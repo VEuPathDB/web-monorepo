@@ -216,10 +216,9 @@ class UserDatasetDetail extends React.Component {
             attribute: 'Shared with',
             value: (
               <ul>
-                {sharedWith.map((share) => (
-                  <li key={share.email}>
-                    {share.userDisplayName} &lt;{share.email}&gt;{' '}
-                    <DateTime datetime={share.time} />
+                {sharedWith.map((share, index) => (
+                  <li key={`${share.userDisplayName}-${index}`}>
+                    {share.userDisplayName}
                   </li>
                 ))}
               </ul>
