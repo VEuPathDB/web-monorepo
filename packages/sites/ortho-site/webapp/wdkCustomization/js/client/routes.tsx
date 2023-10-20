@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 
 import { RouteComponentProps } from 'react-router';
 
@@ -9,6 +9,10 @@ import SiteSearchController from '@veupathdb/web-common/lib/controllers/SiteSear
 import { OrthoMCLHomePageController } from 'ortho-client/controllers/OrthoMCLHomePageController';
 import { ProteomeSummaryController } from 'ortho-client/controllers/ProteomeSummaryController';
 import { GroupClusterGraphController } from 'ortho-client/controllers/GroupClusterGraphController';
+
+const TidyTreeController = React.lazy(
+  () => import('./controllers/TidyTreeController')
+);
 
 export function wrapRoutes(ebrcRoutes: RouteEntry[]): RouteEntry[] {
   return [
@@ -32,6 +36,14 @@ export function wrapRoutes(ebrcRoutes: RouteEntry[]): RouteEntry[] {
     {
       path: '/search',
       component: () => <SiteSearchController offerOrganismFilter={false} />,
+    },
+    {
+      path: '/tidytree',
+      component: () => (
+        <Suspense fallback="Loading...">
+          <TidyTreeController />
+        </Suspense>
+      ),
     },
     ...ebrcRoutes,
   ];
