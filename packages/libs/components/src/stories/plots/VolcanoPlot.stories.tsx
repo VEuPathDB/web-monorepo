@@ -199,7 +199,7 @@ const Template: Story<TemplateProps> = (args) => {
     showSpinner: args.showSpinner,
     rawDataMinMaxValues,
     pValueFloor: args.pValueFloor,
-    adjustedPValueFloor: args.pValueFloor,
+    adjustedPValueFloor: args.adjustedPValueFloor,
   };
 
   return (
@@ -289,6 +289,6 @@ FlooredPValues.args = {
   independentAxisRange: { min: -8, max: 9 },
   dependentAxisRange: { min: -1, max: 9 },
   showSpinner: false,
-  pValueFloor: 0.4,
-  adjustedPValueFloor: 0.4,
+  pValueFloor: 0.0006,
+  adjustedPValueFloor: 0.01,
 };

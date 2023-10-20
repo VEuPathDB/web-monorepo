@@ -147,7 +147,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     showSpinner = false,
     rawDataMinMaxValues,
     pValueFloor = 2e-300,
-    adjustedPValueFloor,
+    adjustedPValueFloor = 0,
   } = props;
 
   // Use ref forwarding to enable screenshotting of the plot for thumbnail versions.
@@ -218,7 +218,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   const dataAccessors = {
     xAccessor: (d: VolcanoPlotDataPoint) => Number(d?.effectSize),
     yAccessor: (d: VolcanoPlotDataPoint) =>
-      d.pValue === '0'
+      Number(d.pValue) <= pValueFloor
         ? -Math.log10(pValueFloor)
         : -Math.log10(Number(d?.pValue)),
   };
@@ -453,7 +453,12 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
                     </li>
                     <li>
                       <span>Adjusted P Value:</span>{' '}
-                      {data?.adjustedPValue ?? 'n/a'}
+                      {data?.adjustedPValue
+                        ? Number(data.adjustedPValue) <= adjustedPValueFloor &&
+                          Number(data.pValue) <= pValueFloor
+                          ? '<= ' + adjustedPValueFloor
+                          : data?.adjustedPValue
+                        : 'n/a'}
                     </li>
                   </ul>
                 </div>
