@@ -80,8 +80,10 @@ export interface VolcanoPlotProps {
   showSpinner?: boolean;
   /** used to determine truncation logic */
   rawDataMinMaxValues: RawDataMinMaxValues;
-  /** The maximum possible y axis value. Points with pValue=0 will get plotted at -log10(minPValueCap). */
-  minPValueCap?: number;
+  /** The minimum allowed p value. Points with true pvalue <= pValueFloor will get plotted at -log10(pValueFloor). */
+  pValueFloor?: number;
+  /** The minimum allowed adjusted p value. */
+  adjustedPValueFloor?: number;
 }
 
 const EmptyVolcanoPlotStats: VolcanoPlotStats = [
@@ -144,7 +146,8 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     truncationBarFill,
     showSpinner = false,
     rawDataMinMaxValues,
-    minPValueCap = 2e-300,
+    pValueFloor = 2e-300,
+    adjustedPValueFloor,
   } = props;
 
   // Use ref forwarding to enable screenshotting of the plot for thumbnail versions.
@@ -168,24 +171,24 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   const { min: dataYMin, max: dataYMax } = rawDataMinMaxValues.y;
 
   // Set mins, maxes of axes in the plot using axis range props
-  // The y axis max should not be allowed to exceed -log10(minPValueCap)
+  // The y axis max should not be allowed to exceed -log10(pValueFloor)
   const xAxisMin = independentAxisRange?.min ?? 0;
   const xAxisMax = independentAxisRange?.max ?? 0;
   const yAxisMin = dependentAxisRange?.min ?? 0;
   const yAxisMax = dependentAxisRange?.max
-    ? dependentAxisRange.max > -Math.log10(minPValueCap)
-      ? -Math.log10(minPValueCap)
+    ? dependentAxisRange.max > -Math.log10(pValueFloor)
+      ? -Math.log10(pValueFloor)
       : dependentAxisRange.max
     : 0;
 
   // Do we need to show the special annotation for the case when the y axis is maxxed out?
-  const showCappedDataAnnotation = yAxisMax === -Math.log10(minPValueCap);
+  const showCappedDataAnnotation = yAxisMax === -Math.log10(pValueFloor);
 
   // Truncation indicators
   // If we have truncation indicators, we'll need to expand the plot range just a tad to
   // ensure the truncation bars appear. The folowing showTruncationBar variables will
   // be either 0 (do not show bar) or 1 (show bar).
-  // The y axis has special logic because it gets capped at -log10(minPValueCap)
+  // The y axis has special logic because it gets capped at -log10(pValueFloor)
   const showXMinTruncationBar = Number(dataXMin < xAxisMin);
   const showXMaxTruncationBar = Number(dataXMax > xAxisMax);
   const xTruncationBarWidth = 0.02 * (xAxisMax - xAxisMin);
@@ -193,7 +196,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   const showYMinTruncationBar = Number(-Math.log10(dataYMax) < yAxisMin);
   const showYMaxTruncationBar =
     dataYMin === 0
-      ? Number(-Math.log10(minPValueCap) > yAxisMax)
+      ? Number(-Math.log10(pValueFloor) > yAxisMax)
       : Number(-Math.log10(dataYMin) > yAxisMax);
   const yTruncationBarHeight = 0.02 * (yAxisMax - yAxisMin);
 
@@ -211,12 +214,12 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
    * Accessors - tell visx which value of the data point we should use and where.
    */
 
-  // For the actual volcano plot data. Y axis points are capped at -Math.log10(minPValueCap)
+  // For the actual volcano plot data. Y axis points are capped at -Math.log10(pValueFloor)
   const dataAccessors = {
     xAccessor: (d: VolcanoPlotDataPoint) => Number(d?.effectSize),
     yAccessor: (d: VolcanoPlotDataPoint) =>
       d.pValue === '0'
-        ? -Math.log10(minPValueCap)
+        ? -Math.log10(pValueFloor)
         : -Math.log10(Number(d?.pValue)),
   };
 

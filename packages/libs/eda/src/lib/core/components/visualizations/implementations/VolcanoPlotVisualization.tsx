@@ -437,6 +437,8 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
      * confusing behavior where selecting group values displays on the empty viz placeholder.
      */
     comparisonLabels: data.value ? comparisonLabels : [],
+    pValueFloor: data.value && Number(data.value.pValueFloor),
+    adjustedPValueFloor: data.value && Number(data.value.adjustedPValueFloor),
     showSpinner: data.pending,
     truncationBarFill: yellow[300],
     independentAxisRange,

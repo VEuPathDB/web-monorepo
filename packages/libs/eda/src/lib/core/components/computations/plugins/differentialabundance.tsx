@@ -73,6 +73,7 @@ export const DifferentialAbundanceConfig = t.type({
   collectionVariable: VariableCollectionDescriptor,
   comparator: Comparator,
   differentialAbundanceMethod: t.string,
+  pValueFloor: t.string,
 });
 
 // Check to ensure the entirety of the configuration is filled out before enabling the
@@ -187,6 +188,9 @@ export function DifferentialAbundanceConfiguration(
   if (configuration)
     configuration.differentialAbundanceMethod =
       DIFFERENTIAL_ABUNDANCE_METHODS[0];
+
+  // Set the pValueFloor here. May change for other apps.
+  if (configuration) configuration.pValueFloor = '1e-200';
 
   // Include known collection variables in this array.
   const collections = useCollectionVariables(studyMetadata.rootEntity);
