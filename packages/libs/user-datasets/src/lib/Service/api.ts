@@ -141,6 +141,26 @@ export class UserDatasetApi extends FetchClientWithCredentials {
       },
     });
   };
+
+  editUserDatasetSharing = (
+    actionName: string,
+    userDatasetIds: number[] | string[],
+    recipientUserIds: number[]
+  ) => {
+    const acceptableActions = ['grant', 'revoke'];
+    if (!actionName || !acceptableActions.includes(actionName))
+      throw new TypeError(
+        `editUserDatasetSharing: invalid action name given: "${actionName}"`
+      );
+    return this.fetch(
+      createJsonRequest({
+        path: `${VDI_SERVICE}/${userDatasetIds[0]}/shares/${recipientUserIds[0]}/offer`,
+        method: 'PUT',
+        body: { action: actionName },
+        transformResponse: noContent,
+      })
+    );
+  };
 }
 
 // TODO: copied from study-data-access's api => move to a different package's util functions

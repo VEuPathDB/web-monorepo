@@ -422,6 +422,7 @@ export function loadUserDatasetList() {
             projectIDs,
             datasetID,
             fileCount,
+            shares,
           } = ud;
           return {
             owner: owner.firstName + ' ' + owner.lastName,
@@ -444,7 +445,12 @@ export function loadUserDatasetList() {
             id: datasetID,
             isCompatible: false,
             isInstalled: false,
-            sharedWith: [],
+            sharedWith: shares?.map((d) => ({
+              user: d.userID,
+              time: 0,
+              email: 'email',
+              userDisplayName: d.firstName + ' ' + d.lastName,
+            })),
             questions: [],
             uploaded: 1,
             modified: 1,
@@ -481,9 +487,27 @@ export function shareUserDatasets(
   recipientUserIds: number[]
 ) {
   return validateUserDatasetCompatibleThunk<SharingAction>(({ wdkService }) => {
-    return wdkService
-      .editUserDatasetSharing('add', userDatasetIds, recipientUserIds)
-      .then(sharingSuccess, sharingError);
+    return (
+      wdkService
+        // @ts-ignore
+        .editUserDatasetSharing('grant', userDatasetIds, recipientUserIds)
+        .then(
+          () =>
+            sharingSuccess({
+              add: {
+                [userDatasetIds[0]]: [
+                  {
+                    userDisplayName: 'My Name',
+                    user: userDatasetIds[0],
+                    email: 'email@email.com',
+                  },
+                ],
+              },
+              delete: { undefined },
+            }),
+          sharingError
+        )
+    );
   });
 }
 
@@ -492,9 +516,27 @@ export function unshareUserDatasets(
   recipientUserIds: number[]
 ) {
   return validateUserDatasetCompatibleThunk<SharingAction>(({ wdkService }) => {
-    return wdkService
-      .editUserDatasetSharing('delete', userDatasetIds, recipientUserIds)
-      .then(sharingSuccess, sharingError);
+    return (
+      wdkService
+        // @ts-ignore
+        .editUserDatasetSharing('revoke', userDatasetIds, recipientUserIds)
+        .then(
+          () =>
+            sharingSuccess({
+              add: { undefined },
+              delete: {
+                [userDatasetIds[0]]: [
+                  {
+                    userDisplayName: 'My Name',
+                    user: userDatasetIds[0],
+                    email: 'email@email.com',
+                  },
+                ],
+              },
+            }),
+          sharingError
+        )
+    );
   });
 }
 
@@ -550,9 +592,9 @@ export function updateProjectFilter(filterByProject: boolean) {
   ]);
 }
 
-// @ts-ignore
-function transformVdiResponseToLegacyResponse(ud) {
-  // (ud: UserDatasetVDI): UserDataset => {
+function transformVdiResponseToLegacyResponse(
+  ud: UserDatasetDetails
+): UserDataset {
   const {
     name,
     description,
@@ -562,6 +604,7 @@ function transformVdiResponseToLegacyResponse(ud) {
     projectIDs,
     datasetID,
     files,
+    shares,
   } = ud;
   return {
     owner: owner.firstName + ' ' + owner.lastName,
@@ -580,12 +623,18 @@ function transformVdiResponseToLegacyResponse(ud) {
     ownerUserId: owner.userID,
     dependencies: [],
     age: 0,
-    // @ts-ignore
-    size: ud.fileSizeTotal ?? files.reduce((prev, curr) => prev + curr.size, 0),
+    size: files.reduce((prev, curr) => prev + curr.size, 0),
     id: datasetID,
     isCompatible: false,
     isInstalled: false,
-    sharedWith: [],
+    sharedWith: shares
+      ?.filter((d) => d.status === 'grant')
+      .map((d) => ({
+        time: 0,
+        userDisplayName: d.recipient.firstName + ' ' + d.recipient.lastName,
+        email: 'email',
+        user: 378138370,
+      })),
     questions: [],
     uploaded: 1,
     modified: 1,
@@ -593,6 +642,4 @@ function transformVdiResponseToLegacyResponse(ud) {
     datafiles: files,
     fileCount: files.length,
   };
-  // }
-  // )
 }

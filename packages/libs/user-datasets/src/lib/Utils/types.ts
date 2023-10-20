@@ -9,6 +9,7 @@ import {
   partial,
   string,
   keyof,
+  boolean,
 } from 'io-ts';
 
 export interface UserDatasetMeta {
@@ -18,7 +19,7 @@ export interface UserDatasetMeta {
 }
 
 export interface UserDatasetShare {
-  time: number;
+  time?: number;
   user: number;
   email: string;
   userDisplayName: string;
@@ -229,9 +230,12 @@ const visibilityOptions = keyof({
   public: null,
 });
 
-const shareDetails = type({
-  status: keyof({ grant: null, revoke: null }),
-  recipient: userMetadata,
+const userDatasetListShareDetails = type({
+  userID: number,
+  firstName: string,
+  lastName: string,
+  organization: string,
+  accepted: boolean,
 });
 
 export const userDataset = intersection([
@@ -252,10 +256,15 @@ export const userDataset = intersection([
     summary: string,
     description: string,
     sourceUrl: string,
-    shares: array(shareDetails),
+    shares: array(userDatasetListShareDetails),
     importMessages: array(string),
   }),
 ]);
+
+const userDatasetDetailsShareDetails = type({
+  status: keyof({ grant: null, revoke: null }),
+  recipient: userMetadata,
+});
 
 export const userDatasetDetails = intersection([
   type({
@@ -274,7 +283,7 @@ export const userDatasetDetails = intersection([
     summary: string,
     description: string,
     sourceUrl: string,
-    shares: array(shareDetails),
+    shares: array(userDatasetDetailsShareDetails),
     importMessages: array(string),
   }),
 ]);
