@@ -25,6 +25,7 @@ import {
   UserDatasetDetails,
   UserDatasetMeta,
   UserDatasetVDI,
+  UserQuotaMetadata,
 } from '../Utils/types';
 
 export type Action =
@@ -397,8 +398,7 @@ type SharingAction =
   | SharingSuccessAction
   | SharingErrorAction;
 
-// replace w/ VDI service
-export function loadUserDatasetList() {
+export function loadUserDatasetList(loadedProjectId?: string) {
   return validateUserDatasetCompatibleThunk<ListAction>(({ wdkService }) => [
     listLoading(),
     Promise.all([
@@ -410,68 +410,66 @@ export function loadUserDatasetList() {
       ),
       // @ts-ignore
       wdkService.getCurrentUserDatasets(),
-    ]).then(([filterByProject, userDatasets]) => {
+      // @ts-ignore
+      wdkService.getUserQuotaMetadata(),
+    ]).then(([filterByProject, userDatasets, userQuotaMetadata]) => {
       const vdiToExistingUds = userDatasets.map(
         (ud: UserDatasetVDI): UserDataset => {
-          const {
-            name,
-            description,
-            summary,
-            owner,
-            datasetType,
-            projectIDs,
-            datasetID,
-            fileCount,
-            shares,
-          } = ud;
+          const { fileCount, shares, fileSizeTotal } = ud;
+          const partiallyTransformedResponse =
+            transformVdiResponseToLegacyResponseHelper(
+              ud,
+              userQuotaMetadata,
+              loadedProjectId
+            );
           return {
-            owner: owner.firstName + ' ' + owner.lastName,
-            projects: projectIDs,
-            created: ud.created,
-            type: {
-              display: datasetType.displayName ?? datasetType.name,
-              name: datasetType.name,
-              version: datasetType.version,
-            },
-            meta: {
-              name,
-              description: description ?? name,
-              summary: summary ?? '',
-            },
-            ownerUserId: owner.userID,
-            dependencies: [],
-            age: 0,
-            size: ud.fileSizeTotal,
-            id: datasetID,
-            isCompatible: false,
-            isInstalled: false,
+            ...partiallyTransformedResponse,
+            datafiles: [],
+            fileCount,
+            size: fileSizeTotal,
             sharedWith: shares?.map((d) => ({
               user: d.userID,
               userDisplayName: d.firstName + ' ' + d.lastName,
             })),
-            questions: [],
-            uploaded: 1,
-            modified: 1,
-            percentQuotaUsed: 0,
-            datafiles: [],
-            fileCount,
           };
         }
       );
-      // return listReceived(userDatasets, filterByProject)
       return listReceived(vdiToExistingUds, filterByProject);
     }, listErrorReceived),
   ]);
 }
 
-export function loadUserDatasetDetail(id: string) {
+export function loadUserDatasetDetail(id: string, loadedProjectId?: string) {
   return validateUserDatasetCompatibleThunk<DetailAction>(({ wdkService }) => [
     detailLoading(id),
-    // @ts-ignore
-    wdkService.getUserDataset(id).then(
-      (userDataset: UserDatasetDetails) => {
-        const transformedResponse =
-          transformVdiResponseToLegacyResponse(userDataset);
+    Promise.all([
+      // @ts-ignore
+      wdkService.getUserDataset(id),
+      // @ts-ignore
+      wdkService.getUserQuotaMetadata(),
+    ]).then(
+      ([userDataset, userQuotaMetadata]) => {
+        const { files, shares } = userDataset as UserDatasetDetails;
+        const partiallyTransformedResponse =
+          transformVdiResponseToLegacyResponseHelper(
+            userDataset,
+            userQuotaMetadata,
+            loadedProjectId
+          );
+        const transformedResponse = {
+          ...partiallyTransformedResponse,
+          datafiles: files,
+          fileCount: files.length,
+          size: files.reduce((prev, curr) => prev + curr.size, 0),
+          sharedWith: shares
+            ?.filter((d) => d.status === 'grant')
+            .map((d) => ({
+              userDisplayName:
+                d.recipient.firstName + ' ' + d.recipient.lastName,
+              // TODO: need a way to pass in the unique userId in details
+              user: 378138370,
+            })),
+        };
         return detailReceived(id, transformedResponse);
       },
       (error: ServiceError) =>
@@ -615,9 +613,16 @@ export function updateProjectFilter(filterByProject: boolean) {
   ]);
 }
 
-function transformVdiResponseToLegacyResponse(
-  ud: UserDatasetDetails
-): UserDataset {
+type PartialLegacyUserDataset = Omit<
+  UserDataset,
+  'datafiles' | 'fileCount' | 'size' | 'sharedWith'
+>;
+
+function transformVdiResponseToLegacyResponseHelper(
+  ud: UserDatasetDetails | UserDatasetVDI,
+  userQuotaMetadata: UserQuotaMetadata,
+  loadedProjectId?: string
+): PartialLegacyUserDataset {
   const {
     name,
     description,
@@ -626,9 +631,18 @@ function transformVdiResponseToLegacyResponse(
     datasetType,
     projectIDs,
     datasetID,
-    files,
-    shares,
+    created,
+    status,
   } = ud;
+  const { quota } = userQuotaMetadata;
+  const installStatusForLoadedProject = status.install?.find(
+    (d) => d.projectID === loadedProjectId
+  );
+  const isInstalled = Boolean(
+    status.import === 'complete' &&
+      installStatusForLoadedProject &&
+      installStatusForLoadedProject.dataStatus === 'complete'
+  );
   return {
     owner: owner.firstName + ' ' + owner.lastName,
     projects: projectIDs ?? [],
@@ -640,28 +654,22 @@ function transformVdiResponseToLegacyResponse(
     },
     meta: {
       name,
-      description: description ?? name,
+      description: description ?? '',
       summary: summary ?? '',
     },
     ownerUserId: owner.userID,
     dependencies: [],
-    age: 0,
-    size: files.reduce((prev, curr) => prev + curr.size, 0),
+    age: Date.now() - Date.parse(created),
     id: datasetID,
-    isCompatible: false,
-    isInstalled: false,
-    sharedWith: shares
-      ?.filter((d) => d.status === 'grant')
-      .map((d) => ({
-        userDisplayName: d.recipient.firstName + ' ' + d.recipient.lastName,
-        // TODO: need a way to pass in the unique userId in details
-        user: 378138370,
-      })),
+    isCompatible: Boolean(
+      loadedProjectId && projectIDs.includes(loadedProjectId)
+    ),
+    isInstalled,
     questions: [],
+    percentQuotaUsed: quota.usage / quota.limit,
+    // 'uploaded' doesn't appear to be used anywhere
     uploaded: 1,
+    // 'modified' doesn't appear to be used anywhere
     modified: 1,
-    percentQuotaUsed: 0,
-    datafiles: files,
-    fileCount: files.length,
   };
 }

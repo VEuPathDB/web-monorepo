@@ -288,6 +288,13 @@ export const userDatasetDetails = intersection([
   }),
 ]);
 
+export const userQuotaMetadata = type({
+  quota: type({
+    limit: number,
+    usage: number,
+  }),
+});
+
 export interface NewUserDatasetMeta {
   name: string;
   datasetType: {
@@ -308,3 +315,4 @@ export interface NewUserDatasetMeta {
 
 export type UserDatasetVDI = TypeOf<typeof userDataset>;
 export type UserDatasetDetails = TypeOf<typeof userDatasetDetails>;
+export type UserQuotaMetadata = TypeOf<typeof userQuotaMetadata>;

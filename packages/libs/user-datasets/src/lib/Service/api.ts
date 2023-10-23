@@ -19,6 +19,7 @@ import {
   NewUserDatasetMeta,
   NewUserDataset,
   userDatasetDetails,
+  userQuotaMetadata,
 } from '../Utils/types';
 
 import { array, string, type } from 'io-ts';
@@ -183,6 +184,16 @@ export class UserDatasetApi extends FetchClientWithCredentials {
         emails,
       }),
     });
+  };
+
+  getUserQuotaMetadata = () => {
+    return this.fetch(
+      createJsonRequest({
+        path: `/vdi-users/self/meta`,
+        method: 'GET',
+        transformResponse: ioTransformer(userQuotaMetadata),
+      })
+    );
   };
 }
 

@@ -88,7 +88,10 @@ class UserDatasetDetailController extends PageController<MergedProps> {
     const idChanged =
       prevProps == null || prevProps.ownProps.id !== this.props.ownProps.id;
     if (idChanged) {
-      this.props.dispatchProps.loadUserDatasetDetail(this.props.ownProps.id);
+      this.props.dispatchProps.loadUserDatasetDetail(
+        this.props.ownProps.id,
+        this.props.stateProps.config?.projectId
+      );
     }
   }
 
