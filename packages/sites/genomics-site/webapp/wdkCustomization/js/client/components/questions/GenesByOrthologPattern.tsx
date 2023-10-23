@@ -229,20 +229,22 @@ function ProfileParameter({
           <ConstraintIcon constraintType="mixed" /> = mixture of constraints )
         </div>
       </div>
-      <CheckboxTree<ProfileNode>
-        tree={profileTree}
-        getNodeId={getNodeId}
-        getNodeChildren={getNodeChildren}
-        onExpansionChange={onExpansionChange}
-        renderNode={renderNode}
-        expandedList={expandedList}
-        showRoot
-        linksPosition={LinksPosition.Top}
-        isSearchable
-        searchTerm={searchTerm}
-        onSearchTermChange={setSearchTerm}
-        searchPredicate={searchPredicate}
-      />
+      <div className={cx('ProfileParameterTreeWrapper')}>
+        <CheckboxTree<ProfileNode>
+          tree={profileTree}
+          getNodeId={getNodeId}
+          getNodeChildren={getNodeChildren}
+          onExpansionChange={onExpansionChange}
+          renderNode={renderNode}
+          expandedList={expandedList}
+          showRoot
+          linksPosition={LinksPosition.Top}
+          isSearchable
+          searchTerm={searchTerm}
+          onSearchTermChange={setSearchTerm}
+          searchPredicate={searchPredicate}
+        />
+      </div>
     </div>
   );
 }
