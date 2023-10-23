@@ -466,8 +466,7 @@ export function loadUserDatasetDetail(id: string, loadedProjectId?: string) {
             .map((d) => ({
               userDisplayName:
                 d.recipient.firstName + ' ' + d.recipient.lastName,
-              // TODO: need a way to pass in the unique userId in details
-              user: 378138370,
+              user: d.recipient.userID,
             })),
         };
         return detailReceived(id, transformedResponse);

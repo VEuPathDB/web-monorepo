@@ -230,12 +230,11 @@ const visibilityOptions = keyof({
   public: null,
 });
 
-const userDatasetListShareDetails = type({
+const userDatasetRecipientDetails = type({
   userID: number,
   firstName: string,
   lastName: string,
   organization: string,
-  accepted: boolean,
 });
 
 export const userDataset = intersection([
@@ -256,14 +255,16 @@ export const userDataset = intersection([
     summary: string,
     description: string,
     sourceUrl: string,
-    shares: array(userDatasetListShareDetails),
+    shares: array(
+      intersection([userDatasetRecipientDetails, type({ accepted: boolean })])
+    ),
     importMessages: array(string),
   }),
 ]);
 
 const userDatasetDetailsShareDetails = type({
   status: keyof({ grant: null, revoke: null }),
-  recipient: userMetadata,
+  recipient: userDatasetRecipientDetails,
 });
 
 export const userDatasetDetails = intersection([
