@@ -91,6 +91,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     selectedValues,
     binningMethod,
     dependentAxisLogScale,
+    selectedPlotMode,
   } = configuration;
 
   const { entity: overlayEntity, variable: overlayVariable } =
@@ -150,11 +151,11 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     studyEntities,
     geoConfigs,
     boundsZoomLevel: appState.boundsZoomLevel,
-    selectedVariable: configuration.selectedVariable,
-    selectedValues: configuration.selectedValues,
-    binningMethod: configuration.binningMethod,
-    dependentAxisLogScale: configuration.dependentAxisLogScale,
-    valueSpec: configuration.selectedPlotMode,
+    selectedVariable,
+    selectedValues,
+    binningMethod,
+    dependentAxisLogScale,
+    valueSpec: selectedPlotMode,
   });
 
   const continuousMarkerPreview = useMemo(() => {
