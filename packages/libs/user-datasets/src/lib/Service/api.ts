@@ -138,15 +138,17 @@ export class UserDatasetApi extends FetchClientWithCredentials {
     );
   };
 
-  // QUESTION: VDI has an option to GET upload files and data files. Should we tweak UI to provide both options?
-  getUserDatasetFiles = async (datasetId: number | string) => {
+  getUserDatasetFiles = async (
+    datasetId: number | string,
+    zipFileType: 'upload' | 'data'
+  ) => {
     if (typeof datasetId !== 'number' && typeof datasetId !== 'string')
       throw new TypeError(
         `Can't build downloadUrl; invalid datasetId given (${datasetId}) [${typeof datasetId}]`
       );
     submitAsForm({
       method: 'GET',
-      action: `${VDI_SERVICE_BASE_URL}${VDI_SERVICE}/${datasetId}/files/data`,
+      action: `${VDI_SERVICE_BASE_URL}${VDI_SERVICE}/${datasetId}/files/${zipFileType}`,
       inputs: {
         'Auth-Key': await this.findUserRequestAuthKey(),
       },

@@ -339,10 +339,14 @@ class UserDatasetDetail extends React.Component {
    -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= */
 
   renderFileSection() {
-    const { userDataset, appUrl, dataNoun } = this.props;
-    const fileTableState = MesaState.create({
-      columns: this.getFileTableColumns({ userDataset, appUrl }),
-      rows: userDataset.datafiles,
+    const { userDataset, dataNoun } = this.props;
+    const uploadZipFileState = MesaState.create({
+      columns: this.getFileTableColumns('upload', true),
+      rows: [{ name: 'upload.zip', size: userDataset.size }],
+    });
+    const processedZipFileState = MesaState.create({
+      columns: this.getFileTableColumns('data', false),
+      rows: [{ name: 'install.zip' }],
     });
 
     return (
@@ -350,17 +354,42 @@ class UserDatasetDetail extends React.Component {
         <h2>Data Files</h2>
         <h3 className={classify('SectionTitle')}>
           <Icon fa="files-o" />
-          Files in {dataNoun.singular}
+          Uploaded Files in {dataNoun.singular}
         </h3>
-        <Mesa state={fileTableState} />
+        <Mesa state={uploadZipFileState} />
+        <h3 className={classify('SectionTitle')}>
+          <Icon fa="files-o" />
+          Processed Files in {dataNoun.singular}
+        </h3>
+        <Mesa state={processedZipFileState} />
       </section>
     );
   }
 
-  getFileTableColumns() {
+  getFileTableColumns(zipFileType, showFileSize) {
     const { userDataset } = this.props;
     const { id } = userDataset;
     const { wdkService } = this.context;
+
+    const fileList =
+      zipFileType === 'upload' ? (
+        <details style={{ margin: '1em 0 0 0.25em' }}>
+          <summary>List of uploaded files:</summary>
+          <ol
+            style={{
+              margin: '0.25em 0 0 0',
+              lineHeight: '1.5em',
+              padding: '0 0 0 2em',
+            }}
+          >
+            {userDataset.datafiles.map((file, index) => (
+              <li key={`${file.name}-${index}`}>
+                {file.name} <span>({bytesToHuman(file.size)})</span>
+              </li>
+            ))}
+          </ol>
+        </details>
+      ) : null;
 
     return [
       {
@@ -368,17 +397,26 @@ class UserDatasetDetail extends React.Component {
         name: 'File Name',
         renderCell({ row }) {
           const { name } = row;
-          return <code>{name}</code>;
+          return (
+            <>
+              <code>{name}</code>
+              {fileList}
+            </>
+          );
         },
       },
-      {
-        key: 'size',
-        name: 'File Size',
-        renderCell({ row }) {
-          const { size } = row;
-          return bytesToHuman(size);
-        },
-      },
+      ...(showFileSize
+        ? [
+            {
+              key: 'size',
+              name: 'File Size',
+              renderCell({ row }) {
+                const { size } = row;
+                return bytesToHuman(size);
+              },
+            },
+          ]
+        : []),
       {
         key: 'download',
         name: 'Download',
@@ -398,7 +436,7 @@ class UserDatasetDetail extends React.Component {
               }
               onClick={(e) => {
                 e.preventDefault();
-                wdkService.getUserDatasetFiles(id);
+                wdkService.getUserDatasetFiles(id, zipFileType);
               }}
             >
               <Icon fa="save" className="left-side" /> Download

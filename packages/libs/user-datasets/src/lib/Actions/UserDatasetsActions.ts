@@ -514,8 +514,8 @@ export function shareUserDatasets(
     }, {});
 
     return Promise.all(
-      // @ts-ignore
       requests.map((req) =>
+        // @ts-ignore
         wdkService.editUserDatasetSharing(
           'grant',
           req.datasetId,
