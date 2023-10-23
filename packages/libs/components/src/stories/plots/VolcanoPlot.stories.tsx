@@ -7,6 +7,7 @@ import { NumberRange } from '../../types/general';
 import { yellow } from '@veupathdb/coreui/lib/definitions/colors';
 import { assignSignificanceColor } from '../../plots/VolcanoPlot';
 import { significanceColors } from '../../types/plots';
+import { CSSProperties } from 'react';
 
 export default {
   title: 'Plots/VolcanoPlot',
@@ -123,6 +124,7 @@ interface TemplateProps {
   comparisonLabels?: string[];
   truncationBarFill?: string;
   showSpinner?: boolean;
+  containerStyles?: CSSProperties;
 }
 
 const Template: Story<TemplateProps> = (args) => {
@@ -190,6 +192,7 @@ const Template: Story<TemplateProps> = (args) => {
     dependentAxisRange: args.dependentAxisRange,
     truncationBarFill: args.truncationBarFill,
     showSpinner: args.showSpinner,
+    containerStyles: args.containerStyles,
     rawDataMinMaxValues,
   };
 
@@ -267,4 +270,27 @@ Empty.args = {
   significanceThreshold: 0.05,
   independentAxisRange: { min: -9, max: 9 },
   dependentAxisRange: { min: -1, max: 9 },
+};
+
+// With visualization plot container styles
+const plotContainerStyles = {
+  width: 750,
+  height: 450,
+  marginLeft: '0.75rem',
+  border: '1px solid #dedede',
+  boxShadow: '1px 1px 4px #00000066',
+};
+export const WithStyle = Template.bind({});
+WithStyle.args = {
+  data: dataSetVolcano,
+  markerBodyOpacity: 0.8,
+  effectSizeThreshold: 1,
+  significanceThreshold: 0.01,
+  comparisonLabels: [
+    'Up in group a, b, c, d, e, f, g, and h',
+    'Up in group i, j, k, l, m, n, o, pqrs',
+  ],
+  independentAxisRange: { min: -9, max: 9 },
+  dependentAxisRange: { min: 0, max: 9 },
+  containerStyles: plotContainerStyles,
 };

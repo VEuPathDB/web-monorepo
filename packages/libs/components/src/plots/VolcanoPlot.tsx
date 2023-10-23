@@ -266,9 +266,9 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           findNearestDatumOverride={findNearestDatumXY}
           margin={{
             top: MARGIN_DEFAULT,
-            right: showCappedDataAnnotation ? 150 : MARGIN_DEFAULT,
-            left: MARGIN_DEFAULT,
-            bottom: MARGIN_DEFAULT,
+            right: showCappedDataAnnotation ? 150 : MARGIN_DEFAULT + 10,
+            left: MARGIN_DEFAULT + 10, // Bottom annotatiions get wide (for right margin, too)
+            bottom: MARGIN_DEFAULT + 20, // Bottom annotations can get long
           }}
         >
           {/* Set up the axes and grid lines. XYChart magically lays them out correctly */}
@@ -295,6 +295,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
                     verticalAnchor="start"
                     showAnchorLine={false}
                     showBackground={false}
+                    maxWidth={100}
                   />
                 </Annotation>
               );
