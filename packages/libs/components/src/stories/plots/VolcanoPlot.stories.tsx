@@ -130,57 +130,66 @@ interface TemplateProps {
 const Template: Story<TemplateProps> = (args) => {
   // Process input data. Take the object of arrays and turn it into
   // an array of data points. Note the backend will do this for us!
-  const volcanoDataPoints: VolcanoPlotData | undefined = {
-    effectSizeLabel: args.data?.volcanoplot.effectSizeLabel ?? '',
-    statistics:
-      args.data?.volcanoplot.statistics.effectSize.map((effectSize, index) => {
-        return {
-          effectSize: effectSize,
-          pValue: args.data?.volcanoplot.statistics.pValue[index],
-          adjustedPValue:
-            args.data?.volcanoplot.statistics.adjustedPValue[index],
-          pointID: args.data?.volcanoplot.statistics.pointID[index],
-          significanceColor: assignSignificanceColor(
-            Number(effectSize),
-            Number(args.data?.volcanoplot.statistics.pValue[index]),
-            args.significanceThreshold,
-            args.effectSizeThreshold,
-            significanceColors
-          ),
-        };
-      }) ?? [],
-  };
+  const volcanoDataPoints: VolcanoPlotData | undefined = args.data
+    ? {
+        effectSizeLabel: args.data?.volcanoplot.effectSizeLabel ?? '',
+        statistics:
+          args.data?.volcanoplot.statistics.effectSize.map(
+            (effectSize, index) => {
+              return {
+                effectSize: effectSize,
+                pValue: args.data?.volcanoplot.statistics.pValue[index],
+                adjustedPValue:
+                  args.data?.volcanoplot.statistics.adjustedPValue[index],
+                pointID: args.data?.volcanoplot.statistics.pointID[index],
+                significanceColor: assignSignificanceColor(
+                  Number(effectSize),
+                  Number(args.data?.volcanoplot.statistics.pValue[index]),
+                  args.significanceThreshold,
+                  args.effectSizeThreshold,
+                  significanceColors
+                ),
+              };
+            }
+          ) ?? [],
+      }
+    : undefined;
 
-  const rawDataMinMaxValues = {
-    x: {
-      min:
-        (volcanoDataPoints &&
-          Math.min(
-            ...volcanoDataPoints.statistics.map((d) => Number(d.effectSize))
-          )) ??
-        0,
-      max:
-        (volcanoDataPoints &&
-          Math.max(
-            ...volcanoDataPoints.statistics.map((d) => Number(d.effectSize))
-          )) ??
-        0,
-    },
-    y: {
-      min:
-        (volcanoDataPoints &&
-          Math.min(
-            ...volcanoDataPoints.statistics.map((d) => Number(d.pValue))
-          )) ??
-        1,
-      max:
-        (volcanoDataPoints &&
-          Math.max(
-            ...volcanoDataPoints.statistics.map((d) => Number(d.pValue))
-          )) ??
-        1,
-    },
-  };
+  const rawDataMinMaxValues = args.data
+    ? {
+        x: {
+          min:
+            (volcanoDataPoints &&
+              Math.min(
+                ...volcanoDataPoints.statistics.map((d) => Number(d.effectSize))
+              )) ??
+            0,
+          max:
+            (volcanoDataPoints &&
+              Math.max(
+                ...volcanoDataPoints.statistics.map((d) => Number(d.effectSize))
+              )) ??
+            0,
+        },
+        y: {
+          min:
+            (volcanoDataPoints &&
+              Math.min(
+                ...volcanoDataPoints.statistics.map((d) => Number(d.pValue))
+              )) ??
+            1,
+          max:
+            (volcanoDataPoints &&
+              Math.max(
+                ...volcanoDataPoints.statistics.map((d) => Number(d.pValue))
+              )) ??
+            1,
+        },
+      }
+    : {
+        x: { min: 0, max: 0 },
+        y: { min: 1, max: 1 },
+      };
 
   const volcanoPlotProps: VolcanoPlotProps = {
     data: volcanoDataPoints,
