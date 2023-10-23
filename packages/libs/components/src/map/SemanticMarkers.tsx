@@ -48,7 +48,6 @@ export default function SemanticMarkers({
   const [consolidatedMarkers, setConsolidatedMarkers] =
     useState<ReactElement<BoundsDriftMarkerProps>[]>(markers);
 
-  // call the prop callback to communicate bounds and zoomLevel to outside world
   useEffect(() => {
     let timeoutVariable: number | undefined;
     // debounce needed to avoid cyclic in/out zooming behaviour
@@ -124,7 +123,6 @@ export default function SemanticMarkers({
         timeoutVariable = enqueueZoom(animationValues.zoomType);
       } else {
         /** First render of markers **/
-        // TODO I removed the array clone. Check if we need it. (dmf)
         setConsolidatedMarkers(markers);
       }
 
@@ -185,38 +183,6 @@ function boundsToGeoBBox(bounds: LatLngBounds): Bounds {
   return {
     southWest: { lat: south, lng: west },
     northEast: { lat: north, lng: east },
-  };
-}
-
-// put longitude bounds within normal -180 to 180 range
-function constrainLongitudeToMainWorld({
-  southWest: { lat: south, lng: west },
-  northEast: { lat: north, lng: east },
-}: Bounds): Bounds {
-  let newEast = east;
-  let newWest = west;
-  while (newEast > 180) {
-    newEast -= 360;
-  }
-  while (newEast < -180) {
-    newEast += 360;
-  }
-  while (newWest < -180) {
-    newWest += 360;
-  }
-  while (newWest > 180) {
-    newWest -= 360;
-  }
-
-  // fully zoomed out, the longitude bounds are often the same
-  // but we need to make sure that west is slightly greater than east
-  // so that they "wrap around" the whole globe
-  // (if west was slightly less than east, it would represent a very tiny sliver)
-  if (Math.abs(newEast - newWest) < 1e-8) newWest = newEast + 1e-8;
-
-  return {
-    southWest: { lat: south, lng: newWest },
-    northEast: { lat: north, lng: newEast },
   };
 }
 
