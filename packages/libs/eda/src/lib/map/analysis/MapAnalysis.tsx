@@ -703,27 +703,6 @@ function MapAnalysisImpl(props: ImplProps) {
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
-  // // for flyTo functionality
-  // const [willFlyTo, setWillFlyTo] = useState(false);
-
-  // // Only decide if we need to flyTo while we are waiting for marker data
-  // // then only trigger the flyTo when no longer pending.
-  // // This makes sure that the user sees the global location of the data before the flyTo happens.
-  // useEffect(() => {
-  //   if (pending) {
-  //     // set a safe margin (epsilon) to perform flyTo correctly due to an issue of map resolution etc.
-  //     // not necessarily need to use defaultAppState.viewport.center [0, 0] here but used it just in case
-  //     const epsilon = 2.0;
-  //     const isWillFlyTo =
-  //       appState.viewport.zoom === defaultViewport.zoom &&
-  //       Math.abs(appState.viewport.center[0] - defaultViewport.center[0]) <=
-  //         epsilon &&
-  //       Math.abs(appState.viewport.center[1] - defaultViewport.center[1]) <=
-  //         epsilon;
-  //     setWillFlyTo(isWillFlyTo);
-  //   }
-  // }, [pending, appState.viewport]);
-
   const activeMapTypePlugin =
     activeMarkerConfiguration?.type === 'barplot'
       ? barMarkerPlugin
@@ -861,19 +840,6 @@ function MapAnalysisImpl(props: ImplProps) {
                     {...mapTypeMapLayerProps}
                   />
                 )}
-
-                {/*activeMapTypeData.error && (
-                  <FloatingDiv
-                    style={{
-                      top: undefined,
-                      bottom: 50,
-                      left: 100,
-                      right: 100,
-                    }}
-                  >
-                    <div>{String(activeMapTypeData.error)}</div>
-                  </FloatingDiv>
-                  )*/}
               </div>
             </DocumentationContainer>
           </ShowHideVariableContextProvider>
