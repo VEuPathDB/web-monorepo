@@ -37,6 +37,11 @@ export const defaultAnimation = {
   duration: defaultAnimationDuration,
 };
 
+export interface SharedMarkerConfigurations {
+  selectedVariable: VariableDescriptor;
+  activeVisualizationId?: string;
+}
+
 export function useCommonData(
   selectedVariable: VariableDescriptor,
   geoConfigs: GeoConfig[],

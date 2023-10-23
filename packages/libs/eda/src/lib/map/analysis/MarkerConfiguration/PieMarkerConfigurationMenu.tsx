@@ -23,15 +23,12 @@ import {
   SelectedCountsOption,
   SelectedValues,
 } from '../appState';
+import { SharedMarkerConfigurations } from '../mapTypes/shared';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
 }
 
-export interface SharedMarkerConfigurations {
-  selectedVariable: VariableDescriptor;
-  activeVisualizationId?: string;
-}
 export interface PieMarkerConfiguration
   extends MarkerConfiguration<'pie'>,
     SharedMarkerConfigurations {

@@ -17,7 +17,6 @@ import { CategoricalMarkerPreview } from './CategoricalMarkerPreview';
 import Barplot from '@veupathdb/components/lib/plots/Barplot';
 import { SubsettingClient } from '../../../core/api';
 import { Toggle } from '@veupathdb/coreui';
-import { SharedMarkerConfigurations } from './PieMarkerConfigurationMenu';
 import { useUncontrolledSelections } from '../hooks/uncontrolledSelections';
 import {
   BinningMethod,
@@ -25,6 +24,7 @@ import {
   SelectedValues,
 } from '../appState';
 import { gray } from '@veupathdb/coreui/lib/definitions/colors';
+import { SharedMarkerConfigurations } from '../mapTypes/shared';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
