@@ -34,6 +34,7 @@ import SemanticMarkers from '@veupathdb/components/lib/map/SemanticMarkers';
 import {
   DistributionMarkerDataProps,
   defaultAnimation,
+  isApproxSameViewport,
   useCategoricalValues,
   useDistributionMarkerData,
   useDistributionOverlayConfig,
@@ -356,7 +357,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
           animation={defaultAnimation}
           flyToMarkers={
             !markerData.isFetching &&
-            markerData.boundsZoomLevel?.zoomLevel === defaultViewport.zoom
+            isApproxSameViewport(props.appState.viewport, defaultViewport)
           }
           flyToMarkersDelay={500}
         />
