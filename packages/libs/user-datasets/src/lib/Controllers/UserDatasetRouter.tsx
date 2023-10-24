@@ -102,7 +102,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
           );
         }}
       />
-      <WdkRoute
+      {/* <WdkRoute
         path={path + '/recent'}
         exact={true}
         requiresLogin={false} // uses custom guest views
@@ -129,7 +129,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
             />
           );
         }}
-      />
+      /> */}
       <WdkRoute
         path={path + '/help'}
         exact={true}
