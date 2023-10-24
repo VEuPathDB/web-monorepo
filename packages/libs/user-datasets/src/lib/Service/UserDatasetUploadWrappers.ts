@@ -1,4 +1,3 @@
-import { partial } from 'lodash';
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import * as Decode from '@veupathdb/wdk-client/lib/Utils/Json';
 import { appendUrlAndRethrow } from '@veupathdb/wdk-client/lib/Service/ServiceUtils';
@@ -173,18 +172,18 @@ function userDatasetUploadFromStatusDetail(
   };
 }
 
-function issueDeleteCommand(
-  datasetImportUrl: string,
-  jobId: string
-): Promise<void> {
-  return fetchWithCredentials(
-    datasetImportUrl,
-    '/user-datasets/' + jobId,
-    'DELETE',
-    undefined,
-    'text/plain;'
-  ).then((x) => {});
-}
+// function issueDeleteCommand(
+//   datasetImportUrl: string,
+//   jobId: string
+// ): Promise<void> {
+//   return fetchWithCredentials(
+//     datasetImportUrl,
+//     '/user-datasets/' + jobId,
+//     'DELETE',
+//     undefined,
+//     'text/plain;'
+//   ).then((x) => {});
+// }
 
 const DATASET_IMPORT_URL_KEY = 'datasetImportUrl';
 
@@ -203,40 +202,19 @@ export const makeUserDatasetUploadServiceWrappers = ({
       }
     ).then((uploads) => uploads.map(userDatasetUploadFromStatusDetail));
   },
-  // Currently only works for jobs whose status is awaiting-upload
-  cancelOngoingUpload:
-    () =>
-    (jobId: string): Promise<void> => {
-      return issueDeleteCommand(datasetImportUrl, jobId);
-    },
-  clearMessages:
-    () =>
-    (jobIds: string[]): Promise<void> => {
-      return Promise.all(
-        jobIds.map(partial(issueDeleteCommand, datasetImportUrl))
-      ).then((x) => {});
-    },
-  getSupportedDatasetTypes: () => (projectId: string) => {
-    return fetchDecodedJsonOrThrowMessage(
-      datasetImportUrl,
-      Decode.arrayOf(Decode.string),
-      {
-        path: `/projects/${projectId}/datasetTypes`,
-        method: 'GET',
-      }
-    );
-  },
-  getSupportedFileUploadTypes:
-    () => (projectId: string, datasetType: string) => {
-      return fetchDecodedJsonOrThrowMessage(
-        datasetImportUrl,
-        Decode.arrayOf(Decode.string),
-        {
-          path: `/projects/${projectId}/datasetTypes/${datasetType}/fileTypes`,
-          method: 'GET',
-        }
-      );
-    },
+  // // Currently only works for jobs whose status is awaiting-upload
+  // cancelOngoingUpload:
+  //   () =>
+  //   (jobId: string): Promise<void> => {
+  //     return issueDeleteCommand(datasetImportUrl, jobId);
+  //   },
+  // clearMessages:
+  //   () =>
+  //   (jobIds: string[]): Promise<void> => {
+  //     return Promise.all(
+  //       jobIds.map(partial(issueDeleteCommand, datasetImportUrl))
+  //     ).then((x) => {});
+  //   },
 });
 
 export function isUserDatasetUploadCompatibleWdkService(

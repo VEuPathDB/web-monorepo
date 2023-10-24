@@ -14,11 +14,11 @@ import {
 
 import UploadForm, { FormSubmission } from '../Components/UploadForm';
 
-import { assertIsUserDatasetUploadCompatibleWdkService } from '../Service/UserDatasetUploadWrappers';
-
 import { StateSlice } from '../StoreModules/types';
 
 import { DatasetUploadTypeConfigEntry } from '../Utils/types';
+
+const SUPPORTED_FILE_UPLOAD_TYPES = ['csv', 'gz', 'tgz', 'tsv', 'txt', 'zip'];
 
 interface Props<T extends string = string> {
   baseUrl: string;
@@ -36,22 +36,6 @@ export default function UserDatasetUploadController({
   const projectId = useWdkService(
     (wdkService) => wdkService.getConfig().then((config) => config.projectId),
     []
-  );
-
-  const supportedFileUploadTypes = useWdkService(
-    async (wdkService) => {
-      assertIsUserDatasetUploadCompatibleWdkService(wdkService);
-
-      if (projectId == null) {
-        return undefined;
-      }
-
-      return wdkService.getSupportedFileUploadTypes(
-        projectId,
-        datasetUploadType.type
-      );
-    },
-    [projectId, datasetUploadType.type]
   );
 
   const strategyOptions = useWdkService(
@@ -101,7 +85,7 @@ export default function UserDatasetUploadController({
   );
 
   return projectId == null ||
-    supportedFileUploadTypes == null ||
+    SUPPORTED_FILE_UPLOAD_TYPES == null ||
     strategyOptions == null ? (
     <Loading />
   ) : (
@@ -118,7 +102,7 @@ export default function UserDatasetUploadController({
         resultUploadConfig={
           datasetUploadType.formConfig.uploadMethodConfig.result
         }
-        supportedFileUploadTypes={supportedFileUploadTypes}
+        supportedFileUploadTypes={SUPPORTED_FILE_UPLOAD_TYPES}
       />
     </div>
   );

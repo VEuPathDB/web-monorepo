@@ -19,37 +19,7 @@ export type UserDatasetShareResponse = {
 
 type UserDatasetsServiceWrappers = typeof userDatasetsServiceWrappers;
 
-export const userDatasetsServiceWrappers = {
-  // editUserDatasetSharing:
-  //   (wdkService: WdkService) =>
-  //   (
-  //     actionName: string,
-  //     userDatasetIds: number[],
-  //     recipientUserIds: number[]
-  //   ) => {
-  //     const acceptableActions = ['add', 'delete'];
-  //     if (!actionName || !acceptableActions.includes(actionName))
-  //       throw new TypeError(
-  //         `editUserDatasetSharing: invalid action name given: "${actionName}"`
-  //       );
-  //     const delta = JSON.stringify({
-  //       [actionName]: userDatasetIds
-  //         .map((id) => `${id}`)
-  //         .reduce((output: object, datasetId: string) => {
-  //           Object.defineProperty(output, datasetId, {
-  //             value: recipientUserIds.map((id) => `${id}`),
-  //             enumerable: true,
-  //           });
-  //           return output;
-  //         }, {}),
-  //     });
-  //     return wdkService._fetchJson<UserDatasetShareResponse>(
-  //       'patch',
-  //       '/users/current/user-dataset-sharing',
-  //       delta
-  //     );
-  //   },
-};
+export const userDatasetsServiceWrappers = {};
 
 export function isUserDatasetsCompatibleWdkService(
   wdkService: WdkService
