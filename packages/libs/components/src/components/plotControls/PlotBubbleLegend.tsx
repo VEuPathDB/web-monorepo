@@ -6,6 +6,7 @@ import _ from 'lodash';
 export interface PlotLegendBubbleProps {
   legendMax: number;
   valueToDiameterMapper: ((value: number) => number) | undefined;
+  isClickable?: boolean; // controls the cursor type
 }
 
 // legend ellipsis function for legend title and legend items (from custom legend work)

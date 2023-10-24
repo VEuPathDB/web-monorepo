@@ -8,6 +8,7 @@ export interface PlotLegendGradientProps {
   valueToColorMapper: (a: number) => string;
   nTicks?: number; // MUST be odd!
   showMissingness?: boolean;
+  isClickable?: boolean; // controls the cursor type
 }
 
 // legend ellipsis function for legend title and legend items (from custom legend work)
@@ -24,6 +25,7 @@ export default function PlotGradientLegend({
   valueToColorMapper,
   nTicks = 5,
   showMissingness,
+  isClickable = true,
 }: PlotLegendGradientProps) {
   // Declare constants
   const gradientBoxHeight = 150;
@@ -119,7 +121,7 @@ export default function PlotGradientLegend({
           <label
             title={'No data'}
             style={{
-              cursor: 'pointer',
+              cursor: isClickable ? 'pointer' : 'default',
               display: 'flex',
               alignItems: 'center',
               fontSize: legendTextSize,
