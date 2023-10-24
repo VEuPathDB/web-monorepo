@@ -34,6 +34,7 @@ import {
 import {
   DistributionMarkerDataProps,
   defaultAnimation,
+  isApproxSameViewport,
   useCategoricalValues,
   useDistributionMarkerData,
   useDistributionOverlayConfig,
@@ -315,8 +316,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
           animation={defaultAnimation}
           flyToMarkers={
             !markerDataResponse.isFetching &&
-            markerDataResponse.boundsZoomLevel?.zoomLevel ===
-              defaultViewport.zoom
+            isApproxSameViewport(props.appState.viewport, defaultViewport)
           }
           flyToMarkersDelay={500}
         />

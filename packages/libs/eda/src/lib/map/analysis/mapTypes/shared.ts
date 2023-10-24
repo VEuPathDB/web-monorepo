@@ -30,6 +30,7 @@ import {
   gradientSequentialColorscaleMap,
 } from '@veupathdb/components/lib/types/plots';
 import { getCategoricalValues } from '../utils/categoricalValues';
+import { Viewport } from '@veupathdb/components/lib/map/MapVEuMap';
 
 export const defaultAnimation = {
   method: 'geohash',
@@ -341,4 +342,13 @@ export function useCategoricalValues(props: CategoricalValuesProps) {
     },
     enabled: props.enabled ?? true,
   });
+}
+
+export function isApproxSameViewport(v1: Viewport, v2: Viewport) {
+  const epsilon = 2.0;
+  return (
+    v1.zoom === v2.zoom &&
+    Math.abs(v1.center[0] - v2.center[0]) < epsilon &&
+    Math.abs(v1.center[1] - v2.center[1]) < epsilon
+  );
 }

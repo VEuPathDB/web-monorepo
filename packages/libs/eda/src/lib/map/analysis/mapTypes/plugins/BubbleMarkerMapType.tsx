@@ -38,7 +38,11 @@ import {
 import { BubbleMarkerIcon } from '../../MarkerConfiguration/icons';
 import { useStandaloneVizPlugins } from '../../hooks/standaloneVizPlugins';
 import { getDefaultBubbleOverlayConfig } from '../../utils/defaultOverlayConfig';
-import { defaultAnimation, useCommonData } from '../shared';
+import {
+  defaultAnimation,
+  isApproxSameViewport,
+  useCommonData,
+} from '../shared';
 import {
   MapTypeConfigPanelProps,
   MapTypeMapLayerProps,
@@ -198,8 +202,7 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
           animation={defaultAnimation}
           flyToMarkers={
             !markersData.isFetching &&
-            markersData.data?.boundsZoomLevel?.zoomLevel ===
-              defaultViewport.zoom
+            isApproxSameViewport(props.appState.viewport, defaultViewport)
           }
           flyToMarkersDelay={500}
         />
