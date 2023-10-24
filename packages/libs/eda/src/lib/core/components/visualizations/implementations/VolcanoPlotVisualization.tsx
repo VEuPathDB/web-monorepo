@@ -607,6 +607,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
         },
       ]}
       showCheckbox={false}
+      isClickable={false}
     />
   );
 
