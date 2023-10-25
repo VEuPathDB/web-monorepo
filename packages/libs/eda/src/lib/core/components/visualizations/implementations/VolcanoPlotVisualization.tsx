@@ -3,6 +3,7 @@ import VolcanoPlot, {
   VolcanoPlotProps,
   assignSignificanceColor,
   RawDataMinMaxValues,
+  StatisticsFloors,
 } from '@veupathdb/components/lib/plots/VolcanoPlot';
 
 import * as t from 'io-ts';
@@ -415,6 +416,12 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
         ]
       : [];
 
+  // Record any floors for the p value and adjusted p value sent to us from the backend.
+  const statisticsFloors: StatisticsFloors = {
+    pValueFloor: (data.value && Number(data.value.pValueFloor)) ?? 0,
+    adjustedPValueFloor: data.value && Number(data.value.adjustedPValueFloor),
+  };
+
   const volcanoPlotProps: VolcanoPlotProps = {
     /**
      * VolcanoPlot defines an EmptyVolcanoPlotData variable that will be assigned when data is undefined.
@@ -437,8 +444,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
      * confusing behavior where selecting group values displays on the empty viz placeholder.
      */
     comparisonLabels: data.value ? comparisonLabels : [],
-    pValueFloor: data.value && Number(data.value.pValueFloor),
-    adjustedPValueFloor: data.value && Number(data.value.adjustedPValueFloor),
+    statisticsFloors,
     showSpinner: data.pending,
     truncationBarFill: yellow[300],
     independentAxisRange,

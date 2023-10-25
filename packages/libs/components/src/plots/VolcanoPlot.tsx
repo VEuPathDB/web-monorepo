@@ -46,6 +46,17 @@ export interface RawDataMinMaxValues {
   y: NumberRange;
 }
 
+export interface StatisticsFloors {
+  /** The minimum allowed p value. Useful for protecting the plot against taking the log of pvalue=0. Points with true pvalue <= pValueFloor will get plotted at -log10(pValueFloor).
+   * Any points with pvalue <= the pValueFloor will show "P Value <= {pValueFloor}" in the tooltip.
+   */
+  pValueFloor: number;
+  /** The minimum allowed adjusted p value. Ideally should be calculated in conjunction with the pValueFloor. Currently used
+   * only to update the tooltip with this information, but later will be used to control the y axis location, similar to pValueFloor.
+   */
+  adjustedPValueFloor?: number;
+}
+
 export interface VolcanoPlotProps {
   /** Data for the plot. An effectSizeLabel and an array of VolcanoPlotDataPoints */
   data: VolcanoPlotData | undefined;
@@ -80,10 +91,10 @@ export interface VolcanoPlotProps {
   showSpinner?: boolean;
   /** used to determine truncation logic */
   rawDataMinMaxValues: RawDataMinMaxValues;
-  /** The minimum allowed p value. Points with true pvalue <= pValueFloor will get plotted at -log10(pValueFloor). */
-  pValueFloor?: number;
-  /** The minimum allowed adjusted p value. */
-  adjustedPValueFloor?: number;
+  /** Minimum (floor) values for p values and adjusted p values. Will set a cap on the maximum y axis values
+   * at which points can be plotted. This information will also be shown in tooltips for floored points.
+   */
+  statisticsFloors?: StatisticsFloors;
 }
 
 const EmptyVolcanoPlotStats: VolcanoPlotStats = [
@@ -93,6 +104,11 @@ const EmptyVolcanoPlotStats: VolcanoPlotStats = [
 const EmptyVolcanoPlotData: VolcanoPlotData = {
   effectSizeLabel: 'log2(FoldChange)',
   statistics: EmptyVolcanoPlotStats,
+};
+
+const DefaultStatisticsFloors: StatisticsFloors = {
+  pValueFloor: 1e-200, // This default matches the default value in the backend.
+  adjustedPValueFloor: 0,
 };
 
 const MARGIN_DEFAULT = 50;
@@ -146,8 +162,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     truncationBarFill,
     showSpinner = false,
     rawDataMinMaxValues,
-    pValueFloor = 2e-300,
-    adjustedPValueFloor = 0,
+    statisticsFloors = DefaultStatisticsFloors,
   } = props;
 
   // Use ref forwarding to enable screenshotting of the plot for thumbnail versions.
@@ -176,28 +191,29 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   const xAxisMax = independentAxisRange?.max ?? 0;
   const yAxisMin = dependentAxisRange?.min ?? 0;
   const yAxisMax = dependentAxisRange?.max
-    ? dependentAxisRange.max > -Math.log10(pValueFloor)
-      ? -Math.log10(pValueFloor)
+    ? dependentAxisRange.max > -Math.log10(statisticsFloors.pValueFloor)
+      ? -Math.log10(statisticsFloors.pValueFloor)
       : dependentAxisRange.max
     : 0;
 
   // Do we need to show the special annotation for the case when the y axis is maxxed out?
-  const showCappedDataAnnotation = yAxisMax === -Math.log10(pValueFloor);
+  const showFlooredDataAnnotation =
+    yAxisMax === -Math.log10(statisticsFloors.pValueFloor);
 
   // Truncation indicators
   // If we have truncation indicators, we'll need to expand the plot range just a tad to
   // ensure the truncation bars appear. The folowing showTruncationBar variables will
   // be either 0 (do not show bar) or 1 (show bar).
-  // The y axis has special logic because it gets capped at -log10(pValueFloor)
+  // The y axis has special logic because it gets capped at -log10(pValueFloor) and we dont want to
+  // show the truncation bar if the annotation will be shown!
   const showXMinTruncationBar = Number(dataXMin < xAxisMin);
   const showXMaxTruncationBar = Number(dataXMax > xAxisMax);
   const xTruncationBarWidth = 0.02 * (xAxisMax - xAxisMin);
 
   const showYMinTruncationBar = Number(-Math.log10(dataYMax) < yAxisMin);
-  const showYMaxTruncationBar =
-    dataYMin === 0
-      ? Number(-Math.log10(pValueFloor) > yAxisMax)
-      : Number(-Math.log10(dataYMin) > yAxisMax);
+  const showYMaxTruncationBar = Number(
+    -Math.log10(dataYMin) > yAxisMax && !showFlooredDataAnnotation
+  );
   const yTruncationBarHeight = 0.02 * (yAxisMax - yAxisMin);
 
   /**
@@ -218,8 +234,8 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   const dataAccessors = {
     xAccessor: (d: VolcanoPlotDataPoint) => Number(d?.effectSize),
     yAccessor: (d: VolcanoPlotDataPoint) =>
-      Number(d.pValue) <= pValueFloor
-        ? -Math.log10(pValueFloor)
+      Number(d.pValue) <= statisticsFloors.pValueFloor
+        ? -Math.log10(statisticsFloors.pValueFloor)
         : -Math.log10(Number(d?.pValue)),
   };
 
@@ -269,7 +285,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           findNearestDatumOverride={findNearestDatumXY}
           margin={{
             top: MARGIN_DEFAULT,
-            right: showCappedDataAnnotation ? 150 : MARGIN_DEFAULT,
+            right: showFlooredDataAnnotation ? 150 : MARGIN_DEFAULT,
             left: MARGIN_DEFAULT,
             bottom: MARGIN_DEFAULT,
           }}
@@ -354,7 +370,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           )}
 
           {/* infinity y data annotation line */}
-          {showCappedDataAnnotation && (
+          {showFlooredDataAnnotation && (
             <Annotation
               datum={{
                 x: xAxisMax,
@@ -446,17 +462,19 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
                     <li>
                       <span>P Value:</span>{' '}
                       {data?.pValue
-                        ? Number(data.pValue) <= pValueFloor
-                          ? '<= ' + pValueFloor
+                        ? Number(data.pValue) <= statisticsFloors.pValueFloor
+                          ? '<= ' + statisticsFloors.pValueFloor
                           : data?.pValue
                         : 'n/a'}
                     </li>
                     <li>
                       <span>Adjusted P Value:</span>{' '}
                       {data?.adjustedPValue
-                        ? Number(data.adjustedPValue) <= adjustedPValueFloor &&
-                          Number(data.pValue) <= pValueFloor
-                          ? '<= ' + adjustedPValueFloor
+                        ? statisticsFloors.adjustedPValueFloor &&
+                          Number(data.adjustedPValue) <=
+                            statisticsFloors.adjustedPValueFloor &&
+                          Number(data.pValue) <= statisticsFloors.pValueFloor
+                          ? '<= ' + statisticsFloors.adjustedPValueFloor
                           : data?.adjustedPValue
                         : 'n/a'}
                     </li>

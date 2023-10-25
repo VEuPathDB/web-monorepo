@@ -1,4 +1,7 @@
-import VolcanoPlot, { VolcanoPlotProps } from '../../plots/VolcanoPlot';
+import VolcanoPlot, {
+  StatisticsFloors,
+  VolcanoPlotProps,
+} from '../../plots/VolcanoPlot';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import { range } from 'lodash';
 import { getNormallyDistributedRandomNumber } from './ScatterPlot.storyData';
@@ -123,8 +126,7 @@ interface TemplateProps {
   comparisonLabels?: string[];
   truncationBarFill?: string;
   showSpinner?: boolean;
-  pValueFloor?: number;
-  adjustedPValueFloor?: number;
+  statisticsFloors?: StatisticsFloors;
 }
 
 const Template: Story<TemplateProps> = (args) => {
@@ -198,8 +200,7 @@ const Template: Story<TemplateProps> = (args) => {
     truncationBarFill: args.truncationBarFill,
     showSpinner: args.showSpinner,
     rawDataMinMaxValues,
-    pValueFloor: args.pValueFloor,
-    adjustedPValueFloor: args.adjustedPValueFloor,
+    statisticsFloors: args.statisticsFloors,
   };
 
   return (
@@ -279,6 +280,10 @@ Empty.args = {
 };
 
 // With a pvalue floor
+const testStatisticsFloors: StatisticsFloors = {
+  pValueFloor: 0.006,
+  adjustedPValueFloor: 0.01,
+};
 export const FlooredPValues = Template.bind({});
 FlooredPValues.args = {
   data: dataSetVolcano,
@@ -289,6 +294,5 @@ FlooredPValues.args = {
   independentAxisRange: { min: -8, max: 9 },
   dependentAxisRange: { min: -1, max: 9 },
   showSpinner: false,
-  pValueFloor: 0.0006,
-  adjustedPValueFloor: 0.01,
+  statisticsFloors: testStatisticsFloors,
 };
