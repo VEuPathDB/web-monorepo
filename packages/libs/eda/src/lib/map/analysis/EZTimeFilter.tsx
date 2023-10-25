@@ -59,7 +59,7 @@ export default function EZTimeFilter({
   // extend the back end range request if our selectedRange is outside of it
   const extendedDisplayRange =
     variableMetadata &&
-    (NumberVariable.is(variableMetadata.variable) ||
+    (NumberVariable.is(variableMetadata.variable) || // TO DO: get rid of number support?
       DateVariable.is(variableMetadata.variable))
       ? selectedRange == null
         ? {
