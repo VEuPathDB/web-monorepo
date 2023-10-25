@@ -9,6 +9,7 @@ import {
   OverlayConfig,
   StudyEntity,
   Variable,
+  VariableType,
 } from '../../../core';
 import { DataClient, SubsettingClient } from '../../../core/api';
 import { BinningMethod } from '../appState';
@@ -62,7 +63,7 @@ export function getDefaultBubbleOverlayConfig(
     return {
       overlayVariable: overlayVariableDescriptor,
       aggregationConfig: {
-        overlayType: 'continuous',
+        overlayType: 'continuous', // TO DO for dates: might do `overlayVariable.type === 'date' ? 'date' : 'number'`
         aggregator,
       },
     };

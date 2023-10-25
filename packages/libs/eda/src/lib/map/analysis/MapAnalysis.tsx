@@ -9,7 +9,6 @@ import {
   NumberRangeFilter,
   NumberVariable,
   PromiseResult,
-  useAnalysis,
   useAnalysisClient,
   useDataClient,
   useDownloadClient,
@@ -27,8 +26,10 @@ import { DocumentationContainer } from '../../core/components/docs/Documentation
 import {
   CheckIcon,
   Download,
+  Plus,
   FilledButton,
   Filter as FilterIcon,
+  FloatingButton,
   H5,
   Table,
 } from '@veupathdb/coreui';
@@ -49,9 +50,10 @@ import { useLoginCallbacks } from '../../workspace/sharing/hooks';
 import NameAnalysis from '../../workspace/sharing/NameAnalysis';
 import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
-import { useHistory } from 'react-router';
+import { useHistory, useRouteMatch } from 'react-router';
 
 import { uniq } from 'lodash';
+import Path from 'path';
 import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import {
@@ -80,6 +82,7 @@ import EZTimeFilter from './EZTimeFilter';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { MapTypeMapLayerProps } from './mapTypes/types';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
+import AnalysisNameDialog from '../../workspace/AnalysisNameDialog';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -107,8 +110,7 @@ interface Props {
 }
 
 export function MapAnalysis(props: Props) {
-  const analysisState = useAnalysis(props.analysisId, 'pass');
-  const appStateAndSetters = useAppState('@@mapApp@@', analysisState);
+  const appStateAndSetters = useAppState('@@mapApp@@', props.analysisId);
   const geoConfigs = useGeoConfig(useStudyEntities());
 
   if (geoConfigs == null || geoConfigs.length === 0)
@@ -125,7 +127,6 @@ export function MapAnalysis(props: Props) {
     <MapAnalysisImpl
       {...props}
       {...(appStateAndSetters as CompleteAppState)}
-      analysisState={analysisState}
       geoConfigs={geoConfigs}
     />
   );
@@ -370,6 +371,18 @@ function MapAnalysisImpl(props: ImplProps) {
   };
 
   const filteredEntities = uniq(filters?.map((f) => f.entityId));
+
+  const [isAnalysisNameDialogOpen, setIsAnalysisNameDialogOpen] =
+    useState(false);
+  const { url: urlRouteMatch } = useRouteMatch();
+  const redirectURL = studyId
+    ? urlRouteMatch.endsWith(studyId)
+      ? `/workspace/${urlRouteMatch}/new`
+      : Path.resolve(urlRouteMatch, '../new')
+    : null;
+  const redirectToNewAnalysis = useCallback(() => {
+    if (redirectURL) history.push(redirectURL);
+  }, [history, redirectURL]);
 
   const sidePanelMenuEntries: SidePanelMenuEntry[] = [
     {
@@ -636,6 +649,32 @@ function MapAnalysisImpl(props: ImplProps) {
               maxWidth: '1500px',
             }}
           >
+            {analysisId && redirectToNewAnalysis ? (
+              <div style={{ float: 'right' }}>
+                <FloatingButton
+                  text="Create new analysis"
+                  icon={Plus}
+                  onPress={
+                    analysisState.analysis?.displayName ===
+                    DEFAULT_ANALYSIS_NAME
+                      ? () => setIsAnalysisNameDialogOpen(true)
+                      : redirectToNewAnalysis
+                  }
+                  textTransform="none"
+                />
+              </div>
+            ) : (
+              <></>
+            )}
+            {analysisState.analysis && (
+              <AnalysisNameDialog
+                isOpen={isAnalysisNameDialogOpen}
+                setIsOpen={setIsAnalysisNameDialogOpen}
+                initialAnalysisName={analysisState.analysis.displayName}
+                setAnalysisName={analysisState.setName}
+                redirectToNewAnalysis={redirectToNewAnalysis}
+              />
+            )}
             <AllAnalyses
               analysisClient={analysisClient}
               activeAnalysisId={
