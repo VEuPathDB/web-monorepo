@@ -5,7 +5,7 @@ import { AllValuesDefinition } from '../../../core';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import { UNSELECTED_TOKEN } from '../../';
+import { UNSELECTED_TOKEN } from '../../constants';
 import { orderBy } from 'lodash';
 import { SelectedCountsOption } from '../appState';
 

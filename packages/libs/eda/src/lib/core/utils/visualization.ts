@@ -25,7 +25,7 @@ import {
   VariablesByInputName,
 } from './data-element-constraints';
 import { isEqual } from 'lodash';
-import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../../map';
+import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../../map/constants';
 
 // was: BarplotData | HistogramData | { series: BoxplotData };
 type SeriesWithStatistics<T> = T & CoverageStatistics;
