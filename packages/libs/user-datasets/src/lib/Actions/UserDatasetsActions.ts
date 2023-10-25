@@ -14,10 +14,7 @@ import {
 } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
 import { ServiceError } from '@veupathdb/wdk-client/lib/Service/ServiceError';
 
-import {
-  UserDatasetShareResponse,
-  validateUserDatasetCompatibleThunk,
-} from '../Service/UserDatasetWrappers';
+import { validateVdiCompatibleThunk } from '../Service';
 
 import { FILTER_BY_PROJECT_PREF } from '../Utils/project-filter';
 import {
@@ -26,6 +23,7 @@ import {
   UserDatasetMeta,
   UserDatasetVDI,
   UserQuotaMetadata,
+  UserDatasetShareResponse,
 } from '../Utils/types';
 
 export type Action =
@@ -399,7 +397,7 @@ type SharingAction =
   | SharingErrorAction;
 
 export function loadUserDatasetList(loadedProjectId?: string) {
-  return validateUserDatasetCompatibleThunk<ListAction>(({ wdkService }) => [
+  return validateVdiCompatibleThunk<ListAction>(({ wdkService }) => [
     listLoading(),
     Promise.all([
       wdkService.getCurrentUserPreferences().then(
@@ -408,9 +406,7 @@ export function loadUserDatasetList(loadedProjectId?: string) {
         // ignore error and default to false
         () => false
       ),
-      // @ts-ignore
       wdkService.getCurrentUserDatasets(),
-      // @ts-ignore
       wdkService.getUserQuotaMetadata(),
     ]).then(([filterByProject, userDatasets, userQuotaMetadata]) => {
       const vdiToExistingUds = userDatasets.map(
@@ -440,12 +436,10 @@ export function loadUserDatasetList(loadedProjectId?: string) {
 }
 
 export function loadUserDatasetDetail(id: string, loadedProjectId?: string) {
-  return validateUserDatasetCompatibleThunk<DetailAction>(({ wdkService }) => [
+  return validateVdiCompatibleThunk<DetailAction>(({ wdkService }) => [
     detailLoading(id),
     Promise.all([
-      // @ts-ignore
       wdkService.getUserDataset(id),
-      // @ts-ignore
       wdkService.getUserQuotaMetadata(),
     ]).then(
       ([userDataset, userQuotaMetadata]) => {
@@ -481,7 +475,7 @@ export function shareUserDatasets(
   userDatasetIds: string[],
   recipientUserIds: number[]
 ) {
-  return validateUserDatasetCompatibleThunk<SharingAction>(({ wdkService }) => {
+  return validateVdiCompatibleThunk<SharingAction>(({ wdkService }) => {
     const requests = [];
     for (const datasetId of userDatasetIds) {
       for (const recipientId of recipientUserIds) {
@@ -512,7 +506,6 @@ export function shareUserDatasets(
 
     return Promise.all(
       requests.map((req) =>
-        // @ts-ignore
         wdkService.editUserDatasetSharing(
           'grant',
           req.datasetId,
@@ -523,7 +516,6 @@ export function shareUserDatasets(
       // can editUserDatasetSharing return a 200 response w/ the recipient's userDisplayName and id?
       () =>
         sharingSuccess({
-          //@ts-ignore
           add: sharingSuccessObject,
           delete: { undefined },
         }),
@@ -533,30 +525,27 @@ export function shareUserDatasets(
 }
 
 export function unshareUserDatasets(
-  userDatasetIds: string[],
-  recipientUserIds: number[]
+  userDatasetId: string,
+  recipientUserId: number
 ) {
-  return validateUserDatasetCompatibleThunk<SharingAction>(({ wdkService }) => {
-    return (
-      wdkService
-        // @ts-ignore
-        .editUserDatasetSharing('revoke', userDatasetIds, recipientUserIds)
-        .then(
-          () =>
-            sharingSuccess({
-              add: { undefined },
-              delete: {
-                [userDatasetIds[0]]: [
-                  {
-                    userDisplayName: 'My Name',
-                    user: recipientUserIds[0],
-                  },
-                ],
-              },
-            }),
-          sharingError
-        )
-    );
+  return validateVdiCompatibleThunk<SharingAction>(({ wdkService }) => {
+    return wdkService
+      .editUserDatasetSharing('revoke', userDatasetId, recipientUserId)
+      .then(
+        () =>
+          sharingSuccess({
+            add: { undefined },
+            delete: {
+              userDatasetId: [
+                {
+                  userDisplayName: 'My Name',
+                  user: recipientUserId,
+                },
+              ],
+            },
+          }),
+        sharingError
+      );
   });
 }
 
@@ -564,10 +553,9 @@ export function updateUserDatasetDetail(
   userDataset: UserDataset,
   meta: UserDatasetMeta
 ) {
-  return validateUserDatasetCompatibleThunk<UpdateAction>(({ wdkService }) => [
+  return validateVdiCompatibleThunk<UpdateAction>(({ wdkService }) => [
     detailUpdating(),
     wdkService
-      // @ts-ignore
       .updateUserDataset(userDataset.id, meta)
       .then(
         () => detailUpdateSuccess({ ...userDataset, meta }),
@@ -580,27 +568,26 @@ export function removeUserDataset(
   userDataset: UserDataset,
   redirectTo?: string
 ) {
-  return validateUserDatasetCompatibleThunk<
-    RemovalAction | EmptyAction | RouteAction
-  >(({ wdkService }) => [
-    detailRemoving(),
-    wdkService
-      // @ts-ignore
-      .removeUserDataset(userDataset.id)
-      .then(
-        () => [
-          detailRemoveSuccess(userDataset),
-          typeof redirectTo === 'string'
-            ? transitionToInternalPage(redirectTo)
-            : emptyAction,
-        ],
-        detailRemoveError
-      ),
-  ]);
+  return validateVdiCompatibleThunk<RemovalAction | EmptyAction | RouteAction>(
+    ({ wdkService }) => [
+      detailRemoving(),
+      wdkService
+        .removeUserDataset(userDataset.id)
+        .then(
+          () => [
+            detailRemoveSuccess(userDataset),
+            typeof redirectTo === 'string'
+              ? transitionToInternalPage(redirectTo)
+              : emptyAction,
+          ],
+          detailRemoveError
+        ),
+    ]
+  );
 }
 
 export function updateProjectFilter(filterByProject: boolean) {
-  return validateUserDatasetCompatibleThunk<
+  return validateVdiCompatibleThunk<
     PreferenceUpdateAction | ProjectFilterAction
   >(() => [
     updateUserPreference(

@@ -53,8 +53,8 @@ interface Props {
     recipientUserIds: number[]
   ) => any;
   unshareUserDatasets: (
-    userDatasetIds: string[],
-    recipientUserIds: number[]
+    userDatasetIds: string,
+    recipientUserIds: number
   ) => any;
   removeUserDataset: (dataset: UserDataset) => any;
   updateUserDatasetDetail: (

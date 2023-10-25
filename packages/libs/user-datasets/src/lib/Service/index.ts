@@ -1,35 +1,56 @@
-import { mapValues } from 'lodash';
-
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
+import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
+import { ActionThunk } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
 
 import {
-  ServiceConfig as UserDatasetUploadServiceConfig,
-  makeUserDatasetUploadServiceWrappers,
-} from './UserDatasetUploadWrappers';
+  UserDatasetApi,
+  VALID_VDI_SERVICE_KEYS,
+  VDI_SERVICE_BASE_URL,
+} from './api';
 
-import { UserDatasetApi, VDI_SERVICE_BASE_URL } from './api';
+export type VdiCompatibleWdkService = ReturnType<typeof wrapWdkService>;
 
-export function wrapWdkService(
-  serviceConfig: UserDatasetUploadServiceConfig | undefined,
-  wdkService: WdkService
-) {
+export function wrapWdkService(wdkService: WdkService) {
   const vdiService = new UserDatasetApi(
     { baseUrl: VDI_SERVICE_BASE_URL },
     wdkService
   );
 
-  const wrappersToInclude =
-    serviceConfig == null
-      ? undefined
-      : {
-          ...makeUserDatasetUploadServiceWrappers(serviceConfig),
-        };
-
   return {
     ...wdkService,
     ...vdiService,
-    ...mapValues(wrappersToInclude, (wdkServiceWrapper) =>
-      wdkServiceWrapper(wdkService)
-    ),
   };
 }
+
+export function isVdiCompatibleWdkService(
+  wdkService: WdkService
+): wdkService is VdiCompatibleWdkService {
+  return VALID_VDI_SERVICE_KEYS.every(
+    (vdiServiceKey) => vdiServiceKey in wdkService
+  );
+}
+
+export function assertIsVdiCompatibleWdkService(
+  wdkService: WdkService
+): asserts wdkService is VdiCompatibleWdkService {
+  if (!isVdiCompatibleWdkService(wdkService)) {
+    throw new Error(MISCONFIGURED_VDI_SERVICE_ERROR_MESSAGE);
+  }
+}
+
+export interface VdiCompatibleEpicDependencies extends EpicDependencies {
+  wdkService: VdiCompatibleWdkService;
+}
+
+export function validateVdiCompatibleThunk<T>(
+  thunk: ActionThunk<T, VdiCompatibleEpicDependencies>
+): ActionThunk<T, VdiCompatibleEpicDependencies> {
+  return (wdkDependencies) => {
+    assertIsVdiCompatibleWdkService(wdkDependencies.wdkService);
+
+    return thunk(wdkDependencies);
+  };
+}
+
+export const MISCONFIGURED_VDI_SERVICE_ERROR_MESSAGE =
+  'In order to use this feature, a VdiCompatibleWdkService must be configured.';

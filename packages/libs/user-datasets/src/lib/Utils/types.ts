@@ -40,7 +40,7 @@ export interface UserDataset {
     size: number;
   }>;
   projects: string[];
-  id: number | string;
+  id: string;
   meta: UserDatasetMeta;
   modified: number;
   owner: string;
@@ -150,6 +150,12 @@ export interface NewUserDataset extends UserDatasetMeta {
         reportConfig: unknown;
       };
 }
+
+export type UserDatasetShareResponse = {
+  [Key in 'add' | 'delete']: {
+    [Key in string]: UserDataset['sharedWith'];
+  };
+};
 
 /**
  * In EDA, data is referred to as "Study" or "Studies"

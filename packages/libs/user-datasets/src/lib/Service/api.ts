@@ -32,6 +32,19 @@ const userIdsByEmailDecoder = record({
   results: arrayOf(objectOf(number)),
 });
 
+export const VALID_VDI_SERVICE_KEYS = [
+  'getCurrentUserDatasets',
+  'addDataset',
+  'getUserDataset',
+  'updateUserDataset',
+  'removeUserDataset',
+  'getCommunityDatasets',
+  'getUserDatasetFiles',
+  'editUserDatasetSharing',
+  'getUserIdsByEmail',
+  'getUserQuotaMetadata',
+];
+
 export class UserDatasetApi extends FetchClientWithCredentials {
   getCurrentUserDatasets = (
     projectId?: string,
@@ -158,7 +171,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
 
   editUserDatasetSharing = (
     actionName: string,
-    userDatasetId: number | string,
+    userDatasetId: string,
     recipientUserId: number
   ) => {
     const acceptableActions = ['grant', 'revoke'];

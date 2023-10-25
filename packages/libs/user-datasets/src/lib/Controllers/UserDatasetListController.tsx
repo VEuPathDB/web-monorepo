@@ -102,8 +102,9 @@ class UserDatasetListController extends PageController<Props> {
       this.props.stateProps.userDatasetList.status !== 'not-requested' &&
       this.props.stateProps.userDatasetList.status !== 'loading' &&
       this.props.stateProps.globalData.config != null &&
-      this.props.stateProps.globalData.user != null &&
-      !this.needsUploadMessages()
+      this.props.stateProps.globalData.user != null
+      // &&
+      // !this.needsUploadMessages()
     );
   }
 
