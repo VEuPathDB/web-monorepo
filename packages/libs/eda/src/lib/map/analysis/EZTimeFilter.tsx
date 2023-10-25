@@ -20,8 +20,9 @@ import { dropRightWhile, dropWhile, zip } from 'lodash';
 import { AppState } from './appState';
 import { timeSliderVariableConstraints } from './config/eztimeslider';
 import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
-import { SiteInformationProps, mapNavigationBackgroundColor } from '..';
 import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
+import { SiteInformationProps } from './Types';
+import { mapSidePanelBackgroundColor } from '../constants';
 
 interface Props {
   studyId: string;
@@ -204,8 +205,7 @@ export default function EZTimeFilter({
   const background =
     siteName === 'VectorBase'
       ? '#F5FAF1D0'
-      : (theme?.palette.primary.hue[100] ?? mapNavigationBackgroundColor) +
-        'D0'; // add transparency
+      : (theme?.palette.primary.hue[100] ?? mapSidePanelBackgroundColor) + 'D0'; // add transparency
 
   const borderRadius = '0px 0px 7px 7px'; // TO DO: add border radius and box shadow to the theme?
   const boxShadow =
