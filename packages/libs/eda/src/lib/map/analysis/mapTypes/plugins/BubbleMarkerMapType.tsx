@@ -505,6 +505,8 @@ function useLegendData(props: DataProps) {
   return useQuery({
     queryKey: ['bubbleMarkers', 'legendData', legendRequestParams],
     queryFn: async () => {
+      // temporarily convert potentially date-strings to numbers
+      // but don't worry - we are also temporarily disabling date variables from bubble mode
       const temp = await dataClient.getStandaloneBubblesLegend(
         'standalone-map',
         legendRequestParams
