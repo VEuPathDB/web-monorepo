@@ -1,7 +1,7 @@
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 
 import { FormSubmission } from '../Components/UploadForm';
-import { assertIsUserDatasetUploadCompatibleWdkService } from '../Service/UserDatasetUploadWrappers';
+import { assertIsVdiCompatibleWdkService } from '../Service/';
 
 import { NewUserDataset } from './types';
 
@@ -9,14 +9,13 @@ export async function uploadUserDataset(
   wdkService: WdkService,
   formSubmission: FormSubmission
 ) {
-  assertIsUserDatasetUploadCompatibleWdkService(wdkService);
+  assertIsVdiCompatibleWdkService(wdkService);
 
   const newUserDatasetConfig = await makeNewUserDatasetConfig(
     wdkService,
     formSubmission
   );
 
-  // @ts-ignore
   return await wdkService.addDataset(newUserDatasetConfig);
 }
 

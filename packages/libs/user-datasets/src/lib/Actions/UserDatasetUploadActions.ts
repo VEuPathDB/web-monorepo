@@ -39,10 +39,10 @@ export const requestUploadMessages = makeActionCreator(
   () => {}
 );
 
-export const receiveUploadMessages = makeActionCreator(
-  'user-dataset-upload/receive-upload-messages',
-  (uploads: Array<UserDatasetUpload>) => ({ uploads })
-);
+// export const receiveUploadMessages = makeActionCreator(
+//   'user-dataset-upload/receive-upload-messages',
+//   (uploads: Array<UserDatasetUpload>) => ({ uploads })
+// );
 
 export const receiveBadUploadHistoryAction = makeActionCreator(
   'user-dataset-upload/receive-bad-upload-history-action',
@@ -56,5 +56,5 @@ export type Action =
   | InferAction<typeof cancelCurrentUpload>
   | InferAction<typeof clearMessages>
   | InferAction<typeof requestUploadMessages>
-  | InferAction<typeof receiveUploadMessages>
+  // | InferAction<typeof receiveUploadMessages>
   | InferAction<typeof receiveBadUploadHistoryAction>;

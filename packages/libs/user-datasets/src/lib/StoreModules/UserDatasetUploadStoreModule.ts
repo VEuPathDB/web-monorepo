@@ -13,14 +13,14 @@ import {
   submitUploadForm,
   receiveBadUpload,
   requestUploadMessages,
-  receiveUploadMessages,
-  cancelCurrentUpload,
-  clearMessages,
+  // receiveUploadMessages,
+  // cancelCurrentUpload,
+  // clearMessages,
   receiveBadUploadHistoryAction,
   clearBadUpload,
 } from '../Actions/UserDatasetUploadActions';
 
-import { assertIsUserDatasetUploadCompatibleWdkService } from '../Service/UserDatasetUploadWrappers';
+import { assertIsVdiCompatibleWdkService } from '../Service';
 
 import { StateSlice } from '../StoreModules/types';
 
@@ -40,8 +40,8 @@ export function reduce(state: State = {}, action: Action): State {
       return { ...state, badUploadMessage: action.payload };
     case clearBadUpload.type:
       return { ...state, badUploadMessage: undefined };
-    case receiveUploadMessages.type:
-      return { ...state, uploads: action.payload.uploads };
+    // case receiveUploadMessages.type:
+    //   return { ...state, uploads: action.payload.uploads };
     case receiveBadUploadHistoryAction.type:
       return { ...state, badAllUploadsActionMessage: action.payload };
     default:
@@ -50,10 +50,10 @@ export function reduce(state: State = {}, action: Action): State {
 }
 
 export const observe = combineEpics(
-  observeSubmitUploadForm,
-  observeRequestUploadMessages,
-  observeCancelCurrentUpload,
-  observeClearMessages
+  observeSubmitUploadForm
+  // observeRequestUploadMessages,
+  // observeCancelCurrentUpload,
+  // observeClearMessages
 );
 
 function observeSubmitUploadForm(
@@ -82,68 +82,68 @@ function observeSubmitUploadForm(
   );
 }
 
-function observeRequestUploadMessages(
-  action$: ActionsObservable<Action>,
-  state$: StateObservable<StateSlice>,
-  dependencies: EpicDependencies
-): Observable<Action> {
-  return action$.pipe(
-    filter(requestUploadMessages.isOfType),
-    mergeMap(async (action) => {
-      assertIsUserDatasetUploadCompatibleWdkService(dependencies.wdkService);
+// function observeRequestUploadMessages(
+//   action$: ActionsObservable<Action>,
+//   state$: StateObservable<StateSlice>,
+//   dependencies: EpicDependencies
+// ): Observable<Action> {
+//   return action$.pipe(
+//     filter(requestUploadMessages.isOfType),
+//     mergeMap(async (action) => {
+//       assertIsVdiCompatibleWdkService(dependencies.wdkService);
 
-      try {
-        const uploads = await dependencies.wdkService.listStatusDetails();
-        return receiveUploadMessages(uploads);
-      } catch (err) {
-        return receiveBadUploadHistoryAction(
-          'Could not retrieve upload history\n' + err
-        );
-      }
-    })
-  );
-}
+//       try {
+//         const uploads = await dependencies.wdkService.listStatusDetails();
+//         return receiveUploadMessages(uploads);
+//       } catch (err) {
+//         return receiveBadUploadHistoryAction(
+//           'Could not retrieve upload history\n' + err
+//         );
+//       }
+//     })
+//   );
+// }
 
-function observeCancelCurrentUpload(
-  action$: ActionsObservable<Action>,
-  state$: StateObservable<StateSlice>,
-  dependencies: EpicDependencies
-): Observable<Action> {
-  return action$.pipe(
-    filter(cancelCurrentUpload.isOfType),
-    mergeMap(async (action) => {
-      assertIsUserDatasetUploadCompatibleWdkService(dependencies.wdkService);
+// function observeCancelCurrentUpload(
+//   action$: ActionsObservable<Action>,
+//   state$: StateObservable<StateSlice>,
+//   dependencies: EpicDependencies
+// ): Observable<Action> {
+//   return action$.pipe(
+//     filter(cancelCurrentUpload.isOfType),
+//     mergeMap(async (action) => {
+//       assertIsVdiCompatibleWdkService(dependencies.wdkService);
 
-      try {
-        await dependencies.wdkService.cancelOngoingUpload(action.payload.id);
-        return requestUploadMessages();
-      } catch (err) {
-        return receiveBadUploadHistoryAction(
-          'Could not cancel current upload\n' + err
-        );
-      }
-    })
-  );
-}
+//       try {
+//         await dependencies.wdkService.cancelOngoingUpload(action.payload.id);
+//         return requestUploadMessages();
+//       } catch (err) {
+//         return receiveBadUploadHistoryAction(
+//           'Could not cancel current upload\n' + err
+//         );
+//       }
+//     })
+//   );
+// }
 
-function observeClearMessages(
-  action$: ActionsObservable<Action>,
-  state$: StateObservable<StateSlice>,
-  dependencies: EpicDependencies
-): Observable<Action> {
-  return action$.pipe(
-    filter(clearMessages.isOfType),
-    mergeMap(async (action) => {
-      assertIsUserDatasetUploadCompatibleWdkService(dependencies.wdkService);
+// function observeClearMessages(
+//   action$: ActionsObservable<Action>,
+//   state$: StateObservable<StateSlice>,
+//   dependencies: EpicDependencies
+// ): Observable<Action> {
+//   return action$.pipe(
+//     filter(clearMessages.isOfType),
+//     mergeMap(async (action) => {
+//       assertIsVdiCompatibleWdkService(dependencies.wdkService);
 
-      try {
-        await dependencies.wdkService.clearMessages(action.payload.ids);
-        return requestUploadMessages();
-      } catch (err) {
-        return receiveBadUploadHistoryAction(
-          'Could not clear messages\n' + err
-        );
-      }
-    })
-  );
-}
+//       try {
+//         await dependencies.wdkService.clearMessages(action.payload.ids);
+//         return requestUploadMessages();
+//       } catch (err) {
+//         return receiveBadUploadHistoryAction(
+//           'Could not clear messages\n' + err
+//         );
+//       }
+//     })
+//   );
+// }
