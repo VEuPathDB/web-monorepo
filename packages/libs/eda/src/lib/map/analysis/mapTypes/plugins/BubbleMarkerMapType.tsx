@@ -358,13 +358,13 @@ const processRawBubblesData = (
       const bubbleData = {
         value: entityCount,
         diameter: bubbleValueToDiameterMapper?.(entityCount) ?? 0,
-        colorValue: overlayValue,
+        colorValue: Number(overlayValue),
         colorLabel: aggregationConfig
           ? aggregationConfig.overlayType === 'continuous'
             ? capitalize(aggregationConfig.aggregator)
             : 'Proportion'
           : undefined,
-        color: bubbleValueToColorMapper?.(overlayValue),
+        color: bubbleValueToColorMapper?.(Number(overlayValue)),
       };
 
       return {
@@ -505,10 +505,17 @@ function useLegendData(props: DataProps) {
   return useQuery({
     queryKey: ['bubbleMarkers', 'legendData', legendRequestParams],
     queryFn: async () => {
-      const bubbleLegendData = await dataClient.getStandaloneBubblesLegend(
+      const temp = await dataClient.getStandaloneBubblesLegend(
         'standalone-map',
         legendRequestParams
       );
+
+      const bubbleLegendData = {
+        minColorValue: Number(temp.minColorValue),
+        maxColorValue: Number(temp.maxColorValue),
+        minSizeValue: temp.minSizeValue,
+        maxSizeValue: temp.maxSizeValue,
+      };
 
       const adjustedSizeData =
         bubbleLegendData.minSizeValue === bubbleLegendData.maxSizeValue
