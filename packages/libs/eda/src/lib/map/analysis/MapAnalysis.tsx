@@ -1,17 +1,13 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import {
-  AllValuesDefinition,
   AnalysisState,
-  BubbleOverlayConfig,
-  CategoricalVariableDataShape,
   DEFAULT_ANALYSIS_NAME,
   DateRangeFilter,
   DateVariable,
   EntityDiagram,
   NumberRangeFilter,
   NumberVariable,
-  OverlayConfig,
   PromiseResult,
   useAnalysis,
   useAnalysisClient,
@@ -38,34 +34,15 @@ import {
 } from '@veupathdb/coreui';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
 import ShowHideVariableContextProvider from '../../core/utils/show-hide-variable-context';
-import { MapLegend } from './MapLegend';
-import {
-  AppState,
-  MarkerConfiguration,
-  useAppState,
-  defaultViewport,
-} from './appState';
-import { FloatingDiv } from './FloatingDiv';
+import { AppState, MarkerConfiguration, useAppState } from './appState';
 import Subsetting from '../../workspace/Subsetting';
 import { MapHeader } from './MapHeader';
 import FilterChipList from '../../core/components/FilterChipList';
 import { VariableLinkConfig } from '../../core/components/VariableLink';
 import { MapSidePanel } from './MapSidePanel';
-import { SiteInformationProps } from '..';
-import MapVizManagement from './MapVizManagement';
-import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { filtersFromBoundingBox } from '../../core/utils/visualization';
 import { EditLocation, InfoOutlined, Notes, Share } from '@material-ui/icons';
 import { ComputationAppOverview } from '../../core/types/visualization';
-import {
-  ChartMarkerPropsWithCounts,
-  DonutMarkerPropsWithCounts,
-  useStandaloneMapMarkers,
-} from './hooks/standaloneMapMarkers';
-import { useStandaloneVizPlugins } from './hooks/standaloneVizPlugins';
-import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/geohash';
-import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
-import DraggableVisualization from './DraggableVisualization';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import Login from '../../workspace/sharing/Login';
 import { useLoginCallbacks } from '../../workspace/sharing/hooks';
@@ -78,49 +55,31 @@ import { uniq } from 'lodash';
 import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import {
-  BarPlotMarkerConfigurationMenu,
-  PieMarkerConfigurationMenu,
-  BubbleMarkerConfigurationMenu,
-} from './MarkerConfiguration';
-import {
   BarPlotMarkerIcon,
   DonutMarkerIcon,
   BubbleMarkerIcon,
 } from './MarkerConfiguration/icons';
-import { leastAncestralEntity } from '../../core/utils/data-element-constraints';
-import { getDefaultOverlayConfig } from './utils/defaultOverlayConfig';
 import { AllAnalyses } from '../../workspace/AllAnalyses';
 import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 import { isSavedAnalysis } from '../../core/utils/analysis';
-import {
-  MapTypeConfigurationMenu,
-  MarkerConfigurationOption,
-} from './MarkerConfiguration/MapTypeConfigurationMenu';
-import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
-import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
 import { GeoConfig } from '../../core/types/geoConfig';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import BubbleMarker, {
-  BubbleMarkerProps,
-} from '@veupathdb/components/lib/map/BubbleMarker';
-import DonutMarker, {
-  DonutMarkerProps,
-  DonutMarkerStandalone,
-} from '@veupathdb/components/lib/map/DonutMarker';
-import ChartMarker, {
-  ChartMarkerProps,
-  ChartMarkerStandalone,
-  getChartMarkerDependentAxisRange,
-} from '@veupathdb/components/lib/map/ChartMarker';
-import { sharedStandaloneMarkerProperties } from './MarkerConfiguration/CategoricalMarkerPreview';
-import { mFormatter, kFormatter } from '../../core/utils/big-number-formatters';
-import { getCategoricalValues } from './utils/categoricalValues';
-import { SidePanelItem, SidePanelMenuEntry } from './Types';
+import {
+  SidePanelItem,
+  SidePanelMenuEntry,
+  SiteInformationProps,
+} from './Types';
 import { SideNavigationItems } from './MapSideNavigation';
-import { DraggablePanelCoordinatePair } from '@veupathdb/coreui/lib/components/containers/DraggablePanel';
-import _ from 'lodash';
+import {
+  barMarkerPlugin,
+  bubbleMarkerPlugin,
+  donutMarkerPlugin,
+} from './mapTypes';
 
 import EZTimeFilter from './EZTimeFilter';
+import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
+import { MapTypeMapLayerProps } from './mapTypes/types';
+import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -135,27 +94,10 @@ enum MapSideNavItemLabels {
   GroupedVariableMaps = 'Grouped Variable Maps',
 }
 
-enum MarkerTypeLabels {
-  pie = 'Donuts',
-  barplot = 'Bar plots',
-  bubble = 'Bubbles',
-}
-
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
   pointerEvents: 'auto',
 };
-
-export const defaultAnimation = {
-  method: 'geohash',
-  animationFunction: geohashAnimation,
-  duration: defaultAnimationDuration,
-};
-
-enum DraggablePanelIds {
-  LEGEND_PANEL = 'legend',
-  VIZ_PANEL = 'viz',
-}
 
 interface Props {
   analysisId?: string;
@@ -240,17 +182,6 @@ function MapAnalysisImpl(props: ImplProps) {
     (markerConfig) => markerConfig.type === activeMarkerConfigurationType
   );
 
-  const { variable: overlayVariable, entity: overlayEntity } =
-    findEntityAndVariable(activeMarkerConfiguration?.selectedVariable) ?? {};
-
-  const outputEntity = useMemo(() => {
-    if (geoConfig == null || geoConfig.entity.id == null) return;
-
-    return overlayEntity
-      ? leastAncestralEntity([overlayEntity, geoConfig.entity], studyEntities)
-      : geoConfig.entity;
-  }, [geoConfig, overlayEntity, studyEntities]);
-
   const updateMarkerConfigurations = useCallback(
     (updatedConfiguration: MarkerConfiguration) => {
       const nextMarkerConfigurations = markerConfigurations.map(
@@ -264,17 +195,6 @@ function MapAnalysisImpl(props: ImplProps) {
       setMarkerConfigurations(nextMarkerConfigurations);
     },
     [markerConfigurations, setMarkerConfigurations]
-  );
-
-  const setActiveVisualizationId = useCallback(
-    (activeVisualizationId?: string) => {
-      if (activeMarkerConfiguration == null) return;
-      updateMarkerConfigurations({
-        ...activeMarkerConfiguration,
-        activeVisualizationId,
-      });
-    },
-    [activeMarkerConfiguration, updateMarkerConfigurations]
   );
 
   const timeFilter: NumberRangeFilter | DateRangeFilter | undefined =
@@ -349,246 +269,6 @@ function MapAnalysisImpl(props: ImplProps) {
     ];
   }, [props.analysisState.analysis?.descriptor.subset.descriptor, timeFilter]);
 
-  const allFilteredCategoricalValues = usePromise(
-    useCallback(async (): Promise<AllValuesDefinition[] | undefined> => {
-      /**
-       * We only need this data for categorical vars, so we can return early if var isn't categorical
-       */
-      if (
-        !overlayVariable ||
-        !CategoricalVariableDataShape.is(overlayVariable.dataShape)
-      )
-        return;
-      return getCategoricalValues({
-        overlayEntity,
-        subsettingClient,
-        studyId,
-        overlayVariable,
-        filters,
-      });
-    }, [overlayEntity, overlayVariable, subsettingClient, studyId, filters])
-  );
-
-  const allVisibleCategoricalValues = usePromise(
-    useCallback(async (): Promise<AllValuesDefinition[] | undefined> => {
-      /**
-       * Return early if:
-       *  - overlay var isn't categorical
-       *  - "Show counts for" toggle isn't set to 'visible'
-       */
-      if (
-        !overlayVariable ||
-        !CategoricalVariableDataShape.is(overlayVariable.dataShape) ||
-        (activeMarkerConfiguration &&
-          'selectedCountsOption' in activeMarkerConfiguration &&
-          activeMarkerConfiguration.selectedCountsOption !== 'visible')
-      )
-        return;
-
-      return getCategoricalValues({
-        overlayEntity,
-        subsettingClient,
-        studyId,
-        overlayVariable,
-        filters: filtersIncludingViewportAndTimeSlider, // TO DO: decide whether to filter on time slider here
-      });
-    }, [
-      overlayVariable,
-      activeMarkerConfiguration,
-      overlayEntity,
-      subsettingClient,
-      studyId,
-      filtersIncludingViewportAndTimeSlider,
-    ])
-  );
-
-  // If the variable or filters have changed on the active marker config
-  // get the default overlay config.
-  const activeOverlayConfig = usePromise(
-    useCallback(async (): Promise<
-      OverlayConfig | BubbleOverlayConfig | undefined
-    > => {
-      // Use `selectedValues` to generate the overlay config for categorical variables
-      if (
-        activeMarkerConfiguration &&
-        'selectedValues' in activeMarkerConfiguration &&
-        activeMarkerConfiguration.selectedValues &&
-        CategoricalVariableDataShape.is(overlayVariable?.dataShape)
-      ) {
-        return {
-          overlayType: 'categorical',
-          overlayVariable: {
-            variableId: overlayVariable?.id,
-            entityId: overlayEntity?.id,
-          },
-          overlayValues: activeMarkerConfiguration.selectedValues,
-        } as OverlayConfig;
-      }
-
-      return getDefaultOverlayConfig({
-        studyId,
-        filters,
-        overlayVariable,
-        overlayEntity,
-        dataClient,
-        subsettingClient,
-        markerType: activeMarkerConfiguration?.type,
-        binningMethod: _.get(activeMarkerConfiguration, 'binningMethod'),
-        aggregator: _.get(activeMarkerConfiguration, 'aggregator'),
-        numeratorValues: _.get(activeMarkerConfiguration, 'numeratorValues'),
-        denominatorValues: _.get(
-          activeMarkerConfiguration,
-          'denominatorValues'
-        ),
-      });
-    }, [
-      activeMarkerConfiguration,
-      overlayVariable,
-      studyId,
-      filters,
-      overlayEntity,
-      dataClient,
-      subsettingClient,
-    ])
-  );
-
-  // needs to be pie, count or proportion
-  const markerType = (() => {
-    switch (activeMarkerConfiguration?.type) {
-      case 'barplot': {
-        return activeMarkerConfiguration?.selectedPlotMode; // count or proportion
-      }
-      case 'bubble':
-        return 'bubble';
-      case 'pie':
-      default:
-        return 'pie';
-    }
-  })();
-
-  const {
-    markersData,
-    pending,
-    error,
-    legendItems,
-    bubbleLegendData,
-    bubbleValueToDiameterMapper,
-    bubbleValueToColorMapper,
-    totalVisibleEntityCount,
-    totalVisibleWithOverlayEntityCount,
-  } = useStandaloneMapMarkers({
-    boundsZoomLevel: appState.boundsZoomLevel,
-    geoConfig: geoConfig,
-    studyId,
-    filters: filtersIncludingTimeSlider,
-    markerType,
-    selectedOverlayVariable: activeMarkerConfiguration?.selectedVariable,
-    overlayConfig: activeOverlayConfig.value,
-    outputEntityId: outputEntity?.id,
-    dependentAxisLogScale:
-      activeMarkerConfiguration &&
-      'dependentAxisLogScale' in activeMarkerConfiguration
-        ? activeMarkerConfiguration.dependentAxisLogScale
-        : false,
-  });
-
-  const { markersData: previewMarkerData } = useStandaloneMapMarkers({
-    boundsZoomLevel: undefined,
-    geoConfig: geoConfig,
-    studyId,
-    filters,
-    markerType,
-    selectedOverlayVariable: activeMarkerConfiguration?.selectedVariable,
-    overlayConfig: activeOverlayConfig.value,
-    outputEntityId: outputEntity?.id,
-  });
-
-  const continuousMarkerPreview = useMemo(() => {
-    if (
-      !previewMarkerData ||
-      !previewMarkerData.length ||
-      !Array.isArray(previewMarkerData[0].data)
-    )
-      return;
-    const typedData =
-      markerType === 'pie'
-        ? (previewMarkerData as DonutMarkerPropsWithCounts[])
-        : (previewMarkerData as ChartMarkerPropsWithCounts[]);
-    const initialDataObject = typedData[0].data.map((data) => ({
-      label: data.label,
-      value: 0,
-      count: 0,
-      ...(data.color ? { color: data.color } : {}),
-    }));
-    /**
-     * In the chart marker's proportion mode, the values are pre-calculated proportion values. Using these pre-calculated proportion values results
-     * in an erroneous totalCount summation and some off visualizations in the marker previews. Since no axes/numbers are displayed in the marker
-     * previews, let's just overwrite the value property with the count property.
-     *
-     * NOTE: the donut preview doesn't have proportion mode and was working just fine, but now it's going to receive count data that it neither
-     * needs nor consumes.
-     */
-    const dataWithCountsOnly = typedData.reduce(
-      (prevData, currData) =>
-        currData.data.map((data, index) => ({
-          label: data.label,
-          // here's the overwrite mentioned in the above comment
-          value: data.count + prevData[index].count,
-          count: data.count + prevData[index].count,
-          ...('color' in prevData[index]
-            ? { color: prevData[index].color }
-            : 'color' in data
-            ? { color: data.color }
-            : {}),
-        })),
-      initialDataObject
-    );
-    // NOTE: we could just as well reduce using c.value since we overwrite the value prop with the count data
-    const totalCount = dataWithCountsOnly.reduce((p, c) => p + c.count, 0);
-    if (markerType === 'pie') {
-      return (
-        <DonutMarkerStandalone
-          data={dataWithCountsOnly}
-          markerLabel={kFormatter(totalCount)}
-          {...sharedStandaloneMarkerProperties}
-        />
-      );
-    } else {
-      const dependentAxisLogScale =
-        activeMarkerConfiguration &&
-        'dependentAxisLogScale' in activeMarkerConfiguration
-          ? activeMarkerConfiguration.dependentAxisLogScale
-          : false;
-      return (
-        <ChartMarkerStandalone
-          data={dataWithCountsOnly}
-          markerLabel={mFormatter(totalCount)}
-          dependentAxisLogScale={dependentAxisLogScale}
-          // pass in an axis range to mimic map markers, especially in log scale
-          dependentAxisRange={getChartMarkerDependentAxisRange(
-            dataWithCountsOnly,
-            dependentAxisLogScale
-          )}
-          {...sharedStandaloneMarkerProperties}
-        />
-      );
-    }
-  }, [activeMarkerConfiguration, markerType, previewMarkerData]);
-
-  const markers = useMemo(
-    () =>
-      markersData?.map((markerProps) =>
-        markerType === 'pie' ? (
-          <DonutMarker {...(markerProps as DonutMarkerProps)} />
-        ) : markerType === 'bubble' ? (
-          <BubbleMarker {...(markerProps as BubbleMarkerProps)} />
-        ) : (
-          <ChartMarker {...(markerProps as ChartMarkerProps)} />
-        )
-      ) || [],
-    [markersData, markerType]
-  );
-
   const userLoggedIn = useWdkService(async (wdkService) => {
     const user = await wdkService.getCurrentUser();
     return !user.isGuest;
@@ -618,28 +298,9 @@ function MapAnalysisImpl(props: ImplProps) {
     analysisState.analysis?.descriptor.subset.descriptor
   );
 
-  const plugins = useStandaloneVizPlugins({
-    selectedOverlayConfig:
-      activeMarkerConfigurationType === 'bubble'
-        ? undefined
-        : activeOverlayConfig.value,
-    overlayHelp:
-      activeMarkerConfigurationType === 'bubble'
-        ? 'Overlay variables are not available for this map type'
-        : undefined,
-  });
-
   const subsetVariableAndEntity = useMemo(() => {
     return appState.subsetVariableAndEntity ?? getDefaultVariableDescriptor();
   }, [appState.subsetVariableAndEntity, getDefaultVariableDescriptor]);
-
-  const outputEntityTotalCount =
-    totalCounts.value && outputEntity ? totalCounts.value[outputEntity.id] : 0;
-
-  const outputEntityFilteredCount =
-    filteredCounts.value && outputEntity
-      ? filteredCounts.value[outputEntity.id]
-      : 0;
 
   function openSubsetPanelFromControlOutsideOfNavigation() {
     setActiveSideMenuId(MapSideNavItemLabels.Filter);
@@ -723,7 +384,7 @@ function MapAnalysisImpl(props: ImplProps) {
             {
               type: 'item',
               id: 'single-variable-pie',
-              labelText: MarkerTypeLabels.pie,
+              labelText: donutMarkerPlugin.displayName,
               rightIcon: <DonutMarkerIcon style={{ height: '1.25em' }} />,
               leftIcon:
                 activeMarkerConfigurationType === 'pie' ? <CheckIcon /> : null,
@@ -731,107 +392,27 @@ function MapAnalysisImpl(props: ImplProps) {
                 setActiveMarkerConfigurationType('pie');
               },
               renderSidePanelDrawer(apps) {
-                const markerVariableConstraints = apps
-                  .find((app) => app.name === 'standalone-map')
-                  ?.visualizations.find(
-                    (viz) => viz.name === 'map-markers'
-                  )?.dataElementConstraints;
-                const overlayConfig = OverlayConfig.is(
-                  activeOverlayConfig.value
-                )
-                  ? activeOverlayConfig.value
-                  : undefined;
-
-                const markerConfiguration: MarkerConfigurationOption = {
-                  type: 'pie',
-                  displayName: MarkerTypeLabels.pie,
-                  icon: (
-                    <DonutMarkerIcon
-                      style={{ height: '1.5em', marginLeft: '0.25em' }}
-                    />
-                  ),
-                  configurationMenu:
-                    activeMarkerConfiguration?.type === 'pie' ? (
-                      <PieMarkerConfigurationMenu
-                        inputs={[{ name: 'overlayVariable', label: 'Overlay' }]}
-                        entities={studyEntities}
-                        onChange={updateMarkerConfigurations}
-                        configuration={activeMarkerConfiguration}
-                        starredVariables={
-                          analysisState.analysis?.descriptor.starredVariables ??
-                          []
-                        }
-                        toggleStarredVariable={toggleStarredVariable}
-                        constraints={markerVariableConstraints}
-                        overlayConfiguration={overlayConfig}
-                        overlayVariable={overlayVariable}
-                        subsettingClient={subsettingClient}
-                        studyId={studyId}
-                        filters={filters}
-                        allFilteredCategoricalValues={
-                          allFilteredCategoricalValues.value
-                        }
-                        allVisibleCategoricalValues={
-                          allVisibleCategoricalValues.value
-                        }
-                        continuousMarkerPreview={continuousMarkerPreview}
-                      />
-                    ) : (
-                      <></>
-                    ),
-                };
-
-                const mapTypeConfigurationMenuTabs: TabbedDisplayProps<
-                  'markers' | 'plots'
-                >['tabs'] = [
-                  {
-                    key: 'markers',
-                    displayName: 'Markers',
-                    content: markerConfiguration.configurationMenu,
-                  },
-                  {
-                    key: 'plots',
-                    displayName: 'Supporting Plots',
-                    content: (
-                      <MapVizManagement
-                        analysisState={analysisState}
-                        setActiveVisualizationId={setActiveVisualizationId}
-                        activeVisualizationId={
-                          activeMarkerConfiguration?.activeVisualizationId
-                        }
-                        apps={apps}
-                        plugins={plugins}
-                        geoConfigs={geoConfigs}
-                        mapType={activeMarkerConfigurationType}
-                        setHideVizInputsAndControls={
-                          setHideVizInputsAndControls
-                        }
-                      />
-                    ),
-                  },
-                ];
-
                 return (
-                  <div
-                    style={{
-                      padding: '1em',
-                      maxWidth: '1500px',
-                    }}
-                  >
-                    <MapTypeConfigurationMenu
-                      markerConfiguration={markerConfiguration}
-                      mapTypeConfigurationMenuTabs={
-                        mapTypeConfigurationMenuTabs
-                      }
-                    />
-                  </div>
+                  <donutMarkerPlugin.ConfigPanelComponent
+                    apps={apps}
+                    analysisState={analysisState}
+                    appState={appState}
+                    studyId={studyId}
+                    filters={filters}
+                    studyEntities={studyEntities}
+                    geoConfigs={geoConfigs}
+                    configuration={activeMarkerConfiguration}
+                    updateConfiguration={updateMarkerConfigurations as any}
+                    hideVizInputsAndControls={hideVizInputsAndControls}
+                    setHideVizInputsAndControls={setHideVizInputsAndControls}
+                  />
                 );
               },
             },
             {
               type: 'item',
-              id: 'single-variable-barplot',
-              labelText: MarkerTypeLabels.barplot,
+              id: 'single-variable-bar',
+              labelText: barMarkerPlugin.displayName,
               leftIcon:
                 activeMarkerConfigurationType === 'barplot' ? (
                   <CheckIcon />
@@ -841,107 +422,27 @@ function MapAnalysisImpl(props: ImplProps) {
                 setActiveMarkerConfigurationType('barplot');
               },
               renderSidePanelDrawer(apps) {
-                const markerVariableConstraints = apps
-                  .find((app) => app.name === 'standalone-map')
-                  ?.visualizations.find(
-                    (viz) => viz.name === 'map-markers'
-                  )?.dataElementConstraints;
-                const overlayConfig = OverlayConfig.is(
-                  activeOverlayConfig.value
-                )
-                  ? activeOverlayConfig.value
-                  : undefined;
-
-                const markerConfiguration: MarkerConfigurationOption = {
-                  type: 'barplot',
-                  displayName: MarkerTypeLabels.barplot,
-                  icon: (
-                    <BarPlotMarkerIcon
-                      style={{ height: '1.5em', marginLeft: '0.25em' }}
-                    />
-                  ),
-                  configurationMenu:
-                    activeMarkerConfiguration?.type === 'barplot' ? (
-                      <BarPlotMarkerConfigurationMenu
-                        inputs={[{ name: 'overlayVariable', label: 'Overlay' }]}
-                        entities={studyEntities}
-                        onChange={updateMarkerConfigurations}
-                        starredVariables={
-                          analysisState.analysis?.descriptor.starredVariables ??
-                          []
-                        }
-                        toggleStarredVariable={toggleStarredVariable}
-                        configuration={activeMarkerConfiguration}
-                        constraints={markerVariableConstraints}
-                        overlayConfiguration={overlayConfig}
-                        overlayVariable={overlayVariable}
-                        subsettingClient={subsettingClient}
-                        studyId={studyId}
-                        filters={filters}
-                        allFilteredCategoricalValues={
-                          allFilteredCategoricalValues.value
-                        }
-                        allVisibleCategoricalValues={
-                          allVisibleCategoricalValues.value
-                        }
-                        continuousMarkerPreview={continuousMarkerPreview}
-                      />
-                    ) : (
-                      <></>
-                    ),
-                };
-
-                const mapTypeConfigurationMenuTabs: TabbedDisplayProps<
-                  'markers' | 'plots'
-                >['tabs'] = [
-                  {
-                    key: 'markers',
-                    displayName: 'Markers',
-                    content: markerConfiguration.configurationMenu,
-                  },
-                  {
-                    key: 'plots',
-                    displayName: 'Supporting Plots',
-                    content: (
-                      <MapVizManagement
-                        analysisState={analysisState}
-                        setActiveVisualizationId={setActiveVisualizationId}
-                        apps={apps}
-                        activeVisualizationId={
-                          activeMarkerConfiguration?.activeVisualizationId
-                        }
-                        plugins={plugins}
-                        geoConfigs={geoConfigs}
-                        mapType={activeMarkerConfigurationType}
-                        setHideVizInputsAndControls={
-                          setHideVizInputsAndControls
-                        }
-                      />
-                    ),
-                  },
-                ];
-
                 return (
-                  <div
-                    style={{
-                      padding: '1em',
-                      maxWidth: '1500px',
-                    }}
-                  >
-                    <MapTypeConfigurationMenu
-                      markerConfiguration={markerConfiguration}
-                      mapTypeConfigurationMenuTabs={
-                        mapTypeConfigurationMenuTabs
-                      }
-                    />
-                  </div>
+                  <barMarkerPlugin.ConfigPanelComponent
+                    apps={apps}
+                    analysisState={analysisState}
+                    appState={appState}
+                    studyId={studyId}
+                    filters={filters}
+                    studyEntities={studyEntities}
+                    geoConfigs={geoConfigs}
+                    configuration={activeMarkerConfiguration}
+                    updateConfiguration={updateMarkerConfigurations as any}
+                    hideVizInputsAndControls={hideVizInputsAndControls}
+                    setHideVizInputsAndControls={setHideVizInputsAndControls}
+                  />
                 );
               },
             },
             {
               type: 'item',
               id: 'single-variable-bubble',
-              labelText: MarkerTypeLabels.bubble,
+              labelText: bubbleMarkerPlugin.displayName,
               rightIcon: <BubbleMarkerIcon style={{ height: '1.25em' }} />,
               leftIcon:
                 activeMarkerConfigurationType === 'bubble' ? (
@@ -949,88 +450,20 @@ function MapAnalysisImpl(props: ImplProps) {
                 ) : null,
               onActive: () => setActiveMarkerConfigurationType('bubble'),
               renderSidePanelDrawer(apps) {
-                const markerVariableConstraints = apps
-                  .find((app) => app.name === 'standalone-map')
-                  ?.visualizations.find(
-                    (viz) => viz.name === 'map-markers'
-                  )?.dataElementConstraints;
-
-                const markerConfiguration: MarkerConfigurationOption = {
-                  type: 'bubble',
-                  displayName: MarkerTypeLabels.bubble,
-                  icon: (
-                    <BubbleMarkerIcon
-                      style={{ height: '1.5em', marginLeft: '0.25em' }}
-                    />
-                  ),
-                  configurationMenu:
-                    activeMarkerConfiguration?.type === 'bubble' ? (
-                      <BubbleMarkerConfigurationMenu
-                        entities={studyEntities}
-                        onChange={updateMarkerConfigurations}
-                        configuration={activeMarkerConfiguration}
-                        overlayConfiguration={
-                          activeOverlayConfig.value &&
-                          'aggregationConfig' in activeOverlayConfig.value
-                            ? activeOverlayConfig.value
-                            : undefined
-                        }
-                        starredVariables={
-                          analysisState.analysis?.descriptor.starredVariables ??
-                          []
-                        }
-                        toggleStarredVariable={toggleStarredVariable}
-                        constraints={markerVariableConstraints}
-                      />
-                    ) : (
-                      <></>
-                    ),
-                };
-
-                const mapTypeConfigurationMenuTabs: TabbedDisplayProps<
-                  'markers' | 'plots'
-                >['tabs'] = [
-                  {
-                    key: 'markers',
-                    displayName: 'Markers',
-                    content: markerConfiguration.configurationMenu,
-                  },
-                  {
-                    key: 'plots',
-                    displayName: 'Supporting Plots',
-                    content: (
-                      <MapVizManagement
-                        analysisState={analysisState}
-                        setActiveVisualizationId={setActiveVisualizationId}
-                        apps={apps}
-                        activeVisualizationId={
-                          activeMarkerConfiguration?.activeVisualizationId
-                        }
-                        plugins={plugins}
-                        geoConfigs={geoConfigs}
-                        mapType={activeMarkerConfigurationType}
-                        setHideVizInputsAndControls={
-                          setHideVizInputsAndControls
-                        }
-                      />
-                    ),
-                  },
-                ];
-
                 return (
-                  <div
-                    style={{
-                      padding: '1em',
-                      maxWidth: '1500px',
-                    }}
-                  >
-                    <MapTypeConfigurationMenu
-                      markerConfiguration={markerConfiguration}
-                      mapTypeConfigurationMenuTabs={
-                        mapTypeConfigurationMenuTabs
-                      }
-                    />
-                  </div>
+                  <bubbleMarkerPlugin.ConfigPanelComponent
+                    apps={apps}
+                    analysisState={analysisState}
+                    appState={appState}
+                    studyId={studyId}
+                    filters={filters}
+                    studyEntities={studyEntities}
+                    geoConfigs={geoConfigs}
+                    configuration={activeMarkerConfiguration}
+                    updateConfiguration={updateMarkerConfigurations as any}
+                    hideVizInputsAndControls={hideVizInputsAndControls}
+                    setHideVizInputsAndControls={setHideVizInputsAndControls}
+                  />
                 );
               },
             },
@@ -1270,44 +703,14 @@ function MapAnalysisImpl(props: ImplProps) {
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
-  // for flyTo functionality
-  const [willFlyTo, setWillFlyTo] = useState(false);
-
-  // Only decide if we need to flyTo while we are waiting for marker data
-  // then only trigger the flyTo when no longer pending.
-  // This makes sure that the user sees the global location of the data before the flyTo happens.
-  useEffect(() => {
-    if (pending) {
-      // set a safe margin (epsilon) to perform flyTo correctly due to an issue of map resolution etc.
-      // not necessarily need to use defaultAppState.viewport.center [0, 0] here but used it just in case
-      const epsilon = 2.0;
-      const isWillFlyTo =
-        appState.viewport.zoom === defaultViewport.zoom &&
-        Math.abs(appState.viewport.center[0] - defaultViewport.center[0]) <=
-          epsilon &&
-        Math.abs(appState.viewport.center[1] - defaultViewport.center[1]) <=
-          epsilon;
-      setWillFlyTo(isWillFlyTo);
-    }
-  }, [pending, appState.viewport]);
-
-  const [zIndicies /* setZIndicies */] = useState<DraggablePanelIds[]>(
-    Object.values(DraggablePanelIds)
-  );
-
-  function getZIndexByPanelTitle(
-    requestedPanelTitle: DraggablePanelIds
-  ): number {
-    const index = zIndicies.findIndex(
-      (panelTitle) => panelTitle === requestedPanelTitle
-    );
-    const zIndexFactor = appState.isSidePanelExpanded ? 2 : 10;
-    return index + zIndexFactor;
-  }
-
-  const legendZIndex =
-    getZIndexByPanelTitle(DraggablePanelIds.LEGEND_PANEL) +
-    getZIndexByPanelTitle(DraggablePanelIds.VIZ_PANEL);
+  const activeMapTypePlugin =
+    activeMarkerConfiguration?.type === 'barplot'
+      ? barMarkerPlugin
+      : activeMarkerConfiguration?.type === 'bubble'
+      ? bubbleMarkerPlugin
+      : activeMarkerConfiguration?.type === 'pie'
+      ? donutMarkerPlugin
+      : undefined;
 
   return (
     <PromiseResult state={appsPromiseState}>
@@ -1315,6 +718,24 @@ function MapAnalysisImpl(props: ImplProps) {
         const activePanelItem = findActiveSidePanelItem();
         const activeSideNavigationItemMenu =
           activePanelItem?.renderSidePanelDrawer(apps) ?? null;
+
+        const mapTypeMapLayerProps: MapTypeMapLayerProps = {
+          apps,
+          analysisState,
+          appState,
+          studyId,
+          filters: filtersIncludingTimeSlider,
+          studyEntities,
+          geoConfigs,
+          configuration: activeMarkerConfiguration,
+          updateConfiguration: updateMarkerConfigurations as any,
+          filtersIncludingViewport: filtersIncludingViewportAndTimeSlider,
+          totalCounts,
+          filteredCounts,
+          hideVizInputsAndControls,
+          setHideVizInputsAndControls,
+        };
+
         return (
           <ShowHideVariableContextProvider>
             <DocumentationContainer>
@@ -1329,18 +750,17 @@ function MapAnalysisImpl(props: ImplProps) {
               >
                 <MapHeader
                   analysisName={analysisState.analysis?.displayName}
-                  outputEntity={outputEntity}
                   filterList={<FilterChipListForHeader />}
                   siteInformation={props.siteInformationProps}
                   onAnalysisNameEdit={analysisState.setName}
                   studyName={studyRecord.displayName}
-                  totalEntityCount={outputEntityTotalCount}
-                  totalEntityInSubsetCount={outputEntityFilteredCount}
-                  visibleEntityCount={
-                    totalVisibleWithOverlayEntityCount ??
-                    totalVisibleEntityCount
+                  mapTypeDetails={
+                    activeMapTypePlugin?.MapTypeHeaderDetails && (
+                      <activeMapTypePlugin.MapTypeHeaderDetails
+                        {...mapTypeMapLayerProps}
+                      />
+                    )
                   }
-                  overlayActive={overlayVariable != null}
                 >
                   {/* child elements will be distributed across, 'hanging' below the header */}
                   {/*  Time slider component - only if prerequisite variable is available */}
@@ -1396,14 +816,8 @@ function MapAnalysisImpl(props: ImplProps) {
                     width="100%"
                     style={mapStyle}
                     showLayerSelector={false}
-                    showSpinner={pending}
-                    animation={defaultAnimation}
+                    showSpinner={false}
                     viewport={appState.viewport}
-                    markers={markers}
-                    flyToMarkers={
-                      markers && markers.length > 0 && willFlyTo && !pending
-                    }
-                    flyToMarkersDelay={500}
                     onBoundsChanged={setBoundsZoomLevel}
                     onViewportChanged={setViewport}
                     showGrid={geoConfig?.zoomLevelToAggregationLevel !== null}
@@ -1412,93 +826,19 @@ function MapAnalysisImpl(props: ImplProps) {
                     }
                     // pass defaultViewport & isStandAloneMap props for custom zoom control
                     defaultViewport={defaultViewport}
-                  />
+                  >
+                    {activeMapTypePlugin?.MapLayerComponent && (
+                      <activeMapTypePlugin.MapLayerComponent
+                        {...mapTypeMapLayerProps}
+                      />
+                    )}
+                  </MapVEuMap>
                 </div>
 
-                {markerType !== 'bubble' ? (
-                  <DraggableLegendPanel
-                    panelTitle={overlayVariable?.displayName}
-                    zIndex={legendZIndex}
-                  >
-                    <div style={{ padding: '5px 10px' }}>
-                      <MapLegend
-                        isLoading={legendItems.length === 0}
-                        plotLegendProps={{ type: 'list', legendItems }}
-                        // control to show checkbox. default: true
-                        showCheckbox={false}
-                      />
-                    </div>
-                  </DraggableLegendPanel>
-                ) : (
-                  <>
-                    <DraggableLegendPanel
-                      panelTitle="Count"
-                      zIndex={legendZIndex}
-                    >
-                      <div style={{ padding: '5px 10px' }}>
-                        <MapLegend
-                          isLoading={pending}
-                          plotLegendProps={{
-                            type: 'bubble',
-                            legendMax: bubbleLegendData?.maxSizeValue ?? 0,
-                            valueToDiameterMapper: bubbleValueToDiameterMapper,
-                          }}
-                        />
-                      </div>
-                    </DraggableLegendPanel>
-                    <DraggableLegendPanel
-                      panelTitle={overlayVariable?.displayName}
-                      zIndex={legendZIndex}
-                      defaultPosition={{ x: window.innerWidth, y: 420 }}
-                    >
-                      <div style={{ padding: '5px 10px' }}>
-                        <MapLegend
-                          isLoading={pending}
-                          plotLegendProps={{
-                            type: 'colorscale',
-                            legendMin: bubbleLegendData?.minColorValue ?? 0,
-                            legendMax: bubbleLegendData?.maxColorValue ?? 0,
-                            valueToColorMapper:
-                              bubbleValueToColorMapper ?? (() => 'white'),
-                          }}
-                        />
-                      </div>
-                    </DraggableLegendPanel>
-                  </>
-                )}
-
-                <DraggableVisualization
-                  analysisState={analysisState}
-                  visualizationId={
-                    activeMarkerConfiguration?.activeVisualizationId
-                  }
-                  setActiveVisualizationId={setActiveVisualizationId}
-                  apps={apps}
-                  plugins={plugins}
-                  geoConfigs={geoConfigs}
-                  totalCounts={totalCounts}
-                  filteredCounts={filteredCounts}
-                  toggleStarredVariable={toggleStarredVariable}
-                  filters={filtersIncludingViewportAndTimeSlider}
-                  // onTouch={moveVizToTop}
-                  zIndexForStackingContext={getZIndexByPanelTitle(
-                    DraggablePanelIds.VIZ_PANEL
-                  )}
-                  hideInputsAndControls={hideVizInputsAndControls}
-                  setHideInputsAndControls={setHideVizInputsAndControls}
-                />
-
-                {error && (
-                  <FloatingDiv
-                    style={{
-                      top: undefined,
-                      bottom: 50,
-                      left: 100,
-                      right: 100,
-                    }}
-                  >
-                    <div>{String(error)}</div>
-                  </FloatingDiv>
+                {activeMapTypePlugin?.MapOverlayComponent && (
+                  <activeMapTypePlugin.MapOverlayComponent
+                    {...mapTypeMapLayerProps}
+                  />
                 )}
               </div>
             </DocumentationContainer>
@@ -1508,23 +848,3 @@ function MapAnalysisImpl(props: ImplProps) {
     </PromiseResult>
   );
 }
-
-const DraggableLegendPanel = (props: {
-  zIndex: number;
-  panelTitle?: string;
-  defaultPosition?: DraggablePanelCoordinatePair;
-  children: React.ReactNode;
-}) => (
-  <DraggablePanel
-    isOpen
-    showPanelTitle
-    panelTitle={props.panelTitle ?? 'Legend'}
-    confineToParentContainer
-    defaultPosition={props.defaultPosition ?? { x: window.innerWidth, y: 225 }}
-    styleOverrides={{
-      zIndex: props.zIndex,
-    }}
-  >
-    {props.children}
-  </DraggablePanel>
-);

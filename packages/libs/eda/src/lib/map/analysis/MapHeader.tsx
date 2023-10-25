@@ -1,4 +1,4 @@
-import { CSSProperties, ReactElement, ReactNode } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import {
   makeClassNameHelper,
   safeHtml,
@@ -6,29 +6,20 @@ import {
 import { SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
 import { ANALYSIS_NAME_MAX_LENGTH } from '../../core/utils/analysis';
 import './MapHeader.scss';
-import {
-  mapSidePanelBackgroundColor,
-  mapSidePanelBorder,
-  SiteInformationProps,
-} from '..';
-import { StudyEntity } from '../../core';
-import { makeEntityDisplayName } from '../../core/utils/study-metadata';
+import { mapSidePanelBackgroundColor } from '../constants';
+import { SiteInformationProps } from './Types';
 import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 
 export type MapNavigationProps = {
   analysisName?: string;
-  outputEntity?: StudyEntity;
   filterList?: ReactElement;
   siteInformation: SiteInformationProps;
   onAnalysisNameEdit: (newName: string) => void;
   studyName: string;
-  totalEntityCount: number | undefined;
-  totalEntityInSubsetCount: number | undefined;
-  visibleEntityCount: number | undefined;
-  overlayActive: boolean;
   /** children of this component will be rendered in flex children
      distributed across the bottom edge of the header, hanging down like tabs */
   children: ReactNode;
+  mapTypeDetails?: ReactNode;
 };
 
 /**
@@ -38,19 +29,14 @@ export type MapNavigationProps = {
  */
 export function MapHeader({
   analysisName,
-  outputEntity,
   filterList,
   siteInformation,
   onAnalysisNameEdit,
   studyName,
-  totalEntityCount = 0,
-  totalEntityInSubsetCount = 0,
-  visibleEntityCount = 0,
-  overlayActive,
   children,
+  mapTypeDetails,
 }: MapNavigationProps) {
   const mapHeader = makeClassNameHelper('MapHeader');
-  const { format } = new Intl.NumberFormat();
   const { siteName } = siteInformation;
   const theme = useUITheme();
 
@@ -88,60 +74,7 @@ export function MapHeader({
           onAnalysisNameEdit={onAnalysisNameEdit}
         />
       </div>
-      {outputEntity && (
-        <div className={`${mapHeader('__SampleCounter')}`}>
-          <p>{makeEntityDisplayName(outputEntity, true)}</p>
-          <LeftBracket
-            styles={{
-              // Bring closer the content of the righthand side of
-              // the bracket.
-              marginLeft: 10,
-            }}
-          />
-          <table>
-            <thead>
-              <tr>{/* <th colSpan={2}>{entityDisplayName}</th> */}</tr>
-            </thead>
-            <tbody>
-              <tr
-                title={`There are ${format(
-                  totalEntityCount
-                )} ${makeEntityDisplayName(
-                  outputEntity,
-                  totalEntityCount > 1
-                )} in the dataset.`}
-              >
-                <td>All</td>
-                <td>{format(totalEntityCount)}</td>
-              </tr>
-              <tr
-                title={`After filtering, there are ${format(
-                  totalEntityInSubsetCount
-                )} ${makeEntityDisplayName(
-                  outputEntity,
-                  totalEntityInSubsetCount > 1
-                )} in the subset.`}
-              >
-                <td>Filtered</td>
-                <td>{format(totalEntityInSubsetCount)}</td>
-              </tr>
-              <tr
-                title={`${format(visibleEntityCount)} ${makeEntityDisplayName(
-                  outputEntity,
-                  visibleEntityCount > 1
-                )} are in the current viewport${
-                  overlayActive
-                    ? ', and have data for the painted variable'
-                    : ''
-                }.`}
-              >
-                <td>View</td>
-                <td>{format(visibleEntityCount)}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      )}
+      {mapTypeDetails}
       <HangingTabs>{children}</HangingTabs>
     </header>
   );
@@ -196,24 +129,5 @@ function HeaderContent({
       </div>
       {filterList}
     </div>
-  );
-}
-
-type LeftBracketProps = {
-  /** Should you need to adjust anything! */
-  styles?: CSSProperties;
-};
-function LeftBracket(props: LeftBracketProps) {
-  return (
-    <div
-      style={{
-        border: '1px solid black',
-        borderRight: 'none',
-        height: '75%',
-        width: 5,
-        ...props.styles,
-      }}
-      aria-hidden
-    ></div>
   );
 }

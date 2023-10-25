@@ -1,5 +1,5 @@
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
-import { UNSELECTED_TOKEN } from '../..';
+import { UNSELECTED_TOKEN } from '../../constants';
 import {
   BinRange,
   BubbleOverlayConfig,
@@ -11,7 +11,7 @@ import {
   Variable,
 } from '../../../core';
 import { DataClient, SubsettingClient } from '../../../core/api';
-import { BinningMethod, MarkerConfiguration } from '../appState';
+import { BinningMethod } from '../appState';
 import { BubbleMarkerConfiguration } from '../MarkerConfiguration/BubbleMarkerConfigurationMenu';
 
 // This async function fetches the default overlay config.
@@ -21,6 +21,55 @@ import { BubbleMarkerConfiguration } from '../MarkerConfiguration/BubbleMarkerCo
 // For categoricals it calls subsetting's distribution endpoint to get a list of values and their counts
 //
 
+export interface DefaultBubbleOverlayConfigProps {
+  studyId: string;
+  filters: Filter[] | undefined;
+  overlayVariable: Variable;
+  overlayEntity: StudyEntity;
+  aggregator?: BubbleMarkerConfiguration['aggregator'];
+  numeratorValues?: BubbleMarkerConfiguration['numeratorValues'];
+  denominatorValues?: BubbleMarkerConfiguration['denominatorValues'];
+}
+
+export function getDefaultBubbleOverlayConfig(
+  props: DefaultBubbleOverlayConfigProps
+): BubbleOverlayConfig {
+  const {
+    overlayVariable,
+    overlayEntity,
+    aggregator = 'mean',
+    numeratorValues = overlayVariable?.vocabulary ?? [],
+    denominatorValues = overlayVariable?.vocabulary ?? [],
+  } = props;
+
+  const overlayVariableDescriptor = {
+    variableId: overlayVariable.id,
+    entityId: overlayEntity.id,
+  };
+
+  if (CategoricalVariableDataShape.is(overlayVariable.dataShape)) {
+    // categorical
+    return {
+      overlayVariable: overlayVariableDescriptor,
+      aggregationConfig: {
+        overlayType: 'categorical',
+        numeratorValues,
+        denominatorValues,
+      },
+    };
+  } else if (ContinuousVariableDataShape.is(overlayVariable.dataShape)) {
+    // continuous
+    return {
+      overlayVariable: overlayVariableDescriptor,
+      aggregationConfig: {
+        overlayType: 'continuous',
+        aggregator,
+      },
+    };
+  }
+  throw new Error('Unknown variable datashape: ' + overlayVariable.dataShape);
+}
+
 export interface DefaultOverlayConfigProps {
   studyId: string;
   filters: Filter[] | undefined;
@@ -28,16 +77,12 @@ export interface DefaultOverlayConfigProps {
   overlayEntity: StudyEntity | undefined;
   dataClient: DataClient;
   subsettingClient: SubsettingClient;
-  markerType?: MarkerConfiguration['type'];
   binningMethod?: BinningMethod;
-  aggregator?: BubbleMarkerConfiguration['aggregator'];
-  numeratorValues?: BubbleMarkerConfiguration['numeratorValues'];
-  denominatorValues?: BubbleMarkerConfiguration['denominatorValues'];
 }
 
 export async function getDefaultOverlayConfig(
   props: DefaultOverlayConfigProps
-): Promise<OverlayConfig | BubbleOverlayConfig | undefined> {
+): Promise<OverlayConfig | undefined> {
   const {
     studyId,
     filters,
@@ -45,11 +90,7 @@ export async function getDefaultOverlayConfig(
     overlayEntity,
     dataClient,
     subsettingClient,
-    markerType,
     binningMethod = 'equalInterval',
-    aggregator = 'mean',
-    numeratorValues,
-    denominatorValues,
   } = props;
 
   if (overlayVariable != null && overlayEntity != null) {
@@ -60,59 +101,34 @@ export async function getDefaultOverlayConfig(
 
     if (CategoricalVariableDataShape.is(overlayVariable.dataShape)) {
       // categorical
-      if (markerType === 'bubble') {
-        return {
-          overlayVariable: overlayVariableDescriptor,
-          aggregationConfig: {
-            overlayType: 'categorical',
-            numeratorValues:
-              numeratorValues ?? overlayVariable.vocabulary ?? [],
-            denominatorValues:
-              denominatorValues ?? overlayVariable.vocabulary ?? [],
-          },
-        };
-      } else {
-        const overlayValues = await getMostFrequentValues({
-          studyId: studyId,
-          ...overlayVariableDescriptor,
-          filters: filters ?? [],
-          numValues: ColorPaletteDefault.length - 1,
-          subsettingClient,
-        });
+      const overlayValues = await getMostFrequentValues({
+        studyId: studyId,
+        ...overlayVariableDescriptor,
+        filters: filters ?? [],
+        numValues: ColorPaletteDefault.length - 1,
+        subsettingClient,
+      });
 
-        return {
-          overlayType: 'categorical',
-          overlayVariable: overlayVariableDescriptor,
-          overlayValues,
-        };
-      }
+      return {
+        overlayType: 'categorical',
+        overlayVariable: overlayVariableDescriptor,
+        overlayValues,
+      };
     } else if (ContinuousVariableDataShape.is(overlayVariable.dataShape)) {
       // continuous
-      if (markerType === 'bubble') {
-        return {
-          overlayVariable: overlayVariableDescriptor,
-          aggregationConfig: {
-            overlayType: 'continuous',
-            aggregator,
-          },
-        };
-      } else {
-        const overlayBins = await getBinRanges({
-          studyId,
-          ...overlayVariableDescriptor,
-          filters: filters ?? [],
-          dataClient,
-          binningMethod,
-        });
+      const overlayBins = await getBinRanges({
+        studyId,
+        ...overlayVariableDescriptor,
+        filters: filters ?? [],
+        dataClient,
+        binningMethod,
+      });
 
-        return {
-          overlayType: 'continuous',
-          overlayValues: overlayBins,
-          overlayVariable: overlayVariableDescriptor,
-        };
-      }
-    } else {
-      return;
+      return {
+        overlayType: 'continuous',
+        overlayValues: overlayBins,
+        overlayVariable: overlayVariableDescriptor,
+      };
     }
   }
 }

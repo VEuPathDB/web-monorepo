@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { AnalysisState, useGetDefaultVariableDescriptor } from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
 import { useGetDefaultTimeVariableDescriptor } from './hooks/eztimeslider';
+import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
 
 const LatLngLiteral = t.type({ lat: t.number, lng: t.number });
 
@@ -114,12 +115,6 @@ export const AppState = t.intersection([
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export type AppState = t.TypeOf<typeof AppState>;
-
-// export default viewport for custom zoom control
-export const defaultViewport: AppState['viewport'] = {
-  center: [0, 0],
-  zoom: 1,
-};
 
 export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
   const { analysis, setVariableUISettings } = analysisState;

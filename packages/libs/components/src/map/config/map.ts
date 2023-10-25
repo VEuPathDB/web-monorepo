@@ -2,6 +2,8 @@
 // which is deprecated.
 // (Context: https://github.com/VEuPathDB/web-components/issues/324)
 
+import { Viewport } from '../MapVEuMap';
+
 export const defaultAnimationDuration = 300;
 
 export const allColorsHex = [
@@ -33,3 +35,9 @@ export const chartMarkerColorsHex = [
   '#B21B45',
   '#ED1C23',
 ];
+
+// export default viewport for custom zoom control
+export const defaultViewport: Viewport = {
+  center: [0, 0],
+  zoom: 1,
+};
