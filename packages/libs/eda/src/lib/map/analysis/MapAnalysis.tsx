@@ -304,7 +304,7 @@ function MapAnalysisImpl(props: ImplProps) {
   }, [appState.subsetVariableAndEntity, getDefaultVariableDescriptor]);
 
   function openSubsetPanelFromControlOutsideOfNavigation() {
-    setActiveSideMenuId(MapSideNavItemLabels.Filter);
+    setActiveSideMenuId('filter');
     setIsSidePanelExpanded(true);
   }
 
@@ -334,8 +334,7 @@ function MapAnalysisImpl(props: ImplProps) {
           disabled={
             // You don't need this button if whenever the filter
             // section is active and expanded.
-            appState.isSidePanelExpanded &&
-            activeSideMenuId === MapSideNavItemLabels.Filter
+            appState.isSidePanelExpanded && activeSideMenuId === 'filter'
           }
           themeRole="primary"
           text="Add filters"
