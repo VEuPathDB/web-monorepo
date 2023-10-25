@@ -10,7 +10,15 @@ import {
 
 export type VdiCompatibleWdkService = ReturnType<typeof wrapWdkService>;
 
-export function wrapWdkService(wdkService: WdkService) {
+export type ServiceConfig = {
+  datasetImportUrl: string;
+  fullWdkServiceUrl: string;
+};
+
+export function wrapWdkService(
+  serviceConfig: ServiceConfig | undefined,
+  wdkService: WdkService
+) {
   const vdiService = new UserDatasetApi(
     { baseUrl: VDI_SERVICE_BASE_URL },
     wdkService

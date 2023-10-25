@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
 
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 
@@ -139,7 +138,9 @@ export function useSendToBasketConfig(
 
 export function useSendToGeneListUserDatasetConfig(
   resultType: ResultType
-): ExportOption<'my-data-sets', [void, RecordClass], unknown> | undefined {
+):
+  | ExportOption<'my-data-sets', [{ datasetID: string }, RecordClass], unknown>
+  | undefined {
   const dispatch = useDispatch();
 
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
@@ -279,7 +280,11 @@ export function useSendGeneListToPortalStrategyConfig(
                   <div>
                     An error occurred while trying to export the contents of
                     step "{resultType.step.customName}" to{' '}
-                    <a href={projectUrls.EuPathDB} target="_blank">
+                    <a
+                      href={projectUrls.EuPathDB}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
                       VEuPathDB
                     </a>
                     .
