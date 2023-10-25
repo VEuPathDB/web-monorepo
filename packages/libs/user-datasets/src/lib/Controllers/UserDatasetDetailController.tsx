@@ -186,6 +186,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       unshareUserDatasets,
       updateUserDatasetDetail,
       userDataset: entry.resource,
+      fileListing: entry.fileListing,
       getQuestionUrl: this.getQuestionUrl,
       questionMap: keyBy(questions, 'fullName'),
       workspaceTitle,

@@ -302,6 +302,11 @@ export const userQuotaMetadata = type({
   }),
 });
 
+export const userDatasetFileListing = type({
+  uploadFiles: array(type({ name: string, size: number })),
+  dataFiles: array(type({ name: string, size: number })),
+});
+
 export interface NewUserDatasetMeta {
   name: string;
   datasetType: {
@@ -323,3 +328,4 @@ export interface NewUserDatasetMeta {
 export type UserDatasetVDI = TypeOf<typeof userDataset>;
 export type UserDatasetDetails = TypeOf<typeof userDatasetDetails>;
 export type UserQuotaMetadata = TypeOf<typeof userQuotaMetadata>;
+export type UserDatasetFileListing = TypeOf<typeof userDatasetFileListing>;

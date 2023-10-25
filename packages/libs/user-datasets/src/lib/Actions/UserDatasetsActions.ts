@@ -24,6 +24,7 @@ import {
   UserDatasetVDI,
   UserQuotaMetadata,
   UserDatasetShareResponse,
+  UserDatasetFileListing,
 } from '../Utils/types';
 
 export type Action =
@@ -133,18 +134,21 @@ export type DetailReceivedAction = {
   payload: {
     id: string;
     userDataset?: UserDataset;
+    fileListing?: UserDatasetFileListing;
   };
 };
 
 export function detailReceived(
   id: string,
-  userDataset?: UserDataset
+  userDataset?: UserDataset,
+  fileListing?: UserDatasetFileListing
 ): DetailReceivedAction {
   return {
     type: DETAIL_RECEIVED,
     payload: {
       id,
       userDataset,
+      fileListing,
     },
   };
 }
@@ -441,8 +445,9 @@ export function loadUserDatasetDetail(id: string, loadedProjectId?: string) {
     Promise.all([
       wdkService.getUserDataset(id),
       wdkService.getUserQuotaMetadata(),
+      wdkService.getUserDatasetFileListing(id),
     ]).then(
-      ([userDataset, userQuotaMetadata]) => {
+      ([userDataset, userQuotaMetadata, fileListing]) => {
         const { files, shares } = userDataset as UserDatasetDetails;
         const partiallyTransformedResponse =
           transformVdiResponseToLegacyResponseHelper(
@@ -463,7 +468,7 @@ export function loadUserDatasetDetail(id: string, loadedProjectId?: string) {
               user: d.recipient.userID,
             })),
         };
-        return detailReceived(id, transformedResponse);
+        return detailReceived(id, transformedResponse, fileListing);
       },
       (error: ServiceError) =>
         error.status === 404 ? detailReceived(id) : detailError(error)

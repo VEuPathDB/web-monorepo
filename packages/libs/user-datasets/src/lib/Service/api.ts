@@ -20,6 +20,7 @@ import {
   NewUserDataset,
   userDatasetDetails,
   userQuotaMetadata,
+  userDatasetFileListing,
 } from '../Utils/types';
 
 import { array, string, type } from 'io-ts';
@@ -39,6 +40,7 @@ export const VALID_VDI_SERVICE_KEYS = [
   'updateUserDataset',
   'removeUserDataset',
   'getCommunityDatasets',
+  'getUserDatasetFileListing',
   'getUserDatasetFiles',
   'editUserDatasetSharing',
   'getUserIdsByEmail',
@@ -110,21 +112,20 @@ export class UserDatasetApi extends FetchClientWithCredentials {
     });
   };
 
-  getUserDataset = (id: string) => {
+  getUserDataset = (datasetId: string) => {
     return this.fetch(
       createJsonRequest({
-        path: `${VDI_SERVICE}/${id}`,
+        path: `${VDI_SERVICE}/${datasetId}`,
         method: 'GET',
         transformResponse: ioTransformer(userDatasetDetails),
       })
     );
   };
 
-  // double-check the expected requestBody type for VDI
-  updateUserDataset = (id: string, requestBody: UserDatasetMeta) => {
+  updateUserDataset = (datasetId: string, requestBody: UserDatasetMeta) => {
     return this.fetch(
       createJsonRequest({
-        path: `${VDI_SERVICE}/${id}`,
+        path: `${VDI_SERVICE}/${datasetId}`,
         method: 'PATCH',
         body: requestBody,
         transformResponse: noContent,
@@ -132,10 +133,10 @@ export class UserDatasetApi extends FetchClientWithCredentials {
     );
   };
 
-  removeUserDataset = (id: string) => {
+  removeUserDataset = (datasetId: string) => {
     return this.fetch(
       createJsonRequest({
-        path: `${VDI_SERVICE}/${id}`,
+        path: `${VDI_SERVICE}/${datasetId}`,
         method: 'DELETE',
         transformResponse: noContent,
       })
@@ -152,11 +153,21 @@ export class UserDatasetApi extends FetchClientWithCredentials {
     );
   };
 
+  getUserDatasetFileListing = (datasetId: string) => {
+    return this.fetch(
+      createJsonRequest({
+        path: `${VDI_SERVICE}/${datasetId}/files`,
+        method: 'GET',
+        transformResponse: ioTransformer(userDatasetFileListing),
+      })
+    );
+  };
+
   getUserDatasetFiles = async (
-    datasetId: number | string,
+    datasetId: string,
     zipFileType: 'upload' | 'data'
   ) => {
-    if (typeof datasetId !== 'number' && typeof datasetId !== 'string')
+    if (typeof datasetId !== 'string')
       throw new TypeError(
         `Can't build downloadUrl; invalid datasetId given (${datasetId}) [${typeof datasetId}]`
       );
