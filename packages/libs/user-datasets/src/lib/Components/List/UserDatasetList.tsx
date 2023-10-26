@@ -152,7 +152,7 @@ class UserDatasetList extends React.Component<Props, State> {
 
   renderStatusCell(cellProps: MesaDataCellProps) {
     const userDataset: UserDataset = cellProps.row;
-    const { baseUrl, projectId, projectName } = this.props;
+    const { baseUrl, projectId, projectName, dataNoun } = this.props;
     return (
       <UserDatasetStatus
         baseUrl={baseUrl}
@@ -161,6 +161,7 @@ class UserDatasetList extends React.Component<Props, State> {
         userDataset={userDataset}
         projectId={projectId}
         displayName={projectName}
+        dataNoun={dataNoun}
       />
     );
   }

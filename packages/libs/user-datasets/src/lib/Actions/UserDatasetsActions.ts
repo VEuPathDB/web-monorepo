@@ -658,6 +658,7 @@ function transformVdiResponseToLegacyResponseHelper(
     isInstalled,
     questions: [],
     percentQuotaUsed: quota.usage / quota.limit,
+    status,
     // 'uploaded' doesn't appear to be used anywhere
     uploaded: 1,
     // 'modified' doesn't appear to be used anywhere

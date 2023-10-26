@@ -56,6 +56,7 @@ export interface UserDataset {
   };
   uploaded: number;
   fileCount: number;
+  status?: UserDatasetVDI['status'];
 }
 
 export interface UserDatasetUpload {
@@ -197,6 +198,7 @@ const installStatus = keyof({
   'failed-installation': null,
   'ready-for-reinstall': null,
   'missing-dependency': null,
+  running: null,
 });
 
 const installDetails = array(

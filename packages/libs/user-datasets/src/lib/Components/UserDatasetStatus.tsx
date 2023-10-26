@@ -5,7 +5,7 @@ import {
   Tooltip,
 } from '@veupathdb/wdk-client/lib/Components';
 
-import { UserDataset } from '../Utils/types';
+import { DataNoun, UserDataset } from '../Utils/types';
 
 interface Props {
   baseUrl: string;
@@ -14,46 +14,61 @@ interface Props {
   displayName: string;
   linkToDataset: boolean;
   useTooltip: boolean;
+  dataNoun: DataNoun;
 }
 
-const FOUR_HOURS = 4 * (1000 * 60 * 60);
-
 export default function UserDatasetStatus(props: Props) {
-  const { baseUrl, userDataset, projectId, displayName } = props;
-  const { isInstalled, isCompatible, projects, age } = userDataset;
+  const { baseUrl, userDataset, projectId, displayName, dataNoun } = props;
+  const { projects, status } = userDataset;
+  const lowercaseSingularDataNoun = dataNoun.singular.toLowerCase();
+  const projectSpecificInstallStatus = status?.install?.find(
+    (d) => d.projectID === projectId
+  );
   const isInstallable = projects.includes(projectId);
-  const isPending = isCompatible && age < FOUR_HOURS;
-  const isError = isCompatible && !isPending;
+  const isInstalled =
+    status?.import === 'complete' &&
+    projectSpecificInstallStatus?.dataStatus === 'complete';
+  const isQueued =
+    status?.import === 'queued' ||
+    (status?.import === 'complete' &&
+      !projectSpecificInstallStatus?.dataStatus);
+  const hasFailed =
+    status?.import === 'failed' ||
+    status?.import === 'invalid' ||
+    ['failed-installation', 'failed-validation', 'missing-dependency'].includes(
+      projectSpecificInstallStatus?.dataStatus ?? ''
+    );
+  const phase = status?.import !== 'complete' ? '1' : '2';
   const link = `${baseUrl}/${userDataset.id}`;
   const content = !isInstallable ? (
-    <span>This data set is not compatible with {displayName}.</span>
-  ) : isInstalled ? (
-    <span>This data set is installed and ready for use in {displayName}.</span>
-  ) : isPending ? (
     <span>
-      This data set is currently being installed in {displayName}. Please check
-      again soon.
+      This {lowercaseSingularDataNoun} is not compatible with {displayName}.
     </span>
-  ) : isError ? (
+  ) : isInstalled ? (
     <span>
-      This data set could not be installed in {displayName} due to a server
-      error.
+      This {lowercaseSingularDataNoun} is installed and ready for use in{' '}
+      {displayName}.
+    </span>
+  ) : isQueued ? (
+    <span>Queued (for phase {phase}). Please check again soon.</span>
+  ) : hasFailed ? (
+    <span>
+      Failed (phase {phase}): {projectSpecificInstallStatus?.dataMessage}
     </span>
   ) : (
     <span>
-      This data set was uploaded but could not be installed, as it is not
-      compatible with resources in this release of {displayName}.
+      <span>In progress (phase {phase}). Please check again soon.</span>
     </span>
   );
   const faIcon = !isInstallable
     ? 'minus-circle'
     : isInstalled
     ? 'check-circle'
-    : isPending
+    : isQueued
     ? 'clock-o'
-    : isError
+    : hasFailed
     ? 'minus-circle'
-    : 'exclamation-circle';
+    : 'clock-o';
   const children = <Icon className="StatusIcon" fa={faIcon} />;
   const visibleContent = props.useTooltip ? (
     <Tooltip content={content}>{children}</Tooltip>

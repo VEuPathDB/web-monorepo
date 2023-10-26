@@ -119,7 +119,7 @@ class UserDatasetDetail extends React.Component {
   }
 
   getAttributes() {
-    const { userDataset, quotaSize, questionMap } = this.props;
+    const { userDataset, quotaSize, questionMap, dataNoun } = this.props;
     const { onMetaSave } = this;
     const {
       id,
@@ -157,6 +157,7 @@ class UserDatasetDetail extends React.Component {
             userDataset={userDataset}
             projectId={this.props.config.projectId}
             displayName={this.props.config.displayName}
+            dataNoun={dataNoun}
           />
         ),
       },
