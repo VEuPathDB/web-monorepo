@@ -82,7 +82,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
     const meta: NewUserDatasetMeta = {
       ...remainingConfig,
       datasetType: {
-        name: newUserDatasetConfig.datasetType.replace('-', ''),
+        name: newUserDatasetConfig.datasetType,
         version: '1.0',
       },
       dependencies: [],

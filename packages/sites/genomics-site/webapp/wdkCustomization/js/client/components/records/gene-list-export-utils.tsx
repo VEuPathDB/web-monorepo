@@ -336,7 +336,7 @@ export async function uploadGeneListUserDataset(
     }" (${resultWorkspaceUrl}).`;
 
   return await uploadUserDataset(wdkService, {
-    datasetType: 'gene-list',
+    datasetType: 'genelist',
     dataUploadSelection: {
       type: 'url',
       url: temporaryResultUrl,
