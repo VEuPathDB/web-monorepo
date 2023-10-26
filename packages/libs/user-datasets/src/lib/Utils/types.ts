@@ -149,7 +149,7 @@ export interface NewUserDataset extends UserDatasetMeta {
 }
 
 export type UserDatasetShareResponse = {
-  [Key in 'add' | 'delete']: {
+  [Key in 'grant' | 'revoke']: {
     [Key in string]: UserDataset['sharedWith'];
   };
 };

@@ -483,26 +483,23 @@ export function shareUserDatasets(
       }
     }
 
-    const sharingSuccessObject = requests.reduce((prev, curr, index) => {
+    const sharingSuccessObject = requests.reduce((prev, curr) => {
       const { datasetId, recipientId } = curr;
       if (datasetId in prev) {
         return {
           ...prev,
-          // @ts-ignore
-          [datasetId]: prev[datasetId].concat({
-            userDisplayName: `Name-${index}`,
+          [datasetId]: prev[datasetId]?.concat({
+            userDisplayName: '',
             user: recipientId,
           }),
         };
       } else {
         return {
           ...prev,
-          [datasetId]: [
-            { userDisplayName: `Name-${index}`, user: recipientId },
-          ],
+          [datasetId]: [{ userDisplayName: '', user: recipientId }],
         };
       }
-    }, {});
+    }, {} as UserDatasetShareResponse['grant']);
 
     return Promise.all(
       requests.map((req) =>
@@ -516,8 +513,8 @@ export function shareUserDatasets(
       // can editUserDatasetSharing return a 200 response w/ the recipient's userDisplayName and id?
       () =>
         sharingSuccess({
-          add: sharingSuccessObject,
-          delete: { undefined },
+          grant: sharingSuccessObject,
+          revoke: {},
         }),
       sharingError
     );
@@ -534,11 +531,11 @@ export function unshareUserDatasets(
       .then(
         () =>
           sharingSuccess({
-            add: { undefined },
-            delete: {
-              userDatasetId: [
+            grant: {},
+            revoke: {
+              [userDatasetId]: [
                 {
-                  userDisplayName: 'My Name',
+                  userDisplayName: '',
                   user: recipientUserId,
                 },
               ],
