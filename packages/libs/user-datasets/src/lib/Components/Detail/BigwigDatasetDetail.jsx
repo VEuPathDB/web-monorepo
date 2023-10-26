@@ -59,16 +59,21 @@ class BigwigDatasetDetail extends UserDatasetDetail {
   }
 
   renderTracksSection() {
-    const { userDataset, appUrl, projectName } = this.props;
+    const { userDataset, appUrl, projectName, config } = this.props;
 
-    const { type } = userDataset;
+    const { type, status } = userDataset;
     const { data } = type;
 
     const rows = data && Array.isArray(data.tracks) ? data.tracks : [];
     const columns = this.getTracksTableColumns({ userDataset, appUrl });
     const tracksTableState = MesaState.create({ rows, columns });
 
-    return !rows.length ? null : userDataset.isInstalled ? (
+    const isInstalled =
+      status?.import === 'complete' &&
+      status?.install?.find((d) => d.projectID === config.projectId)
+        .dataStatus === 'complete';
+
+    return !rows.length ? null : isInstalled ? (
       <section>
         <h3 className={classify('SectionTitle')}>
           <Icon fa="bar-chart" />

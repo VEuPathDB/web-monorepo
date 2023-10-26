@@ -119,7 +119,8 @@ class UserDatasetDetail extends React.Component {
   }
 
   getAttributes() {
-    const { userDataset, quotaSize, questionMap, dataNoun } = this.props;
+    const { userDataset, quotaSize, questionMap, dataNoun, config } =
+      this.props;
     const { onMetaSave } = this;
     const {
       id,
@@ -131,10 +132,14 @@ class UserDatasetDetail extends React.Component {
       created,
       sharedWith,
       questions,
-      isInstalled,
+      status,
     } = userDataset;
     const { display, name, version } = type;
     const isOwner = this.isMyDataset();
+    const isInstalled =
+      status?.import === 'complete' &&
+      status?.install?.find((d) => d.projectID === config.projectId)
+        .dataStatus === 'complete';
 
     return [
       {
@@ -463,9 +468,9 @@ class UserDatasetDetail extends React.Component {
       rows: userDataset.dependencies,
     });
 
-    const { buildNumber } = config;
+    // const { buildNumber } = config;
     // QUESTION: how do we check compatibility with current build/version in VDI?
-    const { isCompatible, status } = userDataset;
+    const { status } = userDataset;
     const isCompatibleProject = userDataset.projects.includes(projectId);
     const isInstalled =
       status?.import === 'complete' &&

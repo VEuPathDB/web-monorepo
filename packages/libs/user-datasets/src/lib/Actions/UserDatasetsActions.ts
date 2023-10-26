@@ -400,7 +400,7 @@ type SharingAction =
   | SharingSuccessAction
   | SharingErrorAction;
 
-export function loadUserDatasetList(loadedProjectId?: string) {
+export function loadUserDatasetList() {
   return validateVdiCompatibleThunk<ListAction>(({ wdkService }) => [
     listLoading(),
     Promise.all([
@@ -417,11 +417,7 @@ export function loadUserDatasetList(loadedProjectId?: string) {
         (ud: UserDatasetVDI): UserDataset => {
           const { fileCount, shares, fileSizeTotal } = ud;
           const partiallyTransformedResponse =
-            transformVdiResponseToLegacyResponseHelper(
-              ud,
-              userQuotaMetadata,
-              loadedProjectId
-            );
+            transformVdiResponseToLegacyResponseHelper(ud, userQuotaMetadata);
           return {
             ...partiallyTransformedResponse,
             datafiles: [],
@@ -439,7 +435,7 @@ export function loadUserDatasetList(loadedProjectId?: string) {
   ]);
 }
 
-export function loadUserDatasetDetail(id: string, loadedProjectId?: string) {
+export function loadUserDatasetDetail(id: string) {
   return validateVdiCompatibleThunk<DetailAction>(({ wdkService }) => [
     detailLoading(id),
     Promise.all([
@@ -452,8 +448,7 @@ export function loadUserDatasetDetail(id: string, loadedProjectId?: string) {
         const partiallyTransformedResponse =
           transformVdiResponseToLegacyResponseHelper(
             userDataset,
-            userQuotaMetadata,
-            loadedProjectId
+            userQuotaMetadata
           );
         const transformedResponse = {
           ...partiallyTransformedResponse,
@@ -611,8 +606,7 @@ type PartialLegacyUserDataset = Omit<
 
 function transformVdiResponseToLegacyResponseHelper(
   ud: UserDatasetDetails | UserDatasetVDI,
-  userQuotaMetadata: UserQuotaMetadata,
-  loadedProjectId?: string
+  userQuotaMetadata: UserQuotaMetadata
 ): PartialLegacyUserDataset {
   const {
     name,
@@ -626,14 +620,6 @@ function transformVdiResponseToLegacyResponseHelper(
     status,
   } = ud;
   const { quota } = userQuotaMetadata;
-  const installStatusForLoadedProject = status.install?.find(
-    (d) => d.projectID === loadedProjectId
-  );
-  const isInstalled = Boolean(
-    status.import === 'complete' &&
-      installStatusForLoadedProject &&
-      installStatusForLoadedProject.dataStatus === 'complete'
-  );
   return {
     owner: owner.firstName + ' ' + owner.lastName,
     projects: projectIDs ?? [],
@@ -652,16 +638,8 @@ function transformVdiResponseToLegacyResponseHelper(
     dependencies: [],
     age: Date.now() - Date.parse(created),
     id: datasetID,
-    isCompatible: Boolean(
-      loadedProjectId && projectIDs.includes(loadedProjectId)
-    ),
-    isInstalled,
     questions: [],
     percentQuotaUsed: quota.usage / quota.limit,
     status,
-    // 'uploaded' doesn't appear to be used anywhere
-    uploaded: 1,
-    // 'modified' doesn't appear to be used anywhere
-    modified: 1,
   };
 }

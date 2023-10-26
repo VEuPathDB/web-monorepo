@@ -80,9 +80,7 @@ class UserDatasetListController extends PageController<Props> {
 
   loadData(prevProps?: Props) {
     if (prevProps == null) {
-      this.props.dispatchProps.loadUserDatasetList(
-        this.props.stateProps.globalData.config?.projectId
-      );
+      this.props.dispatchProps.loadUserDatasetList();
       return;
     }
 

@@ -28,8 +28,6 @@ export interface UserDatasetShare {
 export interface UserDataset {
   created: number | string;
   age: number;
-  isInstalled: boolean;
-  isCompatible: boolean;
   dependencies: Array<{
     resourceDisplayName: string;
     resourceIdentifier: string;
@@ -42,7 +40,6 @@ export interface UserDataset {
   projects: string[];
   id: string;
   meta: UserDatasetMeta;
-  modified: number;
   owner: string;
   ownerUserId: number;
   percentQuotaUsed: number;
@@ -54,7 +51,6 @@ export interface UserDataset {
     display: string;
     version: string;
   };
-  uploaded: number;
   fileCount: number;
   status?: UserDatasetVDI['status'];
 }
