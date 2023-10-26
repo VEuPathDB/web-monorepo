@@ -464,8 +464,26 @@ class UserDatasetDetail extends React.Component {
     });
 
     const { buildNumber } = config;
-    const { isCompatible } = userDataset;
+    // QUESTION: how do we check compatibility with current build/version in VDI?
+    const { isCompatible, status } = userDataset;
     const isCompatibleProject = userDataset.projects.includes(projectId);
+    const isInstalled =
+      status?.import === 'complete' &&
+      status?.install?.find((d) => d.projectID === projectId).dataStatus ===
+        'complete';
+
+    // QUESTION: relates to above question
+    const compatibilityInfo = isCompatibleProject ? (
+      <p className="success">
+        This {dataNoun.singular.toLowerCase()} is compatible with{' '}
+        <b>{projectId}</b>. It is installed for use.
+      </p>
+    ) : (
+      <p className="danger">
+        This {dataNoun.singular.toLowerCase()} is not compatible with{' '}
+        <b>{projectId}</b>.
+      </p>
+    );
 
     return (
       <section id="dataset-compatibility">
@@ -486,7 +504,13 @@ class UserDatasetDetail extends React.Component {
         <div style={{ maxWidth: '600px' }}>
           <Mesa state={compatibilityTableState} />
         </div>
-        {isCompatibleProject && isCompatible ? (
+        {isInstalled && compatibilityInfo}
+        {!isInstalled && (
+          <p className="danger">
+            This {dataNoun.singular.toLowerCase()} is not installed.
+          </p>
+        )}
+        {/* {isCompatibleProject && isCompatible ? (
           <p className="success">
             This {dataNoun.singular.toLowerCase()} is compatible with the
             current release, build {buildNumber}, of <b>{projectId}</b>. It is
@@ -498,7 +522,7 @@ class UserDatasetDetail extends React.Component {
             current release, build {buildNumber}, of <b>{projectId}</b>. It is
             not installed for use.
           </p>
-        )}
+        )} */}
       </section>
     );
   }
