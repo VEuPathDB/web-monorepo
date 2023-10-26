@@ -120,28 +120,34 @@ export default function SemanticMarkers({
           markers: recenteredMarkers,
         });
         setConsolidatedMarkers(animationValues.markers);
-        timeoutVariable = enqueueZoom(animationValues.zoomType);
+        timeoutVariable = enqueueZoom(
+          animationValues.zoomType,
+          recenteredMarkers
+        );
       } else {
         /** First render of markers **/
-        setConsolidatedMarkers(markers);
+        setConsolidatedMarkers(recenteredMarkers);
       }
 
       // Update previous markers with the original markers array
       setPrevMarkers(markers);
     }
 
-    function enqueueZoom(zoomType: string | null) {
+    function enqueueZoom(
+      zoomType: string | null,
+      nextMarkers: ReactElement<BoundsDriftMarkerProps>[]
+    ) {
       /** If we are zooming in then reset the marker elements. When initially rendered
        * the new markers will start at the matching existing marker's location and here we will
        * reset marker elements so they will animated to their final position
        **/
       if (zoomType === 'in') {
-        setConsolidatedMarkers(markers);
+        setConsolidatedMarkers(nextMarkers);
       } else if (zoomType === 'out') {
         /** If we are zooming out then remove the old markers after they finish animating. **/
         return window.setTimeout(
           () => {
-            setConsolidatedMarkers(markers);
+            setConsolidatedMarkers(nextMarkers);
           },
           animation ? animation.duration : 0
         );
