@@ -40,6 +40,7 @@ import { ToImgopts } from 'plotly.js';
 import { DEFAULT_CONTAINER_HEIGHT } from './PlotlyPlot';
 import domToImage from 'dom-to-image';
 import './VolcanoPlot.css';
+import { truncateWithEllipsis } from '../utils/axis-tick-label-ellipsis';
 
 export interface RawDataMinMaxValues {
   x: NumberRange;
@@ -290,7 +291,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
                   {...xyAccessors}
                 >
                   <AnnotationLabel
-                    subtitle={label}
+                    subtitle={truncateWithEllipsis(label, 30)}
                     horizontalAnchor="middle"
                     verticalAnchor="start"
                     showAnchorLine={false}
