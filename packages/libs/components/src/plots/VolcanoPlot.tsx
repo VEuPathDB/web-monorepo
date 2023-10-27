@@ -106,9 +106,8 @@ const EmptyVolcanoPlotData: VolcanoPlotData = {
   statistics: EmptyVolcanoPlotStats,
 };
 
-const DefaultStatisticsFloors: StatisticsFloors = {
-  pValueFloor: 1e-200, // This default matches the default value in the backend.
-  adjustedPValueFloor: 0,
+export const DefaultStatisticsFloors: StatisticsFloors = {
+  pValueFloor: 0, // Do not floor by default
 };
 
 const MARGIN_DEFAULT = 50;
@@ -184,6 +183,15 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   // Set maxes and mins of the data itself from rawDataMinMaxValues prop
   const { min: dataXMin, max: dataXMax } = rawDataMinMaxValues.x;
   const { min: dataYMin, max: dataYMax } = rawDataMinMaxValues.y;
+
+  // When dataYMin = 0, there must be a point with pvalue = 0, which means the plot will try in vain to draw a point at -log10(0) = Inf.
+  // When this issue arises, one should set a pValueFloor >= 0 so that the point with pValue = 0
+  // will be able to be plotted sensibly.
+  if (dataYMin === 0 && statisticsFloors.pValueFloor <= 0) {
+    throw new Error(
+      'Found data point with pValue = 0. Cannot create a volcano plot with a point at -log10(0) = Inf. Please use the statisticsFloors prop to set a pValueFloor >= 0.'
+    );
+  }
 
   // Set mins, maxes of axes in the plot using axis range props
   // The y axis max should not be allowed to exceed -log10(pValueFloor)

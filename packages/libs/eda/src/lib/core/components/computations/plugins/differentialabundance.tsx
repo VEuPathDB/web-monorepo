@@ -190,6 +190,8 @@ export function DifferentialAbundanceConfiguration(
       DIFFERENTIAL_ABUNDANCE_METHODS[0];
 
   // Set the pValueFloor here. May change for other apps.
+  // Note this is intentionally different than the default pValueFloor used in the Volcano component. By default
+  // that component does not floor the data, but we know we want the diff abund computation to use a floor.
   if (configuration) configuration.pValueFloor = '1e-200';
 
   // Include known collection variables in this array.
