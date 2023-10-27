@@ -163,7 +163,8 @@ export default function SemanticMarkers({
     [consolidatedMarkers]
   );
 
-  useFlyToMarkers({ markers: refinedMarkers, flyToMarkers, flyToMarkersDelay });
+  // this should use the unadulterated markers (which are always in the "main world")
+  useFlyToMarkers({ markers, flyToMarkers, flyToMarkersDelay });
 
   return <>{refinedMarkers}</>;
 }
