@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAnalysis, useGetDefaultVariableDescriptor } from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
 import { useGetDefaultTimeVariableDescriptor } from './hooks/eztimeslider';
+import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
 
 const LatLngLiteral = t.type({ lat: t.number, lng: t.number });
 
@@ -44,6 +45,9 @@ export const MarkerConfiguration = t.intersection([
     type: MarkerType,
     selectedVariable: VariableDescriptor,
   }),
+  t.partial({
+    activeVisualizationId: t.string,
+  }),
   t.union([
     t.type({
       type: t.literal('barplot'),
@@ -80,9 +84,9 @@ export const AppState = t.intersection([
     }),
     activeMarkerConfigurationType: MarkerType,
     markerConfigurations: t.array(MarkerConfiguration),
+    isSidePanelExpanded: t.boolean,
   }),
   t.partial({
-    activeVisualizationId: t.string,
     boundsZoomLevel: t.type({
       zoomLevel: t.number,
       bounds: t.type({
@@ -111,12 +115,6 @@ export const AppState = t.intersection([
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export type AppState = t.TypeOf<typeof AppState>;
-
-// export default viewport for custom zoom control
-export const defaultViewport: AppState['viewport'] = {
-  center: [0, 0],
-  zoom: 1,
-};
 
 export function useAppState(uiStateKey: string, analysisId?: string) {
   const analysisState = useAnalysis(analysisId);
@@ -149,6 +147,7 @@ export function useAppState(uiStateKey: string, analysisId?: string) {
       viewport: defaultViewport,
       mouseMode: 'default',
       activeMarkerConfigurationType: 'pie',
+      isSidePanelExpanded: true,
       timeSliderConfig: {
         variable: defaultTimeVariable,
         active: true,
@@ -258,9 +257,8 @@ export function useAppState(uiStateKey: string, analysisId?: string) {
       'activeMarkerConfigurationType'
     ),
     setMarkerConfigurations: useSetter('markerConfigurations'),
-    setActiveVisualizationId: useSetter('activeVisualizationId'),
     setBoundsZoomLevel: useSetter('boundsZoomLevel'),
-    setIsSubsetPanelOpen: useSetter('isSubsetPanelOpen'),
+    setIsSidePanelExpanded: useSetter('isSidePanelExpanded'),
     setSubsetVariableAndEntity: useSetter('subsetVariableAndEntity'),
     setViewport: useSetter('viewport'),
     setTimeSliderConfig: useSetter('timeSliderConfig'),
