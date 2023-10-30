@@ -1,9 +1,9 @@
 import { cloneElement, ReactElement } from 'react';
-import { MarkerProps } from '../Types';
+import { BoundsDriftMarkerProps } from '../BoundsDriftMarker';
 
 export default function updateMarkers(
-  toChangeMarkers: Array<ReactElement<MarkerProps>>,
-  sourceMarkers: Array<ReactElement<MarkerProps>>,
+  toChangeMarkers: Array<ReactElement<BoundsDriftMarkerProps>>,
+  sourceMarkers: Array<ReactElement<BoundsDriftMarkerProps>>,
   hashDif: number
 ) {
   return toChangeMarkers.map((markerObj) => {

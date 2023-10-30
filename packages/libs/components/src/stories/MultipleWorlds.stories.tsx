@@ -65,7 +65,7 @@ const getMarkerElements = (
   });
 };
 
-const getDatelineArgs = () => {
+const useDatelineArgs = () => {
   const [markerElements, setMarkerElements] = useState<
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
@@ -79,7 +79,7 @@ const getDatelineArgs = () => {
     (bvp: BoundsViewport) => {
       setMarkerElements(getMarkerElements(bvp, duration, testDataStraddling));
     },
-    [setMarkerElements]
+    [duration]
   );
 
   return {
@@ -100,6 +100,6 @@ const getDatelineArgs = () => {
 };
 
 const Template = (args: MapVEuMapProps) => (
-  <MapVEuMap {...getDatelineArgs()} {...args} />
+  <MapVEuMap {...useDatelineArgs()} {...args} />
 );
 export const DatelineData: Story<MapVEuMapProps> = Template.bind({});
