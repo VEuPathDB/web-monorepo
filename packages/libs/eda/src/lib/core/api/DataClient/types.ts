@@ -366,10 +366,16 @@ export const VolcanoPlotStatistics = array(
   })
 );
 
-export const VolcanoPlotResponse = type({
-  effectSizeLabel: string,
-  statistics: VolcanoPlotStatistics,
-});
+export const VolcanoPlotResponse = intersection([
+  type({
+    effectSizeLabel: string,
+    statistics: VolcanoPlotStatistics,
+  }),
+  partial({
+    pValueFloor: string,
+    adjustedPValueFloor: string,
+  }),
+]);
 
 export interface VolcanoPlotRequestParams {
   studyId: string;
