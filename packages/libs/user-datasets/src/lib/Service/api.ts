@@ -108,7 +108,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
       path: VDI_SERVICE,
       body: fileBody,
       // TODO: figure out how to pull this from userDataset type instead
-      transformResponse: ioTransformer(type({ datasetID: string })),
+      transformResponse: ioTransformer(type({ datasetId: string })),
     });
   };
 

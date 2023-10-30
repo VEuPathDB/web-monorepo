@@ -33,10 +33,6 @@ export interface UserDataset {
     resourceIdentifier: string;
     resourceVersion: string;
   }>;
-  datafiles: Array<{
-    name: string;
-    size: number;
-  }>;
   projects: string[];
   id: string;
   meta: UserDatasetMeta;
@@ -45,14 +41,15 @@ export interface UserDataset {
   percentQuotaUsed: number;
   sharedWith: UserDatasetShare[] | undefined;
   questions: string[];
-  size: number;
+  size?: number;
   type: {
     name: string;
     display: string;
     version: string;
   };
-  fileCount: number;
+  fileCount?: number;
   status?: UserDatasetVDI['status'];
+  fileListing?: UserDatasetFileListing;
 }
 
 export interface UserDatasetUpload {
@@ -173,7 +170,7 @@ const userMetadata = partial({
 
 const ownerDetails = intersection([
   type({
-    userID: number,
+    userId: number,
   }),
   userMetadata,
 ]);
@@ -200,7 +197,7 @@ const installStatus = keyof({
 const installDetails = array(
   intersection([
     type({
-      projectID: string,
+      projectId: string,
     }),
     partial({
       metaStatus: installStatus,
@@ -235,7 +232,7 @@ const visibilityOptions = keyof({
 });
 
 const userDatasetRecipientDetails = type({
-  userID: number,
+  userId: number,
   firstName: string,
   lastName: string,
   organization: string,
@@ -243,13 +240,13 @@ const userDatasetRecipientDetails = type({
 
 export const userDataset = intersection([
   type({
-    datasetID: string,
+    datasetId: string,
     owner: ownerDetails,
     datasetType: datasetTypeDetails,
     visibility: visibilityOptions,
     name: string,
     origin: string,
-    projectIDs: array(string),
+    projectIds: array(string),
     status: statusDetails,
     created: string,
     fileCount: number,
@@ -273,16 +270,15 @@ const userDatasetDetailsShareDetails = type({
 
 export const userDatasetDetails = intersection([
   type({
-    datasetID: string,
+    datasetId: string,
     owner: ownerDetails,
     datasetType: datasetTypeDetails,
     visibility: visibilityOptions,
     name: string,
     origin: string,
-    projectIDs: array(string),
+    projectIds: array(string),
     status: statusDetails,
     created: string,
-    files: array(type({ name: string, size: number })),
   }),
   partial({
     summary: string,
@@ -300,9 +296,15 @@ export const userQuotaMetadata = type({
   }),
 });
 
-export const userDatasetFileListing = type({
-  uploadFiles: array(type({ name: string, size: number })),
-  dataFiles: array(type({ name: string, size: number })),
+export const userDatasetFileListing = partial({
+  upload: type({
+    zipSize: number,
+    contents: array(type({ fileName: string, fileSize: number })),
+  }),
+  install: type({
+    zipSize: number,
+    contents: array(type({ fileName: string, fileSize: number })),
+  }),
 });
 
 export interface NewUserDatasetMeta {

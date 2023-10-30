@@ -96,7 +96,7 @@ export function useDiyStudySummaryRows(): UserStudySummaryRow[] | undefined {
 
     const currentUserDatasetsById = keyBy(
       currentUserDatasets,
-      ({ datasetID }) => datasetID
+      ({ datasetId }) => datasetId
     );
 
     return diyDatasets.flatMap((diyDataset) => {
@@ -113,7 +113,7 @@ export function useDiyStudySummaryRows(): UserStudySummaryRow[] | undefined {
           edaWorkspaceUrl: `${diyDataset.baseEdaRoute}/new`,
           summary: userDataset.summary ?? '',
           owner:
-            userDataset.owner.userID === currentUser.id
+            userDataset.owner.userId === currentUser.id
               ? 'Me'
               : userDataset.owner.firstName + ' ' + userDataset.owner.lastName,
           sharedWith:

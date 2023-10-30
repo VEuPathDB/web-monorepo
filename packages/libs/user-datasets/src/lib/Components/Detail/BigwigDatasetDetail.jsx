@@ -70,7 +70,7 @@ class BigwigDatasetDetail extends UserDatasetDetail {
 
     const isInstalled =
       status?.import === 'complete' &&
-      status?.install?.find((d) => d.projectID === config.projectId)
+      status?.install?.find((d) => d.projectId === config.projectId)
         .dataStatus === 'complete';
 
     return !rows.length ? null : isInstalled ? (

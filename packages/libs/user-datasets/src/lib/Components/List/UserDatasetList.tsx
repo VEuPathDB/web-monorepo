@@ -584,7 +584,7 @@ class UserDatasetList extends React.Component<Props, State> {
 
     const totalSize = userDatasets
       .filter((ud) => ud.ownerUserId === user.id)
-      .map((ud) => ud.size)
+      .map((ud) => ud.size ?? 0)
       .reduce(add, 0);
 
     const totalPercent = totalSize / quotaSize;

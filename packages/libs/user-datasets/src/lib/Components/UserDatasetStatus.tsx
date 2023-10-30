@@ -22,7 +22,7 @@ export default function UserDatasetStatus(props: Props) {
   const { projects, status } = userDataset;
   const lowercaseSingularDataNoun = dataNoun.singular.toLowerCase();
   const projectSpecificInstallStatus = status?.install?.find(
-    (d) => d.projectID === projectId
+    (d) => d.projectId === projectId
   );
   const isInstallable = projects.includes(projectId);
   const isInstalled =

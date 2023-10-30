@@ -420,11 +420,10 @@ export function loadUserDatasetList() {
             transformVdiResponseToLegacyResponseHelper(ud, userQuotaMetadata);
           return {
             ...partiallyTransformedResponse,
-            datafiles: [],
             fileCount,
             size: fileSizeTotal,
             sharedWith: shares?.map((d) => ({
-              user: d.userID,
+              user: d.userId,
               userDisplayName: d.firstName + ' ' + d.lastName,
             })),
           };
@@ -444,7 +443,7 @@ export function loadUserDatasetDetail(id: string) {
       wdkService.getUserDatasetFileListing(id),
     ]).then(
       ([userDataset, userQuotaMetadata, fileListing]) => {
-        const { files, shares } = userDataset as UserDatasetDetails;
+        const { shares } = userDataset as UserDatasetDetails;
         const partiallyTransformedResponse =
           transformVdiResponseToLegacyResponseHelper(
             userDataset,
@@ -452,15 +451,15 @@ export function loadUserDatasetDetail(id: string) {
           );
         const transformedResponse = {
           ...partiallyTransformedResponse,
-          datafiles: files,
-          fileCount: files.length,
-          size: files.reduce((prev, curr) => prev + curr.size, 0),
+          fileListing,
+          fileCount: fileListing?.upload?.contents.length,
+          size: fileListing?.upload?.zipSize,
           sharedWith: shares
             ?.filter((d) => d.status === 'grant')
             .map((d) => ({
               userDisplayName:
                 d.recipient.firstName + ' ' + d.recipient.lastName,
-              user: d.recipient.userID,
+              user: d.recipient.userId,
             })),
         };
         return detailReceived(id, transformedResponse, fileListing);
@@ -611,15 +610,15 @@ function transformVdiResponseToLegacyResponseHelper(
     summary,
     owner,
     datasetType,
-    projectIDs,
-    datasetID,
+    projectIds,
+    datasetId,
     created,
     status,
   } = ud;
   const { quota } = userQuotaMetadata;
   return {
     owner: owner.firstName + ' ' + owner.lastName,
-    projects: projectIDs ?? [],
+    projects: projectIds ?? [],
     created: ud.created,
     type: {
       display: datasetType.displayName ?? datasetType.name,
@@ -631,10 +630,10 @@ function transformVdiResponseToLegacyResponseHelper(
       description: description ?? '',
       summary: summary ?? '',
     },
-    ownerUserId: owner.userID,
+    ownerUserId: owner.userId,
     dependencies: [],
     age: Date.now() - Date.parse(created),
-    id: datasetID,
+    id: datasetId,
     questions: [],
     percentQuotaUsed: quota.usage / quota.limit,
     status,

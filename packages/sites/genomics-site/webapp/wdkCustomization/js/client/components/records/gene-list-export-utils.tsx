@@ -139,7 +139,7 @@ export function useSendToBasketConfig(
 export function useSendToGeneListUserDatasetConfig(
   resultType: ResultType
 ):
-  | ExportOption<'my-data-sets', [{ datasetID: string }, RecordClass], unknown>
+  | ExportOption<'my-data-sets', [{ datasetId: string }, RecordClass], unknown>
   | undefined {
   const dispatch = useDispatch();
 

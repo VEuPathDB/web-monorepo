@@ -138,7 +138,7 @@ class UserDatasetDetail extends React.Component {
     const isOwner = this.isMyDataset();
     const isInstalled =
       status?.import === 'complete' &&
-      status?.install?.find((d) => d.projectID === config.projectId)
+      status?.install?.find((d) => d.projectId === config.projectId)
         .dataStatus === 'complete';
 
     return [
@@ -346,13 +346,14 @@ class UserDatasetDetail extends React.Component {
 
   renderFileSection() {
     const { userDataset, dataNoun } = this.props;
+    const { fileListing } = userDataset;
     const uploadZipFileState = MesaState.create({
-      columns: this.getFileTableColumns('upload', true),
-      rows: [{ name: 'upload.zip', size: userDataset.size }],
+      columns: this.getFileTableColumns('upload'),
+      rows: [{ name: 'upload.zip', size: fileListing?.upload?.zipSize }],
     });
     const processedZipFileState = MesaState.create({
-      columns: this.getFileTableColumns('data', false),
-      rows: [{ name: 'install.zip' }],
+      columns: this.getFileTableColumns('data'),
+      rows: [{ name: 'install.zip', size: fileListing?.install?.zipSize }],
     });
 
     return (
@@ -372,30 +373,33 @@ class UserDatasetDetail extends React.Component {
     );
   }
 
-  getFileTableColumns(zipFileType, showFileSize) {
+  getFileTableColumns(fileType) {
     const { userDataset } = this.props;
-    const { id } = userDataset;
+    const { id, fileListing } = userDataset;
     const { wdkService } = this.context;
 
-    const fileList =
-      zipFileType === 'upload' ? (
-        <details style={{ margin: '1em 0 0 0.25em' }}>
-          <summary>List of uploaded files:</summary>
-          <ol
-            style={{
-              margin: '0.25em 0 0 0',
-              lineHeight: '1.5em',
-              padding: '0 0 0 2em',
-            }}
-          >
-            {userDataset.datafiles.map((file, index) => (
-              <li key={`${file.name}-${index}`}>
-                {file.name} <span>({bytesToHuman(file.size)})</span>
-              </li>
-            ))}
-          </ol>
-        </details>
-      ) : null;
+    const fileListIndex = fileType === 'upload' ? 'upload' : 'install';
+
+    const fileListElement = fileListing[fileListIndex]?.contents?.length && (
+      <details style={{ margin: '1em 0 0 0.25em' }}>
+        <summary>
+          List of {fileType === 'upload' ? 'uploaded' : 'processed'} files:
+        </summary>
+        <ol
+          style={{
+            margin: '0.25em 0 0 0',
+            lineHeight: '1.5em',
+            padding: '0 0 0 2em',
+          }}
+        >
+          {fileListing[fileListIndex].contents.map((file, index) => (
+            <li key={`${file.fileName}-${index}`}>
+              {file.fileName} <span>({bytesToHuman(file.fileSize)})</span>
+            </li>
+          ))}
+        </ol>
+      </details>
+    );
 
     return [
       {
@@ -406,23 +410,19 @@ class UserDatasetDetail extends React.Component {
           return (
             <>
               <code>{name}</code>
-              {fileList}
+              {fileListElement}
             </>
           );
         },
       },
-      ...(showFileSize
-        ? [
-            {
-              key: 'size',
-              name: 'File Size',
-              renderCell({ row }) {
-                const { size } = row;
-                return bytesToHuman(size);
-              },
-            },
-          ]
-        : []),
+      {
+        key: 'size',
+        name: 'File Size',
+        renderCell({ row }) {
+          const { size } = row;
+          return size ? bytesToHuman(size) : 'pending';
+        },
+      },
       {
         key: 'download',
         name: 'Download',
@@ -442,7 +442,7 @@ class UserDatasetDetail extends React.Component {
               }
               onClick={(e) => {
                 e.preventDefault();
-                wdkService.getUserDatasetFiles(id, zipFileType);
+                wdkService.getUserDatasetFiles(id, fileType);
               }}
             >
               <Icon fa="save" className="left-side" /> Download
@@ -474,7 +474,7 @@ class UserDatasetDetail extends React.Component {
     const isCompatibleProject = userDataset.projects.includes(projectId);
     const isInstalled =
       status?.import === 'complete' &&
-      status?.install?.find((d) => d.projectID === projectId).dataStatus ===
+      status?.install?.find((d) => d.projectId === projectId).dataStatus ===
         'complete';
 
     // QUESTION: relates to above question

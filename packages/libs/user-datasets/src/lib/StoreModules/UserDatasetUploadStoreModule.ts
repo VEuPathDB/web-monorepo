@@ -71,7 +71,7 @@ function observeSubmitUploadForm(
         );
         if (action.payload.baseUrl != null) {
           dependencies.transitioner.transitionToInternalPage(
-            `${action.payload.baseUrl}/${response.datasetID}`
+            `${action.payload.baseUrl}/${response.datasetId}`
           );
         }
         return requestUploadMessages();
