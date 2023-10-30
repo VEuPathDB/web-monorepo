@@ -264,30 +264,6 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     }
   }, [data.value, vizConfig.dependentAxisRange, rawDataMinMaxValues]);
 
-  // determine default min/max for x and y
-  const defaultIndependentAxisRange = useMemo(() => {
-    if (!data.value) return undefined;
-    return {
-      min: rawDataMinMaxValues.x.min,
-      max: rawDataMinMaxValues.x.max,
-    };
-  }, [data.value, rawDataMinMaxValues.x]);
-
-  const defaultDependentAxisRange = useMemo(() => {
-    if (!data.value) return undefined;
-    // since y values are -log10, it needs to check min & max
-    return {
-      min: Math.min(
-        -Math.log10(rawDataMinMaxValues.y.min),
-        -Math.log10(rawDataMinMaxValues.y.max)
-      ),
-      max: Math.max(
-        -Math.log10(rawDataMinMaxValues.y.min),
-        -Math.log10(rawDataMinMaxValues.y.max)
-      ),
-    };
-  }, [data.value, rawDataMinMaxValues.y]);
-
   const significanceThreshold =
     vizConfig.significanceThreshold ?? DEFAULT_SIG_THRESHOLD;
   const effectSizeThreshold =
@@ -483,7 +459,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     ...(data.value ? {} : EMPTY_VIZ_AXIS_RANGES),
   };
 
-  // set truncation flags: will see if this is reusable with other application
+  // set truncation flags
   const {
     truncationConfigIndependentAxisMin,
     truncationConfigIndependentAxisMax,
@@ -493,13 +469,25 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     () =>
       truncationConfig(
         {
-          independentAxisRange: defaultIndependentAxisRange,
-          dependentAxisRange: defaultDependentAxisRange,
+          independentAxisRange: {
+            min: rawDataMinMaxValues.x.min,
+            max: rawDataMinMaxValues.x.max,
+          },
+          dependentAxisRange: {
+            min: Math.min(
+              -Math.log10(rawDataMinMaxValues.y.min),
+              -Math.log10(rawDataMinMaxValues.y.max)
+            ),
+            max: Math.max(
+              -Math.log10(rawDataMinMaxValues.y.min),
+              -Math.log10(rawDataMinMaxValues.y.max)
+            ),
+          },
         },
         vizConfig,
         {}
       ),
-    [defaultIndependentAxisRange, defaultDependentAxisRange, vizConfig]
+    [rawDataMinMaxValues, vizConfig]
   );
 
   // set useEffect for changing truncation warning message
@@ -522,12 +510,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
   ]);
 
   useEffect(() => {
-    if (
-      // (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) &&
-      // !scatterplotProps.showSpinner
-      truncationConfigDependentAxisMin ||
-      truncationConfigDependentAxisMax
-    ) {
+    if (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) {
       setTruncatedDependentAxisWarning(
         'Data may have been truncated by range selection, as indicated by the yellow shading'
       );
