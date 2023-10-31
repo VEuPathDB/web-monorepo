@@ -64,7 +64,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
     );
   };
 
-  addDataset = (newUserDatasetConfig: NewUserDataset) => {
+  addUserDataset = (newUserDatasetConfig: NewUserDataset) => {
     const { uploadMethod, ...remainingConfig } = newUserDatasetConfig;
 
     const meta: NewUserDatasetMeta = {

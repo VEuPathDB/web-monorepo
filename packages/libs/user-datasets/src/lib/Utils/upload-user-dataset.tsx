@@ -16,7 +16,7 @@ export async function uploadUserDataset(
     formSubmission
   );
 
-  return await wdkService.addDataset(newUserDatasetConfig);
+  return await wdkService.addUserDataset(newUserDatasetConfig);
 }
 
 export async function makeNewUserDatasetConfig(
