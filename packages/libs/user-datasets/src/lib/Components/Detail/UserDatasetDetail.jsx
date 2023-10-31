@@ -14,7 +14,7 @@ import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 import NotFound from '@veupathdb/wdk-client/lib/Views/NotFound/NotFound';
 
 import SharingModal from '../Sharing/UserDatasetSharingModal';
-import UserDatasetStatus from '../UserDatasetStatus';
+import UserDatasetStatus, { getDatasetStatusInfo } from '../UserDatasetStatus';
 import { makeClassifier, normalizePercentage } from '../UserDatasetUtils';
 import { ThemedGrantAccessButton } from '../ThemedGrantAccessButton';
 import { ThemedDeleteButton } from '../ThemedDeleteButton';
@@ -468,25 +468,39 @@ class UserDatasetDetail extends React.Component {
       rows: userDataset.dependencies,
     });
 
-    // const { buildNumber } = config;
-    // QUESTION: how do we check compatibility with current build/version in VDI?
-    const { status } = userDataset;
-    const isCompatibleProject = userDataset.projects.includes(projectId);
-    const isInstalled =
-      status?.import === 'complete' &&
-      status?.install?.find((d) => d.projectId === projectId).dataStatus ===
-        'complete';
+    const { status, projects } = userDataset;
 
-    // QUESTION: relates to above question
-    const compatibilityInfo = isCompatibleProject ? (
+    /**
+     * In VDI, we know a dataset is compatible when the site-specific's install status
+     * indicates a successful install.
+     */
+    const installStatusByProject = status?.install?.find(
+      (d) => d.projectId === projectId
+    );
+    const { isInstalled, hasFailed } = getDatasetStatusInfo(
+      projects,
+      projectId,
+      status.import,
+      installStatusByProject
+    );
+
+    const compatibilityInfo = isInstalled ? (
+      // if we've installed successfully, we're compatible
       <p className="success">
         This {dataNoun.singular.toLowerCase()} is compatible with{' '}
         <b>{projectId}</b>. It is installed for use.
       </p>
-    ) : (
+    ) : hasFailed ? (
+      // if isInstalled is false but hasFailed is true, we're incompatible
       <p className="danger">
         This {dataNoun.singular.toLowerCase()} is not compatible with{' '}
         <b>{projectId}</b>.
+      </p>
+    ) : (
+      // if isInstalled AND hasFailed are false, then either import or install is in progress
+      <p className="danger">
+        This {dataNoun.singular.toLowerCase()} is not yet installed. Please
+        check again soon.
       </p>
     );
 
@@ -509,25 +523,7 @@ class UserDatasetDetail extends React.Component {
         <div style={{ maxWidth: '600px' }}>
           <Mesa state={compatibilityTableState} />
         </div>
-        {isInstalled && compatibilityInfo}
-        {!isInstalled && (
-          <p className="danger">
-            This {dataNoun.singular.toLowerCase()} is not installed.
-          </p>
-        )}
-        {/* {isCompatibleProject && isCompatible ? (
-          <p className="success">
-            This {dataNoun.singular.toLowerCase()} is compatible with the
-            current release, build {buildNumber}, of <b>{projectId}</b>. It is
-            installed for use.
-          </p>
-        ) : (
-          <p className="danger">
-            This {dataNoun.singular.toLowerCase()} is not compatible with the
-            current release, build {buildNumber}, of <b>{projectId}</b>. It is
-            not installed for use.
-          </p>
-        )} */}
+        {compatibilityInfo}
       </section>
     );
   }

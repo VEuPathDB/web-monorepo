@@ -48,7 +48,7 @@ export interface UserDataset {
     version: string;
   };
   fileCount?: number;
-  status?: UserDatasetVDI['status'];
+  status: UserDatasetVDI['status'];
   fileListing?: UserDatasetFileListing;
 }
 
@@ -194,19 +194,17 @@ const installStatus = keyof({
   running: null,
 });
 
-const installDetails = array(
-  intersection([
-    type({
-      projectId: string,
-    }),
-    partial({
-      metaStatus: installStatus,
-      metaMessage: string,
-      dataStatus: installStatus,
-      dataMessage: string,
-    }),
-  ])
-);
+const installDetails = intersection([
+  type({
+    projectId: string,
+  }),
+  partial({
+    metaStatus: installStatus,
+    metaMessage: string,
+    dataStatus: installStatus,
+    dataMessage: string,
+  }),
+]);
 
 const importStatus = keyof({
   'in-progress': null,
@@ -221,7 +219,7 @@ const statusDetails = intersection([
     import: importStatus,
   }),
   partial({
-    install: installDetails,
+    install: array(installDetails),
   }),
 ]);
 
@@ -331,3 +329,4 @@ export type UserDatasetVDI = TypeOf<typeof userDataset>;
 export type UserDatasetDetails = TypeOf<typeof userDatasetDetails>;
 export type UserQuotaMetadata = TypeOf<typeof userQuotaMetadata>;
 export type UserDatasetFileListing = TypeOf<typeof userDatasetFileListing>;
+export type UserDatasetInstallDetailsByProject = TypeOf<typeof installDetails>;

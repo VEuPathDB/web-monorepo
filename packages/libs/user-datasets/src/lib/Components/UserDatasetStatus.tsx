@@ -5,7 +5,12 @@ import {
   Tooltip,
 } from '@veupathdb/wdk-client/lib/Components';
 
-import { DataNoun, UserDataset } from '../Utils/types';
+import {
+  DataNoun,
+  UserDataset,
+  UserDatasetVDI,
+  UserDatasetInstallDetailsByProject,
+} from '../Utils/types';
 
 interface Props {
   baseUrl: string;
@@ -17,26 +22,50 @@ interface Props {
   dataNoun: DataNoun;
 }
 
+export function getDatasetStatusInfo(
+  projects: UserDatasetVDI['projectIds'],
+  projectId: string,
+  importStatus: UserDatasetVDI['status']['import'],
+  installStatus?: UserDatasetInstallDetailsByProject
+): {
+  isInstallable: boolean;
+  isInstalled: boolean;
+  isQueued: boolean;
+  hasFailed: boolean;
+} {
+  const isInstallable = projects.includes(projectId);
+  const isInstalled =
+    importStatus === 'complete' && installStatus?.dataStatus === 'complete';
+  const isQueued =
+    importStatus === 'queued' ||
+    (importStatus === 'complete' && !installStatus?.dataStatus);
+  const hasFailed =
+    importStatus === 'failed' ||
+    importStatus === 'invalid' ||
+    ['failed-installation', 'failed-validation', 'missing-dependency'].includes(
+      installStatus?.dataStatus ?? ''
+    );
+  return {
+    isInstallable,
+    isInstalled,
+    isQueued,
+    hasFailed,
+  };
+}
+
 export default function UserDatasetStatus(props: Props) {
   const { baseUrl, userDataset, projectId, displayName, dataNoun } = props;
   const { projects, status } = userDataset;
   const lowercaseSingularDataNoun = dataNoun.singular.toLowerCase();
-  const projectSpecificInstallStatus = status?.install?.find(
+  const installStatusByProject = status?.install?.find(
     (d) => d.projectId === projectId
   );
-  const isInstallable = projects.includes(projectId);
-  const isInstalled =
-    status?.import === 'complete' &&
-    projectSpecificInstallStatus?.dataStatus === 'complete';
-  const isQueued =
-    status?.import === 'queued' ||
-    (status?.import === 'complete' &&
-      !projectSpecificInstallStatus?.dataStatus);
-  const hasFailed =
-    status?.import === 'failed' ||
-    status?.import === 'invalid' ||
-    ['failed-installation', 'failed-validation', 'missing-dependency'].includes(
-      projectSpecificInstallStatus?.dataStatus ?? ''
+  const { isInstallable, isInstalled, isQueued, hasFailed } =
+    getDatasetStatusInfo(
+      projects,
+      projectId,
+      status.import,
+      installStatusByProject
     );
   const phase = status?.import !== 'complete' ? '1' : '2';
   const link = `${baseUrl}/${userDataset.id}`;
@@ -53,7 +82,7 @@ export default function UserDatasetStatus(props: Props) {
     <span>Queued (for phase {phase}). Please check again soon.</span>
   ) : hasFailed ? (
     <span>
-      Failed (phase {phase}): {projectSpecificInstallStatus?.dataMessage}
+      Failed (phase {phase}): {installStatusByProject?.dataMessage}
     </span>
   ) : (
     <span>
