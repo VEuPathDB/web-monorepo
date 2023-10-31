@@ -325,17 +325,23 @@ interface RequestRequestOptionsGetter {
   ): RecordRequestOptions[];
 }
 
+interface CategoryTreePruner {
+  (recordClass: RecordClass, categoryTree: CategoryTreeNode): CategoryTreeNode;
+}
+
 /** Fetch page data from services */
 export function loadRecordData(
   recordClass: string,
   primaryKeyValues: string[],
-  getRecordRequestOptions: RequestRequestOptionsGetter
+  getRecordRequestOptions: RequestRequestOptionsGetter,
+  pruneCategoryTree: CategoryTreePruner
 ): ActionThunk<LoadRecordAction | UserAction | EmptyAction> {
   return function run({ wdkService }) {
     return setActiveRecord(
       recordClass,
       primaryKeyValues,
-      getRecordRequestOptions
+      getRecordRequestOptions,
+      pruneCategoryTree
     );
   };
 }
@@ -350,7 +356,8 @@ export function loadRecordData(
 function setActiveRecord(
   recordClassUrlSegment: string,
   primaryKeyValues: string[],
-  getRecordRequestOptions: RequestRequestOptionsGetter
+  getRecordRequestOptions: RequestRequestOptionsGetter,
+  pruneCategoryTree: CategoryTreePruner
 ): ActionThunk<LoadRecordAction | UserAction | EmptyAction> {
   return ({ wdkService }) => {
     const id = uniqueId('recordViewId');
@@ -364,10 +371,14 @@ function setActiveRecord(
         getCategoryTree(wdkService, recordClassUrlSegment),
       ]).then(
         ([recordClass, primaryKey, fullCategoryTree]) => {
+          const prunedCategoryTree = pruneCategoryTree(
+            recordClass,
+            fullCategoryTree
+          );
           const [initialOptions, ...additionalOptions] =
-            getRecordRequestOptions(recordClass, fullCategoryTree);
+            getRecordRequestOptions(recordClass, prunedCategoryTree);
           const categoryTree = getTree(
-            { name: '__', tree: fullCategoryTree },
+            { name: '__', tree: prunedCategoryTree },
             isNotInternalNode
           );
           const initialAction$ = wdkService
