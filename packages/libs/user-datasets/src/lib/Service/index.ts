@@ -2,11 +2,9 @@ import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
 import { ActionThunk } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
 
-import {
-  UserDatasetApi,
-  VALID_VDI_SERVICE_KEYS,
-  VDI_SERVICE_BASE_URL,
-} from './api';
+import { UserDatasetApi, VDI_SERVICE_BASE_URL } from './api';
+
+const vdiCompatibilityFlag = '__IS_VDI_COMPATIBLE_SERVICE';
 
 export type VdiCompatibleWdkService = ReturnType<typeof wrapWdkService>;
 
@@ -25,6 +23,7 @@ export function wrapWdkService(
   );
 
   return {
+    [vdiCompatibilityFlag]: null,
     ...wdkService,
     ...vdiService,
   };
@@ -33,9 +32,7 @@ export function wrapWdkService(
 export function isVdiCompatibleWdkService(
   wdkService: WdkService
 ): wdkService is VdiCompatibleWdkService {
-  return VALID_VDI_SERVICE_KEYS.every(
-    (vdiServiceKey) => vdiServiceKey in wdkService
-  );
+  return vdiCompatibilityFlag in wdkService;
 }
 
 export function assertIsVdiCompatibleWdkService(

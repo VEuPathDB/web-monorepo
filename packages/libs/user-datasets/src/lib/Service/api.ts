@@ -21,9 +21,10 @@ import {
   userDatasetDetails,
   userQuotaMetadata,
   userDatasetFileListing,
+  datasetIdType,
 } from '../Utils/types';
 
-import { array, string, type } from 'io-ts';
+import { array } from 'io-ts';
 import { submitAsForm } from '@veupathdb/wdk-client/lib/Utils/FormSubmitter';
 
 export const VDI_SERVICE_BASE_URL = 'http://localhost:8080';
@@ -32,20 +33,6 @@ const VDI_SERVICE = '/vdi-datasets';
 const userIdsByEmailDecoder = record({
   results: arrayOf(objectOf(number)),
 });
-
-export const VALID_VDI_SERVICE_KEYS = [
-  'getCurrentUserDatasets',
-  'addDataset',
-  'getUserDataset',
-  'updateUserDataset',
-  'removeUserDataset',
-  'getCommunityDatasets',
-  'getUserDatasetFileListing',
-  'getUserDatasetFiles',
-  'editUserDatasetSharing',
-  'getUserIdsByEmail',
-  'getUserQuotaMetadata',
-];
 
 export class UserDatasetApi extends FetchClientWithCredentials {
   getCurrentUserDatasets = (
@@ -56,6 +43,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
     sortField?: string,
     sortOrder?: string
   ) => {
+    // TODO: wire up to allow query params
     const queryString = makeQueryString(
       [
         'project_id',
@@ -107,8 +95,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
       method: 'POST',
       path: VDI_SERVICE,
       body: fileBody,
-      // TODO: figure out how to pull this from userDataset type instead
-      transformResponse: ioTransformer(type({ datasetId: string })),
+      transformResponse: ioTransformer(datasetIdType),
     });
   };
 

@@ -238,9 +238,11 @@ const userDatasetRecipientDetails = type({
   organization: string,
 });
 
+export const datasetIdType = type({ datasetId: string });
+
 export const userDataset = intersection([
+  datasetIdType,
   type({
-    datasetId: string,
     owner: ownerDetails,
     datasetType: datasetTypeDetails,
     visibility: visibilityOptions,
@@ -269,8 +271,8 @@ const userDatasetDetailsShareDetails = type({
 });
 
 export const userDatasetDetails = intersection([
+  datasetIdType,
   type({
-    datasetId: string,
     owner: ownerDetails,
     datasetType: datasetTypeDetails,
     visibility: visibilityOptions,
