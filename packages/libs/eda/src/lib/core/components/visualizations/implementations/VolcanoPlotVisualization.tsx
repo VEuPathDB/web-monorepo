@@ -486,14 +486,8 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
             max: rawDataMinMaxValues.x.max,
           },
           dependentAxisRange: {
-            min: Math.min(
-              -Math.log10(rawDataMinMaxValues.y.min),
-              -Math.log10(rawDataMinMaxValues.y.max)
-            ),
-            max: Math.max(
-              -Math.log10(rawDataMinMaxValues.y.min),
-              -Math.log10(rawDataMinMaxValues.y.max)
-            ),
+            min: -Math.log10(rawDataMinMaxValues.y.max),
+            max: -Math.log10(rawDataMinMaxValues.y.min),
           },
         },
         vizConfig,
