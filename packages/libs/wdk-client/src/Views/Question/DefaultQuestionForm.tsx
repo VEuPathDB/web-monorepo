@@ -30,6 +30,8 @@ import StepValidationInfo from '../../Views/Question/StepValidationInfo';
 import { Tabs } from '../../Components';
 
 import '../../Views/Question/DefaultQuestionForm.scss';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { type } from 'os';
 
 type TextboxChangeHandler = (
   event: React.ChangeEvent<HTMLInputElement>
@@ -408,9 +410,12 @@ export function ParameterList(props: ParameterListProps) {
               }
             />
             {parameter.visibleHelp !== undefined && (
-              <div className={cx('VisibleHelp')}>
-                {safeHtml(parameter.visibleHelp)}
-              </div>
+              <Banner
+                banner={{
+                  type: 'info',
+                  message: safeHtml(parameter.visibleHelp, null, 'div'),
+                }}
+              />
             )}
             <div className={cx('ParameterControl')}>
               {parameterElements[parameter.name]}
