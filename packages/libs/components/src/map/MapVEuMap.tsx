@@ -1,8 +1,6 @@
 import React, {
   useEffect,
   CSSProperties,
-  ReactElement,
-  cloneElement,
   Ref,
   useMemo,
   useImperativeHandle,
@@ -10,12 +8,7 @@ import React, {
   useCallback,
   useRef,
 } from 'react';
-import {
-  BoundsViewport,
-  AnimationFunction,
-  Bounds as MapVEuBounds,
-} from './Types';
-import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
+import { BoundsViewport, Bounds } from './Types';
 import {
   MapContainer,
   TileLayer,
@@ -24,7 +17,6 @@ import {
   useMap,
   useMapEvents,
 } from 'react-leaflet';
-import SemanticMarkers from './SemanticMarkers';
 import 'leaflet/dist/leaflet.css';
 import './styles/map-styles.css';
 import CustomGridLayer from './CustomGridLayer';
@@ -32,7 +24,7 @@ import { PlotRef } from '../types/plots';
 import { ToImgopts } from 'plotly.js';
 import Spinner from '../components/Spinner';
 import NoDataOverlay from '../components/NoDataOverlay';
-import { LatLngBounds, Map, DomEvent } from 'leaflet';
+import { Map, DomEvent, LatLngBounds } from 'leaflet';
 import domToImage from 'dom-to-image';
 import { makeSharedPromise } from '../utils/promise-utils';
 import { Undo } from '@veupathdb/coreui';
@@ -113,6 +105,8 @@ export interface MapVEuMapProps {
   /** update handler */
   onViewportChanged: (viewport: Viewport) => void;
 
+  onBoundsChanged: (boundsViewport: BoundsViewport) => void;
+
   /** Height and width of plot element */
   height: CSSProperties['height'];
   width: CSSProperties['width'];
@@ -121,18 +115,8 @@ export interface MapVEuMapProps {
    * which have their own dedicated props */
   style?: Omit<React.CSSProperties, 'height' | 'width'>;
 
-  /** callback for when viewport has changed, giving access to the bounding box */
-  onBoundsChanged: (bvp: BoundsViewport) => void;
-
-  markers: ReactElement<BoundsDriftMarkerProps>[];
-  recenterMarkers?: boolean;
   // closing sidebar at MapVEuMap: passing setSidebarCollapsed()
   sidebarOnClose?: (value: React.SetStateAction<boolean>) => void;
-  animation: {
-    method: string;
-    duration: number;
-    animationFunction: AnimationFunction;
-  } | null;
   /** Should a geohash-based grid be shown?
    * Optional. See also zoomLevelToGeohashLevel
    **/
@@ -157,10 +141,6 @@ export interface MapVEuMapProps {
   /** Show zoom control, default true */
   showZoomControl?: boolean;
 
-  /** Whether to zoom and pan map to center on markers */
-  flyToMarkers?: boolean;
-  /** How long (in ms) after rendering to wait before flying to markers */
-  flyToMarkersDelay?: number;
   /** Whether to show a loading spinner */
   showSpinner?: boolean;
   /** Whether to show the "No data" overlay */
@@ -183,6 +163,7 @@ export interface MapVEuMapProps {
   prevGeohashLevel?: number;
   /* prevGeohashLevel setState **/
   setPrevGeohashLevel?: React.Dispatch<React.SetStateAction<number>>;
+  children?: React.ReactNode;
 }
 
 function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
@@ -193,22 +174,15 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     style,
     onViewportChanged,
     onBoundsChanged,
-    markers,
-    animation,
-    recenterMarkers = true,
     showGrid,
     zoomLevelToGeohashLevel,
-    minZoom = 1,
     baseLayer,
     onBaseLayerChanged,
-    flyToMarkers,
-    flyToMarkersDelay,
     showSpinner,
     showNoDataOverlay,
     showScale = true,
     showLayerSelector = true,
     showAttribution = true,
-    showZoomControl = true,
     scrollingEnabled = true,
     interactive = true,
     defaultViewport,
@@ -232,8 +206,12 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     (map: Map) => {
       mapRef.current = map;
       sharedPlotCreation.run();
+      onBoundsChanged({
+        bounds: constrainLongitudeToMainWorld(boundsToGeoBBox(map.getBounds())),
+        zoomLevel: map.getZoom(),
+      });
     },
-    [sharedPlotCreation.run]
+    [onBoundsChanged, sharedPlotCreation]
   );
 
   useEffect(() => {
@@ -243,7 +221,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     if (gitterBtn) {
       gitterBtn.style.display = 'none';
     }
-    () => {
+    return () => {
       if (gitterBtn) {
         gitterBtn.style.display = 'inline';
       }
@@ -263,12 +241,8 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
         return domToImage.toPng(mapRef.current.getContainer(), imageOpts);
       },
     }),
-    [domToImage, mapRef]
+    [sharedPlotCreation.promise]
   );
-
-  const finalMarkers = useMemo(() => {
-    return markers.map((marker) => cloneElement(marker, { showPopup: true }));
-  }, [markers]);
 
   const disabledInteractiveProps = {
     dragging: false,
@@ -296,12 +270,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
       />
 
-      <SemanticMarkers
-        onBoundsChanged={onBoundsChanged}
-        markers={finalMarkers}
-        animation={animation}
-        recenterMarkers={recenterMarkers}
-      />
+      {props.children}
 
       {showGrid && zoomLevelToGeohashLevel ? (
         <CustomGridLayer zoomLevelToGeohashLevel={zoomLevelToGeohashLevel} />
@@ -326,18 +295,11 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       {/* add Scale in the map */}
       {showScale && <ScaleControl position="bottomright" />}
 
-      {/* PerformFlyToMarkers component for flyTo functionality */}
-      {flyToMarkers && (
-        <PerformFlyToMarkers
-          markers={markers}
-          flyToMarkers={flyToMarkers}
-          flyToMarkersDelay={flyToMarkersDelay}
-        />
-      )}
       {/* component for map events */}
       <MapVEuMapEvents
         onViewportChanged={onViewportChanged}
         onBaseLayerChanged={onBaseLayerChanged}
+        onBoundsChanged={onBoundsChanged}
         selectedMarkers={selectedMarkers}
         setSelectedMarkers={setSelectedMarkers}
         setIsPanning={setIsPanning}
@@ -355,49 +317,9 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
 
 export default forwardRef(MapVEuMap);
 
-// for flyTo
-interface PerformFlyToMarkersProps {
-  /* markers */
-  markers: ReactElement<BoundsDriftMarkerProps>[];
-  /** Whether to zoom and pan map to center on markers */
-  flyToMarkers?: boolean;
-  /** How long (in ms) after rendering to wait before flying to markers */
-  flyToMarkersDelay?: number;
-}
-
-// component to implement flyTo functionality
-function PerformFlyToMarkers(props: PerformFlyToMarkersProps) {
-  const { markers, flyToMarkers, flyToMarkersDelay } = props;
-
-  // instead of using useRef() to the map in v2, useMap() should be used instead in v3
-  const map = useMap();
-
-  const markersBounds = useMemo(() => {
-    return computeMarkersBounds(markers);
-  }, [markers]);
-
-  const performFlyToMarkers = useCallback(() => {
-    if (markersBounds) {
-      const boundingBox = computeBoundingBox(markersBounds);
-      if (boundingBox) map.fitBounds(boundingBox);
-    }
-  }, [markersBounds, map]);
-
-  useEffect(() => {
-    const asyncEffect = async () => {
-      if (flyToMarkersDelay)
-        await new Promise((resolve) => setTimeout(resolve, flyToMarkersDelay));
-      performFlyToMarkers();
-    };
-
-    if (flyToMarkers && markers.length > 0) asyncEffect();
-  }, [markers, flyToMarkers, flyToMarkersDelay, performFlyToMarkers]);
-
-  return null;
-}
-
 interface MapVEuMapEventsProps {
   onViewportChanged: (viewport: Viewport) => void;
+  onBoundsChanged: (bondsViewport: BoundsViewport) => void;
   onBaseLayerChanged?: (newBaseLayer: BaseLayerChoice) => void;
   selectedMarkers?: markerDataProp[];
   setSelectedMarkers?: React.Dispatch<React.SetStateAction<markerDataProp[]>>;
@@ -412,6 +334,7 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
   const {
     onViewportChanged,
     onBaseLayerChanged,
+    onBoundsChanged,
     selectedMarkers,
     setSelectedMarkers,
     setIsPanning,
@@ -464,6 +387,13 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
       ) {
         setPrevGeohashLevel(zoomLevelToGeohashLevel(mapEvents.getZoom()));
       }
+      const boundsViewport: BoundsViewport = {
+        bounds: constrainLongitudeToMainWorld(
+          boundsToGeoBBox(mapEvents.getBounds())
+        ),
+        zoomLevel: mapEvents.getZoom(),
+      };
+      onBoundsChanged(boundsViewport);
     },
     moveend: () => {
       onViewportChanged({
@@ -497,6 +427,13 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
           }
         );
       }
+      const boundsViewport: BoundsViewport = {
+        bounds: constrainLongitudeToMainWorld(
+          boundsToGeoBBox(mapEvents.getBounds())
+        ),
+        zoomLevel: mapEvents.getZoom(),
+      };
+      onBoundsChanged(boundsViewport);
     },
     baselayerchange: (e: { name: string }) => {
       onBaseLayerChanged && onBaseLayerChanged(e.name as BaseLayerChoice);
@@ -612,57 +549,60 @@ function CustomZoomControl(props: CustomZoomControlProps) {
   );
 }
 
-// compute markers bounds
-function computeMarkersBounds(markers: ReactElement<BoundsDriftMarkerProps>[]) {
-  if (markers) {
-    let [minLat, maxLat, minLng, maxLng] = [90, -90, 180, -180];
-
-    for (const marker of markers) {
-      const bounds = marker.props.bounds;
-      const ne = bounds.northEast;
-      const sw = bounds.southWest;
-
-      if (ne.lat > maxLat) maxLat = ne.lat;
-      if (ne.lat < minLat) minLat = ne.lat;
-
-      if (ne.lng > maxLng) maxLng = ne.lng;
-      if (ne.lng < minLng) minLng = ne.lng;
-
-      if (sw.lat > maxLat) maxLat = sw.lat;
-      if (sw.lat < minLat) minLat = sw.lat;
-
-      if (sw.lng > maxLng) maxLng = sw.lng;
-      if (sw.lng < minLng) minLng = sw.lng;
-    }
-
-    return {
-      southWest: { lat: minLat, lng: minLng },
-      northEast: { lat: maxLat, lng: maxLng },
-    };
-  } else {
-    return null;
+function boundsToGeoBBox(bounds: LatLngBounds): Bounds {
+  var south = bounds.getSouth();
+  if (south < -90) {
+    south = -90;
   }
+  var north = bounds.getNorth();
+  if (north > 90) {
+    north = 90;
+  }
+  var east = bounds.getEast();
+  var west = bounds.getWest();
+
+  if (east - west > 360) {
+    const center = (east + west) / 2;
+    west = center - 180;
+    east = center + 180;
+  }
+
+  return {
+    southWest: { lat: south, lng: west },
+    northEast: { lat: north, lng: east },
+  };
 }
 
-// compute bounding box
-function computeBoundingBox(markersBounds: MapVEuBounds | null) {
-  if (markersBounds) {
-    const ne = markersBounds.northEast;
-    const sw = markersBounds.southWest;
-
-    const bufferFactor = 0.1;
-    const latBuffer = (ne.lat - sw.lat) * bufferFactor;
-    const lngBuffer = (ne.lng - sw.lng) * bufferFactor;
-
-    const boundingBox = new LatLngBounds([
-      [sw.lat - latBuffer, sw.lng - lngBuffer],
-      [ne.lat + latBuffer, ne.lng + lngBuffer],
-    ]);
-
-    return boundingBox;
-  } else {
-    return undefined;
+// put longitude bounds within normal -180 to 180 range
+function constrainLongitudeToMainWorld({
+  southWest: { lat: south, lng: west },
+  northEast: { lat: north, lng: east },
+}: Bounds): Bounds {
+  let newEast = east;
+  let newWest = west;
+  while (newEast > 180) {
+    newEast -= 360;
   }
+  while (newEast < -180) {
+    newEast += 360;
+  }
+  while (newWest < -180) {
+    newWest += 360;
+  }
+  while (newWest > 180) {
+    newWest -= 360;
+  }
+
+  // fully zoomed out, the longitude bounds are often the same
+  // but we need to make sure that west is slightly greater than east
+  // so that they "wrap around" the whole globe
+  // (if west was slightly less than east, it would represent a very tiny sliver)
+  if (Math.abs(newEast - newWest) < 1e-8) newWest = newEast + 1e-8;
+
+  return {
+    southWest: { lat: south, lng: newWest },
+    northEast: { lat: north, lng: newEast },
+  };
 }
 
 // remove marker's highlight class

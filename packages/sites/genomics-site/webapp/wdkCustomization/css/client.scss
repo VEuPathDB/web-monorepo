@@ -45,12 +45,14 @@
 }
 
 /* Hide default record ID printed by WDK for junctions */
-.wdk-RecordContainer__JunctionRecordClasses\.JunctionRecordClass .wdk-RecordHeading {
+.wdk-RecordContainer__JunctionRecordClasses\.JunctionRecordClass
+  .wdk-RecordHeading {
   display: none;
 }
 
 /* Hide default record ID printed by WDK for long read transcripts */
-.wdk-RecordContainer__LongReadTranscriptRecordClasses\.LongReadTranscriptRecordClass .wdk-RecordHeading {
+.wdk-RecordContainer__LongReadTranscriptRecordClasses\.LongReadTranscriptRecordClass
+  .wdk-RecordHeading {
   display: none;
 }
 

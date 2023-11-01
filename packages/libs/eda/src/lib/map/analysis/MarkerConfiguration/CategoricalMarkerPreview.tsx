@@ -5,7 +5,7 @@ import {
   getChartMarkerDependentAxisRange,
 } from '@veupathdb/components/lib/map/ChartMarker';
 import { DonutMarkerStandalone } from '@veupathdb/components/lib/map/DonutMarker';
-import { UNSELECTED_TOKEN } from '../..';
+import { UNSELECTED_TOKEN } from '../../constants';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import {
   kFormatter,

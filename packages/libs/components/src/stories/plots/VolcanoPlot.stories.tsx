@@ -1,4 +1,7 @@
-import VolcanoPlot, { VolcanoPlotProps } from '../../plots/VolcanoPlot';
+import VolcanoPlot, {
+  StatisticsFloors,
+  VolcanoPlotProps,
+} from '../../plots/VolcanoPlot';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import { range } from 'lodash';
 import { getNormallyDistributedRandomNumber } from './ScatterPlot.storyData';
@@ -70,8 +73,8 @@ const dataSetVolcano: VEuPathDBVolcanoPlotData = {
         '0.001',
         '0.0001',
         '0.002',
-        '0',
-        '0',
+        '1e-90',
+        '0.00000002',
       ],
       adjustedPValue: ['0.01', '0.001', '0.01', '0.001', '0.02', '0', '0'],
       pointID: [
@@ -123,6 +126,7 @@ interface TemplateProps {
   comparisonLabels?: string[];
   truncationBarFill?: string;
   showSpinner?: boolean;
+  statisticsFloors?: StatisticsFloors;
 }
 
 const Template: Story<TemplateProps> = (args) => {
@@ -131,22 +135,27 @@ const Template: Story<TemplateProps> = (args) => {
   const volcanoDataPoints: VolcanoPlotData | undefined = {
     effectSizeLabel: args.data?.volcanoplot.effectSizeLabel ?? '',
     statistics:
-      args.data?.volcanoplot.statistics.effectSize.map((effectSize, index) => {
-        return {
-          effectSize: effectSize,
-          pValue: args.data?.volcanoplot.statistics.pValue[index],
-          adjustedPValue:
-            args.data?.volcanoplot.statistics.adjustedPValue[index],
-          pointID: args.data?.volcanoplot.statistics.pointID[index],
+      args.data?.volcanoplot.statistics.effectSize
+        .map((effectSize, index) => {
+          return {
+            effectSize: effectSize,
+            pValue: args.data?.volcanoplot.statistics.pValue[index],
+            adjustedPValue:
+              args.data?.volcanoplot.statistics.adjustedPValue[index],
+            pointID: args.data?.volcanoplot.statistics.pointID[index],
+          };
+        })
+        .map((d) => ({
+          ...d,
+          pointIDs: d.pointID ? [d.pointID] : undefined,
           significanceColor: assignSignificanceColor(
-            Number(effectSize),
-            Number(args.data?.volcanoplot.statistics.pValue[index]),
+            Number(d.effectSize),
+            Number(d.pValue),
             args.significanceThreshold,
             args.effectSizeThreshold,
             significanceColors
           ),
-        };
-      }) ?? [],
+        })) ?? [],
   };
 
   const rawDataMinMaxValues = {
@@ -191,6 +200,7 @@ const Template: Story<TemplateProps> = (args) => {
     truncationBarFill: args.truncationBarFill,
     showSpinner: args.showSpinner,
     rawDataMinMaxValues,
+    statisticsFloors: args.statisticsFloors,
   };
 
   return (
@@ -267,4 +277,22 @@ Empty.args = {
   significanceThreshold: 0.05,
   independentAxisRange: { min: -9, max: 9 },
   dependentAxisRange: { min: -1, max: 9 },
+};
+
+// With a pvalue floor
+const testStatisticsFloors: StatisticsFloors = {
+  pValueFloor: 0.006,
+  adjustedPValueFloor: 0.01,
+};
+export const FlooredPValues = Template.bind({});
+FlooredPValues.args = {
+  data: dataSetVolcano,
+  markerBodyOpacity: 0.8,
+  effectSizeThreshold: 1,
+  significanceThreshold: 0.01,
+  comparisonLabels: ['up in group a', 'up in group b'],
+  independentAxisRange: { min: -9, max: 9 },
+  dependentAxisRange: { min: -1, max: 9 },
+  showSpinner: false,
+  statisticsFloors: testStatisticsFloors,
 };

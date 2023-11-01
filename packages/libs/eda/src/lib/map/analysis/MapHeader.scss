@@ -23,37 +23,6 @@
       width: 55px;
     }
   }
-
-  &__SampleCounter {
-    display: flex;
-    height: 100%;
-    align-items: center;
-    justify-content: center;
-    margin-right: 1.5rem;
-    font-size: 15px;
-
-    th {
-      border-width: 0;
-      padding: 0;
-      margin: 0;
-    }
-    td {
-      margin: 0;
-      padding: 0 0 0 10px;
-    }
-    tbody tr td:first-child {
-      text-align: left;
-    }
-    tbody tr td:nth-child(2) {
-      text-align: right;
-    }
-
-    tbody tr td:first-child {
-      &::after {
-        content: ':';
-      }
-    }
-  }
 }
 
 .HeaderContent {
