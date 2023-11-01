@@ -1,6 +1,5 @@
 import { ReactElement } from 'react';
 import { LatLngLiteral, Icon } from 'leaflet';
-import { PlotProps } from '../plots/PlotlyPlot';
 
 export type LatLng = LatLngLiteral;
 // from leaflet:
@@ -39,15 +38,15 @@ export interface MarkerProps {
   zIndexOffset?: number;
 }
 
-export type AnimationFunction = ({
+export type AnimationFunction<T extends MarkerProps = MarkerProps> = ({
   prevMarkers,
   markers,
 }: {
-  prevMarkers: ReactElement<MarkerProps>[];
-  markers: ReactElement<MarkerProps>[];
+  prevMarkers: ReactElement<T>[];
+  markers: ReactElement<T>[];
 }) => {
   zoomType: string | null;
-  markers: ReactElement<MarkerProps>[];
+  markers: ReactElement<T>[];
 };
 
 /**

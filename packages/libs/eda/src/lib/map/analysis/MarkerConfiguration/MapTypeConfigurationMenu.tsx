@@ -13,19 +13,14 @@ export interface MarkerConfigurationOption {
 }
 
 interface Props {
-  activeMarkerConfigurationType: MarkerConfiguration['type'];
-  markerConfigurations: MarkerConfigurationOption[];
+  markerConfiguration: MarkerConfigurationOption;
   mapTypeConfigurationMenuTabs: TabbedDisplayProps<'markers' | 'plots'>['tabs'];
 }
 
 export function MapTypeConfigurationMenu({
-  activeMarkerConfigurationType,
-  markerConfigurations,
+  markerConfiguration,
   mapTypeConfigurationMenuTabs,
 }: Props) {
-  const activeMarkerConfiguration = markerConfigurations.find(
-    ({ type }) => type === activeMarkerConfigurationType
-  );
   const [activeTab, setActiveTab] = useState('markers');
 
   return (
@@ -42,8 +37,8 @@ export function MapTypeConfigurationMenu({
           alignItems: 'center',
         }}
       >
-        <span>Configure {activeMarkerConfiguration?.displayName}</span>
-        {activeMarkerConfiguration?.icon}
+        <span>Configure {markerConfiguration.displayName}</span>
+        {markerConfiguration.icon}
       </H5>
       <TabbedDisplay
         tabs={mapTypeConfigurationMenuTabs}

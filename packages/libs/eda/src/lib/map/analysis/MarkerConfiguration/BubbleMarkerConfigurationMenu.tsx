@@ -5,7 +5,6 @@ import {
 import { VariableTreeNode } from '../../../core/types/study';
 import { VariablesByInputName } from '../../../core/utils/data-element-constraints';
 import { findEntityAndVariable } from '../../../core/utils/study-metadata';
-import { SharedMarkerConfigurations } from './PieMarkerConfigurationMenu';
 import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
 import { BubbleOverlayConfig } from '../../../core';
 import PluginError from '../../../core/components/visualizations/PluginError';
@@ -13,7 +12,8 @@ import {
   aggregationHelp,
   AggregationInputs,
 } from '../../../core/components/visualizations/implementations/LineplotVisualization';
-import { DataElementConstraint } from '../../../core/types/visualization';
+import { DataElementConstraint } from '../../../core/types/visualization'; // TO DO for dates: remove
+import { SharedMarkerConfigurations } from '../mapTypes/shared';
 
 type AggregatorOption = typeof aggregatorOptions[number];
 const aggregatorOptions = ['mean', 'median'] as const;
