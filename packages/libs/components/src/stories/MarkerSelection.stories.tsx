@@ -23,6 +23,8 @@ import geohashAnimation from '../map/animation_functions/geohash';
 
 import { markerDataProp } from '../map/BoundsDriftMarker';
 
+import SemanticMarkers from '../map/SemanticMarkers';
+
 export default {
   title: 'Map/Marker Selection',
   component: MapVEuMapSidebar,
@@ -84,8 +86,6 @@ export const DonutMarkers: Story<MapVEuMapProps> = (args) => {
         viewport={viewport}
         onViewportChanged={setViewport}
         onBoundsChanged={handleViewportChanged}
-        markers={markerElements}
-        animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
         // pass selectedMarkers and its setState
         selectedMarkers={selectedMarkers}
@@ -95,7 +95,12 @@ export const DonutMarkers: Story<MapVEuMapProps> = (args) => {
         // pass geohash level and setState
         prevGeohashLevel={prevGeohashLevel}
         setPrevGeohashLevel={setPrevGeohashLevel}
-      />
+      >
+        <SemanticMarkers
+          markers={markerElements}
+          animation={defaultAnimation}
+        />
+      </MapVEuMap>
     </>
   );
 };
@@ -168,9 +173,7 @@ export const ChartMarkers: Story<MapVEuMapProps> = (args) => {
         viewport={viewport}
         onViewportChanged={setViewport}
         onBoundsChanged={handleViewportChanged}
-        markers={markerElements}
         showGrid={true}
-        animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
         // pass selectedMarkers and its setState
         selectedMarkers={selectedMarkers}
@@ -180,7 +183,12 @@ export const ChartMarkers: Story<MapVEuMapProps> = (args) => {
         // pass geohash level and setState
         prevGeohashLevel={prevGeohashLevel}
         setPrevGeohashLevel={setPrevGeohashLevel}
-      />
+      >
+        <SemanticMarkers
+          markers={markerElements}
+          animation={defaultAnimation}
+        />
+      </MapVEuMap>
     </>
   );
 };

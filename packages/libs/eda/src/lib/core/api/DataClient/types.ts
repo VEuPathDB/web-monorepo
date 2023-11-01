@@ -366,10 +366,16 @@ export const VolcanoPlotStatistics = array(
   })
 );
 
-export const VolcanoPlotResponse = type({
-  effectSizeLabel: string,
-  statistics: VolcanoPlotStatistics,
-});
+export const VolcanoPlotResponse = intersection([
+  type({
+    effectSizeLabel: string,
+    statistics: VolcanoPlotStatistics,
+  }),
+  partial({
+    pValueFloor: string,
+    adjustedPValueFloor: string,
+  }),
+]);
 
 export interface VolcanoPlotRequestParams {
   studyId: string;
@@ -831,7 +837,7 @@ export const BubbleOverlayConfig = type({
       denominatorValues: array(string),
     }),
     type({
-      overlayType: literal('continuous'),
+      overlayType: literal('continuous'), // TO DO for dates: probably redefine as 'number' | 'date'
       aggregator: keyof({ mean: null, median: null }),
     }),
   ]),
@@ -889,7 +895,7 @@ export const StandaloneMapBubblesResponse = type({
     intersection([
       MapElement,
       type({
-        overlayValue: number,
+        overlayValue: string,
       }),
     ])
   ),
@@ -914,8 +920,8 @@ export type StandaloneMapBubblesLegendResponse = TypeOf<
   typeof StandaloneMapBubblesLegendResponse
 >;
 export const StandaloneMapBubblesLegendResponse = type({
-  minColorValue: number,
-  maxColorValue: number,
+  minColorValue: string,
+  maxColorValue: string,
   minSizeValue: number,
   maxSizeValue: number,
 });

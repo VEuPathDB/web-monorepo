@@ -1,10 +1,10 @@
-import { MarkerProps } from '../Types';
 import { ReactElement } from 'react';
 import updateMarkers from './updateMarkers';
+import { BoundsDriftMarkerProps } from '../BoundsDriftMarker';
 
 interface geoHashAnimation {
-  prevMarkers: Array<ReactElement<MarkerProps>>;
-  markers: Array<ReactElement<MarkerProps>>;
+  prevMarkers: Array<ReactElement<BoundsDriftMarkerProps>>;
+  markers: Array<ReactElement<BoundsDriftMarkerProps>>;
 }
 
 export default function geohashAnimation({

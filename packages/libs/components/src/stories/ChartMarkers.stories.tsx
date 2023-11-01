@@ -25,6 +25,7 @@ import { MouseMode } from '../map/MouseTools';
 
 import LabelledGroup from '../components/widgets/LabelledGroup';
 import { Toggle } from '@veupathdb/coreui';
+import SemanticMarkers from '../map/SemanticMarkers';
 
 export default {
   title: 'Map/Chart Markers',
@@ -100,12 +101,15 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
         {...args}
         viewport={viewport}
         onViewportChanged={setViewport}
-        onBoundsChanged={handleViewportChanged}
-        markers={markerElements}
         showGrid={true}
-        animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-      />
+        onBoundsChanged={handleViewportChanged}
+      >
+        <SemanticMarkers
+          markers={markerElements}
+          animation={defaultAnimation}
+        />
+      </MapVEuMap>
       <MapVEuLegendSampleList
         legendType={legendType}
         data={legendData}
@@ -196,12 +200,15 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
         {...args}
         viewport={viewport}
         onViewportChanged={setViewport}
-        onBoundsChanged={handleViewportChanged}
-        markers={markerElements}
         showGrid={true}
-        animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-      />
+        onBoundsChanged={handleViewportChanged}
+      >
+        <SemanticMarkers
+          markers={markerElements}
+          animation={defaultAnimation}
+        />
+      </MapVEuMap>
       <MapVEuLegendSampleList
         legendType={legendType}
         data={legendData}
@@ -275,12 +282,15 @@ export const LogScale: Story<MapVEuMapProps> = (args) => {
         {...args}
         viewport={viewport}
         onViewportChanged={setViewport}
-        onBoundsChanged={handleViewportChanged}
-        markers={markerElements}
         showGrid={true}
-        animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-      />
+        onBoundsChanged={handleViewportChanged}
+      >
+        <SemanticMarkers
+          markers={markerElements}
+          animation={defaultAnimation}
+        />
+      </MapVEuMap>
       {/* Y-axis range control */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup label="Y-axis controls">
