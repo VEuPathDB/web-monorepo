@@ -443,7 +443,7 @@ export function loadUserDatasetDetail(id: string) {
       wdkService.getUserDatasetFileListing(id),
     ]).then(
       ([userDataset, userQuotaMetadata, fileListing]) => {
-        const { shares } = userDataset as UserDatasetDetails;
+        const { shares, dependencies } = userDataset as UserDatasetDetails;
         const partiallyTransformedResponse =
           transformVdiResponseToLegacyResponseHelper(
             userDataset,
@@ -461,6 +461,7 @@ export function loadUserDatasetDetail(id: string) {
                 d.recipient.firstName + ' ' + d.recipient.lastName,
               user: d.recipient.userId,
             })),
+          dependencies,
         };
         return detailReceived(id, transformedResponse, fileListing);
       },
@@ -614,6 +615,7 @@ function transformVdiResponseToLegacyResponseHelper(
     datasetId,
     created,
     status,
+    importMessages,
   } = ud;
   const { quota } = userQuotaMetadata;
   return {
@@ -631,11 +633,11 @@ function transformVdiResponseToLegacyResponseHelper(
       summary: summary ?? '',
     },
     ownerUserId: owner.userId,
-    dependencies: [],
     age: Date.now() - Date.parse(created),
     id: datasetId,
     questions: [],
     percentQuotaUsed: quota.usage / quota.limit,
     status,
+    importMessages: importMessages ?? [],
   };
 }

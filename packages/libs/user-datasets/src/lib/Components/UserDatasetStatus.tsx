@@ -55,7 +55,7 @@ export function getDatasetStatusInfo(
 
 export default function UserDatasetStatus(props: Props) {
   const { baseUrl, userDataset, projectId, displayName, dataNoun } = props;
-  const { projects, status } = userDataset;
+  const { projects, status, importMessages } = userDataset;
   const lowercaseSingularDataNoun = dataNoun.singular.toLowerCase();
   const installStatusByProject = status?.install?.find(
     (d) => d.projectId === projectId
@@ -82,7 +82,10 @@ export default function UserDatasetStatus(props: Props) {
     <span>Queued (for phase {phase}). Please check again soon.</span>
   ) : hasFailed ? (
     <span>
-      Failed (phase {phase}): {installStatusByProject?.dataMessage}
+      Failed (phase {phase}):{' '}
+      {phase === '1'
+        ? importMessages.join(', ')
+        : installStatusByProject?.dataMessage}
     </span>
   ) : (
     <span>

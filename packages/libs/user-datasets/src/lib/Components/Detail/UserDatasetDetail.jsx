@@ -374,8 +374,9 @@ class UserDatasetDetail extends React.Component {
   }
 
   getFileTableColumns(fileType) {
-    const { userDataset } = this.props;
-    const { id, fileListing } = userDataset;
+    const { userDataset, config } = this.props;
+    const { projectId } = config;
+    const { id, fileListing, status } = userDataset;
     const { wdkService } = this.context;
 
     const fileListIndex = fileType === 'upload' ? 'upload' : 'install';
@@ -420,7 +421,7 @@ class UserDatasetDetail extends React.Component {
         name: 'File Size',
         renderCell({ row }) {
           const { size } = row;
-          return size ? bytesToHuman(size) : 'pending';
+          return size ? bytesToHuman(size) : '';
         },
       },
       {
@@ -429,14 +430,19 @@ class UserDatasetDetail extends React.Component {
         width: '130px',
         headingStyle: { textAlign: 'center' },
         renderCell() {
-          const downloadAvailable = 'getUserDatasetFiles' in wdkService;
+          const downloadServiceAvailable = 'getUserDatasetFiles' in wdkService;
+          const enableDownload =
+            fileType === 'upload'
+              ? true
+              : status.install?.find((d) => d.projectId === projectId)
+                  ?.dataStatus === 'complete';
 
           return (
             <button
               className="btn btn-info"
-              disabled={!downloadAvailable}
+              disabled={!downloadServiceAvailable || !enableDownload}
               title={
-                downloadAvailable
+                downloadServiceAvailable && enableDownload
                   ? 'Download this file'
                   : 'This download is unavailable. Please contact us if this problem persists.'
               }
@@ -473,34 +479,54 @@ class UserDatasetDetail extends React.Component {
     /**
      * In VDI, we know a dataset is compatible when the site-specific's install status
      * indicates a successful install.
+     *
+     * We know a dataset is incompatible when the site-specific's install status
+     * indicates `missing-dependency`
      */
     const installStatusByProject = status?.install?.find(
       (d) => d.projectId === projectId
     );
-    const { isInstalled, hasFailed } = getDatasetStatusInfo(
+    const { isInstallable, isInstalled, hasFailed } = getDatasetStatusInfo(
       projects,
       projectId,
       status.import,
       installStatusByProject
     );
 
-    const compatibilityInfo = isInstalled ? (
-      // if we've installed successfully, we're compatible
-      <p className="success">
-        This {dataNoun.singular.toLowerCase()} is compatible with{' '}
-        <b>{projectId}</b>. It is installed for use.
-      </p>
-    ) : hasFailed ? (
-      // if isInstalled is false but hasFailed is true, we're incompatible
+    const failedImport =
+      status.import === 'failed' || status.import === 'invalid';
+    const isIncompatible =
+      installStatusByProject?.dataStatus === 'missing-dependency';
+
+    const compatibilityInfo = !isInstallable ? (
+      // if projectIds don't match, then we're not installable nor compatible
       <p className="danger">
         This {dataNoun.singular.toLowerCase()} is not compatible with{' '}
         <b>{projectId}</b>.
       </p>
-    ) : (
-      // if isInstalled AND hasFailed are false, then either import or install is in progress
+    ) : isInstalled ? (
+      // if we've installed successfully and we're installable, we're compatible
+      <p className="success">
+        This {dataNoun.singular.toLowerCase()} is compatible with{' '}
+        <b>{projectId}</b>. It is installed for use.
+      </p>
+    ) : isIncompatible ? (
+      // if we're installable but failed due to a missing dependency, we're incompatible
       <p className="danger">
-        This {dataNoun.singular.toLowerCase()} is not yet installed. Please
-        check again soon.
+        This {dataNoun.singular.toLowerCase()} is not compatible with{' '}
+        <b>{projectId}</b>.
+      </p>
+    ) : hasFailed ? (
+      // if we're installable but failed import or install, let's tell user
+      <p className="danger">
+        This {dataNoun.singular.toLowerCase()} failed to{' '}
+        {failedImport ? 'upload' : 'install'}.
+      </p>
+    ) : (
+      // if we've made it here, we're installable and either import or install is in progress
+      <p className="danger">
+        This {dataNoun.singular.toLowerCase()} is being processed. Please check
+        again soon.
       </p>
     );
 
@@ -550,16 +576,9 @@ class UserDatasetDetail extends React.Component {
       {
         key: 'resourceVersion',
         name: 'Required Resource Release',
-      },
-      {
-        key: 'installedVersion',
-        name: 'Installed Resource Release',
         renderCell({ row }) {
-          const { compatibilityInfo } = row;
-          const { currentBuild } = compatibilityInfo ? compatibilityInfo : {};
-          return compatibilityInfo === null || currentBuild === null
-            ? 'N/A'
-            : currentBuild;
+          const { resourceVersion } = row;
+          return resourceVersion;
         },
       },
     ];

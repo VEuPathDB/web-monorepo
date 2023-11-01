@@ -28,7 +28,7 @@ export interface UserDatasetShare {
 export interface UserDataset {
   created: number | string;
   age: number;
-  dependencies: Array<{
+  dependencies?: Array<{
     resourceDisplayName: string;
     resourceIdentifier: string;
     resourceVersion: string;
@@ -50,6 +50,7 @@ export interface UserDataset {
   fileCount?: number;
   status: UserDatasetVDI['status'];
   fileListing?: UserDatasetFileListing;
+  importMessages: Array<string>;
 }
 
 export interface UserDatasetUpload {
@@ -268,6 +269,12 @@ const userDatasetDetailsShareDetails = type({
   recipient: userDatasetRecipientDetails,
 });
 
+const datasetDependency = type({
+  resourceIdentifier: string,
+  resourceDisplayName: string,
+  resourceVersion: string,
+});
+
 export const userDatasetDetails = intersection([
   datasetIdType,
   type({
@@ -279,6 +286,7 @@ export const userDatasetDetails = intersection([
     projectIds: array(string),
     status: statusDetails,
     created: string,
+    dependencies: array(datasetDependency),
   }),
   partial({
     summary: string,
