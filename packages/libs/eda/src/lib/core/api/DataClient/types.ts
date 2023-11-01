@@ -373,7 +373,7 @@ export const VolcanoPlotResponse = intersection([
   }),
   partial({
     pValueFloor: string,
-    adjustedPValueFloor: string,
+    adjustedPValueFloor: union([string, nullType]),
   }),
 ]);
 
