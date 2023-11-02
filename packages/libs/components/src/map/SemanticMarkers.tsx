@@ -164,7 +164,7 @@ export default function SemanticMarkers({
           setSelectedMarkers,
         })
       ),
-    [consolidatedMarkers]
+    [consolidatedMarkers, selectedMarkers]
   );
 
   useFlyToMarkers({ markers: refinedMarkers, flyToMarkers, flyToMarkersDelay });

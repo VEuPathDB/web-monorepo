@@ -280,21 +280,14 @@ export default function BoundsDriftMarker({
 
   // add click events for highlighting markers
   const handleClick = (e: LeafletMouseEvent) => {
-    // hightlight donutmarker and highlight chartmarker
-    if (e.target._icon.classList.contains('highlight-marker')) {
-      e.target._icon.classList.remove('highlight-marker');
-
-      if (selectedMarkers != null && setSelectedMarkers != null) {
-        // functional updates
+    // if selected, unselect
+    if (setSelectedMarkers) {
+      if (selectedMarkers?.find((id) => id === props.id)) {
         setSelectedMarkers((prevSelectedMarkers: string[]) =>
           prevSelectedMarkers.filter((id: string) => id !== props.id)
         );
-      }
-    } else {
-      e.target._icon.classList.add('highlight-marker');
-
-      if (selectedMarkers != null && setSelectedMarkers != null) {
-        // functional updates
+      } else {
+        // select
         setSelectedMarkers((prevSelectedMarkers: string[]) => [
           ...prevSelectedMarkers,
           props.id,
