@@ -303,12 +303,7 @@ interface MapVEuMapEventsProps {
   onViewportChanged: (viewport: Viewport) => void;
   onBoundsChanged: (bondsViewport: BoundsViewport) => void;
   onBaseLayerChanged?: (newBaseLayer: BaseLayerChoice) => void;
-  selectedMarkers?: string[];
   setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
-  setIsPanning?: React.Dispatch<React.SetStateAction<boolean>>;
-  zoomLevelToGeohashLevel?: (leafletZoomLevel: number) => number;
-  prevGeohashLevel?: number;
-  setPrevGeohashLevel?: React.Dispatch<React.SetStateAction<number>>;
 }
 
 // function to handle map events such as onViewportChanged and baselayerchange
@@ -317,9 +312,7 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
     onViewportChanged,
     onBaseLayerChanged,
     onBoundsChanged,
-    selectedMarkers,
     setSelectedMarkers,
-    setIsPanning,
   } = props;
   const mapEvents = useMapEvents({
     zoomend: () => {
