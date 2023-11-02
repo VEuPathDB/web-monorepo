@@ -155,6 +155,20 @@ export default function SemanticMarkers({
     }
   }, [animation, map, markers, prevMarkers, recenterMarkers]);
 
+  // remove any selectedMarkers that no longer exist in the current markers
+  useEffect(() => {
+    if (setSelectedMarkers && selectedMarkers) {
+      const prunedSelectedMarkers = selectedMarkers.filter((id) =>
+        consolidatedMarkers.find(({ props }) => id === props.id)
+      );
+
+      if (prunedSelectedMarkers.length < selectedMarkers.length)
+        setSelectedMarkers(prunedSelectedMarkers);
+    }
+  }, [consolidatedMarkers, selectedMarkers]);
+
+  // add the selectedMarkers props and callback
+  // (and the scheduled-for-removal showPopup prop)
   const refinedMarkers = useMemo(
     () =>
       consolidatedMarkers.map((marker) =>
