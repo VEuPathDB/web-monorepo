@@ -1,8 +1,16 @@
-import { Suspense, useCallback, useEffect, useMemo, useRef } from 'react';
+import {
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useLocation } from 'react-router';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { CheckboxTreeProps } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 
 import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import {
@@ -95,6 +103,9 @@ export function ValidatedOrganismParam(
 function TreeBoxOrganismEnumParam(
   props: OrganismParamProps<TreeBoxEnumParam, State>
 ) {
+  const [showOnlyReferenceOrganisms, setShowOnlyReferenceOrganisms] =
+    useState<boolean>(false);
+
   const { selectedValues, onChange } = useEnumParamSelectedValues(props);
 
   const paramWithPrunedVocab = useTreeBoxParamWithPrunedVocab(
@@ -125,8 +136,52 @@ function TreeBoxOrganismEnumParam(
       isMultiPick: maxSelectedCount !== 1,
       renderNode,
       searchPredicate,
+      filteredList:
+        showOnlyReferenceOrganisms && referenceStrains
+          ? Array.from(referenceStrains)
+          : undefined,
+      isAdditionalFilterApplied: showOnlyReferenceOrganisms,
+      additionalActions: [
+        <Tooltip
+          title={
+            <span style={{ fontWeight: 'normal' }}>
+              Show only reference organisms{' '}
+              <span style={{ fontWeight: 'bolder' }}>[Reference]</span>
+            </span>
+          }
+        >
+          <label className="OrganismFilter--OnlyMatchesToggle">
+            <input
+              style={{ marginRight: '0.25em' }}
+              type="checkbox"
+              checked={showOnlyReferenceOrganisms}
+              onChange={() => setShowOnlyReferenceOrganisms((value) => !value)}
+            />
+            <span style={{ fontSize: '0.95em' }}>Reference only</span>
+          </label>
+        </Tooltip>,
+      ],
+      styleOverrides: {
+        treeLinks: {
+          container: {
+            flexDirection: 'column',
+            alignItems: 'center',
+          } as React.CSSProperties,
+          actionsContainerStyle: {
+            flexGrow: 'auto',
+            marginLeft: '1em',
+            alignSelf: 'flex-start',
+          } as React.CSSProperties,
+        },
+      },
     }),
-    [maxSelectedCount, renderNode, searchPredicate]
+    [
+      maxSelectedCount,
+      renderNode,
+      searchPredicate,
+      showOnlyReferenceOrganisms,
+      referenceStrains,
+    ]
   );
 
   return hasEmptyVocabularly(paramWithPrunedVocab) ? (
