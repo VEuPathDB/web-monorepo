@@ -6,8 +6,6 @@ import DonutMarker, { DonutMarkerProps } from '../../map/DonutMarker';
 import ChartMarker from '../../map/ChartMarker';
 import { LeafletMouseEvent } from 'leaflet';
 
-import { markerDataProp } from '../../map/BoundsDriftMarker';
-
 function sleep(ms: number): Promise<() => void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -20,8 +18,8 @@ export const getSpeciesDonuts = async (
   ) => void,
   handleMarkerClick: (e: LeafletMouseEvent) => void,
   // add two new props, selectedMarkers and setSelectedMarkers
-  selectedMarkers?: markerDataProp[],
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<markerDataProp[]>>,
+  selectedMarkers?: string[],
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>,
   delay: number = 0,
   zoomLevelToGeohashLevel: (
     zoomLevel: number
@@ -245,8 +243,8 @@ export const getCollectionDateChartMarkers = async (
   legendRadioValue: string,
   setDependentAxisRange: (dependentAxisRange: number[]) => void,
   // add two new props, selectedMarkers and setSelectedMarkers
-  selectedMarkers?: markerDataProp[],
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<markerDataProp[]>>,
+  selectedMarkers?: string[],
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>,
   delay: number = 0,
   dependentAxisLogScale?: boolean
 ) => {

@@ -264,8 +264,8 @@ path,
 }
 
 /* donut and bubble markers highlight */
-.highlight-donutmarker,
-.highlight-bubblemarker {
+.highlight-marker.donut-marker,
+.highlight-marker.bubble-marker {
   /* background-clip: padding-box; */
   border-radius: 50%;
   /* add inset to reduce a gap between the element and the box-shadow */
@@ -275,7 +275,7 @@ path,
 }
 
 /* chart marker highlight */
-.highlight-chartmarker {
+.highlight-marker.chart-marker {
   /* background-clip: padding-box; */
   /* the rounded corner of the chart marker has 10px in radius */
   border-radius: 10px;

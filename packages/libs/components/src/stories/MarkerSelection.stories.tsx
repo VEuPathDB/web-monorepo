@@ -21,8 +21,6 @@ import { LegendProps } from '../map/MapVEuLegendSampleList';
 
 import geohashAnimation from '../map/animation_functions/geohash';
 
-import { markerDataProp } from '../map/BoundsDriftMarker';
-
 import SemanticMarkers from '../map/SemanticMarkers';
 
 export default {
@@ -47,17 +45,9 @@ export const DonutMarkers: Story<MapVEuMapProps> = (args) => {
   });
 
   // make an array of objects state to list highlighted markers
-  const [selectedMarkers, setSelectedMarkers] = useState<markerDataProp[]>([]);
+  const [selectedMarkers, setSelectedMarkers] = useState<string[]>([]);
 
   console.log('selectedMarkers =', selectedMarkers);
-
-  // check if map panning occured
-  const [isPanning, setIsPanning] = useState<boolean>(false);
-
-  // set initial prevGeohashLevel state
-  const [prevGeohashLevel, setPrevGeohashLevel] = useState<number>(
-    leafletZoomLevelToGeohashLevel(viewport.zoom)
-  );
 
   const handleMarkerClick = (e: LeafletMouseEvent) => {};
 
@@ -68,15 +58,12 @@ export const DonutMarkers: Story<MapVEuMapProps> = (args) => {
         defaultAnimationDuration,
         setLegendData,
         handleMarkerClick,
-        // pass selectedMarkers and its setState
         selectedMarkers,
         setSelectedMarkers
       );
       setMarkerElements(markers);
     },
-    // Note: the dependency of the isPanning is required to pass the latest selectedMarkers to get function
-    // because the function calls Marker component (DonutMarker/ChartMarker)
-    [setMarkerElements, isPanning]
+    [setMarkerElements]
   );
 
   return (
@@ -87,14 +74,7 @@ export const DonutMarkers: Story<MapVEuMapProps> = (args) => {
         onViewportChanged={setViewport}
         onBoundsChanged={handleViewportChanged}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-        // pass selectedMarkers and its setState
-        selectedMarkers={selectedMarkers}
         setSelectedMarkers={setSelectedMarkers}
-        // pass setIsPanning to check if map panning occurred
-        setIsPanning={setIsPanning}
-        // pass geohash level and setState
-        prevGeohashLevel={prevGeohashLevel}
-        setPrevGeohashLevel={setPrevGeohashLevel}
       >
         <SemanticMarkers
           markers={markerElements}
@@ -130,17 +110,9 @@ export const ChartMarkers: Story<MapVEuMapProps> = (args) => {
   const duration = defaultAnimationDuration;
 
   // make an array of objects state to list highlighted markers
-  const [selectedMarkers, setSelectedMarkers] = useState<markerDataProp[]>([]);
+  const [selectedMarkers, setSelectedMarkers] = useState<string[]>([]);
 
   console.log('selectedMarkers =', selectedMarkers);
-
-  // check if map panning occured
-  const [isPanning, setIsPanning] = useState<boolean>(false);
-
-  // set initial prevGeohashLevel state
-  const [prevGeohashLevel, setPrevGeohashLevel] = useState<number>(
-    leafletZoomLevelToGeohashLevel(viewport.zoom)
-  );
 
   const handleMarkerClick = (e: LeafletMouseEvent) => {};
 
@@ -155,15 +127,12 @@ export const ChartMarkers: Story<MapVEuMapProps> = (args) => {
         handleMarkerClick,
         legendRadioValue,
         setDependentAxisRange,
-        // pass selectedMarkers and its setState
         selectedMarkers,
         setSelectedMarkers
       );
       setMarkerElements(markers);
     },
-    // Note: the dependency of the isPanning is required to pass the latest selectedMarkers to get function
-    // because the function calls Marker component (DonutMarker/ChartMarker)
-    [setMarkerElements, legendRadioValue, isPanning]
+    [setMarkerElements, legendRadioValue]
   );
 
   return (
@@ -175,14 +144,7 @@ export const ChartMarkers: Story<MapVEuMapProps> = (args) => {
         onBoundsChanged={handleViewportChanged}
         showGrid={true}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-        // pass selectedMarkers and its setState
-        selectedMarkers={selectedMarkers}
         setSelectedMarkers={setSelectedMarkers}
-        // pass setIsPanning to check if map panning occurred
-        setIsPanning={setIsPanning}
-        // pass geohash level and setState
-        prevGeohashLevel={prevGeohashLevel}
-        setPrevGeohashLevel={setPrevGeohashLevel}
       >
         <SemanticMarkers
           markers={markerElements}

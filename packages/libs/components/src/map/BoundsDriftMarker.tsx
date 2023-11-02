@@ -5,42 +5,15 @@ import ReactLeafletDriftMarker from 'react-leaflet-drift-marker';
 import { MarkerProps, Bounds } from './Types';
 import L, { LeafletMouseEvent, LatLngBounds } from 'leaflet';
 
-// define markerData type to have as many info as possible
-export interface markerDataProp {
-  id: string;
-  latLng: {
-    lat: number;
-    lng: number;
-  };
-  data?: {
-    value: number;
-    label: string;
-    color?: string;
-  }[];
-  // bubble marker's data is not array, so define it as bubbleData
-  bubbleData?: {
-    value: number;
-    diameter?: number;
-    colorValue?: number;
-    colorLabel?: string;
-    color?: string;
-  };
-  markerType: 'donut' | 'chart' | 'bubble';
-}
-
 export interface BoundsDriftMarkerProps extends MarkerProps {
   bounds: Bounds;
   duration: number;
   // A class to add to the popup element
   popupClass?: string;
   // selectedMarkers state
-  selectedMarkers?: markerDataProp[];
+  selectedMarkers?: string[];
   // selectedMarkers setState
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<markerDataProp[]>>;
-  // marker type to be used for highlighting markers
-  markerType?: 'donut' | 'chart' | 'bubble';
-  // marker data
-  markerData?: markerDataProp;
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 /**
@@ -72,8 +45,6 @@ export default function BoundsDriftMarker({
   zIndexOffset,
   selectedMarkers,
   setSelectedMarkers,
-  markerType,
-  markerData,
   ...props
 }: BoundsDriftMarkerProps) {
   const map = useMap();
@@ -310,47 +281,23 @@ export default function BoundsDriftMarker({
   // add click events for highlighting markers
   const handleClick = (e: LeafletMouseEvent) => {
     // hightlight donutmarker and highlight chartmarker
-    if (
-      e.target._icon.classList.contains('highlight-donutmarker') ||
-      e.target._icon.classList.contains('highlight-chartmarker') ||
-      e.target._icon.classList.contains('highlight-bubblemarker')
-    ) {
-      if (markerType === 'donut')
-        e.target._icon.classList.remove('highlight-donutmarker');
-      else if (markerType === 'chart')
-        e.target._icon.classList.remove('highlight-chartmarker');
-      else if (markerType === 'bubble')
-        e.target._icon.classList.remove('highlight-bubblemarker');
+    if (e.target._icon.classList.contains('highlight-marker')) {
+      e.target._icon.classList.remove('highlight-marker');
 
-      if (
-        selectedMarkers != null &&
-        setSelectedMarkers != null &&
-        markerData != null
-      ) {
+      if (selectedMarkers != null && setSelectedMarkers != null) {
         // functional updates
-        setSelectedMarkers((prevSelectedMarkers: markerDataProp[]) =>
-          prevSelectedMarkers.filter(
-            (item: markerDataProp) => item.id !== props.id
-          )
+        setSelectedMarkers((prevSelectedMarkers: string[]) =>
+          prevSelectedMarkers.filter((id: string) => id !== props.id)
         );
       }
     } else {
-      if (markerType === 'donut')
-        e.target._icon.classList.add('highlight-donutmarker');
-      else if (markerType === 'chart')
-        e.target._icon.classList.add('highlight-chartmarker');
-      else if (markerType === 'bubble')
-        e.target._icon.classList.add('highlight-bubblemarker');
+      e.target._icon.classList.add('highlight-marker');
 
-      if (
-        selectedMarkers != null &&
-        setSelectedMarkers != null &&
-        markerData != null
-      ) {
+      if (selectedMarkers != null && setSelectedMarkers != null) {
         // functional updates
-        setSelectedMarkers((prevSelectedMarkers: markerDataProp[]) => [
+        setSelectedMarkers((prevSelectedMarkers: string[]) => [
           ...prevSelectedMarkers,
-          markerData,
+          props.id,
         ]);
       }
     }

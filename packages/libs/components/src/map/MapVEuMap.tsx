@@ -29,8 +29,6 @@ import domToImage from 'dom-to-image';
 import { makeSharedPromise } from '../utils/promise-utils';
 import { Undo } from '@veupathdb/coreui';
 
-import { markerDataProp } from './BoundsDriftMarker';
-
 // define Viewport type
 export type Viewport = {
   center: [number, number];
@@ -153,16 +151,8 @@ export interface MapVEuMapProps {
   scrollingEnabled?: boolean;
   /** pass default viewport */
   defaultViewport?: Viewport;
-  /* selectedMarkers state **/
-  selectedMarkers?: markerDataProp[];
-  /* selectedMarkers setState **/
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<markerDataProp[]>>;
-  /* setIsPanning that is used to check if map panning occurred */
-  setIsPanning?: React.Dispatch<React.SetStateAction<boolean>>;
-  /* prevGeohashLevel state **/
-  prevGeohashLevel?: number;
-  /* prevGeohashLevel setState **/
-  setPrevGeohashLevel?: React.Dispatch<React.SetStateAction<number>>;
+  /* selectedMarkers setState (for on-click reset) **/
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
   children?: React.ReactNode;
 }
 
@@ -186,11 +176,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     scrollingEnabled = true,
     interactive = true,
     defaultViewport,
-    selectedMarkers,
     setSelectedMarkers,
-    setIsPanning,
-    prevGeohashLevel,
-    setPrevGeohashLevel,
   } = props;
 
   // use a ref to avoid unneeded renders
@@ -299,12 +285,8 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       <MapVEuMapEvents
         onViewportChanged={onViewportChanged}
         onBaseLayerChanged={onBaseLayerChanged}
-        selectedMarkers={selectedMarkers}
         setSelectedMarkers={setSelectedMarkers}
-        setIsPanning={setIsPanning}
         zoomLevelToGeohashLevel={zoomLevelToGeohashLevel}
-        prevGeohashLevel={prevGeohashLevel}
-        setPrevGeohashLevel={setPrevGeohashLevel}
         onBoundsChanged={onBoundsChanged}
       />
       {/* set ScrollWheelZoom */}
@@ -321,8 +303,8 @@ interface MapVEuMapEventsProps {
   onViewportChanged: (viewport: Viewport) => void;
   onBoundsChanged: (bondsViewport: BoundsViewport) => void;
   onBaseLayerChanged?: (newBaseLayer: BaseLayerChoice) => void;
-  selectedMarkers?: markerDataProp[];
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<markerDataProp[]>>;
+  selectedMarkers?: string[];
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
   setIsPanning?: React.Dispatch<React.SetStateAction<boolean>>;
   zoomLevelToGeohashLevel?: (leafletZoomLevel: number) => number;
   prevGeohashLevel?: number;
@@ -338,9 +320,6 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
     selectedMarkers,
     setSelectedMarkers,
     setIsPanning,
-    zoomLevelToGeohashLevel,
-    prevGeohashLevel,
-    setPrevGeohashLevel,
   } = props;
   const mapEvents = useMapEvents({
     zoomend: () => {
@@ -348,45 +327,6 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
         center: [mapEvents.getCenter().lat, mapEvents.getCenter().lng],
         zoom: mapEvents.getZoom(),
       });
-
-      // check selected markers are within the map viewport/bounds
-      if (
-        selectedMarkers != null &&
-        selectedMarkers.length > 0 &&
-        setSelectedMarkers != null &&
-        zoomLevelToGeohashLevel != null &&
-        setPrevGeohashLevel != null
-      ) {
-        if (prevGeohashLevel === zoomLevelToGeohashLevel(mapEvents.getZoom())) {
-          setSelectedMarkers(
-            (prevSelectedMarkers: markerDataProp[]): markerDataProp[] => {
-              const visibleMarkers = prevSelectedMarkers
-                .map((selectedMarker: markerDataProp) => {
-                  if (mapEvents.getBounds().contains(selectedMarker.latLng)) {
-                    return selectedMarker;
-                  }
-                })
-                .filter((item) => item != null);
-
-              if (visibleMarkers != null)
-                return visibleMarkers as markerDataProp[];
-              else return [];
-            }
-          );
-        } else {
-          // when geohash level is changed
-          setSelectedMarkers([]);
-        }
-      }
-
-      // update preGeohashLevel. Separate condition is made as this is not related to selectedMarkers
-      if (
-        zoomLevelToGeohashLevel != null &&
-        setPrevGeohashLevel != null &&
-        prevGeohashLevel !== zoomLevelToGeohashLevel(mapEvents.getZoom())
-      ) {
-        setPrevGeohashLevel(zoomLevelToGeohashLevel(mapEvents.getZoom()));
-      }
 
       const boundsViewport: BoundsViewport = {
         bounds: constrainLongitudeToMainWorld(
@@ -402,33 +342,6 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
         zoom: mapEvents.getZoom(),
       });
 
-      // map panning occurred
-      if (setIsPanning != null)
-        setIsPanning((prevMoveend: boolean) => !prevMoveend);
-
-      // check bounds to update selectedMarkers: excluding invisible markers in the selectedMarkers
-      if (
-        selectedMarkers != null &&
-        selectedMarkers.length > 0 &&
-        setSelectedMarkers != null
-      ) {
-        setSelectedMarkers(
-          (prevSelectedMarkers: markerDataProp[]): markerDataProp[] => {
-            const visibleMarkers = prevSelectedMarkers
-              .map((selectedMarker: markerDataProp) => {
-                if (mapEvents.getBounds().contains(selectedMarker.latLng)) {
-                  return selectedMarker;
-                }
-              })
-              .filter((item) => item != null);
-
-            if (visibleMarkers != null)
-              return visibleMarkers as markerDataProp[];
-            else return [];
-          }
-        );
-      }
-
       const boundsViewport: BoundsViewport = {
         bounds: constrainLongitudeToMainWorld(
           boundsToGeoBBox(mapEvents.getBounds())
@@ -442,9 +355,6 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
     },
     // map click event: remove selected highlight markers
     click: () => {
-      removeClassName('highlight-donutmarker');
-      removeClassName('highlight-chartmarker');
-      removeClassName('highlight-bubblemarker');
       if (setSelectedMarkers != null) setSelectedMarkers([]);
     },
   });
@@ -605,13 +515,4 @@ function constrainLongitudeToMainWorld({
     southWest: { lat: south, lng: newWest },
     northEast: { lat: north, lng: newEast },
   };
-}
-
-// remove marker's highlight class
-function removeClassName(targetClass: string) {
-  const allElements = document.querySelectorAll('*');
-
-  allElements.forEach((element) => {
-    element.classList.remove(targetClass);
-  });
 }

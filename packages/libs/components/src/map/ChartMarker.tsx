@@ -1,4 +1,3 @@
-import React from 'react';
 import L from 'leaflet';
 
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
@@ -14,8 +13,6 @@ import {
   MarkerScaleAddon,
   MarkerScaleDefault,
 } from '../types/plots';
-
-import { markerDataProp } from './BoundsDriftMarker';
 
 export type BaseMarkerData = {
   value: number;
@@ -39,10 +36,6 @@ export interface ChartMarkerProps
   /** cumulative mode: when true, the total count shown will be the last value, not the sum of the values.
    * See cumulative prop in DonutMarker.tsx for context. */
   cumulative?: boolean;
-  /* selectedMarkers state **/
-  selectedMarkers?: markerDataProp[];
-  /* selectedMarkers setState **/
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<markerDataProp[]>>;
 }
 
 /**
@@ -57,31 +50,11 @@ export default function ChartMarker(props: ChartMarkerProps) {
 
   const { html: svgHTML, size, sumValuesString } = chartMarkerSVGIcon(props);
 
-  // make a prop to pass to BoundsDriftMarker
-  const markerData: markerDataProp = {
-    id: props.id,
-    latLng: props.position,
-    // data: props.data,
-    markerType: 'chart',
-  };
-
-  // add class, highlight-chartmarker, for panning
-  const addHighlightClassName =
-    selectedMarkers != null &&
-    selectedMarkers.length > 0 &&
-    selectedMarkers.some((selectedMarker) => selectedMarker.id === props.id)
-      ? ' highlight-chartmarker'
-      : '';
-
   // set icon
   let HistogramIcon: any = L.divIcon({
     // add class, highlight-chartmarker, for panning
     className:
-      'leaflet-canvas-icon ' +
-      'marker-id-' +
-      props.id +
-      ' chart-marker' +
-      addHighlightClassName,
+      'leaflet-canvas-icon ' + 'marker-id-' + props.id + ' chart-marker',
     iconSize: new L.Point(size, size),
     iconAnchor: new L.Point(size / 2, size / 2), // location of topleft corner: this is used for centering of the icon like transform/translate in CSS
     html: svgHTML, // divIcon HTML svg code generated above
@@ -150,8 +123,6 @@ export default function ChartMarker(props: ChartMarkerProps) {
       // pass // selectedMarkers state and setState
       selectedMarkers={selectedMarkers}
       setSelectedMarkers={setSelectedMarkers}
-      markerType={'chart'}
-      markerData={markerData}
     />
   );
 }

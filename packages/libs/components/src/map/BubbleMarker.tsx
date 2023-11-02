@@ -1,10 +1,7 @@
-// import React from 'react';
 import L from 'leaflet';
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 
 import { ContainerStylesAddon } from '../types/plots';
-
-import { markerDataProp } from './BoundsDriftMarker';
 
 export interface BubbleMarkerProps extends BoundsDriftMarkerProps {
   data: {
@@ -21,9 +18,6 @@ export interface BubbleMarkerProps extends BoundsDriftMarkerProps {
   // isAtomic: add a special thumbtack icon if this is true
   isAtomic?: boolean;
   onClick?: (event: L.LeafletMouseEvent) => void | undefined;
-  /* add selectedMarkers state and its setState props but these are not used for this BubbleMarker **/
-  selectedMarkers?: markerDataProp[];
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<markerDataProp[]>>;
 }
 
 /**
@@ -35,34 +29,10 @@ export default function BubbleMarker(props: BubbleMarkerProps) {
 
   const { html: svgHTML, diameter: size } = bubbleMarkerSVGIcon(props);
 
-  // make a prop to pass to BoundsDriftMarker
-  const markerData: markerDataProp = {
-    id: props.id,
-    latLng: props.position,
-    // use bubbleData, not data for bubble marker
-    // bubbleData: props.data,
-    markerType: 'bubble',
-  };
-
-  // add class, highlight-chartmarker, for panning
-  // Note: map panning calls for new data request, resulting that marker elements are completely regenerated, which causes new className without highlighting
-  // Thus, it is necessary to add a highlight for a marker based on whether it is included in the selectedMarkers
-  // One inevitable disadvantage is that this possibly results in on & off of highlighting (may look like a blink)
-  const addHighlightClassName =
-    selectedMarkers != null &&
-    selectedMarkers.length > 0 &&
-    selectedMarkers.some((selectedMarker) => selectedMarker.id === props.id)
-      ? ' highlight-bubblemarker'
-      : '';
-
   // set icon as divIcon
   const SVGBubbleIcon = L.divIcon({
     className:
-      'leaflet-canvas-icon ' +
-      'marker-id-' +
-      props.id +
-      ' bubble-marker' +
-      addHighlightClassName,
+      'leaflet-canvas-icon ' + 'marker-id-' + props.id + ' bubble-marker',
     iconSize: new L.Point(size, size), // this will make icon to cover up SVG area!
     iconAnchor: new L.Point(size / 2, size / 2), // location of topleft corner: this is used for centering of the icon like transform/translate in CSS
     html: svgHTML, // divIcon HTML svg code generated above
@@ -107,8 +77,6 @@ export default function BubbleMarker(props: BubbleMarkerProps) {
       // pass selectedMarkers state and setState
       selectedMarkers={selectedMarkers}
       setSelectedMarkers={setSelectedMarkers}
-      markerType={'bubble'}
-      markerData={markerData}
     />
   );
 }
