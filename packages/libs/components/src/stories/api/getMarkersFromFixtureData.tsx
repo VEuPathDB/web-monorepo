@@ -17,9 +17,6 @@ export const getSpeciesDonuts = async (
     legendData: Array<{ label: string; value: number; color: string }>
   ) => void,
   handleMarkerClick: (e: LeafletMouseEvent) => void,
-  // add two new props, selectedMarkers and setSelectedMarkers
-  selectedMarkers?: string[],
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>,
   delay: number = 0,
   zoomLevelToGeohashLevel: (
     zoomLevel: number
@@ -129,9 +126,6 @@ export const getSpeciesDonuts = async (
         duration={duration}
         markerScale={donutSize / 40}
         markerLabel={donutSize < 40 ? '' : undefined}
-        // pass two new props
-        selectedMarkers={selectedMarkers}
-        setSelectedMarkers={setSelectedMarkers}
       />
     );
   });
@@ -242,9 +236,6 @@ export const getCollectionDateChartMarkers = async (
   handleMarkerClick: (e: LeafletMouseEvent) => void,
   legendRadioValue: string,
   setDependentAxisRange: (dependentAxisRange: number[]) => void,
-  // add two new props, selectedMarkers and setSelectedMarkers
-  selectedMarkers?: string[],
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>,
   delay: number = 0,
   dependentAxisLogScale?: boolean
 ) => {
@@ -381,9 +372,6 @@ export const getCollectionDateChartMarkers = async (
         duration={duration}
         onClick={handleMarkerClick}
         dependentAxisLogScale={dependentAxisLogScale}
-        // pass two new props
-        selectedMarkers={selectedMarkers}
-        setSelectedMarkers={setSelectedMarkers}
       />
     );
   });

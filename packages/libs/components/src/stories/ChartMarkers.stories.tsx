@@ -181,9 +181,6 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
         handleMarkerClick,
         legendRadioValue,
         setDependentAxisRange,
-        // add two undefined props for selectedMarkers & setSelectedMarkers
-        undefined,
-        undefined,
         2000
       );
       if (!isCancelled) setMarkerElements(fullMarkers);
@@ -265,9 +262,6 @@ export const LogScale: Story<MapVEuMapProps> = (args) => {
         handleMarkerClick,
         legendRadioValue,
         setDependentAxisRange,
-        // add two undefined props for selectedMarkers & setSelectedMarkers
-        undefined,
-        undefined,
         0,
         dependentAxisLogScale
       );

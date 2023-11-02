@@ -57,9 +57,7 @@ export const DonutMarkers: Story<MapVEuMapProps> = (args) => {
         bvp,
         defaultAnimationDuration,
         setLegendData,
-        handleMarkerClick,
-        selectedMarkers,
-        setSelectedMarkers
+        handleMarkerClick
       );
       setMarkerElements(markers);
     },
@@ -79,6 +77,8 @@ export const DonutMarkers: Story<MapVEuMapProps> = (args) => {
         <SemanticMarkers
           markers={markerElements}
           animation={defaultAnimation}
+          selectedMarkers={selectedMarkers}
+          setSelectedMarkers={setSelectedMarkers}
         />
       </MapVEuMap>
     </>
@@ -126,9 +126,7 @@ export const ChartMarkers: Story<MapVEuMapProps> = (args) => {
         setLegendData,
         handleMarkerClick,
         legendRadioValue,
-        setDependentAxisRange,
-        selectedMarkers,
-        setSelectedMarkers
+        setDependentAxisRange
       );
       setMarkerElements(markers);
     },

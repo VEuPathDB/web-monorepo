@@ -24,6 +24,10 @@ export interface SemanticMarkersProps {
   flyToMarkers?: boolean;
   /** How long (in ms) after rendering to wait before flying to markers */
   flyToMarkersDelay?: number;
+  /* selectedMarkers state **/
+  selectedMarkers?: string[];
+  /* selectedMarkers setState **/
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 /**
@@ -38,6 +42,8 @@ export default function SemanticMarkers({
   recenterMarkers = true,
   flyToMarkers,
   flyToMarkersDelay,
+  selectedMarkers,
+  setSelectedMarkers,
 }: SemanticMarkersProps) {
   // react-leaflet v3
   const map = useMap();
@@ -152,7 +158,11 @@ export default function SemanticMarkers({
   const refinedMarkers = useMemo(
     () =>
       consolidatedMarkers.map((marker) =>
-        cloneElement(marker, { showPopup: true })
+        cloneElement(marker, {
+          showPopup: true,
+          selectedMarkers,
+          setSelectedMarkers,
+        })
       ),
     [consolidatedMarkers]
   );

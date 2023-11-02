@@ -315,6 +315,10 @@ export default function BoundsDriftMarker({
     }
   };
 
+  // set this marker as highlighted
+  if (icon && selectedMarkers?.find((id) => id === props.id))
+    icon.options.className += ' highlight-donutmarker';
+
   // DriftMarker misbehaves if icon=undefined is provided
   // is this the most elegant way?
   const optionalIconProp = icon ? { icon } : {};
