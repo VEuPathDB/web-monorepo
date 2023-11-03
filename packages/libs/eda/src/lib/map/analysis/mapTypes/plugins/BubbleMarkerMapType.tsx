@@ -195,12 +195,7 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
 
   // pass selectedMarkers and its state function
   const markers = markersData.data?.markersData.map((markerProps) => (
-    <BubbleMarker
-      // pass two new props for multiple markers selection
-      selectedMarkers={selectedMarkers}
-      setSelectedMarkers={setSelectedMarkers}
-      {...markerProps}
-    />
+    <BubbleMarker {...markerProps} />
   ));
 
   return (
@@ -215,6 +210,8 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
             isApproxSameViewport(props.appState.viewport, defaultViewport)
           }
           flyToMarkersDelay={500}
+          selectedMarkers={selectedMarkers}
+          setSelectedMarkers={setSelectedMarkers}
         />
       )}
     </>

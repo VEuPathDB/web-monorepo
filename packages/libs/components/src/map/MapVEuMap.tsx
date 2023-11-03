@@ -286,7 +286,6 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
         onViewportChanged={onViewportChanged}
         onBaseLayerChanged={onBaseLayerChanged}
         setSelectedMarkers={setSelectedMarkers}
-        zoomLevelToGeohashLevel={zoomLevelToGeohashLevel}
         onBoundsChanged={onBoundsChanged}
       />
       {/* set ScrollWheelZoom */}

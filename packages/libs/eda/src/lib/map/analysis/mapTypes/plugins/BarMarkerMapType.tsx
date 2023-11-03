@@ -350,12 +350,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
 
   // pass selectedMarkers and its state function
   const markers = markerData.markerProps?.map((markerProps) => (
-    <ChartMarker
-      // pass two new props for multiple markers selection
-      selectedMarkers={selectedMarkers}
-      setSelectedMarkers={setSelectedMarkers}
-      {...markerProps}
-    />
+    <ChartMarker {...markerProps} />
   ));
 
   return (
@@ -370,6 +365,8 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
             isApproxSameViewport(props.appState.viewport, defaultViewport)
           }
           flyToMarkersDelay={500}
+          selectedMarkers={selectedMarkers}
+          setSelectedMarkers={setSelectedMarkers}
         />
       )}
     </>

@@ -9,7 +9,6 @@ import { GeoConfig } from '../../../core/types/geoConfig';
 import { ComputationAppOverview } from '../../../core/types/visualization';
 import { AppState } from '../appState';
 import { EntityCounts } from '../../../core/hooks/entityCounts';
-import { markerDataProp } from '@veupathdb/components/lib/map/BoundsDriftMarker';
 
 export interface MapTypeConfigPanelProps {
   apps: ComputationAppOverview[];
@@ -41,8 +40,8 @@ export interface MapTypeMapLayerProps {
   hideVizInputsAndControls: boolean;
   setHideVizInputsAndControls: (hide: boolean) => void;
   // selectedMarkers and its state function
-  selectedMarkers?: markerDataProp[];
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<markerDataProp[]>>;
+  selectedMarkers?: string[];
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 /**

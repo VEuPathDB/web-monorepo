@@ -84,8 +84,6 @@ import { MapTypeMapLayerProps } from './mapTypes/types';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
 import AnalysisNameDialog from '../../workspace/AnalysisNameDialog';
 
-import { markerDataProp } from '@veupathdb/components/lib/map/BoundsDriftMarker';
-
 enum MapSideNavItemLabels {
   Download = 'Download',
   Filter = 'Filter',
@@ -386,14 +384,9 @@ function MapAnalysisImpl(props: ImplProps) {
   }, [history, redirectURL]);
 
   // make an array of objects state to list highlighted markers
-  const [selectedMarkers, setSelectedMarkers] = useState<markerDataProp[]>([]);
+  const [selectedMarkers, setSelectedMarkers] = useState<string[]>([]);
 
   console.log('selectedMarkers =', selectedMarkers);
-
-  // set initial prevGeohashLevel state
-  const [prevGeohashLevel, setPrevGeohashLevel] = useState<number>(
-    geoConfig?.zoomLevelToAggregationLevel(appState.viewport.zoom)
-  );
 
   const sidePanelMenuEntries: SidePanelMenuEntry[] = [
     {
@@ -880,12 +873,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     // pass defaultViewport & isStandAloneMap props for custom zoom control
                     defaultViewport={defaultViewport}
                     // multiple markers selection
-                    // pass selectedMarkers and its setState
-                    selectedMarkers={selectedMarkers}
                     setSelectedMarkers={setSelectedMarkers}
-                    // pass geohash level and setState
-                    prevGeohashLevel={prevGeohashLevel}
-                    setPrevGeohashLevel={setPrevGeohashLevel}
                   >
                     {activeMapTypePlugin?.MapLayerComponent && (
                       <activeMapTypePlugin.MapLayerComponent
