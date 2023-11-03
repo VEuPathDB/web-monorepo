@@ -147,6 +147,8 @@ export const ChartMarkers: Story<MapVEuMapProps> = (args) => {
         <SemanticMarkers
           markers={markerElements}
           animation={defaultAnimation}
+          selectedMarkers={selectedMarkers}
+          setSelectedMarkers={setSelectedMarkers}
         />
       </MapVEuMap>
     </>
