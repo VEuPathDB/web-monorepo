@@ -141,7 +141,7 @@ function TreeBoxOrganismEnumParam(
           ? Array.from(referenceStrains)
           : undefined,
       isAdditionalFilterApplied: showOnlyReferenceOrganisms,
-      additionalActions: [
+      additionalFilters: [
         <Tooltip
           title={
             <span style={{ fontWeight: 'normal' }}>
@@ -162,16 +162,11 @@ function TreeBoxOrganismEnumParam(
         </Tooltip>,
       ],
       styleOverrides: {
-        treeLinks: {
+        searchBox: {
           container: {
-            flexDirection: 'column',
-            alignItems: 'center',
-          } as React.CSSProperties,
-          actionsContainerStyle: {
-            flexGrow: 'auto',
-            marginLeft: '1em',
-            alignSelf: 'flex-start',
-          } as React.CSSProperties,
+            flexGrow: 1,
+            width: 'auto',
+          },
         },
       },
     }),
