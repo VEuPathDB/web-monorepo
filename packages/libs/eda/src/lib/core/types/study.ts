@@ -209,7 +209,6 @@ export type CollectionVariableTreeNode = t.TypeOf<
 export const CollectionVariableTreeNode = t.intersection([
   t.type({
     dataShape: t.string,
-    distributionDefaults: NumberDistributionDefaults,
     id: t.string,
     memberVariableIds: t.array(t.string),
     type: t.string,
@@ -224,6 +223,7 @@ export const CollectionVariableTreeNode = t.intersection([
     isCompositional: t.boolean,
     isProportion: t.boolean,
     normalizationMethod: t.string,
+    distributionDefaults: NumberDistributionDefaults,
   }),
 ]);
 
