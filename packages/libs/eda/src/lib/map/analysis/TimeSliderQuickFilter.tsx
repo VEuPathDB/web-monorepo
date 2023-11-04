@@ -16,7 +16,7 @@ import { VariableDescriptor } from '../../core/types/variable';
 import { SubsettingClient } from '../../core/api';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { useFindEntityAndVariable, Filter } from '../../core';
-import { dropRightWhile, dropWhile, zip } from 'lodash';
+import { zip } from 'lodash';
 import { AppState } from './appState';
 import { timeSliderVariableConstraints } from './config/eztimeslider';
 import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
@@ -151,31 +151,8 @@ export default function TimeSliderQuickFilter({
             )
         : [];
 
-    // Remove leading and trailing zeroes (subset sensitivity) if they are outside
-    // the current selectedRange (if any).
-    // When removing the right hand side zeroes, operate with an offset of 1
-    // so as to leave one zero at the end of the data series.
-    // This is so that when brushing across the entire time slider, the rightmost
-    // date is the start of the next bin (or the end of the very final bin as added above).
-    const trimmed = dropRightWhile(
-      dropWhile(
-        restructured,
-        ({ x, y }) =>
-          y === 0 && (selectedRange == null || x < selectedRange.start)
-      ),
-      ({ x }, index, array) => {
-        if (index > 0) {
-          return (
-            array[index - 1].y === 0 &&
-            (selectedRange == null || x > selectedRange.end)
-          );
-        }
-        return false;
-      }
-    );
-
-    return trimmed;
-  }, [getTimeSliderData, selectedRange]);
+    return restructured;
+  }, [getTimeSliderData]);
 
   // set time slider width and y position
   const timeFilterWidth = 750;

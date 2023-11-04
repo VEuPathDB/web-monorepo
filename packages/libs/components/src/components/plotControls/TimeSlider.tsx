@@ -149,29 +149,22 @@ function TimeSlider(props: TimeSliderProps) {
     () =>
       selectedRange != null
         ? {
-            // The +2 and -2 are a nasty hack that seems to solve a problem
-            // when we fake the controlled <Brush> component using the key prop.
-            // The issue is with the round-trip conversion of pixel/date/millisecond positions.
-            // The brush position is provided in pixel coordinates that we convert from YYYY-MM-DD.
-            // The onChange brush callback produces milliseconds since epoch.
-            // We convert that to YYYY-MM-DD when updating `selectedRange`.
-            // With no +2/-2 offset, the brush window widens by about 4 days (in the storybook story)
-            // at each end after is is manually adjusted. It does not seem to be timezone, leap year
-            // any other of the usual suspects.
-            // Let's hope the fix works in practice. It works with a timeslider only 300px wide
-            // so that seems hopeful.
-            start: { x: xBrushScale(new Date(selectedRange.start)) + 2 },
-            end: { x: xBrushScale(new Date(selectedRange.end)) - 2 },
+            // If we reenable the fake controlled behaviour of the <Brush> component using the key prop
+            // then we'll need to figure out why both brush handles drift every time you adjust one of them.
+            // The issue is something to do with the round-trip conversion of pixel/date/millisecond positions.
+            // A good place to start looking is here.
+            start: { x: xBrushScale(new Date(selectedRange.start)) },
+            end: { x: xBrushScale(new Date(selectedRange.end)) },
           }
         : undefined,
     [selectedRange, xBrushScale]
   );
 
   // `brushKey` makes/fakes the brush as a controlled component,
-  const brushKey =
-    selectedRange != null
-      ? selectedRange.start + ':' + selectedRange.end
-      : 'no_brush';
+  const brushKey = 'not_fake_controlled';
+  //    selectedRange != null
+  //      ? selectedRange.start + ':' + selectedRange.end
+  //      : 'no_brush';
 
   return (
     <div
