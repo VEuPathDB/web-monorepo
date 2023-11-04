@@ -18,6 +18,7 @@ let ReporterSelect = (props) => {
     value: reporter.name,
     display: reporter.displayName,
     description: reporter.description,
+    newBuild: reporter.newBuild,
   }));
   return (
     <div style={{ margin: '20px 0' }}>
