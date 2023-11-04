@@ -78,7 +78,7 @@ import {
   donutMarkerPlugin,
 } from './mapTypes';
 
-import EZTimeFilter from './EZTimeFilter';
+import TimeSliderQuickFilter from './TimeSliderQuickFilter';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { MapTypeMapLayerProps } from './mapTypes/types';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
@@ -804,7 +804,7 @@ function MapAnalysisImpl(props: ImplProps) {
                   {/*  Time slider component - only if prerequisite variable is available */}
                   {appState.timeSliderConfig &&
                     appState.timeSliderConfig.variable && (
-                      <EZTimeFilter
+                      <TimeSliderQuickFilter
                         studyId={studyId}
                         entities={studyEntities}
                         subsettingClient={subsettingClient}

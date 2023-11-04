@@ -1,8 +1,8 @@
 import { useMemo, useCallback, useState } from 'react';
 import { ChevronRight, H6, Toggle } from '@veupathdb/coreui';
-import EzTimeFilterWidget, {
-  EZTimeFilterDataProp,
-} from '@veupathdb/components/lib/components/plotControls/EzTimeFilter';
+import TimeSlider, {
+  TimeSliderDataProp,
+} from '@veupathdb/components/lib/components/plotControls/TimeSlider';
 import { InputVariables } from '../../core/components/visualizations/InputVariables';
 import { VariablesByInputName } from '../../core/utils/data-element-constraints';
 import { usePromise } from '../../core';
@@ -38,7 +38,7 @@ interface Props {
   siteInformation: SiteInformationProps;
 }
 
-export default function EZTimeFilter({
+export default function TimeSliderQuickFilter({
   studyId,
   entities,
   subsettingClient,
@@ -140,15 +140,14 @@ export default function EZTimeFilter({
   );
 
   // converting data to visx format
-  const timeFilterData: EZTimeFilterDataProp[] = useMemo(() => {
+  const timeFilterData: TimeSliderDataProp[] = useMemo(() => {
     const restructured =
       !getTimeSliderData.pending && getTimeSliderData.value != null
         ? zip(getTimeSliderData.value.x, getTimeSliderData.value.y)
             .map(([xValue, yValue]) => ({ x: xValue, y: yValue }))
             // and a type guard filter to avoid any `!` assertions.
             .filter(
-              (val): val is EZTimeFilterDataProp =>
-                val.x != null && val.y != null
+              (val): val is TimeSliderDataProp => val.x != null && val.y != null
             )
         : [];
 
@@ -271,11 +270,11 @@ export default function EZTimeFilter({
       >
         {/* container for the slider widget or spinner */}
         <div style={{ height: sliderHeight, position: 'relative' }}>
-          {/* conditional loading for EzTimeFilter */}
+          {/* conditional loading for TimeSlider */}
           {!getTimeSliderData.pending &&
           getTimeSliderData.value != null &&
           timeFilterData.length > 0 ? (
-            <EzTimeFilterWidget
+            <TimeSlider
               data={timeFilterData}
               selectedRange={selectedRange}
               setSelectedRange={(selectedRange) =>
