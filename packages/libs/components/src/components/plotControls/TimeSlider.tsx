@@ -12,14 +12,14 @@ import { millisecondTodate } from '../../utils/date-format-change';
 import { Bar } from '@visx/shape';
 import { debounce } from 'lodash';
 
-export type EZTimeFilterDataProp = {
+export type TimeSliderDataProp = {
   x: string;
   y: number;
 };
 
-export type EzTimeFilterProps = {
+export type TimeSliderProps = {
   /** Ez time filter data  */
-  data: EZTimeFilterDataProp[];
+  data: TimeSliderDataProp[];
   /** current state of selectedRange */
   selectedRange: { start: string; end: string } | undefined;
   /** update function selectedRange */
@@ -45,7 +45,7 @@ export type EzTimeFilterProps = {
 };
 
 // using forwardRef
-function EzTimeFilter(props: EzTimeFilterProps) {
+function TimeSlider(props: TimeSliderProps) {
   const {
     data,
     // set default width and height
@@ -85,8 +85,8 @@ function EzTimeFilter(props: EzTimeFilterProps) {
   };
 
   // accessors for data
-  const getXData = (d: EZTimeFilterDataProp) => new Date(d.x);
-  const getYData = (d: EZTimeFilterDataProp) => d.y;
+  const getXData = (d: TimeSliderDataProp) => new Date(d.x);
+  const getYData = (d: TimeSliderDataProp) => d.y;
 
   const onBrushChange = useMemo(
     () =>
@@ -266,4 +266,4 @@ function BrushHandle({ x, height, isBrushActive }: BrushHandleRenderProps) {
   );
 }
 
-export default EzTimeFilter;
+export default TimeSlider;
