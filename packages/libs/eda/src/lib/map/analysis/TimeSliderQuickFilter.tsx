@@ -6,11 +6,7 @@ import TimeSlider, {
 import { InputVariables } from '../../core/components/visualizations/InputVariables';
 import { VariablesByInputName } from '../../core/utils/data-element-constraints';
 import { usePromise } from '../../core';
-import {
-  DateVariable,
-  NumberVariable,
-  StudyEntity,
-} from '../../core/types/study';
+import { DateVariable, StudyEntity } from '../../core/types/study';
 import { VariableDescriptor } from '../../core/types/variable';
 
 import { SubsettingClient } from '../../core/api';
@@ -59,9 +55,7 @@ export default function TimeSliderQuickFilter({
 
   // extend the back end range request if our selectedRange is outside of it
   const extendedDisplayRange =
-    variableMetadata &&
-    (NumberVariable.is(variableMetadata.variable) || // TO DO: get rid of number support?
-      DateVariable.is(variableMetadata.variable))
+    variableMetadata && DateVariable.is(variableMetadata.variable)
       ? selectedRange == null
         ? {
             start: variableMetadata.variable.distributionDefaults.rangeMin,
@@ -89,10 +83,7 @@ export default function TimeSliderQuickFilter({
         variableMetadata == null ||
         variable == null ||
         extendedDisplayRange == null ||
-        !(
-          NumberVariable.is(variableMetadata.variable) ||
-          DateVariable.is(variableMetadata.variable)
-        )
+        !DateVariable.is(variableMetadata.variable)
       )
         return;
 
@@ -257,6 +248,7 @@ export default function TimeSliderQuickFilter({
               setSelectedRange={(selectedRange) =>
                 updateConfig({ ...config, selectedRange })
               }
+              xAxisRange={extendedDisplayRange}
               width={timeFilterWidth - 30}
               height={sliderHeight}
               // fill color of the selectedRange

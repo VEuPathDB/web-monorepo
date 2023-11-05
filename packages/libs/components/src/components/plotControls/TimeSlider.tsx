@@ -26,6 +26,8 @@ export type TimeSliderProps = {
   setSelectedRange: (
     selectedRange: { start: string; end: string } | undefined
   ) => void;
+  /** optional xAxisRange - will limit the selection to be within this */
+  xAxisRange?: { start: string; end: string };
   /** width */
   width?: number;
   /** height */
@@ -60,6 +62,7 @@ function TimeSlider(props: TimeSliderProps) {
     // set a default debounce time in milliseconds
     debounceRateMs = 500,
     disabled = false,
+    xAxisRange,
   } = props;
 
   const resizeTriggerAreas: ResizeTriggerAreas[] = disabled
@@ -97,13 +100,17 @@ function TimeSlider(props: TimeSliderProps) {
         const startDate = millisecondTodate(x0);
         const endDate = millisecondTodate(x1);
         setSelectedRange({
-          // don't let the selected range go outside the data.x values
-          // TO DO: possibly don't need this...
-          start: startDate < data[0].x ? data[0].x : startDate,
-          end:
-            endDate > data[data.length - 1].x
-              ? data[data.length - 1].x
-              : endDate,
+          // don't let range go outside the xAxisRange, if provided
+          start: xAxisRange
+            ? startDate < xAxisRange.start
+              ? xAxisRange.start
+              : startDate
+            : startDate,
+          end: xAxisRange
+            ? endDate > xAxisRange.end
+              ? xAxisRange.end
+              : endDate
+            : endDate,
         });
       }, debounceRateMs),
     [setSelectedRange, data]
