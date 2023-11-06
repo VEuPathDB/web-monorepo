@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { WdkStatusIcon } from '../../Components/Icon/WdkStatusIcon';
 import RadioList from '../../Components/InputControls/RadioList';
 import {
   filterOutProps,
@@ -6,7 +7,6 @@ import {
   safeHtml,
 } from '../../Utils/ComponentUtils';
 import DownloadForm from '../../Views/ReporterForm/DownloadForm';
-import PrimaryKeySpan from '../../Views/ReporterForm/PrimaryKeySpan';
 
 let NO_REPORTER_SELECTED = '_none_';
 
@@ -16,7 +16,12 @@ let ReporterSelect = (props) => {
   let nestedDivStyle = { display: 'inline-block', verticalAlign: 'top' };
   let items = reporters.map((reporter) => ({
     value: reporter.name,
-    display: reporter.displayName,
+    display: (
+      <>
+        {reporter.displayName}
+        <WdkStatusIcon buildIntroduced={reporter.newBuild} />
+      </>
+    ),
     description: reporter.description,
     newBuild: reporter.newBuild,
   }));

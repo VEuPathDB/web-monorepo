@@ -13,11 +13,6 @@ ul.wdk-RadioList li.disabled {
   color: gray;
 }
 
-ul.wdk-RadioList li.newBuild::after {
-  content: url('~@veupathdb/wdk-client/lib/Core/Style/images/new-feature.png');
-  margin-left: 0.25em;
-}
-
 ul.wdk-RadioList li span {
   margin-left: 0.5em;
 }

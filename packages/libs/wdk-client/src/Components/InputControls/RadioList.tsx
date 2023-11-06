@@ -14,7 +14,6 @@ type Props = {
     value: string;
     description?: string;
     disabled?: boolean;
-    newBuild?: number;
   }>;
   /** Value of the radio input element that should be checked **/
   value?: string;
@@ -47,7 +46,6 @@ class RadioList extends React.Component<Props> {
   }
 
   render() {
-    let currentBuild = 66;
     let className =
       baseClassName + ' ' + getValueOrDefault(this.props, 'className', '');
     const { required = false } = this.props;
@@ -56,9 +54,7 @@ class RadioList extends React.Component<Props> {
         {this.props.items.map((item) => (
           <li
             key={item.value}
-            className={`${item.disabled ? 'disabled' : ''}   ${
-              item.newBuild == currentBuild ? 'newBuild' : ''
-            }`}
+            className={item.disabled ? 'disabled' : undefined}
           >
             <label>
               <input
