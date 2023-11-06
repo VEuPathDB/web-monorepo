@@ -5,6 +5,7 @@ import {
   StudyMenuSearch,
 } from '@veupathdb/web-common/lib/App/Studies';
 import { DIYStudyMenuItem } from '@veupathdb/web-common/lib/App/Studies/DIYStudyMenuItem';
+import { DIYStudyMenuCollapsibleSection } from '@veupathdb/web-common/lib/App/Studies/DIYStudyMenuCollapsibleSection';
 import {
   menuItemsFromSocials,
   iconMenuItemsFromSocials,
@@ -105,42 +106,52 @@ export default function makeHeaderMenuItemsFactory(
                   studies.entities?.length > 0
                     ? [
                         {
-                          text: <small>My studies</small>,
+                          text: (
+                            <DIYStudyMenuCollapsibleSection
+                              sectionLabel="My studies"
+                              children={filteredUserStudies.map((study) => (
+                                <DIYStudyMenuItem
+                                  name={study.name}
+                                  link={`${study.baseEdaRoute}/new`}
+                                  isChildOfCollapsibleSection={true}
+                                />
+                              ))}
+                            />
+                          ),
                         },
                       ]
                     : []
+                  ).concat(
+                    filteredCuratedStudies.length > 0 && diyDatasets?.length > 0
+                      ? [
+                          {
+                            text: (
+                              <DIYStudyMenuCollapsibleSection
+                                sectionLabel="Curated studies"
+                                children={filteredCuratedStudies.map(
+                                  (study) => (
+                                    <StudyMenuItem
+                                      study={study}
+                                      config={siteConfig}
+                                      permissions={permissionsValue.permissions}
+                                      isChildOfCollapsibleSection={true}
+                                    />
+                                  )
+                                )}
+                              />
+                            ),
+                          },
+                        ]
+                      : filteredCuratedStudies.map((study) => ({
+                          text: (
+                            <StudyMenuItem
+                              study={study}
+                              config={siteConfig}
+                              permissions={permissionsValue.permissions}
+                            />
+                          ),
+                        }))
                   )
-                    .concat(
-                      filteredUserStudies.map((study) => ({
-                        text: (
-                          <DIYStudyMenuItem
-                            name={study.name}
-                            link={`${study.baseEdaRoute}/new`}
-                          />
-                        ),
-                      }))
-                    )
-                    .concat(
-                      filteredCuratedStudies.length > 0 &&
-                        diyDatasets?.length > 0
-                        ? [
-                            {
-                              text: <small>Curated studies</small>,
-                            },
-                          ]
-                        : []
-                    )
-                    .concat(
-                      filteredCuratedStudies.map((study) => ({
-                        text: (
-                          <StudyMenuItem
-                            study={study}
-                            config={siteConfig}
-                            permissions={permissionsValue.permissions}
-                          />
-                        ),
-                      }))
-                    )
                 : [
                     {
                       text: (
