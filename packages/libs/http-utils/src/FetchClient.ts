@@ -44,7 +44,7 @@ export interface FetchApiOptions {
   onNonSuccessResponse?: (error: Error) => void;
 }
 
-class FetchClientError extends Error {
+export class FetchClientError extends Error {
   name = 'FetchClientError';
 }
 
