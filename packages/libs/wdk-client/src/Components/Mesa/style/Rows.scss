@@ -1,6 +1,9 @@
-$headingRowBg: rgba(0, 0, 0, 0.035);
-$evenRowBg: rgba(0, 0, 0, 0.02);
-$oddRowBg: transparent;
+// $headingRowBg: rgba(0, 0, 0, 0.035);
+$headingRowBg: #e2e2e2;
+// $evenRowBg: rgba(0, 0, 0, 0.02);
+$evenRowBg: #fafafa;
+// $oddRowBg: transparent;
+$oddRowBg: white;
 
 .MesaComponent {
   thead {

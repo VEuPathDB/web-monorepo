@@ -274,14 +274,16 @@ class HeadingCell extends React.PureComponent {
   }
 
   render() {
-    const { column, eventHandlers, primary } = this.props;
+    const { column, eventHandlers, primary, columnIndex } = this.props;
     const { key, headingStyle, width, renderHeading } = column;
     const widthStyle = width ? { width, maxWidth: width, minWidth: width } : {};
+    console.log({ columnIndex, headingStyle });
 
     const style = Object.assign(
       {},
       headingStyle ? headingStyle : {},
       widthStyle
+      // columnIndex === 0 ? { position: 'sticky', left: 0, zIndex: 1 } : {}
     );
     const ref = (element) => (this.element = element);
 

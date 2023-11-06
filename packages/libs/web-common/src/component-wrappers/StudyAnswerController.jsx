@@ -50,6 +50,7 @@ function StudyAnswerController(props) {
 
   return (
     <React.Fragment>
+      hello
       <props.DefaultComponent
         {...props}
         stateProps={{

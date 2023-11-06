@@ -154,6 +154,7 @@ class DataTable extends React.Component {
       actions,
       eventHandlers,
       uiState,
+      headerWrapperStyle,
     } = this.props;
     const { dynamicWidths, tableWrapperWidth } = this.state;
     const newColumns =
@@ -170,9 +171,10 @@ class DataTable extends React.Component {
         ? combineWidths(columns.map(({ width }) => width))
         : null,
     };
-    const headerWrapperStyle = {
+    const headerWrapperStyleMerged = {
       width: tableWrapperWidth,
       display: dynamicWidths == null ? 'none' : 'block',
+      ...headerWrapperStyle,
     };
     const tableLayout = { tableLayout: dynamicWidths ? 'fixed' : 'auto' };
     const tableProps = {
@@ -189,7 +191,7 @@ class DataTable extends React.Component {
         <div className={dataTableClass()} style={wrapperStyle}>
           <div className={dataTableClass('Sticky')} style={wrapperStyle}>
             <div
-              style={headerWrapperStyle}
+              style={headerWrapperStyleMerged}
               ref={(node) => (this.headerNode = node)}
               className={dataTableClass('Header')}
             >
