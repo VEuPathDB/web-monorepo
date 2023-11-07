@@ -65,11 +65,19 @@ export function RecordController(WdkRecordController) {
         recordClass,
         categoryTree
       );
+
+      // This is a request for a custom page, so use default
+      // request props.
+      if (this.props.attributes || this.props.tables) {
+        return requestOptions;
+      }
+
       if (
         recordClass.urlSegment !== 'gene' &&
         recordClass.urlSegment !== 'dataset'
-      )
+      ) {
         return requestOptions;
+      }
 
       // Dataset records
       if (recordClass.urlSegment === 'dataset') {
@@ -84,34 +92,17 @@ export function RecordController(WdkRecordController) {
       // Gene records
       return [
         {
+          // This includes all attributes
           attributes: requestOptions[0].attributes,
-          tables: requestOptions[0].tables
-            .concat(['MetaTable'])
-            .concat(
-              'TranscriptionSummary' in recordClass.tablesMap
-                ? ['TranscriptionSummary']
-                : []
-            )
-            .concat(
-              'ExpressionGraphs' in recordClass.tablesMap
-                ? ['ExpressionGraphs']
-                : []
-            )
-            .concat(
-              'PhenotypeGraphs' in recordClass.tablesMap
-                ? ['PhenotypeGraphs']
-                : []
-            )
-            .concat(
-              'CrisprPhenotypeGraphs' in recordClass.tablesMap
-                ? ['CrisprPhenotypeGraphs']
-                : []
-            )
-            .concat(
-              'FungiVBOrgLinkoutsTable' in recordClass.tablesMap
-                ? ['FungiVBOrgLinkoutsTable']
-                : []
-            ),
+          // Preload these tables. Others are lazy-loaded.
+          tables: [
+            'MetaTable',
+            'TranscriptionSummary',
+            'ExpressionGraphs',
+            'PhenotypeGraphs',
+            'CrisprPhenotypeGraphs',
+            'FungiVBOrgLinkoutsTable',
+          ].filter((tableName) => tableName in recordClass.tablesMap),
         },
       ];
     }
