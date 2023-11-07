@@ -94,7 +94,7 @@ function TimeSlider(props: TimeSliderProps) {
   const onBrushChange = useMemo(
     () =>
       debounce((domain: Bounds | null) => {
-        if (!domain || data.length < 2) return;
+        if (!domain) return;
         const { x0, x1 } = domain;
         // x0 and x1 are millisecond value
         const startDate = millisecondTodate(x0);
@@ -113,7 +113,7 @@ function TimeSlider(props: TimeSliderProps) {
             : endDate,
         });
       }, debounceRateMs),
-    [setSelectedRange, data]
+    [setSelectedRange, xAxisRange]
   );
 
   // Cancel any pending onBrushChange requests when this component is unmounted
