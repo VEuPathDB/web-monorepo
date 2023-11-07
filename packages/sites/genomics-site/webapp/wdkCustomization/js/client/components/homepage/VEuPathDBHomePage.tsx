@@ -535,26 +535,6 @@ const useHeaderMenuItems = (
           },
         },
         {
-          key: 'plasmoap',
-          display: 'PlasmoAP',
-          type: 'reactRoute',
-          url: '/plasmoap',
-          target: '_blank',
-          metadata: {
-            include: [PlasmoDB],
-          },
-        },
-        /*  {
-          key: 'pats',
-          display: 'PATS',
-          type: 'externalLink',
-          url: 'http://modlabcadd.ethz.ch/software/pats/',
-          target: '_blank',
-          metadata: {
-            include: [ PlasmoDB ]
-          }
-        },*/
-        {
           key: 'mapveu',
           display: 'MapVEu',
           tooltip: 'Population Biology map',
@@ -626,6 +606,33 @@ const useHeaderMenuItems = (
               ),
               items: mapMenuItems,
             },
+        {
+          key: 'ncbi-primer3',
+          display: 'NCBI Primer3',
+          type: 'externalLink',
+          url: 'https://www.ncbi.nlm.nih.gov/tools/primer-blast/',
+          target: '_blank',
+        },
+        {
+          key: 'plasmoap',
+          display: 'PlasmoAP',
+          type: 'reactRoute',
+          url: '/plasmoap',
+          target: '_blank',
+          metadata: {
+            include: [PlasmoDB],
+          },
+        },
+        /*  {
+          key: 'pats',
+          display: 'PATS',
+          type: 'externalLink',
+          url: 'http://modlabcadd.ethz.ch/software/pats/',
+          target: '_blank',
+          metadata: {
+            include: [ PlasmoDB ]
+          }
+        },*/
         {
           key: 'pubcrawler',
           display: 'PubMed and Entrez',
@@ -733,21 +740,8 @@ const useHeaderMenuItems = (
           url: makeStaticPageRoute('/dataInprogress.html'),
         },
         {
-          key: 'data-files-eupathdb',
-          display: 'Download data files',
-          type: 'externalLink',
-          url: '/common/downloads',
-          metadata: {
-            exclude: [EuPathDB],
-          },
-        },
-        {
           key: 'data-files-eupathdb-beta',
-          display: (
-            <>
-              Download data files <img alt="BETA" src={betaImage} />
-            </>
-          ),
+          display: <>Download data files</>,
           type: 'reactRoute',
           url: '/downloads',
           metadata: {
