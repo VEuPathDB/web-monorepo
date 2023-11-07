@@ -109,12 +109,7 @@ export default function SemanticMarkers({
       // but don't animate if we moved markers by 360 deg. longitude
       // because the DriftMarker or Leaflet.Marker.SlideTo code seems to
       // send everything back to the 'main' world.
-      if (
-        recenteredMarkers.length > 0 &&
-        prevMarkers.length > 0 &&
-        animation &&
-        !didRecenterMarkers
-      ) {
+      if (recenteredMarkers.length > 0 && prevMarkers.length > 0 && animation) {
         const animationValues = animation.animationFunction({
           prevMarkers,
           markers: recenteredMarkers,
@@ -129,8 +124,8 @@ export default function SemanticMarkers({
         setConsolidatedMarkers(recenteredMarkers);
       }
 
-      // Update previous markers with the original markers array
-      setPrevMarkers(markers);
+      // Update previous markers
+      setPrevMarkers(recenteredMarkers);
     }
 
     function enqueueZoom(
@@ -163,7 +158,8 @@ export default function SemanticMarkers({
     [consolidatedMarkers]
   );
 
-  useFlyToMarkers({ markers: refinedMarkers, flyToMarkers, flyToMarkersDelay });
+  // this should use the unadulterated markers (which are always in the "main world")
+  useFlyToMarkers({ markers, flyToMarkers, flyToMarkersDelay });
 
   return <>{refinedMarkers}</>;
 }
