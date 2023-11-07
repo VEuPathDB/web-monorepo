@@ -24,7 +24,6 @@ import { BubbleMarkerConfiguration } from '../MarkerConfiguration/BubbleMarkerCo
 
 export interface DefaultBubbleOverlayConfigProps {
   studyId: string;
-  filters: Filter[] | undefined;
   overlayVariable: Variable;
   overlayEntity: StudyEntity;
   aggregator?: BubbleMarkerConfiguration['aggregator'];

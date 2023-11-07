@@ -58,6 +58,7 @@ import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
 
 const displayName = 'Bubbles';
+const EMPTY_FILTERS: Filter[] = [];
 
 export const plugin: MapTypePlugin = {
   displayName,
@@ -407,13 +408,13 @@ interface OverlayConfigProps {
 function useOverlayConfig(props: OverlayConfigProps) {
   const {
     studyId,
-    filters = [],
+    filters,
     aggregator,
     numeratorValues,
     denominatorValues,
     selectedVariable,
   } = props;
-  const findEntityAndVariable = useFindEntityAndVariable();
+  const findEntityAndVariable = useFindEntityAndVariable(filters);
   const entityAndVariable = findEntityAndVariable(selectedVariable);
 
   if (entityAndVariable == null)
@@ -427,7 +428,6 @@ function useOverlayConfig(props: OverlayConfigProps) {
   return useMemo(() => {
     return getDefaultBubbleOverlayConfig({
       studyId,
-      filters,
       overlayVariable,
       overlayEntity,
       aggregator,
@@ -436,7 +436,6 @@ function useOverlayConfig(props: OverlayConfigProps) {
     });
   }, [
     studyId,
-    filters,
     overlayVariable,
     overlayEntity,
     aggregator,
@@ -487,20 +486,23 @@ function useLegendData(props: DataProps) {
     denominatorValues?.length === 0 ||
     !validateProportionValues(numeratorValues, denominatorValues);
 
-  const legendRequestParams: StandaloneMapBubblesLegendRequestParams = {
-    studyId,
-    filters: filters || [],
-    config: {
-      outputEntityId,
-      colorLegendConfig: {
-        geoAggregateVariable: geoAggregateVariables.at(-1)!,
-        quantitativeOverlayConfig: overlayConfig,
+  const legendRequestParams: StandaloneMapBubblesLegendRequestParams = useMemo(
+    () => ({
+      studyId,
+      filters: filters || EMPTY_FILTERS,
+      config: {
+        outputEntityId,
+        colorLegendConfig: {
+          geoAggregateVariable: geoAggregateVariables.at(-1)!,
+          quantitativeOverlayConfig: overlayConfig,
+        },
+        sizeConfig: {
+          geoAggregateVariable: geoAggregateVariables[0],
+        },
       },
-      sizeConfig: {
-        geoAggregateVariable: geoAggregateVariables[0],
-      },
-    },
-  };
+    }),
+    [studyId, filters, outputEntityId, geoAggregateVariables, overlayConfig]
+  );
 
   return useQuery({
     queryKey: ['bubbleMarkers', 'legendData', legendRequestParams],
