@@ -31,6 +31,7 @@ import { useStudyAccessApi } from '@veupathdb/study-data-access/lib/study-access
 import { getWdkStudyRecords } from '../utils/study-records';
 import { useDeepValue } from './immutability';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
+import { FetchClientError } from '@veupathdb/http-utils';
 
 const STUDY_RECORD_CLASS_NAME = 'dataset';
 
@@ -230,11 +231,14 @@ export function useStudyMetadata(datasetId: string, client: SubsettingClient) {
       try {
         return await client.getStudyMetadata(studyId);
       } catch (error) {
-        console.error(error);
-        return {
-          id: studyId,
-          rootEntity: STUB_ENTITY,
-        };
+        if (error instanceof FetchClientError) {
+          console.error(error);
+          return {
+            id: studyId,
+            rootEntity: STUB_ENTITY,
+          };
+        }
+        throw error;
       }
     },
     [datasetId, client, permissionsResponse]
