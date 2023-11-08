@@ -58,7 +58,6 @@ import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
 
 const displayName = 'Bubbles';
-const EMPTY_FILTERS: Filter[] = [];
 
 export const plugin: MapTypePlugin = {
   displayName,
@@ -486,23 +485,20 @@ function useLegendData(props: DataProps) {
     denominatorValues?.length === 0 ||
     !validateProportionValues(numeratorValues, denominatorValues);
 
-  const legendRequestParams: StandaloneMapBubblesLegendRequestParams = useMemo(
-    () => ({
-      studyId,
-      filters: filters || EMPTY_FILTERS,
-      config: {
-        outputEntityId,
-        colorLegendConfig: {
-          geoAggregateVariable: geoAggregateVariables.at(-1)!,
-          quantitativeOverlayConfig: overlayConfig,
-        },
-        sizeConfig: {
-          geoAggregateVariable: geoAggregateVariables[0],
-        },
+  const legendRequestParams: StandaloneMapBubblesLegendRequestParams = {
+    studyId,
+    filters: filters || [], // OK for react-query, but not for hooks in general
+    config: {
+      outputEntityId,
+      colorLegendConfig: {
+        geoAggregateVariable: geoAggregateVariables.at(-1)!,
+        quantitativeOverlayConfig: overlayConfig,
       },
-    }),
-    [studyId, filters, outputEntityId, geoAggregateVariables, overlayConfig]
-  );
+      sizeConfig: {
+        geoAggregateVariable: geoAggregateVariables[0],
+      },
+    },
+  };
 
   return useQuery({
     queryKey: ['bubbleMarkers', 'legendData', legendRequestParams],
@@ -644,7 +640,15 @@ function useMarkerData(props: DataProps) {
     legendData == null;
 
   return useQuery({
-    queryKey: ['bubbleMarkers', 'markerData', markerRequestParams, legendData],
+    // we're actually using the mapping functions `bubbleValueToColorMapper` and
+    // `bubbleValueToDiameterMapper` in the queryFn but we can't use functions as "dependencies"
+    // in react-query, so we pass the `bubbleLegendData` used to construct these functions instead.
+    queryKey: [
+      'bubbleMarkers',
+      'markerData',
+      markerRequestParams,
+      legendData?.bubbleLegendData,
+    ],
     queryFn: async () => {
       const rawMarkersData = await dataClient.getStandaloneBubbles(
         'standalone-map',
