@@ -643,9 +643,8 @@ function useMarkerData(props: DataProps) {
     !validateProportionValues(numeratorValues, denominatorValues) ||
     legendData == null;
 
-  // FIXME Don't make dependent on legend data
   return useQuery({
-    queryKey: ['bubbleMarkers', 'markerData', markerRequestParams],
+    queryKey: ['bubbleMarkers', 'markerData', markerRequestParams, legendData],
     queryFn: async () => {
       const rawMarkersData = await dataClient.getStandaloneBubbles(
         'standalone-map',
