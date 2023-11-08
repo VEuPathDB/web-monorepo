@@ -369,7 +369,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
             !markerData.isFetching &&
             isApproxSameViewport(props.appState.viewport, defaultViewport)
           }
-          flyToMarkersDelay={500}
+          flyToMarkersDelay={2000}
         />
       )}
     </>
@@ -607,6 +607,7 @@ function useMarkerData(props: MarkerDataProps) {
     data: markerData,
     error,
     isFetching,
+    isPreviousData,
   } = useDistributionMarkerData(props);
   if (markerData == null) return { error, isFetching };
 
@@ -658,7 +659,7 @@ function useMarkerData(props: MarkerDataProps) {
 
   return {
     error,
-    isFetching,
+    isFetching: isFetching || isPreviousData,
     markerProps,
     totalVisibleWithOverlayEntityCount,
     totalVisibleEntityCount,
