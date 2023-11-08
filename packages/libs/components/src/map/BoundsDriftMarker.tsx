@@ -173,8 +173,6 @@ export default function BoundsDriftMarker({
      * on grayBoundsRect in the early return to please TypeScript.
      */
     if (!markerRef.current || !popupRef.current || !grayBoundsRect) return;
-    // if (!markerRef.current || !popupRef.current) return;
-    // if (!markerRef.current || !popupRef.current ) return;
 
     const markerRect = markerRef.current._icon.getBoundingClientRect();
     const markerIconRect =
