@@ -201,10 +201,10 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
           markers={markers}
           animation={defaultAnimation}
           flyToMarkers={
-            !markersData.isFetching &&
+            !(markersData.isFetching || markersData.isPreviousData) &&
             isApproxSameViewport(props.appState.viewport, defaultViewport)
           }
-          flyToMarkersDelay={500}
+          flyToMarkersDelay={2000}
         />
       )}
     </>

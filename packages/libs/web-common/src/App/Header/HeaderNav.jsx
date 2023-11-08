@@ -131,7 +131,10 @@ class HeaderNav extends React.Component {
       case 'facebook':
         return 'facebook-official';
       case 'twitter':
-        return 'twitter';
+        // Icon component renders a FontAwesome icon and our version of FA doesn't include the latest Twitter logo.
+        // Thus, let's add a space so that the FA classname is meaningless ("fa-fa-") and instead we'll point to
+        // the icon we want in -> web-common/icons/
+        return ' ebrc-icon-x-logo';
       case 'youtube':
         return 'youtube-play';
       case 'vimeo':
