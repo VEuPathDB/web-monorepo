@@ -132,6 +132,7 @@ interface MapMarkers {
   error: unknown;
 }
 
+// TO DO: no longer used - we should remove this, right?
 export function useStandaloneMapMarkers(
   props: StandaloneMapMarkersProps
 ): MapMarkers {
