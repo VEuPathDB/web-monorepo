@@ -5,7 +5,7 @@ import {
   StudyMenuSearch,
 } from '@veupathdb/web-common/lib/App/Studies';
 import { DIYStudyMenuItem } from '@veupathdb/web-common/lib/App/Studies/DIYStudyMenuItem';
-import { DIYStudyMenuCollapsibleSection } from '@veupathdb/web-common/lib/App/Studies/DIYStudyMenuCollapsibleSection';
+import { CollapsibleDetailsSection } from '@veupathdb/wdk-client/lib/Components';
 import {
   menuItemsFromSocials,
   iconMenuItemsFromSocials,
@@ -107,15 +107,17 @@ export default function makeHeaderMenuItemsFactory(
                     ? [
                         {
                           text: (
-                            <DIYStudyMenuCollapsibleSection
-                              sectionLabel="My studies"
-                              children={filteredUserStudies.map((study) => (
-                                <DIYStudyMenuItem
-                                  name={study.name}
-                                  link={`${study.baseEdaRoute}/new`}
-                                  isChildOfCollapsibleSection={true}
-                                />
-                              ))}
+                            <CollapsibleDetailsSection
+                              summary="My studies"
+                              collapsibleDetails={filteredUserStudies.map(
+                                (study) => (
+                                  <DIYStudyMenuItem
+                                    name={study.name}
+                                    link={`${study.baseEdaRoute}/new`}
+                                    isChildOfCollapsibleSection={true}
+                                  />
+                                )
+                              )}
                             />
                           ),
                         },
@@ -126,9 +128,9 @@ export default function makeHeaderMenuItemsFactory(
                       ? [
                           {
                             text: (
-                              <DIYStudyMenuCollapsibleSection
-                                sectionLabel="Curated studies"
-                                children={filteredCuratedStudies.map(
+                              <CollapsibleDetailsSection
+                                summary="Curated studies"
+                                collapsibleDetails={filteredCuratedStudies.map(
                                   (study) => (
                                     <StudyMenuItem
                                       study={study}
