@@ -13,16 +13,32 @@ class IsaDatasetDetail extends UserDatasetDetail {
       config: { displayName },
       userDataset: { isInstalled },
       edaWorkspaceUrl,
+      edaMapUrl,
     } = this.props;
 
-    return !isInstalled || !edaWorkspaceUrl ? null : (
-      <section id="eda-linkout">
-        <h2>
-          <Link to={edaWorkspaceUrl}>
-            <i className="ebrc-icon-edaIcon"></i> Explore in {displayName}
-          </Link>
-        </h2>
-      </section>
+    if (!isInstalled) return null;
+
+    return (
+      <>
+        {!edaWorkspaceUrl ? null : (
+          <section id="eda-linkout">
+            <h2>
+              <Link to={edaWorkspaceUrl}>
+                <i className="ebrc-icon-edaIcon"></i> Explore in {displayName}
+              </Link>
+            </h2>
+          </section>
+        )}
+        {!edaMapUrl ? null : (
+          <section id="eda-linkout">
+            <h2>
+              <Link to={edaMapUrl}>
+                <i className="ebrc-icon-edaIcon"></i> Explore in MapVEu
+              </Link>
+            </h2>
+          </section>
+        )}
+      </>
     );
   }
 

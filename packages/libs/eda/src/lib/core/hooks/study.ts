@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { createContext, useCallback } from 'react';
 import {
   useWdkService,
   useWdkServiceWithRefresh,
@@ -9,10 +9,7 @@ import {
   getScopes,
   getNodeId,
 } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
-import {
-  AnswerJsonFormatConfig,
-  RecordInstance,
-} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { AnswerJsonFormatConfig } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 // Definitions
 import {
@@ -26,7 +23,7 @@ import {
 import SubsettingClient from '../api/SubsettingClient';
 
 // Hooks
-import { useStudyRecord } from '..';
+import { usePromise, useStudyRecord } from '..';
 import { useStudyAccessApi } from '@veupathdb/study-data-access/lib/study-access/studyAccessHooks';
 import { getWdkStudyRecords } from '../utils/study-records';
 import { useDeepValue } from './immutability';
@@ -189,44 +186,11 @@ export function isStubEntity(entity: StudyEntity) {
 
 export function useStudyMetadata(datasetId: string, client: SubsettingClient) {
   const permissionsResponse = usePermissions();
-  return useWdkServiceWithRefresh(
-    async (wdkService) => {
+  return usePromise(
+    useCallback(async () => {
       if (permissionsResponse.loading) return;
       const { permissions } = permissionsResponse;
-      const recordClass = await wdkService.findRecordClass('dataset');
-      const attributes = ['dataset_id', 'study_access'].filter(
-        (attribute) => attribute in recordClass.attributesMap
-      );
-      const studyRecord = await wdkService
-        .getRecord(
-          STUDY_RECORD_CLASS_NAME,
-          [{ name: 'dataset_id', value: datasetId }],
-          { attributes }
-        )
-        .catch((error) => {
-          console.warn(
-            'Unable to load study dataset record. See error below. Using stub record.'
-          );
-          console.error(error);
-          const attrs = attributes.reduce(
-            (attrs, name) =>
-              Object.assign(attrs, {
-                [name]: '######',
-              }),
-            {}
-          );
-          return {
-            displayName: 'Fake Study',
-            id: [{ name: 'dataset_id', value: datasetId }],
-            recordClassName: STUDY_RECORD_CLASS_NAME,
-            attributes: attrs,
-            tables: {},
-            tableErrors: [],
-          } as RecordInstance;
-        });
-      const studyId =
-        permissions.perDataset[studyRecord.attributes.dataset_id as string]
-          ?.studyId;
+      const studyId = permissions.perDataset[datasetId]?.studyId;
       if (studyId == null) throw new Error('Not an eda study');
       try {
         return await client.getStudyMetadata(studyId);
@@ -240,7 +204,6 @@ export function useStudyMetadata(datasetId: string, client: SubsettingClient) {
         }
         throw error;
       }
-    },
-    [datasetId, client, permissionsResponse]
-  );
+    }, [client, datasetId, permissionsResponse])
+  ).value;
 }

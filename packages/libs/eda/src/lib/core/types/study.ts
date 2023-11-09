@@ -273,9 +273,14 @@ export const StudyEntity: t.Type<StudyEntity> = t.recursion('StudyEntity', () =>
 // -------------
 
 export type StudyOverview = t.TypeOf<typeof StudyOverview>;
-export const StudyOverview = t.type({
-  id: t.string,
-});
+export const StudyOverview = t.intersection([
+  t.type({
+    id: t.string,
+  }),
+  t.partial({
+    hasMap: t.boolean,
+  }),
+]);
 
 export type StudyMetadata = t.TypeOf<typeof StudyMetadata>;
 export const StudyMetadata = t.intersection([
