@@ -103,7 +103,8 @@ export default function SemanticMarkers({
             })
           : markers;
 
-      const didRecenterMarkers = !isShallowEqual(markers, recenteredMarkers);
+      // don't update any state if the markers haven't changed
+      if (isShallowEqual(consolidatedMarkers, recenteredMarkers)) return;
 
       // now handle animation
       // but don't animate if we moved markers by 360 deg. longitude
