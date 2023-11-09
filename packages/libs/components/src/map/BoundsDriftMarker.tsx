@@ -280,26 +280,28 @@ export default function BoundsDriftMarker({
 
   // add click events for highlighting markers
   const handleClick = (e: LeafletMouseEvent) => {
-    // if selected, unselect
-    if (setSelectedMarkers) {
-      if (selectedMarkers?.find((id) => id === props.id)) {
-        setSelectedMarkers((prevSelectedMarkers: string[]) =>
-          prevSelectedMarkers.filter((id: string) => id !== props.id)
-        );
-      } else {
-        // select
-        setSelectedMarkers((prevSelectedMarkers: string[]) => [
-          ...prevSelectedMarkers,
-          props.id,
-        ]);
+    // check the number of mouse click and enable function for single click only
+    if (e.originalEvent.detail === 1) {
+      if (setSelectedMarkers) {
+        if (selectedMarkers?.find((id) => id === props.id)) {
+          setSelectedMarkers((prevSelectedMarkers: string[]) =>
+            prevSelectedMarkers.filter((id: string) => id !== props.id)
+          );
+        } else {
+          // select
+          setSelectedMarkers((prevSelectedMarkers: string[]) => [
+            ...prevSelectedMarkers,
+            props.id,
+          ]);
+        }
       }
-    }
 
-    // Sometimes clicking throws off the popup's orientation, so reorient it
-    orientPopup(popupOrientationRef.current);
-    // Default popup behavior is to open on marker click
-    // Prevent by immediately closing it
-    e.target.closePopup();
+      // Sometimes clicking throws off the popup's orientation, so reorient it
+      orientPopup(popupOrientationRef.current);
+      // Default popup behavior is to open on marker click
+      // Prevent by immediately closing it
+      e.target.closePopup();
+    }
   };
 
   const handleDoubleClick = () => {
