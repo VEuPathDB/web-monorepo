@@ -57,7 +57,7 @@ export default function UserDatasetStatus(props: Props) {
   const { baseUrl, userDataset, projectId, displayName, dataNoun } = props;
   const { projects, status, importMessages } = userDataset;
   const lowercaseSingularDataNoun = dataNoun.singular.toLowerCase();
-  const installStatusByProject = status?.install?.find(
+  const installStatusForCurrentProject = status?.install?.find(
     (d) => d.projectId === projectId
   );
   const { isInstallable, isInstalled, isQueued, hasFailed } =
@@ -65,7 +65,7 @@ export default function UserDatasetStatus(props: Props) {
       projects,
       projectId,
       status.import,
-      installStatusByProject
+      installStatusForCurrentProject
     );
   const phase = status?.import !== 'complete' ? '1' : '2';
   const link = `${baseUrl}/${userDataset.id}`;
@@ -85,7 +85,7 @@ export default function UserDatasetStatus(props: Props) {
       Failed (phase {phase}):{' '}
       {phase === '1'
         ? importMessages.join(', ')
-        : installStatusByProject?.dataMessage}
+        : installStatusForCurrentProject?.dataMessage}
     </span>
   ) : (
     <span>

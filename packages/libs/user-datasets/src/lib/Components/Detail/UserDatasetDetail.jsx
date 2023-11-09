@@ -483,20 +483,20 @@ class UserDatasetDetail extends React.Component {
      * We know a dataset is incompatible when the site-specific's install status
      * indicates `missing-dependency`
      */
-    const installStatusByProject = status?.install?.find(
+    const installStatusForCurrentProject = status?.install?.find(
       (d) => d.projectId === projectId
     );
     const { isInstallable, isInstalled, hasFailed } = getDatasetStatusInfo(
       projects,
       projectId,
       status.import,
-      installStatusByProject
+      installStatusForCurrentProject
     );
 
     const failedImport =
       status.import === 'failed' || status.import === 'invalid';
     const isIncompatible =
-      installStatusByProject?.dataStatus === 'missing-dependency';
+      installStatusForCurrentProject?.dataStatus === 'missing-dependency';
 
     const compatibilityInfo = !isInstallable ? (
       // if projectIds don't match, then we're not installable nor compatible

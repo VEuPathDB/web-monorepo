@@ -52,10 +52,7 @@ interface Props {
     userDatasetIds: string[],
     recipientUserIds: number[]
   ) => any;
-  unshareUserDatasets: (
-    userDatasetIds: string,
-    recipientUserIds: number
-  ) => any;
+  unshareUserDatasets: (userDatasetId: string, recipientUserId: number) => any;
   removeUserDataset: (dataset: UserDataset) => any;
   updateUserDatasetDetail: (
     userDataset: UserDataset,
@@ -122,7 +119,7 @@ class UserDatasetList extends React.Component<Props, State> {
   }
 
   isRowSelected(row: UserDataset): boolean {
-    const id: number | string = row.id;
+    const id: string = row.id;
     const { selectedRows } = this.state;
     return selectedRows.includes(id);
   }

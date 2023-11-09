@@ -476,6 +476,7 @@ export function shareUserDatasets(
   recipientUserIds: number[]
 ) {
   return validateVdiCompatibleThunk<SharingAction>(({ wdkService }) => {
+    // here we're making an array of objects to help facilitate the sharing of multiple datasets with multiple users
     const requests = [];
     for (const datasetId of userDatasetIds) {
       for (const recipientId of recipientUserIds) {
@@ -483,12 +484,14 @@ export function shareUserDatasets(
       }
     }
 
+    // here we're building a legacy success object to be passed to the redux store
     const sharingSuccessObject = requests.reduce((prev, curr) => {
       const { datasetId, recipientId } = curr;
       if (datasetId in prev) {
         return {
           ...prev,
           [datasetId]: prev[datasetId]?.concat({
+            // current UI renders the user's name here, but we don't have that info readily available
             userDisplayName: '',
             user: recipientId,
           }),
@@ -496,6 +499,7 @@ export function shareUserDatasets(
       } else {
         return {
           ...prev,
+          // see above comment re: user's name
           [datasetId]: [{ userDisplayName: '', user: recipientId }],
         };
       }
@@ -535,6 +539,7 @@ export function unshareUserDatasets(
             revoke: {
               [userDatasetId]: [
                 {
+                  // similar to sharing, legacy UDs had this info to pass but we don't currently
                   userDisplayName: '',
                   user: recipientUserId,
                 },

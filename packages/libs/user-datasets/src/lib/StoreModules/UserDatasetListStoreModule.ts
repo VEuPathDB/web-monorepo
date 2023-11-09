@@ -1,4 +1,4 @@
-import { difference } from 'lodash';
+import { difference, omit } from 'lodash';
 
 import {
   Action,
@@ -84,7 +84,6 @@ export function reduce(state: State = initialState, action: Action): State {
           };
 
     case DETAIL_UPDATE_SUCCESS:
-      // @ts-ignore
       return state.status === 'complete'
         ? {
             ...state,
@@ -99,17 +98,16 @@ export function reduce(state: State = initialState, action: Action): State {
         : state;
 
     case DETAIL_REMOVE_SUCCESS:
-      // @ts-ignore
       return state.status === 'complete'
         ? {
             ...state,
             userDatasets: difference(state.userDatasets, [
               action.payload.userDataset.id,
             ]),
-            userDatasetsById: {
-              ...state.userDatasetsById,
-              [action.payload.userDataset.id]: undefined,
-            },
+            userDatasetsById: omit(
+              state.userDatasetsById,
+              action.payload.userDataset.id
+            ),
           }
         : state;
 

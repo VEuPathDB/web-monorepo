@@ -23,7 +23,7 @@ export function wrapWdkService(
   );
 
   return {
-    [vdiCompatibilityFlag]: null,
+    [vdiCompatibilityFlag]: vdiCompatibilityFlag,
     ...wdkService,
     ...vdiService,
   };
