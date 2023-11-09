@@ -176,7 +176,11 @@ export function useStudyEntities(filters?: Filter[]) {
                               new Date(filterRange.max as string),
                               unit as DateMath.Unit
                             );
-                            return diff >= 12;
+                            // 30 is somewhat arbitrary, but it basically
+                            // means 30+ days will be shown as weeks,
+                            // 30+ weeks shown as months and
+                            // 30+ months will be shown as years.
+                            return diff >= 30;
                           }
                         }
                       ) ?? 'day') as TimeUnit;
