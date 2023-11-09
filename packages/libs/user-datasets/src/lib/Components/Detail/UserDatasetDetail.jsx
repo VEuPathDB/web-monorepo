@@ -131,7 +131,6 @@ class UserDatasetDetail extends React.Component {
       owner,
       created,
       sharedWith,
-      questions,
       status,
     } = userDataset;
     const { display, name, version } = type;
@@ -140,6 +139,11 @@ class UserDatasetDetail extends React.Component {
       status?.import === 'complete' &&
       status?.install?.find((d) => d.projectId === config.projectId)
         .dataStatus === 'complete';
+    const questions = Object.values(questionMap).filter(
+      (q) =>
+        'userDatasetType' in q.properties &&
+        q.properties.userDatasetType.includes(type.name)
+    );
 
     return [
       {
@@ -236,8 +240,7 @@ class UserDatasetDetail extends React.Component {
             attribute: 'Available searches',
             value: (
               <ul>
-                {questions.map((questionName) => {
-                  const q = questionMap[questionName];
+                {questions.map((q) => {
                   // User dataset searches typically offer changing the dataset through a dropdown
                   // Ths dropdown is a param, "biom_dataset" on MicrobiomeDB and "rna_seq_dataset" on genomic sites
                   // Hence the regex: /dataset/
@@ -254,7 +257,7 @@ class UserDatasetDetail extends React.Component {
                     urlPath +
                     (ps.length === 1 ? '?param.' + ps[0] + '=' + id : '');
                   return (
-                    <li key={questionName}>
+                    <li key={q.fullName}>
                       <Link to={url}>{q.displayName}</Link>
                     </li>
                   );

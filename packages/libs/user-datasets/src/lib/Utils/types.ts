@@ -40,7 +40,6 @@ export interface UserDataset {
   ownerUserId: number;
   percentQuotaUsed: number;
   sharedWith: UserDatasetShare[] | undefined;
-  questions: string[];
   size?: number;
   type: {
     name: string;

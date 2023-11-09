@@ -640,7 +640,6 @@ function transformVdiResponseToLegacyResponseHelper(
     ownerUserId: owner.userId,
     age: Date.now() - Date.parse(created),
     id: datasetId,
-    questions: [],
     percentQuotaUsed: quota.usage / quota.limit,
     status,
     importMessages: importMessages ?? [],
