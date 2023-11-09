@@ -179,7 +179,6 @@ export default function BoundsDriftMarker({
       markerRef.current._icon.firstChild.getBoundingClientRect();
     const anchorRect = popupRef.current._tipContainer.getBoundingClientRect();
     const { height: anchorHeight, width: anchorWidth } = anchorRect;
-    const popupRect = popupRef.current._container.getBoundingClientRect();
 
     /**
      * Within each conditional block, we will:
@@ -187,12 +186,13 @@ export default function BoundsDriftMarker({
      *      be anchored to
      *  2.  set the popupRef's offset accordingly (with some fuzzy calculations)
      */
+    // with the marker clicl event for selectedMarkers, popupRef is not used as it changes by click event
     if (orientation === 'down') {
       const yOffset =
         (markerIconRect.bottom > grayBoundsRect.bottom
           ? markerIconRect.bottom
           : grayBoundsRect.bottom) -
-        popupRect.top +
+        markerRect.bottom +
         anchorHeight -
         FINE_ADJUSTMENT / 2;
       popupRef.current.options.offset = [FINE_ADJUSTMENT / 2, yOffset];
@@ -202,14 +202,14 @@ export default function BoundsDriftMarker({
           ? markerIconRect.right
           : grayBoundsRect.right) +
         anchorWidth / 2 -
-        popupRect.left;
+        markerRect.right;
       popupRef.current.options.offset = [xOffset, DEFAULT_OFFSET[1]];
     } else if (orientation === 'left') {
       const xOffset =
         (markerRect.left < grayBoundsRect.left
           ? markerRect.left
           : grayBoundsRect.left) -
-        popupRect.right -
+        markerRect.left -
         anchorWidth / 2;
       popupRef.current.options.offset = [xOffset, DEFAULT_OFFSET[1]];
     } else {
@@ -218,7 +218,7 @@ export default function BoundsDriftMarker({
           ? markerRect.top
           : grayBoundsRect.top) -
         FINE_ADJUSTMENT / 2 -
-        popupRect.bottom;
+        markerRect.y;
       popupRef.current.options.offset = [FINE_ADJUSTMENT / 2, yOffset];
     }
   };
