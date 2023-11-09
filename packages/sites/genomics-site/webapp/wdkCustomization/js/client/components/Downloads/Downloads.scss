@@ -17,6 +17,7 @@
     .wdk-QuestionFormParameterList {
       width: 60vw;
       margin: auto;
+      min-width: 800px;
     }
 
     .wdk-QuestionFormParameterHeading h2 {
@@ -81,6 +82,9 @@
     }
 
     .TableToolbar {
+      .TableToolbar-Info {
+        font-size: 100%;
+      }
       order: -3;
     }
 
