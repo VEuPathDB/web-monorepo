@@ -110,6 +110,9 @@ dist
 # VSCode config files
 .vscode
 
+# IntelliJ config files
+.idea
+
 .editorconfig
 
 .pnp.*
