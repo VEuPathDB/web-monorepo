@@ -420,11 +420,11 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
           'Up in ' +
             computationConfiguration.comparator.groupA
               .map((entry) => entry.label)
-              .join(','),
+              .join(', '),
           'Up in ' +
             computationConfiguration.comparator.groupB
               .map((entry) => entry.label)
-              .join(','),
+              .join(', '),
         ]
       : [];
 
@@ -710,17 +710,17 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
           markerColor: significanceColors['inconclusive'],
         },
         {
-          label: `Up regulated in ${computationConfiguration.comparator.groupB
+          label: `Up in ${computationConfiguration.comparator.groupB
             ?.map((entry) => entry.label)
-            .join(',')} (${countsData[significanceColors['high']]})`,
+            .join(', ')} (${countsData[significanceColors['high']]})`,
           marker: 'circle',
           hasData: true,
           markerColor: significanceColors['high'],
         },
         {
-          label: `Up regulated in ${computationConfiguration.comparator.groupA
+          label: `Up in ${computationConfiguration.comparator.groupA
             ?.map((entry) => entry.label)
-            .join(',')} (${countsData[significanceColors['low']]})`,
+            .join(', ')} (${countsData[significanceColors['low']]})`,
           marker: 'circle',
           hasData: true,
           markerColor: significanceColors['low'],

@@ -94,7 +94,9 @@ export default function PlotListLegend({
                     key={item.label}
                     title={item.label}
                     style={{
-                      cursor: 'pointer',
+                      // only those items with checkboxes that actually have data should look clickable
+                      cursor:
+                        showCheckbox && item.hasData ? 'pointer' : 'default',
                       display: 'flex',
                       alignItems: 'center',
                       fontSize: legendTextSize,
