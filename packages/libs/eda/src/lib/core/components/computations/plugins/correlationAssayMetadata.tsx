@@ -33,7 +33,7 @@ export type CorrelationAssayMetadataConfig = t.TypeOf<
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CorrelationAssayMetadataConfig = t.type({
-  collectionVariable1: VariableCollectionDescriptor,
+  collectionVariable: VariableCollectionDescriptor,
   correlationMethod: t.string,
 });
 
@@ -63,8 +63,8 @@ function CorrelationAssayMetadataConfigDescriptionComponent({
 
   const { configuration } = computation.descriptor;
   const collectionVariable =
-    'collectionVariable1' in configuration
-      ? configuration.collectionVariable1
+    'collectionVariable' in configuration
+      ? configuration.collectionVariable
       : undefined;
   const correlationMethod =
     'correlationMethod' in configuration
@@ -154,11 +154,11 @@ export function CorrelationAssayMetadataConfiguration(
   }, [collections]);
 
   const selectedCollectionVar = useMemo(() => {
-    if (configuration && 'collectionVariable1' in configuration) {
+    if (configuration && 'collectionVariable' in configuration) {
       const selectedItem = collectionVarItems.find((item) =>
         isEqual(item.value, {
-          collectionId: configuration.collectionVariable1.collectionId,
-          entityId: configuration.collectionVariable1.entityId,
+          collectionId: configuration.collectionVariable.collectionId,
+          entityId: configuration.collectionVariable.entityId,
         })
       );
       return selectedItem;
@@ -189,7 +189,7 @@ export function CorrelationAssayMetadataConfiguration(
                   : 'Select the data'
               }
               items={collectionVarItems}
-              onSelect={partial(changeConfigHandler, 'collectionVariable1')}
+              onSelect={partial(changeConfigHandler, 'collectionVariable')}
             />
           </div>
         </div>

@@ -395,12 +395,16 @@ export const BipartiteNetworkResponse = type({
   column2NodeIDs: array(string),
   nodes: array(NodeData),
   links: array(
-    type({
-      source: NodeData,
-      target: NodeData,
-      linkColor: string,
-      linkWeight: string,
-    })
+    intersection([
+      type({
+        source: NodeData,
+        target: NodeData,
+        strokeWidth: string,
+      }),
+      partial({
+        linkColor: string,
+      }),
+    ])
   ),
 });
 
