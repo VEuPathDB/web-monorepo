@@ -50,26 +50,31 @@ export default function SemanticMarkers({
 
   useEffect(() => {
     let timeoutVariable: number | undefined;
-    // debounce needed to avoid cyclic in/out zooming behaviour
-    const debouncedUpdateBounds = debounce(updateBounds, 1000);
+    // debounce needed to avoid cyclic in/out zooming behaviour? (still?)
+    // 2023-11: it does seem to be needed for zoom-in animation to work.
+    const debouncedUpdateMarkerPositions = debounce(
+      updateMarkerPositions,
+      1000
+    );
     // call it at least once at the beginning of the life cycle
-    debouncedUpdateBounds();
+    debouncedUpdateMarkerPositions();
 
     // attach to leaflet events handler
-    map.on('resize moveend dragend zoomend', debouncedUpdateBounds); // resize is there hopefully when we have full screen mode
+    map.on('resize moveend dragend zoomend', debouncedUpdateMarkerPositions); // resize is there hopefully when we have full screen mode
 
     return () => {
       // detach from leaflet events handler
-      map.off('resize moveend dragend zoomend', debouncedUpdateBounds);
-      debouncedUpdateBounds.cancel();
+      map.off('resize moveend dragend zoomend', debouncedUpdateMarkerPositions);
+      debouncedUpdateMarkerPositions.cancel();
       clearTimeout(timeoutVariable);
     };
 
     // function definitions
 
-    function updateBounds() {
+    // handle repositioning of markers into the user's viewport if they have panned
+    // east or west into "another world" (longitudes >180 or <-180), and zoom-related animation
+    function updateMarkerPositions() {
       const bounds = boundsToGeoBBox(map.getBounds());
-      // handle recentering of markers (around +180/-180 longitude) and animation
       const recenteredMarkers =
         recenterMarkers && bounds
           ? markers.map((marker) => {
@@ -297,13 +302,4 @@ function computeMarkersBounds(markers: ReactElement<BoundsDriftMarkerProps>[]) {
   } else {
     return null;
   }
-}
-
-function isShallowEqual<T>(array1: T[], array2: T[]) {
-  if (array1.length !== array2.length) return false;
-
-  for (let index = 0; index < array1.length; index++) {
-    if (array1[index] !== array2[index]) return false;
-  }
-  return true;
 }
