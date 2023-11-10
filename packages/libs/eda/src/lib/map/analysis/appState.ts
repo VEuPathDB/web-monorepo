@@ -229,7 +229,10 @@ export function useAppState(uiStateKey: string, analysisId?: string) {
     appStateChecked,
   ]);
 
-  function useSetter<T extends keyof AppState>(key: T) {
+  function useSetter<T extends keyof AppState>(
+    key: T,
+    createIfUnsaved = false
+  ) {
     return useCallback(
       function setter(value: AppState[T]) {
         setVariableUISettings((prev) => {
@@ -244,9 +247,9 @@ export function useAppState(uiStateKey: string, analysisId?: string) {
             };
           }
           return prev;
-        });
+        }, createIfUnsaved);
       },
-      [key]
+      [key, createIfUnsaved]
     );
   }
 
@@ -254,13 +257,14 @@ export function useAppState(uiStateKey: string, analysisId?: string) {
     appState,
     analysisState,
     setActiveMarkerConfigurationType: useSetter(
-      'activeMarkerConfigurationType'
+      'activeMarkerConfigurationType',
+      true
     ),
-    setMarkerConfigurations: useSetter('markerConfigurations'),
+    setMarkerConfigurations: useSetter('markerConfigurations', true),
     setBoundsZoomLevel: useSetter('boundsZoomLevel'),
     setIsSidePanelExpanded: useSetter('isSidePanelExpanded'),
     setSubsetVariableAndEntity: useSetter('subsetVariableAndEntity'),
     setViewport: useSetter('viewport'),
-    setTimeSliderConfig: useSetter('timeSliderConfig'),
+    setTimeSliderConfig: useSetter('timeSliderConfig', true),
   };
 }
