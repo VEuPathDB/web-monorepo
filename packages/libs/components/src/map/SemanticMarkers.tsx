@@ -42,7 +42,7 @@ export default function SemanticMarkers({
   // react-leaflet v3
   const map = useMap();
 
-  const [prevMarkers, setPrevMarkers] =
+  const [prevRecenteredMarkers, setPrevRecenteredMarkers] =
     useState<ReactElement<BoundsDriftMarkerProps>[]>(markers);
 
   const [consolidatedMarkers, setConsolidatedMarkers] =
@@ -104,11 +104,15 @@ export default function SemanticMarkers({
           : markers;
 
       // now handle animation
-      if (recenteredMarkers.length > 0 && prevMarkers.length > 0 && animation) {
+      if (
+        recenteredMarkers.length > 0 &&
+        prevRecenteredMarkers.length > 0 &&
+        animation
+      ) {
         // get the position-modified markers from `animationFunction`
         // see geohash.tsx for example
         const animationValues = animation.animationFunction({
-          prevMarkers,
+          prevMarkers: prevRecenteredMarkers,
           markers: recenteredMarkers,
         });
         // set them as current
@@ -135,10 +139,10 @@ export default function SemanticMarkers({
       if (
         !isEqual(
           recenteredMarkers.map(({ props }) => props),
-          prevMarkers.map(({ props }) => props)
+          prevRecenteredMarkers.map(({ props }) => props)
         )
       )
-        setPrevMarkers(recenteredMarkers);
+        setPrevRecenteredMarkers(recenteredMarkers);
     }
 
     function enqueueZoom(
@@ -161,7 +165,7 @@ export default function SemanticMarkers({
         );
       }
     }
-  }, [animation, map, markers, prevMarkers, recenterMarkers]);
+  }, [animation, map, markers, prevRecenteredMarkers, recenterMarkers]);
 
   const refinedMarkers = useMemo(
     () =>
