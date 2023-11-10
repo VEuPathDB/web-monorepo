@@ -25,7 +25,10 @@ import { Computation, Visualization } from '../types/visualization';
 /**
  * Type definition for function that will set an attribute of an Analysis.
  */
-type Setter<T> = (value: T | ((value: T) => T)) => void;
+type Setter<T> = (
+  value: T | ((value: T) => T),
+  createIfUnsaved?: boolean
+) => void;
 
 /** Status options for an analysis. */
 export enum Status {
@@ -38,15 +41,20 @@ export enum Status {
 export type AnalysisState = {
   /** Current status of the analysis. */
   status: Status;
+  /** Indicates if the analysis has changes that have not yet been persisted to storage. */
   hasUnsavedChanges: boolean;
   /** Optional. Previously saved analysis or analysis in construction. */
   analysis?: Analysis | NewAnalysis;
+  /** Error object related to loading an analysis */
   error?: unknown;
+  /** Set the display name of the analysis. See @Setter */
   setName: Setter<Analysis['displayName']>;
+  /** Set the description of the analysis. */
   setDescription: Setter<Analysis['description']>;
   setNotes: Setter<Analysis['notes']>;
   setIsPublic: Setter<Analysis['isPublic']>;
   setFilters: Setter<Analysis['descriptor']['subset']['descriptor']>;
+  /** Set the list of configured computations of the analysis. See {@link Setter} */
   setComputations: Setter<Analysis['descriptor']['computations']>;
   setDerivedVariables: Setter<Analysis['descriptor']['derivedVariables']>;
   setStarredVariables: Setter<Analysis['descriptor']['starredVariables']>;
@@ -221,13 +229,16 @@ export function useAnalysis(
   // Helper function to create stable callbacks
   const useSetter = <T>(
     nestedValueLens: Lens<Analysis | NewAnalysis, T>,
-    createIfUnsaved = true
+    _createIfUnsaved = true
   ) => {
-    // Always schedule a save, unless it's a "new" analysis and we're being
-    // told to not schedule a save.
-    const scheduleUpdate = analysisId != null || createIfUnsaved;
     return useCallback(
-      (nestedValue: T | ((nestedValue: T) => T)) => {
+      (
+        nestedValue: T | ((nestedValue: T) => T),
+        createIfUnsaved = _createIfUnsaved
+      ) => {
+        // Always schedule a save, unless it's a "new" analysis and we're being
+        // told to not schedule a save.
+        const scheduleUpdate = analysisId != null || createIfUnsaved;
         setAnalysis((analysis) => {
           if (analysis == null)
             throw new Error(
@@ -237,7 +248,7 @@ export function useAnalysis(
         });
         setUpdateScheduled(scheduleUpdate);
       },
-      [nestedValueLens, scheduleUpdate]
+      [nestedValueLens, _createIfUnsaved]
     );
   };
 
