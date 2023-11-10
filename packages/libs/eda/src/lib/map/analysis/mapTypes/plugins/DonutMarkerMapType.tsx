@@ -264,7 +264,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
           activeVisualizationId={configuration.activeVisualizationId}
           plugins={plugins}
           geoConfigs={geoConfigs}
-          mapType="bubble"
+          mapType="pie"
           setHideVizInputsAndControls={props.setHideVizInputsAndControls}
         />
       ),
