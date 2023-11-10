@@ -8,7 +8,6 @@ export interface PlotLegendGradientProps {
   valueToColorMapper: (a: number) => string;
   nTicks?: number; // MUST be odd!
   showMissingness?: boolean;
-  isClickable?: boolean; // controls the cursor type
 }
 
 // make gradient colorscale legend into a component so it can be more easily incorporated into DK's custom legend if we need
@@ -18,7 +17,6 @@ export default function PlotGradientLegend({
   valueToColorMapper,
   nTicks = 5,
   showMissingness,
-  isClickable = true,
 }: PlotLegendGradientProps) {
   // Declare constants
   const gradientBoxHeight = 150;
@@ -114,7 +112,7 @@ export default function PlotGradientLegend({
           <label
             title={'No data'}
             style={{
-              cursor: isClickable ? 'pointer' : 'default',
+              cursor: 'default',
               display: 'flex',
               alignItems: 'center',
               fontSize: legendTextSize,

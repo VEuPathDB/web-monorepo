@@ -35,8 +35,6 @@ export interface PlotListLegendProps {
   markerBodyOpacity?: number;
   // show checkbox: defualt is true
   showCheckbox?: boolean;
-  /* Is the legend clickable? Default is true */
-  isClickable?: boolean;
 }
 
 export default function PlotListLegend({
@@ -46,7 +44,6 @@ export default function PlotListLegend({
   showOverlayLegend = false,
   markerBodyOpacity = 1,
   showCheckbox = true,
-  isClickable = true,
 }: PlotListLegendProps) {
   // change checkbox state by click
   const handleLegendCheckboxClick = (checked: boolean, id: string) => {
@@ -97,7 +94,9 @@ export default function PlotListLegend({
                     key={item.label}
                     title={item.label}
                     style={{
-                      cursor: isClickable ? 'pointer' : 'default',
+                      // only those items with checkboxes that actually have data should look clickable
+                      cursor:
+                        showCheckbox && item.hasData ? 'pointer' : 'default',
                       display: 'flex',
                       alignItems: 'center',
                       fontSize: legendTextSize,

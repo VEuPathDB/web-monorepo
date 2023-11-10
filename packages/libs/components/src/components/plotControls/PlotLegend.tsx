@@ -8,7 +8,6 @@ import PlotBubbleLegend, { PlotLegendBubbleProps } from './PlotBubbleLegend';
 
 interface PlotLegendBaseProps extends ContainerStylesAddon {
   legendTitle?: string;
-  isClickable?: boolean;
 }
 
 export type PlotLegendProps = PlotLegendBaseProps &
@@ -25,7 +24,6 @@ export default function PlotLegend({
   ...otherProps
 }: PlotLegendProps) {
   const legendTextSize = '1.0em';
-  const isClickable = otherProps.isClickable ?? true;
 
   return (
     <>
@@ -46,7 +44,7 @@ export default function PlotLegend({
             width: 400,
             overflowX: 'hidden',
             overflowY: 'auto',
-            cursor: isClickable ? 'pointer' : 'default',
+            cursor: 'default',
             ...containerStyles,
           }}
         >
@@ -54,7 +52,7 @@ export default function PlotLegend({
             title={legendTitle}
             // style={{ cursor: 'pointer', fontSize: legendTextSize, fontWeight: 'bold', margin: '0 0 0 0.15em' }}
             style={{
-              cursor: isClickable ? 'pointer' : 'default',
+              cursor: 'default',
               fontSize: legendTextSize,
               fontWeight: 'bold',
               marginLeft: '0.15em',
