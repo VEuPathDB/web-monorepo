@@ -14,14 +14,45 @@ class BigwigDatasetDetail extends UserDatasetDetail {
     super(props);
     this.renderTracksSection = this.renderTracksSection.bind(this);
     this.getTracksTableColumns = this.getTracksTableColumns.bind(this);
+    this.state = {
+      sequenceId: null,
+    };
+  }
+
+  componentDidMount() {
+    const { userDataset } = this.props;
+    const { wdkService } = this.context;
+    const { dependencies } = userDataset;
+    var genome;
+    dependencies.forEach(function (dependency) {
+      if (dependency.resourceIdentifier.endsWith('_Genome')) {
+        var regex = new RegExp(
+          '-' + dependency.resourceVersion + '_(.*)_Genome'
+        );
+        var genomeList = dependency.resourceIdentifier.match(regex);
+        genome = genomeList[1];
+      }
+    });
+    wdkService
+      .getAnswerJson(
+        {
+          searchName: 'LongestSeqForAnOrganism',
+          searchConfig: {
+            parameters: {
+              organismNameForFiles: genome,
+            },
+          },
+        },
+        {}
+      )
+      .then((res) => this.setState({ sequenceId: res.records[0].displayName }));
   }
 
   getTracksTableColumns() {
     const { userDataset, appUrl, config } = this.props;
-    const { id, type, meta, dependencies } = userDataset;
+    const { id, meta, dependencies } = userDataset;
     const name = meta.name;
     const { projectId } = config;
-    const { seqId } = type && type.data ? type.data : { seqId: null };
 
     var genome;
     dependencies.forEach(function (dependency) {
@@ -38,15 +69,15 @@ class BigwigDatasetDetail extends UserDatasetDetail {
       {
         key: 'datafileName',
         name: 'Filename',
-        renderCell: ({ row }) => <code>{row.datafileName}</code>,
+        renderCell: ({ row }) => <code>{row.dataFileName}</code>,
       },
       {
         key: 'main',
         name: 'Genome Browser Link',
         renderCell: ({ row }) => (
           <BigwigGBrowseUploader
-            sequenceId={seqId}
-            {...row}
+            sequenceId={this.state.sequenceId}
+            dataFileName={row.dataFileName}
             datasetId={id}
             appUrl={appUrl}
             projectId={projectId}
@@ -59,12 +90,15 @@ class BigwigDatasetDetail extends UserDatasetDetail {
   }
 
   renderTracksSection() {
-    const { userDataset, appUrl, projectName, config } = this.props;
+    const { userDataset, appUrl, projectName, config, fileListing } =
+      this.props;
+    const installFiles = fileListing.install?.contents?.map((file) => ({
+      dataFileName: file.fileName,
+    }));
+    const { status } = userDataset;
 
-    const { type, status } = userDataset;
-    const { data } = type;
-
-    const rows = data && Array.isArray(data.tracks) ? data.tracks : [];
+    const rows =
+      installFiles && Array.isArray(installFiles) ? installFiles : [];
     const columns = this.getTracksTableColumns({ userDataset, appUrl });
     const tracksTableState = MesaState.create({ rows, columns });
 
