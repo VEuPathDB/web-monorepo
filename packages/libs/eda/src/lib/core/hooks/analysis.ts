@@ -47,18 +47,25 @@ export type AnalysisState = {
   analysis?: Analysis | NewAnalysis;
   /** Error object related to loading an analysis */
   error?: unknown;
-  /** Set the display name of the analysis. See @Setter */
+  /** Set the display name of the analysis. See {@link Setter}. */
   setName: Setter<Analysis['displayName']>;
-  /** Set the description of the analysis. */
+  /** Set the description of the analysis. See {@link Setter}. */
   setDescription: Setter<Analysis['description']>;
+  /** Set the notes of an analysis. See {@link Setter}. */
   setNotes: Setter<Analysis['notes']>;
+  /** Set the isPublic flag of an anlysis. See {@link Setter}. */
   setIsPublic: Setter<Analysis['isPublic']>;
+  /** Set the filters of an analysis. See {@link Setter}. */
   setFilters: Setter<Analysis['descriptor']['subset']['descriptor']>;
-  /** Set the list of configured computations of the analysis. See {@link Setter} */
+  /** Set the list of configured computations of the analysis. See {@link Setter}. */
   setComputations: Setter<Analysis['descriptor']['computations']>;
+  /** Set the list of derived variables of an analysis. See {@link Setter}. */
   setDerivedVariables: Setter<Analysis['descriptor']['derivedVariables']>;
+  /** Set the list of starred variables of an analysis. See {@link Setter}. */
   setStarredVariables: Setter<Analysis['descriptor']['starredVariables']>;
+  /** Set the UI state of variables in an analysis. See {@link Setter}. */
   setVariableUISettings: Setter<Analysis['descriptor']['subset']['uiSettings']>;
+  /** Set the datatable config of an analysis. See {@link Setter}. */
   setDataTableConfig: Setter<Analysis['descriptor']['dataTableConfig']>;
 
   /** Convenience methods for manipulating visualizations nested inside computations.
