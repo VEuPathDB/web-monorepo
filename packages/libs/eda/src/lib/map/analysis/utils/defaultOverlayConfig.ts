@@ -31,6 +31,8 @@ export interface DefaultBubbleOverlayConfigProps {
   denominatorValues?: BubbleMarkerConfiguration['denominatorValues'];
 }
 
+// TO DO: rename function? It doesn't always return the default!
+// (e.g. when you pass it numeratorValues or denominatorValues)
 export function getDefaultBubbleOverlayConfig(
   props: DefaultBubbleOverlayConfigProps
 ): BubbleOverlayConfig {

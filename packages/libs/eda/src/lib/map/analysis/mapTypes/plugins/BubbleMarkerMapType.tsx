@@ -9,7 +9,7 @@ import {
 import { getValueToGradientColorMapper } from '@veupathdb/components/lib/types/plots/addOns';
 import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
 import { capitalize, sumBy } from 'lodash';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import {
   useFindEntityAndVariable,
   Filter,
@@ -56,6 +56,7 @@ import { GeoConfig } from '../../../../core/types/geoConfig';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
+import { useSnackbar } from 'notistack';
 
 const displayName = 'Bubbles';
 
@@ -178,14 +179,24 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
  * Renders marker and legend components
  */
 function BubbleMapLayer(props: MapTypeMapLayerProps) {
-  const { studyId, filters, appState, configuration, geoConfigs } = props;
-  const markersData = useMarkerData({
-    boundsZoomLevel: appState.boundsZoomLevel,
-    configuration: configuration as BubbleMarkerConfiguration,
-    geoConfigs,
+  const {
     studyId,
     filters,
-  });
+    appState,
+    configuration,
+    geoConfigs,
+    updateConfiguration,
+  } = props;
+  const markersData = useMarkerData(
+    {
+      boundsZoomLevel: appState.boundsZoomLevel,
+      configuration: configuration as BubbleMarkerConfiguration,
+      geoConfigs,
+      studyId,
+      filters,
+    },
+    updateConfiguration
+  );
   if (markersData.error)
     return <MapFloatingErrorDiv error={markersData.error} />;
 
@@ -404,7 +415,11 @@ interface OverlayConfigProps {
   denominatorValues?: BubbleMarkerConfiguration['denominatorValues'];
 }
 
-function useOverlayConfig(props: OverlayConfigProps) {
+function useOverlayConfig(
+  props: OverlayConfigProps,
+  configuration?: unknown,
+  updateConfiguration?: (configuration: unknown) => void
+) {
   const {
     studyId,
     filters,
@@ -413,7 +428,7 @@ function useOverlayConfig(props: OverlayConfigProps) {
     denominatorValues,
     selectedVariable,
   } = props;
-  const findEntityAndVariable = useFindEntityAndVariable(filters);
+  const findEntityAndVariable = useFindEntityAndVariable(filters); // filter-sensitivity
   const entityAndVariable = findEntityAndVariable(selectedVariable);
 
   if (entityAndVariable == null)
@@ -422,8 +437,47 @@ function useOverlayConfig(props: OverlayConfigProps) {
     );
   const { entity: overlayEntity, variable: overlayVariable } =
     entityAndVariable;
-  // If the variable or filters have changed on the active marker config
-  // get the default overlay config.
+
+  const { enqueueSnackbar } = useSnackbar();
+
+  // watch for changes in the vocabulary (from filters changing, thanks to filter-sensitivity)
+  // that might require changes to the configuration
+  useEffect(() => {
+    if (
+      configuration &&
+      updateConfiguration &&
+      overlayVariable.vocabulary &&
+      numeratorValues &&
+      denominatorValues
+    ) {
+      const vocab = overlayVariable.vocabulary;
+      const sanitisedNumeratorValues = numeratorValues.filter((value) =>
+        vocab.includes(value)
+      );
+      const sanitisedDenominatorValues = denominatorValues.filter((value) =>
+        vocab.includes(value)
+      );
+
+      // reset user selections if either numerator or denominator are now empty
+      if (
+        sanitisedDenominatorValues.length === 0 ||
+        sanitisedNumeratorValues.length == 0
+      ) {
+        updateConfiguration({
+          ...configuration,
+          numeratorValues: undefined,
+          denominatorValues: undefined,
+        });
+        enqueueSnackbar('hello');
+      }
+    }
+  }, [
+    overlayVariable.vocabulary,
+    numeratorValues,
+    denominatorValues,
+    updateConfiguration,
+  ]);
+
   return useMemo(() => {
     return getDefaultBubbleOverlayConfig({
       studyId,
@@ -587,7 +641,10 @@ function useLegendData(props: DataProps) {
   });
 }
 
-function useMarkerData(props: DataProps) {
+function useMarkerData(
+  props: DataProps,
+  updateConfiguration?: (configuration: unknown) => void
+) {
   const { boundsZoomLevel, configuration, geoConfigs, studyId, filters } =
     props;
 
@@ -611,11 +668,15 @@ function useMarkerData(props: DataProps) {
 
   const outputEntityId = outputEntity?.id;
 
-  const overlayConfig = useOverlayConfig({
-    studyId,
-    filters,
-    ...configuration,
-  });
+  const overlayConfig = useOverlayConfig(
+    {
+      studyId,
+      filters,
+      ...configuration,
+    },
+    configuration,
+    updateConfiguration
+  );
 
   const markerRequestParams: StandaloneMapBubblesRequestParams = {
     studyId,
