@@ -386,7 +386,7 @@ function MapAnalysisImpl(props: ImplProps) {
   // make an array of objects state to list highlighted markers
   const [selectedMarkers, setSelectedMarkers] = useState<string[]>([]);
 
-  console.log('selectedMarkers =', selectedMarkers);
+  // console.log('selectedMarkers =', selectedMarkers);
 
   const sidePanelMenuEntries: SidePanelMenuEntry[] = [
     {
@@ -777,9 +777,10 @@ function MapAnalysisImpl(props: ImplProps) {
           filteredCounts,
           hideVizInputsAndControls,
           setHideVizInputsAndControls,
-          // selectedMarkers and its state function
-          selectedMarkers,
-          setSelectedMarkers,
+          /* disabled until wired in fully:
+             selectedMarkers,
+             setSelectedMarkers,
+	   */
         };
 
         return (
@@ -872,7 +873,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     }
                     // pass defaultViewport & isStandAloneMap props for custom zoom control
                     defaultViewport={defaultViewport}
-                    // multiple markers selection
+                    // for multiple markers cancelation of selection only
                     setSelectedMarkers={setSelectedMarkers}
                   >
                     {activeMapTypePlugin?.MapLayerComponent && (
