@@ -31,6 +31,8 @@ import {
   useFlattenedFields,
 } from '../components/variableTrees/hooks';
 import { findFirstVariable } from '../../workspace/Utils';
+import * as DateMath from 'date-arithmetic';
+import { TimeUnit } from '../types/general';
 
 /** Return the study identifier and a hierarchy of the study entities. */
 export function useStudyMetadata(): StudyMetadata {
@@ -143,6 +145,8 @@ export function useStudyEntities(filters?: Filter[]) {
                       variable.type === 'number' ||
                       variable.type === 'integer'
                     )
+                      // TO DO? recalculate binWidth for numeric variables?
+                      // (it's less critical than for dates due to time slider)
                       return {
                         ...variable,
                         vocabulary,
@@ -160,7 +164,26 @@ export function useStudyEntities(filters?: Filter[]) {
                                   .rangeMax as number),
                         },
                       };
-                    else if (variable.type === 'date')
+                    else if (variable.type === 'date') {
+                      // recalculate bin width and units
+                      // to keep it simple let's keep the width at 1 and just try different units
+                      const binWidth = 1;
+                      const binUnits = (['year', 'month', 'week', 'day'].find(
+                        (unit) => {
+                          if (filterRange) {
+                            const diff = DateMath.diff(
+                              new Date(filterRange.min as string),
+                              new Date(filterRange.max as string),
+                              unit as DateMath.Unit
+                            );
+                            // 12 is somewhat arbitrary, but it basically
+                            // means if there are >= 12 years, use year bins.
+                            // Otherwise if >= 12 months, use month bins, etc
+                            return diff >= 12;
+                          }
+                        }
+                      ) ?? 'day') as TimeUnit;
+
                       return {
                         ...variable,
                         vocabulary,
@@ -176,9 +199,11 @@ export function useStudyEntities(filters?: Filter[]) {
                               ? (filterRange.max as string)
                               : (variable.distributionDefaults
                                   .rangeMax as string),
+                          binUnits,
+                          binWidth,
                         },
                       };
-                    else
+                    } else
                       return {
                         ...variable,
                         vocabulary,

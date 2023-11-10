@@ -40,6 +40,7 @@ import { ToImgopts } from 'plotly.js';
 import { DEFAULT_CONTAINER_HEIGHT } from './PlotlyPlot';
 import domToImage from 'dom-to-image';
 import './VolcanoPlot.css';
+import { truncateWithEllipsis } from '../utils/axis-tick-label-ellipsis';
 
 export interface RawDataMinMaxValues {
   x: NumberRange;
@@ -293,9 +294,9 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           findNearestDatumOverride={findNearestDatumXY}
           margin={{
             top: MARGIN_DEFAULT,
-            right: showFlooredDataAnnotation ? 150 : MARGIN_DEFAULT,
-            left: MARGIN_DEFAULT,
-            bottom: MARGIN_DEFAULT,
+            right: showFlooredDataAnnotation ? 150 : MARGIN_DEFAULT + 10,
+            left: MARGIN_DEFAULT + 10, // Bottom annotatiions get wide (for right margin, too)
+            bottom: MARGIN_DEFAULT + 20, // Bottom annotations can get long
           }}
         >
           {/* Set up the axes and grid lines. XYChart magically lays them out correctly */}
@@ -317,11 +318,12 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
                   {...xyAccessors}
                 >
                   <AnnotationLabel
-                    subtitle={label}
+                    subtitle={truncateWithEllipsis(label, 30)}
                     horizontalAnchor="middle"
                     verticalAnchor="start"
                     showAnchorLine={false}
                     showBackground={false}
+                    maxWidth={100}
                   />
                 </Annotation>
               );
