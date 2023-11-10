@@ -30,6 +30,10 @@ export function makeEdaRoute(studyId) {
   return '/workspace/analyses' + (studyId ? `/${studyId}` : '');
 }
 
+export function makeMapRoute(studyId) {
+  return '/workspace/maps' + (studyId ? `/${studyId}` : '');
+}
+
 const EdaWorkspace = React.lazy(() => import('@veupathdb/eda/lib/workspace'));
 
 /**
@@ -70,13 +74,13 @@ export const wrapRoutes = (wdkRoutes) => [
   },
 
   {
-    path: '/workspace/maps',
+    path: makeMapRoute(),
     exact: true,
     component: EdaMapController,
   },
 
   {
-    path: '/workspace/maps',
+    path: makeMapRoute(),
     exact: false,
     isFullscreen: true,
     rootClassNameModifier: 'MapVEu',
@@ -88,7 +92,7 @@ export const wrapRoutes = (wdkRoutes) => [
     exact: false,
     isFullscreen: true,
     rootClassNameModifier: 'MapVEu',
-    component: () => <Redirect to="/workspace/maps" />,
+    component: () => <Redirect to={makeMapRoute()} />,
   },
 
   {

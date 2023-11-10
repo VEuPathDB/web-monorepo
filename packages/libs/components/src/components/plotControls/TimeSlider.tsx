@@ -12,29 +12,33 @@ import { millisecondTodate } from '../../utils/date-format-change';
 import { Bar } from '@visx/shape';
 import { debounce } from 'lodash';
 
-export type EZTimeFilterDataProp = {
+export type TimeSliderDataProp = {
   x: string;
   y: number;
 };
 
-export type EzTimeFilterProps = {
+export type TimeSliderProps = {
   /** Ez time filter data  */
-  data: EZTimeFilterDataProp[];
+  data: TimeSliderDataProp[];
   /** current state of selectedRange */
   selectedRange: { start: string; end: string } | undefined;
   /** update function selectedRange */
   setSelectedRange: (
     selectedRange: { start: string; end: string } | undefined
   ) => void;
+  /** optional xAxisRange - will limit the selection to be within this */
+  xAxisRange?: { start: string; end: string };
   /** width */
   width?: number;
   /** height */
   height?: number;
-  /** color of the selected range */
+  /** color of the 'has data' bars - default is black */
+  barColor?: string;
+  /** color of the selected range - default is lightblue */
   brushColor?: string;
-  /** axis tick and tick label color */
+  /** axis tick and tick label color - default is black */
   axisColor?: string;
-  /** opacity of selected brush */
+  /** opacity of selected brush - default is 0.4 */
   brushOpacity?: number;
   /** debounce rate in millisecond */
   debounceRateMs?: number;
@@ -43,13 +47,14 @@ export type EzTimeFilterProps = {
 };
 
 // using forwardRef
-function EzTimeFilter(props: EzTimeFilterProps) {
+function TimeSlider(props: TimeSliderProps) {
   const {
     data,
     // set default width and height
     width = 720,
     height = 100,
     brushColor = 'lightblue',
+    barColor = '#333',
     axisColor = '#000',
     brushOpacity = 0.4,
     selectedRange,
@@ -57,6 +62,7 @@ function EzTimeFilter(props: EzTimeFilterProps) {
     // set a default debounce time in milliseconds
     debounceRateMs = 500,
     disabled = false,
+    xAxisRange,
   } = props;
 
   const resizeTriggerAreas: ResizeTriggerAreas[] = disabled
@@ -82,25 +88,32 @@ function EzTimeFilter(props: EzTimeFilterProps) {
   };
 
   // accessors for data
-  const getXData = (d: EZTimeFilterDataProp) => new Date(d.x);
-  const getYData = (d: EZTimeFilterDataProp) => d.y;
+  const getXData = (d: TimeSliderDataProp) => new Date(d.x);
+  const getYData = (d: TimeSliderDataProp) => d.y;
 
   const onBrushChange = useMemo(
     () =>
       debounce((domain: Bounds | null) => {
         if (!domain) return;
-
         const { x0, x1 } = domain;
-
-        const selectedDomain = {
-          // x0 and x1 are millisecond value
-          start: millisecondTodate(x0),
-          end: millisecondTodate(x1),
-        };
-
-        setSelectedRange(selectedDomain);
+        // x0 and x1 are millisecond value
+        const startDate = millisecondTodate(x0);
+        const endDate = millisecondTodate(x1);
+        setSelectedRange({
+          // don't let range go outside the xAxisRange, if provided
+          start: xAxisRange
+            ? startDate < xAxisRange.start
+              ? xAxisRange.start
+              : startDate
+            : startDate,
+          end: xAxisRange
+            ? endDate > xAxisRange.end
+              ? xAxisRange.end
+              : endDate
+            : endDate,
+        });
       }, debounceRateMs),
-    [setSelectedRange]
+    [setSelectedRange, xAxisRange]
   );
 
   // Cancel any pending onBrushChange requests when this component is unmounted
@@ -112,8 +125,8 @@ function EzTimeFilter(props: EzTimeFilterProps) {
 
   // bounds
   const xBrushMax = Math.max(width - margin.left - margin.right, 0);
-  // take 80 % of given height considering axis tick/tick labels at the bottom
-  const yBrushMax = Math.max(0.8 * height - margin.top - margin.bottom, 0);
+  // take 70 % of given height considering axis tick/tick labels at the bottom
+  const yBrushMax = Math.max(0.7 * height - margin.top - margin.bottom, 0);
 
   // scaling
   const xBrushScale = useMemo(
@@ -143,6 +156,10 @@ function EzTimeFilter(props: EzTimeFilterProps) {
     () =>
       selectedRange != null
         ? {
+            // If we reenable the fake controlled behaviour of the <Brush> component using the key prop
+            // then we'll need to figure out why both brush handles drift every time you adjust one of them.
+            // The issue is something to do with the round-trip conversion of pixel/date/millisecond positions.
+            // A good place to start looking is here.
             start: { x: xBrushScale(new Date(selectedRange.start)) },
             end: { x: xBrushScale(new Date(selectedRange.end)) },
           }
@@ -150,17 +167,11 @@ function EzTimeFilter(props: EzTimeFilterProps) {
     [selectedRange, xBrushScale]
   );
 
-  // compute bar width manually as scaleTime is used for Bar chart
-  const barWidth = xBrushMax / data.length;
-
-  // data bar color
-  const defaultColor = '#333';
-
-  // this makes/fakes the brush as a controlled component
-  const brushKey =
-    initialBrushPosition != null
-      ? initialBrushPosition.start + ':' + initialBrushPosition.end
-      : 'no_brush';
+  // `brushKey` makes/fakes the brush as a controlled component,
+  const brushKey = 'not_fake_controlled';
+  //    selectedRange != null
+  //      ? selectedRange.start + ':' + selectedRange.end
+  //      : 'no_brush';
 
   return (
     <div
@@ -175,11 +186,18 @@ function EzTimeFilter(props: EzTimeFilterProps) {
           {/* use Bar chart */}
           {data.map((d, i) => {
             const barHeight = yBrushMax - yBrushScale(getYData(d));
+            const x = xBrushScale(getXData(d));
+            // calculate the width using the next bin's date:
+            // subtract a constant to create separate bars for each bin
+            const barWidth =
+              i + 1 >= data.length
+                ? 0
+                : xBrushScale(getXData(data[i + 1])) - x - 1;
             return (
               <React.Fragment key={i}>
                 <Bar
                   key={`bar-${i.toString()}`}
-                  x={xBrushScale(getXData(d))}
+                  x={x}
                   // In SVG bar chart, y-coordinate increases downward, i.e.,
                   // y-coordinates of the top and bottom of the bars are 0 and yBrushMax, respectively
                   // Also, under current yBrushScale, dataY = 0 -> barHeight = 0; dataY = 1 -> barHeight = 60
@@ -190,8 +208,8 @@ function EzTimeFilter(props: EzTimeFilterProps) {
                   y={barHeight === 0 ? yBrushMax : (1 / 4) * yBrushMax}
                   height={(1 / 2) * barHeight}
                   // set the last data's barWidth to be 0 so that it does not overflow to dragging area
-                  width={i === data.length - 1 ? 0 : barWidth}
-                  fill={defaultColor}
+                  width={barWidth}
+                  fill={barColor}
                 />
               </React.Fragment>
             );
@@ -210,9 +228,8 @@ function EzTimeFilter(props: EzTimeFilterProps) {
             yScale={yBrushScale}
             width={xBrushMax}
             height={yBrushMax}
-            margin={margin}
             handleSize={8}
-            // resize
+            margin={margin /* prevents brushing offset */}
             resizeTriggerAreas={resizeTriggerAreas}
             brushDirection="horizontal"
             initialBrushPosition={initialBrushPosition}
@@ -249,4 +266,4 @@ function BrushHandle({ x, height, isBrushActive }: BrushHandleRenderProps) {
   );
 }
 
-export default EzTimeFilter;
+export default TimeSlider;
