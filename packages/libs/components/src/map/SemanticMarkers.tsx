@@ -10,7 +10,7 @@ import { AnimationFunction, Bounds } from './Types';
 import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 import { useMap } from 'react-leaflet';
 import { LatLngBounds } from 'leaflet';
-import { debounce } from 'lodash';
+import { debounce, isEqual } from 'lodash';
 
 export interface SemanticMarkersProps {
   markers: Array<ReactElement<BoundsDriftMarkerProps>>;
@@ -103,19 +103,21 @@ export default function SemanticMarkers({
             })
           : markers;
 
-      // don't update any state if the markers haven't changed
-      if (isShallowEqual(consolidatedMarkers, recenteredMarkers)) return;
-
       // now handle animation
-      // but don't animate if we moved markers by 360 deg. longitude
-      // because the DriftMarker or Leaflet.Marker.SlideTo code seems to
-      // send everything back to the 'main' world.
       if (recenteredMarkers.length > 0 && prevMarkers.length > 0 && animation) {
+        // get the position-modified markers from `animationFunction`
+        // see geohash.tsx for example
         const animationValues = animation.animationFunction({
           prevMarkers,
           markers: recenteredMarkers,
         });
+        // set them as current
+        // any marker that already existed will move to the modified position
         setConsolidatedMarkers(animationValues.markers);
+        // then set a timer to remove the old markers when zooming out
+        // or if zooming in, switch to just the new markers straight away
+        // (their starting position was set by `animationFunction`)
+        // It's complicated but it works!
         timeoutVariable = enqueueZoom(
           animationValues.zoomType,
           recenteredMarkers
@@ -125,8 +127,18 @@ export default function SemanticMarkers({
         setConsolidatedMarkers(recenteredMarkers);
       }
 
-      // Update previous markers
-      setPrevMarkers(recenteredMarkers);
+      // To prevent infinite loops, especially when in "other worlds",
+      // update previous markers unless they are deep-equals.
+      // Only check the props - hopefully more efficient!
+      // If there are any function props (there aren't right now) these
+      // will be compared with referential-equals.
+      if (
+        !isEqual(
+          recenteredMarkers.map(({ props }) => props),
+          prevMarkers.map(({ props }) => props)
+        )
+      )
+        setPrevMarkers(recenteredMarkers);
     }
 
     function enqueueZoom(
