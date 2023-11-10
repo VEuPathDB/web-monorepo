@@ -116,8 +116,12 @@ export const AppState = t.intersection([
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export type AppState = t.TypeOf<typeof AppState>;
 
-export function useAppState(uiStateKey: string, analysisId?: string) {
-  const analysisState = useAnalysis(analysisId);
+export function useAppState(
+  uiStateKey: string,
+  analysisId?: string,
+  singleAppMode?: string
+) {
+  const analysisState = useAnalysis(analysisId, singleAppMode);
 
   // make some backwards compatability updates to the appstate retrieved from the back end
   const [appStateChecked, setAppStateChecked] = useState(false);
