@@ -60,7 +60,7 @@ interface MapVEuMapPropsCutAndPasteCopy {
   animation: {
     method: string;
     duration: number;
-    animationFunction: AnimationFunction;
+    animationFunction: AnimationFunction<BoundsDriftMarkerProps>;
   } | null;
   showGrid: boolean;
 }
@@ -167,7 +167,6 @@ export default function MapVEuMapSidebarSibling({
         </LayersControl>
 
         <SemanticMarkers
-          onBoundsChanged={onViewportChanged}
           markers={markers}
           animation={animation}
           // nudge={nudge}

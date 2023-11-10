@@ -331,9 +331,7 @@ const VEuPathDB = 'VEuPathDB';
 const UniDB = 'UniDB';
 const DB = 'DB';
 
-// TODO Update this const once we know the question name to use.
-// const QUESTION_FOR_MAP_DATASETS = 'DatasetsForMapMenu';
-const QUESTION_FOR_MAP_DATASETS = 'AllDatasets';
+const QUESTION_FOR_MAP_DATASETS = 'MapStudiesForToolbar';
 
 function makeStaticPageRoute(subPath: string) {
   return `${STATIC_ROUTE_PATH}${subPath}`;
@@ -369,16 +367,8 @@ const useHeaderMenuItems = (
       (q) => q.urlSegment === QUESTION_FOR_MAP_DATASETS
     )
   );
-  const mapStudy = useWdkService(
-    (wdkService) =>
-      wdkService
-        .getRecord('dataset', [{ name: 'dataset_id', value: 'DS_480c976ef9' }])
-        .catch(() => {}),
-    []
-  );
-  // const showInteractiveMaps = mapMenuItemsQuestion != null;
-  // const mapMenuItems = useMapMenuItems(mapMenuItemsQuestion);
-  const showInteractiveMaps = projectId === VectorBase && !!useEda;
+  const showInteractiveMaps = mapMenuItemsQuestion != null;
+  const mapMenuItems = useMapMenuItems(mapMenuItemsQuestion);
 
   // type: reactRoute, webAppRoute, externalLink, subMenu, custom
   const fullMenuItemEntries: HeaderMenuItemEntry[] = [
@@ -545,26 +535,6 @@ const useHeaderMenuItems = (
           },
         },
         {
-          key: 'plasmoap',
-          display: 'PlasmoAP',
-          type: 'reactRoute',
-          url: '/plasmoap',
-          target: '_blank',
-          metadata: {
-            include: [PlasmoDB],
-          },
-        },
-        /*  {
-          key: 'pats',
-          display: 'PATS',
-          type: 'externalLink',
-          url: 'http://modlabcadd.ethz.ch/software/pats/',
-          target: '_blank',
-          metadata: {
-            include: [ PlasmoDB ]
-          }
-        },*/
-        {
           key: 'mapveu',
           display: 'MapVEu',
           tooltip: 'Population Biology map',
@@ -586,40 +556,83 @@ const useHeaderMenuItems = (
             include: [EuPathDB, UniDB],
           },
         },
-        // {
-        //   key: 'maps-alpha',
-        //   display: (
-        //     <>
-        //       Interactive maps <img alt="BETA" src={betaImage} />
-        //     </>
-        //   ),
-        //   type: 'subMenu',
-        //   metadata: {
-        //     test: () => showInteractiveMaps,
-        //   },
-        //   items: mapMenuItems ?? [
-        //     {
-        //       key: 'maps-loading',
-        //       type: 'custom',
-        //       display: <Loading radius={4} />,
-        //     },
-        //   ],
-        // },
+        !showInteractiveMaps
+          ? {
+              type: 'custom',
+              key: 'maps-alpha',
+              display: null,
+              metadata: {
+                test: () => showInteractiveMaps,
+              },
+            }
+          : mapMenuItems == null
+          ? {
+              key: 'maps-alpha',
+              type: 'custom',
+              display: (
+                <>
+                  MapVEu &mdash; Interactive maps{' '}
+                  <img alt="BETA" src={betaImage} />{' '}
+                  <Loading
+                    style={{
+                      display: 'inline-block',
+                      height: '1em',
+                      width: '1em',
+                      padding: 0,
+                    }}
+                    radius={1}
+                  />
+                </>
+              ),
+            }
+          : mapMenuItems.length === 1
+          ? {
+              ...mapMenuItems[0],
+              display: (
+                <>
+                  MapVEu &mdash; {mapMenuItems[0].display}{' '}
+                  <img alt="BETA" src={betaImage} />
+                </>
+              ),
+            }
+          : {
+              key: 'maps-alpha',
+              type: 'subMenu',
+              display: (
+                <>
+                  MapVEu &mdash; Interactive maps{' '}
+                  <img alt="BETA" src={betaImage} />
+                </>
+              ),
+              items: mapMenuItems,
+            },
         {
+          key: 'ncbi-primer3',
+          display: 'NCBI Primer3',
+          type: 'externalLink',
+          url: 'https://www.ncbi.nlm.nih.gov/tools/primer-blast/',
+          target: '_blank',
+        },
+        {
+          key: 'plasmoap',
+          display: 'PlasmoAP',
           type: 'reactRoute',
-          display: (
-            <>
-              MapVEu - {safeHtml(mapStudy?.displayName ?? '')}{' '}
-              <img alt="BETA" src={betaImage} />
-            </>
-          ),
-          key: 'map--mega-study',
-          url: '/workspace/maps/DS_480c976ef9/new',
+          url: '/plasmoap',
           target: '_blank',
           metadata: {
-            test: () => showInteractiveMaps && mapStudy != null,
+            include: [PlasmoDB],
           },
         },
+        /*  {
+          key: 'pats',
+          display: 'PATS',
+          type: 'externalLink',
+          url: 'http://modlabcadd.ethz.ch/software/pats/',
+          target: '_blank',
+          metadata: {
+            include: [ PlasmoDB ]
+          }
+        },*/
         {
           key: 'pubcrawler',
           display: 'PubMed and Entrez',
@@ -727,21 +740,8 @@ const useHeaderMenuItems = (
           url: makeStaticPageRoute('/dataInprogress.html'),
         },
         {
-          key: 'data-files-eupathdb',
-          display: 'Download data files',
-          type: 'externalLink',
-          url: '/common/downloads',
-          metadata: {
-            exclude: [EuPathDB],
-          },
-        },
-        {
           key: 'data-files-eupathdb-beta',
-          display: (
-            <>
-              Download data files <img alt="BETA" src={betaImage} />
-            </>
-          ),
+          display: <>Download data files</>,
           type: 'reactRoute',
           url: '/downloads',
           metadata: {
@@ -1196,21 +1196,21 @@ export const VEuPathDBHomePage = connect(mapStateToProps)(
 
 function useMapMenuItems(question?: Question) {
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
-  const studyAccessApi = useStudyAccessApi();
+  const studyAccessApi = useStudyAccessApi_tryCatch();
   const subsettingClient = useMemo(
     () => new SubsettingClient({ baseUrl: edaServiceUrl }, wdkService),
     [wdkService]
   );
-  const [mapMenuItems, setMapMenuItems] = useState<HeaderMenuItem[]>();
+  const [mapMenuItems, setMapMenuItems] = useState<HeaderMenuItemEntry[]>();
   useEffect(() => {
-    if (question == null) return;
+    if (question == null || studyAccessApi == null) return;
     getWdkStudyRecords(
       { studyAccessApi, subsettingClient, wdkService },
       { searchName: question.urlSegment }
     ).then(
       (records) => {
         const menuItems = records.map(
-          (record): HeaderMenuItem => ({
+          (record): HeaderMenuItemEntry => ({
             key: `map-${record.id[0].value}`,
             display: record.displayName,
             type: 'reactRoute',
@@ -1236,4 +1236,15 @@ function useMapMenuItems(question?: Question) {
     );
   }, [question, studyAccessApi, subsettingClient, wdkService]);
   return mapMenuItems;
+}
+
+function useStudyAccessApi_tryCatch() {
+  // useStudyAccessApi() will throw if WdkService isn't configured for study
+  // access. We can ignore the error and return `undefined` to allow the
+  // application to handle the absence of the configuration.
+  try {
+    return useStudyAccessApi();
+  } catch {
+    return;
+  }
 }

@@ -1,6 +1,5 @@
 import { AnalysisState, PromiseHookState } from '../../core';
 
-import { AppState, useAppState } from './appState';
 import {
   ComputationAppOverview,
   VisualizationOverview,
@@ -16,10 +15,8 @@ import { ComputationPlugin } from '../../core/components/computations/Types';
 
 interface Props {
   analysisState: AnalysisState;
-  setActiveVisualizationId: ReturnType<
-    typeof useAppState
-  >['setActiveVisualizationId'];
-  appState: AppState;
+  visualizationId?: string;
+  setActiveVisualizationId: (id?: string) => void;
   apps: ComputationAppOverview[];
   plugins: Partial<Record<string, ComputationPlugin>>;
   geoConfigs: GeoConfig[];
@@ -35,7 +32,7 @@ interface Props {
 
 export default function DraggableVisualization({
   analysisState,
-  appState,
+  visualizationId,
   setActiveVisualizationId,
   geoConfigs,
   apps,
@@ -50,9 +47,7 @@ export default function DraggableVisualization({
   setHideInputsAndControls,
 }: Props) {
   const { computation: activeComputation, visualization: activeViz } =
-    analysisState.getVisualizationAndComputation(
-      appState.activeVisualizationId
-    ) ?? {};
+    analysisState.getVisualizationAndComputation(visualizationId) ?? {};
 
   const computationType = activeComputation?.descriptor.type;
 

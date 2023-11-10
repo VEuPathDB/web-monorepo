@@ -54,12 +54,13 @@
 
   &--Details {
     overflow: auto;
-    max-height: calc(100vh - 35em);
+    max-height: calc(80vh - 46em);
     font-size: 0.9em;
     color: #000000e6;
 
     h3 {
       margin-top: 1em;
+      white-space: pre;
     }
   }
 

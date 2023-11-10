@@ -5,7 +5,7 @@ import RecordMainCategorySection from '../../../Views/Records/RecordMain/RecordM
 import { pure, wrappable } from '../../../Utils/ComponentUtils';
 import { getId, getLabel } from '../../../Utils/CategoryUtils';
 
-/** @type {React.StatelessComponent} */
+/** @type {React.FunctionComponent} */
 let RecordMainSection$;
 
 const RecordMainSection = ({

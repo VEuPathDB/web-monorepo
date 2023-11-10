@@ -7,7 +7,8 @@
   position: relative;
   transition: top 0.1s ease;
   width: 100%;
-  z-index: 10;
+  // We now allow draggable items to go on top of the header:
+  z-index: 2;
   padding: 7px 0px;
 
   &__Contents {
@@ -21,37 +22,6 @@
     height: 100%;
     img {
       width: 55px;
-    }
-  }
-
-  &__SampleCounter {
-    display: flex;
-    height: 100%;
-    align-items: center;
-    justify-content: center;
-    margin-right: 1.5rem;
-    font-size: 15px;
-
-    th {
-      border-width: 0;
-      padding: 0;
-      margin: 0;
-    }
-    td {
-      margin: 0;
-      padding: 0 0 0 10px;
-    }
-    tbody tr td:first-child {
-      text-align: left;
-    }
-    tbody tr td:nth-child(2) {
-      text-align: right;
-    }
-
-    tbody tr td:first-child {
-      &::after {
-        content: ':';
-      }
     }
   }
 }
