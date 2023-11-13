@@ -520,8 +520,8 @@ export function useEndUserTableSectionConfig(
 
   const endUsersAddable =
     userPermissions && canAddEndUsers(userPermissions, activeDatasetId);
-  const endUsersRemovable =
-    userPermissions && canRemoveEndUsers(userPermissions);
+  const endUsersRemovable = false;
+  //  userPermissions && canRemoveEndUsers(userPermissions);
 
   const { approvalStatusEditable, onApprovalStatusChange } =
     useApprovalStatusColumnConfig(
