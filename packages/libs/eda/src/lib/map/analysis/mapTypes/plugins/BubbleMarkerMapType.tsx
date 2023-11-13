@@ -417,8 +417,8 @@ interface OverlayConfigProps {
 
 function useOverlayConfig(
   props: OverlayConfigProps,
-  configuration?: unknown,
-  updateConfiguration?: (configuration: unknown) => void
+  configuration?: BubbleMarkerConfiguration,
+  updateConfiguration?: (configuration: BubbleMarkerConfiguration) => void
 ) {
   const {
     studyId,
@@ -468,7 +468,21 @@ function useOverlayConfig(
           numeratorValues: undefined,
           denominatorValues: undefined,
         });
-        enqueueSnackbar('hello');
+        enqueueSnackbar(
+          'Bubble marker proportion configuration has been reset due to filter change.'
+        );
+      } else if (
+        sanitisedNumeratorValues.length < numeratorValues.length ||
+        sanitisedDenominatorValues.length < denominatorValues.length
+      ) {
+        updateConfiguration({
+          ...configuration,
+          numeratorValues: sanitisedNumeratorValues,
+          denominatorValues: sanitisedDenominatorValues,
+        });
+        enqueueSnackbar(
+          'Bubble marker proportion configuration has been modified due to filter change.'
+        );
       }
     }
   }, [
