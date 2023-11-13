@@ -32,6 +32,7 @@ import {
 import { useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
 import { useEda } from '@veupathdb/web-common/lib/config';
 import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
+import { CollapsibleDetailsSection } from '@veupathdb/wdk-client/lib/Components';
 
 import { Page } from './Page';
 
@@ -268,42 +269,55 @@ function makeHeaderMenuItemsFactory(
                   studies.entities?.length > 0
                     ? [
                         {
-                          text: <small>My studies</small>,
+                          text: (
+                            <CollapsibleDetailsSection
+                              summary="My studies"
+                              collapsibleDetails={filteredUserStudies.map(
+                                (study) => (
+                                  <DIYStudyMenuItem
+                                    name={study.name}
+                                    link={`${study.baseEdaRoute}/new`}
+                                    isChildOfCollapsibleSection={true}
+                                  />
+                                )
+                              )}
+                            />
+                          ),
                         },
                       ]
                     : []
+                  ).concat(
+                    filteredCuratedStudies.length > 0 && diyDatasets?.length > 0
+                      ? [
+                          {
+                            text: (
+                              <CollapsibleDetailsSection
+                                summary="Curated studies"
+                                collapsibleDetails={filteredCuratedStudies.map(
+                                  (study) => (
+                                    <StudyMenuItem
+                                      study={study}
+                                      config={siteConfig}
+                                      permissions={permissionsValue.permissions}
+                                      isChildOfCollapsibleSection={true}
+                                    />
+                                  )
+                                )}
+                                initialShowDetailsState={true}
+                              />
+                            ),
+                          },
+                        ]
+                      : filteredCuratedStudies.map((study) => ({
+                          text: (
+                            <StudyMenuItem
+                              study={study}
+                              config={siteConfig}
+                              permissions={permissionsValue.permissions}
+                            />
+                          ),
+                        }))
                   )
-                    .concat(
-                      filteredUserStudies.map((study) => ({
-                        text: (
-                          <DIYStudyMenuItem
-                            name={study.name}
-                            link={`${study.baseEdaRoute}/new`}
-                          />
-                        ),
-                      }))
-                    )
-                    .concat(
-                      filteredCuratedStudies.length > 0 &&
-                        diyDatasets?.length > 0
-                        ? [
-                            {
-                              text: <small>Curated studies</small>,
-                            },
-                          ]
-                        : []
-                    )
-                    .concat(
-                      filteredCuratedStudies.map((study) => ({
-                        text: (
-                          <StudyMenuItem
-                            study={study}
-                            config={siteConfig}
-                            permissions={permissionsValue.permissions}
-                          />
-                        ),
-                      }))
-                    )
                 : [
                     {
                       text: (
