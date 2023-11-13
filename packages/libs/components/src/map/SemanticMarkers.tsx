@@ -10,7 +10,7 @@ import { AnimationFunction, Bounds } from './Types';
 import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 import { useMap } from 'react-leaflet';
 import { LatLngBounds } from 'leaflet';
-import { debounce } from 'lodash';
+import { debounce, isEqual } from 'lodash';
 
 export interface SemanticMarkersProps {
   markers: Array<ReactElement<BoundsDriftMarkerProps>>;
@@ -48,7 +48,7 @@ export default function SemanticMarkers({
   // react-leaflet v3
   const map = useMap();
 
-  const [prevMarkers, setPrevMarkers] =
+  const [prevRecenteredMarkers, setPrevRecenteredMarkers] =
     useState<ReactElement<BoundsDriftMarkerProps>[]>(markers);
 
   const [consolidatedMarkers, setConsolidatedMarkers] =
@@ -56,26 +56,31 @@ export default function SemanticMarkers({
 
   useEffect(() => {
     let timeoutVariable: number | undefined;
-    // debounce needed to avoid cyclic in/out zooming behaviour
-    const debouncedUpdateBounds = debounce(updateBounds, 1000);
+    // debounce needed to avoid cyclic in/out zooming behaviour? (still?)
+    // 2023-11: it does seem to be needed for zoom-in animation to work.
+    const debouncedUpdateMarkerPositions = debounce(
+      updateMarkerPositions,
+      1000
+    );
     // call it at least once at the beginning of the life cycle
-    debouncedUpdateBounds();
+    debouncedUpdateMarkerPositions();
 
     // attach to leaflet events handler
-    map.on('resize moveend dragend zoomend', debouncedUpdateBounds); // resize is there hopefully when we have full screen mode
+    map.on('resize moveend dragend zoomend', debouncedUpdateMarkerPositions); // resize is there hopefully when we have full screen mode
 
     return () => {
       // detach from leaflet events handler
-      map.off('resize moveend dragend zoomend', debouncedUpdateBounds);
-      debouncedUpdateBounds.cancel();
+      map.off('resize moveend dragend zoomend', debouncedUpdateMarkerPositions);
+      debouncedUpdateMarkerPositions.cancel();
       clearTimeout(timeoutVariable);
     };
 
     // function definitions
 
-    function updateBounds() {
+    // handle repositioning of markers into the user's viewport if they have panned
+    // east or west into "another world" (longitudes >180 or <-180), and zoom-related animation
+    function updateMarkerPositions() {
       const bounds = boundsToGeoBBox(map.getBounds());
-      // handle recentering of markers (around +180/-180 longitude) and animation
       const recenteredMarkers =
         recenterMarkers && bounds
           ? markers.map((marker) => {
@@ -109,18 +114,25 @@ export default function SemanticMarkers({
             })
           : markers;
 
-      const didRecenterMarkers = !isShallowEqual(markers, recenteredMarkers);
-
       // now handle animation
-      // but don't animate if we moved markers by 360 deg. longitude
-      // because the DriftMarker or Leaflet.Marker.SlideTo code seems to
-      // send everything back to the 'main' world.
-      if (recenteredMarkers.length > 0 && prevMarkers.length > 0 && animation) {
+      if (
+        recenteredMarkers.length > 0 &&
+        prevRecenteredMarkers.length > 0 &&
+        animation
+      ) {
+        // get the position-modified markers from `animationFunction`
+        // see geohash.tsx for example
         const animationValues = animation.animationFunction({
-          prevMarkers,
+          prevMarkers: prevRecenteredMarkers,
           markers: recenteredMarkers,
         });
+        // set them as current
+        // any marker that already existed will move to the modified position
         setConsolidatedMarkers(animationValues.markers);
+        // then set a timer to remove the old markers when zooming out
+        // or if zooming in, switch to just the new markers straight away
+        // (their starting position was set by `animationFunction`)
+        // It's complicated but it works!
         timeoutVariable = enqueueZoom(
           animationValues.zoomType,
           recenteredMarkers
@@ -130,8 +142,18 @@ export default function SemanticMarkers({
         setConsolidatedMarkers(recenteredMarkers);
       }
 
-      // Update previous markers
-      setPrevMarkers(recenteredMarkers);
+      // To prevent infinite loops, especially when in "other worlds",
+      // update previous markers unless they are deep-equals.
+      // Only check the props - hopefully more efficient!
+      // If there are any function props (there aren't right now) these
+      // will be compared with referential-equals.
+      if (
+        !isEqual(
+          recenteredMarkers.map(({ props }) => props),
+          prevRecenteredMarkers.map(({ props }) => props)
+        )
+      )
+        setPrevRecenteredMarkers(recenteredMarkers);
     }
 
     function enqueueZoom(
@@ -154,7 +176,7 @@ export default function SemanticMarkers({
         );
       }
     }
-  }, [animation, map, markers, prevMarkers, recenterMarkers]);
+  }, [animation, map, markers, prevRecenteredMarkers, recenterMarkers]);
 
   // remove any selectedMarkers that no longer exist in the current markers
   useEffect(() => {
@@ -304,13 +326,4 @@ function computeMarkersBounds(markers: ReactElement<BoundsDriftMarkerProps>[]) {
   } else {
     return null;
   }
-}
-
-function isShallowEqual<T>(array1: T[], array2: T[]) {
-  if (array1.length !== array2.length) return false;
-
-  for (let index = 0; index < array1.length; index++) {
-    if (array1[index] !== array2[index]) return false;
-  }
-  return true;
 }
