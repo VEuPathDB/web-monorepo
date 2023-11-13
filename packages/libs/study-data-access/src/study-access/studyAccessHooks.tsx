@@ -1555,7 +1555,7 @@ const COLUMNS_TO_MONITOR_FOR_CHANGE = {
   approvalStatus: 'approval status',
   content: 'content',
   denialReason: 'notes',
-  allowSelfEdits: 'lock/unlock',
+  //allowSelfEdits: 'lock/unlock',
 } as const;
 
 const COLUMNS_TO_MONITOR_FOR_CHANGE_KEYS = Object.keys(
@@ -1575,5 +1575,5 @@ function makeUpdateChangeDescription(
 
   return changedColumns.length === 0
     ? `update`
-    : `update ${changedColumns.join(', ')}`;
+    : `updated columns:  ${changedColumns.join(', ')}`;
 }
