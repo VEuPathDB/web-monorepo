@@ -142,7 +142,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   // So we'll make it generalizable by mapping the values of the links.color prop to the palette.
   const uniqueLinkColors = uniq(
     data.value?.links.map(
-      (link) => link.linkColor?.toString() ?? DEFAULT_LINK_COLOR_DATA
+      (link) => link.color?.toString() ?? DEFAULT_LINK_COLOR_DATA
     )
   );
   const linkColorScale = scaleOrdinal<string>()
@@ -175,7 +175,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
           target: link.target,
           strokeWidth: Number(link.strokeWidth),
           color: linkColorScale(
-            link.linkColor?.toString() ?? DEFAULT_LINK_COLOR_DATA
+            link.color?.toString() ?? DEFAULT_LINK_COLOR_DATA
           ),
         };
       }),

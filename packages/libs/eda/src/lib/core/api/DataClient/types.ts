@@ -402,7 +402,7 @@ export const BipartiteNetworkResponse = type({
         strokeWidth: string,
       }),
       partial({
-        linkColor: string,
+        color: string,
       }),
     ])
   ),
