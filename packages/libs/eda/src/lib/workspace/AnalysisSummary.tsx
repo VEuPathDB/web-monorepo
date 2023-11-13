@@ -13,6 +13,7 @@ import {
   Trash,
 } from '@veupathdb/coreui/lib/components/icons';
 import { Chip, FilledButton, FloatingButton } from '@veupathdb/coreui';
+import { Map } from '@material-ui/icons';
 
 interface Props {
   analysis: Analysis | NewAnalysis;
@@ -23,6 +24,7 @@ interface Props {
   onFilterIconClick?: () => void;
   globalFiltersDialogOpen?: boolean;
   displaySharingModal?: () => void;
+  mapLink?: string;
 }
 
 export function AnalysisSummary(props: Props) {
@@ -34,6 +36,7 @@ export function AnalysisSummary(props: Props) {
     onFilterIconClick,
     globalFiltersDialogOpen,
     displaySharingModal,
+    mapLink,
   } = props;
   const history = useHistory();
   const { url } = useRouteMatch();
@@ -109,6 +112,18 @@ export function AnalysisSummary(props: Props) {
             }}
           />
         )}
+        {mapLink && (
+          <FloatingButton
+            icon={Map}
+            text="Switch to map display"
+            themeRole="primary"
+            onPress={() => history.push(mapLink)}
+            styleOverrides={{
+              container: { paddingLeft: 10, paddingRight: 10 },
+            }}
+          />
+        )}
+
         {handleCopy && (
           <FloatingButton
             ariaLabel="Copy Analysis"

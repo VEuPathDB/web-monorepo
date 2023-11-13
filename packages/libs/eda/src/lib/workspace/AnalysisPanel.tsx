@@ -277,6 +277,11 @@ export function AnalysisPanel({
                 ? undefined
                 : () => setSharingModalVisible(true)
             }
+            mapLink={
+              geoConfigs.length > 0
+                ? routeBase.replace('/analyses/', '/maps/')
+                : undefined
+            }
           />
           <Route
             path={[
