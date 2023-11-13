@@ -115,7 +115,8 @@ export function AnalysisSummary(props: Props) {
         {mapLink && (
           <FloatingButton
             icon={Map}
-            text="Switch to map display"
+            textTransform="none"
+            text="Explore in Interactive Map"
             themeRole="primary"
             onPress={() => history.push(mapLink)}
             styleOverrides={{
