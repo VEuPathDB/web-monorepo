@@ -13,7 +13,9 @@ import {
   Trash,
 } from '@veupathdb/coreui/lib/components/icons';
 import { Chip, FilledButton, FloatingButton } from '@veupathdb/coreui';
-import { Map } from '@material-ui/icons';
+import { Public } from '@material-ui/icons';
+import { Link } from 'react-router-dom';
+import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 
 interface Props {
   analysis: Analysis | NewAnalysis;
@@ -39,6 +41,7 @@ export function AnalysisSummary(props: Props) {
     mapLink,
   } = props;
   const history = useHistory();
+  const theme = useUITheme();
   const { url } = useRouteMatch();
   const handleCopy =
     copyAnalysis &&
@@ -113,16 +116,20 @@ export function AnalysisSummary(props: Props) {
           />
         )}
         {mapLink && (
-          <FloatingButton
-            icon={Map}
-            textTransform="none"
-            text="Explore in Interactive Map"
-            themeRole="primary"
-            onPress={() => history.push(mapLink)}
-            styleOverrides={{
-              container: { paddingLeft: 10, paddingRight: 10 },
+          <Link
+            to={mapLink}
+            style={{
+              color: theme?.palette.primary.hue[theme.palette.primary.level],
+              paddingLeft: 10,
+              paddingRight: 10,
+              fontSize: '.7em',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '.5ex',
             }}
-          />
+          >
+            <Public /> Explore in Interactive Map
+          </Link>
         )}
 
         {handleCopy && (
