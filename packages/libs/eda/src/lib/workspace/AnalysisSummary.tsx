@@ -13,10 +13,6 @@ import {
   Trash,
 } from '@veupathdb/coreui/lib/components/icons';
 import { Chip, FilledButton, FloatingButton } from '@veupathdb/coreui';
-import { Public } from '@material-ui/icons';
-import { Link } from 'react-router-dom';
-import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
-
 interface Props {
   analysis: Analysis | NewAnalysis;
   setAnalysisName: (name: string) => void;
@@ -26,7 +22,6 @@ interface Props {
   onFilterIconClick?: () => void;
   globalFiltersDialogOpen?: boolean;
   displaySharingModal?: () => void;
-  mapLink?: string;
 }
 
 export function AnalysisSummary(props: Props) {
@@ -38,10 +33,8 @@ export function AnalysisSummary(props: Props) {
     onFilterIconClick,
     globalFiltersDialogOpen,
     displaySharingModal,
-    mapLink,
   } = props;
   const history = useHistory();
-  const theme = useUITheme();
   const { url } = useRouteMatch();
   const handleCopy =
     copyAnalysis &&
@@ -115,23 +108,6 @@ export function AnalysisSummary(props: Props) {
             }}
           />
         )}
-        {mapLink && (
-          <Link
-            to={mapLink}
-            style={{
-              color: theme?.palette.primary.hue[theme.palette.primary.level],
-              paddingLeft: 10,
-              paddingRight: 10,
-              fontSize: '.7em',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '.5ex',
-            }}
-          >
-            <Public /> Explore in Interactive Map
-          </Link>
-        )}
-
         {handleCopy && (
           <FloatingButton
             ariaLabel="Copy Analysis"
