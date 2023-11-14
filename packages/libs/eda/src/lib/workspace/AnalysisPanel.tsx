@@ -5,7 +5,6 @@ import {
   Redirect,
   Route,
   RouteComponentProps,
-  useHistory,
   useLocation,
   useRouteMatch,
 } from 'react-router';
@@ -50,6 +49,8 @@ import { DownloadClient } from '../core/api/DownloadClient';
 import useUITheme from '@veupathdb/coreui/lib/components/theming/useUITheme';
 import { VariableLinkConfig } from '../core/components/VariableLink';
 import FilterChipList from '../core/components/FilterChipList';
+import { Public } from '@material-ui/icons';
+import { Link } from 'react-router-dom';
 
 const AnalysisTabErrorBoundary = ({
   children,
@@ -133,6 +134,10 @@ export function AnalysisPanel({
   const filteredEntities = uniq(filters?.map((f) => f.entityId));
   const geoConfigs = useGeoConfig(entities);
   const location = useLocation();
+  const mapLink =
+    geoConfigs.length > 0
+      ? routeBase.replace('/analyses/', '/maps/')
+      : undefined;
 
   const [lastVarPath, setLastVarPath] = useState('');
   const [lastVizPath, setLastVizPath] = useState('');
@@ -355,6 +360,25 @@ export function AnalysisPanel({
                 },
               ]}
             />
+            {mapLink && (
+              <Link
+                to={mapLink}
+                style={{
+                  color: themePrimaryColor?.hue[themePrimaryColor?.level],
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                  fontSize: '1.2em',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '.5ex',
+                  position: 'absolute',
+                  right: '0',
+                  bottom: '.5em',
+                }}
+              >
+                <Public /> Explore in Interactive Map
+              </Link>
+            )}
           </div>
           <Route
             path={routeBase}
