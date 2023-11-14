@@ -62,6 +62,7 @@ function StudyAnswerController(props) {
           },
         }}
         renderCellContent={renderCellContent}
+        useStickyFirstColumn={true}
       />
     </React.Fragment>
   );

@@ -119,6 +119,7 @@ function useTableState(props) {
     renderCellContent,
     deriveRowClassName,
     customSortBys,
+    useStickyFirstColumn,
   } = props;
 
   const stickyColumnStyle = { position: 'sticky', left: 0 };
@@ -135,9 +136,9 @@ function useTableState(props) {
           sortable: attribute.isSortable,
           primary: attribute.isPrimary,
           moveable: true,
-          headingStyle:
-            index === 0 ? { ...stickyColumnStyle, zIndex: 2 } : undefined,
-          style: index === 0 ? { ...stickyColumnStyle, zIndex: 1 } : undefined,
+          // headingStyle:
+          //   index === 0 ? { ...stickyColumnStyle, zIndex: 2 } : undefined,
+          // style: index === 0 ? { ...stickyColumnStyle, zIndex: 1 } : undefined,
           renderCell: ({ row: record }) => {
             const cellProps = {
               attribute,
@@ -160,6 +161,7 @@ function useTableState(props) {
   const options = useMemo(
     () => ({
       useStickyHeader: true,
+      useStickyFirstColumn,
       tableBodyMaxHeight: 'unset',
       deriveRowClassName:
         deriveRowClassName &&

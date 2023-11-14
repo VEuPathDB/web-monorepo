@@ -25,6 +25,7 @@ class DataTable extends React.Component {
     this.getInnerCellWidth = this.getInnerCellWidth.bind(this);
     this.hasSelectionColumn = this.hasSelectionColumn.bind(this);
     this.shouldUseStickyHeader = this.shouldUseStickyHeader.bind(this);
+    this.makeFirstColumnSticky = this.makeFirstColumnSticky.bind(this);
     this.handleTableBodyScroll = this.handleTableBodyScroll.bind(this);
     this.setDynamicWidths = this.setDynamicWidths.bind(this);
     this.resizeId = -1;
@@ -40,6 +41,29 @@ class DataTable extends React.Component {
       Use a css height as the "tableBodyMaxHeight" option to use this setting.
     `);
     return true;
+  }
+
+  makeFirstColumnSticky(columns) {
+    return columns.length >= 2
+      ? [
+          {
+            ...columns[0],
+            headingStyle: {
+              ...columns[0].headingStyle,
+              position: 'sticky',
+              left: 0,
+              zIndex: 2,
+            },
+            style: {
+              ...columns[0].style,
+              position: 'sticky',
+              left: 0,
+              zIndex: 1,
+            },
+          },
+          ...columns.slice(1),
+        ]
+      : columns;
   }
 
   componentDidMount() {
@@ -157,20 +181,28 @@ class DataTable extends React.Component {
       headerWrapperStyle,
     } = this.props;
     const { dynamicWidths, tableWrapperWidth } = this.state;
+    const stickyColumns = options.useStickyFirstColumn
+      ? this.makeFirstColumnSticky(columns)
+      : columns;
     const newColumns =
-      columns.every(({ width }) => width) ||
+      stickyColumns.every(({ width }) => width) ||
       !dynamicWidths ||
       dynamicWidths.length == 0
-        ? columns
-        : makeColumnsWithDynamicWidths({ columns, dynamicWidths });
+        ? stickyColumns
+        : makeColumnsWithDynamicWidths({
+            columns: stickyColumns,
+            dynamicWidths,
+          });
     const bodyWrapperStyle = {
       maxHeight: options ? options.tableBodyMaxHeight : null,
     };
+    console.log({ columns });
     const wrapperStyle = {
       minWidth: dynamicWidths
         ? combineWidths(columns.map(({ width }) => width))
         : null,
     };
+    console.log({ newColumns });
     const headerWrapperStyleMerged = {
       width: tableWrapperWidth,
       display: dynamicWidths == null ? 'none' : 'block',
@@ -186,6 +218,7 @@ class DataTable extends React.Component {
       uiState,
       columns: newColumns,
     };
+    console.log({ rows, filteredRows });
     return (
       <div ref={(node) => (this.mainRef = node)} className="MesaComponent">
         <div className={dataTableClass()} style={wrapperStyle}>
@@ -223,12 +256,24 @@ class DataTable extends React.Component {
 
   renderPlainTable() {
     const { props } = this;
+    const { options, columns } = props;
+
+    const stickyColumns = options.useStickyFirstColumn
+      ? this.makeFirstColumnSticky(columns)
+      : columns;
+    const newProps = {
+      ...props,
+      columns: stickyColumns,
+    };
+
+    console.log('in renderPlainTable', { newProps, stickyColumns, columns });
+
     return (
       <div className="MesaComponent">
         <div className={dataTableClass()}>
           <table cellSpacing="0" cellPadding="0">
-            <HeadingRow {...props} />
-            <DataRowList {...props} />
+            <HeadingRow {...newProps} />
+            <DataRowList {...newProps} />
           </table>
         </div>
       </div>
@@ -244,6 +289,8 @@ class DataTable extends React.Component {
 DataTable.propTypes = {
   rows: PropTypes.array,
   columns: PropTypes.array,
+  // options.useStickyHeader exists
+  // add options.useStickyFirstColumn
   options: PropTypes.object,
   actions: PropTypes.arrayOf(
     PropTypes.shape({
@@ -260,6 +307,7 @@ DataTable.propTypes = {
   eventHandlers: PropTypes.objectOf(PropTypes.func),
 };
 
+// Here
 const makeColumnsWithDynamicWidths = defaultMemoize(
   ({ columns, dynamicWidths }) =>
     columns.map((column, index) =>
