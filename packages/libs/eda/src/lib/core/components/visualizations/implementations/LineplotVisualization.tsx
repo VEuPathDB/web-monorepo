@@ -2797,6 +2797,9 @@ export function AggregationInputs<F extends string, P extends Array<string>>(
           >
             <ValuePicker
               allowedValues={props.options}
+              disallowedValues={props.numeratorValues.filter(
+                (value) => !props.options.includes(value)
+              )}
               selectedValues={props.numeratorValues}
               onSelectedValuesChange={props.onNumeratorChange}
             />
@@ -2810,6 +2813,9 @@ export function AggregationInputs<F extends string, P extends Array<string>>(
           >
             <ValuePicker
               allowedValues={props.options}
+              disallowedValues={props.denominatorValues.filter(
+                (value) => !props.options.includes(value)
+              )}
               selectedValues={props.denominatorValues}
               onSelectedValuesChange={props.onDenominatorChange}
             />

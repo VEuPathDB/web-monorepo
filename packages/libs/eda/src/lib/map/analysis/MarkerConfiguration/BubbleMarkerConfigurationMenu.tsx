@@ -77,14 +77,8 @@ export function BubbleMarkerConfigurationMenu({
   const categoricalMode = isSuitableCategoricalVariable(selectedVariable);
 
   const aggregationConfig = overlayConfiguration?.aggregationConfig;
-  const numeratorValues =
-    aggregationConfig && 'numeratorValues' in aggregationConfig
-      ? aggregationConfig.numeratorValues
-      : undefined;
-  const denominatorValues =
-    aggregationConfig && 'denominatorValues' in aggregationConfig
-      ? aggregationConfig.denominatorValues
-      : undefined;
+  const numeratorValues = configuration.numeratorValues;
+  const denominatorValues = configuration.denominatorValues;
   const aggregator =
     aggregationConfig && 'aggregator' in aggregationConfig
       ? aggregationConfig.aggregator
@@ -93,11 +87,6 @@ export function BubbleMarkerConfigurationMenu({
     selectedVariable && 'vocabulary' in selectedVariable
       ? selectedVariable.vocabulary
       : undefined;
-
-  const proportionIsValid = validateProportionValues(
-    numeratorValues,
-    denominatorValues
-  );
 
   const aggregationInputs = (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -131,10 +120,10 @@ export function BubbleMarkerConfigurationMenu({
                 }),
             })}
       />
-      {!proportionIsValid && (
+      {overlayConfiguration == null && (
         <div style={{ position: 'relative' }}>
           <div style={{ position: 'absolute', width: '100%' }}>
-            <PluginError error="To calculate a proportion, all selected numerator values must also be present in the denominator" />
+            <PluginError error="To calculate a proportion, all selected numerator values must also be present in the denominator and any values that have been filtered out must be deselected (indicated by red outline and strike-through)." />
           </div>
         </div>
       )}
@@ -224,14 +213,3 @@ function isSuitableCategoricalVariable(variable?: VariableTreeNode): boolean {
     variable.distinctValuesCount != null
   );
 }
-
-// We currently call this function twice per value change.
-// If the number of values becomes vary large, we may want to optimize this?
-// Maybe O(n^2) isn't that bad though.
-export const validateProportionValues = (
-  numeratorValues: string[] | undefined,
-  denominatorValues: string[] | undefined
-) =>
-  numeratorValues === undefined ||
-  denominatorValues === undefined ||
-  numeratorValues.every((value) => denominatorValues.includes(value));

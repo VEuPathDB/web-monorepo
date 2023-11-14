@@ -27,10 +27,7 @@ import { DraggableLegendPanel } from '../../DraggableLegendPanel';
 import { MapLegend } from '../../MapLegend';
 import MapVizManagement from '../../MapVizManagement';
 import { BubbleMarkerConfigurationMenu } from '../../MarkerConfiguration';
-import {
-  BubbleMarkerConfiguration,
-  validateProportionValues,
-} from '../../MarkerConfiguration/BubbleMarkerConfigurationMenu';
+import { BubbleMarkerConfiguration } from '../../MarkerConfiguration/BubbleMarkerConfigurationMenu';
 import {
   MapTypeConfigurationMenu,
   MarkerConfigurationOption,
@@ -422,8 +419,10 @@ function useOverlayConfig(props: OverlayConfigProps) {
     );
   const { entity: overlayEntity, variable: overlayVariable } =
     entityAndVariable;
-  // If the variable or filters have changed on the active marker config
-  // get the default overlay config.
+  // get the bubble overlay config, with default values from
+  // the current vocabulary for overlayVariable if numeratorValues or denominatorValues
+  // are undefined.
+  // Also returns undefined if the numerator/denominator are invalid.
   return useMemo(() => {
     return getDefaultBubbleOverlayConfig({
       studyId,
@@ -480,12 +479,9 @@ function useLegendData(props: DataProps) {
     denominatorValues,
   });
 
-  const disabled =
-    numeratorValues?.length === 0 ||
-    denominatorValues?.length === 0 ||
-    !validateProportionValues(numeratorValues, denominatorValues);
-
-  const legendRequestParams: StandaloneMapBubblesLegendRequestParams = {
+  const legendRequestParams:
+    | StandaloneMapBubblesLegendRequestParams
+    | undefined = overlayConfig && {
     studyId,
     filters: filters || [], // OK for react-query, but not for hooks in general
     config: {
@@ -503,6 +499,7 @@ function useLegendData(props: DataProps) {
   return useQuery({
     queryKey: ['bubbleMarkers', 'legendData', legendRequestParams],
     queryFn: async () => {
+      if (legendRequestParams == null) return; // see also the `disable` prop
       // temporarily convert potentially date-strings to numbers
       // but don't worry - we are also temporarily disabling date variables from bubble mode
       const temp = await dataClient.getStandaloneBubblesLegend(
@@ -583,7 +580,7 @@ function useLegendData(props: DataProps) {
         bubbleValueToColorMapper,
       };
     },
-    enabled: !disabled,
+    enabled: legendRequestParams != null,
   });
 }
 
@@ -632,12 +629,7 @@ function useMarkerData(props: DataProps) {
   };
   const { data: legendData } = useLegendData(props);
 
-  // add to check legendData is undefined for refetch
-  const disabled =
-    numeratorValues?.length === 0 ||
-    denominatorValues?.length === 0 ||
-    !validateProportionValues(numeratorValues, denominatorValues) ||
-    legendData == null;
+  const disabled = overlayConfig == null || legendData == null;
 
   return useQuery({
     // we're actually using the mapping functions `bubbleValueToColorMapper` and
@@ -670,7 +662,7 @@ function useMarkerData(props: DataProps) {
        */
       const finalMarkersData = processRawBubblesData(
         rawMarkersData.mapElements,
-        overlayConfig.aggregationConfig,
+        overlayConfig?.aggregationConfig,
         bubbleValueToDiameterMapper,
         bubbleValueToColorMapper
       );

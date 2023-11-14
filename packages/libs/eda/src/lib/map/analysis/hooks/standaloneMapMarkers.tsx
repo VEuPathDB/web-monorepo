@@ -37,8 +37,8 @@ import {
   BaseMarkerData,
 } from '@veupathdb/components/lib/map/ChartMarker';
 import { BubbleMarkerProps } from '@veupathdb/components/lib/map/BubbleMarker';
-import { validateProportionValues } from '../MarkerConfiguration/BubbleMarkerConfigurationMenu';
 import _ from 'lodash';
+import { validateProportionValues } from '../utils/defaultOverlayConfig';
 
 /**
  * We can use this viewport to request all available data
@@ -133,9 +133,8 @@ interface MapMarkers {
 }
 
 // TO DO: no longer used - we should remove this, right?
-export function useStandaloneMapMarkers(
-  props: StandaloneMapMarkersProps
-): MapMarkers {
+// starting by "unexporting" it
+function useStandaloneMapMarkers(props: StandaloneMapMarkersProps): MapMarkers {
   const {
     boundsZoomLevel,
     geoConfig,
@@ -262,8 +261,8 @@ export function useStandaloneMapMarkers(
         if (
           !aggregationConfig ||
           numeratorValues?.length === 0 ||
-          denominatorValues?.length === 0 ||
-          !validateProportionValues(numeratorValues, denominatorValues)
+          denominatorValues?.length === 0
+          //          !validateProportionValues(numeratorValues, denominatorValues)
         ) {
           return undefined;
         }

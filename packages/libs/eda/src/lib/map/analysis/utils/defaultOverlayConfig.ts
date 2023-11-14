@@ -31,9 +31,10 @@ export interface DefaultBubbleOverlayConfigProps {
   denominatorValues?: BubbleMarkerConfiguration['denominatorValues'];
 }
 
+// rename getAndValidateBubbleOverlayConfig ?
 export function getDefaultBubbleOverlayConfig(
   props: DefaultBubbleOverlayConfigProps
-): BubbleOverlayConfig {
+): BubbleOverlayConfig | undefined {
   const {
     overlayVariable,
     overlayEntity,
@@ -49,14 +50,21 @@ export function getDefaultBubbleOverlayConfig(
 
   if (CategoricalVariableDataShape.is(overlayVariable.dataShape)) {
     // categorical
-    return {
-      overlayVariable: overlayVariableDescriptor,
-      aggregationConfig: {
-        overlayType: 'categorical',
-        numeratorValues,
-        denominatorValues,
-      },
-    };
+    // validate *after* the default vocabulary has been added for undefined numerator/denominatorValues
+    return validateProportionValues(
+      numeratorValues,
+      denominatorValues,
+      overlayVariable.vocabulary
+    )
+      ? {
+          overlayVariable: overlayVariableDescriptor,
+          aggregationConfig: {
+            overlayType: 'categorical',
+            numeratorValues,
+            denominatorValues,
+          },
+        }
+      : undefined;
   } else if (ContinuousVariableDataShape.is(overlayVariable.dataShape)) {
     // continuous
     return {
@@ -203,3 +211,20 @@ export async function getBinRanges({
   const binRanges = response.binRanges?.[binningMethod]!; // if asking for binRanges, the response WILL contain binRanges
   return binRanges;
 }
+
+// We currently call this function twice per value change.
+// If the number of values becomes vary large, we may want to optimize this?
+// Maybe O(n^2) isn't that bad though.
+export const validateProportionValues = (
+  numeratorValues: string[],
+  denominatorValues: string[],
+  vocabulary?: string[]
+) =>
+  numeratorValues.every(
+    (value) =>
+      denominatorValues.includes(value) &&
+      (vocabulary == null || vocabulary.includes(value))
+  ) &&
+  denominatorValues.every(
+    (value) => vocabulary == null || vocabulary.includes(value)
+  );
