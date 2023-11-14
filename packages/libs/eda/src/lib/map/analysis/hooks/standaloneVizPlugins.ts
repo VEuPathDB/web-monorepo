@@ -154,5 +154,5 @@ export function useStandaloneVizPlugins({
         },
       },
     };
-  }, [selectedOverlayConfig]);
+  }, [selectedOverlayConfig, overlayHelp]);
 }
