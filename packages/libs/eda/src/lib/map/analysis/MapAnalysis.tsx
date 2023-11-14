@@ -105,12 +105,17 @@ const mapStyle: React.CSSProperties = {
 interface Props {
   analysisId?: string;
   sharingUrl: string;
+  singleAppMode?: string;
   studyId: string;
   siteInformationProps: SiteInformationProps;
 }
 
 export function MapAnalysis(props: Props) {
-  const appStateAndSetters = useAppState('@@mapApp@@', props.analysisId);
+  const appStateAndSetters = useAppState(
+    '@@mapApp@@',
+    props.analysisId,
+    props.singleAppMode
+  );
   const geoConfigs = useGeoConfig(useStudyEntities());
 
   if (geoConfigs == null || geoConfigs.length === 0)

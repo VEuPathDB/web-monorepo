@@ -129,6 +129,7 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
               className="MapVEu"
             >
               <MapAnalysis
+                singleAppMode={singleAppMode}
                 analysisId={routeProps.match.params.analysisId}
                 siteInformationProps={siteInformationProps}
                 studyId={routeProps.match.params.studyId}

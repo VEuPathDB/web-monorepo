@@ -116,8 +116,12 @@ export const AppState = t.intersection([
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export type AppState = t.TypeOf<typeof AppState>;
 
-export function useAppState(uiStateKey: string, analysisId?: string) {
-  const analysisState = useAnalysis(analysisId);
+export function useAppState(
+  uiStateKey: string,
+  analysisId?: string,
+  singleAppMode?: string
+) {
+  const analysisState = useAnalysis(analysisId, singleAppMode);
 
   // make some backwards compatability updates to the appstate retrieved from the back end
   const [appStateChecked, setAppStateChecked] = useState(false);
@@ -229,7 +233,10 @@ export function useAppState(uiStateKey: string, analysisId?: string) {
     appStateChecked,
   ]);
 
-  function useSetter<T extends keyof AppState>(key: T) {
+  function useSetter<T extends keyof AppState>(
+    key: T,
+    createIfUnsaved = false
+  ) {
     return useCallback(
       function setter(value: AppState[T]) {
         setVariableUISettings((prev) => {
@@ -244,9 +251,9 @@ export function useAppState(uiStateKey: string, analysisId?: string) {
             };
           }
           return prev;
-        });
+        }, createIfUnsaved);
       },
-      [key]
+      [key, createIfUnsaved]
     );
   }
 
@@ -254,13 +261,14 @@ export function useAppState(uiStateKey: string, analysisId?: string) {
     appState,
     analysisState,
     setActiveMarkerConfigurationType: useSetter(
-      'activeMarkerConfigurationType'
+      'activeMarkerConfigurationType',
+      true
     ),
-    setMarkerConfigurations: useSetter('markerConfigurations'),
+    setMarkerConfigurations: useSetter('markerConfigurations', true),
     setBoundsZoomLevel: useSetter('boundsZoomLevel'),
     setIsSidePanelExpanded: useSetter('isSidePanelExpanded'),
     setSubsetVariableAndEntity: useSetter('subsetVariableAndEntity'),
     setViewport: useSetter('viewport'),
-    setTimeSliderConfig: useSetter('timeSliderConfig'),
+    setTimeSliderConfig: useSetter('timeSliderConfig', true),
   };
 }
