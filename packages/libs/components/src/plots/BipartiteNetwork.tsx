@@ -14,6 +14,7 @@ import { DEFAULT_CONTAINER_HEIGHT } from './PlotlyPlot';
 import Spinner from '../components/Spinner';
 import { ToImgopts } from 'plotly.js';
 import domToImage from 'dom-to-image';
+import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 
 export interface BipartiteNetworkProps {
   /** Bipartite network data */
@@ -33,9 +34,13 @@ export interface BipartiteNetworkProps {
 }
 
 const EmptyBipartiteNetworkData: BipartiteNetworkData = {
-  column1NodeIDs: [],
-  column2NodeIDs: [],
-  nodes: [],
+  column1NodeIDs: ['0', '1', '2', '3', '4', '5'],
+  column2NodeIDs: ['6', '7', '8'],
+  nodes: [...Array(9).keys()].map((item) => ({
+    id: item.toString(),
+    color: gray[100],
+    stroke: gray[300],
+  })),
   links: [],
 };
 

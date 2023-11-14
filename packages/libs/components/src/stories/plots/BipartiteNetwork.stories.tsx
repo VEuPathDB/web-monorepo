@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, CSSProperties } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import {
   NodeData,
@@ -21,6 +21,7 @@ interface TemplateProps {
   column2Name?: string;
   loading?: boolean;
   showThumbnail?: boolean;
+  containerStyles?: CSSProperties;
 }
 
 // Template for showcasing our BipartiteNetwork component.
@@ -42,6 +43,7 @@ const Template: Story<TemplateProps> = (args) => {
     column1Name: args.column1Name,
     column2Name: args.column2Name,
     showSpinner: args.loading,
+    containerStyles: args.containerStyles,
     width: 500,
   };
   return (
@@ -91,6 +93,12 @@ Loading.args = {
   column1Name: 'Column 1',
   column2Name: 'Column 2',
   loading: true,
+};
+
+// Empty bipartite network
+export const Empty = Template.bind({});
+Empty.args = {
+  data: undefined,
 };
 
 // Show thumbnail
