@@ -588,9 +588,7 @@ function useMarkerData(props: DataProps) {
   const { boundsZoomLevel, configuration, geoConfigs, studyId, filters } =
     props;
 
-  const { numeratorValues, denominatorValues } = configuration;
-
-  const studyEntities = useStudyEntities();
+  const studyEntities = useStudyEntities(); // no need for filter-sensitivity (for geo-variables)
   const dataClient = useDataClient();
 
   const {
