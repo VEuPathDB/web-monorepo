@@ -85,7 +85,11 @@ class StudyMenuItem extends React.Component {
   }
 
   renderEdaMenuItem() {
-    const { study, permissions } = this.props;
+    const {
+      study,
+      permissions,
+      isChildOfCollapsibleSection = false,
+    } = this.props;
     const { name, id, disabled } = study;
     const edaRoute = makeEdaRoute(study.id) + '/new';
 
@@ -95,7 +99,11 @@ class StudyMenuItem extends React.Component {
           'row StudyMenuItem' + (disabled ? ' StudyMenuItem--disabled' : '')
         }
       >
-        <div className="box StudyMenuItem-Name">
+        <div
+          className={`box StudyMenuItem-Name ${
+            isChildOfCollapsibleSection ? ' CollapsibleSectionChild' : ''
+          }`}
+        >
           <Link to={edaRoute} className={'StudyMenuItem-RecordLink ' + id}>
             <i className="ebrc-icon-edaIcon"></i> {safeHtml(name)}
           </Link>
