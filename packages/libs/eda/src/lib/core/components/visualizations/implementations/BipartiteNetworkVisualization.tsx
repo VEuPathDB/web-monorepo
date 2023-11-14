@@ -3,7 +3,7 @@ import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { PlotLayout } from '../../layouts/PlotLayout';
 import { VisualizationProps } from '../VisualizationTypes';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
-import { LayoutOptions } from '../../layouts/types';
+import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import { RequestOptions } from '../options/types';
 
 // Bipartite network imports
@@ -28,6 +28,7 @@ import {
 import { fixVarIdLabel } from '../../../utils/visualization';
 import DataClient from '../../../api/DataClient';
 import { CorrelationAssayMetadataConfig } from '../../computations/plugins/correlationAssayMetadata';
+import { OutputEntityTitle } from '../OutputEntityTitle';
 // end imports
 
 // Defaults
@@ -65,6 +66,7 @@ export const BipartiteNetworkConfig = t.partial({
 
 interface Options
   extends LayoutOptions,
+    TitleOptions,
     RequestOptions<BipartiteNetworkConfig, {}, BipartiteNetworkRequestParams> {}
 
 // Bipartite Network Visualization
@@ -152,8 +154,8 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const linkColorScale = scaleOrdinal<string>()
     .domain(linkColorScaleDomain)
     .range(twoColorPalette); // the output palette may change if this visualization is reused in other contexts (ex. not a correlation app).
-  // ANN YOU ARE HERE just going through and doing a mid PR clean. Also prolly going to try some stacked PRs for the
-  // rest of the todos
+
+  // Clean and finalize data format. Specifically, assign link colors, add display labels
   const cleanedData = useMemo(() => {
     if (!data.value) return undefined;
 
@@ -181,13 +183,16 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
           source: link.source,
           target: link.target,
           strokeWidth: Number(link.strokeWidth),
-          color: linkColorScale(
-            link.color?.toString() ?? DEFAULT_LINK_COLOR_DATA
-          ),
+          color: link.color ? linkColorScale(link.color.toString()) : '#000000',
         };
       }),
     };
   }, [data, entities, linkColorScale]);
+
+  // plot subtitle
+  const plotSubtitle =
+    options?.getPlotSubtitle?.(computation.descriptor.configuration) +
+    DEFAULT_CORRELATION_COEF_THRESHOLD.toString();
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
@@ -212,6 +217,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <OutputEntityTitle subtitle={plotSubtitle} />
       <LayoutComponent
         isFaceted={false}
         legendNode={legendNode}
