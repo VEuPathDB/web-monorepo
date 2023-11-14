@@ -202,6 +202,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
 
   const bipartiteNetworkProps: BipartiteNetworkProps = {
     data: cleanedData ?? undefined,
+    showSpinner: data.pending,
   };
 
   const plotNode = (
