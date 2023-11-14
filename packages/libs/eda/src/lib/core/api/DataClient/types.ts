@@ -390,7 +390,7 @@ const NodeData = type({
   id: string,
 });
 
-export const BipartiteNetworkResponse = type({
+export const BipartiteNetworkData = type({
   column1NodeIDs: array(string),
   column2NodeIDs: array(string),
   nodes: array(NodeData),
@@ -406,6 +406,18 @@ export const BipartiteNetworkResponse = type({
       }),
     ])
   ),
+});
+
+const BipartiteNetworkConfig = type({
+  column1Metadata: string,
+  column2Metadata: string,
+});
+
+export const BipartiteNetworkResponse = type({
+  bipartitenetwork: type({
+    data: BipartiteNetworkData,
+    config: BipartiteNetworkConfig,
+  }),
 });
 
 export interface BipartiteNetworkRequestParams {

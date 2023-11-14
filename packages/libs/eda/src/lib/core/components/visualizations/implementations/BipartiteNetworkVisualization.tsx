@@ -15,11 +15,6 @@ import {
   BipartiteNetworkRequestParams,
   BipartiteNetworkResponse,
 } from '../../../api/DataClient/types';
-import {
-  BipartiteNetworkData,
-  LinkData,
-  NodeData,
-} from '@veupathdb/components/lib/types/plots/network';
 import { twoColorPalette } from '@veupathdb/components/lib/types/plots/addOns';
 import { useCallback, useMemo } from 'react';
 import { scaleOrdinal } from 'd3-scale';
@@ -36,8 +31,8 @@ import { CorrelationAssayMetadataConfig } from '../../computations/plugins/corre
 // end imports
 
 // Defaults
-const DEFAULT_CORRELATION_COEF_THRESHOLD = 0.9;
-const DEFAULT_SIGNIFICANCE_THRESHOLD = 0.05;
+const DEFAULT_CORRELATION_COEF_THRESHOLD = 0.05; // Ability for user to change this value not yet implemented.
+const DEFAULT_SIGNIFICANCE_THRESHOLD = 0.05; // Ability for user to change this value not yet implemented.
 const DEFAULT_LINK_COLOR_DATA = '0';
 
 const plotContainerStyles = {
@@ -49,7 +44,7 @@ const plotContainerStyles = {
 };
 
 export const bipartiteNetworkVisualization = createVisualizationPlugin({
-  selectorIcon: VolcanoSVG, // TEMP
+  selectorIcon: VolcanoSVG, // TEMPORARY
   fullscreenComponent: BipartiteNetworkViz,
   createDefaultConfig: createDefaultConfig,
 });
@@ -74,7 +69,7 @@ interface Options
 
 // Bipartite Network Visualization
 // The bipartite network takes no input variables, because the received data will complete the plot.
-// Eventually the user will be able to control the significance and correlation coefficient values.
+// Eventually the user will be able to control the significance and correlation coefficient threshold values.
 function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const {
     options,
@@ -93,25 +88,24 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const computationConfiguration: CorrelationAssayMetadataConfig = computation
     .descriptor.configuration as CorrelationAssayMetadataConfig;
 
-  // Fake data
+  // Get data from the compute job
   const data = usePromise(
     useCallback(async (): Promise<BipartiteNetworkResponse | undefined> => {
       // Only need to check compute job status and filter status, since there are no
       // viz input variables.
-      console.log(filteredCounts);
       if (computeJobStatus !== 'complete') return undefined;
       if (filteredCounts.pending || filteredCounts.value == null)
         return undefined;
 
-      // There are _no_ viz request params for the volcano plot (config: {}).
-      // The data service streams the volcano data directly from the compute service.
       const params = {
         studyId,
         filters,
-        config: {},
+        config: {
+          correlationCoefThreshold: DEFAULT_CORRELATION_COEF_THRESHOLD,
+          significanceThreshold: DEFAULT_SIGNIFICANCE_THRESHOLD,
+        },
         computeConfig: computationConfiguration,
       };
-      console.log(params);
 
       const response = await dataClient.getVisualizationData(
         computation.descriptor.type,
@@ -119,8 +113,6 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
         params,
         BipartiteNetworkResponse
       );
-      console.log('new response');
-      console.log(response);
 
       return response;
     }, [
@@ -135,41 +127,56 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
       visualization.descriptor.type,
     ])
   );
-  console.log(data);
 
   // Assign color to links.
-  // Color palettes live here in the frontend, but the backend knows that the edges should be two colors.
-  // So we'll make it generalizable by mapping the values of the links.color prop to the palette.
+  // Color palettes live here in the frontend, but the backend decides how to color links (ex. by sign of correlation, or avg degree of parent nodes).
+  // So we'll make assigning colors generalizable by mapping the values of the links.color prop to the palette.
   const uniqueLinkColors = uniq(
-    data.value?.links.map(
+    data.value?.bipartitenetwork.data.links.map(
       (link) => link.color?.toString() ?? DEFAULT_LINK_COLOR_DATA
     )
   );
+  if (uniqueLinkColors.length > twoColorPalette.length) {
+    throw new Error(
+      `Found ${uniqueLinkColors.length} link colors but expected only two.`
+    );
+  }
+  // The link colors should be either '-1' or '1', but we'll allow any two unique values. Assigning the domain
+  // this way prevents a situation where if all links have color '1', we don't want them mapped to the
+  // color that is usually reserved for '-1'.
+  const linkColorScaleDomain = uniqueLinkColors.every((val) =>
+    ['-1', '1'].includes(val)
+  )
+    ? ['-1', '1']
+    : uniqueLinkColors;
   const linkColorScale = scaleOrdinal<string>()
-    .domain(uniqueLinkColors)
-    .range(twoColorPalette); // the output palette may change if this visualization is reused in other contexts.
-
+    .domain(linkColorScaleDomain)
+    .range(twoColorPalette); // the output palette may change if this visualization is reused in other contexts (ex. not a correlation app).
+  // ANN YOU ARE HERE just going through and doing a mid PR clean. Also prolly going to try some stacked PRs for the
+  // rest of the todos
   const cleanedData = useMemo(() => {
     if (!data.value) return undefined;
 
     // Find display labels
-    const nodesWithLabels = data.value.nodes.map((node) => {
-      // node.id is the entityId.variableId
-      const displayLabel = fixVarIdLabel(
-        node.id.split('.')[1],
-        node.id.split('.')[0],
-        entities
-      );
+    const nodesWithLabels = data.value.bipartitenetwork.data.nodes.map(
+      (node) => {
+        // node.id is the entityId.variableId
+        const displayLabel = fixVarIdLabel(
+          node.id.split('.')[1],
+          node.id.split('.')[0],
+          entities
+        );
 
-      return {
-        id: node.id,
-        label: displayLabel,
-      };
-    });
+        return {
+          id: node.id,
+          label: displayLabel,
+        };
+      }
+    );
     return {
-      ...data.value,
+      ...data.value.bipartitenetwork.data,
       nodes: nodesWithLabels,
-      links: data.value.links.map((link) => {
+      links: data.value.bipartitenetwork.data.links.map((link) => {
         return {
           source: link.source,
           target: link.target,
