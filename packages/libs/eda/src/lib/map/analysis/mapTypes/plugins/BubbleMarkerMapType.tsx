@@ -249,7 +249,7 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
             </div>
           ) : (
             <MapLegend
-              isLoading={legendData.data == null}
+              isLoading={legendData.isFetching}
               plotLegendProps={{
                 type: 'bubble',
                 legendMax: legendData.data?.bubbleLegendData?.maxSizeValue ?? 0,
@@ -267,7 +267,7 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
       >
         <div style={{ padding: '5px 10px' }}>
           <MapLegend
-            isLoading={legendData.data == null}
+            isLoading={legendData.isFetching}
             plotLegendProps={{
               type: 'colorscale',
               legendMin: legendData.data?.bubbleLegendData?.minColorValue ?? 0,
