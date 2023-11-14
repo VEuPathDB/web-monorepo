@@ -38,7 +38,6 @@ const DEFAULT_LINK_COLOR_DATA = '0';
 
 const plotContainerStyles = {
   width: 750,
-  height: 450,
   marginLeft: '0.75rem',
   border: '1px solid #dedede',
   boxShadow: '1px 1px 4px #00000066',
@@ -81,6 +80,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     computeJobStatus,
     filteredCounts,
     filters,
+    plotContainerStyleOverrides,
   } = props;
 
   const studyMetadata = useStudyMetadata();
@@ -194,15 +194,27 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     options?.getPlotSubtitle?.(computation.descriptor.configuration) +
     DEFAULT_CORRELATION_COEF_THRESHOLD.toString();
 
+  const finalPlotContainerStyles = useMemo(
+    () => ({
+      ...plotContainerStyles,
+      ...plotContainerStyleOverrides,
+    }),
+    [plotContainerStyleOverrides]
+  );
+
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
-    plotContainerStyles,
+    {
+      ...finalPlotContainerStyles,
+      height: 400, // no reason for the thumbnail to be as tall as the network (could be very, very tall!)
+    },
     [cleanedData]
   );
 
   const bipartiteNetworkProps: BipartiteNetworkProps = {
     data: cleanedData ?? undefined,
     showSpinner: data.pending,
+    containerStyles: finalPlotContainerStyles,
   };
 
   const plotNode = (
