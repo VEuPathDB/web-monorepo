@@ -65,7 +65,6 @@ import { AllAnalyses } from '../../workspace/AllAnalyses';
 import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 import { isSavedAnalysis } from '../../core/utils/analysis';
 import { GeoConfig } from '../../core/types/geoConfig';
-import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import {
   SidePanelItem,
   SidePanelMenuEntry,
@@ -83,6 +82,9 @@ import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { MapTypeMapLayerProps } from './mapTypes/types';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
 import AnalysisNameDialog from '../../workspace/AnalysisNameDialog';
+import { FetchClientError } from '@veupathdb/http-utils';
+import { Page } from '@veupathdb/wdk-client/lib/Components';
+import { Link } from 'react-router-dom';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -121,14 +123,75 @@ export function MapAnalysis(props: Props) {
 
   if (geoConfigs == null || geoConfigs.length === 0)
     return (
-      <Banner
-        banner={{
-          type: 'error',
-          message: 'This study does not contain map-specific variables.',
-        }}
-      />
+      <Page requireLogin={false}>
+        <h1>Incompatiable Study</h1>
+        <div css={{ fontSize: '1.2em' }}>
+          <p>This study does not container map-specific variables.</p>
+        </div>
+      </Page>
     );
+  if (appStateAndSetters.analysisState.error) {
+    const { error } = appStateAndSetters.analysisState;
+    const message =
+      error instanceof FetchClientError && error.statusCode === 404 ? (
+        <>
+          <h1>Analysis Not Found</h1>
+          <div css={{ fontSize: '1.2em' }}>
+            <p>
+              The requested analysis does not exist. You might want to try one
+              of the following options.
+            </p>
+            <ul>
+              <li>
+                <Link to="..">See your saved analyses.</Link>
+              </li>
+              <li>
+                <Link to="new">Create a new analysis.</Link>
+              </li>
+            </ul>
+          </div>
+        </>
+      ) : error instanceof FetchClientError && error.statusCode === 403 ? (
+        <>
+          <h1>Access Denied</h1>
+          <div css={{ fontSize: '1.2em' }}>
+            <p>
+              The requested analysis belongs to a different user. You might want
+              to try one of the following options.
+            </p>
+            <ul>
+              <li>
+                If this analysis was shared with you, ask the owner to use the{' '}
+                <strong>Share</strong> button to generate a share link.
+              </li>
+              <li>
+                <Link to="..">See your saved analyses.</Link>
+              </li>
+              <li>
+                <Link to="new">Create a new analysis.</Link>
+              </li>
+            </ul>
+          </div>
+        </>
+      ) : (
+        <>
+          <h1>Analysis Loading Error</h1>
+          <div css={{ fontSize: '1.2em' }}>
+            <p>The analysis could not be loaded.</p>
+            <p>
+              Error message:{' '}
+              <code>
+                {error instanceof Error ? error.message : String(error)}
+              </code>
+            </p>
+          </div>
+        </>
+      );
+    return <Page requireLogin={false}>{message}</Page>;
+  }
+
   if (appStateAndSetters.appState == null) return null;
+
   return (
     <MapAnalysisImpl
       {...props}
