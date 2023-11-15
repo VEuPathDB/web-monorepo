@@ -100,60 +100,76 @@ export default function makeHeaderMenuItemsFactory(
               },
             ].concat(
               filteredCuratedStudies != null &&
-                filteredUserStudies != null &&
+                diyDatasets != null &&
                 !permissionsValue.loading
-                ? (filteredUserStudies.length > 0 &&
-                  studies.entities?.length > 0
+                ? // ? (filteredUserStudies.length > 0 &&
+                  (studies.entities?.length > 0
                     ? [
                         {
+                          isVisible: filteredUserStudies.length > 0,
                           text: (
                             <CollapsibleDetailsSection
                               summary="My studies"
                               collapsibleDetails={filteredUserStudies.map(
-                                (study) => (
+                                (study, idx) => (
                                   <DIYStudyMenuItem
+                                    key={idx}
                                     name={study.name}
                                     link={`${study.baseEdaRoute}/new`}
                                     isChildOfCollapsibleSection={true}
                                   />
                                 )
                               )}
+                              initialShowDetailsState={true}
+                              expandDueToFiltering={
+                                !!(searchTerm && searchTerm.length > 0)
+                              }
                             />
                           ),
                         },
                       ]
                     : []
                   ).concat(
-                    filteredCuratedStudies.length > 0 && diyDatasets?.length > 0
-                      ? [
-                          {
+                    // filteredCuratedStudies.length > 0 && diyDatasets?.length > 0
+                    studies.entities?.length > 0
+                      ? diyDatasets?.length > 0
+                        ? [
+                            {
+                              isVisible: filteredCuratedStudies.length > 0,
+                              text: (
+                                <CollapsibleDetailsSection
+                                  summary="Curated studies"
+                                  collapsibleDetails={filteredCuratedStudies.map(
+                                    (study, idx) => (
+                                      <StudyMenuItem
+                                        key={idx}
+                                        study={study}
+                                        config={siteConfig}
+                                        permissions={
+                                          permissionsValue.permissions
+                                        }
+                                        isChildOfCollapsibleSection={true}
+                                      />
+                                    )
+                                  )}
+                                  initialShowDetailsState={true}
+                                  expandDueToFiltering={
+                                    !!(searchTerm && searchTerm.length > 0)
+                                  }
+                                />
+                              ),
+                            },
+                          ]
+                        : filteredCuratedStudies.map((study) => ({
                             text: (
-                              <CollapsibleDetailsSection
-                                summary="Curated studies"
-                                collapsibleDetails={filteredCuratedStudies.map(
-                                  (study) => (
-                                    <StudyMenuItem
-                                      study={study}
-                                      config={siteConfig}
-                                      permissions={permissionsValue.permissions}
-                                      isChildOfCollapsibleSection={true}
-                                    />
-                                  )
-                                )}
-                                initialShowDetailsState={true}
+                              <StudyMenuItem
+                                study={study}
+                                config={siteConfig}
+                                permissions={permissionsValue.permissions}
                               />
                             ),
-                          },
-                        ]
-                      : filteredCuratedStudies.map((study) => ({
-                          text: (
-                            <StudyMenuItem
-                              study={study}
-                              config={siteConfig}
-                              permissions={permissionsValue.permissions}
-                            />
-                          ),
-                        }))
+                          }))
+                      : []
                   )
                 : [
                     {
