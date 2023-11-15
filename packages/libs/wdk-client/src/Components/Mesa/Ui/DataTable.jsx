@@ -60,6 +60,7 @@ class DataTable extends React.Component {
               left: 0,
               zIndex: 1,
             },
+            className: `${columns[0].className || ''} StickyColumnCell`,
           },
           ...columns.slice(1),
         ]
@@ -196,13 +197,11 @@ class DataTable extends React.Component {
     const bodyWrapperStyle = {
       maxHeight: options ? options.tableBodyMaxHeight : null,
     };
-    console.log({ columns });
     const wrapperStyle = {
       minWidth: dynamicWidths
         ? combineWidths(columns.map(({ width }) => width))
         : null,
     };
-    console.log({ newColumns });
     const headerWrapperStyleMerged = {
       width: tableWrapperWidth,
       display: dynamicWidths == null ? 'none' : 'block',
@@ -218,7 +217,6 @@ class DataTable extends React.Component {
       uiState,
       columns: newColumns,
     };
-    console.log({ rows, filteredRows });
     return (
       <div ref={(node) => (this.mainRef = node)} className="MesaComponent">
         <div className={dataTableClass()} style={wrapperStyle}>
@@ -266,8 +264,6 @@ class DataTable extends React.Component {
       columns: stickyColumns,
     };
 
-    console.log('in renderPlainTable', { newProps, stickyColumns, columns });
-
     return (
       <div className="MesaComponent">
         <div className={dataTableClass()}>
@@ -289,8 +285,6 @@ class DataTable extends React.Component {
 DataTable.propTypes = {
   rows: PropTypes.array,
   columns: PropTypes.array,
-  // options.useStickyHeader exists
-  // add options.useStickyFirstColumn
   options: PropTypes.object,
   actions: PropTypes.arrayOf(
     PropTypes.shape({
@@ -307,7 +301,6 @@ DataTable.propTypes = {
   eventHandlers: PropTypes.objectOf(PropTypes.func),
 };
 
-// Here
 const makeColumnsWithDynamicWidths = defaultMemoize(
   ({ columns, dynamicWidths }) =>
     columns.map((column, index) =>
