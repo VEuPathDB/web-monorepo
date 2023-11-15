@@ -14,7 +14,7 @@ import { useWdkService } from '../../Hooks/WdkServiceHook';
 
 export type Props = RouteComponentProps<any> & {
   classNameModifier?: string;
-  children: React.ReactChild;
+  children: React.ReactNode;
   requireLogin: boolean;
   isFullScreen?: boolean;
 };
