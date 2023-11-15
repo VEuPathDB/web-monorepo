@@ -14,6 +14,7 @@ import {
 } from '../../../core/components/visualizations/implementations/LineplotVisualization';
 import { DataElementConstraint } from '../../../core/types/visualization'; // TO DO for dates: remove
 import { SharedMarkerConfigurations } from '../mapTypes/shared';
+import { invalidProportionText } from '../utils/defaultOverlayConfig';
 
 type AggregatorOption = typeof aggregatorOptions[number];
 const aggregatorOptions = ['mean', 'median'] as const;
@@ -123,7 +124,7 @@ export function BubbleMarkerConfigurationMenu({
       {overlayConfiguration == null && (
         <div style={{ position: 'relative' }}>
           <div style={{ position: 'absolute', width: '100%' }}>
-            <PluginError error="To calculate a proportion, all selected numerator values must also be present in the denominator and any values that have been filtered out must be deselected (indicated by red outline and strike-through)." />
+            <PluginError error={invalidProportionText} />
           </div>
         </div>
       )}

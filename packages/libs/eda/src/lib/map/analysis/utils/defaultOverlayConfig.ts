@@ -228,3 +228,6 @@ export const validateProportionValues = (
   denominatorValues.every(
     (value) => vocabulary == null || vocabulary.includes(value)
   );
+
+export const invalidProportionText =
+  'To calculate a proportion, all selected numerator values must also be present in the denominator and any values that have been filtered out must be deselected (indicated by red outline and strike-through).';

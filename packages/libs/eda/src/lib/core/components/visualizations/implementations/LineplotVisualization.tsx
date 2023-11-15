@@ -138,6 +138,10 @@ import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { FloatingLineplotExtraProps } from '../../../../map/analysis/hooks/plugins/lineplot';
 
 import * as DateMath from 'date-arithmetic';
+import {
+  invalidProportionText,
+  validateProportionValues,
+} from '../../../../map/analysis/utils/defaultOverlayConfig';
 
 const plotContainerStyles = {
   width: 750,
@@ -712,17 +716,17 @@ function LineplotViz(props: VisualizationProps<Options>) {
 
       if (categoricalMode && !valuesAreSpecified) return undefined;
 
-      if (categoricalMode && valuesAreSpecified) {
-        if (
-          dataRequestConfig.numeratorValues != null &&
-          !dataRequestConfig.numeratorValues.every((value) =>
-            dataRequestConfig.denominatorValues?.includes(value)
-          )
+      if (
+        categoricalMode &&
+        dataRequestConfig.numeratorValues &&
+        dataRequestConfig.denominatorValues &&
+        !validateProportionValues(
+          dataRequestConfig.numeratorValues,
+          dataRequestConfig.denominatorValues,
+          yAxisVariable?.vocabulary
         )
-          throw new Error(
-            'To calculate a proportion, all selected numerator values must also be present in the denominator'
-          );
-      }
+      )
+        throw new Error(invalidProportionText);
 
       // no data request if banner should be shown
       if (showIndependentAxisBanner || showDependentAxisBanner)
