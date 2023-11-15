@@ -46,12 +46,8 @@ export interface FetchApiOptions {
 
 export class FetchClientError extends Error {
   name = 'FetchClientError';
-  constructor(
-    message: string,
-    public statusCode: number,
-    options?: ErrorOptions
-  ) {
-    super(message, options);
+  constructor(message: string, public statusCode: number) {
+    super(message);
   }
 }
 
