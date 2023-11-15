@@ -23,6 +23,10 @@ interface Props {
   analysisState: AnalysisState;
 }
 
+// TEMP: matches string returned for variables without provider labels;
+// used to check whether or not to render the provider label info
+const NO_PROVIDER_LABEL_STRING = 'No Provider Label available';
+
 export function VariableDetails(props: Props) {
   const {
     entity,
@@ -69,42 +73,45 @@ export function VariableDetails(props: Props) {
     <ErrorBoundary>
       <div>
         <h3>{variableDisplayWithUnit(variable)}</h3>
-        <div className={cx('-ProviderLabel')}>
-          <div className={cx('-ProviderLabelPrefix')}>
-            <i>
-              Original variable{' '}
-              {MultiFilterVariable.is(variable) ? 'names' : 'name'}:
-            </i>
+        {/* only show provider label info if a meaningful label exists */}
+        {providerLabel !== NO_PROVIDER_LABEL_STRING && (
+          <div className={cx('-ProviderLabel')}>
+            <div className={cx('-ProviderLabelPrefix')}>
+              <i>
+                Original variable{' '}
+                {MultiFilterVariable.is(variable) ? 'names' : 'name'}:
+              </i>
+            </div>
+            {/* showing three variables for multifilter or single variable */}
+            &nbsp;{threeProviderLabel}
+            {/* generalize Show/Hide more: there is a case that providerLabel is string */}
+            {Array.isArray(providerLabel) && providerLabel.length > 3 ? (
+              <>
+                {showMore && providerLabelLeftover}
+                &nbsp;
+                <HelpIcon>
+                  The name of this variable in the original data files
+                </HelpIcon>
+                &nbsp;&nbsp;
+                <button
+                  className="variable-show-more-link link"
+                  onClick={() => {
+                    setShowMore(!showMore);
+                  }}
+                >
+                  {showMoreLink}
+                </button>
+              </>
+            ) : (
+              <>
+                &nbsp;
+                <HelpIcon>
+                  The name of this variable in the original data files
+                </HelpIcon>
+              </>
+            )}
           </div>
-          {/* showing three variables for multifilter or single variable */}
-          &nbsp;{threeProviderLabel}
-          {/* generalize Show/Hide more: there is a case that providerLabel is string */}
-          {Array.isArray(providerLabel) && providerLabel.length > 3 ? (
-            <>
-              {showMore && providerLabelLeftover}
-              &nbsp;
-              <HelpIcon>
-                The name of this variable in the original data files
-              </HelpIcon>
-              &nbsp;&nbsp;
-              <button
-                className="variable-show-more-link link"
-                onClick={() => {
-                  setShowMore(!showMore);
-                }}
-              >
-                {showMoreLink}
-              </button>
-            </>
-          ) : (
-            <>
-              &nbsp;
-              <HelpIcon>
-                The name of this variable in the original data files
-              </HelpIcon>
-            </>
-          )}
-        </div>
+        )}
         {/* add variable.definition */}
         <div className={cx('-SubsettingVariableDefinition')}>
           {variable?.definition}
