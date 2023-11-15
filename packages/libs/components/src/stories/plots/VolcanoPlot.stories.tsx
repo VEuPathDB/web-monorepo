@@ -10,6 +10,7 @@ import { NumberRange } from '../../types/general';
 import { yellow } from '@veupathdb/coreui/lib/definitions/colors';
 import { assignSignificanceColor } from '../../plots/VolcanoPlot';
 import { significanceColors } from '../../types/plots';
+import { CSSProperties } from 'react';
 
 export default {
   title: 'Plots/VolcanoPlot',
@@ -126,6 +127,7 @@ interface TemplateProps {
   comparisonLabels?: string[];
   truncationBarFill?: string;
   showSpinner?: boolean;
+  containerStyles?: CSSProperties;
   statisticsFloors?: StatisticsFloors;
 }
 
@@ -158,36 +160,41 @@ const Template: Story<TemplateProps> = (args) => {
         })) ?? [],
   };
 
-  const rawDataMinMaxValues = {
-    x: {
-      min:
-        (volcanoDataPoints &&
-          Math.min(
-            ...volcanoDataPoints.statistics.map((d) => Number(d.effectSize))
-          )) ??
-        0,
-      max:
-        (volcanoDataPoints &&
-          Math.max(
-            ...volcanoDataPoints.statistics.map((d) => Number(d.effectSize))
-          )) ??
-        0,
-    },
-    y: {
-      min:
-        (volcanoDataPoints &&
-          Math.min(
-            ...volcanoDataPoints.statistics.map((d) => Number(d.pValue))
-          )) ??
-        1,
-      max:
-        (volcanoDataPoints &&
-          Math.max(
-            ...volcanoDataPoints.statistics.map((d) => Number(d.pValue))
-          )) ??
-        1,
-    },
-  };
+  const rawDataMinMaxValues = args.data
+    ? {
+        x: {
+          min:
+            (volcanoDataPoints &&
+              Math.min(
+                ...volcanoDataPoints.statistics.map((d) => Number(d.effectSize))
+              )) ??
+            0,
+          max:
+            (volcanoDataPoints &&
+              Math.max(
+                ...volcanoDataPoints.statistics.map((d) => Number(d.effectSize))
+              )) ??
+            0,
+        },
+        y: {
+          min:
+            (volcanoDataPoints &&
+              Math.min(
+                ...volcanoDataPoints.statistics.map((d) => Number(d.pValue))
+              )) ??
+            1,
+          max:
+            (volcanoDataPoints &&
+              Math.max(
+                ...volcanoDataPoints.statistics.map((d) => Number(d.pValue))
+              )) ??
+            1,
+        },
+      }
+    : {
+        x: { min: 0, max: 0 },
+        y: { min: 1, max: 1 },
+      };
 
   const volcanoPlotProps: VolcanoPlotProps = {
     data: volcanoDataPoints,
@@ -199,6 +206,7 @@ const Template: Story<TemplateProps> = (args) => {
     dependentAxisRange: args.dependentAxisRange,
     truncationBarFill: args.truncationBarFill,
     showSpinner: args.showSpinner,
+    containerStyles: args.containerStyles,
     rawDataMinMaxValues,
     statisticsFloors: args.statisticsFloors,
   };
@@ -277,6 +285,29 @@ Empty.args = {
   significanceThreshold: 0.05,
   independentAxisRange: { min: -9, max: 9 },
   dependentAxisRange: { min: -1, max: 9 },
+};
+
+// With visualization plot container styles
+const plotContainerStyles = {
+  width: 750,
+  height: 450,
+  marginLeft: '0.75rem',
+  border: '1px solid #dedede',
+  boxShadow: '1px 1px 4px #00000066',
+};
+export const WithStyle = Template.bind({});
+WithStyle.args = {
+  data: dataSetVolcano,
+  markerBodyOpacity: 0.8,
+  effectSizeThreshold: 1,
+  significanceThreshold: 0.01,
+  comparisonLabels: [
+    'Up in group a, b, c, d, e, f, g, and h',
+    'Up in group i, j, k, l, m, n, o, pqrs',
+  ],
+  independentAxisRange: { min: -9, max: 9 },
+  dependentAxisRange: { min: 0, max: 9 },
+  containerStyles: plotContainerStyles,
 };
 
 // With a pvalue floor

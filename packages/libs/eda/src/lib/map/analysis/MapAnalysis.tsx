@@ -78,7 +78,7 @@ import {
   donutMarkerPlugin,
 } from './mapTypes';
 
-import EZTimeFilter from './EZTimeFilter';
+import TimeSliderQuickFilter from './TimeSliderQuickFilter';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { MapTypeMapLayerProps } from './mapTypes/types';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
@@ -105,12 +105,18 @@ const mapStyle: React.CSSProperties = {
 interface Props {
   analysisId?: string;
   sharingUrl: string;
+  singleAppMode?: string;
   studyId: string;
   siteInformationProps: SiteInformationProps;
+  showLinkToEda?: boolean;
 }
 
 export function MapAnalysis(props: Props) {
-  const appStateAndSetters = useAppState('@@mapApp@@', props.analysisId);
+  const appStateAndSetters = useAppState(
+    '@@mapApp@@',
+    props.analysisId,
+    props.singleAppMode
+  );
   const geoConfigs = useGeoConfig(useStudyEntities());
 
   if (geoConfigs == null || geoConfigs.length === 0)
@@ -155,6 +161,7 @@ function MapAnalysisImpl(props: ImplProps) {
     setActiveMarkerConfigurationType,
     geoConfigs,
     setTimeSliderConfig,
+    showLinkToEda = false,
   } = props;
   const { activeMarkerConfigurationType, markerConfigurations } = appState;
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
@@ -799,12 +806,13 @@ function MapAnalysisImpl(props: ImplProps) {
                       />
                     )
                   }
+                  showLinkToEda={showLinkToEda}
                 >
                   {/* child elements will be distributed across, 'hanging' below the header */}
                   {/*  Time slider component - only if prerequisite variable is available */}
                   {appState.timeSliderConfig &&
                     appState.timeSliderConfig.variable && (
-                      <EZTimeFilter
+                      <TimeSliderQuickFilter
                         studyId={studyId}
                         entities={studyEntities}
                         subsettingClient={subsettingClient}
@@ -816,6 +824,7 @@ function MapAnalysisImpl(props: ImplProps) {
                         toggleStarredVariable={toggleStarredVariable}
                         config={appState.timeSliderConfig}
                         updateConfig={setTimeSliderConfig}
+                        siteInformation={props.siteInformationProps}
                       />
                     )}
                 </MapHeader>

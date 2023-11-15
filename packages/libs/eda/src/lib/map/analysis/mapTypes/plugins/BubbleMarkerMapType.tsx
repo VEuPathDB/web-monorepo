@@ -201,10 +201,10 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
           markers={markers}
           animation={defaultAnimation}
           flyToMarkers={
-            !markersData.isFetching &&
+            !(markersData.isFetching || markersData.isPreviousData) &&
             isApproxSameViewport(props.appState.viewport, defaultViewport)
           }
-          flyToMarkersDelay={500}
+          flyToMarkersDelay={2000}
         />
       )}
     </>
@@ -595,11 +595,6 @@ function useMarkerData(props: DataProps) {
 
   const { numeratorValues, denominatorValues } = configuration;
 
-  const disabled =
-    numeratorValues?.length === 0 ||
-    denominatorValues?.length === 0 ||
-    !validateProportionValues(numeratorValues, denominatorValues);
-
   const studyEntities = useStudyEntities();
   const dataClient = useDataClient();
 
@@ -638,6 +633,13 @@ function useMarkerData(props: DataProps) {
     },
   };
   const { data: legendData } = useLegendData(props);
+
+  // add to check legendData is undefined for refetch
+  const disabled =
+    numeratorValues?.length === 0 ||
+    denominatorValues?.length === 0 ||
+    !validateProportionValues(numeratorValues, denominatorValues) ||
+    legendData == null;
 
   // FIXME Don't make dependent on legend data
   return useQuery({
