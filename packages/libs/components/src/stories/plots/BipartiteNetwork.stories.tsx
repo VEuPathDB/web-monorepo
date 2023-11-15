@@ -122,6 +122,7 @@ const plotContainerStyles = {
 const svgStyleOverrides = {
   columnPadding: 150,
   topPadding: 100,
+  // width: 300, // should override the plotContainerStyles.width
 };
 export const WithStyle = Template.bind({});
 WithStyle.args = {

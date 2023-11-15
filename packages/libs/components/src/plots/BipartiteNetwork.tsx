@@ -10,7 +10,6 @@ import {
   useImperativeHandle,
   useRef,
 } from 'react';
-import { DEFAULT_CONTAINER_HEIGHT } from './PlotlyPlot';
 import Spinner from '../components/Spinner';
 import { ToImgopts } from 'plotly.js';
 import domToImage from 'dom-to-image';
@@ -42,6 +41,7 @@ export interface BipartiteNetworkProps {
   showSpinner?: boolean;
 }
 
+// Show a few gray nodes when there is no real data.
 const EmptyBipartiteNetworkData: BipartiteNetworkData = {
   column1NodeIDs: ['0', '1', '2', '3', '4', '5'],
   column2NodeIDs: ['6', '7', '8'],

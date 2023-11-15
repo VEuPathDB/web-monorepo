@@ -132,7 +132,8 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
 
   // Assign color to links.
   // Color palettes live here in the frontend, but the backend decides how to color links (ex. by sign of correlation, or avg degree of parent nodes).
-  // So we'll make assigning colors generalizable by mapping the values of the links.color prop to the palette.
+  // So we'll make assigning colors generalizable by mapping the values of the links.color prop to the palette. As we add
+  // different ways to color links in the future, we can adapt our checks and error messaging.
   const uniqueLinkColors = uniq(
     data.value?.bipartitenetwork.data.links.map(
       (link) => link.color?.toString() ?? DEFAULT_LINK_COLOR_DATA
@@ -143,9 +144,9 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
       `Found ${uniqueLinkColors.length} link colors but expected only two.`
     );
   }
-  // The link colors should be either '-1' or '1', but we'll allow any two unique values. Assigning the domain
-  // this way prevents a situation where if all links have color '1', we don't want them mapped to the
-  // color that is usually reserved for '-1'.
+  // The link color sent from the backend should be either '-1' or '1', but we'll allow any two unique values. Assigning the domain
+  // in the following way preserves "1" getting mapped to the second color in the palette, even if it's the only
+  // unique value in uniqueLinkColors.
   const linkColorScaleDomain = uniqueLinkColors.every((val) =>
     ['-1', '1'].includes(val)
   )
@@ -202,6 +203,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     [plotContainerStyleOverrides]
   );
 
+  // These styles affect the network plot and will override the containerStyles if necessary (for example, width).
   const bipartiteNetworkSVGStyles = {
     columnPadding: 150,
   };
@@ -210,7 +212,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     updateThumbnail,
     {
       ...finalPlotContainerStyles,
-      height: 400, // no reason for the thumbnail to be as tall as the network (could be very, very tall!)
+      height: 400, // no reason for the thumbnail to be as tall as the network (which could be very, very tall!)
     },
     [cleanedData]
   );

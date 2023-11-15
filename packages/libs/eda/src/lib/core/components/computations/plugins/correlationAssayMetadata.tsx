@@ -19,8 +19,8 @@ const cx = makeClassNameHelper('AppStepConfigurationContainer');
  * Correlation
  *
  * The Correlation Assay vs Metadata app takes in a user-selected collection (ex. Species) and
- * runs a correlation of that data against all appropriate metadata in the study. The result is
- * a correlation coefficient and significance value for each (assay member, metadata variable) pair.
+ * runs a correlation of that data against all appropriate metadata in the study (found by the backend). The result is
+ * a correlation coefficient and (soon) a significance value for each (assay member, metadata variable) pair.
  *
  * Importantly, this is the first of a few correlation-type apps that are coming along in the near future.
  * There will also be an Assay vs Assay app and a Metadata vs Metadata correlation app. It's possible that
