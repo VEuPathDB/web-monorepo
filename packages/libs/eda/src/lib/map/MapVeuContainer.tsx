@@ -28,6 +28,7 @@ import { SiteInformationProps } from './analysis/Types';
 import { StudyList } from './StudyList';
 import { PublicAnalysesRoute } from '../workspace/PublicAnalysesRoute';
 import { ImportAnalysis } from '../workspace/ImportAnalysis';
+import { Page } from '@veupathdb/wdk-client/lib/Components';
 
 interface Props {
   edaServiceUrl: string;
@@ -80,25 +81,33 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
           path={path}
           exact
           render={() => (
-            <AllAnalyses
-              analysisClient={analysisClient}
-              subsettingClient={edaClient}
-              showLoginForm={showLoginForm}
-            />
+            <Page requireLogin={false}>
+              <AllAnalyses
+                analysisClient={analysisClient}
+                subsettingClient={edaClient}
+                showLoginForm={showLoginForm}
+              />
+            </Page>
           )}
         />
         <Route
           path={`${path}/studies`}
           exact
-          render={() => <StudyList subsettingClient={edaClient} />}
+          render={() => (
+            <Page requireLogin={false}>
+              <StudyList subsettingClient={edaClient} />
+            </Page>
+          )}
         />
         <Route
           path={`${path}/public`}
           render={() => (
-            <PublicAnalysesRoute
-              analysisClient={analysisClient}
-              subsettingClient={edaClient}
-            />
+            <Page requireLogin={false}>
+              <PublicAnalysesRoute
+                analysisClient={analysisClient}
+                subsettingClient={edaClient}
+              />
+            </Page>
           )}
         />
         <Route
@@ -110,10 +119,12 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
             }>
           ) => {
             return (
-              <ImportAnalysis
-                {...props.match.params}
-                analysisClient={analysisClient}
-              />
+              <Page requireLogin={false}>
+                <ImportAnalysis
+                  {...props.match.params}
+                  analysisClient={analysisClient}
+                />
+              </Page>
             );
           }}
         />
