@@ -122,13 +122,9 @@ function useTableState(props) {
     useStickyFirstColumn,
   } = props;
 
-  const stickyColumnStyle = { position: 'sticky', left: 0 };
-  // const stickyColumnStyle = undefined;
-
-  // columns
   const columns = useMemo(
     () =>
-      visibleAttributes.map((attribute, index) => {
+      visibleAttributes.map((attribute) => {
         return {
           key: attribute.name,
           helpText: attribute.help,
@@ -136,9 +132,6 @@ function useTableState(props) {
           sortable: attribute.isSortable,
           primary: attribute.isPrimary,
           moveable: true,
-          // headingStyle:
-          //   index === 0 ? { ...stickyColumnStyle, zIndex: 2 } : undefined,
-          // style: index === 0 ? { ...stickyColumnStyle, zIndex: 1 } : undefined,
           renderCell: ({ row: record }) => {
             const cellProps = {
               attribute,
@@ -215,7 +208,7 @@ function useTableState(props) {
     [columns, onMoveColumn, onSort]
   );
 
-  const headerWrapperStyle = useMemo(() => ({ zIndex: 2 }), []);
+  const headerWrapperStyle = { zIndex: 2 };
 
   return useMemo(
     () =>

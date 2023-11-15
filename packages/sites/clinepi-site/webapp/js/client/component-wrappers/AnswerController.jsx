@@ -34,7 +34,6 @@ export default (AnswerController) => (props) => {
 function ClinEpiStudyAnswerControllerContainer(props) {
   const columns = useDiyStudySummaryColumns();
   const userStudySummaryRows = useDiyStudySummaryRows();
-  console.log({ props });
 
   return (
     <div className="ClinEpiStudyAnswerController">
@@ -47,7 +46,7 @@ function ClinEpiStudyAnswerControllerContainer(props) {
               useEda &&
               userStudySummaryRows.length > 0 && (
                 <>
-                  <h2>My studies lolol</h2>
+                  <h2>My studies</h2>
                   <DataGrid
                     columns={columns}
                     data={userStudySummaryRows}

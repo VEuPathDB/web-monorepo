@@ -1,9 +1,7 @@
 $StickyColumnBg: #e2e2e2;
-$StickyColumnBorder: rgb(191, 191, 191);
 
 .MesaComponent {
   th {
-    // background: rgba(0, 0, 10, 0.02);
     background: #e2e2e2;
     transition: background 0.25s;
     position: relative;
@@ -63,7 +61,6 @@ $StickyColumnBorder: rgb(191, 191, 191);
 
   td.StickyColumnCell {
     background: $StickyColumnBg;
-    border: 1px solid $StickyColumnBorder;
   }
 
   .HeadingCell--Dragging {
