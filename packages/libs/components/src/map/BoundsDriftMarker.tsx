@@ -314,6 +314,15 @@ export default function BoundsDriftMarker({
   if (icon && selectedMarkers?.find((id) => id === props.id))
     icon.options.className += ' highlight-marker';
 
+  // set this marker's popup as highlighted
+  if (popupContent && popupRef.current && popupRef.current._container) {
+    if (selectedMarkers?.find((id) => id === props.id)) {
+      popupRef.current._container.classList.add('marker-popup-highlight');
+    } else {
+      popupRef.current._container.classList.remove('marker-popup-highlight');
+    }
+  }
+
   // DriftMarker misbehaves if icon=undefined is provided
   // is this the most elegant way?
   const optionalIconProp = icon ? { icon } : {};
