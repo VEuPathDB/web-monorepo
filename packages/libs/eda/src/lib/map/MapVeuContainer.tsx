@@ -81,13 +81,11 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
           path={path}
           exact
           render={() => (
-            <Page requireLogin={false}>
-              <AllAnalyses
-                analysisClient={analysisClient}
-                subsettingClient={edaClient}
-                showLoginForm={showLoginForm}
-              />
-            </Page>
+            <AllAnalyses
+              analysisClient={analysisClient}
+              subsettingClient={edaClient}
+              showLoginForm={showLoginForm}
+            />
           )}
         />
         <Route
