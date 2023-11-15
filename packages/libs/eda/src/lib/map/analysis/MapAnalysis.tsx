@@ -50,7 +50,7 @@ import { useLoginCallbacks } from '../../workspace/sharing/hooks';
 import NameAnalysis from '../../workspace/sharing/NameAnalysis';
 import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
-import { useHistory, useRouteMatch } from 'react-router';
+import { useHistory, useLocation, useRouteMatch } from 'react-router';
 
 import { uniq } from 'lodash';
 import Path from 'path';
@@ -85,6 +85,7 @@ import AnalysisNameDialog from '../../workspace/AnalysisNameDialog';
 import { FetchClientError } from '@veupathdb/http-utils';
 import { Page } from '@veupathdb/wdk-client/lib/Components';
 import { Link } from 'react-router-dom';
+import { AnalysisError } from '../../core/components/AnalysisError';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -120,6 +121,7 @@ export function MapAnalysis(props: Props) {
     props.singleAppMode
   );
   const geoConfigs = useGeoConfig(useStudyEntities());
+  const location = useLocation();
 
   if (geoConfigs == null || geoConfigs.length === 0)
     return (
@@ -131,63 +133,14 @@ export function MapAnalysis(props: Props) {
       </Page>
     );
   if (appStateAndSetters.analysisState.error) {
-    const { error } = appStateAndSetters.analysisState;
-    const message =
-      error instanceof FetchClientError && error.statusCode === 404 ? (
-        <>
-          <h1>Analysis Not Found</h1>
-          <div css={{ fontSize: '1.2em' }}>
-            <p>
-              The requested analysis does not exist. You might want to try one
-              of the following options.
-            </p>
-            <ul>
-              <li>
-                <Link to="..">See your saved analyses.</Link>
-              </li>
-              <li>
-                <Link to="new">Create a new analysis.</Link>
-              </li>
-            </ul>
-          </div>
-        </>
-      ) : error instanceof FetchClientError && error.statusCode === 403 ? (
-        <>
-          <h1>Access Denied</h1>
-          <div css={{ fontSize: '1.2em' }}>
-            <p>
-              The requested analysis belongs to a different user. You might want
-              to try one of the following options.
-            </p>
-            <ul>
-              <li>
-                If this analysis was shared with you, ask the owner to use the{' '}
-                <strong>Share</strong> button to generate a share link.
-              </li>
-              <li>
-                <Link to="..">See your saved analyses.</Link>
-              </li>
-              <li>
-                <Link to="new">Create a new analysis.</Link>
-              </li>
-            </ul>
-          </div>
-        </>
-      ) : (
-        <>
-          <h1>Analysis Loading Error</h1>
-          <div css={{ fontSize: '1.2em' }}>
-            <p>The analysis could not be loaded.</p>
-            <p>
-              Error message:{' '}
-              <code>
-                {error instanceof Error ? error.message : String(error)}
-              </code>
-            </p>
-          </div>
-        </>
-      );
-    return <Page requireLogin={false}>{message}</Page>;
+    return (
+      <Page requireLogin={false}>
+        <AnalysisError
+          error={appStateAndSetters.analysisState.error}
+          baseAnalysisPath={location.pathname}
+        />
+      </Page>
+    );
   }
 
   if (appStateAndSetters.appState == null) return null;
