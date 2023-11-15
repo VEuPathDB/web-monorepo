@@ -7,6 +7,7 @@ import {
 } from '../../types/plots/network';
 import BipartiteNetwork, {
   BipartiteNetworkProps,
+  BipartiteNetworkSVGStyles,
 } from '../../plots/BipartiteNetwork';
 import { twoColorPalette } from '../../types/plots/addOns';
 
@@ -22,6 +23,7 @@ interface TemplateProps {
   loading?: boolean;
   showThumbnail?: boolean;
   containerStyles?: CSSProperties;
+  svgStyleOverrides?: BipartiteNetworkSVGStyles;
 }
 
 // Template for showcasing our BipartiteNetwork component.
@@ -44,7 +46,7 @@ const Template: Story<TemplateProps> = (args) => {
     column2Name: args.column2Name,
     showSpinner: args.loading,
     containerStyles: args.containerStyles,
-    width: 500,
+    svgStyleOverrides: args.svgStyleOverrides,
   };
   return (
     <>
@@ -108,6 +110,26 @@ Thumbnail.args = {
   column1Name: 'Column 1',
   column2Name: 'Column 2',
   showThumbnail: true,
+};
+
+// With style
+const plotContainerStyles = {
+  width: 700,
+  marginLeft: '0.75rem',
+  border: '1px solid #dedede',
+  boxShadow: '1px 1px 4px #00000066',
+};
+const svgStyleOverrides = {
+  columnPadding: 150,
+  topPadding: 100,
+};
+export const WithStyle = Template.bind({});
+WithStyle.args = {
+  data: manyPointsData,
+  containerStyles: plotContainerStyles,
+  column1Name: 'Column 1',
+  column2Name: 'Column 2',
+  svgStyleOverrides: svgStyleOverrides,
 };
 
 // Gerenate a bipartite network with a given number of nodes and random edges

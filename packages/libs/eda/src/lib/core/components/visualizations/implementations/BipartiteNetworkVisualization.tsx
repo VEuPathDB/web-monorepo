@@ -202,6 +202,10 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     [plotContainerStyleOverrides]
   );
 
+  const bipartiteNetworkSVGStyles = {
+    columnPadding: 150,
+  };
+
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
     {
@@ -215,6 +219,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     data: cleanedData ?? undefined,
     showSpinner: data.pending,
     containerStyles: finalPlotContainerStyles,
+    svgStyleOverrides: bipartiteNetworkSVGStyles,
   };
 
   const plotNode = (
