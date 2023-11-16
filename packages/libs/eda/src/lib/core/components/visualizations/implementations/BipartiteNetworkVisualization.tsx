@@ -141,7 +141,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   );
   if (uniqueLinkColors.length > twoColorPalette.length) {
     throw new Error(
-      `Found ${uniqueLinkColors.length} link colors but expected only two.`
+      `Found ${uniqueLinkColors.length} link colors but expected only {twoColorPalette.length}.`
     );
   }
   // The link color sent from the backend should be either '-1' or '1', but we'll allow any two unique values. Assigning the domain
