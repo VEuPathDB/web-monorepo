@@ -95,7 +95,7 @@ export default function Showcase(props) {
               card={card}
               attemptAction={attemptAction}
               prefix={prefix}
-              key={card.name}
+              key={Card.name === 'AnalysisCard' ? card.displayName : card.name}
               permissions={permissions}
             />
           )}
