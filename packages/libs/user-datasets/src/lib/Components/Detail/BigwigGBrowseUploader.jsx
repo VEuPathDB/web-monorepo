@@ -24,7 +24,7 @@ class BigwigGBrowseUploader extends React.Component {
 
   getGBrowseUrl() {
     const { sequenceId, genome, datasetName, dataFileName } = this.props;
-    var jbrowseTrackName = datasetName + ' ' + dataFileName;
+    const jbrowseTrackName = datasetName + ' ' + dataFileName;
     return `/a/jbrowse/index.html?data=/a/service/jbrowse/tracks/${genome}&tracks=gene,${
       jbrowseTrackName || ''
     }&highlight=&loc=${sequenceId || ''}`;

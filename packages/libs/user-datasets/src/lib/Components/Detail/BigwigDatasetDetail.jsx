@@ -23,13 +23,13 @@ class BigwigDatasetDetail extends UserDatasetDetail {
     const { userDataset } = this.props;
     const { wdkService } = this.context;
     const { dependencies } = userDataset;
-    var genome;
+    let genome;
     dependencies.forEach(function (dependency) {
       if (dependency.resourceIdentifier.endsWith('_Genome')) {
-        var regex = new RegExp(
+        const regex = new RegExp(
           '-' + dependency.resourceVersion + '_(.*)_Genome'
         );
-        var genomeList = dependency.resourceIdentifier.match(regex);
+        const genomeList = dependency.resourceIdentifier.match(regex);
         genome = genomeList[1];
       }
     });
@@ -54,13 +54,13 @@ class BigwigDatasetDetail extends UserDatasetDetail {
     const name = meta.name;
     const { projectId } = config;
 
-    var genome;
+    let genome;
     dependencies.forEach(function (dependency) {
       if (dependency.resourceIdentifier.endsWith('_Genome')) {
-        var regex = new RegExp(
+        const regex = new RegExp(
           '-' + dependency.resourceVersion + '_(.*)_Genome'
         );
-        var genomeList = dependency.resourceIdentifier.match(regex);
+        const genomeList = dependency.resourceIdentifier.match(regex);
         genome = genomeList[1];
       }
     });
