@@ -1,4 +1,4 @@
-import { FloatingDiv } from './FloatingDiv';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 interface MapFloatingErrorDivProps {
   error: unknown;
@@ -6,15 +6,27 @@ interface MapFloatingErrorDivProps {
 
 export function MapFloatingErrorDiv(props: MapFloatingErrorDivProps) {
   return (
-    <FloatingDiv
+    <div
       style={{
-        top: undefined,
-        bottom: 50,
-        left: 100,
-        right: 100,
+        position: 'absolute',
+        top: '30vh',
+        left: 0,
+        right: 0,
+        zIndex: 1000,
+        margin: 'auto',
+        width: '80em',
       }}
     >
-      <pre>{String(props.error)}</pre>
-    </FloatingDiv>
+      <Banner
+        banner={{
+          type: 'error',
+          message: (
+            <pre style={{ whiteSpace: 'break-spaces' }}>
+              {String(props.error)}
+            </pre>
+          ),
+        }}
+      />
+    </div>
   );
 }
