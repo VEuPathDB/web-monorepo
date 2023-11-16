@@ -67,6 +67,10 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
         keepPreviousData: true,
         // We presume data will not go stale during the lifecycle of an application.
         staleTime: Infinity,
+        // Do not attempt to retry if an error is encountered
+        retry: false,
+        // Do not referch when the browser tab is focused again
+        refetchOnWindowFocus: false,
       },
     },
   });
