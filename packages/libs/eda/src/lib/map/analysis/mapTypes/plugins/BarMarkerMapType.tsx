@@ -346,7 +346,8 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     valueSpec: selectedPlotMode,
   });
 
-  if (markerData.error) return <MapFloatingErrorDiv error={markerData.error} />;
+  if (markerData.error && !markerData.isFetching)
+    return <MapFloatingErrorDiv error={markerData.error} />;
 
   // pass selectedMarkers and its state function
   const markers = markerData.markerProps?.map((markerProps) => (
@@ -426,7 +427,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
       >
         <div style={{ padding: '5px 10px' }}>
           <MapLegend
-            isLoading={legendItems === null}
+            isLoading={markerData.isFetching}
             plotLegendProps={{ type: 'list', legendItems: legendItems ?? [] }}
             showCheckbox={false}
           />

@@ -190,7 +190,7 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
     studyId,
     filters,
   });
-  if (markersData.error)
+  if (markersData.error && !markersData.isFetching)
     return <MapFloatingErrorDiv error={markersData.error} />;
 
   // pass selectedMarkers and its state function
@@ -259,7 +259,7 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
             </div>
           ) : (
             <MapLegend
-              isLoading={legendData.data == null}
+              isLoading={legendData.isFetching}
               plotLegendProps={{
                 type: 'bubble',
                 legendMax: legendData.data?.bubbleLegendData?.maxSizeValue ?? 0,

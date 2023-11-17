@@ -8,6 +8,8 @@ import { ComponentsList } from './SequenceFormElements';
 import * as ComponentUtils from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import * as ReporterUtils from '@veupathdb/wdk-client/lib/Views/ReporterForm/reporterUtils';
 import './ReporterForms.scss';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { getResultTypeDetails } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
 
 const SINGLE_TRANSCRIPT_VIEW_FILTER_VALUE = {
   name: 'representativeTranscriptOnly',
@@ -90,7 +92,14 @@ const createSequenceForm = (
       includeSubmit,
       viewFilters,
       updateViewFilters,
+      resultType,
     } = props;
+    const resultTypeDetails = useWdkService(
+      (wdkService) => getResultTypeDetails(wdkService, resultType),
+      [resultType]
+    );
+    const shouldRenderTranscriptFilter =
+      resultTypeDetails?.recordClassName === 'transcript';
     const getUpdateHandler = (fieldName) =>
       util.getChangeHandler(fieldName, updateFormState, formState);
     const transcriptPerGeneChangeHandler = (isChecked) => {
@@ -117,22 +126,26 @@ const createSequenceForm = (
           />
         </div>
         {reportType === 'Sequences' && sequenceOptions(props)}
-        <h3>Additional options:</h3>
-        <div style={{ marginLeft: '1.5em' }}>
-          <label>
-            <Checkbox
-              value={
-                viewFilters?.some(
-                  (f) => f.name === SINGLE_TRANSCRIPT_VIEW_FILTER_VALUE.name
-                ) ?? false
-              }
-              onChange={transcriptPerGeneChangeHandler}
-            />
-            <span style={{ marginLeft: '0.5em' }}>
-              Include only one transcript per gene (the longest)
-            </span>
-          </label>
-        </div>
+        {shouldRenderTranscriptFilter && (
+          <>
+            <h3>Additional options:</h3>
+            <div style={{ marginLeft: '1.5em' }}>
+              <label>
+                <Checkbox
+                  value={
+                    viewFilters?.some(
+                      (f) => f.name === SINGLE_TRANSCRIPT_VIEW_FILTER_VALUE.name
+                    ) ?? false
+                  }
+                  onChange={transcriptPerGeneChangeHandler}
+                />
+                <span style={{ marginLeft: '0.5em' }}>
+                  Include only one transcript per gene (the longest)
+                </span>
+              </label>
+            </div>
+          </>
+        )}
         {includeSubmit && (
           <div style={{ margin: '0.8em' }}>
             <button className="btn" type="submit" onClick={onSubmit}>
