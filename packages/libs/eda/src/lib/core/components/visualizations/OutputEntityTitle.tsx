@@ -26,10 +26,11 @@ export function OutputEntityTitle({ entity, outputSize, subtitle }: Props) {
           : 'No entity selected'}
       </span>
       {subtitle && (
-        <div className={cxSubtitle()} style={{ color: gray[700] }}>
-          <br />
-          {subtitle}
-        </div>
+        <div
+          className={cxSubtitle()}
+          style={{ color: gray[700] }}
+          dangerouslySetInnerHTML={{ __html: '<br />' + subtitle }}
+        ></div>
       )}
     </p>
   );
