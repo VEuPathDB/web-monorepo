@@ -419,7 +419,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
       >
         <div style={{ padding: '5px 10px' }}>
           <MapLegend
-            isLoading={legendItems === null}
+            isLoading={markerData.isFetching}
             plotLegendProps={{ type: 'list', legendItems: legendItems ?? [] }}
             showCheckbox={false}
           />

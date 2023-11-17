@@ -51,6 +51,7 @@ import { VariableLinkConfig } from '../core/components/VariableLink';
 import FilterChipList from '../core/components/FilterChipList';
 import { Public } from '@material-ui/icons';
 import { Link } from 'react-router-dom';
+import { AnalysisError } from '../core/components/AnalysisError';
 
 const AnalysisTabErrorBoundary = ({
   children,
@@ -117,6 +118,7 @@ export function AnalysisPanel({
 
   const {
     status,
+    error,
     analysis,
     setName,
     copyAnalysis,
@@ -224,6 +226,10 @@ export function AnalysisPanel({
       return linkBase;
     },
   };
+
+  if (error) {
+    return <AnalysisError error={error} baseAnalysisPath={routeBase} />;
+  }
 
   if (status === Status.Error)
     return (
