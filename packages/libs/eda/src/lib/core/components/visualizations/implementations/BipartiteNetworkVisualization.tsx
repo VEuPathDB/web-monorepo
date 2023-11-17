@@ -130,35 +130,35 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     ])
   );
 
-  // Assign color to links.
-  // Color palettes live here in the frontend, but the backend decides how to color links (ex. by sign of correlation, or avg degree of parent nodes).
-  // So we'll make assigning colors generalizable by mapping the values of the links.color prop to the palette. As we add
-  // different ways to color links in the future, we can adapt our checks and error messaging.
-  const uniqueLinkColors = uniq(
-    data.value?.bipartitenetwork.data.links.map(
-      (link) => link.color?.toString() ?? DEFAULT_LINK_COLOR_DATA
-    )
-  );
-  if (uniqueLinkColors.length > twoColorPalette.length) {
-    throw new Error(
-      `Found ${uniqueLinkColors.length} link colors but expected only {twoColorPalette.length}.`
-    );
-  }
-  // The link color sent from the backend should be either '-1' or '1', but we'll allow any two unique values. Assigning the domain
-  // in the following way preserves "1" getting mapped to the second color in the palette, even if it's the only
-  // unique value in uniqueLinkColors.
-  const linkColorScaleDomain = uniqueLinkColors.every((val) =>
-    ['-1', '1'].includes(val)
-  )
-    ? ['-1', '1']
-    : uniqueLinkColors;
-  const linkColorScale = scaleOrdinal<string>()
-    .domain(linkColorScaleDomain)
-    .range(twoColorPalette); // the output palette may change if this visualization is reused in other contexts (ex. not a correlation app).
-
   // Clean and finalize data format. Specifically, assign link colors, add display labels
   const cleanedData = useMemo(() => {
     if (!data.value) return undefined;
+
+    // Assign color to links.
+    // Color palettes live here in the frontend, but the backend decides how to color links (ex. by sign of correlation, or avg degree of parent nodes).
+    // So we'll make assigning colors generalizable by mapping the values of the links.color prop to the palette. As we add
+    // different ways to color links in the future, we can adapt our checks and error messaging.
+    const uniqueLinkColors = uniq(
+      data.value?.bipartitenetwork.data.links.map(
+        (link) => link.color?.toString() ?? DEFAULT_LINK_COLOR_DATA
+      )
+    );
+    if (uniqueLinkColors.length > twoColorPalette.length) {
+      throw new Error(
+        `Found ${uniqueLinkColors.length} link colors but expected only two.`
+      );
+    }
+    // The link color sent from the backend should be either '-1' or '1', but we'll allow any two unique values. Assigning the domain
+    // in the following way preserves "1" getting mapped to the second color in the palette, even if it's the only
+    // unique value in uniqueLinkColors.
+    const linkColorScaleDomain = uniqueLinkColors.every((val) =>
+      ['-1', '1'].includes(val)
+    )
+      ? ['-1', '1']
+      : uniqueLinkColors;
+    const linkColorScale = scaleOrdinal<string>()
+      .domain(linkColorScaleDomain)
+      .range(twoColorPalette); // the output palette may change if this visualization is reused in other contexts (ex. not a correlation app).
 
     // Find display labels
     const nodesWithLabels = data.value.bipartitenetwork.data.nodes.map(
@@ -188,7 +188,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
         };
       }),
     };
-  }, [data, entities, linkColorScale]);
+  }, [data.value, entities]);
 
   // plot subtitle
   const plotSubtitle =
