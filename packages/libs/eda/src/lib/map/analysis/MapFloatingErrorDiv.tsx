@@ -1,5 +1,6 @@
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { createPortal } from 'react-dom';
+import { useMap } from 'react-leaflet';
 
 interface MapFloatingErrorDivProps {
   error: unknown;
@@ -13,6 +14,7 @@ export function MapFloatingErrorDiv(props: MapFloatingErrorDivProps) {
   // map, which prevents the ability to select text.
   //
   // See https://react.dev/reference/react-dom/createPortal
+  const map = useMap();
   return createPortal(
     <div
       style={{
@@ -20,9 +22,10 @@ export function MapFloatingErrorDiv(props: MapFloatingErrorDivProps) {
         top: '30vh',
         left: 0,
         right: 0,
-        zIndex: 1000,
+        zIndex: 1,
         margin: 'auto',
         width: '80em',
+        pointerEvents: 'all',
       }}
     >
       <Banner
@@ -36,6 +39,6 @@ export function MapFloatingErrorDiv(props: MapFloatingErrorDivProps) {
         }}
       />
     </div>,
-    document.body
+    map.getContainer().parentElement!
   );
 }
