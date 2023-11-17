@@ -15,6 +15,10 @@ import { cx } from './Utils';
 // Definitions
 import { Status, useStudyEntities } from '../core';
 
+// This is likely temporary, so not investing too much effort
+// @ts-ignore
+import betaImage from '../images/beta2-30.png';
+
 // Hooks
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { usePrevious } from '../core/hooks/previousValue';
@@ -382,7 +386,8 @@ export function AnalysisPanel({
                   bottom: '.5em',
                 }}
               >
-                <Public /> Explore in Interactive Map
+                <Public /> Explore in Interactive Map{' '}
+                <img alt="BETA" src={betaImage} />
               </Link>
             )}
           </div>
