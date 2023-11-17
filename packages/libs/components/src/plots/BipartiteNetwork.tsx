@@ -14,6 +14,7 @@ import Spinner from '../components/Spinner';
 import { ToImgopts } from 'plotly.js';
 import domToImage from 'dom-to-image';
 import { gray } from '@veupathdb/coreui/lib/definitions/colors';
+import './BipartiteNetwork.css';
 
 export interface BipartiteNetworkSVGStyles {
   width?: number; // svg width
@@ -170,6 +171,7 @@ function BipartiteNetwork(
               x={column1Position}
               y={svgStyles.topPadding / 2}
               textAnchor="end"
+              className="BipartiteNetworkColumnTitle"
             >
               {column1Name}
             </Text>
@@ -179,6 +181,7 @@ function BipartiteNetwork(
               x={column2Position}
               y={svgStyles.topPadding / 2}
               textAnchor="start"
+              className="BipartiteNetworkColumnTitle"
             >
               {column2Name}
             </Text>
