@@ -24,6 +24,7 @@ export function MapFloatingErrorDiv(props: MapFloatingErrorDivProps) {
         pointerEvents: 'all',
         right: '50%',
         transform: 'translate(50%)',
+        width: '55em',
       }}
     >
       <Banner
