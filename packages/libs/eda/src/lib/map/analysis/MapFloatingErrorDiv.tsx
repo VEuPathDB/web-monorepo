@@ -1,11 +1,19 @@
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { createPortal } from 'react-dom';
 
 interface MapFloatingErrorDivProps {
   error: unknown;
 }
 
 export function MapFloatingErrorDiv(props: MapFloatingErrorDivProps) {
-  return (
+  // We're using a portal here so that the user can select the text
+  // in the banner. The portal causes the resulting DOM node to be a
+  // child of the DOM node that is passed as a second argument to the
+  // function. Without a portal, the banner's DOM is a child of the
+  // map, which prevents the ability to select text.
+  //
+  // See https://react.dev/reference/react-dom/createPortal
+  return createPortal(
     <div
       style={{
         position: 'absolute',
@@ -27,6 +35,7 @@ export function MapFloatingErrorDiv(props: MapFloatingErrorDivProps) {
           ),
         }}
       />
-    </div>
+    </div>,
+    document.body
   );
 }
