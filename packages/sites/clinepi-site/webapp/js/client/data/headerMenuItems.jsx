@@ -100,77 +100,68 @@ export default function makeHeaderMenuItemsFactory(
               },
             ].concat(
               filteredCuratedStudies != null &&
-                diyDatasets != null &&
+                filteredUserStudies != null &&
                 !permissionsValue.loading
-                ? // ? (filteredUserStudies.length > 0 &&
-                  (studies.entities?.length > 0
-                    ? [
-                        {
-                          isVisible: filteredUserStudies.length > 0,
-                          text: (
-                            <CollapsibleDetailsSection
-                              summary="My studies"
-                              collapsibleDetails={filteredUserStudies.map(
-                                (study, idx) => (
-                                  <DIYStudyMenuItem
-                                    key={idx}
-                                    name={study.name}
-                                    link={`${study.baseEdaRoute}/new`}
-                                    isChildOfCollapsibleSection={true}
-                                  />
-                                )
-                              )}
-                              initialShowDetailsState={true}
-                              expandDueToFiltering={
-                                !!(searchTerm && searchTerm.length > 0)
-                              }
-                            />
-                          ),
-                        },
-                      ]
-                    : []
-                  ).concat(
-                    // filteredCuratedStudies.length > 0 && diyDatasets?.length > 0
-                    studies.entities?.length > 0
-                      ? diyDatasets?.length > 0
-                        ? [
-                            {
-                              isVisible: filteredCuratedStudies.length > 0,
-                              text: (
-                                <CollapsibleDetailsSection
-                                  summary="Curated studies"
-                                  collapsibleDetails={filteredCuratedStudies.map(
-                                    (study, idx) => (
-                                      <StudyMenuItem
-                                        key={idx}
-                                        study={study}
-                                        config={siteConfig}
-                                        permissions={
-                                          permissionsValue.permissions
-                                        }
-                                        isChildOfCollapsibleSection={true}
-                                      />
-                                    )
-                                  )}
-                                  initialShowDetailsState={true}
-                                  expandDueToFiltering={
-                                    !!(searchTerm && searchTerm.length > 0)
-                                  }
+                ? diyDatasets?.length > 0 && studies.entities?.length > 0
+                  ? // here we have user studies and curated studies, so render "My studies" and "Curated studies" sections
+                    [
+                      {
+                        isVisible: filteredUserStudies.length > 0,
+                        text: (
+                          <CollapsibleDetailsSection
+                            summary="My studies"
+                            collapsibleDetails={filteredUserStudies.map(
+                              (study, idx) => (
+                                <DIYStudyMenuItem
+                                  key={idx}
+                                  name={study.name}
+                                  link={`${study.baseEdaRoute}/new`}
+                                  isChildOfCollapsibleSection={true}
                                 />
-                              ),
-                            },
-                          ]
-                        : filteredCuratedStudies.map((study) => ({
-                            text: (
-                              <StudyMenuItem
-                                study={study}
-                                config={siteConfig}
-                                permissions={permissionsValue.permissions}
-                              />
-                            ),
-                          }))
-                      : []
-                  )
+                              )
+                            )}
+                            initialShowDetailsState={true}
+                            expandDueToFiltering={
+                              !!(searchTerm && searchTerm.length > 0)
+                            }
+                          />
+                        ),
+                      },
+                    ].concat([
+                      {
+                        isVisible: filteredCuratedStudies.length > 0,
+                        text: (
+                          <CollapsibleDetailsSection
+                            summary="Curated studies"
+                            collapsibleDetails={filteredCuratedStudies.map(
+                              (study, idx) => (
+                                <StudyMenuItem
+                                  key={idx}
+                                  study={study}
+                                  config={siteConfig}
+                                  permissions={permissionsValue.permissions}
+                                  isChildOfCollapsibleSection={true}
+                                />
+                              )
+                            )}
+                            initialShowDetailsState={true}
+                            expandDueToFiltering={
+                              !!(searchTerm && searchTerm.length > 0)
+                            }
+                          />
+                        ),
+                      },
+                    ])
+                  : // here we do not have user studies so no need for sections, just list the studies
+                    filteredCuratedStudies.map((study) => ({
+                      text: (
+                        <StudyMenuItem
+                          study={study}
+                          config={siteConfig}
+                          permissions={permissionsValue.permissions}
+                        />
+                      ),
+                    }))
                 : [
                     {
                       text: (

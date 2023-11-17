@@ -73,6 +73,7 @@ class SiteMenuItem extends React.Component {
         className={className}
         onMouseEnter={focus}
         onMouseLeave={blur}
+        // this let's us preserve react keys when filtering collapsible sections in the studies menu
         style={isVisible ? undefined : { display: 'none' }}
       >
         {destination ? (
