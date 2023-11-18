@@ -15,6 +15,10 @@ import { cx } from './Utils';
 // Definitions
 import { Status, useStudyEntities } from '../core';
 
+// This is likely temporary, so not investing too much effort
+// @ts-ignore
+import betaImage from '../images/beta2-30.png';
+
 // Hooks
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { usePrevious } from '../core/hooks/previousValue';
@@ -51,6 +55,7 @@ import { VariableLinkConfig } from '../core/components/VariableLink';
 import FilterChipList from '../core/components/FilterChipList';
 import { Public } from '@material-ui/icons';
 import { Link } from 'react-router-dom';
+import { AnalysisError } from '../core/components/AnalysisError';
 
 const AnalysisTabErrorBoundary = ({
   children,
@@ -117,6 +122,7 @@ export function AnalysisPanel({
 
   const {
     status,
+    error,
     analysis,
     setName,
     copyAnalysis,
@@ -224,6 +230,10 @@ export function AnalysisPanel({
       return linkBase;
     },
   };
+
+  if (error) {
+    return <AnalysisError error={error} baseAnalysisPath={routeBase} />;
+  }
 
   if (status === Status.Error)
     return (
@@ -376,7 +386,8 @@ export function AnalysisPanel({
                   bottom: '.5em',
                 }}
               >
-                <Public /> Explore in Interactive Map
+                <Public /> Explore in Interactive Map{' '}
+                <img alt="BETA" src={betaImage} />
               </Link>
             )}
           </div>
