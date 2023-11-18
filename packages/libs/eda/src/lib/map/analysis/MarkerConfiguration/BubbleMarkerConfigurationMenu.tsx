@@ -78,8 +78,14 @@ export function BubbleMarkerConfigurationMenu({
   const categoricalMode = isSuitableCategoricalVariable(selectedVariable);
 
   const aggregationConfig = overlayConfiguration?.aggregationConfig;
-  const numeratorValues = configuration.numeratorValues;
-  const denominatorValues = configuration.denominatorValues;
+  const numeratorValues =
+    aggregationConfig && 'numeratorValues' in aggregationConfig
+      ? aggregationConfig.numeratorValues
+      : undefined;
+  const denominatorValues =
+    aggregationConfig && 'denominatorValues' in aggregationConfig
+      ? aggregationConfig.denominatorValues
+      : undefined;
   const aggregator =
     aggregationConfig && 'aggregator' in aggregationConfig
       ? aggregationConfig.aggregator
