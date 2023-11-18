@@ -305,6 +305,8 @@ interface MapVEuMapEventsProps {
   setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
+const EMPTY_MARKERS: string[] = [];
+
 // function to handle map events such as onViewportChanged and baselayerchange
 function MapVEuMapEvents(props: MapVEuMapEventsProps) {
   const {
@@ -347,7 +349,7 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
     },
     // map click event: remove selected highlight markers
     click: () => {
-      if (setSelectedMarkers != null) setSelectedMarkers([]);
+      if (setSelectedMarkers != null) setSelectedMarkers(EMPTY_MARKERS);
     },
   });
 
