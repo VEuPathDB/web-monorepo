@@ -9,6 +9,8 @@ import './MapHeader.scss';
 import { mapSidePanelBackgroundColor } from '../constants';
 import { SiteInformationProps } from './Types';
 import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
+import { Link, useHistory } from 'react-router-dom';
+import { EdaIcon } from '@veupathdb/coreui';
 
 export type MapNavigationProps = {
   analysisName?: string;
@@ -20,6 +22,7 @@ export type MapNavigationProps = {
      distributed across the bottom edge of the header, hanging down like tabs */
   children: ReactNode;
   mapTypeDetails?: ReactNode;
+  showLinkToEda: boolean;
 };
 
 /**
@@ -35,10 +38,12 @@ export function MapHeader({
   studyName,
   children,
   mapTypeDetails,
+  showLinkToEda,
 }: MapNavigationProps) {
   const mapHeader = makeClassNameHelper('MapHeader');
   const { siteName } = siteInformation;
   const theme = useUITheme();
+  const history = useHistory();
 
   return (
     <header
@@ -74,6 +79,22 @@ export function MapHeader({
           onAnalysisNameEdit={onAnalysisNameEdit}
         />
       </div>
+      {showLinkToEda && (
+        <Link
+          to={history.location.pathname.replace('/maps/', '/analyses/')}
+          style={{
+            color: theme?.palette.primary.hue[theme.palette.primary.level],
+            paddingLeft: 10,
+            paddingRight: 10,
+            fontSize: '1.2em',
+            marginLeft: 'auto',
+            marginRight: '2em',
+            fontWeight: 500,
+          }}
+        >
+          <EdaIcon fill="currentColor" /> Explore in {siteName}
+        </Link>
+      )}
       {mapTypeDetails}
       <HangingTabs>{children}</HangingTabs>
     </header>

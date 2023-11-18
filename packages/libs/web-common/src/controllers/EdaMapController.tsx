@@ -22,11 +22,12 @@ export function EdaMapController() {
           siteHomeUrl: webAppUrl,
           // TODO Remove hardcoded logo after demo
           // Hardcode veupathdb logo for now.
-          // siteLogoSrc: `${webAppUrl}/images/VEuPathDB/icons-footer/${projectId.toLowerCase()}.png`,
-          siteLogoSrc: `${webAppUrl}/images/VEuPathDB/icons-footer/VEuPathDB.png`,
+          siteLogoSrc: `${webAppUrl}/images/VEuPathDB/icons-footer/${projectId.toLowerCase()}.png`,
+          // siteLogoSrc: `${webAppUrl}/images/VEuPathDB/icons-footer/VEuPathDB.png`,
           siteName: projectConfig?.displayName ?? '',
         }}
         sharingUrl={''}
+        showLinkToEda={projectId === 'ClinEpiDB'}
       />
     </Suspense>
   );

@@ -50,7 +50,7 @@ import { useLoginCallbacks } from '../../workspace/sharing/hooks';
 import NameAnalysis from '../../workspace/sharing/NameAnalysis';
 import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
-import { useHistory, useRouteMatch } from 'react-router';
+import { useHistory, useLocation, useRouteMatch } from 'react-router';
 
 import { uniq } from 'lodash';
 import Path from 'path';
@@ -65,7 +65,6 @@ import { AllAnalyses } from '../../workspace/AllAnalyses';
 import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 import { isSavedAnalysis } from '../../core/utils/analysis';
 import { GeoConfig } from '../../core/types/geoConfig';
-import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import {
   SidePanelItem,
   SidePanelMenuEntry,
@@ -83,6 +82,10 @@ import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { MapTypeMapLayerProps } from './mapTypes/types';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
 import AnalysisNameDialog from '../../workspace/AnalysisNameDialog';
+import { FetchClientError } from '@veupathdb/http-utils';
+import { Page } from '@veupathdb/wdk-client/lib/Components';
+import { Link } from 'react-router-dom';
+import { AnalysisError } from '../../core/components/AnalysisError';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -105,24 +108,43 @@ const mapStyle: React.CSSProperties = {
 interface Props {
   analysisId?: string;
   sharingUrl: string;
+  singleAppMode?: string;
   studyId: string;
   siteInformationProps: SiteInformationProps;
+  showLinkToEda?: boolean;
 }
 
 export function MapAnalysis(props: Props) {
-  const appStateAndSetters = useAppState('@@mapApp@@', props.analysisId);
+  const appStateAndSetters = useAppState(
+    '@@mapApp@@',
+    props.analysisId,
+    props.singleAppMode
+  );
   const geoConfigs = useGeoConfig(useStudyEntities());
+  const location = useLocation();
 
   if (geoConfigs == null || geoConfigs.length === 0)
     return (
-      <Banner
-        banner={{
-          type: 'error',
-          message: 'This study does not contain map-specific variables.',
-        }}
-      />
+      <Page requireLogin={false}>
+        <h1>Incompatiable Study</h1>
+        <div css={{ fontSize: '1.2em' }}>
+          <p>This study does not container map-specific variables.</p>
+        </div>
+      </Page>
     );
+  if (appStateAndSetters.analysisState.error) {
+    return (
+      <Page requireLogin={false}>
+        <AnalysisError
+          error={appStateAndSetters.analysisState.error}
+          baseAnalysisPath={location.pathname}
+        />
+      </Page>
+    );
+  }
+
   if (appStateAndSetters.appState == null) return null;
+
   return (
     <MapAnalysisImpl
       {...props}
@@ -155,6 +177,7 @@ function MapAnalysisImpl(props: ImplProps) {
     setActiveMarkerConfigurationType,
     geoConfigs,
     setTimeSliderConfig,
+    showLinkToEda = false,
   } = props;
   const { activeMarkerConfigurationType, markerConfigurations } = appState;
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
@@ -808,6 +831,7 @@ function MapAnalysisImpl(props: ImplProps) {
                       />
                     )
                   }
+                  showLinkToEda={showLinkToEda}
                 >
                   {/* child elements will be distributed across, 'hanging' below the header */}
                   {/*  Time slider component - only if prerequisite variable is available */}
