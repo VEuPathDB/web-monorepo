@@ -118,16 +118,20 @@ export function BubbleMarkerConfigurationMenu({
               aggregationType: 'proportion',
               options: vocabulary ?? [],
               numeratorValues: numeratorValues ?? [],
-              onNumeratorChange: (value) =>
+              onNumeratorChange: (values) =>
                 onChange({
                   ...configuration,
-                  numeratorValues: value,
+                  numeratorValues: values.filter((value) =>
+                    vocabulary?.includes(value)
+                  ),
                 }),
               denominatorValues: denominatorValues ?? [],
-              onDenominatorChange: (value) =>
+              onDenominatorChange: (values) =>
                 onChange({
                   ...configuration,
-                  denominatorValues: value,
+                  denominatorValues: values.filter((value) =>
+                    vocabulary?.includes(value)
+                  ),
                 }),
             })}
       />
