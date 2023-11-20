@@ -5,7 +5,6 @@ import {
   Redirect,
   Route,
   RouteComponentProps,
-  useHistory,
   useLocation,
   useRouteMatch,
 } from 'react-router';
@@ -15,6 +14,10 @@ import { cx } from './Utils';
 
 // Definitions
 import { Status, useStudyEntities } from '../core';
+
+// This is likely temporary, so not investing too much effort
+// @ts-ignore
+import betaImage from '../images/beta2-30.png';
 
 // Hooks
 import { useEntityCounts } from '../core/hooks/entityCounts';
@@ -50,6 +53,9 @@ import { DownloadClient } from '../core/api/DownloadClient';
 import useUITheme from '@veupathdb/coreui/lib/components/theming/useUITheme';
 import { VariableLinkConfig } from '../core/components/VariableLink';
 import FilterChipList from '../core/components/FilterChipList';
+import { Public } from '@material-ui/icons';
+import { Link } from 'react-router-dom';
+import { AnalysisError } from '../core/components/AnalysisError';
 
 const AnalysisTabErrorBoundary = ({
   children,
@@ -116,6 +122,7 @@ export function AnalysisPanel({
 
   const {
     status,
+    error,
     analysis,
     setName,
     copyAnalysis,
@@ -133,6 +140,10 @@ export function AnalysisPanel({
   const filteredEntities = uniq(filters?.map((f) => f.entityId));
   const geoConfigs = useGeoConfig(entities);
   const location = useLocation();
+  const mapLink =
+    geoConfigs.length > 0
+      ? routeBase.replace('/analyses/', '/maps/')
+      : undefined;
 
   const [lastVarPath, setLastVarPath] = useState('');
   const [lastVizPath, setLastVizPath] = useState('');
@@ -219,6 +230,10 @@ export function AnalysisPanel({
       return linkBase;
     },
   };
+
+  if (error) {
+    return <AnalysisError error={error} baseAnalysisPath={routeBase} />;
+  }
 
   if (status === Status.Error)
     return (
@@ -355,6 +370,26 @@ export function AnalysisPanel({
                 },
               ]}
             />
+            {mapLink && (
+              <Link
+                to={mapLink}
+                style={{
+                  color: themePrimaryColor?.hue[themePrimaryColor?.level],
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                  fontSize: '1.2em',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '.5ex',
+                  position: 'absolute',
+                  right: '0',
+                  bottom: '.5em',
+                }}
+              >
+                <Public /> Explore in Interactive Map{' '}
+                <img alt="BETA" src={betaImage} />
+              </Link>
+            )}
           </div>
           <Route
             path={routeBase}

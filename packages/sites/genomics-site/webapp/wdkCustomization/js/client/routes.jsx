@@ -31,6 +31,9 @@ import { preferredOrganismsRoutes } from './preferredOrganismRoutes';
 import { userCommentRoutes } from './userCommentRoutes';
 import { userDatasetRoutes } from './userDatasetRoutes';
 import Downloads from './components/Downloads';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { projects } from '@veupathdb/web-common/lib/components/homepage/Footer';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
 // Project id is not needed for these record classes.
 // Matches urlSegment.
@@ -117,13 +120,56 @@ function SiteSearchRouteComponent() {
   );
 }
 
+const PROJECTS_WITHOUT_NEW_DOWNLOADS_INTERFACE = [
+  'VEuPathDB',
+  'OrthoMCL',
+  'ClinEpiDB',
+  'MicrobiomeDB',
+];
+
+function DownloadsRouteComponent() {
+  const projectId = useWdkService(
+    async (wdkService) =>
+      await wdkService.getConfig().then((config) => config.projectId)
+  );
+  const projectsWithNewDownloadInterface = projects.filter(
+    (project) => !PROJECTS_WITHOUT_NEW_DOWNLOADS_INTERFACE.includes(project)
+  );
+  if (!projectId) return <Loading />;
+  return projectId === 'EuPathDB' ? (
+    <div className="Downloads">
+      <h1>Download Data Files</h1>
+      <p className="Downloads-Instructions portal">
+        Please go to a specific organism site in order to download files:
+      </p>
+      <ul>
+        {projectsWithNewDownloadInterface.map((project) => (
+          <li key={project}>
+            <a
+              target="_blank"
+              href={`https://${project.toLowerCase()}.org${
+                window.location.pathname
+              }`}
+              rel="noreferrer"
+            >
+              {project}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  ) : (
+    <Downloads />
+  );
+}
+
 /**
  * Wrap Ebrc Routes
  */
 export const wrapRoutes = (ebrcRoutes) => [
   {
     path: '/downloads',
-    component: Downloads,
+    component: DownloadsRouteComponent,
   },
 
   {

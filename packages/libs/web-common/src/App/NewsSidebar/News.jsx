@@ -44,7 +44,10 @@ const News = ({ twitterUrls, news, error }) => {
               )}
               {Seq.from(news ? news.records : Seq.empty())
                 .map(({ attributes }) => (
-                  <div className="NewsEntry" key={attributes.id}>
+                  <div
+                    className="NewsEntry"
+                    key={attributes.date + '__' + attributes.tag}
+                  >
                     <h4 className="NewsHeadline">
                       <Link to={`${newsUrl}#${attributes.tag}`}>
                         {attributes.headline}

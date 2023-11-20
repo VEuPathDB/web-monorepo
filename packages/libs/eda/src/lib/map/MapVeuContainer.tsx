@@ -28,17 +28,24 @@ import { SiteInformationProps } from './analysis/Types';
 import { StudyList } from './StudyList';
 import { PublicAnalysesRoute } from '../workspace/PublicAnalysesRoute';
 import { ImportAnalysis } from '../workspace/ImportAnalysis';
+import { Page } from '@veupathdb/wdk-client/lib/Components';
 
 interface Props {
   edaServiceUrl: string;
   singleAppMode?: string;
   siteInformationProps: SiteInformationProps;
   sharingUrl: string;
+  showLinkToEda?: boolean;
 }
 
 export function MapVeuContainer(mapVeuContainerProps: Props) {
-  const { singleAppMode, siteInformationProps, edaServiceUrl, sharingUrl } =
-    mapVeuContainerProps;
+  const {
+    singleAppMode,
+    siteInformationProps,
+    edaServiceUrl,
+    sharingUrl,
+    showLinkToEda,
+  } = mapVeuContainerProps;
   const edaClient = useConfiguredSubsettingClient(edaServiceUrl);
   const dataClient = useConfiguredDataClient(edaServiceUrl);
   const computeClient = useConfiguredComputeClient(edaServiceUrl);
@@ -60,6 +67,10 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
         keepPreviousData: true,
         // We presume data will not go stale during the lifecycle of an application.
         staleTime: Infinity,
+        // Do not attempt to retry if an error is encountered
+        retry: false,
+        // Do not referch when the browser tab is focused again
+        refetchOnWindowFocus: false,
       },
     },
   });
@@ -84,15 +95,21 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
         <Route
           path={`${path}/studies`}
           exact
-          render={() => <StudyList subsettingClient={edaClient} />}
+          render={() => (
+            <Page requireLogin={false}>
+              <StudyList subsettingClient={edaClient} />
+            </Page>
+          )}
         />
         <Route
           path={`${path}/public`}
           render={() => (
-            <PublicAnalysesRoute
-              analysisClient={analysisClient}
-              subsettingClient={edaClient}
-            />
+            <Page requireLogin={false}>
+              <PublicAnalysesRoute
+                analysisClient={analysisClient}
+                subsettingClient={edaClient}
+              />
+            </Page>
           )}
         />
         <Route
@@ -104,10 +121,12 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
             }>
           ) => {
             return (
-              <ImportAnalysis
-                {...props.match.params}
-                analysisClient={analysisClient}
-              />
+              <Page requireLogin={false}>
+                <ImportAnalysis
+                  {...props.match.params}
+                  analysisClient={analysisClient}
+                />
+              </Page>
             );
           }}
         />
@@ -129,10 +148,12 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
               className="MapVEu"
             >
               <MapAnalysis
+                singleAppMode={singleAppMode}
                 analysisId={routeProps.match.params.analysisId}
                 siteInformationProps={siteInformationProps}
                 studyId={routeProps.match.params.studyId}
                 sharingUrl={sharingUrl}
+                showLinkToEda={showLinkToEda}
               />
             </EDAWorkspaceContainer>
           )}

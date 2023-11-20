@@ -46,6 +46,9 @@ export interface FetchApiOptions {
 
 export class FetchClientError extends Error {
   name = 'FetchClientError';
+  constructor(message: string, public statusCode: number) {
+    super(message);
+  }
 }
 
 export abstract class FetchClient {
@@ -112,7 +115,8 @@ export abstract class FetchClient {
         `${status} ${statusText}: ${method.toUpperCase()} ${url}`,
         traceid != null ? 'Traceid: ' + traceid + '\n' : '',
         await response.text(),
-      ].join('\n')
+      ].join('\n'),
+      status
     );
 
     this.onNonSuccessResponse?.(fetchError);

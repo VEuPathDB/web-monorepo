@@ -93,6 +93,7 @@ import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import {
   findEntityAndDynamicData,
   getTreeNode,
+  isVariableCollectionDescriptor,
   isVariableDescriptor,
 } from '../../../utils/study-metadata';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
@@ -813,10 +814,11 @@ function BoxplotViz(props: VisualizationProps<Options>) {
             required: true,
             display: independentAxisLabel,
             variable:
-              isVariableDescriptor(providedOverlayVariable) &&
+              (isVariableDescriptor(providedOverlayVariable) ||
+                isVariableCollectionDescriptor(providedOverlayVariable)) &&
               providedOverlayVariable != null
                 ? providedOverlayVariable
-                : vizConfig.xAxisVariable,
+                : providedXAxisVariable ?? vizConfig.xAxisVariable,
           },
           ...additionalVariableCoverageTableRows,
           {
