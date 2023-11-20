@@ -1,5 +1,5 @@
 import { useCollectionVariables, useStudyMetadata } from '../../..';
-import { VariableDescriptor } from '../../../types/variable';
+import { VariableCollectionDescriptor } from '../../../types/variable';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { isEqual, partial } from 'lodash';
 import { useConfigChangeHandler, assertComputationWithConfig } from '../Utils';
@@ -19,8 +19,8 @@ const cx = makeClassNameHelper('AppStepConfigurationContainer');
  * Correlation
  *
  * The Correlation Assay vs Metadata app takes in a user-selected collection (ex. Species) and
- * runs a correlation of that data against all appropriate metadata in the study. The result is
- * a correlation coefficient and significance value for each (assay member, metadata variable) pair.
+ * runs a correlation of that data against all appropriate metadata in the study (found by the backend). The result is
+ * a correlation coefficient and (soon) a significance value for each (assay member, metadata variable) pair.
  *
  * Importantly, this is the first of a few correlation-type apps that are coming along in the near future.
  * There will also be an Assay vs Assay app and a Metadata vs Metadata correlation app. It's possible that
@@ -33,7 +33,7 @@ export type CorrelationAssayMetadataConfig = t.TypeOf<
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CorrelationAssayMetadataConfig = t.type({
-  collectionVariable: VariableDescriptor,
+  collectionVariable: VariableCollectionDescriptor,
   correlationMethod: t.string,
 });
 
@@ -44,7 +44,13 @@ export const plugin: ComputationPlugin = {
   createDefaultConfiguration: () => undefined,
   isConfigurationValid: CorrelationAssayMetadataConfig.is,
   visualizationPlugins: {
-    bipartitenetwork: bipartiteNetworkVisualization, // Must match name in data service and in visualization.tsx
+    bipartitenetwork: bipartiteNetworkVisualization.withOptions({
+      getPlotSubtitle(config) {
+        if (CorrelationAssayMetadataConfig.is(config)) {
+          return 'Showing links with an absolute correlation coefficient above '; // visualization will add in the actual value
+        }
+      },
+    }), // Must match name in data service and in visualization.tsx
   },
 };
 
@@ -145,7 +151,7 @@ export function CorrelationAssayMetadataConfiguration(
   const collectionVarItems = useMemo(() => {
     return collections.map((collectionVar) => ({
       value: {
-        variableId: collectionVar.id,
+        collectionId: collectionVar.id,
         entityId: collectionVar.entityId,
       },
       display:
@@ -157,7 +163,7 @@ export function CorrelationAssayMetadataConfiguration(
     if (configuration && 'collectionVariable' in configuration) {
       const selectedItem = collectionVarItems.find((item) =>
         isEqual(item.value, {
-          variableId: configuration.collectionVariable.variableId,
+          collectionId: configuration.collectionVariable.collectionId,
           entityId: configuration.collectionVariable.entityId,
         })
       );

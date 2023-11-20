@@ -301,7 +301,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     valueSpec: 'count',
   });
 
-  if (markerDataResponse.error)
+  if (markerDataResponse.error && !markerDataResponse.isFetching)
     return <MapFloatingErrorDiv error={markerDataResponse.error} />;
 
   const markers = markerDataResponse.markerProps?.map((markerProps) => (
@@ -379,7 +379,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
       >
         <div style={{ padding: '5px 10px' }}>
           <MapLegend
-            isLoading={data.legendItems == null}
+            isLoading={data.isFetching}
             plotLegendProps={{
               type: 'list',
               legendItems: data.legendItems ?? [],
