@@ -93,7 +93,11 @@ export const plugin: ComputationPlugin = {
   visualizationPlugins: {
     volcanoplot: volcanoPlotVisualization.withOptions({
       getPlotSubtitle(config) {
-        if (DifferentialAbundanceConfig.is(config)) {
+        if (
+          DifferentialAbundanceConfig.is(config) &&
+          config.differentialAbundanceMethod in
+            DIFFERENTIAL_ABUNDANCE_METHOD_CITATIONS
+        ) {
           return (
             <span>
               Differential abundance computed using{' '}
