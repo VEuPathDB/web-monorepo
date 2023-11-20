@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import Header from '@veupathdb/web-common/lib/App/Header';
 import Footer from '@veupathdb/web-common/lib/components/Footer';
@@ -79,10 +79,38 @@ function SiteHeader() {
     (s) => s,
     (s) => s
   );
+
+  // for now, we default to each studies section being open and the useEffect
+  // ensures that the sections open when searching
+  const [expandUserStudies, setExpandUserStudies] = useState(true);
+  const [expandCuratedStudies, setExpandCuratedStudies] = useState(true);
+  useEffect(() => {
+    if (searchTerm && searchTerm.length > 0) {
+      setExpandUserStudies(true);
+      setExpandCuratedStudies(true);
+    }
+  }, [searchTerm, setExpandUserStudies, setExpandCuratedStudies]);
+
   const makeHeaderMenuItems = useMemo(
     () =>
-      makeHeaderMenuItemsFactory(permissions, diyDatasets, reloadDiyDatasets),
-    [permissions, diyDatasets, reloadDiyDatasets]
+      makeHeaderMenuItemsFactory(
+        permissions,
+        diyDatasets,
+        reloadDiyDatasets,
+        expandUserStudies,
+        setExpandUserStudies,
+        expandCuratedStudies,
+        setExpandCuratedStudies
+      ),
+    [
+      permissions,
+      diyDatasets,
+      reloadDiyDatasets,
+      expandUserStudies,
+      setExpandUserStudies,
+      expandCuratedStudies,
+      setExpandCuratedStudies,
+    ]
   );
   return (
     <Header
@@ -200,7 +228,11 @@ function getHomeContent({ studies, searches, visualizations }) {
 function makeHeaderMenuItemsFactory(
   permissionsValue,
   diyDatasets,
-  reloadDiyDatasets
+  reloadDiyDatasets,
+  expandUserStudies,
+  setExpandUserStudies,
+  expandCuratedStudies,
+  setExpandCuratedStudies
 ) {
   return function makeHeaderMenuItems(state, props) {
     const { siteConfig } = state.globalData;
@@ -283,10 +315,8 @@ function makeHeaderMenuItemsFactory(
                                 />
                               )
                             )}
-                            initialShowDetailsState={true}
-                            expandDueToFiltering={
-                              !!(searchTerm && searchTerm.length > 0)
-                            }
+                            showDetails={expandUserStudies}
+                            setShowDetails={setExpandUserStudies}
                           />
                         ),
                       },
@@ -307,10 +337,8 @@ function makeHeaderMenuItemsFactory(
                                 />
                               )
                             )}
-                            initialShowDetailsState={true}
-                            expandDueToFiltering={
-                              !!(searchTerm && searchTerm.length > 0)
-                            }
+                            showDetails={expandCuratedStudies}
+                            setShowDetails={setExpandCuratedStudies}
                           />
                         ),
                       },

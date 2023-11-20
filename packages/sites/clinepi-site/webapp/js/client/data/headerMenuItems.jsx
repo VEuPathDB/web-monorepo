@@ -27,7 +27,11 @@ import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png'
 export default function makeHeaderMenuItemsFactory(
   permissionsValue,
   diyDatasets,
-  reloadDiyDatasets
+  reloadDiyDatasets,
+  expandUserStudies,
+  setExpandUserStudies,
+  expandCuratedStudies,
+  setExpandCuratedStudies
 ) {
   return function makeHeaderMenuItems(state, props) {
     const { siteConfig } = state.globalData;
@@ -120,10 +124,8 @@ export default function makeHeaderMenuItemsFactory(
                                 />
                               )
                             )}
-                            initialShowDetailsState={true}
-                            expandDueToFiltering={
-                              !!(searchTerm && searchTerm.length > 0)
-                            }
+                            showDetails={expandUserStudies}
+                            setShowDetails={setExpandUserStudies}
                           />
                         ),
                       },
@@ -144,10 +146,8 @@ export default function makeHeaderMenuItemsFactory(
                                 />
                               )
                             )}
-                            initialShowDetailsState={true}
-                            expandDueToFiltering={
-                              !!(searchTerm && searchTerm.length > 0)
-                            }
+                            showDetails={expandCuratedStudies}
+                            setShowDetails={setExpandCuratedStudies}
                           />
                         ),
                       },
