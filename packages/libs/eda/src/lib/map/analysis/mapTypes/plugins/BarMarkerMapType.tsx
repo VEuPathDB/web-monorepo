@@ -342,7 +342,8 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     valueSpec: selectedPlotMode,
   });
 
-  if (markerData.error) return <MapFloatingErrorDiv error={markerData.error} />;
+  if (markerData.error && !markerData.isFetching)
+    return <MapFloatingErrorDiv error={markerData.error} />;
 
   const markers = markerData.markerProps?.map((markerProps) => (
     <ChartMarker {...markerProps} />
