@@ -32,7 +32,7 @@ export function NodeWithLabel(props: NodeWithLabelProps) {
     onClick,
     labelPosition = 'right',
     fontSize = '1em',
-    fontWeight = 200,
+    fontWeight = 400,
     labelColor = '#000',
   } = props;
 

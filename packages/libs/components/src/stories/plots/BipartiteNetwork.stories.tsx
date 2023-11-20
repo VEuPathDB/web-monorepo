@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, CSSProperties } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import {
   NodeData,
@@ -7,6 +7,7 @@ import {
 } from '../../types/plots/network';
 import BipartiteNetwork, {
   BipartiteNetworkProps,
+  BipartiteNetworkSVGStyles,
 } from '../../plots/BipartiteNetwork';
 import { twoColorPalette } from '../../types/plots/addOns';
 
@@ -21,6 +22,8 @@ interface TemplateProps {
   column2Name?: string;
   loading?: boolean;
   showThumbnail?: boolean;
+  containerStyles?: CSSProperties;
+  svgStyleOverrides?: BipartiteNetworkSVGStyles;
 }
 
 // Template for showcasing our BipartiteNetwork component.
@@ -42,7 +45,8 @@ const Template: Story<TemplateProps> = (args) => {
     column1Name: args.column1Name,
     column2Name: args.column2Name,
     showSpinner: args.loading,
-    width: 500,
+    containerStyles: args.containerStyles,
+    svgStyleOverrides: args.svgStyleOverrides,
   };
   return (
     <>
@@ -93,6 +97,12 @@ Loading.args = {
   loading: true,
 };
 
+// Empty bipartite network
+export const Empty = Template.bind({});
+Empty.args = {
+  data: undefined,
+};
+
 // Show thumbnail
 export const Thumbnail = Template.bind({});
 Thumbnail.args = {
@@ -100,6 +110,27 @@ Thumbnail.args = {
   column1Name: 'Column 1',
   column2Name: 'Column 2',
   showThumbnail: true,
+};
+
+// With style
+const plotContainerStyles = {
+  width: 700,
+  marginLeft: '0.75rem',
+  border: '1px solid #dedede',
+  boxShadow: '1px 1px 4px #00000066',
+};
+const svgStyleOverrides = {
+  columnPadding: 150,
+  topPadding: 100,
+  // width: 300, // should override the plotContainerStyles.width
+};
+export const WithStyle = Template.bind({});
+WithStyle.args = {
+  data: manyPointsData,
+  containerStyles: plotContainerStyles,
+  column1Name: 'Column 1',
+  column2Name: 'Column 2',
+  svgStyleOverrides: svgStyleOverrides,
 };
 
 // Gerenate a bipartite network with a given number of nodes and random edges

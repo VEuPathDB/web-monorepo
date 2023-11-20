@@ -186,7 +186,7 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
     studyId,
     filters,
   });
-  if (markersData.error)
+  if (markersData.error && !markersData.isFetching)
     return <MapFloatingErrorDiv error={markersData.error} />;
 
   const markers = markersData.data?.markersData.map((markerProps) => (

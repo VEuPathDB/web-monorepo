@@ -21,6 +21,7 @@ import {
   blue,
   ColorHue,
 } from '../../definitions/colors';
+import { useUITheme } from '../theming';
 
 export type BannerProps = {
   type: 'warning' | 'danger' | 'error' | 'success' | 'info' | 'normal';
@@ -102,6 +103,8 @@ export default function Banner(props: BannerComponentProps) {
   // add CollapsibleContent
   const { banner, onClose, CollapsibleContent } = props;
 
+  const theme = useUITheme();
+
   // set default values of showMoreLinkText and showLessLinkText
   const {
     type,
@@ -110,7 +113,7 @@ export default function Banner(props: BannerComponentProps) {
     intense,
     showMoreLinkText = 'Show more >>',
     showLessLinkText = 'Show less <<',
-    showMoreLinkColor,
+    showMoreLinkColor = theme?.palette.primary.hue[theme.palette.primary.level],
     isShowMoreLinkBold = false,
     additionalMessage,
     spacing,
@@ -133,15 +136,6 @@ export default function Banner(props: BannerComponentProps) {
   const collapsibleIcon = isShowMore ? <ExpandLessIcon /> : <ExpandMoreIcon />;
   // using native CoreUI icons? but no mouseover event is supported
   // const collapsibleIcon = isShowMore ? <CaretUp color={ '#000000' } /> : <CaretDown color={ '#000000' } />;
-
-  // hover effect
-  const [isHover, setIsHover] = useState(false);
-  const onMouseEnter = () => {
-    setIsHover(true);
-  };
-  const onMouseLeave = () => {
-    setIsHover(false);
-  };
 
   // Banner timeout with fadeout
   useEffect(() => {
@@ -243,18 +237,21 @@ export default function Banner(props: BannerComponentProps) {
                         background-color: transparent;
                         border: none;
                         text-align: center;
-                        text-decoration: ${isHover ? 'underline' : 'none'};
                         color: ${showMoreLinkColor};
                         display: inline-block;
                         cursor: pointer;
+                        :hover,
+                        :active,
+                        :focus {
+                          text-decoration: underline;
+                          background-color: transparent;
+                        }
                       `}
                       onClick={() => {
                         setIsShowMore != null
                           ? setIsShowMore(!isShowMore)
                           : null;
                       }}
-                      onMouseEnter={onMouseEnter}
-                      onMouseLeave={onMouseLeave}
                     >
                       {/* set bold here: somehow font-weight does not work */}
                       {isShowMoreLinkBold ? (
