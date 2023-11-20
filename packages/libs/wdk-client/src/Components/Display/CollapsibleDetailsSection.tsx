@@ -1,17 +1,18 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode } from 'react';
 
 interface Props {
   summary: ReactNode;
   collapsibleDetails: ReactNode;
-  initialShowDetailsState?: boolean;
+  showDetails: boolean;
+  setShowDetails: (showDetails: boolean) => void;
 }
 
 export default function CollapsibleDetailsSection({
   summary,
   collapsibleDetails,
-  initialShowDetailsState = false,
+  showDetails,
+  setShowDetails,
 }: Props) {
-  const [showDetails, setShowDetails] = useState(initialShowDetailsState);
   return (
     <details
       open={showDetails}

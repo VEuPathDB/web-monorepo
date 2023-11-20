@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import Header from '@veupathdb/web-common/lib/App/Header';
 import Footer from '@veupathdb/web-common/lib/components/Footer';
@@ -79,10 +79,43 @@ function SiteHeader() {
     (s) => s,
     (s) => s
   );
+
+  // for now, we default to each studies section being open
+  const [expandUserStudies, setExpandUserStudies] = useState(true);
+  const [expandCuratedStudies, setExpandCuratedStudies] = useState(true);
+
+  const handleStudiesMenuSearch = useCallback(
+    (newValue) => {
+      setSearchTerm(newValue);
+      // open both studies sections onSearch only if diyDatasets exist
+      if (newValue.length > 0 && diyDatasets && diyDatasets.length > 0) {
+        setExpandUserStudies(true);
+        setExpandCuratedStudies(true);
+      }
+    },
+    [diyDatasets, setSearchTerm, setExpandUserStudies, setExpandCuratedStudies]
+  );
+
   const makeHeaderMenuItems = useMemo(
     () =>
-      makeHeaderMenuItemsFactory(permissions, diyDatasets, reloadDiyDatasets),
-    [permissions, diyDatasets, reloadDiyDatasets]
+      makeHeaderMenuItemsFactory(
+        permissions,
+        diyDatasets,
+        reloadDiyDatasets,
+        expandUserStudies,
+        setExpandUserStudies,
+        expandCuratedStudies,
+        setExpandCuratedStudies
+      ),
+    [
+      permissions,
+      diyDatasets,
+      reloadDiyDatasets,
+      expandUserStudies,
+      setExpandUserStudies,
+      expandCuratedStudies,
+      setExpandCuratedStudies,
+    ]
   );
   return (
     <Header
@@ -95,7 +128,7 @@ function SiteHeader() {
       getSiteData={getSiteData}
       makeHeaderMenuItems={makeHeaderMenuItems}
       searchTerm={searchTerm}
-      setSearchTerm={setSearchTerm}
+      setSearchTerm={handleStudiesMenuSearch}
     />
   );
 }
@@ -200,7 +233,11 @@ function getHomeContent({ studies, searches, visualizations }) {
 function makeHeaderMenuItemsFactory(
   permissionsValue,
   diyDatasets,
-  reloadDiyDatasets
+  reloadDiyDatasets,
+  expandUserStudies,
+  setExpandUserStudies,
+  expandCuratedStudies,
+  setExpandCuratedStudies
 ) {
   return function makeHeaderMenuItems(state, props) {
     const { siteConfig } = state.globalData;
@@ -265,59 +302,62 @@ function makeHeaderMenuItemsFactory(
               filteredCuratedStudies != null &&
                 filteredUserStudies != null &&
                 !permissionsValue.loading
-                ? (filteredUserStudies.length > 0 &&
-                  studies.entities?.length > 0
-                    ? [
-                        {
-                          text: (
-                            <CollapsibleDetailsSection
-                              summary="My studies"
-                              collapsibleDetails={filteredUserStudies.map(
-                                (study) => (
-                                  <DIYStudyMenuItem
-                                    name={study.name}
-                                    link={`${study.baseEdaRoute}/new`}
-                                    isChildOfCollapsibleSection={true}
-                                  />
-                                )
-                              )}
-                            />
-                          ),
-                        },
-                      ]
-                    : []
-                  ).concat(
-                    filteredCuratedStudies.length > 0 && diyDatasets?.length > 0
-                      ? [
-                          {
-                            text: (
-                              <CollapsibleDetailsSection
-                                summary="Curated studies"
-                                collapsibleDetails={filteredCuratedStudies.map(
-                                  (study) => (
-                                    <StudyMenuItem
-                                      study={study}
-                                      config={siteConfig}
-                                      permissions={permissionsValue.permissions}
-                                      isChildOfCollapsibleSection={true}
-                                    />
-                                  )
-                                )}
-                                initialShowDetailsState={true}
-                              />
-                            ),
-                          },
-                        ]
-                      : filteredCuratedStudies.map((study) => ({
-                          text: (
-                            <StudyMenuItem
-                              study={study}
-                              config={siteConfig}
-                              permissions={permissionsValue.permissions}
-                            />
-                          ),
-                        }))
-                  )
+                ? diyDatasets?.length > 0 && studies.entities?.length > 0
+                  ? // here we have user studies and curated studies, so render "My studies" and "Curated studies" sections
+                    [
+                      {
+                        isVisible: filteredUserStudies.length > 0,
+                        text: (
+                          <CollapsibleDetailsSection
+                            summary="My studies"
+                            collapsibleDetails={filteredUserStudies.map(
+                              (study, idx) => (
+                                <DIYStudyMenuItem
+                                  key={idx}
+                                  name={study.name}
+                                  link={`${study.baseEdaRoute}/new`}
+                                  isChildOfCollapsibleSection={true}
+                                />
+                              )
+                            )}
+                            showDetails={expandUserStudies}
+                            setShowDetails={setExpandUserStudies}
+                          />
+                        ),
+                      },
+                    ].concat([
+                      {
+                        isVisible: filteredCuratedStudies.length > 0,
+                        text: (
+                          <CollapsibleDetailsSection
+                            summary="Curated studies"
+                            collapsibleDetails={filteredCuratedStudies.map(
+                              (study, idx) => (
+                                <StudyMenuItem
+                                  key={idx}
+                                  study={study}
+                                  config={siteConfig}
+                                  permissions={permissionsValue.permissions}
+                                  isChildOfCollapsibleSection={true}
+                                />
+                              )
+                            )}
+                            showDetails={expandCuratedStudies}
+                            setShowDetails={setExpandCuratedStudies}
+                          />
+                        ),
+                      },
+                    ])
+                  : // here we do not have user studies so need for sections; just list the studies
+                    filteredCuratedStudies.map((study) => ({
+                      text: (
+                        <StudyMenuItem
+                          study={study}
+                          config={siteConfig}
+                          permissions={permissionsValue.permissions}
+                        />
+                      ),
+                    }))
                 : [
                     {
                       text: (
