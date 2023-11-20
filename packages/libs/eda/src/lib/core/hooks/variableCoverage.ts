@@ -37,9 +37,13 @@ export function useVariableCoverageTableRows(
           };
         }
 
-        const { entityId, variableId } = spec.variable;
+        const { entityId } = spec.variable;
+        const variableOrCollectionId =
+          'variableId' in spec.variable
+            ? spec.variable.variableId
+            : spec.variable.collectionId;
         const variableCompleteCases =
-          completeCasesMap[`${entityId}.${variableId}`];
+          completeCasesMap[`${entityId}.${variableOrCollectionId}`];
 
         if (variableCompleteCases == null) {
           return {

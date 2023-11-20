@@ -2,7 +2,10 @@ import { CompleteCasesTable } from '../api/DataClient';
 import { EntityCounts } from '../hooks/entityCounts';
 import { PromiseHookState } from '../hooks/promise';
 import { useVariableCoverageTableRows } from '../hooks/variableCoverage';
-import { VariableDescriptor } from '../types/variable';
+import {
+  VariableCollectionDescriptor,
+  VariableDescriptor,
+} from '../types/variable';
 
 export interface Props {
   containerClassName?: string;
@@ -16,7 +19,7 @@ export interface VariableSpec {
   role: VariableRole;
   required?: boolean;
   display?: VariableDisplay;
-  variable?: VariableDescriptor;
+  variable?: VariableDescriptor | VariableCollectionDescriptor;
 }
 
 /* A short description of the variable's role; e.g., "X-axis", "Y-axis", "Overlay" */
