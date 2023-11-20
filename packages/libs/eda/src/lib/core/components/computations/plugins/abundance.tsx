@@ -45,7 +45,15 @@ export const plugin: ComputationPlugin = {
       },
       getPlotSubtitle(config) {
         if (AbundanceConfig.is(config)) {
-          return `Ranked abundance: Variables with ${config.rankingMethod} = 0 removed. Showing up to the top ten variables.`;
+          return (
+            <>
+              <br />
+              <span>
+                Ranked abundance: Variables with {config.rankingMethod} = 0
+                removed. Showing up to the top ten variables.
+              </span>
+            </>
+          );
         }
       },
       hideShowMissingnessToggle: true,
@@ -66,7 +74,15 @@ export const plugin: ComputationPlugin = {
       },
       getPlotSubtitle(config) {
         if (AbundanceConfig.is(config)) {
-          return `Ranked abundance: Variables with ${config.rankingMethod} = 0 removed. Showing up to the top ten variables.`;
+          return (
+            <>
+              <br />
+              <span>
+                Ranked abundance: Variables with {config.rankingMethod} = 0
+                removed. Showing up to the top eight variables.
+              </span>
+            </>
+          );
         }
       },
       hideShowMissingnessToggle: true,
