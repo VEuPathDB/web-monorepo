@@ -4,7 +4,7 @@ interface Props {
   summary: ReactNode;
   collapsibleDetails: ReactNode;
   showDetails: boolean;
-  setShowDetails: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowDetails: (showDetails: boolean) => void;
 }
 
 export default function CollapsibleDetailsSection({

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import Header from '@veupathdb/web-common/lib/App/Header';
 import Footer from '@veupathdb/web-common/lib/components/Footer';
@@ -80,16 +80,21 @@ function SiteHeader() {
     (s) => s
   );
 
-  // for now, we default to each studies section being open and the useEffect
-  // ensures that the sections open when searching
+  // for now, we default to each studies section being open
   const [expandUserStudies, setExpandUserStudies] = useState(true);
   const [expandCuratedStudies, setExpandCuratedStudies] = useState(true);
-  useEffect(() => {
-    if (searchTerm && searchTerm.length > 0) {
-      setExpandUserStudies(true);
-      setExpandCuratedStudies(true);
-    }
-  }, [searchTerm, setExpandUserStudies, setExpandCuratedStudies]);
+
+  const handleStudiesMenuSearch = useCallback(
+    (newValue) => {
+      setSearchTerm(newValue);
+      // open both studies sections onSearch only if diyDatasets exist
+      if (newValue.length > 0 && diyDatasets && diyDatasets.length > 0) {
+        setExpandUserStudies(true);
+        setExpandCuratedStudies(true);
+      }
+    },
+    [diyDatasets, setSearchTerm, setExpandUserStudies, setExpandCuratedStudies]
+  );
 
   const makeHeaderMenuItems = useMemo(
     () =>
@@ -123,7 +128,7 @@ function SiteHeader() {
       getSiteData={getSiteData}
       makeHeaderMenuItems={makeHeaderMenuItems}
       searchTerm={searchTerm}
-      setSearchTerm={setSearchTerm}
+      setSearchTerm={handleStudiesMenuSearch}
     />
   );
 }
