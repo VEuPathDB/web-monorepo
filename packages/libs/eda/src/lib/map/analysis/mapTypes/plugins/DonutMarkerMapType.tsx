@@ -301,7 +301,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     valueSpec: 'count',
   });
 
-  if (markerDataResponse.error)
+  if (markerDataResponse.error && !markerDataResponse.isFetching)
     return <MapFloatingErrorDiv error={markerDataResponse.error} />;
 
   const markers = markerDataResponse.markerProps?.map((markerProps) => (
