@@ -246,21 +246,15 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
     <>
       <DraggableLegendPanel panelTitle="Count" zIndex={2}>
         <div style={{ padding: '5px 10px' }}>
-          {legendData.error ? (
-            <div>
-              <pre>{String(legendData.error)}</pre>
-            </div>
-          ) : (
-            <MapLegend
-              isLoading={legendData.isFetching}
-              plotLegendProps={{
-                type: 'bubble',
-                legendMax: legendData.data?.bubbleLegendData?.maxSizeValue ?? 0,
-                valueToDiameterMapper:
-                  legendData.data?.bubbleValueToDiameterMapper,
-              }}
-            />
-          )}
+          <MapLegend
+            isLoading={legendData.isFetching}
+            plotLegendProps={{
+              type: 'bubble',
+              legendMax: legendData.data?.bubbleLegendData?.maxSizeValue ?? 0,
+              valueToDiameterMapper:
+                legendData.data?.bubbleValueToDiameterMapper,
+            }}
+          />
         </div>
       </DraggableLegendPanel>
       <DraggableLegendPanel
@@ -270,7 +264,7 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
       >
         <div style={{ padding: '5px 10px' }}>
           <MapLegend
-            isLoading={legendData.data == null}
+            isLoading={legendData.isFetching}
             plotLegendProps={{
               type: 'colorscale',
               legendMin: legendData.data?.bubbleLegendData?.minColorValue ?? 0,
