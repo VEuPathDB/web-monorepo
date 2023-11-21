@@ -630,14 +630,13 @@ function useMarkerData(props: DataProps) {
       viewport,
     },
   };
-  const { data: legendData } = useLegendData(props);
+  const legendDataResult = useLegendData(props);
 
   // add to check legendData is undefined for refetch
   const disabled =
     numeratorValues?.length === 0 ||
     denominatorValues?.length === 0 ||
-    !validateProportionValues(numeratorValues, denominatorValues) ||
-    legendData == null;
+    !validateProportionValues(numeratorValues, denominatorValues);
 
   return useQuery({
     // we're actually using the mapping functions `bubbleValueToColorMapper` and
@@ -647,15 +646,17 @@ function useMarkerData(props: DataProps) {
       'bubbleMarkers',
       'markerData',
       markerRequestParams,
-      legendData?.bubbleLegendData,
+      legendDataResult.data?.bubbleLegendData,
     ],
     queryFn: async () => {
+      if (legendDataResult.error) throw legendDataResult.error;
+
       const rawMarkersData = await dataClient.getStandaloneBubbles(
         'standalone-map',
         markerRequestParams
       );
       const { bubbleValueToColorMapper, bubbleValueToDiameterMapper } =
-        legendData ?? {};
+        legendDataResult.data ?? {};
 
       const totalVisibleEntityCount = rawMarkersData.mapElements.reduce(
         (acc, curr) => {
