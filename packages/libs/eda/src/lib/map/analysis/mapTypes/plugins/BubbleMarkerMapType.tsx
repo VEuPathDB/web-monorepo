@@ -27,17 +27,17 @@ import { DraggableLegendPanel } from '../../DraggableLegendPanel';
 import { MapLegend } from '../../MapLegend';
 import MapVizManagement from '../../MapVizManagement';
 import { BubbleMarkerConfigurationMenu } from '../../MarkerConfiguration';
-import {
-  BubbleMarkerConfiguration,
-  validateProportionValues,
-} from '../../MarkerConfiguration/BubbleMarkerConfigurationMenu';
+import { BubbleMarkerConfiguration } from '../../MarkerConfiguration/BubbleMarkerConfigurationMenu';
 import {
   MapTypeConfigurationMenu,
   MarkerConfigurationOption,
 } from '../../MarkerConfiguration/MapTypeConfigurationMenu';
 import { BubbleMarkerIcon } from '../../MarkerConfiguration/icons';
 import { useStandaloneVizPlugins } from '../../hooks/standaloneVizPlugins';
-import { getDefaultBubbleOverlayConfig } from '../../utils/defaultOverlayConfig';
+import {
+  getDefaultBubbleOverlayConfig,
+  validateProportionValues,
+} from '../../utils/defaultOverlayConfig';
 import {
   defaultAnimation,
   isApproxSameViewport,
@@ -456,12 +456,8 @@ function useLegendData(props: DataProps) {
   const { selectedVariable, numeratorValues, denominatorValues, aggregator } =
     configuration as BubbleMarkerConfiguration;
 
-  const { outputEntity, geoAggregateVariables } = useCommonData(
-    selectedVariable,
-    geoConfigs,
-    studyEntities,
-    boundsZoomLevel
-  );
+  const { outputEntity, geoAggregateVariables, overlayVariable } =
+    useCommonData(selectedVariable, geoConfigs, studyEntities, boundsZoomLevel);
 
   const outputEntityId = outputEntity?.id;
 
@@ -477,7 +473,11 @@ function useLegendData(props: DataProps) {
   const disabled =
     numeratorValues?.length === 0 ||
     denominatorValues?.length === 0 ||
-    !validateProportionValues(numeratorValues, denominatorValues);
+    !validateProportionValues(
+      numeratorValues,
+      denominatorValues,
+      overlayVariable.vocabulary
+    );
 
   const legendRequestParams: StandaloneMapBubblesLegendRequestParams = {
     studyId,

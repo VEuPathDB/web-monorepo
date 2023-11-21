@@ -14,6 +14,10 @@ import {
 } from '../../../core/components/visualizations/implementations/LineplotVisualization';
 import { DataElementConstraint } from '../../../core/types/visualization'; // TO DO for dates: remove
 import { SharedMarkerConfigurations } from '../mapTypes/shared';
+import {
+  invalidProportionText,
+  validateProportionValues,
+} from '../utils/defaultOverlayConfig';
 
 type AggregatorOption = typeof aggregatorOptions[number];
 const aggregatorOptions = ['mean', 'median'] as const;
@@ -96,7 +100,8 @@ export function BubbleMarkerConfigurationMenu({
 
   const proportionIsValid = validateProportionValues(
     numeratorValues,
-    denominatorValues
+    denominatorValues,
+    vocabulary
   );
 
   const aggregationInputs = (
@@ -138,7 +143,7 @@ export function BubbleMarkerConfigurationMenu({
       {!proportionIsValid && (
         <div style={{ position: 'relative' }}>
           <div style={{ position: 'absolute', width: '100%' }}>
-            <PluginError error="To calculate a proportion, all selected numerator values must also be present in the denominator" />
+            <PluginError error={invalidProportionText} />
           </div>
         </div>
       )}
@@ -228,14 +233,3 @@ function isSuitableCategoricalVariable(variable?: VariableTreeNode): boolean {
     variable.distinctValuesCount != null
   );
 }
-
-// We currently call this function twice per value change.
-// If the number of values becomes vary large, we may want to optimize this?
-// Maybe O(n^2) isn't that bad though.
-export const validateProportionValues = (
-  numeratorValues: string[] | undefined,
-  denominatorValues: string[] | undefined
-) =>
-  numeratorValues === undefined ||
-  denominatorValues === undefined ||
-  numeratorValues.every((value) => denominatorValues.includes(value));
