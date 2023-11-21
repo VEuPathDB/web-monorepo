@@ -125,10 +125,10 @@ function orderVariables(study: StudyMetadata) {
     (entity) => entity.children ?? []
   ))
     entity.variables.sort((var1, var2) => {
-      if (var1.displayOrder && var2.displayOrder)
+      if (var1.displayOrder != null && var2.displayOrder != null)
         return var1.displayOrder - var2.displayOrder;
-      if (var1.displayOrder) return -1;
-      if (var2.displayOrder) return 1;
+      if (var1.displayOrder != null) return -1;
+      if (var2.displayOrder != null) return 1;
       return var1.displayName < var2.displayName
         ? -1
         : var1.displayName > var2.displayName

@@ -63,8 +63,8 @@ import { truncationConfig } from '../../../utils/truncation-config-utils';
 // use Notification for truncation warning message
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 
-const DEFAULT_SIG_THRESHOLD = 0.05;
-const DEFAULT_FC_THRESHOLD = 2;
+const DEFAULT_SIG_THRESHOLD = 0.05; // significance threshold (horizontal line)
+const DEFAULT_ES_THRESHOLD = 1; // effect size threshold (vertical lines)
 const DEFAULT_MARKER_OPACITY = 0.8;
 /**
  * The padding ensures we don't clip off part of the glyphs that represent the most extreme points.
@@ -93,7 +93,7 @@ export const volcanoPlotVisualization = createVisualizationPlugin({
 
 function createDefaultConfig(): VolcanoPlotConfig {
   return {
-    effectSizeThreshold: DEFAULT_FC_THRESHOLD,
+    effectSizeThreshold: DEFAULT_ES_THRESHOLD,
     significanceThreshold: DEFAULT_SIG_THRESHOLD,
     markerBodyOpacity: DEFAULT_MARKER_OPACITY,
     independentAxisRange: undefined,
@@ -269,7 +269,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
   const significanceThreshold =
     vizConfig.significanceThreshold ?? DEFAULT_SIG_THRESHOLD;
   const effectSizeThreshold =
-    vizConfig.effectSizeThreshold ?? DEFAULT_FC_THRESHOLD;
+    vizConfig.effectSizeThreshold ?? DEFAULT_ES_THRESHOLD;
 
   /**
    * This version of the data will get passed to the VolcanoPlot component
@@ -745,7 +745,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
             }
             label={finalData?.effectSizeLabel ?? 'Effect Size'}
             minValue={0}
-            value={vizConfig.effectSizeThreshold ?? DEFAULT_FC_THRESHOLD}
+            value={vizConfig.effectSizeThreshold ?? DEFAULT_ES_THRESHOLD}
             containerStyles={{ marginRight: 10 }}
           />
 

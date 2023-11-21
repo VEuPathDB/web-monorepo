@@ -23,5 +23,5 @@ export interface LayoutOptions {
 }
 
 export interface TitleOptions {
-  getPlotSubtitle?(config: unknown): string | undefined;
+  getPlotSubtitle?(config: unknown): ReactNode;
 }

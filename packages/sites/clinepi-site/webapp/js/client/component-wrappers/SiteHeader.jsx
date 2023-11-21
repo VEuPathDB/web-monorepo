@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import Header from '@veupathdb/web-common/lib/App/Header';
 import { useDiyDatasets } from '@veupathdb/web-common/lib/hooks/diyDatasets';
@@ -26,10 +26,47 @@ export default function SiteHeaderWrapper() {
 
     const { diyDatasets, reloadDiyDatasets } = useDiyDatasets();
 
+    // for now, we default to each studies section being open
+    const [expandUserStudies, setExpandUserStudies] = useState(true);
+    const [expandCuratedStudies, setExpandCuratedStudies] = useState(true);
+
+    const handleStudiesMenuSearch = useCallback(
+      (newValue) => {
+        setSearchTerm(newValue);
+        // open both studies sections onSearch only if diyDatasets exist
+        if (newValue.length > 0 && diyDatasets && diyDatasets.length > 0) {
+          setExpandUserStudies(true);
+          setExpandCuratedStudies(true);
+        }
+      },
+      [
+        diyDatasets,
+        setSearchTerm,
+        setExpandUserStudies,
+        setExpandCuratedStudies,
+      ]
+    );
+
     const makeHeaderMenuItems = useMemo(
       () =>
-        makeHeaderMenuItemsFactory(permissions, diyDatasets, reloadDiyDatasets),
-      [permissions, diyDatasets, reloadDiyDatasets]
+        makeHeaderMenuItemsFactory(
+          permissions,
+          diyDatasets,
+          reloadDiyDatasets,
+          expandUserStudies,
+          setExpandUserStudies,
+          expandCuratedStudies,
+          setExpandCuratedStudies
+        ),
+      [
+        permissions,
+        diyDatasets,
+        reloadDiyDatasets,
+        expandUserStudies,
+        setExpandUserStudies,
+        expandCuratedStudies,
+        setExpandCuratedStudies,
+      ]
     );
 
     return (
@@ -44,7 +81,7 @@ export default function SiteHeaderWrapper() {
           getSiteData={getStaticSiteData}
           makeHeaderMenuItems={makeHeaderMenuItems}
           searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
+          setSearchTerm={handleStudiesMenuSearch}
         />
         <DisclaimerModal />
         <DataRestrictionDaemon
