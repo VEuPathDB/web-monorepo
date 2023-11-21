@@ -225,4 +225,4 @@ export const validateProportionValues = (
     ));
 
 export const invalidProportionText =
-  'To calculate a proportion, all selected numerator values must also be present in the denominator and any values that have been filtered out must not be present in either. You may need to review both numerator and denominator drop-downs to configure a valid proportion.';
+  'To calculate a proportion, all selected numerator values must also be present in the denominator and any values that have been filtered out must not be present in either. You may need to review both numerator and denominator drop-downs to reconfigure a valid proportion.';
