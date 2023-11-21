@@ -1,5 +1,11 @@
 import lodash from 'lodash';
-import React, { Component, Suspense, useEffect, useMemo } from 'react';
+import React, {
+  Component,
+  Suspense,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 
@@ -1276,6 +1282,24 @@ function OrthologsFormContainer(props) {
 
   const [preferredOrganisms] = usePreferredOrganismsState();
 
+  const [showLongestTranscriptPerGene, setShowLongestTranscriptPerGene] =
+    useState(false);
+
+  const transcriptFilter = useMemo(
+    () => (
+      <label style={{ display: 'inline-block', margin: '0.5em 0' }}>
+        <input
+          type="checkbox"
+          onChange={(e) => setShowLongestTranscriptPerGene(e.target.checked)}
+        />{' '}
+        <strong>
+          <em>Show only one transcript per gene</em>
+        </strong>
+      </label>
+    ),
+    [setShowLongestTranscriptPerGene]
+  );
+
   const filteredValue = useMemo(() => {
     if (!preferredOrganismsEnabled) {
       return props.value;
@@ -1288,7 +1312,47 @@ function OrthologsFormContainer(props) {
     );
   }, [props.value, preferredOrganisms, preferredOrganismsEnabled]);
 
-  return <OrthologsForm {...props} value={filteredValue} />;
+  const transcriptFilterAwareValues = useMemo(() => {
+    if (!showLongestTranscriptPerGene) return filteredValue;
+    const dataWithLongestTranscriptPerGene = [];
+    // loop through the data to create a new array that replaces duplicates with longest protein length
+    for (const datum of filteredValue) {
+      // check if we have matching ortho source ids between our new array and the data array
+      const matchingGene = dataWithLongestTranscriptPerGene.find(
+        (d) => d['ortho_gene_source_id'] === datum['ortho_gene_source_id']
+      );
+      // NOTE: below matchingGene is for testing on PlasmoDB since I can't find an ortho/paralogs table that actually has duplicates since VectorBase isn't working...
+      // const matchingGene = dataWithLongestTranscriptPerGene.find(
+      //   (d) =>
+      //     d['ortho_gene_source_id'].split('_')[0] ===
+      //     datum['ortho_gene_source_id'].split('_')[0]
+      // );
+      if (matchingGene) {
+        // we have a match, so check protein length and continue if new array's matching gene has greater or equal length
+        // otherwise, find its index and rewrite it with the current dataum
+        if (
+          Number(matchingGene['protein_length']) >=
+          Number(datum['protein_length'])
+        )
+          continue;
+        const indexToReplace =
+          dataWithLongestTranscriptPerGene.indexOf(matchingGene);
+        dataWithLongestTranscriptPerGene[indexToReplace] = datum;
+      } else {
+        // no existing gene found, so push datum onto array
+        dataWithLongestTranscriptPerGene.push(datum);
+      }
+    }
+    return dataWithLongestTranscriptPerGene;
+  }, [showLongestTranscriptPerGene, filteredValue]);
+
+  return (
+    <OrthologsForm
+      {...props}
+      value={transcriptFilterAwareValues}
+      transcriptFilter={transcriptFilter}
+    />
+  );
 }
 
 class OrthologsForm extends SortKeyTable {
@@ -1321,7 +1385,7 @@ class OrthologsForm extends SortKeyTable {
           <input type="hidden" name="type" value="geneOrthologs" />
           <input type="hidden" name="project_id" value={projectId} />
           <input type="hidden" name="gene_ids" value={source_id} />
-
+          {this.props.transcriptFilter}
           <this.props.DefaultComponent
             {...this.props}
             value={this.sortValue(this.props.value)}
