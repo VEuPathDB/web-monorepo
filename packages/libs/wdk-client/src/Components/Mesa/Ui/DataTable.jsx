@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { isEqual } from 'lodash';
+import { isEqual, sum } from 'lodash';
 import { defaultMemoize } from 'reselect';
 
 import HeadingRow from '../../../Components/Mesa/Ui/HeadingRow';
@@ -25,7 +25,7 @@ class DataTable extends React.Component {
     this.getInnerCellWidth = this.getInnerCellWidth.bind(this);
     this.hasSelectionColumn = this.hasSelectionColumn.bind(this);
     this.shouldUseStickyHeader = this.shouldUseStickyHeader.bind(this);
-    this.makeFirstColumnSticky = this.makeFirstColumnSticky.bind(this);
+    this.makeFirstNColumnsSticky = this.makeFirstNColumnsSticky.bind(this);
     this.handleTableBodyScroll = this.handleTableBodyScroll.bind(this);
     this.setDynamicWidths = this.setDynamicWidths.bind(this);
     this.resizeId = -1;
@@ -43,28 +43,37 @@ class DataTable extends React.Component {
     return true;
   }
 
-  makeFirstColumnSticky(columns) {
-    return columns.length >= 2
-      ? [
-          {
-            ...columns[0],
-            headingStyle: {
-              ...columns[0].headingStyle,
-              position: 'sticky',
-              left: 0,
-              zIndex: 2,
-            },
-            style: {
-              ...columns[0].style,
-              position: 'sticky',
-              left: 0,
-              zIndex: 1,
-            },
-            className: `${columns[0].className || ''} StickyColumnCell`,
+  makeFirstNColumnsSticky(columns, n) {
+    const { dynamicWidths } = this.state;
+
+    if (n <= columns.length) {
+      const stickyColumns = columns.slice(0, n).map((column, index) => {
+        const leftOffset = dynamicWidths
+          ? sum(dynamicWidths.slice(0, index))
+          : 0;
+
+        return {
+          ...column,
+          headingStyle: {
+            ...column.headingStyle,
+            position: 'sticky',
+            left: `${leftOffset}px`,
+            zIndex: 2,
           },
-          ...columns.slice(1),
-        ]
-      : columns;
+          style: {
+            ...column.style,
+            position: 'sticky',
+            left: `${leftOffset}px`,
+            zIndex: 1,
+          },
+          className: `${column.className || ''} StickyColumnCell`,
+        };
+      });
+
+      return [...stickyColumns, ...columns.slice(n)];
+    }
+
+    return columns;
   }
 
   componentDidMount() {
@@ -182,8 +191,8 @@ class DataTable extends React.Component {
       headerWrapperStyle,
     } = this.props;
     const { dynamicWidths, tableWrapperWidth } = this.state;
-    const stickyColumns = options.useStickyFirstColumn
-      ? this.makeFirstColumnSticky(columns)
+    const stickyColumns = options.useStickyFirstNColumns
+      ? this.makeFirstNColumnsSticky(columns, options.useStickyFirstNColumns)
       : columns;
     const newColumns =
       stickyColumns.every(({ width }) => width) ||
@@ -256,8 +265,8 @@ class DataTable extends React.Component {
     const { props } = this;
     const { options, columns } = props;
 
-    const stickyColumns = options.useStickyFirstColumn
-      ? this.makeFirstColumnSticky(columns)
+    const stickyColumns = options.useStickyFirstNColumns
+      ? this.makeFirstNColumnsSticky(columns, options.useStickyFirstNColumns)
       : columns;
     const newProps = {
       ...props,

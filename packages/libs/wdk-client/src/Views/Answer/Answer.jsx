@@ -119,7 +119,7 @@ function useTableState(props) {
     renderCellContent,
     deriveRowClassName,
     customSortBys,
-    useStickyFirstColumn,
+    useStickyFirstNColumns,
   } = props;
 
   const columns = useMemo(
@@ -154,7 +154,7 @@ function useTableState(props) {
   const options = useMemo(
     () => ({
       useStickyHeader: true,
-      useStickyFirstColumn,
+      useStickyFirstNColumns,
       tableBodyMaxHeight: 'unset',
       deriveRowClassName:
         deriveRowClassName &&
