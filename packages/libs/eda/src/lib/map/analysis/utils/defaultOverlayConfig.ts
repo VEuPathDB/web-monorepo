@@ -24,7 +24,6 @@ import { BubbleMarkerConfiguration } from '../MarkerConfiguration/BubbleMarkerCo
 
 export interface DefaultBubbleOverlayConfigProps {
   studyId: string;
-  filters: Filter[] | undefined;
   overlayVariable: Variable;
   overlayEntity: StudyEntity;
   aggregator?: BubbleMarkerConfiguration['aggregator'];
@@ -204,3 +203,26 @@ export async function getBinRanges({
   const binRanges = response.binRanges?.[binningMethod]!; // if asking for binRanges, the response WILL contain binRanges
   return binRanges;
 }
+
+// We currently call this function twice per value change.
+// If the number of values becomes vary large, we may want to optimize this?
+// Maybe O(n^2) isn't that bad though.
+export const validateProportionValues = (
+  numeratorValues: string[] | undefined,
+  denominatorValues: string[] | undefined,
+  vocabulary?: string[]
+) =>
+  (numeratorValues == null ||
+    numeratorValues.every(
+      (value) =>
+        denominatorValues == null ||
+        (denominatorValues.includes(value) &&
+          (vocabulary == null || vocabulary.includes(value)))
+    )) &&
+  (denominatorValues == null ||
+    denominatorValues.every(
+      (value) => vocabulary == null || vocabulary.includes(value)
+    ));
+
+export const invalidProportionText =
+  'To calculate a proportion, all selected numerator values must also be present in the denominator and any values that have been filtered out must not be present in either. You may need to review both numerator and denominator drop-downs to reconfigure a valid proportion.';
