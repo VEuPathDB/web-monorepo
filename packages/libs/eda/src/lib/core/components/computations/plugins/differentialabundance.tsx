@@ -20,7 +20,7 @@ import {
   useDataClient,
   useFindEntityAndVariable,
 } from '../../../hooks/workspace';
-import { useCallback, useMemo } from 'react';
+import { ReactNode, useCallback, useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import VariableTreeDropdown from '../../variableTrees/VariableTreeDropdown';
 import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
@@ -93,8 +93,23 @@ export const plugin: ComputationPlugin = {
   visualizationPlugins: {
     volcanoplot: volcanoPlotVisualization.withOptions({
       getPlotSubtitle(config) {
-        if (DifferentialAbundanceConfig.is(config)) {
-          return `Differential abundance computed using ${config.differentialAbundanceMethod} with default parameters.`;
+        if (
+          DifferentialAbundanceConfig.is(config) &&
+          config.differentialAbundanceMethod in
+            DIFFERENTIAL_ABUNDANCE_METHOD_CITATIONS
+        ) {
+          return (
+            <span>
+              Differential abundance computed using{' '}
+              {config.differentialAbundanceMethod}{' '}
+              {
+                DIFFERENTIAL_ABUNDANCE_METHOD_CITATIONS[
+                  config.differentialAbundanceMethod as keyof typeof DIFFERENTIAL_ABUNDANCE_METHOD_CITATIONS
+                ]
+              }{' '}
+              with default parameters.
+            </span>
+          );
         }
       },
     }), // Must match name in data service and in visualization.tsx
@@ -164,7 +179,18 @@ function DifferentialAbundanceConfigDescriptionComponent({
 // Include available methods in this array.
 // 10/10/23 - decided to only release Maaslin for the first roll-out. DESeq is still available
 // and we're poised to release it in the future.
-const DIFFERENTIAL_ABUNDANCE_METHODS = ['Maaslin']; // + 'DESeq' in the future
+type DifferentialAbundanceMethodCitations = { Maaslin: ReactNode };
+const DIFFERENTIAL_ABUNDANCE_METHOD_CITATIONS: DifferentialAbundanceMethodCitations =
+  {
+    Maaslin: (
+      <a href="https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1009442">
+        (Mallick et al., 2021)
+      </a>
+    ),
+  }; // + deseq paper in the future
+const DIFFERENTIAL_ABUNDANCE_METHODS = Object.keys(
+  DIFFERENTIAL_ABUNDANCE_METHOD_CITATIONS
+); // + 'DESeq' in the future
 
 export function DifferentialAbundanceConfiguration(
   props: ComputationConfigProps
