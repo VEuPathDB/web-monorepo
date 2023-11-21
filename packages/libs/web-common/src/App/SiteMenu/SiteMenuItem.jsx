@@ -23,7 +23,16 @@ class SiteMenuItem extends React.Component {
     const { focus, blur } = this;
     const { isFocused } = this.state;
     const { item, config, actions, user } = this.props;
-    const { id, text, url, appUrl, route, target, loginRequired } = item;
+    const {
+      id,
+      text,
+      url,
+      appUrl,
+      route,
+      target,
+      loginRequired,
+      isVisible = true,
+    } = item;
     const { webAppUrl, projectId } = config;
 
     const { showLoginWarning } = actions;
@@ -64,6 +73,8 @@ class SiteMenuItem extends React.Component {
         className={className}
         onMouseEnter={focus}
         onMouseLeave={blur}
+        // this lets us preserve react keys when filtering collapsible sections in the studies menu
+        style={isVisible ? undefined : { display: 'none' }}
       >
         {destination ? (
           <a
