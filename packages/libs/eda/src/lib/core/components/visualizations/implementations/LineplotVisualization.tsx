@@ -1743,6 +1743,8 @@ function LineplotViz(props: VisualizationProps<Options>) {
     </>
   );
 
+  const { vocabulary, fullVocabulary } = yAxisVariable ?? {};
+
   const aggregationInputs = (
     <AggregationInputs
       {...(vizConfig.valueSpecConfig !== 'Proportion'
@@ -1756,27 +1758,20 @@ function LineplotViz(props: VisualizationProps<Options>) {
           }
         : {
             aggregationType: 'proportion',
-            options:
-              yAxisVariable?.fullVocabulary ?? yAxisVariable?.vocabulary ?? [],
-            disabledOptions: yAxisVariable?.fullVocabulary
-              ? yAxisVariable?.fullVocabulary.filter(
-                  (value) => !yAxisVariable?.vocabulary?.includes(value)
-                )
+            options: fullVocabulary ?? vocabulary ?? [],
+            disabledOptions: fullVocabulary
+              ? fullVocabulary.filter((value) => vocabulary?.includes(value))
               : [],
             numeratorValues: vizConfig.numeratorValues ?? [],
             denominatorValues: vizConfig.denominatorValues ?? [],
             // onChange handlers now ensure the available options belong to the vocabulary (which can change due to direct filters)
             onNumeratorChange: (values) =>
               onNumeratorValuesChange(
-                values.filter((value) =>
-                  yAxisVariable?.vocabulary?.includes(value)
-                )
+                values.filter((value) => vocabulary?.includes(value))
               ),
             onDenominatorChange: (values) =>
               onDenominatorValuesChange(
-                values.filter((value) =>
-                  yAxisVariable?.vocabulary?.includes(value)
-                )
+                values.filter((value) => vocabulary?.includes(value))
               ),
           })}
     />
