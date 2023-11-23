@@ -142,7 +142,7 @@ export function BubbleMarkerConfigurationMenu({
                 }),
             })}
       />
-      {isValidProportion == false && (
+      {isValidProportion === false && (
         <div style={{ position: 'relative' }}>
           <div style={{ position: 'absolute', width: '100%' }}>
             <PluginError error={invalidProportionText} />
