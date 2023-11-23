@@ -121,6 +121,10 @@ const Variable_Base = t.intersection([
   }),
   t.partial({
     vocabulary: t.array(t.string),
+    // filter-sensitive versions of StudyEntity data have modified
+    // vocabularies - this is where we keep a copy of the original
+    // (note that this never comes from the back end)
+    fullVocabulary: t.array(t.string),
   }),
 ]);
 

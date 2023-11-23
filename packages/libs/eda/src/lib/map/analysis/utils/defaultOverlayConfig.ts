@@ -33,7 +33,7 @@ export interface DefaultBubbleOverlayConfigProps {
 
 export function getDefaultBubbleOverlayConfig(
   props: DefaultBubbleOverlayConfigProps
-): BubbleOverlayConfig {
+): { overlayConfig: BubbleOverlayConfig; isValidProportion?: boolean } {
   const {
     overlayVariable,
     overlayEntity,
@@ -50,20 +50,29 @@ export function getDefaultBubbleOverlayConfig(
   if (CategoricalVariableDataShape.is(overlayVariable.dataShape)) {
     // categorical
     return {
-      overlayVariable: overlayVariableDescriptor,
-      aggregationConfig: {
-        overlayType: 'categorical',
+      overlayConfig: {
+        overlayVariable: overlayVariableDescriptor,
+        aggregationConfig: {
+          overlayType: 'categorical',
+          numeratorValues,
+          denominatorValues,
+        },
+      },
+      isValidProportion: validateProportionValues(
         numeratorValues,
         denominatorValues,
-      },
+        overlayVariable.vocabulary
+      ),
     };
   } else if (ContinuousVariableDataShape.is(overlayVariable.dataShape)) {
     // continuous
     return {
-      overlayVariable: overlayVariableDescriptor,
-      aggregationConfig: {
-        overlayType: 'continuous', // TO DO for dates: might do `overlayVariable.type === 'date' ? 'date' : 'number'`
-        aggregator,
+      overlayConfig: {
+        overlayVariable: overlayVariableDescriptor,
+        aggregationConfig: {
+          overlayType: 'continuous', // TO DO for dates: might do `overlayVariable.type === 'date' ? 'date' : 'number'`
+          aggregator,
+        },
       },
     };
   }

@@ -1756,7 +1756,13 @@ function LineplotViz(props: VisualizationProps<Options>) {
           }
         : {
             aggregationType: 'proportion',
-            options: yAxisVariable?.vocabulary ?? [],
+            options:
+              yAxisVariable?.fullVocabulary ?? yAxisVariable?.vocabulary ?? [],
+            disabledOptions: yAxisVariable?.fullVocabulary
+              ? yAxisVariable?.fullVocabulary.filter(
+                  (value) => !yAxisVariable?.vocabulary?.includes(value)
+                )
+              : [],
             numeratorValues: vizConfig.numeratorValues ?? [],
             denominatorValues: vizConfig.denominatorValues ?? [],
             // onChange handlers now ensure the available options belong to the vocabulary (which can change due to direct filters)
@@ -2749,6 +2755,7 @@ type AggregationConfig<F extends string, P extends Array<string>> =
       denominatorValues: Array<P[number]>;
       onDenominatorChange: (value: Array<P[number]>) => void;
       options: P;
+      disabledOptions: P;
     };
 
 export function AggregationInputs<F extends string, P extends Array<string>>(
@@ -2810,6 +2817,7 @@ export function AggregationInputs<F extends string, P extends Array<string>>(
           >
             <ValuePicker
               allowedValues={props.options}
+              disabledValues={props.disabledOptions}
               selectedValues={props.numeratorValues}
               onSelectedValuesChange={props.onNumeratorChange}
             />
@@ -2823,6 +2831,7 @@ export function AggregationInputs<F extends string, P extends Array<string>>(
           >
             <ValuePicker
               allowedValues={props.options}
+              disabledValues={props.disabledOptions}
               selectedValues={props.denominatorValues}
               onSelectedValuesChange={props.onDenominatorChange}
             />
