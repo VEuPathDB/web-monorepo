@@ -852,10 +852,18 @@ export const BubbleOverlayConfig = type({
       numeratorValues: array(string),
       denominatorValues: array(string),
     }),
-    type({
-      overlayType: literal('continuous'), // TO DO for dates: probably redefine as 'number' | 'date'
-      aggregator: keyof({ mean: null, median: null }),
-    }),
+    intersection([
+      type({
+        overlayType: literal('continuous'),
+        aggregator: keyof({ mean: null, median: null }),
+      }),
+      partial({
+        // optional for backwards compatibility with user db
+        // and because it must not be sent to the back end
+        // in StandaloneMapBubblesRequestParams and StandaloneMapBubblesLegendRequestParams
+        valueType: keyof({ number: null, date: null }),
+      }),
+    ]),
   ]),
 });
 

@@ -11,7 +11,7 @@ export interface BubbleMarkerProps extends BoundsDriftMarkerProps {
     /* The diameter of the marker */
     diameter: number;
     /* The color value shown in the popup as `colorLabel:` */
-    colorValue?: number;
+    colorValue?: string;
     /* Label shown next to the color value in the popup */
     colorLabel?: string;
     /* The color to fill the bubble marker with */

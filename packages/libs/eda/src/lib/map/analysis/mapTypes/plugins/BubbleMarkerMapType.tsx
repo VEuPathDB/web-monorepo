@@ -8,7 +8,7 @@ import {
 } from '@veupathdb/components/lib/map/config/map';
 import { getValueToGradientColorMapper } from '@veupathdb/components/lib/types/plots/addOns';
 import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
-import { capitalize, sumBy } from 'lodash';
+import { capitalize, sumBy, omit } from 'lodash';
 import { useCallback, useMemo } from 'react';
 import {
   useFindEntityAndVariable,
@@ -349,16 +349,22 @@ const processRawBubblesData = (
 
       // TO DO: address diverging colorscale (especially if there are use-cases)
 
+      const colorNumericValue =
+        aggregationConfig?.overlayType === 'continuous' &&
+        aggregationConfig.valueType === 'date'
+          ? new Date(overlayValue).getTime()
+          : Number(overlayValue);
+
       const bubbleData = {
         value: entityCount,
         diameter: bubbleValueToDiameterMapper?.(entityCount) ?? 0,
-        colorValue: Number(overlayValue),
+        colorValue: overlayValue,
         colorLabel: aggregationConfig
           ? aggregationConfig.overlayType === 'continuous'
             ? capitalize(aggregationConfig.aggregator)
             : 'Proportion'
           : undefined,
-        color: bubbleValueToColorMapper?.(Number(overlayValue)),
+        color: bubbleValueToColorMapper?.(colorNumericValue),
       };
 
       return {
@@ -479,6 +485,11 @@ function useLegendData(props: DataProps) {
       overlayVariable.vocabulary
     );
 
+  const { aggregationConfig, ...restOverlayConfig } = overlayConfig;
+  const valueType =
+    overlayConfig.aggregationConfig.overlayType === 'continuous'
+      ? overlayConfig.aggregationConfig.valueType
+      : undefined;
   const legendRequestParams: StandaloneMapBubblesLegendRequestParams = {
     studyId,
     filters: filters || [], // OK for react-query, but not for hooks in general
@@ -486,7 +497,13 @@ function useLegendData(props: DataProps) {
       outputEntityId,
       colorLegendConfig: {
         geoAggregateVariable: geoAggregateVariables.at(-1)!,
-        quantitativeOverlayConfig: overlayConfig,
+        quantitativeOverlayConfig: {
+          ...restOverlayConfig,
+          aggregationConfig:
+            aggregationConfig.overlayType === 'continuous'
+              ? omit(aggregationConfig, 'valueType') // back end mustn't receive `valueType`
+              : aggregationConfig,
+        },
       },
       sizeConfig: {
         geoAggregateVariable: geoAggregateVariables[0],
@@ -504,9 +521,19 @@ function useLegendData(props: DataProps) {
         legendRequestParams
       );
 
+      const colorData =
+        valueType === 'date'
+          ? {
+              minColorValue: new Date(temp.minColorValue).getTime(),
+              maxColorValue: new Date(temp.maxColorValue).getTime(),
+            }
+          : {
+              minColorValue: Number(temp.minColorValue),
+              maxColorValue: Number(temp.maxColorValue),
+            };
+
       const bubbleLegendData = {
-        minColorValue: Number(temp.minColorValue),
-        maxColorValue: Number(temp.maxColorValue),
+        ...colorData,
         minSizeValue: temp.minSizeValue,
         maxSizeValue: temp.maxSizeValue,
       };
@@ -611,6 +638,7 @@ function useRawMarkerData(props: DataProps) {
     ...configuration,
   });
 
+  const { aggregationConfig, ...restOverlayConfig } = overlayConfig;
   const markerRequestParams: StandaloneMapBubblesRequestParams = {
     studyId,
     filters: filters || [],
@@ -618,7 +646,13 @@ function useRawMarkerData(props: DataProps) {
       geoAggregateVariable,
       latitudeVariable,
       longitudeVariable,
-      overlayConfig,
+      overlayConfig: {
+        ...restOverlayConfig,
+        aggregationConfig:
+          aggregationConfig.overlayType === 'continuous'
+            ? omit(aggregationConfig, 'valueType') // back end mustn't receive valueType
+            : aggregationConfig,
+      },
       outputEntityId,
       valueSpec: 'count',
       viewport,
