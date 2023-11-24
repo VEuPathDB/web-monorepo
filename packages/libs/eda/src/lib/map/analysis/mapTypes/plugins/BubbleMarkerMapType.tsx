@@ -349,8 +349,6 @@ const processRawBubblesData = (
         avgLon
       );
 
-      // TO DO: address diverging colorscale (especially if there are use-cases)
-
       const colorNumericValue =
         aggregationConfig?.overlayType === 'continuous' &&
         aggregationConfig.valueType === 'date'
