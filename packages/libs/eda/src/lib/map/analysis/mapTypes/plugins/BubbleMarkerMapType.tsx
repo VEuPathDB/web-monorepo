@@ -189,7 +189,7 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
   if (markersData.error && !markersData.isFetching)
     return <MapFloatingErrorDiv error={markersData.error} />;
 
-  const markers = markersData.data?.markersData.map((markerProps) => (
+  const markers = markersData.data?.markersData?.map((markerProps) => (
     <BubbleMarker {...markerProps} />
   ));
 
@@ -581,7 +581,7 @@ function useLegendData(props: DataProps) {
   });
 }
 
-function useMarkerData(props: DataProps) {
+function useRawMarkerData(props: DataProps) {
   const { boundsZoomLevel, configuration, geoConfigs, studyId, filters } =
     props;
 
@@ -624,7 +624,6 @@ function useMarkerData(props: DataProps) {
       viewport,
     },
   };
-  const legendDataResult = useLegendData(props);
 
   // add to check legendData is undefined for refetch
   const disabled =
@@ -633,55 +632,67 @@ function useMarkerData(props: DataProps) {
     !validateProportionValues(numeratorValues, denominatorValues);
 
   return useQuery({
-    // we're actually using the mapping functions `bubbleValueToColorMapper` and
-    // `bubbleValueToDiameterMapper` in the queryFn but we can't use functions as "dependencies"
-    // in react-query, so we pass the `bubbleLegendData` used to construct these functions instead.
-    queryKey: [
-      'bubbleMarkers',
-      'markerData',
-      markerRequestParams,
-      legendDataResult.data?.bubbleLegendData,
-    ],
+    queryKey: ['bubbleMarkers', 'markerData', markerRequestParams],
     queryFn: async () => {
-      if (legendDataResult.error) throw legendDataResult.error;
-
       const rawMarkersData = await dataClient.getStandaloneBubbles(
         'standalone-map',
         markerRequestParams
       );
-      const { bubbleValueToColorMapper, bubbleValueToDiameterMapper } =
-        legendDataResult.data ?? {};
+      return rawMarkersData;
+    },
+    enabled: !disabled,
+  });
+}
 
-      const totalVisibleEntityCount = rawMarkersData.mapElements.reduce(
-        (acc, curr) => {
-          return acc + curr.entityCount;
-        },
-        0
-      );
+function useMarkerData(props: DataProps) {
+  const { boundsZoomLevel, configuration, studyId, filters } = props;
 
-      /**
-       * Merge the overlay data into the basicMarkerData, if available,
-       * and create markers.
-       */
-      const finalMarkersData = processRawBubblesData(
-        rawMarkersData.mapElements,
-        overlayConfig.aggregationConfig,
-        bubbleValueToDiameterMapper,
-        bubbleValueToColorMapper
-      );
+  const rawMarkersResult = useRawMarkerData(props);
+  const legendDataResult = useLegendData(props);
+  const overlayConfig = useOverlayConfig({
+    studyId,
+    filters,
+    ...configuration,
+  });
 
-      const totalVisibleWithOverlayEntityCount = sumBy(
-        rawMarkersData.mapElements,
-        'entityCount'
-      );
+  // spoof the useQuery hook
+  return useMemo(() => {
+    const totalVisibleEntityCount = rawMarkersResult.data?.mapElements.reduce(
+      (acc, curr) => {
+        return acc + curr.entityCount;
+      },
+      0
+    );
 
-      return {
+    const totalVisibleWithOverlayEntityCount = sumBy(
+      rawMarkersResult.data?.mapElements,
+      'entityCount'
+    );
+
+    /**
+     * Merge the overlay data into the basicMarkerData, if available,
+     * and create markers.
+     */
+    const { bubbleValueToColorMapper, bubbleValueToDiameterMapper } =
+      legendDataResult.data ?? {};
+    const finalMarkersData =
+      rawMarkersResult.data != null
+        ? processRawBubblesData(
+            rawMarkersResult.data.mapElements,
+            overlayConfig.aggregationConfig,
+            bubbleValueToDiameterMapper,
+            bubbleValueToColorMapper
+          )
+        : undefined;
+
+    return {
+      ...rawMarkersResult, // for error, isFetching etc
+      data: {
         markersData: finalMarkersData,
         totalVisibleWithOverlayEntityCount,
         totalVisibleEntityCount,
         boundsZoomLevel,
-      };
-    },
-    enabled: !disabled,
-  });
+      },
+    };
+  }, [rawMarkersResult, legendDataResult.data, overlayConfig]);
 }
