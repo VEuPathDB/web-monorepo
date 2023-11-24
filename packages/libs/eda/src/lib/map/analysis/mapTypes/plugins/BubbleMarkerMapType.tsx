@@ -271,6 +271,8 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
               legendMax: legendData.data?.bubbleLegendData?.maxColorValue ?? 0,
               valueToColorMapper:
                 legendData.data?.bubbleValueToColorMapper ?? (() => 'white'),
+              valueToTickStringMapper:
+                legendData.data?.bubbleValueToLegendTickMapper,
             }}
           />
         </div>
@@ -598,10 +600,18 @@ function useLegendData(props: DataProps) {
         adjustedBubbleLegendData.maxColorValue
       );
 
+      const bubbleValueToLegendTickMapper =
+        valueType === 'date'
+          ? (val: number) => {
+              return new Date(val).toISOString().substring(0, 10);
+            }
+          : undefined;
+
       return {
         bubbleLegendData: adjustedBubbleLegendData,
         bubbleValueToDiameterMapper,
         bubbleValueToColorMapper,
+        bubbleValueToLegendTickMapper,
       };
     },
     enabled: !disabled,
