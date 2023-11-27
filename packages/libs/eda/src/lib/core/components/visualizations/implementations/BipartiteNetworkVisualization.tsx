@@ -10,7 +10,7 @@ import { RequestOptions } from '../options/types';
 import BipartiteNetwork, {
   BipartiteNetworkProps,
 } from '@veupathdb/components/lib/plots/BipartiteNetwork';
-import VolcanoSVG from './selectorIcons/VolcanoSVG'; // TEMP
+import BipartiteNetworkSVG from './selectorIcons/BipartiteNetworkSVG';
 import {
   BipartiteNetworkRequestParams,
   BipartiteNetworkResponse,
@@ -44,7 +44,7 @@ const plotContainerStyles = {
 };
 
 export const bipartiteNetworkVisualization = createVisualizationPlugin({
-  selectorIcon: VolcanoSVG, // TEMPORARY
+  selectorIcon: BipartiteNetworkSVG,
   fullscreenComponent: BipartiteNetworkViz,
   createDefaultConfig: createDefaultConfig,
 });
