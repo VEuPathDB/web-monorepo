@@ -1,4 +1,4 @@
-$StickyColumnBg: #e2e2e2;
+$StickyColumnBorderColor: rgb(204, 204, 204);
 
 .MesaComponent {
   th {
@@ -59,8 +59,24 @@ $StickyColumnBg: #e2e2e2;
     width: 4em;
   }
 
-  td.StickyColumnCell {
-    background: $StickyColumnBg;
+  .StickyColumnCell::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    left: 0;
+    box-shadow: -1px 0px 0px $StickyColumnBorderColor,
+      1px 0px 0px $StickyColumnBorderColor;
+  }
+
+  tr {
+    &:nth-child(odd) td.StickyColumnCell {
+      background-color: $oddRowBg;
+    }
+    &:nth-child(even) td.StickyColumnCell {
+      background-color: $evenRowBg;
+    }
   }
 
   .HeadingCell--Dragging {
