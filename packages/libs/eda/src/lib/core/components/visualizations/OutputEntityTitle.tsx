@@ -3,11 +3,12 @@ import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 
 import { StudyEntity } from '../../types/study';
 import { makeEntityDisplayName } from '../../utils/study-metadata';
+import { ReactNode } from 'react';
 
 interface Props {
   entity?: StudyEntity;
   outputSize?: number;
-  subtitle?: string;
+  subtitle?: ReactNode;
 }
 
 const cx = makeClassNameHelper('OutputEntityTitle');
@@ -27,7 +28,6 @@ export function OutputEntityTitle({ entity, outputSize, subtitle }: Props) {
       </span>
       {subtitle && (
         <div className={cxSubtitle()} style={{ color: gray[700] }}>
-          <br />
           {subtitle}
         </div>
       )}

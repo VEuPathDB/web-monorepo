@@ -138,6 +138,10 @@ import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { FloatingLineplotExtraProps } from '../../../../map/analysis/hooks/plugins/lineplot';
 
 import * as DateMath from 'date-arithmetic';
+import {
+  invalidProportionText,
+  validateProportionValues,
+} from '../../../../map/analysis/utils/defaultOverlayConfig';
 
 const plotContainerStyles = {
   width: 750,
@@ -712,17 +716,15 @@ function LineplotViz(props: VisualizationProps<Options>) {
 
       if (categoricalMode && !valuesAreSpecified) return undefined;
 
-      if (categoricalMode && valuesAreSpecified) {
-        if (
-          dataRequestConfig.numeratorValues != null &&
-          !dataRequestConfig.numeratorValues.every((value) =>
-            dataRequestConfig.denominatorValues?.includes(value)
-          )
+      if (
+        categoricalMode &&
+        !validateProportionValues(
+          dataRequestConfig.numeratorValues,
+          dataRequestConfig.denominatorValues,
+          yAxisVariable?.vocabulary
         )
-          throw new Error(
-            'To calculate a proportion, all selected numerator values must also be present in the denominator'
-          );
-      }
+      )
+        throw new Error(invalidProportionText);
 
       // no data request if banner should be shown
       if (showIndependentAxisBanner || showDependentAxisBanner)
@@ -1756,9 +1758,20 @@ function LineplotViz(props: VisualizationProps<Options>) {
             aggregationType: 'proportion',
             options: yAxisVariable?.vocabulary ?? [],
             numeratorValues: vizConfig.numeratorValues ?? [],
-            onNumeratorChange: onNumeratorValuesChange,
             denominatorValues: vizConfig.denominatorValues ?? [],
-            onDenominatorChange: onDenominatorValuesChange,
+            // onChange handlers now ensure the available options belong to the vocabulary (which can change due to direct filters)
+            onNumeratorChange: (values) =>
+              onNumeratorValuesChange(
+                values.filter((value) =>
+                  yAxisVariable?.vocabulary?.includes(value)
+                )
+              ),
+            onDenominatorChange: (values) =>
+              onDenominatorValuesChange(
+                values.filter((value) =>
+                  yAxisVariable?.vocabulary?.includes(value)
+                )
+              ),
           })}
     />
   );
