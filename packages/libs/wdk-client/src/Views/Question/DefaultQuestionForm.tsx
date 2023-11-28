@@ -32,6 +32,7 @@ import { Tabs } from '../../Components';
 import '../../Views/Question/DefaultQuestionForm.scss';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { type } from 'os';
+import { BetaIcon } from '../../Core/Style/Icons/BetaIcon';
 
 type TextboxChangeHandler = (
   event: React.ChangeEvent<HTMLInputElement>
@@ -241,6 +242,7 @@ export default function DefaultQuestionForm(props: Props) {
           submissionMetadata.type === 'edit-step'
         }
         headerText={`Identify ${recordClass.displayNamePlural} based on ${question.displayName}`}
+        isBeta={question.isBeta}
       />
       <Tabs
         activeTab={selectedTab}
@@ -265,12 +267,15 @@ export default function DefaultQuestionForm(props: Props) {
 type QuestionHeaderProps = {
   headerText: string;
   showHeader: boolean;
+  isBeta?: boolean;
 };
 
 export function QuestionHeader(props: QuestionHeaderProps) {
   return props.showHeader ? (
     <div className={cx('QuestionHeader')}>
-      <h1>{props.headerText}</h1>
+      <h1>
+        {props.headerText} {props.isBeta && <BetaIcon />}
+      </h1>
     </div>
   ) : (
     <></>
