@@ -71,6 +71,9 @@ import RecordNavigationSection from './Views/Records/RecordNavigation/RecordNavi
 import { SearchInputSelector } from './Views/Strategy/SearchInputSelector';
 import CollapsibleDetailsSection from './Components/Display/CollapsibleDetailsSection';
 
+export { NewIcon } from './Core/Style/Icons/NewIcon';
+export { BetaIcon } from './Core/Style/Icons/BetaIcon';
+
 export {
   AccordionButton,
   AnswerTableCell,
