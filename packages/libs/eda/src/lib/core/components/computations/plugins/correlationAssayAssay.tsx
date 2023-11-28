@@ -174,14 +174,22 @@ export function CorrelationAssayAssayConfiguration(
     );
 
   const collectionVarItems = useMemo(() => {
-    return collections.map((collectionVar) => ({
-      value: {
-        collectionId: collectionVar.id,
-        entityId: collectionVar.entityId,
-      },
-      display:
-        collectionVar.entityDisplayName + ' > ' + collectionVar.displayName,
-    }));
+    // Show all collections except for absolute abundance.
+    return collections
+      .filter((collectionVar) => {
+        return collectionVar.normalizationMethod
+          ? collectionVar.normalizationMethod !== 'NULL' ||
+              collectionVar.displayName?.includes('pathway')
+          : true; // DIY may not have the normalizationMethod annotations, but we still want those datasets to pass.
+      })
+      .map((collectionVar) => ({
+        value: {
+          collectionId: collectionVar.id,
+          entityId: collectionVar.entityId,
+        },
+        display:
+          collectionVar.entityDisplayName + ' > ' + collectionVar.displayName,
+      }));
   }, [collections]);
 
   const selectedCollectionVar1 = useMemo(() => {
