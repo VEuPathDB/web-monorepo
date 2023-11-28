@@ -16,7 +16,6 @@ import {
 import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import { findEntityAndVariable } from '../../../core/utils/study-metadata';
 import { leastAncestralEntity } from '../../../core/utils/data-element-constraints';
-import { GLOBAL_VIEWPORT } from '../hooks/standaloneMapMarkers';
 import { useQuery } from '@tanstack/react-query';
 import {
   DefaultOverlayConfigProps,
@@ -352,3 +351,17 @@ export function isApproxSameViewport(v1: Viewport, v2: Viewport) {
     Math.abs(v1.center[1] - v2.center[1]) < epsilon
   );
 }
+
+/**
+ * We can use this viewport to request all available data
+ */
+export const GLOBAL_VIEWPORT = {
+  latitude: {
+    xMin: -90,
+    xMax: 90,
+  },
+  longitude: {
+    left: -180,
+    right: 180,
+  },
+};
