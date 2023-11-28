@@ -27,17 +27,17 @@ import { DraggableLegendPanel } from '../../DraggableLegendPanel';
 import { MapLegend } from '../../MapLegend';
 import MapVizManagement from '../../MapVizManagement';
 import { BubbleMarkerConfigurationMenu } from '../../MarkerConfiguration';
-import {
-  BubbleMarkerConfiguration,
-  validateProportionValues,
-} from '../../MarkerConfiguration/BubbleMarkerConfigurationMenu';
+import { BubbleMarkerConfiguration } from '../../MarkerConfiguration/BubbleMarkerConfigurationMenu';
 import {
   MapTypeConfigurationMenu,
   MarkerConfigurationOption,
 } from '../../MarkerConfiguration/MapTypeConfigurationMenu';
 import { BubbleMarkerIcon } from '../../MarkerConfiguration/icons';
 import { useStandaloneVizPlugins } from '../../hooks/standaloneVizPlugins';
-import { getDefaultBubbleOverlayConfig } from '../../utils/defaultOverlayConfig';
+import {
+  getDefaultBubbleOverlayConfig,
+  validateProportionValues,
+} from '../../utils/defaultOverlayConfig';
 import {
   defaultAnimation,
   isApproxSameViewport,
@@ -253,21 +253,15 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
     <>
       <DraggableLegendPanel panelTitle="Count" zIndex={2}>
         <div style={{ padding: '5px 10px' }}>
-          {legendData.error ? (
-            <div>
-              <pre>{String(legendData.error)}</pre>
-            </div>
-          ) : (
-            <MapLegend
-              isLoading={legendData.isFetching}
-              plotLegendProps={{
-                type: 'bubble',
-                legendMax: legendData.data?.bubbleLegendData?.maxSizeValue ?? 0,
-                valueToDiameterMapper:
-                  legendData.data?.bubbleValueToDiameterMapper,
-              }}
-            />
-          )}
+          <MapLegend
+            isLoading={legendData.isFetching}
+            plotLegendProps={{
+              type: 'bubble',
+              legendMax: legendData.data?.bubbleLegendData?.maxSizeValue ?? 0,
+              valueToDiameterMapper:
+                legendData.data?.bubbleValueToDiameterMapper,
+            }}
+          />
         </div>
       </DraggableLegendPanel>
       <DraggableLegendPanel
@@ -277,7 +271,7 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
       >
         <div style={{ padding: '5px 10px' }}>
           <MapLegend
-            isLoading={legendData.data == null}
+            isLoading={legendData.isFetching}
             plotLegendProps={{
               type: 'colorscale',
               legendMin: legendData.data?.bubbleLegendData?.minColorValue ?? 0,
@@ -414,13 +408,13 @@ interface OverlayConfigProps {
 function useOverlayConfig(props: OverlayConfigProps) {
   const {
     studyId,
-    filters = [],
+    filters,
     aggregator,
     numeratorValues,
     denominatorValues,
     selectedVariable,
   } = props;
-  const findEntityAndVariable = useFindEntityAndVariable();
+  const findEntityAndVariable = useFindEntityAndVariable(filters);
   const entityAndVariable = findEntityAndVariable(selectedVariable);
 
   if (entityAndVariable == null)
@@ -434,7 +428,6 @@ function useOverlayConfig(props: OverlayConfigProps) {
   return useMemo(() => {
     return getDefaultBubbleOverlayConfig({
       studyId,
-      filters,
       overlayVariable,
       overlayEntity,
       aggregator,
@@ -443,7 +436,6 @@ function useOverlayConfig(props: OverlayConfigProps) {
     });
   }, [
     studyId,
-    filters,
     overlayVariable,
     overlayEntity,
     aggregator,
@@ -471,12 +463,8 @@ function useLegendData(props: DataProps) {
   const { selectedVariable, numeratorValues, denominatorValues, aggregator } =
     configuration as BubbleMarkerConfiguration;
 
-  const { outputEntity, geoAggregateVariables } = useCommonData(
-    selectedVariable,
-    geoConfigs,
-    studyEntities,
-    boundsZoomLevel
-  );
+  const { outputEntity, geoAggregateVariables, overlayVariable } =
+    useCommonData(selectedVariable, geoConfigs, studyEntities, boundsZoomLevel);
 
   const outputEntityId = outputEntity?.id;
 
@@ -492,11 +480,15 @@ function useLegendData(props: DataProps) {
   const disabled =
     numeratorValues?.length === 0 ||
     denominatorValues?.length === 0 ||
-    !validateProportionValues(numeratorValues, denominatorValues);
+    !validateProportionValues(
+      numeratorValues,
+      denominatorValues,
+      overlayVariable.vocabulary
+    );
 
   const legendRequestParams: StandaloneMapBubblesLegendRequestParams = {
     studyId,
-    filters: filters || [],
+    filters: filters || [], // OK for react-query, but not for hooks in general
     config: {
       outputEntityId,
       colorLegendConfig: {
@@ -639,25 +631,33 @@ function useMarkerData(props: DataProps) {
       viewport,
     },
   };
-  const { data: legendData } = useLegendData(props);
+  const legendDataResult = useLegendData(props);
 
   // add to check legendData is undefined for refetch
   const disabled =
     numeratorValues?.length === 0 ||
     denominatorValues?.length === 0 ||
-    !validateProportionValues(numeratorValues, denominatorValues) ||
-    legendData == null;
+    !validateProportionValues(numeratorValues, denominatorValues);
 
-  // FIXME Don't make dependent on legend data
   return useQuery({
-    queryKey: ['bubbleMarkers', 'markerData', markerRequestParams],
+    // we're actually using the mapping functions `bubbleValueToColorMapper` and
+    // `bubbleValueToDiameterMapper` in the queryFn but we can't use functions as "dependencies"
+    // in react-query, so we pass the `bubbleLegendData` used to construct these functions instead.
+    queryKey: [
+      'bubbleMarkers',
+      'markerData',
+      markerRequestParams,
+      legendDataResult.data?.bubbleLegendData,
+    ],
     queryFn: async () => {
+      if (legendDataResult.error) throw legendDataResult.error;
+
       const rawMarkersData = await dataClient.getStandaloneBubbles(
         'standalone-map',
         markerRequestParams
       );
       const { bubbleValueToColorMapper, bubbleValueToDiameterMapper } =
-        legendData ?? {};
+        legendDataResult.data ?? {};
 
       const totalVisibleEntityCount = rawMarkersData.mapElements.reduce(
         (acc, curr) => {

@@ -21,6 +21,7 @@ import {
 import {
   findEntityAndDynamicData,
   getTreeNode,
+  isVariableCollectionDescriptor,
   isVariableDescriptor,
 } from '../../../utils/study-metadata';
 
@@ -866,7 +867,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       return getTreeNode(
         findEntityAndDynamicData(
           entities,
-          isVariableDescriptor(computedOverlayVariableDescriptor)
+          isVariableDescriptor(computedOverlayVariableDescriptor) ||
+            isVariableCollectionDescriptor(computedOverlayVariableDescriptor)
             ? computedOverlayVariableDescriptor
             : undefined
         )
@@ -1931,6 +1933,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             role: 'Y-axis',
             required: isVariableDescriptor(computedOverlayVariableDescriptor)
               ? !computedOverlayVariableDescriptor?.variableId
+              : isVariableCollectionDescriptor(
+                  computedOverlayVariableDescriptor
+                )
+              ? !computedOverlayVariableDescriptor?.collectionId
               : false,
             display: dependentAxisLabel,
             variable:
@@ -1943,7 +1949,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             required: !!computedOverlayVariableDescriptor,
             display: legendTitle,
             variable:
-              isVariableDescriptor(computedOverlayVariableDescriptor) &&
+              (isVariableDescriptor(computedOverlayVariableDescriptor) ||
+                isVariableCollectionDescriptor(
+                  computedOverlayVariableDescriptor
+                )) &&
               computedOverlayVariableDescriptor != null
                 ? computedOverlayVariableDescriptor
                 : vizConfig.overlayVariable,

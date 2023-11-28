@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Variable } from '../../../../core/types/study';
 import { findEntityAndVariable } from '../../../../core/utils/study-metadata';
 import {
@@ -18,6 +18,8 @@ import { getDefaultAxisRange } from '../../../../core/utils/computeDefaultAxisRa
 import { NumberRange } from '@veupathdb/components/lib/types/general';
 import { mFormatter } from '../../../../core/utils/big-number-formatters';
 import ChartMarker, {
+  BaseMarkerData,
+  ChartMarkerProps,
   ChartMarkerStandalone,
   getChartMarkerDependentAxisRange,
 } from '@veupathdb/components/lib/map/ChartMarker';
@@ -60,8 +62,6 @@ import MapVizManagement from '../../MapVizManagement';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
-import { ChartMarkerPropsWithCounts } from '../../hooks/standaloneMapMarkers';
-
 const displayName = 'Bar plots';
 
 export const plugin: MapTypePlugin = {
@@ -70,6 +70,14 @@ export const plugin: MapTypePlugin = {
   MapLayerComponent,
   MapOverlayComponent,
   MapTypeHeaderDetails,
+};
+
+interface ChartMarkerDataWithCounts extends BaseMarkerData {
+  count: number;
+}
+
+type ChartMarkerPropsWithCounts = Omit<ChartMarkerProps, 'data'> & {
+  data: ChartMarkerDataWithCounts[];
 };
 
 function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
@@ -491,7 +499,7 @@ const processRawMarkersData = (
   dependentAxisLogScale: boolean,
   vocabulary?: string[],
   overlayType?: 'categorical' | 'continuous'
-) => {
+): ChartMarkerPropsWithCounts[] => {
   return mapElements.map(
     ({
       geoAggregateValue,
@@ -546,12 +554,13 @@ const processRawMarkersData = (
                 }
             )
           : // however, if there is no overlay data
-            // provide a simple entity count marker in the palette's first colour
+            // provide a simple entity count marker in a neutral gray
             [
               {
                 label: 'unknown',
                 value: entityCount,
                 color: '#333',
+                count: entityCount,
               },
             ];
 
@@ -572,7 +581,7 @@ const processRawMarkersData = (
         markerLabel: mFormatter(count),
         dependentAxisRange: defaultDependentAxisRange,
         dependentAxisLogScale,
-      } as ChartMarkerPropsWithCounts;
+      };
     }
   );
 };
