@@ -28,6 +28,7 @@ import {
 import { fixVarIdLabel } from '../../../utils/visualization';
 import DataClient from '../../../api/DataClient';
 import { CorrelationAssayMetadataConfig } from '../../computations/plugins/correlationAssayMetadata';
+import { CorrelationAssayAssayConfig } from '../../computations/plugins/correlationAssayAssay';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 // end imports
 
@@ -87,8 +88,12 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
-  const computationConfiguration: CorrelationAssayMetadataConfig = computation
-    .descriptor.configuration as CorrelationAssayMetadataConfig;
+  // todo  allow this to also be CorrelationAssayAssayConfig
+  const computationConfiguration:
+    | CorrelationAssayMetadataConfig
+    | CorrelationAssayAssayConfig = computation.descriptor.configuration as
+    | CorrelationAssayMetadataConfig
+    | CorrelationAssayAssayConfig;
 
   // Get data from the compute job
   const data = usePromise(
@@ -145,7 +150,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     );
     if (uniqueLinkColors.length > twoColorPalette.length) {
       throw new Error(
-        `Found ${uniqueLinkColors.length} link colors but expected only two.`
+        `Found ${uniqueLinkColors.length} link colors but expected only ${twoColorPalette.length}.`
       );
     }
     // The link color sent from the backend should be either '-1' or '1', but we'll allow any two unique values. Assigning the domain
