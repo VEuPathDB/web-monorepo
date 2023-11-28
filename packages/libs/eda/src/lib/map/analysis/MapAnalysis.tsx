@@ -74,6 +74,7 @@ import { SideNavigationItems } from './MapSideNavigation';
 import {
   barMarkerPlugin,
   bubbleMarkerPlugin,
+  collectionBarMarkerPlugin,
   donutMarkerPlugin,
 } from './mapTypes';
 
@@ -86,6 +87,7 @@ import { FetchClientError } from '@veupathdb/http-utils';
 import { Page } from '@veupathdb/wdk-client/lib/Components';
 import { Link } from 'react-router-dom';
 import { AnalysisError } from '../../core/components/AnalysisError';
+import { EmotionJSX } from '@emotion/react/types/jsx-namespace';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -496,6 +498,42 @@ function MapAnalysisImpl(props: ImplProps) {
                     geoConfigs={geoConfigs}
                     configuration={activeMarkerConfiguration}
                     updateConfiguration={updateMarkerConfigurations as any}
+                    hideVizInputsAndControls={hideVizInputsAndControls}
+                    setHideVizInputsAndControls={setHideVizInputsAndControls}
+                  />
+                );
+              },
+            },
+          ],
+        },
+        {
+          type: 'subheading',
+          labelText: MapSideNavItemLabels.GroupedVariableMaps,
+          children: [
+            {
+              type: 'item',
+              id: 'collection-var-bar',
+              labelText: collectionBarMarkerPlugin.displayName,
+              leftIcon:
+                activeMarkerConfigurationType === 'collection-barplot' ? (
+                  <CheckIcon />
+                ) : null,
+              rightIcon: <BarPlotMarkerIcon style={{ height: '1.25em' }} />,
+              onActive: () => {
+                setActiveMarkerConfigurationType('collection-barplot');
+              },
+              renderSidePanelDrawer(apps): EmotionJSX.Element {
+                return (
+                  <collectionBarMarkerPlugin.ConfigPanelComponent
+                    apps={apps}
+                    analysisState={analysisState}
+                    appState={appState}
+                    studyId={studyId}
+                    filters={filters}
+                    studyEntities={studyEntities}
+                    geoConfigs={geoConfigs}
+                    configuration={activeMarkerConfiguration}
+                    updateConfiguration={updateMarkerConfigurations}
                     hideVizInputsAndControls={hideVizInputsAndControls}
                     setHideVizInputsAndControls={setHideVizInputsAndControls}
                   />
