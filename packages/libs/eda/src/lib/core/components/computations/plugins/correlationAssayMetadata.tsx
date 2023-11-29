@@ -47,6 +47,7 @@ export const plugin: ComputationPlugin = {
     bipartitenetwork: bipartiteNetworkVisualization.withOptions({
       getPlotSubtitle(config) {
         if (CorrelationAssayMetadataConfig.is(config)) {
+          // why do this here and not in the viz?
           return 'Showing links with an absolute correlation coefficient above '; // visualization will add in the actual value
         }
       },
