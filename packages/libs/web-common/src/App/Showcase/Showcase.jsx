@@ -9,7 +9,7 @@ import { AnalysisClient } from '@veupathdb/eda/lib/core/api/AnalysisClient';
 import { edaServiceUrl } from '../../config';
 
 export default function Showcase(props) {
-  const { analyses, content, prefix, attemptAction } = props;
+  const { content, prefix, attemptAction } = props;
   const {
     items,
     title,
@@ -91,7 +91,6 @@ export default function Showcase(props) {
           additionalClassName={contentType}
           renderCard={(card) => (
             <Card
-              analyses={analyses}
               card={card}
               attemptAction={attemptAction}
               prefix={prefix}
