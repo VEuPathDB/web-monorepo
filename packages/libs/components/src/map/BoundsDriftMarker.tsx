@@ -282,8 +282,6 @@ export default function BoundsDriftMarker({
 
   // add click events for highlighting markers
   const handleClick = (e: LeafletMouseEvent) => {
-    //DKDK left this for checking purpose: will remove later
-    console.log('e.originalEvent.detail =', e.originalEvent.detail);
     // check the number of mouse click and enable function for single click only
     if (e.originalEvent.detail === 1) {
       if (setSelectedMarkers) {
@@ -343,9 +341,9 @@ export default function BoundsDriftMarker({
       // new way to handle mouse events
       eventHandlers={{
         // debounce single click to be prevented when double clicking marker
-        click: (e: LeafletMouseEvent) => debounceSingleClick(e),
-        mouseover: (e: LeafletMouseEvent) => handleMouseOver(e),
-        mouseout: (e: LeafletMouseEvent) => handleMouseOut(e),
+        click: debounceSingleClick,
+        mouseover: handleMouseOver,
+        mouseout: handleMouseOut,
         dblclick: handleDoubleClick,
       }}
       zIndexOffset={zIndexOffset}
