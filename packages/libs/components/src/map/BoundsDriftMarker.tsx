@@ -5,6 +5,8 @@ import ReactLeafletDriftMarker from 'react-leaflet-drift-marker';
 import { MarkerProps, Bounds } from './Types';
 import L, { LeafletMouseEvent, LatLngBounds } from 'leaflet';
 
+import { debounce } from 'lodash';
+
 export interface BoundsDriftMarkerProps extends MarkerProps {
   bounds: Bounds;
   duration: number;
@@ -310,6 +312,9 @@ export default function BoundsDriftMarker({
     }
   };
 
+  // debounce single click to be prevented when double clicking marker
+  const debounceSingleClick = debounce(handleClick, 300);
+
   // set this marker as highlighted
   if (icon && selectedMarkers?.find((id) => id === props.id))
     icon.options.className += ' highlight-marker';
@@ -335,9 +340,10 @@ export default function BoundsDriftMarker({
       position={position}
       // new way to handle mouse events
       eventHandlers={{
-        click: (e: LeafletMouseEvent) => handleClick(e),
-        mouseover: (e: LeafletMouseEvent) => handleMouseOver(e),
-        mouseout: (e: LeafletMouseEvent) => handleMouseOut(e),
+        // debounce single click to be prevented when double clicking marker
+        click: debounceSingleClick,
+        mouseover: handleMouseOver,
+        mouseout: handleMouseOut,
         dblclick: handleDoubleClick,
       }}
       zIndexOffset={zIndexOffset}
