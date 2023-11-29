@@ -199,7 +199,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const plotSubtitle =
     options?.getPlotSubtitle?.(computation.descriptor.configuration) +
     DEFAULT_CORRELATION_COEF_THRESHOLD.toString() +
-    'and a p-value below ' +
+    ' and a p-value below ' +
     DEFAULT_SIGNIFICANCE_THRESHOLD.toString();
 
   const finalPlotContainerStyles = useMemo(
