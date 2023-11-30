@@ -68,15 +68,8 @@ function CorrelationAssayMetadataConfigDescriptionComponent({
     Computation
   );
 
-  const { configuration } = computation.descriptor;
-  const collectionVariable =
-    'collectionVariable' in configuration
-      ? configuration.collectionVariable
-      : undefined;
-  const correlationMethod =
-    'correlationMethod' in configuration
-      ? configuration.correlationMethod
-      : undefined;
+  const { collectionVariable, correlationMethod } =
+    computation.descriptor.configuration;
 
   const updatedCollectionVariable = collections.find((collectionVar) =>
     isEqual(
