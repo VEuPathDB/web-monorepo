@@ -15,7 +15,10 @@ import {
 } from '../api/DataClient';
 import { Bounds } from '@veupathdb/components/lib/map/Types';
 import { Filter } from '../types/filter';
-import { VariableDescriptor } from '../types/variable';
+import {
+  VariableDescriptor,
+  VariableCollectionDescriptor,
+} from '../types/variable';
 import { findEntityAndVariable } from './study-metadata';
 import { variableDisplayWithUnit } from './variable-display';
 import { InputSpec } from '../components/visualizations/InputVariables';
@@ -226,6 +229,14 @@ export function vocabularyWithMissingData(
 
 export function variablesAreUnique(vars: (Variable | undefined)[]): boolean {
   const defined = vars.filter((item) => item != null);
+  const unique = defined.filter((item, i, ar) => ar.indexOf(item) === i);
+  return defined.length === unique.length;
+}
+
+export function variableCollectionsAreUnique(
+  variableCollections: (VariableCollectionDescriptor | undefined)[]
+): boolean {
+  const defined = variableCollections.filter((item) => item != null);
   const unique = defined.filter((item, i, ar) => ar.indexOf(item) === i);
   return defined.length === unique.length;
 }

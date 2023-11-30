@@ -12,6 +12,8 @@ import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { H6 } from '@veupathdb/coreui';
 import { bipartiteNetworkVisualization } from '../../visualizations/implementations/BipartiteNetworkVisualization';
+import { variableCollectionsAreUnique } from '../../../utils/visualization';
+import PluginError from '../../visualizations/PluginError';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -38,12 +40,33 @@ export const CorrelationAssayAssayConfig = t.type({
   correlationMethod: t.string,
 });
 
+export function isCorrelationAssayAssayConfig(
+  object: any
+): object is CorrelationAssayAssayConfig {
+  if (!object) {
+    return false;
+  }
+  return (
+    'collectionVariable1' in object &&
+    'collectionVariable2' in object &&
+    'correlationMethod' in object
+  );
+}
+
 export const plugin: ComputationPlugin = {
   configurationComponent: CorrelationAssayAssayConfiguration,
   configurationDescriptionComponent:
     CorrelationAssayAssayConfigDescriptionComponent,
   createDefaultConfiguration: () => undefined,
-  isConfigurationValid: CorrelationAssayAssayConfig.is,
+  isConfigurationValid: (configuration) => {
+    return (
+      isCorrelationAssayAssayConfig(configuration) &&
+      variableCollectionsAreUnique([
+        configuration.collectionVariable1,
+        configuration.collectionVariable2,
+      ])
+    );
+  },
   visualizationPlugins: {
     bipartitenetwork: bipartiteNetworkVisualization, // Must match name in data service and in visualization.tsx
   },
@@ -205,41 +228,55 @@ export function CorrelationAssayAssayConfiguration(
         stepTitle: `Configure ${computationAppOverview.displayName}`,
       }}
     >
-      <div className={cx()}>
-        <div className={cx('-CorrelationAssayAssayOuterConfigContainer')}>
-          <H6>Input Data</H6>
-          <div className={cx('-InputContainer')}>
-            <span>Data 1</span>
-            <SingleSelect
-              value={
-                selectedCollectionVar1
-                  ? selectedCollectionVar1.value
-                  : 'Select the data'
-              }
-              buttonDisplayContent={
-                selectedCollectionVar1
-                  ? selectedCollectionVar1.display
-                  : 'Select the data'
-              }
-              items={collectionVarItems}
-              onSelect={partial(changeConfigHandler, 'collectionVariable1')}
-            />
-            <span>Data 2</span>
-            <SingleSelect
-              value={
-                selectedCollectionVar2
-                  ? selectedCollectionVar2.value
-                  : 'Select the data'
-              }
-              buttonDisplayContent={
-                selectedCollectionVar2
-                  ? selectedCollectionVar2.display
-                  : 'Select the data'
-              }
-              items={collectionVarItems}
-              onSelect={partial(changeConfigHandler, 'collectionVariable2')}
-            />
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div className={cx()}>
+          <div className={cx('-CorrelationAssayAssayOuterConfigContainer')}>
+            <H6>Input Data</H6>
+            <div className={cx('-InputContainer')}>
+              <span>Data 1</span>
+              <SingleSelect
+                value={
+                  selectedCollectionVar1
+                    ? selectedCollectionVar1.value
+                    : 'Select the data'
+                }
+                buttonDisplayContent={
+                  selectedCollectionVar1
+                    ? selectedCollectionVar1.display
+                    : 'Select the data'
+                }
+                items={collectionVarItems}
+                onSelect={partial(changeConfigHandler, 'collectionVariable1')}
+              />
+              <span>Data 2</span>
+              <SingleSelect
+                value={
+                  selectedCollectionVar2
+                    ? selectedCollectionVar2.value
+                    : 'Select the data'
+                }
+                buttonDisplayContent={
+                  selectedCollectionVar2
+                    ? selectedCollectionVar2.display
+                    : 'Select the data'
+                }
+                items={collectionVarItems}
+                onSelect={partial(changeConfigHandler, 'collectionVariable2')}
+              />
+            </div>
           </div>
+        </div>
+        <div>
+          <PluginError
+            error={
+              !variableCollectionsAreUnique([
+                selectedCollectionVar1?.value,
+                selectedCollectionVar2?.value,
+              ])
+                ? 'Input data must be unique. Please select different data.'
+                : undefined
+            }
+          />
         </div>
       </div>
     </ComputationStepContainer>
