@@ -94,7 +94,7 @@ function CorrelationAssayMetadataConfigDescriptionComponent({
         Data:{' '}
         <span>
           {updatedCollectionVariable ? (
-            `${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}`
+            `${updatedCollectionVariable.entityDisplayName} > ${updatedCollectionVariable.displayName}`
           ) : (
             <i>Not selected</i>
           )}

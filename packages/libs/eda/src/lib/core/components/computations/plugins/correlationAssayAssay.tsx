@@ -68,7 +68,8 @@ function CorrelationAssayAssayConfigDescriptionComponent({
     Computation
   );
 
-  const { collectionVariable1, collectionVariable2, correlationMethod } = computation.descriptor.configuration;
+  const { collectionVariable1, collectionVariable2, correlationMethod } =
+    computation.descriptor.configuration;
 
   const updatedCollectionVariable1 = collections.find((collectionVar) =>
     isEqual(
@@ -96,7 +97,7 @@ function CorrelationAssayAssayConfigDescriptionComponent({
         Data 1:{' '}
         <span>
           {updatedCollectionVariable1 ? (
-            `${updatedCollectionVariable1?.entityDisplayName} > ${updatedCollectionVariable1?.displayName}`
+            `${updatedCollectionVariable1.entityDisplayName} > ${updatedCollectionVariable1.displayName}`
           ) : (
             <i>Not selected</i>
           )}
@@ -106,7 +107,7 @@ function CorrelationAssayAssayConfigDescriptionComponent({
         Data 2:{' '}
         <span>
           {updatedCollectionVariable2 ? (
-            `${updatedCollectionVariable2?.entityDisplayName} > ${updatedCollectionVariable2?.displayName}`
+            `${updatedCollectionVariable2.entityDisplayName} > ${updatedCollectionVariable2.displayName}`
           ) : (
             <i>Not selected</i>
           )}
