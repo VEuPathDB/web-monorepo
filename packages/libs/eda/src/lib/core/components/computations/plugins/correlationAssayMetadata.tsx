@@ -44,14 +44,7 @@ export const plugin: ComputationPlugin = {
   createDefaultConfiguration: () => undefined,
   isConfigurationValid: CorrelationAssayMetadataConfig.is,
   visualizationPlugins: {
-    bipartitenetwork: bipartiteNetworkVisualization.withOptions({
-      getPlotSubtitle(config) {
-        if (CorrelationAssayMetadataConfig.is(config)) {
-          // why do this here and not in the viz?
-          return ' '; // visualization will add in the actual value
-        }
-      },
-    }), // Must match name in data service and in visualization.tsx
+    bipartitenetwork: bipartiteNetworkVisualization, // Must match name in data service and in visualization.tsx
   },
 };
 
