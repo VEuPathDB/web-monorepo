@@ -45,13 +45,7 @@ export const plugin: ComputationPlugin = {
   createDefaultConfiguration: () => undefined,
   isConfigurationValid: CorrelationAssayAssayConfig.is,
   visualizationPlugins: {
-    bipartitenetwork: bipartiteNetworkVisualization.withOptions({
-      getPlotSubtitle(config) {
-        if (CorrelationAssayAssayConfig.is(config)) {
-          return 'Showing links with an absolute correlation coefficient above '; // visualization will add in the actual value
-        }
-      },
-    }), // Must match name in data service and in visualization.tsx
+    bipartitenetwork: bipartiteNetworkVisualization, // Must match name in data service and in visualization.tsx
   },
 };
 

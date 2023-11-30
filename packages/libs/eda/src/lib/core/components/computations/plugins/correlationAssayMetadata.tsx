@@ -48,7 +48,7 @@ export const plugin: ComputationPlugin = {
       getPlotSubtitle(config) {
         if (CorrelationAssayMetadataConfig.is(config)) {
           // why do this here and not in the viz?
-          return 'Showing links with an absolute correlation coefficient above '; // visualization will add in the actual value
+          return ' '; // visualization will add in the actual value
         }
       },
     }), // Must match name in data service and in visualization.tsx
