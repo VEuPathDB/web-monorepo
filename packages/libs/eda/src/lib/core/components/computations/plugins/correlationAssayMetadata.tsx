@@ -145,7 +145,7 @@ export function CorrelationAssayMetadataConfiguration(
   );
 
   const selectedCollectionVar = useMemo(() => {
-    if (configuration && 'collectionVariable' in configuration) {
+    if (configuration.collectionVariable) {
       const selectedItem = collectionVarItems.find((item) =>
         isEqual(item.value, {
           collectionId: configuration.collectionVariable.collectionId,

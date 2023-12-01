@@ -184,7 +184,7 @@ export function CorrelationAssayAssayConfiguration(
     }
   }, [collectionVarItems, configuration]);
   const selectedCollectionVar2 = useMemo(() => {
-    if (configuration && 'collectionVariable2' in configuration) {
+    if (configuration.collectionVariable2) {
       const selectedItem = collectionVarItems.find((item) =>
         isEqual(item.value, {
           collectionId: configuration.collectionVariable2.collectionId,
