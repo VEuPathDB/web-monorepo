@@ -52,6 +52,8 @@ export function removeAbsoluteAbundanceCollectionVariableTreeNodes(
   return variableCollections.filter((collectionVariable) =>
     collectionVariable.normalizationMethod
       ? collectionVariable.normalizationMethod !== 'NULL' ||
+        // most data we want to keep has been normalized, except pathways
+        // should consider better ways to do this in the future.
         collectionVariable.displayName?.includes('pathway')
       : true
   ); // DIY may not have the normalizationMethod annotations, but we still want those datasets to pass.
