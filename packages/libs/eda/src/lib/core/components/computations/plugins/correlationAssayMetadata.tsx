@@ -6,6 +6,8 @@ import {
   useConfigChangeHandler,
   assertComputationWithConfig,
   findCollectionVariableTreeNodeFromDescriptor,
+  removeAbsoluteAbundanceCollectionVariableTreeNodes,
+  makeVariableCollectionItems,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
@@ -135,24 +137,12 @@ export function CorrelationAssayMetadataConfiguration(
       visualizationId
     );
 
-  const collectionVarItems = useMemo(() => {
-    // Show all collections except for absolute abundance.
-    return collections
-      .filter((collectionVar) => {
-        return collectionVar.normalizationMethod
-          ? collectionVar.normalizationMethod !== 'NULL' ||
-              collectionVar.displayName?.includes('pathway')
-          : true; // DIY may not have the normalizationMethod annotations, but we still want those datasets to pass.
-      })
-      .map((collectionVar) => ({
-        value: {
-          collectionId: collectionVar.id,
-          entityId: collectionVar.entityId,
-        },
-        display:
-          collectionVar.entityDisplayName + ' > ' + collectionVar.displayName,
-      }));
-  }, [collections]);
+  const keepCollections =
+    removeAbsoluteAbundanceCollectionVariableTreeNodes(collections);
+  const collectionVarItems = useMemo(
+    () => makeVariableCollectionItems(keepCollections, undefined),
+    [keepCollections]
+  );
 
   const selectedCollectionVar = useMemo(() => {
     if (configuration && 'collectionVariable' in configuration) {

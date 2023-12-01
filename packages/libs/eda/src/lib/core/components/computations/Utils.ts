@@ -8,6 +8,55 @@ import { AnalysisState, CollectionVariableTreeNode } from '../..';
 import { RouterChildContext, useRouteMatch, useHistory } from 'react-router';
 import { VariableCollectionDescriptor } from '../../types/variable';
 
+export type VariableCollectionItem = {
+  value: { collectionId: string; entityId: string | undefined };
+  disabled?: boolean;
+  display: string;
+};
+
+/**
+ * Generates a collection of variable items based on the provided variable collections.
+ *
+ * @param {CollectionVariableTreeNode[]} variableCollections - An array of variable collection nodes.
+ * @param {VariableCollectionDescriptor[]} disabledVariableCollections - An array of disabled variable collection nodes.
+ * @return {VariableCollectionItem[]} An array of variable collection items.
+ */
+export function makeVariableCollectionItems(
+  variableCollections: CollectionVariableTreeNode[],
+  disabledVariableCollections: VariableCollectionDescriptor[] | undefined
+): VariableCollectionItem[] {
+  return variableCollections.map((variableCollection) => ({
+    value: {
+      collectionId: variableCollection.id,
+      entityId: variableCollection.entityId,
+    },
+    disabled: disabledVariableCollections?.some((disabledVariableCollection) =>
+      isEqual(disabledVariableCollection, variableCollection)
+    ),
+    display:
+      variableCollection.entityDisplayName +
+      ' > ' +
+      variableCollection.displayName,
+  }));
+}
+
+/**
+ * Removes absolute abundance collection variable tree nodes based on certain conditions.
+ *
+ * @param {CollectionVariableTreeNode[]} variableCollections - The array of collection variable tree nodes.
+ * @return {CollectionVariableTreeNode[]} The filtered array of collection variable tree nodes.
+ */
+export function removeAbsoluteAbundanceCollectionVariableTreeNodes(
+  variableCollections: CollectionVariableTreeNode[]
+): CollectionVariableTreeNode[] {
+  return variableCollections.filter((collectionVariable) =>
+    collectionVariable.normalizationMethod
+      ? collectionVariable.normalizationMethod !== 'NULL' ||
+        collectionVariable.displayName?.includes('pathway')
+      : true
+  ); // DIY may not have the normalizationMethod annotations, but we still want those datasets to pass.
+}
+
 /**
  * Find a specific CollectionVariableTreeNode from a given array of variableCollections
  * based on the provided variableCollectionDescriptor.
