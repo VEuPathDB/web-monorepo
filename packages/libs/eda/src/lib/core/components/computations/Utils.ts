@@ -52,8 +52,8 @@ export function removeAbsoluteAbundanceCollectionVariableTreeNodes(
   return variableCollections.filter((collectionVariable) =>
     collectionVariable.normalizationMethod
       ? collectionVariable.normalizationMethod !== 'NULL' ||
-        // most data we want to keep has been normalized, except pathways
-        // should consider better ways to do this in the future.
+        // most data we want to keep has been normalized, except pathway coverage data which were leaving apparently
+        // should consider better ways to do this in the future, or if we really want to keep the coverage data.
         collectionVariable.displayName?.includes('pathway')
       : true
   ); // DIY may not have the normalizationMethod annotations, but we still want those datasets to pass.
@@ -69,13 +69,35 @@ export function removeAbsoluteAbundanceCollectionVariableTreeNodes(
  */
 export function findCollectionVariableTreeNodeFromDescriptor(
   variableCollections: CollectionVariableTreeNode[],
-  variableCollectionDescriptor: VariableCollectionDescriptor
+  variableCollectionDescriptor: VariableCollectionDescriptor | undefined
 ): CollectionVariableTreeNode | undefined {
   return variableCollections.find((collectionVariable) =>
     isEqual(
       {
         collectionId: collectionVariable.id,
         entityId: collectionVariable.entityId,
+      },
+      variableCollectionDescriptor
+    )
+  );
+}
+
+/**
+ * Finds a variable collection item from a given descriptor in an array of variable collection items.
+ *
+ * @param {VariableCollectionItem[]} variableCollections - The array of variable collection items to search through.
+ * @param {VariableCollectionDescriptor} variableCollectionDescriptor - The descriptor to match against.
+ * @return {VariableCollectionItem | undefined} The found variable collection item, or undefined if not found.
+ */
+export function findVariableCollectionItemFromDescriptor(
+  variableCollections: VariableCollectionItem[],
+  variableCollectionDescriptor: VariableCollectionDescriptor | undefined
+): VariableCollectionItem | undefined {
+  return variableCollections.find((collectionVariable) =>
+    isEqual(
+      {
+        collectionId: collectionVariable.value.collectionId,
+        entityId: collectionVariable.value.entityId,
       },
       variableCollectionDescriptor
     )

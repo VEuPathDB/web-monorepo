@@ -8,6 +8,7 @@ import {
   findCollectionVariableTreeNodeFromDescriptor,
   removeAbsoluteAbundanceCollectionVariableTreeNodes,
   makeVariableCollectionItems,
+  findVariableCollectionItemFromDescriptor,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
@@ -145,16 +146,11 @@ export function CorrelationAssayMetadataConfiguration(
   );
 
   const selectedCollectionVar = useMemo(() => {
-    if (configuration.collectionVariable) {
-      const selectedItem = collectionVarItems.find((item) =>
-        isEqual(item.value, {
-          collectionId: configuration.collectionVariable.collectionId,
-          entityId: configuration.collectionVariable.entityId,
-        })
-      );
-      return selectedItem;
-    }
-  }, [collectionVarItems, configuration]);
+    return findVariableCollectionItemFromDescriptor(
+      collectionVarItems,
+      configuration.collectionVariable
+    );
+  }, [configuration.collectionVariable, collectionVarItems]);
 
   return (
     <ComputationStepContainer
