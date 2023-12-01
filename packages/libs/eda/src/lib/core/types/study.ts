@@ -210,6 +210,7 @@ export const CollectionVariableTreeNode = t.intersection([
   t.type({
     dataShape: t.string,
     id: t.string,
+    entityId: t.string,
     memberVariableIds: t.array(t.string),
     type: t.string,
   }),
@@ -218,7 +219,6 @@ export const CollectionVariableTreeNode = t.intersection([
     imputeZero: t.boolean,
     precision: t.number,
     units: t.string,
-    entityId: t.string,
     entityDisplayName: t.string,
     isCompositional: t.boolean,
     isProportion: t.boolean,

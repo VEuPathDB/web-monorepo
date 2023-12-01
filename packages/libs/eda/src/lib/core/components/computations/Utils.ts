@@ -9,7 +9,7 @@ import { RouterChildContext, useRouteMatch, useHistory } from 'react-router';
 import { VariableCollectionDescriptor } from '../../types/variable';
 
 export type VariableCollectionItem = {
-  value: { collectionId: string; entityId: string | undefined };
+  value: VariableCollectionDescriptor;
   disabled?: boolean;
   display: string;
 };
