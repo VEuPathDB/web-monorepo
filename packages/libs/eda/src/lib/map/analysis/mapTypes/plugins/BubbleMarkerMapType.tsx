@@ -59,15 +59,26 @@ import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
 
 const displayName = 'Bubbles';
 
-export const plugin: MapTypePlugin = {
+export const plugin: MapTypePlugin<BubbleMarkerConfiguration> = {
   displayName,
+  getDefaultConfig({ defaultVariable }) {
+    return {
+      type: 'bubble',
+      selectedVariable: defaultVariable,
+      aggregator: 'mean',
+      numeratorValues: undefined,
+      denominatorValues: undefined,
+    };
+  },
   ConfigPanelComponent: BubbleMapConfigurationPanel,
   MapLayerComponent: BubbleMapLayer,
   MapOverlayComponent: BubbleLegends,
   MapTypeHeaderDetails,
 };
 
-function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
+function BubbleMapConfigurationPanel(
+  props: MapTypeConfigPanelProps<BubbleMarkerConfiguration>
+) {
   const {
     apps,
     analysisState,
@@ -177,7 +188,9 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
 /**
  * Renders marker and legend components
  */
-function BubbleMapLayer(props: MapTypeMapLayerProps) {
+function BubbleMapLayer(
+  props: MapTypeMapLayerProps<BubbleMarkerConfiguration>
+) {
   const { studyId, filters, appState, configuration, geoConfigs } = props;
   const markersData = useMarkerData({
     boundsZoomLevel: appState.boundsZoomLevel,
@@ -211,7 +224,7 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
   );
 }
 
-function BubbleLegends(props: MapTypeMapLayerProps) {
+function BubbleLegends(props: MapTypeMapLayerProps<BubbleMarkerConfiguration>) {
   const { studyId, filters, geoConfigs, appState, updateConfiguration } = props;
   const configuration = props.configuration as BubbleMarkerConfiguration;
   const findEntityAndVariable = useFindEntityAndVariable();
@@ -295,7 +308,9 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
   );
 }
 
-function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
+function MapTypeHeaderDetails(
+  props: MapTypeMapLayerProps<BubbleMarkerConfiguration>
+) {
   const configuration = props.configuration as BubbleMarkerConfiguration;
   const markerDataResponse = useMarkerData({
     studyId: props.studyId,

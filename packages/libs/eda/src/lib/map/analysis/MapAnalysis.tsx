@@ -83,9 +83,7 @@ import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { MapTypeMapLayerProps } from './mapTypes/types';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
 import AnalysisNameDialog from '../../workspace/AnalysisNameDialog';
-import { FetchClientError } from '@veupathdb/http-utils';
 import { Page } from '@veupathdb/wdk-client/lib/Components';
-import { Link } from 'react-router-dom';
 import { AnalysisError } from '../../core/components/AnalysisError';
 import { EmotionJSX } from '@emotion/react/types/jsx-namespace';
 
@@ -439,7 +437,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     studyEntities={studyEntities}
                     geoConfigs={geoConfigs}
                     configuration={activeMarkerConfiguration}
-                    updateConfiguration={updateMarkerConfigurations as any}
+                    updateConfiguration={updateMarkerConfigurations}
                     hideVizInputsAndControls={hideVizInputsAndControls}
                     setHideVizInputsAndControls={setHideVizInputsAndControls}
                   />
@@ -469,7 +467,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     studyEntities={studyEntities}
                     geoConfigs={geoConfigs}
                     configuration={activeMarkerConfiguration}
-                    updateConfiguration={updateMarkerConfigurations as any}
+                    updateConfiguration={updateMarkerConfigurations}
                     hideVizInputsAndControls={hideVizInputsAndControls}
                     setHideVizInputsAndControls={setHideVizInputsAndControls}
                   />
@@ -497,7 +495,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     studyEntities={studyEntities}
                     geoConfigs={geoConfigs}
                     configuration={activeMarkerConfiguration}
-                    updateConfiguration={updateMarkerConfigurations as any}
+                    updateConfiguration={updateMarkerConfigurations}
                     hideVizInputsAndControls={hideVizInputsAndControls}
                     setHideVizInputsAndControls={setHideVizInputsAndControls}
                   />
@@ -802,6 +800,7 @@ function MapAnalysisImpl(props: ImplProps) {
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
+  // TODO Add `type` to plugin def and use to look up, so we can remove hard coded strings.
   const activeMapTypePlugin =
     activeMarkerConfiguration?.type === 'barplot'
       ? barMarkerPlugin
@@ -818,22 +817,23 @@ function MapAnalysisImpl(props: ImplProps) {
         const activeSideNavigationItemMenu =
           activePanelItem?.renderSidePanelDrawer(apps) ?? null;
 
-        const mapTypeMapLayerProps: MapTypeMapLayerProps = {
-          apps,
-          analysisState,
-          appState,
-          studyId,
-          filters: filtersIncludingTimeSlider,
-          studyEntities,
-          geoConfigs,
-          configuration: activeMarkerConfiguration,
-          updateConfiguration: updateMarkerConfigurations as any,
-          filtersIncludingViewport: filtersIncludingViewportAndTimeSlider,
-          totalCounts,
-          filteredCounts,
-          hideVizInputsAndControls,
-          setHideVizInputsAndControls,
-        };
+        const mapTypeMapLayerProps: MapTypeMapLayerProps<MarkerConfiguration> =
+          {
+            apps,
+            analysisState,
+            appState,
+            studyId,
+            filters: filtersIncludingTimeSlider,
+            studyEntities,
+            geoConfigs,
+            configuration: activeMarkerConfiguration,
+            updateConfiguration: updateMarkerConfigurations,
+            filtersIncludingViewport: filtersIncludingViewportAndTimeSlider,
+            totalCounts,
+            filteredCounts,
+            hideVizInputsAndControls,
+            setHideVizInputsAndControls,
+          };
 
         return (
           <ShowHideVariableContextProvider>

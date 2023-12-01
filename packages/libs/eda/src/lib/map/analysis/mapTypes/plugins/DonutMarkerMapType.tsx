@@ -59,15 +59,26 @@ import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
 
 const displayName = 'Donuts';
 
-export const plugin: MapTypePlugin = {
+export const plugin: MapTypePlugin<PieMarkerConfiguration> = {
   displayName,
+  getDefaultConfig({ defaultVariable }) {
+    return {
+      type: 'pie',
+      selectedVariable: defaultVariable,
+      selectedValues: undefined,
+      binningMethod: undefined,
+      selectedCountsOption: 'filtered',
+    };
+  },
   ConfigPanelComponent,
   MapLayerComponent,
   MapOverlayComponent,
   MapTypeHeaderDetails,
 };
 
-function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
+function ConfigPanelComponent(
+  props: MapTypeConfigPanelProps<PieMarkerConfiguration>
+) {
   const {
     apps,
     analysisState,
@@ -286,7 +297,9 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   );
 }
 
-function MapLayerComponent(props: MapTypeMapLayerProps) {
+function MapLayerComponent(
+  props: MapTypeMapLayerProps<PieMarkerConfiguration>
+) {
   const { selectedVariable, binningMethod, selectedValues } =
     props.configuration as PieMarkerConfiguration;
   const markerDataResponse = useMarkerData({
@@ -325,7 +338,9 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
   );
 }
 
-function MapOverlayComponent(props: MapTypeMapLayerProps) {
+function MapOverlayComponent(
+  props: MapTypeMapLayerProps<PieMarkerConfiguration>
+) {
   const {
     studyId,
     filters,
@@ -407,7 +422,9 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
   );
 }
 
-function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
+function MapTypeHeaderDetails(
+  props: MapTypeMapLayerProps<PieMarkerConfiguration>
+) {
   const { selectedVariable, binningMethod, selectedValues } =
     props.configuration as PieMarkerConfiguration;
   const markerDataResponse = useMarkerData({

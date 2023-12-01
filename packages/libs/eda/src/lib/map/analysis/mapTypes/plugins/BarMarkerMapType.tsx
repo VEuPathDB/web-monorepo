@@ -64,8 +64,19 @@ import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
 const displayName = 'Bar plots';
 
-export const plugin: MapTypePlugin = {
+export const plugin: MapTypePlugin<BarPlotMarkerConfiguration> = {
   displayName,
+  getDefaultConfig({ defaultVariable }) {
+    return {
+      type: 'barplot',
+      selectedPlotMode: 'count',
+      selectedVariable: defaultVariable,
+      selectedValues: undefined,
+      binningMethod: undefined,
+      dependentAxisLogScale: false,
+      selectedCountsOption: 'filtered',
+    };
+  },
   ConfigPanelComponent,
   MapLayerComponent,
   MapOverlayComponent,
@@ -80,7 +91,9 @@ type ChartMarkerPropsWithCounts = Omit<ChartMarkerProps, 'data'> & {
   data: ChartMarkerDataWithCounts[];
 };
 
-function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
+function ConfigPanelComponent(
+  props: MapTypeConfigPanelProps<BarPlotMarkerConfiguration>
+) {
   const {
     apps,
     analysisState,
@@ -322,7 +335,9 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   );
 }
 
-function MapLayerComponent(props: MapTypeMapLayerProps) {
+function MapLayerComponent(
+  props: MapTypeMapLayerProps<BarPlotMarkerConfiguration>
+) {
   const {
     studyEntities,
     studyId,
@@ -375,7 +390,9 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
   );
 }
 
-function MapOverlayComponent(props: MapTypeMapLayerProps) {
+function MapOverlayComponent(
+  props: MapTypeMapLayerProps<BarPlotMarkerConfiguration>
+) {
   const {
     studyEntities,
     studyId,
@@ -454,7 +471,9 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
   );
 }
 
-function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
+function MapTypeHeaderDetails(
+  props: MapTypeMapLayerProps<BarPlotMarkerConfiguration>
+) {
   const {
     selectedVariable,
     binningMethod,
