@@ -181,6 +181,7 @@ export function useStudyEntities(filters?: Filter[]) {
                             // Otherwise if >= 12 months, use month bins, etc
                             return diff >= 12;
                           }
+                          return false;
                         }
                       ) ?? 'day') as TimeUnit;
 
