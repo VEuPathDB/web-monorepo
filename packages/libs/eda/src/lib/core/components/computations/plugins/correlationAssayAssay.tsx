@@ -46,19 +46,6 @@ export const CorrelationAssayAssayConfig = t.type({
   correlationMethod: t.string,
 });
 
-export function isCorrelationAssayAssayConfig(
-  object: any
-): object is CorrelationAssayAssayConfig {
-  if (!object) {
-    return false;
-  }
-  return (
-    'collectionVariable1' in object &&
-    'collectionVariable2' in object &&
-    'correlationMethod' in object
-  );
-}
-
 export const plugin: ComputationPlugin = {
   configurationComponent: CorrelationAssayAssayConfiguration,
   configurationDescriptionComponent:
@@ -66,7 +53,7 @@ export const plugin: ComputationPlugin = {
   createDefaultConfiguration: () => undefined,
   isConfigurationValid: (configuration) => {
     return (
-      isCorrelationAssayAssayConfig(configuration) &&
+      CorrelationAssayAssayConfig.is(configuration) &&
       variableCollectionsAreUnique([
         configuration.collectionVariable1,
         configuration.collectionVariable2,
