@@ -1,7 +1,7 @@
 import { useCollectionVariables, useStudyMetadata } from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { isEqual, partial } from 'lodash';
+import { partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
