@@ -4,8 +4,32 @@ import * as t from 'io-ts';
 import { pipe } from 'fp-ts/lib/function';
 import { fold } from 'fp-ts/lib/Either';
 import { isEqual } from 'lodash';
-import { AnalysisState } from '../..';
+import { AnalysisState, CollectionVariableTreeNode } from '../..';
 import { RouterChildContext, useRouteMatch, useHistory } from 'react-router';
+import { VariableCollectionDescriptor } from '../../types/variable';
+
+/**
+ * Find a specific CollectionVariableTreeNode from a given array of variableCollections
+ * based on the provided variableCollectionDescriptor.
+ *
+ * @param {CollectionVariableTreeNode[]} variableCollections - The array of variableCollections to search through.
+ * @param {VariableCollectionDescriptor} variableCollectionDescriptor - The descriptor to match against.
+ * @return {CollectionVariableTreeNode | undefined} - The matched CollectionVariableTreeNode, or undefined if not found.
+ */
+export function findCollectionVariableTreeNodeFromDescriptor(
+  variableCollections: CollectionVariableTreeNode[],
+  variableCollectionDescriptor: VariableCollectionDescriptor
+): CollectionVariableTreeNode | undefined {
+  return variableCollections.find((collectionVariable) =>
+    isEqual(
+      {
+        collectionId: collectionVariable.id,
+        entityId: collectionVariable.entityId,
+      },
+      variableCollectionDescriptor
+    )
+  );
+}
 
 /**
  * Creates a new `Computation` with a unique id

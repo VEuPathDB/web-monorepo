@@ -2,7 +2,11 @@ import { useCollectionVariables, useStudyMetadata } from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { isEqual, partial } from 'lodash';
-import { useConfigChangeHandler, assertComputationWithConfig } from '../Utils';
+import {
+  useConfigChangeHandler,
+  assertComputationWithConfig,
+  findCollectionVariableTreeNodeFromDescriptor,
+} from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
@@ -64,15 +68,11 @@ function CorrelationAssayMetadataConfigDescriptionComponent({
   const { collectionVariable, correlationMethod } =
     computation.descriptor.configuration;
 
-  const updatedCollectionVariable = collections.find((collectionVar) =>
-    isEqual(
-      {
-        collectionId: collectionVar.id,
-        entityId: collectionVar.entityId,
-      },
+  const updatedCollectionVariable =
+    findCollectionVariableTreeNodeFromDescriptor(
+      collections,
       collectionVariable
-    )
-  );
+    );
 
   return (
     <div className="ConfigDescriptionContainer">

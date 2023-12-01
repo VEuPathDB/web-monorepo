@@ -2,7 +2,11 @@ import { useCollectionVariables, useStudyMetadata } from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { isEqual, partial } from 'lodash';
-import { useConfigChangeHandler, assertComputationWithConfig } from '../Utils';
+import {
+  useConfigChangeHandler,
+  assertComputationWithConfig,
+  findCollectionVariableTreeNodeFromDescriptor,
+} from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
@@ -88,24 +92,16 @@ function CorrelationAssayAssayConfigDescriptionComponent({
   const { collectionVariable1, collectionVariable2, correlationMethod } =
     computation.descriptor.configuration;
 
-  const updatedCollectionVariable1 = collections.find((collectionVar) =>
-    isEqual(
-      {
-        collectionId: collectionVar.id,
-        entityId: collectionVar.entityId,
-      },
+  const collectionVariableTreeNode1 =
+    findCollectionVariableTreeNodeFromDescriptor(
+      collections,
       collectionVariable1
-    )
-  );
-  const updatedCollectionVariable2 = collections.find((collectionVar) =>
-    isEqual(
-      {
-        collectionId: collectionVar.id,
-        entityId: collectionVar.entityId,
-      },
+    );
+  const collectionVariableTreeNode2 =
+    findCollectionVariableTreeNodeFromDescriptor(
+      collections,
       collectionVariable2
-    )
-  );
+    );
 
   // Data 1 and Data 2 are placeholder labels, we can decide what to call them later.
   return (
@@ -113,8 +109,8 @@ function CorrelationAssayAssayConfigDescriptionComponent({
       <h4>
         Data 1:{' '}
         <span>
-          {updatedCollectionVariable1 ? (
-            `${updatedCollectionVariable1.entityDisplayName} > ${updatedCollectionVariable1.displayName}`
+          {collectionVariableTreeNode1 ? (
+            `${collectionVariableTreeNode1.entityDisplayName} > ${collectionVariableTreeNode1.displayName}`
           ) : (
             <i>Not selected</i>
           )}
@@ -123,8 +119,8 @@ function CorrelationAssayAssayConfigDescriptionComponent({
       <h4>
         Data 2:{' '}
         <span>
-          {updatedCollectionVariable2 ? (
-            `${updatedCollectionVariable2.entityDisplayName} > ${updatedCollectionVariable2.displayName}`
+          {collectionVariableTreeNode2 ? (
+            `${collectionVariableTreeNode2.entityDisplayName} > ${collectionVariableTreeNode2.displayName}`
           ) : (
             <i>Not selected</i>
           )}
