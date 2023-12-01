@@ -724,9 +724,6 @@ const useHeaderMenuItems = (
           display: <>Download data files</>,
           type: 'reactRoute',
           url: '/downloads',
-          metadata: {
-            exclude: [EuPathDB],
-          },
         },
         {
           key: 'mahpic-data',
