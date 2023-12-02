@@ -22,7 +22,6 @@ import {
 import { useCallback, useMemo } from 'react';
 import {
   entityTreeToArray,
-  findCollections,
   findEntityAndVariable,
   findEntityAndVariableCollection,
   findVariableCollections,
@@ -124,11 +123,6 @@ export function useEntityAndVariableCollection(
 
 export function useVariableCollections(entity: StudyEntity) {
   return useMemo(() => findVariableCollections(entity).flat(), [entity]);
-}
-
-// deprecated
-export function useCollectionVariables(entity: StudyEntity) {
-  return useMemo(() => findCollections(entity).flat(), [entity]);
 }
 
 /**
