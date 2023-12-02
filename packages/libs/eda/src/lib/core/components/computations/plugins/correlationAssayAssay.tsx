@@ -1,14 +1,17 @@
-import { useCollectionVariables, useStudyMetadata } from '../../..';
+import {
+  useVariableCollections,
+  useStudyMetadata,
+  useFindEntityAndVariableCollection,
+} from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
-  findCollectionVariableTreeNodeFromDescriptor,
-  removeAbsoluteAbundanceCollectionVariableTreeNodes,
   makeVariableCollectionItems,
   findVariableCollectionItemFromDescriptor,
+  removeAbsoluteAbundanceVariableCollections,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
@@ -72,8 +75,7 @@ function CorrelationAssayAssayConfigDescriptionComponent({
 }: {
   computation: Computation;
 }) {
-  const studyMetadata = useStudyMetadata();
-  const collections = useCollectionVariables(studyMetadata.rootEntity);
+  const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
   assertComputationWithConfig<CorrelationAssayAssayConfig>(
     computation,
     Computation
@@ -82,16 +84,10 @@ function CorrelationAssayAssayConfigDescriptionComponent({
   const { collectionVariable1, collectionVariable2, correlationMethod } =
     computation.descriptor.configuration;
 
-  const collectionVariableTreeNode1 =
-    findCollectionVariableTreeNodeFromDescriptor(
-      collections,
-      collectionVariable1
-    );
-  const collectionVariableTreeNode2 =
-    findCollectionVariableTreeNodeFromDescriptor(
-      collections,
-      collectionVariable2
-    );
+  const entityAndCollectionVariableTreeNode1 =
+    findEntityAndVariableCollection(collectionVariable1);
+  const entityAndCollectionVariableTreeNode2 =
+    findEntityAndVariableCollection(collectionVariable2);
 
   // Data 1 and Data 2 are placeholder labels, we can decide what to call them later.
   return (
@@ -99,8 +95,8 @@ function CorrelationAssayAssayConfigDescriptionComponent({
       <h4>
         Data 1:{' '}
         <span>
-          {collectionVariableTreeNode1 ? (
-            `${collectionVariableTreeNode1.entityDisplayName} > ${collectionVariableTreeNode1.displayName}`
+          {entityAndCollectionVariableTreeNode1 ? (
+            `${entityAndCollectionVariableTreeNode1.entity.displayName} > ${entityAndCollectionVariableTreeNode1.variableCollection.displayName}`
           ) : (
             <i>Not selected</i>
           )}
@@ -109,8 +105,8 @@ function CorrelationAssayAssayConfigDescriptionComponent({
       <h4>
         Data 2:{' '}
         <span>
-          {collectionVariableTreeNode2 ? (
-            `${collectionVariableTreeNode2.entityDisplayName} > ${collectionVariableTreeNode2.displayName}`
+          {entityAndCollectionVariableTreeNode2 ? (
+            `${entityAndCollectionVariableTreeNode2.entity.displayName} > ${entityAndCollectionVariableTreeNode2.variableCollection.displayName}`
           ) : (
             <i>Not selected</i>
           )}
@@ -149,8 +145,10 @@ export function CorrelationAssayAssayConfiguration(
   if (configuration) configuration.correlationMethod = 'spearman';
 
   // Include known collection variables in this array.
-  const collections = useCollectionVariables(studyMetadata.rootEntity);
-  if (collections.length === 0)
+  const collectionDescriptors = useVariableCollections(
+    studyMetadata.rootEntity
+  );
+  if (collectionDescriptors.length === 0)
     throw new Error('Could not find any collections for this app.');
 
   assertComputationWithConfig<CorrelationAssayAssayConfig>(
@@ -165,8 +163,9 @@ export function CorrelationAssayAssayConfiguration(
       visualizationId
     );
 
-  const keepCollections =
-    removeAbsoluteAbundanceCollectionVariableTreeNodes(collections);
+  const keepCollections = removeAbsoluteAbundanceVariableCollections(
+    collectionDescriptors
+  );
   // this should also make it easy to disable already selected items if we decide wed rather go that route
   const collectionVarItems = useMemo(
     () => makeVariableCollectionItems(keepCollections, undefined),

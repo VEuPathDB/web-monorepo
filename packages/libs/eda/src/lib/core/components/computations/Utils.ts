@@ -4,9 +4,19 @@ import * as t from 'io-ts';
 import { pipe } from 'fp-ts/lib/function';
 import { fold } from 'fp-ts/lib/Either';
 import { isEqual } from 'lodash';
-import { AnalysisState, CollectionVariableTreeNode } from '../..';
+import {
+  AnalysisState,
+  CollectionVariableTreeNode,
+  useEntityAndVariableCollection,
+  useFindEntityAndVariable,
+  useFindEntityAndVariableCollection,
+} from '../..';
 import { RouterChildContext, useRouteMatch, useHistory } from 'react-router';
 import { VariableCollectionDescriptor } from '../../types/variable';
+import {
+  EntityAndVariableCollection,
+  findEntityAndVariableCollection,
+} from '../../utils/study-metadata';
 
 export type VariableCollectionItem = {
   value: VariableCollectionDescriptor;
@@ -17,65 +27,70 @@ export type VariableCollectionItem = {
 /**
  * Generates a collection of variable items based on the provided variable collections.
  *
- * @param {CollectionVariableTreeNode[]} variableCollections - An array of variable collection nodes.
+ * @param {VariableCollectionDescriptor[]} variableCollections - An array of possible variable collection nodes.
  * @param {VariableCollectionDescriptor[]} disabledVariableCollections - An array of disabled variable collection nodes.
  * @return {VariableCollectionItem[]} An array of variable collection items.
  */
 export function makeVariableCollectionItems(
-  variableCollections: CollectionVariableTreeNode[],
+  variableCollections: VariableCollectionDescriptor[],
   disabledVariableCollections: VariableCollectionDescriptor[] | undefined
 ): VariableCollectionItem[] {
   return variableCollections.map((variableCollection) => ({
     value: {
-      collectionId: variableCollection.id,
+      collectionId: variableCollection.collectionId,
       entityId: variableCollection.entityId,
     },
     disabled: disabledVariableCollections?.some((disabledVariableCollection) =>
       isEqual(disabledVariableCollection, variableCollection)
     ),
     display:
-      variableCollection.entityDisplayName +
+      useEntityAndVariableCollection(variableCollection)?.entity.displayName +
       ' > ' +
-      variableCollection.displayName,
+      useEntityAndVariableCollection(variableCollection)?.variableCollection
+        .displayName,
   }));
 }
 
 /**
- * Removes absolute abundance collection variable tree nodes based on certain conditions.
+ * Removes absolute abundance variable collections based on certain conditions.
  *
- * @param {CollectionVariableTreeNode[]} variableCollections - The array of collection variable tree nodes.
- * @return {CollectionVariableTreeNode[]} The filtered array of collection variable tree nodes.
+ * @param {VariableCollectionDescriptor[]} variableCollections - The array of variable collections.
+ * @return {VariableCollectionDescriptor[]} The filtered array of variable collections.
  */
-export function removeAbsoluteAbundanceCollectionVariableTreeNodes(
-  variableCollections: CollectionVariableTreeNode[]
-): CollectionVariableTreeNode[] {
-  return variableCollections.filter((collectionVariable) =>
-    collectionVariable.normalizationMethod
-      ? collectionVariable.normalizationMethod !== 'NULL' ||
+export function removeAbsoluteAbundanceVariableCollections(
+  variableCollections: VariableCollectionDescriptor[]
+): VariableCollectionDescriptor[] {
+  return variableCollections.filter((variableCollection) =>
+    useEntityAndVariableCollection(variableCollection)?.variableCollection
+      .normalizationMethod
+      ? useEntityAndVariableCollection(variableCollection)?.variableCollection
+          .normalizationMethod !== 'NULL' ||
         // most data we want to keep has been normalized, except pathway coverage data which were leaving apparently
         // should consider better ways to do this in the future, or if we really want to keep the coverage data.
-        collectionVariable.displayName?.includes('pathway')
+        useEntityAndVariableCollection(
+          variableCollection
+        )?.variableCollection.displayName?.includes('pathway')
       : true
   ); // DIY may not have the normalizationMethod annotations, but we still want those datasets to pass.
 }
 
 /**
- * Find a specific CollectionVariableTreeNode from a given array of variableCollections
+ * Find a specific variable collection from a given array of variableCollections
  * based on the provided variableCollectionDescriptor.
  *
- * @param {CollectionVariableTreeNode[]} variableCollections - The array of variableCollections to search through.
+ * @param {EntityAndVariableCollection[]} variableCollections - The array of variableCollections to search through.
  * @param {VariableCollectionDescriptor} variableCollectionDescriptor - The descriptor to match against.
- * @return {CollectionVariableTreeNode | undefined} - The matched CollectionVariableTreeNode, or undefined if not found.
+ * @return {EntityAndVariableCollection | undefined} - The matched variable collection, or undefined if not found.
  */
-export function findCollectionVariableTreeNodeFromDescriptor(
-  variableCollections: CollectionVariableTreeNode[],
+export function findEntityAndVariableCollectionFromDescriptor(
+  entityAndVariableCollections: EntityAndVariableCollection[],
   variableCollectionDescriptor: VariableCollectionDescriptor | undefined
-): CollectionVariableTreeNode | undefined {
-  return variableCollections.find((collectionVariable) =>
+): EntityAndVariableCollection | undefined {
+  return entityAndVariableCollections.find((entityAndVariableCollection) =>
     isEqual(
       {
-        collectionId: collectionVariable.id,
-        entityId: collectionVariable.entityId,
+        collectionId: entityAndVariableCollection.variableCollection.id,
+        entityId: entityAndVariableCollection.entity.id,
       },
       variableCollectionDescriptor
     )
