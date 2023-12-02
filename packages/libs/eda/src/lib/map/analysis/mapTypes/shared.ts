@@ -300,6 +300,7 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
         legendItems,
         overlayConfig,
         boundsZoomLevel,
+        outputEntityId,
       };
     },
     enabled: overlayConfig != null,
