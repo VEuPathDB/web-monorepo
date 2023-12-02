@@ -9,7 +9,6 @@ import {
   OverlayConfig,
   StudyEntity,
   Variable,
-  VariableType,
 } from '../../../core';
 import { DataClient, SubsettingClient } from '../../../core/api';
 import { BinningMethod } from '../appState';
@@ -33,8 +32,11 @@ export interface DefaultBubbleOverlayConfigProps {
 
 export function getDefaultBubbleOverlayConfig(
   props: DefaultBubbleOverlayConfigProps
-): BubbleOverlayConfig & {
-  aggregationConfig: { valueType?: 'number' | 'date' };
+): {
+  overlayConfig: BubbleOverlayConfig & {
+    aggregationConfig: { valueType?: 'number' | 'date' };
+  };
+  isValidProportion?: boolean;
 } {
   const {
     overlayVariable,
@@ -52,21 +54,30 @@ export function getDefaultBubbleOverlayConfig(
   if (CategoricalVariableDataShape.is(overlayVariable.dataShape)) {
     // categorical
     return {
-      overlayVariable: overlayVariableDescriptor,
-      aggregationConfig: {
-        overlayType: 'categorical',
+      overlayConfig: {
+        overlayVariable: overlayVariableDescriptor,
+        aggregationConfig: {
+          overlayType: 'categorical',
+          numeratorValues,
+          denominatorValues,
+        },
+      },
+      isValidProportion: validateProportionValues(
         numeratorValues,
         denominatorValues,
-      },
+        overlayVariable.vocabulary
+      ),
     };
   } else if (ContinuousVariableDataShape.is(overlayVariable.dataShape)) {
     // continuous
     return {
-      overlayVariable: overlayVariableDescriptor,
-      aggregationConfig: {
-        overlayType: 'continuous',
-        valueType: overlayVariable.type === 'date' ? 'date' : 'number',
-        aggregator,
+      overlayConfig: {
+        overlayVariable: overlayVariableDescriptor,
+        aggregationConfig: {
+          overlayType: 'continuous',
+          valueType: overlayVariable.type === 'date' ? 'date' : 'number',
+          aggregator,
+        },
       },
     };
   }
