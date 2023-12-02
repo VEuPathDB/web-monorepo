@@ -34,10 +34,7 @@ import {
 } from '../../MarkerConfiguration/MapTypeConfigurationMenu';
 import { BubbleMarkerIcon } from '../../MarkerConfiguration/icons';
 import { useStandaloneVizPlugins } from '../../hooks/standaloneVizPlugins';
-import {
-  getDefaultBubbleOverlayConfig,
-  validateProportionValues,
-} from '../../utils/defaultOverlayConfig';
+import { getDefaultBubbleOverlayConfig } from '../../utils/defaultOverlayConfig';
 import {
   defaultAnimation,
   isApproxSameViewport,
@@ -519,8 +516,8 @@ function useLegendData(props: DataProps) {
 
   const { aggregationConfig, ...restOverlayConfig } = overlayConfig;
   const valueType =
-    overlayConfig.aggregationConfig.overlayType === 'continuous'
-      ? overlayConfig.aggregationConfig.valueType
+    aggregationConfig.overlayType === 'continuous'
+      ? aggregationConfig.valueType
       : undefined;
   const legendRequestParams: StandaloneMapBubblesLegendRequestParams = {
     studyId,
@@ -723,7 +720,7 @@ function useMarkerData(props: DataProps) {
 
   const rawMarkersResult = useRawMarkerData(props);
   const legendDataResult = useLegendData(props);
-  const overlayConfig = useOverlayConfig({
+  const { overlayConfig } = useOverlayConfig({
     studyId,
     filters,
     ...configuration,
