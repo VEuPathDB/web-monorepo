@@ -14,10 +14,7 @@ import {
 } from '../../../core/components/visualizations/implementations/LineplotVisualization';
 import { DataElementConstraint } from '../../../core/types/visualization'; // TO DO for dates: remove
 import { SharedMarkerConfigurations } from '../mapTypes/shared';
-import {
-  invalidProportionText,
-  validateProportionValues,
-} from '../utils/defaultOverlayConfig';
+import { invalidProportionText } from '../utils/defaultOverlayConfig';
 
 type AggregatorOption = typeof aggregatorOptions[number];
 const aggregatorOptions = ['mean', 'median'] as const;
@@ -46,6 +43,7 @@ interface Props
   onChange: (configuration: BubbleMarkerConfiguration) => void;
   configuration: BubbleMarkerConfiguration;
   overlayConfiguration: BubbleOverlayConfig | undefined;
+  isValidProportion: boolean | undefined; // undefined when not categorical mode
 }
 
 export function BubbleMarkerConfigurationMenu({
@@ -56,6 +54,7 @@ export function BubbleMarkerConfigurationMenu({
   starredVariables,
   toggleStarredVariable,
   constraints,
+  isValidProportion,
 }: Props) {
   function handleInputVariablesOnChange(selection: VariablesByInputName) {
     if (!selection.overlayVariable) {
@@ -97,12 +96,12 @@ export function BubbleMarkerConfigurationMenu({
     selectedVariable && 'vocabulary' in selectedVariable
       ? selectedVariable.vocabulary
       : undefined;
-
-  const proportionIsValid = validateProportionValues(
-    numeratorValues,
-    denominatorValues,
-    vocabulary
-  );
+  // if the vocabulary has been altered by filters on this variable
+  // the fullVocabulary will be available here, otherwise it's undefined
+  const fullVocabulary =
+    selectedVariable && 'fullVocabulary' in selectedVariable
+      ? selectedVariable.fullVocabulary
+      : undefined;
 
   const aggregationInputs = (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -121,7 +120,10 @@ export function BubbleMarkerConfigurationMenu({
             }
           : {
               aggregationType: 'proportion',
-              options: vocabulary ?? [],
+              options: fullVocabulary ?? vocabulary ?? [],
+              disabledOptions: fullVocabulary
+                ? fullVocabulary.filter((value) => !vocabulary?.includes(value))
+                : [],
               numeratorValues: numeratorValues ?? [],
               onNumeratorChange: (values) =>
                 onChange({
@@ -140,7 +142,7 @@ export function BubbleMarkerConfigurationMenu({
                 }),
             })}
       />
-      {!proportionIsValid && (
+      {isValidProportion === false && (
         <div style={{ position: 'relative' }}>
           <div style={{ position: 'absolute', width: '100%' }}>
             <PluginError error={invalidProportionText} />
