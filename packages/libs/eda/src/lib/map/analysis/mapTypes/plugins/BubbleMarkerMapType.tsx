@@ -324,7 +324,9 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
 
 const processRawBubblesData = (
   mapElements: StandaloneMapBubblesResponse['mapElements'],
-  aggregationConfig?: BubbleOverlayConfig['aggregationConfig'],
+  aggregationConfig?: BubbleOverlayConfig['aggregationConfig'] & {
+    valueType?: 'number' | 'date';
+  },
   bubbleValueToDiameterMapper?: (value: number) => number,
   bubbleValueToColorMapper?: (value: number) => string
 ) => {

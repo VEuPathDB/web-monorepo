@@ -33,7 +33,9 @@ export interface DefaultBubbleOverlayConfigProps {
 
 export function getDefaultBubbleOverlayConfig(
   props: DefaultBubbleOverlayConfigProps
-): BubbleOverlayConfig {
+): BubbleOverlayConfig & {
+  aggregationConfig: { valueType?: 'number' | 'date' };
+} {
   const {
     overlayVariable,
     overlayEntity,
