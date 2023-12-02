@@ -271,6 +271,7 @@ function InternalGeneDatasetContent(props: Props) {
           submissionMetadata.type === 'edit-step'
         }
         headerText={`Identify ${outputRecordClass.displayNamePlural} based on ${internalQuestion.displayName}`}
+        isBeta={internalQuestion.isBeta}
       />
       <div className={cx('Legend')}>
         <span style={{ fontWeight: 'bold', fontSize: '13px' }}>Legend:</span>
