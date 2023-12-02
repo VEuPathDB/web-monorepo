@@ -474,16 +474,16 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     dependentAxisLogScale,
     valueSpec: selectedPlotMode,
   });
-  const { outputEntityId, totalVisibleWithOverlayEntityCount } =
-    markerDataResponse;
-  return outputEntityId != null ? (
+  return (
     <MapTypeHeaderCounts
-      outputEntityId={outputEntityId}
-      totalEntityCount={props.totalCounts.value?.[outputEntityId]}
-      totalEntityInSubsetCount={props.filteredCounts.value?.[outputEntityId]}
-      visibleEntityCount={totalVisibleWithOverlayEntityCount}
+      outputEntityId={selectedVariable.entityId}
+      totalEntityCount={props.totalCounts.value?.[selectedVariable.entityId]}
+      totalEntityInSubsetCount={
+        props.filteredCounts.value?.[selectedVariable.entityId]
+      }
+      visibleEntityCount={markerDataResponse.totalVisibleWithOverlayEntityCount}
     />
-  ) : null;
+  );
 }
 
 const processRawMarkersData = (
@@ -617,7 +617,6 @@ function useMarkerData(props: MarkerDataProps) {
     totalVisibleWithOverlayEntityCount,
     legendItems,
     overlayConfig,
-    outputEntityId,
   } = markerData;
 
   // calculate minPos, max and sum for chart marker dependent axis
@@ -667,7 +666,6 @@ function useMarkerData(props: MarkerDataProps) {
     legendItems,
     overlayConfig,
     boundsZoomLevel: props.boundsZoomLevel,
-    outputEntityId,
   };
 }
 

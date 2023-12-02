@@ -90,7 +90,7 @@ export function MapTypeHeaderCounts(props: Props) {
             title={`${format(visibleEntityCount)} ${makeEntityDisplayName(
               outputEntity,
               visibleEntityCount > 1
-            )} are in the current viewport, and have data for the variable displayed on the markers.`}
+            )} are in the current viewport, and have data for the painted variable.`}
           >
             <td>View</td>
             <td>{format(visibleEntityCount)}</td>
