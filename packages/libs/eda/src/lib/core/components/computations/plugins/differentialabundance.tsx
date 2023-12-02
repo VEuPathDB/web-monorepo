@@ -1,7 +1,6 @@
 import {
   ContinuousVariableDataShape,
   LabeledRange,
-  useCollectionVariables,
   usePromise,
   useStudyMetadata,
 } from '../../..';
@@ -15,8 +14,8 @@ import { isEqual, partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
-  removeAbsoluteAbundanceCollectionVariableTreeNodes,
   makeVariableCollectionItems,
+  removeAbsoluteAbundanceVariableCollections,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
@@ -24,6 +23,8 @@ import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import {
   useDataClient,
   useFindEntityAndVariable,
+  useFindEntityAndVariableCollection,
+  useVariableCollections,
 } from '../../../hooks/workspace';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
@@ -128,8 +129,7 @@ function DifferentialAbundanceConfigDescriptionComponent({
   computation: Computation;
   filters: Filter[];
 }) {
-  const studyMetadata = useStudyMetadata();
-  const collections = useCollectionVariables(studyMetadata.rootEntity);
+  const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
   assertComputationWithConfig<DifferentialAbundanceConfig>(
     computation,
     Computation
@@ -145,23 +145,16 @@ function DifferentialAbundanceConfigDescriptionComponent({
       ? findEntityAndVariable(configuration.comparator.variable)
       : undefined;
 
-  const updatedCollectionVariable = collections.find((collectionVar) =>
-    isEqual(
-      {
-        collectionId: collectionVar.id,
-        entityId: collectionVar.entityId,
-      },
-      collectionVariable
-    )
-  );
+  const entityAndCollectionVariableTreeNode =
+    findEntityAndVariableCollection(collectionVariable);
 
   return (
     <div className="ConfigDescriptionContainer">
       <h4>
         Data:{' '}
         <span>
-          {updatedCollectionVariable ? (
-            `${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}`
+          {entityAndCollectionVariableTreeNode ? (
+            `${entityAndCollectionVariableTreeNode.entity.displayName} > ${entityAndCollectionVariableTreeNode.variableCollection.displayName}`
           ) : (
             <i>Not selected</i>
           )}
@@ -226,7 +219,7 @@ export function DifferentialAbundanceConfiguration(
   if (configuration) configuration.pValueFloor = '1e-200';
 
   // Include known collection variables in this array.
-  const collections = useCollectionVariables(studyMetadata.rootEntity);
+  const collections = useVariableCollections(studyMetadata.rootEntity);
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
@@ -243,7 +236,7 @@ export function DifferentialAbundanceConfiguration(
     );
 
   const keepCollections =
-    removeAbsoluteAbundanceCollectionVariableTreeNodes(collections);
+    removeAbsoluteAbundanceVariableCollections(collections);
   const collectionVarItems = useMemo(
     () => makeVariableCollectionItems(keepCollections, undefined),
     [keepCollections]

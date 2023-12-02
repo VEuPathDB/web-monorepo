@@ -136,12 +136,17 @@ export function makeEntityDisplayName(entity: StudyEntity, isPlural: boolean) {
 export function findVariableCollections(
   entity: StudyEntity
 ): VariableCollectionDescriptor[] {
-  return (
-    entity.collections?.map((collection) => ({
-      entityId: entity.id,
+  const collections = Array.from(
+    preorder(entity, (e) => e.children ?? [])
+  ).flatMap((e) => {
+    const VariableCollectionDescriptors = e.collections?.map((collection) => ({
+      entityId: e.id,
       collectionId: collection.id,
-    })) ?? []
-  );
+    }));
+    return VariableCollectionDescriptors ?? [];
+  });
+
+  return collections;
 }
 
 // deprecated

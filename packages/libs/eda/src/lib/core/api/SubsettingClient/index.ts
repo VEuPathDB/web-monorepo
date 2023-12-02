@@ -42,7 +42,6 @@ export default class SubsettingClient extends FetchClientWithCredentials {
           const { study } = await ioTransformer(StudyResponse)(res);
           assertValidStudy(study);
           orderVariables(study);
-          console.log(study);
           return study;
         },
       })

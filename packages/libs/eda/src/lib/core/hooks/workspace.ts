@@ -25,6 +25,7 @@ import {
   findCollections,
   findEntityAndVariable,
   findEntityAndVariableCollection,
+  findVariableCollections,
 } from '../utils/study-metadata';
 import { ComputeClient } from '../api/ComputeClient';
 import { DownloadClient } from '../api';
@@ -122,7 +123,7 @@ export function useEntityAndVariableCollection(
 }
 
 export function useVariableCollections(entity: StudyEntity) {
-  return useMemo(() => findCollections(entity), [entity]);
+  return useMemo(() => findVariableCollections(entity).flat(), [entity]);
 }
 
 // deprecated

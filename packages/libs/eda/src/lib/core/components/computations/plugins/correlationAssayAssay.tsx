@@ -175,16 +175,16 @@ export function CorrelationAssayAssayConfiguration(
   const selectedCollectionVar1 = useMemo(() => {
     return findVariableCollectionItemFromDescriptor(
       collectionVarItems,
-      configuration.collectionVariable1
+      configuration?.collectionVariable1
     );
-  }, [collectionVarItems, configuration]);
+  }, [collectionVarItems, configuration?.collectionVariable1]);
 
   const selectedCollectionVar2 = useMemo(() => {
     return findVariableCollectionItemFromDescriptor(
       collectionVarItems,
-      configuration.collectionVariable2
+      configuration?.collectionVariable2
     );
-  }, [collectionVarItems, configuration]);
+  }, [collectionVarItems, configuration?.collectionVariable2]);
 
   return (
     <ComputationStepContainer

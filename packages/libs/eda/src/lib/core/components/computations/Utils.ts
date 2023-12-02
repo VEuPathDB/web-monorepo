@@ -4,19 +4,10 @@ import * as t from 'io-ts';
 import { pipe } from 'fp-ts/lib/function';
 import { fold } from 'fp-ts/lib/Either';
 import { isEqual } from 'lodash';
-import {
-  AnalysisState,
-  CollectionVariableTreeNode,
-  useEntityAndVariableCollection,
-  useFindEntityAndVariable,
-  useFindEntityAndVariableCollection,
-} from '../..';
+import { AnalysisState, useEntityAndVariableCollection } from '../..';
 import { RouterChildContext, useRouteMatch, useHistory } from 'react-router';
 import { VariableCollectionDescriptor } from '../../types/variable';
-import {
-  EntityAndVariableCollection,
-  findEntityAndVariableCollection,
-} from '../../utils/study-metadata';
+import { EntityAndVariableCollection } from '../../utils/study-metadata';
 
 export type VariableCollectionItem = {
   value: VariableCollectionDescriptor;

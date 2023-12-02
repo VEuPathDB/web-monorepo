@@ -1,14 +1,17 @@
-import { useCollectionVariables, useStudyMetadata } from '../../..';
+import {
+  useFindEntityAndVariableCollection,
+  useStudyMetadata,
+  useVariableCollections,
+} from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
-  findCollectionVariableTreeNodeFromDescriptor,
-  removeAbsoluteAbundanceCollectionVariableTreeNodes,
   makeVariableCollectionItems,
   findVariableCollectionItemFromDescriptor,
+  removeAbsoluteAbundanceVariableCollections,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
@@ -61,8 +64,7 @@ function CorrelationAssayMetadataConfigDescriptionComponent({
 }: {
   computation: Computation;
 }) {
-  const studyMetadata = useStudyMetadata();
-  const collections = useCollectionVariables(studyMetadata.rootEntity);
+  const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
   assertComputationWithConfig<CorrelationAssayMetadataConfig>(
     computation,
     Computation
@@ -71,19 +73,16 @@ function CorrelationAssayMetadataConfigDescriptionComponent({
   const { collectionVariable, correlationMethod } =
     computation.descriptor.configuration;
 
-  const updatedCollectionVariable =
-    findCollectionVariableTreeNodeFromDescriptor(
-      collections,
-      collectionVariable
-    );
+  const entityAndCollectionVariableTreeNode =
+    findEntityAndVariableCollection(collectionVariable);
 
   return (
     <div className="ConfigDescriptionContainer">
       <h4>
         Data:{' '}
         <span>
-          {updatedCollectionVariable ? (
-            `${updatedCollectionVariable.entityDisplayName} > ${updatedCollectionVariable.displayName}`
+          {entityAndCollectionVariableTreeNode ? (
+            `${entityAndCollectionVariableTreeNode.entity.displayName} > ${entityAndCollectionVariableTreeNode.variableCollection.displayName}`
           ) : (
             <i>Not selected</i>
           )}
@@ -122,7 +121,7 @@ export function CorrelationAssayMetadataConfiguration(
   if (configuration) configuration.correlationMethod = 'spearman';
 
   // Include known collection variables in this array.
-  const collections = useCollectionVariables(studyMetadata.rootEntity);
+  const collections = useVariableCollections(studyMetadata.rootEntity);
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
@@ -139,7 +138,7 @@ export function CorrelationAssayMetadataConfiguration(
     );
 
   const keepCollections =
-    removeAbsoluteAbundanceCollectionVariableTreeNodes(collections);
+    removeAbsoluteAbundanceVariableCollections(collections);
   const collectionVarItems = useMemo(
     () => makeVariableCollectionItems(keepCollections, undefined),
     [keepCollections]
@@ -148,9 +147,9 @@ export function CorrelationAssayMetadataConfiguration(
   const selectedCollectionVar = useMemo(() => {
     return findVariableCollectionItemFromDescriptor(
       collectionVarItems,
-      configuration.collectionVariable
+      configuration?.collectionVariable
     );
-  }, [configuration.collectionVariable, collectionVarItems]);
+  }, [collectionVarItems, configuration?.collectionVariable]);
 
   return (
     <ComputationStepContainer
