@@ -8,7 +8,7 @@ import React, {
   useCallback,
   useRef,
 } from 'react';
-import { BoundsViewport, AnimationFunction, Bounds } from './Types';
+import { BoundsViewport, Bounds } from './Types';
 import {
   MapContainer,
   TileLayer,
@@ -151,6 +151,8 @@ export interface MapVEuMapProps {
   scrollingEnabled?: boolean;
   /** pass default viewport */
   defaultViewport?: Viewport;
+  /* selectedMarkers setState (for on-click reset) **/
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
   children?: React.ReactNode;
 }
 
@@ -174,6 +176,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     scrollingEnabled = true,
     interactive = true,
     defaultViewport,
+    setSelectedMarkers,
   } = props;
 
   // use a ref to avoid unneeded renders
@@ -282,6 +285,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       <MapVEuMapEvents
         onViewportChanged={onViewportChanged}
         onBaseLayerChanged={onBaseLayerChanged}
+        setSelectedMarkers={setSelectedMarkers}
         onBoundsChanged={onBoundsChanged}
       />
       {/* set ScrollWheelZoom */}
@@ -298,17 +302,26 @@ interface MapVEuMapEventsProps {
   onViewportChanged: (viewport: Viewport) => void;
   onBoundsChanged: (bondsViewport: BoundsViewport) => void;
   onBaseLayerChanged?: (newBaseLayer: BaseLayerChoice) => void;
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
 }
+
+const EMPTY_MARKERS: string[] = [];
 
 // function to handle map events such as onViewportChanged and baselayerchange
 function MapVEuMapEvents(props: MapVEuMapEventsProps) {
-  const { onViewportChanged, onBaseLayerChanged, onBoundsChanged } = props;
+  const {
+    onViewportChanged,
+    onBaseLayerChanged,
+    onBoundsChanged,
+    setSelectedMarkers,
+  } = props;
   const mapEvents = useMapEvents({
     zoomend: () => {
       onViewportChanged({
         center: [mapEvents.getCenter().lat, mapEvents.getCenter().lng],
         zoom: mapEvents.getZoom(),
       });
+
       const boundsViewport: BoundsViewport = {
         bounds: constrainLongitudeToMainWorld(
           boundsToGeoBBox(mapEvents.getBounds())
@@ -322,6 +335,7 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
         center: [mapEvents.getCenter().lat, mapEvents.getCenter().lng],
         zoom: mapEvents.getZoom(),
       });
+
       const boundsViewport: BoundsViewport = {
         bounds: constrainLongitudeToMainWorld(
           boundsToGeoBBox(mapEvents.getBounds())
@@ -332,6 +346,10 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
     },
     baselayerchange: (e: { name: string }) => {
       onBaseLayerChanged && onBaseLayerChanged(e.name as BaseLayerChoice);
+    },
+    // map click event: remove selected highlight markers
+    click: () => {
+      if (setSelectedMarkers != null) setSelectedMarkers(EMPTY_MARKERS);
     },
   });
 

@@ -176,7 +176,14 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
  * Renders marker and legend components
  */
 function BubbleMapLayer(props: MapTypeMapLayerProps) {
-  const { studyId, filters, appState, geoConfigs } = props;
+  const {
+    studyId,
+    filters,
+    appState,
+    geoConfigs,
+    selectedMarkers,
+    setSelectedMarkers,
+  } = props;
 
   const configuration = props.configuration as BubbleMarkerConfiguration;
 
@@ -211,6 +218,8 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
             !(markersData.isFetching || markersData.isPreviousData) &&
             isApproxSameViewport(props.appState.viewport, defaultViewport)
           }
+          selectedMarkers={selectedMarkers}
+          setSelectedMarkers={setSelectedMarkers}
           flyToMarkersDelay={2000}
         />
       )}
@@ -222,7 +231,7 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
   const { studyId, filters, geoConfigs, appState, updateConfiguration } = props;
   const configuration = props.configuration as BubbleMarkerConfiguration;
 
-  const { overlayConfig, isValidProportion } = useOverlayConfig({
+  const { isValidProportion } = useOverlayConfig({
     studyId,
     filters,
     ...configuration,

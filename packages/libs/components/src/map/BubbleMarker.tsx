@@ -1,4 +1,3 @@
-// import React from 'react';
 import L from 'leaflet';
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 
@@ -26,11 +25,15 @@ export interface BubbleMarkerProps extends BoundsDriftMarkerProps {
  * this is a SVG bubble marker icon
  */
 export default function BubbleMarker(props: BubbleMarkerProps) {
+  const selectedMarkers = props.selectedMarkers;
+  const setSelectedMarkers = props.setSelectedMarkers;
+
   const { html: svgHTML, diameter: size } = bubbleMarkerSVGIcon(props);
 
   // set icon as divIcon
   const SVGBubbleIcon = L.divIcon({
-    className: 'leaflet-canvas-icon', // may need to change this className but just leave it as it for now
+    className:
+      'leaflet-canvas-icon ' + 'marker-id-' + props.id + ' bubble-marker',
     iconSize: new L.Point(size, size), // this will make icon to cover up SVG area!
     iconAnchor: new L.Point(size / 2, size / 2), // location of topleft corner: this is used for centering of the icon like transform/translate in CSS
     html: svgHTML, // divIcon HTML svg code generated above
@@ -74,6 +77,9 @@ export default function BubbleMarker(props: BubbleMarkerProps) {
         },
       }}
       showPopup={props.showPopup}
+      // pass selectedMarkers state and setState
+      selectedMarkers={selectedMarkers}
+      setSelectedMarkers={setSelectedMarkers}
     />
   );
 }
