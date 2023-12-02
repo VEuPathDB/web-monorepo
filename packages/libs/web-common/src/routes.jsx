@@ -17,7 +17,7 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { showLoginForm as showLoginFormAction } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 
 import {
-  edaExampleAnalysesAuthor,
+  edaExampleAnalysesAuthors,
   edaServiceUrl,
   edaSingleAppMode,
   showUnreleasedData,
@@ -63,7 +63,7 @@ export const wrapRoutes = (wdkRoutes) => [
           <EdaWorkspace
             showUnreleasedData={showUnreleasedData}
             edaServiceUrl={edaServiceUrl}
-            exampleAnalysesAuthor={edaExampleAnalysesAuthor}
+            exampleAnalysesAuthors={edaExampleAnalysesAuthors}
             sharingUrlPrefix={window.location.origin}
             showLoginForm={showLoginForm}
             singleAppMode={edaSingleAppMode}

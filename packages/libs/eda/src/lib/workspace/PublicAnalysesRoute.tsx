@@ -14,13 +14,13 @@ import SubsettingClient from '../core/api/SubsettingClient';
 export interface Props {
   analysisClient: AnalysisClient;
   subsettingClient: SubsettingClient;
-  exampleAnalysesAuthor?: number;
+  exampleAnalysesAuthors?: number[];
 }
 
 export function PublicAnalysesRoute({
   analysisClient,
   subsettingClient,
-  exampleAnalysesAuthor,
+  exampleAnalysesAuthors,
 }: Props) {
   const publicAnalysisListState = usePublicAnalysisList(analysisClient);
   const studyRecords = useWdkStudyRecords(subsettingClient);
@@ -40,7 +40,7 @@ export function PublicAnalysesRoute({
       publicAnalysisListState={publicAnalysisListState}
       studyRecords={studyRecords}
       makeAnalysisLink={makeAnalysisLink}
-      exampleAnalysesAuthor={exampleAnalysesAuthor}
+      exampleAnalysesAuthors={exampleAnalysesAuthors}
     />
   );
 }

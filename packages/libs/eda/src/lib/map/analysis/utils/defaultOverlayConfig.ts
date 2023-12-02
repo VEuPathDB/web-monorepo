@@ -9,7 +9,6 @@ import {
   OverlayConfig,
   StudyEntity,
   Variable,
-  VariableType,
 } from '../../../core';
 import { DataClient, SubsettingClient } from '../../../core/api';
 import { BinningMethod } from '../appState';
@@ -33,7 +32,12 @@ export interface DefaultBubbleOverlayConfigProps {
 
 export function getDefaultBubbleOverlayConfig(
   props: DefaultBubbleOverlayConfigProps
-): { overlayConfig: BubbleOverlayConfig; isValidProportion?: boolean } {
+): {
+  overlayConfig: BubbleOverlayConfig & {
+    aggregationConfig: { valueType?: 'number' | 'date' };
+  };
+  isValidProportion?: boolean;
+} {
   const {
     overlayVariable,
     overlayEntity,
@@ -70,7 +74,8 @@ export function getDefaultBubbleOverlayConfig(
       overlayConfig: {
         overlayVariable: overlayVariableDescriptor,
         aggregationConfig: {
-          overlayType: 'continuous', // TO DO for dates: might do `overlayVariable.type === 'date' ? 'date' : 'number'`
+          overlayType: 'continuous',
+          valueType: overlayVariable.type === 'date' ? 'date' : 'number',
           aggregator,
         },
       },
