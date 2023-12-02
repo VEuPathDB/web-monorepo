@@ -33,7 +33,9 @@ export interface DefaultBubbleOverlayConfigProps {
 
 export function getDefaultBubbleOverlayConfig(
   props: DefaultBubbleOverlayConfigProps
-): BubbleOverlayConfig {
+): BubbleOverlayConfig & {
+  aggregationConfig: { valueType?: 'number' | 'date' };
+} {
   const {
     overlayVariable,
     overlayEntity,
@@ -62,7 +64,8 @@ export function getDefaultBubbleOverlayConfig(
     return {
       overlayVariable: overlayVariableDescriptor,
       aggregationConfig: {
-        overlayType: 'continuous', // TO DO for dates: might do `overlayVariable.type === 'date' ? 'date' : 'number'`
+        overlayType: 'continuous',
+        valueType: overlayVariable.type === 'date' ? 'date' : 'number',
         aggregator,
       },
     };
