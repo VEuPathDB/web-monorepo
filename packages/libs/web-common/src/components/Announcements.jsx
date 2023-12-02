@@ -211,27 +211,6 @@ const siteAnnouncements = [
     },
   },
 
-  // VectorBase
-  /*
-  {
-    id: 'vbIndianStrain',
-    renderDisplay: props => {
-      if ( (props.projectId == 'VectorBase') &&
-           (  (props.location.pathname.indexOf("/record/dataset/DS_2f1ec58add") > -1) ||
-              (props.location.pathname.indexOf("/record/dataset/TMPTX_cquiJHB") > -1)
-           ) 
-         )
-      {
-        return (
-          <div key="vbIndianStrain">
-            Note, this strain 'JHB' will be renamed 'JHB 2020' in the next VectorBase release.
-          </div>
-        );
-      }
-      return null;
-    }
-  },
-*/
   // RNASeq issue in certain datasets Jan 2023
   /* {
     id: 'rnaseqBug',
@@ -258,6 +237,273 @@ const siteAnnouncements = [
   },
 */
 
+  //VectorBase, albimanus: https://redmine.apidb.org/issues/53151  Nov 2023-2024
+  {
+    id: 'albimanus',
+    renderDisplay: (props) => {
+      if (
+        (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
+        (props.location.pathname.indexOf(
+          '/record/dataset/TMPTX_aalbSTECLA2020'
+        ) > -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_35d1598565') >
+            -1 ||
+          props.location.pathname.indexOf('/record/dataset/TMPTX_aalbSTECLA') >
+            -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_865dea4bd2') > -1)
+      ) {
+        return (
+          <div key="">
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/DS_35d1598565">
+              <i>Anopheles albimanus</i> STECLA 2020
+            </a>{' '}
+            is the <b>new reference genome</b> for this mosquito species, which
+            means that the 'omics' data sets are only aligned to this strain and
+            all the site functionality is activated.{' '}
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/DS_865dea4bd2">
+              <i>Anopheles albimanus</i> STECLA
+            </a>{' '}
+            will remain available on VectorBase, but with limited functionality.
+            Please{' '}
+            <a href="https://vectorbase.org/vectorbase/app/contact-us">
+              contact us
+            </a>{' '}
+            if you have any questions, suggestions or feedback.
+          </div>
+        );
+      }
+      return null;
+    },
+  },
+
+  //VectorBase, coluzzii: https://redmine.apidb.org/issues/53153  Nov 2023-2024
+  {
+    id: 'coluzzii',
+    renderDisplay: (props) => {
+      if (
+        (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
+        (props.location.pathname.indexOf('/record/dataset/TMPTX_acolAcolN3') >
+          -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_98703c1d88') >
+            -1 ||
+          props.location.pathname.indexOf('/record/dataset/TMPTX_acolNgousso') >
+            -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_f398fa98de') > -1)
+      ) {
+        return (
+          <div key="">
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/DS_98703c1d88">
+              <i>Anopheles coluzzii</i> AcolN3
+            </a>{' '}
+            is the <b>new reference genome</b> for this mosquito species, which
+            means that the 'omics' data sets are only aligned to this strain and
+            all the site functionality is activated.{' '}
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/DS_f398fa98de">
+              <i>Anopheles coluzzii</i> Ngousso
+            </a>{' '}
+            will remain available on VectorBase, but with limited functionality.
+            Please{' '}
+            <a href="https://vectorbase.org/vectorbase/app/contact-us">
+              contact us
+            </a>{' '}
+            if you have any questions, suggestions or feedback.
+          </div>
+        );
+      }
+      return null;
+    },
+  },
+
+  //VectorBase, darlingi: https://redmine.apidb.org/issues/53154  Nov 2023-2024
+  {
+    id: 'darlingi',
+    renderDisplay: (props) => {
+      if (
+        (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
+        (props.location.pathname.indexOf('/record/dataset/TMPTX_adarAdarGF1') >
+          -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_13ae5590c9') >
+            -1 ||
+          props.location.pathname.indexOf('/record/dataset/TMPTX_adarCoari') >
+            -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_252042213e') > -1)
+      ) {
+        return (
+          <div key="">
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/DS_13ae5590c9">
+              <i>Anopheles darlingi</i> AdarGF1
+            </a>{' '}
+            is the <b>new reference genome</b> for this mosquito species, which
+            means that the 'omics' data sets are only aligned to this strain and
+            all the site functionality is activated.{' '}
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/DS_252042213e">
+              <i>Anopheles darlingi</i> Coari
+            </a>{' '}
+            will remain available on VectorBase, but with limited functionality.
+            Please{' '}
+            <a href="https://vectorbase.org/vectorbase/app/contact-us">
+              contact us
+            </a>{' '}
+            if you have any questions, suggestions or feedback.
+          </div>
+        );
+      }
+      return null;
+    },
+  },
+
+  //VectorBase, funestus: https://redmine.apidb.org/issues/53155  Nov 2023-2024
+  {
+    id: 'funestus',
+    renderDisplay: (props) => {
+      if (
+        (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
+        (props.location.pathname.indexOf('/record/dataset/TMPTX_afunAfunGA1') >
+          -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_f66e7aaf06') >
+            -1 ||
+          props.location.pathname.indexOf('/record/dataset/TMPTX_afunFUMOZ') >
+            -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_1a787d4361') > -1)
+      ) {
+        return (
+          <div key="">
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/DS_f66e7aaf06">
+              <i>Anopheles funestus</i> AfunGA1
+            </a>{' '}
+            is the <b>new reference genome</b> for this mosquito species, which
+            means that the 'omics' data sets are only aligned to this strain and
+            all the site functionality is activated.{' '}
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/DS_1a787d4361">
+              <i>Anopheles funestus</i> FUMOZ
+            </a>{' '}
+            will remain available on VectorBase, but with limited functionality.
+            Please{' '}
+            <a href="https://vectorbase.org/vectorbase/app/contact-us">
+              contact us
+            </a>{' '}
+            if you have any questions, suggestions or feedback.
+          </div>
+        );
+      }
+      return null;
+    },
+  },
+
+  //VectorBase, culex: https://redmine.apidb.org/issues/53158  Nov 2023-2024
+  {
+    id: 'culex',
+    renderDisplay: (props) => {
+      if (
+        (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
+        (props.location.pathname.indexOf('/record/dataset/TMPTX_cquiJHB') >
+          -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_2f1ec58add') >
+            -1 ||
+          props.location.pathname.indexOf(
+            '/record/dataset/TMPTX_cquiJohannesburg'
+          ) > -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_2f26cdb393') > -1)
+      ) {
+        return (
+          <div key="">
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/DS_2f1ec58add">
+              <i>Culex quinquefasciatus</i> JHB 2020
+            </a>{' '}
+            is the <b>new reference genome</b> for this mosquito species, which
+            means that the 'omics' data sets are only aligned to this strain and
+            all the site functionality is activated.{' '}
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/DS_2f26cdb393">
+              <i>Culex quinquefasciatus</i> Johannesburg
+            </a>{' '}
+            will remain available on VectorBase, but with limited functionality.
+            Please{' '}
+            <a href="https://vectorbase.org/vectorbase/app/contact-us">
+              contact us
+            </a>{' '}
+            if you have any questions, suggestions or feedback.
+          </div>
+        );
+      }
+      return null;
+    },
+  },
+
+  //VectorBase, longipalpis: https://redmine.apidb.org/issues/53167  Nov 2023-2024
+  {
+    id: 'longipalpis',
+    renderDisplay: (props) => {
+      if (
+        (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
+        (props.location.pathname.indexOf('/record/dataset/TMPTX_llonM1') > -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_c099af5258') >
+            -1 ||
+          props.location.pathname.indexOf(
+            '/record/dataset/TMPTX_llonJacobina'
+          ) > -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_75915ef5b1') > -1)
+      ) {
+        return (
+          <div key="">
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/DS_c099af5258">
+              <i>Lutzomyia longipalpis</i> M1
+            </a>{' '}
+            is the <b>new reference genome</b> for this mosquito species, which
+            means that the 'omics' data sets are only aligned to this strain and
+            all the site functionality is activated.{' '}
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/DS_75915ef5b1">
+              <i>Lutzomyia longipalpis</i> Jacobina
+            </a>{' '}
+            will remain available on VectorBase, but with limited functionality.
+            Please{' '}
+            <a href="https://vectorbase.org/vectorbase/app/contact-us">
+              contact us
+            </a>{' '}
+            if you have any questions, suggestions or feedback.
+          </div>
+        );
+      }
+      return null;
+    },
+  },
+
+  //VectorBase, papatasi: https://redmine.apidb.org/issues/53168  Nov 2023-2024
+  {
+    id: 'papatasi',
+    renderDisplay: (props) => {
+      if (
+        (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
+        (props.location.pathname.indexOf('/record/dataset/TMPTX_ppapM1') > -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_4582dc809c') >
+            -1 ||
+          props.location.pathname.indexOf('/record/dataset/TMPTX_ppapIsrael') >
+            -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_a8e93bad14') > -1)
+      ) {
+        return (
+          <div key="">
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/DS_4582dc809c">
+              <i>Phlebotomus papatasi</i> M1
+            </a>{' '}
+            is the <b>new reference genome</b> for this mosquito species, which
+            means that the 'omics' data sets are only aligned to this strain and
+            all the site functionality is activated.{' '}
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/DS_a8e93bad14">
+              <i>Phlebotomus papatasi</i> Israel
+            </a>{' '}
+            will remain available on VectorBase, but with limited functionality.
+            Please{' '}
+            <a href="https://vectorbase.org/vectorbase/app/contact-us">
+              contact us
+            </a>{' '}
+            if you have any questions, suggestions or feedback.
+          </div>
+        );
+      }
+      return null;
+    },
+  },
+
   //VectorBase, July 8 2023  FOR A YEAR  :  genome pages for Aedes albopictus Foshan FPA and Aedes albopictus Foshan  https://redmine.apidb.org/issues/51815
   {
     id: 'albopicusFoshan',
@@ -277,7 +523,7 @@ const siteAnnouncements = [
             <a href="https://vectorbase.org/vectorbase/app/record/dataset/TMPTX_aalbFPA">
               <i>Aedes albopictus</i> Foshan FPA
             </a>{' '}
-            is the <b>new reference genome</b> for this tick species, which
+            is the <b>new reference genome</b> for this mosquito species, which
             means that the 'omics' data sets are only aligned to this strain and
             all the site functionality is activated.{' '}
             <a href="https://vectorbase.org/vectorbase/app/record/dataset/TMPTX_aalbFoshan">
