@@ -421,16 +421,17 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     binningMethod,
     valueSpec: 'count',
   });
-  return (
+
+  const { outputEntityId, totalVisibleWithOverlayEntityCount } =
+    markerDataResponse;
+  return outputEntityId != null ? (
     <MapTypeHeaderCounts
-      outputEntityId={selectedVariable.entityId}
-      totalEntityCount={props.totalCounts.value?.[selectedVariable.entityId]}
-      totalEntityInSubsetCount={
-        props.filteredCounts.value?.[selectedVariable.entityId]
-      }
-      visibleEntityCount={markerDataResponse.totalVisibleWithOverlayEntityCount}
+      outputEntityId={outputEntityId}
+      totalEntityCount={props.totalCounts.value?.[outputEntityId]}
+      totalEntityInSubsetCount={props.filteredCounts.value?.[outputEntityId]}
+      visibleEntityCount={totalVisibleWithOverlayEntityCount}
     />
-  );
+  ) : null;
 }
 
 function useMarkerData(props: DistributionMarkerDataProps) {
@@ -450,6 +451,7 @@ function useMarkerData(props: DistributionMarkerDataProps) {
     legendItems,
     overlayConfig,
     boundsZoomLevel,
+    outputEntityId,
   } = markerData;
 
   const vocabulary =
@@ -480,6 +482,7 @@ function useMarkerData(props: DistributionMarkerDataProps) {
     legendItems,
     overlayConfig,
     boundsZoomLevel,
+    outputEntityId,
   };
 }
 
