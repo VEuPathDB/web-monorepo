@@ -1743,6 +1743,8 @@ function LineplotViz(props: VisualizationProps<Options>) {
     </>
   );
 
+  const { vocabulary, fullVocabulary } = yAxisVariable ?? {};
+
   const aggregationInputs = (
     <AggregationInputs
       {...(vizConfig.valueSpecConfig !== 'Proportion'
@@ -1756,21 +1758,20 @@ function LineplotViz(props: VisualizationProps<Options>) {
           }
         : {
             aggregationType: 'proportion',
-            options: yAxisVariable?.vocabulary ?? [],
+            options: fullVocabulary ?? vocabulary ?? [],
+            disabledOptions: fullVocabulary
+              ? fullVocabulary.filter((value) => vocabulary?.includes(value))
+              : [],
             numeratorValues: vizConfig.numeratorValues ?? [],
             denominatorValues: vizConfig.denominatorValues ?? [],
             // onChange handlers now ensure the available options belong to the vocabulary (which can change due to direct filters)
             onNumeratorChange: (values) =>
               onNumeratorValuesChange(
-                values.filter((value) =>
-                  yAxisVariable?.vocabulary?.includes(value)
-                )
+                values.filter((value) => vocabulary?.includes(value))
               ),
             onDenominatorChange: (values) =>
               onDenominatorValuesChange(
-                values.filter((value) =>
-                  yAxisVariable?.vocabulary?.includes(value)
-                )
+                values.filter((value) => vocabulary?.includes(value))
               ),
           })}
     />
@@ -2749,6 +2750,7 @@ type AggregationConfig<F extends string, P extends Array<string>> =
       denominatorValues: Array<P[number]>;
       onDenominatorChange: (value: Array<P[number]>) => void;
       options: P;
+      disabledOptions: P;
     };
 
 export function AggregationInputs<F extends string, P extends Array<string>>(
@@ -2810,6 +2812,7 @@ export function AggregationInputs<F extends string, P extends Array<string>>(
           >
             <ValuePicker
               allowedValues={props.options}
+              disabledValues={props.disabledOptions}
               selectedValues={props.numeratorValues}
               onSelectedValuesChange={props.onNumeratorChange}
             />
@@ -2823,6 +2826,7 @@ export function AggregationInputs<F extends string, P extends Array<string>>(
           >
             <ValuePicker
               allowedValues={props.options}
+              disabledValues={props.disabledOptions}
               selectedValues={props.denominatorValues}
               onSelectedValuesChange={props.onDenominatorChange}
             />

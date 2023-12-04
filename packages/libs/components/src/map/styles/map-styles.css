@@ -117,3 +117,10 @@
 .leaflet-container {
   font: 12px/1.5 'Open Sans', Arial, Helvetica, sans-serif;
 }
+
+/* marker popup highlight */
+.marker-popup-highlight .leaflet-popup-content-wrapper {
+  border-radius: 10px;
+  box-shadow: -1px -0.5px 0px 6px rgba(255, 255, 0, 1),
+    -1px -0.5px 0px 2px rgba(255, 255, 0, 1) inset;
+}
