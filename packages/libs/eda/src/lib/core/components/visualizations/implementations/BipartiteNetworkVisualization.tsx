@@ -32,6 +32,8 @@ import { OutputEntityTitle } from '../OutputEntityTitle';
 import { scaleLinear } from 'd3';
 import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
+import { gray } from '@veupathdb/coreui/lib/definitions/colors';
+import '../Visualizations.scss';
 // end imports
 
 // Defaults
@@ -261,7 +263,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
             i
       ),
       marker: 'line',
-      markerColor: 'rgb(136,34,85)',
+      markerColor: gray[900],
       hasData: true,
       lineThickness:
         String(
@@ -278,26 +280,19 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
       marker: 'line',
       markerColor: twoColorPalette[1],
       hasData: true,
-      lineThickness: '2px',
+      lineThickness: '3px',
     },
     {
       label: 'Negetive correlation',
       marker: 'line',
       markerColor: twoColorPalette[0],
       hasData: true,
-      lineThickness: '2px',
+      lineThickness: '3px',
     },
   ];
 
   const legendNode = cleanedData && (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        flexWrap: 'wrap',
-        gap: '20px',
-      }}
-    >
+    <div className="MultiLegendContaner">
       <PlotLegend
         type="list"
         legendItems={lineLegendItems}
