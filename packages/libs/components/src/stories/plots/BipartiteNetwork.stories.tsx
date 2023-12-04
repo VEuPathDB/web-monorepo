@@ -24,6 +24,7 @@ interface TemplateProps {
   showThumbnail?: boolean;
   containerStyles?: CSSProperties;
   svgStyleOverrides?: BipartiteNetworkSVGStyles;
+  labelTruncationLength?: number;
 }
 
 // Template for showcasing our BipartiteNetwork component.
@@ -47,6 +48,7 @@ const Template: Story<TemplateProps> = (args) => {
     showSpinner: args.loading,
     containerStyles: args.containerStyles,
     svgStyleOverrides: args.svgStyleOverrides,
+    labelTruncationLength: args.labelTruncationLength,
   };
   return (
     <>
@@ -131,6 +133,7 @@ WithStyle.args = {
   column1Name: 'Column 1',
   column2Name: 'Column 2',
   svgStyleOverrides: svgStyleOverrides,
+  labelTruncationLength: 5,
 };
 
 // Gerenate a bipartite network with a given number of nodes and random edges

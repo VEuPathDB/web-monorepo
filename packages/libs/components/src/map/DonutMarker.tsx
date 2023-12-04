@@ -1,4 +1,3 @@
-import React from 'react';
 import L from 'leaflet';
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 
@@ -103,6 +102,9 @@ function makeArc(
  * this is a SVG donut marker icon
  */
 export default function DonutMarker(props: DonutMarkerProps) {
+  const selectedMarkers = props.selectedMarkers;
+  const setSelectedMarkers = props.setSelectedMarkers;
+
   const {
     html: svgHTML,
     size,
@@ -112,7 +114,9 @@ export default function DonutMarker(props: DonutMarkerProps) {
 
   // set icon as divIcon
   const SVGDonutIcon: any = L.divIcon({
-    className: 'leaflet-canvas-icon', // may need to change this className but just leave it as it for now
+    // add class, highlight-chartmarker, for panning
+    className:
+      'leaflet-canvas-icon ' + 'marker-id-' + props.id + ' donut-marker',
     iconSize: new L.Point(size, size), // this will make icon to cover up SVG area!
     iconAnchor: new L.Point(size / 2, size / 2), // location of topleft corner: this is used for centering of the icon like transform/translate in CSS
     html: svgHTML, // divIcon HTML svg code generated above
@@ -169,6 +173,9 @@ export default function DonutMarker(props: DonutMarkerProps) {
       }}
       showPopup={props.showPopup}
       popupClass="donut-popup"
+      // pass selectedMarkers state and setState
+      selectedMarkers={selectedMarkers}
+      setSelectedMarkers={setSelectedMarkers}
     />
   );
 }
@@ -310,5 +317,11 @@ function donutMarkerSVGIcon(props: DonutMarkerStandaloneProps): {
 
   // closing svg tag
   svgHTML += '</svg>';
-  return { html: svgHTML, size, sliceTextOverrides, markerLabel: sumLabel };
+
+  return {
+    html: svgHTML,
+    size,
+    sliceTextOverrides,
+    markerLabel: sumLabel,
+  };
 }

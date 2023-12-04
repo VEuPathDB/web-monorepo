@@ -182,6 +182,7 @@ export function useStudyEntities(filters?: Filter[]) {
                       // (it's less critical than for dates due to time slider)
                       return {
                         ...variable,
+                        fullVocabulary: variable.vocabulary,
                         vocabulary,
                         distributionDefaults: {
                           ...variable.distributionDefaults,
@@ -219,6 +220,7 @@ export function useStudyEntities(filters?: Filter[]) {
 
                       return {
                         ...variable,
+                        fullVocabulary: variable.vocabulary,
                         vocabulary,
                         distributionDefaults: {
                           ...variable.distributionDefaults,
@@ -239,6 +241,7 @@ export function useStudyEntities(filters?: Filter[]) {
                     } else
                       return {
                         ...variable,
+                        fullVocabulary: variable.vocabulary,
                         vocabulary,
                         distinctValuesCount: vocabulary?.length ?? 0,
                       };
