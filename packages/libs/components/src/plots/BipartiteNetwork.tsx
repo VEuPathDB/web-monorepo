@@ -40,6 +40,8 @@ export interface BipartiteNetworkProps {
   containerClass?: string;
   /** shall we show the loading spinner? */
   showSpinner?: boolean;
+  /** Length of node label text before truncating with an ellipsis */
+  labelTruncationLength?: number;
 }
 
 // Show a few gray nodes when there is no real data.
@@ -68,6 +70,7 @@ function BipartiteNetwork(
     svgStyleOverrides,
     containerClass = 'web-components-plot',
     showSpinner = false,
+    labelTruncationLength = 20,
   } = props;
 
   // Use ref forwarding to enable screenshotting of the plot for thumbnail versions.
@@ -201,6 +204,7 @@ function BipartiteNetwork(
               const nodeWithLabelProps = {
                 node: node,
                 labelPosition: node.labelPosition,
+                truncationLength: labelTruncationLength,
               };
               return <NodeWithLabel {...nodeWithLabelProps} />;
             }}

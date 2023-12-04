@@ -24,6 +24,10 @@ export interface SemanticMarkersProps {
   flyToMarkers?: boolean;
   /** How long (in ms) after rendering to wait before flying to markers */
   flyToMarkersDelay?: number;
+  /* selectedMarkers state **/
+  selectedMarkers?: string[];
+  /* selectedMarkers setState **/
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 /**
@@ -38,6 +42,8 @@ export default function SemanticMarkers({
   recenterMarkers = true,
   flyToMarkers,
   flyToMarkersDelay,
+  selectedMarkers,
+  setSelectedMarkers,
 }: SemanticMarkersProps) {
   // react-leaflet v3
   const map = useMap();
@@ -172,12 +178,30 @@ export default function SemanticMarkers({
     }
   }, [animation, map, markers, prevRecenteredMarkers, recenterMarkers]);
 
+  // remove any selectedMarkers that no longer exist in the current markers
+  useEffect(() => {
+    if (setSelectedMarkers && selectedMarkers) {
+      const prunedSelectedMarkers = selectedMarkers.filter((id) =>
+        consolidatedMarkers.find(({ props }) => id === props.id)
+      );
+
+      if (prunedSelectedMarkers.length < selectedMarkers.length)
+        setSelectedMarkers(prunedSelectedMarkers);
+    }
+  }, [consolidatedMarkers, selectedMarkers]);
+
+  // add the selectedMarkers props and callback
+  // (and the scheduled-for-removal showPopup prop)
   const refinedMarkers = useMemo(
     () =>
       consolidatedMarkers.map((marker) =>
-        cloneElement(marker, { showPopup: true })
+        cloneElement(marker, {
+          showPopup: true,
+          selectedMarkers,
+          setSelectedMarkers,
+        })
       ),
-    [consolidatedMarkers]
+    [consolidatedMarkers, selectedMarkers]
   );
 
   // this should use the unadulterated markers (which are always in the "main world")

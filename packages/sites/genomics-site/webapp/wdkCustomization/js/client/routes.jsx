@@ -1,5 +1,6 @@
+import { orderBy } from 'lodash';
 import React, { Suspense } from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, useHistory, useRouteMatch } from 'react-router-dom';
 
 import SiteSearchController from '@veupathdb/web-common/lib/controllers/SiteSearchController';
 
@@ -24,7 +25,7 @@ import { useReferenceStrains } from '@veupathdb/preferred-organisms/lib/hooks/re
 import { PageLoading } from './components/common/PageLoading';
 import SampleForm from './components/samples/SampleForm';
 
-import { projectId } from './config';
+import { projectId, webAppUrl } from './config';
 
 import { blastRoutes } from './blastRoutes';
 import { preferredOrganismsRoutes } from './preferredOrganismRoutes';
@@ -32,7 +33,6 @@ import { userCommentRoutes } from './userCommentRoutes';
 import { userDatasetRoutes } from './userDatasetRoutes';
 import Downloads from './components/Downloads';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { projects } from '@veupathdb/web-common/lib/components/homepage/Footer';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
 // Project id is not needed for these record classes.
@@ -120,22 +120,13 @@ function SiteSearchRouteComponent() {
   );
 }
 
-const PROJECTS_WITHOUT_NEW_DOWNLOADS_INTERFACE = [
-  'VEuPathDB',
-  'OrthoMCL',
-  'ClinEpiDB',
-  'MicrobiomeDB',
-];
-
 function DownloadsRouteComponent() {
-  const projectId = useWdkService(
-    async (wdkService) =>
-      await wdkService.getConfig().then((config) => config.projectId)
-  );
-  const projectsWithNewDownloadInterface = projects.filter(
-    (project) => !PROJECTS_WITHOUT_NEW_DOWNLOADS_INTERFACE.includes(project)
-  );
-  if (!projectId) return <Loading />;
+  const config = useWdkService((wdkService) => wdkService.getConfig(), []);
+  const { path } = useRouteMatch();
+  const history = useHistory();
+  const localHref = history.createHref({ pathname: path });
+  const remoteHrefSuffix = localHref.replace(webAppUrl, '');
+  if (!config) return <Loading />;
   return projectId === 'EuPathDB' ? (
     <div className="Downloads">
       <h1>Download Data Files</h1>
@@ -143,13 +134,14 @@ function DownloadsRouteComponent() {
         Please go to a specific organism site in order to download files:
       </p>
       <ul>
-        {projectsWithNewDownloadInterface.map((project) => (
+        {orderBy(
+          Object.entries(config.projectUrls),
+          ([project]) => project
+        ).map(([project, url]) => (
           <li key={project}>
             <a
               target="_blank"
-              href={`https://${project.toLowerCase()}.org${
-                window.location.pathname
-              }`}
+              href={url.replace(/\/$/, '') + remoteHrefSuffix}
               rel="noreferrer"
             >
               {project}

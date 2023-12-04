@@ -29,7 +29,10 @@ import {
   studyMatchPredicate,
   studyFilters,
 } from '@veupathdb/web-common/lib/util/homeContent';
-import { useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
+import {
+  useUserDatasetsWorkspace,
+  edaExampleAnalysesAuthors,
+} from '@veupathdb/web-common/lib/config';
 import { useEda } from '@veupathdb/web-common/lib/config';
 import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 import { CollapsibleDetailsSection } from '@veupathdb/wdk-client/lib/Components';
@@ -458,21 +461,24 @@ function makeHeaderMenuItemsFactory(
 async function loadItems({ analysisClient, wdkService }) {
   const overviews = await analysisClient.getPublicAnalyses();
   const studies = await wdkService.getStudies();
-  return overviews.flatMap((overview) => {
-    const study = studies.records.find(
-      (study) => study.attributes.dataset_id === overview.studyId
-    );
-    if (study == null) return [];
-    return [
-      {
-        displayName: overview.displayName,
-        studyDisplayName: study.displayName,
-        description: overview.description,
-        studyId: overview.studyId,
-        analysisId: overview.analysisId,
-      },
-    ];
-  });
+  const userIds = edaExampleAnalysesAuthors;
+  return overviews
+    .filter((analysis) => userIds?.includes(analysis.userId) ?? true)
+    .flatMap((overview) => {
+      const study = studies.records.find(
+        (study) => study.attributes.dataset_id === overview.studyId
+      );
+      if (study == null) return [];
+      return [
+        {
+          displayName: overview.displayName,
+          studyDisplayName: study.displayName,
+          description: overview.description,
+          studyId: overview.studyId,
+          analysisId: overview.analysisId,
+        },
+      ];
+    });
 }
 
 /**
