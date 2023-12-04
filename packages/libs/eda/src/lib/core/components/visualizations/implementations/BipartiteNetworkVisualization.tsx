@@ -29,12 +29,17 @@ import { fixVarIdLabel } from '../../../utils/visualization';
 import DataClient from '../../../api/DataClient';
 import { CorrelationAssayMetadataConfig } from '../../computations/plugins/correlationAssayMetadata';
 import { OutputEntityTitle } from '../OutputEntityTitle';
+import { scaleLinear } from 'd3';
+import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 // end imports
 
 // Defaults
 const DEFAULT_CORRELATION_COEF_THRESHOLD = 0.05; // Ability for user to change this value not yet implemented.
 const DEFAULT_SIGNIFICANCE_THRESHOLD = 0.05; // Ability for user to change this value not yet implemented.
 const DEFAULT_LINK_COLOR_DATA = '0';
+const MIN_STROKE_WIDTH = 0.5; // Minimum stroke width for links in the network. Will represent the smallest link weight.
+const MAX_STROKE_WIDTH = 6; // Maximum stroke width for links in the network. Will represent the largest link weight.
 
 const plotContainerStyles = {
   width: 750,
@@ -130,6 +135,17 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     ])
   );
 
+  // Adjust link stroke widths so that it spans an appropriate range for this viz.
+  const dataStrokeWidths =
+    data.value?.bipartitenetwork.data.links.map((link) =>
+      Number(link.strokeWidth)
+    ) ?? [];
+  const minDataStrokeWidth = Math.min(...dataStrokeWidths);
+  const maxDataStrokeWidth = Math.max(...dataStrokeWidths);
+  const strokeWidthMap = scaleLinear()
+    .domain([minDataStrokeWidth, maxDataStrokeWidth])
+    .range([MIN_STROKE_WIDTH, MAX_STROKE_WIDTH]);
+
   // Clean and finalize data format. Specifically, assign link colors, add display labels
   const cleanedData = useMemo(() => {
     if (!data.value) return undefined;
@@ -176,6 +192,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
         };
       }
     );
+
     return {
       ...data.value.bipartitenetwork.data,
       nodes: nodesWithLabels,
@@ -183,7 +200,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
         return {
           source: link.source,
           target: link.target,
-          strokeWidth: Number(link.strokeWidth),
+          strokeWidth: strokeWidthMap(Number(link.strokeWidth)),
           color: link.color ? linkColorScale(link.color.toString()) : '#000000',
         };
       }),
@@ -230,7 +247,40 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   );
 
   const controlsNode = <> </>;
-  const legendNode = <> </>;
+
+  // Create legend for 1. Line/link thickness and 2. Link color.
+  const nLineItemsInLegend = 4;
+  const lineLegendItems: LegendItemsProps[] = [
+    ...Array(nLineItemsInLegend).keys(),
+  ].map((i) => {
+    return {
+      label: String(
+        maxDataStrokeWidth -
+          ((maxDataStrokeWidth - minDataStrokeWidth) /
+            (nLineItemsInLegend - 1)) *
+            i
+      ),
+      marker: 'line',
+      markerColor: 'rgb(136,34,85)',
+      hasData: true,
+      lineThickness:
+        String(
+          MAX_STROKE_WIDTH -
+            ((MAX_STROKE_WIDTH - MIN_STROKE_WIDTH) / (nLineItemsInLegend - 1)) *
+              i
+        ) + 'px',
+    };
+  });
+
+  const legendNode = cleanedData && (
+    <PlotLegend
+      type="list"
+      legendItems={lineLegendItems}
+      checkedLegendItems={undefined}
+      legendTitle="Link thickness" // This should be correlation-related. Need new option!
+      showCheckbox={false}
+    />
+  );
   const tableGroupNode = <> </>;
 
   const LayoutComponent = options?.layoutComponent ?? PlotLayout;
