@@ -300,6 +300,10 @@ function ConfigPanelComponent(
 function MapLayerComponent(
   props: MapTypeMapLayerProps<PieMarkerConfiguration>
 ) {
+  // selectedMarkers and its state function
+  const selectedMarkers = props.selectedMarkers;
+  const setSelectedMarkers = props.setSelectedMarkers;
+
   const { selectedVariable, binningMethod, selectedValues } =
     props.configuration as PieMarkerConfiguration;
   const markerDataResponse = useMarkerData({
@@ -317,6 +321,7 @@ function MapLayerComponent(
   if (markerDataResponse.error && !markerDataResponse.isFetching)
     return <MapFloatingErrorDiv error={markerDataResponse.error} />;
 
+  // pass selectedMarkers and its state function
   const markers = markerDataResponse.markerProps?.map((markerProps) => (
     <DonutMarker {...markerProps} />
   ));
@@ -331,6 +336,8 @@ function MapLayerComponent(
             !markerDataResponse.isFetching &&
             isApproxSameViewport(props.appState.viewport, defaultViewport)
           }
+          selectedMarkers={selectedMarkers}
+          setSelectedMarkers={setSelectedMarkers}
           flyToMarkersDelay={2000}
         />
       )}

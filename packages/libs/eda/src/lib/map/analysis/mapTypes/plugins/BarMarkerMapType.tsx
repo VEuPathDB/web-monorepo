@@ -338,6 +338,10 @@ function ConfigPanelComponent(
 function MapLayerComponent(
   props: MapTypeMapLayerProps<BarPlotMarkerConfiguration>
 ) {
+  // selectedMarkers and its state function
+  const selectedMarkers = props.selectedMarkers;
+  const setSelectedMarkers = props.setSelectedMarkers;
+
   const {
     studyEntities,
     studyId,
@@ -368,6 +372,7 @@ function MapLayerComponent(
   if (markerData.error && !markerData.isFetching)
     return <MapFloatingErrorDiv error={markerData.error} />;
 
+  // pass selectedMarkers and its state function
   const markers = markerData.markerProps?.map((markerProps) => (
     <ChartMarker {...markerProps} />
   ));
@@ -383,6 +388,8 @@ function MapLayerComponent(
             !markerData.isFetching &&
             isApproxSameViewport(props.appState.viewport, defaultViewport)
           }
+          selectedMarkers={selectedMarkers}
+          setSelectedMarkers={setSelectedMarkers}
           flyToMarkersDelay={2000}
         />
       )}

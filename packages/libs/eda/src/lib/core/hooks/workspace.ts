@@ -7,6 +7,7 @@ import {
   WorkspaceContext,
 } from '../context/WorkspaceContext';
 import {
+  CollectionVariableTreeNode,
   StudyEntity,
   StudyMetadata,
   StudyRecord,
@@ -14,12 +15,16 @@ import {
   Variable,
   VariableTreeNode,
 } from '../types/study';
-import { VariableDescriptor } from '../types/variable';
+import {
+  VariableCollectionDescriptor,
+  VariableDescriptor,
+} from '../types/variable';
 import { useCallback, useMemo } from 'react';
 import {
   entityTreeToArray,
-  findCollections,
   findEntityAndVariable,
+  findEntityAndVariableCollection,
+  findVariableCollections,
 } from '../utils/study-metadata';
 import { ComputeClient } from '../api/ComputeClient';
 import { DownloadClient } from '../api';
@@ -80,6 +85,24 @@ export function useFindEntityAndVariable(filters?: Filter[]) {
   );
 }
 
+export function useFindEntityAndVariableCollection(filters?: Filter[]) {
+  const entities = useStudyEntities(filters);
+  return useCallback(
+    (variableCollection?: VariableCollectionDescriptor) => {
+      const entAndVarCollection = findEntityAndVariableCollection(
+        entities,
+        variableCollection
+      );
+      if (entAndVarCollection == null) return;
+      return entAndVarCollection as {
+        entity: StudyEntity;
+        variableCollection: CollectionVariableTreeNode;
+      };
+    },
+    [entities]
+  );
+}
+
 export function useEntityAndVariable(descriptor?: VariableDescriptor) {
   const entities = useStudyEntities();
   return useMemo(
@@ -88,8 +111,18 @@ export function useEntityAndVariable(descriptor?: VariableDescriptor) {
   );
 }
 
-export function useCollectionVariables(entity: StudyEntity) {
-  return useMemo(() => findCollections(entity).flat(), [entity]);
+export function useEntityAndVariableCollection(
+  descriptor?: VariableCollectionDescriptor
+) {
+  const entities = useStudyEntities();
+  return useMemo(
+    () => descriptor && findEntityAndVariableCollection(entities, descriptor),
+    [descriptor, entities]
+  );
+}
+
+export function useVariableCollections(entity: StudyEntity) {
+  return useMemo(() => findVariableCollections(entity), [entity]);
 }
 
 /**
@@ -149,6 +182,7 @@ export function useStudyEntities(filters?: Filter[]) {
                       // (it's less critical than for dates due to time slider)
                       return {
                         ...variable,
+                        fullVocabulary: variable.vocabulary,
                         vocabulary,
                         distributionDefaults: {
                           ...variable.distributionDefaults,
@@ -187,6 +221,7 @@ export function useStudyEntities(filters?: Filter[]) {
 
                       return {
                         ...variable,
+                        fullVocabulary: variable.vocabulary,
                         vocabulary,
                         distributionDefaults: {
                           ...variable.distributionDefaults,
@@ -207,6 +242,7 @@ export function useStudyEntities(filters?: Filter[]) {
                     } else
                       return {
                         ...variable,
+                        fullVocabulary: variable.vocabulary,
                         vocabulary,
                         distinctValuesCount: vocabulary?.length ?? 0,
                       };

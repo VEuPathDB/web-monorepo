@@ -406,6 +406,11 @@ function MapAnalysisImpl(props: ImplProps) {
     if (redirectURL) history.push(redirectURL);
   }, [history, redirectURL]);
 
+  // make an array of objects state to list highlighted markers
+  const [selectedMarkers, setSelectedMarkers] = useState<string[]>([]);
+
+  // console.log('selectedMarkers =', selectedMarkers);
+
   const sidePanelMenuEntries: SidePanelMenuEntry[] = [
     {
       type: 'heading',
@@ -833,6 +838,10 @@ function MapAnalysisImpl(props: ImplProps) {
             filteredCounts,
             hideVizInputsAndControls,
             setHideVizInputsAndControls,
+            /* disabled until wired in fully:
+             selectedMarkers,
+             setSelectedMarkers,
+	   */
           };
 
         return (
@@ -927,6 +936,8 @@ function MapAnalysisImpl(props: ImplProps) {
                     }
                     // pass defaultViewport & isStandAloneMap props for custom zoom control
                     defaultViewport={defaultViewport}
+                    // for multiple markers cancelation of selection only
+                    setSelectedMarkers={setSelectedMarkers}
                   >
                     {activeMapTypePlugin?.MapLayerComponent && (
                       <activeMapTypePlugin.MapLayerComponent

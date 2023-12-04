@@ -41,6 +41,9 @@ export interface MapTypeMapLayerProps<T extends MarkerConfiguration> {
   filtersIncludingViewport: Filter[];
   hideVizInputsAndControls: boolean;
   setHideVizInputsAndControls: (hide: boolean) => void;
+  // selectedMarkers and its state function
+  selectedMarkers?: string[];
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 /**

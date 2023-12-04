@@ -448,7 +448,7 @@ const siteAnnouncements = [
             <a href="https://vectorbase.org/vectorbase/app/record/dataset/DS_c099af5258">
               <i>Lutzomyia longipalpis</i> M1
             </a>{' '}
-            is the <b>new reference genome</b> for this mosquito species, which
+            is the <b>new reference genome</b> for this sand fly species, which
             means that the 'omics' data sets are only aligned to this strain and
             all the site functionality is activated.{' '}
             <a href="https://vectorbase.org/vectorbase/app/record/dataset/DS_75915ef5b1">
@@ -485,7 +485,7 @@ const siteAnnouncements = [
             <a href="https://vectorbase.org/vectorbase/app/record/dataset/DS_4582dc809c">
               <i>Phlebotomus papatasi</i> M1
             </a>{' '}
-            is the <b>new reference genome</b> for this mosquito species, which
+            is the <b>new reference genome</b> for this sand fly species, which
             means that the 'omics' data sets are only aligned to this strain and
             all the site functionality is activated.{' '}
             <a href="https://vectorbase.org/vectorbase/app/record/dataset/DS_a8e93bad14">
