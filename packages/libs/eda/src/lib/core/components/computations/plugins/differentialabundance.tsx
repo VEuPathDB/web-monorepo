@@ -237,9 +237,9 @@ export function DifferentialAbundanceConfiguration(
 
   const keepCollections =
     removeAbsoluteAbundanceVariableCollections(collections);
-  const collectionVarItems = useMemo(
-    () => makeVariableCollectionItems(keepCollections, undefined),
-    [keepCollections]
+  const collectionVarItems = makeVariableCollectionItems(
+    keepCollections,
+    undefined
   );
 
   const selectedCollectionVar = useMemo(() => {

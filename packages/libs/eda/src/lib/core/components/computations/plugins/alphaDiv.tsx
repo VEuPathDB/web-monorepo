@@ -135,9 +135,9 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
 
   const keepCollections =
     removeAbsoluteAbundanceVariableCollections(collections);
-  const collectionVarItems = useMemo(
-    () => makeVariableCollectionItems(keepCollections, undefined),
-    [keepCollections]
+  const collectionVarItems = makeVariableCollectionItems(
+    keepCollections,
+    undefined
   );
 
   const selectedCollectionVar = useMemo(() => {

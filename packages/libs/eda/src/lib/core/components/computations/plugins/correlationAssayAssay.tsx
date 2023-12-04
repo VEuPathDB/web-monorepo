@@ -167,9 +167,9 @@ export function CorrelationAssayAssayConfiguration(
     collectionDescriptors
   );
   // this should also make it easy to disable already selected items if we decide wed rather go that route
-  const collectionVarItems = useMemo(
-    () => makeVariableCollectionItems(keepCollections, undefined),
-    [keepCollections]
+  const collectionVarItems = makeVariableCollectionItems(
+    keepCollections,
+    undefined
   );
 
   const selectedCollectionVar1 = useMemo(() => {
