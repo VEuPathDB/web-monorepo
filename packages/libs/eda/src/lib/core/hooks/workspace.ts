@@ -122,7 +122,7 @@ export function useEntityAndVariableCollection(
 }
 
 export function useVariableCollections(entity: StudyEntity) {
-  return useMemo(() => findVariableCollections(entity).flat(), [entity]);
+  return useMemo(() => findVariableCollections(entity), [entity]);
 }
 
 /**
