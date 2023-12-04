@@ -7,7 +7,6 @@ import { screenReaderOnly } from '../../../styleDefinitions/typography';
 import { useUITheme } from '../../theming';
 import DismissButton from '../../notifications/DismissButton';
 import { H6 } from '../../typography';
-import { truncateWithEllipsis } from '@veupathdb/components/lib/utils/axis-tick-label-ellipsis';
 
 export type DraggablePanelCoordinatePair = {
   x: number;
@@ -283,3 +282,10 @@ function constrainPositionOnScreen(
     y: isYOffScreen ? bottomMostY : position.y,
   };
 }
+
+// function for ellipsis
+export const truncateWithEllipsis = (label: string, maxLabelLength: number) => {
+  return (label || '').length > maxLabelLength
+    ? (label || '').substring(0, maxLabelLength - 2) + '...'
+    : label;
+};
