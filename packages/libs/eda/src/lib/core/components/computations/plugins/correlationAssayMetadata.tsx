@@ -50,6 +50,13 @@ export const plugin: ComputationPlugin = {
           return 'Showing links with an absolute correlation coefficient above '; // visualization will add in the actual value
         }
       },
+      getLegendTitle(config) {
+        if (CorrelationAssayMetadataConfig.is(config)) {
+          return 'Correlation coefficient magnitude';
+        } else {
+          return 'Legend';
+        }
+      },
     }), // Must match name in data service and in visualization.tsx
   },
 };

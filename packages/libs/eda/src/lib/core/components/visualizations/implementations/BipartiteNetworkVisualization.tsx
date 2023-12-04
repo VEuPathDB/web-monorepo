@@ -3,7 +3,11 @@ import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { PlotLayout } from '../../layouts/PlotLayout';
 import { VisualizationProps } from '../VisualizationTypes';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
-import { LayoutOptions, TitleOptions } from '../../layouts/types';
+import {
+  LayoutOptions,
+  TitleOptions,
+  LegendOptions,
+} from '../../layouts/types';
 import { RequestOptions } from '../options/types';
 
 // Bipartite network imports
@@ -73,6 +77,7 @@ export const BipartiteNetworkConfig = t.partial({
 interface Options
   extends LayoutOptions,
     TitleOptions,
+    LegendOptions,
     RequestOptions<BipartiteNetworkConfig, {}, BipartiteNetworkRequestParams> {}
 
 // Bipartite Network Visualization
@@ -273,6 +278,9 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
         ) + 'px',
     };
   });
+  const lineLegendTitle =
+    options?.getLegendTitle?.(computation.descriptor.configuration) ??
+    'Link thickness';
 
   const colorLegendItems: LegendItemsProps[] = [
     {
@@ -297,7 +305,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
         type="list"
         legendItems={lineLegendItems}
         checkedLegendItems={undefined}
-        legendTitle="Link thickness" // This should be correlation-related. Need new option!
+        legendTitle={lineLegendTitle}
         showCheckbox={false}
       />
       <PlotLegend
