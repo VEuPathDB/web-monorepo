@@ -7,6 +7,7 @@ import { screenReaderOnly } from '../../../styleDefinitions/typography';
 import { useUITheme } from '../../theming';
 import DismissButton from '../../notifications/DismissButton';
 import { H6 } from '../../typography';
+import { truncateWithEllipsis } from '@veupathdb/components/lib/utils/axis-tick-label-ellipsis';
 
 export type DraggablePanelCoordinatePair = {
   x: number;
@@ -121,6 +122,9 @@ export default function DraggablePanel({
     ? constrainPositionOnScreen(panelPosition, width, height, window)
     : panelPosition;
 
+  // set maximum text length for the panel title
+  const maxPanelTitleTextLength = 25;
+
   return (
     <Draggable
       bounds={confineToParentContainer ? 'parent' : false}
@@ -184,8 +188,12 @@ export default function DraggablePanel({
               padding: '0 10px',
             }}
           >
-            <span css={showPanelTitle ? null : screenReaderOnly}>
-              {panelTitle}
+            {/* ellipsis and tooltip for panel title */}
+            <span
+              css={showPanelTitle ? null : screenReaderOnly}
+              title={panelTitle}
+            >
+              {truncateWithEllipsis(panelTitle, maxPanelTitleTextLength)}
             </span>
           </H6>
           {onPanelDismiss && (
