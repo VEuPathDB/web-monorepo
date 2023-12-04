@@ -272,14 +272,47 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     };
   });
 
+  const colorLegendItems: LegendItemsProps[] = [
+    {
+      label: 'Positive correlation',
+      marker: 'line',
+      markerColor: twoColorPalette[1],
+      hasData: true,
+      lineThickness: '2px',
+    },
+    {
+      label: 'Negetive correlation',
+      marker: 'line',
+      markerColor: twoColorPalette[0],
+      hasData: true,
+      lineThickness: '2px',
+    },
+  ];
+
   const legendNode = cleanedData && (
-    <PlotLegend
-      type="list"
-      legendItems={lineLegendItems}
-      checkedLegendItems={undefined}
-      legendTitle="Link thickness" // This should be correlation-related. Need new option!
-      showCheckbox={false}
-    />
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        flexWrap: 'wrap',
+        gap: '20px',
+      }}
+    >
+      <PlotLegend
+        type="list"
+        legendItems={lineLegendItems}
+        checkedLegendItems={undefined}
+        legendTitle="Link thickness" // This should be correlation-related. Need new option!
+        showCheckbox={false}
+      />
+      <PlotLegend
+        type="list"
+        legendItems={colorLegendItems}
+        checkedLegendItems={undefined}
+        legendTitle="Link color" // This should be correlation-related. Need new option!
+        showCheckbox={false}
+      />
+    </div>
   );
   const tableGroupNode = <> </>;
 
