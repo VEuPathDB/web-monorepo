@@ -1,8 +1,18 @@
-import { useCollectionVariables, useStudyMetadata } from '../../..';
+import {
+  useFindEntityAndVariableCollection,
+  useStudyMetadata,
+  useVariableCollections,
+} from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { isEqual, partial } from 'lodash';
-import { useConfigChangeHandler, assertComputationWithConfig } from '../Utils';
+import { partial } from 'lodash';
+import {
+  useConfigChangeHandler,
+  assertComputationWithConfig,
+  makeVariableCollectionItems,
+  findVariableCollectionItemFromDescriptor,
+  removeAbsoluteAbundanceVariableCollections,
+} from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
@@ -67,40 +77,25 @@ function CorrelationAssayMetadataConfigDescriptionComponent({
 }: {
   computation: Computation;
 }) {
-  const studyMetadata = useStudyMetadata();
-  const collections = useCollectionVariables(studyMetadata.rootEntity);
+  const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
   assertComputationWithConfig<CorrelationAssayMetadataConfig>(
     computation,
     Computation
   );
 
-  const { configuration } = computation.descriptor;
-  const collectionVariable =
-    'collectionVariable' in configuration
-      ? configuration.collectionVariable
-      : undefined;
-  const correlationMethod =
-    'correlationMethod' in configuration
-      ? configuration.correlationMethod
-      : undefined;
+  const { collectionVariable, correlationMethod } =
+    computation.descriptor.configuration;
 
-  const updatedCollectionVariable = collections.find((collectionVar) =>
-    isEqual(
-      {
-        collectionId: collectionVar.id,
-        entityId: collectionVar.entityId,
-      },
-      collectionVariable
-    )
-  );
+  const entityAndCollectionVariableTreeNode =
+    findEntityAndVariableCollection(collectionVariable);
 
   return (
     <div className="ConfigDescriptionContainer">
       <h4>
         Data:{' '}
         <span>
-          {updatedCollectionVariable ? (
-            `${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}`
+          {entityAndCollectionVariableTreeNode ? (
+            `${entityAndCollectionVariableTreeNode.entity.displayName} > ${entityAndCollectionVariableTreeNode.variableCollection.displayName}`
           ) : (
             <i>Not selected</i>
           )}
@@ -139,7 +134,7 @@ export function CorrelationAssayMetadataConfiguration(
   if (configuration) configuration.correlationMethod = 'spearman';
 
   // Include known collection variables in this array.
-  const collections = useCollectionVariables(studyMetadata.rootEntity);
+  const collections = useVariableCollections(studyMetadata.rootEntity);
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
@@ -155,28 +150,19 @@ export function CorrelationAssayMetadataConfiguration(
       visualizationId
     );
 
-  const collectionVarItems = useMemo(() => {
-    return collections.map((collectionVar) => ({
-      value: {
-        collectionId: collectionVar.id,
-        entityId: collectionVar.entityId,
-      },
-      display:
-        collectionVar.entityDisplayName + ' > ' + collectionVar.displayName,
-    }));
-  }, [collections]);
+  const keepCollections =
+    removeAbsoluteAbundanceVariableCollections(collections);
+  const collectionVarItems = makeVariableCollectionItems(
+    keepCollections,
+    undefined
+  );
 
   const selectedCollectionVar = useMemo(() => {
-    if (configuration && 'collectionVariable' in configuration) {
-      const selectedItem = collectionVarItems.find((item) =>
-        isEqual(item.value, {
-          collectionId: configuration.collectionVariable.collectionId,
-          entityId: configuration.collectionVariable.entityId,
-        })
-      );
-      return selectedItem;
-    }
-  }, [collectionVarItems, configuration]);
+    return findVariableCollectionItemFromDescriptor(
+      collectionVarItems,
+      configuration?.collectionVariable
+    );
+  }, [collectionVarItems, configuration?.collectionVariable]);
 
   return (
     <ComputationStepContainer

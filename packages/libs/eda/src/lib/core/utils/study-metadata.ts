@@ -133,21 +133,17 @@ export function makeEntityDisplayName(entity: StudyEntity, isPlural: boolean) {
     : entity.displayNamePlural ?? `${entity.displayName}s`;
 }
 
-// Traverse down the entities and return an array of collection variables.
-export function findCollections(entity: StudyEntity) {
-  // Create an array of collections, where each collection element is a CollectionVariableTreeNode
-  // that includes that collection's entity id and display name
+export function findVariableCollections(
+  entity: StudyEntity
+): VariableCollectionDescriptor[] {
   const collections = Array.from(
     preorder(entity, (e) => e.children ?? [])
   ).flatMap((e) => {
-    const collectionWithEntity = e.collections?.map((collection) => {
-      return {
-        ...collection,
-        entityId: e.id,
-        entityDisplayName: e.displayName,
-      };
-    });
-    return collectionWithEntity ?? [];
+    const VariableCollectionDescriptors = e.collections?.map((collection) => ({
+      entityId: e.id,
+      collectionId: collection.id,
+    }));
+    return VariableCollectionDescriptors ?? [];
   });
 
   return collections;

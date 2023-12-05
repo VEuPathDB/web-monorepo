@@ -6,6 +6,7 @@ export interface PlotLegendGradientProps {
   legendMax: number;
   legendMin: number;
   valueToColorMapper: (a: number) => string;
+  valueToTickStringMapper?: (a: number) => string;
   nTicks?: number; // MUST be odd!
   showMissingness?: boolean;
 }
@@ -15,6 +16,7 @@ export default function PlotGradientLegend({
   legendMax,
   legendMin,
   valueToColorMapper,
+  valueToTickStringMapper = (val: number) => val.toPrecision(3),
   nTicks = 5,
   showMissingness,
 }: PlotLegendGradientProps) {
@@ -63,10 +65,9 @@ export default function PlotGradientLegend({
           dominantBaseline="middle"
           fontSize={tickFontSize}
         >
-          {(
-            (a / (nTicks! - 1)) * (legendMax - legendMin) +
-            legendMin
-          ).toPrecision(3)}
+          {valueToTickStringMapper(
+            (a / (nTicks! - 1)) * (legendMax - legendMin) + legendMin
+          )}
         </text>
       </g>
     );
@@ -77,7 +78,7 @@ export default function PlotGradientLegend({
       <svg
         id="gradientLegend"
         height={gradientBoxHeight + 20}
-        width={gradientBoxWidth + 60}
+        width={gradientBoxWidth + 80}
       >
         <defs>
           <linearGradient id="linearGradient" x1="0" x2="0" y1="1" y2="0">

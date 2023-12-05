@@ -28,7 +28,7 @@ import { StandaloneStudyPage } from './StandaloneStudyPage';
 
 type Props = {
   edaServiceUrl: string;
-  exampleAnalysesAuthor?: number;
+  exampleAnalysesAuthors?: number[];
   showUnreleasedData?: boolean;
   /**
    * The base of the URL from which to being sharing links.
@@ -50,7 +50,7 @@ type Props = {
  */
 export function WorkspaceRouter({
   edaServiceUrl,
-  exampleAnalysesAuthor,
+  exampleAnalysesAuthors,
   sharingUrlPrefix,
   showLoginForm,
   singleAppMode,
@@ -157,7 +157,7 @@ export function WorkspaceRouter({
               <AllAnalyses
                 analysisClient={analysisClient}
                 subsettingClient={subsettingClient}
-                exampleAnalysesAuthor={exampleAnalysesAuthor}
+                exampleAnalysesAuthors={exampleAnalysesAuthors}
                 showLoginForm={showLoginForm}
                 synchronizeWithUrl
                 updateDocumentTitle
@@ -193,7 +193,7 @@ export function WorkspaceRouter({
               <PublicAnalysesRoute
                 analysisClient={analysisClient}
                 subsettingClient={subsettingClient}
-                exampleAnalysesAuthor={exampleAnalysesAuthor}
+                exampleAnalysesAuthors={exampleAnalysesAuthors}
               />
             )}
           />
