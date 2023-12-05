@@ -42,7 +42,7 @@ import '../Visualizations.scss';
 // end imports
 
 // Defaults
-const DEFAULT_CORRELATION_COEF_THRESHOLD = 0.5; // Ability for user to change this value not yet implemented.
+const DEFAULT_CORRELATION_COEF_THRESHOLD = 0.05; // Ability for user to change this value not yet implemented.
 const DEFAULT_SIGNIFICANCE_THRESHOLD = 0.05; // Ability for user to change this value not yet implemented.
 const DEFAULT_LINK_COLOR_DATA = '0';
 const MIN_STROKE_WIDTH = 0.5; // Minimum stroke width for links in the network. Will represent the smallest link weight.
@@ -262,7 +262,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
 
   const controlsNode = <> </>;
 
-  // Create legend for 1. Line/link thickness and 2. Link color.
+  // Create legend for (1) Line/link thickness and (2) Link color.
   const nLineItemsInLegend = 4;
   const lineLegendItems: LegendItemsProps[] = [
     ...Array(nLineItemsInLegend).keys(),
@@ -285,9 +285,12 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
         ) + 'px',
     };
   });
-  const lineLegendTitle =
-    options?.getLegendTitle?.(computation.descriptor.configuration) ??
-    'Link thickness';
+  const lineLegendTitle = options?.getLegendTitle?.(
+    computation.descriptor.configuration
+  )
+    ? options.getLegendTitle(computation.descriptor.configuration) +
+      ' (Link width)'
+    : 'Link width';
 
   const colorLegendItems: LegendItemsProps[] = [
     {
@@ -319,7 +322,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
         type="list"
         legendItems={colorLegendItems}
         checkedLegendItems={undefined}
-        legendTitle="Link color" // This should be correlation-related. Need new option!
+        legendTitle="Link color"
         showCheckbox={false}
       />
     </div>
