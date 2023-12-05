@@ -853,7 +853,7 @@ export const BubbleOverlayConfig = type({
       denominatorValues: array(string),
     }),
     type({
-      overlayType: literal('continuous'), // TO DO for dates: probably redefine as 'number' | 'date'
+      overlayType: literal('continuous'),
       aggregator: keyof({ mean: null, median: null }),
     }),
   ]),

@@ -323,6 +323,10 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
 }
 
 function MapLayerComponent(props: MapTypeMapLayerProps) {
+  // selectedMarkers and its state function
+  const selectedMarkers = props.selectedMarkers;
+  const setSelectedMarkers = props.setSelectedMarkers;
+
   const {
     studyEntities,
     studyId,
@@ -353,6 +357,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
   if (markerData.error && !markerData.isFetching)
     return <MapFloatingErrorDiv error={markerData.error} />;
 
+  // pass selectedMarkers and its state function
   const markers = markerData.markerProps?.map((markerProps) => (
     <ChartMarker {...markerProps} />
   ));
@@ -368,6 +373,8 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
             !markerData.isFetching &&
             isApproxSameViewport(props.appState.viewport, defaultViewport)
           }
+          selectedMarkers={selectedMarkers}
+          setSelectedMarkers={setSelectedMarkers}
           flyToMarkersDelay={2000}
         />
       )}
