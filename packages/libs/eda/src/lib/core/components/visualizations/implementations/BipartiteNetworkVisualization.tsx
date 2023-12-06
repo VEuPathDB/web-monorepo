@@ -272,6 +272,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
               DEFAULT_CORRELATION_COEF_THRESHOLD
             }
             containerStyles={{ marginRight: 10 }}
+            step={0.05}
           />
 
           <NumberInput
