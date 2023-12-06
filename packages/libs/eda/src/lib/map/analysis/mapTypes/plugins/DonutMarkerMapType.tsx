@@ -218,6 +218,12 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
         analysisState.analysis?.descriptor.starredVariables ?? []
       }
       toggleStarredVariable={toggleStarredVariable}
+      // pass react-query's isLoading based on selectedCountsOption
+      isAllCategoricalValuesLoading={
+        configuration.selectedCountsOption === 'filtered'
+          ? allFilteredCategoricalValues.isLoading
+          : allVisibleCategoricalValues.isLoading
+      }
     />
   );
 
