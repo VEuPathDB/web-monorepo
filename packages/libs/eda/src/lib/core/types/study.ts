@@ -222,8 +222,6 @@ export const CollectionVariableTreeNode = t.intersection([
     imputeZero: t.boolean,
     precision: t.number,
     units: t.string,
-    entityId: t.string,
-    entityDisplayName: t.string,
     isCompositional: t.boolean,
     isProportion: t.boolean,
     normalizationMethod: t.string,

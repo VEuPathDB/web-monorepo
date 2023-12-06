@@ -1,6 +1,8 @@
 import { DefaultNode } from '@visx/network';
 import { Text } from '@visx/text';
 import { LinkData, NodeData } from '../types/plots/network';
+import { truncateWithEllipsis } from '../utils/axis-tick-label-ellipsis';
+import './Network.css';
 
 export type LabelPosition = 'right' | 'left';
 
@@ -17,6 +19,8 @@ interface NodeWithLabelProps {
   fontWeight?: number;
   /** Color for the label */
   labelColor?: string;
+  /** Length for labels before being truncated by ellipsis. Default 20 */
+  truncationLength?: number;
 }
 
 // NodeWithLabel draws one node and an optional label for the node. Both the node and
@@ -34,6 +38,7 @@ export function NodeWithLabel(props: NodeWithLabelProps) {
     fontSize = '1em',
     fontWeight = 400,
     labelColor = '#000',
+    truncationLength = 20,
   } = props;
 
   const { color, label, stroke, strokeWidth } = node;
@@ -63,6 +68,8 @@ export function NodeWithLabel(props: NodeWithLabelProps) {
         onClick={onClick}
         stroke={stroke ?? DEFAULT_STROKE}
         strokeWidth={strokeWidth ?? DEFAULT_STROKE_WIDTH}
+        style={{ cursor: 'default' }}
+        className="NodeWithLabel"
       />
       {/* Note that Text becomes a tspan */}
       <Text
@@ -73,10 +80,11 @@ export function NodeWithLabel(props: NodeWithLabelProps) {
         onClick={onClick}
         fontWeight={fontWeight}
         fill={labelColor}
-        style={{ cursor: 'pointer' }}
+        style={{ cursor: 'default' }}
       >
-        {label}
+        {label && truncateWithEllipsis(label, truncationLength)}
       </Text>
+      <title>{label}</title>
     </>
   );
 }
