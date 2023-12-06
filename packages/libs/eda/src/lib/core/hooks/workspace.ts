@@ -34,7 +34,7 @@ import {
   useFeaturedFieldsFromTree,
   useFieldTree,
   useFlattenedFields,
-} from '../components/variableTrees/hooks';
+} from '../components/variableSelectors/hooks';
 import { findFirstVariable } from '../../workspace/Utils';
 import * as DateMath from 'date-arithmetic';
 import { TimeUnit } from '../types/general';
