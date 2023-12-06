@@ -30,6 +30,10 @@ import DataClient from '../../../api/DataClient';
 import { CorrelationAssayMetadataConfig } from '../../computations/plugins/correlationAssayMetadata';
 import { CorrelationAssayAssayConfig } from '../../computations/plugins/correlationAssayAssay';
 import { OutputEntityTitle } from '../OutputEntityTitle';
+import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
+import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
+import { NumberOrDate } from '@veupathdb/components/lib/types/general';
+import { useVizConfig } from '../../../hooks/visualizations';
 // end imports
 
 // Defaults
@@ -77,10 +81,12 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     options,
     computation,
     visualization,
+    updateConfiguration,
     updateThumbnail,
     computeJobStatus,
     filteredCounts,
     filters,
+    hideInputsAndControls,
     plotContainerStyleOverrides,
   } = props;
 
@@ -95,6 +101,13 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     | CorrelationAssayMetadataConfig
     | CorrelationAssayAssayConfig;
 
+  const [vizConfig, updateVizConfig] = useVizConfig(
+    visualization.descriptor.configuration,
+    BipartiteNetworkConfig,
+    createDefaultConfig,
+    updateConfiguration
+  );
+
   // Get data from the compute job
   const data = usePromise(
     useCallback(async (): Promise<BipartiteNetworkResponse | undefined> => {
@@ -108,8 +121,8 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
         studyId,
         filters,
         config: {
-          correlationCoefThreshold: DEFAULT_CORRELATION_COEF_THRESHOLD,
-          significanceThreshold: DEFAULT_SIGNIFICANCE_THRESHOLD,
+          correlationCoefThreshold: vizConfig.correlationCoefThreshold,
+          significanceThreshold: vizConfig.significanceThreshold,
         },
         computeConfig: computationConfiguration,
       };
@@ -132,6 +145,8 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
       computation.descriptor.type,
       dataClient,
       visualization.descriptor.type,
+      vizConfig.correlationCoefThreshold,
+      vizConfig.significanceThreshold,
     ])
   );
 
@@ -244,6 +259,35 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
+      {!hideInputsAndControls && (
+        <LabelledGroup label="Link thresholds" alignChildrenHorizontally={true}>
+          <NumberInput
+            onValueChange={(newValue?: NumberOrDate) =>
+              updateVizConfig({ correlationCoefThreshold: Number(newValue) })
+            }
+            label={'Correlation magnitude'}
+            minValue={0}
+            value={
+              vizConfig.correlationCoefThreshold ??
+              DEFAULT_CORRELATION_COEF_THRESHOLD
+            }
+            containerStyles={{ marginRight: 10 }}
+          />
+
+          <NumberInput
+            label="P-Value"
+            onValueChange={(newValue?: NumberOrDate) =>
+              updateVizConfig({ significanceThreshold: Number(newValue) })
+            }
+            minValue={0}
+            value={
+              vizConfig.significanceThreshold ?? DEFAULT_SIGNIFICANCE_THRESHOLD
+            }
+            containerStyles={{ marginLeft: 10 }}
+            step={0.001}
+          />
+        </LabelledGroup>
+      )}
       <OutputEntityTitle subtitle={plotSubtitle} />
       <LayoutComponent
         isFaceted={false}
