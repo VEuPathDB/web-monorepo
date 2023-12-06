@@ -485,12 +485,7 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
 
   const {
     outputEntity: { id: outputEntityId },
-  } = useCommonData(
-    selectedVariable,
-    props.geoConfigs,
-    props.studyEntities,
-    props.appState.boundsZoomLevel
-  );
+  } = useCommonData(selectedVariable, props.geoConfigs, props.studyEntities);
 
   return outputEntityId != null ? (
     <MapTypeHeaderCounts
