@@ -55,11 +55,6 @@ export const plugin: ComputationPlugin = {
   isConfigurationValid: CorrelationAssayMetadataConfig.is,
   visualizationPlugins: {
     bipartitenetwork: bipartiteNetworkVisualization.withOptions({
-      getPlotSubtitle(config) {
-        if (CorrelationAssayMetadataConfig.is(config)) {
-          return 'Showing links with an absolute correlation coefficient above '; // visualization will add in the actual value
-        }
-      },
       getLegendTitle(config) {
         if (CorrelationAssayMetadataConfig.is(config)) {
           return 'Correlation coefficient magnitude';
