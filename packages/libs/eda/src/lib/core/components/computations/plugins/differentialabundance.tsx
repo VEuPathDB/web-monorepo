@@ -15,7 +15,7 @@ import {
   useConfigChangeHandler,
   assertComputationWithConfig,
   makeVariableCollectionItems,
-  removeAbsoluteAbundanceVariableCollections,
+  isNotAbsoluteAbundanceVariableCollection,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
@@ -28,7 +28,7 @@ import {
 } from '../../../hooks/workspace';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
-import VariableTreeDropdown from '../../variableTrees/VariableTreeDropdown';
+import VariableTreeDropdown from '../../variableSelectors/VariableTreeDropdown';
 import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
 import { useToggleStarredVariable } from '../../../hooks/starredVariables';
 import { Filter } from '../../..';
@@ -219,7 +219,10 @@ export function DifferentialAbundanceConfiguration(
   if (configuration) configuration.pValueFloor = '1e-200';
 
   // Include known collection variables in this array.
-  const collections = useVariableCollections(studyMetadata.rootEntity);
+  const collections = useVariableCollections(
+    studyMetadata.rootEntity,
+    isNotAbsoluteAbundanceVariableCollection
+  );
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
@@ -235,10 +238,8 @@ export function DifferentialAbundanceConfiguration(
       visualizationId
     );
 
-  const keepCollections =
-    removeAbsoluteAbundanceVariableCollections(collections);
   const collectionVarItems = makeVariableCollectionItems(
-    keepCollections,
+    collections,
     undefined
   );
 

@@ -11,7 +11,7 @@ import {
   assertComputationWithConfig,
   makeVariableCollectionItems,
   findVariableCollectionItemFromDescriptor,
-  removeAbsoluteAbundanceVariableCollections,
+  isNotAbsoluteAbundanceVariableCollection,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
@@ -121,7 +121,10 @@ export function CorrelationAssayMetadataConfiguration(
   if (configuration) configuration.correlationMethod = 'spearman';
 
   // Include known collection variables in this array.
-  const collections = useVariableCollections(studyMetadata.rootEntity);
+  const collections = useVariableCollections(
+    studyMetadata.rootEntity,
+    isNotAbsoluteAbundanceVariableCollection
+  );
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
@@ -137,10 +140,8 @@ export function CorrelationAssayMetadataConfiguration(
       visualizationId
     );
 
-  const keepCollections =
-    removeAbsoluteAbundanceVariableCollections(collections);
   const collectionVarItems = makeVariableCollectionItems(
-    keepCollections,
+    collections,
     undefined
   );
 

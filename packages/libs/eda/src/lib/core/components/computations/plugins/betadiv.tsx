@@ -10,8 +10,8 @@ import { isEqual, partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
-  removeAbsoluteAbundanceVariableCollections,
   makeVariableCollectionItems,
+  isNotAbsoluteAbundanceVariableCollection,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
@@ -123,7 +123,10 @@ export function BetaDivConfiguration(props: ComputationConfigProps) {
   } = props;
   const studyMetadata = useStudyMetadata();
   // Include known collection variables in this array.
-  const collections = useVariableCollections(studyMetadata.rootEntity);
+  const collections = useVariableCollections(
+    studyMetadata.rootEntity,
+    isNotAbsoluteAbundanceVariableCollection
+  );
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
@@ -136,10 +139,8 @@ export function BetaDivConfiguration(props: ComputationConfigProps) {
     visualizationId
   );
 
-  const keepCollections =
-    removeAbsoluteAbundanceVariableCollections(collections);
   const collectionVarItems = makeVariableCollectionItems(
-    keepCollections,
+    collections,
     undefined
   );
 

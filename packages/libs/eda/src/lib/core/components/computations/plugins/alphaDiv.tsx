@@ -2,6 +2,7 @@ import {
   useVariableCollections,
   useStudyMetadata,
   useFindEntityAndVariableCollection,
+  useStudyEntities,
 } from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
@@ -11,8 +12,8 @@ import { isEqual, partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
-  removeAbsoluteAbundanceVariableCollections,
   makeVariableCollectionItems,
+  isNotAbsoluteAbundanceVariableCollection,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
@@ -21,6 +22,7 @@ import { useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSelectList';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -119,8 +121,12 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
     visualizationId,
   } = props;
   const studyMetadata = useStudyMetadata();
+  const entities = useStudyEntities();
   // Include known collection variables in this array.
-  const collections = useVariableCollections(studyMetadata.rootEntity);
+  const collections = useVariableCollections(
+    studyMetadata.rootEntity,
+    isNotAbsoluteAbundanceVariableCollection
+  );
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
@@ -133,10 +139,8 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
     visualizationId
   );
 
-  const keepCollections =
-    removeAbsoluteAbundanceVariableCollections(collections);
   const collectionVarItems = makeVariableCollectionItems(
-    keepCollections,
+    collections,
     undefined
   );
 

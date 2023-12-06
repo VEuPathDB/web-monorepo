@@ -4,7 +4,11 @@ import * as t from 'io-ts';
 import { pipe } from 'fp-ts/lib/function';
 import { fold } from 'fp-ts/lib/Either';
 import { isEqual } from 'lodash';
-import { AnalysisState, useEntityAndVariableCollection } from '../..';
+import {
+  AnalysisState,
+  CollectionVariableTreeNode,
+  useEntityAndVariableCollection,
+} from '../..';
 import { RouterChildContext, useRouteMatch, useHistory } from 'react-router';
 import { VariableCollectionDescriptor } from '../../types/variable';
 import { EntityAndVariableCollection } from '../../utils/study-metadata';
@@ -45,24 +49,31 @@ export function makeVariableCollectionItems(
 /**
  * Removes absolute abundance variable collections based on certain conditions.
  *
- * @param {VariableCollectionDescriptor[]} variableCollections - The array of variable collections.
- * @return {VariableCollectionDescriptor[]} The filtered array of variable collections.
+ * @param {CollectionVariableTreeNode[]} variableCollections - The array of variable collections.
+ * @return {CollectionVariableTreeNode[]} The filtered array of variable collections.
  */
 export function removeAbsoluteAbundanceVariableCollections(
-  variableCollections: VariableCollectionDescriptor[]
-): VariableCollectionDescriptor[] {
-  return variableCollections.filter((variableCollection) =>
-    useEntityAndVariableCollection(variableCollection)?.variableCollection
-      .normalizationMethod
-      ? useEntityAndVariableCollection(variableCollection)?.variableCollection
-          .normalizationMethod !== 'NULL' ||
+  variableCollections: CollectionVariableTreeNode[]
+): CollectionVariableTreeNode[] {
+  return variableCollections.filter(isNotAbsoluteAbundanceVariableCollection);
+}
+
+/**
+ * Returns false for absolute abundance variable collections, based on certain conditions.
+ *
+ * @param {CollectionVariableTreeNode} variableCollection - The array of variable collections.
+ * @return {boolean} The filtered array of variable collections.
+ */
+export function isNotAbsoluteAbundanceVariableCollection(
+  variableCollection: CollectionVariableTreeNode
+): boolean {
+  return variableCollection.normalizationMethod
+    ? variableCollection.normalizationMethod !== 'NULL' ||
         // most data we want to keep has been normalized, except pathway coverage data which were leaving apparently
         // should consider better ways to do this in the future, or if we really want to keep the coverage data.
-        useEntityAndVariableCollection(
-          variableCollection
-        )?.variableCollection.displayName?.includes('pathway')
-      : true
-  ); // DIY may not have the normalizationMethod annotations, but we still want those datasets to pass.
+        !!variableCollection.displayName?.includes('pathway')
+    : true;
+  // DIY may not have the normalizationMethod annotations, but we still want those datasets to pass.
 }
 
 /**

@@ -10,8 +10,8 @@ import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { isEqual, partial } from 'lodash';
 import {
   assertComputationWithConfig,
+  isNotAbsoluteAbundanceVariableCollection,
   makeVariableCollectionItems,
-  removeAbsoluteAbundanceVariableCollections,
   useConfigChangeHandler,
 } from '../Utils';
 import * as t from 'io-ts';
@@ -152,7 +152,10 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
   } = props;
   const studyMetadata = useStudyMetadata();
   // Include known collection variables in this array.
-  const collections = useVariableCollections(studyMetadata.rootEntity);
+  const collections = useVariableCollections(
+    studyMetadata.rootEntity,
+    isNotAbsoluteAbundanceVariableCollection
+  );
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
@@ -165,10 +168,8 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
     visualizationId
   );
 
-  const keepCollections =
-    removeAbsoluteAbundanceVariableCollections(collections);
   const collectionVarItems = makeVariableCollectionItems(
-    keepCollections,
+    collections,
     undefined
   );
 

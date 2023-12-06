@@ -121,8 +121,16 @@ export function useEntityAndVariableCollection(
   );
 }
 
-export function useVariableCollections(entity: StudyEntity) {
-  return useMemo(() => findVariableCollections(entity), [entity]);
+export function useVariableCollections(
+  entity: StudyEntity,
+  collectionPredicate?: (
+    variableCollection: CollectionVariableTreeNode
+  ) => boolean
+) {
+  return useMemo(
+    () => findVariableCollections(entity, collectionPredicate),
+    [entity, collectionPredicate]
+  );
 }
 
 /**

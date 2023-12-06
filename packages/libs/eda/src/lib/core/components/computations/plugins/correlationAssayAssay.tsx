@@ -11,7 +11,7 @@ import {
   assertComputationWithConfig,
   makeVariableCollectionItems,
   findVariableCollectionItemFromDescriptor,
-  removeAbsoluteAbundanceVariableCollections,
+  isNotAbsoluteAbundanceVariableCollection,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
@@ -146,7 +146,8 @@ export function CorrelationAssayAssayConfiguration(
 
   // Include known collection variables in this array.
   const collectionDescriptors = useVariableCollections(
-    studyMetadata.rootEntity
+    studyMetadata.rootEntity,
+    isNotAbsoluteAbundanceVariableCollection
   );
   if (collectionDescriptors.length === 0)
     throw new Error('Could not find any collections for this app.');
@@ -163,12 +164,9 @@ export function CorrelationAssayAssayConfiguration(
       visualizationId
     );
 
-  const keepCollections = removeAbsoluteAbundanceVariableCollections(
-    collectionDescriptors
-  );
   // this should also make it easy to disable already selected items if we decide wed rather go that route
   const collectionVarItems = makeVariableCollectionItems(
-    keepCollections,
+    collectionDescriptors,
     undefined
   );
 
