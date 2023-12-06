@@ -36,6 +36,7 @@ import {
   defaultAnimation,
   isApproxSameViewport,
   useCategoricalValues,
+  useCommonData,
   useDistributionMarkerData,
   useDistributionOverlayConfig,
 } from '../shared';
@@ -429,14 +430,21 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     valueSpec: 'count',
   });
 
-  const { outputEntityId, totalVisibleWithOverlayEntityCount } =
-    markerDataResponse;
+  const {
+    outputEntity: { id: outputEntityId },
+  } = useCommonData(
+    selectedVariable,
+    props.geoConfigs,
+    props.studyEntities,
+    props.appState.boundsZoomLevel
+  );
+
   return outputEntityId != null ? (
     <MapTypeHeaderCounts
       outputEntityId={outputEntityId}
       totalEntityCount={props.totalCounts.value?.[outputEntityId]}
       totalEntityInSubsetCount={props.filteredCounts.value?.[outputEntityId]}
-      visibleEntityCount={totalVisibleWithOverlayEntityCount}
+      visibleEntityCount={markerDataResponse.totalVisibleWithOverlayEntityCount}
     />
   ) : null;
 }
@@ -458,7 +466,6 @@ function useMarkerData(props: DistributionMarkerDataProps) {
     legendItems,
     overlayConfig,
     boundsZoomLevel,
-    outputEntityId,
   } = markerData;
 
   const vocabulary =
@@ -489,7 +496,6 @@ function useMarkerData(props: DistributionMarkerDataProps) {
     legendItems,
     overlayConfig,
     boundsZoomLevel,
-    outputEntityId,
   };
 }
 

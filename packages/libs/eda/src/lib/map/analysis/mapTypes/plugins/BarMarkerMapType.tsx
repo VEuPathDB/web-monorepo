@@ -38,6 +38,7 @@ import {
   defaultAnimation,
   isApproxSameViewport,
   useCategoricalValues,
+  useCommonData,
   useDistributionMarkerData,
   useDistributionOverlayConfig,
 } from '../shared';
@@ -481,14 +482,22 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     dependentAxisLogScale,
     valueSpec: selectedPlotMode,
   });
-  const { outputEntityId, totalVisibleWithOverlayEntityCount } =
-    markerDataResponse;
+
+  const {
+    outputEntity: { id: outputEntityId },
+  } = useCommonData(
+    selectedVariable,
+    props.geoConfigs,
+    props.studyEntities,
+    props.appState.boundsZoomLevel
+  );
+
   return outputEntityId != null ? (
     <MapTypeHeaderCounts
       outputEntityId={outputEntityId}
       totalEntityCount={props.totalCounts.value?.[outputEntityId]}
       totalEntityInSubsetCount={props.filteredCounts.value?.[outputEntityId]}
-      visibleEntityCount={totalVisibleWithOverlayEntityCount}
+      visibleEntityCount={markerDataResponse.totalVisibleWithOverlayEntityCount}
     />
   ) : null;
 }
@@ -624,7 +633,6 @@ function useMarkerData(props: MarkerDataProps) {
     totalVisibleWithOverlayEntityCount,
     legendItems,
     overlayConfig,
-    outputEntityId,
   } = markerData;
 
   // calculate minPos, max and sum for chart marker dependent axis
@@ -674,7 +682,6 @@ function useMarkerData(props: MarkerDataProps) {
     legendItems,
     overlayConfig,
     boundsZoomLevel: props.boundsZoomLevel,
-    outputEntityId,
   };
 }
 
