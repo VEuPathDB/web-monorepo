@@ -36,6 +36,7 @@ import {
   defaultAnimation,
   isApproxSameViewport,
   useCategoricalValues,
+  useCommonData,
   useDistributionMarkerData,
   useDistributionOverlayConfig,
 } from '../shared';
@@ -428,16 +429,19 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     binningMethod,
     valueSpec: 'count',
   });
-  return (
+
+  const {
+    outputEntity: { id: outputEntityId },
+  } = useCommonData(selectedVariable, props.geoConfigs, props.studyEntities);
+
+  return outputEntityId != null ? (
     <MapTypeHeaderCounts
-      outputEntityId={selectedVariable.entityId}
-      totalEntityCount={props.totalCounts.value?.[selectedVariable.entityId]}
-      totalEntityInSubsetCount={
-        props.filteredCounts.value?.[selectedVariable.entityId]
-      }
+      outputEntityId={outputEntityId}
+      totalEntityCount={props.totalCounts.value?.[outputEntityId]}
+      totalEntityInSubsetCount={props.filteredCounts.value?.[outputEntityId]}
       visibleEntityCount={markerDataResponse.totalVisibleWithOverlayEntityCount}
     />
-  );
+  ) : null;
 }
 
 function useMarkerData(props: DistributionMarkerDataProps) {
