@@ -213,9 +213,9 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   // plot subtitle
   const plotSubtitle =
     'Showing links with an absolute correlation coefficient above ' +
-    DEFAULT_CORRELATION_COEF_THRESHOLD.toString() +
+    vizConfig.correlationCoefThreshold?.toString() +
     ' and a p-value below ' +
-    DEFAULT_SIGNIFICANCE_THRESHOLD.toString();
+    vizConfig.significanceThreshold?.toString();
 
   const finalPlotContainerStyles = useMemo(
     () => ({
