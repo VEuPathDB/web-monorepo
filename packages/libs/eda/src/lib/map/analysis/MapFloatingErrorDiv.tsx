@@ -7,7 +7,16 @@ interface MapFloatingErrorDivProps {
   error: unknown;
 }
 
-export function MapFloatingErrorDiv(props: MapFloatingErrorDivProps) {
+// don't display an error message if any of the following patterns are found in the error message
+const ignorePatterns = [/did not contain any data/];
+
+export function MapFloatingErrorDiv({ error }: MapFloatingErrorDivProps) {
+  const parentElement = useMap().getContainer().parentElement;
+  const errorString = String(error);
+  if (ignorePatterns.some((pattern) => errorString.match(pattern))) {
+    return null;
+  }
+
   // We're using a portal here so that the user can select the text
   // in the banner. The portal causes the resulting DOM node to be a
   // child of the DOM node that is passed as a second argument to the
@@ -40,9 +49,7 @@ export function MapFloatingErrorDiv(props: MapFloatingErrorDivProps) {
             </>
           ),
           additionalMessage: (
-            <pre style={{ whiteSpace: 'break-spaces' }}>
-              {String(props.error)}
-            </pre>
+            <pre style={{ whiteSpace: 'break-spaces' }}>{errorString}</pre>
           ),
           showMoreLinkText: 'See details',
           showLessLinkText: 'Hide details',
@@ -50,6 +57,6 @@ export function MapFloatingErrorDiv(props: MapFloatingErrorDivProps) {
         }}
       />
     </div>,
-    useMap().getContainer().parentElement!
+    parentElement!
   );
 }
