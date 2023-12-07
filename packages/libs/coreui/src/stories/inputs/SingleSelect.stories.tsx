@@ -1,5 +1,5 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import SingleSelect, {
   SingleSelectProps,
@@ -78,6 +78,44 @@ export const ToggleDisabledState: Story<SingleSelectProps<unknown>> = () => {
         onSelect={setSelectedOption}
         buttonDisplayContent={buttonDisplayContent}
         isDisabled={isDisabled}
+      />
+    </div>
+  );
+};
+
+export const SingleSelectWithGroups: Story<SingleSelectProps<unknown>> = () => {
+  const options = [
+    {
+      label: 'Group 1',
+      items: [
+        { display: 'A for Alligator', value: 'A' },
+        { display: 'B for Beluga', value: 'B' },
+        { display: 'C for Cow', value: 'C' },
+      ],
+    },
+    {
+      label: 'Group 2',
+      items: [
+        { display: 'D is for Dog', value: 'D' },
+        { display: 'E is for Elephant', value: 'E' },
+        { display: 'F is for Fox', value: 'F' },
+      ],
+    },
+  ];
+  const [selectedOption, setSelectedOption] = useState('');
+  const buttonDisplayContent = selectedOption.length
+    ? options
+        .flatMap((option) => option.items)
+        .find((option) => selectedOption === option.value).display
+    : 'Select a letter';
+
+  return (
+    <div>
+      <SingleSelect
+        items={options}
+        value={selectedOption}
+        onSelect={setSelectedOption}
+        buttonDisplayContent={buttonDisplayContent}
       />
     </div>
   );

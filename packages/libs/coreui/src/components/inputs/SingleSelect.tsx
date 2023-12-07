@@ -5,9 +5,14 @@ import { css } from '@emotion/react';
 import { uniqueId } from 'lodash';
 import { CheckIcon } from '../icons';
 
+export interface ItemGroup<T> {
+  label: ReactNode;
+  items: Item<T>[];
+}
+
 export interface SingleSelectProps<T> {
   /** An array of options to be used in the dropdown container */
-  items: Item<T>[];
+  items: (Item<T> | ItemGroup<T>)[];
 
   /**
    * Warning: `value` represents the currently-selected value; for non-primitive types, `value` must be
@@ -35,7 +40,12 @@ export default function SingleSelect<T>({
    * 1. Find the index of the value prop in the items array to set focused state in the dropdown
    * 2. If a value is not found, defaults to the first item in the dropdown
    */
-  const selectedValueIndex = items.findIndex((item) => value === item.value);
+  const flatItems = items.flatMap((item) =>
+    'label' in item ? item.items : [item]
+  );
+  const selectedValueIndex = flatItems.findIndex(
+    (item) => value === item.value
+  );
   const defaultOrSelectedValueIndex =
     selectedValueIndex !== -1 ? selectedValueIndex : 0;
   const [indexOfFocusedElement, setIndexOfFocusedElement] = useState(
@@ -66,7 +76,7 @@ export default function SingleSelect<T>({
       setIndexOfFocusedElement((prev) => prev - 1);
     }
 
-    const hasNextDownIndex = indexOfFocusedElement !== items.length - 1;
+    const hasNextDownIndex = indexOfFocusedElement !== flatItems.length - 1;
     if (key === 'ArrowDown' && hasNextDownIndex) {
       setIndexOfFocusedElement((prev) => prev + 1);
     }
@@ -89,18 +99,75 @@ export default function SingleSelect<T>({
           listStyle: 'none',
         }}
       >
-        {items.map((item, index) => (
-          <Option<T>
-            key={JSON.stringify(item.value)}
-            item={item}
-            onSelect={handleSelection}
-            onKeyDown={onKeyDown}
-            shouldFocus={index === indexOfFocusedElement}
-            isSelected={value === item.value}
-          />
-        ))}
+        {items.map((item, index) =>
+          'label' in item ? (
+            <OptionGroup
+              key={index}
+              itemGroup={item}
+              onSelect={handleSelection}
+              onKeyDown={onKeyDown}
+              value={value}
+              indexOfFocusedElement={indexOfFocusedElement}
+              indexOffset={index}
+            />
+          ) : (
+            <Option<T>
+              key={index}
+              item={item}
+              onSelect={handleSelection}
+              onKeyDown={onKeyDown}
+              shouldFocus={index === indexOfFocusedElement}
+              isSelected={value === item.value}
+            />
+          )
+        )}
       </ul>
     </PopoverButton>
+  );
+}
+
+interface OptionGroupProps<T> {
+  itemGroup: ItemGroup<T>;
+  onSelect: (value: T) => void;
+  onKeyDown: (key: string, value: T) => void;
+  value: T;
+  indexOffset: number;
+  indexOfFocusedElement: number;
+}
+function OptionGroup<T>(props: OptionGroupProps<T>) {
+  const {
+    itemGroup,
+    onKeyDown,
+    onSelect,
+    value,
+    indexOffset,
+    indexOfFocusedElement,
+  } = props;
+  return (
+    <ul
+      css={{
+        padding: '0.125em',
+        margin: 0,
+        minWidth: '200px',
+        listStyle: 'none',
+      }}
+    >
+      <li css={{ padding: '0.5em' }}>
+        <strong>{itemGroup.label}</strong>
+      </li>
+      {itemGroup.items.map((item, index) => {
+        return (
+          <Option
+            key={JSON.stringify(item.value)}
+            item={item}
+            onSelect={onSelect}
+            onKeyDown={onKeyDown}
+            shouldFocus={indexOfFocusedElement === index + indexOffset}
+            isSelected={value === item.value}
+          />
+        );
+      })}
+    </ul>
   );
 }
 
@@ -112,7 +179,7 @@ interface OptionProps<T> {
   isSelected: boolean;
 }
 
-function Option<T>({
+export function Option<T>({
   item,
   onSelect,
   onKeyDown,
