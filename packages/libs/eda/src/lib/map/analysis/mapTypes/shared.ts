@@ -366,3 +366,16 @@ export const GLOBAL_VIEWPORT = {
     right: 180,
   },
 };
+
+/**
+ * Error handling helpers
+ */
+
+const noDataPatterns = [
+  /did not contain any data/,
+  /Could not generate continuous variable metadata/,
+];
+
+export function isNoDataError(error: unknown) {
+  return noDataPatterns.some((pattern) => String(error).match(pattern));
+}

@@ -39,6 +39,7 @@ import {
   useCommonData,
   useDistributionMarkerData,
   useDistributionOverlayConfig,
+  isNoDataError,
 } from '../shared';
 import {
   MapTypeConfigPanelProps,
@@ -306,8 +307,11 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     valueSpec: 'count',
   });
 
+  // no markers and no error div for certain known error strings
   if (markerDataResponse.error && !markerDataResponse.isFetching)
-    return <MapFloatingErrorDiv error={markerDataResponse.error} />;
+    return isNoDataError(markerDataResponse.error) ? null : (
+      <MapFloatingErrorDiv error={markerDataResponse.error} />
+    );
 
   // pass selectedMarkers and its state function
   const markers = markerDataResponse.markerProps?.map((markerProps) => (
@@ -379,6 +383,12 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
 
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
 
+  const noDataErrorMessage = isNoDataError(data.error) ? (
+    <div css={{ textAlign: 'center', width: 200 }}>
+      Filters have removed all data
+    </div>
+  ) : undefined;
+
   return (
     <>
       <DraggableLegendPanel
@@ -386,14 +396,16 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
         zIndex={3}
       >
         <div style={{ padding: '5px 10px' }}>
-          <MapLegend
-            isLoading={data.isFetching}
-            plotLegendProps={{
-              type: 'list',
-              legendItems: data.legendItems ?? [],
-            }}
-            showCheckbox={false}
-          />
+          {noDataErrorMessage ?? (
+            <MapLegend
+              isLoading={data.isFetching}
+              plotLegendProps={{
+                type: 'list',
+                legendItems: data.legendItems ?? [],
+              }}
+              showCheckbox={false}
+            />
+          )}
         </div>
       </DraggableLegendPanel>
       <DraggableVisualization
