@@ -216,10 +216,6 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
     selectedValues,
   });
 
-  if (overlayConfigResult.error) {
-    throw new Error('Could not get overlay config');
-  }
-
   const requestParams: StandaloneMapMarkersRequestParams = {
     studyId,
     filters: filters || [],
@@ -235,7 +231,7 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
   };
   const overlayConfig = overlayConfigResult.data;
 
-  return useQuery({
+  const markerQuery = useQuery({
     keepPreviousData: true,
     queryKey: ['mapMarkers', requestParams],
     queryFn: async () => {
@@ -304,6 +300,11 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
     },
     enabled: overlayConfig != null,
   });
+
+  return {
+    ...markerQuery,
+    error: overlayConfigResult.error ?? markerQuery.error,
+  };
 }
 
 function fixLabelForOtherValues(input: string): string {
