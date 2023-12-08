@@ -152,7 +152,7 @@ function ConfiguredVisualizations(props: Props) {
   const plugin = computation && plugins[computation.descriptor.type];
   const isComputationConfigurationValid =
     computation &&
-    !!plugin?.isConfigurationValid(computation.descriptor.configuration);
+    !!plugin?.isConfigurationComplete(computation.descriptor.configuration);
 
   return (
     <>
@@ -552,7 +552,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
 
   const { computationId } = computation;
   const plugin = plugins[computation.descriptor.type];
-  const isComputationConfigurationValid = !!plugin?.isConfigurationValid(
+  const isComputationConfigurationValid = !!plugin?.isConfigurationComplete(
     computation.descriptor.configuration
   );
 

@@ -7,11 +7,11 @@ import { VariableCollectionDescriptor } from '../../../types/variable';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { isEqual, partial } from 'lodash';
+import { partial } from 'lodash';
 import {
   assertComputationWithConfig,
   isNotAbsoluteAbundanceVariableCollection,
-  makeVariableCollectionItems,
+  partialToCompleteCodec,
   useConfigChangeHandler,
 } from '../Utils';
 import * as t from 'io-ts';
@@ -21,21 +21,24 @@ import { useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSelectList';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
 export type AbundanceConfig = t.TypeOf<typeof AbundanceConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AbundanceConfig = t.type({
+export const AbundanceConfig = t.partial({
   collectionVariable: VariableCollectionDescriptor,
   rankingMethod: t.string,
 });
 
+const CompleteAbundanceConfig = partialToCompleteCodec(AbundanceConfig);
+
 export const plugin: ComputationPlugin = {
   configurationComponent: AbundanceConfiguration,
   configurationDescriptionComponent: AbundanceConfigDescriptionComponent,
-  createDefaultConfiguration: () => undefined,
-  isConfigurationValid: AbundanceConfig.is,
+  createDefaultConfiguration: () => ({}),
+  isConfigurationComplete: CompleteAbundanceConfig.is,
   visualizationPlugins: {
     boxplot: boxplotVisualization.withOptions({
       getXAxisVariable(config) {
@@ -44,7 +47,7 @@ export const plugin: ComputationPlugin = {
         }
       },
       getComputedYAxisDetails(config) {
-        if (AbundanceConfig.is(config)) {
+        if (AbundanceConfig.is(config) && config.collectionVariable) {
           return {
             entityId: config.collectionVariable.entityId,
             placeholderDisplayName: 'Abundance',
@@ -52,7 +55,7 @@ export const plugin: ComputationPlugin = {
         }
       },
       getPlotSubtitle(config) {
-        if (AbundanceConfig.is(config)) {
+        if (AbundanceConfig.is(config) && config.rankingMethod) {
           return (
             <>
               <br />
@@ -68,7 +71,7 @@ export const plugin: ComputationPlugin = {
     }),
     scatterplot: scatterplotVisualization.withOptions({
       getComputedYAxisDetails(config) {
-        if (AbundanceConfig.is(config)) {
+        if (AbundanceConfig.is(config) && config.collectionVariable) {
           return {
             entityId: config.collectionVariable.entityId,
             placeholderDisplayName: 'Abundance',
@@ -104,7 +107,7 @@ function AbundanceConfigDescriptionComponent({
   computation: Computation;
 }) {
   const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
-  assertComputationWithConfig<AbundanceConfig>(computation, Computation);
+  assertComputationWithConfig(computation, AbundanceConfig);
   const { configuration } = computation.descriptor;
   const collectionVariable =
     'collectionVariable' in configuration
@@ -159,7 +162,7 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
-  assertComputationWithConfig<AbundanceConfig>(computation, Computation);
+  assertComputationWithConfig(computation, AbundanceConfig);
   const configuration = computation.descriptor.configuration;
 
   const changeConfigHandler = useConfigChangeHandler<AbundanceConfig>(
@@ -167,23 +170,6 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
     computation,
     visualizationId
   );
-
-  const collectionVarItems = makeVariableCollectionItems(
-    collections,
-    undefined
-  );
-
-  const selectedCollectionVar = useMemo(() => {
-    if (configuration && 'collectionVariable' in configuration) {
-      const selectedItem = collectionVarItems.find((item) =>
-        isEqual(item.value, {
-          collectionId: configuration.collectionVariable.collectionId,
-          entityId: configuration.collectionVariable.entityId,
-        })
-      );
-      return selectedItem;
-    }
-  }, [collectionVarItems, configuration]);
 
   const rankingMethod = useMemo(() => {
     if (configuration && 'rankingMethod' in configuration) {
@@ -200,19 +186,10 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
       <div className={cx()}>
         <div className={cx('-InputContainer')}>
           <span>Data</span>
-          <SingleSelect
-            value={
-              selectedCollectionVar
-                ? selectedCollectionVar.value
-                : 'Select the data'
-            }
-            buttonDisplayContent={
-              selectedCollectionVar
-                ? selectedCollectionVar.display
-                : 'Select the data'
-            }
-            items={collectionVarItems}
+          <VariableCollectionSelectList
+            value={configuration.collectionVariable}
             onSelect={partial(changeConfigHandler, 'collectionVariable')}
+            collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
           />
         </div>
         <div className={cx('-InputContainer')}>

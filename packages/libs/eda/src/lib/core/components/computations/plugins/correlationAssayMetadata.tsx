@@ -12,6 +12,7 @@ import {
   makeVariableCollectionItems,
   findVariableCollectionItemFromDescriptor,
   isNotAbsoluteAbundanceVariableCollection,
+  partialToCompleteCodec,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
@@ -42,17 +43,21 @@ export type CorrelationAssayMetadataConfig = t.TypeOf<
 >;
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CorrelationAssayMetadataConfig = t.type({
+export const CorrelationAssayMetadataConfig = t.partial({
   collectionVariable: VariableCollectionDescriptor,
   correlationMethod: t.string,
 });
+
+const CompleteCorrelationAssayMetadataConfig = partialToCompleteCodec(
+  CorrelationAssayMetadataConfig
+);
 
 export const plugin: ComputationPlugin = {
   configurationComponent: CorrelationAssayMetadataConfiguration,
   configurationDescriptionComponent:
     CorrelationAssayMetadataConfigDescriptionComponent,
-  createDefaultConfiguration: () => undefined,
-  isConfigurationValid: CorrelationAssayMetadataConfig.is,
+  createDefaultConfiguration: () => ({}),
+  isConfigurationComplete: CompleteCorrelationAssayMetadataConfig.is,
   visualizationPlugins: {
     bipartitenetwork: bipartiteNetworkVisualization, // Must match name in data service and in visualization.tsx
   },
@@ -65,10 +70,7 @@ function CorrelationAssayMetadataConfigDescriptionComponent({
   computation: Computation;
 }) {
   const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
-  assertComputationWithConfig<CorrelationAssayMetadataConfig>(
-    computation,
-    Computation
-  );
+  assertComputationWithConfig(computation, CorrelationAssayMetadataConfig);
 
   const { collectionVariable, correlationMethod } =
     computation.descriptor.configuration;
@@ -128,10 +130,7 @@ export function CorrelationAssayMetadataConfiguration(
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
-  assertComputationWithConfig<CorrelationAssayMetadataConfig>(
-    computation,
-    Computation
-  );
+  assertComputationWithConfig(computation, CorrelationAssayMetadataConfig);
 
   const changeConfigHandler =
     useConfigChangeHandler<CorrelationAssayMetadataConfig>(

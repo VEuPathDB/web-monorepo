@@ -1,5 +1,9 @@
 import { useCallback } from 'react';
-import { Computation, Visualization } from '../../types/visualization';
+import {
+  Computation,
+  Visualization,
+  makeComputationWithConfigDecoder,
+} from '../../types/visualization';
 import * as t from 'io-ts';
 import { pipe } from 'fp-ts/lib/function';
 import { fold } from 'fp-ts/lib/Either';
@@ -169,10 +173,11 @@ function createRandomString(numChars: number) {
 
 export function assertComputationWithConfig<ConfigType>(
   computation: Computation,
-  decoder: t.Type<Computation, unknown, unknown>
+  configDecoder: t.Type<ConfigType>
 ): asserts computation is Computation<ConfigType> {
+  const decoder = makeComputationWithConfigDecoder(configDecoder);
   const onLeft = (errors: t.Errors) => {
-    throw new Error(`Invalid computation configuration: ${errors}`);
+    throw new Error(`Invalid computation configuration provided.`);
   };
   const onRight = () => null;
   pipe(decoder.decode(computation), fold(onLeft, onRight));
@@ -349,4 +354,16 @@ function handleRouting(
   urlToReplaceWith: string
 ) {
   history.replace(baseUrl.replace(urlToReplace, urlToReplaceWith));
+}
+
+/**
+ * Takes a partial codec and returns a new codec where all properties
+ * are required.
+ * @param partialCodec An io-ts codec made using the `partial` combinator
+ * @returns An io-ts codec made using the `type` combinator
+ */
+export function partialToCompleteCodec<T extends {}>(
+  partialCodec: t.PartialC<T>
+): t.TypeC<T> {
+  return t.type(partialCodec.props);
 }

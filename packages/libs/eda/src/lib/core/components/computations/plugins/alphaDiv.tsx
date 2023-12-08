@@ -2,23 +2,21 @@ import {
   useVariableCollections,
   useStudyMetadata,
   useFindEntityAndVariableCollection,
-  useStudyEntities,
 } from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { isEqual, partial } from 'lodash';
+import { partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
-  makeVariableCollectionItems,
   isNotAbsoluteAbundanceVariableCollection,
+  partialToCompleteCodec,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
-import { useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -28,20 +26,22 @@ const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
 export type AlphaDivConfig = t.TypeOf<typeof AlphaDivConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AlphaDivConfig = t.type({
+export const AlphaDivConfig = t.partial({
   collectionVariable: VariableCollectionDescriptor,
   alphaDivMethod: t.string,
 });
 
+const CompleteAlphaDivConfig = partialToCompleteCodec(AlphaDivConfig);
+
 export const plugin: ComputationPlugin = {
   configurationComponent: AlphaDivConfiguration,
   configurationDescriptionComponent: AlphaDivConfigDescriptionComponent,
-  createDefaultConfiguration: () => undefined,
-  isConfigurationValid: AlphaDivConfig.is,
+  createDefaultConfiguration: (): AlphaDivConfig => ({}),
+  isConfigurationComplete: CompleteAlphaDivConfig.is,
   visualizationPlugins: {
     boxplot: boxplotVisualization.withOptions({
       getComputedYAxisDetails(config) {
-        if (AlphaDivConfig.is(config)) {
+        if (AlphaDivConfig.is(config) && config.collectionVariable) {
           return {
             entityId: config.collectionVariable.entityId,
             placeholderDisplayName: 'Alpha Diversity',
@@ -53,7 +53,7 @@ export const plugin: ComputationPlugin = {
     }),
     scatterplot: scatterplotVisualization.withOptions({
       getComputedYAxisDetails(config) {
-        if (AlphaDivConfig.is(config)) {
+        if (AlphaDivConfig.is(config) && config.collectionVariable) {
           return {
             entityId: config.collectionVariable.entityId,
             placeholderDisplayName: 'Alpha Diversity',
@@ -72,7 +72,7 @@ function AlphaDivConfigDescriptionComponent({
   computation: Computation;
 }) {
   const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
-  assertComputationWithConfig<AlphaDivConfig>(computation, Computation);
+  assertComputationWithConfig(computation, AlphaDivConfig);
   const { configuration } = computation.descriptor;
   const collectionVariable =
     'collectionVariable' in configuration
@@ -121,7 +121,6 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
     visualizationId,
   } = props;
   const studyMetadata = useStudyMetadata();
-  const entities = useStudyEntities();
   // Include known collection variables in this array.
   const collections = useVariableCollections(
     studyMetadata.rootEntity,
@@ -130,7 +129,7 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
-  assertComputationWithConfig<AlphaDivConfig>(computation, Computation);
+  assertComputationWithConfig(computation, AlphaDivConfig);
   const configuration = computation.descriptor.configuration;
 
   const changeConfigHandler = useConfigChangeHandler<AlphaDivConfig>(
@@ -138,29 +137,6 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
     computation,
     visualizationId
   );
-
-  const collectionVarItems = makeVariableCollectionItems(
-    collections,
-    undefined
-  );
-
-  const selectedCollectionVar = useMemo(() => {
-    if (configuration && 'collectionVariable' in configuration) {
-      const selectedItem = collectionVarItems.find((item) =>
-        isEqual(item.value, {
-          collectionId: configuration.collectionVariable.collectionId,
-          entityId: configuration.collectionVariable.entityId,
-        })
-      );
-      return selectedItem;
-    }
-  }, [collectionVarItems, configuration]);
-
-  const alphaDivMethod = useMemo(() => {
-    if (configuration && 'alphaDivMethod' in configuration) {
-      return configuration.alphaDivMethod;
-    }
-  }, [configuration]);
 
   return (
     <ComputationStepContainer
@@ -172,26 +148,19 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
       <div className={cx()}>
         <div className={cx('-InputContainer')}>
           <span>Data</span>
-          <SingleSelect
-            value={
-              selectedCollectionVar
-                ? selectedCollectionVar.value
-                : 'Select the data'
-            }
-            buttonDisplayContent={
-              selectedCollectionVar
-                ? selectedCollectionVar.display
-                : 'Select the data'
-            }
-            items={collectionVarItems}
+          <VariableCollectionSelectList
+            value={configuration.collectionVariable}
             onSelect={partial(changeConfigHandler, 'collectionVariable')}
+            collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
           />
         </div>
         <div className={cx('-InputContainer')}>
           <span>Method</span>
           <SingleSelect
-            value={alphaDivMethod ?? 'Select a method'}
-            buttonDisplayContent={alphaDivMethod ?? 'Select a method'}
+            value={configuration.alphaDivMethod ?? 'Select a method'}
+            buttonDisplayContent={
+              configuration.alphaDivMethod ?? 'Select a method'
+            }
             items={ALPHA_DIV_METHODS.map((method) => ({
               value: method,
               display: method,

@@ -12,6 +12,7 @@ import {
   makeVariableCollectionItems,
   findVariableCollectionItemFromDescriptor,
   isNotAbsoluteAbundanceVariableCollection,
+  partialToCompleteCodec,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
@@ -44,20 +45,24 @@ export type CorrelationAssayAssayConfig = t.TypeOf<
 >;
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CorrelationAssayAssayConfig = t.type({
+export const CorrelationAssayAssayConfig = t.partial({
   collectionVariable1: VariableCollectionDescriptor,
   collectionVariable2: VariableCollectionDescriptor,
   correlationMethod: t.string,
 });
 
+const CompleteCorrelationAssayAssayConfig = partialToCompleteCodec(
+  CorrelationAssayAssayConfig
+);
+
 export const plugin: ComputationPlugin = {
   configurationComponent: CorrelationAssayAssayConfiguration,
   configurationDescriptionComponent:
     CorrelationAssayAssayConfigDescriptionComponent,
-  createDefaultConfiguration: () => undefined,
-  isConfigurationValid: (configuration) => {
+  createDefaultConfiguration: () => ({}),
+  isConfigurationComplete: (configuration) => {
     return (
-      CorrelationAssayAssayConfig.is(configuration) &&
+      CompleteCorrelationAssayAssayConfig.is(configuration) &&
       variableCollectionsAreUnique([
         configuration.collectionVariable1,
         configuration.collectionVariable2,
@@ -76,10 +81,7 @@ function CorrelationAssayAssayConfigDescriptionComponent({
   computation: Computation;
 }) {
   const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
-  assertComputationWithConfig<CorrelationAssayAssayConfig>(
-    computation,
-    Computation
-  );
+  assertComputationWithConfig(computation, CorrelationAssayAssayConfig);
 
   const { collectionVariable1, collectionVariable2, correlationMethod } =
     computation.descriptor.configuration;
@@ -152,10 +154,7 @@ export function CorrelationAssayAssayConfiguration(
   if (collectionDescriptors.length === 0)
     throw new Error('Could not find any collections for this app.');
 
-  assertComputationWithConfig<CorrelationAssayAssayConfig>(
-    computation,
-    Computation
-  );
+  assertComputationWithConfig(computation, CorrelationAssayAssayConfig);
 
   const changeConfigHandler =
     useConfigChangeHandler<CorrelationAssayAssayConfig>(
