@@ -40,6 +40,7 @@ import {
   useDistributionMarkerData,
   useDistributionOverlayConfig,
   isNoDataError,
+  noDataErrorMessage,
 } from '../shared';
 import {
   MapTypeConfigPanelProps,
@@ -142,7 +143,6 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     filters,
     studyEntities,
     geoConfigs,
-    boundsZoomLevel: appState.boundsZoomLevel,
     selectedVariable: configuration.selectedVariable,
     binningMethod: configuration.binningMethod,
     selectedValues: configuration.selectedValues,
@@ -370,7 +370,6 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     filters,
     studyEntities,
     geoConfigs,
-    boundsZoomLevel,
     binningMethod,
     selectedVariable,
     selectedValues,
@@ -380,14 +379,10 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
   const plugins = useStandaloneVizPlugins({
     selectedOverlayConfig: data.overlayConfig,
   });
-
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
-
-  const noDataErrorMessage = isNoDataError(data.error) ? (
-    <div css={{ textAlign: 'center', width: 200 }}>
-      Filters have removed all data
-    </div>
-  ) : undefined;
+  const noDataError = isNoDataError(data.error)
+    ? noDataErrorMessage
+    : undefined;
 
   return (
     <>
@@ -396,7 +391,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
         zIndex={3}
       >
         <div style={{ padding: '5px 10px' }}>
-          {noDataErrorMessage ?? (
+          {noDataError ?? (
             <MapLegend
               isLoading={data.isFetching}
               plotLegendProps={{

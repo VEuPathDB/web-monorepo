@@ -152,7 +152,6 @@ export function useDistributionOverlayConfig(
         };
         return overlayConfig;
       }
-      console.log('fetching data for distributionOverlayConfig');
       const { entity: overlayEntity, variable: overlayVariable } =
         findEntityAndVariable(props.overlayVariableDescriptor) ?? {};
       return getDefaultOverlayConfig({
@@ -304,6 +303,10 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
   return {
     ...markerQuery,
     error: overlayConfigResult.error ?? markerQuery.error,
+    isFetching: overlayConfigResult.isFetching || markerQuery.isFetching,
+    isPreviousData: overlayConfigResult.error
+      ? false
+      : markerQuery.isPreviousData,
   };
 }
 
@@ -379,3 +382,10 @@ const noDataPatterns = [
 export function isNoDataError(error: unknown) {
   return noDataPatterns.some((pattern) => String(error).match(pattern));
 }
+
+export const noDataErrorMessage = (
+  <div css={{ textAlign: 'center', width: 200 }}>
+    <p>Your filters have removed all data for this variable.</p>
+    <p>Please check your filters or choose another variable.</p>
+  </div>
+);
