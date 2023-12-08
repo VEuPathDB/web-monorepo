@@ -121,6 +121,10 @@ const Variable_Base = t.intersection([
   }),
   t.partial({
     vocabulary: t.array(t.string),
+    // filter-sensitive versions of StudyEntity data have modified
+    // vocabularies - this is where we keep a copy of the original
+    // (note that this never comes from the back end)
+    fullVocabulary: t.array(t.string),
   }),
 ]);
 
@@ -209,7 +213,6 @@ export type CollectionVariableTreeNode = t.TypeOf<
 export const CollectionVariableTreeNode = t.intersection([
   t.type({
     dataShape: t.string,
-    distributionDefaults: NumberDistributionDefaults,
     id: t.string,
     memberVariableIds: t.array(t.string),
     type: t.string,
@@ -219,11 +222,10 @@ export const CollectionVariableTreeNode = t.intersection([
     imputeZero: t.boolean,
     precision: t.number,
     units: t.string,
-    entityId: t.string,
-    entityDisplayName: t.string,
     isCompositional: t.boolean,
     isProportion: t.boolean,
     normalizationMethod: t.string,
+    distributionDefaults: NumberDistributionDefaults,
   }),
 ]);
 
@@ -273,9 +275,14 @@ export const StudyEntity: t.Type<StudyEntity> = t.recursion('StudyEntity', () =>
 // -------------
 
 export type StudyOverview = t.TypeOf<typeof StudyOverview>;
-export const StudyOverview = t.type({
-  id: t.string,
-});
+export const StudyOverview = t.intersection([
+  t.type({
+    id: t.string,
+  }),
+  t.partial({
+    hasMap: t.boolean,
+  }),
+]);
 
 export type StudyMetadata = t.TypeOf<typeof StudyMetadata>;
 export const StudyMetadata = t.intersection([

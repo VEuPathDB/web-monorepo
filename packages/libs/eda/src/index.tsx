@@ -68,8 +68,10 @@ const singleAppMode = process.env.REACT_APP_SINGLE_APP_MODE;
 const showUnreleasedData =
   process.env.REACT_APP_SHOW_UNRELEASED_DATA === 'true';
 
-const exampleAnalysesAuthor = process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR
-  ? Number(process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR)
+const exampleAnalysesAuthors = process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR
+  ? process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR.split(/\s*,\s*/)
+      .map((v) => Number(v))
+      .filter((n) => Number.isInteger(n))
   : undefined;
 
 interface DevLoginFormState {
@@ -183,7 +185,7 @@ initialize({
         return (
           <WorkspaceApp
             edaServiceUrl={edaEndpoint}
-            exampleAnalysesAuthor={exampleAnalysesAuthor}
+            exampleAnalysesAuthors={exampleAnalysesAuthors}
             sharingUrlPrefix={window.location.href}
             showLoginForm={showLoginForm}
             singleAppMode={singleAppMode}

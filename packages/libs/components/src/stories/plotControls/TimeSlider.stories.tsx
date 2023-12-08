@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import { LinePlotProps } from '../../plots/LinePlot';
-import EzTimeFilter, {
-  EZTimeFilterDataProp,
-} from '../../components/plotControls/EzTimeFilter';
+import TimeSlider, {
+  TimeSliderDataProp,
+} from '../../components/plotControls/TimeSlider';
 import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
 
 export default {
-  title: 'Plot Controls/EzTimeFilter',
-  component: EzTimeFilter,
+  title: 'Plot Controls/TimeSlider',
+  component: TimeSlider,
 } as Meta;
 
 // GEMS1 Case Control; x: Enrollment date; y: Weight
@@ -246,7 +246,7 @@ const LineplotData = {
 
 export const TimeFilter: Story<LinePlotProps> = (args: any) => {
   // converting lineplot data to visx format
-  const timeFilterData: EZTimeFilterDataProp[] = LineplotData.series[0].x.map(
+  const timeFilterData: TimeSliderDataProp[] = LineplotData.series[0].x.map(
     (value, index) => {
       // return { x: value, y: LineplotData.series[0].y[index] };
       return { x: value, y: LineplotData.series[0].y[index] >= 9 ? 1 : 0 };
@@ -334,7 +334,7 @@ export const TimeFilter: Story<LinePlotProps> = (args: any) => {
             {selectedRange?.start} ~ {selectedRange?.end}
           </div>
         </div>
-        <EzTimeFilter
+        <TimeSlider
           data={timeFilterData}
           selectedRange={selectedRange}
           setSelectedRange={setSelectedRange}

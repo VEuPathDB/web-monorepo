@@ -15,6 +15,8 @@ import { FilledButton } from '@veupathdb/coreui/lib/components/buttons';
 import AddIcon from '@material-ui/icons/Add';
 import { Computation } from '../core/types/visualization';
 import Path from 'path';
+import { createComputation } from '../core/components/computations/Utils';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
 export interface Props {
   analysisState: AnalysisState;
@@ -94,17 +96,31 @@ export function ComputationRoute(props: Props) {
         if (singleAppMode) {
           if (analysisState.analysis == null) return;
 
-          const computationType =
-            analysisState.analysis.descriptor.computations[0].descriptor.type;
+          // Find an existing computation whose type is the value of `singleAppMode`
+          const singleAppComputation =
+            analysisState.analysis.descriptor.computations.find(
+              (c) => c.descriptor.type === singleAppMode
+            );
 
-          // Check to ensure analysisState didn't somehow get the wrong app
-          if (computationType !== singleAppMode) {
-            throw new Error('Incompatible app type supplied.');
+          if (singleAppComputation == null) {
+            analysisState.setComputations(
+              (computations) =>
+                computations.concat(
+                  createComputation(
+                    singleAppMode,
+                    undefined,
+                    computations,
+                    [],
+                    singleAppMode === 'pass' ? 'pass-through' : singleAppMode
+                  )
+                ),
+              false
+            );
+            return <Loading />;
           }
 
           // Note: the pass app's id will be 'pass-through' for backwards compatability
-          const singleAppComputationId =
-            analysisState.analysis.descriptor.computations[0].computationId;
+          const singleAppComputationId = singleAppComputation.computationId;
 
           return (
             <Switch>

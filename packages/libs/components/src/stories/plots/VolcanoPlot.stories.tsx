@@ -1,4 +1,7 @@
-import VolcanoPlot, { VolcanoPlotProps } from '../../plots/VolcanoPlot';
+import VolcanoPlot, {
+  StatisticsFloors,
+  VolcanoPlotProps,
+} from '../../plots/VolcanoPlot';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import { range } from 'lodash';
 import { getNormallyDistributedRandomNumber } from './ScatterPlot.storyData';
@@ -7,6 +10,7 @@ import { NumberRange } from '../../types/general';
 import { yellow } from '@veupathdb/coreui/lib/definitions/colors';
 import { assignSignificanceColor } from '../../plots/VolcanoPlot';
 import { significanceColors } from '../../types/plots';
+import { CSSProperties } from 'react';
 
 export default {
   title: 'Plots/VolcanoPlot',
@@ -70,8 +74,8 @@ const dataSetVolcano: VEuPathDBVolcanoPlotData = {
         '0.001',
         '0.0001',
         '0.002',
-        '0',
-        '0',
+        '1e-90',
+        '0.00000002',
       ],
       adjustedPValue: ['0.01', '0.001', '0.01', '0.001', '0.02', '0', '0'],
       pointID: [
@@ -123,6 +127,8 @@ interface TemplateProps {
   comparisonLabels?: string[];
   truncationBarFill?: string;
   showSpinner?: boolean;
+  containerStyles?: CSSProperties;
+  statisticsFloors?: StatisticsFloors;
 }
 
 const Template: Story<TemplateProps> = (args) => {
@@ -131,54 +137,64 @@ const Template: Story<TemplateProps> = (args) => {
   const volcanoDataPoints: VolcanoPlotData | undefined = {
     effectSizeLabel: args.data?.volcanoplot.effectSizeLabel ?? '',
     statistics:
-      args.data?.volcanoplot.statistics.effectSize.map((effectSize, index) => {
-        return {
-          effectSize: effectSize,
-          pValue: args.data?.volcanoplot.statistics.pValue[index],
-          adjustedPValue:
-            args.data?.volcanoplot.statistics.adjustedPValue[index],
-          pointID: args.data?.volcanoplot.statistics.pointID[index],
+      args.data?.volcanoplot.statistics.effectSize
+        .map((effectSize, index) => {
+          return {
+            effectSize: effectSize,
+            pValue: args.data?.volcanoplot.statistics.pValue[index],
+            adjustedPValue:
+              args.data?.volcanoplot.statistics.adjustedPValue[index],
+            pointID: args.data?.volcanoplot.statistics.pointID[index],
+          };
+        })
+        .map((d) => ({
+          ...d,
+          pointIDs: d.pointID ? [d.pointID] : undefined,
           significanceColor: assignSignificanceColor(
-            Number(effectSize),
-            Number(args.data?.volcanoplot.statistics.pValue[index]),
+            Number(d.effectSize),
+            Number(d.pValue),
             args.significanceThreshold,
             args.effectSizeThreshold,
             significanceColors
           ),
-        };
-      }) ?? [],
+        })) ?? [],
   };
 
-  const rawDataMinMaxValues = {
-    x: {
-      min:
-        (volcanoDataPoints &&
-          Math.min(
-            ...volcanoDataPoints.statistics.map((d) => Number(d.effectSize))
-          )) ??
-        0,
-      max:
-        (volcanoDataPoints &&
-          Math.max(
-            ...volcanoDataPoints.statistics.map((d) => Number(d.effectSize))
-          )) ??
-        0,
-    },
-    y: {
-      min:
-        (volcanoDataPoints &&
-          Math.min(
-            ...volcanoDataPoints.statistics.map((d) => Number(d.pValue))
-          )) ??
-        1,
-      max:
-        (volcanoDataPoints &&
-          Math.max(
-            ...volcanoDataPoints.statistics.map((d) => Number(d.pValue))
-          )) ??
-        1,
-    },
-  };
+  const rawDataMinMaxValues = args.data
+    ? {
+        x: {
+          min:
+            (volcanoDataPoints &&
+              Math.min(
+                ...volcanoDataPoints.statistics.map((d) => Number(d.effectSize))
+              )) ??
+            0,
+          max:
+            (volcanoDataPoints &&
+              Math.max(
+                ...volcanoDataPoints.statistics.map((d) => Number(d.effectSize))
+              )) ??
+            0,
+        },
+        y: {
+          min:
+            (volcanoDataPoints &&
+              Math.min(
+                ...volcanoDataPoints.statistics.map((d) => Number(d.pValue))
+              )) ??
+            1,
+          max:
+            (volcanoDataPoints &&
+              Math.max(
+                ...volcanoDataPoints.statistics.map((d) => Number(d.pValue))
+              )) ??
+            1,
+        },
+      }
+    : {
+        x: { min: 0, max: 0 },
+        y: { min: 1, max: 1 },
+      };
 
   const volcanoPlotProps: VolcanoPlotProps = {
     data: volcanoDataPoints,
@@ -190,7 +206,9 @@ const Template: Story<TemplateProps> = (args) => {
     dependentAxisRange: args.dependentAxisRange,
     truncationBarFill: args.truncationBarFill,
     showSpinner: args.showSpinner,
+    containerStyles: args.containerStyles,
     rawDataMinMaxValues,
+    statisticsFloors: args.statisticsFloors,
   };
 
   return (
@@ -267,4 +285,45 @@ Empty.args = {
   significanceThreshold: 0.05,
   independentAxisRange: { min: -9, max: 9 },
   dependentAxisRange: { min: -1, max: 9 },
+};
+
+// With visualization plot container styles
+const plotContainerStyles = {
+  width: 750,
+  height: 450,
+  marginLeft: '0.75rem',
+  border: '1px solid #dedede',
+  boxShadow: '1px 1px 4px #00000066',
+};
+export const WithStyle = Template.bind({});
+WithStyle.args = {
+  data: dataSetVolcano,
+  markerBodyOpacity: 0.8,
+  effectSizeThreshold: 1,
+  significanceThreshold: 0.01,
+  comparisonLabels: [
+    'Up in group a, b, c, d, e, f, g, and h',
+    'Up in group i, j, k, l, m, n, o, pqrs',
+  ],
+  independentAxisRange: { min: -9, max: 9 },
+  dependentAxisRange: { min: 0, max: 9 },
+  containerStyles: plotContainerStyles,
+};
+
+// With a pvalue floor
+const testStatisticsFloors: StatisticsFloors = {
+  pValueFloor: 0.006,
+  adjustedPValueFloor: 0.01,
+};
+export const FlooredPValues = Template.bind({});
+FlooredPValues.args = {
+  data: dataSetVolcano,
+  markerBodyOpacity: 0.8,
+  effectSizeThreshold: 1,
+  significanceThreshold: 0.01,
+  comparisonLabels: ['up in group a', 'up in group b'],
+  independentAxisRange: { min: -9, max: 9 },
+  dependentAxisRange: { min: -1, max: 9 },
+  showSpinner: false,
+  statisticsFloors: testStatisticsFloors,
 };

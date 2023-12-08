@@ -40,10 +40,22 @@ import { ToImgopts } from 'plotly.js';
 import { DEFAULT_CONTAINER_HEIGHT } from './PlotlyPlot';
 import domToImage from 'dom-to-image';
 import './VolcanoPlot.css';
+import { truncateWithEllipsis } from '../utils/axis-tick-label-ellipsis';
 
 export interface RawDataMinMaxValues {
   x: NumberRange;
   y: NumberRange;
+}
+
+export interface StatisticsFloors {
+  /** The minimum allowed p value. Useful for protecting the plot against taking the log of pvalue=0. Points with true pvalue <= pValueFloor will get plotted at -log10(pValueFloor).
+   * Any points with pvalue <= the pValueFloor will show "P Value <= {pValueFloor}" in the tooltip.
+   */
+  pValueFloor: number;
+  /** The minimum allowed adjusted p value. Ideally should be calculated in conjunction with the pValueFloor. Currently used
+   * only to update the tooltip with this information, but later will be used to control the y axis location, similar to pValueFloor.
+   */
+  adjustedPValueFloor?: number;
 }
 
 export interface VolcanoPlotProps {
@@ -80,8 +92,10 @@ export interface VolcanoPlotProps {
   showSpinner?: boolean;
   /** used to determine truncation logic */
   rawDataMinMaxValues: RawDataMinMaxValues;
-  /** The maximum possible y axis value. Points with pValue=0 will get plotted at -log10(minPValueCap). */
-  minPValueCap?: number;
+  /** Minimum (floor) values for p values and adjusted p values. Will set a cap on the maximum y axis values
+   * at which points can be plotted. This information will also be shown in tooltips for floored points.
+   */
+  statisticsFloors?: StatisticsFloors;
 }
 
 const EmptyVolcanoPlotStats: VolcanoPlotStats = [
@@ -91,6 +105,10 @@ const EmptyVolcanoPlotStats: VolcanoPlotStats = [
 const EmptyVolcanoPlotData: VolcanoPlotData = {
   effectSizeLabel: 'log2(FoldChange)',
   statistics: EmptyVolcanoPlotStats,
+};
+
+export const DefaultStatisticsFloors: StatisticsFloors = {
+  pValueFloor: 0, // Do not floor by default
 };
 
 const MARGIN_DEFAULT = 50;
@@ -144,7 +162,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     truncationBarFill,
     showSpinner = false,
     rawDataMinMaxValues,
-    minPValueCap = 2e-300,
+    statisticsFloors = DefaultStatisticsFloors,
   } = props;
 
   // Use ref forwarding to enable screenshotting of the plot for thumbnail versions.
@@ -167,34 +185,44 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   const { min: dataXMin, max: dataXMax } = rawDataMinMaxValues.x;
   const { min: dataYMin, max: dataYMax } = rawDataMinMaxValues.y;
 
+  // When dataYMin = 0, there must be a point with pvalue = 0, which means the plot will try in vain to draw a point at -log10(0) = Inf.
+  // When this issue arises, one should set a pValueFloor >= 0 so that the point with pValue = 0
+  // will be able to be plotted sensibly.
+  if (dataYMin === 0 && statisticsFloors.pValueFloor <= 0) {
+    throw new Error(
+      'Found data point with pValue = 0. Cannot create a volcano plot with a point at -log10(0) = Inf. Please use the statisticsFloors prop to set a pValueFloor >= 0.'
+    );
+  }
+
   // Set mins, maxes of axes in the plot using axis range props
-  // The y axis max should not be allowed to exceed -log10(minPValueCap)
+  // The y axis max should not be allowed to exceed -log10(pValueFloor)
   const xAxisMin = independentAxisRange?.min ?? 0;
   const xAxisMax = independentAxisRange?.max ?? 0;
   const yAxisMin = dependentAxisRange?.min ?? 0;
   const yAxisMax = dependentAxisRange?.max
-    ? dependentAxisRange.max > -Math.log10(minPValueCap)
-      ? -Math.log10(minPValueCap)
+    ? dependentAxisRange.max > -Math.log10(statisticsFloors.pValueFloor)
+      ? -Math.log10(statisticsFloors.pValueFloor)
       : dependentAxisRange.max
     : 0;
 
   // Do we need to show the special annotation for the case when the y axis is maxxed out?
-  const showCappedDataAnnotation = yAxisMax === -Math.log10(minPValueCap);
+  const showFlooredDataAnnotation =
+    yAxisMax === -Math.log10(statisticsFloors.pValueFloor);
 
   // Truncation indicators
   // If we have truncation indicators, we'll need to expand the plot range just a tad to
   // ensure the truncation bars appear. The folowing showTruncationBar variables will
   // be either 0 (do not show bar) or 1 (show bar).
-  // The y axis has special logic because it gets capped at -log10(minPValueCap)
+  // The y axis has special logic because it gets capped at -log10(pValueFloor) and we dont want to
+  // show the truncation bar if the annotation will be shown!
   const showXMinTruncationBar = Number(dataXMin < xAxisMin);
   const showXMaxTruncationBar = Number(dataXMax > xAxisMax);
   const xTruncationBarWidth = 0.02 * (xAxisMax - xAxisMin);
 
   const showYMinTruncationBar = Number(-Math.log10(dataYMax) < yAxisMin);
-  const showYMaxTruncationBar =
-    dataYMin === 0
-      ? Number(-Math.log10(minPValueCap) > yAxisMax)
-      : Number(-Math.log10(dataYMin) > yAxisMax);
+  const showYMaxTruncationBar = Number(
+    -Math.log10(dataYMin) > yAxisMax && !showFlooredDataAnnotation
+  );
   const yTruncationBarHeight = 0.02 * (yAxisMax - yAxisMin);
 
   /**
@@ -211,12 +239,12 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
    * Accessors - tell visx which value of the data point we should use and where.
    */
 
-  // For the actual volcano plot data. Y axis points are capped at -Math.log10(minPValueCap)
+  // For the actual volcano plot data. Y axis points are capped at -Math.log10(pValueFloor)
   const dataAccessors = {
     xAccessor: (d: VolcanoPlotDataPoint) => Number(d?.effectSize),
     yAccessor: (d: VolcanoPlotDataPoint) =>
-      d.pValue === '0'
-        ? -Math.log10(minPValueCap)
+      Number(d.pValue) <= statisticsFloors.pValueFloor
+        ? -Math.log10(statisticsFloors.pValueFloor)
         : -Math.log10(Number(d?.pValue)),
   };
 
@@ -266,9 +294,9 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           findNearestDatumOverride={findNearestDatumXY}
           margin={{
             top: MARGIN_DEFAULT,
-            right: showCappedDataAnnotation ? 150 : MARGIN_DEFAULT,
-            left: MARGIN_DEFAULT,
-            bottom: MARGIN_DEFAULT,
+            right: showFlooredDataAnnotation ? 150 : MARGIN_DEFAULT + 10,
+            left: MARGIN_DEFAULT + 10, // Bottom annotatiions get wide (for right margin, too)
+            bottom: MARGIN_DEFAULT + 20, // Bottom annotations can get long
           }}
         >
           {/* Set up the axes and grid lines. XYChart magically lays them out correctly */}
@@ -290,11 +318,12 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
                   {...xyAccessors}
                 >
                   <AnnotationLabel
-                    subtitle={label}
+                    subtitle={truncateWithEllipsis(label, 30)}
                     horizontalAnchor="middle"
                     verticalAnchor="start"
                     showAnchorLine={false}
                     showBackground={false}
+                    maxWidth={100}
                   />
                 </Annotation>
               );
@@ -351,7 +380,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           )}
 
           {/* infinity y data annotation line */}
-          {showCappedDataAnnotation && (
+          {showFlooredDataAnnotation && (
             <Annotation
               datum={{
                 x: xAxisMax,
@@ -441,11 +470,23 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
                       <span>{effectSizeLabel}:</span> {data?.effectSize}
                     </li>
                     <li>
-                      <span>P Value:</span> {data?.pValue}
+                      <span>P Value:</span>{' '}
+                      {data?.pValue
+                        ? Number(data.pValue) <= statisticsFloors.pValueFloor
+                          ? '<= ' + statisticsFloors.pValueFloor
+                          : data?.pValue
+                        : 'n/a'}
                     </li>
                     <li>
                       <span>Adjusted P Value:</span>{' '}
-                      {data?.adjustedPValue ?? 'n/a'}
+                      {data?.adjustedPValue
+                        ? statisticsFloors.adjustedPValueFloor &&
+                          Number(data.adjustedPValue) <=
+                            statisticsFloors.adjustedPValueFloor &&
+                          Number(data.pValue) <= statisticsFloors.pValueFloor
+                          ? '<= ' + statisticsFloors.adjustedPValueFloor
+                          : data?.adjustedPValue
+                        : 'n/a'}
                     </li>
                   </ul>
                 </div>

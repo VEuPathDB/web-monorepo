@@ -1,6 +1,12 @@
 /**
- * A util functions for handling long tick labels
+ * Util functions for handling long tick labels
  */
+
+export const truncateWithEllipsis = (label: string, maxLabelLength: number) => {
+  return (label || '').length > maxLabelLength
+    ? (label || '').substring(0, maxLabelLength - 2) + '...'
+    : label;
+};
 
 export const axisTickLableEllipsis = (
   categoryOrder: string[],
@@ -8,9 +14,7 @@ export const axisTickLableEllipsis = (
 ) => {
   // make array for tick label with ellipsis
   const categoryOrderEllipsis = categoryOrder.map((element) => {
-    return (element || '').length > maxIndependentTickLabelLength
-      ? (element || '').substring(0, maxIndependentTickLabelLength - 2) + '...'
-      : element;
+    return truncateWithEllipsis(element, maxIndependentTickLabelLength);
   });
 
   // identify duplicate element and duplicate indices in the array

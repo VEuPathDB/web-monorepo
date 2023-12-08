@@ -3,10 +3,12 @@ import VolcanoPlot, {
   VolcanoPlotProps,
   assignSignificanceColor,
   RawDataMinMaxValues,
+  StatisticsFloors,
+  DefaultStatisticsFloors,
 } from '@veupathdb/components/lib/plots/VolcanoPlot';
 
 import * as t from 'io-ts';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 
 import { usePromise } from '../../../hooks/promise';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
@@ -56,8 +58,13 @@ import { fixVarIdLabel } from '../../../utils/visualization';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 // end imports
 
-const DEFAULT_SIG_THRESHOLD = 0.05;
-const DEFAULT_FC_THRESHOLD = 2;
+// reusable util for computing truncationConfig
+import { truncationConfig } from '../../../utils/truncation-config-utils';
+// use Notification for truncation warning message
+import Notification from '@veupathdb/components/lib/components/widgets//Notification';
+
+const DEFAULT_SIG_THRESHOLD = 0.05; // significance threshold (horizontal line)
+const DEFAULT_ES_THRESHOLD = 1; // effect size threshold (vertical lines)
 const DEFAULT_MARKER_OPACITY = 0.8;
 /**
  * The padding ensures we don't clip off part of the glyphs that represent the most extreme points.
@@ -86,7 +93,7 @@ export const volcanoPlotVisualization = createVisualizationPlugin({
 
 function createDefaultConfig(): VolcanoPlotConfig {
   return {
-    effectSizeThreshold: DEFAULT_FC_THRESHOLD,
+    effectSizeThreshold: DEFAULT_ES_THRESHOLD,
     significanceThreshold: DEFAULT_SIG_THRESHOLD,
     markerBodyOpacity: DEFAULT_MARKER_OPACITY,
     independentAxisRange: undefined,
@@ -147,6 +154,12 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     createDefaultConfig,
     updateConfiguration
   );
+
+  // set the state of truncation warning message
+  const [truncatedIndependentAxisWarning, setTruncatedIndependentAxisWarning] =
+    useState<string>('');
+  const [truncatedDependentAxisWarning, setTruncatedDependentAxisWarning] =
+    useState<string>('');
 
   // Get the volcano plot data!
   const data = usePromise(
@@ -256,7 +269,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
   const significanceThreshold =
     vizConfig.significanceThreshold ?? DEFAULT_SIG_THRESHOLD;
   const effectSizeThreshold =
-    vizConfig.effectSizeThreshold ?? DEFAULT_FC_THRESHOLD;
+    vizConfig.effectSizeThreshold ?? DEFAULT_ES_THRESHOLD;
 
   /**
    * This version of the data will get passed to the VolcanoPlot component
@@ -407,13 +420,22 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
           'Up in ' +
             computationConfiguration.comparator.groupA
               .map((entry) => entry.label)
-              .join(','),
+              .join(', '),
           'Up in ' +
             computationConfiguration.comparator.groupB
               .map((entry) => entry.label)
-              .join(','),
+              .join(', '),
         ]
       : [];
+
+  // Record any floors for the p value and adjusted p value sent to us from the backend.
+  const statisticsFloors: StatisticsFloors =
+    data.value && data.value.pValueFloor
+      ? {
+          pValueFloor: Number(data.value.pValueFloor),
+          adjustedPValueFloor: Number(data.value.adjustedPValueFloor),
+        }
+      : DefaultStatisticsFloors;
 
   const volcanoPlotProps: VolcanoPlotProps = {
     /**
@@ -437,6 +459,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
      * confusing behavior where selecting group values displays on the empty viz placeholder.
      */
     comparisonLabels: data.value ? comparisonLabels : [],
+    statisticsFloors,
     showSpinner: data.pending,
     truncationBarFill: yellow[300],
     independentAxisRange,
@@ -447,6 +470,65 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
      */
     ...(data.value ? {} : EMPTY_VIZ_AXIS_RANGES),
   };
+
+  // set truncation flags
+  const {
+    truncationConfigIndependentAxisMin,
+    truncationConfigIndependentAxisMax,
+    truncationConfigDependentAxisMin,
+    truncationConfigDependentAxisMax,
+  } = useMemo(
+    () =>
+      truncationConfig(
+        {
+          independentAxisRange: {
+            min: rawDataMinMaxValues.x.min,
+            max: rawDataMinMaxValues.x.max,
+          },
+          dependentAxisRange: {
+            min: -Math.log10(rawDataMinMaxValues.y.max),
+            max: -Math.log10(rawDataMinMaxValues.y.min),
+          },
+        },
+        vizConfig,
+        {}
+      ),
+    [rawDataMinMaxValues, vizConfig]
+  );
+
+  // set useEffect for changing truncation warning message
+  useEffect(() => {
+    if (
+      truncationConfigIndependentAxisMin ||
+      truncationConfigIndependentAxisMax
+    ) {
+      setTruncatedIndependentAxisWarning(
+        'Data may have been truncated by range selection, as indicated by the yellow shading'
+      );
+      // add else for the case when changing inputVariable
+    } else {
+      setTruncatedIndependentAxisWarning('');
+    }
+  }, [
+    truncationConfigIndependentAxisMin,
+    truncationConfigIndependentAxisMax,
+    setTruncatedIndependentAxisWarning,
+  ]);
+
+  useEffect(() => {
+    if (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) {
+      setTruncatedDependentAxisWarning(
+        'Data may have been truncated by range selection, as indicated by the yellow shading'
+      );
+      // add else for the case when changing inputVariable
+    } else {
+      setTruncatedDependentAxisWarning('');
+    }
+  }, [
+    truncationConfigDependentAxisMin,
+    truncationConfigDependentAxisMax,
+    setTruncatedDependentAxisWarning,
+  ]);
 
   // @ts-ignore
   const plotNode = <VolcanoPlot {...volcanoPlotProps} ref={plotRef} />;
@@ -501,9 +583,11 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
               themeRole={'primary'}
               tooltip={'Reset to defaults'}
               disabled={!vizConfig.independentAxisRange}
-              onPress={() =>
-                updateVizConfig({ independentAxisRange: undefined })
-              }
+              onPress={() => {
+                updateVizConfig({ independentAxisRange: undefined });
+                // add reset for truncation message as well
+                setTruncatedIndependentAxisWarning('');
+              }}
             />
           </div>
           <AxisRangeControl
@@ -525,6 +609,22 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
             }}
             step={0.01}
           />
+          {/* truncation notification */}
+          {truncatedIndependentAxisWarning && data.value != null ? (
+            <Notification
+              title={''}
+              text={truncatedIndependentAxisWarning}
+              // this was defined as LIGHT_BLUE
+              color={'#5586BE'}
+              onAcknowledgement={() => {
+                setTruncatedIndependentAxisWarning('');
+              }}
+              showWarningIcon={true}
+              containerStyles={{
+                maxWidth: '350px',
+              }}
+            />
+          ) : null}
         </div>
         {/** vertical line to separate x from y range controls */}
         <div style={{ borderRight: '2px solid lightgray' }}></div>
@@ -549,7 +649,11 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
               themeRole={'primary'}
               tooltip={'Reset to defaults'}
               disabled={!vizConfig.dependentAxisRange}
-              onPress={() => updateVizConfig({ dependentAxisRange: undefined })}
+              onPress={() => {
+                updateVizConfig({ dependentAxisRange: undefined });
+                // add reset for truncation message as well
+                setTruncatedDependentAxisWarning('');
+              }}
             />
           </div>
           <AxisRangeControl
@@ -571,6 +675,22 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
             }}
             step={0.01}
           />
+          {/* truncation notification */}
+          {truncatedDependentAxisWarning ? (
+            <Notification
+              title={''}
+              text={truncatedDependentAxisWarning}
+              // this was defined as LIGHT_BLUE
+              color={'#5586BE'}
+              onAcknowledgement={() => {
+                setTruncatedDependentAxisWarning('');
+              }}
+              showWarningIcon={true}
+              containerStyles={{
+                maxWidth: '350px',
+              }}
+            />
+          ) : null}
         </div>
       </div>
     </div>
@@ -590,17 +710,17 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
           markerColor: significanceColors['inconclusive'],
         },
         {
-          label: `Up regulated in ${computationConfiguration.comparator.groupB
+          label: `Up in ${computationConfiguration.comparator.groupB
             ?.map((entry) => entry.label)
-            .join(',')} (${countsData[significanceColors['high']]})`,
+            .join(', ')} (${countsData[significanceColors['high']]})`,
           marker: 'circle',
           hasData: true,
           markerColor: significanceColors['high'],
         },
         {
-          label: `Up regulated in ${computationConfiguration.comparator.groupA
+          label: `Up in ${computationConfiguration.comparator.groupA
             ?.map((entry) => entry.label)
-            .join(',')} (${countsData[significanceColors['low']]})`,
+            .join(', ')} (${countsData[significanceColors['low']]})`,
           marker: 'circle',
           hasData: true,
           markerColor: significanceColors['low'],
@@ -625,7 +745,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
             }
             label={finalData?.effectSizeLabel ?? 'Effect Size'}
             minValue={0}
-            value={vizConfig.effectSizeThreshold ?? DEFAULT_FC_THRESHOLD}
+            value={vizConfig.effectSizeThreshold ?? DEFAULT_ES_THRESHOLD}
             containerStyles={{ marginRight: 10 }}
           />
 

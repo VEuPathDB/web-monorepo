@@ -7,6 +7,9 @@
     font-size: 1.1em;
     margin: 1em 0 2em 0;
     color: #444;
+    &.portal {
+      margin-bottom: 1em;
+    }
   }
 
   &-Instructions li {
@@ -17,6 +20,7 @@
     .wdk-QuestionFormParameterList {
       width: 60vw;
       margin: auto;
+      min-width: 800px;
     }
 
     .wdk-QuestionFormParameterHeading h2 {
@@ -81,6 +85,9 @@
     }
 
     .TableToolbar {
+      .TableToolbar-Info {
+        font-size: 100%;
+      }
       order: -3;
     }
 

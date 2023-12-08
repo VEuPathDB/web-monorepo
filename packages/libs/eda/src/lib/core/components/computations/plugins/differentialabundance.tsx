@@ -1,7 +1,6 @@
 import {
   ContinuousVariableDataShape,
   LabeledRange,
-  useCollectionVariables,
   usePromise,
   useStudyMetadata,
 } from '../../..';
@@ -12,15 +11,22 @@ import {
 import { volcanoPlotVisualization } from '../../visualizations/implementations/VolcanoPlotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { isEqual, partial } from 'lodash';
-import { useConfigChangeHandler, assertComputationWithConfig } from '../Utils';
+import {
+  useConfigChangeHandler,
+  assertComputationWithConfig,
+  makeVariableCollectionItems,
+  removeAbsoluteAbundanceVariableCollections,
+} from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import {
   useDataClient,
   useFindEntityAndVariable,
+  useFindEntityAndVariableCollection,
+  useVariableCollections,
 } from '../../../hooks/workspace';
-import { useCallback, useMemo } from 'react';
+import { ReactNode, useCallback, useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import VariableTreeDropdown from '../../variableTrees/VariableTreeDropdown';
 import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
@@ -73,6 +79,7 @@ export const DifferentialAbundanceConfig = t.type({
   collectionVariable: VariableCollectionDescriptor,
   comparator: Comparator,
   differentialAbundanceMethod: t.string,
+  pValueFloor: t.string,
 });
 
 // Check to ensure the entirety of the configuration is filled out before enabling the
@@ -92,8 +99,23 @@ export const plugin: ComputationPlugin = {
   visualizationPlugins: {
     volcanoplot: volcanoPlotVisualization.withOptions({
       getPlotSubtitle(config) {
-        if (DifferentialAbundanceConfig.is(config)) {
-          return `Differential abundance computed using ${config.differentialAbundanceMethod} with default parameters.`;
+        if (
+          DifferentialAbundanceConfig.is(config) &&
+          config.differentialAbundanceMethod in
+            DIFFERENTIAL_ABUNDANCE_METHOD_CITATIONS
+        ) {
+          return (
+            <span>
+              Differential abundance computed using{' '}
+              {config.differentialAbundanceMethod}{' '}
+              {
+                DIFFERENTIAL_ABUNDANCE_METHOD_CITATIONS[
+                  config.differentialAbundanceMethod as keyof typeof DIFFERENTIAL_ABUNDANCE_METHOD_CITATIONS
+                ]
+              }{' '}
+              with default parameters.
+            </span>
+          );
         }
       },
     }), // Must match name in data service and in visualization.tsx
@@ -107,8 +129,7 @@ function DifferentialAbundanceConfigDescriptionComponent({
   computation: Computation;
   filters: Filter[];
 }) {
-  const studyMetadata = useStudyMetadata();
-  const collections = useCollectionVariables(studyMetadata.rootEntity);
+  const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
   assertComputationWithConfig<DifferentialAbundanceConfig>(
     computation,
     Computation
@@ -124,23 +145,16 @@ function DifferentialAbundanceConfigDescriptionComponent({
       ? findEntityAndVariable(configuration.comparator.variable)
       : undefined;
 
-  const updatedCollectionVariable = collections.find((collectionVar) =>
-    isEqual(
-      {
-        collectionId: collectionVar.id,
-        entityId: collectionVar.entityId,
-      },
-      collectionVariable
-    )
-  );
+  const entityAndCollectionVariableTreeNode =
+    findEntityAndVariableCollection(collectionVariable);
 
   return (
     <div className="ConfigDescriptionContainer">
       <h4>
         Data:{' '}
         <span>
-          {updatedCollectionVariable ? (
-            `${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}`
+          {entityAndCollectionVariableTreeNode ? (
+            `${entityAndCollectionVariableTreeNode.entity.displayName} > ${entityAndCollectionVariableTreeNode.variableCollection.displayName}`
           ) : (
             <i>Not selected</i>
           )}
@@ -163,7 +177,18 @@ function DifferentialAbundanceConfigDescriptionComponent({
 // Include available methods in this array.
 // 10/10/23 - decided to only release Maaslin for the first roll-out. DESeq is still available
 // and we're poised to release it in the future.
-const DIFFERENTIAL_ABUNDANCE_METHODS = ['Maaslin']; // + 'DESeq' in the future
+type DifferentialAbundanceMethodCitations = { Maaslin: ReactNode };
+const DIFFERENTIAL_ABUNDANCE_METHOD_CITATIONS: DifferentialAbundanceMethodCitations =
+  {
+    Maaslin: (
+      <a href="https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1009442">
+        (Mallick et al., 2021)
+      </a>
+    ),
+  }; // + deseq paper in the future
+const DIFFERENTIAL_ABUNDANCE_METHODS = Object.keys(
+  DIFFERENTIAL_ABUNDANCE_METHOD_CITATIONS
+); // + 'DESeq' in the future
 
 export function DifferentialAbundanceConfiguration(
   props: ComputationConfigProps
@@ -188,8 +213,13 @@ export function DifferentialAbundanceConfiguration(
     configuration.differentialAbundanceMethod =
       DIFFERENTIAL_ABUNDANCE_METHODS[0];
 
+  // Set the pValueFloor here. May change for other apps.
+  // Note this is intentionally different than the default pValueFloor used in the Volcano component. By default
+  // that component does not floor the data, but we know we want the diff abund computation to use a floor.
+  if (configuration) configuration.pValueFloor = '1e-200';
+
   // Include known collection variables in this array.
-  const collections = useCollectionVariables(studyMetadata.rootEntity);
+  const collections = useVariableCollections(studyMetadata.rootEntity);
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
@@ -205,25 +235,12 @@ export function DifferentialAbundanceConfiguration(
       visualizationId
     );
 
-  const collectionVarItems = useMemo(() => {
-    // Show all collections except for absolute abundance. Eventually this will be performed by
-    // the backend, similar to how we do visualization input var constraints.
-    return collections
-      .filter((collectionVar) => {
-        return collectionVar.normalizationMethod
-          ? collectionVar.normalizationMethod !== 'NULL' ||
-              collectionVar.displayName?.includes('pathway')
-          : true; // DIY may not have the normalizationMethod annotations, but we still want those datasets to pass.
-      })
-      .map((collectionVar) => ({
-        value: {
-          collectionId: collectionVar.id,
-          entityId: collectionVar.entityId,
-        },
-        display:
-          collectionVar.entityDisplayName + ' > ' + collectionVar.displayName,
-      }));
-  }, [collections]);
+  const keepCollections =
+    removeAbsoluteAbundanceVariableCollections(collections);
+  const collectionVarItems = makeVariableCollectionItems(
+    keepCollections,
+    undefined
+  );
 
   const selectedCollectionVar = useMemo(() => {
     if (configuration && 'collectionVariable' in configuration) {

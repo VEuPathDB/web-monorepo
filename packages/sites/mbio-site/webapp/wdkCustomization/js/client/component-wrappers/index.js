@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import Header from '@veupathdb/web-common/lib/App/Header';
 import Footer from '@veupathdb/web-common/lib/components/Footer';
@@ -29,9 +29,13 @@ import {
   studyMatchPredicate,
   studyFilters,
 } from '@veupathdb/web-common/lib/util/homeContent';
-import { useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
+import {
+  useUserDatasetsWorkspace,
+  edaExampleAnalysesAuthors,
+} from '@veupathdb/web-common/lib/config';
 import { useEda } from '@veupathdb/web-common/lib/config';
 import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
+import { CollapsibleDetailsSection } from '@veupathdb/wdk-client/lib/Components';
 
 import { Page } from './Page';
 
@@ -78,10 +82,43 @@ function SiteHeader() {
     (s) => s,
     (s) => s
   );
+
+  // for now, we default to each studies section being open
+  const [expandUserStudies, setExpandUserStudies] = useState(true);
+  const [expandCuratedStudies, setExpandCuratedStudies] = useState(true);
+
+  const handleStudiesMenuSearch = useCallback(
+    (newValue) => {
+      setSearchTerm(newValue);
+      // open both studies sections onSearch only if diyDatasets exist
+      if (newValue.length > 0 && diyDatasets && diyDatasets.length > 0) {
+        setExpandUserStudies(true);
+        setExpandCuratedStudies(true);
+      }
+    },
+    [diyDatasets, setSearchTerm, setExpandUserStudies, setExpandCuratedStudies]
+  );
+
   const makeHeaderMenuItems = useMemo(
     () =>
-      makeHeaderMenuItemsFactory(permissions, diyDatasets, reloadDiyDatasets),
-    [permissions, diyDatasets, reloadDiyDatasets]
+      makeHeaderMenuItemsFactory(
+        permissions,
+        diyDatasets,
+        reloadDiyDatasets,
+        expandUserStudies,
+        setExpandUserStudies,
+        expandCuratedStudies,
+        setExpandCuratedStudies
+      ),
+    [
+      permissions,
+      diyDatasets,
+      reloadDiyDatasets,
+      expandUserStudies,
+      setExpandUserStudies,
+      expandCuratedStudies,
+      setExpandCuratedStudies,
+    ]
   );
   return (
     <Header
@@ -94,7 +131,7 @@ function SiteHeader() {
       getSiteData={getSiteData}
       makeHeaderMenuItems={makeHeaderMenuItems}
       searchTerm={searchTerm}
-      setSearchTerm={setSearchTerm}
+      setSearchTerm={handleStudiesMenuSearch}
     />
   );
 }
@@ -199,7 +236,11 @@ function getHomeContent({ studies, searches, visualizations }) {
 function makeHeaderMenuItemsFactory(
   permissionsValue,
   diyDatasets,
-  reloadDiyDatasets
+  reloadDiyDatasets,
+  expandUserStudies,
+  setExpandUserStudies,
+  expandCuratedStudies,
+  setExpandCuratedStudies
 ) {
   return function makeHeaderMenuItems(state, props) {
     const { siteConfig } = state.globalData;
@@ -264,46 +305,62 @@ function makeHeaderMenuItemsFactory(
               filteredCuratedStudies != null &&
                 filteredUserStudies != null &&
                 !permissionsValue.loading
-                ? (filteredUserStudies.length > 0 &&
-                  studies.entities?.length > 0
-                    ? [
-                        {
-                          text: <small>My studies</small>,
-                        },
-                      ]
-                    : []
-                  )
-                    .concat(
-                      filteredUserStudies.map((study) => ({
+                ? diyDatasets?.length > 0 && studies.entities?.length > 0
+                  ? // here we have user studies and curated studies, so render "My studies" and "Curated studies" sections
+                    [
+                      {
+                        isVisible: filteredUserStudies.length > 0,
                         text: (
-                          <DIYStudyMenuItem
-                            name={study.name}
-                            link={`${study.baseEdaRoute}/new`}
+                          <CollapsibleDetailsSection
+                            summary="My studies"
+                            collapsibleDetails={filteredUserStudies.map(
+                              (study, idx) => (
+                                <DIYStudyMenuItem
+                                  key={idx}
+                                  name={study.name}
+                                  link={`${study.baseEdaRoute}/new`}
+                                  isChildOfCollapsibleSection={true}
+                                />
+                              )
+                            )}
+                            showDetails={expandUserStudies}
+                            setShowDetails={setExpandUserStudies}
                           />
                         ),
-                      }))
-                    )
-                    .concat(
-                      filteredCuratedStudies.length > 0 &&
-                        diyDatasets?.length > 0
-                        ? [
-                            {
-                              text: <small>Curated studies</small>,
-                            },
-                          ]
-                        : []
-                    )
-                    .concat(
-                      filteredCuratedStudies.map((study) => ({
+                      },
+                    ].concat([
+                      {
+                        isVisible: filteredCuratedStudies.length > 0,
                         text: (
-                          <StudyMenuItem
-                            study={study}
-                            config={siteConfig}
-                            permissions={permissionsValue.permissions}
+                          <CollapsibleDetailsSection
+                            summary="Curated studies"
+                            collapsibleDetails={filteredCuratedStudies.map(
+                              (study, idx) => (
+                                <StudyMenuItem
+                                  key={idx}
+                                  study={study}
+                                  config={siteConfig}
+                                  permissions={permissionsValue.permissions}
+                                  isChildOfCollapsibleSection={true}
+                                />
+                              )
+                            )}
+                            showDetails={expandCuratedStudies}
+                            setShowDetails={setExpandCuratedStudies}
                           />
                         ),
-                      }))
-                    )
+                      },
+                    ])
+                  : // here we do not have user studies so need for sections; just list the studies
+                    filteredCuratedStudies.map((study) => ({
+                      text: (
+                        <StudyMenuItem
+                          study={study}
+                          config={siteConfig}
+                          permissions={permissionsValue.permissions}
+                        />
+                      ),
+                    }))
                 : [
                     {
                       text: (
@@ -404,21 +461,24 @@ function makeHeaderMenuItemsFactory(
 async function loadItems({ analysisClient, wdkService }) {
   const overviews = await analysisClient.getPublicAnalyses();
   const studies = await wdkService.getStudies();
-  return overviews.flatMap((overview) => {
-    const study = studies.records.find(
-      (study) => study.attributes.dataset_id === overview.studyId
-    );
-    if (study == null) return [];
-    return [
-      {
-        displayName: overview.displayName,
-        studyDisplayName: study.displayName,
-        description: overview.description,
-        studyId: overview.studyId,
-        analysisId: overview.analysisId,
-      },
-    ];
-  });
+  const userIds = edaExampleAnalysesAuthors;
+  return overviews
+    .filter((analysis) => userIds?.includes(analysis.userId) ?? true)
+    .flatMap((overview) => {
+      const study = studies.records.find(
+        (study) => study.attributes.dataset_id === overview.studyId
+      );
+      if (study == null) return [];
+      return [
+        {
+          displayName: overview.displayName,
+          studyDisplayName: study.displayName,
+          description: overview.description,
+          studyId: overview.studyId,
+          analysisId: overview.analysisId,
+        },
+      ];
+    });
 }
 
 /**

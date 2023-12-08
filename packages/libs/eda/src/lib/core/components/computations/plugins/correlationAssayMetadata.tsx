@@ -1,8 +1,18 @@
-import { useCollectionVariables, useStudyMetadata } from '../../..';
-import { VariableDescriptor } from '../../../types/variable';
+import {
+  useFindEntityAndVariableCollection,
+  useStudyMetadata,
+  useVariableCollections,
+} from '../../..';
+import { VariableCollectionDescriptor } from '../../../types/variable';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { isEqual, partial } from 'lodash';
-import { useConfigChangeHandler, assertComputationWithConfig } from '../Utils';
+import { partial } from 'lodash';
+import {
+  useConfigChangeHandler,
+  assertComputationWithConfig,
+  makeVariableCollectionItems,
+  findVariableCollectionItemFromDescriptor,
+  removeAbsoluteAbundanceVariableCollections,
+} from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
@@ -19,8 +29,8 @@ const cx = makeClassNameHelper('AppStepConfigurationContainer');
  * Correlation
  *
  * The Correlation Assay vs Metadata app takes in a user-selected collection (ex. Species) and
- * runs a correlation of that data against all appropriate metadata in the study. The result is
- * a correlation coefficient and significance value for each (assay member, metadata variable) pair.
+ * runs a correlation of that data against all appropriate metadata in the study (found by the backend). The result is
+ * a correlation coefficient and (soon) a significance value for each (assay member, metadata variable) pair.
  *
  * Importantly, this is the first of a few correlation-type apps that are coming along in the near future.
  * There will also be an Assay vs Assay app and a Metadata vs Metadata correlation app. It's possible that
@@ -33,7 +43,7 @@ export type CorrelationAssayMetadataConfig = t.TypeOf<
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CorrelationAssayMetadataConfig = t.type({
-  collectionVariable: VariableDescriptor,
+  collectionVariable: VariableCollectionDescriptor,
   correlationMethod: t.string,
 });
 
@@ -54,40 +64,25 @@ function CorrelationAssayMetadataConfigDescriptionComponent({
 }: {
   computation: Computation;
 }) {
-  const studyMetadata = useStudyMetadata();
-  const collections = useCollectionVariables(studyMetadata.rootEntity);
+  const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
   assertComputationWithConfig<CorrelationAssayMetadataConfig>(
     computation,
     Computation
   );
 
-  const { configuration } = computation.descriptor;
-  const collectionVariable =
-    'collectionVariable' in configuration
-      ? configuration.collectionVariable
-      : undefined;
-  const correlationMethod =
-    'correlationMethod' in configuration
-      ? configuration.correlationMethod
-      : undefined;
+  const { collectionVariable, correlationMethod } =
+    computation.descriptor.configuration;
 
-  const updatedCollectionVariable = collections.find((collectionVar) =>
-    isEqual(
-      {
-        collectionId: collectionVar.id,
-        entityId: collectionVar.entityId,
-      },
-      collectionVariable
-    )
-  );
+  const entityAndCollectionVariableTreeNode =
+    findEntityAndVariableCollection(collectionVariable);
 
   return (
     <div className="ConfigDescriptionContainer">
       <h4>
         Data:{' '}
         <span>
-          {updatedCollectionVariable ? (
-            `${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}`
+          {entityAndCollectionVariableTreeNode ? (
+            `${entityAndCollectionVariableTreeNode.entity.displayName} > ${entityAndCollectionVariableTreeNode.variableCollection.displayName}`
           ) : (
             <i>Not selected</i>
           )}
@@ -126,7 +121,7 @@ export function CorrelationAssayMetadataConfiguration(
   if (configuration) configuration.correlationMethod = 'spearman';
 
   // Include known collection variables in this array.
-  const collections = useCollectionVariables(studyMetadata.rootEntity);
+  const collections = useVariableCollections(studyMetadata.rootEntity);
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
@@ -142,28 +137,19 @@ export function CorrelationAssayMetadataConfiguration(
       visualizationId
     );
 
-  const collectionVarItems = useMemo(() => {
-    return collections.map((collectionVar) => ({
-      value: {
-        variableId: collectionVar.id,
-        entityId: collectionVar.entityId,
-      },
-      display:
-        collectionVar.entityDisplayName + ' > ' + collectionVar.displayName,
-    }));
-  }, [collections]);
+  const keepCollections =
+    removeAbsoluteAbundanceVariableCollections(collections);
+  const collectionVarItems = makeVariableCollectionItems(
+    keepCollections,
+    undefined
+  );
 
   const selectedCollectionVar = useMemo(() => {
-    if (configuration && 'collectionVariable' in configuration) {
-      const selectedItem = collectionVarItems.find((item) =>
-        isEqual(item.value, {
-          variableId: configuration.collectionVariable.variableId,
-          entityId: configuration.collectionVariable.entityId,
-        })
-      );
-      return selectedItem;
-    }
-  }, [collectionVarItems, configuration]);
+    return findVariableCollectionItemFromDescriptor(
+      collectionVarItems,
+      configuration?.collectionVariable
+    );
+  }, [collectionVarItems, configuration?.collectionVariable]);
 
   return (
     <ComputationStepContainer

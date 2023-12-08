@@ -1,3 +1,4 @@
+// TODO When in "embed mode", disable coallpsing, hiding, and TOC
 import { isEqual } from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -18,7 +19,12 @@ import {
   requestPartialRecord,
 } from '../Actions/RecordActions';
 
-import { CategoryTreeNode } from '../Utils/CategoryUtils';
+import {
+  CategoryTreeNode,
+  getNodeId,
+  getRecordClassName,
+  getScopes,
+} from '../Utils/CategoryUtils';
 import { stripHTML } from '../Utils/DomUtils';
 import { RecordClass } from '../Utils/WdkModel';
 import {
@@ -27,6 +33,7 @@ import {
   getTableNames,
 } from '../Views/Records/RecordUtils';
 import { RootState } from '../Core/State/Types';
+import { preorderSeq } from '../Utils/TreeUtils';
 
 const ActionCreators = {
   ...UserActionCreators,
@@ -42,7 +49,12 @@ const ActionCreators = {
 
 type StateProps = RootState['record'];
 type DispatchProps = typeof ActionCreators;
-type OwnProps = { recordClass: string; primaryKey: string };
+type OwnProps = {
+  recordClass: string;
+  primaryKey: string;
+  attributes?: string[];
+  tables?: string[];
+};
 type Props = { ownProps: OwnProps } & StateProps & DispatchProps;
 
 // FIXME Remove when RecordUI is converted to Typescript
@@ -77,14 +89,37 @@ class RecordController extends PageController<Props> {
       // all attributes
       {
         attributes: getAttributeNames(categoryTree),
-        tables: [],
-      },
-      // all tables
-      {
-        attributes: [],
         tables: getTableNames(categoryTree),
       },
     ];
+  }
+
+  pruneCategoryTree(
+    recordClass: RecordClass,
+    categoryTree: CategoryTreeNode
+  ): CategoryTreeNode {
+    const { attributes, tables } = this.props.ownProps;
+    if (attributes || tables) {
+      const nodes = preorderSeq(categoryTree)
+        .filter((node) => {
+          const recordClassName = getRecordClassName(node);
+          const id = getNodeId(node);
+          const scopes = getScopes(node);
+          if (recordClassName !== recordClass.fullName) return false;
+          return (
+            attributes?.includes(id) ||
+            tables?.includes(id) ||
+            scopes.includes('record-internal')
+          );
+        })
+        .toArray();
+      const root: CategoryTreeNode = {
+        properties: {},
+        children: nodes,
+      };
+      return root;
+    }
+    return categoryTree;
   }
 
   isRenderDataLoaded() {
@@ -133,7 +168,8 @@ class RecordController extends PageController<Props> {
       this.props.loadRecordData(
         recordClass,
         pkValues,
-        this.getRecordRequestOptions
+        this.getRecordRequestOptions.bind(this),
+        this.pruneCategoryTree.bind(this)
       );
     }
   }

@@ -77,6 +77,18 @@ export const wrapWdkService = flowRight(
       })
     : identity,
   addMultiBlastService,
+  (wdkService: WdkService): WdkService => ({
+    ...wdkService,
+    // Hardcode isBeta. This method is used by search pages
+    // and the search tree in the site header menu.
+    getQuestions: memoize(async () => {
+      const questions = await wdkService.getQuestions();
+      return questions.map((q) => ({
+        ...q,
+        isBeta: q.urlSegment.endsWith('ByLongReadEvidence'),
+      }));
+    }),
+  }),
   function addGenomicsServices(wdkService: WdkService): GenomicsService {
     return {
       ...wdkService,

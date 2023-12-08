@@ -6,14 +6,16 @@ import { plugin as distributions } from './distributions';
 import { plugin as countsandproportions } from './countsAndProportions';
 import { plugin as abundance } from './abundance';
 import { plugin as differentialabundance } from './differentialabundance';
-import { plugin as xyrelationships } from './xyRelationships';
 import { plugin as correlationassaymetadata } from './correlationAssayMetadata';
+import { plugin as correlationassayassay } from './correlationAssayAssay';
+import { plugin as xyrelationships } from './xyRelationships';
 export const plugins: Record<string, ComputationPlugin> = {
   abundance,
   alphadiv,
   betadiv,
   differentialabundance,
   correlationassaymetadata,
+  correlationassayassay,
   countsandproportions,
   distributions,
   pass,

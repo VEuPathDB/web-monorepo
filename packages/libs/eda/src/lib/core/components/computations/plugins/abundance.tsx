@@ -1,11 +1,19 @@
 import { useStudyMetadata } from '../../..';
-import { useCollectionVariables } from '../../../hooks/workspace';
+import {
+  useFindEntityAndVariableCollection,
+  useVariableCollections,
+} from '../../../hooks/workspace';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { isEqual, partial } from 'lodash';
-import { assertComputationWithConfig, useConfigChangeHandler } from '../Utils';
+import {
+  assertComputationWithConfig,
+  makeVariableCollectionItems,
+  removeAbsoluteAbundanceVariableCollections,
+  useConfigChangeHandler,
+} from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
@@ -45,7 +53,15 @@ export const plugin: ComputationPlugin = {
       },
       getPlotSubtitle(config) {
         if (AbundanceConfig.is(config)) {
-          return `Ranked abundance: Variables with ${config.rankingMethod} = 0 removed. Showing up to the top ten variables.`;
+          return (
+            <>
+              <br />
+              <span>
+                Ranked abundance: Variables with {config.rankingMethod} = 0
+                removed. Showing up to the top ten variables.
+              </span>
+            </>
+          );
         }
       },
       hideShowMissingnessToggle: true,
@@ -66,7 +82,15 @@ export const plugin: ComputationPlugin = {
       },
       getPlotSubtitle(config) {
         if (AbundanceConfig.is(config)) {
-          return `Ranked abundance: Variables with ${config.rankingMethod} = 0 removed. Showing up to the top ten variables.`;
+          return (
+            <>
+              <br />
+              <span>
+                Ranked abundance: Variables with {config.rankingMethod} = 0
+                removed. Showing up to the top eight variables.
+              </span>
+            </>
+          );
         }
       },
       hideShowMissingnessToggle: true,
@@ -79,8 +103,7 @@ function AbundanceConfigDescriptionComponent({
 }: {
   computation: Computation;
 }) {
-  const studyMetadata = useStudyMetadata();
-  const collections = useCollectionVariables(studyMetadata.rootEntity);
+  const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
   assertComputationWithConfig<AbundanceConfig>(computation, Computation);
   const { configuration } = computation.descriptor;
   const collectionVariable =
@@ -89,22 +112,15 @@ function AbundanceConfigDescriptionComponent({
       : undefined;
   const rankingMethod =
     'rankingMethod' in configuration ? configuration.rankingMethod : undefined;
-  const updatedCollectionVariable = collections.find((collectionVar) =>
-    isEqual(
-      {
-        collectionId: collectionVar.id,
-        entityId: collectionVar.entityId,
-      },
-      collectionVariable
-    )
-  );
+  const updatedCollectionVariable =
+    findEntityAndVariableCollection(collectionVariable);
   return (
     <div className="ConfigDescriptionContainer">
       <h4>
         Data:{' '}
         <span>
           {updatedCollectionVariable ? (
-            `${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}`
+            `${updatedCollectionVariable.entity.displayName} > ${updatedCollectionVariable.variableCollection.displayName}`
           ) : (
             <i>Not selected</i>
           )}
@@ -136,7 +152,7 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
   } = props;
   const studyMetadata = useStudyMetadata();
   // Include known collection variables in this array.
-  const collections = useCollectionVariables(studyMetadata.rootEntity);
+  const collections = useVariableCollections(studyMetadata.rootEntity);
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
@@ -149,22 +165,12 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
     visualizationId
   );
 
-  const collectionVarItems = useMemo(() => {
-    return collections
-      .filter((collectionVar) => {
-        return collectionVar.normalizationMethod
-          ? collectionVar.normalizationMethod !== 'NULL'
-          : true;
-      })
-      .map((collectionVar) => ({
-        value: {
-          collectionId: collectionVar.id,
-          entityId: collectionVar.entityId,
-        },
-        display:
-          collectionVar.entityDisplayName + ' > ' + collectionVar.displayName,
-      }));
-  }, [collections]);
+  const keepCollections =
+    removeAbsoluteAbundanceVariableCollections(collections);
+  const collectionVarItems = makeVariableCollectionItems(
+    keepCollections,
+    undefined
+  );
 
   const selectedCollectionVar = useMemo(() => {
     if (configuration && 'collectionVariable' in configuration) {

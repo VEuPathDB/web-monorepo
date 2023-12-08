@@ -3,7 +3,7 @@ import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { PlotLayout } from '../../layouts/PlotLayout';
 import { VisualizationProps } from '../VisualizationTypes';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
-import { LayoutOptions } from '../../layouts/types';
+import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import { RequestOptions } from '../options/types';
 
 // Bipartite network imports
@@ -11,33 +11,41 @@ import BipartiteNetwork, {
   BipartiteNetworkProps,
 } from '@veupathdb/components/lib/plots/BipartiteNetwork';
 import VolcanoSVG from './selectorIcons/VolcanoSVG'; // TEMP
-import { BipartiteNetworkRequestParams } from '../../../api/DataClient/types';
 import {
-  BipartiteNetworkData,
-  LinkData,
-  NodeData,
-} from '@veupathdb/components/lib/types/plots/network';
+  BipartiteNetworkRequestParams,
+  BipartiteNetworkResponse,
+} from '../../../api/DataClient/types';
 import { twoColorPalette } from '@veupathdb/components/lib/types/plots/addOns';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { scaleOrdinal } from 'd3-scale';
 import { uniq } from 'lodash';
+import { usePromise } from '../../../hooks/promise';
+import {
+  useDataClient,
+  useStudyEntities,
+  useStudyMetadata,
+} from '../../../hooks/workspace';
+import { fixVarIdLabel } from '../../../utils/visualization';
+import DataClient from '../../../api/DataClient';
+import { CorrelationAssayMetadataConfig } from '../../computations/plugins/correlationAssayMetadata';
+import { CorrelationAssayAssayConfig } from '../../computations/plugins/correlationAssayAssay';
+import { OutputEntityTitle } from '../OutputEntityTitle';
 // end imports
 
 // Defaults
-const DEFAULT_CORRELATION_COEF_THRESHOLD = 0.9;
-const DEFAULT_SIGNIFICANCE_THRESHOLD = 0.05;
+const DEFAULT_CORRELATION_COEF_THRESHOLD = 0.5; // Ability for user to change this value not yet implemented.
+const DEFAULT_SIGNIFICANCE_THRESHOLD = 0.05; // Ability for user to change this value not yet implemented.
 const DEFAULT_LINK_COLOR_DATA = '0';
 
 const plotContainerStyles = {
   width: 750,
-  height: 450,
   marginLeft: '0.75rem',
   border: '1px solid #dedede',
   boxShadow: '1px 1px 4px #00000066',
 };
 
 export const bipartiteNetworkVisualization = createVisualizationPlugin({
-  selectorIcon: VolcanoSVG, // TEMP
+  selectorIcon: VolcanoSVG, // TEMPORARY
   fullscreenComponent: BipartiteNetworkViz,
   createDefaultConfig: createDefaultConfig,
 });
@@ -58,47 +66,169 @@ export const BipartiteNetworkConfig = t.partial({
 
 interface Options
   extends LayoutOptions,
+    TitleOptions,
     RequestOptions<BipartiteNetworkConfig, {}, BipartiteNetworkRequestParams> {}
 
 // Bipartite Network Visualization
 // The bipartite network takes no input variables, because the received data will complete the plot.
-// Eventually the user will be able to control the significance and correlation coefficient values.
+// Eventually the user will be able to control the significance and correlation coefficient threshold values.
 function BipartiteNetworkViz(props: VisualizationProps<Options>) {
-  const { options, updateThumbnail } = props;
+  const {
+    options,
+    computation,
+    visualization,
+    updateThumbnail,
+    computeJobStatus,
+    filteredCounts,
+    filters,
+    plotContainerStyleOverrides,
+  } = props;
 
-  // Fake data
-  const data: BipartiteNetworkData = useMemo(
-    () => genBipartiteNetwork(100, 10),
-    []
-  );
+  const studyMetadata = useStudyMetadata();
+  const { id: studyId } = studyMetadata;
+  const entities = useStudyEntities(filters);
+  const dataClient: DataClient = useDataClient();
+  // todo  allow this to also be CorrelationAssayAssayConfig
+  const computationConfiguration:
+    | CorrelationAssayMetadataConfig
+    | CorrelationAssayAssayConfig = computation.descriptor.configuration as
+    | CorrelationAssayMetadataConfig
+    | CorrelationAssayAssayConfig;
 
-  // Assign color to links.
-  // Color palettes live here in the frontend, but the backend knows that the edges should be two colors.
-  // So we'll make it generalizable by mapping the values of the links.color prop to the palette.
-  const uniqueLinkColors = uniq(
-    data.links.map((link) => link.color ?? DEFAULT_LINK_COLOR_DATA)
-  );
-  const linkColorScale = scaleOrdinal<string>()
-    .domain(uniqueLinkColors)
-    .range(twoColorPalette); // the output palette may change if this visualization is reused in other contexts.
-  const cleanedData: BipartiteNetworkData = {
-    ...data,
-    links: data.links.map((link) => {
-      return {
-        ...link,
-        color: linkColorScale(link.color ?? DEFAULT_LINK_COLOR_DATA),
+  // Get data from the compute job
+  const data = usePromise(
+    useCallback(async (): Promise<BipartiteNetworkResponse | undefined> => {
+      // Only need to check compute job status and filter status, since there are no
+      // viz input variables.
+      if (computeJobStatus !== 'complete') return undefined;
+      if (filteredCounts.pending || filteredCounts.value == null)
+        return undefined;
+
+      const params = {
+        studyId,
+        filters,
+        config: {
+          correlationCoefThreshold: DEFAULT_CORRELATION_COEF_THRESHOLD,
+          significanceThreshold: DEFAULT_SIGNIFICANCE_THRESHOLD,
+        },
+        computeConfig: computationConfiguration,
       };
+
+      const response = await dataClient.getVisualizationData(
+        computation.descriptor.type,
+        visualization.descriptor.type,
+        params,
+        BipartiteNetworkResponse
+      );
+
+      return response;
+    }, [
+      computeJobStatus,
+      filteredCounts.pending,
+      filteredCounts.value,
+      filters,
+      studyId,
+      computationConfiguration,
+      computation.descriptor.type,
+      dataClient,
+      visualization.descriptor.type,
+    ])
+  );
+
+  // Clean and finalize data format. Specifically, assign link colors, add display labels
+  const cleanedData = useMemo(() => {
+    if (!data.value) return undefined;
+
+    // Assign color to links.
+    // Color palettes live here in the frontend, but the backend decides how to color links (ex. by sign of correlation, or avg degree of parent nodes).
+    // So we'll make assigning colors generalizable by mapping the values of the links.color prop to the palette. As we add
+    // different ways to color links in the future, we can adapt our checks and error messaging.
+    const uniqueLinkColors = uniq(
+      data.value?.bipartitenetwork.data.links.map(
+        (link) => link.color?.toString() ?? DEFAULT_LINK_COLOR_DATA
+      )
+    );
+    if (uniqueLinkColors.length > twoColorPalette.length) {
+      throw new Error(
+        `Found ${uniqueLinkColors.length} link colors but expected only ${twoColorPalette.length}.`
+      );
+    }
+    // The link color sent from the backend should be either '-1' or '1', but we'll allow any two unique values. Assigning the domain
+    // in the following way preserves "1" getting mapped to the second color in the palette, even if it's the only
+    // unique value in uniqueLinkColors.
+    const linkColorScaleDomain = uniqueLinkColors.every((val) =>
+      ['-1', '1'].includes(val)
+    )
+      ? ['-1', '1']
+      : uniqueLinkColors;
+    const linkColorScale = scaleOrdinal<string>()
+      .domain(linkColorScaleDomain)
+      .range(twoColorPalette); // the output palette may change if this visualization is reused in other contexts (ex. not a correlation app).
+
+    // Find display labels
+    const nodesWithLabels = data.value.bipartitenetwork.data.nodes.map(
+      (node) => {
+        // node.id is the entityId.variableId
+        const displayLabel = fixVarIdLabel(
+          node.id.split('.')[1],
+          node.id.split('.')[0],
+          entities
+        );
+
+        return {
+          id: node.id,
+          label: displayLabel,
+        };
+      }
+    );
+    return {
+      ...data.value.bipartitenetwork.data,
+      nodes: nodesWithLabels,
+      links: data.value.bipartitenetwork.data.links.map((link) => {
+        return {
+          source: link.source,
+          target: link.target,
+          strokeWidth: Number(link.strokeWidth),
+          color: link.color ? linkColorScale(link.color.toString()) : '#000000',
+        };
+      }),
+    };
+  }, [data.value, entities]);
+
+  // plot subtitle
+  const plotSubtitle =
+    'Showing links with an absolute correlation coefficient above ' +
+    DEFAULT_CORRELATION_COEF_THRESHOLD.toString() +
+    ' and a p-value below ' +
+    DEFAULT_SIGNIFICANCE_THRESHOLD.toString();
+
+  const finalPlotContainerStyles = useMemo(
+    () => ({
+      ...plotContainerStyles,
+      ...plotContainerStyleOverrides,
     }),
+    [plotContainerStyleOverrides]
+  );
+
+  // These styles affect the network plot and will override the containerStyles if necessary (for example, width).
+  const bipartiteNetworkSVGStyles = {
+    columnPadding: 150,
   };
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
-    plotContainerStyles,
+    {
+      ...finalPlotContainerStyles,
+      height: 400, // no reason for the thumbnail to be as tall as the network (which could be very, very tall!)
+    },
     [cleanedData]
   );
 
   const bipartiteNetworkProps: BipartiteNetworkProps = {
-    data: cleanedData,
+    data: cleanedData ?? undefined,
+    showSpinner: data.pending,
+    containerStyles: finalPlotContainerStyles,
+    svgStyleOverrides: bipartiteNetworkSVGStyles,
   };
 
   const plotNode = (
@@ -114,6 +244,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <OutputEntityTitle subtitle={plotSubtitle} />
       <LayoutComponent
         isFaceted={false}
         legendNode={legendNode}
@@ -124,50 +255,4 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
       />
     </div>
   );
-}
-
-// TEMP: Gerenate a bipartite network with a given number of nodes and random edges
-function genBipartiteNetwork(
-  column1nNodes: number,
-  column2nNodes: number
-): BipartiteNetworkData {
-  // Create the first column of nodes
-  const column1Nodes: NodeData[] = [...Array(column1nNodes).keys()].map((i) => {
-    return {
-      id: String(i),
-      label: 'Node ' + String(i),
-    };
-  });
-
-  // Create the second column of nodes
-  const column2Nodes: NodeData[] = [...Array(column2nNodes).keys()].map((i) => {
-    return {
-      id: String(i + column1nNodes),
-      label: 'Node ' + String(i + column1nNodes),
-    };
-  });
-
-  // Create links
-  // Not worried about exactly how many edges we're adding just yet since this is
-  // used for stories only. Adding color here to mimic what the visualization
-  // will do.
-  const links: LinkData[] = [...Array(column1nNodes * 2).keys()].map(() => {
-    return {
-      source: column1Nodes[Math.floor(Math.random() * column1nNodes)],
-      target: column2Nodes[Math.floor(Math.random() * column2nNodes)],
-      strokeWidth: Math.random() * 2,
-      color: Math.random() > 0.5 ? '0' : '1',
-    };
-  });
-
-  const nodes = column1Nodes.concat(column2Nodes);
-  const column1NodeIDs = column1Nodes.map((node) => node.id);
-  const column2NodeIDs = column2Nodes.map((node) => node.id);
-
-  return {
-    nodes,
-    links,
-    column1NodeIDs,
-    column2NodeIDs,
-  };
 }
