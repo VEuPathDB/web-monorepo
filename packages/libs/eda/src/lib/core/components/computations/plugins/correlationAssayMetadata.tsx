@@ -9,20 +9,17 @@ import { partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
-  makeVariableCollectionItems,
-  findVariableCollectionItemFromDescriptor,
   isNotAbsoluteAbundanceVariableCollection,
   partialToCompleteCodec,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
-import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
-import { useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { H6 } from '@veupathdb/coreui';
 import { bipartiteNetworkVisualization } from '../../visualizations/implementations/BipartiteNetworkVisualization';
+import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -139,18 +136,6 @@ export function CorrelationAssayMetadataConfiguration(
       visualizationId
     );
 
-  const collectionVarItems = makeVariableCollectionItems(
-    collections,
-    undefined
-  );
-
-  const selectedCollectionVar = useMemo(() => {
-    return findVariableCollectionItemFromDescriptor(
-      collectionVarItems,
-      configuration?.collectionVariable
-    );
-  }, [collectionVarItems, configuration?.collectionVariable]);
-
   return (
     <ComputationStepContainer
       computationStepInfo={{
@@ -163,19 +148,10 @@ export function CorrelationAssayMetadataConfiguration(
           <H6>Input Data</H6>
           <div className={cx('-InputContainer')}>
             <span>Data</span>
-            <SingleSelect
-              value={
-                selectedCollectionVar
-                  ? selectedCollectionVar.value
-                  : 'Select the data'
-              }
-              buttonDisplayContent={
-                selectedCollectionVar
-                  ? selectedCollectionVar.display
-                  : 'Select the data'
-              }
-              items={collectionVarItems}
+            <VariableCollectionSelectList
+              value={configuration.collectionVariable}
               onSelect={partial(changeConfigHandler, 'collectionVariable')}
+              collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
             />
           </div>
         </div>

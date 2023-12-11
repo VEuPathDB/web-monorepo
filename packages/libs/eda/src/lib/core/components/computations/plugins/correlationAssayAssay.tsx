@@ -9,15 +9,11 @@ import { partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
-  makeVariableCollectionItems,
-  findVariableCollectionItemFromDescriptor,
   isNotAbsoluteAbundanceVariableCollection,
   partialToCompleteCodec,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
-import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
-import { useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -25,6 +21,7 @@ import { H6 } from '@veupathdb/coreui';
 import { bipartiteNetworkVisualization } from '../../visualizations/implementations/BipartiteNetworkVisualization';
 import { variableCollectionsAreUnique } from '../../../utils/visualization';
 import PluginError from '../../visualizations/PluginError';
+import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -163,26 +160,6 @@ export function CorrelationAssayAssayConfiguration(
       visualizationId
     );
 
-  // this should also make it easy to disable already selected items if we decide wed rather go that route
-  const collectionVarItems = makeVariableCollectionItems(
-    collectionDescriptors,
-    undefined
-  );
-
-  const selectedCollectionVar1 = useMemo(() => {
-    return findVariableCollectionItemFromDescriptor(
-      collectionVarItems,
-      configuration?.collectionVariable1
-    );
-  }, [collectionVarItems, configuration?.collectionVariable1]);
-
-  const selectedCollectionVar2 = useMemo(() => {
-    return findVariableCollectionItemFromDescriptor(
-      collectionVarItems,
-      configuration?.collectionVariable2
-    );
-  }, [collectionVarItems, configuration?.collectionVariable2]);
-
   return (
     <ComputationStepContainer
       computationStepInfo={{
@@ -196,34 +173,16 @@ export function CorrelationAssayAssayConfiguration(
             <H6>Input Data</H6>
             <div className={cx('-InputContainer')}>
               <span>Data 1</span>
-              <SingleSelect
-                value={
-                  selectedCollectionVar1
-                    ? selectedCollectionVar1.value
-                    : 'Select the data'
-                }
-                buttonDisplayContent={
-                  selectedCollectionVar1
-                    ? selectedCollectionVar1.display
-                    : 'Select the data'
-                }
-                items={collectionVarItems}
+              <VariableCollectionSelectList
+                value={configuration.collectionVariable1}
                 onSelect={partial(changeConfigHandler, 'collectionVariable1')}
+                collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
               />
               <span>Data 2</span>
-              <SingleSelect
-                value={
-                  selectedCollectionVar2
-                    ? selectedCollectionVar2.value
-                    : 'Select the data'
-                }
-                buttonDisplayContent={
-                  selectedCollectionVar2
-                    ? selectedCollectionVar2.display
-                    : 'Select the data'
-                }
-                items={collectionVarItems}
+              <VariableCollectionSelectList
+                value={configuration.collectionVariable2}
                 onSelect={partial(changeConfigHandler, 'collectionVariable2')}
+                collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
               />
             </div>
           </div>
@@ -232,8 +191,8 @@ export function CorrelationAssayAssayConfiguration(
           <PluginError
             error={
               !variableCollectionsAreUnique([
-                selectedCollectionVar1?.value,
-                selectedCollectionVar2?.value,
+                configuration.collectionVariable1,
+                configuration.collectionVariable2,
               ])
                 ? 'Input data must be unique. Please select different data.'
                 : undefined
