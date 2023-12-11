@@ -21,7 +21,7 @@ import { useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSelectList';
+import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 

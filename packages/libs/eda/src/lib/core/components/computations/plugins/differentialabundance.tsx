@@ -40,7 +40,7 @@ import {
   GetBinRangesProps,
   getBinRanges,
 } from '../../../../map/analysis/utils/defaultOverlayConfig';
-import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSelectList';
+import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
