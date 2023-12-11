@@ -23,7 +23,6 @@ import {
   useDataClient,
   useFindEntityAndVariable,
   useFindEntityAndVariableCollection,
-  useVariableCollections,
 } from '../../../hooks/workspace';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
@@ -211,32 +210,28 @@ export function DifferentialAbundanceConfiguration(
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
   const findEntityAndVariable = useFindEntityAndVariable(filters);
 
-  // Only releasing Maaslin for b66
-  if (configuration)
-    configuration.differentialAbundanceMethod =
-      DIFFERENTIAL_ABUNDANCE_METHODS[0];
+  assertComputationWithConfig(computation, DifferentialAbundanceConfig);
+
+  const changeConfigHandler = useConfigChangeHandler(
+    analysisState,
+    computation,
+    visualizationId
+  );
 
   // Set the pValueFloor here. May change for other apps.
   // Note this is intentionally different than the default pValueFloor used in the Volcano component. By default
   // that component does not floor the data, but we know we want the diff abund computation to use a floor.
-  if (configuration) configuration.pValueFloor = '1e-200';
+  if (configuration && !configuration.pValueFloor) {
+    changeConfigHandler('pValueFloor', '1e-200');
+  }
 
-  // Include known collection variables in this array.
-  const collections = useVariableCollections(
-    studyMetadata.rootEntity,
-    isNotAbsoluteAbundanceVariableCollection
-  );
-  if (collections.length === 0)
-    throw new Error('Could not find any collections for this app.');
-
-  assertComputationWithConfig(computation, DifferentialAbundanceConfig);
-
-  const changeConfigHandler =
-    useConfigChangeHandler<DifferentialAbundanceConfig>(
-      analysisState,
-      computation,
-      visualizationId
+  // Only releasing Maaslin for b66
+  if (configuration && !configuration.differentialAbundanceMethod) {
+    changeConfigHandler(
+      'differentialAbundanceMethod',
+      DIFFERENTIAL_ABUNDANCE_METHODS[0]
     );
+  }
 
   const selectedComparatorVariable = useMemo(() => {
     if (

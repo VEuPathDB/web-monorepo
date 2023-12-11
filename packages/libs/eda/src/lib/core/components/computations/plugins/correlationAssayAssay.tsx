@@ -1,8 +1,4 @@
-import {
-  useVariableCollections,
-  useStudyMetadata,
-  useFindEntityAndVariableCollection,
-} from '../../..';
+import { useFindEntityAndVariableCollection } from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { partial } from 'lodash';
@@ -136,29 +132,20 @@ export function CorrelationAssayAssayConfiguration(
     visualizationId,
   } = props;
 
-  const configuration = computation.descriptor
-    .configuration as CorrelationAssayAssayConfig;
-  const studyMetadata = useStudyMetadata();
-
-  // For now, set the method to 'spearman'. When we add the next method, we can just add it here (no api change!)
-  if (configuration) configuration.correlationMethod = 'spearman';
-
-  // Include known collection variables in this array.
-  const collectionDescriptors = useVariableCollections(
-    studyMetadata.rootEntity,
-    isNotAbsoluteAbundanceVariableCollection
-  );
-  if (collectionDescriptors.length === 0)
-    throw new Error('Could not find any collections for this app.');
-
   assertComputationWithConfig(computation, CorrelationAssayAssayConfig);
 
-  const changeConfigHandler =
-    useConfigChangeHandler<CorrelationAssayAssayConfig>(
-      analysisState,
-      computation,
-      visualizationId
-    );
+  const { configuration } = computation.descriptor;
+
+  const changeConfigHandler = useConfigChangeHandler(
+    analysisState,
+    computation,
+    visualizationId
+  );
+
+  // For now, set the method to 'spearman'. When we add the next method, we can just add it here (no api change!)
+  if (configuration && !configuration.correlationMethod) {
+    changeConfigHandler('correlationMethod', 'spearman');
+  }
 
   return (
     <ComputationStepContainer

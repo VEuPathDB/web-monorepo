@@ -1,8 +1,4 @@
-import {
-  useVariableCollections,
-  useStudyMetadata,
-  useFindEntityAndVariableCollection,
-} from '../../..';
+import { useFindEntityAndVariableCollection } from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
@@ -120,19 +116,10 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
     analysisState,
     visualizationId,
   } = props;
-  const studyMetadata = useStudyMetadata();
-  // Include known collection variables in this array.
-  const collections = useVariableCollections(
-    studyMetadata.rootEntity,
-    isNotAbsoluteAbundanceVariableCollection
-  );
-  if (collections.length === 0)
-    throw new Error('Could not find any collections for this app.');
-
   assertComputationWithConfig(computation, AlphaDivConfig);
   const configuration = computation.descriptor.configuration;
 
-  const changeConfigHandler = useConfigChangeHandler<AlphaDivConfig>(
+  const changeConfigHandler = useConfigChangeHandler(
     analysisState,
     computation,
     visualizationId

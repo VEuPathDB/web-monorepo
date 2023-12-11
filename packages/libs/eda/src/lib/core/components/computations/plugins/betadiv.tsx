@@ -1,8 +1,4 @@
-import {
-  useFindEntityAndVariableCollection,
-  useStudyMetadata,
-  useVariableCollections,
-} from '../../..';
+import { useFindEntityAndVariableCollection } from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
@@ -124,19 +120,10 @@ export function BetaDivConfiguration(props: ComputationConfigProps) {
     analysisState,
     visualizationId,
   } = props;
-  const studyMetadata = useStudyMetadata();
-  // Include known collection variables in this array.
-  const collections = useVariableCollections(
-    studyMetadata.rootEntity,
-    isNotAbsoluteAbundanceVariableCollection
-  );
-  if (collections.length === 0)
-    throw new Error('Could not find any collections for this app.');
-
   assertComputationWithConfig(computation, BetaDivConfig);
   const configuration = computation.descriptor.configuration;
 
-  const changeConfigHandler = useConfigChangeHandler<BetaDivConfig>(
+  const changeConfigHandler = useConfigChangeHandler(
     analysisState,
     computation,
     visualizationId
