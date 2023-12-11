@@ -16,6 +16,8 @@ export const DraggableLegendPanel = (props: {
     defaultPosition={props.defaultPosition ?? { x: window.innerWidth, y: 225 }}
     styleOverrides={{
       zIndex: props.zIndex,
+      // set minWidth for draggable panel
+      minWidth: '120px',
     }}
   >
     {props.children}
