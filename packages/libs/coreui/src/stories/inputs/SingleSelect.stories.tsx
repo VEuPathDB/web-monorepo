@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import SingleSelect, {
   SingleSelectProps,
 } from '../../components/inputs/SingleSelect';
+import { chunk, range } from 'lodash';
 
 export default {
   title: 'Inputs/SingleSelect',
@@ -84,30 +85,19 @@ export const ToggleDisabledState: Story<SingleSelectProps<unknown>> = () => {
 };
 
 export const SingleSelectWithGroups: Story<SingleSelectProps<unknown>> = () => {
-  const options = [
-    {
-      label: 'Group 1',
-      items: [
-        { display: 'A for Alligator', value: 'A' },
-        { display: 'B for Beluga', value: 'B' },
-        { display: 'C for Cow', value: 'C' },
-      ],
-    },
-    {
-      label: 'Group 2',
-      items: [
-        { display: 'D is for Dog', value: 'D' },
-        { display: 'E is for Elephant', value: 'E' },
-        { display: 'F is for Fox', value: 'F' },
-      ],
-    },
-  ];
-  const [selectedOption, setSelectedOption] = useState('');
-  const buttonDisplayContent = selectedOption.length
+  const options = chunk(range(1, 100), 4).map((group, index) => ({
+    label: 'Group ' + index,
+    items: group.map((num) => ({
+      display: 'Number ' + num.toLocaleString(),
+      value: num,
+    })),
+  }));
+  const [selectedOption, setSelectedOption] = useState<number>();
+  const buttonDisplayContent = selectedOption
     ? options
         .flatMap((option) => option.items)
-        .find((option) => selectedOption === option.value).display
-    : 'Select a letter';
+        .find((option) => selectedOption === option.value)?.display
+    : 'Select a number';
 
   return (
     <div>
