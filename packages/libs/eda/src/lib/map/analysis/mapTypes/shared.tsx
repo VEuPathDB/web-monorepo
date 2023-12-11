@@ -297,7 +297,7 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
         boundsZoomLevel,
       };
     },
-    enabled: overlayConfig != null,
+    enabled: overlayConfig != null && !overlayConfigResult.isFetching,
   });
 
   return {
