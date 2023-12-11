@@ -301,7 +301,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
       lineThickness: '3px',
     },
     {
-      label: 'Negetive correlation',
+      label: 'Negative correlation',
       marker: 'line',
       markerColor: twoColorPalette[0],
       hasData: true,
