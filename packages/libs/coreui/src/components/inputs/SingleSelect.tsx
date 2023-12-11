@@ -97,30 +97,41 @@ export default function SingleSelect<T>({
           margin: 0,
           minWidth: '200px',
           listStyle: 'none',
+          position: 'relative',
         }}
       >
-        {items.map((item, index) =>
-          'label' in item ? (
-            <OptionGroup
-              key={index}
-              itemGroup={item}
-              onSelect={handleSelection}
-              onKeyDown={onKeyDown}
-              value={value}
-              indexOfFocusedElement={indexOfFocusedElement}
-              indexOffset={index}
-            />
-          ) : (
-            <Option<T>
-              key={index}
-              item={item}
-              onSelect={handleSelection}
-              onKeyDown={onKeyDown}
-              shouldFocus={index === indexOfFocusedElement}
-              isSelected={value === item.value}
-            />
-          )
-        )}
+        {
+          items.reduce(
+            ({ items, aggregateIndex }, item) => ({
+              items: [
+                ...items,
+                'label' in item ? (
+                  <OptionGroup
+                    key={aggregateIndex}
+                    itemGroup={item}
+                    onSelect={handleSelection}
+                    onKeyDown={onKeyDown}
+                    value={value}
+                    indexOfFocusedElement={indexOfFocusedElement}
+                    indexOffset={aggregateIndex}
+                  />
+                ) : (
+                  <Option<T>
+                    key={aggregateIndex}
+                    item={item}
+                    onSelect={handleSelection}
+                    onKeyDown={onKeyDown}
+                    shouldFocus={aggregateIndex === indexOfFocusedElement}
+                    isSelected={value === item.value}
+                  />
+                ),
+              ],
+              aggregateIndex:
+                aggregateIndex + ('label' in item ? item.items.length : 1),
+            }),
+            { items: [] as ReactNode[], aggregateIndex: 0 }
+          ).items
+        }
       </ul>
     </PopoverButton>
   );
@@ -152,21 +163,31 @@ function OptionGroup<T>(props: OptionGroupProps<T>) {
         listStyle: 'none',
       }}
     >
-      <li css={{ padding: '0.5em' }}>
-        <strong>{itemGroup.label}</strong>
+      <li>
+        <div
+          css={{
+            padding: '0.5em',
+            position: 'sticky',
+            top: 0,
+            marginBottom: '1px',
+            background: 'white',
+          }}
+        >
+          <strong>{itemGroup.label}</strong>
+        </div>
+        {itemGroup.items.map((item, index) => {
+          return (
+            <Option
+              key={JSON.stringify(item.value)}
+              item={item}
+              onSelect={onSelect}
+              onKeyDown={onKeyDown}
+              shouldFocus={indexOfFocusedElement === index + indexOffset}
+              isSelected={value === item.value}
+            />
+          );
+        })}
       </li>
-      {itemGroup.items.map((item, index) => {
-        return (
-          <Option
-            key={JSON.stringify(item.value)}
-            item={item}
-            onSelect={onSelect}
-            onKeyDown={onKeyDown}
-            shouldFocus={indexOfFocusedElement === index + indexOffset}
-            isSelected={value === item.value}
-          />
-        );
-      })}
     </ul>
   );
 }
@@ -204,8 +225,10 @@ export function Option<T>({
         padding: 0.5em;
         line-height: 1.25;
         cursor: pointer;
+        scroll-margin-top: 2em;
         &:focus {
-          outline: thin dotted;
+          outline: none;
+          background-color: #f3f3f3;
         }
         &:hover {
           background-color: #3375e1;
@@ -215,7 +238,10 @@ export function Option<T>({
       `}
       tabIndex={-1}
       onClick={() => onSelect(item.value)}
-      onKeyDown={(e) => onKeyDown(e.key, item.value)}
+      onKeyDown={(e) => {
+        e.preventDefault();
+        onKeyDown(e.key, item.value);
+      }}
     >
       <span css={checkIconContainer}>
         {isSelected ? <CheckIcon /> : undefined}
