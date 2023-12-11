@@ -372,11 +372,13 @@ export const GLOBAL_VIEWPORT = {
 
 /**
  * Error handling helpers
+ *
+ * The patterns are matched against the 500 error messages from the back end
  */
 
 const noDataPatterns = [
-  /did not contain any data/,
-  /Could not generate continuous variable metadata/,
+  /did not contain any data/, // comes from map-markers endpoint
+  /Could not generate continuous variable metadata/, // comes from continuous-variable-metadata endpoint
 ];
 
 export function isNoDataError(error: unknown) {
