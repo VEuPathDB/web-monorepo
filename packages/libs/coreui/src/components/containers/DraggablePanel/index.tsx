@@ -121,6 +121,9 @@ export default function DraggablePanel({
     ? constrainPositionOnScreen(panelPosition, width, height, window)
     : panelPosition;
 
+  // set maximum text length for the panel title
+  const maxPanelTitleTextLength = 25;
+
   return (
     <Draggable
       bounds={confineToParentContainer ? 'parent' : false}
@@ -184,8 +187,12 @@ export default function DraggablePanel({
               padding: '0 10px',
             }}
           >
-            <span css={showPanelTitle ? null : screenReaderOnly}>
-              {panelTitle}
+            {/* ellipsis and tooltip for panel title */}
+            <span
+              css={showPanelTitle ? null : screenReaderOnly}
+              title={panelTitle}
+            >
+              {truncateWithEllipsis(panelTitle, maxPanelTitleTextLength)}
             </span>
           </H6>
           {onPanelDismiss && (
@@ -275,3 +282,10 @@ function constrainPositionOnScreen(
     y: isYOffScreen ? bottomMostY : position.y,
   };
 }
+
+// function for ellipsis
+export const truncateWithEllipsis = (label: string, maxLabelLength: number) => {
+  return (label || '').length > maxLabelLength
+    ? (label || '').substring(0, maxLabelLength - 2) + '...'
+    : label;
+};
