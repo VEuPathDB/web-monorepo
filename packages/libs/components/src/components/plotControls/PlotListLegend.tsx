@@ -23,7 +23,7 @@ export interface LegendItemsProps {
   group?: number;
   rank?: number;
   hideFromLegend?: boolean;
-  lineThickness?: string;
+  lineThickness?: string; // determines the stroke width. Example: '3px'. Default: '0.15em'.
 }
 
 export interface PlotListLegendProps {

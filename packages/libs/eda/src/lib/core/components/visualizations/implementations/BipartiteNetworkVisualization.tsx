@@ -147,10 +147,10 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     ])
   );
 
-  // Adjust link stroke widths so that it spans an appropriate range for this viz.
+  // Create map that will adjust each link's stroke width so that all link stroke widths span an appropriate range for this viz.
   const dataStrokeWidths =
-    data.value?.bipartitenetwork.data.links.map((link) =>
-      Number(link.strokeWidth)
+    data.value?.bipartitenetwork.data.links.map(
+      (link) => Number(link.strokeWidth) // link.strokeWidth will always be a number if defined, because it represents the continuous data associated with that link.
     ) ?? [];
   const minDataStrokeWidth = Math.min(...dataStrokeWidths);
   const maxDataStrokeWidth = Math.max(...dataStrokeWidths);
