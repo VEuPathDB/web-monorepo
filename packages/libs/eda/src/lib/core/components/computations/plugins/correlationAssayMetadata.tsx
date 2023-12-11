@@ -57,7 +57,7 @@ export const plugin: ComputationPlugin = {
     bipartitenetwork: bipartiteNetworkVisualization.withOptions({
       getLegendTitle(config) {
         if (CorrelationAssayMetadataConfig.is(config)) {
-          return 'Correlation coefficient magnitude';
+          return 'Absolute correlation coefficient';
         } else {
           return 'Legend';
         }

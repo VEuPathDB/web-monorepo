@@ -267,13 +267,12 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const lineLegendItems: LegendItemsProps[] = [
     ...Array(nLineItemsInLegend).keys(),
   ].map((i) => {
+    const adjustedStrokeWidth =
+      maxDataStrokeWidth -
+      ((maxDataStrokeWidth - minDataStrokeWidth) / (nLineItemsInLegend - 1)) *
+        i;
     return {
-      label: String(
-        maxDataStrokeWidth -
-          ((maxDataStrokeWidth - minDataStrokeWidth) /
-            (nLineItemsInLegend - 1)) *
-            i
-      ),
+      label: String(adjustedStrokeWidth.toFixed(4)),
       marker: 'line',
       markerColor: gray[900],
       hasData: true,
