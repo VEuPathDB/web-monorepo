@@ -212,7 +212,6 @@ class DataTable extends React.Component {
         : null,
     };
     const headerWrapperStyleMerged = {
-      width: tableWrapperWidth,
       display: dynamicWidths == null ? 'none' : 'block',
       ...headerWrapperStyle,
     };
