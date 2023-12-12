@@ -33,7 +33,7 @@
     "@veupathdb/eslint-config": "workspace:^",
     "@veupathdb/react-scripts": "workspace:^",
     "@veupathdb/tsconfig": "workspace:^",
-    "react-scripts": "4.0.1",
+    "react-scripts": "^5.0.1",
     "typescript": "^4.4.4"
   },
   "volta": {

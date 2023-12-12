@@ -98,7 +98,7 @@
     "react-dom": "^17.0.1",
     "react-router": "^5.2.1",
     "react-router-dom": "^5.3.0",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "read": "^1.0.7",
     "sass": "^1.54.4",
     "script-loader": "^0.7.2",
