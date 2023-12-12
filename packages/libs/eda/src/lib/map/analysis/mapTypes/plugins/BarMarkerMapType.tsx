@@ -37,7 +37,10 @@ import {
   DistributionMarkerDataProps,
   defaultAnimation,
   isApproxSameViewport,
+  isNoDataError,
+  noDataErrorMessage,
   useCategoricalValues,
+  useCommonData,
   useDistributionMarkerData,
   useDistributionOverlayConfig,
 } from '../shared';
@@ -159,7 +162,6 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     filters,
     studyEntities,
     geoConfigs,
-    boundsZoomLevel: appState.boundsZoomLevel,
     selectedVariable,
     selectedValues,
     binningMethod,
@@ -355,7 +357,9 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
   });
 
   if (markerData.error && !markerData.isFetching)
-    return <MapFloatingErrorDiv error={markerData.error} />;
+    return isNoDataError(markerData.error) ? null : (
+      <MapFloatingErrorDiv error={markerData.error} />
+    );
 
   // pass selectedMarkers and its state function
   const markers = markerData.markerProps?.map((markerProps) => (
@@ -383,14 +387,8 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
 }
 
 function MapOverlayComponent(props: MapTypeMapLayerProps) {
-  const {
-    studyEntities,
-    studyId,
-    filters,
-    geoConfigs,
-    appState: { boundsZoomLevel },
-    updateConfiguration,
-  } = props;
+  const { studyEntities, studyId, filters, geoConfigs, updateConfiguration } =
+    props;
   const configuration = props.configuration as BarPlotMarkerConfiguration;
   const findEntityAndVariable = useFindEntityAndVariable();
   const { variable: overlayVariable } =
@@ -411,7 +409,6 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     studyId,
     filters,
     geoConfigs,
-    boundsZoomLevel,
     selectedVariable: configuration.selectedVariable,
     binningMethod: configuration.binningMethod,
     dependentAxisLogScale: configuration.dependentAxisLogScale,
@@ -420,12 +417,13 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
   });
 
   const legendItems = markerData.legendItems;
-
   const plugins = useStandaloneVizPlugins({
     selectedOverlayConfig: markerData.overlayConfig,
   });
-
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
+  const noDataError = isNoDataError(markerData.error)
+    ? noDataErrorMessage
+    : undefined;
 
   return (
     <>
@@ -434,11 +432,13 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
         zIndex={3}
       >
         <div style={{ padding: '5px 10px' }}>
-          <MapLegend
-            isLoading={markerData.isFetching}
-            plotLegendProps={{ type: 'list', legendItems: legendItems ?? [] }}
-            showCheckbox={false}
-          />
+          {noDataError ?? (
+            <MapLegend
+              isLoading={markerData.isFetching}
+              plotLegendProps={{ type: 'list', legendItems: legendItems ?? [] }}
+              showCheckbox={false}
+            />
+          )}
         </div>
       </DraggableLegendPanel>
       <DraggableVisualization
@@ -481,16 +481,19 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     dependentAxisLogScale,
     valueSpec: selectedPlotMode,
   });
-  return (
+
+  const {
+    outputEntity: { id: outputEntityId },
+  } = useCommonData(selectedVariable, props.geoConfigs, props.studyEntities);
+
+  return outputEntityId != null ? (
     <MapTypeHeaderCounts
-      outputEntityId={selectedVariable.entityId}
-      totalEntityCount={props.totalCounts.value?.[selectedVariable.entityId]}
-      totalEntityInSubsetCount={
-        props.filteredCounts.value?.[selectedVariable.entityId]
-      }
+      outputEntityId={outputEntityId}
+      totalEntityCount={props.totalCounts.value?.[outputEntityId]}
+      totalEntityInSubsetCount={props.filteredCounts.value?.[outputEntityId]}
       visibleEntityCount={markerDataResponse.totalVisibleWithOverlayEntityCount}
     />
-  );
+  ) : null;
 }
 
 const processRawMarkersData = (

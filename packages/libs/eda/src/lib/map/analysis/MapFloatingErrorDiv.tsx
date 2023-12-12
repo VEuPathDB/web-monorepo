@@ -7,7 +7,7 @@ interface MapFloatingErrorDivProps {
   error: unknown;
 }
 
-export function MapFloatingErrorDiv(props: MapFloatingErrorDivProps) {
+export function MapFloatingErrorDiv({ error }: MapFloatingErrorDivProps) {
   // We're using a portal here so that the user can select the text
   // in the banner. The portal causes the resulting DOM node to be a
   // child of the DOM node that is passed as a second argument to the
@@ -40,9 +40,7 @@ export function MapFloatingErrorDiv(props: MapFloatingErrorDivProps) {
             </>
           ),
           additionalMessage: (
-            <pre style={{ whiteSpace: 'break-spaces' }}>
-              {String(props.error)}
-            </pre>
+            <pre style={{ whiteSpace: 'break-spaces' }}>{String(error)}</pre>
           ),
           showMoreLinkText: 'See details',
           showLessLinkText: 'Hide details',
