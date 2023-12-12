@@ -7,7 +7,7 @@ import { ZeroConfigWithButton } from '../ZeroConfiguration';
 
 export const plugin: ComputationPlugin = {
   configurationComponent: ZeroConfigWithButton,
-  isConfigurationValid: t.undefined.is,
+  isConfigurationComplete: t.undefined.is,
   createDefaultConfiguration: () => undefined,
   visualizationPlugins: {
     testVisualization,

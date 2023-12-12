@@ -21,7 +21,7 @@ export function makeCommonDevServerConfig({
       ignored: ['**/node_modules', '**/packages/*/*/src'],
     },
     devServer: {
-      https: true,
+      // https: true,
       open: true,
       setupMiddlewares: (middlewares, devServer) => {
         devServer.app.get('/', (req, res) => {
