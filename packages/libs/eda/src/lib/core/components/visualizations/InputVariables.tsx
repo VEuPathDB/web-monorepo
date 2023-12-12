@@ -8,7 +8,7 @@ import {
   VariablesByInputName,
 } from '../../utils/data-element-constraints';
 
-import VariableTreeDropdown from '../variableTrees/VariableTreeDropdown';
+import VariableTreeDropdown from '../variableSelectors/VariableTreeDropdown';
 import { Toggle } from '@veupathdb/coreui';
 import { makeEntityDisplayName } from '../../utils/study-metadata';
 import { useInputStyles } from './inputStyles';

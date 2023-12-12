@@ -1,10 +1,18 @@
 import { useCallback } from 'react';
-import { Computation, Visualization } from '../../types/visualization';
+import {
+  Computation,
+  Visualization,
+  makeComputationWithConfigDecoder,
+} from '../../types/visualization';
 import * as t from 'io-ts';
 import { pipe } from 'fp-ts/lib/function';
 import { fold } from 'fp-ts/lib/Either';
 import { isEqual } from 'lodash';
-import { AnalysisState, useEntityAndVariableCollection } from '../..';
+import {
+  AnalysisState,
+  CollectionVariableTreeNode,
+  useEntityAndVariableCollection,
+} from '../..';
 import { RouterChildContext, useRouteMatch, useHistory } from 'react-router';
 import { VariableCollectionDescriptor } from '../../types/variable';
 import { EntityAndVariableCollection } from '../../utils/study-metadata';
@@ -45,24 +53,31 @@ export function makeVariableCollectionItems(
 /**
  * Removes absolute abundance variable collections based on certain conditions.
  *
- * @param {VariableCollectionDescriptor[]} variableCollections - The array of variable collections.
- * @return {VariableCollectionDescriptor[]} The filtered array of variable collections.
+ * @param {CollectionVariableTreeNode[]} variableCollections - The array of variable collections.
+ * @return {CollectionVariableTreeNode[]} The filtered array of variable collections.
  */
 export function removeAbsoluteAbundanceVariableCollections(
-  variableCollections: VariableCollectionDescriptor[]
-): VariableCollectionDescriptor[] {
-  return variableCollections.filter((variableCollection) =>
-    useEntityAndVariableCollection(variableCollection)?.variableCollection
-      .normalizationMethod
-      ? useEntityAndVariableCollection(variableCollection)?.variableCollection
-          .normalizationMethod !== 'NULL' ||
+  variableCollections: CollectionVariableTreeNode[]
+): CollectionVariableTreeNode[] {
+  return variableCollections.filter(isNotAbsoluteAbundanceVariableCollection);
+}
+
+/**
+ * Returns false for absolute abundance variable collections, based on certain conditions.
+ *
+ * @param {CollectionVariableTreeNode} variableCollection - The array of variable collections.
+ * @return {boolean} The filtered array of variable collections.
+ */
+export function isNotAbsoluteAbundanceVariableCollection(
+  variableCollection: CollectionVariableTreeNode
+): boolean {
+  return variableCollection.normalizationMethod
+    ? variableCollection.normalizationMethod !== 'NULL' ||
         // most data we want to keep has been normalized, except pathway coverage data which were leaving apparently
         // should consider better ways to do this in the future, or if we really want to keep the coverage data.
-        useEntityAndVariableCollection(
-          variableCollection
-        )?.variableCollection.displayName?.includes('pathway')
-      : true
-  ); // DIY may not have the normalizationMethod annotations, but we still want those datasets to pass.
+        !!variableCollection.displayName?.includes('pathway')
+    : true;
+  // DIY may not have the normalizationMethod annotations, but we still want those datasets to pass.
 }
 
 /**
@@ -158,10 +173,11 @@ function createRandomString(numChars: number) {
 
 export function assertComputationWithConfig<ConfigType>(
   computation: Computation,
-  decoder: t.Type<Computation, unknown, unknown>
+  configDecoder: t.Type<ConfigType>
 ): asserts computation is Computation<ConfigType> {
+  const decoder = makeComputationWithConfigDecoder(configDecoder);
   const onLeft = (errors: t.Errors) => {
-    throw new Error(`Invalid computation configuration: ${errors}`);
+    throw new Error(`Invalid computation configuration provided.`);
   };
   const onRight = () => null;
   pipe(decoder.decode(computation), fold(onLeft, onRight));
@@ -338,4 +354,16 @@ function handleRouting(
   urlToReplaceWith: string
 ) {
   history.replace(baseUrl.replace(urlToReplace, urlToReplaceWith));
+}
+
+/**
+ * Takes a partial codec and returns a new codec where all properties
+ * are required.
+ * @param partialCodec An io-ts codec made using the `partial` combinator
+ * @returns An io-ts codec made using the `type` combinator
+ */
+export function partialToCompleteCodec<T extends {}>(
+  partialCodec: t.PartialC<T>
+): t.TypeC<T> {
+  return t.type(partialCodec.props);
 }

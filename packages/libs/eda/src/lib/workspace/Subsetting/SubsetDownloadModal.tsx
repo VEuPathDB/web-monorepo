@@ -11,7 +11,7 @@ import {
   HelpIcon,
 } from '@veupathdb/wdk-client/lib/Components';
 import { Tooltip } from '@material-ui/core';
-import MultiSelectVariableTree from '../../core/components/variableTrees/MultiSelectVariableTree';
+import MultiSelectVariableTree from '../../core/components/variableSelectors/MultiSelectVariableTree';
 import { Modal, DataGrid, MesaButton, Download } from '@veupathdb/coreui';
 
 // Definitions
@@ -34,7 +34,7 @@ import {
 } from '../../core';
 import useDimensions from 'react-cool-dimensions';
 
-import { useFeaturedFields } from '../../core/components/variableTrees/hooks';
+import { useFeaturedFields } from '../../core/components/variableSelectors/hooks';
 import { useProcessedGridData, processGridData } from './hooks';
 import tableSVG from './cartoon_table.svg';
 import {
