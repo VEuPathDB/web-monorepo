@@ -460,6 +460,31 @@ const iconDemoLegendItems: LegendItemsProps[] = [
   },
 ];
 
+// Legend with a few lines that vary in thickness
+const lineLegendItems: LegendItemsProps[] = [
+  {
+    label: '0.1em',
+    marker: 'line',
+    markerColor: 'rgb(136,34,85)',
+    hasData: true,
+    lineThickness: '0.1em',
+  },
+  {
+    label: '0.5em',
+    marker: 'line',
+    markerColor: 'rgb(136,34,85)',
+    hasData: true,
+    lineThickness: '0.5em',
+  },
+  {
+    label: '1em',
+    marker: 'line',
+    markerColor: 'rgb(136,34,85)',
+    hasData: true,
+    lineThickness: '1em',
+  },
+];
+
 // set some default props
 const plotWidth = 1000;
 const plotHeight = 600;
@@ -597,6 +622,22 @@ export const LegendIconsDemo = () => {
         checkedLegendItems={undefined}
         // pass legend title
         legendTitle={'Icon name'}
+      />
+    </div>
+  );
+};
+
+// Display a legend with lines that vary in thickness
+export const LineThicknessLegend = () => {
+  return (
+    <div>
+      <h5>Line Legend</h5>
+      <PlotLegend
+        type="list"
+        legendItems={lineLegendItems}
+        checkedLegendItems={undefined}
+        legendTitle="Lines"
+        showCheckbox={false}
       />
     </div>
   );

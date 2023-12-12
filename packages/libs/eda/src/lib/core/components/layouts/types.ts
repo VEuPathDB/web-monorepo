@@ -25,3 +25,7 @@ export interface LayoutOptions {
 export interface TitleOptions {
   getPlotSubtitle?(config: unknown): ReactNode;
 }
+
+export interface LegendOptions {
+  getLegendTitle?(config: unknown): string;
+}

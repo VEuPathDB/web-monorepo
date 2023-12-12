@@ -52,7 +52,15 @@ export const plugin: ComputationPlugin = {
   createDefaultConfiguration: () => ({}),
   isConfigurationComplete: CompleteCorrelationAssayMetadataConfig.is,
   visualizationPlugins: {
-    bipartitenetwork: bipartiteNetworkVisualization, // Must match name in data service and in visualization.tsx
+    bipartitenetwork: bipartiteNetworkVisualization.withOptions({
+      getLegendTitle(config) {
+        if (CorrelationAssayMetadataConfig.is(config)) {
+          return 'Absolute correlation coefficient';
+        } else {
+          return 'Legend';
+        }
+      },
+    }), // Must match name in data service and in visualization.tsx
   },
 };
 

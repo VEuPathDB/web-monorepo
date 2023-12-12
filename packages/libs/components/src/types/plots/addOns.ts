@@ -340,7 +340,7 @@ export const significanceColors: SignificanceColors = {
 };
 
 // Color palette optimized for two colors
-export const twoColorPalette: string[] = ['#0EADA5', '#AD3C00'];
+export const twoColorPalette: string[] = ['#AD3C00', '#0EADA5'];
 
 /** truncated axis flags */
 export type AxisTruncationAddon = {

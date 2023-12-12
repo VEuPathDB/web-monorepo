@@ -63,7 +63,15 @@ export const plugin: ComputationPlugin = {
     );
   },
   visualizationPlugins: {
-    bipartitenetwork: bipartiteNetworkVisualization, // Must match name in data service and in visualization.tsx
+    bipartitenetwork: bipartiteNetworkVisualization.withOptions({
+      getLegendTitle(config) {
+        if (CorrelationAssayAssayConfig.is(config)) {
+          return 'Absolute correlation coefficient';
+        } else {
+          return 'Legend';
+        }
+      },
+    }), // Must match name in data service and in visualization.tsx
   },
 };
 
