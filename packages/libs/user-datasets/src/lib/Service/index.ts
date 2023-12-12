@@ -2,23 +2,22 @@ import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
 import { ActionThunk } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
 
-import { UserDatasetApi, VDI_SERVICE_BASE_URL } from './api';
+import { UserDatasetApi } from './api';
 
 const vdiCompatibilityFlag = '__IS_VDI_COMPATIBLE_SERVICE';
 
 export type VdiCompatibleWdkService = ReturnType<typeof wrapWdkService>;
 
 export type ServiceConfig = {
-  datasetImportUrl: string;
-  fullWdkServiceUrl: string;
+  vdiServiceUrl: string;
 };
 
 export function wrapWdkService(
-  serviceConfig: ServiceConfig | undefined,
+  serviceConfig: ServiceConfig,
   wdkService: WdkService
 ) {
   const vdiService = new UserDatasetApi(
-    { baseUrl: VDI_SERVICE_BASE_URL },
+    { baseUrl: serviceConfig.vdiServiceUrl },
     wdkService
   );
 

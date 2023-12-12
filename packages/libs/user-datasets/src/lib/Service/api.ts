@@ -27,9 +27,6 @@ import {
 import { array } from 'io-ts';
 import { submitAsForm } from '@veupathdb/wdk-client/lib/Utils/FormSubmitter';
 
-export const VDI_SERVICE_BASE_URL = 'http://localhost:8080';
-const VDI_SERVICE = '/vdi-datasets';
-
 const userIdsByEmailDecoder = record({
   results: arrayOf(objectOf(number)),
 });
@@ -57,7 +54,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
     );
     return this.fetch(
       createJsonRequest({
-        path: `${VDI_SERVICE}${queryString}`,
+        path: '/vdi-datasets' + queryString,
         method: 'GET',
         transformResponse: ioTransformer(array(userDataset)),
       })
@@ -93,7 +90,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
 
     return this.fetch({
       method: 'POST',
-      path: VDI_SERVICE,
+      path: '/vdi-datasets',
       body: fileBody,
       transformResponse: ioTransformer(datasetIdType),
     });
@@ -102,7 +99,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
   getUserDataset = (datasetId: string) => {
     return this.fetch(
       createJsonRequest({
-        path: `${VDI_SERVICE}/${datasetId}`,
+        path: `/vdi-datasets/${datasetId}`,
         method: 'GET',
         transformResponse: ioTransformer(userDatasetDetails),
       })
@@ -112,7 +109,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
   updateUserDataset = (datasetId: string, requestBody: UserDatasetMeta) => {
     return this.fetch(
       createJsonRequest({
-        path: `${VDI_SERVICE}/${datasetId}`,
+        path: `/vdi-datasets/${datasetId}`,
         method: 'PATCH',
         body: requestBody,
         transformResponse: noContent,
@@ -123,7 +120,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
   removeUserDataset = (datasetId: string) => {
     return this.fetch(
       createJsonRequest({
-        path: `${VDI_SERVICE}/${datasetId}`,
+        path: `/vdi-datasets/${datasetId}`,
         method: 'DELETE',
         transformResponse: noContent,
       })
@@ -133,7 +130,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
   getCommunityDatasets = () => {
     return this.fetch(
       createJsonRequest({
-        path: `${VDI_SERVICE}/community`,
+        path: `/vdi-datasets/community`,
         method: 'GET',
         transformResponse: ioTransformer(array(userDataset)),
       })
@@ -143,7 +140,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
   getUserDatasetFileListing = (datasetId: string) => {
     return this.fetch(
       createJsonRequest({
-        path: `${VDI_SERVICE}/${datasetId}/files`,
+        path: `/vdi-datasets/${datasetId}/files`,
         method: 'GET',
         transformResponse: ioTransformer(userDatasetFileListing),
       })
@@ -160,7 +157,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
       );
     submitAsForm({
       method: 'GET',
-      action: `${VDI_SERVICE_BASE_URL}${VDI_SERVICE}/${datasetId}/files/${zipFileType}`,
+      action: `${this.baseUrl}/vdi-datasets/${datasetId}/files/${zipFileType}`,
       inputs: {
         'Auth-Key': await this.findUserRequestAuthKey(),
       },
@@ -179,7 +176,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
       );
     return this.fetch(
       createJsonRequest({
-        path: `${VDI_SERVICE}/${userDatasetId}/shares/${recipientUserId}/offer`,
+        path: `/vdi-datasets/${userDatasetId}/shares/${recipientUserId}/offer`,
         method: 'PUT',
         body: { action: actionName },
         transformResponse: noContent,
