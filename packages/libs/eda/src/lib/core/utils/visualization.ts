@@ -247,7 +247,9 @@ export function variablesAreUnique(vars: (Variable | undefined)[]): boolean {
 export function variableCollectionsAreUnique(
   variableCollections: (VariableCollectionDescriptor | undefined)[]
 ): boolean {
-  return nonNullValuesAreUnique(variableCollections);
+  return nonNullValuesAreUnique(
+    variableCollections.map((desc) => desc && desc.entityId + desc.collectionId)
+  );
 }
 
 /**

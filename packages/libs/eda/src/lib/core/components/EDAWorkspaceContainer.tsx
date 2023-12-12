@@ -18,7 +18,7 @@ import {
 
 import { FieldWithMetadata, StudyMetadata } from '..';
 
-import { useFieldTree, useFlattenedFields } from './variableTrees/hooks';
+import { useFieldTree, useFlattenedFields } from './variableSelectors/hooks';
 import { DownloadClient } from '../api/DownloadClient';
 import { entityTreeToArray } from '../utils/study-metadata';
 import { ComputeClient } from '../api/ComputeClient';
