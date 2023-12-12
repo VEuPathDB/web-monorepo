@@ -34,7 +34,7 @@ import {
   useFeaturedFieldsFromTree,
   useFieldTree,
   useFlattenedFields,
-} from '../components/variableTrees/hooks';
+} from '../components/variableSelectors/hooks';
 import { findFirstVariable } from '../../workspace/Utils';
 import * as DateMath from 'date-arithmetic';
 import { TimeUnit } from '../types/general';
@@ -121,8 +121,16 @@ export function useEntityAndVariableCollection(
   );
 }
 
-export function useVariableCollections(entity: StudyEntity) {
-  return useMemo(() => findVariableCollections(entity), [entity]);
+export function useVariableCollections(
+  entity: StudyEntity,
+  collectionPredicate?: (
+    variableCollection: CollectionVariableTreeNode
+  ) => boolean
+) {
+  return useMemo(
+    () => findVariableCollections(entity, collectionPredicate),
+    [entity, collectionPredicate]
+  );
 }
 
 /**

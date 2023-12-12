@@ -101,7 +101,7 @@ export function useStandaloneVizPlugins({
 
     const pluginBasics = {
       configurationComponent: ZeroConfigWithButton,
-      isConfigurationValid: t.undefined.is,
+      isConfigurationComplete: t.undefined.is,
       createDefaultConfiguration: () => undefined,
     };
 
@@ -154,5 +154,5 @@ export function useStandaloneVizPlugins({
         },
       },
     };
-  }, [selectedOverlayConfig]);
+  }, [overlayHelp, selectedOverlayConfig]);
 }
