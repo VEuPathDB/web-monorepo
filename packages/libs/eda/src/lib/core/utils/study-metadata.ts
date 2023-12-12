@@ -134,18 +134,24 @@ export function makeEntityDisplayName(entity: StudyEntity, isPlural: boolean) {
 }
 
 export function findVariableCollections(
-  entity: StudyEntity
+  entity: StudyEntity,
+  collectionPredicate?: (
+    variableCollection: CollectionVariableTreeNode
+  ) => boolean
 ): VariableCollectionDescriptor[] {
   const collections = Array.from(
     preorder(entity, (e) => e.children ?? [])
   ).flatMap((e) => {
-    const VariableCollectionDescriptors = e.collections?.map((collection) => ({
+    const collections =
+      (collectionPredicate
+        ? e.collections?.filter(collectionPredicate)
+        : e.collections) ?? [];
+    const variableCollectionDescriptors = collections.map((collection) => ({
       entityId: e.id,
       collectionId: collection.id,
     }));
-    return VariableCollectionDescriptors ?? [];
+    return variableCollectionDescriptors;
   });
-
   return collections;
 }
 

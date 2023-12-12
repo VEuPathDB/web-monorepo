@@ -710,7 +710,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
           markerColor: significanceColors['inconclusive'],
         },
         {
-          label: `Up in ${computationConfiguration.comparator.groupB
+          label: `Up in ${computationConfiguration.comparator?.groupB
             ?.map((entry) => entry.label)
             .join(', ')} (${countsData[significanceColors['high']]})`,
           marker: 'circle',
@@ -718,7 +718,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
           markerColor: significanceColors['high'],
         },
         {
-          label: `Up in ${computationConfiguration.comparator.groupA
+          label: `Up in ${computationConfiguration.comparator?.groupA
             ?.map((entry) => entry.label)
             .join(', ')} (${countsData[significanceColors['low']]})`,
           marker: 'circle',
