@@ -103,6 +103,15 @@ export default function DraggablePanel({
     }
   }
 
+  // convert rem to px
+  const dragHandleHeightValue = 2;
+  const dragHandleHeight = useMemo(() => {
+    return (
+      dragHandleHeightValue *
+      parseFloat(getComputedStyle(document.documentElement).fontSize)
+    );
+  }, []);
+
   const { ref, height, width } = useResizeObserver();
 
   useEffect(
@@ -110,7 +119,11 @@ export default function DraggablePanel({
       if (!onPanelResize || !height || !width) return;
 
       onPanelResize({
-        height: height,
+        // Note: since height from useResizeObserver includes dragHandle's height, 2rem,
+        // dragHandle's height should be substracted from height to compute main panel size
+        // without this, the use of useResizeObserver's height may lead to infinite loop
+        // when changing plot size inside the pannel
+        height: height - dragHandleHeight,
         width: width,
       });
     },
@@ -166,7 +179,9 @@ export default function DraggablePanel({
             background: ${theme?.palette?.primary?.hue[100] ?? gray[100]};
             cursor: ${isDragging ? 'grabbing' : 'grab'};
             display: flex;
-            height: 2rem;
+            height: ${dragHandleHeightValue != null
+              ? dragHandleHeightValue + 'rem'
+              : '2rem'};
             justify-content: center;
             // Because the panels are positioned absolutely and overflow auto,
             // the handle will get lost when the user scrolls down. We can pin the
