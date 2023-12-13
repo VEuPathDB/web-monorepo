@@ -5,7 +5,7 @@ import { MultiFilterVariable, Variable, VariableScope } from '../../core';
 
 // Components
 import { VariableDetails } from '../Variable';
-import VariableTree from '../../core/components/variableTrees/VariableTree';
+import VariableTree from '../../core/components/variableSelectors/VariableTree';
 
 // Hooks
 import { EntityCounts } from '../../core/hooks/entityCounts';

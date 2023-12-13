@@ -10,25 +10,23 @@ import {
 } from '../../../types/variable';
 import { volcanoPlotVisualization } from '../../visualizations/implementations/VolcanoPlotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { isEqual, partial } from 'lodash';
+import { partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
-  makeVariableCollectionItems,
-  removeAbsoluteAbundanceVariableCollections,
+  isNotAbsoluteAbundanceVariableCollection,
+  partialToCompleteCodec,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
-import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import {
   useDataClient,
   useFindEntityAndVariable,
   useFindEntityAndVariableCollection,
-  useVariableCollections,
 } from '../../../hooks/workspace';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
-import VariableTreeDropdown from '../../variableTrees/VariableTreeDropdown';
+import VariableTreeDropdown from '../../variableSelectors/VariableTreeDropdown';
 import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
 import { useToggleStarredVariable } from '../../../hooks/starredVariables';
 import { Filter } from '../../..';
@@ -41,6 +39,7 @@ import {
   GetBinRangesProps,
   getBinRanges,
 } from '../../../../map/analysis/utils/defaultOverlayConfig';
+import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -75,32 +74,39 @@ const Comparator = t.intersection([
 ]);
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const DifferentialAbundanceConfig = t.type({
+export const DifferentialAbundanceConfig = t.partial({
   collectionVariable: VariableCollectionDescriptor,
   comparator: Comparator,
   differentialAbundanceMethod: t.string,
   pValueFloor: t.string,
 });
 
+const CompleteDifferentialAbundanceConfig = partialToCompleteCodec(
+  DifferentialAbundanceConfig
+);
+
 // Check to ensure the entirety of the configuration is filled out before enabling the
 // Generate Results button.
 function isCompleteDifferentialAbundanceConfig(config: unknown) {
-  return (DifferentialAbundanceConfig.is(config) &&
-    config.comparator.groupA &&
-    config.comparator.groupB) as boolean;
+  return (
+    CompleteDifferentialAbundanceConfig.is(config) &&
+    config.comparator.groupA != null &&
+    config.comparator.groupB != null
+  );
 }
 
 export const plugin: ComputationPlugin = {
   configurationComponent: DifferentialAbundanceConfiguration,
   configurationDescriptionComponent:
     DifferentialAbundanceConfigDescriptionComponent,
-  createDefaultConfiguration: () => undefined,
-  isConfigurationValid: isCompleteDifferentialAbundanceConfig,
+  createDefaultConfiguration: () => ({}),
+  isConfigurationComplete: isCompleteDifferentialAbundanceConfig,
   visualizationPlugins: {
     volcanoplot: volcanoPlotVisualization.withOptions({
       getPlotSubtitle(config) {
         if (
           DifferentialAbundanceConfig.is(config) &&
+          config.differentialAbundanceMethod &&
           config.differentialAbundanceMethod in
             DIFFERENTIAL_ABUNDANCE_METHOD_CITATIONS
         ) {
@@ -130,20 +136,16 @@ function DifferentialAbundanceConfigDescriptionComponent({
   filters: Filter[];
 }) {
   const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
-  assertComputationWithConfig<DifferentialAbundanceConfig>(
-    computation,
-    Computation
-  );
+  assertComputationWithConfig(computation, DifferentialAbundanceConfig);
   const findEntityAndVariable = useFindEntityAndVariable(filters);
   const { configuration } = computation.descriptor;
   const collectionVariable =
     'collectionVariable' in configuration
       ? configuration.collectionVariable
       : undefined;
-  const comparatorVariable =
-    'comparator' in configuration
-      ? findEntityAndVariable(configuration.comparator.variable)
-      : undefined;
+  const comparatorVariable = configuration.comparator
+    ? findEntityAndVariable(configuration.comparator.variable)
+    : undefined;
 
   const entityAndCollectionVariableTreeNode =
     findEntityAndVariableCollection(collectionVariable);
@@ -208,51 +210,28 @@ export function DifferentialAbundanceConfiguration(
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
   const findEntityAndVariable = useFindEntityAndVariable(filters);
 
-  // Only releasing Maaslin for b66
-  if (configuration)
-    configuration.differentialAbundanceMethod =
-      DIFFERENTIAL_ABUNDANCE_METHODS[0];
+  assertComputationWithConfig(computation, DifferentialAbundanceConfig);
+
+  const changeConfigHandler = useConfigChangeHandler(
+    analysisState,
+    computation,
+    visualizationId
+  );
 
   // Set the pValueFloor here. May change for other apps.
   // Note this is intentionally different than the default pValueFloor used in the Volcano component. By default
   // that component does not floor the data, but we know we want the diff abund computation to use a floor.
-  if (configuration) configuration.pValueFloor = '1e-200';
+  if (configuration && !configuration.pValueFloor) {
+    changeConfigHandler('pValueFloor', '1e-200');
+  }
 
-  // Include known collection variables in this array.
-  const collections = useVariableCollections(studyMetadata.rootEntity);
-  if (collections.length === 0)
-    throw new Error('Could not find any collections for this app.');
-
-  assertComputationWithConfig<DifferentialAbundanceConfig>(
-    computation,
-    Computation
-  );
-
-  const changeConfigHandler =
-    useConfigChangeHandler<DifferentialAbundanceConfig>(
-      analysisState,
-      computation,
-      visualizationId
+  // Only releasing Maaslin for b66
+  if (configuration && !configuration.differentialAbundanceMethod) {
+    changeConfigHandler(
+      'differentialAbundanceMethod',
+      DIFFERENTIAL_ABUNDANCE_METHODS[0]
     );
-
-  const keepCollections =
-    removeAbsoluteAbundanceVariableCollections(collections);
-  const collectionVarItems = makeVariableCollectionItems(
-    keepCollections,
-    undefined
-  );
-
-  const selectedCollectionVar = useMemo(() => {
-    if (configuration && 'collectionVariable' in configuration) {
-      const selectedItem = collectionVarItems.find((item) =>
-        isEqual(item.value, {
-          collectionId: configuration.collectionVariable.collectionId,
-          entityId: configuration.collectionVariable.entityId,
-        })
-      );
-      return selectedItem;
-    }
-  }, [collectionVarItems, configuration]);
+  }
 
   const selectedComparatorVariable = useMemo(() => {
     if (
@@ -270,13 +249,14 @@ export function DifferentialAbundanceConfiguration(
       if (
         !ContinuousVariableDataShape.is(
           selectedComparatorVariable?.variable.dataShape
-        )
+        ) ||
+        configuration.comparator == null
       )
         return;
 
       const binRangeProps: GetBinRangesProps = {
         studyId: studyMetadata.id,
-        ...configuration.comparator?.variable,
+        ...configuration.comparator.variable,
         filters: filters ?? [],
         dataClient,
         binningMethod: 'quantile',
@@ -285,7 +265,7 @@ export function DifferentialAbundanceConfiguration(
       return bins;
     }, [
       dataClient,
-      configuration?.comparator?.variable,
+      configuration?.comparator,
       filters,
       selectedComparatorVariable,
       studyMetadata.id,
@@ -326,19 +306,10 @@ export function DifferentialAbundanceConfiguration(
           <H6>Input Data</H6>
           <div className={cx('-InputContainer')}>
             <span>Data</span>
-            <SingleSelect
-              value={
-                selectedCollectionVar
-                  ? selectedCollectionVar.value
-                  : 'Select the data'
-              }
-              buttonDisplayContent={
-                selectedCollectionVar
-                  ? selectedCollectionVar.display
-                  : 'Select the data'
-              }
-              items={collectionVarItems}
+            <VariableCollectionSelectList
+              value={configuration.collectionVariable}
               onSelect={partial(changeConfigHandler, 'collectionVariable')}
+              collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
             />
           </div>
         </div>
@@ -389,22 +360,22 @@ export function DifferentialAbundanceConfiguration(
                       ? groupValueOptions?.map((option) => option.label)
                       : undefined
                   }
-                  selectedValues={configuration?.comparator?.groupA?.map(
+                  selectedValues={configuration.comparator?.groupA?.map(
                     (entry) => entry.label
                   )}
-                  disabledValues={configuration?.comparator?.groupB?.map(
+                  disabledValues={configuration.comparator?.groupB?.map(
                     (entry) => entry.label
                   )}
                   onSelectedValuesChange={(newValues) => {
+                    assertConfigWithComparator(configuration);
                     changeConfigHandler('comparator', {
-                      variable:
-                        configuration?.comparator?.variable ?? undefined,
+                      variable: configuration.comparator.variable,
                       groupA: newValues.length
                         ? groupValueOptions?.filter((option) =>
                             newValues.includes(option.label)
                           )
                         : undefined,
-                      groupB: configuration?.comparator?.groupB ?? undefined,
+                      groupB: configuration.comparator.groupB ?? undefined,
                     });
                   }}
                   disabledCheckboxTooltipContent="Values cannot overlap between groups"
@@ -416,14 +387,15 @@ export function DifferentialAbundanceConfiguration(
                   icon={SwapHorizOutlined}
                   text=""
                   themeRole="primary"
-                  onPress={() =>
+                  onPress={() => {
+                    assertConfigWithComparator(configuration);
                     changeConfigHandler('comparator', {
                       variable:
                         configuration?.comparator?.variable ?? undefined,
                       groupA: configuration?.comparator?.groupB ?? undefined,
                       groupB: configuration?.comparator?.groupA ?? undefined,
-                    })
-                  }
+                    });
+                  }}
                   styleOverrides={{
                     container: {
                       padding: 0,
@@ -454,7 +426,8 @@ export function DifferentialAbundanceConfiguration(
                   disabledValues={configuration?.comparator?.groupA?.map(
                     (entry) => entry.label
                   )}
-                  onSelectedValuesChange={(newValues) =>
+                  onSelectedValuesChange={(newValues) => {
+                    assertConfigWithComparator(configuration);
                     changeConfigHandler('comparator', {
                       variable:
                         configuration?.comparator?.variable ?? undefined,
@@ -464,8 +437,8 @@ export function DifferentialAbundanceConfiguration(
                             newValues.includes(option.label)
                           )
                         : undefined,
-                    })
-                  }
+                    });
+                  }}
                   disabledCheckboxTooltipContent="Values cannot overlap between groups"
                   showClearSelectionButton={false}
                   disableInput={disableGroupValueSelectors}
@@ -478,4 +451,14 @@ export function DifferentialAbundanceConfiguration(
       </div>
     </ComputationStepContainer>
   );
+}
+
+function assertConfigWithComparator(
+  configuration: DifferentialAbundanceConfig
+): asserts configuration is Required<DifferentialAbundanceConfig> {
+  if (configuration.comparator == null) {
+    throw new Error(
+      'Unexpected condition: `configuration.comparator.variable` is not defined.'
+    );
+  }
 }
