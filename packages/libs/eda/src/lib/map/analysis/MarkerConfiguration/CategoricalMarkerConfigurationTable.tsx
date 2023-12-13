@@ -211,6 +211,7 @@ export function CategoricalMarkerConfigurationTable<T>({
         style={{
           maxWidth: '340px',
           maxHeight: 300,
+          minHeight: 60,
           overflow: isAllCategoricalValuesLoading ? 'none' : 'auto',
         }}
       >
@@ -219,8 +220,8 @@ export function CategoricalMarkerConfigurationTable<T>({
             size={50}
             styleOverrides={{
               position: 'relative',
-              top: '50%',
-              left: '35%',
+              top: '0%',
+              left: '0%',
               transform: '',
             }}
           />
