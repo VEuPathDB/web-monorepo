@@ -126,6 +126,14 @@ td.wdk-DataTableCell__thumbnail {
   color: black;
 }
 
+.wdk-Compressed .eupathdb-RecordOverviewContainer {
+  position: sticky;
+  top: 0;
+  background: white;
+  border-bottom: 1px solid #aaa;
+  z-index: 1;
+}
+
 .eupathdb-RecordOverviewItem {
   width: 100%;
 }
