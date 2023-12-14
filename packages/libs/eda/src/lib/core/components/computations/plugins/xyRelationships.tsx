@@ -7,8 +7,8 @@ import * as t from 'io-ts';
 
 export const plugin: ComputationPlugin = {
   configurationComponent: ZeroConfigWithButton,
-  isConfigurationComplete: t.undefined.is,
-  createDefaultConfiguration: () => undefined,
+  isConfigurationComplete: t.nullType.is,
+  createDefaultConfiguration: () => null,
   visualizationPlugins: {
     testVisualization,
     scatterplot: scatterplotVisualization,

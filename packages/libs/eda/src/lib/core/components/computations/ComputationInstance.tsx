@@ -3,12 +3,13 @@ import { useRouteMatch } from 'react-router-dom';
 import { useToggleStarredVariable } from '../../hooks/starredVariables';
 import { Computation } from '../../types/visualization';
 import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
-import { ComputationProps } from './Types';
+import { ComputationPlugin, ComputationProps } from './Types';
 import { plugins } from './plugins';
 import { VisualizationPlugin } from '../visualizations/VisualizationPlugin';
 import { AnalysisState } from '../../hooks/analysis';
 import { useComputeJobStatus } from './ComputeJobStatusHook';
 import { Filter } from '../../types/filter';
+import { useStudyMetadata } from '../../hooks/workspace';
 
 export interface Props extends ComputationProps {
   computationId: string;
@@ -31,12 +32,29 @@ export function ComputationInstance(props: Props) {
   } = props;
 
   const { analysis } = analysisState;
+  const { rootEntity } = useStudyMetadata();
 
-  const computation = useComputation(analysis, computationId);
+  const _computation = useComputation(analysis, computationId);
 
   if (analysis == null) throw new Error('Cannot find analysis.');
 
-  if (computation == null) throw new Error('Cannot find computation.');
+  if (_computation == null) throw new Error('Cannot find computation.');
+
+  const plugin = plugins[_computation.descriptor.type];
+
+  if (plugin == null) throw new Error('Cannot find plugin for computation.');
+
+  // handle undefined computation configurations
+  const computation =
+    _computation.descriptor.configuration == null
+      ? {
+          ..._computation,
+          descriptor: {
+            ..._computation.descriptor,
+            configuration: plugin.createDefaultConfiguration(rootEntity),
+          },
+        }
+      : _computation;
 
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
 
@@ -68,7 +86,11 @@ export function ComputationInstance(props: Props) {
             gap: '1em',
           }}
         >
-          <AppTitle computation={computation} filters={filters} />
+          <AppTitle
+            computation={computation}
+            filters={filters}
+            plugin={plugin}
+          />
         </div>
       )}
       <VisualizationsContainer
@@ -76,6 +98,7 @@ export function ComputationInstance(props: Props) {
         computationAppOverview={computationAppOverview}
         geoConfigs={geoConfigs}
         computation={computation}
+        computationPlugin={plugin}
         visualizationsOverview={computationAppOverview.visualizations}
         visualizationPlugins={visualizationPlugins}
         filters={analysis.descriptor.subset.descriptor}
@@ -96,11 +119,11 @@ export function ComputationInstance(props: Props) {
 interface AppTitleProps {
   computation: Computation;
   filters: Filter[];
+  plugin: ComputationPlugin;
 }
 
 function AppTitle(props: AppTitleProps) {
-  const { computation, filters } = props;
-  const plugin = plugins[computation.descriptor?.type];
+  const { computation, filters, plugin } = props;
   const ConfigDescription = plugin
     ? plugin.configurationDescriptionComponent
     : undefined;

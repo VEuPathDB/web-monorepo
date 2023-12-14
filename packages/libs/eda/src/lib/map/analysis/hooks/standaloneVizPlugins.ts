@@ -101,8 +101,8 @@ export function useStandaloneVizPlugins({
 
     const pluginBasics = {
       configurationComponent: ZeroConfigWithButton,
-      isConfigurationComplete: t.undefined.is,
-      createDefaultConfiguration: () => undefined,
+      isConfigurationComplete: t.nullType.is,
+      createDefaultConfiguration: () => null,
     };
 
     return {

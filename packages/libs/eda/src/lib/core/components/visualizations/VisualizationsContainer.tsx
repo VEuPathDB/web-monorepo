@@ -34,7 +34,6 @@ import { PromiseHookState } from '../../hooks/promise';
 import { GeoConfig } from '../../types/geoConfig';
 import { FilledButton } from '@veupathdb/coreui/lib/components/buttons';
 import AddIcon from '@material-ui/icons/Add';
-import { plugins as staticPlugins } from '../computations/plugins';
 import { AnalysisState } from '../../hooks/analysis';
 import { ComputationAppOverview } from '../../types/visualization';
 import { VisualizationPlugin } from './VisualizationPlugin';
@@ -52,6 +51,7 @@ interface Props {
   analysisState: AnalysisState;
   computationAppOverview: ComputationAppOverview;
   computation: Computation;
+  computationPlugin: ComputationPlugin;
   visualizationPlugins: Partial<Record<string, VisualizationPlugin>>;
   visualizationsOverview: VisualizationOverview[];
   filters: Filter[];
@@ -146,13 +146,12 @@ function ConfiguredVisualizations(props: Props) {
     baseUrl,
     isSingleAppMode,
     computeJobStatus,
-    plugins = staticPlugins,
+    computationPlugin: plugin,
   } = props;
   const { url } = useRouteMatch();
-  const plugin = computation && plugins[computation.descriptor.type];
   const isComputationConfigurationValid =
     computation &&
-    !!plugin?.isConfigurationComplete(computation.descriptor.configuration);
+    !!plugin.isConfigurationComplete(computation.descriptor.configuration);
 
   return (
     <>
@@ -454,7 +453,8 @@ type FullScreenVisualizationPropKeys =
   | 'createComputeJob'
   | 'plugins'
   | 'hideInputsAndControls'
-  | 'plotContainerStyleOverrides';
+  | 'plotContainerStyleOverrides'
+  | 'computationPlugin';
 
 interface FullScreenVisualizationProps
   extends Pick<Props, FullScreenVisualizationPropKeys> {
@@ -483,7 +483,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
     actions,
     computeJobStatus,
     createComputeJob,
-    plugins = staticPlugins,
+    computationPlugin: plugin,
     hideInputsAndControls,
     plotContainerStyleOverrides,
   } = props;
@@ -501,6 +501,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
   const overview = overviews.mine != null ? overviews.mine[0] : undefined;
   const constraints = overview?.dataElementConstraints;
   const dataElementDependencyOrder = overview?.dataElementDependencyOrder;
+  const { updateVisualization } = analysisState;
 
   // store a ref to the latest version of the visualization
   // to avoid using the viz as a dependency in the currentPlotFilters effect below
@@ -514,23 +515,23 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
   useEffect(() => {
     const v = vizRef.current;
     if (v != null)
-      analysisState.updateVisualization({
+      updateVisualization({
         ...v,
         descriptor: { ...v.descriptor, currentPlotFilters: filters },
       });
-  }, [filters, analysisState.updateVisualization]);
+  }, [filters, updateVisualization]);
 
   // regular updater (no ref)
   const updateConfiguration = useCallback(
     (configuration: unknown) => {
       if (viz != null) {
-        analysisState.updateVisualization({
+        updateVisualization({
           ...viz,
           descriptor: { ...viz.descriptor, configuration },
         });
       }
     },
-    [analysisState.updateVisualization, viz]
+    [updateVisualization, viz]
   );
 
   // Function to update the thumbnail on the configured viz selection page
@@ -539,19 +540,18 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
     (thumbnail: string) => {
       const v = vizRef.current;
       if (v != null)
-        analysisState.updateVisualization({
+        updateVisualization({
           ...v,
           descriptor: { ...v.descriptor, thumbnail },
         });
     },
-    [analysisState.updateVisualization]
+    [updateVisualization]
   );
 
   if (viz == null) return <div>Visualization not found.</div>;
   if (vizPlugin == null) return <div>Visualization type not implemented.</div>;
 
   const { computationId } = computation;
-  const plugin = plugins[computation.descriptor.type];
   const isComputationConfigurationValid = !!plugin?.isConfigurationComplete(
     computation.descriptor.configuration
   );
@@ -833,7 +833,13 @@ function ConfiguredVisualizationGrayOut({
     }
 
     return null;
-  }, [computeJobStatus, currentPlotFilters, filters, hasCompute]);
+  }, [
+    computeJobStatus,
+    currentPlotFilters,
+    filters,
+    hasCompute,
+    isComputationConfigurationValid,
+  ]);
 
   return (
     <div style={{ position: 'relative' }}>
@@ -863,48 +869,4 @@ function deleteComputationWithNoVisualizations(
       ...computations.filter((c) => c.computationId !== computationId),
     ]);
   }
-}
-
-type VisualizationGroup = {
-  groupName: string;
-  groupDescription: string;
-  groupVisualizationsList: VisualizationOverview[];
-};
-function groupVisualizations(
-  visualizations: VisualizationOverview[]
-): VisualizationGroup[] {
-  return [
-    {
-      groupName: 'Distributions',
-      groupDescription: 'Plot the spread of any continuous variable.',
-      groupVisualizationsList: ['boxplot', 'histogram'],
-    },
-    {
-      groupName: 'Counts and Proportions',
-      groupDescription: 'Compare frequencies of categorical variable(s).',
-      groupVisualizationsList: ['barplot', 'twobytwo', 'conttable'],
-    },
-    {
-      groupName: 'X-Y Relationships',
-      groupDescription:
-        'Visualize the relationship between two continuous variables.',
-      groupVisualizationsList: ['scatterplot', 'lineplot'],
-    },
-    {
-      groupName: 'Geolocation Maps',
-      groupDescription: 'See the distribution of data on a map',
-      groupVisualizationsList: ['map-markers', 'map-markers-overlay'],
-    },
-    // {
-    //   groupName: 'Individual-level plots',
-    //   groupDescription:
-    //     'Visualize data over time, with separate plots for each identifier (ie, Household ID, Participant ID, etc).',
-    //   groupVisualizationsList: ['timelineplot', 'stripplots'],
-    // },
-  ].map((group) => ({
-    ...group,
-    groupVisualizationsList: visualizations.filter(({ name }) =>
-      group.groupVisualizationsList.includes(name)
-    ),
-  }));
 }

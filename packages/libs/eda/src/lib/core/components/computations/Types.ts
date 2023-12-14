@@ -46,6 +46,8 @@ export interface ComputationPlugin {
     filters: Filter[];
   }>;
   visualizationPlugins: Partial<Record<string, VisualizationPlugin<any>>>;
-  createDefaultConfiguration: (rootEntity: StudyEntity) => unknown;
+  createDefaultConfiguration: (
+    rootEntity: StudyEntity
+  ) => Record<string, unknown> | null;
   isConfigurationComplete: (configuration: unknown) => boolean;
 }
