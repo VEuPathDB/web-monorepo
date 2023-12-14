@@ -154,14 +154,13 @@ const routes: RouteEntry[] = [
     ) => {
       const { attributes = '', tables = '' } = parseQueryString(props);
       return (
-        <div style={{ padding: '1rem' }}>
-          <RecordController
-            recordClass={props.match.params.recordClass}
-            primaryKey={props.match.params.primaryKey}
-            attributes={attributes ? attributes.split(',') : undefined}
-            tables={tables ? tables.split(',') : undefined}
-          />
-        </div>
+        <RecordController
+          recordClass={props.match.params.recordClass}
+          primaryKey={props.match.params.primaryKey}
+          attributes={attributes ? attributes.split(',') : undefined}
+          tables={tables ? tables.split(',') : undefined}
+          compressedUI
+        />
       );
     },
   },
