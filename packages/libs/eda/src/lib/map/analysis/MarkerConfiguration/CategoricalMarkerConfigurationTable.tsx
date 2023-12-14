@@ -8,6 +8,7 @@ import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/Radio
 import { UNSELECTED_TOKEN } from '../../constants';
 import { orderBy } from 'lodash';
 import { SelectedCountsOption } from '../appState';
+import Spinner from '@veupathdb/components/lib/components/Spinner';
 
 type Props<T> = {
   overlayValues: string[];
@@ -17,6 +18,7 @@ type Props<T> = {
   setUncontrolledSelections: (v: Set<string>) => void;
   allCategoricalValues: AllValuesDefinition[] | undefined;
   selectedCountsOption: SelectedCountsOption;
+  isAllCategoricalValuesLoading: boolean;
 };
 
 const DEFAULT_SORTING: MesaSortObject = {
@@ -34,9 +36,10 @@ export function CategoricalMarkerConfigurationTable<T>({
   setUncontrolledSelections,
   allCategoricalValues = [],
   selectedCountsOption,
+  isAllCategoricalValuesLoading,
 }: Props<T>) {
   const [sort, setSort] = useState<MesaSortObject>(DEFAULT_SORTING);
-  const totalCount = allCategoricalValues.reduce(
+  const totalCount = allCategoricalValues?.reduce(
     (prev, curr) => prev + curr.count,
     0
   );
@@ -195,6 +198,7 @@ export function CategoricalMarkerConfigurationTable<T>({
       },
     ],
   };
+
   return (
     <div
       style={{
@@ -207,10 +211,23 @@ export function CategoricalMarkerConfigurationTable<T>({
         style={{
           maxWidth: '340px',
           maxHeight: 300,
-          overflow: 'auto',
+          minHeight: 60,
+          overflow: isAllCategoricalValuesLoading ? 'none' : 'auto',
         }}
       >
-        <Mesa state={tableState} />
+        {isAllCategoricalValuesLoading ? (
+          <Spinner
+            size={50}
+            styleOverrides={{
+              position: 'relative',
+              top: '0%',
+              left: '0%',
+              transform: '',
+            }}
+          />
+        ) : (
+          <Mesa state={tableState} />
+        )}
       </div>
       <RadioButtonGroup
         containerStyles={
