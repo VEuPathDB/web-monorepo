@@ -15,6 +15,7 @@ class BigwigDatasetDetail extends UserDatasetDetail {
     this.renderTracksSection = this.renderTracksSection.bind(this);
     this.getTracksTableColumns = this.getTracksTableColumns.bind(this);
     this.state = {
+      ...this.state,
       sequenceId: null,
     };
   }
