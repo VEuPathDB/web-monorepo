@@ -292,12 +292,21 @@ h2.wdk-RecordNavigationSectionHeader {
   font-size: 0.8em;
 }
 
-.wdk-Compressed h1 {
+.wdk-Compressed.wdk-RecordContainer h1 {
   font-size: 1em;
 }
 
 .wdk-Compressed .wdk-RecordMain {
   padding: 0;
+}
+
+.wdk-Compressed .wdk-DataTableContainer {
+  max-height: 50vh;
+}
+
+.wdk-Compressed .wdk-DataTableContainer thead {
+  position: sticky;
+  top: 0;
 }
 
 .wdk-Compressed .wdk-DataTable th,
