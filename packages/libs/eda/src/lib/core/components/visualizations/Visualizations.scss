@@ -97,6 +97,15 @@
       font-weight: 300;
     }
   }
+  // Add disabled effects for the app rows
+  &-AppPicker {
+    &__disabled {
+      opacity: 0.75;
+      cursor: not-allowed;
+      background: #eee;
+      border-radius: 20px;
+    }
+  }
 
   // add hover effect for thumbnail icons
   &-ConfiguredVisualization:hover &-ConfiguredVisualizationActions {
