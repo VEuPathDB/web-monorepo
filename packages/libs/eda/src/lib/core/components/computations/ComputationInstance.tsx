@@ -31,17 +31,15 @@ export function ComputationInstance(props: Props) {
     isSingleAppMode,
   } = props;
 
-  const { analysis } = analysisState;
   const { rootEntity } = useStudyMetadata();
 
-  const _computation = useComputation(analysis, computationId);
-
+  const { analysis } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
 
+  const _computation = useComputation(analysis, computationId);
   if (_computation == null) throw new Error('Cannot find computation.');
 
   const plugin = plugins[_computation.descriptor.type];
-
   if (plugin == null) throw new Error('Cannot find plugin for computation.');
 
   // handle undefined computation configurations
