@@ -54,6 +54,7 @@ type OwnProps = {
   primaryKey: string;
   attributes?: string[];
   tables?: string[];
+  compressedUI?: boolean;
 };
 type Props = { ownProps: OwnProps } & StateProps & DispatchProps;
 
