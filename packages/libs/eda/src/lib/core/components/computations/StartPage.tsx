@@ -59,9 +59,9 @@ export function StartPage(props: Props) {
           {apps
             .filter((app) => plugins[app.name] != null)
             .map((app) => {
-              //@ts-ignore
               const isAppDisabled =
                 plugins[app.name]?.isEnabledInPicker &&
+                //@ts-ignore
                 !plugins[app.name]?.isEnabledInPicker({ studyMetadata });
               return (
                 <div
@@ -93,18 +93,17 @@ export function StartPage(props: Props) {
                     >
                       {app.description}
                       {isAppDisabled && (
-                        <>
-                          <br></br>
-                          <br></br>
-                          <br></br>
-                          <span
-                            style={{
-                              fontWeight: '500',
-                            }}
-                          >
-                            Not available for this study because blah blah blah
-                          </span>
-                        </>
+                        <span
+                          style={{
+                            fontWeight: '500',
+                          }}
+                        >
+                          <br />
+                          <br />
+                          <br />
+                          Not available for this study. <br />
+                          {plugins[app.name]?.studyRequirements}
+                        </span>
                       )}
                     </span>
                   </div>

@@ -1,16 +1,12 @@
 import * as t from 'io-ts';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { PlotLayout } from '../../layouts/PlotLayout';
-import {
-  IsEnabledInPickerParams,
-  VisualizationProps,
-} from '../VisualizationTypes';
+import { VisualizationProps } from '../VisualizationTypes';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import {
   LayoutOptions,
   TitleOptions,
   LegendOptions,
-  AvailabilityOptions,
 } from '../../layouts/types';
 import { RequestOptions } from '../options/types';
 
