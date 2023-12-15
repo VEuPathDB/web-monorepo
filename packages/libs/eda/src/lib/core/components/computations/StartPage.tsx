@@ -59,7 +59,10 @@ export function StartPage(props: Props) {
           {apps
             .filter((app) => plugins[app.name] != null)
             .map((app) => {
-              const appDisabled = true;
+              //@ts-ignore
+              const isAppDisabled =
+                plugins[app.name]?.isEnabledInPicker &&
+                !plugins[app.name]?.isEnabledInPicker({ studyMetadata });
               return (
                 <div
                   style={{
@@ -68,7 +71,7 @@ export function StartPage(props: Props) {
                     padding: tightLayout ? '0em' : '1em',
                     margin: '1em 0',
                   }}
-                  className={cx('-AppPicker', appDisabled && 'disabled')}
+                  className={cx('-AppPicker', isAppDisabled && 'disabled')}
                   key={app.name}
                 >
                   <div
@@ -89,6 +92,20 @@ export function StartPage(props: Props) {
                       }}
                     >
                       {app.description}
+                      {isAppDisabled && (
+                        <>
+                          <br></br>
+                          <br></br>
+                          <br></br>
+                          <span
+                            style={{
+                              fontWeight: '500',
+                            }}
+                          >
+                            Not available for this study because blah blah blah
+                          </span>
+                        </>
+                      )}
                     </span>
                   </div>
                   <div
@@ -107,7 +124,8 @@ export function StartPage(props: Props) {
                         !vizPlugin ||
                         (vizPlugin?.isEnabledInPicker != null &&
                           //@ts-ignore
-                          vizPlugin?.isEnabledInPicker({}) === false);
+                          vizPlugin?.isEnabledInPicker({}) === false) ||
+                        isAppDisabled;
                       return (
                         <div
                           className={cx('-PickerEntry', disabled && 'disabled')}
@@ -231,7 +249,6 @@ export function StartPage(props: Props) {
                                 ?.split(/(, )/g)
                                 .map((str) => (str === ', ' ? <br /> : str))}
                             </div>
-                            {disabled && <i>(Coming soon!)</i>}
                           </div>
                         </div>
                       );

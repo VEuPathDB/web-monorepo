@@ -10,6 +10,7 @@ import {
   LayoutOptions,
   TitleOptions,
   LegendOptions,
+  AvailabilityOptions,
 } from '../../layouts/types';
 import { RequestOptions } from '../options/types';
 
@@ -66,7 +67,6 @@ export const bipartiteNetworkVisualization = createVisualizationPlugin({
   selectorIcon: BipartiteNetworkSVG,
   fullscreenComponent: BipartiteNetworkViz,
   createDefaultConfig: createDefaultConfig,
-  isEnabledInPicker: isEnabledInPicker,
 });
 
 function createDefaultConfig(): BipartiteNetworkConfig {
@@ -392,9 +392,4 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
       />
     </div>
   );
-}
-
-// Decide if this visualization should be enabled in the menu.
-function isEnabledInPicker({ geoConfigs }: IsEnabledInPickerParams): boolean {
-  return geoConfigs != null && geoConfigs.length > 0;
 }

@@ -1,4 +1,5 @@
 import { useFindEntityAndVariableCollection } from '../../..';
+import { useStudyEntities } from '../../../hooks/workspace';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { partial } from 'lodash';
@@ -18,6 +19,9 @@ import { bipartiteNetworkVisualization } from '../../visualizations/implementati
 import { variableCollectionsAreUnique } from '../../../utils/visualization';
 import PluginError from '../../visualizations/PluginError';
 import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
+import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
+import { useMemo } from 'react';
+import { entityTreeToArray } from '../../../utils/study-metadata';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -73,6 +77,7 @@ export const plugin: ComputationPlugin = {
       },
     }), // Must match name in data service and in visualization.tsx
   },
+  isEnabledInPicker: isEnabledInPicker,
 };
 
 // Renders on the thumbnail page to give a summary of the app instance
@@ -197,4 +202,19 @@ export function CorrelationAssayAssayConfiguration(
       </div>
     </ComputationStepContainer>
   );
+}
+
+// Decide if the app is available for this study
+function isEnabledInPicker({
+  studyMetadata,
+}: IsEnabledInPickerParams): boolean {
+  if (!studyMetadata) return false;
+  console.log(studyMetadata);
+  // The following was originally memoized in EDAWorkspaceContainer.tsx
+  // Cant use a hook here bc this is not a component or function
+  const entities = entityTreeToArray(studyMetadata.rootEntity);
+  console.log(
+    entities.filter((entity) => entity.id === 'OBI_0002623').length > 0
+  );
+  return entities.filter((entity) => entity.id === 'OBI_0002623').length > 0; // Metagenomic sequencing assay
 }
