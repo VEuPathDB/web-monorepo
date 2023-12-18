@@ -6,6 +6,7 @@ import { StudyMetadata } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
 import {
   Computation,
+  ComputationAppOverview,
   DataElementConstraint,
   Visualization,
   VisualizationOverview,
@@ -29,6 +30,7 @@ export interface VisualizationProps<Options = undefined> {
   updateConfiguration: (configuration: unknown) => void;
   updateThumbnail?: (source: string) => void;
   computation: Computation;
+  copmutationAppOverview: ComputationAppOverview;
   filters?: Filter[];
   starredVariables: VariableDescriptor[];
   toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;

@@ -718,6 +718,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
                   dataElementDependencyOrder={dataElementDependencyOrder}
                   visualization={viz}
                   computation={computation}
+                  copmutationAppOverview={computationAppOverview}
                   filters={filters}
                   starredVariables={starredVariables}
                   toggleStarredVariable={toggleStarredVariable}
@@ -742,6 +743,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
               dataElementDependencyOrder={dataElementDependencyOrder}
               visualization={viz}
               computation={computation}
+              copmutationAppOverview={computationAppOverview}
               filters={filters}
               starredVariables={starredVariables}
               toggleStarredVariable={toggleStarredVariable}
