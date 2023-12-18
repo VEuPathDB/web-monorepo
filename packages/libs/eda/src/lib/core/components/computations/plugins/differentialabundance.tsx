@@ -1,6 +1,7 @@
 import {
   ContinuousVariableDataShape,
   LabeledRange,
+  StudyEntity,
   usePromise,
   useStudyMetadata,
 } from '../../..';
@@ -40,6 +41,8 @@ import {
   getBinRanges,
 } from '../../../../map/analysis/utils/defaultOverlayConfig';
 import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
+import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
+import { entityTreeToArray } from '../../../utils/study-metadata';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -126,6 +129,9 @@ export const plugin: ComputationPlugin = {
       },
     }), // Must match name in data service and in visualization.tsx
   },
+  isEnabledInPicker: isEnabledInPicker,
+  studyRequirements:
+    'These visualizations are only available for studies with compatible assay data.',
 };
 
 function DifferentialAbundanceConfigDescriptionComponent({
@@ -461,4 +467,20 @@ function assertConfigWithComparator(
       'Unexpected condition: `configuration.comparator.variable` is not defined.'
     );
   }
+}
+
+// Differential abundance requires that the study
+// has at least one collection.
+function isEnabledInPicker({
+  studyMetadata,
+}: IsEnabledInPickerParams): boolean {
+  if (!studyMetadata) return false;
+  const entities = entityTreeToArray(studyMetadata.rootEntity);
+  // Ensure there are collections in this study. Otherwise, disable app
+  const studyHasCollections = !!entities.filter(
+    (e): e is StudyEntity & Required<Pick<StudyEntity, 'collections'>> =>
+      !!e.collections?.length
+  ).length;
+  if (!studyHasCollections) return false;
+  return studyHasCollections;
 }

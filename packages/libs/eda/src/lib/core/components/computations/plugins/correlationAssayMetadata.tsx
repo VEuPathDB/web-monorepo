@@ -181,6 +181,12 @@ function isEnabledInPicker({
 }: IsEnabledInPickerParams): boolean {
   if (!studyMetadata) return false;
   const entities = entityTreeToArray(studyMetadata.rootEntity);
+  // Ensure there are collections in this study. Otherwise, disable app
+  const studyHasCollections = !!entities.filter(
+    (e): e is StudyEntity & Required<Pick<StudyEntity, 'collections'>> =>
+      !!e.collections?.length
+  ).length;
+  if (!studyHasCollections) return false;
 
   // Step 1. Find the first assay node. Doesn't need to be any one in particular just any assay will do
   const firstAssayEntityIndex = entities.findIndex((entity) =>
