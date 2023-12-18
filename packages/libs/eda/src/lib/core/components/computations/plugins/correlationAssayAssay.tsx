@@ -213,6 +213,6 @@ function isEnabledInPicker({
   // The following was originally memoized in EDAWorkspaceContainer.tsx
   // Cant use a hook here bc this is not a component or function
   const entities = entityTreeToArray(studyMetadata.rootEntity);
-  // @ts-ignore
+
   return entities.filter((entity) => entity.id === 'OBI_0002623').length > 0; // Metagenomic sequencing assay
 }
