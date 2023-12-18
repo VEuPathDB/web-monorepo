@@ -205,5 +205,5 @@ export function useStudyMetadata(datasetId: string, client: SubsettingClient) {
         throw error;
       }
     }, [client, datasetId, permissionsResponse])
-  ).value;
+  );
 }
