@@ -37,8 +37,7 @@ export function EDAAnalysisListContainer(props: Props) {
     children,
   } = props;
   const studyRecordState = useWdkStudyRecord(studyId);
-  const studyMetadataResult = useStudyMetadata(studyId, subsettingClient);
-  const studyMetadata = studyMetadataResult.value;
+  const studyMetadata = useStudyMetadata(studyId, subsettingClient);
   const contextValue = useDeepValue({
     ...studyRecordState,
     studyMetadata,
@@ -48,10 +47,6 @@ export function EDAAnalysisListContainer(props: Props) {
     downloadClient,
     computeClient,
   });
-
-  if (studyMetadataResult.error) {
-    throw studyMetadataResult.error;
-  }
 
   if (
     contextValue.studyRecord == null ||
