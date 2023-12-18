@@ -210,6 +210,7 @@ function isEnabledInPicker({
   studyMetadata,
 }: IsEnabledInPickerParams): boolean {
   if (!studyMetadata) return false;
+
   // The following was originally memoized in EDAWorkspaceContainer.tsx
   // Cant use a hook here bc this is not a component or function
   const entities = entityTreeToArray(studyMetadata.rootEntity);
