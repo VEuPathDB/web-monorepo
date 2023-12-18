@@ -262,6 +262,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const {
     options,
     computation,
+    copmutationAppOverview,
     visualization,
     updateConfiguration,
     updateThumbnail,
@@ -700,7 +701,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             : undefined,
           showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
         },
-        computeConfig: computation.descriptor.configuration,
+        computeConfig: copmutationAppOverview.computeName
+          ? computation.descriptor.configuration
+          : undefined,
       };
 
       const response = await dataClient.getVisualizationData(

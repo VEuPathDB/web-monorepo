@@ -287,3 +287,34 @@ h2.wdk-RecordNavigationSectionHeader {
   display: inline-block;
   min-width: 20%;
 }
+
+.wdk-Compressed.wdk-RecordContainer {
+  font-size: 0.8em;
+}
+
+.wdk-Compressed.wdk-RecordContainer h1 {
+  font-size: 1em;
+}
+
+.wdk-Compressed .wdk-RecordMain {
+  padding: 0;
+}
+
+.wdk-Compressed .wdk-DataTableContainer {
+  max-height: 50vh;
+}
+
+.wdk-Compressed .wdk-DataTableContainer thead {
+  position: sticky;
+  top: 0;
+}
+
+.wdk-Compressed .wdk-DataTable th,
+.wdk-Compressed .wdk-DataTable td {
+  padding: 4px;
+  border-color: #d0d0d0;
+}
+
+.wdk-Compressed .wdk-RecordSidebar {
+  display: none;
+}
