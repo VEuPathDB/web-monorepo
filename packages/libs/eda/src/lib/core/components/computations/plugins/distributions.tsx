@@ -3,10 +3,10 @@ import { boxplotVisualization } from '../../visualizations/implementations/Boxpl
 import { histogramVisualization } from '../../visualizations/implementations/HistogramVisualization';
 import { testVisualization } from '../../visualizations/implementations/TestVisualization';
 import { ComputationPlugin } from '../Types';
-import { ZeroConfigWithButton } from '../ZeroConfiguration';
+import { ZeroConfiguration } from '../ZeroConfiguration';
 
 export const plugin: ComputationPlugin = {
-  configurationComponent: ZeroConfigWithButton,
+  configurationComponent: ZeroConfiguration,
   isConfigurationComplete: t.undefined.is,
   createDefaultConfiguration: () => undefined,
   visualizationPlugins: {

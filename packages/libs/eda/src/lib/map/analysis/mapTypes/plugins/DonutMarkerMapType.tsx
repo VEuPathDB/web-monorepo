@@ -220,6 +220,13 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
         analysisState.analysis?.descriptor.starredVariables ?? []
       }
       toggleStarredVariable={toggleStarredVariable}
+      // pass react-query's isLoading (allXXXCategoricalValues) or isFetching (overlayConfiguration)
+      isAllCategoricalValuesLoading={
+        overlayConfiguration.isFetching ||
+        (configuration.selectedCountsOption === 'filtered'
+          ? allFilteredCategoricalValues.isLoading
+          : allVisibleCategoricalValues.isLoading)
+      }
     />
   );
 

@@ -185,6 +185,7 @@ export const BoxplotConfig = t.partial({
 function BoxplotViz(props: VisualizationProps<Options>) {
   const {
     computation,
+    copmutationAppOverview,
     options,
     visualization,
     updateConfiguration,
@@ -489,7 +490,9 @@ function BoxplotViz(props: VisualizationProps<Options>) {
             : [],
           showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
         },
-        computeConfig: computation.descriptor.configuration,
+        computeConfig: copmutationAppOverview.computeName
+          ? computation.descriptor.configuration
+          : undefined,
       };
 
       // boxplot
