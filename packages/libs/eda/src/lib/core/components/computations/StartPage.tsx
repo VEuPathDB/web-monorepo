@@ -1,6 +1,6 @@
 import { ComputationAppOverview } from '../../types/visualization';
 import { ComputationPlugin } from './Types';
-import { orderBy, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 import { H5, H6 } from '@veupathdb/coreui';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import '../visualizations/Visualizations.scss';
@@ -59,10 +59,10 @@ export function StartPage(props: Props) {
           {apps
             .filter((app) => plugins[app.name] != null)
             .map((app) => {
+              const plugin = plugins[app.name];
               const isAppDisabled =
-                plugins[app.name]?.isEnabledInPicker &&
-                //@ts-ignore
-                !plugins[app.name]?.isEnabledInPicker({ studyMetadata });
+                plugin?.isEnabledInPicker &&
+                !plugin.isEnabledInPicker({ studyMetadata });
               return (
                 <div
                   style={{
@@ -102,7 +102,7 @@ export function StartPage(props: Props) {
                           <br />
                           <br />
                           Not available for this study. <br />
-                          {plugins[app.name]?.studyRequirements}
+                          {plugin.studyRequirements}
                         </span>
                       )}
                     </span>
