@@ -1,4 +1,4 @@
-import { useFindEntityAndVariableCollection } from '../../..';
+import { StudyEntity, useFindEntityAndVariableCollection } from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { partial } from 'lodash';
@@ -16,6 +16,10 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { H6 } from '@veupathdb/coreui';
 import { bipartiteNetworkVisualization } from '../../visualizations/implementations/BipartiteNetworkVisualization';
 import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
+import { entityTreeToArray } from '../../../utils/study-metadata';
+import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
+import { useFlattenedFields } from '../../variableSelectors/hooks';
+import { ancestorEntitiesForEntityId } from '../../../utils/data-element-constraints';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -62,6 +66,9 @@ export const plugin: ComputationPlugin = {
       },
     }), // Must match name in data service and in visualization.tsx
   },
+  isEnabledInPicker: isEnabledInPicker,
+  studyRequirements:
+    'These visualizations are only available for studies with compatible metadata.',
 };
 
 // Renders on the thumbnail page to give a summary of the app instance
@@ -154,4 +161,54 @@ export function CorrelationAssayMetadataConfiguration(
       </div>
     </ComputationStepContainer>
   );
+}
+
+// Decide if the app is available for this study. The correlation assay x metadata
+// app is only available for studies with appropriate metadata. Specifically, the study
+// must have at least one continuous metadata variable that is on a one-to-one path
+// from the assay entity.
+// See PR #74 in service-eda-compute for the matching logic on the backend.
+// @ANN you are here trying to figure out how to replicate logic.
+function isEnabledInPicker({
+  studyMetadata,
+}: IsEnabledInPickerParams): boolean {
+  if (!studyMetadata) return false;
+  const entities = entityTreeToArray(studyMetadata.rootEntity);
+
+  // Step 1. Find the first assay node. Doesn't need to be any one in particular just any assay will do
+  // @ts-ignore
+  const firstAssayEntityIndex = entities.findIndex(
+    (entity) => entity.id === 'OBI_0002623' || entity.id === 'EUPATH_0000809'
+  );
+
+  // Step 2. Find all ancestor entites of the assayEntity that are on a one-to-one path with assayEntity.
+  // figure out order, then find the last one that says one-to-one, then chop off array there
+  // entity array starts at participant. Want to go backwards
+  // @ts-ignore
+  const ancestorEntities = ancestorEntitiesForEntityId(
+    entities[firstAssayEntityIndex].id,
+    entities
+  ).reverse();
+
+  // find index of the first entity that is not 1-1
+  // @ts-ignore
+  const lastOneToOneAncestorIndex =
+    ancestorEntities.findIndex((entity) => entity.isManyToOneWithParent) + 1;
+
+  // Step 3. Check if there are any continuous variables in the filtered entities
+  const filteredMetadataVariables = ancestorEntities.flatMap(
+    (entity) => entity.variables
+  );
+
+  // @ts-ignore
+  const hasContinuousVariable = !!filteredMetadataVariables.find(
+    (variable) => variable.dataShape && variable.dataShape === 'continuous'
+  );
+
+  // ann you just found a new mbio error which is screwing up validation on the site
+  // could also validate by using subsetting tab
+  // why oh why error?
+
+  // @ts-ignore
+  return true; // Metagenomic sequencing assay
 }
