@@ -163,12 +163,19 @@ export function CorrelationAssayMetadataConfiguration(
   );
 }
 
+const ASSAY_ENTITIES = [
+  'OBI_0002623',
+  'EUPATH_0000809',
+  'EUPATH_0000813',
+  'EUPATH_0000812',
+];
+
 // Decide if the app is available for this study. The correlation assay x metadata
 // app is only available for studies with appropriate metadata. Specifically, the study
 // must have at least one continuous metadata variable that is on a one-to-one path
 // from the assay entity.
 // See PR #74 in service-eda-compute for the matching logic on the backend.
-// @ANN you are here trying to figure out how to replicate logic.
+// Backend support for dates coming soon!
 function isEnabledInPicker({
   studyMetadata,
 }: IsEnabledInPickerParams): boolean {
@@ -176,39 +183,36 @@ function isEnabledInPicker({
   const entities = entityTreeToArray(studyMetadata.rootEntity);
 
   // Step 1. Find the first assay node. Doesn't need to be any one in particular just any assay will do
-  // @ts-ignore
-  const firstAssayEntityIndex = entities.findIndex(
-    (entity) => entity.id === 'OBI_0002623' || entity.id === 'EUPATH_0000809'
+  const firstAssayEntityIndex = entities.findIndex((entity) =>
+    ASSAY_ENTITIES.includes(entity.id)
   );
+  if (!firstAssayEntityIndex) return false;
 
   // Step 2. Find all ancestor entites of the assayEntity that are on a one-to-one path with assayEntity.
   // figure out order, then find the last one that says one-to-one, then chop off array there
   // entity array starts at participant. Want to go backwards
-  // @ts-ignore
   const ancestorEntities = ancestorEntitiesForEntityId(
     entities[firstAssayEntityIndex].id,
     entities
   ).reverse();
 
   // find index of the first entity that is not 1-1
-  // @ts-ignore
   const lastOneToOneAncestorIndex =
     ancestorEntities.findIndex((entity) => entity.isManyToOneWithParent) + 1;
+  const oneToOneAncestors = ancestorEntities.slice(
+    1,
+    lastOneToOneAncestorIndex
+  );
 
   // Step 3. Check if there are any continuous variables in the filtered entities
-  const filteredMetadataVariables = ancestorEntities.flatMap(
-    (entity) => entity.variables
-  );
+  const hasContinuousVariable = !!oneToOneAncestors
+    .flatMap((entity) => entity.variables)
+    .find(
+      (variable) =>
+        'dataShape' in variable &&
+        variable.dataShape === 'continuous' &&
+        variable.type === 'number'
+    );
 
-  // @ts-ignore
-  const hasContinuousVariable = !!filteredMetadataVariables.find(
-    (variable) => variable.dataShape && variable.dataShape === 'continuous'
-  );
-
-  // ann you just found a new mbio error which is screwing up validation on the site
-  // could also validate by using subsetting tab
-  // why oh why error?
-
-  // @ts-ignore
-  return true; // Metagenomic sequencing assay
+  return hasContinuousVariable;
 }
