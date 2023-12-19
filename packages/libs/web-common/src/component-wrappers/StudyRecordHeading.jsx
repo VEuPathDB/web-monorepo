@@ -10,10 +10,7 @@ import DownloadLink from '../App/Studies/DownloadLink';
 
 import { attemptAction } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionActionCreators';
 import { isPrereleaseStudy } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
-import {
-  shouldOfferLinkToDashboard,
-  isUserFullyApprovedForStudy,
-} from '@veupathdb/study-data-access/lib/study-access/permission';
+import { isUserFullyApprovedForStudy } from '@veupathdb/study-data-access/lib/study-access/permission';
 
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -78,18 +75,6 @@ function StudyRecordHeading({
         </div>
       )}
       <props.DefaultComponent {...props} />
-      {study != null &&
-        permissions != null &&
-        shouldOfferLinkToDashboard(permissions, study.id) && (
-          <div className={cx('DashboardLink')}>
-            <Link
-              className={'btn ' + cx('DashboardLink')}
-              to={`/study-access/${study.id}`}
-            >
-              Data Access Dashboard
-            </Link>
-          </div>
-        )}
       {study != null &&
         showSearches &&
         !isPrereleaseStudy(study.access, study.id, permissions) && (
