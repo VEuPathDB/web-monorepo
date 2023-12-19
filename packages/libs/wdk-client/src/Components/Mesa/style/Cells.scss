@@ -2,7 +2,7 @@ $StickyColumnBorderColor: rgb(204, 204, 204);
 
 .MesaComponent {
   th {
-    background: #e2e2e2;
+    background-color: #e2e2e2;
     transition: background 0.25s;
     position: relative;
     color: #444;
@@ -23,7 +23,7 @@ $StickyColumnBorderColor: rgb(204, 204, 204);
       box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.15);
     }
     &:hover {
-      background: rgba(0, 0, 20, 0.07);
+      background-color: rgba(0, 0, 20, 0.07);
     }
   }
 
@@ -41,6 +41,7 @@ $StickyColumnBorderColor: rgb(204, 204, 204);
     border-top: 1px solid transparent;
     border-right: 1px solid $borderColor;
     border-bottom: none;
+    background-clip: padding-box;
 
     p {
       margin-top: 0;
@@ -80,7 +81,7 @@ $StickyColumnBorderColor: rgb(204, 204, 204);
   }
 
   .HeadingCell--Dragging {
-    background: rgba(0, 0, 0, 0.2);
+    background-color: rgba(0, 0, 0, 0.2);
     color: #444;
     opacity: 0.75;
   }
