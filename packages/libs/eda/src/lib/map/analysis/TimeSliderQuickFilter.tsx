@@ -26,6 +26,7 @@ interface Props {
   // to handle filters
   subsettingClient: SubsettingClient;
   filters: Filter[] | undefined;
+  littleFilters: Filter[] | undefined;
   starredVariables: VariableDescriptor[];
   toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
 
@@ -39,13 +40,14 @@ export default function TimeSliderQuickFilter({
   entities,
   subsettingClient,
   filters,
+  littleFilters,
   starredVariables,
   toggleStarredVariable,
   config,
   updateConfig,
   siteInformation,
 }: Props) {
-  const findEntityAndVariable = useFindEntityAndVariable(filters); // filter sensitivity
+  const findEntityAndVariable = useFindEntityAndVariable(filters); // filter sensitivity only on main filters
   const theme = useUITheme();
   const [minimized, setMinimized] = useState(true);
 
@@ -106,7 +108,7 @@ export default function TimeSliderQuickFilter({
         variable.variableId,
         {
           valueSpec: 'count',
-          filters: filters ?? [],
+          filters: [...(filters ?? []), ...(littleFilters ?? [])],
           binSpec,
         }
       );
@@ -125,6 +127,7 @@ export default function TimeSliderQuickFilter({
       variable,
       subsettingClient,
       filters,
+      littleFilters,
       extendedDisplayRange?.start,
       extendedDisplayRange?.end,
     ])

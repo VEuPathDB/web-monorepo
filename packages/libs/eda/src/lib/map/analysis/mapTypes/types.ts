@@ -7,7 +7,7 @@ import {
 } from '../../../core';
 import { GeoConfig } from '../../../core/types/geoConfig';
 import { ComputationAppOverview } from '../../../core/types/visualization';
-import { AppState } from '../appState';
+import { AppState, MarkerConfiguration } from '../appState';
 import { EntityCounts } from '../../../core/hooks/entityCounts';
 
 export interface MapTypeConfigPanelProps {
@@ -50,6 +50,10 @@ export interface MapTypeMapLayerProps {
  */
 export interface MapTypePlugin {
   /**
+   * Internal type
+   */
+  type: MarkerConfiguration['type'];
+  /**
    * Display name of map type used for menu, etc.
    */
   displayName: string;
@@ -69,4 +73,8 @@ export interface MapTypePlugin {
    * Returns a ReactNode that is rendered in the map header
    */
   MapTypeHeaderDetails?: ComponentType<MapTypeMapLayerProps>;
+  /**
+   * Returns a list of 'little' filters based on marker configuration
+   */
+  getLittleFilters?: (props: MapTypeMapLayerProps) => Filter[];
 }

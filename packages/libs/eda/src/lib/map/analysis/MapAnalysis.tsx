@@ -87,6 +87,8 @@ import { Page } from '@veupathdb/wdk-client/lib/Components';
 import { Link } from 'react-router-dom';
 import { AnalysisError } from '../../core/components/AnalysisError';
 
+const plugins = [barMarkerPlugin, bubbleMarkerPlugin, donutMarkerPlugin];
+
 enum MapSideNavItemLabels {
   Download = 'Download',
   Filter = 'Filter',
@@ -204,6 +206,9 @@ function MapAnalysisImpl(props: ImplProps) {
 
   const activeMarkerConfiguration = markerConfigurations.find(
     (markerConfig) => markerConfig.type === activeMarkerConfigurationType
+  );
+  const activeMapModePlugin = plugins.find(
+    (plugin) => plugin.type === activeMarkerConfigurationType
   );
 
   const updateMarkerConfigurations = useCallback(
@@ -842,6 +847,9 @@ function MapAnalysisImpl(props: ImplProps) {
                         entities={studyEntities}
                         subsettingClient={subsettingClient}
                         filters={filters}
+                        littleFilters={activeMapModePlugin?.getLittleFilters?.(
+                          mapTypeMapLayerProps
+                        )}
                         starredVariables={
                           analysisState.analysis?.descriptor.starredVariables ??
                           []

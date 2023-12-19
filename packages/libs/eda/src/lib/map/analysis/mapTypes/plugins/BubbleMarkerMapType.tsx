@@ -57,6 +57,7 @@ import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
 const displayName = 'Bubbles';
 
 export const plugin: MapTypePlugin = {
+  type: 'bubble',
   displayName,
   ConfigPanelComponent: BubbleMapConfigurationPanel,
   MapLayerComponent: BubbleMapLayer,

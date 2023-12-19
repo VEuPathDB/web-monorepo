@@ -68,6 +68,7 @@ import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
 const displayName = 'Bar plots';
 
 export const plugin: MapTypePlugin = {
+  type: 'barplot',
   displayName,
   ConfigPanelComponent,
   MapLayerComponent,

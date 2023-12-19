@@ -16,6 +16,7 @@ import { useCallback, useMemo } from 'react';
 import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../../../constants';
 import {
   StandaloneMapMarkersResponse,
+  StringSetFilter,
   Variable,
   useFindEntityAndVariable,
   useSubsettingClient,
@@ -63,12 +64,35 @@ import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
 const displayName = 'Donuts';
 
 export const plugin: MapTypePlugin = {
+  type: 'pie',
   displayName,
   ConfigPanelComponent,
   MapLayerComponent,
   MapOverlayComponent,
   MapTypeHeaderDetails,
+  getLittleFilters,
 };
+
+// TO DO: This function may only need the `configuration` arg/prop
+function getLittleFilters(props: MapTypeConfigPanelProps) {
+  const configuration = props.configuration as PieMarkerConfiguration;
+
+  // FIXME TO DO: fully implement - this is just a test for low-cardinality vars
+  // The logic here can be shared with bar marker mode
+  if (
+    configuration.selectedValues?.length &&
+    !configuration.selectedValues.includes(UNSELECTED_TOKEN)
+  ) {
+    return [
+      {
+        ...configuration.selectedVariable,
+        type: 'stringSet' as const,
+        stringSet: configuration.selectedValues,
+      },
+    ];
+  }
+  return [];
+}
 
 function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   const {
