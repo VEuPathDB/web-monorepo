@@ -162,20 +162,22 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     ])
   );
 
-  // Create map that will adjust each link's stroke width so that all link stroke widths span an appropriate range for this viz.
+  // Determin min and max stroke widths. For use in scaling the strokes (strokeWidthMap) and the legend.
   const dataStrokeWidths =
     data.value?.bipartitenetwork.data.links.map(
       (link) => Number(link.strokeWidth) // link.strokeWidth will always be a number if defined, because it represents the continuous data associated with that link.
     ) ?? [];
   const minDataStrokeWidth = Math.min(...dataStrokeWidths);
   const maxDataStrokeWidth = Math.max(...dataStrokeWidths);
-  const strokeWidthMap = scaleLinear()
-    .domain([minDataStrokeWidth, maxDataStrokeWidth])
-    .range([MIN_STROKE_WIDTH, MAX_STROKE_WIDTH]);
 
   // Clean and finalize data format. Specifically, assign link colors, add display labels
   const cleanedData = useMemo(() => {
     if (!data.value) return undefined;
+
+    // Create map that will adjust each link's stroke width so that all link stroke widths span an appropriate range for this viz.
+    const strokeWidthMap = scaleLinear()
+      .domain([minDataStrokeWidth, maxDataStrokeWidth])
+      .range([MIN_STROKE_WIDTH, MAX_STROKE_WIDTH]);
 
     // Assign color to links.
     // Color palettes live here in the frontend, but the backend decides how to color links (ex. by sign of correlation, or avg degree of parent nodes).
@@ -232,7 +234,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
         };
       }),
     };
-  }, [data.value, entities, strokeWidthMap]);
+  }, [data.value, entities, minDataStrokeWidth, maxDataStrokeWidth]);
 
   // plot subtitle
   const plotSubtitle =
