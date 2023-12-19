@@ -192,7 +192,7 @@ function isEnabledInPicker({
   const firstAssayEntityIndex = entities.findIndex((entity) =>
     ASSAY_ENTITIES.includes(entity.id)
   );
-  if (!firstAssayEntityIndex) return false;
+  if (firstAssayEntityIndex === -1) return false;
 
   // Step 2. Find all ancestor entites of the assayEntity that are on a one-to-one path with assayEntity.
   // Step 2a. Grab ancestor entities.
@@ -213,9 +213,9 @@ function isEnabledInPicker({
   );
 
   // Step 3. Check if there are any continuous variables in the filtered entities
-  const hasContinuousVariable = !!oneToOneAncestors
+  const hasContinuousVariable = oneToOneAncestors
     .flatMap((entity) => entity.variables)
-    .find(
+    .some(
       (variable) =>
         'dataShape' in variable &&
         variable.dataShape === 'continuous' &&
