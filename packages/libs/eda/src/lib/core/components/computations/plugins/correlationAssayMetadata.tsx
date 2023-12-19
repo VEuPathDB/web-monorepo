@@ -18,7 +18,6 @@ import { bipartiteNetworkVisualization } from '../../visualizations/implementati
 import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
 import { entityTreeToArray } from '../../../utils/study-metadata';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
-import { useFlattenedFields } from '../../variableSelectors/hooks';
 import { ancestorEntitiesForEntityId } from '../../../utils/data-element-constraints';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
@@ -170,16 +169,16 @@ const ASSAY_ENTITIES = [
   'EUPATH_0000812',
 ];
 
-// Decide if the app is available for this study. The correlation assay x metadata
-// app is only available for studies with appropriate metadata. Specifically, the study
+// The correlation assay x metadata app is only available for studies
+// with appropriate metadata. Specifically, the study
 // must have at least one continuous metadata variable that is on a one-to-one path
 // from the assay entity.
 // See PR #74 in service-eda-compute for the matching logic on the backend.
-// Backend support for dates coming soon!
 function isEnabledInPicker({
   studyMetadata,
 }: IsEnabledInPickerParams): boolean {
   if (!studyMetadata) return false;
+
   const entities = entityTreeToArray(studyMetadata.rootEntity);
   // Ensure there are collections in this study. Otherwise, disable app
   const studyHasCollections = !!entities.filter(
@@ -188,26 +187,29 @@ function isEnabledInPicker({
   ).length;
   if (!studyHasCollections) return false;
 
-  // Step 1. Find the first assay node. Doesn't need to be any one in particular just any assay will do
+  // Check for appropriate metadata
+  // Step 1. Find the first assay node. Doesn't need to be any assay in particular just any mbio assay will do
   const firstAssayEntityIndex = entities.findIndex((entity) =>
     ASSAY_ENTITIES.includes(entity.id)
   );
   if (!firstAssayEntityIndex) return false;
 
   // Step 2. Find all ancestor entites of the assayEntity that are on a one-to-one path with assayEntity.
-  // figure out order, then find the last one that says one-to-one, then chop off array there
-  // entity array starts at participant. Want to go backwards
+  // Step 2a. Grab ancestor entities.
   const ancestorEntities = ancestorEntitiesForEntityId(
     entities[firstAssayEntityIndex].id,
     entities
-  ).reverse();
+  ).reverse(); // Reverse so that the ancestorEntities[0] is the assay and higher indices are further up the tree.
 
-  // find index of the first entity that is not 1-1
-  const lastOneToOneAncestorIndex =
-    ancestorEntities.findIndex((entity) => entity.isManyToOneWithParent) + 1;
+  // Step 2b. Trim the ancestorEntities so that we only keep those that are on
+  // a 1:1 path. Once we find an ancestor that is many to one with its parent, we
+  // know we've hit the end of the 1:1 path.
+  const lastOneToOneAncestorIndex = ancestorEntities.findIndex(
+    (entity) => entity.isManyToOneWithParent
+  );
   const oneToOneAncestors = ancestorEntities.slice(
-    1,
-    lastOneToOneAncestorIndex
+    1, // removing the assay itself
+    lastOneToOneAncestorIndex + 1
   );
 
   // Step 3. Check if there are any continuous variables in the filtered entities
@@ -217,7 +219,7 @@ function isEnabledInPicker({
       (variable) =>
         'dataShape' in variable &&
         variable.dataShape === 'continuous' &&
-        variable.type === 'number'
+        variable.type === 'number' // Support for dates coming soon! Can remove this line once the backend is ready.
     );
 
   return hasContinuousVariable;

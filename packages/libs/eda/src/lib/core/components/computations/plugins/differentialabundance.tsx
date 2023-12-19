@@ -475,12 +475,13 @@ function isEnabledInPicker({
   studyMetadata,
 }: IsEnabledInPickerParams): boolean {
   if (!studyMetadata) return false;
+
   const entities = entityTreeToArray(studyMetadata.rootEntity);
   // Ensure there are collections in this study. Otherwise, disable app
   const studyHasCollections = !!entities.filter(
     (e): e is StudyEntity & Required<Pick<StudyEntity, 'collections'>> =>
       !!e.collections?.length
   ).length;
-  if (!studyHasCollections) return false;
+
   return studyHasCollections;
 }
