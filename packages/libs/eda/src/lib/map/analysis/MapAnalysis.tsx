@@ -409,7 +409,14 @@ function MapAnalysisImpl(props: ImplProps) {
   // make an array of objects state to list highlighted markers
   const [selectedMarkers, setSelectedMarkers] = useState<string[]>([]);
 
-  // console.log('selectedMarkers =', selectedMarkers);
+  // check if map events such as click, zoom, or panning occured
+  const [isMapEvents, setIsMapEvents] = useState<boolean>(false);
+
+  // set a reset function to control left panel
+  const resetMapEvents = () => {
+    setIsSidePanelExpanded(false);
+    return false;
+  };
 
   const sidePanelMenuEntries: SidePanelMenuEntry[] = [
     {
@@ -445,6 +452,8 @@ function MapAnalysisImpl(props: ImplProps) {
                     updateConfiguration={updateMarkerConfigurations as any}
                     hideVizInputsAndControls={hideVizInputsAndControls}
                     setHideVizInputsAndControls={setHideVizInputsAndControls}
+                    // used to hide MapViz
+                    isMapEvents={isMapEvents}
                   />
                 );
               },
@@ -475,6 +484,8 @@ function MapAnalysisImpl(props: ImplProps) {
                     updateConfiguration={updateMarkerConfigurations as any}
                     hideVizInputsAndControls={hideVizInputsAndControls}
                     setHideVizInputsAndControls={setHideVizInputsAndControls}
+                    // used to hide MapViz
+                    isMapEvents={isMapEvents}
                   />
                 );
               },
@@ -503,6 +514,8 @@ function MapAnalysisImpl(props: ImplProps) {
                     updateConfiguration={updateMarkerConfigurations as any}
                     hideVizInputsAndControls={hideVizInputsAndControls}
                     setHideVizInputsAndControls={setHideVizInputsAndControls}
+                    // used to hide MapViz
+                    isMapEvents={isMapEvents}
                   />
                 );
               },
@@ -869,11 +882,16 @@ function MapAnalysisImpl(props: ImplProps) {
                   }}
                 >
                   <MapSidePanel
-                    isExpanded={appState.isSidePanelExpanded}
-                    isUserLoggedIn={userLoggedIn}
-                    onToggleIsExpanded={() =>
-                      setIsSidePanelExpanded(!appState.isSidePanelExpanded)
+                    isExpanded={
+                      isMapEvents
+                        ? resetMapEvents()
+                        : appState.isSidePanelExpanded
                     }
+                    isUserLoggedIn={userLoggedIn}
+                    onToggleIsExpanded={() => {
+                      setIsMapEvents(false);
+                      setIsSidePanelExpanded(!appState.isSidePanelExpanded);
+                    }}
                     siteInformationProps={props.siteInformationProps}
                     sidePanelDrawerContents={activeSideNavigationItemMenu}
                   >
@@ -900,6 +918,8 @@ function MapAnalysisImpl(props: ImplProps) {
                     defaultViewport={defaultViewport}
                     // for multiple markers cancelation of selection only
                     setSelectedMarkers={setSelectedMarkers}
+                    // pass setIsPanning to check if map events such as click, zoom, and panning occured
+                    setIsMapEvents={setIsMapEvents}
                   >
                     {activeMapTypePlugin?.MapLayerComponent && (
                       <activeMapTypePlugin.MapLayerComponent

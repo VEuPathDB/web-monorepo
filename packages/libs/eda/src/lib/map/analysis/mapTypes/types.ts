@@ -22,6 +22,7 @@ export interface MapTypeConfigPanelProps {
   updateConfiguration: (configuration: unknown) => void;
   hideVizInputsAndControls: boolean;
   setHideVizInputsAndControls: (hide: boolean) => void;
+  isMapEvents?: boolean;
 }
 
 export interface MapTypeMapLayerProps {

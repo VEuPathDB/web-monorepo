@@ -73,6 +73,7 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
     studyId,
     filters,
     geoConfigs,
+    isMapEvents = false,
   } = props;
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
@@ -94,6 +95,9 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
     },
     [markerConfiguration, updateConfiguration]
   );
+
+  // hide MapViz
+  if (isMapEvents) setActiveVisualizationId(undefined);
 
   // If the variable or filters have changed on the active marker config
   // get the default overlay config.
