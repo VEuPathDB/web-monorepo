@@ -16,6 +16,7 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { H6 } from '@veupathdb/coreui';
 import { bipartiteNetworkVisualization } from '../../visualizations/implementations/BipartiteNetworkVisualization';
 import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
+import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -105,6 +106,8 @@ function CorrelationAssayMetadataConfigDescriptionComponent({
   );
 }
 
+const CORRELATION_METHODS = ['spearman', 'pearson'];
+
 // Shows as Step 1 in the full screen visualization page
 export function CorrelationAssayMetadataConfiguration(
   props: ComputationConfigProps
@@ -127,11 +130,6 @@ export function CorrelationAssayMetadataConfiguration(
     visualizationId
   );
 
-  // For now, set the method to 'spearman'. When we add the next method, we can just add it here (no api change!)
-  if (configuration && !configuration.correlationMethod) {
-    changeConfigHandler('correlationMethod', 'spearman');
-  }
-
   return (
     <ComputationStepContainer
       computationStepInfo={{
@@ -140,7 +138,7 @@ export function CorrelationAssayMetadataConfiguration(
       }}
     >
       <div className={cx()}>
-        <div className={cx('-CorrelationAssayMetadataOuterConfigContainer')}>
+        <div className={cx('-CorrelationOuterConfigContainer')}>
           <H6>Input Data</H6>
           <div className={cx('-InputContainer')}>
             <span>Data</span>
@@ -148,6 +146,23 @@ export function CorrelationAssayMetadataConfiguration(
               value={configuration.collectionVariable}
               onSelect={partial(changeConfigHandler, 'collectionVariable')}
               collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
+            />
+          </div>
+        </div>
+        <div className={cx('-CorrelationOuterConfigContainer')}>
+          <H6>Correlation Method</H6>
+          <div className={cx('-InputContainer')}>
+            <span>Method</span>
+            <SingleSelect
+              value={configuration.correlationMethod ?? 'Select a method'}
+              buttonDisplayContent={
+                configuration.correlationMethod ?? 'Select a method'
+              }
+              items={CORRELATION_METHODS.map((method: string) => ({
+                value: method,
+                display: method,
+              }))}
+              onSelect={partial(changeConfigHandler, 'correlationMethod')}
             />
           </div>
         </div>
