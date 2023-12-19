@@ -28,6 +28,7 @@
 
       .DataTable-Header {
         overflow: visible;
+        top: 0;
 
         /* set sticky header table width to auto so that scrollbars in the body section don't throw off cell widths */
         // table {
