@@ -16,7 +16,7 @@ import { useCallback, useMemo } from 'react';
 import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../../../constants';
 import {
   StandaloneMapMarkersResponse,
-  StringSetFilter,
+  StringVariable,
   Variable,
   useFindEntityAndVariable,
   useSubsettingClient,
@@ -72,27 +72,6 @@ export const plugin: MapTypePlugin = {
   MapTypeHeaderDetails,
   getLittleFilters,
 };
-
-// TO DO: This function may only need the `configuration` arg/prop
-function getLittleFilters(props: MapTypeConfigPanelProps) {
-  const configuration = props.configuration as PieMarkerConfiguration;
-
-  // FIXME TO DO: fully implement - this is just a test for low-cardinality vars
-  // The logic here can be shared with bar marker mode
-  if (
-    configuration.selectedValues?.length &&
-    !configuration.selectedValues.includes(UNSELECTED_TOKEN)
-  ) {
-    return [
-      {
-        ...configuration.selectedVariable,
-        type: 'stringSet' as const,
-        stringSet: configuration.selectedValues,
-      },
-    ];
-  }
-  return [];
-}
 
 function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   const {
@@ -481,6 +460,40 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     />
   ) : null;
 }
+
+function getLittleFilters(props: MapTypeConfigPanelProps) {
+  const configuration = props.configuration as PieMarkerConfiguration;
+  const { selectedVariable } = configuration;
+
+  // not allowed to use a hook (e.g. useCommonData) here
+  const { variable: overlayVariable } =
+    findEntityAndVariable(props.studyEntities, selectedVariable) ?? {};
+
+  // FIXME TO DO: fully implement - this is just a test for string categoricals
+  // The logic here can likely be shared with bar marker mode
+  if (StringVariable.is(overlayVariable)) {
+    const stringValues =
+      configuration.selectedValues?.length &&
+      !configuration.selectedValues.includes(UNSELECTED_TOKEN)
+        ? configuration.selectedValues // user-selected subset of values
+        : overlayVariable.vocabulary; // all values for variable
+
+    if (stringValues) {
+      return [
+        {
+          ...selectedVariable,
+          type: 'stringSet' as const,
+          stringSet: stringValues,
+        },
+      ];
+    }
+  }
+  return [];
+}
+
+/**
+ * Hooks and helper functions
+ */
 
 function useMarkerData(props: DistributionMarkerDataProps) {
   const {
