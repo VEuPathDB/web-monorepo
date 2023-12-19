@@ -353,8 +353,9 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
             onValueChange={(newValue?: NumberOrDate) =>
               updateVizConfig({ correlationCoefThreshold: Number(newValue) })
             }
-            label={'Correlation magnitude'}
+            label={'Absolute correlation coefficient'}
             minValue={0}
+            maxValue={1}
             value={
               vizConfig.correlationCoefThreshold ??
               DEFAULT_CORRELATION_COEF_THRESHOLD
@@ -369,6 +370,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
               updateVizConfig({ significanceThreshold: Number(newValue) })
             }
             minValue={0}
+            maxValue={1}
             value={
               vizConfig.significanceThreshold ?? DEFAULT_SIGNIFICANCE_THRESHOLD
             }
