@@ -205,15 +205,16 @@ export function CorrelationAssayAssayConfiguration(
   );
 }
 
-// Decide if the app is available for this study
+// The correlation assay x assay app should only be available
+// for studies with metagenomic data.
 function isEnabledInPicker({
   studyMetadata,
 }: IsEnabledInPickerParams): boolean {
   if (!studyMetadata) return false;
 
-  // The following was originally memoized in EDAWorkspaceContainer.tsx
-  // Cant use a hook here bc this is not a component or function
   const entities = entityTreeToArray(studyMetadata.rootEntity);
+  const hasMetagenomicData =
+    entities.filter((entity) => entity.id === 'OBI_0002623').length > 0; // OBI_0002623 = Metagenomic sequencing assay
 
-  return entities.filter((entity) => entity.id === 'OBI_0002623').length > 0; // Metagenomic sequencing assay
+  return hasMetagenomicData;
 }

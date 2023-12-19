@@ -118,13 +118,7 @@ export function StartPage(props: Props) {
                       const plugin = plugins[app.name];
                       const vizPlugin =
                         plugin && plugin.visualizationPlugins[viz.name];
-                      const disabled =
-                        !plugin ||
-                        !vizPlugin ||
-                        (vizPlugin?.isEnabledInPicker != null &&
-                          //@ts-ignore
-                          vizPlugin?.isEnabledInPicker({}) === false) ||
-                        isAppDisabled;
+                      const disabled = !plugin || !vizPlugin || isAppDisabled;
                       return (
                         <div
                           className={cx('-PickerEntry', disabled && 'disabled')}

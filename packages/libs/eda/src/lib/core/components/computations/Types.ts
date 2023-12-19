@@ -53,6 +53,6 @@ export interface ComputationPlugin {
   isConfigurationComplete: (configuration: unknown) => boolean;
   /** Function used to determine if visualization is compatible with study */
   isEnabledInPicker?: (props: IsEnabledInPickerParams) => boolean;
-  //** Human-readable requirements for this computation */
+  /** Human-readable study requirements for this computation */
   studyRequirements?: string;
 }
