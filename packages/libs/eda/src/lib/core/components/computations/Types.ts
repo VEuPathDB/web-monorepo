@@ -6,6 +6,7 @@ import { GeoConfig } from '../../types/geoConfig';
 import { Computation, ComputationAppOverview } from '../../types/visualization';
 import { Filter, StudyEntity } from '../..';
 import { VisualizationPlugin } from '../visualizations/VisualizationPlugin';
+import { IsEnabledInPickerParams } from '../visualizations/VisualizationTypes';
 
 export interface ComputationProps {
   analysisState: AnalysisState;
@@ -46,6 +47,12 @@ export interface ComputationPlugin {
     filters: Filter[];
   }>;
   visualizationPlugins: Partial<Record<string, VisualizationPlugin<any>>>;
-  createDefaultConfiguration: (rootEntity: StudyEntity) => unknown;
+  createDefaultConfiguration: (
+    rootEntity: StudyEntity
+  ) => Record<string, unknown> | undefined;
   isConfigurationComplete: (configuration: unknown) => boolean;
+  /** Function used to determine if visualization is compatible with study */
+  isEnabledInPicker?: (props: IsEnabledInPickerParams) => boolean;
+  /** Human-readable study requirements for this computation */
+  studyRequirements?: string;
 }

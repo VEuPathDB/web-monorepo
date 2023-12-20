@@ -56,9 +56,11 @@ export default function DraggableVisualization({
   const activeVizOverview: VisualizationOverview | undefined =
     app?.visualizations.find((viz) => viz.name === activeViz?.descriptor.type);
 
-  const visualizationPlugins = computationType
-    ? plugins[computationType]?.visualizationPlugins
-    : null;
+  const computationPlugin = computationType
+    ? plugins[computationType]
+    : undefined;
+
+  const visualizationPlugins = computationPlugin?.visualizationPlugins;
 
   const shouldRenderVisualization =
     activeViz &&
@@ -125,6 +127,7 @@ export default function DraggableVisualization({
             <FullScreenVisualization
               analysisState={analysisState}
               computation={activeComputation!}
+              computationPlugin={computationPlugin}
               visualizationPlugins={visualizationPlugins}
               visualizationsOverview={app.visualizations}
               geoConfigs={geoConfigs}
