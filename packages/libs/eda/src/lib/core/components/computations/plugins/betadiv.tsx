@@ -1,4 +1,4 @@
-import { StudyEntity, useFindEntityAndVariableCollection } from '../../..';
+import { useFindEntityAndVariableCollection } from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
@@ -188,8 +188,7 @@ function isEnabledInPicker({
 
   // Ensure there are collections in this study. Otherwise, disable app
   const studyHasCollections = entities.some(
-    (e): e is StudyEntity & Required<Pick<StudyEntity, 'collections'>> =>
-      !!e.collections?.length
+    (entity) => !!entity.collections?.length
   );
 
   return studyHasCollections;

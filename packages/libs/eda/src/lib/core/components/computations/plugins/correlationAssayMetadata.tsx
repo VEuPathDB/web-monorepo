@@ -1,4 +1,4 @@
-import { StudyEntity, useFindEntityAndVariableCollection } from '../../..';
+import { useFindEntityAndVariableCollection } from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { partial } from 'lodash';
@@ -181,10 +181,9 @@ function isEnabledInPicker({
 
   const entities = entityTreeToArray(studyMetadata.rootEntity);
   // Ensure there are collections in this study. Otherwise, disable app
-  const studyHasCollections = !!entities.filter(
-    (e): e is StudyEntity & Required<Pick<StudyEntity, 'collections'>> =>
-      !!e.collections?.length
-  ).length;
+  const studyHasCollections = entities.some(
+    (entity) => !!entity.collections?.length
+  );
   if (!studyHasCollections) return false;
 
   // Check for appropriate metadata
