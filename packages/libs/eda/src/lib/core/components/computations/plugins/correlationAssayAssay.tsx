@@ -212,14 +212,12 @@ function isEnabledInPicker({
   if (!studyMetadata) return false;
 
   const entities = entityTreeToArray(studyMetadata.rootEntity);
-  // Ensure there are collections in this study. Otherwise, disable app
-  const studyHasCollections = entities.some(
-    (entity) => !!entity.collections?.length
-  );
-  if (!studyHasCollections) return false;
 
-  const hasMetagenomicData =
-    entities.filter((entity) => entity.id === 'OBI_0002623').length > 0; // OBI_0002623 = Metagenomic sequencing assay
+  // Check that the metagenomic entity exists _and_ that it has
+  // at least one collection.
+  const hasMetagenomicData = entities.some(
+    (entity) => entity.id === 'OBI_0002623' && !!entity.collections?.length
+  ); // OBI_0002623 = Metagenomic sequencing assay
 
   return hasMetagenomicData;
 }
