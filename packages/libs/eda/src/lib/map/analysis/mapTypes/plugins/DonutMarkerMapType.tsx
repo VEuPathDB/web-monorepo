@@ -15,6 +15,7 @@ import {
 import { useCallback, useMemo } from 'react';
 import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../../../constants';
 import {
+  Filter,
   StandaloneMapMarkersResponse,
   StringVariable,
   Variable,
@@ -47,6 +48,7 @@ import {
   MapTypeConfigPanelProps,
   MapTypeMapLayerProps,
   MapTypePlugin,
+  GetLittleFiltersProps,
 } from '../types';
 import DraggableVisualization from '../../DraggableVisualization';
 import { useStandaloneVizPlugins } from '../../hooks/standaloneVizPlugins';
@@ -461,7 +463,7 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
   ) : null;
 }
 
-function getLittleFilters(props: MapTypeConfigPanelProps) {
+function getLittleFilters(props: GetLittleFiltersProps) {
   const configuration = props.configuration as PieMarkerConfiguration;
   const { selectedVariable } = configuration;
 

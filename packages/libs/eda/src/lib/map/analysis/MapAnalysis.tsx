@@ -86,6 +86,7 @@ import { FetchClientError } from '@veupathdb/http-utils';
 import { Page } from '@veupathdb/wdk-client/lib/Components';
 import { Link } from 'react-router-dom';
 import { AnalysisError } from '../../core/components/AnalysisError';
+import { useDeepValue } from '../../core/hooks/immutability';
 
 const plugins = [barMarkerPlugin, bubbleMarkerPlugin, donutMarkerPlugin];
 
@@ -783,6 +784,14 @@ function MapAnalysisImpl(props: ImplProps) {
       ? donutMarkerPlugin
       : undefined;
 
+  // we have to wrap the `getLittleFilters` call in a hook to get a stable value
+  const littleFilters = useDeepValue(
+    activeMapModePlugin?.getLittleFilters?.({
+      configuration: activeMarkerConfiguration,
+      studyEntities,
+    })
+  );
+
   return (
     <PromiseResult state={appsPromiseState}>
       {(apps: ComputationAppOverview[]) => {
@@ -847,9 +856,7 @@ function MapAnalysisImpl(props: ImplProps) {
                         entities={studyEntities}
                         subsettingClient={subsettingClient}
                         filters={filters}
-                        littleFilters={activeMapModePlugin?.getLittleFilters?.(
-                          mapTypeMapLayerProps
-                        )}
+                        littleFilters={littleFilters}
                         starredVariables={
                           analysisState.analysis?.descriptor.starredVariables ??
                           []

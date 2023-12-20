@@ -44,6 +44,11 @@ export interface MapTypeMapLayerProps {
   setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
+export type GetLittleFiltersProps = Pick<
+  MapTypeMapLayerProps,
+  'configuration' | 'studyEntities'
+>;
+
 /**
  * A plugin containing the pieces needed to render
  * and configure a map type
@@ -76,5 +81,5 @@ export interface MapTypePlugin {
   /**
    * Returns a list of 'little' filters based on marker configuration
    */
-  getLittleFilters?: (props: MapTypeMapLayerProps) => Filter[];
+  getLittleFilters?: (props: GetLittleFiltersProps) => Filter[];
 }
