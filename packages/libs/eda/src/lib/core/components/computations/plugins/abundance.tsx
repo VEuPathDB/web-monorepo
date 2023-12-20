@@ -20,7 +20,6 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { entityTreeToArray } from '../../../utils/study-metadata';
-import { StudyEntity } from '../../../types/study';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -212,8 +211,7 @@ function isEnabledInPicker({
   const entities = entityTreeToArray(studyMetadata.rootEntity);
   // Ensure there are collections in this study. Otherwise, disable app
   const studyHasCollections = entities.some(
-    (e): e is StudyEntity & Required<Pick<StudyEntity, 'collections'>> =>
-      !!e.collections?.length
+    (entity) => !!entity.collections?.length
   );
 
   return studyHasCollections;

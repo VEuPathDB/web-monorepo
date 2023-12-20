@@ -1,7 +1,6 @@
 import {
   ContinuousVariableDataShape,
   LabeledRange,
-  StudyEntity,
   usePromise,
   useStudyMetadata,
 } from '../../..';
@@ -478,10 +477,9 @@ function isEnabledInPicker({
 
   const entities = entityTreeToArray(studyMetadata.rootEntity);
   // Ensure there are collections in this study. Otherwise, disable app
-  const studyHasCollections = !!entities.filter(
-    (e): e is StudyEntity & Required<Pick<StudyEntity, 'collections'>> =>
-      !!e.collections?.length
-  ).length;
+  const studyHasCollections = entities.some(
+    (entity) => !!entity.collections?.length
+  );
 
   return studyHasCollections;
 }

@@ -1,5 +1,4 @@
 import { useFindEntityAndVariableCollection } from '../../..';
-import { useStudyEntities } from '../../../hooks/workspace';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { partial } from 'lodash';
@@ -213,6 +212,12 @@ function isEnabledInPicker({
   if (!studyMetadata) return false;
 
   const entities = entityTreeToArray(studyMetadata.rootEntity);
+  // Ensure there are collections in this study. Otherwise, disable app
+  const studyHasCollections = entities.some(
+    (entity) => !!entity.collections?.length
+  );
+  if (!studyHasCollections) return false;
+
   const hasMetagenomicData =
     entities.filter((entity) => entity.id === 'OBI_0002623').length > 0; // OBI_0002623 = Metagenomic sequencing assay
 
