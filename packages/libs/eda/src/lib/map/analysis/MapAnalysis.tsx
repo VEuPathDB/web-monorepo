@@ -891,7 +891,10 @@ function MapAnalysisImpl(props: ImplProps) {
                     showSpinner={false}
                     viewport={appState.viewport}
                     onBoundsChanged={setBoundsZoomLevel}
-                    onViewportChanged={setViewport}
+                    onViewportChanged={(newViewport) => {
+                      setViewport(newViewport);
+                      setIsSidePanelExpanded(false);
+                    }}
                     showGrid={geoConfig?.zoomLevelToAggregationLevel !== null}
                     zoomLevelToGeohashLevel={
                       geoConfig?.zoomLevelToAggregationLevel
