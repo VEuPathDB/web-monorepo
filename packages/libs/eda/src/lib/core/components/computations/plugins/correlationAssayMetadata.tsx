@@ -219,7 +219,7 @@ function isEnabledInPicker({
       (variable) =>
         'dataShape' in variable &&
         variable.dataShape === 'continuous' &&
-        variable.type === 'number' // Support for dates coming soon! Can remove this line once the backend is ready.
+        (variable.type === 'number' || variable.type === 'integer') // Support for dates coming soon! Can remove this line once the backend is ready.
     );
 
   return hasContinuousVariable;
