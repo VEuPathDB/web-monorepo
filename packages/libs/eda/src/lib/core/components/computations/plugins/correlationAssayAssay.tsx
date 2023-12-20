@@ -19,6 +19,8 @@ import { variableCollectionsAreUnique } from '../../../utils/visualization';
 import PluginError from '../../visualizations/PluginError';
 import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
+import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
+import { entityTreeToArray } from '../../../utils/study-metadata';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -74,6 +76,9 @@ export const plugin: ComputationPlugin = {
       },
     }), // Must match name in data service and in visualization.tsx
   },
+  isEnabledInPicker: isEnabledInPicker,
+  studyRequirements:
+    'These visualizations are only available for studies with metagenomic data.',
 };
 
 // Renders on the thumbnail page to give a summary of the app instance
@@ -212,4 +217,22 @@ export function CorrelationAssayAssayConfiguration(
       </div>
     </ComputationStepContainer>
   );
+}
+
+// The correlation assay x assay app should only be available
+// for studies with metagenomic data.
+function isEnabledInPicker({
+  studyMetadata,
+}: IsEnabledInPickerParams): boolean {
+  if (!studyMetadata) return false;
+
+  const entities = entityTreeToArray(studyMetadata.rootEntity);
+
+  // Check that the metagenomic entity exists _and_ that it has
+  // at least one collection.
+  const hasMetagenomicData = entities.some(
+    (entity) => entity.id === 'OBI_0002623' && !!entity.collections?.length
+  ); // OBI_0002623 = Metagenomic sequencing assay
+
+  return hasMetagenomicData;
 }

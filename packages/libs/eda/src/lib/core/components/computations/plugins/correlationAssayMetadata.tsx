@@ -17,6 +17,9 @@ import { H6 } from '@veupathdb/coreui';
 import { bipartiteNetworkVisualization } from '../../visualizations/implementations/BipartiteNetworkVisualization';
 import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
+import { entityTreeToArray } from '../../../utils/study-metadata';
+import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
+import { ancestorEntitiesForEntityId } from '../../../utils/data-element-constraints';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -63,6 +66,9 @@ export const plugin: ComputationPlugin = {
       },
     }), // Must match name in data service and in visualization.tsx
   },
+  isEnabledInPicker: isEnabledInPicker,
+  studyRequirements:
+    'These visualizations are only available for studies with compatible metadata.',
 };
 
 // Renders on the thumbnail page to give a summary of the app instance
@@ -169,4 +175,66 @@ export function CorrelationAssayMetadataConfiguration(
       </div>
     </ComputationStepContainer>
   );
+}
+
+const ASSAY_ENTITIES = [
+  'OBI_0002623',
+  'EUPATH_0000809',
+  'EUPATH_0000813',
+  'EUPATH_0000812',
+];
+
+// The correlation assay x metadata app is only available for studies
+// with appropriate metadata. Specifically, the study
+// must have at least one continuous metadata variable that is on a one-to-one path
+// from the assay entity.
+// See PR #74 in service-eda-compute for the matching logic on the backend.
+function isEnabledInPicker({
+  studyMetadata,
+}: IsEnabledInPickerParams): boolean {
+  if (!studyMetadata) return false;
+
+  const entities = entityTreeToArray(studyMetadata.rootEntity);
+  // Ensure there are collections in this study. Otherwise, disable app
+  const studyHasCollections = entities.some(
+    (entity) => !!entity.collections?.length
+  );
+  if (!studyHasCollections) return false;
+
+  // Check for appropriate metadata
+  // Step 1. Find the first assay node. Doesn't need to be any assay in particular just any mbio assay will do
+  const firstAssayEntityIndex = entities.findIndex((entity) =>
+    ASSAY_ENTITIES.includes(entity.id)
+  );
+  if (firstAssayEntityIndex === -1) return false;
+
+  // Step 2. Find all ancestor entites of the assayEntity that are on a one-to-one path with assayEntity.
+  // Step 2a. Grab ancestor entities.
+  const ancestorEntities = ancestorEntitiesForEntityId(
+    entities[firstAssayEntityIndex].id,
+    entities
+  ).reverse(); // Reverse so that the ancestorEntities[0] is the assay and higher indices are further up the tree.
+
+  // Step 2b. Trim the ancestorEntities so that we only keep those that are on
+  // a 1:1 path. Once we find an ancestor that is many to one with its parent, we
+  // know we've hit the end of the 1:1 path.
+  const lastOneToOneAncestorIndex = ancestorEntities.findIndex(
+    (entity) => entity.isManyToOneWithParent
+  );
+  const oneToOneAncestors = ancestorEntities.slice(
+    1, // removing the assay itself
+    lastOneToOneAncestorIndex + 1
+  );
+
+  // Step 3. Check if there are any continuous variables in the filtered entities
+  const hasContinuousVariable = oneToOneAncestors
+    .flatMap((entity) => entity.variables)
+    .some(
+      (variable) =>
+        'dataShape' in variable &&
+        variable.dataShape === 'continuous' &&
+        (variable.type === 'number' || variable.type === 'integer') // Support for dates coming soon! Can remove this line once the backend is ready.
+    );
+
+  return hasContinuousVariable;
 }
