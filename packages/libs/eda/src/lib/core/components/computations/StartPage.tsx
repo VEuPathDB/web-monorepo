@@ -11,6 +11,7 @@ import { v4 as uuid } from 'uuid';
 import { useStudyMetadata } from '../../';
 import PlaceholderIcon from '../visualizations/PlaceholderIcon';
 import { useVizIconColors } from '../visualizations/implementations/selectorIcons/types';
+import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 
 interface Props {
   analysisState: AnalysisState;
@@ -84,6 +85,11 @@ export function StartPage(props: Props) {
                     <H6
                       text={app.displayName}
                       additionalStyles={{ margin: 0, marginBottom: 5 }}
+                      color={
+                        isAppDisabled
+                          ? (gray[400] as React.CSSProperties['color'])
+                          : undefined
+                      }
                     />
                     <span
                       style={{
@@ -96,6 +102,7 @@ export function StartPage(props: Props) {
                         <span
                           style={{
                             fontWeight: '500',
+                            color: gray[700],
                           }}
                         >
                           <br />
@@ -125,6 +132,7 @@ export function StartPage(props: Props) {
                           key={`vizType${index}`}
                           style={{
                             margin: tightLayout ? '1em 1em' : '0 3em',
+                            opacity: isAppDisabled ? 0.5 : 1,
                           }}
                         >
                           <Tooltip title={<>{viz.description}</>}>
