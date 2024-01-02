@@ -17,6 +17,8 @@ import { ComputationStepContainer } from '../ComputationStepContainer';
 import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
+import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
+import { entityTreeToArray } from '../../../utils/study-metadata';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -60,6 +62,9 @@ export const plugin: ComputationPlugin = {
       hideShowMissingnessToggle: true,
     }),
   },
+  isEnabledInPicker: isEnabledInPicker,
+  studyRequirements:
+    'These visualizations are only available for studies with compatible assay data.',
 };
 
 function AlphaDivConfigDescriptionComponent({
@@ -158,4 +163,20 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
       </div>
     </ComputationStepContainer>
   );
+}
+
+// Alpha div's only requirement of the study is that
+// the study contains at least one collection.
+function isEnabledInPicker({
+  studyMetadata,
+}: IsEnabledInPickerParams): boolean {
+  if (!studyMetadata) return false;
+  const entities = entityTreeToArray(studyMetadata.rootEntity);
+
+  // Ensure there are collections in this study. Otherwise, disable app
+  const studyHasCollections = entities.some(
+    (entity) => !!entity.collections?.length
+  );
+
+  return studyHasCollections;
 }
