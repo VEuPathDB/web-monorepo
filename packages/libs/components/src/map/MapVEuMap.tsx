@@ -335,9 +335,6 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
         zoomLevel: mapEvents.getZoom(),
       };
       onBoundsChanged(boundsViewport);
-
-      // map zoom occurred
-      if (setIsMapEvents != null) setIsMapEvents(true);
     },
     moveend: () => {
       onViewportChanged({
@@ -352,9 +349,6 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
         zoomLevel: mapEvents.getZoom(),
       };
       onBoundsChanged(boundsViewport);
-
-      // map panning occurred
-      if (setIsMapEvents != null) setIsMapEvents(true);
     },
     baselayerchange: (e: { name: string }) => {
       onBaseLayerChanged && onBaseLayerChanged(e.name as BaseLayerChoice);
@@ -363,7 +357,7 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
     click: () => {
       if (setSelectedMarkers != null) setSelectedMarkers(EMPTY_MARKERS);
 
-      // map click occurred???
+      // map click occurred
       if (setIsMapEvents != null) setIsMapEvents(true);
     },
   });

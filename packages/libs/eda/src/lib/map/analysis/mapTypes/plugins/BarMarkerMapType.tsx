@@ -93,7 +93,6 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     studyId,
     studyEntities,
     filters,
-    isMapEvents = false,
   } = props;
 
   const geoConfig = geoConfigs[0];
@@ -286,9 +285,6 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     },
     [configuration, updateConfiguration]
   );
-
-  // hide MapViz
-  if (isMapEvents) setActiveVisualizationId(undefined);
 
   const plugins = useStandaloneVizPlugins({
     selectedOverlayConfig: overlayConfiguration.data,

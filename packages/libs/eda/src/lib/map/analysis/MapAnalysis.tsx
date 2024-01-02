@@ -409,7 +409,7 @@ function MapAnalysisImpl(props: ImplProps) {
   // make an array of objects state to list highlighted markers
   const [selectedMarkers, setSelectedMarkers] = useState<string[]>([]);
 
-  // check if map events such as click, zoom, or panning occured
+  // check if map events such as click occured
   const [isMapEvents, setIsMapEvents] = useState<boolean>(false);
 
   // set a reset function to control left panel
@@ -452,8 +452,6 @@ function MapAnalysisImpl(props: ImplProps) {
                     updateConfiguration={updateMarkerConfigurations as any}
                     hideVizInputsAndControls={hideVizInputsAndControls}
                     setHideVizInputsAndControls={setHideVizInputsAndControls}
-                    // used to hide MapViz
-                    isMapEvents={isMapEvents}
                   />
                 );
               },
@@ -484,8 +482,6 @@ function MapAnalysisImpl(props: ImplProps) {
                     updateConfiguration={updateMarkerConfigurations as any}
                     hideVizInputsAndControls={hideVizInputsAndControls}
                     setHideVizInputsAndControls={setHideVizInputsAndControls}
-                    // used to hide MapViz
-                    isMapEvents={isMapEvents}
                   />
                 );
               },
@@ -514,8 +510,6 @@ function MapAnalysisImpl(props: ImplProps) {
                     updateConfiguration={updateMarkerConfigurations as any}
                     hideVizInputsAndControls={hideVizInputsAndControls}
                     setHideVizInputsAndControls={setHideVizInputsAndControls}
-                    // used to hide MapViz
-                    isMapEvents={isMapEvents}
                   />
                 );
               },
@@ -909,7 +903,10 @@ function MapAnalysisImpl(props: ImplProps) {
                     showSpinner={false}
                     viewport={appState.viewport}
                     onBoundsChanged={setBoundsZoomLevel}
-                    onViewportChanged={setViewport}
+                    onViewportChanged={(newVieport) => {
+                      setViewport(newVieport);
+                      setIsSidePanelExpanded(false);
+                    }}
                     showGrid={geoConfig?.zoomLevelToAggregationLevel !== null}
                     zoomLevelToGeohashLevel={
                       geoConfig?.zoomLevelToAggregationLevel
@@ -918,7 +915,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     defaultViewport={defaultViewport}
                     // for multiple markers cancelation of selection only
                     setSelectedMarkers={setSelectedMarkers}
-                    // pass setIsPanning to check if map events such as click, zoom, and panning occured
+                    // pass setIsMapEvents to check if map events such as click occured
                     setIsMapEvents={setIsMapEvents}
                   >
                     {activeMapTypePlugin?.MapLayerComponent && (
