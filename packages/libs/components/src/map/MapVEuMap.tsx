@@ -154,7 +154,7 @@ export interface MapVEuMapProps {
   /* selectedMarkers setState (for on-click reset) **/
   setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
   children?: React.ReactNode;
-  /*  setIsMapEvents is used to check if map events such as click, zoom, and panning occured */
+  /* setIsMapEvents is used to check if map events such as click, zoom, and panning occured */
   setIsMapEvents?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 

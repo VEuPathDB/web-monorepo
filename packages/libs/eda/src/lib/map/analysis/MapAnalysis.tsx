@@ -412,11 +412,15 @@ function MapAnalysisImpl(props: ImplProps) {
   // check if map events such as click occured
   const [isMapEvents, setIsMapEvents] = useState<boolean>(false);
 
-  // set a reset function to control left panel
-  const resetMapEvents = () => {
-    setIsSidePanelExpanded(false);
-    return false;
-  };
+  // check if side panel should expand: need useMemo to avoid re-rendering MapSidePanel
+  const shouldSidePanelExpand = useMemo(() => {
+    if (isMapEvents) {
+      setIsSidePanelExpanded(false);
+      return false;
+    } else {
+      return appState.isSidePanelExpanded;
+    }
+  }, [isMapEvents, setIsSidePanelExpanded, appState.isSidePanelExpanded]);
 
   const sidePanelMenuEntries: SidePanelMenuEntry[] = [
     {
@@ -876,11 +880,7 @@ function MapAnalysisImpl(props: ImplProps) {
                   }}
                 >
                   <MapSidePanel
-                    isExpanded={
-                      isMapEvents
-                        ? resetMapEvents()
-                        : appState.isSidePanelExpanded
-                    }
+                    isExpanded={shouldSidePanelExpand}
                     isUserLoggedIn={userLoggedIn}
                     onToggleIsExpanded={() => {
                       setIsMapEvents(false);
