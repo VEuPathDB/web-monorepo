@@ -16,7 +16,8 @@ import {
 } from '../Actions/DownloadFormActions';
 import DownloadFormContainer from '../Views/ReporterForm/DownloadFormContainer';
 import { RootState } from '../Core/State/Types';
-import { AnswerSpec } from '../Utils/WdkModel';
+import { AnswerSpec, FilterValueArray } from '../Utils/WdkModel';
+import { ResultType } from '../Utils/WdkResult';
 
 const DownloadFormActionCreators = {
   loadPageDataFromRecord,
@@ -35,6 +36,14 @@ type Options = Partial<{
   summaryView: string;
   includeSelector?: boolean;
   includeTitle?: boolean;
+  includeSubmit?: boolean;
+  onFormSubmit?: (
+    resultType: ResultType,
+    selectedReporter: string,
+    formState: any,
+    viewFilters?: FilterValueArray,
+    target?: string
+  ) => void;
 }>;
 
 type OwnProps =
@@ -89,12 +98,13 @@ class DownloadFormController extends PageController<Props> {
     // build props object to pass to form component
     let formProps = {
       ...this.props,
+      submitForm: this.props.ownProps.onFormSubmit ?? this.props.submitForm,
     };
     return (
       <DownloadFormContainer
         {...formProps}
         includeTitle={this.props.ownProps.includeTitle ?? true}
-        includeSubmit={true}
+        includeSubmit={this.props.ownProps.includeSubmit ?? true}
         includeSelector={this.props.ownProps.includeSelector}
       />
     );
