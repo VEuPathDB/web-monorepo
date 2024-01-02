@@ -1,6 +1,6 @@
 import SelectList from '@veupathdb/coreui/lib/components/inputs/SelectList';
 import { ReactNode } from 'react';
-import { ClearSelectionButton } from '../../variableTrees/VariableTreeDropdown';
+import { ClearSelectionButton } from '../../variableSelectors/VariableTreeDropdown';
 
 export type ValuePickerProps = {
   allowedValues?: string[];
