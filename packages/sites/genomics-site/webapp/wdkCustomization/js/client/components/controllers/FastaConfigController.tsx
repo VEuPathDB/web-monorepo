@@ -17,7 +17,10 @@ import {
 } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 import { getValueFromState } from '@veupathdb/wdk-client/lib/Views/Question/Params';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
-import { FilterValueArray } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import {
+  FilterValueArray,
+  ParameterValues,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { submitForm } from '@veupathdb/wdk-client/lib/Actions/DownloadFormActions';
 import { ResultType } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
@@ -155,20 +158,22 @@ function FormComponent(props: FormProps) {
       viewFilters?: FilterValueArray,
       target?: string
     ) => {
-      const paramValueEntries = await Promise.all(
-        state.question.parameters.map(async (parameter) => [
-          parameter.name,
-          await getValueFromState(
-            {
-              paramValues: state.paramValues,
-              parameter,
-              searchName: state.question.urlSegment,
-            },
-            state,
-            wdkEpicDependencies
-          ),
-        ])
-      );
+      const paramValues: ParameterValues = {};
+
+      for (const parameter of state.question.parameters) {
+        const value = await getValueFromState(
+          {
+            paramValues: state.paramValues,
+            parameter,
+            searchName: state.question.urlSegment,
+          },
+          state,
+          wdkEpicDependencies
+        );
+        paramValues[parameter.name] = value;
+      }
+
+      console.log({ paramValues });
 
       dispatch(
         submitForm(
@@ -178,7 +183,7 @@ function FormComponent(props: FormProps) {
             answerSpec: {
               searchName: state.question.urlSegment,
               searchConfig: {
-                parameters: Object.fromEntries(paramValueEntries),
+                parameters: paramValues,
               },
             },
           },
