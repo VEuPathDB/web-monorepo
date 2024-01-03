@@ -1,6 +1,5 @@
 import * as t from 'io-ts';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
-import { PlotLayout } from '../../layouts/PlotLayout';
 import { VisualizationProps } from '../VisualizationTypes';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import {
@@ -43,6 +42,7 @@ import LabelledGroup from '@veupathdb/components/lib/components/widgets/Labelled
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
 import { NumberOrDate } from '@veupathdb/components/lib/types/general';
 import { useVizConfig } from '../../../hooks/visualizations';
+import { FacetedPlotLayout } from '../../layouts/FacetedPlotLayout';
 // end imports
 
 // Defaults
@@ -53,7 +53,7 @@ const MIN_STROKE_WIDTH = 0.5; // Minimum stroke width for links in the network. 
 const MAX_STROKE_WIDTH = 6; // Maximum stroke width for links in the network. Will represent the largest link weight.
 
 const plotContainerStyles = {
-  width: 750,
+  width: 1250,
   marginLeft: '0.75rem',
   border: '1px solid #dedede',
   boxShadow: '1px 1px 4px #00000066',
@@ -253,7 +253,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
 
   // These styles affect the network plot and will override the containerStyles if necessary (for example, width).
   const bipartiteNetworkSVGStyles = {
-    columnPadding: 150,
+    columnPadding: 300,
   };
 
   const plotRef = useUpdateThumbnailEffect(
@@ -270,6 +270,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     showSpinner: data.pending,
     containerStyles: finalPlotContainerStyles,
     svgStyleOverrides: bipartiteNetworkSVGStyles,
+    labelTruncationLength: 40,
   };
 
   const plotNode = (
@@ -345,7 +346,11 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   );
   const tableGroupNode = <> </>;
 
-  const LayoutComponent = options?.layoutComponent ?? PlotLayout;
+  // The bipartite network uses FacetedPlotLayout in order to position the legends
+  // atop the plot. The bipartite network plots are often so tall and so wide that
+  // with the normal PlotLayout component the legends are forced way, way down the screen
+  // below the plot.
+  const LayoutComponent = options?.layoutComponent ?? FacetedPlotLayout;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -383,12 +388,10 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
       )}
       <OutputEntityTitle subtitle={plotSubtitle} />
       <LayoutComponent
-        isFaceted={false}
         legendNode={legendNode}
         plotNode={plotNode}
         controlsNode={controlsNode}
         tableGroupNode={tableGroupNode}
-        showRequiredInputsPrompt={false}
       />
     </div>
   );
