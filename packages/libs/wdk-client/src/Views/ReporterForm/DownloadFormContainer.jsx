@@ -98,10 +98,10 @@ class DownloadFormContainer extends Component {
   }
 
   // create parameterless form submission function for forms to use
-  onSubmit() {
+  async onSubmit() {
     let { submitForm, resultType, selectedReporter, formState, viewFilters } =
       this.props;
-    submitForm(resultType, selectedReporter, formState, viewFilters);
+    await submitForm(resultType, selectedReporter, formState, viewFilters);
   }
 
   render() {
