@@ -173,8 +173,6 @@ function FormComponent(props: FormProps) {
         paramValues[parameter.name] = value;
       }
 
-      console.log({ paramValues });
-
       dispatch(
         submitForm(
           {
