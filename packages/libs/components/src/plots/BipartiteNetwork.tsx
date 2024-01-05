@@ -5,6 +5,7 @@ import { Graph } from '@visx/network';
 import { Text } from '@visx/text';
 import {
   CSSProperties,
+  ReactNode,
   Ref,
   forwardRef,
   useImperativeHandle,
@@ -42,6 +43,8 @@ export interface BipartiteNetworkProps {
   showSpinner?: boolean;
   /** Length of node label text before truncating with an ellipsis */
   labelTruncationLength?: number;
+  /** Additional error messaging to show when the network is empty */
+  emptyNetworkContent?: ReactNode;
 }
 
 // Show a few gray nodes when there is no real data.
@@ -71,6 +74,7 @@ function BipartiteNetwork(
     containerClass = 'web-components-plot',
     showSpinner = false,
     labelTruncationLength = 20,
+    emptyNetworkContent,
   } = props;
 
   // Use ref forwarding to enable screenshotting of the plot for thumbnail versions.
@@ -160,57 +164,65 @@ function BipartiteNetwork(
       style={{ width: '100%', ...containerStyles, position: 'relative' }}
     >
       <div ref={plotRef} style={{ width: '100%', height: '100%' }}>
-        <svg
-          width={svgStyles.width}
-          height={
-            Math.max(data.column1NodeIDs.length, data.column2NodeIDs.length) *
-              svgStyles.nodeSpacing +
-            svgStyles.topPadding
-          }
-        >
-          {/* Draw names of node colums if they exist */}
-          {column1Name && (
-            <Text
-              x={column1Position}
-              y={svgStyles.topPadding / 2}
-              textAnchor="end"
-              className="BipartiteNetworkColumnTitle"
-            >
-              {column1Name}
-            </Text>
-          )}
-          {column2Name && (
-            <Text
-              x={column2Position}
-              y={svgStyles.topPadding / 2}
-              textAnchor="start"
-              className="BipartiteNetworkColumnTitle"
-            >
-              {column2Name}
-            </Text>
-          )}
+        {nodesByColumnWithCoordinates[0].length > 0 ? (
+          <svg
+            width={svgStyles.width}
+            height={
+              Math.max(data.column1NodeIDs.length, data.column2NodeIDs.length) *
+                svgStyles.nodeSpacing +
+              svgStyles.topPadding
+            }
+          >
+            {/* Draw names of node colums if they exist */}
+            {column1Name && (
+              <Text
+                x={column1Position}
+                y={svgStyles.topPadding / 2}
+                textAnchor="end"
+                className="BipartiteNetworkColumnTitle"
+              >
+                {column1Name}
+              </Text>
+            )}
+            {column2Name && (
+              <Text
+                x={column2Position}
+                y={svgStyles.topPadding / 2}
+                textAnchor="start"
+                className="BipartiteNetworkColumnTitle"
+              >
+                {column2Name}
+              </Text>
+            )}
 
-          <Graph
-            graph={{
-              nodes: nodesByColumnWithCoordinates[0].concat(
-                nodesByColumnWithCoordinates[1]
-              ),
-              links: linksWithCoordinates,
-            }}
-            // Using our Link component so that it uses our nice defaults and
-            // can better expand to handle more complex events (hover and such).
-            linkComponent={({ link }) => <Link link={link} />}
-            nodeComponent={({ node }) => {
-              const nodeWithLabelProps = {
-                node: node,
-                labelPosition: node.labelPosition,
-                truncationLength: labelTruncationLength,
-              };
-              return <NodeWithLabel {...nodeWithLabelProps} />;
-            }}
-          />
-        </svg>
-        {showSpinner && <Spinner />}
+            <Graph
+              graph={{
+                nodes: nodesByColumnWithCoordinates[0].concat(
+                  nodesByColumnWithCoordinates[1]
+                ),
+                links: linksWithCoordinates,
+              }}
+              // Using our Link component so that it uses our nice defaults and
+              // can better expand to handle more complex events (hover and such).
+              linkComponent={({ link }) => <Link link={link} />}
+              nodeComponent={({ node }) => {
+                const nodeWithLabelProps = {
+                  node: node,
+                  labelPosition: node.labelPosition,
+                  truncationLength: labelTruncationLength,
+                };
+                return <NodeWithLabel {...nodeWithLabelProps} />;
+              }}
+            />
+          </svg>
+        ) : (
+          emptyNetworkContent ?? <p>No nodes in the network</p>
+        )}
+        {
+          // Note that the spinner shows up in the middle of the network. So when
+          // the network is very long, the spinner will be further down the page than in other vizs.
+          showSpinner && <Spinner />
+        }
       </div>
     </div>
   );
