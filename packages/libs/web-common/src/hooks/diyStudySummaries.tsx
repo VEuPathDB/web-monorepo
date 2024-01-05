@@ -6,7 +6,8 @@ import { keyBy } from 'lodash';
 
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { assertIsUserDatasetCompatibleWdkService } from '@veupathdb/user-datasets/lib/Service/UserDatasetWrappers';
+// import { assertIsVdiCompatibleWdkService } from '@veupathdb/user-datasets/lib/Service';
+import { assertIsUserDatasetCompatibleWdkService } from '@veupathdb/user-datasets-legacy/lib/Service/UserDatasetWrappers';
 
 import { useDiyDatasets } from './diyDatasets';
 
@@ -109,7 +110,7 @@ export function useDiyStudySummaryRows(): UserStudySummaryRow[] | undefined {
           name: diyDataset.name,
           userDatasetWorkspaceUrl: diyDataset.userDatasetsRoute,
           edaWorkspaceUrl: `${diyDataset.baseEdaRoute}/new`,
-          summary: userDataset.meta.summary,
+          summary: userDataset.meta.summary ?? '',
           owner:
             userDataset.ownerUserId === currentUser.id
               ? 'Me'
