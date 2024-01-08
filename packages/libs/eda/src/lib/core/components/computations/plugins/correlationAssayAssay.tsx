@@ -1,7 +1,7 @@
 import { useFindEntityAndVariableCollection } from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { partial } from 'lodash';
+import { capitalize, partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
@@ -125,7 +125,7 @@ function CorrelationAssayAssayConfigDescriptionComponent({
         Method:{' '}
         <span>
           {correlationMethod ? (
-            correlationMethod[0].toUpperCase() + correlationMethod.slice(1)
+            capitalize(correlationMethod)
           ) : (
             <i>Not selected</i>
           )}
@@ -191,11 +191,13 @@ export function CorrelationAssayAssayConfiguration(
               <SingleSelect
                 value={configuration.correlationMethod ?? 'Select a method'}
                 buttonDisplayContent={
-                  configuration.correlationMethod ?? 'Select a method'
+                  configuration.correlationMethod
+                    ? capitalize(configuration.correlationMethod)
+                    : 'Select a method'
                 }
                 items={CORRELATION_METHODS.map((method: string) => ({
                   value: method,
-                  display: method,
+                  display: capitalize(method),
                 }))}
                 onSelect={partial(changeConfigHandler, 'correlationMethod')}
               />
