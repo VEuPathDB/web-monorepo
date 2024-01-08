@@ -1,17 +1,13 @@
-import { useStudyMetadata } from '../../..';
-import {
-  useFindEntityAndVariableCollection,
-  useVariableCollections,
-} from '../../../hooks/workspace';
+import { useFindEntityAndVariableCollection } from '../../../hooks/workspace';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { isEqual, partial } from 'lodash';
+import { capitalize, partial } from 'lodash';
 import {
   assertComputationWithConfig,
-  makeVariableCollectionItems,
-  removeAbsoluteAbundanceVariableCollections,
+  isNotAbsoluteAbundanceVariableCollection,
+  partialToCompleteCodec,
   useConfigChangeHandler,
 } from '../Utils';
 import * as t from 'io-ts';
@@ -21,21 +17,26 @@ import { useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
+import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
+import { entityTreeToArray } from '../../../utils/study-metadata';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
 export type AbundanceConfig = t.TypeOf<typeof AbundanceConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AbundanceConfig = t.type({
+export const AbundanceConfig = t.partial({
   collectionVariable: VariableCollectionDescriptor,
   rankingMethod: t.string,
 });
 
+const CompleteAbundanceConfig = partialToCompleteCodec(AbundanceConfig);
+
 export const plugin: ComputationPlugin = {
   configurationComponent: AbundanceConfiguration,
   configurationDescriptionComponent: AbundanceConfigDescriptionComponent,
-  createDefaultConfiguration: () => undefined,
-  isConfigurationValid: AbundanceConfig.is,
+  createDefaultConfiguration: () => ({}),
+  isConfigurationComplete: CompleteAbundanceConfig.is,
   visualizationPlugins: {
     boxplot: boxplotVisualization.withOptions({
       getXAxisVariable(config) {
@@ -44,7 +45,7 @@ export const plugin: ComputationPlugin = {
         }
       },
       getComputedYAxisDetails(config) {
-        if (AbundanceConfig.is(config)) {
+        if (AbundanceConfig.is(config) && config.collectionVariable) {
           return {
             entityId: config.collectionVariable.entityId,
             placeholderDisplayName: 'Abundance',
@@ -52,7 +53,7 @@ export const plugin: ComputationPlugin = {
         }
       },
       getPlotSubtitle(config) {
-        if (AbundanceConfig.is(config)) {
+        if (AbundanceConfig.is(config) && config.rankingMethod) {
           return (
             <>
               <br />
@@ -68,7 +69,7 @@ export const plugin: ComputationPlugin = {
     }),
     scatterplot: scatterplotVisualization.withOptions({
       getComputedYAxisDetails(config) {
-        if (AbundanceConfig.is(config)) {
+        if (AbundanceConfig.is(config) && config.collectionVariable) {
           return {
             entityId: config.collectionVariable.entityId,
             placeholderDisplayName: 'Abundance',
@@ -96,6 +97,9 @@ export const plugin: ComputationPlugin = {
       hideShowMissingnessToggle: true,
     }),
   },
+  isEnabledInPicker: isEnabledInPicker,
+  studyRequirements:
+    'These visualizations are only available for studies with compatible assay data.',
 };
 
 function AbundanceConfigDescriptionComponent({
@@ -104,7 +108,7 @@ function AbundanceConfigDescriptionComponent({
   computation: Computation;
 }) {
   const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
-  assertComputationWithConfig<AbundanceConfig>(computation, Computation);
+  assertComputationWithConfig(computation, AbundanceConfig);
   const { configuration } = computation.descriptor;
   const collectionVariable =
     'collectionVariable' in configuration
@@ -129,11 +133,7 @@ function AbundanceConfigDescriptionComponent({
       <h4>
         Method:{' '}
         <span>
-          {rankingMethod ? (
-            rankingMethod[0].toUpperCase() + rankingMethod.slice(1)
-          ) : (
-            <i>Not selected</i>
-          )}
+          {rankingMethod ? capitalize(rankingMethod) : <i>Not selected</i>}
         </span>
       </h4>
     </div>
@@ -150,39 +150,14 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
     analysisState,
     visualizationId,
   } = props;
-  const studyMetadata = useStudyMetadata();
-  // Include known collection variables in this array.
-  const collections = useVariableCollections(studyMetadata.rootEntity);
-  if (collections.length === 0)
-    throw new Error('Could not find any collections for this app.');
-
-  assertComputationWithConfig<AbundanceConfig>(computation, Computation);
+  assertComputationWithConfig(computation, AbundanceConfig);
   const configuration = computation.descriptor.configuration;
 
-  const changeConfigHandler = useConfigChangeHandler<AbundanceConfig>(
+  const changeConfigHandler = useConfigChangeHandler(
     analysisState,
     computation,
     visualizationId
   );
-
-  const keepCollections =
-    removeAbsoluteAbundanceVariableCollections(collections);
-  const collectionVarItems = makeVariableCollectionItems(
-    keepCollections,
-    undefined
-  );
-
-  const selectedCollectionVar = useMemo(() => {
-    if (configuration && 'collectionVariable' in configuration) {
-      const selectedItem = collectionVarItems.find((item) =>
-        isEqual(item.value, {
-          collectionId: configuration.collectionVariable.collectionId,
-          entityId: configuration.collectionVariable.entityId,
-        })
-      );
-      return selectedItem;
-    }
-  }, [collectionVarItems, configuration]);
 
   const rankingMethod = useMemo(() => {
     if (configuration && 'rankingMethod' in configuration) {
@@ -199,34 +174,43 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
       <div className={cx()}>
         <div className={cx('-InputContainer')}>
           <span>Data</span>
-          <SingleSelect
-            value={
-              selectedCollectionVar
-                ? selectedCollectionVar.value
-                : 'Select the data'
-            }
-            buttonDisplayContent={
-              selectedCollectionVar
-                ? selectedCollectionVar.display
-                : 'Select the data'
-            }
-            items={collectionVarItems}
+          <VariableCollectionSelectList
+            value={configuration.collectionVariable}
             onSelect={partial(changeConfigHandler, 'collectionVariable')}
+            collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
           />
         </div>
         <div className={cx('-InputContainer')}>
           <span>Method</span>
           <SingleSelect
             value={rankingMethod ?? 'Select a method'}
-            buttonDisplayContent={rankingMethod ?? 'Select a method'}
+            buttonDisplayContent={
+              rankingMethod ? capitalize(rankingMethod) : 'Select a method'
+            }
             onSelect={partial(changeConfigHandler, 'rankingMethod')}
             items={ABUNDANCE_METHODS.map((method) => ({
               value: method,
-              display: method,
+              display: capitalize(method),
             }))}
           />
         </div>
       </div>
     </ComputationStepContainer>
   );
+}
+
+// The abundance app's only requirement for the study is that the study
+// contains at least one collection.
+function isEnabledInPicker({
+  studyMetadata,
+}: IsEnabledInPickerParams): boolean {
+  if (!studyMetadata) return false;
+
+  const entities = entityTreeToArray(studyMetadata.rootEntity);
+  // Ensure there are collections in this study. Otherwise, disable app
+  const studyHasCollections = entities.some(
+    (entity) => !!entity.collections?.length
+  );
+
+  return studyHasCollections;
 }

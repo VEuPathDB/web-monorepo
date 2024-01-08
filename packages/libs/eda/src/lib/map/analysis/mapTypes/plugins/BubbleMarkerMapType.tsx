@@ -358,20 +358,24 @@ function MapTypeHeaderDetails(
     boundsZoomLevel: props.appState.boundsZoomLevel,
     configuration,
   });
-  return (
+  const {
+    outputEntity: { id: outputEntityId },
+  } = useCommonData(
+    configuration.selectedVariable,
+    props.geoConfigs,
+    props.studyEntities
+  );
+
+  return outputEntityId != null ? (
     <MapTypeHeaderCounts
-      outputEntityId={configuration.selectedVariable.entityId}
-      totalEntityCount={
-        props.totalCounts.value?.[configuration.selectedVariable.entityId]
-      }
-      totalEntityInSubsetCount={
-        props.filteredCounts.value?.[configuration.selectedVariable.entityId]
-      }
+      outputEntityId={outputEntityId}
+      totalEntityCount={props.totalCounts.value?.[outputEntityId]}
+      totalEntityInSubsetCount={props.filteredCounts.value?.[outputEntityId]}
       visibleEntityCount={
-        markerDataResponse.data?.totalVisibleWithOverlayEntityCount
+        markerDataResponse.data.totalVisibleWithOverlayEntityCount
       }
     />
-  );
+  ) : null;
 }
 
 const processRawBubblesData = (

@@ -1,22 +1,15 @@
-import {
-  useVariableCollections,
-  useStudyMetadata,
-  useFindEntityAndVariableCollection,
-} from '../../..';
+import { useFindEntityAndVariableCollection } from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { partial } from 'lodash';
+import { capitalize, partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
-  makeVariableCollectionItems,
-  findVariableCollectionItemFromDescriptor,
-  removeAbsoluteAbundanceVariableCollections,
+  isNotAbsoluteAbundanceVariableCollection,
+  partialToCompleteCodec,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
-import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
-import { useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -24,6 +17,10 @@ import { H6 } from '@veupathdb/coreui';
 import { bipartiteNetworkVisualization } from '../../visualizations/implementations/BipartiteNetworkVisualization';
 import { variableCollectionsAreUnique } from '../../../utils/visualization';
 import PluginError from '../../visualizations/PluginError';
+import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
+import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
+import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
+import { entityTreeToArray } from '../../../utils/study-metadata';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -44,20 +41,24 @@ export type CorrelationAssayAssayConfig = t.TypeOf<
 >;
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CorrelationAssayAssayConfig = t.type({
+export const CorrelationAssayAssayConfig = t.partial({
   collectionVariable1: VariableCollectionDescriptor,
   collectionVariable2: VariableCollectionDescriptor,
   correlationMethod: t.string,
 });
 
+const CompleteCorrelationAssayAssayConfig = partialToCompleteCodec(
+  CorrelationAssayAssayConfig
+);
+
 export const plugin: ComputationPlugin = {
   configurationComponent: CorrelationAssayAssayConfiguration,
   configurationDescriptionComponent:
     CorrelationAssayAssayConfigDescriptionComponent,
-  createDefaultConfiguration: () => undefined,
-  isConfigurationValid: (configuration) => {
+  createDefaultConfiguration: () => ({}),
+  isConfigurationComplete: (configuration) => {
     return (
-      CorrelationAssayAssayConfig.is(configuration) &&
+      CompleteCorrelationAssayAssayConfig.is(configuration) &&
       variableCollectionsAreUnique([
         configuration.collectionVariable1,
         configuration.collectionVariable2,
@@ -65,8 +66,19 @@ export const plugin: ComputationPlugin = {
     );
   },
   visualizationPlugins: {
-    bipartitenetwork: bipartiteNetworkVisualization, // Must match name in data service and in visualization.tsx
+    bipartitenetwork: bipartiteNetworkVisualization.withOptions({
+      getLegendTitle(config) {
+        if (CorrelationAssayAssayConfig.is(config)) {
+          return ['absolute correlation coefficient', 'correlation direction'];
+        } else {
+          return [];
+        }
+      },
+    }), // Must match name in data service and in visualization.tsx
   },
+  isEnabledInPicker: isEnabledInPicker,
+  studyRequirements:
+    'These visualizations are only available for studies with metagenomic data.',
 };
 
 // Renders on the thumbnail page to give a summary of the app instance
@@ -76,10 +88,7 @@ function CorrelationAssayAssayConfigDescriptionComponent({
   computation: Computation;
 }) {
   const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
-  assertComputationWithConfig<CorrelationAssayAssayConfig>(
-    computation,
-    Computation
-  );
+  assertComputationWithConfig(computation, CorrelationAssayAssayConfig);
 
   const { collectionVariable1, collectionVariable2, correlationMethod } =
     computation.descriptor.configuration;
@@ -116,7 +125,7 @@ function CorrelationAssayAssayConfigDescriptionComponent({
         Method:{' '}
         <span>
           {correlationMethod ? (
-            correlationMethod[0].toUpperCase() + correlationMethod.slice(1)
+            capitalize(correlationMethod)
           ) : (
             <i>Not selected</i>
           )}
@@ -125,6 +134,8 @@ function CorrelationAssayAssayConfigDescriptionComponent({
     </div>
   );
 }
+
+const CORRELATION_METHODS = ['spearman', 'pearson'];
 
 // Shows as Step 1 in the full screen visualization page
 export function CorrelationAssayAssayConfiguration(
@@ -137,54 +148,15 @@ export function CorrelationAssayAssayConfiguration(
     visualizationId,
   } = props;
 
-  const configuration = computation.descriptor
-    .configuration as CorrelationAssayAssayConfig;
-  const studyMetadata = useStudyMetadata();
+  assertComputationWithConfig(computation, CorrelationAssayAssayConfig);
 
-  // For now, set the method to 'spearman'. When we add the next method, we can just add it here (no api change!)
-  if (configuration) configuration.correlationMethod = 'spearman';
+  const { configuration } = computation.descriptor;
 
-  // Include known collection variables in this array.
-  const collectionDescriptors = useVariableCollections(
-    studyMetadata.rootEntity
-  );
-  if (collectionDescriptors.length === 0)
-    throw new Error('Could not find any collections for this app.');
-
-  assertComputationWithConfig<CorrelationAssayAssayConfig>(
+  const changeConfigHandler = useConfigChangeHandler(
+    analysisState,
     computation,
-    Computation
+    visualizationId
   );
-
-  const changeConfigHandler =
-    useConfigChangeHandler<CorrelationAssayAssayConfig>(
-      analysisState,
-      computation,
-      visualizationId
-    );
-
-  const keepCollections = removeAbsoluteAbundanceVariableCollections(
-    collectionDescriptors
-  );
-  // this should also make it easy to disable already selected items if we decide wed rather go that route
-  const collectionVarItems = makeVariableCollectionItems(
-    keepCollections,
-    undefined
-  );
-
-  const selectedCollectionVar1 = useMemo(() => {
-    return findVariableCollectionItemFromDescriptor(
-      collectionVarItems,
-      configuration?.collectionVariable1
-    );
-  }, [collectionVarItems, configuration?.collectionVariable1]);
-
-  const selectedCollectionVar2 = useMemo(() => {
-    return findVariableCollectionItemFromDescriptor(
-      collectionVarItems,
-      configuration?.collectionVariable2
-    );
-  }, [collectionVarItems, configuration?.collectionVariable2]);
 
   return (
     <ComputationStepContainer
@@ -195,38 +167,39 @@ export function CorrelationAssayAssayConfiguration(
     >
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <div className={cx()}>
-          <div className={cx('-CorrelationAssayAssayOuterConfigContainer')}>
+          <div className={cx('-CorrelationOuterConfigContainer')}>
             <H6>Input Data</H6>
             <div className={cx('-InputContainer')}>
               <span>Data 1</span>
-              <SingleSelect
-                value={
-                  selectedCollectionVar1
-                    ? selectedCollectionVar1.value
-                    : 'Select the data'
-                }
-                buttonDisplayContent={
-                  selectedCollectionVar1
-                    ? selectedCollectionVar1.display
-                    : 'Select the data'
-                }
-                items={collectionVarItems}
+              <VariableCollectionSelectList
+                value={configuration.collectionVariable1}
                 onSelect={partial(changeConfigHandler, 'collectionVariable1')}
+                collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
               />
               <span>Data 2</span>
-              <SingleSelect
-                value={
-                  selectedCollectionVar2
-                    ? selectedCollectionVar2.value
-                    : 'Select the data'
-                }
-                buttonDisplayContent={
-                  selectedCollectionVar2
-                    ? selectedCollectionVar2.display
-                    : 'Select the data'
-                }
-                items={collectionVarItems}
+              <VariableCollectionSelectList
+                value={configuration.collectionVariable2}
                 onSelect={partial(changeConfigHandler, 'collectionVariable2')}
+                collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
+              />
+            </div>
+          </div>
+          <div className={cx('-CorrelationOuterConfigContainer')}>
+            <H6>Correlation Method</H6>
+            <div className={cx('-InputContainer')}>
+              <span>Method</span>
+              <SingleSelect
+                value={configuration.correlationMethod ?? 'Select a method'}
+                buttonDisplayContent={
+                  configuration.correlationMethod
+                    ? capitalize(configuration.correlationMethod)
+                    : 'Select a method'
+                }
+                items={CORRELATION_METHODS.map((method: string) => ({
+                  value: method,
+                  display: capitalize(method),
+                }))}
+                onSelect={partial(changeConfigHandler, 'correlationMethod')}
               />
             </div>
           </div>
@@ -235,8 +208,8 @@ export function CorrelationAssayAssayConfiguration(
           <PluginError
             error={
               !variableCollectionsAreUnique([
-                selectedCollectionVar1?.value,
-                selectedCollectionVar2?.value,
+                configuration.collectionVariable1,
+                configuration.collectionVariable2,
               ])
                 ? 'Input data must be unique. Please select different data.'
                 : undefined
@@ -246,4 +219,22 @@ export function CorrelationAssayAssayConfiguration(
       </div>
     </ComputationStepContainer>
   );
+}
+
+// The correlation assay x assay app should only be available
+// for studies with metagenomic data.
+function isEnabledInPicker({
+  studyMetadata,
+}: IsEnabledInPickerParams): boolean {
+  if (!studyMetadata) return false;
+
+  const entities = entityTreeToArray(studyMetadata.rootEntity);
+
+  // Check that the metagenomic entity exists _and_ that it has
+  // at least one collection.
+  const hasMetagenomicData = entities.some(
+    (entity) => entity.id === 'OBI_0002623' && !!entity.collections?.length
+  ); // OBI_0002623 = Metagenomic sequencing assay
+
+  return hasMetagenomicData;
 }

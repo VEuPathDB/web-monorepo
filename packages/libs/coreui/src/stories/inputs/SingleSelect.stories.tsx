@@ -1,9 +1,10 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import SingleSelect, {
   SingleSelectProps,
 } from '../../components/inputs/SingleSelect';
+import { chunk, range } from 'lodash';
 
 export default {
   title: 'Inputs/SingleSelect',
@@ -78,6 +79,33 @@ export const ToggleDisabledState: Story<SingleSelectProps<unknown>> = () => {
         onSelect={setSelectedOption}
         buttonDisplayContent={buttonDisplayContent}
         isDisabled={isDisabled}
+      />
+    </div>
+  );
+};
+
+export const SingleSelectWithGroups: Story<SingleSelectProps<unknown>> = () => {
+  const options = chunk(range(1, 100), 4).map((group, index) => ({
+    label: 'Group ' + index,
+    items: group.map((num) => ({
+      display: 'Number ' + num.toLocaleString(),
+      value: num,
+    })),
+  }));
+  const [selectedOption, setSelectedOption] = useState<number>();
+  const buttonDisplayContent = selectedOption
+    ? options
+        .flatMap((option) => option.items)
+        .find((option) => selectedOption === option.value)?.display
+    : 'Select a number';
+
+  return (
+    <div>
+      <SingleSelect
+        items={options}
+        value={selectedOption}
+        onSelect={setSelectedOption}
+        buttonDisplayContent={buttonDisplayContent}
       />
     </div>
   );

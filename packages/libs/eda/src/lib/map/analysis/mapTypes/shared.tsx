@@ -152,7 +152,6 @@ export function useDistributionOverlayConfig(
         };
         return overlayConfig;
       }
-      console.log('fetching data for distributionOverlayConfig');
       const { entity: overlayEntity, variable: overlayVariable } =
         findEntityAndVariable(props.overlayVariableDescriptor) ?? {};
       return getDefaultOverlayConfig({
@@ -216,10 +215,6 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
     selectedValues,
   });
 
-  if (overlayConfigResult.error) {
-    throw new Error('Could not get overlay config');
-  }
-
   const requestParams: StandaloneMapMarkersRequestParams = {
     studyId,
     filters: filters || [],
@@ -235,7 +230,7 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
   };
   const overlayConfig = overlayConfigResult.data;
 
-  return useQuery({
+  const markerQuery = useQuery({
     keepPreviousData: true,
     queryKey: ['mapMarkers', requestParams],
     queryFn: async () => {
@@ -302,8 +297,17 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
         boundsZoomLevel,
       };
     },
-    enabled: overlayConfig != null,
+    enabled: overlayConfig != null && !overlayConfigResult.isFetching,
   });
+
+  return {
+    ...markerQuery,
+    error: overlayConfigResult.error ?? markerQuery.error,
+    isFetching: overlayConfigResult.isFetching || markerQuery.isFetching,
+    isPreviousData: overlayConfigResult.error
+      ? false
+      : markerQuery.isPreviousData,
+  };
 }
 
 function fixLabelForOtherValues(input: string): string {
@@ -365,3 +369,25 @@ export const GLOBAL_VIEWPORT = {
     right: 180,
   },
 };
+
+/**
+ * Error handling helpers
+ *
+ * The patterns are matched against the 500 error messages from the back end
+ */
+
+const noDataPatterns = [
+  /did not contain any data/, // comes from map-markers endpoint
+  /Could not generate continuous variable metadata/, // comes from continuous-variable-metadata endpoint
+];
+
+export function isNoDataError(error: unknown) {
+  return noDataPatterns.some((pattern) => String(error).match(pattern));
+}
+
+export const noDataErrorMessage = (
+  <div css={{ textAlign: 'center', width: 200 }}>
+    <p>Your filters have removed all data for this variable.</p>
+    <p>Please check your filters or choose another variable.</p>
+  </div>
+);

@@ -13,9 +13,7 @@ module.exports = function (app) {
       changeOrigin: true,
       followRedirects: true,
       logLevel: 'debug',
-      onProxyReq: function (proxyReq) {
-        addPrereleaseAuthCookieToProxyReq(proxyReq);
-      },
+      onProxyReq: addPrereleaseAuthCookieToProxyReq,
     })
   );
   app.use(
