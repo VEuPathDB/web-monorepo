@@ -18,6 +18,16 @@
     }
   }
 
+  &-CorrelationOuterConfigContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75em;
+    span {
+      white-space: nowrap;
+    }
+    text-transform: capitalize;
+  }
+
   &-InputContainer {
     display: flex;
     gap: 0.75em;
