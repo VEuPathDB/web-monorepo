@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BoundsViewport, Bounds } from '../../map/Types';
 import { allColorsHex, chartMarkerColorsHex } from '../../map/config/map';
 import { leafletZoomLevelToGeohashLevel } from '../../map/utils/leaflet-geohash';

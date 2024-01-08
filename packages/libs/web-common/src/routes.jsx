@@ -17,7 +17,7 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { showLoginForm as showLoginFormAction } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 
 import {
-  edaExampleAnalysesAuthor,
+  edaExampleAnalysesAuthors,
   edaServiceUrl,
   edaSingleAppMode,
   showUnreleasedData,
@@ -28,6 +28,10 @@ export const STATIC_ROUTE_PATH = '/static-content';
 
 export function makeEdaRoute(studyId) {
   return '/workspace/analyses' + (studyId ? `/${studyId}` : '');
+}
+
+export function makeMapRoute(studyId) {
+  return '/workspace/maps' + (studyId ? `/${studyId}` : '');
 }
 
 const EdaWorkspace = React.lazy(() => import('@veupathdb/eda/lib/workspace'));
@@ -59,7 +63,7 @@ export const wrapRoutes = (wdkRoutes) => [
           <EdaWorkspace
             showUnreleasedData={showUnreleasedData}
             edaServiceUrl={edaServiceUrl}
-            exampleAnalysesAuthor={edaExampleAnalysesAuthor}
+            exampleAnalysesAuthors={edaExampleAnalysesAuthors}
             sharingUrlPrefix={window.location.origin}
             showLoginForm={showLoginForm}
             singleAppMode={edaSingleAppMode}
@@ -70,13 +74,13 @@ export const wrapRoutes = (wdkRoutes) => [
   },
 
   {
-    path: '/workspace/maps',
+    path: makeMapRoute(),
     exact: true,
     component: EdaMapController,
   },
 
   {
-    path: '/workspace/maps',
+    path: makeMapRoute(),
     exact: false,
     isFullscreen: true,
     rootClassNameModifier: 'MapVEu',
@@ -88,7 +92,7 @@ export const wrapRoutes = (wdkRoutes) => [
     exact: false,
     isFullscreen: true,
     rootClassNameModifier: 'MapVEu',
-    component: () => <Redirect to="/workspace/maps" />,
+    component: () => <Redirect to={makeMapRoute()} />,
   },
 
   {

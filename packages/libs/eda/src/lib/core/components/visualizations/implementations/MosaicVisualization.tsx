@@ -68,7 +68,7 @@ import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { LayoutOptions } from '../../layouts/types';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { useInputStyles } from '../inputStyles';
-import { ClearSelectionButton } from '../../variableTrees/VariableTreeDropdown';
+import { ClearSelectionButton } from '../../variableSelectors/VariableTreeDropdown';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
@@ -87,10 +87,6 @@ const plotContainerStyles = {
 };
 
 const plotSpacingOptions = {};
-
-const statsTableStyles = {
-  width: plotContainerStyles.width,
-};
 
 const facetedStatsTableStyles = {};
 
@@ -200,11 +196,20 @@ function MosaicViz(props: Props<Options>) {
     toggleStarredVariable,
     totalCounts,
     filteredCounts,
+    hideInputsAndControls,
+    plotContainerStyleOverrides,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
+  const finalPlotContainerStyles = useMemo(
+    () => ({
+      ...plotContainerStyles,
+      ...plotContainerStyleOverrides,
+    }),
+    [plotContainerStyleOverrides]
+  );
 
   // set default tab to Mosaic in TabbedDisplay component
   const [activeTab, setActiveTab] = useState(
@@ -549,12 +554,14 @@ function MosaicViz(props: Props<Options>) {
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
-    plotContainerStyles,
+    finalPlotContainerStyles,
     [data]
   );
 
   const mosaicProps: MosaicPlotProps = {
-    containerStyles: !isFaceted(data.value) ? plotContainerStyles : undefined,
+    containerStyles: !isFaceted(data.value)
+      ? finalPlotContainerStyles
+      : undefined,
     spacingOptions: !isFaceted(data.value) ? plotSpacingOptions : undefined,
     independentAxisLabel: xAxisLabel ?? 'X-axis',
     dependentAxisLabel: yAxisLabel ?? 'Y-axis',
@@ -611,7 +618,7 @@ function MosaicViz(props: Props<Options>) {
                 tableContainerStyles={
                   isFaceted(data.value)
                     ? facetedStatsTableStyles
-                    : statsTableStyles
+                    : { width: finalPlotContainerStyles.width }
                 }
                 facetedContainerStyles={facetedStatsTableContainerStyles}
                 independentVariable={xAxisLabel ?? 'X-axis'}
@@ -982,36 +989,40 @@ function MosaicViz(props: Props<Options>) {
       )}
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
-          <InputVariables
-            inputs={inputs}
-            customSections={
-              isTwoByTwo ? twoByTwoReferenceValueInputs : undefined
-            }
-            entities={entities}
-            selectedVariables={selectedVariables}
-            onChange={handleInputVariableChange}
-            constraints={dataElementConstraints}
-            dataElementDependencyOrder={dataElementDependencyOrder}
-            starredVariables={starredVariables}
-            toggleStarredVariable={toggleStarredVariable}
-            enableShowMissingnessToggle={
-              facetVariable != null &&
-              data.value?.completeCasesAllVars !==
-                data.value?.completeCasesAxesVars
-            }
-            showMissingness={vizConfig.showMissingness}
-            // this can be used to show and hide no data control
-            onShowMissingnessChange={
-              computation.descriptor.type === 'pass'
-                ? onShowMissingnessChange
-                : undefined
-            }
-            outputEntity={outputEntity}
-          />
+          {!hideInputsAndControls && (
+            <InputVariables
+              inputs={inputs}
+              customSections={
+                isTwoByTwo ? twoByTwoReferenceValueInputs : undefined
+              }
+              entities={entities}
+              selectedVariables={selectedVariables}
+              onChange={handleInputVariableChange}
+              constraints={dataElementConstraints}
+              dataElementDependencyOrder={dataElementDependencyOrder}
+              starredVariables={starredVariables}
+              toggleStarredVariable={toggleStarredVariable}
+              enableShowMissingnessToggle={
+                facetVariable != null &&
+                data.value?.completeCasesAllVars !==
+                  data.value?.completeCasesAxesVars
+              }
+              showMissingness={vizConfig.showMissingness}
+              // this can be used to show and hide no data control
+              onShowMissingnessChange={
+                computation.descriptor.type === 'pass'
+                  ? onShowMissingnessChange
+                  : undefined
+              }
+              outputEntity={outputEntity}
+            />
+          )}
         </div>
 
         <PluginError error={data.error} outputSize={outputSize} />
-        <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+        {!hideInputsAndControls && (
+          <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+        )}
         <LayoutComponent
           isFaceted={isFaceted(data.value)}
           plotNode={plotNode}
@@ -1019,6 +1030,7 @@ function MosaicViz(props: Props<Options>) {
           tableGroupNode={tableGroupNode}
           showRequiredInputsPrompt={!areRequiredInputsSelected}
           isMosaicPlot={true}
+          hideControls={hideInputsAndControls}
         />
       </div>
     </>

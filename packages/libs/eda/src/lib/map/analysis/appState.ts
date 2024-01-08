@@ -2,14 +2,11 @@ import { getOrElseW } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { isEqual } from 'lodash';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
-import {
-  AnalysisState,
-  useGetDefaultVariableDescriptor,
-  useStudyMetadata,
-} from '../../core';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useAnalysis, useGetDefaultVariableDescriptor } from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
 import { useGetDefaultTimeVariableDescriptor } from './hooks/eztimeslider';
+import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
 
 const LatLngLiteral = t.type({ lat: t.number, lng: t.number });
 
@@ -48,6 +45,9 @@ export const MarkerConfiguration = t.intersection([
     type: MarkerType,
     selectedVariable: VariableDescriptor,
   }),
+  t.partial({
+    activeVisualizationId: t.string,
+  }),
   t.union([
     t.type({
       type: t.literal('barplot'),
@@ -84,9 +84,9 @@ export const AppState = t.intersection([
     }),
     activeMarkerConfigurationType: MarkerType,
     markerConfigurations: t.array(MarkerConfiguration),
+    isSidePanelExpanded: t.boolean,
   }),
   t.partial({
-    activeVisualizationId: t.string,
     boundsZoomLevel: t.type({
       zoomLevel: t.number,
       bounds: t.type({
@@ -116,13 +116,21 @@ export const AppState = t.intersection([
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export type AppState = t.TypeOf<typeof AppState>;
 
-// export default viewport for custom zoom control
-export const defaultViewport: AppState['viewport'] = {
-  center: [0, 0],
-  zoom: 1,
-};
+export function useAppState(
+  uiStateKey: string,
+  analysisId?: string,
+  singleAppMode?: string
+) {
+  const analysisState = useAnalysis(analysisId, singleAppMode);
 
-export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
+  // make some backwards compatability updates to the appstate retrieved from the back end
+  const [appStateChecked, setAppStateChecked] = useState(false);
+
+  useEffect(() => {
+    // flip bit when analysis id changes
+    setAppStateChecked(false);
+  }, [analysisId]);
+
   const { analysis, setVariableUISettings } = analysisState;
   const appState = pipe(
     AppState.decode(
@@ -143,6 +151,7 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
       viewport: defaultViewport,
       mouseMode: 'default',
       activeMarkerConfigurationType: 'pie',
+      isSidePanelExpanded: true,
       timeSliderConfig: {
         variable: defaultTimeVariable,
         active: true,
@@ -177,11 +186,8 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
     [defaultVariable, defaultTimeVariable]
   );
 
-  // make some backwards compatability updates to the appstate retrieved from the back end
-  const appStateCheckedRef = useRef(false);
-
   useEffect(() => {
-    if (appStateCheckedRef.current) return;
+    if (appStateChecked) return;
     if (analysis) {
       if (!appState) {
         setVariableUISettings((prev) => ({
@@ -216,11 +222,21 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
           }));
         }
       }
-      appStateCheckedRef.current = true;
+      setAppStateChecked(true);
     }
-  }, [analysis, appState, setVariableUISettings, uiStateKey, defaultAppState]);
+  }, [
+    analysis,
+    appState,
+    setVariableUISettings,
+    uiStateKey,
+    defaultAppState,
+    appStateChecked,
+  ]);
 
-  function useSetter<T extends keyof AppState>(key: T) {
+  function useSetter<T extends keyof AppState>(
+    key: T,
+    createIfUnsaved = false
+  ) {
     return useCallback(
       function setter(value: AppState[T]) {
         setVariableUISettings((prev) => {
@@ -235,23 +251,24 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
             };
           }
           return prev;
-        });
+        }, createIfUnsaved);
       },
-      [key]
+      [key, createIfUnsaved]
     );
   }
 
   return {
     appState,
+    analysisState,
     setActiveMarkerConfigurationType: useSetter(
-      'activeMarkerConfigurationType'
+      'activeMarkerConfigurationType',
+      true
     ),
-    setMarkerConfigurations: useSetter('markerConfigurations'),
-    setActiveVisualizationId: useSetter('activeVisualizationId'),
+    setMarkerConfigurations: useSetter('markerConfigurations', true),
     setBoundsZoomLevel: useSetter('boundsZoomLevel'),
-    setIsSubsetPanelOpen: useSetter('isSubsetPanelOpen'),
+    setIsSidePanelExpanded: useSetter('isSidePanelExpanded'),
     setSubsetVariableAndEntity: useSetter('subsetVariableAndEntity'),
     setViewport: useSetter('viewport'),
-    setTimeSliderConfig: useSetter('timeSliderConfig'),
+    setTimeSliderConfig: useSetter('timeSliderConfig', true),
   };
 }

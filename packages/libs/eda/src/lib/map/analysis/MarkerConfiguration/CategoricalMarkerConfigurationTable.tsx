@@ -5,9 +5,10 @@ import { AllValuesDefinition } from '../../../core';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import { UNSELECTED_TOKEN } from '../../';
+import { UNSELECTED_TOKEN } from '../../constants';
 import { orderBy } from 'lodash';
 import { SelectedCountsOption } from '../appState';
+import Spinner from '@veupathdb/components/lib/components/Spinner';
 
 type Props<T> = {
   overlayValues: string[];
@@ -17,6 +18,7 @@ type Props<T> = {
   setUncontrolledSelections: (v: Set<string>) => void;
   allCategoricalValues: AllValuesDefinition[] | undefined;
   selectedCountsOption: SelectedCountsOption;
+  isAllCategoricalValuesLoading: boolean;
 };
 
 const DEFAULT_SORTING: MesaSortObject = {
@@ -34,9 +36,10 @@ export function CategoricalMarkerConfigurationTable<T>({
   setUncontrolledSelections,
   allCategoricalValues = [],
   selectedCountsOption,
+  isAllCategoricalValuesLoading,
 }: Props<T>) {
   const [sort, setSort] = useState<MesaSortObject>(DEFAULT_SORTING);
-  const totalCount = allCategoricalValues.reduce(
+  const totalCount = allCategoricalValues?.reduce(
     (prev, curr) => prev + curr.count,
     0
   );
@@ -169,6 +172,10 @@ export function CategoricalMarkerConfigurationTable<T>({
          */
         key: 'label',
         name: 'Values',
+        style: {
+          wordBreak: 'break-word',
+          hyphens: 'auto',
+        },
         sortable: true,
         renderCell: (data: { row: AllValuesDefinition }) => (
           <>{data.row.label}</>
@@ -191,22 +198,36 @@ export function CategoricalMarkerConfigurationTable<T>({
       },
     ],
   };
+
   return (
     <div
       style={{
-        padding: 15,
+        padding: 10,
         border: `1px solid rgb(204,204,204)`,
         width: 'fit-content',
       }}
     >
       <div
         style={{
-          maxWidth: '50vw',
+          maxWidth: '340px',
           maxHeight: 300,
-          overflow: 'auto',
+          minHeight: 60,
+          overflow: isAllCategoricalValuesLoading ? 'none' : 'auto',
         }}
       >
-        <Mesa state={tableState} />
+        {isAllCategoricalValuesLoading ? (
+          <Spinner
+            size={50}
+            styleOverrides={{
+              position: 'relative',
+              top: '0%',
+              left: '0%',
+              transform: '',
+            }}
+          />
+        ) : (
+          <Mesa state={tableState} />
+        )}
       </div>
       <RadioButtonGroup
         containerStyles={
@@ -221,7 +242,7 @@ export function CategoricalMarkerConfigurationTable<T>({
         options={['filtered', 'visible']}
         optionLabels={['Filtered', 'Visible']}
         buttonColor={'primary'}
-        // margins={['0em', '0', '0', '1em']}
+        margins={['1em', '0', '0', '0em']}
         onOptionSelected={handleCountsSelection}
       />
     </div>

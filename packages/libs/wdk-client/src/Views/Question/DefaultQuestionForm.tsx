@@ -30,6 +30,9 @@ import StepValidationInfo from '../../Views/Question/StepValidationInfo';
 import { Tabs } from '../../Components';
 
 import '../../Views/Question/DefaultQuestionForm.scss';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { type } from 'os';
+import { BetaIcon } from '../../Core/Style/Icons/BetaIcon';
 
 type TextboxChangeHandler = (
   event: React.ChangeEvent<HTMLInputElement>
@@ -239,6 +242,7 @@ export default function DefaultQuestionForm(props: Props) {
           submissionMetadata.type === 'edit-step'
         }
         headerText={`Identify ${recordClass.displayNamePlural} based on ${question.displayName}`}
+        isBeta={question.isBeta}
       />
       <Tabs
         activeTab={selectedTab}
@@ -263,12 +267,15 @@ export default function DefaultQuestionForm(props: Props) {
 type QuestionHeaderProps = {
   headerText: string;
   showHeader: boolean;
+  isBeta?: boolean;
 };
 
 export function QuestionHeader(props: QuestionHeaderProps) {
   return props.showHeader ? (
     <div className={cx('QuestionHeader')}>
-      <h1>{props.headerText}</h1>
+      <h1>
+        {props.headerText} {props.isBeta && <BetaIcon />}
+      </h1>
     </div>
   ) : (
     <></>
@@ -408,9 +415,12 @@ export function ParameterList(props: ParameterListProps) {
               }
             />
             {parameter.visibleHelp !== undefined && (
-              <div className={cx('VisibleHelp')}>
-                {safeHtml(parameter.visibleHelp)}
-              </div>
+              <Banner
+                banner={{
+                  type: 'info',
+                  message: safeHtml(parameter.visibleHelp, null, 'div'),
+                }}
+              />
             )}
             <div className={cx('ParameterControl')}>
               {parameterElements[parameter.name]}
@@ -428,12 +438,12 @@ function ParameterHeading(props: {
   const { parameter, paramDependencyUpdating } = props;
   return (
     <div className={cx('ParameterHeading')}>
-      <h2>
+      <h3>
         <HelpIcon>{safeHtml(parameter.help)}</HelpIcon> {parameter.displayName}
         {paramDependencyUpdating && (
           <IconAlt fa="circle-o-notch" className="fa-spin fa-fw" />
         )}
-      </h2>
+      </h3>
     </div>
   );
 }

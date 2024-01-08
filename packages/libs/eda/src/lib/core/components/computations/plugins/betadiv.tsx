@@ -1,9 +1,14 @@
-import { useCollectionVariables, useStudyMetadata } from '../../..';
-import { VariableDescriptor } from '../../../types/variable';
+import { useFindEntityAndVariableCollection } from '../../..';
+import { VariableCollectionDescriptor } from '../../../types/variable';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { isEqual, partial } from 'lodash';
-import { useConfigChangeHandler, assertComputationWithConfig } from '../Utils';
+import { capitalize, partial } from 'lodash';
+import {
+  useConfigChangeHandler,
+  assertComputationWithConfig,
+  isNotAbsoluteAbundanceVariableCollection,
+  partialToCompleteCodec,
+} from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
@@ -12,26 +17,31 @@ import ScatterBetadivSVG from '../../visualizations/implementations/selectorIcon
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
+import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
+import { entityTreeToArray } from '../../../utils/study-metadata';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
 export type BetaDivConfig = t.TypeOf<typeof BetaDivConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BetaDivConfig = t.type({
-  collectionVariable: VariableDescriptor,
+export const BetaDivConfig = t.partial({
+  collectionVariable: VariableCollectionDescriptor,
   betaDivDissimilarityMethod: t.string,
 });
+
+const CompleteBetaDivConfig = partialToCompleteCodec(BetaDivConfig);
 
 export const plugin: ComputationPlugin = {
   configurationComponent: BetaDivConfiguration,
   configurationDescriptionComponent: BetaDivConfigDescriptionComponent,
-  createDefaultConfiguration: () => undefined,
-  isConfigurationValid: BetaDivConfig.is,
+  createDefaultConfiguration: () => ({}),
+  isConfigurationComplete: CompleteBetaDivConfig.is,
   visualizationPlugins: {
     scatterplot: scatterplotVisualization
       .withOptions({
         getComputedXAxisDetails(config) {
-          if (BetaDivConfig.is(config)) {
+          if (BetaDivConfig.is(config) && config.collectionVariable) {
             return {
               entityId: config.collectionVariable.entityId,
               placeholderDisplayName: 'Beta Diversity Axis 1',
@@ -40,7 +50,7 @@ export const plugin: ComputationPlugin = {
           }
         },
         getComputedYAxisDetails(config) {
-          if (BetaDivConfig.is(config)) {
+          if (BetaDivConfig.is(config) && config.collectionVariable) {
             return {
               entityId: config.collectionVariable.entityId,
               placeholderDisplayName: 'Beta Diversity Axis 2',
@@ -55,6 +65,9 @@ export const plugin: ComputationPlugin = {
       })
       .withSelectorIcon(ScatterBetadivSVG),
   },
+  isEnabledInPicker: isEnabledInPicker,
+  studyRequirements:
+    'These visualizations are only available for studies with compatible assay data.',
 };
 
 function BetaDivConfigDescriptionComponent({
@@ -62,9 +75,8 @@ function BetaDivConfigDescriptionComponent({
 }: {
   computation: Computation;
 }) {
-  const studyMetadata = useStudyMetadata();
-  const collections = useCollectionVariables(studyMetadata.rootEntity);
-  assertComputationWithConfig<BetaDivConfig>(computation, Computation);
+  const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
+  assertComputationWithConfig(computation, BetaDivConfig);
   const { configuration } = computation.descriptor;
   const collectionVariable =
     'collectionVariable' in configuration
@@ -74,22 +86,15 @@ function BetaDivConfigDescriptionComponent({
     'betaDivDissimilarityMethod' in configuration
       ? configuration.betaDivDissimilarityMethod
       : undefined;
-  const updatedCollectionVariable = collections.find((collectionVar) =>
-    isEqual(
-      {
-        variableId: collectionVar.id,
-        entityId: collectionVar.entityId,
-      },
-      collectionVariable
-    )
-  );
+  const updatedCollectionVariable =
+    findEntityAndVariableCollection(collectionVariable);
   return (
     <div className="ConfigDescriptionContainer">
       <h4>
         Data:{' '}
         <span>
           {updatedCollectionVariable ? (
-            `${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}`
+            `${updatedCollectionVariable.entity.displayName} > ${updatedCollectionVariable.variableCollection.displayName}`
           ) : (
             <i>Not selected</i>
           )}
@@ -99,8 +104,11 @@ function BetaDivConfigDescriptionComponent({
         Dissimilarity method:{' '}
         <span>
           {betaDivDissimilarityMethod ? (
-            betaDivDissimilarityMethod[0].toUpperCase() +
-            betaDivDissimilarityMethod.slice(1)
+            betaDivDissimilarityMethod === 'jsd' ? (
+              betaDivDissimilarityMethod.toUpperCase()
+            ) : (
+              capitalize(betaDivDissimilarityMethod)
+            )
           ) : (
             <i>Not selected</i>
           )}
@@ -120,49 +128,14 @@ export function BetaDivConfiguration(props: ComputationConfigProps) {
     analysisState,
     visualizationId,
   } = props;
-  const studyMetadata = useStudyMetadata();
-  // Include known collection variables in this array.
-  const collections = useCollectionVariables(studyMetadata.rootEntity);
-  if (collections.length === 0)
-    throw new Error('Could not find any collections for this app.');
-
-  assertComputationWithConfig<BetaDivConfig>(computation, Computation);
+  assertComputationWithConfig(computation, BetaDivConfig);
   const configuration = computation.descriptor.configuration;
 
-  const changeConfigHandler = useConfigChangeHandler<BetaDivConfig>(
+  const changeConfigHandler = useConfigChangeHandler(
     analysisState,
     computation,
     visualizationId
   );
-
-  const collectionVarItems = useMemo(() => {
-    return collections
-      .filter((collectionVar) => {
-        return collectionVar.normalizationMethod
-          ? collectionVar.normalizationMethod !== 'NULL'
-          : true;
-      })
-      .map((collectionVar) => ({
-        value: {
-          variableId: collectionVar.id,
-          entityId: collectionVar.entityId,
-        },
-        display:
-          collectionVar.entityDisplayName + ' > ' + collectionVar.displayName,
-      }));
-  }, [collections]);
-
-  const selectedCollectionVar = useMemo(() => {
-    if (configuration && 'collectionVariable' in configuration) {
-      const selectedItem = collectionVarItems.find((item) =>
-        isEqual(item.value, {
-          variableId: configuration.collectionVariable.variableId,
-          entityId: configuration.collectionVariable.entityId,
-        })
-      );
-      return selectedItem;
-    }
-  }, [collectionVarItems, configuration]);
 
   const betaDivDissimilarityMethod = useMemo(() => {
     if (configuration && 'betaDivDissimilarityMethod' in configuration) {
@@ -180,19 +153,10 @@ export function BetaDivConfiguration(props: ComputationConfigProps) {
       <div className={cx()}>
         <div className={cx('-InputContainer')}>
           <span>Data</span>
-          <SingleSelect
-            value={
-              selectedCollectionVar
-                ? selectedCollectionVar.value
-                : 'Select the data'
-            }
-            buttonDisplayContent={
-              selectedCollectionVar
-                ? selectedCollectionVar.display
-                : 'Select the data'
-            }
-            items={collectionVarItems}
+          <VariableCollectionSelectList
+            value={configuration.collectionVariable}
             onSelect={partial(changeConfigHandler, 'collectionVariable')}
+            collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
           />
         </div>
         <div className={cx('-InputContainer')}>
@@ -200,11 +164,19 @@ export function BetaDivConfiguration(props: ComputationConfigProps) {
           <SingleSelect
             value={betaDivDissimilarityMethod ?? 'Select a method'}
             buttonDisplayContent={
-              betaDivDissimilarityMethod ?? 'Select a method'
+              betaDivDissimilarityMethod
+                ? betaDivDissimilarityMethod === 'jsd'
+                  ? betaDivDissimilarityMethod.toUpperCase()
+                  : capitalize(betaDivDissimilarityMethod)
+                : 'Select a method'
             }
             items={BETA_DIV_DISSIMILARITY_METHODS.map((method) => ({
               value: method,
-              display: method,
+              display: method
+                ? method === 'jsd'
+                  ? method.toUpperCase()
+                  : capitalize(method)
+                : 'Select a method',
             }))}
             onSelect={partial(
               changeConfigHandler,
@@ -215,4 +187,20 @@ export function BetaDivConfiguration(props: ComputationConfigProps) {
       </div>
     </ComputationStepContainer>
   );
+}
+
+// Beta div's only requirement of the study is that it contains
+// at least one collection
+function isEnabledInPicker({
+  studyMetadata,
+}: IsEnabledInPickerParams): boolean {
+  if (!studyMetadata) return false;
+  const entities = entityTreeToArray(studyMetadata.rootEntity);
+
+  // Ensure there are collections in this study. Otherwise, disable app
+  const studyHasCollections = entities.some(
+    (entity) => !!entity.collections?.length
+  );
+
+  return studyHasCollections;
 }

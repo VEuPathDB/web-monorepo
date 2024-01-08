@@ -23,6 +23,7 @@ export interface LegendItemsProps {
   group?: number;
   rank?: number;
   hideFromLegend?: boolean;
+  lineThickness?: string; // determines the stroke width. Example: '3px'. Default: '0.15em'.
 }
 
 export interface PlotListLegendProps {
@@ -69,10 +70,10 @@ export default function PlotListLegend({
   const circleMarkerSize = circleMarkerSizeNum.toString() + 'em';
   const scatterMarkerSpace = '2em';
 
-  const Line = (props: { color?: string }) => (
+  const Line = (props: { color?: string; thickness?: string }) => (
     <div
       style={{
-        height: '0.15em',
+        height: props.thickness ?? '0.15em',
         width: scatterMarkerSpace,
         borderWidth: '0',
         backgroundColor: props.color,
@@ -94,7 +95,9 @@ export default function PlotListLegend({
                     key={item.label}
                     title={item.label}
                     style={{
-                      cursor: 'pointer',
+                      // only those items with checkboxes that actually have data should look clickable
+                      cursor:
+                        showCheckbox && item.hasData ? 'pointer' : 'default',
                       display: 'flex',
                       alignItems: 'center',
                       fontSize: legendTextSize,
@@ -198,7 +201,10 @@ export default function PlotListLegend({
                       {/* for scatter plot: smoothed mean or best fit line */}
                       {item.marker === 'line' && (
                         <div style={{ width: scatterMarkerSpace }}>
-                          <Line color={item.markerColor} />
+                          <Line
+                            color={item.markerColor}
+                            thickness={item.lineThickness}
+                          />
                         </div>
                       )}
                       {item.marker === 'lineWithCircle' && (

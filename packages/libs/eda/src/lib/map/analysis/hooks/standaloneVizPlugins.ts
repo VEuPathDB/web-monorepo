@@ -1,7 +1,7 @@
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import * as t from 'io-ts';
 import { ComputationPlugin } from '../../../core/components/computations/Types';
-import { ZeroConfigWithButton } from '../../../core/components/computations/ZeroConfiguration';
+import { ZeroConfiguration } from '../../../core/components/computations/ZeroConfiguration';
 import { FloatingLayout } from '../../../core/components/layouts/FloatingLayout';
 import { LayoutOptions } from '../../../core/components/layouts/types';
 import {
@@ -33,12 +33,14 @@ import _ from 'lodash';
 
 interface Props {
   selectedOverlayConfig?: OverlayConfig | BubbleOverlayConfig;
+  overlayHelp?: ReactNode;
 }
 
 type StandaloneVizOptions = LayoutOptions & OverlayOptions;
 
 export function useStandaloneVizPlugins({
   selectedOverlayConfig,
+  overlayHelp = 'The overlay variable can be selected via the top-right panel.',
 }: Props): Record<string, ComputationPlugin> {
   return useMemo(() => {
     function vizWithOptions(
@@ -67,8 +69,7 @@ export function useStandaloneVizPlugins({
             return overlayValues;
           }
         },
-        getOverlayVariableHelp: () =>
-          'The overlay variable can be selected via the top-right panel.',
+        getOverlayVariableHelp: () => overlayHelp,
       });
     }
 
@@ -99,8 +100,8 @@ export function useStandaloneVizPlugins({
     }
 
     const pluginBasics = {
-      configurationComponent: ZeroConfigWithButton,
-      isConfigurationValid: t.undefined.is,
+      configurationComponent: ZeroConfiguration,
+      isConfigurationComplete: t.undefined.is,
       createDefaultConfiguration: () => undefined,
     };
 
@@ -153,5 +154,5 @@ export function useStandaloneVizPlugins({
         },
       },
     };
-  }, [selectedOverlayConfig]);
+  }, [overlayHelp, selectedOverlayConfig]);
 }

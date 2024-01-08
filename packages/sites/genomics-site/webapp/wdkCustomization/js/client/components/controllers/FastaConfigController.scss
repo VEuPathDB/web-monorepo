@@ -1,0 +1,22 @@
+.FastaConfigPage {
+  p {
+    font-size: 1.3em;
+  }
+
+  .wdk-QuestionFormParameterHeading {
+    border-bottom: none;
+    padding: 0em 3em;
+
+    & > h3:after {
+      content: ':';
+    }
+  }
+
+  .wdk-QuestionFormParameterControl {
+    padding: 0em 3em;
+  }
+
+  .wdk-DatasetParamSectionList {
+    margin-left: 2em;
+  }
+}

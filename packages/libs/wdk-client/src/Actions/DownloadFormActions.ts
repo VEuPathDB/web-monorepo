@@ -10,7 +10,12 @@ import {
   ActionCreatorResult,
 } from '../Core/WdkMiddleware';
 import { UserPreferences } from '../Utils/WdkUser';
-import { FilterValueArray, Question, RecordClass } from '../Utils/WdkModel';
+import {
+  AnswerSpec,
+  FilterValueArray,
+  Question,
+  RecordClass,
+} from '../Utils/WdkModel';
 import { CategoryOntology } from '../Utils/CategoryUtils';
 import { WdkService } from '../Core';
 import {
@@ -19,6 +24,7 @@ import {
   downloadReport,
 } from '../Utils/WdkResult';
 import { STANDARD_REPORTER_NAME } from '../Views/ReporterForm/reporterUtils';
+import { resultTypeDetails } from '../StoreModules/StepAnalysis/StepAnalysisSelectors';
 
 export type Action =
   | InitializeAction
@@ -269,6 +275,38 @@ export function loadPageDataFromBasketName(
     const resultType: ResultType = {
       type: 'basket',
       basketName,
+    };
+    const resultTypeBundlePromise = getResultTypeDetails(
+      wdkService,
+      resultType
+    ).then(({ searchName, recordClassName }) => {
+      return Promise.all([
+        wdkService.findQuestion(searchName),
+        wdkService.findRecordClass(recordClassName),
+      ]).then(([question, recordClass]) => ({
+        question,
+        recordClass,
+        resultType,
+      }));
+    });
+    return getInitializationActionSet(
+      wdkService,
+      'results',
+      resultTypeBundlePromise,
+      requestedFormat
+    );
+  };
+}
+
+export function loadPageDataFromAnswerSpec(
+  answerSpec: AnswerSpec,
+  requestedFormat?: ReporterSelection
+): ActionThunk<LoadPageDataAction> {
+  return function run({ wdkService }) {
+    const resultType: ResultType = {
+      type: 'answerSpec',
+      answerSpec,
+      displayName: 'SRT search config',
     };
     const resultTypeBundlePromise = getResultTypeDetails(
       wdkService,

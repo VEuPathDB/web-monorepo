@@ -1,15 +1,21 @@
 import { useMap, Popup } from 'react-leaflet';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 // use new ReactLeafletDriftMarker instead of DriftMarker
 import ReactLeafletDriftMarker from 'react-leaflet-drift-marker';
 import { MarkerProps, Bounds } from './Types';
 import L, { LeafletMouseEvent, LatLngBounds } from 'leaflet';
+
+import { debounce } from 'lodash';
 
 export interface BoundsDriftMarkerProps extends MarkerProps {
   bounds: Bounds;
   duration: number;
   // A class to add to the popup element
   popupClass?: string;
+  // selectedMarkers state
+  selectedMarkers?: string[];
+  // selectedMarkers setState
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 /**
@@ -39,8 +45,12 @@ export default function BoundsDriftMarker({
   popupContent,
   popupClass,
   zIndexOffset,
+  selectedMarkers,
+  setSelectedMarkers,
+  ...props
 }: BoundsDriftMarkerProps) {
   const map = useMap();
+
   const boundingBox = new LatLngBounds([
     [bounds.southWest.lat, bounds.southWest.lng],
     [bounds.northEast.lat, bounds.northEast.lng],
@@ -171,7 +181,6 @@ export default function BoundsDriftMarker({
       markerRef.current._icon.firstChild.getBoundingClientRect();
     const anchorRect = popupRef.current._tipContainer.getBoundingClientRect();
     const { height: anchorHeight, width: anchorWidth } = anchorRect;
-    const popupRect = popupRef.current._container.getBoundingClientRect();
 
     /**
      * Within each conditional block, we will:
@@ -179,12 +188,13 @@ export default function BoundsDriftMarker({
      *      be anchored to
      *  2.  set the popupRef's offset accordingly (with some fuzzy calculations)
      */
+    // with the marker clicl event for selectedMarkers, popupRef is not used as it changes by click event
     if (orientation === 'down') {
       const yOffset =
         (markerIconRect.bottom > grayBoundsRect.bottom
           ? markerIconRect.bottom
           : grayBoundsRect.bottom) -
-        popupRect.top +
+        markerRect.bottom +
         anchorHeight -
         FINE_ADJUSTMENT / 2;
       popupRef.current.options.offset = [FINE_ADJUSTMENT / 2, yOffset];
@@ -194,14 +204,14 @@ export default function BoundsDriftMarker({
           ? markerIconRect.right
           : grayBoundsRect.right) +
         anchorWidth / 2 -
-        popupRect.left;
+        markerRect.right;
       popupRef.current.options.offset = [xOffset, DEFAULT_OFFSET[1]];
     } else if (orientation === 'left') {
       const xOffset =
         (markerRect.left < grayBoundsRect.left
           ? markerRect.left
           : grayBoundsRect.left) -
-        popupRect.right -
+        markerRect.left -
         anchorWidth / 2;
       popupRef.current.options.offset = [xOffset, DEFAULT_OFFSET[1]];
     } else {
@@ -210,7 +220,7 @@ export default function BoundsDriftMarker({
           ? markerRect.top
           : grayBoundsRect.top) -
         FINE_ADJUSTMENT / 2 -
-        popupRect.bottom;
+        markerRect.y;
       popupRef.current.options.offset = [FINE_ADJUSTMENT / 2, yOffset];
     }
   };
@@ -270,12 +280,30 @@ export default function BoundsDriftMarker({
     e.target.closePopup();
   };
 
+  // add click events for highlighting markers
   const handleClick = (e: LeafletMouseEvent) => {
-    // Sometimes clicking throws off the popup's orientation, so reorient it
-    orientPopup(popupOrientationRef.current);
-    // Default popup behavior is to open on marker click
-    // Prevent by immediately closing it
-    e.target.closePopup();
+    // check the number of mouse click and enable function for single click only
+    if (e.originalEvent.detail === 1) {
+      if (setSelectedMarkers) {
+        if (selectedMarkers?.find((id) => id === props.id)) {
+          setSelectedMarkers((prevSelectedMarkers: string[]) =>
+            prevSelectedMarkers.filter((id: string) => id !== props.id)
+          );
+        } else {
+          // select
+          setSelectedMarkers((prevSelectedMarkers: string[]) => [
+            ...prevSelectedMarkers,
+            props.id,
+          ]);
+        }
+      }
+
+      // Sometimes clicking throws off the popup's orientation, so reorient it
+      orientPopup(popupOrientationRef.current);
+      // Default popup behavior is to open on marker click
+      // Prevent by immediately closing it
+      e.target.closePopup();
+    }
   };
 
   const handleDoubleClick = () => {
@@ -283,6 +311,22 @@ export default function BoundsDriftMarker({
       map.fitBounds(boundingBox);
     }
   };
+
+  // debounce single click to be prevented when double clicking marker
+  const debounceSingleClick = debounce(handleClick, 300);
+
+  // set this marker as highlighted
+  if (icon && selectedMarkers?.find((id) => id === props.id))
+    icon.options.className += ' highlight-marker';
+
+  // set this marker's popup as highlighted
+  if (popupContent && popupRef.current && popupRef.current._container) {
+    if (selectedMarkers?.find((id) => id === props.id)) {
+      popupRef.current._container.classList.add('marker-popup-highlight');
+    } else {
+      popupRef.current._container.classList.remove('marker-popup-highlight');
+    }
+  }
 
   // DriftMarker misbehaves if icon=undefined is provided
   // is this the most elegant way?
@@ -296,9 +340,10 @@ export default function BoundsDriftMarker({
       position={position}
       // new way to handle mouse events
       eventHandlers={{
-        click: (e: LeafletMouseEvent) => handleClick(e),
-        mouseover: (e: LeafletMouseEvent) => handleMouseOver(e),
-        mouseout: (e: LeafletMouseEvent) => handleMouseOut(e),
+        // debounce single click to be prevented when double clicking marker
+        click: debounceSingleClick,
+        mouseover: handleMouseOver,
+        mouseout: handleMouseOut,
         dblclick: handleDoubleClick,
       }}
       zIndexOffset={zIndexOffset}

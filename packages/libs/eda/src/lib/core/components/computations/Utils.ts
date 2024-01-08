@@ -1,11 +1,129 @@
 import { useCallback } from 'react';
-import { Computation, Visualization } from '../../types/visualization';
+import {
+  Computation,
+  Visualization,
+  makeComputationWithConfigDecoder,
+} from '../../types/visualization';
 import * as t from 'io-ts';
 import { pipe } from 'fp-ts/lib/function';
 import { fold } from 'fp-ts/lib/Either';
 import { isEqual } from 'lodash';
-import { AnalysisState } from '../..';
+import {
+  AnalysisState,
+  CollectionVariableTreeNode,
+  useEntityAndVariableCollection,
+} from '../..';
 import { RouterChildContext, useRouteMatch, useHistory } from 'react-router';
+import { VariableCollectionDescriptor } from '../../types/variable';
+import { EntityAndVariableCollection } from '../../utils/study-metadata';
+
+export type VariableCollectionItem = {
+  value: VariableCollectionDescriptor;
+  disabled?: boolean;
+  display: string;
+};
+
+/**
+ * Generates a collection of variable items based on the provided variable collections.
+ *
+ * @param {VariableCollectionDescriptor[]} variableCollections - An array of possible variable collection nodes.
+ * @param {VariableCollectionDescriptor[]} disabledVariableCollections - An array of disabled variable collection nodes.
+ * @return {VariableCollectionItem[]} An array of variable collection items.
+ */
+export function makeVariableCollectionItems(
+  variableCollections: VariableCollectionDescriptor[],
+  disabledVariableCollections: VariableCollectionDescriptor[] | undefined
+): VariableCollectionItem[] {
+  return variableCollections.map((variableCollection) => ({
+    value: {
+      collectionId: variableCollection.collectionId,
+      entityId: variableCollection.entityId,
+    },
+    disabled: disabledVariableCollections?.some((disabledVariableCollection) =>
+      isEqual(disabledVariableCollection, variableCollection)
+    ),
+    display:
+      useEntityAndVariableCollection(variableCollection)?.entity.displayName +
+      ' > ' +
+      useEntityAndVariableCollection(variableCollection)?.variableCollection
+        .displayName,
+  }));
+}
+
+/**
+ * Removes absolute abundance variable collections based on certain conditions.
+ *
+ * @param {CollectionVariableTreeNode[]} variableCollections - The array of variable collections.
+ * @return {CollectionVariableTreeNode[]} The filtered array of variable collections.
+ */
+export function removeAbsoluteAbundanceVariableCollections(
+  variableCollections: CollectionVariableTreeNode[]
+): CollectionVariableTreeNode[] {
+  return variableCollections.filter(isNotAbsoluteAbundanceVariableCollection);
+}
+
+/**
+ * Returns false for absolute abundance variable collections, based on certain conditions.
+ *
+ * @param {CollectionVariableTreeNode} variableCollection - The array of variable collections.
+ * @return {boolean} The filtered array of variable collections.
+ */
+export function isNotAbsoluteAbundanceVariableCollection(
+  variableCollection: CollectionVariableTreeNode
+): boolean {
+  return variableCollection.normalizationMethod
+    ? variableCollection.normalizationMethod !== 'NULL' ||
+        // most data we want to keep has been normalized, except pathway coverage data which were leaving apparently
+        // should consider better ways to do this in the future, or if we really want to keep the coverage data.
+        !!variableCollection.displayName?.includes('pathway')
+    : true;
+  // DIY may not have the normalizationMethod annotations, but we still want those datasets to pass.
+}
+
+/**
+ * Find a specific variable collection from a given array of variableCollections
+ * based on the provided variableCollectionDescriptor.
+ *
+ * @param {EntityAndVariableCollection[]} variableCollections - The array of variableCollections to search through.
+ * @param {VariableCollectionDescriptor} variableCollectionDescriptor - The descriptor to match against.
+ * @return {EntityAndVariableCollection | undefined} - The matched variable collection, or undefined if not found.
+ */
+export function findEntityAndVariableCollectionFromDescriptor(
+  entityAndVariableCollections: EntityAndVariableCollection[],
+  variableCollectionDescriptor: VariableCollectionDescriptor | undefined
+): EntityAndVariableCollection | undefined {
+  return entityAndVariableCollections.find((entityAndVariableCollection) =>
+    isEqual(
+      {
+        collectionId: entityAndVariableCollection.variableCollection.id,
+        entityId: entityAndVariableCollection.entity.id,
+      },
+      variableCollectionDescriptor
+    )
+  );
+}
+
+/**
+ * Finds a variable collection item from a given descriptor in an array of variable collection items.
+ *
+ * @param {VariableCollectionItem[]} variableCollections - The array of variable collection items to search through.
+ * @param {VariableCollectionDescriptor} variableCollectionDescriptor - The descriptor to match against.
+ * @return {VariableCollectionItem | undefined} The found variable collection item, or undefined if not found.
+ */
+export function findVariableCollectionItemFromDescriptor(
+  variableCollections: VariableCollectionItem[],
+  variableCollectionDescriptor: VariableCollectionDescriptor | undefined
+): VariableCollectionItem | undefined {
+  return variableCollections.find((collectionVariable) =>
+    isEqual(
+      {
+        collectionId: collectionVariable.value.collectionId,
+        entityId: collectionVariable.value.entityId,
+      },
+      variableCollectionDescriptor
+    )
+  );
+}
 
 /**
  * Creates a new `Computation` with a unique id
@@ -55,10 +173,11 @@ function createRandomString(numChars: number) {
 
 export function assertComputationWithConfig<ConfigType>(
   computation: Computation,
-  decoder: t.Type<Computation, unknown, unknown>
+  configDecoder: t.Type<ConfigType>
 ): asserts computation is Computation<ConfigType> {
+  const decoder = makeComputationWithConfigDecoder(configDecoder);
   const onLeft = (errors: t.Errors) => {
-    throw new Error(`Invalid computation configuration: ${errors}`);
+    throw new Error(`Invalid computation configuration provided.`);
   };
   const onRight = () => null;
   pipe(decoder.decode(computation), fold(onLeft, onRight));
@@ -235,4 +354,16 @@ function handleRouting(
   urlToReplaceWith: string
 ) {
   history.replace(baseUrl.replace(urlToReplace, urlToReplaceWith));
+}
+
+/**
+ * Takes a partial codec and returns a new codec where all properties
+ * are required.
+ * @param partialCodec An io-ts codec made using the `partial` combinator
+ * @returns An io-ts codec made using the `type` combinator
+ */
+export function partialToCompleteCodec<T extends {}>(
+  partialCodec: t.PartialC<T>
+): t.TypeC<T> {
+  return t.type(partialCodec.props);
 }

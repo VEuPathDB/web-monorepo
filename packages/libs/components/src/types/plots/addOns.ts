@@ -339,6 +339,9 @@ export const significanceColors: SignificanceColors = {
   low: '#007F5C',
 };
 
+// Color palette optimized for two colors
+export const twoColorPalette: string[] = ['#AD3C00', '#0EADA5'];
+
 /** truncated axis flags */
 export type AxisTruncationAddon = {
   /** truncation config (flags) to show truncated axis (true) or not (false) */

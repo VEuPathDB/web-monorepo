@@ -1,6 +1,10 @@
 import { DefaultNode } from '@visx/network';
 import { Text } from '@visx/text';
 import { LinkData, NodeData } from '../types/plots/network';
+import { truncateWithEllipsis } from '../utils/axis-tick-label-ellipsis';
+import './Network.css';
+
+export type LabelPosition = 'right' | 'left';
 
 interface NodeWithLabelProps {
   /** Network node */
@@ -8,29 +12,33 @@ interface NodeWithLabelProps {
   /** Function to run when a user clicks either the node or label */
   onClick?: () => void;
   /** Should the label be drawn to the left or right of the node? */
-  labelPosition?: 'right' | 'left';
+  labelPosition?: LabelPosition;
   /** Font size for the label. Ex. "1em" */
   fontSize?: string;
   /** Font weight for the label */
   fontWeight?: number;
   /** Color for the label */
   labelColor?: string;
+  /** Length for labels before being truncated by ellipsis. Default 20 */
+  truncationLength?: number;
 }
 
 // NodeWithLabel draws one node and an optional label for the node. Both the node and
 // label can be styled.
 export function NodeWithLabel(props: NodeWithLabelProps) {
-  const DEFAULT_NODE_RADIUS = 4;
-  const DEFAULT_NODE_COLOR = '#aaa';
+  const DEFAULT_NODE_RADIUS = 6;
+  const DEFAULT_NODE_COLOR = '#fff';
   const DEFAULT_STROKE_WIDTH = 1;
+  const DEFAULT_STROKE = '#111';
 
   const {
     node,
     onClick,
     labelPosition = 'right',
     fontSize = '1em',
-    fontWeight = 200,
+    fontWeight = 400,
     labelColor = '#000',
+    truncationLength = 20,
   } = props;
 
   const { color, label, stroke, strokeWidth } = node;
@@ -58,8 +66,10 @@ export function NodeWithLabel(props: NodeWithLabelProps) {
         r={nodeRadius}
         fill={color ?? DEFAULT_NODE_COLOR}
         onClick={onClick}
-        stroke={stroke}
+        stroke={stroke ?? DEFAULT_STROKE}
         strokeWidth={strokeWidth ?? DEFAULT_STROKE_WIDTH}
+        style={{ cursor: 'default' }}
+        className="NodeWithLabel"
       />
       {/* Note that Text becomes a tspan */}
       <Text
@@ -70,10 +80,11 @@ export function NodeWithLabel(props: NodeWithLabelProps) {
         onClick={onClick}
         fontWeight={fontWeight}
         fill={labelColor}
-        style={{ cursor: 'pointer' }}
+        style={{ cursor: 'default' }}
       >
-        {label}
+        {label && truncateWithEllipsis(label, truncationLength)}
       </Text>
+      <title>{label}</title>
     </>
   );
 }

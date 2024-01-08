@@ -1,10 +1,10 @@
 import React, { useContext, useMemo } from 'react';
 import { useAnalysisList } from '@veupathdb/eda/lib/core/hooks/analysis';
 import { AnalysisClient } from '@veupathdb/eda/lib/core/api/AnalysisClient';
-import { Showcase } from '../../App/Showcase';
-import { News } from '../../App/NewsSidebar';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { edaServiceUrl } from '../../config';
+import { Showcase } from '../../App/Showcase';
+import { News } from '../../App/NewsSidebar';
 
 import './HomePage.scss';
 

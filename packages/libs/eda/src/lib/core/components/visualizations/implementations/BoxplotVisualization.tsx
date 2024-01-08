@@ -90,7 +90,12 @@ import { truncationConfig } from '../../../utils/truncation-config-utils';
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 // alphadiv abundance this should be used for collection variable
-import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
+import {
+  findEntityAndDynamicData,
+  getTreeNode,
+  isVariableCollectionDescriptor,
+  isVariableDescriptor,
+} from '../../../utils/study-metadata';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
 import {
   BoxplotRequestParams,
@@ -180,6 +185,7 @@ export const BoxplotConfig = t.partial({
 function BoxplotViz(props: VisualizationProps<Options>) {
   const {
     computation,
+    copmutationAppOverview,
     options,
     visualization,
     updateConfiguration,
@@ -192,11 +198,20 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     totalCounts,
     filteredCounts,
     computeJobStatus,
+    hideInputsAndControls,
+    plotContainerStyleOverrides,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
+  const finalPlotContainerStyles = useMemo(
+    () => ({
+      ...plotContainerStyles,
+      ...plotContainerStyleOverrides,
+    }),
+    [plotContainerStyleOverrides]
+  );
 
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,
@@ -475,7 +490,9 @@ function BoxplotViz(props: VisualizationProps<Options>) {
             : [],
           showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
         },
-        computeConfig: computation.descriptor.configuration,
+        computeConfig: copmutationAppOverview.computeName
+          ? computation.descriptor.configuration
+          : undefined,
       };
 
       // boxplot
@@ -652,12 +669,11 @@ function BoxplotViz(props: VisualizationProps<Options>) {
 
   // alphadiv abundance findEntityAndVariable does not work properly for collection variable
   const independentAxisEntityAndVariable = useMemo(
-    () =>
-      findCollectionVariableEntityAndVariable(entities, providedXAxisVariable),
+    () => findEntityAndDynamicData(entities, providedXAxisVariable),
     [entities, providedXAxisVariable]
   );
   const independentAxisLabel =
-    independentAxisEntityAndVariable?.variable.displayName ??
+    getTreeNode(independentAxisEntityAndVariable)?.displayName ??
     variableDisplayWithUnit(xAxisVariable) ??
     'X-axis';
 
@@ -686,7 +702,9 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       // data.value
       data={data.value}
       updateThumbnail={updateThumbnail}
-      containerStyles={!isFaceted(data.value) ? plotContainerStyles : undefined}
+      containerStyles={
+        !isFaceted(data.value) ? finalPlotContainerStyles : undefined
+      }
       spacingOptions={!isFaceted(data.value) ? plotSpacingOptions : undefined}
       orientation={'vertical'}
       displayLegend={false}
@@ -752,6 +770,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     />
   );
 
+  // TODO understand how we know this is a collection without checking isCollection?
   // List variables in a collection one by one in the variable coverage table. Create these extra rows
   // here and then append to the variable coverage table rows array.
   const collectionVariableMetadata = data.value?.computedVariableMetadata?.find(
@@ -797,7 +816,12 @@ function BoxplotViz(props: VisualizationProps<Options>) {
             role: 'X-axis',
             required: true,
             display: independentAxisLabel,
-            variable: providedXAxisVariable ?? vizConfig.xAxisVariable,
+            variable:
+              (isVariableDescriptor(providedOverlayVariable) ||
+                isVariableCollectionDescriptor(providedOverlayVariable)) &&
+              providedOverlayVariable != null
+                ? providedOverlayVariable
+                : providedXAxisVariable ?? vizConfig.xAxisVariable,
           },
           ...additionalVariableCoverageTableRows,
           {
@@ -871,38 +895,42 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
-        <InputVariables
-          inputs={finalizedInputs}
-          entities={entities}
-          selectedVariables={selectedVariables}
-          variablesForConstraints={variablesForConstraints}
-          onChange={handleInputVariableChange}
-          constraints={dataElementConstraints}
-          dataElementDependencyOrder={dataElementDependencyOrder}
-          starredVariables={starredVariables}
-          toggleStarredVariable={toggleStarredVariable}
-          enableShowMissingnessToggle={
-            (overlayVariable != null || facetVariable != null) &&
-            data.value?.completeCasesAllVars !==
-              data.value?.completeCasesAxesVars
-          }
-          showMissingness={vizConfig.showMissingness}
-          // this can be used to show and hide no data control
-          onShowMissingnessChange={
-            options?.hideShowMissingnessToggle
-              ? undefined
-              : onShowMissingnessChange
-          }
-          outputEntity={outputEntity}
-        />
+        {!hideInputsAndControls && (
+          <InputVariables
+            inputs={finalizedInputs}
+            entities={entities}
+            selectedVariables={selectedVariables}
+            variablesForConstraints={variablesForConstraints}
+            onChange={handleInputVariableChange}
+            constraints={dataElementConstraints}
+            dataElementDependencyOrder={dataElementDependencyOrder}
+            starredVariables={starredVariables}
+            toggleStarredVariable={toggleStarredVariable}
+            enableShowMissingnessToggle={
+              (overlayVariable != null || facetVariable != null) &&
+              data.value?.completeCasesAllVars !==
+                data.value?.completeCasesAxesVars
+            }
+            showMissingness={vizConfig.showMissingness}
+            // this can be used to show and hide no data control
+            onShowMissingnessChange={
+              options?.hideShowMissingnessToggle
+                ? undefined
+                : onShowMissingnessChange
+            }
+            outputEntity={outputEntity}
+          />
+        )}
       </div>
 
       <PluginError error={data.error} outputSize={outputSize} />
-      <OutputEntityTitle
-        entity={outputEntity}
-        outputSize={outputSize}
-        subtitle={plotSubtitle}
-      />
+      {!hideInputsAndControls && (
+        <OutputEntityTitle
+          entity={outputEntity}
+          outputSize={outputSize}
+          subtitle={plotSubtitle}
+        />
+      )}
       <LayoutComponent
         isFaceted={isFaceted(data.value)}
         legendNode={showOverlayLegend ? legendNode : null}
@@ -910,6 +938,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         controlsNode={controlsNode}
         tableGroupNode={tableGroupNode}
         showRequiredInputsPrompt={!areRequiredInputsSelected}
+        hideControls={hideInputsAndControls}
       />
     </div>
   );

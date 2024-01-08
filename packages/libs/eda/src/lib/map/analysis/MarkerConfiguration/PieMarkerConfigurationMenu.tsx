@@ -3,7 +3,6 @@ import {
   InputVariables,
   Props as InputVariablesProps,
 } from '../../../core/components/visualizations/InputVariables';
-import { VariableDescriptor } from '../../../core/types/variable';
 import { VariablesByInputName } from '../../../core/utils/data-element-constraints';
 import {
   usePromise,
@@ -17,21 +16,18 @@ import { CategoricalMarkerPreview } from './CategoricalMarkerPreview';
 import Barplot from '@veupathdb/components/lib/plots/Barplot';
 import { SubsettingClient } from '../../../core/api';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import { useUncontrolledSelections } from '../hooks/uncontrolledSelections';
 import {
   BinningMethod,
   SelectedCountsOption,
   SelectedValues,
 } from '../appState';
+import { SharedMarkerConfigurations } from '../mapTypes/shared';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
 }
 
-export interface SharedMarkerConfigurations {
-  selectedVariable: VariableDescriptor;
-}
 export interface PieMarkerConfiguration
   extends MarkerConfiguration<'pie'>,
     SharedMarkerConfigurations {
@@ -61,6 +57,8 @@ interface Props
    * Only defined and used in categorical table if selectedCountsOption is 'visible'
    */
   allVisibleCategoricalValues: AllValuesDefinition[] | undefined;
+  /* check if allFilteredCategoricalValues or allVisibleCategoricalValues is loading */
+  isAllCategoricalValuesLoading: boolean;
 }
 
 // TODO: generalize this and BarPlotMarkerConfigMenu into MarkerConfigurationMenu. Lots of code repetition...
@@ -80,6 +78,7 @@ export function PieMarkerConfigurationMenu({
   continuousMarkerPreview,
   allFilteredCategoricalValues,
   allVisibleCategoricalValues,
+  isAllCategoricalValuesLoading,
 }: Props) {
   /**
    * Used to track the CategoricalMarkerConfigurationTable's selection state, which allows users to
@@ -172,26 +171,31 @@ export function PieMarkerConfigurationMenu({
       >
         Color:
       </p>
-      <InputVariables
-        inputs={[
-          {
-            name: 'overlayVariable',
-            label: 'Variable',
-            titleOverride: ' ',
-            isNonNullable: true,
-          },
-        ]}
-        entities={entities}
-        selectedVariables={{ overlayVariable: configuration.selectedVariable }}
-        onChange={handleInputVariablesOnChange}
-        starredVariables={starredVariables}
-        toggleStarredVariable={toggleStarredVariable}
-        constraints={constraints}
-      />
+      {/* limit inputVariables width */}
+      <div style={{ maxWidth: '350px' }}>
+        <InputVariables
+          inputs={[
+            {
+              name: 'overlayVariable',
+              label: 'Variable',
+              titleOverride: ' ',
+              isNonNullable: true,
+            },
+          ]}
+          entities={entities}
+          selectedVariables={{
+            overlayVariable: configuration.selectedVariable,
+          }}
+          onChange={handleInputVariablesOnChange}
+          starredVariables={starredVariables}
+          toggleStarredVariable={toggleStarredVariable}
+          constraints={constraints}
+        />
+      </div>
       <div style={{ margin: '5px 0 0 0' }}>
-        <span style={{ fontWeight: 'bold' }}>
+        <div style={{ fontWeight: 'bold', marginBottom: '0.5em' }}>
           Summary marker (all filtered data)
-        </span>
+        </div>
         {overlayConfiguration?.overlayType === 'categorical' ? (
           <CategoricalMarkerPreview
             overlayConfiguration={overlayConfiguration}
@@ -203,7 +207,7 @@ export function PieMarkerConfigurationMenu({
           continuousMarkerPreview
         )}
       </div>
-      <LabelledGroup label="Donut marker controls">
+      {overlayConfiguration?.overlayType === 'continuous' && (
         <RadioButtonGroup
           containerStyles={
             {
@@ -213,11 +217,7 @@ export function PieMarkerConfigurationMenu({
           label="Binning method"
           selectedOption={configuration.binningMethod ?? 'equalInterval'}
           options={['equalInterval', 'quantile', 'standardDeviation']}
-          optionLabels={[
-            'Equal interval',
-            'Quantile (10)',
-            'Standard deviation',
-          ]}
+          optionLabels={['Equal interval', 'Quantile (10)', 'Std. dev.']}
           buttonColor={'primary'}
           // margins={['0em', '0', '0', '1em']}
           onOptionSelected={handleBinningMethodSelection}
@@ -227,7 +227,7 @@ export function PieMarkerConfigurationMenu({
               : ['equalInterval', 'quantile', 'standardDeviation']
           }
         />
-      </LabelledGroup>
+      )}
       {overlayConfiguration?.overlayType === 'categorical' && (
         <CategoricalMarkerConfigurationTable
           overlayValues={overlayConfiguration.overlayValues}
@@ -241,6 +241,7 @@ export function PieMarkerConfigurationMenu({
               : allVisibleCategoricalValues
           }
           selectedCountsOption={configuration.selectedCountsOption}
+          isAllCategoricalValuesLoading={isAllCategoricalValuesLoading}
         />
       )}
       {overlayConfiguration?.overlayType === 'continuous' && barplotData.value && (
@@ -261,7 +262,9 @@ export function PieMarkerConfigurationMenu({
               marginBottom: 0,
             }}
             containerStyles={{
-              height: 300,
+              // set barplot maxWidth
+              height: '300px',
+              maxWidth: '360px',
             }}
           />
         </div>

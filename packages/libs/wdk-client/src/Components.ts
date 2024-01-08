@@ -69,6 +69,10 @@ import SliderInput from './Components/InputControls/SliderInput';
 import UnhandledErrors from './Views/UnhandledErrors/UnhandledErrors';
 import RecordNavigationSection from './Views/Records/RecordNavigation/RecordNavigationSection';
 import { SearchInputSelector } from './Views/Strategy/SearchInputSelector';
+import CollapsibleDetailsSection from './Components/Display/CollapsibleDetailsSection';
+
+export { NewIcon } from './Core/Style/Icons/NewIcon';
+export { BetaIcon } from './Core/Style/Icons/BetaIcon';
 
 export {
   AccordionButton,
@@ -79,6 +83,7 @@ export {
   Checkbox,
   CheckboxList,
   CollapsibleSection,
+  CollapsibleDetailsSection,
   CommonModal,
   DataTable,
   DateRangeSelector,

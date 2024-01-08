@@ -9,6 +9,7 @@ export interface LayoutProps {
   plotStyles?: CSSProperties;
   tableGroupNode: ReactNode;
   tableGroupStyles?: CSSProperties;
+  hideControls?: boolean;
 }
 
 export type StyleProps<P> = Pick<P, keyof P & `${string}Styles`>;
@@ -22,5 +23,9 @@ export interface LayoutOptions {
 }
 
 export interface TitleOptions {
-  getPlotSubtitle?(config: unknown): string | undefined;
+  getPlotSubtitle?(config: unknown): ReactNode;
+}
+
+export interface LegendOptions {
+  getLegendTitle?(config: unknown): string[];
 }

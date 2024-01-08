@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 import {
   InputVariables,
   Props as InputVariablesProps,
@@ -16,15 +16,15 @@ import { CategoricalMarkerConfigurationTable } from './CategoricalMarkerConfigur
 import { CategoricalMarkerPreview } from './CategoricalMarkerPreview';
 import Barplot from '@veupathdb/components/lib/plots/Barplot';
 import { SubsettingClient } from '../../../core/api';
-import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import { Toggle } from '@veupathdb/coreui';
-import { SharedMarkerConfigurations } from './PieMarkerConfigurationMenu';
 import { useUncontrolledSelections } from '../hooks/uncontrolledSelections';
 import {
   BinningMethod,
   SelectedCountsOption,
   SelectedValues,
 } from '../appState';
+import { gray } from '@veupathdb/coreui/lib/definitions/colors';
+import { SharedMarkerConfigurations } from '../mapTypes/shared';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
@@ -61,6 +61,8 @@ interface Props
    * Only defined and used in categorical table if selectedCountsOption is 'visible'
    */
   allVisibleCategoricalValues: AllValuesDefinition[] | undefined;
+  /* check if allFilteredCategoricalValues or allVisibleCategoricalValues is loading */
+  isAllCategoricalValuesLoading: boolean;
 }
 
 // TODO: generalize this and PieMarkerConfigMenu into MarkerConfigurationMenu. Lots of code repetition...
@@ -80,6 +82,7 @@ export function BarPlotMarkerConfigurationMenu({
   continuousMarkerPreview,
   allFilteredCategoricalValues,
   allVisibleCategoricalValues,
+  isAllCategoricalValuesLoading,
 }: Props) {
   /**
    * Used to track the CategoricalMarkerConfigurationTable's selection state, which allows users to
@@ -133,6 +136,7 @@ export function BarPlotMarkerConfigurationMenu({
         color: '#333',
       };
     }, [
+      studyId,
       overlayVariable,
       overlayConfiguration?.overlayType,
       subsettingClient,
@@ -185,26 +189,31 @@ export function BarPlotMarkerConfigurationMenu({
       >
         Color:
       </p>
-      <InputVariables
-        inputs={[
-          {
-            name: 'overlayVariable',
-            label: 'Variable',
-            titleOverride: ' ',
-            isNonNullable: true,
-          },
-        ]}
-        entities={entities}
-        selectedVariables={{ overlayVariable: configuration.selectedVariable }}
-        onChange={handleInputVariablesOnChange}
-        starredVariables={starredVariables}
-        toggleStarredVariable={toggleStarredVariable}
-        constraints={constraints}
-      />
+      {/* limit inputVariables width */}
+      <div style={{ maxWidth: '350px' }}>
+        <InputVariables
+          inputs={[
+            {
+              name: 'overlayVariable',
+              label: 'Variable',
+              titleOverride: ' ',
+              isNonNullable: true,
+            },
+          ]}
+          entities={entities}
+          selectedVariables={{
+            overlayVariable: configuration.selectedVariable,
+          }}
+          onChange={handleInputVariablesOnChange}
+          starredVariables={starredVariables}
+          toggleStarredVariable={toggleStarredVariable}
+          constraints={constraints}
+        />
+      </div>
       <div style={{ margin: '5px 0 0 0' }}>
-        <span style={{ fontWeight: 'bold' }}>
+        <div style={{ fontWeight: 'bold', marginBottom: '0.5em' }}>
           Summary marker (all filtered data)
-        </span>
+        </div>
         {overlayConfiguration?.overlayType === 'categorical' ? (
           <>
             <CategoricalMarkerPreview
@@ -221,7 +230,17 @@ export function BarPlotMarkerConfigurationMenu({
           continuousMarkerPreview
         )}
       </div>
-      <LabelledGroup label="Marker X-axis controls">
+      <div style={{ maxWidth: '360px', marginTop: '1em' }}>
+        <div
+          style={{
+            color: gray[900],
+            fontWeight: 500,
+            fontSize: '1.2em',
+            marginBottom: '0.5em',
+          }}
+        >
+          Marker X-axis controls
+        </div>
         <RadioButtonGroup
           containerStyles={
             {
@@ -231,13 +250,9 @@ export function BarPlotMarkerConfigurationMenu({
           label="Binning method"
           selectedOption={configuration.binningMethod ?? 'equalInterval'}
           options={['equalInterval', 'quantile', 'standardDeviation']}
-          optionLabels={[
-            'Equal interval',
-            'Quantile (10)',
-            'Standard deviation',
-          ]}
+          optionLabels={['Equal interval', 'Quantile (10)', 'Std. dev.']}
           buttonColor={'primary'}
-          // margins={['0em', '0', '0', '1em']}
+          // margins={['-1em', '0', '0', '0em']}
           onOptionSelected={handleBinningMethodSelection}
           disabledList={
             overlayConfiguration?.overlayType === 'continuous'
@@ -245,8 +260,18 @@ export function BarPlotMarkerConfigurationMenu({
               : ['equalInterval', 'quantile', 'standardDeviation']
           }
         />
-      </LabelledGroup>
-      <LabelledGroup label="Marker Y-axis controls">
+      </div>
+      <div style={{ maxWidth: '360px', marginTop: '1em', marginBottom: '1em' }}>
+        <div
+          style={{
+            color: gray[900],
+            fontWeight: 500,
+            fontSize: '1.2em',
+            marginBottom: '0.5em',
+          }}
+        >
+          Marker Y-axis controls
+        </div>
         <RadioButtonGroup
           containerStyles={
             {
@@ -258,7 +283,7 @@ export function BarPlotMarkerConfigurationMenu({
           options={['count', 'proportion']}
           optionLabels={['Count', 'Proportion']}
           buttonColor={'primary'}
-          // margins={['0em', '0', '0', '1em']}
+          // margins={['-1em', '0', '0', '1em']}
           onOptionSelected={handlePlotModeSelection}
         />
         <Toggle
@@ -267,21 +292,24 @@ export function BarPlotMarkerConfigurationMenu({
           value={configuration.dependentAxisLogScale}
           onChange={handleLogScaleChange}
         />
-      </LabelledGroup>
+      </div>
       {overlayConfiguration?.overlayType === 'categorical' && (
-        <CategoricalMarkerConfigurationTable
-          overlayValues={overlayConfiguration.overlayValues}
-          configuration={configuration}
-          onChange={onChange}
-          uncontrolledSelections={uncontrolledSelections}
-          setUncontrolledSelections={setUncontrolledSelections}
-          allCategoricalValues={
-            configuration.selectedCountsOption === 'filtered'
-              ? allFilteredCategoricalValues
-              : allVisibleCategoricalValues
-          }
-          selectedCountsOption={configuration.selectedCountsOption}
-        />
+        <div style={{ maxWidth: '360px', marginTop: '1em' }}>
+          <CategoricalMarkerConfigurationTable
+            overlayValues={overlayConfiguration.overlayValues}
+            configuration={configuration}
+            onChange={onChange}
+            uncontrolledSelections={uncontrolledSelections}
+            setUncontrolledSelections={setUncontrolledSelections}
+            allCategoricalValues={
+              configuration.selectedCountsOption === 'filtered'
+                ? allFilteredCategoricalValues
+                : allVisibleCategoricalValues
+            }
+            selectedCountsOption={configuration.selectedCountsOption}
+            isAllCategoricalValuesLoading={isAllCategoricalValuesLoading}
+          />
+        </div>
       )}
       {overlayConfiguration?.overlayType === 'continuous' && barplotData.value && (
         <div style={{ margin: '5px 0 0 0' }}>
@@ -301,8 +329,8 @@ export function BarPlotMarkerConfigurationMenu({
               marginBottom: 0,
             }}
             containerStyles={{
-              height: 250,
-              width: 400,
+              height: '300px',
+              maxWidth: '360px',
             }}
           />
         </div>

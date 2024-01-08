@@ -42,6 +42,7 @@ import LabelledGroup from '@veupathdb/components/lib/components/widgets/Labelled
 import { Toggle } from '@veupathdb/coreui';
 import { LayoutOptions } from '../../layouts/types';
 import { useMapMarkers } from '../../../hooks/mapMarkers';
+import SemanticMarkers from '@veupathdb/components/lib/map/SemanticMarkers';
 
 export const mapVisualization = createVisualizationPlugin({
   selectorIcon: MapSVG,
@@ -113,6 +114,7 @@ function MapViz(props: VisualizationProps<Options>) {
     otherVizOverviews,
     starredVariables,
     toggleStarredVariable,
+    hideInputsAndControls,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -248,8 +250,6 @@ function MapViz(props: VisualizationProps<Options>) {
         viewport={{ center: [latitude, longitude], zoom: zoomLevel }}
         onViewportChanged={handleViewportChanged}
         onBoundsChanged={setBoundsZoomLevel}
-        markers={markers ?? []}
-        animation={defaultAnimation}
         height={height}
         width={width}
         showGrid={geoConfig?.zoomLevelToAggregationLevel != null}
@@ -259,8 +259,6 @@ function MapViz(props: VisualizationProps<Options>) {
         onBaseLayerChanged={(newBaseLayer) =>
           updateVizConfig({ baseLayer: newBaseLayer })
         }
-        flyToMarkers={markers && markers.length > 0 && willFlyTo && !pending}
-        flyToMarkersDelay={500}
         showSpinner={pending}
         // whether to show scale at map
         showScale={zoomLevel != null && zoomLevel > 4 ? true : false}
@@ -272,7 +270,14 @@ function MapViz(props: VisualizationProps<Options>) {
           ],
           zoom: defaultConfig.mapCenterAndZoom.zoomLevel,
         }}
-      />
+      >
+        <SemanticMarkers
+          markers={markers ?? []}
+          animation={defaultAnimation}
+          flyToMarkers={markers && markers.length > 0 && willFlyTo && !pending}
+          flyToMarkersDelay={500}
+        />
+      </MapVEuMap>
     </>
   );
 
@@ -399,45 +404,57 @@ function MapViz(props: VisualizationProps<Options>) {
           justifyContent: 'space-between',
         }}
       >
-        {geoConfigs.length > 1 && (
-          <FormControl style={{ minWidth: '200px' }} variant="filled">
-            <InputLabel>Map the locations of</InputLabel>
-            <Select
-              value={vizConfig.geoEntityId ?? ''}
-              onChange={handleGeoEntityChange}
-            >
-              {geoConfigs.map((geoConfig) => (
-                <MenuItem key={geoConfig.entity.id} value={geoConfig.entity.id}>
-                  {geoConfig.entity.displayNamePlural ??
-                    geoConfig.entity.displayName}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+        {!hideInputsAndControls && (
+          <>
+            {geoConfigs.length > 1 && (
+              <FormControl style={{ minWidth: '200px' }} variant="filled">
+                <InputLabel>Map the locations of</InputLabel>
+                <Select
+                  value={vizConfig.geoEntityId ?? ''}
+                  onChange={handleGeoEntityChange}
+                >
+                  {geoConfigs.map((geoConfig) => (
+                    <MenuItem
+                      key={geoConfig.entity.id}
+                      value={geoConfig.entity.id}
+                    >
+                      {geoConfig.entity.displayNamePlural ??
+                        geoConfig.entity.displayName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
+            <InputVariables
+              inputs={[
+                {
+                  name: 'xAxisVariable',
+                  label: 'Main',
+                },
+              ]}
+              entities={entities}
+              selectedVariables={{
+                xAxisVariable: vizConfig.xAxisVariable,
+              }}
+              onChange={handleInputVariableChange}
+              constraints={pieConstraints}
+              dataElementDependencyOrder={pieDependencyOrder}
+              starredVariables={starredVariables}
+              toggleStarredVariable={toggleStarredVariable}
+              outputEntity={outputEntity}
+            />
+          </>
         )}
-        <InputVariables
-          inputs={[
-            {
-              name: 'xAxisVariable',
-              label: 'Main',
-            },
-          ]}
-          entities={entities}
-          selectedVariables={{
-            xAxisVariable: vizConfig.xAxisVariable,
-          }}
-          onChange={handleInputVariableChange}
-          constraints={pieConstraints}
-          dataElementDependencyOrder={pieDependencyOrder}
-          starredVariables={starredVariables}
-          toggleStarredVariable={toggleStarredVariable}
-          outputEntity={outputEntity}
-        />
       </div>
 
       <PluginError error={basicMarkerError} outputSize={totalEntityCount} />
       <PluginError error={overlayError} outputSize={totalEntityCount} />
-      <OutputEntityTitle entity={outputEntity} outputSize={totalEntityCount} />
+      {!hideInputsAndControls && (
+        <OutputEntityTitle
+          entity={outputEntity}
+          outputSize={totalEntityCount}
+        />
+      )}
       <LayoutComponent
         isFaceted={false}
         legendNode={legendNode}
@@ -449,6 +466,7 @@ function MapViz(props: VisualizationProps<Options>) {
          * thus, we're directly coercing a boolean as to whether or not the required variable has been chosen
          */
         showRequiredInputsPrompt={!vizConfig.xAxisVariable}
+        hideControls={hideInputsAndControls}
       />
     </div>
   );

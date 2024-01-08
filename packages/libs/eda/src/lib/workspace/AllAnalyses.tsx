@@ -65,7 +65,7 @@ interface AnalysisAndDataset {
 interface Props {
   analysisClient: AnalysisClient;
   subsettingClient: SubsettingClient;
-  exampleAnalysesAuthor?: number;
+  exampleAnalysesAuthors?: number[];
   /**
    * When provided, the table is filtered to the study,
    * and the study column is not displayed.
@@ -109,7 +109,7 @@ const WDK_STUDY_RECORD_ATTRIBUTES = ['study_access'];
 export function AllAnalyses(props: Props) {
   const {
     analysisClient,
-    exampleAnalysesAuthor,
+    exampleAnalysesAuthors,
     showLoginForm,
     studyId,
     synchronizeWithUrl,
@@ -534,7 +534,9 @@ export function AllAnalyses(props: Props) {
             const analysisId = data.row.analysis.analysisId;
             const descriptionStr = data.row.analysis.description || '';
 
-            return user?.id === exampleAnalysesAuthor ? (
+            return user &&
+              exampleAnalysesAuthors &&
+              exampleAnalysesAuthors.includes(user.id) ? (
               <div style={{ display: 'block', maxWidth: '100%' }}>
                 <SaveableTextEditor
                   key={analysisId}
@@ -640,9 +642,10 @@ export function AllAnalyses(props: Props) {
       history.location.pathname,
       addPinnedAnalysis,
       removePinnedAnalysis,
-      exampleAnalysesAuthor,
+      exampleAnalysesAuthors,
       user,
       studyId,
+      activeAnalysisId,
     ]
   );
 

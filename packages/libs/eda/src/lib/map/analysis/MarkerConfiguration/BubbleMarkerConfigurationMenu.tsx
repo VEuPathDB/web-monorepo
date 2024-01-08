@@ -5,7 +5,6 @@ import {
 import { VariableTreeNode } from '../../../core/types/study';
 import { VariablesByInputName } from '../../../core/utils/data-element-constraints';
 import { findEntityAndVariable } from '../../../core/utils/study-metadata';
-import { SharedMarkerConfigurations } from './PieMarkerConfigurationMenu';
 import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
 import { BubbleOverlayConfig } from '../../../core';
 import PluginError from '../../../core/components/visualizations/PluginError';
@@ -13,6 +12,9 @@ import {
   aggregationHelp,
   AggregationInputs,
 } from '../../../core/components/visualizations/implementations/LineplotVisualization';
+import { DataElementConstraint } from '../../../core/types/visualization'; // TO DO for dates: remove
+import { SharedMarkerConfigurations } from '../mapTypes/shared';
+import { invalidProportionText } from '../utils/defaultOverlayConfig';
 
 type AggregatorOption = typeof aggregatorOptions[number];
 const aggregatorOptions = ['mean', 'median'] as const;
@@ -41,6 +43,7 @@ interface Props
   onChange: (configuration: BubbleMarkerConfiguration) => void;
   configuration: BubbleMarkerConfiguration;
   overlayConfiguration: BubbleOverlayConfig | undefined;
+  isValidProportion: boolean | undefined; // undefined when not categorical mode
 }
 
 export function BubbleMarkerConfigurationMenu({
@@ -51,6 +54,7 @@ export function BubbleMarkerConfigurationMenu({
   starredVariables,
   toggleStarredVariable,
   constraints,
+  isValidProportion,
 }: Props) {
   function handleInputVariablesOnChange(selection: VariablesByInputName) {
     if (!selection.overlayVariable) {
@@ -92,11 +96,12 @@ export function BubbleMarkerConfigurationMenu({
     selectedVariable && 'vocabulary' in selectedVariable
       ? selectedVariable.vocabulary
       : undefined;
-
-  const proportionIsValid = validateProportionValues(
-    numeratorValues,
-    denominatorValues
-  );
+  // if the vocabulary has been altered by filters on this variable
+  // the fullVocabulary will be available here, otherwise it's undefined
+  const fullVocabulary =
+    selectedVariable && 'fullVocabulary' in selectedVariable
+      ? selectedVariable.fullVocabulary
+      : undefined;
 
   const aggregationInputs = (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -115,25 +120,32 @@ export function BubbleMarkerConfigurationMenu({
             }
           : {
               aggregationType: 'proportion',
-              options: vocabulary ?? [],
+              options: fullVocabulary ?? vocabulary ?? [],
+              disabledOptions: fullVocabulary
+                ? fullVocabulary.filter((value) => !vocabulary?.includes(value))
+                : [],
               numeratorValues: numeratorValues ?? [],
-              onNumeratorChange: (value) =>
+              onNumeratorChange: (values) =>
                 onChange({
                   ...configuration,
-                  numeratorValues: value,
+                  numeratorValues: values.filter((value) =>
+                    vocabulary?.includes(value)
+                  ),
                 }),
               denominatorValues: denominatorValues ?? [],
-              onDenominatorChange: (value) =>
+              onDenominatorChange: (values) =>
                 onChange({
                   ...configuration,
-                  denominatorValues: value,
+                  denominatorValues: values.filter((value) =>
+                    vocabulary?.includes(value)
+                  ),
                 }),
             })}
       />
-      {!proportionIsValid && (
+      {isValidProportion === false && (
         <div style={{ position: 'relative' }}>
           <div style={{ position: 'absolute', width: '100%' }}>
-            <PluginError error="To calculate a proportion, all selected numerator values must also be present in the denominator" />
+            <PluginError error={invalidProportionText} />
           </div>
         </div>
       )}
@@ -208,14 +220,3 @@ function isSuitableCategoricalVariable(variable?: VariableTreeNode): boolean {
     variable.distinctValuesCount != null
   );
 }
-
-// We currently call this function twice per value change.
-// If the number of values becomes vary large, we may want to optimize this?
-// Maybe O(n^2) isn't that bad though.
-export const validateProportionValues = (
-  numeratorValues: string[] | undefined,
-  denominatorValues: string[] | undefined
-) =>
-  numeratorValues === undefined ||
-  denominatorValues === undefined ||
-  numeratorValues.every((value) => denominatorValues.includes(value));

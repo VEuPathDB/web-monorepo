@@ -15,7 +15,10 @@ import {
 } from '../api/DataClient';
 import { Bounds } from '@veupathdb/components/lib/map/Types';
 import { Filter } from '../types/filter';
-import { VariableDescriptor } from '../types/variable';
+import {
+  VariableDescriptor,
+  VariableCollectionDescriptor,
+} from '../types/variable';
 import { findEntityAndVariable } from './study-metadata';
 import { variableDisplayWithUnit } from './variable-display';
 import { InputSpec } from '../components/visualizations/InputVariables';
@@ -25,7 +28,7 @@ import {
   VariablesByInputName,
 } from './data-element-constraints';
 import { isEqual } from 'lodash';
-import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../../map';
+import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../../map/constants';
 
 // was: BarplotData | HistogramData | { series: BoxplotData };
 type SeriesWithStatistics<T> = T & CoverageStatistics;
@@ -224,10 +227,29 @@ export function vocabularyWithMissingData(
     : vocabulary;
 }
 
+/**
+ * Checks if non-null values in an array are unique.
+ *
+ * @param {T[]} array - The array, possibly containing containing null values.
+ * @return {boolean} Returns true if the non-null values in the array are unique, false otherwise.
+ */
+export function nonNullValuesAreUnique<T>(array: (T | undefined)[]): boolean {
+  const defined = array.filter((item) => item != null);
+  const unique = new Set(defined);
+  return defined.length === unique.size;
+}
+
+// leaving these in as an alias, and so i dont have to hunt down places already in use
 export function variablesAreUnique(vars: (Variable | undefined)[]): boolean {
-  const defined = vars.filter((item) => item != null);
-  const unique = defined.filter((item, i, ar) => ar.indexOf(item) === i);
-  return defined.length === unique.length;
+  return nonNullValuesAreUnique(vars);
+}
+
+export function variableCollectionsAreUnique(
+  variableCollections: (VariableCollectionDescriptor | undefined)[]
+): boolean {
+  return nonNullValuesAreUnique(
+    variableCollections.map((desc) => desc && desc.entityId + desc.collectionId)
+  );
 }
 
 /**

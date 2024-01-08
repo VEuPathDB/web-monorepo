@@ -87,17 +87,20 @@ const variableSpec = type({
 });
 
 export type PlotReferenceValue = TypeOf<typeof plotReferenceValue>;
-const plotReferenceValue = keyof({
-  xAxis: null,
-  yAxis: null,
-  zAxis: null,
-  overlay: null,
-  facet1: null,
-  facet2: null,
-  geo: null,
-  latitude: null,
-  longitude: null,
-});
+const plotReferenceValue = union([
+  keyof({
+    xAxis: null,
+    yAxis: null,
+    zAxis: null,
+    overlay: null,
+    facet1: null,
+    facet2: null,
+    geo: null,
+    latitude: null,
+    longitude: null,
+  }),
+  nullType,
+]);
 
 export type API_VariableType = TypeOf<typeof API_VariableType>;
 const API_VariableType = keyof({
@@ -122,13 +125,13 @@ export const VariableMapping = intersection([
   type({
     variableClass,
     variableSpec,
-    plotReference: plotReferenceValue,
     dataType: API_VariableType,
     dataShape: API_VariableDataShape,
     isCollection: boolean,
     imputeZero: boolean,
   }),
   partial({
+    plotReference: plotReferenceValue,
     displayName: string,
     displayRangeMin: union([string, number]),
     displayRangeMax: union([string, number]),
@@ -357,20 +360,76 @@ export const ScatterplotResponse = intersection([
 // The volcano plot response type MUST be the same as the VolcanoPlotData type defined in the components package
 export type VolcanoPlotResponse = TypeOf<typeof VolcanoPlotResponse>;
 
-// TEMP - Many of these can be simplified after some backend work is merged (microbiomeComputations #37)
-export const VolcanoPlotResponse = array(
+export const VolcanoPlotStatistics = array(
   partial({
-    log2foldChange: string,
+    effectSize: string,
     pValue: string,
     adjustedPValue: string,
     pointID: string,
   })
 );
 
+export const VolcanoPlotResponse = intersection([
+  type({
+    effectSizeLabel: string,
+    statistics: VolcanoPlotStatistics,
+  }),
+  partial({
+    pValueFloor: string,
+    adjustedPValueFloor: union([string, nullType]),
+  }),
+]);
+
 export interface VolcanoPlotRequestParams {
   studyId: string;
   filters: Filter[];
   config: {}; // Empty viz config because there are no viz input vars
+}
+
+// Bipartite network
+export type BipartiteNetworkResponse = TypeOf<typeof BipartiteNetworkResponse>;
+
+const NodeData = type({
+  id: string,
+});
+
+export const BipartiteNetworkData = type({
+  column1NodeIDs: array(string),
+  column2NodeIDs: array(string),
+  nodes: array(NodeData),
+  links: array(
+    intersection([
+      type({
+        source: NodeData,
+        target: NodeData,
+        strokeWidth: string,
+      }),
+      partial({
+        color: string,
+      }),
+    ])
+  ),
+});
+
+const BipartiteNetworkConfig = type({
+  column1Metadata: string,
+  column2Metadata: string,
+});
+
+export const BipartiteNetworkResponse = type({
+  bipartitenetwork: type({
+    data: BipartiteNetworkData,
+    config: BipartiteNetworkConfig,
+  }),
+});
+
+export interface BipartiteNetworkRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    correlationCoefThreshold?: number;
+    significanceThreshold?: number;
+  };
 }
 
 ////////////////
@@ -855,7 +914,7 @@ export const StandaloneMapBubblesResponse = type({
     intersection([
       MapElement,
       type({
-        overlayValue: number,
+        overlayValue: string,
       }),
     ])
   ),
@@ -880,8 +939,8 @@ export type StandaloneMapBubblesLegendResponse = TypeOf<
   typeof StandaloneMapBubblesLegendResponse
 >;
 export const StandaloneMapBubblesLegendResponse = type({
-  minColorValue: number,
-  maxColorValue: number,
+  minColorValue: string,
+  maxColorValue: string,
   minSizeValue: number,
   maxSizeValue: number,
 });
@@ -901,6 +960,17 @@ export const BinRange = type({
   binEnd: string,
   binLabel: string,
 });
+
+export type LabeledRange = TypeOf<typeof LabeledRange>;
+export const LabeledRange = intersection([
+  type({
+    label: string,
+  }),
+  partial({
+    max: string,
+    min: string,
+  }),
+]);
 
 export type ContinousVariableMetadataResponse = TypeOf<
   typeof ContinousVariableMetadataResponse

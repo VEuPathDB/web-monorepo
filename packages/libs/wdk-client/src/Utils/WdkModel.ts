@@ -46,7 +46,7 @@ export interface Reporter {
   name: string;
   type: string;
   displayName: string;
-  description: string;
+  description?: string;
   isInReport: boolean;
   scopes: string[];
 }
@@ -270,6 +270,7 @@ export interface Question extends UrlModelEntity {
   paramNames: string[];
   queryName?: string;
   isCacheable: boolean;
+  isBeta?: boolean;
 }
 
 export interface QuestionWithParameters extends Question {

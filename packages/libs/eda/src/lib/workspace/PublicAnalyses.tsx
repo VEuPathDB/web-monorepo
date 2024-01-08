@@ -59,7 +59,7 @@ interface Props {
   publicAnalysisListState: PromiseHookState<PublicAnalysisSummary[]>;
   studyRecords: StudyRecord[] | undefined;
   makeAnalysisLink: (analysisId: string) => string;
-  exampleAnalysesAuthor?: number;
+  exampleAnalysesAuthors?: number[];
 }
 
 export function PublicAnalyses({
@@ -111,7 +111,7 @@ function PublicAnalysesTable({
   publicAnalysisList,
   studyRecords,
   makeAnalysisLink,
-  exampleAnalysesAuthor,
+  exampleAnalysesAuthors,
   userId,
 }: TableProps) {
   const { publicAnalysesState, updateAnalysis } = useEditablePublicAnalysisList(
@@ -166,9 +166,9 @@ function PublicAnalysesTable({
       modificationTimeDisplay: convertISOToDisplayFormat(
         publicAnalysis.modificationTime
       ),
-      isExample: publicAnalysis.userId === exampleAnalysesAuthor,
+      isExample: !!exampleAnalysesAuthors?.includes(publicAnalysis.userId),
     }));
-  }, [publicAnalysesState, studyRecords, exampleAnalysesAuthor]);
+  }, [publicAnalysesState, studyRecords, exampleAnalysesAuthors]);
 
   const offerExampleSortControl = useMemo(
     () =>
@@ -287,7 +287,7 @@ function PublicAnalysesTable({
           const analysisId = data.row.analysisId;
           const descriptionStr = data.row.description ?? '';
 
-          return userId === exampleAnalysesAuthor &&
+          return exampleAnalysesAuthors?.includes(userId) &&
             data.row.userId === userId ? (
             <div style={{ display: 'block', maxWidth: '100%' }}>
               <SaveableTextEditor
@@ -331,7 +331,7 @@ function PublicAnalysesTable({
           data.row.modificationTimeDisplay,
       },
     ],
-    [makeAnalysisLink, updateAnalysis, exampleAnalysesAuthor, userId]
+    [makeAnalysisLink, updateAnalysis, exampleAnalysesAuthors, userId]
   );
 
   const tableUiState = useMemo(() => ({ sort: tableSort }), [tableSort]);

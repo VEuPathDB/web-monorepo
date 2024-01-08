@@ -1,5 +1,6 @@
+import { orderBy } from 'lodash';
 import React, { Suspense } from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, useHistory, useRouteMatch } from 'react-router-dom';
 
 import SiteSearchController from '@veupathdb/web-common/lib/controllers/SiteSearchController';
 
@@ -24,13 +25,15 @@ import { useReferenceStrains } from '@veupathdb/preferred-organisms/lib/hooks/re
 import { PageLoading } from './components/common/PageLoading';
 import SampleForm from './components/samples/SampleForm';
 
-import { projectId } from './config';
+import { projectId, webAppUrl } from './config';
 
 import { blastRoutes } from './blastRoutes';
 import { preferredOrganismsRoutes } from './preferredOrganismRoutes';
 import { userCommentRoutes } from './userCommentRoutes';
 import { userDatasetRoutes } from './userDatasetRoutes';
 import Downloads from './components/Downloads';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
 // Project id is not needed for these record classes.
 // Matches urlSegment.
@@ -117,13 +120,48 @@ function SiteSearchRouteComponent() {
   );
 }
 
+function DownloadsRouteComponent() {
+  const config = useWdkService((wdkService) => wdkService.getConfig(), []);
+  const { path } = useRouteMatch();
+  const history = useHistory();
+  const localHref = history.createHref({ pathname: path });
+  const remoteHrefSuffix = localHref.replace(webAppUrl, '');
+  if (!config) return <Loading />;
+  return projectId === 'EuPathDB' ? (
+    <div className="Downloads">
+      <h1>Download Data Files</h1>
+      <p className="Downloads-Instructions portal">
+        Please go to a specific organism site in order to download files:
+      </p>
+      <ul>
+        {orderBy(
+          Object.entries(config.projectUrls),
+          ([project]) => project
+        ).map(([project, url]) => (
+          <li key={project}>
+            <a
+              target="_blank"
+              href={url.replace(/\/$/, '') + remoteHrefSuffix}
+              rel="noreferrer"
+            >
+              {project}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  ) : (
+    <Downloads />
+  );
+}
+
 /**
  * Wrap Ebrc Routes
  */
 export const wrapRoutes = (ebrcRoutes) => [
   {
     path: '/downloads',
-    component: Downloads,
+    component: DownloadsRouteComponent,
   },
 
   {
