@@ -144,12 +144,22 @@ export function CategoricalMarkerConfigurationTable<T>({
       },
       onMultipleRowDeselect: () => {
         /**
-         * This handler actually deselects all values by setting the table state and the configuration to the "All other labels" value
+         * This handler actually deselects all values by setting the table
+         * state and the configuration to the "All other labels" value.
+         * However, if there are only a few possible values,
+         * we won't show "All other labels".
          */
-        setUncontrolledSelections(new Set([UNSELECTED_TOKEN]));
+        setUncontrolledSelections(
+          numberOfAvailableValues < MAXIMUM_ALLOWABLE_VALUES
+            ? new Set([])
+            : new Set([UNSELECTED_TOKEN])
+        );
         onChange({
           ...configuration,
-          selectedValues: [UNSELECTED_TOKEN],
+          selectedValues:
+            numberOfAvailableValues < MAXIMUM_ALLOWABLE_VALUES
+              ? []
+              : [UNSELECTED_TOKEN],
         });
       },
       onSort: (
