@@ -3,7 +3,7 @@ import { VariableCollectionDescriptor } from '../../../types/variable';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { partial } from 'lodash';
+import { capitalize, partial } from 'lodash';
 import {
   assertComputationWithConfig,
   isNotAbsoluteAbundanceVariableCollection,
@@ -133,11 +133,7 @@ function AbundanceConfigDescriptionComponent({
       <h4>
         Method:{' '}
         <span>
-          {rankingMethod ? (
-            rankingMethod[0].toUpperCase() + rankingMethod.slice(1)
-          ) : (
-            <i>Not selected</i>
-          )}
+          {rankingMethod ? capitalize(rankingMethod) : <i>Not selected</i>}
         </span>
       </h4>
     </div>
@@ -188,11 +184,13 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
           <span>Method</span>
           <SingleSelect
             value={rankingMethod ?? 'Select a method'}
-            buttonDisplayContent={rankingMethod ?? 'Select a method'}
+            buttonDisplayContent={
+              rankingMethod ? capitalize(rankingMethod) : 'Select a method'
+            }
             onSelect={partial(changeConfigHandler, 'rankingMethod')}
             items={ABUNDANCE_METHODS.map((method) => ({
               value: method,
-              display: method,
+              display: capitalize(method),
             }))}
           />
         </div>
