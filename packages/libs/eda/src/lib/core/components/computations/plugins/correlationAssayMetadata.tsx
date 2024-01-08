@@ -6,7 +6,7 @@ import {
 } from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { partial } from 'lodash';
+import { capitalize, partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
@@ -21,6 +21,7 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { H6 } from '@veupathdb/coreui';
 import { bipartiteNetworkVisualization } from '../../visualizations/implementations/BipartiteNetworkVisualization';
 import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
+import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { entityTreeToArray } from '../../../utils/study-metadata';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { ancestorEntitiesForEntityId } from '../../../utils/data-element-constraints';
@@ -63,9 +64,9 @@ export const plugin: ComputationPlugin = {
     bipartitenetwork: bipartiteNetworkVisualization.withOptions({
       getLegendTitle(config) {
         if (CorrelationAssayMetadataConfig.is(config)) {
-          return 'Absolute correlation coefficient';
+          return ['absolute correlation coefficient', 'correlation direction'];
         } else {
-          return 'Legend';
+          return [];
         }
       },
     }), // Must match name in data service and in visualization.tsx
@@ -106,7 +107,7 @@ function CorrelationAssayMetadataConfigDescriptionComponent({
         Method:{' '}
         <span>
           {correlationMethod ? (
-            correlationMethod[0].toUpperCase() + correlationMethod.slice(1)
+            capitalize(correlationMethod)
           ) : (
             <i>Not selected</i>
           )}
@@ -115,6 +116,8 @@ function CorrelationAssayMetadataConfigDescriptionComponent({
     </div>
   );
 }
+
+const CORRELATION_METHODS = ['spearman', 'pearson'];
 
 // Shows as Step 1 in the full screen visualization page
 export function CorrelationAssayMetadataConfiguration(
@@ -138,11 +141,6 @@ export function CorrelationAssayMetadataConfiguration(
     visualizationId
   );
 
-  // For now, set the method to 'spearman'. When we add the next method, we can just add it here (no api change!)
-  if (configuration && !configuration.correlationMethod) {
-    changeConfigHandler('correlationMethod', 'spearman');
-  }
-
   return (
     <ComputationStepContainer
       computationStepInfo={{
@@ -151,7 +149,7 @@ export function CorrelationAssayMetadataConfiguration(
       }}
     >
       <div className={cx()}>
-        <div className={cx('-CorrelationAssayMetadataOuterConfigContainer')}>
+        <div className={cx('-CorrelationOuterConfigContainer')}>
           <H6>Input Data</H6>
           <div className={cx('-InputContainer')}>
             <span>Data</span>
@@ -159,6 +157,25 @@ export function CorrelationAssayMetadataConfiguration(
               value={configuration.collectionVariable}
               onSelect={partial(changeConfigHandler, 'collectionVariable')}
               collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
+            />
+          </div>
+        </div>
+        <div className={cx('-CorrelationOuterConfigContainer')}>
+          <H6>Correlation Method</H6>
+          <div className={cx('-InputContainer')}>
+            <span>Method</span>
+            <SingleSelect
+              value={configuration.correlationMethod ?? 'Select a method'}
+              buttonDisplayContent={
+                configuration.correlationMethod
+                  ? capitalize(configuration.correlationMethod)
+                  : 'Select a method'
+              }
+              items={CORRELATION_METHODS.map((method: string) => ({
+                value: method,
+                display: capitalize(method),
+              }))}
+              onSelect={partial(changeConfigHandler, 'correlationMethod')}
             />
           </div>
         </div>
