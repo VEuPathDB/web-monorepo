@@ -305,20 +305,29 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const lineLegendTitle = options?.getLegendTitle?.(
     computation.descriptor.configuration
   )
-    ? options.getLegendTitle(computation.descriptor.configuration) +
-      ' (Link width)'
+    ? 'Link width (' +
+      options.getLegendTitle(computation.descriptor.configuration)[0] +
+      ')'
     : 'Link width';
+
+  const colorLegendTitle = options?.getLegendTitle?.(
+    computation.descriptor.configuration
+  )
+    ? 'Link color (' +
+      options.getLegendTitle(computation.descriptor.configuration)[1] +
+      ')'
+    : 'Link color';
 
   const colorLegendItems: LegendItemsProps[] = [
     {
-      label: 'Positive correlation',
+      label: 'Positive',
       marker: 'line',
       markerColor: twoColorPalette[1],
       hasData: true,
       lineThickness: '3px',
     },
     {
-      label: 'Negative correlation',
+      label: 'Negative',
       marker: 'line',
       markerColor: twoColorPalette[0],
       hasData: true,
@@ -339,7 +348,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
         type="list"
         legendItems={colorLegendItems}
         checkedLegendItems={undefined}
-        legendTitle="Link color"
+        legendTitle={colorLegendTitle}
         showCheckbox={false}
       />
     </div>
