@@ -164,16 +164,6 @@ body.vpdb-Body .wdk-QuestionFormQuestionHeader {
   top: 8.5em;
 }
 
-// Fix for All Datasets sticky header
-body.vpdb-Body
-  .wdk-Answer
-  .MesaComponent
-  .DataTable
-  .DataTable-Sticky
-  .DataTable-Header {
-  top: 103px;
-}
-
 // Fix for Preferred Organisms config page header
 body.vpdb-Body .PreferredOrganismsConfig {
   h1 {
