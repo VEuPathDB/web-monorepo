@@ -3,7 +3,7 @@ import { VariableCollectionDescriptor } from '../../../types/variable';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { partial } from 'lodash';
+import { capitalize, partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
@@ -100,11 +100,7 @@ function AlphaDivConfigDescriptionComponent({
       <h4>
         Method:{' '}
         <span>
-          {alphaDivMethod ? (
-            alphaDivMethod[0].toUpperCase() + alphaDivMethod.slice(1)
-          ) : (
-            <i>Not selected</i>
-          )}
+          {alphaDivMethod ? capitalize(alphaDivMethod) : <i>Not selected</i>}
         </span>
       </h4>
     </div>
@@ -151,11 +147,13 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
           <SingleSelect
             value={configuration.alphaDivMethod ?? 'Select a method'}
             buttonDisplayContent={
-              configuration.alphaDivMethod ?? 'Select a method'
+              configuration.alphaDivMethod
+                ? capitalize(configuration.alphaDivMethod)
+                : 'Select a method'
             }
             items={ALPHA_DIV_METHODS.map((method) => ({
               value: method,
-              display: method,
+              display: capitalize(method),
             }))}
             onSelect={partial(changeConfigHandler, 'alphaDivMethod')}
           />
