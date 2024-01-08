@@ -438,12 +438,12 @@ function ParameterHeading(props: {
   const { parameter, paramDependencyUpdating } = props;
   return (
     <div className={cx('ParameterHeading')}>
-      <h2>
+      <h3>
         <HelpIcon>{safeHtml(parameter.help)}</HelpIcon> {parameter.displayName}
         {paramDependencyUpdating && (
           <IconAlt fa="circle-o-notch" className="fa-spin fa-fw" />
         )}
-      </h2>
+      </h3>
     </div>
   );
 }
