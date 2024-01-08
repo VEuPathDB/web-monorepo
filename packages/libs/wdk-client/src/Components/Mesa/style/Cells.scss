@@ -59,15 +59,22 @@ $StickyColumnBorderColor: rgb(204, 204, 204);
     width: 4em;
   }
 
-  .StickyColumnCell::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 100%;
-    left: 0;
-    box-shadow: -1px 0px 0px $StickyColumnBorderColor,
-      1px 0px 0px $StickyColumnBorderColor;
+  .StickyColumnCell {
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+      left: 0;
+      box-shadow: -1px 0px 0px $StickyColumnBorderColor,
+        1px 0px 0px $StickyColumnBorderColor;
+    }
+
+    a {
+      position: relative;
+      z-index: 1;
+    }
   }
 
   tr {
