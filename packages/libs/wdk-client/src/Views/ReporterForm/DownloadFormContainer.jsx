@@ -98,10 +98,10 @@ class DownloadFormContainer extends Component {
   }
 
   // create parameterless form submission function for forms to use
-  onSubmit() {
+  async onSubmit() {
     let { submitForm, resultType, selectedReporter, formState, viewFilters } =
       this.props;
-    submitForm(resultType, selectedReporter, formState, viewFilters);
+    await submitForm(resultType, selectedReporter, formState, viewFilters);
   }
 
   render() {
@@ -114,6 +114,7 @@ class DownloadFormContainer extends Component {
       selectReporter,
       includeTitle,
       includeSubmit,
+      includeSelector = true,
     } = this.props;
 
     // create page title element
@@ -132,12 +133,19 @@ class DownloadFormContainer extends Component {
 
     return (
       <div style={{ padding: '1em 3em' }}>
-        {includeTitle && title}
-        <ReporterSelect
-          reporters={availableReporters}
-          selected={selectedReporter}
-          onChange={selectReporter}
-        />
+        {includeTitle && (
+          <>
+            {title}
+            <hr />
+          </>
+        )}
+        {includeSelector && (
+          <ReporterSelect
+            reporters={availableReporters}
+            selected={selectedReporter}
+            onChange={selectReporter}
+          />
+        )}
         <DownloadForm
           {...formProps}
           onSubmit={this.onSubmit}
