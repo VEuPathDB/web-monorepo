@@ -9064,6 +9064,7 @@ __metadata:
     "@veupathdb/react-scripts": "workspace:^"
     "@veupathdb/study-data-access": "workspace:^"
     "@veupathdb/user-datasets": "workspace:^"
+    "@veupathdb/user-datasets-legacy": "workspace:^"
     "@veupathdb/wdk-client": "workspace:^"
     bubleify: ^2.0.0
     custom-event-polyfill: ^1.0.7
