@@ -1,29 +1,17 @@
 import { NumberVariable, VariableTreeNode } from '../types/study';
 
-//DKDK add scale in conjunction with
+// add scale in conjunction with units
 export function variableDisplayWithUnit(
   variable: VariableTreeNode | undefined
 ): string | undefined {
-  if (NumberVariable.is(variable)) {
-    if (variable.units && variable.units != null) {
-      if (variable.scale && variable.scale != null) {
-        return (
-          variable.displayName +
-          ' (' +
-          variable.units +
-          ', ' +
-          variable.scale +
-          ')'
-        );
-      } else {
-        return variable.displayName + ' (' + variable.units + ')';
-      }
-    } else {
-      if (variable.scale && variable.scale != null) {
-        return variable.displayName + ' (' + variable.scale + ')';
-      } else {
-        return variable?.displayName;
-      }
-    }
-  } else return variable?.displayName;
+  if (variable == null) return;
+
+  if (!NumberVariable.is(variable)) return variable.displayName;
+
+  const parentheticalParts = [variable.units, variable.scale].filter(Boolean);
+
+  if (parentheticalParts.length)
+    return `${variable.displayName} (${parentheticalParts.join(', ')})`;
+
+  return variable.displayName;
 }
