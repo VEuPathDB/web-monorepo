@@ -9,7 +9,6 @@ export function DownloadForm() {
     );
     return (
       <div>
-        <hr />
         <Reporter {...props} />
       </div>
     );

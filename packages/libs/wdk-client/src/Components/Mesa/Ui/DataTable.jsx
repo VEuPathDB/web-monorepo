@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { isEqual } from 'lodash';
+import { isEqual, sum } from 'lodash';
 import { defaultMemoize } from 'reselect';
 
 import HeadingRow from '../../../Components/Mesa/Ui/HeadingRow';
@@ -25,6 +25,7 @@ class DataTable extends React.Component {
     this.getInnerCellWidth = this.getInnerCellWidth.bind(this);
     this.hasSelectionColumn = this.hasSelectionColumn.bind(this);
     this.shouldUseStickyHeader = this.shouldUseStickyHeader.bind(this);
+    this.makeFirstNColumnsSticky = this.makeFirstNColumnsSticky.bind(this);
     this.handleTableBodyScroll = this.handleTableBodyScroll.bind(this);
     this.setDynamicWidths = this.setDynamicWidths.bind(this);
     this.resizeId = -1;
@@ -40,6 +41,39 @@ class DataTable extends React.Component {
       Use a css height as the "tableBodyMaxHeight" option to use this setting.
     `);
     return true;
+  }
+
+  makeFirstNColumnsSticky(columns, n) {
+    const { dynamicWidths } = this.state;
+
+    if (n <= columns.length) {
+      const stickyColumns = columns.slice(0, n).map((column, index) => {
+        const leftOffset = dynamicWidths
+          ? sum(dynamicWidths.slice(0, index))
+          : 0;
+
+        return {
+          ...column,
+          headingStyle: {
+            ...column.headingStyle,
+            position: 'sticky',
+            left: `${leftOffset}px`,
+            zIndex: 2,
+          },
+          style: {
+            ...column.style,
+            position: 'sticky',
+            left: `${leftOffset}px`,
+            zIndex: 1,
+          },
+          className: `${column.className || ''} StickyColumnCell`,
+        };
+      });
+
+      return [...stickyColumns, ...columns.slice(n)];
+    }
+
+    return columns;
   }
 
   componentDidMount() {
@@ -154,14 +188,21 @@ class DataTable extends React.Component {
       actions,
       eventHandlers,
       uiState,
+      headerWrapperStyle,
     } = this.props;
     const { dynamicWidths, tableWrapperWidth } = this.state;
+    const stickyColumns = options.useStickyFirstNColumns
+      ? this.makeFirstNColumnsSticky(columns, options.useStickyFirstNColumns)
+      : columns;
     const newColumns =
-      columns.every(({ width }) => width) ||
+      stickyColumns.every(({ width }) => width) ||
       !dynamicWidths ||
       dynamicWidths.length == 0
-        ? columns
-        : makeColumnsWithDynamicWidths({ columns, dynamicWidths });
+        ? stickyColumns
+        : makeColumnsWithDynamicWidths({
+            columns: stickyColumns,
+            dynamicWidths,
+          });
     const bodyWrapperStyle = {
       maxHeight: options ? options.tableBodyMaxHeight : null,
     };
@@ -170,9 +211,9 @@ class DataTable extends React.Component {
         ? combineWidths(columns.map(({ width }) => width))
         : null,
     };
-    const headerWrapperStyle = {
-      width: tableWrapperWidth,
+    const headerWrapperStyleMerged = {
       display: dynamicWidths == null ? 'none' : 'block',
+      ...headerWrapperStyle,
     };
     const tableLayout = { tableLayout: dynamicWidths ? 'fixed' : 'auto' };
     const tableProps = {
@@ -189,7 +230,7 @@ class DataTable extends React.Component {
         <div className={dataTableClass()} style={wrapperStyle}>
           <div className={dataTableClass('Sticky')} style={wrapperStyle}>
             <div
-              style={headerWrapperStyle}
+              style={headerWrapperStyleMerged}
               ref={(node) => (this.headerNode = node)}
               className={dataTableClass('Header')}
             >
@@ -221,12 +262,22 @@ class DataTable extends React.Component {
 
   renderPlainTable() {
     const { props } = this;
+    const { options, columns } = props;
+
+    const stickyColumns = options.useStickyFirstNColumns
+      ? this.makeFirstNColumnsSticky(columns, options.useStickyFirstNColumns)
+      : columns;
+    const newProps = {
+      ...props,
+      columns: stickyColumns,
+    };
+
     return (
       <div className="MesaComponent">
         <div className={dataTableClass()}>
           <table cellSpacing="0" cellPadding="0">
-            <HeadingRow {...props} />
-            <DataRowList {...props} />
+            <HeadingRow {...newProps} />
+            <DataRowList {...newProps} />
           </table>
         </div>
       </div>

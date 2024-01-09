@@ -502,16 +502,6 @@ const useHeaderMenuItems = (
           },
         },
         {
-          key: 'ancillary-genome-browser',
-          display: 'Ancillary genome browser',
-          type: 'externalLink',
-          url: 'http://ancillary.toxodb.org',
-          target: '_blank',
-          metadata: {
-            include: [ToxoDB],
-          },
-        },
-        {
           key: 'vb-images',
           display: 'Image gallery',
           tooltip: 'Free to use pictures of vectors',
