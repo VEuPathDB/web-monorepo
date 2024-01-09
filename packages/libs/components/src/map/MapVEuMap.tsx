@@ -154,8 +154,10 @@ export interface MapVEuMapProps {
   /* selectedMarkers setState (for on-click reset) **/
   setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
   children?: React.ReactNode;
-  /* setIsMapEvents is used to check if map events such as click, zoom, and panning occured */
-  setIsMapEvents?: React.Dispatch<React.SetStateAction<boolean>>;
+  /* hide map side panel */
+  onMapClick?: (value: boolean) => void;
+  onMapDrag?: (value: boolean) => void;
+  onMapZoom?: (value: boolean) => void;
 }
 
 function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
@@ -179,7 +181,9 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     interactive = true,
     defaultViewport,
     setSelectedMarkers,
-    setIsMapEvents,
+    onMapClick,
+    onMapDrag,
+    onMapZoom,
   } = props;
 
   // use a ref to avoid unneeded renders
@@ -290,7 +294,9 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
         onBaseLayerChanged={onBaseLayerChanged}
         setSelectedMarkers={setSelectedMarkers}
         onBoundsChanged={onBoundsChanged}
-        setIsMapEvents={setIsMapEvents}
+        onMapClick={onMapClick}
+        onMapDrag={onMapDrag}
+        onMapZoom={onMapZoom}
       />
       {/* set ScrollWheelZoom */}
       <MapScrollWheelZoom scrollingEnabled={scrollingEnabled} />
@@ -307,7 +313,9 @@ interface MapVEuMapEventsProps {
   onBoundsChanged: (bondsViewport: BoundsViewport) => void;
   onBaseLayerChanged?: (newBaseLayer: BaseLayerChoice) => void;
   setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
-  setIsMapEvents?: React.Dispatch<React.SetStateAction<boolean>>;
+  onMapClick?: (value: boolean) => void;
+  onMapDrag?: (value: boolean) => void;
+  onMapZoom?: (value: boolean) => void;
 }
 
 const EMPTY_MARKERS: string[] = [];
@@ -319,7 +327,9 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
     onBaseLayerChanged,
     onBoundsChanged,
     setSelectedMarkers,
-    setIsMapEvents,
+    onMapClick,
+    onMapDrag,
+    onMapZoom,
   } = props;
   const mapEvents = useMapEvents({
     zoomend: () => {
@@ -335,6 +345,8 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
         zoomLevel: mapEvents.getZoom(),
       };
       onBoundsChanged(boundsViewport);
+
+      if (onMapZoom != null) onMapZoom(false);
     },
     moveend: () => {
       onViewportChanged({
@@ -349,6 +361,8 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
         zoomLevel: mapEvents.getZoom(),
       };
       onBoundsChanged(boundsViewport);
+
+      if (onMapDrag != null) onMapDrag(false);
     },
     baselayerchange: (e: { name: string }) => {
       onBaseLayerChanged && onBaseLayerChanged(e.name as BaseLayerChoice);
@@ -357,8 +371,7 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
     click: () => {
       if (setSelectedMarkers != null) setSelectedMarkers(EMPTY_MARKERS);
 
-      // map click occurred
-      if (setIsMapEvents != null) setIsMapEvents(true);
+      if (onMapClick != null) onMapClick(false);
     },
   });
 

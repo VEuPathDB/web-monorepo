@@ -409,19 +409,6 @@ function MapAnalysisImpl(props: ImplProps) {
   // make an array of objects state to list highlighted markers
   const [selectedMarkers, setSelectedMarkers] = useState<string[]>([]);
 
-  // check if map events such as click occured
-  const [isMapEvents, setIsMapEvents] = useState<boolean>(false);
-
-  // check if side panel should expand: need useMemo to avoid re-rendering MapSidePanel
-  const shouldSidePanelExpand = useMemo(() => {
-    if (isMapEvents) {
-      setIsSidePanelExpanded(false);
-      return false;
-    } else {
-      return appState.isSidePanelExpanded;
-    }
-  }, [isMapEvents, setIsSidePanelExpanded, appState.isSidePanelExpanded]);
-
   const sidePanelMenuEntries: SidePanelMenuEntry[] = [
     {
       type: 'heading',
@@ -880,10 +867,9 @@ function MapAnalysisImpl(props: ImplProps) {
                   }}
                 >
                   <MapSidePanel
-                    isExpanded={shouldSidePanelExpand}
+                    isExpanded={appState.isSidePanelExpanded}
                     isUserLoggedIn={userLoggedIn}
                     onToggleIsExpanded={() => {
-                      setIsMapEvents(false);
                       setIsSidePanelExpanded(!appState.isSidePanelExpanded);
                     }}
                     siteInformationProps={props.siteInformationProps}
@@ -903,10 +889,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     showSpinner={false}
                     viewport={appState.viewport}
                     onBoundsChanged={setBoundsZoomLevel}
-                    onViewportChanged={(newVieport) => {
-                      setViewport(newVieport);
-                      setIsSidePanelExpanded(false);
-                    }}
+                    onViewportChanged={setViewport}
                     showGrid={geoConfig?.zoomLevelToAggregationLevel !== null}
                     zoomLevelToGeohashLevel={
                       geoConfig?.zoomLevelToAggregationLevel
@@ -915,8 +898,9 @@ function MapAnalysisImpl(props: ImplProps) {
                     defaultViewport={defaultViewport}
                     // for multiple markers cancelation of selection only
                     setSelectedMarkers={setSelectedMarkers}
-                    // pass setIsMapEvents to check if map events such as click occured
-                    setIsMapEvents={setIsMapEvents}
+                    onMapClick={setIsSidePanelExpanded}
+                    onMapDrag={setIsSidePanelExpanded}
+                    onMapZoom={setIsSidePanelExpanded}
                   >
                     {activeMapTypePlugin?.MapLayerComponent && (
                       <activeMapTypePlugin.MapLayerComponent
