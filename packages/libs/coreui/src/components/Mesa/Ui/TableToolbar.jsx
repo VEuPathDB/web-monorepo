@@ -1,7 +1,7 @@
 import React from 'react';
 
-import TableSearch from '../../../Components/Mesa/Ui/TableSearch';
-import RowCounter from '../../../Components/Mesa/Ui/RowCounter';
+import TableSearch from './TableSearch';
+import RowCounter from './RowCounter';
 
 class TableToolbar extends React.PureComponent {
   constructor(props) {

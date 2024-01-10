@@ -1,8 +1,4 @@
-import {
-  fail,
-  badType,
-  missingFromState,
-} from '../../../Components/Mesa/Utils/Errors';
+import { fail, badType, missingFromState } from './Errors';
 
 export const createSelection = (_selection = []) => {
   if (!Array.isArray(_selection))

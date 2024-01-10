@@ -1,7 +1,7 @@
 import React from 'react';
 
-import DataRow from '../../../Components/Mesa/Ui/DataRow';
-import { makeClassifier } from '../../../Components/Mesa/Utils/Utils';
+import DataRow from './DataRow';
+import { makeClassifier } from '../Utils/Utils';
 
 class DataRowList extends React.Component {
   constructor(props) {

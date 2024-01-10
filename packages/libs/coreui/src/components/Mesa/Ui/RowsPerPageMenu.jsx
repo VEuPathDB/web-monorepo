@@ -1,6 +1,6 @@
 import React from 'react';
 
-import SelectBox from '../../../Components/Mesa/Components/SelectBox';
+import SelectBox from '../Components/SelectBox';
 
 class RowsPerPageMenu extends React.PureComponent {
   constructor(props) {

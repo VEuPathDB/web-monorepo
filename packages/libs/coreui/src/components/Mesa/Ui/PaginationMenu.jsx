@@ -2,8 +2,8 @@ import { range } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Icon from '../../../Components/Mesa/Components/Icon';
-import RowsPerPageMenu from '../../../Components/Mesa/Ui/RowsPerPageMenu';
+import Icon from '../Components/Icon';
+import RowsPerPageMenu from './RowsPerPageMenu';
 
 const settings = {
   overflowPoint: 8,

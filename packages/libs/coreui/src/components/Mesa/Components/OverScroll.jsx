@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Defaults from '../../../Components/Mesa/Defaults';
+import Defaults from '../Defaults';
 
 class OverScroll extends React.Component {
   constructor(props) {

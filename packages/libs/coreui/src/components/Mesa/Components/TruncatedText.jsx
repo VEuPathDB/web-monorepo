@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Icon from '../../../Components/Mesa/Components/Icon';
+import Icon from './Icon';
 
 class TruncatedText extends React.Component {
   constructor(props) {

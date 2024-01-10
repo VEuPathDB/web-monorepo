@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Templates from '../../../Components/Mesa/Templates';
-import Icon from '../../../Components/Mesa/Components/Icon';
-import Tooltip from '../../../Components/Mesa/Components/Tooltip';
-import { makeClassifier } from '../../../Components/Mesa/Utils/Utils';
-import Events, { EventsFactory } from '../../../Components/Mesa/Utils/Events';
+import Templates from '../Templates';
+import Icon from '../Components/Icon';
+import Tooltip from '../Components/Tooltip';
+import { makeClassifier } from '../Utils/Utils';
+import Events, { EventsFactory } from '../Utils/Events';
 import { MESA_SCROLL_EVENT, MESA_REFLOW_EVENT } from './MesaContants';
 
 const headingCellClass = makeClassifier('HeadingCell');

@@ -4,12 +4,9 @@ import PropTypes from 'prop-types';
 import { isEqual, sum } from 'lodash';
 import { defaultMemoize } from 'reselect';
 
-import HeadingRow from '../../../Components/Mesa/Ui/HeadingRow';
-import DataRowList from '../../../Components/Mesa/Ui/DataRowList';
-import {
-  makeClassifier,
-  combineWidths,
-} from '../../../Components/Mesa/Utils/Utils';
+import HeadingRow from './HeadingRow';
+import DataRowList from './DataRowList';
+import { makeClassifier, combineWidths } from '../Utils/Utils';
 import { MESA_SCROLL_EVENT, MESA_REFLOW_EVENT } from './MesaContants';
 
 const dataTableClass = makeClassifier('DataTable');
