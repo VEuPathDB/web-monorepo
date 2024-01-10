@@ -154,7 +154,6 @@ export interface MapVEuMapProps {
   /* selectedMarkers setState (for on-click reset) **/
   setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
   children?: React.ReactNode;
-  /* close left-side panel when map events happen */
   onMapClick?: () => void;
   onMapDrag?: () => void;
   onMapZoom?: () => void;
@@ -346,7 +345,6 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
       };
       onBoundsChanged(boundsViewport);
 
-      // close left-side panel when zoom event happens
       if (onMapZoom != null) onMapZoom();
     },
     moveend: () => {
@@ -363,7 +361,6 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
       };
       onBoundsChanged(boundsViewport);
 
-      // close left-side panel when drag/panning event happens
       if (onMapDrag != null) onMapDrag();
     },
     baselayerchange: (e: { name: string }) => {
@@ -373,7 +370,6 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
     click: () => {
       if (setSelectedMarkers != null) setSelectedMarkers(EMPTY_MARKERS);
 
-      // close left-side panel when click event happens
       if (onMapClick != null) onMapClick();
     },
   });

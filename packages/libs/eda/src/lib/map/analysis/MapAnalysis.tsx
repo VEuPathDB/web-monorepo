@@ -872,9 +872,9 @@ function MapAnalysisImpl(props: ImplProps) {
                   <MapSidePanel
                     isExpanded={appState.isSidePanelExpanded}
                     isUserLoggedIn={userLoggedIn}
-                    onToggleIsExpanded={() => {
-                      setIsSidePanelExpanded(!appState.isSidePanelExpanded);
-                    }}
+                    onToggleIsExpanded={() =>
+                      setIsSidePanelExpanded(!appState.isSidePanelExpanded)
+                    }
                     siteInformationProps={props.siteInformationProps}
                     sidePanelDrawerContents={activeSideNavigationItemMenu}
                   >
