@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Templates from '../../../Components/Mesa/Templates';
-import { makeClassifier } from '../../../Components/Mesa/Utils/Utils';
+import Templates from '../Templates';
+import { makeClassifier } from '../Utils/Utils';
 
 const dataCellClass = makeClassifier('DataCell');
 

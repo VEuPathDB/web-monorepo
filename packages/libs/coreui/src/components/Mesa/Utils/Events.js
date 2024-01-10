@@ -1,4 +1,4 @@
-import KeyCodes from '../../../Components/Mesa/Utils/KeyCodes';
+import KeyCodes from './KeyCodes';
 const idPrefix = 'listener_';
 
 export const EventsFactory = (node) => {

@@ -1,8 +1,8 @@
 import React from 'react';
 import { debounce } from 'lodash';
 
-import Tooltip from '../../../Components/Mesa/Components/Tooltip';
-import Events from '../../../Components/Mesa/Utils/Events';
+import Tooltip from './Tooltip';
+import Events from '../Utils/Events';
 import { MESA_SCROLL_EVENT, MESA_REFLOW_EVENT } from '../Ui/MesaContants';
 
 class AnchoredTooltip extends React.Component {

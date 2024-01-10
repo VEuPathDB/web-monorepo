@@ -1,6 +1,6 @@
 import React from 'react';
-import Icon from '../../../Components/Mesa/Components/Icon';
-import AnchoredTooltip from '../../../Components/Mesa/Components/AnchoredTooltip';
+import Icon from './Icon';
+import AnchoredTooltip from './AnchoredTooltip';
 
 class HelpTrigger extends React.Component {
   constructor(props) {

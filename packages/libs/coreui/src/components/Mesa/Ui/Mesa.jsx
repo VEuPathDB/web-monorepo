@@ -1,8 +1,8 @@
 // TODO Convert to typescript and add types
 import React from 'react';
 
-import MesaController from '../../../Components/Mesa/Ui/MesaController';
-import MesaState from '../../../Components/Mesa/Utils/MesaState';
+import MesaController from './MesaController';
+import MesaState from '../Utils/MesaState';
 
 class Mesa extends React.Component {
   constructor(props) {
