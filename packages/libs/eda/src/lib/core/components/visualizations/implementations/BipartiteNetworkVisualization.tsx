@@ -16,7 +16,7 @@ import BipartiteNetwork, {
 import BipartiteNetworkSVG from './selectorIcons/BipartiteNetworkSVG';
 import {
   BipartiteNetworkRequestParams,
-  BipartiteNetworkResponse,
+  CorrelationBipartiteNetworkResponse,
 } from '../../../api/DataClient/types';
 import { twoColorPalette } from '@veupathdb/components/lib/types/plots/addOns';
 import { useCallback, useMemo } from 'react';
@@ -122,7 +122,9 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
 
   // Get data from the compute job
   const data = usePromise(
-    useCallback(async (): Promise<BipartiteNetworkResponse | undefined> => {
+    useCallback(async (): Promise<
+      CorrelationBipartiteNetworkResponse | undefined
+    > => {
       // Only need to check compute job status and filter status, since there are no
       // viz input variables.
       if (computeJobStatus !== 'complete') return undefined;
@@ -143,7 +145,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
         computation.descriptor.type,
         visualization.descriptor.type,
         params,
-        BipartiteNetworkResponse
+        CorrelationBipartiteNetworkResponse
       );
 
       return response;
@@ -162,21 +164,21 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     ])
   );
 
-  // Determin min and max stroke widths. For use in scaling the strokes (strokeWidthMap) and the legend.
-  const dataStrokeWidths =
+  // Determin min and max stroke widths. For use in scaling the strokes (weightMap) and the legend.
+  const dataWeights =
     data.value?.bipartitenetwork.data.links.map(
-      (link) => Number(link.strokeWidth) // link.strokeWidth will always be a number if defined, because it represents the continuous data associated with that link.
+      (link) => Number(link.weight) // link.weight will always be a number if defined, because it represents the continuous data associated with that link.
     ) ?? [];
-  const minDataStrokeWidth = Math.min(...dataStrokeWidths);
-  const maxDataStrokeWidth = Math.max(...dataStrokeWidths);
+  const minDataWeight = Math.min(...dataWeights);
+  const maxDataWeight = Math.max(...dataWeights);
 
   // Clean and finalize data format. Specifically, assign link colors, add display labels
   const cleanedData = useMemo(() => {
     if (!data.value) return undefined;
 
     // Create map that will adjust each link's stroke width so that all link stroke widths span an appropriate range for this viz.
-    const strokeWidthMap = scaleLinear()
-      .domain([minDataStrokeWidth, maxDataStrokeWidth])
+    const weightMap = scaleLinear()
+      .domain([minDataWeight, maxDataWeight])
       .range([MIN_STROKE_WIDTH, MAX_STROKE_WIDTH]);
 
     // Assign color to links.
@@ -229,12 +231,12 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
         return {
           source: link.source,
           target: link.target,
-          strokeWidth: strokeWidthMap(Number(link.strokeWidth)),
+          weight: weightMap(Number(link.weight)),
           color: link.color ? linkColorScale(link.color.toString()) : '#000000',
         };
       }),
     };
-  }, [data.value, entities, minDataStrokeWidth, maxDataStrokeWidth]);
+  }, [data.value, entities, minDataWeight, maxDataWeight]);
 
   // plot subtitle
   const plotSubtitle =
@@ -285,12 +287,11 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const lineLegendItems: LegendItemsProps[] = [
     ...Array(nLineItemsInLegend).keys(),
   ].map((i) => {
-    const adjustedStrokeWidth =
-      maxDataStrokeWidth -
-      ((maxDataStrokeWidth - minDataStrokeWidth) / (nLineItemsInLegend - 1)) *
-        i;
+    const weightLabel =
+      maxDataWeight -
+      ((maxDataWeight - minDataWeight) / (nLineItemsInLegend - 1)) * i;
     return {
-      label: String(adjustedStrokeWidth.toFixed(4)),
+      label: String(weightLabel.toFixed(4)),
       marker: 'line',
       markerColor: gray[900],
       hasData: true,
