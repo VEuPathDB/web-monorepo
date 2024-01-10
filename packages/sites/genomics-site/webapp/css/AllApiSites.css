@@ -50,19 +50,6 @@ header {
   background-color: #f0f0f0;
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-           =Answer page (all datasets table)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-.wdk-Answer .MesaComponent .DataTable .DataTable-Sticky .DataTable-Header {
-  top: 68px;
-}
-
-@media screen and (max-width: 960px) {
-  .wdk-Answer .MesaComponent .DataTable .DataTable-Sticky .DataTable-Header {
-    top: 0;
-  }
-}
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       = Results Table: Boolean and Leaf transcript Filters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
