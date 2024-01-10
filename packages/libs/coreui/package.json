@@ -14,7 +14,7 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "clean": "rm -rf lib",
-    "build": "NODE_ENV=production babel src --ignore \"src/stories/**/*\" --out-dir lib --extensions \".ts,.tsx\" ",
+    "build": "NODE_ENV=production babel src --ignore \"src/stories/**/*\" --out-dir lib --extensions \".ts,.tsx,.js,.jsx\" --ignore \"src/**/*.d.ts\" ",
     "tsc": "tsc",
     "build-npm-modules": "npm-run-all build tsc",
     "create-svg-icons": "npx @svgr/cli --icon --replace-attr-values \"#000000=currentColor\" --out-dir src/components/icons/ src/assets/svg/ --typescript",
