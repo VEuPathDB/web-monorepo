@@ -776,6 +776,9 @@ function MapAnalysisImpl(props: ImplProps) {
       ? donutMarkerPlugin
       : undefined;
 
+  // close left-side panel when map events happen
+  const closePanel = useCallback(() => setIsSidePanelExpanded(false), []);
+
   return (
     <PromiseResult state={appsPromiseState}>
       {(apps: ComputationAppOverview[]) => {
@@ -898,9 +901,10 @@ function MapAnalysisImpl(props: ImplProps) {
                     defaultViewport={defaultViewport}
                     // for multiple markers cancelation of selection only
                     setSelectedMarkers={setSelectedMarkers}
-                    onMapClick={setIsSidePanelExpanded}
-                    onMapDrag={setIsSidePanelExpanded}
-                    onMapZoom={setIsSidePanelExpanded}
+                    // close left-side panel when map events happen
+                    onMapClick={closePanel}
+                    onMapDrag={closePanel}
+                    onMapZoom={closePanel}
                   >
                     {activeMapTypePlugin?.MapLayerComponent && (
                       <activeMapTypePlugin.MapLayerComponent

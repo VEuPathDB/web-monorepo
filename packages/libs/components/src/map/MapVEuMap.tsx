@@ -154,10 +154,10 @@ export interface MapVEuMapProps {
   /* selectedMarkers setState (for on-click reset) **/
   setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
   children?: React.ReactNode;
-  /* hide map side panel */
-  onMapClick?: (value: boolean) => void;
-  onMapDrag?: (value: boolean) => void;
-  onMapZoom?: (value: boolean) => void;
+  /* close left-side panel when map events happen */
+  onMapClick?: () => void;
+  onMapDrag?: () => void;
+  onMapZoom?: () => void;
 }
 
 function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
@@ -313,9 +313,9 @@ interface MapVEuMapEventsProps {
   onBoundsChanged: (bondsViewport: BoundsViewport) => void;
   onBaseLayerChanged?: (newBaseLayer: BaseLayerChoice) => void;
   setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
-  onMapClick?: (value: boolean) => void;
-  onMapDrag?: (value: boolean) => void;
-  onMapZoom?: (value: boolean) => void;
+  onMapClick?: () => void;
+  onMapDrag?: () => void;
+  onMapZoom?: () => void;
 }
 
 const EMPTY_MARKERS: string[] = [];
@@ -346,7 +346,8 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
       };
       onBoundsChanged(boundsViewport);
 
-      if (onMapZoom != null) onMapZoom(false);
+      // close left-side panel when zoom event happens
+      if (onMapZoom != null) onMapZoom();
     },
     moveend: () => {
       onViewportChanged({
@@ -362,7 +363,8 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
       };
       onBoundsChanged(boundsViewport);
 
-      if (onMapDrag != null) onMapDrag(false);
+      // close left-side panel when drag/panning event happens
+      if (onMapDrag != null) onMapDrag();
     },
     baselayerchange: (e: { name: string }) => {
       onBaseLayerChanged && onBaseLayerChanged(e.name as BaseLayerChoice);
@@ -371,7 +373,8 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
     click: () => {
       if (setSelectedMarkers != null) setSelectedMarkers(EMPTY_MARKERS);
 
-      if (onMapClick != null) onMapClick(false);
+      // close left-side panel when click event happens
+      if (onMapClick != null) onMapClick();
     },
   });
 
