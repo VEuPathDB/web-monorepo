@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Mesa from '@veupathdb/wdk-client/lib/Components/Mesa';
+import Mesa from '@veupathdb/coreui/lib/components/Mesa';
 import { MesaSortObject } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
 import { AllValuesDefinition } from '../../../core';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';

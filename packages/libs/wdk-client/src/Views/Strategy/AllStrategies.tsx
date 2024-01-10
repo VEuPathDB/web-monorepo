@@ -4,7 +4,7 @@ import React, { useMemo } from 'react';
 import { StrategySummary } from '../../Utils/WdkUser';
 import { formatDateTimeString } from '../../Views/Strategy/StrategyUtils';
 import { Link } from 'react-router-dom';
-import { MesaState, Mesa } from '../../Components/Mesa';
+import { MesaState, Mesa } from '@veupathdb/coreui/lib/components/Mesa';
 import { RecordClass } from '../../Utils/WdkModel';
 import Tabs from '../../Components/Tabs/Tabs';
 import { makeClassNameHelper } from '../../Utils/ComponentUtils';

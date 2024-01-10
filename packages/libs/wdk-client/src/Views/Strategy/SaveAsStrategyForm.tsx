@@ -1,7 +1,7 @@
 import { orderBy } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Mesa, { MesaState } from '../../Components/Mesa';
+import Mesa, { MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 import { MesaSortObject } from '../../Core/CommonTypes';
 import { preferences, usePreference } from '../../Preferences';
 import { makeClassNameHelper } from '../../Utils/ComponentUtils';

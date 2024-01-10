@@ -13,7 +13,7 @@ import {
   Mesa,
   MesaState,
   Utils as MesaUtils,
-} from '@veupathdb/wdk-client/lib/Components/Mesa';
+} from '@veupathdb/coreui/lib/components/Mesa';
 import {
   MesaColumn,
   MesaSortObject,

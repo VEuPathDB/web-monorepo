@@ -4,7 +4,7 @@ import {
   CommonResultTable,
   ColumnSettings,
 } from '@veupathdb/wdk-client/lib/Components/Shared/CommonResultTable';
-import Templates from '@veupathdb/wdk-client/lib/Components/Mesa/Templates';
+import Templates from '@veupathdb/coreui/lib/components/Mesa/Templates';
 
 import './StepAnalysisEnrichmentResult.scss';
 import { Tooltip } from '@veupathdb/wdk-client/lib/Components';

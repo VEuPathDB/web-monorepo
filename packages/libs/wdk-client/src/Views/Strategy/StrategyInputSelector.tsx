@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { orderBy } from 'lodash';
 
 import { Loading, RealTimeSearchBox } from '../../Components';
-import Mesa, { MesaState } from '../../Components/Mesa';
+import Mesa, { MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 import { MesaSortObject, MesaColumn } from '../../Core/CommonTypes';
 import { RootState } from '../../Core/State/Types';
 import { useWdkService } from '../../Hooks/WdkServiceHook';

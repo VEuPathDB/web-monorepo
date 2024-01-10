@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
-import Mesa, { MesaState } from '@veupathdb/wdk-client/lib/Components/Mesa';
+import Mesa, { MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 import { MesaSortObject } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
 
 import {

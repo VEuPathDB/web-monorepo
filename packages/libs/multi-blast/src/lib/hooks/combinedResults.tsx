@@ -13,7 +13,7 @@ import { Either, left, isLeft, isRight, map, right } from 'fp-ts/Either';
 import { groupBy, orderBy } from 'lodash';
 
 import { Link } from '@veupathdb/wdk-client/lib/Components';
-import { MesaState } from '@veupathdb/wdk-client/lib/Components/Mesa';
+import { MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 import {
   MesaColumn,
   MesaSortObject,
