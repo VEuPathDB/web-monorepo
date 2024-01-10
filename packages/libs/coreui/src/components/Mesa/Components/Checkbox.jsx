@@ -1,5 +1,5 @@
 import React from 'react';
-import IndeterminateCheckbox from '@veupathdb/coreui/lib/components/inputs/checkboxes/IndeterminateCheckbox';
+import IndeterminateCheckbox from '../../inputs/checkboxes/IndeterminateCheckbox';
 
 class Checkbox extends React.Component {
   constructor(props) {
