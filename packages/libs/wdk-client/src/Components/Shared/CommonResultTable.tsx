@@ -1,9 +1,14 @@
-import { Component, Fragment } from 'react';
+import React, { Component, Fragment } from 'react';
 
-import Mesa, { MesaState, Utils as MesaUtils } from '../Mesa';
+import Mesa, {
+  MesaState,
+  Utils as MesaUtils,
+} from '@veupathdb/coreui/lib/components/Mesa';
+import {
+  htmlStringValue,
+  numericValue,
+} from '@veupathdb/coreui/lib/components/Mesa/Utils/Utils';
 import { RealTimeSearchBox } from '../../Components';
-import React from 'react';
-import { htmlStringValue, numericValue } from '../Mesa/Utils/Utils';
 import { compose, debounce } from 'lodash/fp';
 import { MesaColumn } from '../../Core/CommonTypes';
 

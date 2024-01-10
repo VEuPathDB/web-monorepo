@@ -1,5 +1,5 @@
 import React from 'react';
-import { numericValue } from '../../Mesa/Utils/Utils';
+import { numericValue } from '@veupathdb/coreui/lib/components/Mesa/Utils/Utils';
 import { Tooltip } from '../../../Components';
 
 export const numberRenderFactory =

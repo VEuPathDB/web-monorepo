@@ -8,7 +8,7 @@ import {
   RecordInstance,
 } from '../../Utils/WdkModel';
 import { pure, wrappable } from '../../Utils/ComponentUtils';
-import { Mesa, MesaState } from '../../Components/Mesa';
+import { Mesa, MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 import Link from '../../Components/Link';
 import BasketCell from '../../Views/ResultTableSummaryView/BasketCell';
 import PrimaryKeyCell from '../../Views/ResultTableSummaryView/PrimaryKeyCell';

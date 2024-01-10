@@ -11,7 +11,7 @@ import {
 } from 'lodash';
 import React from 'react';
 import Toggle from '../../Components/Icon/Toggle';
-import { MesaController as Mesa } from '../../Components/Mesa';
+import { MesaController as Mesa } from '@veupathdb/coreui/lib/components/Mesa';
 import RealTimeSearchBox from '../../Components/SearchBox/RealTimeSearchBox';
 import ErrorBoundary from '../../Core/Controllers/ErrorBoundary';
 import { safeHtml } from '../../Utils/ComponentUtils';

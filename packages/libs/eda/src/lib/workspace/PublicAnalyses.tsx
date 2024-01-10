@@ -15,7 +15,7 @@ import {
   Mesa,
   SaveableTextEditor,
 } from '@veupathdb/wdk-client/lib/Components';
-import { create as createTableState } from '@veupathdb/wdk-client/lib/Components/Mesa/Utils/MesaState';
+import { create as createTableState } from '@veupathdb/coreui/lib/components/Mesa/Utils/MesaState';
 import {
   MesaColumn,
   MesaSortObject,
