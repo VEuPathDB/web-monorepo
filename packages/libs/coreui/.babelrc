@@ -10,6 +10,6 @@
         { "runtime": "automatic", "importSource": "@emotion/react" }
       ]
     ],
-    "plugins": ["@emotion/babel-plugin", "react-require"]
+    "plugins": ["babel-plugin-transform-scss", "@emotion/babel-plugin", "react-require"]
   }
 
