@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   RadioList,
   NumberSelector,
   Checkbox,
+  Loading,
 } from '@veupathdb/wdk-client/lib/Components';
 import { ComponentsList } from './SequenceFormElements';
 import * as ComponentUtils from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -113,6 +114,21 @@ const createSequenceForm = (
       }
       updateViewFilters(nextViewFilters);
     };
+
+    const [submitInProgress, setSubmitInProgress] = useState(false);
+
+    const submitHandler = useCallback(
+      async (...args) => {
+        try {
+          setSubmitInProgress(true);
+          await onSubmit(...args);
+        } finally {
+          setSubmitInProgress(false);
+        }
+      },
+      [onSubmit]
+    );
+
     return (
       <div>
         {formBeforeCommonOptions(props)}
@@ -148,8 +164,13 @@ const createSequenceForm = (
         )}
         {includeSubmit && (
           <div style={{ margin: '0.8em' }}>
-            <button className="btn" type="submit" onClick={onSubmit}>
-              Get {reportType}
+            <button
+              className="btn"
+              type="submit"
+              onClick={submitHandler}
+              disabled={submitInProgress}
+            >
+              {submitInProgress ? 'Loading...' : <>Get {reportType}</>}
             </button>
           </div>
         )}

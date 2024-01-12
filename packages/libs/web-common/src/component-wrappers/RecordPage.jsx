@@ -11,7 +11,7 @@ export function RecordHeading(DefaultComponent) {
     makeDynamicWrapper('RecordHeading')(DefaultComponent);
   return function EbrcRecordHeading(props) {
     return (
-      <div>
+      <div className="eupathdb-RecordOverviewContainer">
         <DynamicRecordHeading {...props} />
         {renderWithCustomElements(props.record.attributes.record_overview)}
       </div>
