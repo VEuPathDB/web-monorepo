@@ -489,7 +489,6 @@ export function useAnalysisList(analysisClient: AnalysisClient) {
   const [error, setError] = useState<string>();
 
   const loadList = useCallback(() => {
-    console.log('loading analyses list');
     setLoading(true);
     analysisClient.getAnalyses().then(
       (analyses) => {
@@ -505,11 +504,14 @@ export function useAnalysisList(analysisClient: AnalysisClient) {
 
   useEffect(() => {
     loadList();
-  }, [loadList]);
-
-  useEffect(() => {
     // TODO Merge in change!
-    return analysisEventEmitter.onAnalysisUpdate(loadList);
+    return analysisEventEmitter.onAnalysisUpdate((analysis) => {
+      setAnalyses((analyses) =>
+        analyses?.map((a) =>
+          a.analysisId === analysis.analysisId ? { ...a, ...analysis } : a
+        )
+      );
+    });
   }, [loadList]);
 
   const deleteAnalysis = useCallback(
