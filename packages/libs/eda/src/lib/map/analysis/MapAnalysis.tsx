@@ -126,9 +126,9 @@ export function MapAnalysis(props: Props) {
   if (geoConfigs == null || geoConfigs.length === 0)
     return (
       <Page requireLogin={false}>
-        <h1>Incompatiable Study</h1>
+        <h1>Incompatible Study</h1>
         <div css={{ fontSize: '1.2em' }}>
-          <p>This study does not container map-specific variables.</p>
+          <p>This study does not contain map-specific variables.</p>
         </div>
       </Page>
     );
