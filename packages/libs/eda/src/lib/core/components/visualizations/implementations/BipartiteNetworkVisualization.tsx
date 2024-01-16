@@ -1,6 +1,5 @@
 import * as t from 'io-ts';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
-import { PlotLayout } from '../../layouts/PlotLayout';
 import { VisualizationProps } from '../VisualizationTypes';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import {
@@ -17,7 +16,7 @@ import BipartiteNetwork, {
 import BipartiteNetworkSVG from './selectorIcons/BipartiteNetworkSVG';
 import {
   BipartiteNetworkRequestParams,
-  BipartiteNetworkResponse,
+  CorrelationBipartiteNetworkResponse,
 } from '../../../api/DataClient/types';
 import { twoColorPalette } from '@veupathdb/components/lib/types/plots/addOns';
 import { useCallback, useMemo } from 'react';
@@ -43,17 +42,18 @@ import LabelledGroup from '@veupathdb/components/lib/components/widgets/Labelled
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
 import { NumberOrDate } from '@veupathdb/components/lib/types/general';
 import { useVizConfig } from '../../../hooks/visualizations';
+import { FacetedPlotLayout } from '../../layouts/FacetedPlotLayout';
 // end imports
 
 // Defaults
-const DEFAULT_CORRELATION_COEF_THRESHOLD = 0.05; // Ability for user to change this value not yet implemented.
+const DEFAULT_CORRELATION_COEF_THRESHOLD = 0.5; // Ability for user to change this value not yet implemented.
 const DEFAULT_SIGNIFICANCE_THRESHOLD = 0.05; // Ability for user to change this value not yet implemented.
 const DEFAULT_LINK_COLOR_DATA = '0';
 const MIN_STROKE_WIDTH = 0.5; // Minimum stroke width for links in the network. Will represent the smallest link weight.
 const MAX_STROKE_WIDTH = 6; // Maximum stroke width for links in the network. Will represent the largest link weight.
 
 const plotContainerStyles = {
-  width: 750,
+  width: 1250,
   marginLeft: '0.75rem',
   border: '1px solid #dedede',
   boxShadow: '1px 1px 4px #00000066',
@@ -122,7 +122,9 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
 
   // Get data from the compute job
   const data = usePromise(
-    useCallback(async (): Promise<BipartiteNetworkResponse | undefined> => {
+    useCallback(async (): Promise<
+      CorrelationBipartiteNetworkResponse | undefined
+    > => {
       // Only need to check compute job status and filter status, since there are no
       // viz input variables.
       if (computeJobStatus !== 'complete') return undefined;
@@ -143,7 +145,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
         computation.descriptor.type,
         visualization.descriptor.type,
         params,
-        BipartiteNetworkResponse
+        CorrelationBipartiteNetworkResponse
       );
 
       return response;
@@ -162,21 +164,21 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     ])
   );
 
-  // Determin min and max stroke widths. For use in scaling the strokes (strokeWidthMap) and the legend.
-  const dataStrokeWidths =
+  // Determin min and max stroke widths. For use in scaling the strokes (weightToStrokeWidthMap) and the legend.
+  const dataWeights =
     data.value?.bipartitenetwork.data.links.map(
-      (link) => Number(link.strokeWidth) // link.strokeWidth will always be a number if defined, because it represents the continuous data associated with that link.
+      (link) => Number(link.weight) // link.weight will always be a number if defined, because it represents the continuous data associated with that link.
     ) ?? [];
-  const minDataStrokeWidth = Math.min(...dataStrokeWidths);
-  const maxDataStrokeWidth = Math.max(...dataStrokeWidths);
+  const minDataWeight = Math.min(...dataWeights);
+  const maxDataWeight = Math.max(...dataWeights);
 
   // Clean and finalize data format. Specifically, assign link colors, add display labels
   const cleanedData = useMemo(() => {
     if (!data.value) return undefined;
 
-    // Create map that will adjust each link's stroke width so that all link stroke widths span an appropriate range for this viz.
-    const strokeWidthMap = scaleLinear()
-      .domain([minDataStrokeWidth, maxDataStrokeWidth])
+    // Create map that will adjust each link's weight to find a stroke width that spans an appropriate range for this viz.
+    const weightToStrokeWidthMap = scaleLinear()
+      .domain([minDataWeight, maxDataWeight])
       .range([MIN_STROKE_WIDTH, MAX_STROKE_WIDTH]);
 
     // Assign color to links.
@@ -229,12 +231,12 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
         return {
           source: link.source,
           target: link.target,
-          strokeWidth: strokeWidthMap(Number(link.strokeWidth)),
+          strokeWidth: weightToStrokeWidthMap(Number(link.weight)),
           color: link.color ? linkColorScale(link.color.toString()) : '#000000',
         };
       }),
     };
-  }, [data.value, entities, minDataStrokeWidth, maxDataStrokeWidth]);
+  }, [data.value, entities, minDataWeight, maxDataWeight]);
 
   // plot subtitle
   const plotSubtitle =
@@ -253,7 +255,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
 
   // These styles affect the network plot and will override the containerStyles if necessary (for example, width).
   const bipartiteNetworkSVGStyles = {
-    columnPadding: 150,
+    columnPadding: 300,
   };
 
   const plotRef = useUpdateThumbnailEffect(
@@ -270,6 +272,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     showSpinner: data.pending,
     containerStyles: finalPlotContainerStyles,
     svgStyleOverrides: bipartiteNetworkSVGStyles,
+    labelTruncationLength: 40,
   };
 
   const plotNode = (
@@ -284,12 +287,11 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const lineLegendItems: LegendItemsProps[] = [
     ...Array(nLineItemsInLegend).keys(),
   ].map((i) => {
-    const adjustedStrokeWidth =
-      maxDataStrokeWidth -
-      ((maxDataStrokeWidth - minDataStrokeWidth) / (nLineItemsInLegend - 1)) *
-        i;
+    const weightLabel =
+      maxDataWeight -
+      ((maxDataWeight - minDataWeight) / (nLineItemsInLegend - 1)) * i;
     return {
-      label: String(adjustedStrokeWidth.toFixed(4)),
+      label: String(weightLabel.toFixed(4)),
       marker: 'line',
       markerColor: gray[900],
       hasData: true,
@@ -304,20 +306,29 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const lineLegendTitle = options?.getLegendTitle?.(
     computation.descriptor.configuration
   )
-    ? options.getLegendTitle(computation.descriptor.configuration) +
-      ' (Link width)'
+    ? 'Link width (' +
+      options.getLegendTitle(computation.descriptor.configuration)[0] +
+      ')'
     : 'Link width';
+
+  const colorLegendTitle = options?.getLegendTitle?.(
+    computation.descriptor.configuration
+  )
+    ? 'Link color (' +
+      options.getLegendTitle(computation.descriptor.configuration)[1] +
+      ')'
+    : 'Link color';
 
   const colorLegendItems: LegendItemsProps[] = [
     {
-      label: 'Positive correlation',
+      label: 'Positive',
       marker: 'line',
       markerColor: twoColorPalette[1],
       hasData: true,
       lineThickness: '3px',
     },
     {
-      label: 'Negative correlation',
+      label: 'Negative',
       marker: 'line',
       markerColor: twoColorPalette[0],
       hasData: true,
@@ -338,14 +349,18 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
         type="list"
         legendItems={colorLegendItems}
         checkedLegendItems={undefined}
-        legendTitle="Link color"
+        legendTitle={colorLegendTitle}
         showCheckbox={false}
       />
     </div>
   );
   const tableGroupNode = <> </>;
 
-  const LayoutComponent = options?.layoutComponent ?? PlotLayout;
+  // The bipartite network uses FacetedPlotLayout in order to position the legends
+  // atop the plot. The bipartite network plots are often so tall and so wide that
+  // with the normal PlotLayout component the legends are forced way, way down the screen
+  // below the plot.
+  const LayoutComponent = options?.layoutComponent ?? FacetedPlotLayout;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -355,8 +370,9 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
             onValueChange={(newValue?: NumberOrDate) =>
               updateVizConfig({ correlationCoefThreshold: Number(newValue) })
             }
-            label={'Correlation magnitude'}
+            label={'Absolute correlation coefficient'}
             minValue={0}
+            maxValue={1}
             value={
               vizConfig.correlationCoefThreshold ??
               DEFAULT_CORRELATION_COEF_THRESHOLD
@@ -371,6 +387,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
               updateVizConfig({ significanceThreshold: Number(newValue) })
             }
             minValue={0}
+            maxValue={1}
             value={
               vizConfig.significanceThreshold ?? DEFAULT_SIGNIFICANCE_THRESHOLD
             }
@@ -381,12 +398,10 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
       )}
       <OutputEntityTitle subtitle={plotSubtitle} />
       <LayoutComponent
-        isFaceted={false}
         legendNode={legendNode}
         plotNode={plotNode}
         controlsNode={controlsNode}
         tableGroupNode={tableGroupNode}
-        showRequiredInputsPrompt={false}
       />
     </div>
   );

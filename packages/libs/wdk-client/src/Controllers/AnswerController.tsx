@@ -70,6 +70,7 @@ type Options = {
   deriveRowClassName?: (props: RowClassNameProps) => string | undefined;
   customSortBys?: Record<string, ListIteratee<RecordInstance>[]>;
   additionalActions?: TableAction[];
+  useStickyFirstNColumns?: number;
 };
 
 type OwnProps = {
@@ -273,6 +274,7 @@ class AnswerController extends PageController<Props> {
         deriveRowClassName={this.props.deriveRowClassName}
         customSortBys={this.props.customSortBys}
         additionalActions={this.props.additionalActions}
+        useStickyFirstNColumns={this.props.useStickyFirstNColumns}
       />
     );
   }

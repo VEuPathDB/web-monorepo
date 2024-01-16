@@ -27,5 +27,5 @@ export interface TitleOptions {
 }
 
 export interface LegendOptions {
-  getLegendTitle?(config: unknown): string;
+  getLegendTitle?(config: unknown): string[];
 }
