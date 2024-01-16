@@ -3,7 +3,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import Path from 'path';
 
 // Components
-import { H3, Table, FloatingButton } from '@veupathdb/coreui';
+import { H3, Table, FloatingButton, FilledButton } from '@veupathdb/coreui';
 
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -71,12 +71,16 @@ export function EDAWorkspaceHeading({
               studyRecord.id[0].value
             ) && (
               <div>
-                <Link
-                  className={'btn StudyDataAccessDashboardLink'}
-                  to={`/study-access/${studyRecord.id[0].value}`}
-                >
-                  Data Access Dashboard
-                </Link>
+                <FilledButton
+                  themeRole="primary"
+                  text="Data Access Dashboard"
+                  tooltip="Manage user access to study data"
+                  textTransform="capitalize"
+                  size="medium"
+                  onPress={() => {
+                    history.push(`/study-access/${studyRecord.id[0].value}`);
+                  }}
+                />
               </div>
             )}
         </div>
@@ -96,7 +100,6 @@ export function EDAWorkspaceHeading({
                   tooltip="Create a new analysis"
                   textTransform="capitalize"
                   size="medium"
-                  // @ts-ignore
                   icon={AddIcon}
                   onPress={
                     /** If (1) there is no analysis, (2) we're in an unsaved new
