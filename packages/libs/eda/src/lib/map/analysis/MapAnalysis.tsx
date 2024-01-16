@@ -409,8 +409,6 @@ function MapAnalysisImpl(props: ImplProps) {
   // make an array of objects state to list highlighted markers
   const [selectedMarkers, setSelectedMarkers] = useState<string[]>([]);
 
-  // console.log('selectedMarkers =', selectedMarkers);
-
   const sidePanelMenuEntries: SidePanelMenuEntry[] = [
     {
       type: 'heading',
@@ -778,6 +776,9 @@ function MapAnalysisImpl(props: ImplProps) {
       ? donutMarkerPlugin
       : undefined;
 
+  // close left-side panel when map events happen
+  const closePanel = useCallback(() => setIsSidePanelExpanded(false), []);
+
   return (
     <PromiseResult state={appsPromiseState}>
       {(apps: ComputationAppOverview[]) => {
@@ -900,6 +901,10 @@ function MapAnalysisImpl(props: ImplProps) {
                     defaultViewport={defaultViewport}
                     // for multiple markers cancelation of selection only
                     setSelectedMarkers={setSelectedMarkers}
+                    // close left-side panel when map events happen
+                    onMapClick={closePanel}
+                    onMapDrag={closePanel}
+                    onMapZoom={closePanel}
                   >
                     {activeMapTypePlugin?.MapLayerComponent && (
                       <activeMapTypePlugin.MapLayerComponent
