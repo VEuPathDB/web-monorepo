@@ -124,16 +124,7 @@ function UserDatasetsWorkspace(props: Props) {
                               e[0].slice(1).replace('_', ' ') +
                               ': '}
                           </span>
-                          <code
-                            style={{
-                              // display: 'inline-block',
-                              // maxWidth: '100%',
-                              // overflowX: 'auto',
-                              // whiteSpace: 'nowrap',
-                              verticalAlign: 'bottom',
-                            }}
-                          >
-                            {/* remove whitespace */}
+                          <code style={{ verticalAlign: 'bottom' }}>
                             {e[1].trim()}
                           </code>
                         </li>
