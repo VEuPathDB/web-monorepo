@@ -87,17 +87,20 @@ const variableSpec = type({
 });
 
 export type PlotReferenceValue = TypeOf<typeof plotReferenceValue>;
-const plotReferenceValue = keyof({
-  xAxis: null,
-  yAxis: null,
-  zAxis: null,
-  overlay: null,
-  facet1: null,
-  facet2: null,
-  geo: null,
-  latitude: null,
-  longitude: null,
-});
+const plotReferenceValue = union([
+  keyof({
+    xAxis: null,
+    yAxis: null,
+    zAxis: null,
+    overlay: null,
+    facet1: null,
+    facet2: null,
+    geo: null,
+    latitude: null,
+    longitude: null,
+  }),
+  nullType,
+]);
 
 export type API_VariableType = TypeOf<typeof API_VariableType>;
 const API_VariableType = keyof({
@@ -122,13 +125,13 @@ export const VariableMapping = intersection([
   type({
     variableClass,
     variableSpec,
-    plotReference: plotReferenceValue,
     dataType: API_VariableType,
     dataShape: API_VariableDataShape,
     isCollection: boolean,
     imputeZero: boolean,
   }),
   partial({
+    plotReference: plotReferenceValue,
     displayName: string,
     displayRangeMin: union([string, number]),
     displayRangeMax: union([string, number]),
@@ -399,7 +402,7 @@ export const BipartiteNetworkData = type({
       type({
         source: NodeData,
         target: NodeData,
-        strokeWidth: string,
+        weight: string,
       }),
       partial({
         color: string,
@@ -419,6 +422,19 @@ export const BipartiteNetworkResponse = type({
     config: BipartiteNetworkConfig,
   }),
 });
+
+// Correlation Bipartite Network
+// a specific flavor of the bipartite network that also includes correlationCoefThreshold and significanceThreshold
+export type CorrelationBipartiteNetworkResponse = TypeOf<
+  typeof CorrelationBipartiteNetworkResponse
+>;
+export const CorrelationBipartiteNetworkResponse = intersection([
+  BipartiteNetworkResponse,
+  type({
+    correlationCoefThreshold: number,
+    significanceThreshold: number,
+  }),
+]);
 
 export interface BipartiteNetworkRequestParams {
   studyId: string;

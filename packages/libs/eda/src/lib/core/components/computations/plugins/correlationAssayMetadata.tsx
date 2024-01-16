@@ -1,7 +1,7 @@
 import { useFindEntityAndVariableCollection } from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { partial } from 'lodash';
+import { capitalize, partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
@@ -16,6 +16,10 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { H6 } from '@veupathdb/coreui';
 import { bipartiteNetworkVisualization } from '../../visualizations/implementations/BipartiteNetworkVisualization';
 import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
+import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
+import { entityTreeToArray } from '../../../utils/study-metadata';
+import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
+import { ancestorEntitiesForEntityId } from '../../../utils/data-element-constraints';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -55,13 +59,16 @@ export const plugin: ComputationPlugin = {
     bipartitenetwork: bipartiteNetworkVisualization.withOptions({
       getLegendTitle(config) {
         if (CorrelationAssayMetadataConfig.is(config)) {
-          return 'Absolute correlation coefficient';
+          return ['absolute correlation coefficient', 'correlation direction'];
         } else {
-          return 'Legend';
+          return [];
         }
       },
     }), // Must match name in data service and in visualization.tsx
   },
+  isEnabledInPicker: isEnabledInPicker,
+  studyRequirements:
+    'These visualizations are only available for studies with compatible metadata.',
 };
 
 // Renders on the thumbnail page to give a summary of the app instance
@@ -95,7 +102,7 @@ function CorrelationAssayMetadataConfigDescriptionComponent({
         Method:{' '}
         <span>
           {correlationMethod ? (
-            correlationMethod[0].toUpperCase() + correlationMethod.slice(1)
+            capitalize(correlationMethod)
           ) : (
             <i>Not selected</i>
           )}
@@ -104,6 +111,8 @@ function CorrelationAssayMetadataConfigDescriptionComponent({
     </div>
   );
 }
+
+const CORRELATION_METHODS = ['spearman', 'pearson'];
 
 // Shows as Step 1 in the full screen visualization page
 export function CorrelationAssayMetadataConfiguration(
@@ -127,11 +136,6 @@ export function CorrelationAssayMetadataConfiguration(
     visualizationId
   );
 
-  // For now, set the method to 'spearman'. When we add the next method, we can just add it here (no api change!)
-  if (configuration && !configuration.correlationMethod) {
-    changeConfigHandler('correlationMethod', 'spearman');
-  }
-
   return (
     <ComputationStepContainer
       computationStepInfo={{
@@ -140,7 +144,7 @@ export function CorrelationAssayMetadataConfiguration(
       }}
     >
       <div className={cx()}>
-        <div className={cx('-CorrelationAssayMetadataOuterConfigContainer')}>
+        <div className={cx('-CorrelationOuterConfigContainer')}>
           <H6>Input Data</H6>
           <div className={cx('-InputContainer')}>
             <span>Data</span>
@@ -151,7 +155,88 @@ export function CorrelationAssayMetadataConfiguration(
             />
           </div>
         </div>
+        <div className={cx('-CorrelationOuterConfigContainer')}>
+          <H6>Correlation Method</H6>
+          <div className={cx('-InputContainer')}>
+            <span>Method</span>
+            <SingleSelect
+              value={configuration.correlationMethod ?? 'Select a method'}
+              buttonDisplayContent={
+                configuration.correlationMethod
+                  ? capitalize(configuration.correlationMethod)
+                  : 'Select a method'
+              }
+              items={CORRELATION_METHODS.map((method: string) => ({
+                value: method,
+                display: capitalize(method),
+              }))}
+              onSelect={partial(changeConfigHandler, 'correlationMethod')}
+            />
+          </div>
+        </div>
       </div>
     </ComputationStepContainer>
   );
+}
+
+const ASSAY_ENTITIES = [
+  'OBI_0002623',
+  'EUPATH_0000809',
+  'EUPATH_0000813',
+  'EUPATH_0000812',
+];
+
+// The correlation assay x metadata app is only available for studies
+// with appropriate metadata. Specifically, the study
+// must have at least one continuous metadata variable that is on a one-to-one path
+// from the assay entity.
+// See PR #74 in service-eda-compute for the matching logic on the backend.
+function isEnabledInPicker({
+  studyMetadata,
+}: IsEnabledInPickerParams): boolean {
+  if (!studyMetadata) return false;
+
+  const entities = entityTreeToArray(studyMetadata.rootEntity);
+  // Ensure there are collections in this study. Otherwise, disable app
+  const studyHasCollections = entities.some(
+    (entity) => !!entity.collections?.length
+  );
+  if (!studyHasCollections) return false;
+
+  // Check for appropriate metadata
+  // Step 1. Find the first assay node. Doesn't need to be any assay in particular just any mbio assay will do
+  const firstAssayEntityIndex = entities.findIndex((entity) =>
+    ASSAY_ENTITIES.includes(entity.id)
+  );
+  if (firstAssayEntityIndex === -1) return false;
+
+  // Step 2. Find all ancestor entites of the assayEntity that are on a one-to-one path with assayEntity.
+  // Step 2a. Grab ancestor entities.
+  const ancestorEntities = ancestorEntitiesForEntityId(
+    entities[firstAssayEntityIndex].id,
+    entities
+  ).reverse(); // Reverse so that the ancestorEntities[0] is the assay and higher indices are further up the tree.
+
+  // Step 2b. Trim the ancestorEntities so that we only keep those that are on
+  // a 1:1 path. Once we find an ancestor that is many to one with its parent, we
+  // know we've hit the end of the 1:1 path.
+  const lastOneToOneAncestorIndex = ancestorEntities.findIndex(
+    (entity) => entity.isManyToOneWithParent
+  );
+  const oneToOneAncestors = ancestorEntities.slice(
+    1, // removing the assay itself
+    lastOneToOneAncestorIndex + 1
+  );
+
+  // Step 3. Check if there are any continuous variables in the filtered entities
+  const hasContinuousVariable = oneToOneAncestors
+    .flatMap((entity) => entity.variables)
+    .some(
+      (variable) =>
+        'dataShape' in variable &&
+        variable.dataShape === 'continuous' &&
+        (variable.type === 'number' || variable.type === 'integer') // Support for dates coming soon! Can remove this line once the backend is ready.
+    );
+
+  return hasContinuousVariable;
 }

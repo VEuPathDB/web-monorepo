@@ -97,6 +97,14 @@
       font-weight: 300;
     }
   }
+  // Add disabled effects for the app rows
+  &-AppPicker {
+    &__disabled {
+      cursor: not-allowed;
+      border-radius: 20px;
+      color: #a6a6a6;
+    }
+  }
 
   // add hover effect for thumbnail icons
   &-ConfiguredVisualization:hover &-ConfiguredVisualizationActions {
@@ -445,7 +453,7 @@ $data-table-thick-border: 2px solid #262626;
 
 .MultiLegendContaner {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   flex-wrap: wrap;
   gap: 20px;
 }

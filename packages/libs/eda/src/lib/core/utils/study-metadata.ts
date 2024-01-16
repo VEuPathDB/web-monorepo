@@ -12,7 +12,7 @@ import {
 } from '../types/variable';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
-export function entityTreeToArray(rootEntity: StudyEntity) {
+export function entityTreeToArray(rootEntity: StudyEntity): StudyEntity[] {
   return Array.from(preorder(rootEntity, (e) => e.children ?? []));
 }
 
