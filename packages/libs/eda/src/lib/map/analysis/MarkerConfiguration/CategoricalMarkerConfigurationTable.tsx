@@ -147,17 +147,15 @@ export function CategoricalMarkerConfigurationTable<T>({
          * However, if there are only a few possible values,
          * we won't show "All other labels".
          */
-        setUncontrolledSelections(
+        const emptySelection =
           numberOfAvailableValues < MAXIMUM_ALLOWABLE_VALUES
-            ? new Set([])
-            : new Set([UNSELECTED_TOKEN])
-        );
+            ? []
+            : [UNSELECTED_TOKEN];
+
+        setUncontrolledSelections(new Set(emptySelection));
         onChange({
           ...configuration,
-          selectedValues:
-            numberOfAvailableValues < MAXIMUM_ALLOWABLE_VALUES
-              ? []
-              : [UNSELECTED_TOKEN],
+          selectedValues: emptySelection,
         });
       },
       onSort: (
