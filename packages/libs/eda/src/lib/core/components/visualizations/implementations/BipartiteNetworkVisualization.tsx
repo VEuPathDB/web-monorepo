@@ -164,7 +164,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     ])
   );
 
-  // Determin min and max stroke widths. For use in scaling the strokes (weightMap) and the legend.
+  // Determin min and max stroke widths. For use in scaling the strokes (weightToStrokeWidthMap) and the legend.
   const dataWeights =
     data.value?.bipartitenetwork.data.links.map(
       (link) => Number(link.weight) // link.weight will always be a number if defined, because it represents the continuous data associated with that link.
@@ -176,8 +176,8 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const cleanedData = useMemo(() => {
     if (!data.value) return undefined;
 
-    // Create map that will adjust each link's stroke width so that all link stroke widths span an appropriate range for this viz.
-    const weightMap = scaleLinear()
+    // Create map that will adjust each link's weight to find a stroke width that spans an appropriate range for this viz.
+    const weightToStrokeWidthMap = scaleLinear()
       .domain([minDataWeight, maxDataWeight])
       .range([MIN_STROKE_WIDTH, MAX_STROKE_WIDTH]);
 
@@ -231,7 +231,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
         return {
           source: link.source,
           target: link.target,
-          weight: weightMap(Number(link.weight)),
+          strokeWidth: weightToStrokeWidthMap(Number(link.weight)),
           color: link.color ? linkColorScale(link.color.toString()) : '#000000',
         };
       }),
