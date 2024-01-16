@@ -17,7 +17,7 @@ class BiomDatasetDetail extends UserDatasetDetail {
 
     const isInstalled =
       status?.import === 'complete' &&
-      status?.install?.find((d) => d.projectId === projectId).dataStatus ===
+      status?.install?.find((d) => d.projectId === projectId)?.dataStatus ===
         'complete';
 
     return !isInstalled || !edaWorkspaceUrl ? null : (

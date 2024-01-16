@@ -138,7 +138,7 @@ class UserDatasetDetail extends React.Component {
     const isInstalled =
       status?.import === 'complete' &&
       status?.install?.find((d) => d.projectId === config.projectId)
-        .dataStatus === 'complete';
+        ?.dataStatus === 'complete';
     const questions = Object.values(questionMap).filter(
       (q) =>
         'userDatasetType' in q.properties &&
