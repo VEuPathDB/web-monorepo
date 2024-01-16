@@ -18,7 +18,6 @@ type Props<T> = {
   setUncontrolledSelections: (v: Set<string>) => void;
   allCategoricalValues: AllValuesDefinition[] | undefined;
   selectedCountsOption: SelectedCountsOption;
-  isAllCategoricalValuesLoading: boolean;
 };
 
 const DEFAULT_SORTING: MesaSortObject = {
@@ -36,7 +35,6 @@ export function CategoricalMarkerConfigurationTable<T>({
   setUncontrolledSelections,
   allCategoricalValues = [],
   selectedCountsOption,
-  isAllCategoricalValuesLoading,
 }: Props<T>) {
   const [sort, setSort] = useState<MesaSortObject>(DEFAULT_SORTING);
   const totalCount = allCategoricalValues?.reduce(
@@ -212,10 +210,10 @@ export function CategoricalMarkerConfigurationTable<T>({
           maxWidth: '340px',
           maxHeight: 300,
           minHeight: 60,
-          overflow: isAllCategoricalValuesLoading ? 'none' : 'auto',
+          overflow: 'auto',
         }}
       >
-        {isAllCategoricalValuesLoading ? (
+        {tableState.rows.length === 0 ? (
           <Spinner
             size={50}
             styleOverrides={{
