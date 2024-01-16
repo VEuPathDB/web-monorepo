@@ -89,6 +89,19 @@ export const setOptions = (state, options) => {
   return Object.assign({}, state, { options });
 };
 
+export const setHeaderWrapperStyle = (state, headerWrapperStyle) => {
+  if (typeof headerWrapperStyle !== 'object')
+    return (
+      badType(
+        'setHeaderWrapperStyle',
+        'headerWrapperStyle',
+        'object',
+        typeof headerWrapperStyle
+      ) || state
+    );
+  return Object.assign({}, state, { headerWrapperStyle });
+};
+
 export const setEventHandlers = (state, eventHandlers) => {
   if (typeof eventHandlers !== 'object')
     return (
@@ -224,7 +237,16 @@ export const getUiState = (state) => {
  * @param {any=} state
  */
 export const create = (
-  { rows, filteredRows, columns, options, actions, eventHandlers, uiState },
+  {
+    rows,
+    filteredRows,
+    columns,
+    options,
+    actions,
+    eventHandlers,
+    uiState,
+    headerWrapperStyle,
+  },
   state = {}
 ) => {
   state = setRows(state, rows ? rows : []);
@@ -236,6 +258,10 @@ export const create = (
   state = setFilteredRows(
     state,
     filteredRows ? filteredRows : rows ? rows : []
+  );
+  state = setHeaderWrapperStyle(
+    state,
+    headerWrapperStyle ? headerWrapperStyle : {}
   );
   return state;
 };

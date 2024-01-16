@@ -119,6 +119,7 @@ function useTableState(props) {
     renderCellContent,
     deriveRowClassName,
     customSortBys,
+    useStickyFirstNColumns,
   } = props;
 
   const columns = useMemo(
@@ -153,6 +154,7 @@ function useTableState(props) {
   const options = useMemo(
     () => ({
       useStickyHeader: true,
+      useStickyFirstNColumns,
       tableBodyMaxHeight: 'unset',
       deriveRowClassName:
         deriveRowClassName &&
@@ -206,6 +208,8 @@ function useTableState(props) {
     [columns, onMoveColumn, onSort]
   );
 
+  const headerWrapperStyle = { zIndex: 2 };
+
   return useMemo(
     () =>
       MesaState.create({
@@ -214,6 +218,7 @@ function useTableState(props) {
         options,
         uiState,
         eventHandlers,
+        headerWrapperStyle,
       }),
     [rows, columns, options, uiState, eventHandlers]
   );
