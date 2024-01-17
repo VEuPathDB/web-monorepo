@@ -1,6 +1,6 @@
 import { DefaultNode } from '@visx/network';
 import { Text } from '@visx/text';
-import { LinkData, NodeData } from '../types/plots/network';
+import { NetworkLink, NetworkNode } from '../types/plots/network';
 import { truncateWithEllipsis } from '../utils/axis-tick-label-ellipsis';
 import './Network.css';
 
@@ -8,7 +8,7 @@ export type LabelPosition = 'right' | 'left';
 
 interface NodeWithLabelProps {
   /** Network node */
-  node: NodeData;
+  node: NetworkNode;
   /** Function to run when a user clicks either the node or label */
   onClick?: () => void;
   /** Should the label be drawn to the left or right of the node? */
@@ -90,7 +90,7 @@ export function NodeWithLabel(props: NodeWithLabelProps) {
 }
 
 export interface LinkProps {
-  link: LinkData;
+  link: NetworkLink;
   // onClick?: () => void; To add in the future, maybe also some hover action
 }
 

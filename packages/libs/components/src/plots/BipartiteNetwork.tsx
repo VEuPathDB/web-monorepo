@@ -1,4 +1,4 @@
-import { BipartiteNetworkData, NodeData } from '../types/plots/network';
+import { BipartiteNetwork, NetworkNode } from '../types/plots/network';
 import { partition } from 'lodash';
 import { LabelPosition, Link, NodeWithLabel } from './Network';
 import { Graph } from '@visx/network';
@@ -16,16 +16,16 @@ import domToImage from 'dom-to-image';
 import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 import './BipartiteNetwork.css';
 
-export interface BipartiteNetworkSVGStyles {
+export interface BipartiteNetworkPlotSVGStyles {
   width?: number; // svg width
   topPadding?: number; // space between the top of the svg and the top-most node
   nodeSpacing?: number; // space between vertically adjacent nodes
   columnPadding?: number; // space between the left of the svg and the left column, also the right of the svg and the right column.
 }
 
-export interface BipartiteNetworkProps {
-  /** Bipartite network data */
-  data: BipartiteNetworkData | undefined;
+export interface BipartiteNetworkPlotProps {
+  /** Bipartite network */
+  network: BipartiteNetwork | undefined;
   /** Name of column 1 */
   column1Name?: string;
   /** Name of column 2 */
@@ -35,7 +35,7 @@ export interface BipartiteNetworkProps {
   /** bipartite network-specific styling for the svg itself. These
    * properties will override any adaptation the network may try to do based on the container styles.
    */
-  svgStyleOverrides?: BipartiteNetworkSVGStyles;
+  svgStyleOverrides?: BipartiteNetworkPlotSVGStyles;
   /** container name */
   containerClass?: string;
   /** shall we show the loading spinner? */
@@ -44,8 +44,8 @@ export interface BipartiteNetworkProps {
   labelTruncationLength?: number;
 }
 
-// Show a few gray nodes when there is no real data.
-const EmptyBipartiteNetworkData: BipartiteNetworkData = {
+// Show a few gray nodes when there is no real network.
+const EmptyBipartiteNetwork: BipartiteNetwork = {
   column1NodeIDs: ['0', '1', '2', '3', '4', '5'],
   column2NodeIDs: ['6', '7', '8'],
   nodes: [...Array(9).keys()].map((item) => ({
@@ -58,12 +58,12 @@ const EmptyBipartiteNetworkData: BipartiteNetworkData = {
 
 // The BipartiteNetwork function draws a two-column network using visx. This component handles
 // the positioning of each column, and consequently the positioning of nodes and links.
-function BipartiteNetwork(
-  props: BipartiteNetworkProps,
+function BipartiteNetworkPlot(
+  props: BipartiteNetworkPlotProps,
   ref: Ref<HTMLDivElement>
 ) {
   const {
-    data = EmptyBipartiteNetworkData,
+    network = EmptyBipartiteNetwork,
     column1Name,
     column2Name,
     containerStyles,
@@ -102,19 +102,19 @@ function BipartiteNetwork(
   // In order to assign coordinates to each node, we'll separate the
   // nodes based on their column, then will use their order in the column
   // (given by columnXNodeIDs) to finally assign the coordinates.
-  const nodesByColumn: NodeData[][] = partition(data.nodes, (node) => {
-    return data.column1NodeIDs.includes(node.id);
+  const nodesByColumn: NetworkNode[][] = partition(network.nodes, (node) => {
+    return network.column1NodeIDs.includes(node.id);
   });
 
   const nodesByColumnWithCoordinates = nodesByColumn.map(
     (column, columnIndex) => {
       const columnWithCoordinates = column.map((node) => {
         // Find the index of the node in the column
-        type ColumnName = keyof typeof data;
+        type ColumnName = keyof typeof network;
         const columnName = ('column' +
           (columnIndex + 1) +
           'NodeIDs') as ColumnName;
-        const indexInColumn = data[columnName].findIndex(
+        const indexInColumn = network[columnName].findIndex(
           (id) => id === node.id
         );
 
@@ -132,7 +132,7 @@ function BipartiteNetwork(
   );
 
   // Assign coordinates to links based on the newly created node coordinates
-  const linksWithCoordinates = data.links.map((link) => {
+  const linksWithCoordinates = network.links.map((link) => {
     const sourceNode = nodesByColumnWithCoordinates[0].find(
       (node) => node.id === link.source.id
     );
@@ -163,7 +163,10 @@ function BipartiteNetwork(
         <svg
           width={svgStyles.width}
           height={
-            Math.max(data.column1NodeIDs.length, data.column2NodeIDs.length) *
+            Math.max(
+              network.column1NodeIDs.length,
+              network.column2NodeIDs.length
+            ) *
               svgStyles.nodeSpacing +
             svgStyles.topPadding
           }
@@ -216,4 +219,4 @@ function BipartiteNetwork(
   );
 }
 
-export default forwardRef(BipartiteNetwork);
+export default forwardRef(BipartiteNetworkPlot);

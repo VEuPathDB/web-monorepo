@@ -387,21 +387,23 @@ export interface VolcanoPlotRequestParams {
 }
 
 // Bipartite network
-export type BipartiteNetworkResponse = TypeOf<typeof BipartiteNetworkResponse>;
+export type BipartiteNetworkPlotResponse = TypeOf<
+  typeof BipartiteNetworkPlotResponse
+>;
 
-const NodeData = type({
+const NetworkNodeData = type({
   id: string,
 });
 
 export const BipartiteNetworkData = type({
   column1NodeIDs: array(string),
   column2NodeIDs: array(string),
-  nodes: array(NodeData),
+  nodes: array(NetworkNodeData),
   links: array(
     intersection([
       type({
-        source: NodeData,
-        target: NodeData,
+        source: NetworkNodeData,
+        target: NetworkNodeData,
         weight: string,
       }),
       partial({
@@ -411,32 +413,32 @@ export const BipartiteNetworkData = type({
   ),
 });
 
-const BipartiteNetworkConfig = type({
+const BipartiteNetworkPlotConfig = type({
   column1Metadata: string,
   column2Metadata: string,
 });
 
-export const BipartiteNetworkResponse = type({
+export const BipartiteNetworkPlotResponse = type({
   bipartitenetwork: type({
     data: BipartiteNetworkData,
-    config: BipartiteNetworkConfig,
+    config: BipartiteNetworkPlotConfig,
   }),
 });
 
 // Correlation Bipartite Network
 // a specific flavor of the bipartite network that also includes correlationCoefThreshold and significanceThreshold
-export type CorrelationBipartiteNetworkResponse = TypeOf<
-  typeof CorrelationBipartiteNetworkResponse
+export type CorrelationBipartiteNetworkPlotResponse = TypeOf<
+  typeof CorrelationBipartiteNetworkPlotResponse
 >;
-export const CorrelationBipartiteNetworkResponse = intersection([
-  BipartiteNetworkResponse,
+export const CorrelationBipartiteNetworkPlotResponse = intersection([
+  BipartiteNetworkPlotResponse,
   type({
     correlationCoefThreshold: number,
     significanceThreshold: number,
   }),
 ]);
 
-export interface BipartiteNetworkRequestParams {
+export interface BipartiteNetworkPlotRequestParams {
   studyId: string;
   filters: Filter[];
   config: {

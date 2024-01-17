@@ -1,33 +1,33 @@
 import { useState, useEffect, useRef, CSSProperties } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import {
-  NodeData,
-  LinkData,
-  BipartiteNetworkData,
+  NetworkNode,
+  NetworkLink,
+  BipartiteNetwork,
 } from '../../types/plots/network';
-import BipartiteNetwork, {
-  BipartiteNetworkProps,
-  BipartiteNetworkSVGStyles,
+import BipartiteNetworkPlot, {
+  BipartiteNetworkPlotProps,
+  BipartiteNetworkPlotSVGStyles,
 } from '../../plots/BipartiteNetwork';
 import { twoColorPalette } from '../../types/plots/addOns';
 
 export default {
   title: 'Plots/Network/BipartiteNetwork',
-  component: BipartiteNetwork,
+  component: BipartiteNetworkPlot,
 } as Meta;
 
 interface TemplateProps {
-  data: BipartiteNetworkData;
+  data: BipartiteNetwork;
   column1Name?: string;
   column2Name?: string;
   loading?: boolean;
   showThumbnail?: boolean;
   containerStyles?: CSSProperties;
-  svgStyleOverrides?: BipartiteNetworkSVGStyles;
+  svgStyleOverrides?: BipartiteNetworkPlotSVGStyles;
   labelTruncationLength?: number;
 }
 
-// Template for showcasing our BipartiteNetwork component.
+// Template for showcasing our BipartiteNetworkPlot component.
 const Template: Story<TemplateProps> = (args) => {
   // Generate a jpeg version of the network (svg).
   // Mimicks the makePlotThumbnailUrl process in web-eda.
@@ -41,8 +41,8 @@ const Template: Story<TemplateProps> = (args) => {
     }, 2000);
   }, []);
 
-  const bipartiteNetworkProps: BipartiteNetworkProps = {
-    data: args.data,
+  const bipartiteNetworkPlotProps: BipartiteNetworkPlotProps = {
+    network: args.data,
     column1Name: args.column1Name,
     column2Name: args.column2Name,
     showSpinner: args.loading,
@@ -52,7 +52,7 @@ const Template: Story<TemplateProps> = (args) => {
   };
   return (
     <>
-      <BipartiteNetwork ref={ref} {...bipartiteNetworkProps} />
+      <BipartiteNetworkPlot ref={ref} {...bipartiteNetworkPlotProps} />
       {args.showThumbnail && (
         <>
           <br></br>
@@ -140,28 +140,32 @@ WithStyle.args = {
 function genBipartiteNetwork(
   column1nNodes: number,
   column2nNodes: number
-): BipartiteNetworkData {
+): BipartiteNetwork {
   // Create the first column of nodes
-  const column1Nodes: NodeData[] = [...Array(column1nNodes).keys()].map((i) => {
-    return {
-      id: String(i),
-      label: 'Node ' + String(i),
-    };
-  });
+  const column1Nodes: NetworkNode[] = [...Array(column1nNodes).keys()].map(
+    (i) => {
+      return {
+        id: String(i),
+        label: 'Node ' + String(i),
+      };
+    }
+  );
 
   // Create the second column of nodes
-  const column2Nodes: NodeData[] = [...Array(column2nNodes).keys()].map((i) => {
-    return {
-      id: String(i + column1nNodes),
-      label: 'Node ' + String(i + column1nNodes),
-    };
-  });
+  const column2Nodes: NetworkNode[] = [...Array(column2nNodes).keys()].map(
+    (i) => {
+      return {
+        id: String(i + column1nNodes),
+        label: 'Node ' + String(i + column1nNodes),
+      };
+    }
+  );
 
   // Create links
   // Not worried about exactly how many edges we're adding just yet since this is
   // used for stories only. Adding color here to mimic what the visualization
   // will do.
-  const links: LinkData[] = [...Array(column1nNodes * 2).keys()].map(() => {
+  const links: NetworkLink[] = [...Array(column1nNodes * 2).keys()].map(() => {
     return {
       source: column1Nodes[Math.floor(Math.random() * column1nNodes)],
       target: column2Nodes[Math.floor(Math.random() * column2nNodes)],
