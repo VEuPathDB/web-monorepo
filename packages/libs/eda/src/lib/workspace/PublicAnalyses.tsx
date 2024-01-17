@@ -19,7 +19,7 @@ import { create as createTableState } from '@veupathdb/coreui/lib/components/Mes
 import {
   MesaColumn,
   MesaSortObject,
-} from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';

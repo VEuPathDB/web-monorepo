@@ -7,7 +7,7 @@ import {
   setStrategyListSort,
   setSearchTerm,
 } from '../Actions/StrategyListActions';
-import { MesaSortObject } from '../Core/CommonTypes';
+import { MesaSortObject } from '@veupathdb/coreui/lib/components/Mesa/types';
 
 export const key = 'strategyList';
 

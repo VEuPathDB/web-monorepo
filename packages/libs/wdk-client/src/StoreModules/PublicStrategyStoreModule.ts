@@ -4,7 +4,7 @@ import {
   setSort,
   setPrioritizeExamples,
 } from '../Actions/PublicStrategyActions';
-import { MesaSortObject } from '../Core/CommonTypes';
+import { MesaSortObject } from '@veupathdb/coreui/lib/components/Mesa/types';
 
 export const key = 'publicStrategies';
 

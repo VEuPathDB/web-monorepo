@@ -4,7 +4,10 @@ import { orderBy } from 'lodash';
 
 import { Checkbox, Icon, Link, RealTimeSearchBox } from '../../Components';
 import { MesaState, Mesa } from '@veupathdb/coreui/lib/components/Mesa';
-import { MesaSortObject, MesaColumn } from '../../Core/CommonTypes';
+import {
+  MesaSortObject,
+  MesaColumn,
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import { makeClassNameHelper } from '../../Utils/ComponentUtils';
 import { StrategySummary } from '../../Utils/WdkUser';
 import { RecordClass } from '../../Utils/WdkModel';

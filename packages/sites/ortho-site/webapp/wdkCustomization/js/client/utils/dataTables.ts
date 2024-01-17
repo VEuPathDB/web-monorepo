@@ -1,7 +1,7 @@
 import {
   MesaColumn,
   MesaSortObject,
-} from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 
 export type DataTableColumnKey<R> = keyof R & string;
 

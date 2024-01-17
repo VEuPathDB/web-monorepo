@@ -9,7 +9,7 @@ import { RecordClass } from '../../Utils/WdkModel';
 import Tabs from '../../Components/Tabs/Tabs';
 import { makeClassNameHelper } from '../../Utils/ComponentUtils';
 
-import { MesaSortObject } from '../../Core/CommonTypes';
+import { MesaSortObject } from '@veupathdb/coreui/lib/components/Mesa/types';
 import RealTimeSearchBox from '../../Components/SearchBox/RealTimeSearchBox';
 import { StrategyControls } from '../../Views/Strategy/StrategyControls';
 

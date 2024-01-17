@@ -17,7 +17,7 @@ import { MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 import {
   MesaColumn,
   MesaSortObject,
-} from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 
 import {
