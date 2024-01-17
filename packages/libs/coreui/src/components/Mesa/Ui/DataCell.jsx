@@ -43,7 +43,7 @@ class DataCell extends React.PureComponent {
   }
 
   render() {
-    let { column, row, inline } = this.props;
+    let { column, inline, options } = this.props;
     let { style, width, className, key } = column;
 
     let whiteSpace = !inline

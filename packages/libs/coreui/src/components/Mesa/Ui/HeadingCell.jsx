@@ -275,7 +275,7 @@ class HeadingCell extends React.PureComponent {
 
   render() {
     const { column, eventHandlers, primary } = this.props;
-    const { key, headingStyle, width, renderHeading } = column;
+    const { key, headingStyle, width } = column;
     const widthStyle = width ? { width, maxWidth: width, minWidth: width } : {};
 
     const style = Object.assign(

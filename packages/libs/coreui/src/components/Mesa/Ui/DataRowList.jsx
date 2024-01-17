@@ -1,7 +1,6 @@
 import React from 'react';
 
 import DataRow from './DataRow';
-import { makeClassifier } from '../Utils/Utils';
 
 class DataRowList extends React.Component {
   constructor(props) {

@@ -26,7 +26,7 @@ export const EventsFactory = (node) => {
       instance.listenerStore.forEach(clear);
     },
     onKey: (key, callback) => {
-      if (!key in KeyCodes) return;
+      if (!(key in KeyCodes)) return;
       return instance.onKeyCode(KeyCodes[key], callback);
     },
     onKeyCode: (keyCodeOrSet, callback) => {

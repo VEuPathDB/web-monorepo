@@ -1,4 +1,4 @@
-import { fail, badType, missingFromState } from './Errors';
+import { badType } from './Errors';
 
 export const createSelection = (_selection = []) => {
   if (!Array.isArray(_selection))

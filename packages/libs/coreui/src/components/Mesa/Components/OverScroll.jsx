@@ -1,7 +1,5 @@
 import React from 'react';
 
-import Defaults from '../Defaults';
-
 class OverScroll extends React.Component {
   constructor(props) {
     super(props);

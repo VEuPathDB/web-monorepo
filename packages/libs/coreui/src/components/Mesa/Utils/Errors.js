@@ -1,7 +1,6 @@
 /*    Error Handlers   */
 export const fail = (fn, message, Err = Error) => {
   throw new Err(`<${fn}>: ${message}`);
-  return undefined;
 };
 
 export const warn = (fn, message) => {

@@ -112,7 +112,7 @@ export const setEventHandlers = (state, eventHandlers) => {
 };
 
 export const getSelectedRows = (state, onlyFilteredRows = true) => {
-  if (onlyFilteredRows && !'filteredRows' in state)
+  if (onlyFilteredRows && !('filteredRows' in state))
     return missingFromState('getSelectedRows', 'filteredRows', state) || state;
   const { filteredRows } = state;
   if (onlyFilteredRows && !Array.isArray(filteredRows))
@@ -125,13 +125,13 @@ export const getSelectedRows = (state, onlyFilteredRows = true) => {
       ) || state
     );
 
-  if (!onlyFilteredRows && !'rows' in state)
+  if (!onlyFilteredRows && !('rows' in state))
     return missingFromState('getSelectedRows', 'filteredRows', state) || state;
   const { rows } = state;
   if (!onlyFilteredRows && !Array.isArray(rows))
     return badType('getSelectedRows', 'rows', 'array', typeof rows) || state;
 
-  if (!'options' in state)
+  if (!('options' in state))
     return missingFromState('getSelectedRows', 'options', state) || state;
   if (typeof state.options !== 'object')
     return (
@@ -139,7 +139,7 @@ export const getSelectedRows = (state, onlyFilteredRows = true) => {
     );
   const { options } = state;
 
-  if (!'isRowSelected' in options)
+  if (!('isRowSelected' in options))
     return (
       missingFromState('getSelectedRows', 'options.isRowSelected', options) ||
       state
@@ -365,7 +365,7 @@ export const moveColumnToIndex = (state, columnKey, toIndex) => {
       '"toIndex" should be a number"',
       TypeError
     );
-  if (!'columns' in state)
+  if (!('columns' in state))
     return missingFromState('changeColumnIndex', 'columns', state) || state;
 
   const oldColumns = getColumns(state);
@@ -385,7 +385,7 @@ export const callActionOnSelectedRows = (
   batch = false,
   onlyFilteredRows = true
 ) => {
-  if (!'selectedRows' in state)
+  if (!('selectedRows' in state))
     return (
       missingFromState('callActionOnSelectedRows', 'selectedRows', state) ||
       state

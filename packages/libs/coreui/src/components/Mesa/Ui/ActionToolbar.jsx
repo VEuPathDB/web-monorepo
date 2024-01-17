@@ -83,7 +83,6 @@ class ActionToolbar extends React.PureComponent {
     } = eventHandlers ? eventHandlers : {};
 
     const ActionList = this.renderActionItemList;
-    const selection = this.getSelection();
 
     const selectionCounterProps = {
       rows,

@@ -1,5 +1,3 @@
-import { compose } from 'redux';
-
 export function stringValue(value) {
   switch (typeof value) {
     case 'string':
@@ -136,7 +134,6 @@ export function uid(len = 8) {
 
 export const displayUnits = {
   px: /[0-9]+(px)?$/,
-  vw: /[0-9]+vw$/,
   vw: /[0-9]+vw$/,
   em: /[0-9]+em$/,
   rem: /[0-9]+rem$/,
