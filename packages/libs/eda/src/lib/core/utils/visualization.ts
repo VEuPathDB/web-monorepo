@@ -1,6 +1,6 @@
 import {
   HistogramData,
-  BarplotData,
+  BarPlotData,
   BoxplotData,
   FacetedData,
 } from '@veupathdb/components/lib/types/plots';
@@ -30,14 +30,14 @@ import {
 import { isEqual } from 'lodash';
 import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../../map/constants';
 
-// was: BarplotData | HistogramData | { series: BoxplotData };
+// was: BarPlotData | HistogramData | { series: BoxplotData };
 type SeriesWithStatistics<T> = T & CoverageStatistics;
 type MaybeFacetedSeries<T> = T | FacetedData<T>;
 type MaybeFacetedSeriesWithStatistics<T> = MaybeFacetedSeries<T> &
   CoverageStatistics;
 
 export function grayOutLastSeries<
-  T extends { series: BoxplotData } | BarplotData | HistogramData
+  T extends { series: BoxplotData } | BarPlotData | HistogramData
 >(
   data: T | MaybeFacetedSeriesWithStatistics<T>,
   showMissingness: boolean = false,

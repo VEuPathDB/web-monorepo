@@ -230,7 +230,7 @@ export const HistogramResponse = intersection([
   }),
 ]);
 
-export interface BarplotRequestParams {
+export interface BarPlotRequestParams {
   studyId: string;
   filters: Filter[];
   //  derivedVariables:  // TO DO
@@ -246,8 +246,8 @@ export interface BarplotRequestParams {
   };
 }
 
-export type BarplotResponse = TypeOf<typeof BarplotResponse>;
-export const BarplotResponse = intersection([
+export type BarPlotResponse = TypeOf<typeof BarPlotResponse>;
+export const BarPlotResponse = intersection([
   type({
     barplot: type({
       config: plotConfig,

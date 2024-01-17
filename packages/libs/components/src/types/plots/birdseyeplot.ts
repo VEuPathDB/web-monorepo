@@ -1,4 +1,4 @@
-import { BarplotData } from './barplot';
+import { BarPlotData } from './barplot';
 
 export type BirdsEyePlotData = {
   brackets: {

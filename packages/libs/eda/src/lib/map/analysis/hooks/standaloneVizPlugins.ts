@@ -15,7 +15,7 @@ import { histogramVisualization } from '../../../core/components/visualizations/
 import { contTableVisualization } from '../../../core/components/visualizations/implementations/MosaicVisualization';
 import { scatterplotVisualization } from '../../../core/components/visualizations/implementations/ScatterplotVisualization';
 import { lineplotVisualization } from '../../../core/components/visualizations/implementations/LineplotVisualization';
-import { barplotVisualization } from '../../../core/components/visualizations/implementations/BarplotVisualization';
+import { barplotVisualization } from '../../../core/components/visualizations/implementations/BarPlotVisualization';
 import { boxplotVisualization } from '../../../core/components/visualizations/implementations/BoxplotVisualization';
 import {
   BinDefinitions,

@@ -8,7 +8,7 @@ import { LinePlotData } from './lineplot';
 import { PiePlotData } from './piePlot';
 import { BoxplotData } from './boxplot';
 import { ScatterPlotData } from './scatterplot';
-import { BarplotData } from './barplot';
+import { BarPlotData } from './barplot';
 import { HeatmapData } from './heatmap';
 import { MosaicPlotData } from './mosaicPlot';
 import { BirdsEyePlotData } from './birdseyeplot';
@@ -41,7 +41,7 @@ export type UnionOfPlotDataTypes =
   | LinePlotData
   | BoxplotData
   | ScatterPlotData
-  | BarplotData
+  | BarPlotData
   | HeatmapData
   | MosaicPlotData
   | BirdsEyePlotData;

@@ -10,8 +10,8 @@ import {
   AppsResponse,
   HistogramRequestParams,
   HistogramResponse,
-  BarplotRequestParams,
-  BarplotResponse,
+  BarPlotRequestParams,
+  BarPlotResponse,
   ScatterplotRequestParams,
   ScatterplotResponse,
   LineplotRequestParams,
@@ -75,16 +75,16 @@ export default class DataClient extends FetchClientWithCredentials {
     );
   }
 
-  // Barplot
-  getBarplot(
+  // BarPlot
+  getBarPlot(
     computationName: string,
-    params: BarplotRequestParams
-  ): Promise<BarplotResponse> {
+    params: BarPlotRequestParams
+  ): Promise<BarPlotResponse> {
     return this.getVisualizationData(
       computationName,
       'barplot',
       params,
-      BarplotResponse
+      BarPlotResponse
     );
   }
 

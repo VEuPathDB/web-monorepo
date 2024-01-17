@@ -1,10 +1,10 @@
 import { isEqual } from 'lodash';
 import { OverlayConfig } from '../../../../core';
-import { BarplotConfig } from '../../../../core/components/visualizations/implementations/BarplotVisualization';
+import { BarPlotConfig } from '../../../../core/components/visualizations/implementations/BarPlotVisualization';
 import { RequestOptionProps } from '../../../../core/components/visualizations/options/types';
 
 export function barplotRequest(
-  props: RequestOptionProps<BarplotConfig> & {
+  props: RequestOptionProps<BarPlotConfig> & {
     overlayConfig: OverlayConfig | undefined;
   }
 ) {
