@@ -69,9 +69,9 @@ export interface MesaColumn<Key extends string = string> {
   resizeable?: boolean;
   moveable?: boolean;
   helpText?: string;
-  style?: CSSProperties;
+  style?: any;
   className?: string;
-  width?: CSSProperties['width'];
+  width?: any;
   renderCell?: unknown; // a function
   renderHeading?: unknown; // a function
   wrapCustomHeadings?: unknown; // a function

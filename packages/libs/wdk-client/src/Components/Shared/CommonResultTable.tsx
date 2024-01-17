@@ -10,7 +10,7 @@ import {
 } from '@veupathdb/coreui/lib/components/Mesa/Utils/Utils';
 import { RealTimeSearchBox } from '../../Components';
 import { compose, debounce } from 'lodash/fp';
-import { MesaColumn } from '../../Core/CommonTypes';
+import { MesaColumn } from '@veupathdb/coreui/lib/components/Mesa/types';
 
 const simpleFilterPredicateFactory =
   (searchQuery: string) => (row: Record<string, string>) =>

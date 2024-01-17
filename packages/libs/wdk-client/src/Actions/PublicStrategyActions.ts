@@ -1,4 +1,4 @@
-import { MesaSortObject } from '../Core/CommonTypes';
+import { MesaSortObject } from '@veupathdb/coreui/lib/components/Mesa/types';
 import { makeActionCreator, InferAction } from '../Utils/ActionCreatorUtils';
 import { StrategySummary } from '../Utils/WdkUser';
 
