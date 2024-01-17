@@ -122,29 +122,18 @@ export function ComputationRoute(props: Props) {
           // Note: the pass app's id will be 'pass-through' for backwards compatability
           const singleAppComputationId = singleAppComputation.computationId;
 
+          const plugin = apps[0] && plugins[apps[0].name];
+          if (apps[0] == null || plugin == null)
+            return <div>Cannot find app!</div>;
           return (
-            <Switch>
-              <Route exact path={url}>
-                <Redirect to={`${url}/${singleAppComputationId}`} />
-              </Route>
-              <Route
-                path={`${url}/${singleAppComputationId}`}
-                render={() => {
-                  const plugin = apps[0] && plugins[apps[0].name];
-                  if (apps[0] == null || plugin == null)
-                    return <div>Cannot find app!</div>;
-                  return (
-                    <ComputationInstance
-                      {...props}
-                      computationId={singleAppComputationId}
-                      computationAppOverview={apps[0]}
-                      visualizationPlugins={plugin.visualizationPlugins}
-                      isSingleAppMode={!!singleAppMode}
-                    />
-                  );
-                }}
-              />
-            </Switch>
+            <ComputationInstance
+              {...props}
+              baseUrl={url}
+              computationId={singleAppComputationId}
+              computationAppOverview={apps[0]}
+              visualizationPlugins={plugin.visualizationPlugins}
+              isSingleAppMode={!!singleAppMode}
+            />
           );
         } else {
           return (
@@ -189,7 +178,7 @@ export function ComputationRoute(props: Props) {
                                   visualizationPlugins={
                                     plugin.visualizationPlugins
                                   }
-                                  baseUrl={`${url}/${c.computationId}`}
+                                  baseUrl={url}
                                   isSingleAppMode={!!singleAppMode}
                                 />
                               );
@@ -210,15 +199,27 @@ export function ComputationRoute(props: Props) {
                 />
               </Route>
               <Route
-                path={`${url}/:id`}
+                path={`${url}/:computationId/:visualizationId`}
+                render={(routeProps) => (
+                  <Redirect
+                    to={`${url}/${routeProps.match.params.visualizationId}`}
+                  />
+                )}
+              />
+              <Route
+                path={`${url}/:visualizationId`}
                 render={(routeProps) => {
-                  // These are routes for the computation instances already saved
-                  const computation =
-                    props.analysisState.analysis?.descriptor.computations.find(
-                      (c) => c.computationId === routeProps.match.params.id
+                  const result =
+                    props.analysisState.getVisualizationAndComputation(
+                      routeProps.match.params.visualizationId
                     );
+                  if (result == null) {
+                    return null;
+                  }
+
+                  const { computation } = result;
                   const app = apps.find(
-                    (app) => app.name === computation?.descriptor.type
+                    (app) => app.name === computation.descriptor.type
                   );
                   const plugin = app && plugins[app.name];
                   if (app == null || plugin == null)
@@ -226,10 +227,10 @@ export function ComputationRoute(props: Props) {
                   return (
                     <ComputationInstance
                       {...props}
-                      computationId={routeProps.match.params.id}
+                      computationId={computation.computationId}
                       computationAppOverview={app}
                       visualizationPlugins={plugin.visualizationPlugins}
-                      baseUrl={`${url}/${computation?.computationId}`}
+                      baseUrl={url}
                       isSingleAppMode={!!singleAppMode}
                     />
                   );

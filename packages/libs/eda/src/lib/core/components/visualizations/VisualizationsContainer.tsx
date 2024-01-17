@@ -80,7 +80,7 @@ interface Props {
  */
 export function VisualizationsContainer(props: Props) {
   const { baseUrl } = { ...props };
-  const { url } = useRouteMatch();
+  // const { url } = useRouteMatch();
 
   const currentStudyRecordId = useStudyRecord().id[0].value;
   const studiesForPerformanceWarning = [
@@ -117,14 +117,14 @@ export function VisualizationsContainer(props: Props) {
         ></Banner>
       ) : null}
       <Switch>
-        <Route exact path={url}>
+        <Route exact path={baseUrl}>
           <ConfiguredVisualizations {...props} />
         </Route>
-        <Route exact path={`${baseUrl || url}/new`}>
+        <Route exact path={`${baseUrl}/new`}>
           <NewVisualizationPicker {...props} />
         </Route>
         <Route
-          path={`${baseUrl || url}/:id`}
+          path={`${baseUrl}/:id`}
           render={(routeProps: RouteComponentProps<{ id: string }>) => (
             <FullScreenVisualization
               id={routeProps.match.params.id}
@@ -320,7 +320,7 @@ export function NewVisualizationPicker(props: NewVisualizationPickerProps) {
     computation,
     geoConfigs,
     onVisualizationCreated = function (visualizationId, computationId) {
-      history.replace(`../${computationId}/${visualizationId}`);
+      history.replace(`${visualizationId}`);
     },
     includeHeader = true,
   } = props;
@@ -592,10 +592,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
                       );
                     }
                     history.replace(
-                      Path.resolve(
-                        history.location.pathname,
-                        isSingleAppMode ? '..' : '../..'
-                      )
+                      Path.resolve(history.location.pathname, '..')
                     );
                   }}
                 >
