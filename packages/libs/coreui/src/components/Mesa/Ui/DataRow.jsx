@@ -64,8 +64,7 @@ class DataRow extends React.PureComponent {
   }
 
   render() {
-    const { row, rowIndex, columns, options, actions, eventHandlers } =
-      this.props;
+    const { row, rowIndex, columns, options, eventHandlers } = this.props;
     const { expanded } = this.state;
     const { columnDefaults } = options ? options : {};
     const inline = options.inline ? !expanded : false;

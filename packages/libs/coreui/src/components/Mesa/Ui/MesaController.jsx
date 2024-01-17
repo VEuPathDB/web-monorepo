@@ -85,7 +85,6 @@ class MesaController extends React.Component {
       headerWrapperStyle,
     };
 
-    const Body = this.renderBody;
     const Toolbar = this.renderToolbar;
     const ActionBar = this.renderActionBar;
     const PageNav = this.renderPaginationMenu;

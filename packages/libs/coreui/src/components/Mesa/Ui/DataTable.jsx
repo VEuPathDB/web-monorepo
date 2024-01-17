@@ -187,7 +187,7 @@ class DataTable extends React.Component {
       uiState,
       headerWrapperStyle,
     } = this.props;
-    const { dynamicWidths, tableWrapperWidth } = this.state;
+    const { dynamicWidths } = this.state;
     const stickyColumns = options.useStickyFirstNColumns
       ? this.makeFirstNColumnsSticky(columns, options.useStickyFirstNColumns)
       : columns;

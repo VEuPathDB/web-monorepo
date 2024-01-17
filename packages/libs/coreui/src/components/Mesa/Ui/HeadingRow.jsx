@@ -2,7 +2,6 @@ import React from 'react';
 
 import HeadingCell from './HeadingCell';
 import SelectionCell from './SelectionCell';
-import { ColumnDefaults } from '../Defaults';
 
 class HeadingRow extends React.PureComponent {
   constructor(props) {
@@ -27,8 +26,6 @@ class HeadingRow extends React.PureComponent {
       onRowSelect,
       onRowDeselect,
     ].every((fn) => typeof fn === 'function');
-
-    const nullRenderer = () => null;
 
     const rowCount = columns.reduce((count, column) => {
       const thisCount = Array.isArray(column.renderHeading)

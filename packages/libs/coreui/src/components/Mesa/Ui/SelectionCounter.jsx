@@ -42,7 +42,6 @@ class SelectionCounter extends React.Component {
       this.props;
     const selection = rows.filter(isRowSelected);
     if (!selection.length) return null;
-    const allSelected = rows.every((row) => selection.includes(row));
 
     return (
       <div className="SelectionCounter">

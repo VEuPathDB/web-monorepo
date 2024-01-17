@@ -1,7 +1,3 @@
-import React from 'react';
-
-import Icon from './Components/Icon';
-
 export const ColumnDefaults = {
   primary: false,
   searchable: true,

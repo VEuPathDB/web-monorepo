@@ -21,6 +21,8 @@ export interface MesaStateProps<Row, Key extends string> {
   options?: {
     title?: string;
     inline?: boolean;
+    inlineMaxWidth?: string;
+    inlineMaxHeight?: string;
     className?: string;
     showCount?: boolean;
     errOnOverflow?: boolean;
