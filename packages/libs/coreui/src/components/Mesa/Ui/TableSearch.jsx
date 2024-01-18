@@ -48,7 +48,7 @@ class TableSearch extends React.PureComponent {
 }
 
 TableSearch.propTypes = {
-  query: PropTypes.string,
+  searchQuery: PropTypes.string,
   options: PropTypes.object,
   onSearch: PropTypes.func,
 };

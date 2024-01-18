@@ -26,6 +26,11 @@ class DataCell extends React.PureComponent {
     if (!column.type) return Templates.textCell(cellProps);
     if (!cellProps.value) return Templates.textCell(cellProps);
 
+    if (column.type.toLowerCase() === 'html') {
+      const Component = Templates[inline ? 'textCell' : 'htmlCell'];
+      return Component(cellProps);
+    }
+
     switch (column.type.toLowerCase()) {
       case 'wdklink':
         return Templates.wdkLinkCell(cellProps);
@@ -33,9 +38,6 @@ class DataCell extends React.PureComponent {
         return Templates.linkCell(cellProps);
       case 'number':
         return Templates.numberCell(cellProps);
-      case 'html':
-        const Component = Templates[inline ? 'textCell' : 'htmlCell'];
-        return Component(cellProps);
       case 'text':
       default:
         return Templates.textCell(cellProps);
@@ -70,6 +72,9 @@ DataCell.propTypes = {
   column: PropTypes.object,
   row: PropTypes.object,
   inline: PropTypes.bool,
+  options: PropTypes.object,
+  rowIndex: PropTypes.number,
+  columnIndex: PropTypes.number,
 };
 
 export default DataCell;

@@ -289,6 +289,8 @@ class DataTable extends React.Component {
 
 DataTable.propTypes = {
   rows: PropTypes.array,
+  filteredRows: PropTypes.array,
+  headerWrapperStyle: PropTypes.object,
   columns: PropTypes.array,
   options: PropTypes.object,
   actions: PropTypes.arrayOf(

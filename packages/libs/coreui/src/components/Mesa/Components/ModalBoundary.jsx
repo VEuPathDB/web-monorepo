@@ -101,4 +101,9 @@ ModalBoundary.childContextTypes = {
   triggerModalRefresh: PropTypes.func,
 };
 
+ModalBoundary.propTypes = {
+  children: PropTypes.oneOfType([PropTypes.node, PropTypes.element]),
+  style: PropTypes.object,
+};
+
 export default ModalBoundary;
