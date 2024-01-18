@@ -181,13 +181,16 @@ class Tooltip extends React.Component {
 
 Tooltip.propTypes = {
   hideDelay: PropTypes.number,
-  children: PropTypes.node,
+  showDelay: PropTypes.number,
+  children: PropTypes.oneOfType([PropTypes.node, PropTypes.element]),
   className: PropTypes.string,
   content: PropTypes.node,
   corner: PropTypes.string,
   fadeOut: PropTypes.bool,
   position: PropTypes.object,
+  style: PropTypes.object,
   getPosition: PropTypes.func,
+  renderHtml: PropTypes.bool,
 };
 
 export default Tooltip;

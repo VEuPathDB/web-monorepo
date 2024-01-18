@@ -111,9 +111,11 @@ class ActionToolbar extends React.PureComponent {
 
 ActionToolbar.propTypes = {
   rows: PropTypes.array,
+  columns: PropTypes.array,
   actions: PropTypes.array,
   options: PropTypes.object,
   eventHandlers: PropTypes.object,
+  children: PropTypes.oneOfType([PropTypes.node, PropTypes.element]),
 };
 
 export default ActionToolbar;

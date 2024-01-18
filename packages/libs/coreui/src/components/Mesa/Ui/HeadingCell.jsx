@@ -137,7 +137,11 @@ class HeadingCell extends React.PureComponent {
         e.stopPropagation();
       });
     };
-    return <div ref={stopPropagation} style={style} children={children} />;
+    return (
+      <div ref={stopPropagation} style={style}>
+        {children}
+      </div>
+    );
   }
 
   renderSortTrigger() {
@@ -306,6 +310,8 @@ HeadingCell.propTypes = {
   eventHandlers: PropTypes.object,
   column: PropTypes.object.isRequired,
   columnIndex: PropTypes.number.isRequired,
+  primary: PropTypes.bool,
+  headingRowIndex: PropTypes.number,
 };
 
 export default HeadingCell;
