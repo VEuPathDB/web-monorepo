@@ -51,6 +51,7 @@ const DEFAULT_SIGNIFICANCE_THRESHOLD = 0.05; // Ability for user to change this 
 const DEFAULT_LINK_COLOR_DATA = '0';
 const MIN_STROKE_WIDTH = 0.5; // Minimum stroke width for links in the network. Will represent the smallest link weight.
 const MAX_STROKE_WIDTH = 6; // Maximum stroke width for links in the network. Will represent the largest link weight.
+const DEFAULT_NUMBER_OF_LINE_LEGEND_ITEMS = 4;
 
 const plotContainerStyles = {
   width: 1250,
@@ -283,26 +284,41 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const controlsNode = <> </>;
 
   // Create legend for (1) Line/link thickness and (2) Link color.
-  const nLineItemsInLegend = 4;
-  const lineLegendItems: LegendItemsProps[] = [
-    ...Array(nLineItemsInLegend).keys(),
-  ].map((i) => {
-    const weightLabel =
-      maxDataWeight -
-      ((maxDataWeight - minDataWeight) / (nLineItemsInLegend - 1)) * i;
-    return {
-      label: String(weightLabel.toFixed(4)),
-      marker: 'line',
-      markerColor: gray[900],
-      hasData: true,
-      lineThickness:
-        String(
-          MAX_STROKE_WIDTH -
-            ((MAX_STROKE_WIDTH - MIN_STROKE_WIDTH) / (nLineItemsInLegend - 1)) *
-              i
-        ) + 'px',
-    };
-  });
+  // For (1), we'll do the following:
+  //  - create a base array that is conditioned on the length of dataWeights since dataWeights is a map of data.links.weight
+  //    -- if dataWeights.length is less than or equal to 4, let's use dataWeights as our base array sorted from greatest to least
+  //    -- if dataWeights.length is greater than 4, create an array of a default length filled with 'undefined'
+  //  - create lineLegendItems by mapping over lineLegendItemsBaseArray
+  //    -- if the element (weight) is truthy, then we know we're dealing with a copy of the dataWeights array and can use this value for weightLabel
+  //    -- if the element is falsy, fall back to previous calculation for weightLabel
+  const lineLegendItemsBaseArray =
+    dataWeights.length <= 4
+      ? [...dataWeights].sort((a, b) => b - a)
+      : Array(DEFAULT_NUMBER_OF_LINE_LEGEND_ITEMS).fill(undefined);
+  const lineLegendItems: LegendItemsProps[] = lineLegendItemsBaseArray.map(
+    (weight, index) => {
+      const weightLabel =
+        weight ??
+        maxDataWeight -
+          ((maxDataWeight - minDataWeight) /
+            (lineLegendItemsBaseArray.length - 1)) *
+            index;
+      return {
+        label: String(weightLabel.toFixed(4)),
+        marker: 'line',
+        markerColor: gray[900],
+        hasData: true,
+        lineThickness:
+          String(
+            MAX_STROKE_WIDTH -
+              ((MAX_STROKE_WIDTH - MIN_STROKE_WIDTH) /
+                (lineLegendItemsBaseArray.length - 1)) *
+                index
+          ) + 'px',
+      };
+    }
+  );
+
   const lineLegendTitle = options?.getLegendTitle?.(
     computation.descriptor.configuration
   )
