@@ -32,6 +32,8 @@ interface Props {
   config: NonNullable<AppState['timeSliderConfig']>;
   updateConfig: (newConfig: NonNullable<AppState['timeSliderConfig']>) => void;
   siteInformation: SiteInformationProps;
+  littleFilters?: Record<string, Filter[]>;
+  setLittleFilters: (littleFilters: Record<string, Filter[]>) => void;
 }
 
 export default function TimeSliderQuickFilter({

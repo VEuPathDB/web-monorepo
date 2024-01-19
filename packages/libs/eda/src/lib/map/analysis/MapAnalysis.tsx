@@ -180,6 +180,7 @@ function MapAnalysisImpl(props: ImplProps) {
     showLinkToEda = false,
     setLittleFilters,
   } = props;
+  console.log({ littleFilters: appState.littleFilters });
   const { activeMarkerConfigurationType, markerConfigurations } = appState;
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
   const studyRecord = useStudyRecord();
@@ -852,6 +853,8 @@ function MapAnalysisImpl(props: ImplProps) {
                         config={appState.timeSliderConfig}
                         updateConfig={setTimeSliderConfig}
                         siteInformation={props.siteInformationProps}
+                        littleFilters={appState.littleFilters}
+                        setLittleFilters={setLittleFilters}
                       />
                     )}
                 </MapHeader>
