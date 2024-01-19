@@ -46,6 +46,8 @@ export default function TimeSliderQuickFilter({
   config,
   updateConfig,
   siteInformation,
+  littleFilters,
+  setLittleFilters,
 }: Props) {
   const findEntityAndVariable = useFindEntityAndVariable(filters); // filter sensitivity
   const theme = useUITheme();
@@ -164,6 +166,31 @@ export default function TimeSliderQuickFilter({
       selectedRange: undefined,
       active: true,
     });
+
+    setLittleFilters({
+      ...(littleFilters ?? {}),
+      ['time-slider']: [],
+    });
+  }
+
+  function handleSelectedRangeChange(
+    selectedRange: { start: string; end: string } | undefined
+  ) {
+    updateConfig({ ...config, selectedRange });
+    setLittleFilters({
+      ...(littleFilters ?? {}),
+      ['time-slider']:
+        selectedRange == null || variable == null
+          ? []
+          : [
+              {
+                type: 'dateRange',
+                ...variable,
+                min: selectedRange.start + 'T00:00:00Z',
+                max: selectedRange.end + 'T00:00:00Z',
+              },
+            ],
+    });
   }
 
   // (easily) centering the variable picker requires two same-width divs either side
@@ -247,9 +274,7 @@ export default function TimeSliderQuickFilter({
             <TimeSlider
               data={timeFilterData}
               selectedRange={selectedRange}
-              setSelectedRange={(selectedRange) =>
-                updateConfig({ ...config, selectedRange })
-              }
+              setSelectedRange={handleSelectedRangeChange}
               xAxisRange={extendedDisplayRange}
               width={timeFilterWidth - 30}
               height={sliderHeight}
