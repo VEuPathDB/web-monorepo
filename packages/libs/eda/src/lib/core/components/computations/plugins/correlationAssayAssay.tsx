@@ -7,6 +7,8 @@ import {
   assertComputationWithConfig,
   isNotAbsoluteAbundanceVariableCollection,
   partialToCompleteCodec,
+  isTaxonomicVariableCollection,
+  isFunctionalCollection,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
@@ -29,11 +31,10 @@ const cx = makeClassNameHelper('AppStepConfigurationContainer');
  *
  * The Correlation Assay vs Assay app takes in a two user-selected collections (ex. Species and Pathways) and
  * runs a pairwise correlation of all the member variables of one collection against the other. The result is
- * a correlation coefficient and (soon) a significance value for each pair.
+ * a correlation coefficient and a significance value for each pair.
  *
- * Importantly, this is the second of a few correlation-type apps that are coming along in the near future.
- * There will also be a Metadata vs Metadata correlation app. It's possible that
- * this PR should see a little refactoring to make the code a bit nicer.
+ * In its current state, this app is targeted toward a specific use case of correlating
+ * taxa with pathways or genes.
  */
 
 export type CorrelationAssayAssayConfig = t.TypeOf<
@@ -170,17 +171,17 @@ export function CorrelationAssayAssayConfiguration(
           <div className={cx('-CorrelationOuterConfigContainer')}>
             <H6>Input Data</H6>
             <div className={cx('-InputContainer')}>
-              <span>Data 1</span>
+              <span>Taxonomic Level</span>
               <VariableCollectionSelectList
                 value={configuration.collectionVariable1}
                 onSelect={partial(changeConfigHandler, 'collectionVariable1')}
-                collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
+                collectionPredicate={isTaxonomicVariableCollection}
               />
-              <span>Data 2</span>
+              <span>Functional Data</span>
               <VariableCollectionSelectList
                 value={configuration.collectionVariable2}
                 onSelect={partial(changeConfigHandler, 'collectionVariable2')}
-                collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
+                collectionPredicate={isFunctionalCollection}
               />
             </div>
           </div>
