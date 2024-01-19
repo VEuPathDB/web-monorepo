@@ -398,8 +398,8 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
               vizConfig.correlationCoefThreshold ??
               DEFAULT_CORRELATION_COEF_THRESHOLD
             }
-            containerStyles={{ marginRight: 10 }}
             step={0.05}
+            applyWarningStyles={cleanedData && cleanedData.nodes.length === 0}
           />
 
           <NumberInput
@@ -414,6 +414,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
             }
             containerStyles={{ marginLeft: 10 }}
             step={0.001}
+            applyWarningStyles={cleanedData && cleanedData.nodes.length === 0}
           />
         </LabelledGroup>
       )}
