@@ -99,11 +99,10 @@ function CorrelationAssayAssayConfigDescriptionComponent({
   const entityAndCollectionVariableTreeNode2 =
     findEntityAndVariableCollection(collectionVariable2);
 
-  // Data 1 and Data 2 are placeholder labels, we can decide what to call them later.
   return (
     <div className="ConfigDescriptionContainer">
       <h4>
-        Data 1:{' '}
+        Taxonomic level:{' '}
         <span>
           {entityAndCollectionVariableTreeNode1 ? (
             `${entityAndCollectionVariableTreeNode1.entity.displayName} > ${entityAndCollectionVariableTreeNode1.variableCollection.displayName}`
@@ -113,7 +112,7 @@ function CorrelationAssayAssayConfigDescriptionComponent({
         </span>
       </h4>
       <h4>
-        Data 2:{' '}
+        Functional data:{' '}
         <span>
           {entityAndCollectionVariableTreeNode2 ? (
             `${entityAndCollectionVariableTreeNode2.entity.displayName} > ${entityAndCollectionVariableTreeNode2.variableCollection.displayName}`
@@ -171,13 +170,13 @@ export function CorrelationAssayAssayConfiguration(
           <div className={cx('-CorrelationOuterConfigContainer')}>
             <H6>Input Data</H6>
             <div className={cx('-InputContainer')}>
-              <span>Taxonomic Level</span>
+              <span>Taxonomic level</span>
               <VariableCollectionSelectList
                 value={configuration.collectionVariable1}
                 onSelect={partial(changeConfigHandler, 'collectionVariable1')}
                 collectionPredicate={isTaxonomicVariableCollection}
               />
-              <span>Functional Data</span>
+              <span>Functional data</span>
               <VariableCollectionSelectList
                 value={configuration.collectionVariable2}
                 onSelect={partial(changeConfigHandler, 'collectionVariable2')}
