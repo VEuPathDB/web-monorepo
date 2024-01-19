@@ -39,7 +39,10 @@ type OwnProps = {
 type Props = StateProps & OwnProps;
 
 type StrategyInputColumnKey = 'dataType' | 'name' | 'description';
-type StrategyInputColumn = MesaColumn<StrategyInputColumnKey>;
+type StrategyInputColumn = MesaColumn<
+  StrategySummaryWithDataType,
+  StrategyInputColumnKey
+>;
 
 type OptionalMesaSortObject = MesaSortObject | null;
 

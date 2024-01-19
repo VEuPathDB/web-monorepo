@@ -39,8 +39,7 @@ export interface UserTableSortObject<R, K extends UserTableColumnKey<R>>
 type OrderablePrimimitive = boolean | number | string;
 
 export interface UserTableColumn<R, K extends UserTableColumnKey<R>>
-  extends MesaColumn<K> {
-  renderCell?: (props: { row: R; value: R[K] }) => React.ReactNode;
+  extends MesaColumn<R, K> {
   makeSearchableString?: (value: R[K], row: R) => string;
   makeOrder?: (row: R) => OrderablePrimimitive | OrderablePrimimitive[];
 }

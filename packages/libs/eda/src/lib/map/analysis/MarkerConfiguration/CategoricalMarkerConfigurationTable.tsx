@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import Mesa from '@veupathdb/coreui/lib/components/Mesa';
-import { MesaSortObject } from '@veupathdb/coreui/lib/components/Mesa/types';
+import {
+  MesaSortObject,
+  MesaStateProps,
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import { AllValuesDefinition } from '../../../core';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
@@ -113,7 +116,10 @@ export function CategoricalMarkerConfigurationTable<T>({
     });
   }
 
-  const tableState = {
+  const tableState: MesaStateProps<
+    AllValuesDefinition,
+    keyof AllValuesDefinition | 'distribution'
+  > = {
     options: {
       isRowSelected: (value: AllValuesDefinition) =>
         uncontrolledSelections.has(value.label),
