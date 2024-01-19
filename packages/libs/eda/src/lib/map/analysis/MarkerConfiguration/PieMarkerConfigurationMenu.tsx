@@ -57,8 +57,6 @@ interface Props
    * Only defined and used in categorical table if selectedCountsOption is 'visible'
    */
   allVisibleCategoricalValues: AllValuesDefinition[] | undefined;
-  /* check if allFilteredCategoricalValues or allVisibleCategoricalValues is loading */
-  isAllCategoricalValuesLoading: boolean;
 }
 
 // TODO: generalize this and BarPlotMarkerConfigMenu into MarkerConfigurationMenu. Lots of code repetition...
@@ -78,7 +76,6 @@ export function PieMarkerConfigurationMenu({
   continuousMarkerPreview,
   allFilteredCategoricalValues,
   allVisibleCategoricalValues,
-  isAllCategoricalValuesLoading,
 }: Props) {
   /**
    * Used to track the CategoricalMarkerConfigurationTable's selection state, which allows users to
@@ -241,7 +238,6 @@ export function PieMarkerConfigurationMenu({
               : allVisibleCategoricalValues
           }
           selectedCountsOption={configuration.selectedCountsOption}
-          isAllCategoricalValuesLoading={isAllCategoricalValuesLoading}
         />
       )}
       {overlayConfiguration?.overlayType === 'continuous' && barplotData.value && (

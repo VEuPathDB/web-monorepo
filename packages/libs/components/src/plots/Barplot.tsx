@@ -121,7 +121,12 @@ const Barplot = makePlotlyPlotComponent(
               orientation: orientation === 'vertical' ? 'v' : 'h',
               opacity: calculatedOpacity,
               type: 'bar',
-              text: showValues ? el.value : undefined,
+              // two decimal points for y values
+              text: showValues
+                ? el.value.map(
+                    (value: number) => `${Number.parseFloat(value.toFixed(2))}`
+                  )
+                : undefined,
               textposition: showValues ? 'auto' : undefined,
               marker: {
                 color: el.color,

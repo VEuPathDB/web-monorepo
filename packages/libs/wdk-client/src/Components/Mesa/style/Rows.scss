@@ -1,6 +1,4 @@
-$headingRowBg: rgba(0, 0, 0, 0.035);
-$evenRowBg: rgba(0, 0, 0, 0.02);
-$oddRowBg: transparent;
+$headingRowBg: #e2e2e2;
 
 .MesaComponent {
   thead {
@@ -15,22 +13,22 @@ $oddRowBg: transparent;
       th:first-child,
       td:first-child {
         border-top-left-radius: $borderRadius;
-        overflow: hidden;
+        // overflow: hidden;
       }
       th:last-child,
       td:last-child {
         border-top-right-radius: $borderRadius;
-        overflow: hidden;
+        // overflow: hidden;
       }
     }
   }
 
   tbody {
     tr {
-      &:nth-child(odd) {
+      &:nth-child(odd) td {
         background-color: $oddRowBg;
       }
-      &:nth-child(even) {
+      &:nth-child(even) td {
         background-color: $evenRowBg;
       }
       &:last-child {

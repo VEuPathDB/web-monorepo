@@ -154,6 +154,10 @@ export const NumberVariable = t.intersection([
     dataShape: VariableDataShape,
     distributionDefaults: NumberDistributionDefaults,
   }),
+  // add scale
+  t.partial({
+    scale: t.string,
+  }),
 ]);
 
 export type DateVariable = t.TypeOf<typeof DateVariable>;
