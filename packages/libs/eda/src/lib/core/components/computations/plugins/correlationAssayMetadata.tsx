@@ -190,7 +190,10 @@ export function CorrelationAssayMetadataConfiguration(
               minValue={0}
               maxValue={1}
               step={0.01}
-              value={configuration.prefilterThresholds?.proportionNonZero}
+              value={
+                configuration.prefilterThresholds?.proportionNonZero ??
+                DEFAULT_PROPORTION_NON_ZERO_THRESHOLD
+              }
               onValueChange={(newValue) => {
                 changeConfigHandler('prefilterThresholds', {
                   proportionNonZero:
@@ -208,7 +211,10 @@ export function CorrelationAssayMetadataConfiguration(
             <NumberInput
               minValue={0}
               step={1}
-              value={configuration.prefilterThresholds?.variance}
+              value={
+                configuration.prefilterThresholds?.variance ??
+                DEFAULT_VARIANCE_THRESHOLD
+              }
               onValueChange={(newValue) => {
                 changeConfigHandler('prefilterThresholds', {
                   proportionNonZero:
@@ -225,7 +231,10 @@ export function CorrelationAssayMetadataConfiguration(
             <NumberInput
               minValue={0}
               step={1}
-              value={configuration.prefilterThresholds?.standardDeviation}
+              value={
+                configuration.prefilterThresholds?.standardDeviation ??
+                DEFAULT_STANDARD_DEVIATION_THRESHOLD
+              }
               onValueChange={(newValue) => {
                 changeConfigHandler('prefilterThresholds', {
                   proportionNonZero:
