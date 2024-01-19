@@ -22,7 +22,7 @@ import {
 // add d3.select
 import { select } from 'd3';
 // 3rd party toImage function from plotly
-import { ToImgopts, toImage, DataTitle } from 'plotly.js';
+import Plotly, { ToImgopts, toImage, DataTitle } from 'plotly.js';
 import { uniqueId } from 'lodash';
 import { makeSharedPromise } from '../utils/promise-utils';
 import NoDataOverlay from '../components/NoDataOverlay';
@@ -49,6 +49,8 @@ export interface PlotProps<T> extends ColorPaletteAddon {
   showSpinner?: boolean;
   /** Show an overlay with the words 'No Data' */
   showNoDataOverlay?: boolean;
+  /** Show "Export to SVG" button */
+  showExportButton?: boolean;
   /** Options for customizing plot legend layout and appearance. */
   legendOptions?: PlotLegendAddon;
   /** legend title */
@@ -95,6 +97,7 @@ function PlotlyPlot<T>(
     spacingOptions,
     showSpinner,
     showNoDataOverlay,
+    showExportButton = true,
     // set default max number of characters (20) for legend ellipsis
     maxLegendTextLength = DEFAULT_MAX_LEGEND_TEXT_LENGTH,
     // expose data for applying legend ellipsis
@@ -419,6 +422,21 @@ function PlotlyPlot<T>(
           </div>
         )}
         {showSpinner && <Spinner />}
+        {showExportButton && (
+          <button
+            type="button"
+            onClick={() => {
+              Plotly.downloadImage(plotId, {
+                format: 'svg',
+                width: 1000,
+                height: 800,
+                filename: 'plot',
+              });
+            }}
+          >
+            Export as SVG
+          </button>
+        )}
       </div>
     </Suspense>
   );

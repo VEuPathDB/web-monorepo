@@ -30,6 +30,7 @@ import {
   thresholdLineStyles,
   VisxPoint,
   axisStyles,
+  downloadSvg,
 } from './visxVEuPathDB';
 import { Polygon } from '@visx/shape';
 import { useContext } from 'react';
@@ -546,6 +547,9 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
         </XYChart>
         {showSpinner && <Spinner />}
       </div>
+      <button type="button" onClick={() => downloadSvg(plotRef.current)}>
+        Export to SVG
+      </button>
     </div>
   );
 }

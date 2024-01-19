@@ -1,5 +1,7 @@
 /** Helpful styles and types for working with visx */
 
+import domToImage from 'dom-to-image';
+
 /**
  * Types
  */
@@ -27,3 +29,15 @@ export const gridStyles = {
   stroke: '#dddddd',
   strokeWidth: 0.5,
 };
+
+export async function downloadSvg(node: HTMLElement | null) {
+  if (node == null) return;
+
+  const svgUrl = await domToImage.toSvg(node, { height: 800, width: 1000 });
+  const downloadLink = document.createElement('a');
+  downloadLink.href = svgUrl;
+  downloadLink.download = 'plot.svg';
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
+}

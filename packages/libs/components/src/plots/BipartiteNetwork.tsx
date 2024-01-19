@@ -15,6 +15,7 @@ import { ToImgopts } from 'plotly.js';
 import domToImage from 'dom-to-image';
 import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 import './BipartiteNetwork.css';
+import { downloadSvg } from './visxVEuPathDB';
 
 export interface BipartiteNetworkSVGStyles {
   width?: number; // svg width
@@ -212,6 +213,15 @@ function BipartiteNetwork(
         </svg>
         {showSpinner && <Spinner />}
       </div>
+      <button
+        type="button"
+        disabled={plotRef.current == null}
+        onClick={() => {
+          downloadSvg(plotRef.current);
+        }}
+      >
+        Export to SVG
+      </button>
     </div>
   );
 }
