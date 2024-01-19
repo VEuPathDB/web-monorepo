@@ -214,7 +214,7 @@ export function ComputationRoute(props: Props) {
                       routeProps.match.params.visualizationId
                     );
                   if (result == null) {
-                    return null;
+                    return <div>Cannot find visualization!</div>;
                   }
 
                   const { computation } = result;

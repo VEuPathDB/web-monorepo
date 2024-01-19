@@ -80,8 +80,6 @@ interface Props {
  */
 export function VisualizationsContainer(props: Props) {
   const { baseUrl } = { ...props };
-  // const { url } = useRouteMatch();
-
   const currentStudyRecordId = useStudyRecord().id[0].value;
   const studiesForPerformanceWarning = [
     'DS_a885240fc4',
@@ -319,7 +317,7 @@ export function NewVisualizationPicker(props: NewVisualizationPickerProps) {
     visualizationsOverview,
     computation,
     geoConfigs,
-    onVisualizationCreated = function (visualizationId, computationId) {
+    onVisualizationCreated = function (visualizationId) {
       history.replace(`${visualizationId}`);
     },
     includeHeader = true,
