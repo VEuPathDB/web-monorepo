@@ -178,6 +178,7 @@ function MapAnalysisImpl(props: ImplProps) {
     geoConfigs,
     setTimeSliderConfig,
     showLinkToEda = false,
+    setLittleFilters,
   } = props;
   const { activeMarkerConfigurationType, markerConfigurations } = appState;
   const filters = analysisState.analysis?.descriptor.subset.descriptor;

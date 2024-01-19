@@ -3,7 +3,11 @@ import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { isEqual } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useAnalysis, useGetDefaultVariableDescriptor } from '../../core';
+import {
+  Filter,
+  useAnalysis,
+  useGetDefaultVariableDescriptor,
+} from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
 import { useGetDefaultTimeVariableDescriptor } from './hooks/eztimeslider';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
@@ -110,6 +114,7 @@ export const AppState = t.intersection([
       ]),
       active: t.boolean,
     }),
+    littleFilters: t.array(Filter),
   }),
 ]);
 
@@ -157,6 +162,7 @@ export function useAppState(
         active: true,
         selectedRange: undefined,
       },
+      littleFilters: [],
       markerConfigurations: [
         {
           type: 'pie',
@@ -204,23 +210,37 @@ export function useAppState(
               )
           );
 
-        const timeSliderConfigIsMissing = appState.timeSliderConfig == null;
-
-        if (missingMarkerConfigs.length > 0 || timeSliderConfigIsMissing) {
+        if (missingMarkerConfigs.length > 0)
           setVariableUISettings((prev) => ({
             ...prev,
             [uiStateKey]: {
               ...appState,
-              ...(timeSliderConfigIsMissing
-                ? { timeSliderConfig: defaultAppState.timeSliderConfig }
-                : {}),
               markerConfigurations: [
                 ...appState.markerConfigurations,
                 ...missingMarkerConfigs,
               ],
             },
           }));
-        }
+
+        const timeSliderConfigIsMissing = appState.timeSliderConfig == null;
+        if (timeSliderConfigIsMissing)
+          setVariableUISettings((prev) => ({
+            ...prev,
+            [uiStateKey]: {
+              ...appState,
+              timeSliderConfig: defaultAppState.timeSliderConfig,
+            },
+          }));
+
+        const littleFiltersAreMissing = appState.littleFilters == null;
+        if (littleFiltersAreMissing)
+          setVariableUISettings((prev) => ({
+            ...prev,
+            [uiStateKey]: {
+              ...appState,
+              littleFilters: [], // it's just an empty array but it will make update logic much simpler
+            },
+          }));
       }
       setAppStateChecked(true);
     }
@@ -270,5 +290,6 @@ export function useAppState(
     setSubsetVariableAndEntity: useSetter('subsetVariableAndEntity'),
     setViewport: useSetter('viewport'),
     setTimeSliderConfig: useSetter('timeSliderConfig', true),
+    setLittleFilters: useSetter('littleFilters', true),
   };
 }
