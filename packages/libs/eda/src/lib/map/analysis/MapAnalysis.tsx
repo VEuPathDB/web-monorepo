@@ -6,6 +6,7 @@ import {
   DateRangeFilter,
   DateVariable,
   EntityDiagram,
+  Filter,
   NumberRangeFilter,
   NumberVariable,
   PromiseResult,
@@ -223,33 +224,8 @@ function MapAnalysisImpl(props: ImplProps) {
     [markerConfigurations, setMarkerConfigurations]
   );
 
-  const timeFilter: NumberRangeFilter | DateRangeFilter | undefined =
-    useMemo(() => {
-      if (appState.timeSliderConfig == null) return undefined;
-
-      const { active, variable, selectedRange } = appState.timeSliderConfig;
-
-      const { variable: timeVariableMetadata } =
-        findEntityAndVariable(variable) ?? {};
-
-      return active && variable && selectedRange
-        ? DateVariable.is(timeVariableMetadata)
-          ? {
-              type: 'dateRange',
-              ...variable,
-              min: selectedRange.start + 'T00:00:00Z',
-              max: selectedRange.end + 'T00:00:00Z',
-            }
-          : NumberVariable.is(timeVariableMetadata)
-          ? {
-              type: 'numberRange', // this is temporary - I think we should NOT handle non-date variables when we roll this out
-              ...variable, // TO DO: remove number variable handling
-              min: Number(selectedRange.start.split(/-/)[0]), // just take the year number
-              max: Number(selectedRange.end.split(/-/)[0]), // from the YYYY-MM-DD returned from the widget
-            }
-          : undefined
-        : undefined;
-    }, [appState.timeSliderConfig, findEntityAndVariable]);
+  const timeFilters: Filter[] | undefined =
+    appState.littleFilters?.['time-slider'];
 
   const viewportFilters = useMemo(
     () =>
@@ -279,21 +255,21 @@ function MapAnalysisImpl(props: ImplProps) {
     return [
       ...(props.analysisState.analysis?.descriptor.subset.descriptor ?? []),
       ...viewportFilters,
-      ...(timeFilter != null ? [timeFilter] : []),
+      ...(timeFilters != null ? timeFilters : []),
     ];
   }, [
     props.analysisState.analysis?.descriptor.subset.descriptor,
     viewportFilters,
-    timeFilter,
+    timeFilters,
   ]);
 
   // needed for markers
   const filtersIncludingTimeSlider = useMemo(() => {
     return [
       ...(props.analysisState.analysis?.descriptor.subset.descriptor ?? []),
-      ...(timeFilter != null ? [timeFilter] : []),
+      ...(timeFilters != null ? timeFilters : []),
     ];
-  }, [props.analysisState.analysis?.descriptor.subset.descriptor, timeFilter]);
+  }, [props.analysisState.analysis?.descriptor.subset.descriptor, timeFilters]);
 
   const userLoggedIn = useWdkService(async (wdkService) => {
     const user = await wdkService.getCurrentUser();
