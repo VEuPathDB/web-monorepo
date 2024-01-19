@@ -59,6 +59,7 @@ import MapVizManagement from '../../MapVizManagement';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
+import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
 
 const displayName = 'Donuts';
 
@@ -442,7 +443,9 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
   } = useCommonData(selectedVariable, props.geoConfigs, props.studyEntities);
 
   return outputEntityId != null ? (
-    <MapTypeHeaderCounts
+    <MapTypeHeaderStudyDetails
+      filters={props.filters}
+      filtersIncludingViewport={props.filtersIncludingViewport}
       outputEntityId={outputEntityId}
       totalEntityCount={props.totalCounts.value?.[outputEntityId]}
       totalEntityInSubsetCount={props.filteredCounts.value?.[outputEntityId]}
