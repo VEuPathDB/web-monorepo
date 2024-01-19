@@ -71,11 +71,8 @@ export function removeAbsoluteAbundanceVariableCollections(
 export function isNotAbsoluteAbundanceVariableCollection(
   variableCollection: CollectionVariableTreeNode
 ): boolean {
-  return variableCollection.normalizationMethod
-    ? variableCollection.normalizationMethod !== 'NULL' ||
-        // most data we want to keep has been normalized, except pathway coverage data which were leaving apparently
-        // should consider better ways to do this in the future, or if we really want to keep the coverage data.
-        !!variableCollection.displayName?.includes('pathway')
+  return variableCollection.displayName
+    ? !variableCollection.displayName.includes('absolute abundance')
     : true;
   // DIY may not have the normalizationMethod annotations, but we still want those datasets to pass.
 }
