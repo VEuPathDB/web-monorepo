@@ -1,4 +1,7 @@
-import { useFindEntityAndVariableCollection } from '../../..';
+import {
+  FeaturePrefilterThresholds,
+  useFindEntityAndVariableCollection,
+} from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { capitalize, partial } from 'lodash';
@@ -20,6 +23,7 @@ import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { entityTreeToArray } from '../../../utils/study-metadata';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { ancestorEntitiesForEntityId } from '../../../utils/data-element-constraints';
+import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -43,6 +47,7 @@ export type CorrelationAssayMetadataConfig = t.TypeOf<
 export const CorrelationAssayMetadataConfig = t.partial({
   collectionVariable: VariableCollectionDescriptor,
   correlationMethod: t.string,
+  prefilterThresholds: FeaturePrefilterThresholds,
 });
 
 const CompleteCorrelationAssayMetadataConfig = partialToCompleteCodec(
@@ -113,6 +118,9 @@ function CorrelationAssayMetadataConfigDescriptionComponent({
 }
 
 const CORRELATION_METHODS = ['spearman', 'pearson'];
+const DEFAULT_PROPORTION_NON_ZERO_THRESHOLD = 0.05;
+const DEFAULT_VARIANCE_THRESHOLD = 0;
+const DEFAULT_STANDARD_DEVIATION_THRESHOLD = 0;
 
 // Shows as Step 1 in the full screen visualization page
 export function CorrelationAssayMetadataConfiguration(
@@ -171,6 +179,74 @@ export function CorrelationAssayMetadataConfiguration(
                 display: capitalize(method),
               }))}
               onSelect={partial(changeConfigHandler, 'correlationMethod')}
+            />
+          </div>
+        </div>
+        <div className={cx('-CorrelationOuterConfigContainer')}>
+          <H6>Prefilters</H6>
+          <div className={cx('-InputContainer')}>
+            <span>Proportion non-zero</span>
+            <NumberInput
+              minValue={0}
+              maxValue={1}
+              step={0.01}
+              value={
+                configuration.prefilterThresholds?.proportionNonZero ??
+                DEFAULT_PROPORTION_NON_ZERO_THRESHOLD
+              }
+              onValueChange={(newValue) => {
+                changeConfigHandler('prefilterThresholds', {
+                  proportionNonZero:
+                    Number(newValue) ?? DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
+                  variance:
+                    configuration.prefilterThresholds?.variance ??
+                    DEFAULT_VARIANCE_THRESHOLD,
+                  standardDeviation:
+                    configuration.prefilterThresholds?.standardDeviation ??
+                    DEFAULT_STANDARD_DEVIATION_THRESHOLD,
+                });
+              }}
+            />
+            <span>Variance</span>
+            <NumberInput
+              minValue={0}
+              step={1}
+              value={
+                configuration.prefilterThresholds?.variance ??
+                DEFAULT_VARIANCE_THRESHOLD
+              }
+              onValueChange={(newValue) => {
+                changeConfigHandler('prefilterThresholds', {
+                  proportionNonZero:
+                    configuration.prefilterThresholds?.proportionNonZero ??
+                    DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
+                  variance: Number(newValue) ?? DEFAULT_VARIANCE_THRESHOLD,
+                  standardDeviation:
+                    configuration.prefilterThresholds?.standardDeviation ??
+                    DEFAULT_STANDARD_DEVIATION_THRESHOLD,
+                });
+              }}
+            />
+            <span>Standard deviation</span>
+            <NumberInput
+              minValue={0}
+              step={1}
+              value={
+                configuration.prefilterThresholds?.standardDeviation ??
+                DEFAULT_STANDARD_DEVIATION_THRESHOLD
+              }
+              onValueChange={(newValue) => {
+                changeConfigHandler('prefilterThresholds', {
+                  proportionNonZero:
+                    configuration.prefilterThresholds?.proportionNonZero ??
+                    DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
+                  variance:
+                    configuration.prefilterThresholds?.variance ??
+                    DEFAULT_VARIANCE_THRESHOLD,
+                  standardDeviation:
+                    Number(newValue) ?? DEFAULT_STANDARD_DEVIATION_THRESHOLD,
+                });
+              }}
             />
           </div>
         </div>
