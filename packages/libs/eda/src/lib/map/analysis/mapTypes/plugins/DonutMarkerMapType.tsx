@@ -59,8 +59,7 @@ import MapVizManagement from '../../MapVizManagement';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
-import { pickLittleFilters } from '../../appState';
-import { useDeepValue } from '../../../../core/hooks/immutability';
+import { useLittleFilters } from '../../appState';
 
 const displayName = 'Donuts';
 
@@ -300,16 +299,11 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
   const { selectedVariable, binningMethod, selectedValues } =
     props.configuration as PieMarkerConfiguration;
 
-  // Which extra filters do we need?
-  // We don't need the viewport because that is handled separately by the map-markers endpoint
-  const littleFilters = useDeepValue(
-    pickLittleFilters(props.appState.littleFilters, markerDataLittleFilters)
-  );
-
-  const filters = useMemo(
-    () => [...(props.filters ?? []), ...littleFilters],
-    [props.filters, littleFilters]
-  );
+  const { filters } = useLittleFilters({
+    filters: props.filters,
+    littleFilters: props.appState.littleFilters,
+    filterTypes: markerDataLittleFilters,
+  });
 
   const markerDataResponse = useMarkerData({
     studyId: props.studyId,
@@ -374,15 +368,11 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     [props.configuration, updateConfiguration]
   );
 
-  // Note: the data request needs to be the same as the one made by
-  // MapLayerComponent
-  const littleFilters = useDeepValue(
-    pickLittleFilters(props.appState.littleFilters, markerDataLittleFilters)
-  );
-  const filters = useMemo(
-    () => [...(props.filters ?? []), ...littleFilters],
-    [props.filters, littleFilters]
-  );
+  const { filters } = useLittleFilters({
+    filters: props.filters,
+    littleFilters: props.appState.littleFilters,
+    filterTypes: markerDataLittleFilters,
+  });
 
   const data = useMarkerData({
     studyId,
@@ -445,15 +435,11 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
   const { selectedVariable, binningMethod, selectedValues } =
     props.configuration as PieMarkerConfiguration;
 
-  // Note: the data request needs to be the same as the one made by
-  // MapLayerComponent
-  const littleFilters = useDeepValue(
-    pickLittleFilters(props.appState.littleFilters, markerDataLittleFilters)
-  );
-  const filters = useMemo(
-    () => [...(props.filters ?? []), ...littleFilters],
-    [props.filters, littleFilters]
-  );
+  const { filters } = useLittleFilters({
+    filters: props.filters,
+    littleFilters: props.appState.littleFilters,
+    filterTypes: markerDataLittleFilters,
+  });
 
   const markerDataResponse = useMarkerData({
     studyId: props.studyId,

@@ -11,6 +11,7 @@ import {
 import { VariableDescriptor } from '../../core/types/variable';
 import { useGetDefaultTimeVariableDescriptor } from './hooks/eztimeslider';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
+import { useDeepValue } from '../../core/hooks/immutability';
 
 const LatLngLiteral = t.type({ lat: t.number, lng: t.number });
 
@@ -292,7 +293,7 @@ export function useAppState(
 }
 
 // convenience function concatenate desired little filters
-export function pickLittleFilters(
+function pickLittleFilters(
   littleFilters: LittleFilters | undefined,
   keys: string[]
 ): Filter[] {
@@ -303,4 +304,26 @@ export function pickLittleFilters(
     }
     return accumulator;
   }, []);
+}
+
+// hook to do basic picking and concatenation of filters and little filters
+interface useLittleFiltersProps {
+  filters: Filter[] | undefined;
+  littleFilters: LittleFilters | undefined;
+  filterTypes: string[];
+}
+
+export function useLittleFilters(props: useLittleFiltersProps) {
+  const littleFilters = useDeepValue(
+    pickLittleFilters(props.littleFilters, props.filterTypes)
+  );
+  const filters = useMemo(
+    () => [...(props.filters ?? []), ...littleFilters],
+    [props.filters, littleFilters]
+  );
+
+  return {
+    littleFilters,
+    filters,
+  };
 }
