@@ -103,28 +103,13 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     );
   }
 
-  const filtersIncludingViewport = useMemo(() => {
-    const viewportFilters = appState.boundsZoomLevel
-      ? filtersFromBoundingBox(
-          appState.boundsZoomLevel.bounds,
-          {
-            variableId: geoConfig.latitudeVariableId,
-            entityId: geoConfig.entity.id,
-          },
-          {
-            variableId: geoConfig.longitudeVariableId,
-            entityId: geoConfig.entity.id,
-          }
-        )
-      : [];
-    return [...(filters ?? []), ...viewportFilters];
-  }, [
-    appState.boundsZoomLevel,
-    geoConfig.entity.id,
-    geoConfig.latitudeVariableId,
-    geoConfig.longitudeVariableId,
+  const { filters: filtersForVisibleOption } = useLittleFilters({
     filters,
-  ]);
+    littleFilters: appState.littleFilters,
+    filterTypes: ['time-slider', 'viewport'],
+    // note: previously the time-slider filters were not being included
+    // so this is fixing an unreported bug
+  });
 
   const allFilteredCategoricalValues = useCategoricalValues({
     overlayEntity,
@@ -137,7 +122,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     overlayEntity,
     studyId,
     overlayVariable,
-    filters: filtersIncludingViewport,
+    filters: filtersForVisibleOption,
     enabled: configuration.selectedCountsOption === 'visible',
   });
 
@@ -374,6 +359,12 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     filterTypes: markerDataLittleFilters,
   });
 
+  const { filters: filtersForFloaters } = useLittleFilters({
+    filters: props.filters,
+    littleFilters: props.appState.littleFilters,
+    filterTypes: ['time-slider', 'viewport'],
+  });
+
   const data = useMarkerData({
     studyId,
     filters,
@@ -422,7 +413,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
         totalCounts={props.totalCounts}
         filteredCounts={props.filteredCounts}
         toggleStarredVariable={toggleStarredVariable}
-        filters={props.filtersIncludingViewport}
+        filters={filtersForFloaters}
         zIndexForStackingContext={2}
         hideInputsAndControls={props.hideVizInputsAndControls}
         setHideInputsAndControls={props.setHideVizInputsAndControls}
