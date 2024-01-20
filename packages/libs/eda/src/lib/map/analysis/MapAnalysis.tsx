@@ -3,12 +3,8 @@ import { useCallback, useMemo, useState } from 'react';
 import {
   AnalysisState,
   DEFAULT_ANALYSIS_NAME,
-  DateRangeFilter,
-  DateVariable,
   EntityDiagram,
   Filter,
-  NumberRangeFilter,
-  NumberVariable,
   PromiseResult,
   useAnalysisClient,
   useDataClient,
@@ -83,9 +79,7 @@ import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { MapTypeMapLayerProps } from './mapTypes/types';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
 import AnalysisNameDialog from '../../workspace/AnalysisNameDialog';
-import { FetchClientError } from '@veupathdb/http-utils';
 import { Page } from '@veupathdb/wdk-client/lib/Components';
-import { Link } from 'react-router-dom';
 import { AnalysisError } from '../../core/components/AnalysisError';
 
 enum MapSideNavItemLabels {

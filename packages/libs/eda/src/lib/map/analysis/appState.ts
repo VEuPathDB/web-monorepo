@@ -80,6 +80,10 @@ export const MarkerConfiguration = t.intersection([
   ]),
 ]);
 
+export const LittleFilters = t.record(t.string, t.array(Filter));
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export type LittleFilters = t.TypeOf<typeof LittleFilters>;
+
 export const AppState = t.intersection([
   t.type({
     viewport: t.type({
@@ -116,7 +120,7 @@ export const AppState = t.intersection([
     }),
     // note: I (BM) tried and failed to provide adequate type-protection on the keys of the record.
     // I couldn't get it to prevent excess keys and so decided there was no use typing it.
-    littleFilters: t.record(t.string, t.array(Filter)),
+    littleFilters: LittleFilters,
   }),
 ]);
 

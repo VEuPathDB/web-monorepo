@@ -13,7 +13,7 @@ import { SubsettingClient } from '../../core/api';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { useFindEntityAndVariable, Filter } from '../../core';
 import { zip } from 'lodash';
-import { AppState } from './appState';
+import { AppState, LittleFilters } from './appState';
 import { timeSliderVariableConstraints } from './config/eztimeslider';
 import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
@@ -32,8 +32,8 @@ interface Props {
   config: NonNullable<AppState['timeSliderConfig']>;
   updateConfig: (newConfig: NonNullable<AppState['timeSliderConfig']>) => void;
   siteInformation: SiteInformationProps;
-  littleFilters?: Record<string, Filter[]>;
-  setLittleFilters: (littleFilters: Record<string, Filter[]>) => void;
+  littleFilters?: LittleFilters;
+  setLittleFilters: (newFilters: LittleFilters) => void;
 }
 
 export default function TimeSliderQuickFilter({
