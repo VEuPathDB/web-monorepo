@@ -19,6 +19,7 @@ import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/Radio
 import { useUncontrolledSelections } from '../hooks/uncontrolledSelections';
 import {
   BinningMethod,
+  LittleFilters,
   SelectedCountsOption,
   SelectedValues,
 } from '../appState';
@@ -57,6 +58,8 @@ interface Props
    * Only defined and used in categorical table if selectedCountsOption is 'visible'
    */
   allVisibleCategoricalValues: AllValuesDefinition[] | undefined;
+  littleFilters?: LittleFilters;
+  setLittleFilters?: (newFilters: LittleFilters) => void;
 }
 
 // TODO: generalize this and BarPlotMarkerConfigMenu into MarkerConfigurationMenu. Lots of code repetition...
@@ -76,6 +79,8 @@ export function PieMarkerConfigurationMenu({
   continuousMarkerPreview,
   allFilteredCategoricalValues,
   allVisibleCategoricalValues,
+  littleFilters,
+  setLittleFilters,
 }: Props) {
   /**
    * Used to track the CategoricalMarkerConfigurationTable's selection state, which allows users to
@@ -150,6 +155,21 @@ export function PieMarkerConfigurationMenu({
       selectedVariable: selection.overlayVariable,
       selectedValues: undefined,
     });
+
+    // TO DO: handle continuous vars also
+    // TO DO: fetch vocabulary for new variable here???
+    setLittleFilters != null &&
+      overlayVariable?.vocabulary != null &&
+      setLittleFilters({
+        ...(littleFilters ?? {}),
+        ['marker-config']: [
+          {
+            ...configuration.selectedVariable,
+            type: 'stringSet' as const,
+            stringSet: overlayVariable.vocabulary || [], // TO DO: think more carefully
+          },
+        ],
+      });
   }
   function handleBinningMethodSelection(option: string) {
     onChange({
@@ -238,6 +258,8 @@ export function PieMarkerConfigurationMenu({
               : allVisibleCategoricalValues
           }
           selectedCountsOption={configuration.selectedCountsOption}
+          littleFilters={littleFilters}
+          setLittleFilters={setLittleFilters}
         />
       )}
       {overlayConfiguration?.overlayType === 'continuous' && barplotData.value && (

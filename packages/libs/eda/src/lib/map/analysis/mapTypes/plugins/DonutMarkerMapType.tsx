@@ -23,7 +23,6 @@ import {
 import { useToggleStarredVariable } from '../../../../core/hooks/starredVariables';
 import { kFormatter } from '../../../../core/utils/big-number-formatters';
 import { findEntityAndVariable } from '../../../../core/utils/study-metadata';
-import { filtersFromBoundingBox } from '../../../../core/utils/visualization';
 import { DraggableLegendPanel } from '../../DraggableLegendPanel';
 import { MapLegend } from '../../MapLegend';
 import { sharedStandaloneMarkerProperties } from '../../MarkerConfiguration/CategoricalMarkerPreview';
@@ -83,9 +82,9 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     studyId,
     studyEntities,
     filters,
+    setLittleFilters,
   } = props;
 
-  const geoConfig = geoConfigs[0];
   const subsettingClient = useSubsettingClient();
   const configuration = props.configuration as PieMarkerConfiguration;
   const { selectedVariable, selectedValues, binningMethod } = configuration;
@@ -208,6 +207,8 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
         analysisState.analysis?.descriptor.starredVariables ?? []
       }
       toggleStarredVariable={toggleStarredVariable}
+      littleFilters={appState.littleFilters}
+      setLittleFilters={setLittleFilters}
     />
   );
 

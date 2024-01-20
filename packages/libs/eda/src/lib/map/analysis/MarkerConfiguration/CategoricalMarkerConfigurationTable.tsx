@@ -7,8 +7,9 @@ import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { UNSELECTED_TOKEN } from '../../constants';
 import { orderBy } from 'lodash';
-import { SelectedCountsOption } from '../appState';
+import { LittleFilters, SelectedCountsOption } from '../appState';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
+import { SharedMarkerConfigurations } from '../mapTypes/shared';
 
 type Props<T> = {
   overlayValues: string[];
@@ -18,6 +19,9 @@ type Props<T> = {
   setUncontrolledSelections: (v: Set<string>) => void;
   allCategoricalValues: AllValuesDefinition[] | undefined;
   selectedCountsOption: SelectedCountsOption;
+  // TO DO: probably make these mandatory
+  littleFilters?: LittleFilters | undefined;
+  setLittleFilters?: (newFilters: LittleFilters) => void;
 };
 
 const DEFAULT_SORTING: MesaSortObject = {
@@ -27,7 +31,9 @@ const DEFAULT_SORTING: MesaSortObject = {
 
 export const MAXIMUM_ALLOWABLE_VALUES = ColorPaletteDefault.length;
 
-export function CategoricalMarkerConfigurationTable<T>({
+export function CategoricalMarkerConfigurationTable<
+  T extends SharedMarkerConfigurations
+>({
   overlayValues,
   configuration,
   onChange,
@@ -35,6 +41,8 @@ export function CategoricalMarkerConfigurationTable<T>({
   setUncontrolledSelections,
   allCategoricalValues = [],
   selectedCountsOption,
+  littleFilters,
+  setLittleFilters,
 }: Props<T>) {
   const [sort, setSort] = useState<MesaSortObject>(DEFAULT_SORTING);
   const totalCount = allCategoricalValues?.reduce(
@@ -68,12 +76,38 @@ export function CategoricalMarkerConfigurationTable<T>({
             .slice(0, overlayValues.length - 1)
             .concat(newArrayValues),
         });
-        // can set the new configuration without worrying about the "All other values" data
+        // set a little filter for the all values in vocabulary
+        // TO DO: setLittleFilters might be mandatory
+        setLittleFilters != null &&
+          setLittleFilters({
+            ...(littleFilters ?? {}),
+            ['marker-config']: [
+              {
+                ...configuration.selectedVariable,
+                type: 'stringSet' as const,
+                stringSet: allCategoricalValues.map(({ label }) => label),
+              },
+            ],
+          });
       } else {
+        // no "All other values" data so we need
         onChange({
           ...configuration,
           selectedValues: overlayValues.concat(data.label),
         });
+        // set a little filter for just the selected overlay values
+        // TO DO: setLittleFilters might be mandatory
+        setLittleFilters != null &&
+          setLittleFilters({
+            ...(littleFilters ?? {}),
+            ['marker-config']: [
+              {
+                ...configuration.selectedVariable,
+                type: 'stringSet' as const,
+                stringSet: overlayValues,
+              },
+            ],
+          });
       }
       // we're already at the limit for selections, so just track the selections for the table state, but don't set the configuration
     } else {
@@ -100,6 +134,37 @@ export function CategoricalMarkerConfigurationTable<T>({
         ...configuration,
         selectedValues: Array.from(nextSelections),
       });
+
+      // modify little filters
+      if (nextSelections.has(UNSELECTED_TOKEN)) {
+        // all values case
+        // TO DO: setLittleFilters might be mandatory
+        setLittleFilters != null &&
+          setLittleFilters({
+            ...(littleFilters ?? {}),
+            ['marker-config']: [
+              {
+                ...configuration.selectedVariable,
+                type: 'stringSet' as const,
+                stringSet: allCategoricalValues.map(({ label }) => label),
+              },
+            ],
+          });
+      } else {
+        // selected values only case
+        // TO DO: setLittleFilters might be mandatory
+        setLittleFilters != null &&
+          setLittleFilters({
+            ...(littleFilters ?? {}),
+            ['marker-config']: [
+              {
+                ...configuration.selectedVariable,
+                type: 'stringSet' as const,
+                stringSet: Array.from(nextSelections),
+              },
+            ],
+          });
+      }
     }
     setUncontrolledSelections(nextSelections);
   }

@@ -406,6 +406,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     updateConfiguration={updateMarkerConfigurations as any}
                     hideVizInputsAndControls={hideVizInputsAndControls}
                     setHideVizInputsAndControls={setHideVizInputsAndControls}
+                    setLittleFilters={setLittleFilters}
                   />
                 );
               },
