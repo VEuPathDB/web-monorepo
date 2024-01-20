@@ -59,6 +59,8 @@ import MapVizManagement from '../../MapVizManagement';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
+import { pickLittleFilters } from '../../appState';
+import { useDeepValue } from '../../../../core/hooks/immutability';
 
 const displayName = 'Donuts';
 
@@ -295,9 +297,19 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
 
   const { selectedVariable, binningMethod, selectedValues } =
     props.configuration as PieMarkerConfiguration;
+
+  const littleFilters = useDeepValue(
+    pickLittleFilters(props.appState.littleFilters, ['time-slider'])
+  );
+
+  const filters = useMemo(
+    () => [...(props.filters ?? []), ...littleFilters],
+    [props.filters, littleFilters]
+  );
+
   const markerDataResponse = useMarkerData({
     studyId: props.studyId,
-    filters: props.filters,
+    filters,
     studyEntities: props.studyEntities,
     geoConfigs: props.geoConfigs,
     boundsZoomLevel: props.appState.boundsZoomLevel,

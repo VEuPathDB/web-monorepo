@@ -197,8 +197,6 @@ function MapAnalysisImpl(props: ImplProps) {
 
   const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
 
-  const findEntityAndVariable = useFindEntityAndVariable();
-
   const activeMarkerConfiguration = markerConfigurations.find(
     (markerConfig) => markerConfig.type === activeMarkerConfigurationType
   );
@@ -256,14 +254,6 @@ function MapAnalysisImpl(props: ImplProps) {
     viewportFilters,
     timeFilters,
   ]);
-
-  // needed for markers
-  const filtersIncludingTimeSlider = useMemo(() => {
-    return [
-      ...(props.analysisState.analysis?.descriptor.subset.descriptor ?? []),
-      ...(timeFilters != null ? timeFilters : []),
-    ];
-  }, [props.analysisState.analysis?.descriptor.subset.descriptor, timeFilters]);
 
   const userLoggedIn = useWdkService(async (wdkService) => {
     const user = await wdkService.getCurrentUser();
@@ -763,7 +753,7 @@ function MapAnalysisImpl(props: ImplProps) {
           analysisState,
           appState,
           studyId,
-          filters: filtersIncludingTimeSlider,
+          filters,
           studyEntities,
           geoConfigs,
           configuration: activeMarkerConfiguration,

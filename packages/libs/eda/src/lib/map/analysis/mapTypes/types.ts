@@ -7,7 +7,7 @@ import {
 } from '../../../core';
 import { GeoConfig } from '../../../core/types/geoConfig';
 import { ComputationAppOverview } from '../../../core/types/visualization';
-import { AppState } from '../appState';
+import { AppState, LittleFilters } from '../appState';
 import { EntityCounts } from '../../../core/hooks/entityCounts';
 
 export interface MapTypeConfigPanelProps {
@@ -42,6 +42,7 @@ export interface MapTypeMapLayerProps {
   // selectedMarkers and its state function
   selectedMarkers?: string[];
   setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
+  setLittleFilters?: (newFilters: LittleFilters) => void;
 }
 
 /**

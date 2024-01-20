@@ -290,3 +290,17 @@ export function useAppState(
     setLittleFilters: useSetter('littleFilters', true),
   };
 }
+
+// convenience function concatenate desired little filters
+export function pickLittleFilters(
+  littleFilters: LittleFilters | undefined,
+  keys: string[]
+): Filter[] {
+  return keys.reduce<Filter[]>((accumulator, currentKey) => {
+    const currentArray = littleFilters?.[currentKey];
+    if (currentArray) {
+      return accumulator.concat(currentArray);
+    }
+    return accumulator;
+  }, []);
+}
