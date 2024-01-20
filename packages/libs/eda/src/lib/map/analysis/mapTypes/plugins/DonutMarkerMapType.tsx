@@ -64,6 +64,8 @@ import { useDeepValue } from '../../../../core/hooks/immutability';
 
 const displayName = 'Donuts';
 
+const markerDataLittleFilters = ['time-slider'];
+
 export const plugin: MapTypePlugin = {
   displayName,
   ConfigPanelComponent,
@@ -298,8 +300,10 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
   const { selectedVariable, binningMethod, selectedValues } =
     props.configuration as PieMarkerConfiguration;
 
+  // Which extra filters do we need?
+  // We don't need the viewport because that is handled separately by the map-markers endpoint
   const littleFilters = useDeepValue(
-    pickLittleFilters(props.appState.littleFilters, ['time-slider'])
+    pickLittleFilters(props.appState.littleFilters, markerDataLittleFilters)
   );
 
   const filters = useMemo(
@@ -350,14 +354,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
 }
 
 function MapOverlayComponent(props: MapTypeMapLayerProps) {
-  const {
-    studyId,
-    filters,
-    studyEntities,
-    geoConfigs,
-    appState: { boundsZoomLevel },
-    updateConfiguration,
-  } = props;
+  const { studyId, studyEntities, geoConfigs, updateConfiguration } = props;
   const {
     selectedVariable,
     selectedValues,
@@ -375,6 +372,16 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
       });
     },
     [props.configuration, updateConfiguration]
+  );
+
+  // Note: the data request needs to be the same as the one made by
+  // MapLayerComponent
+  const littleFilters = useDeepValue(
+    pickLittleFilters(props.appState.littleFilters, markerDataLittleFilters)
+  );
+  const filters = useMemo(
+    () => [...(props.filters ?? []), ...littleFilters],
+    [props.filters, littleFilters]
   );
 
   const data = useMarkerData({
@@ -437,9 +444,20 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
 function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
   const { selectedVariable, binningMethod, selectedValues } =
     props.configuration as PieMarkerConfiguration;
+
+  // Note: the data request needs to be the same as the one made by
+  // MapLayerComponent
+  const littleFilters = useDeepValue(
+    pickLittleFilters(props.appState.littleFilters, markerDataLittleFilters)
+  );
+  const filters = useMemo(
+    () => [...(props.filters ?? []), ...littleFilters],
+    [props.filters, littleFilters]
+  );
+
   const markerDataResponse = useMarkerData({
     studyId: props.studyId,
-    filters: props.filters,
+    filters,
     studyEntities: props.studyEntities,
     geoConfigs: props.geoConfigs,
     boundsZoomLevel: props.appState.boundsZoomLevel,
