@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import React, { useMemo } from 'react';
 import { connect, useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -10,16 +9,11 @@ import DownloadLink from '../App/Studies/DownloadLink';
 
 import { attemptAction } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionActionCreators';
 import { isPrereleaseStudy } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
-import {
-  shouldOfferLinkToDashboard,
-  isUserFullyApprovedForStudy,
-} from '@veupathdb/study-data-access/lib/study-access/permission';
+import { isUserFullyApprovedForStudy } from '@veupathdb/study-data-access/lib/study-access/permission';
 
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
-
-import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 import './StudyRecordHeading.scss';
 
@@ -80,21 +74,6 @@ function StudyRecordHeading({
         </div>
       )}
       <props.DefaultComponent {...props} />
-      {study != null &&
-        permissions != null &&
-        shouldOfferLinkToDashboard(permissions, study.id) && (
-          <Banner
-            banner={{
-              type: 'info',
-              message: (
-                <span>
-                  The <b>Data Access Dashboard</b> button has been moved next to
-                  the study name above.
-                </span>
-              ),
-            }}
-          />
-        )}
       {study != null &&
         showSearches &&
         !isPrereleaseStudy(study.access, study.id, permissions) && (
