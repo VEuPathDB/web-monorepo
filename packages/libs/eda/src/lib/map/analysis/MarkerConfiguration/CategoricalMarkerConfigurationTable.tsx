@@ -7,9 +7,10 @@ import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { UNSELECTED_TOKEN } from '../../constants';
 import { orderBy } from 'lodash';
-import { LittleFilters, SelectedCountsOption } from '../appState';
+import { SelectedCountsOption } from '../appState';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { SharedMarkerConfigurations } from '../mapTypes/shared';
+import { LittleFilters } from '../littleFilters';
 
 type Props<T> = {
   overlayValues: string[];

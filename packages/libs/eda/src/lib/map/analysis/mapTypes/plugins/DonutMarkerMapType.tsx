@@ -58,7 +58,7 @@ import MapVizManagement from '../../MapVizManagement';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
-import { useLittleFilters } from '../../appState';
+import { useLittleFilters } from '../../littleFilters';
 
 const displayName = 'Donuts';
 

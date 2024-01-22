@@ -7,8 +7,9 @@ import {
 } from '../../../core';
 import { GeoConfig } from '../../../core/types/geoConfig';
 import { ComputationAppOverview } from '../../../core/types/visualization';
-import { AppState, LittleFilters } from '../appState';
+import { AppState } from '../appState';
 import { EntityCounts } from '../../../core/hooks/entityCounts';
+import { LittleFilters } from '../littleFilters';
 
 export interface MapTypeConfigPanelProps {
   apps: ComputationAppOverview[];

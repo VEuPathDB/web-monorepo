@@ -13,12 +13,13 @@ import { SubsettingClient } from '../../core/api';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { useFindEntityAndVariable, Filter } from '../../core';
 import { zip } from 'lodash';
-import { AppState, LittleFilters } from './appState';
+import { AppState } from './appState';
 import { timeSliderVariableConstraints } from './config/eztimeslider';
 import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
 import { SiteInformationProps } from './Types';
 import { mapSidePanelBackgroundColor } from '../constants';
+import { LittleFilters } from './littleFilters';
 
 interface Props {
   studyId: string;

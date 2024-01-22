@@ -11,7 +11,7 @@ import {
 import { VariableDescriptor } from '../../core/types/variable';
 import { useGetDefaultTimeVariableDescriptor } from './hooks/eztimeslider';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
-import { useDeepValue } from '../../core/hooks/immutability';
+import { LittleFilters } from './littleFilters';
 
 const LatLngLiteral = t.type({ lat: t.number, lng: t.number });
 
@@ -80,10 +80,6 @@ export const MarkerConfiguration = t.intersection([
     ]),
   ]),
 ]);
-
-export const LittleFilters = t.record(t.string, t.array(Filter));
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export type LittleFilters = t.TypeOf<typeof LittleFilters>;
 
 export const AppState = t.intersection([
   t.type({
@@ -289,41 +285,5 @@ export function useAppState(
     setViewport: useSetter('viewport'),
     setTimeSliderConfig: useSetter('timeSliderConfig', true),
     setLittleFilters: useSetter('littleFilters', true),
-  };
-}
-
-// convenience function concatenate desired little filters
-function pickLittleFilters(
-  littleFilters: LittleFilters | undefined,
-  keys: string[]
-): Filter[] {
-  return keys.reduce<Filter[]>((accumulator, currentKey) => {
-    const currentArray = littleFilters?.[currentKey];
-    if (currentArray) {
-      return accumulator.concat(currentArray);
-    }
-    return accumulator;
-  }, []);
-}
-
-// hook to do basic picking and concatenation of filters and little filters
-interface useLittleFiltersProps {
-  filters: Filter[] | undefined;
-  littleFilters: LittleFilters | undefined;
-  filterTypes: string[];
-}
-
-export function useLittleFilters(props: useLittleFiltersProps) {
-  const littleFilters = useDeepValue(
-    pickLittleFilters(props.littleFilters, props.filterTypes)
-  );
-  const filters = useMemo(
-    () => [...(props.filters ?? []), ...littleFilters],
-    [props.filters, littleFilters]
-  );
-
-  return {
-    littleFilters,
-    filters,
   };
 }

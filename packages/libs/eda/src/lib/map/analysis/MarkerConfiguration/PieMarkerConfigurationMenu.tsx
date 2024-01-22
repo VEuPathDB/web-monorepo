@@ -19,11 +19,11 @@ import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/Radio
 import { useUncontrolledSelections } from '../hooks/uncontrolledSelections';
 import {
   BinningMethod,
-  LittleFilters,
   SelectedCountsOption,
   SelectedValues,
 } from '../appState';
 import { SharedMarkerConfigurations } from '../mapTypes/shared';
+import { LittleFilters } from '../littleFilters';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
