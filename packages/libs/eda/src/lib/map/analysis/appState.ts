@@ -3,11 +3,7 @@ import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { isEqual } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  Filter,
-  useAnalysis,
-  useGetDefaultVariableDescriptor,
-} from '../../core';
+import { useAnalysis, useGetDefaultVariableDescriptor } from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
 import { useGetDefaultTimeVariableDescriptor } from './hooks/eztimeslider';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
