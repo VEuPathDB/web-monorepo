@@ -23,7 +23,7 @@ import {
   SelectedValues,
 } from '../appState';
 import { SharedMarkerConfigurations } from '../mapTypes/shared';
-import { LittleFilters } from '../littleFilters';
+import { LittleFilters, useLittleFiltersForVariable } from '../littleFilters';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
@@ -95,6 +95,8 @@ export function PieMarkerConfigurationMenu({
         : undefined
     );
 
+  const littleFiltersForVariable = useLittleFiltersForVariable(filters);
+
   const barplotData = usePromise(
     useCallback(async () => {
       if (
@@ -156,19 +158,13 @@ export function PieMarkerConfigurationMenu({
       selectedValues: undefined,
     });
 
-    // TO DO: handle continuous vars also
-    // TO DO: fetch vocabulary for new variable here???
+    const newLittleFilters = littleFiltersForVariable(
+      selection.overlayVariable
+    );
     setLittleFilters != null &&
-      overlayVariable?.vocabulary != null &&
       setLittleFilters({
         ...(littleFilters ?? {}),
-        ['marker-config']: [
-          {
-            ...configuration.selectedVariable,
-            type: 'stringSet' as const,
-            stringSet: overlayVariable.vocabulary || [], // TO DO: think more carefully
-          },
-        ],
+        ['marker-config']: newLittleFilters,
       });
   }
   function handleBinningMethodSelection(option: string) {

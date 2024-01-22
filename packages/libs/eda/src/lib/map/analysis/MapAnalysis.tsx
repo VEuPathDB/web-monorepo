@@ -9,7 +9,6 @@ import {
   useAnalysisClient,
   useDataClient,
   useDownloadClient,
-  useFindEntityAndVariable,
   useGetDefaultVariableDescriptor,
   usePromise,
   useStudyEntities,
