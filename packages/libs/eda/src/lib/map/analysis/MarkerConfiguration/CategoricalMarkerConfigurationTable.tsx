@@ -105,7 +105,7 @@ export function CategoricalMarkerConfigurationTable<
               {
                 ...configuration.selectedVariable,
                 type: 'stringSet' as const,
-                stringSet: overlayValues,
+                stringSet: overlayValues.concat(data.label),
               },
             ],
           });

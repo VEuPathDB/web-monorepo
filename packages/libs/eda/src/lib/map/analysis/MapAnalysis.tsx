@@ -761,7 +761,7 @@ function MapAnalysisImpl(props: ImplProps) {
         ),
       });
     },
-    [geoConfig, setBoundsZoomLevel, setLittleFilters]
+    [geoConfig, setBoundsZoomLevel, setLittleFilters, appState.littleFilters]
   );
 
   return (
