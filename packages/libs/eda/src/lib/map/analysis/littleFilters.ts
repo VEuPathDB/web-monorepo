@@ -1,38 +1,45 @@
-import * as t from 'io-ts';
-import { useDeepValue } from '../../core/hooks/immutability';
-import { Filter, useFindEntityAndVariable } from '../../core';
-import { useCallback, useMemo } from 'react';
-import { VariableDescriptor } from '../../core/types/variable';
+import { AnalysisState, Filter, useFindEntityAndVariable } from '../../core';
+import { useMemo } from 'react';
+import { AppState } from './appState';
+import { UNSELECTED_TOKEN } from '../constants';
+import { filtersFromBoundingBox } from '../../core/utils/visualization';
+import { GeoConfig } from '../../core/types/geoConfig';
 
-export const LittleFilters = t.record(t.string, t.array(Filter));
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export type LittleFilters = t.TypeOf<typeof LittleFilters>;
+export type LittleFilterTypes = 'time-slider' | 'marker-config' | 'viewport';
 
-// convenience function concatenate desired little filters
-function pickLittleFilters(
-  littleFilters: LittleFilters | undefined,
-  keys: string[]
-): Filter[] {
-  return keys.reduce<Filter[]>((accumulator, currentKey) => {
-    const currentArray = littleFilters?.[currentKey];
-    if (currentArray) {
-      return accumulator.concat(currentArray);
-    }
-    return accumulator;
-  }, []);
+interface LittleFilter {
+  type: LittleFilterTypes;
+  filters: Filter[];
 }
 
-// hook to do basic picking and concatenation of filters and little filters
 interface useLittleFiltersProps {
   filters: Filter[] | undefined;
-  littleFilters: LittleFilters | undefined;
-  filterTypes: string[];
+  analysisState: AnalysisState;
+  appState: AppState;
+  geoConfigs: GeoConfig[];
+  filterTypes: Set<LittleFilterTypes>;
 }
 
+// props:
+// regular `filters`, `appState`, `analysisState` and the set of `filterTypes` that you want to use
+//
+// returns:
+// filters : Filter[], // main and designated little filters concatenated together, referentially stable
+// littleFilters: Filter[], // just the designated little filters, also referentially stable
+//
 export function useLittleFilters(props: useLittleFiltersProps) {
-  const littleFilters = useDeepValue(
-    pickLittleFilters(props.littleFilters, props.filterTypes)
+  const viewportFilter = useViewportFilter(props);
+  const timeSliderFilter = useTimeSliderFilter(props);
+  const markerConfigFilter = useMarkerConfigFilter(props);
+
+  const littleFilters = useMemo(
+    () =>
+      [viewportFilter, timeSliderFilter, markerConfigFilter]
+        .filter(({ type }) => props.filterTypes.has(type)) // concatenate only the ones we need
+        .flatMap(({ filters }) => filters),
+    [viewportFilter, timeSliderFilter, markerConfigFilter, props.filterTypes]
   );
+
   const filters = useMemo(
     () => [...(props.filters ?? []), ...littleFilters],
     [props.filters, littleFilters]
@@ -44,56 +51,145 @@ export function useLittleFilters(props: useLittleFiltersProps) {
   };
 }
 
-// hook to return function that creates a little filter that performs the 'has value'
-// functionality that it would be nice to have on the back end
-//
-// if you pass `filters` then the filters will be applied to the study metadata
-// in 'filter-sensitive' mode (e.g. affecting the vocabulary or range)
-export function useLittleFiltersForVariable(
-  filters?: Filter[]
-): (variableDescriptor: VariableDescriptor) => Filter[] {
-  const findEntityAndVariable = useFindEntityAndVariable(filters);
+// TO DO: can we somehow move this marker-mode-specific code to the relevant marker mode sources?
+export function useMarkerConfigFilter(
+  props: useLittleFiltersProps
+): LittleFilter {
+  const {
+    appState: { markerConfigurations, activeMarkerConfigurationType },
+  } = props;
 
-  return useCallback(
-    (variableDescriptor: VariableDescriptor) => {
-      const { variable } = findEntityAndVariable(variableDescriptor) ?? {};
-      if (variable != null) {
+  const findEntityAndVariable = useFindEntityAndVariable(props.filters);
+
+  const activeMarkerConfiguration = markerConfigurations.find(
+    (markerConfig) => markerConfig.type === activeMarkerConfigurationType
+  );
+
+  const filters = useMemo(() => {
+    // This doesn't seem ideal. Do we ever have no active config?
+    if (activeMarkerConfiguration == null) return [];
+    const { selectedVariable, type } = activeMarkerConfiguration;
+    const { variable } = findEntityAndVariable(selectedVariable) ?? {};
+    if (variable != null) {
+      if (variable.dataShape === 'categorical' && variable.vocabulary != null) {
+        // are the 'true categorical' modes have no user-selections or are in 'all other values' mode?
         if (
-          variable.dataShape === 'categorical' &&
-          variable.vocabulary != null
+          ((type === 'pie' || type === 'barplot') &&
+            (activeMarkerConfiguration.selectedValues == null ||
+              activeMarkerConfiguration.selectedValues.includes(
+                UNSELECTED_TOKEN
+              ))) ||
+          type === 'bubble'
         ) {
           return [
             {
               type: 'stringSet' as const,
-              ...variableDescriptor,
+              ...selectedVariable,
               stringSet: variable.vocabulary,
             },
           ];
-        } else if (variable.type === 'number') {
-          return [
-            {
-              type: 'numberRange' as const,
-              ...variableDescriptor,
-              min: variable.distributionDefaults.rangeMin,
-              max: variable.distributionDefaults.rangeMax, // TO DO: check we use this, not display ranges
-            },
-          ];
-        } else if (variable.type === 'date') {
-          return [
-            {
-              type: 'dateRange' as const,
-              ...variableDescriptor,
-              min: variable.distributionDefaults.rangeMin + 'T00:00:00Z',
-              max: variable.distributionDefaults.rangeMax + 'T00:00:00Z',
-              // TO DO: check we use this, not display ranges
-            },
-          ];
         } else {
-          throw new Error('unknown variable type or missing vocabulary');
+          // we have selected values in pie or barplot mode and no "all other values"
+          return [
+            {
+              type: 'stringSet' as const,
+              ...selectedVariable,
+              stringSet:
+                activeMarkerConfiguration.selectedValues ?? variable.vocabulary,
+              // the full vocab fallback shouldn't be necessary?
+            },
+          ];
         }
+      } else if (variable.type === 'number') {
+        return [
+          {
+            type: 'numberRange' as const,
+            ...selectedVariable,
+            min: variable.distributionDefaults.rangeMin,
+            max: variable.distributionDefaults.rangeMax, // TO DO: check we use this, not display ranges
+          },
+        ];
+      } else if (variable.type === 'date') {
+        return [
+          {
+            type: 'dateRange' as const,
+            ...selectedVariable,
+            min: variable.distributionDefaults.rangeMin + 'T00:00:00Z',
+            max: variable.distributionDefaults.rangeMax + 'T00:00:00Z',
+            // TO DO: check we use this, not display ranges
+          },
+        ];
+      } else {
+        throw new Error('unknown variable type or missing vocabulary');
       }
-      return [];
-    },
-    [findEntityAndVariable]
+    }
+    return [];
+  }, [activeMarkerConfiguration, findEntityAndVariable]);
+
+  return useMemo(
+    () => ({
+      type: 'marker-config',
+      filters,
+    }),
+    [filters]
+  );
+}
+
+export function useViewportFilter(props: useLittleFiltersProps): LittleFilter {
+  const {
+    appState: { boundsZoomLevel },
+    geoConfigs,
+  } = props;
+  const geoConfig = geoConfigs[0]; // not ideal...
+  return useMemo(
+    () => ({
+      type: 'viewport',
+      filters:
+        boundsZoomLevel == null
+          ? []
+          : filtersFromBoundingBox(
+              boundsZoomLevel.bounds,
+              {
+                variableId: geoConfig.latitudeVariableId,
+                entityId: geoConfig.entity.id,
+              },
+              {
+                variableId: geoConfig.longitudeVariableId,
+                entityId: geoConfig.entity.id,
+              }
+            ),
+    }),
+    [boundsZoomLevel, geoConfig]
+  );
+}
+
+// perhaps this should go with the timeslider code?
+export function useTimeSliderFilter(
+  props: useLittleFiltersProps
+): LittleFilter {
+  const { timeSliderConfig } = props.appState;
+
+  const filters = useMemo(() => {
+    if (timeSliderConfig != null) {
+      const { selectedRange, active, variable } = timeSliderConfig;
+      if (variable != null && active && selectedRange != null)
+        return [
+          {
+            type: 'dateRange' as const,
+            ...variable,
+            min: selectedRange.start + 'T00:00:00Z',
+            max: selectedRange.end + 'T00:00:00Z',
+          },
+        ];
+    }
+    return [];
+  }, [timeSliderConfig]);
+
+  return useMemo(
+    () => ({
+      type: 'time-slider',
+      filters,
+    }),
+    [filters]
   );
 }

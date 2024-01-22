@@ -81,6 +81,7 @@ import AnalysisNameDialog from '../../workspace/AnalysisNameDialog';
 import { Page } from '@veupathdb/wdk-client/lib/Components';
 import { AnalysisError } from '../../core/components/AnalysisError';
 import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
+import { useLittleFilters } from './littleFilters';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -173,9 +174,7 @@ function MapAnalysisImpl(props: ImplProps) {
     geoConfigs,
     setTimeSliderConfig,
     showLinkToEda = false,
-    setLittleFilters,
   } = props;
-  console.log({ littleFilters: appState.littleFilters });
   const { activeMarkerConfigurationType, markerConfigurations } = appState;
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
   const studyRecord = useStudyRecord();
@@ -216,8 +215,13 @@ function MapAnalysisImpl(props: ImplProps) {
     [markerConfigurations, setMarkerConfigurations]
   );
 
-  const timeFilters: Filter[] | undefined =
-    appState.littleFilters?.['time-slider'];
+  const { littleFilters: timeFilters } = useLittleFilters({
+    filters,
+    appState,
+    analysisState,
+    geoConfigs,
+    filterTypes: new Set(['time-slider']),
+  });
 
   const viewportFilters = useMemo(
     () =>
@@ -405,7 +409,6 @@ function MapAnalysisImpl(props: ImplProps) {
                     updateConfiguration={updateMarkerConfigurations as any}
                     hideVizInputsAndControls={hideVizInputsAndControls}
                     setHideVizInputsAndControls={setHideVizInputsAndControls}
-                    setLittleFilters={setLittleFilters}
                   />
                 );
               },
@@ -742,28 +745,6 @@ function MapAnalysisImpl(props: ImplProps) {
   // close left-side panel when map events happen
   const closePanel = useCallback(() => setIsSidePanelExpanded(false), []);
 
-  // update viewport little filter at same time as boundsZoomLevel
-  const handleBoundsChange = useCallback(
-    (newBounds: BoundsViewport) => {
-      setBoundsZoomLevel(newBounds);
-      setLittleFilters({
-        ...(appState.littleFilters ?? {}),
-        ['viewport']: filtersFromBoundingBox(
-          newBounds.bounds,
-          {
-            variableId: geoConfig.latitudeVariableId,
-            entityId: geoConfig.entity.id,
-          },
-          {
-            variableId: geoConfig.longitudeVariableId,
-            entityId: geoConfig.entity.id,
-          }
-        ),
-      });
-    },
-    [geoConfig, setBoundsZoomLevel, setLittleFilters, appState.littleFilters]
-  );
-
   return (
     <PromiseResult state={appsPromiseState}>
       {(apps: ComputationAppOverview[]) => {
@@ -836,8 +817,6 @@ function MapAnalysisImpl(props: ImplProps) {
                         config={appState.timeSliderConfig}
                         updateConfig={setTimeSliderConfig}
                         siteInformation={props.siteInformationProps}
-                        littleFilters={appState.littleFilters}
-                        setLittleFilters={setLittleFilters}
                       />
                     )}
                 </MapHeader>
@@ -878,7 +857,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     showLayerSelector={false}
                     showSpinner={false}
                     viewport={appState.viewport}
-                    onBoundsChanged={handleBoundsChange}
+                    onBoundsChanged={setBoundsZoomLevel}
                     onViewportChanged={setViewport}
                     showGrid={geoConfig?.zoomLevelToAggregationLevel !== null}
                     zoomLevelToGeohashLevel={

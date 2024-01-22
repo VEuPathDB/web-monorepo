@@ -19,7 +19,6 @@ import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
 import { SiteInformationProps } from './Types';
 import { mapSidePanelBackgroundColor } from '../constants';
-import { LittleFilters } from './littleFilters';
 
 interface Props {
   studyId: string;
@@ -33,8 +32,6 @@ interface Props {
   config: NonNullable<AppState['timeSliderConfig']>;
   updateConfig: (newConfig: NonNullable<AppState['timeSliderConfig']>) => void;
   siteInformation: SiteInformationProps;
-  littleFilters?: LittleFilters;
-  setLittleFilters: (newFilters: LittleFilters) => void;
 }
 
 export default function TimeSliderQuickFilter({
@@ -47,8 +44,6 @@ export default function TimeSliderQuickFilter({
   config,
   updateConfig,
   siteInformation,
-  littleFilters,
-  setLittleFilters,
 }: Props) {
   const findEntityAndVariable = useFindEntityAndVariable(filters); // filter sensitivity
   const theme = useUITheme();
@@ -167,31 +162,12 @@ export default function TimeSliderQuickFilter({
       selectedRange: undefined,
       active: true,
     });
-
-    setLittleFilters({
-      ...(littleFilters ?? {}),
-      ['time-slider']: [],
-    });
   }
 
   function handleSelectedRangeChange(
     selectedRange: { start: string; end: string } | undefined
   ) {
     updateConfig({ ...config, selectedRange });
-    setLittleFilters({
-      ...(littleFilters ?? {}),
-      ['time-slider']:
-        selectedRange == null || variable == null
-          ? []
-          : [
-              {
-                type: 'dateRange',
-                ...variable,
-                min: selectedRange.start + 'T00:00:00Z',
-                max: selectedRange.end + 'T00:00:00Z',
-              },
-            ],
-    });
   }
 
   // (easily) centering the variable picker requires two same-width divs either side

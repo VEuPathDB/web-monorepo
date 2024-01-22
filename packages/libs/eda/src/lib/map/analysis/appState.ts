@@ -7,7 +7,6 @@ import { useAnalysis, useGetDefaultVariableDescriptor } from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
 import { useGetDefaultTimeVariableDescriptor } from './hooks/eztimeslider';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
-import { LittleFilters } from './littleFilters';
 
 const LatLngLiteral = t.type({ lat: t.number, lng: t.number });
 
@@ -111,9 +110,6 @@ export const AppState = t.intersection([
       ]),
       active: t.boolean,
     }),
-    // note: I (BM) tried and failed to provide adequate type-protection on the keys of the record.
-    // I couldn't get it to prevent excess keys and so decided there was no use typing it.
-    littleFilters: LittleFilters,
   }),
 ]);
 
@@ -280,6 +276,5 @@ export function useAppState(
     setSubsetVariableAndEntity: useSetter('subsetVariableAndEntity'),
     setViewport: useSetter('viewport'),
     setTimeSliderConfig: useSetter('timeSliderConfig', true),
-    setLittleFilters: useSetter('littleFilters', true),
   };
 }

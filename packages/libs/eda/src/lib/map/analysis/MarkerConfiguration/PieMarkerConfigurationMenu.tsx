@@ -23,7 +23,6 @@ import {
   SelectedValues,
 } from '../appState';
 import { SharedMarkerConfigurations } from '../mapTypes/shared';
-import { LittleFilters, useLittleFiltersForVariable } from '../littleFilters';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
@@ -58,8 +57,6 @@ interface Props
    * Only defined and used in categorical table if selectedCountsOption is 'visible'
    */
   allVisibleCategoricalValues: AllValuesDefinition[] | undefined;
-  littleFilters?: LittleFilters;
-  setLittleFilters?: (newFilters: LittleFilters) => void;
 }
 
 // TODO: generalize this and BarPlotMarkerConfigMenu into MarkerConfigurationMenu. Lots of code repetition...
@@ -79,8 +76,6 @@ export function PieMarkerConfigurationMenu({
   continuousMarkerPreview,
   allFilteredCategoricalValues,
   allVisibleCategoricalValues,
-  littleFilters,
-  setLittleFilters,
 }: Props) {
   /**
    * Used to track the CategoricalMarkerConfigurationTable's selection state, which allows users to
@@ -94,8 +89,6 @@ export function PieMarkerConfigurationMenu({
         ? overlayConfiguration?.overlayValues
         : undefined
     );
-
-  const littleFiltersForVariable = useLittleFiltersForVariable(filters);
 
   const barplotData = usePromise(
     useCallback(async () => {
@@ -157,15 +150,6 @@ export function PieMarkerConfigurationMenu({
       selectedVariable: selection.overlayVariable,
       selectedValues: undefined,
     });
-
-    const newLittleFilters = littleFiltersForVariable(
-      selection.overlayVariable
-    );
-    setLittleFilters != null &&
-      setLittleFilters({
-        ...(littleFilters ?? {}),
-        ['marker-config']: newLittleFilters,
-      });
   }
   function handleBinningMethodSelection(option: string) {
     onChange({
@@ -254,8 +238,6 @@ export function PieMarkerConfigurationMenu({
               : allVisibleCategoricalValues
           }
           selectedCountsOption={configuration.selectedCountsOption}
-          littleFilters={littleFilters}
-          setLittleFilters={setLittleFilters}
         />
       )}
       {overlayConfiguration?.overlayType === 'continuous' && barplotData.value && (

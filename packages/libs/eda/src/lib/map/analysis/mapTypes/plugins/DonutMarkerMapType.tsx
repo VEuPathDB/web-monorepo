@@ -58,11 +58,13 @@ import MapVizManagement from '../../MapVizManagement';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
-import { useLittleFilters } from '../../littleFilters';
+import { useLittleFilters, LittleFilterTypes } from '../../littleFilters';
 
 const displayName = 'Donuts';
 
-const markerDataLittleFilters = ['time-slider'];
+const markerDataLittleFilters: Set<LittleFilterTypes> = new Set([
+  'time-slider',
+]);
 
 export const plugin: MapTypePlugin = {
   displayName,
@@ -82,7 +84,6 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     studyId,
     studyEntities,
     filters,
-    setLittleFilters,
   } = props;
 
   const subsettingClient = useSubsettingClient();
@@ -104,8 +105,10 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
 
   const { filters: filtersForVisibleOption } = useLittleFilters({
     filters,
-    littleFilters: appState.littleFilters,
-    filterTypes: ['time-slider', 'viewport'],
+    appState,
+    analysisState,
+    geoConfigs,
+    filterTypes: new Set(['time-slider', 'viewport']),
     // note: previously the time-slider filters were not being included
     // so this is fixing an unreported bug
   });
@@ -207,8 +210,6 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
         analysisState.analysis?.descriptor.starredVariables ?? []
       }
       toggleStarredVariable={toggleStarredVariable}
-      littleFilters={appState.littleFilters}
-      setLittleFilters={setLittleFilters}
     />
   );
 
@@ -279,15 +280,22 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
 
 function MapLayerComponent(props: MapTypeMapLayerProps) {
   // selectedMarkers and its state function
-  const selectedMarkers = props.selectedMarkers;
-  const setSelectedMarkers = props.setSelectedMarkers;
+  const {
+    selectedMarkers,
+    setSelectedMarkers,
+    appState,
+    analysisState,
+    geoConfigs,
+  } = props;
 
   const { selectedVariable, binningMethod, selectedValues } =
     props.configuration as PieMarkerConfiguration;
 
   const { filters } = useLittleFilters({
     filters: props.filters,
-    littleFilters: props.appState.littleFilters,
+    appState,
+    analysisState,
+    geoConfigs,
     filterTypes: markerDataLittleFilters,
   });
 
@@ -334,7 +342,14 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
 }
 
 function MapOverlayComponent(props: MapTypeMapLayerProps) {
-  const { studyId, studyEntities, geoConfigs, updateConfiguration } = props;
+  const {
+    studyId,
+    studyEntities,
+    geoConfigs,
+    updateConfiguration,
+    appState,
+    analysisState,
+  } = props;
   const {
     selectedVariable,
     selectedValues,
@@ -356,14 +371,18 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
 
   const { filters } = useLittleFilters({
     filters: props.filters,
-    littleFilters: props.appState.littleFilters,
+    appState,
+    analysisState,
+    geoConfigs,
     filterTypes: markerDataLittleFilters,
   });
 
   const { filters: filtersForFloaters } = useLittleFilters({
     filters: props.filters,
-    littleFilters: props.appState.littleFilters,
-    filterTypes: ['time-slider', 'viewport', 'marker-config'],
+    appState,
+    analysisState,
+    geoConfigs,
+    filterTypes: new Set(['time-slider', 'viewport', 'marker-config']),
   });
 
   const data = useMarkerData({
@@ -424,12 +443,15 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
 }
 
 function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
+  const { analysisState, appState, geoConfigs } = props;
   const { selectedVariable, binningMethod, selectedValues } =
     props.configuration as PieMarkerConfiguration;
 
   const { filters } = useLittleFilters({
     filters: props.filters,
-    littleFilters: props.appState.littleFilters,
+    appState,
+    analysisState,
+    geoConfigs,
     filterTypes: markerDataLittleFilters,
   });
 
