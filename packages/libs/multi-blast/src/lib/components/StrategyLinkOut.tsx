@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { AnchoredTooltip } from '@veupathdb/wdk-client/lib/Components/Mesa';
+import { AnchoredTooltip } from '@veupathdb/coreui/lib/components/Mesa';
 
 import './StrategyLinkOut.scss';
 

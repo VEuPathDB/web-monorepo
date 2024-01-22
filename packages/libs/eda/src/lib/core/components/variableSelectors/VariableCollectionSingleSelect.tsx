@@ -36,7 +36,8 @@ export function VariableCollectionSelectList(props: Props) {
             })
           ),
         };
-      });
+      })
+      .filter((itemGroup) => itemGroup.items.length > 0); // Remove entites that had all their collections fail the collection predicate.
   }, [entities, collectionPredicate]);
 
   const handleSelect = useCallback(

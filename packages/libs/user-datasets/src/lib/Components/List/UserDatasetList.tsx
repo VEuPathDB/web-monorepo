@@ -13,11 +13,11 @@ import {
   Mesa,
   MesaState,
   Utils as MesaUtils,
-} from '@veupathdb/wdk-client/lib/Components/Mesa';
+} from '@veupathdb/coreui/lib/components/Mesa';
 import {
   MesaColumn,
   MesaSortObject,
-} from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';

@@ -6,7 +6,7 @@ import { Link } from '@veupathdb/wdk-client/lib/Components';
 import {
   MesaColumn,
   MesaSortObject,
-} from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 import { JobRow } from '../components/BlastWorkspaceAll';

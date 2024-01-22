@@ -2,7 +2,7 @@ import { orderBy, uniq } from 'lodash';
 import React, { useMemo, useState, useCallback } from 'react';
 import { withRouter } from 'react-router';
 import Icon from '../../Components/Icon/IconAlt';
-import { Mesa, MesaState } from '../../Components/Mesa';
+import { Mesa, MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 import Dialog from '../../Components/Overlays/Dialog';
 import { wrappable } from '../../Utils/ComponentUtils';
 import AttributeSelector from '../../Views/Answer/AnswerAttributeSelector';

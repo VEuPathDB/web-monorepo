@@ -1,4 +1,7 @@
-import { useFindEntityAndVariableCollection } from '../../..';
+import {
+  FeaturePrefilterThresholds,
+  useFindEntityAndVariableCollection,
+} from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { capitalize, partial } from 'lodash';
@@ -7,6 +10,8 @@ import {
   assertComputationWithConfig,
   isNotAbsoluteAbundanceVariableCollection,
   partialToCompleteCodec,
+  isTaxonomicVariableCollection,
+  isFunctionalCollection,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
@@ -21,6 +26,7 @@ import { VariableCollectionSelectList } from '../../variableSelectors/VariableCo
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { entityTreeToArray } from '../../../utils/study-metadata';
+import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -29,11 +35,10 @@ const cx = makeClassNameHelper('AppStepConfigurationContainer');
  *
  * The Correlation Assay vs Assay app takes in a two user-selected collections (ex. Species and Pathways) and
  * runs a pairwise correlation of all the member variables of one collection against the other. The result is
- * a correlation coefficient and (soon) a significance value for each pair.
+ * a correlation coefficient and a significance value for each pair.
  *
- * Importantly, this is the second of a few correlation-type apps that are coming along in the near future.
- * There will also be a Metadata vs Metadata correlation app. It's possible that
- * this PR should see a little refactoring to make the code a bit nicer.
+ * In its current state, this app is targeted toward a specific use case of correlating
+ * taxa with pathways or genes.
  */
 
 export type CorrelationAssayAssayConfig = t.TypeOf<
@@ -45,6 +50,7 @@ export const CorrelationAssayAssayConfig = t.partial({
   collectionVariable1: VariableCollectionDescriptor,
   collectionVariable2: VariableCollectionDescriptor,
   correlationMethod: t.string,
+  prefilterThresholds: FeaturePrefilterThresholds,
 });
 
 const CompleteCorrelationAssayAssayConfig = partialToCompleteCodec(
@@ -98,11 +104,10 @@ function CorrelationAssayAssayConfigDescriptionComponent({
   const entityAndCollectionVariableTreeNode2 =
     findEntityAndVariableCollection(collectionVariable2);
 
-  // Data 1 and Data 2 are placeholder labels, we can decide what to call them later.
   return (
     <div className="ConfigDescriptionContainer">
       <h4>
-        Data 1:{' '}
+        Taxonomic level:{' '}
         <span>
           {entityAndCollectionVariableTreeNode1 ? (
             `${entityAndCollectionVariableTreeNode1.entity.displayName} > ${entityAndCollectionVariableTreeNode1.variableCollection.displayName}`
@@ -112,7 +117,7 @@ function CorrelationAssayAssayConfigDescriptionComponent({
         </span>
       </h4>
       <h4>
-        Data 2:{' '}
+        Functional data:{' '}
         <span>
           {entityAndCollectionVariableTreeNode2 ? (
             `${entityAndCollectionVariableTreeNode2.entity.displayName} > ${entityAndCollectionVariableTreeNode2.variableCollection.displayName}`
@@ -136,6 +141,9 @@ function CorrelationAssayAssayConfigDescriptionComponent({
 }
 
 const CORRELATION_METHODS = ['spearman', 'pearson'];
+const DEFAULT_PROPORTION_NON_ZERO_THRESHOLD = 0.05;
+const DEFAULT_VARIANCE_THRESHOLD = 0;
+const DEFAULT_STANDARD_DEVIATION_THRESHOLD = 0;
 
 // Shows as Step 1 in the full screen visualization page
 export function CorrelationAssayAssayConfiguration(
@@ -170,17 +178,17 @@ export function CorrelationAssayAssayConfiguration(
           <div className={cx('-CorrelationOuterConfigContainer')}>
             <H6>Input Data</H6>
             <div className={cx('-InputContainer')}>
-              <span>Data 1</span>
+              <span>Taxonomic level</span>
               <VariableCollectionSelectList
                 value={configuration.collectionVariable1}
                 onSelect={partial(changeConfigHandler, 'collectionVariable1')}
-                collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
+                collectionPredicate={isTaxonomicVariableCollection}
               />
-              <span>Data 2</span>
+              <span>Functional data</span>
               <VariableCollectionSelectList
                 value={configuration.collectionVariable2}
                 onSelect={partial(changeConfigHandler, 'collectionVariable2')}
-                collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
+                collectionPredicate={isFunctionalCollection}
               />
             </div>
           </div>
@@ -200,6 +208,74 @@ export function CorrelationAssayAssayConfiguration(
                   display: capitalize(method),
                 }))}
                 onSelect={partial(changeConfigHandler, 'correlationMethod')}
+              />
+            </div>
+          </div>
+          <div className={cx('-CorrelationOuterConfigContainer')}>
+            <H6>Prefilters</H6>
+            <div className={cx('-InputContainer')}>
+              <span>Proportion non-zero</span>
+              <NumberInput
+                minValue={0}
+                maxValue={1}
+                step={0.01}
+                value={
+                  configuration.prefilterThresholds?.proportionNonZero ??
+                  DEFAULT_PROPORTION_NON_ZERO_THRESHOLD
+                }
+                onValueChange={(newValue) => {
+                  changeConfigHandler('prefilterThresholds', {
+                    proportionNonZero:
+                      Number(newValue) ?? DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
+                    variance:
+                      configuration.prefilterThresholds?.variance ??
+                      DEFAULT_VARIANCE_THRESHOLD,
+                    standardDeviation:
+                      configuration.prefilterThresholds?.standardDeviation ??
+                      DEFAULT_STANDARD_DEVIATION_THRESHOLD,
+                  });
+                }}
+              />
+              <span>Variance</span>
+              <NumberInput
+                minValue={0}
+                step={1}
+                value={
+                  configuration.prefilterThresholds?.variance ??
+                  DEFAULT_VARIANCE_THRESHOLD
+                }
+                onValueChange={(newValue) => {
+                  changeConfigHandler('prefilterThresholds', {
+                    proportionNonZero:
+                      configuration.prefilterThresholds?.proportionNonZero ??
+                      DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
+                    variance: Number(newValue) ?? DEFAULT_VARIANCE_THRESHOLD,
+                    standardDeviation:
+                      configuration.prefilterThresholds?.standardDeviation ??
+                      DEFAULT_STANDARD_DEVIATION_THRESHOLD,
+                  });
+                }}
+              />
+              <span>Standard deviation</span>
+              <NumberInput
+                minValue={0}
+                step={1}
+                value={
+                  configuration.prefilterThresholds?.standardDeviation ??
+                  DEFAULT_STANDARD_DEVIATION_THRESHOLD
+                }
+                onValueChange={(newValue) => {
+                  changeConfigHandler('prefilterThresholds', {
+                    proportionNonZero:
+                      configuration.prefilterThresholds?.proportionNonZero ??
+                      DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
+                    variance:
+                      configuration.prefilterThresholds?.variance ??
+                      DEFAULT_VARIANCE_THRESHOLD,
+                    standardDeviation:
+                      Number(newValue) ?? DEFAULT_STANDARD_DEVIATION_THRESHOLD,
+                  });
+                }}
               />
             </div>
           </div>
