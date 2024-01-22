@@ -655,11 +655,15 @@ div.wdk-CollapsibleSectionContent li {
   margin-bottom: 0.6em;
 }
 
-a.btn.StudyDataAccessDashboardLink {
+.wdk-RecordContainer a.btn.StudyRecordHeadingSearchLinksDashboardLink {
   background: #3c78d8;
   border-color: #0d47a2;
   color: white;
   font-size: 130%;
+  margin-left: 0;
+}
+.wdk-RecordContainer div.StudyRecordHeadingSearchLinksDashboardLink {
+  margin-top: 2em;
 }
 
 .eupathdb-RecordOverviewItem {

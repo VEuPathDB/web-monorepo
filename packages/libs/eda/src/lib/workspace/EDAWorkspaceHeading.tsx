@@ -5,7 +5,6 @@ import Path from 'path';
 // Components
 import { H3, Table, FloatingButton, FilledButton } from '@veupathdb/coreui';
 
-import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import AnalysisNameDialog from './AnalysisNameDialog';
 import AddIcon from '@material-ui/icons/Add';
