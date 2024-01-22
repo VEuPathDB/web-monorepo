@@ -7,7 +7,7 @@ import {
   AnchoredTooltip,
   Mesa,
   MesaState,
-} from '@veupathdb/wdk-client/lib/Components/Mesa';
+} from '@veupathdb/coreui/lib/components/Mesa';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 

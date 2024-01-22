@@ -2,7 +2,7 @@ import { escapeRegExp } from 'lodash';
 import React from 'react';
 import { Dispatch } from 'redux';
 
-import Mesa from '../../Components/Mesa';
+import Mesa from '@veupathdb/coreui/lib/components/Mesa';
 import RealTimeSearchBox from '../../Components/SearchBox/RealTimeSearchBox';
 import { Tabs } from '../../Components';
 import { Seq } from '../../Utils/IterableUtils';
