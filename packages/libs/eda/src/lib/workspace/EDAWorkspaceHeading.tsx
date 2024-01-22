@@ -70,16 +70,16 @@ export function EDAWorkspaceHeading({
               permissionsValue.permissions,
               studyRecord.id[0].value
             ) && (
-              <div>
+              <div style={{ marginLeft: '1em' }}>
                 <FilledButton
                   themeRole="primary"
                   text="Data Access Dashboard"
                   tooltip="Manage user access to study data"
                   textTransform="capitalize"
                   size="medium"
-                  onPress={() => {
-                    history.push(`/study-access/${studyRecord.id[0].value}`);
-                  }}
+                  onPress={() =>
+                    history.push(`/study-access/${studyRecord.id[0].value}`)
+                  }
                 />
               </div>
             )}
