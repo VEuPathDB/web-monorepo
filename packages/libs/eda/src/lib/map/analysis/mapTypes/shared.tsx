@@ -333,15 +333,19 @@ export function useCategoricalValues(props: CategoricalValuesProps) {
     ],
     queryFn: () => {
       if (!CategoricalVariableDataShape.is(props.overlayVariable.dataShape)) {
-        return undefined;
+        // not allowed to return undefined
+        // consider throwing an error if more appropriate
+        return [];
       }
-      return getCategoricalValues({
-        studyId: props.studyId,
-        filters: props.filters,
-        subsettingClient,
-        overlayEntity: props.overlayEntity,
-        overlayVariable: props.overlayVariable,
-      });
+      return (
+        getCategoricalValues({
+          studyId: props.studyId,
+          filters: props.filters,
+          subsettingClient,
+          overlayEntity: props.overlayEntity,
+          overlayVariable: props.overlayVariable,
+        }) ?? []
+      ); // see above re returning undefined
     },
     enabled: props.enabled ?? true,
   });
