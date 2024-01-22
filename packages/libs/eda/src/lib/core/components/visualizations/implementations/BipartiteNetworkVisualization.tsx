@@ -166,13 +166,15 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     ])
   );
 
-  // Determin min and max stroke widths. For use in scaling the strokes (weightToStrokeWidthMap) and the legend.
+  // Determine min and max stroke widths. For use in scaling the strokes (weightToStrokeWidthMap) and the legend.
   const dataWeights =
     data.value?.bipartitenetwork.data.links.map(
       (link) => Number(link.weight) // link.weight will always be a number if defined, because it represents the continuous data associated with that link.
     ) ?? [];
-  const minDataWeight = Math.min(...dataWeights);
-  const maxDataWeight = Math.max(...dataWeights);
+  // Use Set to dedupe the array of dataWeights
+  const uniqueDataWeights = Array.from(new Set(dataWeights));
+  const minDataWeight = Math.min(...uniqueDataWeights);
+  const maxDataWeight = Math.max(...uniqueDataWeights);
 
   // Clean and finalize data format. Specifically, assign link colors, add display labels
   const cleanedData = useMemo(() => {
@@ -306,15 +308,15 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
 
   // Create legend for (1) Line/link thickness and (2) Link color.
   // For (1), we'll do the following:
-  //  - create a base array that is conditioned on the length of dataWeights since dataWeights is a map of data.links.weight
-  //    -- if dataWeights.length is less than or equal to 4, let's use dataWeights as our base array sorted from greatest to least
-  //    -- if dataWeights.length is greater than 4, create an array of a default length filled with 'undefined'
+  //  - create a base array that is conditioned on the length of uniqueDataWeights since uniqueDataWeights is a deduped map of ALL data.links.weight
+  //    -- if uniqueDataWeights.length is less than or equal to 4, let's use uniqueDataWeights as our base array sorted from greatest to least
+  //    -- if uniqueDataWeights.length is greater than 4, create an array of a default length filled with 'undefined'
   //  - create lineLegendItems by mapping over lineLegendItemsBaseArray
-  //    -- if the element (weight) is truthy, then we know we're dealing with a copy of the dataWeights array and can use this value for weightLabel
+  //    -- if the element (weight) is truthy, then we know we're dealing with a copy of the uniqueDataWeights array and can use this value for weightLabel
   //    -- if the element is falsy, fall back to previous calculation for weightLabel
   const lineLegendItemsBaseArray =
-    dataWeights.length <= 4
-      ? [...dataWeights].sort((a, b) => b - a)
+    uniqueDataWeights.length <= 4
+      ? [...uniqueDataWeights].sort((a, b) => b - a)
       : Array(DEFAULT_NUMBER_OF_LINE_LEGEND_ITEMS).fill(undefined);
   const lineLegendItems: LegendItemsProps[] = lineLegendItemsBaseArray.map(
     (weight, index) => {
