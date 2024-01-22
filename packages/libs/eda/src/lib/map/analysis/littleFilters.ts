@@ -100,7 +100,7 @@ export function useMarkerConfigFilter(
             },
           ];
         }
-      } else if (variable.type === 'number') {
+      } else if (variable.type === 'number' || variable.type === 'integer') {
         return [
           {
             type: 'numberRange' as const,

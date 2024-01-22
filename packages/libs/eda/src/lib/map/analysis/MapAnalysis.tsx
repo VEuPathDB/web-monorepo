@@ -4,7 +4,6 @@ import {
   AnalysisState,
   DEFAULT_ANALYSIS_NAME,
   EntityDiagram,
-  Filter,
   PromiseResult,
   useAnalysisClient,
   useDataClient,
@@ -37,7 +36,6 @@ import { MapHeader } from './MapHeader';
 import FilterChipList from '../../core/components/FilterChipList';
 import { VariableLinkConfig } from '../../core/components/VariableLink';
 import { MapSidePanel } from './MapSidePanel';
-import { filtersFromBoundingBox } from '../../core/utils/visualization';
 import { EditLocation, InfoOutlined, Notes, Share } from '@material-ui/icons';
 import { ComputationAppOverview } from '../../core/types/visualization';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
@@ -80,7 +78,6 @@ import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
 import AnalysisNameDialog from '../../workspace/AnalysisNameDialog';
 import { Page } from '@veupathdb/wdk-client/lib/Components';
 import { AnalysisError } from '../../core/components/AnalysisError';
-import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import { useLittleFilters } from './littleFilters';
 
 enum MapSideNavItemLabels {
@@ -214,50 +211,6 @@ function MapAnalysisImpl(props: ImplProps) {
     },
     [markerConfigurations, setMarkerConfigurations]
   );
-
-  const { littleFilters: timeFilters } = useLittleFilters({
-    filters,
-    appState,
-    analysisState,
-    geoConfigs,
-    filterTypes: new Set(['time-slider']),
-  });
-
-  const viewportFilters = useMemo(
-    () =>
-      appState.boundsZoomLevel
-        ? filtersFromBoundingBox(
-            appState.boundsZoomLevel.bounds,
-            {
-              variableId: geoConfig.latitudeVariableId,
-              entityId: geoConfig.entity.id,
-            },
-            {
-              variableId: geoConfig.longitudeVariableId,
-              entityId: geoConfig.entity.id,
-            }
-          )
-        : [],
-    [
-      appState.boundsZoomLevel,
-      geoConfig.entity.id,
-      geoConfig.latitudeVariableId,
-      geoConfig.longitudeVariableId,
-    ]
-  );
-
-  // needed for floaters
-  const filtersIncludingViewportAndTimeSlider = useMemo(() => {
-    return [
-      ...(props.analysisState.analysis?.descriptor.subset.descriptor ?? []),
-      ...viewportFilters,
-      ...(timeFilters != null ? timeFilters : []),
-    ];
-  }, [
-    props.analysisState.analysis?.descriptor.subset.descriptor,
-    viewportFilters,
-    timeFilters,
-  ]);
 
   const userLoggedIn = useWdkService(async (wdkService) => {
     const user = await wdkService.getCurrentUser();
@@ -744,6 +697,14 @@ function MapAnalysisImpl(props: ImplProps) {
 
   // close left-side panel when map events happen
   const closePanel = useCallback(() => setIsSidePanelExpanded(false), []);
+
+  const { filters: filtersIncludingViewportAndTimeSlider } = useLittleFilters({
+    filters,
+    appState,
+    analysisState,
+    geoConfigs,
+    filterTypes: new Set(['viewport', 'time-slider']),
+  });
 
   return (
     <PromiseResult state={appsPromiseState}>

@@ -157,7 +157,6 @@ export function useAppState(
         active: true,
         selectedRange: undefined,
       },
-      littleFilters: {},
       markerConfigurations: [
         {
           type: 'pie',

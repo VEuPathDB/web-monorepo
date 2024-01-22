@@ -164,12 +164,6 @@ export default function TimeSliderQuickFilter({
     });
   }
 
-  function handleSelectedRangeChange(
-    selectedRange: { start: string; end: string } | undefined
-  ) {
-    updateConfig({ ...config, selectedRange });
-  }
-
   // (easily) centering the variable picker requires two same-width divs either side
   const sideElementStyle = { width: '70px' };
 
@@ -251,7 +245,9 @@ export default function TimeSliderQuickFilter({
             <TimeSlider
               data={timeFilterData}
               selectedRange={selectedRange}
-              setSelectedRange={handleSelectedRangeChange}
+              setSelectedRange={(selectedRange) =>
+                updateConfig({ ...config, selectedRange })
+              }
               xAxisRange={extendedDisplayRange}
               width={timeFilterWidth - 30}
               height={sliderHeight}

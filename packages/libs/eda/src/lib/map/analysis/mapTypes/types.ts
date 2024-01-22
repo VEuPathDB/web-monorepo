@@ -36,6 +36,9 @@ export interface MapTypeMapLayerProps {
   updateConfiguration: (configuration: unknown) => void;
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
+  // TO DO: remove filtersIncludingViewport - should be able to use useLittleFilters
+  // where it's needed (and it seems to be recalculated from scratch in BarMarkerMapType and not
+  // used at all in DonutMarkerMapType
   filtersIncludingViewport: Filter[];
   hideVizInputsAndControls: boolean;
   setHideVizInputsAndControls: (hide: boolean) => void;
