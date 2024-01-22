@@ -445,6 +445,15 @@ export interface BipartiteNetworkRequestParams {
   };
 }
 
+export type FeaturePrefilterThresholds = TypeOf<
+  typeof FeaturePrefilterThresholds
+>;
+export const FeaturePrefilterThresholds = type({
+  proportionNonZero: number,
+  variance: number,
+  standardDeviation: number,
+});
+
 ////////////////
 // Table Data //
 ////////////////
