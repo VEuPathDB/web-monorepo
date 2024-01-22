@@ -83,8 +83,9 @@ export function useLittleFiltersForVariable(
             {
               type: 'dateRange' as const,
               ...variableDescriptor,
-              min: variable.distributionDefaults.rangeMin,
-              max: variable.distributionDefaults.rangeMax, // TO DO: check we use this, not display ranges
+              min: variable.distributionDefaults.rangeMin + 'T00:00:00Z',
+              max: variable.distributionDefaults.rangeMax + 'T00:00:00Z',
+              // TO DO: check we use this, not display ranges
             },
           ];
         } else {

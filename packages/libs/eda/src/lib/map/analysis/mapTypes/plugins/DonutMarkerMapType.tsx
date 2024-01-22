@@ -363,7 +363,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
   const { filters: filtersForFloaters } = useLittleFilters({
     filters: props.filters,
     littleFilters: props.appState.littleFilters,
-    filterTypes: ['time-slider', 'viewport'],
+    filterTypes: ['time-slider', 'viewport', 'marker-config'],
   });
 
   const data = useMarkerData({
