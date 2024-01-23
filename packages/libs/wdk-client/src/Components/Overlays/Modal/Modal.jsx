@@ -1,7 +1,7 @@
 import React from 'react';
 
 import '../../../Components/Overlays/Modal/Modal.scss';
-import { BodyLayer } from '../../../Components/Mesa';
+import { BodyLayer } from '@veupathdb/coreui/lib/components/Mesa';
 import { useBodyScrollManager } from '../../../Components/Overlays/BodyScrollManager';
 
 function Modal(props) {

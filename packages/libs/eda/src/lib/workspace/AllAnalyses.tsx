@@ -294,7 +294,7 @@ export function AllAnalyses(props: Props) {
             ],
             ['asc', tableSort[1]]
           )
-        : filteredAnalysesAndDatasets,
+        : filteredAnalysesAndDatasets ?? [],
       options: {
         renderEmptyState: () => (
           <div
