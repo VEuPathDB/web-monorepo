@@ -51,6 +51,7 @@ class DataTable extends React.Component {
 
         return {
           ...column,
+          moveable: false,
           headingStyle: {
             ...column.headingStyle,
             position: 'sticky',
