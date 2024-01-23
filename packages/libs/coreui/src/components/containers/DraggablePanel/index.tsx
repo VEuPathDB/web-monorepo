@@ -1,4 +1,11 @@
-import { CSSProperties, ReactNode, useEffect, useState, useMemo } from 'react';
+import {
+  CSSProperties,
+  ReactNode,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+} from 'react';
 import Draggable, { DraggableEvent, DraggableData } from 'react-draggable';
 import { css } from '@emotion/react';
 import useResizeObserver from 'use-resize-observer';
@@ -7,6 +14,8 @@ import { screenReaderOnly } from '../../../styleDefinitions/typography';
 import { useUITheme } from '../../theming';
 import DismissButton from '../../notifications/DismissButton';
 import { H6 } from '../../typography';
+import SettingsButton from './SettingsButton';
+import useSnackbar from '../../notifications/useSnackbar';
 
 export type DraggablePanelCoordinatePair = {
   x: number;
@@ -56,6 +65,9 @@ export type DraggablePanelProps = {
   onPanelDismiss?: () => void;
   /** This event fires when the user resizes the height or width of the panel. */
   onPanelResize?: (heightAndWidth: HeightAndWidthInPixels) => void;
+  /** check if side panel is open and open side panel */
+  isSidePanelExpanded?: boolean;
+  openPanel?: () => void;
 };
 
 export default function DraggablePanel({
@@ -70,6 +82,8 @@ export default function DraggablePanel({
   panelTitle,
   showPanelTitle,
   styleOverrides,
+  isSidePanelExpanded,
+  openPanel,
 }: DraggablePanelProps) {
   const theme = useUITheme();
 
@@ -124,6 +138,9 @@ export default function DraggablePanel({
   // set maximum text length for the panel title
   const maxPanelTitleTextLength = 25;
 
+  // snackbar
+  const { enqueueSnackbar } = useSnackbar();
+
   return (
     <Draggable
       bounds={confineToParentContainer ? 'parent' : false}
@@ -165,7 +182,9 @@ export default function DraggablePanel({
             border-radius: 7px 7px 0 0;
             background: ${theme?.palette?.primary?.hue[100] ?? gray[100]};
             cursor: ${isDragging ? 'grabbing' : 'grab'};
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr repeat(1, auto) 1fr;
+            grid-column-gap: 5px;
             height: 2rem;
             justify-content: center;
             // Because the panels are positioned absolutely and overflow auto,
@@ -180,21 +199,27 @@ export default function DraggablePanel({
             width: 100%;
           `}
         >
-          <H6
-            additionalStyles={{
-              fontWeight: 'bold',
-              fontSize: 14,
-              padding: '0 10px',
-            }}
+          <div
+            css={css`
+              grid-column-start: 2;
+            `}
           >
-            {/* ellipsis and tooltip for panel title */}
-            <span
-              css={showPanelTitle ? null : screenReaderOnly}
-              title={panelTitle}
+            <H6
+              additionalStyles={{
+                fontWeight: 'bold',
+                fontSize: 14,
+                padding: '0 10px',
+              }}
             >
-              {truncateWithEllipsis(panelTitle, maxPanelTitleTextLength)}
-            </span>
-          </H6>
+              {/* ellipsis and tooltip for panel title */}
+              <span
+                css={showPanelTitle ? null : screenReaderOnly}
+                title={panelTitle}
+              >
+                {truncateWithEllipsis(panelTitle, maxPanelTitleTextLength)}
+              </span>
+            </H6>
+          </div>
           {onPanelDismiss && (
             <div
               css={css`
@@ -205,6 +230,31 @@ export default function DraggablePanel({
               <DismissButton
                 buttonText={`Close ${panelTitle}`}
                 onClick={onPanelDismiss}
+              />
+            </div>
+          )}
+          {/* add gear button */}
+          {openPanel != null && (
+            <div
+              css={css`
+                margin-left: auto;
+              `}
+            >
+              {/* <button onClick={openPanel} >O</button> */}
+              <SettingsButton
+                buttonText={`Settings ${panelTitle}`}
+                tooltipText={'Open marker configuration panel'}
+                size={20}
+                // with snackbar
+                onClick={
+                  isSidePanelExpanded
+                    ? () =>
+                        enqueueSnackbar(
+                          'Marker configuration panel is already open',
+                          { variant: 'warning' }
+                        )
+                    : openPanel
+                }
               />
             </div>
           )}

@@ -7,6 +7,8 @@ export const DraggableLegendPanel = (props: {
   panelTitle?: string;
   defaultPosition?: DraggablePanelCoordinatePair;
   children: React.ReactNode;
+  isSidePanelExpanded?: boolean;
+  openPanel?: () => void;
 }) => (
   <DraggablePanel
     isOpen
@@ -19,6 +21,8 @@ export const DraggableLegendPanel = (props: {
       // set minWidth for draggable panel
       minWidth: '120px',
     }}
+    isSidePanelExpanded={props.isSidePanelExpanded}
+    openPanel={props.openPanel}
   >
     {props.children}
   </DraggablePanel>

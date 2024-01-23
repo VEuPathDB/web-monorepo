@@ -409,6 +409,11 @@ function MapAnalysisImpl(props: ImplProps) {
   // make an array of objects state to list highlighted markers
   const [selectedMarkers, setSelectedMarkers] = useState<string[]>([]);
 
+  // open panel when legend icon is pressed
+  const openPanel = useCallback(() => setIsSidePanelExpanded(true), []);
+  // close left-side panel when map events happen
+  const closePanel = useCallback(() => setIsSidePanelExpanded(false), []);
+
   const sidePanelMenuEntries: SidePanelMenuEntry[] = [
     {
       type: 'heading',
@@ -776,9 +781,6 @@ function MapAnalysisImpl(props: ImplProps) {
       ? donutMarkerPlugin
       : undefined;
 
-  // close left-side panel when map events happen
-  const closePanel = useCallback(() => setIsSidePanelExpanded(false), []);
-
   return (
     <PromiseResult state={appsPromiseState}>
       {(apps: ComputationAppOverview[]) => {
@@ -804,7 +806,8 @@ function MapAnalysisImpl(props: ImplProps) {
           /* disabled until wired in fully:
              selectedMarkers,
              setSelectedMarkers,
-	   */
+          */
+          openPanel: openPanel,
         };
 
         return (

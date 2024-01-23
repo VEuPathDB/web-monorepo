@@ -228,7 +228,14 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
 }
 
 function BubbleLegends(props: MapTypeMapLayerProps) {
-  const { studyId, filters, geoConfigs, appState, updateConfiguration } = props;
+  const {
+    studyId,
+    filters,
+    geoConfigs,
+    appState,
+    updateConfiguration,
+    openPanel,
+  } = props;
   const configuration = props.configuration as BubbleMarkerConfiguration;
 
   const { isValidProportion } = useOverlayConfig({
@@ -294,6 +301,8 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
         panelTitle={overlayVariable?.displayName}
         zIndex={3}
         defaultPosition={{ x: window.innerWidth, y: 420 }}
+        isSidePanelExpanded={appState.isSidePanelExpanded}
+        openPanel={openPanel}
       >
         <div style={{ padding: '5px 10px' }}>
           {invalidProportionMessage ?? (
