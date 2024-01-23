@@ -72,7 +72,7 @@ export function EDAWorkspaceHeading({
               <div style={{ marginLeft: '1em' }}>
                 <FilledButton
                   themeRole="primary"
-                  text="Data Access Dashboard"
+                  text="Management Dashboard"
                   tooltip="Manage user access to study data"
                   textTransform="capitalize"
                   size="medium"
