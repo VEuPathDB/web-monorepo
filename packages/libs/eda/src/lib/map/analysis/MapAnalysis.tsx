@@ -98,11 +98,6 @@ const mapStyle: React.CSSProperties = {
   pointerEvents: 'auto',
 };
 
-const possiblyDeprecatedFilterTypes: Set<LittleFilterTypes> = new Set([
-  'viewport',
-  'time-slider',
-]);
-
 const timeSliderFilterTypes: Set<LittleFilterTypes> = new Set([
   'marker-config',
 ]);
@@ -707,13 +702,6 @@ function MapAnalysisImpl(props: ImplProps) {
   // close left-side panel when map events happen
   const closePanel = useCallback(() => setIsSidePanelExpanded(false), []);
 
-  const { filters: filtersIncludingViewportAndTimeSlider } = useLittleFilters({
-    filters,
-    appState,
-    geoConfigs,
-    filterTypes: possiblyDeprecatedFilterTypes,
-  });
-
   const { filters: filtersForTimeSlider } = useLittleFilters({
     filters,
     appState,
@@ -738,7 +726,6 @@ function MapAnalysisImpl(props: ImplProps) {
           geoConfigs,
           configuration: activeMarkerConfiguration,
           updateConfiguration: updateMarkerConfigurations as any,
-          filtersIncludingViewport: filtersIncludingViewportAndTimeSlider,
           totalCounts,
           filteredCounts,
           hideVizInputsAndControls,

@@ -40,6 +40,9 @@ import {
   useDistributionOverlayConfig,
   isNoDataError,
   noDataErrorMessage,
+  visibleOptionFilterTypes,
+  markerDataFilterTypes,
+  floaterFilterTypes,
 } from '../shared';
 import {
   MapTypeConfigPanelProps,
@@ -58,22 +61,9 @@ import MapVizManagement from '../../MapVizManagement';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
-import { useLittleFilters, LittleFilterTypes } from '../../littleFilters';
+import { useLittleFilters } from '../../littleFilters';
 
 const displayName = 'Donuts';
-
-// these have to be proper stable constants
-const markerDataFilterTypes: Set<LittleFilterTypes> = new Set([
-  'time-slider', // map-markers endpoint handles viewport explicitly, not via filters
-]);
-const floaterFilterTypes: Set<LittleFilterTypes> = new Set([
-  'time-slider',
-  'viewport',
-]); // up for debate: add 'marker-config'
-const visibleOptionFilterTypes: Set<LittleFilterTypes> = new Set([
-  'time-slider',
-  'viewport',
-]);
 
 export const plugin: MapTypePlugin = {
   displayName,
@@ -117,8 +107,6 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     appState,
     geoConfigs,
     filterTypes: visibleOptionFilterTypes,
-    // note: previously the time-slider filters were not being included
-    // so this is fixing an unreported bug
   });
 
   const allFilteredCategoricalValues = useCategoricalValues({
@@ -288,19 +276,14 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
 
 function MapLayerComponent(props: MapTypeMapLayerProps) {
   // selectedMarkers and its state function
-  const {
-    selectedMarkers,
-    setSelectedMarkers,
-    appState,
-    analysisState,
-    geoConfigs,
-  } = props;
+  const { selectedMarkers, setSelectedMarkers, appState, geoConfigs, filters } =
+    props;
 
   const { selectedVariable, binningMethod, selectedValues } =
     props.configuration as PieMarkerConfiguration;
 
-  const { filters } = useLittleFilters({
-    filters: props.filters,
+  const { filters: filtersForMarkerData } = useLittleFilters({
+    filters,
     appState,
     geoConfigs,
     filterTypes: markerDataFilterTypes,
@@ -308,7 +291,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
 
   const markerDataResponse = useMarkerData({
     studyId: props.studyId,
-    filters,
+    filters: filtersForMarkerData,
     studyEntities: props.studyEntities,
     geoConfigs: props.geoConfigs,
     boundsZoomLevel: props.appState.boundsZoomLevel,
@@ -355,7 +338,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     geoConfigs,
     updateConfiguration,
     appState,
-    analysisState,
+    filters,
   } = props;
   const {
     selectedVariable,
@@ -376,15 +359,15 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     [props.configuration, updateConfiguration]
   );
 
-  const { filters } = useLittleFilters({
-    filters: props.filters,
+  const { filters: filtersForMarkerData } = useLittleFilters({
+    filters,
     appState,
     geoConfigs,
     filterTypes: markerDataFilterTypes,
   });
 
   const { filters: filtersForFloaters } = useLittleFilters({
-    filters: props.filters,
+    filters,
     appState,
     geoConfigs,
     filterTypes: floaterFilterTypes,
@@ -392,7 +375,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
 
   const data = useMarkerData({
     studyId,
-    filters,
+    filters: filtersForMarkerData,
     studyEntities,
     geoConfigs,
     binningMethod,
@@ -448,12 +431,12 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
 }
 
 function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
-  const { analysisState, appState, geoConfigs } = props;
+  const { appState, geoConfigs, filters } = props;
   const { selectedVariable, binningMethod, selectedValues } =
     props.configuration as PieMarkerConfiguration;
 
-  const { filters } = useLittleFilters({
-    filters: props.filters,
+  const { filters: filtersForMarkerData } = useLittleFilters({
+    filters,
     appState,
     geoConfigs,
     filterTypes: markerDataFilterTypes,
@@ -461,7 +444,7 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
 
   const markerDataResponse = useMarkerData({
     studyId: props.studyId,
-    filters,
+    filters: filtersForMarkerData,
     studyEntities: props.studyEntities,
     geoConfigs: props.geoConfigs,
     boundsZoomLevel: props.appState.boundsZoomLevel,

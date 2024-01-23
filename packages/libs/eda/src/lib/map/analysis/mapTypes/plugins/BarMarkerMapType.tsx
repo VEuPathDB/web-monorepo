@@ -36,6 +36,7 @@ import SemanticMarkers from '@veupathdb/components/lib/map/SemanticMarkers';
 import {
   DistributionMarkerDataProps,
   defaultAnimation,
+  floaterFilterTypes,
   isApproxSameViewport,
   isNoDataError,
   noDataErrorMessage,
@@ -65,6 +66,7 @@ import MapVizManagement from '../../MapVizManagement';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
+import { useLittleFilters } from '../../littleFilters';
 const displayName = 'Bar plots';
 
 export const plugin: MapTypePlugin = {
@@ -387,8 +389,14 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
 }
 
 function MapOverlayComponent(props: MapTypeMapLayerProps) {
-  const { studyEntities, studyId, filters, geoConfigs, updateConfiguration } =
-    props;
+  const {
+    studyEntities,
+    studyId,
+    filters,
+    geoConfigs,
+    updateConfiguration,
+    appState,
+  } = props;
   const configuration = props.configuration as BarPlotMarkerConfiguration;
   const findEntityAndVariable = useFindEntityAndVariable();
   const { variable: overlayVariable } =
@@ -425,6 +433,13 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     ? noDataErrorMessage
     : undefined;
 
+  const { filters: filtersForFloaters } = useLittleFilters({
+    filters: props.filters,
+    appState,
+    geoConfigs,
+    filterTypes: floaterFilterTypes,
+  });
+
   return (
     <>
       <DraggableLegendPanel
@@ -451,7 +466,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
         totalCounts={props.totalCounts}
         filteredCounts={props.filteredCounts}
         toggleStarredVariable={toggleStarredVariable}
-        filters={props.filtersIncludingViewport}
+        filters={filtersForFloaters}
         // onTouch={moveVizToTop}
         zIndexForStackingContext={2}
         hideInputsAndControls={props.hideVizInputsAndControls}

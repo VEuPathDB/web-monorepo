@@ -37,6 +37,7 @@ import { useStandaloneVizPlugins } from '../../hooks/standaloneVizPlugins';
 import { getDefaultBubbleOverlayConfig } from '../../utils/defaultOverlayConfig';
 import {
   defaultAnimation,
+  floaterFilterTypes,
   isApproxSameViewport,
   useCommonData,
 } from '../shared';
@@ -53,6 +54,7 @@ import { GeoConfig } from '../../../../core/types/geoConfig';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
+import { useLittleFilters } from '../../littleFilters';
 
 const displayName = 'Bubbles';
 
@@ -273,6 +275,13 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
       </div>
     ) : undefined;
 
+  const { filters: filtersForFloaters } = useLittleFilters({
+    filters: props.filters,
+    appState,
+    geoConfigs,
+    filterTypes: floaterFilterTypes,
+  });
+
   return (
     <>
       <DraggableLegendPanel panelTitle="Count" zIndex={2}>
@@ -324,7 +333,7 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
         totalCounts={props.totalCounts}
         filteredCounts={props.filteredCounts}
         toggleStarredVariable={toggleStarredVariable}
-        filters={props.filtersIncludingViewport}
+        filters={filtersForFloaters}
         // onTouch={moveVizToTop}
         zIndexForStackingContext={2}
         hideInputsAndControls={props.hideVizInputsAndControls}

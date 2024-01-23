@@ -30,12 +30,29 @@ import {
 } from '@veupathdb/components/lib/types/plots';
 import { getCategoricalValues } from '../utils/categoricalValues';
 import { Viewport } from '@veupathdb/components/lib/map/MapVEuMap';
+import { LittleFilterTypes } from '../littleFilters';
 
 export const defaultAnimation = {
   method: 'geohash',
   animationFunction: geohashAnimation,
   duration: defaultAnimationDuration,
 };
+
+export const markerDataFilterTypes: Set<LittleFilterTypes> = new Set([
+  'time-slider',
+  // viewport not needed, map-markers endpoint handles viewport explicitly, not via filters
+]);
+export const floaterFilterTypes: Set<LittleFilterTypes> = new Set([
+  'time-slider',
+  'viewport',
+  // up for debate: add 'marker-config'?
+]);
+export const visibleOptionFilterTypes: Set<LittleFilterTypes> = new Set([
+  'time-slider',
+  'viewport',
+  // note: previously the time-slider filters were not being included
+  // so this is fixing an unreported bug
+]);
 
 export interface SharedMarkerConfigurations {
   selectedVariable: VariableDescriptor;
