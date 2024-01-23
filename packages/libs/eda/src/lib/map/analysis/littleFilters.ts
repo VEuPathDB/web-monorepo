@@ -73,7 +73,11 @@ export function useMarkerConfigFilter(
     const { selectedVariable, type } = activeMarkerConfiguration;
     const { variable } = findEntityAndVariable(selectedVariable) ?? {};
     if (variable != null) {
-      if (variable.dataShape === 'categorical' && variable.vocabulary != null) {
+      if (
+        (variable.dataShape === 'categorical' ||
+          variable.dataShape === 'binary') &&
+        variable.vocabulary != null
+      ) {
         // are the 'true categorical' modes have no user-selections or are in 'all other values' mode?
         if (
           ((type === 'pie' || type === 'barplot') &&
