@@ -402,7 +402,7 @@ export const BipartiteNetworkData = type({
       type({
         source: NodeData,
         target: NodeData,
-        strokeWidth: string,
+        weight: string,
       }),
       partial({
         color: string,
@@ -423,6 +423,19 @@ export const BipartiteNetworkResponse = type({
   }),
 });
 
+// Correlation Bipartite Network
+// a specific flavor of the bipartite network that also includes correlationCoefThreshold and significanceThreshold
+export type CorrelationBipartiteNetworkResponse = TypeOf<
+  typeof CorrelationBipartiteNetworkResponse
+>;
+export const CorrelationBipartiteNetworkResponse = intersection([
+  BipartiteNetworkResponse,
+  type({
+    correlationCoefThreshold: number,
+    significanceThreshold: number,
+  }),
+]);
+
 export interface BipartiteNetworkRequestParams {
   studyId: string;
   filters: Filter[];
@@ -431,6 +444,15 @@ export interface BipartiteNetworkRequestParams {
     significanceThreshold?: number;
   };
 }
+
+export type FeaturePrefilterThresholds = TypeOf<
+  typeof FeaturePrefilterThresholds
+>;
+export const FeaturePrefilterThresholds = type({
+  proportionNonZero: number,
+  variance: number,
+  standardDeviation: number,
+});
 
 ////////////////
 // Table Data //
