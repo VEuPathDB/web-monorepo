@@ -4,6 +4,7 @@ import { AppState } from './appState';
 import { UNSELECTED_TOKEN } from '../constants';
 import { filtersFromBoundingBox } from '../../core/utils/visualization';
 import { GeoConfig } from '../../core/types/geoConfig';
+import { useDeepValue } from '../../core/hooks/immutability';
 
 export type LittleFilterTypes = 'time-slider' | 'marker-config' | 'viewport';
 
@@ -32,12 +33,14 @@ export function useLittleFilters(props: useLittleFiltersProps) {
   const timeSliderFilter = useTimeSliderFilter(props);
   const markerConfigFilter = useMarkerConfigFilter(props);
 
-  const littleFilters = useMemo(
-    () =>
-      [viewportFilter, timeSliderFilter, markerConfigFilter]
-        .filter(({ type }) => props.filterTypes.has(type)) // concatenate only the ones we need
-        .flatMap(({ filters }) => filters),
-    [viewportFilter, timeSliderFilter, markerConfigFilter, props.filterTypes]
+  const littleFilters = useDeepValue(
+    useMemo(
+      () =>
+        [viewportFilter, timeSliderFilter, markerConfigFilter]
+          .filter(({ type }) => props.filterTypes.has(type)) // concatenate only the ones we need
+          .flatMap(({ filters }) => filters),
+      [viewportFilter, timeSliderFilter, markerConfigFilter, props.filterTypes]
+    )
   );
 
   const filters = useMemo(

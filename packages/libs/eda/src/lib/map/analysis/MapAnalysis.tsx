@@ -103,6 +103,10 @@ const possiblyDeprecatedFilterTypes: Set<LittleFilterTypes> = new Set([
   'time-slider',
 ]);
 
+const timeSliderFilterTypes: Set<LittleFilterTypes> = new Set([
+  'marker-config',
+]);
+
 interface Props {
   analysisId?: string;
   sharingUrl: string;
@@ -711,6 +715,14 @@ function MapAnalysisImpl(props: ImplProps) {
     filterTypes: possiblyDeprecatedFilterTypes,
   });
 
+  const { filters: filtersForTimeSlider } = useLittleFilters({
+    filters,
+    appState,
+    analysisState,
+    geoConfigs,
+    filterTypes: timeSliderFilterTypes,
+  });
+
   return (
     <PromiseResult state={appsPromiseState}>
       {(apps: ComputationAppOverview[]) => {
@@ -774,7 +786,7 @@ function MapAnalysisImpl(props: ImplProps) {
                         studyId={studyId}
                         entities={studyEntities}
                         subsettingClient={subsettingClient}
-                        filters={filters}
+                        filters={filtersForTimeSlider}
                         starredVariables={
                           analysisState.analysis?.descriptor.starredVariables ??
                           []
