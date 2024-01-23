@@ -78,7 +78,7 @@ import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
 import AnalysisNameDialog from '../../workspace/AnalysisNameDialog';
 import { Page } from '@veupathdb/wdk-client/lib/Components';
 import { AnalysisError } from '../../core/components/AnalysisError';
-import { useLittleFilters } from './littleFilters';
+import { LittleFilterTypes, useLittleFilters } from './littleFilters';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -97,6 +97,11 @@ const mapStyle: React.CSSProperties = {
   zIndex: 1,
   pointerEvents: 'auto',
 };
+
+const possiblyDeprecatedFilterTypes: Set<LittleFilterTypes> = new Set([
+  'viewport',
+  'time-slider',
+]);
 
 interface Props {
   analysisId?: string;
@@ -703,7 +708,7 @@ function MapAnalysisImpl(props: ImplProps) {
     appState,
     analysisState,
     geoConfigs,
-    filterTypes: new Set(['viewport', 'time-slider']),
+    filterTypes: possiblyDeprecatedFilterTypes,
   });
 
   return (

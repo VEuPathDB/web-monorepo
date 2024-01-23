@@ -62,8 +62,17 @@ import { useLittleFilters, LittleFilterTypes } from '../../littleFilters';
 
 const displayName = 'Donuts';
 
-const markerDataLittleFilters: Set<LittleFilterTypes> = new Set([
+// these have to be proper stable constants
+const markerDataFilterTypes: Set<LittleFilterTypes> = new Set([
+  'time-slider', // map-markers endpoint handles viewport explicitly, not via filters
+]);
+const floaterFilterTypes: Set<LittleFilterTypes> = new Set([
   'time-slider',
+  'viewport',
+]); // up for debate: add 'marker-config'
+const visibleOptionFilterTypes: Set<LittleFilterTypes> = new Set([
+  'time-slider',
+  'viewport',
 ]);
 
 export const plugin: MapTypePlugin = {
@@ -108,7 +117,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     appState,
     analysisState,
     geoConfigs,
-    filterTypes: new Set(['time-slider', 'viewport']),
+    filterTypes: visibleOptionFilterTypes,
     // note: previously the time-slider filters were not being included
     // so this is fixing an unreported bug
   });
@@ -296,7 +305,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     appState,
     analysisState,
     geoConfigs,
-    filterTypes: markerDataLittleFilters,
+    filterTypes: markerDataFilterTypes,
   });
 
   const markerDataResponse = useMarkerData({
@@ -374,7 +383,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     appState,
     analysisState,
     geoConfigs,
-    filterTypes: markerDataLittleFilters,
+    filterTypes: markerDataFilterTypes,
   });
 
   const { filters: filtersForFloaters } = useLittleFilters({
@@ -382,7 +391,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     appState,
     analysisState,
     geoConfigs,
-    filterTypes: new Set(['time-slider', 'viewport', 'marker-config']),
+    filterTypes: floaterFilterTypes,
   });
 
   const data = useMarkerData({
@@ -452,7 +461,7 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     appState,
     analysisState,
     geoConfigs,
-    filterTypes: markerDataLittleFilters,
+    filterTypes: markerDataFilterTypes,
   });
 
   const markerDataResponse = useMarkerData({
