@@ -39,11 +39,13 @@ import {
   floaterFilterTypes,
   isApproxSameViewport,
   isNoDataError,
+  markerDataFilterTypes,
   noDataErrorMessage,
   useCategoricalValues,
   useCommonData,
   useDistributionMarkerData,
   useDistributionOverlayConfig,
+  visibleOptionFilterTypes,
 } from '../shared';
 import {
   useFindEntityAndVariable,
@@ -51,7 +53,6 @@ import {
 } from '../../../../core/hooks/workspace';
 import { DraggableLegendPanel } from '../../DraggableLegendPanel';
 import { MapLegend } from '../../MapLegend';
-import { filtersFromBoundingBox } from '../../../../core/utils/visualization';
 import { sharedStandaloneMarkerProperties } from '../../MarkerConfiguration/CategoricalMarkerPreview';
 import { useToggleStarredVariable } from '../../../../core/hooks/starredVariables';
 import DraggableVisualization from '../../DraggableVisualization';
@@ -97,7 +98,6 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     filters,
   } = props;
 
-  const geoConfig = geoConfigs[0];
   const subsettingClient = useSubsettingClient();
   const configuration = props.configuration as BarPlotMarkerConfiguration;
   const {
@@ -121,28 +121,12 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     );
   }
 
-  const filtersIncludingViewport = useMemo(() => {
-    const viewportFilters = appState.boundsZoomLevel
-      ? filtersFromBoundingBox(
-          appState.boundsZoomLevel.bounds,
-          {
-            variableId: geoConfig.latitudeVariableId,
-            entityId: geoConfig.entity.id,
-          },
-          {
-            variableId: geoConfig.longitudeVariableId,
-            entityId: geoConfig.entity.id,
-          }
-        )
-      : [];
-    return [...(filters ?? []), ...viewportFilters];
-  }, [
-    appState.boundsZoomLevel,
-    geoConfig.entity.id,
-    geoConfig.latitudeVariableId,
-    geoConfig.longitudeVariableId,
+  const { filters: filtersForVisibleOption } = useLittleFilters({
     filters,
-  ]);
+    appState,
+    geoConfigs,
+    filterTypes: visibleOptionFilterTypes,
+  });
 
   const allFilteredCategoricalValues = useCategoricalValues({
     overlayEntity,
@@ -155,7 +139,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     overlayEntity,
     studyId,
     overlayVariable,
-    filters: filtersIncludingViewport,
+    filters: filtersForVisibleOption,
     enabled: configuration.selectedCountsOption === 'visible',
   });
 
@@ -327,17 +311,16 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
 }
 
 function MapLayerComponent(props: MapTypeMapLayerProps) {
-  // selectedMarkers and its state function
-  const selectedMarkers = props.selectedMarkers;
-  const setSelectedMarkers = props.setSelectedMarkers;
-
   const {
     studyEntities,
     studyId,
     filters,
     geoConfigs,
-    appState: { boundsZoomLevel },
+    appState,
+    selectedMarkers,
+    setSelectedMarkers,
   } = props;
+
   const {
     selectedVariable,
     selectedValues,
@@ -345,12 +328,20 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     dependentAxisLogScale,
     selectedPlotMode,
   } = props.configuration as BarPlotMarkerConfiguration;
+
+  const { filters: filtersForMarkerData } = useLittleFilters({
+    filters,
+    appState,
+    geoConfigs,
+    filterTypes: markerDataFilterTypes,
+  });
+
   const markerData = useMarkerData({
     studyEntities,
     studyId,
-    filters,
+    filters: filtersForMarkerData,
     geoConfigs,
-    boundsZoomLevel,
+    boundsZoomLevel: appState.boundsZoomLevel,
     selectedVariable,
     selectedValues,
     binningMethod,
@@ -377,7 +368,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
           animation={defaultAnimation}
           flyToMarkers={
             !markerData.isFetching &&
-            isApproxSameViewport(props.appState.viewport, defaultViewport)
+            isApproxSameViewport(appState.viewport, defaultViewport)
           }
           selectedMarkers={selectedMarkers}
           setSelectedMarkers={setSelectedMarkers}
@@ -397,6 +388,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     updateConfiguration,
     appState,
   } = props;
+
   const configuration = props.configuration as BarPlotMarkerConfiguration;
   const findEntityAndVariable = useFindEntityAndVariable();
   const { variable: overlayVariable } =
@@ -412,10 +404,17 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     [configuration, updateConfiguration]
   );
 
+  const { filters: filtersForMarkerData } = useLittleFilters({
+    filters,
+    appState,
+    geoConfigs,
+    filterTypes: markerDataFilterTypes,
+  });
+
   const markerData = useMarkerData({
     studyEntities,
     studyId,
-    filters,
+    filters: filtersForMarkerData,
     geoConfigs,
     selectedVariable: configuration.selectedVariable,
     binningMethod: configuration.binningMethod,
@@ -434,7 +433,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     : undefined;
 
   const { filters: filtersForFloaters } = useLittleFilters({
-    filters: props.filters,
+    filters,
     appState,
     geoConfigs,
     filterTypes: floaterFilterTypes,
@@ -462,7 +461,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
         setActiveVisualizationId={setActiveVisualizationId}
         apps={props.apps}
         plugins={plugins}
-        geoConfigs={props.geoConfigs}
+        geoConfigs={geoConfigs}
         totalCounts={props.totalCounts}
         filteredCounts={props.filteredCounts}
         toggleStarredVariable={toggleStarredVariable}
@@ -478,18 +477,35 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
 
 function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
   const {
+    studyId,
+    studyEntities,
+    geoConfigs,
+    appState,
+    appState: { boundsZoomLevel },
+    filters,
+  } = props;
+
+  const {
     selectedVariable,
     binningMethod,
     selectedValues,
     dependentAxisLogScale,
     selectedPlotMode,
   } = props.configuration as BarPlotMarkerConfiguration;
+
+  const { filters: filtersForMarkerData } = useLittleFilters({
+    filters,
+    appState,
+    geoConfigs,
+    filterTypes: markerDataFilterTypes,
+  });
+
   const markerDataResponse = useMarkerData({
-    studyId: props.studyId,
-    filters: props.filters,
-    studyEntities: props.studyEntities,
-    geoConfigs: props.geoConfigs,
-    boundsZoomLevel: props.appState.boundsZoomLevel,
+    studyId,
+    filters: filtersForMarkerData,
+    studyEntities,
+    geoConfigs,
+    boundsZoomLevel,
     selectedVariable,
     selectedValues,
     binningMethod,
@@ -499,7 +515,7 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
 
   const {
     outputEntity: { id: outputEntityId },
-  } = useCommonData(selectedVariable, props.geoConfigs, props.studyEntities);
+  } = useCommonData(selectedVariable, geoConfigs, studyEntities);
 
   return outputEntityId != null ? (
     <MapTypeHeaderCounts

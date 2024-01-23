@@ -1,4 +1,3 @@
-import React from 'react';
 import DonutMarker, {
   DonutMarkerProps,
   DonutMarkerStandalone,
@@ -276,8 +275,16 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
 
 function MapLayerComponent(props: MapTypeMapLayerProps) {
   // selectedMarkers and its state function
-  const { selectedMarkers, setSelectedMarkers, appState, geoConfigs, filters } =
-    props;
+  const {
+    studyId,
+    studyEntities,
+    selectedMarkers,
+    setSelectedMarkers,
+    appState,
+    appState: { boundsZoomLevel },
+    geoConfigs,
+    filters,
+  } = props;
 
   const { selectedVariable, binningMethod, selectedValues } =
     props.configuration as PieMarkerConfiguration;
@@ -290,11 +297,11 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
   });
 
   const markerDataResponse = useMarkerData({
-    studyId: props.studyId,
+    studyId,
     filters: filtersForMarkerData,
-    studyEntities: props.studyEntities,
-    geoConfigs: props.geoConfigs,
-    boundsZoomLevel: props.appState.boundsZoomLevel,
+    studyEntities,
+    geoConfigs,
+    boundsZoomLevel,
     selectedVariable,
     selectedValues,
     binningMethod,
@@ -320,7 +327,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
           animation={defaultAnimation}
           flyToMarkers={
             !markerDataResponse.isFetching &&
-            isApproxSameViewport(props.appState.viewport, defaultViewport)
+            isApproxSameViewport(appState.viewport, defaultViewport)
           }
           selectedMarkers={selectedMarkers}
           setSelectedMarkers={setSelectedMarkers}
@@ -417,7 +424,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
         setActiveVisualizationId={setActiveVisualizationId}
         apps={props.apps}
         plugins={plugins}
-        geoConfigs={props.geoConfigs}
+        geoConfigs={geoConfigs}
         totalCounts={props.totalCounts}
         filteredCounts={props.filteredCounts}
         toggleStarredVariable={toggleStarredVariable}
@@ -431,7 +438,14 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
 }
 
 function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
-  const { appState, geoConfigs, filters } = props;
+  const {
+    studyId,
+    studyEntities,
+    appState,
+    appState: { boundsZoomLevel },
+    geoConfigs,
+    filters,
+  } = props;
   const { selectedVariable, binningMethod, selectedValues } =
     props.configuration as PieMarkerConfiguration;
 
@@ -443,11 +457,11 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
   });
 
   const markerDataResponse = useMarkerData({
-    studyId: props.studyId,
+    studyId,
     filters: filtersForMarkerData,
-    studyEntities: props.studyEntities,
-    geoConfigs: props.geoConfigs,
-    boundsZoomLevel: props.appState.boundsZoomLevel,
+    studyEntities,
+    geoConfigs,
+    boundsZoomLevel,
     selectedVariable,
     selectedValues,
     binningMethod,
@@ -456,7 +470,7 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
 
   const {
     outputEntity: { id: outputEntityId },
-  } = useCommonData(selectedVariable, props.geoConfigs, props.studyEntities);
+  } = useCommonData(selectedVariable, geoConfigs, studyEntities);
 
   return outputEntityId != null ? (
     <MapTypeHeaderCounts
