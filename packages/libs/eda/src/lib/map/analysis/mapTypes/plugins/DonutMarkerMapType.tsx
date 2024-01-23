@@ -115,7 +115,6 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   const { filters: filtersForVisibleOption } = useLittleFilters({
     filters,
     appState,
-    analysisState,
     geoConfigs,
     filterTypes: visibleOptionFilterTypes,
     // note: previously the time-slider filters were not being included
@@ -303,7 +302,6 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
   const { filters } = useLittleFilters({
     filters: props.filters,
     appState,
-    analysisState,
     geoConfigs,
     filterTypes: markerDataFilterTypes,
   });
@@ -381,7 +379,6 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
   const { filters } = useLittleFilters({
     filters: props.filters,
     appState,
-    analysisState,
     geoConfigs,
     filterTypes: markerDataFilterTypes,
   });
@@ -389,7 +386,6 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
   const { filters: filtersForFloaters } = useLittleFilters({
     filters: props.filters,
     appState,
-    analysisState,
     geoConfigs,
     filterTypes: floaterFilterTypes,
   });
@@ -459,7 +455,6 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
   const { filters } = useLittleFilters({
     filters: props.filters,
     appState,
-    analysisState,
     geoConfigs,
     filterTypes: markerDataFilterTypes,
   });

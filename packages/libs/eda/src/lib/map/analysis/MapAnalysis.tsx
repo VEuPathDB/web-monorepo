@@ -710,7 +710,6 @@ function MapAnalysisImpl(props: ImplProps) {
   const { filters: filtersIncludingViewportAndTimeSlider } = useLittleFilters({
     filters,
     appState,
-    analysisState,
     geoConfigs,
     filterTypes: possiblyDeprecatedFilterTypes,
   });
@@ -718,7 +717,6 @@ function MapAnalysisImpl(props: ImplProps) {
   const { filters: filtersForTimeSlider } = useLittleFilters({
     filters,
     appState,
-    analysisState,
     geoConfigs,
     filterTypes: timeSliderFilterTypes,
   });

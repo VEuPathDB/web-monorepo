@@ -15,7 +15,6 @@ interface LittleFilter {
 
 interface useLittleFiltersProps {
   filters: Filter[] | undefined;
-  analysisState: AnalysisState;
   appState: AppState;
   geoConfigs: GeoConfig[];
   filterTypes: Set<LittleFilterTypes>;
