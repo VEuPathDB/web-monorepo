@@ -1,8 +1,14 @@
 import React, { CSSProperties, ReactElement, ReactNode } from 'react';
 
-export interface MesaStateProps<Row, Key = keyof Row> {
+type DefaultColumnKey<Row> = Extract<keyof Row, string>;
+
+export interface MesaStateProps<
+  Row,
+  Key = DefaultColumnKey<Row>,
+  Value = DefaultColumnValue<Row, Key>
+> {
   rows: Row[];
-  columns: MesaColumn<Row, Key>[];
+  columns: MesaColumn<Row, Key, Value>[];
   filteredRows?: Row[];
   uiState?: {
     sort?: MesaSortObject;
@@ -35,9 +41,9 @@ export interface MesaStateProps<Row, Key = keyof Row> {
     selectedNoun?: string;
     selectedPluralNoun?: string;
     searchPlaceholder?: string;
-    deriveRowClassName?: (row: Row) => string | undefined; // a function
-    renderEmptyState?: () => ReactNode; // a function
-    isRowSelected?: (row: Row) => boolean; // a callback function
+    deriveRowClassName?: (row: Row) => string | undefined;
+    renderEmptyState?: () => ReactNode;
+    isRowSelected?: (row: Row) => boolean;
   };
   actions?: MesaAction<Row, Key>[];
   eventHandlers?: {
@@ -56,27 +62,37 @@ export interface MesaStateProps<Row, Key = keyof Row> {
   };
 }
 
-interface MesaAction<Row, Key> {
+interface MesaAction<Row, Key = DefaultColumnKey<Row>> {
   selectionRequired?: boolean;
   element: React.ReactNode;
   callback?: (row: Row, columns: MesaColumn<Row, Key>[]) => void;
   handler?: (
-    seection: Row[],
+    selection: Row[],
     columns: MesaColumn<Row, Key>[],
     rows: Row[]
   ) => void;
 }
 
-interface CellProps<Row, Key> {
+type DefaultColumnValue<Row, Key> = Key extends keyof Row ? Row[Key] : unknown;
+
+interface CellProps<
+  Row,
+  Key = DefaultColumnKey<Row>,
+  Value = DefaultColumnValue<Row, Key>
+> {
   key: Key;
-  value: Key extends keyof Row ? Row[Key] : unknown;
+  value: Value;
   row: Row;
   column: MesaColumn<Row, Key>;
   rowIndex: number;
   columnIndex: number;
 }
 
-export interface MesaColumn<Row, Key = keyof Row> {
+export interface MesaColumn<
+  Row,
+  Key = DefaultColumnKey<Row>,
+  Value = DefaultColumnValue<Row, Key>
+> {
   key: Key;
   name?: string;
   type?: string;
@@ -89,8 +105,8 @@ export interface MesaColumn<Row, Key = keyof Row> {
   style?: CSSProperties;
   className?: string;
   width?: CSSProperties['width'];
-  // getValue?: (props: { row: Row, index: number }) => ReactElement;
-  renderCell?: (cellProps: CellProps<Row, Key>) => ReactNode; // a function
+  getValue?: (props: { row: Row; index: number }) => Value;
+  renderCell?: (cellProps: CellProps<Row, Key, Value>) => ReactNode;
   renderHeading?:
     | boolean
     | ((
@@ -101,12 +117,12 @@ export interface MesaColumn<Row, Key = keyof Row> {
           HelpTrigger: ReactElement;
           ClickBoundary: ReactElement;
         }
-      ) => ReactNode); // a function
+      ) => ReactNode);
   wrapCustomHeadings?: (props: {
-    column: MesaColumn<Row, Key>;
+    column: MesaColumn<Row, Key, Value>;
     columnIndex: number;
     headerRowIndex: number;
-  }) => boolean; // a function
+  }) => boolean;
 }
 
 export interface MesaSortObject<Key extends string = string> {
