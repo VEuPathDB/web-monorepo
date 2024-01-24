@@ -6,7 +6,8 @@ import { keyBy } from 'lodash';
 
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { assertIsVdiCompatibleWdkService } from '@veupathdb/user-datasets/lib/Service';
+// import { assertIsVdiCompatibleWdkService } from '@veupathdb/user-datasets/lib/Service';
+import { assertIsUserDatasetCompatibleWdkService } from '@veupathdb/user-datasets-legacy/lib/Service/UserDatasetWrappers';
 
 import { useDiyDatasets } from './diyDatasets';
 
@@ -70,7 +71,7 @@ export function useDiyStudySummaryRows(): UserStudySummaryRow[] | undefined {
 
   const currentUserDatasets = useWdkService(
     async (wdkService) => {
-      assertIsVdiCompatibleWdkService(wdkService);
+      assertIsUserDatasetCompatibleWdkService(wdkService);
       if (currentUser == null) {
         return undefined;
       }
@@ -94,10 +95,7 @@ export function useDiyStudySummaryRows(): UserStudySummaryRow[] | undefined {
       return undefined;
     }
 
-    const currentUserDatasetsById = keyBy(
-      currentUserDatasets,
-      ({ datasetId }) => datasetId
-    );
+    const currentUserDatasetsById = keyBy(currentUserDatasets, ({ id }) => id);
 
     return diyDatasets.flatMap((diyDataset) => {
       const userDataset = currentUserDatasetsById[diyDataset.userDatasetId];
@@ -111,14 +109,14 @@ export function useDiyStudySummaryRows(): UserStudySummaryRow[] | undefined {
           name: diyDataset.name,
           userDatasetWorkspaceUrl: diyDataset.userDatasetsRoute,
           edaWorkspaceUrl: `${diyDataset.baseEdaRoute}/new`,
-          summary: userDataset.summary ?? '',
+          summary: userDataset.meta.summary ?? '',
           owner:
-            userDataset.owner.userId === currentUser.id
+            userDataset.ownerUserId === currentUser.id
               ? 'Me'
-              : userDataset.owner.firstName + ' ' + userDataset.owner.lastName,
+              : userDataset.owner,
           sharedWith:
-            userDataset.shares
-              ?.map(({ firstName, lastName }) => `${firstName} ${lastName}`)
+            userDataset.sharedWith
+              ?.map(({ userDisplayName }) => userDisplayName)
               ?.join(', ') ?? '',
         },
       ];
