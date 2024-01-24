@@ -96,7 +96,8 @@ const stringParamDecoder: Decode.Decoder<StringParam> = Decode.combine(
   paramSharedDecoder,
   Decode.field('type', Decode.constant('string')),
   Decode.field('length', Decode.number),
-  Decode.field('isMultiLine', Decode.boolean)
+  Decode.field('isMultiLine', Decode.boolean),
+  Decode.field('isNumber', Decode.boolean)
 );
 
 /* FilterParamNew */
