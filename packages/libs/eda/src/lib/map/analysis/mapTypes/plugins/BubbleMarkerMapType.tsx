@@ -39,6 +39,7 @@ import {
   defaultAnimation,
   floaterFilterTypes,
   isApproxSameViewport,
+  markerDataFilterTypes,
   useCommonData,
 } from '../shared';
 import {
@@ -175,13 +176,14 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
 }
 
 /**
- * Renders marker and legend components
+ * Renders markers
  */
 function BubbleMapLayer(props: MapTypeMapLayerProps) {
   const {
     studyId,
     filters,
     appState,
+    appState: { boundsZoomLevel },
     geoConfigs,
     selectedMarkers,
     setSelectedMarkers,
@@ -195,12 +197,19 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
     ...configuration,
   });
 
+  const { filters: filtersForMarkerData } = useLittleFilters({
+    filters,
+    appState,
+    geoConfigs,
+    filterTypes: markerDataFilterTypes,
+  });
+
   const markersData = useMarkerData({
-    boundsZoomLevel: appState.boundsZoomLevel,
+    boundsZoomLevel,
     configuration,
     geoConfigs,
     studyId,
-    filters,
+    filters: filtersForMarkerData,
   });
   if (markersData.error && !markersData.isFetching)
     return <MapFloatingErrorDiv error={markersData.error} />;
@@ -230,7 +239,14 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
 }
 
 function BubbleLegends(props: MapTypeMapLayerProps) {
-  const { studyId, filters, geoConfigs, appState, updateConfiguration } = props;
+  const {
+    studyId,
+    filters,
+    geoConfigs,
+    appState,
+    appState: { boundsZoomLevel },
+    updateConfiguration,
+  } = props;
   const configuration = props.configuration as BubbleMarkerConfiguration;
 
   const { isValidProportion } = useOverlayConfig({
@@ -248,7 +264,7 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
     filters,
     geoConfigs,
     configuration,
-    boundsZoomLevel: appState.boundsZoomLevel,
+    boundsZoomLevel,
   });
 
   const setActiveVisualizationId = useCallback(
@@ -344,21 +360,35 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
 }
 
 function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
+  const {
+    studyId,
+    studyEntities,
+    filters,
+    geoConfigs,
+    appState,
+    appState: { boundsZoomLevel },
+  } = props;
+
   const configuration = props.configuration as BubbleMarkerConfiguration;
+
+  const { filters: filtersForMarkerData } = useLittleFilters({
+    filters,
+    appState,
+    geoConfigs,
+    filterTypes: markerDataFilterTypes,
+  });
+
   const markerDataResponse = useMarkerData({
-    studyId: props.studyId,
-    filters: props.filters,
-    geoConfigs: props.geoConfigs,
-    boundsZoomLevel: props.appState.boundsZoomLevel,
+    studyId,
+    filters: filtersForMarkerData,
+    geoConfigs,
+    boundsZoomLevel,
     configuration,
   });
+
   const {
     outputEntity: { id: outputEntityId },
-  } = useCommonData(
-    configuration.selectedVariable,
-    props.geoConfigs,
-    props.studyEntities
-  );
+  } = useCommonData(configuration.selectedVariable, geoConfigs, studyEntities);
 
   return outputEntityId != null ? (
     <MapTypeHeaderCounts
