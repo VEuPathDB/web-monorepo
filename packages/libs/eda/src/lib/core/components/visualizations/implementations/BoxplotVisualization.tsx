@@ -714,6 +714,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       // show/hide independent/dependent axis tick label
       showIndependentAxisTickLabel={true}
       showDependentAxisTickLabel={true}
+      showExportButton={true}
       showMean={true}
       interactive={!isFaceted(data.value) ? true : false}
       showSpinner={data.pending || filteredCounts.pending}

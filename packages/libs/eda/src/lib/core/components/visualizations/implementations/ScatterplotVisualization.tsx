@@ -1295,6 +1295,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const scatterplotProps: ScatterPlotProps = {
     interactive: !isFaceted(data.value?.dataSetProcess) ? true : false,
     showSpinner: filteredCounts.pending || data.pending,
+    showExportButton: true,
     independentAxisLabel: independentAxisLabel,
     dependentAxisLabel: dependentAxisLabel,
     displayLegend: false,

@@ -9,13 +9,14 @@ import {
   forwardRef,
   useImperativeHandle,
   useRef,
+  useCallback,
 } from 'react';
 import Spinner from '../components/Spinner';
 import { ToImgopts } from 'plotly.js';
-import domToImage from 'dom-to-image';
 import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 import './BipartiteNetwork.css';
-import { downloadSvg } from './visxVEuPathDB';
+import { ExportPlotToImageButton } from './ExportPlotToImageButton';
+import { plotToImage } from './visxVEuPathDB';
 
 export interface BipartiteNetworkSVGStyles {
   width?: number; // svg width
@@ -76,16 +77,18 @@ function BipartiteNetwork(
 
   // Use ref forwarding to enable screenshotting of the plot for thumbnail versions.
   const plotRef = useRef<HTMLDivElement>(null);
+
+  const toImage = useCallback(async (opts: ToImgopts) => {
+    return plotToImage(plotRef.current, opts);
+  }, []);
+
   useImperativeHandle<HTMLDivElement, any>(
     ref,
     () => ({
       // The thumbnail generator makePlotThumbnailUrl expects to call a toImage function
-      toImage: async (imageOpts: ToImgopts) => {
-        if (!plotRef.current) throw new Error('Plot not ready');
-        return domToImage.toPng(plotRef.current, imageOpts);
-      },
+      toImage,
     }),
-    []
+    [toImage]
   );
 
   // Set up styles for the bipartite network and incorporate overrides
@@ -213,15 +216,7 @@ function BipartiteNetwork(
         </svg>
         {showSpinner && <Spinner />}
       </div>
-      <button
-        type="button"
-        disabled={plotRef.current == null}
-        onClick={() => {
-          downloadSvg(plotRef.current);
-        }}
-      >
-        Export to SVG
-      </button>
+      <ExportPlotToImageButton toImage={toImage} filename="Network" />
     </div>
   );
 }

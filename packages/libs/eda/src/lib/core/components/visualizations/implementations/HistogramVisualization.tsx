@@ -1016,6 +1016,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
     dependentAxisLabel:
       vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion',
     showSpinner: data.pending || filteredCounts.pending,
+    showExportButton: true,
     displayLegend: false,
     displayLibraryControls: false,
     legendTitle: overlayLabel,

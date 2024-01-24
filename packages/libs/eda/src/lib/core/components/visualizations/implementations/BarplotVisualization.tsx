@@ -674,6 +674,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
     legendTitle: overlayLabel,
     interactive: !isFaceted(data.value) ? true : false,
     showSpinner: data.pending || filteredCounts.pending,
+    showExportButton: true,
     dependentAxisLogScale: vizConfig.dependentAxisLogScale,
     // set dependent axis range for log scale
     // truncation axis range control

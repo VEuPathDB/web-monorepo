@@ -1037,6 +1037,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
           : 'Y-axis'
         : 'Y-axis',
     displayLegend: false,
+    showExportButton: true,
     containerStyles: !isFaceted(data.value?.dataSetProcess)
       ? finalPlotContainerStyles
       : undefined,

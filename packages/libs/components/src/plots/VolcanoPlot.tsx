@@ -2,6 +2,7 @@ import {
   CSSProperties,
   forwardRef,
   Ref,
+  useCallback,
   useImperativeHandle,
   useRef,
 } from 'react';
@@ -30,7 +31,7 @@ import {
   thresholdLineStyles,
   VisxPoint,
   axisStyles,
-  downloadSvg,
+  plotToImage,
 } from './visxVEuPathDB';
 import { Polygon } from '@visx/shape';
 import { useContext } from 'react';
@@ -39,9 +40,9 @@ import Spinner from '../components/Spinner';
 // For screenshotting
 import { ToImgopts } from 'plotly.js';
 import { DEFAULT_CONTAINER_HEIGHT } from './PlotlyPlot';
-import domToImage from 'dom-to-image';
-import './VolcanoPlot.css';
 import { truncateWithEllipsis } from '../utils/axis-tick-label-ellipsis';
+import { ExportPlotToImageButton } from './ExportPlotToImageButton';
+import './VolcanoPlot.css';
 
 export interface RawDataMinMaxValues {
   x: NumberRange;
@@ -168,16 +169,18 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
 
   // Use ref forwarding to enable screenshotting of the plot for thumbnail versions.
   const plotRef = useRef<HTMLDivElement>(null);
+
+  const toImage = useCallback(async (imgOpts: ToImgopts) => {
+    return plotToImage(plotRef.current, imgOpts);
+  }, []);
+
   useImperativeHandle<HTMLDivElement, any>(
     ref,
     () => ({
       // The thumbnail generator makePlotThumbnailUrl expects to call a toImage function
-      toImage: async (imageOpts: ToImgopts) => {
-        if (!plotRef.current) throw new Error('Plot not ready');
-        return domToImage.toPng(plotRef.current, imageOpts);
-      },
+      toImage,
     }),
-    []
+    [toImage]
   );
 
   const effectSizeLabel = data.effectSizeLabel;
@@ -547,9 +550,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
         </XYChart>
         {showSpinner && <Spinner />}
       </div>
-      <button type="button" onClick={() => downloadSvg(plotRef.current)}>
-        Export to SVG
-      </button>
+      <ExportPlotToImageButton toImage={toImage} filename="Volcano" />
     </div>
   );
 }
