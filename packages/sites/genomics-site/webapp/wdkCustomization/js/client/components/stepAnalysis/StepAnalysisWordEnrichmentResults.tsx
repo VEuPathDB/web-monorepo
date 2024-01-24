@@ -87,7 +87,7 @@ const wordEnrichmentResultColumns = [
     sortable: true,
     sortType: 'number',
   },
-] as ColumnSettings[];
+] as ColumnSettings<any>[];
 
 const wordEnrichmentButtonsConfigFactory = (
   stepId: number,

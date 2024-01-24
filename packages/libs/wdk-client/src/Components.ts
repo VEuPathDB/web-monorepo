@@ -49,7 +49,7 @@ import LoadError from './Components/PageStatus/LoadError';
 import PermissionDenied from './Components/PageStatus/PermissionDenied';
 import Loading from './Components/Loading/Loading';
 import LoadingOverlay from './Components/Loading/LoadingOverlay';
-import * as Mesa from './Components/Mesa';
+import * as Mesa from '@veupathdb/coreui/lib/components/Mesa';
 import CommonModal from './Components/Overlays/CommonModal';
 import Dialog from './Components/Overlays/Dialog';
 import Modal from './Components/Overlays/Modal';

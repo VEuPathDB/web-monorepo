@@ -1,7 +1,7 @@
 import { ActionThunk } from '../Core/WdkMiddleware';
 import { Favorite, RecordClass } from '../Utils/WdkModel';
 import { ServiceError } from '../Service/ServiceError';
-import { MesaState } from '../Components/Mesa';
+import { MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 
 // Types
 // -----
