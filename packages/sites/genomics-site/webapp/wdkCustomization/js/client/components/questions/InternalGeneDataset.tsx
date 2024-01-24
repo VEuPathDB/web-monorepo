@@ -367,7 +367,7 @@ function InternalGeneDatasetContent(props: Props) {
             },
           },
           {
-            key: 'Searches',
+            key: 'searches',
             name: 'Choose a Search',
             sortable: false,
             renderCell: (cellProps: any) => (
