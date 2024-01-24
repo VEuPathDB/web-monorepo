@@ -96,15 +96,29 @@ export function useMarkerConfigFilter(
           ];
         } else {
           // we have selected values in pie or barplot mode and no "all other values"
-          return [
-            {
-              type: 'stringSet' as const,
-              ...selectedVariable,
-              stringSet:
-                activeMarkerConfiguration.selectedValues ?? variable.vocabulary,
-              // the full vocab fallback shouldn't be necessary?
-            },
-          ];
+          if (
+            activeMarkerConfiguration.selectedValues != null &&
+            activeMarkerConfiguration.selectedValues.length > 0
+          )
+            return [
+              {
+                type: 'stringSet' as const,
+                ...selectedVariable,
+                stringSet: activeMarkerConfiguration.selectedValues,
+              },
+            ];
+          // Edge case where all values are deselected in the marker configuration table
+          // and we want the back end filters to return nothing.
+          // This is hopefully a workable solution. It is not allowed to pass an
+          // empty array to a `stringSet` filter.
+          else
+            return [
+              {
+                type: 'stringSet' as const,
+                ...selectedVariable,
+                stringSet: ['avaluewewillhopefullyneversee'],
+              },
+            ];
         }
       } else if (variable.type === 'number' || variable.type === 'integer') {
         return [
