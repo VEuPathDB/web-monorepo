@@ -25,15 +25,7 @@ function Component(props: Props<StringParam, undefined>) {
   const { parameter, value, onParamValueChange } = props;
   const cols = DEFAULT_COLS;
   const rows = calculateRows(parameter, cols);
-  return parameter.length <= 50 ? (
-    <TextBox
-      type="text"
-      value={value}
-      readOnly={parameter.isReadOnly}
-      onChange={onParamValueChange}
-      required={!parameter.allowEmptyValue}
-    />
-  ) : (
+  return parameter.isMultiLine ? (
     <TextArea
       cols={cols}
       rows={rows}
@@ -41,6 +33,15 @@ function Component(props: Props<StringParam, undefined>) {
       value={value}
       onChange={onParamValueChange}
       required={!parameter.allowEmptyValue}
+    />
+  ) : (
+    <TextBox
+      type="text"
+      value={value}
+      readOnly={parameter.isReadOnly}
+      onChange={onParamValueChange}
+      required={!parameter.allowEmptyValue}
+      size={40}
     />
   );
 }
