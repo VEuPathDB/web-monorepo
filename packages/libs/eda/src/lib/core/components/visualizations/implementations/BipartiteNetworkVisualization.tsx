@@ -286,7 +286,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
       <H6>No correlation results pass the configured thresholds.</H6>
       <br />
       <br />
-      Adjust the correlation magnitude and p-value thresholds to continue.
+      Adjust the correlation coefficient and p-value thresholds to continue.
     </div>
   );
 
