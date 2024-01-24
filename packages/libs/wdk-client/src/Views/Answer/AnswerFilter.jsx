@@ -1,7 +1,7 @@
 import { debounce } from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { HelpTrigger } from '../../Components/Mesa';
+import { HelpTrigger } from '@veupathdb/coreui/lib/components/Mesa';
 import Tooltip from '../../Components/Overlays/Tooltip';
 import { wrappable } from '../../Utils/ComponentUtils';
 import AnswerFilterSelector from '../../Views/Answer/AnswerFilterSelector';

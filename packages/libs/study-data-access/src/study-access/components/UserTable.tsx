@@ -3,11 +3,11 @@ import React, { useMemo, useState } from 'react';
 import { orderBy } from 'lodash';
 
 import { RealTimeSearchBox } from '@veupathdb/wdk-client/lib/Components';
-import Mesa, { MesaState } from '@veupathdb/wdk-client/lib/Components/Mesa';
+import Mesa, { MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 import {
   MesaColumn,
   MesaSortObject,
-} from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import {
   areTermsInString,
@@ -39,8 +39,7 @@ export interface UserTableSortObject<R, K extends UserTableColumnKey<R>>
 type OrderablePrimimitive = boolean | number | string;
 
 export interface UserTableColumn<R, K extends UserTableColumnKey<R>>
-  extends MesaColumn<K> {
-  renderCell?: (props: { row: R; value: R[K] }) => React.ReactNode;
+  extends MesaColumn<R, K> {
   makeSearchableString?: (value: R[K], row: R) => string;
   makeOrder?: (row: R) => OrderablePrimimitive | OrderablePrimimitive[];
 }

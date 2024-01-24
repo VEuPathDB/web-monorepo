@@ -12,7 +12,7 @@ import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import {
   AnchoredTooltip,
   PaginationMenu,
-} from '@veupathdb/wdk-client/lib/Components/Mesa';
+} from '@veupathdb/coreui/lib/components/Mesa';
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';

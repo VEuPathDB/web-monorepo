@@ -4,8 +4,11 @@ import { connect } from 'react-redux';
 import { orderBy } from 'lodash';
 
 import { Loading, RealTimeSearchBox } from '../../Components';
-import Mesa, { MesaState } from '../../Components/Mesa';
-import { MesaSortObject, MesaColumn } from '../../Core/CommonTypes';
+import Mesa, { MesaState } from '@veupathdb/coreui/lib/components/Mesa';
+import {
+  MesaSortObject,
+  MesaColumn,
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import { RootState } from '../../Core/State/Types';
 import { useWdkService } from '../../Hooks/WdkServiceHook';
 import WdkService from '../../Service/WdkService';
@@ -36,7 +39,10 @@ type OwnProps = {
 type Props = StateProps & OwnProps;
 
 type StrategyInputColumnKey = 'dataType' | 'name' | 'description';
-type StrategyInputColumn = MesaColumn<StrategyInputColumnKey>;
+type StrategyInputColumn = MesaColumn<
+  StrategySummaryWithDataType,
+  StrategyInputColumnKey
+>;
 
 type OptionalMesaSortObject = MesaSortObject | null;
 
