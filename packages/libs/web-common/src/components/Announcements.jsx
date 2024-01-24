@@ -237,6 +237,39 @@ const siteAnnouncements = [
   },
 */
 
+  //VectorBase, aquasalis: https://redmine.apidb.org/issues/53436  Jan 18 2024 -patched prod 66-  for a year
+  {
+    id: 'aquasalis',
+    renderDisplay: (props) => {
+      if (
+        (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
+        (props.location.pathname.indexOf('/record/dataset/TMPTX_aaquAaquGF1') >
+          -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_44554a07c1') >
+            -1 ||
+          props.location.pathname.indexOf('/record/gene/AAQUA_') > -1)
+      ) {
+        return (
+          <div key="">
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/DS_44554a07c1">
+              <i>Anopheles aquasalis</i> AaquGF1
+            </a>{' '}
+            has a confusion in chromosome nomenclature. The current X and Y
+            designations should be replaced with XL (X long arm) and XR (X short
+            arm), respectively. While the matter is being addressed in the
+            primary databases/INSDC and will subsequently be handled at
+            VectorBase, feel free to{' '}
+            <a href="https://vectorbase.org/vectorbase/app/contact-us">
+              contact us
+            </a>{' '}
+            for any inquiries, suggestions, or feedback.
+          </div>
+        );
+      }
+      return null;
+    },
+  },
+
   //VectorBase, albimanus: https://redmine.apidb.org/issues/53151  Nov 2023-2024
   {
     id: 'albimanus',
