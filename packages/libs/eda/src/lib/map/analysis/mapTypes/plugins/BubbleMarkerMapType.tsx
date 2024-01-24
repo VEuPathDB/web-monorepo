@@ -239,14 +239,7 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
 }
 
 function BubbleLegends(props: MapTypeMapLayerProps) {
-  const {
-    studyId,
-    filters,
-    geoConfigs,
-    appState,
-    appState: { boundsZoomLevel },
-    updateConfiguration,
-  } = props;
+  const { studyId, filters, geoConfigs, appState, updateConfiguration } = props;
   const configuration = props.configuration as BubbleMarkerConfiguration;
 
   const { isValidProportion } = useOverlayConfig({
@@ -264,7 +257,6 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
     filters,
     geoConfigs,
     configuration,
-    boundsZoomLevel,
   });
 
   const setActiveVisualizationId = useCallback(
@@ -534,8 +526,7 @@ interface DataProps {
 }
 
 function useLegendData(props: DataProps) {
-  const { boundsZoomLevel, configuration, geoConfigs, studyId, filters } =
-    props;
+  const { configuration, geoConfigs, studyId, filters } = props;
 
   const studyEntities = useStudyEntities();
   const dataClient = useDataClient();
@@ -546,8 +537,7 @@ function useLegendData(props: DataProps) {
   const { outputEntity, geoAggregateVariables } = useCommonData(
     selectedVariable,
     geoConfigs,
-    studyEntities,
-    boundsZoomLevel
+    studyEntities
   );
 
   const outputEntityId = outputEntity?.id;

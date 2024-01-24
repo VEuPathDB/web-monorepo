@@ -404,17 +404,10 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     [configuration, updateConfiguration]
   );
 
-  const { filters: filtersForMarkerData } = useLittleFilters({
-    filters,
-    appState,
-    geoConfigs,
-    filterTypes: markerDataFilterTypes,
-  });
-
   const markerData = useMarkerData({
     studyEntities,
     studyId,
-    filters: filtersForMarkerData,
+    filters,
     geoConfigs,
     selectedVariable: configuration.selectedVariable,
     binningMethod: configuration.binningMethod,
