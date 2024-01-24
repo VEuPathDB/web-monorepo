@@ -16,6 +16,7 @@ import {
 } from '../../Actions/AttributeAnalysisActions';
 
 import '../../Views/AttributeAnalysis/AttributeAnalysisTabs.scss';
+import { MesaColumn } from '@veupathdb/coreui/lib/components/Mesa/types';
 
 export interface TableState {
   currentPage: number;
@@ -42,8 +43,6 @@ type Props<T extends string> = {
   tableConfig: TableConfig<T>;
 };
 
-type Column = { key: 'value' | 'count'; display: string };
-
 export default class AttributeAnalysisTabs<
   T extends string
 > extends React.PureComponent<Props<T>> {
@@ -53,8 +52,10 @@ export default class AttributeAnalysisTabs<
   onRowsPerPageChange = (rowsPerPage: number) =>
     this.props.dispatch(changeTableRowsPerPage(rowsPerPage));
 
-  onSort = (column: Column, direction: 'asc' | 'desc') =>
-    this.props.dispatch(sortTable(column.key, direction));
+  onSort = (
+    column: MesaColumn<TableConfig<T>['data'][number], T>,
+    direction: 'asc' | 'desc'
+  ) => this.props.dispatch(sortTable(column.key, direction));
 
   onSearch = (search: string) => this.props.dispatch(searchTable(search));
 
@@ -109,7 +110,7 @@ export default class AttributeAnalysisTabs<
                   searchTerm={tableState.search}
                   onSearchTermChange={this.onSearch}
                 />
-                <Mesa
+                <Mesa<TableConfig<T>['data'][number], T>
                   state={{
                     options: {
                       useStickyHeader: true,
