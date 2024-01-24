@@ -1,5 +1,5 @@
 import * as t from 'io-ts';
-import { barplotVisualization } from '../../visualizations/implementations/BarplotVisualization';
+import { barplotVisualization } from '../../visualizations/implementations/BarPlotVisualization';
 import {
   contTableVisualization,
   twoByTwoVisualization,

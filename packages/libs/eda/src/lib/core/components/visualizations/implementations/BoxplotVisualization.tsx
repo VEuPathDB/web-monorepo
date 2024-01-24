@@ -1299,7 +1299,7 @@ export function boxplotResponseToData(
 }
 
 /**
- * reorder the series prop of the BarplotData object so that labels
+ * reorder the series prop of the BarPlotData object so that labels
  * go in the same order as the main variable's vocabulary, and the overlay
  * strata are ordered in that variable's vocabulary order too, with missing values and traces added as undefined
  *

@@ -23,7 +23,7 @@ export interface BirdsEyePlotProps extends PlotProps<BirdsEyePlotData> {
 
 const EmptyBirdsEyePlotData: BirdsEyePlotData = { brackets: [], bars: [] };
 
-/** A Plotly-based Barplot component. */
+/** A Plotly-based BarPlot component. */
 export default function BirdsEyePlot({
   data = EmptyBirdsEyePlotData,
   dependentAxisLabel = '',

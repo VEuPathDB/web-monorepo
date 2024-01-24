@@ -1,7 +1,7 @@
 import L from 'leaflet';
 
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
-import Barplot from '../plots/Barplot';
+import BarPlot from '../plots/BarPlot';
 //import Histogram from '../plots/Histogram';
 // import NumberRange type def
 import { NumberRange } from '../types/general';
@@ -68,7 +68,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
   const popupSize = plotSize + 2 * marginSize;
 
   const popupPlot = (
-    <Barplot
+    <BarPlot
       data={{
         series: [
           {

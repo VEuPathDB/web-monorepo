@@ -14,7 +14,7 @@ import {
 } from '../../../core';
 import { CategoricalMarkerConfigurationTable } from './CategoricalMarkerConfigurationTable';
 import { CategoricalMarkerPreview } from './CategoricalMarkerPreview';
-import Barplot from '@veupathdb/components/lib/plots/Barplot';
+import BarPlot from '@veupathdb/components/lib/plots/BarPlot';
 import { SubsettingClient } from '../../../core/api';
 import { Toggle } from '@veupathdb/coreui';
 import { useUncontrolledSelections } from '../hooks/uncontrolledSelections';
@@ -312,7 +312,7 @@ export function BarPlotMarkerConfigurationMenu({
           <span style={{ fontWeight: 'bold' }}>
             Raw distribution of overall filtered data
           </span>
-          <Barplot
+          <BarPlot
             data={{ series: [barplotData.value] }}
             barLayout="overlay"
             showValues={false}

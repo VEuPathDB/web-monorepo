@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
-import Barplot, { BarplotProps } from '../../plots/Barplot';
-import { FacetedData, BarplotData } from '../../types/plots';
-import FacetedBarplot from '../../plots/facetedPlots/FacetedBarplot';
+import BarPlot, { BarPlotProps } from '../../plots/BarPlot';
+import { FacetedData, BarPlotData } from '../../types/plots';
+import FacetedBarPlot from '../../plots/facetedPlots/FacetedBarPlot';
 import AxisRangeControl from '../../components/plotControls/AxisRangeControl';
 import { NumberRange, NumberOrDateRange } from '../../types/general';
 import { Toggle } from '@veupathdb/coreui';
 
 export default {
-  title: 'Plots/Barplot',
-  component: Barplot,
+  title: 'Plots/BarPlot',
+  component: BarPlot,
 } as Meta;
 
 const dataSet = {
@@ -27,7 +27,7 @@ const dataSet = {
   ],
 };
 
-const Template: Story<BarplotProps> = (args) => <Barplot {...args} />;
+const Template: Story<BarPlotProps> = (args) => <BarPlot {...args} />;
 export const Basic = Template.bind({});
 Basic.args = {
   data: dataSet,
@@ -63,7 +63,7 @@ NoDataOverlay.args = {
  * FACETING
  */
 
-const facetedData: FacetedData<BarplotData> = {
+const facetedData: FacetedData<BarPlotData> = {
   facets: [
     {
       label: 'indoors',
@@ -95,9 +95,9 @@ const facetedData: FacetedData<BarplotData> = {
 };
 
 interface FacetedStoryProps {
-  data: FacetedData<BarplotData>;
-  componentProps: BarplotProps;
-  modalComponentProps: BarplotProps;
+  data: FacetedData<BarPlotData>;
+  componentProps: BarPlotProps;
+  modalComponentProps: BarPlotProps;
 }
 
 const FacetedTemplate: Story<FacetedStoryProps> = ({
@@ -105,7 +105,7 @@ const FacetedTemplate: Story<FacetedStoryProps> = ({
   componentProps,
   modalComponentProps,
 }) => (
-  <FacetedBarplot
+  <FacetedBarPlot
     data={data}
     componentProps={componentProps}
     modalComponentProps={modalComponentProps}
@@ -134,7 +134,7 @@ Faceted.args = {
   },
 };
 
-const TemplateWithSelectedRangeControls: Story<Omit<BarplotProps, 'data'>> = (
+const TemplateWithSelectedRangeControls: Story<Omit<BarPlotProps, 'data'>> = (
   args
 ) => {
   const [dependentAxisRange, setDependentAxisRange] = useState<
@@ -155,7 +155,7 @@ const TemplateWithSelectedRangeControls: Story<Omit<BarplotProps, 'data'>> = (
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <Barplot
+      <BarPlot
         data={dataSet}
         {...args}
         dependentAxisRange={dependentAxisRange}

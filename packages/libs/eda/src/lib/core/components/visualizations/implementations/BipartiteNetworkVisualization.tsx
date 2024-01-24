@@ -10,13 +10,13 @@ import {
 import { RequestOptions } from '../options/types';
 
 // Bipartite network imports
-import BipartiteNetwork, {
-  BipartiteNetworkProps,
+import BipartiteNetworkPlot, {
+  BipartiteNetworkPlotProps,
 } from '@veupathdb/components/lib/plots/BipartiteNetwork';
 import BipartiteNetworkSVG from './selectorIcons/BipartiteNetworkSVG';
 import {
-  BipartiteNetworkRequestParams,
-  CorrelationBipartiteNetworkResponse,
+  BipartiteNetworkPlotRequestParams,
+  CorrelationBipartiteNetworkPlotResponse,
 } from '../../../api/DataClient/types';
 import { twoColorPalette } from '@veupathdb/components/lib/types/plots/addOns';
 import { useCallback, useMemo } from 'react';
@@ -46,8 +46,8 @@ import { FacetedPlotLayout } from '../../layouts/FacetedPlotLayout';
 // end imports
 
 // Defaults
-const DEFAULT_CORRELATION_COEF_THRESHOLD = 0.5; // Ability for user to change this value not yet implemented.
-const DEFAULT_SIGNIFICANCE_THRESHOLD = 0.05; // Ability for user to change this value not yet implemented.
+const DEFAULT_CORRELATION_COEF_THRESHOLD = 0.5;
+const DEFAULT_SIGNIFICANCE_THRESHOLD = 0.05;
 const DEFAULT_LINK_COLOR_DATA = '0';
 const MIN_STROKE_WIDTH = 0.5; // Minimum stroke width for links in the network. Will represent the smallest link weight.
 const MAX_STROKE_WIDTH = 6; // Maximum stroke width for links in the network. Will represent the largest link weight.
@@ -66,16 +66,18 @@ export const bipartiteNetworkVisualization = createVisualizationPlugin({
   createDefaultConfig: createDefaultConfig,
 });
 
-function createDefaultConfig(): BipartiteNetworkConfig {
+function createDefaultConfig(): BipartiteNetworkPlotConfig {
   return {
     correlationCoefThreshold: DEFAULT_CORRELATION_COEF_THRESHOLD,
     significanceThreshold: DEFAULT_SIGNIFICANCE_THRESHOLD,
   };
 }
 
-export type BipartiteNetworkConfig = t.TypeOf<typeof BipartiteNetworkConfig>;
+export type BipartiteNetworkPlotConfig = t.TypeOf<
+  typeof BipartiteNetworkPlotConfig
+>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BipartiteNetworkConfig = t.partial({
+export const BipartiteNetworkPlotConfig = t.partial({
   correlationCoefThreshold: t.number,
   significanceThreshold: t.number,
 });
@@ -84,11 +86,15 @@ interface Options
   extends LayoutOptions,
     TitleOptions,
     LegendOptions,
-    RequestOptions<BipartiteNetworkConfig, {}, BipartiteNetworkRequestParams> {}
+    RequestOptions<
+      BipartiteNetworkPlotConfig,
+      {},
+      BipartiteNetworkPlotRequestParams
+    > {}
 
 // Bipartite Network Visualization
 // The bipartite network takes no input variables, because the received data will complete the plot.
-// Eventually the user will be able to control the significance and correlation coefficient threshold values.
+// The only user controls are the significance and correlation coefficient threshold values.
 function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const {
     options,
@@ -107,7 +113,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
-  // todo  allow this to also be CorrelationAssayAssayConfig
+
   const computationConfiguration:
     | CorrelationAssayMetadataConfig
     | CorrelationAssayAssayConfig = computation.descriptor.configuration as
@@ -116,7 +122,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
 
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,
-    BipartiteNetworkConfig,
+    BipartiteNetworkPlotConfig,
     createDefaultConfig,
     updateConfiguration
   );
@@ -124,7 +130,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   // Get data from the compute job
   const data = usePromise(
     useCallback(async (): Promise<
-      CorrelationBipartiteNetworkResponse | undefined
+      CorrelationBipartiteNetworkPlotResponse | undefined
     > => {
       // Only need to check compute job status and filter status, since there are no
       // viz input variables.
@@ -146,7 +152,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
         computation.descriptor.type,
         visualization.descriptor.type,
         params,
-        CorrelationBipartiteNetworkResponse
+        CorrelationBipartiteNetworkPlotResponse
       );
 
       return response;
@@ -270,8 +276,8 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     [cleanedData]
   );
 
-  const bipartiteNetworkProps: BipartiteNetworkProps = {
-    data: cleanedData ?? undefined,
+  const bipartiteNetworkProps: BipartiteNetworkPlotProps = {
+    network: cleanedData ?? undefined,
     showSpinner: data.pending,
     containerStyles: finalPlotContainerStyles,
     svgStyleOverrides: bipartiteNetworkSVGStyles,
@@ -280,7 +286,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
 
   const plotNode = (
     //@ts-ignore
-    <BipartiteNetwork {...bipartiteNetworkProps} ref={plotRef} />
+    <BipartiteNetworkPlot {...bipartiteNetworkProps} ref={plotRef} />
   );
 
   const controlsNode = <> </>;

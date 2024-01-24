@@ -1,5 +1,5 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
-import { NodeData } from '../../types/plots/network';
+import { NetworkNode } from '../../types/plots/network';
 import { NodeWithLabel } from '../../plots/Network';
 import { Group } from '@visx/group';
 
@@ -9,7 +9,7 @@ export default {
 } as Meta;
 
 interface TemplateProps {
-  data: NodeData;
+  data: NetworkNode;
   onClick: () => void;
   labelPosition?: 'right' | 'left';
   fontWeight?: number;

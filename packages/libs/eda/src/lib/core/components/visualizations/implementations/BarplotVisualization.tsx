@@ -1,9 +1,9 @@
-// load Barplot component
-import Barplot, { BarplotProps } from '@veupathdb/components/lib/plots/Barplot';
-import FacetedBarplot from '@veupathdb/components/lib/plots/facetedPlots/FacetedBarplot';
+// load BarPlot component
+import BarPlot, { BarPlotProps } from '@veupathdb/components/lib/plots/BarPlot';
+import FacetedBarPlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedBarPlot';
 import {
-  BarplotData,
-  BarplotDataSeries,
+  BarPlotData,
+  BarPlotDataSeries,
   FacetedData,
 } from '@veupathdb/components/lib/types/plots';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
@@ -14,10 +14,10 @@ import * as t from 'io-ts';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import PluginError from '../PluginError';
 
-// need to set for Barplot
+// need to set for BarPlot
 import DataClient, {
-  BarplotResponse,
-  BarplotRequestParams,
+  BarPlotResponse,
+  BarPlotRequestParams,
 } from '../../../api/DataClient';
 
 import { usePromise } from '../../../hooks/promise';
@@ -107,9 +107,9 @@ import { ResetButtonCoreUI } from '../../ResetButton';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 
 // export
-export type BarplotDataWithStatistics = (
-  | BarplotData
-  | FacetedData<BarplotData>
+export type BarPlotDataWithStatistics = (
+  | BarPlotData
+  | FacetedData<BarPlotData>
 ) &
   CoverageStatistics;
 
@@ -138,13 +138,13 @@ export const barplotVisualization = createVisualizationPlugin({
 interface Options
   extends LayoutOptions,
     OverlayOptions,
-    RequestOptions<BarplotConfig, {}, BarplotRequestParams> {}
+    RequestOptions<BarPlotConfig, {}, BarPlotRequestParams> {}
 
 function FullscreenComponent(props: VisualizationProps<Options>) {
-  return <BarplotViz {...props} />;
+  return <BarPlotViz {...props} />;
 }
 
-function createDefaultConfig(): BarplotConfig {
+function createDefaultConfig(): BarPlotConfig {
   return {
     dependentAxisLogScale: false,
     valueSpec: 'count',
@@ -157,9 +157,9 @@ type ValueSpec = t.TypeOf<typeof ValueSpec>;
 const ValueSpec = t.keyof({ count: null, proportion: null });
 
 // export
-export type BarplotConfig = t.TypeOf<typeof BarplotConfig>;
+export type BarPlotConfig = t.TypeOf<typeof BarPlotConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const BarplotConfig = t.intersection([
+export const BarPlotConfig = t.intersection([
   t.type({
     dependentAxisLogScale: t.boolean,
     valueSpec: ValueSpec,
@@ -177,7 +177,7 @@ export const BarplotConfig = t.intersection([
   }),
 ]);
 
-function BarplotViz(props: VisualizationProps<Options>) {
+function BarPlotViz(props: VisualizationProps<Options>) {
   const {
     options,
     computation,
@@ -209,7 +209,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
   // use useVizConfig hook
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,
-    BarplotConfig,
+    BarPlotConfig,
     createDefaultConfig,
     updateConfiguration
   );
@@ -259,7 +259,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
 
   // prettier-ignore
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof BarplotConfig, resetCheckedLegendItems?: boolean, resetAxisRanges?: boolean) => (newValue?: ValueType) => {
+    < ValueType,>(key: keyof BarPlotConfig, resetCheckedLegendItems?: boolean, resetAxisRanges?: boolean) => (newValue?: ValueType) => {
       const newPartialConfig = {
         [key]: newValue,
         ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
@@ -391,7 +391,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
   );
 
   const data = usePromise(
-    useCallback(async (): Promise<BarplotDataWithStatistics | undefined> => {
+    useCallback(async (): Promise<BarPlotDataWithStatistics | undefined> => {
       if (
         variable == null ||
         outputEntity == null ||
@@ -431,7 +431,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
           outputEntity
         );
 
-      const response = await dataClient.getBarplot(
+      const response = await dataClient.getBarPlot(
         computation.descriptor.type,
         params
       );
@@ -525,7 +525,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
         )?.data?.series;
 
     return legendData != null
-      ? legendData.map((dataItem: BarplotDataSeries, index: number) => {
+      ? legendData.map((dataItem: BarPlotDataSeries, index: number) => {
           return {
             label: dataItem.name,
             // barplot does not have mode, so set to square
@@ -540,7 +540,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
                 ? true
                 : false
               : data.value?.facets
-                  .map((el: { label: string; data?: BarplotData }) => {
+                  .map((el: { label: string; data?: BarPlotData }) => {
                     // faceted plot: here data.value is full data
                     // need to check whether el.data.series[index] exists
                     return el.data?.series[index]?.value.some(
@@ -660,7 +660,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
 
   // these props are passed to either a single plot
   // or by FacetedPlot to each individual facet plot (where some will be overridden)
-  const plotProps: BarplotProps = {
+  const plotProps: BarPlotProps = {
     containerStyles: !isFaceted(data.value)
       ? finalPlotContainerStyles
       : undefined,
@@ -701,7 +701,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
   const plotNode = (
     <>
       {isFaceted(data.value) ? (
-        <FacetedBarplot
+        <FacetedBarPlot
           data={data.value}
           componentProps={plotProps}
           modalComponentProps={{
@@ -715,7 +715,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
           checkedLegendItems={checkedLegendItems}
         />
       ) : (
-        <Barplot
+        <BarPlot
           data={data.value}
           ref={plotRef}
           // for custom legend: pass checkedLegendItems to PlotlyPlot
@@ -948,16 +948,16 @@ function BarplotViz(props: VisualizationProps<Options>) {
 }
 
 /**
- * Reformat response from Barplot endpoints into complete BarplotData
+ * Reformat response from BarPlot endpoints into complete BarPlotData
  * @param response
- * @returns BarplotData & completeCases & completeCasesAllVars & completeCasesAxesVars
+ * @returns BarPlotData & completeCases & completeCasesAllVars & completeCasesAxesVars
  */
 export function barplotResponseToData(
-  response: BarplotResponse,
+  response: BarPlotResponse,
   variable: Variable,
   overlayVariable?: Variable,
   facetVariable?: Variable
-): BarplotDataWithStatistics {
+): BarPlotDataWithStatistics {
   // group by facet variable value (if only one facet variable in response - there may be up to two in future)
   // BM tried to factor this out into a function in utils/visualization.ts but got bogged down in TS issues
   const facetGroupedResponseData = groupBy(response.barplot.data, (data) =>
@@ -1010,11 +1010,11 @@ export function barplotResponseToData(
     completeCases: response.completeCasesTable,
     completeCasesAllVars: response.barplot.config.completeCasesAllVars,
     completeCasesAxesVars: response.barplot.config.completeCasesAxesVars,
-  } as BarplotDataWithStatistics; // sorry, but seemed necessary!
+  } as BarPlotDataWithStatistics; // sorry, but seemed necessary!
 }
 
 type DataRequestConfig = Pick<
-  BarplotConfig,
+  BarPlotConfig,
   | 'xAxisVariable'
   | 'overlayVariable'
   | 'facetVariable'
@@ -1027,7 +1027,7 @@ function getRequestParams(
   filters: Filter[],
   config: DataRequestConfig,
   outputEntity: StudyEntity
-): BarplotRequestParams {
+): BarPlotRequestParams {
   return {
     studyId,
     filters,
@@ -1046,7 +1046,7 @@ function getRequestParams(
 }
 
 /**
- * reorder the series prop of the BarplotData object so that labels
+ * reorder the series prop of the BarPlotData object so that labels
  * go in the same order as the main variable's vocabulary, and the overlay
  * strata are ordered in that variable's vocabulary order too, with missing values and traces added as undefined
  *
@@ -1054,11 +1054,11 @@ function getRequestParams(
  *
  */
 function reorderData(
-  data: BarplotDataWithStatistics | BarplotData,
+  data: BarPlotDataWithStatistics | BarPlotData,
   labelVocabulary: string[] = [],
   overlayVocabulary: string[] = [],
   facetVocabulary: string[] = []
-): BarplotDataWithStatistics | BarplotData {
+): BarPlotDataWithStatistics | BarPlotData {
   // If faceted, reorder the facets and within the facets
   if (isFaceted(data)) {
     if (facetVocabulary.length === 0) return data; // FIX-ME stop-gap for vocabulary-less numeric variables
@@ -1082,7 +1082,7 @@ function reorderData(
                   facetData,
                   labelVocabulary,
                   overlayVocabulary
-                ) as BarplotData)
+                ) as BarPlotData)
               : undefined,
         };
       }),

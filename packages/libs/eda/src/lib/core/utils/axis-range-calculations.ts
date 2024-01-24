@@ -5,7 +5,7 @@ import {
   HistogramData,
   HistogramDataSeries,
 } from '@veupathdb/components/lib/types/plots';
-import { BarplotDataWithStatistics } from '../components/visualizations/implementations/BarplotVisualization';
+import { BarPlotDataWithStatistics } from '../components/visualizations/implementations/BarPlotVisualization';
 import { BoxplotDataWithCoverage } from '../components/visualizations/implementations/BoxplotVisualization';
 import { min, max, map } from 'lodash';
 import { Variable } from '../types/study';
@@ -74,7 +74,7 @@ export function histogramDefaultDependentAxisMinMax(
 }
 
 export function barplotDefaultDependentAxisMax(
-  data: PromiseHookState<BarplotDataWithStatistics | undefined>
+  data: PromiseHookState<BarPlotDataWithStatistics | undefined>
 ) {
   if (isFaceted(data?.value)) {
     return data?.value?.facets != null
@@ -92,7 +92,7 @@ export function barplotDefaultDependentAxisMax(
 }
 
 export function barplotDefaultDependentAxisMinPos(
-  data: PromiseHookState<BarplotDataWithStatistics | undefined>
+  data: PromiseHookState<BarPlotDataWithStatistics | undefined>
 ) {
   if (isFaceted(data?.value)) {
     return data?.value?.facets != null

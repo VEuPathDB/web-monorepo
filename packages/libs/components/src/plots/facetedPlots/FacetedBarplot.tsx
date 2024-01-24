@@ -1,8 +1,8 @@
-import Barplot, { BarplotProps } from '../Barplot';
+import BarPlot, { BarPlotProps } from '../BarPlot';
 import FacetedPlot, { FacetedPlotPropsWithRef } from '../FacetedPlot';
-import { BarplotData } from '../../types/plots';
+import { BarPlotData } from '../../types/plots';
 
-export const defaultContainerStyles: BarplotProps['containerStyles'] = {
+export const defaultContainerStyles: BarPlotProps['containerStyles'] = {
   height: 300,
   width: 375,
   marginBottom: '0.25rem',
@@ -10,25 +10,25 @@ export const defaultContainerStyles: BarplotProps['containerStyles'] = {
   boxShadow: '1px 1px 4px #00000066',
 };
 
-export const defaultSpacingOptions: BarplotProps['spacingOptions'] = {
+export const defaultSpacingOptions: BarPlotProps['spacingOptions'] = {
   marginRight: 10,
   marginLeft: 10,
   marginBottom: 10,
   marginTop: 50,
 };
 
-type FacetedBarplotProps = Omit<
-  FacetedPlotPropsWithRef<BarplotData, BarplotProps>,
+type FacetedBarPlotProps = Omit<
+  FacetedPlotPropsWithRef<BarPlotData, BarPlotProps>,
   'component'
 >;
 
-const FacetedBarplot = (facetedBarplotProps: FacetedBarplotProps) => {
-  const { componentProps } = facetedBarplotProps;
+const FacetedBarPlot = (facetedBarPlotProps: FacetedBarPlotProps) => {
+  const { componentProps } = facetedBarPlotProps;
 
   return (
     <FacetedPlot
-      component={Barplot}
-      {...facetedBarplotProps}
+      component={BarPlot}
+      {...facetedBarPlotProps}
       componentProps={{
         ...componentProps,
         containerStyles:
@@ -39,4 +39,4 @@ const FacetedBarplot = (facetedBarplotProps: FacetedBarplotProps) => {
   );
 };
 
-export default FacetedBarplot;
+export default FacetedBarPlot;

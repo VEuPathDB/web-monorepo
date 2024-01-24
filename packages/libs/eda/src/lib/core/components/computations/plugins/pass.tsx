@@ -1,4 +1,4 @@
-import { barplotVisualization } from '../../visualizations/implementations/BarplotVisualization';
+import { barplotVisualization } from '../../visualizations/implementations/BarPlotVisualization';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { histogramVisualization } from '../../visualizations/implementations/HistogramVisualization';
 import {

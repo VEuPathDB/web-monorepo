@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { PlotParams } from 'react-plotly.js';
 import {
   BarLayoutAddon,
-  BarplotData,
+  BarPlotData,
   OpacityAddon,
   OpacityDefault,
   OrientationAddon,
@@ -26,8 +26,8 @@ import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
 import { tickSettings } from '../utils/tick-settings';
 
 // in this example, the main variable is 'country'
-export interface BarplotProps
-  extends PlotProps<BarplotData>,
+export interface BarPlotProps
+  extends PlotProps<BarPlotData>,
     BarLayoutAddon<'overlay' | 'stack' | 'group'>,
     OrientationAddon,
     OpacityAddon,
@@ -48,13 +48,13 @@ export interface BarplotProps
   dependentAxisRange?: NumberRange;
 }
 
-const EmptyBarplotData: BarplotData = { series: [] };
+const EmptyBarPlotData: BarPlotData = { series: [] };
 
-/** A Plotly-based Barplot component. */
-const Barplot = makePlotlyPlotComponent(
+/** A Plotly-based BarPlot component. */
+const BarPlot = makePlotlyPlotComponent(
   'BarPlot',
   ({
-    data = EmptyBarplotData,
+    data = EmptyBarPlotData,
     independentAxisLabel,
     dependentAxisLabel,
     showValues = false,
@@ -68,7 +68,7 @@ const Barplot = makePlotlyPlotComponent(
     // truncation
     axisTruncationConfig,
     ...restProps
-  }: BarplotProps) => {
+  }: BarPlotProps) => {
     // set tick label Length for ellipsis
     const maxIndependentTickLabelLength = 20;
 
@@ -261,4 +261,4 @@ const Barplot = makePlotlyPlotComponent(
   }
 );
 
-export default Barplot;
+export default BarPlot;

@@ -1,6 +1,6 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
 import { Graph } from '@visx/network';
-import { NodeData, LinkData, NetworkData } from '../../types/plots/network';
+import { NetworkNode, NetworkLink, Network } from '../../types/plots/network';
 import { Link, NodeWithLabel } from '../../plots/Network';
 
 export default {
@@ -12,7 +12,7 @@ export default {
 const DEFAULT_PLOT_SIZE = 500;
 
 interface TemplateProps {
-  data: NetworkData;
+  data: Network;
 }
 
 // This template is a simple network that highlights our NodeWithLabel and Link components.
@@ -69,7 +69,7 @@ function genNetwork(
   width: number
 ) {
   // Create nodes with random positioning, an id, and optionally a label
-  const nodes: NodeData[] = [...Array(nNodes).keys()].map((i) => {
+  const nodes: NetworkNode[] = [...Array(nNodes).keys()].map((i) => {
     return {
       x: Math.floor(Math.random() * width),
       y: Math.floor(Math.random() * height),
@@ -79,12 +79,12 @@ function genNetwork(
   });
 
   // Create {nNodes} links. Just basic links no weighting or colors for now.
-  const links: LinkData[] = [...Array(nNodes).keys()].map(() => {
+  const links: NetworkLink[] = [...Array(nNodes).keys()].map(() => {
     return {
       source: nodes[Math.floor(Math.random() * nNodes)],
       target: nodes[Math.floor(Math.random() * nNodes)],
     };
   });
 
-  return { nodes, links } as NetworkData;
+  return { nodes, links } as Network;
 }

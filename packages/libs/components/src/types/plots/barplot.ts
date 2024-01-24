@@ -1,4 +1,4 @@
-export type BarplotDataSeries = {
+export type BarPlotDataSeries = {
   /** The name of the data. e.g. 'male' or 'female' */
   name: string;
   /** The color of the data. Optional. */
@@ -11,6 +11,6 @@ export type BarplotDataSeries = {
   label: string[]; // e.g. India, Pakistan, Mali
 };
 
-export type BarplotData = {
-  series: Array<BarplotDataSeries>;
+export type BarPlotData = {
+  series: Array<BarPlotDataSeries>;
 };
