@@ -21,7 +21,6 @@ type Props<T> = {
   setUncontrolledSelections: (v: Set<string>) => void;
   allCategoricalValues: AllValuesDefinition[] | undefined;
   selectedCountsOption: SelectedCountsOption;
-  isAllCategoricalValuesLoading: boolean;
 };
 
 const DEFAULT_SORTING: MesaSortObject = {
@@ -39,7 +38,6 @@ export function CategoricalMarkerConfigurationTable<T>({
   setUncontrolledSelections,
   allCategoricalValues = [],
   selectedCountsOption,
-  isAllCategoricalValuesLoading,
 }: Props<T>) {
   const [sort, setSort] = useState<MesaSortObject>(DEFAULT_SORTING);
   const totalCount = allCategoricalValues?.reduce(
@@ -150,12 +148,20 @@ export function CategoricalMarkerConfigurationTable<T>({
       },
       onMultipleRowDeselect: () => {
         /**
-         * This handler actually deselects all values by setting the table state and the configuration to the "All other labels" value
+         * This handler actually deselects all values by setting the table
+         * state and the configuration to the "All other labels" value.
+         * However, if there are only a few possible values,
+         * we won't show "All other labels".
          */
-        setUncontrolledSelections(new Set([UNSELECTED_TOKEN]));
+        const emptySelection =
+          numberOfAvailableValues < MAXIMUM_ALLOWABLE_VALUES
+            ? []
+            : [UNSELECTED_TOKEN];
+
+        setUncontrolledSelections(new Set(emptySelection));
         onChange({
           ...configuration,
-          selectedValues: [UNSELECTED_TOKEN],
+          selectedValues: emptySelection,
         });
       },
       onSort: (
@@ -218,10 +224,10 @@ export function CategoricalMarkerConfigurationTable<T>({
           maxWidth: '340px',
           maxHeight: 300,
           minHeight: 60,
-          overflow: isAllCategoricalValuesLoading ? 'none' : 'auto',
+          overflow: 'auto',
         }}
       >
-        {isAllCategoricalValuesLoading ? (
+        {tableState.rows.length === 0 ? (
           <Spinner
             size={50}
             styleOverrides={{
