@@ -43,6 +43,7 @@ export async function plotToImage(
     case 'png':
       return domToImage.toPng(plotElement, opts);
     case 'svg': {
+      // The following was adapted from https://stackoverflow.com/a/23218877
       const svgRoot = plotElement.querySelector('svg');
       if (!svgRoot) throw new Error('Plot not ready');
       //get svg source.
