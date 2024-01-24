@@ -41,7 +41,7 @@ function Component(props: Props<StringParam, undefined>) {
       readOnly={parameter.isReadOnly}
       onChange={onParamValueChange}
       required={!parameter.allowEmptyValue}
-      size={40}
+      size={parameter.isNumber ? 20 : 40}
     />
   );
 }
