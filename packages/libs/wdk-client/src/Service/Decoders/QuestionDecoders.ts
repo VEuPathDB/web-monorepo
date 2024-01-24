@@ -95,7 +95,8 @@ const timestampParamDecoder: Decode.Decoder<TimestampParam> = Decode.combine(
 const stringParamDecoder: Decode.Decoder<StringParam> = Decode.combine(
   paramSharedDecoder,
   Decode.field('type', Decode.constant('string')),
-  Decode.field('length', Decode.number)
+  Decode.field('length', Decode.number),
+  Decode.field('isMultiLine', Decode.boolean)
 );
 
 /* FilterParamNew */
