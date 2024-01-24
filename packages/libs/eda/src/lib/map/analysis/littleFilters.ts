@@ -21,7 +21,7 @@ interface useLittleFiltersProps {
 }
 
 // props:
-// regular `filters`, `appState`, `analysisState` and the set of `filterTypes` that you want to use
+// regular `filters`, `appState`, `geoConfigs` and the set of `filterTypes` that you want to use
 //
 // returns:
 // filters : Filter[], // main and designated little filters concatenated together, referentially stable
@@ -85,7 +85,9 @@ export function useMarkerConfigFilter(
               activeMarkerConfiguration.selectedValues.includes(
                 UNSELECTED_TOKEN
               ))) ||
-          type === 'bubble'
+          (type === 'bubble' &&
+            activeMarkerConfiguration.numeratorValues == null &&
+            activeMarkerConfiguration.denominatorValues == null)
         ) {
           return [
             {
@@ -94,7 +96,7 @@ export function useMarkerConfigFilter(
               stringSet: variable.vocabulary,
             },
           ];
-        } else {
+        } else if (type === 'pie' || type === 'barplot') {
           // we have selected values in pie or barplot mode and no "all other values"
           if (
             activeMarkerConfiguration.selectedValues != null &&
@@ -119,6 +121,26 @@ export function useMarkerConfigFilter(
                 stringSet: ['avaluewewillhopefullyneversee'],
               },
             ];
+        } else {
+          // must be bubble with custom proportion configuration
+          // use all the selected values from both
+          const allSelectedValues = Array.from(
+            new Set([
+              ...(activeMarkerConfiguration.numeratorValues ?? []),
+              ...(activeMarkerConfiguration.denominatorValues ?? []),
+            ])
+          );
+
+          return [
+            {
+              type: 'stringSet' as const,
+              ...selectedVariable,
+              stringSet:
+                allSelectedValues.length > 0
+                  ? allSelectedValues
+                  : ['avaluewewillhopefullyneversee'],
+            },
+          ];
         }
       } else if (variable.type === 'number' || variable.type === 'integer') {
         return [
