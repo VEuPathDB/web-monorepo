@@ -227,7 +227,7 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
           animation={defaultAnimation}
           flyToMarkers={
             !(markersData.isFetching || markersData.isPreviousData) &&
-            isApproxSameViewport(props.appState.viewport, defaultViewport)
+            isApproxSameViewport(appState.viewport, defaultViewport)
           }
           selectedMarkers={selectedMarkers}
           setSelectedMarkers={setSelectedMarkers}
@@ -284,7 +284,7 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
     ) : undefined;
 
   const { filters: filtersForFloaters } = useLittleFilters({
-    filters: props.filters,
+    filters,
     appState,
     geoConfigs,
     filterTypes: floaterFilterTypes,
@@ -337,7 +337,7 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
         setActiveVisualizationId={setActiveVisualizationId}
         apps={props.apps}
         plugins={plugins}
-        geoConfigs={props.geoConfigs}
+        geoConfigs={geoConfigs}
         totalCounts={props.totalCounts}
         filteredCounts={props.filteredCounts}
         toggleStarredVariable={toggleStarredVariable}
