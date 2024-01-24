@@ -3,11 +3,11 @@ import React, { useMemo, useState } from 'react';
 import { orderBy } from 'lodash';
 
 import { RealTimeSearchBox } from '@veupathdb/wdk-client/lib/Components';
-import Mesa, { MesaState } from '@veupathdb/wdk-client/lib/Components/Mesa';
+import Mesa, { MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 import {
   MesaColumn,
   MesaSortObject,
-} from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import {
   areTermsInString,
