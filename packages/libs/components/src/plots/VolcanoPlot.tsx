@@ -263,10 +263,9 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     },
   };
 
+  // Relative positioning so that tooltips are positioned correctly (tooltips are positioned absolutely)
   return (
     <>
-      // Relative positioning so that tooltips are positioned correctly
-      (tooltips are positioned absolutely)
       <div
         className={containerClass}
         style={{ ...containerStyles, position: 'relative' }}
