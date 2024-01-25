@@ -159,65 +159,67 @@ function BipartiteNetwork(
   });
 
   return (
-    <div
-      className={containerClass}
-      style={{ width: '100%', ...containerStyles, position: 'relative' }}
-    >
-      <div ref={plotRef} style={{ width: '100%', height: '100%' }}>
-        <svg
-          width={svgStyles.width}
-          height={
-            Math.max(data.column1NodeIDs.length, data.column2NodeIDs.length) *
-              svgStyles.nodeSpacing +
-            svgStyles.topPadding
-          }
-        >
-          {/* Draw names of node colums if they exist */}
-          {column1Name && (
-            <Text
-              x={column1Position}
-              y={svgStyles.topPadding / 2}
-              textAnchor="end"
-              className="BipartiteNetworkColumnTitle"
-            >
-              {column1Name}
-            </Text>
-          )}
-          {column2Name && (
-            <Text
-              x={column2Position}
-              y={svgStyles.topPadding / 2}
-              textAnchor="start"
-              className="BipartiteNetworkColumnTitle"
-            >
-              {column2Name}
-            </Text>
-          )}
+    <>
+      <div
+        className={containerClass}
+        style={{ width: '100%', ...containerStyles, position: 'relative' }}
+      >
+        <div ref={plotRef} style={{ width: '100%', height: '100%' }}>
+          <svg
+            width={svgStyles.width}
+            height={
+              Math.max(data.column1NodeIDs.length, data.column2NodeIDs.length) *
+                svgStyles.nodeSpacing +
+              svgStyles.topPadding
+            }
+          >
+            {/* Draw names of node colums if they exist */}
+            {column1Name && (
+              <Text
+                x={column1Position}
+                y={svgStyles.topPadding / 2}
+                textAnchor="end"
+                className="BipartiteNetworkColumnTitle"
+              >
+                {column1Name}
+              </Text>
+            )}
+            {column2Name && (
+              <Text
+                x={column2Position}
+                y={svgStyles.topPadding / 2}
+                textAnchor="start"
+                className="BipartiteNetworkColumnTitle"
+              >
+                {column2Name}
+              </Text>
+            )}
 
-          <Graph
-            graph={{
-              nodes: nodesByColumnWithCoordinates[0].concat(
-                nodesByColumnWithCoordinates[1]
-              ),
-              links: linksWithCoordinates,
-            }}
-            // Using our Link component so that it uses our nice defaults and
-            // can better expand to handle more complex events (hover and such).
-            linkComponent={({ link }) => <Link link={link} />}
-            nodeComponent={({ node }) => {
-              const nodeWithLabelProps = {
-                node: node,
-                labelPosition: node.labelPosition,
-                truncationLength: labelTruncationLength,
-              };
-              return <NodeWithLabel {...nodeWithLabelProps} />;
-            }}
-          />
-        </svg>
-        {showSpinner && <Spinner />}
+            <Graph
+              graph={{
+                nodes: nodesByColumnWithCoordinates[0].concat(
+                  nodesByColumnWithCoordinates[1]
+                ),
+                links: linksWithCoordinates,
+              }}
+              // Using our Link component so that it uses our nice defaults and
+              // can better expand to handle more complex events (hover and such).
+              linkComponent={({ link }) => <Link link={link} />}
+              nodeComponent={({ node }) => {
+                const nodeWithLabelProps = {
+                  node: node,
+                  labelPosition: node.labelPosition,
+                  truncationLength: labelTruncationLength,
+                };
+                return <NodeWithLabel {...nodeWithLabelProps} />;
+              }}
+            />
+          </svg>
+          {showSpinner && <Spinner />}
+        </div>
       </div>
       <ExportPlotToImageButton toImage={toImage} filename="Network" />
-    </div>
+    </>
   );
 }
 
