@@ -1,5 +1,5 @@
 import { Image } from '@material-ui/icons';
-import { FloatingButton } from '@veupathdb/coreui';
+import { SingleSelect } from '@veupathdb/coreui';
 
 interface ToImageOpts {
   height: number;
@@ -18,7 +18,6 @@ interface Props {
 
 export function ExportPlotToImageButton(props: Props) {
   const { filename = 'plot', toImage } = props;
-  const ext = 'svg';
   return (
     <div
       style={{
@@ -28,19 +27,34 @@ export function ExportPlotToImageButton(props: Props) {
         padding: '.5em 0',
       }}
     >
-      <FloatingButton
-        onPress={() => downloadPng(toImage, filename, ext)}
-        text={`Export to ${ext.toUpperCase()}`}
-        icon={Image}
-        themeRole="primary"
-        textTransform="none"
-        size="small"
+      <SingleSelect
+        items={[
+          {
+            display: 'SVG',
+            value: 'svg',
+          } as const,
+          {
+            display: 'PNG',
+            value: 'png',
+          } as const,
+        ]}
+        value={undefined}
+        onSelect={(value) => {
+          if (value) {
+            downloadImage(toImage, filename, value);
+          }
+        }}
+        buttonDisplayContent={
+          <>
+            <Image style={{ marginRight: '.5ex' }} /> Export plot
+          </>
+        }
       />
     </div>
   );
 }
 
-async function downloadPng(
+async function downloadImage(
   toImage: ToImage,
   filename: string,
   ext: ToImageOpts['format']
