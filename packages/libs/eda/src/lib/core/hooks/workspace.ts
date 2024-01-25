@@ -186,7 +186,6 @@ export function useStudyEntities(filters?: Filter[]) {
                         const filterRange = relevantFilters.reduce(
                           (range, filter) => {
                             if (filter.type === 'numberRange')
-                              // don't handle longitudeRange?
                               return {
                                 min:
                                   filter.min > range.min
@@ -198,6 +197,8 @@ export function useStudyEntities(filters?: Filter[]) {
                                     : range.max,
                               };
                             else return range;
+                            // longitudeRanges are difficult to handle
+                            // and there's no need to modify the range metadata for longitude vars anyway
                           },
                           {
                             min: variable.distributionDefaults.rangeMin,
