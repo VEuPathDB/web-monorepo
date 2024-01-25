@@ -1,6 +1,9 @@
 import { useState } from 'react';
-import Mesa from '@veupathdb/wdk-client/lib/Components/Mesa';
-import { MesaSortObject } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+import Mesa from '@veupathdb/coreui/lib/components/Mesa';
+import {
+  MesaSortObject,
+  MesaStateProps,
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import { AllValuesDefinition } from '../../../core';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
@@ -111,7 +114,10 @@ export function CategoricalMarkerConfigurationTable<T>({
     });
   }
 
-  const tableState = {
+  const tableState: MesaStateProps<
+    AllValuesDefinition,
+    keyof AllValuesDefinition | 'distribution'
+  > = {
     options: {
       isRowSelected: (value: AllValuesDefinition) =>
         uncontrolledSelections.has(value.label),
@@ -142,12 +148,20 @@ export function CategoricalMarkerConfigurationTable<T>({
       },
       onMultipleRowDeselect: () => {
         /**
-         * This handler actually deselects all values by setting the table state and the configuration to the "All other labels" value
+         * This handler actually deselects all values by setting the table
+         * state and the configuration to the "All other labels" value.
+         * However, if there are only a few possible values,
+         * we won't show "All other labels".
          */
-        setUncontrolledSelections(new Set([UNSELECTED_TOKEN]));
+        const emptySelection =
+          numberOfAvailableValues < MAXIMUM_ALLOWABLE_VALUES
+            ? []
+            : [UNSELECTED_TOKEN];
+
+        setUncontrolledSelections(new Set(emptySelection));
         onChange({
           ...configuration,
-          selectedValues: [UNSELECTED_TOKEN],
+          selectedValues: emptySelection,
         });
       },
       onSort: (

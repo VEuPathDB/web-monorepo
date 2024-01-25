@@ -1,7 +1,7 @@
 import {
   MesaColumn,
   MesaSortObject,
-} from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 
 export type DataTableColumnKey<R> = keyof R & string;
 
@@ -12,8 +12,7 @@ export interface DataTableSortObject<R, K extends DataTableColumnKey<R>>
 }
 
 export interface DataTableColumn<R, K extends DataTableColumnKey<R>>
-  extends MesaColumn<K> {
-  renderCell?: (props: { row: R; value: R[K] }) => React.ReactNode;
+  extends MesaColumn<R, K> {
   makeSearchableString?: (value: R[K]) => string;
   makeOrder?: (row: R) => boolean | number | string;
 }

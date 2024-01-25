@@ -65,19 +65,49 @@ export function removeAbsoluteAbundanceVariableCollections(
 /**
  * Returns false for absolute abundance variable collections, based on certain conditions.
  *
- * @param {CollectionVariableTreeNode} variableCollection - The array of variable collections.
- * @return {boolean} The filtered array of variable collections.
+ * @param {CollectionVariableTreeNode} variableCollection - A variable collection.
+ * @return {boolean} True if the collection is not an absolute abundance variable collection.
  */
 export function isNotAbsoluteAbundanceVariableCollection(
   variableCollection: CollectionVariableTreeNode
 ): boolean {
+  // Absolute abundance collections have the following annotations:
+  // 1. normalizationMethod = NULL
+  // 2. isCompositional = true
+  // 3. isProportion = false
   return variableCollection.normalizationMethod
     ? variableCollection.normalizationMethod !== 'NULL' ||
-        // most data we want to keep has been normalized, except pathway coverage data which were leaving apparently
-        // should consider better ways to do this in the future, or if we really want to keep the coverage data.
-        !!variableCollection.displayName?.includes('pathway')
+        !variableCollection.isCompositional ||
+        !!variableCollection.isProportion
     : true;
-  // DIY may not have the normalizationMethod annotations, but we still want those datasets to pass.
+  // DIY may not have these annotations, but we still want those datasets to pass.
+}
+
+/**
+ * Returns true for taxonomic variable collections and false for all others.
+ *
+ * @param {CollectionVariableTreeNode} variableCollection - A variable collection.
+ * @return {boolean}
+ */
+export function isTaxonomicVariableCollection(
+  variableCollection: CollectionVariableTreeNode
+): boolean {
+  return (
+    isNotAbsoluteAbundanceVariableCollection(variableCollection) &&
+    variableCollection.normalizationMethod === 'sumToUnity'
+  );
+}
+
+/**
+ * Returns true for functional genomics (eg pathways, gene abundances) variable collections and false for all others.
+ *
+ * @param {CollectionVariableTreeNode} variableCollection - A variable collection.
+ * @return {boolean}
+ */
+export function isFunctionalCollection(
+  variableCollection: CollectionVariableTreeNode
+): boolean {
+  return variableCollection.normalizationMethod === 'RPK'; // reads per kilobase
 }
 
 /**

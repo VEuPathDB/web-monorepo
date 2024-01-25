@@ -102,16 +102,31 @@ function UserDatasetsWorkspace(props: Props) {
               toDoWhatMessage: `To upload your dataset`,
               extraParagraphContent:
                 Object.entries(props.urlParams).length === 0 ? undefined : (
-                  <div>
-                    Afterwards, you will be taken back to an upload page with
-                    these details:
+                  <div style={{ width: '100%', paddingBottom: 20 }}>
+                    <div style={{ paddingBottom: 5, textAlign: 'center' }}>
+                      Afterwards, you will be taken back to an upload page with
+                      these details:
+                    </div>
+
                     <ul style={{ listStyle: 'none' }}>
                       {Object.entries(props.urlParams).map((e) => (
-                        <li key={e.join(' ')}>
-                          {e[0].charAt(0).toUpperCase() +
-                            e[0].slice(1).replace('_', ' ') +
-                            ': '}
-                          <code>{e[1]}</code>
+                        <li
+                          key={e.join(' ')}
+                          style={{
+                            paddingBottom: 5,
+                            maxWidth: '100%',
+                            overflowX: 'auto',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          <span style={{ fontWeight: 'bold' }}>
+                            {e[0].charAt(0).toUpperCase() +
+                              e[0].slice(1).replace('_', ' ') +
+                              ': '}
+                          </span>
+                          <code style={{ verticalAlign: 'bottom' }}>
+                            {e[1].trim()}
+                          </code>
                         </li>
                       ))}
                     </ul>

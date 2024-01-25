@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
-import { Mesa, MesaState } from '@veupathdb/wdk-client/lib/Components/Mesa';
+import { Mesa, MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 
 import { makeClassifier } from '../UserDatasetUtils';
 import UserDatasetDetail from './UserDatasetDetail';
