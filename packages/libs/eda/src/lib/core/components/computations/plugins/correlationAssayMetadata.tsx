@@ -1,4 +1,5 @@
 import {
+  VariableTreeNode,
   FeaturePrefilterThresholds,
   useFindEntityAndVariableCollection,
 } from '../../..';
@@ -266,6 +267,11 @@ const ASSAY_ENTITIES = [
 // with appropriate metadata. Specifically, the study
 // must have at least one continuous metadata variable that is on a one-to-one path
 // from the assay entity.
+// We made some assumptions to simplify logic.
+// 1. Curated studies have one parent for all assay entities.
+// 2. All assay entities are one-to-one with their parent
+// 3. Studies with at least 2 entities are curated, so we can check for assay entities using our assay ids.
+// 4. Assay entities have no relevant metadata within their own entity.
 // See PR #74 in service-eda-compute for the matching logic on the backend.
 function isEnabledInPicker({
   studyMetadata,
@@ -273,46 +279,69 @@ function isEnabledInPicker({
   if (!studyMetadata) return false;
 
   const entities = entityTreeToArray(studyMetadata.rootEntity);
+
   // Ensure there are collections in this study. Otherwise, disable app
   const studyHasCollections = entities.some(
     (entity) => !!entity.collections?.length
   );
   if (!studyHasCollections) return false;
 
-  // Check for appropriate metadata
-  // Step 1. Find the first assay node. Doesn't need to be any assay in particular just any mbio assay will do
-  const firstAssayEntityIndex = entities.findIndex((entity) =>
-    ASSAY_ENTITIES.includes(entity.id)
-  );
-  if (firstAssayEntityIndex === -1) return false;
+  // Find metadata variables.
+  let metadataVariables: VariableTreeNode[];
+  if (entities.length > 1) {
+    // Then we're in a curated study. So we can expect to find an entity with an id in ASSAY_ENTITIES,
+    // which we can use to limit our metadata search to only appropriate entities.
 
-  // Step 2. Find all ancestor entites of the assayEntity that are on a one-to-one path with assayEntity.
-  // Step 2a. Grab ancestor entities.
-  const ancestorEntities = ancestorEntitiesForEntityId(
-    entities[firstAssayEntityIndex].id,
-    entities
-  ).reverse(); // Reverse so that the ancestorEntities[0] is the assay and higher indices are further up the tree.
-
-  // Step 2b. Trim the ancestorEntities so that we only keep those that are on
-  // a 1:1 path. Once we find an ancestor that is many to one with its parent, we
-  // know we've hit the end of the 1:1 path.
-  const lastOneToOneAncestorIndex = ancestorEntities.findIndex(
-    (entity) => entity.isManyToOneWithParent
-  );
-  const oneToOneAncestors = ancestorEntities.slice(
-    1, // removing the assay itself
-    lastOneToOneAncestorIndex + 1
-  );
-
-  // Step 3. Check if there are any continuous variables in the filtered entities
-  const hasContinuousVariable = oneToOneAncestors
-    .flatMap((entity) => entity.variables)
-    .some(
-      (variable) =>
-        'dataShape' in variable &&
-        variable.dataShape === 'continuous' &&
-        (variable.type === 'number' || variable.type === 'integer') // Support for dates coming soon! Can remove this line once the backend is ready.
+    // Step 1. Find the first assay node. Doesn't need to be any assay in particular just any mbio assay will do
+    const firstAssayEntityIndex = entities.findIndex((entity) =>
+      ASSAY_ENTITIES.includes(entity.id)
     );
+    if (firstAssayEntityIndex === -1) return false;
+
+    // Step 2. Find all ancestor entites of the assayEntity that are on a one-to-one path with assayEntity.
+    // Step 2a. Grab ancestor entities.
+    const ancestorEntities = ancestorEntitiesForEntityId(
+      entities[firstAssayEntityIndex].id,
+      entities
+    ).reverse(); // Reverse so that the ancestorEntities[0] is the assay and higher indices are further up the tree.
+
+    // Step 2b. Trim the ancestorEntities so that we only keep those that are on
+    // a 1:1 path. Once we find an ancestor that is many to one with its parent, we
+    // know we've hit the end of the 1:1 path.
+    const lastOneToOneAncestorIndex = ancestorEntities.findIndex(
+      (entity) => entity.isManyToOneWithParent
+    );
+    const oneToOneAncestors = ancestorEntities.slice(
+      1, // removing the assay itself since we assume assay entities have no metadata
+      lastOneToOneAncestorIndex + 1
+    );
+
+    // Step 3. Grab variables from the ancestors.
+    metadataVariables = oneToOneAncestors.flatMap((entity) => entity.variables);
+  } else {
+    // Then there is only one entity in the study. User datasets only have one entity.
+    // Regardless, in the one entity case we want to consider all variables that are not
+    // part of a collection as candidate metadata variables for this app.
+
+    // Find all variables in any collection, then remove them from the
+    // list of all variables to get a list of metadata variables.
+    const variablesInACollection = entities[0].collections?.flatMap(
+      (collection) => {
+        return collection.memberVariableIds;
+      }
+    );
+    metadataVariables = entities[0].variables.filter((variable) => {
+      return !variablesInACollection?.includes(variable.id);
+    });
+  }
+
+  // Final filter - keep only the variables that are numeric and continuous. Support for dates coming soon!
+  const hasContinuousVariable = metadataVariables.some(
+    (variable) =>
+      'dataShape' in variable &&
+      variable.dataShape === 'continuous' &&
+      (variable.type === 'number' || variable.type === 'integer') // Can remove this line once the backend supports dates.
+  );
 
   return hasContinuousVariable;
 }
