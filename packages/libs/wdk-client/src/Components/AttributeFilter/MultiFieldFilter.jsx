@@ -3,7 +3,7 @@ import naturalSort from 'natural-sort';
 import React from 'react';
 import { makeClassNameHelper } from '../../Utils/ComponentUtils';
 import { Seq } from '../../Utils/IterableUtils';
-import { MesaController as Mesa } from '../../Components/Mesa';
+import { MesaController as Mesa } from '@veupathdb/coreui/lib/components/Mesa';
 import RealTimeSearchBox from '../../Components/SearchBox/RealTimeSearchBox';
 import StackedBar from '../../Components/AttributeFilter/StackedBar';
 import {
