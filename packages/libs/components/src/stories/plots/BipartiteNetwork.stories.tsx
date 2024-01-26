@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, CSSProperties } from 'react';
+import { useState, useEffect, useRef, CSSProperties, ReactNode } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import {
   NodeData,
@@ -10,6 +10,7 @@ import BipartiteNetwork, {
   BipartiteNetworkSVGStyles,
 } from '../../plots/BipartiteNetwork';
 import { twoColorPalette } from '../../types/plots/addOns';
+import { Text } from '@visx/text';
 
 export default {
   title: 'Plots/Network/BipartiteNetwork',
@@ -25,6 +26,7 @@ interface TemplateProps {
   containerStyles?: CSSProperties;
   svgStyleOverrides?: BipartiteNetworkSVGStyles;
   labelTruncationLength?: number;
+  emptyNetworkContent?: ReactNode;
 }
 
 // Template for showcasing our BipartiteNetwork component.
@@ -49,6 +51,7 @@ const Template: Story<TemplateProps> = (args) => {
     containerStyles: args.containerStyles,
     svgStyleOverrides: args.svgStyleOverrides,
     labelTruncationLength: args.labelTruncationLength,
+    emptyNetworkContent: args.emptyNetworkContent,
   };
   return (
     <>
@@ -134,6 +137,19 @@ WithStyle.args = {
   column2Name: 'Column 2',
   svgStyleOverrides: svgStyleOverrides,
   labelTruncationLength: 5,
+};
+
+// With a network that has no nodes or links
+const noNodesData = genBipartiteNetwork(0, 0);
+const emptyNetworkContent = (
+  <Text x={100} y={100}>
+    No nodes or links
+  </Text>
+);
+export const NoNodes = Template.bind({});
+NoNodes.args = {
+  data: noNodesData,
+  emptyNetworkContent,
 };
 
 // Gerenate a bipartite network with a given number of nodes and random edges
