@@ -73,12 +73,9 @@ export function useMarkerConfigFilter(
     const { selectedVariable, type } = activeMarkerConfiguration;
     const { variable } = findEntityAndVariable(selectedVariable) ?? {};
     if (variable != null) {
-      if (
-        (variable.dataShape === 'categorical' ||
-          variable.dataShape === 'binary') &&
-        variable.vocabulary != null
-      ) {
-        // are the 'true categorical' modes have no user-selections or are in 'all other values' mode?
+      if (variable.dataShape !== 'continuous' && variable.vocabulary != null) {
+        // if markers configuration is empty (equivalent to all values selected)
+        // or if the "all other values" value is active (aka UNSELECTED_TOKEN)
         if (
           ((type === 'pie' || type === 'barplot') &&
             (activeMarkerConfiguration.selectedValues == null ||
