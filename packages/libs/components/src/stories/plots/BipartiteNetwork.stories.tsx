@@ -193,7 +193,6 @@ function genBipartiteNetwork(
   return {
     nodes,
     links,
-    column1NodeIDs,
-    column2NodeIDs,
+    partitions: [{ nodeIds: column1NodeIDs }, { nodeIds: column2NodeIDs }],
   };
 }

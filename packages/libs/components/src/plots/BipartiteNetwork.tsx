@@ -49,8 +49,10 @@ export interface BipartiteNetworkProps {
 
 // Show a few gray nodes when there is no real data.
 const EmptyBipartiteNetworkData: BipartiteNetworkData = {
-  column1NodeIDs: ['0', '1', '2', '3', '4', '5'],
-  column2NodeIDs: ['6', '7', '8'],
+  partitions: [
+    { nodeIds: ['0', '1', '2', '3', '4', '5'] },
+    { nodeIds: ['6', '7', '8'] },
+  ],
   nodes: [...Array(9).keys()].map((item) => ({
     id: item.toString(),
     color: gray[100],
@@ -107,18 +109,14 @@ function BipartiteNetwork(
   // nodes based on their column, then will use their order in the column
   // (given by columnXNodeIDs) to finally assign the coordinates.
   const nodesByColumn: NodeData[][] = partition(data.nodes, (node) => {
-    return data.column1NodeIDs.includes(node.id);
+    return data.partitions[0].nodeIds.includes(node.id);
   });
 
   const nodesByColumnWithCoordinates = nodesByColumn.map(
     (column, columnIndex) => {
       const columnWithCoordinates = column.map((node) => {
         // Find the index of the node in the column
-        type ColumnName = keyof typeof data;
-        const columnName = ('column' +
-          (columnIndex + 1) +
-          'NodeIDs') as ColumnName;
-        const indexInColumn = data[columnName].findIndex(
+        const indexInColumn = data.partitions[columnIndex].nodeIds.findIndex(
           (id) => id === node.id
         );
 
@@ -168,7 +166,10 @@ function BipartiteNetwork(
           <svg
             width={svgStyles.width}
             height={
-              Math.max(data.column1NodeIDs.length, data.column2NodeIDs.length) *
+              Math.max(
+                data.partitions[1].nodeIds.length,
+                data.partitions[0].nodeIds.length
+              ) *
                 svgStyles.nodeSpacing +
               svgStyles.topPadding
             }
