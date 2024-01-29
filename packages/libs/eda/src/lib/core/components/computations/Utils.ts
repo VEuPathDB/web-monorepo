@@ -71,10 +71,16 @@ export function removeAbsoluteAbundanceVariableCollections(
 export function isNotAbsoluteAbundanceVariableCollection(
   variableCollection: CollectionVariableTreeNode
 ): boolean {
-  return variableCollection.displayName
-    ? !variableCollection.displayName.includes('absolute abundance')
+  // Absolute abundance collections have the following annotations:
+  // 1. normalizationMethod = NULL
+  // 2. isCompositional = true
+  // 3. isProportion = false
+  return variableCollection.normalizationMethod
+    ? variableCollection.normalizationMethod !== 'NULL' ||
+        !variableCollection.isCompositional ||
+        !!variableCollection.isProportion
     : true;
-  // DIY may not have the normalizationMethod annotations, but we still want those datasets to pass.
+  // DIY may not have these annotations, but we still want those datasets to pass.
 }
 
 /**

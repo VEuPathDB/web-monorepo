@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { DARKEST_GRAY, MEDIUM_GRAY } from '../../constants/colors';
 import { NumberOrDate } from '../../types/general';
 import { debounce } from 'lodash';
+import { warning } from '@veupathdb/coreui/lib/definitions/colors';
 
 type BaseProps<M extends NumberOrDate> = {
   /** Externally controlled value. */
@@ -32,6 +33,8 @@ type BaseProps<M extends NumberOrDate> = {
   displayRangeViolationWarnings?: boolean;
   /** Disabled? Default is false */
   disabled?: boolean;
+  /** Style the Text Field with the warning color and bold stroke */
+  applyWarningStyles?: boolean;
 };
 
 export type NumberInputProps = BaseProps<number> & { step?: number };
@@ -82,6 +85,7 @@ function BaseInput({
   containerStyles,
   displayRangeViolationWarnings = true,
   disabled = false,
+  applyWarningStyles = false,
   ...props
 }: BaseInputProps) {
   if (validator && (required || minValue != null || maxValue != null))
@@ -103,6 +107,12 @@ function BaseInput({
       // set width for date
       width: valueType === 'date' ? 165 : '',
     },
+    notchedOutline: applyWarningStyles
+      ? {
+          borderColor: warning[500],
+          borderWidth: 3,
+        }
+      : {},
   })();
 
   const debouncedOnChange = useMemo(

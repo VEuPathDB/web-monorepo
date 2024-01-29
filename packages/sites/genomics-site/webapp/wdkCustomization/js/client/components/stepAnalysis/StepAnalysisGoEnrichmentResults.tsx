@@ -93,7 +93,7 @@ const goEnrichmentResultColumns = [
     sortable: true,
     sortType: 'number',
   },
-] as ColumnSettings[];
+] as ColumnSettings<any>[];
 
 const goIdRenderFactory =
   (goTermBaseUrl: string) =>

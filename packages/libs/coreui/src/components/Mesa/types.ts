@@ -1,8 +1,14 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, ReactElement, ReactNode } from 'react';
 
-export interface MesaStateProps<Row, Key extends string> {
+type DefaultColumnKey<Row> = Extract<keyof Row, string>;
+
+export interface MesaStateProps<
+  Row,
+  Key = DefaultColumnKey<Row>,
+  Value = DefaultColumnValue<Row, Key>
+> {
   rows: Row[];
-  columns: MesaColumn<Key>[];
+  columns: MesaColumn<Row, Key, Value>[];
   filteredRows?: Row[];
   uiState?: {
     sort?: MesaSortObject;
@@ -35,33 +41,58 @@ export interface MesaStateProps<Row, Key extends string> {
     selectedNoun?: string;
     selectedPluralNoun?: string;
     searchPlaceholder?: string;
-    deriveRowClassName?: unknown; // a function
-    renderEmptyState?: unknown; // a function
-    isRowSelected?: unknown; // a callback function
+    deriveRowClassName?: (row: Row) => string | undefined;
+    renderEmptyState?: () => ReactNode;
+    isRowSelected?: (row: Row) => boolean;
   };
-  actions?: MesaAction[];
+  actions?: MesaAction<Row, Key>[];
   eventHandlers?: {
-    onSearch?: unknown;
-    onSort?: unknown;
-    onSortChange?: unknown;
-    onPageChange?: unknown;
-    onRowsPerPageChange?: unknown;
-    onRowSelect?: unknown;
-    onRowDeselect?: unknown;
-    onMultipleRowSelect?: unknown;
-    onMultipleRowDeselect?: unknown;
-    onColumnReorder?: unknown;
+    onSearch?: (query: string) => void;
+    onSort?: (
+      column: MesaColumn<Row, Key>,
+      direction: MesaSortObject['direction']
+    ) => void;
+    onPageChange?: (page: number) => void;
+    onRowsPerPageChange?: (numRows: number) => void;
+    onRowSelect?: (row: Row) => void;
+    onRowDeselect?: (row: Row) => void;
+    onMultipleRowSelect?: (rows: Row[]) => void;
+    onMultipleRowDeselect?: (rows: Row[]) => void;
+    onColumnReorder?: (columnKey: Key, columnIndex: number) => void;
   };
 }
 
-interface MesaAction {
+interface MesaAction<Row, Key = DefaultColumnKey<Row>> {
   selectionRequired?: boolean;
   element: React.ReactNode;
-  callback?: unknown;
-  handler?: unknown;
+  callback?: (row: Row, columns: MesaColumn<Row, Key>[]) => void;
+  handler?: (
+    selection: Row[],
+    columns: MesaColumn<Row, Key>[],
+    rows: Row[]
+  ) => void;
 }
 
-export interface MesaColumn<Key extends string = string> {
+type DefaultColumnValue<Row, Key> = Key extends keyof Row ? Row[Key] : unknown;
+
+interface CellProps<
+  Row,
+  Key = DefaultColumnKey<Row>,
+  Value = DefaultColumnValue<Row, Key>
+> {
+  key: Key;
+  value: Value;
+  row: Row;
+  column: MesaColumn<Row, Key>;
+  rowIndex: number;
+  columnIndex: number;
+}
+
+export interface MesaColumn<
+  Row,
+  Key = DefaultColumnKey<Row>,
+  Value = DefaultColumnValue<Row, Key>
+> {
   key: Key;
   name?: string;
   type?: string;
@@ -71,12 +102,27 @@ export interface MesaColumn<Key extends string = string> {
   resizeable?: boolean;
   moveable?: boolean;
   helpText?: string;
-  style?: any;
+  style?: CSSProperties;
   className?: string;
-  width?: any;
-  renderCell?: unknown; // a function
-  renderHeading?: unknown; // a function
-  wrapCustomHeadings?: unknown; // a function
+  width?: CSSProperties['width'];
+  getValue?: (props: { row: Row; index: number }) => Value;
+  renderCell?: (cellProps: CellProps<Row, Key, Value>) => ReactNode;
+  renderHeading?:
+    | boolean
+    | ((
+        column: MesaColumn<Row, Key>,
+        columnIndex: number,
+        components: {
+          SortTrigger: ReactElement;
+          HelpTrigger: ReactElement;
+          ClickBoundary: ReactElement;
+        }
+      ) => ReactNode);
+  wrapCustomHeadings?: (props: {
+    column: MesaColumn<Row, Key, Value>;
+    columnIndex: number;
+    headerRowIndex: number;
+  }) => boolean;
 }
 
 export interface MesaSortObject<Key extends string = string> {

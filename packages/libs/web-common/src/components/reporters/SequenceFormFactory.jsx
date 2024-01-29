@@ -20,7 +20,7 @@ const SINGLE_TRANSCRIPT_VIEW_FILTER_VALUE = {
 const util = Object.assign({}, ComponentUtils, ReporterUtils);
 
 const deflineFieldOptions = [
-  { value: 'gene_id', display: 'Gene ID', disabled: true },
+  { value: 'gene_id', display: 'Unique ID', disabled: true },
   { value: 'organism', display: 'Organism' },
   { value: 'description', display: 'Description' },
   { value: 'position', display: 'Location' },
