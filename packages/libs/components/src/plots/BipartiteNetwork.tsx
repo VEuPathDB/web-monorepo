@@ -27,10 +27,10 @@ export interface BipartiteNetworkSVGStyles {
 export interface BipartiteNetworkProps {
   /** Bipartite network data */
   data: BipartiteNetworkData | undefined;
-  /** Name of column 1 */
-  column1Name?: string;
-  /** Name of column 2 */
-  column2Name?: string;
+  /** Name of partition 1 */
+  partition1Name?: string;
+  /** Name of partition 2 */
+  partition2Name?: string;
   /** styling for the plot's container */
   containerStyles?: CSSProperties;
   /** bipartite network-specific styling for the svg itself. These
@@ -61,16 +61,16 @@ const EmptyBipartiteNetworkData: BipartiteNetworkData = {
   links: [],
 };
 
-// The BipartiteNetwork function draws a two-column network using visx. This component handles
-// the positioning of each column, and consequently the positioning of nodes and links.
+// The BipartiteNetwork function takes a network w two partitions of nodes and draws those partitions as columns.
+// This component handles the positioning of each column, and consequently the positioning of nodes and links.
 function BipartiteNetwork(
   props: BipartiteNetworkProps,
   ref: Ref<HTMLDivElement>
 ) {
   const {
     data = EmptyBipartiteNetworkData,
-    column1Name,
-    column2Name,
+    partition1Name,
+    partition2Name,
     containerStyles,
     svgStyleOverrides,
     containerClass = 'web-components-plot',
@@ -106,39 +106,39 @@ function BipartiteNetwork(
   const column2Position = svgStyles.width - svgStyles.columnPadding;
 
   // In order to assign coordinates to each node, we'll separate the
-  // nodes based on their column, then will use their order in the column
-  // (given by columnXNodeIDs) to finally assign the coordinates.
-  const nodesByColumn: NodeData[][] = partition(data.nodes, (node) => {
+  // nodes based on their partition, then will use their order in the partition
+  // (given by partitionXNodeIDs) to finally assign the coordinates.
+  const nodesByPartition: NodeData[][] = partition(data.nodes, (node) => {
     return data.partitions[0].nodeIds.includes(node.id);
   });
 
-  const nodesByColumnWithCoordinates = nodesByColumn.map(
-    (column, columnIndex) => {
-      const columnWithCoordinates = column.map((node) => {
-        // Find the index of the node in the column
-        const indexInColumn = data.partitions[columnIndex].nodeIds.findIndex(
-          (id) => id === node.id
-        );
+  const nodesByPartitionWithCoordinates = nodesByPartition.map(
+    (partition, partitionIndex) => {
+      const partitionWithCoordinates = partition.map((node) => {
+        // Find the index of the node in the partition
+        const indexInPartition = data.partitions[
+          partitionIndex
+        ].nodeIds.findIndex((id) => id === node.id);
 
         return {
-          // columnIndex of 0 refers to the left-column nodes whereas 1 refers to right-column nodes
-          x: columnIndex === 0 ? column1Position : column2Position,
-          y: svgStyles.topPadding + svgStyles.nodeSpacing * indexInColumn,
+          // partitionIndex of 0 refers to the left-column nodes whereas 1 refers to right-column nodes
+          x: partitionIndex === 0 ? column1Position : column2Position,
+          y: svgStyles.topPadding + svgStyles.nodeSpacing * indexInPartition,
           labelPosition:
-            columnIndex === 0 ? 'left' : ('right' as LabelPosition),
+            partitionIndex === 0 ? 'left' : ('right' as LabelPosition),
           ...node,
         };
       });
-      return columnWithCoordinates;
+      return partitionWithCoordinates;
     }
   );
 
   // Assign coordinates to links based on the newly created node coordinates
   const linksWithCoordinates = data.links.map((link) => {
-    const sourceNode = nodesByColumnWithCoordinates[0].find(
+    const sourceNode = nodesByPartitionWithCoordinates[0].find(
       (node) => node.id === link.source.id
     );
-    const targetNode = nodesByColumnWithCoordinates[1].find(
+    const targetNode = nodesByPartitionWithCoordinates[1].find(
       (node) => node.id === link.target.id
     );
     return {
@@ -162,7 +162,7 @@ function BipartiteNetwork(
       style={{ width: '100%', ...containerStyles, position: 'relative' }}
     >
       <div ref={plotRef} style={{ width: '100%', height: '100%' }}>
-        {nodesByColumnWithCoordinates[0].length > 0 ? (
+        {nodesByPartitionWithCoordinates[0].length > 0 ? (
           <svg
             width={svgStyles.width}
             height={
@@ -175,31 +175,31 @@ function BipartiteNetwork(
             }
           >
             {/* Draw names of node colums if they exist */}
-            {column1Name && (
+            {partition1Name && (
               <Text
                 x={column1Position}
                 y={svgStyles.topPadding / 2}
                 textAnchor="end"
-                className="BipartiteNetworkColumnTitle"
+                className="BipartiteNetworkPartitionTitle"
               >
-                {column1Name}
+                {partition1Name}
               </Text>
             )}
-            {column2Name && (
+            {partition2Name && (
               <Text
                 x={column2Position}
                 y={svgStyles.topPadding / 2}
                 textAnchor="start"
-                className="BipartiteNetworkColumnTitle"
+                className="BipartiteNetworkPartitionTitle"
               >
-                {column2Name}
+                {partition2Name}
               </Text>
             )}
 
             <Graph
               graph={{
-                nodes: nodesByColumnWithCoordinates[0].concat(
-                  nodesByColumnWithCoordinates[1]
+                nodes: nodesByPartitionWithCoordinates[0].concat(
+                  nodesByPartitionWithCoordinates[1]
                 ),
                 links: linksWithCoordinates,
               }}
