@@ -65,6 +65,8 @@ interface ParameterBase extends NamedModelEntity {
 export interface StringParam extends ParameterBase {
   type: 'string';
   length: number;
+  isMultiLine: boolean;
+  isNumber: boolean;
 }
 
 export interface TimestampParam extends ParameterBase {

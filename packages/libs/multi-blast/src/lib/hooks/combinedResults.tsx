@@ -236,7 +236,7 @@ function useCombinedResultColumns(
   jobId: string,
   organismToProject: Record<string, string>,
   projectUrls: Record<string, string>
-): MesaColumn<keyof CombinedResultRow>[] {
+): MesaColumn<CombinedResultRow>[] {
   const targetMetadataByDataType = useContext(TargetMetadataByDataType);
 
   const recordLinkUrlSegment =

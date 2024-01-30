@@ -21,7 +21,7 @@ const simpleFilterPredicateFactory =
 interface CommonResultTableProps<R> {
   emptyResultMessage: string;
   rows: R[];
-  columns: ColumnSettings[];
+  columns: ColumnSettings<R>[];
   initialSearchQuery?: string;
   initialSortColumnKey?: string;
   initialSortDirection?: 'asc' | 'desc';
@@ -32,7 +32,7 @@ interface CommonResultTableProps<R> {
   searchBoxHeader?: string;
 }
 
-export interface ColumnSettings extends MesaColumn {
+export interface ColumnSettings<Row> extends MesaColumn<Row> {
   type?: 'number' | 'text' | 'html';
   sortType?: 'text' | 'number' | 'htmlText' | 'htmlNumber';
 }

@@ -8,6 +8,7 @@ import {
 } from '@veupathdb/wdk-client/lib/Components/Shared/CommonResultTable';
 import { GenomeViewSequence } from '../../types/genomeSummaryViewTypes';
 import {
+  GenomeViewFeatureModel,
   GenomeViewRegionModel,
   useIsPortalSite,
 } from '../../util/GenomeSummaryViewUtils';
@@ -53,7 +54,9 @@ const featureColumnsFactory = defaultMemoize(
       //   sortable: true,
       //   sortType: 'text'
       // }
-    ].filter((column) => typeof column !== 'boolean') as ColumnSettings[]
+    ].filter(
+      (column) => typeof column !== 'boolean'
+    ) as ColumnSettings<GenomeViewFeatureModel>[]
 );
 
 interface FeatureTableProps {
