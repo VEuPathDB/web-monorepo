@@ -42,7 +42,8 @@ export interface MapTypeMapLayerProps {
   // selectedMarkers and its state function
   selectedMarkers?: string[];
   setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
-  openPanel?: () => void;
+  // HeaderButtons component
+  headerButtons?: React.FC;
 }
 
 /**

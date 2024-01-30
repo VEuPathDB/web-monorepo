@@ -234,7 +234,7 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
     geoConfigs,
     appState,
     updateConfiguration,
-    openPanel,
+    headerButtons,
   } = props;
   const configuration = props.configuration as BubbleMarkerConfiguration;
 
@@ -301,8 +301,7 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
         panelTitle={overlayVariable?.displayName}
         zIndex={3}
         defaultPosition={{ x: window.innerWidth, y: 420 }}
-        isSidePanelExpanded={appState.isSidePanelExpanded}
-        openPanel={openPanel}
+        headerButtons={headerButtons}
       >
         <div style={{ padding: '5px 10px' }}>
           {invalidProportionMessage ?? (

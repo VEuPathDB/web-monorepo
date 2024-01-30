@@ -1,11 +1,4 @@
-import {
-  CSSProperties,
-  ReactNode,
-  useEffect,
-  useState,
-  useMemo,
-  useCallback,
-} from 'react';
+import { CSSProperties, ReactNode, useEffect, useState } from 'react';
 import Draggable, { DraggableEvent, DraggableData } from 'react-draggable';
 import { css } from '@emotion/react';
 import useResizeObserver from 'use-resize-observer';
@@ -14,8 +7,6 @@ import { screenReaderOnly } from '../../../styleDefinitions/typography';
 import { useUITheme } from '../../theming';
 import DismissButton from '../../notifications/DismissButton';
 import { H6 } from '../../typography';
-import SettingsButton from './SettingsButton';
-import useSnackbar from '../../notifications/useSnackbar';
 
 export type DraggablePanelCoordinatePair = {
   x: number;
@@ -65,26 +56,27 @@ export type DraggablePanelProps = {
   onPanelDismiss?: () => void;
   /** This event fires when the user resizes the height or width of the panel. */
   onPanelResize?: (heightAndWidth: HeightAndWidthInPixels) => void;
-  /** check if side panel is open and open side panel */
-  isSidePanelExpanded?: boolean;
-  openPanel?: () => void;
+  /** HeaderButtons component for gear icon at SAM Legend */
+  headerButtons?: React.FC;
 };
 
-export default function DraggablePanel({
-  confineToParentContainer,
-  children,
-  defaultPosition = { x: 0, y: 0 },
-  isOpen,
-  onDragComplete,
-  onDragStart,
-  onPanelDismiss,
-  onPanelResize,
-  panelTitle,
-  showPanelTitle,
-  styleOverrides,
-  isSidePanelExpanded,
-  openPanel,
-}: DraggablePanelProps) {
+export default function DraggablePanel(props: DraggablePanelProps) {
+  const {
+    confineToParentContainer,
+    children,
+    defaultPosition = { x: 0, y: 0 },
+    isOpen,
+    onDragComplete,
+    onDragStart,
+    onPanelDismiss,
+    onPanelResize,
+    panelTitle,
+    showPanelTitle,
+    styleOverrides,
+    // make the first letter capital as headerButtons is a component
+    headerButtons: HeaderButtons,
+  } = props;
+
   const theme = useUITheme();
 
   const [wasDragged, setWasDragged] = useState<boolean>(false);
@@ -137,9 +129,6 @@ export default function DraggablePanel({
 
   // set maximum text length for the panel title
   const maxPanelTitleTextLength = 25;
-
-  // snackbar
-  const { enqueueSnackbar } = useSnackbar();
 
   return (
     <Draggable
@@ -234,30 +223,7 @@ export default function DraggablePanel({
             </div>
           )}
           {/* add gear button */}
-          {openPanel != null && (
-            <div
-              css={css`
-                margin-left: auto;
-              `}
-            >
-              {/* <button onClick={openPanel} >O</button> */}
-              <SettingsButton
-                buttonText={`Settings ${panelTitle}`}
-                tooltipText={'Open marker configuration panel'}
-                size={20}
-                // with snackbar
-                onClick={
-                  isSidePanelExpanded
-                    ? () =>
-                        enqueueSnackbar(
-                          'Marker configuration panel is already open',
-                          { variant: 'warning' }
-                        )
-                    : openPanel
-                }
-              />
-            </div>
-          )}
+          {HeaderButtons != null && <HeaderButtons />}
         </div>
         <div
           css={css`

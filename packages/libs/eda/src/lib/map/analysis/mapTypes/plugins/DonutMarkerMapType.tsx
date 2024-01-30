@@ -345,7 +345,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     geoConfigs,
     appState,
     updateConfiguration,
-    openPanel,
+    headerButtons,
   } = props;
   const {
     selectedVariable,
@@ -390,8 +390,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
       <DraggableLegendPanel
         panelTitle={overlayVariable?.displayName}
         zIndex={3}
-        isSidePanelExpanded={appState.isSidePanelExpanded}
-        openPanel={openPanel}
+        headerButtons={headerButtons}
       >
         <div style={{ padding: '5px 10px' }}>
           {noDataError ?? (
