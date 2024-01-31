@@ -228,7 +228,14 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
 }
 
 function BubbleLegends(props: MapTypeMapLayerProps) {
-  const { studyId, filters, geoConfigs, appState, updateConfiguration } = props;
+  const {
+    studyId,
+    filters,
+    geoConfigs,
+    appState,
+    updateConfiguration,
+    headerButtons,
+  } = props;
   const configuration = props.configuration as BubbleMarkerConfiguration;
 
   const { isValidProportion } = useOverlayConfig({
@@ -294,6 +301,7 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
         panelTitle={overlayVariable?.displayName}
         zIndex={3}
         defaultPosition={{ x: window.innerWidth, y: 420 }}
+        headerButtons={headerButtons}
       >
         <div style={{ padding: '5px 10px' }}>
           {invalidProportionMessage ?? (
@@ -778,5 +786,5 @@ function useMarkerData(props: DataProps) {
         boundsZoomLevel,
       },
     };
-  }, [rawMarkersResult, legendDataResult.data, overlayConfig]);
+  }, [rawMarkersResult, legendDataResult.data, overlayConfig, boundsZoomLevel]);
 }
