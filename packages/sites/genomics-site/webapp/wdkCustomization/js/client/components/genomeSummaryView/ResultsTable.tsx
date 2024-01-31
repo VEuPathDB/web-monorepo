@@ -78,7 +78,7 @@ const resultColumnsFactory = defaultMemoize(
         ),
         sortable: false,
       },
-    ] as ColumnSettings[]
+    ] as ColumnSettings<GenomeViewSequenceModel>[]
 );
 
 const locationCellRenderFactory =

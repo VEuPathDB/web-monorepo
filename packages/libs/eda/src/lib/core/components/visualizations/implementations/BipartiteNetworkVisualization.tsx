@@ -43,6 +43,7 @@ import { NumberInput } from '@veupathdb/components/lib/components/widgets/Number
 import { NumberOrDate } from '@veupathdb/components/lib/types/general';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { FacetedPlotLayout } from '../../layouts/FacetedPlotLayout';
+import { H6 } from '@veupathdb/coreui';
 // end imports
 
 // Defaults
@@ -107,7 +108,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
-  // todo  allow this to also be CorrelationAssayAssayConfig
+
   const computationConfiguration:
     | CorrelationAssayMetadataConfig
     | CorrelationAssayAssayConfig = computation.descriptor.configuration as
@@ -270,12 +271,32 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     [cleanedData]
   );
 
+  // Have the bpnet component say "No nodes" or whatev and have an extra
+  // prop called errorMessage or something that displays when there are no nodes.
+  // that error message can say "your thresholds of blah and blah are too high, change them"
+  const emptyNetworkContent = (
+    <div
+      style={{
+        height: 400,
+        textAlign: 'center',
+        top: '50%',
+        transform: 'translateY(40%)',
+      }}
+    >
+      <H6>No correlation results pass the configured thresholds.</H6>
+      <br />
+      <br />
+      Adjust the correlation coefficient and p-value thresholds to continue.
+    </div>
+  );
+
   const bipartiteNetworkProps: BipartiteNetworkProps = {
     data: cleanedData ?? undefined,
     showSpinner: data.pending,
     containerStyles: finalPlotContainerStyles,
     svgStyleOverrides: bipartiteNetworkSVGStyles,
     labelTruncationLength: 40,
+    emptyNetworkContent,
   };
 
   const plotNode = (
@@ -354,7 +375,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     },
   ];
 
-  const legendNode = cleanedData && (
+  const legendNode = cleanedData && cleanedData.nodes.length > 0 && (
     <div className="MultiLegendContaner">
       <PlotLegend
         type="list"
@@ -395,8 +416,8 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
               vizConfig.correlationCoefThreshold ??
               DEFAULT_CORRELATION_COEF_THRESHOLD
             }
-            containerStyles={{ marginRight: 10 }}
             step={0.05}
+            applyWarningStyles={cleanedData && cleanedData.nodes.length === 0}
           />
 
           <NumberInput
@@ -411,6 +432,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
             }
             containerStyles={{ marginLeft: 10 }}
             step={0.001}
+            applyWarningStyles={cleanedData && cleanedData.nodes.length === 0}
           />
         </LabelledGroup>
       )}

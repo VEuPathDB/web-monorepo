@@ -10,7 +10,7 @@ import './StepAnalysisEnrichmentResult.scss';
 import { Tooltip } from '@veupathdb/wdk-client/lib/Components';
 
 const baseColumnSettings: Pick<
-  ColumnSettings,
+  ColumnSettings<any>,
   'key' | 'renderCell' | 'sortable' | 'sortType' | 'type'
 >[] = [
   {
@@ -79,7 +79,7 @@ const baseColumnSettings: Pick<
 const hpiGeneListResultColumns = (
   headerRow: any,
   headerDescription: any
-): ColumnSettings[] =>
+): ColumnSettings<any>[] =>
   baseColumnSettings.map((column) => ({
     ...column,
     name: headerRow[column.key],

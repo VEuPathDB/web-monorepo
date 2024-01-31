@@ -17,7 +17,7 @@ import {
 } from '../utils/allJobs';
 import { BlastApi } from '../utils/api';
 
-export function useAllJobsColumns(): MesaColumn<keyof JobRow>[] {
+export function useAllJobsColumns(): MesaColumn<JobRow>[] {
   return useMemo(
     () => [
       {
