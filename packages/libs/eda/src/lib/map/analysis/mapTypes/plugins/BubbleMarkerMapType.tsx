@@ -786,5 +786,5 @@ function useMarkerData(props: DataProps) {
         boundsZoomLevel,
       },
     };
-  }, [rawMarkersResult, legendDataResult.data, overlayConfig]);
+  }, [rawMarkersResult, legendDataResult.data, overlayConfig, boundsZoomLevel]);
 }

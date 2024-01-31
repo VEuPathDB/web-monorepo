@@ -768,24 +768,28 @@ function MapAnalysisImpl(props: ImplProps) {
   // snackbar
   const { enqueueSnackbar } = useSnackbar();
 
-  // setting button behavior at Legend
-  const openPanelBehavior = () => {
-    // for barplot, activeSideManuId is based on 'bar', but activeMarkerConfigurationType is 'barplot'
-    setActiveSideMenuId(
-      'single-variable-' +
-        (appState.activeMarkerConfigurationType === 'barplot'
-          ? 'bar'
-          : appState.activeMarkerConfigurationType)
-    );
-    setIsSidePanelExpanded(true);
-  };
-
   const openPanel = useCallback(() => {
-    appState.isSidePanelExpanded
-      ? enqueueSnackbar('Marker configuration panel is already open', {
-          variant: 'info',
-        })
-      : openPanelBehavior();
+    if (appState.isSidePanelExpanded) {
+      enqueueSnackbar('Marker configuration panel is already open', {
+        variant: 'info',
+      });
+      // focusing on marker configuration
+      // for barplot, activeSideManuId is based on 'bar', but activeMarkerConfigurationType is 'barplot'
+      setActiveSideMenuId(
+        'single-variable-' +
+          (appState.activeMarkerConfigurationType === 'barplot'
+            ? 'bar'
+            : appState.activeMarkerConfigurationType)
+      );
+    } else {
+      setActiveSideMenuId(
+        'single-variable-' +
+          (appState.activeMarkerConfigurationType === 'barplot'
+            ? 'bar'
+            : appState.activeMarkerConfigurationType)
+      );
+      setIsSidePanelExpanded(true);
+    }
   }, [
     appState.isSidePanelExpanded,
     enqueueSnackbar,
