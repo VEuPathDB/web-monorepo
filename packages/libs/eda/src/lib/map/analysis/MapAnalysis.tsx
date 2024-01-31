@@ -71,14 +71,11 @@ import {
   donutMarkerPlugin,
 } from './mapTypes';
 
-import TimeSliderQuickFilter from './TimeSliderQuickFilter';
-import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { MapTypeMapLayerProps } from './mapTypes/types';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
 import AnalysisNameDialog from '../../workspace/AnalysisNameDialog';
 import { Page } from '@veupathdb/wdk-client/lib/Components';
 import { AnalysisError } from '../../core/components/AnalysisError';
-import { LittleFilterTypes, useLittleFilters } from './littleFilters';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -97,10 +94,6 @@ const mapStyle: React.CSSProperties = {
   zIndex: 1,
   pointerEvents: 'auto',
 };
-
-const timeSliderFilterTypes: Set<LittleFilterTypes> = new Set([
-  'marker-config',
-]);
 
 interface Props {
   analysisId?: string;
@@ -688,8 +681,6 @@ function MapAnalysisImpl(props: ImplProps) {
     'single-variable-' + appState.activeMarkerConfigurationType
   );
 
-  const toggleStarredVariable = useToggleStarredVariable(analysisState);
-
   const activeMapTypePlugin =
     activeMarkerConfiguration?.type === 'barplot'
       ? barMarkerPlugin
@@ -701,13 +692,6 @@ function MapAnalysisImpl(props: ImplProps) {
 
   // close left-side panel when map events happen
   const closePanel = useCallback(() => setIsSidePanelExpanded(false), []);
-
-  const { filters: filtersForTimeSlider } = useLittleFilters({
-    filters,
-    appState,
-    geoConfigs,
-    filterTypes: timeSliderFilterTypes,
-  });
 
   return (
     <PromiseResult state={appsPromiseState}>
@@ -764,24 +748,14 @@ function MapAnalysisImpl(props: ImplProps) {
                   showLinkToEda={showLinkToEda}
                 >
                   {/* child elements will be distributed across, 'hanging' below the header */}
-                  {/*  Time slider component - only if prerequisite variable is available */}
-                  {appState.timeSliderConfig &&
-                    appState.timeSliderConfig.variable && (
-                      <TimeSliderQuickFilter
-                        studyId={studyId}
-                        entities={studyEntities}
-                        subsettingClient={subsettingClient}
-                        filters={filtersForTimeSlider}
-                        starredVariables={
-                          analysisState.analysis?.descriptor.starredVariables ??
-                          []
-                        }
-                        toggleStarredVariable={toggleStarredVariable}
-                        config={appState.timeSliderConfig}
-                        updateConfig={setTimeSliderConfig}
-                        siteInformation={props.siteInformationProps}
-                      />
-                    )}
+                  {/* Time slider component won't render if there's no suitable variable to use */}
+                  {activeMapTypePlugin?.TimeSliderComponent && (
+                    <activeMapTypePlugin.TimeSliderComponent
+                      {...mapTypeMapLayerProps}
+                      setTimeSliderConfig={setTimeSliderConfig}
+                      siteInformationProps={props.siteInformationProps}
+                    />
+                  )}
                 </MapHeader>
                 <div
                   style={{

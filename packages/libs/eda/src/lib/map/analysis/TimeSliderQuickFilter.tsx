@@ -5,7 +5,7 @@ import TimeSlider, {
 } from '@veupathdb/components/lib/components/plotControls/TimeSlider';
 import { InputVariables } from '../../core/components/visualizations/InputVariables';
 import { VariablesByInputName } from '../../core/utils/data-element-constraints';
-import { usePromise } from '../../core';
+import { usePromise, useSubsettingClient } from '../../core';
 import { DateVariable, StudyEntity } from '../../core/types/study';
 import { VariableDescriptor } from '../../core/types/variable';
 
@@ -19,32 +19,32 @@ import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
 import { SiteInformationProps } from './Types';
 import { mapSidePanelBackgroundColor } from '../constants';
+import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 
 interface Props {
   studyId: string;
   entities: StudyEntity[];
   // to handle filters
-  subsettingClient: SubsettingClient;
   filters: Filter[] | undefined;
   starredVariables: VariableDescriptor[];
-  toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
-
   config: NonNullable<AppState['timeSliderConfig']>;
   updateConfig: (newConfig: NonNullable<AppState['timeSliderConfig']>) => void;
+  toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
   siteInformation: SiteInformationProps;
 }
 
 export default function TimeSliderQuickFilter({
   studyId,
   entities,
-  subsettingClient,
   filters,
   starredVariables,
-  toggleStarredVariable,
   config,
   updateConfig,
+  toggleStarredVariable,
   siteInformation,
 }: Props) {
+  const subsettingClient = useSubsettingClient();
+
   const findEntityAndVariable = useFindEntityAndVariable(filters); // filter sensitivity
   const theme = useUITheme();
   const [minimized, setMinimized] = useState(true);

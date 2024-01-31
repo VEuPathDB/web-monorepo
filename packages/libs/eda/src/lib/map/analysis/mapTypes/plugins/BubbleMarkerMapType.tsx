@@ -41,6 +41,7 @@ import {
   isApproxSameViewport,
   markerDataFilterTypes,
   useCommonData,
+  TimeSliderComponent,
 } from '../shared';
 import {
   MapTypeConfigPanelProps,
@@ -65,6 +66,7 @@ export const plugin: MapTypePlugin = {
   MapLayerComponent: BubbleMapLayer,
   MapOverlayComponent: BubbleLegends,
   MapTypeHeaderDetails,
+  TimeSliderComponent,
 };
 
 function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {

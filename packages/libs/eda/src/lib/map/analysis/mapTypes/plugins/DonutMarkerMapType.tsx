@@ -42,6 +42,7 @@ import {
   visibleOptionFilterTypes,
   markerDataFilterTypes,
   floaterFilterTypes,
+  TimeSliderComponent,
 } from '../shared';
 import {
   MapTypeConfigPanelProps,
@@ -70,6 +71,7 @@ export const plugin: MapTypePlugin = {
   MapLayerComponent,
   MapOverlayComponent,
   MapTypeHeaderDetails,
+  TimeSliderComponent,
 };
 
 function ConfigPanelComponent(props: MapTypeConfigPanelProps) {

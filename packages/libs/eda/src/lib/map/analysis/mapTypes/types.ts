@@ -9,7 +9,10 @@ import { GeoConfig } from '../../../core/types/geoConfig';
 import { ComputationAppOverview } from '../../../core/types/visualization';
 import { AppState } from '../appState';
 import { EntityCounts } from '../../../core/hooks/entityCounts';
+import { SiteInformationProps } from '../Types';
 
+// should we just use one type: MapTypeMapLayerProps?
+// and get rid of this one?
 export interface MapTypeConfigPanelProps {
   apps: ComputationAppOverview[];
   analysisState: AnalysisState;
@@ -41,6 +44,10 @@ export interface MapTypeMapLayerProps {
   // selectedMarkers and its state function
   selectedMarkers?: string[];
   setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
+  setTimeSliderConfig?: (
+    newConfig: NonNullable<AppState['timeSliderConfig']>
+  ) => void;
+  siteInformationProps?: SiteInformationProps;
 }
 
 /**
@@ -68,4 +75,8 @@ export interface MapTypePlugin {
    * Returns a ReactNode that is rendered in the map header
    */
   MapTypeHeaderDetails?: ComponentType<MapTypeMapLayerProps>;
+  /**
+   * Returns a ReactNode that is rendered under the map header
+   */
+  TimeSliderComponent?: ComponentType<MapTypeMapLayerProps>;
 }

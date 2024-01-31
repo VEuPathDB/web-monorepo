@@ -46,6 +46,7 @@ import {
   useDistributionMarkerData,
   useDistributionOverlayConfig,
   visibleOptionFilterTypes,
+  TimeSliderComponent,
 } from '../shared';
 import {
   useFindEntityAndVariable,
@@ -76,6 +77,7 @@ export const plugin: MapTypePlugin = {
   MapLayerComponent,
   MapOverlayComponent,
   MapTypeHeaderDetails,
+  TimeSliderComponent,
 };
 
 interface ChartMarkerDataWithCounts extends BaseMarkerData {

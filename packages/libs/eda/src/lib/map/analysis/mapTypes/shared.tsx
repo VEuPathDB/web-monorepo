@@ -30,7 +30,10 @@ import {
 } from '@veupathdb/components/lib/types/plots';
 import { getCategoricalValues } from '../utils/categoricalValues';
 import { Viewport } from '@veupathdb/components/lib/map/MapVEuMap';
-import { LittleFilterTypes } from '../littleFilters';
+import { LittleFilterTypes, useLittleFilters } from '../littleFilters';
+import { MapTypeMapLayerProps } from './types';
+import { useToggleStarredVariable } from '../../../core/hooks/starredVariables';
+import TimeSliderQuickFilter from '../TimeSliderQuickFilter';
 
 export const defaultAnimation = {
   method: 'geohash',
@@ -53,10 +56,51 @@ export const visibleOptionFilterTypes: Set<LittleFilterTypes> = new Set([
   // note: previously the time-slider filters were not being included
   // so this is fixing an unreported bug
 ]);
+export const timeSliderFilterTypes: Set<LittleFilterTypes> = new Set([
+  'marker-config',
+]);
 
 export interface SharedMarkerConfigurations {
   selectedVariable: VariableDescriptor;
   activeVisualizationId?: string;
+}
+
+export function TimeSliderComponent(props: MapTypeMapLayerProps) {
+  const {
+    studyId,
+    studyEntities,
+    filters,
+    appState,
+    appState: { timeSliderConfig },
+    analysisState,
+    geoConfigs,
+    setTimeSliderConfig,
+    siteInformationProps,
+  } = props;
+
+  const toggleStarredVariable = useToggleStarredVariable(analysisState);
+
+  const { filters: filtersForTimeSlider } = useLittleFilters({
+    filters,
+    appState,
+    geoConfigs,
+    filterTypes: timeSliderFilterTypes,
+  });
+
+  return timeSliderConfig && setTimeSliderConfig && siteInformationProps ? (
+    <TimeSliderQuickFilter
+      studyId={studyId}
+      entities={studyEntities}
+      filters={filtersForTimeSlider}
+      starredVariables={
+        analysisState.analysis?.descriptor.starredVariables ?? []
+      }
+      toggleStarredVariable={toggleStarredVariable}
+      config={timeSliderConfig}
+      updateConfig={setTimeSliderConfig}
+      siteInformation={siteInformationProps}
+    />
+  ) : null;
 }
 
 export function useCommonData(
