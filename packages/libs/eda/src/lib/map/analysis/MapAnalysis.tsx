@@ -768,31 +768,27 @@ function MapAnalysisImpl(props: ImplProps) {
   // snackbar
   const { enqueueSnackbar } = useSnackbar();
 
+  // behaviors of the Legend's setup/gear icon
   const openPanel = useCallback(() => {
-    if (appState.isSidePanelExpanded) {
+    const nextSideMenuId =
+      'single-variable-' +
+      (appState.activeMarkerConfigurationType === 'barplot'
+        ? 'bar'
+        : appState.activeMarkerConfigurationType);
+
+    if (appState.isSidePanelExpanded && activeSideMenuId === nextSideMenuId)
       enqueueSnackbar('Marker configuration panel is already open', {
         variant: 'info',
       });
-      // focusing on marker configuration
-      // for barplot, activeSideManuId is based on 'bar', but activeMarkerConfigurationType is 'barplot'
-      setActiveSideMenuId(
-        'single-variable-' +
-          (appState.activeMarkerConfigurationType === 'barplot'
-            ? 'bar'
-            : appState.activeMarkerConfigurationType)
-      );
-    } else {
-      setActiveSideMenuId(
-        'single-variable-' +
-          (appState.activeMarkerConfigurationType === 'barplot'
-            ? 'bar'
-            : appState.activeMarkerConfigurationType)
-      );
-      setIsSidePanelExpanded(true);
-    }
+
+    if (!appState.isSidePanelExpanded) setIsSidePanelExpanded(true);
+
+    if (activeSideMenuId !== nextSideMenuId)
+      setActiveSideMenuId(nextSideMenuId);
   }, [
     appState.isSidePanelExpanded,
     enqueueSnackbar,
+    activeSideMenuId,
     setActiveSideMenuId,
     setIsSidePanelExpanded,
     appState.activeMarkerConfigurationType,
