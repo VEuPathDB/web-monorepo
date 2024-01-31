@@ -37,11 +37,18 @@ module.exports = {
         {
           loader: 'imports-loader',
           options: {
-            imports: {
-              syntax: 'namespace',
-              moduleName: require.resolve('d3v5'),
-              name: 'd3',
-            },
+            imports: [
+              {
+                syntax: 'namespace',
+                moduleName: require.resolve('d3v5'),
+                name: 'd3',
+              },
+              {
+                syntax: 'namespace',
+                moduleName: require.resolve('patristic'),
+                name: 'patristic',
+              },
+            ],
           },
         },
         // TidyTree creates a global variable, so we convert it to a named export with this laoder
