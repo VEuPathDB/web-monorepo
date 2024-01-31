@@ -8,10 +8,15 @@ import { UserDatasetUpload } from '../Utils/types';
 
 export const submitUploadForm = makeActionCreator(
   'user-dataset-upload/submit-form',
-  (formSubmission: FormSubmission, baseUrl?: string) => ({
-    formSubmission,
+  (datasetId: string, baseUrl?: string) => ({
+    datasetId,
     baseUrl,
   })
+);
+
+export const trackUploadProgress = makeActionCreator(
+  'user-dataset-upload/upload-progress',
+  (progress: number | null) => ({ progress })
 );
 
 export const receiveBadUpload = makeActionCreator(
@@ -51,6 +56,7 @@ export const receiveBadUploadHistoryAction = makeActionCreator(
 
 export type Action =
   | InferAction<typeof submitUploadForm>
+  | InferAction<typeof trackUploadProgress>
   | InferAction<typeof receiveBadUpload>
   | InferAction<typeof clearBadUpload>
   | InferAction<typeof cancelCurrentUpload>

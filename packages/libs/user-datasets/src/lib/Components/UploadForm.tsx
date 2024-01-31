@@ -43,6 +43,7 @@ interface Props<T extends string = string> {
   resultUploadConfig?: ResultUploadConfig;
   clearBadUpload: () => void;
   submitForm: (newUserDataset: FormSubmission, baseUrl?: string) => void;
+  uploadProgress?: number | null;
   supportedFileUploadTypes: string[];
 }
 
@@ -92,6 +93,7 @@ function UploadForm({
   resultUploadConfig,
   clearBadUpload,
   submitForm,
+  uploadProgress,
   supportedFileUploadTypes,
 }: Props) {
   const strategyOptionsByStrategyId = useMemo(
@@ -449,8 +451,27 @@ function UploadForm({
       <button type="submit" className="btn" disabled={submitting}>
         Upload Data Set
       </button>
+      <UploadProgress uploadProgress={uploadProgress} />
       {datasetUploadType.formConfig?.renderInfo?.()}
     </form>
+  );
+}
+
+function UploadProgress({
+  uploadProgress,
+}: {
+  uploadProgress?: number | null;
+}) {
+  return (
+    <div>
+      {uploadProgress && uploadProgress !== 100 && (
+        <div style={{ display: 'flex' }}>
+          <label htmlFor="file">Uploading...</label>
+          <progress id="file" max="100" value={uploadProgress} />
+        </div>
+      )}
+      {uploadProgress === 100 && <>Waiting on server response...</>}
+    </div>
   );
 }
 

@@ -11,6 +11,7 @@ import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
 import {
   Action,
   submitUploadForm,
+  trackUploadProgress,
   receiveBadUpload,
   requestUploadMessages,
   // receiveUploadMessages,
@@ -24,8 +25,11 @@ import { assertIsVdiCompatibleWdkService } from '../Service';
 
 import { StateSlice } from '../StoreModules/types';
 
-import { UserDatasetUpload } from '../Utils/types';
-import { uploadUserDataset } from '../Utils/upload-user-dataset';
+import { NewUserDatasetMeta, UserDatasetUpload } from '../Utils/types';
+import {
+  makeNewUserDatasetConfig,
+  uploadUserDataset,
+} from '../Utils/upload-user-dataset';
 
 export const key = 'userDatasetUpload';
 
@@ -33,6 +37,7 @@ export type State = {
   uploads?: Array<UserDatasetUpload>;
   badUploadMessage?: { message: string; timestamp: number };
   badAllUploadsActionMessage?: { message: string; timestamp: number };
+  uploadProgress?: { progress: number | null };
 };
 export function reduce(state: State = {}, action: Action): State {
   switch (action.type) {
@@ -42,6 +47,8 @@ export function reduce(state: State = {}, action: Action): State {
       return { ...state, badUploadMessage: undefined };
     // case receiveUploadMessages.type:
     //   return { ...state, uploads: action.payload.uploads };
+    case trackUploadProgress.type:
+      return { ...state, uploadProgress: action.payload };
     case receiveBadUploadHistoryAction.type:
       return { ...state, badAllUploadsActionMessage: action.payload };
     default:
@@ -65,13 +72,14 @@ function observeSubmitUploadForm(
     filter(submitUploadForm.isOfType),
     mergeMap(async (action) => {
       try {
-        const response = await uploadUserDataset(
-          dependencies.wdkService,
-          action.payload.formSubmission
-        );
+        // const response = await uploadUserDataset(
+        //   dependencies.wdkService,
+        //   action.payload.formSubmission
+        // );
+        console.log(action.payload.datasetId);
         if (action.payload.baseUrl != null) {
           dependencies.transitioner.transitionToInternalPage(
-            `${action.payload.baseUrl}/${response.datasetId}`
+            `${action.payload.baseUrl}/${action.payload.datasetId}`
           );
         }
         return requestUploadMessages();

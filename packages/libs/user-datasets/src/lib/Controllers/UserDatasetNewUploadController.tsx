@@ -10,13 +10,17 @@ import { StrategySummary } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import {
   clearBadUpload,
   submitUploadForm,
+  trackUploadProgress,
 } from '../Actions/UserDatasetUploadActions';
 
 import UploadForm, { FormSubmission } from '../Components/UploadForm';
 
 import { StateSlice } from '../StoreModules/types';
 
-import { DatasetUploadTypeConfigEntry } from '../Utils/types';
+import {
+  DatasetUploadTypeConfigEntry,
+  NewUserDatasetMeta,
+} from '../Utils/types';
 
 const SUPPORTED_FILE_UPLOAD_TYPES = ['csv', 'gz', 'tgz', 'tsv', 'txt', 'zip'];
 
@@ -71,15 +75,86 @@ export default function UserDatasetUploadController({
     (stateSlice: StateSlice) => stateSlice.userDatasetUpload.badUploadMessage
   );
 
+  const uploadProgress = useSelector(
+    (stateSlice: StateSlice) => stateSlice.userDatasetUpload.uploadProgress
+  );
+
   const dispatch = useDispatch();
 
   const clearBadUploadMessage = useCallback(() => {
     dispatch(clearBadUpload);
   }, [dispatch]);
 
+  // const submitForm = useCallback(
+  //   (formSubmission: FormSubmission, redirectTo?: string) => {
+  //     dispatch(submitUploadForm(formSubmission, redirectTo));
+  //   },
+  //   [dispatch]
+  // );
+
   const submitForm = useCallback(
     (formSubmission: FormSubmission, redirectTo?: string) => {
-      dispatch(submitUploadForm(formSubmission, redirectTo));
+      const { dataUploadSelection, ...remainingFormSubmission } =
+        formSubmission;
+      const newUserDatasetConfig = Object.assign({}, remainingFormSubmission, {
+        uploadMethod: dataUploadSelection,
+      });
+      const { uploadMethod, ...remainingConfig } = newUserDatasetConfig;
+      const meta: NewUserDatasetMeta = {
+        ...remainingConfig,
+        datasetType: {
+          name: newUserDatasetConfig.datasetType,
+          version: '1.0',
+        },
+        dependencies: [],
+        origin: 'direct-upload',
+      };
+
+      const xhr = new XMLHttpRequest();
+      xhr.upload.addEventListener('progress', (e) => {
+        const progress = Math.floor((e.loaded / e.total) * 100);
+        dispatch(trackUploadProgress(progress));
+      });
+      xhr.upload.addEventListener('load', () => {
+        setTimeout(() => {
+          try {
+            const response = JSON.parse(xhr.response);
+            dispatch(submitUploadForm(response.datasetId, redirectTo));
+            dispatch(trackUploadProgress(null));
+          } catch (error) {
+            console.error(error);
+          }
+        }, 10);
+      });
+
+      const fileBody = new FormData();
+      fileBody.append('meta', JSON.stringify(meta));
+
+      if (uploadMethod.type === 'file') {
+        fileBody.append('file', uploadMethod.file);
+      } else if (uploadMethod.type === 'url') {
+        console.log('url');
+        fileBody.append('url', uploadMethod.url);
+      } else {
+        throw new Error(
+          `Tried to upload a dataset via an unrecognized upload method '${uploadMethod.type}'`
+        );
+      }
+
+      const wdkCheckAuthEntry = document.cookie
+        .split('; ')
+        .find((x) => x.startsWith('wdk_check_auth='));
+
+      if (wdkCheckAuthEntry == null) {
+        throw new Error(
+          `Tried to retrieve a non-existent WDK auth key for user`
+        );
+      }
+      const authKey = wdkCheckAuthEntry.replace(/^wdk_check_auth=/, '');
+
+      xhr.open('POST', '/vdi-service/vdi-datasets', true);
+      xhr.setRequestHeader('Auth-Key', authKey);
+      xhr.send(fileBody);
     },
     [dispatch]
   );
@@ -97,6 +172,7 @@ export default function UserDatasetUploadController({
         badUploadMessage={badUploadMessage}
         clearBadUpload={clearBadUploadMessage}
         submitForm={submitForm}
+        uploadProgress={uploadProgress?.progress}
         urlParams={urlParams}
         strategyOptions={strategyOptions}
         resultUploadConfig={
