@@ -76,7 +76,6 @@ function observeSubmitUploadForm(
         //   dependencies.wdkService,
         //   action.payload.formSubmission
         // );
-        console.log(action.payload.datasetId);
         if (action.payload.baseUrl != null) {
           dependencies.transitioner.transitionToInternalPage(
             `${action.payload.baseUrl}/${action.payload.datasetId}`

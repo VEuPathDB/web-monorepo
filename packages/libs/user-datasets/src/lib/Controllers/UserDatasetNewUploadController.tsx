@@ -116,15 +116,17 @@ export default function UserDatasetUploadController({
         dispatch(trackUploadProgress(progress));
       });
       xhr.upload.addEventListener('load', () => {
-        setTimeout(() => {
-          try {
-            const response = JSON.parse(xhr.response);
-            dispatch(submitUploadForm(response.datasetId, redirectTo));
-            dispatch(trackUploadProgress(null));
-          } catch (error) {
-            console.error(error);
+        xhr.addEventListener('readystatechange', () => {
+          if (xhr.readyState === XMLHttpRequest.DONE) {
+            try {
+              const response = JSON.parse(xhr.response);
+              dispatch(submitUploadForm(response.datasetId, redirectTo));
+              dispatch(trackUploadProgress(null));
+            } catch (error) {
+              console.error(error);
+            }
           }
-        }, 10);
+        });
       });
 
       const fileBody = new FormData();
