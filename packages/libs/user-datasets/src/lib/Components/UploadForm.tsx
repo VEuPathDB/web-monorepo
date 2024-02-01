@@ -16,6 +16,7 @@ import {
   FileInput,
   RadioList,
   SingleSelect,
+  Loading,
 } from '@veupathdb/wdk-client/lib/Components';
 
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -28,6 +29,8 @@ import {
   NewUserDataset,
   ResultUploadConfig,
 } from '../Utils/types';
+
+import { Modal } from '@veupathdb/coreui';
 
 import './UploadForm.scss';
 
@@ -439,7 +442,6 @@ function UploadForm({
                       `Unrecognized upload method '${value}' encountered.`
                     );
                   }
-
                   setDataUploadMode(value);
                 }}
                 items={uploadMethodItems}
@@ -451,7 +453,28 @@ function UploadForm({
       <button type="submit" className="btn" disabled={submitting}>
         Upload Data Set
       </button>
-      <UploadProgress uploadProgress={uploadProgress} />
+      <Modal
+        visible={submitting}
+        toggleVisible={() => null}
+        styleOverrides={{
+          content: {
+            size: {
+              height: '100%',
+              width: '100%',
+            },
+            padding: {
+              right: 10,
+              left: 10,
+            },
+          },
+          size: {
+            height: 150,
+            width: 'auto',
+          },
+        }}
+      >
+        <UploadProgress uploadProgress={uploadProgress} />
+      </Modal>
       {datasetUploadType.formConfig?.renderInfo?.()}
     </form>
   );
@@ -463,14 +486,29 @@ function UploadProgress({
   uploadProgress?: number | null;
 }) {
   return (
-    <div>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: '1em',
+        fontSize: '1.5em',
+        height: '100%',
+      }}
+    >
       {uploadProgress && uploadProgress !== 100 && (
-        <div style={{ display: 'flex' }}>
-          <label htmlFor="file">Uploading...</label>
+        <>
           <progress id="file" max="100" value={uploadProgress} />
-        </div>
+          <label htmlFor="file">Uploading...</label>
+        </>
       )}
-      {uploadProgress === 100 && <>Waiting on server response...</>}
+      {uploadProgress === 100 && (
+        <>
+          <Loading style={{ padding: '1em' }} />
+          <span>Waiting on server response...</span>
+        </>
+      )}
     </div>
   );
 }
