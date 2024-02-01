@@ -442,6 +442,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
         plotNode={plotNode}
         controlsNode={controlsNode}
         tableGroupNode={tableGroupNode}
+        plotStyles={{ width: 'auto' }}
       />
     </div>
   );

@@ -759,26 +759,28 @@ function BarplotViz(props: VisualizationProps<Options>) {
               alignItems: 'center',
             }}
           >
-            <LabelledGroup label="Y-axis controls"> </LabelledGroup>
-            <div style={{ marginLeft: '-2.6em', width: '50%' }}>
-              <ResetButtonCoreUI
-                size={'medium'}
-                text={''}
-                themeRole={'primary'}
-                tooltip={'Reset to defaults'}
-                disabled={false}
-                onPress={handleDependentAxisSettingsReset}
+            <LabelledGroup
+              label={
+                <div css={{ display: 'flex', alignItems: 'center' }}>
+                  Y-axis controls
+                  <ResetButtonCoreUI
+                    size={'medium'}
+                    text={''}
+                    themeRole={'primary'}
+                    tooltip={'Reset to defaults'}
+                    disabled={false}
+                    onPress={handleDependentAxisSettingsReset}
+                  />
+                </div>
+              }
+            >
+              <Toggle
+                label={'Log scale'}
+                value={vizConfig.dependentAxisLogScale}
+                onChange={onDependentAxisLogScaleChange}
+                themeRole="primary"
               />
-            </div>
-          </div>
-
-          <div style={{ marginLeft: '1em', marginTop: '-0.5em' }}>
-            <Toggle
-              label={'Log scale'}
-              value={vizConfig.dependentAxisLogScale}
-              onChange={onDependentAxisLogScaleChange}
-              themeRole="primary"
-            />
+            </LabelledGroup>
           </div>
 
           <LabelledGroup

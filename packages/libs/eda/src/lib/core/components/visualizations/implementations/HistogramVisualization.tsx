@@ -1095,114 +1095,107 @@ function HistogramViz(props: VisualizationProps<Options>) {
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           {/* make switch and radiobutton single line with space
-                  also marginRight at LabelledGroup is set to 0.5625em: default - 1.5625em*/}
-
-          {/* set Undo icon and its behavior */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
-          >
-            <LabelledGroup label="X-axis controls"> </LabelledGroup>
-            <div style={{ marginLeft: '-2.6em', width: '50%' }}>
-              <ResetButtonCoreUI
-                size={'medium'}
-                text={''}
-                themeRole={'primary'}
-                tooltip={'Reset to defaults'}
-                disabled={false}
-                onPress={handleIndependentAxisSettingsReset}
-              />
-            </div>
-          </div>
-
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              marginLeft: '1em',
-              marginTop: '-0.5em',
-            }}
-          >
-            <BinWidthControl
-              binWidth={data0?.binWidthSlider?.binWidth}
-              onBinWidthChange={onBinWidthChange}
-              binWidthRange={data0?.binWidthSlider?.binWidthRange}
-              binWidthStep={data0?.binWidthSlider?.binWidthStep}
-              valueType={data0?.binWidthSlider?.valueType}
-              binUnit={
-                data0?.binWidthSlider?.valueType === 'date'
-                  ? (data0?.binWidthSlider?.binWidth as TimeDelta).unit
-                  : undefined
-              }
-              binUnitOptions={
-                data0?.binWidthSlider?.valueType === 'date'
-                  ? ['day', 'week', 'month', 'year']
-                  : undefined
-              }
-              containerStyles={{
-                minHeight: widgetHeight,
-                // set maxWidth
-                maxWidth: valueType === 'date' ? '215px' : '315px',
-              }}
-            />
-          </div>
+                also marginRight at LabelledGroup is set to 0.5625em: default - 1.5625em*/}
 
           <LabelledGroup
-            label="X-axis range"
-            containerStyles={{
-              fontSize: '0.9em',
-              // width: '350px',
-              marginTop: '-0.8em',
-            }}
+            label={
+              <div css={{ display: 'flex', alignItems: 'center' }}>
+                X-axis controls
+                <ResetButtonCoreUI
+                  size={'medium'}
+                  text={''}
+                  themeRole={'primary'}
+                  tooltip={'Reset to defaults'}
+                  disabled={false}
+                  onPress={handleIndependentAxisSettingsReset}
+                />
+              </div>
+            }
           >
-            <RadioButtonGroup
-              options={['Full', 'Auto-zoom', 'Custom']}
-              selectedOption={vizConfig.independentAxisValueSpec ?? 'Full'}
-              onOptionSelected={(newAxisRangeOption: string) => {
-                onIndependentAxisValueSpecChange(newAxisRangeOption);
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
               }}
-              orientation={'horizontal'}
-              labelPlacement={'end'}
-              buttonColor={'primary'}
-              margins={['0em', '0', '0', '0em']}
-              itemMarginRight={25}
-            />
-            {/* X-Axis range control */}
-            <AxisRangeControl
-              label="Range"
-              range={vizConfig.independentAxisRange ?? defaultIndependentRange}
-              onRangeChange={handleIndependentAxisRangeChange}
-              valueType={valueType}
-              // set maxWidth
-              containerStyles={{
-                maxWidth: '350px',
-              }}
-              disabled={
-                vizConfig.independentAxisValueSpec === 'Full' ||
-                vizConfig.independentAxisValueSpec === 'Auto-zoom'
-              }
-            />
-            {/* truncation notification */}
-            {truncatedIndependentAxisWarning ? (
-              <Notification
-                title={''}
-                text={truncatedIndependentAxisWarning}
-                // this was defined as LIGHT_BLUE
-                color={'#5586BE'}
-                onAcknowledgement={() => {
-                  setTruncatedIndependentAxisWarning('');
-                }}
-                showWarningIcon={true}
-                // set maxWidth per type
+            >
+              <BinWidthControl
+                binWidth={data0?.binWidthSlider?.binWidth}
+                onBinWidthChange={onBinWidthChange}
+                binWidthRange={data0?.binWidthSlider?.binWidthRange}
+                binWidthStep={data0?.binWidthSlider?.binWidthStep}
+                valueType={data0?.binWidthSlider?.valueType}
+                binUnit={
+                  data0?.binWidthSlider?.valueType === 'date'
+                    ? (data0?.binWidthSlider?.binWidth as TimeDelta).unit
+                    : undefined
+                }
+                binUnitOptions={
+                  data0?.binWidthSlider?.valueType === 'date'
+                    ? ['day', 'week', 'month', 'year']
+                    : undefined
+                }
                 containerStyles={{
-                  // maxWidth: valueType === 'date' ? '362px': '350px',
-                  maxWidth: '350px',
+                  minHeight: widgetHeight,
+                  // set maxWidth
+                  maxWidth: valueType === 'date' ? '215px' : '315px',
                 }}
               />
-            ) : null}
+            </div>
+
+            <LabelledGroup
+              label="X-axis range"
+              containerStyles={{
+                fontSize: '0.9em',
+                padding: '1em 0',
+              }}
+            >
+              <RadioButtonGroup
+                options={['Full', 'Auto-zoom', 'Custom']}
+                selectedOption={vizConfig.independentAxisValueSpec ?? 'Full'}
+                onOptionSelected={(newAxisRangeOption: string) => {
+                  onIndependentAxisValueSpecChange(newAxisRangeOption);
+                }}
+                orientation={'horizontal'}
+                labelPlacement={'end'}
+                buttonColor={'primary'}
+                margins={['0em', '0', '0', '0em']}
+                itemMarginRight={25}
+              />
+              {/* X-Axis range control */}
+              <AxisRangeControl
+                label="Range"
+                range={
+                  vizConfig.independentAxisRange ?? defaultIndependentRange
+                }
+                onRangeChange={handleIndependentAxisRangeChange}
+                valueType={valueType}
+                containerStyles={{
+                  maxWidth: '350px',
+                }}
+                disabled={
+                  vizConfig.independentAxisValueSpec === 'Full' ||
+                  vizConfig.independentAxisValueSpec === 'Auto-zoom'
+                }
+              />
+              {/* truncation notification */}
+              {truncatedIndependentAxisWarning ? (
+                <Notification
+                  title={''}
+                  text={truncatedIndependentAxisWarning}
+                  // this was defined as LIGHT_BLUE
+                  color={'#5586BE'}
+                  onAcknowledgement={() => {
+                    setTruncatedIndependentAxisWarning('');
+                  }}
+                  showWarningIcon={true}
+                  // set maxWidth per type
+                  containerStyles={{
+                    // maxWidth: valueType === 'date' ? '362px': '350px',
+                    maxWidth: '350px',
+                  }}
+                />
+              ) : null}
+            </LabelledGroup>
           </LabelledGroup>
         </div>
 
@@ -1213,7 +1206,6 @@ function HistogramViz(props: VisualizationProps<Options>) {
             borderLeft: '2px solid lightgray',
             height: '16em',
             position: 'relative',
-            marginLeft: '-1px',
             top: '1.5em',
           }}
         >
@@ -1221,28 +1213,21 @@ function HistogramViz(props: VisualizationProps<Options>) {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {/* set Undo icon and its behavior */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
+          <LabelledGroup
+            label={
+              <div css={{ display: 'flex', alignItems: 'center' }}>
+                Y-axis controls
+                <ResetButtonCoreUI
+                  size={'medium'}
+                  text={''}
+                  themeRole={'primary'}
+                  tooltip={'Reset to defaults'}
+                  disabled={false}
+                  onPress={handleDependentAxisSettingsReset}
+                />
+              </div>
+            }
           >
-            <LabelledGroup label="Y-axis controls"> </LabelledGroup>
-            <div style={{ marginLeft: '-2.6em', width: '50%' }}>
-              <ResetButtonCoreUI
-                size={'medium'}
-                text={''}
-                themeRole={'primary'}
-                tooltip={'Reset to defaults'}
-                disabled={false}
-                onPress={handleDependentAxisSettingsReset}
-              />
-            </div>
-          </div>
-
-          <div style={{ marginLeft: '1em', marginTop: '-0.6em' }}>
             <Toggle
               label={'Log scale'}
               value={histogramProps.dependentAxisLogScale ?? false}
@@ -1254,58 +1239,59 @@ function HistogramViz(props: VisualizationProps<Options>) {
               }}
               themeRole="primary"
             />
-          </div>
 
-          <LabelledGroup
-            label="Y-axis range"
-            containerStyles={{
-              fontSize: '0.9em',
-              // width: '350px',
-              marginTop: '-0.8em',
-            }}
-          >
-            <RadioButtonGroup
-              options={['Full', 'Auto-zoom', 'Custom']}
-              selectedOption={vizConfig.dependentAxisValueSpec ?? 'Full'}
-              onOptionSelected={(newAxisRangeOption: string) => {
-                onDependentAxisValueSpecChange(newAxisRangeOption);
+            <LabelledGroup
+              label="Y-axis range"
+              containerStyles={{
+                fontSize: '0.9em',
+                padding: '1em 0',
               }}
-              orientation={'horizontal'}
-              labelPlacement={'end'}
-              buttonColor={'primary'}
-              margins={['0em', '0', '0', '0em']}
-              itemMarginRight={25}
-            />
-            {/* Y-axis range control */}
-            <NumberRangeInput
-              label="Range"
-              range={vizConfig.dependentAxisRange ?? defaultDependentAxisRange}
-              onRangeChange={(newRange?: NumberOrDateRange) => {
-                handleDependentAxisRangeChange(newRange as NumberRange);
-              }}
-              allowPartialRange={false}
-              // set maxWidth
-              containerStyles={{ maxWidth: '350px' }}
-              disabled={
-                vizConfig.dependentAxisValueSpec === 'Full' ||
-                vizConfig.dependentAxisValueSpec === 'Auto-zoom'
-              }
-            />
-            {/* truncation notification */}
-            {truncatedDependentAxisWarning ? (
-              <Notification
-                title={''}
-                text={truncatedDependentAxisWarning}
-                // this was defined as LIGHT_BLUE
-                color={'#5586BE'}
-                onAcknowledgement={() => {
-                  setTruncatedDependentAxisWarning('');
+            >
+              <RadioButtonGroup
+                options={['Full', 'Auto-zoom', 'Custom']}
+                selectedOption={vizConfig.dependentAxisValueSpec ?? 'Full'}
+                onOptionSelected={(newAxisRangeOption: string) => {
+                  onDependentAxisValueSpecChange(newAxisRangeOption);
                 }}
-                showWarningIcon={true}
-                // change maxWidth
-                containerStyles={{ maxWidth: '350px' }}
+                orientation={'horizontal'}
+                labelPlacement={'end'}
+                buttonColor={'primary'}
+                margins={['0em', '0', '0', '0em']}
+                itemMarginRight={25}
               />
-            ) : null}
+              {/* Y-axis range control */}
+              <NumberRangeInput
+                label="Range"
+                range={
+                  vizConfig.dependentAxisRange ?? defaultDependentAxisRange
+                }
+                onRangeChange={(newRange?: NumberOrDateRange) => {
+                  handleDependentAxisRangeChange(newRange as NumberRange);
+                }}
+                allowPartialRange={false}
+                // set maxWidth
+                containerStyles={{ maxWidth: '350px' }}
+                disabled={
+                  vizConfig.dependentAxisValueSpec === 'Full' ||
+                  vizConfig.dependentAxisValueSpec === 'Auto-zoom'
+                }
+              />
+              {/* truncation notification */}
+              {truncatedDependentAxisWarning ? (
+                <Notification
+                  title={''}
+                  text={truncatedDependentAxisWarning}
+                  // this was defined as LIGHT_BLUE
+                  color={'#5586BE'}
+                  onAcknowledgement={() => {
+                    setTruncatedDependentAxisWarning('');
+                  }}
+                  showWarningIcon={true}
+                  // change maxWidth
+                  containerStyles={{ maxWidth: '350px' }}
+                />
+              ) : null}
+            </LabelledGroup>
           </LabelledGroup>
         </div>
       </div>

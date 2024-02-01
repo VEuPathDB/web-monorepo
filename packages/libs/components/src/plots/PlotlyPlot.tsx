@@ -431,13 +431,10 @@ function PlotlyPlot<T>(
           </div>
         )}
         {showSpinner && <Spinner />}
-        {showExportButton && (
-          <ExportPlotToImageButton
-            toImage={toImage}
-            filename={exportFileName}
-          />
-        )}
       </div>
+      {showExportButton && (
+        <ExportPlotToImageButton toImage={toImage} filename={exportFileName} />
+      )}
     </Suspense>
   );
 }
