@@ -1,5 +1,6 @@
 import { Image } from '@material-ui/icons';
-import { SingleSelect } from '@veupathdb/coreui';
+import { colors, SingleSelect, Warning } from '@veupathdb/coreui';
+import { CSSProperties, useState } from 'react';
 
 interface ToImageOpts {
   height: number;
@@ -14,17 +15,22 @@ interface ToImage {
 interface Props {
   filename?: string;
   toImage: ToImage;
+  style?: CSSProperties;
 }
 
 export function ExportPlotToImageButton(props: Props) {
-  const { filename = 'plot', toImage } = props;
+  const { filename = 'plot', toImage, style } = props;
+  const [sawError, setSawError] = useState(false);
   return (
     <div
       style={{
-        width: '100%',
+        ...style,
         display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'end',
         justifyContent: 'end',
         padding: '.5em 0',
+        height: 'auto',
       }}
     >
       <SingleSelect
@@ -34,14 +40,24 @@ export function ExportPlotToImageButton(props: Props) {
             value: 'svg',
           } as const,
           {
-            display: 'PNG',
+            display: (
+              <>
+                PNG &nbsp; <em>(large plots may fail)</em>
+              </>
+            ),
             value: 'png',
           } as const,
         ]}
         value={undefined}
-        onSelect={(value) => {
+        onSelect={async (value) => {
           if (value) {
-            downloadImage(toImage, filename, value);
+            setSawError(false);
+            try {
+              await downloadImage(toImage, filename, value);
+            } catch (error) {
+              setSawError(true);
+              console.error(error);
+            }
           }
         }}
         buttonDisplayContent={
@@ -50,6 +66,18 @@ export function ExportPlotToImageButton(props: Props) {
           </>
         }
       />
+      {sawError && (
+        <div
+          style={{
+            fontSize: 'small',
+            fontStyle: 'italic',
+            color: colors.error[600],
+            marginTop: '.2em',
+          }}
+        >
+          An error occurred when trying to export the plot.
+        </div>
+      )}
     </div>
   );
 }
