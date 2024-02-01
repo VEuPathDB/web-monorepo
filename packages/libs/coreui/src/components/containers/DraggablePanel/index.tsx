@@ -1,4 +1,4 @@
-import { CSSProperties, ReactNode, useEffect, useState, useMemo } from 'react';
+import { CSSProperties, ReactNode, useEffect, useState } from 'react';
 import Draggable, { DraggableEvent, DraggableData } from 'react-draggable';
 import { css } from '@emotion/react';
 import useResizeObserver from 'use-resize-observer';
@@ -56,21 +56,27 @@ export type DraggablePanelProps = {
   onPanelDismiss?: () => void;
   /** This event fires when the user resizes the height or width of the panel. */
   onPanelResize?: (heightAndWidth: HeightAndWidthInPixels) => void;
+  /** HeaderButtons component for gear icon at SAM Legend */
+  headerButtons?: React.FC;
 };
 
-export default function DraggablePanel({
-  confineToParentContainer,
-  children,
-  defaultPosition = { x: 0, y: 0 },
-  isOpen,
-  onDragComplete,
-  onDragStart,
-  onPanelDismiss,
-  onPanelResize,
-  panelTitle,
-  showPanelTitle,
-  styleOverrides,
-}: DraggablePanelProps) {
+export default function DraggablePanel(props: DraggablePanelProps) {
+  const {
+    confineToParentContainer,
+    children,
+    defaultPosition = { x: 0, y: 0 },
+    isOpen,
+    onDragComplete,
+    onDragStart,
+    onPanelDismiss,
+    onPanelResize,
+    panelTitle,
+    showPanelTitle,
+    styleOverrides,
+    // make the first letter capital as headerButtons is a component
+    headerButtons: HeaderButtons,
+  } = props;
+
   const theme = useUITheme();
 
   const [wasDragged, setWasDragged] = useState<boolean>(false);
@@ -165,7 +171,9 @@ export default function DraggablePanel({
             border-radius: 7px 7px 0 0;
             background: ${theme?.palette?.primary?.hue[100] ?? gray[100]};
             cursor: ${isDragging ? 'grabbing' : 'grab'};
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr repeat(1, auto) 1fr;
+            grid-column-gap: 5px;
             height: 2rem;
             justify-content: center;
             // Because the panels are positioned absolutely and overflow auto,
@@ -180,21 +188,27 @@ export default function DraggablePanel({
             width: 100%;
           `}
         >
-          <H6
-            additionalStyles={{
-              fontWeight: 'bold',
-              fontSize: 14,
-              padding: '0 10px',
-            }}
+          <div
+            css={css`
+              grid-column-start: 2;
+            `}
           >
-            {/* ellipsis and tooltip for panel title */}
-            <span
-              css={showPanelTitle ? null : screenReaderOnly}
-              title={panelTitle}
+            <H6
+              additionalStyles={{
+                fontWeight: 'bold',
+                fontSize: 14,
+                padding: '0 10px',
+              }}
             >
-              {truncateWithEllipsis(panelTitle, maxPanelTitleTextLength)}
-            </span>
-          </H6>
+              {/* ellipsis and tooltip for panel title */}
+              <span
+                css={showPanelTitle ? null : screenReaderOnly}
+                title={panelTitle}
+              >
+                {truncateWithEllipsis(panelTitle, maxPanelTitleTextLength)}
+              </span>
+            </H6>
+          </div>
           {onPanelDismiss && (
             <div
               css={css`
@@ -208,6 +222,8 @@ export default function DraggablePanel({
               />
             </div>
           )}
+          {/* add gear button */}
+          {HeaderButtons != null && <HeaderButtons />}
         </div>
         <div
           css={css`

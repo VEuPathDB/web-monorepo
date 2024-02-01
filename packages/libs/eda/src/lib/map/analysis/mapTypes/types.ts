@@ -48,6 +48,7 @@ export interface MapTypeMapLayerProps {
     newConfig: NonNullable<AppState['timeSliderConfig']>
   ) => void;
   siteInformationProps?: SiteInformationProps;
+  headerButtons?: React.FC;
 }
 
 /**

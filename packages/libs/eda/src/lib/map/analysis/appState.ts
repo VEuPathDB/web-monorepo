@@ -151,7 +151,7 @@ export function useAppState(
       viewport: defaultViewport,
       mouseMode: 'default',
       activeMarkerConfigurationType: 'pie',
-      isSidePanelExpanded: true,
+      isSidePanelExpanded: false,
       timeSliderConfig: {
         variable: defaultTimeVariable,
         active: true,
