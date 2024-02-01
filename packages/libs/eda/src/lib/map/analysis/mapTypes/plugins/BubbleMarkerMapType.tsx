@@ -37,11 +37,10 @@ import { useStandaloneVizPlugins } from '../../hooks/standaloneVizPlugins';
 import { getDefaultBubbleOverlayConfig } from '../../utils/defaultOverlayConfig';
 import {
   defaultAnimation,
-  floaterFilterTypes,
+  floaterFilterFuncs,
   isApproxSameViewport,
-  markerDataFilterTypes,
+  markerDataFilterFuncs,
   useCommonData,
-  TimeSliderComponent,
 } from '../shared';
 import {
   MapTypeConfigPanelProps,
@@ -56,7 +55,8 @@ import { GeoConfig } from '../../../../core/types/geoConfig';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
-import { useLittleFilters } from '../../littleFilters';
+import { useLittleFilters, useLittleFiltersProps } from '../../littleFilters';
+import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
 
 const displayName = 'Bubbles';
 
@@ -199,12 +199,14 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
     ...configuration,
   });
 
-  const { filters: filtersForMarkerData } = useLittleFilters({
-    filters,
-    appState,
-    geoConfigs,
-    filterTypes: markerDataFilterTypes,
-  });
+  const { filters: filtersForMarkerData } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    markerDataFilterFuncs
+  );
 
   const markersData = useMarkerData({
     boundsZoomLevel,
@@ -292,12 +294,14 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
       </div>
     ) : undefined;
 
-  const { filters: filtersForFloaters } = useLittleFilters({
-    filters,
-    appState,
-    geoConfigs,
-    filterTypes: floaterFilterTypes,
-  });
+  const { filters: filtersForFloaters } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    floaterFilterFuncs
+  );
 
   return (
     <>
@@ -373,12 +377,14 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
 
   const configuration = props.configuration as BubbleMarkerConfiguration;
 
-  const { filters: filtersForMarkerData } = useLittleFilters({
-    filters,
-    appState,
-    geoConfigs,
-    filterTypes: markerDataFilterTypes,
-  });
+  const { filters: filtersForMarkerData } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    markerDataFilterFuncs
+  );
 
   const markerDataResponse = useMarkerData({
     studyId,
@@ -403,6 +409,52 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     />
   ) : null;
 }
+
+const timeSliderFilterFuncs = [markerConfigLittleFilter];
+
+export function TimeSliderComponent(props: MapTypeMapLayerProps) {
+  const {
+    studyId,
+    studyEntities,
+    filters,
+    appState,
+    appState: { timeSliderConfig },
+    analysisState,
+    geoConfigs,
+    setTimeSliderConfig,
+    siteInformationProps,
+  } = props;
+
+  const toggleStarredVariable = useToggleStarredVariable(analysisState);
+  const findEntityAndVariable = useFindEntityAndVariable(filters);
+
+  const { filters: filtersForTimeSlider } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+      findEntityAndVariable,
+    },
+    timeSliderFilterFuncs
+  );
+
+  return timeSliderConfig && setTimeSliderConfig && siteInformationProps ? (
+    <TimeSliderQuickFilter
+      studyId={studyId}
+      entities={studyEntities}
+      filters={filtersForTimeSlider}
+      starredVariables={
+        analysisState.analysis?.descriptor.starredVariables ?? []
+      }
+      toggleStarredVariable={toggleStarredVariable}
+      config={timeSliderConfig}
+      updateConfig={setTimeSliderConfig}
+      siteInformation={siteInformationProps}
+    />
+  ) : null;
+}
+
+///// helpers and hooks //////
 
 const processRawBubblesData = (
   mapElements: StandaloneMapBubblesResponse['mapElements'],
@@ -818,4 +870,89 @@ function useMarkerData(props: DataProps) {
       },
     };
   }, [rawMarkersResult, legendDataResult.data, overlayConfig, boundsZoomLevel]);
+}
+
+//
+// calculates little filters related to
+// marker variable selection and custom checked values
+//
+function markerConfigLittleFilter(props: useLittleFiltersProps): Filter[] {
+  const {
+    appState: { markerConfigurations, activeMarkerConfigurationType },
+    findEntityAndVariable,
+  } = props;
+
+  if (findEntityAndVariable == null)
+    throw new Error(
+      'Bubble markerConfigLittleFilter must receive findEntityAndVariable'
+    );
+
+  const activeMarkerConfiguration = markerConfigurations.find(
+    (markerConfig) => markerConfig.type === activeMarkerConfigurationType
+  );
+
+  // This doesn't seem ideal. Do we ever have no active config?
+  if (activeMarkerConfiguration == null) return [];
+  const { selectedVariable, type } = activeMarkerConfiguration;
+  const { variable } = findEntityAndVariable(selectedVariable) ?? {};
+  if (variable != null && type === 'bubble') {
+    if (variable.dataShape !== 'continuous' && variable.vocabulary != null) {
+      // if markers configuration is empty (equivalent to all values selected)
+      // or if the "all other values" value is active (aka UNSELECTED_TOKEN)
+      if (
+        activeMarkerConfiguration.numeratorValues == null &&
+        activeMarkerConfiguration.denominatorValues == null
+      ) {
+        return [
+          {
+            type: 'stringSet' as const,
+            ...selectedVariable,
+            stringSet: variable.vocabulary,
+          },
+        ];
+      } else {
+        // must be bubble with custom proportion configuration
+        // use all the selected values from both
+        const allSelectedValues = Array.from(
+          new Set([
+            ...(activeMarkerConfiguration.numeratorValues ?? []),
+            ...(activeMarkerConfiguration.denominatorValues ?? []),
+          ])
+        );
+
+        return [
+          {
+            type: 'stringSet' as const,
+            ...selectedVariable,
+            stringSet:
+              allSelectedValues.length > 0
+                ? allSelectedValues
+                : ['avaluewewillhopefullyneversee'],
+          },
+        ];
+      }
+    } else if (variable.type === 'number' || variable.type === 'integer') {
+      return [
+        {
+          type: 'numberRange' as const,
+          ...selectedVariable,
+          min: variable.distributionDefaults.rangeMin,
+          max: variable.distributionDefaults.rangeMax, // TO DO: check we use this, not display ranges
+        },
+      ];
+    } else if (variable.type === 'date') {
+      return [
+        {
+          type: 'dateRange' as const,
+          ...selectedVariable,
+          min: variable.distributionDefaults.rangeMin + 'T00:00:00Z',
+          max: variable.distributionDefaults.rangeMax + 'T00:00:00Z',
+          // TO DO: check we use this, not display ranges
+        },
+      ];
+    } else {
+      throw new Error('unknown variable type or missing vocabulary');
+    }
+  }
+  return [];
 }

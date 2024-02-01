@@ -36,17 +36,17 @@ import SemanticMarkers from '@veupathdb/components/lib/map/SemanticMarkers';
 import {
   DistributionMarkerDataProps,
   defaultAnimation,
-  floaterFilterTypes,
+  floaterFilterFuncs,
   isApproxSameViewport,
   isNoDataError,
-  markerDataFilterTypes,
+  markerDataFilterFuncs,
   noDataErrorMessage,
+  pieOrBarMarkerConfigLittleFilter,
   useCategoricalValues,
   useCommonData,
   useDistributionMarkerData,
   useDistributionOverlayConfig,
-  visibleOptionFilterTypes,
-  TimeSliderComponent,
+  visibleOptionFilterFuncs,
 } from '../shared';
 import {
   useFindEntityAndVariable,
@@ -69,6 +69,7 @@ import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
 import { useLittleFilters } from '../../littleFilters';
+import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
 const displayName = 'Bar plots';
 
 export const plugin: MapTypePlugin = {
@@ -123,12 +124,14 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     );
   }
 
-  const { filters: filtersForVisibleOption } = useLittleFilters({
-    filters,
-    appState,
-    geoConfigs,
-    filterTypes: visibleOptionFilterTypes,
-  });
+  const { filters: filtersForVisibleOption } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    visibleOptionFilterFuncs
+  );
 
   const allFilteredCategoricalValues = useCategoricalValues({
     overlayEntity,
@@ -331,12 +334,14 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     selectedPlotMode,
   } = props.configuration as BarPlotMarkerConfiguration;
 
-  const { filters: filtersForMarkerData } = useLittleFilters({
-    filters,
-    appState,
-    geoConfigs,
-    filterTypes: markerDataFilterTypes,
-  });
+  const { filters: filtersForMarkerData } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    markerDataFilterFuncs
+  );
 
   const markerData = useMarkerData({
     studyEntities,
@@ -428,12 +433,14 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     ? noDataErrorMessage
     : undefined;
 
-  const { filters: filtersForFloaters } = useLittleFilters({
-    filters,
-    appState,
-    geoConfigs,
-    filterTypes: floaterFilterTypes,
-  });
+  const { filters: filtersForFloaters } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    floaterFilterFuncs
+  );
 
   return (
     <>
@@ -490,12 +497,14 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     selectedPlotMode,
   } = props.configuration as BarPlotMarkerConfiguration;
 
-  const { filters: filtersForMarkerData } = useLittleFilters({
-    filters,
-    appState,
-    geoConfigs,
-    filterTypes: markerDataFilterTypes,
-  });
+  const { filters: filtersForMarkerData } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    markerDataFilterFuncs
+  );
 
   const markerDataResponse = useMarkerData({
     studyId,
@@ -523,6 +532,52 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     />
   ) : null;
 }
+
+const timeSliderFilterFuncs = [pieOrBarMarkerConfigLittleFilter];
+
+export function TimeSliderComponent(props: MapTypeMapLayerProps) {
+  const {
+    studyId,
+    studyEntities,
+    filters,
+    appState,
+    appState: { timeSliderConfig },
+    analysisState,
+    geoConfigs,
+    setTimeSliderConfig,
+    siteInformationProps,
+  } = props;
+
+  const toggleStarredVariable = useToggleStarredVariable(analysisState);
+  const findEntityAndVariable = useFindEntityAndVariable(filters);
+
+  const { filters: filtersForTimeSlider } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+      findEntityAndVariable,
+    },
+    timeSliderFilterFuncs
+  );
+
+  return timeSliderConfig && setTimeSliderConfig && siteInformationProps ? (
+    <TimeSliderQuickFilter
+      studyId={studyId}
+      entities={studyEntities}
+      filters={filtersForTimeSlider}
+      starredVariables={
+        analysisState.analysis?.descriptor.starredVariables ?? []
+      }
+      toggleStarredVariable={toggleStarredVariable}
+      config={timeSliderConfig}
+      updateConfig={setTimeSliderConfig}
+      siteInformation={siteInformationProps}
+    />
+  ) : null;
+}
+
+///// helpers and hooks /////
 
 const processRawMarkersData = (
   mapElements: StandaloneMapMarkersResponse['mapElements'],

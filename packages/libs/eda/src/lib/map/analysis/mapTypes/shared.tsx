@@ -30,10 +30,8 @@ import {
 } from '@veupathdb/components/lib/types/plots';
 import { getCategoricalValues } from '../utils/categoricalValues';
 import { Viewport } from '@veupathdb/components/lib/map/MapVEuMap';
-import { LittleFilterTypes, useLittleFilters } from '../littleFilters';
-import { MapTypeMapLayerProps } from './types';
-import { useToggleStarredVariable } from '../../../core/hooks/starredVariables';
-import TimeSliderQuickFilter from '../TimeSliderQuickFilter';
+import { useLittleFiltersProps } from '../littleFilters';
+import { filtersFromBoundingBox } from '../../../core/utils/visualization';
 
 export const defaultAnimation = {
   method: 'geohash',
@@ -41,66 +39,19 @@ export const defaultAnimation = {
   duration: defaultAnimationDuration,
 };
 
-export const markerDataFilterTypes: Set<LittleFilterTypes> = new Set([
-  'time-slider',
-  // viewport not needed, map-markers endpoint handles viewport explicitly, not via filters
-]);
-export const floaterFilterTypes: Set<LittleFilterTypes> = new Set([
-  'time-slider',
-  'viewport',
-  // up for debate: add 'marker-config'?
-]);
-export const visibleOptionFilterTypes: Set<LittleFilterTypes> = new Set([
-  'time-slider',
-  'viewport',
-  // note: previously the time-slider filters were not being included
-  // so this is fixing an unreported bug
-]);
-export const timeSliderFilterTypes: Set<LittleFilterTypes> = new Set([
-  'marker-config',
-]);
+export const markerDataFilterFuncs = [timeSliderLittleFilter];
+export const floaterFilterFuncs = [
+  timeSliderLittleFilter,
+  viewportLittleFilters,
+];
+export const visibleOptionFilterFuncs = [
+  timeSliderLittleFilter,
+  viewportLittleFilters,
+];
 
 export interface SharedMarkerConfigurations {
   selectedVariable: VariableDescriptor;
   activeVisualizationId?: string;
-}
-
-export function TimeSliderComponent(props: MapTypeMapLayerProps) {
-  const {
-    studyId,
-    studyEntities,
-    filters,
-    appState,
-    appState: { timeSliderConfig },
-    analysisState,
-    geoConfigs,
-    setTimeSliderConfig,
-    siteInformationProps,
-  } = props;
-
-  const toggleStarredVariable = useToggleStarredVariable(analysisState);
-
-  const { filters: filtersForTimeSlider } = useLittleFilters({
-    filters,
-    appState,
-    geoConfigs,
-    filterTypes: timeSliderFilterTypes,
-  });
-
-  return timeSliderConfig && setTimeSliderConfig && siteInformationProps ? (
-    <TimeSliderQuickFilter
-      studyId={studyId}
-      entities={studyEntities}
-      filters={filtersForTimeSlider}
-      starredVariables={
-        analysisState.analysis?.descriptor.starredVariables ?? []
-      }
-      toggleStarredVariable={toggleStarredVariable}
-      config={timeSliderConfig}
-      updateConfig={setTimeSliderConfig}
-      siteInformation={siteInformationProps}
-    />
-  ) : null;
 }
 
 export function useCommonData(
@@ -419,6 +370,141 @@ export function isApproxSameViewport(v1: Viewport, v2: Viewport) {
     Math.abs(v1.center[0] - v2.center[0]) < epsilon &&
     Math.abs(v1.center[1] - v2.center[1]) < epsilon
   );
+}
+
+/**
+ * little filter helpers
+ */
+
+function timeSliderLittleFilter(props: useLittleFiltersProps): Filter[] {
+  const { timeSliderConfig } = props.appState;
+
+  if (timeSliderConfig != null) {
+    const { selectedRange, active, variable } = timeSliderConfig;
+    if (variable != null && active && selectedRange != null)
+      return [
+        {
+          type: 'dateRange' as const,
+          ...variable,
+          min: selectedRange.start + 'T00:00:00Z',
+          max: selectedRange.end + 'T00:00:00Z',
+        },
+      ];
+  }
+  return [];
+}
+
+function viewportLittleFilters(props: useLittleFiltersProps): Filter[] {
+  const {
+    appState: { boundsZoomLevel },
+    geoConfigs,
+  } = props;
+  const geoConfig = geoConfigs[0]; // not ideal...
+  return boundsZoomLevel == null
+    ? []
+    : filtersFromBoundingBox(
+        boundsZoomLevel.bounds,
+        {
+          variableId: geoConfig.latitudeVariableId,
+          entityId: geoConfig.entity.id,
+        },
+        {
+          variableId: geoConfig.longitudeVariableId,
+          entityId: geoConfig.entity.id,
+        }
+      );
+}
+
+//
+// calculates little filters for pie/bar markers related to
+// marker variable selection and custom checked values
+//
+export function pieOrBarMarkerConfigLittleFilter(
+  props: useLittleFiltersProps
+): Filter[] {
+  const {
+    appState: { markerConfigurations, activeMarkerConfigurationType },
+    findEntityAndVariable,
+  } = props;
+
+  if (findEntityAndVariable == null)
+    throw new Error(
+      'Bar markerConfigLittleFilter must receive findEntityAndVariable'
+    );
+
+  const activeMarkerConfiguration = markerConfigurations.find(
+    (markerConfig) => markerConfig.type === activeMarkerConfigurationType
+  );
+
+  // This doesn't seem ideal. Do we ever have no active config?
+  if (activeMarkerConfiguration == null) return [];
+  const { selectedVariable, type } = activeMarkerConfiguration;
+  const { variable } = findEntityAndVariable(selectedVariable) ?? {};
+  if (variable != null && (type === 'pie' || type === 'barplot')) {
+    if (variable.dataShape !== 'continuous' && variable.vocabulary != null) {
+      // if markers configuration is empty (equivalent to all values selected)
+      // or if the "all other values" value is active (aka UNSELECTED_TOKEN)
+      if (
+        activeMarkerConfiguration.selectedValues == null ||
+        activeMarkerConfiguration.selectedValues.includes(UNSELECTED_TOKEN)
+      ) {
+        return [
+          {
+            type: 'stringSet' as const,
+            ...selectedVariable,
+            stringSet: variable.vocabulary,
+          },
+        ];
+      } else {
+        // we have selected values in pie or barplot mode and no "all other values"
+        if (
+          activeMarkerConfiguration.selectedValues != null &&
+          activeMarkerConfiguration.selectedValues.length > 0
+        )
+          return [
+            {
+              type: 'stringSet' as const,
+              ...selectedVariable,
+              stringSet: activeMarkerConfiguration.selectedValues,
+            },
+          ];
+        // Edge case where all values are deselected in the marker configuration table
+        // and we want the back end filters to return nothing.
+        // This is hopefully a workable solution. It is not allowed to pass an
+        // empty array to a `stringSet` filter.
+        else
+          return [
+            {
+              type: 'stringSet' as const,
+              ...selectedVariable,
+              stringSet: ['avaluewewillhopefullyneversee'],
+            },
+          ];
+      }
+    } else if (variable.type === 'number' || variable.type === 'integer') {
+      return [
+        {
+          type: 'numberRange' as const,
+          ...selectedVariable,
+          min: variable.distributionDefaults.rangeMin,
+          max: variable.distributionDefaults.rangeMax, // TO DO: check we use this, not display ranges
+        },
+      ];
+    } else if (variable.type === 'date') {
+      return [
+        {
+          type: 'dateRange' as const,
+          ...selectedVariable,
+          min: variable.distributionDefaults.rangeMin + 'T00:00:00Z',
+          max: variable.distributionDefaults.rangeMax + 'T00:00:00Z',
+          // TO DO: check we use this, not display ranges
+        },
+      ];
+    } else {
+      throw new Error('unknown variable type or missing vocabulary');
+    }
+  }
+  return [];
 }
 
 /**
