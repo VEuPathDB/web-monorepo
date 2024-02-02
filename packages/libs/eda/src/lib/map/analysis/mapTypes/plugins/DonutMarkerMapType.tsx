@@ -317,11 +317,6 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     valueSpec: 'count',
   });
 
-  const selectedMarkers = markerConfigurations.find(
-    (markerConfiguration) =>
-      markerConfiguration.type === activeMarkerConfigurationType
-  )?.selectedMarkers;
-
   const setSelectedMarkers = useCallback(
     (selectedMarkers?: string[]) => {
       updateConfiguration({
@@ -342,6 +337,11 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
   const markers = markerDataResponse.markerProps?.map((markerProps) => (
     <DonutMarker {...markerProps} />
   ));
+
+  const selectedMarkers = markerConfigurations.find(
+    (markerConfiguration) =>
+      markerConfiguration.type === activeMarkerConfigurationType
+  )?.selectedMarkers;
 
   return (
     <>

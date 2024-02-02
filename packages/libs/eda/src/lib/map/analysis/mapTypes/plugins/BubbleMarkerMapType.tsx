@@ -186,7 +186,12 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
     studyId,
     filters,
     appState,
-    appState: { boundsZoomLevel },
+    appState: {
+      boundsZoomLevel,
+      markerConfigurations,
+      activeMarkerConfigurationType,
+    },
+    updateConfiguration,
     geoConfigs,
   } = props;
 
@@ -214,12 +219,28 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
     studyId,
     filters: filtersForMarkerData,
   });
+
+  const setSelectedMarkers = useCallback(
+    (selectedMarkers?: string[]) => {
+      updateConfiguration({
+        ...(props.configuration as BubbleMarkerConfiguration),
+        selectedMarkers,
+      });
+    },
+    [props.configuration, updateConfiguration]
+  );
+
   if (markersData.error && !markersData.isFetching)
     return <MapFloatingErrorDiv error={markersData.error} />;
 
   const markers = markersData.data?.markersData?.map((markerProps) => (
     <BubbleMarker {...markerProps} />
   ));
+
+  const selectedMarkers = markerConfigurations.find(
+    (markerConfiguration) =>
+      markerConfiguration.type === activeMarkerConfigurationType
+  )?.selectedMarkers;
 
   return (
     <>
@@ -232,8 +253,8 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
             !(markersData.isFetching || markersData.isPreviousData) &&
             isApproxSameViewport(appState.viewport, defaultViewport)
           }
-          // selectedMarkers={selectedMarkers}
-          // setSelectedMarkers={setSelectedMarkers}
+          selectedMarkers={selectedMarkers}
+          setSelectedMarkers={setSelectedMarkers}
           flyToMarkersDelay={2000}
         />
       )}

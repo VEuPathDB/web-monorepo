@@ -316,7 +316,19 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
 }
 
 function MapLayerComponent(props: MapTypeMapLayerProps) {
-  const { studyEntities, studyId, filters, geoConfigs, appState } = props;
+  const {
+    studyEntities,
+    studyId,
+    filters,
+    geoConfigs,
+    appState,
+    appState: {
+      boundsZoomLevel,
+      markerConfigurations,
+      activeMarkerConfigurationType,
+    },
+    updateConfiguration,
+  } = props;
 
   const {
     selectedVariable,
@@ -340,7 +352,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     studyId,
     filters: filtersForMarkerData,
     geoConfigs,
-    boundsZoomLevel: appState.boundsZoomLevel,
+    boundsZoomLevel,
     selectedVariable,
     selectedValues,
     binningMethod,
@@ -348,15 +360,30 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     valueSpec: selectedPlotMode,
   });
 
+  const setSelectedMarkers = useCallback(
+    (selectedMarkers?: string[]) => {
+      updateConfiguration({
+        ...(props.configuration as BarPlotMarkerConfiguration),
+        selectedMarkers,
+      });
+    },
+    [props.configuration, updateConfiguration]
+  );
+
   if (markerData.error && !markerData.isFetching)
     return isNoDataError(markerData.error) ? null : (
       <MapFloatingErrorDiv error={markerData.error} />
     );
 
-  // pass selectedMarkers and its state function
+  // convert marker data to markers
   const markers = markerData.markerProps?.map((markerProps) => (
     <ChartMarker {...markerProps} />
   ));
+
+  const selectedMarkers = markerConfigurations.find(
+    (markerConfiguration) =>
+      markerConfiguration.type === activeMarkerConfigurationType
+  )?.selectedMarkers;
 
   return (
     <>
@@ -369,8 +396,8 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
             !markerData.isFetching &&
             isApproxSameViewport(appState.viewport, defaultViewport)
           }
-          // selectedMarkers={selectedMarkers}
-          // setSelectedMarkers={setSelectedMarkers}
+          selectedMarkers={selectedMarkers}
+          setSelectedMarkers={setSelectedMarkers}
           flyToMarkersDelay={2000}
         />
       )}
