@@ -160,6 +160,10 @@ function BipartiteNetwork(
     };
   });
 
+  const plotRect = plotRef.current?.getBoundingClientRect();
+  const imageHeight = plotRect?.height;
+  const imageWidth = plotRect?.width;
+
   return (
     <>
       <div
@@ -231,7 +235,12 @@ function BipartiteNetwork(
           }
         </div>
       </div>
-      <ExportPlotToImageButton toImage={toImage} filename="Network" />
+      <ExportPlotToImageButton
+        toImage={toImage}
+        imageHeight={imageHeight}
+        imageWidth={imageWidth}
+        filename="Network"
+      />
     </>
   );
 }

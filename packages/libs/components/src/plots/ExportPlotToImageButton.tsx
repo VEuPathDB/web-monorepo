@@ -16,10 +16,20 @@ interface Props {
   filename?: string;
   toImage: ToImage;
   style?: CSSProperties;
+  /** Height of image in pixels */
+  imageHeight?: number;
+  /** Width of image in pixels */
+  imageWidth?: number;
 }
 
 export function ExportPlotToImageButton(props: Props) {
-  const { filename = 'plot', toImage, style } = props;
+  const {
+    filename = 'plot',
+    toImage,
+    style,
+    imageHeight = 450,
+    imageWidth = 750,
+  } = props;
   const [sawError, setSawError] = useState(false);
   return (
     <div
@@ -49,11 +59,15 @@ export function ExportPlotToImageButton(props: Props) {
           } as const,
         ]}
         value={undefined}
-        onSelect={async (value) => {
-          if (value) {
+        onSelect={async (format) => {
+          if (format) {
             setSawError(false);
             try {
-              await downloadImage(toImage, filename, value);
+              await downloadImage(toImage, filename, {
+                format,
+                height: imageHeight,
+                width: imageWidth,
+              });
             } catch (error) {
               setSawError(true);
               console.error(error);
@@ -85,12 +99,12 @@ export function ExportPlotToImageButton(props: Props) {
 async function downloadImage(
   toImage: ToImage,
   filename: string,
-  ext: ToImageOpts['format']
+  options: ToImageOpts
 ) {
-  const imgUrl = await toImage({ height: 450, width: 750, format: ext });
+  const imgUrl = await toImage(options);
   const downloadLink = document.createElement('a');
   downloadLink.href = imgUrl;
-  downloadLink.download = filename + '.' + ext;
+  downloadLink.download = filename + '.' + options.format;
   document.body.appendChild(downloadLink);
   downloadLink.click();
   document.body.removeChild(downloadLink);
