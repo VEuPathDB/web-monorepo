@@ -443,6 +443,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
         controlsNode={controlsNode}
         tableGroupNode={tableGroupNode}
         plotStyles={{ width: 'auto' }}
+        containerStyles={{ flexDirection: 'column' }}
       />
     </div>
   );
