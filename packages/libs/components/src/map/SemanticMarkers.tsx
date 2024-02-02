@@ -27,10 +27,8 @@ export interface SemanticMarkersProps {
   /* selectedMarkers state **/
   selectedMarkers?: string[];
   /* selectedMarkers setState **/
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
+  setSelectedMarkers?: (selectedMarkers: string[] | undefined) => void;
 }
-
-const EMPTY_MARKERS: string[] = [];
 
 /**
  * Renders the semantic markers layer
@@ -53,7 +51,7 @@ export default function SemanticMarkers({
   // cancel marker selection with a single click on the map
   useMapEvents({
     click: () => {
-      if (setSelectedMarkers != null) setSelectedMarkers(EMPTY_MARKERS);
+      if (setSelectedMarkers != null) setSelectedMarkers(undefined);
     },
   });
 

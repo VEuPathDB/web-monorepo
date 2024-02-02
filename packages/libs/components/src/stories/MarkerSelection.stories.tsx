@@ -45,7 +45,8 @@ export const DonutMarkers: Story<MapVEuMapProps> = (args) => {
   });
 
   // make an array of objects state to list highlighted markers
-  const [selectedMarkers, setSelectedMarkers] = useState<string[]>([]);
+  const [selectedMarkers, setSelectedMarkers] =
+    useState<string[] | undefined>();
 
   console.log('selectedMarkers =', selectedMarkers);
 
@@ -109,7 +110,8 @@ export const ChartMarkers: Story<MapVEuMapProps> = (args) => {
   const duration = defaultAnimationDuration;
 
   // make an array of objects state to list highlighted markers
-  const [selectedMarkers, setSelectedMarkers] = useState<string[]>([]);
+  const [selectedMarkers, setSelectedMarkers] =
+    useState<string[] | undefined>();
 
   console.log('selectedMarkers =', selectedMarkers);
 
