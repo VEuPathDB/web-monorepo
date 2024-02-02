@@ -5,12 +5,7 @@ import {
   Tooltip,
 } from '@veupathdb/wdk-client/lib/Components';
 
-import {
-  DataNoun,
-  UserDataset,
-  UserDatasetVDI,
-  UserDatasetInstallDetailsByProject,
-} from '../Utils/types';
+import { DataNoun, UserDataset, UserDatasetVDI } from '../Utils/types';
 
 interface Props {
   baseUrl: string;
@@ -22,85 +17,178 @@ interface Props {
   dataNoun: DataNoun;
 }
 
-export function getDatasetStatusInfo(
-  projects: UserDatasetVDI['projectIds'],
+export const failedImportAndInstallStatuses = [
+  'invalid',
+  'failed',
+  'failed-validation',
+  'failed-installation',
+  'ready-for-reinstall',
+];
+
+const orderedStatuses = [
+  'failed-validation',
+  'missing-dependency',
+  'failed-installation',
+  'ready-for-reinstall',
+  'running',
+  'complete',
+];
+
+/**
+ * This is a mapping of import and install statuses received from VDI response
+ *  import queued                 clock "queued"
+ *  import in-progress	          clock "queued"
+ *  import complete               clock "queued"
+ *  import invalid			          yellow: "validation error on import; this is why"
+ *  import failed 			          grey: "error on import (a bug); please let us know"
+ *  install running		            clock: "in progress"
+ *  install complete		          green: "complete"
+ *  install failed-validation     yellow: "validation error on install; this is why"
+ *  install failed-installation   grey: "error on install (a bug); pls let us know"
+ *  install ready-for-reinstall   grey: "error on install (a bug); pls let us know"
+ *  install missing-dependency    yellow: "incompatible, why"
+ **/
+
+function getStatus(
+  status: UserDatasetVDI['status'],
+  importMessages: UserDatasetVDI['importMessages'],
   projectId: string,
-  importStatus: UserDatasetVDI['status']['import'],
-  installStatus?: UserDatasetInstallDetailsByProject
-): {
-  isInstallable: boolean;
-  isInstalled: boolean;
-  isQueued: boolean;
-  hasFailed: boolean;
-} {
-  const isInstallable = projects.includes(projectId);
-  const isInstalled =
-    importStatus === 'complete' && installStatus?.dataStatus === 'complete';
-  const isQueued =
-    importStatus === 'queued' ||
-    (importStatus === 'complete' && !installStatus?.dataStatus);
-  const hasFailed =
-    importStatus === 'failed' ||
-    importStatus === 'invalid' ||
-    ['failed-installation', 'failed-validation', 'missing-dependency'].includes(
-      installStatus?.dataStatus ?? ''
+  dataNoun: string,
+  projectDisplayName: string,
+  projects: string[]
+): { content: React.ReactNode; icon: string } {
+  const isIncompatibleProject = !projects.includes(projectId);
+  if (isIncompatibleProject) {
+    return {
+      content: `This ${dataNoun} is not compatible with ${projectDisplayName}.`,
+      icon: 'minus-circle',
+    };
+  }
+
+  const importStatus = status.import;
+  switch (importStatus) {
+    case 'queued':
+    case 'in-progress':
+      return {
+        content: `This ${dataNoun} is queued. Please check again soon.`,
+        icon: 'clock-o',
+      };
+    case 'invalid':
+      return {
+        content: (
+          <>
+            This {dataNoun} was rejected as invalid during the import phase:{' '}
+            {importMessages?.join(', ')}
+          </>
+        ),
+        icon: 'exclamation-circle',
+      };
+    case 'failed':
+      return {
+        content: (
+          <>
+            Failed during the import phase. If the problem persists, please let
+            us know through our{' '}
+            <Link to="/contact-us" target="_blank">
+              support form
+            </Link>
+            .
+          </>
+        ),
+        icon: 'times-circle',
+      };
+  }
+
+  if (importStatus !== 'complete') {
+    return {
+      content: `This ${dataNoun} is queued. Please check again soon.`,
+      icon: 'clock-o',
+    };
+  } else {
+    const installData = status.install?.find((d) => d.projectId === projectId);
+    const metaStatus = installData?.metaStatus;
+    const metaMessage = installData?.metaMessage ?? '';
+    const dataStatus = installData?.dataStatus;
+    const dataMessage = installData?.dataMessage ?? '';
+
+    // Returns the "least" status between metaStatus and dataStatus
+    const combinedStatus = orderedStatuses.find(
+      (status) => metaStatus === status || dataStatus === status
     );
-  return {
-    isInstallable,
-    isInstalled,
-    isQueued,
-    hasFailed,
-  };
+
+    switch (combinedStatus) {
+      case 'running':
+        return {
+          content: 'In progress. Please check again soon.',
+          icon: 'clock-o',
+        };
+      case 'complete':
+        return {
+          content: `This ${dataNoun} is installed and ready to use in ${projectDisplayName}.`,
+          icon: 'check-circle',
+        };
+      case 'failed-validation':
+        return {
+          content: (
+            <>
+              This {dataNoun} was rejected as invalid during the install phase:{' '}
+              {metaMessage}
+              {metaMessage.length && dataMessage.length ? '; ' : ''}
+              {dataMessage}
+            </>
+          ),
+          icon: 'exclamation-circle',
+        };
+      case 'failed-installation':
+      case 'ready-for-reinstall':
+        return {
+          content: (
+            <>
+              Failed during the install phase. If the problem persists, please
+              let us know through our{' '}
+              <Link to="/contact-us" target="_blank">
+                support form
+              </Link>
+              .
+            </>
+          ),
+          icon: 'times-circle',
+        };
+      case 'missing-dependency':
+        return {
+          content: (
+            <>
+              This {dataNoun} is incompatible: {metaMessage}
+              {metaMessage.length && dataMessage.length ? '; ' : ''}
+              {dataMessage}
+            </>
+          ),
+          icon: 'exclamation-circle',
+        };
+      default:
+        return {
+          content: 'Status unknown at this time. Please check again soon.',
+          icon: 'clock-o',
+        };
+    }
+  }
 }
 
 export default function UserDatasetStatus(props: Props) {
   const { baseUrl, userDataset, projectId, displayName, dataNoun } = props;
   const { projects, status, importMessages } = userDataset;
   const lowercaseSingularDataNoun = dataNoun.singular.toLowerCase();
-  const installStatusForCurrentProject = status?.install?.find(
-    (d) => d.projectId === projectId
+
+  const { content, icon: faIcon } = getStatus(
+    status,
+    importMessages,
+    projectId,
+    lowercaseSingularDataNoun,
+    displayName,
+    projects
   );
-  const { isInstallable, isInstalled, isQueued, hasFailed } =
-    getDatasetStatusInfo(
-      projects,
-      projectId,
-      status.import,
-      installStatusForCurrentProject
-    );
-  const phase = status?.import !== 'complete' ? '1' : '2';
+
   const link = `${baseUrl}/${userDataset.id}`;
-  const content = !isInstallable ? (
-    <span>
-      This {lowercaseSingularDataNoun} is not compatible with {displayName}.
-    </span>
-  ) : isInstalled ? (
-    <span>
-      This {lowercaseSingularDataNoun} is installed and ready for use in{' '}
-      {displayName}.
-    </span>
-  ) : isQueued ? (
-    <span>Queued (for phase {phase}). Please check again soon.</span>
-  ) : hasFailed ? (
-    <span>
-      Failed (phase {phase}):{' '}
-      {phase === '1'
-        ? importMessages.join(', ')
-        : installStatusForCurrentProject?.dataMessage}
-    </span>
-  ) : (
-    <span>
-      <span>In progress (phase {phase}). Please check again soon.</span>
-    </span>
-  );
-  const faIcon = !isInstallable
-    ? 'minus-circle'
-    : isInstalled
-    ? 'check-circle'
-    : isQueued
-    ? 'clock-o'
-    : hasFailed
-    ? 'minus-circle'
-    : 'clock-o';
   const children = <Icon className="StatusIcon" fa={faIcon} />;
   const visibleContent = props.useTooltip ? (
     <Tooltip content={content}>{children}</Tooltip>

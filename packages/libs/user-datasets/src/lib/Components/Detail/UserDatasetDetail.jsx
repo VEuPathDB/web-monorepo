@@ -14,7 +14,9 @@ import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 import NotFound from '@veupathdb/wdk-client/lib/Views/NotFound/NotFound';
 
 import SharingModal from '../Sharing/UserDatasetSharingModal';
-import UserDatasetStatus, { getDatasetStatusInfo } from '../UserDatasetStatus';
+import UserDatasetStatus, {
+  failedImportAndInstallStatuses,
+} from '../UserDatasetStatus';
 import { makeClassifier, normalizePercentage } from '../UserDatasetUtils';
 import { ThemedGrantAccessButton } from '../ThemedGrantAccessButton';
 import { ThemedDeleteButton } from '../ThemedDeleteButton';
@@ -42,6 +44,7 @@ class UserDatasetDetail extends React.Component {
 
     this.renderCompatibilitySection =
       this.renderCompatibilitySection.bind(this);
+    this.getCompatibilityStatus = this.getCompatibilityStatus.bind(this);
     this.getCompatibilityTableColumns =
       this.getCompatibilityTableColumns.bind(this);
 
@@ -470,68 +473,14 @@ class UserDatasetDetail extends React.Component {
 
   renderCompatibilitySection() {
     const { userDataset, config, dataNoun } = this.props;
-    const { projectId, displayName } = config;
+    const { displayName } = config;
 
     const compatibilityTableState = MesaState.create({
       columns: this.getCompatibilityTableColumns(userDataset),
       rows: userDataset.dependencies,
     });
 
-    const { status, projects } = userDataset;
-
-    /**
-     * In VDI, we know a dataset is compatible when the site-specific's install status
-     * indicates a successful install.
-     *
-     * We know a dataset is incompatible when the site-specific's install status
-     * indicates `missing-dependency`
-     */
-    const installStatusForCurrentProject = status?.install?.find(
-      (d) => d.projectId === projectId
-    );
-    const { isInstallable, isInstalled, hasFailed } = getDatasetStatusInfo(
-      projects,
-      projectId,
-      status.import,
-      installStatusForCurrentProject
-    );
-
-    const failedImport =
-      status.import === 'failed' || status.import === 'invalid';
-    const isIncompatible =
-      installStatusForCurrentProject?.dataStatus === 'missing-dependency';
-
-    const compatibilityInfo = !isInstallable ? (
-      // if projectIds don't match, then we're not installable nor compatible
-      <p className="danger">
-        This {dataNoun.singular.toLowerCase()} is not compatible with{' '}
-        <b>{projectId}</b>.
-      </p>
-    ) : isInstalled ? (
-      // if we've installed successfully and we're installable, we're compatible
-      <p className="success">
-        This {dataNoun.singular.toLowerCase()} is compatible with{' '}
-        <b>{projectId}</b>. It is installed for use.
-      </p>
-    ) : isIncompatible ? (
-      // if we're installable but failed due to a missing dependency, we're incompatible
-      <p className="danger">
-        This {dataNoun.singular.toLowerCase()} is not compatible with{' '}
-        <b>{projectId}</b>.
-      </p>
-    ) : hasFailed ? (
-      // if we're installable but failed import or install, let's tell user
-      <p className="danger">
-        This {dataNoun.singular.toLowerCase()} failed to{' '}
-        {failedImport ? 'upload' : 'install'}.
-      </p>
-    ) : (
-      // if we've made it here, we're installable and either import or install is in progress
-      <p className="danger">
-        This {dataNoun.singular.toLowerCase()} is being processed. Please check
-        again soon.
-      </p>
-    );
+    const compatibilityStatus = this.getCompatibilityStatus();
 
     return (
       <section id="dataset-compatibility">
@@ -552,9 +501,79 @@ class UserDatasetDetail extends React.Component {
         <div style={{ maxWidth: '600px' }}>
           <Mesa state={compatibilityTableState} />
         </div>
-        {compatibilityInfo}
+        {compatibilityStatus}
       </section>
     );
+  }
+
+  getCompatibilityStatus() {
+    const { userDataset, config, dataNoun } = this.props;
+    const { projectId } = config;
+
+    const { status, projects } = userDataset;
+
+    /**
+     * In VDI, we know a dataset is compatible when the site-specific's install status
+     * indicates a successful install.
+     *
+     * We know a dataset is incompatible when the site-specific's install status
+     * indicates `missing-dependency`
+     */
+    const installStatusForCurrentProject = status.install?.find(
+      (d) => d.projectId === projectId
+    );
+
+    const isInstallable = projects.includes(projectId);
+    const isInstalled = [
+      userDataset.status.import,
+      installStatusForCurrentProject?.metaStatus,
+      installStatusForCurrentProject?.dataStatus,
+    ].every((status) => status === 'complete');
+    const hasFailed = [
+      userDataset.status.import,
+      installStatusForCurrentProject?.metaStatus,
+      installStatusForCurrentProject?.dataStatus,
+    ].some((status) => failedImportAndInstallStatuses.includes(status));
+
+    const failedImport =
+      status.import === 'failed' || status.import === 'invalid';
+    const isIncompatible =
+      installStatusForCurrentProject?.dataStatus === 'missing-dependency';
+
+    if (!isInstallable || (isInstallable && isIncompatible)) {
+      return (
+        // if projectIds don't match, then we're not installable and thus incompatible
+        // if we're installable but failed due to a missing dependency, we're incompatible
+        <p className="danger">
+          This {dataNoun.singular.toLowerCase()} is not compatible with{' '}
+          <b>{projectId}</b>.
+        </p>
+      );
+    } else if (isInstalled) {
+      return (
+        // if we've installed successfully and we're installable, we're compatible
+        <p className="success">
+          This {dataNoun.singular.toLowerCase()} is compatible with{' '}
+          <b>{projectId}</b>. It is installed for use.
+        </p>
+      );
+    } else if (hasFailed) {
+      return (
+        // if we're installable but failed import or install, let's tell user
+        <p className="danger">
+          This {dataNoun.singular.toLowerCase()} failed to{' '}
+          {failedImport ? 'upload' : 'install'}.
+        </p>
+      );
+    } else {
+      return (
+        // if we've made it here, we're installable and either import or install is in progress
+        <p className="danger">
+          This {dataNoun.singular.toLowerCase()} is being processed. Please
+          check again soon.
+        </p>
+      );
+    }
   }
 
   getCompatibilityTableColumns() {
