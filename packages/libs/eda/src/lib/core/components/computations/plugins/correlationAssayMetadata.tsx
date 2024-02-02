@@ -261,6 +261,7 @@ const ASSAY_ENTITIES = [
   'EUPATH_0000809',
   'EUPATH_0000813',
   'EUPATH_0000812',
+  'OBI_0000626', // should just find whatever entity has collections!!!
 ];
 
 // The correlation assay x metadata app is only available for studies
