@@ -49,6 +49,8 @@ export const visibleOptionFilterFuncs = [
   viewportLittleFilters,
 ];
 
+export const MAX_FILTERSET_VALUES = 1000;
+
 export interface SharedMarkerConfigurations {
   selectedVariable: VariableDescriptor;
   activeVisualizationId?: string;
@@ -441,45 +443,60 @@ export function pieOrBarMarkerConfigLittleFilter(
   const { selectedVariable, type } = activeMarkerConfiguration;
   const { variable } = findEntityAndVariable(selectedVariable) ?? {};
   if (variable != null && (type === 'pie' || type === 'barplot')) {
-    if (variable.dataShape !== 'continuous' && variable.vocabulary != null) {
-      // if markers configuration is empty (equivalent to all values selected)
-      // or if the "all other values" value is active (aka UNSELECTED_TOKEN)
-      if (
-        activeMarkerConfiguration.selectedValues == null ||
-        activeMarkerConfiguration.selectedValues.includes(UNSELECTED_TOKEN)
-      ) {
-        return [
-          {
-            type: 'stringSet' as const,
-            ...selectedVariable,
-            stringSet: variable.vocabulary,
-          },
-        ];
-      } else {
-        // we have selected values in pie or barplot mode and no "all other values"
+    if (variable.dataShape !== 'continuous') {
+      if (variable.vocabulary != null) {
+        // if markers configuration is empty (equivalent to all values selected)
+        // or if the "all other values" value is active (aka UNSELECTED_TOKEN)
         if (
-          activeMarkerConfiguration.selectedValues != null &&
-          activeMarkerConfiguration.selectedValues.length > 0
-        )
-          return [
-            {
-              type: 'stringSet' as const,
-              ...selectedVariable,
-              stringSet: activeMarkerConfiguration.selectedValues,
-            },
-          ];
-        // Edge case where all values are deselected in the marker configuration table
-        // and we want the back end filters to return nothing.
-        // This is hopefully a workable solution. It is not allowed to pass an
-        // empty array to a `stringSet` filter.
-        else
-          return [
-            {
-              type: 'stringSet' as const,
-              ...selectedVariable,
-              stringSet: ['avaluewewillhopefullyneversee'],
-            },
-          ];
+          activeMarkerConfiguration.selectedValues == null ||
+          activeMarkerConfiguration.selectedValues.includes(UNSELECTED_TOKEN)
+        ) {
+          if (variable.vocabulary.length <= MAX_FILTERSET_VALUES) {
+            return [
+              {
+                type: 'stringSet' as const,
+                ...selectedVariable,
+                stringSet: variable.vocabulary,
+              },
+            ];
+          } else {
+            console.log(
+              'donut/bar marker-config filter skipping ultra-high cardinality variable: ' +
+                variable.displayName
+            );
+            return [];
+          }
+        } else {
+          // We have selected values in pie or barplot mode and no "all other values".
+          // Note that we will not (yet) check the number of selections <= MAX_FILTERSET_VALUES here
+          // because we will (likely) need to prevent that many being selected in the first place
+          // TO DO: https://github.com/VEuPathDB/web-monorepo/issues/820
+          if (
+            activeMarkerConfiguration.selectedValues != null &&
+            activeMarkerConfiguration.selectedValues.length > 0
+          )
+            return [
+              {
+                type: 'stringSet' as const,
+                ...selectedVariable,
+                stringSet: activeMarkerConfiguration.selectedValues,
+              },
+            ];
+          // Edge case where all values are deselected in the marker configuration table
+          // and we want the back end filters to return nothing.
+          // This is hopefully a workable solution. It is not allowed to pass an
+          // empty array to a `stringSet` filter.
+          else
+            return [
+              {
+                type: 'stringSet' as const,
+                ...selectedVariable,
+                stringSet: ['avaluewewillhopefullyneversee'],
+              },
+            ];
+        }
+      } else {
+        throw new Error('missing vocabulary on categorical variable');
       }
     } else if (variable.type === 'number' || variable.type === 'integer') {
       return [
@@ -501,7 +518,9 @@ export function pieOrBarMarkerConfigLittleFilter(
         },
       ];
     } else {
-      throw new Error('unknown variable type or missing vocabulary');
+      throw new Error(
+        'unknown variable type encounted in marker-config filter function'
+      );
     }
   }
   return [];

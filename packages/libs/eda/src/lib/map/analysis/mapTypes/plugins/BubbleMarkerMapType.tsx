@@ -36,6 +36,7 @@ import { BubbleMarkerIcon } from '../../MarkerConfiguration/icons';
 import { useStandaloneVizPlugins } from '../../hooks/standaloneVizPlugins';
 import { getDefaultBubbleOverlayConfig } from '../../utils/defaultOverlayConfig';
 import {
+  MAX_FILTERSET_VALUES,
   defaultAnimation,
   floaterFilterFuncs,
   isApproxSameViewport,
@@ -896,40 +897,56 @@ function markerConfigLittleFilter(props: useLittleFiltersProps): Filter[] {
   const { selectedVariable, type } = activeMarkerConfiguration;
   const { variable } = findEntityAndVariable(selectedVariable) ?? {};
   if (variable != null && type === 'bubble') {
-    if (variable.dataShape !== 'continuous' && variable.vocabulary != null) {
-      // if markers configuration is empty (equivalent to all values selected)
-      // or if the "all other values" value is active (aka UNSELECTED_TOKEN)
-      if (
-        activeMarkerConfiguration.numeratorValues == null &&
-        activeMarkerConfiguration.denominatorValues == null
-      ) {
-        return [
-          {
-            type: 'stringSet' as const,
-            ...selectedVariable,
-            stringSet: variable.vocabulary,
-          },
-        ];
+    if (variable.dataShape !== 'continuous') {
+      if (variable.vocabulary != null) {
+        // if markers configuration is empty (equivalent to all values selected)
+        // or if the "all other values" value is active (aka UNSELECTED_TOKEN)
+        if (
+          activeMarkerConfiguration.numeratorValues == null &&
+          activeMarkerConfiguration.denominatorValues == null
+        ) {
+          if (variable.vocabulary.length <= MAX_FILTERSET_VALUES)
+            return [
+              {
+                type: 'stringSet' as const,
+                ...selectedVariable,
+                stringSet: variable.vocabulary,
+              },
+            ];
+          else {
+            console.log(
+              'bubble marker-config filter skipping ultra-high cardinality variable: ' +
+                variable.displayName
+            );
+            return [];
+          }
+        } else {
+          // must be bubble with custom proportion configuration
+          // use all the selected values from both
+          const allSelectedValues = Array.from(
+            new Set([
+              ...(activeMarkerConfiguration.numeratorValues ?? []),
+              ...(activeMarkerConfiguration.denominatorValues ?? []),
+            ])
+          );
+          // Note that we will not (yet) check the number of selections <= MAX_FILTERSET_VALUES here
+          // because we will (likely) need to prevent that many being selected in the first place
+          // TO DO: https://github.com/VEuPathDB/web-monorepo/issues/820
+          return [
+            {
+              type: 'stringSet' as const,
+              ...selectedVariable,
+              stringSet:
+                allSelectedValues.length > 0
+                  ? allSelectedValues
+                  : ['avaluewewillhopefullyneversee'],
+            },
+          ];
+        }
       } else {
-        // must be bubble with custom proportion configuration
-        // use all the selected values from both
-        const allSelectedValues = Array.from(
-          new Set([
-            ...(activeMarkerConfiguration.numeratorValues ?? []),
-            ...(activeMarkerConfiguration.denominatorValues ?? []),
-          ])
+        throw new Error(
+          'missing vocabulary for categorical variable: ' + variable.displayName
         );
-
-        return [
-          {
-            type: 'stringSet' as const,
-            ...selectedVariable,
-            stringSet:
-              allSelectedValues.length > 0
-                ? allSelectedValues
-                : ['avaluewewillhopefullyneversee'],
-          },
-        ];
       }
     } else if (variable.type === 'number' || variable.type === 'integer') {
       return [
@@ -951,7 +968,9 @@ function markerConfigLittleFilter(props: useLittleFiltersProps): Filter[] {
         },
       ];
     } else {
-      throw new Error('unknown variable type or missing vocabulary');
+      throw new Error(
+        'unknown variable type in bubble marker-config filter function'
+      );
     }
   }
   return [];
