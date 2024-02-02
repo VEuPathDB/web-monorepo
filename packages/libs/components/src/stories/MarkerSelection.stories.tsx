@@ -72,7 +72,6 @@ export const DonutMarkers: Story<MapVEuMapProps> = (args) => {
         onViewportChanged={setViewport}
         onBoundsChanged={handleViewportChanged}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-        setSelectedMarkers={setSelectedMarkers}
       >
         <SemanticMarkers
           markers={markerElements}
@@ -142,7 +141,6 @@ export const ChartMarkers: Story<MapVEuMapProps> = (args) => {
         onBoundsChanged={handleViewportChanged}
         showGrid={true}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-        setSelectedMarkers={setSelectedMarkers}
       >
         <SemanticMarkers
           markers={markerElements}

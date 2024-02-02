@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { AnimationFunction, Bounds } from './Types';
 import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
-import { useMap } from 'react-leaflet';
+import { useMap, useMapEvents } from 'react-leaflet';
 import { LatLngBounds } from 'leaflet';
 import { debounce, isEqual } from 'lodash';
 
@@ -30,6 +30,8 @@ export interface SemanticMarkersProps {
   setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
+const EMPTY_MARKERS: string[] = [];
+
 /**
  * Renders the semantic markers layer
  *
@@ -47,6 +49,13 @@ export default function SemanticMarkers({
 }: SemanticMarkersProps) {
   // react-leaflet v3
   const map = useMap();
+
+  // cancel marker selection with a single click on the map
+  useMapEvents({
+    click: () => {
+      if (setSelectedMarkers != null) setSelectedMarkers(EMPTY_MARKERS);
+    },
+  });
 
   const [prevRecenteredMarkers, setPrevRecenteredMarkers] =
     useState<ReactElement<BoundsDriftMarkerProps>[]>(markers);
