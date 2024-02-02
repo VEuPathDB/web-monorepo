@@ -316,15 +316,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
 }
 
 function MapLayerComponent(props: MapTypeMapLayerProps) {
-  const {
-    studyEntities,
-    studyId,
-    filters,
-    geoConfigs,
-    appState,
-    selectedMarkers,
-    setSelectedMarkers,
-  } = props;
+  const { studyEntities, studyId, filters, geoConfigs, appState } = props;
 
   const {
     selectedVariable,
@@ -377,8 +369,8 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
             !markerData.isFetching &&
             isApproxSameViewport(appState.viewport, defaultViewport)
           }
-          selectedMarkers={selectedMarkers}
-          setSelectedMarkers={setSelectedMarkers}
+          // selectedMarkers={selectedMarkers}
+          // setSelectedMarkers={setSelectedMarkers}
           flyToMarkersDelay={2000}
         />
       )}

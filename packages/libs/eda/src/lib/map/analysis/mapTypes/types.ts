@@ -41,9 +41,6 @@ export interface MapTypeMapLayerProps {
   filteredCounts: PromiseHookState<EntityCounts>;
   hideVizInputsAndControls: boolean;
   setHideVizInputsAndControls: (hide: boolean) => void;
-  // selectedMarkers and its state function
-  selectedMarkers?: string[];
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
   setTimeSliderConfig?: (
     newConfig: NonNullable<AppState['timeSliderConfig']>
   ) => void;

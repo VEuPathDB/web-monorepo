@@ -188,8 +188,6 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
     appState,
     appState: { boundsZoomLevel },
     geoConfigs,
-    selectedMarkers,
-    setSelectedMarkers,
   } = props;
 
   const configuration = props.configuration as BubbleMarkerConfiguration;
@@ -234,8 +232,8 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
             !(markersData.isFetching || markersData.isPreviousData) &&
             isApproxSameViewport(appState.viewport, defaultViewport)
           }
-          selectedMarkers={selectedMarkers}
-          setSelectedMarkers={setSelectedMarkers}
+          // selectedMarkers={selectedMarkers}
+          // setSelectedMarkers={setSelectedMarkers}
           flyToMarkersDelay={2000}
         />
       )}

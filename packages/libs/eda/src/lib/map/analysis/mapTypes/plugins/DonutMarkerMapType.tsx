@@ -279,16 +279,18 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
 }
 
 function MapLayerComponent(props: MapTypeMapLayerProps) {
-  // selectedMarkers and its state function
   const {
     studyId,
     studyEntities,
-    selectedMarkers,
-    setSelectedMarkers,
     appState,
-    appState: { boundsZoomLevel },
+    appState: {
+      boundsZoomLevel,
+      markerConfigurations,
+      activeMarkerConfigurationType,
+    },
     geoConfigs,
     filters,
+    updateConfiguration,
   } = props;
 
   const { selectedVariable, binningMethod, selectedValues } =
@@ -315,16 +317,32 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     valueSpec: 'count',
   });
 
+  const selectedMarkers = markerConfigurations.find(
+    (markerConfiguration) =>
+      markerConfiguration.type === activeMarkerConfigurationType
+  )?.selectedMarkers;
+
+  const setSelectedMarkers = useCallback(
+    (selectedMarkers?: string[]) => {
+      updateConfiguration({
+        ...(props.configuration as PieMarkerConfiguration),
+        selectedMarkers,
+      });
+    },
+    [props.configuration, updateConfiguration]
+  );
+
   // no markers and no error div for certain known error strings
   if (markerDataResponse.error && !markerDataResponse.isFetching)
     return isNoDataError(markerDataResponse.error) ? null : (
       <MapFloatingErrorDiv error={markerDataResponse.error} />
     );
 
-  // pass selectedMarkers and its state function
+  // convert marker data into markers
   const markers = markerDataResponse.markerProps?.map((markerProps) => (
     <DonutMarker {...markerProps} />
   ));
+
   return (
     <>
       {markerDataResponse.isFetching && <Spinner />}
