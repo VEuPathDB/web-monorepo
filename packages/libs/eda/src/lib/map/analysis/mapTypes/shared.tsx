@@ -43,6 +43,7 @@ export const markerDataFilterFuncs = [timeSliderLittleFilter];
 export const floaterFilterFuncs = [
   timeSliderLittleFilter,
   viewportLittleFilters,
+  selectedMarkersLittleFilter,
 ];
 export const visibleOptionFilterFuncs = [
   timeSliderLittleFilter,
@@ -522,6 +523,47 @@ export function pieOrBarMarkerConfigLittleFilter(
         'unknown variable type encounted in marker-config filter function'
       );
     }
+  }
+  return [];
+}
+
+//
+// figures out which geoaggregator variable corresponds
+// to the current zoom level and creates a little filter
+// on that variable using `selectedMarkers`
+//
+function selectedMarkersLittleFilter(props: useLittleFiltersProps): Filter[] {
+  const {
+    appState: {
+      markerConfigurations,
+      activeMarkerConfigurationType,
+      viewport: { zoom },
+    },
+    geoConfigs,
+  } = props;
+
+  const activeMarkerConfiguration = markerConfigurations.find(
+    (markerConfig) => markerConfig.type === activeMarkerConfigurationType
+  );
+
+  const selectedMarkers = activeMarkerConfiguration?.selectedMarkers;
+
+  // only return a filter if there are selectedMarkers
+  if (selectedMarkers && selectedMarkers.length > 0) {
+    const { entity, zoomLevelToAggregationLevel, aggregationVariableIds } =
+      geoConfigs[0];
+    const geoAggregationVariableId =
+      aggregationVariableIds?.[zoomLevelToAggregationLevel(zoom) - 1];
+    if (entity && geoAggregationVariableId)
+      // sanity check due to array indexing
+      return [
+        {
+          type: 'stringSet' as const,
+          entityId: entity.id,
+          variableId: geoAggregationVariableId,
+          stringSet: selectedMarkers,
+        },
+      ];
   }
   return [];
 }
