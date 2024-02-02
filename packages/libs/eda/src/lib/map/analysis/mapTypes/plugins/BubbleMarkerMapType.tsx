@@ -56,7 +56,7 @@ import { GeoConfig } from '../../../../core/types/geoConfig';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
-import { useLittleFilters, useLittleFiltersProps } from '../../littleFilters';
+import { useLittleFilters, UseLittleFiltersProps } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
 
 const displayName = 'Bubbles';
@@ -877,7 +877,7 @@ function useMarkerData(props: DataProps) {
 // calculates little filters related to
 // marker variable selection and custom checked values
 //
-function markerConfigLittleFilter(props: useLittleFiltersProps): Filter[] {
+function markerConfigLittleFilter(props: UseLittleFiltersProps): Filter[] {
   const {
     appState: { markerConfigurations, activeMarkerConfigurationType },
     findEntityAndVariable,

@@ -5,7 +5,7 @@ import { GeoConfig } from '../../core/types/geoConfig';
 import { useDeepValue } from '../../core/hooks/immutability';
 import { VariableDescriptor } from '../../core/types/variable';
 
-export interface useLittleFiltersProps {
+export interface UseLittleFiltersProps {
   filters: Filter[] | undefined;
   appState: AppState;
   geoConfigs: GeoConfig[];
@@ -24,8 +24,8 @@ export interface useLittleFiltersProps {
 // assumes `filters` prop is already referentially stable
 //
 export function useLittleFilters(
-  props: useLittleFiltersProps,
-  funcs: ((props: useLittleFiltersProps) => Filter[])[]
+  props: UseLittleFiltersProps,
+  funcs: ((props: UseLittleFiltersProps) => Filter[])[]
 ) {
   const littleFilters = useDeepValue(
     useMemo(

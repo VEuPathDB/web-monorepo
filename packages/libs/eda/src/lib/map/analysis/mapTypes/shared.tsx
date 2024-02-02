@@ -30,7 +30,7 @@ import {
 } from '@veupathdb/components/lib/types/plots';
 import { getCategoricalValues } from '../utils/categoricalValues';
 import { Viewport } from '@veupathdb/components/lib/map/MapVEuMap';
-import { useLittleFiltersProps } from '../littleFilters';
+import { UseLittleFiltersProps } from '../littleFilters';
 import { filtersFromBoundingBox } from '../../../core/utils/visualization';
 
 export const defaultAnimation = {
@@ -378,7 +378,7 @@ export function isApproxSameViewport(v1: Viewport, v2: Viewport) {
  * little filter helpers
  */
 
-function timeSliderLittleFilter(props: useLittleFiltersProps): Filter[] {
+function timeSliderLittleFilter(props: UseLittleFiltersProps): Filter[] {
   const { timeSliderConfig } = props.appState;
 
   if (timeSliderConfig != null) {
@@ -396,7 +396,7 @@ function timeSliderLittleFilter(props: useLittleFiltersProps): Filter[] {
   return [];
 }
 
-function viewportLittleFilters(props: useLittleFiltersProps): Filter[] {
+function viewportLittleFilters(props: UseLittleFiltersProps): Filter[] {
   const {
     appState: { boundsZoomLevel },
     geoConfigs,
@@ -422,7 +422,7 @@ function viewportLittleFilters(props: useLittleFiltersProps): Filter[] {
 // marker variable selection and custom checked values
 //
 export function pieOrBarMarkerConfigLittleFilter(
-  props: useLittleFiltersProps
+  props: UseLittleFiltersProps
 ): Filter[] {
   const {
     appState: { markerConfigurations, activeMarkerConfigurationType },
