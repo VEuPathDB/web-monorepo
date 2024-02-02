@@ -2321,8 +2321,13 @@ function processInputData<T extends number | string>(
       ? 'x'
       : 'circle';
 
+  const numDataPoints = responseScatterplotData
+    .map((v) => v.seriesX?.length ?? 0)
+    .reduce((a, b) => a + b, 0);
+
   // use type: scatter for faceted plot, otherwise scattergl
-  const scatterPlotType = facetVariable != null ? 'scatter' : 'scattergl';
+  const scatterPlotType =
+    facetVariable != null || numDataPoints < 1000 ? 'scatter' : 'scattergl';
 
   // set dataSetProcess as any for now
   let dataSetProcess: any = [];
