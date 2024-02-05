@@ -108,6 +108,10 @@ export default function PopoverButton(props: PopoverButtonProps) {
         width: 'fit-content',
         ...(isDisabled ? { cursor: 'not-allowed' } : {}),
       }}
+      onClick={(event) => {
+        // prevent click event from propagating to ancestor nodes
+        event.stopPropagation();
+      }}
     >
       {button}
       {menu}
