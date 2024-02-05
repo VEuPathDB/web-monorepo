@@ -1,11 +1,31 @@
 import { Meta, Story } from '@storybook/react';
-import { TidyTree } from '../../components/tidytree/TidyTree';
+import { TidyTree, TidyTreeProps } from '../../components/tidytree/TidyTree';
 import { useQuery } from 'react-query';
 
 export default {
   title: 'TidyTree',
   component: TidyTree,
   parameters: {},
+  argTypes: {
+    'options.layout': {
+      control: { type: 'select' },
+      options: ['horizontal', 'vertical', 'circular'],
+    },
+    'options.type': {
+      control: { type: 'select' },
+      options: ['tree', 'weighted', 'dendrogram'],
+    },
+    'options.mode': {
+      control: { type: 'select' },
+      options: ['square', 'smooth', 'straight'],
+    },
+    'options.equidistantLeaves': {
+      control: 'boolean',
+    },
+    'options.ruler': {
+      control: 'boolean',
+    },
+  },
 } as Meta;
 
 // the file is in the public/data directory
@@ -15,7 +35,7 @@ type NewickJSONType = {
   newick: string;
 };
 
-export const Basic = () => {
+const Template: Story<TidyTreeProps> = (args) => {
   const newick = useQuery<string>({
     queryKey: [newickURL],
     queryFn: async () => {
@@ -28,5 +48,10 @@ export const Basic = () => {
     },
   });
 
-  return newick.data ? <TidyTree data={newick.data} /> : null;
+  return <TidyTree {...args} data={newick.data} />;
+};
+
+export const Basic = Template.bind({});
+Basic.args = {
+  options: {},
 };
