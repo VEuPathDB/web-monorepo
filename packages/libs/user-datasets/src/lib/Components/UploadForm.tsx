@@ -45,8 +45,9 @@ interface Props<T extends string = string> {
   strategyOptions: StrategySummary[];
   resultUploadConfig?: ResultUploadConfig;
   clearBadUpload: () => void;
-  submitForm: (newUserDataset: FormSubmission, baseUrl?: string) => void;
+  submitForm: (formSubmission: FormSubmission, baseUrl?: string) => void;
   uploadProgress?: number | null;
+  dispatchUploadProgress: (progress: number | null) => void;
   supportedFileUploadTypes: string[];
 }
 
@@ -97,6 +98,7 @@ function UploadForm({
   clearBadUpload,
   submitForm,
   uploadProgress,
+  dispatchUploadProgress,
   supportedFileUploadTypes,
 }: Props) {
   const strategyOptionsByStrategyId = useMemo(
@@ -227,10 +229,11 @@ function UploadForm({
 
   useEffect(() => {
     if (badUploadMessage != null) {
+      dispatchUploadProgress(null);
       setErrorMessages([badUploadMessage.message]);
       setSubmitting(false);
     }
-  }, [badUploadMessage]);
+  }, [badUploadMessage, dispatchUploadProgress]);
 
   useEffect(() => {
     return () => {
@@ -454,7 +457,7 @@ function UploadForm({
         Upload Data Set
       </button>
       <Modal
-        visible={submitting}
+        visible={submitting && Boolean(uploadProgress)}
         toggleVisible={() => null}
         styleOverrides={{
           content: {

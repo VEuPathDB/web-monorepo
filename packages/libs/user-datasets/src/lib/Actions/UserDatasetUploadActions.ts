@@ -3,16 +3,7 @@ import {
   InferAction,
 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
 
-import { FormSubmission } from '../Components/UploadForm';
-import { UserDatasetUpload } from '../Utils/types';
-
-export const submitUploadForm = makeActionCreator(
-  'user-dataset-upload/submit-form',
-  (datasetId: string, baseUrl?: string) => ({
-    datasetId,
-    baseUrl,
-  })
-);
+// import { UserDatasetUpload } from '../Utils/types';
 
 export const trackUploadProgress = makeActionCreator(
   'user-dataset-upload/upload-progress',
@@ -55,7 +46,6 @@ export const receiveBadUploadHistoryAction = makeActionCreator(
 );
 
 export type Action =
-  | InferAction<typeof submitUploadForm>
   | InferAction<typeof trackUploadProgress>
   | InferAction<typeof receiveBadUpload>
   | InferAction<typeof clearBadUpload>

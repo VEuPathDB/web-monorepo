@@ -17,7 +17,6 @@ import {
   userDataset,
   UserDatasetMeta,
   NewUserDatasetMeta,
-  NewUserDataset,
   userDatasetDetails,
   userQuotaMetadata,
   userDatasetFileListing,
@@ -26,6 +25,8 @@ import {
 
 import { array } from 'io-ts';
 import { submitAsForm } from '@veupathdb/wdk-client/lib/Utils/FormSubmitter';
+import { FormSubmission } from '../Components/UploadForm';
+import { makeNewUserDatasetConfig } from '../Utils/upload-user-dataset';
 
 const userIdsByEmailDecoder = record({
   results: arrayOf(objectOf(number)),
@@ -61,7 +62,15 @@ export class UserDatasetApi extends FetchClientWithCredentials {
     );
   };
 
-  addUserDataset = (newUserDatasetConfig: NewUserDataset) => {
+  addUserDataset = async (
+    formSubmission: FormSubmission,
+    dispatchUploadProgress?: (progress: number | null) => void,
+    dispatchPageRedirect?: (datasetId: typeof datasetIdType) => void
+  ) => {
+    const newUserDatasetConfig = await makeNewUserDatasetConfig(
+      this.wdkService,
+      formSubmission
+    );
     const { uploadMethod, ...remainingConfig } = newUserDatasetConfig;
 
     const meta: NewUserDatasetMeta = {
@@ -73,6 +82,25 @@ export class UserDatasetApi extends FetchClientWithCredentials {
       dependencies: [],
       origin: 'direct-upload',
     };
+
+    const xhr = new XMLHttpRequest();
+    xhr.upload.addEventListener('progress', (e) => {
+      const progress = Math.floor((e.loaded / e.total) * 100);
+      dispatchUploadProgress && dispatchUploadProgress(progress);
+    });
+
+    xhr.addEventListener('readystatechange', () => {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        try {
+          const response = JSON.parse(xhr.response);
+          dispatchUploadProgress && dispatchUploadProgress(null);
+          dispatchPageRedirect && dispatchPageRedirect(response.datasetId);
+        } catch (error) {
+          dispatchUploadProgress && dispatchUploadProgress(null);
+          console.error(error);
+        }
+      }
+    });
 
     const fileBody = new FormData();
 
@@ -88,12 +116,10 @@ export class UserDatasetApi extends FetchClientWithCredentials {
       );
     }
 
-    return this.fetch({
-      method: 'POST',
-      path: '/vdi-datasets',
-      body: fileBody,
-      transformResponse: ioTransformer(datasetIdType),
-    });
+    const authKey = await this.findUserRequestAuthKey();
+    xhr.open('POST', '/vdi-service/vdi-datasets', true);
+    xhr.setRequestHeader('Auth-Key', authKey);
+    xhr.send(fileBody);
   };
 
   getUserDataset = (datasetId: string) => {

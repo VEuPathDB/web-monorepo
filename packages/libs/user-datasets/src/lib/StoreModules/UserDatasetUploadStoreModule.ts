@@ -1,19 +1,18 @@
-import {
-  ActionsObservable,
-  combineEpics,
-  StateObservable,
-} from 'redux-observable';
-import { Observable } from 'rxjs';
-import { filter, mergeMap } from 'rxjs/operators';
+// import {
+//   ActionsObservable,
+//   combineEpics,
+//   StateObservable,
+// } from 'redux-observable';
+// import { Observable } from 'rxjs';
+// import { filter, mergeMap } from 'rxjs/operators';
 
-import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
+// import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
 
 import {
   Action,
-  submitUploadForm,
   trackUploadProgress,
   receiveBadUpload,
-  requestUploadMessages,
+  // requestUploadMessages,
   // receiveUploadMessages,
   // cancelCurrentUpload,
   // clearMessages,
@@ -21,15 +20,11 @@ import {
   clearBadUpload,
 } from '../Actions/UserDatasetUploadActions';
 
-import { assertIsVdiCompatibleWdkService } from '../Service';
+// import { assertIsVdiCompatibleWdkService } from '../Service';
 
-import { StateSlice } from '../StoreModules/types';
+// import { StateSlice } from '../StoreModules/types';
 
-import { NewUserDatasetMeta, UserDatasetUpload } from '../Utils/types';
-import {
-  makeNewUserDatasetConfig,
-  uploadUserDataset,
-} from '../Utils/upload-user-dataset';
+import { UserDatasetUpload } from '../Utils/types';
 
 export const key = 'userDatasetUpload';
 
@@ -56,38 +51,11 @@ export function reduce(state: State = {}, action: Action): State {
   }
 }
 
-export const observe = combineEpics(
-  observeSubmitUploadForm
-  // observeRequestUploadMessages,
-  // observeCancelCurrentUpload,
-  // observeClearMessages
-);
-
-function observeSubmitUploadForm(
-  action$: ActionsObservable<Action>,
-  state$: StateObservable<StateSlice>,
-  dependencies: EpicDependencies
-): Observable<Action> {
-  return action$.pipe(
-    filter(submitUploadForm.isOfType),
-    mergeMap(async (action) => {
-      try {
-        // const response = await uploadUserDataset(
-        //   dependencies.wdkService,
-        //   action.payload.formSubmission
-        // );
-        if (action.payload.baseUrl != null) {
-          dependencies.transitioner.transitionToInternalPage(
-            `${action.payload.baseUrl}/${action.payload.datasetId}`
-          );
-        }
-        return requestUploadMessages();
-      } catch (err) {
-        return receiveBadUpload(String(err) ?? 'Failed to upload dataset');
-      }
-    })
-  );
-}
+// export const observe = combineEpics(
+//   // observeRequestUploadMessages,
+//   // observeCancelCurrentUpload,
+//   // observeClearMessages
+// );
 
 // function observeRequestUploadMessages(
 //   action$: ActionsObservable<Action>,

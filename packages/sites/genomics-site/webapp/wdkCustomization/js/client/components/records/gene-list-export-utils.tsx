@@ -138,9 +138,8 @@ export function useSendToBasketConfig(
 
 export function useSendToGeneListUserDatasetConfig(
   resultType: ResultType
-):
-  | ExportOption<'my-data-sets', [{ datasetId: string }, RecordClass], unknown>
-  | undefined {
+): // | ExportOption<'my-data-sets', [{ datasetId: string } | undefined, RecordClass], unknown>
+ExportOption<'my-data-sets', [void, RecordClass], unknown> | undefined {
   const dispatch = useDispatch();
 
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);

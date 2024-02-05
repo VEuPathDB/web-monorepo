@@ -11,12 +11,7 @@ export async function uploadUserDataset(
 ) {
   assertIsVdiCompatibleWdkService(wdkService);
 
-  const newUserDatasetConfig = await makeNewUserDatasetConfig(
-    wdkService,
-    formSubmission
-  );
-
-  return await wdkService.addUserDataset(newUserDatasetConfig);
+  return await wdkService.addUserDataset(formSubmission);
 }
 
 export async function makeNewUserDatasetConfig(
