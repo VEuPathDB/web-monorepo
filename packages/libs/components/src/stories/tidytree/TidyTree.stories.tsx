@@ -1,41 +1,32 @@
-import React, { useEffect, useRef } from 'react';
 import { Meta, Story } from '@storybook/react';
-import { TidyTree } from 'tidytree';
-
-function TidyTreeComponent() {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (ref.current == null) return;
-    import('./newick-example').then((module) => {
-      if (ref.current == null) return; // In case this component was unmounted before the Promise resolves
-      new TidyTree(module.newick, { parent: ref.current });
-    });
-  }, []);
-  return (
-    <div
-      style={{
-        height: '70vh',
-        width: '80vh',
-        margin: 'auto',
-        overflow: 'auto',
-      }}
-    >
-      <div
-        style={{
-          width: '1800px',
-          height: '8000px',
-          overflow: 'hidden',
-        }}
-        ref={ref}
-      />
-    </div>
-  );
-}
+import { TidyTree } from '../../components/tidytree/TidyTree';
+import { useQuery } from 'react-query';
 
 export default {
   title: 'TidyTree',
-  component: TidyTreeComponent,
+  component: TidyTree,
   parameters: {},
 } as Meta;
 
-export const Basic = () => <TidyTreeComponent />;
+// the file is in the public/data directory
+const newickURL = 'data/newick-example.json';
+
+type NewickJSONType = {
+  newick: string;
+};
+
+export const Basic = () => {
+  const newick = useQuery<string>({
+    queryKey: [newickURL],
+    queryFn: async () => {
+      const response = await fetch(newickURL);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const json: NewickJSONType = await response.json();
+      return json.newick;
+    },
+  });
+
+  return newick.data ? <TidyTree data={newick.data} /> : null;
+};
