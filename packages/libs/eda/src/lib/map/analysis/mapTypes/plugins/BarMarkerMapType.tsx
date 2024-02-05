@@ -387,8 +387,15 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
 }
 
 function MapOverlayComponent(props: MapTypeMapLayerProps) {
-  const { studyEntities, studyId, filters, geoConfigs, updateConfiguration } =
-    props;
+  const {
+    studyEntities,
+    studyId,
+    filters,
+    geoConfigs,
+    appState,
+    updateConfiguration,
+    headerButtons,
+  } = props;
   const configuration = props.configuration as BarPlotMarkerConfiguration;
   const findEntityAndVariable = useFindEntityAndVariable();
   const { variable: overlayVariable } =
@@ -430,6 +437,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
       <DraggableLegendPanel
         panelTitle={overlayVariable?.displayName}
         zIndex={3}
+        headerButtons={headerButtons}
       >
         <div style={{ padding: '5px 10px' }}>
           {noDataError ?? (

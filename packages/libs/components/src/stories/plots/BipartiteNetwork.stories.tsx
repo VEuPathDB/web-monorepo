@@ -19,8 +19,8 @@ export default {
 
 interface TemplateProps {
   data: BipartiteNetworkData;
-  column1Name?: string;
-  column2Name?: string;
+  partition1Name?: string;
+  partition2Name?: string;
   loading?: boolean;
   showThumbnail?: boolean;
   containerStyles?: CSSProperties;
@@ -45,8 +45,8 @@ const Template: Story<TemplateProps> = (args) => {
 
   const bipartiteNetworkProps: BipartiteNetworkProps = {
     data: args.data,
-    column1Name: args.column1Name,
-    column2Name: args.column2Name,
+    partition1Name: args.partition1Name,
+    partition2Name: args.partition2Name,
     showSpinner: args.loading,
     containerStyles: args.containerStyles,
     svgStyleOverrides: args.svgStyleOverrides,
@@ -85,20 +85,20 @@ ManyPoints.args = {
   data: manyPointsData,
 };
 
-// With column names
-export const WithColumnNames = Template.bind({});
-WithColumnNames.args = {
+// With partition names
+export const WithPartitionNames = Template.bind({});
+WithPartitionNames.args = {
   data: simpleData,
-  column1Name: 'Column 1',
-  column2Name: 'Column 2',
+  partition1Name: 'Partition 1',
+  partition2Name: 'Partition 2',
 };
 
 // Loading with a spinner
 export const Loading = Template.bind({});
 Loading.args = {
   data: simpleData,
-  column1Name: 'Column 1',
-  column2Name: 'Column 2',
+  partition1Name: 'Partition 1',
+  partition2Name: 'Partition 2',
   loading: true,
 };
 
@@ -112,8 +112,8 @@ Empty.args = {
 export const Thumbnail = Template.bind({});
 Thumbnail.args = {
   data: genBipartiteNetwork(10, 10),
-  column1Name: 'Column 1',
-  column2Name: 'Column 2',
+  partition1Name: 'Partition 1',
+  partition2Name: 'Partition 2',
   showThumbnail: true,
 };
 
@@ -133,8 +133,8 @@ export const WithStyle = Template.bind({});
 WithStyle.args = {
   data: manyPointsData,
   containerStyles: plotContainerStyles,
-  column1Name: 'Column 1',
-  column2Name: 'Column 2',
+  partition1Name: 'Partition 1',
+  partition2Name: 'Partition 2',
   svgStyleOverrides: svgStyleOverrides,
   labelTruncationLength: 5,
 };
@@ -154,46 +154,52 @@ NoNodes.args = {
 
 // Gerenate a bipartite network with a given number of nodes and random edges
 function genBipartiteNetwork(
-  column1nNodes: number,
-  column2nNodes: number
+  partition1nNodes: number,
+  partition2nNodes: number
 ): BipartiteNetworkData {
-  // Create the first column of nodes
-  const column1Nodes: NodeData[] = [...Array(column1nNodes).keys()].map((i) => {
-    return {
-      id: String(i),
-      label: 'Node ' + String(i),
-    };
-  });
+  // Create the first partition of nodes
+  const partition1Nodes: NodeData[] = [...Array(partition1nNodes).keys()].map(
+    (i) => {
+      return {
+        id: String(i),
+        label: 'Node ' + String(i),
+      };
+    }
+  );
 
-  // Create the second column of nodes
-  const column2Nodes: NodeData[] = [...Array(column2nNodes).keys()].map((i) => {
-    return {
-      id: String(i + column1nNodes),
-      label: 'Node ' + String(i + column1nNodes),
-    };
-  });
+  // Create the second partition of nodes
+  const partition2Nodes: NodeData[] = [...Array(partition2nNodes).keys()].map(
+    (i) => {
+      return {
+        id: String(i + partition1nNodes),
+        label: 'Node ' + String(i + partition1nNodes),
+      };
+    }
+  );
 
   // Create links
   // Not worried about exactly how many edges we're adding just yet since this is
   // used for stories only. Adding color here to mimic what the visualization
   // will do.
-  const links: LinkData[] = [...Array(column1nNodes * 2).keys()].map(() => {
+  const links: LinkData[] = [...Array(partition1nNodes * 2).keys()].map(() => {
     return {
-      source: column1Nodes[Math.floor(Math.random() * column1nNodes)],
-      target: column2Nodes[Math.floor(Math.random() * column2nNodes)],
+      source: partition1Nodes[Math.floor(Math.random() * partition1nNodes)],
+      target: partition2Nodes[Math.floor(Math.random() * partition2nNodes)],
       strokeWidth: Math.random() * 2,
       color: Math.random() > 0.5 ? twoColorPalette[0] : twoColorPalette[1],
     };
   });
 
-  const nodes = column1Nodes.concat(column2Nodes);
-  const column1NodeIDs = column1Nodes.map((node) => node.id);
-  const column2NodeIDs = column2Nodes.map((node) => node.id);
+  const nodes = partition1Nodes.concat(partition2Nodes);
+  const partition1NodeIDs = partition1Nodes.map((node) => node.id);
+  const partition2NodeIDs = partition2Nodes.map((node) => node.id);
 
   return {
     nodes,
     links,
-    column1NodeIDs,
-    column2NodeIDs,
+    partitions: [
+      { nodeIds: partition1NodeIDs },
+      { nodeIds: partition2NodeIDs },
+    ],
   };
 }
