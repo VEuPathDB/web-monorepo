@@ -343,8 +343,9 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     filters,
     studyEntities,
     geoConfigs,
-    appState: { boundsZoomLevel },
+    appState,
     updateConfiguration,
+    headerButtons,
   } = props;
   const {
     selectedVariable,
@@ -389,6 +390,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
       <DraggableLegendPanel
         panelTitle={overlayVariable?.displayName}
         zIndex={3}
+        headerButtons={headerButtons}
       >
         <div style={{ padding: '5px 10px' }}>
           {noDataError ?? (

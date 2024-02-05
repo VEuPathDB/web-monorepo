@@ -839,7 +839,7 @@ function ConfiguredVisualizationGrayOut({
   ]);
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div>
       <div
         style={{
           position: 'relative',

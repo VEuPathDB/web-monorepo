@@ -82,10 +82,10 @@ import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { MapTypeMapLayerProps } from './mapTypes/types';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
 import AnalysisNameDialog from '../../workspace/AnalysisNameDialog';
-import { FetchClientError } from '@veupathdb/http-utils';
 import { Page } from '@veupathdb/wdk-client/lib/Components';
-import { Link } from 'react-router-dom';
 import { AnalysisError } from '../../core/components/AnalysisError';
+import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
+import SettingsButton from '@veupathdb/coreui/lib/components/containers/DraggablePanel/SettingsButton';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -765,6 +765,56 @@ function MapAnalysisImpl(props: ImplProps) {
     'single-variable-' + appState.activeMarkerConfigurationType
   );
 
+  // snackbar
+  const { enqueueSnackbar } = useSnackbar();
+
+  // behaviors of the Legend's setup/gear icon
+  const openPanel = useCallback(() => {
+    const nextSideMenuId =
+      'single-variable-' +
+      (appState.activeMarkerConfigurationType === 'barplot'
+        ? 'bar'
+        : appState.activeMarkerConfigurationType);
+
+    if (appState.isSidePanelExpanded && activeSideMenuId === nextSideMenuId)
+      enqueueSnackbar('Marker configuration panel is already open', {
+        variant: 'info',
+      });
+
+    if (!appState.isSidePanelExpanded) setIsSidePanelExpanded(true);
+
+    if (activeSideMenuId !== nextSideMenuId)
+      setActiveSideMenuId(nextSideMenuId);
+  }, [
+    appState.isSidePanelExpanded,
+    enqueueSnackbar,
+    activeSideMenuId,
+    setActiveSideMenuId,
+    setIsSidePanelExpanded,
+    appState.activeMarkerConfigurationType,
+  ]);
+
+  const { variable: overlayVariable } =
+    findEntityAndVariable(activeMarkerConfiguration?.selectedVariable) ?? {};
+
+  // component for a gear icon at Legend
+  const HeaderButtons: React.FC = () => (
+    <div style={{ marginLeft: 'auto' }}>
+      <SettingsButton
+        buttonText={`Settings ${overlayVariable?.displayName}`}
+        tooltipText={'Open marker configuration panel'}
+        size={20}
+        onClick={openPanel}
+      />
+    </div>
+  );
+
+  // close left-side panel when map events happen
+  const closePanel = useCallback(
+    () => setIsSidePanelExpanded(false),
+    [setIsSidePanelExpanded]
+  );
+
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
   const activeMapTypePlugin =
@@ -775,9 +825,6 @@ function MapAnalysisImpl(props: ImplProps) {
       : activeMarkerConfiguration?.type === 'pie'
       ? donutMarkerPlugin
       : undefined;
-
-  // close left-side panel when map events happen
-  const closePanel = useCallback(() => setIsSidePanelExpanded(false), []);
 
   return (
     <PromiseResult state={appsPromiseState}>
@@ -804,7 +851,8 @@ function MapAnalysisImpl(props: ImplProps) {
           /* disabled until wired in fully:
              selectedMarkers,
              setSelectedMarkers,
-	   */
+          */
+          headerButtons: HeaderButtons,
         };
 
         return (
