@@ -532,7 +532,7 @@ export function pieOrBarMarkerConfigLittleFilter(
 // to the current zoom level and creates a little filter
 // on that variable using `selectedMarkers`
 //
-function selectedMarkersLittleFilter(props: useLittleFiltersProps): Filter[] {
+function selectedMarkersLittleFilter(props: UseLittleFiltersProps): Filter[] {
   const {
     appState: {
       markerConfigurations,
