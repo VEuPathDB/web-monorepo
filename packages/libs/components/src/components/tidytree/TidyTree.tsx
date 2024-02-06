@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { TidyTree as TidyTreeJS } from 'tidytree';
 
 export interface TidyTreeProps {
@@ -15,6 +15,10 @@ export interface TidyTreeProps {
    * number of pixels height taken per leaf
    */
   rowHeight: number;
+  /**
+   * TO DO: add width prop and nail down most of the options to
+   * horizontal dendrograms
+   */
   options: {
     layout?: 'horizontal' | 'vertical' | 'circular';
     type?: 'tree' | 'weighted' | 'dendrogram';
@@ -64,19 +68,31 @@ export function TidyTree({
     return function cleanup() {
       instance.destroy();
     };
-  }, [data, layout, type, mode, equidistantLeaves, ruler]);
+  }, [
+    data,
+    layout,
+    type,
+    mode,
+    equidistantLeaves,
+    ruler,
+    margin,
+    leafCount,
+    rowHeight,
+  ]);
+  // Included `leafCount` and `rowHeight` in the dependency array to ensure the TidyTree
+  // instance is recreated when the size of its container div changes. Although these
+  // variables are not directly used in the effect, their changes affect the calculated
+  // height of the container, below, which in turn requires reinitialization of the TidyTree
+  // to adapt to the new size.
 
   // calculate height
-
   const heightInPx = leafCount * rowHeight;
 
   return (
     <div
       style={{
-        width: '800px',
+        width: '400px',
         height: heightInPx + 'px',
-        overflow: 'hidden',
-        background: 'yellow',
       }}
       ref={ref}
     />

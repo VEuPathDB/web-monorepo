@@ -50,24 +50,25 @@ const Template: Story<TidyTreeProps> = (args) => {
   );
 };
 
+const commonArgs: Partial<TidyTreeProps> = {
+  rowHeight: 50,
+  options: {
+    margin: [0, 10, 0, 10],
+  },
+};
+
 export const SevenLeaves = Template.bind({});
 SevenLeaves.args = {
   data: sevenLeafTree,
   leafCount: 7,
-  rowHeight: 50,
-  options: {
-    margin: [0, 0, 0, 0],
-  },
+  ...commonArgs,
 };
 
 export const ThreeLeaves = Template.bind({});
 ThreeLeaves.args = {
   data: threeLeafTree,
   leafCount: 3,
-  rowHeight: 50,
-  options: {
-    margin: [0, 0, 0, 0],
-  },
+  ...commonArgs,
 };
 
 /**
