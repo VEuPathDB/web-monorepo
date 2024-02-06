@@ -59,7 +59,7 @@ export function TidyTree({
       equidistantLeaves,
       ruler,
       margin,
-      vStretch: 1.1,
+      animation: 0, // it's naff and it reveals edge lengths/weights momentarily
     });
     return function cleanup() {
       instance.destroy();

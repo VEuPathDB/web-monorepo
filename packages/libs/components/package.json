@@ -44,7 +44,7 @@
     "react-spring": "^9.7.1",
     "react-transition-group": "^4.4.1",
     "shape2geohash": "^1.2.5",
-    "tidytree": "github:d-callan/TidyTree"
+    "tidytree": "github:d-callan/TidyTree#fix-vertical-layout"
   },
   "files": [
     "lib",

@@ -8186,7 +8186,7 @@ __metadata:
     shape2geohash: ^1.2.5
     stats-lite: ^2.2.0
     storybook: ^6.5.14
-    tidytree: "github:d-callan/TidyTree"
+    tidytree: "github:d-callan/TidyTree#fix-vertical-layout"
     typescript: 4.3.4
   peerDependencies:
     "@emotion/react": ^11.10.0
@@ -36013,13 +36013,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tidytree@github:d-callan/TidyTree":
+"tidytree@github:d-callan/TidyTree#fix-vertical-layout":
   version: 0.6.0
-  resolution: "tidytree@https://github.com/d-callan/TidyTree.git#commit=7f710e636b3523ab0ab10cd8c75eebd4af8f414e"
+  resolution: "tidytree@https://github.com/d-callan/TidyTree.git#commit=87a8676ad8fec2a6df508917c45ef096551645aa"
   dependencies:
     d3: ^7.6.1
     patristic: "github:CDCgov/patristic"
-  checksum: f8f7ab57a7f69daa6f5af0a9287c2b63997e5a2d40cbeeffddc23c3973db8e19a9ef426e470e94170b110458c96d82e30995f3336b21be369a07490ef4fb769e
+  checksum: a1411f00e012cd1e5aaf503de0d03425ea5aef95df257145d05aee58a0af5bbbeb6f453474094e2fada11ca0609d20339d43ce7674fa4bb5bff76387a145aa03
   languageName: node
   linkType: hard
 
