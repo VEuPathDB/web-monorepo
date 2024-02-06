@@ -3,11 +3,7 @@ import { useCallback, useMemo, useState } from 'react';
 import {
   AnalysisState,
   DEFAULT_ANALYSIS_NAME,
-  DateRangeFilter,
-  DateVariable,
   EntityDiagram,
-  NumberRangeFilter,
-  NumberVariable,
   PromiseResult,
   useAnalysisClient,
   useDataClient,
@@ -41,7 +37,6 @@ import { MapHeader } from './MapHeader';
 import FilterChipList from '../../core/components/FilterChipList';
 import { VariableLinkConfig } from '../../core/components/VariableLink';
 import { MapSidePanel } from './MapSidePanel';
-import { filtersFromBoundingBox } from '../../core/utils/visualization';
 import { EditLocation, InfoOutlined, Notes, Share } from '@material-ui/icons';
 import { ComputationAppOverview } from '../../core/types/visualization';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
@@ -77,8 +72,6 @@ import {
   donutMarkerPlugin,
 } from './mapTypes';
 
-import TimeSliderQuickFilter from './TimeSliderQuickFilter';
-import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { MapTypeMapLayerProps } from './mapTypes/types';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
 import AnalysisNameDialog from '../../workspace/AnalysisNameDialog';
@@ -220,78 +213,6 @@ function MapAnalysisImpl(props: ImplProps) {
     },
     [markerConfigurations, setMarkerConfigurations]
   );
-
-  const timeFilter: NumberRangeFilter | DateRangeFilter | undefined =
-    useMemo(() => {
-      if (appState.timeSliderConfig == null) return undefined;
-
-      const { active, variable, selectedRange } = appState.timeSliderConfig;
-
-      const { variable: timeVariableMetadata } =
-        findEntityAndVariable(variable) ?? {};
-
-      return active && variable && selectedRange
-        ? DateVariable.is(timeVariableMetadata)
-          ? {
-              type: 'dateRange',
-              ...variable,
-              min: selectedRange.start + 'T00:00:00Z',
-              max: selectedRange.end + 'T00:00:00Z',
-            }
-          : NumberVariable.is(timeVariableMetadata)
-          ? {
-              type: 'numberRange', // this is temporary - I think we should NOT handle non-date variables when we roll this out
-              ...variable, // TO DO: remove number variable handling
-              min: Number(selectedRange.start.split(/-/)[0]), // just take the year number
-              max: Number(selectedRange.end.split(/-/)[0]), // from the YYYY-MM-DD returned from the widget
-            }
-          : undefined
-        : undefined;
-    }, [appState.timeSliderConfig, findEntityAndVariable]);
-
-  const viewportFilters = useMemo(
-    () =>
-      appState.boundsZoomLevel
-        ? filtersFromBoundingBox(
-            appState.boundsZoomLevel.bounds,
-            {
-              variableId: geoConfig.latitudeVariableId,
-              entityId: geoConfig.entity.id,
-            },
-            {
-              variableId: geoConfig.longitudeVariableId,
-              entityId: geoConfig.entity.id,
-            }
-          )
-        : [],
-    [
-      appState.boundsZoomLevel,
-      geoConfig.entity.id,
-      geoConfig.latitudeVariableId,
-      geoConfig.longitudeVariableId,
-    ]
-  );
-
-  // needed for floaters
-  const filtersIncludingViewportAndTimeSlider = useMemo(() => {
-    return [
-      ...(props.analysisState.analysis?.descriptor.subset.descriptor ?? []),
-      ...viewportFilters,
-      ...(timeFilter != null ? [timeFilter] : []),
-    ];
-  }, [
-    props.analysisState.analysis?.descriptor.subset.descriptor,
-    viewportFilters,
-    timeFilter,
-  ]);
-
-  // needed for markers
-  const filtersIncludingTimeSlider = useMemo(() => {
-    return [
-      ...(props.analysisState.analysis?.descriptor.subset.descriptor ?? []),
-      ...(timeFilter != null ? [timeFilter] : []),
-    ];
-  }, [props.analysisState.analysis?.descriptor.subset.descriptor, timeFilter]);
 
   const userLoggedIn = useWdkService(async (wdkService) => {
     const user = await wdkService.getCurrentUser();
@@ -815,8 +736,6 @@ function MapAnalysisImpl(props: ImplProps) {
     [setIsSidePanelExpanded]
   );
 
-  const toggleStarredVariable = useToggleStarredVariable(analysisState);
-
   const activeMapTypePlugin =
     activeMarkerConfiguration?.type === 'barplot'
       ? barMarkerPlugin
@@ -838,12 +757,11 @@ function MapAnalysisImpl(props: ImplProps) {
           analysisState,
           appState,
           studyId,
-          filters: filtersIncludingTimeSlider,
+          filters,
           studyEntities,
           geoConfigs,
           configuration: activeMarkerConfiguration,
           updateConfiguration: updateMarkerConfigurations as any,
-          filtersIncludingViewport: filtersIncludingViewportAndTimeSlider,
           totalCounts,
           filteredCounts,
           hideVizInputsAndControls,
@@ -883,24 +801,14 @@ function MapAnalysisImpl(props: ImplProps) {
                   showLinkToEda={showLinkToEda}
                 >
                   {/* child elements will be distributed across, 'hanging' below the header */}
-                  {/*  Time slider component - only if prerequisite variable is available */}
-                  {appState.timeSliderConfig &&
-                    appState.timeSliderConfig.variable && (
-                      <TimeSliderQuickFilter
-                        studyId={studyId}
-                        entities={studyEntities}
-                        subsettingClient={subsettingClient}
-                        filters={filters}
-                        starredVariables={
-                          analysisState.analysis?.descriptor.starredVariables ??
-                          []
-                        }
-                        toggleStarredVariable={toggleStarredVariable}
-                        config={appState.timeSliderConfig}
-                        updateConfig={setTimeSliderConfig}
-                        siteInformation={props.siteInformationProps}
-                      />
-                    )}
+                  {/* Time slider component won't render if there's no suitable variable to use */}
+                  {activeMapTypePlugin?.TimeSliderComponent && (
+                    <activeMapTypePlugin.TimeSliderComponent
+                      {...mapTypeMapLayerProps}
+                      setTimeSliderConfig={setTimeSliderConfig}
+                      siteInformationProps={props.siteInformationProps}
+                    />
+                  )}
                 </MapHeader>
                 <div
                   style={{
