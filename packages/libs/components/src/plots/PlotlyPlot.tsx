@@ -22,11 +22,12 @@ import {
 // add d3.select
 import { select } from 'd3';
 // 3rd party toImage function from plotly
-import { ToImgopts, toImage, DataTitle } from 'plotly.js';
+import Plotly, { ToImgopts, DataTitle } from 'plotly.js';
 import { uniqueId } from 'lodash';
 import { makeSharedPromise } from '../utils/promise-utils';
 import NoDataOverlay from '../components/NoDataOverlay';
 import { removeHtmlTags } from '../utils/removeHtmlTags';
+import { ExportPlotToImageButton } from './ExportPlotToImageButton';
 
 export interface PlotProps<T> extends ColorPaletteAddon {
   /** plot data - following web-components' API, not Plotly's */
@@ -49,6 +50,10 @@ export interface PlotProps<T> extends ColorPaletteAddon {
   showSpinner?: boolean;
   /** Show an overlay with the words 'No Data' */
   showNoDataOverlay?: boolean;
+  /** Show "Export to SVG" button */
+  showExportButton?: boolean;
+  /** Filename of exported file, without extension. */
+  exportFileName?: string;
   /** Options for customizing plot legend layout and appearance. */
   legendOptions?: PlotLegendAddon;
   /** legend title */
@@ -95,6 +100,8 @@ function PlotlyPlot<T>(
     spacingOptions,
     showSpinner,
     showNoDataOverlay,
+    showExportButton,
+    exportFileName,
     // set default max number of characters (20) for legend ellipsis
     maxLegendTextLength = DEFAULT_MAX_LEGEND_TEXT_LENGTH,
     // expose data for applying legend ellipsis
@@ -360,26 +367,31 @@ function PlotlyPlot<T>(
           ? (d.name || '').substring(0, maxLegendTextLength) + '...'
           : d.name,
     }));
-  }, [data, checkedLegendItems]);
+  }, [data, checkedLegendItems, maxLegendTextLength]);
 
   const plotId = useMemo(() => uniqueId('plotly_plot_div_'), []);
+
+  const toImage = useCallback(
+    async (imageOpts: ToImgopts) => {
+      try {
+        await sharedPlotCreation.promise;
+        // Call the 3rd party function that actually creates the image
+        return await Plotly.toImage(plotId, imageOpts);
+      } catch (error) {
+        console.error('Could not create image for plot:', error);
+      }
+      return '';
+    },
+    [plotId, sharedPlotCreation.promise]
+  );
 
   useImperativeHandle<PlotRef, PlotRef>(
     ref,
     () => ({
       // Set the ref's toImage function that will be called in web-eda
-      toImage: async (imageOpts: ToImgopts) => {
-        try {
-          await sharedPlotCreation.promise;
-          // Call the 3rd party function that actually creates the image
-          return await toImage(plotId, imageOpts);
-        } catch (error) {
-          console.error('Could not create image for plot:', error);
-        }
-        return '';
-      },
+      toImage,
     }),
-    [plotId]
+    [toImage]
   );
 
   const marginTop = spacingOptions?.marginTop ?? PlotSpacingDefault.marginTop;
@@ -420,6 +432,9 @@ function PlotlyPlot<T>(
         )}
         {showSpinner && <Spinner />}
       </div>
+      {showExportButton && (
+        <ExportPlotToImageButton toImage={toImage} filename={exportFileName} />
+      )}
     </Suspense>
   );
 }
@@ -436,7 +451,13 @@ export function makePlotlyPlotComponent<S extends { data?: T }, T>(
 ) {
   function PlotlyPlotComponent(props: S, ref: Ref<PlotRef>) {
     const xformProps = transformProps(props);
-    return <PlotlyPlotWithRef {...xformProps} ref={ref} />;
+    return (
+      <PlotlyPlotWithRef
+        exportFileName={displayName}
+        {...xformProps}
+        ref={ref}
+      />
+    );
   }
   PlotlyPlotComponent.displayName = displayName;
   return forwardRef(PlotlyPlotComponent);
