@@ -19,8 +19,9 @@ type NewickJSONType = {
   newick: string;
 };
 
-// not used any more?
-// url = data/newick-example.json
+// not needed any more?
+// maybe we'll use it for larger example trees like
+// this --> url = data/newick-example.json
 function getNewickJSON(url: string) {
   const newick = useQuery<string>({
     queryKey: [url],
@@ -37,13 +38,23 @@ function getNewickJSON(url: string) {
 }
 
 const Template: Story<TidyTreeProps> = (args) => {
-  return <TidyTree {...args} />;
+  return (
+    <div style={{ display: 'flex', flexDirection: 'row' }}>
+      <TidyTree {...args} />
+      <Stripes
+        count={args.leafCount}
+        stripeHeight={args.rowHeight}
+        width={400}
+      />
+    </div>
+  );
 };
 
 export const SevenLeaves = Template.bind({});
 SevenLeaves.args = {
   data: sevenLeafTree,
   leafCount: 7,
+  rowHeight: 50,
   options: {
     margin: [0, 0, 0, 0],
   },
@@ -53,7 +64,46 @@ export const ThreeLeaves = Template.bind({});
 ThreeLeaves.args = {
   data: threeLeafTree,
   leafCount: 3,
+  rowHeight: 50,
   options: {
     margin: [0, 0, 0, 0],
   },
+};
+
+/**
+ * Some stripy divs to simulate a table with fixed row height
+ */
+interface StripesProps {
+  count: number; // The number of stripes to display
+  width: number; // width of stripes in px
+  stripeHeight: number; // height in px of each stripe
+}
+
+interface StripeProps {
+  height: number;
+  isDark: boolean;
+}
+
+const Stripe: React.FC<StripeProps> = ({ isDark, height }) => {
+  const style = {
+    height: height + 'px',
+    width: '100%',
+    backgroundColor: isDark ? '#707070' : '#A8A8A8', // dark grey : light grey
+  };
+
+  return <div style={style} />;
+};
+
+const Stripes: React.FC<StripesProps> = ({ count, stripeHeight, width }) => {
+  const style = {
+    height: '50px',
+    width: width + 'px',
+  };
+  return (
+    <div style={style}>
+      {Array.from({ length: count }, (_, index) => (
+        <Stripe key={index} height={stripeHeight} isDark={index % 2 === 0} />
+      ))}
+    </div>
+  );
 };

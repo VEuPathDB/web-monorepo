@@ -11,6 +11,10 @@ export interface TidyTreeProps {
    * (maybe we can calculate this from the Newick string in future?)
    */
   leafCount: number;
+  /**
+   * number of pixels height taken per leaf
+   */
+  rowHeight: number;
   options: {
     layout?: 'horizontal' | 'vertical' | 'circular';
     type?: 'tree' | 'weighted' | 'dendrogram';
@@ -28,6 +32,7 @@ export interface TidyTreeProps {
 export function TidyTree({
   data,
   leafCount,
+  rowHeight,
   options: {
     layout = 'horizontal',
     type = 'dendrogram',
@@ -54,6 +59,7 @@ export function TidyTree({
       equidistantLeaves,
       ruler,
       margin,
+      vStretch: 1.1,
     });
     return function cleanup() {
       instance.destroy();
@@ -62,7 +68,7 @@ export function TidyTree({
 
   // calculate height
 
-  const heightInPx = leafCount * 50;
+  const heightInPx = leafCount * rowHeight;
 
   return (
     <div
