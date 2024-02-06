@@ -12,6 +12,7 @@ import { UNSELECTED_TOKEN } from '../../constants';
 import { orderBy } from 'lodash';
 import { SelectedCountsOption } from '../appState';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
+import { SharedMarkerConfigurations } from '../mapTypes/shared';
 
 type Props<T> = {
   overlayValues: string[];
@@ -30,7 +31,9 @@ const DEFAULT_SORTING: MesaSortObject = {
 
 export const MAXIMUM_ALLOWABLE_VALUES = ColorPaletteDefault.length;
 
-export function CategoricalMarkerConfigurationTable<T>({
+export function CategoricalMarkerConfigurationTable<
+  T extends SharedMarkerConfigurations
+>({
   overlayValues,
   configuration,
   onChange,
@@ -71,8 +74,8 @@ export function CategoricalMarkerConfigurationTable<T>({
             .slice(0, overlayValues.length - 1)
             .concat(newArrayValues),
         });
-        // can set the new configuration without worrying about the "All other values" data
       } else {
+        // no "All other values" data so we need
         onChange({
           ...configuration,
           selectedValues: overlayValues.concat(data.label),
