@@ -61,3 +61,21 @@ export const BinWidthSlider = type({
   max: number,
   step: number,
 });
+
+// allow null for Lineplot's binslider and binspec
+export type LineplotBinWidthSlider = TypeOf<typeof LineplotBinWidthSlider>;
+export const LineplotBinWidthSlider = type({
+  min: NumberOrNull,
+  max: NumberOrNull,
+  step: NumberOrNull,
+});
+
+export type LineplotBinSpec = TypeOf<typeof LineplotBinSpec>;
+export const LineplotBinSpec = intersection([
+  type({ type: keyof({ binWidth: null, numBins: null }) }),
+  partial({
+    value: NumberOrNull,
+    units: TimeUnit,
+    range: NumberOrDateRange,
+  }),
+]);

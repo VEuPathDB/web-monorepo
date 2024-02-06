@@ -22,6 +22,8 @@ import {
   BinWidthSlider,
   TimeUnit,
   NumberOrNull,
+  LineplotBinWidthSlider,
+  LineplotBinSpec,
 } from '../../types/general';
 import { VariableDescriptor, StringVariableValue } from '../../types/variable';
 import { ComputationAppOverview } from '../../types/visualization';
@@ -540,8 +542,8 @@ export type LineplotConfig = TypeOf<typeof lineplotConfig>;
 const lineplotConfig = intersection([
   plotConfig,
   partial({
-    binSlider: BinWidthSlider,
-    binSpec: BinSpec,
+    binSlider: LineplotBinWidthSlider,
+    binSpec: LineplotBinSpec,
     viewport: numericViewport,
   }),
 ]);
