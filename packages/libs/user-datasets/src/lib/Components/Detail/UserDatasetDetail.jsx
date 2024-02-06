@@ -523,7 +523,7 @@ class UserDatasetDetail extends React.Component {
       (d) => d.projectId === projectId
     );
 
-    const isInstallable = projects.includes(projectId);
+    const isTargetingCurrentSite = projects.includes(projectId);
     const isInstalled = [
       userDataset.status.import,
       installStatusForCurrentProject?.metaStatus,
@@ -540,7 +540,7 @@ class UserDatasetDetail extends React.Component {
     const isIncompatible =
       installStatusForCurrentProject?.dataStatus === 'missing-dependency';
 
-    if (!isInstallable || (isInstallable && isIncompatible)) {
+    if (!isTargetingCurrentSite || (isTargetingCurrentSite && isIncompatible)) {
       return (
         // if projectIds don't match, then we're not installable and thus incompatible
         // if we're installable but failed due to a missing dependency, we're incompatible

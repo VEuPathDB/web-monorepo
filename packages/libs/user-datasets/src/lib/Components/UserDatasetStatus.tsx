@@ -7,6 +7,9 @@ import {
 
 import { DataNoun, UserDataset, UserDatasetVDI } from '../Utils/types';
 
+// NOTE: The reinstall interval is configured in the VDI service and thus may change
+const VDI_REINSTALL_INTERVAL = 6;
+
 interface Props {
   baseUrl: string;
   userDataset: UserDataset;
@@ -57,10 +60,10 @@ function getStatus(
   projectDisplayName: string,
   projects: string[]
 ): { content: React.ReactNode; icon: string } {
-  const isIncompatibleProject = !projects.includes(projectId);
-  if (isIncompatibleProject) {
+  const isTargetingCurrentSite = projects.includes(projectId);
+  if (!isTargetingCurrentSite) {
     return {
-      content: `This ${dataNoun} is not compatible with ${projectDisplayName}.`,
+      content: `This ${dataNoun} was uploaded and installed in a different VEuPathDB project.`,
       icon: 'minus-circle',
     };
   }
@@ -140,7 +143,6 @@ function getStatus(
           icon: 'exclamation-circle',
         };
       case 'failed-installation':
-      case 'ready-for-reinstall':
         return {
           content: (
             <>
@@ -153,6 +155,16 @@ function getStatus(
             </>
           ),
           icon: 'times-circle',
+        };
+      case 'ready-for-reinstall':
+        return {
+          content: (
+            <>
+              This {dataNoun} will be reinstalled within{' '}
+              {VDI_REINSTALL_INTERVAL} hours. Please check again soon.
+            </>
+          ),
+          icon: 'minus-circle',
         };
       case 'missing-dependency':
         return {
