@@ -52,7 +52,6 @@ export const plugin: ComputationPlugin = {
           };
         }
       },
-      // make both X-axis and overlay subtitles similar
       getPlotSubtitle(config) {
         if (AbundanceConfig.is(config) && config.rankingMethod) {
           return (
