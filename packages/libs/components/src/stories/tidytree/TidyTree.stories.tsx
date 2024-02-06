@@ -6,40 +6,26 @@ export default {
   title: 'TidyTree',
   component: TidyTree,
   parameters: {},
-  argTypes: {
-    'options.layout': {
-      control: { type: 'select' },
-      options: ['horizontal', 'vertical', 'circular'],
-    },
-    'options.type': {
-      control: { type: 'select' },
-      options: ['tree', 'weighted', 'dendrogram'],
-    },
-    'options.mode': {
-      control: { type: 'select' },
-      options: ['square', 'smooth', 'straight'],
-    },
-    'options.equidistantLeaves': {
-      control: 'boolean',
-    },
-    'options.ruler': {
-      control: 'boolean',
-    },
-  },
+  argTypes: {}, // couldn't get storybook-addon-deep-controls to work :(
 } as Meta;
 
 // the file is in the public/data directory
-const newickURL = 'data/newick-example.json';
+const sevenLeafTree =
+  '(Bovine:0.69395,(Gibbon:0.36079,(Orang:0.33636,(Gorilla:0.17147,(Chimp:0.19268, Human:0.11927):0.08386):0.06124):0.15057):0.54939,Mouse:1.21460)';
+
+const threeLeafTree = '(dog:20, (elephant:30, horse:60):20):50';
 
 type NewickJSONType = {
   newick: string;
 };
 
-const Template: Story<TidyTreeProps> = (args) => {
+// not used any more?
+// url = data/newick-example.json
+function getNewickJSON(url: string) {
   const newick = useQuery<string>({
-    queryKey: [newickURL],
+    queryKey: [url],
     queryFn: async () => {
-      const response = await fetch(newickURL);
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -47,11 +33,27 @@ const Template: Story<TidyTreeProps> = (args) => {
       return json.newick;
     },
   });
+  return newick.data;
+}
 
-  return <TidyTree {...args} data={newick.data} />;
+const Template: Story<TidyTreeProps> = (args) => {
+  return <TidyTree {...args} />;
 };
 
-export const Basic = Template.bind({});
-Basic.args = {
-  options: {},
+export const SevenLeaves = Template.bind({});
+SevenLeaves.args = {
+  data: sevenLeafTree,
+  leafCount: 7,
+  options: {
+    margin: [0, 0, 0, 0],
+  },
+};
+
+export const ThreeLeaves = Template.bind({});
+ThreeLeaves.args = {
+  data: threeLeafTree,
+  leafCount: 3,
+  options: {
+    margin: [0, 0, 0, 0],
+  },
 };
