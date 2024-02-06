@@ -1,5 +1,5 @@
 import Close from '@material-ui/icons/Close';
-import { screenReaderOnly } from '../../styleDefinitions/typography';
+import { screenReaderOnly } from '../../../styleDefinitions/typography';
 
 interface Props {
   className?: string;

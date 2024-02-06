@@ -1,3 +1,6 @@
+// Information
+export * from './components/information/Tooltip';
+
 // Typography
 export * from './components/typography';
 
