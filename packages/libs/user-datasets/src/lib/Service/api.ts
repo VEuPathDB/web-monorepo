@@ -117,7 +117,9 @@ export class UserDatasetApi extends FetchClientWithCredentials {
     }
 
     const authKey = await this.findUserRequestAuthKey();
-    xhr.open('POST', '/vdi-service/vdi-datasets', true);
+    const vdiServiceUrl = this.baseUrl;
+
+    xhr.open('POST', `${vdiServiceUrl}/vdi-datasets`, true);
     xhr.setRequestHeader('Auth-Key', authKey);
     xhr.send(fileBody);
   };
