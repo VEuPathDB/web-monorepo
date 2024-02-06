@@ -1037,6 +1037,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
           : 'Y-axis'
         : 'Y-axis',
     displayLegend: false,
+    showExportButton: true,
     containerStyles: !isFaceted(data.value?.dataSetProcess)
       ? finalPlotContainerStyles
       : undefined,
@@ -1308,198 +1309,191 @@ function LineplotViz(props: VisualizationProps<Options>) {
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           {/* X-axis controls   */}
           {/* set Undo icon and its behavior */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginTop: '-1em',
-            }}
+          <LabelledGroup
+            label={
+              <div css={{ display: 'flex', alignItems: 'center' }}>
+                X-axis controls
+                <ResetButtonCoreUI
+                  size={'medium'}
+                  text={''}
+                  themeRole={'primary'}
+                  tooltip={'Reset to defaults'}
+                  disabled={lineplotProps.independentValueType === 'string'}
+                  onPress={handleIndependentAxisSettingsReset}
+                />
+              </div>
+            }
           >
-            <LabelledGroup label="X-axis controls"> </LabelledGroup>
-            <div style={{ marginLeft: '-2.6em', width: '50%' }}>
-              <ResetButtonCoreUI
-                size={'medium'}
-                text={''}
-                themeRole={'primary'}
-                tooltip={'Reset to defaults'}
-                disabled={lineplotProps.independentValueType === 'string'}
-                onPress={handleIndependentAxisSettingsReset}
-              />
-            </div>
-          </div>
-
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              marginTop: '-0.3em',
-              marginBottom: '0.8em',
-              marginLeft: '1em',
-            }}
-          >
-            <Toggle
-              label={'Log scale (excludes values \u{2264} 0)'}
-              value={vizConfig.independentAxisLogScale ?? false}
-              onChange={(newValue: boolean) => {
-                setDismissedIndependentAllNegativeWarning(false);
-                onIndependentAxisLogScaleChange(newValue);
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                marginBottom: '0.8em',
               }}
-              disabled={
-                lineplotProps.independentValueType === 'date' ||
-                lineplotProps.independentValueType === 'string'
-              }
-              themeRole="primary"
-            />
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              // marginTop: '-0.3em',
-              marginBottom: '0.8em',
-              marginLeft: '1em',
-            }}
-          >
-            {independentAllNegative &&
-            !dismissedIndependentAllNegativeWarning &&
-            !(vizConfig.independentAxisLogScale && vizConfig.useBinning) &&
-            !(vizConfig.dependentAxisLogScale && vizConfig.showErrorBars) ? (
-              <Notification
-                title={''}
-                text={
-                  'Nothing can be plotted with log scale because all values are zero or negative'
-                }
-                color={'#5586BE'}
-                onAcknowledgement={() =>
-                  setDismissedIndependentAllNegativeWarning(true)
-                }
-                showWarningIcon={true}
-                containerStyles={{ maxWidth: '350px', marginBottom: '1em' }}
-              />
-            ) : null}
-            {/* hide Binning toggle for timeline Viz */}
-            {!alwaysEnableUseBinning ? (
+            >
               <Toggle
-                label={'Binning'}
-                value={vizConfig.useBinning}
+                label={'Log scale (excludes values \u{2264} 0)'}
+                value={vizConfig.independentAxisLogScale ?? false}
                 onChange={(newValue: boolean) => {
-                  onUseBinningChange(newValue);
+                  setDismissedIndependentAllNegativeWarning(false);
+                  onIndependentAxisLogScaleChange(newValue);
                 }}
-                disabled={neverUseBinning}
+                disabled={
+                  lineplotProps.independentValueType === 'date' ||
+                  lineplotProps.independentValueType === 'string'
+                }
                 themeRole="primary"
               />
-            ) : null}
-            <BinWidthControl
-              binWidth={data0?.binWidthSlider?.binWidth}
-              onBinWidthChange={onBinWidthChange}
-              binWidthRange={data0?.binWidthSlider?.binWidthRange}
-              binWidthStep={data0?.binWidthSlider?.binWidthStep}
-              valueType={data0?.binWidthSlider?.valueType}
-              binUnit={
-                data0?.binWidthSlider?.valueType === 'date'
-                  ? (data0?.binWidthSlider?.binWidth as TimeDelta).unit
-                  : undefined
-              }
-              binUnitOptions={
-                data0?.binWidthSlider?.valueType === 'date'
-                  ? ['day', 'week', 'month', 'year']
-                  : undefined
-              }
-              containerStyles={{
-                minHeight: widgetHeight,
-                // considering axis range control
-                maxWidth:
-                  lineplotProps.independentValueType === 'date'
-                    ? '250px'
-                    : '350px',
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                // marginTop: '-0.3em',
+                marginBottom: '0.8em',
               }}
-              // always enable binning for timeline Viz
-              disabled={
-                alwaysEnableUseBinning
-                  ? undefined
-                  : !vizConfig.useBinning || neverUseBinning
-              }
-            />
-          </div>
-
-          <LabelledGroup
-            label="X-axis range"
-            containerStyles={{
-              fontSize: '0.9em',
-              // width: '350px',
-              marginTop: '-0.8em',
-            }}
-          >
-            <RadioButtonGroup
-              options={['Full', 'Auto-zoom', 'Custom']}
-              selectedOption={vizConfig.independentAxisValueSpec ?? 'Full'}
-              onOptionSelected={(newAxisRangeOption: string) => {
-                onIndependentAxisValueSpecChange(newAxisRangeOption);
-              }}
-              orientation={'horizontal'}
-              labelPlacement={'end'}
-              buttonColor={'primary'}
-              margins={['0em', '0', '0', '0em']}
-              itemMarginRight={25}
-              // add disabled list
-              disabledList={
-                lineplotProps.independentValueType === 'string'
-                  ? ['Full', 'Auto-zoom', 'Custom']
-                  : []
-              }
-            />
-            {/* X-Axis range control */}
-            {/* designed to disable X-axis range control for categorical X */}
-            <AxisRangeControl
-              // change label for disabled case
-              label={
-                lineplotProps.independentValueType === 'string'
-                  ? 'Range (not available)'
-                  : 'Range'
-              }
-              range={
-                vizConfig.independentAxisRange ?? defaultIndependentAxisRange
-              }
-              onRangeChange={handleIndependentAxisRangeChange}
-              // will disable for categorical X so this is sufficient
-              valueType={
-                lineplotProps.independentValueType === 'date'
-                  ? 'date'
-                  : 'number'
-              }
-              // set maxWidth
-              containerStyles={{ maxWidth: '350px' }}
-              // input forms are diabled for categorical X
-              disabled={
-                lineplotProps.independentValueType === 'string' ||
-                vizConfig.independentAxisValueSpec === 'Full' ||
-                vizConfig.independentAxisValueSpec === 'Auto-zoom'
-              }
-            />
-            {/* truncation notification */}
-            {truncatedIndependentAxisWarning &&
-            !independentAllNegative &&
-            !(vizConfig.independentAxisLogScale && vizConfig.useBinning) &&
-            !(vizConfig.dependentAxisLogScale && vizConfig.showErrorBars) ? (
-              <Notification
-                title={''}
-                text={truncatedIndependentAxisWarning}
-                // this was defined as LIGHT_BLUE
-                color={'#5586BE'}
-                onAcknowledgement={() => {
-                  setTruncatedIndependentAxisWarning('');
-                }}
-                showWarningIcon={true}
-                // set maxWidth per type
+            >
+              {independentAllNegative &&
+              !dismissedIndependentAllNegativeWarning &&
+              !(vizConfig.independentAxisLogScale && vizConfig.useBinning) &&
+              !(vizConfig.dependentAxisLogScale && vizConfig.showErrorBars) ? (
+                <Notification
+                  title={''}
+                  text={
+                    'Nothing can be plotted with log scale because all values are zero or negative'
+                  }
+                  color={'#5586BE'}
+                  onAcknowledgement={() =>
+                    setDismissedIndependentAllNegativeWarning(true)
+                  }
+                  showWarningIcon={true}
+                  containerStyles={{ maxWidth: '350px', marginBottom: '1em' }}
+                />
+              ) : null}
+              {/* hide Binning toggle for timeline Viz */}
+              {!alwaysEnableUseBinning ? (
+                <Toggle
+                  label={'Binning'}
+                  value={vizConfig.useBinning}
+                  onChange={(newValue: boolean) => {
+                    onUseBinningChange(newValue);
+                  }}
+                  disabled={neverUseBinning}
+                  themeRole="primary"
+                />
+              ) : null}
+              <BinWidthControl
+                binWidth={data0?.binWidthSlider?.binWidth}
+                onBinWidthChange={onBinWidthChange}
+                binWidthRange={data0?.binWidthSlider?.binWidthRange}
+                binWidthStep={data0?.binWidthSlider?.binWidthStep}
+                valueType={data0?.binWidthSlider?.valueType}
+                binUnit={
+                  data0?.binWidthSlider?.valueType === 'date'
+                    ? (data0?.binWidthSlider?.binWidth as TimeDelta).unit
+                    : undefined
+                }
+                binUnitOptions={
+                  data0?.binWidthSlider?.valueType === 'date'
+                    ? ['day', 'week', 'month', 'year']
+                    : undefined
+                }
                 containerStyles={{
+                  minHeight: widgetHeight,
+                  // considering axis range control
                   maxWidth:
                     lineplotProps.independentValueType === 'date'
-                      ? '350px'
+                      ? '250px'
                       : '350px',
                 }}
+                // always enable binning for timeline Viz
+                disabled={
+                  alwaysEnableUseBinning
+                    ? undefined
+                    : !vizConfig.useBinning || neverUseBinning
+                }
               />
-            ) : null}
+            </div>
+
+            <LabelledGroup
+              label="X-axis range"
+              containerStyles={{
+                fontSize: '0.9em',
+                // width: '350px',
+                marginTop: '-0.8em',
+                padding: '1em 0',
+              }}
+            >
+              <RadioButtonGroup
+                options={['Full', 'Auto-zoom', 'Custom']}
+                selectedOption={vizConfig.independentAxisValueSpec ?? 'Full'}
+                onOptionSelected={(newAxisRangeOption: string) => {
+                  onIndependentAxisValueSpecChange(newAxisRangeOption);
+                }}
+                orientation={'horizontal'}
+                labelPlacement={'end'}
+                buttonColor={'primary'}
+                margins={['0em', '0', '0', '0em']}
+                itemMarginRight={25}
+                // add disabled list
+                disabledList={
+                  lineplotProps.independentValueType === 'string'
+                    ? ['Full', 'Auto-zoom', 'Custom']
+                    : []
+                }
+              />
+              {/* X-Axis range control */}
+              {/* designed to disable X-axis range control for categorical X */}
+              <AxisRangeControl
+                // change label for disabled case
+                label={
+                  lineplotProps.independentValueType === 'string'
+                    ? 'Range (not available)'
+                    : 'Range'
+                }
+                range={
+                  vizConfig.independentAxisRange ?? defaultIndependentAxisRange
+                }
+                onRangeChange={handleIndependentAxisRangeChange}
+                // will disable for categorical X so this is sufficient
+                valueType={
+                  lineplotProps.independentValueType === 'date'
+                    ? 'date'
+                    : 'number'
+                }
+                // set maxWidth
+                containerStyles={{ maxWidth: '350px' }}
+                // input forms are diabled for categorical X
+                disabled={
+                  lineplotProps.independentValueType === 'string' ||
+                  vizConfig.independentAxisValueSpec === 'Full' ||
+                  vizConfig.independentAxisValueSpec === 'Auto-zoom'
+                }
+              />
+              {/* truncation notification */}
+              {truncatedIndependentAxisWarning &&
+              !independentAllNegative &&
+              !(vizConfig.independentAxisLogScale && vizConfig.useBinning) &&
+              !(vizConfig.dependentAxisLogScale && vizConfig.showErrorBars) ? (
+                <Notification
+                  title={''}
+                  text={truncatedIndependentAxisWarning}
+                  // this was defined as LIGHT_BLUE
+                  color={'#5586BE'}
+                  onAcknowledgement={() => {
+                    setTruncatedIndependentAxisWarning('');
+                  }}
+                  showWarningIcon={true}
+                  // set maxWidth per type
+                  containerStyles={{
+                    maxWidth:
+                      lineplotProps.independentValueType === 'date'
+                        ? '350px'
+                        : '350px',
+                  }}
+                />
+              ) : null}
+            </LabelledGroup>
           </LabelledGroup>
         </div>
 
@@ -1512,7 +1506,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
             position: 'relative',
             marginLeft: '-1px',
             top: '1.5em',
-            marginTop: '-1em',
           }}
         >
           {' '}
@@ -1520,146 +1513,142 @@ function LineplotViz(props: VisualizationProps<Options>) {
 
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           {/* set Undo icon and its behavior */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginTop: '-1em',
-            }}
+          <LabelledGroup
+            label={
+              <div css={{ display: 'flex', alignItems: 'center' }}>
+                Y-axis controls
+                <ResetButtonCoreUI
+                  size={'medium'}
+                  text={''}
+                  themeRole={'primary'}
+                  tooltip={'Reset to defaults'}
+                  disabled={false}
+                  onPress={handleDependentAxisSettingsReset}
+                />
+              </div>
+            }
           >
-            <LabelledGroup label="Y-axis controls"> </LabelledGroup>
-            <div style={{ marginLeft: '-2.6em', width: '50%' }}>
-              <ResetButtonCoreUI
-                size={'medium'}
-                text={''}
-                themeRole={'primary'}
-                tooltip={'Reset to defaults'}
-                disabled={false}
-                onPress={handleDependentAxisSettingsReset}
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                marginBottom: '0.8em',
+              }}
+            >
+              <Toggle
+                label={'Log scale (excludes values \u{2264} 0)'}
+                value={vizConfig.dependentAxisLogScale ?? false}
+                onChange={(newValue: boolean) => {
+                  setDismissedDependentAllNegativeWarning(false);
+                  onDependentAxisLogScaleChange(newValue);
+                }}
+                disabled={lineplotProps.dependentValueType === 'date'}
+                themeRole="primary"
               />
             </div>
-          </div>
-
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              marginTop: '-0.3em',
-              marginBottom: '0.8em',
-              marginLeft: '1em',
-            }}
-          >
-            <Toggle
-              label={'Log scale (excludes values \u{2264} 0)'}
-              value={vizConfig.dependentAxisLogScale ?? false}
-              onChange={(newValue: boolean) => {
-                setDismissedDependentAllNegativeWarning(false);
-                onDependentAxisLogScaleChange(newValue);
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                marginBottom: '0.8em',
               }}
-              disabled={lineplotProps.dependentValueType === 'date'}
-              themeRole="primary"
-            />
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-
-              marginBottom: '0.8em',
-              marginLeft: '1em',
-            }}
-          >
-            {dependentAllNegative &&
-            !dismissedDependentAllNegativeWarning &&
-            !(vizConfig.independentAxisLogScale && vizConfig.useBinning) &&
-            !(vizConfig.dependentAxisLogScale && vizConfig.showErrorBars) ? (
-              <Notification
-                title={''}
-                text={
-                  'Nothing can be plotted with log scale because all values are zero or negative'
-                }
-                color={'#5586BE'}
-                onAcknowledgement={() =>
-                  setDismissedDependentAllNegativeWarning(true)
-                }
-                showWarningIcon={true}
-                containerStyles={{ maxWidth: '350px', marginBottom: '1em' }}
-              />
-            ) : null}
-            <Toggle
-              label={'Error bars (95% C.I.)'}
-              value={vizConfig.showErrorBars ?? true}
-              onChange={(newValue: boolean) => {
-                onShowErrorBarsChange(newValue);
-              }}
-              disabled={neverShowErrorBars}
-              themeRole="primary"
-            />
-          </div>
-          {/* Y-axis range control */}
-          {/* make some space to match with X-axis range control */}
-          <div style={{ height: '4em' }} />
-          <LabelledGroup
-            label="Y-axis range"
-            containerStyles={{
-              fontSize: '0.9em',
-              marginTop: '-0.8em',
-              // width: '350px',
-            }}
-          >
-            <RadioButtonGroup
-              options={['Full', 'Auto-zoom', 'Custom']}
-              selectedOption={vizConfig.dependentAxisValueSpec ?? 'Full'}
-              onOptionSelected={(newAxisRangeOption: string) => {
-                onDependentAxisValueSpecChange(newAxisRangeOption);
-              }}
-              orientation={'horizontal'}
-              labelPlacement={'end'}
-              buttonColor={'primary'}
-              margins={['0em', '0', '0', '0em']}
-              itemMarginRight={25}
-              disabledList={
-                !categoricalMode && vizConfig.yAxisVariable != null
-                  ? ['Full']
-                  : []
-              }
-            />
-            <AxisRangeControl
-              label="Range"
-              range={vizConfig.dependentAxisRange ?? defaultDependentAxisRange}
-              valueType={
-                lineplotProps.dependentValueType === 'date' ? 'date' : 'number'
-              }
-              onRangeChange={(newRange?: NumberOrDateRange) => {
-                handleDependentAxisRangeChange(newRange);
-              }}
-              // set maxWidth
-              containerStyles={{ maxWidth: '350px' }}
-              logScale={vizConfig.dependentAxisLogScale}
-              disabled={
-                vizConfig.dependentAxisValueSpec === 'Full' ||
-                vizConfig.dependentAxisValueSpec === 'Auto-zoom'
-              }
-            />
-            {/* truncation notification */}
-            {truncatedDependentAxisWarning &&
-            !dependentAllNegative &&
-            !(vizConfig.independentAxisLogScale && vizConfig.useBinning) &&
-            !(vizConfig.dependentAxisLogScale && vizConfig.showErrorBars) ? (
-              <Notification
-                title={''}
-                text={truncatedDependentAxisWarning}
-                // this was defined as LIGHT_BLUE
-                color={'#5586BE'}
-                onAcknowledgement={() => {
-                  setTruncatedDependentAxisWarning('');
+            >
+              {dependentAllNegative &&
+              !dismissedDependentAllNegativeWarning &&
+              !(vizConfig.independentAxisLogScale && vizConfig.useBinning) &&
+              !(vizConfig.dependentAxisLogScale && vizConfig.showErrorBars) ? (
+                <Notification
+                  title={''}
+                  text={
+                    'Nothing can be plotted with log scale because all values are zero or negative'
+                  }
+                  color={'#5586BE'}
+                  onAcknowledgement={() =>
+                    setDismissedDependentAllNegativeWarning(true)
+                  }
+                  showWarningIcon={true}
+                  containerStyles={{ maxWidth: '350px', marginBottom: '1em' }}
+                />
+              ) : null}
+              <Toggle
+                label={'Error bars (95% C.I.)'}
+                value={vizConfig.showErrorBars ?? true}
+                onChange={(newValue: boolean) => {
+                  onShowErrorBarsChange(newValue);
                 }}
-                showWarningIcon={true}
-                // change maxWidth
-                containerStyles={{ maxWidth: '350px' }}
+                disabled={neverShowErrorBars}
+                themeRole="primary"
               />
-            ) : null}
+            </div>
+            {/* Y-axis range control */}
+            {/* make some space to match with X-axis range control */}
+            <div style={{ height: '4em' }} />
+            <LabelledGroup
+              label="Y-axis range"
+              containerStyles={{
+                fontSize: '0.9em',
+                marginTop: '-0.8em',
+                // width: '350px',
+                padding: '1em 0',
+              }}
+            >
+              <RadioButtonGroup
+                options={['Full', 'Auto-zoom', 'Custom']}
+                selectedOption={vizConfig.dependentAxisValueSpec ?? 'Full'}
+                onOptionSelected={(newAxisRangeOption: string) => {
+                  onDependentAxisValueSpecChange(newAxisRangeOption);
+                }}
+                orientation={'horizontal'}
+                labelPlacement={'end'}
+                buttonColor={'primary'}
+                margins={['0em', '0', '0', '0em']}
+                itemMarginRight={25}
+                disabledList={
+                  !categoricalMode && vizConfig.yAxisVariable != null
+                    ? ['Full']
+                    : []
+                }
+              />
+              <AxisRangeControl
+                label="Range"
+                range={
+                  vizConfig.dependentAxisRange ?? defaultDependentAxisRange
+                }
+                valueType={
+                  lineplotProps.dependentValueType === 'date'
+                    ? 'date'
+                    : 'number'
+                }
+                onRangeChange={(newRange?: NumberOrDateRange) => {
+                  handleDependentAxisRangeChange(newRange);
+                }}
+                // set maxWidth
+                containerStyles={{ maxWidth: '350px' }}
+                logScale={vizConfig.dependentAxisLogScale}
+                disabled={
+                  vizConfig.dependentAxisValueSpec === 'Full' ||
+                  vizConfig.dependentAxisValueSpec === 'Auto-zoom'
+                }
+              />
+              {/* truncation notification */}
+              {truncatedDependentAxisWarning &&
+              !dependentAllNegative &&
+              !(vizConfig.independentAxisLogScale && vizConfig.useBinning) &&
+              !(vizConfig.dependentAxisLogScale && vizConfig.showErrorBars) ? (
+                <Notification
+                  title={''}
+                  text={truncatedDependentAxisWarning}
+                  // this was defined as LIGHT_BLUE
+                  color={'#5586BE'}
+                  onAcknowledgement={() => {
+                    setTruncatedDependentAxisWarning('');
+                  }}
+                  showWarningIcon={true}
+                  // change maxWidth
+                  containerStyles={{ maxWidth: '350px' }}
+                />
+              ) : null}
+            </LabelledGroup>
           </LabelledGroup>
         </div>
       </div>

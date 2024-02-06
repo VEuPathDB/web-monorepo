@@ -569,6 +569,7 @@ function MosaicViz(props: Props<Options>) {
     interactive: true,
     showSpinner: data.pending,
     displayLibraryControls: false,
+    showExportButton: true,
   };
 
   const plotNode = (

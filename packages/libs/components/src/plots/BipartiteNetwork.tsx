@@ -10,12 +10,14 @@ import {
   forwardRef,
   useImperativeHandle,
   useRef,
+  useCallback,
 } from 'react';
 import Spinner from '../components/Spinner';
 import { ToImgopts } from 'plotly.js';
-import domToImage from 'dom-to-image';
 import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 import './BipartiteNetwork.css';
+import { ExportPlotToImageButton } from './ExportPlotToImageButton';
+import { plotToImage } from './visxVEuPathDB';
 
 export interface BipartiteNetworkSVGStyles {
   width?: number; // svg width
@@ -81,16 +83,18 @@ function BipartiteNetwork(
 
   // Use ref forwarding to enable screenshotting of the plot for thumbnail versions.
   const plotRef = useRef<HTMLDivElement>(null);
+
+  const toImage = useCallback(async (opts: ToImgopts) => {
+    return plotToImage(plotRef.current, opts);
+  }, []);
+
   useImperativeHandle<HTMLDivElement, any>(
     ref,
     () => ({
       // The thumbnail generator makePlotThumbnailUrl expects to call a toImage function
-      toImage: async (imageOpts: ToImgopts) => {
-        if (!plotRef.current) throw new Error('Plot not ready');
-        return domToImage.toPng(plotRef.current, imageOpts);
-      },
+      toImage,
     }),
-    []
+    [toImage]
   );
 
   // Set up styles for the bipartite network and incorporate overrides
@@ -156,76 +160,88 @@ function BipartiteNetwork(
     };
   });
 
-  return (
-    <div
-      className={containerClass}
-      style={{ width: '100%', ...containerStyles, position: 'relative' }}
-    >
-      <div ref={plotRef} style={{ width: '100%', height: '100%' }}>
-        {nodesByPartitionWithCoordinates[0].length > 0 ? (
-          <svg
-            width={svgStyles.width}
-            height={
-              Math.max(
-                data.partitions[1].nodeIds.length,
-                data.partitions[0].nodeIds.length
-              ) *
-                svgStyles.nodeSpacing +
-              svgStyles.topPadding
-            }
-          >
-            {/* Draw names of node colums if they exist */}
-            {partition1Name && (
-              <Text
-                x={column1Position}
-                y={svgStyles.topPadding / 2}
-                textAnchor="end"
-                className="BipartiteNetworkPartitionTitle"
-              >
-                {partition1Name}
-              </Text>
-            )}
-            {partition2Name && (
-              <Text
-                x={column2Position}
-                y={svgStyles.topPadding / 2}
-                textAnchor="start"
-                className="BipartiteNetworkPartitionTitle"
-              >
-                {partition2Name}
-              </Text>
-            )}
+  const plotRect = plotRef.current?.getBoundingClientRect();
+  const imageHeight = plotRect?.height;
+  const imageWidth = plotRect?.width;
 
-            <Graph
-              graph={{
-                nodes: nodesByPartitionWithCoordinates[0].concat(
-                  nodesByPartitionWithCoordinates[1]
-                ),
-                links: linksWithCoordinates,
-              }}
-              // Using our Link component so that it uses our nice defaults and
-              // can better expand to handle more complex events (hover and such).
-              linkComponent={({ link }) => <Link link={link} />}
-              nodeComponent={({ node }) => {
-                const nodeWithLabelProps = {
-                  node: node,
-                  labelPosition: node.labelPosition,
-                  truncationLength: labelTruncationLength,
-                };
-                return <NodeWithLabel {...nodeWithLabelProps} />;
-              }}
-            />
-          </svg>
-        ) : (
-          emptyNetworkContent ?? <p>No nodes in the network</p>
-        )}
-        {
-          // Note that the spinner shows up in the middle of the network. So when
-          // the network is very long, the spinner will be further down the page than in other vizs.
-          showSpinner && <Spinner />
-        }
+  return (
+    <>
+      <div
+        className={containerClass}
+        style={{ width: '100%', ...containerStyles, position: 'relative' }}
+      >
+        <div ref={plotRef} style={{ width: '100%', height: '100%' }}>
+          {nodesByPartitionWithCoordinates[0].length > 0 ? (
+            <svg
+              width={svgStyles.width}
+              height={
+                Math.max(
+                  data.partitions[1].nodeIds.length,
+                  data.partitions[0].nodeIds.length
+                ) *
+                  svgStyles.nodeSpacing +
+                svgStyles.topPadding
+              }
+            >
+              {/* Draw names of node colums if they exist */}
+              {partition1Name && (
+                <Text
+                  x={column1Position}
+                  y={svgStyles.topPadding / 2}
+                  textAnchor="end"
+                  className="BipartiteNetworkPartitionTitle"
+                >
+                  {partition1Name}
+                </Text>
+              )}
+              {partition2Name && (
+                <Text
+                  x={column2Position}
+                  y={svgStyles.topPadding / 2}
+                  textAnchor="start"
+                  className="BipartiteNetworkPartitionTitle"
+                >
+                  {partition2Name}
+                </Text>
+              )}
+
+              <Graph
+                graph={{
+                  nodes: nodesByPartitionWithCoordinates[0].concat(
+                    nodesByPartitionWithCoordinates[1]
+                  ),
+                  links: linksWithCoordinates,
+                }}
+                // Using our Link component so that it uses our nice defaults and
+                // can better expand to handle more complex events (hover and such).
+                linkComponent={({ link }) => <Link link={link} />}
+                nodeComponent={({ node }) => {
+                  const nodeWithLabelProps = {
+                    node: node,
+                    labelPosition: node.labelPosition,
+                    truncationLength: labelTruncationLength,
+                  };
+                  return <NodeWithLabel {...nodeWithLabelProps} />;
+                }}
+              />
+            </svg>
+          ) : (
+            emptyNetworkContent ?? <p>No nodes in the network</p>
+          )}
+          {
+            // Note that the spinner shows up in the middle of the network. So when
+            // the network is very long, the spinner will be further down the page than in other vizs.
+            showSpinner && <Spinner />
+          }
+        </div>
       </div>
-    </div>
+      <ExportPlotToImageButton
+        toImage={toImage}
+        imageHeight={imageHeight}
+        imageWidth={imageWidth}
+        filename="Network"
+      />
+    </>
   );
 }
 
