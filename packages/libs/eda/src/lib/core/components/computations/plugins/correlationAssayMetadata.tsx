@@ -1,5 +1,4 @@
 import {
-  VariableTreeNode,
   FeaturePrefilterThresholds,
   VariableTreeNode,
   useFindEntityAndVariableCollection,
