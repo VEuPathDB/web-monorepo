@@ -970,7 +970,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     }
     return Object.entries(dataElementConstraints[0])
       .filter((variable) => variable[1].isRequired)
-      .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
+      .every((reqdVar) => !!vizConfig[reqdVar[0] as keyof typeof vizConfig]);
   }, [dataElementConstraints, vizConfig]);
 
   // set truncation flags: will see if this is reusable with other application

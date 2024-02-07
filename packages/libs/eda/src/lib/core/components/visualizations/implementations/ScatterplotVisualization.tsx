@@ -198,6 +198,29 @@ export interface ScatterPlotDataWithCoverage extends CoverageStatistics {
 // define ScatterPlotDataResponse
 type ScatterPlotDataResponse = ScatterplotResponse;
 
+// define dataSetProcess type used inside the processInputData()
+// Note that dataSetProcess is different from the one used in the outside of the processInputData()
+// using pre-existing ScatterPlotDataSeries to override
+type Override<T1, T2> = Omit<T1, keyof T2> & T2;
+type dataSetProcessType = Override<
+  ScatterPlotDataSeries,
+  {
+    x: (number | string)[] | null[];
+    y: (number | string)[] | null[];
+    marker?: {
+      color?: string | string[];
+      size?: number;
+      symbol?: string;
+      line?: {
+        color?: string | string[];
+        width?: number;
+      };
+    };
+    type?: string;
+    r2?: number | null;
+  }
+>;
+
 export const scatterplotVisualization = createVisualizationPlugin({
   selectorIcon: ScatterSVG,
   fullscreenComponent: ScatterplotViz,
@@ -1990,7 +2013,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     if (!dataElementConstraints) return false;
     return Object.entries(dataElementConstraints[0])
       .filter((variable) => variable[1].isRequired)
-      .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
+      .every((reqdVar) => !!vizConfig[reqdVar[0] as keyof typeof vizConfig]);
   }, [dataElementConstraints, vizConfig]);
 
   const LayoutComponent = options?.layoutComponent ?? PlotLayout;
@@ -2242,10 +2265,9 @@ export function scatterplotResponseToData(
 }
 
 // making plotly input data
-function processInputData<T extends number | string>(
+function processInputData(
   responseScatterplotData: ScatterplotResponse['scatterplot']['data'],
-  // line, marker,
-  modeValue: string,
+  modeValue: 'markers' | 'lines' | 'lines+markers',
   // use independentValueType & dependentValueType to distinguish btw number and date string
   independentValueType: string,
   dependentValueType: string,
@@ -2329,19 +2351,20 @@ function processInputData<T extends number | string>(
   const scatterPlotType =
     facetVariable != null || numDataPoints < 1000 ? 'scatter' : 'scattergl';
 
-  // set dataSetProcess as any for now
-  let dataSetProcess: any = [];
+  // data array to return
+  let dataSetProcess: dataSetProcessType[] = [];
 
-  // drawing raw data (markers) at first
-  // Nasty 'any' type here...
-  responseScatterplotData.some(function (el: any, index: number) {
+  responseScatterplotData.some(function (
+    el: ScatterplotResponse['scatterplot']['data'][number],
+    index: number
+  ) {
     // initialize seriesX/Y
     let seriesX = [];
     let seriesY = [];
 
     // initialize gradient colorscale arrays
     let seriesGradientColorscale = [];
-    let markerColorsGradient = [];
+    let markerColorsGradient: string[] = [];
     let markerSymbolGradient: string = 'x';
 
     // Fix overlay variable label. If a numeric var, fix with fixLabelForNumberVariables. If the overlay variable
@@ -2390,10 +2413,10 @@ function processInputData<T extends number | string>(
       if (seriesX.length) {
         xMin =
           xMin != null
-            ? lte(xMin, min(seriesX))
+            ? lte(xMin, minValue(seriesX))
               ? xMin
-              : min(seriesX)
-            : min(seriesX);
+              : minValue(seriesX)
+            : minValue(seriesX);
         xMinPos =
           xMinPos != null
             ? lte(xMinPos, minPos(seriesX))
@@ -2402,19 +2425,19 @@ function processInputData<T extends number | string>(
             : minPos(seriesX);
         xMax =
           xMax != null
-            ? gte(xMax, max(seriesX))
+            ? gte(xMax, maxValue(seriesX))
               ? xMax
-              : max(seriesX)
-            : max(seriesX);
+              : maxValue(seriesX)
+            : maxValue(seriesX);
       }
 
       if (seriesY.length) {
         yMin =
           yMin != null
-            ? lte(yMin, min(seriesY))
+            ? lte(yMin, minValue(seriesY))
               ? yMin
-              : min(seriesY)
-            : min(seriesY);
+              : minValue(seriesY)
+            : minValue(seriesY);
         yMinPos =
           yMinPos != null
             ? lte(yMinPos, minPos(seriesY))
@@ -2423,10 +2446,10 @@ function processInputData<T extends number | string>(
             : minPos(seriesY);
         yMax =
           yMax != null
-            ? gte(yMax, max(seriesY))
+            ? gte(yMax, maxValue(seriesY))
               ? yMax
-              : max(seriesY)
-            : max(seriesY);
+              : maxValue(seriesY)
+            : maxValue(seriesY);
       }
 
       // If seriesGradientColorscale column exists, need to use gradient colorscales
@@ -2487,13 +2510,17 @@ function processInputData<T extends number | string>(
   });
 
   // after drawing raw data, smoothedMean and bestfitline plots are displayed
-  responseScatterplotData.some(function (el: any, index: number) {
+  responseScatterplotData.some(function (
+    el: ScatterplotResponse['scatterplot']['data'][number],
+    index: number
+  ) {
+    // responseScatterplotData.some(function (el: ScatterplotResponse['scatterplot']['data'][number], index: number) {
     // initialize variables: setting with union type for future, but this causes typescript issue in the current version
-    let xIntervalLineValue: T[] = [];
+    let xIntervalLineValue = [];
     let yIntervalLineValue: number[] = [];
     let standardErrorValue: number[] = []; // this is for standardError
 
-    let xIntervalBounds: T[] = [];
+    let xIntervalBounds = [];
     let yIntervalBounds: number[] = [];
 
     // initialize smoothedMeanX, bestFitLineX
@@ -2557,17 +2584,17 @@ function processInputData<T extends number | string>(
       // add additional condition for the case of smoothedMean (without series data)
       // need to check whether data is empty
       if (yIntervalLineValue.length) {
-        yMin = el.seriesY.length
+        yMin = el.seriesY?.length
           ? lte(yMin, min(yIntervalLineValue))
             ? yMin
             : min(yIntervalLineValue)
           : min(yIntervalLineValue);
-        yMinPos = el.seriesY.length
+        yMinPos = el.seriesY?.length
           ? lte(yMin, minPos(yIntervalLineValue))
             ? yMin
             : minPos(yIntervalLineValue)
           : minPos(yIntervalLineValue);
-        yMax = el.seriesY.length
+        yMax = el.seriesY?.length
           ? gte(yMax, max(yIntervalLineValue))
             ? yMax
             : max(yIntervalLineValue)
@@ -2778,4 +2805,12 @@ function reorderResponseScatterplotData(
 
 function minPos(array: (number | string | undefined)[]) {
   return min(filter(array, (x) => gt(x, 0)));
+}
+
+function minValue(array: (number | string | undefined)[]) {
+  return min(array);
+}
+
+function maxValue(array: (number | string | undefined)[]) {
+  return max(array);
 }
