@@ -24,6 +24,7 @@ interface Props {
   totalEntityCount?: number;
   totalEntityInSubsetCount?: number;
   visibleEntityCount?: number;
+  onShowStudies: (showStudies: boolean) => void;
 }
 
 const { format } = new Intl.NumberFormat('en-us');
@@ -34,6 +35,7 @@ export function MapTypeHeaderStudyDetails(props: Props) {
     filtersIncludingViewport,
     outputEntityId,
     visibleEntityCount,
+    onShowStudies,
   } = props;
   const { rootEntity } = useStudyMetadata();
   const rootEntityCount = useEntityCount(
@@ -78,27 +80,32 @@ export function MapTypeHeaderStudyDetails(props: Props) {
       </p>
       <p>
         The visualized data comes from {totalRootEntityFromatted}{' '}
-        {rootEntity.displayNamePlural} <button>Show list</button>
+        {rootEntity.displayNamePlural}{' '}
+        <button type="button" onClick={() => onShowStudies(true)}>
+          Show list
+        </button>
       </p>
     </div>
   );
 
   return (
-    <div
-      css={{
-        padding: '1em',
-        fontSize: '1.2em',
-        display: 'flex',
-        gap: '1ex',
-        alignItems: 'center',
-      }}
-    >
-      {format(visibleEntityCount)} {outputEntity.displayNamePlural} from{' '}
-      {format(rootEntityCount.data.count)} {rootEntity.displayNamePlural}
-      <Tooltip title={tooltipContent} interactive style={{ width: 'auto' }}>
-        <Info style={{ color: '#069', height: '.8em', width: '.8em' }} />
-      </Tooltip>
-    </div>
+    <>
+      <div
+        css={{
+          padding: '1em',
+          fontSize: '1.2em',
+          display: 'flex',
+          gap: '1ex',
+          alignItems: 'center',
+        }}
+      >
+        {format(visibleEntityCount)} {outputEntity.displayNamePlural} from{' '}
+        {format(rootEntityCount.data.count)} {rootEntity.displayNamePlural}
+        <Tooltip title={tooltipContent} interactive style={{ width: 'auto' }}>
+          <Info style={{ color: '#069', height: '.8em', width: '.8em' }} />
+        </Tooltip>
+      </div>
+    </>
   );
 }
 

@@ -60,6 +60,7 @@ import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
 import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
+import { SubStudies } from '../../SubStudies';
 
 const displayName = 'Donuts';
 
@@ -341,11 +342,12 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
 function MapOverlayComponent(props: MapTypeMapLayerProps) {
   const {
     studyId,
-    filters,
+    filtersIncludingViewport: filters,
     studyEntities,
     geoConfigs,
-    appState: { boundsZoomLevel },
+    appState: { boundsZoomLevel, studyDetailsPanelConfig },
     updateConfiguration,
+    setStudyDetailsPanelConfig,
   } = props;
   const {
     selectedVariable,
@@ -387,6 +389,16 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
 
   return (
     <>
+      {studyDetailsPanelConfig.isVisble && (
+        <SubStudies
+          studyId={studyId}
+          entityId={studyEntities[0].id}
+          filters={filters}
+          panelConfig={studyDetailsPanelConfig}
+          updatePanelConfig={setStudyDetailsPanelConfig}
+        />
+      )}
+
       <DraggableLegendPanel
         panelTitle={overlayVariable?.displayName}
         zIndex={3}
@@ -450,6 +462,12 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
       totalEntityCount={props.totalCounts.value?.[outputEntityId]}
       totalEntityInSubsetCount={props.filteredCounts.value?.[outputEntityId]}
       visibleEntityCount={markerDataResponse.totalVisibleWithOverlayEntityCount}
+      onShowStudies={(isVisble) =>
+        props.setStudyDetailsPanelConfig({
+          ...props.appState.studyDetailsPanelConfig,
+          isVisble,
+        })
+      }
     />
   ) : null;
 }

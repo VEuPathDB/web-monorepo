@@ -76,6 +76,18 @@ export const MarkerConfiguration = t.intersection([
   ]),
 ]);
 
+const PanelConfig = t.type({
+  isVisble: t.boolean,
+  position: t.type({ x: t.number, y: t.number }),
+  dimensions: t.type({
+    height: t.union([t.number, t.string]),
+    width: t.union([t.number, t.string]),
+  }),
+});
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export type PanelConfig = t.TypeOf<typeof PanelConfig>;
+
 export const AppState = t.intersection([
   t.type({
     viewport: t.type({
@@ -85,6 +97,7 @@ export const AppState = t.intersection([
     activeMarkerConfigurationType: MarkerType,
     markerConfigurations: t.array(MarkerConfiguration),
     isSidePanelExpanded: t.boolean,
+    studyDetailsPanelConfig: PanelConfig,
   }),
   t.partial({
     boundsZoomLevel: t.type({
@@ -156,6 +169,11 @@ export function useAppState(
         variable: defaultTimeVariable,
         active: true,
         selectedRange: undefined,
+      },
+      studyDetailsPanelConfig: {
+        isVisble: false,
+        position: { x: 650, y: 225 },
+        dimensions: { height: '70vh', width: 1000 },
       },
       markerConfigurations: [
         {
@@ -270,5 +288,6 @@ export function useAppState(
     setSubsetVariableAndEntity: useSetter('subsetVariableAndEntity'),
     setViewport: useSetter('viewport'),
     setTimeSliderConfig: useSetter('timeSliderConfig', true),
+    setStudyDetailsPanelConfig: useSetter('studyDetailsPanelConfig'),
   };
 }

@@ -82,9 +82,7 @@ import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { MapTypeMapLayerProps } from './mapTypes/types';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
 import AnalysisNameDialog from '../../workspace/AnalysisNameDialog';
-import { FetchClientError } from '@veupathdb/http-utils';
 import { Page } from '@veupathdb/wdk-client/lib/Components';
-import { Link } from 'react-router-dom';
 import { AnalysisError } from '../../core/components/AnalysisError';
 
 enum MapSideNavItemLabels {
@@ -175,6 +173,7 @@ function MapAnalysisImpl(props: ImplProps) {
     setIsSidePanelExpanded,
     setMarkerConfigurations,
     setActiveMarkerConfigurationType,
+    setStudyDetailsPanelConfig,
     geoConfigs,
     setTimeSliderConfig,
     showLinkToEda = false,
@@ -801,6 +800,7 @@ function MapAnalysisImpl(props: ImplProps) {
           filteredCounts,
           hideVizInputsAndControls,
           setHideVizInputsAndControls,
+          setStudyDetailsPanelConfig,
           /* disabled until wired in fully:
              selectedMarkers,
              setSelectedMarkers,
