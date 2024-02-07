@@ -7,6 +7,7 @@ export const DraggableLegendPanel = (props: {
   panelTitle?: string;
   defaultPosition?: DraggablePanelCoordinatePair;
   children: React.ReactNode;
+  headerButtons?: React.FC;
 }) => (
   <DraggablePanel
     isOpen
@@ -19,6 +20,8 @@ export const DraggableLegendPanel = (props: {
       // set minWidth for draggable panel
       minWidth: '120px',
     }}
+    // HeaderButtons component for SAM Legend
+    headerButtons={props.headerButtons}
   >
     {props.children}
   </DraggablePanel>

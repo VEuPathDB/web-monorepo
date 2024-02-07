@@ -9,7 +9,10 @@ import { GeoConfig } from '../../../core/types/geoConfig';
 import { ComputationAppOverview } from '../../../core/types/visualization';
 import { AppState, PanelConfig } from '../appState';
 import { EntityCounts } from '../../../core/hooks/entityCounts';
+import { SiteInformationProps } from '../Types';
 
+// should we just use one type: MapTypeMapLayerProps?
+// and get rid of this one?
 export interface MapTypeConfigPanelProps {
   apps: ComputationAppOverview[];
   analysisState: AnalysisState;
@@ -36,13 +39,17 @@ export interface MapTypeMapLayerProps {
   updateConfiguration: (configuration: unknown) => void;
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
-  filtersIncludingViewport: Filter[];
   hideVizInputsAndControls: boolean;
   setHideVizInputsAndControls: (hide: boolean) => void;
   // selectedMarkers and its state function
   selectedMarkers?: string[];
   setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
   setStudyDetailsPanelConfig: (config: PanelConfig) => void;
+  setTimeSliderConfig?: (
+    newConfig: NonNullable<AppState['timeSliderConfig']>
+  ) => void;
+  siteInformationProps?: SiteInformationProps;
+  headerButtons?: React.FC;
 }
 
 /**
@@ -70,4 +77,8 @@ export interface MapTypePlugin {
    * Returns a ReactNode that is rendered in the map header
    */
   MapTypeHeaderDetails?: ComponentType<MapTypeMapLayerProps>;
+  /**
+   * Returns a ReactNode that is rendered under the map header
+   */
+  TimeSliderComponent?: ComponentType<MapTypeMapLayerProps>;
 }

@@ -78,7 +78,7 @@ export function VariableCoverageTable({
               <tr key={row.role}>
                 <th>{row.role}</th>
                 <td>{row.display}</td>
-                <td className="numeric">
+                <td className="numeric" style={{ minWidth: '5em' }}>
                   {row.completeCount?.toLocaleString()}
                   <br />
                   {row.completePercent != null && (

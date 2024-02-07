@@ -164,7 +164,7 @@ export function useAppState(
       viewport: defaultViewport,
       mouseMode: 'default',
       activeMarkerConfigurationType: 'pie',
-      isSidePanelExpanded: true,
+      isSidePanelExpanded: false,
       timeSliderConfig: {
         variable: defaultTimeVariable,
         active: true,
@@ -222,23 +222,28 @@ export function useAppState(
               )
           );
 
-        const timeSliderConfigIsMissing = appState.timeSliderConfig == null;
-
-        if (missingMarkerConfigs.length > 0 || timeSliderConfigIsMissing) {
+        // refactored these into two calls to setVariableUISettings to be more readable and future-proof
+        if (missingMarkerConfigs.length > 0)
           setVariableUISettings((prev) => ({
             ...prev,
             [uiStateKey]: {
               ...appState,
-              ...(timeSliderConfigIsMissing
-                ? { timeSliderConfig: defaultAppState.timeSliderConfig }
-                : {}),
               markerConfigurations: [
                 ...appState.markerConfigurations,
                 ...missingMarkerConfigs,
               ],
             },
           }));
-        }
+
+        const timeSliderConfigIsMissing = appState.timeSliderConfig == null;
+        if (timeSliderConfigIsMissing)
+          setVariableUISettings((prev) => ({
+            ...prev,
+            [uiStateKey]: {
+              ...appState,
+              timeSliderConfig: defaultAppState.timeSliderConfig,
+            },
+          }));
       }
       setAppStateChecked(true);
     }
