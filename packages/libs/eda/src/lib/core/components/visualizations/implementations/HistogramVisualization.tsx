@@ -121,14 +121,9 @@ import {
   RequestOptions,
 } from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
-
-// reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
 import { FloatingHistogramExtraProps } from '../../../../map/analysis/hooks/plugins/histogram';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
-
-import { getDistribution } from '../../filter/util';
-import { DistributionResponse } from '../../../api/SubsettingClient';
 import { useSubsettingClient } from '../../../hooks/workspace';
 import { red } from '../../filter/colors';
 import { min, max } from 'lodash';
@@ -463,73 +458,70 @@ function HistogramViz(props: VisualizationProps<Options>) {
   // get distribution data
   const subsettingClient = useSubsettingClient();
 
-  const getDistributionData = useCallback(async () => {
-    if (vizConfig.xAxisVariable != null && xAxisVariable != null) {
-      const [displayRangeMin, displayRangeMax, binWidth, binUnits] =
-        NumberVariable.is(xAxisVariable)
-          ? [
-              xAxisVariable.distributionDefaults.displayRangeMin ??
-                xAxisVariable.distributionDefaults.rangeMin,
-              xAxisVariable.distributionDefaults.displayRangeMax ??
-                xAxisVariable.distributionDefaults.rangeMax,
-              xAxisVariable.distributionDefaults.binWidth,
-              undefined,
-            ]
-          : [
-              (xAxisVariable as DateVariable).distributionDefaults
-                .displayRangeMin ??
-                (xAxisVariable as DateVariable).distributionDefaults.rangeMin,
-              (xAxisVariable as DateVariable).distributionDefaults
-                .displayRangeMax ??
-                (xAxisVariable as DateVariable).distributionDefaults.rangeMax,
-              (xAxisVariable as DateVariable).distributionDefaults.binWidth,
-              (xAxisVariable as DateVariable).distributionDefaults.binUnits,
-            ];
-
-      // try to call once
-      const distribution = await subsettingClient.getDistribution(
-        studyMetadata.id,
-        vizConfig.xAxisVariable?.entityId ?? '',
-        vizConfig.xAxisVariable?.variableId ?? '',
-        {
-          valueSpec: 'count',
-          filters,
-          binSpec: {
-            // Note: technically any arbitrary values can be used here for displayRangeMin/Max
-            // but used more accurate value anyway
-            displayRangeMin: DateVariable.is(xAxisVariable)
-              ? displayRangeMin + 'T00:00:00Z'
-              : displayRangeMin,
-            displayRangeMax: DateVariable.is(xAxisVariable)
-              ? displayRangeMax + 'T00:00:00Z'
-              : displayRangeMax,
-            binWidth: binWidth ?? 1,
-            binUnits: binUnits,
-          },
-        }
-      );
-
-      // return series using foreground response
-      const series = {
-        series: [
-          distributionResponseToDataSeries(
-            'Subset',
-            distribution,
-            red,
-            NumberVariable.is(xAxisVariable) ? 'number' : 'date'
-          ),
-        ],
-      };
-
-      return series;
-    }
-
-    return undefined;
-  }, [filters, xAxisVariable, vizConfig.xAxisVariable, subsettingClient]);
-
-  // need useCallback to avoid infinite loop
   const distributionDataPromise = usePromise(
-    useCallback(() => getDistributionData(), [getDistributionData])
+    useCallback(async () => {
+      if (vizConfig.xAxisVariable != null && xAxisVariable != null) {
+        const [displayRangeMin, displayRangeMax, binWidth, binUnits] =
+          NumberVariable.is(xAxisVariable)
+            ? [
+                xAxisVariable.distributionDefaults.displayRangeMin ??
+                  xAxisVariable.distributionDefaults.rangeMin,
+                xAxisVariable.distributionDefaults.displayRangeMax ??
+                  xAxisVariable.distributionDefaults.rangeMax,
+                xAxisVariable.distributionDefaults.binWidth,
+                undefined,
+              ]
+            : [
+                (xAxisVariable as DateVariable).distributionDefaults
+                  .displayRangeMin ??
+                  (xAxisVariable as DateVariable).distributionDefaults.rangeMin,
+                (xAxisVariable as DateVariable).distributionDefaults
+                  .displayRangeMax ??
+                  (xAxisVariable as DateVariable).distributionDefaults.rangeMax,
+                (xAxisVariable as DateVariable).distributionDefaults.binWidth,
+                (xAxisVariable as DateVariable).distributionDefaults.binUnits,
+              ];
+
+        // try to call once
+        const distribution = await subsettingClient.getDistribution(
+          studyMetadata.id,
+          vizConfig.xAxisVariable?.entityId ?? '',
+          vizConfig.xAxisVariable?.variableId ?? '',
+          {
+            valueSpec: 'count',
+            filters,
+            binSpec: {
+              // Note: technically any arbitrary values can be used here for displayRangeMin/Max
+              // but used more accurate value anyway
+              displayRangeMin: DateVariable.is(xAxisVariable)
+                ? displayRangeMin + 'T00:00:00Z'
+                : displayRangeMin,
+              displayRangeMax: DateVariable.is(xAxisVariable)
+                ? displayRangeMax + 'T00:00:00Z'
+                : displayRangeMax,
+              binWidth: binWidth ?? 1,
+              binUnits: binUnits,
+            },
+          }
+        );
+
+        // return series using foreground response
+        const series = {
+          series: [
+            distributionResponseToDataSeries(
+              'Subset',
+              distribution,
+              red,
+              NumberVariable.is(xAxisVariable) ? 'number' : 'date'
+            ),
+          ],
+        };
+
+        return series;
+      }
+
+      return undefined;
+    }, [filters, xAxisVariable, vizConfig.xAxisVariable, subsettingClient])
   );
 
   const dataRequestConfig: DataRequestConfig = useDeepValue(
@@ -557,13 +549,6 @@ function HistogramViz(props: VisualizationProps<Options>) {
         outputEntity == null ||
         filteredCounts.pending ||
         filteredCounts.value == null
-      )
-        return undefined;
-
-      // wait till distributionDataPromise is ready
-      if (
-        distributionDataPromise.pending ||
-        distributionDataPromise.value == null
       )
         return undefined;
 
@@ -662,8 +647,6 @@ function HistogramViz(props: VisualizationProps<Options>) {
       computation.descriptor.type,
       overlayEntity,
       facetEntity,
-      distributionDataPromise.pending,
-      distributionDataPromise.value,
     ])
   );
 
