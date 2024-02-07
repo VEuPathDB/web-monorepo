@@ -57,7 +57,15 @@ export default class DataClient extends FetchClientWithCredentials {
         method: 'POST',
         path: `/apps/${computationName}/visualizations/${visualizationName}`,
         body: params,
-        transformResponse: ioTransformer(decoder),
+        transformResponse(body) {
+          if (body == null) {
+            throw new Error(
+              'The visualization cannot be made because the current subset is empty.'
+            );
+          }
+          console.log(body, decoder);
+          return ioTransformer(decoder)(body);
+        },
       })
     );
   }
