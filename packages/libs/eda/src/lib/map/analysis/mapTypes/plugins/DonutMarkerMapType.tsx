@@ -11,7 +11,7 @@ import {
   ColorPaletteDefault,
   gradientSequentialColorscaleMap,
 } from '@veupathdb/components/lib/types/plots/addOns';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../../../constants';
 import {
   StandaloneMapMarkersResponse,
@@ -63,6 +63,7 @@ import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
 import { useLittleFilters } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
+import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 
 const displayName = 'Donuts';
 
@@ -293,8 +294,16 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     updateConfiguration,
   } = props;
 
-  const { selectedVariable, binningMethod, selectedValues } =
-    props.configuration as PieMarkerConfiguration;
+  const {
+    selectedVariable,
+    binningMethod,
+    selectedValues,
+    activeVisualizationId,
+  } = props.configuration as PieMarkerConfiguration;
+
+  const [shownSelectedMarkersSnackbar, setShownSelectedMarkersSnackbar] =
+    useState(false);
+  const { enqueueSnackbar } = useSnackbar();
 
   const { filters: filtersForMarkerData } = useLittleFilters(
     {
@@ -319,12 +328,32 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
 
   const setSelectedMarkers = useCallback(
     (selectedMarkers?: string[]) => {
+      if (
+        selectedMarkers != null &&
+        !shownSelectedMarkersSnackbar &&
+        activeVisualizationId == null
+      ) {
+        enqueueSnackbar(
+          `Marker selections currently only affect supporting plots`,
+          {
+            variant: 'info',
+          }
+        );
+        setShownSelectedMarkersSnackbar(true);
+      }
+
       updateConfiguration({
         ...(props.configuration as PieMarkerConfiguration),
         selectedMarkers,
       });
     },
-    [props.configuration, updateConfiguration]
+    [
+      props.configuration,
+      updateConfiguration,
+      shownSelectedMarkersSnackbar,
+      activeVisualizationId,
+      enqueueSnackbar,
+    ]
   );
 
   // no markers and no error div for certain known error strings
