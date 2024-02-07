@@ -714,6 +714,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       // show/hide independent/dependent axis tick label
       showIndependentAxisTickLabel={true}
       showDependentAxisTickLabel={true}
+      showExportButton={true}
       showMean={true}
       interactive={!isFaceted(data.value) ? true : false}
       showSpinner={data.pending || filteredCounts.pending}
@@ -1120,82 +1121,75 @@ function Controls({
       {/* Y-axis range control */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {/* set Undo icon and its behavior */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
-          >
-            <LabelledGroup label="Y-axis controls"> </LabelledGroup>
-            {/* using CoreUI: icon only */}
-            <div style={{ marginLeft: '-2.6em', width: '50%' }}>
-              <ResetButtonCoreUI
-                size={'medium'}
-                text={''}
-                themeRole={'primary'}
-                tooltip={'Reset to defaults'}
-                disabled={false}
-                onPress={handleDependentAxisSettingsReset}
-              />
-            </div>
-          </div>
-
           <LabelledGroup
-            label="Y-axis range"
-            containerStyles={{
-              fontSize: '0.9em',
-              // width: '350px',
-              marginTop: '-0.8em',
-            }}
+            label={
+              <div css={{ display: 'flex', alignItems: 'center' }}>
+                Y-axis controls
+                <ResetButtonCoreUI
+                  size={'medium'}
+                  text={''}
+                  themeRole={'primary'}
+                  tooltip={'Reset to defaults'}
+                  disabled={false}
+                  onPress={handleDependentAxisSettingsReset}
+                />
+              </div>
+            }
           >
-            <RadioButtonGroup
-              options={axisRangeOptions}
-              selectedOption={dependentAxisValueSpec}
-              onOptionSelected={(newAxisRangeOption: string) => {
-                onDependentAxisValueSpecChange(newAxisRangeOption);
+            <LabelledGroup
+              label="Y-axis range"
+              containerStyles={{
+                fontSize: '0.9em',
+                padding: '1em 0',
               }}
-              orientation={'horizontal'}
-              labelPlacement={'end'}
-              buttonColor={'primary'}
-              margins={['0em', '0', '0', '0em']}
-              itemMarginRight={25}
-            />
-            {/* Y-axis range control */}
-            <NumberRangeInput
-              label="Range"
-              // add range: for now, handle number only
-              range={
-                (vizConfig.dependentAxisRange as NumberRange) ??
-                defaultDependentAxisRange
-              }
-              onRangeChange={(newRange?: NumberOrDateRange) => {
-                handleDependentAxisRangeChange(newRange as NumberRange);
-              }}
-              allowPartialRange={false}
-              // set maxWidth
-              containerStyles={{ maxWidth: '350px' }}
-              disabled={
-                vizConfig.dependentAxisValueSpec === 'Full' ||
-                vizConfig.dependentAxisValueSpec === 'Auto-zoom'
-              }
-            />
-            {/* truncation notification */}
-            {truncatedDependentAxisWarning ? (
-              <Notification
-                title={''}
-                text={truncatedDependentAxisWarning}
-                // this was defined as LIGHT_BLUE
-                color={'#5586BE'}
-                onAcknowledgement={() => {
-                  setTruncatedDependentAxisWarning('');
+            >
+              <RadioButtonGroup
+                options={axisRangeOptions}
+                selectedOption={dependentAxisValueSpec}
+                onOptionSelected={(newAxisRangeOption: string) => {
+                  onDependentAxisValueSpecChange(newAxisRangeOption);
                 }}
-                showWarningIcon={true}
-                // change maxWidth
-                containerStyles={{ maxWidth: '350px' }}
+                orientation={'horizontal'}
+                labelPlacement={'end'}
+                buttonColor={'primary'}
+                margins={['0em', '0', '0', '0em']}
+                itemMarginRight={25}
               />
-            ) : null}
+              {/* Y-axis range control */}
+              <NumberRangeInput
+                label="Range"
+                // add range: for now, handle number only
+                range={
+                  (vizConfig.dependentAxisRange as NumberRange) ??
+                  defaultDependentAxisRange
+                }
+                onRangeChange={(newRange?: NumberOrDateRange) => {
+                  handleDependentAxisRangeChange(newRange as NumberRange);
+                }}
+                allowPartialRange={false}
+                // set maxWidth
+                containerStyles={{ maxWidth: '350px' }}
+                disabled={
+                  vizConfig.dependentAxisValueSpec === 'Full' ||
+                  vizConfig.dependentAxisValueSpec === 'Auto-zoom'
+                }
+              />
+              {/* truncation notification */}
+              {truncatedDependentAxisWarning ? (
+                <Notification
+                  title={''}
+                  text={truncatedDependentAxisWarning}
+                  // this was defined as LIGHT_BLUE
+                  color={'#5586BE'}
+                  onAcknowledgement={() => {
+                    setTruncatedDependentAxisWarning('');
+                  }}
+                  showWarningIcon={true}
+                  // change maxWidth
+                  containerStyles={{ maxWidth: '350px' }}
+                />
+              ) : null}
+            </LabelledGroup>
           </LabelledGroup>
         </div>
       </div>

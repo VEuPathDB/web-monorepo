@@ -61,7 +61,6 @@
   },
   "eslintConfig": {
     "extends": [
-      "plugin:react-hooks/recommended",
       "@veupathdb"
     ]
   },
