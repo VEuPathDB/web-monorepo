@@ -475,6 +475,15 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     markerDataFilterFuncs
   );
 
+  const { filters: filtersForSubStudies } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    visibleOptionFilterFuncs
+  );
+
   const markerDataResponse = useMarkerData({
     studyId,
     filters: filtersForMarkerData,
@@ -494,7 +503,7 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
   return outputEntityId != null ? (
     <MapTypeHeaderStudyDetails
       filters={props.filters}
-      filtersIncludingViewport={filtersForMarkerData}
+      filtersIncludingViewport={filtersForSubStudies}
       outputEntityId={outputEntityId}
       totalEntityCount={props.totalCounts.value?.[outputEntityId]}
       totalEntityInSubsetCount={props.filteredCounts.value?.[outputEntityId]}
