@@ -81,6 +81,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     apps,
     analysisState,
     appState,
+    appState: { markerConfigurations, activeMarkerConfigurationType },
     geoConfigs,
     updateConfiguration,
     studyId,
@@ -223,8 +224,14 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     configurationMenu,
   };
 
+  const selectedMarkers = markerConfigurations.find(
+    (markerConfiguration) =>
+      markerConfiguration.type === activeMarkerConfigurationType
+  )?.selectedMarkers;
+
   const plugins = useStandaloneVizPlugins({
     selectedOverlayConfig: overlayConfiguration.data,
+    selectedMarkers, // probably not needed for the config panel (but needed for floater)
   });
 
   const setActiveVisualizationId = useCallback(
@@ -334,7 +341,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
         activeVisualizationId == null
       ) {
         enqueueSnackbar(
-          `Marker selections currently only affect supporting plots`,
+          `Marker selections currently only apply to supporting plots`,
           {
             variant: 'info',
           }
@@ -399,6 +406,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     geoConfigs,
     updateConfiguration,
     appState,
+    appState: { markerConfigurations, activeMarkerConfigurationType },
     filters,
     headerButtons,
   } = props;
@@ -441,9 +449,16 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     valueSpec: 'count',
   });
 
+  const selectedMarkers = markerConfigurations.find(
+    (markerConfiguration) =>
+      markerConfiguration.type === activeMarkerConfigurationType
+  )?.selectedMarkers;
+
   const plugins = useStandaloneVizPlugins({
     selectedOverlayConfig: data.overlayConfig,
+    selectedMarkers,
   });
+
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
   const noDataError = isNoDataError(data.error)
     ? noDataErrorMessage

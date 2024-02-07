@@ -119,6 +119,7 @@ import {
   OverlayOptions,
   RequestOptionProps,
   RequestOptions,
+  VerbiageOptions,
 } from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
 import { ResetButtonCoreUI } from '../../ResetButton';
@@ -198,6 +199,7 @@ export const HistogramConfig = t.intersection([
 interface Options
   extends LayoutOptions,
     OverlayOptions,
+    VerbiageOptions,
     RequestOptions<
       HistogramConfig,
       FloatingHistogramExtraProps,
@@ -1341,6 +1343,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
   );
 
   const LayoutComponent = options?.layoutComponent ?? PlotLayout;
+  const entitySubtitle = options?.getEntitySubtitleForViz?.();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -1376,7 +1379,11 @@ function HistogramViz(props: VisualizationProps<Options>) {
 
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {!hideInputsAndControls && (
-          <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+          <OutputEntityTitle
+            entity={outputEntity}
+            subtitle={entitySubtitle}
+            outputSize={outputSize}
+          />
         )}
         <LayoutComponent
           isFaceted={isFaceted(data.value)}

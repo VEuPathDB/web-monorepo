@@ -603,3 +603,11 @@ export const noDataErrorMessage = (
     <p>Please check your filters or choose another variable.</p>
   </div>
 );
+
+/**
+ * Simple styling for the optional visualization subtitle as used in
+ * standaloneVizPlugins.ts (Bob didn't want to convert it to tsx)
+ */
+export function EntitySubtitleForViz({ subtitle }: { subtitle: string }) {
+  return <div style={{ marginTop: 8, fontStyle: 'italic' }}>({subtitle})</div>;
+}

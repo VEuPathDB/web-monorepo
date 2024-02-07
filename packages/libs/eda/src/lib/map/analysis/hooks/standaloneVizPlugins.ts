@@ -8,6 +8,7 @@ import {
   OverlayOptions,
   RequestOptionProps,
   RequestOptions,
+  VerbiageOptions,
 } from '../../../core/components/visualizations/options/types';
 import { VisualizationPlugin } from '../../../core/components/visualizations/VisualizationPlugin';
 
@@ -30,17 +31,20 @@ import { scatterplotRequest } from './plugins/scatterplot';
 
 import TimeSeriesSVG from '../../../core/components/visualizations/implementations/selectorIcons/TimeSeriesSVG';
 import _ from 'lodash';
+import { EntitySubtitleForViz } from '../mapTypes/shared';
 
 interface Props {
   selectedOverlayConfig?: OverlayConfig | BubbleOverlayConfig;
   overlayHelp?: ReactNode;
+  selectedMarkers?: string[] | undefined;
 }
 
-type StandaloneVizOptions = LayoutOptions & OverlayOptions;
+type StandaloneVizOptions = LayoutOptions & OverlayOptions & VerbiageOptions;
 
 export function useStandaloneVizPlugins({
   selectedOverlayConfig,
   overlayHelp = 'The overlay variable can be selected via the top-right panel.',
+  selectedMarkers,
 }: Props): Record<string, ComputationPlugin> {
   return useMemo(() => {
     function vizWithOptions(
@@ -70,6 +74,10 @@ export function useStandaloneVizPlugins({
           }
         },
         getOverlayVariableHelp: () => overlayHelp,
+        getEntitySubtitleForViz: () =>
+          selectedMarkers && selectedMarkers.length > 0
+            ? EntitySubtitleForViz({ subtitle: 'for selected markers' })
+            : EntitySubtitleForViz({ subtitle: 'for all visible data on map' }),
       });
     }
 
@@ -154,5 +162,5 @@ export function useStandaloneVizPlugins({
         },
       },
     };
-  }, [overlayHelp, selectedOverlayConfig]);
+  }, [overlayHelp, selectedOverlayConfig, selectedMarkers]);
 }
