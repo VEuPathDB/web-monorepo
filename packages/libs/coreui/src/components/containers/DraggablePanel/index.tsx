@@ -103,19 +103,18 @@ export default function DraggablePanel({
     }
   }
 
-  const { ref, height, width } = useResizeObserver();
-
-  useEffect(
-    function invokeOnPanelResize() {
+  const { ref, height, width } = useResizeObserver({
+    box: 'border-box',
+    onResize: ({ height, width }) => {
       if (!onPanelResize || !height || !width) return;
 
+      console.log('resize event', { height, width });
       onPanelResize({
         height: height,
         width: width,
       });
     },
-    [height, width]
-  );
+  });
 
   const finalPosition = confineToParentContainer
     ? constrainPositionOnScreen(panelPosition, width, height, window)
@@ -135,7 +134,6 @@ export default function DraggablePanel({
       position={finalPosition}
     >
       <div
-        ref={ref}
         // As the attribute's name suggests, this helps with automated testing.
         // At the moment, jsdom and dragging is a bad combo for testing.
         data-testid={`${panelTitle} ${wasDragged ? 'dragged' : 'not dragged'}`}
@@ -149,13 +147,7 @@ export default function DraggablePanel({
           top: 0;
           visibility: ${isOpen === false ? 'hidden' : 'visible'};
           z-index: ${styleOverrides?.zIndex ?? 'auto'};
-          margin: ${styleOverrides?.margin ?? 'margin'};
-          // If resize is set, you can consider these two values as
-          // initial heights and widths.
-          height: ${styleOverrides?.height ?? 'fit-content'};
-          width: ${styleOverrides?.width ?? 'fit-content'};
-          min-height: ${styleOverrides?.minHeight ?? 0};
-          min-width: ${styleOverrides?.minWidth ?? 0};
+          margin: ${cssLengthToString(styleOverrides?.margin) ?? 'margin'};
         `}
       >
         <div
@@ -210,6 +202,7 @@ export default function DraggablePanel({
           )}
         </div>
         <div
+          ref={ref}
           css={css`
             // Hey, so you need to explicitly set overflow wherever
             // you plan to use resize.
@@ -222,6 +215,13 @@ export default function DraggablePanel({
             // and the content's container a z-index of 1.
             position: relative;
             z-index: 1;
+            // If resize is set, you can consider these two values as
+            // initial heights and widths.
+            height: ${cssLengthToString(styleOverrides?.height) ??
+            'fit-content'};
+            width: ${cssLengthToString(styleOverrides?.width) ?? 'fit-content'};
+            min-height: ${cssLengthToString(styleOverrides?.minHeight) ?? 0};
+            min-width: ${cssLengthToString(styleOverrides?.minWidth) ?? 0};
           `}
         >
           {children}
@@ -289,3 +289,12 @@ export const truncateWithEllipsis = (label: string, maxLabelLength: number) => {
     ? (label || '').substring(0, maxLabelLength - 2) + '...'
     : label;
 };
+
+function cssLengthToString(value?: string | number): string | undefined {
+  switch (typeof value) {
+    case 'number':
+      return value + 'px';
+    default:
+      return value;
+  }
+}
