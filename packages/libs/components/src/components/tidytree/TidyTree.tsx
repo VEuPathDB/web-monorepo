@@ -1,20 +1,15 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { TidyTree as TidyTreeJS } from 'tidytree';
 
 export interface TidyTreeProps {
   /**
+   * The first set of props are expected to be fairly constant
+   * and when changed, a whole new TidyTreeJS instance will be created
+   */
+  /**
    * tree data in Newick format
    */
   data: string | undefined;
-  /**
-   * how many leaf nodes are in the data string
-   * (maybe we can calculate this from the Newick string in future?)
-   */
-  leafCount: number;
-  /**
-   * number of pixels height taken per leaf
-   */
-  rowHeight: number;
   /**
    * TO DO: add width prop and nail down most of the options to
    * horizontal dendrograms
@@ -31,6 +26,22 @@ export interface TidyTreeProps {
      */
     margin?: [number, number, number, number];
   };
+  /**
+   * The remaining props are handled with a redraw:
+   */
+  /**
+   * how many leaf nodes are in the data string
+   * (maybe we can calculate this from the Newick string in future?)
+   */
+  leafCount: number;
+  /**
+   * number of pixels height taken per leaf
+   */
+  rowHeight: number;
+  /**
+   * which nodes to highlight
+   */
+  highlightedNodes?: string[];
 }
 
 export function TidyTree({
@@ -47,6 +58,8 @@ export function TidyTree({
   },
 }: TidyTreeProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const tidyTreeRef = useRef<TidyTreeJS>();
+
   useEffect(() => {
     if (ref.current == null || data == null) {
       // If props.data is nullish and ref.current exists, clear its content
@@ -65,34 +78,31 @@ export function TidyTree({
       margin,
       animation: 0, // it's naff and it reveals edge lengths/weights momentarily
     });
+    tidyTreeRef.current = instance;
     return function cleanup() {
       instance.destroy();
     };
-  }, [
-    data,
-    layout,
-    type,
-    mode,
-    equidistantLeaves,
-    ruler,
-    margin,
-    leafCount,
-    rowHeight,
-  ]);
-  // Included `leafCount` and `rowHeight` in the dependency array to ensure the TidyTree
-  // instance is recreated when the size of its container div changes. Although these
-  // variables are not directly used in the effect, their changes affect the calculated
-  // height of the container, below, which in turn requires reinitialization of the TidyTree
-  // to adapt to the new size.
+  }, [data, layout, type, mode, equidistantLeaves, ruler, margin]);
 
-  // calculate height
-  const heightInPx = leafCount * rowHeight;
+  // redraw when the container size changes
+  // useLayoutEffect ensures that the redraw is not called for brand new TidyTreeJS objects
+  // look out for potential performance issues (the effect is run synchronously)
+  useLayoutEffect(() => {
+    if (tidyTreeRef.current) {
+      console.log('I did a redraw');
+      tidyTreeRef.current.redraw();
+    }
+  }, [leafCount, rowHeight, tidyTreeRef]);
 
+  // now handle changes to 'redraw props'
+  // TO DO
+
+  const containerHeight = leafCount * rowHeight;
   return (
     <div
       style={{
         width: '400px',
-        height: heightInPx + 'px',
+        height: containerHeight + 'px',
       }}
       ref={ref}
     />
