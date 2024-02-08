@@ -57,19 +57,19 @@ export function TidyTree({
     margin = [0, 0, 0, 0],
   },
 }: TidyTreeProps) {
-  const ref = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const tidyTreeRef = useRef<TidyTreeJS>();
 
   useEffect(() => {
-    if (ref.current == null || data == null) {
-      // If props.data is nullish and ref.current exists, clear its content
-      if (ref.current) {
-        ref.current.innerHTML = ''; // Clear the container for blank rendering
+    if (containerRef.current == null || data == null) {
+      // If props.data is nullish and containerRef.current exists, clear its content
+      if (containerRef.current) {
+        containerRef.current.innerHTML = ''; // Clear the container for blank rendering
       }
       return;
     }
     const instance = new TidyTreeJS(data, {
-      parent: ref.current,
+      parent: containerRef.current,
       layout,
       type,
       mode,
@@ -104,7 +104,7 @@ export function TidyTree({
         width: '400px',
         height: containerHeight + 'px',
       }}
-      ref={ref}
+      ref={containerRef}
     />
   );
 }
