@@ -403,6 +403,7 @@ export function useSelectedMarkerSnackbars(
         setShownSelectedMarkersSnackbar(true);
       }
       if (
+        (shownSelectedMarkersSnackbar || activeVisualizationId != null) &&
         !shownShiftKeySnackbar &&
         selectedMarkers != null &&
         selectedMarkers.length === 1
@@ -413,6 +414,9 @@ export function useSelectedMarkerSnackbars(
         });
         setShownShiftKeySnackbar(true);
       }
+      // if the user has managed to select more than one marker, then they don't need help
+      if (selectedMarkers != null && selectedMarkers.length > 1)
+        setShownShiftKeySnackbar(true);
     },
     [
       shownSelectedMarkersSnackbar,
