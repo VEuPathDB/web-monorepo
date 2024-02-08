@@ -2,10 +2,8 @@ import { useEffect, useLayoutEffect, useRef } from 'react';
 import { TidyTree as TidyTreeJS } from 'tidytree';
 
 export interface TidyTreeProps {
-  /**
-   * The first set of props are expected to be fairly constant
-   * and when changed, a whole new TidyTreeJS instance will be created
-   */
+  /// The first set of props are expected to be fairly constant         ///
+  /// and when changed, a whole new TidyTreeJS instance will be created ///
   /**
    * tree data in Newick format
    */
@@ -26,9 +24,8 @@ export interface TidyTreeProps {
      */
     margin?: [number, number, number, number];
   };
-  /**
-   * The remaining props are handled with a redraw:
-   */
+
+  /// The remaining props are handled with a redraw: ///
   /**
    * how many leaf nodes are in the data string
    * (maybe we can calculate this from the Newick string in future?)
@@ -39,9 +36,13 @@ export interface TidyTreeProps {
    */
   rowHeight: number;
   /**
-   * which nodes to highlight
+   * which leaf nodes to highlight
    */
-  highlightedNodes?: string[];
+  highlightedNodeIds?: string[];
+  /**
+   * highlight whole subtrees ('monophyletic') or just leaves ('none')
+   */
+  highlightMode?: 'monophyletic' | 'none';
 }
 
 export function TidyTree({
@@ -56,6 +57,8 @@ export function TidyTree({
     ruler = false,
     margin = [0, 0, 0, 0],
   },
+  highlightedNodeIds,
+  highlightMode,
 }: TidyTreeProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const tidyTreeRef = useRef<TidyTreeJS>();
@@ -94,8 +97,21 @@ export function TidyTree({
     }
   }, [leafCount, rowHeight, tidyTreeRef]);
 
-  // now handle changes to 'redraw props'
-  // TO DO
+  // now handle changes to props that act via tidytree methods
+  // which also usually trigger a redraw
+
+  // highlightedNodeIds
+  useEffect(() => {
+    if (tidyTreeRef.current && highlightedNodeIds) {
+      tidyTreeRef.current.setColorOptions({
+        nodeColorMode: 'predicate',
+        branchColorMode: highlightMode ?? 'none',
+        leavesOnly: true,
+        predicate: (node) => highlightedNodeIds.includes(node.__data__.data.id),
+      });
+      // no redraw needed, setColorOptions does it
+    }
+  }, [highlightedNodeIds, highlightMode, tidyTreeRef]);
 
   const containerHeight = leafCount * rowHeight;
   return (

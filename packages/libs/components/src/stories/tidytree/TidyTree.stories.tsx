@@ -1,6 +1,8 @@
 import { Meta, Story } from '@storybook/react';
 import { TidyTree, TidyTreeProps } from '../../components/tidytree/TidyTree';
 import { useQuery } from 'react-query';
+import { useState } from 'react';
+import { CheckboxList } from '../../../../coreui/lib';
 
 export default {
   title: 'TidyTree',
@@ -68,6 +70,51 @@ export const ThreeLeaves = Template.bind({});
 ThreeLeaves.args = {
   data: threeLeafTree,
   leafCount: 3,
+  ...commonArgs,
+};
+
+interface HighlightedTidyTreeProps extends TidyTreeProps {
+  allNodeIds: string[];
+}
+
+const Highlighting: Story<HighlightedTidyTreeProps> = (args) => {
+  const [highlightedNodes, setHighlightedNodes] = useState<string[]>([]);
+
+  return (
+    <>
+      <div
+        style={{
+          width: '800px',
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+        }}
+      >
+        <TidyTree {...args} highlightedNodeIds={highlightedNodes} />
+        <CheckboxList
+          items={args.allNodeIds.map((id) => ({ display: id, value: id }))}
+          value={highlightedNodes}
+          onChange={setHighlightedNodes}
+        />
+      </div>
+    </>
+  );
+};
+
+export const HighlightedSeven = Highlighting.bind({});
+HighlightedSeven.args = {
+  data: sevenLeafTree,
+  leafCount: 7,
+  allNodeIds: [
+    'Bovine',
+    'Gibbon',
+    'Orang',
+    'Gorilla',
+    'Chimp',
+    'Human',
+    'Mouse',
+  ],
   ...commonArgs,
 };
 
