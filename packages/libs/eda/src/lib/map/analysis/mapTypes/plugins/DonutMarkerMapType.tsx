@@ -344,6 +344,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
           `Marker selections currently only apply to supporting plots`,
           {
             variant: 'info',
+            anchorOrigin: { vertical: 'top', horizontal: 'center' },
           }
         );
         setShownSelectedMarkersSnackbar(true);

@@ -697,6 +697,7 @@ function MapAnalysisImpl(props: ImplProps) {
     if (appState.isSidePanelExpanded && activeSideMenuId === nextSideMenuId)
       enqueueSnackbar('Marker configuration panel is already open', {
         variant: 'info',
+        anchorOrigin: { vertical: 'top', horizontal: 'center' },
       });
 
     if (!appState.isSidePanelExpanded) setIsSidePanelExpanded(true);
