@@ -92,7 +92,6 @@ export function TidyTree({
   // look out for potential performance issues (the effect is run synchronously)
   useLayoutEffect(() => {
     if (tidyTreeRef.current) {
-      console.log('I did a redraw');
       tidyTreeRef.current.redraw();
     }
   }, [leafCount, rowHeight, tidyTreeRef]);
