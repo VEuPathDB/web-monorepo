@@ -290,9 +290,12 @@ export default function BoundsDriftMarker({
             setSelectedMarkers(
               selectedMarkers.filter((id: string) => id !== props.id)
             );
-          } else {
-            // select
+          } else if (e.originalEvent.shiftKey) {
+            // add to selection if SHIFT key pressed
             setSelectedMarkers([...(selectedMarkers ?? []), props.id]);
+          } else {
+            // replace selection
+            setSelectedMarkers([props.id]);
           }
         }
 
