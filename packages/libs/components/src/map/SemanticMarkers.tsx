@@ -135,7 +135,13 @@ export default function SemanticMarkers({
         });
         // set them as current
         // any marker that already existed will move to the modified position
-        setConsolidatedMarkers(animationValues.markers);
+        if (
+          !isEqual(
+            animationValues.markers.map(({ props }) => props),
+            consolidatedMarkers.map(({ props }) => props)
+          )
+        )
+          setConsolidatedMarkers(animationValues.markers);
         // then set a timer to remove the old markers when zooming out
         // or if zooming in, switch to just the new markers straight away
         // (their starting position was set by `animationFunction`)
@@ -146,7 +152,13 @@ export default function SemanticMarkers({
         );
       } else {
         /** First render of markers **/
-        setConsolidatedMarkers(recenteredMarkers);
+        if (
+          !isEqual(
+            recenteredMarkers.map(({ props }) => props),
+            consolidatedMarkers.map(({ props }) => props)
+          )
+        )
+          setConsolidatedMarkers(recenteredMarkers);
       }
 
       // To prevent infinite loops, especially when in "other worlds",
@@ -183,7 +195,14 @@ export default function SemanticMarkers({
         );
       }
     }
-  }, [animation, map, markers, prevRecenteredMarkers, recenterMarkers]);
+  }, [
+    animation,
+    map,
+    markers,
+    prevRecenteredMarkers,
+    recenterMarkers,
+    consolidatedMarkers,
+  ]);
 
   // remove any selectedMarkers that no longer exist in the current markers
   useEffect(() => {
@@ -195,7 +214,7 @@ export default function SemanticMarkers({
       if (prunedSelectedMarkers.length < selectedMarkers.length)
         setSelectedMarkers(prunedSelectedMarkers);
     }
-  }, [consolidatedMarkers, selectedMarkers]);
+  }, [consolidatedMarkers, selectedMarkers, setSelectedMarkers]);
 
   // add the selectedMarkers props and callback
   // (and the scheduled-for-removal showPopup prop)
@@ -208,7 +227,7 @@ export default function SemanticMarkers({
           setSelectedMarkers,
         })
       ),
-    [consolidatedMarkers, selectedMarkers]
+    [consolidatedMarkers, selectedMarkers, setSelectedMarkers]
   );
 
   // this should use the unadulterated markers (which are always in the "main world")

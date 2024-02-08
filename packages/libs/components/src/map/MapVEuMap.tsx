@@ -250,7 +250,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       zoom={viewport.zoom}
       minZoom={1}
       zoomSnap={zoomSnap}
-      wheelPxPerZoomLevel={1000}
+      wheelPxPerZoomLevel={100}
       // We add our own custom zoom control below
       zoomControl={false}
       style={{ height, width, ...style }}
