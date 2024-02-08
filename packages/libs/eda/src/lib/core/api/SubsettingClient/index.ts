@@ -108,9 +108,7 @@ export default class SubsettingClient extends FetchClientWithCredentials {
     submitAsForm({
       action: `${
         this.baseUrl
-      }/studies/${studyId}/entities/${entityId}/tabular?Auth-Key=${encodeURIComponent(
-        await this.findUserRequestAuthKey()
-      )}`,
+      }/studies/${studyId}/entities/${entityId}/tabular?${await this.findAuthorizationQueryString()}`,
       inputs: {
         data: JSON.stringify(params),
       },

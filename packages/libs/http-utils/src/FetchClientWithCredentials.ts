@@ -12,24 +12,42 @@ export class FetchClientWithCredentials extends FetchClient {
 
   protected readonly getUser = once(() => this.wdkService.getCurrentUser());
 
-  protected readonly findUserRequestAuthKey = once(async () => {
-    const user = await this.getUser();
-    if (user.isGuest) {
-      return String(user.id);
+  protected readonly findAuthorizationHeaders = once(async (): Promise<
+    Record<string, string>
+  > => {
+    const cookies = Object.fromEntries(
+      document.cookie
+        .split('; ')
+        .map((entry) => entry.split(/=(.*)/).slice(0, 2))
+    );
+
+    if ('Authorization' in cookies) {
+      return { Authorization: cookies.Authorization };
     }
 
-    const wdkCheckAuthEntry = document.cookie
-      .split('; ')
-      .find((x) => x.startsWith('wdk_check_auth='));
+    const user = await this.getUser();
+    if (user.isGuest) {
+      return {
+        'Auth-Key': String(user.id),
+      };
+    }
 
-    if (wdkCheckAuthEntry == null) {
+    const wdkCheckAuthCookieValue = cookies.wdk_check_auth;
+    if (wdkCheckAuthCookieValue == null) {
       throw new Error(
         `Tried to retrieve a non-existent WDK auth key for user ${user.id}`
       );
     }
 
-    return wdkCheckAuthEntry.replace(/^wdk_check_auth=/, '');
+    return { 'Auth-Key': wdkCheckAuthCookieValue };
   });
+
+  protected async findAuthorizationQueryString() {
+    const authHeader = await this.findAuthorizationHeaders();
+    return Object.entries(authHeader)
+      .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
+      .join('');
+  }
 
   constructor(
     options: FetchApiOptions,
@@ -43,7 +61,7 @@ export class FetchClientWithCredentials extends FetchClient {
       ...apiRequest,
       headers: {
         ...(apiRequest.headers ?? {}),
-        'Auth-Key': await this.findUserRequestAuthKey(),
+        ...(await this.findAuthorizationHeaders()),
       },
     };
 
