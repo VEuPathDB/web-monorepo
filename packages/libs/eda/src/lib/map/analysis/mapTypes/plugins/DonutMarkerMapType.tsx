@@ -43,6 +43,7 @@ import {
   markerDataFilterFuncs,
   floaterFilterFuncs,
   pieOrBarMarkerConfigLittleFilter,
+  useSelectedMarkerSnackbars,
 } from '../shared';
 import {
   MapTypeConfigPanelProps,
@@ -308,10 +309,6 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     activeVisualizationId,
   } = props.configuration as PieMarkerConfiguration;
 
-  const [shownSelectedMarkersSnackbar, setShownSelectedMarkersSnackbar] =
-    useState(false);
-  const { enqueueSnackbar } = useSnackbar();
-
   const { filters: filtersForMarkerData } = useLittleFilters(
     {
       filters,
@@ -333,35 +330,19 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     valueSpec: 'count',
   });
 
+  const handleSelectedMarkerSnackbars = useSelectedMarkerSnackbars(
+    activeVisualizationId
+  );
+
   const setSelectedMarkers = useCallback(
     (selectedMarkers?: string[]) => {
-      if (
-        selectedMarkers != null &&
-        !shownSelectedMarkersSnackbar &&
-        activeVisualizationId == null
-      ) {
-        enqueueSnackbar(
-          `Marker selections currently only apply to supporting plots`,
-          {
-            variant: 'info',
-            anchorOrigin: { vertical: 'top', horizontal: 'center' },
-          }
-        );
-        setShownSelectedMarkersSnackbar(true);
-      }
-
+      handleSelectedMarkerSnackbars(selectedMarkers);
       updateConfiguration({
         ...(props.configuration as PieMarkerConfiguration),
         selectedMarkers,
       });
     },
-    [
-      props.configuration,
-      updateConfiguration,
-      shownSelectedMarkersSnackbar,
-      activeVisualizationId,
-      enqueueSnackbar,
-    ]
+    [props.configuration, updateConfiguration, handleSelectedMarkerSnackbars]
   );
 
   // no markers and no error div for certain known error strings

@@ -32,6 +32,8 @@ import { getCategoricalValues } from '../utils/categoricalValues';
 import { Viewport } from '@veupathdb/components/lib/map/MapVEuMap';
 import { UseLittleFiltersProps } from '../littleFilters';
 import { filtersFromBoundingBox } from '../../../core/utils/visualization';
+import { useCallback, useState } from 'react';
+import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 
 export const defaultAnimation = {
   method: 'geohash',
@@ -372,6 +374,52 @@ export function isApproxSameViewport(v1: Viewport, v2: Viewport) {
     v1.zoom === v2.zoom &&
     Math.abs(v1.center[0] - v2.center[0]) < epsilon &&
     Math.abs(v1.center[1] - v2.center[1]) < epsilon
+  );
+}
+
+// returns a function (selectedMarkers?) => voi
+export function useSelectedMarkerSnackbars(
+  activeVisualizationId: string | undefined
+) {
+  const { enqueueSnackbar } = useSnackbar();
+  const [shownSelectedMarkersSnackbar, setShownSelectedMarkersSnackbar] =
+    useState(false);
+  const [shownShiftKeySnackbar, setShownShiftKeySnackbar] = useState(false);
+
+  return useCallback(
+    (selectedMarkers: string[] | undefined) => {
+      if (
+        !shownSelectedMarkersSnackbar &&
+        selectedMarkers != null &&
+        activeVisualizationId == null
+      ) {
+        enqueueSnackbar(
+          `Marker selections currently only apply to supporting plots`,
+          {
+            variant: 'info',
+            anchorOrigin: { vertical: 'top', horizontal: 'center' },
+          }
+        );
+        setShownSelectedMarkersSnackbar(true);
+      }
+      if (
+        !shownShiftKeySnackbar &&
+        selectedMarkers != null &&
+        selectedMarkers.length === 1
+      ) {
+        enqueueSnackbar(`Use shift-click to select multiple markers`, {
+          variant: 'info',
+          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        });
+        setShownShiftKeySnackbar(true);
+      }
+    },
+    [
+      shownSelectedMarkersSnackbar,
+      shownShiftKeySnackbar,
+      enqueueSnackbar,
+      activeVisualizationId,
+    ]
   );
 }
 
