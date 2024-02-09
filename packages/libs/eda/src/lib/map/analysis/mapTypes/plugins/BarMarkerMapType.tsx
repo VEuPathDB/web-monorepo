@@ -38,15 +38,15 @@ import {
   defaultAnimation,
   floaterFilterFuncs,
   isApproxSameViewport,
-  isNoDataError,
   markerDataFilterFuncs,
-  noDataErrorMessage,
   pieOrBarMarkerConfigLittleFilter,
   useCategoricalValues,
   useCommonData,
   useDistributionMarkerData,
   useDistributionOverlayConfig,
   visibleOptionFilterFuncs,
+  getErrorOverlayComponent,
+  getLegendErrorMessage,
 } from '../shared';
 import {
   useFindEntityAndVariable,
@@ -66,7 +66,6 @@ import { BarPlotMarkerIcon } from '../../MarkerConfiguration/icons';
 import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
 import MapVizManagement from '../../MapVizManagement';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
-import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
 import { useLittleFilters } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
@@ -357,9 +356,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
   });
 
   if (markerData.error && !markerData.isFetching)
-    return isNoDataError(markerData.error) ? null : (
-      <MapFloatingErrorDiv error={markerData.error} />
-    );
+    return getErrorOverlayComponent(markerData.error);
 
   // pass selectedMarkers and its state function
   const markers = markerData.markerProps?.map((markerProps) => (
@@ -429,9 +426,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     selectedOverlayConfig: markerData.overlayConfig,
   });
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
-  const noDataError = isNoDataError(markerData.error)
-    ? noDataErrorMessage
-    : undefined;
+  const noDataError = getLegendErrorMessage(markerData.error);
 
   const { filters: filtersForFloaters } = useLittleFilters(
     {

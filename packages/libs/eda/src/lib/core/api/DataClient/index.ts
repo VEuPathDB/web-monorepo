@@ -1,4 +1,5 @@
 import { TypeOf, Decoder } from 'io-ts';
+import { v4 as uuid } from 'uuid';
 
 import {
   createJsonRequest,
@@ -34,6 +35,7 @@ import {
   StandaloneMapBubblesLegendRequestParams,
   StandaloneMapBubblesLegendResponse,
 } from './types';
+import { NoDataError } from './NoDataError';
 
 export default class DataClient extends FetchClientWithCredentials {
   getApps(): Promise<TypeOf<typeof AppsResponse>> {
@@ -59,11 +61,13 @@ export default class DataClient extends FetchClientWithCredentials {
         body: params,
         transformResponse(body) {
           if (body == null) {
-            throw new Error(
-              'The visualization cannot be made because the current subset is empty.'
+            throw new NoDataError(
+              'The visualization cannot be made because the current subset is empty.',
+              'No data',
+              204,
+              uuid()
             );
           }
-          console.log(body, decoder);
           return ioTransformer(decoder)(body);
         },
       })

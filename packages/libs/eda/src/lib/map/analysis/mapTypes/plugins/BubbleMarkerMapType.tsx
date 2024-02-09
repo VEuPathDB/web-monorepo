@@ -42,6 +42,7 @@ import {
   isApproxSameViewport,
   markerDataFilterFuncs,
   useCommonData,
+  getErrorOverlayComponent,
 } from '../shared';
 import {
   MapTypeConfigPanelProps,
@@ -54,7 +55,6 @@ import { useQuery } from '@tanstack/react-query';
 import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import { GeoConfig } from '../../../../core/types/geoConfig';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
-import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
 import { useLittleFilters, UseLittleFiltersProps } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
@@ -217,7 +217,7 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
     filters: filtersForMarkerData,
   });
   if (markersData.error && !markersData.isFetching)
-    return <MapFloatingErrorDiv error={markersData.error} />;
+    return getErrorOverlayComponent(markersData.error);
 
   const markers = markersData.data?.markersData?.map((markerProps) => (
     <BubbleMarker {...markerProps} />

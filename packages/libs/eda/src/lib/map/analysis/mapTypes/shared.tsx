@@ -32,6 +32,8 @@ import { getCategoricalValues } from '../utils/categoricalValues';
 import { Viewport } from '@veupathdb/components/lib/map/MapVEuMap';
 import { UseLittleFiltersProps } from '../littleFilters';
 import { filtersFromBoundingBox } from '../../../core/utils/visualization';
+import { MapFloatingErrorDiv } from '../MapFloatingErrorDiv';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 export const defaultAnimation = {
   method: 'geohash',
@@ -547,17 +549,36 @@ export const GLOBAL_VIEWPORT = {
  */
 
 const noDataPatterns = [
-  /did not contain any data/, // comes from map-markers endpoint
   /Could not generate continuous variable metadata/, // comes from continuous-variable-metadata endpoint
 ];
 
 export function isNoDataError(error: unknown) {
+  if (error instanceof Error && error.name === 'NoDataError') return true;
   return noDataPatterns.some((pattern) => String(error).match(pattern));
 }
 
-export const noDataErrorMessage = (
+const noDataErrorMessage = (
   <div css={{ textAlign: 'center', width: 200 }}>
     <p>Your filters have removed all data for this variable.</p>
     <p>Please check your filters or choose another variable.</p>
   </div>
 );
+
+export function getErrorOverlayComponent(error: unknown) {
+  return isNoDataError(error) ? (
+    <MapFloatingErrorDiv>
+      <Banner
+        banner={{
+          type: 'warning',
+          message: error instanceof Error ? error.message : String(error),
+        }}
+      />
+    </MapFloatingErrorDiv>
+  ) : (
+    <MapFloatingErrorDiv error={error} />
+  );
+}
+
+export function getLegendErrorMessage(error: unknown) {
+  return isNoDataError(error) ? noDataErrorMessage : undefined;
+}
