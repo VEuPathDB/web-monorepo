@@ -11,7 +11,7 @@ import {
   ColorPaletteDefault,
   gradientSequentialColorscaleMap,
 } from '@veupathdb/components/lib/types/plots/addOns';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../../../constants';
 import {
   StandaloneMapMarkersResponse,
@@ -64,7 +64,6 @@ import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
 import { useLittleFilters } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
-import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 
 const displayName = 'Donuts';
 
@@ -82,7 +81,6 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     apps,
     analysisState,
     appState,
-    appState: { markerConfigurations, activeMarkerConfigurationType },
     geoConfigs,
     updateConfiguration,
     studyId,
@@ -225,14 +223,8 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     configurationMenu,
   };
 
-  const selectedMarkers = markerConfigurations.find(
-    (markerConfiguration) =>
-      markerConfiguration.type === activeMarkerConfigurationType
-  )?.selectedMarkers;
-
   const plugins = useStandaloneVizPlugins({
     selectedOverlayConfig: overlayConfiguration.data,
-    selectedMarkers, // probably not needed for the config panel (but needed for floater)
   });
 
   const setActiveVisualizationId = useCallback(

@@ -77,7 +77,10 @@ export function useStandaloneVizPlugins({
         getEntitySubtitleForViz: () =>
           selectedMarkers && selectedMarkers.length > 0
             ? EntitySubtitleForViz({ subtitle: 'for selected markers' })
-            : EntitySubtitleForViz({ subtitle: 'for all visible data on map' }),
+            : EntitySubtitleForViz({
+                subtitle:
+                  'for all visible data on map - click markers to refine',
+              }),
       });
     }
 
