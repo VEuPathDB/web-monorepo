@@ -667,21 +667,22 @@ function HistogramViz(props: VisualizationProps<Options>) {
     if (
       !distributionDataPromise.pending &&
       distributionDataPromise.value != null
-    )
-      return {
-        min: DateVariable.is(xAxisVariable)
-          ? (
-              (distributionDataPromise?.value?.series[0]?.summary
-                ?.min as string) ?? ''
-            ).split('T')[0]
-          : distributionDataPromise?.value?.series[0]?.summary?.min,
-        max: DateVariable.is(xAxisVariable)
-          ? (
-              (distributionDataPromise?.value?.series[0]?.summary
-                ?.max as string) ?? ''
-            ).split('T')[0]
-          : distributionDataPromise?.value?.series[0]?.summary?.max,
-      };
+    ) {
+      const min = distributionDataPromise.value.series[0]?.summary?.min;
+      const max = distributionDataPromise.value.series[0]?.summary?.max;
+
+      if (min != null && max != null) {
+        if (DateVariable.is(xAxisVariable)) {
+          return {
+            min: (min as string).split('T')[0],
+            max: (max as string).split('T')[0],
+          };
+        } else {
+          return { min, max };
+        }
+      }
+    }
+    return undefined;
   }, [distributionDataPromise]);
 
   const independentAxisMinMax = useMemo(() => {
