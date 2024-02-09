@@ -75,12 +75,11 @@ export function isNotAbsoluteAbundanceVariableCollection(
   // 1. normalizationMethod = NULL
   // 2. isCompositional = true
   // 3. isProportion = false
-  // return variableCollection.normalizationMethod
-  //   ? variableCollection.normalizationMethod !== 'NULL' ||
-  //       !variableCollection.isCompositional ||
-  //       !!variableCollection.isProportion
-  //   : true;
-  return true;
+  return variableCollection.normalizationMethod
+    ? variableCollection.normalizationMethod !== 'NULL' ||
+        !variableCollection.isCompositional ||
+        !!variableCollection.isProportion
+    : true;
   // DIY may not have these annotations, but we still want those datasets to pass.
 }
 
