@@ -1,4 +1,3 @@
-import React from 'react';
 import DonutMarker, {
   DonutMarkerProps,
   DonutMarkerStandalone,
@@ -23,7 +22,6 @@ import {
 import { useToggleStarredVariable } from '../../../../core/hooks/starredVariables';
 import { kFormatter } from '../../../../core/utils/big-number-formatters';
 import { findEntityAndVariable } from '../../../../core/utils/study-metadata';
-import { filtersFromBoundingBox } from '../../../../core/utils/visualization';
 import { DraggableLegendPanel } from '../../DraggableLegendPanel';
 import { MapLegend } from '../../MapLegend';
 import { sharedStandaloneMarkerProperties } from '../../MarkerConfiguration/CategoricalMarkerPreview';
@@ -41,6 +39,10 @@ import {
   useDistributionOverlayConfig,
   isNoDataError,
   noDataErrorMessage,
+  visibleOptionFilterFuncs,
+  markerDataFilterFuncs,
+  floaterFilterFuncs,
+  pieOrBarMarkerConfigLittleFilter,
 } from '../shared';
 import {
   MapTypeConfigPanelProps,
@@ -59,6 +61,8 @@ import MapVizManagement from '../../MapVizManagement';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
+import { useLittleFilters } from '../../littleFilters';
+import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
 
 const displayName = 'Donuts';
 
@@ -68,6 +72,7 @@ export const plugin: MapTypePlugin = {
   MapLayerComponent,
   MapOverlayComponent,
   MapTypeHeaderDetails,
+  TimeSliderComponent,
 };
 
 function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
@@ -82,7 +87,6 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     filters,
   } = props;
 
-  const geoConfig = geoConfigs[0];
   const subsettingClient = useSubsettingClient();
   const configuration = props.configuration as PieMarkerConfiguration;
   const { selectedVariable, selectedValues, binningMethod } = configuration;
@@ -100,28 +104,14 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     );
   }
 
-  const filtersIncludingViewport = useMemo(() => {
-    const viewportFilters = appState.boundsZoomLevel
-      ? filtersFromBoundingBox(
-          appState.boundsZoomLevel.bounds,
-          {
-            variableId: geoConfig.latitudeVariableId,
-            entityId: geoConfig.entity.id,
-          },
-          {
-            variableId: geoConfig.longitudeVariableId,
-            entityId: geoConfig.entity.id,
-          }
-        )
-      : [];
-    return [...(filters ?? []), ...viewportFilters];
-  }, [
-    appState.boundsZoomLevel,
-    geoConfig.entity.id,
-    geoConfig.latitudeVariableId,
-    geoConfig.longitudeVariableId,
-    filters,
-  ]);
+  const { filters: filtersForVisibleOption } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    visibleOptionFilterFuncs
+  );
 
   const allFilteredCategoricalValues = useCategoricalValues({
     overlayEntity,
@@ -134,7 +124,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     overlayEntity,
     studyId,
     overlayVariable,
-    filters: filtersIncludingViewport,
+    filters: filtersForVisibleOption,
     enabled: configuration.selectedCountsOption === 'visible',
   });
 
@@ -290,17 +280,35 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
 
 function MapLayerComponent(props: MapTypeMapLayerProps) {
   // selectedMarkers and its state function
-  const selectedMarkers = props.selectedMarkers;
-  const setSelectedMarkers = props.setSelectedMarkers;
+  const {
+    studyId,
+    studyEntities,
+    selectedMarkers,
+    setSelectedMarkers,
+    appState,
+    appState: { boundsZoomLevel },
+    geoConfigs,
+    filters,
+  } = props;
 
   const { selectedVariable, binningMethod, selectedValues } =
     props.configuration as PieMarkerConfiguration;
+
+  const { filters: filtersForMarkerData } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    markerDataFilterFuncs
+  );
+
   const markerDataResponse = useMarkerData({
-    studyId: props.studyId,
-    filters: props.filters,
-    studyEntities: props.studyEntities,
-    geoConfigs: props.geoConfigs,
-    boundsZoomLevel: props.appState.boundsZoomLevel,
+    studyId,
+    filters: filtersForMarkerData,
+    studyEntities,
+    geoConfigs,
+    boundsZoomLevel,
     selectedVariable,
     selectedValues,
     binningMethod,
@@ -326,7 +334,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
           animation={defaultAnimation}
           flyToMarkers={
             !markerDataResponse.isFetching &&
-            isApproxSameViewport(props.appState.viewport, defaultViewport)
+            isApproxSameViewport(appState.viewport, defaultViewport)
           }
           selectedMarkers={selectedMarkers}
           setSelectedMarkers={setSelectedMarkers}
@@ -340,11 +348,11 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
 function MapOverlayComponent(props: MapTypeMapLayerProps) {
   const {
     studyId,
-    filters,
     studyEntities,
     geoConfigs,
-    appState,
     updateConfiguration,
+    appState,
+    filters,
     headerButtons,
   } = props;
   const {
@@ -364,6 +372,15 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
       });
     },
     [props.configuration, updateConfiguration]
+  );
+
+  const { filters: filtersForFloaters } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    floaterFilterFuncs
   );
 
   const data = useMarkerData({
@@ -411,11 +428,11 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
         setActiveVisualizationId={setActiveVisualizationId}
         apps={props.apps}
         plugins={plugins}
-        geoConfigs={props.geoConfigs}
+        geoConfigs={geoConfigs}
         totalCounts={props.totalCounts}
         filteredCounts={props.filteredCounts}
         toggleStarredVariable={toggleStarredVariable}
-        filters={props.filtersIncludingViewport}
+        filters={filtersForFloaters}
         zIndexForStackingContext={2}
         hideInputsAndControls={props.hideVizInputsAndControls}
         setHideInputsAndControls={props.setHideVizInputsAndControls}
@@ -425,14 +442,32 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
 }
 
 function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
+  const {
+    studyId,
+    studyEntities,
+    appState,
+    appState: { boundsZoomLevel },
+    geoConfigs,
+    filters,
+  } = props;
   const { selectedVariable, binningMethod, selectedValues } =
     props.configuration as PieMarkerConfiguration;
+
+  const { filters: filtersForMarkerData } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    markerDataFilterFuncs
+  );
+
   const markerDataResponse = useMarkerData({
-    studyId: props.studyId,
-    filters: props.filters,
-    studyEntities: props.studyEntities,
-    geoConfigs: props.geoConfigs,
-    boundsZoomLevel: props.appState.boundsZoomLevel,
+    studyId,
+    filters: filtersForMarkerData,
+    studyEntities,
+    geoConfigs,
+    boundsZoomLevel,
     selectedVariable,
     selectedValues,
     binningMethod,
@@ -441,7 +476,7 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
 
   const {
     outputEntity: { id: outputEntityId },
-  } = useCommonData(selectedVariable, props.geoConfigs, props.studyEntities);
+  } = useCommonData(selectedVariable, geoConfigs, studyEntities);
 
   return outputEntityId != null ? (
     <MapTypeHeaderCounts
@@ -452,6 +487,52 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     />
   ) : null;
 }
+
+const timeSliderFilterFuncs = [pieOrBarMarkerConfigLittleFilter];
+
+export function TimeSliderComponent(props: MapTypeMapLayerProps) {
+  const {
+    studyId,
+    studyEntities,
+    filters,
+    appState,
+    appState: { timeSliderConfig },
+    analysisState,
+    geoConfigs,
+    setTimeSliderConfig,
+    siteInformationProps,
+  } = props;
+
+  const toggleStarredVariable = useToggleStarredVariable(analysisState);
+  const findEntityAndVariable = useFindEntityAndVariable(filters);
+
+  const { filters: filtersForTimeSlider } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+      findEntityAndVariable,
+    },
+    timeSliderFilterFuncs
+  );
+
+  return timeSliderConfig && setTimeSliderConfig && siteInformationProps ? (
+    <TimeSliderQuickFilter
+      studyId={studyId}
+      entities={studyEntities}
+      filters={filtersForTimeSlider}
+      starredVariables={
+        analysisState.analysis?.descriptor.starredVariables ?? []
+      }
+      toggleStarredVariable={toggleStarredVariable}
+      config={timeSliderConfig}
+      updateConfig={setTimeSliderConfig}
+      siteInformation={siteInformationProps}
+    />
+  ) : null;
+}
+
+////// functions and hooks ///////
 
 function useMarkerData(props: DistributionMarkerDataProps) {
   const {
