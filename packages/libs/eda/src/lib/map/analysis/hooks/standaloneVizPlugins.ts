@@ -76,7 +76,11 @@ export function useStandaloneVizPlugins({
         getOverlayVariableHelp: () => overlayHelp,
         getEntitySubtitleForViz: () =>
           selectedMarkers && selectedMarkers.length > 0
-            ? EntitySubtitleForViz({ subtitle: 'for selected markers' })
+            ? selectedMarkers.length > 1
+              ? EntitySubtitleForViz({ subtitle: 'for selected markers' })
+              : EntitySubtitleForViz({
+                  subtitle: 'for selected marker - shift-click to add more',
+                })
             : EntitySubtitleForViz({
                 subtitle:
                   'for all visible data on map - click markers to refine',
