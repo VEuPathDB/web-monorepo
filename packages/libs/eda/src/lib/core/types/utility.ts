@@ -37,3 +37,5 @@ export type Dist<T extends keyof DataClient> = {
   foreground: PromiseType<ReturnType<DataClient[T]>>;
   background: PromiseType<ReturnType<DataClient[T]>>;
 };
+
+export type Override<T1, T2> = Omit<T1, keyof T2> & T2;

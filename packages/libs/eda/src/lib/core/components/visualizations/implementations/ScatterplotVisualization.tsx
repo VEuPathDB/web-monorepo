@@ -148,6 +148,8 @@ import SliderWidget, {
 } from '@veupathdb/components/lib/components/widgets/Slider';
 import { FloatingScatterplotExtraProps } from '../../../../map/analysis/hooks/plugins/scatterplot';
 
+import { Override } from '../../../types/utility';
+
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
 const SMOOTHEDMEANSUFFIX = `, ${SMOOTHEDMEANTEXT}`;
@@ -198,11 +200,10 @@ export interface ScatterPlotDataWithCoverage extends CoverageStatistics {
 // define ScatterPlotDataResponse
 type ScatterPlotDataResponse = ScatterplotResponse;
 
-// define dataSetProcess type used inside the processInputData()
-// Note that dataSetProcess is different from the one used in the outside of the processInputData()
+// define dataSetProcess type used in the processInputData()
+// Note that the dataSetProcess here is different from the one used in the outside of the processInputData()
 // using pre-existing ScatterPlotDataSeries to override
-type Override<T1, T2> = Omit<T1, keyof T2> & T2;
-type dataSetProcessType = Override<
+type DataSetProcessType = Override<
   ScatterPlotDataSeries,
   {
     x: (number | string)[] | null[];
@@ -2013,7 +2014,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     if (!dataElementConstraints) return false;
     return Object.entries(dataElementConstraints[0])
       .filter((variable) => variable[1].isRequired)
-      .every((reqdVar) => !!vizConfig[reqdVar[0] as keyof typeof vizConfig]);
+      .every((reqdVar) => !!vizConfig[reqdVar[0] as keyof ScatterplotConfig]);
   }, [dataElementConstraints, vizConfig]);
 
   const LayoutComponent = options?.layoutComponent ?? PlotLayout;
@@ -2352,7 +2353,7 @@ function processInputData(
     facetVariable != null || numDataPoints < 1000 ? 'scatter' : 'scattergl';
 
   // data array to return
-  let dataSetProcess: dataSetProcessType[] = [];
+  let dataSetProcess: DataSetProcessType[] = [];
 
   responseScatterplotData.some(function (
     el: ScatterplotResponse['scatterplot']['data'][number],
