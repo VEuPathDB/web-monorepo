@@ -42,6 +42,7 @@ import {
   isApproxSameViewport,
   markerDataFilterFuncs,
   useCommonData,
+  useSelectedMarkerSnackbars,
 } from '../shared';
 import {
   MapTypeConfigPanelProps,
@@ -65,7 +66,7 @@ export const plugin: MapTypePlugin = {
   displayName,
   ConfigPanelComponent: BubbleMapConfigurationPanel,
   MapLayerComponent: BubbleMapLayer,
-  MapOverlayComponent: BubbleLegends,
+  MapOverlayComponent: BubbleLegendsAndFloater,
   MapTypeHeaderDetails,
   TimeSliderComponent,
 };
@@ -220,8 +221,13 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
     filters: filtersForMarkerData,
   });
 
+  const handleSelectedMarkerSnackbars = useSelectedMarkerSnackbars(
+    configuration.activeVisualizationId
+  );
+
   const setSelectedMarkers = useCallback(
     (selectedMarkers?: string[]) => {
+      handleSelectedMarkerSnackbars(selectedMarkers);
       updateConfiguration({
         ...(props.configuration as BubbleMarkerConfiguration),
         selectedMarkers,
@@ -262,12 +268,13 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
   );
 }
 
-function BubbleLegends(props: MapTypeMapLayerProps) {
+function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
   const {
     studyId,
     filters,
     geoConfigs,
     appState,
+    appState: { markerConfigurations, activeMarkerConfigurationType },
     updateConfiguration,
     headerButtons,
   } = props;
@@ -300,8 +307,14 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
     [configuration, updateConfiguration]
   );
 
+  const selectedMarkers = markerConfigurations.find(
+    (markerConfiguration) =>
+      markerConfiguration.type === activeMarkerConfigurationType
+  )?.selectedMarkers;
+
   const plugins = useStandaloneVizPlugins({
     overlayHelp: 'Overlay variables are not available for this map type',
+    selectedMarkers,
   });
 
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
