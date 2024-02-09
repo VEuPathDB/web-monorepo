@@ -114,12 +114,11 @@ import {
   histogramDefaultIndependentAxisMinMax,
   histogramDefaultDependentAxisMinMax,
 } from '../../../utils/axis-range-calculations';
-import { LayoutOptions } from '../../layouts/types';
+import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import {
   OverlayOptions,
   RequestOptionProps,
   RequestOptions,
-  VerbiageOptions,
 } from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
 import { ResetButtonCoreUI } from '../../ResetButton';
@@ -199,7 +198,7 @@ export const HistogramConfig = t.intersection([
 interface Options
   extends LayoutOptions,
     OverlayOptions,
-    VerbiageOptions,
+    TitleOptions,
     RequestOptions<
       HistogramConfig,
       FloatingHistogramExtraProps,
@@ -1344,7 +1343,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
   );
 
   const LayoutComponent = options?.layoutComponent ?? PlotLayout;
-  const entitySubtitle = options?.getEntitySubtitleForViz?.();
+  const plotSubtitle = options?.getPlotSubtitle?.();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -1382,7 +1381,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
         {!hideInputsAndControls && (
           <OutputEntityTitle
             entity={outputEntity}
-            subtitle={entitySubtitle}
+            subtitle={plotSubtitle}
             outputSize={outputSize}
           />
         )}

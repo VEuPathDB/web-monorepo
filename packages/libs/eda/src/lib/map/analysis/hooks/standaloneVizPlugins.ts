@@ -3,12 +3,14 @@ import * as t from 'io-ts';
 import { ComputationPlugin } from '../../../core/components/computations/Types';
 import { ZeroConfiguration } from '../../../core/components/computations/ZeroConfiguration';
 import { FloatingLayout } from '../../../core/components/layouts/FloatingLayout';
-import { LayoutOptions } from '../../../core/components/layouts/types';
+import {
+  LayoutOptions,
+  TitleOptions,
+} from '../../../core/components/layouts/types';
 import {
   OverlayOptions,
   RequestOptionProps,
   RequestOptions,
-  VerbiageOptions,
 } from '../../../core/components/visualizations/options/types';
 import { VisualizationPlugin } from '../../../core/components/visualizations/VisualizationPlugin';
 
@@ -39,7 +41,7 @@ interface Props {
   selectedMarkers?: string[] | undefined;
 }
 
-type StandaloneVizOptions = LayoutOptions & OverlayOptions & VerbiageOptions;
+type StandaloneVizOptions = LayoutOptions & OverlayOptions & TitleOptions;
 
 export function useStandaloneVizPlugins({
   selectedOverlayConfig,
@@ -74,7 +76,7 @@ export function useStandaloneVizPlugins({
           }
         },
         getOverlayVariableHelp: () => overlayHelp,
-        getEntitySubtitleForViz: () =>
+        getPlotSubtitle: () =>
           selectedMarkers && selectedMarkers.length > 0
             ? selectedMarkers.length > 1
               ? EntitySubtitleForViz({ subtitle: 'for selected markers' })

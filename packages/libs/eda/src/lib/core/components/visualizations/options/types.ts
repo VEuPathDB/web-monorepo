@@ -23,10 +23,6 @@ export interface OverlayOptions {
   getCheckedLegendItems?: (computeConfig: unknown) => string[] | undefined;
 }
 
-export interface VerbiageOptions {
-  getEntitySubtitleForViz?: () => ReactNode;
-}
-
 export type RequestOptionProps<ConfigType> = {
   studyId: string;
   filters: Filter[] | undefined;
