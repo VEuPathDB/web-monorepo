@@ -195,7 +195,7 @@ function ConfiguredVisualizations(props: Props) {
                             analysisState.deleteVisualization(
                               viz.visualizationId
                             );
-                            /* 
+                            /*
                               Here we're deleting the computation in the event we delete
                               the computation's last remaining visualization.
                             */
@@ -331,7 +331,7 @@ export function NewVisualizationPicker(props: NewVisualizationPickerProps) {
       {includeHeader && (
         <>
           <div className={cx('-PickerActions')}>
-            <Link replace to={`../${computationId}`}>
+            <Link replace to={'../visualizations'}>
               <i className="fa fa-close"></i>
             </Link>
           </div>
@@ -393,7 +393,9 @@ export function NewVisualizationPicker(props: NewVisualizationPickerProps) {
                 <div>
                   {vizOverview.displayName
                     ?.split(/(, )/g)
-                    .map((str) => (str === ', ' ? <br /> : str))}
+                    .map((str, index) =>
+                      str === ', ' ? <br key={index} /> : str
+                    )}
                 </div>
                 {vizPlugin == null && <i>(Coming soon!)</i>}
                 {vizPlugin != null && disabled && (
@@ -576,7 +578,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
                   onClick={() => {
                     if (viz == null) return;
                     analysisState.deleteVisualization(viz.visualizationId);
-                    /* 
+                    /*
                       Here we're deleting the computation in the event we delete
                       the computation's last remaining visualization.
                     */
@@ -625,7 +627,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
             <Tooltip title="Minimize visualization">
               <Link
                 to={{
-                  pathname: `../${baseUrl ? '' : computationId}`, // Should go to ../visualizations unless in single app mode
+                  pathname: `${baseUrl ? baseUrl : '../' + computationId}`, // Should go to ../visualizations unless in single app
                   state: { scrollToTop: false },
                 }}
               >
