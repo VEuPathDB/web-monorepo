@@ -54,6 +54,7 @@ export type BannerProps = {
   // fadeout effect when timeout
   fadeoutEffect?: boolean;
   setFadeoutEffect?: (newValue: boolean) => void;
+  hideIcon?: boolean;
 };
 
 export type BannerComponentProps = {
@@ -123,6 +124,7 @@ export default function Banner(props: BannerComponentProps) {
     autoHideDuration,
     fadeoutEffect,
     setFadeoutEffect,
+    hideIcon = false,
   } = banner;
 
   const [isShowMore, setIsShowMore] = useState(false);
@@ -208,20 +210,22 @@ export default function Banner(props: BannerComponentProps) {
                 align-items: center;
               `}
             >
-              <IconComponent
-                css={css`
-                  color: ${intense
-                    ? 'white'
-                    : CollapsibleContent != null
-                    ? '#00008B'
-                    : 'black'};
-                  font-size: 1.4em;
-                  line-height: 1.4em;
-                  width: 30px;
-                  text-align: center;
-                  margin-right: 5px;
-                `}
-              ></IconComponent>
+              {!hideIcon && (
+                <IconComponent
+                  css={css`
+                    color: ${intense
+                      ? 'white'
+                      : CollapsibleContent != null
+                      ? '#00008B'
+                      : 'black'};
+                    font-size: 1.4em;
+                    line-height: 1.4em;
+                    width: 30px;
+                    text-align: center;
+                    margin-right: 5px;
+                  `}
+                />
+              )}
               <span
                 css={css`
                   margin-right: auto;
