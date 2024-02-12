@@ -58,8 +58,8 @@ export const plugin: ComputationPlugin = {
             <>
               <br />
               <span>
-                Ranked abundance: Variables with {config.rankingMethod} = 0
-                removed. Showing up to the top ten variables.
+                Ranked abundance: X-axis variables with {config.rankingMethod} =
+                0 removed. Showing up to the top ten variables.
               </span>
             </>
           );
@@ -87,8 +87,8 @@ export const plugin: ComputationPlugin = {
             <>
               <br />
               <span>
-                Ranked abundance: Variables with {config.rankingMethod} = 0
-                removed. Showing up to the top eight variables.
+                Ranked abundance: Overlay variables with {config.rankingMethod}{' '}
+                = 0 removed. Showing up to the top eight variables.
               </span>
             </>
           );
