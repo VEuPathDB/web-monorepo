@@ -35,6 +35,8 @@ import { filtersFromBoundingBox } from '../../../core/utils/visualization';
 import { MapFloatingErrorDiv } from '../MapFloatingErrorDiv';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { NoDataError } from '../../../core/api/DataClient/NoDataError';
+import { useCallback, useState } from 'react';
+import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 
 export const defaultAnimation = {
   method: 'geohash',
@@ -46,6 +48,7 @@ export const markerDataFilterFuncs = [timeSliderLittleFilter];
 export const floaterFilterFuncs = [
   timeSliderLittleFilter,
   viewportLittleFilters,
+  selectedMarkersLittleFilter,
 ];
 export const visibleOptionFilterFuncs = [
   timeSliderLittleFilter,
@@ -377,6 +380,56 @@ export function isApproxSameViewport(v1: Viewport, v2: Viewport) {
   );
 }
 
+// returns a function (selectedMarkers?) => voi
+export function useSelectedMarkerSnackbars(
+  activeVisualizationId: string | undefined
+) {
+  const { enqueueSnackbar } = useSnackbar();
+  const [shownSelectedMarkersSnackbar, setShownSelectedMarkersSnackbar] =
+    useState(false);
+  const [shownShiftKeySnackbar, setShownShiftKeySnackbar] = useState(false);
+
+  return useCallback(
+    (selectedMarkers: string[] | undefined) => {
+      if (
+        !shownSelectedMarkersSnackbar &&
+        selectedMarkers != null &&
+        activeVisualizationId == null
+      ) {
+        enqueueSnackbar(
+          `Marker selections currently only apply to supporting plots`,
+          {
+            variant: 'info',
+            anchorOrigin: { vertical: 'top', horizontal: 'center' },
+          }
+        );
+        setShownSelectedMarkersSnackbar(true);
+      }
+      if (
+        (shownSelectedMarkersSnackbar || activeVisualizationId != null) &&
+        !shownShiftKeySnackbar &&
+        selectedMarkers != null &&
+        selectedMarkers.length === 1
+      ) {
+        enqueueSnackbar(`Use shift-click to select multiple markers`, {
+          variant: 'info',
+          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        });
+        setShownShiftKeySnackbar(true);
+      }
+      // if the user has managed to select more than one marker, then they don't need help
+      if (selectedMarkers != null && selectedMarkers.length > 1)
+        setShownShiftKeySnackbar(true);
+    },
+    [
+      shownSelectedMarkersSnackbar,
+      shownShiftKeySnackbar,
+      enqueueSnackbar,
+      activeVisualizationId,
+    ]
+  );
+}
+
 /**
  * little filter helpers
  */
@@ -529,6 +582,47 @@ export function pieOrBarMarkerConfigLittleFilter(
   return [];
 }
 
+//
+// figures out which geoaggregator variable corresponds
+// to the current zoom level and creates a little filter
+// on that variable using `selectedMarkers`
+//
+function selectedMarkersLittleFilter(props: UseLittleFiltersProps): Filter[] {
+  const {
+    appState: {
+      markerConfigurations,
+      activeMarkerConfigurationType,
+      viewport: { zoom },
+    },
+    geoConfigs,
+  } = props;
+
+  const activeMarkerConfiguration = markerConfigurations.find(
+    (markerConfig) => markerConfig.type === activeMarkerConfigurationType
+  );
+
+  const selectedMarkers = activeMarkerConfiguration?.selectedMarkers;
+
+  // only return a filter if there are selectedMarkers
+  if (selectedMarkers && selectedMarkers.length > 0) {
+    const { entity, zoomLevelToAggregationLevel, aggregationVariableIds } =
+      geoConfigs[0];
+    const geoAggregationVariableId =
+      aggregationVariableIds?.[zoomLevelToAggregationLevel(zoom) - 1];
+    if (entity && geoAggregationVariableId)
+      // sanity check due to array indexing
+      return [
+        {
+          type: 'stringSet' as const,
+          entityId: entity.id,
+          variableId: geoAggregationVariableId,
+          stringSet: selectedMarkers,
+        },
+      ];
+  }
+  return [];
+}
+
 /**
  * We can use this viewport to request all available data
  */
@@ -582,4 +676,12 @@ const noDataLegendMessage = (
 
 export function getLegendErrorMessage(error: unknown) {
   return isNoDataError(error) ? noDataLegendMessage : undefined;
+}
+
+/**
+ * Simple styling for the optional visualization subtitle as used in
+ * standaloneVizPlugins.ts (Bob didn't want to convert it to tsx)
+ */
+export function EntitySubtitleForViz({ subtitle }: { subtitle: string }) {
+  return <div style={{ marginTop: 8, fontStyle: 'italic' }}>({subtitle})</div>;
 }

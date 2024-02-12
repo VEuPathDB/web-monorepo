@@ -40,7 +40,7 @@ export default function geohashAnimation({
   } else {
     /** No difference in geohashes - Render markers as they are **/
     zoomType = null;
-    consolidatedMarkers = [...markers];
+    consolidatedMarkers = markers;
   }
 
   return { zoomType: zoomType, markers: consolidatedMarkers };

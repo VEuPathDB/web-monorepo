@@ -49,20 +49,34 @@ export const MarkerConfiguration = t.intersection([
     activeVisualizationId: t.string,
   }),
   t.union([
-    t.type({
-      type: t.literal('barplot'),
-      selectedValues: SelectedValues,
-      selectedPlotMode: t.union([t.literal('count'), t.literal('proportion')]),
-      binningMethod: BinningMethod,
-      dependentAxisLogScale: t.boolean,
-      selectedCountsOption: SelectedCountsOption,
-    }),
-    t.type({
-      type: t.literal('pie'),
-      selectedValues: SelectedValues,
-      binningMethod: BinningMethod,
-      selectedCountsOption: SelectedCountsOption,
-    }),
+    t.intersection([
+      t.type({
+        type: t.literal('barplot'),
+        selectedValues: SelectedValues,
+        selectedPlotMode: t.union([
+          t.literal('count'),
+          t.literal('proportion'),
+        ]),
+        binningMethod: BinningMethod,
+        dependentAxisLogScale: t.boolean,
+        selectedCountsOption: SelectedCountsOption,
+      }),
+      t.partial({
+        // yes all the modes have selectedMarkers but maybe in the future one won't
+        selectedMarkers: t.array(t.string),
+      }),
+    ]),
+    t.intersection([
+      t.type({
+        type: t.literal('pie'),
+        selectedValues: SelectedValues,
+        binningMethod: BinningMethod,
+        selectedCountsOption: SelectedCountsOption,
+      }),
+      t.partial({
+        selectedMarkers: t.array(t.string),
+      }),
+    ]),
     t.intersection([
       t.type({
         type: t.literal('bubble'),
@@ -71,6 +85,7 @@ export const MarkerConfiguration = t.intersection([
         aggregator: t.union([t.literal('mean'), t.literal('median')]),
         numeratorValues: t.union([t.array(t.string), t.undefined]),
         denominatorValues: t.union([t.array(t.string), t.undefined]),
+        selectedMarkers: t.array(t.string),
       }),
     ]),
   ]),

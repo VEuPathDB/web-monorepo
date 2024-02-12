@@ -44,6 +44,7 @@ import {
   useCommonData,
   useDistributionMarkerData,
   useDistributionOverlayConfig,
+  useSelectedMarkerSnackbars,
   visibleOptionFilterFuncs,
   getErrorOverlayComponent,
   getLegendErrorMessage,
@@ -321,8 +322,12 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     filters,
     geoConfigs,
     appState,
-    selectedMarkers,
-    setSelectedMarkers,
+    appState: {
+      boundsZoomLevel,
+      markerConfigurations,
+      activeMarkerConfigurationType,
+    },
+    updateConfiguration,
   } = props;
 
   const {
@@ -331,6 +336,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     binningMethod,
     dependentAxisLogScale,
     selectedPlotMode,
+    activeVisualizationId,
   } = props.configuration as BarPlotMarkerConfiguration;
 
   const { filters: filtersForMarkerData } = useLittleFilters(
@@ -347,7 +353,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     studyId,
     filters: filtersForMarkerData,
     geoConfigs,
-    boundsZoomLevel: appState.boundsZoomLevel,
+    boundsZoomLevel,
     selectedVariable,
     selectedValues,
     binningMethod,
@@ -355,13 +361,33 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     valueSpec: selectedPlotMode,
   });
 
+  const handleSelectedMarkerSnackbars = useSelectedMarkerSnackbars(
+    activeVisualizationId
+  );
+
+  const setSelectedMarkers = useCallback(
+    (selectedMarkers?: string[]) => {
+      handleSelectedMarkerSnackbars(selectedMarkers);
+      updateConfiguration({
+        ...(props.configuration as BarPlotMarkerConfiguration),
+        selectedMarkers,
+      });
+    },
+    [props.configuration, updateConfiguration, handleSelectedMarkerSnackbars]
+  );
+
   if (markerData.error && !markerData.isFetching)
     return getErrorOverlayComponent(markerData.error);
 
-  // pass selectedMarkers and its state function
+  // convert marker data to markers
   const markers = markerData.markerProps?.map((markerProps) => (
     <ChartMarker {...markerProps} />
   ));
+
+  const selectedMarkers = markerConfigurations.find(
+    (markerConfiguration) =>
+      markerConfiguration.type === activeMarkerConfigurationType
+  )?.selectedMarkers;
 
   return (
     <>
@@ -390,6 +416,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     filters,
     geoConfigs,
     appState,
+    appState: { markerConfigurations, activeMarkerConfigurationType },
     updateConfiguration,
     headerButtons,
   } = props;
@@ -421,9 +448,15 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     valueSpec: configuration.selectedPlotMode,
   });
 
+  const selectedMarkers = markerConfigurations.find(
+    (markerConfiguration) =>
+      markerConfiguration.type === activeMarkerConfigurationType
+  )?.selectedMarkers;
+
   const legendItems = markerData.legendItems;
   const plugins = useStandaloneVizPlugins({
     selectedOverlayConfig: markerData.overlayConfig,
+    selectedMarkers,
   });
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
   const noDataError = getLegendErrorMessage(markerData.error);
