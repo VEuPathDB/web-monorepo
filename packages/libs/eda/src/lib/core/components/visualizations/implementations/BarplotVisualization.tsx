@@ -98,7 +98,7 @@ import {
   barplotDefaultDependentAxisMinPos,
 } from '../../../utils/axis-range-calculations';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
-import { LayoutOptions } from '../../layouts/types';
+import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import { OverlayOptions, RequestOptions } from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
 
@@ -138,6 +138,7 @@ export const barplotVisualization = createVisualizationPlugin({
 interface Options
   extends LayoutOptions,
     OverlayOptions,
+    TitleOptions,
     RequestOptions<BarplotConfig, {}, BarplotRequestParams> {}
 
 function FullscreenComponent(props: VisualizationProps<Options>) {
@@ -902,6 +903,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
       .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
 
   const LayoutComponent = options?.layoutComponent ?? PlotLayout;
+  const plotSubtitle = options?.getPlotSubtitle?.();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -935,7 +937,11 @@ function BarplotViz(props: VisualizationProps<Options>) {
 
       <PluginError error={data.error} outputSize={outputSize} />
       {!hideInputsAndControls && (
-        <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+        <OutputEntityTitle
+          entity={outputEntity}
+          outputSize={outputSize}
+          subtitle={plotSubtitle}
+        />
       )}
       <LayoutComponent
         isFaceted={isFaceted(data.value)}

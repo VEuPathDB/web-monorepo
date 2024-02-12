@@ -39,11 +39,10 @@ export interface MapTypeMapLayerProps {
   updateConfiguration: (configuration: unknown) => void;
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
+  // TO DO: the hideVizInputsAndControls props are currently required
+  // and sent to plugin components that don't need it - we should also address this
   hideVizInputsAndControls: boolean;
   setHideVizInputsAndControls: (hide: boolean) => void;
-  // selectedMarkers and its state function
-  selectedMarkers?: string[];
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
   setTimeSliderConfig?: (
     newConfig: NonNullable<AppState['timeSliderConfig']>
   ) => void;

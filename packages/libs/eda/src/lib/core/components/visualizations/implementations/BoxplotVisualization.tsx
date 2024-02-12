@@ -849,7 +849,6 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     </>
   );
 
-  // plot subtitle
   const plotSubtitle = options?.getPlotSubtitle?.(
     computation.descriptor.configuration
   );

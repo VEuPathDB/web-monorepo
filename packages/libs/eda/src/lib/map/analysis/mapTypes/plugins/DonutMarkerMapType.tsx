@@ -43,6 +43,7 @@ import {
   markerDataFilterFuncs,
   floaterFilterFuncs,
   pieOrBarMarkerConfigLittleFilter,
+  useSelectedMarkerSnackbars,
 } from '../shared';
 import {
   MapTypeConfigPanelProps,
@@ -279,20 +280,26 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
 }
 
 function MapLayerComponent(props: MapTypeMapLayerProps) {
-  // selectedMarkers and its state function
   const {
     studyId,
     studyEntities,
-    selectedMarkers,
-    setSelectedMarkers,
     appState,
-    appState: { boundsZoomLevel },
+    appState: {
+      boundsZoomLevel,
+      markerConfigurations,
+      activeMarkerConfigurationType,
+    },
     geoConfigs,
     filters,
+    updateConfiguration,
   } = props;
 
-  const { selectedVariable, binningMethod, selectedValues } =
-    props.configuration as PieMarkerConfiguration;
+  const {
+    selectedVariable,
+    binningMethod,
+    selectedValues,
+    activeVisualizationId,
+  } = props.configuration as PieMarkerConfiguration;
 
   const { filters: filtersForMarkerData } = useLittleFilters(
     {
@@ -315,16 +322,37 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     valueSpec: 'count',
   });
 
+  const handleSelectedMarkerSnackbars = useSelectedMarkerSnackbars(
+    activeVisualizationId
+  );
+
+  const setSelectedMarkers = useCallback(
+    (selectedMarkers?: string[]) => {
+      handleSelectedMarkerSnackbars(selectedMarkers);
+      updateConfiguration({
+        ...(props.configuration as PieMarkerConfiguration),
+        selectedMarkers,
+      });
+    },
+    [props.configuration, updateConfiguration, handleSelectedMarkerSnackbars]
+  );
+
   // no markers and no error div for certain known error strings
   if (markerDataResponse.error && !markerDataResponse.isFetching)
     return isNoDataError(markerDataResponse.error) ? null : (
       <MapFloatingErrorDiv error={markerDataResponse.error} />
     );
 
-  // pass selectedMarkers and its state function
+  // convert marker data into markers
   const markers = markerDataResponse.markerProps?.map((markerProps) => (
     <DonutMarker {...markerProps} />
   ));
+
+  const selectedMarkers = markerConfigurations.find(
+    (markerConfiguration) =>
+      markerConfiguration.type === activeMarkerConfigurationType
+  )?.selectedMarkers;
+
   return (
     <>
       {markerDataResponse.isFetching && <Spinner />}
@@ -352,6 +380,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     geoConfigs,
     updateConfiguration,
     appState,
+    appState: { markerConfigurations, activeMarkerConfigurationType },
     filters,
     headerButtons,
   } = props;
@@ -394,9 +423,16 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     valueSpec: 'count',
   });
 
+  const selectedMarkers = markerConfigurations.find(
+    (markerConfiguration) =>
+      markerConfiguration.type === activeMarkerConfigurationType
+  )?.selectedMarkers;
+
   const plugins = useStandaloneVizPlugins({
     selectedOverlayConfig: data.overlayConfig,
+    selectedMarkers,
   });
+
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
   const noDataError = isNoDataError(data.error)
     ? noDataErrorMessage
