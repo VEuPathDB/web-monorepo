@@ -55,7 +55,7 @@ export function MapTypeHeaderStudyDetails(props: Props) {
     return null;
 
   const totalCountFormatted = format(visibleEntityCount);
-  const totalRootEntityFromatted = format(rootEntityCount.data.count);
+  const totalRootEntityFormatted = format(rootEntityCount.data.count);
 
   const tooltipContent = (
     <div>
@@ -79,7 +79,7 @@ export function MapTypeHeaderStudyDetails(props: Props) {
         </ul>
       </p>
       <p>
-        The visualized data comes from {totalRootEntityFromatted}{' '}
+        The visualized data comes from {totalRootEntityFormatted}{' '}
         {rootEntity.displayNamePlural}{' '}
         <button type="button" onClick={() => onShowStudies(true)}>
           Show list
