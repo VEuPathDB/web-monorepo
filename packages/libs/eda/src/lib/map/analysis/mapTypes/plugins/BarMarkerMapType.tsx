@@ -42,10 +42,12 @@ import {
   markerDataFilterFuncs,
   noDataErrorMessage,
   pieOrBarMarkerConfigLittleFilter,
+  timeSliderLittleFilter,
   useCategoricalValues,
   useCommonData,
   useDistributionMarkerData,
   useDistributionOverlayConfig,
+  viewportLittleFilters,
   visibleOptionFilterFuncs,
 } from '../shared';
 import {
@@ -70,6 +72,8 @@ import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
 import { useLittleFilters } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
+import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
+import { SubStudies } from '../../SubStudies';
 const displayName = 'Bar plots';
 
 export const plugin: MapTypePlugin = {
@@ -395,6 +399,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     appState,
     updateConfiguration,
     headerButtons,
+    setStudyDetailsPanelConfig,
   } = props;
 
   const configuration = props.configuration as BarPlotMarkerConfiguration;
@@ -442,8 +447,26 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     floaterFilterFuncs
   );
 
+  const { filters: filtersForSubStudies } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    substudyFilterFuncs
+  );
+
   return (
     <>
+      {appState.studyDetailsPanelConfig.isVisble && (
+        <SubStudies
+          studyId={studyId}
+          entityId={studyEntities[0].id}
+          filters={filtersForSubStudies}
+          panelConfig={appState.studyDetailsPanelConfig}
+          updatePanelConfig={setStudyDetailsPanelConfig}
+        />
+      )}
       <DraggableLegendPanel
         panelTitle={overlayVariable?.displayName}
         zIndex={3}
@@ -497,6 +520,15 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     selectedPlotMode,
   } = props.configuration as BarPlotMarkerConfiguration;
 
+  const { filters: filtersForSubStudies } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    substudyFilterFuncs
+  );
+
   const { filters: filtersForMarkerData } = useLittleFilters(
     {
       filters,
@@ -524,16 +556,30 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
   } = useCommonData(selectedVariable, geoConfigs, studyEntities);
 
   return outputEntityId != null ? (
-    <MapTypeHeaderCounts
+    <MapTypeHeaderStudyDetails
+      filters={props.filters}
+      filtersIncludingViewport={filtersForSubStudies}
       outputEntityId={outputEntityId}
       totalEntityCount={props.totalCounts.value?.[outputEntityId]}
       totalEntityInSubsetCount={props.filteredCounts.value?.[outputEntityId]}
       visibleEntityCount={markerDataResponse.totalVisibleWithOverlayEntityCount}
+      onShowStudies={(isVisble) =>
+        props.setStudyDetailsPanelConfig({
+          ...props.appState.studyDetailsPanelConfig,
+          isVisble,
+        })
+      }
     />
   ) : null;
 }
 
 const timeSliderFilterFuncs = [pieOrBarMarkerConfigLittleFilter];
+
+const substudyFilterFuncs = [
+  viewportLittleFilters,
+  timeSliderLittleFilter,
+  pieOrBarMarkerConfigLittleFilter,
+];
 
 export function TimeSliderComponent(props: MapTypeMapLayerProps) {
   const {
@@ -549,14 +595,12 @@ export function TimeSliderComponent(props: MapTypeMapLayerProps) {
   } = props;
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
-  const findEntityAndVariable = useFindEntityAndVariable(filters);
 
   const { filters: filtersForTimeSlider } = useLittleFilters(
     {
       filters,
       appState,
       geoConfigs,
-      findEntityAndVariable,
     },
     timeSliderFilterFuncs
   );

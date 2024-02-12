@@ -42,6 +42,8 @@ import {
   isApproxSameViewport,
   markerDataFilterFuncs,
   useCommonData,
+  timeSliderLittleFilter,
+  viewportLittleFilters,
 } from '../shared';
 import {
   MapTypeConfigPanelProps,
@@ -56,8 +58,14 @@ import { GeoConfig } from '../../../../core/types/geoConfig';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
-import { useLittleFilters, UseLittleFiltersProps } from '../../littleFilters';
+import {
+  useLittleFilters,
+  UseLittleFiltersFuncProps,
+  UseLittleFiltersProps,
+} from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
+import { SubStudies } from '../../SubStudies';
+import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
 
 const displayName = 'Bubbles';
 
@@ -251,6 +259,8 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
     appState,
     updateConfiguration,
     headerButtons,
+    setStudyDetailsPanelConfig,
+    studyEntities,
   } = props;
   const configuration = props.configuration as BubbleMarkerConfiguration;
 
@@ -304,8 +314,26 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
     floaterFilterFuncs
   );
 
+  const { filters: filtersForSubStudies } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    substudyFilterFuncs
+  );
+
   return (
     <>
+      {appState.studyDetailsPanelConfig.isVisble && (
+        <SubStudies
+          studyId={studyId}
+          entityId={studyEntities[0].id}
+          filters={filtersForSubStudies}
+          panelConfig={appState.studyDetailsPanelConfig}
+          updatePanelConfig={setStudyDetailsPanelConfig}
+        />
+      )}
       <DraggableLegendPanel panelTitle="Count" zIndex={2}>
         <div style={{ padding: '5px 10px' }}>
           {invalidProportionMessage ?? (
@@ -378,6 +406,15 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
 
   const configuration = props.configuration as BubbleMarkerConfiguration;
 
+  const { filters: filtersForSubStudies } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    substudyFilterFuncs
+  );
+
   const { filters: filtersForMarkerData } = useLittleFilters(
     {
       filters,
@@ -400,18 +437,32 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
   } = useCommonData(configuration.selectedVariable, geoConfigs, studyEntities);
 
   return outputEntityId != null ? (
-    <MapTypeHeaderCounts
+    <MapTypeHeaderStudyDetails
+      filters={props.filters}
+      filtersIncludingViewport={filtersForSubStudies}
       outputEntityId={outputEntityId}
       totalEntityCount={props.totalCounts.value?.[outputEntityId]}
       totalEntityInSubsetCount={props.filteredCounts.value?.[outputEntityId]}
       visibleEntityCount={
         markerDataResponse.data.totalVisibleWithOverlayEntityCount
       }
+      onShowStudies={(isVisble) =>
+        props.setStudyDetailsPanelConfig({
+          ...props.appState.studyDetailsPanelConfig,
+          isVisble,
+        })
+      }
     />
   ) : null;
 }
 
 const timeSliderFilterFuncs = [markerConfigLittleFilter];
+
+const substudyFilterFuncs = [
+  viewportLittleFilters,
+  timeSliderLittleFilter,
+  markerConfigLittleFilter,
+];
 
 export function TimeSliderComponent(props: MapTypeMapLayerProps) {
   const {
@@ -427,14 +478,12 @@ export function TimeSliderComponent(props: MapTypeMapLayerProps) {
   } = props;
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
-  const findEntityAndVariable = useFindEntityAndVariable(filters);
 
   const { filters: filtersForTimeSlider } = useLittleFilters(
     {
       filters,
       appState,
       geoConfigs,
-      findEntityAndVariable,
     },
     timeSliderFilterFuncs
   );
@@ -877,7 +926,7 @@ function useMarkerData(props: DataProps) {
 // calculates little filters related to
 // marker variable selection and custom checked values
 //
-function markerConfigLittleFilter(props: UseLittleFiltersProps): Filter[] {
+function markerConfigLittleFilter(props: UseLittleFiltersFuncProps): Filter[] {
   const {
     appState: { markerConfigurations, activeMarkerConfigurationType },
     findEntityAndVariable,
