@@ -151,8 +151,6 @@ export interface MapVEuMapProps {
   scrollingEnabled?: boolean;
   /** pass default viewport */
   defaultViewport?: Viewport;
-  /* selectedMarkers setState (for on-click reset) **/
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
   children?: React.ReactNode;
   onMapClick?: () => void;
   onMapDrag?: () => void;
@@ -179,7 +177,6 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     scrollingEnabled = true,
     interactive = true,
     defaultViewport,
-    setSelectedMarkers,
     onMapClick,
     onMapDrag,
     onMapZoom,
@@ -253,7 +250,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       zoom={viewport.zoom}
       minZoom={1}
       zoomSnap={zoomSnap}
-      wheelPxPerZoomLevel={1000}
+      wheelPxPerZoomLevel={100}
       // We add our own custom zoom control below
       zoomControl={false}
       style={{ height, width, ...style }}
@@ -296,7 +293,6 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       <MapVEuMapEvents
         onViewportChanged={onViewportChanged}
         onBaseLayerChanged={onBaseLayerChanged}
-        setSelectedMarkers={setSelectedMarkers}
         onBoundsChanged={onBoundsChanged}
         onMapClick={onMapClick}
         onMapDrag={onMapDrag}
@@ -319,13 +315,10 @@ interface MapVEuMapEventsProps {
   onViewportChanged: (viewport: Viewport) => void;
   onBoundsChanged: (bondsViewport: BoundsViewport) => void;
   onBaseLayerChanged?: (newBaseLayer: BaseLayerChoice) => void;
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
   onMapClick?: () => void;
   onMapDrag?: () => void;
   onMapZoom?: () => void;
 }
-
-const EMPTY_MARKERS: string[] = [];
 
 // function to handle map events such as onViewportChanged and baselayerchange
 function MapVEuMapEvents(props: MapVEuMapEventsProps) {
@@ -333,7 +326,6 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
     onViewportChanged,
     onBaseLayerChanged,
     onBoundsChanged,
-    setSelectedMarkers,
     onMapClick,
     onMapDrag,
     onMapZoom,
@@ -376,8 +368,6 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
     },
     // map click event: remove selected highlight markers
     click: () => {
-      if (setSelectedMarkers != null) setSelectedMarkers(EMPTY_MARKERS);
-
       if (onMapClick != null) onMapClick();
     },
   });

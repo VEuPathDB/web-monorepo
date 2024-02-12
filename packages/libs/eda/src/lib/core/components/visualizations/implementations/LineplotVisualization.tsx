@@ -127,7 +127,7 @@ import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import { LayoutOptions } from '../../layouts/types';
+import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import {
   OverlayOptions,
   RequestOptionProps,
@@ -263,6 +263,7 @@ export const LineplotConfig = t.intersection([
 interface Options
   extends LayoutOptions,
     OverlayOptions,
+    TitleOptions,
     RequestOptions<
       LineplotConfig,
       FloatingLineplotExtraProps,
@@ -1771,7 +1772,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
   );
 
   const LayoutComponent = options?.layoutComponent ?? PlotLayout;
-
+  const plotSubtitle = options?.getPlotSubtitle?.();
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
@@ -1829,7 +1830,11 @@ function LineplotViz(props: VisualizationProps<Options>) {
 
       <PluginError error={data.error} outputSize={outputSize} />
       {!hideInputsAndControls && (
-        <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+        <OutputEntityTitle
+          entity={outputEntity}
+          outputSize={outputSize}
+          subtitle={plotSubtitle}
+        />
       )}
       <LayoutComponent
         isFaceted={isFaceted(data.value?.dataSetProcess)}
