@@ -1,0 +1,9 @@
+.DataCell:empty:after {
+  content: 'N/A';
+  opacity: 0.4;
+}
+
+.DataCell > .Cell:empty:after {
+  content: 'N/A';
+  opacity: 0.4;
+}

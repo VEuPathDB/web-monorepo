@@ -8,6 +8,8 @@ import {
   pure,
   wrappable,
 } from '../../../Utils/ComponentUtils';
+import { Mesa, MesaState } from '@veupathdb/coreui/lib/components/Mesa';
+import './RecordTable.css';
 
 const mapAttributeType = (type) => {
   switch (type) {
@@ -63,6 +65,12 @@ class RecordTable extends Component {
       (props) => props.table,
       getOrderedData
     );
+    this.onSort = this.onSort.bind(this);
+  }
+
+  onSort(column, direction) {
+    const key = column.key;
+    console.log({ column, key, direction });
   }
 
   render() {
@@ -79,6 +87,55 @@ class RecordTable extends Component {
     const displayableAttributes = this.getDisplayableAttributes(this.props);
     const columns = this.getColumns(this.props);
     const data = this.getOrderedData(this.props);
+
+    const mesaReadyColumns = columns
+      .filter((c) => c.isDisplayable)
+      .map((c) => {
+        const { name, displayName, isSortable, type, ...remainingProperties } =
+          c;
+        return {
+          ...remainingProperties,
+          key: name,
+          name: displayName,
+          sortable: isSortable,
+          type: type ?? 'html',
+        };
+      });
+
+    const mesaReadyRows = data.map((d) => {
+      let newData = { ...d };
+      const columnsWithLinks = mesaReadyColumns.filter(
+        (c) => c.key in d && 'type' in c && c.type === 'link'
+      );
+      columnsWithLinks.forEach((col) => {
+        const linkPropertyName = col.key;
+        const linkObject = d[linkPropertyName];
+        newData = {
+          ...newData,
+          [linkPropertyName]: {
+            href: linkObject?.url ?? '',
+            text: linkObject?.displayText ?? '',
+          },
+        };
+      });
+      return newData;
+    });
+
+    const tableState = {
+      rows: mesaReadyRows,
+      columns: mesaReadyColumns,
+      eventHandlers: {
+        onSort: this.onSort,
+      },
+      uiState: {
+        sort: {
+          columnKey: undefined,
+          direction: 'desc',
+        },
+      },
+    };
+
+    console.log({ mesaReadyColumns, mesaReadyRows, columns, data });
 
     if (value.length === 0 || columns.length === 0) {
       return (
@@ -106,7 +163,7 @@ class RecordTable extends Component {
 
     return (
       <div className={className}>
-        <DataTable
+        {/* <DataTable
           searchTerm={searchTerm}
           onSearchTermChange={onSearchTermChange}
           getRowId={getSortIndex}
@@ -117,7 +174,8 @@ class RecordTable extends Component {
           childRow={childRow}
           searchable={value.length > 1}
           onDraw={onDraw}
-        />
+        /> */}
+        <Mesa state={MesaState.create(tableState)} />
       </div>
     );
   }

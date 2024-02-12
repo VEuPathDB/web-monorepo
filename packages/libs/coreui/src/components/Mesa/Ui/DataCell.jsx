@@ -18,7 +18,6 @@ class DataCell extends React.PureComponent {
     const value =
       typeof getValue === 'function' ? getValue({ row, key }) : row[key];
     const cellProps = { key, value, row, column, rowIndex, columnIndex };
-
     if ('renderCell' in column) {
       return column.renderCell(cellProps);
     }
