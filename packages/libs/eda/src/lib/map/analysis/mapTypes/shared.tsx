@@ -378,7 +378,7 @@ export function isApproxSameViewport(v1: Viewport, v2: Viewport) {
  * little filter helpers
  */
 
-function timeSliderLittleFilter(props: UseLittleFiltersProps): Filter[] {
+export function timeSliderLittleFilter(props: UseLittleFiltersProps): Filter[] {
   const { timeSliderConfig } = props.appState;
 
   if (timeSliderConfig != null) {
@@ -396,7 +396,7 @@ function timeSliderLittleFilter(props: UseLittleFiltersProps): Filter[] {
   return [];
 }
 
-function viewportLittleFilters(props: UseLittleFiltersProps): Filter[] {
+export function viewportLittleFilters(props: UseLittleFiltersProps): Filter[] {
   const {
     appState: { boundsZoomLevel },
     geoConfigs,

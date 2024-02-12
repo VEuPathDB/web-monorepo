@@ -43,6 +43,8 @@ import {
   markerDataFilterFuncs,
   floaterFilterFuncs,
   pieOrBarMarkerConfigLittleFilter,
+  viewportLittleFilters,
+  timeSliderLittleFilter,
 } from '../shared';
 import {
   MapTypeConfigPanelProps,
@@ -364,7 +366,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     binningMethod,
     activeVisualizationId,
   } = props.configuration as PieMarkerConfiguration;
-  const findEntityAndVariable = useFindEntityAndVariable();
+  const findEntityAndVariable = useFindEntityAndVariable(filters);
   const { variable: overlayVariable } =
     findEntityAndVariable(selectedVariable) ?? {};
   const setActiveVisualizationId = useCallback(
@@ -384,6 +386,16 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
       geoConfigs,
     },
     floaterFilterFuncs
+  );
+
+  const { filters: filtersForSubStudies } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+      findEntityAndVariable,
+    },
+    substudyFilterFuncs
   );
 
   const data = useMarkerData({
@@ -411,7 +423,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
         <SubStudies
           studyId={studyId}
           entityId={studyEntities[0].id}
-          filters={filtersForFloaters}
+          filters={filtersForSubStudies}
           panelConfig={appState.studyDetailsPanelConfig}
           updatePanelConfig={setStudyDetailsPanelConfig}
         />
@@ -466,6 +478,8 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
   const { selectedVariable, binningMethod, selectedValues } =
     props.configuration as PieMarkerConfiguration;
 
+  const findEntityAndVariable = useFindEntityAndVariable(filters);
+
   const { filters: filtersForMarkerData } = useLittleFilters(
     {
       filters,
@@ -480,8 +494,9 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
       filters,
       appState,
       geoConfigs,
+      findEntityAndVariable,
     },
-    visibleOptionFilterFuncs
+    substudyFilterFuncs
   );
 
   const markerDataResponse = useMarkerData({
@@ -519,6 +534,11 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
 }
 
 const timeSliderFilterFuncs = [pieOrBarMarkerConfigLittleFilter];
+const substudyFilterFuncs = [
+  viewportLittleFilters,
+  timeSliderLittleFilter,
+  pieOrBarMarkerConfigLittleFilter,
+];
 
 export function TimeSliderComponent(props: MapTypeMapLayerProps) {
   const {
