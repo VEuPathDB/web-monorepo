@@ -62,7 +62,7 @@ export default class DataClient extends FetchClientWithCredentials {
         transformResponse(body) {
           if (body == null) {
             throw new NoDataError(
-              'The visualization cannot be made because the current subset is empty.',
+              'The visualization cannot be made because no data remains after filtering.',
               'No data',
               204,
               uuid()

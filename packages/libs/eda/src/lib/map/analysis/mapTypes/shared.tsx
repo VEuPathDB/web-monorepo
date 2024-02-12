@@ -34,6 +34,7 @@ import { UseLittleFiltersProps } from '../littleFilters';
 import { filtersFromBoundingBox } from '../../../core/utils/visualization';
 import { MapFloatingErrorDiv } from '../MapFloatingErrorDiv';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { NoDataError } from '../../../core/api/DataClient/NoDataError';
 
 export const defaultAnimation = {
   method: 'geohash',
@@ -553,16 +554,9 @@ const noDataPatterns = [
 ];
 
 export function isNoDataError(error: unknown) {
-  if (error instanceof Error && error.name === 'NoDataError') return true;
+  if (error instanceof NoDataError) return true;
   return noDataPatterns.some((pattern) => String(error).match(pattern));
 }
-
-const noDataErrorMessage = (
-  <div css={{ textAlign: 'center', width: 200 }}>
-    <p>Your filters have removed all data for this variable.</p>
-    <p>Please check your filters or choose another variable.</p>
-  </div>
-);
 
 export function getErrorOverlayComponent(error: unknown) {
   return isNoDataError(error) ? (
@@ -579,6 +573,13 @@ export function getErrorOverlayComponent(error: unknown) {
   );
 }
 
+const noDataLegendMessage = (
+  <div css={{ textAlign: 'center', width: 200 }}>
+    <p>Your filters have removed all data for this variable.</p>
+    <p>Please check your filters or choose another variable.</p>
+  </div>
+);
+
 export function getLegendErrorMessage(error: unknown) {
-  return isNoDataError(error) ? noDataErrorMessage : undefined;
+  return isNoDataError(error) ? noDataLegendMessage : undefined;
 }
