@@ -57,11 +57,9 @@ import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import { GeoConfig } from '../../../../core/types/geoConfig';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
-import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
 import {
   useLittleFilters,
   UseLittleFiltersFuncProps,
-  UseLittleFiltersProps,
 } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
 import { SubStudies } from '../../SubStudies';
@@ -401,7 +399,7 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     filters,
     geoConfigs,
     appState,
-    appState: { boundsZoomLevel },
+    appState: { boundsZoomLevel, timeSliderConfig },
   } = props;
 
   const configuration = props.configuration as BubbleMarkerConfiguration;
@@ -438,8 +436,9 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
 
   return outputEntityId != null ? (
     <MapTypeHeaderStudyDetails
-      filters={props.filters}
-      filtersIncludingViewport={filtersForSubStudies}
+      subsetFilterLength={props.filters?.length}
+      filterForVisibleData={filtersForSubStudies}
+      includesTimeSliderFilter={timeSliderConfig != null}
       outputEntityId={outputEntityId}
       totalEntityCount={props.totalCounts.value?.[outputEntityId]}
       totalEntityInSubsetCount={props.filteredCounts.value?.[outputEntityId]}

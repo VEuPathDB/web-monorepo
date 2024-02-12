@@ -470,7 +470,7 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     studyId,
     studyEntities,
     appState,
-    appState: { boundsZoomLevel },
+    appState: { boundsZoomLevel, timeSliderConfig },
     geoConfigs,
     filters,
   } = props;
@@ -513,8 +513,9 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
 
   return outputEntityId != null ? (
     <MapTypeHeaderStudyDetails
-      filters={props.filters}
-      filtersIncludingViewport={filtersForSubStudies}
+      subsetFilterLength={props.filters?.length}
+      filterForVisibleData={filtersForSubStudies}
+      includesTimeSliderFilter={timeSliderConfig != null}
       outputEntityId={outputEntityId}
       totalEntityCount={props.totalCounts.value?.[outputEntityId]}
       totalEntityInSubsetCount={props.filteredCounts.value?.[outputEntityId]}

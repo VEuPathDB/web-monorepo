@@ -69,7 +69,6 @@ import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/Tabbe
 import MapVizManagement from '../../MapVizManagement';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
-import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
 import { useLittleFilters } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
 import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
@@ -508,7 +507,7 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     studyEntities,
     geoConfigs,
     appState,
-    appState: { boundsZoomLevel },
+    appState: { boundsZoomLevel, timeSliderConfig },
     filters,
   } = props;
 
@@ -557,8 +556,9 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
 
   return outputEntityId != null ? (
     <MapTypeHeaderStudyDetails
-      filters={props.filters}
-      filtersIncludingViewport={filtersForSubStudies}
+      subsetFilterLength={props.filters?.length}
+      filterForVisibleData={filtersForSubStudies}
+      includesTimeSliderFilter={timeSliderConfig != null}
       outputEntityId={outputEntityId}
       totalEntityCount={props.totalCounts.value?.[outputEntityId]}
       totalEntityInSubsetCount={props.filteredCounts.value?.[outputEntityId]}

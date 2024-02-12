@@ -9,16 +9,15 @@ import {
 } from '../../../core';
 
 interface Props {
+  subsetFilterLength: number | undefined;
+  includesTimeSliderFilter: boolean;
   /** All filters applied to the map, including:
    * - subset
    * - marker config
    * - timeline filters
    * - viewport
    */
-  filters?: Filter[];
-
-  filtersIncludingViewport: Filter[];
-
+  filterForVisibleData: Filter[];
   /** Entity space of map markers, overlay, etc */
   outputEntityId: string;
   totalEntityCount?: number;
@@ -31,8 +30,9 @@ const { format } = new Intl.NumberFormat('en-us');
 
 export function MapTypeHeaderStudyDetails(props: Props) {
   const {
-    filters,
-    filtersIncludingViewport,
+    subsetFilterLength,
+    filterForVisibleData,
+    includesTimeSliderFilter,
     outputEntityId,
     visibleEntityCount,
     onShowStudies,
@@ -40,7 +40,7 @@ export function MapTypeHeaderStudyDetails(props: Props) {
   const { rootEntity } = useStudyMetadata();
   const rootEntityCount = useEntityCount(
     rootEntity.id, // Study entity
-    filtersIncludingViewport // Should be subset, map type, timeline, and viewport filters
+    filterForVisibleData // Should be subset, map type, timeline, and viewport filters
   );
 
   const outputEntity = useStudyEntities().find(
@@ -66,9 +66,16 @@ export function MapTypeHeaderStudyDetails(props: Props) {
         <ul>
           <li>
             satisfy all your filters (you currently have{' '}
-            {filters?.length ?? 'no'} filters active)
+            {subsetFilterLength == null || subsetFilterLength === 0
+              ? 'no filters'
+              : subsetFilterLength === 1
+              ? '1 filter'
+              : format(subsetFilterLength) + ' filters'}{' '}
+            active)
           </li>
-          <li>to do: also time slider filter</li>
+          {includesTimeSliderFilter && (
+            <li>satisfy the time range you have selected</li>
+          )}
           <li>
             have data for the variable that is currently displayed on the
             markers
