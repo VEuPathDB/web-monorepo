@@ -30,7 +30,10 @@ import {
 } from '@veupathdb/components/lib/types/plots';
 import { getCategoricalValues } from '../utils/categoricalValues';
 import { Viewport } from '@veupathdb/components/lib/map/MapVEuMap';
-import { UseLittleFiltersProps } from '../littleFilters';
+import {
+  UseLittleFiltersFuncProps,
+  UseLittleFiltersProps,
+} from '../littleFilters';
 import { filtersFromBoundingBox } from '../../../core/utils/visualization';
 
 export const defaultAnimation = {
@@ -422,7 +425,7 @@ export function viewportLittleFilters(props: UseLittleFiltersProps): Filter[] {
 // marker variable selection and custom checked values
 //
 export function pieOrBarMarkerConfigLittleFilter(
-  props: UseLittleFiltersProps
+  props: UseLittleFiltersFuncProps
 ): Filter[] {
   const {
     appState: { markerConfigurations, activeMarkerConfigurationType },

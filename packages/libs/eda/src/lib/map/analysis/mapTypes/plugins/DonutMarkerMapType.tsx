@@ -393,7 +393,6 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
       filters,
       appState,
       geoConfigs,
-      findEntityAndVariable,
     },
     substudyFilterFuncs
   );
@@ -478,8 +477,6 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
   const { selectedVariable, binningMethod, selectedValues } =
     props.configuration as PieMarkerConfiguration;
 
-  const findEntityAndVariable = useFindEntityAndVariable(filters);
-
   const { filters: filtersForMarkerData } = useLittleFilters(
     {
       filters,
@@ -494,7 +491,6 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
       filters,
       appState,
       geoConfigs,
-      findEntityAndVariable,
     },
     substudyFilterFuncs
   );
@@ -554,14 +550,12 @@ export function TimeSliderComponent(props: MapTypeMapLayerProps) {
   } = props;
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
-  const findEntityAndVariable = useFindEntityAndVariable(filters);
 
   const { filters: filtersForTimeSlider } = useLittleFilters(
     {
       filters,
       appState,
       geoConfigs,
-      findEntityAndVariable,
     },
     timeSliderFilterFuncs
   );
