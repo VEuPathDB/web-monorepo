@@ -228,9 +228,10 @@ export default function Banner(props: BannerComponentProps) {
                 `}
               >
                 {/* showMore implementation */}
-                {message}&nbsp;
+                {message}
                 {(additionalMessage != null || CollapsibleContent != null) && (
                   <>
+                    {' '}
                     {isShowMore && additionalMessage}
                     <button
                       css={css`
