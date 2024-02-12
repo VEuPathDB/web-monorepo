@@ -256,13 +256,6 @@ export function CorrelationAssayMetadataConfiguration(
   );
 }
 
-const ASSAY_ENTITIES = [
-  'OBI_0002623',
-  'EUPATH_0000809',
-  'EUPATH_0000813',
-  'EUPATH_0000812',
-];
-
 // The correlation assay x metadata app is only available for studies
 // with appropriate metadata. Specifically, the study
 // must have at least one continuous metadata variable that is on a one-to-one path
@@ -292,9 +285,10 @@ function isEnabledInPicker({
     // Then we're in a curated study. So we can expect to find an entity with an id in ASSAY_ENTITIES,
     // which we can use to limit our metadata search to only appropriate entities.
 
-    // Step 1. Find the first assay node. Doesn't need to be any assay in particular just any mbio assay will do
-    const firstAssayEntityIndex = entities.findIndex((entity) =>
-      ASSAY_ENTITIES.includes(entity.id)
+    // Step 1. Find the first assay node. Right now Assays are the only entities with collections,
+    // so we can just grab the first entity we see that has a collection.
+    const firstAssayEntityIndex = entities.findIndex(
+      (entity) => !!entity.collections?.length
     );
     if (firstAssayEntityIndex === -1) return false;
 

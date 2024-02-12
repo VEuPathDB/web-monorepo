@@ -102,7 +102,7 @@ export default function Notification({
           {text}
         </span>
         <Button
-          text="Ok"
+          text="OK"
           type="outlined"
           color="#FFFFFF"
           onClick={onAcknowledgement}
