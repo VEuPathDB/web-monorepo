@@ -109,7 +109,7 @@ export default function DraggablePanel(props: DraggablePanelProps) {
     }
   }
 
-  const { ref, height, width } = useResizeObserver({
+  const { ref } = useResizeObserver({
     box: 'border-box',
     onResize: ({ height, width }) => {
       if (!onPanelResize || !height || !width) return;
@@ -122,8 +122,21 @@ export default function DraggablePanel(props: DraggablePanelProps) {
     },
   });
 
+  const {
+    ref: containerRef,
+    height: conainerHeight,
+    width: containerWidth,
+  } = useResizeObserver({
+    box: 'border-box',
+  });
+
   const finalPosition = confineToParentContainer
-    ? constrainPositionOnScreen(panelPosition, width, height, window)
+    ? constrainPositionOnScreen(
+        panelPosition,
+        containerWidth,
+        conainerHeight,
+        window
+      )
     : panelPosition;
 
   // set maximum text length for the panel title
@@ -140,6 +153,7 @@ export default function DraggablePanel(props: DraggablePanelProps) {
       position={finalPosition}
     >
       <div
+        ref={containerRef}
         // As the attribute's name suggests, this helps with automated testing.
         // At the moment, jsdom and dragging is a bad combo for testing.
         data-testid={`${panelTitle} ${wasDragged ? 'dragged' : 'not dragged'}`}
