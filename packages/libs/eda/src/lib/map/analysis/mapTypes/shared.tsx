@@ -30,12 +30,26 @@ import {
 } from '@veupathdb/components/lib/types/plots';
 import { getCategoricalValues } from '../utils/categoricalValues';
 import { Viewport } from '@veupathdb/components/lib/map/MapVEuMap';
+import { UseLittleFiltersProps } from '../littleFilters';
+import { filtersFromBoundingBox } from '../../../core/utils/visualization';
 
 export const defaultAnimation = {
   method: 'geohash',
   animationFunction: geohashAnimation,
   duration: defaultAnimationDuration,
 };
+
+export const markerDataFilterFuncs = [timeSliderLittleFilter];
+export const floaterFilterFuncs = [
+  timeSliderLittleFilter,
+  viewportLittleFilters,
+];
+export const visibleOptionFilterFuncs = [
+  timeSliderLittleFilter,
+  viewportLittleFilters,
+];
+
+export const MAX_FILTERSET_VALUES = 1000;
 
 export interface SharedMarkerConfigurations {
   selectedVariable: VariableDescriptor;
@@ -333,15 +347,19 @@ export function useCategoricalValues(props: CategoricalValuesProps) {
     ],
     queryFn: () => {
       if (!CategoricalVariableDataShape.is(props.overlayVariable.dataShape)) {
-        return undefined;
+        // not allowed to return undefined
+        // consider throwing an error if more appropriate
+        return [];
       }
-      return getCategoricalValues({
-        studyId: props.studyId,
-        filters: props.filters,
-        subsettingClient,
-        overlayEntity: props.overlayEntity,
-        overlayVariable: props.overlayVariable,
-      });
+      return (
+        getCategoricalValues({
+          studyId: props.studyId,
+          filters: props.filters,
+          subsettingClient,
+          overlayEntity: props.overlayEntity,
+          overlayVariable: props.overlayVariable,
+        }) ?? []
+      ); // see above re returning undefined
     },
     enabled: props.enabled ?? true,
   });
@@ -354,6 +372,158 @@ export function isApproxSameViewport(v1: Viewport, v2: Viewport) {
     Math.abs(v1.center[0] - v2.center[0]) < epsilon &&
     Math.abs(v1.center[1] - v2.center[1]) < epsilon
   );
+}
+
+/**
+ * little filter helpers
+ */
+
+function timeSliderLittleFilter(props: UseLittleFiltersProps): Filter[] {
+  const { timeSliderConfig } = props.appState;
+
+  if (timeSliderConfig != null) {
+    const { selectedRange, active, variable } = timeSliderConfig;
+    if (variable != null && active && selectedRange != null)
+      return [
+        {
+          type: 'dateRange' as const,
+          ...variable,
+          min: selectedRange.start + 'T00:00:00Z',
+          max: selectedRange.end + 'T00:00:00Z',
+        },
+      ];
+  }
+  return [];
+}
+
+function viewportLittleFilters(props: UseLittleFiltersProps): Filter[] {
+  const {
+    appState: { boundsZoomLevel },
+    geoConfigs,
+  } = props;
+  const geoConfig = geoConfigs[0]; // not ideal...
+  return boundsZoomLevel == null
+    ? []
+    : filtersFromBoundingBox(
+        boundsZoomLevel.bounds,
+        {
+          variableId: geoConfig.latitudeVariableId,
+          entityId: geoConfig.entity.id,
+        },
+        {
+          variableId: geoConfig.longitudeVariableId,
+          entityId: geoConfig.entity.id,
+        }
+      );
+}
+
+//
+// calculates little filters for pie/bar markers related to
+// marker variable selection and custom checked values
+//
+export function pieOrBarMarkerConfigLittleFilter(
+  props: UseLittleFiltersProps
+): Filter[] {
+  const {
+    appState: { markerConfigurations, activeMarkerConfigurationType },
+    findEntityAndVariable,
+  } = props;
+
+  if (findEntityAndVariable == null)
+    throw new Error(
+      'Bar markerConfigLittleFilter must receive findEntityAndVariable'
+    );
+
+  const activeMarkerConfiguration = markerConfigurations.find(
+    (markerConfig) => markerConfig.type === activeMarkerConfigurationType
+  );
+
+  // This doesn't seem ideal. Do we ever have no active config?
+  if (activeMarkerConfiguration == null) return [];
+  const { selectedVariable, type } = activeMarkerConfiguration;
+  const { variable } = findEntityAndVariable(selectedVariable) ?? {};
+  if (variable != null && (type === 'pie' || type === 'barplot')) {
+    if (variable.dataShape !== 'continuous') {
+      if (variable.vocabulary != null) {
+        // if markers configuration is empty (equivalent to all values selected)
+        // or if the "all other values" value is active (aka UNSELECTED_TOKEN)
+        if (
+          activeMarkerConfiguration.selectedValues == null ||
+          activeMarkerConfiguration.selectedValues.includes(UNSELECTED_TOKEN)
+        ) {
+          if (variable.vocabulary.length <= MAX_FILTERSET_VALUES) {
+            return [
+              {
+                type: 'stringSet' as const,
+                ...selectedVariable,
+                stringSet: variable.vocabulary,
+              },
+            ];
+          } else {
+            console.log(
+              'donut/bar marker-config filter skipping ultra-high cardinality variable: ' +
+                variable.displayName
+            );
+            return [];
+          }
+        } else {
+          // We have selected values in pie or barplot mode and no "all other values".
+          // Note that we will not (yet) check the number of selections <= MAX_FILTERSET_VALUES here
+          // because we will (likely) need to prevent that many being selected in the first place
+          // TO DO: https://github.com/VEuPathDB/web-monorepo/issues/820
+          if (
+            activeMarkerConfiguration.selectedValues != null &&
+            activeMarkerConfiguration.selectedValues.length > 0
+          )
+            return [
+              {
+                type: 'stringSet' as const,
+                ...selectedVariable,
+                stringSet: activeMarkerConfiguration.selectedValues,
+              },
+            ];
+          // Edge case where all values are deselected in the marker configuration table
+          // and we want the back end filters to return nothing.
+          // This is hopefully a workable solution. It is not allowed to pass an
+          // empty array to a `stringSet` filter.
+          else
+            return [
+              {
+                type: 'stringSet' as const,
+                ...selectedVariable,
+                stringSet: ['avaluewewillhopefullyneversee'],
+              },
+            ];
+        }
+      } else {
+        throw new Error('missing vocabulary on categorical variable');
+      }
+    } else if (variable.type === 'number' || variable.type === 'integer') {
+      return [
+        {
+          type: 'numberRange' as const,
+          ...selectedVariable,
+          min: variable.distributionDefaults.rangeMin,
+          max: variable.distributionDefaults.rangeMax, // TO DO: check we use this, not display ranges
+        },
+      ];
+    } else if (variable.type === 'date') {
+      return [
+        {
+          type: 'dateRange' as const,
+          ...selectedVariable,
+          min: variable.distributionDefaults.rangeMin + 'T00:00:00Z',
+          max: variable.distributionDefaults.rangeMax + 'T00:00:00Z',
+          // TO DO: check we use this, not display ranges
+        },
+      ];
+    } else {
+      throw new Error(
+        'unknown variable type encounted in marker-config filter function'
+      );
+    }
+  }
+  return [];
 }
 
 /**

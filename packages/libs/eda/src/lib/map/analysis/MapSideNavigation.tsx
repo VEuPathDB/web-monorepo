@@ -60,12 +60,12 @@ function SideNavigationItemsRecursion({
     );
   }
 
-  const sideNavigationItems = menuEntries.map((entry) => {
+  const sideNavigationItems = menuEntries.map((entry, index) => {
     switch (entry.type) {
       case 'heading':
       case 'subheading':
         return (
-          <li>
+          <li key={index}>
             <div role="group">{formatEntry(entry)}</div>
             <SideNavigationItemsRecursion
               indentLevel={indentLevel + 1}
@@ -78,7 +78,7 @@ function SideNavigationItemsRecursion({
       case 'item': {
         const isActive = entry.id === activeSideMenuId;
         return (
-          <li role="presentation">
+          <li role="presentation" key={index}>
             <button
               type="button"
               className="link"

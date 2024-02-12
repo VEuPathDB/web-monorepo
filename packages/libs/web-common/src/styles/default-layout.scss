@@ -36,7 +36,7 @@ body.vpdb-Body {
     grid-template-rows: $expanded-header-height auto 1fr auto;
 
     @media screen and (max-width: $hamburger-width) {
-      grid-template-rows: auto auto 1fr auto !important;
+      grid-template-rows: auto auto 1fr auto;
     }
 
     grid-template-columns: 100%;
