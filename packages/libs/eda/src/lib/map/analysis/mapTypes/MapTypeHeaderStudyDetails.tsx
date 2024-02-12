@@ -23,7 +23,10 @@ interface Props {
   totalEntityCount?: number;
   totalEntityInSubsetCount?: number;
   visibleEntityCount?: number;
-  onShowStudies: (showStudies: boolean) => void;
+  /**
+   * If omitted, do not show studies link
+   */
+  onShowStudies?: (showStudies: boolean) => void;
 }
 
 const { format } = new Intl.NumberFormat('en-us');
@@ -63,7 +66,7 @@ export function MapTypeHeaderStudyDetails(props: Props) {
         {totalCountFormatted} {outputEntity.displayNamePlural} are currently
         visualized on the map using markers. These are the{' '}
         {outputEntity.displayNamePlural} that
-        <ul>
+        <ul css={{ padding: '1em 0' }}>
           <li>
             satisfy all your filters (you currently have{' '}
             {subsetFilterLength == null || subsetFilterLength === 0
@@ -81,17 +84,19 @@ export function MapTypeHeaderStudyDetails(props: Props) {
             markers
           </li>
           <li>
-            have appropriate values for if the marker has been custom-configured
+            have appropriate values, if the marker has been custom-configured
           </li>
         </ul>
       </p>
-      <p>
-        The visualized data comes from {totalRootEntityFormatted}{' '}
-        {rootEntity.displayNamePlural}{' '}
-        <button type="button" onClick={() => onShowStudies(true)}>
-          Show list
-        </button>
-      </p>
+      {onShowStudies && (
+        <p>
+          The visualized data comes from {totalRootEntityFormatted}{' '}
+          {rootEntity.displayNamePlural}{' '}
+          <button type="button" onClick={() => onShowStudies(true)}>
+            Show list
+          </button>
+        </p>
+      )}
     </div>
   );
 
@@ -106,8 +111,14 @@ export function MapTypeHeaderStudyDetails(props: Props) {
           alignItems: 'center',
         }}
       >
-        {format(visibleEntityCount)} {outputEntity.displayNamePlural} from{' '}
-        {format(rootEntityCount.data.count)} {rootEntity.displayNamePlural}
+        {format(visibleEntityCount)} {outputEntity.displayNamePlural}
+        {onShowStudies && (
+          <>
+            {' '}
+            from {format(rootEntityCount.data.count)}{' '}
+            {rootEntity.displayNamePlural}
+          </>
+        )}
         <Tooltip title={tooltipContent} interactive style={{ width: 'auto' }}>
           <Info style={{ color: '#069', height: '.8em', width: '.8em' }} />
         </Tooltip>

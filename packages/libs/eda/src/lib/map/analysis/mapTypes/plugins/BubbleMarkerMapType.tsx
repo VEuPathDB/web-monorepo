@@ -323,7 +323,7 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
 
   return (
     <>
-      {appState.studyDetailsPanelConfig.isVisble && (
+      {appState.studyDetailsPanelConfig?.isVisble && (
         <SubStudies
           studyId={studyId}
           entityId={studyEntities[0].id}
@@ -399,7 +399,7 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     filters,
     geoConfigs,
     appState,
-    appState: { boundsZoomLevel, timeSliderConfig },
+    appState: { boundsZoomLevel, timeSliderConfig, studyDetailsPanelConfig },
   } = props;
 
   const configuration = props.configuration as BubbleMarkerConfiguration;
@@ -445,11 +445,13 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
       visibleEntityCount={
         markerDataResponse.data.totalVisibleWithOverlayEntityCount
       }
-      onShowStudies={(isVisble) =>
-        props.setStudyDetailsPanelConfig({
-          ...props.appState.studyDetailsPanelConfig,
-          isVisble,
-        })
+      onShowStudies={
+        studyDetailsPanelConfig &&
+        ((isVisble) =>
+          props.setStudyDetailsPanelConfig({
+            ...studyDetailsPanelConfig,
+            isVisble,
+          }))
       }
     />
   ) : null;

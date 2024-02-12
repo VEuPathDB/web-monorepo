@@ -418,7 +418,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
 
   return (
     <>
-      {appState.studyDetailsPanelConfig.isVisble && (
+      {appState.studyDetailsPanelConfig?.isVisble && (
         <SubStudies
           studyId={studyId}
           entityId={studyEntities[0].id}
@@ -470,7 +470,7 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     studyId,
     studyEntities,
     appState,
-    appState: { boundsZoomLevel, timeSliderConfig },
+    appState: { boundsZoomLevel, timeSliderConfig, studyDetailsPanelConfig },
     geoConfigs,
     filters,
   } = props;
@@ -520,11 +520,13 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
       totalEntityCount={props.totalCounts.value?.[outputEntityId]}
       totalEntityInSubsetCount={props.filteredCounts.value?.[outputEntityId]}
       visibleEntityCount={markerDataResponse.totalVisibleWithOverlayEntityCount}
-      onShowStudies={(isVisble) =>
-        props.setStudyDetailsPanelConfig({
-          ...props.appState.studyDetailsPanelConfig,
-          isVisble,
-        })
+      onShowStudies={
+        studyDetailsPanelConfig &&
+        ((isVisble) =>
+          props.setStudyDetailsPanelConfig({
+            ...studyDetailsPanelConfig,
+            isVisble,
+          }))
       }
     />
   ) : null;

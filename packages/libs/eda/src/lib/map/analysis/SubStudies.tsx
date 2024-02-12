@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
 import { PanelConfig } from './appState';
 import { useDebouncedCallback } from '../../core/hooks/debouncing';
+import Spinner from '@veupathdb/components/lib/components/Spinner';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 interface Props {
   studyId: string;
@@ -62,9 +64,6 @@ export function SubStudies(props: Props) {
     250
   );
 
-  if (result.data == null) {
-    return <>Loading...</>;
-  }
   return (
     <DraggablePanel
       isOpen
@@ -90,21 +89,36 @@ export function SubStudies(props: Props) {
           padding: '1em',
         }}
       >
-        <div>
-          <p>There are {result.data.length - 1} studies visible on the map.</p>
-          <ul>
-            {result.data.slice(1).map(([id, display]) => (
-              <li>
-                <Link
-                  target="_blank"
-                  to={{ pathname: `/record/dataset/${datasetIdByStudyId[id]}` }}
-                >
-                  {display}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
+        {result.error ? (
+          <Banner
+            banner={{
+              type: 'error',
+              message: String(result.error),
+            }}
+          />
+        ) : result.data == null ? (
+          <Spinner />
+        ) : (
+          <div>
+            <p>
+              There are {result.data.length - 1} studies visible on the map.
+            </p>
+            <ul>
+              {result.data.slice(1).map(([id, display]) => (
+                <li>
+                  <Link
+                    target="_blank"
+                    to={{
+                      pathname: `/record/dataset/${datasetIdByStudyId[id]}`,
+                    }}
+                  >
+                    {display}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </DraggablePanel>
   );

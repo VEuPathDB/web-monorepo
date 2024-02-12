@@ -3,7 +3,11 @@ import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { isEqual } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useAnalysis, useGetDefaultVariableDescriptor } from '../../core';
+import {
+  useAnalysis,
+  useGetDefaultVariableDescriptor,
+  useStudyMetadata,
+} from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
 import { useGetDefaultTimeVariableDescriptor } from './hooks/eztimeslider';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
@@ -97,9 +101,9 @@ export const AppState = t.intersection([
     activeMarkerConfigurationType: MarkerType,
     markerConfigurations: t.array(MarkerConfiguration),
     isSidePanelExpanded: t.boolean,
-    studyDetailsPanelConfig: PanelConfig,
   }),
   t.partial({
+    studyDetailsPanelConfig: PanelConfig,
     boundsZoomLevel: t.type({
       zoomLevel: t.number,
       bounds: t.type({
@@ -152,12 +156,19 @@ export function useAppState(
     getOrElseW(() => undefined)
   );
 
+  const studyMetadata = useStudyMetadata();
   const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
   const defaultVariable = getDefaultVariableDescriptor();
 
   const getDefaultTimeVariableDescriptor =
     useGetDefaultTimeVariableDescriptor();
   const defaultTimeVariable = getDefaultTimeVariableDescriptor();
+
+  const isMegaStudy =
+    studyMetadata.rootEntity.id === 'EUPATH_0000605' &&
+    studyMetadata.rootEntity.variables.find(
+      (variable) => variable.id === 'OBI_0001622'
+    ) != null;
 
   const defaultAppState: AppState = useMemo(
     () => ({
@@ -170,11 +181,15 @@ export function useAppState(
         active: true,
         selectedRange: undefined,
       },
-      studyDetailsPanelConfig: {
-        isVisble: false,
-        position: { x: 650, y: 225 },
-        dimensions: { height: '70vh', width: 1000 },
-      },
+      ...(isMegaStudy
+        ? {
+            studyDetailsPanelConfig: {
+              isVisble: false,
+              position: { x: 650, y: 225 },
+              dimensions: { height: '70vh', width: 1000 },
+            },
+          }
+        : {}),
       markerConfigurations: [
         {
           type: 'pie',
@@ -201,7 +216,7 @@ export function useAppState(
         },
       ],
     }),
-    [defaultVariable, defaultTimeVariable]
+    [defaultTimeVariable, isMegaStudy, defaultVariable]
   );
 
   useEffect(() => {
@@ -244,12 +259,23 @@ export function useAppState(
               timeSliderConfig: defaultAppState.timeSliderConfig,
             },
           }));
+
+        if (isMegaStudy && appState.studyDetailsPanelConfig == null) {
+          setVariableUISettings((prev) => ({
+            ...prev,
+            [uiStateKey]: {
+              ...appState,
+              studyDefaultsPanelConfig: defaultAppState.studyDetailsPanelConfig,
+            },
+          }));
+        }
       }
       setAppStateChecked(true);
     }
   }, [
     analysis,
     appState,
+    isMegaStudy,
     setVariableUISettings,
     uiStateKey,
     defaultAppState,
