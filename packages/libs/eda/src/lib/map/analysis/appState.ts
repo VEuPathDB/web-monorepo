@@ -11,6 +11,7 @@ import {
 import { VariableDescriptor } from '../../core/types/variable';
 import { useGetDefaultTimeVariableDescriptor } from './hooks/eztimeslider';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
+import { STUDIES_ENTITY_ID, STUDY_ID_VARIABLE_ID } from '../constants';
 
 const LatLngLiteral = t.type({ lat: t.number, lng: t.number });
 
@@ -165,9 +166,9 @@ export function useAppState(
   const defaultTimeVariable = getDefaultTimeVariableDescriptor();
 
   const isMegaStudy =
-    studyMetadata.rootEntity.id === 'EUPATH_0000605' &&
+    studyMetadata.rootEntity.id === STUDIES_ENTITY_ID &&
     studyMetadata.rootEntity.variables.find(
-      (variable) => variable.id === 'OBI_0001622'
+      (variable) => variable.id === STUDY_ID_VARIABLE_ID
     ) != null;
 
   const defaultAppState: AppState = useMemo(

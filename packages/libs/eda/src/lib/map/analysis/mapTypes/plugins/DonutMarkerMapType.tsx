@@ -12,7 +12,12 @@ import {
   gradientSequentialColorscaleMap,
 } from '@veupathdb/components/lib/types/plots/addOns';
 import { useCallback, useMemo } from 'react';
-import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../../../constants';
+import {
+  STUDIES_ENTITY_ID,
+  STUDY_ID_VARIABLE_ID,
+  UNSELECTED_DISPLAY_TEXT,
+  UNSELECTED_TOKEN,
+} from '../../../constants';
 import {
   StandaloneMapMarkersResponse,
   Variable,
@@ -421,7 +426,8 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
       {appState.studyDetailsPanelConfig?.isVisble && (
         <SubStudies
           studyId={studyId}
-          entityId={studyEntities[0].id}
+          entityId={STUDIES_ENTITY_ID}
+          variableId={STUDY_ID_VARIABLE_ID}
           filters={filtersForSubStudies}
           panelConfig={appState.studyDetailsPanelConfig}
           updatePanelConfig={setStudyDetailsPanelConfig}

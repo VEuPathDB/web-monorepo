@@ -11,7 +11,10 @@ import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 interface Props {
   studyId: string;
+  /** ID for Studies entity */
   entityId: string;
+  /** ID for StudyID variable */
+  variableId: string;
   filters?: Filter[];
   panelConfig: PanelConfig;
   updatePanelConfig: (config: PanelConfig) => void;
@@ -21,8 +24,9 @@ export function SubStudies(props: Props) {
   // get tabular data for studies
   const {
     entityId,
-    filters = [],
     studyId,
+    variableId,
+    filters = [],
     panelConfig,
     updatePanelConfig,
   } = props;
@@ -33,7 +37,7 @@ export function SubStudies(props: Props) {
     queryFn: async () => {
       return await subsettingClient.getTabularData(studyId, entityId, {
         filters,
-        outputVariableIds: ['OBI_0001622'],
+        outputVariableIds: [variableId],
         reportConfig: {
           headerFormat: 'standard',
         },

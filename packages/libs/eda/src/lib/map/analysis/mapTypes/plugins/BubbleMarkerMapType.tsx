@@ -64,6 +64,7 @@ import {
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
 import { SubStudies } from '../../SubStudies';
 import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
+import { STUDIES_ENTITY_ID, STUDY_ID_VARIABLE_ID } from '../../../constants';
 
 const displayName = 'Bubbles';
 
@@ -258,7 +259,6 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
     updateConfiguration,
     headerButtons,
     setStudyDetailsPanelConfig,
-    studyEntities,
   } = props;
   const configuration = props.configuration as BubbleMarkerConfiguration;
 
@@ -326,7 +326,8 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
       {appState.studyDetailsPanelConfig?.isVisble && (
         <SubStudies
           studyId={studyId}
-          entityId={studyEntities[0].id}
+          entityId={STUDIES_ENTITY_ID}
+          variableId={STUDY_ID_VARIABLE_ID}
           filters={filtersForSubStudies}
           panelConfig={appState.studyDetailsPanelConfig}
           updatePanelConfig={setStudyDetailsPanelConfig}
