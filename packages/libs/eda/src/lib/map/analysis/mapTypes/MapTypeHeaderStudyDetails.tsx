@@ -42,12 +42,12 @@ export function MapTypeHeaderStudyDetails(props: Props) {
   const outputEntity = entities.find((entity) => entity.id === outputEntityId);
 
   const studyEntityCount = useEntityCount(
-    STUDIES_ENTITY_ID, // Study entity
+    studyEntity?.id, // Study entity
     filterForVisibleData // Should be subset, map type, timeline, and viewport filters
   );
 
   const outputEntityCount = useEntityCount(
-    outputEntityId,
+    outputEntity?.id,
     filterForVisibleData
   );
 
