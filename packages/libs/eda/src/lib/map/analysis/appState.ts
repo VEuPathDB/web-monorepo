@@ -253,38 +253,41 @@ export function useAppState(
               )
           );
 
-        // refactored these into two calls to setVariableUISettings to be more readable and future-proof
-        if (missingMarkerConfigs.length > 0)
-          setVariableUISettings((prev) => ({
-            ...prev,
-            [uiStateKey]: {
-              ...appState,
-              markerConfigurations: [
-                ...appState.markerConfigurations,
-                ...missingMarkerConfigs,
-              ],
-            },
-          }));
+        // Used to track if appState needs to be updated with
+        // missing pieces of configuration.
+        let nextAppState = appState;
 
-        const timeSliderConfigIsMissing = appState.timeSliderConfig == null;
-        if (timeSliderConfigIsMissing)
-          setVariableUISettings((prev) => ({
-            ...prev,
-            [uiStateKey]: {
-              ...appState,
-              timeSliderConfig: defaultAppState.timeSliderConfig,
-            },
-          }));
+        if (missingMarkerConfigs.length > 0) {
+          nextAppState = {
+            ...nextAppState,
+            markerConfigurations: [
+              ...nextAppState.markerConfigurations,
+              ...missingMarkerConfigs,
+            ],
+          };
+        }
+
+        if (appState.timeSliderConfig == null) {
+          nextAppState = {
+            ...nextAppState,
+            timeSliderConfig: defaultAppState.timeSliderConfig,
+          };
+        }
 
         if (isMegaStudy && appState.studyDetailsPanelConfig == null) {
+          nextAppState = {
+            ...nextAppState,
+            studyDetailsPanelConfig: defaultAppState.studyDetailsPanelConfig,
+          };
+        }
+
+        // If nextAppState has a new value, then we need to update
+        // the analysis object
+        if (nextAppState !== appState)
           setVariableUISettings((prev) => ({
             ...prev,
-            [uiStateKey]: {
-              ...appState,
-              studyDefaultsPanelConfig: defaultAppState.studyDetailsPanelConfig,
-            },
+            [uiStateKey]: nextAppState,
           }));
-        }
       }
       setAppStateChecked(true);
     }
