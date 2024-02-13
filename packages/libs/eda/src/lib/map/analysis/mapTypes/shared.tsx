@@ -32,6 +32,9 @@ import { getCategoricalValues } from '../utils/categoricalValues';
 import { Viewport } from '@veupathdb/components/lib/map/MapVEuMap';
 import { UseLittleFiltersProps } from '../littleFilters';
 import { filtersFromBoundingBox } from '../../../core/utils/visualization';
+import { MapFloatingErrorDiv } from '../MapFloatingErrorDiv';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { NoDataError } from '../../../core/api/DataClient/NoDataError';
 import { useCallback, useState } from 'react';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 
@@ -641,20 +644,39 @@ export const GLOBAL_VIEWPORT = {
  */
 
 const noDataPatterns = [
-  /did not contain any data/, // comes from map-markers endpoint
   /Could not generate continuous variable metadata/, // comes from continuous-variable-metadata endpoint
 ];
 
 export function isNoDataError(error: unknown) {
+  if (error instanceof NoDataError) return true;
   return noDataPatterns.some((pattern) => String(error).match(pattern));
 }
 
-export const noDataErrorMessage = (
+export function getErrorOverlayComponent(error: unknown) {
+  return isNoDataError(error) ? (
+    <MapFloatingErrorDiv>
+      <Banner
+        banner={{
+          type: 'warning',
+          message: error instanceof Error ? error.message : String(error),
+        }}
+      />
+    </MapFloatingErrorDiv>
+  ) : (
+    <MapFloatingErrorDiv error={error} />
+  );
+}
+
+const noDataLegendMessage = (
   <div css={{ textAlign: 'center', width: 200 }}>
     <p>Your filters have removed all data for this variable.</p>
     <p>Please check your filters or choose another variable.</p>
   </div>
 );
+
+export function getLegendErrorMessage(error: unknown) {
+  return isNoDataError(error) ? noDataLegendMessage : undefined;
+}
 
 /**
  * Simple styling for the optional visualization subtitle as used in

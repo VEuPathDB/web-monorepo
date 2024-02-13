@@ -2113,8 +2113,14 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         error={data.error}
         outputSize={outputSize}
         customCases={[
-          (errorString) =>
-            errorString.match(/400.+too large/is) ? (
+          (error) => {
+            const errorMessage =
+              error == null
+                ? ''
+                : error instanceof Error
+                ? error.message
+                : String(error);
+            return errorMessage.match(/400.+too large/is) ? (
               <span>
                 Your plot currently has too many points (&gt;
                 {MAXALLOWEDDATAPOINTS.toLocaleString()}) to display in a
@@ -2125,7 +2131,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                 tab to reduce the number, or consider using a summary plot such
                 as histogram or boxplot.
               </span>
-            ) : undefined,
+            ) : undefined;
+          },
         ]}
       />
 

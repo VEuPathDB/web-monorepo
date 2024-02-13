@@ -37,12 +37,12 @@ import {
   useCommonData,
   useDistributionMarkerData,
   useDistributionOverlayConfig,
-  isNoDataError,
-  noDataErrorMessage,
   visibleOptionFilterFuncs,
   markerDataFilterFuncs,
   floaterFilterFuncs,
   pieOrBarMarkerConfigLittleFilter,
+  getErrorOverlayComponent,
+  getLegendErrorMessage,
   useSelectedMarkerSnackbars,
 } from '../shared';
 import {
@@ -60,7 +60,6 @@ import { DonutMarkersIcon } from '../../MarkerConfiguration/icons';
 import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
 import MapVizManagement from '../../MapVizManagement';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
-import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
 import { useLittleFilters } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
@@ -339,9 +338,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
 
   // no markers and no error div for certain known error strings
   if (markerDataResponse.error && !markerDataResponse.isFetching)
-    return isNoDataError(markerDataResponse.error) ? null : (
-      <MapFloatingErrorDiv error={markerDataResponse.error} />
-    );
+    return getErrorOverlayComponent(markerDataResponse.error);
 
   // convert marker data into markers
   const markers = markerDataResponse.markerProps?.map((markerProps) => (
@@ -434,9 +431,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
   });
 
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
-  const noDataError = isNoDataError(data.error)
-    ? noDataErrorMessage
-    : undefined;
+  const noDataError = getLegendErrorMessage(data.error);
 
   return (
     <>
