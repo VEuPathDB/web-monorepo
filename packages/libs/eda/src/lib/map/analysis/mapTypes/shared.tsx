@@ -390,13 +390,12 @@ export function useSelectedMarkerSnackbars(
 ) {
   const { enqueueSnackbar } = useSnackbar();
   const [shownSelectedMarkersSnackbar, setShownSelectedMarkersSnackbar] =
-    useState(false);
+    useState(isMegaStudy);
   const [shownShiftKeySnackbar, setShownShiftKeySnackbar] = useState(false);
 
   return useCallback(
     (selectedMarkers: string[] | undefined) => {
       if (
-        !isMegaStudy &&
         !shownSelectedMarkersSnackbar &&
         selectedMarkers != null &&
         activeVisualizationId == null
