@@ -365,6 +365,7 @@ function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
           filters={filtersForSubStudies}
           panelConfig={appState.studyDetailsPanelConfig}
           updatePanelConfig={setStudyDetailsPanelConfig}
+          hasSelectedMarkers={!!selectedMarkers?.length}
         />
       )}
       <DraggableLegendPanel panelTitle="Count" zIndex={2}>

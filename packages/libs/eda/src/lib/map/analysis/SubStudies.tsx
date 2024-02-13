@@ -18,6 +18,7 @@ interface Props {
   filters?: Filter[];
   panelConfig: PanelConfig;
   updatePanelConfig: (config: PanelConfig) => void;
+  hasSelectedMarkers: boolean;
 }
 
 export function SubStudies(props: Props) {
@@ -29,6 +30,7 @@ export function SubStudies(props: Props) {
     filters = [],
     panelConfig,
     updatePanelConfig,
+    hasSelectedMarkers,
   } = props;
   const subsettingClient = useSubsettingClient();
   const permissions = usePermissions();
@@ -100,12 +102,13 @@ export function SubStudies(props: Props) {
               message: String(result.error),
             }}
           />
-        ) : result.data == null ? (
+        ) : result.isFetching ? (
           <Spinner />
         ) : (
           <div>
             <p>
-              There are {result.data.length - 1} studies visible on the map.
+              There {studyCountPhrase(result.data.length - 1)} for the{' '}
+              {hasSelectedMarkers ? 'selected' : 'visible'} markers on the map.
             </p>
             <ul>
               {result.data.slice(1).map(([id, display]) => (
@@ -126,4 +129,15 @@ export function SubStudies(props: Props) {
       </div>
     </DraggablePanel>
   );
+}
+
+function studyCountPhrase(numStudies: number) {
+  switch (numStudies) {
+    case 0:
+      return 'are no studies';
+    case 1:
+      return 'is 1 study';
+    default:
+      return `are ${numStudies} studies`;
+  }
 }

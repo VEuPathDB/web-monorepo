@@ -500,6 +500,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
           filters={filtersForSubStudies}
           panelConfig={appState.studyDetailsPanelConfig}
           updatePanelConfig={setStudyDetailsPanelConfig}
+          hasSelectedMarkers={!!selectedMarkers?.length}
         />
       )}
       <DraggableLegendPanel
