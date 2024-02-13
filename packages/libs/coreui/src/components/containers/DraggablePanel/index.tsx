@@ -114,7 +114,6 @@ export default function DraggablePanel(props: DraggablePanelProps) {
     onResize: ({ height, width }) => {
       if (!onPanelResize || !height || !width) return;
 
-      console.log('resize event', { height, width });
       onPanelResize({
         height: height,
         width: width,
