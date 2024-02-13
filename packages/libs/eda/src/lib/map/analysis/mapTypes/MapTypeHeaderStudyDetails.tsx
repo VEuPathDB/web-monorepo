@@ -107,7 +107,7 @@ export function MapTypeHeaderStudyDetails(props: Props) {
           )}
           <li>
             have data for the variable that is currently displayed on the
-            visible or slected markers
+            visible or selected markers
           </li>
           <li>
             have appropriate values, if the marker has been custom-configured
