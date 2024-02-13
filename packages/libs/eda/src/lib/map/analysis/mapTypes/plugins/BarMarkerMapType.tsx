@@ -55,6 +55,7 @@ import {
   visibleOptionFilterFuncs,
   getErrorOverlayComponent,
   getLegendErrorMessage,
+  selectedMarkersLittleFilter,
 } from '../shared';
 import {
   useFindEntityAndVariable,
@@ -615,6 +616,7 @@ const substudyFilterFuncs = [
   viewportLittleFilters,
   timeSliderLittleFilter,
   pieOrBarMarkerConfigLittleFilter,
+  selectedMarkersLittleFilter,
 ];
 
 export function TimeSliderComponent(props: MapTypeMapLayerProps) {

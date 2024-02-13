@@ -67,21 +67,13 @@ export function MapTypeHeaderStudyDetails(props: Props) {
         visualized on the map using markers. These are the{' '}
         {outputEntity.displayNamePlural} that
         <ul css={{ padding: '1em 0' }}>
-          <li>
-            satisfy all your filters (you currently have{' '}
-            {subsetFilterLength == null || subsetFilterLength === 0
-              ? 'no filters'
-              : subsetFilterLength === 1
-              ? '1 filter'
-              : format(subsetFilterLength) + ' filters'}{' '}
-            active)
-          </li>
+          <li>satisfy all your filters</li>
           {includesTimeSliderFilter && (
             <li>satisfy the time range you have selected</li>
           )}
           <li>
             have data for the variable that is currently displayed on the
-            markers
+            visible or slected markers
           </li>
           <li>
             have appropriate values, if the marker has been custom-configured

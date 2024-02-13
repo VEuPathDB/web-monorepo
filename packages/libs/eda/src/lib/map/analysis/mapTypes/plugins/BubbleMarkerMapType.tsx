@@ -46,6 +46,7 @@ import {
   viewportLittleFilters,
   getErrorOverlayComponent,
   useSelectedMarkerSnackbars,
+  selectedMarkersLittleFilter,
 } from '../shared';
 import {
   MapTypeConfigPanelProps,
@@ -496,6 +497,7 @@ const substudyFilterFuncs = [
   viewportLittleFilters,
   timeSliderLittleFilter,
   markerConfigLittleFilter,
+  selectedMarkersLittleFilter,
 ];
 
 export function TimeSliderComponent(props: MapTypeMapLayerProps) {
