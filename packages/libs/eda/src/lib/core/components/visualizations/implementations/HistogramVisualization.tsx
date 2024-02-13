@@ -869,13 +869,6 @@ function HistogramViz(props: VisualizationProps<Options>) {
 
   const widgetHeight = '4em';
 
-  // controls need the bin info from just one facet (not an empty one)
-  const data0 = isFaceted(data.value)
-    ? data.value.facets.find(
-        ({ data }) => data != null && data.series.length > 0
-      )?.data
-    : data.value;
-
   // set truncation flags: will see if this is reusable with other application
   const {
     truncationConfigIndependentAxisMin,
@@ -1117,18 +1110,18 @@ function HistogramViz(props: VisualizationProps<Options>) {
               }}
             >
               <BinWidthControl
-                binWidth={data0?.binWidthSlider?.binWidth}
+                binWidth={checkData?.binWidthSlider?.binWidth}
                 onBinWidthChange={onBinWidthChange}
-                binWidthRange={data0?.binWidthSlider?.binWidthRange}
-                binWidthStep={data0?.binWidthSlider?.binWidthStep}
-                valueType={data0?.binWidthSlider?.valueType}
+                binWidthRange={checkData?.binWidthSlider?.binWidthRange}
+                binWidthStep={checkData?.binWidthSlider?.binWidthStep}
+                valueType={checkData?.binWidthSlider?.valueType}
                 binUnit={
-                  data0?.binWidthSlider?.valueType === 'date'
-                    ? (data0?.binWidthSlider?.binWidth as TimeDelta).unit
+                  checkData?.binWidthSlider?.valueType === 'date'
+                    ? (checkData?.binWidthSlider?.binWidth as TimeDelta).unit
                     : undefined
                 }
                 binUnitOptions={
-                  data0?.binWidthSlider?.valueType === 'date'
+                  checkData?.binWidthSlider?.valueType === 'date'
                     ? ['day', 'week', 'month', 'year']
                     : undefined
                 }
