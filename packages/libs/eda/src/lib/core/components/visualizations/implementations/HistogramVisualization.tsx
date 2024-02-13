@@ -613,6 +613,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
         facetVariable?.vocabulary,
         facetVariable
       );
+
       return grayOutLastSeries(
         substituteUnselectedToken(
           reorderData(
@@ -650,6 +651,18 @@ function HistogramViz(props: VisualizationProps<Options>) {
       facetEntity,
     ])
   );
+
+  // controls need the bin info from just one facet (not an empty one)
+  const checkData = isFaceted(data.value)
+    ? data.value.facets.find(
+        ({ data }) => data != null && data.series.length > 0
+      )?.data
+    : data.value;
+
+  // we can't always rely on data.value?.completeCasesXXXVars (e.g. in SAM)
+  // in the outputSize determination above, so we make a simple check the data (or one non-empty facet)
+  const isEmptyData =
+    checkData?.series.find((series) => series.bins.length > 0) == null;
 
   // Note: Histogram distribution data contains statistical values such as summary.min/max,
   // however, it does not fully respect multiple filters.
@@ -1375,7 +1388,10 @@ function HistogramViz(props: VisualizationProps<Options>) {
         )}
       </div>
 
-      <PluginError error={data.error} outputSize={outputSize} />
+      <PluginError
+        error={data.error}
+        outputSize={isEmptyData ? 0 : outputSize}
+      />
 
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {!hideInputsAndControls && (
@@ -1411,9 +1427,6 @@ export function histogramResponseToData(
   overlayVariable?: Variable,
   facetVariable?: Variable
 ): HistogramDataWithCoverageStatistics {
-  if (!response.histogram.data.find((item) => item.value.length > 0))
-    throw Error(`Expected one or more data series, but got zero`);
-
   const facetGroupedResponseData = groupBy(response.histogram.data, (data) =>
     data.facetVariableDetails && data.facetVariableDetails.length === 1
       ? fixLabelForNumberVariables(
@@ -1482,9 +1495,11 @@ export function histogramResponseToData(
   });
 
   return {
-    // data
-    ...(size(processedData) === 1 &&
-    head(keys(processedData)) === '__NO_FACET__'
+    // to avoid erronous assignment to facetedData for empty data reponse
+    // need to check if size(processedData) === 0 condition has any side effect
+    ...((size(processedData) === 1 &&
+      head(keys(processedData)) === '__NO_FACET__') ||
+    size(processedData) === 0
       ? // unfaceted
         head(values(processedData))
       : // faceted
