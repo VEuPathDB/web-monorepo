@@ -1,4 +1,5 @@
 import { TypeOf, Decoder } from 'io-ts';
+import { v4 as uuid } from 'uuid';
 
 import {
   createJsonRequest,
@@ -34,6 +35,7 @@ import {
   StandaloneMapBubblesLegendRequestParams,
   StandaloneMapBubblesLegendResponse,
 } from './types';
+import { NoDataError } from './NoDataError';
 
 export default class DataClient extends FetchClientWithCredentials {
   getApps(): Promise<TypeOf<typeof AppsResponse>> {
@@ -57,7 +59,17 @@ export default class DataClient extends FetchClientWithCredentials {
         method: 'POST',
         path: `/apps/${computationName}/visualizations/${visualizationName}`,
         body: params,
-        transformResponse: ioTransformer(decoder),
+        transformResponse(body) {
+          if (body == null) {
+            throw new NoDataError(
+              'The visualization cannot be made because no data remains after filtering.',
+              'No data',
+              204,
+              uuid()
+            );
+          }
+          return ioTransformer(decoder)(body);
+        },
       })
     );
   }

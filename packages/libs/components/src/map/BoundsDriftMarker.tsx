@@ -1,5 +1,5 @@
 import { useMap, Popup } from 'react-leaflet';
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 // use new ReactLeafletDriftMarker instead of DriftMarker
 import ReactLeafletDriftMarker from 'react-leaflet-drift-marker';
 import { MarkerProps, Bounds } from './Types';
@@ -15,7 +15,7 @@ export interface BoundsDriftMarkerProps extends MarkerProps {
   // selectedMarkers state
   selectedMarkers?: string[];
   // selectedMarkers setState
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
+  setSelectedMarkers?: (selectedMarkers: string[] | undefined) => void;
 }
 
 /**
@@ -281,30 +281,33 @@ export default function BoundsDriftMarker({
   };
 
   // add click events for highlighting markers
-  const handleClick = (e: LeafletMouseEvent) => {
-    // check the number of mouse click and enable function for single click only
-    if (e.originalEvent.detail === 1) {
-      if (setSelectedMarkers) {
-        if (selectedMarkers?.find((id) => id === props.id)) {
-          setSelectedMarkers((prevSelectedMarkers: string[]) =>
-            prevSelectedMarkers.filter((id: string) => id !== props.id)
-          );
-        } else {
-          // select
-          setSelectedMarkers((prevSelectedMarkers: string[]) => [
-            ...prevSelectedMarkers,
-            props.id,
-          ]);
+  const handleClick = useCallback(
+    (e: LeafletMouseEvent) => {
+      // check the number of mouse click and enable function for single click only
+      if (e.originalEvent.detail === 1) {
+        if (setSelectedMarkers) {
+          if (selectedMarkers?.find((id) => id === props.id)) {
+            setSelectedMarkers(
+              selectedMarkers.filter((id: string) => id !== props.id)
+            );
+          } else if (e.originalEvent.shiftKey) {
+            // add to selection if SHIFT key pressed
+            setSelectedMarkers([...(selectedMarkers ?? []), props.id]);
+          } else {
+            // replace selection
+            setSelectedMarkers([props.id]);
+          }
         }
-      }
 
-      // Sometimes clicking throws off the popup's orientation, so reorient it
-      orientPopup(popupOrientationRef.current);
-      // Default popup behavior is to open on marker click
-      // Prevent by immediately closing it
-      e.target.closePopup();
-    }
-  };
+        // Sometimes clicking throws off the popup's orientation, so reorient it
+        orientPopup(popupOrientationRef.current);
+        // Default popup behavior is to open on marker click
+        // Prevent by immediately closing it
+        e.target.closePopup();
+      }
+    },
+    [setSelectedMarkers, selectedMarkers, props.id]
+  );
 
   const handleDoubleClick = () => {
     if (map) {
