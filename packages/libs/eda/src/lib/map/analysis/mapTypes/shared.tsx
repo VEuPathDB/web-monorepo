@@ -385,6 +385,7 @@ export function isApproxSameViewport(v1: Viewport, v2: Viewport) {
 
 // returns a function (selectedMarkers?) => voi
 export function useSelectedMarkerSnackbars(
+  isMegaStudy: boolean,
   activeVisualizationId: string | undefined
 ) {
   const { enqueueSnackbar } = useSnackbar();
@@ -395,6 +396,7 @@ export function useSelectedMarkerSnackbars(
   return useCallback(
     (selectedMarkers: string[] | undefined) => {
       if (
+        !isMegaStudy &&
         !shownSelectedMarkersSnackbar &&
         selectedMarkers != null &&
         activeVisualizationId == null

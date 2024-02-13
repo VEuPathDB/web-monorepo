@@ -230,6 +230,7 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
   });
 
   const handleSelectedMarkerSnackbars = useSelectedMarkerSnackbars(
+    appState.studyDetailsPanelConfig != null,
     configuration.activeVisualizationId
   );
 

@@ -371,6 +371,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
   });
 
   const handleSelectedMarkerSnackbars = useSelectedMarkerSnackbars(
+    appState.studyDetailsPanelConfig != null,
     activeVisualizationId
   );
 
