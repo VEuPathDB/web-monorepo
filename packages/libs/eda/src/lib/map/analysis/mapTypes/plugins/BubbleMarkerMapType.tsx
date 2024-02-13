@@ -42,6 +42,8 @@ import {
   isApproxSameViewport,
   markerDataFilterFuncs,
   useCommonData,
+  getErrorOverlayComponent,
+  useSelectedMarkerSnackbars,
 } from '../shared';
 import {
   MapTypeConfigPanelProps,
@@ -54,7 +56,6 @@ import { useQuery } from '@tanstack/react-query';
 import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import { GeoConfig } from '../../../../core/types/geoConfig';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
-import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
 import { useLittleFilters, UseLittleFiltersProps } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
@@ -65,7 +66,7 @@ export const plugin: MapTypePlugin = {
   displayName,
   ConfigPanelComponent: BubbleMapConfigurationPanel,
   MapLayerComponent: BubbleMapLayer,
-  MapOverlayComponent: BubbleLegends,
+  MapOverlayComponent: BubbleLegendsAndFloater,
   MapTypeHeaderDetails,
   TimeSliderComponent,
 };
@@ -186,10 +187,13 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
     studyId,
     filters,
     appState,
-    appState: { boundsZoomLevel },
+    appState: {
+      boundsZoomLevel,
+      markerConfigurations,
+      activeMarkerConfigurationType,
+    },
+    updateConfiguration,
     geoConfigs,
-    selectedMarkers,
-    setSelectedMarkers,
   } = props;
 
   const configuration = props.configuration as BubbleMarkerConfiguration;
@@ -216,12 +220,33 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
     studyId,
     filters: filtersForMarkerData,
   });
+
+  const handleSelectedMarkerSnackbars = useSelectedMarkerSnackbars(
+    configuration.activeVisualizationId
+  );
+
+  const setSelectedMarkers = useCallback(
+    (selectedMarkers?: string[]) => {
+      handleSelectedMarkerSnackbars(selectedMarkers);
+      updateConfiguration({
+        ...(props.configuration as BubbleMarkerConfiguration),
+        selectedMarkers,
+      });
+    },
+    [props.configuration, updateConfiguration]
+  );
+
   if (markersData.error && !markersData.isFetching)
-    return <MapFloatingErrorDiv error={markersData.error} />;
+    return getErrorOverlayComponent(markersData.error);
 
   const markers = markersData.data?.markersData?.map((markerProps) => (
     <BubbleMarker {...markerProps} />
   ));
+
+  const selectedMarkers = markerConfigurations.find(
+    (markerConfiguration) =>
+      markerConfiguration.type === activeMarkerConfigurationType
+  )?.selectedMarkers;
 
   return (
     <>
@@ -243,12 +268,13 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
   );
 }
 
-function BubbleLegends(props: MapTypeMapLayerProps) {
+function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
   const {
     studyId,
     filters,
     geoConfigs,
     appState,
+    appState: { markerConfigurations, activeMarkerConfigurationType },
     updateConfiguration,
     headerButtons,
   } = props;
@@ -281,8 +307,14 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
     [configuration, updateConfiguration]
   );
 
+  const selectedMarkers = markerConfigurations.find(
+    (markerConfiguration) =>
+      markerConfiguration.type === activeMarkerConfigurationType
+  )?.selectedMarkers;
+
   const plugins = useStandaloneVizPlugins({
     overlayHelp: 'Overlay variables are not available for this map type',
+    selectedMarkers,
   });
 
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
