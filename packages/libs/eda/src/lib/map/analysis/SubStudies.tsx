@@ -73,7 +73,7 @@ export function SubStudies(props: Props) {
       isOpen
       confineToParentContainer
       showPanelTitle
-      panelTitle="Visible studies"
+      panelTitle="Studies"
       defaultPosition={panelConfig.position}
       onDragComplete={updatePosition}
       onPanelResize={updateDimensions}
