@@ -540,21 +540,15 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
 
 function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
   const {
-    studyId,
     studyEntities,
     geoConfigs,
     appState,
-    appState: { boundsZoomLevel, timeSliderConfig, studyDetailsPanelConfig },
+    appState: { timeSliderConfig, studyDetailsPanelConfig },
     filters,
   } = props;
 
-  const {
-    selectedVariable,
-    binningMethod,
-    selectedValues,
-    dependentAxisLogScale,
-    selectedPlotMode,
-  } = props.configuration as BarPlotMarkerConfiguration;
+  const { selectedVariable } =
+    props.configuration as BarPlotMarkerConfiguration;
 
   const { filters: filtersForSubStudies } = useLittleFilters(
     {
@@ -565,41 +559,15 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     substudyFilterFuncs
   );
 
-  const { filters: filtersForMarkerData } = useLittleFilters(
-    {
-      filters,
-      appState,
-      geoConfigs,
-    },
-    markerDataFilterFuncs
-  );
-
-  const markerDataResponse = useMarkerData({
-    studyId,
-    filters: filtersForMarkerData,
-    studyEntities,
-    geoConfigs,
-    boundsZoomLevel,
-    selectedVariable,
-    selectedValues,
-    binningMethod,
-    dependentAxisLogScale,
-    valueSpec: selectedPlotMode,
-  });
-
   const {
     outputEntity: { id: outputEntityId },
   } = useCommonData(selectedVariable, geoConfigs, studyEntities);
 
   return outputEntityId != null ? (
     <MapTypeHeaderStudyDetails
-      subsetFilterLength={props.filters?.length}
-      filterForVisibleData={filtersForSubStudies}
+      filtersForVisibleData={filtersForSubStudies}
       includesTimeSliderFilter={timeSliderConfig != null}
       outputEntityId={outputEntityId}
-      totalEntityCount={props.totalCounts.value?.[outputEntityId]}
-      totalEntityInSubsetCount={props.filteredCounts.value?.[outputEntityId]}
-      visibleEntityCount={markerDataResponse.totalVisibleWithOverlayEntityCount}
       onShowStudies={
         studyDetailsPanelConfig &&
         ((isVisble) =>

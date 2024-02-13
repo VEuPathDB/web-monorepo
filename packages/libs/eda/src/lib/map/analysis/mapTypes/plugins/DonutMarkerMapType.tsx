@@ -506,24 +506,13 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
 
 function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
   const {
-    studyId,
     studyEntities,
     appState,
-    appState: { boundsZoomLevel, timeSliderConfig, studyDetailsPanelConfig },
+    appState: { timeSliderConfig, studyDetailsPanelConfig },
     geoConfigs,
     filters,
   } = props;
-  const { selectedVariable, binningMethod, selectedValues } =
-    props.configuration as PieMarkerConfiguration;
-
-  const { filters: filtersForMarkerData } = useLittleFilters(
-    {
-      filters,
-      appState,
-      geoConfigs,
-    },
-    markerDataFilterFuncs
-  );
+  const { selectedVariable } = props.configuration as PieMarkerConfiguration;
 
   const { filters: filtersForSubStudies } = useLittleFilters(
     {
@@ -534,31 +523,15 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     substudyFilterFuncs
   );
 
-  const markerDataResponse = useMarkerData({
-    studyId,
-    filters: filtersForMarkerData,
-    studyEntities,
-    geoConfigs,
-    boundsZoomLevel,
-    selectedVariable,
-    selectedValues,
-    binningMethod,
-    valueSpec: 'count',
-  });
-
   const {
     outputEntity: { id: outputEntityId },
   } = useCommonData(selectedVariable, geoConfigs, studyEntities);
 
   return outputEntityId != null ? (
     <MapTypeHeaderStudyDetails
-      subsetFilterLength={props.filters?.length}
-      filterForVisibleData={filtersForSubStudies}
+      filtersForVisibleData={filtersForSubStudies}
       includesTimeSliderFilter={timeSliderConfig != null}
       outputEntityId={outputEntityId}
-      totalEntityCount={props.totalCounts.value?.[outputEntityId]}
-      totalEntityInSubsetCount={props.filteredCounts.value?.[outputEntityId]}
-      visibleEntityCount={markerDataResponse.totalVisibleWithOverlayEntityCount}
       onShowStudies={
         studyDetailsPanelConfig &&
         ((isVisble) =>

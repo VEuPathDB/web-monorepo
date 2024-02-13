@@ -242,7 +242,7 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
         selectedMarkers,
       });
     },
-    [props.configuration, updateConfiguration]
+    [handleSelectedMarkerSnackbars, props.configuration, updateConfiguration]
   );
 
   if (markersData.error && !markersData.isFetching)
@@ -430,12 +430,11 @@ function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
 
 function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
   const {
-    studyId,
     studyEntities,
     filters,
     geoConfigs,
     appState,
-    appState: { boundsZoomLevel, timeSliderConfig, studyDetailsPanelConfig },
+    appState: { timeSliderConfig, studyDetailsPanelConfig },
   } = props;
 
   const configuration = props.configuration as BubbleMarkerConfiguration;
@@ -449,38 +448,15 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     substudyFilterFuncs
   );
 
-  const { filters: filtersForMarkerData } = useLittleFilters(
-    {
-      filters,
-      appState,
-      geoConfigs,
-    },
-    markerDataFilterFuncs
-  );
-
-  const markerDataResponse = useMarkerData({
-    studyId,
-    filters: filtersForMarkerData,
-    geoConfigs,
-    boundsZoomLevel,
-    configuration,
-  });
-
   const {
     outputEntity: { id: outputEntityId },
   } = useCommonData(configuration.selectedVariable, geoConfigs, studyEntities);
 
   return outputEntityId != null ? (
     <MapTypeHeaderStudyDetails
-      subsetFilterLength={props.filters?.length}
-      filterForVisibleData={filtersForSubStudies}
+      filtersForVisibleData={filtersForSubStudies}
       includesTimeSliderFilter={timeSliderConfig != null}
       outputEntityId={outputEntityId}
-      totalEntityCount={props.totalCounts.value?.[outputEntityId]}
-      totalEntityInSubsetCount={props.filteredCounts.value?.[outputEntityId]}
-      visibleEntityCount={
-        markerDataResponse.data.totalVisibleWithOverlayEntityCount
-      }
       onShowStudies={
         studyDetailsPanelConfig &&
         ((isVisble) =>

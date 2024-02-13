@@ -7,9 +7,9 @@ import {
   useStudyMetadata,
   useSubsettingClient,
 } from '../../../core';
+import { STUDIES_ENTITY_ID } from '../../constants';
 
 interface Props {
-  subsetFilterLength: number | undefined;
   includesTimeSliderFilter: boolean;
   /** All filters applied to the map, including:
    * - subset
@@ -17,12 +17,9 @@ interface Props {
    * - timeline filters
    * - viewport
    */
-  filterForVisibleData: Filter[];
+  filtersForVisibleData: Filter[];
   /** Entity space of map markers, overlay, etc */
   outputEntityId: string;
-  totalEntityCount?: number;
-  totalEntityInSubsetCount?: number;
-  visibleEntityCount?: number;
   /**
    * If omitted, do not show studies link
    */
@@ -33,38 +30,61 @@ const { format } = new Intl.NumberFormat('en-us');
 
 export function MapTypeHeaderStudyDetails(props: Props) {
   const {
-    subsetFilterLength,
-    filterForVisibleData,
+    filtersForVisibleData: filterForVisibleData,
     includesTimeSliderFilter,
     outputEntityId,
-    visibleEntityCount,
     onShowStudies,
   } = props;
-  const { rootEntity } = useStudyMetadata();
-  const rootEntityCount = useEntityCount(
-    rootEntity.id, // Study entity
+  const entities = useStudyEntities();
+  const studyEntity = entities.find(
+    (entity) => entity.id === STUDIES_ENTITY_ID
+  );
+  const outputEntity = entities.find((entity) => entity.id === outputEntityId);
+
+  const studyEntityCount = useEntityCount(
+    STUDIES_ENTITY_ID, // Study entity
     filterForVisibleData // Should be subset, map type, timeline, and viewport filters
   );
 
-  const outputEntity = useStudyEntities().find(
-    (entity) => entity.id === outputEntityId
+  const outputEntityCount = useEntityCount(
+    outputEntityId,
+    filterForVisibleData
   );
 
-  if (
-    rootEntityCount.data == null ||
-    visibleEntityCount == null ||
-    outputEntity == null
-  )
-    return null;
+  // Should not happen. Throw error?
+  if (outputEntity == null) return null;
 
-  const totalCountFormatted = format(visibleEntityCount);
-  const totalRootEntityFormatted = format(rootEntityCount.data.count);
+  if (
+    studyEntityCount.data == null ||
+    studyEntityCount.isFetching ||
+    outputEntityCount.data == null ||
+    outputEntityCount.isFetching
+  )
+    return (
+      <div
+        css={{
+          padding: '1em',
+          fontSize: '1.2em',
+          display: 'flex',
+          gap: '1ex',
+          alignItems: 'center',
+        }}
+      >
+        Loading counts&hellip;
+      </div>
+    );
+
+  const totalCountFormatted = format(outputEntityCount.data.count);
+  const totalStudiesFormatted = format(studyEntityCount.data.count);
 
   const tooltipContent = (
     <div>
       <p>
-        {totalCountFormatted} {outputEntity.displayNamePlural} are currently
-        visualized on the map using markers. These are the{' '}
+        {totalCountFormatted}{' '}
+        {outputEntityCount.data.count === 1
+          ? outputEntity.displayName + ' is'
+          : outputEntity.displayNamePlural + ' are'}{' '}
+        currently visualized on the map using markers. These are the{' '}
         {outputEntity.displayNamePlural} that
         <ul css={{ padding: '1em 0' }}>
           <li>satisfy all your filters</li>
@@ -80,10 +100,12 @@ export function MapTypeHeaderStudyDetails(props: Props) {
           </li>
         </ul>
       </p>
-      {onShowStudies && (
+      {onShowStudies && studyEntity && (
         <p>
-          The visualized data comes from {totalRootEntityFormatted}{' '}
-          {rootEntity.displayNamePlural}{' '}
+          The visualized data comes from {totalStudiesFormatted}{' '}
+          {studyEntityCount.data.count === 1
+            ? studyEntity.displayName
+            : studyEntity.displayNamePlural}{' '}
           <button type="button" onClick={() => onShowStudies(true)}>
             Show list
           </button>
@@ -103,12 +125,15 @@ export function MapTypeHeaderStudyDetails(props: Props) {
           alignItems: 'center',
         }}
       >
-        {format(visibleEntityCount)} {outputEntity.displayNamePlural}
-        {onShowStudies && (
+        {totalCountFormatted}{' '}
+        {outputEntityCount.data.count === 1
+          ? outputEntity.displayName
+          : outputEntity.displayNamePlural}
+        {onShowStudies && studyEntity && (
           <>
             {' '}
-            from {format(rootEntityCount.data.count)}{' '}
-            {rootEntity.displayNamePlural}
+            from {format(studyEntityCount.data.count)}{' '}
+            {studyEntity.displayNamePlural}
           </>
         )}
         <Tooltip title={tooltipContent} interactive style={{ width: 'auto' }}>
@@ -119,12 +144,16 @@ export function MapTypeHeaderStudyDetails(props: Props) {
   );
 }
 
-function useEntityCount(entityId: string, filters?: Filter[]) {
+function useEntityCount(entityId?: string, filters?: Filter[]) {
   const studyMetadata = useStudyMetadata();
   const subsettingClient = useSubsettingClient();
   return useQuery({
     queryKey: ['entityCount', entityId, filters],
     queryFn: async function () {
+      if (entityId == null)
+        return {
+          count: 0,
+        };
       return subsettingClient.getEntityCount(
         studyMetadata.id,
         entityId,
