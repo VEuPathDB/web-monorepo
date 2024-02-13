@@ -20,8 +20,8 @@ import {
   success,
   blue,
   ColorHue,
-} from '../../../definitions/colors';
-import { useUITheme } from '../../theming';
+} from '../../definitions/colors';
+import { useUITheme } from '../theming';
 
 export type BannerProps = {
   type: 'warning' | 'danger' | 'error' | 'success' | 'info' | 'normal';

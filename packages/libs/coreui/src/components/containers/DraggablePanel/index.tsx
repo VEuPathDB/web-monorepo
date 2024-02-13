@@ -5,7 +5,7 @@ import useResizeObserver from 'use-resize-observer';
 import { gray } from '../../../definitions/colors';
 import { screenReaderOnly } from '../../../styleDefinitions/typography';
 import { useUITheme } from '../../theming';
-import DismissButton from '../../information/notifications/DismissButton';
+import DismissButton from '../../notifications/DismissButton';
 import { H6 } from '../../typography';
 
 export type DraggablePanelCoordinatePair = {

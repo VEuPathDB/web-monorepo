@@ -15,8 +15,8 @@ import {
   success,
   error,
   warning,
-} from '../../../definitions/colors';
-import { UITheme, useUITheme } from '../../theming';
+} from '../../definitions/colors';
+import { UITheme, useUITheme } from '../theming';
 
 export type SnackbarStyleProps<T> = T & { theme?: UITheme };
 
