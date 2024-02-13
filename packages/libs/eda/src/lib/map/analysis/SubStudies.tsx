@@ -102,7 +102,7 @@ export function SubStudies(props: Props) {
               message: String(result.error),
             }}
           />
-        ) : result.isFetching ? (
+        ) : result.data == null || result.isFetching ? (
           <Spinner />
         ) : (
           <div>
