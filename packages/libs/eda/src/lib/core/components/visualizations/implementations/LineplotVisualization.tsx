@@ -101,11 +101,7 @@ import { LegendItemsProps } from '@veupathdb/components/lib/components/plotContr
 import { isFaceted, isTimeDelta } from '@veupathdb/components/lib/types/guards';
 import FacetedLinePlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedLinePlot';
 import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
-import {
-  TimeUnit,
-  LineplotBinWidthSlider,
-  LineplotBinSpec,
-} from '../../../types/general';
+import { BinSpec, BinWidthSlider, TimeUnit } from '../../../types/general';
 import {
   useNeutralPaletteProps,
   useVizConfig,
@@ -2163,9 +2159,9 @@ function processInputData(
   showMissingness: boolean,
   hasMissingData: boolean,
   dependentIsProportion: boolean,
-  // allow null for binspec and binslider
-  binSpec?: LineplotBinSpec,
-  binWidthSlider?: LineplotBinWidthSlider,
+  // allow null for binSpec and binWidthSlider
+  binSpec?: BinSpec,
+  binWidthSlider?: BinWidthSlider,
   overlayVariable?: Variable,
   colorPaletteOverride?: string[],
   showMarginalHistogram?: boolean

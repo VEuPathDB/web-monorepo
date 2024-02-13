@@ -1411,7 +1411,17 @@ export function histogramResponseToData(
   overlayVariable?: Variable,
   facetVariable?: Variable
 ): HistogramDataWithCoverageStatistics {
-  if (response.histogram.data.length === 0)
+  // check if data is empty: there is a case that data.length != 0 but still no data at SAM
+  // dataExist before filter() will have an array of booleans, e.g.,  [true, false, true,...]
+  // if data does not exists, the array consists of all false values
+  // filtering out true cases, then no data  = dataExist.length === 0
+  const dataExist = response.histogram.data
+    .map((item) => {
+      return item.value.length > 0;
+    })
+    .filter((element: boolean) => element);
+
+  if (response.histogram.data.length === 0 || dataExist.length === 0)
     throw Error(`Expected one or more data series, but got zero`);
 
   const facetGroupedResponseData = groupBy(response.histogram.data, (data) =>
