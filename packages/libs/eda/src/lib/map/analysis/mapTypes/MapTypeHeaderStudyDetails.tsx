@@ -52,7 +52,21 @@ export function MapTypeHeaderStudyDetails(props: Props) {
   );
 
   // Should not happen. Throw error?
-  if (outputEntity == null) return null;
+  if (
+    outputEntity == null ||
+    outputEntityCount.error ||
+    studyEntityCount.error
+  ) {
+    outputEntity == null &&
+      console.error('Could not find an entity with the ID ' + outputEntityId);
+    outputEntityCount.error && console.error(outputEntityCount.error);
+    studyEntityCount.error && console.error(studyEntityCount.error);
+    return (
+      <div>
+        <em>Could not load counts for map data</em>
+      </div>
+    );
+  }
 
   if (
     studyEntityCount.data == null ||
