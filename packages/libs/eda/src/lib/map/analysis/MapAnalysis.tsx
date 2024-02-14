@@ -168,6 +168,7 @@ function MapAnalysisImpl(props: ImplProps) {
     setIsSidePanelExpanded,
     setMarkerConfigurations,
     setActiveMarkerConfigurationType,
+    setStudyDetailsPanelConfig,
     geoConfigs,
     setTimeSliderConfig,
     showLinkToEda = false,
@@ -764,6 +765,7 @@ function MapAnalysisImpl(props: ImplProps) {
           filteredCounts,
           hideVizInputsAndControls,
           setHideVizInputsAndControls,
+          setStudyDetailsPanelConfig,
           headerButtons: HeaderButtons,
         };
 
