@@ -662,6 +662,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
   // we can't always rely on data.value?.completeCasesXXXVars (e.g. in SAM)
   // in the outputSize determination above, so we make a simple check the data (or one non-empty facet)
   const isEmptyData =
+    data.value &&
     checkData?.series.find((series) => series.bins.length > 0) == null;
 
   // Note: Histogram distribution data contains statistical values such as summary.min/max,

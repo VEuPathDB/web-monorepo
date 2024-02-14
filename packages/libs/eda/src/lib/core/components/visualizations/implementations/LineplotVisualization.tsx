@@ -1138,7 +1138,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
   // use data0 also to determine if there's no data at all (for PluginError banner)
   // because outputSize can't always rely on data.value.completeCasesAllVars and friend
   const isEmptyData =
-    data0?.series.find((series) => series.x.length > 0) == null;
+    data.value && data0?.series.find((series) => series.x.length > 0) == null;
 
   // add banner condition to avoid unnecessary disabled
   const neverUseBinning =
