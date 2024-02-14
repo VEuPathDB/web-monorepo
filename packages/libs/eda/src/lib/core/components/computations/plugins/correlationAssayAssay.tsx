@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
   FeaturePrefilterThresholds,
   useFindEntityAndVariableCollection,
@@ -166,6 +167,21 @@ export function CorrelationAssayAssayConfiguration(
     visualizationId
   );
 
+  // set initial prefilterThresholds
+  useEffect(() => {
+    changeConfigHandler('prefilterThresholds', {
+      proportionNonZero:
+        configuration.prefilterThresholds?.proportionNonZero ??
+        DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
+      variance:
+        configuration.prefilterThresholds?.variance ??
+        DEFAULT_VARIANCE_THRESHOLD,
+      standardDeviation:
+        configuration.prefilterThresholds?.standardDeviation ??
+        DEFAULT_STANDARD_DEVIATION_THRESHOLD,
+    });
+  }, []);
+
   return (
     <ComputationStepContainer
       computationStepInfo={{
@@ -212,21 +228,28 @@ export function CorrelationAssayAssayConfiguration(
             </div>
           </div>
           <div className={cx('-CorrelationOuterConfigContainer')}>
-            <H6>Prefilters</H6>
+            <H6>Prefilter Data</H6>
             <div className={cx('-InputContainer')}>
-              <span>Proportion non-zero</span>
+              <span>
+                Prevalence: Keep if abundance is non-zero in at least{' '}
+              </span>
               <NumberInput
                 minValue={0}
-                maxValue={1}
-                step={0.01}
+                maxValue={100}
+                step={1}
                 value={
-                  configuration.prefilterThresholds?.proportionNonZero ??
-                  DEFAULT_PROPORTION_NON_ZERO_THRESHOLD
+                  // display with % value
+                  configuration.prefilterThresholds?.proportionNonZero != null
+                    ? configuration.prefilterThresholds?.proportionNonZero * 100
+                    : DEFAULT_PROPORTION_NON_ZERO_THRESHOLD * 100
                 }
                 onValueChange={(newValue) => {
                   changeConfigHandler('prefilterThresholds', {
                     proportionNonZero:
-                      Number(newValue) ?? DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
+                      // save as decimal point, not %
+                      newValue != null
+                        ? Number((newValue as number) / 100)
+                        : DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
                     variance:
                       configuration.prefilterThresholds?.variance ??
                       DEFAULT_VARIANCE_THRESHOLD,
@@ -235,48 +258,9 @@ export function CorrelationAssayAssayConfiguration(
                       DEFAULT_STANDARD_DEVIATION_THRESHOLD,
                   });
                 }}
+                containerStyles={{ width: '5.5em' }}
               />
-              <span>Variance</span>
-              <NumberInput
-                minValue={0}
-                step={1}
-                value={
-                  configuration.prefilterThresholds?.variance ??
-                  DEFAULT_VARIANCE_THRESHOLD
-                }
-                onValueChange={(newValue) => {
-                  changeConfigHandler('prefilterThresholds', {
-                    proportionNonZero:
-                      configuration.prefilterThresholds?.proportionNonZero ??
-                      DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
-                    variance: Number(newValue) ?? DEFAULT_VARIANCE_THRESHOLD,
-                    standardDeviation:
-                      configuration.prefilterThresholds?.standardDeviation ??
-                      DEFAULT_STANDARD_DEVIATION_THRESHOLD,
-                  });
-                }}
-              />
-              <span>Standard deviation</span>
-              <NumberInput
-                minValue={0}
-                step={1}
-                value={
-                  configuration.prefilterThresholds?.standardDeviation ??
-                  DEFAULT_STANDARD_DEVIATION_THRESHOLD
-                }
-                onValueChange={(newValue) => {
-                  changeConfigHandler('prefilterThresholds', {
-                    proportionNonZero:
-                      configuration.prefilterThresholds?.proportionNonZero ??
-                      DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
-                    variance:
-                      configuration.prefilterThresholds?.variance ??
-                      DEFAULT_VARIANCE_THRESHOLD,
-                    standardDeviation:
-                      Number(newValue) ?? DEFAULT_STANDARD_DEVIATION_THRESHOLD,
-                  });
-                }}
-              />
+              <span>% of samples</span>
             </div>
           </div>
         </div>
