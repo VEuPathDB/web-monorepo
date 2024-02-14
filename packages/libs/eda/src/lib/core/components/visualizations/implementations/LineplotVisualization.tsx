@@ -1135,6 +1135,10 @@ function LineplotViz(props: VisualizationProps<Options>) {
       )?.data
     : data.value?.dataSetProcess;
 
+  // use data0 also to determine if there's no data at all (for PluginError banner)
+  const isEmptyData =
+    data0?.series.find((series) => series.x.length > 0) == null;
+
   // add banner condition to avoid unnecessary disabled
   const neverUseBinning =
     !showIndependentAxisBanner &&
@@ -1824,7 +1828,10 @@ function LineplotViz(props: VisualizationProps<Options>) {
         )}
       </div>
 
-      <PluginError error={data.error} outputSize={outputSize} />
+      <PluginError
+        error={data.error}
+        outputSize={isEmptyData ? 0 : outputSize}
+      />
       {!hideInputsAndControls && (
         <OutputEntityTitle
           entity={outputEntity}
@@ -1928,9 +1935,11 @@ export function lineplotResponseToData(
   const yMax = max(map(processedData, ({ yMax }) => yMax));
 
   const dataSetProcess =
-    size(processedData) === 1 && head(keys(processedData)) === '__NO_FACET__'
+    (size(processedData) === 1 &&
+      head(keys(processedData)) === '__NO_FACET__') ||
+    size(processedData) === 0
       ? // unfaceted
-        head(values(processedData))?.dataSetProcess
+        head(values(processedData))?.dataSetProcess ?? { series: [] }
       : // faceted
         {
           facets: vocabularyWithMissingData(
