@@ -202,8 +202,9 @@ export function CorrelationAssayMetadataConfiguration(
         <div className={cx('-CorrelationOuterConfigContainer')}>
           <H6>Prefilter Data</H6>
           <div className={cx('-InputContainer')}>
-            <span>
-              Prevalence: Keep taxa if abundance is non-zero in at least{' '}
+            <span>Prevalence: </span>
+            <span className={cx('-DescriptionContainer')}>
+              Keep taxa if abundance is non-zero in at least{' '}
             </span>
             <NumberInput
               minValue={0}
@@ -232,7 +233,7 @@ export function CorrelationAssayMetadataConfiguration(
               }}
               containerStyles={{ width: '5.5em' }}
             />
-            <span>% of samples</span>
+            <span className={cx('-DescriptionContainer')}>% of samples</span>
           </div>
         </div>
       </div>
