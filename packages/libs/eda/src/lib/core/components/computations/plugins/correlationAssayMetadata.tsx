@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import {
-  VariableTreeNode,
   FeaturePrefilterThresholds,
+  VariableTreeNode,
   useFindEntityAndVariableCollection,
 } from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';

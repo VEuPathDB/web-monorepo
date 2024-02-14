@@ -309,8 +309,11 @@ export default function BoundsDriftMarker({
     [setSelectedMarkers, selectedMarkers, props.id]
   );
 
-  const handleDoubleClick = () => {
-    if (map) {
+  const handleDoubleClick = (e: LeafletMouseEvent) => {
+    // If SHIFT is pressed, ignore double-click event
+    // so users can quickly select multiple markers without
+    // triggering a zoom
+    if (map && !e.originalEvent.shiftKey) {
       map.fitBounds(boundingBox);
     }
   };
