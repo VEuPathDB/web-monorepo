@@ -80,7 +80,7 @@ export function SubStudies(props: Props) {
       onDragComplete={updatePosition}
       onPanelResize={updateDimensions}
       styleOverrides={{
-        zIndex: 10,
+        zIndex: 4,
         height: panelConfig.dimensions.height,
         width: panelConfig.dimensions.width,
         resize: 'both',

@@ -454,6 +454,7 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
 
   return outputEntityId != null ? (
     <MapTypeHeaderStudyDetails
+      hasMarkerSelection={!!configuration.selectedMarkers?.length}
       filtersForVisibleData={filtersForSubStudies}
       includesTimeSliderFilter={timeSliderConfig != null}
       outputEntityId={outputEntityId}

@@ -512,7 +512,8 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     geoConfigs,
     filters,
   } = props;
-  const { selectedVariable } = props.configuration as PieMarkerConfiguration;
+  const { selectedVariable, selectedMarkers } =
+    props.configuration as PieMarkerConfiguration;
 
   const { filters: filtersForSubStudies } = useLittleFilters(
     {
@@ -529,6 +530,7 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
 
   return outputEntityId != null ? (
     <MapTypeHeaderStudyDetails
+      hasMarkerSelection={!!selectedMarkers?.length}
       filtersForVisibleData={filtersForSubStudies}
       includesTimeSliderFilter={timeSliderConfig != null}
       outputEntityId={outputEntityId}

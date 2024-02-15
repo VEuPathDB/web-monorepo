@@ -201,8 +201,11 @@ export function useAppState(
         ? {
             studyDetailsPanelConfig: {
               isVisble: false,
-              position: { x: 650, y: 225 },
-              dimensions: { height: '70vh', width: 1000 },
+              position: {
+                x: Math.max(650, window.innerWidth / 2 - 250),
+                y: Math.max(300, window.innerHeight / 2 - 250),
+              },
+              dimensions: { height: 500, width: 500 },
             },
           }
         : {}),
