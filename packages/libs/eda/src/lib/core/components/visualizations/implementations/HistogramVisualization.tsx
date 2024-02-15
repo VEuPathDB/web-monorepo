@@ -652,18 +652,22 @@ function HistogramViz(props: VisualizationProps<Options>) {
     ])
   );
 
-  // controls need the bin info from just one facet (not an empty one)
-  const checkData = isFaceted(data.value)
-    ? data.value.facets.find(
-        ({ data }) => data != null && data.series.length > 0
-      )?.data
-    : data.value;
+  const [checkData, isEmptyData] = useMemo(() => {
+    // controls need the bin info from just one facet (not an empty one)
+    const checkData = isFaceted(data.value)
+      ? data.value.facets.find(
+          ({ data }) => data != null && data.series.length > 0
+        )?.data
+      : data.value;
 
-  // we can't always rely on data.value?.completeCasesXXXVars (e.g. in SAM)
-  // in the outputSize determination above, so we make a simple check the data (or one non-empty facet)
-  const isEmptyData =
-    data.value != null &&
-    checkData?.series.find((series) => series.bins.length > 0) == null;
+    // we can't always rely on data.value?.completeCasesXXXVars (e.g. in SAM)
+    // in the outputSize determination above, so we make a simple check the data (or one non-empty facet)
+    const isEmptyData =
+      data.value != null &&
+      checkData?.series.find((series) => series.bins.length > 0) == null;
+
+    return [checkData, isEmptyData];
+  }, [data.value]);
 
   // Note: Histogram distribution data contains statistical values such as summary.min/max,
   // however, it does not fully respect multiple filters.

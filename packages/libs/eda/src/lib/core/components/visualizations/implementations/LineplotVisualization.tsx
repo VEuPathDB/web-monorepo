@@ -1129,23 +1129,23 @@ function LineplotViz(props: VisualizationProps<Options>) {
   const widgetHeight = '4em';
 
   // controls need the bin info from just one facet (not an empty one)
-  const data0 = isFaceted(data.value?.dataSetProcess)
+  const checkData = isFaceted(data.value?.dataSetProcess)
     ? data.value?.dataSetProcess.facets.find(
         ({ data }) => data != null && data.series.length > 0
       )?.data
     : data.value?.dataSetProcess;
 
-  // use data0 also to determine if there's no data at all (for PluginError banner)
+  // use checkData also to determine if there's no data at all (for PluginError banner)
   // because outputSize can't always rely on data.value.completeCasesAllVars and friend
   const isEmptyData =
     data.value != null &&
-    data0?.series.find((series) => series.x.length > 0) == null;
+    checkData?.series.find((series) => series.x.length > 0) == null;
 
   // add banner condition to avoid unnecessary disabled
   const neverUseBinning =
     !showIndependentAxisBanner &&
     !showDependentAxisBanner &&
-    data0?.binWidthSlider == null; // for ordinal string x-variables
+    checkData?.binWidthSlider == null; // for ordinal string x-variables
 
   // axis range control
   const neverShowErrorBars = lineplotProps.dependentValueType === 'date';
@@ -1390,18 +1390,18 @@ function LineplotViz(props: VisualizationProps<Options>) {
                 />
               ) : null}
               <BinWidthControl
-                binWidth={data0?.binWidthSlider?.binWidth}
+                binWidth={checkData?.binWidthSlider?.binWidth}
                 onBinWidthChange={onBinWidthChange}
-                binWidthRange={data0?.binWidthSlider?.binWidthRange}
-                binWidthStep={data0?.binWidthSlider?.binWidthStep}
-                valueType={data0?.binWidthSlider?.valueType}
+                binWidthRange={checkData?.binWidthSlider?.binWidthRange}
+                binWidthStep={checkData?.binWidthSlider?.binWidthStep}
+                valueType={checkData?.binWidthSlider?.valueType}
                 binUnit={
-                  data0?.binWidthSlider?.valueType === 'date'
-                    ? (data0?.binWidthSlider?.binWidth as TimeDelta).unit
+                  checkData?.binWidthSlider?.valueType === 'date'
+                    ? (checkData?.binWidthSlider?.binWidth as TimeDelta).unit
                     : undefined
                 }
                 binUnitOptions={
-                  data0?.binWidthSlider?.valueType === 'date'
+                  checkData?.binWidthSlider?.valueType === 'date'
                     ? ['day', 'week', 'month', 'year']
                     : undefined
                 }

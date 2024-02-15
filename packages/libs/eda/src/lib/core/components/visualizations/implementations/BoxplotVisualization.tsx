@@ -627,7 +627,6 @@ function BoxplotViz(props: VisualizationProps<Options>) {
           ? legendData.map((dataItem: BoxplotDataObject, index: number) => {
               return {
                 label: dataItem.name ?? '',
-                // histogram plot does not have mode, so set to square for now
                 marker: 'lightSquareBorder' as const,
                 markerColor:
                   dataItem.name === 'No data'
