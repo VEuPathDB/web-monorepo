@@ -58,7 +58,10 @@ export const Footer: FunctionComponent<Props> = ({
           </a>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <a target="_blank" href="https://elixir-europe.org/">
-            <img src="/assets/images/elixir-core-data-resources-logo.png"></img>
+            <img
+              style={{ height: '3rem' }}
+              src="/assets/images/elixir-core-data-resources-logo.png"
+            ></img>
           </a>
         </div>
       </div>
