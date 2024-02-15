@@ -245,6 +245,7 @@ function ConfiguredVisualizations(props: Props) {
                         pathname: `${baseUrl || url}/${viz.visualizationId}`,
                         state: { scrollToTop: false },
                       }}
+                      className={cx('-ConfiguredVizLink')}
                     >
                       <ConfiguredVisualizationGrayOut
                         filters={props.filters}
