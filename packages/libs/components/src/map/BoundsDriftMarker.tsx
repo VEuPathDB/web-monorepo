@@ -56,9 +56,17 @@ export default function BoundsDriftMarker({
     [bounds.northEast.lat, bounds.northEast.lng],
   ]);
 
+  // This will get placed in the popupPane, so that
+  // it is visible on top of the associated marker.
+  // The `interactive` option is set to false, so
+  // that it does not react to mouse events, which
+  // allows the marker to be clicked, even if the
+  // reactable is above the marker.
   const boundsRectangle = L.rectangle(boundingBox, {
     color: 'gray',
     weight: 1,
+    pane: 'popupPane',
+    interactive: false,
   });
   useEffect(() => {
     /**
