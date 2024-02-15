@@ -28,6 +28,7 @@ import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { entityTreeToArray } from '../../../utils/study-metadata';
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
+import { ExpandablePanel } from '@veupathdb/coreui';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -182,6 +183,67 @@ export function CorrelationAssayAssayConfiguration(
     });
   }, []);
 
+  const helpContent = (
+    <div className={cx('-HelpInfoContainer')}>
+      <H6>What is correlation?</H6>
+      <p>
+        The correlation between two variables (taxa, genes, sample metadata,
+        etc.) describes the degree to which their presence in samples
+        co-fluctuate. For example, the Age and Shoe Size of children are
+        correlated since as a child ages, their feet grow.
+      </p>
+      <p>Here we look for correlation between:</p>
+      <ol>
+        <li>Abundance of taxa at a given taxonomic level</li>
+        <li>Abundance of functional data (e.g. pathways, genes)</li>
+      </ol>
+      <br></br>
+      <H6>Inputs:</H6>
+      <p>
+        <ul>
+          <li>
+            <strong>Taxonomic Level.</strong> The taxonomic abundance data to
+            used in the calcualtion
+          </li>
+          <li>
+            <strong>Functional Data.</strong> The pathway, metabolic, or gene
+            data to be correlatd against the taxonomic abundance data.
+          </li>
+          <li>
+            <strong>Method.</strong> The type of correlation to compute. The
+            Pearson method looks for a linear trend in the data, while the
+            Spearman method looks for a monotonic relationship. For Spearman and
+            Pearson correlation, we use the rcorr function from the Hmisc
+            package.
+          </li>
+          <li>
+            <strong>Prevalence Prefilter.</strong> Remove variables that do not
+            have a set percentage of non-zero abundance across samples. Removing
+            rarely occurring features before calculating correlation can prevent
+            some spurious results.
+          </li>
+        </ul>
+      </p>
+      <br></br>
+      <H6>Outputs:</H6>
+      <p>
+        For each pair of variables, the correlation computation returns
+        <ul>
+          <li>
+            Correlation coefficient. A value between [-1, 1] that describes the
+            similarity of the input variables. Positive values indicate that
+            both variables rise and fall together, whereas negative values
+            indicate that as one rises, the other falls.
+          </li>
+          <li>
+            P Value. A measure of the probability of observing the result by
+            chance.
+          </li>
+        </ul>
+      </p>
+    </div>
+  );
+
   return (
     <ComputationStepContainer
       computationStepInfo={{
@@ -277,6 +339,14 @@ export function CorrelationAssayAssayConfiguration(
             }
           />
         </div>
+        <ExpandablePanel
+          title="Learn more about correlation"
+          subTitle={{}}
+          children={helpContent}
+          stylePreset="floating"
+          themeRole="primary"
+          styleOverrides={{ container: { marginLeft: 40 } }}
+        />
       </div>
     </ComputationStepContainer>
   );
