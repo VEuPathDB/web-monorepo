@@ -242,6 +242,19 @@ export function CorrelationAssayAssayConfiguration(
           </li>
         </ul>
       </p>
+      <br></br>
+      <H6>More Questions?</H6>
+      <p>
+        Check out the{' '}
+        <a href="https://github.com/VEuPathDB/microbiomeComputations/blob/master/R/method-correlation.R">
+          correlation function
+        </a>{' '}
+        in our{' '}
+        <a href="https://github.com/VEuPathDB/microbiomeComputations/tree/master">
+          microbiomeComputations
+        </a>{' '}
+        R package.
+      </p>
     </div>
   );
 
