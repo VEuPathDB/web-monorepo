@@ -63,6 +63,7 @@ export const MAX_FILTERSET_VALUES = 1000;
 export interface SharedMarkerConfigurations {
   selectedVariable: VariableDescriptor;
   activeVisualizationId?: string;
+  selectedMarkers?: string[];
 }
 
 export function useCommonData(
