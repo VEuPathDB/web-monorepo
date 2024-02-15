@@ -155,6 +155,12 @@ export function ReportSelect({
       controlShouldRenderValue={false}
       onChange={onChangeReport}
       options={options}
+      styles={{
+        menu: (baseStyles, state) => ({
+          ...baseStyles,
+          zIndex: 3,
+        }),
+      }}
     />
   );
 }

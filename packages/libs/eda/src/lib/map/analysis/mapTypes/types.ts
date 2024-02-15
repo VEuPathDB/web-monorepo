@@ -43,8 +43,6 @@ export interface MapTypeMapLayerProps {
   // and sent to plugin components that don't need it - we should also address this
   hideVizInputsAndControls: boolean;
   setHideVizInputsAndControls: (hide: boolean) => void;
-  // selectedMarkers and its state function
-  selectedMarkers?: string[];
   setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
   setStudyDetailsPanelConfig: (config: PanelConfig) => void;
   setTimeSliderConfig?: (

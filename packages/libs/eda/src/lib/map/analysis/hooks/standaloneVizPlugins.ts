@@ -52,6 +52,8 @@ export function useStandaloneVizPlugins({
     function vizWithOptions(
       visualization: VisualizationPlugin<StandaloneVizOptions>
     ) {
+      const modifierKey =
+        window.navigator.platform.indexOf('Mac') === 0 ? 'Cmd' : 'Ctrl';
       return visualization.withOptions({
         hideFacetInputs: true, // will also enable table-only mode for mosaic
         hideShowMissingnessToggle: true,
@@ -81,7 +83,7 @@ export function useStandaloneVizPlugins({
             ? selectedMarkers.length > 1
               ? EntitySubtitleForViz({ subtitle: 'for selected markers' })
               : EntitySubtitleForViz({
-                  subtitle: 'for selected marker - shift-click to add more',
+                  subtitle: `for selected marker - ${modifierKey}-click to add more`,
                 })
             : EntitySubtitleForViz({
                 subtitle:

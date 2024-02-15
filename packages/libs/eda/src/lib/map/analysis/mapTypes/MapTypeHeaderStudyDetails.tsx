@@ -24,6 +24,10 @@ interface Props {
    * If omitted, do not show studies link
    */
   onShowStudies?: (showStudies: boolean) => void;
+  /**
+   * Indicates if any markers are selected
+   */
+  hasMarkerSelection: boolean;
 }
 
 const { format } = new Intl.NumberFormat('en-us');
@@ -34,6 +38,7 @@ export function MapTypeHeaderStudyDetails(props: Props) {
     includesTimeSliderFilter,
     outputEntityId,
     onShowStudies,
+    hasMarkerSelection,
   } = props;
   const entities = useStudyEntities();
   const studyEntity = entities.find(
@@ -139,6 +144,7 @@ export function MapTypeHeaderStudyDetails(props: Props) {
           alignItems: 'center',
         }}
       >
+        {hasMarkerSelection ? 'Selected: ' : 'Showing: '}
         {totalCountFormatted}{' '}
         {outputEntityCount.data.count === 1
           ? outputEntity.displayName
@@ -147,7 +153,9 @@ export function MapTypeHeaderStudyDetails(props: Props) {
           <>
             {' '}
             from {format(studyEntityCount.data.count)}{' '}
-            {studyEntity.displayNamePlural}
+            {studyEntityCount.data.count === 1
+              ? studyEntity.displayName
+              : studyEntity.displayNamePlural}
           </>
         )}
         <Tooltip title={tooltipContent} interactive style={{ width: 'auto' }}>
