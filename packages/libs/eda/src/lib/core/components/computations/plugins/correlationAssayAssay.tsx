@@ -183,6 +183,7 @@ export function CorrelationAssayAssayConfiguration(
     });
   }, []);
 
+  // Content for the expandable help section
   const helpContent = (
     <div className={cx('-HelpInfoContainer')}>
       <H6>What is correlation?</H6>
