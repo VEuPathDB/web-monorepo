@@ -339,6 +339,7 @@ function getColumns({
         attribute.name !== recordClass.recordIdAttributeName &&
         attribute.isRemovable,
       helpText: attribute.help,
+      htmlHelp: attribute.htmlHelp,
       name: attribute.displayName,
       renderCell: ({ row, key }: { row: RecordInstance; key: string }) =>
         key === recordClass.recordIdAttributeName ? (
