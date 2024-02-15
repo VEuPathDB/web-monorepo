@@ -179,8 +179,8 @@ export function CorrelationAssayMetadataConfiguration(
           as pathway abundance
         </li>
         <li>
-          Continuous metadata variables that are compatable, i.e. on a 1-1 path
-          from the taxonomimc assay entity.
+          Continuous metadata variables that are compatable, i.e. on an entity
+          that is 1-1 with the assay entity.
         </li>
       </ol>
       <br></br>
@@ -193,7 +193,7 @@ export function CorrelationAssayMetadataConfiguration(
           </li>
           <li>
             <strong>Method.</strong> The type of correlation to compute. The
-            Pearson method looks for a linear trends in the data, while the
+            Pearson method looks for linear trends in the data, while the
             Spearman method looks for a monotonic relationship. For Spearman and
             Pearson correlation, we use the rcorr function from the Hmisc
             package.

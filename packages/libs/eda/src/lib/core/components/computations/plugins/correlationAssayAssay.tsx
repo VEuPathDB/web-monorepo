@@ -203,8 +203,8 @@ export function CorrelationAssayAssayConfiguration(
       <p>
         <ul>
           <li>
-            <strong>Taxonomic Level.</strong> The taxonomic abundance data to
-            used in the calcualtion
+            <strong>Taxonomic Level.</strong> The taxonomic abundance data to be
+            used in the calculation.
           </li>
           <li>
             <strong>Functional Data.</strong> The pathway, metabolic, or gene
@@ -212,7 +212,7 @@ export function CorrelationAssayAssayConfiguration(
           </li>
           <li>
             <strong>Method.</strong> The type of correlation to compute. The
-            Pearson method looks for a linear trend in the data, while the
+            Pearson method looks for linear trends in the data, while the
             Spearman method looks for a monotonic relationship. For Spearman and
             Pearson correlation, we use the rcorr function from the Hmisc
             package.
