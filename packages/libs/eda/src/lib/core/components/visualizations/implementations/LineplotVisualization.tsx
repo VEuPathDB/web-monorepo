@@ -452,10 +452,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
           : 'Full',
         dependentAxisValueSpec: keepDependentAxisSettings
           ? vizConfig.dependentAxisValueSpec
-          : yAxisVar != null
-          ? isSuitableCategoricalVariable(yAxisVar)
-            ? 'Full'
-            : 'Auto-zoom'
           : 'Full',
         // udpate useBinning with conditions
         useBinning: keepIndependentAxisUseBinning
@@ -1208,7 +1204,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     updateVizConfig({
       dependentAxisRange: undefined,
       dependentAxisLogScale: false,
-      dependentAxisValueSpec: categoricalMode ? 'Full' : 'Auto-zoom',
+      dependentAxisValueSpec: 'Full',
       showErrorBars: true,
     });
     // add reset for truncation message as well
@@ -1610,11 +1606,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
                 buttonColor={'primary'}
                 margins={['0em', '0', '0', '0em']}
                 itemMarginRight={25}
-                disabledList={
-                  !categoricalMode && vizConfig.yAxisVariable != null
-                    ? ['Full']
-                    : []
-                }
               />
               <AxisRangeControl
                 label="Range"
