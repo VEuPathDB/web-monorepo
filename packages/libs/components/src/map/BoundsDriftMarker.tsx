@@ -56,9 +56,17 @@ export default function BoundsDriftMarker({
     [bounds.northEast.lat, bounds.northEast.lng],
   ]);
 
+  // This will get placed in the popupPane, so that
+  // it is visible on top of the associated marker.
+  // The `interactive` option is set to false, so
+  // that it does not react to mouse events, which
+  // allows the marker to be clicked, even if the
+  // reactable is above the marker.
   const boundsRectangle = L.rectangle(boundingBox, {
     color: 'gray',
     weight: 1,
+    pane: 'popupPane',
+    interactive: false,
   });
   useEffect(() => {
     /**
@@ -290,8 +298,8 @@ export default function BoundsDriftMarker({
             setSelectedMarkers(
               selectedMarkers.filter((id: string) => id !== props.id)
             );
-          } else if (e.originalEvent.shiftKey) {
-            // add to selection if SHIFT key pressed
+          } else if (e.originalEvent.ctrlKey || e.originalEvent.metaKey) {
+            // add to selection if CTRL or CMD key pressed
             setSelectedMarkers([...(selectedMarkers ?? []), props.id]);
           } else {
             // replace selection
@@ -310,10 +318,10 @@ export default function BoundsDriftMarker({
   );
 
   const handleDoubleClick = (e: LeafletMouseEvent) => {
-    // If SHIFT is pressed, ignore double-click event
+    // If any mofigier key is pressed, ignore double-click event
     // so users can quickly select multiple markers without
     // triggering a zoom
-    if (map && !e.originalEvent.shiftKey) {
+    if (map && !mouseEventHasModifierKey(e.originalEvent)) {
       map.fitBounds(boundingBox);
     }
   };
@@ -358,4 +366,8 @@ export default function BoundsDriftMarker({
       {showPopup && popup}
     </ReactLeafletDriftMarker>
   );
+}
+
+function mouseEventHasModifierKey(event: MouseEvent) {
+  return event.ctrlKey || event.altKey || event.metaKey || event.shiftKey;
 }

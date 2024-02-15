@@ -63,6 +63,7 @@ export const MAX_FILTERSET_VALUES = 1000;
 export interface SharedMarkerConfigurations {
   selectedVariable: VariableDescriptor;
   activeVisualizationId?: string;
+  selectedMarkers?: string[];
 }
 
 export function useCommonData(
@@ -415,7 +416,9 @@ export function useSelectedMarkerSnackbars(
         selectedMarkers != null &&
         selectedMarkers.length === 1
       ) {
-        enqueueSnackbar(`Use shift-click to select multiple markers`, {
+        const modifierKey =
+          window.navigator.platform.indexOf('Mac') === 0 ? 'Cmd' : 'Ctrl';
+        enqueueSnackbar(`Use ${modifierKey}-click to select multiple markers`, {
           variant: 'info',
           anchorOrigin: { vertical: 'top', horizontal: 'center' },
         });
