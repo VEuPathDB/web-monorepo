@@ -43,6 +43,17 @@ const SelectedCountsOption = t.union([
   t.undefined,
 ]);
 
+export type PanelConfig = t.TypeOf<typeof PanelConfig>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+const PanelConfig = t.type({
+  isVisble: t.boolean,
+  position: t.type({ x: t.number, y: t.number }),
+  dimensions: t.type({
+    height: t.union([t.number, t.string]),
+    width: t.union([t.number, t.string]),
+  }),
+});
+
 export type MarkerConfiguration = t.TypeOf<typeof MarkerConfiguration>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const MarkerConfiguration = t.intersection([
@@ -51,7 +62,12 @@ export const MarkerConfiguration = t.intersection([
     selectedVariable: VariableDescriptor,
   }),
   t.partial({
-    activeVisualizationId: t.string,
+    activeVisualizationPanelConfig: t.intersection([
+      PanelConfig,
+      t.type({
+        visualizationId: t.string,
+      }),
+    ]),
   }),
   t.union([
     t.intersection([
@@ -95,18 +111,6 @@ export const MarkerConfiguration = t.intersection([
     ]),
   ]),
 ]);
-
-const PanelConfig = t.type({
-  isVisble: t.boolean,
-  position: t.type({ x: t.number, y: t.number }),
-  dimensions: t.type({
-    height: t.union([t.number, t.string]),
-    width: t.union([t.number, t.string]),
-  }),
-});
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export type PanelConfig = t.TypeOf<typeof PanelConfig>;
 
 export const AppState = t.intersection([
   t.type({

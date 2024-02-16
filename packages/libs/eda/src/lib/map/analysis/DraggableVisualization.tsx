@@ -12,11 +12,14 @@ import { Filter } from '../../core/types/filter';
 import { FilledButton } from '@veupathdb/coreui';
 import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
 import { ComputationPlugin } from '../../core/components/computations/Types';
+import { ActiveVisualizationPanelConfig } from './mapTypes/shared';
 
 interface Props {
   analysisState: AnalysisState;
-  visualizationId?: string;
-  setActiveVisualizationId: (id?: string) => void;
+  visualizationPanelConfig?: ActiveVisualizationPanelConfig;
+  setActiveVisualizationPanelConfig: (
+    activeVisualizationPanelConfig?: ActiveVisualizationPanelConfig
+  ) => void;
   apps: ComputationAppOverview[];
   plugins: Partial<Record<string, ComputationPlugin>>;
   geoConfigs: GeoConfig[];
@@ -32,8 +35,8 @@ interface Props {
 
 export default function DraggableVisualization({
   analysisState,
-  visualizationId,
-  setActiveVisualizationId,
+  visualizationPanelConfig,
+  setActiveVisualizationPanelConfig,
   geoConfigs,
   apps,
   plugins,
@@ -47,7 +50,9 @@ export default function DraggableVisualization({
   setHideInputsAndControls,
 }: Props) {
   const { computation: activeComputation, visualization: activeViz } =
-    analysisState.getVisualizationAndComputation(visualizationId) ?? {};
+    analysisState.getVisualizationAndComputation(
+      visualizationPanelConfig?.visualizationId
+    ) ?? {};
 
   const computationType = activeComputation?.descriptor.type;
 
@@ -63,6 +68,7 @@ export default function DraggableVisualization({
   const visualizationPlugins = computationPlugin?.visualizationPlugins;
 
   const shouldRenderVisualization =
+    visualizationPanelConfig &&
     activeViz &&
     app &&
     visualizationPlugins &&
@@ -77,13 +83,15 @@ export default function DraggableVisualization({
         zIndex: zIndexForStackingContext,
         resize: 'both',
         overflow: 'hidden',
+        height: visualizationPanelConfig.dimensions.height,
+        width: visualizationPanelConfig.dimensions.width,
       }}
       panelTitle={activeVizOverview?.displayName || ''}
       defaultPosition={{
         x: 535,
         y: 220,
       }}
-      onPanelDismiss={() => setActiveVisualizationId(undefined)}
+      onPanelDismiss={() => setActiveVisualizationPanelConfig(undefined)}
     >
       <div
         style={{

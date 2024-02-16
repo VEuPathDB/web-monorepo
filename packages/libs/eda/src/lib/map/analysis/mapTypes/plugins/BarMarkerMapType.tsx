@@ -56,6 +56,7 @@ import {
   getErrorOverlayComponent,
   getLegendErrorMessage,
   selectedMarkersLittleFilter,
+  ActiveVisualizationPanelConfig,
 } from '../shared';
 import {
   useFindEntityAndVariable,
@@ -269,12 +270,26 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   };
 
   const setActiveVisualizationId = useCallback(
-    (activeVisualizationId?: string) => {
+    (visualizationId?: string) => {
       if (configuration == null) return;
-      updateConfiguration({
+      const nextConfig: BarPlotMarkerConfiguration = {
         ...configuration,
-        activeVisualizationId,
-      });
+        activeVisualizationPanelConfig: visualizationId
+          ? {
+              visualizationId,
+              isVisble: true,
+              position: {
+                x: 650,
+                y: 250,
+              },
+              dimensions: {
+                width: 'auto',
+                height: 'auto',
+              },
+            }
+          : undefined,
+      };
+      updateConfiguration(nextConfig);
     },
     [configuration, updateConfiguration]
   );
@@ -299,7 +314,9 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
           analysisState={analysisState}
           setActiveVisualizationId={setActiveVisualizationId}
           apps={apps}
-          activeVisualizationId={configuration.activeVisualizationId}
+          activeVisualizationId={
+            configuration.activeVisualizationPanelConfig?.visualizationId
+          }
           plugins={plugins}
           geoConfigs={geoConfigs}
           mapType="barplot"
@@ -345,7 +362,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     binningMethod,
     dependentAxisLogScale,
     selectedPlotMode,
-    activeVisualizationId,
+    activeVisualizationPanelConfig,
   } = props.configuration as BarPlotMarkerConfiguration;
 
   const { filters: filtersForMarkerData } = useLittleFilters(
@@ -372,7 +389,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
 
   const handleSelectedMarkerSnackbars = useSelectedMarkerSnackbars(
     appState.studyDetailsPanelConfig != null,
-    activeVisualizationId
+    activeVisualizationPanelConfig?.visualizationId
   );
 
   const setSelectedMarkers = useCallback(
@@ -437,11 +454,11 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
   const { variable: overlayVariable } =
     findEntityAndVariable(configuration.selectedVariable) ?? {};
 
-  const setActiveVisualizationId = useCallback(
-    (activeVisualizationId?: string) => {
+  const setActiveVisualizationPanelConfig = useCallback(
+    (activeVisualizationPanelConfig?: ActiveVisualizationPanelConfig) => {
       updateConfiguration({
         ...configuration,
-        activeVisualizationId,
+        activeVisualizationPanelConfig,
       });
     },
     [configuration, updateConfiguration]
@@ -520,8 +537,8 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
       </DraggableLegendPanel>
       <DraggableVisualization
         analysisState={props.analysisState}
-        visualizationId={configuration.activeVisualizationId}
-        setActiveVisualizationId={setActiveVisualizationId}
+        visualizationPanelConfig={configuration.activeVisualizationPanelConfig}
+        setActiveVisualizationPanelConfig={setActiveVisualizationPanelConfig}
         apps={props.apps}
         plugins={plugins}
         geoConfigs={geoConfigs}

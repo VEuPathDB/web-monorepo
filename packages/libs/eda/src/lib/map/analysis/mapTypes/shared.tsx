@@ -40,6 +40,7 @@ import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { NoDataError } from '../../../core/api/DataClient/NoDataError';
 import { useCallback, useState } from 'react';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
+import { PanelConfig } from '../appState';
 
 export const defaultAnimation = {
   method: 'geohash',
@@ -60,9 +61,13 @@ export const visibleOptionFilterFuncs = [
 
 export const MAX_FILTERSET_VALUES = 1000;
 
+export interface ActiveVisualizationPanelConfig extends PanelConfig {
+  visualizationId: string;
+}
+
 export interface SharedMarkerConfigurations {
   selectedVariable: VariableDescriptor;
-  activeVisualizationId?: string;
+  activeVisualizationPanelConfig?: ActiveVisualizationPanelConfig;
   selectedMarkers?: string[];
 }
 

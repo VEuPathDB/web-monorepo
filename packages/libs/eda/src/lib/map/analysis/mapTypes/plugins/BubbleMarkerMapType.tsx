@@ -47,6 +47,7 @@ import {
   getErrorOverlayComponent,
   useSelectedMarkerSnackbars,
   selectedMarkersLittleFilter,
+  ActiveVisualizationPanelConfig,
 } from '../shared';
 import {
   MapTypeConfigPanelProps,
@@ -100,12 +101,26 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
     )?.dataElementConstraints;
 
   const setActiveVisualizationId = useCallback(
-    (activeVisualizationId?: string) => {
+    (visualizationId?: string) => {
       if (markerConfiguration == null) return;
-      updateConfiguration({
+      const nextConfig: BubbleMarkerConfiguration = {
         ...markerConfiguration,
-        activeVisualizationId,
-      });
+        activeVisualizationPanelConfig: visualizationId
+          ? {
+              visualizationId,
+              isVisble: true,
+              position: {
+                x: 650,
+                y: 250,
+              },
+              dimensions: {
+                width: 'auto',
+                height: 'auto',
+              },
+            }
+          : undefined,
+      };
+      updateConfiguration(nextConfig);
     },
     [markerConfiguration, updateConfiguration]
   );
@@ -162,7 +177,9 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
           analysisState={analysisState}
           setActiveVisualizationId={setActiveVisualizationId}
           apps={apps}
-          activeVisualizationId={markerConfiguration.activeVisualizationId}
+          activeVisualizationId={
+            markerConfiguration.activeVisualizationPanelConfig?.visualizationId
+          }
           plugins={plugins}
           geoConfigs={geoConfigs}
           mapType="bubble"
@@ -231,7 +248,7 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
 
   const handleSelectedMarkerSnackbars = useSelectedMarkerSnackbars(
     appState.studyDetailsPanelConfig != null,
-    configuration.activeVisualizationId
+    configuration.activeVisualizationPanelConfig?.visualizationId
   );
 
   const setSelectedMarkers = useCallback(
@@ -307,11 +324,11 @@ function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
     configuration,
   });
 
-  const setActiveVisualizationId = useCallback(
-    (activeVisualizationId?: string) => {
+  const setActiveVisualizationPanelConfig = useCallback(
+    (activeVisualizationPanelConfig?: ActiveVisualizationPanelConfig) => {
       updateConfiguration({
         ...configuration,
-        activeVisualizationId,
+        activeVisualizationPanelConfig,
       });
     },
     [configuration, updateConfiguration]
@@ -410,8 +427,8 @@ function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
       </DraggableLegendPanel>
       <DraggableVisualization
         analysisState={props.analysisState}
-        visualizationId={configuration.activeVisualizationId}
-        setActiveVisualizationId={setActiveVisualizationId}
+        visualizationPanelConfig={configuration.activeVisualizationPanelConfig}
+        setActiveVisualizationPanelConfig={setActiveVisualizationPanelConfig}
         apps={props.apps}
         plugins={plugins}
         geoConfigs={geoConfigs}

@@ -52,6 +52,7 @@ import {
   getLegendErrorMessage,
   useSelectedMarkerSnackbars,
   selectedMarkersLittleFilter,
+  ActiveVisualizationPanelConfig,
 } from '../shared';
 import {
   MapTypeConfigPanelProps,
@@ -236,12 +237,26 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   });
 
   const setActiveVisualizationId = useCallback(
-    (activeVisualizationId?: string) => {
+    (visualizationId?: string) => {
       if (configuration == null) return;
-      updateConfiguration({
+      const nextConfig: PieMarkerConfiguration = {
         ...configuration,
-        activeVisualizationId,
-      });
+        activeVisualizationPanelConfig: visualizationId
+          ? {
+              visualizationId,
+              isVisble: true,
+              position: {
+                x: 650,
+                y: 250,
+              },
+              dimensions: {
+                width: 'auto',
+                height: 'auto',
+              },
+            }
+          : undefined,
+      };
+      updateConfiguration(nextConfig);
     },
     [configuration, updateConfiguration]
   );
@@ -262,7 +277,9 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
           analysisState={analysisState}
           setActiveVisualizationId={setActiveVisualizationId}
           apps={apps}
-          activeVisualizationId={configuration.activeVisualizationId}
+          activeVisualizationId={
+            configuration.activeVisualizationPanelConfig?.visualizationId
+          }
           plugins={plugins}
           geoConfigs={geoConfigs}
           mapType="pie"
@@ -306,7 +323,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     selectedVariable,
     binningMethod,
     selectedValues,
-    activeVisualizationId,
+    activeVisualizationPanelConfig,
   } = props.configuration as PieMarkerConfiguration;
 
   const { filters: filtersForMarkerData } = useLittleFilters(
@@ -332,7 +349,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
 
   const handleSelectedMarkerSnackbars = useSelectedMarkerSnackbars(
     appState.studyDetailsPanelConfig != null,
-    activeVisualizationId
+    activeVisualizationPanelConfig?.visualizationId
   );
 
   const setSelectedMarkers = useCallback(
@@ -396,16 +413,17 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     selectedVariable,
     selectedValues,
     binningMethod,
-    activeVisualizationId,
+    activeVisualizationPanelConfig,
   } = props.configuration as PieMarkerConfiguration;
   const findEntityAndVariable = useFindEntityAndVariable(filters);
   const { variable: overlayVariable } =
     findEntityAndVariable(selectedVariable) ?? {};
-  const setActiveVisualizationId = useCallback(
-    (activeVisualizationId?: string) => {
+
+  const setActiveVisualizationPanelConfig = useCallback(
+    (activeVisualizationPanelConfig?: ActiveVisualizationPanelConfig) => {
       updateConfiguration({
         ...(props.configuration as PieMarkerConfiguration),
-        activeVisualizationId,
+        activeVisualizationPanelConfig,
       });
     },
     [props.configuration, updateConfiguration]
@@ -487,8 +505,8 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
       </DraggableLegendPanel>
       <DraggableVisualization
         analysisState={props.analysisState}
-        visualizationId={activeVisualizationId}
-        setActiveVisualizationId={setActiveVisualizationId}
+        visualizationPanelConfig={activeVisualizationPanelConfig}
+        setActiveVisualizationPanelConfig={setActiveVisualizationPanelConfig}
         apps={props.apps}
         plugins={plugins}
         geoConfigs={geoConfigs}
