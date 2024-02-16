@@ -98,7 +98,7 @@ import {
   barplotDefaultDependentAxisMinPos,
 } from '../../../utils/axis-range-calculations';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
-import { LayoutOptions } from '../../layouts/types';
+import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import { OverlayOptions, RequestOptions } from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
 
@@ -138,6 +138,7 @@ export const barplotVisualization = createVisualizationPlugin({
 interface Options
   extends LayoutOptions,
     OverlayOptions,
+    TitleOptions,
     RequestOptions<BarplotConfig, {}, BarplotRequestParams> {}
 
 function FullscreenComponent(props: VisualizationProps<Options>) {
@@ -517,45 +518,55 @@ function BarplotViz(props: VisualizationProps<Options>) {
       : data.value?.completeCasesAxesVars;
 
   // custom legend items for checkbox
-  const legendItems: LegendItemsProps[] = useMemo(() => {
-    const legendData = !isFaceted(data.value)
-      ? data.value?.series
-      : data.value?.facets.find(
-          ({ data }) => data != null && data.series.length > 0
-        )?.data?.series;
+  const [legendItems, isEmptyData]: [LegendItemsProps[], boolean] =
+    useMemo(() => {
+      const legendData = !isFaceted(data.value)
+        ? data.value?.series
+        : data.value?.facets.find(
+            ({ data }) => data != null && data.series.length > 0
+          )?.data?.series;
 
-    return legendData != null
-      ? legendData.map((dataItem: BarplotDataSeries, index: number) => {
-          return {
-            label: dataItem.name,
-            // barplot does not have mode, so set to square
-            marker: 'square',
-            markerColor:
-              dataItem.name === 'No data'
-                ? '#E8E8E8'
-                : ColorPaletteDefault[index],
-            // [undefined, undefined, ...] for filtered out case and no data so need to do a deep comparison
-            hasData: !isFaceted(data.value) // no faceted plot
-              ? dataItem.value.some((el) => el != null)
-                ? true
-                : false
-              : data.value?.facets
-                  .map((el: { label: string; data?: BarplotData }) => {
-                    // faceted plot: here data.value is full data
-                    // need to check whether el.data.series[index] exists
-                    return el.data?.series[index]?.value.some(
-                      (el: number) => el != null
-                    );
-                  })
-                  .includes(true)
-              ? true
-              : false,
-            group: 1,
-            rank: 1,
-          };
-        })
-      : [];
-  }, [data]);
+      const legendItems =
+        legendData != null
+          ? legendData.map((dataItem: BarplotDataSeries, index: number) => {
+              return {
+                label: dataItem.name,
+                // barplot does not have mode, so set to square
+                marker: 'square' as const,
+                markerColor:
+                  dataItem.name === 'No data'
+                    ? '#E8E8E8'
+                    : ColorPaletteDefault[index],
+                // [undefined, undefined, ...] for filtered out case and no data so need to do a deep comparison
+                hasData: !isFaceted(data.value) // no faceted plot
+                  ? dataItem.value.some((el) => el != null)
+                    ? true
+                    : false
+                  : data.value?.facets
+                      .map((el: { label: string; data?: BarplotData }) => {
+                        // faceted plot: here data.value is full data
+                        // need to check whether el.data.series[index] exists
+                        return el.data?.series[index]?.value.some(
+                          (el: number) => el != null
+                        );
+                      })
+                      .includes(true)
+                  ? true
+                  : false,
+                group: 1,
+                rank: 1,
+              };
+            })
+          : [];
+
+      // use legendData also to determine if there's no data at all (for PluginError banner)
+      // because outputSize can't always rely on data.value.completeCasesAllVars and friend
+      const isEmptyData =
+        data.value != null &&
+        legendData?.find((series) => series.label.length > 0) == null;
+
+      return [legendItems, isEmptyData];
+    }, [data]);
 
   // set checkedLegendItems to either the config-stored items, or all items if
   // nothing stored (or if no overlay locally configured)
@@ -902,6 +913,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
       .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
 
   const LayoutComponent = options?.layoutComponent ?? PlotLayout;
+  const plotSubtitle = options?.getPlotSubtitle?.();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -933,9 +945,16 @@ function BarplotViz(props: VisualizationProps<Options>) {
         )}
       </div>
 
-      <PluginError error={data.error} outputSize={outputSize} />
+      <PluginError
+        error={data.error}
+        outputSize={isEmptyData ? 0 : outputSize}
+      />
       {!hideInputsAndControls && (
-        <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+        <OutputEntityTitle
+          entity={outputEntity}
+          outputSize={outputSize}
+          subtitle={plotSubtitle}
+        />
       )}
       <LayoutComponent
         isFaceted={isFaceted(data.value)}

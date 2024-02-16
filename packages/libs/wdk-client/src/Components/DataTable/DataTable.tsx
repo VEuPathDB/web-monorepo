@@ -809,7 +809,7 @@ type DataTableProps = {
   containerClassName: string;
 };
 
-function DataTableFilterSelector({
+export function DataTableFilterSelector({
   filterAttributes,
   selectedColumnFilters,
   onColumnFilterChange,

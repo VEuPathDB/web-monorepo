@@ -20,6 +20,8 @@ import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDepen
 import {
   FilterValueArray,
   ParameterValues,
+  Question,
+  RecordClass,
 } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { submitForm } from '@veupathdb/wdk-client/lib/Actions/DownloadFormActions';
@@ -45,22 +47,19 @@ const submissionMetadata: SubmissionMetadata = {
 
 export default function FastaConfigController() {
   const { url } = useRouteMatch();
-  const questionsAndRecordClasses = useWdkService(
-    (wdkService) =>
-      Promise.all(
-        SEARCHES.map((searchName) =>
-          wdkService
-            .findQuestion(searchName)
-            .then((question) =>
-              Promise.all([
-                question,
-                wdkService.findRecordClass(question.outputRecordClassName),
-              ])
-            )
-        )
-      ),
-    []
-  );
+  const questionsAndRecordClasses = useWdkService(async (wdkService) => {
+    const questions = await wdkService.getQuestions();
+    const recordClasses = await wdkService.getRecordClasses();
+    return SEARCHES.map((searchName) => {
+      const question = questions.find((q) => q.urlSegment === searchName);
+      if (question == null) return undefined;
+      const recordClass = recordClasses.find(
+        (r) => r.urlSegment === question.outputRecordClassName
+      );
+      if (recordClass == null) return undefined;
+      return [question, recordClass];
+    }).filter((entry): entry is [Question, RecordClass] => entry != null);
+  }, []);
 
   useSetDocumentTitle('Retrieve Sequences');
 

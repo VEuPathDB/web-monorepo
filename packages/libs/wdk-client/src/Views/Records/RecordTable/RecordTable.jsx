@@ -1,8 +1,10 @@
 import { chunk, property, orderBy, toLower } from 'lodash';
-import React, { Component } from 'react';
+import React, { Component, useCallback, useState } from 'react';
 import { createSelector } from 'reselect';
 import PropTypes from 'prop-types';
-import DataTable from '../../../Components/DataTable/DataTable';
+import DataTable, {
+  DataTableFilterSelector,
+} from '../../../Components/DataTable/DataTable';
 import {
   renderAttributeValue,
   pure,
@@ -10,6 +12,12 @@ import {
 } from '../../../Utils/ComponentUtils';
 import { Mesa, MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 import './RecordTable.css';
+import { HelpIcon, RealTimeSearchBox } from '../../../Components';
+import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import {
+  areTermsInStringRegexString,
+  parseSearchQueryString,
+} from '../../../Utils/SearchUtils';
 
 const mapAttributeType = (type) => {
   switch (type) {
@@ -66,6 +74,10 @@ class RecordTable extends Component {
       getOrderedData
     );
     this.onSort = this.onSort.bind(this);
+    this.state = {
+      searchTerm: this.props.searchTerm ?? '',
+      selectedColumnFilters: [],
+    };
   }
 
   onSort(column, direction) {
@@ -121,9 +133,22 @@ class RecordTable extends Component {
       return newData;
     });
 
+    const queryTerms = parseSearchQueryString(this.state.searchTerm);
+    const searchTermRegex = areTermsInStringRegexString(queryTerms);
+    const regex = new RegExp(searchTermRegex, 'i');
+    const searchableAttributes = this.state.selectedColumnFilters.length
+      ? displayableAttributes.filter((attr) =>
+          this.state.selectedColumnFilters.includes(attr.name)
+        )
+      : displayableAttributes;
+    const filteredRows = mesaReadyRows.filter((row) => {
+      return searchableAttributes.some((attr) => regex.test(row[attr.name]));
+    });
+
     const tableState = {
       rows: mesaReadyRows,
       columns: mesaReadyColumns,
+      filteredRows: this.state.searchTerm.length ? filteredRows : undefined,
       eventHandlers: {
         onSort: this.onSort,
       },
@@ -133,9 +158,12 @@ class RecordTable extends Component {
           direction: 'desc',
         },
       },
+      options: {
+        toolbar: true,
+      },
     };
 
-    console.log({ mesaReadyColumns, mesaReadyRows, columns, data });
+    // console.log({ mesaReadyColumns, mesaReadyRows, queryTerms, searchTermRegex, selectedColumnFilters: this.state.selectedColumnFilters });
 
     if (value.length === 0 || columns.length === 0) {
       return (
@@ -175,10 +203,134 @@ class RecordTable extends Component {
           searchable={value.length > 1}
           onDraw={onDraw}
         /> */}
-        <Mesa state={MesaState.create(tableState)} />
+        <Mesa state={MesaState.create(tableState)}>
+          {mesaReadyRows.length > 1 && (
+            <RecordFilter
+              searchTerm={this.state.searchTerm}
+              onSearchTermChange={(searchTerm) =>
+                this.setState((state) => ({
+                  ...state,
+                  searchTerm,
+                }))
+              }
+              recordDisplayName={this.props.recordClass.displayNamePlural}
+              filterAttributes={displayableAttributes.map((attr) => ({
+                value: attr.name,
+                display: attr.displayName,
+              }))}
+              selectedColumnFilters={this.state.selectedColumnFilters}
+              onColumnFilterChange={(value) =>
+                this.setState((state) => ({
+                  ...state,
+                  selectedColumnFilters: value,
+                }))
+              }
+            />
+          )}
+        </Mesa>
       </div>
     );
   }
+}
+
+function RecordFilter(props) {
+  const [showFieldSelector, setShowFieldSelector] = useState(false);
+
+  const toggleFilterFieldSelector = useCallback(
+    () => setShowFieldSelector(!showFieldSelector),
+    [showFieldSelector, setShowFieldSelector]
+  );
+
+  return (
+    <>
+      <div style={{ display: 'flex' }}>
+        <RealTimeSearchBox
+          searchTerm={props.searchTerm}
+          className="wdk-DataTableSearchBox"
+          placeholderText="Search this table..."
+          onSearchTermChange={props.onSearchTermChange}
+          delayMs={0}
+          iconName=""
+          cancelBtnRightMargin="3em"
+        />
+        <div
+          style={{
+            position: 'relative',
+            width: 0,
+            right: '2.75em',
+            top: '0.25em',
+          }}
+        >
+          <Tooltip title="Show search fields">
+            <button
+              className="fa fa-caret-down"
+              style={{ background: 'none', border: 'none' }}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleFilterFieldSelector();
+              }}
+            />
+          </Tooltip>
+        </div>
+        <HelpIcon>
+          <div>
+            <ul>
+              <li>
+                The {props.recordDisplayName} in your refined list will contain
+                ALL your terms (or phrases, when using double quotes), in ANY of
+                the selected fields.
+              </li>
+              <li>
+                Click on the arrow inside the box to select/unselect fields.{' '}
+              </li>
+              <li>
+                Your terms are matched at the start; for example, the term{' '}
+                <i>typ</i> will match{' '}
+                <i>
+                  <u>typ</u>ically
+                </i>{' '}
+                and{' '}
+                <i>
+                  <u>typ</u>e
+                </i>
+                , but <strong>not</strong>{' '}
+                <i>
+                  <u>atyp</u>ical
+                </i>
+                .
+              </li>
+              <li>
+                Your terms may include * wildcards; for example, the term{' '}
+                <i>*typ</i> will match{' '}
+                <i>
+                  <u>typ</u>ically
+                </i>
+                ,{' '}
+                <i>
+                  <u>typ</u>e
+                </i>
+                , and{' '}
+                <i>
+                  a<u>typ</u>ical
+                </i>
+                .
+              </li>
+            </ul>
+          </div>
+        </HelpIcon>
+      </div>
+      {showFieldSelector && (
+        <DataTableFilterSelector
+          filterAttributes={props.filterAttributes}
+          selectedColumnFilters={props.selectedColumnFilters}
+          onColumnFilterChange={props.onColumnFilterChange}
+          toggleFilterFieldSelector={toggleFilterFieldSelector}
+          containerClassName="wdk-Answer-filterFieldSelector"
+        />
+      )}
+    </>
+  );
 }
 
 RecordTable.propTypes = {

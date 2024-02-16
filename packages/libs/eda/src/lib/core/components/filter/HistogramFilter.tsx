@@ -661,7 +661,7 @@ function HistogramPlotWithControls({
             }}
           >
             <LabelledGroup label="X-axis controls"> </LabelledGroup>
-            <div style={{ marginLeft: '-2.6em', width: '50%' }}>
+            <div style={{ marginLeft: '-1em', width: '50%' }}>
               <ResetButtonCoreUI
                 size={'medium'}
                 text={''}
@@ -743,7 +743,7 @@ function HistogramPlotWithControls({
             }}
           >
             <LabelledGroup label="Y-axis controls"> </LabelledGroup>
-            <div style={{ marginLeft: '-2.6em', width: '50%' }}>
+            <div style={{ marginLeft: '-1em', width: '50%' }}>
               <ResetButtonCoreUI
                 size={'medium'}
                 text={''}
