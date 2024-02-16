@@ -547,7 +547,7 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     filters,
   } = props;
 
-  const { selectedVariable } =
+  const { selectedVariable, selectedMarkers } =
     props.configuration as BarPlotMarkerConfiguration;
 
   const { filters: filtersForSubStudies } = useLittleFilters(
@@ -565,6 +565,7 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
 
   return outputEntityId != null ? (
     <MapTypeHeaderStudyDetails
+      hasMarkerSelection={!!selectedMarkers?.length}
       filtersForVisibleData={filtersForSubStudies}
       includesTimeSliderFilter={timeSliderConfig != null}
       outputEntityId={outputEntityId}

@@ -80,7 +80,7 @@ export function SubStudies(props: Props) {
       onDragComplete={updatePosition}
       onPanelResize={updateDimensions}
       styleOverrides={{
-        zIndex: 10,
+        zIndex: 4,
         height: panelConfig.dimensions.height,
         width: panelConfig.dimensions.width,
         resize: 'both',
@@ -106,10 +106,15 @@ export function SubStudies(props: Props) {
           <Spinner />
         ) : (
           <div>
-            <p>
-              There {studyCountPhrase(result.data.length - 1)} for the{' '}
-              {hasSelectedMarkers ? 'selected' : 'visible'} markers on the map.
-            </p>
+            {result.data.length - 1 === 0 ? (
+              <p>There are no studies to show here.</p>
+            ) : (
+              <p>
+                There {studyCountPhrase(result.data.length - 1)} for the{' '}
+                {hasSelectedMarkers ? 'selected' : 'visible'} markers on the
+                map.
+              </p>
+            )}
             <ul>
               {result.data.slice(1).map(([id, display]) => (
                 <li>
@@ -133,8 +138,6 @@ export function SubStudies(props: Props) {
 
 function studyCountPhrase(numStudies: number) {
   switch (numStudies) {
-    case 0:
-      return 'are no studies';
     case 1:
       return 'is 1 study';
     default:

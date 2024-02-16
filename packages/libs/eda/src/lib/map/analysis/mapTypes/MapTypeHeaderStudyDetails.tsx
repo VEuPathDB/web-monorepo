@@ -24,6 +24,10 @@ interface Props {
    * If omitted, do not show studies link
    */
   onShowStudies?: (showStudies: boolean) => void;
+  /**
+   * Indicates if any markers are selected
+   */
+  hasMarkerSelection: boolean;
 }
 
 const { format } = new Intl.NumberFormat('en-us');
@@ -34,6 +38,7 @@ export function MapTypeHeaderStudyDetails(props: Props) {
     includesTimeSliderFilter,
     outputEntityId,
     onShowStudies,
+    hasMarkerSelection,
   } = props;
   const entities = useStudyEntities();
   const studyEntity = entities.find(
@@ -120,9 +125,6 @@ export function MapTypeHeaderStudyDetails(props: Props) {
           {studyEntityCount.data.count === 1
             ? studyEntity.displayName
             : studyEntity.displayNamePlural}{' '}
-          <button type="button" onClick={() => onShowStudies(true)}>
-            Show list
-          </button>
         </p>
       )}
     </div>
@@ -135,21 +137,30 @@ export function MapTypeHeaderStudyDetails(props: Props) {
           padding: '1em',
           fontSize: '1.2em',
           display: 'flex',
-          gap: '1ex',
           alignItems: 'center',
         }}
       >
+        {hasMarkerSelection ? 'Selected: ' : 'Showing: '}
         {totalCountFormatted}{' '}
         {outputEntityCount.data.count === 1
           ? outputEntity.displayName
           : outputEntity.displayNamePlural}
         {onShowStudies && studyEntity && (
           <>
-            {' '}
-            from {format(studyEntityCount.data.count)}{' '}
-            {studyEntity.displayNamePlural}
+            &nbsp;from&nbsp;
+            <button
+              className="link"
+              type="button"
+              onClick={() => onShowStudies(true)}
+            >
+              {format(studyEntityCount.data.count)}{' '}
+              {studyEntityCount.data.count === 1
+                ? studyEntity.displayName
+                : studyEntity.displayNamePlural}
+            </button>
           </>
         )}
+        &nbsp;
         <Tooltip title={tooltipContent} interactive style={{ width: 'auto' }}>
           <Info style={{ color: '#069', height: '.8em', width: '.8em' }} />
         </Tooltip>
