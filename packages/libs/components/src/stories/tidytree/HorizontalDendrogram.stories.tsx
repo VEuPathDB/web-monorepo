@@ -1,12 +1,15 @@
 import { Meta, Story } from '@storybook/react';
-import { TidyTree, TidyTreeProps } from '../../components/tidytree/TidyTree';
+import {
+  HorizontalDendrogram,
+  HorizontalDendrogramProps,
+} from '../../components/tidytree/HorizontalDendrogram';
 import { useQuery } from 'react-query';
 import { useState } from 'react';
 import { CheckboxList } from '../../../../coreui/lib';
 
 export default {
-  title: 'TidyTree',
-  component: TidyTree,
+  title: 'HorizontalDendrogram',
+  component: HorizontalDendrogram,
   parameters: {},
   argTypes: {}, // couldn't get storybook-addon-deep-controls to work :(
 } as Meta;
@@ -39,10 +42,10 @@ function getNewickJSON(url: string) {
   return newick.data;
 }
 
-const Template: Story<TidyTreeProps> = (args) => {
+const Template: Story<HorizontalDendrogramProps> = (args) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
-      <TidyTree {...args} />
+      <HorizontalDendrogram {...args} />
       <Stripes
         count={args.leafCount}
         stripeHeight={args.rowHeight}
@@ -52,7 +55,8 @@ const Template: Story<TidyTreeProps> = (args) => {
   );
 };
 
-const commonArgs: Partial<TidyTreeProps> = {
+const commonArgs: Partial<HorizontalDendrogramProps> = {
+  width: 400,
   rowHeight: 50,
   options: {
     margin: [0, 10, 0, 10],
@@ -73,11 +77,12 @@ ThreeLeaves.args = {
   ...commonArgs,
 };
 
-interface HighlightedTidyTreeProps extends TidyTreeProps {
+interface HighlightedHorizontalDendrogramProps
+  extends HorizontalDendrogramProps {
   allNodeIds: string[];
 }
 
-const Highlighting: Story<HighlightedTidyTreeProps> = (args) => {
+const Highlighting: Story<HighlightedHorizontalDendrogramProps> = (args) => {
   const [highlightedNodes, setHighlightedNodes] = useState<string[]>([]);
 
   return (
@@ -91,7 +96,7 @@ const Highlighting: Story<HighlightedTidyTreeProps> = (args) => {
           alignItems: 'center',
         }}
       >
-        <TidyTree {...args} highlightedNodeIds={highlightedNodes} />
+        <HorizontalDendrogram {...args} highlightedNodeIds={highlightedNodes} />
         <CheckboxList
           items={args.allNodeIds.map((id) => ({ display: id, value: id }))}
           value={highlightedNodes}

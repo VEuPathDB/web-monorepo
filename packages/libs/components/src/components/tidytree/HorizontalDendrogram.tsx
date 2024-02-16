@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { TidyTree as TidyTreeJS } from 'tidytree';
 
-export interface TidyTreeProps {
+export interface HorizontalDendrogramProps {
   /// The first set of props are expected to be fairly constant         ///
   /// and when changed, a whole new TidyTreeJS instance will be created ///
   /**
@@ -13,10 +13,6 @@ export interface TidyTreeProps {
    * horizontal dendrograms
    */
   options: {
-    layout?: 'horizontal' | 'vertical' | 'circular';
-    type?: 'tree' | 'weighted' | 'dendrogram';
-    mode?: 'square' | 'smooth' | 'straight';
-    equidistantLeaves?: boolean;
     ruler?: boolean;
     /**
      * supposedly [ top, right, bottom, left ] but in practice not at all
@@ -32,6 +28,10 @@ export interface TidyTreeProps {
    */
   leafCount: number;
   /**
+   * width of tree in pixels
+   */
+  width: number;
+  /**
    * number of pixels height taken per leaf
    */
   rowHeight: number;
@@ -45,21 +45,22 @@ export interface TidyTreeProps {
   highlightMode?: 'monophyletic' | 'none';
 }
 
-export function TidyTree({
+/**
+ * This is hardwired to produce a horizontal, equally spaced, square cornered dendrogram.
+ * A more general purpose wrapping of TidyTreeJS will have to come later. It's not trivial
+ * due to horizontal/vertical orientation affecting heights and widths. Given that users expect
+ * to scroll up/down in a large tree rather than left/right, and because we will be aligning
+ * it with a table that also works in up/down space, this seems reasonable.
+ */
+export function HorizontalDendrogram({
   data,
   leafCount,
   rowHeight,
-  options: {
-    layout = 'horizontal',
-    type = 'dendrogram',
-    mode = 'square',
-    equidistantLeaves = true,
-    ruler = false,
-    margin = [0, 0, 0, 0],
-  },
+  width,
+  options: { ruler = false, margin = [0, 0, 0, 0] },
   highlightedNodeIds,
   highlightMode,
-}: TidyTreeProps) {
+}: HorizontalDendrogramProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const tidyTreeRef = useRef<TidyTreeJS>();
 
@@ -73,10 +74,10 @@ export function TidyTree({
     }
     const instance = new TidyTreeJS(data, {
       parent: containerRef.current,
-      layout,
-      type,
-      mode,
-      equidistantLeaves,
+      layout: 'horizontal',
+      type: 'dendrogram',
+      mode: 'straight',
+      equidistantLeaves: true,
       ruler,
       margin,
       animation: 0, // it's naff and it reveals edge lengths/weights momentarily
@@ -85,7 +86,7 @@ export function TidyTree({
     return function cleanup() {
       instance.destroy();
     };
-  }, [data, layout, type, mode, equidistantLeaves, ruler, margin]);
+  }, [data, ruler, margin]);
 
   // redraw when the container size changes
   // useLayoutEffect ensures that the redraw is not called for brand new TidyTreeJS objects
@@ -94,7 +95,7 @@ export function TidyTree({
     if (tidyTreeRef.current) {
       tidyTreeRef.current.redraw();
     }
-  }, [leafCount, rowHeight, tidyTreeRef]);
+  }, [leafCount, width, rowHeight, tidyTreeRef]);
 
   // now handle changes to props that act via tidytree methods
   // which also usually trigger a redraw
@@ -116,7 +117,7 @@ export function TidyTree({
   return (
     <div
       style={{
-        width: '400px',
+        width: width + 'px',
         height: containerHeight + 'px',
       }}
       ref={containerRef}
