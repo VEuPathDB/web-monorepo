@@ -205,12 +205,10 @@ export default function TimeSliderQuickFilter({
           <li>satisfies any filters you have applied</li>
           <li>
             has values for the variable currently displayed on markers,
-            including custom-configurations if applicable
-          </li>
-          <li style={{ listStyleType: 'none' }}>
-            (* data that has no geolocation will also be shown on the timeline)
+            including custom-configurations
           </li>
         </ul>
+        (* data that has no geolocation will also be shown on the timeline)
       </p>
       <p>
         How to use
