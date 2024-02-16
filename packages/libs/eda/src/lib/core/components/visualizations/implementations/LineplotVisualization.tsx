@@ -885,9 +885,26 @@ function LineplotViz(props: VisualizationProps<Options>) {
   );
 
   // use a hook to handle default dependent axis range for Lineplot Viz Proportion
+  // but first, effectively disable the distributionDefaults.rangeMin/Max to force
+  // the axis range calculations to use the observed min/max (because these are aggregate
+  // (e.g. mean/median) values whose range is much reduced compared to their min/max)
+
+  const rangelessYAxisVariable =
+    Variable.is(yAxisVariable) &&
+    (yAxisVariable.type === 'number' || yAxisVariable.type === 'integer')
+      ? {
+          ...yAxisVariable,
+          distributionDefaults: {
+            ...yAxisVariable.distributionDefaults,
+            rangeMin: Infinity, // can't use undefined because
+            rangeMax: -Infinity, // these props are mandatory
+          },
+        }
+      : yAxisVariable;
+
   const defaultDependentAxisRange = useDefaultDependentAxisRangeProportion(
     data,
-    yAxisVariable,
+    rangelessYAxisVariable,
     vizConfig.dependentAxisLogScale,
     vizConfig.valueSpecConfig,
     vizConfig.dependentAxisValueSpec
@@ -2710,6 +2727,9 @@ function useDefaultDependentAxisRangeProportion(
     dependentAxisLogScale,
     dependentAxisValueSpec
   );
+
+  // wait until we have observed min/max data before attempting to return anything meaningful
+  if (data.value == null) return;
 
   // include min origin: 0 (linear) or minPos (logscale)
   if (data.value != null && valueSpecConfig === 'Proportion')
