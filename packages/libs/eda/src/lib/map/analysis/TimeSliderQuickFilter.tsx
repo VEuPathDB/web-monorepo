@@ -196,12 +196,23 @@ export default function TimeSliderQuickFilter({
     <div style={{ paddingTop: 10 }}>
       <H6>Timeline help</H6>
       <p>
+        Black bars indicate when <i>in time</i> there is data that...
         <ul>
-          <li>Black bars indicate when in time there is available data</li>
-          <li>Permanent filters are applied if applicable</li>
+          <li>is located anywhere on Earth*, not just currently in view</li>
           <li>
-            You currently have {filters?.length} active permanent filter(s)
+            has a value for <b>{variableMetadata?.variable.displayName}</b>
           </li>
+          <li>satisfies any filters you have applied</li>
+          <li>
+            has values for the variable currently displayed on markers,
+            including custom-configurations
+          </li>
+        </ul>
+        (* data that has no geolocation will also be shown on the timeline)
+      </p>
+      <p>
+        How to use
+        <ul>
           <li>
             Apply a temporary time-based filter by dragging a window across the
             graphic
@@ -218,7 +229,7 @@ export default function TimeSliderQuickFilter({
         <a style={{ cursor: 'pointer' }} onClick={() => setMinimized(false)}>
           here
         </a>{' '}
-        to reveal further controls that allow you to:
+        to reveal further controls that allow you to...
         <ul>
           <li>
             change the date variable (currently{' '}
