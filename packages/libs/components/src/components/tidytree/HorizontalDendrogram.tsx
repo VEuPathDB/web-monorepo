@@ -76,7 +76,7 @@ export function HorizontalDendrogram({
       parent: containerRef.current,
       layout: 'horizontal',
       type: 'dendrogram',
-      mode: 'straight',
+      mode: 'square',
       equidistantLeaves: true,
       ruler,
       margin,
