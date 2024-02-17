@@ -3,7 +3,8 @@ import {
   HorizontalDendrogram,
   HorizontalDendrogramProps,
 } from '../../components/tidytree/HorizontalDendrogram';
-import * as Mesa from '@veupathdb/coreui/lib/components/Mesa';
+import Mesa from '@veupathdb/coreui/lib/components/Mesa';
+import { MesaStateProps } from '../../../../coreui/lib/components/Mesa/types';
 
 export default {
   title: 'TreeTable',
@@ -16,10 +17,86 @@ export default {
 const sevenLeafTree =
   '(Bovine:0.69395,(Gibbon:0.36079,(Orang:0.33636,(Gorilla:0.17147,(Chimp:0.19268, Human:0.11927):0.08386):0.06124):0.15057):0.54939,Mouse:1.21460)';
 
+interface LeafRow {
+  leafId: string;
+  accession: string;
+  length: number;
+  domains: string;
+}
+
+const sevenLeafTableRows: LeafRow[] = [
+  {
+    leafId: 'Bovine',
+    accession: 'bov0123',
+    length: 99,
+    domains: 'ABC XYZ',
+  },
+  {
+    leafId: 'Gibbon',
+    accession: 'gib0987',
+    length: 120,
+    domains: 'ABC XYZ',
+  },
+  {
+    leafId: 'Orang',
+    accession: 'ora0333',
+    length: 102,
+    domains: 'ABC XYZ QQQ',
+  },
+  {
+    leafId: 'Gorilla',
+    accession: 'gor0321',
+    length: 119,
+    domains: 'ABC',
+  },
+  {
+    leafId: 'Chimp',
+    accession: 'chi0111',
+    length: 111,
+    domains: 'ABC XYZ',
+  },
+  {
+    leafId: 'Human',
+    accession: 'hum0008',
+    length: 104,
+    domains: 'ABC XYZ',
+  },
+  {
+    leafId: 'Mouse',
+    accession: 'mus0738',
+    length: 150,
+    domains: 'ABC DEF XYZ',
+  },
+];
+
 const Template: Story<HorizontalDendrogramProps> = (args) => {
+  const tableState: MesaStateProps<LeafRow> = {
+    rows: sevenLeafTableRows,
+    columns: [
+      {
+        key: 'leafId',
+        name: 'Leaf ID',
+      },
+      {
+        key: 'accession',
+        name: 'Sequence accession',
+      },
+      {
+        key: 'length',
+        name: 'Sequence length',
+      },
+      {
+        key: 'domains',
+        name: 'Domains',
+      },
+    ],
+    options: {},
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
       <HorizontalDendrogram {...args} />
+      <Mesa state={tableState} />
     </div>
   );
 };
