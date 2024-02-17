@@ -30,8 +30,16 @@ import {
 } from '@veupathdb/components/lib/types/plots';
 import { getCategoricalValues } from '../utils/categoricalValues';
 import { Viewport } from '@veupathdb/components/lib/map/MapVEuMap';
-import { UseLittleFiltersProps } from '../littleFilters';
+import {
+  UseLittleFiltersFuncProps,
+  UseLittleFiltersProps,
+} from '../littleFilters';
 import { filtersFromBoundingBox } from '../../../core/utils/visualization';
+import { MapFloatingErrorDiv } from '../MapFloatingErrorDiv';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { NoDataError } from '../../../core/api/DataClient/NoDataError';
+import { useCallback, useState } from 'react';
+import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 
 export const defaultAnimation = {
   method: 'geohash',
@@ -43,6 +51,7 @@ export const markerDataFilterFuncs = [timeSliderLittleFilter];
 export const floaterFilterFuncs = [
   timeSliderLittleFilter,
   viewportLittleFilters,
+  selectedMarkersLittleFilter,
 ];
 export const visibleOptionFilterFuncs = [
   timeSliderLittleFilter,
@@ -54,6 +63,7 @@ export const MAX_FILTERSET_VALUES = 1000;
 export interface SharedMarkerConfigurations {
   selectedVariable: VariableDescriptor;
   activeVisualizationId?: string;
+  selectedMarkers?: string[];
 }
 
 export function useCommonData(
@@ -374,11 +384,64 @@ export function isApproxSameViewport(v1: Viewport, v2: Viewport) {
   );
 }
 
+// returns a function (selectedMarkers?) => voi
+export function useSelectedMarkerSnackbars(
+  isMegaStudy: boolean,
+  activeVisualizationId: string | undefined
+) {
+  const { enqueueSnackbar } = useSnackbar();
+  const [shownSelectedMarkersSnackbar, setShownSelectedMarkersSnackbar] =
+    useState(isMegaStudy);
+  const [shownShiftKeySnackbar, setShownShiftKeySnackbar] = useState(false);
+
+  return useCallback(
+    (selectedMarkers: string[] | undefined) => {
+      if (
+        !shownSelectedMarkersSnackbar &&
+        selectedMarkers != null &&
+        activeVisualizationId == null
+      ) {
+        enqueueSnackbar(
+          `Marker selections currently only apply to supporting plots`,
+          {
+            variant: 'info',
+            anchorOrigin: { vertical: 'top', horizontal: 'center' },
+          }
+        );
+        setShownSelectedMarkersSnackbar(true);
+      }
+      if (
+        (shownSelectedMarkersSnackbar || activeVisualizationId != null) &&
+        !shownShiftKeySnackbar &&
+        selectedMarkers != null &&
+        selectedMarkers.length === 1
+      ) {
+        const modifierKey =
+          window.navigator.platform.indexOf('Mac') === 0 ? 'Cmd' : 'Ctrl';
+        enqueueSnackbar(`Use ${modifierKey}-click to select multiple markers`, {
+          variant: 'info',
+          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        });
+        setShownShiftKeySnackbar(true);
+      }
+      // if the user has managed to select more than one marker, then they don't need help
+      if (selectedMarkers != null && selectedMarkers.length > 1)
+        setShownShiftKeySnackbar(true);
+    },
+    [
+      shownSelectedMarkersSnackbar,
+      shownShiftKeySnackbar,
+      enqueueSnackbar,
+      activeVisualizationId,
+    ]
+  );
+}
+
 /**
  * little filter helpers
  */
 
-function timeSliderLittleFilter(props: UseLittleFiltersProps): Filter[] {
+export function timeSliderLittleFilter(props: UseLittleFiltersProps): Filter[] {
   const { timeSliderConfig } = props.appState;
 
   if (timeSliderConfig != null) {
@@ -396,7 +459,7 @@ function timeSliderLittleFilter(props: UseLittleFiltersProps): Filter[] {
   return [];
 }
 
-function viewportLittleFilters(props: UseLittleFiltersProps): Filter[] {
+export function viewportLittleFilters(props: UseLittleFiltersProps): Filter[] {
   const {
     appState: { boundsZoomLevel },
     geoConfigs,
@@ -422,7 +485,7 @@ function viewportLittleFilters(props: UseLittleFiltersProps): Filter[] {
 // marker variable selection and custom checked values
 //
 export function pieOrBarMarkerConfigLittleFilter(
-  props: UseLittleFiltersProps
+  props: UseLittleFiltersFuncProps
 ): Filter[] {
   const {
     appState: { markerConfigurations, activeMarkerConfigurationType },
@@ -526,6 +589,49 @@ export function pieOrBarMarkerConfigLittleFilter(
   return [];
 }
 
+//
+// figures out which geoaggregator variable corresponds
+// to the current zoom level and creates a little filter
+// on that variable using `selectedMarkers`
+//
+export function selectedMarkersLittleFilter(
+  props: UseLittleFiltersProps
+): Filter[] {
+  const {
+    appState: {
+      markerConfigurations,
+      activeMarkerConfigurationType,
+      viewport: { zoom },
+    },
+    geoConfigs,
+  } = props;
+
+  const activeMarkerConfiguration = markerConfigurations.find(
+    (markerConfig) => markerConfig.type === activeMarkerConfigurationType
+  );
+
+  const selectedMarkers = activeMarkerConfiguration?.selectedMarkers;
+
+  // only return a filter if there are selectedMarkers
+  if (selectedMarkers && selectedMarkers.length > 0) {
+    const { entity, zoomLevelToAggregationLevel, aggregationVariableIds } =
+      geoConfigs[0];
+    const geoAggregationVariableId =
+      aggregationVariableIds?.[zoomLevelToAggregationLevel(zoom) - 1];
+    if (entity && geoAggregationVariableId)
+      // sanity check due to array indexing
+      return [
+        {
+          type: 'stringSet' as const,
+          entityId: entity.id,
+          variableId: geoAggregationVariableId,
+          stringSet: selectedMarkers,
+        },
+      ];
+  }
+  return [];
+}
+
 /**
  * We can use this viewport to request all available data
  */
@@ -547,17 +653,44 @@ export const GLOBAL_VIEWPORT = {
  */
 
 const noDataPatterns = [
-  /did not contain any data/, // comes from map-markers endpoint
   /Could not generate continuous variable metadata/, // comes from continuous-variable-metadata endpoint
 ];
 
 export function isNoDataError(error: unknown) {
+  if (error instanceof NoDataError) return true;
   return noDataPatterns.some((pattern) => String(error).match(pattern));
 }
 
-export const noDataErrorMessage = (
+export function getErrorOverlayComponent(error: unknown) {
+  return isNoDataError(error) ? (
+    <MapFloatingErrorDiv>
+      <Banner
+        banner={{
+          type: 'warning',
+          message: error instanceof Error ? error.message : String(error),
+        }}
+      />
+    </MapFloatingErrorDiv>
+  ) : (
+    <MapFloatingErrorDiv error={error} />
+  );
+}
+
+const noDataLegendMessage = (
   <div css={{ textAlign: 'center', width: 200 }}>
     <p>Your filters have removed all data for this variable.</p>
     <p>Please check your filters or choose another variable.</p>
   </div>
 );
+
+export function getLegendErrorMessage(error: unknown) {
+  return isNoDataError(error) ? noDataLegendMessage : undefined;
+}
+
+/**
+ * Simple styling for the optional visualization subtitle as used in
+ * standaloneVizPlugins.ts (Bob didn't want to convert it to tsx)
+ */
+export function EntitySubtitleForViz({ subtitle }: { subtitle: string }) {
+  return <div style={{ marginTop: 8, fontStyle: 'italic' }}>({subtitle})</div>;
+}
