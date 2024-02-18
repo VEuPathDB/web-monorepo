@@ -5,6 +5,7 @@ import {
 } from '../../components/tidytree/HorizontalDendrogram';
 import Mesa from '@veupathdb/coreui/lib/components/Mesa';
 import { MesaStateProps } from '../../../../coreui/lib/components/Mesa/types';
+import { css } from '@emotion/react';
 
 export default {
   title: 'TreeTable',
@@ -70,6 +71,11 @@ const sevenLeafTableRows: LeafRow[] = [
 ];
 
 const Template: Story<HorizontalDendrogramProps> = (args) => {
+  const rowStyles = css({
+    height: '75px',
+    background: 'yellow',
+  });
+
   const tableState: MesaStateProps<LeafRow> = {
     rows: sevenLeafTableRows,
     columns: [
@@ -90,11 +96,16 @@ const Template: Story<HorizontalDendrogramProps> = (args) => {
         name: 'Domains',
       },
     ],
-    options: {},
+    options: {
+      // This only works if we actually render something using the `css` prop (see below).
+      // And it's pretty nasty too...
+      deriveRowClassName: (_) => 'css-' + rowStyles.name,
+    },
   };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
+      <div css={rowStyles}>Hello world</div>
       <HorizontalDendrogram {...args} />
       <Mesa state={tableState} />
     </div>
