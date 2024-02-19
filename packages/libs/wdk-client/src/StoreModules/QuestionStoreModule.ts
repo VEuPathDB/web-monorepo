@@ -429,7 +429,7 @@ function reduceParamState(state: QuestionState, action: Action) {
     'parameter' in action.payload
   ) {
     const { parameter } = action.payload;
-    if (parameter) {
+    if (parameter && state.paramUIState) {
       const paramState = paramReducer(
         parameter,
         state.paramUIState[parameter.name],
