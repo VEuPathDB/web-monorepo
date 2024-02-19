@@ -93,8 +93,9 @@ export default function FastaConfigController() {
         supply.
       </p>
       <p>
-        (If instead you would like to download sequences in bulk, please visit
-        our file download section.)
+        (If instead you would like to download sequences in genome-scale files,
+        please visit our{' '}
+        <Link to={{ pathname: '/downloads' }}>file download section</Link>.)
       </p>
       <WorkspaceNavigation
         heading={null}
