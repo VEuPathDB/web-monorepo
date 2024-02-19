@@ -1,18 +1,12 @@
 import { Meta, Story } from '@storybook/react';
-import {
-  HorizontalDendrogram,
-  HorizontalDendrogramProps,
-} from '../../components/tidytree/HorizontalDendrogram';
-import Mesa from '@veupathdb/coreui/lib/components/Mesa';
-import { MesaStateProps } from '../../../../coreui/lib/components/Mesa/types';
-import { css as classNameStyle, cx } from '@emotion/css';
-import { css as globalStyle, Global } from '@emotion/react';
+import TreeTable, { TreeTableProps } from '../../components/tidytree/TreeTable';
+import { MesaColumn } from '../../../../coreui/lib/components/Mesa/types';
 
 export default {
   title: 'TreeTable',
-  component: HorizontalDendrogram, // TO DO: make TreeTable component!
+  component: TreeTable,
   parameters: {},
-  argTypes: {}, // couldn't get storybook-addon-deep-controls to work :(
+  argTypes: {},
 } as Meta;
 
 // the file is in the public/data directory
@@ -71,71 +65,41 @@ const sevenLeafTableRows: LeafRow[] = [
   },
 ];
 
-const Template: Story<HorizontalDendrogramProps> = (args) => {
-  const rowStyleClassName = cx(
-    classNameStyle({
-      height: args.rowHeight + 'px',
-      background: 'yellow',
-    })
-  );
+const tableColumns: MesaColumn<LeafRow>[] = [
+  {
+    key: 'leafId',
+    name: 'Leaf ID',
+  },
+  {
+    key: 'accession',
+    name: 'Sequence accession',
+  },
+  {
+    key: 'length',
+    name: 'Sequence length',
+  },
+  {
+    key: 'domains',
+    name: 'Domains',
+  },
+];
 
-  const tableState: MesaStateProps<LeafRow> = {
-    rows: sevenLeafTableRows,
-    columns: [
-      {
-        key: 'leafId',
-        name: 'Leaf ID',
-      },
-      {
-        key: 'accession',
-        name: 'Sequence accession',
-      },
-      {
-        key: 'length',
-        name: 'Sequence length',
-      },
-      {
-        key: 'domains',
-        name: 'Domains',
-      },
-    ],
-    options: {
-      deriveRowClassName: (_) => rowStyleClassName,
-    },
-  };
-
-  return (
-    <div
-      style={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'row' }}
-    >
-      <div style={{ background: 'yellow' }}>
-        <HorizontalDendrogram {...args} />
-      </div>
-      <div style={{ background: 'pink' }}>
-        <Global
-          styles={globalStyle`
-	  .DataTable {
-	    margin-bottom: 0px !important;
-	  }
-	`}
-        />
-        <Mesa state={tableState} />
-      </div>
-    </div>
-  );
+const Template: Story<TreeTableProps<LeafRow>> = (args) => {
+  return <TreeTable {...args} />;
 };
 
-const commonArgs: Partial<HorizontalDendrogramProps> = {
+const commonArgs: Partial<TreeTableProps<LeafRow>> = {
   width: 400,
   rowHeight: 50,
   options: {
     margin: [0, 10, 0, 10],
   },
+  columns: tableColumns,
 };
 
 export const SevenRows = Template.bind({});
 SevenRows.args = {
-  data: sevenLeafTree,
-  leafCount: 7,
   ...commonArgs,
+  data: sevenLeafTree,
+  rows: sevenLeafTableRows,
 };
