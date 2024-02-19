@@ -1,4 +1,9 @@
-import { Filter, StudyEntity, Variable } from '../../core';
+import {
+  Filter,
+  StudyEntity,
+  Variable,
+  useFindEntityAndVariable,
+} from '../../core';
 import { useMemo } from 'react';
 import { AppState } from './appState';
 import { GeoConfig } from '../../core/types/geoConfig';
@@ -9,9 +14,15 @@ export interface UseLittleFiltersProps {
   filters: Filter[] | undefined;
   appState: AppState;
   geoConfigs: GeoConfig[];
-  findEntityAndVariable?: (
-    vd: VariableDescriptor
-  ) => { entity: StudyEntity; variable: Variable } | undefined;
+}
+
+export interface UseLittleFiltersFuncProps extends UseLittleFiltersProps {
+  findEntityAndVariable: (variableDescriptor?: VariableDescriptor) =>
+    | {
+        entity: StudyEntity;
+        variable: Variable;
+      }
+    | undefined;
 }
 
 //
@@ -25,16 +36,20 @@ export interface UseLittleFiltersProps {
 //
 export function useLittleFilters(
   props: UseLittleFiltersProps,
-  funcs: ((props: UseLittleFiltersProps) => Filter[])[]
+  funcs: ((props: UseLittleFiltersFuncProps) => Filter[])[]
 ) {
+  const findEntityAndVariable = useFindEntityAndVariable(props.filters);
   const littleFilters = useDeepValue(
     useMemo(
       () =>
         funcs.reduce(
-          (filters, func) => [...filters, ...func(props)],
+          (filters, func) => [
+            ...filters,
+            ...func({ ...props, findEntityAndVariable }),
+          ],
           [] as Filter[]
         ),
-      [props, funcs]
+      [props, funcs, findEntityAndVariable]
     )
   );
 

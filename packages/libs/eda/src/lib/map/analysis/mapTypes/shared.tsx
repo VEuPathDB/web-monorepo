@@ -30,7 +30,10 @@ import {
 } from '@veupathdb/components/lib/types/plots';
 import { getCategoricalValues } from '../utils/categoricalValues';
 import { Viewport } from '@veupathdb/components/lib/map/MapVEuMap';
-import { UseLittleFiltersProps } from '../littleFilters';
+import {
+  UseLittleFiltersFuncProps,
+  UseLittleFiltersProps,
+} from '../littleFilters';
 import { filtersFromBoundingBox } from '../../../core/utils/visualization';
 import { MapFloatingErrorDiv } from '../MapFloatingErrorDiv';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
@@ -60,6 +63,7 @@ export const MAX_FILTERSET_VALUES = 1000;
 export interface SharedMarkerConfigurations {
   selectedVariable: VariableDescriptor;
   activeVisualizationId?: string;
+  selectedMarkers?: string[];
 }
 
 export function useCommonData(
@@ -382,11 +386,12 @@ export function isApproxSameViewport(v1: Viewport, v2: Viewport) {
 
 // returns a function (selectedMarkers?) => voi
 export function useSelectedMarkerSnackbars(
+  isMegaStudy: boolean,
   activeVisualizationId: string | undefined
 ) {
   const { enqueueSnackbar } = useSnackbar();
   const [shownSelectedMarkersSnackbar, setShownSelectedMarkersSnackbar] =
-    useState(false);
+    useState(isMegaStudy);
   const [shownShiftKeySnackbar, setShownShiftKeySnackbar] = useState(false);
 
   return useCallback(
@@ -411,7 +416,9 @@ export function useSelectedMarkerSnackbars(
         selectedMarkers != null &&
         selectedMarkers.length === 1
       ) {
-        enqueueSnackbar(`Use shift-click to select multiple markers`, {
+        const modifierKey =
+          window.navigator.platform.indexOf('Mac') === 0 ? 'Cmd' : 'Ctrl';
+        enqueueSnackbar(`Use ${modifierKey}-click to select multiple markers`, {
           variant: 'info',
           anchorOrigin: { vertical: 'top', horizontal: 'center' },
         });
@@ -434,7 +441,7 @@ export function useSelectedMarkerSnackbars(
  * little filter helpers
  */
 
-function timeSliderLittleFilter(props: UseLittleFiltersProps): Filter[] {
+export function timeSliderLittleFilter(props: UseLittleFiltersProps): Filter[] {
   const { timeSliderConfig } = props.appState;
 
   if (timeSliderConfig != null) {
@@ -452,7 +459,7 @@ function timeSliderLittleFilter(props: UseLittleFiltersProps): Filter[] {
   return [];
 }
 
-function viewportLittleFilters(props: UseLittleFiltersProps): Filter[] {
+export function viewportLittleFilters(props: UseLittleFiltersProps): Filter[] {
   const {
     appState: { boundsZoomLevel },
     geoConfigs,
@@ -478,7 +485,7 @@ function viewportLittleFilters(props: UseLittleFiltersProps): Filter[] {
 // marker variable selection and custom checked values
 //
 export function pieOrBarMarkerConfigLittleFilter(
-  props: UseLittleFiltersProps
+  props: UseLittleFiltersFuncProps
 ): Filter[] {
   const {
     appState: { markerConfigurations, activeMarkerConfigurationType },
@@ -587,7 +594,9 @@ export function pieOrBarMarkerConfigLittleFilter(
 // to the current zoom level and creates a little filter
 // on that variable using `selectedMarkers`
 //
-function selectedMarkersLittleFilter(props: UseLittleFiltersProps): Filter[] {
+export function selectedMarkersLittleFilter(
+  props: UseLittleFiltersProps
+): Filter[] {
   const {
     appState: {
       markerConfigurations,
