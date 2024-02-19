@@ -50,8 +50,7 @@ const submissionMetadata: SubmissionMetadata = {
 const genomicSegmentsBanner = (
   <Banner
     banner={{
-      type: 'warning',
-      // hideIcon: true,
+      type: 'info',
       message: (
         <div>
           To download partial genomic sequences (aka genomic segments) please
@@ -59,7 +58,7 @@ const genomicSegmentsBanner = (
           <Link to={{ pathname: '/search/genomic-segment/DynSpansBySourceId' }}>
             Genomic Segments based on Genomic Location
           </Link>{' '}
-          search page
+          search page.
         </div>
       ),
     }}
