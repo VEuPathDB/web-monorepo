@@ -12,6 +12,8 @@ import { get, memoize } from 'lodash';
 
 // @ts-ignore
 import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
+// @ts-ignore
+import newImage from '@veupathdb/wdk-client/lib/Core/Style/images/new-feature.png';
 
 import makeSnackbarProvider, {
   SnackbarStyleProps,
@@ -517,7 +519,7 @@ const useHeaderMenuItems = (
         },
         {
           key: 'mapveu',
-          display: 'MapVEu',
+          display: 'Legacy implementation of MapVEu (soon to be retired)',
           tooltip: 'Population Biology map',
           type: 'externalLink',
           url: '/popbio-map/web/',
@@ -551,7 +553,7 @@ const useHeaderMenuItems = (
               display: (
                 <>
                   MapVEu &mdash; Interactive maps{' '}
-                  <img alt="BETA" src={betaImage} />{' '}
+                  <img alt="NEW" src={newImage} />{' '}
                   <Loading
                     style={{
                       display: 'inline-block',
@@ -570,7 +572,7 @@ const useHeaderMenuItems = (
               display: (
                 <>
                   MapVEu &mdash; {mapMenuItems[0].display}{' '}
-                  <img alt="BETA" src={betaImage} />
+                  <img alt="NEW" src={newImage} />
                 </>
               ),
             }
@@ -580,7 +582,7 @@ const useHeaderMenuItems = (
               display: (
                 <>
                   MapVEu &mdash; Interactive maps{' '}
-                  <img alt="BETA" src={betaImage} />
+                  <img alt="NEW" src={newImage} />
                 </>
               ),
               items: mapMenuItems,
@@ -617,7 +619,11 @@ const useHeaderMenuItems = (
         },
         {
           key: 'srt',
-          display: 'Sequence retrieval',
+          display: (
+            <>
+              Sequence retrieval <img alt="NEW" src={newImage} />{' '}
+            </>
+          ),
           type: 'reactRoute',
           url: '/fasta-tool',
         },
