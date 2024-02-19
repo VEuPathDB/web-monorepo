@@ -91,9 +91,6 @@ const Template: Story<TreeTableProps<LeafRow>> = (args) => {
 const commonArgs: Partial<TreeTableProps<LeafRow>> = {
   width: 400,
   rowHeight: 50,
-  options: {
-    margin: [0, 10, 0, 10],
-  },
   columns: tableColumns,
 };
 

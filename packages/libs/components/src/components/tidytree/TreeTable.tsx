@@ -57,7 +57,11 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
     <div
       style={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'row' }}
     >
-      <HorizontalDendrogram {...props} leafCount={rows.length} options={{}} />
+      <HorizontalDendrogram
+        {...props}
+        leafCount={rows.length}
+        options={{ margin: [0, 10, 0, 10] }}
+      />
       <>
         <Global
           styles={globalStyle`
