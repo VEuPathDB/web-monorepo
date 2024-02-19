@@ -44,6 +44,7 @@ import { JobStatus } from '../computations/ComputeJobStatusHook';
 import { ComputationStepContainer } from '../computations/ComputationStepContainer';
 import { ComputationPlugin } from '../computations/Types';
 import { PlotContainerStyleOverrides } from './VisualizationTypes';
+import { removeParentheticals } from '../../utils/string-formatters';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -688,9 +689,8 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
                   computationStepInfo={{
                     stepNumber: 2,
                     // Remove parentheticals from Step 2 tite.
-                    stepTitle: `Generate ${computationAppOverview.displayName.replace(
-                      / *\([^)]*\) */g,
-                      ''
+                    stepTitle: `Generate ${removeParentheticals(
+                      computationAppOverview.displayName
                     )} results`,
                   }}
                   isStepDisabled={!isComputationConfigurationValid}
@@ -710,9 +710,8 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
               computationStepInfo={{
                 stepNumber: 3,
                 // Remove parentheticals from Step 3 title
-                stepTitle: `Use ${computationAppOverview.displayName.replace(
-                  / *\([^)]*\) */g,
-                  ''
+                stepTitle: `Use ${removeParentheticals(
+                  computationAppOverview.displayName
                 )} results in visualization`,
               }}
               isStepDisabled={computeJobStatus !== 'complete'}
