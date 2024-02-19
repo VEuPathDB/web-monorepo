@@ -4,7 +4,7 @@ import {
   HorizontalDendrogramProps,
 } from '../../components/tidytree/HorizontalDendrogram';
 import { useQuery } from 'react-query';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { CheckboxList } from '../../../../coreui/lib';
 
 export default {
