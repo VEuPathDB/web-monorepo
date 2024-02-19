@@ -687,7 +687,11 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
                 <ComputationStepContainer
                   computationStepInfo={{
                     stepNumber: 2,
-                    stepTitle: `Generate ${computationAppOverview.displayName} results`,
+                    // Remove parentheticals from Step 2 tite.
+                    stepTitle: `Generate ${computationAppOverview.displayName.replace(
+                      / *\([^)]*\) */g,
+                      ''
+                    )} results`,
                   }}
                   isStepDisabled={!isComputationConfigurationValid}
                 >
@@ -705,7 +709,11 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
             <ComputationStepContainer
               computationStepInfo={{
                 stepNumber: 3,
-                stepTitle: `Use ${computationAppOverview.displayName} results in visualization`,
+                // Remove parentheticals from Step 3 title
+                stepTitle: `Use ${computationAppOverview.displayName.replace(
+                  / *\([^)]*\) */g,
+                  ''
+                )} results in visualization`,
               }}
               isStepDisabled={computeJobStatus !== 'complete'}
             >
