@@ -184,12 +184,13 @@ class HeadingCell extends React.PureComponent {
     const { top, left, height } = offset ? offset : {};
     const position = { top: top + height, left };
 
-    if (!column.helpText) return null;
+    if (!column.helpText && !column.htmlHelp) return null;
     return (
       <Tooltip
         position={position}
         className="Trigger HelpTrigger"
-        content={column.helpText}
+        content={column.htmlHelp ?? column.helpText}
+        renderHtml={!!column.htmlHelp}
       >
         <Icon fa="question-circle" />
       </Tooltip>

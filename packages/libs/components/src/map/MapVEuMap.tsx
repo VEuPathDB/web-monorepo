@@ -151,8 +151,6 @@ export interface MapVEuMapProps {
   scrollingEnabled?: boolean;
   /** pass default viewport */
   defaultViewport?: Viewport;
-  /* selectedMarkers setState (for on-click reset) **/
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
   children?: React.ReactNode;
   onMapClick?: () => void;
   onMapDrag?: () => void;
@@ -179,7 +177,6 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     scrollingEnabled = true,
     interactive = true,
     defaultViewport,
-    setSelectedMarkers,
     onMapClick,
     onMapDrag,
     onMapZoom,
@@ -245,16 +242,21 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     boxZoom: false,
   };
 
+  const zoomSnap = 0.25;
+
   return (
     <MapContainer
       center={viewport.center}
       zoom={viewport.zoom}
-      style={{ height, width, ...style }}
       minZoom={1}
+      zoomSnap={zoomSnap}
+      wheelPxPerZoomLevel={100}
+      // We add our own custom zoom control below
+      zoomControl={false}
+      style={{ height, width, ...style }}
       worldCopyJump={false}
       whenCreated={onCreated}
       attributionControl={showAttribution}
-      zoomControl={false}
       {...(interactive ? {} : disabledInteractiveProps)}
     >
       <TileLayer
@@ -291,7 +293,6 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       <MapVEuMapEvents
         onViewportChanged={onViewportChanged}
         onBaseLayerChanged={onBaseLayerChanged}
-        setSelectedMarkers={setSelectedMarkers}
         onBoundsChanged={onBoundsChanged}
         onMapClick={onMapClick}
         onMapDrag={onMapDrag}
@@ -300,7 +301,10 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       {/* set ScrollWheelZoom */}
       <MapScrollWheelZoom scrollingEnabled={scrollingEnabled} />
       {/* use custom zoom control */}
-      <CustomZoomControl defaultViewport={defaultViewport} />
+      <CustomZoomControl
+        defaultViewport={defaultViewport}
+        zoomDelta={zoomSnap}
+      />
     </MapContainer>
   );
 }
@@ -311,13 +315,10 @@ interface MapVEuMapEventsProps {
   onViewportChanged: (viewport: Viewport) => void;
   onBoundsChanged: (bondsViewport: BoundsViewport) => void;
   onBaseLayerChanged?: (newBaseLayer: BaseLayerChoice) => void;
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
   onMapClick?: () => void;
   onMapDrag?: () => void;
   onMapZoom?: () => void;
 }
-
-const EMPTY_MARKERS: string[] = [];
 
 // function to handle map events such as onViewportChanged and baselayerchange
 function MapVEuMapEvents(props: MapVEuMapEventsProps) {
@@ -325,7 +326,6 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
     onViewportChanged,
     onBaseLayerChanged,
     onBoundsChanged,
-    setSelectedMarkers,
     onMapClick,
     onMapDrag,
     onMapZoom,
@@ -368,8 +368,6 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
     },
     // map click event: remove selected highlight markers
     click: () => {
-      if (setSelectedMarkers != null) setSelectedMarkers(EMPTY_MARKERS);
-
       if (onMapClick != null) onMapClick();
     },
   });
@@ -396,10 +394,13 @@ function MapScrollWheelZoom(props: MapScrollWheelZoomProps) {
 // custom zoom control
 interface CustomZoomControlProps {
   defaultViewport?: Viewport;
+  zoomDelta?: number;
 }
 
 function CustomZoomControl(props: CustomZoomControlProps) {
   const map = useMap();
+  const boundedZoomDelta =
+    props.zoomDelta !== undefined ? Math.max(props.zoomDelta, 0.25) : 1;
 
   const disableMinZoomButton =
     map.getZoom() <= map.getMinZoom() ? 'leaflet-disabled' : '';
@@ -409,13 +410,13 @@ function CustomZoomControl(props: CustomZoomControlProps) {
   // zoom in
   const zoomIn = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    map.setZoom(map.getZoom() + 1);
+    if (!disableMaxZoomButton) map.setZoom(map.getZoom() + boundedZoomDelta);
   };
 
   // zoom out
   const zoomOut = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    map.setZoom(map.getZoom() - 1);
+    if (!disableMinZoomButton) map.setZoom(map.getZoom() - boundedZoomDelta);
   };
 
   // zoom to data: using flyTo function implicitly

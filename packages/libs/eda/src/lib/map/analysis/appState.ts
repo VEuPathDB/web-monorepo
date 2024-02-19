@@ -3,10 +3,15 @@ import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { isEqual } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useAnalysis, useGetDefaultVariableDescriptor } from '../../core';
+import {
+  useAnalysis,
+  useGetDefaultVariableDescriptor,
+  useStudyMetadata,
+} from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
 import { useGetDefaultTimeVariableDescriptor } from './hooks/eztimeslider';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
+import { STUDIES_ENTITY_ID, STUDY_ID_VARIABLE_ID } from '../constants';
 
 const LatLngLiteral = t.type({ lat: t.number, lng: t.number });
 
@@ -49,20 +54,34 @@ export const MarkerConfiguration = t.intersection([
     activeVisualizationId: t.string,
   }),
   t.union([
-    t.type({
-      type: t.literal('barplot'),
-      selectedValues: SelectedValues,
-      selectedPlotMode: t.union([t.literal('count'), t.literal('proportion')]),
-      binningMethod: BinningMethod,
-      dependentAxisLogScale: t.boolean,
-      selectedCountsOption: SelectedCountsOption,
-    }),
-    t.type({
-      type: t.literal('pie'),
-      selectedValues: SelectedValues,
-      binningMethod: BinningMethod,
-      selectedCountsOption: SelectedCountsOption,
-    }),
+    t.intersection([
+      t.type({
+        type: t.literal('barplot'),
+        selectedValues: SelectedValues,
+        selectedPlotMode: t.union([
+          t.literal('count'),
+          t.literal('proportion'),
+        ]),
+        binningMethod: BinningMethod,
+        dependentAxisLogScale: t.boolean,
+        selectedCountsOption: SelectedCountsOption,
+      }),
+      t.partial({
+        // yes all the modes have selectedMarkers but maybe in the future one won't
+        selectedMarkers: t.array(t.string),
+      }),
+    ]),
+    t.intersection([
+      t.type({
+        type: t.literal('pie'),
+        selectedValues: SelectedValues,
+        binningMethod: BinningMethod,
+        selectedCountsOption: SelectedCountsOption,
+      }),
+      t.partial({
+        selectedMarkers: t.array(t.string),
+      }),
+    ]),
     t.intersection([
       t.type({
         type: t.literal('bubble'),
@@ -71,10 +90,23 @@ export const MarkerConfiguration = t.intersection([
         aggregator: t.union([t.literal('mean'), t.literal('median')]),
         numeratorValues: t.union([t.array(t.string), t.undefined]),
         denominatorValues: t.union([t.array(t.string), t.undefined]),
+        selectedMarkers: t.array(t.string),
       }),
     ]),
   ]),
 ]);
+
+const PanelConfig = t.type({
+  isVisble: t.boolean,
+  position: t.type({ x: t.number, y: t.number }),
+  dimensions: t.type({
+    height: t.union([t.number, t.string]),
+    width: t.union([t.number, t.string]),
+  }),
+});
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export type PanelConfig = t.TypeOf<typeof PanelConfig>;
 
 export const AppState = t.intersection([
   t.type({
@@ -87,6 +119,7 @@ export const AppState = t.intersection([
     isSidePanelExpanded: t.boolean,
   }),
   t.partial({
+    studyDetailsPanelConfig: PanelConfig,
     boundsZoomLevel: t.type({
       zoomLevel: t.number,
       bounds: t.type({
@@ -139,6 +172,7 @@ export function useAppState(
     getOrElseW(() => undefined)
   );
 
+  const studyMetadata = useStudyMetadata();
   const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
   const defaultVariable = getDefaultVariableDescriptor();
 
@@ -146,17 +180,35 @@ export function useAppState(
     useGetDefaultTimeVariableDescriptor();
   const defaultTimeVariable = getDefaultTimeVariableDescriptor();
 
+  const isMegaStudy =
+    studyMetadata.rootEntity.id === STUDIES_ENTITY_ID &&
+    studyMetadata.rootEntity.variables.find(
+      (variable) => variable.id === STUDY_ID_VARIABLE_ID
+    ) != null;
+
   const defaultAppState: AppState = useMemo(
     () => ({
       viewport: defaultViewport,
       mouseMode: 'default',
       activeMarkerConfigurationType: 'pie',
-      isSidePanelExpanded: true,
+      isSidePanelExpanded: false,
       timeSliderConfig: {
         variable: defaultTimeVariable,
         active: true,
         selectedRange: undefined,
       },
+      ...(isMegaStudy
+        ? {
+            studyDetailsPanelConfig: {
+              isVisble: false,
+              position: {
+                x: Math.max(650, window.innerWidth / 2 - 250),
+                y: Math.max(300, window.innerHeight / 2 - 250),
+              },
+              dimensions: { height: 500, width: 500 },
+            },
+          }
+        : {}),
       markerConfigurations: [
         {
           type: 'pie',
@@ -183,7 +235,7 @@ export function useAppState(
         },
       ],
     }),
-    [defaultVariable, defaultTimeVariable]
+    [defaultTimeVariable, isMegaStudy, defaultVariable]
   );
 
   useEffect(() => {
@@ -204,29 +256,48 @@ export function useAppState(
               )
           );
 
-        const timeSliderConfigIsMissing = appState.timeSliderConfig == null;
+        // Used to track if appState needs to be updated with
+        // missing pieces of configuration.
+        let nextAppState = appState;
 
-        if (missingMarkerConfigs.length > 0 || timeSliderConfigIsMissing) {
+        if (missingMarkerConfigs.length > 0) {
+          nextAppState = {
+            ...nextAppState,
+            markerConfigurations: [
+              ...nextAppState.markerConfigurations,
+              ...missingMarkerConfigs,
+            ],
+          };
+        }
+
+        if (appState.timeSliderConfig == null) {
+          nextAppState = {
+            ...nextAppState,
+            timeSliderConfig: defaultAppState.timeSliderConfig,
+          };
+        }
+
+        if (isMegaStudy && appState.studyDetailsPanelConfig == null) {
+          nextAppState = {
+            ...nextAppState,
+            studyDetailsPanelConfig: defaultAppState.studyDetailsPanelConfig,
+          };
+        }
+
+        // If nextAppState has a new value, then we need to update
+        // the analysis object
+        if (nextAppState !== appState)
           setVariableUISettings((prev) => ({
             ...prev,
-            [uiStateKey]: {
-              ...appState,
-              ...(timeSliderConfigIsMissing
-                ? { timeSliderConfig: defaultAppState.timeSliderConfig }
-                : {}),
-              markerConfigurations: [
-                ...appState.markerConfigurations,
-                ...missingMarkerConfigs,
-              ],
-            },
+            [uiStateKey]: nextAppState,
           }));
-        }
       }
       setAppStateChecked(true);
     }
   }, [
     analysis,
     appState,
+    isMegaStudy,
     setVariableUISettings,
     uiStateKey,
     defaultAppState,
@@ -270,5 +341,6 @@ export function useAppState(
     setSubsetVariableAndEntity: useSetter('subsetVariableAndEntity'),
     setViewport: useSetter('viewport'),
     setTimeSliderConfig: useSetter('timeSliderConfig', true),
+    setStudyDetailsPanelConfig: useSetter('studyDetailsPanelConfig'),
   };
 }

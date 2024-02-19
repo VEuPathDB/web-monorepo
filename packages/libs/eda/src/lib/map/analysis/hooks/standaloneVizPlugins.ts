@@ -3,7 +3,10 @@ import * as t from 'io-ts';
 import { ComputationPlugin } from '../../../core/components/computations/Types';
 import { ZeroConfiguration } from '../../../core/components/computations/ZeroConfiguration';
 import { FloatingLayout } from '../../../core/components/layouts/FloatingLayout';
-import { LayoutOptions } from '../../../core/components/layouts/types';
+import {
+  LayoutOptions,
+  TitleOptions,
+} from '../../../core/components/layouts/types';
 import {
   OverlayOptions,
   RequestOptionProps,
@@ -30,22 +33,27 @@ import { scatterplotRequest } from './plugins/scatterplot';
 
 import TimeSeriesSVG from '../../../core/components/visualizations/implementations/selectorIcons/TimeSeriesSVG';
 import _ from 'lodash';
+import { EntitySubtitleForViz } from '../mapTypes/shared';
 
 interface Props {
   selectedOverlayConfig?: OverlayConfig | BubbleOverlayConfig;
   overlayHelp?: ReactNode;
+  selectedMarkers?: string[] | undefined;
 }
 
-type StandaloneVizOptions = LayoutOptions & OverlayOptions;
+type StandaloneVizOptions = LayoutOptions & OverlayOptions & TitleOptions;
 
 export function useStandaloneVizPlugins({
   selectedOverlayConfig,
   overlayHelp = 'The overlay variable can be selected via the top-right panel.',
+  selectedMarkers,
 }: Props): Record<string, ComputationPlugin> {
   return useMemo(() => {
     function vizWithOptions(
       visualization: VisualizationPlugin<StandaloneVizOptions>
     ) {
+      const modifierKey =
+        window.navigator.platform.indexOf('Mac') === 0 ? 'Cmd' : 'Ctrl';
       return visualization.withOptions({
         hideFacetInputs: true, // will also enable table-only mode for mosaic
         hideShowMissingnessToggle: true,
@@ -70,6 +78,17 @@ export function useStandaloneVizPlugins({
           }
         },
         getOverlayVariableHelp: () => overlayHelp,
+        getPlotSubtitle: () =>
+          selectedMarkers && selectedMarkers.length > 0
+            ? selectedMarkers.length > 1
+              ? EntitySubtitleForViz({ subtitle: 'for selected markers' })
+              : EntitySubtitleForViz({
+                  subtitle: `for selected marker - ${modifierKey}-click to add more`,
+                })
+            : EntitySubtitleForViz({
+                subtitle:
+                  'for all visible data on map - click markers to refine',
+              }),
       });
     }
 
@@ -154,5 +173,5 @@ export function useStandaloneVizPlugins({
         },
       },
     };
-  }, [overlayHelp, selectedOverlayConfig]);
+  }, [overlayHelp, selectedOverlayConfig, selectedMarkers]);
 }

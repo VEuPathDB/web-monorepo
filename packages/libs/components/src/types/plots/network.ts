@@ -37,10 +37,13 @@ export type NetworkData = {
   links: LinkData[];
 };
 
+export type NodeIdList = {
+  nodeIds: string[];
+};
+
 /** Bipartite network data is a regular network with addiitonal declarations of
  * nodes in each of the two columns. IDs in columnXNodeIDs must match node ids exactly.
  */
 export type BipartiteNetworkData = {
-  column1NodeIDs: string[];
-  column2NodeIDs: string[];
+  partitions: NodeIdList[];
 } & NetworkData;
