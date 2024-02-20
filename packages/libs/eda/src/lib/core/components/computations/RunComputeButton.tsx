@@ -27,7 +27,11 @@ export function RunComputeButton(props: Props) {
     >
       <FilledButton
         themeRole="primary"
-        text={`Generate ${computationAppOverview.displayName} results`}
+        // Remove any parentheticals from the button text
+        text={`Generate ${computationAppOverview.displayName.replace(
+          / *\([^)]*\) */g,
+          ''
+        )} results`}
         textTransform="none"
         onPress={createJob}
         disabled={!status || !['no-such-job', 'expired'].includes(status)}

@@ -452,10 +452,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
           : 'Full',
         dependentAxisValueSpec: keepDependentAxisSettings
           ? vizConfig.dependentAxisValueSpec
-          : yAxisVar != null
-          ? isSuitableCategoricalVariable(yAxisVar)
-            ? 'Full'
-            : 'Auto-zoom'
           : 'Full',
         // udpate useBinning with conditions
         useBinning: keepIndependentAxisUseBinning
@@ -889,9 +885,26 @@ function LineplotViz(props: VisualizationProps<Options>) {
   );
 
   // use a hook to handle default dependent axis range for Lineplot Viz Proportion
+  // but first, effectively disable the distributionDefaults.rangeMin/Max to force
+  // the axis range calculations to use the observed min/max (because these are aggregate
+  // (e.g. mean/median) values whose range is much reduced compared to their min/max)
+
+  const rangelessYAxisVariable =
+    Variable.is(yAxisVariable) &&
+    (yAxisVariable.type === 'number' || yAxisVariable.type === 'integer')
+      ? {
+          ...yAxisVariable,
+          distributionDefaults: {
+            ...yAxisVariable.distributionDefaults,
+            rangeMin: Infinity, // can't use undefined because
+            rangeMax: -Infinity, // these props are mandatory
+          },
+        }
+      : yAxisVariable;
+
   const defaultDependentAxisRange = useDefaultDependentAxisRangeProportion(
     data,
-    yAxisVariable,
+    rangelessYAxisVariable,
     vizConfig.dependentAxisLogScale,
     vizConfig.valueSpecConfig,
     vizConfig.dependentAxisValueSpec
@@ -1129,17 +1142,23 @@ function LineplotViz(props: VisualizationProps<Options>) {
   const widgetHeight = '4em';
 
   // controls need the bin info from just one facet (not an empty one)
-  const data0 = isFaceted(data.value?.dataSetProcess)
+  const checkData = isFaceted(data.value?.dataSetProcess)
     ? data.value?.dataSetProcess.facets.find(
         ({ data }) => data != null && data.series.length > 0
       )?.data
     : data.value?.dataSetProcess;
 
+  // use checkData also to determine if there's no data at all (for PluginError banner)
+  // because outputSize can't always rely on data.value.completeCasesAllVars and friend
+  const isEmptyData =
+    data.value != null &&
+    checkData?.series.find((series) => series.x.length > 0) == null;
+
   // add banner condition to avoid unnecessary disabled
   const neverUseBinning =
     !showIndependentAxisBanner &&
     !showDependentAxisBanner &&
-    data0?.binWidthSlider == null; // for ordinal string x-variables
+    checkData?.binWidthSlider == null; // for ordinal string x-variables
 
   // axis range control
   const neverShowErrorBars = lineplotProps.dependentValueType === 'date';
@@ -1202,7 +1221,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     updateVizConfig({
       dependentAxisRange: undefined,
       dependentAxisLogScale: false,
-      dependentAxisValueSpec: categoricalMode ? 'Full' : 'Auto-zoom',
+      dependentAxisValueSpec: 'Full',
       showErrorBars: true,
     });
     // add reset for truncation message as well
@@ -1384,18 +1403,18 @@ function LineplotViz(props: VisualizationProps<Options>) {
                 />
               ) : null}
               <BinWidthControl
-                binWidth={data0?.binWidthSlider?.binWidth}
+                binWidth={checkData?.binWidthSlider?.binWidth}
                 onBinWidthChange={onBinWidthChange}
-                binWidthRange={data0?.binWidthSlider?.binWidthRange}
-                binWidthStep={data0?.binWidthSlider?.binWidthStep}
-                valueType={data0?.binWidthSlider?.valueType}
+                binWidthRange={checkData?.binWidthSlider?.binWidthRange}
+                binWidthStep={checkData?.binWidthSlider?.binWidthStep}
+                valueType={checkData?.binWidthSlider?.valueType}
                 binUnit={
-                  data0?.binWidthSlider?.valueType === 'date'
-                    ? (data0?.binWidthSlider?.binWidth as TimeDelta).unit
+                  checkData?.binWidthSlider?.valueType === 'date'
+                    ? (checkData?.binWidthSlider?.binWidth as TimeDelta).unit
                     : undefined
                 }
                 binUnitOptions={
-                  data0?.binWidthSlider?.valueType === 'date'
+                  checkData?.binWidthSlider?.valueType === 'date'
                     ? ['day', 'week', 'month', 'year']
                     : undefined
                 }
@@ -1604,11 +1623,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
                 buttonColor={'primary'}
                 margins={['0em', '0', '0', '0em']}
                 itemMarginRight={25}
-                disabledList={
-                  !categoricalMode && vizConfig.yAxisVariable != null
-                    ? ['Full']
-                    : []
-                }
               />
               <AxisRangeControl
                 label="Range"
@@ -1824,7 +1838,10 @@ function LineplotViz(props: VisualizationProps<Options>) {
         )}
       </div>
 
-      <PluginError error={data.error} outputSize={outputSize} />
+      <PluginError
+        error={data.error}
+        outputSize={isEmptyData ? 0 : outputSize}
+      />
       {!hideInputsAndControls && (
         <OutputEntityTitle
           entity={outputEntity}
@@ -1928,9 +1945,11 @@ export function lineplotResponseToData(
   const yMax = max(map(processedData, ({ yMax }) => yMax));
 
   const dataSetProcess =
-    size(processedData) === 1 && head(keys(processedData)) === '__NO_FACET__'
+    (size(processedData) === 1 &&
+      head(keys(processedData)) === '__NO_FACET__') ||
+    size(processedData) === 0
       ? // unfaceted
-        head(values(processedData))?.dataSetProcess
+        head(values(processedData))?.dataSetProcess ?? { series: [] }
       : // faceted
         {
           facets: vocabularyWithMissingData(
@@ -2159,6 +2178,7 @@ function processInputData(
   showMissingness: boolean,
   hasMissingData: boolean,
   dependentIsProportion: boolean,
+  // allow null for binSpec and binWidthSlider
   binSpec?: BinSpec,
   binWidthSlider?: BinWidthSlider,
   overlayVariable?: Variable,
@@ -2707,6 +2727,9 @@ function useDefaultDependentAxisRangeProportion(
     dependentAxisLogScale,
     dependentAxisValueSpec
   );
+
+  // wait until we have observed min/max data before attempting to return anything meaningful
+  if (data.value == null) return;
 
   // include min origin: 0 (linear) or minPos (logscale)
   if (data.value != null && valueSpecConfig === 'Proportion')
