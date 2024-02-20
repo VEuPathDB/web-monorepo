@@ -72,6 +72,9 @@ class MesaController extends React.Component {
       uiState,
       eventHandlers,
       headerWrapperStyle,
+      childRow,
+      expandedRows,
+      onExpandedRowsChange,
     } = this.props;
     if (!filteredRows) filteredRows = [...rows];
     const props = {
@@ -83,6 +86,9 @@ class MesaController extends React.Component {
       uiState,
       eventHandlers,
       headerWrapperStyle,
+      childRow,
+      expandedRows,
+      onExpandedRowsChange,
     };
 
     const Toolbar = this.renderToolbar;

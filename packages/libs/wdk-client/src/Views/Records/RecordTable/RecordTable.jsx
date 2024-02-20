@@ -103,14 +103,21 @@ class RecordTable extends Component {
     const mesaReadyColumns = columns
       .filter((c) => c.isDisplayable)
       .map((c) => {
-        const { name, displayName, isSortable, type, ...remainingProperties } =
-          c;
+        const {
+          name,
+          displayName,
+          isSortable,
+          type,
+          help,
+          ...remainingProperties
+        } = c;
         return {
           ...remainingProperties,
           key: name,
           name: displayName,
           sortable: isSortable,
           type: type ?? 'html',
+          helpText: help,
         };
       });
 
@@ -151,15 +158,18 @@ class RecordTable extends Component {
       filteredRows: this.state.searchTerm.length ? filteredRows : undefined,
       eventHandlers: {
         onSort: this.onSort,
+        onExpandedRowsChange,
       },
       uiState: {
         sort: {
           columnKey: undefined,
           direction: 'desc',
         },
+        expandedRows,
       },
       options: {
         toolbar: true,
+        childRow,
       },
     };
 
@@ -203,7 +213,7 @@ class RecordTable extends Component {
           searchable={value.length > 1}
           onDraw={onDraw}
         /> */}
-        <Mesa state={MesaState.create(tableState)}>
+        <Mesa state={tableState}>
           {mesaReadyRows.length > 1 && (
             <RecordFilter
               searchTerm={this.state.searchTerm}

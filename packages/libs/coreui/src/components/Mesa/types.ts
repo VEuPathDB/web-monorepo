@@ -2,6 +2,11 @@ import React, { CSSProperties, ReactElement, ReactNode } from 'react';
 
 type DefaultColumnKey<Row> = Extract<keyof Row, string>;
 
+type ChildRowProps<Row> = {
+  rowIndex: number;
+  rowData: Row;
+};
+
 export interface MesaStateProps<
   Row,
   Key = DefaultColumnKey<Row>,
@@ -22,6 +27,7 @@ export interface MesaStateProps<
       rowsPerPageOptions?: number[];
     };
     emptinessCulprit?: 'search' | 'nocolumns' | 'filters' | 'nodata';
+    expandedRows?: number[];
   };
   headerWrapperStyle?: CSSProperties;
   options?: {
@@ -44,6 +50,9 @@ export interface MesaStateProps<
     deriveRowClassName?: (row: Row) => string | undefined;
     renderEmptyState?: () => ReactNode;
     isRowSelected?: (row: Row) => boolean;
+    childRow?:
+      | string
+      | ((props: ChildRowProps<Row>) => ReactElement<ChildRowProps<Row>>);
   };
   actions?: MesaAction<Row, Key>[];
   eventHandlers?: {
@@ -59,6 +68,7 @@ export interface MesaStateProps<
     onMultipleRowSelect?: (rows: Row[]) => void;
     onMultipleRowDeselect?: (rows: Row[]) => void;
     onColumnReorder?: (columnKey: Key, columnIndex: number) => void;
+    onExpandedRowsChange?: (indexes: number[]) => void;
   };
 }
 

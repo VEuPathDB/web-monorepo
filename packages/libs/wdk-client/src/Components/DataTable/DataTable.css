@@ -65,23 +65,23 @@
   color: black;
 }
 
-.wdk-DataTableCellExpand:before {
+/* .wdk-DataTableCellExpand:before {
   font-family: FontAwesome;
   content: '\f0da'; /* caret-right */
-  font-size: 1.6em;
+/* font-size: 1.6em;
   text-align: center;
   display: block;
-}
+} */
 
-.wdk-DataTableRow__expanded .wdk-DataTableCellExpand:before {
-  content: '\f0d7'; /* caret-down */
-  color: initial;
-}
+/* .wdk-DataTableRow__expanded .wdk-DataTableCellExpand:before { */
+/* content: '\f0d7'; caret-down */
+/* color: initial; */
+/* } */
 
-.wdk-DataTableRow__expanded td.wdk-DataTableCell {
-  background-color: #f9f9f9;
-  font-weight: bold;
-}
+/* .wdk-DataTableRow__expanded td.wdk-DataTableCell { */
+/* background-color: #f9f9f9; */
+/* font-weight: bold; */
+/* } */
 
 /** DataTables and FontAwesome integration **/
 

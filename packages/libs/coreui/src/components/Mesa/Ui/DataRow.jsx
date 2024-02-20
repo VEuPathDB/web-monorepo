@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import DataCell from './DataCell';
 import SelectionCell from './SelectionCell';
+import ExpansionCell from './ExpansionCell';
 import { makeClassifier } from '../Utils/Utils';
 
 const dataRowClass = makeClassifier('DataRow');
@@ -64,15 +65,22 @@ class DataRow extends React.PureComponent {
   }
 
   render() {
-    const { row, rowIndex, columns, options, eventHandlers } = this.props;
+    const { row, rowIndex, columns, options, eventHandlers, uiState } =
+      this.props;
     const { expanded } = this.state;
-    const { columnDefaults } = options ? options : {};
+    const { columnDefaults, childRow } = options ? options : {};
     const inline = options.inline ? !expanded : false;
 
     const hasSelectionColumn =
       typeof options.isRowSelected === 'function' &&
       typeof eventHandlers.onRowSelect === 'function' &&
       typeof eventHandlers.onRowDeselect === 'function';
+
+    const hasExpansionColumn = [
+      childRow,
+      eventHandlers.onExpandedRowsChange,
+      uiState.expandedRows,
+    ].every((prop) => prop != null);
 
     const rowStyle = !inline
       ? {}
@@ -97,14 +105,22 @@ class DataRow extends React.PureComponent {
         onMouseOver={this.handleRowMouseOver}
         onMouseOut={this.handleRowMouseOut}
       >
-        {!hasSelectionColumn ? null : (
+        {hasSelectionColumn ? (
           <SelectionCell
             key="_selection"
             row={row}
             eventHandlers={eventHandlers}
             isRowSelected={options.isRowSelected}
           />
-        )}
+        ) : hasExpansionColumn ? (
+          <ExpansionCell
+            key="_expansion"
+            row={row}
+            onExpandedRowsChange={eventHandlers.onExpandedRowsChange}
+            expandedRows={uiState.expandedRows}
+            rowIndex={rowIndex}
+          />
+        ) : null}
         {columns.map((column, columnIndex) => {
           if (typeof columnDefaults === 'object')
             column = Object.assign({}, columnDefaults, column);
