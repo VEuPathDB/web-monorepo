@@ -621,7 +621,8 @@ const useHeaderMenuItems = (
           key: 'srt',
           display: (
             <>
-              Sequence retrieval <img alt="NEW" src={newImage} />{' '}
+              Sequence retrieval{' '}
+              {projectId === EuPathDB ? '' : <img alt="NEW" src={newImage} />}
             </>
           ),
           type: 'reactRoute',
