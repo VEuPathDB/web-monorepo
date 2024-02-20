@@ -16,6 +16,10 @@
     font-size: 1.15em;
   }
 
+  &-ConfiguredVizLink {
+    width: 100%;
+  }
+
   &-ConfiguredVisualization {
     height: 15em;
     width: 25em;
@@ -250,6 +254,10 @@ $data-table-thick-border: 2px solid #262626;
   }
   th {
     vertical-align: baseline;
+  }
+  td {
+    padding-right: 10px;
+    word-break: break-word;
   }
 }
 

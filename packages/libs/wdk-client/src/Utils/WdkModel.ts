@@ -311,6 +311,7 @@ export type ParamUIState =
 
 export interface AttributeField extends NamedModelEntity {
   help?: string;
+  htmlHelp?: string;
   align?: string;
   isSortable: boolean;
   isRemovable: boolean;

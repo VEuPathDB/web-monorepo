@@ -36,9 +36,17 @@ import { BubbleMarkerIcon } from '../../MarkerConfiguration/icons';
 import { useStandaloneVizPlugins } from '../../hooks/standaloneVizPlugins';
 import { getDefaultBubbleOverlayConfig } from '../../utils/defaultOverlayConfig';
 import {
+  MAX_FILTERSET_VALUES,
   defaultAnimation,
+  floaterFilterFuncs,
   isApproxSameViewport,
+  markerDataFilterFuncs,
   useCommonData,
+  timeSliderLittleFilter,
+  viewportLittleFilters,
+  getErrorOverlayComponent,
+  useSelectedMarkerSnackbars,
+  selectedMarkersLittleFilter,
 } from '../shared';
 import {
   MapTypeConfigPanelProps,
@@ -51,8 +59,14 @@ import { useQuery } from '@tanstack/react-query';
 import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import { GeoConfig } from '../../../../core/types/geoConfig';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
-import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
-import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
+import {
+  useLittleFilters,
+  UseLittleFiltersFuncProps,
+} from '../../littleFilters';
+import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
+import { SubStudies } from '../../SubStudies';
+import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
+import { STUDIES_ENTITY_ID, STUDY_ID_VARIABLE_ID } from '../../../constants';
 
 const displayName = 'Bubbles';
 
@@ -60,8 +74,9 @@ export const plugin: MapTypePlugin = {
   displayName,
   ConfigPanelComponent: BubbleMapConfigurationPanel,
   MapLayerComponent: BubbleMapLayer,
-  MapOverlayComponent: BubbleLegends,
+  MapOverlayComponent: BubbleLegendsAndFloater,
   MapTypeHeaderDetails,
+  TimeSliderComponent,
 };
 
 function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
@@ -173,16 +188,20 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
 }
 
 /**
- * Renders marker and legend components
+ * Renders markers
  */
 function BubbleMapLayer(props: MapTypeMapLayerProps) {
   const {
     studyId,
     filters,
     appState,
+    appState: {
+      boundsZoomLevel,
+      markerConfigurations,
+      activeMarkerConfigurationType,
+    },
+    updateConfiguration,
     geoConfigs,
-    selectedMarkers,
-    setSelectedMarkers,
   } = props;
 
   const configuration = props.configuration as BubbleMarkerConfiguration;
@@ -193,19 +212,50 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
     ...configuration,
   });
 
+  const { filters: filtersForMarkerData } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    markerDataFilterFuncs
+  );
+
   const markersData = useMarkerData({
-    boundsZoomLevel: appState.boundsZoomLevel,
+    boundsZoomLevel,
     configuration,
     geoConfigs,
     studyId,
-    filters,
+    filters: filtersForMarkerData,
   });
+
+  const handleSelectedMarkerSnackbars = useSelectedMarkerSnackbars(
+    appState.studyDetailsPanelConfig != null,
+    configuration.activeVisualizationId
+  );
+
+  const setSelectedMarkers = useCallback(
+    (selectedMarkers?: string[]) => {
+      handleSelectedMarkerSnackbars(selectedMarkers);
+      updateConfiguration({
+        ...(props.configuration as BubbleMarkerConfiguration),
+        selectedMarkers,
+      });
+    },
+    [handleSelectedMarkerSnackbars, props.configuration, updateConfiguration]
+  );
+
   if (markersData.error && !markersData.isFetching)
-    return <MapFloatingErrorDiv error={markersData.error} />;
+    return getErrorOverlayComponent(markersData.error);
 
   const markers = markersData.data?.markersData?.map((markerProps) => (
     <BubbleMarker {...markerProps} />
   ));
+
+  const selectedMarkers = markerConfigurations.find(
+    (markerConfiguration) =>
+      markerConfiguration.type === activeMarkerConfigurationType
+  )?.selectedMarkers;
 
   return (
     <>
@@ -216,7 +266,7 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
           animation={defaultAnimation}
           flyToMarkers={
             !(markersData.isFetching || markersData.isPreviousData) &&
-            isApproxSameViewport(props.appState.viewport, defaultViewport)
+            isApproxSameViewport(appState.viewport, defaultViewport)
           }
           selectedMarkers={selectedMarkers}
           setSelectedMarkers={setSelectedMarkers}
@@ -227,8 +277,17 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
   );
 }
 
-function BubbleLegends(props: MapTypeMapLayerProps) {
-  const { studyId, filters, geoConfigs, appState, updateConfiguration } = props;
+function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
+  const {
+    studyId,
+    filters,
+    geoConfigs,
+    appState,
+    appState: { markerConfigurations, activeMarkerConfigurationType },
+    updateConfiguration,
+    headerButtons,
+    setStudyDetailsPanelConfig,
+  } = props;
   const configuration = props.configuration as BubbleMarkerConfiguration;
 
   const { isValidProportion } = useOverlayConfig({
@@ -246,7 +305,6 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
     filters,
     geoConfigs,
     configuration,
-    boundsZoomLevel: appState.boundsZoomLevel,
   });
 
   const setActiveVisualizationId = useCallback(
@@ -259,8 +317,14 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
     [configuration, updateConfiguration]
   );
 
+  const selectedMarkers = markerConfigurations.find(
+    (markerConfiguration) =>
+      markerConfiguration.type === activeMarkerConfigurationType
+  )?.selectedMarkers;
+
   const plugins = useStandaloneVizPlugins({
     overlayHelp: 'Overlay variables are not available for this map type',
+    selectedMarkers,
   });
 
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
@@ -273,8 +337,37 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
       </div>
     ) : undefined;
 
+  const { filters: filtersForFloaters } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    floaterFilterFuncs
+  );
+
+  const { filters: filtersForSubStudies } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    substudyFilterFuncs
+  );
+
   return (
     <>
+      {appState.studyDetailsPanelConfig?.isVisble && (
+        <SubStudies
+          studyId={studyId}
+          entityId={STUDIES_ENTITY_ID}
+          variableId={STUDY_ID_VARIABLE_ID}
+          filters={filtersForSubStudies}
+          panelConfig={appState.studyDetailsPanelConfig}
+          updatePanelConfig={setStudyDetailsPanelConfig}
+          hasSelectedMarkers={!!selectedMarkers?.length}
+        />
+      )}
       <DraggableLegendPanel panelTitle="Count" zIndex={2}>
         <div style={{ padding: '5px 10px' }}>
           {invalidProportionMessage ?? (
@@ -294,6 +387,7 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
         panelTitle={overlayVariable?.displayName}
         zIndex={3}
         defaultPosition={{ x: window.innerWidth, y: 420 }}
+        headerButtons={headerButtons}
       >
         <div style={{ padding: '5px 10px' }}>
           {invalidProportionMessage ?? (
@@ -320,11 +414,11 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
         setActiveVisualizationId={setActiveVisualizationId}
         apps={props.apps}
         plugins={plugins}
-        geoConfigs={props.geoConfigs}
+        geoConfigs={geoConfigs}
         totalCounts={props.totalCounts}
         filteredCounts={props.filteredCounts}
         toggleStarredVariable={toggleStarredVariable}
-        filters={props.filtersIncludingViewport}
+        filters={filtersForFloaters}
         // onTouch={moveVizToTop}
         zIndexForStackingContext={2}
         hideInputsAndControls={props.hideVizInputsAndControls}
@@ -335,33 +429,97 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
 }
 
 function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
-  const configuration = props.configuration as BubbleMarkerConfiguration;
-  const markerDataResponse = useMarkerData({
-    studyId: props.studyId,
-    filters: props.filters,
-    geoConfigs: props.geoConfigs,
-    boundsZoomLevel: props.appState.boundsZoomLevel,
-    configuration,
-  });
   const {
-    outputEntity: { id: outputEntityId },
-  } = useCommonData(
-    configuration.selectedVariable,
-    props.geoConfigs,
-    props.studyEntities
+    studyEntities,
+    filters,
+    geoConfigs,
+    appState,
+    appState: { timeSliderConfig, studyDetailsPanelConfig },
+  } = props;
+
+  const configuration = props.configuration as BubbleMarkerConfiguration;
+
+  const { filters: filtersForSubStudies } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    substudyFilterFuncs
   );
 
+  const {
+    outputEntity: { id: outputEntityId },
+  } = useCommonData(configuration.selectedVariable, geoConfigs, studyEntities);
+
   return outputEntityId != null ? (
-    <MapTypeHeaderCounts
+    <MapTypeHeaderStudyDetails
+      hasMarkerSelection={!!configuration.selectedMarkers?.length}
+      filtersForVisibleData={filtersForSubStudies}
+      includesTimeSliderFilter={timeSliderConfig != null}
       outputEntityId={outputEntityId}
-      totalEntityCount={props.totalCounts.value?.[outputEntityId]}
-      totalEntityInSubsetCount={props.filteredCounts.value?.[outputEntityId]}
-      visibleEntityCount={
-        markerDataResponse.data.totalVisibleWithOverlayEntityCount
+      onShowStudies={
+        studyDetailsPanelConfig &&
+        ((isVisble) =>
+          props.setStudyDetailsPanelConfig({
+            ...studyDetailsPanelConfig,
+            isVisble,
+          }))
       }
     />
   ) : null;
 }
+
+const timeSliderFilterFuncs = [markerConfigLittleFilter];
+
+const substudyFilterFuncs = [
+  viewportLittleFilters,
+  timeSliderLittleFilter,
+  markerConfigLittleFilter,
+  selectedMarkersLittleFilter,
+];
+
+export function TimeSliderComponent(props: MapTypeMapLayerProps) {
+  const {
+    studyId,
+    studyEntities,
+    filters,
+    appState,
+    appState: { timeSliderConfig },
+    analysisState,
+    geoConfigs,
+    setTimeSliderConfig,
+    siteInformationProps,
+  } = props;
+
+  const toggleStarredVariable = useToggleStarredVariable(analysisState);
+
+  const { filters: filtersForTimeSlider } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    timeSliderFilterFuncs
+  );
+
+  return timeSliderConfig && setTimeSliderConfig && siteInformationProps ? (
+    <TimeSliderQuickFilter
+      studyId={studyId}
+      entities={studyEntities}
+      filters={filtersForTimeSlider}
+      starredVariables={
+        analysisState.analysis?.descriptor.starredVariables ?? []
+      }
+      toggleStarredVariable={toggleStarredVariable}
+      config={timeSliderConfig}
+      updateConfig={setTimeSliderConfig}
+      siteInformation={siteInformationProps}
+    />
+  ) : null;
+}
+
+///// helpers and hooks //////
 
 const processRawBubblesData = (
   mapElements: StandaloneMapBubblesResponse['mapElements'],
@@ -495,8 +653,7 @@ interface DataProps {
 }
 
 function useLegendData(props: DataProps) {
-  const { boundsZoomLevel, configuration, geoConfigs, studyId, filters } =
-    props;
+  const { configuration, geoConfigs, studyId, filters } = props;
 
   const studyEntities = useStudyEntities();
   const dataClient = useDataClient();
@@ -507,8 +664,7 @@ function useLegendData(props: DataProps) {
   const { outputEntity, geoAggregateVariables } = useCommonData(
     selectedVariable,
     geoConfigs,
-    studyEntities,
-    boundsZoomLevel
+    studyEntities
   );
 
   const outputEntityId = outputEntity?.id;
@@ -778,5 +934,108 @@ function useMarkerData(props: DataProps) {
         boundsZoomLevel,
       },
     };
-  }, [rawMarkersResult, legendDataResult.data, overlayConfig]);
+  }, [rawMarkersResult, legendDataResult.data, overlayConfig, boundsZoomLevel]);
+}
+
+//
+// calculates little filters related to
+// marker variable selection and custom checked values
+//
+function markerConfigLittleFilter(props: UseLittleFiltersFuncProps): Filter[] {
+  const {
+    appState: { markerConfigurations, activeMarkerConfigurationType },
+    findEntityAndVariable,
+  } = props;
+
+  if (findEntityAndVariable == null)
+    throw new Error(
+      'Bubble markerConfigLittleFilter must receive findEntityAndVariable'
+    );
+
+  const activeMarkerConfiguration = markerConfigurations.find(
+    (markerConfig) => markerConfig.type === activeMarkerConfigurationType
+  );
+
+  // This doesn't seem ideal. Do we ever have no active config?
+  if (activeMarkerConfiguration == null) return [];
+  const { selectedVariable, type } = activeMarkerConfiguration;
+  const { variable } = findEntityAndVariable(selectedVariable) ?? {};
+  if (variable != null && type === 'bubble') {
+    if (variable.dataShape !== 'continuous') {
+      if (variable.vocabulary != null) {
+        // if markers configuration is empty (equivalent to all values selected)
+        // or if the "all other values" value is active (aka UNSELECTED_TOKEN)
+        if (
+          activeMarkerConfiguration.numeratorValues == null &&
+          activeMarkerConfiguration.denominatorValues == null
+        ) {
+          if (variable.vocabulary.length <= MAX_FILTERSET_VALUES)
+            return [
+              {
+                type: 'stringSet' as const,
+                ...selectedVariable,
+                stringSet: variable.vocabulary,
+              },
+            ];
+          else {
+            console.log(
+              'bubble marker-config filter skipping ultra-high cardinality variable: ' +
+                variable.displayName
+            );
+            return [];
+          }
+        } else {
+          // must be bubble with custom proportion configuration
+          // use all the selected values from both
+          const allSelectedValues = Array.from(
+            new Set([
+              ...(activeMarkerConfiguration.numeratorValues ?? []),
+              ...(activeMarkerConfiguration.denominatorValues ?? []),
+            ])
+          );
+          // Note that we will not (yet) check the number of selections <= MAX_FILTERSET_VALUES here
+          // because we will (likely) need to prevent that many being selected in the first place
+          // TO DO: https://github.com/VEuPathDB/web-monorepo/issues/820
+          return [
+            {
+              type: 'stringSet' as const,
+              ...selectedVariable,
+              stringSet:
+                allSelectedValues.length > 0
+                  ? allSelectedValues
+                  : ['avaluewewillhopefullyneversee'],
+            },
+          ];
+        }
+      } else {
+        throw new Error(
+          'missing vocabulary for categorical variable: ' + variable.displayName
+        );
+      }
+    } else if (variable.type === 'number' || variable.type === 'integer') {
+      return [
+        {
+          type: 'numberRange' as const,
+          ...selectedVariable,
+          min: variable.distributionDefaults.rangeMin,
+          max: variable.distributionDefaults.rangeMax, // TO DO: check we use this, not display ranges
+        },
+      ];
+    } else if (variable.type === 'date') {
+      return [
+        {
+          type: 'dateRange' as const,
+          ...selectedVariable,
+          min: variable.distributionDefaults.rangeMin + 'T00:00:00Z',
+          max: variable.distributionDefaults.rangeMax + 'T00:00:00Z',
+          // TO DO: check we use this, not display ranges
+        },
+      ];
+    } else {
+      throw new Error(
+        'unknown variable type in bubble marker-config filter function'
+      );
+    }
+  }
+  return [];
 }

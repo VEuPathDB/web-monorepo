@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
   FeaturePrefilterThresholds,
   useFindEntityAndVariableCollection,
@@ -27,6 +28,7 @@ import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { entityTreeToArray } from '../../../utils/study-metadata';
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
+import { ExpandablePanel } from '@veupathdb/coreui';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -166,6 +168,96 @@ export function CorrelationAssayAssayConfiguration(
     visualizationId
   );
 
+  // set initial prefilterThresholds
+  useEffect(() => {
+    changeConfigHandler('prefilterThresholds', {
+      proportionNonZero:
+        configuration.prefilterThresholds?.proportionNonZero ??
+        DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
+      variance:
+        configuration.prefilterThresholds?.variance ??
+        DEFAULT_VARIANCE_THRESHOLD,
+      standardDeviation:
+        configuration.prefilterThresholds?.standardDeviation ??
+        DEFAULT_STANDARD_DEVIATION_THRESHOLD,
+    });
+  }, []);
+
+  // Content for the expandable help section
+  const helpContent = (
+    <div className={cx('-HelpInfoContainer')}>
+      <H6>What is correlation?</H6>
+      <p>
+        The correlation between two variables (taxa, genes, sample metadata,
+        etc.) describes the degree to which their presence in samples
+        co-fluctuate. For example, the Age and Shoe Size of children are
+        correlated since as a child ages, their feet grow.
+      </p>
+      <p>Here we look for correlation between:</p>
+      <ol>
+        <li>Abundance of taxa at a given taxonomic level</li>
+        <li>Abundance of functional data (e.g. pathways, genes)</li>
+      </ol>
+      <br></br>
+      <H6>Inputs:</H6>
+      <p>
+        <ul>
+          <li>
+            <strong>Taxonomic Level.</strong> The taxonomic abundance data to be
+            used in the calculation.
+          </li>
+          <li>
+            <strong>Functional Data.</strong> The pathway, metabolic, or gene
+            data to be correlatd against the taxonomic abundance data.
+          </li>
+          <li>
+            <strong>Method.</strong> The type of correlation to compute. The
+            Pearson method looks for linear trends in the data, while the
+            Spearman method looks for a monotonic relationship. For Spearman and
+            Pearson correlation, we use the rcorr function from the Hmisc
+            package.
+          </li>
+          <li>
+            <strong>Prevalence Prefilter.</strong> Remove variables that do not
+            have a set percentage of non-zero abundance across samples. Removing
+            rarely occurring features before calculating correlation can prevent
+            some spurious results.
+          </li>
+        </ul>
+      </p>
+      <br></br>
+      <H6>Outputs:</H6>
+      <p>
+        For each pair of variables, the correlation computation returns
+        <ul>
+          <li>
+            Correlation coefficient. A value between [-1, 1] that describes the
+            similarity of the input variables. Positive values indicate that
+            both variables rise and fall together, whereas negative values
+            indicate that as one rises, the other falls.
+          </li>
+          <li>
+            P Value. A measure of the probability of observing the result by
+            chance.
+          </li>
+        </ul>
+      </p>
+      <br></br>
+      <H6>More Questions?</H6>
+      <p>
+        Check out the{' '}
+        <a href="https://github.com/VEuPathDB/microbiomeComputations/blob/master/R/method-correlation.R">
+          correlation function
+        </a>{' '}
+        in our{' '}
+        <a href="https://github.com/VEuPathDB/microbiomeComputations/tree/master">
+          microbiomeComputations
+        </a>{' '}
+        R package.
+      </p>
+    </div>
+  );
+
   return (
     <ComputationStepContainer
       computationStepInfo={{
@@ -212,21 +304,29 @@ export function CorrelationAssayAssayConfiguration(
             </div>
           </div>
           <div className={cx('-CorrelationOuterConfigContainer')}>
-            <H6>Prefilters</H6>
+            <H6>Prefilter Data</H6>
             <div className={cx('-InputContainer')}>
-              <span>Proportion non-zero</span>
+              <span>Prevalence: </span>
+              <span className={cx('-DescriptionContainer')}>
+                Keep if abundance is non-zero in at least{' '}
+              </span>
               <NumberInput
                 minValue={0}
-                maxValue={1}
-                step={0.01}
+                maxValue={100}
+                step={1}
                 value={
-                  configuration.prefilterThresholds?.proportionNonZero ??
-                  DEFAULT_PROPORTION_NON_ZERO_THRESHOLD
+                  // display with % value
+                  configuration.prefilterThresholds?.proportionNonZero != null
+                    ? configuration.prefilterThresholds?.proportionNonZero * 100
+                    : DEFAULT_PROPORTION_NON_ZERO_THRESHOLD * 100
                 }
                 onValueChange={(newValue) => {
                   changeConfigHandler('prefilterThresholds', {
                     proportionNonZero:
-                      Number(newValue) ?? DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
+                      // save as decimal point, not %
+                      newValue != null
+                        ? Number((newValue as number) / 100)
+                        : DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
                     variance:
                       configuration.prefilterThresholds?.variance ??
                       DEFAULT_VARIANCE_THRESHOLD,
@@ -235,48 +335,9 @@ export function CorrelationAssayAssayConfiguration(
                       DEFAULT_STANDARD_DEVIATION_THRESHOLD,
                   });
                 }}
+                containerStyles={{ width: '5.5em' }}
               />
-              <span>Variance</span>
-              <NumberInput
-                minValue={0}
-                step={1}
-                value={
-                  configuration.prefilterThresholds?.variance ??
-                  DEFAULT_VARIANCE_THRESHOLD
-                }
-                onValueChange={(newValue) => {
-                  changeConfigHandler('prefilterThresholds', {
-                    proportionNonZero:
-                      configuration.prefilterThresholds?.proportionNonZero ??
-                      DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
-                    variance: Number(newValue) ?? DEFAULT_VARIANCE_THRESHOLD,
-                    standardDeviation:
-                      configuration.prefilterThresholds?.standardDeviation ??
-                      DEFAULT_STANDARD_DEVIATION_THRESHOLD,
-                  });
-                }}
-              />
-              <span>Standard deviation</span>
-              <NumberInput
-                minValue={0}
-                step={1}
-                value={
-                  configuration.prefilterThresholds?.standardDeviation ??
-                  DEFAULT_STANDARD_DEVIATION_THRESHOLD
-                }
-                onValueChange={(newValue) => {
-                  changeConfigHandler('prefilterThresholds', {
-                    proportionNonZero:
-                      configuration.prefilterThresholds?.proportionNonZero ??
-                      DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
-                    variance:
-                      configuration.prefilterThresholds?.variance ??
-                      DEFAULT_VARIANCE_THRESHOLD,
-                    standardDeviation:
-                      Number(newValue) ?? DEFAULT_STANDARD_DEVIATION_THRESHOLD,
-                  });
-                }}
-              />
+              <span className={cx('-DescriptionContainer')}>% of samples</span>
             </div>
           </div>
         </div>
@@ -292,6 +353,14 @@ export function CorrelationAssayAssayConfiguration(
             }
           />
         </div>
+        <ExpandablePanel
+          title="Learn more about correlation"
+          subTitle={{}}
+          children={helpContent}
+          stylePreset="floating"
+          themeRole="primary"
+          styleOverrides={{ container: { marginLeft: 40 } }}
+        />
       </div>
     </ComputationStepContainer>
   );

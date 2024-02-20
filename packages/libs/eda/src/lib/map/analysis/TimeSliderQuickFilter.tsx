@@ -1,15 +1,14 @@
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ChevronRight, H6, Toggle } from '@veupathdb/coreui';
 import TimeSlider, {
   TimeSliderDataProp,
 } from '@veupathdb/components/lib/components/plotControls/TimeSlider';
 import { InputVariables } from '../../core/components/visualizations/InputVariables';
 import { VariablesByInputName } from '../../core/utils/data-element-constraints';
-import { usePromise } from '../../core';
+import { DistributionRequestParams, useSubsettingClient } from '../../core';
 import { DateVariable, StudyEntity } from '../../core/types/study';
 import { VariableDescriptor } from '../../core/types/variable';
 
-import { SubsettingClient } from '../../core/api';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { useFindEntityAndVariable, Filter } from '../../core';
 import { zip } from 'lodash';
@@ -19,32 +18,32 @@ import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
 import { SiteInformationProps } from './Types';
 import { mapSidePanelBackgroundColor } from '../constants';
+import { useQuery } from '@tanstack/react-query';
 
 interface Props {
   studyId: string;
   entities: StudyEntity[];
   // to handle filters
-  subsettingClient: SubsettingClient;
   filters: Filter[] | undefined;
   starredVariables: VariableDescriptor[];
-  toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
-
   config: NonNullable<AppState['timeSliderConfig']>;
   updateConfig: (newConfig: NonNullable<AppState['timeSliderConfig']>) => void;
+  toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
   siteInformation: SiteInformationProps;
 }
 
 export default function TimeSliderQuickFilter({
   studyId,
   entities,
-  subsettingClient,
   filters,
   starredVariables,
-  toggleStarredVariable,
   config,
   updateConfig,
+  toggleStarredVariable,
   siteInformation,
 }: Props) {
+  const subsettingClient = useSubsettingClient();
+
   const findEntityAndVariable = useFindEntityAndVariable(filters); // filter sensitivity
   const theme = useUITheme();
   const [minimized, setMinimized] = useState(true);
@@ -75,66 +74,81 @@ export default function TimeSliderQuickFilter({
           }
       : undefined;
 
-  // data request to distribution for time slider
-  const getTimeSliderData = usePromise(
-    useCallback(async () => {
-      // no data request if no variable is available
-      if (
-        variableMetadata == null ||
-        variable == null ||
-        extendedDisplayRange == null ||
-        !DateVariable.is(variableMetadata.variable)
-      )
-        return;
+  // converting old usePromise code to useQuery in an efficient manner
+  const { enabled, queryKey, queryFn } = useMemo(() => {
+    // no data request if no variable is available
+    if (
+      variableMetadata == null ||
+      variable == null ||
+      extendedDisplayRange == null ||
+      !DateVariable.is(variableMetadata.variable)
+    )
+      return { enabled: false };
 
-      const binSpec = {
-        displayRangeMin:
-          extendedDisplayRange.start +
-          (variableMetadata.variable.type === 'date' ? 'T00:00:00Z' : ''),
-        displayRangeMax:
-          extendedDisplayRange.end +
-          (variableMetadata.variable.type === 'date' ? 'T00:00:00Z' : ''),
-        binWidth: variableMetadata.variable.distributionDefaults.binWidth ?? 1,
-        binUnits:
-          'binUnits' in variableMetadata.variable.distributionDefaults
-            ? variableMetadata.variable.distributionDefaults.binUnits
-            : undefined,
-      };
-      const distributionResponse = await subsettingClient.getDistribution(
-        studyId,
-        variable.entityId,
-        variable.variableId,
-        {
-          valueSpec: 'count',
-          filters: filters ?? [],
-          binSpec,
-        }
-      );
+    const binSpec = {
+      displayRangeMin:
+        extendedDisplayRange.start +
+        (variableMetadata.variable.type === 'date' ? 'T00:00:00Z' : ''),
+      displayRangeMax:
+        extendedDisplayRange.end +
+        (variableMetadata.variable.type === 'date' ? 'T00:00:00Z' : ''),
+      binWidth: variableMetadata.variable.distributionDefaults.binWidth ?? 1,
+      binUnits:
+        'binUnits' in variableMetadata.variable.distributionDefaults
+          ? variableMetadata.variable.distributionDefaults.binUnits
+          : undefined,
+    };
 
-      const histo = distributionResponse.histogram;
-      // return the bin starts and the final bin end (with a fixed y value of zero)
-      return {
-        x: histo
-          .map((d) => d.binStart)
-          .concat([histo[histo.length - 1].binEnd]),
-        // conditionally set y-values to be 1 (with data) and 0 (no data)
-        y: histo.map<number>((d) => (d.value >= 1 ? 1 : 0)).concat([0]),
-      };
-    }, [
-      variableMetadata?.variable,
-      variable,
-      subsettingClient,
-      filters,
-      extendedDisplayRange?.start,
-      extendedDisplayRange?.end,
-    ])
-  );
+    const payload: [string, string, string, DistributionRequestParams] = [
+      studyId,
+      variable.entityId,
+      variable.variableId,
+      {
+        valueSpec: 'count',
+        filters: filters ?? [],
+        binSpec,
+      },
+    ];
+
+    return {
+      enabled: true,
+      queryKey: payload,
+      queryFn: async () => {
+        const distributionResponse = await subsettingClient.getDistribution(
+          ...payload
+        );
+        const histo = distributionResponse.histogram;
+        // return the bin starts and the final bin end (with a fixed y value of zero)
+        return {
+          x: histo
+            .map((d) => d.binStart)
+            .concat([histo[histo.length - 1].binEnd]),
+          // conditionally set y-values to be 1 (with data) and 0 (no data)
+          y: histo.map<number>((d) => (d.value >= 1 ? 1 : 0)).concat([0]),
+        };
+      },
+    };
+  }, [
+    variableMetadata?.variable,
+    variable,
+    subsettingClient,
+    filters,
+    extendedDisplayRange?.start,
+    extendedDisplayRange?.end,
+  ]);
+
+  const timeSliderData = useQuery({
+    enabled,
+    queryFn,
+    queryKey,
+    keepPreviousData: true,
+  });
 
   // converting data to visx format
   const timeFilterData: TimeSliderDataProp[] = useMemo(() => {
     const restructured =
-      !getTimeSliderData.pending && getTimeSliderData.value != null
-        ? zip(getTimeSliderData.value.x, getTimeSliderData.value.y)
+      timeSliderData.data != null
+        ? zip(timeSliderData.data.x, timeSliderData.data.y)
             .map(([xValue, yValue]) => ({ x: xValue, y: yValue }))
             // and a type guard filter to avoid any `!` assertions.
             .filter(
@@ -143,7 +157,7 @@ export default function TimeSliderQuickFilter({
         : [];
 
     return restructured;
-  }, [getTimeSliderData]);
+  }, [timeSliderData.data]);
 
   // set time slider width and y position
   const timeFilterWidth = 750;
@@ -182,12 +196,23 @@ export default function TimeSliderQuickFilter({
     <div style={{ paddingTop: 10 }}>
       <H6>Timeline help</H6>
       <p>
+        Black bars indicate when <i>in time</i> there is data that...
         <ul>
-          <li>Black bars indicate when in time there is available data</li>
-          <li>Permanent filters are applied if applicable</li>
+          <li>is located anywhere on Earth*, not just currently in view</li>
           <li>
-            You currently have {filters?.length} active permanent filter(s)
+            has a value for <b>{variableMetadata?.variable.displayName}</b>
           </li>
+          <li>satisfies any filters you have applied</li>
+          <li>
+            has values for the variable currently displayed on markers,
+            including custom-configurations
+          </li>
+        </ul>
+        (* data that has no geolocation will also be shown on the timeline)
+      </p>
+      <p>
+        How to use
+        <ul>
           <li>
             Apply a temporary time-based filter by dragging a window across the
             graphic
@@ -204,7 +229,7 @@ export default function TimeSliderQuickFilter({
         <a style={{ cursor: 'pointer' }} onClick={() => setMinimized(false)}>
           here
         </a>{' '}
-        to reveal further controls that allow you to:
+        to reveal further controls that allow you to...
         <ul>
           <li>
             change the date variable (currently{' '}
@@ -239,8 +264,8 @@ export default function TimeSliderQuickFilter({
         {/* container for the slider widget or spinner */}
         <div style={{ height: sliderHeight, position: 'relative' }}>
           {/* conditional loading for TimeSlider */}
-          {!getTimeSliderData.pending &&
-          getTimeSliderData.value != null &&
+          {!timeSliderData.isFetching &&
+          timeFilterData != null &&
           timeFilterData.length > 0 ? (
             <TimeSlider
               data={timeFilterData}

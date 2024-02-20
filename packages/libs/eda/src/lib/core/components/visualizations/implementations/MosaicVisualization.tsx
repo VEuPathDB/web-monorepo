@@ -65,7 +65,7 @@ import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import FacetedMosaicPlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedMosaicPlot';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
-import { LayoutOptions } from '../../layouts/types';
+import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { useInputStyles } from '../inputStyles';
 import { ClearSelectionButton } from '../../variableSelectors/VariableTreeDropdown';
@@ -152,7 +152,7 @@ export const twoByTwoVisualization = createVisualizationPlugin({
   createDefaultConfig: createDefaultConfig,
 });
 
-interface Options extends LayoutOptions {}
+interface Options extends LayoutOptions, TitleOptions {}
 
 function ContTableFullscreenComponent(props: VisualizationProps<Options>) {
   return <MosaicViz {...props} />;
@@ -569,6 +569,7 @@ function MosaicViz(props: Props<Options>) {
     interactive: true,
     showSpinner: data.pending,
     displayLibraryControls: false,
+    showExportButton: true,
   };
 
   const plotNode = (
@@ -735,7 +736,7 @@ function MosaicViz(props: Props<Options>) {
   }, [dataElementConstraints, isTwoByTwo, vizConfig]);
 
   const LayoutComponent = options?.layoutComponent ?? PlotLayout;
-
+  const plotSubtitle = options?.getPlotSubtitle?.();
   const classes = useInputStyles();
 
   /**
@@ -1021,7 +1022,11 @@ function MosaicViz(props: Props<Options>) {
 
         <PluginError error={data.error} outputSize={outputSize} />
         {!hideInputsAndControls && (
-          <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+          <OutputEntityTitle
+            entity={outputEntity}
+            outputSize={outputSize}
+            subtitle={plotSubtitle}
+          />
         )}
         <LayoutComponent
           isFaceted={isFaceted(data.value)}
