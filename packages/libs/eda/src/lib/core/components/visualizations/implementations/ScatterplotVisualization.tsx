@@ -2668,7 +2668,7 @@ function processInputData(
         // use darker color for smoothed mean's confidence interval
         // when using scatter, fillColor should be rgba() format
         fillcolor:
-          facetVariable != null
+          scatterPlotType === 'scatter'
             ? ColorMath.evaluate(
                 markerColorDark(index) + ' @a 20%'
               ).result.css()
