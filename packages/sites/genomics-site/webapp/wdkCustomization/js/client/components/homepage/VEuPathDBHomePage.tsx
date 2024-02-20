@@ -622,7 +622,7 @@ const useHeaderMenuItems = (
           display: (
             <>
               Sequence retrieval{' '}
-              {projectId === 'EuPathBD' ? '' : <img alt="NEW" src={newImage} />}
+              {projectId === EuPathDB ? '' : <img alt="NEW" src={newImage} />}
             </>
           ),
           type: 'reactRoute',
