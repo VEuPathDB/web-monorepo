@@ -1,4 +1,4 @@
-import { chunk, property, orderBy, toLower } from 'lodash';
+import { chunk, property, orderBy, toLower, uniqueId } from 'lodash';
 import React, { Component, useCallback, useState } from 'react';
 import { createSelector } from 'reselect';
 import PropTypes from 'prop-types';
@@ -9,6 +9,7 @@ import {
   renderAttributeValue,
   pure,
   wrappable,
+  safeHtml,
 } from '../../../Utils/ComponentUtils';
 import { Mesa, MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 import './RecordTable.css';
@@ -18,6 +19,7 @@ import {
   areTermsInStringRegexString,
   parseSearchQueryString,
 } from '../../../Utils/SearchUtils';
+import { ErrorBoundary } from '../../../Controllers';
 
 const mapAttributeType = (type) => {
   switch (type) {
@@ -74,6 +76,7 @@ class RecordTable extends Component {
       getOrderedData
     );
     this.onSort = this.onSort.bind(this);
+    this.wrappedChildRow = this.wrappedChildRow.bind(this);
     this.state = {
       searchTerm: this.props.searchTerm ?? '',
       selectedColumnFilters: [],
@@ -83,6 +86,28 @@ class RecordTable extends Component {
   onSort(column, direction) {
     const key = column.key;
     console.log({ column, key, direction });
+  }
+
+  wrappedChildRow(rowIndex, rowData) {
+    const { childRow: ChildRow } = this.props;
+    if (!ChildRow) return;
+    const content =
+      typeof ChildRow === 'string' ? (
+        safeHtml(ChildRow)
+      ) : typeof ChildRow === 'function' ? (
+        ChildRow({ rowIndex, rowData })
+      ) : (
+        <ChildRow rowIndex={rowIndex} rowData={rowData} />
+      );
+    return (
+      <div id={`DataTableChildRow${uniqueId()}`}>
+        <ErrorBoundary
+          renderError={() => <h3>We're sorry, something went wrong.</h3>}
+        >
+          {content}
+        </ErrorBoundary>
+      </div>
+    );
   }
 
   render() {
@@ -118,6 +143,11 @@ class RecordTable extends Component {
           sortable: isSortable,
           type: type ?? 'html',
           helpText: help,
+          ...(name === 'thumbnail'
+            ? {
+                className: 'wdk-DataTableCell__thumbnail',
+              }
+            : null),
         };
       });
 
@@ -169,11 +199,9 @@ class RecordTable extends Component {
       },
       options: {
         toolbar: true,
-        childRow,
+        childRow: childRow ? this.wrappedChildRow : undefined,
       },
     };
-
-    // console.log({ mesaReadyColumns, mesaReadyRows, queryTerms, searchTermRegex, selectedColumnFilters: this.state.selectedColumnFilters });
 
     if (value.length === 0 || columns.length === 0) {
       return (

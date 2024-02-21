@@ -82,6 +82,10 @@ class DataRow extends React.PureComponent {
       uiState.expandedRows,
     ].every((prop) => prop != null);
 
+    const showChildRow =
+      hasExpansionColumn && uiState.expandedRows.includes(rowIndex);
+    const childRowColSpan = columns.length + 1;
+
     const rowStyle = !inline
       ? {}
       : { whiteSpace: 'nowrap', textOverflow: 'ellipsis' };
@@ -97,43 +101,69 @@ class DataRow extends React.PureComponent {
     const sharedProps = { row, inline, options, rowIndex };
 
     return (
-      <tr
-        className={className}
-        tabIndex={this.props.options.onRowClick ? -1 : undefined}
-        style={rowStyle}
-        onClick={this.handleRowClick}
-        onMouseOver={this.handleRowMouseOver}
-        onMouseOut={this.handleRowMouseOut}
-      >
-        {hasSelectionColumn ? (
-          <SelectionCell
-            key="_selection"
-            row={row}
-            eventHandlers={eventHandlers}
-            isRowSelected={options.isRowSelected}
-          />
-        ) : hasExpansionColumn ? (
-          <ExpansionCell
-            key="_expansion"
-            row={row}
-            onExpandedRowsChange={eventHandlers.onExpandedRowsChange}
-            expandedRows={uiState.expandedRows}
-            rowIndex={rowIndex}
-          />
-        ) : null}
-        {columns.map((column, columnIndex) => {
-          if (typeof columnDefaults === 'object')
-            column = Object.assign({}, columnDefaults, column);
-          return (
+      <>
+        <tr
+          className={className}
+          tabIndex={this.props.options.onRowClick ? -1 : undefined}
+          style={rowStyle}
+          onClick={this.handleRowClick}
+          onMouseOver={this.handleRowMouseOver}
+          onMouseOut={this.handleRowMouseOut}
+        >
+          {hasSelectionColumn ? (
+            <SelectionCell
+              key="_selection"
+              row={row}
+              eventHandlers={eventHandlers}
+              isRowSelected={options.isRowSelected}
+            />
+          ) : hasExpansionColumn ? (
+            <ExpansionCell
+              key="_expansion"
+              row={row}
+              onExpandedRowsChange={eventHandlers.onExpandedRowsChange}
+              expandedRows={uiState.expandedRows}
+              rowIndex={rowIndex}
+            />
+          ) : null}
+          {columns.map((column, columnIndex) => {
+            if (typeof columnDefaults === 'object')
+              column = Object.assign({}, columnDefaults, column);
+            return (
+              <DataCell
+                key={`${column.key}-${columnIndex}`}
+                column={column}
+                columnIndex={columnIndex}
+                {...sharedProps}
+              />
+            );
+          })}
+        </tr>
+        {showChildRow && (
+          <tr
+            className={className}
+            tabIndex={this.props.options.onRowClick ? -1 : undefined}
+            style={rowStyle}
+            onClick={this.handleRowClick}
+            onMouseOver={this.handleRowMouseOver}
+            onMouseOut={this.handleRowMouseOut}
+          >
             <DataCell
-              key={`${column.key}-${columnIndex}`}
-              column={column}
-              columnIndex={columnIndex}
+              key={`childRow-${rowIndex}`}
+              column={{
+                style: {},
+                width: null,
+                className: '',
+                key: 'childRow-test',
+              }}
+              columnIndex={null}
+              isChildRow={true}
+              childRowColSpan={childRowColSpan}
               {...sharedProps}
             />
-          );
-        })}
-      </tr>
+          </tr>
+        )}
+      </>
     );
   }
 }

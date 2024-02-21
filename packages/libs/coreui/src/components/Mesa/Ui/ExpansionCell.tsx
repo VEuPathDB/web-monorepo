@@ -78,7 +78,7 @@ export default function ExpansionCell({
     };
 
     return (
-      <td className="wdk-DataTableCellExpand">
+      <td className="wdk-DataTable wdk-DataTableCell__childRowToggle">
         {inert ? null : isExpanded ? (
           <button className="wdk-DataTableCellExpand" onClick={handler}>
             <ArrowDown />

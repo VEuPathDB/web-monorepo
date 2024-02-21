@@ -47,7 +47,7 @@
   background: #f3f3f3;
 }
 
-.wdk-DataTable .wdk-DataTableCell__childRowToggle {
+/* .wdk-DataTable .wdk-DataTableCell__childRowToggle {
   vertical-align: middle;
   width: 3em;
   padding: 0;
@@ -61,9 +61,14 @@
   background: transparent !important;
 }
 
-.wdk-DataTableCellExpand:hover {
+th > .wdk-DataTableCellExpand {
+  display: flex;
+  justify-content: center;
+} */
+
+/* .wdk-DataTableCellExpand:hover {
   color: black;
-}
+} */
 
 /* .wdk-DataTableCellExpand:before {
   font-family: FontAwesome;

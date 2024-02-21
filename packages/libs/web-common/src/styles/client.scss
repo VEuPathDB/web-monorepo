@@ -96,8 +96,29 @@ h4 {
   font-size: 1.4em;
 }
 
+.wdk-DataTableCellExpand > svg {
+  fill: #777;
+}
+
+.wdk-DataTableCellExpand:hover > svg {
+  fill: black;
+}
+
 .wdk-DataTableCellExpand {
-  color: #777;
+  width: 3em;
+  padding: 0;
+  border: none;
+  line-height: 2;
+  background: transparent !important;
+}
+
+th > .wdk-DataTableCellExpand {
+  display: flex;
+  justify-content: center;
+}
+
+td.wdk-DataTable.wdk-DataTableCell__childRowToggle {
+  vertical-align: middle;
 }
 
 td.wdk-DataTableCell__thumbnail {

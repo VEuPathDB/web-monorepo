@@ -13,11 +13,16 @@ class DataCell extends React.PureComponent {
   }
 
   renderContent() {
-    const { row, column, rowIndex, columnIndex, inline } = this.props;
+    const { row, column, rowIndex, columnIndex, inline, options, isChildRow } =
+      this.props;
     const { key, getValue } = column;
     const value =
       typeof getValue === 'function' ? getValue({ row, key }) : row[key];
     const cellProps = { key, value, row, column, rowIndex, columnIndex };
+    const { childRow } = options;
+    if (isChildRow && childRow != null) {
+      return childRow(rowIndex, row);
+    }
     if ('renderCell' in column) {
       return column.renderCell(cellProps);
     }
@@ -43,7 +48,7 @@ class DataCell extends React.PureComponent {
   }
 
   render() {
-    let { column, inline, options } = this.props;
+    let { column, inline, options, isChildRow, childRowColSpan } = this.props;
     let { style, width, className, key } = column;
 
     let whiteSpace = !inline
@@ -60,7 +65,13 @@ class DataCell extends React.PureComponent {
     style = Object.assign({}, style, width, whiteSpace);
     className = dataCellClass() + (className ? ' ' + className : '');
     const children = this.renderContent();
-    const props = { style, children, key, className };
+    const props = {
+      style,
+      children,
+      key,
+      className,
+      ...(isChildRow ? { colSpan: childRowColSpan } : null),
+    };
 
     return column.hidden ? null : <td {...props} />;
   }
