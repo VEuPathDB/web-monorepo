@@ -11,7 +11,7 @@ addEventListener('click', (event) => {
     !event.target.target
   ) {
     const url = new URL(event.target.href);
-    if (url.origin !== location.origin || !event.target.target) {
+    if (url.origin !== location.origin) {
       event.target.target = '_blank';
       event.target.rel = 'noreffer';
     }
