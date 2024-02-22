@@ -11,7 +11,10 @@ import {
   wrappable,
   safeHtml,
 } from '../../../Utils/ComponentUtils';
-import { Mesa, MesaState } from '@veupathdb/coreui/lib/components/Mesa';
+import {
+  Mesa,
+  Utils as MesaUtils,
+} from '@veupathdb/coreui/lib/components/Mesa';
 import './RecordTable.css';
 import { HelpIcon, RealTimeSearchBox } from '../../../Components';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
@@ -20,14 +23,19 @@ import {
   parseSearchQueryString,
 } from '../../../Utils/SearchUtils';
 import { ErrorBoundary } from '../../../Controllers';
+import { stripHTML } from '../../../Utils/DomUtils';
 
-const mapAttributeType = (type) => {
-  switch (type) {
-    case 'number':
-      return 'num';
-    default:
-      return undefined;
+// TODO: handle in model
+const COLUMNS_TO_OVERRIDE_SORT = ['thumbnail', 'clustalInput'];
+
+const mapSortType = (val) => {
+  if (!isNaN(parseFloat(val)) && isFinite(val)) {
+    return 'number';
   }
+  if (MesaUtils.isHtml(val)) {
+    return 'htmlText';
+  }
+  return 'text';
 };
 
 // max columns for list mode
@@ -42,12 +50,7 @@ const addDefaultSortId = (row, index) =>
   Object.assign({}, row, { [defaultSortId]: index });
 
 const getColumns = (tableField) =>
-  defaultSortColumn.concat(
-    tableField.attributes.map((attr) => ({
-      ...attr,
-      sortType: mapAttributeType(attr.type),
-    }))
-  );
+  defaultSortColumn.concat(tableField.attributes.map((attr) => attr));
 
 const getDisplayableAttributes = (tableField) =>
   tableField.attributes.filter((attr) => attr.isDisplayable);
@@ -80,12 +83,13 @@ class RecordTable extends Component {
     this.state = {
       searchTerm: this.props.searchTerm ?? '',
       selectedColumnFilters: [],
+      sort: { columnKey: undefined, direction: 'desc' },
     };
   }
 
   onSort(column, direction) {
-    const key = column.key;
-    console.log({ column, key, direction });
+    const columnKey = column.key;
+    this.setState((state) => ({ ...state, sort: { columnKey, direction } }));
   }
 
   wrappedChildRow(rowIndex, rowData) {
@@ -94,7 +98,8 @@ class RecordTable extends Component {
     const content =
       typeof ChildRow === 'string' ? (
         safeHtml(ChildRow)
-      ) : typeof ChildRow === 'function' ? (
+      ) : // Q: Is this necessary? Is ChildRow ever a typeof function that isn't actually a PureWrapper class?
+      typeof ChildRow === 'function' && ChildRow.name !== 'PureWrapper' ? (
         ChildRow({ rowIndex, rowData })
       ) : (
         <ChildRow rowIndex={rowIndex} rowData={rowData} />
@@ -121,6 +126,7 @@ class RecordTable extends Component {
       searchTerm,
       onSearchTermChange,
     } = this.props;
+    const { sort } = this.state;
     const displayableAttributes = this.getDisplayableAttributes(this.props);
     const columns = this.getColumns(this.props);
     const data = this.getOrderedData(this.props);
@@ -136,13 +142,27 @@ class RecordTable extends Component {
           help,
           ...remainingProperties
         } = c;
+        const nonNullDataObject = data.find((d) => d[name] != null);
+        const nonNullDataValue =
+          nonNullDataObject != null
+            ? type === 'link'
+              ? nonNullDataObject[name]['displayText']
+              : nonNullDataObject[name]
+            : undefined;
+        const sortType =
+          isSortable && nonNullDataValue && name !== 'thumbnail'
+            ? mapSortType(nonNullDataValue ?? '')
+            : undefined;
         return {
           ...remainingProperties,
           key: name,
           name: displayName,
-          sortable: isSortable,
+          sortable: COLUMNS_TO_OVERRIDE_SORT.includes(name)
+            ? false
+            : isSortable,
           type: type ?? 'html',
           helpText: help,
+          sortType,
           ...(name === 'thumbnail'
             ? {
                 className: 'wdk-DataTableCell__thumbnail',
@@ -170,6 +190,42 @@ class RecordTable extends Component {
       return newData;
     });
 
+    const columnToSort = mesaReadyColumns.find(
+      (c) => c.key === sort?.columnKey
+    );
+    const sortType = columnToSort?.sortType ?? 'text';
+
+    const sortedMesaRows =
+      sort?.columnKey == null
+        ? mesaReadyRows
+        : orderBy(
+            mesaReadyRows,
+            (row) => {
+              const { columnKey } = sort;
+              const isLinkType = columnToSort.type === 'link';
+              if (sortType === 'number' && isLinkType) {
+                return row[columnKey]['text'] === ''
+                  ? -Infinity
+                  : Number(row[columnKey]['text']);
+              }
+              if (sortType === 'number') {
+                return row[columnKey] == null
+                  ? -Infinity
+                  : Number(row[columnKey]);
+              }
+              if (columnToSort.type === 'link') {
+                return row[columnKey]['text'];
+              }
+              if (sortType === 'htmlText') {
+                return stripHTML(row[columnKey]).toLowerCase().trim();
+              }
+              return row[columnKey] == null
+                ? ''
+                : row[columnKey].toLowerCase().trim();
+            },
+            [sort.direction]
+          );
+
     const queryTerms = parseSearchQueryString(this.state.searchTerm);
     const searchTermRegex = areTermsInStringRegexString(queryTerms);
     const regex = new RegExp(searchTermRegex, 'i');
@@ -178,12 +234,12 @@ class RecordTable extends Component {
           this.state.selectedColumnFilters.includes(attr.name)
         )
       : displayableAttributes;
-    const filteredRows = mesaReadyRows.filter((row) => {
+    const filteredRows = sortedMesaRows.filter((row) => {
       return searchableAttributes.some((attr) => regex.test(row[attr.name]));
     });
 
     const tableState = {
-      rows: mesaReadyRows,
+      rows: sortedMesaRows,
       columns: mesaReadyColumns,
       filteredRows: this.state.searchTerm.length ? filteredRows : undefined,
       eventHandlers: {
@@ -191,10 +247,7 @@ class RecordTable extends Component {
         onExpandedRowsChange,
       },
       uiState: {
-        sort: {
-          columnKey: undefined,
-          direction: 'desc',
-        },
+        sort: this.state.sort,
         expandedRows,
       },
       options: {
