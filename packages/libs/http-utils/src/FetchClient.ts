@@ -125,6 +125,10 @@ export abstract class FetchClient {
 }
 
 async function fetchResponseBody(response: Response) {
+  if (response.status === 204) {
+    return undefined;
+  }
+
   const contentType = response.headers.get('Content-Type');
 
   return contentType == null

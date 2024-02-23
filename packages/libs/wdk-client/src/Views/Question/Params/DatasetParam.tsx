@@ -163,7 +163,7 @@ type Section = {
 const sections: Section[] = [
   {
     sourceType: 'idList',
-    label: 'Enter a list of IDs or text',
+    label: 'Enter a list of IDs',
     isAvailable: ({ uiState }) => !uiState.loadingIdList,
     render: ({ ctx, dispatch, parameter, uiState }) => (
       <div

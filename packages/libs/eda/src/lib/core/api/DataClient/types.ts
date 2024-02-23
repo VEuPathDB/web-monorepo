@@ -622,9 +622,9 @@ export const ContTableResponse = intersection([
   partial({
     statsTable: array(
       partial({
-        pvalue: union([number, string]), // TO DO: should these three stats values all be optional?
-        degreesFreedom: number,
-        chisq: number,
+        pvalue: union([number, string, nullType]), // TO DO: should these three stats values all be optional?
+        degreesFreedom: NumberOrNull,
+        chisq: NumberOrNull,
         facetVariableDetails: union([
           tuple([StringVariableValue]),
           tuple([StringVariableValue, StringVariableValue]),

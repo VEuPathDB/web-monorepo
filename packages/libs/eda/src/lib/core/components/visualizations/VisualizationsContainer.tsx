@@ -44,6 +44,7 @@ import { JobStatus } from '../computations/ComputeJobStatusHook';
 import { ComputationStepContainer } from '../computations/ComputationStepContainer';
 import { ComputationPlugin } from '../computations/Types';
 import { PlotContainerStyleOverrides } from './VisualizationTypes';
+import { removeParentheticals } from '../../utils/string-formatters';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -195,7 +196,7 @@ function ConfiguredVisualizations(props: Props) {
                             analysisState.deleteVisualization(
                               viz.visualizationId
                             );
-                            /* 
+                            /*
                               Here we're deleting the computation in the event we delete
                               the computation's last remaining visualization.
                             */
@@ -245,6 +246,7 @@ function ConfiguredVisualizations(props: Props) {
                         pathname: `${baseUrl || url}/${viz.visualizationId}`,
                         state: { scrollToTop: false },
                       }}
+                      className={cx('-ConfiguredVizLink')}
                     >
                       <ConfiguredVisualizationGrayOut
                         filters={props.filters}
@@ -331,7 +333,7 @@ export function NewVisualizationPicker(props: NewVisualizationPickerProps) {
       {includeHeader && (
         <>
           <div className={cx('-PickerActions')}>
-            <Link replace to={`../${computationId}`}>
+            <Link replace to={'../visualizations'}>
               <i className="fa fa-close"></i>
             </Link>
           </div>
@@ -393,7 +395,9 @@ export function NewVisualizationPicker(props: NewVisualizationPickerProps) {
                 <div>
                   {vizOverview.displayName
                     ?.split(/(, )/g)
-                    .map((str) => (str === ', ' ? <br /> : str))}
+                    .map((str, index) =>
+                      str === ', ' ? <br key={index} /> : str
+                    )}
                 </div>
                 {vizPlugin == null && <i>(Coming soon!)</i>}
                 {vizPlugin != null && disabled && (
@@ -576,7 +580,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
                   onClick={() => {
                     if (viz == null) return;
                     analysisState.deleteVisualization(viz.visualizationId);
-                    /* 
+                    /*
                       Here we're deleting the computation in the event we delete
                       the computation's last remaining visualization.
                     */
@@ -625,7 +629,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
             <Tooltip title="Minimize visualization">
               <Link
                 to={{
-                  pathname: `../${baseUrl ? '' : computationId}`, // Should go to ../visualizations unless in single app mode
+                  pathname: `${baseUrl ? baseUrl : '../' + computationId}`, // Should go to ../visualizations unless in single app
                   state: { scrollToTop: false },
                 }}
               >
@@ -684,7 +688,10 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
                 <ComputationStepContainer
                   computationStepInfo={{
                     stepNumber: 2,
-                    stepTitle: `Generate ${computationAppOverview.displayName} results`,
+                    // Remove parentheticals from Step 2 tite.
+                    stepTitle: `Generate ${removeParentheticals(
+                      computationAppOverview.displayName
+                    )} results`,
                   }}
                   isStepDisabled={!isComputationConfigurationValid}
                 >
@@ -702,7 +709,10 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
             <ComputationStepContainer
               computationStepInfo={{
                 stepNumber: 3,
-                stepTitle: `Use ${computationAppOverview.displayName} results in visualization`,
+                // Remove parentheticals from Step 3 title
+                stepTitle: `Use ${removeParentheticals(
+                  computationAppOverview.displayName
+                )} results in visualization`,
               }}
               isStepDisabled={computeJobStatus !== 'complete'}
             >

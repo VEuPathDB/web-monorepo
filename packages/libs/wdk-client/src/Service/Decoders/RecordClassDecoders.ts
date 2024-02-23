@@ -32,6 +32,7 @@ export const attributeFieldDecoder: Decode.Decoder<AttributeField> =
   Decode.combine(
     namedModelEntityDecoder,
     Decode.field('help', Decode.optional(Decode.string)),
+    Decode.field('htmlHelp', Decode.optional(Decode.string)),
     Decode.field('align', Decode.optional(Decode.string)),
     Decode.field('isSortable', Decode.boolean),
     Decode.field('isRemovable', Decode.boolean),

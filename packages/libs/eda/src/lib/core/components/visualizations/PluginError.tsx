@@ -1,4 +1,6 @@
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { ReactFragment } from 'react';
+import { NoDataError } from '../../api/DataClient/NoDataError';
 
 interface Props {
   error?: unknown;
@@ -6,13 +8,10 @@ interface Props {
   outputSize?: number;
 }
 
-type Case = (errorString: string) => string | ReactFragment | undefined;
+type Case = (error: unknown) => string | ReactFragment | undefined;
 
 const defaultCases: Case[] = [
-  (errorString) =>
-    errorString.match(/did not contain any data/i)
-      ? 'The visualization cannot be made because the current subset is empty.'
-      : undefined,
+  (error) => (error instanceof NoDataError ? error.message : undefined),
 ];
 
 const emptyCaseMessage =
@@ -21,7 +20,7 @@ const emptyCaseMessage =
 export default function PluginError({ error, customCases, outputSize }: Props) {
   // TO DO: errors from back end should arrive with a separate response code property
   // FOR NOW: flatten entire error to a string
-  const errorMessage =
+  const fallbackErrorMessage =
     error == null ? '' : error instanceof Error ? error.message : String(error);
 
   const emptyCase = () => (outputSize === 0 ? emptyCaseMessage : undefined);
@@ -30,25 +29,16 @@ export default function PluginError({ error, customCases, outputSize }: Props) {
     (customCases ?? [])
       .concat([emptyCase, ...defaultCases])
       .reduce<string | ReactFragment | undefined>(
-        (prev, caseFunction) => prev ?? caseFunction(errorMessage),
+        (prev, caseFunction) => prev ?? caseFunction(error),
         undefined
-      ) ?? errorMessage;
+      ) ?? fallbackErrorMessage;
 
   return errorContent ? (
-    <div
-      style={{
-        fontSize: '1.2em',
-        padding: '1em',
-        background: 'rgb(255, 233, 233) none repeat scroll 0% 0%',
-        borderRadius: '.5em',
-        margin: '.5em 0',
-        color: '#333',
-        border: '1px solid #d9cdcd',
-        display: 'flex',
+    <Banner
+      banner={{
+        type: 'warning',
+        message: errorContent,
       }}
-    >
-      <i className="fa fa-warning" style={{ marginRight: '1ex' }}></i>{' '}
-      {errorContent}
-    </div>
+    />
   ) : null;
 }

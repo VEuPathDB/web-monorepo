@@ -104,11 +104,8 @@
   transform: rotate(180deg);
 }
 
-/*  on mouse-over, marker to top and set its opacity such that marker doesn't
-    obscure small grey rectangles (the bounding box) */
 .top-marker {
-  z-index: 3100 !important;
-  opacity: 0.4;
+  z-index: 1;
 }
 
 /* Replace leaflet styles*/
