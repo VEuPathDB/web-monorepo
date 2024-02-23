@@ -8,6 +8,7 @@
     "url": "https://github.com/veupathdb/web-components.git"
   },
   "dependencies": {
+    "@emotion/css": "^11.11.2",
     "@typescript-eslint/eslint-plugin": "^5.46.0",
     "@typescript-eslint/parser": "^5.46.0",
     "@veupathdb/coreui": "workspace:^",
@@ -73,7 +74,6 @@
     "@babel/core": "^7.17.9",
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.16.7",
     "@babel/preset-env": "^7.16.11",
-    "@emotion/css": "^11.11.2",
     "@emotion/react": "^11.10.0",
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
