@@ -1,6 +1,7 @@
 import { Meta, Story } from '@storybook/react';
 import TreeTable, { TreeTableProps } from '../../components/tidytree/TreeTable';
 import { MesaColumn } from '../../../../coreui/lib/components/Mesa/types';
+import { useState } from 'react';
 
 export default {
   title: 'TreeTable',
@@ -88,15 +89,54 @@ const Template: Story<TreeTableProps<LeafRow>> = (args) => {
   return <TreeTable {...args} />;
 };
 
-const commonArgs: Partial<TreeTableProps<LeafRow>> = {
-  width: 400,
+const commonArgs: DeepPartial<TreeTableProps<LeafRow>> = {
   rowHeight: 50,
-  columns: tableColumns,
+  treeProps: {
+    width: 400,
+  },
+  tableProps: {
+    columns: tableColumns,
+  },
 };
 
 export const SevenRows = Template.bind({});
 SevenRows.args = {
   ...commonArgs,
-  data: sevenLeafTree,
-  rows: sevenLeafTableRows,
+  treeProps: {
+    ...commonArgs.treeProps,
+    data: sevenLeafTree,
+  },
+  tableProps: {
+    ...commonArgs.tableProps,
+    rows: sevenLeafTableRows,
+  },
+} as TreeTableProps<LeafRow>;
+
+const HLTemplate: Story<TreeTableProps<LeafRow>> = (args) => {
+  const [highlightedNodes, setHighlightedNodes] = useState<string[]>([]);
+
+  return <TreeTable {...args} />;
+};
+
+export const Highlighting = HLTemplate.bind({});
+Highlighting.args = {
+  ...commonArgs,
+  treeProps: {
+    ...commonArgs.treeProps,
+    data: sevenLeafTree,
+  },
+  tableProps: {
+    ...commonArgs.tableProps,
+    rows: sevenLeafTableRows,
+  },
+} as TreeTableProps<LeafRow>;
+
+type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends Array<infer U>
+    ? Array<DeepPartial<U>> // If it's an array, make its elements DeepPartial
+    : T[P] extends ReadonlyArray<infer U>
+    ? ReadonlyArray<DeepPartial<U>> // Also handle readonly arrays
+    : T[P] extends object
+    ? DeepPartial<T[P]> // Apply DeepPartial recursively if the property is an object
+    : T[P]; // Otherwise, just make the property optional
 };

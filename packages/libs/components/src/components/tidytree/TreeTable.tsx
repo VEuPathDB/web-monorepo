@@ -11,10 +11,23 @@ import {
 import { css as classNameStyle, cx } from '@emotion/css';
 import { css as globalStyle, Global } from '@emotion/react';
 
-export interface TreeTableProps<RowType>
-  extends Omit<HorizontalDendrogramProps, 'leafCount' | 'options'> {
-  rows: RowType[];
-  columns: MesaColumn<RowType>[];
+export interface TreeTableProps<RowType> {
+  /**
+   * number of pixels vertical space for each row of the table and tree
+   * (for the table this is a minimum height, so make sure table content doesn't wrap)
+   */
+  rowHeight: number;
+  /**
+   * data and options for the tree
+   */
+  treeProps: Omit<
+    HorizontalDendrogramProps,
+    'leafCount' | 'options' | 'rowHeight'
+  >;
+  /**
+   * data and options for the table
+   */
+  tableProps: MesaStateProps<RowType>;
 }
 
 /**
@@ -32,7 +45,8 @@ export interface TreeTableProps<RowType>
  * - allow additional Mesa props and options to be passed
  */
 export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
-  const { rows, columns, rowHeight } = props;
+  const { rowHeight } = props;
+  const { rows, columns, options } = props.tableProps;
 
   const rowStyleClassName = useMemo(
     () =>
@@ -49,6 +63,7 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
     rows,
     columns,
     options: {
+      ...options,
       deriveRowClassName: (_) => rowStyleClassName,
     },
   };
@@ -58,7 +73,8 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
       style={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'row' }}
     >
       <HorizontalDendrogram
-        {...props}
+        {...props.treeProps}
+        rowHeight={rowHeight}
         leafCount={rows.length}
         options={{ margin: [0, 10, 0, 10] }}
       />
