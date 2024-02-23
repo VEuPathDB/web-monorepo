@@ -4,10 +4,7 @@ import {
   HorizontalDendrogramProps,
 } from '../../components/tidytree/HorizontalDendrogram';
 import Mesa from '@veupathdb/coreui/lib/components/Mesa';
-import {
-  MesaColumn,
-  MesaStateProps,
-} from '../../../../coreui/lib/components/Mesa/types';
+import { MesaStateProps } from '../../../../coreui/lib/components/Mesa/types';
 import { css as classNameStyle, cx } from '@emotion/css';
 import { css as globalStyle, Global } from '@emotion/react';
 
@@ -46,7 +43,7 @@ export interface TreeTableProps<RowType> {
  */
 export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
   const { rowHeight } = props;
-  const { rows, columns, options } = props.tableProps;
+  const { rows } = props.tableProps;
 
   const rowStyleClassName = useMemo(
     () =>
@@ -59,11 +56,12 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
     [rowHeight]
   );
 
+  // tableState is just the tableProps with an extra CSS class
+  // to make sure the height is consistent with the tree
   const tableState: MesaStateProps<RowType> = {
-    rows,
-    columns,
+    ...props.tableProps,
     options: {
-      ...options,
+      ...props.tableProps.options,
       deriveRowClassName: (_) => rowStyleClassName,
     },
   };

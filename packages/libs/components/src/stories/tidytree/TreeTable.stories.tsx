@@ -93,6 +93,7 @@ const commonArgs: DeepPartial<TreeTableProps<LeafRow>> = {
   rowHeight: 50,
   treeProps: {
     width: 400,
+    highlightMode: 'monophyletic',
   },
   tableProps: {
     columns: tableColumns,
@@ -115,7 +116,29 @@ SevenRows.args = {
 const HLTemplate: Story<TreeTableProps<LeafRow>> = (args) => {
   const [highlightedNodes, setHighlightedNodes] = useState<string[]>([]);
 
-  return <TreeTable {...args} />;
+  // add highlighting/selection handling to the props/args
+  const props = {
+    ...args,
+    treeProps: {
+      ...args.treeProps,
+      highlightedNodeIds: highlightedNodes,
+    },
+    tableProps: {
+      ...args.tableProps,
+      eventHandlers: {
+        onRowSelect: (row: LeafRow) =>
+          setHighlightedNodes((prev) => [...prev, row.leafId]), // crude but effective
+        onRowDeselect: (row: LeafRow) =>
+          setHighlightedNodes((prev) => prev.filter((id) => id !== row.leafId)),
+      },
+      options: {
+        ...args.tableProps.options,
+        isRowSelected: (row: LeafRow) => highlightedNodes.includes(row.leafId),
+      },
+    },
+  };
+
+  return <TreeTable {...props} />;
 };
 
 export const Highlighting = HLTemplate.bind({});
@@ -123,6 +146,7 @@ Highlighting.args = {
   ...commonArgs,
   treeProps: {
     ...commonArgs.treeProps,
+    width: 200,
     data: sevenLeafTree,
   },
   tableProps: {
