@@ -1,3 +1,5 @@
+const { addD3Shimming } = require('../webpack-shimming');
+
 module.exports = {
   typescript: {
     check: true,
@@ -41,36 +43,7 @@ module.exports = {
       },
     });
 
-    config.module.rules.push({
-      test: require.resolve('tidytree'),
-      use: [
-        // TidyTree expects window.d3 to be available, so we shim it with this loader
-        {
-          loader: 'imports-loader',
-          options: {
-            imports: [
-              {
-                syntax: 'namespace',
-                moduleName: require.resolve('d3v5'),
-                name: 'd3',
-              },
-              {
-                syntax: 'namespace',
-                moduleName: require.resolve('patristic'),
-                name: 'patristic',
-              },
-            ],
-          },
-        },
-        // TidyTree creates a global variable, so we convert it to a named export with this laoder
-        {
-          loader: 'exports-loader',
-          options: {
-            exports: 'TidyTree',
-          },
-        },
-      ],
-    });
+    addD3Shimming(config.module.rules);
 
     config.module.rules.push({
       test: /\.scss$/,
