@@ -10,8 +10,6 @@ import {
   ioTransformer,
 } from '@veupathdb/http-utils';
 
-import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
-
 import { makeReportPollingPromise } from '../components/BlastWorkspaceResult';
 
 import {
@@ -248,8 +246,7 @@ export class BlastApi extends FetchClientWithCredentials {
   async downloadJobContent(
     jobId: string,
     format: IoBlastFormat,
-    shouldZip: boolean,
-    filename: string
+    shouldZip: boolean
   ) {
     const reportResponse = await makeReportPollingPromise(this, jobId, format);
 
@@ -299,9 +296,8 @@ function transformTooLargeError(errorDetails: ErrorDetails): ErrorDetails {
 export function createJobContentDownloader(blastApi: BlastApi, jobId: string) {
   return async function downloadJobContent(
     format: IoBlastFormat,
-    shouldZip: boolean,
-    filename: string
+    shouldZip: boolean
   ) {
-    blastApi.downloadJobContent(jobId, format, shouldZip, filename);
+    blastApi.downloadJobContent(jobId, format, shouldZip);
   };
 }

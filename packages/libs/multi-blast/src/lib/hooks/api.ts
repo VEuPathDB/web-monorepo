@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 
 import { Dispatch } from 'redux';
 import { useDispatch } from 'react-redux';
@@ -54,7 +54,7 @@ const makeErrorReporter = once(function (
 
 export function useDownloadReportCallback(jobId: string) {
   const blastApi = useBlastApi();
-  return useCallback(() => {
+  return useMemo(() => {
     return createJobContentDownloader(blastApi, jobId);
   }, [blastApi, jobId]);
 }
