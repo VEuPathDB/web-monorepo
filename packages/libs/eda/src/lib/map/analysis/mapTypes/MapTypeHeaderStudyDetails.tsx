@@ -1,6 +1,6 @@
 import { Info } from '@material-ui/icons';
 import { useQuery } from '@tanstack/react-query';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 import {
   Filter,
   useStudyEntities,

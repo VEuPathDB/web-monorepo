@@ -26,7 +26,7 @@ import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import { useLocalBackedState } from '@veupathdb/wdk-client/lib/Hooks/LocalBackedState';
 import PlaceholderIcon from './PlaceholderIcon';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '@veupathdb/coreui';
 import { isEqual, groupBy } from 'lodash';
 import { EntityCounts } from '../../hooks/entityCounts';
 import { useStudyRecord } from '../../hooks/workspace';

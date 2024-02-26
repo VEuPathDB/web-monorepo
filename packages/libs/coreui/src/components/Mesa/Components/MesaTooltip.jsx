@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import BodyLayer from './BodyLayer';
 import { EventsFactory } from '../Utils/Events';
 
-class Tooltip extends React.Component {
+class MesaTooltip extends React.Component {
   constructor(props) {
     super(props);
 
@@ -179,7 +179,7 @@ class Tooltip extends React.Component {
   }
 }
 
-Tooltip.propTypes = {
+MesaTooltip.propTypes = {
   hideDelay: PropTypes.number,
   showDelay: PropTypes.number,
   children: PropTypes.oneOfType([PropTypes.node, PropTypes.element]),
@@ -193,4 +193,4 @@ Tooltip.propTypes = {
   renderHtml: PropTypes.bool,
 };
 
-export default Tooltip;
+export default MesaTooltip;

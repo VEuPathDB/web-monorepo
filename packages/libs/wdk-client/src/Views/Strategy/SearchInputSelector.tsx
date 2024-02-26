@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createSelector } from 'reselect';
 
-import { HtmlTooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { HtmlTooltip } from '@veupathdb/coreui';
 
 import { requestBasketCounts } from '../../Actions/BasketActions';
 import {

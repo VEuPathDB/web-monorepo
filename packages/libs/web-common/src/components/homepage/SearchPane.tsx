@@ -33,7 +33,7 @@ import {
 import { decode, arrayOf, string } from '@veupathdb/wdk-client/lib/Utils/Json';
 import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
-import { HtmlTooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { HtmlTooltip } from '@veupathdb/coreui';
 
 import {
   combineClassNames,

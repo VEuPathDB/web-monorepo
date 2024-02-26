@@ -134,7 +134,7 @@ import { useDeepValue } from '../../../hooks/immutability';
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 import { FloatingLineplotExtraProps } from '../../../../map/analysis/hooks/plugins/lineplot';
 
 import * as DateMath from 'date-arithmetic';
