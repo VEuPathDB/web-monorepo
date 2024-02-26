@@ -1,16 +1,13 @@
-import { createContext, useContext, useMemo } from 'react';
+import { createContext, useCallback, useContext, useMemo } from 'react';
 
 import { Dispatch } from 'redux';
 import { useDispatch } from 'react-redux';
 
 import { once } from 'lodash';
 
-import { notifyUnhandledError } from '@veupathdb/wdk-client/lib/Actions/UnhandledErrorActions';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
-import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
-import { IoBlastFormat } from '../utils/ServiceTypes';
 import { BlastApi, createJobContentDownloader } from '../utils/api';
 import {
   BlastCompatibleWdkService,
@@ -56,22 +53,8 @@ const makeErrorReporter = once(function (
 });
 
 export function useDownloadReportCallback(jobId: string) {
-  const blastServiceUrl = useContext(BlastServiceUrl);
-
-  const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
-
   const blastApi = useBlastApi();
-
-  return useMemo(() => {
-    const reportDownloader =
-      user &&
-      blastApi &&
-      createJobContentDownloader(user, blastApi, blastServiceUrl, jobId);
-
-    return (
-      reportDownloader &&
-      ((jobId: string, format: IoBlastFormat, zip: boolean) =>
-        reportDownloader(format, zip, `${jobId}-${format}-report`))
-    );
-  }, [user, blastApi, blastServiceUrl, jobId]);
+  return useCallback(() => {
+    return createJobContentDownloader(blastApi, jobId);
+  }, [blastApi, jobId]);
 }
