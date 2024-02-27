@@ -1,10 +1,8 @@
 import { chunk, property, orderBy, toLower, uniqueId } from 'lodash';
-import React, { Component, useCallback, useState } from 'react';
+import React, { Component } from 'react';
 import { createSelector } from 'reselect';
 import PropTypes from 'prop-types';
-import DataTable, {
-  DataTableFilterSelector,
-} from '../../../Components/DataTable/DataTable';
+import { RecordFilter } from './RecordFilter';
 import {
   renderAttributeValue,
   pure,
@@ -15,15 +13,13 @@ import {
   Mesa,
   Utils as MesaUtils,
 } from '@veupathdb/coreui/lib/components/Mesa';
-import './RecordTable.css';
-import { HelpIcon, RealTimeSearchBox } from '../../../Components';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import {
   areTermsInStringRegexString,
   parseSearchQueryString,
 } from '../../../Utils/SearchUtils';
 import { ErrorBoundary } from '../../../Controllers';
 import { stripHTML } from '../../../Utils/DomUtils';
+import './RecordTable.css';
 
 // TODO: handle in model
 const COLUMNS_TO_OVERRIDE_SORT = ['thumbnail', 'clustalInput'];
@@ -253,6 +249,7 @@ class RecordTable extends Component {
       options: {
         toolbar: true,
         childRow: childRow ? this.wrappedChildRow : undefined,
+        className: 'wdk-DataTableContainer',
       },
     };
 
@@ -322,106 +319,6 @@ class RecordTable extends Component {
       </div>
     );
   }
-}
-
-function RecordFilter(props) {
-  const [showFieldSelector, setShowFieldSelector] = useState(false);
-
-  const toggleFilterFieldSelector = useCallback(
-    () => setShowFieldSelector(!showFieldSelector),
-    [showFieldSelector, setShowFieldSelector]
-  );
-
-  return (
-    <>
-      <div style={{ display: 'flex' }}>
-        <RealTimeSearchBox
-          searchTerm={props.searchTerm}
-          className="wdk-DataTableSearchBox"
-          placeholderText="Search this table..."
-          onSearchTermChange={props.onSearchTermChange}
-          delayMs={0}
-          iconName=""
-          cancelBtnRightMargin="3em"
-        />
-        <div
-          style={{
-            position: 'relative',
-            width: 0,
-            right: '2.75em',
-            top: '0.25em',
-          }}
-        >
-          <Tooltip title="Show search fields">
-            <button
-              className="fa fa-caret-down"
-              style={{ background: 'none', border: 'none' }}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                toggleFilterFieldSelector();
-              }}
-            />
-          </Tooltip>
-        </div>
-        <HelpIcon>
-          <div>
-            <ul>
-              <li>
-                The {props.recordDisplayName} in your refined list will contain
-                ALL your terms (or phrases, when using double quotes), in ANY of
-                the selected fields.
-              </li>
-              <li>
-                Click on the arrow inside the box to select/unselect fields.{' '}
-              </li>
-              <li>
-                Your terms are matched at the start; for example, the term{' '}
-                <i>typ</i> will match{' '}
-                <i>
-                  <u>typ</u>ically
-                </i>{' '}
-                and{' '}
-                <i>
-                  <u>typ</u>e
-                </i>
-                , but <strong>not</strong>{' '}
-                <i>
-                  <u>atyp</u>ical
-                </i>
-                .
-              </li>
-              <li>
-                Your terms may include * wildcards; for example, the term{' '}
-                <i>*typ</i> will match{' '}
-                <i>
-                  <u>typ</u>ically
-                </i>
-                ,{' '}
-                <i>
-                  <u>typ</u>e
-                </i>
-                , and{' '}
-                <i>
-                  a<u>typ</u>ical
-                </i>
-                .
-              </li>
-            </ul>
-          </div>
-        </HelpIcon>
-      </div>
-      {showFieldSelector && (
-        <DataTableFilterSelector
-          filterAttributes={props.filterAttributes}
-          selectedColumnFilters={props.selectedColumnFilters}
-          onColumnFilterChange={props.onColumnFilterChange}
-          toggleFilterFieldSelector={toggleFilterFieldSelector}
-          containerClassName="wdk-Answer-filterFieldSelector"
-        />
-      )}
-    </>
-  );
 }
 
 RecordTable.propTypes = {
