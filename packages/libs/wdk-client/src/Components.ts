@@ -16,7 +16,6 @@ import ApplicationSpecificProperties from './Views/User/ApplicationSpecificPrope
 import ServerSideAttributeFilter from './Components/AttributeFilter/ServerSideAttributeFilter';
 import AccordionButton from './Components/CheckboxTree/AccordionButton';
 import CategoriesCheckboxTree from './Components/CheckboxTree/CategoriesCheckboxTree';
-import DataTable from './Components/DataTable/DataTable';
 import CollapsibleSection from './Components/Display/CollapsibleSection';
 import Sticky from './Components/Display/Sticky';
 import TabbableContainer from './Components/Display/TabbableContainer';
@@ -85,7 +84,6 @@ export {
   CollapsibleSection,
   CollapsibleDetailsSection,
   CommonModal,
-  DataTable,
   DateRangeSelector,
   DateSelector,
   Dialog,
