@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
   FeaturePrefilterThresholds,
   VariableTreeNode,
@@ -6,7 +6,7 @@ import {
 } from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { capitalize, partial } from 'lodash';
+import { partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
@@ -94,6 +94,11 @@ function CorrelationAssayMetadataConfigDescriptionComponent({
   const entityAndCollectionVariableTreeNode =
     findEntityAndVariableCollection(collectionVariable);
 
+  const correlationMethodDisplayName = correlationMethod
+    ? CORRELATION_METHODS.find((method) => method.value === correlationMethod)
+        ?.displayName
+    : undefined;
+
   return (
     <div className="ConfigDescriptionContainer">
       <h4>
@@ -110,7 +115,7 @@ function CorrelationAssayMetadataConfigDescriptionComponent({
         Method:{' '}
         <span>
           {correlationMethod ? (
-            capitalize(correlationMethod)
+            correlationMethodDisplayName
           ) : (
             <i>Not selected</i>
           )}
@@ -120,7 +125,10 @@ function CorrelationAssayMetadataConfigDescriptionComponent({
   );
 }
 
-const CORRELATION_METHODS = ['spearman', 'pearson'];
+const CORRELATION_METHODS = [
+  { value: 'spearman', displayName: 'Spearman' },
+  { value: 'pearson', displayName: 'Pearson' },
+];
 const DEFAULT_PROPORTION_NON_ZERO_THRESHOLD = 0.05;
 const DEFAULT_VARIANCE_THRESHOLD = 0;
 const DEFAULT_STANDARD_DEVIATION_THRESHOLD = 0;
@@ -240,6 +248,18 @@ export function CorrelationAssayMetadataConfiguration(
     </div>
   );
 
+  const correlationMethodSelectorText = useMemo(() => {
+    if (configuration.correlationMethod) {
+      return (
+        CORRELATION_METHODS.find(
+          (method) => method.value === configuration.correlationMethod
+        )?.displayName ?? 'Select a method'
+      );
+    } else {
+      return 'Select a method';
+    }
+  }, [configuration.correlationMethod]);
+
   return (
     <ComputationStepContainer
       computationStepInfo={{
@@ -266,14 +286,10 @@ export function CorrelationAssayMetadataConfiguration(
               <span>Method</span>
               <SingleSelect
                 value={configuration.correlationMethod ?? 'Select a method'}
-                buttonDisplayContent={
-                  configuration.correlationMethod
-                    ? capitalize(configuration.correlationMethod)
-                    : 'Select a method'
-                }
-                items={CORRELATION_METHODS.map((method: string) => ({
-                  value: method,
-                  display: capitalize(method),
+                buttonDisplayContent={correlationMethodSelectorText}
+                items={CORRELATION_METHODS.map((method) => ({
+                  value: method.value,
+                  display: method.displayName,
                 }))}
                 onSelect={partial(changeConfigHandler, 'correlationMethod')}
               />
