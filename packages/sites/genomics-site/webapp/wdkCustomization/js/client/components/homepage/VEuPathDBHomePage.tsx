@@ -12,6 +12,8 @@ import { get, memoize } from 'lodash';
 
 // @ts-ignore
 import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
+// @ts-ignore
+import newImage from '@veupathdb/wdk-client/lib/Core/Style/images/new-feature.png';
 
 import makeSnackbarProvider, {
   SnackbarStyleProps,
@@ -517,7 +519,7 @@ const useHeaderMenuItems = (
         },
         {
           key: 'mapveu',
-          display: 'MapVEu',
+          display: 'Legacy implementation of MapVEu (soon to be retired)',
           tooltip: 'Population Biology map',
           type: 'externalLink',
           url: '/popbio-map/web/',
@@ -551,7 +553,7 @@ const useHeaderMenuItems = (
               display: (
                 <>
                   MapVEu &mdash; Interactive maps{' '}
-                  <img alt="BETA" src={betaImage} />{' '}
+                  <img alt="NEW" src={newImage} />{' '}
                   <Loading
                     style={{
                       display: 'inline-block',
@@ -570,7 +572,7 @@ const useHeaderMenuItems = (
               display: (
                 <>
                   MapVEu &mdash; {mapMenuItems[0].display}{' '}
-                  <img alt="BETA" src={betaImage} />
+                  <img alt="NEW" src={newImage} />
                 </>
               ),
             }
@@ -580,7 +582,7 @@ const useHeaderMenuItems = (
               display: (
                 <>
                   MapVEu &mdash; Interactive maps{' '}
-                  <img alt="BETA" src={betaImage} />
+                  <img alt="NEW" src={newImage} />
                 </>
               ),
               items: mapMenuItems,
@@ -617,7 +619,12 @@ const useHeaderMenuItems = (
         },
         {
           key: 'srt',
-          display: 'Sequence retrieval',
+          display: (
+            <>
+              Sequence retrieval{' '}
+              {projectId === EuPathDB ? '' : <img alt="NEW" src={newImage} />}
+            </>
+          ),
           type: 'reactRoute',
           url: '/fasta-tool',
         },
@@ -1034,11 +1041,55 @@ const useHeaderMenuItems = (
       type: 'subMenu',
       items: [
         {
-          key: 'landing',
+          key: 'learning',
           display: 'Learn how to use VEuPathDB',
-          type: 'reactRoute',
-          url: makeStaticPageRoute('/landing.html'),
+          type: 'subMenu',
+          items: [
+            {
+              key: 'faqs',
+              display: 'FAQs',
+              type: 'reactRoute',
+              url: makeStaticPageRoute(`/faq.html`),
+            },
+            {
+              key: 'webinars',
+              display: 'Webinars',
+              type: 'reactRoute',
+              url: makeStaticPageRoute(`/webinars.html`),
+            },
+            {
+              key: 'workshops',
+              display: 'Workshops',
+              type: 'reactRoute',
+              url: makeStaticPageRoute(`/workshops.html`),
+            },
+            {
+              key: 'tutorials',
+              display: 'Tutorials',
+              type: 'reactRoute',
+              url: makeStaticPageRoute(`/tutorials.html`),
+            },
+            {
+              key: 'videos',
+              display: 'Videos',
+              type: 'externalLink',
+              url: 'https://www.youtube.com/user/EuPathDB/playlists',
+            },
+            {
+              key: 'methods',
+              display: 'Analysis methods',
+              type: 'reactRoute',
+              url: makeStaticPageRoute(`/methods.html`),
+            },
+            {
+              key: 'landing',
+              display: 'All learning resources',
+              type: 'reactRoute',
+              url: makeStaticPageRoute('/landing.html'),
+            },
+          ],
         },
+
         {
           key: 'our-glossary',
           display: `VEuPathDB glossary`,

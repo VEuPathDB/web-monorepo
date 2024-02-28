@@ -106,23 +106,27 @@ const siteAnnouncements = [
   },
 */
 
-  /*
-{  
+  {
     id: 'clinepiEDA',
     renderDisplay: (props) => {
-    if ( (props.projectId == 'ClinEpiDB') && (props.location.pathname === '/') ) {
+      if (
+        props.projectId == 'ClinEpiDB' &&
+        (props.location.pathname.indexOf('/workspace/analyses/DS_624583e93e/') >
+          -1 ||
+          props.location.pathname.indexOf('/request-access/DS_624583e93e') > -1)
+      ) {
         return (
           <div>
-           Welcome to ClinEpiDB’s new and improved <span style={{fontWeight: 'bold', fontStyle: 'italic'}}>data exploration platform!</span>
-           &nbsp;&nbsp;Access the original version of our website, including your saved strategies, at <a href="https://legacy.clinepidb.org">legacy.clinepidb.org</a>. 
+            {' '}
+            Requests to access LLINEUP2 data will not be granted until the
+            manuscript has been published.
           </div>
         );
       }
       return null;
-    }
+    },
   },
- 
-*/
+
   // clinepi workshop
   /* 
  {
