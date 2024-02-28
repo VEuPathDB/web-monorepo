@@ -121,9 +121,9 @@ function BetaDivConfigDescriptionComponent({
 
 // Include available methods in this array.
 const BETA_DIV_DISSIMILARITY_METHODS = [
-  { value: 'bray', displayName: 'Bray' },
-  { value: 'jaccard', displayName: 'Jaccard' },
-  { value: 'jsd', displayName: 'JSD' },
+  { value: 'bray', displayName: 'Bray-Curtis dissimilarity' },
+  { value: 'jaccard', displayName: 'Jaccard index' },
+  { value: 'jsd', displayName: 'Jensen-Shannon divergence' },
 ];
 
 export function BetaDivConfiguration(props: ComputationConfigProps) {
