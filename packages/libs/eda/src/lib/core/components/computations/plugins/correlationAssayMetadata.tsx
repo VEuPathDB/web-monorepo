@@ -258,7 +258,7 @@ export function CorrelationAssayMetadataConfiguration(
                 onSelect={partial(changeConfigHandler, 'collectionVariable')}
                 collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
               />
-              <span className="FixedInput">Data 2 (fixed):</span>
+              <span className="FixedInput">Data 2 (fixed)</span>
               <span className="FixedInput FixedInputValue">
                 Continuous metadata variables
               </span>
