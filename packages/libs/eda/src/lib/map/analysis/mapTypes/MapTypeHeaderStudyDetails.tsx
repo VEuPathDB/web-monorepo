@@ -125,9 +125,6 @@ export function MapTypeHeaderStudyDetails(props: Props) {
           {studyEntityCount.data.count === 1
             ? studyEntity.displayName
             : studyEntity.displayNamePlural}{' '}
-          <button type="button" onClick={() => onShowStudies(true)}>
-            Show list
-          </button>
         </p>
       )}
     </div>
@@ -140,7 +137,6 @@ export function MapTypeHeaderStudyDetails(props: Props) {
           padding: '1em',
           fontSize: '1.2em',
           display: 'flex',
-          gap: '1ex',
           alignItems: 'center',
         }}
       >
@@ -151,13 +147,20 @@ export function MapTypeHeaderStudyDetails(props: Props) {
           : outputEntity.displayNamePlural}
         {onShowStudies && studyEntity && (
           <>
-            {' '}
-            from {format(studyEntityCount.data.count)}{' '}
-            {studyEntityCount.data.count === 1
-              ? studyEntity.displayName
-              : studyEntity.displayNamePlural}
+            &nbsp;from&nbsp;
+            <button
+              className="link"
+              type="button"
+              onClick={() => onShowStudies(true)}
+            >
+              {format(studyEntityCount.data.count)}{' '}
+              {studyEntityCount.data.count === 1
+                ? studyEntity.displayName
+                : studyEntity.displayNamePlural}
+            </button>
           </>
         )}
+        &nbsp;
         <Tooltip title={tooltipContent} interactive style={{ width: 'auto' }}>
           <Info style={{ color: '#069', height: '.8em', width: '.8em' }} />
         </Tooltip>

@@ -12,6 +12,8 @@ import { get, memoize } from 'lodash';
 
 // @ts-ignore
 import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
+// @ts-ignore
+import newImage from '@veupathdb/wdk-client/lib/Core/Style/images/new-feature.png';
 
 import makeSnackbarProvider, {
   SnackbarStyleProps,
@@ -410,7 +412,6 @@ const useHeaderMenuItems = (
           tooltip: 'Instantaneous, collaborative, genome annotation editor',
           type: 'reactRoute',
           url: makeStaticPageRoute(`/apollo_help.html`),
-          target: '_blank',
           metadata: {
             include: [
               AmoebaDB,
@@ -435,7 +436,6 @@ const useHeaderMenuItems = (
           display: 'BLAST (multi-query capable)',
           type: 'reactRoute',
           url: '/workspace/blast/new',
-          target: '_blank',
         },
         {
           key: 'companion',
@@ -444,7 +444,6 @@ const useHeaderMenuItems = (
           tooltip:
             'Annotate your sequence and determine orthology, phylogeny & synteny',
           url: 'https://companion.ac.uk/',
-          target: '_blank',
           metadata: {
             exclude: [VectorBase],
           },
@@ -456,7 +455,6 @@ const useHeaderMenuItems = (
           tooltip:
             'CRISPR GuideXpress at DRSC/TRiP Functional Genomics Resources',
           url: 'https://www.flyrnai.org/tools/fly2mosquito/web/',
-          target: '_blank',
           metadata: {
             include: [VectorBase],
           },
@@ -467,7 +465,6 @@ const useHeaderMenuItems = (
           type: 'externalLink',
           tooltip: 'Eukaryotic Pathogen CRISPR guide RNA/DNA Design Tool',
           url: 'http://grna.ctegd.uga.edu',
-          target: '_blank',
           metadata: {
             exclude: [VectorBase],
           },
@@ -489,14 +486,12 @@ const useHeaderMenuItems = (
           display: 'Galaxy',
           type: 'reactRoute',
           url: '/galaxy-orientation',
-          target: '_blank',
         },
         {
           key: 'jbrowse',
           display: 'Genome browser',
           type: 'reactRoute',
           url: '/jbrowse?data=/a/service/jbrowse/tracks/default',
-          target: '_blank',
           metadata: {
             exclude: [EuPathDB],
           },
@@ -507,7 +502,6 @@ const useHeaderMenuItems = (
           tooltip: 'Free to use pictures of vectors',
           type: 'reactRoute',
           url: makeStaticPageRoute('/VectorBase/imageGallery.html'),
-          target: '_blank',
           metadata: {
             include: [VectorBase],
           },
@@ -519,18 +513,16 @@ const useHeaderMenuItems = (
             'Your online resource for CRISPR Cas9 T7 RNA Polymerase gene editing in kinetoplastids',
           type: 'externalLink',
           url: 'http://www.leishgedit.net',
-          target: '_blank',
           metadata: {
             include: [TriTrypDB],
           },
         },
         {
           key: 'mapveu',
-          display: 'MapVEu',
+          display: 'Legacy implementation of MapVEu (soon to be retired)',
           tooltip: 'Population Biology map',
           type: 'externalLink',
           url: '/popbio-map/web/',
-          target: '_blank',
           metadata: {
             include: [VectorBase],
           },
@@ -541,7 +533,6 @@ const useHeaderMenuItems = (
           tooltip: 'Population Biology map',
           type: 'externalLink',
           url: 'https://vectorbase.org/popbio-map/web/',
-          target: '_blank',
           metadata: {
             include: [EuPathDB, UniDB],
           },
@@ -562,7 +553,7 @@ const useHeaderMenuItems = (
               display: (
                 <>
                   MapVEu &mdash; Interactive maps{' '}
-                  <img alt="BETA" src={betaImage} />{' '}
+                  <img alt="NEW" src={newImage} />{' '}
                   <Loading
                     style={{
                       display: 'inline-block',
@@ -581,7 +572,7 @@ const useHeaderMenuItems = (
               display: (
                 <>
                   MapVEu &mdash; {mapMenuItems[0].display}{' '}
-                  <img alt="BETA" src={betaImage} />
+                  <img alt="NEW" src={newImage} />
                 </>
               ),
             }
@@ -591,7 +582,7 @@ const useHeaderMenuItems = (
               display: (
                 <>
                   MapVEu &mdash; Interactive maps{' '}
-                  <img alt="BETA" src={betaImage} />
+                  <img alt="NEW" src={newImage} />
                 </>
               ),
               items: mapMenuItems,
@@ -601,14 +592,12 @@ const useHeaderMenuItems = (
           display: 'NCBI Primer3',
           type: 'externalLink',
           url: 'https://www.ncbi.nlm.nih.gov/tools/primer-blast/',
-          target: '_blank',
         },
         {
           key: 'plasmoap',
           display: 'PlasmoAP',
           type: 'reactRoute',
           url: '/plasmoap',
-          target: '_blank',
           metadata: {
             include: [PlasmoDB],
           },
@@ -618,7 +607,6 @@ const useHeaderMenuItems = (
           display: 'PATS',
           type: 'externalLink',
           url: 'http://modlabcadd.ethz.ch/software/pats/',
-          target: '_blank',
           metadata: {
             include: [ PlasmoDB ]
           }
@@ -628,21 +616,23 @@ const useHeaderMenuItems = (
           display: 'PubMed and Entrez',
           type: 'externalLink',
           url: `/pubcrawler/${displayName}`,
-          target: '_blank',
         },
         {
           key: 'srt',
-          display: 'Sequence retrieval',
+          display: (
+            <>
+              Sequence retrieval{' '}
+              {projectId === EuPathDB ? '' : <img alt="NEW" src={newImage} />}
+            </>
+          ),
           type: 'reactRoute',
           url: '/fasta-tool',
-          target: '_blank',
         },
         {
           key: 'webservices',
           display: 'Web services',
           type: 'reactRoute',
           url: makeStaticPageRoute(`/content/${displayName}/webServices.html`),
-          target: '_blank',
         },
       ],
     },
@@ -787,98 +777,84 @@ const useHeaderMenuItems = (
               display: 'VEuPathDB',
               type: 'externalLink',
               url: 'https://veupathdb.org',
-              target: '_blank',
             },
             {
               key: 'amoebadb',
               display: 'AmoebaDB',
               type: 'externalLink',
               url: 'https://amoebadb.org',
-              target: '_blank',
             },
             {
               key: 'cryptodb',
               display: 'CryptoDB',
               type: 'externalLink',
               url: 'https://cryptodb.org',
-              target: '_blank',
             },
             {
               key: 'fungidb',
               display: 'FungiDB',
               type: 'externalLink',
               url: 'https://fungidb.org',
-              target: '_blank',
             },
             {
               key: 'giardiadb',
               display: 'GiardiaDB',
               type: 'externalLink',
               url: 'https://giardiadb.org',
-              target: '_blank',
             },
             {
               key: 'hostdb',
               display: 'HostDB',
               type: 'externalLink',
               url: 'https://hostdb.org',
-              target: '_blank',
             },
             {
               key: 'microsporidiadb',
               display: 'MicrosporidiaDB',
               type: 'externalLink',
               url: 'https://microsporidiadb.org',
-              target: '_blank',
             },
             {
               key: 'piroplasmadb',
               display: 'PiroplasmaDB',
               type: 'externalLink',
               url: 'https://piroplasmadb.org',
-              target: '_blank',
             },
             {
               key: 'plasmodb',
               display: 'PlasmoDB',
               type: 'externalLink',
               url: 'https://plasmodb.org',
-              target: '_blank',
             },
             {
               key: 'toxodb',
               display: 'ToxoDB',
               type: 'externalLink',
               url: 'https://toxodb.org',
-              target: '_blank',
             },
             {
               key: 'trichdb',
               display: 'TrichDB',
               type: 'externalLink',
               url: 'https://trichdb.org',
-              target: '_blank',
             },
             {
               key: 'tritrypdb',
               display: 'TriTrypDB',
               type: 'externalLink',
               url: 'https://tritrypdb.org',
-              target: '_blank',
             },
             {
               key: 'vectorbase',
               display: 'VectorBase',
               type: 'externalLink',
               url: 'https://vectorbase.org',
-              target: '_blank',
             },
             {
               key: 'orthomcl',
               display: 'OrthoMCL',
               type: 'externalLink',
               url: 'https://orthomcl.org',
-              target: '_blank',
             },
           ],
         },
@@ -923,7 +899,6 @@ const useHeaderMenuItems = (
               display: 'Publications that use our resources',
               type: 'externalLink',
               url: 'https://scholar.google.com/scholar?hl=en&as_sdt=0,39&q=OrthoMCL+OR+PlasmoDB+OR+ToxoDB+OR+CryptoDB+OR+TrichDB+OR+GiardiaDB+OR+TriTrypDB+OR+AmoebaDB+OR+MicrosporidiaDB+OR+%22FungiDB%22+OR+PiroplasmaDB+OR+%22vectorbase%22+OR+veupathdb+OR+ApiDB+OR+EuPathDB+-encrypt+-cryptography+-hymenoptera&scisbd=1',
-              target: '_blank',
             },
           ],
         },
@@ -1043,7 +1018,6 @@ const useHeaderMenuItems = (
               display: 'Website usage statistics',
               type: 'externalLink',
               url: '/awstats/awstats.pl',
-              target: '_blank',
               metadata: {
                 exclude: [EuPathDB],
               },
@@ -1053,7 +1027,6 @@ const useHeaderMenuItems = (
               display: 'All websites usage statistics',
               type: 'externalLink',
               url: '/awstats/awstats.pl?config=All_EBRC_Combined',
-              target: '_blank',
               metadata: {
                 include: [EuPathDB],
               },
@@ -1068,11 +1041,55 @@ const useHeaderMenuItems = (
       type: 'subMenu',
       items: [
         {
-          key: 'landing',
+          key: 'learning',
           display: 'Learn how to use VEuPathDB',
-          type: 'reactRoute',
-          url: makeStaticPageRoute('/landing.html'),
+          type: 'subMenu',
+          items: [
+            {
+              key: 'faqs',
+              display: 'FAQs',
+              type: 'reactRoute',
+              url: makeStaticPageRoute(`/faq.html`),
+            },
+            {
+              key: 'webinars',
+              display: 'Webinars',
+              type: 'reactRoute',
+              url: makeStaticPageRoute(`/webinars.html`),
+            },
+            {
+              key: 'workshops',
+              display: 'Workshops',
+              type: 'reactRoute',
+              url: makeStaticPageRoute(`/workshops.html`),
+            },
+            {
+              key: 'tutorials',
+              display: 'Tutorials',
+              type: 'reactRoute',
+              url: makeStaticPageRoute(`/tutorials.html`),
+            },
+            {
+              key: 'videos',
+              display: 'Videos',
+              type: 'externalLink',
+              url: 'https://www.youtube.com/user/EuPathDB/playlists',
+            },
+            {
+              key: 'methods',
+              display: 'Analysis methods',
+              type: 'reactRoute',
+              url: makeStaticPageRoute(`/methods.html`),
+            },
+            {
+              key: 'landing',
+              display: 'All learning resources',
+              type: 'reactRoute',
+              url: makeStaticPageRoute('/landing.html'),
+            },
+          ],
         },
+
         {
           key: 'our-glossary',
           display: `VEuPathDB glossary`,
@@ -1099,7 +1116,6 @@ const useHeaderMenuItems = (
       display: 'Contact Us',
       type: 'reactRoute',
       url: '/contact-us',
-      target: '_blank',
     },
   ];
 

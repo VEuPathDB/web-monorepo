@@ -62,6 +62,7 @@ import { OutputEntityTitle } from '../OutputEntityTitle';
 import { truncationConfig } from '../../../utils/truncation-config-utils';
 // use Notification for truncation warning message
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
+import PluginError from '../PluginError';
 
 const DEFAULT_SIG_THRESHOLD = 0.05; // significance threshold (horizontal line)
 const DEFAULT_ES_THRESHOLD = 1; // effect size threshold (vertical lines)
@@ -761,6 +762,11 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
           />
         </LabelledGroup>
       )}
+
+      <PluginError
+        error={data.error}
+        outputSize={finalData?.statistics.length}
+      />
 
       {!hideInputsAndControls && <OutputEntityTitle subtitle={plotSubtitle} />}
       <LayoutComponent
