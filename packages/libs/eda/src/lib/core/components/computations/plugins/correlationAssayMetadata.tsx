@@ -272,12 +272,16 @@ export function CorrelationAssayMetadataConfiguration(
           <div className={cx('-CorrelationOuterConfigContainer')}>
             <H6>Input Data</H6>
             <div className={cx('-InputContainer')}>
-              <span>Data</span>
+              <span>Data 1</span>
               <VariableCollectionSelectList
                 value={configuration.collectionVariable}
                 onSelect={partial(changeConfigHandler, 'collectionVariable')}
                 collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
               />
+              <span className="FixedInput">Data 2 (fixed)</span>
+              <span className="FixedInput FixedInputValue">
+                Continuous metadata variables
+              </span>
             </div>
           </div>
           <div className={cx('-CorrelationOuterConfigContainer')}>
