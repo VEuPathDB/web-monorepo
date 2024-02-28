@@ -6,38 +6,60 @@ import { ButtonStyleSpec, PartialButtonStyleSpec } from '..';
 import { ArrowDown } from '../../icons';
 import { merge } from 'lodash';
 
+// The default styles largely mimic the style of the MUI button was previously used in this component
 const defaultStyle: ButtonStyleSpec = {
   default: {
     color: gray[200],
+    textColor: 'black',
+    fontWeight: 500,
     border: {
       radius: 5,
     },
-    fontWeight: 500,
-    textColor: 'black',
+    dropShadow: {
+      color: gray[500],
+      blurRadius: '5px',
+      offsetX: '0px',
+      offsetY: '2px',
+    },
   },
   hover: {
+    color: gray[300],
+    textColor: 'black',
+    fontWeight: 500,
+    border: {
+      radius: 5,
+    },
+    dropShadow: {
+      color: gray[600],
+      blurRadius: '5px',
+      offsetX: '0px',
+      offsetY: '2px',
+    },
+  },
+  pressed: {
     color: gray[300],
     fontWeight: 500,
     textColor: 'black',
     border: {
-      color: gray[400],
       radius: 5,
-      width: 2,
-      style: 'solid',
     },
-  },
-  pressed: {
-    color: gray[400],
-    fontWeight: 500,
-    textColor: 'black',
-    border: {
-      radius: 5,
+    dropShadow: {
+      color: gray[600],
+      blurRadius: '7px',
+      offsetX: '0px',
+      offsetY: '4px',
     },
   },
   disabled: {
     color: gray[100],
     textColor: gray[300],
     fontWeight: 500,
+    dropShadow: {
+      color: gray[300],
+      blurRadius: '5px',
+      offsetX: '0px',
+      offsetY: '2px',
+    },
   },
   icon: {
     fontSize: '1em',
