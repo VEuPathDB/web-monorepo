@@ -35,6 +35,12 @@
     span {
       font-weight: 500;
     }
+    .FixedInput {
+      text-transform: none;
+    }
+    .FixedInputValue {
+      font-weight: normal;
+    }
     &__disabled {
       cursor: not-allowed;
       span {
