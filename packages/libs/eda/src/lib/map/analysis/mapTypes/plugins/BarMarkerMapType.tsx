@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useEffect } from 'react';
 import { Variable } from '../../../../core/types/study';
 import { findEntityAndVariable } from '../../../../core/utils/study-metadata';
 import {
@@ -337,6 +337,8 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
       activeMarkerConfigurationType,
     },
     updateConfiguration,
+    // pass coordinates of selected area
+    boxCoord,
   } = props;
 
   const {
@@ -385,6 +387,42 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     },
     [props.configuration, updateConfiguration, handleSelectedMarkerSnackbars]
   );
+
+  // set useEffect for area selection to change selectedMarkers via setSelectedmarkers
+  // define useEffect here to avoid conditional call
+  // thus, this contains duplicate codes, e.g., markers and selectedMarkers
+  useEffect(() => {
+    if (!markerData.error && !markerData.isFetching) {
+      // convert marker data into markers
+      const markers = markerData.markerProps?.map((markerProps) => (
+        <ChartMarker {...markerProps} />
+      ));
+      // define selectedMarkers
+      const selectedMarkers = markerConfigurations.find(
+        (markerConfiguration) =>
+          markerConfiguration.type === activeMarkerConfigurationType
+      )?.selectedMarkers;
+
+      // update selectedMarkers
+      if (boxCoord != null && markers != null) {
+        const boxCoordMarkers = markers
+          .map((marker) => {
+            // check if the center of a marker is within selected area
+            return marker.props.position.lat >= boxCoord.southWest.lat &&
+              marker.props.position.lat <= boxCoord.northEast.lat &&
+              marker.props.position.lng >= boxCoord.southWest.lng &&
+              marker.props.position.lng <= boxCoord.northEast.lng
+              ? marker.props.id
+              : '';
+          })
+          .filter((item) => item !== '');
+
+        // then, update selectedMarkers
+        setSelectedMarkers([...(selectedMarkers ?? []), ...boxCoordMarkers]);
+      }
+    }
+    // additional dependency may cause infinite loop
+  }, [boxCoord]);
 
   if (markerData.error && !markerData.isFetching)
     return getErrorOverlayComponent(markerData.error);

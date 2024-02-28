@@ -23,6 +23,10 @@ import geohashAnimation from '../map/animation_functions/geohash';
 
 import SemanticMarkers from '../map/SemanticMarkers';
 
+// area selection
+import AreaSelect from '../map/AreaSelect';
+import { Bounds as BoundsProp } from '../map/Types';
+
 export default {
   title: 'Map/Marker Selection',
   component: MapVEuMapSidebar,
@@ -65,6 +69,9 @@ export const DonutMarkers: Story<MapVEuMapProps> = (args) => {
     [setMarkerElements]
   );
 
+  // coordinates of selected area
+  const [boxCoord, setBoxCoord] = useState<BoundsProp | undefined>(undefined);
+
   return (
     <>
       <MapVEuMap
@@ -74,6 +81,9 @@ export const DonutMarkers: Story<MapVEuMapProps> = (args) => {
         onBoundsChanged={handleViewportChanged}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
       >
+        {/* area selection by ctrl + mouse */}
+        <AreaSelect setBoxCoord={setBoxCoord} />
+
         <SemanticMarkers
           markers={markerElements}
           animation={defaultAnimation}
