@@ -249,38 +249,35 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
 
   // set useEffect for area selection to change selectedMarkers via setSelectedmarkers
   // define useEffect here to avoid conditional call
-  // thus, this contains duplicate codes, e.g., markers and selectedMarkers
+  // thus, this contains duplicate code, selectedMarkers
   useEffect(() => {
-    if (!markersData.error && !markersData.isFetching) {
-      // convert marker data into markers
-      const markers = markersData.data?.markersData?.map((markerProps) => (
-        <BubbleMarker {...markerProps} />
-      ));
+    if (!markersData.error && !markersData.isFetching && boxCoord != null) {
       // define selectedMarkers
       const selectedMarkers = markerConfigurations.find(
         (markerConfiguration) =>
           markerConfiguration.type === activeMarkerConfigurationType
       )?.selectedMarkers;
 
-      // update selectedMarkers
-      if (boxCoord != null && markers != null) {
-        const boxCoordMarkers = markers
-          .map((marker) => {
-            // check if the center of a marker is within selected area
-            return marker.props.position.lat >= boxCoord.southWest.lat &&
-              marker.props.position.lat <= boxCoord.northEast.lat &&
-              marker.props.position.lng >= boxCoord.southWest.lng &&
-              marker.props.position.lng <= boxCoord.northEast.lng
-              ? marker.props.id
-              : '';
-          })
-          .filter((item) => item !== '');
+      // find markers within area selection
+      const boxCoordMarkers = markersData.data?.markersData
+        ?.map((marker) => {
+          // check if the center of a marker is within selected area
+          return marker.position.lat >= boxCoord.southWest.lat &&
+            marker.position.lat <= boxCoord.northEast.lat &&
+            marker.position.lng >= boxCoord.southWest.lng &&
+            marker.position.lng <= boxCoord.northEast.lng
+            ? marker.id
+            : '';
+        })
+        .filter((item) => item !== '');
 
-        // then, update selectedMarkers
-        setSelectedMarkers([...(selectedMarkers ?? []), ...boxCoordMarkers]);
-      }
+      // then, update selectedMarkers
+      setSelectedMarkers([
+        ...(selectedMarkers ?? []),
+        ...(boxCoordMarkers ?? []),
+      ]);
     }
-    // additional dependency may cause infinite loop
+    // additional dependency may cause infinite loop, e.g., markerData
   }, [boxCoord]);
 
   if (markersData.error && !markersData.isFetching)
