@@ -39,6 +39,8 @@ import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { NoDataError } from '../../../core/api/DataClient/NoDataError';
 import { useCallback, useState } from 'react';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
+import { PieMarkerConfiguration } from '../MarkerConfiguration/PieMarkerConfigurationMenu';
+import { BarPlotMarkerConfiguration } from '../MarkerConfiguration/BarPlotMarkerConfigurationMenu';
 
 export const defaultAnimation = {
   method: 'geohash',
@@ -487,7 +489,7 @@ export function pieOrBarMarkerConfigLittleFilter(
 
   const activeMarkerConfiguration = markerConfigurations.find(
     (markerConfig) => markerConfig.type === activeMarkerConfigurationType
-  );
+  ) as PieMarkerConfiguration | BarPlotMarkerConfiguration;
 
   // This doesn't seem ideal. Do we ever have no active config?
   if (activeMarkerConfiguration == null) return [];

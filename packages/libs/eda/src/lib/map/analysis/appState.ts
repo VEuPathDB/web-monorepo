@@ -41,9 +41,15 @@ const SelectedCountsOption = t.union([
 export type MarkerConfiguration = t.TypeOf<typeof MarkerConfiguration>;
 // TODO Make `uknown` and use plugin-specific decoder
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const MarkerConfiguration = t.type({
-  type: t.string,
-});
+export const MarkerConfiguration = t.intersection([
+  t.type({
+    type: t.string,
+  }),
+  t.partial({
+    selectedMarkers: t.array(t.string),
+    selectedVariable: VariableDescriptor,
+  }),
+]);
 
 const PanelConfig = t.type({
   isVisble: t.boolean,
