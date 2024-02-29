@@ -35,12 +35,27 @@
     span {
       font-weight: 500;
     }
+    .FixedInput {
+      text-transform: none;
+    }
+    .FixedInputValue {
+      font-weight: normal;
+    }
     &__disabled {
       cursor: not-allowed;
       span {
         opacity: 0.5;
       }
     }
+  }
+
+  &-DescriptionContainer {
+    font-weight: normal !important;
+    text-transform: none;
+  }
+
+  &-HelpInfoContainer {
+    padding: 20px 40px;
   }
 }
 

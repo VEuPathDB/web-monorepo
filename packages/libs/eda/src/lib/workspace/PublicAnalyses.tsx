@@ -15,11 +15,11 @@ import {
   Mesa,
   SaveableTextEditor,
 } from '@veupathdb/wdk-client/lib/Components';
-import { create as createTableState } from '@veupathdb/wdk-client/lib/Components/Mesa/Utils/MesaState';
+import { create as createTableState } from '@veupathdb/coreui/lib/components/Mesa/Utils/MesaState';
 import {
   MesaColumn,
   MesaSortObject,
-} from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -241,7 +241,7 @@ function PublicAnalysesTable({
     [filteredRows, tableSort, exampleSort, offerExampleSortControl]
   );
 
-  const columns: MesaColumn<keyof PublicAnalysisRow>[] = useMemo(
+  const columns: MesaColumn<PublicAnalysisRow>[] = useMemo(
     () => [
       {
         key: 'studyId',

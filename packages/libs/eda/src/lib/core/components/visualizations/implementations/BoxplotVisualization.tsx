@@ -614,46 +614,55 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   ) as NumberRange;
 
   // custom legend items for checkbox
-  const legendItems: LegendItemsProps[] = useMemo(() => {
-    const legendData = !isFaceted(data.value)
-      ? data.value?.series
-      : data.value?.facets.find(
-          ({ data }) => data != null && data.series.length > 0
-        )?.data?.series;
+  const [legendItems, isEmptyData]: [LegendItemsProps[], boolean] =
+    useMemo(() => {
+      const legendData = !isFaceted(data.value)
+        ? data.value?.series
+        : data.value?.facets.find(
+            ({ data }) => data != null && data.series.length > 0
+          )?.data?.series;
 
-    return legendData != null
-      ? legendData.map((dataItem: BoxplotDataObject, index: number) => {
-          return {
-            label: dataItem.name ?? '',
-            // histogram plot does not have mode, so set to square for now
-            marker: 'lightSquareBorder',
-            markerColor:
-              dataItem.name === 'No data'
-                ? // boxplot uses slightly fainted color
-                  'rgb(191, 191, 191)' // #bfbfbf
-                : ColorPaletteDefault[index],
-            // deep comparison is required for faceted plot
-            hasData: !isFaceted(data.value) // no faceted plot
-              ? dataItem.q1.some((el: number | string) => el != null)
-                ? true
-                : false
-              : data.value?.facets
-                  .map((el: { label: string; data?: BoxplotData }) => {
-                    // faceted plot: here data.value is full data
-                    // need to check whether el.data.series[index] exists
-                    return el.data?.series[index]?.q1.some(
-                      (el: number | string) => el != null
-                    );
-                  })
-                  .includes(true)
-              ? true
-              : false,
-            group: 1,
-            rank: 1,
-          };
-        })
-      : [];
-  }, [data]);
+      const legendItems =
+        legendData != null
+          ? legendData.map((dataItem: BoxplotDataObject, index: number) => {
+              return {
+                label: dataItem.name ?? '',
+                marker: 'lightSquareBorder' as const,
+                markerColor:
+                  dataItem.name === 'No data'
+                    ? // boxplot uses slightly fainted color
+                      'rgb(191, 191, 191)' // #bfbfbf
+                    : ColorPaletteDefault[index],
+                // deep comparison is required for faceted plot
+                hasData: !isFaceted(data.value) // no faceted plot
+                  ? dataItem.q1.some((el: number | string) => el != null)
+                    ? true
+                    : false
+                  : data.value?.facets
+                      .map((el: { label: string; data?: BoxplotData }) => {
+                        // faceted plot: here data.value is full data
+                        // need to check whether el.data.series[index] exists
+                        return el.data?.series[index]?.q1.some(
+                          (el: number | string) => el != null
+                        );
+                      })
+                      .includes(true)
+                  ? true
+                  : false,
+                group: 1,
+                rank: 1,
+              };
+            })
+          : [];
+
+      // use legendData also to determine if there's no data at all (for PluginError banner)
+      // because outputSize can't always rely on data.value.completeCasesAllVars and friend
+      const isEmptyData =
+        data.value != null &&
+        legendData?.find((series) => series.label.length > 0) == null;
+
+      return [legendItems, isEmptyData];
+    }, [data]);
 
   // set checkedLegendItems to either the config-stored items, or all items if
   // nothing stored (or if no overlay locally configured)
@@ -714,6 +723,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       // show/hide independent/dependent axis tick label
       showIndependentAxisTickLabel={true}
       showDependentAxisTickLabel={true}
+      showExportButton={true}
       showMean={true}
       interactive={!isFaceted(data.value) ? true : false}
       showSpinner={data.pending || filteredCounts.pending}
@@ -848,7 +858,6 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     </>
   );
 
-  // plot subtitle
   const plotSubtitle = options?.getPlotSubtitle?.(
     computation.descriptor.configuration
   );
@@ -923,7 +932,10 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         )}
       </div>
 
-      <PluginError error={data.error} outputSize={outputSize} />
+      <PluginError
+        error={data.error}
+        outputSize={isEmptyData ? 0 : outputSize}
+      />
       {!hideInputsAndControls && (
         <OutputEntityTitle
           entity={outputEntity}
@@ -1120,82 +1132,75 @@ function Controls({
       {/* Y-axis range control */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {/* set Undo icon and its behavior */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
-          >
-            <LabelledGroup label="Y-axis controls"> </LabelledGroup>
-            {/* using CoreUI: icon only */}
-            <div style={{ marginLeft: '-2.6em', width: '50%' }}>
-              <ResetButtonCoreUI
-                size={'medium'}
-                text={''}
-                themeRole={'primary'}
-                tooltip={'Reset to defaults'}
-                disabled={false}
-                onPress={handleDependentAxisSettingsReset}
-              />
-            </div>
-          </div>
-
           <LabelledGroup
-            label="Y-axis range"
-            containerStyles={{
-              fontSize: '0.9em',
-              // width: '350px',
-              marginTop: '-0.8em',
-            }}
+            label={
+              <div css={{ display: 'flex', alignItems: 'center' }}>
+                Y-axis controls
+                <ResetButtonCoreUI
+                  size={'medium'}
+                  text={''}
+                  themeRole={'primary'}
+                  tooltip={'Reset to defaults'}
+                  disabled={false}
+                  onPress={handleDependentAxisSettingsReset}
+                />
+              </div>
+            }
           >
-            <RadioButtonGroup
-              options={axisRangeOptions}
-              selectedOption={dependentAxisValueSpec}
-              onOptionSelected={(newAxisRangeOption: string) => {
-                onDependentAxisValueSpecChange(newAxisRangeOption);
+            <LabelledGroup
+              label="Y-axis range"
+              containerStyles={{
+                fontSize: '0.9em',
+                padding: '1em 0',
               }}
-              orientation={'horizontal'}
-              labelPlacement={'end'}
-              buttonColor={'primary'}
-              margins={['0em', '0', '0', '0em']}
-              itemMarginRight={25}
-            />
-            {/* Y-axis range control */}
-            <NumberRangeInput
-              label="Range"
-              // add range: for now, handle number only
-              range={
-                (vizConfig.dependentAxisRange as NumberRange) ??
-                defaultDependentAxisRange
-              }
-              onRangeChange={(newRange?: NumberOrDateRange) => {
-                handleDependentAxisRangeChange(newRange as NumberRange);
-              }}
-              allowPartialRange={false}
-              // set maxWidth
-              containerStyles={{ maxWidth: '350px' }}
-              disabled={
-                vizConfig.dependentAxisValueSpec === 'Full' ||
-                vizConfig.dependentAxisValueSpec === 'Auto-zoom'
-              }
-            />
-            {/* truncation notification */}
-            {truncatedDependentAxisWarning ? (
-              <Notification
-                title={''}
-                text={truncatedDependentAxisWarning}
-                // this was defined as LIGHT_BLUE
-                color={'#5586BE'}
-                onAcknowledgement={() => {
-                  setTruncatedDependentAxisWarning('');
+            >
+              <RadioButtonGroup
+                options={axisRangeOptions}
+                selectedOption={dependentAxisValueSpec}
+                onOptionSelected={(newAxisRangeOption: string) => {
+                  onDependentAxisValueSpecChange(newAxisRangeOption);
                 }}
-                showWarningIcon={true}
-                // change maxWidth
-                containerStyles={{ maxWidth: '350px' }}
+                orientation={'horizontal'}
+                labelPlacement={'end'}
+                buttonColor={'primary'}
+                margins={['0em', '0', '0', '0em']}
+                itemMarginRight={25}
               />
-            ) : null}
+              {/* Y-axis range control */}
+              <NumberRangeInput
+                label="Range"
+                // add range: for now, handle number only
+                range={
+                  (vizConfig.dependentAxisRange as NumberRange) ??
+                  defaultDependentAxisRange
+                }
+                onRangeChange={(newRange?: NumberOrDateRange) => {
+                  handleDependentAxisRangeChange(newRange as NumberRange);
+                }}
+                allowPartialRange={false}
+                // set maxWidth
+                containerStyles={{ maxWidth: '350px' }}
+                disabled={
+                  vizConfig.dependentAxisValueSpec === 'Full' ||
+                  vizConfig.dependentAxisValueSpec === 'Auto-zoom'
+                }
+              />
+              {/* truncation notification */}
+              {truncatedDependentAxisWarning ? (
+                <Notification
+                  title={''}
+                  text={truncatedDependentAxisWarning}
+                  // this was defined as LIGHT_BLUE
+                  color={'#5586BE'}
+                  onAcknowledgement={() => {
+                    setTruncatedDependentAxisWarning('');
+                  }}
+                  showWarningIcon={true}
+                  // change maxWidth
+                  containerStyles={{ maxWidth: '350px' }}
+                />
+              ) : null}
+            </LabelledGroup>
           </LabelledGroup>
         </div>
       </div>

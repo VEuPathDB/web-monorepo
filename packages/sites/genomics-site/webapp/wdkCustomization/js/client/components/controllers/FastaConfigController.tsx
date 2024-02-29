@@ -1,30 +1,33 @@
-import React, { useCallback, useMemo } from 'react';
 import { mapValues } from 'lodash';
+import React, { useCallback, useMemo } from 'react';
 
-import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { submitForm } from '@veupathdb/wdk-client/lib/Actions/DownloadFormActions';
+import { SubmissionMetadata } from '@veupathdb/wdk-client/lib/Actions/QuestionActions';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import {
   DownloadFormController,
   QuestionController,
 } from '@veupathdb/wdk-client/lib/Controllers';
-import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
+import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
-import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
-import { SubmissionMetadata } from '@veupathdb/wdk-client/lib/Actions/QuestionActions';
+import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import {
+  FilterValueArray,
+  ParameterValues,
+  Question,
+  RecordClass,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { ResultType } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
 import {
   Props as FormProps,
   renderDefaultParamGroup,
 } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 import { getValueFromState } from '@veupathdb/wdk-client/lib/Views/Question/Params';
-import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
-import {
-  FilterValueArray,
-  ParameterValues,
-} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
-import { submitForm } from '@veupathdb/wdk-client/lib/Actions/DownloadFormActions';
-import { ResultType } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
 import { useDispatch } from 'react-redux';
+import { Link, Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
 
 import './FastaConfigController.scss';
 
@@ -32,6 +35,7 @@ import './FastaConfigController.scss';
 const SEARCHES = [
   'GeneByLocusTag',
   'SequenceBySourceId',
+  'DynSpansBySourceId',
   'EstBySourceId',
   'PopsetByPopsetId',
 ];
@@ -43,24 +47,39 @@ const submissionMetadata: SubmissionMetadata = {
   },
 };
 
+const genomicSegmentsBanner = (
+  <Banner
+    banner={{
+      type: 'info',
+      message: (
+        <div>
+          To download partial genomic sequences (aka genomic segments) please
+          use the{' '}
+          <Link to={{ pathname: '/search/genomic-segment/DynSpansBySourceId' }}>
+            Genomic Segments based on Genomic Location
+          </Link>{' '}
+          search page.
+        </div>
+      ),
+    }}
+  />
+);
+
 export default function FastaConfigController() {
   const { url } = useRouteMatch();
-  const questionsAndRecordClasses = useWdkService(
-    (wdkService) =>
-      Promise.all(
-        SEARCHES.map((searchName) =>
-          wdkService
-            .findQuestion(searchName)
-            .then((question) =>
-              Promise.all([
-                question,
-                wdkService.findRecordClass(question.outputRecordClassName),
-              ])
-            )
-        )
-      ),
-    []
-  );
+  const questionsAndRecordClasses = useWdkService(async (wdkService) => {
+    const questions = await wdkService.getQuestions();
+    const recordClasses = await wdkService.getRecordClasses();
+    return SEARCHES.map((searchName) => {
+      const question = questions.find((q) => q.urlSegment === searchName);
+      if (question == null) return undefined;
+      const recordClass = recordClasses.find(
+        (r) => r.urlSegment === question.outputRecordClassName
+      );
+      if (recordClass == null) return undefined;
+      return [question, recordClass];
+    }).filter((entry): entry is [Question, RecordClass] => entry != null);
+  }, []);
 
   useSetDocumentTitle('Retrieve Sequences');
 
@@ -74,8 +93,9 @@ export default function FastaConfigController() {
         supply.
       </p>
       <p>
-        (If instead you would like to download sequences in bulk, please visit
-        our file download section.)
+        (If instead you would like to download sequences in genome-scale files,
+        please visit our{' '}
+        <Link to={{ pathname: '/downloads' }}>file download section</Link>.)
       </p>
       <WorkspaceNavigation
         heading={null}
@@ -102,16 +122,20 @@ export default function FastaConfigController() {
         {questionsAndRecordClasses.map(([question]) => (
           <Route
             path={url + '/' + question.outputRecordClassName}
-            render={() => (
-              <QuestionController
-                question={question.urlSegment}
-                recordClass={question.outputRecordClassName}
-                submissionMetadata={submissionMetadata}
-                FormComponent={FormComponent}
-                prepopulateWithLastParamValues
-                shouldChangeDocumentTitle={false}
-              />
-            )}
+            render={(props) =>
+              props.match.url.includes('genomic-segment') ? (
+                genomicSegmentsBanner
+              ) : (
+                <QuestionController
+                  question={question.urlSegment}
+                  recordClass={question.outputRecordClassName}
+                  submissionMetadata={submissionMetadata}
+                  FormComponent={FormComponent}
+                  prepopulateWithLastParamValues
+                  shouldChangeDocumentTitle={false}
+                />
+              )
+            }
           />
         ))}
       </Switch>
@@ -201,6 +225,8 @@ function FormComponent(props: FormProps) {
 
   return (
     <>
+      {state.question.urlSegment === 'SequenceBySourceId' &&
+        genomicSegmentsBanner}
       {paramGroupElements}
 
       <DownloadFormController

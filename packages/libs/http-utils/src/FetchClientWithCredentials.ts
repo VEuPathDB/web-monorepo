@@ -3,6 +3,11 @@ import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { ApiRequest, FetchApiOptions, FetchClient } from './FetchClient';
 
+interface AuthorizationToken {
+  type: 'wdk' | 'bearer';
+  value: string;
+}
+
 export class FetchClientWithCredentials extends FetchClient {
   public static getClient = memoize(
     (baseUrl: string, wdkService: WdkService) => {
@@ -12,24 +17,54 @@ export class FetchClientWithCredentials extends FetchClient {
 
   protected readonly getUser = once(() => this.wdkService.getCurrentUser());
 
-  protected readonly findUserRequestAuthKey = once(async () => {
-    const user = await this.getUser();
-    if (user.isGuest) {
-      return String(user.id);
-    }
-
-    const wdkCheckAuthEntry = document.cookie
-      .split('; ')
-      .find((x) => x.startsWith('wdk_check_auth='));
-
-    if (wdkCheckAuthEntry == null) {
-      throw new Error(
-        `Tried to retrieve a non-existent WDK auth key for user ${user.id}`
+  private readonly findAuthorizationToken = once(
+    async (): Promise<AuthorizationToken> => {
+      const cookies = Object.fromEntries(
+        document.cookie
+          .split('; ')
+          .map((entry) => entry.split(/=(.*)/).slice(0, 2))
       );
-    }
 
-    return wdkCheckAuthEntry.replace(/^wdk_check_auth=/, '');
-  });
+      if ('Authorization' in cookies) {
+        return {
+          type: 'bearer',
+          value: cookies.Authorization,
+        };
+      }
+
+      const user = await this.getUser();
+      const authKeyValue = user.isGuest
+        ? String(user.id)
+        : cookies.wdk_check_auth;
+      if (authKeyValue == null) {
+        throw new Error(
+          `Tried to retrieve a non-existent WDK auth key for user ${user.id}`
+        );
+      }
+      return {
+        type: 'wdk',
+        value: authKeyValue,
+      };
+    }
+  );
+
+  protected async findAuthorizationHeaders(): Promise<Record<string, string>> {
+    const authKey = await this.findAuthorizationToken();
+    return authKey.type === 'bearer'
+      ? {
+          Authorization: 'Bearer ' + authKey.value,
+        }
+      : {
+          'Auth-Key': authKey.value,
+        };
+  }
+
+  protected async findAuthorizationQueryString() {
+    const authKey = await this.findAuthorizationToken();
+    return authKey.type === 'bearer'
+      ? `access_token=${encodeURIComponent(authKey.value)}`
+      : `Auth-Key=${encodeURIComponent(authKey.value)}`;
+  }
 
   constructor(
     options: FetchApiOptions,
@@ -43,7 +78,7 @@ export class FetchClientWithCredentials extends FetchClient {
       ...apiRequest,
       headers: {
         ...(apiRequest.headers ?? {}),
-        'Auth-Key': await this.findUserRequestAuthKey(),
+        ...(await this.findAuthorizationHeaders()),
       },
     };
 

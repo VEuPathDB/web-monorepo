@@ -83,9 +83,8 @@ export function ReportSelect({
   const blastServiceUrl = useContext(BlastServiceUrl);
   const blastApi = useBlastApi();
 
-  const [selectedReportOption, setSelectedReportOption] = useState<
-    ReportOption | undefined
-  >(undefined);
+  const [selectedReportOption, setSelectedReportOption] =
+    useState<ReportOption | undefined>(undefined);
   const [reportState, setReportState] = useState<ReportJobPollingState>({
     status: 'report-pending',
     jobId,
@@ -199,6 +198,12 @@ export function ReportSelect({
       controlShouldRenderValue={false}
       onChange={onChangeReport}
       options={options}
+      styles={{
+        menu: (baseStyles, state) => ({
+          ...baseStyles,
+          zIndex: 3,
+        }),
+      }}
     />
   );
 }

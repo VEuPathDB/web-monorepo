@@ -160,7 +160,8 @@ function pruneCategories(nextState) {
 function removeProteinCategories(categoryTree, record) {
   if (
     record.attributes.gene_type !== 'protein coding' &&
-    record.attributes.gene_type !== 'protein coding gene'
+    record.attributes.gene_type !== 'protein coding gene' &&
+    record.attributes.gene_type !== 'transposable element gene'
   ) {
     let children = categoryTree.children.filter(function (category) {
       let label = category.properties.label[0];

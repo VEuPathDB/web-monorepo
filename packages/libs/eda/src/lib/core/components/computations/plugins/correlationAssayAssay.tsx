@@ -1,12 +1,18 @@
-import { useFindEntityAndVariableCollection } from '../../..';
+import { useEffect, useMemo } from 'react';
+import {
+  FeaturePrefilterThresholds,
+  useFindEntityAndVariableCollection,
+} from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { capitalize, partial } from 'lodash';
+import { partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
   isNotAbsoluteAbundanceVariableCollection,
   partialToCompleteCodec,
+  isTaxonomicVariableCollection,
+  isFunctionalCollection,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
@@ -21,6 +27,8 @@ import { VariableCollectionSelectList } from '../../variableSelectors/VariableCo
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { entityTreeToArray } from '../../../utils/study-metadata';
+import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
+import { ExpandablePanel } from '@veupathdb/coreui';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -29,11 +37,10 @@ const cx = makeClassNameHelper('AppStepConfigurationContainer');
  *
  * The Correlation Assay vs Assay app takes in a two user-selected collections (ex. Species and Pathways) and
  * runs a pairwise correlation of all the member variables of one collection against the other. The result is
- * a correlation coefficient and (soon) a significance value for each pair.
+ * a correlation coefficient and a significance value for each pair.
  *
- * Importantly, this is the second of a few correlation-type apps that are coming along in the near future.
- * There will also be a Metadata vs Metadata correlation app. It's possible that
- * this PR should see a little refactoring to make the code a bit nicer.
+ * In its current state, this app is targeted toward a specific use case of correlating
+ * taxa with pathways or genes.
  */
 
 export type CorrelationAssayAssayConfig = t.TypeOf<
@@ -45,6 +52,7 @@ export const CorrelationAssayAssayConfig = t.partial({
   collectionVariable1: VariableCollectionDescriptor,
   collectionVariable2: VariableCollectionDescriptor,
   correlationMethod: t.string,
+  prefilterThresholds: FeaturePrefilterThresholds,
 });
 
 const CompleteCorrelationAssayAssayConfig = partialToCompleteCodec(
@@ -98,11 +106,15 @@ function CorrelationAssayAssayConfigDescriptionComponent({
   const entityAndCollectionVariableTreeNode2 =
     findEntityAndVariableCollection(collectionVariable2);
 
-  // Data 1 and Data 2 are placeholder labels, we can decide what to call them later.
+  const correlationMethodDisplayName = correlationMethod
+    ? CORRELATION_METHODS.find((method) => method.value === correlationMethod)
+        ?.displayName
+    : undefined;
+
   return (
     <div className="ConfigDescriptionContainer">
       <h4>
-        Data 1:{' '}
+        Taxonomic level:{' '}
         <span>
           {entityAndCollectionVariableTreeNode1 ? (
             `${entityAndCollectionVariableTreeNode1.entity.displayName} > ${entityAndCollectionVariableTreeNode1.variableCollection.displayName}`
@@ -112,7 +124,7 @@ function CorrelationAssayAssayConfigDescriptionComponent({
         </span>
       </h4>
       <h4>
-        Data 2:{' '}
+        Functional data:{' '}
         <span>
           {entityAndCollectionVariableTreeNode2 ? (
             `${entityAndCollectionVariableTreeNode2.entity.displayName} > ${entityAndCollectionVariableTreeNode2.variableCollection.displayName}`
@@ -125,7 +137,7 @@ function CorrelationAssayAssayConfigDescriptionComponent({
         Method:{' '}
         <span>
           {correlationMethod ? (
-            capitalize(correlationMethod)
+            correlationMethodDisplayName
           ) : (
             <i>Not selected</i>
           )}
@@ -135,7 +147,13 @@ function CorrelationAssayAssayConfigDescriptionComponent({
   );
 }
 
-const CORRELATION_METHODS = ['spearman', 'pearson'];
+const CORRELATION_METHODS = [
+  { value: 'spearman', displayName: 'Spearman' },
+  { value: 'pearson', displayName: 'Pearson' },
+];
+const DEFAULT_PROPORTION_NON_ZERO_THRESHOLD = 0.05;
+const DEFAULT_VARIANCE_THRESHOLD = 0;
+const DEFAULT_STANDARD_DEVIATION_THRESHOLD = 0;
 
 // Shows as Step 1 in the full screen visualization page
 export function CorrelationAssayAssayConfiguration(
@@ -158,6 +176,108 @@ export function CorrelationAssayAssayConfiguration(
     visualizationId
   );
 
+  // set initial prefilterThresholds
+  useEffect(() => {
+    changeConfigHandler('prefilterThresholds', {
+      proportionNonZero:
+        configuration.prefilterThresholds?.proportionNonZero ??
+        DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
+      variance:
+        configuration.prefilterThresholds?.variance ??
+        DEFAULT_VARIANCE_THRESHOLD,
+      standardDeviation:
+        configuration.prefilterThresholds?.standardDeviation ??
+        DEFAULT_STANDARD_DEVIATION_THRESHOLD,
+    });
+  }, []);
+
+  // Content for the expandable help section
+  const helpContent = (
+    <div className={cx('-HelpInfoContainer')}>
+      <H6>What is correlation?</H6>
+      <p>
+        The correlation between two variables (taxa, genes, sample metadata,
+        etc.) describes the degree to which their presence in samples
+        co-fluctuate. For example, the Age and Shoe Size of children are
+        correlated since as a child ages, their feet grow.
+      </p>
+      <p>Here we look for correlation between:</p>
+      <ol>
+        <li>Abundance of taxa at a given taxonomic level</li>
+        <li>Abundance of functional data (e.g. pathways, genes)</li>
+      </ol>
+      <br></br>
+      <H6>Inputs:</H6>
+      <p>
+        <ul>
+          <li>
+            <strong>Taxonomic Level.</strong> The taxonomic abundance data to be
+            used in the calculation.
+          </li>
+          <li>
+            <strong>Functional Data.</strong> The pathway, metabolic, or gene
+            data to be correlatd against the taxonomic abundance data.
+          </li>
+          <li>
+            <strong>Method.</strong> The type of correlation to compute. The
+            Pearson method looks for linear trends in the data, while the
+            Spearman method looks for a monotonic relationship. For Spearman and
+            Pearson correlation, we use the rcorr function from the Hmisc
+            package.
+          </li>
+          <li>
+            <strong>Prevalence Prefilter.</strong> Remove variables that do not
+            have a set percentage of non-zero abundance across samples. Removing
+            rarely occurring features before calculating correlation can prevent
+            some spurious results.
+          </li>
+        </ul>
+      </p>
+      <br></br>
+      <H6>Outputs:</H6>
+      <p>
+        For each pair of variables, the correlation computation returns
+        <ul>
+          <li>
+            Correlation coefficient. A value between [-1, 1] that describes the
+            similarity of the input variables. Positive values indicate that
+            both variables rise and fall together, whereas negative values
+            indicate that as one rises, the other falls.
+          </li>
+          <li>
+            P Value. A measure of the probability of observing the result by
+            chance.
+          </li>
+        </ul>
+      </p>
+      <br></br>
+      <H6>More Questions?</H6>
+      <p>
+        Check out the{' '}
+        <a href="https://github.com/VEuPathDB/microbiomeComputations/blob/master/R/method-correlation.R">
+          correlation function
+        </a>{' '}
+        in our{' '}
+        <a href="https://github.com/VEuPathDB/microbiomeComputations/tree/master">
+          microbiomeComputations
+        </a>{' '}
+        R package.
+      </p>
+    </div>
+  );
+
+  const correlationMethodSelectorText = useMemo(() => {
+    if (configuration.correlationMethod) {
+      return (
+        CORRELATION_METHODS.find(
+          (method) => method.value === configuration.correlationMethod
+        )?.displayName ?? 'Select a method'
+      );
+    } else {
+      return 'Select a method';
+    }
+  }, [configuration.correlationMethod]);
+
   return (
     <ComputationStepContainer
       computationStepInfo={{
@@ -170,17 +290,17 @@ export function CorrelationAssayAssayConfiguration(
           <div className={cx('-CorrelationOuterConfigContainer')}>
             <H6>Input Data</H6>
             <div className={cx('-InputContainer')}>
-              <span>Data 1</span>
+              <span>Taxonomic level</span>
               <VariableCollectionSelectList
                 value={configuration.collectionVariable1}
                 onSelect={partial(changeConfigHandler, 'collectionVariable1')}
-                collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
+                collectionPredicate={isTaxonomicVariableCollection}
               />
-              <span>Data 2</span>
+              <span>Functional data</span>
               <VariableCollectionSelectList
                 value={configuration.collectionVariable2}
                 onSelect={partial(changeConfigHandler, 'collectionVariable2')}
-                collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
+                collectionPredicate={isFunctionalCollection}
               />
             </div>
           </div>
@@ -190,17 +310,50 @@ export function CorrelationAssayAssayConfiguration(
               <span>Method</span>
               <SingleSelect
                 value={configuration.correlationMethod ?? 'Select a method'}
-                buttonDisplayContent={
-                  configuration.correlationMethod
-                    ? capitalize(configuration.correlationMethod)
-                    : 'Select a method'
-                }
-                items={CORRELATION_METHODS.map((method: string) => ({
-                  value: method,
-                  display: capitalize(method),
+                buttonDisplayContent={correlationMethodSelectorText}
+                items={CORRELATION_METHODS.map((method) => ({
+                  value: method.value,
+                  display: method.displayName,
                 }))}
                 onSelect={partial(changeConfigHandler, 'correlationMethod')}
               />
+            </div>
+          </div>
+          <div className={cx('-CorrelationOuterConfigContainer')}>
+            <H6>Prefilter Data</H6>
+            <div className={cx('-InputContainer')}>
+              <span>Prevalence: </span>
+              <span className={cx('-DescriptionContainer')}>
+                Keep if abundance is non-zero in at least{' '}
+              </span>
+              <NumberInput
+                minValue={0}
+                maxValue={100}
+                step={1}
+                value={
+                  // display with % value
+                  configuration.prefilterThresholds?.proportionNonZero != null
+                    ? configuration.prefilterThresholds?.proportionNonZero * 100
+                    : DEFAULT_PROPORTION_NON_ZERO_THRESHOLD * 100
+                }
+                onValueChange={(newValue) => {
+                  changeConfigHandler('prefilterThresholds', {
+                    proportionNonZero:
+                      // save as decimal point, not %
+                      newValue != null
+                        ? Number((newValue as number) / 100)
+                        : DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
+                    variance:
+                      configuration.prefilterThresholds?.variance ??
+                      DEFAULT_VARIANCE_THRESHOLD,
+                    standardDeviation:
+                      configuration.prefilterThresholds?.standardDeviation ??
+                      DEFAULT_STANDARD_DEVIATION_THRESHOLD,
+                  });
+                }}
+                containerStyles={{ width: '5.5em' }}
+              />
+              <span className={cx('-DescriptionContainer')}>% of samples</span>
             </div>
           </div>
         </div>
@@ -216,6 +369,14 @@ export function CorrelationAssayAssayConfiguration(
             }
           />
         </div>
+        <ExpandablePanel
+          title="Learn more about correlation"
+          subTitle={{}}
+          children={helpContent}
+          stylePreset="floating"
+          themeRole="primary"
+          styleOverrides={{ container: { marginLeft: 40 } }}
+        />
       </div>
     </ComputationStepContainer>
   );

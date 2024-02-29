@@ -13,11 +13,11 @@ import { Either, left, isLeft, isRight, map, right } from 'fp-ts/Either';
 import { groupBy, orderBy } from 'lodash';
 
 import { Link } from '@veupathdb/wdk-client/lib/Components';
-import { MesaState } from '@veupathdb/wdk-client/lib/Components/Mesa';
+import { MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 import {
   MesaColumn,
   MesaSortObject,
-} from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 
 import {
@@ -79,9 +79,8 @@ export function useCombinedResultProps({
   organismToProject: Record<string, string>;
   projectUrls: Record<string, string>;
 }): CombinedResultProps {
-  const { hitQueryCount, hitSubjectCount, totalQueryCount } = useHitCounts(
-    combinedResult
-  );
+  const { hitQueryCount, hitSubjectCount, totalQueryCount } =
+    useHitCounts(combinedResult);
 
   const columns = useCombinedResultColumns(
     hitTypeDisplayName,
@@ -132,56 +131,57 @@ export function useCombinedResultProps({
         )(sortedRows);
   }, [columns, eventHandlers, options, sortedRows, uiState]);
 
-  const downloadTableOptions: CombinedResultProps['downloadTableOptions'] = useMemo(() => {
-    if (isLeft(sortedRows)) {
+  const downloadTableOptions: CombinedResultProps['downloadTableOptions'] =
+    useMemo(() => {
+      if (isLeft(sortedRows)) {
+        return {
+          offer: false,
+        };
+      }
+
       return {
-        offer: false,
-      };
-    }
-
-    return {
-      offer: true,
-      onClickDownloadTable: () => {
-        const combinedReportBlob = new Blob(
-          [
+        offer: true,
+        onClickDownloadTable: () => {
+          const combinedReportBlob = new Blob(
             [
-              'Accession',
-              'Organism',
-              'Query',
-              'Rank Per Query',
-              'Rank Per Subject',
-              'Align Length',
-              'E-Value',
-              'Score',
-              'Identity',
-              'Query Coverage',
-            ].join(','),
-            '\n',
-            sortedRows.right.rows
-              .map((row) =>
-                [
-                  row.accession,
-                  row.organism,
-                  row.queryTitle,
-                  row.queryRank,
-                  row.subjectRank,
-                  row.alignmentLength,
-                  row.eValue,
-                  row.score,
-                  row.identity,
-                  row.queryCoverage,
-                ].join(',')
-              )
-              .join('\n'),
-            '\n',
-          ],
-          { type: 'text/csv' }
-        );
+              [
+                'Accession',
+                'Organism',
+                'Query',
+                'Rank Per Query',
+                'Rank Per Subject',
+                'Align Length',
+                'E-Value',
+                'Score',
+                'Identity',
+                'Query Coverage',
+              ].join(','),
+              '\n',
+              sortedRows.right.rows
+                .map((row) =>
+                  [
+                    row.accession,
+                    row.organism,
+                    row.queryTitle,
+                    row.queryRank,
+                    row.subjectRank,
+                    row.alignmentLength,
+                    row.eValue,
+                    row.score,
+                    row.identity,
+                    row.queryCoverage,
+                  ].join(',')
+                )
+                .join('\n'),
+              '\n',
+            ],
+            { type: 'text/csv' }
+          );
 
-        saveAs(combinedReportBlob, `${jobId}-combined-report`);
-      },
-    };
-  }, [jobId, sortedRows]);
+          saveAs(combinedReportBlob, `${jobId}-combined-report`);
+        },
+      };
+    }, [jobId, sortedRows]);
 
   return {
     jobId,
@@ -236,7 +236,7 @@ function useCombinedResultColumns(
   jobId: string,
   organismToProject: Record<string, string>,
   projectUrls: Record<string, string>
-): MesaColumn<keyof CombinedResultRow>[] {
+): MesaColumn<CombinedResultRow>[] {
   const targetMetadataByDataType = useContext(TargetMetadataByDataType);
 
   const recordLinkUrlSegment =
@@ -379,9 +379,10 @@ function DescriptionCell(props: { value: string }) {
     [textContents]
   );
 
-  const truncatedHtmlContents = useMemo(() => fullHtmlContents.slice(0, 2), [
-    fullHtmlContents,
-  ]);
+  const truncatedHtmlContents = useMemo(
+    () => fullHtmlContents.slice(0, 2),
+    [fullHtmlContents]
+  );
 
   const toggleExpansion = useCallback(() => {
     setExpanded((isExpanded) => !isExpanded);
@@ -494,9 +495,8 @@ function useRawCombinedResultRows(
 
     const byQueryRanks = Object.entries(hitsGroupedByQuery).reduce(
       (memo, [queryId, queryGroup]) => {
-        const queryGroupOrderedBySignificance = orderHitsBySignificance(
-          queryGroup
-        );
+        const queryGroupOrderedBySignificance =
+          orderHitsBySignificance(queryGroup);
 
         queryGroupOrderedBySignificance.forEach(
           ({ accession: subjectId }, zeroIndexRank) => {
@@ -511,9 +511,8 @@ function useRawCombinedResultRows(
 
     const bySubjectRanks = Object.entries(hitsGroupedBySubject).reduce(
       (memo, [subjectId, subjectGroup]) => {
-        const subjectGroupOrderedBySignificance = orderHitsBySignificance(
-          subjectGroup
-        );
+        const subjectGroupOrderedBySignificance =
+          orderHitsBySignificance(subjectGroup);
 
         subjectGroupOrderedBySignificance.forEach(
           ({ queryId }, zeroIndexRank) => {
@@ -630,10 +629,8 @@ export function useTargetTypeTermAndWdkRecordType(targets: IOJobTarget[]) {
   const targetMetadataByDataType = useContext(TargetMetadataByDataType);
 
   return useMemo(() => {
-    const {
-      targetDisplayName: sampleOrganism,
-      targetFile: sampleDbName,
-    } = targets[0];
+    const { targetDisplayName: sampleOrganism, targetFile: sampleDbName } =
+      targets[0];
     const targetDbName = sampleDbName.replace(sampleOrganism, '');
     const targetTypeTerm = dbNameToTargetTypeTerm(targetDbName);
 

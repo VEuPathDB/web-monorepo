@@ -86,8 +86,6 @@ export class DownloadClient extends FetchClientWithCredentials {
     const projectId = (await this.wdkService.getConfig()).projectId;
     return `${
       this.baseUrl
-    }/download/${projectId}/${studyId}/${releaseId}/${fileId}?Auth-Key=${encodeURIComponent(
-      await this.findUserRequestAuthKey()
-    )}`;
+    }/download/${projectId}/${studyId}/${releaseId}/${fileId}?${await this.findAuthorizationQueryString()}`;
   }
 }

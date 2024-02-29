@@ -23,7 +23,7 @@ export interface LayoutOptions {
 }
 
 export interface TitleOptions {
-  getPlotSubtitle?(config: unknown): ReactNode;
+  getPlotSubtitle?(config?: unknown): ReactNode;
 }
 
 export interface LegendOptions {

@@ -164,16 +164,6 @@ body.vpdb-Body .wdk-QuestionFormQuestionHeader {
   top: 8.5em;
 }
 
-// Fix for All Datasets sticky header
-body.vpdb-Body
-  .wdk-Answer
-  .MesaComponent
-  .DataTable
-  .DataTable-Sticky
-  .DataTable-Header {
-  top: 103px;
-}
-
 // Fix for Preferred Organisms config page header
 body.vpdb-Body .PreferredOrganismsConfig {
   h1 {
@@ -203,19 +193,4 @@ body.vpdb-Body .ExternalContentController a[name]::before {
 // Fix for RecordSidebar sticky container
 body.vpdb-Body .wdk-RecordSidebarContainer {
   top: 2em;
-}
-
-body.vpdb-Body .vpdb-RootContainer {
-  @media screen and (max-width: $mobile-width) {
-    grid-template-areas:
-      'header'
-      'subheader'
-      'banner'
-      'nav'
-      'content'
-      'side'
-      'footer';
-
-    grid-template-rows: auto auto auto auto 1fr auto auto;
-  }
 }

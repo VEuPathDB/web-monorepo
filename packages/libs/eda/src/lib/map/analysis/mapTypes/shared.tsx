@@ -21,7 +21,6 @@ import {
   DefaultOverlayConfigProps,
   getDefaultOverlayConfig,
 } from '../utils/defaultOverlayConfig';
-import { sumBy } from 'lodash';
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../../constants';
 import {
@@ -30,6 +29,16 @@ import {
 } from '@veupathdb/components/lib/types/plots';
 import { getCategoricalValues } from '../utils/categoricalValues';
 import { Viewport } from '@veupathdb/components/lib/map/MapVEuMap';
+import {
+  UseLittleFiltersFuncProps,
+  UseLittleFiltersProps,
+} from '../littleFilters';
+import { filtersFromBoundingBox } from '../../../core/utils/visualization';
+import { MapFloatingErrorDiv } from '../MapFloatingErrorDiv';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { NoDataError } from '../../../core/api/DataClient/NoDataError';
+import { useCallback, useState } from 'react';
+import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 
 export const defaultAnimation = {
   method: 'geohash',
@@ -37,9 +46,23 @@ export const defaultAnimation = {
   duration: defaultAnimationDuration,
 };
 
+export const markerDataFilterFuncs = [timeSliderLittleFilter];
+export const floaterFilterFuncs = [
+  timeSliderLittleFilter,
+  viewportLittleFilters,
+  selectedMarkersLittleFilter,
+];
+export const visibleOptionFilterFuncs = [
+  timeSliderLittleFilter,
+  viewportLittleFilters,
+];
+
+export const MAX_FILTERSET_VALUES = 1000;
+
 export interface SharedMarkerConfigurations {
   selectedVariable: VariableDescriptor;
   activeVisualizationId?: string;
+  selectedMarkers?: string[];
 }
 
 export function useCommonData(
@@ -249,15 +272,6 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
             )
           : undefined;
 
-      const totalVisibleEntityCount = markerData?.mapElements.reduce(
-        (acc, curr) => {
-          return acc + curr.entityCount;
-        },
-        0
-      );
-
-      const countSum = sumBy(markerData?.mapElements, 'entityCount');
-
       /**
        * create custom legend data
        */
@@ -290,8 +304,6 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
 
       return {
         mapElements: markerData.mapElements,
-        totalVisibleWithOverlayEntityCount: countSum,
-        totalVisibleEntityCount,
         legendItems,
         overlayConfig,
         boundsZoomLevel,
@@ -333,15 +345,19 @@ export function useCategoricalValues(props: CategoricalValuesProps) {
     ],
     queryFn: () => {
       if (!CategoricalVariableDataShape.is(props.overlayVariable.dataShape)) {
-        return undefined;
+        // not allowed to return undefined
+        // consider throwing an error if more appropriate
+        return [];
       }
-      return getCategoricalValues({
-        studyId: props.studyId,
-        filters: props.filters,
-        subsettingClient,
-        overlayEntity: props.overlayEntity,
-        overlayVariable: props.overlayVariable,
-      });
+      return (
+        getCategoricalValues({
+          studyId: props.studyId,
+          filters: props.filters,
+          subsettingClient,
+          overlayEntity: props.overlayEntity,
+          overlayVariable: props.overlayVariable,
+        }) ?? []
+      ); // see above re returning undefined
     },
     enabled: props.enabled ?? true,
   });
@@ -354,6 +370,254 @@ export function isApproxSameViewport(v1: Viewport, v2: Viewport) {
     Math.abs(v1.center[0] - v2.center[0]) < epsilon &&
     Math.abs(v1.center[1] - v2.center[1]) < epsilon
   );
+}
+
+// returns a function (selectedMarkers?) => voi
+export function useSelectedMarkerSnackbars(
+  isMegaStudy: boolean,
+  activeVisualizationId: string | undefined
+) {
+  const { enqueueSnackbar } = useSnackbar();
+  const [shownSelectedMarkersSnackbar, setShownSelectedMarkersSnackbar] =
+    useState(isMegaStudy);
+  const [shownShiftKeySnackbar, setShownShiftKeySnackbar] = useState(false);
+
+  return useCallback(
+    (selectedMarkers: string[] | undefined) => {
+      if (
+        !shownSelectedMarkersSnackbar &&
+        selectedMarkers != null &&
+        activeVisualizationId == null
+      ) {
+        enqueueSnackbar(
+          `Marker selections currently only apply to supporting plots`,
+          {
+            variant: 'info',
+            anchorOrigin: { vertical: 'top', horizontal: 'center' },
+          }
+        );
+        setShownSelectedMarkersSnackbar(true);
+      }
+      if (
+        (shownSelectedMarkersSnackbar || activeVisualizationId != null) &&
+        !shownShiftKeySnackbar &&
+        selectedMarkers != null &&
+        selectedMarkers.length === 1
+      ) {
+        const modifierKey =
+          window.navigator.platform.indexOf('Mac') === 0 ? 'Cmd' : 'Ctrl';
+        enqueueSnackbar(`Use ${modifierKey}-click to select multiple markers`, {
+          variant: 'info',
+          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        });
+        setShownShiftKeySnackbar(true);
+      }
+      // if the user has managed to select more than one marker, then they don't need help
+      if (selectedMarkers != null && selectedMarkers.length > 1)
+        setShownShiftKeySnackbar(true);
+    },
+    [
+      shownSelectedMarkersSnackbar,
+      shownShiftKeySnackbar,
+      enqueueSnackbar,
+      activeVisualizationId,
+    ]
+  );
+}
+
+/**
+ * little filter helpers
+ */
+
+export function timeSliderLittleFilter(props: UseLittleFiltersProps): Filter[] {
+  const { timeSliderConfig } = props.appState;
+
+  if (timeSliderConfig != null) {
+    const { selectedRange, active, variable } = timeSliderConfig;
+    if (variable != null && active && selectedRange != null)
+      return [
+        {
+          type: 'dateRange' as const,
+          ...variable,
+          min: selectedRange.start + 'T00:00:00Z',
+          max: selectedRange.end + 'T00:00:00Z',
+        },
+      ];
+  }
+  return [];
+}
+
+export function viewportLittleFilters(props: UseLittleFiltersProps): Filter[] {
+  const {
+    appState: { boundsZoomLevel },
+    geoConfigs,
+  } = props;
+  const geoConfig = geoConfigs[0]; // not ideal...
+  return boundsZoomLevel == null
+    ? []
+    : filtersFromBoundingBox(
+        boundsZoomLevel.bounds,
+        {
+          variableId: geoConfig.latitudeVariableId,
+          entityId: geoConfig.entity.id,
+        },
+        {
+          variableId: geoConfig.longitudeVariableId,
+          entityId: geoConfig.entity.id,
+        }
+      );
+}
+
+//
+// calculates little filters for pie/bar markers related to
+// marker variable selection and custom checked values
+//
+export function pieOrBarMarkerConfigLittleFilter(
+  props: UseLittleFiltersFuncProps
+): Filter[] {
+  const {
+    appState: { markerConfigurations, activeMarkerConfigurationType },
+    findEntityAndVariable,
+  } = props;
+
+  if (findEntityAndVariable == null)
+    throw new Error(
+      'Bar markerConfigLittleFilter must receive findEntityAndVariable'
+    );
+
+  const activeMarkerConfiguration = markerConfigurations.find(
+    (markerConfig) => markerConfig.type === activeMarkerConfigurationType
+  );
+
+  // This doesn't seem ideal. Do we ever have no active config?
+  if (activeMarkerConfiguration == null) return [];
+  const { selectedVariable, type } = activeMarkerConfiguration;
+  const { variable } = findEntityAndVariable(selectedVariable) ?? {};
+  if (variable != null && (type === 'pie' || type === 'barplot')) {
+    if (variable.dataShape !== 'continuous') {
+      if (variable.vocabulary != null) {
+        // if markers configuration is empty (equivalent to all values selected)
+        // or if the "all other values" value is active (aka UNSELECTED_TOKEN)
+        if (
+          activeMarkerConfiguration.selectedValues == null ||
+          activeMarkerConfiguration.selectedValues.includes(UNSELECTED_TOKEN)
+        ) {
+          if (variable.vocabulary.length <= MAX_FILTERSET_VALUES) {
+            return [
+              {
+                type: 'stringSet' as const,
+                ...selectedVariable,
+                stringSet: variable.vocabulary,
+              },
+            ];
+          } else {
+            console.log(
+              'donut/bar marker-config filter skipping ultra-high cardinality variable: ' +
+                variable.displayName
+            );
+            return [];
+          }
+        } else {
+          // We have selected values in pie or barplot mode and no "all other values".
+          // Note that we will not (yet) check the number of selections <= MAX_FILTERSET_VALUES here
+          // because we will (likely) need to prevent that many being selected in the first place
+          // TO DO: https://github.com/VEuPathDB/web-monorepo/issues/820
+          if (
+            activeMarkerConfiguration.selectedValues != null &&
+            activeMarkerConfiguration.selectedValues.length > 0
+          )
+            return [
+              {
+                type: 'stringSet' as const,
+                ...selectedVariable,
+                stringSet: activeMarkerConfiguration.selectedValues,
+              },
+            ];
+          // Edge case where all values are deselected in the marker configuration table
+          // and we want the back end filters to return nothing.
+          // This is hopefully a workable solution. It is not allowed to pass an
+          // empty array to a `stringSet` filter.
+          else
+            return [
+              {
+                type: 'stringSet' as const,
+                ...selectedVariable,
+                stringSet: ['avaluewewillhopefullyneversee'],
+              },
+            ];
+        }
+      } else {
+        throw new Error('missing vocabulary on categorical variable');
+      }
+    } else if (variable.type === 'number' || variable.type === 'integer') {
+      return [
+        {
+          type: 'numberRange' as const,
+          ...selectedVariable,
+          min: variable.distributionDefaults.rangeMin,
+          max: variable.distributionDefaults.rangeMax, // TO DO: check we use this, not display ranges
+        },
+      ];
+    } else if (variable.type === 'date') {
+      return [
+        {
+          type: 'dateRange' as const,
+          ...selectedVariable,
+          min: variable.distributionDefaults.rangeMin + 'T00:00:00Z',
+          max: variable.distributionDefaults.rangeMax + 'T00:00:00Z',
+          // TO DO: check we use this, not display ranges
+        },
+      ];
+    } else {
+      throw new Error(
+        'unknown variable type encounted in marker-config filter function'
+      );
+    }
+  }
+  return [];
+}
+
+//
+// figures out which geoaggregator variable corresponds
+// to the current zoom level and creates a little filter
+// on that variable using `selectedMarkers`
+//
+export function selectedMarkersLittleFilter(
+  props: UseLittleFiltersProps
+): Filter[] {
+  const {
+    appState: {
+      markerConfigurations,
+      activeMarkerConfigurationType,
+      viewport: { zoom },
+    },
+    geoConfigs,
+  } = props;
+
+  const activeMarkerConfiguration = markerConfigurations.find(
+    (markerConfig) => markerConfig.type === activeMarkerConfigurationType
+  );
+
+  const selectedMarkers = activeMarkerConfiguration?.selectedMarkers;
+
+  // only return a filter if there are selectedMarkers
+  if (selectedMarkers && selectedMarkers.length > 0) {
+    const { entity, zoomLevelToAggregationLevel, aggregationVariableIds } =
+      geoConfigs[0];
+    const geoAggregationVariableId =
+      aggregationVariableIds?.[zoomLevelToAggregationLevel(zoom) - 1];
+    if (entity && geoAggregationVariableId)
+      // sanity check due to array indexing
+      return [
+        {
+          type: 'stringSet' as const,
+          entityId: entity.id,
+          variableId: geoAggregationVariableId,
+          stringSet: selectedMarkers,
+        },
+      ];
+  }
+  return [];
 }
 
 /**
@@ -377,17 +641,44 @@ export const GLOBAL_VIEWPORT = {
  */
 
 const noDataPatterns = [
-  /did not contain any data/, // comes from map-markers endpoint
   /Could not generate continuous variable metadata/, // comes from continuous-variable-metadata endpoint
 ];
 
 export function isNoDataError(error: unknown) {
+  if (error instanceof NoDataError) return true;
   return noDataPatterns.some((pattern) => String(error).match(pattern));
 }
 
-export const noDataErrorMessage = (
+export function getErrorOverlayComponent(error: unknown) {
+  return isNoDataError(error) ? (
+    <MapFloatingErrorDiv>
+      <Banner
+        banner={{
+          type: 'warning',
+          message: error instanceof Error ? error.message : String(error),
+        }}
+      />
+    </MapFloatingErrorDiv>
+  ) : (
+    <MapFloatingErrorDiv error={error} />
+  );
+}
+
+const noDataLegendMessage = (
   <div css={{ textAlign: 'center', width: 200 }}>
     <p>Your filters have removed all data for this variable.</p>
     <p>Please check your filters or choose another variable.</p>
   </div>
 );
+
+export function getLegendErrorMessage(error: unknown) {
+  return isNoDataError(error) ? noDataLegendMessage : undefined;
+}
+
+/**
+ * Simple styling for the optional visualization subtitle as used in
+ * standaloneVizPlugins.ts (Bob didn't want to convert it to tsx)
+ */
+export function EntitySubtitleForViz({ subtitle }: { subtitle: string }) {
+  return <div style={{ marginTop: 8, fontStyle: 'italic' }}>({subtitle})</div>;
+}

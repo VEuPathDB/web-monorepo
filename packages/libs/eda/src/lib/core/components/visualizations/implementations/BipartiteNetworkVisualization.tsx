@@ -16,7 +16,7 @@ import BipartiteNetwork, {
 import BipartiteNetworkSVG from './selectorIcons/BipartiteNetworkSVG';
 import {
   BipartiteNetworkRequestParams,
-  BipartiteNetworkResponse,
+  CorrelationBipartiteNetworkResponse,
 } from '../../../api/DataClient/types';
 import { twoColorPalette } from '@veupathdb/components/lib/types/plots/addOns';
 import { useCallback, useMemo } from 'react';
@@ -43,6 +43,7 @@ import { NumberInput } from '@veupathdb/components/lib/components/widgets/Number
 import { NumberOrDate } from '@veupathdb/components/lib/types/general';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { FacetedPlotLayout } from '../../layouts/FacetedPlotLayout';
+import { H6 } from '@veupathdb/coreui';
 // end imports
 
 // Defaults
@@ -51,6 +52,7 @@ const DEFAULT_SIGNIFICANCE_THRESHOLD = 0.05; // Ability for user to change this 
 const DEFAULT_LINK_COLOR_DATA = '0';
 const MIN_STROKE_WIDTH = 0.5; // Minimum stroke width for links in the network. Will represent the smallest link weight.
 const MAX_STROKE_WIDTH = 6; // Maximum stroke width for links in the network. Will represent the largest link weight.
+const DEFAULT_NUMBER_OF_LINE_LEGEND_ITEMS = 4;
 
 const plotContainerStyles = {
   width: 1250,
@@ -106,7 +108,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
-  // todo  allow this to also be CorrelationAssayAssayConfig
+
   const computationConfiguration:
     | CorrelationAssayMetadataConfig
     | CorrelationAssayAssayConfig = computation.descriptor.configuration as
@@ -122,7 +124,9 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
 
   // Get data from the compute job
   const data = usePromise(
-    useCallback(async (): Promise<BipartiteNetworkResponse | undefined> => {
+    useCallback(async (): Promise<
+      CorrelationBipartiteNetworkResponse | undefined
+    > => {
       // Only need to check compute job status and filter status, since there are no
       // viz input variables.
       if (computeJobStatus !== 'complete') return undefined;
@@ -143,7 +147,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
         computation.descriptor.type,
         visualization.descriptor.type,
         params,
-        BipartiteNetworkResponse
+        CorrelationBipartiteNetworkResponse
       );
 
       return response;
@@ -162,21 +166,23 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     ])
   );
 
-  // Determin min and max stroke widths. For use in scaling the strokes (strokeWidthMap) and the legend.
-  const dataStrokeWidths =
+  // Determine min and max stroke widths. For use in scaling the strokes (weightToStrokeWidthMap) and the legend.
+  const dataWeights =
     data.value?.bipartitenetwork.data.links.map(
-      (link) => Number(link.strokeWidth) // link.strokeWidth will always be a number if defined, because it represents the continuous data associated with that link.
+      (link) => Number(link.weight) // link.weight will always be a number if defined, because it represents the continuous data associated with that link.
     ) ?? [];
-  const minDataStrokeWidth = Math.min(...dataStrokeWidths);
-  const maxDataStrokeWidth = Math.max(...dataStrokeWidths);
+  // Use Set to dedupe the array of dataWeights
+  const uniqueDataWeights = Array.from(new Set(dataWeights));
+  const minDataWeight = Math.min(...uniqueDataWeights);
+  const maxDataWeight = Math.max(...uniqueDataWeights);
 
   // Clean and finalize data format. Specifically, assign link colors, add display labels
   const cleanedData = useMemo(() => {
     if (!data.value) return undefined;
 
-    // Create map that will adjust each link's stroke width so that all link stroke widths span an appropriate range for this viz.
-    const strokeWidthMap = scaleLinear()
-      .domain([minDataStrokeWidth, maxDataStrokeWidth])
+    // Create map that will adjust each link's weight to find a stroke width that spans an appropriate range for this viz.
+    const weightToStrokeWidthMap = scaleLinear()
+      .domain([minDataWeight, maxDataWeight])
       .range([MIN_STROKE_WIDTH, MAX_STROKE_WIDTH]);
 
     // Assign color to links.
@@ -229,12 +235,12 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
         return {
           source: link.source,
           target: link.target,
-          strokeWidth: strokeWidthMap(Number(link.strokeWidth)),
+          strokeWidth: weightToStrokeWidthMap(Number(link.weight)),
           color: link.color ? linkColorScale(link.color.toString()) : '#000000',
         };
       }),
     };
-  }, [data.value, entities, minDataStrokeWidth, maxDataStrokeWidth]);
+  }, [data.value, entities, minDataWeight, maxDataWeight]);
 
   // plot subtitle
   const plotSubtitle =
@@ -265,12 +271,32 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     [cleanedData]
   );
 
+  // Have the bpnet component say "No nodes" or whatev and have an extra
+  // prop called errorMessage or something that displays when there are no nodes.
+  // that error message can say "your thresholds of blah and blah are too high, change them"
+  const emptyNetworkContent = (
+    <div
+      style={{
+        height: 400,
+        textAlign: 'center',
+        top: '50%',
+        transform: 'translateY(40%)',
+      }}
+    >
+      <H6>No correlation results pass the configured thresholds.</H6>
+      <br />
+      <br />
+      Adjust the correlation coefficient and p-value thresholds to continue.
+    </div>
+  );
+
   const bipartiteNetworkProps: BipartiteNetworkProps = {
     data: cleanedData ?? undefined,
     showSpinner: data.pending,
     containerStyles: finalPlotContainerStyles,
     svgStyleOverrides: bipartiteNetworkSVGStyles,
     labelTruncationLength: 40,
+    emptyNetworkContent,
   };
 
   const plotNode = (
@@ -281,27 +307,41 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const controlsNode = <> </>;
 
   // Create legend for (1) Line/link thickness and (2) Link color.
-  const nLineItemsInLegend = 4;
-  const lineLegendItems: LegendItemsProps[] = [
-    ...Array(nLineItemsInLegend).keys(),
-  ].map((i) => {
-    const adjustedStrokeWidth =
-      maxDataStrokeWidth -
-      ((maxDataStrokeWidth - minDataStrokeWidth) / (nLineItemsInLegend - 1)) *
-        i;
-    return {
-      label: String(adjustedStrokeWidth.toFixed(4)),
-      marker: 'line',
-      markerColor: gray[900],
-      hasData: true,
-      lineThickness:
-        String(
-          MAX_STROKE_WIDTH -
-            ((MAX_STROKE_WIDTH - MIN_STROKE_WIDTH) / (nLineItemsInLegend - 1)) *
-              i
-        ) + 'px',
-    };
-  });
+  // For (1), we'll do the following:
+  //  - create a base array that is conditioned on the length of uniqueDataWeights since uniqueDataWeights is a deduped map of ALL data.links.weight
+  //    -- if uniqueDataWeights.length is less than or equal to 4, let's use uniqueDataWeights as our base array sorted from greatest to least
+  //    -- if uniqueDataWeights.length is greater than 4, create an array of a default length filled with 'undefined'
+  //  - create lineLegendItems by mapping over lineLegendItemsBaseArray
+  //    -- if the element (weight) is truthy, then we know we're dealing with a copy of the uniqueDataWeights array and can use this value for weightLabel
+  //    -- if the element is falsy, fall back to previous calculation for weightLabel
+  const lineLegendItemsBaseArray =
+    uniqueDataWeights.length <= 4
+      ? [...uniqueDataWeights].sort((a, b) => b - a)
+      : Array(DEFAULT_NUMBER_OF_LINE_LEGEND_ITEMS).fill(undefined);
+  const lineLegendItems: LegendItemsProps[] = lineLegendItemsBaseArray.map(
+    (weight, index) => {
+      const weightLabel =
+        weight ??
+        maxDataWeight -
+          ((maxDataWeight - minDataWeight) /
+            (lineLegendItemsBaseArray.length - 1)) *
+            index;
+      return {
+        label: String(weightLabel.toFixed(4)),
+        marker: 'line',
+        markerColor: gray[900],
+        hasData: true,
+        lineThickness:
+          String(
+            MAX_STROKE_WIDTH -
+              ((MAX_STROKE_WIDTH - MIN_STROKE_WIDTH) /
+                (lineLegendItemsBaseArray.length - 1)) *
+                index
+          ) + 'px',
+      };
+    }
+  );
+
   const lineLegendTitle = options?.getLegendTitle?.(
     computation.descriptor.configuration
   )
@@ -335,7 +375,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     },
   ];
 
-  const legendNode = cleanedData && (
+  const legendNode = cleanedData && cleanedData.nodes.length > 0 && (
     <div className="MultiLegendContaner">
       <PlotLegend
         type="list"
@@ -376,8 +416,8 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
               vizConfig.correlationCoefThreshold ??
               DEFAULT_CORRELATION_COEF_THRESHOLD
             }
-            containerStyles={{ marginRight: 10 }}
             step={0.05}
+            applyWarningStyles={cleanedData && cleanedData.nodes.length === 0}
           />
 
           <NumberInput
@@ -392,6 +432,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
             }
             containerStyles={{ marginLeft: 10 }}
             step={0.001}
+            applyWarningStyles={cleanedData && cleanedData.nodes.length === 0}
           />
         </LabelledGroup>
       )}
@@ -401,6 +442,8 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
         plotNode={plotNode}
         controlsNode={controlsNode}
         tableGroupNode={tableGroupNode}
+        plotStyles={{ width: 'auto' }}
+        containerStyles={{ flexDirection: 'column' }}
       />
     </div>
   );
