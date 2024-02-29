@@ -116,11 +116,13 @@ export class UserDatasetApi extends FetchClientWithCredentials {
       );
     }
 
-    const authKey = await this.findUserRequestAuthKey();
+    const authHeaders = await this.findAuthorizationHeaders();
     const vdiServiceUrl = this.baseUrl;
 
     xhr.open('POST', `${vdiServiceUrl}/vdi-datasets`, true);
-    xhr.setRequestHeader('Auth-Key', authKey);
+    for (const [headerName, headerValue] of Object.entries(authHeaders)) {
+      xhr.setRequestHeader(headerName, headerValue);
+    }
     xhr.send(fileBody);
   };
 
@@ -183,12 +185,13 @@ export class UserDatasetApi extends FetchClientWithCredentials {
       throw new TypeError(
         `Can't build downloadUrl; invalid datasetId given (${datasetId}) [${typeof datasetId}]`
       );
+    // When a form is submitted using the GET method, query params are removed.
+    // By using the `input` option, the object will get converted to query params
+    // by the form submission.
     submitAsForm({
       method: 'GET',
       action: `${this.baseUrl}/vdi-datasets/${datasetId}/files/${zipFileType}`,
-      inputs: {
-        'Auth-Key': await this.findUserRequestAuthKey(),
-      },
+      inputs: Object.fromEntries(await this.findAuthorizationQueryParams()),
     });
   };
 
