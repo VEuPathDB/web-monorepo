@@ -1,4 +1,3 @@
-import { saveAs } from 'file-saver';
 import { isLeft, map } from 'fp-ts/Either';
 import { array, string } from 'io-ts';
 import { identity, memoize, omit } from 'lodash';
@@ -10,8 +9,6 @@ import {
   createJsonRequest,
   ioTransformer,
 } from '@veupathdb/http-utils';
-
-import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import { makeReportPollingPromise } from '../components/BlastWorkspaceResult';
 
@@ -31,6 +28,7 @@ import {
   shortReportResponse,
 } from './ServiceTypes';
 import { BlastCompatibleWdkService } from './wdkServiceIntegration';
+import { submitAsForm } from '@veupathdb/wdk-client/lib/Utils/FormSubmitter';
 
 const JOBS_PATH = '/jobs';
 const REPORTS_PATH = '/reports';
@@ -244,35 +242,13 @@ export class BlastApi extends FetchClientWithCredentials {
       transformResponse: ioTransformer(string),
     });
   }
-}
 
-function transformTooLargeError(errorDetails: ErrorDetails): ErrorDetails {
-  return errorDetails.status === 'too-large' ||
-    (errorDetails.status === 'bad-request' &&
-      errorDetails.message ===
-        'Requested report is larger than the specified max content size.')
-    ? { ...errorDetails, status: 'too-large' }
-    : errorDetails;
-}
-
-// FIXME: Update createRequestHandler to accommodate responses
-// with "attachment" Content-Disposition
-export function createJobContentDownloader(
-  user: User,
-  blastApi: BlastApi,
-  blastServiceUrl: string,
-  jobId: string
-) {
-  return async function downloadJobContent(
+  async downloadJobContent(
+    jobId: string,
     format: IoBlastFormat,
-    shouldZip: boolean,
-    filename: string
+    shouldZip: boolean
   ) {
-    const reportResponse = await makeReportPollingPromise(
-      blastApi,
-      jobId,
-      format
-    );
+    const reportResponse = await makeReportPollingPromise(this, jobId, format);
 
     if (reportResponse.status === 'queueing-error') {
       throw new Error('We were unable to queue your report.');
@@ -297,33 +273,31 @@ export function createJobContentDownloader(
         ? 'report.zip'
         : nonZippedReportFiles[0];
 
-    const downloadResponse = await fetch(
-      `${blastServiceUrl}/reports/${reportID}/files/${reportFile}`,
-      {
-        headers: { 'Auth-Key': getAuthKey(user) },
-      }
-    );
-
-    if (!downloadResponse.ok) {
-      throw new Error(
-        'An error occurred while trying to download your report.'
-      );
-    }
-
-    const blob = await downloadResponse.blob();
-    saveAs(blob, filename);
-  };
+    submitAsForm({
+      action: `${
+        this.baseUrl
+      }/reports/${reportID}/files/${reportFile}?${await this.findAuthorizationQueryString()}`,
+      method: 'GET',
+    });
+  }
 }
 
-function getAuthKey(user: User) {
-  if (user.isGuest) {
-    return `${user.id}`;
-  }
+function transformTooLargeError(errorDetails: ErrorDetails): ErrorDetails {
+  return errorDetails.status === 'too-large' ||
+    (errorDetails.status === 'bad-request' &&
+      errorDetails.message ===
+        'Requested report is larger than the specified max content size.')
+    ? { ...errorDetails, status: 'too-large' }
+    : errorDetails;
+}
 
-  const wdkCheckAuth =
-    document.cookie.split('; ').find((x) => x.startsWith('wdk_check_auth=')) ??
-    '';
-  const authKey = wdkCheckAuth.replace('wdk_check_auth=', '');
-
-  return authKey;
+// FIXME: Update createRequestHandler to accommodate responses
+// with "attachment" Content-Disposition
+export function createJobContentDownloader(blastApi: BlastApi, jobId: string) {
+  return async function downloadJobContent(
+    format: IoBlastFormat,
+    shouldZip: boolean
+  ) {
+    blastApi.downloadJobContent(jobId, format, shouldZip);
+  };
 }

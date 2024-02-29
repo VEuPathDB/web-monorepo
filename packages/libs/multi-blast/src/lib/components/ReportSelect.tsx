@@ -98,7 +98,6 @@ export function ReportSelect({
             }
           } else {
             await downloadReportCallback(
-              jobId,
               selectedReportOption.value.format,
               selectedReportOption.value.shouldZip
             );
