@@ -1,6 +1,9 @@
 import { useState } from 'react';
-import Mesa from '@veupathdb/wdk-client/lib/Components/Mesa';
-import { MesaSortObject } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+import Mesa from '@veupathdb/coreui/lib/components/Mesa';
+import {
+  MesaSortObject,
+  MesaStateProps,
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import { AllValuesDefinition } from '../../../core';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
@@ -9,6 +12,7 @@ import { UNSELECTED_TOKEN } from '../../constants';
 import { orderBy } from 'lodash';
 import { SelectedCountsOption } from '../appState';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
+import { SharedMarkerConfigurations } from '../mapTypes/shared';
 
 type Props<T> = {
   overlayValues: string[];
@@ -18,7 +22,6 @@ type Props<T> = {
   setUncontrolledSelections: (v: Set<string>) => void;
   allCategoricalValues: AllValuesDefinition[] | undefined;
   selectedCountsOption: SelectedCountsOption;
-  isAllCategoricalValuesLoading: boolean;
 };
 
 const DEFAULT_SORTING: MesaSortObject = {
@@ -28,7 +31,9 @@ const DEFAULT_SORTING: MesaSortObject = {
 
 export const MAXIMUM_ALLOWABLE_VALUES = ColorPaletteDefault.length;
 
-export function CategoricalMarkerConfigurationTable<T>({
+export function CategoricalMarkerConfigurationTable<
+  T extends SharedMarkerConfigurations
+>({
   overlayValues,
   configuration,
   onChange,
@@ -36,7 +41,6 @@ export function CategoricalMarkerConfigurationTable<T>({
   setUncontrolledSelections,
   allCategoricalValues = [],
   selectedCountsOption,
-  isAllCategoricalValuesLoading,
 }: Props<T>) {
   const [sort, setSort] = useState<MesaSortObject>(DEFAULT_SORTING);
   const totalCount = allCategoricalValues?.reduce(
@@ -70,8 +74,8 @@ export function CategoricalMarkerConfigurationTable<T>({
             .slice(0, overlayValues.length - 1)
             .concat(newArrayValues),
         });
-        // can set the new configuration without worrying about the "All other values" data
       } else {
+        // no "All other values" data so we need
         onChange({
           ...configuration,
           selectedValues: overlayValues.concat(data.label),
@@ -113,7 +117,10 @@ export function CategoricalMarkerConfigurationTable<T>({
     });
   }
 
-  const tableState = {
+  const tableState: MesaStateProps<
+    AllValuesDefinition,
+    keyof AllValuesDefinition | 'distribution'
+  > = {
     options: {
       isRowSelected: (value: AllValuesDefinition) =>
         uncontrolledSelections.has(value.label),
@@ -144,12 +151,20 @@ export function CategoricalMarkerConfigurationTable<T>({
       },
       onMultipleRowDeselect: () => {
         /**
-         * This handler actually deselects all values by setting the table state and the configuration to the "All other labels" value
+         * This handler actually deselects all values by setting the table
+         * state and the configuration to the "All other labels" value.
+         * However, if there are only a few possible values,
+         * we won't show "All other labels".
          */
-        setUncontrolledSelections(new Set([UNSELECTED_TOKEN]));
+        const emptySelection =
+          numberOfAvailableValues < MAXIMUM_ALLOWABLE_VALUES
+            ? []
+            : [UNSELECTED_TOKEN];
+
+        setUncontrolledSelections(new Set(emptySelection));
         onChange({
           ...configuration,
-          selectedValues: [UNSELECTED_TOKEN],
+          selectedValues: emptySelection,
         });
       },
       onSort: (
@@ -212,10 +227,10 @@ export function CategoricalMarkerConfigurationTable<T>({
           maxWidth: '340px',
           maxHeight: 300,
           minHeight: 60,
-          overflow: isAllCategoricalValuesLoading ? 'none' : 'auto',
+          overflow: 'auto',
         }}
       >
-        {isAllCategoricalValuesLoading ? (
+        {tableState.rows.length === 0 ? (
           <Spinner
             size={50}
             styleOverrides={{

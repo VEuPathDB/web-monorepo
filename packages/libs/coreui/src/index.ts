@@ -20,6 +20,14 @@ export { DataGrid, TabbedDisplay } from './components/grids';
 // Forms
 export { FormField, MultilineTextField } from './components/forms';
 
+// Inputs
+export { default as SingleSelect } from './components/inputs/SingleSelect';
+export { default as SelectList } from './components/inputs/SelectList';
+export { default as SelectTree } from './components/inputs/SelectTree/SelectTree';
+export { default as SearchBox } from './components/inputs/SearchBox/SearchBox';
+export { default as CheckboxList } from './components/inputs/checkboxes/CheckboxList';
+export { default as CheckboxTree } from './components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+
 export { default as styles } from './styleDefinitions';
 export { default as colors } from './definitions/colors';
 

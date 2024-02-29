@@ -47,7 +47,7 @@ export type BinSpec = TypeOf<typeof BinSpec>;
 export const BinSpec = intersection([
   type({ type: keyof({ binWidth: null, numBins: null }) }),
   partial({
-    value: number,
+    value: NumberOrNull,
     units: TimeUnit,
     range: NumberOrDateRange,
   }),
@@ -57,7 +57,7 @@ export const BinSpec = intersection([
 // perhaps we can make these two consistent somehow?
 export type BinWidthSlider = TypeOf<typeof BinWidthSlider>;
 export const BinWidthSlider = type({
-  min: number,
-  max: number,
-  step: number,
+  min: NumberOrNull,
+  max: NumberOrNull,
+  step: NumberOrNull,
 });

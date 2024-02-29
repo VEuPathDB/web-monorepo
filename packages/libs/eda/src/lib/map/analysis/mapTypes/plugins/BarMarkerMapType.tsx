@@ -31,18 +31,31 @@ import {
   ColorPaletteDefault,
   gradientSequentialColorscaleMap,
 } from '@veupathdb/components/lib/types/plots/addOns';
-import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../../../constants';
+import {
+  STUDIES_ENTITY_ID,
+  STUDY_ID_VARIABLE_ID,
+  UNSELECTED_DISPLAY_TEXT,
+  UNSELECTED_TOKEN,
+} from '../../../constants';
 import SemanticMarkers from '@veupathdb/components/lib/map/SemanticMarkers';
 import {
   DistributionMarkerDataProps,
   defaultAnimation,
+  floaterFilterFuncs,
   isApproxSameViewport,
-  isNoDataError,
-  noDataErrorMessage,
+  markerDataFilterFuncs,
+  pieOrBarMarkerConfigLittleFilter,
+  timeSliderLittleFilter,
   useCategoricalValues,
   useCommonData,
   useDistributionMarkerData,
   useDistributionOverlayConfig,
+  viewportLittleFilters,
+  useSelectedMarkerSnackbars,
+  visibleOptionFilterFuncs,
+  getErrorOverlayComponent,
+  getLegendErrorMessage,
+  selectedMarkersLittleFilter,
 } from '../shared';
 import {
   useFindEntityAndVariable,
@@ -50,7 +63,6 @@ import {
 } from '../../../../core/hooks/workspace';
 import { DraggableLegendPanel } from '../../DraggableLegendPanel';
 import { MapLegend } from '../../MapLegend';
-import { filtersFromBoundingBox } from '../../../../core/utils/visualization';
 import { sharedStandaloneMarkerProperties } from '../../MarkerConfiguration/CategoricalMarkerPreview';
 import { useToggleStarredVariable } from '../../../../core/hooks/starredVariables';
 import DraggableVisualization from '../../DraggableVisualization';
@@ -63,8 +75,10 @@ import { BarPlotMarkerIcon } from '../../MarkerConfiguration/icons';
 import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
 import MapVizManagement from '../../MapVizManagement';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
-import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
-import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
+import { useLittleFilters } from '../../littleFilters';
+import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
+import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
+import { SubStudies } from '../../SubStudies';
 const displayName = 'Bar plots';
 
 export const plugin: MapTypePlugin<BarPlotMarkerConfiguration> = {
@@ -84,6 +98,7 @@ export const plugin: MapTypePlugin<BarPlotMarkerConfiguration> = {
   MapLayerComponent,
   MapOverlayComponent,
   MapTypeHeaderDetails,
+  TimeSliderComponent,
 };
 
 interface ChartMarkerDataWithCounts extends BaseMarkerData {
@@ -108,7 +123,6 @@ function ConfigPanelComponent(
     filters,
   } = props;
 
-  const geoConfig = geoConfigs[0];
   const subsettingClient = useSubsettingClient();
   const configuration = props.configuration as BarPlotMarkerConfiguration;
   const {
@@ -132,28 +146,14 @@ function ConfigPanelComponent(
     );
   }
 
-  const filtersIncludingViewport = useMemo(() => {
-    const viewportFilters = appState.boundsZoomLevel
-      ? filtersFromBoundingBox(
-          appState.boundsZoomLevel.bounds,
-          {
-            variableId: geoConfig.latitudeVariableId,
-            entityId: geoConfig.entity.id,
-          },
-          {
-            variableId: geoConfig.longitudeVariableId,
-            entityId: geoConfig.entity.id,
-          }
-        )
-      : [];
-    return [...(filters ?? []), ...viewportFilters];
-  }, [
-    appState.boundsZoomLevel,
-    geoConfig.entity.id,
-    geoConfig.latitudeVariableId,
-    geoConfig.longitudeVariableId,
-    filters,
-  ]);
+  const { filters: filtersForVisibleOption } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    visibleOptionFilterFuncs
+  );
 
   const allFilteredCategoricalValues = useCategoricalValues({
     overlayEntity,
@@ -166,7 +166,7 @@ function ConfigPanelComponent(
     overlayEntity,
     studyId,
     overlayVariable,
-    filters: filtersIncludingViewport,
+    filters: filtersForVisibleOption,
     enabled: configuration.selectedCountsOption === 'visible',
   });
 
@@ -269,13 +269,6 @@ function ConfigPanelComponent(
         analysisState.analysis?.descriptor.starredVariables ?? []
       }
       toggleStarredVariable={toggleStarredVariable}
-      // pass react-query's isLoading (allXXXCategoricalValues) or isFetching (overlayConfiguration)
-      isAllCategoricalValuesLoading={
-        overlayConfiguration.isFetching ||
-        (configuration.selectedCountsOption === 'filtered'
-          ? allFilteredCategoricalValues.isLoading
-          : allVisibleCategoricalValues.isLoading)
-      }
     />
   );
 
@@ -347,28 +340,39 @@ function ConfigPanelComponent(
 function MapLayerComponent(
   props: MapTypeMapLayerProps<BarPlotMarkerConfiguration>
 ) {
-  // selectedMarkers and its state function
-  const selectedMarkers = props.selectedMarkers;
-  const setSelectedMarkers = props.setSelectedMarkers;
-
   const {
     studyEntities,
     studyId,
     filters,
     geoConfigs,
+    appState,
     appState: { boundsZoomLevel },
+    updateConfiguration,
   } = props;
+
   const {
     selectedVariable,
     selectedValues,
     binningMethod,
     dependentAxisLogScale,
     selectedPlotMode,
+    activeVisualizationId,
+    selectedMarkers,
   } = props.configuration as BarPlotMarkerConfiguration;
+
+  const { filters: filtersForMarkerData } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    markerDataFilterFuncs
+  );
+
   const markerData = useMarkerData({
     studyEntities,
     studyId,
-    filters,
+    filters: filtersForMarkerData,
     geoConfigs,
     boundsZoomLevel,
     selectedVariable,
@@ -378,12 +382,26 @@ function MapLayerComponent(
     valueSpec: selectedPlotMode,
   });
 
-  if (markerData.error && !markerData.isFetching)
-    return isNoDataError(markerData.error) ? null : (
-      <MapFloatingErrorDiv error={markerData.error} />
-    );
+  const handleSelectedMarkerSnackbars = useSelectedMarkerSnackbars(
+    appState.studyDetailsPanelConfig != null,
+    activeVisualizationId
+  );
 
-  // pass selectedMarkers and its state function
+  const setSelectedMarkers = useCallback(
+    (selectedMarkers?: string[]) => {
+      handleSelectedMarkerSnackbars(selectedMarkers);
+      updateConfiguration({
+        ...(props.configuration as BarPlotMarkerConfiguration),
+        selectedMarkers,
+      });
+    },
+    [props.configuration, updateConfiguration, handleSelectedMarkerSnackbars]
+  );
+
+  if (markerData.error && !markerData.isFetching)
+    return getErrorOverlayComponent(markerData.error);
+
+  // convert marker data to markers
   const markers = markerData.markerProps?.map((markerProps) => (
     <ChartMarker {...markerProps} />
   ));
@@ -397,7 +415,7 @@ function MapLayerComponent(
           animation={defaultAnimation}
           flyToMarkers={
             !markerData.isFetching &&
-            isApproxSameViewport(props.appState.viewport, defaultViewport)
+            isApproxSameViewport(appState.viewport, defaultViewport)
           }
           selectedMarkers={selectedMarkers}
           setSelectedMarkers={setSelectedMarkers}
@@ -411,8 +429,17 @@ function MapLayerComponent(
 function MapOverlayComponent(
   props: MapTypeMapLayerProps<BarPlotMarkerConfiguration>
 ) {
-  const { studyEntities, studyId, filters, geoConfigs, updateConfiguration } =
-    props;
+  const {
+    studyEntities,
+    studyId,
+    filters,
+    geoConfigs,
+    appState,
+    updateConfiguration,
+    headerButtons,
+    setStudyDetailsPanelConfig,
+  } = props;
+
   const configuration = props.configuration as BarPlotMarkerConfiguration;
   const findEntityAndVariable = useFindEntityAndVariable();
   const { variable: overlayVariable } =
@@ -440,20 +467,51 @@ function MapOverlayComponent(
     valueSpec: configuration.selectedPlotMode,
   });
 
+  const selectedMarkers = configuration.selectedMarkers;
+
   const legendItems = markerData.legendItems;
   const plugins = useStandaloneVizPlugins({
     selectedOverlayConfig: markerData.overlayConfig,
+    selectedMarkers,
   });
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
-  const noDataError = isNoDataError(markerData.error)
-    ? noDataErrorMessage
-    : undefined;
+  const noDataError = getLegendErrorMessage(markerData.error);
+
+  const { filters: filtersForFloaters } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    floaterFilterFuncs
+  );
+
+  const { filters: filtersForSubStudies } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    substudyFilterFuncs
+  );
 
   return (
     <>
+      {appState.studyDetailsPanelConfig?.isVisble && (
+        <SubStudies
+          studyId={studyId}
+          entityId={STUDIES_ENTITY_ID}
+          variableId={STUDY_ID_VARIABLE_ID}
+          filters={filtersForSubStudies}
+          panelConfig={appState.studyDetailsPanelConfig}
+          updatePanelConfig={setStudyDetailsPanelConfig}
+          hasSelectedMarkers={!!selectedMarkers?.length}
+        />
+      )}
       <DraggableLegendPanel
         panelTitle={overlayVariable?.displayName}
         zIndex={3}
+        headerButtons={headerButtons}
       >
         <div style={{ padding: '5px 10px' }}>
           {noDataError ?? (
@@ -471,11 +529,11 @@ function MapOverlayComponent(
         setActiveVisualizationId={setActiveVisualizationId}
         apps={props.apps}
         plugins={plugins}
-        geoConfigs={props.geoConfigs}
+        geoConfigs={geoConfigs}
         totalCounts={props.totalCounts}
         filteredCounts={props.filteredCounts}
         toggleStarredVariable={toggleStarredVariable}
-        filters={props.filtersIncludingViewport}
+        filters={filtersForFloaters}
         // onTouch={moveVizToTop}
         zIndexForStackingContext={2}
         hideInputsAndControls={props.hideVizInputsAndControls}
@@ -489,38 +547,99 @@ function MapTypeHeaderDetails(
   props: MapTypeMapLayerProps<BarPlotMarkerConfiguration>
 ) {
   const {
-    selectedVariable,
-    binningMethod,
-    selectedValues,
-    dependentAxisLogScale,
-    selectedPlotMode,
-  } = props.configuration as BarPlotMarkerConfiguration;
-  const markerDataResponse = useMarkerData({
-    studyId: props.studyId,
-    filters: props.filters,
-    studyEntities: props.studyEntities,
-    geoConfigs: props.geoConfigs,
-    boundsZoomLevel: props.appState.boundsZoomLevel,
-    selectedVariable,
-    selectedValues,
-    binningMethod,
-    dependentAxisLogScale,
-    valueSpec: selectedPlotMode,
-  });
+    studyEntities,
+    geoConfigs,
+    appState,
+    appState: { timeSliderConfig, studyDetailsPanelConfig },
+    filters,
+  } = props;
+
+  const { selectedVariable, selectedMarkers } =
+    props.configuration as BarPlotMarkerConfiguration;
+
+  const { filters: filtersForSubStudies } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    substudyFilterFuncs
+  );
 
   const {
     outputEntity: { id: outputEntityId },
-  } = useCommonData(selectedVariable, props.geoConfigs, props.studyEntities);
+  } = useCommonData(selectedVariable, geoConfigs, studyEntities);
 
   return outputEntityId != null ? (
-    <MapTypeHeaderCounts
+    <MapTypeHeaderStudyDetails
+      hasMarkerSelection={!!selectedMarkers?.length}
+      filtersForVisibleData={filtersForSubStudies}
+      includesTimeSliderFilter={timeSliderConfig != null}
       outputEntityId={outputEntityId}
-      totalEntityCount={props.totalCounts.value?.[outputEntityId]}
-      totalEntityInSubsetCount={props.filteredCounts.value?.[outputEntityId]}
-      visibleEntityCount={markerDataResponse.totalVisibleWithOverlayEntityCount}
+      onShowStudies={
+        studyDetailsPanelConfig &&
+        ((isVisble) =>
+          props.setStudyDetailsPanelConfig({
+            ...studyDetailsPanelConfig,
+            isVisble,
+          }))
+      }
     />
   ) : null;
 }
+
+const timeSliderFilterFuncs = [pieOrBarMarkerConfigLittleFilter];
+
+const substudyFilterFuncs = [
+  viewportLittleFilters,
+  timeSliderLittleFilter,
+  pieOrBarMarkerConfigLittleFilter,
+  selectedMarkersLittleFilter,
+];
+
+export function TimeSliderComponent(
+  props: MapTypeMapLayerProps<BarPlotMarkerConfiguration>
+) {
+  const {
+    studyId,
+    studyEntities,
+    filters,
+    appState,
+    appState: { timeSliderConfig },
+    analysisState,
+    geoConfigs,
+    setTimeSliderConfig,
+    siteInformationProps,
+  } = props;
+
+  const toggleStarredVariable = useToggleStarredVariable(analysisState);
+
+  const { filters: filtersForTimeSlider } = useLittleFilters(
+    {
+      filters,
+      appState,
+      geoConfigs,
+    },
+    timeSliderFilterFuncs
+  );
+
+  return timeSliderConfig && setTimeSliderConfig && siteInformationProps ? (
+    <TimeSliderQuickFilter
+      studyId={studyId}
+      entities={studyEntities}
+      filters={filtersForTimeSlider}
+      starredVariables={
+        analysisState.analysis?.descriptor.starredVariables ?? []
+      }
+      toggleStarredVariable={toggleStarredVariable}
+      config={timeSliderConfig}
+      updateConfig={setTimeSliderConfig}
+      siteInformation={siteInformationProps}
+    />
+  ) : null;
+}
+
+///// helpers and hooks /////
 
 const processRawMarkersData = (
   mapElements: StandaloneMapMarkersResponse['mapElements'],
@@ -647,13 +766,7 @@ function useMarkerData(props: MarkerDataProps) {
   } = useDistributionMarkerData(props);
   if (markerData == null) return { error, isFetching };
 
-  const {
-    mapElements,
-    totalVisibleEntityCount,
-    totalVisibleWithOverlayEntityCount,
-    legendItems,
-    overlayConfig,
-  } = markerData;
+  const { mapElements, legendItems, overlayConfig } = markerData;
 
   // calculate minPos, max and sum for chart marker dependent axis
   // assumes the value is a count! (so never negative)
@@ -697,8 +810,6 @@ function useMarkerData(props: MarkerDataProps) {
     error,
     isFetching: isFetching || isPreviousData,
     markerProps,
-    totalVisibleWithOverlayEntityCount,
-    totalVisibleEntityCount,
     legendItems,
     overlayConfig,
     boundsZoomLevel: props.boundsZoomLevel,

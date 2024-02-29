@@ -386,6 +386,11 @@ export interface VolcanoPlotRequestParams {
   config: {}; // Empty viz config because there are no viz input vars
 }
 
+export type NodeIdList = TypeOf<typeof NodeIdList>;
+export const NodeIdList = type({
+  nodeIds: array(string),
+});
+
 // Bipartite network
 export type BipartiteNetworkResponse = TypeOf<typeof BipartiteNetworkResponse>;
 
@@ -394,15 +399,14 @@ const NodeData = type({
 });
 
 export const BipartiteNetworkData = type({
-  column1NodeIDs: array(string),
-  column2NodeIDs: array(string),
+  partitions: array(NodeIdList),
   nodes: array(NodeData),
   links: array(
     intersection([
       type({
         source: NodeData,
         target: NodeData,
-        strokeWidth: string,
+        weight: string,
       }),
       partial({
         color: string,
@@ -412,8 +416,7 @@ export const BipartiteNetworkData = type({
 });
 
 const BipartiteNetworkConfig = type({
-  column1Metadata: string,
-  column2Metadata: string,
+  partitionsMetadata: array(string),
 });
 
 export const BipartiteNetworkResponse = type({
@@ -423,6 +426,19 @@ export const BipartiteNetworkResponse = type({
   }),
 });
 
+// Correlation Bipartite Network
+// a specific flavor of the bipartite network that also includes correlationCoefThreshold and significanceThreshold
+export type CorrelationBipartiteNetworkResponse = TypeOf<
+  typeof CorrelationBipartiteNetworkResponse
+>;
+export const CorrelationBipartiteNetworkResponse = intersection([
+  BipartiteNetworkResponse,
+  type({
+    correlationCoefThreshold: number,
+    significanceThreshold: number,
+  }),
+]);
+
 export interface BipartiteNetworkRequestParams {
   studyId: string;
   filters: Filter[];
@@ -431,6 +447,15 @@ export interface BipartiteNetworkRequestParams {
     significanceThreshold?: number;
   };
 }
+
+export type FeaturePrefilterThresholds = TypeOf<
+  typeof FeaturePrefilterThresholds
+>;
+export const FeaturePrefilterThresholds = type({
+  proportionNonZero: number,
+  variance: number,
+  standardDeviation: number,
+});
 
 ////////////////
 // Table Data //
@@ -597,9 +622,9 @@ export const ContTableResponse = intersection([
   partial({
     statsTable: array(
       partial({
-        pvalue: union([number, string]), // TO DO: should these three stats values all be optional?
-        degreesFreedom: number,
-        chisq: number,
+        pvalue: union([number, string, nullType]), // TO DO: should these three stats values all be optional?
+        degreesFreedom: NumberOrNull,
+        chisq: NumberOrNull,
         facetVariableDetails: union([
           tuple([StringVariableValue]),
           tuple([StringVariableValue, StringVariableValue]),

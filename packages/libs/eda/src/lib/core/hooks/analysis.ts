@@ -21,6 +21,7 @@ import { createComputation } from '../components/computations/Utils';
 import { useHistory } from 'react-router-dom';
 import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 import { Computation, Visualization } from '../types/visualization';
+import EventEmitter from 'events';
 
 /**
  * Type definition for function that will set an attribute of an Analysis.
@@ -101,6 +102,38 @@ export type AnalysisState = {
 
 // Used to store loaded analyses. Looks to be a performance enhancement.
 const analysisCache = new Map<string, Analysis>();
+
+class AnalysisEventEmitter {
+  private _emitter = new EventEmitter();
+  private _analysisUpdateEvent = 'analysis_update';
+  private _listUpdateEvent = 'list_update';
+
+  onAnalysisUpdate(callback: (analysis: Analysis) => void) {
+    const { _emitter, _analysisUpdateEvent } = this;
+    _emitter.on(_analysisUpdateEvent, callback);
+    return function cancel() {
+      _emitter.off(_analysisUpdateEvent, callback);
+    };
+  }
+
+  onListUpdate(callback: (analysisList: AnalysisSummary[]) => void) {
+    const { _emitter, _listUpdateEvent } = this;
+    _emitter.on(_listUpdateEvent, callback);
+    return function cancel() {
+      _emitter.off(_listUpdateEvent, callback);
+    };
+  }
+
+  triggerAnalysisUpdate(analysis: Analysis) {
+    this._emitter.emit(this._analysisUpdateEvent, analysis);
+  }
+
+  triggerListUpdate(list: AnalysisSummary[]) {
+    this._emitter.emit(this._listUpdateEvent, list);
+  }
+}
+
+const analysisEventEmitter = new AnalysisEventEmitter();
 
 /**
  * Provide access to a user created analysis and associated functionality.
@@ -199,6 +232,7 @@ export function useAnalysis(
     else if (analysis !== analysisCache.get(analysis.analysisId)) {
       await analysisClient.updateAnalysis(analysis.analysisId, analysis);
       analysisCache.set(analysis.analysisId, analysis);
+      analysisEventEmitter.triggerAnalysisUpdate(analysis);
     }
   }, [analysisClient, createAnalysis]);
 
@@ -360,7 +394,7 @@ export function useAnalysis(
   );
 
   // Retrieve an Analysis from the data store whenever `analysisID` updates.
-  useEffect(() => {
+  const loadAnalysis = useCallback(() => {
     setUpdateScheduled(false);
     if (analysisId == null) {
       setStatus(Status.Loaded);
@@ -387,7 +421,26 @@ export function useAnalysis(
         );
       }
     }
-  }, [defaultAnalysis, analysisId, analysisClient]);
+  }, [analysisClient, analysisId, defaultAnalysis]);
+
+  useEffect(() => {
+    loadAnalysis();
+  }, [loadAnalysis]);
+
+  useEffect(() => {
+    // TODO only update if the active analysis has changed... or merge in the change!
+    return analysisEventEmitter.onListUpdate((list) => {
+      if (analysisId == null) return;
+      const update = list.find((summary) => summary.analysisId === analysisId);
+      if (update) {
+        setAnalysis((analysis) => analysis && { ...analysis, ...update });
+        const analysis = analysisCache.get(analysisId);
+        if (analysis) {
+          analysisCache.set(analysisId, { ...analysis, ...update });
+        }
+      }
+    });
+  }, [analysisId, loadAnalysis]);
 
   // Reactively save analysis when it has been modified
   useEffect(() => {
@@ -434,7 +487,8 @@ export function useAnalysisList(analysisClient: AnalysisClient) {
   const [analyses, setAnalyses] = useState<AnalysisSummary[]>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
-  useEffect(() => {
+
+  const loadList = useCallback(() => {
     setLoading(true);
     analysisClient.getAnalyses().then(
       (analyses) => {
@@ -447,6 +501,18 @@ export function useAnalysisList(analysisClient: AnalysisClient) {
       }
     );
   }, [analysisClient]);
+
+  useEffect(() => {
+    loadList();
+    // TODO Merge in change!
+    return analysisEventEmitter.onAnalysisUpdate((analysis) => {
+      setAnalyses((analyses) =>
+        analyses?.map((a) =>
+          a.analysisId === analysis.analysisId ? { ...a, ...analysis } : a
+        )
+      );
+    });
+  }, [loadList]);
 
   const deleteAnalysis = useCallback(
     async (id: string) => {
@@ -497,6 +563,11 @@ export function useAnalysisList(analysisClient: AnalysisClient) {
       setLoading(true);
       try {
         await analysisClient.updateAnalysis(id, patch);
+        const analysis = analysisCache.get(id);
+        if (analysis) {
+          analysisCache.set(id, { ...analysis, ...patch });
+        }
+        analysisCache.delete(id);
         setAnalyses(
           (analyses) =>
             analyses &&
@@ -512,6 +583,10 @@ export function useAnalysisList(analysisClient: AnalysisClient) {
     },
     [analysisClient]
   );
+
+  useEffect(() => {
+    if (analyses) analysisEventEmitter.triggerListUpdate(analyses);
+  }, [analyses]);
 
   return {
     analyses,

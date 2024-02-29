@@ -535,7 +535,16 @@ function transformFormQuestion(
         memo.push({
           ...parameter,
           displayName: 'Input Sequence(s)',
-          help: 'Paste your Input Sequence(s) in the text box, or upload a FASTA file.',
+          help: `
+              <p>Paste your Input Sequence(s) in the text box, or upload a FASTA file.</p>
+              <a
+                href='https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=BlastHelp#filter'
+                target='_blank'
+                rel="noreferrer"
+              >
+                Learn more about BLAST query inputs here.
+              </a>
+            `,
         });
 
         return memo;

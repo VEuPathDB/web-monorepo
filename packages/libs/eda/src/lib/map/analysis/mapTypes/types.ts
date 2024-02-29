@@ -8,9 +8,10 @@ import {
 } from '../../../core';
 import { GeoConfig } from '../../../core/types/geoConfig';
 import { ComputationAppOverview } from '../../../core/types/visualization';
-import { AppState, MarkerConfiguration } from '../appState';
+import { AppState, MarkerConfiguration, PanelConfig } from '../appState';
 import { EntityCounts } from '../../../core/hooks/entityCounts';
 import { VariableDescriptor } from '../../../core/types/variable';
+import { SiteInformationProps } from '../Types';
 
 export interface MapTypeConfigPanelProps<T extends MarkerConfiguration> {
   apps: ComputationAppOverview[];
@@ -38,12 +39,17 @@ export interface MapTypeMapLayerProps<T extends MarkerConfiguration> {
   updateConfiguration: (configuration: T) => void;
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
-  filtersIncludingViewport: Filter[];
+  // TO DO: the hideVizInputsAndControls props are currently required
+  // and sent to plugin components that don't need it - we should also address this
   hideVizInputsAndControls: boolean;
   setHideVizInputsAndControls: (hide: boolean) => void;
-  // selectedMarkers and its state function
-  selectedMarkers?: string[];
   setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
+  setStudyDetailsPanelConfig: (config: PanelConfig) => void;
+  setTimeSliderConfig?: (
+    newConfig: NonNullable<AppState['timeSliderConfig']>
+  ) => void;
+  siteInformationProps?: SiteInformationProps;
+  headerButtons?: React.FC;
 }
 
 /**
@@ -79,4 +85,8 @@ export interface MapTypePlugin<T extends MarkerConfiguration> {
    * Returns a ReactNode that is rendered in the map header
    */
   MapTypeHeaderDetails?: ComponentType<MapTypeMapLayerProps<T>>;
+  /**
+   * Returns a ReactNode that is rendered under the map header
+   */
+  TimeSliderComponent?: ComponentType<MapTypeMapLayerProps<T>>;
 }

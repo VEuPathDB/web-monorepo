@@ -13,11 +13,11 @@ import {
   Mesa,
   MesaState,
   Utils as MesaUtils,
-} from '@veupathdb/wdk-client/lib/Components/Mesa';
+} from '@veupathdb/coreui/lib/components/Mesa';
 import {
   MesaColumn,
   MesaSortObject,
-} from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
@@ -76,7 +76,7 @@ interface State {
 
 interface MesaDataCellProps {
   row: UserDataset;
-  column: MesaColumn;
+  column: MesaColumn<UserDataset>;
   rowIndex: number;
   columnIndex: number;
   inline?: boolean;
@@ -342,8 +342,8 @@ class UserDatasetList extends React.Component<Props, State> {
     this.setState({ selectedRows: newSelection });
   }
 
-  onSort(column: MesaColumn, direction: string): void {
-    const key: string = column.key;
+  onSort(column: MesaColumn<UserDataset>, direction: string): void {
+    const key = column.key;
     const { state } = this;
     const { setSortColumnKey, setSortDirection } = MesaState;
     const updatedState = setSortDirection(

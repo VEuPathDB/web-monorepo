@@ -2,7 +2,7 @@ import { orderBy, uniq } from 'lodash';
 import React, { useMemo, useState, useCallback } from 'react';
 import { withRouter } from 'react-router';
 import Icon from '../../Components/Icon/IconAlt';
-import { Mesa, MesaState } from '../../Components/Mesa';
+import { Mesa, MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 import Dialog from '../../Components/Overlays/Dialog';
 import { wrappable } from '../../Utils/ComponentUtils';
 import AttributeSelector from '../../Views/Answer/AnswerAttributeSelector';
@@ -119,6 +119,7 @@ function useTableState(props) {
     renderCellContent,
     deriveRowClassName,
     customSortBys,
+    useStickyFirstNColumns,
   } = props;
 
   const columns = useMemo(
@@ -153,6 +154,7 @@ function useTableState(props) {
   const options = useMemo(
     () => ({
       useStickyHeader: true,
+      useStickyFirstNColumns,
       tableBodyMaxHeight: 'unset',
       deriveRowClassName:
         deriveRowClassName &&
@@ -206,6 +208,8 @@ function useTableState(props) {
     [columns, onMoveColumn, onSort]
   );
 
+  const headerWrapperStyle = { zIndex: 2 };
+
   return useMemo(
     () =>
       MesaState.create({
@@ -214,6 +218,7 @@ function useTableState(props) {
         options,
         uiState,
         eventHandlers,
+        headerWrapperStyle,
       }),
     [rows, columns, options, uiState, eventHandlers]
   );

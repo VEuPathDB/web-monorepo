@@ -13,11 +13,11 @@ import { Either, left, isLeft, isRight, map, right } from 'fp-ts/Either';
 import { groupBy, orderBy } from 'lodash';
 
 import { Link } from '@veupathdb/wdk-client/lib/Components';
-import { MesaState } from '@veupathdb/wdk-client/lib/Components/Mesa';
+import { MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 import {
   MesaColumn,
   MesaSortObject,
-} from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 
 import {
@@ -236,7 +236,7 @@ function useCombinedResultColumns(
   jobId: string,
   organismToProject: Record<string, string>,
   projectUrls: Record<string, string>
-): MesaColumn<keyof CombinedResultRow>[] {
+): MesaColumn<CombinedResultRow>[] {
   const targetMetadataByDataType = useContext(TargetMetadataByDataType);
 
   const recordLinkUrlSegment =

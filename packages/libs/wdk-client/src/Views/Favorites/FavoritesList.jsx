@@ -5,7 +5,11 @@ import BannerList from '@veupathdb/coreui/lib/components/banners/BannerList';
 import Icon from '../../Components/Icon/IconAlt';
 import TextArea from '../../Components/InputControls/TextArea';
 import TextBox from '../../Components/InputControls/TextBox';
-import { Mesa, MesaState, Utils as MesaUtils } from '../../Components/Mesa';
+import {
+  Mesa,
+  MesaState,
+  Utils as MesaUtils,
+} from '@veupathdb/coreui/lib/components/Mesa';
 import RealTimeSearchBox from '../../Components/SearchBox/RealTimeSearchBox';
 import { wrappable } from '../../Utils/ComponentUtils';
 import RecordLink from '../../Views/Records/RecordLink';

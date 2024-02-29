@@ -101,7 +101,7 @@ const pathwayEnrichmentResultColumns = [
     sortable: true,
     sortType: 'number',
   },
-] as ColumnSettings[];
+] as ColumnSettings<any>[];
 
 const pathwayIdRenderFactory =
   (pathwayBaseUrl: string) =>

@@ -152,110 +152,151 @@ export function useStudyEntities(filters?: Filter[]) {
             if (filters.some((f) => f.entityId === entity.id)) {
               const variables = entity.variables.map(
                 (variable): VariableTreeNode => {
-                  const filter = filters.find(
-                    (f) =>
-                      f.entityId === entity.id && f.variableId === variable.id
-                  );
-                  if (variable.type !== 'category' && filter) {
-                    const vocabulary =
-                      filter.type === 'dateSet'
-                        ? filter.dateSet
-                        : filter.type === 'numberSet'
-                        ? filter.numberSet.map(String)
-                        : filter.type === 'stringSet'
-                        ? filter.stringSet
-                        : undefined;
-                    // need to strip 'T00:00:00Z' from filter.min/max
-                    const filterRange =
-                      filter.type === 'numberRange' ||
-                      filter.type === 'dateRange'
-                        ? {
-                            min:
-                              filter.type === 'numberRange'
-                                ? filter.min
-                                : filter.min.split(/T00:00:00(?:\.000)?Z?/)[0],
-                            max:
-                              filter.type === 'numberRange'
-                                ? filter.max
-                                : filter.max.split(/T00:00:00(?:\.000)?Z?/)[0],
-                          }
-                        : undefined;
+                  if (variable.type !== 'category') {
+                    const relevantFilters = filters.filter(
+                      (f) =>
+                        f.entityId === entity.id && f.variableId === variable.id
+                    );
+                    if (relevantFilters.length > 0) {
+                      // if there's a variable.vocabulary, filter it by *all* the filters
+                      // and their filter values
+                      const vocabulary = relevantFilters.reduce(
+                        (vocab, filter) =>
+                          vocab?.filter((vocabItem) =>
+                            filter.type === 'dateSet'
+                              ? filter.dateSet.includes(vocabItem)
+                              : filter.type === 'numberSet'
+                              ? filter.numberSet.map(String).includes(vocabItem)
+                              : filter.type === 'stringSet'
+                              ? filter.stringSet.includes(vocabItem)
+                              : undefined
+                          ),
+                        variable.vocabulary
+                      );
 
-                    // augment variable metadata including filter-aware axis range
-                    if (
-                      variable.type === 'number' ||
-                      variable.type === 'integer'
-                    )
-                      // TO DO? recalculate binWidth for numeric variables?
-                      // (it's less critical than for dates due to time slider)
-                      return {
-                        ...variable,
-                        fullVocabulary: variable.vocabulary,
-                        vocabulary,
-                        distributionDefaults: {
-                          ...variable.distributionDefaults,
-                          rangeMin:
-                            filterRange != null
-                              ? (filterRange.min as number)
-                              : (variable.distributionDefaults
-                                  .rangeMin as number),
-                          rangeMax:
-                            filterRange != null
-                              ? (filterRange.max as number)
-                              : (variable.distributionDefaults
-                                  .rangeMax as number),
-                        },
-                      };
-                    else if (variable.type === 'date') {
-                      // recalculate bin width and units
-                      // to keep it simple let's keep the width at 1 and just try different units
-                      const binWidth = 1;
-                      const binUnits = (['year', 'month', 'week', 'day'].find(
-                        (unit) => {
-                          if (filterRange) {
-                            const diff = DateMath.diff(
-                              new Date(filterRange.min as string),
-                              new Date(filterRange.max as string),
-                              unit as DateMath.Unit
-                            );
-                            // 12 is somewhat arbitrary, but it basically
-                            // means if there are >= 12 years, use year bins.
-                            // Otherwise if >= 12 months, use month bins, etc
-                            return diff >= 12;
-                          }
-                          return false;
-                        }
-                      ) ?? 'day') as TimeUnit;
+                      // augment variable metadata including filter-aware axis range
+                      if (
+                        variable.type === 'number' ||
+                        variable.type === 'integer'
+                      ) {
+                        // TO DO? recalculate binWidth for numeric variables?
+                        // (it's less critical than for dates due to time slider)
 
-                      return {
-                        ...variable,
-                        fullVocabulary: variable.vocabulary,
-                        vocabulary,
-                        distributionDefaults: {
-                          ...variable.distributionDefaults,
-                          rangeMin:
-                            filterRange != null
-                              ? (filterRange.min as string)
-                              : (variable.distributionDefaults
-                                  .rangeMin as string),
-                          rangeMax:
-                            filterRange != null
-                              ? (filterRange.max as string)
-                              : (variable.distributionDefaults
-                                  .rangeMax as string),
-                          binUnits,
-                          binWidth,
-                        },
-                      };
-                    } else
-                      return {
-                        ...variable,
-                        fullVocabulary: variable.vocabulary,
-                        vocabulary,
-                        distinctValuesCount: vocabulary?.length ?? 0,
-                      };
-                  }
-                  return variable;
+                        // narrow variable's rangeMin/Max based on ranges of *all* filters
+                        const filterRange = relevantFilters.reduce(
+                          (range, filter) => {
+                            if (filter.type === 'numberRange')
+                              return {
+                                min:
+                                  filter.min > range.min
+                                    ? filter.min
+                                    : range.min,
+                                max:
+                                  filter.max < range.max
+                                    ? filter.max
+                                    : range.max,
+                              };
+                            else return range;
+                            // longitudeRanges are difficult to handle
+                            // and there's no need to modify the range metadata for longitude vars anyway
+                          },
+                          {
+                            min: variable.distributionDefaults.rangeMin,
+                            max: variable.distributionDefaults.rangeMax,
+                          }
+                        );
+
+                        return {
+                          ...variable,
+                          fullVocabulary: variable.vocabulary,
+                          vocabulary,
+                          distributionDefaults: {
+                            ...variable.distributionDefaults,
+                            rangeMin:
+                              filterRange != null
+                                ? (filterRange.min as number)
+                                : (variable.distributionDefaults
+                                    .rangeMin as number),
+                            rangeMax:
+                              filterRange != null
+                                ? (filterRange.max as number)
+                                : (variable.distributionDefaults
+                                    .rangeMax as number),
+                          },
+                        };
+                      } else if (variable.type === 'date') {
+                        // as with numbers above, narrow variable's range based on ranges of *all* filters
+                        const filterRange = relevantFilters.reduce(
+                          (range, filter) => {
+                            if (filter.type === 'dateRange') {
+                              const filterMin = filter.min.split(
+                                /T00:00:00(?:\.000)?Z?/
+                              )[0];
+                              const filterMax = filter.max.split(
+                                /T00:00:00(?:\.000)?Z?/
+                              )[0];
+                              return {
+                                min:
+                                  filterMin > range.min ? filterMin : range.min,
+                                max:
+                                  filterMax < range.max ? filterMax : range.max,
+                              };
+                            } else return range;
+                          },
+                          {
+                            min: variable.distributionDefaults.rangeMin,
+                            max: variable.distributionDefaults.rangeMax,
+                          }
+                        );
+
+                        // recalculate bin width and units
+                        // to keep it simple let's keep the width at 1 and just try different units
+                        const binWidth = 1;
+                        const binUnits = (['year', 'month', 'week', 'day'].find(
+                          (unit) => {
+                            if (filterRange) {
+                              const diff = DateMath.diff(
+                                new Date(filterRange.min as string),
+                                new Date(filterRange.max as string),
+                                unit as DateMath.Unit
+                              );
+                              // 12 is somewhat arbitrary, but it basically
+                              // means if there are >= 12 years, use year bins.
+                              // Otherwise if >= 12 months, use month bins, etc
+                              return diff >= 12;
+                            }
+                          }
+                        ) ?? 'day') as TimeUnit;
+
+                        return {
+                          ...variable,
+                          fullVocabulary: variable.vocabulary,
+                          vocabulary,
+                          distributionDefaults: {
+                            ...variable.distributionDefaults,
+                            rangeMin:
+                              filterRange != null
+                                ? (filterRange.min as string)
+                                : (variable.distributionDefaults
+                                    .rangeMin as string),
+                            rangeMax:
+                              filterRange != null
+                                ? (filterRange.max as string)
+                                : (variable.distributionDefaults
+                                    .rangeMax as string),
+                            binUnits,
+                            binWidth,
+                          },
+                        };
+                      } else
+                        return {
+                          ...variable,
+                          fullVocabulary: variable.vocabulary,
+                          vocabulary,
+                          distinctValuesCount: vocabulary?.length ?? 0,
+                        };
+                    } else return variable;
+                  } else return variable;
                 }
               );
               return {

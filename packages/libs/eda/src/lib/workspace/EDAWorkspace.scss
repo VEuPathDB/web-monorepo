@@ -25,7 +25,7 @@
   &-Heading {
     display: grid;
     grid:
-      'title linkouts' auto
+      'title data-access-btn linkouts' auto
       / auto 1fr;
     gap: 1em;
     align-items: center;

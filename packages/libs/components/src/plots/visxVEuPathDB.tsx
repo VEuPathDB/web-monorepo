@@ -1,5 +1,8 @@
 /** Helpful styles and types for working with visx */
 
+import domToImage from 'dom-to-image';
+import { ToImgopts } from 'plotly.js';
+
 /**
  * Types
  */
@@ -27,3 +30,50 @@ export const gridStyles = {
   stroke: '#dddddd',
   strokeWidth: 0.5,
 };
+
+export async function plotToImage(
+  plotElement: HTMLElement | null,
+  imgOpts: ToImgopts
+) {
+  if (!plotElement) throw new Error('Plot not ready');
+  const opts = { ...imgOpts, bgcolor: 'white' };
+  switch (opts.format) {
+    case 'jpeg':
+      return domToImage.toJpeg(plotElement, opts);
+    case 'png':
+      return domToImage.toPng(plotElement, opts);
+    case 'svg': {
+      // The following was adapted from https://stackoverflow.com/a/23218877
+      const svgRoot = plotElement.querySelector('svg');
+      if (!svgRoot) throw new Error('Plot not ready');
+      //get svg source.
+      const serializer = new XMLSerializer();
+      let source = serializer.serializeToString(svgRoot);
+
+      //add name spaces.
+      if (!source.match(/^<svg[^>]+xmlns="http:\/\/www\.w3\.org\/2000\/svg"/)) {
+        source = source.replace(
+          /^<svg/,
+          '<svg xmlns="http://www.w3.org/2000/svg"'
+        );
+      }
+      if (!source.match(/^<svg[^>]+"http:\/\/www\.w3\.org\/1999\/xlink"/)) {
+        source = source.replace(
+          /^<svg/,
+          '<svg xmlns:xlink="http://www.w3.org/1999/xlink"'
+        );
+      }
+
+      //add xml declaration
+      source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
+
+      const svgBlob = new Blob([source], {
+        type: 'image/svg+xml;charset=utf-8',
+      });
+      var svgUrl = URL.createObjectURL(svgBlob);
+      return svgUrl;
+    }
+    default:
+      return '';
+  }
+}

@@ -417,8 +417,10 @@ export function ParameterList(props: ParameterListProps) {
             {parameter.visibleHelp !== undefined && (
               <Banner
                 banner={{
-                  type: 'info',
+                  // 'normal' renders a banner w/ gray background
+                  type: 'normal',
                   message: safeHtml(parameter.visibleHelp, null, 'div'),
+                  hideIcon: true,
                 }}
               />
             )}

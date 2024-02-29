@@ -1,0 +1,40 @@
+.MesaComponent {
+  .DataTable {
+    font-size: $fontSize;
+    width: 100%;
+    display: block;
+    margin-bottom: 1.5em;
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+    }
+
+    .DataTable-Sticky {
+      display: block;
+      overflow: auto;
+      position: relative;
+      max-height: 70vh;
+
+      .DataTable-Header,
+      .DataTable-Body {
+        display: block;
+        // table { table-layout: fixed; }
+      }
+
+      .DataTable-Body {
+        padding-bottom: 1.5em; /* prevent macos scrollbar from occluding last row */
+      }
+
+      .DataTable-Header {
+        overflow: visible;
+        top: 0;
+
+        /* set sticky header table width to auto so that scrollbars in the body section don't throw off cell widths */
+        // table {
+        //   width: auto;
+        // }
+      }
+    }
+  }
+}

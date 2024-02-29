@@ -12,6 +12,7 @@ import { VariableDescriptor } from '../../core/types/variable';
 import { useGetDefaultTimeVariableDescriptor } from './hooks/eztimeslider';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
 import * as plugins from './mapTypes';
+import { STUDIES_ENTITY_ID, STUDY_ID_VARIABLE_ID } from '../constants';
 
 const LatLngLiteral = t.type({ lat: t.number, lng: t.number });
 
@@ -44,6 +45,18 @@ export const MarkerConfiguration = t.type({
   type: t.string,
 });
 
+const PanelConfig = t.type({
+  isVisble: t.boolean,
+  position: t.type({ x: t.number, y: t.number }),
+  dimensions: t.type({
+    height: t.union([t.number, t.string]),
+    width: t.union([t.number, t.string]),
+  }),
+});
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export type PanelConfig = t.TypeOf<typeof PanelConfig>;
+
 export const AppState = t.intersection([
   t.type({
     viewport: t.type({
@@ -55,6 +68,7 @@ export const AppState = t.intersection([
     isSidePanelExpanded: t.boolean,
   }),
   t.partial({
+    studyDetailsPanelConfig: PanelConfig,
     boundsZoomLevel: t.type({
       zoomLevel: t.number,
       bounds: t.type({
@@ -107,20 +121,26 @@ export function useAppState(
     getOrElseW(() => undefined)
   );
 
+  const studyMetadata = useStudyMetadata();
   const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
   const defaultVariable = getDefaultVariableDescriptor();
-  const studyMetadata = useStudyMetadata();
 
   const getDefaultTimeVariableDescriptor =
     useGetDefaultTimeVariableDescriptor();
   const defaultTimeVariable = getDefaultTimeVariableDescriptor();
+
+  const isMegaStudy =
+    studyMetadata.rootEntity.id === STUDIES_ENTITY_ID &&
+    studyMetadata.rootEntity.variables.find(
+      (variable) => variable.id === STUDY_ID_VARIABLE_ID
+    ) != null;
 
   const defaultAppState: AppState = useMemo(
     () => ({
       viewport: defaultViewport,
       mouseMode: 'default',
       activeMarkerConfigurationType: 'pie',
-      isSidePanelExpanded: true,
+      isSidePanelExpanded: false,
       timeSliderConfig: {
         variable: defaultTimeVariable,
         active: true,
@@ -129,8 +149,20 @@ export function useAppState(
       markerConfigurations: Object.values(plugins).map((plugin) =>
         plugin.getDefaultConfig({ defaultVariable, study: studyMetadata })
       ),
+      ...(isMegaStudy
+        ? {
+            studyDetailsPanelConfig: {
+              isVisble: false,
+              position: {
+                x: Math.max(650, window.innerWidth / 2 - 250),
+                y: Math.max(300, window.innerHeight / 2 - 250),
+              },
+              dimensions: { height: 500, width: 500 },
+            },
+          }
+        : {}),
     }),
-    [defaultTimeVariable, defaultVariable, studyMetadata]
+    [defaultTimeVariable, isMegaStudy, defaultVariable, studyMetadata]
   );
 
   useEffect(() => {
@@ -151,29 +183,48 @@ export function useAppState(
               )
           );
 
-        const timeSliderConfigIsMissing = appState.timeSliderConfig == null;
+        // Used to track if appState needs to be updated with
+        // missing pieces of configuration.
+        let nextAppState = appState;
 
-        if (missingMarkerConfigs.length > 0 || timeSliderConfigIsMissing) {
+        if (missingMarkerConfigs.length > 0) {
+          nextAppState = {
+            ...nextAppState,
+            markerConfigurations: [
+              ...nextAppState.markerConfigurations,
+              ...missingMarkerConfigs,
+            ],
+          };
+        }
+
+        if (appState.timeSliderConfig == null) {
+          nextAppState = {
+            ...nextAppState,
+            timeSliderConfig: defaultAppState.timeSliderConfig,
+          };
+        }
+
+        if (isMegaStudy && appState.studyDetailsPanelConfig == null) {
+          nextAppState = {
+            ...nextAppState,
+            studyDetailsPanelConfig: defaultAppState.studyDetailsPanelConfig,
+          };
+        }
+
+        // If nextAppState has a new value, then we need to update
+        // the analysis object
+        if (nextAppState !== appState)
           setVariableUISettings((prev) => ({
             ...prev,
-            [uiStateKey]: {
-              ...appState,
-              ...(timeSliderConfigIsMissing
-                ? { timeSliderConfig: defaultAppState.timeSliderConfig }
-                : {}),
-              markerConfigurations: [
-                ...appState.markerConfigurations,
-                ...missingMarkerConfigs,
-              ],
-            },
+            [uiStateKey]: nextAppState,
           }));
-        }
       }
       setAppStateChecked(true);
     }
   }, [
     analysis,
     appState,
+    isMegaStudy,
     setVariableUISettings,
     uiStateKey,
     defaultAppState,
@@ -217,5 +268,6 @@ export function useAppState(
     setSubsetVariableAndEntity: useSetter('subsetVariableAndEntity'),
     setViewport: useSetter('viewport'),
     setTimeSliderConfig: useSetter('timeSliderConfig', true),
+    setStudyDetailsPanelConfig: useSetter('studyDetailsPanelConfig'),
   };
 }

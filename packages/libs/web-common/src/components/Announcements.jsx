@@ -106,23 +106,27 @@ const siteAnnouncements = [
   },
 */
 
-  /*
-{  
+  {
     id: 'clinepiEDA',
     renderDisplay: (props) => {
-    if ( (props.projectId == 'ClinEpiDB') && (props.location.pathname === '/') ) {
+      if (
+        props.projectId == 'ClinEpiDB' &&
+        (props.location.pathname.indexOf('/workspace/analyses/DS_624583e93e/') >
+          -1 ||
+          props.location.pathname.indexOf('/request-access/DS_624583e93e') > -1)
+      ) {
         return (
           <div>
-           Welcome to ClinEpiDB’s new and improved <span style={{fontWeight: 'bold', fontStyle: 'italic'}}>data exploration platform!</span>
-           &nbsp;&nbsp;Access the original version of our website, including your saved strategies, at <a href="https://legacy.clinepidb.org">legacy.clinepidb.org</a>. 
+            {' '}
+            Requests to access LLINEUP2 data will not be granted until the
+            manuscript has been published.
           </div>
         );
       }
       return null;
-    }
+    },
   },
- 
-*/
+
   // clinepi workshop
   /* 
  {
@@ -236,6 +240,155 @@ const siteAnnouncements = [
     }
   },
 */
+
+  //VectorBase, aquasalis: https://redmine.apidb.org/issues/53436  Jan 18 2024 -patched prod 66-  for a year
+  {
+    id: 'aquasalis',
+    renderDisplay: (props) => {
+      if (
+        (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
+        (props.location.pathname.indexOf('/record/dataset/TMPTX_aaquAaquGF1') >
+          -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_44554a07c1') >
+            -1 ||
+          props.location.pathname.indexOf('/record/gene/AAQUA_') > -1)
+      ) {
+        return (
+          <div key="">
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/DS_44554a07c1">
+              <i>Anopheles aquasalis</i> AaquGF1
+            </a>{' '}
+            has a confusion in chromosome nomenclature. The current X and Y
+            designations should be replaced with XL (X long arm) and XR (X short
+            arm), respectively. While the matter is being addressed in the
+            primary databases/INSDC and will subsequently be handled at
+            VectorBase, feel free to{' '}
+            <a href="https://vectorbase.org/vectorbase/app/contact-us">
+              contact us
+            </a>{' '}
+            for any inquiries, suggestions, or feedback.
+          </div>
+        );
+      }
+      return null;
+    },
+  },
+
+  //VectorBase, arabiensis: https://redmine.apidb.org/issues/53152 b67  Feb-2024 to Feb 2025?
+  {
+    id: 'arabiensis',
+    renderDisplay: (props) => {
+      if (
+        (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
+        (props.location.pathname.indexOf(
+          '/record/dataset/TMPTX_aaraDONGOLA2021'
+        ) > -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_ade3ddae6f') >
+            -1 ||
+          props.location.pathname.indexOf('/record/dataset/TMPTX_aaraDongola') >
+            -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_bb27e14657') > -1)
+      ) {
+        return (
+          <div key="">
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/TMPTX_aaraDONGOLA2021">
+              <i>Anopheles arabiensis</i> DONGOLA 2021
+            </a>{' '}
+            is the <b>new reference genome</b> for this mosquito species, which
+            means that the 'omics' data sets are only aligned to this strain and
+            all the site functionality is activated.{' '}
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/TMPTX_aaraDongola">
+              <i>Anopheles arabiensis</i> Dongola
+            </a>{' '}
+            will remain available on VectorBase, but with limited functionality.
+            Please{' '}
+            <a href="https://vectorbase.org/vectorbase/app/contact-us">
+              contact us
+            </a>{' '}
+            if you have any questions, suggestions or feedback.
+          </div>
+        );
+      }
+      return null;
+    },
+  },
+
+  //VectorBase, merus: https://redmine.apidb.org/issues/53156 b67  Feb-2024 to Feb 2025?
+  {
+    id: 'merus',
+    renderDisplay: (props) => {
+      if (
+        (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
+        (props.location.pathname.indexOf('/record/dataset/TMPTX_amerMAF2021') >
+          -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_dd9510023e') >
+            -1 ||
+          props.location.pathname.indexOf('/record/dataset/TMPTX_amerMAF') >
+            -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_b08fa4ba88') > -1)
+      ) {
+        return (
+          <div key="">
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/TMPTX_amerMAF2021">
+              <i>Anopheles merus</i> MAF 2021
+            </a>{' '}
+            is the <b>new reference genome</b> for this mosquito species, which
+            means that the 'omics' data sets are only aligned to this strain and
+            all the site functionality is activated.{' '}
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/TMPTX_amerMAF">
+              <i>Anopheles merus</i> MAF
+            </a>{' '}
+            will remain available on VectorBase, but with limited functionality.
+            Please{' '}
+            <a href="https://vectorbase.org/vectorbase/app/contact-us">
+              contact us
+            </a>{' '}
+            if you have any questions, suggestions or feedback.
+          </div>
+        );
+      }
+      return null;
+    },
+  },
+
+  //VectorBase, stephensi : https://redmine.apidb.org/issues/53157 b67  Feb-2024 to Feb 2025?
+  {
+    id: 'stephensi',
+    renderDisplay: (props) => {
+      if (
+        (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
+        (props.location.pathname.indexOf(
+          '/record/dataset/TMPTX_asteUCISS2018'
+        ) > -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_869a805bc4') >
+            -1 ||
+          props.location.pathname.indexOf('/record/dataset/TMPTX_asteSDA-500') >
+            -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_e6b0a3ff10') > -1)
+      ) {
+        return (
+          <div key="">
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/TMPTX_asteUCISS2018">
+              <i>Anopheles stephensi</i> UCISS2018
+            </a>{' '}
+            is the <b>new reference genome</b> for this mosquito species, which
+            means that the 'omics' data sets are only aligned to this strain and
+            all the site functionality is activated.{' '}
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/TMPTX_asteSDA-500">
+              <i>Anopheles stephensi</i> SDA-500
+            </a>{' '}
+            will remain available on VectorBase, but with limited functionality.
+            Please{' '}
+            <a href="https://vectorbase.org/vectorbase/app/contact-us">
+              contact us
+            </a>{' '}
+            if you have any questions, suggestions or feedback.
+          </div>
+        );
+      }
+      return null;
+    },
+  },
 
   //VectorBase, albimanus: https://redmine.apidb.org/issues/53151  Nov 2023-2024
   {
