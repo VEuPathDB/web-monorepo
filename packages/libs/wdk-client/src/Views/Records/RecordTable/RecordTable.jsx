@@ -24,6 +24,7 @@ import './RecordTable.css';
 // TODO: handle in model
 const COLUMNS_TO_OVERRIDE_SORT = ['thumbnail', 'clustalInput'];
 
+// NOTE: This is very hacky because the model is not reliably providing column or sort types
 const mapSortType = (val) => {
   if (!isNaN(parseFloat(val)) && isFinite(val)) {
     return 'number';
@@ -112,21 +113,14 @@ class RecordTable extends Component {
   }
 
   render() {
-    const {
-      value,
-      childRow,
-      expandedRows,
-      onExpandedRowsChange,
-      className,
-      onDraw,
-      searchTerm,
-      onSearchTermChange,
-    } = this.props;
+    const { value, childRow, expandedRows, onExpandedRowsChange, className } =
+      this.props;
     const { sort } = this.state;
     const displayableAttributes = this.getDisplayableAttributes(this.props);
     const columns = this.getColumns(this.props);
     const data = this.getOrderedData(this.props);
 
+    // Manipulate columns to match properties expected in Mesa
     const mesaReadyColumns = columns
       .filter((c) => c.isDisplayable)
       .map((c) => {
@@ -138,6 +132,12 @@ class RecordTable extends Component {
           help,
           ...remainingProperties
         } = c;
+        /**
+         * NOTE: This is very hacky because the model is not reliably providing column or sort types
+         *
+         * It's possible that the first "nonNullDataObject" found could misrepresent the actual sort type
+         * of the data.
+         */
         const nonNullDataObject = data.find((d) => d[name] != null);
         const nonNullDataValue =
           nonNullDataObject != null
@@ -167,6 +167,8 @@ class RecordTable extends Component {
         };
       });
 
+    // Manipulate rows to match Mesa properties; this really only pertains to the
+    // link properties that differ between DataTable and Mesa
     const mesaReadyRows = data.map((d) => {
       let newData = { ...d };
       const columnsWithLinks = mesaReadyColumns.filter(
@@ -279,18 +281,6 @@ class RecordTable extends Component {
 
     return (
       <div className={className}>
-        {/* <DataTable
-          searchTerm={searchTerm}
-          onSearchTermChange={onSearchTermChange}
-          getRowId={getSortIndex}
-          expandedRows={expandedRows}
-          onExpandedRowsChange={onExpandedRowsChange}
-          columns={columns}
-          data={data}
-          childRow={childRow}
-          searchable={value.length > 1}
-          onDraw={onDraw}
-        /> */}
         <Mesa state={tableState}>
           {mesaReadyRows.length > 1 && (
             <RecordFilter
