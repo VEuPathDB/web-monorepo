@@ -1072,7 +1072,7 @@ const useHeaderMenuItems = (
             {
               key: 'videos',
               display: 'Videos',
-              type: 'reactRoute',
+              type: 'externalLink',
               url: 'https://www.youtube.com/user/EuPathDB/playlists',
             },
             {
