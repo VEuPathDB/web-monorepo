@@ -2,35 +2,39 @@ import { useCallback } from 'react';
 import {
   InputVariables,
   Props as InputVariablesProps,
-} from '../../../core/components/visualizations/InputVariables';
-import { VariablesByInputName } from '../../../core/utils/data-element-constraints';
+} from '../../../../../core/components/visualizations/InputVariables';
+import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
+import { VariablesByInputName } from '../../../../../core/utils/data-element-constraints';
 import {
   usePromise,
   AllValuesDefinition,
   OverlayConfig,
   Variable,
   Filter,
-} from '../../../core';
-import { CategoricalMarkerConfigurationTable } from './CategoricalMarkerConfigurationTable';
-import { CategoricalMarkerPreview } from './CategoricalMarkerPreview';
+} from '../../../../../core';
+import { CategoricalMarkerConfigurationTable } from '../../MarkerConfiguration/CategoricalMarkerConfigurationTable';
+import { CategoricalMarkerPreview } from '../../MarkerConfiguration/CategoricalMarkerPreview';
 import Barplot from '@veupathdb/components/lib/plots/Barplot';
-import { SubsettingClient } from '../../../core/api';
-import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import { useUncontrolledSelections } from '../hooks/uncontrolledSelections';
+import { SubsettingClient } from '../../../../../core/api';
+import { Toggle } from '@veupathdb/coreui';
+import { useUncontrolledSelections } from '../../../hooks/uncontrolledSelections';
 import {
   BinningMethod,
   SelectedCountsOption,
   SelectedValues,
-} from '../appState';
-import { SharedMarkerConfigurations } from '../mapTypes/shared';
+} from '../../../appState';
+import { gray } from '@veupathdb/coreui/lib/definitions/colors';
+import { SharedMarkerConfigurations } from '../../shared';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
 }
 
-export interface PieMarkerConfiguration
-  extends MarkerConfiguration<'pie'>,
+export interface BarPlotMarkerConfiguration
+  extends MarkerConfiguration<'barplot'>,
     SharedMarkerConfigurations {
+  selectedPlotMode: 'count' | 'proportion';
+  dependentAxisLogScale: boolean;
   binningMethod: BinningMethod;
   selectedValues: SelectedValues;
   selectedCountsOption: SelectedCountsOption;
@@ -41,8 +45,8 @@ interface Props
     InputVariablesProps,
     'onChange' | 'selectedVariables' | 'selectedPlotMode' | 'onPlotSelected'
   > {
-  onChange: (configuration: PieMarkerConfiguration) => void;
-  configuration: PieMarkerConfiguration;
+  onChange: (configuration: BarPlotMarkerConfiguration) => void;
+  configuration: BarPlotMarkerConfiguration;
   overlayConfiguration: OverlayConfig | undefined;
   overlayVariable: Variable | undefined;
   subsettingClient: SubsettingClient;
@@ -59,14 +63,14 @@ interface Props
   allVisibleCategoricalValues: AllValuesDefinition[] | undefined;
 }
 
-// TODO: generalize this and BarPlotMarkerConfigMenu into MarkerConfigurationMenu. Lots of code repetition...
+// TODO: generalize this and PieMarkerConfigMenu into MarkerConfigurationMenu. Lots of code repetition...
 
-export function PieMarkerConfigurationMenu({
+export function BarPlotMarkerConfigurationMenu({
   entities,
-  configuration,
   onChange,
   starredVariables,
   toggleStarredVariable,
+  configuration,
   constraints,
   overlayConfiguration,
   overlayVariable,
@@ -129,6 +133,7 @@ export function PieMarkerConfigurationMenu({
         color: '#333',
       };
     }, [
+      studyId,
       overlayVariable,
       overlayConfiguration?.overlayType,
       subsettingClient,
@@ -140,7 +145,7 @@ export function PieMarkerConfigurationMenu({
   function handleInputVariablesOnChange(selection: VariablesByInputName) {
     if (!selection.overlayVariable) {
       console.error(
-        `Expected overlayVariable to be defined but got ${typeof selection.overlayVariable}`
+        `Expected overlay to defined but got ${typeof selection.overlayVariable}`
       );
       return;
     }
@@ -151,10 +156,23 @@ export function PieMarkerConfigurationMenu({
       selectedValues: undefined,
     });
   }
+  function handlePlotModeSelection(option: string) {
+    onChange({
+      ...configuration,
+      selectedPlotMode:
+        option as BarPlotMarkerConfiguration['selectedPlotMode'],
+    });
+  }
   function handleBinningMethodSelection(option: string) {
     onChange({
       ...configuration,
-      binningMethod: option as PieMarkerConfiguration['binningMethod'],
+      binningMethod: option as BarPlotMarkerConfiguration['binningMethod'],
+    });
+  }
+  function handleLogScaleChange(option: boolean) {
+    onChange({
+      ...configuration,
+      dependentAxisLogScale: option,
     });
   }
 
@@ -194,17 +212,32 @@ export function PieMarkerConfigurationMenu({
           Summary marker (all filtered data)
         </div>
         {overlayConfiguration?.overlayType === 'categorical' ? (
-          <CategoricalMarkerPreview
-            overlayConfiguration={overlayConfiguration}
-            allFilteredCategoricalValues={allFilteredCategoricalValues}
-            mapType="pie"
-            numberSelected={uncontrolledSelections.size}
-          />
+          <>
+            <CategoricalMarkerPreview
+              overlayConfiguration={overlayConfiguration}
+              allFilteredCategoricalValues={allFilteredCategoricalValues}
+              mapType="barplot"
+              numberSelected={uncontrolledSelections.size}
+              isDependentAxisLogScaleActive={
+                configuration.dependentAxisLogScale
+              }
+            />
+          </>
         ) : (
           continuousMarkerPreview
         )}
       </div>
-      {overlayConfiguration?.overlayType === 'continuous' && (
+      <div style={{ maxWidth: '360px', marginTop: '1em' }}>
+        <div
+          style={{
+            color: gray[900],
+            fontWeight: 500,
+            fontSize: '1.2em',
+            marginBottom: '0.5em',
+          }}
+        >
+          Marker X-axis controls
+        </div>
         <RadioButtonGroup
           containerStyles={
             {
@@ -216,7 +249,7 @@ export function PieMarkerConfigurationMenu({
           options={['equalInterval', 'quantile', 'standardDeviation']}
           optionLabels={['Equal interval', 'Quantile (10)', 'Std. dev.']}
           buttonColor={'primary'}
-          // margins={['0em', '0', '0', '1em']}
+          // margins={['-1em', '0', '0', '0em']}
           onOptionSelected={handleBinningMethodSelection}
           disabledList={
             overlayConfiguration?.overlayType === 'continuous'
@@ -224,21 +257,55 @@ export function PieMarkerConfigurationMenu({
               : ['equalInterval', 'quantile', 'standardDeviation']
           }
         />
-      )}
-      {overlayConfiguration?.overlayType === 'categorical' && (
-        <CategoricalMarkerConfigurationTable
-          overlayValues={overlayConfiguration.overlayValues}
-          configuration={configuration}
-          onChange={onChange}
-          uncontrolledSelections={uncontrolledSelections}
-          setUncontrolledSelections={setUncontrolledSelections}
-          allCategoricalValues={
-            configuration.selectedCountsOption === 'filtered'
-              ? allFilteredCategoricalValues
-              : allVisibleCategoricalValues
+      </div>
+      <div style={{ maxWidth: '360px', marginTop: '1em', marginBottom: '1em' }}>
+        <div
+          style={{
+            color: gray[900],
+            fontWeight: 500,
+            fontSize: '1.2em',
+            marginBottom: '0.5em',
+          }}
+        >
+          Marker Y-axis controls
+        </div>
+        <RadioButtonGroup
+          containerStyles={
+            {
+              // marginTop: 20,
+            }
           }
-          selectedCountsOption={configuration.selectedCountsOption}
+          label="Plot mode"
+          selectedOption={configuration.selectedPlotMode || 'count'}
+          options={['count', 'proportion']}
+          optionLabels={['Count', 'Proportion']}
+          buttonColor={'primary'}
+          // margins={['-1em', '0', '0', '1em']}
+          onOptionSelected={handlePlotModeSelection}
         />
+        <Toggle
+          label="Log scale"
+          themeRole="primary"
+          value={configuration.dependentAxisLogScale}
+          onChange={handleLogScaleChange}
+        />
+      </div>
+      {overlayConfiguration?.overlayType === 'categorical' && (
+        <div style={{ maxWidth: '360px', marginTop: '1em' }}>
+          <CategoricalMarkerConfigurationTable
+            overlayValues={overlayConfiguration.overlayValues}
+            configuration={configuration}
+            onChange={onChange}
+            uncontrolledSelections={uncontrolledSelections}
+            setUncontrolledSelections={setUncontrolledSelections}
+            allCategoricalValues={
+              configuration.selectedCountsOption === 'filtered'
+                ? allFilteredCategoricalValues
+                : allVisibleCategoricalValues
+            }
+            selectedCountsOption={configuration.selectedCountsOption}
+          />
+        </div>
       )}
       {overlayConfiguration?.overlayType === 'continuous' && barplotData.value && (
         <div style={{ margin: '5px 0 0 0' }}>
@@ -258,7 +325,6 @@ export function PieMarkerConfigurationMenu({
               marginBottom: 0,
             }}
             containerStyles={{
-              // set barplot maxWidth
               height: '300px',
               maxWidth: '360px',
             }}

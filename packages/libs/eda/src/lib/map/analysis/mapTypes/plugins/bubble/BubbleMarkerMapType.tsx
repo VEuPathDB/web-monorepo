@@ -15,26 +15,28 @@ import {
   Filter,
   useDataClient,
   useStudyEntities,
-} from '../../../../core';
+} from '../../../../../core';
 import {
   BubbleOverlayConfig,
   StandaloneMapBubblesLegendRequestParams,
   StandaloneMapBubblesRequestParams,
   StandaloneMapBubblesResponse,
-} from '../../../../core/api/DataClient/types';
-import { useToggleStarredVariable } from '../../../../core/hooks/starredVariables';
-import { DraggableLegendPanel } from '../../DraggableLegendPanel';
-import { MapLegend } from '../../MapLegend';
-import MapVizManagement from '../../MapVizManagement';
-import { BubbleMarkerConfigurationMenu } from '../../MarkerConfiguration';
-import { BubbleMarkerConfiguration } from '../../MarkerConfiguration/BubbleMarkerConfigurationMenu';
+} from '../../../../../core/api/DataClient/types';
+import { useToggleStarredVariable } from '../../../../../core/hooks/starredVariables';
+import { DraggableLegendPanel } from '../../../DraggableLegendPanel';
+import { MapLegend } from '../../../MapLegend';
+import MapVizManagement from '../../../MapVizManagement';
+import {
+  BubbleMarkerConfiguration,
+  BubbleMarkerConfigurationMenu,
+} from './BubbleMarkerConfigurationMenu';
 import {
   MapTypeConfigurationMenu,
   MarkerConfigurationOption,
 } from '../../MarkerConfiguration/MapTypeConfigurationMenu';
 import { BubbleMarkerIcon } from '../../MarkerConfiguration/icons';
-import { useStandaloneVizPlugins } from '../../hooks/standaloneVizPlugins';
-import { getDefaultBubbleOverlayConfig } from '../../utils/defaultOverlayConfig';
+import { useStandaloneVizPlugins } from '../../../hooks/standaloneVizPlugins';
+import { getDefaultBubbleOverlayConfig } from '../../../utils/defaultOverlayConfig';
 import {
   MAX_FILTERSET_VALUES,
   defaultAnimation,
@@ -47,26 +49,26 @@ import {
   getErrorOverlayComponent,
   useSelectedMarkerSnackbars,
   selectedMarkersLittleFilter,
-} from '../shared';
+} from '../../shared';
 import {
   MapTypeConfigPanelProps,
   MapTypeMapLayerProps,
   MapTypePlugin,
-} from '../types';
-import DraggableVisualization from '../../DraggableVisualization';
-import { VariableDescriptor } from '../../../../core/types/variable';
+} from '../../types';
+import DraggableVisualization from '../../../DraggableVisualization';
+import { VariableDescriptor } from '../../../../../core/types/variable';
 import { useQuery } from '@tanstack/react-query';
 import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
-import { GeoConfig } from '../../../../core/types/geoConfig';
+import { GeoConfig } from '../../../../../core/types/geoConfig';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import {
   useLittleFilters,
   UseLittleFiltersFuncProps,
-} from '../../littleFilters';
-import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
-import { SubStudies } from '../../SubStudies';
-import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
-import { STUDIES_ENTITY_ID, STUDY_ID_VARIABLE_ID } from '../../../constants';
+} from '../../../littleFilters';
+import TimeSliderQuickFilter from '../../../TimeSliderQuickFilter';
+import { SubStudies } from '../../../SubStudies';
+import { MapTypeHeaderStudyDetails } from '../../MapTypeHeaderStudyDetails';
+import { STUDIES_ENTITY_ID, STUDY_ID_VARIABLE_ID } from '../../../../constants';
 
 const displayName = 'Bubbles';
 

@@ -1,6 +1,6 @@
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { VariableCollectionDescriptor } from '../../../../core/types/variable';
-import { MapTypeConfigPanelProps, MapTypePlugin } from '../types';
+import { VariableCollectionDescriptor } from '../../../../../core/types/variable';
+import { MapTypeConfigPanelProps, MapTypePlugin } from '../../types';
 
 const displayName = 'Bar plots';
 

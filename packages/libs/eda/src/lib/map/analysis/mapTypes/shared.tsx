@@ -39,8 +39,8 @@ import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { NoDataError } from '../../../core/api/DataClient/NoDataError';
 import { useCallback, useState } from 'react';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
-import { PieMarkerConfiguration } from '../MarkerConfiguration/PieMarkerConfigurationMenu';
-import { BarPlotMarkerConfiguration } from '../MarkerConfiguration/BarPlotMarkerConfigurationMenu';
+import { PieMarkerConfiguration } from './plugins/donut/PieMarkerConfigurationMenu';
+import { BarPlotMarkerConfiguration } from './plugins/barplot/BarPlotMarkerConfigurationMenu';
 
 export const defaultAnimation = {
   method: 'geohash',

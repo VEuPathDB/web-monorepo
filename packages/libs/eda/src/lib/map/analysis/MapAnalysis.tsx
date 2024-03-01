@@ -55,7 +55,7 @@ import {
   BarPlotMarkerIcon,
   DonutMarkerIcon,
   BubbleMarkerIcon,
-} from './MarkerConfiguration/icons';
+} from './mapTypes/MarkerConfiguration/icons';
 import { AllAnalyses } from '../../workspace/AllAnalyses';
 import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 import { isSavedAnalysis } from '../../core/utils/analysis';
