@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import React from 'react';
 
 type RKeyboardEvent = React.KeyboardEvent<HTMLDivElement>;
@@ -35,7 +34,6 @@ class TabbableContainer extends React.Component<Props> {
       !this.node.contains(document.activeElement)
     ) {
       this.node.focus();
-      // $(this.node).find(':tabbable:first').focus();
     }
   }
 
@@ -53,14 +51,32 @@ class TabbableContainer extends React.Component<Props> {
     if (event.key !== 'Tab') {
       return;
     }
-    let tabbables = $(':tabbable', this.node!);
-    let l = tabbables.length;
-    let index = tabbables.index($(event.target as HTMLElement));
+    // Assuming `this.node` refers to the container node, get all tabbable elements within the container
+    const tabbables: HTMLElement[] | null =
+      this.node &&
+      Array.from(
+        this.node.querySelectorAll(
+          'a[href], button, input, select, textarea, [tabindex]'
+        )
+      );
+
+    // Filter out elements that are not tabbable
+    const filteredTabbables =
+      tabbables?.filter((element) => {
+        const tabIndex = element.getAttribute('tabindex');
+        const isDisabled =
+          'disabled' in element &&
+          (element as HTMLElement & { disabled: boolean }).disabled;
+        return !isDisabled && tabIndex !== '-1';
+      }) ?? [];
+
+    let l = filteredTabbables.length;
+    let index = filteredTabbables.findIndex((el) => el === event.target);
     let delta = event.shiftKey ? l - 1 : 1;
     let nextIndex = (index + delta) % l;
-    let nextTarget = tabbables[nextIndex];
+    let nextTarget = filteredTabbables[nextIndex];
     if (nextTarget == null) {
-      nextTarget = tabbables[0];
+      nextTarget = filteredTabbables[0];
     }
     nextTarget.focus();
     event.preventDefault();
