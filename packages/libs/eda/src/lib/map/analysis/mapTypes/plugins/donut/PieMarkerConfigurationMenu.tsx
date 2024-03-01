@@ -129,6 +129,7 @@ export function PieMarkerConfigurationMenu({
         color: '#333',
       };
     }, [
+      studyId,
       overlayVariable,
       overlayConfiguration?.overlayType,
       subsettingClient,
