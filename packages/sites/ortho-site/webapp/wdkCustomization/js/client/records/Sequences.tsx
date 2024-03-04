@@ -2,13 +2,23 @@ import React from 'react';
 
 import Mesa from '@veupathdb/coreui/lib/components/Mesa';
 import { RecordTableProps, WrappedComponentProps } from './Types';
+import { useOrthoService } from 'ortho-client/hooks/orthoService';
 
 export function RecordTable_Sequences(
   props: WrappedComponentProps<RecordTableProps>
 ) {
-  const ogGroupName = props.record.id.find(
+  const groupName = props.record.id.find(
     ({ name }) => name === 'group_name'
   )?.value;
+
+  if (!groupName) {
+    throw new Error('groupName is required but was not found in the record.');
+  }
+
+  const treeResponse = useOrthoService(
+    (orthoService) => orthoService.getGroupTree(groupName),
+    [groupName]
+  );
 
   const mesaColumns = props.table.attributes
     .map(({ name, displayName }) => ({
@@ -31,7 +41,7 @@ export function RecordTable_Sequences(
     <>
       <ul>
         <li>displayName: {props.record.displayName}</li>
-        <li>group_name id: {ogGroupName}</li>
+        <li>group_name id: {groupName}</li>
       </ul>
       <Mesa state={mesaState} />
     </>

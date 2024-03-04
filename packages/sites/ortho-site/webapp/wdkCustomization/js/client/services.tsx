@@ -9,11 +9,13 @@ import {
   groupLayoutResponseDecoder,
 } from 'ortho-client/utils/groupLayout';
 import { TaxonEntries, taxonEntriesDecoder } from 'ortho-client/utils/taxons';
+import { TreeResponse, treeResponseDecoder } from 'ortho-client/utils/tree';
 
 export function wrapWdkService(wdkService: WdkService): OrthoService {
   return {
     ...wdkService,
     getGroupLayout: orthoServiceWrappers.getGroupLayout(wdkService),
+    getGroupTree: orthoServiceWrappers.getGroupTree(wdkService),
     getProteomeSummary: orthoServiceWrappers.getProteomeSummary(wdkService),
     getTaxons: orthoServiceWrappers.getTaxons(wdkService),
   };
@@ -25,6 +27,12 @@ const orthoServiceWrappers = {
       useCache: true,
       method: 'get',
       path: `/group/${groupName}/layout`,
+    }),
+  getGroupTree: (wdkService: WdkService) => (groupName: string) =>
+    wdkService.sendRequest(treeResponseDecoder, {
+      useCache: true,
+      method: 'get',
+      path: `/newick-protein-tree/${groupName}`,
     }),
   getProteomeSummary: (wdkService: WdkService) => () =>
     wdkService.sendRequest(proteomeSummaryRowsDecoder, {
@@ -42,6 +50,7 @@ const orthoServiceWrappers = {
 
 export interface OrthoService extends WdkService {
   getGroupLayout: (groupName: string) => Promise<GroupLayoutResponse>;
+  getGroupTree: (groupName: string) => Promise<TreeResponse>;
   getProteomeSummary: () => Promise<ProteomeSummaryRows>;
   getTaxons: () => Promise<TaxonEntries>;
 }
