@@ -23,24 +23,40 @@ type UserDatasetUploadServiceWrappers = ReturnType<
 >;
 
 /*
- * The authentication method uses an 'Auth-Key' header, not the cookie like in WDK
+ * The authentication method uses a header, not a cookie like in WDK
  */
-function fetchWithCredentials(
+async function fetchWithCredentials(
   serviceUrl: string,
   path: string,
   method: string,
   body: any,
   contentType?: string
 ) {
-  const wdkCheckAuth =
-    document.cookie.split('; ').find((x) => x.startsWith('wdk_check_auth=')) ||
-    '';
-  const authKey = wdkCheckAuth.replace('wdk_check_auth=', '');
-  const authO = {
-    'Auth-Key': authKey,
-  };
-  const contentTypeO: Record<string, string> =
+  const cookies = Object.fromEntries(
+    document.cookie.split('; ').map((entry) => entry.split(/=(.*)/).slice(0, 2))
+  );
+
+  let authO: Record<string, string>;
+
+  if ('Authorization' in cookies) {
+    authO = {
+      Authorization: 'Bearer ' + cookies.Authorization,
+    };
+  } else {
+    const authKeyValue = cookies.wdk_check_auth;
+    if (authKeyValue == null) {
+      throw new Error(
+        `Tried to retrieve a non-existent WDK auth key for user.`
+      );
+    }
+    authO = {
+      'Auth-Key': authKeyValue,
+    };
+  }
+
+  const contentTypeO =
     contentType != null ? { 'Content-Type': contentType } : {};
+
   return fetch(serviceUrl + path, {
     method: method.toUpperCase(),
     body: body,
