@@ -1,5 +1,6 @@
 import React from 'react';
 
+import Mesa from '@veupathdb/coreui/lib/components/Mesa';
 import { RecordTableProps, WrappedComponentProps } from './Types';
 
 export function RecordTable_Sequences(
@@ -9,23 +10,31 @@ export function RecordTable_Sequences(
     ({ name }) => name === 'group_name'
   )?.value;
 
-  const tables = Object.keys(props.record.tables).join(' + ');
-  // EcNumber + Sequences + TaxonCounts + ProteinPFams + PFams + Statistics
+  const mesaColumns = props.table.attributes
+    .map(
+      ({ name, displayName }) => ({
+        key: name,
+        name: displayName,
+      })
+      // and remove some a raw HTML checkbox field and an object-laden 'sequence_link' field
+    )
+    .filter(({ key }) => key !== 'clustalInput' && key !== 'sequence_link');
 
-  const sequences = props.record.tables['Sequences'];
-  const firstRow = sequences[0];
+  const mesaRows = props.value;
 
-  const sequenceT = props.recordClass.tables.find(
-    (table) => table.name === 'Sequences'
-  );
-  const attributes = sequenceT?.attributes;
+  const mesaState = {
+    options: {},
+    rows: mesaRows,
+    columns: mesaColumns,
+  };
+
   return (
-    <ul>
-      <li>displayName: {props.record.displayName}</li>
-      <li>group_name id: {ogGroupName}</li>
-      <li>tables keys: {tables}</li>
-      <li>attributes of Sequences: {JSON.stringify(attributes)}</li>
-      <li>first row of Sequences: {JSON.stringify(firstRow)}</li>
-    </ul>
+    <>
+      <ul>
+        <li>displayName: {props.record.displayName}</li>
+        <li>group_name id: {ogGroupName}</li>
+      </ul>
+      <Mesa state={mesaState} />
+    </>
   );
 }
