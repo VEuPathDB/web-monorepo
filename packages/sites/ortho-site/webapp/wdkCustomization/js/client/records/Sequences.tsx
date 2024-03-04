@@ -11,13 +11,12 @@ export function RecordTable_Sequences(
   )?.value;
 
   const mesaColumns = props.table.attributes
-    .map(
-      ({ name, displayName }) => ({
-        key: name,
-        name: displayName,
-      })
-      // and remove some a raw HTML checkbox field and an object-laden 'sequence_link' field
-    )
+    .map(({ name, displayName }) => ({
+      key: name,
+      name: displayName,
+    }))
+    // and remove a raw HTML checkbox field - we'll use Mesa's built-in checkboxes for this
+    // and an object-laden 'sequence_link' field - the ID seems to be replicated in the full_id field
     .filter(({ key }) => key !== 'clustalInput' && key !== 'sequence_link');
 
   const mesaRows = props.value;
