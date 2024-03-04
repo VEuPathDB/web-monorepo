@@ -1,11 +1,13 @@
 import DraggablePanel, {
   DraggablePanelCoordinatePair,
 } from '@veupathdb/coreui/lib/components/containers/DraggablePanel';
+import { PanelConfig } from './appState';
 
 export const DraggableLegendPanel = (props: {
   zIndex: number;
   panelTitle?: string;
   defaultPosition?: DraggablePanelCoordinatePair;
+  onDragComplete?: (position: PanelConfig['position']) => void;
   children: React.ReactNode;
   headerButtons?: React.FC;
 }) => (
@@ -15,6 +17,7 @@ export const DraggableLegendPanel = (props: {
     panelTitle={props.panelTitle ?? 'Legend'}
     confineToParentContainer
     defaultPosition={props.defaultPosition ?? { x: window.innerWidth, y: 225 }}
+    onDragComplete={props.onDragComplete}
     styleOverrides={{
       zIndex: props.zIndex,
       // set minWidth for draggable panel

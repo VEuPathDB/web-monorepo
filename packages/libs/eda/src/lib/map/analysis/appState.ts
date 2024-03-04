@@ -97,7 +97,7 @@ export const MarkerConfiguration = t.intersection([
 ]);
 
 const PanelConfig = t.type({
-  isVisble: t.boolean,
+  isVisible: t.boolean,
   position: t.type({ x: t.number, y: t.number }),
   dimensions: t.type({
     height: t.union([t.number, t.string]),
@@ -105,8 +105,28 @@ const PanelConfig = t.type({
   }),
 });
 
+const VariableLegendPosition = t.type({
+  variable: t.union([t.undefined, t.type({ x: t.number, y: t.number })]),
+});
+const CountsLegendPosition = t.type({
+  count: t.type({ x: t.number, y: t.number }),
+});
+const BubbleLegendPositionConfig = t.intersection([
+  VariableLegendPosition,
+  CountsLegendPosition,
+]);
+
+const LegendPanelConfig = t.partial({
+  pie: t.union([VariableLegendPosition, t.undefined]),
+  barplot: t.union([VariableLegendPosition, t.undefined]),
+  bubble: BubbleLegendPositionConfig,
+});
+
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export type PanelConfig = t.TypeOf<typeof PanelConfig>;
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export type LegendPanelConfig = t.TypeOf<typeof LegendPanelConfig>;
 
 export const AppState = t.intersection([
   t.type({
@@ -120,6 +140,7 @@ export const AppState = t.intersection([
   }),
   t.partial({
     studyDetailsPanelConfig: PanelConfig,
+    legendPanelConfig: LegendPanelConfig,
     boundsZoomLevel: t.type({
       zoomLevel: t.number,
       bounds: t.type({
@@ -200,7 +221,7 @@ export function useAppState(
       ...(isMegaStudy
         ? {
             studyDetailsPanelConfig: {
-              isVisble: false,
+              isVisible: false,
               position: {
                 x: Math.max(650, window.innerWidth / 2 - 250),
                 y: Math.max(300, window.innerHeight / 2 - 250),
@@ -209,6 +230,15 @@ export function useAppState(
             },
           }
         : {}),
+      legendPanelConfig: {
+        bubble: {
+          variable: undefined,
+          count: {
+            x: window.innerWidth,
+            y: 420,
+          },
+        },
+      },
       markerConfigurations: [
         {
           type: 'pie',
@@ -342,5 +372,6 @@ export function useAppState(
     setViewport: useSetter('viewport'),
     setTimeSliderConfig: useSetter('timeSliderConfig', true),
     setStudyDetailsPanelConfig: useSetter('studyDetailsPanelConfig'),
+    setLegendPanelConfig: useSetter('legendPanelConfig'),
   };
 }

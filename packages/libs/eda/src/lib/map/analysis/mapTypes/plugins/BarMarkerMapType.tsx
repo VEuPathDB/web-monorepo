@@ -79,6 +79,8 @@ import { useLittleFilters } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
 import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
 import { SubStudies } from '../../SubStudies';
+import { useDebouncedCallback } from '../../../../core/hooks/debouncing';
+import { PanelConfig } from '../../appState';
 const displayName = 'Bar plots';
 
 export const plugin: MapTypePlugin = {
@@ -426,10 +428,15 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     filters,
     geoConfigs,
     appState,
-    appState: { markerConfigurations, activeMarkerConfigurationType },
+    appState: {
+      markerConfigurations,
+      activeMarkerConfigurationType,
+      legendPanelConfig,
+    },
     updateConfiguration,
     headerButtons,
     setStudyDetailsPanelConfig,
+    setLegendPanelConfig,
   } = props;
 
   const configuration = props.configuration as BarPlotMarkerConfiguration;
@@ -490,9 +497,21 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     substudyFilterFuncs
   );
 
+  const updateLegendPosition = useDebouncedCallback(
+    (position: PanelConfig['position']) => {
+      setLegendPanelConfig({
+        ...legendPanelConfig,
+        barplot: {
+          variable: position,
+        },
+      });
+    },
+    250
+  );
+
   return (
     <>
-      {appState.studyDetailsPanelConfig?.isVisble && (
+      {appState.studyDetailsPanelConfig?.isVisible && (
         <SubStudies
           studyId={studyId}
           entityId={STUDIES_ENTITY_ID}
@@ -507,6 +526,8 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
         panelTitle={overlayVariable?.displayName}
         zIndex={3}
         headerButtons={headerButtons}
+        defaultPosition={legendPanelConfig?.barplot?.variable}
+        onDragComplete={updateLegendPosition}
       >
         <div style={{ padding: '5px 10px' }}>
           {noDataError ?? (
@@ -571,10 +592,10 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
       outputEntityId={outputEntityId}
       onShowStudies={
         studyDetailsPanelConfig &&
-        ((isVisble) =>
+        ((isVisible) =>
           props.setStudyDetailsPanelConfig({
             ...studyDetailsPanelConfig,
-            isVisble,
+            isVisible,
           }))
       }
     />

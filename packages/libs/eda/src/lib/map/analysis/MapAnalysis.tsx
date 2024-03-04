@@ -169,6 +169,7 @@ function MapAnalysisImpl(props: ImplProps) {
     setMarkerConfigurations,
     setActiveMarkerConfigurationType,
     setStudyDetailsPanelConfig,
+    setLegendPanelConfig,
     geoConfigs,
     setTimeSliderConfig,
     showLinkToEda = false,
@@ -766,6 +767,7 @@ function MapAnalysisImpl(props: ImplProps) {
           hideVizInputsAndControls,
           setHideVizInputsAndControls,
           setStudyDetailsPanelConfig,
+          setLegendPanelConfig,
           headerButtons: HeaderButtons,
         };
 

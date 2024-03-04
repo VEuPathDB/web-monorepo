@@ -7,7 +7,7 @@ import {
 } from '../../../core';
 import { GeoConfig } from '../../../core/types/geoConfig';
 import { ComputationAppOverview } from '../../../core/types/visualization';
-import { AppState, PanelConfig } from '../appState';
+import { AppState, LegendPanelConfig, PanelConfig } from '../appState';
 import { EntityCounts } from '../../../core/hooks/entityCounts';
 import { SiteInformationProps } from '../Types';
 
@@ -45,6 +45,7 @@ export interface MapTypeMapLayerProps {
   setHideVizInputsAndControls: (hide: boolean) => void;
   setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
   setStudyDetailsPanelConfig: (config: PanelConfig) => void;
+  setLegendPanelConfig: (config: LegendPanelConfig) => void;
   setTimeSliderConfig?: (
     newConfig: NonNullable<AppState['timeSliderConfig']>
   ) => void;

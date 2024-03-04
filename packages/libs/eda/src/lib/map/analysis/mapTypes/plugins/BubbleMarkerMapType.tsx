@@ -67,6 +67,8 @@ import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
 import { SubStudies } from '../../SubStudies';
 import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
 import { STUDIES_ENTITY_ID, STUDY_ID_VARIABLE_ID } from '../../../constants';
+import { useDebouncedCallback } from '../../../../core/hooks/debouncing';
+import { PanelConfig } from '../../appState';
 
 const displayName = 'Bubbles';
 
@@ -283,10 +285,15 @@ function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
     filters,
     geoConfigs,
     appState,
-    appState: { markerConfigurations, activeMarkerConfigurationType },
+    appState: {
+      markerConfigurations,
+      activeMarkerConfigurationType,
+      legendPanelConfig,
+    },
     updateConfiguration,
     headerButtons,
     setStudyDetailsPanelConfig,
+    setLegendPanelConfig,
   } = props;
   const configuration = props.configuration as BubbleMarkerConfiguration;
 
@@ -355,9 +362,38 @@ function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
     substudyFilterFuncs
   );
 
+  const updateVariableLegendPosition = useDebouncedCallback(
+    (position: PanelConfig['position']) => {
+      setLegendPanelConfig({
+        ...legendPanelConfig,
+        bubble: {
+          count: legendPanelConfig?.bubble?.count ?? {
+            x: window.innerWidth,
+            y: 420,
+          },
+          variable: position,
+        },
+      });
+    },
+    250
+  );
+
+  const updateCountLegendPosition = useDebouncedCallback(
+    (position: PanelConfig['position']) => {
+      setLegendPanelConfig({
+        ...legendPanelConfig,
+        bubble: {
+          variable: legendPanelConfig?.bubble?.variable,
+          count: position,
+        },
+      });
+    },
+    250
+  );
+
   return (
     <>
-      {appState.studyDetailsPanelConfig?.isVisble && (
+      {appState.studyDetailsPanelConfig?.isVisible && (
         <SubStudies
           studyId={studyId}
           entityId={STUDIES_ENTITY_ID}
@@ -368,7 +404,12 @@ function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
           hasSelectedMarkers={!!selectedMarkers?.length}
         />
       )}
-      <DraggableLegendPanel panelTitle="Count" zIndex={2}>
+      <DraggableLegendPanel
+        panelTitle="Count"
+        zIndex={2}
+        defaultPosition={legendPanelConfig?.bubble?.count}
+        onDragComplete={updateCountLegendPosition}
+      >
         <div style={{ padding: '5px 10px' }}>
           {invalidProportionMessage ?? (
             <MapLegend
@@ -386,7 +427,8 @@ function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
       <DraggableLegendPanel
         panelTitle={overlayVariable?.displayName}
         zIndex={3}
-        defaultPosition={{ x: window.innerWidth, y: 420 }}
+        defaultPosition={legendPanelConfig?.bubble?.variable}
+        onDragComplete={updateVariableLegendPosition}
         headerButtons={headerButtons}
       >
         <div style={{ padding: '5px 10px' }}>
@@ -460,10 +502,10 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
       outputEntityId={outputEntityId}
       onShowStudies={
         studyDetailsPanelConfig &&
-        ((isVisble) =>
+        ((isVisible) =>
           props.setStudyDetailsPanelConfig({
             ...studyDetailsPanelConfig,
-            isVisble,
+            isVisible,
           }))
       }
     />
