@@ -1,8 +1,8 @@
 import React from 'react';
-
-import Mesa from '@veupathdb/coreui/lib/components/Mesa';
+import TreeTable from '@veupathdb/components/lib/components/tidytree/TreeTable';
 import { RecordTableProps, WrappedComponentProps } from './Types';
 import { useOrthoService } from 'ortho-client/hooks/orthoService';
+import { Loading } from '../../../../../../../libs/wdk-client/lib/Components';
 
 export function RecordTable_Sequences(
   props: WrappedComponentProps<RecordTableProps>
@@ -19,6 +19,8 @@ export function RecordTable_Sequences(
     (orthoService) => orthoService.getGroupTree(groupName),
     [groupName]
   );
+
+  if (treeResponse == null) return <Loading />;
 
   const mesaColumns = props.table.attributes
     .map(({ name, displayName }) => ({
@@ -37,13 +39,19 @@ export function RecordTable_Sequences(
     columns: mesaColumns,
   };
 
+  const treeProps = {
+    data: treeResponse.newick,
+    width: 200,
+    highlightMode: 'monophyletic' as const,
+  };
+
   return (
     <>
       <ul>
         <li>displayName: {props.record.displayName}</li>
         <li>group_name id: {groupName}</li>
       </ul>
-      <Mesa state={mesaState} />
+      <TreeTable rowHeight={100} treeProps={treeProps} tableProps={mesaState} />
     </>
   );
 }
