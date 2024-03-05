@@ -89,5 +89,8 @@
   "files": [
     "dist",
     "webapp"
-  ]
+  ],
+  "dependencies": {
+    "patristic": "^0.6.0"
+  }
 }

@@ -2,7 +2,8 @@ import React from 'react';
 import TreeTable from '@veupathdb/components/lib/components/tidytree/TreeTable';
 import { RecordTableProps, WrappedComponentProps } from './Types';
 import { useOrthoService } from 'ortho-client/hooks/orthoService';
-import { Loading } from '../../../../../../../libs/wdk-client/lib/Components';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { parseNewick } from 'patristic';
 
 export function RecordTable_Sequences(
   props: WrappedComponentProps<RecordTableProps>
@@ -33,6 +34,17 @@ export function RecordTable_Sequences(
 
   const mesaRows = props.value;
 
+  // do some validation on the tree w.r.t. the table
+
+  // should this be async? it's potentially expensive
+  const tree = parseNewick(treeResponse.newick);
+  const leaves = tree.getLeaves();
+
+  const numLeaves = leaves.length;
+  const numSequences = mesaRows.length;
+
+  console.log({ numLeaves, numSequences });
+
   const mesaState = {
     options: {},
     rows: mesaRows,
@@ -41,7 +53,7 @@ export function RecordTable_Sequences(
 
   const treeProps = {
     data: treeResponse.newick,
-    width: 200,
+    width: 400,
     highlightMode: 'monophyletic' as const,
   };
 

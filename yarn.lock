@@ -8755,6 +8755,7 @@ __metadata:
     mini-css-extract-plugin: ^2.7.6
     notistack: ^1.0.10
     npm-run-all: ^4.1.5
+    patristic: ^0.6.0
     popper.js: ^1.16.1
     react: 17
     react-cytoscapejs: ^2.0.0
@@ -28437,6 +28438,13 @@ __metadata:
   version: 0.6.0
   resolution: "patristic@https://github.com/CDCgov/patristic.git#commit=e51a23401765558267ccb993b4c061d5996df600"
   checksum: 5b58451c81506a0f6bfd15891edde488b5e81776ce6f97333c528d01a049cf4a783b53aca48280430377be14850204f83c16752c4331abb11a022f394ec13d56
+  languageName: node
+  linkType: hard
+
+"patristic@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "patristic@npm:0.6.0"
+  checksum: b2253b1dcc9ca85e8a4c50f3d496d50bff45f8378f6a5b2e4ec03f69b2332c51d374bcd5e90b4387222ec98c8fb6b26b4788784a6df8234530557dac9e4b0b6f
   languageName: node
   linkType: hard
 
