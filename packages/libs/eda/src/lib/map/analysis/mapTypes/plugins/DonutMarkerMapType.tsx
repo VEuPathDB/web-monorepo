@@ -58,7 +58,10 @@ import {
   MapTypeMapLayerProps,
   MapTypePlugin,
 } from '../types';
-import DraggableVisualization from '../../DraggableVisualization';
+import DraggableVisualization, {
+  DEFAULT_DRAGGABLE_VIZ_DIMENSIONS,
+  DEFAULT_DRAGGABLE_VIZ_POSITION,
+} from '../../DraggableVisualization';
 import { useStandaloneVizPlugins } from '../../hooks/standaloneVizPlugins';
 import {
   MapTypeConfigurationMenu,
@@ -96,6 +99,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     studyId,
     studyEntities,
     filters,
+    setVisualizationPanelConfigs,
   } = props;
 
   const subsettingClient = useSubsettingClient();
@@ -237,6 +241,8 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     selectedOverlayConfig: overlayConfiguration.data,
   });
 
+  const { visualizationPanelConfigs } = appState;
+
   const setActiveVisualizationId = useCallback(
     (activeVisualizationId?: string) => {
       if (configuration == null) return;
@@ -244,8 +250,25 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
         ...configuration,
         activeVisualizationId,
       });
+      setVisualizationPanelConfigs({
+        ...visualizationPanelConfigs,
+        pie: {
+          position:
+            visualizationPanelConfigs?.pie?.position ??
+            DEFAULT_DRAGGABLE_VIZ_POSITION,
+          dimensions:
+            visualizationPanelConfigs?.pie?.dimensions ??
+            DEFAULT_DRAGGABLE_VIZ_DIMENSIONS,
+          isVisible: !!activeVisualizationId,
+        },
+      });
     },
-    [configuration, updateConfiguration]
+    [
+      configuration,
+      updateConfiguration,
+      visualizationPanelConfigs,
+      setVisualizationPanelConfigs,
+    ]
   );
 
   const mapTypeConfigurationMenuTabs: TabbedDisplayProps<
@@ -393,11 +416,13 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
       markerConfigurations,
       activeMarkerConfigurationType,
       legendPanelConfig,
+      visualizationPanelConfigs,
     },
     filters,
     headerButtons,
     setStudyDetailsPanelConfig,
     setLegendPanelConfig,
+    setVisualizationPanelConfigs,
   } = props;
   const {
     selectedVariable,
@@ -472,6 +497,60 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     250
   );
 
+  const updateVisualizationPosition = useCallback(
+    (position: PanelConfig['position']) => {
+      const newConfig = {
+        position,
+        dimensions:
+          visualizationPanelConfigs?.pie?.dimensions ??
+          DEFAULT_DRAGGABLE_VIZ_DIMENSIONS,
+        isVisible: true,
+      };
+      setVisualizationPanelConfigs({
+        ...visualizationPanelConfigs,
+        pie: newConfig,
+      });
+    },
+    [visualizationPanelConfigs, setVisualizationPanelConfigs]
+  );
+
+  const updateVisualizationDimensions = useCallback(
+    (dimensions: PanelConfig['dimensions']) => {
+      const newConfig = {
+        dimensions,
+        position:
+          visualizationPanelConfigs?.pie?.position ??
+          DEFAULT_DRAGGABLE_VIZ_POSITION,
+        isVisible: true,
+      };
+      setVisualizationPanelConfigs({
+        ...visualizationPanelConfigs,
+        pie: newConfig,
+      });
+    },
+    [visualizationPanelConfigs, setVisualizationPanelConfigs]
+  );
+
+  const onPanelDismiss = useCallback(() => {
+    setActiveVisualizationId(undefined);
+    setVisualizationPanelConfigs({
+      ...visualizationPanelConfigs,
+      pie: {
+        position:
+          visualizationPanelConfigs?.pie?.position ??
+          DEFAULT_DRAGGABLE_VIZ_POSITION,
+        dimensions:
+          visualizationPanelConfigs?.pie?.dimensions ??
+          DEFAULT_DRAGGABLE_VIZ_DIMENSIONS,
+        isVisible: false,
+      },
+    });
+  }, [
+    setActiveVisualizationId,
+    setVisualizationPanelConfigs,
+    visualizationPanelConfigs,
+  ]);
+
   return (
     <>
       {appState.studyDetailsPanelConfig?.isVisible && (
@@ -509,7 +588,6 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
       <DraggableVisualization
         analysisState={props.analysisState}
         visualizationId={activeVisualizationId}
-        setActiveVisualizationId={setActiveVisualizationId}
         apps={props.apps}
         plugins={plugins}
         geoConfigs={geoConfigs}
@@ -520,6 +598,17 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
         zIndexForStackingContext={2}
         hideInputsAndControls={props.hideVizInputsAndControls}
         setHideInputsAndControls={props.setHideVizInputsAndControls}
+        onDragComplete={updateVisualizationPosition}
+        defaultPosition={
+          visualizationPanelConfigs?.pie?.position ??
+          DEFAULT_DRAGGABLE_VIZ_POSITION
+        }
+        onPanelResize={updateVisualizationDimensions}
+        dimensions={
+          visualizationPanelConfigs?.pie?.dimensions ??
+          DEFAULT_DRAGGABLE_VIZ_DIMENSIONS
+        }
+        onPanelDismiss={onPanelDismiss}
       />
     </>
   );

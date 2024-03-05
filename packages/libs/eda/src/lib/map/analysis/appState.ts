@@ -122,11 +122,22 @@ const LegendPanelConfig = t.partial({
   bubble: BubbleLegendPositionConfig,
 });
 
+const VisualizationPanelConfigs = t.partial({
+  barplot: t.union([t.undefined, PanelConfig]),
+  pie: t.union([t.undefined, PanelConfig]),
+  bubble: t.union([t.undefined, PanelConfig]),
+});
+
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export type PanelConfig = t.TypeOf<typeof PanelConfig>;
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export type LegendPanelConfig = t.TypeOf<typeof LegendPanelConfig>;
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export type VisualizationPanelConfigs = t.TypeOf<
+  typeof VisualizationPanelConfigs
+>;
 
 export const AppState = t.intersection([
   t.type({
@@ -141,6 +152,7 @@ export const AppState = t.intersection([
   t.partial({
     studyDetailsPanelConfig: PanelConfig,
     legendPanelConfig: LegendPanelConfig,
+    visualizationPanelConfigs: VisualizationPanelConfigs,
     boundsZoomLevel: t.type({
       zoomLevel: t.number,
       bounds: t.type({
@@ -239,6 +251,7 @@ export function useAppState(
           },
         },
       },
+      visualizationPanelConfigs: {},
       markerConfigurations: [
         {
           type: 'pie',
@@ -373,5 +386,6 @@ export function useAppState(
     setTimeSliderConfig: useSetter('timeSliderConfig', true),
     setStudyDetailsPanelConfig: useSetter('studyDetailsPanelConfig'),
     setLegendPanelConfig: useSetter('legendPanelConfig'),
+    setVisualizationPanelConfigs: useSetter('visualizationPanelConfigs'),
   };
 }
