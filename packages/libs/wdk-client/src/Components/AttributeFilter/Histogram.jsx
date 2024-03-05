@@ -24,7 +24,7 @@ import {
 } from '../../Components/AttributeFilter/AttributeFilterUtils';
 import Icon from '../../Components/Icon/IconAlt';
 import { CollapsibleSection, IconAlt } from '../../Components';
-import Tooltip from '../../Components/Overlays/Tooltip';
+import WDKClientTooltip from '../../Components/Overlays/Tooltip';
 
 const DAY = 1000 * 60 * 60 * 24;
 
@@ -836,9 +836,9 @@ export default Histogram;
 function RangeWarning({ rangeMin, rangeMax, selectionMin, selectionMax }) {
   if (rangeMin >= selectionMin && rangeMax <= selectionMax) return null;
   return (
-    <Tooltip content="Some values are hidden due to your current range selection.">
+    <WDKClientTooltip content="Some values are hidden due to your current range selection.">
       <IconAlt fa="exclamation-circle range-warning" />
-    </Tooltip>
+    </WDKClientTooltip>
   );
 }
 

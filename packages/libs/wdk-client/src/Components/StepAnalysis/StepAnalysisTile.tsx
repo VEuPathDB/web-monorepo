@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tooltip } from '../../Components';
+import { WDKClientTooltip } from '../../Components';
 import Spinnable from '../Shared/Spinnable';
 import { memoize } from 'lodash/fp';
 
@@ -16,7 +16,7 @@ interface StepAnalysisTileProps {
 const TOOLTIP_POSITION = {
   my: 'top center',
   at: 'bottom center',
-};
+} as const;
 
 export const StepAnalysisTile: React.SFC<StepAnalysisTileProps> = ({
   shortDescription,
@@ -27,7 +27,8 @@ export const StepAnalysisTile: React.SFC<StepAnalysisTileProps> = ({
   loading,
   loadChoice,
 }) => (
-  <Tooltip content={shortDescription} position={TOOLTIP_POSITION}>
+  // here
+  <WDKClientTooltip content={shortDescription} position={TOOLTIP_POSITION}>
     <div
       className={`${inactive ? 'inactive ' : ''}analysis-selector`}
       title={shortDescription}
@@ -51,7 +52,7 @@ export const StepAnalysisTile: React.SFC<StepAnalysisTileProps> = ({
         <p className="analysis-selector-description">{shortDescription}</p>
       </div>
     </div>
-  </Tooltip>
+  </WDKClientTooltip>
 );
 
 const ENTER_KEY_CODE = 13;

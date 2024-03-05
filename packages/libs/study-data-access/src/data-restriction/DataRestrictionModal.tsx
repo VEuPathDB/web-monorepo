@@ -14,7 +14,7 @@ import Modal from '@veupathdb/wdk-client/lib/Components/Overlays/Modal';
 import {
   IconAlt as Icon,
   Link,
-  Tooltip,
+  WDKClientTooltip,
 } from '@veupathdb/wdk-client/lib/Components';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { getStudyAccess, getStudyId, getStudyName } from '../shared/studies';
@@ -197,12 +197,12 @@ function Buttons(props: Props) {
         </button>
       )}
       {!approvalRequired ? null : user.isGuest ? (
-        <Tooltip
+        <WDKClientTooltip
           content={'You must be logged in to request data access'}
           showDelay={0}
         >
           {submitDataAccessButton}
-        </Tooltip>
+        </WDKClientTooltip>
       ) : (
         submitDataAccessButton
       )}

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { IconAlt, Tooltip } from '../../Components';
+import { IconAlt, WDKClientTooltip } from '../../Components';
 import { safeHtml } from '../../Utils/ComponentUtils';
 
 interface Props {
@@ -15,11 +15,11 @@ export function DefaultSectionTitle({ displayName, help }: Props) {
       {help && (
         <>
           &nbsp;
-          <Tooltip content={safeHtml(help)}>
+          <WDKClientTooltip content={safeHtml(help)}>
             <div className="HelpTrigger">
               <IconAlt fa="question-circle" />
             </div>
-          </Tooltip>
+          </WDKClientTooltip>
         </>
       )}
     </>

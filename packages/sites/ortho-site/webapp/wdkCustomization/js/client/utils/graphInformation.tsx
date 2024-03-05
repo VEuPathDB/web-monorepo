@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Link, Tooltip } from '@veupathdb/wdk-client/lib/Components';
+import { Link, WDKClientTooltip } from '@veupathdb/wdk-client/lib/Components';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import { TabConfig } from '@veupathdb/wdk-client/lib/Components/Tabs/Tabs';
 
@@ -32,11 +32,11 @@ export const graphInformationBaseTabConfigs: GraphInformationBaseTabConfig[] = [
     display: (
       <div>
         Sequence List
-        <Tooltip content={SEQUENCE_LIST_HELP}>
+        <WDKClientTooltip content={SEQUENCE_LIST_HELP}>
           <div className="HelpTrigger">
             <Icon fa="question-circle" />
           </div>
-        </Tooltip>
+        </WDKClientTooltip>
       </div>
     ),
   },
@@ -45,11 +45,11 @@ export const graphInformationBaseTabConfigs: GraphInformationBaseTabConfig[] = [
     display: (
       <div>
         Node Details
-        <Tooltip content={NODE_DETAILS_HELP}>
+        <WDKClientTooltip content={NODE_DETAILS_HELP}>
           <div className="HelpTrigger">
             <Icon fa="question-circle" />
           </div>
-        </Tooltip>
+        </WDKClientTooltip>
       </div>
     ),
   },

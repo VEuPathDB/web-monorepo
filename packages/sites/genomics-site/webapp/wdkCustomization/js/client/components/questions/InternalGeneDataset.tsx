@@ -12,7 +12,7 @@ import { useLocation, useHistory } from 'react-router';
 import {
   Loading,
   Link,
-  Tooltip,
+  WDKClientTooltip,
   HelpIcon,
 } from '@veupathdb/wdk-client/lib/Components';
 import { TabbedDisplay } from '@veupathdb/coreui';
@@ -277,7 +277,7 @@ function InternalGeneDatasetContent(props: Props) {
         <span style={{ fontWeight: 'bold', fontSize: '13px' }}>Legend:</span>
         <div style={{ display: 'flex', flexWrap: 'wrap', rowGap: '0.25rem' }}>
           {displayCategoryOrder.map((categoryName) => (
-            <Tooltip
+            <WDKClientTooltip
               key={categoryName}
               content={
                 <div>
@@ -292,7 +292,7 @@ function InternalGeneDatasetContent(props: Props) {
                 </span>
                 <span>{displayCategoriesByName[categoryName].displayName}</span>
               </span>
-            </Tooltip>
+            </WDKClientTooltip>
           ))}
         </div>
       </div>

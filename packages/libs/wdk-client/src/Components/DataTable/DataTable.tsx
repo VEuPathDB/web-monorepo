@@ -22,7 +22,7 @@ import CheckboxList from '@veupathdb/coreui/lib/components/inputs/checkboxes/Che
 import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import '../../Components/DataTable/DataTable.css';
 import HelpIcon from '../Icon/HelpIcon';
-import Tooltip from '../Overlays/Tooltip';
+import WDKClientTooltip from '../Overlays/Tooltip';
 import TabbableContainer from '../Display/TabbableContainer';
 import { ErrorBoundary } from '../../Controllers';
 
@@ -612,7 +612,7 @@ class DataTable extends PureComponent<Props, State> {
                   top: '0.25em',
                 }}
               >
-                <Tooltip content="Show search fields">
+                <WDKClientTooltip content="Show search fields">
                   <button
                     className="fa fa-caret-down"
                     style={{ background: 'none', border: 'none' }}
@@ -621,7 +621,7 @@ class DataTable extends PureComponent<Props, State> {
                       this.toggleFilterFieldSelector();
                     }}
                   />
-                </Tooltip>
+                </WDKClientTooltip>
               </div>
               <HelpIcon>
                 <div>

@@ -1,7 +1,7 @@
 import { noop } from 'lodash';
 import React, { ReactNode, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import Tooltip from '../../Components/Overlays/Tooltip';
+import WDKClientTooltip from '../../Components/Overlays/Tooltip';
 import { Plugin } from '../../Utils/ClientPlugin';
 import { RecordClass } from '../../Utils/WdkModel';
 import { Step } from '../../Utils/WdkUser';
@@ -39,7 +39,8 @@ export default function StepBoxes(props: StepBoxesProps) {
     <React.Fragment>
       <div className={cx()}>
         <StepTree {...props} />
-        <Tooltip
+        {/* here */}
+        <WDKClientTooltip
           position={{ my: 'top center', at: 'bottom center' }}
           content={ADD_STEP_BUTTON_VERBIAGE}
         >
@@ -55,7 +56,7 @@ export default function StepBoxes(props: StepBoxesProps) {
           >
             <i className="fa fa-plus" /> <div>Add a step</div>
           </button>
-        </Tooltip>
+        </WDKClientTooltip>
       </div>
       <ExpandedSteps {...props} />
     </React.Fragment>

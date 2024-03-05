@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeClassNameHelper } from '../../Utils/ComponentUtils';
-import Tooltip from '../../Components/Overlays/Tooltip';
+import WDKClientTooltip from '../../Components/Overlays/Tooltip';
 import './ShowAllToggle.scss';
 import allStrats from './all-strats.svg';
 import oneStrat from './one-strat.svg';
@@ -16,7 +16,8 @@ export default function ShowAllToggle(props: Props) {
   const { on, onChange } = props;
   return (
     <div className={cx()}>
-      <Tooltip
+      {/* here */}
+      <WDKClientTooltip
         content="Show only the selected strategy, or all strategies."
         position={{
           my: 'top center',
@@ -48,7 +49,7 @@ export default function ShowAllToggle(props: Props) {
             </div>
           </label>
         </div>
-      </Tooltip>
+      </WDKClientTooltip>
     </div>
   );
 }

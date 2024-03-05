@@ -7,7 +7,7 @@ import {
 import Templates from '@veupathdb/coreui/lib/components/Mesa/Templates';
 
 import './StepAnalysisEnrichmentResult.scss';
-import { Tooltip } from '@veupathdb/wdk-client/lib/Components';
+import { WDKClientTooltip } from '@veupathdb/wdk-client/lib/Components';
 
 const baseColumnSettings: Pick<
   ColumnSettings<any>,
@@ -22,7 +22,7 @@ const baseColumnSettings: Pick<
   {
     key: 'experimentName',
     renderCell: (cellProps: any) => (
-      <Tooltip
+      <WDKClientTooltip
         content={Templates.htmlCell({
           ...cellProps,
           key: 'description',
@@ -36,7 +36,7 @@ const baseColumnSettings: Pick<
         >
           {cellProps.row.experimentName}
         </a>
-      </Tooltip>
+      </WDKClientTooltip>
     ),
     sortable: true,
   },

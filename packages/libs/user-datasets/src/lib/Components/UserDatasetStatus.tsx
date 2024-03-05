@@ -2,7 +2,7 @@ import * as React from 'react';
 import {
   IconAlt as Icon,
   Link,
-  Tooltip,
+  WDKClientTooltip,
 } from '@veupathdb/wdk-client/lib/Components';
 
 import { UserDataset } from '../Utils/types';
@@ -56,7 +56,7 @@ export default function UserDatasetStatus(props: Props) {
     : 'exclamation-circle';
   const children = <Icon className="StatusIcon" fa={faIcon} />;
   const visibleContent = props.useTooltip ? (
-    <Tooltip content={content}>{children}</Tooltip>
+    <WDKClientTooltip content={content}>{children}</WDKClientTooltip>
   ) : (
     <React.Fragment>
       {children} {content}
