@@ -8,6 +8,9 @@ import { makeClassifier } from '../Utils/Utils';
 
 const dataRowClass = makeClassifier('DataRow');
 
+const EXTRA_COLUMNS_FOR_EXPAND_AND_SELECT = 2;
+const EXTRA_COLUMNS_FOR_EXPAND = 1;
+
 class DataRow extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -84,7 +87,11 @@ class DataRow extends React.PureComponent {
 
     const showChildRow =
       hasExpansionColumn && uiState.expandedRows.includes(rowIndex);
-    const childRowColSpan = columns.length + 1;
+    const childRowColSpan =
+      columns.length +
+      (hasSelectionColumn
+        ? EXTRA_COLUMNS_FOR_EXPAND_AND_SELECT
+        : EXTRA_COLUMNS_FOR_EXPAND);
 
     const rowStyle = !inline
       ? {}
@@ -103,21 +110,16 @@ class DataRow extends React.PureComponent {
     return (
       <>
         <tr
-          className={className}
+          className={className
+            .concat(showChildRow ? ' _childIsExpanded' : '')
+            .concat(hasExpansionColumn ? ' _isExpandable' : '')}
           tabIndex={this.props.options.onRowClick ? -1 : undefined}
           style={rowStyle}
           onClick={this.handleRowClick}
           onMouseOver={this.handleRowMouseOver}
           onMouseOut={this.handleRowMouseOut}
         >
-          {hasSelectionColumn ? (
-            <SelectionCell
-              key="_selection"
-              row={row}
-              eventHandlers={eventHandlers}
-              isRowSelected={options.isRowSelected}
-            />
-          ) : hasExpansionColumn ? (
+          {hasExpansionColumn && (
             <ExpansionCell
               key="_expansion"
               row={row}
@@ -125,7 +127,15 @@ class DataRow extends React.PureComponent {
               expandedRows={uiState.expandedRows}
               rowIndex={rowIndex}
             />
-          ) : null}
+          )}
+          {hasSelectionColumn && (
+            <SelectionCell
+              key="_selection"
+              row={row}
+              eventHandlers={eventHandlers}
+              isRowSelected={options.isRowSelected}
+            />
+          )}
           {columns.map((column, columnIndex) => {
             if (typeof columnDefaults === 'object')
               column = Object.assign({}, columnDefaults, column);
@@ -141,7 +151,7 @@ class DataRow extends React.PureComponent {
         </tr>
         {showChildRow && (
           <tr
-            className={className}
+            className={className + ' _isExpandable'}
             tabIndex={this.props.options.onRowClick ? -1 : undefined}
             style={rowStyle}
             onClick={this.handleRowClick}

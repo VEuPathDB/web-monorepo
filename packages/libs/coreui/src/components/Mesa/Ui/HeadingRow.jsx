@@ -63,17 +63,7 @@ class HeadingRow extends React.PureComponent {
         {headingRows.map(({ cols, isFirstRow }, index) => {
           return (
             <tr className="Row HeadingRow" key={index}>
-              {hasSelectionColumn ? (
-                <SelectionCell
-                  inert={!isFirstRow}
-                  heading={true}
-                  key="_selection"
-                  rows={filteredRows}
-                  options={options}
-                  eventHandlers={eventHandlers}
-                  isRowSelected={isRowSelected}
-                />
-              ) : hasExpansionColumn ? (
+              {hasExpansionColumn && (
                 <ExpansionCell
                   inert={!isFirstRow}
                   heading={true}
@@ -83,7 +73,18 @@ class HeadingRow extends React.PureComponent {
                   onExpandedRowsChange={onExpandedRowsChange}
                   expandedRows={expandedRows}
                 />
-              ) : null}
+              )}
+              {hasSelectionColumn && (
+                <SelectionCell
+                  inert={!isFirstRow}
+                  heading={true}
+                  key="_selection"
+                  rows={filteredRows}
+                  options={options}
+                  eventHandlers={eventHandlers}
+                  isRowSelected={isRowSelected}
+                />
+              )}
               {cols.map((column, columnIndex) => {
                 if (typeof columnDefaults === 'object')
                   column = Object.assign({}, columnDefaults, column);
