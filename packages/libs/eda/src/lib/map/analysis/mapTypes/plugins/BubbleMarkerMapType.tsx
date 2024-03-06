@@ -8,8 +8,8 @@ import {
 } from '@veupathdb/components/lib/map/config/map';
 import { getValueToGradientColorMapper } from '@veupathdb/components/lib/types/plots/addOns';
 import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
-import { capitalize, sumBy, omit } from 'lodash';
-import { useCallback, useMemo, useEffect } from 'react';
+import { capitalize, omit } from 'lodash';
+import { useCallback, useMemo } from 'react';
 import {
   useFindEntityAndVariable,
   Filter,
@@ -932,18 +932,6 @@ function useMarkerData(props: DataProps) {
 
   // spoof the useQuery hook
   return useMemo(() => {
-    const totalVisibleEntityCount = rawMarkersResult.data?.mapElements.reduce(
-      (acc, curr) => {
-        return acc + curr.entityCount;
-      },
-      0
-    );
-
-    const totalVisibleWithOverlayEntityCount = sumBy(
-      rawMarkersResult.data?.mapElements,
-      'entityCount'
-    );
-
     /**
      * Merge the overlay data into the basicMarkerData, if available,
      * and create markers.
@@ -964,8 +952,6 @@ function useMarkerData(props: DataProps) {
       ...rawMarkersResult, // for error, isFetching etc
       data: {
         markersData: finalMarkersData,
-        totalVisibleWithOverlayEntityCount,
-        totalVisibleEntityCount,
         boundsZoomLevel,
       },
     };

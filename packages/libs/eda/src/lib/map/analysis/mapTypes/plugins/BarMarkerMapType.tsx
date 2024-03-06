@@ -792,13 +792,7 @@ function useMarkerData(props: MarkerDataProps) {
   } = useDistributionMarkerData(props);
   if (markerData == null) return { error, isFetching };
 
-  const {
-    mapElements,
-    totalVisibleEntityCount,
-    totalVisibleWithOverlayEntityCount,
-    legendItems,
-    overlayConfig,
-  } = markerData;
+  const { mapElements, legendItems, overlayConfig } = markerData;
 
   // calculate minPos, max and sum for chart marker dependent axis
   // assumes the value is a count! (so never negative)
@@ -842,8 +836,6 @@ function useMarkerData(props: MarkerDataProps) {
     error,
     isFetching: isFetching || isPreviousData,
     markerProps,
-    totalVisibleWithOverlayEntityCount,
-    totalVisibleEntityCount,
     legendItems,
     overlayConfig,
     boundsZoomLevel: props.boundsZoomLevel,

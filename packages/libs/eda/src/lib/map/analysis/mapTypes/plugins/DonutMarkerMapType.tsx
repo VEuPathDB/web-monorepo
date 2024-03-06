@@ -645,14 +645,8 @@ function useMarkerData(props: DistributionMarkerDataProps) {
 
   if (markerData == null) return { error, isFetching };
 
-  const {
-    mapElements,
-    totalVisibleEntityCount,
-    totalVisibleWithOverlayEntityCount,
-    legendItems,
-    overlayConfig,
-    boundsZoomLevel,
-  } = markerData;
+  const { mapElements, legendItems, overlayConfig, boundsZoomLevel } =
+    markerData;
 
   const vocabulary =
     overlayConfig.overlayType === 'categorical' // switch statement style guide time!!
@@ -677,8 +671,6 @@ function useMarkerData(props: DistributionMarkerDataProps) {
     error,
     isFetching: isFetching || isPreviousData,
     markerProps,
-    totalVisibleWithOverlayEntityCount,
-    totalVisibleEntityCount,
     legendItems,
     overlayConfig,
     boundsZoomLevel,
