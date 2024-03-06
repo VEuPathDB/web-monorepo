@@ -82,6 +82,8 @@ import { SubStudies } from '../../../SubStudies';
 const displayName = 'Bar plots';
 
 export const plugin: MapTypePlugin<BarPlotMarkerConfiguration> = {
+  type: 'barplot',
+  IconComponent: BarPlotMarkerIcon,
   displayName,
   getDefaultConfig({ defaultVariable }) {
     return {

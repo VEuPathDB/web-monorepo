@@ -64,7 +64,10 @@ import {
   MapTypeConfigurationMenu,
   MarkerConfigurationOption,
 } from '../../MarkerConfiguration/MapTypeConfigurationMenu';
-import { DonutMarkersIcon } from '../../MarkerConfiguration/icons';
+import {
+  DonutMarkerIcon,
+  DonutMarkersIcon,
+} from '../../MarkerConfiguration/icons';
 import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
 import MapVizManagement from '../../../MapVizManagement';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
@@ -76,6 +79,8 @@ import TimeSliderQuickFilter from '../../../TimeSliderQuickFilter';
 const displayName = 'Donuts';
 
 export const plugin: MapTypePlugin<PieMarkerConfiguration> = {
+  type: 'pie',
+  IconComponent: DonutMarkerIcon,
   displayName,
   getDefaultConfig({ defaultVariable }) {
     return {

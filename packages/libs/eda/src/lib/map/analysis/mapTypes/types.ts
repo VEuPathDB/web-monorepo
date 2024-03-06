@@ -1,4 +1,4 @@
-import { ComponentType } from 'react';
+import { ComponentType, SVGProps } from 'react';
 import {
   AnalysisState,
   Filter,
@@ -58,9 +58,17 @@ export interface MapTypeMapLayerProps<T extends MarkerConfiguration> {
  */
 export interface MapTypePlugin<T extends MarkerConfiguration> {
   /**
+   * Unique identifier for the map type
+   */
+  type: T['type'];
+  /**
    * Display name of map type used for menu, etc.
    */
   displayName: string;
+  /**
+   * Icon component
+   */
+  IconComponent: ComponentType<SVGProps<SVGSVGElement>>;
   /**
    * Returns a default configuration for this MapType. This is used to
    * create a set of default configurations for new analyses.

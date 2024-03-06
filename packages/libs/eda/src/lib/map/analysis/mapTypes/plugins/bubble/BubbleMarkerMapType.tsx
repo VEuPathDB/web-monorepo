@@ -73,6 +73,8 @@ import { STUDIES_ENTITY_ID, STUDY_ID_VARIABLE_ID } from '../../../../constants';
 const displayName = 'Bubbles';
 
 export const plugin: MapTypePlugin<BubbleMarkerConfiguration> = {
+  type: 'bubble',
+  IconComponent: BubbleMarkerIcon,
   displayName,
   getDefaultConfig({ defaultVariable }) {
     return {
