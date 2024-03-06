@@ -38,6 +38,8 @@ L.Map.SelectArea = L.Map.BoxZoom.extend({
   options: {
     shiftKey: false,
     ctrlKey: true,
+    // enable metaKey
+    metaKey: true,
     validate: trueFn,
     autoDisable: false,
     cursor: 'crosshair',
@@ -64,7 +66,9 @@ L.Map.SelectArea = L.Map.BoxZoom.extend({
     /**
      * @type {Boolean}
      */
-    this._autoDisable = !this.options.ctrlKey && this.options.autoDisable;
+    this._autoDisable =
+      (!this.options.ctrlKey || !this.options.metaKey) &&
+      this.options.autoDisable;
 
     /**
      * @type {L.Point}
@@ -109,6 +113,7 @@ L.Map.SelectArea = L.Map.BoxZoom.extend({
     var wasEnabled = this._enabled;
     if (wasEnabled) this.disable();
     this.options.ctrlKey = !!on;
+    this.options.metaKey = !!on;
     if (on) this.options.shiftKey = false;
     if (wasEnabled) this.enable();
   },
@@ -120,7 +125,10 @@ L.Map.SelectArea = L.Map.BoxZoom.extend({
     var wasEnabled = this._enabled;
     if (wasEnabled) this.disable();
     this.options.shiftKey = !!on;
-    if (on) this.options.ctrlKey = false;
+    if (on) {
+      this.options.ctrlKey = false;
+      this.options.metaKey = false;
+    }
     if (wasEnabled) this.enable();
   },
 
@@ -136,10 +144,13 @@ L.Map.SelectArea = L.Map.BoxZoom.extend({
       }
     } else if (!this.options.ctrlKey) {
       this._map.dragging.disable();
+    } else if (!this.options.metaKey) {
+      this._map.dragging.disable();
     }
     L.Map.BoxZoom.prototype.enable.call(this);
 
     if (!this.options.ctrlKey) this._setCursor();
+    if (!this.options.metaKey) this._setCursor();
 
     if (validate) this.setValidate(validate);
     this.setAutoDisable(autoDisable);
@@ -154,6 +165,7 @@ L.Map.SelectArea = L.Map.BoxZoom.extend({
     L.Map.BoxZoom.prototype.disable.call(this);
 
     if (!this.options.ctrlKey) this._restoreCursor();
+    if (!this.options.metalKey) this._restoreCursor();
 
     if (this.options.shiftKey) {
       if (this._map.boxZoom) {
@@ -198,11 +210,8 @@ L.Map.SelectArea = L.Map.BoxZoom.extend({
     this._moved = false;
     this._lastLayerPoint = null;
 
-    if (
-      (this.options.shiftKey && !e.shiftKey) ||
-      (this.options.ctrlKey && !e.ctrlKey) ||
-      (e.which !== 1 && e.button !== 1)
-    ) {
+    // simplified && block shiftKey + mouse event
+    if (e.shiftKey || (e.which !== 1 && e.button !== 1)) {
       return false;
     }
 
@@ -264,7 +273,7 @@ L.Map.SelectArea = L.Map.BoxZoom.extend({
         this._finish();
       }
       // this.disable();
-    } else if (this.options.ctrlKey) {
+    } else if (this.options.ctrlKey || this.options.metaKey) {
       this._restoreCursor();
       this._map.dragging.enable();
     }
@@ -276,9 +285,12 @@ L.Map.SelectArea = L.Map.BoxZoom.extend({
    */
   _onKeyPress: function (e) {
     if (
-      this.options.ctrlKey &&
-      (e.ctrlKey || e.type === 'dragstart') &&
-      this._beforeCursor === null
+      (this.options.ctrlKey &&
+        (e.ctrlKey || e.type === 'dragstart') &&
+        this._beforeCursor === null) ||
+      (this.options.metaKey &&
+        (e.metaKey || e.type === 'dragstart') &&
+        this._beforeCursor === null)
     ) {
       this._setCursor();
       this._map.dragging._draggable._onUp(e); // hardcore
