@@ -9,7 +9,7 @@ import {
 import { getValueToGradientColorMapper } from '@veupathdb/components/lib/types/plots/addOns';
 import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
 import { capitalize, omit } from 'lodash';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useEffect } from 'react';
 import {
   useFindEntityAndVariable,
   Filter,
