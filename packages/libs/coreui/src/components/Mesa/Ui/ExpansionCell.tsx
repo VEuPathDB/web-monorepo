@@ -2,25 +2,27 @@ import React, { useCallback } from 'react';
 import { ArrowDown, ArrowRight } from '../../icons';
 
 type Props = {
-  rowIndex: number;
   rows: unknown[];
-  onExpandedRowsChange: (indexes: number[]) => void;
-  expandedRows: number[];
+  row: unknown;
+  onExpandedRowsChange: (ids: (string | number)[]) => void;
+  expandedRows: (string | number)[];
+  getRowId: (row: unknown) => string | number;
   inert: boolean;
   heading: boolean;
 };
 
 export default function ExpansionCell({
-  rowIndex,
   rows,
+  row,
   onExpandedRowsChange,
   expandedRows,
+  getRowId,
   inert,
   heading,
 }: Props) {
   const expandAllRows = useCallback(
-    () => onExpandedRowsChange(rows.map((row, index) => index)),
-    [onExpandedRowsChange, rows]
+    () => onExpandedRowsChange(rows.map((row) => getRowId(row))),
+    [onExpandedRowsChange, rows, getRowId]
   );
 
   const collapseAllRows = useCallback(
@@ -63,17 +65,19 @@ export default function ExpansionCell({
   }, [rows, expandedRows, collapseAllRows, expandAllRows, inert]);
 
   const renderRowExpansionToggle = useCallback(() => {
-    const isExpanded = expandedRows.includes(rowIndex);
+    const isExpanded = expandedRows.includes(getRowId(row));
 
     const handler = (e: React.SyntheticEvent) => {
       e.stopPropagation();
       e.preventDefault();
       if (isExpanded) {
         // remove from expandedRows
-        onExpandedRowsChange(expandedRows.filter((row) => row != rowIndex));
+        onExpandedRowsChange(
+          expandedRows.filter((rowId) => rowId != getRowId(row))
+        );
       } else {
         // expand and add to expandedRows
-        onExpandedRowsChange(expandedRows.concat(rowIndex));
+        onExpandedRowsChange(expandedRows.concat(getRowId(row)));
       }
     };
 
@@ -90,7 +94,7 @@ export default function ExpansionCell({
         )}
       </td>
     );
-  }, [expandedRows, rowIndex, onExpandedRowsChange, inert]);
+  }, [expandedRows, row, getRowId, onExpandedRowsChange, inert]);
 
   return heading ? renderPageExpansionToggle() : renderRowExpansionToggle();
 }

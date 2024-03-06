@@ -19,7 +19,9 @@ class HeadingRow extends React.PureComponent {
       eventHandlers,
       offsetLeft,
     } = this.props;
-    const { isRowSelected, columnDefaults, childRow } = options ? options : {};
+    const { isRowSelected, columnDefaults, childRow, getRowId } = options
+      ? options
+      : {};
     const { sort, expandedRows } = uiState ? uiState : {};
     const { onRowSelect, onRowDeselect, onExpandedRowsChange } = eventHandlers
       ? eventHandlers
@@ -34,6 +36,7 @@ class HeadingRow extends React.PureComponent {
       childRow,
       expandedRows,
       onExpandedRowsChange,
+      getRowId,
     ].every((prop) => prop != null);
 
     const rowCount = columns.reduce((count, column) => {
@@ -70,6 +73,7 @@ class HeadingRow extends React.PureComponent {
                   key="_expansion"
                   rows={filteredRows}
                   childRow={childRow}
+                  getRowId={getRowId}
                   onExpandedRowsChange={onExpandedRowsChange}
                   expandedRows={expandedRows}
                 />

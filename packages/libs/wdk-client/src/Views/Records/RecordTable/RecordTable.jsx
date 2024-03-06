@@ -252,6 +252,7 @@ class RecordTable extends Component {
         toolbar: true,
         childRow: childRow ? this.wrappedChildRow : undefined,
         className: 'wdk-DataTableContainer',
+        getRowId: getSortIndex,
       },
     };
 

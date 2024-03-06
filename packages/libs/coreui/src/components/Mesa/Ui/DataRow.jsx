@@ -71,7 +71,7 @@ class DataRow extends React.PureComponent {
     const { row, rowIndex, columns, options, eventHandlers, uiState } =
       this.props;
     const { expanded } = this.state;
-    const { columnDefaults, childRow } = options ? options : {};
+    const { columnDefaults, childRow, getRowId } = options ? options : {};
     const inline = options.inline ? !expanded : false;
 
     const hasSelectionColumn =
@@ -83,10 +83,11 @@ class DataRow extends React.PureComponent {
       childRow,
       eventHandlers.onExpandedRowsChange,
       uiState.expandedRows,
+      getRowId,
     ].every((prop) => prop != null);
 
     const showChildRow =
-      hasExpansionColumn && uiState.expandedRows.includes(rowIndex);
+      hasExpansionColumn && uiState.expandedRows.includes(getRowId(row));
     const childRowColSpan =
       columns.length +
       (hasSelectionColumn
@@ -125,7 +126,7 @@ class DataRow extends React.PureComponent {
               row={row}
               onExpandedRowsChange={eventHandlers.onExpandedRowsChange}
               expandedRows={uiState.expandedRows}
-              rowIndex={rowIndex}
+              getRowId={getRowId}
             />
           )}
           {hasSelectionColumn && (

@@ -53,6 +53,7 @@ export interface MesaStateProps<
     childRow?:
       | string
       | ((props: ChildRowProps<Row>) => ReactElement<ChildRowProps<Row>>);
+    getRowId?: (row: Row) => string | number;
   };
   actions?: MesaAction<Row, Key>[];
   eventHandlers?: {
