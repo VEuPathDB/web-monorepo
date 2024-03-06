@@ -50,9 +50,11 @@ export interface MesaStateProps<
     deriveRowClassName?: (row: Row) => string | undefined;
     renderEmptyState?: () => ReactNode;
     isRowSelected?: (row: Row) => boolean;
-    childRow?:
-      | string
-      | ((props: ChildRowProps<Row>) => ReactElement<ChildRowProps<Row>>);
+    /**
+     * To handle errors gracefully, childRow elements should be wrapped in wdk-client's ErrorBoundary.
+     * As a reference, refer to the RecordTable.jsx component in wdk-client.
+     */
+    childRow?: (props: ChildRowProps<Row>) => ReactElement<ChildRowProps<Row>>;
     getRowId?: (row: Row) => string | number;
   };
   actions?: MesaAction<Row, Key>[];
