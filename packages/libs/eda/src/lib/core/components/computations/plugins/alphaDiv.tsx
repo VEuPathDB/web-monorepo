@@ -1,9 +1,10 @@
+import { useMemo } from 'react';
 import { useFindEntityAndVariableCollection } from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { capitalize, partial } from 'lodash';
+import { partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
@@ -85,6 +86,10 @@ function AlphaDivConfigDescriptionComponent({
       : undefined;
   const updatedCollectionVariable =
     findEntityAndVariableCollection(collectionVariable);
+  const alphaDivMethodDisplayName = alphaDivMethod
+    ? ALPHA_DIV_METHODS.find((method) => method.value === alphaDivMethod)
+        ?.displayName
+    : undefined;
   return (
     <div className="ConfigDescriptionContainer">
       <h4>
@@ -100,7 +105,7 @@ function AlphaDivConfigDescriptionComponent({
       <h4>
         Method:{' '}
         <span>
-          {alphaDivMethod ? capitalize(alphaDivMethod) : <i>Not selected</i>}
+          {alphaDivMethod ? alphaDivMethodDisplayName : <i>Not selected</i>}
         </span>
       </h4>
     </div>
@@ -108,7 +113,10 @@ function AlphaDivConfigDescriptionComponent({
 }
 
 // Include available methods in this array.
-const ALPHA_DIV_METHODS = ['shannon', 'simpson'];
+const ALPHA_DIV_METHODS = [
+  { value: 'shannon', displayName: 'Shannon' },
+  { value: 'simpson', displayName: 'Simpson' },
+];
 
 export function AlphaDivConfiguration(props: ComputationConfigProps) {
   const {
@@ -125,6 +133,18 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
     computation,
     visualizationId
   );
+
+  const alphaDivMethodSelectorText = useMemo(() => {
+    if (configuration.alphaDivMethod) {
+      return (
+        ALPHA_DIV_METHODS.find(
+          (method) => method.value === configuration.alphaDivMethod
+        )?.displayName ?? 'Select a method'
+      );
+    } else {
+      return 'Select a method';
+    }
+  }, [configuration.alphaDivMethod]);
 
   return (
     <ComputationStepContainer
@@ -146,14 +166,10 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
           <span>Method</span>
           <SingleSelect
             value={configuration.alphaDivMethod ?? 'Select a method'}
-            buttonDisplayContent={
-              configuration.alphaDivMethod
-                ? capitalize(configuration.alphaDivMethod)
-                : 'Select a method'
-            }
+            buttonDisplayContent={alphaDivMethodSelectorText}
             items={ALPHA_DIV_METHODS.map((method) => ({
-              value: method,
-              display: capitalize(method),
+              value: method.value,
+              display: method.displayName,
             }))}
             onSelect={partial(changeConfigHandler, 'alphaDivMethod')}
           />
