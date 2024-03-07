@@ -253,6 +253,8 @@ export function useDefaultCheckboxTreeProps(
   tree: TreeBoxVocabNode,
   selectedLeaves: string[]
 ): CheckboxTreeProps<TreeBoxVocabNode> {
+  const multiPick =
+    isMultiPick(props.parameter) && props.parameter.maxSelectedCount > 1;
   const handleExpansionChange = useCallback(
     (expandedList: string[]) => {
       props.dispatch(setExpandedList({ ...props.context, expandedList }));
@@ -261,7 +263,9 @@ export function useDefaultCheckboxTreeProps(
   );
   const handleSelectionChange = useCallback(
     (ids: string[]) => {
-      const idsWithBranches = ids.concat(deriveSelectedBranches(tree, ids));
+      const idsWithBranches = multiPick
+        ? ids.concat(deriveSelectedBranches(tree, ids))
+        : ids;
       props.onChange(idsWithBranches);
     },
     [props.onChange, tree]
@@ -275,7 +279,7 @@ export function useDefaultCheckboxTreeProps(
 
   return {
     isSelectable: true,
-    isMultiPick: isMultiPick(props.parameter),
+    isMultiPick: multiPick,
     linksPosition: LinksPosition.Top,
     showRoot: false,
     shouldExpandDescendantsWithOneChild: false,

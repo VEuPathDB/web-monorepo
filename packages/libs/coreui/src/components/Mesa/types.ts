@@ -21,7 +21,7 @@ export interface MesaStateProps<
       rowsPerPage: number;
       rowsPerPageOptions?: number[];
     };
-    emptinessCulprit?: 'search' | 'nocolumns' | 'filtrs' | 'nodata';
+    emptinessCulprit?: 'search' | 'nocolumns' | 'filters' | 'nodata';
   };
   headerWrapperStyle?: CSSProperties;
   options?: {
