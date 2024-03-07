@@ -169,8 +169,6 @@ function MapAnalysisImpl(props: ImplProps) {
     setMarkerConfigurations,
     setActiveMarkerConfigurationType,
     setStudyDetailsPanelConfig,
-    setLegendPanelConfig,
-    setVisualizationPanelConfigs,
     geoConfigs,
     setTimeSliderConfig,
     showLinkToEda = false,
@@ -364,7 +362,6 @@ function MapAnalysisImpl(props: ImplProps) {
                     updateConfiguration={updateMarkerConfigurations as any}
                     hideVizInputsAndControls={hideVizInputsAndControls}
                     setHideVizInputsAndControls={setHideVizInputsAndControls}
-                    setVisualizationPanelConfigs={setVisualizationPanelConfigs}
                   />
                 );
               },
@@ -395,7 +392,6 @@ function MapAnalysisImpl(props: ImplProps) {
                     updateConfiguration={updateMarkerConfigurations as any}
                     hideVizInputsAndControls={hideVizInputsAndControls}
                     setHideVizInputsAndControls={setHideVizInputsAndControls}
-                    setVisualizationPanelConfigs={setVisualizationPanelConfigs}
                   />
                 );
               },
@@ -424,7 +420,6 @@ function MapAnalysisImpl(props: ImplProps) {
                     updateConfiguration={updateMarkerConfigurations as any}
                     hideVizInputsAndControls={hideVizInputsAndControls}
                     setHideVizInputsAndControls={setHideVizInputsAndControls}
-                    setVisualizationPanelConfigs={setVisualizationPanelConfigs}
                   />
                 );
               },
@@ -771,8 +766,6 @@ function MapAnalysisImpl(props: ImplProps) {
           hideVizInputsAndControls,
           setHideVizInputsAndControls,
           setStudyDetailsPanelConfig,
-          setLegendPanelConfig,
-          setVisualizationPanelConfigs,
           headerButtons: HeaderButtons,
         };
 

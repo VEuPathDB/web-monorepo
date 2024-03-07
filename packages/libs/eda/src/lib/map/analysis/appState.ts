@@ -12,6 +12,17 @@ import { VariableDescriptor } from '../../core/types/variable';
 import { useGetDefaultTimeVariableDescriptor } from './hooks/eztimeslider';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
 import { STUDIES_ENTITY_ID, STUDY_ID_VARIABLE_ID } from '../constants';
+import {
+  DEFAULT_DRAGGABLE_VIZ_DIMENSIONS,
+  DEFAULT_DRAGGABLE_VIZ_POSITION,
+} from './DraggableVisualization';
+import { DEFAULT_DRAGGABLE_LEGEND_POSITION } from './DraggableLegendPanel';
+
+const defaultVisualizationPanelConfig = {
+  isVisible: false,
+  position: DEFAULT_DRAGGABLE_VIZ_POSITION,
+  dimensions: DEFAULT_DRAGGABLE_VIZ_DIMENSIONS,
+};
 
 const LatLngLiteral = t.type({ lat: t.number, lng: t.number });
 
@@ -20,6 +31,36 @@ const MarkerType = t.keyof({
   pie: null,
   bubble: null,
 });
+
+const PanelPositionConfig = t.type({
+  x: t.number,
+  y: t.number,
+});
+
+const PanelConfig = t.type({
+  isVisible: t.boolean,
+  position: PanelPositionConfig,
+  dimensions: t.type({
+    height: t.union([t.number, t.string]),
+    width: t.union([t.number, t.string]),
+  }),
+});
+
+const BubbleLegendPositionConfig = t.type({
+  variable: PanelPositionConfig,
+  count: PanelPositionConfig,
+});
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export type PanelConfig = t.TypeOf<typeof PanelConfig>;
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export type PanelPositionConfig = t.TypeOf<typeof PanelPositionConfig>;
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export type BubbleLegendPositionConfig = t.TypeOf<
+  typeof BubbleLegendPositionConfig
+>;
 
 // user-specified selection
 export type SelectedValues = t.TypeOf<typeof SelectedValues>;
@@ -65,6 +106,8 @@ export const MarkerConfiguration = t.intersection([
         binningMethod: BinningMethod,
         dependentAxisLogScale: t.boolean,
         selectedCountsOption: SelectedCountsOption,
+        legendPanelConfig: PanelPositionConfig,
+        visualizationPanelConfig: PanelConfig,
       }),
       t.partial({
         // yes all the modes have selectedMarkers but maybe in the future one won't
@@ -77,6 +120,8 @@ export const MarkerConfiguration = t.intersection([
         selectedValues: SelectedValues,
         binningMethod: BinningMethod,
         selectedCountsOption: SelectedCountsOption,
+        legendPanelConfig: PanelPositionConfig,
+        visualizationPanelConfig: PanelConfig,
       }),
       t.partial({
         selectedMarkers: t.array(t.string),
@@ -91,53 +136,12 @@ export const MarkerConfiguration = t.intersection([
         numeratorValues: t.union([t.array(t.string), t.undefined]),
         denominatorValues: t.union([t.array(t.string), t.undefined]),
         selectedMarkers: t.array(t.string),
+        legendPanelConfig: BubbleLegendPositionConfig,
+        visualizationPanelConfig: PanelConfig,
       }),
     ]),
   ]),
 ]);
-
-const PanelConfig = t.type({
-  isVisible: t.boolean,
-  position: t.type({ x: t.number, y: t.number }),
-  dimensions: t.type({
-    height: t.union([t.number, t.string]),
-    width: t.union([t.number, t.string]),
-  }),
-});
-
-const VariableLegendPosition = t.type({
-  variable: t.union([t.undefined, t.type({ x: t.number, y: t.number })]),
-});
-const CountsLegendPosition = t.type({
-  count: t.type({ x: t.number, y: t.number }),
-});
-const BubbleLegendPositionConfig = t.intersection([
-  VariableLegendPosition,
-  CountsLegendPosition,
-]);
-
-const LegendPanelConfig = t.partial({
-  pie: t.union([VariableLegendPosition, t.undefined]),
-  barplot: t.union([VariableLegendPosition, t.undefined]),
-  bubble: BubbleLegendPositionConfig,
-});
-
-const VisualizationPanelConfigs = t.partial({
-  barplot: t.union([t.undefined, PanelConfig]),
-  pie: t.union([t.undefined, PanelConfig]),
-  bubble: t.union([t.undefined, PanelConfig]),
-});
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export type PanelConfig = t.TypeOf<typeof PanelConfig>;
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export type LegendPanelConfig = t.TypeOf<typeof LegendPanelConfig>;
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export type VisualizationPanelConfigs = t.TypeOf<
-  typeof VisualizationPanelConfigs
->;
 
 export const AppState = t.intersection([
   t.type({
@@ -151,8 +155,6 @@ export const AppState = t.intersection([
   }),
   t.partial({
     studyDetailsPanelConfig: PanelConfig,
-    legendPanelConfig: LegendPanelConfig,
-    visualizationPanelConfigs: VisualizationPanelConfigs,
     boundsZoomLevel: t.type({
       zoomLevel: t.number,
       bounds: t.type({
@@ -242,16 +244,6 @@ export function useAppState(
             },
           }
         : {}),
-      legendPanelConfig: {
-        bubble: {
-          variable: undefined,
-          count: {
-            x: window.innerWidth,
-            y: 420,
-          },
-        },
-      },
-      visualizationPanelConfigs: {},
       markerConfigurations: [
         {
           type: 'pie',
@@ -259,6 +251,8 @@ export function useAppState(
           selectedValues: undefined,
           binningMethod: undefined,
           selectedCountsOption: 'filtered',
+          legendPanelConfig: DEFAULT_DRAGGABLE_LEGEND_POSITION,
+          visualizationPanelConfig: defaultVisualizationPanelConfig,
         },
         {
           type: 'barplot',
@@ -268,6 +262,8 @@ export function useAppState(
           binningMethod: undefined,
           dependentAxisLogScale: false,
           selectedCountsOption: 'filtered',
+          legendPanelConfig: DEFAULT_DRAGGABLE_LEGEND_POSITION,
+          visualizationPanelConfig: defaultVisualizationPanelConfig,
         },
         {
           type: 'bubble',
@@ -275,6 +271,14 @@ export function useAppState(
           aggregator: 'mean',
           numeratorValues: undefined,
           denominatorValues: undefined,
+          legendPanelConfig: {
+            variable: DEFAULT_DRAGGABLE_LEGEND_POSITION,
+            count: {
+              x: window.innerWidth,
+              y: 420,
+            },
+          },
+          visualizationPanelConfig: defaultVisualizationPanelConfig,
         },
       ],
     }),
@@ -385,7 +389,5 @@ export function useAppState(
     setViewport: useSetter('viewport'),
     setTimeSliderConfig: useSetter('timeSliderConfig', true),
     setStudyDetailsPanelConfig: useSetter('studyDetailsPanelConfig'),
-    setLegendPanelConfig: useSetter('legendPanelConfig'),
-    setVisualizationPanelConfigs: useSetter('visualizationPanelConfigs'),
   };
 }

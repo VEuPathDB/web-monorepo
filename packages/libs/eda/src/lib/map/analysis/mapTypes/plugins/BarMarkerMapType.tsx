@@ -65,10 +65,7 @@ import { DraggableLegendPanel } from '../../DraggableLegendPanel';
 import { MapLegend } from '../../MapLegend';
 import { sharedStandaloneMarkerProperties } from '../../MarkerConfiguration/CategoricalMarkerPreview';
 import { useToggleStarredVariable } from '../../../../core/hooks/starredVariables';
-import DraggableVisualization, {
-  DEFAULT_DRAGGABLE_VIZ_DIMENSIONS,
-  DEFAULT_DRAGGABLE_VIZ_POSITION,
-} from '../../DraggableVisualization';
+import DraggableVisualization from '../../DraggableVisualization';
 import { useStandaloneVizPlugins } from '../../hooks/standaloneVizPlugins';
 import {
   MapTypeConfigurationMenu,
@@ -82,7 +79,6 @@ import { useLittleFilters } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
 import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
 import { SubStudies } from '../../SubStudies';
-import { useDebouncedCallback } from '../../../../core/hooks/debouncing';
 import { PanelConfig } from '../../appState';
 const displayName = 'Bar plots';
 
@@ -113,7 +109,6 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     studyId,
     studyEntities,
     filters,
-    setVisualizationPanelConfigs,
   } = props;
 
   const subsettingClient = useSubsettingClient();
@@ -124,6 +119,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     binningMethod,
     dependentAxisLogScale,
     selectedPlotMode,
+    visualizationPanelConfig,
   } = configuration;
 
   const { entity: overlayEntity, variable: overlayVariable } =
@@ -274,34 +270,19 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     configurationMenu,
   };
 
-  const { visualizationPanelConfigs } = appState;
-
   const setActiveVisualizationId = useCallback(
     (activeVisualizationId?: string) => {
       if (configuration == null) return;
       updateConfiguration({
         ...configuration,
         activeVisualizationId,
-      });
-      setVisualizationPanelConfigs({
-        ...visualizationPanelConfigs,
-        barplot: {
-          position:
-            visualizationPanelConfigs?.barplot?.position ??
-            DEFAULT_DRAGGABLE_VIZ_POSITION,
-          dimensions:
-            visualizationPanelConfigs?.barplot?.dimensions ??
-            DEFAULT_DRAGGABLE_VIZ_DIMENSIONS,
+        visualizationPanelConfig: {
+          ...visualizationPanelConfig,
           isVisible: !!activeVisualizationId,
         },
       });
     },
-    [
-      configuration,
-      updateConfiguration,
-      visualizationPanelConfigs,
-      setVisualizationPanelConfigs,
-    ]
+    [configuration, updateConfiguration, visualizationPanelConfig]
   );
 
   const plugins = useStandaloneVizPlugins({
@@ -451,17 +432,9 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     filters,
     geoConfigs,
     appState,
-    appState: {
-      markerConfigurations,
-      activeMarkerConfigurationType,
-      legendPanelConfig,
-      visualizationPanelConfigs,
-    },
     updateConfiguration,
     headerButtons,
     setStudyDetailsPanelConfig,
-    setLegendPanelConfig,
-    setVisualizationPanelConfigs,
   } = props;
 
   const configuration = props.configuration as BarPlotMarkerConfiguration;
@@ -469,15 +442,8 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
   const { variable: overlayVariable } =
     findEntityAndVariable(configuration.selectedVariable) ?? {};
 
-  const setActiveVisualizationId = useCallback(
-    (activeVisualizationId?: string) => {
-      updateConfiguration({
-        ...configuration,
-        activeVisualizationId,
-      });
-    },
-    [configuration, updateConfiguration]
-  );
+  const { selectedMarkers, legendPanelConfig, visualizationPanelConfig } =
+    configuration;
 
   const markerData = useMarkerData({
     studyEntities,
@@ -490,11 +456,6 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     selectedValues: configuration.selectedValues,
     valueSpec: configuration.selectedPlotMode,
   });
-
-  const selectedMarkers = markerConfigurations.find(
-    (markerConfiguration) =>
-      markerConfiguration.type === activeMarkerConfigurationType
-  )?.selectedMarkers;
 
   const legendItems = markerData.legendItems;
   const plugins = useStandaloneVizPlugins({
@@ -522,71 +483,52 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     substudyFilterFuncs
   );
 
-  const updateLegendPosition = useDebouncedCallback(
+  const updateLegendPosition = useCallback(
     (position: PanelConfig['position']) => {
-      setLegendPanelConfig({
-        ...legendPanelConfig,
-        barplot: {
-          variable: position,
-        },
+      updateConfiguration({
+        ...configuration,
+        legendPanelConfig: position,
       });
     },
-    250
+    [updateConfiguration, configuration]
   );
 
   const updateVisualizationPosition = useCallback(
     (position: PanelConfig['position']) => {
-      const newConfig = {
-        position,
-        dimensions:
-          visualizationPanelConfigs?.barplot?.dimensions ??
-          DEFAULT_DRAGGABLE_VIZ_DIMENSIONS,
-        isVisible: true,
-      };
-      setVisualizationPanelConfigs({
-        ...visualizationPanelConfigs,
-        barplot: newConfig,
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...visualizationPanelConfig,
+          position,
+        },
       });
     },
-    [visualizationPanelConfigs, setVisualizationPanelConfigs]
+    [updateConfiguration, configuration, visualizationPanelConfig]
   );
 
   const updateVisualizationDimensions = useCallback(
     (dimensions: PanelConfig['dimensions']) => {
-      const newConfig = {
-        dimensions,
-        position:
-          visualizationPanelConfigs?.barplot?.position ??
-          DEFAULT_DRAGGABLE_VIZ_POSITION,
-        isVisible: true,
-      };
-      setVisualizationPanelConfigs({
-        ...visualizationPanelConfigs,
-        barplot: newConfig,
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...visualizationPanelConfig,
+          dimensions,
+        },
       });
     },
-    [visualizationPanelConfigs, setVisualizationPanelConfigs]
+    [updateConfiguration, configuration, visualizationPanelConfig]
   );
 
   const onPanelDismiss = useCallback(() => {
-    setActiveVisualizationId(undefined);
-    setVisualizationPanelConfigs({
-      ...visualizationPanelConfigs,
-      barplot: {
-        position:
-          visualizationPanelConfigs?.barplot?.position ??
-          DEFAULT_DRAGGABLE_VIZ_POSITION,
-        dimensions:
-          visualizationPanelConfigs?.barplot?.dimensions ??
-          DEFAULT_DRAGGABLE_VIZ_DIMENSIONS,
+    updateConfiguration({
+      ...configuration,
+      activeVisualizationId: undefined,
+      visualizationPanelConfig: {
+        ...visualizationPanelConfig,
         isVisible: false,
       },
     });
-  }, [
-    setActiveVisualizationId,
-    setVisualizationPanelConfigs,
-    visualizationPanelConfigs,
-  ]);
+  }, [updateConfiguration, configuration, visualizationPanelConfig]);
 
   return (
     <>
@@ -605,7 +547,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
         panelTitle={overlayVariable?.displayName}
         zIndex={3}
         headerButtons={headerButtons}
-        defaultPosition={legendPanelConfig?.barplot?.variable}
+        defaultPosition={legendPanelConfig}
         onDragComplete={updateLegendPosition}
       >
         <div style={{ padding: '5px 10px' }}>
@@ -633,15 +575,9 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
         hideInputsAndControls={props.hideVizInputsAndControls}
         setHideInputsAndControls={props.setHideVizInputsAndControls}
         onDragComplete={updateVisualizationPosition}
-        defaultPosition={
-          visualizationPanelConfigs?.barplot?.position ??
-          DEFAULT_DRAGGABLE_VIZ_POSITION
-        }
+        defaultPosition={visualizationPanelConfig.position}
         onPanelResize={updateVisualizationDimensions}
-        dimensions={
-          visualizationPanelConfigs?.barplot?.dimensions ??
-          DEFAULT_DRAGGABLE_VIZ_DIMENSIONS
-        }
+        dimensions={visualizationPanelConfig.dimensions}
         onPanelDismiss={onPanelDismiss}
       />
     </>

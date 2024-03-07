@@ -58,10 +58,7 @@ import {
   MapTypeMapLayerProps,
   MapTypePlugin,
 } from '../types';
-import DraggableVisualization, {
-  DEFAULT_DRAGGABLE_VIZ_DIMENSIONS,
-  DEFAULT_DRAGGABLE_VIZ_POSITION,
-} from '../../DraggableVisualization';
+import DraggableVisualization from '../../DraggableVisualization';
 import { useStandaloneVizPlugins } from '../../hooks/standaloneVizPlugins';
 import {
   MapTypeConfigurationMenu,
@@ -75,7 +72,6 @@ import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
 import { SubStudies } from '../../SubStudies';
 import { useLittleFilters } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
-import { useDebouncedCallback } from '../../../../core/hooks/debouncing';
 import { PanelConfig } from '../../appState';
 
 const displayName = 'Donuts';
@@ -99,7 +95,6 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     studyId,
     studyEntities,
     filters,
-    setVisualizationPanelConfigs,
   } = props;
 
   const subsettingClient = useSubsettingClient();
@@ -241,34 +236,19 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     selectedOverlayConfig: overlayConfiguration.data,
   });
 
-  const { visualizationPanelConfigs } = appState;
-
   const setActiveVisualizationId = useCallback(
     (activeVisualizationId?: string) => {
       if (configuration == null) return;
       updateConfiguration({
         ...configuration,
         activeVisualizationId,
-      });
-      setVisualizationPanelConfigs({
-        ...visualizationPanelConfigs,
-        pie: {
-          position:
-            visualizationPanelConfigs?.pie?.position ??
-            DEFAULT_DRAGGABLE_VIZ_POSITION,
-          dimensions:
-            visualizationPanelConfigs?.pie?.dimensions ??
-            DEFAULT_DRAGGABLE_VIZ_DIMENSIONS,
+        visualizationPanelConfig: {
+          ...configuration.visualizationPanelConfig,
           isVisible: !!activeVisualizationId,
         },
       });
     },
-    [
-      configuration,
-      updateConfiguration,
-      visualizationPanelConfigs,
-      setVisualizationPanelConfigs,
-    ]
+    [configuration, updateConfiguration]
   );
 
   const mapTypeConfigurationMenuTabs: TabbedDisplayProps<
@@ -327,12 +307,14 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     updateConfiguration,
   } = props;
 
+  const configuration = props.configuration as PieMarkerConfiguration;
+
   const {
     selectedVariable,
     binningMethod,
     selectedValues,
     activeVisualizationId,
-  } = props.configuration as PieMarkerConfiguration;
+  } = configuration;
 
   const { filters: filtersForMarkerData } = useLittleFilters(
     {
@@ -364,11 +346,11 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     (selectedMarkers?: string[]) => {
       handleSelectedMarkerSnackbars(selectedMarkers);
       updateConfiguration({
-        ...(props.configuration as PieMarkerConfiguration),
+        ...configuration,
         selectedMarkers,
       });
     },
-    [props.configuration, updateConfiguration, handleSelectedMarkerSnackbars]
+    [configuration, updateConfiguration, handleSelectedMarkerSnackbars]
   );
 
   // no markers and no error div for certain known error strings
@@ -412,36 +394,25 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     geoConfigs,
     updateConfiguration,
     appState,
-    appState: {
-      markerConfigurations,
-      activeMarkerConfigurationType,
-      legendPanelConfig,
-      visualizationPanelConfigs,
-    },
     filters,
     headerButtons,
     setStudyDetailsPanelConfig,
-    setLegendPanelConfig,
-    setVisualizationPanelConfigs,
   } = props;
+
+  const configuration = props.configuration as PieMarkerConfiguration;
+
   const {
     selectedVariable,
     selectedValues,
     binningMethod,
     activeVisualizationId,
-  } = props.configuration as PieMarkerConfiguration;
+    legendPanelConfig,
+    visualizationPanelConfig,
+    selectedMarkers,
+  } = configuration;
   const findEntityAndVariable = useFindEntityAndVariable(filters);
   const { variable: overlayVariable } =
     findEntityAndVariable(selectedVariable) ?? {};
-  const setActiveVisualizationId = useCallback(
-    (activeVisualizationId?: string) => {
-      updateConfiguration({
-        ...(props.configuration as PieMarkerConfiguration),
-        activeVisualizationId,
-      });
-    },
-    [props.configuration, updateConfiguration]
-  );
 
   const { filters: filtersForFloaters } = useLittleFilters(
     {
@@ -472,11 +443,6 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     valueSpec: 'count',
   });
 
-  const selectedMarkers = markerConfigurations.find(
-    (markerConfiguration) =>
-      markerConfiguration.type === activeMarkerConfigurationType
-  )?.selectedMarkers;
-
   const plugins = useStandaloneVizPlugins({
     selectedOverlayConfig: data.overlayConfig,
     selectedMarkers,
@@ -485,71 +451,52 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
   const noDataError = getLegendErrorMessage(data.error);
 
-  const updateLegendPosition = useDebouncedCallback(
+  const updateLegendPosition = useCallback(
     (position: PanelConfig['position']) => {
-      setLegendPanelConfig({
-        ...legendPanelConfig,
-        pie: {
-          variable: position,
-        },
+      updateConfiguration({
+        ...configuration,
+        legendPanelConfig: position,
       });
     },
-    250
+    [updateConfiguration, configuration]
   );
 
   const updateVisualizationPosition = useCallback(
     (position: PanelConfig['position']) => {
-      const newConfig = {
-        position,
-        dimensions:
-          visualizationPanelConfigs?.pie?.dimensions ??
-          DEFAULT_DRAGGABLE_VIZ_DIMENSIONS,
-        isVisible: true,
-      };
-      setVisualizationPanelConfigs({
-        ...visualizationPanelConfigs,
-        pie: newConfig,
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...visualizationPanelConfig,
+          position,
+        },
       });
     },
-    [visualizationPanelConfigs, setVisualizationPanelConfigs]
+    [updateConfiguration, configuration, visualizationPanelConfig]
   );
 
   const updateVisualizationDimensions = useCallback(
     (dimensions: PanelConfig['dimensions']) => {
-      const newConfig = {
-        dimensions,
-        position:
-          visualizationPanelConfigs?.pie?.position ??
-          DEFAULT_DRAGGABLE_VIZ_POSITION,
-        isVisible: true,
-      };
-      setVisualizationPanelConfigs({
-        ...visualizationPanelConfigs,
-        pie: newConfig,
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...visualizationPanelConfig,
+          dimensions,
+        },
       });
     },
-    [visualizationPanelConfigs, setVisualizationPanelConfigs]
+    [updateConfiguration, configuration, visualizationPanelConfig]
   );
 
   const onPanelDismiss = useCallback(() => {
-    setActiveVisualizationId(undefined);
-    setVisualizationPanelConfigs({
-      ...visualizationPanelConfigs,
-      pie: {
-        position:
-          visualizationPanelConfigs?.pie?.position ??
-          DEFAULT_DRAGGABLE_VIZ_POSITION,
-        dimensions:
-          visualizationPanelConfigs?.pie?.dimensions ??
-          DEFAULT_DRAGGABLE_VIZ_DIMENSIONS,
+    updateConfiguration({
+      ...configuration,
+      activeVisualizationId: undefined,
+      visualizationPanelConfig: {
+        ...visualizationPanelConfig,
         isVisible: false,
       },
     });
-  }, [
-    setActiveVisualizationId,
-    setVisualizationPanelConfigs,
-    visualizationPanelConfigs,
-  ]);
+  }, [updateConfiguration, configuration, visualizationPanelConfig]);
 
   return (
     <>
@@ -569,7 +516,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
         panelTitle={overlayVariable?.displayName}
         zIndex={3}
         headerButtons={headerButtons}
-        defaultPosition={legendPanelConfig?.pie?.variable}
+        defaultPosition={legendPanelConfig}
         onDragComplete={updateLegendPosition}
       >
         <div style={{ padding: '5px 10px' }}>
@@ -599,15 +546,9 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
         hideInputsAndControls={props.hideVizInputsAndControls}
         setHideInputsAndControls={props.setHideVizInputsAndControls}
         onDragComplete={updateVisualizationPosition}
-        defaultPosition={
-          visualizationPanelConfigs?.pie?.position ??
-          DEFAULT_DRAGGABLE_VIZ_POSITION
-        }
+        defaultPosition={visualizationPanelConfig.position}
         onPanelResize={updateVisualizationDimensions}
-        dimensions={
-          visualizationPanelConfigs?.pie?.dimensions ??
-          DEFAULT_DRAGGABLE_VIZ_DIMENSIONS
-        }
+        dimensions={visualizationPanelConfig.dimensions}
         onPanelDismiss={onPanelDismiss}
       />
     </>

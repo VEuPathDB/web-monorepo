@@ -53,10 +53,7 @@ import {
   MapTypeMapLayerProps,
   MapTypePlugin,
 } from '../types';
-import DraggableVisualization, {
-  DEFAULT_DRAGGABLE_VIZ_DIMENSIONS,
-  DEFAULT_DRAGGABLE_VIZ_POSITION,
-} from '../../DraggableVisualization';
+import DraggableVisualization from '../../DraggableVisualization';
 import { VariableDescriptor } from '../../../../core/types/variable';
 import { useQuery } from '@tanstack/react-query';
 import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
@@ -70,7 +67,6 @@ import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
 import { SubStudies } from '../../SubStudies';
 import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
 import { STUDIES_ENTITY_ID, STUDY_ID_VARIABLE_ID } from '../../../constants';
-import { useDebouncedCallback } from '../../../../core/hooks/debouncing';
 import { PanelConfig } from '../../appState';
 
 const displayName = 'Bubbles';
@@ -87,18 +83,19 @@ export const plugin: MapTypePlugin = {
 function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
   const {
     apps,
-    appState,
     analysisState,
     studyEntities,
     updateConfiguration,
     studyId,
     filters,
     geoConfigs,
-    setVisualizationPanelConfigs,
   } = props;
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
+
   const markerConfiguration = props.configuration as BubbleMarkerConfiguration;
+
+  const { visualizationPanelConfig } = markerConfiguration;
 
   const markerVariableConstraints = apps
     .find((app) => app.name === 'standalone-map')
@@ -106,34 +103,19 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
       (viz) => viz.name === 'map-markers'
     )?.dataElementConstraints;
 
-  const { visualizationPanelConfigs } = appState;
-
   const setActiveVisualizationId = useCallback(
     (activeVisualizationId?: string) => {
       if (markerConfiguration == null) return;
       updateConfiguration({
         ...markerConfiguration,
         activeVisualizationId,
-      });
-      setVisualizationPanelConfigs({
-        ...visualizationPanelConfigs,
-        bubble: {
-          position:
-            visualizationPanelConfigs?.bubble?.position ??
-            DEFAULT_DRAGGABLE_VIZ_POSITION,
-          dimensions:
-            visualizationPanelConfigs?.bubble?.dimensions ??
-            DEFAULT_DRAGGABLE_VIZ_DIMENSIONS,
+        visualizationPanelConfig: {
+          ...visualizationPanelConfig,
           isVisible: !!activeVisualizationId,
         },
       });
     },
-    [
-      markerConfiguration,
-      updateConfiguration,
-      visualizationPanelConfigs,
-      setVisualizationPanelConfigs,
-    ]
+    [markerConfiguration, updateConfiguration, visualizationPanelConfig]
   );
 
   // If the variable or filters have changed on the active marker config
@@ -309,19 +291,14 @@ function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
     filters,
     geoConfigs,
     appState,
-    appState: {
-      markerConfigurations,
-      activeMarkerConfigurationType,
-      legendPanelConfig,
-      visualizationPanelConfigs,
-    },
     updateConfiguration,
     headerButtons,
     setStudyDetailsPanelConfig,
-    setLegendPanelConfig,
-    setVisualizationPanelConfigs,
   } = props;
   const configuration = props.configuration as BubbleMarkerConfiguration;
+
+  const { legendPanelConfig, visualizationPanelConfig, selectedMarkers } =
+    configuration;
 
   const { isValidProportion } = useOverlayConfig({
     studyId,
@@ -339,21 +316,6 @@ function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
     geoConfigs,
     configuration,
   });
-
-  const setActiveVisualizationId = useCallback(
-    (activeVisualizationId?: string) => {
-      updateConfiguration({
-        ...configuration,
-        activeVisualizationId,
-      });
-    },
-    [configuration, updateConfiguration]
-  );
-
-  const selectedMarkers = markerConfigurations.find(
-    (markerConfiguration) =>
-      markerConfiguration.type === activeMarkerConfigurationType
-  )?.selectedMarkers;
 
   const plugins = useStandaloneVizPlugins({
     overlayHelp: 'Overlay variables are not available for this map type',
@@ -388,88 +350,68 @@ function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
     substudyFilterFuncs
   );
 
-  const updateVariableLegendPosition = useDebouncedCallback(
+  const updateVariableLegendPosition = useCallback(
     (position: PanelConfig['position']) => {
-      setLegendPanelConfig({
-        ...legendPanelConfig,
-        bubble: {
-          count: legendPanelConfig?.bubble?.count ?? {
-            x: window.innerWidth,
-            y: 420,
-          },
+      updateConfiguration({
+        ...configuration,
+        legendPanelConfig: {
+          ...legendPanelConfig,
           variable: position,
         },
       });
     },
-    250
+    [updateConfiguration, configuration, legendPanelConfig]
   );
 
-  const updateCountLegendPosition = useDebouncedCallback(
+  const updateCountLegendPosition = useCallback(
     (position: PanelConfig['position']) => {
-      setLegendPanelConfig({
-        ...legendPanelConfig,
-        bubble: {
-          variable: legendPanelConfig?.bubble?.variable,
+      updateConfiguration({
+        ...configuration,
+        legendPanelConfig: {
+          ...legendPanelConfig,
           count: position,
         },
       });
     },
-    250
+    [updateConfiguration, configuration, legendPanelConfig]
   );
 
   const updateVisualizationPosition = useCallback(
     (position: PanelConfig['position']) => {
-      const newConfig = {
-        position,
-        dimensions:
-          visualizationPanelConfigs?.bubble?.dimensions ??
-          DEFAULT_DRAGGABLE_VIZ_DIMENSIONS,
-        isVisible: true,
-      };
-      setVisualizationPanelConfigs({
-        ...visualizationPanelConfigs,
-        bubble: newConfig,
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...visualizationPanelConfig,
+          position,
+        },
       });
     },
-    [visualizationPanelConfigs, setVisualizationPanelConfigs]
+    [updateConfiguration, configuration, visualizationPanelConfig]
   );
 
   const updateVisualizationDimensions = useCallback(
     (dimensions: PanelConfig['dimensions']) => {
-      const newConfig = {
-        dimensions,
-        position:
-          visualizationPanelConfigs?.bubble?.position ??
-          DEFAULT_DRAGGABLE_VIZ_POSITION,
-        isVisible: true,
-      };
-      setVisualizationPanelConfigs({
-        ...visualizationPanelConfigs,
-        bubble: newConfig,
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...visualizationPanelConfig,
+          dimensions,
+        },
       });
     },
-    [visualizationPanelConfigs, setVisualizationPanelConfigs]
+    [updateConfiguration, configuration, visualizationPanelConfig]
   );
 
   const onPanelDismiss = useCallback(() => {
-    setActiveVisualizationId(undefined);
-    setVisualizationPanelConfigs({
-      ...visualizationPanelConfigs,
-      bubble: {
-        position:
-          visualizationPanelConfigs?.bubble?.position ??
-          DEFAULT_DRAGGABLE_VIZ_POSITION,
-        dimensions:
-          visualizationPanelConfigs?.bubble?.dimensions ??
-          DEFAULT_DRAGGABLE_VIZ_DIMENSIONS,
+    updateConfiguration({
+      ...configuration,
+      activeVisualizationId: undefined,
+      visualizationPanelConfig: {
+        ...visualizationPanelConfig,
         isVisible: false,
       },
     });
-  }, [
-    setActiveVisualizationId,
-    setVisualizationPanelConfigs,
-    visualizationPanelConfigs,
-  ]);
+  }, [updateConfiguration, configuration, visualizationPanelConfig]);
 
   return (
     <>
@@ -487,7 +429,7 @@ function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
       <DraggableLegendPanel
         panelTitle="Count"
         zIndex={2}
-        defaultPosition={legendPanelConfig?.bubble?.count}
+        defaultPosition={legendPanelConfig.count}
         onDragComplete={updateCountLegendPosition}
       >
         <div style={{ padding: '5px 10px' }}>
@@ -507,7 +449,7 @@ function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
       <DraggableLegendPanel
         panelTitle={overlayVariable?.displayName}
         zIndex={3}
-        defaultPosition={legendPanelConfig?.bubble?.variable}
+        defaultPosition={legendPanelConfig.variable}
         onDragComplete={updateVariableLegendPosition}
         headerButtons={headerButtons}
       >
@@ -545,15 +487,9 @@ function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
         hideInputsAndControls={props.hideVizInputsAndControls}
         setHideInputsAndControls={props.setHideVizInputsAndControls}
         onDragComplete={updateVisualizationPosition}
-        defaultPosition={
-          visualizationPanelConfigs?.bubble?.position ??
-          DEFAULT_DRAGGABLE_VIZ_POSITION
-        }
+        defaultPosition={visualizationPanelConfig.position}
         onPanelResize={updateVisualizationDimensions}
-        dimensions={
-          visualizationPanelConfigs?.bubble?.dimensions ??
-          DEFAULT_DRAGGABLE_VIZ_DIMENSIONS
-        }
+        dimensions={visualizationPanelConfig.dimensions}
         onPanelDismiss={onPanelDismiss}
       />
     </>

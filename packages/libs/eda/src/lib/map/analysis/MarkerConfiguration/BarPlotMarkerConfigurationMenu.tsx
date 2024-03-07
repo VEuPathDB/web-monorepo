@@ -20,6 +20,8 @@ import { Toggle } from '@veupathdb/coreui';
 import { useUncontrolledSelections } from '../hooks/uncontrolledSelections';
 import {
   BinningMethod,
+  PanelConfig,
+  PanelPositionConfig,
   SelectedCountsOption,
   SelectedValues,
 } from '../appState';
@@ -38,6 +40,8 @@ export interface BarPlotMarkerConfiguration
   binningMethod: BinningMethod;
   selectedValues: SelectedValues;
   selectedCountsOption: SelectedCountsOption;
+  legendPanelConfig: PanelPositionConfig;
+  visualizationPanelConfig: PanelConfig;
 }
 
 interface Props
