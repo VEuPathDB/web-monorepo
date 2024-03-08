@@ -66,7 +66,6 @@ class DataCell extends React.PureComponent {
       children,
       key,
       className,
-      title: 'possibly an option to use the title attribute',
     };
 
     return column.hidden ? null : <td {...props} />;
