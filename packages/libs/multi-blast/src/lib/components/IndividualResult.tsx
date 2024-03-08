@@ -54,6 +54,12 @@ export function IndividualResult(props: Props) {
                     options={props.individualQueryOptions}
                     value={props.selectedQueryOption}
                     onChange={props.onSelectedOptionChange}
+                    styles={{
+                      menu: (baseStyles, state) => ({
+                        ...baseStyles,
+                        zIndex: 3,
+                      }),
+                    }}
                   />
                 </div>
               )}
