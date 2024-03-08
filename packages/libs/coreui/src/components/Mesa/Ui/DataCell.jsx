@@ -23,7 +23,8 @@ class DataCell extends React.PureComponent {
       return column.renderCell(cellProps);
     }
 
-    if (!column.type || !cellProps.value) return Templates.textCell(cellProps);
+    if (!column.type) return Templates.textCell(cellProps);
+    if (!cellProps.value) return Templates.textCell(cellProps);
 
     switch (column.type.toLowerCase()) {
       case 'wdklink':
@@ -39,33 +40,6 @@ class DataCell extends React.PureComponent {
       case 'text':
       default:
         return Templates.textCell(cellProps);
-    }
-  }
-
-  getTooltipText() {
-    const { row, column, rowIndex, columnIndex, inline } = this.props;
-    const { key, getValue } = column;
-    const value =
-      typeof getValue === 'function' ? getValue({ row, key }) : row[key];
-    const cellProps = { key, value, row, column, rowIndex, columnIndex };
-
-    // ignores optional renderCell wrapper function
-
-    if (!column.type || !cellProps.value) return Templates.textText(cellProps);
-
-    switch (column.type.toLowerCase()) {
-      case 'wdklink':
-        return Templates.wdkLinkText(cellProps);
-      case 'link':
-        return Templates.linkText(cellProps);
-      case 'number':
-        return Templates.numberText(cellProps);
-      case 'html': {
-        return undefined; // no title attribute/tooltip for HTML cells
-      }
-      case 'text':
-      default:
-        return Templates.textText(cellProps);
     }
   }
 
@@ -86,18 +60,13 @@ class DataCell extends React.PureComponent {
     width = width ? { width, maxWidth: width, minWidth: width } : {};
     style = Object.assign({}, style, width, whiteSpace);
     className = dataCellClass() + (className ? ' ' + className : '');
-
-    // provide basic mouse-over support for inline tables where
-    // text is likely to be truncated
-    const title = inline ? this.getTooltipText() : undefined;
-
     const children = this.renderContent();
     const props = {
       style,
       children,
       key,
       className,
-      title,
+      title: 'possibly an option to use the title attribute',
     };
 
     return column.hidden ? null : <td {...props} />;

@@ -6,14 +6,10 @@ import TruncatedText from './Components/TruncatedText';
 import { stringValue } from './Utils/Utils';
 
 const Templates = {
-  textText({ value }) {
-    return stringValue(value);
-  },
-
   textCell({ key, value, row, rowIndex, column }) {
     const { truncated } = column;
     const className = 'Cell Cell-' + key;
-    const text = Templates.textText({ value });
+    const text = stringValue(value);
 
     return truncated ? (
       <TruncatedText
@@ -26,44 +22,36 @@ const Templates = {
     );
   },
 
-  numberText({ value }) {
-    return typeof value === 'number'
-      ? value.toLocaleString()
-      : stringValue(value);
-  },
-
   numberCell({ key, value, row, rowIndex, column }) {
     const className = 'Cell NumberCell Cell-' + key;
-    const display = Templates.numberText({ value });
-    return <div className={className}>{display}</div>;
-  },
+    const display =
+      typeof value === 'number' ? value.toLocaleString() : stringValue(value);
 
-  wdkLinkText({ value, href }) {
-    const { displayText, url } = value;
-    return displayText.length ? value.displayText : href;
+    return <div className={className}>{display}</div>;
   },
 
   wdkLinkCell({ key, value, row, rowIndex, column }) {
     const className = 'Cell wdkLinkCell Cell-' + key;
-    const { url } = value;
-    const href = url ? url : '#';
-    const text = Templates.wdkLinkText({ value, href });
-    const div = <div dangerouslySetInnerHTML={{ __html: text }} />;
-    const target = '_blank';
+    let { displayText, url } = value;
+    let href = url ? url : '#';
+    let text = displayText.length ? value.displayText : href;
+    text = <div dangerouslySetInnerHTML={{ __html: text }} />;
+    let target = '_blank';
+
     const props = { href, target, className };
 
-    return <a {...props}>{div}</a>;
-  },
-
-  linkText({ value }) {
-    const { text } = getLinkDetails(value);
-    return text;
+    return <a {...props}>{text}</a>;
   },
 
   linkCell({ key, value, row, rowIndex, column }) {
     const className = 'Cell LinkCell Cell-' + key;
-    const { href, text, target } = getLinkDetails(value);
+    const defaults = { href: null, target: '_blank', text: '' };
+    let { href, target, text } = typeof value === 'object' ? value : defaults;
+    href = href ? href : typeof value === 'string' ? value : '#';
+    text = text.length ? text : href;
+
     const props = { href, target, className, name: text };
+
     return <a {...props}>{text}</a>;
   },
 
@@ -89,18 +77,5 @@ const Templates = {
     return <div className={className}>{content}</div>;
   },
 };
-
-function getLinkDetails(value) {
-  const defaults = { href: '#', text: '', target: '_blank' };
-  if (typeof value === 'string') {
-    // If the value is a string, it's used for both href and text, with default target
-    return { ...defaults, href: value, text: value };
-  } else if (typeof value === 'object' && value != null) {
-    // If the value is an object, extract href, text, and target, applying defaults as necessary
-    const { href = '#', text = '', target = '_blank' } = value;
-    return { href, text: text.length > 0 ? text : href, target };
-  }
-  return defaults;
-}
 
 export default Templates;
