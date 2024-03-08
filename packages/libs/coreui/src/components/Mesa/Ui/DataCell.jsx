@@ -61,12 +61,7 @@ class DataCell extends React.PureComponent {
     style = Object.assign({}, style, width, whiteSpace);
     className = dataCellClass() + (className ? ' ' + className : '');
     const children = this.renderContent();
-    const props = {
-      style,
-      children,
-      key,
-      className,
-    };
+    const props = { style, children, key, className };
 
     return column.hidden ? null : <td {...props} />;
   }
