@@ -61,10 +61,7 @@ export function RecordTable_Sequences(
 
   return (
     <>
-      <ul>
-        <li>displayName: {props.record.displayName}</li>
-        <li>group_name id: {groupName}</li>
-      </ul>
+      <div>Ignore the help text above for now!</div>
       <TreeTable
         rowHeight={rowHeight}
         treeProps={treeProps}

@@ -12,8 +12,13 @@ export interface TreeTableProps<RowType> {
   /**
    * number of pixels vertical space for each row of the table and tree
    * (for the table this is a minimum height, so make sure table content doesn't wrap)
+   * required; no default; minimum seems to be 42; suggested value: 45
    */
   rowHeight: number;
+  /**
+   * number of pixels max width for table columns; defaults to 200
+   */
+  maxColumnWidth?: number;
   /**
    * data and options for the tree
    */
@@ -42,27 +47,23 @@ export interface TreeTableProps<RowType> {
  * - allow additional Mesa props and options to be passed
  */
 export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
-  const { rowHeight } = props;
+  const { rowHeight, maxColumnWidth = 200 } = props;
   const { rows } = props.tableProps;
 
   const rowStyleClassName = useMemo(
     () =>
       cx(
+        // minimum height for table rows
         classNameStyle`
           height: ${rowHeight}px;
 
           & td {
-            max-width: 0;
-            max-height: ${rowHeight}px; /* Match the row height for consistency */
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-
-            /* Add a basic tooltip to encourage hover to reveal the 'title' attribute */
+ 
             &:hover {
               cursor: pointer;
               position: relative;
             }
+
           }
 	`
       ),
@@ -76,6 +77,9 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
     options: {
       ...props.tableProps.options,
       deriveRowClassName: (_) => rowStyleClassName,
+      inline: true,
+      inlineMaxHeight: `${rowHeight}px`,
+      inlineMaxWidth: `${maxColumnWidth}px`,
     },
   };
 
