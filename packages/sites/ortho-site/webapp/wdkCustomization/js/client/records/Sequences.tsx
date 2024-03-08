@@ -53,9 +53,11 @@ export function RecordTable_Sequences(
 
   const treeProps = {
     data: treeResponse.newick,
-    width: 400,
+    width: 200,
     highlightMode: 'monophyletic' as const,
   };
+
+  const rowHeight = 45;
 
   return (
     <>
@@ -63,7 +65,11 @@ export function RecordTable_Sequences(
         <li>displayName: {props.record.displayName}</li>
         <li>group_name id: {groupName}</li>
       </ul>
-      <TreeTable rowHeight={100} treeProps={treeProps} tableProps={mesaState} />
+      <TreeTable
+        rowHeight={rowHeight}
+        treeProps={treeProps}
+        tableProps={mesaState}
+      />
     </>
   );
 }

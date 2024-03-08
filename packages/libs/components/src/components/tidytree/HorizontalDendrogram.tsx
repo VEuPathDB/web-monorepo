@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { CSSProperties, useEffect, useLayoutEffect, useRef } from 'react';
 import { TidyTree as TidyTreeJS } from 'tidytree';
 
 export interface HorizontalDendrogramProps {
@@ -32,9 +32,20 @@ export interface HorizontalDendrogramProps {
    */
   width: number;
   /**
+   * hopefully temporary prop that we can get rid of when we understand the
+   * horizontal layout behaviour of the tree (with respect to number of nodes)
+   * which will come with testing with more examples. Defaults to 1.0
+   * update: possibly wasn't needed in the end!
+   */
+  hStretch?: number;
+  /**
    * number of pixels height taken per leaf
    */
   rowHeight: number;
+  /**
+   * CSS styles for the container div
+   */
+  containerStyles?: CSSProperties;
   /**
    * which leaf nodes to highlight
    */
@@ -60,6 +71,8 @@ export function HorizontalDendrogram({
   options: { ruler = false, margin = [0, 0, 0, 0] },
   highlightedNodeIds,
   highlightMode,
+  hStretch = 1.0,
+  containerStyles,
 }: HorizontalDendrogramProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const tidyTreeRef = useRef<TidyTreeJS>();
@@ -80,6 +93,7 @@ export function HorizontalDendrogram({
       equidistantLeaves: true,
       ruler,
       margin,
+      hStretch,
       animation: 0, // it's naff and it reveals edge lengths/weights momentarily
     });
     tidyTreeRef.current = instance;
@@ -119,6 +133,7 @@ export function HorizontalDendrogram({
       style={{
         width: width + 'px',
         height: containerHeight + 'px',
+        ...containerStyles,
       }}
       ref={containerRef}
     />

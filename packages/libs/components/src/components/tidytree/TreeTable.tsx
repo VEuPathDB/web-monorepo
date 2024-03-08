@@ -48,10 +48,23 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
   const rowStyleClassName = useMemo(
     () =>
       cx(
-        classNameStyle({
-          height: rowHeight + 'px',
-          background: 'yellow',
-        })
+        classNameStyle`
+          height: ${rowHeight}px;
+
+          & td {
+            max-width: 0;
+            max-height: ${rowHeight}px; /* Match the row height for consistency */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            /* Add a basic tooltip to encourage hover to reveal the 'title' attribute */
+            &:hover {
+              cursor: pointer;
+              position: relative;
+            }
+          }
+	`
       ),
     [rowHeight]
   );
@@ -76,16 +89,22 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
         leafCount={rows.length}
         options={{ margin: [0, 10, 0, 10] }}
       />
-      <>
+      <div
+        style={{
+          flexGrow: 1,
+          width: 1 /* arbitrary non-zero width seems necessary for flex */,
+        }}
+      >
         <Global
           styles={globalStyle`
 	  .DataTable {
 	    margin-bottom: 0px !important;
+            width: 80%;
 	  }
 	`}
         />
         <Mesa state={tableState} />
-      </>
+      </div>
     </div>
   );
 }
