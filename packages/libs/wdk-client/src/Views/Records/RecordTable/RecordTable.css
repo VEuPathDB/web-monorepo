@@ -1,0 +1,19 @@
+.DataCell:empty:after {
+  content: 'N/A';
+  opacity: 0.4;
+}
+
+.DataCell > .Cell:empty:after {
+  content: 'N/A';
+  opacity: 0.4;
+}
+
+.wdk-RecordFilterSearchBox {
+  width: 300px;
+}
+
+.MesaComponent > .DataTable {
+  position: relative;
+  max-width: 100%;
+  overflow-x: auto;
+}
