@@ -72,7 +72,7 @@ Props) => {
     <Tooltip
       title={content ?? <></>}
       // open={open}
-      classes={classes as any}
+      className={classes}
       arrow={true}
       enterDelay={showDelay}
       leaveDelay={hideDelay}
