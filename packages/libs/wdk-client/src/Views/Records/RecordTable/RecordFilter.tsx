@@ -4,7 +4,7 @@ import {
   HelpIcon,
   TabbableContainer,
 } from '../../../Components';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 import { CheckboxList } from '@veupathdb/coreui';
 import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 
