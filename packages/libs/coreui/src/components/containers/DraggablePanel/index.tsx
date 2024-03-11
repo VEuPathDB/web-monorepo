@@ -92,13 +92,15 @@ export default function DraggablePanel(props: DraggablePanelProps) {
     });
   }
 
-  function handleOnDragStart() {
+  function handleOnDragStart(e: DraggableEvent) {
+    if ((e.target as HTMLElement).closest('button')) return;
     setIsDragging(true);
 
     if (onDragStart) onDragStart();
   }
 
-  function handleOnDragStop(_: DraggableEvent, data: DraggableData) {
+  function handleOnDragStop(e: DraggableEvent, data: DraggableData) {
+    if ((e.target as HTMLElement).closest('button')) return;
     setIsDragging(false);
 
     if (onDragComplete) {
