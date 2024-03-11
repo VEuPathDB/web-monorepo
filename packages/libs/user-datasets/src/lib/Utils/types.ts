@@ -91,6 +91,7 @@ export interface DatasetUploadTypeConfigEntry<T extends string> {
 
 export interface FileUploadConfig {
   render?: (props: { fieldNode: ReactNode }) => ReactNode;
+  maxSizeBytes?: number;
 }
 
 export interface UrlUploadConfig {
