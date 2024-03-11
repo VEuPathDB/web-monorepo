@@ -31,7 +31,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
               <>
                 {fieldNode}
                 <div style={{ marginTop: '0.25em' }}>
-                  File must be 10MB or smaller.
+                  File must be 10 MB or smaller.
                 </div>
               </>
             ),
