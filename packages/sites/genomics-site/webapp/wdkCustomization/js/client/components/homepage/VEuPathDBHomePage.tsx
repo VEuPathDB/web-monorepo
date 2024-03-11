@@ -1115,6 +1115,7 @@ const useHeaderMenuItems = (
       key: 'contact-us',
       display: 'Contact Us',
       type: 'reactRoute',
+      target: '_blank',
       url: '/contact-us',
     },
   ];
