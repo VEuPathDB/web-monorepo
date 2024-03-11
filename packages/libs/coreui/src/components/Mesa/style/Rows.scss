@@ -25,6 +25,14 @@ $headingRowBg: #e2e2e2;
 
   tbody {
     tr {
+      &._childIsExpanded {
+        font-weight: 500;
+      }
+      &._isExpandable {
+        td {
+          border-top: 1px solid $borderColor;
+        }
+      }
       &:nth-child(odd) td {
         background-color: $oddRowBg;
       }
