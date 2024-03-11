@@ -3,6 +3,7 @@ import * as t from 'io-ts';
 import { Filter } from './filter';
 import { VariableDescriptor } from './variable';
 import { Computation } from './visualization';
+import { merge } from 'lodash';
 
 export type AnalysisPreferences = t.TypeOf<typeof AnalysisPreferences>;
 export const AnalysisPreferences = t.intersection([
@@ -135,9 +136,10 @@ export const DEFAULT_ANALYSIS_NAME = 'Unnamed Analysis';
 
 export function makeNewAnalysis(
   studyId: string,
-  computation?: Computation
+  computation?: Computation,
+  additionalConfig?: unknown
 ): NewAnalysis {
-  return {
+  const defaultAnalysis = {
     displayName: DEFAULT_ANALYSIS_NAME,
     studyId,
     isPublic: false,
@@ -154,4 +156,6 @@ export function makeNewAnalysis(
       computations: computation ? [computation] : [],
     },
   };
+
+  return merge(defaultAnalysis, additionalConfig);
 }
