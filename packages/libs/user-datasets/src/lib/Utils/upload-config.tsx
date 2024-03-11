@@ -14,8 +14,8 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
           <p className="formInfo">
             We accept any file in the{' '}
             <a href="http://biom-format.org">BIOM format</a>, either JSON-based
-            (BIOM 1.0) or HDF5 (BIOM 2.0+). The maximum allowed file size is
-            1GB.
+            (BIOM 1.0) or HDF5 (BIOM 2.0+). The maximum allowed file size is 10
+            MB.
             <br />
             <br />
             If possible, try including taxonomic information and rich sample
