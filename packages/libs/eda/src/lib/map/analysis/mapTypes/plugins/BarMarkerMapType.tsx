@@ -109,6 +109,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     studyId,
     studyEntities,
     filters,
+    setIsSidePanelExpanded,
   } = props;
 
   const subsettingClient = useSubsettingClient();
@@ -310,6 +311,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
           geoConfigs={geoConfigs}
           mapType="barplot"
           setHideVizInputsAndControls={props.setHideVizInputsAndControls}
+          setIsSidePanelExpanded={setIsSidePanelExpanded}
         />
       ),
     },

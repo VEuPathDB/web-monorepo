@@ -95,6 +95,8 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     studyId,
     studyEntities,
     filters,
+    setHideVizInputsAndControls,
+    setIsSidePanelExpanded,
   } = props;
 
   const subsettingClient = useSubsettingClient();
@@ -271,7 +273,8 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
           plugins={plugins}
           geoConfigs={geoConfigs}
           mapType="pie"
-          setHideVizInputsAndControls={props.setHideVizInputsAndControls}
+          setHideVizInputsAndControls={setHideVizInputsAndControls}
+          setIsSidePanelExpanded={setIsSidePanelExpanded}
         />
       ),
     },
@@ -397,6 +400,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     filters,
     headerButtons,
     setStudyDetailsPanelConfig,
+    setHideVizInputsAndControls,
   } = props;
 
   const configuration = props.configuration as PieMarkerConfiguration;
@@ -544,7 +548,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
         filters={filtersForFloaters}
         zIndexForStackingContext={2}
         hideInputsAndControls={props.hideVizInputsAndControls}
-        setHideInputsAndControls={props.setHideVizInputsAndControls}
+        setHideInputsAndControls={setHideVizInputsAndControls}
         onDragComplete={updateVisualizationPosition}
         defaultPosition={visualizationPanelConfig.position}
         onPanelResize={updateVisualizationDimensions}

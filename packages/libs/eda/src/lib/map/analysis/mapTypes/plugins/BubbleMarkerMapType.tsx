@@ -89,6 +89,8 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
     studyId,
     filters,
     geoConfigs,
+    setIsSidePanelExpanded,
+    setHideVizInputsAndControls,
   } = props;
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
@@ -174,7 +176,8 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
           plugins={plugins}
           geoConfigs={geoConfigs}
           mapType="bubble"
-          setHideVizInputsAndControls={props.setHideVizInputsAndControls}
+          setHideVizInputsAndControls={setHideVizInputsAndControls}
+          setIsSidePanelExpanded={setIsSidePanelExpanded}
         />
       ),
     },
@@ -294,6 +297,7 @@ function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
     updateConfiguration,
     headerButtons,
     setStudyDetailsPanelConfig,
+    setHideVizInputsAndControls,
   } = props;
   const configuration = props.configuration as BubbleMarkerConfiguration;
 
@@ -485,7 +489,7 @@ function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
         // onTouch={moveVizToTop}
         zIndexForStackingContext={2}
         hideInputsAndControls={props.hideVizInputsAndControls}
-        setHideInputsAndControls={props.setHideVizInputsAndControls}
+        setHideInputsAndControls={setHideVizInputsAndControls}
         onDragComplete={updateVisualizationPosition}
         defaultPosition={visualizationPanelConfig.position}
         onPanelResize={updateVisualizationDimensions}
