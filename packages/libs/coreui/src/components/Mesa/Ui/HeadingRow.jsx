@@ -1,4 +1,5 @@
 import React from 'react';
+import ExpansionCell from './ExpansionCell';
 
 import HeadingCell from './HeadingCell';
 import SelectionCell from './SelectionCell';
@@ -18,14 +19,25 @@ class HeadingRow extends React.PureComponent {
       eventHandlers,
       offsetLeft,
     } = this.props;
-    const { isRowSelected, columnDefaults } = options ? options : {};
-    const { sort } = uiState ? uiState : {};
-    const { onRowSelect, onRowDeselect } = eventHandlers ? eventHandlers : {};
+    const { isRowSelected, columnDefaults, childRow, getRowId } = options
+      ? options
+      : {};
+    const { sort, expandedRows } = uiState ? uiState : {};
+    const { onRowSelect, onRowDeselect, onExpandedRowsChange } = eventHandlers
+      ? eventHandlers
+      : {};
     const hasSelectionColumn = [
       isRowSelected,
       onRowSelect,
       onRowDeselect,
     ].every((fn) => typeof fn === 'function');
+
+    const hasExpansionColumn = [
+      childRow,
+      expandedRows,
+      onExpandedRowsChange,
+      getRowId,
+    ].every((prop) => prop != null);
 
     const rowCount = columns.reduce((count, column) => {
       const thisCount = Array.isArray(column.renderHeading)
@@ -54,7 +66,19 @@ class HeadingRow extends React.PureComponent {
         {headingRows.map(({ cols, isFirstRow }, index) => {
           return (
             <tr className="Row HeadingRow" key={index}>
-              {!hasSelectionColumn ? null : (
+              {hasExpansionColumn && (
+                <ExpansionCell
+                  inert={!isFirstRow}
+                  heading={true}
+                  key="_expansion"
+                  rows={filteredRows}
+                  childRow={childRow}
+                  getRowId={getRowId}
+                  onExpandedRowsChange={onExpandedRowsChange}
+                  expandedRows={expandedRows}
+                />
+              )}
+              {hasSelectionColumn && (
                 <SelectionCell
                   inert={!isFirstRow}
                   heading={true}
