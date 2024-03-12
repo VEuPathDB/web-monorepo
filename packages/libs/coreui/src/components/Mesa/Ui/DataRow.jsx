@@ -79,12 +79,11 @@ class DataRow extends React.PureComponent {
       typeof eventHandlers.onRowSelect === 'function' &&
       typeof eventHandlers.onRowDeselect === 'function';
 
-    const hasExpansionColumn = [
-      childRow,
-      eventHandlers.onExpandedRowsChange,
-      uiState.expandedRows,
-      getRowId,
-    ].every((prop) => prop != null);
+    const hasExpansionColumn =
+      childRow != null &&
+      eventHandlers?.onExpandedRowsChange != null &&
+      uiState?.expandedRows != null &&
+      getRowId != null;
 
     const showChildRow =
       hasExpansionColumn && uiState.expandedRows.includes(getRowId(row));
