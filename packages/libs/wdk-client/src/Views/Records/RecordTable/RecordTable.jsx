@@ -21,9 +21,6 @@ import { ErrorBoundary } from '../../../Controllers';
 import { stripHTML } from '../../../Utils/DomUtils';
 import './RecordTable.css';
 
-// TODO: handle in model
-const COLUMNS_TO_OVERRIDE_SORT = ['thumbnail', 'clustalInput'];
-
 // NOTE: This is very hacky because the model is not reliably providing column or sort types
 const mapSortType = (val) => {
   if (!isNaN(parseFloat(val)) && isFinite(val)) {
@@ -153,9 +150,7 @@ class RecordTable extends Component {
           ...remainingProperties,
           key: name,
           name: displayName,
-          sortable: COLUMNS_TO_OVERRIDE_SORT.includes(name)
-            ? false
-            : isSortable,
+          sortable: isSortable,
           type: type ?? 'html',
           helpText: help,
           sortType,
