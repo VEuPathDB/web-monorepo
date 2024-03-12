@@ -2,7 +2,7 @@ import { useFindEntityAndVariableCollection } from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { capitalize, partial } from 'lodash';
+import { partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
@@ -88,6 +88,11 @@ function BetaDivConfigDescriptionComponent({
       : undefined;
   const updatedCollectionVariable =
     findEntityAndVariableCollection(collectionVariable);
+  const dissimilarityMethodDisplayName = betaDivDissimilarityMethod
+    ? BETA_DIV_DISSIMILARITY_METHODS.find(
+        (method) => method.value === betaDivDissimilarityMethod
+      )?.displayName
+    : undefined;
   return (
     <div className="ConfigDescriptionContainer">
       <h4>
@@ -104,11 +109,7 @@ function BetaDivConfigDescriptionComponent({
         Dissimilarity method:{' '}
         <span>
           {betaDivDissimilarityMethod ? (
-            betaDivDissimilarityMethod === 'jsd' ? (
-              betaDivDissimilarityMethod.toUpperCase()
-            ) : (
-              capitalize(betaDivDissimilarityMethod)
-            )
+            dissimilarityMethodDisplayName
           ) : (
             <i>Not selected</i>
           )}
@@ -119,7 +120,11 @@ function BetaDivConfigDescriptionComponent({
 }
 
 // Include available methods in this array.
-const BETA_DIV_DISSIMILARITY_METHODS = ['bray', 'jaccard', 'jsd'];
+const BETA_DIV_DISSIMILARITY_METHODS = [
+  { value: 'bray', displayName: 'Bray-Curtis dissimilarity' },
+  { value: 'jaccard', displayName: 'Jaccard index' },
+  { value: 'jsd', displayName: 'Jensen-Shannon divergence' },
+];
 
 export function BetaDivConfiguration(props: ComputationConfigProps) {
   const {
@@ -143,6 +148,18 @@ export function BetaDivConfiguration(props: ComputationConfigProps) {
     }
   }, [configuration]);
 
+  const betaDivDissimilaritySelectorText = useMemo(() => {
+    if (betaDivDissimilarityMethod) {
+      return (
+        BETA_DIV_DISSIMILARITY_METHODS.find(
+          (method) => method.value === betaDivDissimilarityMethod
+        )?.displayName ?? 'Select a method'
+      );
+    } else {
+      return 'Select a method';
+    }
+  }, [betaDivDissimilarityMethod]);
+
   return (
     <ComputationStepContainer
       computationStepInfo={{
@@ -163,20 +180,10 @@ export function BetaDivConfiguration(props: ComputationConfigProps) {
           <span>Dissimilarity method</span>
           <SingleSelect
             value={betaDivDissimilarityMethod ?? 'Select a method'}
-            buttonDisplayContent={
-              betaDivDissimilarityMethod
-                ? betaDivDissimilarityMethod === 'jsd'
-                  ? betaDivDissimilarityMethod.toUpperCase()
-                  : capitalize(betaDivDissimilarityMethod)
-                : 'Select a method'
-            }
+            buttonDisplayContent={betaDivDissimilaritySelectorText}
             items={BETA_DIV_DISSIMILARITY_METHODS.map((method) => ({
-              value: method,
-              display: method
-                ? method === 'jsd'
-                  ? method.toUpperCase()
-                  : capitalize(method)
-                : 'Select a method',
+              value: method.value,
+              display: method.displayName ?? 'Select a method',
             }))}
             onSelect={partial(
               changeConfigHandler,

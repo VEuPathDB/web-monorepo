@@ -1,9 +1,9 @@
-.wdk-RecordContainer .wdk-DataTableContainer {
+.wdk-RecordTable > .Mesa.MesaComponent > .MesaComponent > .DataTable {
   max-height: 50em;
   overflow: auto;
 }
 
-.wdk-DataTableCell__legend {
+.Cell-legend {
   .PfamDomain {
     width: 16.6666666667em;
   }

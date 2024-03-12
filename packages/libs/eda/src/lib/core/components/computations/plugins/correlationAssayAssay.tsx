@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
   FeaturePrefilterThresholds,
   useFindEntityAndVariableCollection,
 } from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { capitalize, partial } from 'lodash';
+import { partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
@@ -106,6 +106,11 @@ function CorrelationAssayAssayConfigDescriptionComponent({
   const entityAndCollectionVariableTreeNode2 =
     findEntityAndVariableCollection(collectionVariable2);
 
+  const correlationMethodDisplayName = correlationMethod
+    ? CORRELATION_METHODS.find((method) => method.value === correlationMethod)
+        ?.displayName
+    : undefined;
+
   return (
     <div className="ConfigDescriptionContainer">
       <h4>
@@ -132,7 +137,7 @@ function CorrelationAssayAssayConfigDescriptionComponent({
         Method:{' '}
         <span>
           {correlationMethod ? (
-            capitalize(correlationMethod)
+            correlationMethodDisplayName
           ) : (
             <i>Not selected</i>
           )}
@@ -142,7 +147,10 @@ function CorrelationAssayAssayConfigDescriptionComponent({
   );
 }
 
-const CORRELATION_METHODS = ['spearman', 'pearson'];
+const CORRELATION_METHODS = [
+  { value: 'spearman', displayName: 'Spearman' },
+  { value: 'pearson', displayName: 'Pearson' },
+];
 const DEFAULT_PROPORTION_NON_ZERO_THRESHOLD = 0.05;
 const DEFAULT_VARIANCE_THRESHOLD = 0;
 const DEFAULT_STANDARD_DEVIATION_THRESHOLD = 0;
@@ -258,6 +266,18 @@ export function CorrelationAssayAssayConfiguration(
     </div>
   );
 
+  const correlationMethodSelectorText = useMemo(() => {
+    if (configuration.correlationMethod) {
+      return (
+        CORRELATION_METHODS.find(
+          (method) => method.value === configuration.correlationMethod
+        )?.displayName ?? 'Select a method'
+      );
+    } else {
+      return 'Select a method';
+    }
+  }, [configuration.correlationMethod]);
+
   return (
     <ComputationStepContainer
       computationStepInfo={{
@@ -270,17 +290,22 @@ export function CorrelationAssayAssayConfiguration(
           <div className={cx('-CorrelationOuterConfigContainer')}>
             <H6>Input Data</H6>
             <div className={cx('-InputContainer')}>
-              <span>Taxonomic level</span>
+              {/* <span>Taxonomic level</span> */}
+              <span>Data 1</span>
               <VariableCollectionSelectList
                 value={configuration.collectionVariable1}
                 onSelect={partial(changeConfigHandler, 'collectionVariable1')}
-                collectionPredicate={isTaxonomicVariableCollection}
+                // collectionPredicate={isTaxonomicVariableCollection}
+                collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
               />
-              <span>Functional data</span>
+              {/* <span>Functional data</span>
+               */}
+              <span>Data 2</span>
               <VariableCollectionSelectList
                 value={configuration.collectionVariable2}
                 onSelect={partial(changeConfigHandler, 'collectionVariable2')}
-                collectionPredicate={isFunctionalCollection}
+                // collectionPredicate={isFunctionalCollection}
+                collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
               />
             </div>
           </div>
@@ -290,14 +315,10 @@ export function CorrelationAssayAssayConfiguration(
               <span>Method</span>
               <SingleSelect
                 value={configuration.correlationMethod ?? 'Select a method'}
-                buttonDisplayContent={
-                  configuration.correlationMethod
-                    ? capitalize(configuration.correlationMethod)
-                    : 'Select a method'
-                }
-                items={CORRELATION_METHODS.map((method: string) => ({
-                  value: method,
-                  display: capitalize(method),
+                buttonDisplayContent={correlationMethodSelectorText}
+                items={CORRELATION_METHODS.map((method) => ({
+                  value: method.value,
+                  display: method.displayName,
                 }))}
                 onSelect={partial(changeConfigHandler, 'correlationMethod')}
               />
@@ -373,13 +394,21 @@ function isEnabledInPicker({
 }: IsEnabledInPickerParams): boolean {
   if (!studyMetadata) return false;
 
-  const entities = entityTreeToArray(studyMetadata.rootEntity);
+  /** Temporary removal of collection type restriction!
+   * This temporary change allows all collections to play in the assay v assay app.
+   * The hack will be removed as part of #906 part 2.
+   */
+  // const entities = entityTreeToArray(studyMetadata.rootEntity);
 
-  // Check that the metagenomic entity exists _and_ that it has
-  // at least one collection.
-  const hasMetagenomicData = entities.some(
-    (entity) => entity.id === 'OBI_0002623' && !!entity.collections?.length
-  ); // OBI_0002623 = Metagenomic sequencing assay
+  // // Check that the metagenomic entity exists _and_ that it has
+  // // at least one collection.
+  // const hasMetagenomicData = entities.some(
+  //   (entity) => entity.id === 'OBI_0002623' && !!entity.collections?.length
+  // ); // OBI_0002623 = Metagenomic sequencing assay
 
-  return hasMetagenomicData;
+  // return hasMetagenomicData;
+
+  /** end of temporary change */
+
+  return true;
 }

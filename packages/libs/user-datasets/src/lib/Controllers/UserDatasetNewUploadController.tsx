@@ -133,6 +133,9 @@ export default function UserDatasetUploadController({
           datasetUploadType.formConfig.uploadMethodConfig.result
         }
         supportedFileUploadTypes={SUPPORTED_FILE_UPLOAD_TYPES}
+        maxSizeBytes={
+          datasetUploadType.formConfig.uploadMethodConfig.file?.maxSizeBytes
+        }
       />
     </div>
   );

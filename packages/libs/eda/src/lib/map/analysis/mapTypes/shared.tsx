@@ -21,7 +21,6 @@ import {
   DefaultOverlayConfigProps,
   getDefaultOverlayConfig,
 } from '../utils/defaultOverlayConfig';
-import { sumBy } from 'lodash';
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../../constants';
 import {
@@ -273,15 +272,6 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
             )
           : undefined;
 
-      const totalVisibleEntityCount = markerData?.mapElements.reduce(
-        (acc, curr) => {
-          return acc + curr.entityCount;
-        },
-        0
-      );
-
-      const countSum = sumBy(markerData?.mapElements, 'entityCount');
-
       /**
        * create custom legend data
        */
@@ -314,8 +304,6 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
 
       return {
         mapElements: markerData.mapElements,
-        totalVisibleWithOverlayEntityCount: countSum,
-        totalVisibleEntityCount,
         legendItems,
         overlayConfig,
         boundsZoomLevel,
