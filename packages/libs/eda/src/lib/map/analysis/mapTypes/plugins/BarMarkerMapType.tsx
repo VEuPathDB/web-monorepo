@@ -79,6 +79,8 @@ import { useLittleFilters } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
 import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
 import { SubStudies } from '../../SubStudies';
+import { useAreaSelect } from './useAreaSelect';
+
 const displayName = 'Bar plots';
 
 export const plugin: MapTypePlugin = {
@@ -388,38 +390,14 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     [props.configuration, updateConfiguration, handleSelectedMarkerSnackbars]
   );
 
-  // set useEffect for area selection to change selectedMarkers via setSelectedmarkers
-  // define useEffect here to avoid conditional call
-  // thus, this contains duplicate code, selectedMarkers
-  useEffect(() => {
-    if (!markerData.error && !markerData.isFetching && boxCoord != null) {
-      // define selectedMarkers
-      const selectedMarkers = markerConfigurations.find(
-        (markerConfiguration) =>
-          markerConfiguration.type === activeMarkerConfigurationType
-      )?.selectedMarkers;
-
-      // find markers within area selection
-      const boxCoordMarkers = markerData.markerProps
-        ?.map((marker) => {
-          // check if the center of a marker is within selected area
-          return marker.position.lat >= boxCoord.southWest.lat &&
-            marker.position.lat <= boxCoord.northEast.lat &&
-            marker.position.lng >= boxCoord.southWest.lng &&
-            marker.position.lng <= boxCoord.northEast.lng
-            ? marker.id
-            : '';
-        })
-        .filter((item) => item !== '');
-
-      // then, update selectedMarkers
-      setSelectedMarkers([
-        ...(selectedMarkers ?? []),
-        ...(boxCoordMarkers ?? []),
-      ]);
-    }
-    // additional dependency may cause infinite loop, e.g., markerData
-  }, [boxCoord]);
+  // marker selection by ctrl+click
+  const areaSelection = useAreaSelect(
+    appState,
+    markerData,
+    setSelectedMarkers,
+    boxCoord,
+    markerData.markerProps
+  );
 
   if (markerData.error && !markerData.isFetching)
     return getErrorOverlayComponent(markerData.error);

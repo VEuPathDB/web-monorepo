@@ -9,7 +9,7 @@ import {
 import { getValueToGradientColorMapper } from '@veupathdb/components/lib/types/plots/addOns';
 import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
 import { capitalize, omit } from 'lodash';
-import { useCallback, useMemo, useEffect } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   useFindEntityAndVariable,
   Filter,
@@ -67,6 +67,7 @@ import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
 import { SubStudies } from '../../SubStudies';
 import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
 import { STUDIES_ENTITY_ID, STUDY_ID_VARIABLE_ID } from '../../../constants';
+import { useAreaSelect } from './useAreaSelect';
 
 const displayName = 'Bubbles';
 
@@ -247,38 +248,14 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
     [handleSelectedMarkerSnackbars, props.configuration, updateConfiguration]
   );
 
-  // set useEffect for area selection to change selectedMarkers via setSelectedmarkers
-  // define useEffect here to avoid conditional call
-  // thus, this contains duplicate code, selectedMarkers
-  useEffect(() => {
-    if (!markersData.error && !markersData.isFetching && boxCoord != null) {
-      // define selectedMarkers
-      const selectedMarkers = markerConfigurations.find(
-        (markerConfiguration) =>
-          markerConfiguration.type === activeMarkerConfigurationType
-      )?.selectedMarkers;
-
-      // find markers within area selection
-      const boxCoordMarkers = markersData.data?.markersData
-        ?.map((marker) => {
-          // check if the center of a marker is within selected area
-          return marker.position.lat >= boxCoord.southWest.lat &&
-            marker.position.lat <= boxCoord.northEast.lat &&
-            marker.position.lng >= boxCoord.southWest.lng &&
-            marker.position.lng <= boxCoord.northEast.lng
-            ? marker.id
-            : '';
-        })
-        .filter((item) => item !== '');
-
-      // then, update selectedMarkers
-      setSelectedMarkers([
-        ...(selectedMarkers ?? []),
-        ...(boxCoordMarkers ?? []),
-      ]);
-    }
-    // additional dependency may cause infinite loop, e.g., markerData
-  }, [boxCoord]);
+  // marker selection by ctrl+click
+  const areaSelection = useAreaSelect(
+    appState,
+    markersData,
+    setSelectedMarkers,
+    boxCoord,
+    markersData.data?.markersData
+  );
 
   if (markersData.error && !markersData.isFetching)
     return getErrorOverlayComponent(markersData.error);

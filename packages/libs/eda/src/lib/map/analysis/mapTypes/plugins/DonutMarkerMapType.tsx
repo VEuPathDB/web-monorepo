@@ -11,7 +11,7 @@ import {
   ColorPaletteDefault,
   gradientSequentialColorscaleMap,
 } from '@veupathdb/components/lib/types/plots/addOns';
-import { useCallback, useMemo, useEffect } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   STUDIES_ENTITY_ID,
   STUDY_ID_VARIABLE_ID,
@@ -72,6 +72,7 @@ import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
 import { SubStudies } from '../../SubStudies';
 import { useLittleFilters } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
+import { useAreaSelect } from './useAreaSelect';
 
 const displayName = 'Donuts';
 
@@ -348,42 +349,14 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     [props.configuration, updateConfiguration, handleSelectedMarkerSnackbars]
   );
 
-  // set useEffect for area selection to change selectedMarkers via setSelectedmarkers
-  // define useEffect here to avoid conditional call
-  // thus, this contains duplicate code, selectedMarkers
-  useEffect(() => {
-    if (
-      !markerDataResponse.error &&
-      !markerDataResponse.isFetching &&
-      boxCoord != null
-    ) {
-      // define selectedMarkers
-      const selectedMarkers = markerConfigurations.find(
-        (markerConfiguration) =>
-          markerConfiguration.type === activeMarkerConfigurationType
-      )?.selectedMarkers;
-
-      // find markers within area selection
-      const boxCoordMarkers = markerDataResponse.markerProps
-        ?.map((marker) => {
-          // check if the center of a marker is within selected area
-          return marker.position.lat >= boxCoord.southWest.lat &&
-            marker.position.lat <= boxCoord.northEast.lat &&
-            marker.position.lng >= boxCoord.southWest.lng &&
-            marker.position.lng <= boxCoord.northEast.lng
-            ? marker.id
-            : '';
-        })
-        .filter((item) => item !== '');
-
-      // then, update selectedMarkers
-      setSelectedMarkers([
-        ...(selectedMarkers ?? []),
-        ...(boxCoordMarkers ?? []),
-      ]);
-    }
-    // additional dependency may cause infinite loop, e.g., markerDataResponse
-  }, [boxCoord]);
+  // marker selection by ctrl+click
+  const areaSelection = useAreaSelect(
+    appState,
+    markerDataResponse,
+    setSelectedMarkers,
+    boxCoord,
+    markerDataResponse.markerProps
+  );
 
   // no markers and no error div for certain known error strings
   if (markerDataResponse.error && !markerDataResponse.isFetching)

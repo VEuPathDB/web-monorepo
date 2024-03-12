@@ -11,6 +11,7 @@ import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 import { useMap, useMapEvents } from 'react-leaflet';
 import { LatLngBounds } from 'leaflet';
 import { debounce, isEqual } from 'lodash';
+import { mouseEventHasModifierKey } from './BoundsDriftMarker';
 
 export interface SemanticMarkersProps {
   markers: Array<ReactElement<BoundsDriftMarkerProps>>;
@@ -50,8 +51,13 @@ export default function SemanticMarkers({
 
   // cancel marker selection with a single click on the map
   useMapEvents({
-    click: () => {
-      if (setSelectedMarkers != null) setSelectedMarkers(undefined);
+    click: (e) => {
+      // excluding a combination of special keys and mouse click
+      if (
+        setSelectedMarkers != null &&
+        !mouseEventHasModifierKey(e.originalEvent)
+      )
+        setSelectedMarkers(undefined);
     },
   });
 
