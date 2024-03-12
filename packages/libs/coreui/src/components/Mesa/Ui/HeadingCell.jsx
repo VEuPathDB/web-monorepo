@@ -65,7 +65,7 @@ class HeadingCell extends React.PureComponent {
   updateOffset() {
     const { element } = this;
     if (!element) return;
-    let offset = MesaTooltip.getOffset(element);
+    const offset = element.getBoundingClientRect();
     this.setState({ offset });
   }
 
