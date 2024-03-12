@@ -42,9 +42,14 @@ export default function SelectList<T>({
   useEffect(() => {
     setSelected(value);
     setButtonDisplayContent(
-      value.length ? value.join(', ') : defaultButtonDisplayContent
+      value.length
+        ? items
+            .filter((item) => value.includes(item.value))
+            .map((item) => item.display)
+            .join(', ')
+        : defaultButtonDisplayContent
     );
-  }, [value, defaultButtonDisplayContent]);
+  }, [value, defaultButtonDisplayContent, items]);
 
   const buttonLabel = (
     <span

@@ -17,6 +17,10 @@ export { Card, ExpandablePanel, Modal } from './components/containers';
 // Grids
 export { DataGrid, TabbedDisplay } from './components/grids';
 
+// Mesa table
+export { Mesa } from './components/Mesa';
+export * from './components/Mesa/types';
+
 // Forms
 export { FormField, MultilineTextField } from './components/forms';
 

@@ -2,36 +2,36 @@ import { useCallback } from 'react';
 import {
   InputVariables,
   Props as InputVariablesProps,
-} from '../../../core/components/visualizations/InputVariables';
+} from '../../../../../core/components/visualizations/InputVariables';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import { VariablesByInputName } from '../../../core/utils/data-element-constraints';
+import { VariablesByInputName } from '../../../../../core/utils/data-element-constraints';
 import {
   usePromise,
   AllValuesDefinition,
   OverlayConfig,
   Variable,
   Filter,
-} from '../../../core';
-import { CategoricalMarkerConfigurationTable } from './CategoricalMarkerConfigurationTable';
-import { CategoricalMarkerPreview } from './CategoricalMarkerPreview';
+} from '../../../../../core';
+import { CategoricalMarkerConfigurationTable } from '../../MarkerConfiguration/CategoricalMarkerConfigurationTable';
+import { CategoricalMarkerPreview } from '../../MarkerConfiguration/CategoricalMarkerPreview';
 import Barplot from '@veupathdb/components/lib/plots/Barplot';
-import { SubsettingClient } from '../../../core/api';
+import { SubsettingClient } from '../../../../../core/api';
 import { Toggle } from '@veupathdb/coreui';
-import { useUncontrolledSelections } from '../hooks/uncontrolledSelections';
+import { useUncontrolledSelections } from '../../../hooks/uncontrolledSelections';
 import {
   BinningMethod,
   SelectedCountsOption,
   SelectedValues,
-} from '../appState';
+} from '../../../appState';
 import { gray } from '@veupathdb/coreui/lib/definitions/colors';
-import { SharedMarkerConfigurations } from '../mapTypes/shared';
+import { SharedMarkerConfigurations } from '../../shared';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
 }
 
 export interface BarPlotMarkerConfiguration
-  extends MarkerConfiguration<'barplot'>,
+  extends MarkerConfiguration<'collection-barplot'>,
     SharedMarkerConfigurations {
   selectedPlotMode: 'count' | 'proportion';
   dependentAxisLogScale: boolean;

@@ -12,7 +12,7 @@ import {
 } from '../../../core';
 import { DataClient, SubsettingClient } from '../../../core/api';
 import { BinningMethod } from '../appState';
-import { BubbleMarkerConfiguration } from '../MarkerConfiguration/BubbleMarkerConfigurationMenu';
+import { BubbleMarkerConfiguration } from '../mapTypes/plugins/bubble/BubbleMarkerConfigurationMenu';
 
 // This async function fetches the default overlay config.
 // For continuous variables, this involves calling the filter-aware-metadata/continuous-variable

@@ -1,22 +1,22 @@
 import { useCallback, useMemo } from 'react';
-import { Variable } from '../../../../core/types/study';
-import { findEntityAndVariable } from '../../../../core/utils/study-metadata';
+import { Variable } from '../../../../../core/types/study';
+import { findEntityAndVariable } from '../../../../../core/utils/study-metadata';
 import {
   BarPlotMarkerConfiguration,
   BarPlotMarkerConfigurationMenu,
-} from '../../MarkerConfiguration/BarPlotMarkerConfigurationMenu';
+} from './BarPlotMarkerConfigurationMenu';
 import {
   MapTypeConfigPanelProps,
   MapTypeMapLayerProps,
   MapTypePlugin,
-} from '../types';
+} from '../../types';
 import {
   OverlayConfig,
   StandaloneMapMarkersResponse,
-} from '../../../../core/api/DataClient/types';
-import { getDefaultAxisRange } from '../../../../core/utils/computeDefaultAxisRange';
+} from '../../../../../core/api/DataClient/types';
+import { getDefaultAxisRange } from '../../../../../core/utils/computeDefaultAxisRange';
 import { NumberRange } from '@veupathdb/components/lib/types/general';
-import { mFormatter } from '../../../../core/utils/big-number-formatters';
+import { mFormatter } from '../../../../../core/utils/big-number-formatters';
 import ChartMarker, {
   BaseMarkerData,
   ChartMarkerProps,
@@ -36,7 +36,7 @@ import {
   STUDY_ID_VARIABLE_ID,
   UNSELECTED_DISPLAY_TEXT,
   UNSELECTED_TOKEN,
-} from '../../../constants';
+} from '../../../../constants';
 import SemanticMarkers from '@veupathdb/components/lib/map/SemanticMarkers';
 import {
   DistributionMarkerDataProps,
@@ -56,33 +56,46 @@ import {
   getErrorOverlayComponent,
   getLegendErrorMessage,
   selectedMarkersLittleFilter,
-} from '../shared';
+} from '../../shared';
 import {
   useFindEntityAndVariable,
   useSubsettingClient,
-} from '../../../../core/hooks/workspace';
-import { DraggableLegendPanel } from '../../DraggableLegendPanel';
-import { MapLegend } from '../../MapLegend';
+} from '../../../../../core/hooks/workspace';
+import { DraggableLegendPanel } from '../../../DraggableLegendPanel';
+import { MapLegend } from '../../../MapLegend';
 import { sharedStandaloneMarkerProperties } from '../../MarkerConfiguration/CategoricalMarkerPreview';
-import { useToggleStarredVariable } from '../../../../core/hooks/starredVariables';
-import DraggableVisualization from '../../DraggableVisualization';
-import { useStandaloneVizPlugins } from '../../hooks/standaloneVizPlugins';
+import { useToggleStarredVariable } from '../../../../../core/hooks/starredVariables';
+import DraggableVisualization from '../../../DraggableVisualization';
+import { useStandaloneVizPlugins } from '../../../hooks/standaloneVizPlugins';
 import {
   MapTypeConfigurationMenu,
   MarkerConfigurationOption,
 } from '../../MarkerConfiguration/MapTypeConfigurationMenu';
 import { BarPlotMarkerIcon } from '../../MarkerConfiguration/icons';
 import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
-import MapVizManagement from '../../MapVizManagement';
+import MapVizManagement from '../../../MapVizManagement';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
-import { useLittleFilters } from '../../littleFilters';
-import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
-import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
-import { SubStudies } from '../../SubStudies';
+import { useLittleFilters } from '../../../littleFilters';
+import TimeSliderQuickFilter from '../../../TimeSliderQuickFilter';
+import { MapTypeHeaderStudyDetails } from '../../MapTypeHeaderStudyDetails';
+import { SubStudies } from '../../../SubStudies';
 const displayName = 'Bar plots';
 
-export const plugin: MapTypePlugin = {
+export const plugin: MapTypePlugin<BarPlotMarkerConfiguration> = {
+  type: 'barplot',
+  IconComponent: BarPlotMarkerIcon,
   displayName,
+  getDefaultConfig({ defaultVariable }) {
+    return {
+      type: 'barplot',
+      selectedPlotMode: 'count',
+      selectedVariable: defaultVariable,
+      selectedValues: undefined,
+      binningMethod: undefined,
+      dependentAxisLogScale: false,
+      selectedCountsOption: 'filtered',
+    };
+  },
   ConfigPanelComponent,
   MapLayerComponent,
   MapOverlayComponent,
@@ -98,7 +111,9 @@ type ChartMarkerPropsWithCounts = Omit<ChartMarkerProps, 'data'> & {
   data: ChartMarkerDataWithCounts[];
 };
 
-function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
+function ConfigPanelComponent(
+  props: MapTypeConfigPanelProps<BarPlotMarkerConfiguration>
+) {
   const {
     apps,
     analysisState,
@@ -324,18 +339,16 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   );
 }
 
-function MapLayerComponent(props: MapTypeMapLayerProps) {
+function MapLayerComponent(
+  props: MapTypeMapLayerProps<BarPlotMarkerConfiguration>
+) {
   const {
     studyEntities,
     studyId,
     filters,
     geoConfigs,
     appState,
-    appState: {
-      boundsZoomLevel,
-      markerConfigurations,
-      activeMarkerConfigurationType,
-    },
+    appState: { boundsZoomLevel },
     updateConfiguration,
   } = props;
 
@@ -346,6 +359,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     dependentAxisLogScale,
     selectedPlotMode,
     activeVisualizationId,
+    selectedMarkers,
   } = props.configuration as BarPlotMarkerConfiguration;
 
   const { filters: filtersForMarkerData } = useLittleFilters(
@@ -394,11 +408,6 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     <ChartMarker {...markerProps} />
   ));
 
-  const selectedMarkers = markerConfigurations.find(
-    (markerConfiguration) =>
-      markerConfiguration.type === activeMarkerConfigurationType
-  )?.selectedMarkers;
-
   return (
     <>
       {markerData.isFetching && <Spinner />}
@@ -419,14 +428,15 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
   );
 }
 
-function MapOverlayComponent(props: MapTypeMapLayerProps) {
+function MapOverlayComponent(
+  props: MapTypeMapLayerProps<BarPlotMarkerConfiguration>
+) {
   const {
     studyEntities,
     studyId,
     filters,
     geoConfigs,
     appState,
-    appState: { markerConfigurations, activeMarkerConfigurationType },
     updateConfiguration,
     headerButtons,
     setStudyDetailsPanelConfig,
@@ -459,10 +469,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     valueSpec: configuration.selectedPlotMode,
   });
 
-  const selectedMarkers = markerConfigurations.find(
-    (markerConfiguration) =>
-      markerConfiguration.type === activeMarkerConfigurationType
-  )?.selectedMarkers;
+  const selectedMarkers = configuration.selectedMarkers;
 
   const legendItems = markerData.legendItems;
   const plugins = useStandaloneVizPlugins({
@@ -538,7 +545,9 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
   );
 }
 
-function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
+function MapTypeHeaderDetails(
+  props: MapTypeMapLayerProps<BarPlotMarkerConfiguration>
+) {
   const {
     studyEntities,
     geoConfigs,
@@ -590,7 +599,9 @@ const substudyFilterFuncs = [
   selectedMarkersLittleFilter,
 ];
 
-export function TimeSliderComponent(props: MapTypeMapLayerProps) {
+export function TimeSliderComponent(
+  props: MapTypeMapLayerProps<BarPlotMarkerConfiguration>
+) {
   const {
     studyId,
     studyEntities,

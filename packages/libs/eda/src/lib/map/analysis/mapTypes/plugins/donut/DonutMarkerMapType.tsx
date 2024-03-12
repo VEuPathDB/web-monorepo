@@ -17,23 +17,23 @@ import {
   STUDY_ID_VARIABLE_ID,
   UNSELECTED_DISPLAY_TEXT,
   UNSELECTED_TOKEN,
-} from '../../../constants';
+} from '../../../../constants';
 import {
   StandaloneMapMarkersResponse,
   Variable,
   useFindEntityAndVariable,
   useSubsettingClient,
-} from '../../../../core';
-import { useToggleStarredVariable } from '../../../../core/hooks/starredVariables';
-import { kFormatter } from '../../../../core/utils/big-number-formatters';
-import { findEntityAndVariable } from '../../../../core/utils/study-metadata';
-import { DraggableLegendPanel } from '../../DraggableLegendPanel';
-import { MapLegend } from '../../MapLegend';
+} from '../../../../../core';
+import { useToggleStarredVariable } from '../../../../../core/hooks/starredVariables';
+import { kFormatter } from '../../../../../core/utils/big-number-formatters';
+import { findEntityAndVariable } from '../../../../../core/utils/study-metadata';
+import { DraggableLegendPanel } from '../../../DraggableLegendPanel';
+import { MapLegend } from '../../../MapLegend';
 import { sharedStandaloneMarkerProperties } from '../../MarkerConfiguration/CategoricalMarkerPreview';
 import {
   PieMarkerConfiguration,
   PieMarkerConfigurationMenu,
-} from '../../MarkerConfiguration/PieMarkerConfigurationMenu';
+} from './PieMarkerConfigurationMenu';
 import {
   DistributionMarkerDataProps,
   defaultAnimation,
@@ -52,31 +52,45 @@ import {
   getLegendErrorMessage,
   useSelectedMarkerSnackbars,
   selectedMarkersLittleFilter,
-} from '../shared';
+} from '../../shared';
 import {
   MapTypeConfigPanelProps,
   MapTypeMapLayerProps,
   MapTypePlugin,
-} from '../types';
-import DraggableVisualization from '../../DraggableVisualization';
-import { useStandaloneVizPlugins } from '../../hooks/standaloneVizPlugins';
+} from '../../types';
+import DraggableVisualization from '../../../DraggableVisualization';
+import { useStandaloneVizPlugins } from '../../../hooks/standaloneVizPlugins';
 import {
   MapTypeConfigurationMenu,
   MarkerConfigurationOption,
 } from '../../MarkerConfiguration/MapTypeConfigurationMenu';
-import { DonutMarkersIcon } from '../../MarkerConfiguration/icons';
+import {
+  DonutMarkerIcon,
+  DonutMarkersIcon,
+} from '../../MarkerConfiguration/icons';
 import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
-import MapVizManagement from '../../MapVizManagement';
+import MapVizManagement from '../../../MapVizManagement';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
-import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
-import { SubStudies } from '../../SubStudies';
-import { useLittleFilters } from '../../littleFilters';
-import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
+import { MapTypeHeaderStudyDetails } from '../../MapTypeHeaderStudyDetails';
+import { SubStudies } from '../../../SubStudies';
+import { useLittleFilters } from '../../../littleFilters';
+import TimeSliderQuickFilter from '../../../TimeSliderQuickFilter';
 
 const displayName = 'Donuts';
 
-export const plugin: MapTypePlugin = {
+export const plugin: MapTypePlugin<PieMarkerConfiguration> = {
+  type: 'pie',
+  IconComponent: DonutMarkerIcon,
   displayName,
+  getDefaultConfig({ defaultVariable }) {
+    return {
+      type: 'pie',
+      selectedVariable: defaultVariable,
+      selectedValues: undefined,
+      binningMethod: undefined,
+      selectedCountsOption: 'filtered',
+    };
+  },
   ConfigPanelComponent,
   MapLayerComponent,
   MapOverlayComponent,
@@ -84,7 +98,9 @@ export const plugin: MapTypePlugin = {
   TimeSliderComponent,
 };
 
-function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
+function ConfigPanelComponent(
+  props: MapTypeConfigPanelProps<PieMarkerConfiguration>
+) {
   const {
     apps,
     analysisState,
@@ -287,16 +303,14 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   );
 }
 
-function MapLayerComponent(props: MapTypeMapLayerProps) {
+function MapLayerComponent(
+  props: MapTypeMapLayerProps<PieMarkerConfiguration>
+) {
   const {
     studyId,
     studyEntities,
     appState,
-    appState: {
-      boundsZoomLevel,
-      markerConfigurations,
-      activeMarkerConfigurationType,
-    },
+    appState: { boundsZoomLevel },
     geoConfigs,
     filters,
     updateConfiguration,
@@ -307,6 +321,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     binningMethod,
     selectedValues,
     activeVisualizationId,
+    selectedMarkers,
   } = props.configuration as PieMarkerConfiguration;
 
   const { filters: filtersForMarkerData } = useLittleFilters(
@@ -355,11 +370,6 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     <DonutMarker {...markerProps} />
   ));
 
-  const selectedMarkers = markerConfigurations.find(
-    (markerConfiguration) =>
-      markerConfiguration.type === activeMarkerConfigurationType
-  )?.selectedMarkers;
-
   return (
     <>
       {markerDataResponse.isFetching && <Spinner />}
@@ -380,14 +390,15 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
   );
 }
 
-function MapOverlayComponent(props: MapTypeMapLayerProps) {
+function MapOverlayComponent(
+  props: MapTypeMapLayerProps<PieMarkerConfiguration>
+) {
   const {
     studyId,
     studyEntities,
     geoConfigs,
     updateConfiguration,
     appState,
-    appState: { markerConfigurations, activeMarkerConfigurationType },
     filters,
     headerButtons,
     setStudyDetailsPanelConfig,
@@ -397,6 +408,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     selectedValues,
     binningMethod,
     activeVisualizationId,
+    selectedMarkers,
   } = props.configuration as PieMarkerConfiguration;
   const findEntityAndVariable = useFindEntityAndVariable(filters);
   const { variable: overlayVariable } =
@@ -439,11 +451,6 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     selectedValues,
     valueSpec: 'count',
   });
-
-  const selectedMarkers = markerConfigurations.find(
-    (markerConfiguration) =>
-      markerConfiguration.type === activeMarkerConfigurationType
-  )?.selectedMarkers;
 
   const plugins = useStandaloneVizPlugins({
     selectedOverlayConfig: data.overlayConfig,
@@ -504,7 +511,9 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
   );
 }
 
-function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
+function MapTypeHeaderDetails(
+  props: MapTypeMapLayerProps<PieMarkerConfiguration>
+) {
   const {
     studyEntities,
     appState,
@@ -554,7 +563,9 @@ const substudyFilterFuncs = [
   selectedMarkersLittleFilter,
 ];
 
-export function TimeSliderComponent(props: MapTypeMapLayerProps) {
+export function TimeSliderComponent(
+  props: MapTypeMapLayerProps<PieMarkerConfiguration>
+) {
   const {
     studyId,
     studyEntities,

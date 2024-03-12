@@ -11,15 +11,10 @@ import {
 import { VariableDescriptor } from '../../core/types/variable';
 import { useGetDefaultTimeVariableDescriptor } from './hooks/eztimeslider';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
+import * as plugins from './mapTypes';
 import { STUDIES_ENTITY_ID, STUDY_ID_VARIABLE_ID } from '../constants';
 
 const LatLngLiteral = t.type({ lat: t.number, lng: t.number });
-
-const MarkerType = t.keyof({
-  barplot: null,
-  pie: null,
-  bubble: null,
-});
 
 // user-specified selection
 export type SelectedValues = t.TypeOf<typeof SelectedValues>;
@@ -44,56 +39,16 @@ const SelectedCountsOption = t.union([
 ]);
 
 export type MarkerConfiguration = t.TypeOf<typeof MarkerConfiguration>;
+// TODO Make `uknown` and use plugin-specific decoder
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const MarkerConfiguration = t.intersection([
   t.type({
-    type: MarkerType,
-    selectedVariable: VariableDescriptor,
+    type: t.string,
   }),
   t.partial({
-    activeVisualizationId: t.string,
+    selectedMarkers: t.array(t.string),
+    selectedVariable: VariableDescriptor,
   }),
-  t.union([
-    t.intersection([
-      t.type({
-        type: t.literal('barplot'),
-        selectedValues: SelectedValues,
-        selectedPlotMode: t.union([
-          t.literal('count'),
-          t.literal('proportion'),
-        ]),
-        binningMethod: BinningMethod,
-        dependentAxisLogScale: t.boolean,
-        selectedCountsOption: SelectedCountsOption,
-      }),
-      t.partial({
-        // yes all the modes have selectedMarkers but maybe in the future one won't
-        selectedMarkers: t.array(t.string),
-      }),
-    ]),
-    t.intersection([
-      t.type({
-        type: t.literal('pie'),
-        selectedValues: SelectedValues,
-        binningMethod: BinningMethod,
-        selectedCountsOption: SelectedCountsOption,
-      }),
-      t.partial({
-        selectedMarkers: t.array(t.string),
-      }),
-    ]),
-    t.intersection([
-      t.type({
-        type: t.literal('bubble'),
-      }),
-      t.partial({
-        aggregator: t.union([t.literal('mean'), t.literal('median')]),
-        numeratorValues: t.union([t.array(t.string), t.undefined]),
-        denominatorValues: t.union([t.array(t.string), t.undefined]),
-        selectedMarkers: t.array(t.string),
-      }),
-    ]),
-  ]),
 ]);
 
 const PanelConfig = t.type({
@@ -114,7 +69,7 @@ export const AppState = t.intersection([
       center: t.tuple([t.number, t.number]),
       zoom: t.number,
     }),
-    activeMarkerConfigurationType: MarkerType,
+    activeMarkerConfigurationType: t.string,
     markerConfigurations: t.array(MarkerConfiguration),
     isSidePanelExpanded: t.boolean,
   }),
@@ -197,6 +152,9 @@ export function useAppState(
         active: true,
         selectedRange: undefined,
       },
+      markerConfigurations: Object.values(plugins).map((plugin) =>
+        plugin.getDefaultConfig({ defaultVariable, study: studyMetadata })
+      ),
       ...(isMegaStudy
         ? {
             studyDetailsPanelConfig: {
@@ -209,33 +167,8 @@ export function useAppState(
             },
           }
         : {}),
-      markerConfigurations: [
-        {
-          type: 'pie',
-          selectedVariable: defaultVariable,
-          selectedValues: undefined,
-          binningMethod: undefined,
-          selectedCountsOption: 'filtered',
-        },
-        {
-          type: 'barplot',
-          selectedPlotMode: 'count',
-          selectedVariable: defaultVariable,
-          selectedValues: undefined,
-          binningMethod: undefined,
-          dependentAxisLogScale: false,
-          selectedCountsOption: 'filtered',
-        },
-        {
-          type: 'bubble',
-          selectedVariable: defaultVariable,
-          aggregator: 'mean',
-          numeratorValues: undefined,
-          denominatorValues: undefined,
-        },
-      ],
     }),
-    [defaultTimeVariable, isMegaStudy, defaultVariable]
+    [defaultTimeVariable, isMegaStudy, defaultVariable, studyMetadata]
   );
 
   useEffect(() => {
