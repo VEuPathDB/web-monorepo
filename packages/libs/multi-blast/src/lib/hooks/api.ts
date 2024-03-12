@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo } from 'react';
+import { createContext, useContext } from 'react';
 
 import { Dispatch } from 'redux';
 import { useDispatch } from 'react-redux';
@@ -8,13 +8,13 @@ import { once } from 'lodash';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 
-import { BlastApi, createJobContentDownloader } from '../utils/api';
 import {
   BlastCompatibleWdkService,
   isBlastCompatibleWdkService,
 } from '../utils/wdkServiceIntegration';
+import { BlastAPIClient } from '../utils/api/BlastAPIClient';
 
-const BlastServiceUrl = createContext('/multi-blast');
+export const BlastServiceUrl = createContext('/multi-blast');
 
 export function useBlastApi() {
   const blastServiceUrl = useContext(BlastServiceUrl);
@@ -29,7 +29,7 @@ export function useBlastApi() {
 
   const reportError = makeErrorReporter(wdkDependencies.wdkService, dispatch);
 
-  return BlastApi.getBlastClient(
+  return BlastAPIClient.create(
     blastServiceUrl,
     wdkDependencies.wdkService,
     reportError
@@ -51,10 +51,3 @@ const makeErrorReporter = once(function (
     // dispatch(notifyUnhandledError(error));
   };
 });
-
-export function useDownloadReportCallback(jobId: string) {
-  const blastApi = useBlastApi();
-  return useMemo(() => {
-    return createJobContentDownloader(blastApi, jobId);
-  }, [blastApi, jobId]);
-}

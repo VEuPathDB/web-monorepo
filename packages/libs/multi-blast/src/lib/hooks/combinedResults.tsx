@@ -29,7 +29,6 @@ import {
   ApiResult,
   ErrorDetails,
   MultiQueryReportJson,
-  Target,
 } from '../utils/ServiceTypes';
 import {
   TargetMetadataByDataType,
@@ -56,6 +55,7 @@ import {
   mergeIntervals,
   orderHitsBySignificance,
 } from '../utils/combinedResults';
+import { IOJobTarget } from '../utils/api/query/types/common';
 
 const MAX_ROWS = 5000;
 
@@ -625,11 +625,12 @@ function useMesaOptions(sortedRows: Either<ErrorDetails, CombinedResultRows>) {
   );
 }
 
-export function useTargetTypeTermAndWdkRecordType(targets: Target[]) {
+export function useTargetTypeTermAndWdkRecordType(targets: IOJobTarget[]) {
   const targetMetadataByDataType = useContext(TargetMetadataByDataType);
 
   return useMemo(() => {
-    const { organism: sampleOrganism, target: sampleDbName } = targets[0];
+    const { targetDisplayName: sampleOrganism, targetFile: sampleDbName } =
+      targets[0];
     const targetDbName = sampleDbName.replace(sampleOrganism, '');
     const targetTypeTerm = dbNameToTargetTypeTerm(targetDbName);
 

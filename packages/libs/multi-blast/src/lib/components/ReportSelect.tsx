@@ -1,12 +1,22 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import Select, { ActionMeta, OptionsType, ValueType } from 'react-select';
 
+import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
+
 import { Props as CombinedResultProps } from '../components/CombinedResult';
-import { useDownloadReportCallback } from '../hooks/api';
-import { IoBlastFormat } from '../utils/ServiceTypes';
+import { BlastServiceUrl, useBlastApi } from '../hooks/api';
+import { downloadJobContent } from '../utils/api';
+
+import {
+  ReportJobPollingState,
+  makeReportPollingPromise,
+} from './BlastWorkspaceResult';
 
 import './ReportSelect.scss';
+import { IOBlastOutFormat } from '../utils/api/report/blast/blast-config-format';
 
 interface Props {
   combinedResultTableDownloadConfig?: CombinedResultProps['downloadTableOptions'];
@@ -17,7 +27,7 @@ interface Props {
 interface ReportOption {
   value:
     | 'combined-result-table'
-    | { format: IoBlastFormat; shouldZip: boolean };
+    | { format: IOBlastOutFormat; shouldZip: boolean };
   label: string;
 }
 
@@ -31,7 +41,7 @@ const baseReportOptions: ReportOption[] = [
     label: 'XML',
   },
   {
-    value: { format: 'archive-asn-1', shouldZip: false },
+    value: { format: 'asn1', shouldZip: false },
     label: 'ASN.1',
   },
   {
@@ -47,19 +57,19 @@ const baseReportOptions: ReportOption[] = [
     label: 'Hit Table (csv)',
   },
   {
-    value: { format: 'multi-file-xml2', shouldZip: true },
+    value: { format: 'multi-file-blast-xml2', shouldZip: true },
     label: 'Multiple-file XML2',
   },
   {
-    value: { format: 'single-file-xml2', shouldZip: false },
+    value: { format: 'single-file-blast-xml2', shouldZip: false },
     label: 'Single-file XML2',
   },
   {
-    value: { format: 'multi-file-json', shouldZip: true },
+    value: { format: 'multi-file-blast-json', shouldZip: true },
     label: 'Multiple-file JSON',
   },
   {
-    value: { format: 'single-file-json', shouldZip: false },
+    value: { format: 'single-file-blast-json', shouldZip: false },
     label: 'Single-file JSON',
   },
 ];
@@ -69,8 +79,21 @@ export function ReportSelect({
   jobId,
   placeholder,
 }: Props) {
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+  const blastServiceUrl = useContext(BlastServiceUrl);
+  const blastApi = useBlastApi();
+
   const [selectedReportOption, setSelectedReportOption] =
     useState<ReportOption | undefined>(undefined);
+  const [reportState, setReportState] = useState<ReportJobPollingState>({
+    status: 'report-pending',
+    jobId,
+  });
+
+  const resetSelectedReport = useCallback(() => {
+    setSelectedReportOption(undefined);
+    setReportState({ status: 'report-pending', jobId });
+  }, [jobId]);
 
   const onChangeReport = useCallback(
     (
@@ -84,39 +107,60 @@ export function ReportSelect({
     []
   );
 
-  const downloadReportCallback = useDownloadReportCallback(jobId);
+  useEffect(() => {
+    if (
+      selectedReportOption == null ||
+      selectedReportOption.value === 'combined-result-table' ||
+      (reportState.status !== 'report-pending' && reportState.jobId === jobId)
+    ) {
+      return;
+    }
+
+    const format = selectedReportOption.value.format;
+
+    return Task.fromPromise(() =>
+      makeReportPollingPromise(blastApi.reportAPI, jobId, format)
+    ).run(setReportState);
+  }, [blastApi, jobId, selectedReportOption, reportState]);
 
   useEffect(() => {
-    let canceled = false;
+    if (
+      selectedReportOption == null ||
+      selectedReportOption.value === 'combined-result-table' ||
+      reportState.status === 'report-pending'
+    ) {
+      return;
+    }
 
-    (async () => {
-      if (downloadReportCallback != null && selectedReportOption != null) {
-        try {
-          if (selectedReportOption.value === 'combined-result-table') {
-            if (combinedResultTableDownloadConfig?.offer) {
-              await combinedResultTableDownloadConfig.onClickDownloadTable();
-            }
-          } else {
-            await downloadReportCallback(
-              selectedReportOption.value.format,
-              selectedReportOption.value.shouldZip
-            );
-          }
-        } finally {
-          if (!canceled) {
-            setSelectedReportOption(undefined);
-          }
-        }
-      }
-    })();
+    const { shouldZip } = selectedReportOption.value;
 
-    return () => {
-      canceled = true;
-    };
+    return Task.fromPromise(async () =>
+      downloadJobContent(blastApi.reportAPI, reportState, shouldZip)
+    ).run(resetSelectedReport, resetSelectedReport);
   }, [
-    combinedResultTableDownloadConfig,
-    downloadReportCallback,
+    blastServiceUrl,
+    wdkService,
+    resetSelectedReport,
+    reportState,
     jobId,
+    selectedReportOption,
+  ]);
+
+  useEffect(() => {
+    if (
+      selectedReportOption?.value !== 'combined-result-table' ||
+      combinedResultTableDownloadConfig?.offer !== true
+    ) {
+      return;
+    }
+
+    return Task.fromPromise(async () =>
+      combinedResultTableDownloadConfig.onClickDownloadTable()
+    ).run(resetSelectedReport, resetSelectedReport);
+  }, [
+    resetSelectedReport,
+    jobId,
+    combinedResultTableDownloadConfig,
     selectedReportOption,
   ]);
 

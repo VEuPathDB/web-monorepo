@@ -11,11 +11,8 @@ import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 import { JobRow } from '../components/BlastWorkspaceAll';
 import { ApiResult, ErrorDetails } from '../utils/ServiceTypes';
-import {
-  entityStatusToReadableStatus,
-  shouldIncludeInJobsTable,
-} from '../utils/allJobs';
-import { BlastApi } from '../utils/api';
+import { entityStatusToReadableStatus } from '../utils/allJobs';
+import { BlastQueryClient } from '../utils/api/BlastQueryClient';
 
 export function useAllJobsColumns(): MesaColumn<JobRow>[] {
   return useMemo(
@@ -29,9 +26,9 @@ export function useAllJobsColumns(): MesaColumn<JobRow>[] {
         sortable: true,
       },
       {
-        key: 'description',
-        name: 'Description',
-        renderCell: ({ row }: { row: JobRow }) => row.description ?? 'Untitled',
+        key: 'summary',
+        name: 'Summary',
+        renderCell: ({ row }: { row: JobRow }) => row.summary ?? 'Untitled',
         sortable: true,
       },
       {
@@ -63,29 +60,27 @@ export function useAllJobsColumns(): MesaColumn<JobRow>[] {
 }
 
 export function useRawJobRows(
-  blastApi: BlastApi
+  blastApi: BlastQueryClient
 ): ApiResult<JobRow[], ErrorDetails> | undefined {
   return useWdkService(async (wdkService) => {
-    const jobEntities = await blastApi.fetchJobEntities();
     const { projectId } = await wdkService.getConfig();
+    const jobEntities = await blastApi.listJobs(projectId);
 
-    return jobEntities == null
-      ? undefined
-      : jobEntities.status === 'error'
-      ? jobEntities
-      : {
-          status: 'ok',
-          value: jobEntities.value
-            .filter((jobEntity) =>
-              shouldIncludeInJobsTable(jobEntity, projectId)
-            )
-            .map((jobEntity) => ({
-              jobId: jobEntity.id,
-              description: jobEntity.description ?? null,
-              created: jobEntity.created,
+    if (jobEntities == null) {
+      return undefined;
+    } else {
+      return jobEntities.status === 'error'
+        ? jobEntities
+        : {
+            status: 'ok',
+            value: jobEntities.value.map((jobEntity) => ({
+              jobId: jobEntity.queryJobID,
+              summary: jobEntity.userMeta?.summary ?? null,
+              created: jobEntity.createdOn,
               status: entityStatusToReadableStatus(jobEntity.status),
             })),
-        };
+          };
+    }
   }, []);
 }
 
