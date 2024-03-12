@@ -27,7 +27,6 @@ export const StepAnalysisTile: React.SFC<StepAnalysisTileProps> = ({
   loading,
   loadChoice,
 }) => (
-  // here
   <WDKClientTooltip content={shortDescription} position={TOOLTIP_POSITION}>
     <div
       className={`${inactive ? 'inactive ' : ''}analysis-selector`}

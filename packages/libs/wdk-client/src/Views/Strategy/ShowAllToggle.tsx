@@ -16,7 +16,6 @@ export default function ShowAllToggle(props: Props) {
   const { on, onChange } = props;
   return (
     <div className={cx()}>
-      {/* here */}
       <WDKClientTooltip
         content="Show only the selected strategy, or all strategies."
         position={{

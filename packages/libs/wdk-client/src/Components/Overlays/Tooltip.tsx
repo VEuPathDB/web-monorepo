@@ -36,48 +36,33 @@ export interface TooltipPosition {
 
 // FIXME Add `renderContent` props that is a function that returns `typeof content`
 type Props = {
-  content: React.ReactNode; // title
-  children: React.ReactElement; // children
-  // open?: boolean; // open
-  classes?: string; // classes
-  // showTip?: boolean; // arrow
+  content: React.ReactNode;
+  children: React.ReactElement;
+  classes?: string;
   showEvent?: string;
-  showDelay?: number; // enterDelay
+  showDelay?: number;
   hideEvent?: string;
-  hideDelay?: number; // leaveDelay
+  hideDelay?: number;
   position?: TooltipPosition;
-  // solo?: boolean;
-  // onShow?: (e: Event) => void; // onOpen
-  // onHide?: (e: Event) => void; // onClose
 };
 
 const WDKClientTooltip = ({
   content,
   children,
-  // open,
   classes = 'qtip-wdk',
-  // showTip = true,
-  // showEvent,
   showDelay = defaultOptions.show.delay,
-  // hideEvent,
   hideDelay = defaultOptions.hide.delay,
   position = defaultOptions.position,
-}: // solo = true,
-// onShow,
-// onHide,
-Props) => {
+}: Props) => {
   const placement = positionMap[position.at ?? defaultOptions.position.at];
 
   return (
     <Tooltip
       title={content ?? <></>}
-      // open={open}
       className={classes}
       arrow={true}
       enterDelay={showDelay}
       leaveDelay={hideDelay}
-      // onOpen={onShow}
-      // onClose={onHide}
       placement={placement}
     >
       {children}

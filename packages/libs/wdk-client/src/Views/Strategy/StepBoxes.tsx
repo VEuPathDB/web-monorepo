@@ -39,7 +39,6 @@ export default function StepBoxes(props: StepBoxesProps) {
     <React.Fragment>
       <div className={cx()}>
         <StepTree {...props} />
-        {/* here */}
         <WDKClientTooltip
           position={{ my: 'top center', at: 'bottom center' }}
           content={ADD_STEP_BUTTON_VERBIAGE}
