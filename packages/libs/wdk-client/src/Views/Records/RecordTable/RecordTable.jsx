@@ -239,12 +239,14 @@ class RecordTable extends Component {
       uiState: {
         sort: this.state.sort,
         expandedRows,
+        filteredRowCount: mesaReadyRows.length - filteredRows.length,
       },
       options: {
         toolbar: true,
         childRow: childRow ? this.wrappedChildRow : undefined,
         className: 'wdk-DataTableContainer',
         getRowId: getSortIndex,
+        showCount: mesaReadyRows.length > 1,
       },
     };
 
