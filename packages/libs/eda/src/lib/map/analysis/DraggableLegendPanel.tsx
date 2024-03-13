@@ -5,7 +5,7 @@ import { PanelConfig } from './appState';
 
 export const DEFAULT_DRAGGABLE_LEGEND_POSITION = {
   x: window.innerWidth,
-  y: 225,
+  y: 250,
 };
 
 export const DraggableLegendPanel = (props: {

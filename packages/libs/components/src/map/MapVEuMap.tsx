@@ -271,7 +271,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       ) : null}
 
       {showLayerSelector && (
-        <LayersControl position="topleft">
+        <LayersControl position="topright">
           {Object.entries(baseLayers).map(([name, layerProps], i) => (
             <LayersControl.BaseLayer
               name={name}
@@ -436,7 +436,7 @@ function CustomZoomControl(props: CustomZoomControlProps) {
     >
       <div
         className="leaflet-top leaflet-right"
-        style={{ top: '0px', right: '-3px' }}
+        style={{ top: '55px', right: '0px', zIndex: 'auto' }}
       >
         <div className="leaflet-control-zoom leaflet-bar leaflet-control">
           <a
