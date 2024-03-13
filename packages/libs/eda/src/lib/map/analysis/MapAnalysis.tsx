@@ -80,10 +80,6 @@ import { AnalysisError } from '../../core/components/AnalysisError';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import SettingsButton from '@veupathdb/coreui/lib/components/containers/DraggablePanel/SettingsButton';
 
-// area selection by ctrl + mouse
-import AreaSelect from '@veupathdb/components/lib/map/AreaSelect';
-import { Bounds as BoundsProp } from '@veupathdb/components/lib/map/Types';
-
 enum MapSideNavItemLabels {
   Download = 'Download',
   Filter = 'Filter',
@@ -748,17 +744,6 @@ function MapAnalysisImpl(props: ImplProps) {
       ? donutMarkerPlugin
       : undefined;
 
-  // coordinates of selected area: SW lat & lng and NE lat & lng
-  const [boxCoord, setBoxCoord] = useState<BoundsProp | undefined>(undefined);
-
-  const selectedMarkers = markerConfigurations.find(
-    (markerConfiguration) =>
-      markerConfiguration.type === activeMarkerConfigurationType
-  )?.selectedMarkers;
-
-  //DKDK temporarily enabled to check selectedMarkers
-  console.log('selectedMarkers =', selectedMarkers);
-
   return (
     <PromiseResult state={appsPromiseState}>
       {(apps: ComputationAppOverview[]) => {
@@ -782,8 +767,6 @@ function MapAnalysisImpl(props: ImplProps) {
           setHideVizInputsAndControls,
           setStudyDetailsPanelConfig,
           headerButtons: HeaderButtons,
-          // pass coordinates of selected area
-          boxCoord: boxCoord,
         };
 
         return (
@@ -873,9 +856,6 @@ function MapAnalysisImpl(props: ImplProps) {
                     onMapDrag={closePanel}
                     onMapZoom={closePanel}
                   >
-                    {/* area selection */}
-                    <AreaSelect setBoxCoord={setBoxCoord} />
-
                     {activeMapTypePlugin?.MapLayerComponent && (
                       <activeMapTypePlugin.MapLayerComponent
                         {...mapTypeMapLayerProps}

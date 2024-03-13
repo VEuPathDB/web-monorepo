@@ -67,7 +67,8 @@ import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
 import { SubStudies } from '../../SubStudies';
 import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
 import { STUDIES_ENTITY_ID, STUDY_ID_VARIABLE_ID } from '../../../constants';
-import { useAreaSelect } from './useAreaSelect';
+import { useOnAreaSelected } from './useOnAreaSelected';
+import AreaSelect from '@veupathdb/components/lib/map/AreaSelect';
 
 const displayName = 'Bubbles';
 
@@ -203,8 +204,6 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
     },
     updateConfiguration,
     geoConfigs,
-    // pass coordinates of selected area
-    boxCoord,
   } = props;
 
   const configuration = props.configuration as BubbleMarkerConfiguration;
@@ -249,12 +248,10 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
   );
 
   // marker selection by ctrl+click
-  const areaSelection = useAreaSelect(
+  const onAreaSelected = useOnAreaSelected(
     appState,
     markersData,
-    setSelectedMarkers,
-    boxCoord,
-    markersData.data?.markersData
+    setSelectedMarkers
   );
 
   if (markersData.error && !markersData.isFetching)
@@ -272,6 +269,7 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
   return (
     <>
       {markersData.isFetching && <Spinner />}
+      {onAreaSelected && <AreaSelect onAreaSelected={onAreaSelected} />}
       {markers && (isValidProportion == null || isValidProportion) && (
         <SemanticMarkers
           markers={markers}

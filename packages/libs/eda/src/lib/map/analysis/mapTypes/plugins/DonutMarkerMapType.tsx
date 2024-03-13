@@ -72,7 +72,8 @@ import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
 import { SubStudies } from '../../SubStudies';
 import { useLittleFilters } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
-import { useAreaSelect } from './useAreaSelect';
+import { useOnAreaSelected } from './useOnAreaSelected';
+import AreaSelect from '@veupathdb/components/lib/map/AreaSelect';
 
 const displayName = 'Donuts';
 
@@ -301,8 +302,6 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     geoConfigs,
     filters,
     updateConfiguration,
-    // pass coordinates of selected area
-    boxCoord,
   } = props;
 
   const {
@@ -350,12 +349,10 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
   );
 
   // marker selection by ctrl+click
-  const areaSelection = useAreaSelect(
+  const onAreaSelected = useOnAreaSelected(
     appState,
     markerDataResponse,
-    setSelectedMarkers,
-    boxCoord,
-    markerDataResponse.markerProps
+    setSelectedMarkers
   );
 
   // no markers and no error div for certain known error strings
@@ -375,6 +372,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
   return (
     <>
       {markerDataResponse.isFetching && <Spinner />}
+      {onAreaSelected && <AreaSelect onAreaSelected={onAreaSelected} />}
       {markers && (
         <SemanticMarkers
           markers={markers}

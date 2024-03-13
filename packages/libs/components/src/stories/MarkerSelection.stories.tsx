@@ -25,7 +25,7 @@ import SemanticMarkers from '../map/SemanticMarkers';
 
 // area selection
 import AreaSelect from '../map/AreaSelect';
-import { Bounds as BoundsProp } from '../map/Types';
+import { Bounds } from '../map/Types';
 
 export default {
   title: 'Map/Marker Selection',
@@ -70,7 +70,9 @@ export const DonutMarkers: Story<MapVEuMapProps> = (args) => {
   );
 
   // coordinates of selected area
-  const [boxCoord, setBoxCoord] = useState<BoundsProp | undefined>(undefined);
+  const onAreaSelected = useCallback((bounds: Bounds | undefined) => {
+    console.log({ message: 'these bounds were area-selected', bounds });
+  }, []);
 
   return (
     <>
@@ -82,7 +84,7 @@ export const DonutMarkers: Story<MapVEuMapProps> = (args) => {
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
       >
         {/* area selection by ctrl + mouse */}
-        <AreaSelect setBoxCoord={setBoxCoord} />
+        <AreaSelect onAreaSelected={onAreaSelected} />
 
         <SemanticMarkers
           markers={markerElements}

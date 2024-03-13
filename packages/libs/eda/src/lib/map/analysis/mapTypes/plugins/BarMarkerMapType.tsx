@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useEffect } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Variable } from '../../../../core/types/study';
 import { findEntityAndVariable } from '../../../../core/utils/study-metadata';
 import {
@@ -79,7 +79,8 @@ import { useLittleFilters } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
 import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
 import { SubStudies } from '../../SubStudies';
-import { useAreaSelect } from './useAreaSelect';
+import { useOnAreaSelected } from './useOnAreaSelected';
+import AreaSelect from '@veupathdb/components/lib/map/AreaSelect';
 
 const displayName = 'Bar plots';
 
@@ -339,8 +340,6 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
       activeMarkerConfigurationType,
     },
     updateConfiguration,
-    // pass coordinates of selected area
-    boxCoord,
   } = props;
 
   const {
@@ -391,12 +390,10 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
   );
 
   // marker selection by ctrl+click
-  const areaSelection = useAreaSelect(
+  const onAreaSelected = useOnAreaSelected(
     appState,
     markerData,
-    setSelectedMarkers,
-    boxCoord,
-    markerData.markerProps
+    setSelectedMarkers
   );
 
   if (markerData.error && !markerData.isFetching)
@@ -415,6 +412,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
   return (
     <>
       {markerData.isFetching && <Spinner />}
+      {onAreaSelected && <AreaSelect onAreaSelected={onAreaSelected} />}
       {markers && (
         <SemanticMarkers
           markers={markers}
