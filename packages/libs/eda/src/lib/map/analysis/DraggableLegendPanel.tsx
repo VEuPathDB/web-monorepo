@@ -14,7 +14,7 @@ export const DraggableLegendPanel = (props: {
     showPanelTitle
     panelTitle={props.panelTitle ?? 'Legend'}
     confineToParentContainer
-    defaultPosition={props.defaultPosition ?? { x: window.innerWidth, y: 225 }}
+    defaultPosition={props.defaultPosition ?? { x: window.innerWidth, y: 250 }}
     styleOverrides={{
       zIndex: props.zIndex,
       // set minWidth for draggable panel
