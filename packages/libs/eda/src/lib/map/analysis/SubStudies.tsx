@@ -89,7 +89,7 @@ export function SubStudies(props: Props) {
         overflow: 'auto',
       }}
       onPanelDismiss={() =>
-        updatePanelConfig({ ...panelConfig, isVisble: false })
+        updatePanelConfig({ ...panelConfig, isVisible: false })
       }
     >
       <div
