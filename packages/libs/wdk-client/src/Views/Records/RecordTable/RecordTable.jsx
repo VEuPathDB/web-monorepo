@@ -92,9 +92,6 @@ class RecordTable extends Component {
     const content =
       typeof ChildRow === 'string' ? (
         safeHtml(ChildRow)
-      ) : // Q: Is this necessary? Is ChildRow ever a typeof function that isn't actually a PureWrapper class?
-      typeof ChildRow === 'function' && ChildRow.name !== 'PureWrapper' ? (
-        ChildRow({ rowIndex, rowData })
       ) : (
         <ChildRow rowIndex={rowIndex} rowData={rowData} />
       );
