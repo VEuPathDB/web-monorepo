@@ -457,3 +457,16 @@ div.eupathdb-content {
 .smaller-font {
   font-size: 90%;
 }
+
+.LegacyMapRedirectModalContainer {
+  font-size: 1.2em;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: justify;
+  p {
+    margin-top: 0;
+    margin-bottom: 2em;
+  }
+}

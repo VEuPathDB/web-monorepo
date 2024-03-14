@@ -5,13 +5,15 @@ import { useConfiguredAnalysisClient } from '@veupathdb/eda/lib/core/hooks/clien
 import { createComputation } from '@veupathdb/eda/lib/core/components/computations/Utils';
 import { makeNewAnalysis } from '@veupathdb/eda/lib/core';
 import { RouteComponentProps } from 'react-router';
+import { LegacyRedirectState } from '@veupathdb/eda/lib/map/analysis/MapAnalysis';
 
 // Define constants to create new computations and analyses
 const MEGA_STUDY_ID = 'DS_480c976ef9';
 const MEGA_STUDIES_ENTITY_ID = 'EUPATH_0000605';
 const POPBIO_ID_VARIABLE_ID = 'POPBIO_8000215';
 const DESCRIPTOR_TYPE = 'stringSet';
-const DESCRIPTION_TEXTAREA_CHAR_LIMIT = 255;
+const REDIRECT_ANALYSIS_DESCRIPTION =
+  'This map was created from a legacy PopBio map link.';
 const DEFAULT_COMPUTATION = createComputation(
   'pass',
   undefined,
@@ -33,19 +35,24 @@ export function LegacyMapRedirectHandler({
   );
 
   const handleLegacyMapRedirect = useCallback(
-    async (computation, additionalConfig = {}) => {
+    async (computation, additionalConfig = {}, legacyMapRedirectState) => {
       const { analysisId } = await analysisClient.createAnalysis(
         makeNewAnalysis(MEGA_STUDY_ID, computation, additionalConfig)
       );
-      history.push(
-        `${match.url.replace(
+      history.push({
+        pathname: `${match.url.replace(
           '/legacy-redirect-handler',
           ''
-        )}/${MEGA_STUDY_ID}/${analysisId}`
-      );
+        )}/${MEGA_STUDY_ID}/${analysisId}`,
+        state: legacyMapRedirectState as LegacyRedirectState,
+      });
     },
     [analysisClient, history, match]
   );
+
+  const baseAdditionalAnalysisConfig = {
+    description: REDIRECT_ANALYSIS_DESCRIPTION,
+  };
 
   const paramKeys = Object.keys(queryParams);
 
@@ -68,49 +75,68 @@ export function LegacyMapRedirectHandler({
 
       if (paramKeys.length === 1) {
         // We know we have only the projectID param, so make new analysis and redirect
-        handleLegacyMapRedirect(DEFAULT_COMPUTATION, descriptorConfig);
-      } else {
-        // Here we have a projectID and other param(s), so populate the Notes -> Description info
-        // with the additional param(s)
-        const description = composeDescriptionString(true, queryParams);
-        const additionalConfig = {
+        const additionalAnalysisConfig = {
+          ...baseAdditionalAnalysisConfig,
           ...descriptorConfig,
-          description:
-            description.length <= DESCRIPTION_TEXTAREA_CHAR_LIMIT
-              ? description
-              : description.slice(0, DESCRIPTION_TEXTAREA_CHAR_LIMIT),
         };
-        handleLegacyMapRedirect(DEFAULT_COMPUTATION, additionalConfig);
+        handleLegacyMapRedirect(
+          DEFAULT_COMPUTATION,
+          additionalAnalysisConfig,
+          undefined
+        );
+      } else {
+        // Here we have a projectID and other param(s), so populate the Notes -> Analysis Details info
+        // with the additional param(s) and pass along the legacyMapRedirectState object
+        const notes = composeParamListForNotesString(queryParams);
+        const additionalAnalysisConfig = {
+          ...descriptorConfig,
+          ...baseAdditionalAnalysisConfig,
+          notes,
+        };
+        const legacyMapRedirectState = {
+          showLegacyMapRedirectModal: true,
+          projectId: queryParams['projectID'],
+        };
+        handleLegacyMapRedirect(
+          DEFAULT_COMPUTATION,
+          additionalAnalysisConfig,
+          legacyMapRedirectState
+        );
       }
     } else {
-      // Here we have query params but no projectID, so populate the description textarea and redirect
-      const description = composeDescriptionString(false, queryParams);
-      const additionalConfig = {
-        description:
-          description.length <= DESCRIPTION_TEXTAREA_CHAR_LIMIT
-            ? description
-            : description.slice(0, DESCRIPTION_TEXTAREA_CHAR_LIMIT),
+      // Here we have query params but no projectID, so populate the Notes -> Analysis Description info
+      // with the additional param(s) and pass along the legacyMapRedirectState object
+      const notes = composeParamListForNotesString(queryParams);
+      const additionalAnalysisConfig = {
+        ...baseAdditionalAnalysisConfig,
+        notes,
       };
-      handleLegacyMapRedirect(DEFAULT_COMPUTATION, additionalConfig);
+      const legacyMapRedirectState = {
+        showLegacyMapRedirectModal: true,
+        projectId: undefined,
+      };
+      handleLegacyMapRedirect(
+        DEFAULT_COMPUTATION,
+        additionalAnalysisConfig,
+        legacyMapRedirectState
+      );
     }
   } else {
-    // no query params, so create a default map analysis and redirect
-    handleLegacyMapRedirect(DEFAULT_COMPUTATION, undefined);
+    // no query params, so create a default map analysis with only the baseAdditionalAnalysisConfig and redirect
+    handleLegacyMapRedirect(
+      DEFAULT_COMPUTATION,
+      baseAdditionalAnalysisConfig,
+      undefined
+    );
   }
   return null;
 }
 
-function composeDescriptionString(
-  hasProjectID: boolean,
+function composeParamListForNotesString(
   queryParams: QueryString.ParsedUrlQuery
 ) {
   let description =
-    'We have created a new map analysis from an old link' +
-    (hasProjectID
-      ? ' that is filtered by the appropriate PopBio Study ID.'
-      : '.') +
-    ' However, the following parameters were ignored:\n';
-
+    'The following parameters from the old link were present but ignored:\n';
   for (const [key, value] of Object.entries(queryParams)) {
     if (key !== 'projectID') {
       description += `${key}: ${JSON.stringify(value)}\n`;

@@ -132,12 +132,29 @@ export const Analysis = t.intersection([
   }),
 ]);
 
+export type AdditionalAnalysisConfig = t.TypeOf<
+  typeof AdditionalAnalysisConfig
+>;
+export const AdditionalAnalysisConfig = t.intersection([
+  t.type({
+    description: t.string,
+  }),
+  t.partial({
+    notes: t.string,
+    descriptor: t.partial({
+      subset: t.type({
+        descriptor: t.array(Filter),
+      }),
+    }),
+  }),
+]);
+
 export const DEFAULT_ANALYSIS_NAME = 'Unnamed Analysis';
 
 export function makeNewAnalysis(
   studyId: string,
   computation?: Computation,
-  additionalConfig?: unknown
+  additionalAnalysisConfig?: AdditionalAnalysisConfig
 ): NewAnalysis {
   const defaultAnalysis = {
     displayName: DEFAULT_ANALYSIS_NAME,
@@ -156,6 +173,5 @@ export function makeNewAnalysis(
       computations: computation ? [computation] : [],
     },
   };
-
-  return merge(defaultAnalysis, additionalConfig);
+  return merge(defaultAnalysis, additionalAnalysisConfig);
 }
