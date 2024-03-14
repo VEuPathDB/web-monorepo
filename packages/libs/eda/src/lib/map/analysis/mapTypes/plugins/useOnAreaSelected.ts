@@ -6,7 +6,12 @@ import { Bounds, MarkerProps } from '@veupathdb/components/lib/map/Types';
 interface EssentialMarkerDataResponseProps {
   error: unknown;
   isFetching: boolean;
-  markerProps?: MarkerProps[]; // base type is all we need here
+  // donut and bar
+  markerProps?: MarkerProps[];
+  // bubble is different!
+  data?: {
+    markersData?: MarkerProps[];
+  };
 }
 
 export function useOnAreaSelected(
@@ -19,7 +24,6 @@ export function useOnAreaSelected(
       if (
         !markerDataResponse.error &&
         !markerDataResponse.isFetching &&
-        markerDataResponse.markerProps != null &&
         boxCoord != null
       ) {
         // retrieve selectedMarkers from appState
@@ -28,7 +32,9 @@ export function useOnAreaSelected(
             markerConfiguration.type === appState.activeMarkerConfigurationType
         )?.selectedMarkers;
 
-        const markerProps = markerDataResponse.markerProps;
+        const markerProps =
+          markerDataResponse.markerProps ??
+          markerDataResponse.data?.markersData;
 
         // find markers within area selection
         const boxCoordMarkers = markerProps
