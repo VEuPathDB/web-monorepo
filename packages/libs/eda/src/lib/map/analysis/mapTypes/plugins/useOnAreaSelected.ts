@@ -37,6 +37,11 @@ export function useOnAreaSelected(
         setSelectedMarkers(Array.from(new Set(combinedMarkers)));
       }
     },
-    [appState, markerProps, setSelectedMarkers]
+    [
+      appState.markerConfigurations,
+      appState.activeMarkerConfigurationType,
+      markerProps,
+      setSelectedMarkers,
+    ]
   );
 }
