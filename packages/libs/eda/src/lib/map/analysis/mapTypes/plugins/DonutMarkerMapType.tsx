@@ -351,7 +351,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
   // marker selection by ctrl+click
   const onAreaSelected = useOnAreaSelected(
     appState,
-    markerDataResponse,
+    markerDataResponse.markerProps,
     setSelectedMarkers
   );
 

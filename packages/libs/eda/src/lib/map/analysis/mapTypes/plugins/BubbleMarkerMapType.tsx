@@ -250,7 +250,7 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
   // marker selection by ctrl+click
   const onAreaSelected = useOnAreaSelected(
     appState,
-    markersData,
+    markersData.data.markersData,
     setSelectedMarkers
   );
 

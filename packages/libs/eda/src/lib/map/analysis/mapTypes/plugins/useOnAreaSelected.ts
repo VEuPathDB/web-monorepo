@@ -2,39 +2,19 @@ import { useCallback } from 'react';
 import { AppState } from '../../appState';
 import { Bounds, MarkerProps } from '@veupathdb/components/lib/map/Types';
 
-// just defining the props we are using
-interface EssentialMarkerDataResponseProps {
-  error: unknown;
-  isFetching: boolean;
-  // donut and bar
-  markerProps?: MarkerProps[];
-  // bubble is different!
-  data?: {
-    markersData?: MarkerProps[];
-  };
-}
-
 export function useOnAreaSelected(
   appState: AppState,
-  markerDataResponse: EssentialMarkerDataResponseProps,
+  markerProps: MarkerProps[] | undefined,
   setSelectedMarkers: (selectedMarkers: string[] | undefined) => void
 ) {
   return useCallback(
     (boxCoord: Bounds | undefined) => {
-      if (
-        !markerDataResponse.error &&
-        !markerDataResponse.isFetching &&
-        boxCoord != null
-      ) {
+      if (boxCoord != null) {
         // retrieve selectedMarkers from appState
         const selectedMarkers = appState.markerConfigurations.find(
           (markerConfiguration) =>
             markerConfiguration.type === appState.activeMarkerConfigurationType
         )?.selectedMarkers;
-
-        const markerProps =
-          markerDataResponse.markerProps ??
-          markerDataResponse.data?.markersData;
 
         // find markers within area selection
         const boxCoordMarkers = markerProps
@@ -57,6 +37,6 @@ export function useOnAreaSelected(
         setSelectedMarkers(Array.from(new Set(combinedMarkers)));
       }
     },
-    [appState, markerDataResponse, setSelectedMarkers]
+    [appState, markerProps, setSelectedMarkers]
   );
 }
