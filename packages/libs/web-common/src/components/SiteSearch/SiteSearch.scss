@@ -454,6 +454,9 @@
   &--Result {
     &Link {
       font-size: 1.145em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     &DocumentTypePath {
       color: #3e3e3e;
