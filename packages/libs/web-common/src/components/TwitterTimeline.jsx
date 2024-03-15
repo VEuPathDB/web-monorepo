@@ -66,8 +66,9 @@ export default class TwitterTimeline extends React.Component {
           {this.state.isInitialized && (
             <p>
               <em>
-                <strong>Warning</strong>: You must be logged into Twitter/X to
-                view our timeline.
+                <strong>Warning</strong>: If our Twitter/X timeline is not
+                displaying, you may need to log into Twitter/X or alter your
+                browser security settings.
               </em>
             </p>
           )}
