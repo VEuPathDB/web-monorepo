@@ -85,6 +85,7 @@ const makePfamDomainsAttributeFields = transformAttributeFieldsUsingSpecs([
   {
     name: DOMAIN_ACCESSION_ATTRIBUTE_NAME,
     displayName: 'Accession',
+    type: 'link',
   },
   {
     name: DOMAIN_SYMBOL_ATTRIBUTE_NAME,
