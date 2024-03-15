@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import QueryString from 'querystring';
 import { edaServiceUrl } from '../config';
 import { useConfiguredAnalysisClient } from '@veupathdb/eda/lib/core/hooks/client';
@@ -33,12 +33,15 @@ export function LegacyMapRedirectHandler({
     () => QueryString.parse(location.search.slice(1)),
     [location.search]
   );
+  const [hasCreatedAnalysis, setHasCreatedAnalysis] = useState(false);
 
   const handleLegacyMapRedirect = useCallback(
     async (computation, additionalConfig = {}, legacyMapRedirectState) => {
+      if (hasCreatedAnalysis) return;
       const { analysisId } = await analysisClient.createAnalysis(
         makeNewAnalysis(MEGA_STUDY_ID, computation, additionalConfig)
       );
+      setHasCreatedAnalysis(true);
       history.push({
         pathname: `${match.url.replace(
           '/legacy-redirect-handler',
@@ -47,7 +50,7 @@ export function LegacyMapRedirectHandler({
         state: legacyMapRedirectState as LegacyRedirectState,
       });
     },
-    [analysisClient, history, match]
+    [analysisClient, history, match, hasCreatedAnalysis, setHasCreatedAnalysis]
   );
 
   const baseAdditionalAnalysisConfig = {
