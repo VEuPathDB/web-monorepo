@@ -168,18 +168,17 @@ export function MapAnalysis(props: Props) {
           },
           size: {
             width: 400,
-            height: 225,
+            height: 200,
           },
         }}
       >
         <div className="LegacyMapRedirectModalContainer">
           <p>
-            You have been redirected from the legacy PopBio map.{' '}
-            {locationState?.projectId
-              ? `Your study filter (${locationState.projectId}) has been retained, but all other settings encoded in your link have been lost.`
-              : 'Settings encoded in your link have been lost.'}{' '}
-            You can go to the <strong>Notes</strong> section in this map's side
-            panel to see what settings were in your link, if any.
+            You have been redirected from the legacy PopBio map
+            {locationState?.projectId &&
+              ` to the same study (${locationState.projectId}) in our new map`}
+            . Settings encoded in your URL are not applied but are kept in the{' '}
+            <strong>Notes</strong> section (see left side panel).
           </p>
           <FilledButton
             text="Dismiss"
