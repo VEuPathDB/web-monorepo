@@ -8287,7 +8287,7 @@ __metadata:
     shape2geohash: ^1.2.5
     stats-lite: ^2.2.0
     storybook: ^6.5.14
-    tidytree: "github:d-callan/TidyTree"
+    tidytree: "https://github.com/d-callan/TidyTree.git#commit=9063e2df3d93c72743702a6d8f43169a1461e5b0"
     typescript: 4.3.4
   peerDependencies:
     "@emotion/react": ^11.10.0
@@ -36129,13 +36129,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tidytree@github:d-callan/TidyTree":
-  version: 0.6.0
-  resolution: "tidytree@https://github.com/d-callan/TidyTree.git#commit=01715074da658ba390fdc652dfd04aecb985cd37"
+"tidytree@https://github.com/d-callan/TidyTree.git#commit=9063e2df3d93c72743702a6d8f43169a1461e5b0":
+  version: 0.7.0
+  resolution: "tidytree@https://github.com/d-callan/TidyTree.git#commit=9063e2df3d93c72743702a6d8f43169a1461e5b0"
   dependencies:
     d3: ^7.6.1
     patristic: "github:CDCgov/patristic"
-  checksum: a1411f00e012cd1e5aaf503de0d03425ea5aef95df257145d05aee58a0af5bbbeb6f453474094e2fada11ca0609d20339d43ce7674fa4bb5bff76387a145aa03
+  checksum: 243e27ebe6061ff00f66f8de7168eebb09ab2070bdcf429a283ddab307be1adbdbca3623a2779f8bef0a81776956e7e538eb6110fedc9581804ba795017a5a23
   languageName: node
   linkType: hard
 

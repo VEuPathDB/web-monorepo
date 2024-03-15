@@ -19,6 +19,7 @@ export interface HorizontalDendrogramProps {
        for now just default to all zero margins (left-most edges 
      */
     margin?: [number, number, number, number];
+    interactive?: boolean;
   };
 
   /// The remaining props are handled with a redraw: ///
@@ -68,7 +69,7 @@ export function HorizontalDendrogram({
   leafCount,
   rowHeight,
   width,
-  options: { ruler = false, margin = [0, 0, 0, 0] },
+  options: { ruler = false, margin = [0, 0, 0, 0], interactive = true },
   highlightedNodeIds,
   highlightMode,
   hStretch = 1.0,
@@ -95,6 +96,7 @@ export function HorizontalDendrogram({
       margin,
       hStretch,
       animation: 0, // it's naff and it reveals edge lengths/weights momentarily
+      interactive,
     });
     tidyTreeRef.current = instance;
     return function cleanup() {

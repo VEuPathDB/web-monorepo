@@ -91,7 +91,7 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
         {...props.treeProps}
         rowHeight={rowHeight}
         leafCount={rows.length}
-        options={{ margin: [0, 10, 0, 10] }}
+        options={{ margin: [0, 10, 0, 10], interactive: false }}
       />
       <div
         style={{
