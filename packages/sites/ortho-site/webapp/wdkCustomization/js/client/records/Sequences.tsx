@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import TreeTable from '@veupathdb/components/lib/components/tidytree/TreeTable';
 import { RecordTableProps, WrappedComponentProps } from './Types';
 import { useOrthoService } from 'ortho-client/hooks/orthoService';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { parseNewick } from 'patristic';
 import { AttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+
+type RowType = Record<string, AttributeValue>;
 
 export function RecordTable_Sequences(
   props: WrappedComponentProps<RecordTableProps>
@@ -21,6 +23,8 @@ export function RecordTable_Sequences(
     (orthoService) => orthoService.getGroupTree(groupName),
     [groupName]
   );
+
+  const [highlightedNodes, setHighlightedNodes] = useState<string[]>([]);
 
   if (treeResponse == null) return <Loading />;
 
@@ -44,7 +48,7 @@ export function RecordTable_Sequences(
   // sort the table in the same order as the tree's leaves
   const sortedRows = leaves
     .map(({ id }) => mesaRows.find(({ full_id }) => full_id === id))
-    .filter((row): row is Record<string, AttributeValue> => row != null);
+    .filter((row): row is RowType => row != null);
 
   if (leaves.length !== sortedRows.length)
     return (
@@ -52,15 +56,25 @@ export function RecordTable_Sequences(
     );
 
   const mesaState = {
-    options: {},
+    options: {
+      isRowSelected: (row: RowType) =>
+        highlightedNodes.includes(row.full_id as string),
+    },
     rows: sortedRows,
     columns: mesaColumns,
+    eventHandlers: {
+      onRowSelect: (row: RowType) =>
+        setHighlightedNodes((prev) => [...prev, row.full_id as string]),
+      onRowDeselect: (row: RowType) =>
+        setHighlightedNodes((prev) => prev.filter((id) => id !== row.full_id)),
+    },
   };
 
   const treeProps = {
     data: treeResponse.newick,
     width: 200,
     highlightMode: 'monophyletic' as const,
+    highlightedNodeIds: highlightedNodes,
   };
 
   const rowHeight = 45;
