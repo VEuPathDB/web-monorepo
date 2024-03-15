@@ -4,6 +4,7 @@ import { RecordTableProps, WrappedComponentProps } from './Types';
 import { useOrthoService } from 'ortho-client/hooks/orthoService';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { parseNewick } from 'patristic';
+import { AttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 export function RecordTable_Sequences(
   props: WrappedComponentProps<RecordTableProps>
@@ -40,14 +41,19 @@ export function RecordTable_Sequences(
   const tree = parseNewick(treeResponse.newick);
   const leaves = tree.getLeaves();
 
-  const numLeaves = leaves.length;
-  const numSequences = mesaRows.length;
+  // sort the table in the same order as the tree's leaves
+  const sortedRows = leaves
+    .map(({ id }) => mesaRows.find(({ full_id }) => full_id === id))
+    .filter((row): row is Record<string, AttributeValue> => row != null);
 
-  console.log({ numLeaves, numSequences });
+  if (leaves.length !== sortedRows.length)
+    return (
+      <div>Tree and protein list mismatch, please contact the helpdesk</div>
+    );
 
   const mesaState = {
     options: {},
-    rows: mesaRows,
+    rows: sortedRows,
     columns: mesaColumns,
   };
 

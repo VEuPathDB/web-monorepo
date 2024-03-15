@@ -1,5 +1,5 @@
 declare module 'patristic' {
-  interface BranchData {
+  export class Branch {
     id: string;
     parent?: Branch | null;
     length?: number;
@@ -7,12 +7,10 @@ declare module 'patristic' {
     value?: number;
     depth?: number;
     height?: number;
-  }
 
-  export class Branch {
-    constructor(data: BranchData, children?: (data: any) => Branch[]);
-    addChild(data: Branch | BranchData): Branch;
-    addParent(data: Branch | BranchData, siblings?: Branch[]): Branch;
+    constructor(data: Branch, children?: (data: any) => Branch[]);
+    addChild(data: Branch): Branch;
+    addParent(data: Branch, siblings?: Branch[]): Branch;
     ancestors(): Branch[];
     clone(): Branch;
     getLeaves(): Branch[];
