@@ -62,6 +62,16 @@ export default class TwitterTimeline extends React.Component {
           width,
         }}
       >
+        <div>
+          {this.state.isInitialized && (
+            <p>
+              <em>
+                <strong>Warning</strong>: You must be logged into Twitter/X to
+                view our timeline.
+              </em>
+            </p>
+          )}
+        </div>
         <a
           ref={this.timelineRef}
           data-height={height}
@@ -73,14 +83,6 @@ export default class TwitterTimeline extends React.Component {
         >
           Tweets by {profileId}
         </a>
-        {this.state.isInitialized && (
-          <p>
-            <em>
-              <strong>Warning</strong>: You must be logged into Twitter/X to
-              view our timeline.
-            </em>
-          </p>
-        )}
       </div>
     );
   }
