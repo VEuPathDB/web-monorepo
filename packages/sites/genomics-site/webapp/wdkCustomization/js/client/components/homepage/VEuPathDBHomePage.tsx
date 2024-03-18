@@ -517,26 +517,6 @@ const useHeaderMenuItems = (
             include: [TriTrypDB],
           },
         },
-        {
-          key: 'mapveu',
-          display: 'Legacy implementation of MapVEu (soon to be retired)',
-          tooltip: 'Population Biology map',
-          type: 'externalLink',
-          url: '/popbio-map/web/',
-          metadata: {
-            include: [VectorBase],
-          },
-        },
-        {
-          key: 'mapveu',
-          display: 'MapVEu',
-          tooltip: 'Population Biology map',
-          type: 'externalLink',
-          url: 'https://vectorbase.org/popbio-map/web/',
-          metadata: {
-            include: [EuPathDB, UniDB],
-          },
-        },
         !showInteractiveMaps
           ? {
               type: 'custom',
@@ -627,6 +607,19 @@ const useHeaderMenuItems = (
           ),
           type: 'reactRoute',
           url: '/fasta-tool',
+        },
+        {
+          key: 'study-explorer',
+          display: (
+            <>
+              WGCNA Study explorer <img alt="NEW" src={newImage} />
+            </>
+          ),
+          type: 'reactRoute',
+          url: '/workspace/analyses/DS_82dc5abc7f/new',
+          metadata: {
+            include: [PlasmoDB, HostDB, EuPathDB, UniDB],
+          },
         },
         {
           key: 'webservices',
@@ -724,9 +717,6 @@ const useHeaderMenuItems = (
           display: <>Download data files</>,
           type: 'reactRoute',
           url: '/downloads',
-          metadata: {
-            exclude: [EuPathDB],
-          },
         },
         {
           key: 'mahpic-data',
@@ -1115,6 +1105,7 @@ const useHeaderMenuItems = (
       key: 'contact-us',
       display: 'Contact Us',
       type: 'reactRoute',
+      target: '_blank',
       url: '/contact-us',
     },
   ];

@@ -1,21 +1,35 @@
-import { chunk, property, orderBy, toLower } from 'lodash';
+import { chunk, property, orderBy, toLower, uniqueId } from 'lodash';
 import React, { Component } from 'react';
 import { createSelector } from 'reselect';
 import PropTypes from 'prop-types';
-import DataTable from '../../../Components/DataTable/DataTable';
+import { RecordFilter } from './RecordFilter';
 import {
   renderAttributeValue,
   pure,
   wrappable,
+  safeHtml,
 } from '../../../Utils/ComponentUtils';
+import {
+  Mesa,
+  Utils as MesaUtils,
+} from '@veupathdb/coreui/lib/components/Mesa';
+import {
+  areTermsInStringRegexString,
+  parseSearchQueryString,
+} from '../../../Utils/SearchUtils';
+import { ErrorBoundary } from '../../../Controllers';
+import { stripHTML } from '../../../Utils/DomUtils';
+import './RecordTable.css';
 
-const mapAttributeType = (type) => {
-  switch (type) {
-    case 'number':
-      return 'num';
-    default:
-      return undefined;
+// NOTE: This is very hacky because the model is not reliably providing column or sort types
+const mapSortType = (val) => {
+  if (!isNaN(parseFloat(val)) && isFinite(val)) {
+    return 'number';
   }
+  if (MesaUtils.isHtml(val)) {
+    return 'htmlText';
+  }
+  return 'text';
 };
 
 // max columns for list mode
@@ -30,12 +44,7 @@ const addDefaultSortId = (row, index) =>
   Object.assign({}, row, { [defaultSortId]: index });
 
 const getColumns = (tableField) =>
-  defaultSortColumn.concat(
-    tableField.attributes.map((attr) => ({
-      ...attr,
-      sortType: mapAttributeType(attr.type),
-    }))
-  );
+  defaultSortColumn.concat(tableField.attributes.map((attr) => attr));
 
 const getDisplayableAttributes = (tableField) =>
   tableField.attributes.filter((attr) => attr.isDisplayable);
@@ -63,22 +72,183 @@ class RecordTable extends Component {
       (props) => props.table,
       getOrderedData
     );
+    this.onSort = this.onSort.bind(this);
+    this.wrappedChildRow = this.wrappedChildRow.bind(this);
+    this.state = {
+      searchTerm: this.props.searchTerm ?? '',
+      selectedColumnFilters: [],
+      sort: { columnKey: undefined, direction: 'desc' },
+    };
+  }
+
+  onSort(column, direction) {
+    const columnKey = column.key;
+    this.setState((state) => ({ ...state, sort: { columnKey, direction } }));
+  }
+
+  wrappedChildRow(rowIndex, rowData) {
+    const { childRow: ChildRow } = this.props;
+    if (!ChildRow) return;
+    const content =
+      typeof ChildRow === 'string' ? (
+        safeHtml(ChildRow)
+      ) : (
+        <ChildRow rowIndex={rowIndex} rowData={rowData} />
+      );
+    return (
+      <div id={`DataTableChildRow${uniqueId()}`}>
+        <ErrorBoundary
+          renderError={() => <h3>We're sorry, something went wrong.</h3>}
+        >
+          {content}
+        </ErrorBoundary>
+      </div>
+    );
   }
 
   render() {
-    const {
-      value,
-      childRow,
-      expandedRows,
-      onExpandedRowsChange,
-      className,
-      onDraw,
-      searchTerm,
-      onSearchTermChange,
-    } = this.props;
+    const { value, childRow, expandedRows, onExpandedRowsChange, className } =
+      this.props;
+    const { sort } = this.state;
     const displayableAttributes = this.getDisplayableAttributes(this.props);
     const columns = this.getColumns(this.props);
     const data = this.getOrderedData(this.props);
+
+    // Manipulate columns to match properties expected in Mesa
+    const mesaReadyColumns = columns
+      .filter((c) => c.isDisplayable)
+      .map((c) => {
+        const {
+          name,
+          displayName,
+          isSortable,
+          type,
+          help,
+          ...remainingProperties
+        } = c;
+        /**
+         * NOTE: This is very hacky because the model is not reliably providing column or sort types
+         *
+         * It's possible that the first "nonNullDataObject" found could misrepresent the actual sort type
+         * of the data.
+         */
+        const nonNullDataObject = data.find((d) => d[name] != null);
+        const nonNullDataValue =
+          nonNullDataObject != null
+            ? type === 'link'
+              ? nonNullDataObject[name]['displayText']
+              : nonNullDataObject[name]
+            : undefined;
+        const sortType =
+          isSortable && nonNullDataValue && name !== 'thumbnail'
+            ? mapSortType(nonNullDataValue ?? '')
+            : undefined;
+        return {
+          ...remainingProperties,
+          key: name,
+          name: displayName,
+          sortable: isSortable,
+          type: type ?? 'html',
+          helpText: help,
+          sortType,
+          ...(name === 'thumbnail'
+            ? {
+                className: 'wdk-DataTableCell__thumbnail',
+              }
+            : null),
+        };
+      });
+
+    // Manipulate rows to match Mesa properties; this really only pertains to the
+    // link properties that differ between DataTable and Mesa
+    const mesaReadyRows = data.map((d) => {
+      let newData = { ...d };
+      const columnsWithLinks = mesaReadyColumns.filter(
+        (c) => c.key in d && 'type' in c && c.type === 'link'
+      );
+      columnsWithLinks.forEach((col) => {
+        const linkPropertyName = col.key;
+        const linkObject = d[linkPropertyName];
+        newData = {
+          ...newData,
+          [linkPropertyName]: {
+            href: linkObject?.url ?? '',
+            text: linkObject?.displayText ?? '',
+          },
+        };
+      });
+      return newData;
+    });
+
+    const columnToSort = mesaReadyColumns.find(
+      (c) => c.key === sort?.columnKey
+    );
+    const sortType = columnToSort?.sortType ?? 'text';
+
+    const sortedMesaRows =
+      sort?.columnKey == null
+        ? mesaReadyRows
+        : orderBy(
+            mesaReadyRows,
+            (row) => {
+              const { columnKey } = sort;
+              const isLinkType = columnToSort.type === 'link';
+              if (sortType === 'number' && isLinkType) {
+                return row[columnKey]['text'] === ''
+                  ? -Infinity
+                  : Number(row[columnKey]['text']);
+              }
+              if (sortType === 'number') {
+                return row[columnKey] == null
+                  ? -Infinity
+                  : Number(row[columnKey]);
+              }
+              if (columnToSort.type === 'link') {
+                return row[columnKey]['text'];
+              }
+              if (sortType === 'htmlText') {
+                return stripHTML(row[columnKey]).toLowerCase().trim();
+              }
+              return row[columnKey] == null
+                ? ''
+                : row[columnKey].toLowerCase().trim();
+            },
+            [sort.direction]
+          );
+
+    const queryTerms = parseSearchQueryString(this.state.searchTerm);
+    const searchTermRegex = areTermsInStringRegexString(queryTerms);
+    const regex = new RegExp(searchTermRegex, 'i');
+    const searchableAttributes = this.state.selectedColumnFilters.length
+      ? displayableAttributes.filter((attr) =>
+          this.state.selectedColumnFilters.includes(attr.name)
+        )
+      : displayableAttributes;
+    const filteredRows = sortedMesaRows.filter((row) => {
+      return searchableAttributes.some((attr) => regex.test(row[attr.name]));
+    });
+
+    const tableState = {
+      rows: sortedMesaRows,
+      columns: mesaReadyColumns,
+      filteredRows: this.state.searchTerm.length ? filteredRows : undefined,
+      eventHandlers: {
+        onSort: this.onSort,
+        onExpandedRowsChange,
+      },
+      uiState: {
+        sort: this.state.sort,
+        expandedRows,
+        filteredRowCount: mesaReadyRows.length - filteredRows.length,
+      },
+      options: {
+        toolbar: true,
+        childRow: childRow ? this.wrappedChildRow : undefined,
+        className: 'wdk-DataTableContainer',
+        getRowId: getSortIndex,
+        showCount: mesaReadyRows.length > 1,
+      },
+    };
 
     if (value.length === 0 || columns.length === 0) {
       return (
@@ -106,18 +276,31 @@ class RecordTable extends Component {
 
     return (
       <div className={className}>
-        <DataTable
-          searchTerm={searchTerm}
-          onSearchTermChange={onSearchTermChange}
-          getRowId={getSortIndex}
-          expandedRows={expandedRows}
-          onExpandedRowsChange={onExpandedRowsChange}
-          columns={columns}
-          data={data}
-          childRow={childRow}
-          searchable={value.length > 1}
-          onDraw={onDraw}
-        />
+        <Mesa state={tableState}>
+          {mesaReadyRows.length > 1 && (
+            <RecordFilter
+              searchTerm={this.state.searchTerm}
+              onSearchTermChange={(searchTerm) =>
+                this.setState((state) => ({
+                  ...state,
+                  searchTerm,
+                }))
+              }
+              recordDisplayName={this.props.recordClass.displayNamePlural}
+              filterAttributes={displayableAttributes.map((attr) => ({
+                value: attr.name,
+                display: attr.displayName,
+              }))}
+              selectedColumnFilters={this.state.selectedColumnFilters}
+              onColumnFilterChange={(value) =>
+                this.setState((state) => ({
+                  ...state,
+                  selectedColumnFilters: value,
+                }))
+              }
+            />
+          )}
+        </Mesa>
       </div>
     );
   }

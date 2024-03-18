@@ -37,13 +37,15 @@ export function SubStudies(props: Props) {
   const result = useQuery({
     queryKey: ['map', 'studies', entityId, filters],
     queryFn: async () => {
-      return await subsettingClient.getTabularData(studyId, entityId, {
+      const rows = await subsettingClient.getTabularData(studyId, entityId, {
         filters,
         outputVariableIds: [variableId],
         reportConfig: {
           headerFormat: 'standard',
         },
       });
+      // includes a header row
+      return rows.slice(1);
     },
   });
 
@@ -87,7 +89,7 @@ export function SubStudies(props: Props) {
         overflow: 'auto',
       }}
       onPanelDismiss={() =>
-        updatePanelConfig({ ...panelConfig, isVisble: false })
+        updatePanelConfig({ ...panelConfig, isVisible: false })
       }
     >
       <div
@@ -110,13 +112,13 @@ export function SubStudies(props: Props) {
               <p>There are no studies to show here.</p>
             ) : (
               <p>
-                There {studyCountPhrase(result.data.length - 1)} for the{' '}
+                There {studyCountPhrase(result.data.length)} for the{' '}
                 {hasSelectedMarkers ? 'selected' : 'visible'} markers on the
                 map.
               </p>
             )}
             <ul>
-              {result.data.slice(1).map(([id, display]) => (
+              {result.data.map(([id, display]) => (
                 <li>
                   <Link
                     target="_blank"

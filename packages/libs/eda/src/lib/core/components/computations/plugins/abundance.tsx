@@ -3,7 +3,7 @@ import { VariableCollectionDescriptor } from '../../../types/variable';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { capitalize, partial } from 'lodash';
+import { partial } from 'lodash';
 import {
   assertComputationWithConfig,
   isNotAbsoluteAbundanceVariableCollection,
@@ -118,6 +118,10 @@ function AbundanceConfigDescriptionComponent({
     'rankingMethod' in configuration ? configuration.rankingMethod : undefined;
   const updatedCollectionVariable =
     findEntityAndVariableCollection(collectionVariable);
+  const rankingMethodDisplayName = rankingMethod
+    ? ABUNDANCE_METHODS.find((method) => method.value === rankingMethod)
+        ?.displayName
+    : undefined;
   return (
     <div className="ConfigDescriptionContainer">
       <h4>
@@ -133,7 +137,7 @@ function AbundanceConfigDescriptionComponent({
       <h4>
         Method:{' '}
         <span>
-          {rankingMethod ? capitalize(rankingMethod) : <i>Not selected</i>}
+          {rankingMethod ? rankingMethodDisplayName : <i>Not selected</i>}
         </span>
       </h4>
     </div>
@@ -141,7 +145,12 @@ function AbundanceConfigDescriptionComponent({
 }
 
 // Include available methods in this array.
-const ABUNDANCE_METHODS = ['median', 'q3', 'variance', 'max'];
+const ABUNDANCE_METHODS = [
+  { value: 'median', displayName: 'Median' },
+  { value: 'q3', displayName: 'Q3' },
+  { value: 'variance', displayName: 'Variance' },
+  { value: 'max', displayName: 'Max' },
+];
 
 export function AbundanceConfiguration(props: ComputationConfigProps) {
   const {
@@ -164,6 +173,18 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
       return configuration.rankingMethod;
     }
   }, [configuration]);
+
+  const rankingMethodSelectorText = useMemo(() => {
+    if (rankingMethod) {
+      return (
+        ABUNDANCE_METHODS.find((method) => method.value === rankingMethod)
+          ?.displayName ?? 'Select a method'
+      );
+    } else {
+      return 'Select a method';
+    }
+  }, [rankingMethod]);
+
   return (
     <ComputationStepContainer
       computationStepInfo={{
@@ -184,13 +205,11 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
           <span>Method</span>
           <SingleSelect
             value={rankingMethod ?? 'Select a method'}
-            buttonDisplayContent={
-              rankingMethod ? capitalize(rankingMethod) : 'Select a method'
-            }
+            buttonDisplayContent={rankingMethodSelectorText}
             onSelect={partial(changeConfigHandler, 'rankingMethod')}
             items={ABUNDANCE_METHODS.map((method) => ({
-              value: method,
-              display: capitalize(method),
+              value: method.value,
+              display: method.displayName,
             }))}
           />
         </div>
