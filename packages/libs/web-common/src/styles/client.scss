@@ -2,6 +2,8 @@
 @import './AllSites.scss';
 @import './question-wizard.css';
 
+$expand-child-row-toggle-width: 3em;
+
 body,
 h1,
 h2,
@@ -112,11 +114,15 @@ tr._childIsExpanded
 }
 
 .wdk-DataTableCellExpand {
-  width: 3em;
+  width: $expand-child-row-toggle-width;
   padding: 0;
   border: none;
   line-height: 2;
   background: transparent !important;
+}
+
+.wdk-DataTableCell.wdk-DataTableCell__childRowToggle {
+  width: $expand-child-row-toggle-width;
 }
 
 th > .wdk-DataTableCellExpand {

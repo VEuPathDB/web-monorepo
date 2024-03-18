@@ -32,12 +32,11 @@ class HeadingRow extends React.PureComponent {
       onRowDeselect,
     ].every((fn) => typeof fn === 'function');
 
-    const hasExpansionColumn = [
-      childRow,
-      expandedRows,
-      onExpandedRowsChange,
-      getRowId,
-    ].every((prop) => prop != null);
+    const hasExpansionColumn =
+      childRow != null &&
+      onExpandedRowsChange != null &&
+      expandedRows != null &&
+      getRowId != null;
 
     const rowCount = columns.reduce((count, column) => {
       const thisCount = Array.isArray(column.renderHeading)

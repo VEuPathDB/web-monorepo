@@ -72,6 +72,7 @@ import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
 import { SubStudies } from '../../SubStudies';
 import { useLittleFilters } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
+import { PanelConfig } from '../../appState';
 
 const displayName = 'Donuts';
 
@@ -94,6 +95,8 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     studyId,
     studyEntities,
     filters,
+    setHideVizInputsAndControls,
+    setIsSidePanelExpanded,
   } = props;
 
   const subsettingClient = useSubsettingClient();
@@ -241,6 +244,10 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
       updateConfiguration({
         ...configuration,
         activeVisualizationId,
+        visualizationPanelConfig: {
+          ...configuration.visualizationPanelConfig,
+          isVisible: !!activeVisualizationId,
+        },
       });
     },
     [configuration, updateConfiguration]
@@ -266,7 +273,8 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
           plugins={plugins}
           geoConfigs={geoConfigs}
           mapType="pie"
-          setHideVizInputsAndControls={props.setHideVizInputsAndControls}
+          setHideVizInputsAndControls={setHideVizInputsAndControls}
+          setIsSidePanelExpanded={setIsSidePanelExpanded}
         />
       ),
     },
@@ -302,12 +310,14 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     updateConfiguration,
   } = props;
 
+  const configuration = props.configuration as PieMarkerConfiguration;
+
   const {
     selectedVariable,
     binningMethod,
     selectedValues,
     activeVisualizationId,
-  } = props.configuration as PieMarkerConfiguration;
+  } = configuration;
 
   const { filters: filtersForMarkerData } = useLittleFilters(
     {
@@ -339,11 +349,11 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     (selectedMarkers?: string[]) => {
       handleSelectedMarkerSnackbars(selectedMarkers);
       updateConfiguration({
-        ...(props.configuration as PieMarkerConfiguration),
+        ...configuration,
         selectedMarkers,
       });
     },
-    [props.configuration, updateConfiguration, handleSelectedMarkerSnackbars]
+    [configuration, updateConfiguration, handleSelectedMarkerSnackbars]
   );
 
   // no markers and no error div for certain known error strings
@@ -387,29 +397,26 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     geoConfigs,
     updateConfiguration,
     appState,
-    appState: { markerConfigurations, activeMarkerConfigurationType },
     filters,
     headerButtons,
     setStudyDetailsPanelConfig,
+    setHideVizInputsAndControls,
   } = props;
+
+  const configuration = props.configuration as PieMarkerConfiguration;
+
   const {
     selectedVariable,
     selectedValues,
     binningMethod,
     activeVisualizationId,
-  } = props.configuration as PieMarkerConfiguration;
+    legendPanelConfig,
+    visualizationPanelConfig,
+    selectedMarkers,
+  } = configuration;
   const findEntityAndVariable = useFindEntityAndVariable(filters);
   const { variable: overlayVariable } =
     findEntityAndVariable(selectedVariable) ?? {};
-  const setActiveVisualizationId = useCallback(
-    (activeVisualizationId?: string) => {
-      updateConfiguration({
-        ...(props.configuration as PieMarkerConfiguration),
-        activeVisualizationId,
-      });
-    },
-    [props.configuration, updateConfiguration]
-  );
 
   const { filters: filtersForFloaters } = useLittleFilters(
     {
@@ -440,11 +447,6 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     valueSpec: 'count',
   });
 
-  const selectedMarkers = markerConfigurations.find(
-    (markerConfiguration) =>
-      markerConfiguration.type === activeMarkerConfigurationType
-  )?.selectedMarkers;
-
   const plugins = useStandaloneVizPlugins({
     selectedOverlayConfig: data.overlayConfig,
     selectedMarkers,
@@ -453,9 +455,56 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
   const noDataError = getLegendErrorMessage(data.error);
 
+  const updateLegendPosition = useCallback(
+    (position: PanelConfig['position']) => {
+      updateConfiguration({
+        ...configuration,
+        legendPanelConfig: position,
+      });
+    },
+    [updateConfiguration, configuration]
+  );
+
+  const updateVisualizationPosition = useCallback(
+    (position: PanelConfig['position']) => {
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...visualizationPanelConfig,
+          position,
+        },
+      });
+    },
+    [updateConfiguration, configuration, visualizationPanelConfig]
+  );
+
+  const updateVisualizationDimensions = useCallback(
+    (dimensions: PanelConfig['dimensions']) => {
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...visualizationPanelConfig,
+          dimensions,
+        },
+      });
+    },
+    [updateConfiguration, configuration, visualizationPanelConfig]
+  );
+
+  const onPanelDismiss = useCallback(() => {
+    updateConfiguration({
+      ...configuration,
+      activeVisualizationId: undefined,
+      visualizationPanelConfig: {
+        ...visualizationPanelConfig,
+        isVisible: false,
+      },
+    });
+  }, [updateConfiguration, configuration, visualizationPanelConfig]);
+
   return (
     <>
-      {appState.studyDetailsPanelConfig?.isVisble && (
+      {appState.studyDetailsPanelConfig?.isVisible && (
         <SubStudies
           studyId={studyId}
           entityId={STUDIES_ENTITY_ID}
@@ -471,6 +520,8 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
         panelTitle={overlayVariable?.displayName}
         zIndex={3}
         headerButtons={headerButtons}
+        defaultPosition={legendPanelConfig}
+        onDragComplete={updateLegendPosition}
       >
         <div style={{ padding: '5px 10px' }}>
           {noDataError ?? (
@@ -488,7 +539,6 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
       <DraggableVisualization
         analysisState={props.analysisState}
         visualizationId={activeVisualizationId}
-        setActiveVisualizationId={setActiveVisualizationId}
         apps={props.apps}
         plugins={plugins}
         geoConfigs={geoConfigs}
@@ -498,7 +548,12 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
         filters={filtersForFloaters}
         zIndexForStackingContext={2}
         hideInputsAndControls={props.hideVizInputsAndControls}
-        setHideInputsAndControls={props.setHideVizInputsAndControls}
+        setHideInputsAndControls={setHideVizInputsAndControls}
+        onDragComplete={updateVisualizationPosition}
+        defaultPosition={visualizationPanelConfig.position}
+        onPanelResize={updateVisualizationDimensions}
+        dimensions={visualizationPanelConfig.dimensions}
+        onPanelDismiss={onPanelDismiss}
       />
     </>
   );
@@ -536,10 +591,10 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
       outputEntityId={outputEntityId}
       onShowStudies={
         studyDetailsPanelConfig &&
-        ((isVisble) =>
+        ((isVisible) =>
           props.setStudyDetailsPanelConfig({
             ...studyDetailsPanelConfig,
-            isVisble,
+            isVisible,
           }))
       }
     />

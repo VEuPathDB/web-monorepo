@@ -410,6 +410,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     updateConfiguration={updateMarkerConfigurations as any}
                     hideVizInputsAndControls={hideVizInputsAndControls}
                     setHideVizInputsAndControls={setHideVizInputsAndControls}
+                    setIsSidePanelExpanded={setIsSidePanelExpanded}
                   />
                 );
               },
@@ -440,6 +441,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     updateConfiguration={updateMarkerConfigurations as any}
                     hideVizInputsAndControls={hideVizInputsAndControls}
                     setHideVizInputsAndControls={setHideVizInputsAndControls}
+                    setIsSidePanelExpanded={setIsSidePanelExpanded}
                   />
                 );
               },
@@ -468,6 +470,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     updateConfiguration={updateMarkerConfigurations as any}
                     hideVizInputsAndControls={hideVizInputsAndControls}
                     setHideVizInputsAndControls={setHideVizInputsAndControls}
+                    setIsSidePanelExpanded={setIsSidePanelExpanded}
                   />
                 );
               },
@@ -888,7 +891,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     height="100%"
                     width="100%"
                     style={mapStyle}
-                    showLayerSelector={false}
+                    showLayerSelector={true}
                     showSpinner={false}
                     viewport={appState.viewport}
                     onBoundsChanged={setBoundsZoomLevel}

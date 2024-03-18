@@ -44,6 +44,7 @@ interface Props<T extends string = string> {
   clearBadUpload: () => void;
   submitForm: (newUserDataset: FormSubmission, redirectTo?: string) => void;
   supportedFileUploadTypes: string[];
+  maxSizeBytes?: number;
 }
 
 type DataUploadMode = 'file' | 'url' | 'strategy' | 'step';
@@ -93,6 +94,7 @@ function UploadForm({
   clearBadUpload,
   submitForm,
   supportedFileUploadTypes,
+  maxSizeBytes,
 }: Props) {
   const strategyOptionsByStrategyId = useMemo(
     () => keyBy(strategyOptions, (option) => option.strategyId),
@@ -248,6 +250,7 @@ function UploadForm({
         .join(',')}
       required={dataUploadMode === 'file'}
       disabled={dataUploadMode !== 'file' || useFixedUploadMethod}
+      maxSizeBytes={maxSizeBytes}
       onChange={(file) => {
         const fileWithSpacedRemovedFromName =
           file && new File([file], file?.name.replace(/\s+/g, '_'), file);
