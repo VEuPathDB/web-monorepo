@@ -38,10 +38,10 @@ export function LegacyMapRedirectHandler({
   const handleLegacyMapRedirect = useCallback(
     async (computation, additionalConfig = {}, legacyMapRedirectState) => {
       if (hasCreatedAnalysis) return;
+      setHasCreatedAnalysis(true);
       const { analysisId } = await analysisClient.createAnalysis(
         makeNewAnalysis(MEGA_STUDY_ID, computation, additionalConfig)
       );
-      setHasCreatedAnalysis(true);
       history.push({
         pathname: `${match.url.replace(
           '/legacy-redirect-handler',
