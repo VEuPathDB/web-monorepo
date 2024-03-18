@@ -50,6 +50,7 @@ const WDKClientTooltip = ({
   content,
   children,
   classes = 'qtip-wdk',
+  // classes,
   showDelay = defaultOptions.show.delay,
   hideDelay = defaultOptions.hide.delay,
   position = defaultOptions.position,

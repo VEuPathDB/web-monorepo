@@ -341,10 +341,8 @@ button.wdk-Link {
 /* Use style similar to Tooltip from austinbillings/mesa.git */
 .qtip-wdk {
   color: black;
-  background-color: #fffceb;
-  padding: 4px;
+  padding: 0 4px 0 4px;
   z-index: 1;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
   border-radius: 4px;
   border: none;
   font: unset;
