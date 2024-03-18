@@ -17,6 +17,7 @@ import { MarkerConfiguration } from './appState';
 import { ComputationPlugin } from '../../core/components/computations/Types';
 import { VisualizationPlugin } from '../../core/components/visualizations/VisualizationPlugin';
 import { StartPage } from '../../core/components/computations/StartPage';
+import { MapTypeConfigPanelProps } from './mapTypes/types';
 
 interface Props {
   activeVisualizationId: string | undefined;
@@ -28,6 +29,7 @@ interface Props {
   geoConfigs: GeoConfig[];
   mapType?: MarkerConfiguration['type'];
   setHideVizInputsAndControls: (value: boolean) => void;
+  setIsSidePanelExpanded: MapTypeConfigPanelProps['setIsSidePanelExpanded'];
 }
 
 const mapVizManagementClassName = makeClassNameHelper('MapVizManagement');
@@ -41,6 +43,7 @@ export default function MapVizManagement({
   plugins,
   mapType,
   setHideVizInputsAndControls,
+  setIsSidePanelExpanded,
 }: Props) {
   const [isVizSelectorVisible, setIsVizSelectorVisible] = useState(false);
 
@@ -48,6 +51,7 @@ export default function MapVizManagement({
     setIsVizSelectorVisible(false);
     setActiveVisualizationId(visualizationId);
     setHideVizInputsAndControls(false);
+    setIsSidePanelExpanded(false);
   }
 
   if (!analysisState.analysis) return null;

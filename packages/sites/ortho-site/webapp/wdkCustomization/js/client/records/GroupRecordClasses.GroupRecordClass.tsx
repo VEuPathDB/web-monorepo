@@ -142,7 +142,7 @@ const transformPfamsAttributeFields = curry(
   (isGraphic: boolean, attributeFields: AttributeField[]): AttributeField[] => {
     const renamedAttributeFields = attributeFields.map((attributeField) =>
       attributeField.name === ACCESSION_ATTRIBUTE_NAME
-        ? { ...attributeField, displayName: 'Accession' }
+        ? { ...attributeField, displayName: 'Accession', type: 'link' }
         : attributeField
     );
 
@@ -187,6 +187,7 @@ const makeProteinDomainLocationAttributeFields =
     {
       name: SOURCE_ID_ATTRIBUTE_NAME,
       displayName: 'Accession',
+      type: 'link',
     },
     {
       name: TAXON_ATTRIBUTE_NAME,
@@ -219,6 +220,7 @@ const makeProteinDomainArchitectureAttributeFields =
     {
       name: SOURCE_ID_ATTRIBUTE_NAME,
       displayName: 'Accession',
+      type: 'link',
     },
     {
       name: TAXON_ATTRIBUTE_NAME,

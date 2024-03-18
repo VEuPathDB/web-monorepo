@@ -15,6 +15,7 @@ import {
 import { DataElementConstraint } from '../../../core/types/visualization'; // TO DO for dates: remove
 import { SharedMarkerConfigurations } from '../mapTypes/shared';
 import { invalidProportionText } from '../utils/defaultOverlayConfig';
+import { BubbleLegendPositionConfig, PanelConfig } from '../appState';
 
 type AggregatorOption = typeof aggregatorOptions[number];
 const aggregatorOptions = ['mean', 'median'] as const;
@@ -29,6 +30,8 @@ export interface BubbleMarkerConfiguration
   aggregator?: AggregatorOption;
   numeratorValues?: string[];
   denominatorValues?: string[];
+  legendPanelConfig: BubbleLegendPositionConfig;
+  visualizationPanelConfig: PanelConfig;
 }
 
 interface Props
