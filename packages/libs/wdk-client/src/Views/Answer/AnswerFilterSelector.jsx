@@ -1,9 +1,7 @@
-import $ from 'jquery';
 import { includes } from 'lodash';
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import TabbableContainer from '../../Components/Display/TabbableContainer';
-import { wrappable, lazy } from '../../Utils/ComponentUtils';
+import { wrappable } from '../../Utils/ComponentUtils';
 
 /** Filter text input */
 function renderFilterField(field, isChecked, handleChange) {
@@ -22,6 +20,8 @@ function renderFilterField(field, isChecked, handleChange) {
   );
 }
 
+const ANSWER_FILTER_CLASSNAME = 'wdk-Answer-filterFieldSelector';
+
 /** Record fields to match filter expression against */
 class AnswerFilterSelector extends Component {
   constructor(props) {
@@ -33,8 +33,7 @@ class AnswerFilterSelector extends Component {
     };
     this.handleDocumentClick = (e) => {
       // close if the click target is not contained by this node
-      let node = ReactDOM.findDOMNode(this);
-      if ($(e.target).closest(node).length === 0) {
+      if (!e.target.closest(`.${ANSWER_FILTER_CLASSNAME}`)) {
         this.props.onClose();
       }
     };
@@ -78,7 +77,7 @@ class AnswerFilterSelector extends Component {
       <TabbableContainer
         autoFocus
         onKeyDown={this.handleKeyPress}
-        className="wdk-Answer-filterFieldSelector"
+        className={ANSWER_FILTER_CLASSNAME}
       >
         <p>
           <a href="#" onClick={selectAll}>

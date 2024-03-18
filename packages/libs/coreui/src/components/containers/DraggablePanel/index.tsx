@@ -1,4 +1,4 @@
-import { CSSProperties, ReactNode, useEffect, useState } from 'react';
+import { CSSProperties, ReactNode, useState } from 'react';
 import Draggable, { DraggableEvent, DraggableData } from 'react-draggable';
 import { css } from '@emotion/react';
 import useResizeObserver from 'use-resize-observer';
@@ -92,13 +92,15 @@ export default function DraggablePanel(props: DraggablePanelProps) {
     });
   }
 
-  function handleOnDragStart() {
+  function handleOnDragStart(e: DraggableEvent) {
+    if ((e.target as HTMLElement).closest('button')) return;
     setIsDragging(true);
 
     if (onDragStart) onDragStart();
   }
 
-  function handleOnDragStop(_: DraggableEvent, data: DraggableData) {
+  function handleOnDragStop(e: DraggableEvent, data: DraggableData) {
+    if ((e.target as HTMLElement).closest('button')) return;
     setIsDragging(false);
 
     if (onDragComplete) {

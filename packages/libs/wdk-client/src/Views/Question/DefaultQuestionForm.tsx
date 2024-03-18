@@ -31,7 +31,6 @@ import { Tabs } from '../../Components';
 
 import '../../Views/Question/DefaultQuestionForm.scss';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import { type } from 'os';
 import { BetaIcon } from '../../Core/Style/Icons/BetaIcon';
 
 type TextboxChangeHandler = (
@@ -382,6 +381,15 @@ function ShowHideGroup(props: GroupProps) {
         {group.displayName}
       </button>
       <div className={cx('ShowHideGroupContent')}>
+        {isVisible && group.description && (
+          <Banner
+            banner={{
+              type: 'normal',
+              hideIcon: true,
+              message: safeHtml(group.description, null, 'div'),
+            }}
+          />
+        )}
         {isVisible ? props.children : null}
       </div>
     </div>
@@ -440,12 +448,12 @@ function ParameterHeading(props: {
   const { parameter, paramDependencyUpdating } = props;
   return (
     <div className={cx('ParameterHeading')}>
-      <h3>
+      <h4>
         <HelpIcon>{safeHtml(parameter.help)}</HelpIcon> {parameter.displayName}
         {paramDependencyUpdating && (
           <IconAlt fa="circle-o-notch" className="fa-spin fa-fw" />
         )}
-      </h3>
+      </h4>
     </div>
   );
 }

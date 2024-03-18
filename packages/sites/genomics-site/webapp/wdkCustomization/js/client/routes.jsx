@@ -34,6 +34,7 @@ import { userDatasetRoutes } from './userDatasetRoutes';
 import Downloads from './components/Downloads';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { Srt } from './components/Srt';
 
 // Project id is not needed for these record classes.
 // Matches urlSegment.
@@ -174,7 +175,8 @@ export const wrapRoutes = (ebrcRoutes) => [
   {
     path: '/fasta-tool',
     exact: false,
-    component: () => <FastaConfigController />,
+    component: () =>
+      projectId === 'EuPathDB' ? <Srt /> : <FastaConfigController />,
   },
 
   {
