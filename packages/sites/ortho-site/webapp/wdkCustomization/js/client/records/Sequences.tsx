@@ -81,12 +81,37 @@ export function RecordTable_Sequences(
 
   return (
     <>
-      <div>Ignore the help text above for now!</div>
       <TreeTable
         rowHeight={rowHeight}
         treeProps={treeProps}
         tableProps={mesaState}
       />
+      <form action="/cgi-bin/msaOrthoMCL" target="_blank" method="post">
+        <input type="hidden" name="project_id" value="OrthoMCL" />
+        <input type="hidden" name="msa_full_ids" value={highlightedNodes} />
+        <p>
+          Please note: selecting a large number of proteins will take several
+          minutes to align.
+        </p>
+        <div id="userOptions">
+          <p>
+            Output format: &nbsp;
+            <select name="clustalOutFormat">
+              <option value="clu">Mismatches highlighted</option>
+              <option value="fasta">FASTA</option>
+              <option value="phy">PHYLIP</option>
+              <option value="st">STOCKHOLM</option>
+              <option value="vie">VIENNA</option>
+            </select>
+          </p>
+          <button
+            type="submit"
+            disabled={highlightedNodes == null || highlightedNodes.length === 0}
+          >
+            Run Clustal Omega for selected proteins
+          </button>
+        </div>
+      </form>
     </>
   );
 }
