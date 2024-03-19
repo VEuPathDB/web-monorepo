@@ -88,10 +88,12 @@ export function RecordTable_Sequences(
       />
       <form action="/cgi-bin/msaOrthoMCL" target="_blank" method="post">
         <input type="hidden" name="project_id" value="OrthoMCL" />
-        <input type="hidden" name="msa_full_ids" value={highlightedNodes} />
+        {highlightedNodes.map((id) => (
+          <input type="hidden" name="msa_full_ids" value={id} key={id} />
+        ))}
         <p>
           Please note: selecting a large number of proteins will take several
-          minutes to align.
+          minutes to align. You must select at least two proteins.
         </p>
         <div id="userOptions">
           <p>
@@ -106,7 +108,7 @@ export function RecordTable_Sequences(
           </p>
           <button
             type="submit"
-            disabled={highlightedNodes == null || highlightedNodes.length === 0}
+            disabled={highlightedNodes == null || highlightedNodes.length < 2}
           >
             Run Clustal Omega for selected proteins
           </button>
