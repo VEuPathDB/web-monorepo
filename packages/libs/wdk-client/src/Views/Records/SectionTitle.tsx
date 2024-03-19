@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { IconAlt, WDKClientTooltip } from '../../Components';
+import { IconAlt } from '../../Components';
+import { Tooltip } from '@veupathdb/coreui';
 import { safeHtml } from '../../Utils/ComponentUtils';
 
 interface Props {
@@ -15,11 +16,11 @@ export function DefaultSectionTitle({ displayName, help }: Props) {
       {help && (
         <>
           &nbsp;
-          <WDKClientTooltip content={safeHtml(help)}>
+          <Tooltip title={safeHtml(help)} style={{ paddingLeft: 4 }}>
             <div className="HelpTrigger">
               <IconAlt fa="question-circle" />
             </div>
-          </WDKClientTooltip>
+          </Tooltip>
         </>
       )}
     </>

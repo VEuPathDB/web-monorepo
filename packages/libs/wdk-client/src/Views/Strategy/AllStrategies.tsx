@@ -17,7 +17,7 @@ import Icon from '../../Components/Icon/IconAlt';
 import LoadingOverlay from '../../Components/Loading/LoadingOverlay';
 
 import './AllStrategies.scss';
-import WDKClientTooltip from '../../Components/Overlays/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 import { OverflowingTextCell } from '../../Views/Strategy/OverflowingTextCell';
 
 const cx = makeClassNameHelper('AllStrategies');
@@ -174,9 +174,9 @@ interface CellRenderProps<T> {
 }
 
 const invalidIcon = (
-  <WDKClientTooltip content="Indicates that a strategy is invalid. You can fix errors by opening your strategy and updating steps marked as invalid.">
+  <Tooltip title="Indicates that a strategy is invalid. You can fix errors by opening your strategy and updating steps marked as invalid.">
     <i className={`${cx('--InvalidIcon')} fa fa-ban`} />
-  </WDKClientTooltip>
+  </Tooltip>
 );
 
 function makeColumns(

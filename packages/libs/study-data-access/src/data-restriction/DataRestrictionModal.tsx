@@ -11,11 +11,8 @@ import {
   actionRequiresApproval,
 } from './DataRestrictionUtils';
 import Modal from '@veupathdb/wdk-client/lib/Components/Overlays/Modal';
-import {
-  IconAlt as Icon,
-  Link,
-  WDKClientTooltip,
-} from '@veupathdb/wdk-client/lib/Components';
+import { IconAlt as Icon, Link } from '@veupathdb/wdk-client/lib/Components';
+import { Tooltip } from '@veupathdb/coreui';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { getStudyAccess, getStudyId, getStudyName } from '../shared/studies';
 
@@ -197,12 +194,12 @@ function Buttons(props: Props) {
         </button>
       )}
       {!approvalRequired ? null : user.isGuest ? (
-        <WDKClientTooltip
-          content={'You must be logged in to request data access'}
-          showDelay={0}
+        <Tooltip
+          title={'You must be logged in to request data access'}
+          enterDelay={0}
         >
           {submitDataAccessButton}
-        </WDKClientTooltip>
+        </Tooltip>
       ) : (
         submitDataAccessButton
       )}

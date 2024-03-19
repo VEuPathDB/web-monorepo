@@ -1,7 +1,7 @@
 import { isEmpty } from 'lodash';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { WDKClientTooltip } from '@veupathdb/wdk-client/lib/Components';
+import { Tooltip } from '@veupathdb/coreui';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import {
   makeClassNameHelper,
@@ -111,7 +111,7 @@ export const SiteSearchInput = wrappable(function ({ placeholderText }: Props) {
         <input key={field} type="hidden" name={FILTERS_PARAM} value={field} />
       ))}
       {hasFilters ? (
-        <WDKClientTooltip content="Run a new search, without your existing filters">
+        <Tooltip title="Run a new search, without your existing filters">
           <button
             className="reset"
             type="button"
@@ -119,7 +119,7 @@ export const SiteSearchInput = wrappable(function ({ placeholderText }: Props) {
           >
             Clear filters
           </button>
-        </WDKClientTooltip>
+        </Tooltip>
       ) : null}
       <input
         ref={inputRef}
@@ -131,7 +131,7 @@ export const SiteSearchInput = wrappable(function ({ placeholderText }: Props) {
         placeholder={placeholderText}
       />
       {location.pathname !== SITE_SEARCH_ROUTE && lastSearchQueryString && (
-        <WDKClientTooltip content="Go back to your last search result">
+        <Tooltip title="Go back to your last search result">
           <button
             className="back"
             type="button"
@@ -139,10 +139,10 @@ export const SiteSearchInput = wrappable(function ({ placeholderText }: Props) {
           >
             <i className="fa fa-long-arrow-left" />
           </button>
-        </WDKClientTooltip>
+        </Tooltip>
       )}
-      <WDKClientTooltip
-        content={
+      <Tooltip
+        title={
           hasFilters
             ? 'Update your search, keeping existing filters'
             : 'Run a new search'
@@ -151,7 +151,7 @@ export const SiteSearchInput = wrappable(function ({ placeholderText }: Props) {
         <button type="submit">
           <i className="fa fa-search" />
         </button>
-      </WDKClientTooltip>
+      </Tooltip>
     </form>
   );
 });

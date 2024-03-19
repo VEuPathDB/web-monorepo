@@ -61,7 +61,6 @@ const MesaTooltip = ({
       }
       leaveDelay={hideDelay}
       enterDelay={showDelay}
-      // arrow={corner ? corner !== 'no-corner' : false}
       className={(className ?? '') + (corner ? ` ${corner}` : '')}
       style={finalStyle}
     >

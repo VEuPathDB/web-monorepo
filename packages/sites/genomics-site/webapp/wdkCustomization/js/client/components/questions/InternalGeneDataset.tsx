@@ -9,13 +9,8 @@ import React, {
 import { useSelector } from 'react-redux';
 import { useLocation, useHistory } from 'react-router';
 
-import {
-  Loading,
-  Link,
-  WDKClientTooltip,
-  HelpIcon,
-} from '@veupathdb/wdk-client/lib/Components';
-import { TabbedDisplay } from '@veupathdb/coreui';
+import { Loading, Link, HelpIcon } from '@veupathdb/wdk-client/lib/Components';
+import { TabbedDisplay, Tooltip } from '@veupathdb/coreui';
 import { CommonResultTable as InternalGeneDatasetTable } from '@veupathdb/wdk-client/lib/Components/Shared/CommonResultTable';
 import { useIsRefOverflowingVertically } from '@veupathdb/wdk-client/lib/Hooks/Overflow';
 import QuestionController, {
@@ -277,9 +272,9 @@ function InternalGeneDatasetContent(props: Props) {
         <span style={{ fontWeight: 'bold', fontSize: '13px' }}>Legend:</span>
         <div style={{ display: 'flex', flexWrap: 'wrap', rowGap: '0.25rem' }}>
           {displayCategoryOrder.map((categoryName) => (
-            <WDKClientTooltip
+            <Tooltip
               key={categoryName}
-              content={
+              title={
                 <div>
                   <h4>{displayCategoriesByName[categoryName].displayName}</h4>
                   {displayCategoriesByName[categoryName].description}
@@ -292,7 +287,7 @@ function InternalGeneDatasetContent(props: Props) {
                 </span>
                 <span>{displayCategoriesByName[categoryName].displayName}</span>
               </span>
-            </WDKClientTooltip>
+            </Tooltip>
           ))}
         </div>
       </div>

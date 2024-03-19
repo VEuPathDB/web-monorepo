@@ -1,7 +1,7 @@
 import React from 'react';
-import { WDKClientTooltip } from '../../Components';
 import Spinnable from '../Shared/Spinnable';
 import { memoize } from 'lodash/fp';
+import { Tooltip } from '@veupathdb/coreui';
 
 interface StepAnalysisTileProps {
   shortDescription: string;
@@ -13,11 +13,6 @@ interface StepAnalysisTileProps {
   loadChoice: () => void;
 }
 
-const TOOLTIP_POSITION = {
-  my: 'top center',
-  at: 'bottom center',
-} as const;
-
 export const StepAnalysisTile: React.SFC<StepAnalysisTileProps> = ({
   shortDescription,
   customThumbnailUrl,
@@ -27,7 +22,7 @@ export const StepAnalysisTile: React.SFC<StepAnalysisTileProps> = ({
   loading,
   loadChoice,
 }) => (
-  <WDKClientTooltip content={shortDescription} position={TOOLTIP_POSITION}>
+  <Tooltip title={shortDescription} placement="bottom">
     <div
       className={`${inactive ? 'inactive ' : ''}analysis-selector`}
       title={shortDescription}
@@ -51,7 +46,7 @@ export const StepAnalysisTile: React.SFC<StepAnalysisTileProps> = ({
         <p className="analysis-selector-description">{shortDescription}</p>
       </div>
     </div>
-  </WDKClientTooltip>
+  </Tooltip>
 );
 
 const ENTER_KEY_CODE = 13;
