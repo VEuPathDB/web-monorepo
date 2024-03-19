@@ -2,7 +2,7 @@ import { debounce } from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { HelpTrigger } from '@veupathdb/coreui/lib/components/Mesa';
-import WDKClientTooltip from '../../Components/Overlays/Tooltip';
+import Tooltip from '@veupathdb/coreui';
 import { wrappable } from '../../Utils/ComponentUtils';
 import AnswerFilterSelector from '../../Views/Answer/AnswerFilterSelector';
 
@@ -152,7 +152,7 @@ class AnswerFilter extends React.Component {
           placeholder={`Search ${displayNamePlural}`}
           onChange={this.handleFilter}
         />
-        <WDKClientTooltip content="Show search fields">
+        <Tooltip title="Show search fields">
           <button
             className="fa fa-caret-down wdk-Answer-filterSelectFieldsIcon"
             onClick={(e) => {
@@ -160,7 +160,7 @@ class AnswerFilter extends React.Component {
               this.toggleFilterFieldSelector();
             }}
           />
-        </WDKClientTooltip>
+        </Tooltip>
         <HelpTrigger>{tooltipContent}</HelpTrigger>
         <AnswerFilterSelector
           attributes={attributes}

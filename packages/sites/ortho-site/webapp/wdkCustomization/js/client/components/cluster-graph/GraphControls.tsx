@@ -6,8 +6,9 @@ import {
   RadioList,
   SliderInput,
   TextBox,
-  WDKClientTooltip,
 } from '@veupathdb/wdk-client/lib/Components';
+
+import { Tooltip } from '@veupathdb/coreui';
 
 import {
   EDGE_OPTIONS_HELP,
@@ -239,11 +240,6 @@ export interface LegendEntryProps {
   onMouseOut?: () => void;
 }
 
-const TOOLTIP_POSITION = {
-  my: 'top left',
-  at: 'bottom right',
-} as const;
-
 function LegendEntry({
   symbol,
   tooltip,
@@ -265,12 +261,8 @@ function LegendEntry({
   return tooltip == null ? (
     legendContent
   ) : (
-    <WDKClientTooltip
-      content={tooltip}
-      showDelay={0}
-      position={TOOLTIP_POSITION}
-    >
+    <Tooltip title={tooltip} enterDelay={0} placement="bottom-end">
       {legendContent}
-    </WDKClientTooltip>
+    </Tooltip>
   );
 }

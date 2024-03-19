@@ -10,7 +10,7 @@ import CheckboxTree, {
   LinksPosition,
 } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import Icon from '../../Components/Icon/IconAlt';
-import WDKClientTooltip from '../../Components/Overlays/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 import {
   isFilterField,
   isMulti,
@@ -187,7 +187,7 @@ function FieldNode({ node, isActive, searchTerm, handleFieldSelect }) {
   }, [isActive, nodeRef.current, searchTerm]);
 
   return (
-    <WDKClientTooltip content={node.field.description} hideDelay={0}>
+    <Tooltip title={node.field.description} leaveDelay={0}>
       {isFilterField(node.field) ? (
         <a
           ref={nodeRef}
@@ -209,7 +209,7 @@ function FieldNode({ node, isActive, searchTerm, handleFieldSelect }) {
           {node.field.display}
         </div>
       )}
-    </WDKClientTooltip>
+    </Tooltip>
   );
 }
 

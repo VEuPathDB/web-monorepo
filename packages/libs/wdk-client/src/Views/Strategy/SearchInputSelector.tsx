@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createSelector } from 'reselect';
 
-import { HtmlTooltip } from '@veupathdb/coreui';
+import { Tooltip } from '@veupathdb/coreui';
 
 import { requestBasketCounts } from '../../Actions/BasketActions';
 import {
@@ -430,7 +430,7 @@ function SearchInputNode({
   const tooltipContent = getFormattedTooltipContent(node);
 
   return tooltipContent && offerTooltip ? (
-    <HtmlTooltip title={tooltipContent}>{displayElement}</HtmlTooltip>
+    <Tooltip title={tooltipContent}>{displayElement}</Tooltip>
   ) : (
     displayElement
   );

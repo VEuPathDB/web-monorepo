@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Link, WDKClientTooltip } from '@veupathdb/wdk-client/lib/Components';
+import { Link } from '@veupathdb/wdk-client/lib/Components';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import { TabConfig } from '@veupathdb/wdk-client/lib/Components/Tabs/Tabs';
 
@@ -11,6 +11,8 @@ import {
   edgeTypeDisplayNames,
 } from 'ortho-client/utils/clusterGraph';
 import { GroupLayout } from 'ortho-client/utils/groupLayout';
+
+import { Tooltip } from '@veupathdb/coreui';
 
 export type GraphInformationTabKey = 'sequence-list' | 'node-details';
 
@@ -32,11 +34,11 @@ export const graphInformationBaseTabConfigs: GraphInformationBaseTabConfig[] = [
     display: (
       <div>
         Sequence List
-        <WDKClientTooltip content={SEQUENCE_LIST_HELP}>
+        <Tooltip title={SEQUENCE_LIST_HELP}>
           <div className="HelpTrigger">
             <Icon fa="question-circle" />
           </div>
-        </WDKClientTooltip>
+        </Tooltip>
       </div>
     ),
   },
@@ -45,11 +47,11 @@ export const graphInformationBaseTabConfigs: GraphInformationBaseTabConfig[] = [
     display: (
       <div>
         Node Details
-        <WDKClientTooltip content={NODE_DETAILS_HELP}>
+        <Tooltip title={NODE_DETAILS_HELP}>
           <div className="HelpTrigger">
             <Icon fa="question-circle" />
           </div>
-        </WDKClientTooltip>
+        </Tooltip>
       </div>
     ),
   },

@@ -1,7 +1,7 @@
-import { WDKClientTooltip } from '@veupathdb/wdk-client/lib/Components';
+import React from 'react';
+import { Tooltip } from '@veupathdb/coreui';
 import { renderAttributeValue } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { AttributeField } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import React from 'react';
 import { StudyRecord, StudyRecordClass } from '../core';
 import { cx } from './Utils';
 
@@ -17,12 +17,12 @@ export function StudySummary(props: Props) {
       {Object.entries(studyRecord.attributes).map(
         ([name, value]) =>
           value != null && (
-            <WDKClientTooltip
+            <Tooltip
               key={name}
-              content={getTooltipContent(studyRecordClass.attributesMap[name])}
+              title={getTooltipContent(studyRecordClass.attributesMap[name])}
             >
               {renderAttributeValue(value, { tabIndex: 0 })}
-            </WDKClientTooltip>
+            </Tooltip>
           )
       )}
     </div>

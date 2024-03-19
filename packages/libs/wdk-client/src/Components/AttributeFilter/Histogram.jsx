@@ -24,7 +24,7 @@ import {
 } from '../../Components/AttributeFilter/AttributeFilterUtils';
 import Icon from '../../Components/Icon/IconAlt';
 import { CollapsibleSection, IconAlt } from '../../Components';
-import WDKClientTooltip from '../../Components/Overlays/Tooltip';
+import Tooltip from '@veupathdb/coreui';
 
 const DAY = 1000 * 60 * 60 * 24;
 
@@ -836,9 +836,9 @@ export default Histogram;
 function RangeWarning({ rangeMin, rangeMax, selectionMin, selectionMax }) {
   if (rangeMin >= selectionMin && rangeMax <= selectionMax) return null;
   return (
-    <WDKClientTooltip content="Some values are hidden due to your current range selection.">
+    <Tooltip title="Some values are hidden due to your current range selection.">
       <IconAlt fa="exclamation-circle range-warning" />
-    </WDKClientTooltip>
+    </Tooltip>
   );
 }
 
