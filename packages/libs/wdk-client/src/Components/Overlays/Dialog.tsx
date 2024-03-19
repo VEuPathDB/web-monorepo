@@ -1,4 +1,10 @@
-import React, { ReactNode, useEffect, useRef } from 'react';
+import React, {
+  CSSProperties,
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import Icon from '../../Components/Icon/Icon';
 import { useBodyScrollManager } from '../../Components/Overlays/BodyScrollManager';
 import Popup from '../../Components/Overlays/Popup';
@@ -20,10 +26,19 @@ type Props = {
   onClose?: () => void;
 };
 
+const resizeStyling: CSSProperties = {
+  resize: 'both',
+  overflow: 'auto',
+  minHeight: 100,
+};
+
 function Dialog(props: Props) {
   const headerNode = useRef<HTMLDivElement>(null);
   useBodyScrollManager(props.open && !!props.modal);
-  useRestorePrevoiusFocus(props.open);
+  useRestorePreviousFocus(props.open);
+  const [isDragging, setIsDragging] = useState(false);
+  const [initialOffset, setInitialOffset] =
+    useState<{ left: number; top: number } | undefined>(undefined);
 
   if (!props.open) return null;
 
@@ -37,14 +52,62 @@ function Dialog(props: Props) {
     leftButtons,
   } = props;
 
+  const handleDragStart = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    if (headerNode.current && !initialOffset) {
+      const popupRect =
+        headerNode.current.parentElement?.getBoundingClientRect();
+      setInitialOffset({
+        left: e.clientX - (popupRect?.left ?? 0),
+        top: e.clientY - (popupRect?.top ?? 0),
+      });
+    }
+  };
+
+  const handleDrag = (e: React.MouseEvent) => {
+    if (isDragging && headerNode.current && initialOffset) {
+      const popupContainer = headerNode.current.parentElement;
+      if (popupContainer) {
+        const popupRect = popupContainer.getBoundingClientRect();
+        const left =
+          popupContainer.offsetLeft +
+          (e.clientX - popupRect.left) -
+          initialOffset.left;
+        const top =
+          popupContainer.offsetTop +
+          (e.clientY - popupRect.top) -
+          initialOffset.top;
+        popupContainer.style.left = left + 'px';
+        popupContainer.style.top = top + 'px';
+      }
+    }
+  };
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+    setInitialOffset(undefined);
+  };
+
   const content = (
     <div
       onKeyDown={handleKeyDown}
       className={makeClassName(props.className, '', props.modal && 'modal')}
+      style={props.resizable ? resizeStyling : undefined}
     >
       <div
         ref={headerNode}
-        className={makeClassName(props.className, 'Header')}
+        className={makeClassName(
+          props.className,
+          'Header',
+          props.draggable ? ' draggable' : ''
+        )}
+        {...(props.draggable
+          ? {
+              onMouseDown: handleDragStart,
+              onMouseMove: handleDrag,
+              onMouseUp: handleDragEnd,
+            }
+          : {})}
       >
         <div className={makeClassName(props.className, 'LeftButtons')}>
           {leftButtons}
@@ -63,12 +126,7 @@ function Dialog(props: Props) {
   );
 
   return (
-    <Popup
-      className={makeClassName(props.className, 'PopupWrapper')}
-      dragHandleSelector={() => headerNode.current as HTMLDivElement}
-      open={props.open}
-      resizable={props.resizable}
-    >
+    <Popup className={makeClassName(props.className, 'PopupWrapper')}>
       {content}
     </Popup>
   );
@@ -90,7 +148,7 @@ function makeClassName(className?: string, suffix = '', ...modifiers: any[]) {
   );
 }
 
-function useRestorePrevoiusFocus(isOpen: boolean) {
+function useRestorePreviousFocus(isOpen: boolean) {
   const previousActiveRef = useRef<Element | null>();
   useEffect(() => {
     if (isOpen) {
