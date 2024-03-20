@@ -5,6 +5,10 @@ import { useOrthoService } from 'ortho-client/hooks/orthoService';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { parseNewick } from 'patristic';
 import { AttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { MesaColumn } from '../../../../../../../libs/coreui/lib/components/Mesa/types';
+import { groupBy } from 'lodash';
+import { PfamDomainArchitecture } from 'ortho-client/components/pfam-domains/PfamDomainArchitecture';
+import { extractPfamDomain } from 'ortho-client/records/utils';
 
 type RowType = Record<string, AttributeValue>;
 
@@ -26,9 +30,7 @@ export function RecordTable_Sequences(
 
   const [highlightedNodes, setHighlightedNodes] = useState<string[]>([]);
 
-  if (treeResponse == null) return <Loading />;
-
-  const mesaColumns = props.table.attributes
+  const mesaColumns: MesaColumn<RowType>[] = props.table.attributes
     .map(({ name, displayName }) => ({
       key: name,
       name: displayName,
@@ -38,6 +40,44 @@ export function RecordTable_Sequences(
     .filter(({ key }) => key !== 'clustalInput' && key !== 'sequence_link');
 
   const mesaRows = props.value;
+
+  // deal with Pfam domain architectures
+  const proteinPfams = props.record.tables['ProteinPFams'];
+  const rowsByAccession = groupBy(proteinPfams, 'full_id');
+
+  //  const maxLength = useMemo(
+  //    () => mesaRows.reduce(
+  //      (max, current) => {
+  //	const length = Number(current['protein_length']);
+  //	return length > max ? length : max;
+  //      }, 0)
+  //  , [ mesaRows ]);
+
+  mesaColumns.unshift({
+    key: 'pfamArchitecture',
+    name: 'Domain architecture (all drawn to 100% length)',
+    renderCell: (cellProps) => {
+      const proteinId = cellProps.row.full_id as string;
+      const flatPfamData = rowsByAccession[proteinId];
+      if (flatPfamData && flatPfamData.length > 0) {
+        const pfamDomains = flatPfamData.flatMap(extractPfamDomain);
+        const proteinLength = Number(
+          flatPfamData[0]['protein_length'] as string
+        );
+        return (
+          <PfamDomainArchitecture
+            style={{ width: '150px', top: '10px' }}
+            length={proteinLength}
+            domains={pfamDomains}
+          />
+        );
+      } else {
+        return <span>no PFAM domains</span>;
+      }
+    },
+  });
+
+  if (treeResponse == null) return <Loading />;
 
   // do some validation on the tree w.r.t. the table
 
