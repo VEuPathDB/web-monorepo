@@ -29,6 +29,10 @@ export interface TreeTableProps<RowType> {
    * data and options for the table
    */
   tableProps: MesaStateProps<RowType>;
+  /**
+   * hide the tree (but keep its horizontal space); default = false
+   */
+  hideTree?: boolean;
 }
 
 /**
@@ -46,7 +50,7 @@ export interface TreeTableProps<RowType> {
  * - allow additional Mesa props and options to be passed
  */
 export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
-  const { rowHeight, maxColumnWidth = 200 } = props;
+  const { rowHeight, maxColumnWidth = 200, hideTree = false } = props;
   const { rows } = props.tableProps;
 
   const rowStyleClassName = useMemo(
@@ -84,14 +88,17 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
     <div
       style={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'row' }}
     >
-      <HorizontalDendrogram
-        {...props.treeProps}
-        rowHeight={rowHeight}
-        leafCount={rows.length}
-        options={{ margin: [0, 10, 0, 10], interactive: false }}
-      />
+      {!hideTree && (
+        <HorizontalDendrogram
+          {...props.treeProps}
+          rowHeight={rowHeight}
+          leafCount={rows.length}
+          options={{ margin: [0, 10, 0, 10], interactive: false }}
+        />
+      )}
       <div
         css={{
+          marginLeft: hideTree ? props.treeProps.width : 0,
           flexGrow: 1,
           width: 1 /* arbitrary non-zero width seems necessary for flex */,
           '.DataTable': {

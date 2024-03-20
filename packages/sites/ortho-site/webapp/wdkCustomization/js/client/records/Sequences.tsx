@@ -15,6 +15,8 @@ type RowType = Record<string, AttributeValue>;
 export function RecordTable_Sequences(
   props: WrappedComponentProps<RecordTableProps>
 ) {
+  const [searchQuery, setSearchQuery] = useState('');
+
   const groupName = props.record.id.find(
     ({ name }) => name === 'group_name'
   )?.value;
@@ -90,6 +92,13 @@ export function RecordTable_Sequences(
     .map(({ id }) => mesaRows.find(({ full_id }) => full_id === id))
     .filter((row): row is RowType => row != null);
 
+  const filteredRows =
+    searchQuery !== ''
+      ? sortedRows.filter((row) =>
+          (row.description as string).match(new RegExp(searchQuery, 'i'))
+        )
+      : undefined;
+
   if (leaves.length !== sortedRows.length)
     return (
       <div>Tree and protein list mismatch, please contact the helpdesk</div>
@@ -99,14 +108,24 @@ export function RecordTable_Sequences(
     options: {
       isRowSelected: (row: RowType) =>
         highlightedNodes.includes(row.full_id as string),
+      toolbar: true,
+      searchPlaceholder:
+        'Type to filter the table. (Description column only at the moment!!) The tree will not be shown while filtering.',
+    },
+    uiState: {
+      searchQuery,
     },
     rows: sortedRows,
+    filteredRows,
     columns: mesaColumns,
     eventHandlers: {
       onRowSelect: (row: RowType) =>
         setHighlightedNodes((prev) => [...prev, row.full_id as string]),
       onRowDeselect: (row: RowType) =>
         setHighlightedNodes((prev) => prev.filter((id) => id !== row.full_id)),
+      onSearch: (query: string) => {
+        setSearchQuery(query);
+      },
     },
   };
 
@@ -127,6 +146,7 @@ export function RecordTable_Sequences(
         rowHeight={rowHeight}
         treeProps={treeProps}
         tableProps={mesaState}
+        hideTree={!!filteredRows}
       />
       <form action="/cgi-bin/msaOrthoMCL" target="_blank" method="post">
         <input type="hidden" name="project_id" value="OrthoMCL" />
