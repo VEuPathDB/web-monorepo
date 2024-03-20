@@ -441,7 +441,7 @@ function CustomZoomControl(props: CustomZoomControlProps) {
         <div className="leaflet-control-zoom leaflet-bar leaflet-control">
           <a
             className={'leaflet-control-zoom-in' + disableMaxZoomButton}
-            href="#"
+            href="/#"
             title="Zoom in"
             role="button"
             aria-label="Zoom in"
@@ -451,7 +451,7 @@ function CustomZoomControl(props: CustomZoomControlProps) {
           </a>
           <a
             className={'leaflet-control-zoom-out' + disableMinZoomButton}
-            href="#"
+            href="/#"
             title="Zoom out"
             role="button"
             aria-label="Zoom out"
@@ -461,7 +461,7 @@ function CustomZoomControl(props: CustomZoomControlProps) {
           </a>
           <a
             className="leaflet-control-zoom-out"
-            href="#"
+            href="/#"
             title="zoom to data"
             role="button"
             aria-label="zoom to data"
