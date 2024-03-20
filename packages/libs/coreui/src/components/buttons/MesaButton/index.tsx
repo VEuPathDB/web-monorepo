@@ -23,6 +23,8 @@ export default function MesaButton({
   themeRole,
   styleOverrides = {},
   ariaLabel,
+  iconPosition = 'left',
+  additionalAriaProperties = {},
 }: SwissArmyButtonVariantProps) {
   const defaultStyle: ButtonStyleSpec = {
     default: {
@@ -156,6 +158,8 @@ export default function MesaButton({
       size={size}
       icon={icon}
       ariaLabel={ariaLabel}
+      iconPosition={iconPosition}
+      additionalAriaProperties={additionalAriaProperties}
     />
   );
 }

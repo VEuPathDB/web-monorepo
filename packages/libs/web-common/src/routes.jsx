@@ -23,6 +23,7 @@ import {
   showUnreleasedData,
 } from './config';
 import { EdaMapController } from './controllers/EdaMapController';
+import { LegacyMapRedirectHandler } from './controllers/LegacyMapRedirectHandler';
 
 export const STATIC_ROUTE_PATH = '/static-content';
 
@@ -77,6 +78,14 @@ export const wrapRoutes = (wdkRoutes) => [
     path: makeMapRoute(),
     exact: true,
     component: EdaMapController,
+  },
+
+  {
+    path: makeMapRoute() + '/legacy-redirect-handler',
+    exact: false,
+    isFullscreen: true,
+    rootClassNameModifier: 'MapVEu',
+    component: LegacyMapRedirectHandler,
   },
 
   {
