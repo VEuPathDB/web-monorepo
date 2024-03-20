@@ -1,9 +1,9 @@
 import { Decoder, record, string } from '@veupathdb/wdk-client/lib/Utils/Json';
 
-export interface TreeResponse {
+export interface GroupTreeResponse {
   newick: string;
 }
 
-export const treeResponseDecoder: Decoder<TreeResponse> = record({
+export const groupTreeResponseDecoder: Decoder<GroupTreeResponse> = record({
   newick: string,
 });
