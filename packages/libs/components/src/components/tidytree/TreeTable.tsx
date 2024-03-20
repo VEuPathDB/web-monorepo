@@ -5,8 +5,7 @@ import {
 } from '../../components/tidytree/HorizontalDendrogram';
 import Mesa from '@veupathdb/coreui/lib/components/Mesa';
 import { MesaStateProps } from '../../../../coreui/lib/components/Mesa/types';
-import { css as classNameStyle, cx } from '@emotion/css';
-import { css as globalStyle, Global } from '@emotion/react';
+import { css, cx } from '@emotion/css';
 
 export interface TreeTableProps<RowType> {
   /**
@@ -54,18 +53,16 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
     () =>
       cx(
         // minimum height for table rows
-        classNameStyle`
+        css`
           height: ${rowHeight}px;
 
           & td {
- 
             &:hover {
               cursor: pointer;
               position: relative;
             }
-
           }
-	`
+        `
       ),
     [rowHeight]
   );
@@ -94,19 +91,15 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
         options={{ margin: [0, 10, 0, 10], interactive: false }}
       />
       <div
-        style={{
+        css={{
           flexGrow: 1,
           width: 1 /* arbitrary non-zero width seems necessary for flex */,
+          '.DataTable': {
+            marginBottom: '0px !important',
+            width: '80%',
+          },
         }}
       >
-        <Global
-          styles={globalStyle`
-	  .DataTable {
-	    margin-bottom: 0px !important;
-            width: 80%;
-	  }
-	`}
-        />
         <Mesa state={tableState} />
       </div>
     </div>
