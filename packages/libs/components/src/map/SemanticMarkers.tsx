@@ -11,6 +11,7 @@ import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 import { useMap, useMapEvents } from 'react-leaflet';
 import { LatLngBounds } from 'leaflet';
 import { debounce, isEqual } from 'lodash';
+import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 
 export interface SemanticMarkersProps {
   markers: Array<ReactElement<BoundsDriftMarkerProps>>;
@@ -48,10 +49,32 @@ export default function SemanticMarkers({
   // react-leaflet v3
   const map = useMap();
 
-  // cancel marker selection with a single click on the map
+  const { enqueueSnackbar } = useSnackbar();
+
+  // detect zooming and panning
+  const [isZoom, setIsZoom] = useState(false);
+  const [isDragend, setIsDragend] = useState(false);
+
   useMapEvents({
+    // cancel marker selection with a single click on the map
     click: () => {
       if (setSelectedMarkers != null) setSelectedMarkers(undefined);
+    },
+    // check zooming: zoomend somehow does not work consistently here
+    // but zoomend just worked fine at MapVEuMap
+    zoom: () => {
+      if (selectedMarkers && selectedMarkers.length > 0) {
+        setIsZoom(true);
+        // set this to prevent from preceding behavior that doesn't change selectedMarkers
+        setIsDragend(false);
+      }
+    },
+    // check panning
+    dragend: () => {
+      if (selectedMarkers && selectedMarkers.length > 0) {
+        setIsDragend(true);
+        setIsZoom(false);
+      }
     },
   });
 
@@ -211,10 +234,36 @@ export default function SemanticMarkers({
         consolidatedMarkers.find(({ props }) => id === props.id)
       );
 
-      if (prunedSelectedMarkers.length < selectedMarkers.length)
+      if (prunedSelectedMarkers.length < selectedMarkers.length) {
+        // zooming or panning?
+        if (isZoom || isDragend) {
+          const message = isZoom
+            ? 'marker selection has been cancelled because aggregation level has changed due to zooming'
+            : isDragend
+            ? 'selected markers that went off-screen have been deselected'
+            : undefined;
+          if (message != null) {
+            enqueueSnackbar(message, {
+              variant: 'info',
+              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+            });
+            // reset
+            setIsZoom(false);
+            setIsDragend(false);
+          }
+        }
+
         setSelectedMarkers(prunedSelectedMarkers);
+      }
     }
-  }, [consolidatedMarkers, selectedMarkers, setSelectedMarkers]);
+  }, [
+    consolidatedMarkers,
+    selectedMarkers,
+    setSelectedMarkers,
+    isZoom,
+    isDragend,
+    enqueueSnackbar,
+  ]);
 
   // add the selectedMarkers props and callback
   // (and the scheduled-for-removal showPopup prop)
