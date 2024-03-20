@@ -78,6 +78,8 @@ export function RecordTable_Sequences(
   };
 
   const rowHeight = 45;
+  const clustalDisabled =
+    highlightedNodes == null || highlightedNodes.length < 2;
 
   return (
     <>
@@ -93,7 +95,7 @@ export function RecordTable_Sequences(
         ))}
         <p>
           Please note: selecting a large number of proteins will take several
-          minutes to align. You must select at least two proteins.
+          minutes to align.
         </p>
         <div id="userOptions">
           <p>
@@ -106,12 +108,14 @@ export function RecordTable_Sequences(
               <option value="vie">VIENNA</option>
             </select>
           </p>
-          <button
-            type="submit"
-            disabled={highlightedNodes == null || highlightedNodes.length < 2}
-          >
-            Run Clustal Omega for selected proteins
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <button type="submit" disabled={clustalDisabled}>
+              Run Clustal Omega for selected proteins
+            </button>
+            {clustalDisabled && (
+              <span>(You must select at least two proteins.)</span>
+            )}
+          </div>
         </div>
       </form>
     </>
