@@ -28,6 +28,7 @@ import {
   FloatingButton,
   H5,
   Table,
+  Modal,
 } from '@veupathdb/coreui';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
 import ShowHideVariableContextProvider from '../../core/utils/show-hide-variable-context';
@@ -98,6 +99,13 @@ const mapStyle: React.CSSProperties = {
   pointerEvents: 'auto',
 };
 
+export type LegacyRedirectState =
+  | undefined
+  | {
+      projectId?: string;
+      showLegacyMapRedirectModal: boolean;
+    };
+
 interface Props {
   analysisId?: string;
   sharingUrl: string;
@@ -115,6 +123,8 @@ export function MapAnalysis(props: Props) {
   );
   const geoConfigs = useGeoConfig(useStudyEntities());
   const location = useLocation();
+  const locationState = location.state as LegacyRedirectState;
+  const [showRedirectModal, setShowRedirectModal] = useState(!!locationState);
 
   if (geoConfigs == null || geoConfigs.length === 0)
     return (
@@ -139,11 +149,49 @@ export function MapAnalysis(props: Props) {
   if (appStateAndSetters.appState == null) return null;
 
   return (
-    <MapAnalysisImpl
-      {...props}
-      {...(appStateAndSetters as CompleteAppState)}
-      geoConfigs={geoConfigs}
-    />
+    <>
+      <Modal
+        visible={Boolean(locationState && showRedirectModal)}
+        toggleVisible={() => setShowRedirectModal(false)}
+        styleOverrides={{
+          content: {
+            size: {
+              height: '100%',
+              width: '100%',
+            },
+            padding: {
+              top: 25,
+              right: 25,
+              bottom: 25,
+              left: 25,
+            },
+          },
+          size: {
+            width: 400,
+            height: 200,
+          },
+        }}
+      >
+        <div className="LegacyMapRedirectModalContainer">
+          <p>
+            You have been redirected from the legacy PopBio map
+            {locationState?.projectId &&
+              ` to the same study (${locationState.projectId}) in our new map`}
+            . Settings encoded in your URL are not applied but are kept in the{' '}
+            <strong>Notes</strong> section (see left side panel).
+          </p>
+          <FilledButton
+            text="Dismiss"
+            onPress={() => setShowRedirectModal(false)}
+          />
+        </div>
+      </Modal>
+      <MapAnalysisImpl
+        {...props}
+        {...(appStateAndSetters as CompleteAppState)}
+        geoConfigs={geoConfigs}
+      />
+    </>
   );
 }
 
@@ -362,6 +410,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     updateConfiguration={updateMarkerConfigurations as any}
                     hideVizInputsAndControls={hideVizInputsAndControls}
                     setHideVizInputsAndControls={setHideVizInputsAndControls}
+                    setIsSidePanelExpanded={setIsSidePanelExpanded}
                   />
                 );
               },
@@ -392,6 +441,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     updateConfiguration={updateMarkerConfigurations as any}
                     hideVizInputsAndControls={hideVizInputsAndControls}
                     setHideVizInputsAndControls={setHideVizInputsAndControls}
+                    setIsSidePanelExpanded={setIsSidePanelExpanded}
                   />
                 );
               },
@@ -420,6 +470,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     updateConfiguration={updateMarkerConfigurations as any}
                     hideVizInputsAndControls={hideVizInputsAndControls}
                     setHideVizInputsAndControls={setHideVizInputsAndControls}
+                    setIsSidePanelExpanded={setIsSidePanelExpanded}
                   />
                 );
               },
@@ -840,7 +891,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     height="100%"
                     width="100%"
                     style={mapStyle}
-                    showLayerSelector={false}
+                    showLayerSelector={true}
                     showSpinner={false}
                     viewport={appState.viewport}
                     onBoundsChanged={setBoundsZoomLevel}

@@ -21,9 +21,6 @@ import { ErrorBoundary } from '../../../Controllers';
 import { stripHTML } from '../../../Utils/DomUtils';
 import './RecordTable.css';
 
-// TODO: handle in model
-const COLUMNS_TO_OVERRIDE_SORT = ['thumbnail', 'clustalInput'];
-
 // NOTE: This is very hacky because the model is not reliably providing column or sort types
 const mapSortType = (val) => {
   if (!isNaN(parseFloat(val)) && isFinite(val)) {
@@ -95,9 +92,6 @@ class RecordTable extends Component {
     const content =
       typeof ChildRow === 'string' ? (
         safeHtml(ChildRow)
-      ) : // Q: Is this necessary? Is ChildRow ever a typeof function that isn't actually a PureWrapper class?
-      typeof ChildRow === 'function' && ChildRow.name !== 'PureWrapper' ? (
-        ChildRow({ rowIndex, rowData })
       ) : (
         <ChildRow rowIndex={rowIndex} rowData={rowData} />
       );
@@ -153,9 +147,7 @@ class RecordTable extends Component {
           ...remainingProperties,
           key: name,
           name: displayName,
-          sortable: COLUMNS_TO_OVERRIDE_SORT.includes(name)
-            ? false
-            : isSortable,
+          sortable: isSortable,
           type: type ?? 'html',
           helpText: help,
           sortType,
@@ -247,12 +239,14 @@ class RecordTable extends Component {
       uiState: {
         sort: this.state.sort,
         expandedRows,
+        filteredRowCount: mesaReadyRows.length - filteredRows.length,
       },
       options: {
         toolbar: true,
         childRow: childRow ? this.wrappedChildRow : undefined,
         className: 'wdk-DataTableContainer',
         getRowId: getSortIndex,
+        showCount: mesaReadyRows.length > 1,
       },
     };
 

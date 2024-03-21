@@ -26,6 +26,7 @@ export interface MapTypeConfigPanelProps {
   updateConfiguration: (configuration: unknown) => void;
   hideVizInputsAndControls: boolean;
   setHideVizInputsAndControls: (hide: boolean) => void;
+  setIsSidePanelExpanded: (isExpanded: boolean) => void;
 }
 
 export interface MapTypeMapLayerProps {

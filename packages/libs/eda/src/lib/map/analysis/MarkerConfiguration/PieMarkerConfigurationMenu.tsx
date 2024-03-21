@@ -19,6 +19,8 @@ import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/Radio
 import { useUncontrolledSelections } from '../hooks/uncontrolledSelections';
 import {
   BinningMethod,
+  PanelConfig,
+  PanelPositionConfig,
   SelectedCountsOption,
   SelectedValues,
 } from '../appState';
@@ -34,6 +36,8 @@ export interface PieMarkerConfiguration
   binningMethod: BinningMethod;
   selectedValues: SelectedValues;
   selectedCountsOption: SelectedCountsOption;
+  legendPanelConfig: PanelPositionConfig;
+  visualizationPanelConfig: PanelConfig;
 }
 
 interface Props
