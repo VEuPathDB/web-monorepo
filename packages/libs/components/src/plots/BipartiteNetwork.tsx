@@ -1,5 +1,5 @@
 import { BipartiteNetworkData, NodeData } from '../types/plots/network';
-import { partition } from 'lodash';
+import { partition, set } from 'lodash';
 import { LabelPosition, Link, NodeWithLabel } from './Network';
 import { Graph } from '@visx/network';
 import { Text } from '@visx/text';
@@ -11,6 +11,10 @@ import {
   useImperativeHandle,
   useRef,
   useCallback,
+  ComponentType,
+  useState,
+  useMemo,
+  useEffect,
 } from 'react';
 import Spinner from '../components/Spinner';
 import { ToImgopts } from 'plotly.js';
@@ -24,6 +28,10 @@ export interface BipartiteNetworkSVGStyles {
   topPadding?: number; // space between the top of the svg and the top-most node
   nodeSpacing?: number; // space between vertically adjacent nodes
   columnPadding?: number; // space between the left of the svg and the left column, also the right of the svg and the right column.
+}
+
+export interface NodeActionProps {
+  data: NodeData;
 }
 
 export interface BipartiteNetworkProps {
@@ -47,6 +55,8 @@ export interface BipartiteNetworkProps {
   labelTruncationLength?: number;
   /** Additional error messaging to show when the network is empty */
   emptyNetworkContent?: ReactNode;
+  /** Entries for the actions that appear in the menu when you click a node */
+  nodeActions?: ComponentType<NodeActionProps>[];
 }
 
 // Show a few gray nodes when there is no real data.
@@ -79,7 +89,10 @@ function BipartiteNetwork(
     showSpinner = false,
     labelTruncationLength = 20,
     emptyNetworkContent,
+    nodeActions,
   } = props;
+
+  const [selectedNode, setSelectedNode] = useState<NodeData>();
 
   // Use ref forwarding to enable screenshotting of the plot for thumbnail versions.
   const plotRef = useRef<HTMLDivElement>(null);
@@ -112,57 +125,99 @@ function BipartiteNetwork(
   // In order to assign coordinates to each node, we'll separate the
   // nodes based on their partition, then will use their order in the partition
   // (given by partitionXNodeIDs) to finally assign the coordinates.
-  const nodesByPartition: NodeData[][] = partition(data.nodes, (node) => {
-    return data.partitions[0].nodeIds.includes(node.id);
-  });
+  const nodesByPartition: NodeData[][] = useMemo(
+    () =>
+      partition(data.nodes, (node) => {
+        return data.partitions[0].nodeIds.includes(node.id);
+      }),
+    [data.nodes, data.partitions]
+  );
 
-  const nodesByPartitionWithCoordinates = nodesByPartition.map(
-    (partition, partitionIndex) => {
-      const partitionWithCoordinates = partition.map((node) => {
-        // Find the index of the node in the partition
-        const indexInPartition = data.partitions[
-          partitionIndex
-        ].nodeIds.findIndex((id) => id === node.id);
+  const nodesByPartitionWithCoordinates = useMemo(
+    () =>
+      nodesByPartition.map((partition, partitionIndex) => {
+        const partitionWithCoordinates = partition.map((node) => {
+          // Find the index of the node in the partition
+          const indexInPartition = data.partitions[
+            partitionIndex
+          ].nodeIds.findIndex((id) => id === node.id);
 
-        return {
-          // partitionIndex of 0 refers to the left-column nodes whereas 1 refers to right-column nodes
-          x: partitionIndex === 0 ? column1Position : column2Position,
-          y: svgStyles.topPadding + svgStyles.nodeSpacing * indexInPartition,
-          labelPosition:
-            partitionIndex === 0 ? 'left' : ('right' as LabelPosition),
-          ...node,
-        };
-      });
-      return partitionWithCoordinates;
-    }
+          return {
+            // partitionIndex of 0 refers to the left-column nodes whereas 1 refers to right-column nodes
+            x: partitionIndex === 0 ? column1Position : column2Position,
+            y: svgStyles.topPadding + svgStyles.nodeSpacing * indexInPartition,
+            labelPosition:
+              partitionIndex === 0 ? 'left' : ('right' as LabelPosition),
+            ...node,
+          };
+        });
+        return partitionWithCoordinates;
+      }),
+    [
+      column1Position,
+      column2Position,
+      data.partitions,
+      nodesByPartition,
+      svgStyles.nodeSpacing,
+      svgStyles.topPadding,
+    ]
   );
 
   // Assign coordinates to links based on the newly created node coordinates
-  const linksWithCoordinates = data.links.map((link) => {
-    const sourceNode = nodesByPartitionWithCoordinates[0].find(
-      (node) => node.id === link.source.id
-    );
-    const targetNode = nodesByPartitionWithCoordinates[1].find(
-      (node) => node.id === link.target.id
-    );
-    return {
-      ...link,
-      source: {
-        x: sourceNode?.x,
-        y: sourceNode?.y,
-        ...link.source,
-      },
-      target: {
-        x: targetNode?.x,
-        y: targetNode?.y,
-        ...link.target,
-      },
-    };
-  });
+  const linksWithCoordinates = useMemo(
+    () =>
+      data.links.map((link) => {
+        const sourceNode = nodesByPartitionWithCoordinates[0].find(
+          (node) => node.id === link.source.id
+        );
+        const targetNode = nodesByPartitionWithCoordinates[1].find(
+          (node) => node.id === link.target.id
+        );
+        return {
+          ...link,
+          source: {
+            x: sourceNode?.x,
+            y: sourceNode?.y,
+            ...link.source,
+          },
+          target: {
+            x: targetNode?.x,
+            y: targetNode?.y,
+            ...link.target,
+          },
+        };
+      }),
+    [data.links, nodesByPartitionWithCoordinates]
+  );
 
   const plotRect = plotRef.current?.getBoundingClientRect();
   const imageHeight = plotRect?.height;
   const imageWidth = plotRect?.width;
+
+  const nodes = useMemo(
+    () =>
+      nodesByPartitionWithCoordinates[0].concat(
+        nodesByPartitionWithCoordinates[1]
+      ),
+    [nodesByPartitionWithCoordinates]
+  );
+
+  useEffect(() => {
+    function listener(event: MouseEvent) {
+      const target = event.target;
+      console.log('click target', target);
+      if (
+        target instanceof Element &&
+        target.closest('.NodeWithLabel_Node,.NodeWithLabel_Label') == null
+      ) {
+        setSelectedNode(undefined);
+      }
+    }
+    document.addEventListener('click', listener);
+    return function cleanup() {
+      document.removeEventListener('click', listener);
+    };
+  }, []);
 
   return (
     <>
@@ -170,6 +225,23 @@ function BipartiteNetwork(
         className={containerClass}
         style={{ width: '100%', ...containerStyles, position: 'relative' }}
       >
+        {selectedNode && nodeActions && (
+          <div
+            style={{
+              position: 'absolute',
+              left: selectedNode.x,
+              top: selectedNode.y,
+            }}
+          >
+            <ul>
+              {nodeActions.map((NodeAction) => (
+                <li>
+                  <NodeAction data={selectedNode} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         <div ref={plotRef} style={{ width: '100%', height: '100%' }}>
           {nodesByPartitionWithCoordinates[0].length > 0 ? (
             <svg
@@ -207,21 +279,27 @@ function BipartiteNetwork(
 
               <Graph
                 graph={{
-                  nodes: nodesByPartitionWithCoordinates[0].concat(
-                    nodesByPartitionWithCoordinates[1]
-                  ),
+                  nodes,
                   links: linksWithCoordinates,
                 }}
                 // Using our Link component so that it uses our nice defaults and
                 // can better expand to handle more complex events (hover and such).
                 linkComponent={({ link }) => <Link link={link} />}
                 nodeComponent={({ node }) => {
-                  const nodeWithLabelProps = {
-                    node: node,
-                    labelPosition: node.labelPosition,
-                    truncationLength: labelTruncationLength,
-                  };
-                  return <NodeWithLabel {...nodeWithLabelProps} />;
+                  return (
+                    <NodeWithLabel
+                      node={{
+                        ...node,
+                        strokeWidth: node.id === selectedNode?.id ? 3 : 1,
+                      }}
+                      labelPosition={node.labelPosition}
+                      truncationLength={labelTruncationLength}
+                      onClick={() => {
+                        setSelectedNode(node);
+                      }}
+                      fontWeight={selectedNode?.id === node.id ? 600 : 400}
+                    />
+                  );
                 }}
               />
             </svg>

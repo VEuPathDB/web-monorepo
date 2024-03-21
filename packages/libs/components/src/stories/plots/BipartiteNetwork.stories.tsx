@@ -8,6 +8,7 @@ import {
 import BipartiteNetwork, {
   BipartiteNetworkProps,
   BipartiteNetworkSVGStyles,
+  NodeActionProps,
 } from '../../plots/BipartiteNetwork';
 import { twoColorPalette } from '../../types/plots/addOns';
 import { Text } from '@visx/text';
@@ -27,6 +28,7 @@ interface TemplateProps {
   svgStyleOverrides?: BipartiteNetworkSVGStyles;
   labelTruncationLength?: number;
   emptyNetworkContent?: ReactNode;
+  nodeActions?: BipartiteNetworkProps['nodeActions'];
 }
 
 // Template for showcasing our BipartiteNetwork component.
@@ -52,6 +54,7 @@ const Template: Story<TemplateProps> = (args) => {
     svgStyleOverrides: args.svgStyleOverrides,
     labelTruncationLength: args.labelTruncationLength,
     emptyNetworkContent: args.emptyNetworkContent,
+    nodeActions: args.nodeActions,
   };
   return (
     <>
@@ -138,6 +141,22 @@ WithStyle.args = {
   svgStyleOverrides: svgStyleOverrides,
   labelTruncationLength: 5,
 };
+
+export const WithActions = Template.bind({});
+WithActions.args = {
+  data: manyPointsData,
+  partition1Name: 'Partition 1',
+  partition2Name: 'Partition 2',
+  nodeActions: [NodeAction],
+};
+
+function NodeAction(props: NodeActionProps) {
+  return (
+    <button type="button" onClick={() => alert('You clicked ' + props.data.id)}>
+      Click me
+    </button>
+  );
+}
 
 // With a network that has no nodes or links
 const noNodesData = genBipartiteNetwork(0, 0);
