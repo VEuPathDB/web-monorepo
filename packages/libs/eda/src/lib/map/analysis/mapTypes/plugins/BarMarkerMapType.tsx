@@ -79,8 +79,6 @@ import { useLittleFilters } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
 import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
 import { SubStudies } from '../../SubStudies';
-import { useOnAreaSelected } from './useOnAreaSelected';
-import AreaSelect from '@veupathdb/components/lib/map/AreaSelect';
 
 const displayName = 'Bar plots';
 
@@ -389,13 +387,6 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     [props.configuration, updateConfiguration, handleSelectedMarkerSnackbars]
   );
 
-  // marker selection by ctrl+click
-  const onAreaSelected = useOnAreaSelected(
-    appState,
-    markerData.markerProps,
-    setSelectedMarkers
-  );
-
   if (markerData.error && !markerData.isFetching)
     return getErrorOverlayComponent(markerData.error);
 
@@ -412,7 +403,6 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
   return (
     <>
       {markerData.isFetching && <Spinner />}
-      {onAreaSelected && <AreaSelect onAreaSelected={onAreaSelected} />}
       {markers && (
         <SemanticMarkers
           markers={markers}
