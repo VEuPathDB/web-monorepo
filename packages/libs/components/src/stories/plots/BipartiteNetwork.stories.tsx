@@ -154,6 +154,9 @@ WithStyle.args = {
 export const WithActions = Template.bind({});
 WithActions.args = {
   data: simpleData,
+  containerStyles: {
+    marginLeft: '200px',
+  },
   partition1Name: 'Partition 1',
   partition2Name: 'Partition 2',
   nodeActions: [NodeAction],
@@ -170,6 +173,9 @@ function NodeAction(props: NodeActionProps) {
 export const WithSelection = Template.bind({});
 WithSelection.args = {
   data: simpleData,
+  containerStyles: {
+    marginLeft: '200px',
+  },
   partition1Name: 'Partition 1',
   partition2Name: 'Partition 2',
   nodeActions: [NodeAction],
