@@ -8,7 +8,7 @@ import {
 import BipartiteNetwork, {
   BipartiteNetworkProps,
   BipartiteNetworkSVGStyles,
-  NodeActionProps,
+  NodeAction,
 } from '../../plots/BipartiteNetwork';
 import { twoColorPalette } from '../../types/plots/addOns';
 import { Text } from '@visx/text';
@@ -151,6 +151,21 @@ WithStyle.args = {
   labelTruncationLength: 5,
 };
 
+const nodeActions: NodeAction[] = [
+  {
+    label: 'Click me!!',
+    onClick(nodeId) {
+      alert('You clicked node ' + nodeId);
+    },
+  },
+  {
+    label: 'Click me, too!!',
+    onClick(nodeId) {
+      alert('You clicked node ' + nodeId);
+    },
+  },
+];
+
 export const WithActions = Template.bind({});
 WithActions.args = {
   data: simpleData,
@@ -159,16 +174,8 @@ WithActions.args = {
   },
   partition1Name: 'Partition 1',
   partition2Name: 'Partition 2',
-  nodeActions: [NodeAction],
+  nodeActions,
 };
-
-function NodeAction(props: NodeActionProps) {
-  return (
-    <button type="button" onClick={() => alert('You clicked ' + props.nodeId)}>
-      Click me
-    </button>
-  );
-}
 
 export const WithSelection = Template.bind({});
 WithSelection.args = {
@@ -178,7 +185,7 @@ WithSelection.args = {
   },
   partition1Name: 'Partition 1',
   partition2Name: 'Partition 2',
-  nodeActions: [NodeAction],
+  nodeActions,
   isSelectable: true,
 };
 

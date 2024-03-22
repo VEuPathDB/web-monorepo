@@ -11,10 +11,8 @@ import {
   useImperativeHandle,
   useRef,
   useCallback,
-  ComponentType,
   useState,
   useMemo,
-  useEffect,
 } from 'react';
 import Spinner from '../components/Spinner';
 import { ToImgopts } from 'plotly.js';
@@ -22,6 +20,7 @@ import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 import './BipartiteNetwork.css';
 import { ExportPlotToImageButton } from './ExportPlotToImageButton';
 import { plotToImage } from './visxVEuPathDB';
+import { FloatingButton } from '@veupathdb/coreui';
 
 export interface BipartiteNetworkSVGStyles {
   width?: number; // svg width
@@ -30,8 +29,9 @@ export interface BipartiteNetworkSVGStyles {
   columnPadding?: number; // space between the left of the svg and the left column, also the right of the svg and the right column.
 }
 
-export interface NodeActionProps {
-  nodeId: string;
+export interface NodeAction {
+  label: ReactNode;
+  onClick: (nodeId: string) => void;
 }
 
 export interface BipartiteNetworkProps {
@@ -56,7 +56,7 @@ export interface BipartiteNetworkProps {
   /** Additional error messaging to show when the network is empty */
   emptyNetworkContent?: ReactNode;
   /** Entries for the actions that appear in the menu when you click a node */
-  nodeActions?: ComponentType<NodeActionProps>[];
+  nodeActions?: NodeAction[];
   /** selected nodes */
   selectedNodeIds?: string[];
   /** set selected nodes */
@@ -208,22 +208,6 @@ function BipartiteNetwork(
     [nodesByPartitionWithCoordinates]
   );
 
-  useEffect(() => {
-    function listener(event: MouseEvent) {
-      const target = event.target;
-      if (
-        target instanceof Element &&
-        target.closest('.NodeWithLabel_Node,.NodeWithLabel_Label') == null
-      ) {
-        setActiveNodeId(undefined);
-      }
-    }
-    document.addEventListener('click', listener);
-    return function cleanup() {
-      document.removeEventListener('click', listener);
-    };
-  }, []);
-
   const activeNode = nodes.find((node) => node.id === activeNodeId);
 
   return (
@@ -244,13 +228,31 @@ function BipartiteNetwork(
                       activeNode.label?.length ?? 0
                     }ch - 100%))`
                   : `translate(calc(2ch + ${activeNode.label?.length ?? 0}ch))`,
-              border: '1px solid black',
+              borderRadius: '4px',
+              boxShadow:
+                '0px 5px 5px -3px rgba(0,0,0,0.2),0px 8px 10px 1px rgba(0,0,0,0.14),0px 3px 14px 2px rgba(0,0,0,0.12)',
             }}
           >
             <ul>
-              {nodeActions.map((NodeAction) => (
-                <li>
-                  <NodeAction nodeId={activeNode.id} />
+              {nodeActions.map((nodeAction) => (
+                <li
+                  style={{
+                    padding: 0,
+                    margin: 0,
+                    listStyle: 'none',
+                  }}
+                >
+                  <FloatingButton
+                    text={nodeAction.label}
+                    onPress={() => {
+                      nodeAction.onClick(activeNode.id);
+                    }}
+                    styleOverrides={{
+                      container: {
+                        minWidth: 150,
+                      },
+                    }}
+                  />
                 </li>
               ))}
             </ul>
