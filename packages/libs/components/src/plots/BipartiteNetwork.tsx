@@ -238,6 +238,12 @@ function BipartiteNetwork(
               position: 'absolute',
               left: activeNode.x,
               top: activeNode.y,
+              transform:
+                activeNode.labelPosition === 'left'
+                  ? `translate(calc(-2ch - ${
+                      activeNode.label?.length ?? 0
+                    }ch - 100%))`
+                  : `translate(calc(2ch + ${activeNode.label?.length ?? 0}ch))`,
               border: '1px solid black',
             }}
           >
