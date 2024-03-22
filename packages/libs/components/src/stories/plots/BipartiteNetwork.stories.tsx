@@ -29,6 +29,7 @@ interface TemplateProps {
   labelTruncationLength?: number;
   emptyNetworkContent?: ReactNode;
   nodeActions?: BipartiteNetworkProps['nodeActions'];
+  isSelectable?: boolean;
 }
 
 // Template for showcasing our BipartiteNetwork component.
@@ -45,6 +46,8 @@ const Template: Story<TemplateProps> = (args) => {
     }, 2000);
   }, []);
 
+  const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>([]);
+
   const bipartiteNetworkProps: BipartiteNetworkProps = {
     data: args.data,
     partition1Name: args.partition1Name,
@@ -55,6 +58,12 @@ const Template: Story<TemplateProps> = (args) => {
     labelTruncationLength: args.labelTruncationLength,
     emptyNetworkContent: args.emptyNetworkContent,
     nodeActions: args.nodeActions,
+    ...(args.isSelectable
+      ? {
+          selectedNodeIds,
+          setSelectedNodeIds,
+        }
+      : {}),
   };
   return (
     <>
@@ -144,7 +153,7 @@ WithStyle.args = {
 
 export const WithActions = Template.bind({});
 WithActions.args = {
-  data: manyPointsData,
+  data: simpleData,
   partition1Name: 'Partition 1',
   partition2Name: 'Partition 2',
   nodeActions: [NodeAction],
@@ -152,11 +161,20 @@ WithActions.args = {
 
 function NodeAction(props: NodeActionProps) {
   return (
-    <button type="button" onClick={() => alert('You clicked ' + props.data.id)}>
+    <button type="button" onClick={() => alert('You clicked ' + props.nodeId)}>
       Click me
     </button>
   );
 }
+
+export const WithSelection = Template.bind({});
+WithSelection.args = {
+  data: simpleData,
+  partition1Name: 'Partition 1',
+  partition2Name: 'Partition 2',
+  nodeActions: [NodeAction],
+  isSelectable: true,
+};
 
 // With a network that has no nodes or links
 const noNodesData = genBipartiteNetwork(0, 0);

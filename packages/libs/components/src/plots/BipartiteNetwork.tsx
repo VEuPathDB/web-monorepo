@@ -1,5 +1,5 @@
 import { BipartiteNetworkData, NodeData } from '../types/plots/network';
-import { partition, set } from 'lodash';
+import { difference, partition } from 'lodash';
 import { LabelPosition, Link, NodeWithLabel } from './Network';
 import { Graph } from '@visx/network';
 import { Text } from '@visx/text';
@@ -31,7 +31,7 @@ export interface BipartiteNetworkSVGStyles {
 }
 
 export interface NodeActionProps {
-  data: NodeData;
+  nodeId: string;
 }
 
 export interface BipartiteNetworkProps {
@@ -57,6 +57,10 @@ export interface BipartiteNetworkProps {
   emptyNetworkContent?: ReactNode;
   /** Entries for the actions that appear in the menu when you click a node */
   nodeActions?: ComponentType<NodeActionProps>[];
+  /** selected nodes */
+  selectedNodeIds?: string[];
+  /** set selected nodes */
+  setSelectedNodeIds?: (nodeIds: string[]) => void;
 }
 
 // Show a few gray nodes when there is no real data.
@@ -90,9 +94,11 @@ function BipartiteNetwork(
     labelTruncationLength = 20,
     emptyNetworkContent,
     nodeActions,
+    selectedNodeIds,
+    setSelectedNodeIds,
   } = props;
 
-  const [selectedNode, setSelectedNode] = useState<NodeData>();
+  const [activeNodeId, setActiveNodeId] = useState<string>();
 
   // Use ref forwarding to enable screenshotting of the plot for thumbnail versions.
   const plotRef = useRef<HTMLDivElement>(null);
@@ -205,12 +211,11 @@ function BipartiteNetwork(
   useEffect(() => {
     function listener(event: MouseEvent) {
       const target = event.target;
-      console.log('click target', target);
       if (
         target instanceof Element &&
         target.closest('.NodeWithLabel_Node,.NodeWithLabel_Label') == null
       ) {
-        setSelectedNode(undefined);
+        setActiveNodeId(undefined);
       }
     }
     document.addEventListener('click', listener);
@@ -219,24 +224,27 @@ function BipartiteNetwork(
     };
   }, []);
 
+  const activeNode = nodes.find((node) => node.id === activeNodeId);
+
   return (
     <>
       <div
         className={containerClass}
         style={{ width: '100%', ...containerStyles, position: 'relative' }}
       >
-        {selectedNode && nodeActions && (
+        {activeNode && nodeActions && (
           <div
             style={{
               position: 'absolute',
-              left: selectedNode.x,
-              top: selectedNode.y,
+              left: activeNode.x,
+              top: activeNode.y,
+              border: '1px solid black',
             }}
           >
             <ul>
               {nodeActions.map((NodeAction) => (
                 <li>
-                  <NodeAction data={selectedNode} />
+                  <NodeAction nodeId={activeNode.id} />
                 </li>
               ))}
             </ul>
@@ -286,18 +294,35 @@ function BipartiteNetwork(
                 // can better expand to handle more complex events (hover and such).
                 linkComponent={({ link }) => <Link link={link} />}
                 nodeComponent={({ node }) => {
+                  const partitionIndex = data.partitions[0].nodeIds.includes(
+                    node.id
+                  )
+                    ? 0
+                    : 1;
+                  const thisPartitionIds =
+                    data.partitions[partitionIndex].nodeIds;
+                  const isSelected = selectedNodeIds?.includes(node.id);
                   return (
                     <NodeWithLabel
                       node={{
                         ...node,
-                        strokeWidth: node.id === selectedNode?.id ? 3 : 1,
+                        strokeWidth: isSelected ? 3 : 1,
                       }}
                       labelPosition={node.labelPosition}
                       truncationLength={labelTruncationLength}
                       onClick={() => {
-                        setSelectedNode(node);
+                        const nextSelectedNodeIds = difference(
+                          selectedNodeIds,
+                          thisPartitionIds
+                        );
+                        setSelectedNodeIds?.(
+                          isSelected
+                            ? nextSelectedNodeIds
+                            : nextSelectedNodeIds.concat(node.id)
+                        );
+                        setActiveNodeId(isSelected ? undefined : node.id);
                       }}
-                      fontWeight={selectedNode?.id === node.id ? 600 : 400}
+                      fontWeight={isSelected ? 600 : 400}
                     />
                   );
                 }}
