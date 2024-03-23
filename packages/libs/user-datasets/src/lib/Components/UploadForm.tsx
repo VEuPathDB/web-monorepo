@@ -372,6 +372,11 @@ function UploadForm({
       {errorMessages.length > 0 && <ErrorMessage errors={errorMessages} />}
       <div>
         <h2>{datasetUploadType.uploadTitle}</h2>
+        <div>
+          Before uploading your dataset, please ensure your data is formatted
+          according to the instructions listed in the{' '}
+          <a href="../datasets/help">"Help" tab</a>.
+        </div>
         <div className="formSection">
           <FieldLabel required htmlFor="data-set-name">
             Name
