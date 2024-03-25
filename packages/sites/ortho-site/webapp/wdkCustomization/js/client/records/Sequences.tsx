@@ -15,6 +15,7 @@ import { extractPfamDomain } from 'ortho-client/records/utils';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 type RowType = Record<string, AttributeValue>;
+const treeWidth = 200;
 
 export function RecordTable_Sequences(
   props: WrappedComponentProps<RecordTableProps>
@@ -177,7 +178,7 @@ export function RecordTable_Sequences(
 
   const treeProps = {
     data: finalNewick,
-    width: 200,
+    width: treeWidth,
     highlightMode: 'monophyletic' as const,
     highlightedNodeIds: highlightedNodes,
   };
@@ -188,17 +189,20 @@ export function RecordTable_Sequences(
 
   return (
     <>
-      <RealTimeSearchBox
-        searchTerm={searchQuery}
-        onSearchTermChange={setSearchQuery}
-        delayMs={0}
-        className="wdk-RecordFilterSearchBox"
-        placeholderText="Search this table..."
-      />
+      <div style={{ marginLeft: treeWidth, padding: 10 }}>
+        <RealTimeSearchBox
+          searchTerm={searchQuery}
+          onSearchTermChange={setSearchQuery}
+          delayMs={0}
+          className="wdk-RecordFilterSearchBox"
+          placeholderText="Search this table..."
+        />
+      </div>
       <TreeTable
         rowHeight={rowHeight}
         treeProps={treeProps}
         tableProps={mesaState}
+        hideTree={!finalNewick}
       />
       <form action="/cgi-bin/msaOrthoMCL" target="_blank" method="post">
         <input type="hidden" name="project_id" value="OrthoMCL" />

@@ -35,6 +35,8 @@ export interface TreeTableProps<RowType> {
   hideTree?: boolean;
 }
 
+const margin: [number, number, number, number] = [0, 10, 0, 10];
+
 /**
  * main props are
  *   data: string;    // Newick format tree
@@ -93,7 +95,7 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
           {...props.treeProps}
           rowHeight={rowHeight}
           leafCount={filteredRows?.length ?? rows.length}
-          options={{ margin: [0, 10, 0, 10], interactive: false }}
+          options={{ margin, interactive: false }}
         />
       )}
       <div

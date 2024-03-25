@@ -102,7 +102,7 @@ export function HorizontalDendrogram({
     return function cleanup() {
       instance.destroy();
     };
-  }, [data, ruler, margin]);
+  }, [data, ruler, margin, hStretch, interactive, containerRef]);
 
   // redraw when the container size changes
   // useLayoutEffect ensures that the redraw is not called for brand new TidyTreeJS objects
@@ -127,7 +127,8 @@ export function HorizontalDendrogram({
       });
       // no redraw needed, setColorOptions does it
     }
-  }, [highlightedNodeIds, highlightMode, tidyTreeRef]);
+  }, [highlightedNodeIds, highlightMode, tidyTreeRef, data]);
+  // `data` not used in effect but needed to trigger recoloring
 
   const containerHeight = leafCount * rowHeight;
   return (
