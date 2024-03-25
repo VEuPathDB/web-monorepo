@@ -55,14 +55,6 @@ export function RecordTable_Sequences(
   const proteinPfams = props.record.tables['ProteinPFams'];
   const rowsByAccession = groupBy(proteinPfams, 'full_id');
 
-  //  const maxLength = useMemo(
-  //    () => mesaRows.reduce(
-  //      (max, current) => {
-  //	const length = Number(current['protein_length']);
-  //	return length > max ? length : max;
-  //      }, 0)
-  //  , [ mesaRows ]);
-
   mesaColumns.unshift({
     key: 'pfamArchitecture',
     name: 'Domain architecture (all drawn to same length)',
@@ -90,8 +82,11 @@ export function RecordTable_Sequences(
   // do some validation on the tree w.r.t. the table
 
   // should this be async? it's potentially expensive
-  const tree = treeResponse && parseNewick(treeResponse.newick);
-  const leaves = tree?.getLeaves();
+  const tree = useMemo(
+    () => treeResponse && parseNewick(treeResponse.newick),
+    [treeResponse]
+  );
+  const leaves = useMemo(() => tree?.getLeaves(), [tree]);
 
   // sort the table in the same order as the tree's leaves
   const sortedRows = useMemo(
