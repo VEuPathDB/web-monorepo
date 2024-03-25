@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import TreeTable from '@veupathdb/components/lib/components/tidytree/TreeTable';
 import { RecordTableProps, WrappedComponentProps } from './Types';
 import { useOrthoService } from 'ortho-client/hooks/orthoService';
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import {
+  Loading,
+  RealTimeSearchBox,
+} from '@veupathdb/wdk-client/lib/Components';
 import { parseNewick } from 'patristic';
 import { AttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { MesaColumn } from '../../../../../../../libs/coreui/lib/components/Mesa/types';
@@ -17,6 +20,10 @@ export function RecordTable_Sequences(
   props: WrappedComponentProps<RecordTableProps>
 ) {
   const [searchQuery, setSearchQuery] = useState('');
+  const safeSearchRegexp = useMemo(
+    () => createSafeSearchRegExp(searchQuery),
+    [searchQuery]
+  );
 
   const groupName = props.record.id.find(
     ({ name }) => name === 'group_name'
@@ -80,27 +87,34 @@ export function RecordTable_Sequences(
     },
   });
 
-  if (treeResponse == null) return <Loading />;
-
   // do some validation on the tree w.r.t. the table
 
   // should this be async? it's potentially expensive
-  const tree = parseNewick(treeResponse.newick);
-  const leaves = tree.getLeaves();
+  const tree = treeResponse && parseNewick(treeResponse.newick);
+  const leaves = tree?.getLeaves();
 
   // sort the table in the same order as the tree's leaves
-  const sortedRows = leaves
-    .map(({ id }) => mesaRows.find(({ full_id }) => full_id === id))
-    .filter((row): row is RowType => row != null);
+  const sortedRows = useMemo(
+    () =>
+      leaves
+        ?.map(({ id }) => mesaRows.find(({ full_id }) => full_id === id))
+        .filter((row): row is RowType => row != null),
+    [leaves, mesaRows]
+  );
 
-  const filteredRows =
-    searchQuery !== ''
-      ? sortedRows.filter((row) =>
-          (row.description as string).match(new RegExp(searchQuery, 'i'))
-        )
-      : undefined;
+  // can't memoize this easily after the early return for null treeResponse above :-(
+  const filteredRows = useMemo(
+    () =>
+      searchQuery !== ''
+        ? sortedRows?.filter((row) => rowMatch(row, safeSearchRegexp))
+        : undefined,
+    [searchQuery, safeSearchRegexp, sortedRows]
+  );
 
-  if (leaves.length !== sortedRows.length)
+  if (treeResponse == null || leaves == null || sortedRows == null)
+    return <Loading />;
+
+  if (leaves?.length !== sortedRows?.length)
     return (
       <Banner
         banner={{
@@ -115,12 +129,6 @@ export function RecordTable_Sequences(
     options: {
       isRowSelected: (row: RowType) =>
         highlightedNodes.includes(row.full_id as string),
-      toolbar: true,
-      searchPlaceholder:
-        'Type to filter the table. (Description column only at the moment!!) The tree will not be shown while filtering.',
-    },
-    uiState: {
-      searchQuery,
     },
     rows: sortedRows,
     filteredRows,
@@ -130,9 +138,6 @@ export function RecordTable_Sequences(
         setHighlightedNodes((prev) => [...prev, row.full_id as string]),
       onRowDeselect: (row: RowType) =>
         setHighlightedNodes((prev) => prev.filter((id) => id !== row.full_id)),
-      onSearch: (query: string) => {
-        setSearchQuery(query);
-      },
     },
   };
 
@@ -149,6 +154,13 @@ export function RecordTable_Sequences(
 
   return (
     <>
+      <RealTimeSearchBox
+        searchTerm={searchQuery}
+        onSearchTermChange={setSearchQuery}
+        delayMs={0}
+        className="wdk-RecordFilterSearchBox"
+        placeholderText="Search this table..."
+      />
       <TreeTable
         rowHeight={rowHeight}
         treeProps={treeProps}
@@ -187,4 +199,32 @@ export function RecordTable_Sequences(
       </form>
     </>
   );
+}
+
+function rowMatch(row: RowType, query: RegExp): boolean {
+  return (
+    Object.values(row).find((value) => {
+      if (value != null) {
+        if (typeof value === 'string') return value.match(query);
+        else if (
+          typeof value === 'object' &&
+          'displayText' in value &&
+          typeof value.displayText === 'string'
+        )
+          return value.displayText.match(query);
+      }
+      return false;
+    }) !== undefined
+  );
+}
+
+function createSafeSearchRegExp(input: string): RegExp {
+  try {
+    // Attempt to create a RegExp from the user input directly
+    return new RegExp(input, 'i');
+  } catch (error) {
+    // If an error occurs (e.g., invalid RegExp), escape the input and create a literal search RegExp
+    const escapedInput = input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return new RegExp(escapedInput, 'i');
+  }
 }
