@@ -13,8 +13,21 @@ import { groupBy } from 'lodash';
 import { PfamDomainArchitecture } from 'ortho-client/components/pfam-domains/PfamDomainArchitecture';
 import { extractPfamDomain } from 'ortho-client/records/utils';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 
 type RowType = Record<string, AttributeValue>;
+const CorePeripheralFilterStates = ['both', 'core', 'peripheral'] as const;
+type CorePeripheralFilterState = typeof CorePeripheralFilterStates[number];
+
+const CorePeripheralFilterStateLabels: Record<
+  CorePeripheralFilterState,
+  string
+> = {
+  both: 'Core & Peripheral',
+  core: 'Core only',
+  peripheral: 'Peripheral only',
+};
+
 const treeWidth = 200;
 
 export function RecordTable_Sequences(
@@ -25,6 +38,9 @@ export function RecordTable_Sequences(
     () => createSafeSearchRegExp(searchQuery),
     [searchQuery]
   );
+
+  const [corePeripheralFilterState, setCorePeripheralFilterState] =
+    useState<CorePeripheralFilterState>('both');
 
   const groupName = props.record.id.find(
     ({ name }) => name === 'group_name'
@@ -101,10 +117,16 @@ export function RecordTable_Sequences(
   // can't memoize this easily after the early return for null treeResponse above :-(
   const filteredRows = useMemo(
     () =>
-      searchQuery !== ''
-        ? sortedRows?.filter((row) => rowMatch(row, safeSearchRegexp))
+      searchQuery !== '' || corePeripheralFilterState !== 'both'
+        ? sortedRows?.filter(
+            (row) =>
+              (searchQuery === '' || rowMatch(row, safeSearchRegexp)) &&
+              (corePeripheralFilterState === 'both' ||
+                ((row['core_peripheral'] as string) ?? '').toLowerCase() ===
+                  (corePeripheralFilterState as string))
+          )
         : undefined,
-    [searchQuery, safeSearchRegexp, sortedRows]
+    [searchQuery, safeSearchRegexp, sortedRows, corePeripheralFilterState]
   );
 
   // now filter the tree if needed.
@@ -189,13 +211,33 @@ export function RecordTable_Sequences(
 
   return (
     <>
-      <div style={{ marginLeft: treeWidth, padding: 10 }}>
+      <div
+        style={{
+          marginLeft: treeWidth,
+          padding: 10,
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
         <RealTimeSearchBox
           searchTerm={searchQuery}
           onSearchTermChange={setSearchQuery}
           delayMs={0}
           className="wdk-RecordFilterSearchBox"
           placeholderText="Search this table..."
+        />
+        <RadioButtonGroup
+          options={[...CorePeripheralFilterStates]}
+          optionLabels={CorePeripheralFilterStates.map(
+            (s) => CorePeripheralFilterStateLabels[s]
+          )}
+          selectedOption={corePeripheralFilterState}
+          onOptionSelected={(newOption: string) =>
+            setCorePeripheralFilterState(newOption as CorePeripheralFilterState)
+          }
+          capitalizeLabels={false}
         />
       </div>
       <TreeTable

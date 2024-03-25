@@ -34,6 +34,8 @@ export type RadioButtonGroupProps = {
   itemMarginRight?: number | string;
   /** disabled list to disable radio button item(s): grayed out */
   disabledList?: string[];
+  /** capitalize of the labels; default: true */
+  capitalizeLabels?: boolean;
 };
 
 /**
@@ -54,6 +56,7 @@ export default function RadioButtonGroup({
   margins,
   itemMarginRight,
   disabledList,
+  capitalizeLabels = true,
 }: RadioButtonGroupProps) {
   // perhaps not using focused?
   // const [focused, setFocused] = useState(false);
@@ -127,7 +130,7 @@ export default function RadioButtonGroup({
                 marginRight: itemMarginRight,
                 fontSize: '0.75em',
                 fontWeight: 400,
-                textTransform: 'capitalize',
+                textTransform: capitalizeLabels ? 'capitalize' : undefined,
                 minWidth: minWidth,
               }}
             />

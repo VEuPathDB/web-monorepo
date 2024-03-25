@@ -105,7 +105,6 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
           width: 1 /* arbitrary non-zero width seems necessary for flex */,
           '.DataTable': {
             marginBottom: '0px !important',
-            width: '80%',
           },
         }}
       >
