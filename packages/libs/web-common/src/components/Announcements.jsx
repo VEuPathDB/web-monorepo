@@ -241,6 +241,46 @@ const siteAnnouncements = [
   },
 */
 
+  //VectorBase, aziemanni: https://redmine.apidb.org/issues/53767 b68
+  {
+    id: 'aziemanni ',
+    renderDisplay: (props) => {
+      if (
+        (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
+        (props.location.pathname.indexOf('/record/dataset/TMPTX_acouAcouGA1') >
+          -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_52a781a3b2') >
+            -1 ||
+          props.location.pathname.indexOf('/record/gene/ACOU0') > -1 ||
+          props.location.pathname.indexOf('/record/dataset/TMPTX_azieAzieGA1') >
+            -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_a52a9d2470') >
+            -1 ||
+          props.location.pathname.indexOf('/record/gene/AZIE0') > -1)
+      ) {
+        return (
+          <div key="">
+            <a href="/a/app/record/dataset/TMPTX_acouAcouGA1">
+              <i>Anopheles coustani</i> AcouGA1
+            </a>{' '}
+            and{' '}
+            <a href="/a/app/record/dataset/TMPTX_azieAzieGA1">
+              <i>Anopheles ziemanni</i> AzieGA1
+            </a>{' '}
+            genomes are part of a <b>species complex</b>. Based on the current
+            evidence, <i>An. ziemanni</i> AzieGA1 may actually be the species{' '}
+            <i>An. coustani</i> or even another species from this complex.{' '}
+            <a href="/a/app/static-content/aziemani.html">
+              See additional details
+            </a>
+            .
+          </div>
+        );
+      }
+      return null;
+    },
+  },
+
   //VectorBase, aquasalis: https://redmine.apidb.org/issues/53436  Jan 18 2024 -patched prod 66-  for a year
   {
     id: 'aquasalis',

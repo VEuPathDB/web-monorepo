@@ -10,6 +10,7 @@ import { ComputationAppOverview } from '../../../core/types/visualization';
 import { AppState, PanelConfig } from '../appState';
 import { EntityCounts } from '../../../core/hooks/entityCounts';
 import { SiteInformationProps } from '../Types';
+import { Bounds as BoundsProp } from '@veupathdb/components/lib/map/Types';
 
 // should we just use one type: MapTypeMapLayerProps?
 // and get rid of this one?
@@ -25,6 +26,7 @@ export interface MapTypeConfigPanelProps {
   updateConfiguration: (configuration: unknown) => void;
   hideVizInputsAndControls: boolean;
   setHideVizInputsAndControls: (hide: boolean) => void;
+  setIsSidePanelExpanded: (isExpanded: boolean) => void;
 }
 
 export interface MapTypeMapLayerProps {
@@ -50,6 +52,8 @@ export interface MapTypeMapLayerProps {
   ) => void;
   siteInformationProps?: SiteInformationProps;
   headerButtons?: React.FC;
+  // coordinates of selected area
+  boxCoord?: BoundsProp;
 }
 
 /**
