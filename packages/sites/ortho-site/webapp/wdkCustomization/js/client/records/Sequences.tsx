@@ -129,20 +129,44 @@ export function RecordTable_Sequences(
     [leaves, mesaRows]
   );
 
-  // can't memoize this easily after the early return for null treeResponse above :-(
-  const filteredRows = useMemo(
-    () =>
-      searchQuery !== '' || corePeripheralFilterState !== 'both'
-        ? sortedRows?.filter(
-            (row) =>
-              (searchQuery === '' || rowMatch(row, safeSearchRegexp)) &&
-              (corePeripheralFilterState === 'both' ||
-                ((row['core_peripheral'] as string) ?? '').toLowerCase() ===
-                  (corePeripheralFilterState as string))
-          )
-        : undefined,
-    [searchQuery, safeSearchRegexp, sortedRows, corePeripheralFilterState]
-  );
+  // filter the rows of the table based on
+  // 1. user-entered text search
+  // 2. core-peripheral radio button
+  // 3. checked boxes in the Pfam legend
+  const filteredRows = useMemo(() => {
+    if (
+      searchQuery !== '' ||
+      corePeripheralFilterState !== 'both' ||
+      pfamFilterIds.length > 0
+    ) {
+      return sortedRows?.filter((row) => {
+        const rowCorePeripheral = (
+          (row['core_peripheral'] as string) ?? ''
+        ).toLowerCase();
+        const rowFullId = row['full_id'] as string;
+        const rowPfamIdsSet = accessionToPfamIds.get(rowFullId);
+
+        const searchMatch =
+          searchQuery === '' || rowMatch(row, safeSearchRegexp);
+        const corePeripheralMatch =
+          corePeripheralFilterState === 'both' ||
+          rowCorePeripheral === corePeripheralFilterState;
+        const pfamIdMatch =
+          pfamFilterIds.length === 0 ||
+          pfamFilterIds.some((pfamId) => rowPfamIdsSet?.has(pfamId));
+
+        return searchMatch && corePeripheralMatch && pfamIdMatch;
+      });
+    }
+    return undefined;
+  }, [
+    searchQuery,
+    safeSearchRegexp,
+    sortedRows,
+    corePeripheralFilterState,
+    accessionToPfamIds,
+    pfamFilterIds,
+  ]);
 
   // now filter the tree if needed.
   const filteredTree = useMemo(() => {
