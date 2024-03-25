@@ -51,7 +51,7 @@ export interface TreeTableProps<RowType> {
  */
 export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
   const { rowHeight, maxColumnWidth = 200, hideTree = false } = props;
-  const { rows } = props.tableProps;
+  const { rows, filteredRows } = props.tableProps;
 
   const rowStyleClassName = useMemo(
     () =>
@@ -92,7 +92,7 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
         <HorizontalDendrogram
           {...props.treeProps}
           rowHeight={rowHeight}
-          leafCount={rows.length}
+          leafCount={filteredRows?.length ?? rows.length}
           options={{ margin: [0, 10, 0, 10], interactive: false }}
         />
       )}

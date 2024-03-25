@@ -14,6 +14,8 @@ declare module 'patristic' {
     ancestors(): Branch[];
     clone(): Branch;
     getLeaves(): Branch[];
+    remove(pruneAncestors: boolean): Branch[];
+    toNewick(): string;
   }
 
   export function parseNewick(newickStr: string): Branch;

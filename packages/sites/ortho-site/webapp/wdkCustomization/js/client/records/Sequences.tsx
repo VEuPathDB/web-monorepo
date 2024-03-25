@@ -106,6 +106,45 @@ export function RecordTable_Sequences(
     [searchQuery, safeSearchRegexp, sortedRows]
   );
 
+  // now filter the tree if needed.
+  const filteredTree = useMemo(() => {
+    if (leaves == null || tree == null || filteredRows?.length === 0) return;
+
+    if (filteredRows != null && filteredRows.length < leaves.length) {
+      // must work on a copy of the tree because it's destructive
+      const treeCopy = tree.clone();
+      let leavesRemoved = false;
+
+      do {
+        const leavesCopy = treeCopy.getLeaves();
+        leavesRemoved = false; // Reset flag for each iteration
+
+        leavesCopy.forEach((leaf) => {
+          if (!filteredRows.find(({ full_id }) => full_id === leaf.id)) {
+            leaf.remove(true); // remove leaf and remove any dangling ancestors
+            leavesRemoved = true; // A leaf was removed, so set flag to true
+          }
+        });
+      } while (leavesRemoved); // Continue looping if any leaf was removed
+
+      return treeCopy;
+    }
+    return tree;
+  }, [tree, leaves, filteredRows]);
+
+  // make a newick string from the filtered tree if needed
+  const finalNewick = useMemo(() => {
+    if (filteredTree === tree && treeResponse != null) {
+      return treeResponse.newick; // no filtering so return what we read from the back end
+    } else if (
+      filteredTree != null &&
+      filteredRows != null &&
+      filteredRows.length > 0
+    ) {
+      return filteredTree.toNewick(); // make new newick data from the filtered tree
+    } else return;
+  }, [filteredTree, treeResponse, tree, filteredRows]);
+
   if (treeResponse == null || leaves == null || sortedRows == null)
     return <Loading />;
 
@@ -137,7 +176,7 @@ export function RecordTable_Sequences(
   };
 
   const treeProps = {
-    data: treeResponse.newick,
+    data: finalNewick,
     width: 200,
     highlightMode: 'monophyletic' as const,
     highlightedNodeIds: highlightedNodes,
@@ -160,7 +199,6 @@ export function RecordTable_Sequences(
         rowHeight={rowHeight}
         treeProps={treeProps}
         tableProps={mesaState}
-        hideTree={!!filteredRows}
       />
       <form action="/cgi-bin/msaOrthoMCL" target="_blank" method="post">
         <input type="hidden" name="project_id" value="OrthoMCL" />
