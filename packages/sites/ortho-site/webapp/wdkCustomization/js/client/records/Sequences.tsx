@@ -9,6 +9,7 @@ import { MesaColumn } from '../../../../../../../libs/coreui/lib/components/Mesa
 import { groupBy } from 'lodash';
 import { PfamDomainArchitecture } from 'ortho-client/components/pfam-domains/PfamDomainArchitecture';
 import { extractPfamDomain } from 'ortho-client/records/utils';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 type RowType = Record<string, AttributeValue>;
 
@@ -57,7 +58,7 @@ export function RecordTable_Sequences(
 
   mesaColumns.unshift({
     key: 'pfamArchitecture',
-    name: 'Domain architecture (all drawn to 100% length)',
+    name: 'Domain architecture (all drawn to same length)',
     renderCell: (cellProps) => {
       const proteinId = cellProps.row.full_id as string;
       const flatPfamData = rowsByAccession[proteinId];
@@ -101,7 +102,13 @@ export function RecordTable_Sequences(
 
   if (leaves.length !== sortedRows.length)
     return (
-      <div>Tree and protein list mismatch, please contact the helpdesk</div>
+      <Banner
+        banner={{
+          type: 'warning',
+          message:
+            'Tree and protein list mismatch, please contact the helpdesk',
+        }}
+      />
     );
 
   const mesaState = {
