@@ -15,7 +15,7 @@ import {
 
 import sharingReducer from '../Components/Sharing/UserDatasetSharingReducer';
 
-import { UserDataset } from '../Utils/types';
+import { UserDataset, UserDatasetFileListing } from '../Utils/types';
 
 export const key = 'userDatasetDetail';
 
@@ -26,6 +26,7 @@ export const key = 'userDatasetDetail';
 export type UserDatasetEntry = {
   isLoading: boolean;
   resource?: UserDataset;
+  fileListing?: UserDatasetFileListing;
 };
 
 export interface State {
@@ -73,6 +74,7 @@ export function reduce(state: State = initialState, action: Action): State {
           [action.payload.id]: {
             isLoading: false,
             resource: action.payload.userDataset,
+            fileListing: action.payload.fileListing,
           },
         },
       };

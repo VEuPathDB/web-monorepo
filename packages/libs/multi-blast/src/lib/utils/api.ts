@@ -276,7 +276,7 @@ export class BlastApi extends FetchClientWithCredentials {
     submitAsForm({
       action: `${
         this.baseUrl
-      }/reports/${reportID}/files/${reportFile}?${await this.findAuthorizationQueryString()}`,
+      }/reports/${reportID}/files/${reportFile}?${await this.findAuthorizationQueryParams()}`,
       method: 'GET',
     });
   }

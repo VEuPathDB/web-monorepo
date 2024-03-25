@@ -49,10 +49,10 @@ function UserDatasetsWorkspace(props: Props) {
                   display: 'New upload',
                   route: '/new',
                 },
-                {
-                  display: 'Recent uploads',
-                  route: '/recent',
-                },
+                // {
+                //   display: 'Recent uploads',
+                //   route: '/recent',
+                // },
               ]
             : [],
           helpTabContents != null
@@ -135,7 +135,7 @@ function UserDatasetsWorkspace(props: Props) {
             }}
           />
         )}
-        {uploadPageConfig.hasDirectUpload && (
+        {/* {uploadPageConfig.hasDirectUpload && (
           <WdkRoute
             requiresLogin
             exact
@@ -145,7 +145,7 @@ function UserDatasetsWorkspace(props: Props) {
             )}
             disclaimerProps={{ toDoWhatMessage: 'To view your recent uploads' }}
           />
-        )}
+        )} */}
         {helpTabContents != null && (
           <WdkRoute
             requiresLogin={false}

@@ -4,9 +4,8 @@ import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { ok } from '@veupathdb/wdk-client/lib/Utils/Json';
 
 import {
-  datasetImportUrl,
-  endpoint,
   useUserDatasetsWorkspace,
+  vdiServiceUrl,
 } from '@veupathdb/web-common/lib/config';
 
 import { wrapWdkService as addMultiBlastService } from '@veupathdb/multi-blast/lib/utils/wdkServiceIntegration';
@@ -72,8 +71,7 @@ export const genomicsServiceWrappers = {
 export const wrapWdkService = flowRight(
   useUserDatasetsWorkspace
     ? partial(addUserDatasetsServices, {
-        datasetImportUrl,
-        fullWdkServiceUrl: `${window.location.origin}${endpoint}`,
+        vdiServiceUrl,
       })
     : identity,
   addMultiBlastService,

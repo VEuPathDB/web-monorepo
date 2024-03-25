@@ -1,4 +1,4 @@
-import { difference } from 'lodash';
+import { difference, omit } from 'lodash';
 
 import {
   Action,
@@ -37,7 +37,7 @@ type ForbiddenState = {
 
 type CompleteState = {
   status: 'complete';
-  userDatasets: number[];
+  userDatasets: Array<string | number>;
   userDatasetsById: Record<string, { isLoading: false; resource: UserDataset }>;
   filterByProject: boolean;
 };
@@ -104,10 +104,10 @@ export function reduce(state: State = initialState, action: Action): State {
             userDatasets: difference(state.userDatasets, [
               action.payload.userDataset.id,
             ]),
-            userDatasetsById: {
-              ...state.userDatasetsById,
-              [action.payload.userDataset.id]: undefined,
-            },
+            userDatasetsById: omit(
+              state.userDatasetsById,
+              action.payload.userDataset.id
+            ),
           }
         : state;
 

@@ -21,8 +21,8 @@ type State = Record<
 
 const initialState: State = {};
 
-const handleAdd = handleOperation('add');
-const handleDelete = handleOperation('delete');
+const handleAdd = handleOperation('grant');
+const handleDelete = handleOperation('revoke');
 
 export default function reduce(
   state: State = initialState,
@@ -53,7 +53,7 @@ function handleOperation(operation: ShareOperation) {
           return state;
         }
         const sharedWith =
-          operation === 'add'
+          operation === 'grant'
             ? unionWith(entry.resource.sharedWith, shares, shareComparator)
             : differenceWith(
                 entry.resource.sharedWith,

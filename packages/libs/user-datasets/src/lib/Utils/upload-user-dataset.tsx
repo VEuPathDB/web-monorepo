@@ -1,7 +1,7 @@
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 
 import { FormSubmission } from '../Components/UploadForm';
-import { assertIsUserDatasetUploadCompatibleWdkService } from '../Service/UserDatasetUploadWrappers';
+import { assertIsVdiCompatibleWdkService } from '../Service/';
 
 import { NewUserDataset } from './types';
 
@@ -9,28 +9,24 @@ export async function uploadUserDataset(
   wdkService: WdkService,
   formSubmission: FormSubmission
 ) {
-  assertIsUserDatasetUploadCompatibleWdkService(wdkService);
+  assertIsVdiCompatibleWdkService(wdkService);
 
-  const newUserDatasetConfig = await makeNewUserDatasetConfig(
-    wdkService,
-    formSubmission
-  );
-
-  return await wdkService.addDataset(newUserDatasetConfig);
+  return await wdkService.addUserDataset(formSubmission);
 }
 
 export async function makeNewUserDatasetConfig(
   wdkService: WdkService,
   formSubmission: FormSubmission
 ): Promise<NewUserDataset> {
-  if (formSubmission.dataUploadSelection.type !== 'result') {
+  const { dataUploadSelection, ...remainingFormSubmission } = formSubmission;
+  if (dataUploadSelection.type !== 'result') {
     return {
-      ...formSubmission,
-      uploadMethod: formSubmission.dataUploadSelection,
+      ...remainingFormSubmission,
+      uploadMethod: dataUploadSelection,
     };
   }
 
-  const { compatibleRecordTypes, stepId } = formSubmission.dataUploadSelection;
+  const { compatibleRecordTypes, stepId } = dataUploadSelection;
 
   const { recordClassName } = await wdkService.findStep(stepId);
 
@@ -43,7 +39,7 @@ export async function makeNewUserDatasetConfig(
   }
 
   return {
-    ...formSubmission,
+    ...remainingFormSubmission,
     uploadMethod: {
       type: 'result',
       stepId,

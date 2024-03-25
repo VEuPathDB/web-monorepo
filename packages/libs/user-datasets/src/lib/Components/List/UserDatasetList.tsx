@@ -49,13 +49,10 @@ interface Props {
   userDatasets: UserDataset[];
   filterByProject: boolean;
   shareUserDatasets: (
-    userDatasetIds: number[],
+    userDatasetIds: string[],
     recipientUserIds: number[]
   ) => any;
-  unshareUserDatasets: (
-    userDatasetIds: number[],
-    recipientUserIds: number[]
-  ) => any;
+  unshareUserDatasets: (userDatasetId: string, recipientUserId: number) => any;
   removeUserDataset: (dataset: UserDataset) => any;
   updateUserDatasetDetail: (
     userDataset: UserDataset,
@@ -67,7 +64,7 @@ interface Props {
 }
 
 interface State {
-  selectedRows: number[];
+  selectedRows: Array<number | string>;
   uiState: { sort: MesaSortObject };
   searchTerm: string;
   sharingModalOpen: boolean;
@@ -122,7 +119,7 @@ class UserDatasetList extends React.Component<Props, State> {
   }
 
   isRowSelected(row: UserDataset): boolean {
-    const id: number = row.id;
+    const id: string = row.id;
     const { selectedRows } = this.state;
     return selectedRows.includes(id);
   }
@@ -152,7 +149,7 @@ class UserDatasetList extends React.Component<Props, State> {
 
   renderStatusCell(cellProps: MesaDataCellProps) {
     const userDataset: UserDataset = cellProps.row;
-    const { baseUrl, projectId, projectName } = this.props;
+    const { baseUrl, projectId, projectName, dataNoun } = this.props;
     return (
       <UserDatasetStatus
         baseUrl={baseUrl}
@@ -161,6 +158,7 @@ class UserDatasetList extends React.Component<Props, State> {
         userDataset={userDataset}
         projectId={projectId}
         displayName={projectName}
+        dataNoun={dataNoun}
       />
     );
   }
@@ -282,9 +280,9 @@ class UserDatasetList extends React.Component<Props, State> {
         )),
       },
       {
-        key: 'datafiles',
+        key: 'fileCount',
         name: 'File Count',
-        renderCell: textCell('datafiles', (files: any[]) => files.length),
+        renderCell: textCell('fileCount', (count: number) => count),
       },
       {
         key: 'size',
@@ -297,25 +295,25 @@ class UserDatasetList extends React.Component<Props, State> {
         name: 'Quota Usage',
         sortable: true,
         renderCell: textCell('percentQuotaUsed', (percent: number) =>
-          percent ? `${normalizePercentage(percent)}%` : null
+          percent || percent === 0 ? `${normalizePercentage(percent)}%` : null
         ),
       },
     ].filter((column) => column);
   }
 
   onRowSelect(row: UserDataset): void {
-    const id: number = row.id;
+    const id: number | string = row.id;
     const { selectedRows } = this.state;
     if (selectedRows.includes(id)) return;
-    const newSelection: number[] = [...selectedRows, id];
+    const newSelection: Array<number | string> = [...selectedRows, id];
     this.setState({ selectedRows: newSelection });
   }
 
   onRowDeselect(row: UserDataset): void {
-    const id: number = row.id;
+    const id: number | string = row.id;
     const { selectedRows } = this.state;
     if (!selectedRows.includes(id)) return;
-    const newSelection: number[] = selectedRows.filter(
+    const newSelection: Array<number | string> = selectedRows.filter(
       (selectedId) => selectedId !== id
     );
     this.setState({ selectedRows: newSelection });
@@ -328,14 +326,19 @@ class UserDatasetList extends React.Component<Props, State> {
       .filter((dataset: UserDataset) => !selectedRows.includes(dataset.id))
       .map((dataset: UserDataset) => dataset.id);
     if (!unselectedRows.length) return;
-    const newSelection: number[] = [...selectedRows, ...unselectedRows];
+    const newSelection: Array<number | string> = [
+      ...selectedRows,
+      ...unselectedRows,
+    ];
     this.setState({ selectedRows: newSelection });
   }
 
   onMultipleRowDeselect(rows: UserDataset[]): void {
     if (!rows.length) return;
     const { selectedRows } = this.state;
-    const deselectedIds: number[] = rows.map((row: UserDataset) => row.id);
+    const deselectedIds: Array<number | string> = rows.map(
+      (row: UserDataset) => row.id
+    );
     const newSelection = selectedRows.filter(
       (id) => !deselectedIds.includes(id)
     );
@@ -578,7 +581,7 @@ class UserDatasetList extends React.Component<Props, State> {
 
     const totalSize = userDatasets
       .filter((ud) => ud.ownerUserId === user.id)
-      .map((ud) => ud.size)
+      .map((ud) => ud.size ?? 0)
       .reduce(add, 0);
 
     const totalPercent = totalSize / quotaSize;

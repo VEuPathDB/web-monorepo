@@ -4,7 +4,7 @@ import { getLeaves } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 import { useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
 
-import { wrapStoreModules as addUserDatasetStoreModules } from '@veupathdb/user-datasets/lib/StoreModules';
+import { wrapStoreModules as addUserDatasetStoreModules } from '@veupathdb/user-datasets-legacy/lib/StoreModules';
 
 /** Compose reducer functions from right to left */
 const composeReducers =

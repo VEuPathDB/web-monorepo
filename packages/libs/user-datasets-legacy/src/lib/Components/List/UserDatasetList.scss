@@ -1,0 +1,19 @@
+.UserDatasetList {
+  margin-bottom: 30px;
+}
+.UserDatasetList-EmptyState {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  p {
+    font-size: 1.3em;
+    font-weight: 300;
+  }
+  .wdk-Icon.EmptyState-Icon {
+    opacity: 0.1;
+    font-size: 60px;
+    margin: 5px auto 20px;
+  }
+}

@@ -55,6 +55,7 @@
     "@veupathdb/react-scripts": "workspace:^",
     "@veupathdb/study-data-access": "workspace:^",
     "@veupathdb/user-datasets": "workspace:^",
+    "@veupathdb/user-datasets-legacy": "workspace:^",
     "bubleify": "^2.0.0",
     "icon-font-generator": "^2.1.11",
     "ify-loader": "^1.1.0",

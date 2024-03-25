@@ -59,11 +59,13 @@ export class FetchClientWithCredentials extends FetchClient {
         };
   }
 
-  protected async findAuthorizationQueryString() {
+  protected async findAuthorizationQueryParams(): Promise<URLSearchParams> {
     const authKey = await this.findAuthorizationToken();
-    return authKey.type === 'bearer'
-      ? `access_token=${encodeURIComponent(authKey.value)}`
-      : `Auth-Key=${encodeURIComponent(authKey.value)}`;
+    return new URLSearchParams(
+      authKey.type === 'bearer'
+        ? `access_token=${authKey.value}`
+        : `Auth-Key=${authKey.value}`
+    );
   }
 
   constructor(
