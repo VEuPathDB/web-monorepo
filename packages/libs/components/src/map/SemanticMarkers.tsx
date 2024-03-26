@@ -11,6 +11,8 @@ import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 import { useMap, useMapEvents } from 'react-leaflet';
 import { LatLngBounds } from 'leaflet';
 import { debounce, isEqual } from 'lodash';
+import { mouseEventHasModifierKey } from './BoundsDriftMarker';
+import AreaSelect from './AreaSelect';
 
 export interface SemanticMarkersProps {
   markers: Array<ReactElement<BoundsDriftMarkerProps>>;
@@ -50,8 +52,13 @@ export default function SemanticMarkers({
 
   // cancel marker selection with a single click on the map
   useMapEvents({
-    click: () => {
-      if (setSelectedMarkers != null) setSelectedMarkers(undefined);
+    click: (e) => {
+      // excluding a combination of special keys and mouse click
+      if (
+        setSelectedMarkers != null &&
+        !mouseEventHasModifierKey(e.originalEvent)
+      )
+        setSelectedMarkers(undefined);
     },
   });
 
@@ -233,7 +240,40 @@ export default function SemanticMarkers({
   // this should use the unadulterated markers (which are always in the "main world")
   useFlyToMarkers({ markers, flyToMarkers, flyToMarkersDelay });
 
-  return <>{refinedMarkers}</>;
+  // rectangle marker selection
+  const onAreaSelected = useCallback(
+    (boxCoord: Bounds | undefined) => {
+      if (boxCoord != null && setSelectedMarkers != null) {
+        // find markers within area selection
+        const boxCoordMarkers = consolidatedMarkers
+          ?.filter((marker) => {
+            // check if the center of a marker is within selected area
+            return (
+              marker.props.position.lat >= boxCoord.southWest.lat &&
+              marker.props.position.lat <= boxCoord.northEast.lat &&
+              marker.props.position.lng >= boxCoord.southWest.lng &&
+              marker.props.position.lng <= boxCoord.northEast.lng
+            );
+          })
+          .map(({ props: { id } }) => id);
+
+        // combine, de-duplicate, and update selected marker IDs
+        const combinedMarkers = [
+          ...(selectedMarkers ?? []),
+          ...(boxCoordMarkers ?? []),
+        ];
+        setSelectedMarkers(Array.from(new Set(combinedMarkers)));
+      }
+    },
+    [consolidatedMarkers, selectedMarkers, setSelectedMarkers]
+  );
+
+  return (
+    <>
+      <AreaSelect onAreaSelected={onAreaSelected} />
+      {refinedMarkers}
+    </>
+  );
 }
 
 function boundsToGeoBBox(bounds: LatLngBounds): Bounds {
