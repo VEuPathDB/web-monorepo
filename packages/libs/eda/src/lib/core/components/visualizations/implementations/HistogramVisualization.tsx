@@ -1540,15 +1540,16 @@ function getRequestParams(
   ) => HistogramRequestParams
 ): HistogramRequestParams {
   const {
-    binWidth = undefined,
-    binWidthTimeUnit = variable?.type === 'date'
-      ? variable.distributionDefaults.binUnits
-      : undefined,
+    binWidth,
+    binWidthTimeUnit,
     valueSpec,
     overlayVariable,
     facetVariable,
     xAxisVariable,
   } = config;
+
+  //DKDK
+  console.log('binWidth, binWidthTimeUnit =', binWidth, binWidthTimeUnit);
 
   const binSpec: Pick<HistogramRequestParams['config'], 'binSpec'> = binWidth
     ? {
