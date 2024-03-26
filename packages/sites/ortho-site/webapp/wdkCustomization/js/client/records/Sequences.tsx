@@ -14,7 +14,9 @@ import { PfamDomainArchitecture } from 'ortho-client/components/pfam-domains/Pfa
 import { extractPfamDomain } from 'ortho-client/records/utils';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import Mesa from '../../../../../../../libs/coreui/lib/components/Mesa';
+import Mesa, {
+  RowCounter,
+} from '../../../../../../../libs/coreui/lib/components/Mesa';
 import { PfamDomain } from 'ortho-client/components/pfam-domains/PfamDomain';
 
 type RowType = Record<string, AttributeValue>;
@@ -226,6 +228,7 @@ export function RecordTable_Sequences(
       isRowSelected: (row: RowType) =>
         highlightedNodes.includes(row.full_id as string),
     },
+    uiState: {},
     rows: sortedRows,
     filteredRows,
     columns: mesaColumns,
@@ -290,6 +293,8 @@ export function RecordTable_Sequences(
     },
   };
 
+  const rowCount = (filteredRows ?? sortedRows).length;
+
   return (
     <>
       <div
@@ -304,7 +309,7 @@ export function RecordTable_Sequences(
       <div
         style={{
           marginLeft: treeWidth,
-          padding: 10,
+          padding: '10px',
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
@@ -318,6 +323,14 @@ export function RecordTable_Sequences(
           className="wdk-RecordFilterSearchBox"
           placeholderText="Search this table..."
         />
+        <div className="MesaComponent">
+          <div className="TableToolbar-Info">
+            <RowCounter
+              count={rowCount}
+              noun={rowCount === 1 ? 'row' : 'rows'}
+            />
+          </div>
+        </div>
         <RadioButtonGroup
           options={[...CorePeripheralFilterStates]}
           optionLabels={CorePeripheralFilterStates.map(
