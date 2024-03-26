@@ -50,11 +50,6 @@ export function ExportPlotToImageButton(props: Props) {
             value: 'svg',
           } as const,
           {
-            // display: (
-            //   <>
-            //     PNG &nbsp; <em>(large plots may fail)</em>
-            //   </>
-            // ),
             display: (
               <>
                 PNG &nbsp; <em>(large plots may fail)</em>
