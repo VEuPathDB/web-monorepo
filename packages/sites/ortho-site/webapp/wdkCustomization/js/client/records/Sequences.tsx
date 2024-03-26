@@ -251,12 +251,13 @@ export function RecordTable_Sequences(
   const clustalDisabled =
     highlightedNodes == null || highlightedNodes.length < 2;
 
+  const pfamRows = props.record.tables['PFams'];
   const pfamMesaState = {
     options: {
       isRowSelected: (row: RowType) =>
         pfamFilterIds.includes(row.accession as string),
     },
-    rows: props.record.tables['PFams'],
+    rows: pfamRows,
     columns: [
       {
         key: 'accession',
@@ -276,8 +277,8 @@ export function RecordTable_Sequences(
         helpText: 'Number of proteins that contain this domain',
       },
       {
-        key: 'legend',
-        name: 'Legend',
+        key: 'graphic',
+        name: 'Graphic',
         renderCell: (cellProps: { row: RowType }) => {
           const pfamId = cellProps.row.accession as string;
           const symbol = cellProps.row.symbol as string;
@@ -297,15 +298,20 @@ export function RecordTable_Sequences(
 
   return (
     <>
-      <div
-        style={{
-          marginLeft: treeWidth,
-          display: 'flex',
-          flexDirection: 'row-reverse',
-        }}
-      >
-        <Mesa state={pfamMesaState} />
-      </div>
+      {pfamRows.length > 0 && (
+        <div
+          style={{
+            marginLeft: treeWidth,
+            display: 'flex',
+            flexDirection: 'row-reverse',
+          }}
+        >
+          <div>
+            <h4>PFam legend</h4>
+            <Mesa state={pfamMesaState} />
+          </div>
+        </div>
+      )}
       <div
         style={{
           marginLeft: treeWidth,
