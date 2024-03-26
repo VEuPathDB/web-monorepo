@@ -1,6 +1,6 @@
+import React, { CSSProperties, useState } from 'react';
 import { Image } from '@material-ui/icons';
-import { colors, SingleSelect, Warning } from '@veupathdb/coreui';
-import { CSSProperties, useState } from 'react';
+import { colors, SingleSelect } from '@veupathdb/coreui';
 
 interface ToImageOpts {
   height: number;
@@ -50,6 +50,11 @@ export function ExportPlotToImageButton(props: Props) {
             value: 'svg',
           } as const,
           {
+            // display: (
+            //   <>
+            //     PNG &nbsp; <em>(large plots may fail)</em>
+            //   </>
+            // ),
             display: (
               <>
                 PNG &nbsp; <em>(large plots may fail)</em>

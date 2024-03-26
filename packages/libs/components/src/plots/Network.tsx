@@ -1,3 +1,4 @@
+import React from 'react';
 import { DefaultNode } from '@visx/network';
 import { Text } from '@visx/text';
 import { LinkData, NodeData } from '../types/plots/network';

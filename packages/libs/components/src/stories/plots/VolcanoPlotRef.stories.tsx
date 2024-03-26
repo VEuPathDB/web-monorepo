@@ -1,6 +1,4 @@
-import { useEffect } from 'react';
-import { useState } from 'react';
-import { useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Story } from '@storybook/react/types-6-0';
 import VolcanoPlot, { VolcanoPlotProps } from '../../plots/VolcanoPlot';
 import { range } from 'lodash';

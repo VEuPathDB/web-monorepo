@@ -1,10 +1,11 @@
-import {
+import React, {
   CSSProperties,
   forwardRef,
   Ref,
   useCallback,
   useImperativeHandle,
   useRef,
+  useContext,
 } from 'react';
 import {
   VolcanoPlotData,
@@ -34,7 +35,6 @@ import {
   plotToImage,
 } from './visxVEuPathDB';
 import { Polygon } from '@visx/shape';
-import { useContext } from 'react';
 import { PatternLines } from '@visx/visx';
 import Spinner from '../components/Spinner';
 // For screenshotting
@@ -274,7 +274,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           ref={plotRef} // Set ref here. Also tried setting innerRef of Group but that didnt work with domToImage
           style={{ width: '100%', height: '100%' }}
         >
-          {/* The XYChart takes care of laying out the chart elements (children) appropriately. 
+          {/* The XYChart takes care of laying out the chart elements (children) appropriately.
           It uses modularized React.context layers for data, events, etc. The following all becomes an svg,
           so use caution when ordering the children (ex. draw axes before data).  */}
           <XYChart

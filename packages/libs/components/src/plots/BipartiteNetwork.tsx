@@ -1,9 +1,4 @@
-import { BipartiteNetworkData, NodeData } from '../types/plots/network';
-import { partition } from 'lodash';
-import { LabelPosition, Link, NodeWithLabel } from './Network';
-import { Graph } from '@visx/network';
-import { Text } from '@visx/text';
-import {
+import React, {
   CSSProperties,
   ReactNode,
   Ref,
@@ -12,6 +7,11 @@ import {
   useRef,
   useCallback,
 } from 'react';
+import { BipartiteNetworkData, NodeData } from '../types/plots/network';
+import { partition } from 'lodash';
+import { LabelPosition, Link, NodeWithLabel } from './Network';
+import { Graph } from '@visx/network';
+import { Text } from '@visx/text';
 import Spinner from '../components/Spinner';
 import { ToImgopts } from 'plotly.js';
 import { gray } from '@veupathdb/coreui/lib/definitions/colors';

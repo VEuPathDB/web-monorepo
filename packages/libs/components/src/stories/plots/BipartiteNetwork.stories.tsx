@@ -1,4 +1,10 @@
-import { useState, useEffect, useRef, CSSProperties, ReactNode } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  CSSProperties,
+  ReactNode,
+} from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import {
   NodeData,
