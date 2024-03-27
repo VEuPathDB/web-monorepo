@@ -1,6 +1,8 @@
 import React from 'react';
 
 import Checkbox from '../Components/Checkbox';
+import AnchoredTooltip from '../Components/AnchoredTooltip';
+import Icon from '../Components/Icon';
 
 class SelectionCell extends React.PureComponent {
   constructor(props) {
@@ -30,10 +32,12 @@ class SelectionCell extends React.PureComponent {
   }
 
   renderPageCheckbox() {
-    const { rows, isRowSelected, inert } = this.props;
+    const { rows, isRowSelected, inert, options } = this.props;
     const selection = rows.filter(isRowSelected);
     const checked = rows.length && rows.every(isRowSelected);
     const isIndeterminate = selection.length > 0 && !checked;
+
+    const { selectColumnHeadingDetails } = options;
 
     let handler = (e) => {
       e.stopPropagation();
@@ -43,9 +47,29 @@ class SelectionCell extends React.PureComponent {
     };
 
     return (
-      <th className="SelectionCell" onClick={handler}>
+      <th
+        className={
+          'SelectionCell' + (selectColumnHeadingDetails ? '__withDetails' : '')
+        }
+        onClick={handler}
+      >
         {inert ? null : (
-          <Checkbox checked={checked} indeterminate={isIndeterminate} />
+          <AnchoredTooltip
+            content={checked || isIndeterminate ? 'Clear all' : 'Select all'}
+          >
+            <Checkbox checked={checked} indeterminate={isIndeterminate} />
+          </AnchoredTooltip>
+        )}
+        {selectColumnHeadingDetails && (
+          <span>{selectColumnHeadingDetails.heading}</span>
+        )}
+        {selectColumnHeadingDetails && selectColumnHeadingDetails.helpText && (
+          <AnchoredTooltip
+            className="Trigger HelpTrigger"
+            content={selectColumnHeadingDetails.helpText}
+          >
+            <Icon fa="question-circle" />
+          </AnchoredTooltip>
         )}
       </th>
     );

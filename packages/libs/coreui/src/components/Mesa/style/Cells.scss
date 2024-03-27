@@ -59,6 +59,16 @@ $StickyColumnBorderColor: rgb(204, 204, 204);
     width: 4em;
   }
 
+  th.SelectionCell__withDetails {
+    display: flex;
+    width: auto;
+    align-items: center;
+    margin-top: 0px;
+    span {
+      margin-left: 0.5em;
+    }
+  }
+
   .StickyColumnCell {
     &::after {
       content: '';
