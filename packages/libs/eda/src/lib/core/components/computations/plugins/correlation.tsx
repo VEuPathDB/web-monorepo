@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import {
   FeaturePrefilterThresholds,
+  VariableTreeNode,
   useFindEntityAndVariableCollection,
 } from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
@@ -19,61 +20,59 @@ import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { H6 } from '@veupathdb/coreui';
 import { bipartiteNetworkVisualization } from '../../visualizations/implementations/BipartiteNetworkVisualization';
-import { variableCollectionsAreUnique } from '../../../utils/visualization';
-import PluginError from '../../visualizations/PluginError';
 import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
+import { entityTreeToArray } from '../../../utils/study-metadata';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
+import { ancestorEntitiesForEntityId } from '../../../utils/data-element-constraints';
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
-import { ExpandablePanel } from '@veupathdb/coreui';
+import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
 /**
  * Correlation
  *
- * The Correlation Assay vs Assay app takes in a two user-selected collections (ex. Species and Pathways) and
- * runs a pairwise correlation of all the member variables of one collection against the other. The result is
- * a correlation coefficient and a significance value for each pair.
+ * The Correlation app takes all collections and offers correlation between any pair of unique collections
+ * or between a collection and continuous metadata variables. This is the most general of the correlation
+ * plugins to date.
  *
- * In its current state, this app is targeted toward a specific use case of correlating
- * taxa with pathways or genes.
+ * As of 03/2024, this correlation plugin is used for genomics (except vectorbase) sites
+ * to help them understand WGCNA outputs and their relationship to metadata.
  */
 
-export type CorrelationAssayAssayConfig = t.TypeOf<
-  typeof CorrelationAssayAssayConfig
->;
+export type CorrelationConfig = t.TypeOf<typeof CorrelationConfig>;
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CorrelationAssayAssayConfig = t.partial({
+export const CorrelationConfig = t.partial({
   collectionVariable: VariableCollectionDescriptor,
   collectionVariable2: VariableCollectionDescriptor,
   correlationMethod: t.string,
   prefilterThresholds: FeaturePrefilterThresholds,
 });
 
-const CompleteCorrelationAssayAssayConfig = partialToCompleteCodec(
-  CorrelationAssayAssayConfig
-);
+// A complete correlation configuration may or may not have a second collection. The backend
+// will fill in the empty collectionVariable2 slot with continuous metadata variables.
+const CompleteCorrelationConfig = t.intersection([
+  t.type({
+    collectionVariable: VariableCollectionDescriptor,
+    correlationMethod: t.string,
+    prefilterThresholds: FeaturePrefilterThresholds,
+  }),
+  t.partial({
+    collectionVariable2: VariableCollectionDescriptor,
+  }),
+]);
 
 export const plugin: ComputationPlugin = {
-  configurationComponent: CorrelationAssayAssayConfiguration,
-  configurationDescriptionComponent:
-    CorrelationAssayAssayConfigDescriptionComponent,
+  configurationComponent: CorrelationConfiguration,
+  configurationDescriptionComponent: CorrelationConfigDescriptionComponent,
   createDefaultConfiguration: () => ({}),
-  isConfigurationComplete: (configuration) => {
-    return (
-      CompleteCorrelationAssayAssayConfig.is(configuration) &&
-      variableCollectionsAreUnique([
-        configuration.collectionVariable,
-        configuration.collectionVariable2,
-      ])
-    );
-  },
+  isConfigurationComplete: CompleteCorrelationConfig.is,
   visualizationPlugins: {
     bipartitenetwork: bipartiteNetworkVisualization.withOptions({
       getLegendTitle(config) {
-        if (CorrelationAssayAssayConfig.is(config)) {
+        if (CorrelationConfig.is(config)) {
           return ['absolute correlation coefficient', 'correlation direction'];
         } else {
           return [];
@@ -83,25 +82,23 @@ export const plugin: ComputationPlugin = {
   },
   isEnabledInPicker: isEnabledInPicker,
   studyRequirements:
-    'These visualizations are only available for studies with metagenomic data.',
+    'These visualizations are only available for studies with compatible metadata.',
 };
 
 // Renders on the thumbnail page to give a summary of the app instance
-function CorrelationAssayAssayConfigDescriptionComponent({
+function CorrelationConfigDescriptionComponent({
   computation,
 }: {
   computation: Computation;
 }) {
   const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
-  assertComputationWithConfig(computation, CorrelationAssayAssayConfig);
+  assertComputationWithConfig(computation, CorrelationConfig);
 
   const { collectionVariable, collectionVariable2, correlationMethod } =
     computation.descriptor.configuration;
 
-  const entityAndCollectionVariableTreeNode1 =
+  const entityAndCollectionVariableTreeNode =
     findEntityAndVariableCollection(collectionVariable);
-  const entityAndCollectionVariableTreeNode2 =
-    findEntityAndVariableCollection(collectionVariable2);
 
   const correlationMethodDisplayName = correlationMethod
     ? CORRELATION_METHODS.find((method) => method.value === correlationMethod)
@@ -111,24 +108,18 @@ function CorrelationAssayAssayConfigDescriptionComponent({
   return (
     <div className="ConfigDescriptionContainer">
       <h4>
-        Taxonomic level:{' '}
+        Data 1:{' '}
         <span>
-          {entityAndCollectionVariableTreeNode1 ? (
-            `${entityAndCollectionVariableTreeNode1.entity.displayName} > ${entityAndCollectionVariableTreeNode1.variableCollection.displayName}`
+          {entityAndCollectionVariableTreeNode ? (
+            `${entityAndCollectionVariableTreeNode.entity.displayName} > ${entityAndCollectionVariableTreeNode.variableCollection.displayName}`
           ) : (
             <i>Not selected</i>
           )}
         </span>
       </h4>
       <h4>
-        Functional data:{' '}
-        <span>
-          {entityAndCollectionVariableTreeNode2 ? (
-            `${entityAndCollectionVariableTreeNode2.entity.displayName} > ${entityAndCollectionVariableTreeNode2.variableCollection.displayName}`
-          ) : (
-            <i>Not selected</i>
-          )}
-        </span>
+        Data 2:{' '}
+        <span>{collectionVariable2 ? 'chosen' : <i>Not selected</i>}</span>
       </h4>
       <h4>
         Method:{' '}
@@ -153,9 +144,7 @@ const DEFAULT_VARIANCE_THRESHOLD = 0;
 const DEFAULT_STANDARD_DEVIATION_THRESHOLD = 0;
 
 // Shows as Step 1 in the full screen visualization page
-export function CorrelationAssayAssayConfiguration(
-  props: ComputationConfigProps
-) {
+export function CorrelationConfiguration(props: ComputationConfigProps) {
   const {
     computationAppOverview,
     computation,
@@ -163,9 +152,10 @@ export function CorrelationAssayAssayConfiguration(
     visualizationId,
   } = props;
 
-  assertComputationWithConfig(computation, CorrelationAssayAssayConfig);
+  const configuration = computation.descriptor
+    .configuration as CorrelationConfig;
 
-  const { configuration } = computation.descriptor;
+  assertComputationWithConfig(computation, CorrelationConfig);
 
   const changeConfigHandler = useConfigChangeHandler(
     analysisState,
@@ -189,31 +179,35 @@ export function CorrelationAssayAssayConfiguration(
   }, []);
 
   // Content for the expandable help section
+  // Note the text is dependent on the context, for example in genomics we'll use different
+  // language than in mbio.
   const helpContent = (
     <div className={cx('-HelpInfoContainer')}>
       <H6>What is correlation?</H6>
       <p>
-        The correlation between two variables (taxa, genes, sample metadata,
-        etc.) describes the degree to which their presence in samples
-        co-fluctuate. For example, the Age and Shoe Size of children are
-        correlated since as a child ages, their feet grow.
+        The correlation between two variables (genes, sample metadata, etc.)
+        describes the degree to which their presence in samples co-fluctuate.
+        For example, the Age and Shoe Size of children are correlated since as a
+        child ages, their feet grow.
       </p>
       <p>Here we look for correlation between:</p>
       <ol>
-        <li>Abundance of taxa at a given taxonomic level</li>
-        <li>Abundance of functional data (e.g. pathways, genes)</li>
+        <li>
+          Abundance of taxa at a given taxonomic level or functional data such
+          as pathway abundance
+        </li>
+        <li>
+          Continuous metadata variables that are compatable, i.e. on an entity
+          that is 1-1 with the assay entity.
+        </li>
       </ol>
       <br></br>
       <H6>Inputs:</H6>
       <p>
         <ul>
           <li>
-            <strong>Taxonomic Level.</strong> The taxonomic abundance data to be
-            used in the calculation.
-          </li>
-          <li>
-            <strong>Functional Data.</strong> The pathway, metabolic, or gene
-            data to be correlatd against the taxonomic abundance data.
+            <strong>Data.</strong> The abundance data to be correlated against
+            the study's metadata variables.
           </li>
           <li>
             <strong>Method.</strong> The type of correlation to compute. The
@@ -236,14 +230,15 @@ export function CorrelationAssayAssayConfiguration(
         For each pair of variables, the correlation computation returns
         <ul>
           <li>
-            Correlation coefficient. A value between [-1, 1] that describes the
-            similarity of the input variables. Positive values indicate that
-            both variables rise and fall together, whereas negative values
-            indicate that as one rises, the other falls.
+            <strong>Correlation coefficient.</strong> A value between [-1, 1]
+            that describes the similarity of the input variables. Positive
+            values indicate that both the abundance and metadata variable rise
+            and fall together, whereas negative values indicate that as one
+            rises, the other falls.
           </li>
           <li>
-            P Value. A measure of the probability of observing the result by
-            chance.
+            <strong>P Value.</strong> A measure of the probability of observing
+            the result by chance.
           </li>
         </ul>
       </p>
@@ -287,21 +282,16 @@ export function CorrelationAssayAssayConfiguration(
           <div className={cx('-CorrelationOuterConfigContainer')}>
             <H6>Input Data</H6>
             <div className={cx('-InputContainer')}>
-              {/* <span>Taxonomic level</span> */}
               <span>Data 1</span>
               <VariableCollectionSelectList
                 value={configuration.collectionVariable}
                 onSelect={partial(changeConfigHandler, 'collectionVariable')}
-                // collectionPredicate={isTaxonomicVariableCollection}
                 collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
               />
-              {/* <span>Functional data</span>
-               */}
               <span>Data 2</span>
               <VariableCollectionSelectList
                 value={configuration.collectionVariable2}
                 onSelect={partial(changeConfigHandler, 'collectionVariable2')}
-                // collectionPredicate={isFunctionalCollection}
                 collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
               />
             </div>
@@ -359,18 +349,6 @@ export function CorrelationAssayAssayConfiguration(
             </div>
           </div>
         </div>
-        <div>
-          <PluginError
-            error={
-              !variableCollectionsAreUnique([
-                configuration.collectionVariable,
-                configuration.collectionVariable2,
-              ])
-                ? 'Input data must be unique. Please select different data.'
-                : undefined
-            }
-          />
-        </div>
         <ExpandablePanel
           title="Learn more about correlation"
           subTitle={{}}
@@ -384,28 +362,86 @@ export function CorrelationAssayAssayConfiguration(
   );
 }
 
-// The correlation assay x assay app should only be available
-// for studies with metagenomic data.
+// The correlation assay x metadata app is only available for studies
+// with appropriate metadata. Specifically, the study
+// must have at least one continuous metadata variable that is on a one-to-one path
+// from the assay entity.
+// We made some assumptions to simplify logic.
+// 1. Curated studies have one parent for all assay entities.
+// 2. All assay entities are one-to-one with their parent
+// 3. Studies with at least 2 entities are curated, so we can check for assay entities using our assay ids.
+// 4. Assay entities have no relevant metadata within their own entity.
+// See PR #74 in service-eda-compute for the matching logic on the backend.
 function isEnabledInPicker({
   studyMetadata,
 }: IsEnabledInPickerParams): boolean {
   if (!studyMetadata) return false;
 
-  /** Temporary removal of collection type restriction!
-   * This temporary change allows all collections to play in the assay v assay app.
-   * The hack will be removed as part of #906 part 2.
-   */
-  // const entities = entityTreeToArray(studyMetadata.rootEntity);
+  const entities = entityTreeToArray(studyMetadata.rootEntity);
 
-  // // Check that the metagenomic entity exists _and_ that it has
-  // // at least one collection.
-  // const hasMetagenomicData = entities.some(
-  //   (entity) => entity.id === 'OBI_0002623' && !!entity.collections?.length
-  // ); // OBI_0002623 = Metagenomic sequencing assay
+  // Ensure there are collections in this study. Otherwise, disable app
+  const studyHasCollections = entities.some(
+    (entity) => !!entity.collections?.length
+  );
+  if (!studyHasCollections) return false;
 
-  // return hasMetagenomicData;
+  // Find metadata variables.
+  let metadataVariables: VariableTreeNode[];
+  if (entities.length > 1) {
+    // Then we're in a curated study. So we can expect to find an entity with an id in ASSAY_ENTITIES,
+    // which we can use to limit our metadata search to only appropriate entities.
 
-  /** end of temporary change */
+    // Step 1. Find the first assay node. Right now Assays are the only entities with collections,
+    // so we can just grab the first entity we see that has a collection.
+    const firstAssayEntityIndex = entities.findIndex(
+      (entity) => !!entity.collections?.length
+    );
+    if (firstAssayEntityIndex === -1) return false;
 
-  return true;
+    // Step 2. Find all ancestor entites of the assayEntity that are on a one-to-one path with assayEntity.
+    // Step 2a. Grab ancestor entities.
+    const ancestorEntities = ancestorEntitiesForEntityId(
+      entities[firstAssayEntityIndex].id,
+      entities
+    ).reverse(); // Reverse so that the ancestorEntities[0] is the assay and higher indices are further up the tree.
+
+    // Step 2b. Trim the ancestorEntities so that we only keep those that are on
+    // a 1:1 path. Once we find an ancestor that is many to one with its parent, we
+    // know we've hit the end of the 1:1 path.
+    const lastOneToOneAncestorIndex = ancestorEntities.findIndex(
+      (entity) => entity.isManyToOneWithParent
+    );
+    const oneToOneAncestors = ancestorEntities.slice(
+      1, // removing the assay itself since we assume assay entities have no metadata
+      lastOneToOneAncestorIndex + 1
+    );
+
+    // Step 3. Grab variables from the ancestors.
+    metadataVariables = oneToOneAncestors.flatMap((entity) => entity.variables);
+  } else {
+    // Then there is only one entity in the study. User datasets only have one entity.
+    // Regardless, in the one entity case we want to consider all variables that are not
+    // part of a collection as candidate metadata variables for this app.
+
+    // Find all variables in any collection, then remove them from the
+    // list of all variables to get a list of metadata variables.
+    const variablesInACollection = entities[0].collections?.flatMap(
+      (collection) => {
+        return collection.memberVariableIds;
+      }
+    );
+    metadataVariables = entities[0].variables.filter((variable) => {
+      return !variablesInACollection?.includes(variable.id);
+    });
+  }
+
+  // Final filter - keep only the variables that are numeric and continuous. Support for dates coming soon!
+  const hasContinuousVariable = metadataVariables.some(
+    (variable) =>
+      'dataShape' in variable &&
+      variable.dataShape === 'continuous' &&
+      (variable.type === 'number' || variable.type === 'integer') // Can remove this line once the backend supports dates.
+  );
+
+  return hasContinuousVariable;
 }

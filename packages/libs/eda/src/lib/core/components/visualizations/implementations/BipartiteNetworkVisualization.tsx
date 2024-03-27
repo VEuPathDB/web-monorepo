@@ -32,6 +32,7 @@ import { fixVarIdLabel } from '../../../utils/visualization';
 import DataClient from '../../../api/DataClient';
 import { CorrelationAssayMetadataConfig } from '../../computations/plugins/correlationAssayMetadata';
 import { CorrelationAssayAssayConfig } from '../../computations/plugins/correlationAssayAssay';
+import { CorrelationConfig } from '../../computations/plugins/correlation';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { scaleLinear } from 'd3';
 import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
@@ -111,9 +112,11 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
 
   const computationConfiguration:
     | CorrelationAssayMetadataConfig
-    | CorrelationAssayAssayConfig = computation.descriptor.configuration as
+    | CorrelationAssayAssayConfig
+    | CorrelationConfig = computation.descriptor.configuration as
     | CorrelationAssayMetadataConfig
-    | CorrelationAssayAssayConfig;
+    | CorrelationAssayAssayConfig
+    | CorrelationConfig;
 
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,
