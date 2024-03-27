@@ -21,6 +21,8 @@ export default function OutlinedButton({
   icon = () => null,
   themeRole,
   styleOverrides = {},
+  iconPosition = 'left',
+  additionalAriaProperties = {},
 }: SwissArmyButtonVariantProps) {
   const defaultStyle: ButtonStyleSpec = {
     default: {
@@ -126,6 +128,8 @@ export default function OutlinedButton({
       tooltip={tooltip}
       size={size}
       icon={icon}
+      iconPosition={iconPosition}
+      additionalAriaProperties={additionalAriaProperties}
     />
   );
 }

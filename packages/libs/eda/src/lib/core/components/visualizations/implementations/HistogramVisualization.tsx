@@ -1540,15 +1540,8 @@ function getRequestParams(
   ) => HistogramRequestParams
 ): HistogramRequestParams {
   const {
-    binWidth = NumberVariable.is(variable) || DateVariable.is(variable)
-      ? config.independentAxisValueSpec === 'Full'
-        ? variable.distributionDefaults.binWidthOverride ??
-          variable.distributionDefaults.binWidth
-        : undefined
-      : undefined,
-    binWidthTimeUnit = variable?.type === 'date'
-      ? variable.distributionDefaults.binUnits
-      : undefined,
+    binWidth,
+    binWidthTimeUnit,
     valueSpec,
     overlayVariable,
     facetVariable,

@@ -129,6 +129,7 @@ export class AnalysisClient extends FetchClientWithCredentials {
     const body: NewAnalysis = pick(analysis, [
       'displayName',
       'description',
+      'notes',
       'descriptor',
       'isPublic',
       'studyId',
