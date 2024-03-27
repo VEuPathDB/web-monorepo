@@ -11,8 +11,6 @@ import {
   assertComputationWithConfig,
   isNotAbsoluteAbundanceVariableCollection,
   partialToCompleteCodec,
-  isTaxonomicVariableCollection,
-  isFunctionalCollection,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
@@ -26,7 +24,6 @@ import PluginError from '../../visualizations/PluginError';
 import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
-import { entityTreeToArray } from '../../../utils/study-metadata';
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
 import { ExpandablePanel } from '@veupathdb/coreui';
 
@@ -49,7 +46,7 @@ export type CorrelationAssayAssayConfig = t.TypeOf<
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CorrelationAssayAssayConfig = t.partial({
-  collectionVariable1: VariableCollectionDescriptor,
+  collectionVariable: VariableCollectionDescriptor,
   collectionVariable2: VariableCollectionDescriptor,
   correlationMethod: t.string,
   prefilterThresholds: FeaturePrefilterThresholds,
@@ -68,7 +65,7 @@ export const plugin: ComputationPlugin = {
     return (
       CompleteCorrelationAssayAssayConfig.is(configuration) &&
       variableCollectionsAreUnique([
-        configuration.collectionVariable1,
+        configuration.collectionVariable,
         configuration.collectionVariable2,
       ])
     );
@@ -98,11 +95,11 @@ function CorrelationAssayAssayConfigDescriptionComponent({
   const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
   assertComputationWithConfig(computation, CorrelationAssayAssayConfig);
 
-  const { collectionVariable1, collectionVariable2, correlationMethod } =
+  const { collectionVariable, collectionVariable2, correlationMethod } =
     computation.descriptor.configuration;
 
   const entityAndCollectionVariableTreeNode1 =
-    findEntityAndVariableCollection(collectionVariable1);
+    findEntityAndVariableCollection(collectionVariable);
   const entityAndCollectionVariableTreeNode2 =
     findEntityAndVariableCollection(collectionVariable2);
 
@@ -293,8 +290,8 @@ export function CorrelationAssayAssayConfiguration(
               {/* <span>Taxonomic level</span> */}
               <span>Data 1</span>
               <VariableCollectionSelectList
-                value={configuration.collectionVariable1}
-                onSelect={partial(changeConfigHandler, 'collectionVariable1')}
+                value={configuration.collectionVariable}
+                onSelect={partial(changeConfigHandler, 'collectionVariable')}
                 // collectionPredicate={isTaxonomicVariableCollection}
                 collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
               />
@@ -366,7 +363,7 @@ export function CorrelationAssayAssayConfiguration(
           <PluginError
             error={
               !variableCollectionsAreUnique([
-                configuration.collectionVariable1,
+                configuration.collectionVariable,
                 configuration.collectionVariable2,
               ])
                 ? 'Input data must be unique. Please select different data.'
