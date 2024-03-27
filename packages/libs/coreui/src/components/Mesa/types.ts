@@ -44,6 +44,10 @@ export interface MesaStateProps<
     useStickyHeader?: boolean;
     useStickyFirstNColumns?: number;
     tableBodyMaxHeight?: string;
+    selectColumnHeadingDetails?: {
+      heading: string;
+      helpText?: string;
+    };
     selectedNoun?: string;
     selectedPluralNoun?: string;
     searchPlaceholder?: string;

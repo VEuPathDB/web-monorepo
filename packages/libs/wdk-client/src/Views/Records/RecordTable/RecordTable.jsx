@@ -113,10 +113,19 @@ class RecordTable extends Component {
     const displayableAttributes = this.getDisplayableAttributes(this.props);
     const columns = this.getColumns(this.props);
     const data = this.getOrderedData(this.props);
+    const isOrthologTable = this.props.table.name === 'Orthologs';
+    const clustalInputRow = isOrthologTable
+      ? columns.find((c) => c.name === 'clustalInput')
+      : undefined;
 
     // Manipulate columns to match properties expected in Mesa
     const mesaReadyColumns = columns
-      .filter((c) => c.isDisplayable)
+      .filter(
+        (c) =>
+          // NOTE: I'd rather avoid this condition by amending the clustalInput column attribute in the model
+          (c.isDisplayable && isOrthologTable && c.name !== 'clustalInput') ||
+          (c.isDisplayable && !isOrthologTable)
+      )
       .map((c) => {
         const {
           name,
@@ -235,6 +244,9 @@ class RecordTable extends Component {
       eventHandlers: {
         onSort: this.onSort,
         onExpandedRowsChange,
+        ...(isOrthologTable
+          ? { ...this.props.orthoTableProps.eventHandlers }
+          : {}),
       },
       uiState: {
         sort: this.state.sort,
@@ -247,7 +259,21 @@ class RecordTable extends Component {
         className: 'wdk-DataTableContainer',
         getRowId: getSortIndex,
         showCount: mesaReadyRows.length > 1,
+        ...(isOrthologTable
+          ? {
+              ...this.props.orthoTableProps.options,
+              selectColumnHeadingDetails: {
+                heading: clustalInputRow.displayName,
+                helpText: clustalInputRow.help,
+              },
+            }
+          : {}),
       },
+      ...(isOrthologTable
+        ? {
+            actions: this.props.orthoTableProps.actions,
+          }
+        : {}),
     };
 
     if (value.length === 0 || columns.length === 0) {

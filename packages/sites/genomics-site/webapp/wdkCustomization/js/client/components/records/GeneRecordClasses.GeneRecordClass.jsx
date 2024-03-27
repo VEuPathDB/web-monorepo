@@ -1356,11 +1356,50 @@ function OrthologsFormContainer(props) {
 }
 
 class OrthologsForm extends SortKeyTable {
-  toggleAll(checked) {
-    const node = ReactDOM.findDOMNode(this);
-    for (const input of node.querySelectorAll('input[name="gene_ids"]')) {
-      input.checked = checked;
-    }
+  constructor() {
+    super();
+    this.state = {
+      selectedRowIds: [],
+    };
+    this.isRowSelected = this.isRowSelected.bind(this);
+    this.onRowSelect = this.onRowSelect.bind(this);
+    this.onRowDeselect = this.onRowDeselect.bind(this);
+    this.onMultipleRowSelect = this.onMultipleRowSelect.bind(this);
+    this.onMultipleRowDeselect = this.onMultipleRowDeselect.bind(this);
+  }
+
+  isRowSelected({ ortho_gene_source_id }) {
+    return this.state.selectedRowIds.includes(ortho_gene_source_id);
+  }
+
+  onRowSelect({ ortho_gene_source_id }) {
+    this.setState((state) => ({
+      selectedRowIds: state.selectedRowIds.concat(ortho_gene_source_id),
+    }));
+  }
+
+  onRowDeselect({ ortho_gene_source_id }) {
+    this.setState((state) => ({
+      selectedRowIds: state.selectedRowIds.filter(
+        (id) => id !== ortho_gene_source_id
+      ),
+    }));
+  }
+
+  onMultipleRowSelect(rows) {
+    this.setState((state) => ({
+      selectedRowIds: state.selectedRowIds.concat(
+        rows.map((row) => row['ortho_gene_source_id'])
+      ),
+    }));
+  }
+
+  onMultipleRowDeselect(rows) {
+    this.setState((state) => ({
+      selectedRowIds: state.selectedRowIds.filter((row) =>
+        rows.includes(row['ortho_gene_source_id'])
+      ),
+    }));
   }
 
   render() {
@@ -1371,6 +1410,29 @@ class OrthologsForm extends SortKeyTable {
         ? true
         : false;
     let not_protein = is_protein ? false : true;
+
+    const orthoTableProps = {
+      options: {
+        isRowSelected: this.isRowSelected,
+        selectedNoun: 'gene',
+        selectedPluralNoun: 'genes',
+      },
+      eventHandlers: {
+        onRowSelect: this.onRowSelect,
+        onRowDeselect: this.onRowDeselect,
+        onMultipleRowSelect: this.onMultipleRowSelect,
+        onMultipleRowDeselect: this.onMultipleRowDeselect,
+      },
+      actions: [
+        {
+          selectionRequired: false,
+          element() {
+            return null;
+          },
+          callback: () => null,
+        },
+      ],
+    };
 
     if (this.props.value.length === 0 || not_protein) {
       return (
@@ -1385,24 +1447,15 @@ class OrthologsForm extends SortKeyTable {
           <input type="hidden" name="type" value="geneOrthologs" />
           <input type="hidden" name="project_id" value={projectId} />
           <input type="hidden" name="gene_ids" value={source_id} />
+          {this.state.selectedRowIds.map((sourceId) => (
+            <input type="hidden" name="gene_ids" value={sourceId} />
+          ))}
           {this.props.transcriptFilter}
           <this.props.DefaultComponent
             {...this.props}
             value={this.sortValue(this.props.value)}
+            orthoTableProps={orthoTableProps}
           />
-          <input
-            type="button"
-            name="CheckAll"
-            value="Check All"
-            onClick={() => this.toggleAll(true)}
-          />
-          <input
-            type="button"
-            name="UnCheckAll"
-            value="Uncheck All"
-            onClick={() => this.toggleAll(false)}
-          />
-          <br />
           <p>
             <b>
               Select sequence type for Clustal Omega multiple sequence
