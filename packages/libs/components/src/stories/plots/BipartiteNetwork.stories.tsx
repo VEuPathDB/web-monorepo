@@ -8,6 +8,7 @@ import {
 import BipartiteNetwork, {
   BipartiteNetworkProps,
   BipartiteNetworkSVGStyles,
+  NodeAction,
 } from '../../plots/BipartiteNetwork';
 import { twoColorPalette } from '../../types/plots/addOns';
 import { Text } from '@visx/text';
@@ -27,6 +28,8 @@ interface TemplateProps {
   svgStyleOverrides?: BipartiteNetworkSVGStyles;
   labelTruncationLength?: number;
   emptyNetworkContent?: ReactNode;
+  nodeActions?: BipartiteNetworkProps['nodeActions'];
+  isSelectable?: boolean;
 }
 
 // Template for showcasing our BipartiteNetwork component.
@@ -43,6 +46,8 @@ const Template: Story<TemplateProps> = (args) => {
     }, 2000);
   }, []);
 
+  const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>([]);
+
   const bipartiteNetworkProps: BipartiteNetworkProps = {
     data: args.data,
     partition1Name: args.partition1Name,
@@ -52,6 +57,13 @@ const Template: Story<TemplateProps> = (args) => {
     svgStyleOverrides: args.svgStyleOverrides,
     labelTruncationLength: args.labelTruncationLength,
     emptyNetworkContent: args.emptyNetworkContent,
+    nodeActions: args.nodeActions,
+    ...(args.isSelectable
+      ? {
+          selectedNodeIds,
+          setSelectedNodeIds,
+        }
+      : {}),
   };
   return (
     <>
@@ -137,6 +149,44 @@ WithStyle.args = {
   partition2Name: 'Partition 2',
   svgStyleOverrides: svgStyleOverrides,
   labelTruncationLength: 5,
+};
+
+const nodeActions: NodeAction[] = [
+  {
+    label: 'Click me!!',
+    onClick(nodeId) {
+      alert('You clicked node ' + nodeId);
+    },
+  },
+  {
+    label: 'Click me, too!!',
+    onClick(nodeId) {
+      alert('You clicked node ' + nodeId);
+    },
+  },
+];
+
+export const WithActions = Template.bind({});
+WithActions.args = {
+  data: simpleData,
+  containerStyles: {
+    marginLeft: '200px',
+  },
+  partition1Name: 'Partition 1',
+  partition2Name: 'Partition 2',
+  nodeActions,
+};
+
+export const WithSelection = Template.bind({});
+WithSelection.args = {
+  data: simpleData,
+  containerStyles: {
+    marginLeft: '200px',
+  },
+  partition1Name: 'Partition 1',
+  partition2Name: 'Partition 2',
+  nodeActions,
+  isSelectable: true,
 };
 
 // With a network that has no nodes or links
