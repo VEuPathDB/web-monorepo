@@ -2,7 +2,7 @@ import { Close, FloatingButton, H5, Paragraph } from '@veupathdb/coreui';
 import { useState } from 'react';
 import { v4 as uuid } from 'uuid';
 
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '@veupathdb/coreui';
 import { Add } from '@material-ui/icons';
 import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';

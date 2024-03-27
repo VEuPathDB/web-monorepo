@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import Templates from '../Templates';
 import Icon from '../Components/Icon';
-import Tooltip from '../Components/Tooltip';
+import HelpTrigger from '../Components/HelpTrigger';
 import { makeClassifier } from '../Utils/Utils';
 import Events, { EventsFactory } from '../Utils/Events';
 import { MESA_SCROLL_EVENT, MESA_REFLOW_EVENT } from './MesaContants';
@@ -65,7 +65,7 @@ class HeadingCell extends React.PureComponent {
   updateOffset() {
     const { element } = this;
     if (!element) return;
-    let offset = Tooltip.getOffset(element);
+    const offset = element.getBoundingClientRect();
     this.setState({ offset });
   }
 
@@ -180,21 +180,8 @@ class HeadingCell extends React.PureComponent {
 
   renderHelpTrigger() {
     const { column } = this.props;
-    const { offset } = this.state;
-    const { top, left, height } = offset ? offset : {};
-    const position = { top: top + height, left };
-
     if (!column.helpText && !column.htmlHelp) return null;
-    return (
-      <Tooltip
-        position={position}
-        className="Trigger HelpTrigger"
-        content={column.htmlHelp ?? column.helpText}
-        renderHtml={!!column.htmlHelp}
-      >
-        <Icon fa="question-circle" />
-      </Tooltip>
-    );
+    return <HelpTrigger>{column.htmlHelp ?? column.helpText}</HelpTrigger>;
   }
 
   // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=

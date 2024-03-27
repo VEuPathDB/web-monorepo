@@ -10,7 +10,7 @@ import {
   LoadingOverlay,
   HelpIcon,
 } from '@veupathdb/wdk-client/lib/Components';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '@veupathdb/coreui';
 import MultiSelectVariableTree from '../../core/components/variableSelectors/MultiSelectVariableTree';
 import { Modal, DataGrid, MesaButton, Download } from '@veupathdb/coreui';
 

@@ -53,7 +53,6 @@ import CommonModal from './Components/Overlays/CommonModal';
 import Dialog from './Components/Overlays/Dialog';
 import Modal from './Components/Overlays/Modal';
 import Popup from './Components/Overlays/Popup';
-import Tooltip from './Components/Overlays/Tooltip';
 import Tabs from './Components/Tabs/Tabs';
 import RealTimeSearchBox from './Components/SearchBox/RealTimeSearchBox';
 import AttributeCell from './Views/ResultTableSummaryView/AttributeCell';
@@ -139,7 +138,6 @@ export {
   TextArea,
   TextBox,
   TextBoxMultivalued,
-  Tooltip,
   UnhandledErrors,
   AttributeCell,
   ResultTable,

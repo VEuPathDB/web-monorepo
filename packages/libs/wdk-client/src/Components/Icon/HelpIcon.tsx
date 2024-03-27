@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Icon from '../../Components/Icon/IconAlt';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 
 import '../../Components/Icon/HelpIcon.scss';
 

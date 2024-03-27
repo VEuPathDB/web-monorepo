@@ -1,6 +1,6 @@
 import React from 'react';
 import { webAppUrl } from '../config';
-import { Tooltip } from '@veupathdb/wdk-client/lib/Components';
+import { Tooltip } from '@veupathdb/coreui';
 import {
   getPropertyValue,
   nodeHasChildren,
@@ -89,7 +89,7 @@ class QueryGrid extends React.Component {
           return (
             <li>
               <i className="bullet fa fa-li fa-circle"></i>
-              <Tooltip content={search.wdkReference.description}>
+              <Tooltip title={search.wdkReference.description}>
                 <a
                   href={
                     webAppUrl +

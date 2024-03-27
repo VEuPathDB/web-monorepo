@@ -36,8 +36,7 @@ import {
   Field,
   FieldTreeNode,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
-import { Tooltip } from '@material-ui/core';
-import { HtmlTooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { HtmlTooltip } from '@veupathdb/coreui';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 // import ShowHideVariableContext
 import { VariableDescriptor } from '../../types/variable';
@@ -479,7 +478,7 @@ export default function VariableList({
 
   const additionalFilters = useMemo(
     () => [
-      <Tooltip
+      <HtmlTooltip
         title={makeStarredVariablesFilterTooltipContent(
           showOnlyStarredVariables,
           starredVariableToggleDisabled
@@ -510,7 +509,7 @@ export default function VariableList({
             <Icon fa="star" />
           </button>
         </div>
-      </Tooltip>,
+      </HtmlTooltip>,
     ],
     [
       showOnlyStarredVariables,

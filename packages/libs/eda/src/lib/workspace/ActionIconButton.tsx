@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconAlt } from '@veupathdb/wdk-client/lib/Components';
 import { cx } from './Utils';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '@veupathdb/coreui';
 
 interface Props {
   iconClassName: string;

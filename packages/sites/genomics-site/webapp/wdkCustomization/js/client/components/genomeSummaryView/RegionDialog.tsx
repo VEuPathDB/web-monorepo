@@ -7,7 +7,7 @@ import {
 } from '../../util/GenomeSummaryViewUtils';
 import { FeatureTable } from './FeatureTable';
 import { FeatureTooltip } from './FeatureTooltip';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 
 interface RegionDialogProps {
   region: GenomeViewRegionModel;

@@ -69,7 +69,7 @@ import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { useInputStyles } from '../inputStyles';
 import { ClearSelectionButton } from '../../variableSelectors/VariableTreeDropdown';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 /**

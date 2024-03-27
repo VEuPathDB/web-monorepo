@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeClassNameHelper } from '../../Utils/ComponentUtils';
-import Tooltip from '../../Components/Overlays/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 import './ShowAllToggle.scss';
 import allStrats from './all-strats.svg';
 import oneStrat from './one-strat.svg';
@@ -17,11 +17,8 @@ export default function ShowAllToggle(props: Props) {
   return (
     <div className={cx()}>
       <Tooltip
-        content="Show only the selected strategy, or all strategies."
-        position={{
-          my: 'top center',
-          at: 'bottom center',
-        }}
+        title="Show only the selected strategy, or all strategies."
+        placement="bottom"
       >
         <div className={cx('--Container')}>
           <div>Show:</div>

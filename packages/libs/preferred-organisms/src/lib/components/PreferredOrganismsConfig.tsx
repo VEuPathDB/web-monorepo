@@ -29,7 +29,7 @@ import { getNodeChildren, getNodeId } from '../utils/organismNodes';
 import { PreferredOrganismsToggleHelp } from './PreferredOrganismsToggleHelp';
 
 import './PreferredOrganismsConfig.scss';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '@veupathdb/coreui';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 
 export const cx = makeClassNameHelper('PreferredOrganismsConfig');

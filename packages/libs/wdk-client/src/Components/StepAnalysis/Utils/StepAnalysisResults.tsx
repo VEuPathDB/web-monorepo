@@ -1,6 +1,6 @@
 import React from 'react';
 import { numericValue } from '@veupathdb/coreui/lib/components/Mesa/Utils/Utils';
-import { Tooltip } from '../../../Components';
+import { Tooltip } from '@veupathdb/coreui';
 
 export const numberRenderFactory =
   (exponential: boolean) =>
@@ -10,7 +10,7 @@ export const numberRenderFactory =
     (
       <div>
         {exponential ? (
-          <Tooltip content={row[key]}>
+          <Tooltip title={row[key]}>
             <div>{numericValue(row[key]).toExponential(precision)}</div>
           </Tooltip>
         ) : (

@@ -12,7 +12,6 @@ import {
   InputAdornment,
   makeStyles,
   TextField,
-  Tooltip,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import InfoIcon from '@material-ui/icons/Info';
@@ -49,7 +48,7 @@ import {
 } from '../core/utils/analysis';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
 import ShareFromAnalysesList from './sharing/ShareFromAnalysesList';
-import { Checkbox, Toggle, colors } from '@veupathdb/coreui';
+import { Checkbox, Toggle, Tooltip, colors } from '@veupathdb/coreui';
 
 interface AnalysisAndDataset {
   analysis: AnalysisSummary & {

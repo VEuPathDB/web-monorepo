@@ -2,7 +2,7 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { isEqual, truncate } from 'lodash';
 import { RecordInstance, AttributeField } from '../../Utils/WdkModel';
 import { safeHtml, wrappable } from '../../Utils/ComponentUtils';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 import { useIsRefOverflowingHorizontally } from '../../Hooks/Overflow';
 
 interface AttributeCellProps {

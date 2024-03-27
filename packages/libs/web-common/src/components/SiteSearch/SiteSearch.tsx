@@ -1,4 +1,4 @@
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 import { DataGrid } from '@veupathdb/coreui';
 import {
   CheckboxList,
