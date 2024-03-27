@@ -120,12 +120,7 @@ class RecordTable extends Component {
 
     // Manipulate columns to match properties expected in Mesa
     const mesaReadyColumns = columns
-      .filter(
-        (c) =>
-          // NOTE: I'd rather avoid this condition by amending the clustalInput column attribute in the model
-          (c.isDisplayable && isOrthologTable && c.name !== 'clustalInput') ||
-          (c.isDisplayable && !isOrthologTable)
-      )
+      .filter((c) => c.isDisplayable)
       .map((c) => {
         const {
           name,
