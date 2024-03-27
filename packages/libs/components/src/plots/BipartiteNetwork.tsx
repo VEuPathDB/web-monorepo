@@ -13,6 +13,7 @@ import {
   useCallback,
   useState,
   useMemo,
+  useEffect,
 } from 'react';
 import Spinner from '../components/Spinner';
 import { ToImgopts } from 'plotly.js';
@@ -20,7 +21,7 @@ import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 import './BipartiteNetwork.css';
 import { ExportPlotToImageButton } from './ExportPlotToImageButton';
 import { plotToImage } from './visxVEuPathDB';
-import { FloatingButton } from '@veupathdb/coreui';
+import { Menu } from '@veupathdb/coreui/lib/components/inputs/Menu';
 
 export interface BipartiteNetworkSVGStyles {
   width?: number; // svg width
@@ -233,29 +234,13 @@ function BipartiteNetwork(
                 '0px 5px 5px -3px rgba(0,0,0,0.2),0px 8px 10px 1px rgba(0,0,0,0.14),0px 3px 14px 2px rgba(0,0,0,0.12)',
             }}
           >
-            <ul
-              style={{
-                padding: 0,
-                margin: 0,
-                listStyle: 'none',
-              }}
-            >
-              {nodeActions.map((nodeAction) => (
-                <li>
-                  <FloatingButton
-                    text={nodeAction.label}
-                    onPress={() => {
-                      nodeAction.onClick(activeNode.id);
-                    }}
-                    styleOverrides={{
-                      container: {
-                        minWidth: 150,
-                      },
-                    }}
-                  />
-                </li>
-              ))}
-            </ul>
+            <Menu
+              items={nodeActions.map((nodeAction) => ({
+                display: nodeAction.label,
+                value: nodeAction,
+              }))}
+              onSelect={(action) => action.onClick(activeNode.id)}
+            />
           </div>
         )}
         <div ref={plotRef} style={{ width: '100%', height: '100%' }}>
@@ -300,7 +285,21 @@ function BipartiteNetwork(
                 }}
                 // Using our Link component so that it uses our nice defaults and
                 // can better expand to handle more complex events (hover and such).
-                linkComponent={({ link }) => <Link link={link} />}
+                linkComponent={({ link }) => {
+                  const linkSelected =
+                    selectedNodeIds == null || selectedNodeIds.length === 0
+                      ? true
+                      : selectedNodeIds.includes(link.source.id) ||
+                        selectedNodeIds.includes(link.target.id);
+                  return (
+                    <Link
+                      link={{
+                        ...link,
+                        color: linkSelected ? link.color : '#eee',
+                      }}
+                    />
+                  );
+                }}
                 nodeComponent={({ node }) => {
                   const partitionIndex = data.partitions[0].nodeIds.includes(
                     node.id
