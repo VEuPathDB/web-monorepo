@@ -1548,9 +1548,6 @@ function getRequestParams(
     xAxisVariable,
   } = config;
 
-  //DKDK
-  console.log('binWidth, binWidthTimeUnit =', binWidth, binWidthTimeUnit);
-
   const binSpec: Pick<HistogramRequestParams['config'], 'binSpec'> = binWidth
     ? {
         binSpec: {
