@@ -664,7 +664,10 @@ function Hit(props: HitProps) {
           </span>
         )}
         {subTitle && (
-          <div className={cx('--ResultSubTitle')}>
+          <div
+            className={cx('--ResultSubTitle')}
+            title={formatSummaryFieldValue(subTitle)}
+          >
             {formatSummaryFieldValue(subTitle)}
           </div>
         )}

@@ -1,4 +1,8 @@
-import { CSSProperties } from 'react';
+import React, {
+  AriaAttributes,
+  ButtonHTMLAttributes,
+  CSSProperties,
+} from 'react';
 import { SvgIconComponent } from '@material-ui/icons';
 
 import { UITheme } from '../theming';
@@ -17,6 +21,9 @@ export type ButtonStyleSpec = {
   hover: ButtonStateStyleSpec;
   pressed: ButtonStateStyleSpec;
   disabled: ButtonStateStyleSpec;
+  icon?: {
+    fontSize: CSSProperties['fontSize'];
+  };
 };
 
 type ButtonStateStyleSpec = {
@@ -51,7 +58,9 @@ type CoreProps = {
    * but moved into a separate prop for client convenience purposes. */
   textTransform?: CSSProperties['textTransform'];
   /** Action to take when the button is clicked. */
-  onPress: () => void;
+  onPress:
+    | (() => void)
+    | ((event: React.MouseEvent<HTMLButtonElement>) => void);
   /** Optional. Indicates if the button is disabled. */
   disabled?: boolean;
   /** Optional. Text to display as a tooltip when button is hovered over. */
@@ -65,6 +74,12 @@ type CoreProps = {
   size?: 'small' | 'medium' | 'large';
   /** Additional styles to apply to the button container. */
   styleOverrides?: PartialButtonStyleSpec;
+  /** Icon can be to the left or to the right of the button's text. Defaults to left. */
+  iconPosition?: 'left' | 'right';
+  /** Can specify additional aria properties as needed. Used in PopoverButton */
+  additionalAriaProperties?: Partial<
+    ButtonHTMLAttributes<HTMLButtonElement> & AriaAttributes
+  >;
 };
 
 /**
@@ -89,7 +104,7 @@ type TextIconProps =
     }
   | {
       /** Text of the button. */
-      text: string;
+      text: string | React.ReactNode;
       /** Optional. SVG component to use as an icon. */
       icon?:
         | React.ComponentType<React.SVGProps<SVGSVGElement>>
