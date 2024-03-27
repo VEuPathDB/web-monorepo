@@ -220,6 +220,7 @@ function MapAnalysisImpl(props: ImplProps) {
     geoConfigs,
     setTimeSliderConfig,
     showLinkToEda = false,
+    setHideVizControl,
   } = props;
   const { activeMarkerConfigurationType, markerConfigurations } = appState;
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
@@ -233,8 +234,9 @@ function MapAnalysisImpl(props: ImplProps) {
   const subsettingClient = useSubsettingClient();
   const geoConfig = geoConfigs[0];
   const history = useHistory();
-  const [hideVizInputsAndControls, setHideVizInputsAndControls] =
-    useState(false);
+
+  //DKDK
+  console.log('appState.hideVizControl =', appState.hideVizControl);
 
   // FIXME use the sharingUrl prop to construct this
   const sharingUrl = new URL(`../${analysisId}/import`, window.location.href)
@@ -408,8 +410,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     geoConfigs={geoConfigs}
                     configuration={activeMarkerConfiguration}
                     updateConfiguration={updateMarkerConfigurations as any}
-                    hideVizInputsAndControls={hideVizInputsAndControls}
-                    setHideVizInputsAndControls={setHideVizInputsAndControls}
+                    setHideVizInputsAndControls={setHideVizControl}
                     setIsSidePanelExpanded={setIsSidePanelExpanded}
                   />
                 );
@@ -439,8 +440,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     geoConfigs={geoConfigs}
                     configuration={activeMarkerConfiguration}
                     updateConfiguration={updateMarkerConfigurations as any}
-                    hideVizInputsAndControls={hideVizInputsAndControls}
-                    setHideVizInputsAndControls={setHideVizInputsAndControls}
+                    setHideVizInputsAndControls={setHideVizControl}
                     setIsSidePanelExpanded={setIsSidePanelExpanded}
                   />
                 );
@@ -468,8 +468,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     geoConfigs={geoConfigs}
                     configuration={activeMarkerConfiguration}
                     updateConfiguration={updateMarkerConfigurations as any}
-                    hideVizInputsAndControls={hideVizInputsAndControls}
-                    setHideVizInputsAndControls={setHideVizInputsAndControls}
+                    setHideVizInputsAndControls={setHideVizControl}
                     setIsSidePanelExpanded={setIsSidePanelExpanded}
                   />
                 );
@@ -814,8 +813,8 @@ function MapAnalysisImpl(props: ImplProps) {
           updateConfiguration: updateMarkerConfigurations as any,
           totalCounts,
           filteredCounts,
-          hideVizInputsAndControls,
-          setHideVizInputsAndControls,
+          hideVizInputsAndControls: appState.hideVizControl,
+          setHideVizInputsAndControls: setHideVizControl,
           setStudyDetailsPanelConfig,
           headerButtons: HeaderButtons,
         };

@@ -152,6 +152,7 @@ export const AppState = t.intersection([
     activeMarkerConfigurationType: MarkerType,
     markerConfigurations: t.array(MarkerConfiguration),
     isSidePanelExpanded: t.boolean,
+    hideVizControl: t.boolean,
   }),
   t.partial({
     studyDetailsPanelConfig: PanelConfig,
@@ -232,6 +233,7 @@ export function useAppState(
         active: true,
         selectedRange: undefined,
       },
+      hideVizControl: false,
       ...(isMegaStudy
         ? {
             studyDetailsPanelConfig: {
@@ -389,5 +391,6 @@ export function useAppState(
     setViewport: useSetter('viewport'),
     setTimeSliderConfig: useSetter('timeSliderConfig', true),
     setStudyDetailsPanelConfig: useSetter('studyDetailsPanelConfig'),
+    setHideVizControl: useSetter('hideVizControl'),
   };
 }
