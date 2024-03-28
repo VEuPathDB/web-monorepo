@@ -11,7 +11,6 @@ import {
   useConfigChangeHandler,
   assertComputationWithConfig,
   isNotAbsoluteAbundanceVariableCollection,
-  partialToCompleteCodec,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
@@ -21,7 +20,9 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { H6 } from '@veupathdb/coreui';
 import { bipartiteNetworkVisualization } from '../../visualizations/implementations/BipartiteNetworkVisualization';
 import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
-import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
+import SingleSelect, {
+  ItemGroup,
+} from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { entityTreeToArray } from '../../../utils/study-metadata';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { ancestorEntitiesForEntityId } from '../../../utils/data-element-constraints';
@@ -270,6 +271,16 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
     }
   }, [configuration.correlationMethod]);
 
+  const metadataItemGroup: ItemGroup<string> = {
+    label: 'Metadata',
+    items: [
+      {
+        value: 'Entity:MetadataCollection',
+        display: 'Continuous metadata variables',
+      },
+    ],
+  };
+
   return (
     <ComputationStepContainer
       computationStepInfo={{
@@ -293,6 +304,7 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
                 value={configuration.collectionVariable2}
                 onSelect={partial(changeConfigHandler, 'collectionVariable2')}
                 collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
+                additionalItemGroups={[metadataItemGroup]}
               />
             </div>
           </div>

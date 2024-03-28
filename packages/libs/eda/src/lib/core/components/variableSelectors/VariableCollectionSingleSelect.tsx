@@ -11,14 +11,16 @@ interface Props {
   collectionPredicate?: (collection: CollectionVariableTreeNode) => boolean;
   value?: VariableCollectionDescriptor;
   onSelect: (value?: VariableCollectionDescriptor) => void;
+  /** Optionally add additional non-collection items to the dropdown */
+  additionalItemGroups?: ItemGroup<string>[];
 }
 
 export function VariableCollectionSelectList(props: Props) {
-  const { collectionPredicate, onSelect, value } = props;
+  const { collectionPredicate, onSelect, value, additionalItemGroups } = props;
   const entities = useStudyEntities();
 
   const items = useMemo(() => {
-    return entities
+    const collectionItems = entities
       .filter(
         (e): e is StudyEntity & Required<Pick<StudyEntity, 'collections'>> =>
           !!e.collections?.length
@@ -38,6 +40,9 @@ export function VariableCollectionSelectList(props: Props) {
         };
       })
       .filter((itemGroup) => itemGroup.items.length > 0); // Remove entites that had all their collections fail the collection predicate.
+    return additionalItemGroups
+      ? [...collectionItems, ...additionalItemGroups]
+      : collectionItems;
   }, [entities, collectionPredicate]);
 
   const handleSelect = useCallback(
@@ -54,9 +59,20 @@ export function VariableCollectionSelectList(props: Props) {
 
   const display = useMemo(() => {
     if (value == null) return 'Select the data';
+    // First check if the value is from a collection
     const collection = entities
       .find((e) => e.id === value.entityId)
       ?.collections?.find((c) => c.id === value.collectionId);
+
+    // If not, check any additionalItemGroups
+    if (!collection) {
+      const item = additionalItemGroups
+        ?.flatMap((group) => group.items)
+        .find(
+          (item) => item.value === `${value.entityId}:${value.collectionId}`
+        );
+      return item ? item.display : `Unknown item: ${value.entityId}`;
+    }
     return (
       collection?.displayName ?? `Unknown collection: ${value.collectionId}`
     );
