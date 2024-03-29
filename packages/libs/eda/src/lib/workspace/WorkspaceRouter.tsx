@@ -43,6 +43,7 @@ type Props = {
    * or left undefined to use all apps associated with the project.
    * This is passed down through several component layers. */
   singleAppMode?: string;
+  helpTabContents?: React.ReactNode;
 };
 
 /**
@@ -55,6 +56,7 @@ export function WorkspaceRouter({
   showLoginForm,
   singleAppMode,
   showUnreleasedData = false,
+  helpTabContents,
 }: Props) {
   const coreUITheme = useUITheme();
   const coreUIPrimaryColor = coreUITheme?.palette.primary;
@@ -235,6 +237,7 @@ export function WorkspaceRouter({
                   downloadClient={downloadClient}
                   singleAppMode={singleAppMode}
                   showUnreleasedData={showUnreleasedData}
+                  helpTabContents={helpTabContents}
                 />
               </WorkspaceContainer>
             )}
@@ -302,6 +305,7 @@ export function WorkspaceRouter({
                   downloadClient={downloadClient}
                   singleAppMode={singleAppMode}
                   showUnreleasedData={showUnreleasedData}
+                  helpTabContents={helpTabContents}
                 />
               </WorkspaceContainer>
             )}

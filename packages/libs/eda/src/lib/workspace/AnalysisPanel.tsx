@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { uniq } from 'lodash';
 import Path from 'path';
 import {
@@ -57,6 +57,8 @@ import { Public } from '@material-ui/icons';
 import { Link } from 'react-router-dom';
 import { AnalysisError } from '../core/components/AnalysisError';
 
+export const WGCNA_DATASET_ID = 'DS_82dc5abc7f';
+
 const AnalysisTabErrorBoundary = ({
   children,
 }: {
@@ -97,6 +99,7 @@ interface Props {
   downloadClient: DownloadClient;
   singleAppMode?: string;
   showUnreleasedData: boolean;
+  helpTabContents?: ReactNode;
 }
 
 /**
@@ -116,6 +119,7 @@ export function AnalysisPanel({
   downloadClient,
   singleAppMode,
   showUnreleasedData,
+  helpTabContents,
 }: Props) {
   const studyRecord = useStudyRecord();
   const analysisState = useAnalysis(analysisId, singleAppMode);
@@ -368,7 +372,14 @@ export function AnalysisPanel({
                   display: 'Record Notes',
                   route: '/notes',
                 },
-              ]}
+              ].concat(
+                studyId === WGCNA_DATASET_ID
+                  ? {
+                      display: 'Learn',
+                      route: '/learn',
+                    }
+                  : []
+              )}
             />
             {mapLink && (
               <Link
@@ -470,6 +481,14 @@ export function AnalysisPanel({
             render={() => (
               <AnalysisTabErrorBoundary>
                 <NotesTab analysisState={analysisState} />
+              </AnalysisTabErrorBoundary>
+            )}
+          />
+          <Route
+            path={`${routeBase}/learn`}
+            render={() => (
+              <AnalysisTabErrorBoundary>
+                {helpTabContents}
               </AnalysisTabErrorBoundary>
             )}
           />
