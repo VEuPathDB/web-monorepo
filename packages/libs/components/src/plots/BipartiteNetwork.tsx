@@ -1,5 +1,5 @@
 import { BipartiteNetworkData, NodeData } from '../types/plots/network';
-import { difference, partition } from 'lodash';
+import { partition } from 'lodash';
 import { LabelPosition, Link, NodeWithLabel } from './Network';
 import { Graph } from '@visx/network';
 import { Text } from '@visx/text';
@@ -18,10 +18,12 @@ import {
 import Spinner from '../components/Spinner';
 import { ToImgopts } from 'plotly.js';
 import { gray } from '@veupathdb/coreui/lib/definitions/colors';
-import './BipartiteNetwork.css';
 import { ExportPlotToImageButton } from './ExportPlotToImageButton';
 import { plotToImage } from './visxVEuPathDB';
 import { Menu } from '@veupathdb/coreui/lib/components/inputs/Menu';
+import { GlyphTriangle } from '@visx/visx';
+
+import './BipartiteNetwork.css';
 
 export interface BipartiteNetworkSVGStyles {
   width?: number; // svg width
@@ -32,7 +34,8 @@ export interface BipartiteNetworkSVGStyles {
 
 export interface NodeAction {
   label: ReactNode;
-  onClick: (nodeId: string) => void;
+  onClick?: () => void;
+  href?: string;
 }
 
 export interface BipartiteNetworkProps {
@@ -57,11 +60,7 @@ export interface BipartiteNetworkProps {
   /** Additional error messaging to show when the network is empty */
   emptyNetworkContent?: ReactNode;
   /** Entries for the actions that appear in the menu when you click a node */
-  nodeActions?: NodeAction[];
-  /** selected nodes */
-  selectedNodeIds?: string[];
-  /** set selected nodes */
-  setSelectedNodeIds?: (nodeIds: string[]) => void;
+  getNodeActions?: (nodeId: string) => NodeAction[];
 }
 
 // Show a few gray nodes when there is no real data.
@@ -94,11 +93,10 @@ function BipartiteNetwork(
     showSpinner = false,
     labelTruncationLength = 20,
     emptyNetworkContent,
-    nodeActions,
-    selectedNodeIds,
-    setSelectedNodeIds,
+    getNodeActions,
   } = props;
 
+  const [highlightedNodeId, setHighlightedNodeId] = useState<string>();
   const [activeNodeId, setActiveNodeId] = useState<string>();
 
   // Use ref forwarding to enable screenshotting of the plot for thumbnail versions.
@@ -203,13 +201,31 @@ function BipartiteNetwork(
 
   const nodes = useMemo(
     () =>
-      nodesByPartitionWithCoordinates[0].concat(
-        nodesByPartitionWithCoordinates[1]
-      ),
-    [nodesByPartitionWithCoordinates]
+      nodesByPartitionWithCoordinates[0]
+        .concat(nodesByPartitionWithCoordinates[1])
+        .map((node) => ({
+          ...node,
+          actions: getNodeActions?.(node.id),
+        })),
+    [getNodeActions, nodesByPartitionWithCoordinates]
   );
 
   const activeNode = nodes.find((node) => node.id === activeNodeId);
+
+  useEffect(() => {
+    const element = document.querySelector('.bpnet-plot-container');
+    if (element == null) return;
+
+    element.addEventListener('click', handler);
+
+    return () => {
+      element.removeEventListener('click', handler);
+    };
+
+    function handler() {
+      setActiveNodeId(undefined);
+    }
+  }, [containerClass]);
 
   return (
     <>
@@ -217,33 +233,47 @@ function BipartiteNetwork(
         className={containerClass}
         style={{ width: '100%', ...containerStyles, position: 'relative' }}
       >
-        {activeNode && nodeActions && (
+        {activeNode?.actions?.length && (
           <div
             style={{
               position: 'absolute',
               left: activeNode.x,
-              top: activeNode.y,
+              top: activeNode.y + 12,
               transform:
                 activeNode.labelPosition === 'left'
                   ? `translate(calc(-2ch - ${
                       activeNode.label?.length ?? 0
-                    }ch - 100%))`
-                  : `translate(calc(2ch + ${activeNode.label?.length ?? 0}ch))`,
+                    }ch - 50%))`
+                  : `translate(calc(2ch + ${
+                      activeNode.label?.length ?? 0 / 2
+                    }ch - 50%))`,
               borderRadius: '4px',
               boxShadow:
                 '0px 5px 5px -3px rgba(0,0,0,0.2),0px 8px 10px 1px rgba(0,0,0,0.14),0px 3px 14px 2px rgba(0,0,0,0.12)',
+              background: 'white',
             }}
           >
             <Menu
-              items={nodeActions.map((nodeAction) => ({
+              items={activeNode.actions.map((nodeAction) => ({
                 display: nodeAction.label,
                 value: nodeAction,
               }))}
-              onSelect={(action) => action.onClick(activeNode.id)}
+              onSelect={(action) => {
+                if (action.href) {
+                  window.location.assign(action.href);
+                } else if (action.onClick) {
+                  action.onClick();
+                }
+                setActiveNodeId(undefined);
+              }}
             />
           </div>
         )}
-        <div ref={plotRef} style={{ width: '100%', height: '100%' }}>
+        <div
+          className="bpnet-plot-container"
+          ref={plotRef}
+          style={{ width: '100%', height: '100%' }}
+        >
           {nodesByPartitionWithCoordinates[0].length > 0 ? (
             <svg
               width={svgStyles.width}
@@ -286,51 +316,84 @@ function BipartiteNetwork(
                 // Using our Link component so that it uses our nice defaults and
                 // can better expand to handle more complex events (hover and such).
                 linkComponent={({ link }) => {
-                  const linkSelected =
-                    selectedNodeIds == null || selectedNodeIds.length === 0
-                      ? true
-                      : selectedNodeIds.includes(link.source.id) ||
-                        selectedNodeIds.includes(link.target.id);
+                  const isGrayedOut =
+                    highlightedNodeId != null &&
+                    link.source.id !== highlightedNodeId &&
+                    link.target.id !== highlightedNodeId;
                   return (
                     <Link
                       link={{
                         ...link,
-                        color: linkSelected ? link.color : '#eee',
+                        color: isGrayedOut ? '#eee' : link.color,
                       }}
                     />
                   );
                 }}
                 nodeComponent={({ node }) => {
-                  const partitionIndex = data.partitions[0].nodeIds.includes(
-                    node.id
-                  )
-                    ? 0
-                    : 1;
-                  const thisPartitionIds =
-                    data.partitions[partitionIndex].nodeIds;
-                  const isSelected = selectedNodeIds?.includes(node.id);
+                  const isHighlighted = highlightedNodeId === node.id;
+                  const rectWidth =
+                    (node.r ?? 6) * 2 + // node diameter
+                    (node.label?.length ?? 0) * 6 + // label width
+                    (12 + 6) + // button + space
+                    (12 + 12 + 12); // paddingLeft + space-between-node-and-label + paddingRight
+                  const rectX =
+                    node.labelPosition === 'left' ? -rectWidth + 12 : -12;
+                  const glyphLeft =
+                    node.labelPosition === 'left' ? rectX + 12 : rectWidth - 24;
                   return (
-                    <NodeWithLabel
-                      node={{
-                        ...node,
-                        strokeWidth: isSelected ? 3 : 1,
-                      }}
-                      labelPosition={node.labelPosition}
-                      truncationLength={labelTruncationLength}
-                      onClick={() => {
-                        const nextSelectedNodeIds = difference(
-                          selectedNodeIds,
-                          thisPartitionIds
-                        );
-                        setSelectedNodeIds?.(
-                          isSelected
-                            ? nextSelectedNodeIds
-                            : nextSelectedNodeIds.concat(node.id)
-                        );
-                        setActiveNodeId(isSelected ? undefined : node.id);
-                      }}
-                      fontWeight={isSelected ? 600 : 400}
-                    />
+                    <>
+                      {node.actions?.length && (
+                        <g className="bpnet-hover-dropdown">
+                          <rect
+                            rx="2.5"
+                            width={rectWidth}
+                            height={24}
+                            x={rectX}
+                            y={-12}
+                            strokeWidth={1}
+                            fill="transparent"
+                            stroke="gray"
+                          />
+                          <GlyphTriangle
+                            left={glyphLeft}
+                            size={36}
+                            style={{
+                              transform: 'rotate(180deg)',
+                            }}
+                          />
+                          <rect
+                            className="hover-trigger"
+                            width={24}
+                            height={24}
+                            x={
+                              node.labelPosition === 'left'
+                                ? rectX
+                                : rectX + rectWidth - 22
+                            }
+                            y={-12}
+                            fill="transparent"
+                            style={{
+                              cursor: 'pointer',
+                            }}
+                            onClick={() => setActiveNodeId(node.id)}
+                          />
+                        </g>
+                      )}
+                      <NodeWithLabel
+                        node={{
+                          ...node,
+                          strokeWidth: isHighlighted ? 3 : 1,
+                        }}
+                        labelPosition={node.labelPosition}
+                        truncationLength={labelTruncationLength}
+                        onClick={() => {
+                          setHighlightedNodeId((id) =>
+                            id === node.id ? undefined : node.id
+                          );
+                        }}
+                        fontWeight={isHighlighted ? 600 : 400}
+                      />
+                    </>
                   );
                 }}
               />

@@ -27,6 +27,7 @@ import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes
 import { ancestorEntitiesForEntityId } from '../../../utils/data-element-constraints';
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
+import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -71,6 +72,39 @@ export const plugin: ComputationPlugin = {
         } else {
           return [];
         }
+      },
+      makeGetNodeActions(studyMetadata) {
+        const entities = entityTreeToArray(studyMetadata.rootEntity);
+        const variables = entities.flatMap((e) => e.variables);
+        const collections = entities.flatMap(
+          (entity) => entity.collections ?? []
+        );
+        const hostCollection = collections.find(
+          (c) => c.id === 'EUPATH_0005050'
+        );
+        const parasiteCollection = collections.find(
+          (c) => c.id === 'EUPATH_0005051'
+        );
+        return function getNodeActions(nodeId: string) {
+          const [, variableId] = nodeId.split('.');
+          const variable = variables.find((v) => v.id === variableId);
+          if (variable == null) return [];
+
+          const href = parasiteCollection?.memberVariableIds.includes(
+            variable.id
+          )
+            ? `https://qa.plasmodb.org/plasmo/app/search/transcript/GenesByRNASeqpfal3D7_Lee_Gambian_ebi_rnaSeq_RSRCWGCNAModules?param.wgcnaParam=${variable.displayName.toLowerCase()}&autoRun=1`
+            : hostCollection?.memberVariableIds.includes(variable.id)
+            ? `https://qa.hostdb.org/hostdb/app/search/transcript/GenesByRNASeqhsapREF_Lee_Gambian_ebi_rnaSeq_RSRCWGCNAModules?param.wgcnaParam=${variable.displayName.toLowerCase()}&autoRun=1`
+            : undefined;
+          if (href == null) return [];
+          return [
+            {
+              label: 'See list of genes',
+              href,
+            },
+          ];
+        };
       },
     }), // Must match name in data service and in visualization.tsx
   },

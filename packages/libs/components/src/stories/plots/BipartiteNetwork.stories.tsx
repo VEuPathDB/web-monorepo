@@ -28,7 +28,7 @@ interface TemplateProps {
   svgStyleOverrides?: BipartiteNetworkSVGStyles;
   labelTruncationLength?: number;
   emptyNetworkContent?: ReactNode;
-  nodeActions?: BipartiteNetworkProps['nodeActions'];
+  getNodeActions?: BipartiteNetworkProps['getNodeActions'];
   isSelectable?: boolean;
 }
 
@@ -57,7 +57,7 @@ const Template: Story<TemplateProps> = (args) => {
     svgStyleOverrides: args.svgStyleOverrides,
     labelTruncationLength: args.labelTruncationLength,
     emptyNetworkContent: args.emptyNetworkContent,
-    nodeActions: args.nodeActions,
+    getNodeActions: args.getNodeActions,
     ...(args.isSelectable
       ? {
           selectedNodeIds,
@@ -151,20 +151,22 @@ WithStyle.args = {
   labelTruncationLength: 5,
 };
 
-const nodeActions: NodeAction[] = [
-  {
-    label: 'Click me!!',
-    onClick(nodeId) {
-      alert('You clicked node ' + nodeId);
+function getNodeActions(nodeId: string): NodeAction[] {
+  return [
+    {
+      label: 'Click me!!',
+      onClick() {
+        alert('You clicked node ' + nodeId);
+      },
     },
-  },
-  {
-    label: 'Click me, too!!',
-    onClick(nodeId) {
-      alert('You clicked node ' + nodeId);
+    {
+      label: 'Click me, too!!',
+      onClick() {
+        alert('You clicked node ' + nodeId);
+      },
     },
-  },
-];
+  ];
+}
 
 export const WithActions = Template.bind({});
 WithActions.args = {
@@ -174,7 +176,7 @@ WithActions.args = {
   },
   partition1Name: 'Partition 1',
   partition2Name: 'Partition 2',
-  nodeActions,
+  getNodeActions,
 };
 
 export const WithSelection = Template.bind({});
@@ -185,7 +187,7 @@ WithSelection.args = {
   },
   partition1Name: 'Partition 1',
   partition2Name: 'Partition 2',
-  nodeActions,
+  getNodeActions,
   isSelectable: true,
 };
 

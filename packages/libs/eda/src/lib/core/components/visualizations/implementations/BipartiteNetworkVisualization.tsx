@@ -12,6 +12,7 @@ import { RequestOptions } from '../options/types';
 // Bipartite network imports
 import BipartiteNetwork, {
   BipartiteNetworkProps,
+  NodeAction,
 } from '@veupathdb/components/lib/plots/BipartiteNetwork';
 import BipartiteNetworkSVG from './selectorIcons/BipartiteNetworkSVG';
 import {
@@ -44,6 +45,7 @@ import { NumberOrDate } from '@veupathdb/components/lib/types/general';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { FacetedPlotLayout } from '../../layouts/FacetedPlotLayout';
 import { H6 } from '@veupathdb/coreui';
+import { StudyMetadata } from '../../..';
 // end imports
 
 // Defaults
@@ -85,7 +87,11 @@ interface Options
   extends LayoutOptions,
     TitleOptions,
     LegendOptions,
-    RequestOptions<BipartiteNetworkConfig, {}, BipartiteNetworkRequestParams> {}
+    RequestOptions<BipartiteNetworkConfig, {}, BipartiteNetworkRequestParams> {
+  makeGetNodeActions?: (
+    studyMetadata: StudyMetadata
+  ) => ((nodeId: string) => NodeAction[]) | undefined;
+}
 
 // Bipartite Network Visualization
 // The bipartite network takes no input variables, because the received data will complete the plot.
@@ -297,6 +303,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     svgStyleOverrides: bipartiteNetworkSVGStyles,
     labelTruncationLength: 40,
     emptyNetworkContent,
+    getNodeActions: options?.makeGetNodeActions?.(studyMetadata),
   };
 
   const plotNode = (
