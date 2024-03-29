@@ -3,7 +3,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import Path from 'path';
 
 // Components
-import { H3, Table, FloatingButton, FilledButton } from '@veupathdb/coreui';
+import { H3, H4, Table, FloatingButton, FilledButton } from '@veupathdb/coreui';
 
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import AnalysisNameDialog from './AnalysisNameDialog';
@@ -21,6 +21,7 @@ import { getStudyAccess } from '@veupathdb/study-data-access/lib/shared/studies'
 import { shouldOfferLinkToDashboard } from '@veupathdb/study-data-access/lib/study-access/permission';
 import { isStubEntity } from '../core/hooks/study';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { WGCNA_DATASET_ID } from './AnalysisPanel';
 
 interface EDAWorkspaceHeadingProps {
   /** Optional AnalysisState for "New analysis" button functionality */
@@ -53,6 +54,9 @@ export function EDAWorkspaceHeading({
       ]?.actionAuthorization.subsetting
     );
 
+  const isStudyExplorerWorkspace =
+    studyRecord.attributes.dataset_id === WGCNA_DATASET_ID;
+
   useEffect(() => {
     setDialogIsOpen(false);
   }, [analysisId]);
@@ -60,9 +64,18 @@ export function EDAWorkspaceHeading({
   return (
     <>
       <div className={cx('-Heading')}>
-        <H3 additionalStyles={{ padding: 0 }}>
-          {safeHtml(studyRecord.displayName)}
-        </H3>
+        {isStudyExplorerWorkspace ? (
+          <div>
+            <H3 additionalStyles={{ padding: 0 }}>Study Explorer</H3>
+            <H4 additionalStyles={{ fontWeight: 400 }}>
+              {safeHtml(studyRecord.displayName)}
+            </H4>
+          </div>
+        ) : (
+          <H3 additionalStyles={{ padding: 0 }}>
+            {safeHtml(studyRecord.displayName)}
+          </H3>
+        )}
         <div>
           {!permissionsValue.loading &&
             shouldOfferLinkToDashboard(
