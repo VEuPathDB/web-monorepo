@@ -28,6 +28,7 @@ import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes
 import { ancestorEntitiesForEntityId } from '../../../utils/data-element-constraints';
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
+import { MixedVariableSelectList } from '../../variableSelectors/MixedVariableSingleSelect';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -47,7 +48,8 @@ export type CorrelationConfig = t.TypeOf<typeof CorrelationConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CorrelationConfig = t.partial({
   collectionVariable: VariableCollectionDescriptor,
-  collectionVariable2: VariableCollectionDescriptor,
+  collectionVariable2: t.union([VariableCollectionDescriptor, t.string]),
+  useMetadata: t.boolean,
   correlationMethod: t.string,
   prefilterThresholds: FeaturePrefilterThresholds,
 });
@@ -58,10 +60,11 @@ const CompleteCorrelationConfig = t.intersection([
   t.type({
     collectionVariable: VariableCollectionDescriptor,
     correlationMethod: t.string,
+    useMetadata: t.boolean,
     prefilterThresholds: FeaturePrefilterThresholds,
   }),
   t.partial({
-    collectionVariable2: VariableCollectionDescriptor,
+    collectionVariable2: t.union([VariableCollectionDescriptor, t.string]),
   }),
 ]);
 
@@ -275,11 +278,14 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
     label: 'Metadata',
     items: [
       {
-        value: 'Entity:MetadataCollection',
+        value: 'metadata',
         display: 'Continuous metadata variables',
       },
     ],
   };
+
+  // Need to change this to "metadata" or something but gotta figure out what
+  console.log(configuration);
 
   return (
     <ComputationStepContainer
@@ -300,9 +306,23 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
                 collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
               />
               <span>Data 2</span>
-              <VariableCollectionSelectList
-                value={configuration.collectionVariable2}
-                onSelect={partial(changeConfigHandler, 'collectionVariable2')}
+              <MixedVariableSelectList
+                value={
+                  configuration.useMetadata
+                    ? 'metadata'
+                    : configuration.collectionVariable2
+                }
+                onSelect={(value) => {
+                  console.log('value', value);
+                  if (value === 'metadata') {
+                    changeConfigHandler('useMetadata', true);
+                    changeConfigHandler('collectionVariable2', undefined);
+                    console.log('changed');
+                  } else {
+                    changeConfigHandler('collectionVariable2', value);
+                    changeConfigHandler('useMetadata', false);
+                  }
+                }}
                 collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
                 additionalItemGroups={[metadataItemGroup]}
               />

@@ -12,11 +12,26 @@ interface Props {
   value?: VariableCollectionDescriptor;
   onSelect: (value?: VariableCollectionDescriptor) => void;
   /** Optionally add additional non-collection items to the dropdown */
-  additionalItemGroups?: ItemGroup<string>[];
+  includeEmptyGroup?: boolean;
+  emptyItemGroup?: ItemGroup<string | undefined>;
 }
 
 export function VariableCollectionSelectList(props: Props) {
-  const { collectionPredicate, onSelect, value, additionalItemGroups } = props;
+  const {
+    collectionPredicate,
+    onSelect,
+    value = null,
+    includeEmptyGroup,
+    emptyItemGroup = {
+      label: 'Metadata',
+      items: [
+        {
+          value: undefined,
+          display: 'Continuous metadata variables',
+        },
+      ],
+    },
+  } = props;
   const entities = useStudyEntities();
 
   const items = useMemo(() => {
@@ -40,14 +55,19 @@ export function VariableCollectionSelectList(props: Props) {
         };
       })
       .filter((itemGroup) => itemGroup.items.length > 0); // Remove entites that had all their collections fail the collection predicate.
-    return additionalItemGroups
-      ? [...collectionItems, ...additionalItemGroups]
+    return includeEmptyGroup
+      ? [...collectionItems, emptyItemGroup]
       : collectionItems;
   }, [entities, collectionPredicate]);
 
   const handleSelect = useCallback(
-    (value?: string) => {
-      if (value == null) {
+    (value?: string | null | undefined) => {
+      console.log(value);
+      if (value === undefined) {
+        onSelect(undefined);
+        return;
+      }
+      if (value === null) {
         onSelect();
         return;
       }
@@ -58,20 +78,24 @@ export function VariableCollectionSelectList(props: Props) {
   );
 
   const display = useMemo(() => {
-    if (value == null) return 'Select the data';
+    console.log('value', value);
+    if (value === null) return 'Select the data';
+    if (value === undefined) return 'Continuous metadata variables';
     // First check if the value is from a collection
     const collection = entities
       .find((e) => e.id === value.entityId)
       ?.collections?.find((c) => c.id === value.collectionId);
-
+    console.log('collection', collection);
+    console.log(collection === undefined);
     // If not, check any additionalItemGroups
-    if (!collection) {
-      const item = additionalItemGroups
-        ?.flatMap((group) => group.items)
-        .find(
-          (item) => item.value === `${value.entityId}:${value.collectionId}`
-        );
-      return item ? item.display : `Unknown item: ${value.entityId}`;
+    if (!collection && includeEmptyGroup) {
+      console.log('items', items);
+      // const item = additionalItemGroups
+      //   ?.flatMap((group) => group.items)
+      //   .find(
+      //     (item) => item.value === `${value.entityId}:${value.collectionId}`
+      //   );
+      // return item ? item.display : `Unknown item: ${value.entityId}`;
     }
     return (
       collection?.displayName ?? `Unknown collection: ${value.collectionId}`
@@ -79,7 +103,7 @@ export function VariableCollectionSelectList(props: Props) {
   }, [entities, value]);
 
   return (
-    <SingleSelect<string | undefined>
+    <SingleSelect<string | undefined | null>
       items={items}
       value={value && `${value.entityId}:${value.collectionId}`}
       onSelect={handleSelect}
