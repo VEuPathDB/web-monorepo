@@ -21,16 +21,17 @@ import { getStudyAccess } from '@veupathdb/study-data-access/lib/shared/studies'
 import { shouldOfferLinkToDashboard } from '@veupathdb/study-data-access/lib/study-access/permission';
 import { isStubEntity } from '../core/hooks/study';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import { WGCNA_DATASET_ID } from './AnalysisPanel';
 
 interface EDAWorkspaceHeadingProps {
   /** Optional AnalysisState for "New analysis" button functionality */
   analysisState?: AnalysisState;
+  isStudyExplorerWorkspace?: boolean;
 }
 
 /** Study Header Component */
 export function EDAWorkspaceHeading({
   analysisState,
+  isStudyExplorerWorkspace = false,
 }: EDAWorkspaceHeadingProps) {
   const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();
@@ -53,9 +54,6 @@ export function EDAWorkspaceHeading({
         studyRecord.attributes.dataset_id as string
       ]?.actionAuthorization.subsetting
     );
-
-  const isStudyExplorerWorkspace =
-    studyRecord.attributes.dataset_id === WGCNA_DATASET_ID;
 
   useEffect(() => {
     setDialogIsOpen(false);

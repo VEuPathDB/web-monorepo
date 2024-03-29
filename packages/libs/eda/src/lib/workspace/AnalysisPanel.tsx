@@ -56,8 +56,9 @@ import FilterChipList from '../core/components/FilterChipList';
 import { Public } from '@material-ui/icons';
 import { Link } from 'react-router-dom';
 import { AnalysisError } from '../core/components/AnalysisError';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
-export const WGCNA_DATASET_ID = 'DS_82dc5abc7f';
+const EDA_PROJECT_IDS = ['ClinEpiDB', 'MicrobiomeDB'];
 
 const AnalysisTabErrorBoundary = ({
   children,
@@ -123,6 +124,9 @@ export function AnalysisPanel({
 }: Props) {
   const studyRecord = useStudyRecord();
   const analysisState = useAnalysis(analysisId, singleAppMode);
+  const projectId = useWdkService(
+    async (wdkService) => (await wdkService.getConfig()).projectId
+  );
 
   const {
     status,
@@ -259,7 +263,12 @@ export function AnalysisPanel({
   return (
     <RestrictedPage approvalStatus={approvalStatus}>
       <ShowHideVariableContextProvider>
-        <EDAWorkspaceHeading analysisState={analysisState} />
+        <EDAWorkspaceHeading
+          analysisState={analysisState}
+          isStudyExplorerWorkspace={
+            projectId != null && !EDA_PROJECT_IDS.includes(projectId)
+          }
+        />
         <ShareFromAnalysis
           visible={sharingModalVisible}
           toggleVisible={setSharingModalVisible}
@@ -373,7 +382,7 @@ export function AnalysisPanel({
                   route: '/notes',
                 },
               ].concat(
-                studyId === WGCNA_DATASET_ID
+                projectId != null && !EDA_PROJECT_IDS.includes(projectId)
                   ? {
                       display: 'Learn',
                       route: '/learn',
