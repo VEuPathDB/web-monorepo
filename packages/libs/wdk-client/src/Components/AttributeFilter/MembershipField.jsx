@@ -57,6 +57,10 @@ class MembershipField extends React.PureComponent {
         groupBySelected: !this.props.activeFieldState.sort.groupBySelected,
       })
     );
+    // the setTimeout is a hack to ensure both onSort and onPageChange update the uiState appropriately
+    setTimeout(() => {
+      this.props.onMemberChangeCurrentPage(this.props.activeField, 1);
+    }, 1);
   }
 
   isSortEnabled() {
@@ -143,6 +147,7 @@ class MembershipField extends React.PureComponent {
 MembershipField.defaultProps = {
   filteredCountHeadingPrefix: 'Remaining',
   unfilteredCountHeadingPrefix: '',
+  showInternalMesaCounts: false,
 };
 
 function filterBySearchTerm(rows, searchTerm) {
@@ -677,14 +682,26 @@ class MembershipTable extends React.PureComponent {
     return (
       <Mesa
         options={{
-          // isRowSelected: this.isItemSelected,
+          isRowSelected: this.isItemSelected,
           deriveRowClassName: this.deriveRowClassName,
           onRowClick: this.handleRowClick,
           useStickyHeader: true,
           tableBodyMaxHeight: '80vh',
         }}
         uiState={uiState}
-        actions={[]}
+        actions={
+          this.props.showInternalMesaCounts
+            ? [
+                {
+                  selectionRequired: false,
+                  element() {
+                    return null;
+                  },
+                  callback: () => null,
+                },
+              ]
+            : []
+        }
         eventHandlers={eventHandlers}
         rows={rows}
         filteredRows={filteredRows}
