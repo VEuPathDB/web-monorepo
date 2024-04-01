@@ -80,6 +80,7 @@ import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
 import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
 import { SubStudies } from '../../SubStudies';
 import { PanelConfig } from '../../appState';
+
 const displayName = 'Bar plots';
 
 export const plugin: MapTypePlugin = {
