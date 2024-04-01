@@ -777,9 +777,13 @@ function LineplotViz(props: VisualizationProps<Options>) {
         );
 
       // This is used for reordering series data.
-      // We don't want to do this for non-continuous variables.
+      // We must not reorder binned data from continous vars (number and date)
+      // because then the data gets "lost" - nothing plotted.
+      // Also integer ordinals get binned too - so we disable the vocabulary for them.
       const xAxisVocabulary =
-        xAxisVariable.dataShape === 'continuous'
+        xAxisVariable.dataShape === 'continuous' ||
+        (xAxisVariable.dataShape === 'ordinal' &&
+          xAxisVariable.type === 'integer')
           ? []
           : fixLabelsForNumberVariables(
               xAxisVariable?.vocabulary,
@@ -2094,14 +2098,8 @@ function getRequestParams(
     facetVariable,
     valueSpecConfig,
     showMissingness,
-    binWidth = NumberVariable.is(xAxisVariableMetadata) ||
-    DateVariable.is(xAxisVariableMetadata)
-      ? xAxisVariableMetadata.distributionDefaults.binWidthOverride ??
-        xAxisVariableMetadata.distributionDefaults.binWidth
-      : undefined,
-    binWidthTimeUnit = xAxisVariableMetadata?.type === 'date'
-      ? xAxisVariableMetadata.distributionDefaults.binUnits
-      : undefined,
+    binWidth,
+    binWidthTimeUnit,
     useBinning,
     numeratorValues,
     denominatorValues,

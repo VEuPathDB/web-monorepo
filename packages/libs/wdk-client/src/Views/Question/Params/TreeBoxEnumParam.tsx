@@ -254,7 +254,7 @@ export function useDefaultCheckboxTreeProps(
   selectedLeaves: string[]
 ): CheckboxTreeProps<TreeBoxVocabNode> {
   const multiPick =
-    isMultiPick(props.parameter) && props.parameter.maxSelectedCount > 1;
+    isMultiPick(props.parameter) && props.parameter.maxSelectedCount !== 1;
   const handleExpansionChange = useCallback(
     (expandedList: string[]) => {
       props.dispatch(setExpandedList({ ...props.context, expandedList }));

@@ -268,8 +268,8 @@ const siteAnnouncements = [
               <i>Anopheles ziemanni</i> AzieGA1
             </a>{' '}
             genomes are part of a <b>species complex</b>. Based on the current
-            evidence, An. ziemanni AzieGA1 may actually be the species An.
-            coustani or even another species from this complex.{' '}
+            evidence, <i>An. ziemanni</i> AzieGA1 may actually be the species{' '}
+            <i>An. coustani</i> or even another species from this complex.{' '}
             <a href="/a/app/static-content/aziemani.html">
               See additional details
             </a>
