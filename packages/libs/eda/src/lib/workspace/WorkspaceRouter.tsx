@@ -25,6 +25,9 @@ import { StudyList } from './StudyList';
 import { WorkspaceContainer } from './WorkspaceContainer';
 import { AnalysisPanel } from './AnalysisPanel';
 import { StandaloneStudyPage } from './StandaloneStudyPage';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+
+const EDA_PROJECT_IDS = ['ClinEpiDB', 'MicrobiomeDB'];
 
 type Props = {
   edaServiceUrl: string;
@@ -67,6 +70,12 @@ export function WorkspaceRouter({
   const analysisClient = useConfiguredAnalysisClient(edaServiceUrl);
   const downloadClient = useConfiguredDownloadClient(edaServiceUrl);
   const computeClient = useConfiguredComputeClient(edaServiceUrl);
+
+  const projectId = useWdkService(
+    async (wdkService) => (await wdkService.getConfig()).projectId
+  );
+  const isStudyExplorerWorkspace =
+    projectId != null && !EDA_PROJECT_IDS.includes(projectId);
 
   // The following useEffect handles when the user presses the back button and
   // is inadvertently moved back to a new analysis URL from their saved analysis URL
@@ -228,6 +237,7 @@ export function WorkspaceRouter({
                 analysisClient={analysisClient}
                 downloadClient={downloadClient}
                 computeClient={computeClient}
+                isStudyExplorerWorkspace={isStudyExplorerWorkspace}
               >
                 <AnalysisPanel
                   {...props.match.params}
@@ -238,6 +248,7 @@ export function WorkspaceRouter({
                   singleAppMode={singleAppMode}
                   showUnreleasedData={showUnreleasedData}
                   helpTabContents={helpTabContents}
+                  isStudyExplorerWorkspace={isStudyExplorerWorkspace}
                 />
               </WorkspaceContainer>
             )}
@@ -297,6 +308,7 @@ export function WorkspaceRouter({
                 analysisClient={analysisClient}
                 downloadClient={downloadClient}
                 computeClient={computeClient}
+                isStudyExplorerWorkspace={isStudyExplorerWorkspace}
               >
                 <AnalysisPanel
                   {...props.match.params}
@@ -306,6 +318,7 @@ export function WorkspaceRouter({
                   singleAppMode={singleAppMode}
                   showUnreleasedData={showUnreleasedData}
                   helpTabContents={helpTabContents}
+                  isStudyExplorerWorkspace={isStudyExplorerWorkspace}
                 />
               </WorkspaceContainer>
             )}

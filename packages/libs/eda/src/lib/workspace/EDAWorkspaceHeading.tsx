@@ -64,7 +64,9 @@ export function EDAWorkspaceHeading({
       <div className={cx('-Heading')}>
         {isStudyExplorerWorkspace ? (
           <div>
-            <H3 additionalStyles={{ padding: 0 }}>Study Explorer</H3>
+            <H3 additionalStyles={{ padding: 0, fontWeight: 500 }}>
+              <em>Study Explorer</em>
+            </H3>
             <H4 additionalStyles={{ fontWeight: 400 }}>
               {safeHtml(studyRecord.displayName)}
             </H4>
@@ -94,13 +96,14 @@ export function EDAWorkspaceHeading({
               </div>
             )}
         </div>
-        <div>
+        <div style={{ height: '100%' }}>
           {showButtons && (
             <div
               style={{
                 display: 'flex',
                 justifyContent: 'flex-end',
-                alignItems: 'center',
+                alignItems: isStudyExplorerWorkspace ? 'flex-end' : 'center',
+                height: '100%',
               }}
             >
               <div>
