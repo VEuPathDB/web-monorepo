@@ -24,7 +24,7 @@ import {
 } from '../../Components/AttributeFilter/AttributeFilterUtils';
 import Icon from '../../Components/Icon/IconAlt';
 import { CollapsibleSection, IconAlt } from '../../Components';
-import Tooltip from '@veupathdb/coreui';
+import { Tooltip } from '@veupathdb/coreui';
 
 const DAY = 1000 * 60 * 60 * 24;
 

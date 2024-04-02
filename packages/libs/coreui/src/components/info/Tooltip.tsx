@@ -1,9 +1,24 @@
-import { Theme, Tooltip, withStyles } from '@material-ui/core';
+import { ComponentProps } from 'react';
+import { Theme, Tooltip as MUITooltip, withStyles } from '@material-ui/core';
+import _ from 'lodash';
 
-// This is just for convenience.
-export { HtmlTooltip as Tooltip };
+/**
+ * Tooltip will not render if the title is an empty value or a boolean.
+ */
+const UnstyledTooltip = (props: ComponentProps<typeof MUITooltip>) => {
+  const { title } = props;
 
-export const HtmlTooltip = withStyles((theme: Theme) => ({
+  return !(
+    title === '' ||
+    _.isEqual(title, {}) ||
+    _.isEqual(title, []) ||
+    typeof title === 'boolean'
+  ) ? (
+    <MUITooltip {...props} />
+  ) : null;
+};
+
+export const Tooltip = withStyles((theme: Theme) => ({
   tooltip: {
     backgroundColor: '#fffde7',
     color: 'rgba(0, 0, 0, 0.87)',
@@ -12,4 +27,6 @@ export const HtmlTooltip = withStyles((theme: Theme) => ({
     border: '1px solid #dadde9',
     boxShadow: theme.shadows[1],
   },
-}))(Tooltip);
+}))(UnstyledTooltip);
+
+export { Tooltip as HtmlTooltip };
