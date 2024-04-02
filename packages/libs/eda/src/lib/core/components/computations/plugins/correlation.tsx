@@ -24,12 +24,20 @@ import { VariableCollectionSelectList } from '../../variableSelectors/VariableCo
 import SingleSelect, {
   ItemGroup,
 } from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
-import { entityTreeToArray } from '../../../utils/study-metadata';
+import {
+  entityTreeToArray,
+  isVariableCollectionDescriptor,
+} from '../../../utils/study-metadata';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { ancestorEntitiesForEntityId } from '../../../utils/data-element-constraints';
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
 import { MixedVariableSelectList } from '../../variableSelectors/MixedVariableSingleSelect';
+import {
+  nonUniqueWarning,
+  variableCollectionsAreUnique,
+} from '../../../utils/visualization';
+import PluginError from '../../visualizations/PluginError';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -54,8 +62,6 @@ export const CorrelationConfig = t.partial({
   prefilterThresholds: FeaturePrefilterThresholds,
 });
 
-// A complete correlation configuration may or may not have a second collection. The backend
-// will fill in the empty collectionVariable2 slot with continuous metadata variables.
 const CompleteCorrelationConfig = partialToCompleteCodec(CorrelationConfig);
 
 export const plugin: ComputationPlugin = {
@@ -199,13 +205,10 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
       </p>
       <p>Here we look for correlation between:</p>
       <ol>
-        <li>
-          Abundance of taxa at a given taxonomic level or functional data such
-          as pathway abundance
-        </li>
+        <li>Eigengene profiles derived from modules in a WGCNA analysis</li>
         <li>
           Continuous metadata variables that are compatable, i.e. on an entity
-          that is 1-1 with the assay entity.
+          that is 1-1 with the assay entity, or other eigengene profiles.
         </li>
       </ol>
       <br></br>
@@ -213,8 +216,12 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
       <p>
         <ul>
           <li>
-            <strong>Data.</strong> The abundance data to be correlated against
-            the study's metadata variables.
+            <strong>Data 1.</strong> A set of eigengene profiles, either from
+            the host or pathogen.
+          </li>
+          <li>
+            <strong>Data 2.</strong> All compatable metdata, or a second set of
+            eigengene profiles, either from the host or pathogen.
           </li>
           <li>
             <strong>Method.</strong> The type of correlation to compute. The
@@ -225,7 +232,7 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
           </li>
           <li>
             <strong>Prevalence Prefilter.</strong> Remove variables that do not
-            have a set percentage of non-zero abundance across samples. Removing
+            have a set percentage of non-zero values across samples. Removing
             rarely occurring features before calculating correlation can prevent
             some spurious results.
           </li>
@@ -239,9 +246,8 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
           <li>
             <strong>Correlation coefficient.</strong> A value between [-1, 1]
             that describes the similarity of the input variables. Positive
-            values indicate that both the abundance and metadata variable rise
-            and fall together, whereas negative values indicate that as one
-            rises, the other falls.
+            values indicate that both variables rise and fall together, whereas
+            negative values indicate that as one rises, the other falls.
           </li>
           <li>
             <strong>P Value.</strong> A measure of the probability of observing
@@ -287,7 +293,6 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
     ],
   };
 
-  console.log('configuration', configuration);
   return (
     <ComputationStepContainer
       computationStepInfo={{
@@ -319,15 +324,14 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
                     : configuration.data2?.collectionSpec
                 }
                 onSelect={(value) => {
-                  if (value === 'metadata') {
+                  if (isVariableCollectionDescriptor(value)) {
                     changeConfigHandler('data2', {
-                      dataType: 'metadata',
+                      dataType: 'collection',
+                      collectionSpec: value,
                     });
                   } else {
                     changeConfigHandler('data2', {
-                      dataType: 'collection',
-                      //@ts-ignore
-                      collectionSpec: value,
+                      dataType: 'metadata',
                     });
                   }
                 }}
