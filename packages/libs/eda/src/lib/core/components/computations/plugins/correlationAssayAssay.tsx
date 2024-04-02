@@ -11,6 +11,8 @@ import {
   assertComputationWithConfig,
   isNotAbsoluteAbundanceVariableCollection,
   partialToCompleteCodec,
+  isFunctionalCollection,
+  isTaxonomicVariableCollection,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
@@ -26,6 +28,7 @@ import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
 import { ExpandablePanel } from '@veupathdb/coreui';
+import { entityTreeToArray } from '../../../utils/study-metadata';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -287,22 +290,17 @@ export function CorrelationAssayAssayConfiguration(
           <div className={cx('-CorrelationOuterConfigContainer')}>
             <H6>Input Data</H6>
             <div className={cx('-InputContainer')}>
-              {/* <span>Taxonomic level</span> */}
-              <span>Data 1</span>
+              <span>Taxonomic level</span>
               <VariableCollectionSelectList
                 value={configuration.collectionVariable}
                 onSelect={partial(changeConfigHandler, 'collectionVariable')}
-                // collectionPredicate={isTaxonomicVariableCollection}
-                collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
+                collectionPredicate={isTaxonomicVariableCollection}
               />
-              {/* <span>Functional data</span>
-               */}
-              <span>Data 2</span>
+              <span>Functional data</span>
               <VariableCollectionSelectList
                 value={configuration.collectionVariable2}
                 onSelect={partial(changeConfigHandler, 'collectionVariable2')}
-                // collectionPredicate={isFunctionalCollection}
-                collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
+                collectionPredicate={isFunctionalCollection}
               />
             </div>
           </div>
@@ -391,21 +389,15 @@ function isEnabledInPicker({
 }: IsEnabledInPickerParams): boolean {
   if (!studyMetadata) return false;
 
-  /** Temporary removal of collection type restriction!
-   * This temporary change allows all collections to play in the assay v assay app.
-   * The hack will be removed as part of #906 part 2.
-   */
-  // const entities = entityTreeToArray(studyMetadata.rootEntity);
+  const entities = entityTreeToArray(studyMetadata.rootEntity);
 
-  // // Check that the metagenomic entity exists _and_ that it has
-  // // at least one collection.
-  // const hasMetagenomicData = entities.some(
-  //   (entity) => entity.id === 'OBI_0002623' && !!entity.collections?.length
-  // ); // OBI_0002623 = Metagenomic sequencing assay
+  // Check that the metagenomic entity exists _and_ that it has
+  // at least one collection.
+  const hasMetagenomicData = entities.some(
+    (entity) => entity.id === 'OBI_0002623' && !!entity.collections?.length
+  ); // OBI_0002623 = Metagenomic sequencing assay
 
-  // return hasMetagenomicData;
-
-  /** end of temporary change */
+  return hasMetagenomicData;
 
   return true;
 }
