@@ -32,7 +32,12 @@ import {
 } from '@veupathdb/coreui';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
 import ShowHideVariableContextProvider from '../../core/utils/show-hide-variable-context';
-import { AppState, MarkerConfiguration, useAppState } from './appState';
+import {
+  AppState,
+  MarkerConfiguration,
+  useAppState,
+  LegacyRedirectState,
+} from './appState';
 import Subsetting from '../../workspace/Subsetting';
 import { MapHeader } from './MapHeader';
 import FilterChipList from '../../core/components/FilterChipList';
@@ -99,13 +104,6 @@ const mapStyle: React.CSSProperties = {
   pointerEvents: 'auto',
 };
 
-export type LegacyRedirectState =
-  | undefined
-  | {
-      projectId?: string;
-      showLegacyMapRedirectModal: boolean;
-    };
-
 interface Props {
   analysisId?: string;
   sharingUrl: string;
@@ -123,8 +121,11 @@ export function MapAnalysis(props: Props) {
   );
   const geoConfigs = useGeoConfig(useStudyEntities());
   const location = useLocation();
-  const locationState = location.state as LegacyRedirectState;
-  const [showRedirectModal, setShowRedirectModal] = useState(!!locationState);
+  const locationState = location.state;
+  const [showRedirectModal, setShowRedirectModal] = useState(
+    LegacyRedirectState.is(locationState) &&
+      locationState?.showLegacyMapRedirectModal
+  );
 
   if (geoConfigs == null || geoConfigs.length === 0)
     return (
@@ -151,7 +152,7 @@ export function MapAnalysis(props: Props) {
   return (
     <>
       <Modal
-        visible={Boolean(locationState && showRedirectModal)}
+        visible={Boolean(showRedirectModal)}
         toggleVisible={() => setShowRedirectModal(false)}
         styleOverrides={{
           content: {
@@ -175,7 +176,8 @@ export function MapAnalysis(props: Props) {
         <div className="LegacyMapRedirectModalContainer">
           <p>
             You have been redirected from the legacy PopBio map
-            {locationState?.projectId &&
+            {LegacyRedirectState.is(locationState) &&
+              locationState?.projectId &&
               ` to the same study (${locationState.projectId}) in our new map`}
             . Settings encoded in your URL are not applied but are kept in the{' '}
             <strong>Notes</strong> section (see left side panel).
