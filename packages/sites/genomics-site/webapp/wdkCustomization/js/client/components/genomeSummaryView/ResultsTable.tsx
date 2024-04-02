@@ -210,8 +210,8 @@ const rowsFactory = defaultMemoize(
     report.type === 'truncated'
       ? []
       : emptyChromosomeFilterApplied
-      ? report.sequences.filter(({ featureCount }) => featureCount)
-      : report.sequences
+      ? report.sequences
+      : report.sequences.filter(({ featureCount }) => featureCount)
 );
 
 export const ResultsTable: React.SFC<ResultsTableProps> = ({
