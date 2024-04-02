@@ -235,9 +235,6 @@ function MapAnalysisImpl(props: ImplProps) {
   const geoConfig = geoConfigs[0];
   const history = useHistory();
 
-  //DKDK
-  console.log('appState.hideVizControl =', appState.hideVizControl);
-
   // FIXME use the sharingUrl prop to construct this
   const sharingUrl = new URL(`../${analysisId}/import`, window.location.href)
     .href;
