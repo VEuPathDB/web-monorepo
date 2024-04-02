@@ -60,7 +60,7 @@ export const GenomeSummaryView: React.SFC<GenomeSummaryViewProps> = ({
           ))
         )}
         <ResultsTable
-          emptyChromosomeFilterApplied
+          emptyChromosomeFilterApplied={emptyChromosomeFilterApplied}
           displayName={displayName}
           displayNamePlural={displayNamePlural}
           report={genomeSummaryData}

@@ -2098,14 +2098,8 @@ function getRequestParams(
     facetVariable,
     valueSpecConfig,
     showMissingness,
-    binWidth = NumberVariable.is(xAxisVariableMetadata) ||
-    DateVariable.is(xAxisVariableMetadata)
-      ? xAxisVariableMetadata.distributionDefaults.binWidthOverride ??
-        xAxisVariableMetadata.distributionDefaults.binWidth
-      : undefined,
-    binWidthTimeUnit = xAxisVariableMetadata?.type === 'date'
-      ? xAxisVariableMetadata.distributionDefaults.binUnits
-      : undefined,
+    binWidth,
+    binWidthTimeUnit,
     useBinning,
     numeratorValues,
     denominatorValues,

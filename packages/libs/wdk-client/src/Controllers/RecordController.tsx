@@ -144,6 +144,30 @@ class RecordController extends PageController<Props> {
     return this.props.error != null && this.props.error.status === 404;
   }
 
+  renderDataNotFound() {
+    const [sourceID, projectID] = this.props.ownProps.primaryKey.split('/');
+    const recordClass = this.props.ownProps.recordClass;
+    return (
+      <div>
+        <h1>
+          No {recordClass} with an ID of {sourceID} found in {projectID}
+        </h1>
+        <p>
+          The ID may have changed. Please use our site search feature to find
+          matches for <strong>{sourceID}</strong>.
+        </p>
+        <p>
+          <a
+            target={'_blank'}
+            href="https://static-content.veupathdb.org/documents/SiteSearch.pdf"
+          >
+            Learn more about our site search feature here.
+          </a>
+        </p>
+      </div>
+    );
+  }
+
   getTitle() {
     return (
       this.props.recordClass.displayName +
