@@ -84,7 +84,7 @@ export function MixedVariableSelectList(props: Props) {
         .find((item) => item.value === value)?.display;
       return valueDisplay;
     }
-  }, [entities, value]);
+  }, [entities, value, items]);
 
   console.log('display', display);
 

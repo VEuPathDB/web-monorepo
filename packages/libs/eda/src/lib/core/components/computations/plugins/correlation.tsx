@@ -4,13 +4,14 @@ import {
   VariableTreeNode,
   useFindEntityAndVariableCollection,
 } from '../../..';
-import { VariableCollectionDescriptor } from '../../../types/variable';
+import { CorrelationInputData } from '../../../types/variable';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
   isNotAbsoluteAbundanceVariableCollection,
+  partialToCompleteCodec,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
@@ -47,26 +48,15 @@ export type CorrelationConfig = t.TypeOf<typeof CorrelationConfig>;
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CorrelationConfig = t.partial({
-  collectionVariable: VariableCollectionDescriptor,
-  collectionVariable2: t.union([VariableCollectionDescriptor, t.string]),
-  useMetadata: t.boolean,
+  data1: CorrelationInputData,
+  data2: CorrelationInputData,
   correlationMethod: t.string,
   prefilterThresholds: FeaturePrefilterThresholds,
 });
 
 // A complete correlation configuration may or may not have a second collection. The backend
 // will fill in the empty collectionVariable2 slot with continuous metadata variables.
-const CompleteCorrelationConfig = t.intersection([
-  t.type({
-    collectionVariable: VariableCollectionDescriptor,
-    correlationMethod: t.string,
-    useMetadata: t.boolean,
-    prefilterThresholds: FeaturePrefilterThresholds,
-  }),
-  t.partial({
-    collectionVariable2: t.union([VariableCollectionDescriptor, t.string]),
-  }),
-]);
+const CompleteCorrelationConfig = partialToCompleteCodec(CorrelationConfig);
 
 export const plugin: ComputationPlugin = {
   configurationComponent: CorrelationConfiguration,
@@ -98,11 +88,16 @@ function CorrelationConfigDescriptionComponent({
   const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
   assertComputationWithConfig(computation, CorrelationConfig);
 
-  const { collectionVariable, collectionVariable2, correlationMethod } =
+  const { data1, data2, correlationMethod } =
     computation.descriptor.configuration;
 
-  const entityAndCollectionVariableTreeNode =
-    findEntityAndVariableCollection(collectionVariable);
+  const entityAndCollectionVariableTreeNode = findEntityAndVariableCollection(
+    data1?.collectionSpec
+  );
+
+  const entityAndCollectionVariable2TreeNode = findEntityAndVariableCollection(
+    data2?.collectionSpec
+  );
 
   const correlationMethodDisplayName = correlationMethod
     ? CORRELATION_METHODS.find((method) => method.value === correlationMethod)
@@ -123,7 +118,15 @@ function CorrelationConfigDescriptionComponent({
       </h4>
       <h4>
         Data 2:{' '}
-        <span>{collectionVariable2 ? 'chosen' : <i>Not selected</i>}</span>
+        <span>
+          {data2?.dataType === 'metadata' ? (
+            'Continuous metadata variables'
+          ) : entityAndCollectionVariable2TreeNode ? (
+            `${entityAndCollectionVariable2TreeNode.entity.displayName} > ${entityAndCollectionVariable2TreeNode.variableCollection.displayName}`
+          ) : (
+            <i>Not selected</i>
+          )}
+        </span>
       </h4>
       <h4>
         Method:{' '}
@@ -284,9 +287,7 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
     ],
   };
 
-  // Need to change this to "metadata" or something but gotta figure out what
-  console.log(configuration);
-
+  console.log('configuration', configuration);
   return (
     <ComputationStepContainer
       computationStepInfo={{
@@ -301,26 +302,33 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
             <div className={cx('-InputContainer')}>
               <span>Data 1</span>
               <VariableCollectionSelectList
-                value={configuration.collectionVariable}
-                onSelect={partial(changeConfigHandler, 'collectionVariable')}
+                value={configuration.data1?.collectionSpec}
+                onSelect={(value) =>
+                  changeConfigHandler('data1', {
+                    dataType: 'collection',
+                    collectionSpec: value,
+                  })
+                }
                 collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
               />
               <span>Data 2</span>
               <MixedVariableSelectList
                 value={
-                  configuration.useMetadata
+                  configuration.data2?.dataType === 'metadata'
                     ? 'metadata'
-                    : configuration.collectionVariable2
+                    : configuration.data2?.collectionSpec
                 }
                 onSelect={(value) => {
-                  console.log('value', value);
                   if (value === 'metadata') {
-                    changeConfigHandler('useMetadata', true);
-                    changeConfigHandler('collectionVariable2', undefined);
-                    console.log('changed');
+                    changeConfigHandler('data2', {
+                      dataType: 'metadata',
+                    });
                   } else {
-                    changeConfigHandler('collectionVariable2', value);
-                    changeConfigHandler('useMetadata', false);
+                    changeConfigHandler('data2', {
+                      dataType: 'collection',
+                      //@ts-ignore
+                      collectionSpec: value,
+                    });
                   }
                 }}
                 collectionPredicate={isNotAbsoluteAbundanceVariableCollection}

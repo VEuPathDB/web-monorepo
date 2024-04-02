@@ -26,3 +26,13 @@ export type VariableCollectionDescriptor = t.TypeOf<
   typeof VariableCollectionDescriptor
 >;
 export const VariableCollectionDescriptor = _VariableCollectionBase;
+
+export type CorrelationInputData = t.TypeOf<typeof CorrelationInputData>;
+export const CorrelationInputData = t.intersection([
+  t.type({
+    dataType: t.string,
+  }),
+  t.partial({
+    collectionSpec: VariableCollectionDescriptor,
+  }),
+]);
