@@ -16,7 +16,10 @@ import { H6 } from '@veupathdb/coreui';
 import { bipartiteNetworkVisualization } from '../../visualizations/implementations/BipartiteNetworkVisualization';
 import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
-import { entityTreeToArray } from '../../../utils/study-metadata';
+import {
+  entityTreeToArray,
+  isVariableCollectionDescriptor,
+} from '../../../utils/study-metadata';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { ancestorEntitiesForEntityId } from '../../../utils/data-element-constraints';
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
@@ -267,10 +270,11 @@ export function CorrelationAssayMetadataConfiguration(
               <VariableCollectionSelectList
                 value={configuration.data1?.collectionSpec}
                 onSelect={(value) => {
-                  changeConfigHandler('data1', {
-                    dataType: 'collection',
-                    collectionSpec: value,
-                  });
+                  if (isVariableCollectionDescriptor(value))
+                    changeConfigHandler('data1', {
+                      dataType: 'collection',
+                      collectionSpec: value,
+                    });
                 }}
                 collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
               />

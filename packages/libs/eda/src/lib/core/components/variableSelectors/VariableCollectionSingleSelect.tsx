@@ -6,14 +6,17 @@ import SingleSelect, {
 import { Item } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxList';
 import { useStudyEntities } from '../../hooks/workspace';
 import { VariableCollectionDescriptor } from '../../types/variable';
+import { isVariableCollectionDescriptor } from '../../utils/study-metadata';
 
 interface Props {
+  /** Optional logic to filter out unwanted collections */
   collectionPredicate?: (collection: CollectionVariableTreeNode) => boolean;
-  value?: VariableCollectionDescriptor;
-  onSelect: (value?: VariableCollectionDescriptor) => void;
+  /** Selected value */
+  value?: VariableCollectionDescriptor | string;
+  /** Function to apply when a value is selected */
+  onSelect: (value?: VariableCollectionDescriptor | string) => void;
   /** Optionally add additional non-collection items to the dropdown */
-  includeEmptyGroup?: boolean;
-  emptyItemGroup?: ItemGroup<string | undefined>;
+  additionalItemGroups?: ItemGroup<string>[];
 }
 
 export function VariableCollectionSelectList(props: Props) {
@@ -21,16 +24,7 @@ export function VariableCollectionSelectList(props: Props) {
     collectionPredicate,
     onSelect,
     value = null,
-    includeEmptyGroup,
-    emptyItemGroup = {
-      label: 'Metadata',
-      items: [
-        {
-          value: undefined,
-          display: 'Continuous metadata variables',
-        },
-      ],
-    },
+    additionalItemGroups,
   } = props;
   const entities = useStudyEntities();
 
@@ -55,57 +49,56 @@ export function VariableCollectionSelectList(props: Props) {
         };
       })
       .filter((itemGroup) => itemGroup.items.length > 0); // Remove entites that had all their collections fail the collection predicate.
-    return includeEmptyGroup
-      ? [...collectionItems, emptyItemGroup]
+
+    return additionalItemGroups
+      ? [...collectionItems, ...additionalItemGroups]
       : collectionItems;
-  }, [entities, collectionPredicate]);
+  }, [entities, collectionPredicate, additionalItemGroups]);
 
   const handleSelect = useCallback(
-    (value?: string | null | undefined) => {
-      console.log(value);
-      if (value === undefined) {
-        onSelect(undefined);
-        return;
-      }
-      if (value === null) {
+    (value?: string | null) => {
+      if (value == null) {
         onSelect();
         return;
       }
-      const [entityId, collectionId] = value.split(':');
-      onSelect({ entityId, collectionId });
+      if (value.includes(':')) {
+        const [entityId, collectionId] = value.split(':');
+        onSelect({ entityId, collectionId });
+      } else {
+        onSelect(value);
+      }
     },
     [onSelect]
   );
 
   const display = useMemo(() => {
-    console.log('value', value);
     if (value === null) return 'Select the data';
-    if (value === undefined) return 'Continuous metadata variables';
-    // First check if the value is from a collection
-    const collection = entities
-      .find((e) => e.id === value.entityId)
-      ?.collections?.find((c) => c.id === value.collectionId);
-    console.log('collection', collection);
-    console.log(collection === undefined);
-    // If not, check any additionalItemGroups
-    if (!collection && includeEmptyGroup) {
-      console.log('items', items);
-      // const item = additionalItemGroups
-      //   ?.flatMap((group) => group.items)
-      //   .find(
-      //     (item) => item.value === `${value.entityId}:${value.collectionId}`
-      //   );
-      // return item ? item.display : `Unknown item: ${value.entityId}`;
+
+    // Handle different types of values we may see (either VariableCollectionDescriptors or strings)
+    if (isVariableCollectionDescriptor(value)) {
+      const collection = entities
+        .find((e) => e.id === value.entityId)
+        ?.collections?.find((c) => c.id === value.collectionId);
+      return (
+        collection?.displayName ?? `Unknown collection: ${value.collectionId}`
+      );
+    } else {
+      const valueDisplay = items
+        .flatMap((group) => group.items)
+        .find((item) => item.value === value)?.display;
+      return valueDisplay;
     }
-    return (
-      collection?.displayName ?? `Unknown collection: ${value.collectionId}`
-    );
-  }, [entities, value]);
+  }, [entities, value, items]);
 
   return (
     <SingleSelect<string | undefined | null>
       items={items}
-      value={value && `${value.entityId}:${value.collectionId}`}
+      value={
+        value &&
+        (isVariableCollectionDescriptor(value)
+          ? `${value.entityId}:${value.collectionId}`
+          : value)
+      }
       onSelect={handleSelect}
       buttonDisplayContent={display}
     />

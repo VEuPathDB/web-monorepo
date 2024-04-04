@@ -25,7 +25,6 @@ import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes
 import { ancestorEntitiesForEntityId } from '../../../utils/data-element-constraints';
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
-import { MixedVariableSelectList } from '../../variableSelectors/MixedVariableSingleSelect';
 import { variableCollectionsAreUnique } from '../../../utils/visualization';
 import PluginError from '../../visualizations/PluginError';
 import {
@@ -301,16 +300,17 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
               <span>Data 1</span>
               <VariableCollectionSelectList
                 value={configuration.data1?.collectionSpec}
-                onSelect={(value) =>
-                  changeConfigHandler('data1', {
-                    dataType: 'collection',
-                    collectionSpec: value,
-                  })
-                }
+                onSelect={(value) => {
+                  if (isVariableCollectionDescriptor(value))
+                    changeConfigHandler('data1', {
+                      dataType: 'collection',
+                      collectionSpec: value,
+                    });
+                }}
                 collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
               />
               <span>Data 2</span>
-              <MixedVariableSelectList
+              <VariableCollectionSelectList
                 value={
                   configuration.data2?.dataType === 'metadata'
                     ? 'metadata'

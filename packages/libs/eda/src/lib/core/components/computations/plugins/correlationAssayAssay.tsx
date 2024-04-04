@@ -283,10 +283,11 @@ export function CorrelationAssayAssayConfiguration(
               <VariableCollectionSelectList
                 value={configuration.data1?.collectionSpec}
                 onSelect={(value) => {
-                  changeConfigHandler('data1', {
-                    dataType: 'collection',
-                    collectionSpec: value,
-                  });
+                  if (isVariableCollectionDescriptor(value))
+                    changeConfigHandler('data1', {
+                      dataType: 'collection',
+                      collectionSpec: value,
+                    });
                 }}
                 collectionPredicate={isTaxonomicVariableCollection}
               />
@@ -294,10 +295,11 @@ export function CorrelationAssayAssayConfiguration(
               <VariableCollectionSelectList
                 value={configuration.data2?.collectionSpec}
                 onSelect={(value) => {
-                  changeConfigHandler('data2', {
-                    dataType: 'collection',
-                    collectionSpec: value,
-                  });
+                  if (isVariableCollectionDescriptor(value))
+                    changeConfigHandler('data2', {
+                      dataType: 'collection',
+                      collectionSpec: value,
+                    });
                 }}
                 collectionPredicate={isFunctionalCollection}
               />
