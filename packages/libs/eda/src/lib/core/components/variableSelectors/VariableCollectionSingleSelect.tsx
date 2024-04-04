@@ -20,12 +20,7 @@ interface Props {
 }
 
 export function VariableCollectionSelectList(props: Props) {
-  const {
-    collectionPredicate,
-    onSelect,
-    value = null,
-    additionalItemGroups,
-  } = props;
+  const { collectionPredicate, onSelect, value, additionalItemGroups } = props;
   const entities = useStudyEntities();
 
   const items = useMemo(() => {
@@ -56,7 +51,7 @@ export function VariableCollectionSelectList(props: Props) {
   }, [entities, collectionPredicate, additionalItemGroups]);
 
   const handleSelect = useCallback(
-    (value?: string | null) => {
+    (value?: string) => {
       if (value == null) {
         onSelect();
         return;
@@ -72,7 +67,7 @@ export function VariableCollectionSelectList(props: Props) {
   );
 
   const display = useMemo(() => {
-    if (value === null) return 'Select the data';
+    if (value == null) return 'Select the data';
 
     // Handle different types of values we may see (either VariableCollectionDescriptors or strings)
     if (isVariableCollectionDescriptor(value)) {
@@ -91,7 +86,7 @@ export function VariableCollectionSelectList(props: Props) {
   }, [entities, value, items]);
 
   return (
-    <SingleSelect<string | undefined | null>
+    <SingleSelect<string | undefined>
       items={items}
       value={
         value &&
