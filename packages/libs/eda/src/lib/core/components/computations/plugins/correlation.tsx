@@ -68,7 +68,18 @@ export const plugin: ComputationPlugin = {
   configurationComponent: CorrelationConfiguration,
   configurationDescriptionComponent: CorrelationConfigDescriptionComponent,
   createDefaultConfiguration: () => ({}),
-  isConfigurationComplete: CompleteCorrelationConfig.is,
+  isConfigurationComplete: (configuration) => {
+    // Configuration must be complete and have unique values for data1 and data2.
+    return (
+      CompleteCorrelationConfig.is(configuration) &&
+      isVariableCollectionDescriptor(configuration.data1?.collectionSpec) &&
+      isVariableCollectionDescriptor(configuration.data2?.collectionSpec) &&
+      variableCollectionsAreUnique([
+        configuration.data1?.collectionSpec,
+        configuration.data2?.collectionSpec,
+      ])
+    );
+  },
   visualizationPlugins: {
     bipartitenetwork: bipartiteNetworkVisualization.withOptions({
       getLegendTitle(config) {
@@ -392,6 +403,25 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
               <span className={cx('-DescriptionContainer')}>% of samples</span>
             </div>
           </div>
+        </div>
+        <div>
+          <PluginError
+            error={
+              isVariableCollectionDescriptor(
+                configuration.data1?.collectionSpec
+              ) &&
+              isVariableCollectionDescriptor(
+                configuration.data2?.collectionSpec
+              ) &&
+              !variableCollectionsAreUnique([
+                configuration.data1?.collectionSpec,
+                configuration.data2?.collectionSpec,
+              ])
+                ? 'Input data must be unique. Please select different data.'
+                : undefined
+            }
+            bannerType="error"
+          />
         </div>
         <ExpandablePanel
           title="Learn more about correlation"

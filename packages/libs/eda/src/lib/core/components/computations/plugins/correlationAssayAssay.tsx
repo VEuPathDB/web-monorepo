@@ -357,18 +357,6 @@ export function CorrelationAssayAssayConfiguration(
             </div>
           </div>
         </div>
-        <div>
-          <PluginError
-            error={
-              !variableCollectionsAreUnique([
-                configuration.collectionVariable,
-                configuration.collectionVariable2,
-              ])
-                ? 'Input data must be unique. Please select different data.'
-                : undefined
-            }
-          />
-        </div>
         <ExpandablePanel
           title="Learn more about correlation"
           subTitle={{}}
