@@ -45,7 +45,7 @@ export default function MySubset({
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
   return (
-    <div key="My Subset" style={{ marginTop: 20, marginBottom: 35 }}>
+    <div key="My Subset">
       {currentEntity ? (
         <SubsetDownloadModal
           displayModal={mySubsetModalOpen}
