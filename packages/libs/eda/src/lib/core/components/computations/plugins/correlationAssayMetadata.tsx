@@ -141,8 +141,14 @@ export function CorrelationAssayMetadataConfiguration(
     visualizationId
   );
 
+  // Set data2 to metadata. Using a second useEffect ends up clobbering the prefilters one.
+  configuration.data2 = {
+    dataType: 'metadata',
+  };
+
   // set initial prefilterThresholds
   useEffect(() => {
+    console.log('update prefilterThresholds');
     changeConfigHandler('prefilterThresholds', {
       proportionNonZero:
         configuration.prefilterThresholds?.proportionNonZero ??
@@ -153,14 +159,6 @@ export function CorrelationAssayMetadataConfiguration(
       standardDeviation:
         configuration.prefilterThresholds?.standardDeviation ??
         DEFAULT_STANDARD_DEVIATION_THRESHOLD,
-    });
-  }, []);
-
-  // Set data2 as metadata. Use a new useEffect to avoid
-  // the changeConfigHandlers interfering with each other.
-  useEffect(() => {
-    changeConfigHandler('data2', {
-      dataType: 'metadata',
     });
   }, []);
 
@@ -253,6 +251,8 @@ export function CorrelationAssayMetadataConfiguration(
       return 'Select a method';
     }
   }, [configuration.correlationMethod]);
+
+  console.log(configuration);
 
   return (
     <ComputationStepContainer
