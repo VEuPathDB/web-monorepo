@@ -30,9 +30,6 @@ import {
 } from '../../../hooks/workspace';
 import { fixVarIdLabel } from '../../../utils/visualization';
 import DataClient from '../../../api/DataClient';
-import { CorrelationAssayMetadataConfig } from '../../computations/plugins/correlationAssayMetadata';
-import { CorrelationAssayAssayConfig } from '../../computations/plugins/correlationAssayAssay';
-import { CorrelationConfig } from '../../computations/plugins/correlation';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { scaleLinear } from 'd3';
 import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
@@ -45,6 +42,7 @@ import { NumberOrDate } from '@veupathdb/components/lib/types/general';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { FacetedPlotLayout } from '../../layouts/FacetedPlotLayout';
 import { H6 } from '@veupathdb/coreui';
+import { CorrelationConfig } from '../../../types/apps';
 // end imports
 
 // Defaults
@@ -110,13 +108,8 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
 
-  const computationConfiguration:
-    | CorrelationAssayMetadataConfig
-    | CorrelationAssayAssayConfig
-    | CorrelationConfig = computation.descriptor.configuration as
-    | CorrelationAssayMetadataConfig
-    | CorrelationAssayAssayConfig
-    | CorrelationConfig;
+  const computationConfiguration: CorrelationConfig = computation.descriptor
+    .configuration as CorrelationConfig;
 
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,

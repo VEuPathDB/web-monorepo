@@ -1,17 +1,11 @@
 import { useEffect, useMemo } from 'react';
-import {
-  FeaturePrefilterThresholds,
-  VariableTreeNode,
-  useFindEntityAndVariableCollection,
-} from '../../..';
-import { VariableCollectionDescriptor } from '../../../types/variable';
+import { VariableTreeNode, useFindEntityAndVariableCollection } from '../../..';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
   isNotAbsoluteAbundanceVariableCollection,
-  partialToCompleteCodec,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
@@ -27,6 +21,10 @@ import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes
 import { ancestorEntitiesForEntityId } from '../../../utils/data-element-constraints';
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
+import {
+  CompleteCorrelationConfig,
+  CorrelationConfig,
+} from '../../../types/apps';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -42,31 +40,16 @@ const cx = makeClassNameHelper('AppStepConfigurationContainer');
  * when those roll out we'll be able to do a little refactoring to make the code a bit nicer.
  */
 
-export type CorrelationAssayMetadataConfig = t.TypeOf<
-  typeof CorrelationAssayMetadataConfig
->;
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CorrelationAssayMetadataConfig = t.partial({
-  collectionVariable: VariableCollectionDescriptor,
-  correlationMethod: t.string,
-  prefilterThresholds: FeaturePrefilterThresholds,
-});
-
-const CompleteCorrelationAssayMetadataConfig = partialToCompleteCodec(
-  CorrelationAssayMetadataConfig
-);
-
 export const plugin: ComputationPlugin = {
   configurationComponent: CorrelationAssayMetadataConfiguration,
   configurationDescriptionComponent:
     CorrelationAssayMetadataConfigDescriptionComponent,
   createDefaultConfiguration: () => ({}),
-  isConfigurationComplete: CompleteCorrelationAssayMetadataConfig.is,
+  isConfigurationComplete: CompleteCorrelationConfig.is,
   visualizationPlugins: {
     bipartitenetwork: bipartiteNetworkVisualization.withOptions({
       getLegendTitle(config) {
-        if (CorrelationAssayMetadataConfig.is(config)) {
+        if (CorrelationConfig.is(config)) {
           return ['absolute correlation coefficient', 'correlation direction'];
         } else {
           return [];
@@ -86,13 +69,13 @@ function CorrelationAssayMetadataConfigDescriptionComponent({
   computation: Computation;
 }) {
   const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
-  assertComputationWithConfig(computation, CorrelationAssayMetadataConfig);
+  assertComputationWithConfig(computation, CorrelationConfig);
 
-  const { collectionVariable, correlationMethod } =
-    computation.descriptor.configuration;
+  const { data1, correlationMethod } = computation.descriptor.configuration;
 
-  const entityAndCollectionVariableTreeNode =
-    findEntityAndVariableCollection(collectionVariable);
+  const entityAndCollectionVariableTreeNode = findEntityAndVariableCollection(
+    data1?.collectionSpec
+  );
 
   const correlationMethodDisplayName = correlationMethod
     ? CORRELATION_METHODS.find((method) => method.value === correlationMethod)
@@ -145,9 +128,9 @@ export function CorrelationAssayMetadataConfiguration(
   } = props;
 
   const configuration = computation.descriptor
-    .configuration as CorrelationAssayMetadataConfig;
+    .configuration as CorrelationConfig;
 
-  assertComputationWithConfig(computation, CorrelationAssayMetadataConfig);
+  assertComputationWithConfig(computation, CorrelationConfig);
 
   const changeConfigHandler = useConfigChangeHandler(
     analysisState,
@@ -167,6 +150,14 @@ export function CorrelationAssayMetadataConfiguration(
       standardDeviation:
         configuration.prefilterThresholds?.standardDeviation ??
         DEFAULT_STANDARD_DEVIATION_THRESHOLD,
+    });
+  }, []);
+
+  // Set data2 as metadata. Use a new useEffect to avoid
+  // the changeConfigHandlers interfering with each other.
+  useEffect(() => {
+    changeConfigHandler('data2', {
+      dataType: 'metadata',
     });
   }, []);
 
@@ -274,8 +265,13 @@ export function CorrelationAssayMetadataConfiguration(
             <div className={cx('-InputContainer')}>
               <span>Data 1</span>
               <VariableCollectionSelectList
-                value={configuration.collectionVariable}
-                onSelect={partial(changeConfigHandler, 'collectionVariable')}
+                value={configuration.data1?.collectionSpec}
+                onSelect={(value) => {
+                  changeConfigHandler('data1', {
+                    dataType: 'collection',
+                    collectionSpec: value,
+                  });
+                }}
                 collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
               />
               <span className="FixedInput">Data 2 (fixed)</span>

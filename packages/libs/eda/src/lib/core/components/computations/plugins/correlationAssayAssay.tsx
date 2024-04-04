@@ -1,16 +1,10 @@
 import { useEffect, useMemo } from 'react';
-import {
-  FeaturePrefilterThresholds,
-  useFindEntityAndVariableCollection,
-} from '../../..';
-import { VariableCollectionDescriptor } from '../../../types/variable';
+import { useFindEntityAndVariableCollection } from '../../..';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
-  isNotAbsoluteAbundanceVariableCollection,
-  partialToCompleteCodec,
   isFunctionalCollection,
   isTaxonomicVariableCollection,
 } from '../Utils';
@@ -22,13 +16,19 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { H6 } from '@veupathdb/coreui';
 import { bipartiteNetworkVisualization } from '../../visualizations/implementations/BipartiteNetworkVisualization';
 import { variableCollectionsAreUnique } from '../../../utils/visualization';
-import PluginError from '../../visualizations/PluginError';
 import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
 import { ExpandablePanel } from '@veupathdb/coreui';
-import { entityTreeToArray } from '../../../utils/study-metadata';
+import {
+  entityTreeToArray,
+  isVariableCollectionDescriptor,
+} from '../../../utils/study-metadata';
+import {
+  CompleteCorrelationConfig,
+  CorrelationConfig,
+} from '../../../types/apps';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -43,40 +43,27 @@ const cx = makeClassNameHelper('AppStepConfigurationContainer');
  * taxa with pathways or genes.
  */
 
-export type CorrelationAssayAssayConfig = t.TypeOf<
-  typeof CorrelationAssayAssayConfig
->;
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CorrelationAssayAssayConfig = t.partial({
-  collectionVariable: VariableCollectionDescriptor,
-  collectionVariable2: VariableCollectionDescriptor,
-  correlationMethod: t.string,
-  prefilterThresholds: FeaturePrefilterThresholds,
-});
-
-const CompleteCorrelationAssayAssayConfig = partialToCompleteCodec(
-  CorrelationAssayAssayConfig
-);
-
 export const plugin: ComputationPlugin = {
   configurationComponent: CorrelationAssayAssayConfiguration,
   configurationDescriptionComponent:
     CorrelationAssayAssayConfigDescriptionComponent,
   createDefaultConfiguration: () => ({}),
   isConfigurationComplete: (configuration) => {
+    // Configuration must be complete and have unique values for data1 and data2.
     return (
-      CompleteCorrelationAssayAssayConfig.is(configuration) &&
+      CompleteCorrelationConfig.is(configuration) &&
+      isVariableCollectionDescriptor(configuration.data1?.collectionSpec) &&
+      isVariableCollectionDescriptor(configuration.data2?.collectionSpec) &&
       variableCollectionsAreUnique([
-        configuration.collectionVariable,
-        configuration.collectionVariable2,
+        configuration.data1?.collectionSpec,
+        configuration.data2?.collectionSpec,
       ])
     );
   },
   visualizationPlugins: {
     bipartitenetwork: bipartiteNetworkVisualization.withOptions({
       getLegendTitle(config) {
-        if (CorrelationAssayAssayConfig.is(config)) {
+        if (CorrelationConfig.is(config)) {
           return ['absolute correlation coefficient', 'correlation direction'];
         } else {
           return [];
@@ -96,15 +83,17 @@ function CorrelationAssayAssayConfigDescriptionComponent({
   computation: Computation;
 }) {
   const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
-  assertComputationWithConfig(computation, CorrelationAssayAssayConfig);
+  assertComputationWithConfig(computation, CorrelationConfig);
 
-  const { collectionVariable, collectionVariable2, correlationMethod } =
+  const { data1, data2, correlationMethod } =
     computation.descriptor.configuration;
 
-  const entityAndCollectionVariableTreeNode1 =
-    findEntityAndVariableCollection(collectionVariable);
-  const entityAndCollectionVariableTreeNode2 =
-    findEntityAndVariableCollection(collectionVariable2);
+  const entityAndCollectionVariableTreeNode1 = findEntityAndVariableCollection(
+    data1?.collectionSpec
+  );
+  const entityAndCollectionVariableTreeNode2 = findEntityAndVariableCollection(
+    data2?.collectionSpec
+  );
 
   const correlationMethodDisplayName = correlationMethod
     ? CORRELATION_METHODS.find((method) => method.value === correlationMethod)
@@ -166,7 +155,7 @@ export function CorrelationAssayAssayConfiguration(
     visualizationId,
   } = props;
 
-  assertComputationWithConfig(computation, CorrelationAssayAssayConfig);
+  assertComputationWithConfig(computation, CorrelationConfig);
 
   const { configuration } = computation.descriptor;
 
@@ -292,14 +281,24 @@ export function CorrelationAssayAssayConfiguration(
             <div className={cx('-InputContainer')}>
               <span>Taxonomic level</span>
               <VariableCollectionSelectList
-                value={configuration.collectionVariable}
-                onSelect={partial(changeConfigHandler, 'collectionVariable')}
+                value={configuration.data1?.collectionSpec}
+                onSelect={(value) => {
+                  changeConfigHandler('data1', {
+                    dataType: 'collection',
+                    collectionSpec: value,
+                  });
+                }}
                 collectionPredicate={isTaxonomicVariableCollection}
               />
               <span>Functional data</span>
               <VariableCollectionSelectList
-                value={configuration.collectionVariable2}
-                onSelect={partial(changeConfigHandler, 'collectionVariable2')}
+                value={configuration.data2?.collectionSpec}
+                onSelect={(value) => {
+                  changeConfigHandler('data2', {
+                    dataType: 'collection',
+                    collectionSpec: value,
+                  });
+                }}
                 collectionPredicate={isFunctionalCollection}
               />
             </div>

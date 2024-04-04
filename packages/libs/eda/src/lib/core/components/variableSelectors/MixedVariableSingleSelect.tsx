@@ -68,7 +68,6 @@ export function MixedVariableSelectList(props: Props) {
   );
 
   const display = useMemo(() => {
-    console.log('value', value);
     if (value == null) return 'Select the data';
     // if the value is a VariableCollectionDescriptor, return the collectionId
     if (typeof value === 'object') {
@@ -85,8 +84,6 @@ export function MixedVariableSelectList(props: Props) {
       return valueDisplay;
     }
   }, [entities, value, items]);
-
-  console.log('display', display);
 
   return (
     <SingleSelect<string | undefined>

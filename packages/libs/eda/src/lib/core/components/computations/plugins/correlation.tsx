@@ -1,19 +1,12 @@
 import { useEffect, useMemo } from 'react';
-import {
-  FeaturePrefilterThresholds,
-  VariableTreeNode,
-  useFindEntityAndVariableCollection,
-} from '../../..';
-import { CorrelationInputData } from '../../../types/variable';
+import { VariableTreeNode, useFindEntityAndVariableCollection } from '../../..';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
   isNotAbsoluteAbundanceVariableCollection,
-  partialToCompleteCodec,
 } from '../Utils';
-import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import './Plugins.scss';
@@ -33,11 +26,12 @@ import { ancestorEntitiesForEntityId } from '../../../utils/data-element-constra
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
 import { MixedVariableSelectList } from '../../variableSelectors/MixedVariableSingleSelect';
-import {
-  nonUniqueWarning,
-  variableCollectionsAreUnique,
-} from '../../../utils/visualization';
+import { variableCollectionsAreUnique } from '../../../utils/visualization';
 import PluginError from '../../visualizations/PluginError';
+import {
+  CompleteCorrelationConfig,
+  CorrelationConfig,
+} from '../../../types/apps';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -51,18 +45,6 @@ const cx = makeClassNameHelper('AppStepConfigurationContainer');
  * As of 03/2024, this correlation plugin is used for genomics (except vectorbase) sites
  * to help them understand WGCNA outputs and their relationship to metadata.
  */
-
-export type CorrelationConfig = t.TypeOf<typeof CorrelationConfig>;
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CorrelationConfig = t.partial({
-  data1: CorrelationInputData,
-  data2: CorrelationInputData,
-  correlationMethod: t.string,
-  prefilterThresholds: FeaturePrefilterThresholds,
-});
-
-const CompleteCorrelationConfig = partialToCompleteCodec(CorrelationConfig);
 
 export const plugin: ComputationPlugin = {
   configurationComponent: CorrelationConfiguration,
