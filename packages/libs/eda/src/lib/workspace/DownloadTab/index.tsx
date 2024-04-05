@@ -32,8 +32,6 @@ import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActi
 import { useHistory } from 'react-router';
 import { parsePath } from 'history';
 
-const EDA_USER_DATASET_PREFIX = 'EDAUD';
-
 type DownloadsTabProps = {
   downloadClient: DownloadClient;
   analysisState: AnalysisState;
@@ -56,7 +54,7 @@ export default function DownloadTab({
     filteredCounts
   );
   const datasetId = studyRecord.id[0].value;
-  const isUserStudy = datasetId.split('_')[0] === EDA_USER_DATASET_PREFIX;
+  const { isUserStudy } = studyMetadata;
   const permission = usePermissions();
   const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
   const projectDisplayName = useWdkService(
@@ -235,8 +233,8 @@ export default function DownloadTab({
           marginRight: 75,
         }}
       >
-        {!isUserStudy &&
-          projectDisplayName === 'ClinEpiDB' &&
+        {projectDisplayName === 'ClinEpiDB' &&
+          !isUserStudy &&
           (dataAccessDeclaration ?? '')}
         {mergedReleaseData[0] && (
           <StudyCitation
