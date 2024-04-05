@@ -7,6 +7,7 @@ import React, {
   useMemo,
 } from 'react';
 import { connect, useSelector } from 'react-redux';
+import { useLocation } from 'react-router';
 
 import { get, memoize } from 'lodash';
 
@@ -47,7 +48,6 @@ import {
 } from '@veupathdb/web-common/lib/components/homepage/Utils';
 import {
   useUserDatasetsWorkspace,
-  useEda,
   edaServiceUrl,
 } from '@veupathdb/web-common/lib/config';
 import { useAnnouncementsState } from '@veupathdb/web-common/lib/hooks/announcements';
@@ -64,16 +64,12 @@ import { PageDescription } from './PageDescription';
 import { makeVpdbClassNameHelper } from './Utils';
 
 import './VEuPathDBHomePage.scss';
-import {
-  makeClassNameHelper,
-  safeHtml,
-} from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import SubsettingClient from '@veupathdb/eda/lib/core/api/SubsettingClient';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { Warning } from '@veupathdb/coreui';
-import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 const vpdbCx = makeVpdbClassNameHelper('');
 
@@ -118,6 +114,10 @@ const VEuPathDBHomePageViewStandard: FunctionComponent<Props> = (props) => {
   const { isHomePage, classNameModifier } = props;
   const [headerExpanded, setHeaderExpanded] = useState(true);
   const [footerThin, setFooterThin] = useState(true);
+
+  const location = useLocation();
+  const shouldHideOrgPrefsSubheader =
+    location.pathname.includes('workspace/analyses');
 
   useEffect(() => {
     if (isHomePage && props.displayName) {
@@ -264,9 +264,11 @@ const VEuPathDBHomePageViewStandard: FunctionComponent<Props> = (props) => {
               branding={branding}
             />
           </ErrorBoundary>
-          <div className={subHeaderClassName}>
-            <PreferredOrganismsSummary />
-          </div>
+          {!shouldHideOrgPrefsSubheader && (
+            <div className={subHeaderClassName}>
+              <PreferredOrganismsSummary />
+            </div>
+          )}
           <div className={vpdbCx('Announcements')}>
             <Announcements
               closedBanners={closedBanners}

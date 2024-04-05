@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { uniq } from 'lodash';
 import Path from 'path';
 import {
@@ -97,6 +97,8 @@ interface Props {
   downloadClient: DownloadClient;
   singleAppMode?: string;
   showUnreleasedData: boolean;
+  helpTabContents?: ReactNode;
+  isStudyExplorerWorkspace?: boolean;
 }
 
 /**
@@ -116,6 +118,8 @@ export function AnalysisPanel({
   downloadClient,
   singleAppMode,
   showUnreleasedData,
+  helpTabContents,
+  isStudyExplorerWorkspace = false,
 }: Props) {
   const studyRecord = useStudyRecord();
   const analysisState = useAnalysis(analysisId, singleAppMode);
@@ -255,7 +259,10 @@ export function AnalysisPanel({
   return (
     <RestrictedPage approvalStatus={approvalStatus}>
       <ShowHideVariableContextProvider>
-        <EDAWorkspaceHeading analysisState={analysisState} />
+        <EDAWorkspaceHeading
+          analysisState={analysisState}
+          isStudyExplorerWorkspace={isStudyExplorerWorkspace}
+        />
         <ShareFromAnalysis
           visible={sharingModalVisible}
           toggleVisible={setSharingModalVisible}
@@ -368,7 +375,14 @@ export function AnalysisPanel({
                   display: 'Record Notes',
                   route: '/notes',
                 },
-              ]}
+              ].concat(
+                isStudyExplorerWorkspace
+                  ? {
+                      display: 'Learn',
+                      route: '/learn',
+                    }
+                  : []
+              )}
             />
             {mapLink && (
               <Link
@@ -470,6 +484,14 @@ export function AnalysisPanel({
             render={() => (
               <AnalysisTabErrorBoundary>
                 <NotesTab analysisState={analysisState} />
+              </AnalysisTabErrorBoundary>
+            )}
+          />
+          <Route
+            path={`${routeBase}/learn`}
+            render={() => (
+              <AnalysisTabErrorBoundary>
+                {helpTabContents}
               </AnalysisTabErrorBoundary>
             )}
           />
