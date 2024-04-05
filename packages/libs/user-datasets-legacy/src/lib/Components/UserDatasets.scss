@@ -1,0 +1,101 @@
+@import '@veupathdb/wdk-client/lib/Core/Style/palette';
+
+.UserDatasetList,
+.UserDatasetDetail,
+.UserDataset-SharingModal {
+  .success {
+    color: $green;
+  }
+  .danger {
+    color: $red;
+  }
+  .faded {
+    opacity: 0.5;
+  }
+
+  input,
+  input[type='text'],
+  textarea {
+    background-color: none;
+  }
+
+  section {
+    width: 100%;
+    margin-bottom: 30px;
+  }
+
+  .MesaComponent {
+    .DataTable {
+      button {
+        .wdk-Icon {
+          font-size: 1em;
+        }
+      }
+    }
+    td,
+    th {
+      vertical-align: middle;
+    }
+  }
+
+  .ActionToolbar-Children {
+    display: flex;
+    flex: 1 0 auto;
+    align-items: center;
+  }
+  .StatusIcon {
+    font-size: 20px;
+    &.fa-clock-o {
+      color: $blue;
+    }
+    &.fa-minus-circle {
+      color: #bbb;
+    }
+    &.fa-times-circle {
+      color: $red;
+    }
+    &.fa-check-circle {
+      color: $green;
+    }
+    &.fa-exclamation-circle {
+      color: $gold;
+    }
+  }
+}
+
+.UserDataset-NoDatasets {
+  font-size: 1.4em;
+  text-align: center;
+  line-height: 1.5;
+  margin: 2em;
+
+  &__lead {
+    font-size: 1.2em;
+    font-weight: 500;
+  }
+  ul {
+    list-style: none;
+  }
+}
+
+.UserDataset-Help {
+  font-size: 1.2em;
+  /*  text-align: center;*/
+
+  ul {
+    display: block;
+    max-width: 90%;
+    text-align: left;
+  }
+  .box {
+    padding: 10px;
+  }
+  iframe {
+    margin-bottom: 20px;
+  }
+  img {
+    display: block;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+}
