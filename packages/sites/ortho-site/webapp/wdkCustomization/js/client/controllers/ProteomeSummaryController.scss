@@ -1,9 +1,13 @@
 .ReleaseSummary.ProteomeSummary {
   .SearchBoxContainer {
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: auto auto auto;
     align-items: center;
     gap: 0.25em;
+  }
+
+  .Counts {
+    padding-left: 2em;
   }
 
   .EmptyResourceVersion {
