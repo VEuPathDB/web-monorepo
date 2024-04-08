@@ -29,7 +29,7 @@ interface Props {
   geoConfigs: GeoConfig[];
   mapType?: MarkerConfiguration['type'];
   setHideVizInputsAndControls: (value: boolean) => void;
-  setIsSidePanelExpanded: MapTypeConfigPanelProps['setIsSidePanelExpanded'];
+  setIsSidePanelExpanded: MapTypeConfigPanelProps<any>['setIsSidePanelExpanded'];
 }
 
 const mapVizManagementClassName = makeClassNameHelper('MapVizManagement');
