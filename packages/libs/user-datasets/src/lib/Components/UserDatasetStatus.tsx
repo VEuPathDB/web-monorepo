@@ -200,7 +200,7 @@ export default function UserDatasetStatus(props: Props) {
   const link = `${baseUrl}/${userDataset.id}`;
   const children = <Icon className="StatusIcon" fa={faIcon} />;
   const visibleContent = props.useTooltip ? (
-    <Tooltip title={content}>{children}</Tooltip>
+    <Tooltip title={content ?? ''}>{children}</Tooltip>
   ) : (
     <React.Fragment>
       {children} {content}
