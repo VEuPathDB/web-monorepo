@@ -156,6 +156,9 @@ export default function SearchBox({
       <Filter style={styleSpec.optionalIcon} />
     );
 
+  // use safeHtml for helpText to allow italic
+  const helpTextHtml = helpText ? safeHtml(helpText) : null;
+
   return (
     <div
       style={{
@@ -195,9 +198,8 @@ export default function SearchBox({
           optionalIcon
         ) : null}
       </label>
-      {/* use safeHtml for helpText to allow italic */}
-      {!helpText ? null : (
-        <Tooltip title={safeHtml(helpText)} interactive>
+      {!helpTextHtml ? null : (
+        <Tooltip title={helpTextHtml} interactive>
           <Help style={styleSpec.helpIcon} />
         </Tooltip>
       )}

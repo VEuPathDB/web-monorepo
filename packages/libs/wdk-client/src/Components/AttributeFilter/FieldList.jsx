@@ -187,7 +187,7 @@ function FieldNode({ node, isActive, searchTerm, handleFieldSelect }) {
   }, [isActive, nodeRef.current, searchTerm]);
 
   return (
-    <Tooltip title={node.field.description} leaveDelay={0}>
+    <Tooltip title={node.field.description ?? ''} leaveDelay={0}>
       {isFilterField(node.field) ? (
         <a
           ref={nodeRef}

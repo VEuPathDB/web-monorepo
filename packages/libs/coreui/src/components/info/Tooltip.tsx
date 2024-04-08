@@ -6,16 +6,17 @@ import _ from 'lodash';
  * Tooltip will not render if the title is an empty value or a boolean.
  */
 const UnstyledTooltip = (props: ComponentProps<typeof MUITooltip>) => {
-  const { title } = props;
+  const { title, ...otherProps } = props;
 
-  return !(
-    title === '' ||
+  const finalTitle = !(
     _.isEqual(title, {}) ||
     _.isEqual(title, []) ||
     typeof title === 'boolean'
-  ) ? (
-    <MUITooltip {...props} />
-  ) : null;
+  )
+    ? title
+    : '';
+
+  return <MUITooltip title={finalTitle} {...otherProps} />;
 };
 
 export const Tooltip = withStyles((theme: Theme) => ({
