@@ -285,6 +285,7 @@ export const StudyOverview = t.intersection([
   }),
   t.partial({
     hasMap: t.boolean,
+    isUserStudy: t.boolean,
   }),
 ]);
 

@@ -368,6 +368,6 @@ export default function BoundsDriftMarker({
   );
 }
 
-function mouseEventHasModifierKey(event: MouseEvent) {
+export function mouseEventHasModifierKey(event: MouseEvent) {
   return event.ctrlKey || event.altKey || event.metaKey || event.shiftKey;
 }

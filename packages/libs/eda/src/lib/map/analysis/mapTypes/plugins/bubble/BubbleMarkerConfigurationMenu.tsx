@@ -12,9 +12,9 @@ import {
   aggregationHelp,
   AggregationInputs,
 } from '../../../../../core/components/visualizations/implementations/LineplotVisualization';
-import { DataElementConstraint } from '../../../../../core/types/visualization'; // TO DO for dates: remove
 import { SharedMarkerConfigurations } from '../../shared';
 import { invalidProportionText } from '../../../utils/defaultOverlayConfig';
+import { PanelConfig, PanelPositionConfig } from '../../../appState';
 
 type AggregatorOption = typeof aggregatorOptions[number];
 const aggregatorOptions = ['mean', 'median'] as const;
@@ -23,12 +23,19 @@ interface MarkerConfiguration<T extends string> {
   type: T;
 }
 
+interface BubbleLegendPositionConfig {
+  variable: PanelPositionConfig;
+  count: PanelPositionConfig;
+}
+
 export interface BubbleMarkerConfiguration
   extends MarkerConfiguration<'bubble'>,
     SharedMarkerConfigurations {
   aggregator?: AggregatorOption;
   numeratorValues?: string[];
   denominatorValues?: string[];
+  legendPanelConfig: BubbleLegendPositionConfig;
+  visualizationPanelConfig: PanelConfig;
 }
 
 interface Props

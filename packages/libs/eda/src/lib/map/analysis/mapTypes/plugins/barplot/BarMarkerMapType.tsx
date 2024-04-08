@@ -61,7 +61,10 @@ import {
   useFindEntityAndVariable,
   useSubsettingClient,
 } from '../../../../../core/hooks/workspace';
-import { DraggableLegendPanel } from '../../../DraggableLegendPanel';
+import {
+  DEFAULT_DRAGGABLE_LEGEND_POSITION,
+  DraggableLegendPanel,
+} from '../../../DraggableLegendPanel';
 import { MapLegend } from '../../../MapLegend';
 import { sharedStandaloneMarkerProperties } from '../../MarkerConfiguration/CategoricalMarkerPreview';
 import { useToggleStarredVariable } from '../../../../../core/hooks/starredVariables';
@@ -79,6 +82,11 @@ import { useLittleFilters } from '../../../littleFilters';
 import TimeSliderQuickFilter from '../../../TimeSliderQuickFilter';
 import { MapTypeHeaderStudyDetails } from '../../MapTypeHeaderStudyDetails';
 import { SubStudies } from '../../../SubStudies';
+import {
+  PanelConfig,
+  defaultVisualizationPanelConfig,
+} from '../../../appState';
+
 const displayName = 'Bar plots';
 
 export const plugin: MapTypePlugin<BarPlotMarkerConfiguration> = {
@@ -94,6 +102,8 @@ export const plugin: MapTypePlugin<BarPlotMarkerConfiguration> = {
       binningMethod: undefined,
       dependentAxisLogScale: false,
       selectedCountsOption: 'filtered',
+      legendPanelConfig: DEFAULT_DRAGGABLE_LEGEND_POSITION,
+      visualizationPanelConfig: defaultVisualizationPanelConfig,
     };
   },
   ConfigPanelComponent,
@@ -123,6 +133,7 @@ function ConfigPanelComponent(
     studyId,
     studyEntities,
     filters,
+    setIsSidePanelExpanded,
   } = props;
 
   const subsettingClient = useSubsettingClient();
@@ -133,6 +144,7 @@ function ConfigPanelComponent(
     binningMethod,
     dependentAxisLogScale,
     selectedPlotMode,
+    visualizationPanelConfig,
   } = configuration;
 
   const { entity: overlayEntity, variable: overlayVariable } =
@@ -289,9 +301,13 @@ function ConfigPanelComponent(
       updateConfiguration({
         ...configuration,
         activeVisualizationId,
+        visualizationPanelConfig: {
+          ...visualizationPanelConfig,
+          isVisible: !!activeVisualizationId,
+        },
       });
     },
-    [configuration, updateConfiguration]
+    [configuration, updateConfiguration, visualizationPanelConfig]
   );
 
   const plugins = useStandaloneVizPlugins({
@@ -319,6 +335,7 @@ function ConfigPanelComponent(
           geoConfigs={geoConfigs}
           mapType="barplot"
           setHideVizInputsAndControls={props.setHideVizInputsAndControls}
+          setIsSidePanelExpanded={setIsSidePanelExpanded}
         />
       ),
     },
@@ -447,15 +464,8 @@ function MapOverlayComponent(
   const { variable: overlayVariable } =
     findEntityAndVariable(configuration.selectedVariable) ?? {};
 
-  const setActiveVisualizationId = useCallback(
-    (activeVisualizationId?: string) => {
-      updateConfiguration({
-        ...configuration,
-        activeVisualizationId,
-      });
-    },
-    [configuration, updateConfiguration]
-  );
+  const { selectedMarkers, legendPanelConfig, visualizationPanelConfig } =
+    configuration;
 
   const markerData = useMarkerData({
     studyEntities,
@@ -468,8 +478,6 @@ function MapOverlayComponent(
     selectedValues: configuration.selectedValues,
     valueSpec: configuration.selectedPlotMode,
   });
-
-  const selectedMarkers = configuration.selectedMarkers;
 
   const legendItems = markerData.legendItems;
   const plugins = useStandaloneVizPlugins({
@@ -497,9 +505,56 @@ function MapOverlayComponent(
     substudyFilterFuncs
   );
 
+  const updateLegendPosition = useCallback(
+    (position: PanelConfig['position']) => {
+      updateConfiguration({
+        ...configuration,
+        legendPanelConfig: position,
+      });
+    },
+    [updateConfiguration, configuration]
+  );
+
+  const updateVisualizationPosition = useCallback(
+    (position: PanelConfig['position']) => {
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...visualizationPanelConfig,
+          position,
+        },
+      });
+    },
+    [updateConfiguration, configuration, visualizationPanelConfig]
+  );
+
+  const updateVisualizationDimensions = useCallback(
+    (dimensions: PanelConfig['dimensions']) => {
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...visualizationPanelConfig,
+          dimensions,
+        },
+      });
+    },
+    [updateConfiguration, configuration, visualizationPanelConfig]
+  );
+
+  const onPanelDismiss = useCallback(() => {
+    updateConfiguration({
+      ...configuration,
+      activeVisualizationId: undefined,
+      visualizationPanelConfig: {
+        ...visualizationPanelConfig,
+        isVisible: false,
+      },
+    });
+  }, [updateConfiguration, configuration, visualizationPanelConfig]);
+
   return (
     <>
-      {appState.studyDetailsPanelConfig?.isVisble && (
+      {appState.studyDetailsPanelConfig?.isVisible && (
         <SubStudies
           studyId={studyId}
           entityId={STUDIES_ENTITY_ID}
@@ -514,6 +569,8 @@ function MapOverlayComponent(
         panelTitle={overlayVariable?.displayName}
         zIndex={3}
         headerButtons={headerButtons}
+        defaultPosition={legendPanelConfig}
+        onDragComplete={updateLegendPosition}
       >
         <div style={{ padding: '5px 10px' }}>
           {noDataError ?? (
@@ -528,7 +585,6 @@ function MapOverlayComponent(
       <DraggableVisualization
         analysisState={props.analysisState}
         visualizationId={configuration.activeVisualizationId}
-        setActiveVisualizationId={setActiveVisualizationId}
         apps={props.apps}
         plugins={plugins}
         geoConfigs={geoConfigs}
@@ -540,6 +596,11 @@ function MapOverlayComponent(
         zIndexForStackingContext={2}
         hideInputsAndControls={props.hideVizInputsAndControls}
         setHideInputsAndControls={props.setHideVizInputsAndControls}
+        onDragComplete={updateVisualizationPosition}
+        defaultPosition={visualizationPanelConfig.position}
+        onPanelResize={updateVisualizationDimensions}
+        dimensions={visualizationPanelConfig.dimensions}
+        onPanelDismiss={onPanelDismiss}
       />
     </>
   );
@@ -580,10 +641,10 @@ function MapTypeHeaderDetails(
       outputEntityId={outputEntityId}
       onShowStudies={
         studyDetailsPanelConfig &&
-        ((isVisble) =>
+        ((isVisible) =>
           props.setStudyDetailsPanelConfig({
             ...studyDetailsPanelConfig,
-            isVisble,
+            isVisible,
           }))
       }
     />

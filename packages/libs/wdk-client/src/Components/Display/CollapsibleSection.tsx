@@ -58,9 +58,10 @@ function CollapsibleSection(props: Props) {
   const handleCollapsedChange = useCallback(
     (event: React.MouseEvent<HTMLElement>) => {
       event.currentTarget.blur();
+      event.stopPropagation();
       onCollapsedChange(!isCollapsed);
     },
-    [isCollapsed]
+    [isCollapsed, onCollapsedChange]
   );
 
   return (

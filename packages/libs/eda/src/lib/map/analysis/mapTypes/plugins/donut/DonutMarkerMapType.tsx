@@ -27,7 +27,10 @@ import {
 import { useToggleStarredVariable } from '../../../../../core/hooks/starredVariables';
 import { kFormatter } from '../../../../../core/utils/big-number-formatters';
 import { findEntityAndVariable } from '../../../../../core/utils/study-metadata';
-import { DraggableLegendPanel } from '../../../DraggableLegendPanel';
+import {
+  DEFAULT_DRAGGABLE_LEGEND_POSITION,
+  DraggableLegendPanel,
+} from '../../../DraggableLegendPanel';
 import { MapLegend } from '../../../MapLegend';
 import { sharedStandaloneMarkerProperties } from '../../MarkerConfiguration/CategoricalMarkerPreview';
 import {
@@ -75,6 +78,10 @@ import { MapTypeHeaderStudyDetails } from '../../MapTypeHeaderStudyDetails';
 import { SubStudies } from '../../../SubStudies';
 import { useLittleFilters } from '../../../littleFilters';
 import TimeSliderQuickFilter from '../../../TimeSliderQuickFilter';
+import {
+  PanelConfig,
+  defaultVisualizationPanelConfig,
+} from '../../../appState';
 
 const displayName = 'Donuts';
 
@@ -89,6 +96,8 @@ export const plugin: MapTypePlugin<PieMarkerConfiguration> = {
       selectedValues: undefined,
       binningMethod: undefined,
       selectedCountsOption: 'filtered',
+      legendPanelConfig: DEFAULT_DRAGGABLE_LEGEND_POSITION,
+      visualizationPanelConfig: defaultVisualizationPanelConfig,
     };
   },
   ConfigPanelComponent,
@@ -110,6 +119,8 @@ function ConfigPanelComponent(
     studyId,
     studyEntities,
     filters,
+    setHideVizInputsAndControls,
+    setIsSidePanelExpanded,
   } = props;
 
   const subsettingClient = useSubsettingClient();
@@ -257,6 +268,10 @@ function ConfigPanelComponent(
       updateConfiguration({
         ...configuration,
         activeVisualizationId,
+        visualizationPanelConfig: {
+          ...configuration.visualizationPanelConfig,
+          isVisible: !!activeVisualizationId,
+        },
       });
     },
     [configuration, updateConfiguration]
@@ -282,7 +297,8 @@ function ConfigPanelComponent(
           plugins={plugins}
           geoConfigs={geoConfigs}
           mapType="pie"
-          setHideVizInputsAndControls={props.setHideVizInputsAndControls}
+          setHideVizInputsAndControls={setHideVizInputsAndControls}
+          setIsSidePanelExpanded={setIsSidePanelExpanded}
         />
       ),
     },
@@ -315,6 +331,8 @@ function MapLayerComponent(
     filters,
     updateConfiguration,
   } = props;
+
+  const configuration = props.configuration as PieMarkerConfiguration;
 
   const {
     selectedVariable,
@@ -354,11 +372,11 @@ function MapLayerComponent(
     (selectedMarkers?: string[]) => {
       handleSelectedMarkerSnackbars(selectedMarkers);
       updateConfiguration({
-        ...(props.configuration as PieMarkerConfiguration),
+        ...configuration,
         selectedMarkers,
       });
     },
-    [props.configuration, updateConfiguration, handleSelectedMarkerSnackbars]
+    [configuration, updateConfiguration, handleSelectedMarkerSnackbars]
   );
 
   // no markers and no error div for certain known error strings
@@ -402,26 +420,23 @@ function MapOverlayComponent(
     filters,
     headerButtons,
     setStudyDetailsPanelConfig,
+    setHideVizInputsAndControls,
   } = props;
+
+  const configuration = props.configuration as PieMarkerConfiguration;
+
   const {
     selectedVariable,
     selectedValues,
     binningMethod,
     activeVisualizationId,
+    legendPanelConfig,
+    visualizationPanelConfig,
     selectedMarkers,
-  } = props.configuration as PieMarkerConfiguration;
+  } = configuration;
   const findEntityAndVariable = useFindEntityAndVariable(filters);
   const { variable: overlayVariable } =
     findEntityAndVariable(selectedVariable) ?? {};
-  const setActiveVisualizationId = useCallback(
-    (activeVisualizationId?: string) => {
-      updateConfiguration({
-        ...(props.configuration as PieMarkerConfiguration),
-        activeVisualizationId,
-      });
-    },
-    [props.configuration, updateConfiguration]
-  );
 
   const { filters: filtersForFloaters } = useLittleFilters(
     {
@@ -460,9 +475,56 @@ function MapOverlayComponent(
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
   const noDataError = getLegendErrorMessage(data.error);
 
+  const updateLegendPosition = useCallback(
+    (position: PanelConfig['position']) => {
+      updateConfiguration({
+        ...configuration,
+        legendPanelConfig: position,
+      });
+    },
+    [updateConfiguration, configuration]
+  );
+
+  const updateVisualizationPosition = useCallback(
+    (position: PanelConfig['position']) => {
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...visualizationPanelConfig,
+          position,
+        },
+      });
+    },
+    [updateConfiguration, configuration, visualizationPanelConfig]
+  );
+
+  const updateVisualizationDimensions = useCallback(
+    (dimensions: PanelConfig['dimensions']) => {
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...visualizationPanelConfig,
+          dimensions,
+        },
+      });
+    },
+    [updateConfiguration, configuration, visualizationPanelConfig]
+  );
+
+  const onPanelDismiss = useCallback(() => {
+    updateConfiguration({
+      ...configuration,
+      activeVisualizationId: undefined,
+      visualizationPanelConfig: {
+        ...visualizationPanelConfig,
+        isVisible: false,
+      },
+    });
+  }, [updateConfiguration, configuration, visualizationPanelConfig]);
+
   return (
     <>
-      {appState.studyDetailsPanelConfig?.isVisble && (
+      {appState.studyDetailsPanelConfig?.isVisible && (
         <SubStudies
           studyId={studyId}
           entityId={STUDIES_ENTITY_ID}
@@ -478,6 +540,8 @@ function MapOverlayComponent(
         panelTitle={overlayVariable?.displayName}
         zIndex={3}
         headerButtons={headerButtons}
+        defaultPosition={legendPanelConfig}
+        onDragComplete={updateLegendPosition}
       >
         <div style={{ padding: '5px 10px' }}>
           {noDataError ?? (
@@ -495,7 +559,6 @@ function MapOverlayComponent(
       <DraggableVisualization
         analysisState={props.analysisState}
         visualizationId={activeVisualizationId}
-        setActiveVisualizationId={setActiveVisualizationId}
         apps={props.apps}
         plugins={plugins}
         geoConfigs={geoConfigs}
@@ -505,7 +568,12 @@ function MapOverlayComponent(
         filters={filtersForFloaters}
         zIndexForStackingContext={2}
         hideInputsAndControls={props.hideVizInputsAndControls}
-        setHideInputsAndControls={props.setHideVizInputsAndControls}
+        setHideInputsAndControls={setHideVizInputsAndControls}
+        onDragComplete={updateVisualizationPosition}
+        defaultPosition={visualizationPanelConfig.position}
+        onPanelResize={updateVisualizationDimensions}
+        dimensions={visualizationPanelConfig.dimensions}
+        onPanelDismiss={onPanelDismiss}
       />
     </>
   );
@@ -545,10 +613,10 @@ function MapTypeHeaderDetails(
       outputEntityId={outputEntityId}
       onShowStudies={
         studyDetailsPanelConfig &&
-        ((isVisble) =>
+        ((isVisible) =>
           props.setStudyDetailsPanelConfig({
             ...studyDetailsPanelConfig,
-            isVisble,
+            isVisible,
           }))
       }
     />

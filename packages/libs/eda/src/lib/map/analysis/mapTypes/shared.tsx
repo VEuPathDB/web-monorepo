@@ -408,10 +408,13 @@ export function useSelectedMarkerSnackbars(
       ) {
         const modifierKey =
           window.navigator.platform.indexOf('Mac') === 0 ? 'Cmd' : 'Ctrl';
-        enqueueSnackbar(`Use ${modifierKey}-click to select multiple markers`, {
-          variant: 'info',
-          anchorOrigin: { vertical: 'top', horizontal: 'center' },
-        });
+        enqueueSnackbar(
+          `Use ${modifierKey}-click or ${modifierKey}-drag-rectangle to select multiple markers`,
+          {
+            variant: 'info',
+            anchorOrigin: { vertical: 'top', horizontal: 'center' },
+          }
+        );
         setShownShiftKeySnackbar(true);
       }
       // if the user has managed to select more than one marker, then they don't need help

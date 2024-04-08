@@ -12,6 +12,7 @@ import { AppState, MarkerConfiguration, PanelConfig } from '../appState';
 import { EntityCounts } from '../../../core/hooks/entityCounts';
 import { VariableDescriptor } from '../../../core/types/variable';
 import { SiteInformationProps } from '../Types';
+import { Bounds as BoundsProp } from '@veupathdb/components/lib/map/Types';
 
 export interface MapTypeConfigPanelProps<T extends MarkerConfiguration> {
   apps: ComputationAppOverview[];
@@ -25,6 +26,7 @@ export interface MapTypeConfigPanelProps<T extends MarkerConfiguration> {
   updateConfiguration: (configuration: T) => void;
   hideVizInputsAndControls: boolean;
   setHideVizInputsAndControls: (hide: boolean) => void;
+  setIsSidePanelExpanded: (isExpanded: boolean) => void;
 }
 
 export interface MapTypeMapLayerProps<T extends MarkerConfiguration> {
@@ -50,6 +52,8 @@ export interface MapTypeMapLayerProps<T extends MarkerConfiguration> {
   ) => void;
   siteInformationProps?: SiteInformationProps;
   headerButtons?: React.FC;
+  // coordinates of selected area
+  boxCoord?: BoundsProp;
 }
 
 /**

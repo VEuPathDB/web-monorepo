@@ -12,11 +12,21 @@ import { Filter } from '../../core/types/filter';
 import { FilledButton } from '@veupathdb/coreui';
 import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
 import { ComputationPlugin } from '../../core/components/computations/Types';
+import { PanelConfig } from './appState';
+
+export const DEFAULT_DRAGGABLE_VIZ_POSITION = {
+  x: 535,
+  y: 220,
+};
+
+export const DEFAULT_DRAGGABLE_VIZ_DIMENSIONS = {
+  width: 'auto',
+  height: 'auto',
+};
 
 interface Props {
   analysisState: AnalysisState;
   visualizationId?: string;
-  setActiveVisualizationId: (id?: string) => void;
   apps: ComputationAppOverview[];
   plugins: Partial<Record<string, ComputationPlugin>>;
   geoConfigs: GeoConfig[];
@@ -28,12 +38,16 @@ interface Props {
   additionalRenderCondition?: () => void;
   hideInputsAndControls: boolean;
   setHideInputsAndControls: (value: boolean) => void;
+  defaultPosition: PanelConfig['position'];
+  onDragComplete: (position: PanelConfig['position']) => void;
+  onPanelResize: (dimensions: PanelConfig['dimensions']) => void;
+  dimensions: PanelConfig['dimensions'];
+  onPanelDismiss: () => void;
 }
 
 export default function DraggableVisualization({
   analysisState,
   visualizationId,
-  setActiveVisualizationId,
   geoConfigs,
   apps,
   plugins,
@@ -45,6 +59,11 @@ export default function DraggableVisualization({
   additionalRenderCondition,
   hideInputsAndControls,
   setHideInputsAndControls,
+  defaultPosition,
+  onDragComplete,
+  onPanelResize,
+  dimensions,
+  onPanelDismiss,
 }: Props) {
   const { computation: activeComputation, visualization: activeViz } =
     analysisState.getVisualizationAndComputation(visualizationId) ?? {};
@@ -77,13 +96,14 @@ export default function DraggableVisualization({
         zIndex: zIndexForStackingContext,
         resize: 'both',
         overflow: 'hidden',
+        width: dimensions.width,
+        height: dimensions.height,
       }}
       panelTitle={activeVizOverview?.displayName || ''}
-      defaultPosition={{
-        x: 535,
-        y: 220,
-      }}
-      onPanelDismiss={() => setActiveVisualizationId(undefined)}
+      defaultPosition={defaultPosition}
+      onDragComplete={onDragComplete}
+      onPanelDismiss={onPanelDismiss}
+      onPanelResize={onPanelResize}
     >
       <div
         style={{

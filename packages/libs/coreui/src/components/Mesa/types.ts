@@ -2,6 +2,11 @@ import React, { CSSProperties, ReactElement, ReactNode } from 'react';
 
 type DefaultColumnKey<Row> = Extract<keyof Row, string>;
 
+type ChildRowProps<Row> = {
+  rowIndex: number;
+  rowData: Row;
+};
+
 export interface MesaStateProps<
   Row,
   Key = DefaultColumnKey<Row>,
@@ -22,6 +27,7 @@ export interface MesaStateProps<
       rowsPerPageOptions?: number[];
     };
     emptinessCulprit?: 'search' | 'nocolumns' | 'filters' | 'nodata';
+    expandedRows?: (number | string)[];
   };
   headerWrapperStyle?: CSSProperties;
   options?: {
@@ -38,12 +44,22 @@ export interface MesaStateProps<
     useStickyHeader?: boolean;
     useStickyFirstNColumns?: number;
     tableBodyMaxHeight?: string;
+    selectColumnHeadingDetails?: {
+      heading: string;
+      helpText?: string;
+    };
     selectedNoun?: string;
     selectedPluralNoun?: string;
     searchPlaceholder?: string;
     deriveRowClassName?: (row: Row) => string | undefined;
     renderEmptyState?: () => ReactNode;
     isRowSelected?: (row: Row) => boolean;
+    /**
+     * To handle errors gracefully, childRow elements should be wrapped in wdk-client's ErrorBoundary.
+     * As a reference, refer to the RecordTable.jsx component in wdk-client.
+     */
+    childRow?: (props: ChildRowProps<Row>) => ReactElement<ChildRowProps<Row>>;
+    getRowId?: (row: Row) => string | number;
   };
   actions?: MesaAction<Row, Key>[];
   eventHandlers?: {
@@ -59,6 +75,7 @@ export interface MesaStateProps<
     onMultipleRowSelect?: (rows: Row[]) => void;
     onMultipleRowDeselect?: (rows: Row[]) => void;
     onColumnReorder?: (columnKey: Key, columnIndex: number) => void;
+    onExpandedRowsChange?: (indexes: number[]) => void;
   };
 }
 

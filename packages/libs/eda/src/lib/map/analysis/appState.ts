@@ -13,8 +13,57 @@ import { useGetDefaultTimeVariableDescriptor } from './hooks/eztimeslider';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
 import * as plugins from './mapTypes';
 import { STUDIES_ENTITY_ID, STUDY_ID_VARIABLE_ID } from '../constants';
+import {
+  DEFAULT_DRAGGABLE_VIZ_DIMENSIONS,
+  DEFAULT_DRAGGABLE_VIZ_POSITION,
+} from './DraggableVisualization';
+
+export const defaultVisualizationPanelConfig = {
+  isVisible: false,
+  position: DEFAULT_DRAGGABLE_VIZ_POSITION,
+  dimensions: DEFAULT_DRAGGABLE_VIZ_DIMENSIONS,
+};
 
 const LatLngLiteral = t.type({ lat: t.number, lng: t.number });
+
+const PanelPositionConfig = t.type({
+  x: t.number,
+  y: t.number,
+});
+
+const PanelConfig = t.type({
+  isVisible: t.boolean,
+  position: PanelPositionConfig,
+  dimensions: t.type({
+    height: t.union([t.number, t.string]),
+    width: t.union([t.number, t.string]),
+  }),
+});
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export type PanelConfig = t.TypeOf<typeof PanelConfig>;
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export type PanelPositionConfig = t.TypeOf<typeof PanelPositionConfig>;
+
+/*
+const MarkerType = t.keyof({
+  barplot: null,
+  pie: null,
+  bubble: null,
+});
+
+
+const BubbleLegendPositionConfig = t.type({
+  variable: PanelPositionConfig,
+  count: PanelPositionConfig,
+});
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export type BubbleLegendPositionConfig = t.TypeOf<
+  typeof BubbleLegendPositionConfig
+>;
+*/
 
 // user-specified selection
 export type SelectedValues = t.TypeOf<typeof SelectedValues>;
@@ -49,19 +98,56 @@ export const MarkerConfiguration = t.intersection([
     selectedMarkers: t.array(t.string),
     selectedVariable: VariableDescriptor,
   }),
+  /*
+  t.union([
+    t.intersection([
+      t.type({
+        type: t.literal('barplot'),
+        selectedValues: SelectedValues,
+        selectedPlotMode: t.union([
+          t.literal('count'),
+          t.literal('proportion'),
+        ]),
+        binningMethod: BinningMethod,
+        dependentAxisLogScale: t.boolean,
+        selectedCountsOption: SelectedCountsOption,
+        legendPanelConfig: PanelPositionConfig,
+        visualizationPanelConfig: PanelConfig,
+      }),
+      t.partial({
+        // yes all the modes have selectedMarkers but maybe in the future one won't
+        selectedMarkers: t.array(t.string),
+      }),
+    ]),
+    t.intersection([
+      t.type({
+        type: t.literal('pie'),
+        selectedValues: SelectedValues,
+        binningMethod: BinningMethod,
+        selectedCountsOption: SelectedCountsOption,
+        legendPanelConfig: PanelPositionConfig,
+        visualizationPanelConfig: PanelConfig,
+      }),
+      t.partial({
+        selectedMarkers: t.array(t.string),
+      }),
+    ]),
+    t.intersection([
+      t.type({
+        type: t.literal('bubble'),
+      }),
+      t.partial({
+        aggregator: t.union([t.literal('mean'), t.literal('median')]),
+        numeratorValues: t.union([t.array(t.string), t.undefined]),
+        denominatorValues: t.union([t.array(t.string), t.undefined]),
+        selectedMarkers: t.array(t.string),
+        legendPanelConfig: BubbleLegendPositionConfig,
+        visualizationPanelConfig: PanelConfig,
+      }),
+    ]),
+  ]),
+  */
 ]);
-
-const PanelConfig = t.type({
-  isVisble: t.boolean,
-  position: t.type({ x: t.number, y: t.number }),
-  dimensions: t.type({
-    height: t.union([t.number, t.string]),
-    width: t.union([t.number, t.string]),
-  }),
-});
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export type PanelConfig = t.TypeOf<typeof PanelConfig>;
 
 export const AppState = t.intersection([
   t.type({
@@ -158,7 +244,7 @@ export function useAppState(
       ...(isMegaStudy
         ? {
             studyDetailsPanelConfig: {
-              isVisble: false,
+              isVisible: false,
               position: {
                 x: Math.max(650, window.innerWidth / 2 - 250),
                 y: Math.max(300, window.innerHeight / 2 - 250),
@@ -167,6 +253,45 @@ export function useAppState(
             },
           }
         : {}),
+      /*
+      markerConfigurations: [
+        {
+          type: 'pie',
+          selectedVariable: defaultVariable,
+          selectedValues: undefined,
+          binningMethod: undefined,
+          selectedCountsOption: 'filtered',
+          legendPanelConfig: DEFAULT_DRAGGABLE_LEGEND_POSITION,
+          visualizationPanelConfig: defaultVisualizationPanelConfig,
+        },
+        {
+          type: 'barplot',
+          selectedPlotMode: 'count',
+          selectedVariable: defaultVariable,
+          selectedValues: undefined,
+          binningMethod: undefined,
+          dependentAxisLogScale: false,
+          selectedCountsOption: 'filtered',
+          legendPanelConfig: DEFAULT_DRAGGABLE_LEGEND_POSITION,
+          visualizationPanelConfig: defaultVisualizationPanelConfig,
+        },
+        {
+          type: 'bubble',
+          selectedVariable: defaultVariable,
+          aggregator: 'mean',
+          numeratorValues: undefined,
+          denominatorValues: undefined,
+          legendPanelConfig: {
+            variable: DEFAULT_DRAGGABLE_LEGEND_POSITION,
+            count: {
+              x: window.innerWidth,
+              y: 420,
+            },
+          },
+          visualizationPanelConfig: defaultVisualizationPanelConfig,
+        },
+      ],
+      */
     }),
     [defaultTimeVariable, isMegaStudy, defaultVariable, studyMetadata]
   );

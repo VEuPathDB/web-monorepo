@@ -23,7 +23,10 @@ import {
   StandaloneMapBubblesResponse,
 } from '../../../../../core/api/DataClient/types';
 import { useToggleStarredVariable } from '../../../../../core/hooks/starredVariables';
-import { DraggableLegendPanel } from '../../../DraggableLegendPanel';
+import {
+  DEFAULT_DRAGGABLE_LEGEND_POSITION,
+  DraggableLegendPanel,
+} from '../../../DraggableLegendPanel';
 import { MapLegend } from '../../../MapLegend';
 import MapVizManagement from '../../../MapVizManagement';
 import {
@@ -69,6 +72,10 @@ import TimeSliderQuickFilter from '../../../TimeSliderQuickFilter';
 import { SubStudies } from '../../../SubStudies';
 import { MapTypeHeaderStudyDetails } from '../../MapTypeHeaderStudyDetails';
 import { STUDIES_ENTITY_ID, STUDY_ID_VARIABLE_ID } from '../../../../constants';
+import {
+  PanelConfig,
+  defaultVisualizationPanelConfig,
+} from '../../../appState';
 
 const displayName = 'Bubbles';
 
@@ -83,6 +90,14 @@ export const plugin: MapTypePlugin<BubbleMarkerConfiguration> = {
       aggregator: 'mean',
       numeratorValues: undefined,
       denominatorValues: undefined,
+      legendPanelConfig: {
+        variable: DEFAULT_DRAGGABLE_LEGEND_POSITION,
+        count: {
+          x: window.innerWidth,
+          y: 420,
+        },
+      },
+      visualizationPanelConfig: defaultVisualizationPanelConfig,
     };
   },
   ConfigPanelComponent: BubbleMapConfigurationPanel,
@@ -103,10 +118,15 @@ function BubbleMapConfigurationPanel(
     studyId,
     filters,
     geoConfigs,
+    setIsSidePanelExpanded,
+    setHideVizInputsAndControls,
   } = props;
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
+
   const markerConfiguration = props.configuration as BubbleMarkerConfiguration;
+
+  const { visualizationPanelConfig } = markerConfiguration;
 
   const markerVariableConstraints = apps
     .find((app) => app.name === 'standalone-map')
@@ -120,9 +140,13 @@ function BubbleMapConfigurationPanel(
       updateConfiguration({
         ...markerConfiguration,
         activeVisualizationId,
+        visualizationPanelConfig: {
+          ...visualizationPanelConfig,
+          isVisible: !!activeVisualizationId,
+        },
       });
     },
-    [markerConfiguration, updateConfiguration]
+    [markerConfiguration, updateConfiguration, visualizationPanelConfig]
   );
 
   // If the variable or filters have changed on the active marker config
@@ -181,7 +205,8 @@ function BubbleMapConfigurationPanel(
           plugins={plugins}
           geoConfigs={geoConfigs}
           mapType="bubble"
-          setHideVizInputsAndControls={props.setHideVizInputsAndControls}
+          setHideVizInputsAndControls={setHideVizInputsAndControls}
+          setIsSidePanelExpanded={setIsSidePanelExpanded}
         />
       ),
     },
@@ -298,8 +323,12 @@ function BubbleLegendsAndFloater(
     updateConfiguration,
     headerButtons,
     setStudyDetailsPanelConfig,
+    setHideVizInputsAndControls,
   } = props;
   const configuration = props.configuration as BubbleMarkerConfiguration;
+
+  const { legendPanelConfig, visualizationPanelConfig, selectedMarkers } =
+    configuration;
 
   const { isValidProportion } = useOverlayConfig({
     studyId,
@@ -317,18 +346,6 @@ function BubbleLegendsAndFloater(
     geoConfigs,
     configuration,
   });
-
-  const setActiveVisualizationId = useCallback(
-    (activeVisualizationId?: string) => {
-      updateConfiguration({
-        ...configuration,
-        activeVisualizationId,
-      });
-    },
-    [configuration, updateConfiguration]
-  );
-
-  const selectedMarkers = configuration.selectedMarkers;
 
   const plugins = useStandaloneVizPlugins({
     overlayHelp: 'Overlay variables are not available for this map type',
@@ -363,9 +380,72 @@ function BubbleLegendsAndFloater(
     substudyFilterFuncs
   );
 
+  const updateVariableLegendPosition = useCallback(
+    (position: PanelConfig['position']) => {
+      updateConfiguration({
+        ...configuration,
+        legendPanelConfig: {
+          ...legendPanelConfig,
+          variable: position,
+        },
+      });
+    },
+    [updateConfiguration, configuration, legendPanelConfig]
+  );
+
+  const updateCountLegendPosition = useCallback(
+    (position: PanelConfig['position']) => {
+      updateConfiguration({
+        ...configuration,
+        legendPanelConfig: {
+          ...legendPanelConfig,
+          count: position,
+        },
+      });
+    },
+    [updateConfiguration, configuration, legendPanelConfig]
+  );
+
+  const updateVisualizationPosition = useCallback(
+    (position: PanelConfig['position']) => {
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...visualizationPanelConfig,
+          position,
+        },
+      });
+    },
+    [updateConfiguration, configuration, visualizationPanelConfig]
+  );
+
+  const updateVisualizationDimensions = useCallback(
+    (dimensions: PanelConfig['dimensions']) => {
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...visualizationPanelConfig,
+          dimensions,
+        },
+      });
+    },
+    [updateConfiguration, configuration, visualizationPanelConfig]
+  );
+
+  const onPanelDismiss = useCallback(() => {
+    updateConfiguration({
+      ...configuration,
+      activeVisualizationId: undefined,
+      visualizationPanelConfig: {
+        ...visualizationPanelConfig,
+        isVisible: false,
+      },
+    });
+  }, [updateConfiguration, configuration, visualizationPanelConfig]);
+
   return (
     <>
-      {appState.studyDetailsPanelConfig?.isVisble && (
+      {appState.studyDetailsPanelConfig?.isVisible && (
         <SubStudies
           studyId={studyId}
           entityId={STUDIES_ENTITY_ID}
@@ -376,7 +456,12 @@ function BubbleLegendsAndFloater(
           hasSelectedMarkers={!!selectedMarkers?.length}
         />
       )}
-      <DraggableLegendPanel panelTitle="Count" zIndex={2}>
+      <DraggableLegendPanel
+        panelTitle="Count"
+        zIndex={2}
+        defaultPosition={legendPanelConfig.count}
+        onDragComplete={updateCountLegendPosition}
+      >
         <div style={{ padding: '5px 10px' }}>
           {invalidProportionMessage ?? (
             <MapLegend
@@ -394,7 +479,8 @@ function BubbleLegendsAndFloater(
       <DraggableLegendPanel
         panelTitle={overlayVariable?.displayName}
         zIndex={3}
-        defaultPosition={{ x: window.innerWidth, y: 420 }}
+        defaultPosition={legendPanelConfig.variable}
+        onDragComplete={updateVariableLegendPosition}
         headerButtons={headerButtons}
       >
         <div style={{ padding: '5px 10px' }}>
@@ -419,7 +505,6 @@ function BubbleLegendsAndFloater(
       <DraggableVisualization
         analysisState={props.analysisState}
         visualizationId={configuration.activeVisualizationId}
-        setActiveVisualizationId={setActiveVisualizationId}
         apps={props.apps}
         plugins={plugins}
         geoConfigs={geoConfigs}
@@ -430,7 +515,12 @@ function BubbleLegendsAndFloater(
         // onTouch={moveVizToTop}
         zIndexForStackingContext={2}
         hideInputsAndControls={props.hideVizInputsAndControls}
-        setHideInputsAndControls={props.setHideVizInputsAndControls}
+        setHideInputsAndControls={setHideVizInputsAndControls}
+        onDragComplete={updateVisualizationPosition}
+        defaultPosition={visualizationPanelConfig.position}
+        onPanelResize={updateVisualizationDimensions}
+        dimensions={visualizationPanelConfig.dimensions}
+        onPanelDismiss={onPanelDismiss}
       />
     </>
   );
@@ -470,10 +560,10 @@ function MapTypeHeaderDetails(
       outputEntityId={outputEntityId}
       onShowStudies={
         studyDetailsPanelConfig &&
-        ((isVisble) =>
+        ((isVisible) =>
           props.setStudyDetailsPanelConfig({
             ...studyDetailsPanelConfig,
-            isVisble,
+            isVisible,
           }))
       }
     />

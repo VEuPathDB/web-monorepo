@@ -22,7 +22,11 @@ export const ACCESSION_ATTRIBUTE_NAME = 'accession';
 export const DOMAIN_START_ATTRIBUTE_NAME = 'start_min';
 export const DOMAIN_END_ATTRIBUTE_NAME = 'end_max';
 
-export const PFAM_LEGEND_ATTRIBUTE_FIELD: AttributeField = {
+interface AttributeFieldWithOptionalType extends AttributeField {
+  type?: string;
+}
+
+export const PFAM_LEGEND_ATTRIBUTE_FIELD: AttributeFieldWithOptionalType = {
   name: 'legend',
   displayName: 'Legend',
   isDisplayable: true,
@@ -32,7 +36,7 @@ export const PFAM_LEGEND_ATTRIBUTE_FIELD: AttributeField = {
   formats: [],
 };
 
-export const PFAM_DOMAINS_ATTRIBUTE_FIELD: AttributeField = {
+export const PFAM_DOMAINS_ATTRIBUTE_FIELD: AttributeFieldWithOptionalType = {
   name: 'domains',
   displayName: ' ',
   isDisplayable: true,
@@ -53,11 +57,14 @@ export const PROTEIN_PFAMS_TABLE_NAME = 'ProteinPFams';
 interface PseudoAttributeSpec {
   name: string;
   displayName: string;
+  type?: string;
 }
 
 export const makeCommonRecordTableWrapper = curry(
   (
-    makeAttributeFields: (ads: AttributeField[]) => AttributeField[],
+    makeAttributeFields: (
+      ads: AttributeFieldWithOptionalType[]
+    ) => AttributeFieldWithOptionalType[],
     makeTableRow: (
       row: Record<string, AttributeValue>
     ) => Record<string, AttributeValue>,
@@ -89,8 +96,8 @@ export const makeCommonRecordTableWrapper = curry(
 export const transformAttributeFieldsUsingSpecs = curry(
   (
     pseudoAttributeSpecs: PseudoAttributeSpec[],
-    attributeFields: AttributeField[]
-  ): AttributeField[] => {
+    attributeFields: AttributeFieldWithOptionalType[]
+  ): AttributeFieldWithOptionalType[] => {
     const augmentedAttributeFields = [
       ...attributeFields,
       PFAM_LEGEND_ATTRIBUTE_FIELD,
@@ -102,11 +109,26 @@ export const transformAttributeFieldsUsingSpecs = curry(
         pseudoAttributeSpecs.find((pa) => pa.name === attributeField.name)
     );
 
+    const filteredAttributeFieldsWithOptionalType = filteredAttributeFields.map(
+      (attributeField) => {
+        const pseudoAttribute = pseudoAttributeSpecs.find(
+          (pa) => pa.name === attributeField.name
+        );
+        if (pseudoAttribute && 'type' in pseudoAttribute) {
+          return {
+            ...attributeField,
+            type: pseudoAttribute.type,
+          };
+        }
+        return attributeField;
+      }
+    );
+
     const attributeDisplayNames = new Map(
       pseudoAttributeSpecs.map((pa) => [pa.name, pa.displayName])
     );
 
-    const renamedAttributeFields = filteredAttributeFields.map(
+    const renamedAttributeFields = filteredAttributeFieldsWithOptionalType.map(
       (attributeField) => ({
         ...attributeField,
         displayName:

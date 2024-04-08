@@ -4,6 +4,9 @@ export default class TwitterTimeline extends React.Component {
   constructor(props) {
     super(props);
     this.timelineRef = React.createRef();
+    this.state = {
+      isInitialized: false,
+    };
   }
 
   componentDidMount() {
@@ -34,6 +37,12 @@ export default class TwitterTimeline extends React.Component {
       return t;
     })(document, 'script', 'twitter-wjs'));
 
+    if (!this.state.isInitialized && 'init' in t) {
+      this.setState({
+        isInitialized: true,
+      });
+    }
+
     t.ready(() => t.widgets.load(this.timelineRef.current));
   }
 
@@ -46,17 +55,36 @@ export default class TwitterTimeline extends React.Component {
       linkColor = null,
     } = this.props;
     return (
-      <a
-        ref={this.timelineRef}
-        data-height={height}
-        data-width={width}
-        data-theme={theme}
-        data-link-color={linkColor}
-        className="twitter-timeline"
-        href={`https://twitter.com/${profileId}`}
+      <div
+        className="TwitterTimelineContainer"
+        style={{
+          height,
+          width,
+        }}
       >
-        Tweets by {profileId}
-      </a>
+        <div>
+          {this.state.isInitialized && (
+            <p>
+              <em>
+                <strong>Warning</strong>: If our Twitter/X timeline is not
+                displaying, you may need to log into Twitter/X or alter your
+                browser security settings.
+              </em>
+            </p>
+          )}
+        </div>
+        <a
+          ref={this.timelineRef}
+          data-height={height}
+          data-width={width}
+          data-theme={theme}
+          data-link-color={linkColor}
+          className="twitter-timeline"
+          href={`https://twitter.com/${profileId}`}
+        >
+          Tweets by {profileId}
+        </a>
+      </div>
     );
   }
 }

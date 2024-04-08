@@ -16,6 +16,7 @@ import {
   FileInput,
   RadioList,
   SingleSelect,
+  Loading,
 } from '@veupathdb/wdk-client/lib/Components';
 
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -28,6 +29,8 @@ import {
   NewUserDataset,
   ResultUploadConfig,
 } from '../Utils/types';
+
+import { Modal } from '@veupathdb/coreui';
 
 import './UploadForm.scss';
 
@@ -42,8 +45,11 @@ interface Props<T extends string = string> {
   strategyOptions: StrategySummary[];
   resultUploadConfig?: ResultUploadConfig;
   clearBadUpload: () => void;
-  submitForm: (newUserDataset: FormSubmission, redirectTo?: string) => void;
+  submitForm: (formSubmission: FormSubmission, baseUrl?: string) => void;
+  uploadProgress?: number | null;
+  dispatchUploadProgress: (progress: number | null) => void;
   supportedFileUploadTypes: string[];
+  maxSizeBytes?: number;
 }
 
 type DataUploadMode = 'file' | 'url' | 'strategy' | 'step';
@@ -92,7 +98,10 @@ function UploadForm({
   resultUploadConfig,
   clearBadUpload,
   submitForm,
+  uploadProgress,
+  dispatchUploadProgress,
   supportedFileUploadTypes,
+  maxSizeBytes,
 }: Props) {
   const strategyOptionsByStrategyId = useMemo(
     () => keyBy(strategyOptions, (option) => option.strategyId),
@@ -204,7 +213,7 @@ function UploadForm({
         setErrorMessages(formValidation.errors);
       } else {
         setSubmitting(true);
-        submitForm(formValidation.submission, `${baseUrl}/recent`);
+        submitForm(formValidation.submission, baseUrl);
       }
     },
     [
@@ -222,10 +231,11 @@ function UploadForm({
 
   useEffect(() => {
     if (badUploadMessage != null) {
+      dispatchUploadProgress(null);
       setErrorMessages([badUploadMessage.message]);
       setSubmitting(false);
     }
-  }, [badUploadMessage]);
+  }, [badUploadMessage, dispatchUploadProgress]);
 
   useEffect(() => {
     return () => {
@@ -248,6 +258,7 @@ function UploadForm({
         .join(',')}
       required={dataUploadMode === 'file'}
       disabled={dataUploadMode !== 'file' || useFixedUploadMethod}
+      maxSizeBytes={maxSizeBytes}
       onChange={(file) => {
         const fileWithSpacedRemovedFromName =
           file && new File([file], file?.name.replace(/\s+/g, '_'), file);
@@ -437,7 +448,6 @@ function UploadForm({
                       `Unrecognized upload method '${value}' encountered.`
                     );
                   }
-
                   setDataUploadMode(value);
                 }}
                 items={uploadMethodItems}
@@ -449,8 +459,63 @@ function UploadForm({
       <button type="submit" className="btn" disabled={submitting}>
         Upload Data Set
       </button>
+      <Modal
+        visible={submitting && Boolean(uploadProgress)}
+        toggleVisible={() => null}
+        styleOverrides={{
+          content: {
+            size: {
+              height: '100%',
+              width: '100%',
+            },
+            padding: {
+              right: 10,
+              left: 10,
+            },
+          },
+          size: {
+            height: 150,
+            width: 'auto',
+          },
+        }}
+      >
+        <UploadProgress uploadProgress={uploadProgress} />
+      </Modal>
       {datasetUploadType.formConfig?.renderInfo?.()}
     </form>
+  );
+}
+
+function UploadProgress({
+  uploadProgress,
+}: {
+  uploadProgress?: number | null;
+}) {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: '1em',
+        fontSize: '1.5em',
+        height: '100%',
+      }}
+    >
+      {uploadProgress && uploadProgress !== 100 && (
+        <>
+          <progress id="file" max="100" value={uploadProgress} />
+          <label htmlFor="file">Uploading...</label>
+        </>
+      )}
+      {uploadProgress === 100 && (
+        <>
+          <Loading style={{ padding: '1em' }} />
+          <span>Waiting on server response...</span>
+        </>
+      )}
+    </div>
   );
 }
 
