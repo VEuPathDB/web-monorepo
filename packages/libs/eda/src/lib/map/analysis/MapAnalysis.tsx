@@ -80,6 +80,8 @@ import { Page } from '@veupathdb/wdk-client/lib/Components';
 import { AnalysisError } from '../../core/components/AnalysisError';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import SettingsButton from '@veupathdb/coreui/lib/components/containers/DraggablePanel/SettingsButton';
+import { BubbleMarkerConfiguration } from './MarkerConfiguration/BubbleMarkerConfigurationMenu';
+import { PieMarkerConfiguration } from './MarkerConfiguration/PieMarkerConfigurationMenu';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -780,11 +782,20 @@ function MapAnalysisImpl(props: ImplProps) {
     </div>
   );
 
-  // close left-side panel when map events happen
-  const closePanel = useCallback(
-    () => setIsSidePanelExpanded(false),
-    [setIsSidePanelExpanded]
-  );
+  // deselect selectedMarkers and close panel
+  const deselectMarkers = useCallback(() => {
+    updateMarkerConfigurations({
+      // type assertion to avoid ts error
+      ...(activeMarkerConfiguration as PieMarkerConfiguration),
+      selectedMarkers: undefined,
+    });
+    // close side panel
+    setIsSidePanelExpanded(false);
+  }, [
+    updateMarkerConfigurations,
+    activeMarkerConfiguration,
+    setIsSidePanelExpanded,
+  ]);
 
   const activeMapTypePlugin =
     activeMarkerConfiguration?.type === 'barplot'
@@ -902,10 +913,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     }
                     // pass defaultViewport & isStandAloneMap props for custom zoom control
                     defaultViewport={defaultViewport}
-                    // close left-side panel when map events happen
-                    onMapClick={closePanel}
-                    onMapDrag={closePanel}
-                    onMapZoom={closePanel}
+                    onMapClick={deselectMarkers}
                   >
                     {activeMapTypePlugin?.MapLayerComponent && (
                       <activeMapTypePlugin.MapLayerComponent
