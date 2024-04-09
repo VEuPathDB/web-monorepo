@@ -732,3 +732,11 @@
 .filter-param .wdk-MultiFieldFilterCountCell > div:last-child {
   text-align: left;
 }
+
+/* make Mesa's action bar as small as possible when not rendered */
+.membership-filter
+  > .Mesa.MesaComponent
+  > .ActionToolbar.Toolbar
+  > .ActionToolbar-Info {
+  min-height: auto;
+}
