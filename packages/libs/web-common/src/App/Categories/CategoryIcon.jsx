@@ -2,7 +2,7 @@ import './CategoryIcon.css';
 
 import { capitalize } from 'lodash';
 import React from 'react';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 
 import { getCategoryColor } from './CategoryUtils';
 

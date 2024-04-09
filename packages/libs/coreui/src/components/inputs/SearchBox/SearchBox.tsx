@@ -4,18 +4,7 @@ import { merge } from 'lodash';
 import { safeHtml } from '../SelectTree/Utils';
 import { Close, Filter } from '../../icons';
 import { Help, Search } from '@material-ui/icons';
-import { Theme, Tooltip, withStyles } from '@material-ui/core';
-
-const StyledTooltip = withStyles((theme: Theme) => ({
-  tooltip: {
-    backgroundColor: '#fffde7',
-    color: 'rgba(0, 0, 0, 0.87)',
-    maxWidth: 320,
-    fontSize: theme.typography.pxToRem(12),
-    border: '1px solid #dadde9',
-    boxShadow: theme.shadows[1],
-  },
-}))(Tooltip);
+import { Tooltip } from '../../info/Tooltip';
 
 type SearchBoxProps = {
   /** Set the autofocus property of the underlying HTMLTextInputElement */
@@ -167,6 +156,9 @@ export default function SearchBox({
       <Filter style={styleSpec.optionalIcon} />
     );
 
+  // use safeHtml for helpText to allow italic
+  const helpTextHtml = helpText ? safeHtml(helpText) : null;
+
   return (
     <div
       style={{
@@ -206,11 +198,10 @@ export default function SearchBox({
           optionalIcon
         ) : null}
       </label>
-      {/* use safeHtml for helpText to allow italic */}
-      {!helpText ? null : (
-        <StyledTooltip title={safeHtml(helpText)} interactive>
+      {!helpTextHtml ? null : (
+        <Tooltip title={helpTextHtml} interactive>
           <Help style={styleSpec.helpIcon} />
-        </StyledTooltip>
+        </Tooltip>
       )}
     </div>
   );
