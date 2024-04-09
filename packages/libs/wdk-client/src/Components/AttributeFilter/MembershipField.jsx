@@ -711,6 +711,7 @@ class MembershipTable extends React.PureComponent {
           },
           {
             key: 'value',
+            headingStyle: { minWidth: '12em' },
             inline: true,
             sortable: useSort,
             wrapCustomHeadings: ({ headingRowIndex }) => headingRowIndex === 0,
@@ -722,7 +723,7 @@ class MembershipTable extends React.PureComponent {
           {
             key: 'filteredCount',
             sortable: useSort,
-            width: '12em',
+            headingStyle: { maxWidth: '12em' },
             helpText: (
               <div>
                 The number of <em>{this.props.displayName}</em> that match the
@@ -747,7 +748,7 @@ class MembershipTable extends React.PureComponent {
           {
             key: 'count',
             sortable: useSort,
-            width: '12em',
+            headingStyle: { maxWidth: '12em' },
             helpText: (
               <div>
                 The number of <em>{this.props.displayName}</em> in the dataset

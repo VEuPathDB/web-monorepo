@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
 
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 
@@ -35,6 +34,21 @@ import { useProjectUrls } from '@veupathdb/web-common/lib/hooks/projectUrls';
 import { ExportOption } from './ResultExportSelector';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 
+const GENOMICS_PROJECTS_LIST = [
+  'VEuPathDB',
+  'AmoebaDB',
+  'CryptoDB',
+  'FungiDB',
+  'GiardiaDB',
+  'MicrosporidiaDB',
+  'PiroplasmaDB',
+  'PlasmoDB',
+  'ToxoDB',
+  'TrichDB',
+  'TriTrypDB',
+  'VectorBase',
+];
+
 const SUPPORTED_RECORD_CLASS_URL_SEGMENTS = new Set(['transcript']);
 
 function isGeneListStep(resultType: ResultType): resultType is StepResultType {
@@ -55,22 +69,23 @@ export function useGeneListExportOptions(resultType: ResultType) {
   );
   const onSelectGeneListUserDatasetExportConfig =
     useSendToGeneListUserDatasetConfig(resultType);
-  const onSelectPortalExportConfig =
-    useSendGeneListToPortalStrategyConfig(resultType);
-
+  const onSelectGenomicSiteExportConfigs =
+    useSendGeneListToGenomicSiteStrategyConfig(resultType);
   return useMemo(
     () =>
       [
         onSelectBasketAddExportConfig,
         onSelectBasketReplaceExportConfig,
         onSelectGeneListUserDatasetExportConfig,
-        onSelectPortalExportConfig,
+        ...(onSelectGenomicSiteExportConfigs
+          ? onSelectGenomicSiteExportConfigs
+          : []),
       ].filter((exportConfig) => exportConfig != null),
     [
       onSelectBasketAddExportConfig,
       onSelectBasketReplaceExportConfig,
       onSelectGeneListUserDatasetExportConfig,
-      onSelectPortalExportConfig,
+      onSelectGenomicSiteExportConfigs,
     ]
   );
 }
@@ -139,7 +154,8 @@ export function useSendToBasketConfig(
 
 export function useSendToGeneListUserDatasetConfig(
   resultType: ResultType
-): ExportOption<'my-data-sets', [void, RecordClass], unknown> | undefined {
+): // | ExportOption<'my-data-sets', [{ datasetId: string } | undefined, RecordClass], unknown>
+ExportOption<'my-data-sets', [void, RecordClass], unknown> | undefined {
   const dispatch = useDispatch();
 
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
@@ -232,9 +248,9 @@ export function useSendToGeneListUserDatasetConfig(
   );
 }
 
-export function useSendGeneListToPortalStrategyConfig(
+export function useSendGeneListToGenomicSiteStrategyConfig(
   resultType: ResultType
-): ExportOption<'portal-strategy', string, unknown> | undefined {
+): ExportOption<string, string, unknown>[] | undefined {
   const dispatch = useDispatch();
 
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
@@ -244,34 +260,37 @@ export function useSendGeneListToPortalStrategyConfig(
     []
   );
 
+  const exportableProjectIds = GENOMICS_PROJECTS_LIST.filter(
+    (id) =>
+      (projectId !== 'EuPathDB' && id === 'VEuPathDB') ||
+      (projectId === 'EuPathDB' && id !== 'VEuPathDB')
+  );
+
   const projectUrls = useProjectUrls();
 
   return useMemo(
     () =>
-      isGeneListStep(resultType) &&
-      projectId != null &&
-      projectId !== 'EuPathDB' &&
-      projectUrls != null &&
-      projectUrls.EuPathDB != null
-        ? {
-            value: 'portal-strategy',
+      isGeneListStep(resultType) && projectId != null && projectUrls != null
+        ? exportableProjectIds.map((id) => ({
+            value: `${id}-strategy`,
             label: (
               <>
                 <IconAlt fa="code-fork fa-rotate-270 fa-fw" />{' '}
-                <span style={{ marginLeft: '0.5em' }}>
-                  VEuPathDB.org Strategy
-                </span>
+                <span style={{ marginLeft: '0.5em' }}>{id}.org Strategy</span>
               </>
             ),
             onSelectionTask: Task.fromPromise(() =>
-              makeGeneListPortalSearchUrl(
+              makeGeneListGenomicsSearchUrl(
                 wdkService,
                 resultType.step,
-                new URL('app', projectUrls.EuPathDB).toString()
+                new URL(
+                  'app',
+                  id === 'VEuPathDB' ? projectUrls.EuPathDB : projectUrls[id]
+                ).toString()
               )
             ),
-            onSelectionFulfillment: (portalSearchUrl: string) => {
-              window.open(portalSearchUrl, '_blank');
+            onSelectionFulfillment: (genomicsSiteSearchUrl: string) => {
+              window.open(genomicsSiteSearchUrl, '_blank');
             },
             onSelectionError: (error) => {
               dispatch(
@@ -279,8 +298,16 @@ export function useSendGeneListToPortalStrategyConfig(
                   <div>
                     An error occurred while trying to export the contents of
                     step "{resultType.step.customName}" to{' '}
-                    <a href={projectUrls.EuPathDB} target="_blank">
-                      VEuPathDB
+                    <a
+                      href={
+                        id === 'VEuPathDB'
+                          ? projectUrls.EuPathDB
+                          : `https://${id}.org/${id}`
+                      }
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {id}
                     </a>
                     .
                     <br />
@@ -291,7 +318,7 @@ export function useSendGeneListToPortalStrategyConfig(
                     if the problem persists.
                   </div>,
                   {
-                    key: `portal-upload-${Date.now()}`,
+                    key: `genomics-upload-${Date.now()}`,
                     variant: 'error',
                     persist: true,
                   }
@@ -300,9 +327,16 @@ export function useSendGeneListToPortalStrategyConfig(
 
               throw error;
             },
-          }
+          }))
         : undefined,
-    [dispatch, resultType, projectId, wdkService, projectUrls]
+    [
+      dispatch,
+      resultType,
+      projectId,
+      wdkService,
+      projectUrls,
+      exportableProjectIds,
+    ]
   );
 }
 
@@ -331,7 +365,7 @@ export async function uploadGeneListUserDataset(
     }" (${resultWorkspaceUrl}).`;
 
   return await uploadUserDataset(wdkService, {
-    datasetType: 'gene-list',
+    datasetType: 'genelist',
     dataUploadSelection: {
       type: 'url',
       url: temporaryResultUrl,
@@ -343,10 +377,10 @@ export async function uploadGeneListUserDataset(
   });
 }
 
-export async function makeGeneListPortalSearchUrl(
+export async function makeGeneListGenomicsSearchUrl(
   wdkService: WdkService,
   step: Step,
-  portalSiteRootUrl: string
+  siteRootUrl: string
 ) {
   const [
     temporaryResultUrl,
@@ -358,7 +392,7 @@ export async function makeGeneListPortalSearchUrl(
     wdkService.findRecordClass(step.recordClassName),
   ]);
 
-  const searchUrl = `${portalSiteRootUrl}/search/transcript/GeneByLocusTag`;
+  const searchUrl = `${siteRootUrl}/search/transcript/GeneByLocusTag`;
 
   const urlParams = new URLSearchParams({
     'param.ds_gene_ids.url': temporaryResultUrl,

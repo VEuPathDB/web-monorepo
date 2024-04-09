@@ -8,8 +8,7 @@ import {
 } from '@veupathdb/wdk-client/lib/Components';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 
-import { isUserDatasetsCompatibleWdkService } from '../../Service/UserDatasetWrappers';
-import { DateTime } from '../DateTime';
+import { isVdiCompatibleWdkService } from '../../Service';
 
 import './UserDatasetSharingModal.scss';
 
@@ -74,7 +73,7 @@ class UserDatasetSharingModal extends React.Component {
 
     const { wdkService } = this.context;
 
-    if (!isUserDatasetsCompatibleWdkService(wdkService)) {
+    if (!isVdiCompatibleWdkService(wdkService)) {
       throw new Error(
         `verifyRecipient: must have a properly configured UserDatasetsCompatibleWdkService`
       );
@@ -214,15 +213,14 @@ class UserDatasetSharingModal extends React.Component {
         'UserDatasetSharingModal:unshareWithUser: expected unshareUserDatasets to be function. Got: ' +
           typeof unshareUserDatasets
       );
-    unshareUserDatasets([datasetId], [userId]);
+    unshareUserDatasets(datasetId, userId);
   }
 
   renderShareItem(share, index, userDataset) {
-    const { user, time, userDisplayName } = share;
+    const { user, userDisplayName } = share;
     return (
       <div key={index}>
         <span className="faded">Shared with</span> <b>{userDisplayName}</b>{' '}
-        <DateTime datetime={time} />
         <button
           type="button"
           onClick={() => this.unshareWithUser(userDataset.id, user)}
