@@ -143,6 +143,7 @@ class MembershipField extends React.PureComponent {
 MembershipField.defaultProps = {
   filteredCountHeadingPrefix: 'Remaining',
   unfilteredCountHeadingPrefix: '',
+  showInternalMesaCounts: false,
 };
 
 function filterBySearchTerm(rows, searchTerm) {
@@ -677,14 +678,26 @@ class MembershipTable extends React.PureComponent {
     return (
       <Mesa
         options={{
-          // isRowSelected: this.isItemSelected,
+          isRowSelected: this.isItemSelected,
           deriveRowClassName: this.deriveRowClassName,
           onRowClick: this.handleRowClick,
           useStickyHeader: true,
           tableBodyMaxHeight: '80vh',
         }}
         uiState={uiState}
-        actions={[]}
+        actions={
+          this.props.showInternalMesaCounts
+            ? [
+                {
+                  selectionRequired: false,
+                  element() {
+                    return null;
+                  },
+                  callback: () => null,
+                },
+              ]
+            : []
+        }
         eventHandlers={eventHandlers}
         rows={rows}
         filteredRows={filteredRows}
