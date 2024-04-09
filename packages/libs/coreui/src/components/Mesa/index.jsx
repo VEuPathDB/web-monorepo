@@ -9,7 +9,7 @@ import ActionToolbar from './Ui/ActionToolbar';
 import PaginationMenu from './Ui/PaginationMenu';
 import MesaController from './Ui/MesaController';
 
-import Tooltip from './Components/Tooltip';
+import MesaTooltip from './Components/MesaTooltip';
 import Checkbox from './Components/Checkbox';
 import BodyLayer from './Components/BodyLayer';
 import HelpTrigger from './Components/HelpTrigger';
@@ -31,7 +31,7 @@ export {
   TableToolbar,
   ActionToolbar,
   PaginationMenu,
-  Tooltip,
+  MesaTooltip,
   Checkbox,
   BodyLayer,
   HelpTrigger,

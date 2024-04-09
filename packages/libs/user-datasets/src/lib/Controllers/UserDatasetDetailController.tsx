@@ -88,9 +88,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
     const idChanged =
       prevProps == null || prevProps.ownProps.id !== this.props.ownProps.id;
     if (idChanged) {
-      this.props.dispatchProps.loadUserDatasetDetail(
-        Number(this.props.ownProps.id)
-      );
+      this.props.dispatchProps.loadUserDatasetDetail(this.props.ownProps.id);
     }
   }
 
@@ -185,6 +183,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       unshareUserDatasets,
       updateUserDatasetDetail,
       userDataset: entry.resource,
+      fileListing: entry.fileListing,
       getQuestionUrl: this.getQuestionUrl,
       questionMap: keyBy(questions, 'fullName'),
       workspaceTitle,

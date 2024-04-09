@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
-import { Chip, Tooltip } from '@material-ui/core';
+import { Chip } from '@material-ui/core';
+import { Tooltip } from '@veupathdb/coreui';
 import { makeStyles } from '@material-ui/core/styles';
 
 interface Props {

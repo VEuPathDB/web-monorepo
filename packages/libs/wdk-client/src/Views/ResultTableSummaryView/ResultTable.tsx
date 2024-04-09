@@ -217,6 +217,7 @@ function getEventHandlers(props: Props) {
       ...answer.meta.sorting.filter((entry) => entry.attributeName !== key),
     ].slice(0, 3);
     requestSortingUpdate(newSort, question.urlSegment);
+    viewPageNumber(1);
   }
   function onColumnReorder(attributeName: string, newIndex: number) {
     const tmpColumns = answer.meta.attributes.filter(
