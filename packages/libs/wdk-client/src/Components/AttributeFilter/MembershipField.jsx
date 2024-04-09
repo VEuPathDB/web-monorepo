@@ -57,10 +57,6 @@ class MembershipField extends React.PureComponent {
         groupBySelected: !this.props.activeFieldState.sort.groupBySelected,
       })
     );
-    // the setTimeout is a hack to ensure both onSort and onPageChange update the uiState appropriately
-    setTimeout(() => {
-      this.props.onMemberChangeCurrentPage(this.props.activeField, 1);
-    }, 1);
   }
 
   isSortEnabled() {

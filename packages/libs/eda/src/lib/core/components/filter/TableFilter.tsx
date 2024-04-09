@@ -233,6 +233,7 @@ export function TableFilter({
         [uiStateKey]: {
           ...uiState,
           sort,
+          currentPage: 1,
         },
       }));
     },

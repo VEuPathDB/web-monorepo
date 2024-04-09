@@ -71,17 +71,12 @@ class HeadingCell extends React.PureComponent {
 
   sortColumn() {
     const { column, sort, eventHandlers } = this.props;
-    const { onSort, onPageChange } = eventHandlers;
+    const { onSort } = eventHandlers;
     if (typeof onSort !== 'function' || !column.sortable) return;
     const currentlySorting = sort && sort.columnKey === column.key;
     const direction =
       currentlySorting && sort.direction === 'asc' ? 'desc' : 'asc';
-    onSort(column, direction);
-    if (onPageChange && typeof onPageChange === 'function') {
-      // the setTimeout is a hack to ensure both onSort and onPageChange update the uiState appropriately
-      setTimeout(() => onPageChange(1), 1);
-    }
-    return;
+    return onSort(column, direction);
   }
 
   // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
