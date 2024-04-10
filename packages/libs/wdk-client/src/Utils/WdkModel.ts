@@ -273,6 +273,7 @@ export interface Question extends UrlModelEntity {
   queryName?: string;
   isCacheable: boolean;
   isBeta?: boolean;
+  searchVisibleHelp?: string;
 }
 
 export interface QuestionWithParameters extends Question {

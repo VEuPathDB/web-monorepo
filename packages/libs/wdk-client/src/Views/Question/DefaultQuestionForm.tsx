@@ -330,12 +330,24 @@ export function DefaultGroup(props: DefaultGroupProps) {
       uiState={uiState}
       onVisibilityChange={onVisibilityChange}
     >
-      <ParameterList
-        parameterMap={question.parametersByName}
-        parameterElements={parameterElements}
-        parameters={group.parameters}
-        paramDependenciesUpdating={paramDependenciesUpdating}
-      />
+      <>
+        {question.searchVisibleHelp !== undefined && (
+          <Banner
+            // 'normal' renders a banner w/ gray background
+            banner={{
+              type: 'normal',
+              message: safeHtml(question.searchVisibleHelp, null, 'div'),
+              hideIcon: true,
+            }}
+          />
+        )}
+        <ParameterList
+          parameterMap={question.parametersByName}
+          parameterElements={parameterElements}
+          parameters={group.parameters}
+          paramDependenciesUpdating={paramDependenciesUpdating}
+        />
+      </>
     </Group>
   );
 }
