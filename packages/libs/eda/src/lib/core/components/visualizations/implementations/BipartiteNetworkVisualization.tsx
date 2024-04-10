@@ -234,8 +234,30 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
       }
     );
 
+    const nodesById = new Map(nodesWithLabels.map((n) => [n.id, n]));
+
+    // sort node data by label
+    // this is mutating the original paritions arrray :shrug:
+    const orderedPartitions = data.value.bipartitenetwork.data.partitions.map(
+      (partition) => {
+        return {
+          ...partition,
+          nodeIds: partition.nodeIds.concat().sort((a, b) => {
+            const nodeA = nodesById.get(a);
+            const nodeB = nodesById.get(b);
+            if (nodeA == null || nodeB == null) return 0;
+            return nodeA.label.localeCompare(nodeB.label, 'en', {
+              numeric: true,
+              sensitivity: 'base',
+            });
+          }),
+        };
+      }
+    );
+
     return {
       ...data.value.bipartitenetwork.data,
+      partitions: orderedPartitions,
       nodes: nodesWithLabels,
       links: data.value.bipartitenetwork.data.links.map((link) => {
         return {
