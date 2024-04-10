@@ -1,12 +1,43 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
-const { endpoint } = require('./constants');
+const { endpoint, vdiServiceUrl } = require('./constants');
+
+const requiredEnvVars = [
+  'WDK_SERVICE_URL',
+  'DATASET_IMPORT_SERVICE_URL',
+  'VDI_SERVICE_URL',
+];
+
+const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
+
+if (missingVars.length) {
+  console.error(
+    new Error(
+      `Required environment variables are not defined: ${missingVars.join(
+        ', '
+      )}.`
+    )
+  );
+  process.exit(1);
+}
 
 module.exports = function (app) {
   app.use(
     endpoint,
     createProxyMiddleware({
-      target: process.env.REACT_APP_WDK_SERVICE_URL,
+      target: process.env.WDK_SERVICE_URL,
       pathRewrite: { [`^${endpoint}`]: '' },
+      secure: false,
+      changeOrigin: true,
+      followRedirects: true,
+      logLevel: 'debug',
+      onProxyReq: addPrereleaseAuthCookieToProxyReq,
+    })
+  );
+  app.use(
+    vdiServiceUrl,
+    createProxyMiddleware({
+      target: process.env.VDI_SERVICE_URL,
+      pathRewrite: { [`^${vdiServiceUrl}`]: '' },
       secure: false,
       changeOrigin: true,
       followRedirects: true,

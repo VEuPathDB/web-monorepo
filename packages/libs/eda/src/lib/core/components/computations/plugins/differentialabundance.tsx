@@ -34,7 +34,7 @@ import { FloatingButton, H6 } from '@veupathdb/coreui';
 import { SwapHorizOutlined } from '@material-ui/icons';
 import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '@veupathdb/coreui';
 import {
   GetBinRangesProps,
   getBinRanges,
