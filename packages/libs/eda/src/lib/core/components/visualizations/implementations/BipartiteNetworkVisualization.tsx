@@ -91,6 +91,15 @@ interface Options
   makeGetNodeActions?: (
     studyMetadata: StudyMetadata
   ) => ((nodeId: string) => NodeAction[]) | undefined;
+  getParitionNames?: (
+    studyMetadata: StudyMetadata,
+    config: unknown
+  ) =>
+    | Partial<{
+        parition1Name: string;
+        partition2Name: string;
+      }>
+    | undefined;
 }
 
 // Bipartite Network Visualization
@@ -326,6 +335,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     labelTruncationLength: 40,
     emptyNetworkContent,
     getNodeActions: options?.makeGetNodeActions?.(studyMetadata),
+    ...options?.getParitionNames?.(studyMetadata, computationConfiguration),
   };
 
   const plotNode = (

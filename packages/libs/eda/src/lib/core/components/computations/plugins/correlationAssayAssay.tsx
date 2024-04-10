@@ -26,7 +26,10 @@ import PluginError from '../../visualizations/PluginError';
 import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
-import { entityTreeToArray } from '../../../utils/study-metadata';
+import {
+  entityTreeToArray,
+  findEntityAndVariableCollection,
+} from '../../../utils/study-metadata';
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
 import { ExpandablePanel } from '@veupathdb/coreui';
 import {
@@ -84,6 +87,20 @@ export const plugin: ComputationPlugin = {
           return ['absolute correlation coefficient', 'correlation direction'];
         } else {
           return [];
+        }
+      },
+      getParitionNames(studyMetadata, config) {
+        if (CorrelationAssayAssayConfig.is(config)) {
+          const entities = entityTreeToArray(studyMetadata.rootEntity);
+          const partition1Name = findEntityAndVariableCollection(
+            entities,
+            config.collectionVariable1
+          )?.variableCollection.displayName;
+          const partition2Name = findEntityAndVariableCollection(
+            entities,
+            config.collectionVariable2
+          )?.variableCollection.displayName;
+          return { partition1Name, partition2Name };
         }
       },
       makeGetNodeActions(studyMetadata) {

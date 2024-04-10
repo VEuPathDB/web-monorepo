@@ -22,12 +22,14 @@ import { H6 } from '@veupathdb/coreui';
 import { bipartiteNetworkVisualization } from '../../visualizations/implementations/BipartiteNetworkVisualization';
 import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
-import { entityTreeToArray } from '../../../utils/study-metadata';
+import {
+  entityTreeToArray,
+  findEntityAndVariableCollection,
+} from '../../../utils/study-metadata';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { ancestorEntitiesForEntityId } from '../../../utils/data-element-constraints';
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -71,6 +73,17 @@ export const plugin: ComputationPlugin = {
           return ['absolute correlation coefficient', 'correlation direction'];
         } else {
           return [];
+        }
+      },
+      getParitionNames(studyMetadata, config) {
+        if (CorrelationAssayMetadataConfig.is(config)) {
+          const entities = entityTreeToArray(studyMetadata.rootEntity);
+          const partition1Name = findEntityAndVariableCollection(
+            entities,
+            config.collectionVariable
+          )?.variableCollection.displayName;
+          const partition2Name = 'Continuous metadata variables';
+          return { partition1Name, partition2Name };
         }
       },
       makeGetNodeActions(studyMetadata) {
