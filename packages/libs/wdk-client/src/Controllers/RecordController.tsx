@@ -34,6 +34,7 @@ import {
 } from '../Views/Records/RecordUtils';
 import { RootState } from '../Core/State/Types';
 import { preorderSeq } from '../Utils/TreeUtils';
+import { RecordNotFoundPage } from '../Views/Records/RecordNotFoundPage';
 
 const ActionCreators = {
   ...UserActionCreators,
@@ -142,6 +143,11 @@ class RecordController extends PageController<Props> {
 
   isRenderDataNotFound() {
     return this.props.error != null && this.props.error.status === 404;
+  }
+
+  renderDataNotFound() {
+    const sourceID = this.props.ownProps.primaryKey.split('/')[0];
+    return <RecordNotFoundPage sourceID={sourceID} />;
   }
 
   getTitle() {

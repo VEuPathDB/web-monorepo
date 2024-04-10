@@ -1,7 +1,7 @@
-import React, { Suspense, useCallback } from 'react';
+import React, { Suspense, useCallback, useMemo } from 'react';
 
 import { useDispatch } from 'react-redux';
-import { Redirect } from 'react-router';
+import { Redirect, useLocation } from 'react-router';
 
 import { communitySite } from './config';
 
@@ -26,6 +26,7 @@ import { EdaMapController } from './controllers/EdaMapController';
 import { LegacyMapRedirectHandler } from './controllers/LegacyMapRedirectHandler';
 
 export const STATIC_ROUTE_PATH = '/static-content';
+const WGCNA_HELP_PAGE = '/wgcna_help.html';
 
 export function makeEdaRoute(studyId) {
   return '/workspace/analyses' + (studyId ? `/${studyId}` : '');
@@ -59,6 +60,16 @@ export const wrapRoutes = (wdkRoutes) => [
         dispatch(showLoginFormAction());
       }, [dispatch]);
 
+      const location = useLocation();
+
+      const helpTabContentUrl = useMemo(
+        () =>
+          [communitySite, WGCNA_HELP_PAGE, location.search, location.hash].join(
+            ''
+          ),
+        [location.search, location.hash]
+      );
+
       return (
         <Suspense fallback={<Loading />}>
           <EdaWorkspace
@@ -68,6 +79,9 @@ export const wrapRoutes = (wdkRoutes) => [
             sharingUrlPrefix={window.location.origin}
             showLoginForm={showLoginForm}
             singleAppMode={edaSingleAppMode}
+            helpTabContents={
+              <ExternalContentController url={helpTabContentUrl} />
+            }
           />
         </Suspense>
       );

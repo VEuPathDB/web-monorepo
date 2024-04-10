@@ -41,7 +41,7 @@ import {
 
 import { useReferenceStrains } from '@veupathdb/preferred-organisms/lib/hooks/referenceStrains';
 
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 
 import './OrganismFilter.scss';
 
