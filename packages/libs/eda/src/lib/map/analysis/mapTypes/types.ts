@@ -24,7 +24,6 @@ export interface MapTypeConfigPanelProps {
   geoConfigs: GeoConfig[];
   configuration: unknown;
   updateConfiguration: (configuration: unknown) => void;
-  setHideVizInputsAndControls: (hide: boolean) => void;
   setIsSidePanelExpanded: (isExpanded: boolean) => void;
 }
 

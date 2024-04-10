@@ -273,7 +273,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   };
 
   const setActiveVisualizationId = useCallback(
-    (activeVisualizationId?: string) => {
+    (activeVisualizationId?: string, isNew?: boolean) => {
       if (configuration == null) return;
       updateConfiguration({
         ...configuration,
@@ -281,6 +281,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
         visualizationPanelConfig: {
           ...visualizationPanelConfig,
           isVisible: !!activeVisualizationId,
+          ...(isNew ? { hideVizControl: false } : {}),
         },
       });
     },
@@ -311,7 +312,6 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
           plugins={plugins}
           geoConfigs={geoConfigs}
           mapType="barplot"
-          setHideVizInputsAndControls={props.setHideVizInputsAndControls}
           setIsSidePanelExpanded={setIsSidePanelExpanded}
         />
       ),

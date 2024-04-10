@@ -95,7 +95,6 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     studyId,
     studyEntities,
     filters,
-    setHideVizInputsAndControls,
     setIsSidePanelExpanded,
   } = props;
 
@@ -239,7 +238,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   });
 
   const setActiveVisualizationId = useCallback(
-    (activeVisualizationId?: string) => {
+    (activeVisualizationId?: string, isNew?: boolean) => {
       if (configuration == null) return;
       updateConfiguration({
         ...configuration,
@@ -247,6 +246,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
         visualizationPanelConfig: {
           ...configuration.visualizationPanelConfig,
           isVisible: !!activeVisualizationId,
+          ...(isNew ? { hideVizControl: false } : {}),
         },
       });
     },
@@ -273,7 +273,6 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
           plugins={plugins}
           geoConfigs={geoConfigs}
           mapType="pie"
-          setHideVizInputsAndControls={setHideVizInputsAndControls}
           setIsSidePanelExpanded={setIsSidePanelExpanded}
         />
       ),

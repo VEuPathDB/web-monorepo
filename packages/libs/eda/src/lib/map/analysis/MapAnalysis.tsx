@@ -220,7 +220,6 @@ function MapAnalysisImpl(props: ImplProps) {
     geoConfigs,
     setTimeSliderConfig,
     showLinkToEda = false,
-    setHideVizControl,
   } = props;
   const { activeMarkerConfigurationType, markerConfigurations } = appState;
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
@@ -375,6 +374,22 @@ function MapAnalysisImpl(props: ImplProps) {
     if (redirectURL) history.push(redirectURL);
   }, [history, redirectURL]);
 
+  const setHideVizControl = useCallback(
+    (hideValue?: boolean) => {
+      if (activeMarkerConfiguration == null) return;
+      if (activeMarkerConfiguration.visualizationPanelConfig != null) {
+        updateMarkerConfigurations({
+          ...activeMarkerConfiguration,
+          visualizationPanelConfig: {
+            ...activeMarkerConfiguration.visualizationPanelConfig,
+            hideVizControl: hideValue,
+          },
+        });
+      }
+    },
+    [activeMarkerConfiguration, updateMarkerConfigurations]
+  );
+
   const sidePanelMenuEntries: SidePanelMenuEntry[] = [
     {
       type: 'heading',
@@ -407,7 +422,6 @@ function MapAnalysisImpl(props: ImplProps) {
                     geoConfigs={geoConfigs}
                     configuration={activeMarkerConfiguration}
                     updateConfiguration={updateMarkerConfigurations as any}
-                    setHideVizInputsAndControls={setHideVizControl}
                     setIsSidePanelExpanded={setIsSidePanelExpanded}
                   />
                 );
@@ -437,7 +451,6 @@ function MapAnalysisImpl(props: ImplProps) {
                     geoConfigs={geoConfigs}
                     configuration={activeMarkerConfiguration}
                     updateConfiguration={updateMarkerConfigurations as any}
-                    setHideVizInputsAndControls={setHideVizControl}
                     setIsSidePanelExpanded={setIsSidePanelExpanded}
                   />
                 );
@@ -465,7 +478,6 @@ function MapAnalysisImpl(props: ImplProps) {
                     geoConfigs={geoConfigs}
                     configuration={activeMarkerConfiguration}
                     updateConfiguration={updateMarkerConfigurations as any}
-                    setHideVizInputsAndControls={setHideVizControl}
                     setIsSidePanelExpanded={setIsSidePanelExpanded}
                   />
                 );
@@ -810,7 +822,9 @@ function MapAnalysisImpl(props: ImplProps) {
           updateConfiguration: updateMarkerConfigurations as any,
           totalCounts,
           filteredCounts,
-          hideVizInputsAndControls: appState.hideVizControl,
+          hideVizInputsAndControls:
+            activeMarkerConfiguration?.visualizationPanelConfig
+              ?.hideVizControl ?? false,
           setHideVizInputsAndControls: setHideVizControl,
           setStudyDetailsPanelConfig,
           headerButtons: HeaderButtons,

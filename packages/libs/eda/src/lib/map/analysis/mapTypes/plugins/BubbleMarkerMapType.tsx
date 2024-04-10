@@ -90,7 +90,6 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
     filters,
     geoConfigs,
     setIsSidePanelExpanded,
-    setHideVizInputsAndControls,
   } = props;
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
@@ -106,7 +105,7 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
     )?.dataElementConstraints;
 
   const setActiveVisualizationId = useCallback(
-    (activeVisualizationId?: string) => {
+    (activeVisualizationId?: string, isNew?: boolean) => {
       if (markerConfiguration == null) return;
       updateConfiguration({
         ...markerConfiguration,
@@ -114,6 +113,7 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
         visualizationPanelConfig: {
           ...visualizationPanelConfig,
           isVisible: !!activeVisualizationId,
+          ...(isNew ? { hideVizControl: false } : {}),
         },
       });
     },
@@ -176,7 +176,6 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
           plugins={plugins}
           geoConfigs={geoConfigs}
           mapType="bubble"
-          setHideVizInputsAndControls={setHideVizInputsAndControls}
           setIsSidePanelExpanded={setIsSidePanelExpanded}
         />
       ),
