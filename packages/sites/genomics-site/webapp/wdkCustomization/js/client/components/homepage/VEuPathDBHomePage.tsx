@@ -611,19 +611,6 @@ const useHeaderMenuItems = (
           url: '/fasta-tool',
         },
         {
-          key: 'study-explorer',
-          display: (
-            <>
-              WGCNA Study explorer <img alt="NEW" src={newImage} />
-            </>
-          ),
-          type: 'reactRoute',
-          url: '/workspace/analyses/DS_82dc5abc7f/new',
-          metadata: {
-            include: [PlasmoDB, HostDB, EuPathDB, UniDB],
-          },
-        },
-        {
           key: 'webservices',
           display: 'Web services',
           type: 'reactRoute',
