@@ -22,6 +22,7 @@ import { ExportPlotToImageButton } from './ExportPlotToImageButton';
 import { plotToImage } from './visxVEuPathDB';
 import { Menu } from '@veupathdb/coreui/lib/components/inputs/Menu';
 import { GlyphTriangle } from '@visx/visx';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 import './BipartiteNetwork.css';
 
@@ -233,6 +234,21 @@ function BipartiteNetwork(
         className={containerClass}
         style={{ width: '100%', ...containerStyles, position: 'relative' }}
       >
+        <div style={{ display: 'inline-flex' }}>
+          <Banner
+            banner={{
+              type: 'info',
+              hideIcon: true,
+              message: (
+                <em>
+                  Click to higlight a node and its edges.{' '}
+                  {getNodeActions &&
+                    'Additional actions can be found in the dropdown.'}
+                </em>
+              ),
+            }}
+          />
+        </div>
         {activeNode?.actions?.length && (
           <div
             style={{
