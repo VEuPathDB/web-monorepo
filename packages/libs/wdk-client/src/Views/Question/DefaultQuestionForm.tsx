@@ -434,18 +434,54 @@ export function ParameterList(props: ParameterListProps) {
                 !!paramDependenciesUpdating[parameter.name]
               }
             />
-            {parameter.visibleHelp !== undefined && (
-              <Banner
-                banner={{
-                  // 'normal' renders a banner w/ gray background
-                  type: 'normal',
-                  message: safeHtml(parameter.visibleHelp, null, 'div'),
-                  hideIcon: true,
-                }}
-              />
-            )}
-            <div className={cx('ParameterControl')}>
-              {parameterElements[parameter.name]}
+            <div
+              className={cx(
+                'ParameterControlContainer' +
+                  (parameter.visibleHelp
+                    ? parameter.visibleHelpPosition &&
+                      parameter.visibleHelpPosition === 'right'
+                      ? '_VisibleHelpRight'
+                      : ''
+                    : '')
+              )}
+            >
+              {parameter.visibleHelp !== undefined && (
+                <div
+                  className={
+                    parameter.visibleHelpPosition &&
+                    parameter.visibleHelpPosition === 'right'
+                      ? cx('VisibleHelpContainer_Right')
+                      : ''
+                  }
+                >
+                  <Banner
+                    banner={{
+                      // 'normal' renders a banner w/ gray background
+                      type: 'normal',
+                      message: safeHtml(parameter.visibleHelp, null, 'div'),
+                      hideIcon: true,
+                      spacing:
+                        parameter.visibleHelpPosition &&
+                        parameter.visibleHelpPosition === 'right'
+                          ? { margin: '10px' }
+                          : { margin: '10px 0' },
+                    }}
+                  />
+                </div>
+              )}
+              <div
+                className={
+                  cx('ParameterControl') +
+                  (parameter.visibleHelp
+                    ? parameter.visibleHelpPosition &&
+                      parameter.visibleHelpPosition === 'right'
+                      ? ' ControlLeft'
+                      : ''
+                    : '')
+                }
+              >
+                {parameterElements[parameter.name]}
+              </div>
             </div>
           </React.Fragment>
         ))}
