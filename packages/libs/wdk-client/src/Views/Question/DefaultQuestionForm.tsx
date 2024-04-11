@@ -465,6 +465,7 @@ export function ParameterList(props: ParameterListProps) {
                         parameter.visibleHelpPosition === 'right'
                           ? { margin: '10px' }
                           : { margin: '10px 0' },
+                      width: 'auto',
                     }}
                   />
                 </div>
