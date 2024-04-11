@@ -374,22 +374,6 @@ function MapAnalysisImpl(props: ImplProps) {
     if (redirectURL) history.push(redirectURL);
   }, [history, redirectURL]);
 
-  const setHideVizControl = useCallback(
-    (hideValue?: boolean) => {
-      if (activeMarkerConfiguration == null) return;
-      if (activeMarkerConfiguration.visualizationPanelConfig != null) {
-        updateMarkerConfigurations({
-          ...activeMarkerConfiguration,
-          visualizationPanelConfig: {
-            ...activeMarkerConfiguration.visualizationPanelConfig,
-            hideVizControl: hideValue,
-          },
-        });
-      }
-    },
-    [activeMarkerConfiguration, updateMarkerConfigurations]
-  );
-
   const sidePanelMenuEntries: SidePanelMenuEntry[] = [
     {
       type: 'heading',
@@ -822,10 +806,6 @@ function MapAnalysisImpl(props: ImplProps) {
           updateConfiguration: updateMarkerConfigurations as any,
           totalCounts,
           filteredCounts,
-          hideVizInputsAndControls:
-            activeMarkerConfiguration?.visualizationPanelConfig
-              ?.hideVizControl ?? false,
-          setHideVizInputsAndControls: setHideVizControl,
           setStudyDetailsPanelConfig,
           headerButtons: HeaderButtons,
         };

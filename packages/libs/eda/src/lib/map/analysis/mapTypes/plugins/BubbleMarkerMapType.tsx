@@ -296,7 +296,6 @@ function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
     updateConfiguration,
     headerButtons,
     setStudyDetailsPanelConfig,
-    setHideVizInputsAndControls,
   } = props;
   const configuration = props.configuration as BubbleMarkerConfiguration;
 
@@ -416,6 +415,19 @@ function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
     });
   }, [updateConfiguration, configuration, visualizationPanelConfig]);
 
+  const setHideVizControl = useCallback(
+    (hideValue?: boolean) => {
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...visualizationPanelConfig,
+          hideVizControl: hideValue,
+        },
+      });
+    },
+    [updateConfiguration, configuration, visualizationPanelConfig]
+  );
+
   return (
     <>
       {appState.studyDetailsPanelConfig?.isVisible && (
@@ -488,8 +500,10 @@ function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
           filters={filtersForFloaters}
           // onTouch={moveVizToTop}
           zIndexForStackingContext={2}
-          hideInputsAndControls={props.hideVizInputsAndControls}
-          setHideInputsAndControls={setHideVizInputsAndControls}
+          hideInputsAndControls={
+            visualizationPanelConfig.hideVizControl ?? false
+          }
+          setHideInputsAndControls={setHideVizControl}
           onDragComplete={updateVisualizationPosition}
           defaultPosition={visualizationPanelConfig.position}
           onPanelResize={updateVisualizationDimensions}

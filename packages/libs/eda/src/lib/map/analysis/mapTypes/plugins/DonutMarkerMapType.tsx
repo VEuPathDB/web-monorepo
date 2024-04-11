@@ -399,7 +399,6 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     filters,
     headerButtons,
     setStudyDetailsPanelConfig,
-    setHideVizInputsAndControls,
   } = props;
 
   const configuration = props.configuration as PieMarkerConfiguration;
@@ -501,6 +500,19 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     });
   }, [updateConfiguration, configuration, visualizationPanelConfig]);
 
+  const setHideVizControl = useCallback(
+    (hideValue?: boolean) => {
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...visualizationPanelConfig,
+          hideVizControl: hideValue,
+        },
+      });
+    },
+    [updateConfiguration, configuration, visualizationPanelConfig]
+  );
+
   return (
     <>
       {appState.studyDetailsPanelConfig?.isVisible && (
@@ -547,8 +559,10 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
           toggleStarredVariable={toggleStarredVariable}
           filters={filtersForFloaters}
           zIndexForStackingContext={2}
-          hideInputsAndControls={props.hideVizInputsAndControls}
-          setHideInputsAndControls={setHideVizInputsAndControls}
+          hideInputsAndControls={
+            visualizationPanelConfig.hideVizControl ?? false
+          }
+          setHideInputsAndControls={setHideVizControl}
           onDragComplete={updateVisualizationPosition}
           defaultPosition={visualizationPanelConfig.position}
           onPanelResize={updateVisualizationDimensions}

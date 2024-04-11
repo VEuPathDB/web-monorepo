@@ -533,6 +533,19 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     });
   }, [updateConfiguration, configuration, visualizationPanelConfig]);
 
+  const setHideVizControl = useCallback(
+    (hideValue?: boolean) => {
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...visualizationPanelConfig,
+          hideVizControl: hideValue,
+        },
+      });
+    },
+    [updateConfiguration, configuration, visualizationPanelConfig]
+  );
+
   return (
     <>
       {appState.studyDetailsPanelConfig?.isVisible && (
@@ -576,8 +589,10 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
           filters={filtersForFloaters}
           // onTouch={moveVizToTop}
           zIndexForStackingContext={2}
-          hideInputsAndControls={props.hideVizInputsAndControls}
-          setHideInputsAndControls={props.setHideVizInputsAndControls}
+          hideInputsAndControls={
+            visualizationPanelConfig.hideVizControl ?? false
+          }
+          setHideInputsAndControls={setHideVizControl}
           onDragComplete={updateVisualizationPosition}
           defaultPosition={visualizationPanelConfig.position}
           onPanelResize={updateVisualizationDimensions}

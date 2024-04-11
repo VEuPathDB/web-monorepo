@@ -39,8 +39,6 @@ export interface MapTypeMapLayerProps {
   updateConfiguration: (configuration: unknown) => void;
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
-  hideVizInputsAndControls: boolean;
-  setHideVizInputsAndControls: (hide: boolean) => void;
   setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
   setStudyDetailsPanelConfig: (config: PanelConfig) => void;
   setTimeSliderConfig?: (
