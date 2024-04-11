@@ -64,7 +64,8 @@ const paramSharedDecoder =
     ),
     Decode.combine(
       Decode.field('allowEmptyValue', Decode.boolean),
-      Decode.field('visibleHelp', Decode.optional(Decode.string))
+      Decode.field('visibleHelp', Decode.optional(Decode.string)),
+      Decode.field('visibleHelpPosition', Decode.optional(Decode.string))
     )
   );
 
