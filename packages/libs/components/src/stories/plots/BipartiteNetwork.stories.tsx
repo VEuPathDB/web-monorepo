@@ -8,7 +8,7 @@ import {
 import BipartiteNetwork, {
   BipartiteNetworkProps,
   BipartiteNetworkSVGStyles,
-  NodeAction,
+  NodeMenuAction,
 } from '../../plots/BipartiteNetwork';
 import { twoColorPalette } from '../../types/plots/addOns';
 import { Text } from '@visx/text';
@@ -28,7 +28,7 @@ interface TemplateProps {
   svgStyleOverrides?: BipartiteNetworkSVGStyles;
   labelTruncationLength?: number;
   emptyNetworkContent?: ReactNode;
-  getNodeActions?: BipartiteNetworkProps['getNodeActions'];
+  getNodeMenuActions?: BipartiteNetworkProps['getNodeMenuActions'];
   isSelectable?: boolean;
 }
 
@@ -57,7 +57,7 @@ const Template: Story<TemplateProps> = (args) => {
     svgStyleOverrides: args.svgStyleOverrides,
     labelTruncationLength: args.labelTruncationLength,
     emptyNetworkContent: args.emptyNetworkContent,
-    getNodeActions: args.getNodeActions,
+    getNodeMenuActions: args.getNodeMenuActions,
     ...(args.isSelectable
       ? {
           selectedNodeIds,
@@ -151,7 +151,7 @@ WithStyle.args = {
   labelTruncationLength: 5,
 };
 
-function getNodeActions(nodeId: string): NodeAction[] {
+function getNodeActions(nodeId: string): NodeMenuAction[] {
   return [
     {
       label: 'Click me!!',
@@ -176,7 +176,7 @@ WithActions.args = {
   },
   partition1Name: 'Partition 1',
   partition2Name: 'Partition 2',
-  getNodeActions,
+  getNodeMenuActions: getNodeActions,
 };
 
 export const WithSelection = Template.bind({});
@@ -187,7 +187,7 @@ WithSelection.args = {
   },
   partition1Name: 'Partition 1',
   partition2Name: 'Partition 2',
-  getNodeActions,
+  getNodeMenuActions: getNodeActions,
   isSelectable: true,
 };
 

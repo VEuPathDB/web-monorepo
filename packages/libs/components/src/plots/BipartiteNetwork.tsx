@@ -33,7 +33,7 @@ export interface BipartiteNetworkSVGStyles {
   columnPadding?: number; // space between the left of the svg and the left column, also the right of the svg and the right column.
 }
 
-export interface NodeAction {
+export interface NodeMenuAction {
   label: ReactNode;
   onClick?: () => void;
   href?: string;
@@ -61,7 +61,7 @@ export interface BipartiteNetworkProps {
   /** Additional error messaging to show when the network is empty */
   emptyNetworkContent?: ReactNode;
   /** Entries for the actions that appear in the menu when you click a node */
-  getNodeActions?: (nodeId: string) => NodeAction[];
+  getNodeMenuActions?: (nodeId: string) => NodeMenuAction[];
 }
 
 // Show a few gray nodes when there is no real data.
@@ -94,7 +94,7 @@ function BipartiteNetwork(
     showSpinner = false,
     labelTruncationLength = 20,
     emptyNetworkContent,
-    getNodeActions,
+    getNodeMenuActions: getNodeActions,
   } = props;
 
   const [highlightedNodeId, setHighlightedNodeId] = useState<string>();

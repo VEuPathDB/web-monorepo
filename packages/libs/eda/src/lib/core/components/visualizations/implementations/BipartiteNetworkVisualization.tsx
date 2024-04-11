@@ -12,7 +12,7 @@ import { RequestOptions } from '../options/types';
 // Bipartite network imports
 import BipartiteNetwork, {
   BipartiteNetworkProps,
-  NodeAction,
+  NodeMenuAction,
 } from '@veupathdb/components/lib/plots/BipartiteNetwork';
 import BipartiteNetworkSVG from './selectorIcons/BipartiteNetworkSVG';
 import {
@@ -88,9 +88,9 @@ interface Options
     TitleOptions,
     LegendOptions,
     RequestOptions<BipartiteNetworkConfig, {}, BipartiteNetworkRequestParams> {
-  makeGetNodeActions?: (
+  makeGetNodeMenuActions?: (
     studyMetadata: StudyMetadata
-  ) => ((nodeId: string) => NodeAction[]) | undefined;
+  ) => ((nodeId: string) => NodeMenuAction[]) | undefined;
   getParitionNames?: (
     studyMetadata: StudyMetadata,
     config: unknown
@@ -334,7 +334,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     svgStyleOverrides: bipartiteNetworkSVGStyles,
     labelTruncationLength: 40,
     emptyNetworkContent,
-    getNodeActions: options?.makeGetNodeActions?.(studyMetadata),
+    getNodeMenuActions: options?.makeGetNodeMenuActions?.(studyMetadata),
     ...options?.getParitionNames?.(studyMetadata, computationConfiguration),
   };
 

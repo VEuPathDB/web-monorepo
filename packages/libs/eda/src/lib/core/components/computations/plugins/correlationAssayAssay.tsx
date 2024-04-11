@@ -103,7 +103,7 @@ export const plugin: ComputationPlugin = {
           return { partition1Name, partition2Name };
         }
       },
-      makeGetNodeActions(studyMetadata) {
+      makeGetNodeMenuActions(studyMetadata) {
         const entities = entityTreeToArray(studyMetadata.rootEntity);
         const variables = entities.flatMap((e) => e.variables);
         const collections = entities.flatMap(
