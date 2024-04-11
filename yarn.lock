@@ -8590,7 +8590,7 @@ __metadata:
     "@veupathdb/site-tsconfig": "workspace:^"
     "@veupathdb/site-webpack-config": "workspace:^"
     "@veupathdb/study-data-access": "workspace:^"
-    "@veupathdb/user-datasets-legacy": "workspace:^"
+    "@veupathdb/user-datasets": "workspace:^"
     "@veupathdb/wdk-client": "workspace:^"
     "@veupathdb/web-common": "workspace:^"
     babel-loader: ^8.3.0
