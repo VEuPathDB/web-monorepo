@@ -54,6 +54,7 @@ export default function DownloadTab({
     filteredCounts
   );
   const datasetId = studyRecord.id[0].value;
+  const { isUserStudy } = studyMetadata;
   const permission = usePermissions();
   const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
   const projectDisplayName = useWdkService(
@@ -114,20 +115,11 @@ export default function DownloadTab({
       </button>
     );
 
-    return (
-      <span
-        style={{
-          fontWeight: 300,
-          fontSize: '1.4em',
-        }}
-      >
-        {getDataAccessDeclaration(
-          studyAccess,
-          requestElement,
-          user?.isGuest,
-          hasPermission
-        )}
-      </span>
+    return getDataAccessDeclaration(
+      studyAccess,
+      requestElement,
+      user?.isGuest,
+      hasPermission
     );
   }, [user, permission, studyRecord, handleClick]);
 
@@ -232,8 +224,18 @@ export default function DownloadTab({
 
   return (
     <div style={{ display: 'flex', paddingTop: 10 }}>
-      <div key="Column One" style={{ marginRight: 75 }}>
-        {dataAccessDeclaration ?? ''}
+      <div
+        key="Column One"
+        style={{
+          display: 'flex',
+          rowGap: '1.5em',
+          flexDirection: 'column',
+          marginRight: 75,
+        }}
+      >
+        {projectDisplayName === 'ClinEpiDB' &&
+          !isUserStudy &&
+          (dataAccessDeclaration ?? '')}
         {mergedReleaseData[0] && (
           <StudyCitation
             partialCitationData={partialCitationData}

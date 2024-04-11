@@ -10,7 +10,7 @@ import { useLocation } from 'react-router';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { CheckboxTreeProps } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 
 import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import {

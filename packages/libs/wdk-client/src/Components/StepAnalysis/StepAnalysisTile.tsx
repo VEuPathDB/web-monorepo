@@ -1,7 +1,7 @@
 import React from 'react';
-import { Tooltip } from '../../Components';
 import Spinnable from '../Shared/Spinnable';
 import { memoize } from 'lodash/fp';
+import { Tooltip } from '@veupathdb/coreui';
 
 interface StepAnalysisTileProps {
   shortDescription: string;
@@ -13,11 +13,6 @@ interface StepAnalysisTileProps {
   loadChoice: () => void;
 }
 
-const TOOLTIP_POSITION = {
-  my: 'top center',
-  at: 'bottom center',
-};
-
 export const StepAnalysisTile: React.SFC<StepAnalysisTileProps> = ({
   shortDescription,
   customThumbnailUrl,
@@ -27,7 +22,7 @@ export const StepAnalysisTile: React.SFC<StepAnalysisTileProps> = ({
   loading,
   loadChoice,
 }) => (
-  <Tooltip content={shortDescription} position={TOOLTIP_POSITION}>
+  <Tooltip title={shortDescription} placement="bottom">
     <div
       className={`${inactive ? 'inactive ' : ''}analysis-selector`}
       title={shortDescription}

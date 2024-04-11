@@ -134,7 +134,7 @@ import { useDeepValue } from '../../../hooks/immutability';
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 import { FloatingLineplotExtraProps } from '../../../../map/analysis/hooks/plugins/lineplot';
 
 import * as DateMath from 'date-arithmetic';
@@ -2098,14 +2098,8 @@ function getRequestParams(
     facetVariable,
     valueSpecConfig,
     showMissingness,
-    binWidth = NumberVariable.is(xAxisVariableMetadata) ||
-    DateVariable.is(xAxisVariableMetadata)
-      ? xAxisVariableMetadata.distributionDefaults.binWidthOverride ??
-        xAxisVariableMetadata.distributionDefaults.binWidth
-      : undefined,
-    binWidthTimeUnit = xAxisVariableMetadata?.type === 'date'
-      ? xAxisVariableMetadata.distributionDefaults.binUnits
-      : undefined,
+    binWidth,
+    binWidthTimeUnit,
     useBinning,
     numeratorValues,
     denominatorValues,

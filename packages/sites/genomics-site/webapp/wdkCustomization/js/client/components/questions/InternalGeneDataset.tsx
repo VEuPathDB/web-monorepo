@@ -9,13 +9,8 @@ import React, {
 import { useSelector } from 'react-redux';
 import { useLocation, useHistory } from 'react-router';
 
-import {
-  Loading,
-  Link,
-  Tooltip,
-  HelpIcon,
-} from '@veupathdb/wdk-client/lib/Components';
-import { TabbedDisplay } from '@veupathdb/coreui';
+import { Loading, Link, HelpIcon } from '@veupathdb/wdk-client/lib/Components';
+import { TabbedDisplay, Tooltip } from '@veupathdb/coreui';
 import { CommonResultTable as InternalGeneDatasetTable } from '@veupathdb/wdk-client/lib/Components/Shared/CommonResultTable';
 import { useIsRefOverflowingVertically } from '@veupathdb/wdk-client/lib/Hooks/Overflow';
 import QuestionController, {
@@ -279,7 +274,7 @@ function InternalGeneDatasetContent(props: Props) {
           {displayCategoryOrder.map((categoryName) => (
             <Tooltip
               key={categoryName}
-              content={
+              title={
                 <div>
                   <h4>{displayCategoriesByName[categoryName].displayName}</h4>
                   {displayCategoriesByName[categoryName].description}

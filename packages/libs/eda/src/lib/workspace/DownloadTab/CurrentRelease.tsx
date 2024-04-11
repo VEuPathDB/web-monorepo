@@ -90,7 +90,7 @@ export default function CurrentRelease({
   ];
 
   return (
-    <div id="Current Release Dataset" style={{ marginBottom: 35 }}>
+    <div id="Current Release Dataset">
       <div style={{ marginBottom: 15 }}>
         <H5
           text={`Full Dataset (Release ${release.releaseNumber})`}
