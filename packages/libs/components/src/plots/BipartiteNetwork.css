@@ -2,3 +2,21 @@
   font-size: 1em;
   font-weight: 500;
 }
+
+.bpnet-hover-dropdown {
+  display: none;
+}
+
+.visx-network-node:hover .bpnet-hover-dropdown {
+  display: unset;
+}
+
+.visx-network-node .hover-trigger:hover {
+  display: unset;
+  fill: #00000017;
+}
+
+.NodeWithLabel_Node,
+.NodeWithLabel_Label {
+  cursor: pointer;
+}
