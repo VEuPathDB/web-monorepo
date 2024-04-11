@@ -1,5 +1,5 @@
 import { BipartiteNetworkData, NodeData } from '../types/plots/network';
-import { partition } from 'lodash';
+import { orderBy, partition } from 'lodash';
 import { LabelPosition, Link, NodeWithLabel } from './Network';
 import { Graph } from '@visx/network';
 import { Text } from '@visx/text';
@@ -171,28 +171,42 @@ function BipartiteNetwork(
   // Assign coordinates to links based on the newly created node coordinates
   const linksWithCoordinates = useMemo(
     () =>
-      data.links.map((link) => {
-        const sourceNode = nodesByPartitionWithCoordinates[0].find(
-          (node) => node.id === link.source.id
-        );
-        const targetNode = nodesByPartitionWithCoordinates[1].find(
-          (node) => node.id === link.target.id
-        );
-        return {
-          ...link,
-          source: {
-            x: sourceNode?.x,
-            y: sourceNode?.y,
-            ...link.source,
-          },
-          target: {
-            x: targetNode?.x,
-            y: targetNode?.y,
-            ...link.target,
-          },
-        };
-      }),
-    [data.links, nodesByPartitionWithCoordinates]
+      // Put highlighted links on top of gray links.
+      orderBy(
+        data.links.map((link) => {
+          const sourceNode = nodesByPartitionWithCoordinates[0].find(
+            (node) => node.id === link.source.id
+          );
+          const targetNode = nodesByPartitionWithCoordinates[1].find(
+            (node) => node.id === link.target.id
+          );
+          return {
+            ...link,
+            source: {
+              x: sourceNode?.x,
+              y: sourceNode?.y,
+              ...link.source,
+            },
+            target: {
+              x: targetNode?.x,
+              y: targetNode?.y,
+              ...link.target,
+            },
+            color:
+              highlightedNodeId != null &&
+              sourceNode?.id !== highlightedNodeId &&
+              targetNode?.id !== highlightedNodeId
+                ? '#eee'
+                : link.color,
+          };
+        }),
+        // Links that are added later will be on top.
+        // If a link is grayed out, it will be sorted before other links.
+        // In theory, it's possible to have a false positive here;
+        // but that's okay, because the overlapping colors will be the same.
+        (link) => (link.color === '#eee' ? 1 : -1)
+      ),
+    [data.links, highlightedNodeId, nodesByPartitionWithCoordinates]
   );
 
   const plotRect = plotRef.current?.getBoundingClientRect();
@@ -316,18 +330,7 @@ function BipartiteNetwork(
                 // Using our Link component so that it uses our nice defaults and
                 // can better expand to handle more complex events (hover and such).
                 linkComponent={({ link }) => {
-                  const isGrayedOut =
-                    highlightedNodeId != null &&
-                    link.source.id !== highlightedNodeId &&
-                    link.target.id !== highlightedNodeId;
-                  return (
-                    <Link
-                      link={{
-                        ...link,
-                        color: isGrayedOut ? '#eee' : link.color,
-                      }}
-                    />
-                  );
+                  return <Link link={link} />;
                 }}
                 nodeComponent={({ node }) => {
                   const isHighlighted = highlightedNodeId === node.id;
