@@ -7,6 +7,8 @@ import React, {
   useState,
 } from 'react';
 
+import { Link } from 'react-router-dom';
+
 import { keyBy } from 'lodash';
 
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
@@ -31,6 +33,7 @@ import {
 } from '../Utils/types';
 
 import { Modal } from '@veupathdb/coreui';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 import './UploadForm.scss';
 
@@ -380,11 +383,18 @@ function UploadForm({
       {errorMessages.length > 0 && <ErrorMessage errors={errorMessages} />}
       <div>
         <h2>{datasetUploadType.uploadTitle}</h2>
-        <div>
-          Before uploading your dataset, please ensure your data is formatted
-          according to the instructions listed in the{' '}
-          <a href="../datasets/help">"Help" tab</a>.
-        </div>
+        <Banner
+          banner={{
+            type: 'warning',
+            message: (
+              <>
+                Before uploading your dataset, please ensure your data is
+                formatted according to the instructions listed in the{' '}
+                <Link to={{ pathname: '../datasets/help' }}>"Help" tab</Link>.
+              </>
+            ),
+          }}
+        />
         <div className="formSection">
           <FieldLabel required htmlFor="data-set-name">
             Name
