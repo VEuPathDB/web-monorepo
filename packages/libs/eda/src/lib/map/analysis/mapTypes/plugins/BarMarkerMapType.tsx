@@ -56,6 +56,7 @@ import {
   getErrorOverlayComponent,
   getLegendErrorMessage,
   selectedMarkersLittleFilter,
+  useFloatingPanelHandlers,
 } from '../shared';
 import {
   useFindEntityAndVariable,
@@ -79,7 +80,6 @@ import { useLittleFilters } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
 import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
 import { SubStudies } from '../../SubStudies';
-import { PanelConfig } from '../../appState';
 
 const displayName = 'Bar plots';
 
@@ -486,65 +486,13 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     substudyFilterFuncs
   );
 
-  const updateLegendPosition = useCallback(
-    (position: PanelConfig['position']) => {
-      updateConfiguration({
-        ...configuration,
-        legendPanelConfig: position,
-      });
-    },
-    [updateConfiguration, configuration]
-  );
-
-  const updateVisualizationPosition = useCallback(
-    (position: PanelConfig['position']) => {
-      updateConfiguration({
-        ...configuration,
-        visualizationPanelConfig: {
-          ...visualizationPanelConfig,
-          position,
-        },
-      });
-    },
-    [updateConfiguration, configuration, visualizationPanelConfig]
-  );
-
-  const updateVisualizationDimensions = useCallback(
-    (dimensions: PanelConfig['dimensions']) => {
-      updateConfiguration({
-        ...configuration,
-        visualizationPanelConfig: {
-          ...visualizationPanelConfig,
-          dimensions,
-        },
-      });
-    },
-    [updateConfiguration, configuration, visualizationPanelConfig]
-  );
-
-  const onPanelDismiss = useCallback(() => {
-    updateConfiguration({
-      ...configuration,
-      activeVisualizationId: undefined,
-      visualizationPanelConfig: {
-        ...visualizationPanelConfig,
-        isVisible: false,
-      },
-    });
-  }, [updateConfiguration, configuration, visualizationPanelConfig]);
-
-  const setHideVizControl = useCallback(
-    (hideValue?: boolean) => {
-      updateConfiguration({
-        ...configuration,
-        visualizationPanelConfig: {
-          ...visualizationPanelConfig,
-          hideVizControl: hideValue,
-        },
-      });
-    },
-    [updateConfiguration, configuration, visualizationPanelConfig]
-  );
+  const {
+    updateLegendPosition,
+    updateVisualizationPosition,
+    updateVisualizationDimensions,
+    onPanelDismiss,
+    setHideVizControl,
+  } = useFloatingPanelHandlers({ configuration, updateConfiguration });
 
   return (
     <>

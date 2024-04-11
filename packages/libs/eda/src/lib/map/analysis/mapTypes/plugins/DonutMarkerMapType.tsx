@@ -52,6 +52,7 @@ import {
   getLegendErrorMessage,
   useSelectedMarkerSnackbars,
   selectedMarkersLittleFilter,
+  useFloatingPanelHandlers,
 } from '../shared';
 import {
   MapTypeConfigPanelProps,
@@ -72,7 +73,6 @@ import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
 import { SubStudies } from '../../SubStudies';
 import { useLittleFilters } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
-import { PanelConfig } from '../../appState';
 
 const displayName = 'Donuts';
 
@@ -453,65 +453,13 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
   const noDataError = getLegendErrorMessage(data.error);
 
-  const updateLegendPosition = useCallback(
-    (position: PanelConfig['position']) => {
-      updateConfiguration({
-        ...configuration,
-        legendPanelConfig: position,
-      });
-    },
-    [updateConfiguration, configuration]
-  );
-
-  const updateVisualizationPosition = useCallback(
-    (position: PanelConfig['position']) => {
-      updateConfiguration({
-        ...configuration,
-        visualizationPanelConfig: {
-          ...visualizationPanelConfig,
-          position,
-        },
-      });
-    },
-    [updateConfiguration, configuration, visualizationPanelConfig]
-  );
-
-  const updateVisualizationDimensions = useCallback(
-    (dimensions: PanelConfig['dimensions']) => {
-      updateConfiguration({
-        ...configuration,
-        visualizationPanelConfig: {
-          ...visualizationPanelConfig,
-          dimensions,
-        },
-      });
-    },
-    [updateConfiguration, configuration, visualizationPanelConfig]
-  );
-
-  const onPanelDismiss = useCallback(() => {
-    updateConfiguration({
-      ...configuration,
-      activeVisualizationId: undefined,
-      visualizationPanelConfig: {
-        ...visualizationPanelConfig,
-        isVisible: false,
-      },
-    });
-  }, [updateConfiguration, configuration, visualizationPanelConfig]);
-
-  const setHideVizControl = useCallback(
-    (hideValue?: boolean) => {
-      updateConfiguration({
-        ...configuration,
-        visualizationPanelConfig: {
-          ...visualizationPanelConfig,
-          hideVizControl: hideValue,
-        },
-      });
-    },
-    [updateConfiguration, configuration, visualizationPanelConfig]
-  );
+  const {
+    updateLegendPosition,
+    updateVisualizationPosition,
+    updateVisualizationDimensions,
+    onPanelDismiss,
+    setHideVizControl,
+  } = useFloatingPanelHandlers({ configuration, updateConfiguration });
 
   return (
     <>
