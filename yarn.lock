@@ -8162,7 +8162,7 @@ __metadata:
     "@veupathdb/site-tsconfig": "workspace:^"
     "@veupathdb/site-webpack-config": "workspace:^"
     "@veupathdb/study-data-access": "workspace:^"
-    "@veupathdb/user-datasets-legacy": "workspace:^"
+    "@veupathdb/user-datasets": "workspace:^"
     "@veupathdb/wdk-client": "workspace:^"
     "@veupathdb/web-common": "workspace:^"
     babel-loader: ^8.3.0
@@ -8935,7 +8935,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@veupathdb/user-datasets-legacy@workspace:^, @veupathdb/user-datasets-legacy@workspace:packages/libs/user-datasets-legacy":
+"@veupathdb/user-datasets-legacy@workspace:packages/libs/user-datasets-legacy":
   version: 0.0.0-use.local
   resolution: "@veupathdb/user-datasets-legacy@workspace:packages/libs/user-datasets-legacy"
   dependencies:
@@ -9182,7 +9182,6 @@ __metadata:
     "@veupathdb/react-scripts": "workspace:^"
     "@veupathdb/study-data-access": "workspace:^"
     "@veupathdb/user-datasets": "workspace:^"
-    "@veupathdb/user-datasets-legacy": "workspace:^"
     "@veupathdb/wdk-client": "workspace:^"
     bubleify: ^2.0.0
     custom-event-polyfill: ^1.0.7
