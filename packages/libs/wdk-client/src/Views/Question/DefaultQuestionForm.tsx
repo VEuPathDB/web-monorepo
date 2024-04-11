@@ -273,7 +273,9 @@ export function QuestionHeader(props: QuestionHeaderProps) {
   return props.showHeader ? (
     <div className={cx('QuestionHeader')}>
       <h1>
-        {props.headerText} {props.isBeta && <BetaIcon />}
+        {/** NOTE: Remove the WGCNA hardcoding when appropriate */}
+        {props.headerText}{' '}
+        {(props.isBeta || props.headerText.includes('WGCNA')) && <BetaIcon />}
       </h1>
     </div>
   ) : (

@@ -9,7 +9,12 @@ import React, {
 import { useSelector } from 'react-redux';
 import { useLocation, useHistory } from 'react-router';
 
-import { Loading, Link, HelpIcon } from '@veupathdb/wdk-client/lib/Components';
+import {
+  Loading,
+  Link,
+  HelpIcon,
+  BetaIcon,
+} from '@veupathdb/wdk-client/lib/Components';
 import { TabbedDisplay, Tooltip } from '@veupathdb/coreui';
 import { CommonResultTable as InternalGeneDatasetTable } from '@veupathdb/wdk-client/lib/Components/Shared/CommonResultTable';
 import { useIsRefOverflowingVertically } from '@veupathdb/wdk-client/lib/Hooks/Overflow';
@@ -270,7 +275,7 @@ function InternalGeneDatasetContent(props: Props) {
       />
       <div className={cx('Legend')}>
         <span style={{ fontWeight: 'bold', fontSize: '13px' }}>Legend:</span>
-        <div style={{ display: 'flex', flexWrap: 'wrap', rowGap: '0.25rem' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', rowGap: '1rem' }}>
           {displayCategoryOrder.map((categoryName) => (
             <Tooltip
               key={categoryName}
@@ -281,12 +286,36 @@ function InternalGeneDatasetContent(props: Props) {
                 </div>
               }
             >
-              <span key={categoryName}>
+              <div key={categoryName}>
                 <span className="bttn bttn-cyan bttn-legend">
                   {displayCategoriesByName[categoryName].shortDisplayName}
                 </span>
-                <span>{displayCategoriesByName[categoryName].displayName}</span>
-              </span>
+                {/** NOTE: Remove the styles related to the hardcoded beta icon */}
+                <span
+                  style={
+                    displayCategoriesByName[categoryName].displayName ===
+                    'WGCNA'
+                      ? { marginRight: '30px' }
+                      : undefined
+                  }
+                >
+                  {displayCategoriesByName[categoryName].displayName}
+                </span>
+                {displayCategoriesByName[categoryName].displayName ===
+                  'WGCNA' && (
+                  <div style={{ position: 'relative' }}>
+                    <div
+                      style={{
+                        position: 'absolute',
+                        bottom: '0.5em',
+                        right: '0.25em',
+                      }}
+                    >
+                      <BetaIcon />
+                    </div>
+                  </div>
+                )}
+              </div>
             </Tooltip>
           ))}
         </div>
