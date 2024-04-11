@@ -326,6 +326,7 @@ const questionSharedDecoder = Decode.combine(
     Decode.field('reviseBuild', Decode.optional(Decode.string))
   ),
   Decode.combine(
+    Decode.field('searchVisibleHelp', Decode.optional(Decode.string)),
     Decode.field('urlSegment', Decode.string),
     Decode.field('groups', Decode.arrayOf(paramGroupDecoder)),
     Decode.field('defaultAttributes', Decode.arrayOf(Decode.string)),
