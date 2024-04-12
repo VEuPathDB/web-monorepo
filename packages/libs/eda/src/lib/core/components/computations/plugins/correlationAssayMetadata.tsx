@@ -159,7 +159,6 @@ export function CorrelationAssayMetadataConfiguration(
 
   // set initial prefilterThresholds
   useEffect(() => {
-    console.log('update prefilterThresholds');
     changeConfigHandler('prefilterThresholds', {
       proportionNonZero:
         configuration.prefilterThresholds?.proportionNonZero ??

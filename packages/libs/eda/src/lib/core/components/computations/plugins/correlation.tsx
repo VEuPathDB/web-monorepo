@@ -318,7 +318,6 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
       </p>
     </div>
   );
-  console.log(configuration);
 
   const correlationMethodSelectorText = useMemo(() => {
     if (configuration.correlationMethod) {
