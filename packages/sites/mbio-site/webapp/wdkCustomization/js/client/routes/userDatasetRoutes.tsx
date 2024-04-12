@@ -8,9 +8,9 @@ import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import { makeEdaRoute } from '@veupathdb/web-common/lib/routes';
 import { diyUserDatasetIdToWdkRecordId } from '@veupathdb/wdk-client/lib/Utils/diyDatasets';
 
-import { UserDatasetDetailProps } from '@veupathdb/user-datasets-legacy/lib/Controllers/UserDatasetDetailController';
+import { UserDatasetDetailProps } from '@veupathdb/user-datasets/lib/Controllers/UserDatasetDetailController';
 
-import { uploadTypeConfig } from '@veupathdb/user-datasets-legacy/lib/Utils/upload-config';
+import { uploadTypeConfig } from '@veupathdb/user-datasets/lib/Utils/upload-config';
 
 import { communitySite, projectId } from '@veupathdb/web-common/lib/config';
 
@@ -18,9 +18,7 @@ import ExternalContentController from '@veupathdb/web-common/lib/controllers/Ext
 
 const BiomDatasetDetail = React.lazy(
   () =>
-    import(
-      '@veupathdb/user-datasets-legacy/lib/Components/Detail/BiomDatasetDetail'
-    )
+    import('@veupathdb/user-datasets/lib/Components/Detail/BiomDatasetDetail')
 );
 
 const UserDatasetRouter = React.lazy(

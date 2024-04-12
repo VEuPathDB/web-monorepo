@@ -64,7 +64,8 @@ const paramSharedDecoder =
     ),
     Decode.combine(
       Decode.field('allowEmptyValue', Decode.boolean),
-      Decode.field('visibleHelp', Decode.optional(Decode.string))
+      Decode.field('visibleHelp', Decode.optional(Decode.string)),
+      Decode.field('visibleHelpPosition', Decode.optional(Decode.string))
     )
   );
 
@@ -326,6 +327,7 @@ const questionSharedDecoder = Decode.combine(
     Decode.field('reviseBuild', Decode.optional(Decode.string))
   ),
   Decode.combine(
+    Decode.field('searchVisibleHelp', Decode.optional(Decode.string)),
     Decode.field('urlSegment', Decode.string),
     Decode.field('groups', Decode.arrayOf(paramGroupDecoder)),
     Decode.field('defaultAttributes', Decode.arrayOf(Decode.string)),
