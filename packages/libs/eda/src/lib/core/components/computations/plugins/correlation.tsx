@@ -51,16 +51,21 @@ export const plugin: ComputationPlugin = {
   configurationDescriptionComponent: CorrelationConfigDescriptionComponent,
   createDefaultConfiguration: () => ({}),
   isConfigurationComplete: (configuration) => {
-    // Configuration must be complete and have unique values for data1 and data2.
-    return (
-      CompleteCorrelationConfig.is(configuration) &&
-      isVariableCollectionDescriptor(configuration.data1?.collectionSpec) &&
-      isVariableCollectionDescriptor(configuration.data2?.collectionSpec) &&
-      variableCollectionsAreUnique([
-        configuration.data1?.collectionSpec,
-        configuration.data2?.collectionSpec,
-      ])
-    );
+    // First, the configuration must be complete
+    if (!CompleteCorrelationConfig.is(configuration)) return false;
+
+    // Also, if both data1 and data2 are collections, they must be unique
+    if (configuration.data2?.dataType === 'collection') {
+      return (
+        isVariableCollectionDescriptor(configuration.data1?.collectionSpec) &&
+        isVariableCollectionDescriptor(configuration.data2?.collectionSpec) &&
+        variableCollectionsAreUnique([
+          configuration.data1?.collectionSpec,
+          configuration.data2?.collectionSpec,
+        ])
+      );
+    }
+    return true;
   },
   visualizationPlugins: {
     bipartitenetwork: bipartiteNetworkVisualization.withOptions({
@@ -313,6 +318,7 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
       </p>
     </div>
   );
+  console.log(configuration);
 
   const correlationMethodSelectorText = useMemo(() => {
     if (configuration.correlationMethod) {
