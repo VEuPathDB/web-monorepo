@@ -48,7 +48,11 @@ export const plugin: ComputationPlugin = {
   configurationComponent: CorrelationAssayMetadataConfiguration,
   configurationDescriptionComponent:
     CorrelationAssayMetadataConfigDescriptionComponent,
-  createDefaultConfiguration: () => ({}),
+  createDefaultConfiguration: () => ({
+    data2: {
+      dataType: 'metadata',
+    },
+  }),
   isConfigurationComplete: CompleteCorrelationConfig.is,
   visualizationPlugins: {
     bipartitenetwork: bipartiteNetworkVisualization.withOptions({
@@ -152,11 +156,6 @@ export function CorrelationAssayMetadataConfiguration(
     computation,
     visualizationId
   );
-
-  // Set data2 to metadata. Using a second useEffect ends up clobbering the prefilters one.
-  configuration.data2 = {
-    dataType: 'metadata',
-  };
 
   // set initial prefilterThresholds
   useEffect(() => {
@@ -263,8 +262,6 @@ export function CorrelationAssayMetadataConfiguration(
       return 'Select a method';
     }
   }, [configuration.correlationMethod]);
-
-  console.log(configuration);
 
   return (
     <ComputationStepContainer
