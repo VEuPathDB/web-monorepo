@@ -52,7 +52,13 @@ export const plugin: ComputationPlugin = {
   configurationComponent: CorrelationAssayAssayConfiguration,
   configurationDescriptionComponent:
     CorrelationAssayAssayConfigDescriptionComponent,
-  createDefaultConfiguration: () => ({}),
+  createDefaultConfiguration: () => ({
+    prefilterThresholds: {
+      proportionNonZero: DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
+      variance: DEFAULT_VARIANCE_THRESHOLD,
+      standardDeviation: DEFAULT_STANDARD_DEVIATION_THRESHOLD,
+    },
+  }),
   isConfigurationComplete: (configuration) => {
     // Configuration must be complete and have unique values for data1 and data2.
     return (
@@ -183,21 +189,6 @@ export function CorrelationAssayAssayConfiguration(
     computation,
     visualizationId
   );
-
-  // set initial prefilterThresholds
-  useEffect(() => {
-    changeConfigHandler('prefilterThresholds', {
-      proportionNonZero:
-        configuration.prefilterThresholds?.proportionNonZero ??
-        DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
-      variance:
-        configuration.prefilterThresholds?.variance ??
-        DEFAULT_VARIANCE_THRESHOLD,
-      standardDeviation:
-        configuration.prefilterThresholds?.standardDeviation ??
-        DEFAULT_STANDARD_DEVIATION_THRESHOLD,
-    });
-  }, []);
 
   // Content for the expandable help section
   const helpContent = (

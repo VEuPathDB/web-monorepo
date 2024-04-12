@@ -49,7 +49,13 @@ const cx = makeClassNameHelper('AppStepConfigurationContainer');
 export const plugin: ComputationPlugin = {
   configurationComponent: CorrelationConfiguration,
   configurationDescriptionComponent: CorrelationConfigDescriptionComponent,
-  createDefaultConfiguration: () => ({}),
+  createDefaultConfiguration: () => ({
+    prefilterThresholds: {
+      proportionNonZero: DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
+      variance: DEFAULT_VARIANCE_THRESHOLD,
+      standardDeviation: DEFAULT_STANDARD_DEVIATION_THRESHOLD,
+    },
+  }),
   isConfigurationComplete: (configuration) => {
     // First, the configuration must be complete
     if (!CompleteCorrelationConfig.is(configuration)) return false;
@@ -223,21 +229,6 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
     computation,
     visualizationId
   );
-
-  // set initial prefilterThresholds
-  useEffect(() => {
-    changeConfigHandler('prefilterThresholds', {
-      proportionNonZero:
-        configuration.prefilterThresholds?.proportionNonZero ??
-        DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
-      variance:
-        configuration.prefilterThresholds?.variance ??
-        DEFAULT_VARIANCE_THRESHOLD,
-      standardDeviation:
-        configuration.prefilterThresholds?.standardDeviation ??
-        DEFAULT_STANDARD_DEVIATION_THRESHOLD,
-    });
-  }, []);
 
   // Content for the expandable help section
   // Note the text is dependent on the context, for example in genomics we'll use different
