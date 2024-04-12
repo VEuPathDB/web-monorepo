@@ -284,7 +284,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
         {`Showing links with an absolute correlation coefficient above ${vizConfig.correlationCoefThreshold?.toString()} and a p-value below ${vizConfig.significanceThreshold?.toString()}`}
       </p>
       <p>
-        Click a node to hightlight it and its edges.
+        Click on a node to highlight its edges.
         {getNodeMenuActions &&
           ' A dropdown menu will appear on mouseover, if additional actions are available.'}
       </p>
