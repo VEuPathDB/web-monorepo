@@ -69,6 +69,7 @@ export function initialize(options = {}) {
     additionalMiddleware,
   } = options;
 
+  fixForwardSlashes();
   unaliasWebappUrl();
   removeJsessionid();
   preventButtonOutlineOnClick();
@@ -101,6 +102,14 @@ export function initialize(options = {}) {
   });
 
   return context;
+}
+
+function fixForwardSlashes() {
+  const { pathname } = window.location;
+  if (pathname.includes('//') || pathname.endsWith('/')) {
+    const newPathname = (pathname + '/').replace(/[/]+/g, '/').slice(0, -1);
+    window.history.replaceState(null, '', newPathname);
+  }
 }
 
 /**
