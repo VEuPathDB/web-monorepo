@@ -1571,7 +1571,8 @@ function getRequestParams(
           xMin: config?.independentAxisRange?.min,
           xMax: config?.independentAxisRange?.max,
         }
-      : defaultIndependentRange?.min != null &&
+      : binWidth &&
+        defaultIndependentRange?.min != null &&
         defaultIndependentRange?.max != null
       ? {
           xMin: defaultIndependentRange?.min,
