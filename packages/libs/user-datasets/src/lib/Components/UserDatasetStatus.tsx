@@ -1,9 +1,6 @@
 import * as React from 'react';
-import {
-  IconAlt as Icon,
-  Link,
-  Tooltip,
-} from '@veupathdb/wdk-client/lib/Components';
+import { IconAlt as Icon, Link } from '@veupathdb/wdk-client/lib/Components';
+import { Tooltip } from '@veupathdb/coreui';
 
 import { DataNoun, UserDataset, UserDatasetVDI } from '../Utils/types';
 
@@ -203,7 +200,7 @@ export default function UserDatasetStatus(props: Props) {
   const link = `${baseUrl}/${userDataset.id}`;
   const children = <Icon className="StatusIcon" fa={faIcon} />;
   const visibleContent = props.useTooltip ? (
-    <Tooltip content={content}>{children}</Tooltip>
+    <Tooltip title={content ?? ''}>{children}</Tooltip>
   ) : (
     <React.Fragment>
       {children} {content}

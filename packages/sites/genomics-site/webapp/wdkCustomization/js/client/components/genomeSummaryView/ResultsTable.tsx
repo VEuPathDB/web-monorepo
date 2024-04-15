@@ -13,7 +13,7 @@ import {
   GenomeViewSequenceModel,
 } from '../../util/GenomeSummaryViewUtils';
 import { FeatureTooltip } from './FeatureTooltip';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 
 const resultColumnsFactory = defaultMemoize(
   (
