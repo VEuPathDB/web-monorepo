@@ -12,6 +12,7 @@ import { RequestOptions } from '../options/types';
 // Bipartite network imports
 import BipartiteNetwork, {
   BipartiteNetworkProps,
+  NodeMenuAction,
 } from '@veupathdb/components/lib/plots/BipartiteNetwork';
 import BipartiteNetworkSVG from './selectorIcons/BipartiteNetworkSVG';
 import {
@@ -44,6 +45,7 @@ import { NumberOrDate } from '@veupathdb/components/lib/types/general';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { FacetedPlotLayout } from '../../layouts/FacetedPlotLayout';
 import { H6 } from '@veupathdb/coreui';
+import { StudyMetadata } from '../../..';
 // end imports
 
 // Defaults
@@ -85,7 +87,20 @@ interface Options
   extends LayoutOptions,
     TitleOptions,
     LegendOptions,
-    RequestOptions<BipartiteNetworkConfig, {}, BipartiteNetworkRequestParams> {}
+    RequestOptions<BipartiteNetworkConfig, {}, BipartiteNetworkRequestParams> {
+  makeGetNodeMenuActions?: (
+    studyMetadata: StudyMetadata
+  ) => ((nodeId: string) => NodeMenuAction[]) | undefined;
+  getParitionNames?: (
+    studyMetadata: StudyMetadata,
+    config: unknown
+  ) =>
+    | Partial<{
+        parition1Name: string;
+        partition2Name: string;
+      }>
+    | undefined;
+}
 
 // Bipartite Network Visualization
 // The bipartite network takes no input variables, because the received data will complete the plot.
@@ -228,8 +243,30 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
       }
     );
 
+    const nodesById = new Map(nodesWithLabels.map((n) => [n.id, n]));
+
+    // sort node data by label
+    // this is mutating the original paritions arrray :shrug:
+    const orderedPartitions = data.value.bipartitenetwork.data.partitions.map(
+      (partition) => {
+        return {
+          ...partition,
+          nodeIds: partition.nodeIds.concat().sort((a, b) => {
+            const nodeA = nodesById.get(a);
+            const nodeB = nodesById.get(b);
+            if (nodeA == null || nodeB == null) return 0;
+            return nodeA.label.localeCompare(nodeB.label, 'en', {
+              numeric: true,
+              sensitivity: 'base',
+            });
+          }),
+        };
+      }
+    );
+
     return {
       ...data.value.bipartitenetwork.data,
+      partitions: orderedPartitions,
       nodes: nodesWithLabels,
       links: data.value.bipartitenetwork.data.links.map((link) => {
         return {
@@ -242,12 +279,21 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     };
   }, [data.value, entities, minDataWeight, maxDataWeight]);
 
+  const getNodeMenuActions = options?.makeGetNodeMenuActions?.(studyMetadata);
+
   // plot subtitle
-  const plotSubtitle =
-    'Showing links with an absolute correlation coefficient above ' +
-    vizConfig.correlationCoefThreshold?.toString() +
-    ' and a p-value below ' +
-    vizConfig.significanceThreshold?.toString();
+  const plotSubtitle = (
+    <div>
+      <p>
+        {`Showing links with an absolute correlation coefficient above ${vizConfig.correlationCoefThreshold?.toString()} and a p-value below ${vizConfig.significanceThreshold?.toString()}`}
+      </p>
+      <p>
+        Click a node to hightlight it and its edges.
+        {getNodeMenuActions &&
+          ' A dropdown menu will appear on mouseover, if additional actions are available.'}
+      </p>
+    </div>
+  );
 
   const finalPlotContainerStyles = useMemo(
     () => ({
@@ -297,6 +343,8 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     svgStyleOverrides: bipartiteNetworkSVGStyles,
     labelTruncationLength: 40,
     emptyNetworkContent,
+    getNodeMenuActions,
+    ...options?.getParitionNames?.(studyMetadata, computationConfiguration),
   };
 
   const plotNode = (

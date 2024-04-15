@@ -20,7 +20,7 @@ export type SwissArmyButtonProps = Omit<
 /** Basic button with a variety of customization options. */
 export default function SwissArmyButton({
   text,
-  textTransform = 'uppercase',
+  textTransform,
   onPress,
   disabled = false,
   tooltip,
