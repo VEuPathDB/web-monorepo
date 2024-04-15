@@ -33,6 +33,7 @@ interface Props {
   dataClient: DataClient;
   downloadClient: DownloadClient;
   subsettingClient: SubsettingClient;
+  isStudyExplorerWorkspace?: boolean;
 }
 
 /** Allows a user to create a new analysis or edit an existing one. */
@@ -44,6 +45,7 @@ export function WorkspaceContainer({
   downloadClient,
   computeClient,
   children,
+  isStudyExplorerWorkspace = false,
 }: Props) {
   const { url } = useRouteMatch();
 
@@ -73,7 +75,9 @@ export function WorkspaceContainer({
   return (
     <EDAWorkspaceContainer
       studyId={studyId}
-      className={`${cx()} ${classes.workspace}`}
+      className={`${cx()} ${
+        isStudyExplorerWorkspace ? 'StudyExplorerWorkspace' : ''
+      } ${classes.workspace}`}
       analysisClient={analysisClient}
       dataClient={dataClient}
       subsettingClient={subsettingClient}

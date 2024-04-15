@@ -113,8 +113,9 @@ class RecordTable extends Component {
     const displayableAttributes = this.getDisplayableAttributes(this.props);
     const columns = this.getColumns(this.props);
     const data = this.getOrderedData(this.props);
-    const isOrthologTable = this.props.table.name === 'Orthologs';
-    const clustalInputRow = isOrthologTable
+    const isOrthologTableWithData =
+      this.props.table.name === 'Orthologs' && value.length > 0;
+    const clustalInputRow = isOrthologTableWithData
       ? columns.find((c) => c.name === 'clustalInput')
       : undefined;
 
@@ -239,7 +240,7 @@ class RecordTable extends Component {
       eventHandlers: {
         onSort: this.onSort,
         onExpandedRowsChange,
-        ...(isOrthologTable
+        ...(isOrthologTableWithData
           ? { ...this.props.orthoTableProps.eventHandlers }
           : {}),
       },
@@ -254,7 +255,7 @@ class RecordTable extends Component {
         className: 'wdk-DataTableContainer',
         getRowId: getSortIndex,
         showCount: mesaReadyRows.length > 1,
-        ...(isOrthologTable
+        ...(isOrthologTableWithData
           ? {
               ...this.props.orthoTableProps.options,
               selectColumnHeadingDetails: {
@@ -264,7 +265,7 @@ class RecordTable extends Component {
             }
           : {}),
       },
-      ...(isOrthologTable
+      ...(isOrthologTableWithData
         ? {
             actions: this.props.orthoTableProps.actions,
           }
