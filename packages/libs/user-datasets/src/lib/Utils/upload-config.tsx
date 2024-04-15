@@ -23,7 +23,19 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
             level, using our filtering and visualisation tools.
           </p>
         ),
-        uploadMethodConfig: {},
+        uploadMethodConfig: {
+          file: {
+            maxSizeBytes: 100 * 1000 * 1000, // 100MB
+            render: ({ fieldNode }) => (
+              <>
+                {fieldNode}
+                <div style={{ marginTop: '0.25em' }}>
+                  File must be less than 100MB
+                </div>
+              </>
+            ),
+          },
+        },
       },
     },
     genelist: {
