@@ -2130,6 +2130,24 @@ function getRequestParams(
       ? 'TRUE'
       : 'FALSE';
 
+  const viewport = binWidth
+    ? vizConfig.independentAxisRange != null
+      ? {
+          xMin: String(vizConfig.independentAxisRange.min),
+          xMax: String(vizConfig.independentAxisRange.max),
+        }
+      : (xAxisVariableMetadata.type === 'integer' ||
+          xAxisVariableMetadata.type === 'number' ||
+          xAxisVariableMetadata.type === 'date') &&
+        xAxisVariableMetadata.distributionDefaults != null
+      ? // do we need to consider displayRangeMin/Max too?
+        {
+          xMin: String(xAxisVariableMetadata.distributionDefaults.rangeMin),
+          xMax: String(xAxisVariableMetadata.distributionDefaults.rangeMax),
+        }
+      : undefined
+    : undefined;
+
   return (
     customMakeRequestParams?.({
       studyId,
@@ -2148,6 +2166,7 @@ function getRequestParams(
         xAxisVariable: xAxisVariable!, // these will never be undefined because
         yAxisVariable: yAxisVariable!, // data requests are only made when they have been chosen by user
         ...binSpec,
+        viewport,
         overlayVariable: overlayVariable,
         facetVariable: facetVariable ? [facetVariable] : [],
         showMissingness: showMissingness ? 'TRUE' : 'FALSE',
