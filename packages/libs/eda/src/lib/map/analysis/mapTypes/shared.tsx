@@ -39,6 +39,11 @@ import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { NoDataError } from '../../../core/api/DataClient/NoDataError';
 import { useCallback, useState } from 'react';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
+import {
+  BubbleLegendPositionConfig,
+  PanelConfig,
+  PanelPositionConfig,
+} from '../appState';
 
 export const defaultAnimation = {
   method: 'geohash',
@@ -426,6 +431,93 @@ export function useSelectedMarkerSnackbars(
       activeVisualizationId,
     ]
   );
+}
+
+/**
+ * DRY up floating visualization handlers
+ */
+
+interface MinimalPanelConfig {
+  visualizationPanelConfig: PanelConfig;
+  legendPanelConfig: PanelPositionConfig | BubbleLegendPositionConfig;
+}
+
+interface UseFloatingPanelHandlersProps<M extends MinimalPanelConfig> {
+  configuration: M;
+  updateConfiguration: (configuration: M) => void;
+}
+
+export function useFloatingPanelHandlers<M extends MinimalPanelConfig>({
+  updateConfiguration,
+  configuration,
+}: UseFloatingPanelHandlersProps<M>) {
+  const updateLegendPosition = useCallback(
+    (position: M['legendPanelConfig']) => {
+      updateConfiguration({
+        ...configuration,
+        legendPanelConfig: position,
+      });
+    },
+    [updateConfiguration, configuration]
+  );
+
+  const updateVisualizationPosition = useCallback(
+    (position: PanelConfig['position']) => {
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...configuration.visualizationPanelConfig,
+          position,
+        },
+      });
+    },
+    [updateConfiguration, configuration]
+  );
+
+  const updateVisualizationDimensions = useCallback(
+    (dimensions: PanelConfig['dimensions']) => {
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...configuration.visualizationPanelConfig,
+          dimensions,
+        },
+      });
+    },
+    [updateConfiguration, configuration]
+  );
+
+  const onPanelDismiss = useCallback(() => {
+    updateConfiguration({
+      ...configuration,
+      activeVisualizationId: undefined,
+      visualizationPanelConfig: {
+        ...configuration.visualizationPanelConfig,
+        isVisible: false,
+      },
+    });
+  }, [updateConfiguration, configuration]);
+
+  const setHideVizControl = useCallback(
+    (hideValue?: boolean) => {
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...configuration.visualizationPanelConfig,
+          hideVizControl: hideValue,
+        },
+      });
+    },
+    [updateConfiguration, configuration]
+  );
+
+  return {
+    updateLegendPosition,
+    updateVisualizationPosition,
+    updateVisualizationDimensions,
+    onPanelDismiss,
+    setHideVizControl,
+  };
 }
 
 /**

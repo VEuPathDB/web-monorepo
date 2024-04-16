@@ -77,7 +77,8 @@ export function EDAWorkspaceHeading({
           </H3>
         )}
         <div>
-          {!permissionsValue.loading &&
+          {studyMetadata.isUserStudy &&
+            !permissionsValue.loading &&
             shouldOfferLinkToDashboard(
               permissionsValue.permissions,
               studyRecord.id[0].value

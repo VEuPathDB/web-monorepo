@@ -56,7 +56,9 @@ export const userDatasetRoutes: RouteEntry[] = [
 
       const detailComponentsByTypeName = useMemo(
         () => ({
-          ISA: function ClinEpiIsaDatasetDetail(props: UserDatasetDetailProps) {
+          isasimple: function ClinEpiIsaDatasetDetail(
+            props: UserDatasetDetailProps
+          ) {
             const wdkDatasetId = diyUserDatasetIdToWdkRecordId(
               props.userDataset.id
             );
@@ -98,6 +100,11 @@ export const userDatasetRoutes: RouteEntry[] = [
 ];
 
 function useEdaStudyMetadata(wdkDatasetId: string) {
-  const subsettingClient = useConfiguredSubsettingClient(edaServiceUrl);
-  return useStudyMetadata(wdkDatasetId, subsettingClient);
+  try {
+    const subsettingClient = useConfiguredSubsettingClient(edaServiceUrl);
+    return useStudyMetadata(wdkDatasetId, subsettingClient);
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
 }
