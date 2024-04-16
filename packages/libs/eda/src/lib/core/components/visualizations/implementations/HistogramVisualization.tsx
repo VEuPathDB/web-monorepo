@@ -1571,7 +1571,8 @@ function getRequestParams(
           xMin: config?.independentAxisRange?.min,
           xMax: config?.independentAxisRange?.max,
         }
-      : binWidth &&
+      : // send back end a viewport to prevent edge-case 500s with single-valued variables when a binWidth is provided
+      binWidth &&
         defaultIndependentRange?.min != null &&
         defaultIndependentRange?.max != null
       ? {
