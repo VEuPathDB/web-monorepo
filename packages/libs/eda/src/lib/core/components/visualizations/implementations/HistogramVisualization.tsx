@@ -525,6 +525,68 @@ function HistogramViz(props: VisualizationProps<Options>) {
     }, [filters, xAxisVariable, vizConfig.xAxisVariable, subsettingClient])
   );
 
+  // Note: Histogram distribution data contains statistical values such as summary.min/max,
+  // however, it does not fully respect multiple filters.
+  // Similarly, distribution data also partially reflect filtered data.
+  // A solution is to compute both min/max values from data-based and summary-based ones,
+  // then take max of min values and min of max values,
+  // which will result in correct min/max value for multiple filters
+  // More specifically, data-based min and summary-based max are correct values
+  const dataBasedIndependentAxisMinMax = useMemo(() => {
+    return histogramDefaultIndependentAxisMinMax(distributionDataPromise);
+  }, [distributionDataPromise]);
+
+  const summaryBasedIndependentAxisMinMax = useMemo(() => {
+    if (
+      !distributionDataPromise.pending &&
+      distributionDataPromise.value != null
+    ) {
+      const min = distributionDataPromise.value.series[0]?.summary?.min;
+      const max = distributionDataPromise.value.series[0]?.summary?.max;
+
+      if (min != null && max != null) {
+        if (DateVariable.is(xAxisVariable)) {
+          return {
+            min: (min as string).split('T')[0],
+            max: (max as string).split('T')[0],
+          };
+        } else {
+          return { min, max };
+        }
+      }
+    }
+    return undefined;
+  }, [distributionDataPromise]);
+
+  const independentAxisMinMax = useMemo(() => {
+    return {
+      min: max([
+        dataBasedIndependentAxisMinMax?.min,
+        summaryBasedIndependentAxisMinMax?.min,
+      ]),
+      max: min([
+        dataBasedIndependentAxisMinMax?.max,
+        summaryBasedIndependentAxisMinMax?.max,
+      ]),
+    };
+  }, [distributionDataPromise]);
+
+  // Note: defaultIndependentRange in the Histogram Viz should keep its initial range
+  // regardless of the change of the data to ensure the truncation behavior
+  // Thus, pass an additional prop to useDefaultAxisRange() if Histogram Viz
+  const defaultIndependentRange = useDefaultAxisRange(
+    xAxisVariable,
+    vizConfig.independentAxisValueSpec === 'Full'
+      ? undefined
+      : independentAxisMinMax?.min,
+    undefined,
+    vizConfig.independentAxisValueSpec === 'Full'
+      ? undefined
+      : independentAxisMinMax?.max,
+    undefined,
+    vizConfig.independentAxisValueSpec
+  );
+
   const dataRequestConfig: DataRequestConfig = useDeepValue(
     pick(vizConfig, [
       'valueSpec',
@@ -577,6 +639,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
         dataRequestConfig,
         xAxisVariable,
         outputEntity,
+        defaultIndependentRange,
         options?.getRequestParams
       );
       const response = await dataClient.getHistogram(
@@ -668,68 +731,6 @@ function HistogramViz(props: VisualizationProps<Options>) {
 
     return [checkData, isEmptyData];
   }, [data.value]);
-
-  // Note: Histogram distribution data contains statistical values such as summary.min/max,
-  // however, it does not fully respect multiple filters.
-  // Similarly, distribution data also partially reflect filtered data.
-  // A solution is to compute both min/max values from data-based and summary-based ones,
-  // then take max of min values and min of max values,
-  // which will result in correct min/max value for multiple filters
-  // More specifically, data-based min and summary-based max are correct values
-  const dataBasedIndependentAxisMinMax = useMemo(() => {
-    return histogramDefaultIndependentAxisMinMax(distributionDataPromise);
-  }, [distributionDataPromise]);
-
-  const summaryBasedIndependentAxisMinMax = useMemo(() => {
-    if (
-      !distributionDataPromise.pending &&
-      distributionDataPromise.value != null
-    ) {
-      const min = distributionDataPromise.value.series[0]?.summary?.min;
-      const max = distributionDataPromise.value.series[0]?.summary?.max;
-
-      if (min != null && max != null) {
-        if (DateVariable.is(xAxisVariable)) {
-          return {
-            min: (min as string).split('T')[0],
-            max: (max as string).split('T')[0],
-          };
-        } else {
-          return { min, max };
-        }
-      }
-    }
-    return undefined;
-  }, [distributionDataPromise]);
-
-  const independentAxisMinMax = useMemo(() => {
-    return {
-      min: max([
-        dataBasedIndependentAxisMinMax?.min,
-        summaryBasedIndependentAxisMinMax?.min,
-      ]),
-      max: min([
-        dataBasedIndependentAxisMinMax?.max,
-        summaryBasedIndependentAxisMinMax?.max,
-      ]),
-    };
-  }, [distributionDataPromise]);
-
-  // Note: defaultIndependentRange in the Histogram Viz should keep its initial range
-  // regardless of the change of the data to ensure the truncation behavior
-  // Thus, pass an additional prop to useDefaultAxisRange() if Histogram Viz
-  const defaultIndependentRange = useDefaultAxisRange(
-    xAxisVariable,
-    vizConfig.independentAxisValueSpec === 'Full'
-      ? undefined
-      : independentAxisMinMax?.min,
-    undefined,
-    vizConfig.independentAxisValueSpec === 'Full'
-      ? undefined
-      : independentAxisMinMax?.max,
-    undefined,
-    vizConfig.independentAxisValueSpec
-  );
 
   // separate minPosMax from dependentMinPosMax
   const minPosMax = useMemo(
@@ -1535,6 +1536,7 @@ function getRequestParams(
   config: DataRequestConfig,
   variable: Variable,
   outputEntity: StudyEntity,
+  defaultIndependentRange: NumberOrDateRange | undefined,
   customMakeRequestParams?: (
     props: RequestOptionProps<HistogramConfig> & FloatingHistogramExtraProps
   ) => HistogramRequestParams
@@ -1568,6 +1570,14 @@ function getRequestParams(
       ? {
           xMin: config?.independentAxisRange?.min,
           xMax: config?.independentAxisRange?.max,
+        }
+      : // send back end a viewport to prevent edge-case 500s with single-valued variables when a binWidth is provided
+      binWidth &&
+        defaultIndependentRange?.min != null &&
+        defaultIndependentRange?.max != null
+      ? {
+          xMin: defaultIndependentRange?.min,
+          xMax: defaultIndependentRange?.max,
         }
       : undefined;
 

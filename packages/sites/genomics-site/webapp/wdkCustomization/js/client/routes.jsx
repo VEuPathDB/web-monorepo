@@ -40,6 +40,9 @@ import { Srt } from './components/Srt';
 // Matches urlSegment.
 const RECORD_CLASSES_WITHOUT_PROJECT_ID = ['dataset', 'sample'];
 
+// Used to hardcode a redirect to eda workspace from the datatsets table
+const GAMBIAN_WGCNA_DATASET = 'DS_82dc5abc7f';
+
 const projectRegExp = new RegExp('/' + projectId + '$');
 
 /**
@@ -169,6 +172,15 @@ export const wrapRoutes = (ebrcRoutes) => [
     path: '/record/organism/:id*',
     component: (props) => (
       <Redirect to={`/record/dataset/${props.match.params.id}`} />
+    ),
+  },
+
+  // hardcodes a redirect from the datasets table to the EDA "study explorer"
+  {
+    path: `/record/dataset/${GAMBIAN_WGCNA_DATASET}`,
+    exact: true,
+    component: () => (
+      <Redirect to={`/workspace/analyses/${GAMBIAN_WGCNA_DATASET}/new`} />
     ),
   },
 
