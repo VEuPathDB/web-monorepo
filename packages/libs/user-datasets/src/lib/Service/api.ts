@@ -102,13 +102,10 @@ export class UserDatasetApi extends FetchClientWithCredentials {
         }
       }
       if (xhr.readyState === XMLHttpRequest.DONE && xhr.status >= 400) {
-        try {
-          throw new Error(xhr.response);
-        } catch (error) {
-          dispatchUploadProgress && dispatchUploadProgress(null);
-          dispatchBadUpload && dispatchBadUpload(String(error));
-          console.log(error);
-        }
+        const error = new Error(xhr.response);
+        dispatchUploadProgress && dispatchUploadProgress(null);
+        dispatchBadUpload && dispatchBadUpload(String(error));
+        console.log(error);
       }
     });
 
