@@ -44,6 +44,7 @@ import {
   PanelConfig,
   PanelPositionConfig,
 } from '../appState';
+import { findLast } from 'lodash';
 
 export const defaultAnimation = {
   method: 'geohash',
@@ -68,6 +69,7 @@ export interface SharedMarkerConfigurations {
   selectedVariable: VariableDescriptor;
   activeVisualizationId?: string;
   selectedMarkers?: string[];
+  geoEntityId?: string;
 }
 
 export function useCommonData(
@@ -76,7 +78,10 @@ export function useCommonData(
   studyEntities: StudyEntity[],
   boundsZoomLevel?: BoundsViewport
 ) {
-  const geoConfig = geoConfigs[0];
+  const geoConfig = findLeastAncestralGeoConfig(
+    geoConfigs,
+    selectedVariable.entityId
+  );
 
   const { entity: overlayEntity, variable: overlayVariable } =
     findEntityAndVariable(studyEntities, selectedVariable) ?? {};
@@ -544,10 +549,20 @@ export function timeSliderLittleFilter(props: UseLittleFiltersProps): Filter[] {
 
 export function viewportLittleFilters(props: UseLittleFiltersProps): Filter[] {
   const {
-    appState: { boundsZoomLevel },
+    appState: {
+      boundsZoomLevel,
+      markerConfigurations,
+      activeMarkerConfigurationType,
+    },
     geoConfigs,
   } = props;
-  const geoConfig = geoConfigs[0]; // not ideal...
+
+  const { geoEntityId } =
+    markerConfigurations.find(
+      (markerConfig) => markerConfig.type === activeMarkerConfigurationType
+    ) ?? {};
+
+  const geoConfig = getGeoConfig(geoConfigs, geoEntityId);
   return boundsZoomLevel == null
     ? []
     : filtersFromBoundingBox(
@@ -698,7 +713,7 @@ export function selectedMarkersLittleFilter(
   // only return a filter if there are selectedMarkers
   if (selectedMarkers && selectedMarkers.length > 0) {
     const { entity, zoomLevelToAggregationLevel, aggregationVariableIds } =
-      geoConfigs[0];
+      getGeoConfig(geoConfigs, activeMarkerConfiguration.geoEntityId);
     const geoAggregationVariableId =
       aggregationVariableIds?.[zoomLevelToAggregationLevel(zoom) - 1];
     if (entity && geoAggregationVariableId)
@@ -776,4 +791,48 @@ export function getLegendErrorMessage(error: unknown) {
  */
 export function EntitySubtitleForViz({ subtitle }: { subtitle: string }) {
   return <div style={{ marginTop: 8, fontStyle: 'italic' }}>({subtitle})</div>;
+}
+
+// multiple geoEntity functions
+
+/**
+ * Given the geoConfigs (one per entity with geo variables) and an entity ID,
+ * return the entity that is furthest from the root that is the parent of the provided entity ID.
+ *
+ * Assumes `geoConfigs` is in root to leaf order.
+ */
+export function findLeastAncestralGeoConfig(
+  geoConfigs: GeoConfig[],
+  entityId: string
+): GeoConfig {
+  return (
+    findLast(geoConfigs, ({ entity }) =>
+      entityHasChildEntityWithId(entity, entityId)
+    ) ?? geoConfigs[0]
+  );
+}
+
+// Check if the specified entity or any of its descendants has the given entityId.
+function entityHasChildEntityWithId(
+  entity: StudyEntity,
+  entityId: string
+): boolean {
+  return (
+    entity.id === entityId ||
+    (entity.children?.some((child) =>
+      entityHasChildEntityWithId(child, entityId)
+    ) ??
+      false)
+  );
+}
+
+// simple convenience function
+// defaults to root-most geoConfig for safety.
+export function getGeoConfig(
+  geoConfigs: GeoConfig[],
+  entityId?: string
+): GeoConfig {
+  return (
+    geoConfigs.find(({ entity: { id } }) => id === entityId) ?? geoConfigs[0]
+  );
 }

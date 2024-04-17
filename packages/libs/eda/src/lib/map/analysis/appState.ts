@@ -99,6 +99,7 @@ export const MarkerConfiguration = t.intersection([
   }),
   t.partial({
     activeVisualizationId: t.string,
+    geoEntityId: t.string,
   }),
   t.union([
     t.intersection([
