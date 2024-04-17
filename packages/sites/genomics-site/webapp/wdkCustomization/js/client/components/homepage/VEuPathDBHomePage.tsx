@@ -371,8 +371,13 @@ const useHeaderMenuItems = (
       (q) => q.urlSegment === QUESTION_FOR_MAP_DATASETS
     )
   );
+
+  const buildNumber = useSelector(
+    (state: RootState) => state.globalData.config?.buildNumber
+  );
+
   const showInteractiveMaps = mapMenuItemsQuestion != null;
-  const mapMenuItems = useMapMenuItems(mapMenuItemsQuestion);
+  const mapMenuItems = useMapMenuItems(mapMenuItemsQuestion, buildNumber);
 
   // type: reactRoute, webAppRoute, externalLink, subMenu, custom
   const fullMenuItemEntries: HeaderMenuItemEntry[] = [
@@ -1180,7 +1185,7 @@ export const VEuPathDBHomePage = connect(mapStateToProps)(
   VEuPathDBHomePageView
 );
 
-function useMapMenuItems(question?: Question) {
+function useMapMenuItems(question?: Question, buildNumber?: string) {
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
   const studyAccessApi = useStudyAccessApi_tryCatch();
   const subsettingClient = useMemo(
@@ -1189,20 +1194,27 @@ function useMapMenuItems(question?: Question) {
   );
   const [mapMenuItems, setMapMenuItems] = useState<HeaderMenuItemEntry[]>();
   useEffect(() => {
-    if (question == null || studyAccessApi == null) return;
+    if (question == null || studyAccessApi == null || buildNumber == null)
+      return;
     getWdkStudyRecords(
       { studyAccessApi, subsettingClient, wdkService },
       { searchName: question.urlSegment }
     ).then(
       (records) => {
-        const menuItems = records.map(
-          (record): HeaderMenuItemEntry => ({
-            key: `map-${record.id[0].value}`,
-            display: record.displayName,
-            type: 'reactRoute',
-            url: `/workspace/maps/${record.id[0].value}/new`,
-          })
-        );
+        const menuItems = records
+          .filter(
+            (record) =>
+              record.attributes['build_number_introduced'] &&
+              record.attributes['build_number_introduced'] < buildNumber
+          )
+          .map(
+            (record): HeaderMenuItemEntry => ({
+              key: `map-${record.id[0].value}`,
+              display: record.displayName,
+              type: 'reactRoute',
+              url: `/workspace/maps/${record.id[0].value}/new`,
+            })
+          );
         setMapMenuItems(menuItems);
       },
       (error) => {
@@ -1220,7 +1232,7 @@ function useMapMenuItems(question?: Question) {
         ]);
       }
     );
-  }, [question, studyAccessApi, subsettingClient, wdkService]);
+  }, [question, studyAccessApi, subsettingClient, wdkService, buildNumber]);
   return mapMenuItems;
 }
 

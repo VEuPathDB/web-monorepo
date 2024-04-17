@@ -20,7 +20,7 @@ interface WdkStudyRecordsOptions {
   searchName?: string;
 }
 
-const DEFAULT_STUDY_ATTRIBUTES = ['dataset_id'];
+const DEFAULT_STUDY_ATTRIBUTES = ['dataset_id', 'build_number_introduced'];
 const DEFAULT_STUDY_TABLES: string[] = [];
 const EMPTY_ARRAY: string[] = [];
 
