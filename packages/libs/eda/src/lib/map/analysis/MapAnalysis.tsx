@@ -80,8 +80,6 @@ import { Page } from '@veupathdb/wdk-client/lib/Components';
 import { AnalysisError } from '../../core/components/AnalysisError';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import SettingsButton from '@veupathdb/coreui/lib/components/containers/DraggablePanel/SettingsButton';
-import { BubbleMarkerConfiguration } from './MarkerConfiguration/BubbleMarkerConfigurationMenu';
-import { PieMarkerConfiguration } from './MarkerConfiguration/PieMarkerConfigurationMenu';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -774,14 +772,11 @@ function MapAnalysisImpl(props: ImplProps) {
     </div>
   );
 
-  // deselect selectedMarkers and close panel
-  const deselectMarkers = useCallback(() => {
+  const deselectMarkersAndClosePanel = useCallback(() => {
     updateMarkerConfigurations({
-      // type assertion to avoid ts error
-      ...(activeMarkerConfiguration as PieMarkerConfiguration),
+      ...(activeMarkerConfiguration as MarkerConfiguration),
       selectedMarkers: undefined,
     });
-    // close side panel
     setIsSidePanelExpanded(false);
   }, [
     updateMarkerConfigurations,
@@ -903,7 +898,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     }
                     // pass defaultViewport & isStandAloneMap props for custom zoom control
                     defaultViewport={defaultViewport}
-                    onMapClick={deselectMarkers}
+                    onMapClick={deselectMarkersAndClosePanel}
                   >
                     {activeMapTypePlugin?.MapLayerComponent && (
                       <activeMapTypePlugin.MapLayerComponent
