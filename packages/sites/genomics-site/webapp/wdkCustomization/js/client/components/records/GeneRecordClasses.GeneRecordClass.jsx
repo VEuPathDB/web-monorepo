@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
 import { RecordActions } from '@veupathdb/wdk-client/lib/Actions';
 import * as Category from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import {
-  CollapsibleSection,
   CategoriesCheckboxTree,
   Loading,
   RecordTable as WdkRecordTable,
@@ -43,10 +42,10 @@ import {
   usePreferredOrganismsEnabledState,
   usePreferredOrganismsState,
 } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
-import { BlockRecordAttributeSection } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
 import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
 import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { AlphaFoldRecordSection } from './AlphaFoldAttributeSection';
+import { Tooltip } from '@veupathdb/coreui';
 
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
@@ -1360,6 +1359,7 @@ class OrthologsForm extends SortKeyTable {
     super();
     this.state = {
       selectedRowIds: [],
+      groupBySelected: false,
     };
     this.isRowSelected = this.isRowSelected.bind(this);
     this.onRowSelect = this.onRowSelect.bind(this);
@@ -1374,12 +1374,14 @@ class OrthologsForm extends SortKeyTable {
 
   onRowSelect({ ortho_gene_source_id }) {
     this.setState((state) => ({
+      ...state,
       selectedRowIds: state.selectedRowIds.concat(ortho_gene_source_id),
     }));
   }
 
   onRowDeselect({ ortho_gene_source_id }) {
     this.setState((state) => ({
+      ...state,
       selectedRowIds: state.selectedRowIds.filter(
         (id) => id !== ortho_gene_source_id
       ),
@@ -1388,6 +1390,7 @@ class OrthologsForm extends SortKeyTable {
 
   onMultipleRowSelect(rows) {
     this.setState((state) => ({
+      ...state,
       selectedRowIds: state.selectedRowIds.concat(
         rows.map((row) => row['ortho_gene_source_id'])
       ),
@@ -1396,6 +1399,7 @@ class OrthologsForm extends SortKeyTable {
 
   onMultipleRowDeselect(rows) {
     this.setState((state) => ({
+      ...state,
       selectedRowIds: state.selectedRowIds.filter((row) =>
         rows.includes(row['ortho_gene_source_id'])
       ),
@@ -1432,6 +1436,7 @@ class OrthologsForm extends SortKeyTable {
           callback: () => null,
         },
       ],
+      groupBySelected: this.state.groupBySelected,
     };
 
     if (this.props.value.length === 0 || not_protein) {
@@ -1448,9 +1453,48 @@ class OrthologsForm extends SortKeyTable {
           <input type="hidden" name="project_id" value={projectId} />
           <input type="hidden" name="gene_ids" value={source_id} />
           {this.state.selectedRowIds.map((sourceId) => (
-            <input type="hidden" name="gene_ids" value={sourceId} />
+            <input
+              key={sourceId}
+              type="hidden"
+              name="gene_ids"
+              value={sourceId}
+            />
           ))}
-          {this.props.transcriptFilter}
+          <div
+            style={{ display: 'flex', columnGap: '2em', alignItems: 'center' }}
+          >
+            {this.props.transcriptFilter}
+            <Tooltip
+              title={
+                !this.state.selectedRowIds.length
+                  ? 'Select genes to enable this filter'
+                  : ''
+              }
+            >
+              <label
+                style={
+                  !this.state.selectedRowIds.length
+                    ? { cursor: 'not-allowed', opacity: 0.4 }
+                    : undefined
+                }
+              >
+                <input
+                  type="checkbox"
+                  checked={this.state.groupBySelected}
+                  onChange={(e) => {
+                    this.setState((state) => ({
+                      ...state,
+                      groupBySelected: e.target.checked,
+                    }));
+                  }}
+                  disabled={!this.state.selectedRowIds.length}
+                />{' '}
+                <strong>
+                  <em>Keep checked values at top</em>
+                </strong>
+              </label>
+            </Tooltip>
+          </div>
           <this.props.DefaultComponent
             {...this.props}
             value={this.sortValue(this.props.value)}
