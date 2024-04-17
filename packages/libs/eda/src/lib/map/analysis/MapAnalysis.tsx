@@ -772,11 +772,17 @@ function MapAnalysisImpl(props: ImplProps) {
     </div>
   );
 
-  // close left-side panel when map events happen
-  const closePanel = useCallback(
-    () => setIsSidePanelExpanded(false),
-    [setIsSidePanelExpanded]
-  );
+  const deselectMarkersAndClosePanel = useCallback(() => {
+    updateMarkerConfigurations({
+      ...(activeMarkerConfiguration as MarkerConfiguration),
+      selectedMarkers: undefined,
+    });
+    setIsSidePanelExpanded(false);
+  }, [
+    updateMarkerConfigurations,
+    activeMarkerConfiguration,
+    setIsSidePanelExpanded,
+  ]);
 
   const activeMapTypePlugin =
     activeMarkerConfiguration?.type === 'barplot'
@@ -892,10 +898,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     }
                     // pass defaultViewport & isStandAloneMap props for custom zoom control
                     defaultViewport={defaultViewport}
-                    // close left-side panel when map events happen
-                    onMapClick={closePanel}
-                    onMapDrag={closePanel}
-                    onMapZoom={closePanel}
+                    onMapClick={deselectMarkersAndClosePanel}
                   >
                     {activeMapTypePlugin?.MapLayerComponent && (
                       <activeMapTypePlugin.MapLayerComponent
