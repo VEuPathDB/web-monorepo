@@ -286,7 +286,23 @@ function MapAnalysisImpl(props: ImplProps) {
   const appsPromiseState = usePromise(
     useCallback(async () => {
       const { apps } = await dataClient.getApps();
-      return apps; // return all apps; new viz picker will only show those with client plugins defined
+      return apps.map((app) =>
+        app.name === 'standalone-map-distributions'
+          ? {
+              ...app,
+              visualizations: app.visualizations.map((viz) =>
+                viz.name === 'histogram'
+                  ? {
+                      ...viz,
+                      dataElementDependencyOrder: [
+                        ['xAxisVariable', 'overlayVariable'],
+                      ],
+                    }
+                  : viz
+              ),
+            }
+          : app
+      ); // return all apps; new viz picker will only show those with client plugins defined
     }, [dataClient])
   );
 
