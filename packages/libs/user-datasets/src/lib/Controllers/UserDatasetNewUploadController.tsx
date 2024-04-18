@@ -101,7 +101,9 @@ export default function UserDatasetUploadController({
             // callback to redirect to new dataset page
             (datasetId: typeof datasetIdType) =>
               baseUrl &&
-              transitioner.transitionToInternalPage(`${baseUrl}/${datasetId}`)
+              transitioner.transitionToInternalPage(`${baseUrl}/${datasetId}`),
+            // callback to handle bad uploads
+            (error: string) => dispatch(receiveBadUpload(error))
           );
           return requestUploadMessages();
         } catch (err) {
