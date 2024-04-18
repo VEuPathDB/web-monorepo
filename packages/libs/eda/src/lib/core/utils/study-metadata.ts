@@ -57,6 +57,9 @@ export function isVariableCollectionDescriptor(
   if (!object) {
     return false;
   }
+  if (typeof object !== 'object') {
+    return false;
+  }
   return 'entityId' in object && 'collectionId' in object;
 }
 
