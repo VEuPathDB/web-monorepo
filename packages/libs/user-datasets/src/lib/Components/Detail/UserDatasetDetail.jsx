@@ -14,9 +14,7 @@ import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 import NotFound from '@veupathdb/wdk-client/lib/Views/NotFound/NotFound';
 
 import SharingModal from '../Sharing/UserDatasetSharingModal';
-import UserDatasetStatus, {
-  failedImportAndInstallStatuses,
-} from '../UserDatasetStatus';
+import UserDatasetStatus from '../UserDatasetStatus';
 import { makeClassifier, normalizePercentage } from '../UserDatasetUtils';
 import { ThemedGrantAccessButton } from '../ThemedGrantAccessButton';
 import { ThemedDeleteButton } from '../ThemedDeleteButton';
@@ -529,14 +527,7 @@ class UserDatasetDetail extends React.Component {
       installStatusForCurrentProject?.metaStatus,
       installStatusForCurrentProject?.dataStatus,
     ].every((status) => status === 'complete');
-    const hasFailed = [
-      userDataset.status.import,
-      installStatusForCurrentProject?.metaStatus,
-      installStatusForCurrentProject?.dataStatus,
-    ].some((status) => failedImportAndInstallStatuses.includes(status));
 
-    const failedImport =
-      status.import === 'failed' || status.import === 'invalid';
     const isIncompatible =
       installStatusForCurrentProject?.dataStatus === 'missing-dependency';
 
@@ -557,22 +548,10 @@ class UserDatasetDetail extends React.Component {
           <b>{projectId}</b>. It is installed for use.
         </p>
       );
-    } else if (hasFailed) {
-      return (
-        // if we're installable but failed import or install, let's tell user
-        <p className="danger">
-          This {dataNoun.singular.toLowerCase()} failed to{' '}
-          {failedImport ? 'upload' : 'install'}.
-        </p>
-      );
     } else {
-      return (
-        // if we've made it here, we're installable and either import or install is in progress
-        <p className="danger">
-          This {dataNoun.singular.toLowerCase()} is being processed. Please
-          check again soon.
-        </p>
-      );
+      // instead of attempting to provide very granular messaging for when things are neither
+      // compatible nor incompatible, let's let the dataset page's Status messaging handle this
+      return null;
     }
   }
 

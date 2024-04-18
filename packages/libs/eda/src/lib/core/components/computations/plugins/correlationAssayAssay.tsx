@@ -1,18 +1,12 @@
 import { useEffect, useMemo } from 'react';
-import {
-  FeaturePrefilterThresholds,
-  useFindEntityAndVariableCollection,
-} from '../../..';
-import { VariableCollectionDescriptor } from '../../../types/variable';
+import { useFindEntityAndVariableCollection } from '../../..';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
-  isNotAbsoluteAbundanceVariableCollection,
-  partialToCompleteCodec,
-  isTaxonomicVariableCollection,
   isFunctionalCollection,
+  isTaxonomicVariableCollection,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
@@ -22,14 +16,18 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { H6 } from '@veupathdb/coreui';
 import { bipartiteNetworkVisualization } from '../../visualizations/implementations/BipartiteNetworkVisualization';
 import { variableCollectionsAreUnique } from '../../../utils/visualization';
-import PluginError from '../../visualizations/PluginError';
 import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import {
   entityTreeToArray,
+  isVariableCollectionDescriptor,
   findEntityAndVariableCollection,
 } from '../../../utils/study-metadata';
+import {
+  CompleteCorrelationConfig,
+  CorrelationConfig,
+} from '../../../types/apps';
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
 import { ExpandablePanel } from '@veupathdb/coreui';
 import {
@@ -50,91 +48,51 @@ const cx = makeClassNameHelper('AppStepConfigurationContainer');
  * taxa with pathways or genes.
  */
 
-export type CorrelationAssayAssayConfig = t.TypeOf<
-  typeof CorrelationAssayAssayConfig
->;
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CorrelationAssayAssayConfig = t.partial({
-  collectionVariable1: VariableCollectionDescriptor,
-  collectionVariable2: VariableCollectionDescriptor,
-  correlationMethod: t.string,
-  prefilterThresholds: FeaturePrefilterThresholds,
-});
-
-const CompleteCorrelationAssayAssayConfig = partialToCompleteCodec(
-  CorrelationAssayAssayConfig
-);
-
 export const plugin: ComputationPlugin = {
   configurationComponent: CorrelationAssayAssayConfiguration,
   configurationDescriptionComponent:
     CorrelationAssayAssayConfigDescriptionComponent,
-  createDefaultConfiguration: () => ({}),
+  createDefaultConfiguration: () => ({
+    prefilterThresholds: {
+      proportionNonZero: DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
+      variance: DEFAULT_VARIANCE_THRESHOLD,
+      standardDeviation: DEFAULT_STANDARD_DEVIATION_THRESHOLD,
+    },
+  }),
   isConfigurationComplete: (configuration) => {
+    // Configuration must be complete and have unique values for data1 and data2.
     return (
-      CompleteCorrelationAssayAssayConfig.is(configuration) &&
+      CompleteCorrelationConfig.is(configuration) &&
+      isVariableCollectionDescriptor(configuration.data1?.collectionSpec) &&
+      isVariableCollectionDescriptor(configuration.data2?.collectionSpec) &&
       variableCollectionsAreUnique([
-        configuration.collectionVariable1,
-        configuration.collectionVariable2,
+        configuration.data1?.collectionSpec,
+        configuration.data2?.collectionSpec,
       ])
     );
   },
   visualizationPlugins: {
     bipartitenetwork: bipartiteNetworkVisualization.withOptions({
       getLegendTitle(config) {
-        if (CorrelationAssayAssayConfig.is(config)) {
+        if (CorrelationConfig.is(config)) {
           return ['absolute correlation coefficient', 'correlation direction'];
         } else {
           return [];
         }
       },
       getParitionNames(studyMetadata, config) {
-        if (CorrelationAssayAssayConfig.is(config)) {
+        if (CorrelationConfig.is(config)) {
           const entities = entityTreeToArray(studyMetadata.rootEntity);
           const partition1Name = findEntityAndVariableCollection(
             entities,
-            config.collectionVariable1
+            config.data1?.collectionSpec
           )?.variableCollection.displayName;
           const partition2Name = findEntityAndVariableCollection(
             entities,
-            config.collectionVariable2
+            config.data2?.collectionSpec
           )?.variableCollection.displayName;
           return { partition1Name, partition2Name };
         }
-      },
-      makeGetNodeMenuActions(studyMetadata) {
-        const entities = entityTreeToArray(studyMetadata.rootEntity);
-        const variables = entities.flatMap((e) => e.variables);
-        const collections = entities.flatMap(
-          (entity) => entity.collections ?? []
-        );
-        const hostCollection = collections.find(
-          (c) => c.id === 'EUPATH_0005050'
-        );
-        const parasiteCollection = collections.find(
-          (c) => c.id === 'EUPATH_0005051'
-        );
-        return function getNodeActions(nodeId: string) {
-          const [, variableId] = nodeId.split('.');
-          const variable = variables.find((v) => v.id === variableId);
-          if (variable == null) return [];
-
-          const href = parasiteCollection?.memberVariableIds.includes(
-            variable.id
-          )
-            ? `https://qa.plasmodb.org/plasmo/app/search/transcript/GenesByRNASeqpfal3D7_Lee_Gambian_ebi_rnaSeq_RSRCWGCNAModules?param.wgcnaParam=${variable.displayName.toLowerCase()}&autoRun=1`
-            : hostCollection?.memberVariableIds.includes(variable.id)
-            ? `https://qa.hostdb.org/hostdb/app/search/transcript/GenesByRNASeqhsapREF_Lee_Gambian_ebi_rnaSeq_RSRCWGCNAModules?param.wgcnaParam=${variable.displayName.toLowerCase()}&autoRun=1`
-            : undefined;
-          if (href == null) return [];
-          return [
-            {
-              label: 'See list of genes',
-              href,
-            },
-          ];
-        };
       },
     }), // Must match name in data service and in visualization.tsx
   },
@@ -150,15 +108,17 @@ function CorrelationAssayAssayConfigDescriptionComponent({
   computation: Computation;
 }) {
   const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
-  assertComputationWithConfig(computation, CorrelationAssayAssayConfig);
+  assertComputationWithConfig(computation, CorrelationConfig);
 
-  const { collectionVariable1, collectionVariable2, correlationMethod } =
+  const { data1, data2, correlationMethod } =
     computation.descriptor.configuration;
 
-  const entityAndCollectionVariableTreeNode1 =
-    findEntityAndVariableCollection(collectionVariable1);
-  const entityAndCollectionVariableTreeNode2 =
-    findEntityAndVariableCollection(collectionVariable2);
+  const entityAndCollectionVariableTreeNode1 = findEntityAndVariableCollection(
+    data1?.collectionSpec
+  );
+  const entityAndCollectionVariableTreeNode2 = findEntityAndVariableCollection(
+    data2?.collectionSpec
+  );
 
   const correlationMethodDisplayName = correlationMethod
     ? CORRELATION_METHODS.find((method) => method.value === correlationMethod)
@@ -220,7 +180,7 @@ export function CorrelationAssayAssayConfiguration(
     visualizationId,
   } = props;
 
-  assertComputationWithConfig(computation, CorrelationAssayAssayConfig);
+  assertComputationWithConfig(computation, CorrelationConfig);
 
   const { configuration } = computation.descriptor;
 
@@ -229,21 +189,6 @@ export function CorrelationAssayAssayConfiguration(
     computation,
     visualizationId
   );
-
-  // set initial prefilterThresholds
-  useEffect(() => {
-    changeConfigHandler('prefilterThresholds', {
-      proportionNonZero:
-        configuration.prefilterThresholds?.proportionNonZero ??
-        DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
-      variance:
-        configuration.prefilterThresholds?.variance ??
-        DEFAULT_VARIANCE_THRESHOLD,
-      standardDeviation:
-        configuration.prefilterThresholds?.standardDeviation ??
-        DEFAULT_STANDARD_DEVIATION_THRESHOLD,
-    });
-  }, []);
 
   // Content for the expandable help section
   const helpContent = (
@@ -344,22 +289,29 @@ export function CorrelationAssayAssayConfiguration(
           <div className={cx('-CorrelationOuterConfigContainer')}>
             <H6>Input Data</H6>
             <div className={cx('-InputContainer')}>
-              {/* <span>Taxonomic level</span> */}
-              <span>Data 1</span>
+              <span>Taxonomic level</span>
               <VariableCollectionSelectList
-                value={configuration.collectionVariable1}
-                onSelect={partial(changeConfigHandler, 'collectionVariable1')}
-                // collectionPredicate={isTaxonomicVariableCollection}
-                collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
+                value={configuration.data1?.collectionSpec}
+                onSelect={(value) => {
+                  if (isVariableCollectionDescriptor(value))
+                    changeConfigHandler('data1', {
+                      dataType: 'collection',
+                      collectionSpec: value,
+                    });
+                }}
+                collectionPredicate={isTaxonomicVariableCollection}
               />
-              {/* <span>Functional data</span>
-               */}
-              <span>Data 2</span>
+              <span>Functional data</span>
               <VariableCollectionSelectList
-                value={configuration.collectionVariable2}
-                onSelect={partial(changeConfigHandler, 'collectionVariable2')}
-                // collectionPredicate={isFunctionalCollection}
-                collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
+                value={configuration.data2?.collectionSpec}
+                onSelect={(value) => {
+                  if (isVariableCollectionDescriptor(value))
+                    changeConfigHandler('data2', {
+                      dataType: 'collection',
+                      collectionSpec: value,
+                    });
+                }}
+                collectionPredicate={isFunctionalCollection}
               />
             </div>
           </div>
@@ -416,18 +368,6 @@ export function CorrelationAssayAssayConfiguration(
             </div>
           </div>
         </div>
-        <div>
-          <PluginError
-            error={
-              !variableCollectionsAreUnique([
-                configuration.collectionVariable1,
-                configuration.collectionVariable2,
-              ])
-                ? 'Input data must be unique. Please select different data.'
-                : undefined
-            }
-          />
-        </div>
         <ExpandablePanel
           title="Learn more about correlation"
           subTitle={{}}
@@ -448,21 +388,15 @@ function isEnabledInPicker({
 }: IsEnabledInPickerParams): boolean {
   if (!studyMetadata) return false;
 
-  /** Temporary removal of collection type restriction!
-   * This temporary change allows all collections to play in the assay v assay app.
-   * The hack will be removed as part of #906 part 2.
-   */
-  // const entities = entityTreeToArray(studyMetadata.rootEntity);
+  const entities = entityTreeToArray(studyMetadata.rootEntity);
 
-  // // Check that the metagenomic entity exists _and_ that it has
-  // // at least one collection.
-  // const hasMetagenomicData = entities.some(
-  //   (entity) => entity.id === 'OBI_0002623' && !!entity.collections?.length
-  // ); // OBI_0002623 = Metagenomic sequencing assay
+  // Check that the metagenomic entity exists _and_ that it has
+  // at least one collection.
+  const hasMetagenomicData = entities.some(
+    (entity) => entity.id === 'OBI_0002623' && !!entity.collections?.length
+  ); // OBI_0002623 = Metagenomic sequencing assay
 
-  // return hasMetagenomicData;
-
-  /** end of temporary change */
+  return hasMetagenomicData;
 
   return true;
 }
