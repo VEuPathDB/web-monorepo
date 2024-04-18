@@ -82,11 +82,9 @@ class UserDatasetSharingModal extends React.Component {
     return wdkService
       .getUserIdsByEmail([recipientEmail])
       .then(({ results }) => {
-        const foundUsers = results.find((result) =>
-          Object.keys(result).includes(recipientEmail)
-        );
+        const foundUserId = results && results[recipientEmail];
 
-        if (!results.length || !foundUsers) {
+        if (!results || !foundUserId) {
           return this.disqualifyRecipient(
             recipientEmail,
             <span>
@@ -96,9 +94,7 @@ class UserDatasetSharingModal extends React.Component {
           );
         }
 
-        const uid = foundUsers[recipientEmail];
-
-        if (uid === this.props.user.id) {
+        if (foundUserId === this.props.user.id) {
           return this.disqualifyRecipient(
             recipientEmail,
             <span>
@@ -107,7 +103,7 @@ class UserDatasetSharingModal extends React.Component {
             </span>
           );
         } else {
-          return this.acceptRecipient(recipientEmail, uid);
+          return this.acceptRecipient(recipientEmail, foundUserId);
         }
       })
       .catch((err) => {
