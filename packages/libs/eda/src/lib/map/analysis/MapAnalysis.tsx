@@ -80,6 +80,7 @@ import { Page } from '@veupathdb/wdk-client/lib/Components';
 import { AnalysisError } from '../../core/components/AnalysisError';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import SettingsButton from '@veupathdb/coreui/lib/components/containers/DraggablePanel/SettingsButton';
+import { getGeoConfig } from '../../core/utils/geoVariables';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -231,7 +232,6 @@ function MapAnalysisImpl(props: ImplProps) {
   const dataClient = useDataClient();
   const downloadClient = useDownloadClient();
   const subsettingClient = useSubsettingClient();
-  const geoConfig = geoConfigs[0];
   const history = useHistory();
 
   // FIXME use the sharingUrl prop to construct this
@@ -244,6 +244,11 @@ function MapAnalysisImpl(props: ImplProps) {
 
   const activeMarkerConfiguration = markerConfigurations.find(
     (markerConfig) => markerConfig.type === activeMarkerConfigurationType
+  );
+
+  const geoConfig = getGeoConfig(
+    geoConfigs,
+    activeMarkerConfiguration?.geoEntityId
   );
 
   const updateMarkerConfigurations = useCallback(

@@ -145,6 +145,7 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
       toggleStarredVariable={toggleStarredVariable}
       constraints={markerVariableConstraints}
       isValidProportion={isValidProportion}
+      geoConfigs={geoConfigs}
     />
   );
 
