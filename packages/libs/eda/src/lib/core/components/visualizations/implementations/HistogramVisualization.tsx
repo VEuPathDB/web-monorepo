@@ -376,12 +376,6 @@ function HistogramViz(props: VisualizationProps<Options>) {
     };
   }, [findEntityAndVariable, vizConfig.xAxisVariable]);
 
-  const outputEntity = useFindOutputEntity(
-    dataElementDependencyOrder,
-    vizConfig,
-    'xAxisVariable'
-  );
-
   const getOverlayVariable = options?.getOverlayVariable;
 
   const providedOverlayVariableDescriptor = useMemo(
@@ -396,6 +390,12 @@ function HistogramViz(props: VisualizationProps<Options>) {
       (providedOverlayVariableDescriptor ?? vizConfig.overlayVariable),
     facetVariable: vizConfig.facetVariable,
   });
+
+  const outputEntity = useFindOutputEntity(
+    dataElementDependencyOrder,
+    selectedVariables,
+    'xAxisVariable'
+  );
 
   const {
     overlayVariable,
