@@ -156,6 +156,10 @@ export function useStandaloneVizPlugins({
             vizWithOptions(histogramVisualization),
             histogramRequest
           ),
+          timeline: vizWithCustomizedGetRequest(
+            vizWithOptions(histogramVisualization),
+            histogramRequest
+          ),
           boxplot: vizWithCustomizedGetRequest(
             vizWithOptions(boxplotVisualization),
             boxplotRequest
