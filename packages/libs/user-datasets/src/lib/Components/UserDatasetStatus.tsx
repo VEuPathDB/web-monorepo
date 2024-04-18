@@ -17,14 +17,6 @@ interface Props {
   dataNoun: DataNoun;
 }
 
-export const failedImportAndInstallStatuses = [
-  'invalid',
-  'failed',
-  'failed-validation',
-  'failed-installation',
-  'ready-for-reinstall',
-];
-
 const orderedStatuses = [
   'failed-validation',
   'missing-dependency',
