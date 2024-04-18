@@ -44,7 +44,10 @@ import {
   PanelConfig,
   PanelPositionConfig,
 } from '../appState';
-import { findLast } from 'lodash';
+import {
+  findLeastAncestralGeoConfig,
+  getGeoConfig,
+} from '../../../core/utils/geoVariables';
 
 export const defaultAnimation = {
   method: 'geohash',
@@ -791,48 +794,4 @@ export function getLegendErrorMessage(error: unknown) {
  */
 export function EntitySubtitleForViz({ subtitle }: { subtitle: string }) {
   return <div style={{ marginTop: 8, fontStyle: 'italic' }}>({subtitle})</div>;
-}
-
-// multiple geoEntity functions
-
-/**
- * Given the geoConfigs (one per entity with geo variables) and an entity ID,
- * return the entity that is furthest from the root that is the parent of the provided entity ID.
- *
- * Assumes `geoConfigs` is in root to leaf order.
- */
-export function findLeastAncestralGeoConfig(
-  geoConfigs: GeoConfig[],
-  entityId: string
-): GeoConfig {
-  return (
-    findLast(geoConfigs, ({ entity }) =>
-      entityHasChildEntityWithId(entity, entityId)
-    ) ?? geoConfigs[0]
-  );
-}
-
-// Check if the specified entity or any of its descendants has the given entityId.
-function entityHasChildEntityWithId(
-  entity: StudyEntity,
-  entityId: string
-): boolean {
-  return (
-    entity.id === entityId ||
-    (entity.children?.some((child) =>
-      entityHasChildEntityWithId(child, entityId)
-    ) ??
-      false)
-  );
-}
-
-// simple convenience function
-// defaults to root-most geoConfig for safety.
-export function getGeoConfig(
-  geoConfigs: GeoConfig[],
-  entityId?: string
-): GeoConfig {
-  return (
-    geoConfigs.find(({ entity: { id } }) => id === entityId) ?? geoConfigs[0]
-  );
 }

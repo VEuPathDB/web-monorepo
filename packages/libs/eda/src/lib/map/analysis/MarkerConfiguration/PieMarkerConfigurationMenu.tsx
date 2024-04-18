@@ -24,11 +24,9 @@ import {
   SelectedCountsOption,
   SelectedValues,
 } from '../appState';
-import {
-  SharedMarkerConfigurations,
-  findLeastAncestralGeoConfig,
-} from '../mapTypes/shared';
+import { SharedMarkerConfigurations } from '../mapTypes/shared';
 import { GeoConfig } from '../../../core/types/geoConfig';
+import { findLeastAncestralGeoConfig } from '../../../core/utils/geoVariables';
 
 interface MarkerConfiguration<T extends string> {
   type: T;

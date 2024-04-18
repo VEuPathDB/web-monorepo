@@ -80,7 +80,7 @@ import { Page } from '@veupathdb/wdk-client/lib/Components';
 import { AnalysisError } from '../../core/components/AnalysisError';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import SettingsButton from '@veupathdb/coreui/lib/components/containers/DraggablePanel/SettingsButton';
-import { getGeoConfig } from './mapTypes/shared';
+import { getGeoConfig } from '../../core/utils/geoVariables';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
