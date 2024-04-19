@@ -14,6 +14,7 @@ import { usePromise } from '../../../hooks/promise';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import {
   useDataClient,
+  useFindEntityAndVariableCollection,
   useStudyEntities,
   useStudyMetadata,
 } from '../../../hooks/workspace';
@@ -46,7 +47,7 @@ import { yellow } from '@material-ui/core/colors';
 import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { significanceColors } from '@veupathdb/components/lib/types/plots';
 import { NumberOrDateRange, NumberRange } from '../../../types/general';
-import { max, min } from 'lodash';
+import { capitalize, max, min } from 'lodash';
 
 // plot controls
 import SliderWidget, {
@@ -697,10 +698,16 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     </div>
   );
 
+  // If available, grab the annotated display name to describe the points
+  const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
+  const pointsDisplayName = findEntityAndVariableCollection(
+    computationConfiguration.collectionVariable
+  )?.variableCollection.memberPlural;
+
   const legendNode = finalData && countsData && (
     <PlotLegend
       type="list"
-      legendTitle="Legend"
+      legendTitle={capitalize(pointsDisplayName) ?? 'Legend'}
       legendItems={[
         {
           label: `Inconclusive (${
