@@ -644,6 +644,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
       );
       const response = await dataClient.getHistogram(
         computation.descriptor.type,
+        visualization.descriptor.type,
         params
       );
 
@@ -712,6 +713,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
       computation.descriptor.type,
       overlayEntity,
       facetEntity,
+      visualization.descriptor.type,
     ])
   );
 

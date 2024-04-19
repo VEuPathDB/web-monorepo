@@ -67,11 +67,12 @@ export default class DataClient extends FetchClientWithCredentials {
   // Histogram
   getHistogram(
     computationName: string,
+    pluginName: string, // now handles timeline and histogram
     params: HistogramRequestParams
   ): Promise<HistogramResponse> {
     return this.getVisualizationData(
       computationName,
-      'histogram',
+      pluginName,
       params,
       HistogramResponse
     );
