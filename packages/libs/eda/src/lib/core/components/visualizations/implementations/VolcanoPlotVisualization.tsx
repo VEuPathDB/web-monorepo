@@ -700,14 +700,15 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
 
   // If available, grab the annotated display name to describe the points
   const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
-  const pointsDisplayName = findEntityAndVariableCollection(
-    computationConfiguration.collectionVariable
-  )?.variableCollection.memberPlural;
+  const pointsDisplayName = capitalize(
+    findEntityAndVariableCollection(computationConfiguration.collectionVariable)
+      ?.variableCollection.memberPlural
+  );
 
   const legendNode = finalData && countsData && (
     <PlotLegend
       type="list"
-      legendTitle={capitalize(pointsDisplayName) ?? 'Legend'}
+      legendTitle={pointsDisplayName ?? 'Legend'}
       legendItems={[
         {
           label: `Inconclusive (${
@@ -775,7 +776,13 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
         outputSize={finalData?.statistics.length}
       />
 
-      {!hideInputsAndControls && <OutputEntityTitle subtitle={plotSubtitle} />}
+      {!hideInputsAndControls && (
+        <OutputEntityTitle
+          subtitle={plotSubtitle}
+          entityDisplayNameOverride={pointsDisplayName}
+          outputSize={finalData?.statistics.length}
+        />
+      )}
       <LayoutComponent
         isFaceted={false}
         legendNode={legendNode}

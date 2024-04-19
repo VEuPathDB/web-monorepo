@@ -56,7 +56,6 @@ export const plugin: ComputationPlugin = {
         if (AbundanceConfig.is(config) && config.rankingMethod) {
           return (
             <>
-              <br />
               <span>
                 Ranked abundance: X-axis variables with {config.rankingMethod} =
                 0 removed. Showing up to the top ten variables.
