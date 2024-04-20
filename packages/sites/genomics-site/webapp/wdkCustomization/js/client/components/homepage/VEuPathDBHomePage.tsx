@@ -49,6 +49,7 @@ import {
 import {
   useUserDatasetsWorkspace,
   edaServiceUrl,
+  showUnreleasedData,
 } from '@veupathdb/web-common/lib/config';
 import { useAnnouncementsState } from '@veupathdb/web-common/lib/hooks/announcements';
 import { useCommunitySiteRootUrl } from '@veupathdb/web-common/lib/hooks/staticData';
@@ -1192,17 +1193,26 @@ function useMapMenuItems(question?: Question) {
     if (question == null || studyAccessApi == null) return;
     getWdkStudyRecords(
       { studyAccessApi, subsettingClient, wdkService },
-      { searchName: question.urlSegment }
+      {
+        searchName: question.urlSegment,
+        attributes: ['is_public'],
+        hasMap: true,
+      }
     ).then(
       (records) => {
-        const menuItems = records.map(
-          (record): HeaderMenuItemEntry => ({
-            key: `map-${record.id[0].value}`,
-            display: record.displayName,
-            type: 'reactRoute',
-            url: `/workspace/maps/${record.id[0].value}/new`,
-          })
-        );
+        const menuItems = records
+          .filter(
+            (record) =>
+              record.attributes.is_public === 'true' || showUnreleasedData
+          )
+          .map(
+            (record): HeaderMenuItemEntry => ({
+              key: `map-${record.id[0].value}`,
+              display: record.displayName,
+              type: 'reactRoute',
+              url: `/workspace/maps/${record.id[0].value}/new`,
+            })
+          );
         setMapMenuItems(menuItems);
       },
       (error) => {
