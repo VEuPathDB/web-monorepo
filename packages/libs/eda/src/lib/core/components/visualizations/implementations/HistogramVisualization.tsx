@@ -391,6 +391,8 @@ function HistogramViz(props: VisualizationProps<Options>) {
     facetVariable: vizConfig.facetVariable,
   });
 
+  // this returns undefined if the overlay and main variable
+  // are on different branches of the tree
   const outputEntity = useFindOutputEntity(
     dataElementDependencyOrder,
     selectedVariables,
@@ -609,7 +611,6 @@ function HistogramViz(props: VisualizationProps<Options>) {
       if (
         dataRequestConfig.xAxisVariable == null ||
         xAxisVariable == null ||
-        outputEntity == null ||
         filteredCounts.pending ||
         filteredCounts.value == null
       )
@@ -631,6 +632,10 @@ function HistogramViz(props: VisualizationProps<Options>) {
         dataElementConstraints,
         dataElementDependencyOrder
       );
+
+      // We test this after assertValidInputVariables because
+      // that gives a useful message to users. Returning undefined doesn't.
+      if (outputEntity == null) return undefined;
 
       const params = getRequestParams(
         studyId,
