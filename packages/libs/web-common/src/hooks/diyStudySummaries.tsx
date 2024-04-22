@@ -6,7 +6,7 @@ import { keyBy } from 'lodash';
 
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { assertIsUserDatasetCompatibleWdkService } from '@veupathdb/user-datasets/lib/Service/UserDatasetWrappers';
+import { assertIsVdiCompatibleWdkService } from '@veupathdb/user-datasets/lib/Service';
 
 import { useDiyDatasets } from './diyDatasets';
 
@@ -70,7 +70,7 @@ export function useDiyStudySummaryRows(): UserStudySummaryRow[] | undefined {
 
   const currentUserDatasets = useWdkService(
     async (wdkService) => {
-      assertIsUserDatasetCompatibleWdkService(wdkService);
+      assertIsVdiCompatibleWdkService(wdkService);
       if (currentUser == null) {
         return undefined;
       }
@@ -78,7 +78,6 @@ export function useDiyStudySummaryRows(): UserStudySummaryRow[] | undefined {
       if (currentUser.isGuest) {
         return [];
       }
-
       return wdkService.getCurrentUserDatasets();
     },
     [currentUser]
@@ -95,7 +94,10 @@ export function useDiyStudySummaryRows(): UserStudySummaryRow[] | undefined {
       return undefined;
     }
 
-    const currentUserDatasetsById = keyBy(currentUserDatasets, ({ id }) => id);
+    const currentUserDatasetsById = keyBy(
+      currentUserDatasets,
+      (ud) => ud.datasetId
+    );
 
     return diyDatasets.flatMap((diyDataset) => {
       const userDataset = currentUserDatasetsById[diyDataset.userDatasetId];
@@ -109,19 +111,29 @@ export function useDiyStudySummaryRows(): UserStudySummaryRow[] | undefined {
           name: diyDataset.name,
           userDatasetWorkspaceUrl: diyDataset.userDatasetsRoute,
           edaWorkspaceUrl: `${diyDataset.baseEdaRoute}/new`,
-          summary: userDataset.meta.summary,
+          summary: userDataset.summary ?? '',
           owner:
-            userDataset.ownerUserId === currentUser.id
+            userDataset.owner.userId === currentUser.id
               ? 'Me'
-              : userDataset.owner,
-          sharedWith:
-            userDataset.sharedWith
-              ?.map(({ userDisplayName }) => userDisplayName)
-              ?.join(', ') ?? '',
+              : formatUser(userDataset.owner),
+          sharedWith: userDataset.shares?.map(formatUser)?.join(', ') ?? '',
         },
       ];
     });
   }, [currentUser, currentUserDatasets, diyDatasets]);
 
   return userStudySummaryRows;
+}
+
+function formatUser(user: {
+  firstName?: string;
+  lastName?: string;
+  organization?: string;
+}) {
+  const { firstName, lastName, organization } = user;
+  const name =
+    firstName == null && lastName == null
+      ? 'Unknown user'
+      : `${firstName} ${lastName}`;
+  return name + (organization ? `(${organization})` : '');
 }

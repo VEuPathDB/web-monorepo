@@ -1,7 +1,7 @@
 import React from 'react';
 import { debounce } from 'lodash';
 
-import Tooltip from './Tooltip';
+import MesaTooltip from './MesaTooltip';
 import Events from '../Utils/Events';
 import { MESA_SCROLL_EVENT, MESA_REFLOW_EVENT } from '../Ui/MesaContants';
 
@@ -56,7 +56,7 @@ class AnchoredTooltip extends React.Component {
     const extractedProps = { ...props, children };
 
     return (
-      <Tooltip
+      <MesaTooltip
         corner="top-left"
         className="AnchoredTooltip"
         getPosition={this.getPosition}

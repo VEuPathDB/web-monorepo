@@ -13,7 +13,7 @@ import {
   GenomeViewSequenceModel,
 } from '../../util/GenomeSummaryViewUtils';
 import { FeatureTooltip } from './FeatureTooltip';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 
 const resultColumnsFactory = defaultMemoize(
   (
@@ -210,8 +210,8 @@ const rowsFactory = defaultMemoize(
     report.type === 'truncated'
       ? []
       : emptyChromosomeFilterApplied
-      ? report.sequences.filter(({ featureCount }) => featureCount)
-      : report.sequences
+      ? report.sequences
+      : report.sequences.filter(({ featureCount }) => featureCount)
 );
 
 export const ResultsTable: React.SFC<ResultsTableProps> = ({

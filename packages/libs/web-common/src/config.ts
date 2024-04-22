@@ -32,6 +32,7 @@ export const {
   useUserDatasetsWorkspace = false,
   datasetImportUrl = '',
   showUnreleasedData = false,
+  vdiServiceUrl = '',
 } = window.__SITE_CONFIG__;
 
 export const edaExampleAnalysesAuthors = !window.__SITE_CONFIG__

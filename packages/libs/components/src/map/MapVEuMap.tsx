@@ -28,6 +28,7 @@ import { Map, DomEvent, LatLngBounds } from 'leaflet';
 import domToImage from 'dom-to-image';
 import { makeSharedPromise } from '../utils/promise-utils';
 import { Undo } from '@veupathdb/coreui';
+import { mouseEventHasModifierKey } from './BoundsDriftMarker';
 
 // define Viewport type
 export type Viewport = {
@@ -366,9 +367,10 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
     baselayerchange: (e: { name: string }) => {
       onBaseLayerChanged && onBaseLayerChanged(e.name as BaseLayerChoice);
     },
-    // map click event: remove selected highlight markers
-    click: () => {
-      if (onMapClick != null) onMapClick();
+    // map click event: remove selected markers and close side panel
+    click: (e) => {
+      if (onMapClick != null && !mouseEventHasModifierKey(e.originalEvent))
+        onMapClick();
     },
   });
 

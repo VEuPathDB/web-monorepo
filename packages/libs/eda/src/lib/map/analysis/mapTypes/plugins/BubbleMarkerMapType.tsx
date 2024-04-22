@@ -47,6 +47,7 @@ import {
   getErrorOverlayComponent,
   useSelectedMarkerSnackbars,
   selectedMarkersLittleFilter,
+  useFloatingPanelHandlers,
 } from '../shared';
 import {
   MapTypeConfigPanelProps,
@@ -90,7 +91,6 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
     filters,
     geoConfigs,
     setIsSidePanelExpanded,
-    setHideVizInputsAndControls,
   } = props;
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
@@ -106,7 +106,7 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
     )?.dataElementConstraints;
 
   const setActiveVisualizationId = useCallback(
-    (activeVisualizationId?: string) => {
+    (activeVisualizationId?: string, isNew?: boolean) => {
       if (markerConfiguration == null) return;
       updateConfiguration({
         ...markerConfiguration,
@@ -114,6 +114,7 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
         visualizationPanelConfig: {
           ...visualizationPanelConfig,
           isVisible: !!activeVisualizationId,
+          ...(isNew ? { hideVizControl: false } : {}),
         },
       });
     },
@@ -144,6 +145,7 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
       toggleStarredVariable={toggleStarredVariable}
       constraints={markerVariableConstraints}
       isValidProportion={isValidProportion}
+      geoConfigs={geoConfigs}
     />
   );
 
@@ -176,7 +178,6 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
           plugins={plugins}
           geoConfigs={geoConfigs}
           mapType="bubble"
-          setHideVizInputsAndControls={setHideVizInputsAndControls}
           setIsSidePanelExpanded={setIsSidePanelExpanded}
         />
       ),
@@ -297,7 +298,6 @@ function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
     updateConfiguration,
     headerButtons,
     setStudyDetailsPanelConfig,
-    setHideVizInputsAndControls,
   } = props;
   const configuration = props.configuration as BubbleMarkerConfiguration;
 
@@ -354,6 +354,15 @@ function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
     substudyFilterFuncs
   );
 
+  // use all the handlers except updateLegendPosition
+  const {
+    updateVisualizationPosition,
+    updateVisualizationDimensions,
+    onPanelDismiss,
+    setHideVizControl,
+  } = useFloatingPanelHandlers({ configuration, updateConfiguration });
+
+  // and use the two specialized ones for the legends
   const updateVariableLegendPosition = useCallback(
     (position: PanelConfig['position']) => {
       updateConfiguration({
@@ -379,43 +388,6 @@ function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
     },
     [updateConfiguration, configuration, legendPanelConfig]
   );
-
-  const updateVisualizationPosition = useCallback(
-    (position: PanelConfig['position']) => {
-      updateConfiguration({
-        ...configuration,
-        visualizationPanelConfig: {
-          ...visualizationPanelConfig,
-          position,
-        },
-      });
-    },
-    [updateConfiguration, configuration, visualizationPanelConfig]
-  );
-
-  const updateVisualizationDimensions = useCallback(
-    (dimensions: PanelConfig['dimensions']) => {
-      updateConfiguration({
-        ...configuration,
-        visualizationPanelConfig: {
-          ...visualizationPanelConfig,
-          dimensions,
-        },
-      });
-    },
-    [updateConfiguration, configuration, visualizationPanelConfig]
-  );
-
-  const onPanelDismiss = useCallback(() => {
-    updateConfiguration({
-      ...configuration,
-      activeVisualizationId: undefined,
-      visualizationPanelConfig: {
-        ...visualizationPanelConfig,
-        isVisible: false,
-      },
-    });
-  }, [updateConfiguration, configuration, visualizationPanelConfig]);
 
   return (
     <>
@@ -476,26 +448,30 @@ function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
           )}
         </div>
       </DraggableLegendPanel>
-      <DraggableVisualization
-        analysisState={props.analysisState}
-        visualizationId={configuration.activeVisualizationId}
-        apps={props.apps}
-        plugins={plugins}
-        geoConfigs={geoConfigs}
-        totalCounts={props.totalCounts}
-        filteredCounts={props.filteredCounts}
-        toggleStarredVariable={toggleStarredVariable}
-        filters={filtersForFloaters}
-        // onTouch={moveVizToTop}
-        zIndexForStackingContext={2}
-        hideInputsAndControls={props.hideVizInputsAndControls}
-        setHideInputsAndControls={setHideVizInputsAndControls}
-        onDragComplete={updateVisualizationPosition}
-        defaultPosition={visualizationPanelConfig.position}
-        onPanelResize={updateVisualizationDimensions}
-        dimensions={visualizationPanelConfig.dimensions}
-        onPanelDismiss={onPanelDismiss}
-      />
+      {visualizationPanelConfig?.isVisible && (
+        <DraggableVisualization
+          analysisState={props.analysisState}
+          visualizationId={configuration.activeVisualizationId}
+          apps={props.apps}
+          plugins={plugins}
+          geoConfigs={geoConfigs}
+          totalCounts={props.totalCounts}
+          filteredCounts={props.filteredCounts}
+          toggleStarredVariable={toggleStarredVariable}
+          filters={filtersForFloaters}
+          // onTouch={moveVizToTop}
+          zIndexForStackingContext={2}
+          hideInputsAndControls={
+            visualizationPanelConfig.hideVizControl ?? false
+          }
+          setHideInputsAndControls={setHideVizControl}
+          onDragComplete={updateVisualizationPosition}
+          defaultPosition={visualizationPanelConfig.position}
+          onPanelResize={updateVisualizationDimensions}
+          dimensions={visualizationPanelConfig.dimensions}
+          onPanelDismiss={onPanelDismiss}
+        />
+      )}
     </>
   );
 }

@@ -61,15 +61,13 @@ export function NodeWithLabel(props: NodeWithLabelProps) {
   }
 
   return (
-    <>
+    <g onClick={onClick}>
       <DefaultNode
         r={nodeRadius}
         fill={color ?? DEFAULT_NODE_COLOR}
-        onClick={onClick}
         stroke={stroke ?? DEFAULT_STROKE}
         strokeWidth={strokeWidth ?? DEFAULT_STROKE_WIDTH}
-        style={{ cursor: 'default' }}
-        className="NodeWithLabel"
+        className="NodeWithLabel_Node"
       />
       {/* Note that Text becomes a tspan */}
       <Text
@@ -77,15 +75,14 @@ export function NodeWithLabel(props: NodeWithLabelProps) {
         textAnchor={textAnchor}
         fontSize={fontSize}
         verticalAnchor="middle"
-        onClick={onClick}
         fontWeight={fontWeight}
         fill={labelColor}
-        style={{ cursor: 'default' }}
+        className="NodeWithLabel_Label"
       >
         {label && truncateWithEllipsis(label, truncationLength)}
       </Text>
       <title>{label}</title>
-    </>
+    </g>
   );
 }
 

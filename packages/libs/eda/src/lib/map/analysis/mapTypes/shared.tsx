@@ -39,6 +39,15 @@ import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { NoDataError } from '../../../core/api/DataClient/NoDataError';
 import { useCallback, useState } from 'react';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
+import {
+  BubbleLegendPositionConfig,
+  PanelConfig,
+  PanelPositionConfig,
+} from '../appState';
+import {
+  findLeastAncestralGeoConfig,
+  getGeoConfig,
+} from '../../../core/utils/geoVariables';
 
 export const defaultAnimation = {
   method: 'geohash',
@@ -63,6 +72,7 @@ export interface SharedMarkerConfigurations {
   selectedVariable: VariableDescriptor;
   activeVisualizationId?: string;
   selectedMarkers?: string[];
+  geoEntityId?: string;
 }
 
 export function useCommonData(
@@ -71,7 +81,10 @@ export function useCommonData(
   studyEntities: StudyEntity[],
   boundsZoomLevel?: BoundsViewport
 ) {
-  const geoConfig = geoConfigs[0];
+  const geoConfig = findLeastAncestralGeoConfig(
+    geoConfigs,
+    selectedVariable.entityId
+  );
 
   const { entity: overlayEntity, variable: overlayVariable } =
     findEntityAndVariable(studyEntities, selectedVariable) ?? {};
@@ -406,10 +419,13 @@ export function useSelectedMarkerSnackbars(
       ) {
         const modifierKey =
           window.navigator.platform.indexOf('Mac') === 0 ? 'Cmd' : 'Ctrl';
-        enqueueSnackbar(`Use ${modifierKey}-click to select multiple markers`, {
-          variant: 'info',
-          anchorOrigin: { vertical: 'top', horizontal: 'center' },
-        });
+        enqueueSnackbar(
+          `Use ${modifierKey}-click or ${modifierKey}-drag-rectangle to select multiple markers`,
+          {
+            variant: 'info',
+            anchorOrigin: { vertical: 'top', horizontal: 'center' },
+          }
+        );
         setShownShiftKeySnackbar(true);
       }
       // if the user has managed to select more than one marker, then they don't need help
@@ -423,6 +439,93 @@ export function useSelectedMarkerSnackbars(
       activeVisualizationId,
     ]
   );
+}
+
+/**
+ * DRY up floating visualization handlers
+ */
+
+interface MinimalPanelConfig {
+  visualizationPanelConfig: PanelConfig;
+  legendPanelConfig: PanelPositionConfig | BubbleLegendPositionConfig;
+}
+
+interface UseFloatingPanelHandlersProps<M extends MinimalPanelConfig> {
+  configuration: M;
+  updateConfiguration: (configuration: M) => void;
+}
+
+export function useFloatingPanelHandlers<M extends MinimalPanelConfig>({
+  updateConfiguration,
+  configuration,
+}: UseFloatingPanelHandlersProps<M>) {
+  const updateLegendPosition = useCallback(
+    (position: M['legendPanelConfig']) => {
+      updateConfiguration({
+        ...configuration,
+        legendPanelConfig: position,
+      });
+    },
+    [updateConfiguration, configuration]
+  );
+
+  const updateVisualizationPosition = useCallback(
+    (position: PanelConfig['position']) => {
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...configuration.visualizationPanelConfig,
+          position,
+        },
+      });
+    },
+    [updateConfiguration, configuration]
+  );
+
+  const updateVisualizationDimensions = useCallback(
+    (dimensions: PanelConfig['dimensions']) => {
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...configuration.visualizationPanelConfig,
+          dimensions,
+        },
+      });
+    },
+    [updateConfiguration, configuration]
+  );
+
+  const onPanelDismiss = useCallback(() => {
+    updateConfiguration({
+      ...configuration,
+      activeVisualizationId: undefined,
+      visualizationPanelConfig: {
+        ...configuration.visualizationPanelConfig,
+        isVisible: false,
+      },
+    });
+  }, [updateConfiguration, configuration]);
+
+  const setHideVizControl = useCallback(
+    (hideValue?: boolean) => {
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...configuration.visualizationPanelConfig,
+          hideVizControl: hideValue,
+        },
+      });
+    },
+    [updateConfiguration, configuration]
+  );
+
+  return {
+    updateLegendPosition,
+    updateVisualizationPosition,
+    updateVisualizationDimensions,
+    onPanelDismiss,
+    setHideVizControl,
+  };
 }
 
 /**
@@ -449,10 +552,20 @@ export function timeSliderLittleFilter(props: UseLittleFiltersProps): Filter[] {
 
 export function viewportLittleFilters(props: UseLittleFiltersProps): Filter[] {
   const {
-    appState: { boundsZoomLevel },
+    appState: {
+      boundsZoomLevel,
+      markerConfigurations,
+      activeMarkerConfigurationType,
+    },
     geoConfigs,
   } = props;
-  const geoConfig = geoConfigs[0]; // not ideal...
+
+  const { geoEntityId } =
+    markerConfigurations.find(
+      (markerConfig) => markerConfig.type === activeMarkerConfigurationType
+    ) ?? {};
+
+  const geoConfig = getGeoConfig(geoConfigs, geoEntityId);
   return boundsZoomLevel == null
     ? []
     : filtersFromBoundingBox(
@@ -603,7 +716,7 @@ export function selectedMarkersLittleFilter(
   // only return a filter if there are selectedMarkers
   if (selectedMarkers && selectedMarkers.length > 0) {
     const { entity, zoomLevelToAggregationLevel, aggregationVariableIds } =
-      geoConfigs[0];
+      getGeoConfig(geoConfigs, activeMarkerConfiguration.geoEntityId);
     const geoAggregationVariableId =
       aggregationVariableIds?.[zoomLevelToAggregationLevel(zoom) - 1];
     if (entity && geoAggregationVariableId)

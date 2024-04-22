@@ -41,12 +41,13 @@ export type BannerProps = {
   showMoreLinkColor?: string;
   // is showMoreLink bold?
   isShowMoreLinkBold?: boolean;
-  // banner margin, padding, text font size
+  // banner margin, padding, text font size, width
   spacing?: {
     margin?: CSSProperties['margin'];
     padding?: CSSProperties['padding'];
   };
   fontSize?: CSSProperties['fontSize'];
+  width?: CSSProperties['width'];
   // implementing Banner timeout
   showBanner?: boolean;
   setShowBanner?: (newValue: boolean) => void;
@@ -119,6 +120,7 @@ export default function Banner(props: BannerComponentProps) {
     additionalMessage,
     spacing,
     fontSize,
+    width,
     showBanner = true,
     setShowBanner,
     autoHideDuration,
@@ -186,7 +188,7 @@ export default function Banner(props: BannerComponentProps) {
             box-sizing: border-box;
             border-radius: ${CollapsibleContent != null ? '0' : '7px'};
             margin: ${spacing?.margin != null ? spacing.margin : '10px 0'};
-            width: 100%;
+            width: ${width ?? '100%'};
             padding: ${spacing?.padding != null ? spacing.padding : '10px'};
             align-items: center;
             font-family: 'Roboto', 'Helvetica Neue', Helvetica, 'Segoe UI',
