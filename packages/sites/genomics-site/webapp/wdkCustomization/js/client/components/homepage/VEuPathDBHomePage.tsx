@@ -1196,7 +1196,7 @@ function useMapMenuItems(question?: Question) {
       {
         searchName: question.urlSegment,
         attributes: ['is_public'],
-        hasMap: true,
+        // hasMap: true,
       }
     ).then(
       (records) => {
