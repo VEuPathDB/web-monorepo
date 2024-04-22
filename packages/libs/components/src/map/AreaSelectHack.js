@@ -234,33 +234,38 @@ L.Map.SelectArea = L.Map.BoxZoom.extend({
    * @override
    */
   _onMouseMove: function (e) {
-    if (!this._moved) {
-      this._box = L.DomUtil.create('div', 'leaflet-zoom-box', this._pane);
-      L.DomUtil.setPosition(this._box, this._startLayerPoint);
-      this._map.fire(L.Map.SelectArea.AREA_SELECT_START);
+    // check if ctrlKey or metaKey is pressed to avoid unnecesary initiation of the area selection
+    if (e.ctrlKey || e.metaKey) {
+      if (!this._moved) {
+        this._box = L.DomUtil.create('div', 'leaflet-zoom-box', this._pane);
+        L.DomUtil.setPosition(this._box, this._startLayerPoint);
+        this._map.fire(L.Map.SelectArea.AREA_SELECT_START);
+      }
+
+      var startPoint = this._startLayerPoint;
+      var box = this._box;
+
+      var layerPoint = this._map.mouseEventToLayerPoint(e);
+      var offset = layerPoint.subtract(startPoint);
+
+      if (!this._validate(layerPoint)) return;
+      this._lastLayerPoint = layerPoint;
+
+      var newPos = new L.Point(
+        Math.min(layerPoint.x, startPoint.x),
+        Math.min(layerPoint.y, startPoint.y)
+      );
+
+      L.DomUtil.setPosition(box, newPos);
+
+      this._moved = true;
+
+      // TODO refactor: remove hardcoded 4 pixels
+      box.style.width = Math.max(0, Math.abs(offset.x) - 4) + 'px';
+      box.style.height = Math.max(0, Math.abs(offset.y) - 4) + 'px';
+    } else {
+      return false;
     }
-
-    var startPoint = this._startLayerPoint;
-    var box = this._box;
-
-    var layerPoint = this._map.mouseEventToLayerPoint(e);
-    var offset = layerPoint.subtract(startPoint);
-
-    if (!this._validate(layerPoint)) return;
-    this._lastLayerPoint = layerPoint;
-
-    var newPos = new L.Point(
-      Math.min(layerPoint.x, startPoint.x),
-      Math.min(layerPoint.y, startPoint.y)
-    );
-
-    L.DomUtil.setPosition(box, newPos);
-
-    this._moved = true;
-
-    // TODO refactor: remove hardcoded 4 pixels
-    box.style.width = Math.max(0, Math.abs(offset.x) - 4) + 'px';
-    box.style.height = Math.max(0, Math.abs(offset.y) - 4) + 'px';
   },
 
   /**
