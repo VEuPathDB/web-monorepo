@@ -475,36 +475,15 @@ export function shareUserDatasets(
   userDatasetIds: string[],
   recipientUserIds: number[]
 ) {
-  return validateVdiCompatibleThunk<SharingAction>(({ wdkService }) => {
-    // here we're making an array of objects to help facilitate the sharing of multiple datasets with multiple users
-    const requests = [];
-    for (const datasetId of userDatasetIds) {
-      for (const recipientId of recipientUserIds) {
-        requests.push({ datasetId, recipientId });
-      }
+  // here we're making an array of objects to help facilitate the sharing of multiple datasets with multiple users
+  const requests: { datasetId: string; recipientId: number }[] = [];
+  for (const datasetId of userDatasetIds) {
+    for (const recipientId of recipientUserIds) {
+      requests.push({ datasetId, recipientId });
     }
+  }
 
-    // here we're building a legacy success object to be passed to the redux store
-    const sharingSuccessObject = requests.reduce((prev, curr) => {
-      const { datasetId, recipientId } = curr;
-      if (datasetId in prev) {
-        return {
-          ...prev,
-          [datasetId]: prev[datasetId]?.concat({
-            // current UI renders the user's name here, but we don't have that info readily available
-            userDisplayName: '',
-            user: recipientId,
-          }),
-        };
-      } else {
-        return {
-          ...prev,
-          // see above comment re: user's name
-          [datasetId]: [{ userDisplayName: '', user: recipientId }],
-        };
-      }
-    }, {} as UserDatasetShareResponse['grant']);
-
+  return validateVdiCompatibleThunk<SharingAction>(({ wdkService }) => {
     return Promise.all(
       requests.map((req) =>
         wdkService.editUserDatasetSharing(
@@ -513,15 +492,36 @@ export function shareUserDatasets(
           req.recipientId
         )
       )
-    ).then(
-      // can editUserDatasetSharing return a 200 response w/ the recipient's userDisplayName and id?
-      () =>
-        sharingSuccess({
+    )
+      .then(
+        // get user datasets from the above share requests in order to get usernames
+        () =>
+          Promise.all(
+            requests.map((req) => wdkService.getUserDataset(req.datasetId))
+          )
+      )
+      .then((datasets) => {
+        // here we're building a legacy success object to be passed to the redux store
+        const sharingSuccessObject = requests.reduce((prev, curr) => {
+          const { datasetId } = curr;
+          const dataset = datasets.find((d) => d.datasetId === datasetId);
+          const grantees = dataset?.shares
+            ?.filter((share) => share.status === 'grant')
+            .map((share) => ({
+              userDisplayName:
+                share.recipient.firstName + ' ' + share.recipient.lastName,
+              user: share.recipient.userId,
+            }));
+          return {
+            ...prev,
+            [datasetId]: grantees,
+          };
+        }, {} as UserDatasetShareResponse['grant']);
+        return sharingSuccess({
           grant: sharingSuccessObject,
           revoke: {},
-        }),
-      sharingError
-    );
+        });
+      }, sharingError);
   });
 }
 
