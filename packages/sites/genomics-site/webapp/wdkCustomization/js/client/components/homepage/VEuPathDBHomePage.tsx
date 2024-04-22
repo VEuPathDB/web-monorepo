@@ -64,13 +64,15 @@ import { Props as PageProps } from '@veupathdb/wdk-client/lib/Components/Layout/
 import { PageDescription } from './PageDescription';
 import { makeVpdbClassNameHelper } from './Utils';
 
-import './VEuPathDBHomePage.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import SubsettingClient from '@veupathdb/eda/lib/core/api/SubsettingClient';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { Warning } from '@veupathdb/coreui';
+import { Tooltip, Warning } from '@veupathdb/coreui';
+import { Build } from '@material-ui/icons';
+
+import './VEuPathDBHomePage.scss';
 
 const vpdbCx = makeVpdbClassNameHelper('');
 
@@ -1208,7 +1210,16 @@ function useMapMenuItems(question?: Question) {
           .map(
             (record): HeaderMenuItemEntry => ({
               key: `map-${record.id[0].value}`,
-              display: record.displayName,
+              display:
+                record.attributes.is_public === 'true' ? (
+                  record.displayName
+                ) : (
+                  <Tooltip title="This dataset is under development and will not appear on live sites.">
+                    <div style={{ display: 'inline' }}>
+                      {record.displayName} <Build fontSize="small" />
+                    </div>
+                  </Tooltip>
+                ),
               type: 'reactRoute',
               url: `/workspace/maps/${record.id[0].value}/new`,
             })
