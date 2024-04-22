@@ -84,12 +84,9 @@ export function canAccessDashboard(
 
 export function shouldOfferLinkToDashboard(
   userPermissions: UserPermissions,
-  datasetId?: string
+  datasetId: string
 ) {
-  return (
-    isOwner(userPermissions) ||
-    (datasetId != null && isManager(userPermissions, datasetId))
-  );
+  return isOwner(userPermissions) || isManager(userPermissions, datasetId);
 }
 
 export function shouldDisplayStaffTable(userPermissions: UserPermissions) {
