@@ -191,16 +191,27 @@ export default function UserDatasetStatus(props: Props) {
 
   const link = `${baseUrl}/${userDataset.id}`;
   const children = <Icon className="StatusIcon" fa={faIcon} />;
-  const visibleContent = props.useTooltip ? (
-    <Tooltip title={content ?? ''}>{children}</Tooltip>
-  ) : (
-    <React.Fragment>
-      {children} {content}
-    </React.Fragment>
-  );
-  return props.linkToDataset ? (
-    <Link to={link}>{visibleContent}</Link>
-  ) : (
-    visibleContent
-  );
+  if (props.useTooltip && props.linkToDataset) {
+    return (
+      <Tooltip title={content ?? ''}>
+        <Link to={link}>{children}</Link>
+      </Tooltip>
+    );
+  } else if (props.useTooltip && !props.linkToDataset) {
+    return <Tooltip title={content ?? ''}>{children}</Tooltip>;
+  } else if (!props.useTooltip && props.linkToDataset) {
+    return (
+      <Link to={link}>
+        <React.Fragment>
+          {children} {content}
+        </React.Fragment>
+      </Link>
+    );
+  } else {
+    return (
+      <React.Fragment>
+        {children} {content}
+      </React.Fragment>
+    );
+  }
 }
