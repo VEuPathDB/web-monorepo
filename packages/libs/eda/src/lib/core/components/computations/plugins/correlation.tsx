@@ -7,7 +7,6 @@ import {
   assertComputationWithConfig,
   isNotAbsoluteAbundanceVariableCollection,
 } from '../Utils';
-import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import './Plugins.scss';
@@ -15,16 +14,20 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { H6 } from '@veupathdb/coreui';
 import { bipartiteNetworkVisualization } from '../../visualizations/implementations/BipartiteNetworkVisualization';
 import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
-import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
+import SingleSelect, {
+  ItemGroup,
+} from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import {
   entityTreeToArray,
-  isVariableCollectionDescriptor,
   findEntityAndVariableCollection,
+  isVariableCollectionDescriptor,
 } from '../../../utils/study-metadata';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { ancestorEntitiesForEntityId } from '../../../utils/data-element-constraints';
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
+import { variableCollectionsAreUnique } from '../../../utils/visualization';
+import PluginError from '../../visualizations/PluginError';
 import {
   CompleteCorrelationConfig,
   CorrelationConfig,
@@ -35,30 +38,41 @@ const cx = makeClassNameHelper('AppStepConfigurationContainer');
 /**
  * Correlation
  *
- * The Correlation Assay vs Metadata app takes in a user-selected collection (ex. Species) and
- * runs a correlation of that data against all appropriate metadata in the study (found by the backend). The result is
- * a correlation coefficient and (soon) a significance value for each (assay member, metadata variable) pair.
+ * The Correlation app takes all collections and offers correlation between any pair of unique collections
+ * or between a collection and continuous metadata variables. This is the most general of the correlation
+ * plugins to date.
  *
- * Importantly, this is the first of a few correlation-type apps that are coming along in the near future.
- * There will also be an Assay vs Assay app and a Metadata vs Metadata correlation app. It's possible that
- * when those roll out we'll be able to do a little refactoring to make the code a bit nicer.
+ * As of 03/2024, this correlation plugin is used for genomics (except vectorbase) sites
+ * to help them understand WGCNA outputs and their relationship to metadata.
  */
 
 export const plugin: ComputationPlugin = {
-  configurationComponent: CorrelationAssayMetadataConfiguration,
-  configurationDescriptionComponent:
-    CorrelationAssayMetadataConfigDescriptionComponent,
+  configurationComponent: CorrelationConfiguration,
+  configurationDescriptionComponent: CorrelationConfigDescriptionComponent,
   createDefaultConfiguration: () => ({
-    data2: {
-      dataType: 'metadata',
-    },
     prefilterThresholds: {
       proportionNonZero: DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
       variance: DEFAULT_VARIANCE_THRESHOLD,
       standardDeviation: DEFAULT_STANDARD_DEVIATION_THRESHOLD,
     },
   }),
-  isConfigurationComplete: CompleteCorrelationConfig.is,
+  isConfigurationComplete: (configuration) => {
+    // First, the configuration must be complete
+    if (!CompleteCorrelationConfig.is(configuration)) return false;
+
+    // Also, if both data1 and data2 are collections, they must be unique
+    if (configuration.data2?.dataType === 'collection') {
+      return (
+        isVariableCollectionDescriptor(configuration.data1?.collectionSpec) &&
+        isVariableCollectionDescriptor(configuration.data2?.collectionSpec) &&
+        variableCollectionsAreUnique([
+          configuration.data1?.collectionSpec,
+          configuration.data2?.collectionSpec,
+        ])
+      );
+    }
+    return true;
+  },
   visualizationPlugins: {
     bipartitenetwork: bipartiteNetworkVisualization.withOptions({
       getLegendTitle(config) {
@@ -68,6 +82,39 @@ export const plugin: ComputationPlugin = {
           return [];
         }
       },
+      makeGetNodeMenuActions(studyMetadata) {
+        const entities = entityTreeToArray(studyMetadata.rootEntity);
+        const variables = entities.flatMap((e) => e.variables);
+        const collections = entities.flatMap(
+          (entity) => entity.collections ?? []
+        );
+        const hostCollection = collections.find(
+          (c) => c.id === 'EUPATH_0005050'
+        );
+        const parasiteCollection = collections.find(
+          (c) => c.id === 'EUPATH_0005051'
+        );
+        return function getNodeActions(nodeId: string) {
+          const [, variableId] = nodeId.split('.');
+          const variable = variables.find((v) => v.id === variableId);
+          if (variable == null) return [];
+
+          const href = parasiteCollection?.memberVariableIds.includes(
+            variable.id
+          )
+            ? `https://qa.plasmodb.org/plasmo/app/search/transcript/GenesByRNASeqpfal3D7_Lee_Gambian_ebi_rnaSeq_RSRCWGCNAModules?param.wgcnaParam=${variable.displayName.toLowerCase()}&autoRun=1`
+            : hostCollection?.memberVariableIds.includes(variable.id)
+            ? `https://qa.hostdb.org/hostdb/app/search/transcript/GenesByRNASeqhsapREF_Lee_Gambian_ebi_rnaSeq_RSRCWGCNAModules?param.wgcnaParam=${variable.displayName.toLowerCase()}&autoRun=1`
+            : undefined;
+          if (href == null) return [];
+          return [
+            {
+              label: 'See list of genes',
+              href,
+            },
+          ];
+        };
+      },
       getParitionNames(studyMetadata, config) {
         if (CorrelationConfig.is(config)) {
           const entities = entityTreeToArray(studyMetadata.rootEntity);
@@ -75,7 +122,13 @@ export const plugin: ComputationPlugin = {
             entities,
             config.data1?.collectionSpec
           )?.variableCollection.displayName;
-          const partition2Name = 'Continuous metadata variables';
+          const partition2Name =
+            config.data2?.dataType === 'collection'
+              ? findEntityAndVariableCollection(
+                  entities,
+                  config.data2?.collectionSpec
+                )?.variableCollection.displayName
+              : 'Continuous metadata variables';
           return { partition1Name, partition2Name };
         }
       },
@@ -87,7 +140,7 @@ export const plugin: ComputationPlugin = {
 };
 
 // Renders on the thumbnail page to give a summary of the app instance
-function CorrelationAssayMetadataConfigDescriptionComponent({
+function CorrelationConfigDescriptionComponent({
   computation,
 }: {
   computation: Computation;
@@ -95,10 +148,15 @@ function CorrelationAssayMetadataConfigDescriptionComponent({
   const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
   assertComputationWithConfig(computation, CorrelationConfig);
 
-  const { data1, correlationMethod } = computation.descriptor.configuration;
+  const { data1, data2, correlationMethod } =
+    computation.descriptor.configuration;
 
   const entityAndCollectionVariableTreeNode = findEntityAndVariableCollection(
     data1?.collectionSpec
+  );
+
+  const entityAndCollectionVariable2TreeNode = findEntityAndVariableCollection(
+    data2?.collectionSpec
   );
 
   const correlationMethodDisplayName = correlationMethod
@@ -109,10 +167,22 @@ function CorrelationAssayMetadataConfigDescriptionComponent({
   return (
     <div className="ConfigDescriptionContainer">
       <h4>
-        Data:{' '}
+        Data 1:{' '}
         <span>
           {entityAndCollectionVariableTreeNode ? (
             `${entityAndCollectionVariableTreeNode.entity.displayName} > ${entityAndCollectionVariableTreeNode.variableCollection.displayName}`
+          ) : (
+            <i>Not selected</i>
+          )}
+        </span>
+      </h4>
+      <h4>
+        Data 2:{' '}
+        <span>
+          {data2?.dataType === 'metadata' ? (
+            'Continuous metadata variables'
+          ) : entityAndCollectionVariable2TreeNode ? (
+            `${entityAndCollectionVariable2TreeNode.entity.displayName} > ${entityAndCollectionVariable2TreeNode.variableCollection.displayName}`
           ) : (
             <i>Not selected</i>
           )}
@@ -141,9 +211,7 @@ const DEFAULT_VARIANCE_THRESHOLD = 0;
 const DEFAULT_STANDARD_DEVIATION_THRESHOLD = 0;
 
 // Shows as Step 1 in the full screen visualization page
-export function CorrelationAssayMetadataConfiguration(
-  props: ComputationConfigProps
-) {
+export function CorrelationConfiguration(props: ComputationConfigProps) {
   const {
     computationAppOverview,
     computation,
@@ -163,24 +231,23 @@ export function CorrelationAssayMetadataConfiguration(
   );
 
   // Content for the expandable help section
+  // Note the text is dependent on the context, for example in genomics we'll use different
+  // language than in mbio.
   const helpContent = (
     <div className={cx('-HelpInfoContainer')}>
       <H6>What is correlation?</H6>
       <p>
-        The correlation between two variables (taxa, genes, sample metadata,
-        etc.) describes the degree to which their presence in samples
-        co-fluctuate. For example, the Age and Shoe Size of children are
-        correlated since as a child ages, their feet grow.
+        The correlation between two variables (genes, sample metadata, etc.)
+        describes the degree to which their presence in samples co-fluctuate.
+        For example, the Age and Shoe Size of children are correlated since as a
+        child ages, their feet grow.
       </p>
       <p>Here we look for correlation between:</p>
       <ol>
-        <li>
-          Abundance of taxa at a given taxonomic level or functional data such
-          as pathway abundance
-        </li>
+        <li>Eigengene profiles derived from modules in a WGCNA analysis</li>
         <li>
           Continuous metadata variables that are compatable, i.e. on an entity
-          that is 1-1 with the assay entity.
+          that is 1-1 with the assay entity, or other eigengene profiles.
         </li>
       </ol>
       <br></br>
@@ -188,8 +255,12 @@ export function CorrelationAssayMetadataConfiguration(
       <p>
         <ul>
           <li>
-            <strong>Data.</strong> The abundance data to be correlated against
-            the study's metadata variables.
+            <strong>Data 1.</strong> A set of eigengene profiles, either from
+            the host or pathogen.
+          </li>
+          <li>
+            <strong>Data 2.</strong> All compatable metdata, or a second set of
+            eigengene profiles, either from the host or pathogen.
           </li>
           <li>
             <strong>Method.</strong> The type of correlation to compute. The
@@ -200,7 +271,7 @@ export function CorrelationAssayMetadataConfiguration(
           </li>
           <li>
             <strong>Prevalence Prefilter.</strong> Remove variables that do not
-            have a set percentage of non-zero abundance across samples. Removing
+            have a set percentage of non-zero values across samples. Removing
             rarely occurring features before calculating correlation can prevent
             some spurious results.
           </li>
@@ -214,9 +285,8 @@ export function CorrelationAssayMetadataConfiguration(
           <li>
             <strong>Correlation coefficient.</strong> A value between [-1, 1]
             that describes the similarity of the input variables. Positive
-            values indicate that both the abundance and metadata variable rise
-            and fall together, whereas negative values indicate that as one
-            rises, the other falls.
+            values indicate that both variables rise and fall together, whereas
+            negative values indicate that as one rises, the other falls.
           </li>
           <li>
             <strong>P Value.</strong> A measure of the probability of observing
@@ -252,6 +322,16 @@ export function CorrelationAssayMetadataConfiguration(
     }
   }, [configuration.correlationMethod]);
 
+  const metadataItemGroup: ItemGroup<string> = {
+    label: 'Metadata',
+    items: [
+      {
+        value: 'metadata',
+        display: 'Continuous metadata variables',
+      },
+    ],
+  };
+
   return (
     <ComputationStepContainer
       computationStepInfo={{
@@ -276,10 +356,28 @@ export function CorrelationAssayMetadataConfiguration(
                 }}
                 collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
               />
-              <span className="FixedInput">Data 2 (fixed)</span>
-              <span className="FixedInput FixedInputValue">
-                Continuous metadata variables
-              </span>
+              <span>Data 2</span>
+              <VariableCollectionSelectList
+                value={
+                  configuration.data2?.dataType === 'metadata'
+                    ? 'metadata'
+                    : configuration.data2?.collectionSpec
+                }
+                onSelect={(value) => {
+                  if (isVariableCollectionDescriptor(value)) {
+                    changeConfigHandler('data2', {
+                      dataType: 'collection',
+                      collectionSpec: value,
+                    });
+                  } else {
+                    changeConfigHandler('data2', {
+                      dataType: 'metadata',
+                    });
+                  }
+                }}
+                collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
+                additionalItemGroups={[metadataItemGroup]}
+              />
             </div>
           </div>
           <div className={cx('-CorrelationOuterConfigContainer')}>
@@ -334,6 +432,25 @@ export function CorrelationAssayMetadataConfiguration(
               <span className={cx('-DescriptionContainer')}>% of samples</span>
             </div>
           </div>
+        </div>
+        <div>
+          <PluginError
+            error={
+              isVariableCollectionDescriptor(
+                configuration.data1?.collectionSpec
+              ) &&
+              isVariableCollectionDescriptor(
+                configuration.data2?.collectionSpec
+              ) &&
+              !variableCollectionsAreUnique([
+                configuration.data1?.collectionSpec,
+                configuration.data2?.collectionSpec,
+              ])
+                ? 'Input data must be unique. Please select different data.'
+                : undefined
+            }
+            bannerType="error"
+          />
         </div>
         <ExpandablePanel
           title="Learn more about correlation"

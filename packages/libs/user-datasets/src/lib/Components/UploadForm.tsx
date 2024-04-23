@@ -11,7 +11,6 @@ import { Link } from 'react-router-dom';
 
 import { keyBy } from 'lodash';
 
-import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import {
   TextBox,
   TextArea,
@@ -554,17 +553,19 @@ function FieldLabel({ children, required, ...labelProps }: FieldLabelProps) {
 
 function ErrorMessage({ errors }: { errors: string[] }) {
   return (
-    <div className="ui-state-error" style={{ fontSize: 'large' }}>
-      <div>
-        <Icon fa="exclamation-triangle" />
-        &nbsp; Could not upload data set
-      </div>
-      {errors.map((error, ix) => (
-        <div key={ix} className="ui-state-error-text">
-          {error}
-        </div>
-      ))}
-    </div>
+    <Banner
+      banner={{
+        type: 'error',
+        message: (
+          <div style={{ lineHeight: 1.5 }}>
+            <span>Could not upload data set</span>
+            {errors.map((error, index) => (
+              <div key={index}>{error}</div>
+            ))}
+          </div>
+        ),
+      }}
+    />
   );
 }
 

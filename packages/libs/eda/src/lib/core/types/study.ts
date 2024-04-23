@@ -230,6 +230,8 @@ export const CollectionVariableTreeNode = t.intersection([
     isProportion: t.boolean,
     normalizationMethod: t.string,
     distributionDefaults: NumberDistributionDefaults,
+    member: t.string,
+    memberPlural: t.string,
   }),
 ]);
 

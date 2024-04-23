@@ -31,8 +31,6 @@ import {
 } from '../../../hooks/workspace';
 import { fixVarIdLabel } from '../../../utils/visualization';
 import DataClient from '../../../api/DataClient';
-import { CorrelationAssayMetadataConfig } from '../../computations/plugins/correlationAssayMetadata';
-import { CorrelationAssayAssayConfig } from '../../computations/plugins/correlationAssayAssay';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { scaleLinear } from 'd3';
 import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
@@ -45,6 +43,7 @@ import { NumberOrDate } from '@veupathdb/components/lib/types/general';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { FacetedPlotLayout } from '../../layouts/FacetedPlotLayout';
 import { H6 } from '@veupathdb/coreui';
+import { CorrelationConfig } from '../../../types/apps';
 import { StudyMetadata } from '../../..';
 // end imports
 
@@ -124,11 +123,8 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
 
-  const computationConfiguration:
-    | CorrelationAssayMetadataConfig
-    | CorrelationAssayAssayConfig = computation.descriptor.configuration as
-    | CorrelationAssayMetadataConfig
-    | CorrelationAssayAssayConfig;
+  const computationConfiguration: CorrelationConfig = computation.descriptor
+    .configuration as CorrelationConfig;
 
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,
@@ -288,7 +284,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
         {`Showing links with an absolute correlation coefficient above ${vizConfig.correlationCoefThreshold?.toString()} and a p-value below ${vizConfig.significanceThreshold?.toString()}`}
       </p>
       <p>
-        Click a node to hightlight it and its edges.
+        Click on a node to highlight its edges.
         {getNodeMenuActions &&
           ' A dropdown menu will appear on mouseover, if additional actions are available.'}
       </p>

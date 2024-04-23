@@ -24,8 +24,6 @@ export interface MapTypeConfigPanelProps {
   geoConfigs: GeoConfig[];
   configuration: unknown;
   updateConfiguration: (configuration: unknown) => void;
-  hideVizInputsAndControls: boolean;
-  setHideVizInputsAndControls: (hide: boolean) => void;
   setIsSidePanelExpanded: (isExpanded: boolean) => void;
 }
 
@@ -41,10 +39,6 @@ export interface MapTypeMapLayerProps {
   updateConfiguration: (configuration: unknown) => void;
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
-  // TO DO: the hideVizInputsAndControls props are currently required
-  // and sent to plugin components that don't need it - we should also address this
-  hideVizInputsAndControls: boolean;
-  setHideVizInputsAndControls: (hide: boolean) => void;
   setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
   setStudyDetailsPanelConfig: (config: PanelConfig) => void;
   setTimeSliderConfig?: (
