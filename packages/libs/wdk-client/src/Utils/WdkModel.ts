@@ -60,6 +60,7 @@ interface ParameterBase extends NamedModelEntity {
   dependentParams: string[];
   allowEmptyValue: boolean;
   visibleHelp?: string;
+  visibleHelpPosition?: string;
 }
 
 export interface StringParam extends ParameterBase {
@@ -273,6 +274,7 @@ export interface Question extends UrlModelEntity {
   queryName?: string;
   isCacheable: boolean;
   isBeta?: boolean;
+  searchVisibleHelp?: string;
 }
 
 export interface QuestionWithParameters extends Question {

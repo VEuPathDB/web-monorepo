@@ -374,7 +374,7 @@ const HeaderMenuItemContent = ({
               focusType={focusType}
               setSelectedItems={setSelectedItems}
               setFocusType={setFocusType}
-              dismissSubmenus={dismissSubmenus}
+              dismissSubmenus={() => null}
             />
           </DeferredDiv>
         </div>

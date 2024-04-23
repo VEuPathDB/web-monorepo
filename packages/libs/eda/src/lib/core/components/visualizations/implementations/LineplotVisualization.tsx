@@ -2130,6 +2130,28 @@ function getRequestParams(
       ? 'TRUE'
       : 'FALSE';
 
+  // If a binWidth is passed to the back end, we should send a viewport too.
+  // This helps prevent a 500 in edge-case scenarios where the variable is single-valued.
+  // It doesn't really matter what the viewport is, but we send either the custom range
+  // or the variable's automatically annotated range.
+  // The back end requires strings for some reason.
+  const viewport = binWidth
+    ? vizConfig.independentAxisRange != null
+      ? {
+          xMin: String(vizConfig.independentAxisRange.min),
+          xMax: String(vizConfig.independentAxisRange.max),
+        }
+      : (xAxisVariableMetadata.type === 'integer' ||
+          xAxisVariableMetadata.type === 'number' ||
+          xAxisVariableMetadata.type === 'date') &&
+        xAxisVariableMetadata.distributionDefaults != null
+      ? {
+          xMin: String(xAxisVariableMetadata.distributionDefaults.rangeMin),
+          xMax: String(xAxisVariableMetadata.distributionDefaults.rangeMax),
+        }
+      : undefined
+    : undefined;
+
   return (
     customMakeRequestParams?.({
       studyId,
@@ -2148,6 +2170,7 @@ function getRequestParams(
         xAxisVariable: xAxisVariable!, // these will never be undefined because
         yAxisVariable: yAxisVariable!, // data requests are only made when they have been chosen by user
         ...binSpec,
+        viewport,
         overlayVariable: overlayVariable,
         facetVariable: facetVariable ? [facetVariable] : [],
         showMissingness: showMissingness ? 'TRUE' : 'FALSE',

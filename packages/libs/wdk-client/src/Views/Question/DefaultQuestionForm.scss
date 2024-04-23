@@ -42,6 +42,15 @@
     padding-bottom: 0.5rem;
   }
 
+  &ParameterControlContainer {
+    &_VisibleHelpRight {
+      display: grid;
+      align-items: center;
+      grid-template-columns: auto auto;
+      grid-template-rows: auto;
+    }
+  }
+
   &ParameterHeading {
     h2 {
       font-size: 1.6em;
@@ -55,6 +64,17 @@
 
   &ParameterControl {
     padding: 1.3rem;
+    .ControlLeft {
+      grid-column: 1;
+      grid-row: 1;
+    }
+  }
+
+  &VisibleHelpContainer {
+    &_Right {
+      grid-column: 2;
+      grid-row: 1;
+    }
   }
 
   &VisibleHelp {
