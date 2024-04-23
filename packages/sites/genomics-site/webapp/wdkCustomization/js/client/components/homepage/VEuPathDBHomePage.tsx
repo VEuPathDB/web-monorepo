@@ -70,7 +70,6 @@ import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDepen
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { Tooltip, Warning } from '@veupathdb/coreui';
-import { Build } from '@material-ui/icons';
 
 import './VEuPathDBHomePage.scss';
 
@@ -1216,7 +1215,7 @@ function useMapMenuItems(question?: Question) {
                 ) : (
                   <Tooltip title="This dataset is under development and will not appear on live sites.">
                     <div style={{ display: 'inline' }}>
-                      {record.displayName} <Build fontSize="small" />
+                      &#128679; {record.displayName}
                     </div>
                   </Tooltip>
                 ),
@@ -1224,7 +1223,15 @@ function useMapMenuItems(question?: Question) {
               url: `/workspace/maps/${record.id[0].value}/new`,
             })
           );
-        setMapMenuItems(menuItems);
+        if (menuItems.length > 0) setMapMenuItems(menuItems);
+        else
+          setMapMenuItems([
+            {
+              key: 'map-empty',
+              type: 'custom',
+              display: 'No map datasets found',
+            },
+          ]);
       },
       (error) => {
         console.error(error);
