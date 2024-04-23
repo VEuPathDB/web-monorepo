@@ -50,7 +50,8 @@ interface Props {
   filterByProject: boolean;
   shareUserDatasets: (
     userDatasetIds: string[],
-    recipientUserIds: number[]
+    recipientUserIds: number[],
+    context: 'datasetDetails' | 'datasetsList'
   ) => any;
   unshareUserDatasets: (userDatasetId: string, recipientUserId: number) => any;
   removeUserDataset: (dataset: UserDataset) => any;
@@ -602,6 +603,7 @@ class UserDatasetList extends React.Component<Props, State> {
                     datasets={selectedDatasets}
                     deselectDataset={this.onRowDeselect}
                     shareUserDatasets={shareUserDatasets}
+                    context="datasetsList"
                     unshareUserDatasets={unshareUserDatasets}
                     onClose={this.closeSharingModal}
                     dataNoun={dataNoun}

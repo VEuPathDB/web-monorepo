@@ -473,7 +473,8 @@ export function loadUserDatasetDetail(id: string) {
 
 export function shareUserDatasets(
   userDatasetIds: string[],
-  recipientUserIds: number[]
+  recipientUserIds: number[],
+  context: 'datasetDetails' | 'datasetsList'
 ) {
   // here we're making an array of objects to help facilitate the sharing of multiple datasets with multiple users
   const requests: { datasetId: string; recipientId: number }[] = [];
@@ -482,8 +483,9 @@ export function shareUserDatasets(
       requests.push({ datasetId, recipientId });
     }
   }
-
-  return validateVdiCompatibleThunk<SharingAction>(({ wdkService }) => {
+  return validateVdiCompatibleThunk<
+    DetailAction | ListAction | SharingErrorAction
+  >(({ wdkService }) => {
     return Promise.all(
       requests.map((req) =>
         wdkService.editUserDatasetSharing(
@@ -492,36 +494,13 @@ export function shareUserDatasets(
           req.recipientId
         )
       )
-    )
-      .then(
-        // get user datasets from the above share requests in order to get usernames
-        () =>
-          Promise.all(
-            requests.map((req) => wdkService.getUserDataset(req.datasetId))
-          )
-      )
-      .then((datasets) => {
-        // here we're building a legacy success object to be passed to the redux store
-        const sharingSuccessObject = requests.reduce((prev, curr) => {
-          const { datasetId } = curr;
-          const dataset = datasets.find((d) => d.datasetId === datasetId);
-          const grantees = dataset?.shares
-            ?.filter((share) => share.status === 'grant')
-            .map((share) => ({
-              userDisplayName:
-                share.recipient.firstName + ' ' + share.recipient.lastName,
-              user: share.recipient.userId,
-            }));
-          return {
-            ...prev,
-            [datasetId]: grantees,
-          };
-        }, {} as UserDatasetShareResponse['grant']);
-        return sharingSuccess({
-          grant: sharingSuccessObject,
-          revoke: {},
-        });
-      }, sharingError);
+    ).then(() => {
+      if (context === 'datasetDetails') {
+        return loadUserDatasetDetail(userDatasetIds[0]);
+      } else {
+        return loadUserDatasetList();
+      }
+    }, sharingError);
   });
 }
 

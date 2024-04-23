@@ -633,6 +633,7 @@ class UserDatasetDetail extends React.Component {
             datasets={[userDataset]}
             onClose={this.closeSharingModal}
             shareUserDatasets={shareUserDatasets}
+            context="datasetDetails"
             unshareUserDatasets={unshareUserDatasets}
             dataNoun={dataNoun}
           />

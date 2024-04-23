@@ -359,12 +359,13 @@ class UserDatasetSharingModal extends React.Component {
     const recipients = this.getValidRecipients();
     const datasets = this.getShareableDatasets();
     if (!datasets.length) return;
-    const { shareUserDatasets } = this.props;
+    const { shareUserDatasets, context } = this.props;
 
     this.setState({ processing: true }, () => {
       shareUserDatasets(
         datasets.map(({ id }) => id),
-        recipients.map(({ id }) => id)
+        recipients.map(({ id }) => id),
+        context
       )
         .then((response) => {
           if (response.type !== 'user-datasets/sharing-success') throw response;
