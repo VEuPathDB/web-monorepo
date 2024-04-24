@@ -52,6 +52,7 @@ export default configure({
         edaServiceUrl: process.env.EDA_SERVICE_ENDPOINT,
         edaSingleAppMode: process.env.EDA_SINGLE_APP_MODE,
         vdiServiceUrl: process.env.VDI_SERVICE_ENDPOINT,
+        showUnreleasedData: process.env.SHOW_UNRELEASED_DATA === 'true',
 })
     }),
     new HtmlWebpackPlugin({

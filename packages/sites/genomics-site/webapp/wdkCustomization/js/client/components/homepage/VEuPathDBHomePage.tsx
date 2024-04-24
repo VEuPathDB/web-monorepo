@@ -49,6 +49,7 @@ import {
 import {
   useUserDatasetsWorkspace,
   edaServiceUrl,
+  showUnreleasedData,
 } from '@veupathdb/web-common/lib/config';
 import { useAnnouncementsState } from '@veupathdb/web-common/lib/hooks/announcements';
 import { useCommunitySiteRootUrl } from '@veupathdb/web-common/lib/hooks/staticData';
@@ -63,13 +64,14 @@ import { Props as PageProps } from '@veupathdb/wdk-client/lib/Components/Layout/
 import { PageDescription } from './PageDescription';
 import { makeVpdbClassNameHelper } from './Utils';
 
-import './VEuPathDBHomePage.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import SubsettingClient from '@veupathdb/eda/lib/core/api/SubsettingClient';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { Warning } from '@veupathdb/coreui';
+import { Tooltip, Warning } from '@veupathdb/coreui';
+
+import './VEuPathDBHomePage.scss';
 
 const vpdbCx = makeVpdbClassNameHelper('');
 
@@ -535,7 +537,6 @@ const useHeaderMenuItems = (
               display: (
                 <>
                   MapVEu &mdash; Interactive maps{' '}
-                  <img alt="NEW" src={newImage} />{' '}
                   <Loading
                     style={{
                       display: 'inline-block',
@@ -551,22 +552,12 @@ const useHeaderMenuItems = (
           : mapMenuItems.length === 1
           ? {
               ...mapMenuItems[0],
-              display: (
-                <>
-                  MapVEu &mdash; {mapMenuItems[0].display}{' '}
-                  <img alt="NEW" src={newImage} />
-                </>
-              ),
+              display: <>MapVEu &mdash; {mapMenuItems[0].display} </>,
             }
           : {
               key: 'maps-alpha',
               type: 'subMenu',
-              display: (
-                <>
-                  MapVEu &mdash; Interactive maps{' '}
-                  <img alt="NEW" src={newImage} />
-                </>
-              ),
+              display: <>MapVEu &mdash; Interactive maps </>,
               items: mapMenuItems,
             },
         {
@@ -601,12 +592,7 @@ const useHeaderMenuItems = (
         },
         {
           key: 'srt',
-          display: (
-            <>
-              Sequence retrieval{' '}
-              {projectId === EuPathDB ? '' : <img alt="NEW" src={newImage} />}
-            </>
-          ),
+          display: 'Sequence retrieval',
           type: 'reactRoute',
           url: '/fasta-tool',
         },
@@ -1023,6 +1009,7 @@ const useHeaderMenuItems = (
           key: 'learning',
           display: 'Learn how to use VEuPathDB',
           type: 'subMenu',
+          openByDefault: true,
           items: [
             {
               key: 'faqs',
@@ -1192,18 +1179,44 @@ function useMapMenuItems(question?: Question) {
     if (question == null || studyAccessApi == null) return;
     getWdkStudyRecords(
       { studyAccessApi, subsettingClient, wdkService },
-      { searchName: question.urlSegment }
+      {
+        searchName: question.urlSegment,
+        attributes: ['is_public'],
+        // hasMap: true,
+      }
     ).then(
       (records) => {
-        const menuItems = records.map(
-          (record): HeaderMenuItemEntry => ({
-            key: `map-${record.id[0].value}`,
-            display: record.displayName,
-            type: 'reactRoute',
-            url: `/workspace/maps/${record.id[0].value}/new`,
-          })
-        );
-        setMapMenuItems(menuItems);
+        const menuItems = records
+          .filter(
+            (record) =>
+              record.attributes.is_public === 'true' || showUnreleasedData
+          )
+          .map(
+            (record): HeaderMenuItemEntry => ({
+              key: `map-${record.id[0].value}`,
+              display:
+                record.attributes.is_public === 'true' ? (
+                  record.displayName
+                ) : (
+                  <Tooltip title="This dataset is under development and will not appear on live sites.">
+                    <div style={{ display: 'inline' }}>
+                      &#128679; {record.displayName}
+                    </div>
+                  </Tooltip>
+                ),
+              type: 'reactRoute',
+              url: `/workspace/maps/${record.id[0].value}/new`,
+            })
+          );
+        if (menuItems.length > 0) setMapMenuItems(menuItems);
+        else
+          setMapMenuItems([
+            {
+              key: 'map-empty',
+              type: 'custom',
+              display: 'No map datasets found',
+            },
+          ]);
       },
       (error) => {
         console.error(error);
