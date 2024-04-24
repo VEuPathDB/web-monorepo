@@ -237,7 +237,11 @@ L.Map.SelectArea = L.Map.BoxZoom.extend({
     // check if ctrlKey or metaKey is pressed to avoid unnecesary initiation of the area selection
     if (e.ctrlKey || e.metaKey) {
       if (!this._moved) {
-        this._box = L.DomUtil.create('div', 'leaflet-zoom-box', this._pane);
+        this._box = L.DomUtil.create(
+          'div',
+          'leaflet-area-selection-box',
+          this._pane
+        );
         L.DomUtil.setPosition(this._box, this._startLayerPoint);
         this._map.fire(L.Map.SelectArea.AREA_SELECT_START);
       }
