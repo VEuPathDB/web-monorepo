@@ -537,7 +537,6 @@ const useHeaderMenuItems = (
               display: (
                 <>
                   MapVEu &mdash; Interactive maps{' '}
-                  <img alt="NEW" src={newImage} />{' '}
                   <Loading
                     style={{
                       display: 'inline-block',
@@ -553,22 +552,12 @@ const useHeaderMenuItems = (
           : mapMenuItems.length === 1
           ? {
               ...mapMenuItems[0],
-              display: (
-                <>
-                  MapVEu &mdash; {mapMenuItems[0].display}{' '}
-                  <img alt="NEW" src={newImage} />
-                </>
-              ),
+              display: <>MapVEu &mdash; {mapMenuItems[0].display} </>,
             }
           : {
               key: 'maps-alpha',
               type: 'subMenu',
-              display: (
-                <>
-                  MapVEu &mdash; Interactive maps{' '}
-                  <img alt="NEW" src={newImage} />
-                </>
-              ),
+              display: <>MapVEu &mdash; Interactive maps </>,
               items: mapMenuItems,
             },
         {
@@ -603,12 +592,7 @@ const useHeaderMenuItems = (
         },
         {
           key: 'srt',
-          display: (
-            <>
-              Sequence retrieval{' '}
-              {projectId === EuPathDB ? '' : <img alt="NEW" src={newImage} />}
-            </>
-          ),
+          display: 'Sequence retrieval',
           type: 'reactRoute',
           url: '/fasta-tool',
         },
@@ -1025,6 +1009,7 @@ const useHeaderMenuItems = (
           key: 'learning',
           display: 'Learn how to use VEuPathDB',
           type: 'subMenu',
+          openByDefault: true,
           items: [
             {
               key: 'faqs',

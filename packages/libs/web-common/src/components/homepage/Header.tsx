@@ -91,6 +91,7 @@ interface ExternalLinkMenuItem<T> extends HeaderMenuItemBase<T> {
 interface SubmenuItem<T> extends HeaderMenuItemBase<T> {
   type: 'subMenu';
   items: HeaderMenuItem<T>[];
+  openByDefault?: boolean;
 }
 
 interface CustomMenuItem<T> extends HeaderMenuItemBase<T> {
@@ -379,7 +380,7 @@ const HeaderMenuItemContent = ({
           </DeferredDiv>
         </div>
       ) : item.type === 'subMenu' ? (
-        <details>
+        <details open={!!item.openByDefault}>
           <summary>
             <span>{item.display}</span>
           </summary>
