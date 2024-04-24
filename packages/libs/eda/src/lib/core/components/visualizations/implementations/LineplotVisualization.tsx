@@ -323,9 +323,9 @@ function LineplotViz(props: VisualizationProps<Options>) {
 
   const colorPaletteOverride =
     neutralPaletteProps.colorPalette ??
-    options?.getOverlayType?.() === 'continuous'
+    (options?.getOverlayType?.() === 'continuous'
       ? SequentialGradientColorscale
-      : undefined;
+      : undefined);
 
   const findEntityAndVariable = useFindEntityAndVariable(filters);
 
