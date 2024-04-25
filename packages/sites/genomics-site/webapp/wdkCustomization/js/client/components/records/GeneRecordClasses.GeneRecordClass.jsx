@@ -45,7 +45,6 @@ import {
 import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
 import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { AlphaFoldRecordSection } from './AlphaFoldAttributeSection';
-import { Tooltip } from '@veupathdb/coreui';
 
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
@@ -1426,6 +1425,11 @@ class OrthologsForm extends SortKeyTable {
         onRowDeselect: this.onRowDeselect,
         onMultipleRowSelect: this.onMultipleRowSelect,
         onMultipleRowDeselect: this.onMultipleRowDeselect,
+        onGroupBySelectedChange: () =>
+          this.setState({
+            ...this.state,
+            groupBySelected: !this.state.groupBySelected,
+          }),
       },
       actions: [
         {
@@ -1460,41 +1464,7 @@ class OrthologsForm extends SortKeyTable {
               value={sourceId}
             />
           ))}
-          <div
-            style={{ display: 'flex', columnGap: '2em', alignItems: 'center' }}
-          >
-            {this.props.transcriptFilter}
-            <Tooltip
-              title={
-                !this.state.selectedRowIds.length
-                  ? 'Select genes to enable this filter'
-                  : ''
-              }
-            >
-              <label
-                style={
-                  !this.state.selectedRowIds.length
-                    ? { cursor: 'not-allowed', opacity: 0.4 }
-                    : undefined
-                }
-              >
-                <input
-                  type="checkbox"
-                  checked={this.state.groupBySelected}
-                  onChange={(e) => {
-                    this.setState((state) => ({
-                      ...state,
-                      groupBySelected: e.target.checked,
-                    }));
-                  }}
-                  disabled={!this.state.selectedRowIds.length}
-                />{' '}
-                <strong>
-                  <em>Keep checked values at top</em>
-                </strong>
-              </label>
-            </Tooltip>
-          </div>
+          {this.props.transcriptFilter}
           <this.props.DefaultComponent
             {...this.props}
             value={this.sortValue(this.props.value)}

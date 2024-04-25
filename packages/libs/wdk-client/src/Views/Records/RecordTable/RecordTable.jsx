@@ -265,9 +265,11 @@ class RecordTable extends Component {
         sort: this.state.sort,
         expandedRows,
         filteredRowCount: mesaReadyRows.length - filteredRows.length,
+        ...(isOrthologTableWithData
+          ? { groupBySelected: this.props.orthoTableProps.groupBySelected }
+          : {}),
       },
       options: {
-        toolbar: true,
         childRow: childRow ? this.wrappedChildRow : undefined,
         className: 'wdk-DataTableContainer',
         getRowId: getSortIndex,
