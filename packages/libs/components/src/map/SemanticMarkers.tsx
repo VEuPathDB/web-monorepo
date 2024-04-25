@@ -11,6 +11,7 @@ import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 import { useMap } from 'react-leaflet';
 import { LatLngBounds } from 'leaflet';
 import { debounce, isEqual } from 'lodash';
+import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import AreaSelect from './AreaSelect';
 
 export interface SemanticMarkersProps {
@@ -48,6 +49,8 @@ export default function SemanticMarkers({
 }: SemanticMarkersProps) {
   // react-leaflet v3
   const map = useMap();
+
+  const { enqueueSnackbar } = useSnackbar();
 
   const [prevRecenteredMarkers, setPrevRecenteredMarkers] =
     useState<ReactElement<BoundsDriftMarkerProps>[]>(markers);
@@ -205,10 +208,34 @@ export default function SemanticMarkers({
         consolidatedMarkers.find(({ props }) => id === props.id)
       );
 
-      if (prunedSelectedMarkers.length < selectedMarkers.length)
+      if (prunedSelectedMarkers.length < selectedMarkers.length) {
+        const consolidatedMarkersElementLength =
+          consolidatedMarkers.length === 0
+            ? 0
+            : consolidatedMarkers[0].props.id.length;
+
+        const selectedMarkersElementLength =
+          selectedMarkers.length === 0 ? 0 : selectedMarkers[0].length;
+
+        const message =
+          consolidatedMarkersElementLength !== selectedMarkersElementLength
+            ? 'Marker selection has been cancelled because aggregation level has changed due to zooming'
+            : 'Selected markers that went off-screen have been deselected';
+
+        enqueueSnackbar(message, {
+          variant: 'info',
+          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        });
+
         setSelectedMarkers(prunedSelectedMarkers);
+      }
     }
-  }, [consolidatedMarkers, selectedMarkers, setSelectedMarkers]);
+  }, [
+    consolidatedMarkers,
+    selectedMarkers,
+    setSelectedMarkers,
+    enqueueSnackbar,
+  ]);
 
   // add the selectedMarkers props and callback
   // (and the scheduled-for-removal showPopup prop)
