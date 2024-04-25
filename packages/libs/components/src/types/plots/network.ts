@@ -32,7 +32,7 @@ export type LinkData = {
 };
 
 /** NetworkData is the same format accepted by visx's Graph component. */
-export type NetworkData = {
+export type NetworkPlotData = {
   nodes: NodeData[];
   links: LinkData[];
 };
@@ -46,4 +46,4 @@ export type NodeIdList = {
  */
 export type BipartiteNetworkData = {
   partitions: NodeIdList[];
-} & NetworkData;
+} & NetworkPlotData;
