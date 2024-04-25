@@ -131,6 +131,6 @@
   height: 0;
   box-sizing: border-box;
   z-index: 800;
-  border: 2px dotted rgba(255, 255, 0, 1);
+  border: 6px solid rgba(255, 255, 0, 1);
   background: rgba(255, 255, 255, 0.5);
 }
