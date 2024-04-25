@@ -49,7 +49,7 @@ export const userDatasetRoutes: RouteEntry[] = [
 
       const detailComponentsByTypeName = useMemo(
         () => ({
-          BIOM: function MbioBiomDatasetDetail(props: UserDatasetDetailProps) {
+          biom: function MbioBiomDatasetDetail(props: UserDatasetDetailProps) {
             const wdkDatasetId = diyUserDatasetIdToWdkRecordId(
               props.userDataset.id
             );

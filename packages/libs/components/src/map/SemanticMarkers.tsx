@@ -8,10 +8,10 @@ import {
 } from 'react';
 import { AnimationFunction, Bounds } from './Types';
 import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
-import { useMap, useMapEvents } from 'react-leaflet';
+import { useMap } from 'react-leaflet';
 import { LatLngBounds } from 'leaflet';
 import { debounce, isEqual } from 'lodash';
-import { mouseEventHasModifierKey } from './BoundsDriftMarker';
+import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import AreaSelect from './AreaSelect';
 
 export interface SemanticMarkersProps {
@@ -50,17 +50,7 @@ export default function SemanticMarkers({
   // react-leaflet v3
   const map = useMap();
 
-  // cancel marker selection with a single click on the map
-  useMapEvents({
-    click: (e) => {
-      // excluding a combination of special keys and mouse click
-      if (
-        setSelectedMarkers != null &&
-        !mouseEventHasModifierKey(e.originalEvent)
-      )
-        setSelectedMarkers(undefined);
-    },
-  });
+  const { enqueueSnackbar } = useSnackbar();
 
   const [prevRecenteredMarkers, setPrevRecenteredMarkers] =
     useState<ReactElement<BoundsDriftMarkerProps>[]>(markers);
@@ -218,10 +208,34 @@ export default function SemanticMarkers({
         consolidatedMarkers.find(({ props }) => id === props.id)
       );
 
-      if (prunedSelectedMarkers.length < selectedMarkers.length)
+      if (prunedSelectedMarkers.length < selectedMarkers.length) {
+        const consolidatedMarkersElementLength =
+          consolidatedMarkers.length === 0
+            ? 0
+            : consolidatedMarkers[0].props.id.length;
+
+        const selectedMarkersElementLength =
+          selectedMarkers.length === 0 ? 0 : selectedMarkers[0].length;
+
+        const message =
+          consolidatedMarkersElementLength !== selectedMarkersElementLength
+            ? 'Marker selection has been cancelled because aggregation level has changed due to zooming'
+            : 'Selected markers that went off-screen have been deselected';
+
+        enqueueSnackbar(message, {
+          variant: 'info',
+          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        });
+
         setSelectedMarkers(prunedSelectedMarkers);
+      }
     }
-  }, [consolidatedMarkers, selectedMarkers, setSelectedMarkers]);
+  }, [
+    consolidatedMarkers,
+    selectedMarkers,
+    setSelectedMarkers,
+    enqueueSnackbar,
+  ]);
 
   // add the selectedMarkers props and callback
   // (and the scheduled-for-removal showPopup prop)

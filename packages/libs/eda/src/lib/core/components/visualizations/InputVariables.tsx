@@ -12,7 +12,7 @@ import VariableTreeDropdown from '../variableSelectors/VariableTreeDropdown';
 import { Toggle } from '@veupathdb/coreui';
 import { makeEntityDisplayName } from '../../utils/study-metadata';
 import { useInputStyles } from './inputStyles';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { isEqual } from 'lodash';
 import { red } from '@veupathdb/coreui/lib/definitions/colors';

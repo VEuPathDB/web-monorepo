@@ -10,7 +10,7 @@ import {
   LoadingOverlay,
   HelpIcon,
 } from '@veupathdb/wdk-client/lib/Components';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '@veupathdb/coreui';
 import MultiSelectVariableTree from '../../core/components/variableSelectors/MultiSelectVariableTree';
 import { Modal, DataGrid, MesaButton, Download } from '@veupathdb/coreui';
 
@@ -122,17 +122,21 @@ export default function SubsetDownloadModal({
   const theme = useUITheme();
   const primaryColor = theme?.palette.primary.hue[theme.palette.primary.level];
 
-  // In order to show a sortable preview we need a wide table of data.
-  // Wide tables can only be up to 1000 columns. So if there are at least 1000
-  // vars, (1) do not ask for the wide table and (2) tell the user that we can't
-  // show a preview but everything is okay.
-  const canLoadTablePreview = currentEntity.variables.length < 1000;
-
   //   Various Custom Hooks
   const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();
   const subsettingClient = useSubsettingClient();
   const featuredFields = useFeaturedFields(entities, 'download');
+
+  // In order to show a sortable preview we need a wide table of data.
+  // Wide tables can only be up to 1000 columns. So if there are at least 1000
+  // vars, (1) do not ask for the wide table and (2) tell the user that we can't
+  // show a preview but everything is okay.
+  // TEMP: we also don't have wide tables for user studies; so let's apply the same
+  // UI for user studies
+  const { isUserStudy } = studyMetadata;
+  const canLoadTablePreview =
+    currentEntity.variables.length < 1000 && !isUserStudy;
 
   const scopedFeaturedFields = useMemo(
     () =>

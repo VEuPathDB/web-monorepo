@@ -13,8 +13,6 @@ import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 
 import NotFound from '@veupathdb/wdk-client/lib/Views/NotFound/NotFound';
 
-import { isUserDatasetsCompatibleWdkService } from '../../Service/UserDatasetWrappers';
-
 import SharingModal from '../Sharing/UserDatasetSharingModal';
 import UserDatasetStatus from '../UserDatasetStatus';
 import { makeClassifier, normalizePercentage } from '../UserDatasetUtils';
@@ -44,6 +42,7 @@ class UserDatasetDetail extends React.Component {
 
     this.renderCompatibilitySection =
       this.renderCompatibilitySection.bind(this);
+    this.getCompatibilityStatus = this.getCompatibilityStatus.bind(this);
     this.getCompatibilityTableColumns =
       this.getCompatibilityTableColumns.bind(this);
 
@@ -121,7 +120,8 @@ class UserDatasetDetail extends React.Component {
   }
 
   getAttributes() {
-    const { userDataset, quotaSize, questionMap } = this.props;
+    const { userDataset, quotaSize, questionMap, dataNoun, config } =
+      this.props;
     const { onMetaSave } = this;
     const {
       id,
@@ -132,11 +132,19 @@ class UserDatasetDetail extends React.Component {
       owner,
       created,
       sharedWith,
-      questions,
-      isInstalled,
+      status,
     } = userDataset;
     const { display, name, version } = type;
     const isOwner = this.isMyDataset();
+    const isInstalled =
+      status?.import === 'complete' &&
+      status?.install?.find((d) => d.projectId === config.projectId)
+        ?.dataStatus === 'complete';
+    const questions = Object.values(questionMap).filter(
+      (q) =>
+        'userDatasetType' in q.properties &&
+        q.properties.userDatasetType.includes(type.name)
+    );
 
     return [
       {
@@ -159,6 +167,7 @@ class UserDatasetDetail extends React.Component {
             userDataset={userDataset}
             projectId={this.props.config.projectId}
             displayName={this.props.config.displayName}
+            dataNoun={dataNoun}
           />
         ),
       },
@@ -218,10 +227,9 @@ class UserDatasetDetail extends React.Component {
             attribute: 'Shared with',
             value: (
               <ul>
-                {sharedWith.map((share) => (
-                  <li key={share.email}>
-                    {share.userDisplayName} &lt;{share.email}&gt;{' '}
-                    <DateTime datetime={share.time} />
+                {sharedWith.map((share, index) => (
+                  <li key={`${share.userDisplayName}-${index}`}>
+                    {share.userDisplayName}
                   </li>
                 ))}
               </ul>
@@ -233,8 +241,7 @@ class UserDatasetDetail extends React.Component {
             attribute: 'Available searches',
             value: (
               <ul>
-                {questions.map((questionName) => {
-                  const q = questionMap[questionName];
+                {questions.map((q) => {
                   // User dataset searches typically offer changing the dataset through a dropdown
                   // Ths dropdown is a param, "biom_dataset" on MicrobiomeDB and "rna_seq_dataset" on genomic sites
                   // Hence the regex: /dataset/
@@ -251,7 +258,7 @@ class UserDatasetDetail extends React.Component {
                     urlPath +
                     (ps.length === 1 ? '?param.' + ps[0] + '=' + id : '');
                   return (
-                    <li key={questionName}>
+                    <li key={q.fullName}>
                       <Link to={url}>{q.displayName}</Link>
                     </li>
                   );
@@ -342,10 +349,15 @@ class UserDatasetDetail extends React.Component {
    -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= */
 
   renderFileSection() {
-    const { userDataset, appUrl, dataNoun } = this.props;
-    const fileTableState = MesaState.create({
-      columns: this.getFileTableColumns({ userDataset, appUrl }),
-      rows: userDataset.datafiles,
+    const { userDataset, dataNoun } = this.props;
+    const { fileListing } = userDataset;
+    const uploadZipFileState = MesaState.create({
+      columns: this.getFileTableColumns('upload'),
+      rows: [{ name: 'upload.zip', size: fileListing?.upload?.zipSize }],
+    });
+    const processedZipFileState = MesaState.create({
+      columns: this.getFileTableColumns('data'),
+      rows: [{ name: 'install.zip', size: fileListing?.install?.zipSize }],
     });
 
     return (
@@ -353,17 +365,46 @@ class UserDatasetDetail extends React.Component {
         <h2>Data Files</h2>
         <h3 className={classify('SectionTitle')}>
           <Icon fa="files-o" />
-          Files in {dataNoun.singular}
+          Uploaded Files in {dataNoun.singular}
         </h3>
-        <Mesa state={fileTableState} />
+        <Mesa state={uploadZipFileState} />
+        <h3 className={classify('SectionTitle')}>
+          <Icon fa="files-o" />
+          Processed Files in {dataNoun.singular}
+        </h3>
+        <Mesa state={processedZipFileState} />
       </section>
     );
   }
 
-  getFileTableColumns() {
-    const { userDataset } = this.props;
-    const { id } = userDataset;
+  getFileTableColumns(fileType) {
+    const { userDataset, config } = this.props;
+    const { projectId } = config;
+    const { id, fileListing, status } = userDataset;
     const { wdkService } = this.context;
+
+    const fileListIndex = fileType === 'upload' ? 'upload' : 'install';
+
+    const fileListElement = fileListing[fileListIndex]?.contents?.length && (
+      <details style={{ margin: '1em 0 0 0.25em' }}>
+        <summary>
+          List of {fileType === 'upload' ? 'uploaded' : 'processed'} files:
+        </summary>
+        <ol
+          style={{
+            margin: '0.25em 0 0 0',
+            lineHeight: '1.5em',
+            padding: '0 0 0 2em',
+          }}
+        >
+          {fileListing[fileListIndex].contents.map((file, index) => (
+            <li key={`${file.fileName}-${index}`}>
+              {file.fileName} <span>({bytesToHuman(file.fileSize)})</span>
+            </li>
+          ))}
+        </ol>
+      </details>
+    );
 
     return [
       {
@@ -371,7 +412,12 @@ class UserDatasetDetail extends React.Component {
         name: 'File Name',
         renderCell({ row }) {
           const { name } = row;
-          return <code>{name}</code>;
+          return (
+            <>
+              <code>{name}</code>
+              {fileListElement}
+            </>
+          );
         },
       },
       {
@@ -379,7 +425,7 @@ class UserDatasetDetail extends React.Component {
         name: 'File Size',
         renderCell({ row }) {
           const { size } = row;
-          return bytesToHuman(size);
+          return size ? bytesToHuman(size) : '';
         },
       },
       {
@@ -387,34 +433,30 @@ class UserDatasetDetail extends React.Component {
         name: 'Download',
         width: '130px',
         headingStyle: { textAlign: 'center' },
-        renderCell({ row }) {
-          const { name } = row;
-
-          const downloadUrl = !isUserDatasetsCompatibleWdkService(wdkService)
-            ? undefined
-            : wdkService.getUserDatasetDownloadUrl(id, name);
-
-          const downloadAvailable = downloadUrl != null;
+        renderCell() {
+          const downloadServiceAvailable = 'getUserDatasetFiles' in wdkService;
+          const enableDownload =
+            fileType === 'upload'
+              ? true
+              : status.install?.find((d) => d.projectId === projectId)
+                  ?.dataStatus === 'complete';
 
           return (
-            <a
-              href={downloadUrl}
-              target="_blank"
-              rel="noreferrer"
-              title="Download this file"
+            <button
+              className="btn btn-info"
+              disabled={!downloadServiceAvailable || !enableDownload}
+              title={
+                downloadServiceAvailable && enableDownload
+                  ? 'Download this file'
+                  : 'This download is unavailable. Please contact us if this problem persists.'
+              }
+              onClick={(e) => {
+                e.preventDefault();
+                wdkService.getUserDatasetFiles(id, fileType);
+              }}
             >
-              <button
-                className="btn btn-info"
-                disabled={!downloadAvailable}
-                title={
-                  downloadAvailable
-                    ? undefined
-                    : 'This download is unavailable. Please contact us if this problem persists.'
-                }
-              >
-                <Icon fa="save" className="left-side" /> Download
-              </button>
-            </a>
+              <Icon fa="save" className="left-side" /> Download
+            </button>
           );
         },
       },
@@ -429,16 +471,14 @@ class UserDatasetDetail extends React.Component {
 
   renderCompatibilitySection() {
     const { userDataset, config, dataNoun } = this.props;
-    const { projectId, displayName } = config;
+    const { displayName } = config;
 
     const compatibilityTableState = MesaState.create({
       columns: this.getCompatibilityTableColumns(userDataset),
       rows: userDataset.dependencies,
     });
 
-    const { buildNumber } = config;
-    const { isCompatible } = userDataset;
-    const isCompatibleProject = userDataset.projects.includes(projectId);
+    const compatibilityStatus = this.getCompatibilityStatus();
 
     return (
       <section id="dataset-compatibility">
@@ -459,21 +499,60 @@ class UserDatasetDetail extends React.Component {
         <div style={{ maxWidth: '600px' }}>
           <Mesa state={compatibilityTableState} />
         </div>
-        {isCompatibleProject && isCompatible ? (
-          <p className="success">
-            This {dataNoun.singular.toLowerCase()} is compatible with the
-            current release, build {buildNumber}, of <b>{projectId}</b>. It is
-            installed for use.
-          </p>
-        ) : (
-          <p className="danger">
-            This {dataNoun.singular.toLowerCase()} is not compatible with the
-            current release, build {buildNumber}, of <b>{projectId}</b>. It is
-            not installed for use.
-          </p>
-        )}
+        {compatibilityStatus}
       </section>
     );
+  }
+
+  getCompatibilityStatus() {
+    const { userDataset, config, dataNoun } = this.props;
+    const { projectId } = config;
+
+    const { status, projects } = userDataset;
+
+    /**
+     * In VDI, we know a dataset is compatible when the site-specific's install status
+     * indicates a successful install.
+     *
+     * We know a dataset is incompatible when the site-specific's install status
+     * indicates `missing-dependency`
+     */
+    const installStatusForCurrentProject = status.install?.find(
+      (d) => d.projectId === projectId
+    );
+
+    const isTargetingCurrentSite = projects.includes(projectId);
+    const isInstalled = [
+      userDataset.status.import,
+      installStatusForCurrentProject?.metaStatus,
+      installStatusForCurrentProject?.dataStatus,
+    ].every((status) => status === 'complete');
+
+    const isIncompatible =
+      installStatusForCurrentProject?.dataStatus === 'missing-dependency';
+
+    if (!isTargetingCurrentSite || (isTargetingCurrentSite && isIncompatible)) {
+      return (
+        // if projectIds don't match, then we're not installable and thus incompatible
+        // if we're installable but failed due to a missing dependency, we're incompatible
+        <p className="danger">
+          This {dataNoun.singular.toLowerCase()} is not compatible with{' '}
+          <b>{projectId}</b>.
+        </p>
+      );
+    } else if (isInstalled) {
+      return (
+        // if we've installed successfully and we're installable, we're compatible
+        <p className="success">
+          This {dataNoun.singular.toLowerCase()} is compatible with{' '}
+          <b>{projectId}</b>. It is installed for use.
+        </p>
+      );
+    } else {
+      // instead of attempting to provide very granular messaging for when things are neither
+      // compatible nor incompatible, let's let the dataset page's Status messaging handle this
+      return null;
+    }
   }
 
   getCompatibilityTableColumns() {
@@ -498,16 +577,9 @@ class UserDatasetDetail extends React.Component {
       {
         key: 'resourceVersion',
         name: 'Required Resource Release',
-      },
-      {
-        key: 'installedVersion',
-        name: 'Installed Resource Release',
         renderCell({ row }) {
-          const { compatibilityInfo } = row;
-          const { currentBuild } = compatibilityInfo ? compatibilityInfo : {};
-          return compatibilityInfo === null || currentBuild === null
-            ? 'N/A'
-            : currentBuild;
+          const { resourceVersion } = row;
+          return resourceVersion;
         },
       },
     ];

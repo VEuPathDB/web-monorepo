@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 
 import { uploadUserDataset } from '@veupathdb/user-datasets/lib/Utils/upload-user-dataset';
 
@@ -154,7 +154,8 @@ export function useSendToBasketConfig(
 
 export function useSendToGeneListUserDatasetConfig(
   resultType: ResultType
-): ExportOption<'my-data-sets', [void, RecordClass], unknown> | undefined {
+): // | ExportOption<'my-data-sets', [{ datasetId: string } | undefined, RecordClass], unknown>
+ExportOption<'my-data-sets', [void, RecordClass], unknown> | undefined {
   const dispatch = useDispatch();
 
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
@@ -364,7 +365,7 @@ export async function uploadGeneListUserDataset(
     }" (${resultWorkspaceUrl}).`;
 
   return await uploadUserDataset(wdkService, {
-    datasetType: 'gene-list',
+    datasetType: 'genelist',
     dataUploadSelection: {
       type: 'url',
       url: temporaryResultUrl,
