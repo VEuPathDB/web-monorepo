@@ -150,6 +150,16 @@ export const MarkerConfiguration = t.intersection([
   ]),
 ]);
 
+export type LegacyRedirectState = t.TypeOf<typeof LegacyRedirectState>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const LegacyRedirectState = t.union([
+  t.undefined,
+  t.type({
+    projectId: t.union([t.string, t.undefined]),
+    showLegacyMapRedirectModal: t.boolean,
+  }),
+]);
+
 export const AppState = t.intersection([
   t.type({
     viewport: t.type({
