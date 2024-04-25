@@ -53,7 +53,18 @@ interface Props {
     recipientUserIds: number[],
     context: 'datasetDetails' | 'datasetsList'
   ) => any;
-  unshareUserDatasets: (userDatasetId: string, recipientUserId: number) => any;
+  unshareUserDatasets: (
+    userDatasetId: string,
+    recipientUserId: number,
+    context: 'datasetDetails' | 'datasetsList'
+  ) => any;
+  sharingModalOpen: boolean;
+  sharingSuccess: (shareSuccessful: boolean | undefined) => any;
+  sharingError: (shareError: Error | undefined) => any;
+  updateSharingModalState: (isOpen: boolean) => any;
+  sharingDatasetPending: boolean;
+  shareSuccessful: boolean | undefined;
+  shareError: Error | undefined;
   removeUserDataset: (dataset: UserDataset) => any;
   updateUserDatasetDetail: (
     userDataset: UserDataset,
@@ -68,7 +79,6 @@ interface State {
   selectedRows: Array<number | string>;
   uiState: { sort: MesaSortObject };
   searchTerm: string;
-  sharingModalOpen: boolean;
   editingCache: any;
 }
 
@@ -92,7 +102,6 @@ class UserDatasetList extends React.Component<Props, State> {
         },
       },
       editingCache: {},
-      sharingModalOpen: false,
       searchTerm: '',
     };
 
@@ -531,13 +540,13 @@ class UserDatasetList extends React.Component<Props, State> {
   }
 
   closeSharingModal() {
-    const sharingModalOpen = false;
-    this.setState({ sharingModalOpen });
+    this.props.updateSharingModalState(false);
   }
 
   openSharingModal() {
-    const sharingModalOpen = true;
-    this.setState({ sharingModalOpen });
+    this.props.sharingSuccess(undefined);
+    this.props.sharingError(undefined);
+    this.props.updateSharingModalState(true);
   }
 
   toggleProjectScope(newValue: boolean) {
@@ -555,8 +564,12 @@ class UserDatasetList extends React.Component<Props, State> {
       filterByProject,
       quotaSize,
       dataNoun,
+      sharingModalOpen,
+      sharingDatasetPending,
+      shareSuccessful,
+      shareError,
     } = this.props;
-    const { uiState, selectedRows, searchTerm, sharingModalOpen } = this.state;
+    const { uiState, selectedRows, searchTerm } = this.state;
 
     const rows = userDatasets;
     const selectedDatasets = rows.filter(isRowSelected);
@@ -607,6 +620,9 @@ class UserDatasetList extends React.Component<Props, State> {
                     unshareUserDatasets={unshareUserDatasets}
                     onClose={this.closeSharingModal}
                     dataNoun={dataNoun}
+                    sharingDatasetPending={sharingDatasetPending}
+                    shareSuccessful={shareSuccessful}
+                    shareError={shareError}
                   />
                 ) : null}
                 <SearchBox

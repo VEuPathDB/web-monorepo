@@ -23,7 +23,6 @@ import {
   UserDatasetMeta,
   UserDatasetVDI,
   UserQuotaMetadata,
-  UserDatasetShareResponse,
   UserDatasetFileListing,
 } from '../Utils/types';
 
@@ -41,8 +40,10 @@ export type Action =
   | ListErrorReceivedAction
   | ListReceivedAction
   | ProjectFilterAction
-  | SharingDatasetAction
-  | SharingSuccessAction;
+  | SharingDatasetPendingAction
+  | SharingSuccessAction
+  | SharingModalOpenAction
+  | SharingErrorAction;
 
 //==============================================================================
 
@@ -291,25 +292,22 @@ export function detailRemoveError(
 
 //==============================================================================
 
-export const SHARING_DATASET = 'user-datasets/sharing-dataset';
+export const SHARING_DATASET_PENDING = 'user-datasets/sharing-dataset-pending';
 
-export type SharingDatasetAction = {
-  type: typeof SHARING_DATASET;
+export type SharingDatasetPendingAction = {
+  type: typeof SHARING_DATASET_PENDING;
   payload: {
-    userDataset: UserDataset;
-    recipients: string[];
+    sharingDatasetPending: boolean;
   };
 };
 
-export function sharingDataset(
-  userDataset: UserDataset,
-  recipients: string[]
-): SharingDatasetAction {
+export function updateSharingDatasetPending(
+  sharingDatasetPending: boolean
+): SharingDatasetPendingAction {
   return {
-    type: SHARING_DATASET,
+    type: SHARING_DATASET_PENDING,
     payload: {
-      userDataset,
-      recipients,
+      sharingDatasetPending,
     },
   };
 }
@@ -321,17 +319,17 @@ export const SHARING_SUCCESS = 'user-datasets/sharing-success';
 export type SharingSuccessAction = {
   type: typeof SHARING_SUCCESS;
   payload: {
-    response: UserDatasetShareResponse;
+    shareSuccessful: boolean | undefined;
   };
 };
 
 export function sharingSuccess(
-  response: UserDatasetShareResponse
+  shareSuccessful: boolean | undefined
 ): SharingSuccessAction {
   return {
     type: SHARING_SUCCESS,
     payload: {
-      response,
+      shareSuccessful,
     },
   };
 }
@@ -343,15 +341,39 @@ export const SHARING_ERROR = 'user-datasets/sharing-error';
 export type SharingErrorAction = {
   type: typeof SHARING_ERROR;
   payload: {
-    error: Error;
+    shareError: Error | undefined;
   };
 };
 
-export function sharingError(error: Error): SharingErrorAction {
+export function sharingError(
+  shareError: Error | undefined
+): SharingErrorAction {
   return {
     type: SHARING_ERROR,
     payload: {
-      error,
+      shareError,
+    },
+  };
+}
+
+//==============================================================================
+
+export const SHARING_MODAL_OPEN = 'user-datasets/sharing-modal-open-state';
+
+export type SharingModalOpenAction = {
+  type: typeof SHARING_MODAL_OPEN;
+  payload: {
+    sharingModalOpen: boolean;
+  };
+};
+
+export function updateSharingModalState(
+  sharingModalOpen: boolean
+): SharingModalOpenAction {
+  return {
+    type: SHARING_MODAL_OPEN,
+    payload: {
+      sharingModalOpen,
     },
   };
 }
@@ -395,14 +417,9 @@ type RemovalAction =
   | DetailRemovingAction
   | DetailRemoveSuccessAction
   | DetailRemoveErrorAction;
-type SharingAction =
-  | SharingDatasetAction
-  | SharingSuccessAction
-  | SharingErrorAction;
 
-export function loadUserDatasetList() {
-  return validateVdiCompatibleThunk<ListAction>(({ wdkService }) => [
-    listLoading(),
+export function loadUserDatasetListWithoutLoadingIndicator() {
+  return validateVdiCompatibleThunk<ListAction>(({ wdkService }) =>
     Promise.all([
       wdkService.getCurrentUserPreferences().then(
         (preferences) =>
@@ -430,13 +447,16 @@ export function loadUserDatasetList() {
         }
       );
       return listReceived(vdiToExistingUds, filterByProject);
-    }, listErrorReceived),
-  ]);
+    }, listErrorReceived)
+  );
 }
 
-export function loadUserDatasetDetail(id: string) {
-  return validateVdiCompatibleThunk<DetailAction>(({ wdkService }) => [
-    detailLoading(id),
+export function loadUserDatasetList() {
+  return [listLoading(), loadUserDatasetListWithoutLoadingIndicator()];
+}
+
+export function loadUserDatasetDetailWithoutLoadingIndicator(id: string) {
+  return validateVdiCompatibleThunk<DetailAction>(({ wdkService }) =>
     Promise.all([
       wdkService.getUserDataset(id),
       wdkService.getUserQuotaMetadata(),
@@ -467,8 +487,12 @@ export function loadUserDatasetDetail(id: string) {
       },
       (error: ServiceError) =>
         error.status === 404 ? detailReceived(id) : detailError(error)
-    ),
-  ]);
+    )
+  );
+}
+
+export function loadUserDatasetDetail(id: string) {
+  return [detailLoading(id), loadUserDatasetDetailWithoutLoadingIndicator(id)];
 }
 
 export function shareUserDatasets(
@@ -484,9 +508,14 @@ export function shareUserDatasets(
     }
   }
   return validateVdiCompatibleThunk<
-    DetailAction | ListAction | SharingErrorAction
-  >(({ wdkService }) => {
-    return Promise.all(
+    | DetailAction
+    | ListAction
+    | SharingDatasetPendingAction
+    | SharingSuccessAction
+    | SharingErrorAction
+  >(({ wdkService }) => [
+    updateSharingDatasetPending(true),
+    Promise.all(
       requests.map((req) =>
         wdkService.editUserDatasetSharing(
           'grant',
@@ -496,38 +525,41 @@ export function shareUserDatasets(
       )
     ).then(() => {
       if (context === 'datasetDetails') {
-        return loadUserDatasetDetail(userDatasetIds[0]);
+        return [
+          loadUserDatasetDetailWithoutLoadingIndicator(userDatasetIds[0]),
+          sharingSuccess(true),
+        ];
       } else {
-        return loadUserDatasetList();
+        return [
+          loadUserDatasetListWithoutLoadingIndicator(),
+          sharingSuccess(true),
+        ];
       }
-    }, sharingError);
-  });
+    }, sharingError),
+    updateSharingDatasetPending(false),
+  ]);
 }
 
 export function unshareUserDatasets(
   userDatasetId: string,
-  recipientUserId: number
+  recipientUserId: number,
+  context: 'datasetDetails' | 'datasetsList'
 ) {
-  return validateVdiCompatibleThunk<SharingAction>(({ wdkService }) => {
-    return wdkService
+  return validateVdiCompatibleThunk<
+    DetailAction | ListAction | SharingDatasetPendingAction | SharingErrorAction
+  >(({ wdkService }) => [
+    updateSharingDatasetPending(true),
+    wdkService
       .editUserDatasetSharing('revoke', userDatasetId, recipientUserId)
-      .then(
-        () =>
-          sharingSuccess({
-            grant: {},
-            revoke: {
-              [userDatasetId]: [
-                {
-                  // similar to sharing, legacy UDs had this info to pass but we don't currently
-                  userDisplayName: '',
-                  user: recipientUserId,
-                },
-              ],
-            },
-          }),
-        sharingError
-      );
-  });
+      .then(() => {
+        if (context === 'datasetDetails') {
+          return loadUserDatasetDetailWithoutLoadingIndicator(userDatasetId);
+        } else {
+          return loadUserDatasetListWithoutLoadingIndicator();
+        }
+      }, sharingError),
+    updateSharingDatasetPending(false),
+  ]);
 }
 
 export function updateUserDatasetDetail(

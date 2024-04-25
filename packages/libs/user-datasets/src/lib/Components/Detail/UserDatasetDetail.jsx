@@ -28,7 +28,6 @@ const classify = makeClassifier('UserDatasetDetail');
 class UserDatasetDetail extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { sharingModalOpen: false };
 
     this.onMetaSave = this.onMetaSave.bind(this);
     this.isMyDataset = this.isMyDataset.bind(this);
@@ -62,11 +61,13 @@ class UserDatasetDetail extends React.Component {
   }
 
   openSharingModal() {
-    this.setState({ sharingModalOpen: true });
+    this.props.sharingSuccess(undefined);
+    this.props.sharingError(undefined);
+    this.props.updateSharingModalState(true);
   }
 
   closeSharingModal() {
-    this.setState({ sharingModalOpen: false });
+    this.props.updateSharingModalState(false);
   }
 
   validateKey(key) {
@@ -611,6 +612,10 @@ class UserDatasetDetail extends React.Component {
       shareUserDatasets,
       unshareUserDatasets,
       dataNoun,
+      sharingModalOpen,
+      sharingDatasetPending,
+      shareSuccessful,
+      shareError,
     } = this.props;
     const AllDatasetsLink = this.renderAllDatasetsLink;
     if (!userDataset)
@@ -620,7 +625,6 @@ class UserDatasetDetail extends React.Component {
         </NotFound>
       );
     const isOwner = this.isMyDataset();
-    const { sharingModalOpen } = this.state;
 
     return (
       <div className={classify()}>
@@ -636,6 +640,9 @@ class UserDatasetDetail extends React.Component {
             context="datasetDetails"
             unshareUserDatasets={unshareUserDatasets}
             dataNoun={dataNoun}
+            sharingDatasetPending={sharingDatasetPending}
+            shareSuccessful={shareSuccessful}
+            shareError={shareError}
           />
         )}
       </div>
