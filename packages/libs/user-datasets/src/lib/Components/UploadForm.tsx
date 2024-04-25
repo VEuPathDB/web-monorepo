@@ -255,9 +255,11 @@ function UploadForm({
 
   const defaultFileInputField = (
     <FileInput
-      accept={supportedFileUploadTypes
-        .map((fileUploadType) => `.${fileUploadType}`)
-        .join(',')}
+      accept={
+        supportedFileUploadTypes
+          ?.map((fileUploadType) => `.${fileUploadType}`)
+          .join(',') || undefined
+      }
       required={dataUploadMode === 'file'}
       disabled={dataUploadMode !== 'file' || useFixedUploadMethod}
       maxSizeBytes={maxSizeBytes}
