@@ -203,7 +203,7 @@ function BipartiteNetwork(
         // If a link is grayed out, it will be sorted before other links.
         // In theory, it's possible to have a false positive here;
         // but that's okay, because the overlapping colors will be the same.
-        (link) => (link.color === '#eee' ? 1 : -1)
+        (link) => (link.color === '#eee' ? -1 : 1)
       ),
     [data.links, highlightedNodeId, nodesByPartitionWithCoordinates]
   );
