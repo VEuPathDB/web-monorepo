@@ -161,6 +161,7 @@ class UserDatasetDetail extends React.Component {
       },
       {
         attribute: 'Status',
+        className: classify('Status'),
         value: (
           <UserDatasetStatus
             linkToDataset={false}
