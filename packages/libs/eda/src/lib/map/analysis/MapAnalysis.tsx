@@ -125,7 +125,7 @@ export function MapAnalysis(props: Props) {
   const locationState = location.state;
   const [showRedirectModal, setShowRedirectModal] = useState(
     LegacyRedirectState.is(locationState) &&
-      locationState?.showLegacyMapRedirectModal
+      !!locationState?.showLegacyMapRedirectModal
   );
 
   if (geoConfigs == null || geoConfigs.length === 0)
@@ -153,7 +153,7 @@ export function MapAnalysis(props: Props) {
   return (
     <>
       <Modal
-        visible={Boolean(showRedirectModal)}
+        visible={showRedirectModal}
         toggleVisible={() => setShowRedirectModal(false)}
         styleOverrides={{
           content: {
