@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import SelectionCounter from './SelectionCounter';
+import RowCounter from './RowCounter';
 import { makeClassifier } from '../Utils/Utils';
+import Toggle from '../../widgets/Toggle';
 
 const actionToolbarClass = makeClassifier('ActionToolbar');
 
@@ -10,8 +12,11 @@ class ActionToolbar extends React.PureComponent {
   constructor(props) {
     super(props);
     this.dispatchAction = this.dispatchAction.bind(this);
+    this.renderCounter = this.renderCounter.bind(this);
     this.renderActionItem = this.renderActionItem.bind(this);
     this.renderActionItemList = this.renderActionItemList.bind(this);
+    this.renderGroupBySelectedToggle =
+      this.renderGroupBySelectedToggle.bind(this);
   }
 
   getSelection() {
@@ -32,6 +37,21 @@ class ActionToolbar extends React.PureComponent {
       selection.forEach((row) => handler(row, columns));
     if (typeof callback === 'function')
       return callback(selection, columns, rows);
+  }
+
+  renderCounter() {
+    const { rows = {}, options = {}, uiState = {}, eventHandlers } = this.props;
+    const { showCount, toolbar } = options;
+
+    if (!showCount || (showCount && toolbar)) return null;
+
+    const props = { rows, uiState, eventHandlers };
+
+    return (
+      <div className="TableToolbar-Info">
+        <RowCounter {...props} />
+      </div>
+    );
   }
 
   renderActionItem({ action }) {
@@ -70,6 +90,28 @@ class ActionToolbar extends React.PureComponent {
     );
   }
 
+  renderGroupBySelectedToggle() {
+    const { rows, options = {}, eventHandlers = {}, uiState = {} } = this.props;
+    const { isRowSelected } = options;
+    const { onGroupBySelectedChange } = eventHandlers;
+    const { groupBySelected } = uiState;
+
+    if (!isRowSelected || groupBySelected == null || !onGroupBySelectedChange)
+      return null;
+
+    return (
+      <div className={actionToolbarClass('GroupBySelectedToggle')}>
+        <Toggle
+          value={groupBySelected}
+          onChange={onGroupBySelectedChange}
+          disabled={!rows.filter(isRowSelected).length}
+          label="Keep checked values at top"
+          labelPosition="right"
+        />
+      </div>
+    );
+  }
+
   render() {
     const { rows, eventHandlers, children, options } = this.props;
     const { selectedNoun, selectedPluralNoun, isRowSelected } = options
@@ -100,7 +142,9 @@ class ActionToolbar extends React.PureComponent {
         {!children ? null : (
           <div className={actionToolbarClass('Children')}>{children}</div>
         )}
+        {this.renderCounter()}
         <div className={actionToolbarClass('Info')}>
+          {this.renderGroupBySelectedToggle()}
           <SelectionCounter {...selectionCounterProps} />
         </div>
         <ActionList />
