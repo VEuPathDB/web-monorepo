@@ -20,8 +20,6 @@ class UserDatasetSharingModal extends React.Component {
     this.state = {
       recipients: [],
       recipientInput: null,
-      processing: false,
-      succeeded: null,
     };
     this.renderShareItem = this.renderShareItem.bind(this);
     this.renderShareList = this.renderShareList.bind(this);
@@ -82,11 +80,9 @@ class UserDatasetSharingModal extends React.Component {
     return wdkService
       .getUserIdsByEmail([recipientEmail])
       .then(({ results }) => {
-        const foundUsers = results.find((result) =>
-          Object.keys(result).includes(recipientEmail)
-        );
+        const foundUserId = results && results[recipientEmail];
 
-        if (!results.length || !foundUsers) {
+        if (!results || !foundUserId) {
           return this.disqualifyRecipient(
             recipientEmail,
             <span>
@@ -96,9 +92,7 @@ class UserDatasetSharingModal extends React.Component {
           );
         }
 
-        const uid = foundUsers[recipientEmail];
-
-        if (uid === this.props.user.id) {
+        if (foundUserId === this.props.user.id) {
           return this.disqualifyRecipient(
             recipientEmail,
             <span>
@@ -107,7 +101,7 @@ class UserDatasetSharingModal extends React.Component {
             </span>
           );
         } else {
-          return this.acceptRecipient(recipientEmail, uid);
+          return this.acceptRecipient(recipientEmail, foundUserId);
         }
       })
       .catch((err) => {
@@ -207,13 +201,13 @@ class UserDatasetSharingModal extends React.Component {
       )
     )
       return;
-    const { unshareUserDatasets } = this.props;
+    const { unshareUserDatasets, context } = this.props;
     if (typeof unshareUserDatasets !== 'function')
       throw new TypeError(
         'UserDatasetSharingModal:unshareWithUser: expected unshareUserDatasets to be function. Got: ' +
           typeof unshareUserDatasets
       );
-    unshareUserDatasets(datasetId, userId);
+    unshareUserDatasets(datasetId, userId, context);
   }
 
   renderShareItem(share, index, userDataset) {
@@ -363,22 +357,13 @@ class UserDatasetSharingModal extends React.Component {
     const recipients = this.getValidRecipients();
     const datasets = this.getShareableDatasets();
     if (!datasets.length) return;
-    const { shareUserDatasets } = this.props;
+    const { shareUserDatasets, context } = this.props;
 
-    this.setState({ processing: true }, () => {
-      shareUserDatasets(
-        datasets.map(({ id }) => id),
-        recipients.map(({ id }) => id)
-      )
-        .then((response) => {
-          if (response.type !== 'user-datasets/sharing-success') throw response;
-          this.setState({ processing: false, succeeded: true });
-        })
-        .catch((err) => {
-          console.error('submitShare: rejected', err);
-          this.setState({ processing: false, succeeded: false });
-        });
-    });
+    shareUserDatasets(
+      datasets.map(({ id }) => id),
+      recipients.map(({ id }) => id),
+      context
+    );
   }
 
   renderRecipientForm() {
@@ -439,8 +424,9 @@ class UserDatasetSharingModal extends React.Component {
   }
 
   renderViewContent() {
-    const { recipients, succeeded } = this.state;
-    const { datasets, onClose, dataNoun } = this.props;
+    const { recipients } = this.state;
+    const { datasets, onClose, dataNoun, shareError, shareSuccessful } =
+      this.props;
     const datasetNoun = this.getDatasetNoun();
 
     const DatasetList = this.renderDatasetList;
@@ -453,52 +439,50 @@ class UserDatasetSharingModal extends React.Component {
       </button>
     );
 
-    switch (succeeded) {
-      case true:
-        return (
-          <div className="UserDataset-SharingModal-StatusView">
-            <Icon fa="check-circle success" />
-            <h2>Shared successfully.</h2>
-            <CloseButton />
+    if (shareError) {
+      return (
+        <div className="UserDataset-SharingModal-StatusView">
+          <Icon fa="times-circle danger" />
+          <h2>Error Sharing {dataNoun.plural}.</h2>
+          <p>
+            An error occurred while sharing your {dataNoun.plural.toLowerCase()}
+            . Please try again.
+          </p>
+          <CloseButton />
+        </div>
+      );
+    } else if (shareSuccessful) {
+      return (
+        <div className="UserDataset-SharingModal-StatusView">
+          <Icon fa="check-circle success" />
+          <h2>Shared successfully.</h2>
+          <CloseButton />
+        </div>
+      );
+    } else {
+      return (
+        <div className="UserDataset-SharingModal-FormView">
+          <div className="UserDataset-SharingModal-DatasetSection">
+            <h2 className="UserDatasetSharing-SectionName">
+              Share {datasetNoun}:
+            </h2>
+            <DatasetList datasets={datasets} />
           </div>
-        );
-      case false:
-        return (
-          <div className="UserDataset-SharingModal-StatusView">
-            <Icon fa="times-circle danger" />
-            <h2>Error Sharing {dataNoun.plural}.</h2>
-            <p>
-              An error occurred while sharing your{' '}
-              {dataNoun.plural.toLowerCase()}. Please try again.
-            </p>
-            <CloseButton />
+          <div className="UserDataset-SharingModal-RecipientSection">
+            <h2 className="UserDatasetSharing-SectionName">
+              With the following recipients:
+            </h2>
+            <RecipientForm />
+            <RecipientList recipients={recipients} />
+            <SharingButtons />
           </div>
-        );
-      default:
-        return (
-          <div className="UserDataset-SharingModal-FormView">
-            <div className="UserDataset-SharingModal-DatasetSection">
-              <h2 className="UserDatasetSharing-SectionName">
-                Share {datasetNoun}:
-              </h2>
-              <DatasetList datasets={datasets} />
-            </div>
-            <div className="UserDataset-SharingModal-RecipientSection">
-              <h2 className="UserDatasetSharing-SectionName">
-                With the following recipients:
-              </h2>
-              <RecipientForm />
-              <RecipientList recipients={recipients} />
-              <SharingButtons />
-            </div>
-          </div>
-        );
+        </div>
+      );
     }
   }
 
   render() {
-    const { onClose } = this.props;
-    const { processing } = this.state;
+    const { onClose, sharingDatasetPending } = this.props;
     const ViewContent = this.renderViewContent;
 
     return (
@@ -513,7 +497,7 @@ class UserDatasetSharingModal extends React.Component {
             onClick={() => (typeof onClose === 'function' ? onClose() : null)}
           />
         </div>
-        {processing ? <Loading /> : <ViewContent />}
+        {sharingDatasetPending ? <Loading /> : <ViewContent />}
       </Modal>
     );
   }
