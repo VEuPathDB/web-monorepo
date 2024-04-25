@@ -62,7 +62,7 @@ function getStatus(
     case 'queued':
     case 'in-progress':
       return {
-        content: `This ${dataNoun} is queued. Please check again soon.`,
+        content: `This ${dataNoun} is queued. Please check again soon (reload the page).`,
         icon: 'clock-o',
       };
     case 'invalid':
