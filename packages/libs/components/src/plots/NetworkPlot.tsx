@@ -26,9 +26,11 @@ import { plotToImage } from './visxVEuPathDB';
 import { GlyphTriangle } from '@visx/visx';
 
 import './BipartiteNetwork.css';
+import { container } from 'webpack';
 
 export interface BipartiteNetworkSVGStyles {
   width?: number; // svg width
+  height?: number; // svg height
   topPadding?: number; // space between the top of the svg and the top-most node
   nodeSpacing?: number; // space between vertically adjacent nodes
   columnPadding?: number; // space between the left of the svg and the left column, also the right of the svg and the right column.
@@ -112,6 +114,7 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
   // Set up styles for the bipartite network and incorporate overrides
   const svgStyles = {
     width: Number(containerStyles?.width) || 400,
+    height: Number(containerStyles?.height) || 500,
     topPadding: 40,
     nodeSpacing: 30,
     columnPadding: 100,
@@ -245,13 +248,9 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
             ))}
           </div>
         )}
-        <div
-          className="bpnet-plot-container"
-          ref={plotRef}
-          style={{ width: '100%', height: '100%' }}
-        >
+        <div className="network-plot-container" ref={plotRef}>
           {nodes.length > 0 ? (
-            <svg width={svgStyles.width} height={500}>
+            <svg width={svgStyles.width} height={svgStyles.height}>
               <Graph
                 graph={{
                   nodes: nodesWithActions,

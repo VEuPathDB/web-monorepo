@@ -8,10 +8,10 @@ import {
 import BipartiteNetwork, {
   BipartiteNetworkProps,
   BipartiteNetworkSVGStyles,
-  NodeMenuAction,
 } from '../../plots/BipartiteNetwork';
 import { twoColorPalette } from '../../types/plots/addOns';
 import { Text } from '@visx/text';
+import { NodeMenuAction } from '../../plots/NetworkPlot';
 
 export default {
   title: 'Plots/Network/BipartiteNetwork',
@@ -22,7 +22,7 @@ interface TemplateProps {
   data: BipartiteNetworkData;
   partition1Name?: string;
   partition2Name?: string;
-  loading?: boolean;
+  showSpinner?: boolean;
   showThumbnail?: boolean;
   containerStyles?: CSSProperties;
   svgStyleOverrides?: BipartiteNetworkSVGStyles;
@@ -49,10 +49,12 @@ const Template: Story<TemplateProps> = (args) => {
   const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>([]);
 
   const bipartiteNetworkProps: BipartiteNetworkProps = {
-    data: args.data,
+    nodes: args.data.nodes,
+    links: args.data.links,
+    partitions: args.data.partitions,
     partition1Name: args.partition1Name,
     partition2Name: args.partition2Name,
-    showSpinner: args.loading,
+    showSpinner: args.showSpinner,
     containerStyles: args.containerStyles,
     svgStyleOverrides: args.svgStyleOverrides,
     labelTruncationLength: args.labelTruncationLength,
@@ -72,7 +74,7 @@ const Template: Story<TemplateProps> = (args) => {
         <>
           <br></br>
           <h3>A snapshot of the plot will appear below after two sconds...</h3>
-          <img src={img} />
+          <img src={img} alt="Bipartite network snapshot" />
         </>
       )}
     </>
@@ -111,7 +113,7 @@ Loading.args = {
   data: simpleData,
   partition1Name: 'Partition 1',
   partition2Name: 'Partition 2',
-  loading: true,
+  showSpinner: true,
 };
 
 // Empty bipartite network
@@ -177,6 +179,7 @@ WithActions.args = {
   partition1Name: 'Partition 1',
   partition2Name: 'Partition 2',
   getNodeMenuActions: getNodeActions,
+  isSelectable: false,
 };
 
 export const WithSelection = Template.bind({});

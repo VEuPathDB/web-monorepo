@@ -37,7 +37,7 @@ export type NetworkPlotData = {
   links: LinkData[];
 };
 
-export type NodeIdList = {
+export type NetworkPartition = {
   nodeIds: string[];
 };
 
@@ -45,5 +45,5 @@ export type NodeIdList = {
  * nodes in each of the two columns. IDs in columnXNodeIDs must match node ids exactly.
  */
 export type BipartiteNetworkData = {
-  partitions: NodeIdList[];
+  partitions: NetworkPartition[];
 } & NetworkPlotData;
