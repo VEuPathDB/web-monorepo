@@ -122,7 +122,7 @@ export const ServiceBase = (serviceUrl: string) => {
     name: 'WdkService/' + serviceUrl,
   });
   const _cache: Map<string, Promise<any>> = new Map();
-  let _initialCheck: Promise<number> | undefined;
+  let _initialCheck: Promise<ServiceConfig> | undefined;
   let _version: number | undefined;
   let _isInvalidating = false;
 
@@ -206,7 +206,7 @@ export const ServiceBase = (serviceUrl: string) => {
     console.group('Client error log');
     console.error(error);
     console.groupEnd();
-    return _checkStoreVersion().then(() =>
+    return _initializeStore().then(() =>
       sendRequest(Decode.none, {
         method: 'post',
         path: '/client-errors',
@@ -273,14 +273,10 @@ export const ServiceBase = (serviceUrl: string) => {
 
         return response.text().then((text) => {
           if (response.status === 409 && text === CLIENT_OUT_OF_SYNC_TEXT) {
-            _isInvalidating = true;
-            Promise.all([
-              _store.clear(),
-              alert(
-                'Reload Page',
-                'This page is no longer valid and will be reloaded.'
-              ),
-            ]).then(() => location.reload(true));
+            if (!_isInvalidating) {
+              _isInvalidating = true;
+              _store.clear().then(() => window.location.reload(true));
+            }
             return pendingPromise as Promise<T>;
           }
 
@@ -306,7 +302,7 @@ export const ServiceBase = (serviceUrl: string) => {
     checkCachedValue = (cachedValue: T) => true
   ) {
     if (!_cache.has(key)) {
-      let cacheValue$ = _checkStoreVersion()
+      let cacheValue$ = _initializeStore()
         .then(() => _store.getItem<T>(key))
         .then((storeItem) => {
           if (storeItem != null && checkCachedValue(storeItem))
@@ -326,31 +322,26 @@ export const ServiceBase = (serviceUrl: string) => {
     return <Promise<T>>_cache.get(key);
   }
 
-  function _checkStoreVersion() {
+  /**
+   * Set the store version
+   */
+  function _initializeStore() {
     if (_initialCheck == null) {
-      let serviceConfig$ = _fetchJson<ServiceConfig>('get', '/');
-      let storeConfig$ = _store.getItem<ServiceConfig>('config');
-      _initialCheck = Promise.all([serviceConfig$, storeConfig$] as const)
-        .then(([serviceConfig, storeConfig]) => {
-          if (
-            storeConfig == null ||
-            storeConfig.startupTime != serviceConfig.startupTime
-          ) {
-            return _store.clear().then(() => {
-              return _store.setItem('config', serviceConfig).catch((err) => {
-                console.error(
-                  'Unable to store WdkService item with key `config`.',
-                  err
-                );
-                return serviceConfig;
-              });
-            });
+      _initialCheck = _store
+        .getItem<ServiceConfig>('/__config')
+        .then((storeConfig) => {
+          if (storeConfig == null) {
+            return _fetchJson<ServiceConfig>('GET', '/').then(
+              (serviceConfig) => {
+                return _store.setItem('/__config', serviceConfig);
+              }
+            );
           }
-          return serviceConfig;
+          return storeConfig;
         })
-        .then((serviceConfig) => {
-          _version = serviceConfig.startupTime;
-          return _version;
+        .then((config) => {
+          _version = config.startupTime;
+          return config;
         });
     }
     return _initialCheck;
@@ -360,8 +351,9 @@ export const ServiceBase = (serviceUrl: string) => {
     return _store.clear();
   }
 
-  function getVersion() {
-    return _checkStoreVersion();
+  async function getVersion() {
+    const { startupTime } = await getConfig();
+    return startupTime;
   }
 
   function getRecordTypesPath() {
