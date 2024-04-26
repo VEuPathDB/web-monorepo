@@ -190,7 +190,7 @@ class RecordTable extends Component {
     );
     const sortType = columnToSort?.sortType ?? 'text';
 
-    const sortedMesaRows =
+    const preSortedMesaRows =
       sort?.columnKey == null
         ? mesaReadyRows
         : orderBy(
@@ -221,6 +221,23 @@ class RecordTable extends Component {
             [sort.direction]
           );
 
+    const sortedMesaRows =
+      isOrthologTableWithData && this.props.orthoTableProps.groupBySelected
+        ? preSortedMesaRows.sort((a, b) => {
+            const aSelected =
+              this.props.orthoTableProps.options.isRowSelected(a);
+            const bSelected =
+              this.props.orthoTableProps.options.isRowSelected(b);
+            return aSelected && bSelected
+              ? 0
+              : aSelected
+              ? -1
+              : bSelected
+              ? 1
+              : 0;
+          })
+        : preSortedMesaRows;
+
     const queryTerms = parseSearchQueryString(this.state.searchTerm);
     const searchTermRegex = areTermsInStringRegexString(queryTerms);
     const regex = new RegExp(searchTermRegex, 'i');
@@ -248,9 +265,11 @@ class RecordTable extends Component {
         sort: this.state.sort,
         expandedRows,
         filteredRowCount: mesaReadyRows.length - filteredRows.length,
+        ...(isOrthologTableWithData
+          ? { groupBySelected: this.props.orthoTableProps.groupBySelected }
+          : {}),
       },
       options: {
-        toolbar: true,
         childRow: childRow ? this.wrappedChildRow : undefined,
         className: 'wdk-DataTableContainer',
         getRowId: getSortIndex,

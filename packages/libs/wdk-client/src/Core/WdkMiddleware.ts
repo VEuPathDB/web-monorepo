@@ -29,7 +29,7 @@ export interface ActionThunk<
   T,
   S extends ActionCreatorServices = ActionCreatorServices
 > {
-  (services: S): ActionCreatorResult<T>;
+  (services: S): ActionCreatorResult<T, S>;
 }
 
 // The following is used by thunks. When WdkMiddleware encounters this action,

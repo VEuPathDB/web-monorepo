@@ -1,11 +1,6 @@
 import { zipWith } from 'lodash';
 
-import {
-  arrayOf,
-  number,
-  objectOf,
-  record,
-} from '@veupathdb/wdk-client/lib/Utils/Json';
+import { number, objectOf, record } from '@veupathdb/wdk-client/lib/Utils/Json';
 
 import {
   createJsonRequest,
@@ -29,7 +24,7 @@ import { FormSubmission } from '../Components/UploadForm';
 import { makeNewUserDatasetConfig } from '../Utils/upload-user-dataset';
 
 const userIdsByEmailDecoder = record({
-  results: arrayOf(objectOf(number)),
+  results: objectOf(number),
 });
 
 export class UserDatasetApi extends FetchClientWithCredentials {
