@@ -20,7 +20,6 @@ import { ToImgopts } from 'plotly.js';
 import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 import { ExportPlotToImageButton } from './ExportPlotToImageButton';
 import { plotToImage } from './visxVEuPathDB';
-import { Menu } from '@veupathdb/coreui/lib/components/inputs/Menu';
 import { GlyphTriangle } from '@visx/visx';
 
 import './BipartiteNetwork.css';
@@ -204,7 +203,7 @@ function BipartiteNetwork(
         // If a link is grayed out, it will be sorted before other links.
         // In theory, it's possible to have a false positive here;
         // but that's okay, because the overlapping colors will be the same.
-        (link) => (link.color === '#eee' ? 1 : -1)
+        (link) => (link.color === '#eee' ? -1 : 1)
       ),
     [data.links, highlightedNodeId, nodesByPartitionWithCoordinates]
   );
@@ -267,20 +266,35 @@ function BipartiteNetwork(
               background: 'white',
             }}
           >
-            <Menu
-              items={activeNode.actions.map((nodeAction) => ({
-                display: nodeAction.label,
-                value: nodeAction,
-              }))}
-              onSelect={(action) => {
-                if (action.href) {
-                  window.location.assign(action.href);
-                } else if (action.onClick) {
-                  action.onClick();
-                }
-                setActiveNodeId(undefined);
-              }}
-            />
+            {activeNode.actions.map((action) => (
+              <div>
+                {action.href ? (
+                  <a
+                    style={{
+                      display: 'inline-block',
+                      lineHeight: '1.25em',
+                      padding: '0.5em 1em',
+                    }}
+                    href={action.href}
+                  >
+                    {action.label}
+                  </a>
+                ) : (
+                  <button
+                    style={{
+                      display: 'inline-block',
+                      lineHeight: '1.25em',
+                      padding: '0.5em 1em',
+                    }}
+                    onClick={action.onClick}
+                    type="button"
+                    className="link"
+                  >
+                    {action.label}
+                  </button>
+                )}
+              </div>
+            ))}
           </div>
         )}
         <div

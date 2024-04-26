@@ -21,7 +21,7 @@ import { StateSlice } from '../StoreModules/types';
 import { datasetIdType, DatasetUploadTypeConfigEntry } from '../Utils/types';
 import { assertIsVdiCompatibleWdkService } from '../Service';
 
-const SUPPORTED_FILE_UPLOAD_TYPES = ['csv', 'gz', 'tgz', 'tsv', 'txt', 'zip'];
+const SUPPORTED_FILE_UPLOAD_TYPES: string[] = [];
 
 interface Props<T extends string = string> {
   baseUrl: string;

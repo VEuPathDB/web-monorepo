@@ -44,6 +44,10 @@ import {
   PanelConfig,
   PanelPositionConfig,
 } from '../appState';
+import {
+  findLeastAncestralGeoConfig,
+  getGeoConfig,
+} from '../../../core/utils/geoVariables';
 
 export const defaultAnimation = {
   method: 'geohash',
@@ -68,6 +72,7 @@ export interface SharedMarkerConfigurations {
   selectedVariable: VariableDescriptor;
   activeVisualizationId?: string;
   selectedMarkers?: string[];
+  geoEntityId?: string;
 }
 
 export function useCommonData(
@@ -76,7 +81,10 @@ export function useCommonData(
   studyEntities: StudyEntity[],
   boundsZoomLevel?: BoundsViewport
 ) {
-  const geoConfig = geoConfigs[0];
+  const geoConfig = findLeastAncestralGeoConfig(
+    geoConfigs,
+    selectedVariable.entityId
+  );
 
   const { entity: overlayEntity, variable: overlayVariable } =
     findEntityAndVariable(studyEntities, selectedVariable) ?? {};
@@ -544,10 +552,20 @@ export function timeSliderLittleFilter(props: UseLittleFiltersProps): Filter[] {
 
 export function viewportLittleFilters(props: UseLittleFiltersProps): Filter[] {
   const {
-    appState: { boundsZoomLevel },
+    appState: {
+      boundsZoomLevel,
+      markerConfigurations,
+      activeMarkerConfigurationType,
+    },
     geoConfigs,
   } = props;
-  const geoConfig = geoConfigs[0]; // not ideal...
+
+  const { geoEntityId } =
+    markerConfigurations.find(
+      (markerConfig) => markerConfig.type === activeMarkerConfigurationType
+    ) ?? {};
+
+  const geoConfig = getGeoConfig(geoConfigs, geoEntityId);
   return boundsZoomLevel == null
     ? []
     : filtersFromBoundingBox(
@@ -698,7 +716,7 @@ export function selectedMarkersLittleFilter(
   // only return a filter if there are selectedMarkers
   if (selectedMarkers && selectedMarkers.length > 0) {
     const { entity, zoomLevelToAggregationLevel, aggregationVariableIds } =
-      geoConfigs[0];
+      getGeoConfig(geoConfigs, activeMarkerConfiguration.geoEntityId);
     const geoAggregationVariableId =
       aggregationVariableIds?.[zoomLevelToAggregationLevel(zoom) - 1];
     if (entity && geoAggregationVariableId)
