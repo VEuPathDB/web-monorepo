@@ -14,6 +14,9 @@ import {
   shareUserDatasets,
   unshareUserDatasets,
   updateUserDatasetDetail,
+  updateSharingModalState,
+  sharingError,
+  sharingSuccess,
 } from '../Actions/UserDatasetsActions';
 
 import BigwigDatasetDetail from '../Components/Detail/BigwigDatasetDetail';
@@ -33,6 +36,9 @@ const ActionCreators = {
   removeUserDataset,
   shareUserDatasets,
   unshareUserDatasets,
+  updateSharingModalState,
+  sharingError,
+  sharingSuccess,
 };
 
 export type UserDatasetDetailProps = any;
@@ -153,6 +159,9 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       shareUserDatasets,
       removeUserDataset,
       unshareUserDatasets,
+      updateSharingModalState,
+      sharingSuccess,
+      sharingError,
     } = this.props.dispatchProps;
     const {
       userDatasetsById,
@@ -161,6 +170,10 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       questions,
       config,
       userDatasetUpdating,
+      sharingModalOpen,
+      sharingDatasetPending,
+      shareError,
+      shareSuccessful,
     } = this.props.stateProps;
     const entry = userDatasetsById[id];
     const isOwner = !!(
@@ -182,6 +195,13 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       shareUserDatasets,
       unshareUserDatasets,
       updateUserDatasetDetail,
+      sharingModalOpen,
+      sharingDatasetPending,
+      sharingError,
+      shareError,
+      sharingSuccess,
+      shareSuccessful,
+      updateSharingModalState,
       userDataset: entry.resource,
       fileListing: entry.fileListing,
       getQuestionUrl: this.getQuestionUrl,

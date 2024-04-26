@@ -47,6 +47,9 @@ export function EDAWorkspaceHeading({
   const analysisId = getAnalysisId(analysis);
 
   const permissionsValue = usePermissions();
+
+  const studyAccess = getStudyAccess(studyRecord);
+
   const showButtons =
     !permissionsValue.loading &&
     Boolean(
@@ -77,8 +80,9 @@ export function EDAWorkspaceHeading({
           </H3>
         )}
         <div>
-          {studyMetadata.isUserStudy &&
-            !permissionsValue.loading &&
+          {!permissionsValue.loading &&
+            !studyMetadata.isUserStudy &&
+            studyAccess?.toLowerCase() !== 'public' &&
             shouldOfferLinkToDashboard(
               permissionsValue.permissions,
               studyRecord.id[0].value
