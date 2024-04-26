@@ -107,11 +107,12 @@ export default class DataClient extends FetchClientWithCredentials {
   // Lineplot
   getLineplot(
     computationName: string,
+    pluginName: string,
     params: LineplotRequestParams
   ): Promise<LineplotResponse> {
     return this.getVisualizationData(
       computationName,
-      'lineplot',
+      pluginName,
       params,
       LineplotResponse
     );

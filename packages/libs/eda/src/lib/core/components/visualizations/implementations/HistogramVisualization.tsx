@@ -123,7 +123,7 @@ import {
 import { useDeepValue } from '../../../hooks/immutability';
 import { ResetButtonCoreUI } from '../../ResetButton';
 import { FloatingHistogramExtraProps } from '../../../../map/analysis/hooks/plugins/histogram';
-import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
+import { useOutputEntity } from '../../../hooks/findOutputEntity';
 import { useSubsettingClient } from '../../../hooks/workspace';
 import { red } from '../../filter/colors';
 import { min, max } from 'lodash';
@@ -393,7 +393,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
 
   // this returns undefined if the overlay and main variable
   // are on different branches of the tree
-  const outputEntity = useFindOutputEntity(
+  const outputEntity = useOutputEntity(
     dataElementDependencyOrder,
     selectedVariables,
     'xAxisVariable'
