@@ -25,8 +25,7 @@ import { ExportPlotToImageButton } from './ExportPlotToImageButton';
 import { plotToImage } from './visxVEuPathDB';
 import { GlyphTriangle } from '@visx/visx';
 
-import './BipartiteNetwork.css';
-import { container } from 'webpack';
+import './Network.css';
 
 export interface BipartiteNetworkSVGStyles {
   width?: number; // svg width
