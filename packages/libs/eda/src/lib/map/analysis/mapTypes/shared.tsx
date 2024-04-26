@@ -175,7 +175,7 @@ export function useDistributionOverlayConfig(
 ) {
   const dataClient = useDataClient();
   const subsettingClient = useSubsettingClient();
-  const findEntityAndVariable = useFindEntityAndVariable();
+  const findEntityAndVariable = useFindEntityAndVariable(props.filters);
   return useQuery({
     keepPreviousData: true,
     queryKey: ['distributionOverlayConfig', props],
