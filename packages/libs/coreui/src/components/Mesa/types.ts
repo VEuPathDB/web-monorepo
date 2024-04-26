@@ -28,6 +28,7 @@ export interface MesaStateProps<
     };
     emptinessCulprit?: 'search' | 'nocolumns' | 'filters' | 'nodata';
     expandedRows?: (number | string)[];
+    groupBySelected?: boolean;
   };
   headerWrapperStyle?: CSSProperties;
   options?: {
@@ -36,11 +37,17 @@ export interface MesaStateProps<
     inlineMaxWidth?: string;
     inlineMaxHeight?: string;
     className?: string;
-    showCount?: boolean;
     errOnOverflow?: boolean;
     editableColumns?: boolean;
     overflowHeight?: string;
     toolbar?: boolean;
+    /**
+     * It's possible to render counts in the ActionToolbar and the Toolbar, so be careful not to duplicate.
+     * This is because we pass search filters as children to Mesa that renders in the Toolbar if the toolbar
+     * option is true and renders in the ActionToolbar when false. For CSS positioning reasons, it's cleaner
+     * to render either toolbar component and not both, thus why it's possible to render counts in either situation.
+     */
+    showCount?: boolean;
     useStickyHeader?: boolean;
     useStickyFirstNColumns?: number;
     tableBodyMaxHeight?: string;
@@ -76,6 +83,7 @@ export interface MesaStateProps<
     onMultipleRowDeselect?: (rows: Row[]) => void;
     onColumnReorder?: (columnKey: Key, columnIndex: number) => void;
     onExpandedRowsChange?: (indexes: number[]) => void;
+    onGroupBySelectedChange?: (groupBySelected: boolean) => void;
   };
 }
 
