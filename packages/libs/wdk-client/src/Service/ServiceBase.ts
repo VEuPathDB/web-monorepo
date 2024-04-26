@@ -125,6 +125,7 @@ export const ServiceBase = (serviceUrl: string) => {
   let _initialCheck: Promise<ServiceConfig> | undefined;
   let _version: number | undefined;
   let _isInvalidating = false;
+  let _firstRealRequestMade = false;
 
   /**
    * Get the configuration for the Wdk REST Service that resides at the given base url.
@@ -246,6 +247,8 @@ export const ServiceBase = (serviceUrl: string) => {
       credentials: 'include',
     })
       .then((response) => {
+        let firstRealRequestMade = _firstRealRequestMade;
+        _firstRealRequestMade = true;
         if (_isInvalidating) {
           return pendingPromise as Promise<T>;
         }
@@ -275,9 +278,21 @@ export const ServiceBase = (serviceUrl: string) => {
           if (response.status === 409 && text === CLIENT_OUT_OF_SYNC_TEXT) {
             if (!_isInvalidating) {
               _isInvalidating = true;
-              _store.clear().then(() => window.location.reload(true));
+              _store
+                .clear()
+                .then(() =>
+                  firstRealRequestMade
+                    ? alert(
+                        'Out of data',
+                        'The data on the page is out of date, and will be reloaded.'
+                      )
+                    : undefined
+                )
+                .then(() => {
+                  window.location.reload(true);
+                });
+              return pendingPromise as Promise<T>;
             }
-            return pendingPromise as Promise<T>;
           }
 
           // FIXME Get uuid from response header when available
