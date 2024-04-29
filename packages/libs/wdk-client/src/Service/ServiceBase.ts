@@ -283,8 +283,8 @@ export const ServiceBase = (serviceUrl: string) => {
                 .then(() =>
                   firstRealRequestMade
                     ? alert(
-                        'Out of data',
-                        'The data on the page is out of date, and will be reloaded.'
+                        'Reload page',
+                        'This page is no longer valid and will be reloaded.'
                       )
                     : undefined
                 )
