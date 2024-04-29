@@ -1,6 +1,8 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
 import { NodeData, LinkData, NetworkPlotData } from '../../types/plots/network';
 import NetworkPlot from '../../plots/NetworkPlot';
+import { ReactNode } from 'react';
+import { Text } from '@visx/text';
 
 export default {
   title: 'Plots/Network',
@@ -12,6 +14,7 @@ const DEFAULT_PLOT_SIZE = 500;
 
 interface TemplateProps {
   data: NetworkPlotData;
+  annotations?: ReactNode[];
 }
 
 // This template is a simple network that highlights our NodeWithLabel and Link components.
@@ -19,6 +22,7 @@ const Template: Story<TemplateProps> = (args) => {
   return (
     <NetworkPlot
       {...args.data}
+      annotations={args.annotations}
       containerStyles={{ width: DEFAULT_PLOT_SIZE }}
     />
   );
@@ -45,6 +49,23 @@ const manyPointsData = genNetwork(
 export const ManyPoints = Template.bind({});
 ManyPoints.args = {
   data: manyPointsData,
+};
+
+// A network with annotations
+const annotation1 = (
+  <Text x={30} y={50} fontWeight={600} fill={'orange'}>
+    I am an annotation
+  </Text>
+);
+const annotation2 = (
+  <Text x={300} y={50} fontWeight={600} fill={'blue'}>
+    I am another annotation
+  </Text>
+);
+export const WithAnnotations = Template.bind({});
+WithAnnotations.args = {
+  data: simpleData,
+  annotations: [annotation1, annotation2],
 };
 
 // Gerenate a network with a given number of nodes and random edges

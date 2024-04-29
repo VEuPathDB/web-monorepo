@@ -62,6 +62,8 @@ export interface NetworkPlotProps {
   emptyNetworkContent?: ReactNode;
   /** Entries for the actions that appear in the menu when you click a node */
   getNodeMenuActions?: (nodeId: string) => NodeMenuAction[];
+  /** Labels, notes, and other annotations to add to the network */
+  annotations?: ReactNode[];
 }
 
 const emptyNodes: NodeData[] = [...Array(9).keys()].map((item) => ({
@@ -86,6 +88,7 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
     labelTruncationLength = 20,
     emptyNetworkContent,
     getNodeMenuActions: getNodeActions,
+    annotations,
   } = props;
 
   const [highlightedNodeId, setHighlightedNodeId] = useState<string>();
@@ -322,6 +325,10 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
                   );
                 }}
               />
+              {annotations &&
+                annotations.map((annotation) => {
+                  return annotation;
+                })}
             </svg>
           ) : (
             emptyNetworkContent ?? <p>No nodes in the network</p>

@@ -16,6 +16,7 @@ import {
   SVGAttributes,
 } from 'react';
 import { gray } from '@veupathdb/coreui/lib/definitions/colors';
+import { Text } from '@visx/text';
 
 import './BipartiteNetworkPlot.css';
 import NetworkPlot, { NodeMenuAction } from './NetworkPlot';
@@ -103,14 +104,14 @@ function BipartiteNetworkPlot(
   const DEFAULT_TOP_PADDING = 40;
   const DEFAULT_NODE_SPACING = 30;
   const DEFAULT_SVG_WIDTH = 400;
-  const topPadding = partitions[0].name || partitions[1].name ? 100 : 20;
   const svgStyles = {
     width: Number(containerStyles?.width) || DEFAULT_SVG_WIDTH,
     height:
       Math.max(partitions[1].nodeIds.length, partitions[0].nodeIds.length) *
         DEFAULT_NODE_SPACING +
       DEFAULT_TOP_PADDING,
-    topPadding: DEFAULT_TOP_PADDING,
+    topPadding:
+      partitions[0].name || partitions[1].name ? 60 : DEFAULT_TOP_PADDING,
     nodeSpacing: DEFAULT_NODE_SPACING,
     columnPadding: 100,
     ...svgStyleOverrides,
@@ -147,7 +148,7 @@ function BipartiteNetworkPlot(
           return {
             // partitionIndex of 0 refers to the left-column nodes whereas 1 refers to right-column nodes
             x: partitionIndex === 0 ? column1Position : column2Position,
-            y: topPadding + svgStyles.nodeSpacing * indexInPartition,
+            y: svgStyles.topPadding + svgStyles.nodeSpacing * indexInPartition,
             labelPosition:
               partitionIndex === 0 ? 'left' : ('right' as LabelPosition),
             ...node,
@@ -161,8 +162,30 @@ function BipartiteNetworkPlot(
       partitions,
       nodesByPartition,
       svgStyles.nodeSpacing,
-      topPadding,
+      svgStyles.topPadding,
     ]
+  );
+
+  // Create column labels if any exist
+  const leftColumnLabel = partitions[0].name && (
+    <Text
+      x={column1Position}
+      y={svgStyles.topPadding / 2}
+      textAnchor="end"
+      className="BipartiteNetworkPartitionTitle"
+    >
+      {partitions[0].name}
+    </Text>
+  );
+  const rightColumnLabel = partitions[1].name && (
+    <Text
+      x={column2Position}
+      y={svgStyles.topPadding / 2}
+      textAnchor="start"
+      className="BipartiteNetworkPartitionTitle"
+    >
+      {partitions[1].name}
+    </Text>
   );
 
   // // Assign coordinates to links based on the newly created node coordinates
@@ -245,6 +268,7 @@ function BipartiteNetworkPlot(
         nodesByPartitionWithCoordinates[1]
       )}
       links={links}
+      annotations={[leftColumnLabel, rightColumnLabel]}
       svgStyleOverrides={svgStyles}
     />
   );
