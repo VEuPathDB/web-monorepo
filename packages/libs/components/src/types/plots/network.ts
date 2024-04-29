@@ -1,3 +1,5 @@
+import { LabelPosition } from '../../plots/Node';
+
 // Types required for creating networks
 export type NodeData = {
   /** Node ID. Must be unique in the network! */
@@ -16,6 +18,8 @@ export type NodeData = {
   stroke?: string;
   /** Width of node stroke */
   strokeWidth?: number;
+  /** Should the node label be drawn to the right or left of the node? */
+  labelPosition?: LabelPosition;
 };
 
 export type LinkData = {

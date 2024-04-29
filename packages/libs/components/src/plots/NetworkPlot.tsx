@@ -119,25 +119,45 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
     ...svgStyleOverrides,
   };
 
+  const plotRect = plotRef.current?.getBoundingClientRect();
+  const imageHeight = plotRect?.height;
+  const imageWidth = plotRect?.width;
+
+  const nodesWithActions = useMemo(
+    () =>
+      nodes.map((node, index) => ({
+        labelPosition: 'right' as LabelPosition,
+        ...node,
+        x: node.x ?? 230 + 200 * Math.cos(2 * Math.PI * (index / nodes.length)),
+        y: node.y ?? 230 + 200 * Math.sin(2 * Math.PI * (index / nodes.length)),
+        actions: getNodeActions?.(node.id),
+      })),
+    [getNodeActions, nodes]
+  );
+
   // Assign coordinates to links based on the newly created node coordinates
   const linksWithCoordinates = useMemo(
     () =>
       // Put highlighted links on top of gray links.
       orderBy(
         links.map((link) => {
-          const sourceNode = nodes.find((node) => node.id === link.source.id);
-          const targetNode = nodes.find((node) => node.id === link.target.id);
+          const sourceNode = nodesWithActions.find(
+            (node) => node.id === link.source.id
+          );
+          const targetNode = nodesWithActions.find(
+            (node) => node.id === link.target.id
+          );
           return {
             ...link,
             source: {
+              ...link.source,
               x: sourceNode?.x,
               y: sourceNode?.y,
-              ...link.source,
             },
             target: {
+              ...link.target,
               x: targetNode?.x,
               y: targetNode?.y,
-              ...link.target,
             },
             color:
               highlightedNodeId != null &&
@@ -153,23 +173,7 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
         // but that's okay, because the overlapping colors will be the same.
         (link) => (link.color === '#eee' ? -1 : 1)
       ),
-    [links, highlightedNodeId, nodes]
-  );
-
-  const plotRect = plotRef.current?.getBoundingClientRect();
-  const imageHeight = plotRect?.height;
-  const imageWidth = plotRect?.width;
-
-  const nodesWithActions = useMemo(
-    () =>
-      nodes.map((node) => ({
-        x: Math.random() * 100,
-        y: Math.random() * 100,
-        labelPosition: 'right' as LabelPosition,
-        ...node,
-        actions: getNodeActions?.(node.id),
-      })),
-    [getNodeActions, nodes]
+    [links, highlightedNodeId, nodesWithActions]
   );
 
   const activeNode = nodesWithActions.find((node) => node.id === activeNodeId);

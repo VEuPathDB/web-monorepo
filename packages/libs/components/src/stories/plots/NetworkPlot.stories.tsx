@@ -33,7 +33,13 @@ const Template: Story<TemplateProps> = (args) => {
  */
 
 // A simple network with node labels
-const simpleData = genNetwork(20, true, DEFAULT_PLOT_SIZE, DEFAULT_PLOT_SIZE);
+const simpleData = genNetwork(
+  20,
+  true,
+  true,
+  DEFAULT_PLOT_SIZE,
+  DEFAULT_PLOT_SIZE
+);
 export const Simple = Template.bind({});
 Simple.args = {
   data: simpleData,
@@ -43,12 +49,27 @@ Simple.args = {
 const manyPointsData = genNetwork(
   100,
   false,
+  true,
   DEFAULT_PLOT_SIZE,
   DEFAULT_PLOT_SIZE
 );
+
 export const ManyPoints = Template.bind({});
 ManyPoints.args = {
   data: manyPointsData,
+};
+
+// Test the default layout
+const defaultLayoutData = genNetwork(
+  50,
+  false,
+  false,
+  DEFAULT_PLOT_SIZE,
+  DEFAULT_PLOT_SIZE
+);
+export const DefaultLayout = Template.bind({});
+DefaultLayout.args = {
+  data: defaultLayoutData,
 };
 
 // A network with annotations
@@ -78,6 +99,7 @@ Empty.args = {
 function genNetwork(
   nNodes: number,
   addNodeLabel: boolean,
+  addNodeCoordinates: boolean,
   height: number,
   width: number
 ) {
@@ -86,8 +108,8 @@ function genNetwork(
     const nodeX = 10 + Math.floor(Math.random() * (width - 20)); // Add/Subtract a bit to keep the whole node in view
     const nodeY = 10 + Math.floor(Math.random() * (height - 20));
     return {
-      x: nodeX,
-      y: nodeY,
+      x: addNodeCoordinates ? nodeX : undefined,
+      y: addNodeCoordinates ? nodeY : undefined,
       id: String(i),
       label: addNodeLabel ? 'Node ' + String(i) : undefined,
       labelPosition: addNodeLabel
