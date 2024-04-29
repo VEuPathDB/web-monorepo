@@ -289,7 +289,7 @@ export const ServiceBase = (serviceUrl: string) => {
                     : undefined
                 )
                 .then(() => {
-                  window.location.reload(true);
+                  window.location.reload();
                 });
               return pendingPromise as Promise<T>;
             }
