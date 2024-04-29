@@ -161,9 +161,17 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     enabled: configuration.selectedCountsOption === 'visible',
   });
 
-  const previewMarkerData = useMarkerData({
+  const overlayConfigQueryResult = useDistributionOverlayConfig({
     studyId,
     filters,
+    binningMethod,
+    overlayVariableDescriptor: selectedVariable,
+    selectedValues,
+  });
+
+  const previewMarkerData = useMarkerData({
+    studyId,
+    filters, // no extra little filters; should reflect whole map and all time
     studyEntities,
     geoConfigs,
     selectedVariable,
@@ -171,6 +179,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     binningMethod,
     dependentAxisLogScale,
     valueSpec: selectedPlotMode,
+    overlayConfigQueryResult,
   });
 
   const continuousMarkerPreview = useMemo(() => {
@@ -367,6 +376,14 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     markerDataFilterFuncs
   );
 
+  const overlayConfigQueryResult = useDistributionOverlayConfig({
+    studyId,
+    filters,
+    binningMethod,
+    overlayVariableDescriptor: selectedVariable,
+    selectedValues,
+  });
+
   const markerData = useMarkerData({
     studyEntities,
     studyId,
@@ -378,6 +395,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     binningMethod,
     dependentAxisLogScale,
     valueSpec: selectedPlotMode,
+    overlayConfigQueryResult,
   });
 
   const handleSelectedMarkerSnackbars = useSelectedMarkerSnackbars(
@@ -449,6 +467,15 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
   const { selectedMarkers, legendPanelConfig, visualizationPanelConfig } =
     configuration;
 
+  const { binningMethod, selectedVariable, selectedValues } = configuration;
+  const overlayConfigQueryResult = useDistributionOverlayConfig({
+    studyId,
+    filters,
+    binningMethod,
+    overlayVariableDescriptor: selectedVariable,
+    selectedValues,
+  });
+
   const markerData = useMarkerData({
     studyEntities,
     studyId,
@@ -459,6 +486,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     dependentAxisLogScale: configuration.dependentAxisLogScale,
     selectedValues: configuration.selectedValues,
     valueSpec: configuration.selectedPlotMode,
+    overlayConfigQueryResult,
   });
 
   const legendItems = markerData.legendItems;
