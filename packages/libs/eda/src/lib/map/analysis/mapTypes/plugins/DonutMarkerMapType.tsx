@@ -139,15 +139,24 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     enabled: configuration.selectedCountsOption === 'visible',
   });
 
-  const previewMarkerResult = useMarkerData({
+  const overlayConfigQueryResult = useDistributionOverlayConfig({
     studyId,
     filters,
+    binningMethod,
+    overlayVariableDescriptor: selectedVariable,
+    selectedValues,
+  });
+
+  const previewMarkerResult = useMarkerData({
+    studyId,
+    filters, // no extra little filters; should reflect whole map and all time
     studyEntities,
     geoConfigs,
     selectedVariable: configuration.selectedVariable,
     binningMethod: configuration.binningMethod,
     selectedValues: configuration.selectedValues,
     valueSpec: 'count',
+    overlayConfigQueryResult,
   });
 
   const continuousMarkerPreview = useMemo(() => {
@@ -328,6 +337,14 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     markerDataFilterFuncs
   );
 
+  const overlayConfigQueryResult = useDistributionOverlayConfig({
+    studyId,
+    filters,
+    binningMethod,
+    overlayVariableDescriptor: selectedVariable,
+    selectedValues,
+  });
+
   const markerDataResponse = useMarkerData({
     studyId,
     filters: filtersForMarkerData,
@@ -338,6 +355,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     selectedValues,
     binningMethod,
     valueSpec: 'count',
+    overlayConfigQueryResult,
   });
 
   const handleSelectedMarkerSnackbars = useSelectedMarkerSnackbars(
@@ -435,6 +453,14 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     substudyFilterFuncs
   );
 
+  const overlayConfigQueryResult = useDistributionOverlayConfig({
+    studyId,
+    filters,
+    binningMethod,
+    overlayVariableDescriptor: selectedVariable,
+    selectedValues,
+  });
+
   const data = useMarkerData({
     studyId,
     filters,
@@ -444,6 +470,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     selectedVariable,
     selectedValues,
     valueSpec: 'count',
+    overlayConfigQueryResult,
   });
 
   const plugins = useStandaloneVizPlugins({

@@ -56,7 +56,7 @@ import {
 } from '../types';
 import DraggableVisualization from '../../DraggableVisualization';
 import { VariableDescriptor } from '../../../../core/types/variable';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import { GeoConfig } from '../../../../core/types/geoConfig';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
@@ -79,6 +79,18 @@ export const plugin: MapTypePlugin = {
   MapOverlayComponent: BubbleLegendsAndFloater,
   MapTypeHeaderDetails,
   TimeSliderComponent,
+};
+
+type BubbleLegendData = {
+  bubbleLegendData: {
+    minColorValue: number;
+    maxColorValue: number;
+    minSizeValue: number;
+    maxSizeValue: number;
+  };
+  bubbleValueToDiameterMapper: (value: number) => number;
+  bubbleValueToColorMapper: ((value: number) => string) | undefined;
+  bubbleValueToLegendTickMapper: ((val: number) => string) | undefined;
 };
 
 function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
@@ -233,12 +245,20 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
     markerDataFilterFuncs
   );
 
+  const legendData = useLegendData({
+    studyId,
+    filters,
+    geoConfigs,
+    configuration,
+  });
+
   const markersData = useMarkerData({
     boundsZoomLevel,
     configuration,
     geoConfigs,
     studyId,
     filters: filtersForMarkerData,
+    legendData,
   });
 
   const handleSelectedMarkerSnackbars = useSelectedMarkerSnackbars(
@@ -698,6 +718,7 @@ interface DataProps {
   geoConfigs: GeoConfig[];
   studyId: string;
   filters?: Filter[];
+  legendData?: UseQueryResult<BubbleLegendData>;
 }
 
 function useLegendData(props: DataProps) {
@@ -933,10 +954,10 @@ function useRawMarkerData(props: DataProps) {
 }
 
 function useMarkerData(props: DataProps) {
-  const { boundsZoomLevel, configuration, studyId, filters } = props;
+  const { boundsZoomLevel, configuration, studyId, filters, legendData } =
+    props;
 
   const rawMarkersResult = useRawMarkerData(props);
-  const legendDataResult = useLegendData(props);
   const { overlayConfig } = useOverlayConfig({
     studyId,
     filters,
@@ -950,7 +971,7 @@ function useMarkerData(props: DataProps) {
      * and create markers.
      */
     const { bubbleValueToColorMapper, bubbleValueToDiameterMapper } =
-      legendDataResult.data ?? {};
+      legendData?.data ?? {};
     const finalMarkersData =
       rawMarkersResult.data != null
         ? processRawBubblesData(
@@ -968,7 +989,7 @@ function useMarkerData(props: DataProps) {
         boundsZoomLevel,
       },
     };
-  }, [rawMarkersResult, legendDataResult.data, overlayConfig, boundsZoomLevel]);
+  }, [rawMarkersResult, legendData?.data, overlayConfig, boundsZoomLevel]);
 }
 
 //
