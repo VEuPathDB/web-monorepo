@@ -19,7 +19,7 @@ import {
   useFindEntityAndVariable,
   useStudyEntities,
 } from '../../../hooks/workspace';
-import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
+import { useOutputEntity } from '../../../hooks/findOutputEntity';
 import { Filter } from '../../../types/filter';
 
 import { VariableDescriptor } from '../../../types/variable';
@@ -620,9 +620,9 @@ function LineplotViz(props: VisualizationProps<Options>) {
     true
   );
 
-  const outputEntity = useFindOutputEntity(
+  const outputEntity = useOutputEntity(
     dataElementDependencyOrder,
-    vizConfig,
+    selectedVariables,
     'yAxisVariable'
   );
 
@@ -693,7 +693,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
   const data = usePromise(
     useCallback(async (): Promise<LinePlotDataWithCoverage | undefined> => {
       if (
-        outputEntity == null ||
         xAxisVariable == null ||
         yAxisVariable == null ||
         filteredCounts.pending ||
@@ -735,6 +734,8 @@ function LineplotViz(props: VisualizationProps<Options>) {
         dataElementDependencyOrder
       );
 
+      if (outputEntity == null) return undefined;
+
       // check independentValueType/dependentValueType
       const independentValueType = xAxisVariable?.type
         ? xAxisVariable.type
@@ -754,6 +755,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
 
       const response = await dataClient.getLineplot(
         computation.descriptor.type,
+        visualization.descriptor.type,
         params
       );
 
