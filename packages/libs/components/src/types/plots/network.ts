@@ -39,6 +39,7 @@ export type NetworkPlotData = {
 
 export type NetworkPartition = {
   nodeIds: string[];
+  name?: string;
 };
 
 /** Bipartite network data is a regular network with addiitonal declarations of

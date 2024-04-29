@@ -4,24 +4,24 @@ import {
   NodeData,
   LinkData,
   BipartiteNetworkData,
+  NetworkPartition,
 } from '../../types/plots/network';
-import BipartiteNetwork, {
+import BipartiteNetworkPlot, {
   BipartiteNetworkProps,
   BipartiteNetworkSVGStyles,
-} from '../../plots/BipartiteNetwork';
+} from '../../plots/BipartiteNetworkPlot';
 import { twoColorPalette } from '../../types/plots/addOns';
 import { Text } from '@visx/text';
 import { NodeMenuAction } from '../../plots/NetworkPlot';
 
 export default {
   title: 'Plots/Network/BipartiteNetwork',
-  component: BipartiteNetwork,
+  component: BipartiteNetworkPlot,
 } as Meta;
 
 interface TemplateProps {
   data: BipartiteNetworkData;
-  partition1Name?: string;
-  partition2Name?: string;
+  partitions: NetworkPartition[];
   showSpinner?: boolean;
   showThumbnail?: boolean;
   containerStyles?: CSSProperties;
@@ -49,11 +49,9 @@ const Template: Story<TemplateProps> = (args) => {
   const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>([]);
 
   const bipartiteNetworkProps: BipartiteNetworkProps = {
-    nodes: args.data.nodes,
-    links: args.data.links,
-    partitions: args.data.partitions,
-    partition1Name: args.partition1Name,
-    partition2Name: args.partition2Name,
+    nodes: args.data && args.data.nodes,
+    links: args.data && args.data.links,
+    partitions: args.data && args.data.partitions,
     showSpinner: args.showSpinner,
     containerStyles: args.containerStyles,
     svgStyleOverrides: args.svgStyleOverrides,
@@ -69,7 +67,7 @@ const Template: Story<TemplateProps> = (args) => {
   };
   return (
     <>
-      <BipartiteNetwork ref={ref} {...bipartiteNetworkProps} />
+      <BipartiteNetworkPlot ref={ref} {...bipartiteNetworkProps} />
       {args.showThumbnail && (
         <>
           <br></br>
@@ -86,33 +84,30 @@ const Template: Story<TemplateProps> = (args) => {
  */
 
 // A basic bipartite network
-const simpleData = genBipartiteNetwork(20, 10);
+const simpleData = genBipartiteNetwork(20, 10, false);
 export const Simple = Template.bind({});
 Simple.args = {
   data: simpleData,
 };
 
 // A network with lots and lots of points!
-const manyPointsData = genBipartiteNetwork(1000, 100);
+const manyPointsData = genBipartiteNetwork(1000, 100, false);
 export const ManyPoints = Template.bind({});
 ManyPoints.args = {
   data: manyPointsData,
 };
 
 // With partition names
+const simpleDataWithNames = genBipartiteNetwork(20, 10, true);
 export const WithPartitionNames = Template.bind({});
 WithPartitionNames.args = {
-  data: simpleData,
-  partition1Name: 'Partition 1',
-  partition2Name: 'Partition 2',
+  data: simpleDataWithNames,
 };
 
 // Loading with a spinner
 export const Loading = Template.bind({});
 Loading.args = {
-  data: simpleData,
-  partition1Name: 'Partition 1',
-  partition2Name: 'Partition 2',
+  data: simpleDataWithNames,
   showSpinner: true,
 };
 
@@ -125,9 +120,7 @@ Empty.args = {
 // Show thumbnail
 export const Thumbnail = Template.bind({});
 Thumbnail.args = {
-  data: genBipartiteNetwork(10, 10),
-  partition1Name: 'Partition 1',
-  partition2Name: 'Partition 2',
+  data: genBipartiteNetwork(10, 10, true),
   showThumbnail: true,
 };
 
@@ -147,8 +140,6 @@ export const WithStyle = Template.bind({});
 WithStyle.args = {
   data: manyPointsData,
   containerStyles: plotContainerStyles,
-  partition1Name: 'Partition 1',
-  partition2Name: 'Partition 2',
   svgStyleOverrides: svgStyleOverrides,
   labelTruncationLength: 5,
 };
@@ -176,8 +167,6 @@ WithActions.args = {
   containerStyles: {
     marginLeft: '200px',
   },
-  partition1Name: 'Partition 1',
-  partition2Name: 'Partition 2',
   getNodeMenuActions: getNodeActions,
   isSelectable: false,
 };
@@ -188,14 +177,12 @@ WithSelection.args = {
   containerStyles: {
     marginLeft: '200px',
   },
-  partition1Name: 'Partition 1',
-  partition2Name: 'Partition 2',
   getNodeMenuActions: getNodeActions,
   isSelectable: true,
 };
 
 // With a network that has no nodes or links
-const noNodesData = genBipartiteNetwork(0, 0);
+const noNodesData = genBipartiteNetwork(0, 0, false);
 const emptyNetworkContent = (
   <Text x={100} y={100}>
     No nodes or links
@@ -210,7 +197,8 @@ NoNodes.args = {
 // Gerenate a bipartite network with a given number of nodes and random edges
 function genBipartiteNetwork(
   partition1nNodes: number,
-  partition2nNodes: number
+  partition2nNodes: number,
+  addPartitionNames: boolean
 ): BipartiteNetworkData {
   // Create the first partition of nodes
   const partition1Nodes: NodeData[] = [...Array(partition1nNodes).keys()].map(
@@ -253,8 +241,14 @@ function genBipartiteNetwork(
     nodes,
     links,
     partitions: [
-      { nodeIds: partition1NodeIDs },
-      { nodeIds: partition2NodeIDs },
+      {
+        nodeIds: partition1NodeIDs,
+        name: addPartitionNames ? 'Partition 1' : undefined,
+      },
+      {
+        nodeIds: partition2NodeIDs,
+        name: addPartitionNames ? 'Partition 2' : undefined,
+      },
     ],
   };
 }

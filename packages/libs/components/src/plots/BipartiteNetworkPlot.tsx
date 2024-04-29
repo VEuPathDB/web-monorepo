@@ -5,7 +5,7 @@ import {
   NodeData,
 } from '../types/plots/network';
 import { partition } from 'lodash';
-import { LabelPosition } from './Network';
+import { LabelPosition } from './Node';
 import {
   CSSProperties,
   ReactNode,
@@ -13,14 +13,14 @@ import {
   forwardRef,
   useRef,
   useMemo,
+  SVGAttributes,
 } from 'react';
 import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 
-import './BipartiteNetwork.css';
+import './BipartiteNetworkPlot.css';
 import NetworkPlot, { NodeMenuAction } from './NetworkPlot';
 
-export interface BipartiteNetworkSVGStyles {
-  width?: number; // svg width
+export interface BipartiteNetworkSVGStyles extends SVGAttributes<SVGElement> {
   topPadding?: number; // space between the top of the svg and the top-most node
   nodeSpacing?: number; // space between vertically adjacent nodes
   columnPadding?: number; // space between the left of the svg and the left column, also the right of the svg and the right column.
@@ -33,10 +33,6 @@ export interface BipartiteNetworkProps {
   links: LinkData[] | undefined;
   /** Partitions. An array of NetworkPartitions (an array of node ids) that defines the two node groups */
   partitions: NetworkPartition[] | undefined;
-  /** Name of partition 1 */
-  partition1Name?: string;
-  /** Name of partition 2 */
-  partition2Name?: string;
   /** styling for the plot's container */
   containerStyles?: CSSProperties;
   /** bipartite network-specific styling for the svg itself. These
@@ -58,20 +54,21 @@ export interface BipartiteNetworkProps {
 // Show a few gray nodes when there is no real data.
 const EmptyBipartiteNetworkData: BipartiteNetworkData = {
   partitions: [
-    { nodeIds: ['0', '1', '2', '3', '4', '5'] },
-    { nodeIds: ['6', '7', '8'] },
+    { nodeIds: ['0', '1', '2', '3', '4', '5'], name: '' },
+    { nodeIds: ['6', '7', '8'], name: '' },
   ],
   nodes: [...Array(9).keys()].map((item) => ({
     id: item.toString(),
     color: gray[100],
     stroke: gray[300],
+    y: item < 6 ? 40 + 30 * item : 40 + 30 * (item - 6),
   })),
   links: [],
 };
 
-// The BipartiteNetwork function takes a network w two partitions of nodes and draws those partitions as columns.
+// The BipartiteNetworkPlot function takes a network w two partitions of nodes and draws those partitions as columns.
 // This component handles the positioning of each column, and consequently the positioning of nodes and links.
-function BipartiteNetwork(
+function BipartiteNetworkPlot(
   props: BipartiteNetworkProps,
   ref: Ref<HTMLDivElement>
 ) {
@@ -79,15 +76,8 @@ function BipartiteNetwork(
     nodes = EmptyBipartiteNetworkData.nodes,
     links = EmptyBipartiteNetworkData.links,
     partitions = EmptyBipartiteNetworkData.partitions,
-    partition1Name,
-    partition2Name,
     containerStyles,
     svgStyleOverrides,
-    containerClass = 'web-components-plot',
-    showSpinner = false,
-    labelTruncationLength = 20,
-    emptyNetworkContent,
-    getNodeMenuActions: getNodeActions,
   } = props;
 
   // const [highlightedNodeId, setHighlightedNodeId] = useState<string>();
@@ -112,8 +102,10 @@ function BipartiteNetwork(
   // Set up styles for the bipartite network and incorporate overrides
   const DEFAULT_TOP_PADDING = 40;
   const DEFAULT_NODE_SPACING = 30;
+  const DEFAULT_SVG_WIDTH = 400;
+  const topPadding = partitions[0].name || partitions[1].name ? 100 : 20;
   const svgStyles = {
-    width: Number(containerStyles?.width) || 400,
+    width: Number(containerStyles?.width) || DEFAULT_SVG_WIDTH,
     height:
       Math.max(partitions[1].nodeIds.length, partitions[0].nodeIds.length) *
         DEFAULT_NODE_SPACING +
@@ -123,10 +115,14 @@ function BipartiteNetwork(
     columnPadding: 100,
     ...svgStyleOverrides,
   };
-  console.log(svgStyles.height);
 
+  // So maybe we make partitionDetails = {name: string, position: number}.
+  // that removes all but topPadding from svgStyleOverrides, which i'd like to
+  // make just regular svg styles.
+  // Alternatively, just set a decent topPadding that is 1 thing if a header
+  // and another thing if not.
   const column1Position = svgStyles.columnPadding;
-  const column2Position = svgStyles.width - svgStyles.columnPadding;
+  const column2Position = Number(svgStyles.width) - svgStyles.columnPadding;
 
   // In order to assign coordinates to each node, we'll separate the
   // nodes based on their partition, then will use their order in the partition
@@ -151,7 +147,7 @@ function BipartiteNetwork(
           return {
             // partitionIndex of 0 refers to the left-column nodes whereas 1 refers to right-column nodes
             x: partitionIndex === 0 ? column1Position : column2Position,
-            y: svgStyles.topPadding + svgStyles.nodeSpacing * indexInPartition,
+            y: topPadding + svgStyles.nodeSpacing * indexInPartition,
             labelPosition:
               partitionIndex === 0 ? 'left' : ('right' as LabelPosition),
             ...node,
@@ -165,7 +161,7 @@ function BipartiteNetwork(
       partitions,
       nodesByPartition,
       svgStyles.nodeSpacing,
-      svgStyles.topPadding,
+      topPadding,
     ]
   );
 
@@ -432,4 +428,4 @@ function BipartiteNetwork(
   // )}
 }
 
-export default forwardRef(BipartiteNetwork);
+export default forwardRef(BipartiteNetworkPlot);

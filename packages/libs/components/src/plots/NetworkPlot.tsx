@@ -1,6 +1,5 @@
 import { LinkData, NetworkPartition, NodeData } from '../types/plots/network';
 import { truncateWithEllipsis } from '../utils/axis-tick-label-ellipsis';
-import './Network.css';
 import { orderBy } from 'lodash';
 import { LabelPosition, NodeWithLabel } from './Node';
 import { Link } from './Link';
@@ -17,6 +16,7 @@ import {
   useState,
   useMemo,
   useEffect,
+  SVGAttributes,
 } from 'react';
 import Spinner from '../components/Spinner';
 import { ToImgopts } from 'plotly.js';
@@ -25,7 +25,7 @@ import { ExportPlotToImageButton } from './ExportPlotToImageButton';
 import { plotToImage } from './visxVEuPathDB';
 import { GlyphTriangle } from '@visx/visx';
 
-import './Network.css';
+import './NetworkPlot.css';
 
 export interface BipartiteNetworkSVGStyles {
   width?: number; // svg width
@@ -46,14 +46,12 @@ export interface NetworkPlotProps {
   nodes: NodeData[] | undefined;
   /** Network links */
   links: LinkData[] | undefined;
-  /** Partitions, optional. Used for k-partite networks only */
-  partitions?: NetworkPartition[];
   /** styling for the plot's container */
   containerStyles?: CSSProperties;
-  /** bipartite network-specific styling for the svg itself. These
+  /** Network-specific styling for the svg itself. These
    * properties will override any adaptation the network may try to do based on the container styles.
    */
-  svgStyleOverrides?: BipartiteNetworkSVGStyles;
+  svgStyleOverrides?: SVGAttributes<SVGElement>;
   /** container name */
   containerClass?: string;
   /** shall we show the loading spinner? */
@@ -81,7 +79,6 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
   const {
     nodes = emptyNodes,
     links = emptyLinks,
-    partitions,
     containerStyles,
     svgStyleOverrides,
     containerClass = 'web-components-plot',
@@ -114,9 +111,6 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
   const svgStyles = {
     width: Number(containerStyles?.width) || 400,
     height: Number(containerStyles?.height) || 500,
-    topPadding: 40,
-    nodeSpacing: 30,
-    columnPadding: 100,
     ...svgStyleOverrides,
   };
 
@@ -249,7 +243,7 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
         )}
         <div className="network-plot-container" ref={plotRef}>
           {nodes.length > 0 ? (
-            <svg width={svgStyles.width} height={svgStyles.height}>
+            <svg {...svgStyles}>
               <Graph
                 graph={{
                   nodes: nodesWithActions,

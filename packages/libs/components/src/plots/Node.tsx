@@ -2,7 +2,7 @@ import { DefaultNode } from '@visx/network';
 import { Text } from '@visx/text';
 import { NodeData } from '../types/plots/network';
 import { truncateWithEllipsis } from '../utils/axis-tick-label-ellipsis';
-import './Network.css';
+import './NetworkPlot.css';
 
 export type LabelPosition = 'right' | 'left';
 
