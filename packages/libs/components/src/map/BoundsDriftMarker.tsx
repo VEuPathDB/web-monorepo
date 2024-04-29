@@ -1,11 +1,11 @@
-import { useMap, Popup } from 'react-leaflet';
 import { useRef, useEffect, useCallback } from 'react';
+import L, { LeafletMouseEvent, LatLngBounds } from 'leaflet';
+import { useMap, Popup } from 'react-leaflet';
 // use new ReactLeafletDriftMarker instead of DriftMarker
 import ReactLeafletDriftMarker from 'react-leaflet-drift-marker';
-import { MarkerProps, Bounds } from './Types';
-import L, { LeafletMouseEvent, LatLngBounds } from 'leaflet';
-
 import { debounce } from 'lodash';
+
+import { MarkerProps, Bounds } from './Types';
 
 export interface BoundsDriftMarkerProps extends MarkerProps {
   bounds: Bounds;
@@ -68,6 +68,7 @@ export default function BoundsDriftMarker({
     pane: 'popupPane',
     interactive: false,
   });
+
   useEffect(() => {
     /**
      * Prevents an edge case where the boundsRectangle persists if simultaneously a marker is hovered
@@ -80,6 +81,7 @@ export default function BoundsDriftMarker({
 
   const markerRef = useRef<any>();
   const popupRef = useRef<any>();
+  // const popupRef = useRef<L.Popup>(null);
   const popupOrientationRef = useRef<PopupOrientation>('up');
 
   // Update popupOrientationRef based on whether the marker is close to the map edge.
@@ -196,7 +198,7 @@ export default function BoundsDriftMarker({
      *      be anchored to
      *  2.  set the popupRef's offset accordingly (with some fuzzy calculations)
      */
-    // with the marker clicl event for selectedMarkers, popupRef is not used as it changes by click event
+    // with the marker click event for selectedMarkers, popupRef is not used as it changes by click event
     if (orientation === 'down') {
       const yOffset =
         (markerIconRect.bottom > grayBoundsRect.bottom
@@ -269,8 +271,8 @@ export default function BoundsDriftMarker({
       maxHeight={popupContent.size.height}
       autoPan={false}
       closeButton={false}
-      onOpen={() => handlePopupOpen()}
-      onClose={() => handlePopupClose()}
+      onOpen={handlePopupOpen}
+      onClose={handlePopupClose}
     >
       {popupContent.content}
     </Popup>

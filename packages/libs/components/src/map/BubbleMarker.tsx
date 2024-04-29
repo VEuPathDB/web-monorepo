@@ -32,8 +32,7 @@ export default function BubbleMarker(props: BubbleMarkerProps) {
 
   // set icon as divIcon
   const SVGBubbleIcon = L.divIcon({
-    className:
-      'leaflet-canvas-icon ' + 'marker-id-' + props.id + ' bubble-marker',
+    className: 'leaflet-canvas-icon marker-id-' + props.id + ' bubble-marker',
     iconSize: new L.Point(size, size), // this will make icon to cover up SVG area!
     iconAnchor: new L.Point(size / 2, size / 2), // location of topleft corner: this is used for centering of the icon like transform/translate in CSS
     html: svgHTML, // divIcon HTML svg code generated above
@@ -41,20 +40,33 @@ export default function BubbleMarker(props: BubbleMarkerProps) {
 
   // anim check duration exists or not
   const duration: number = props.duration ? props.duration : 300;
+  const popupSize = 120;
 
   const popupContent = (
-    <div style={{ fontSize: 16, lineHeight: '150%' }}>
-      <div>
-        <b style={{ marginRight: '0.15rem' }}>Count</b> {props.data.value}
-      </div>
-      {props.data.colorValue && (
-        <div style={{ marginTop: '0.5rem' }}>
-          <b style={{ marginRight: '0.15rem' }}>
-            {props.data.colorLabel ?? 'Value'}
-          </b>{' '}
-          {props.data.colorValue}
+    <div style={{ position: 'relative', height: popupSize, width: popupSize }}>
+      <div
+        style={{
+          fontSize: 16,
+          lineHeight: '150%',
+          height: popupSize / 2,
+          width: popupSize,
+          position: 'absolute',
+          top: '50%',
+          transform: 'translateY(-50%)',
+        }}
+      >
+        <div>
+          <b style={{ marginRight: '0.15rem' }}>Count</b> {props.data.value}
         </div>
-      )}
+        {props.data.colorValue && (
+          <div style={{ marginTop: '1rem' }}>
+            <b style={{ marginRight: '0.15rem' }}>
+              {props.data.colorLabel ?? 'Value'}
+            </b>{' '}
+            {props.data.colorValue}
+          </div>
+        )}
+      </div>
     </div>
   );
 
@@ -72,8 +84,8 @@ export default function BubbleMarker(props: BubbleMarkerProps) {
       popupContent={{
         content: popupContent,
         size: {
-          width: 170,
-          height: 100,
+          width: popupSize,
+          height: popupSize,
         },
       }}
       showPopup={props.showPopup}
