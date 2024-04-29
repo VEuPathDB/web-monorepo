@@ -68,6 +68,12 @@ WithAnnotations.args = {
   annotations: [annotation1, annotation2],
 };
 
+// An empty network @ANN You are here making this nice looking
+export const Empty = Template.bind({});
+Empty.args = {
+  data: undefined,
+};
+
 // Gerenate a network with a given number of nodes and random edges
 function genNetwork(
   nNodes: number,
