@@ -27,7 +27,7 @@ import {
   useFindEntityAndVariable,
   useStudyEntities,
 } from '../../../hooks/workspace';
-import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
+import { useOutputEntity } from '../../../hooks/findOutputEntity';
 import { Filter } from '../../../types/filter';
 import { VariableDescriptor } from '../../../types/variable';
 import { CoverageStatistics } from '../../../types/visualization';
@@ -332,13 +332,6 @@ function MosaicViz(props: Props<Options>) {
     [xAxisReferenceValue, yAxisReferenceValue]
   );
 
-  // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
-  const outputEntity = useFindOutputEntity(
-    dataElementDependencyOrder,
-    vizConfig,
-    'xAxisVariable'
-  );
-
   const selectedVariables = useMemo(
     () => ({
       xAxisVariable: vizConfig.xAxisVariable,
@@ -346,6 +339,13 @@ function MosaicViz(props: Props<Options>) {
       facetVariable: vizConfig.facetVariable,
     }),
     [vizConfig.facetVariable, vizConfig.xAxisVariable, vizConfig.yAxisVariable]
+  );
+
+  // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
+  const outputEntity = useOutputEntity(
+    dataElementDependencyOrder,
+    selectedVariables,
+    'xAxisVariable'
   );
 
   const inputs = useMemo(
@@ -399,6 +399,8 @@ function MosaicViz(props: Props<Options>) {
         dataElementConstraints
       );
 
+      if (outputEntity == null) return undefined;
+
       const xAxisVocabulary = fixLabelsForNumberVariables(
         xAxisVariable.vocabulary,
         xAxisVariable
@@ -426,7 +428,7 @@ function MosaicViz(props: Props<Options>) {
           filters ?? [],
           vizConfig.xAxisVariable,
           vizConfig.yAxisVariable,
-          outputEntity?.id ?? '',
+          outputEntity.id,
           vizConfig.facetVariable,
           vizConfig.showMissingness,
           vizConfig.xAxisReferenceValue,

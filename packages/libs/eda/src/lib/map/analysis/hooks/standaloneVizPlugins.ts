@@ -32,6 +32,8 @@ import { histogramRequest } from './plugins/histogram';
 import { scatterplotRequest } from './plugins/scatterplot';
 
 import TimeSeriesSVG from '../../../core/components/visualizations/implementations/selectorIcons/TimeSeriesSVG';
+import HistogramTimelineSVG from '../../../core/components/visualizations/implementations/selectorIcons/HistogramTimelineSVG';
+
 import _ from 'lodash';
 import { EntitySubtitleForViz } from '../mapTypes/shared';
 
@@ -154,6 +156,12 @@ export function useStandaloneVizPlugins({
         visualizationPlugins: {
           histogram: vizWithCustomizedGetRequest(
             vizWithOptions(histogramVisualization),
+            histogramRequest
+          ),
+          timeline: vizWithCustomizedGetRequest(
+            vizWithOptions(
+              histogramVisualization.withSelectorIcon(HistogramTimelineSVG)
+            ),
             histogramRequest
           ),
           boxplot: vizWithCustomizedGetRequest(

@@ -123,7 +123,7 @@ import {
 import { useDeepValue } from '../../../hooks/immutability';
 import { ResetButtonCoreUI } from '../../ResetButton';
 import { FloatingHistogramExtraProps } from '../../../../map/analysis/hooks/plugins/histogram';
-import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
+import { useOutputEntity } from '../../../hooks/findOutputEntity';
 import { useSubsettingClient } from '../../../hooks/workspace';
 import { red } from '../../filter/colors';
 import { min, max } from 'lodash';
@@ -376,12 +376,6 @@ function HistogramViz(props: VisualizationProps<Options>) {
     };
   }, [findEntityAndVariable, vizConfig.xAxisVariable]);
 
-  const outputEntity = useFindOutputEntity(
-    dataElementDependencyOrder,
-    vizConfig,
-    'xAxisVariable'
-  );
-
   const getOverlayVariable = options?.getOverlayVariable;
 
   const providedOverlayVariableDescriptor = useMemo(
@@ -396,6 +390,14 @@ function HistogramViz(props: VisualizationProps<Options>) {
       (providedOverlayVariableDescriptor ?? vizConfig.overlayVariable),
     facetVariable: vizConfig.facetVariable,
   });
+
+  // this returns undefined if the overlay and main variable
+  // are on different branches of the tree
+  const outputEntity = useOutputEntity(
+    dataElementDependencyOrder,
+    selectedVariables,
+    'xAxisVariable'
+  );
 
   const {
     overlayVariable,
@@ -609,7 +611,6 @@ function HistogramViz(props: VisualizationProps<Options>) {
       if (
         dataRequestConfig.xAxisVariable == null ||
         xAxisVariable == null ||
-        outputEntity == null ||
         filteredCounts.pending ||
         filteredCounts.value == null
       )
@@ -632,6 +633,10 @@ function HistogramViz(props: VisualizationProps<Options>) {
         dataElementDependencyOrder
       );
 
+      // We test this after assertValidInputVariables because
+      // that gives a useful message to users. Returning undefined doesn't.
+      if (outputEntity == null) return undefined;
+
       const params = getRequestParams(
         studyId,
         filters ?? [],
@@ -644,6 +649,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
       );
       const response = await dataClient.getHistogram(
         computation.descriptor.type,
+        visualization.descriptor.type,
         params
       );
 
@@ -712,6 +718,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
       computation.descriptor.type,
       overlayEntity,
       facetEntity,
+      visualization.descriptor.type,
     ])
   );
 
