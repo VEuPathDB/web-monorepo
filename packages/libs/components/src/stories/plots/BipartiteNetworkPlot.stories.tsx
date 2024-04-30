@@ -1,34 +1,22 @@
-import { useState, useEffect, useRef, CSSProperties, ReactNode } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import {
   NodeData,
   LinkData,
   BipartiteNetworkData,
-  NetworkPartition,
 } from '../../types/plots/network';
 import BipartiteNetworkPlot, {
   BipartiteNetworkProps,
-  BipartiteNetworkSVGStyles,
 } from '../../plots/BipartiteNetworkPlot';
 import { twoColorPalette } from '../../types/plots/addOns';
-import { Text } from '@visx/text';
-import { NodeMenuAction } from '../../plots/NetworkPlot';
 
 export default {
-  title: 'Plots/Network/BipartiteNetwork',
+  title: 'Plots/Networks/BipartiteNetwork',
   component: BipartiteNetworkPlot,
 } as Meta;
 
-interface TemplateProps {
-  data: BipartiteNetworkData;
-  partitions: NetworkPartition[];
-  showSpinner?: boolean;
+interface TemplateProps extends BipartiteNetworkProps {
   showThumbnail?: boolean;
-  containerStyles?: CSSProperties;
-  svgStyleOverrides?: BipartiteNetworkSVGStyles;
-  labelTruncationLength?: number;
-  emptyNetworkContent?: ReactNode;
-  getNodeMenuActions?: BipartiteNetworkProps['getNodeMenuActions'];
   isSelectable?: boolean;
 }
 
@@ -49,14 +37,7 @@ const Template: Story<TemplateProps> = (args) => {
   const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>([]);
 
   const bipartiteNetworkProps: BipartiteNetworkProps = {
-    nodes: args.data && args.data.nodes,
-    links: args.data && args.data.links,
-    partitions: args.data && args.data.partitions,
-    showSpinner: args.showSpinner,
-    containerStyles: args.containerStyles,
-    svgStyleOverrides: args.svgStyleOverrides,
-    labelTruncationLength: args.labelTruncationLength,
-    emptyNetworkContent: args.emptyNetworkContent,
+    ...args,
     getNodeMenuActions: args.getNodeMenuActions,
     ...(args.isSelectable
       ? {
@@ -87,40 +68,42 @@ const Template: Story<TemplateProps> = (args) => {
 const simpleData = genBipartiteNetwork(20, 10, false);
 export const Simple = Template.bind({});
 Simple.args = {
-  data: simpleData,
+  ...simpleData,
 };
 
 // A network with lots and lots of points!
 const manyPointsData = genBipartiteNetwork(1000, 100, false);
 export const ManyPoints = Template.bind({});
 ManyPoints.args = {
-  data: manyPointsData,
+  ...manyPointsData,
 };
 
 // With partition names
 const simpleDataWithNames = genBipartiteNetwork(20, 10, true);
 export const WithPartitionNames = Template.bind({});
 WithPartitionNames.args = {
-  data: simpleDataWithNames,
+  ...simpleDataWithNames,
 };
 
 // Loading with a spinner
 export const Loading = Template.bind({});
 Loading.args = {
-  data: simpleDataWithNames,
+  ...simpleDataWithNames,
   showSpinner: true,
 };
 
 // Empty bipartite network
 export const Empty = Template.bind({});
 Empty.args = {
-  data: undefined,
+  nodes: undefined,
+  links: undefined,
+  partitions: undefined,
 };
 
 // Show thumbnail
 export const Thumbnail = Template.bind({});
 Thumbnail.args = {
-  data: genBipartiteNetwork(10, 10, true),
+  ...simpleData,
   showThumbnail: true,
 };
 
@@ -134,64 +117,13 @@ const plotContainerStyles = {
 const svgStyleOverrides = {
   columnPadding: 150,
   topPadding: 100,
-  // width: 300, // should override the plotContainerStyles.width
 };
 export const WithStyle = Template.bind({});
 WithStyle.args = {
-  data: manyPointsData,
+  ...manyPointsData,
   containerStyles: plotContainerStyles,
   svgStyleOverrides: svgStyleOverrides,
   labelTruncationLength: 5,
-};
-
-function getNodeActions(nodeId: string): NodeMenuAction[] {
-  return [
-    {
-      label: 'Click me!!',
-      onClick() {
-        alert('You clicked node ' + nodeId);
-      },
-    },
-    {
-      label: 'Click me, too!!',
-      onClick() {
-        alert('You clicked node ' + nodeId);
-      },
-    },
-  ];
-}
-
-export const WithActions = Template.bind({});
-WithActions.args = {
-  data: simpleData,
-  containerStyles: {
-    marginLeft: '200px',
-  },
-  getNodeMenuActions: getNodeActions,
-  isSelectable: false,
-};
-
-export const WithSelection = Template.bind({});
-WithSelection.args = {
-  data: simpleData,
-  containerStyles: {
-    marginLeft: '200px',
-  },
-  getNodeMenuActions: getNodeActions,
-  isSelectable: true,
-};
-
-// With a network that has no nodes or links
-const noNodesData = genBipartiteNetwork(0, 0, false);
-const emptyNetworkContent = (
-  <Text x={100} y={100}>
-    No nodes or links
-  </Text>
-);
-export const NoNodes = Template.bind({});
-NoNodes.args = {
-  data: noNodesData,
-  emptyNetworkContent,
 };
 
 // Gerenate a bipartite network with a given number of nodes and random edges

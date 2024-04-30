@@ -270,6 +270,7 @@ function BipartiteNetworkPlot(
       links={links}
       annotations={[leftColumnLabel, rightColumnLabel]}
       svgStyleOverrides={svgStyles}
+      ref={ref}
     />
   );
 

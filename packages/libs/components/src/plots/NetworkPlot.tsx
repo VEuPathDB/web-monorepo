@@ -70,8 +70,6 @@ const emptyNodes: NodeData[] = [...Array(9).keys()].map((item) => ({
   id: item.toString(),
   color: gray[100],
   stroke: gray[300],
-  x: 30 + Math.random() * 300,
-  y: 30 + Math.random() * 300,
 }));
 const emptyLinks: LinkData[] = [];
 
