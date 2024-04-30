@@ -586,6 +586,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       visualization.descriptor.type,
       overlayEntity,
       facetEntity,
+      variablesForConstraints,
     ])
   );
 
