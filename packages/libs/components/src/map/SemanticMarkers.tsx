@@ -219,8 +219,10 @@ export default function SemanticMarkers({
 
         const message =
           consolidatedMarkersElementLength !== selectedMarkersElementLength
-            ? 'Marker selection has been cancelled because aggregation level has changed due to zooming'
-            : 'Selected markers that went off-screen have been deselected';
+            ? consolidatedMarkersElementLength === 0
+              ? 'Marker selection has been cancelled because there are no visible markers in the current view'
+              : 'Marker selection has been cancelled because aggregation level has changed due to zooming'
+            : 'Selected markers that are no longer visible have been deselected';
 
         enqueueSnackbar(message, {
           variant: 'info',
