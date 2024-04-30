@@ -28,7 +28,6 @@ interface Props {
   //  visualizationPlugins: Partial<Record<string, VisualizationPlugin>>;
   geoConfigs: GeoConfig[];
   mapType?: MarkerConfiguration['type'];
-  setHideVizInputsAndControls: (value: boolean) => void;
   setIsSidePanelExpanded: MapTypeConfigPanelProps<any>['setIsSidePanelExpanded'];
 }
 

@@ -27,12 +27,12 @@ export const defaultVisualizationPanelConfig = {
 
 const LatLngLiteral = t.type({ lat: t.number, lng: t.number });
 
-const PanelPositionConfig = t.type({
+export const PanelPositionConfig = t.type({
   x: t.number,
   y: t.number,
 });
 
-const PanelConfig = t.intersection([
+export const PanelConfig = t.intersection([
   t.type({
     isVisible: t.boolean,
     position: PanelPositionConfig,

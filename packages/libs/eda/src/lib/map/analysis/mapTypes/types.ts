@@ -23,7 +23,7 @@ export interface MapTypeConfigPanelProps<T extends MarkerConfiguration> {
   studyEntities: StudyEntity[];
   geoConfigs: GeoConfig[];
   configuration: unknown;
-  updateConfiguration: (configuration: unknown) => void;
+  updateConfiguration: (configuration: T) => void;
   setIsSidePanelExpanded: (isExpanded: boolean) => void;
 }
 
