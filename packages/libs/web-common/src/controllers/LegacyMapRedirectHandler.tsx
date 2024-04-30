@@ -5,7 +5,7 @@ import { useConfiguredAnalysisClient } from '@veupathdb/eda/lib/core/hooks/clien
 import { createComputation } from '@veupathdb/eda/lib/core/components/computations/Utils';
 import { makeNewAnalysis } from '@veupathdb/eda/lib/core';
 import { RouteComponentProps } from 'react-router';
-import { LegacyRedirectState } from '@veupathdb/eda/lib/map/analysis/MapAnalysis';
+import { LegacyRedirectState } from '@veupathdb/eda/lib/map/analysis/appState';
 
 // Define constants to create new computations and analyses
 const MEGA_STUDY_ID = 'DS_480c976ef9';

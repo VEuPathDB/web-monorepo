@@ -113,8 +113,9 @@ class RecordTable extends Component {
     const displayableAttributes = this.getDisplayableAttributes(this.props);
     const columns = this.getColumns(this.props);
     const data = this.getOrderedData(this.props);
-    const isOrthologTable = this.props.table.name === 'Orthologs';
-    const clustalInputRow = isOrthologTable
+    const isOrthologTableWithData =
+      this.props.table.name === 'Orthologs' && value.length > 0;
+    const clustalInputRow = isOrthologTableWithData
       ? columns.find((c) => c.name === 'clustalInput')
       : undefined;
 
@@ -189,7 +190,7 @@ class RecordTable extends Component {
     );
     const sortType = columnToSort?.sortType ?? 'text';
 
-    const sortedMesaRows =
+    const preSortedMesaRows =
       sort?.columnKey == null
         ? mesaReadyRows
         : orderBy(
@@ -220,6 +221,23 @@ class RecordTable extends Component {
             [sort.direction]
           );
 
+    const sortedMesaRows =
+      isOrthologTableWithData && this.props.orthoTableProps.groupBySelected
+        ? preSortedMesaRows.sort((a, b) => {
+            const aSelected =
+              this.props.orthoTableProps.options.isRowSelected(a);
+            const bSelected =
+              this.props.orthoTableProps.options.isRowSelected(b);
+            return aSelected && bSelected
+              ? 0
+              : aSelected
+              ? -1
+              : bSelected
+              ? 1
+              : 0;
+          })
+        : preSortedMesaRows;
+
     const queryTerms = parseSearchQueryString(this.state.searchTerm);
     const searchTermRegex = areTermsInStringRegexString(queryTerms);
     const regex = new RegExp(searchTermRegex, 'i');
@@ -239,7 +257,7 @@ class RecordTable extends Component {
       eventHandlers: {
         onSort: this.onSort,
         onExpandedRowsChange,
-        ...(isOrthologTable
+        ...(isOrthologTableWithData
           ? { ...this.props.orthoTableProps.eventHandlers }
           : {}),
       },
@@ -247,14 +265,16 @@ class RecordTable extends Component {
         sort: this.state.sort,
         expandedRows,
         filteredRowCount: mesaReadyRows.length - filteredRows.length,
+        ...(isOrthologTableWithData
+          ? { groupBySelected: this.props.orthoTableProps.groupBySelected }
+          : {}),
       },
       options: {
-        toolbar: true,
         childRow: childRow ? this.wrappedChildRow : undefined,
         className: 'wdk-DataTableContainer',
         getRowId: getSortIndex,
         showCount: mesaReadyRows.length > 1,
-        ...(isOrthologTable
+        ...(isOrthologTableWithData
           ? {
               ...this.props.orthoTableProps.options,
               selectColumnHeadingDetails: {
@@ -264,7 +284,7 @@ class RecordTable extends Component {
             }
           : {}),
       },
-      ...(isOrthologTable
+      ...(isOrthologTableWithData
         ? {
             actions: this.props.orthoTableProps.actions,
           }

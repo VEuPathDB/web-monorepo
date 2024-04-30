@@ -1,20 +1,16 @@
 import { flowRight, identity, partial } from 'lodash';
 
 import {
-  endpoint,
-  datasetImportUrl,
   useUserDatasetsWorkspace,
-  // vdiServiceUrl,
+  vdiServiceUrl,
 } from '@veupathdb/web-common/lib/config';
 
-import { wrapWdkService as addUserDatasetServices } from '@veupathdb/user-datasets-legacy/lib/Service';
+import { wrapWdkService as addUserDatasetServices } from '@veupathdb/user-datasets/lib/Service';
 
 export default flowRight(
   useUserDatasetsWorkspace
     ? partial(addUserDatasetServices, {
-        datasetImportUrl,
-        fullWdkServiceUrl: `${window.location.origin}${endpoint}`,
-        // vdiServiceUrl,
+        vdiServiceUrl,
       })
     : identity
 );

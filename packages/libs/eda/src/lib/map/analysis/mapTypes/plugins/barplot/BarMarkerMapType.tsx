@@ -56,6 +56,7 @@ import {
   getErrorOverlayComponent,
   getLegendErrorMessage,
   selectedMarkersLittleFilter,
+  useFloatingPanelHandlers,
 } from '../../shared';
 import {
   useFindEntityAndVariable,
@@ -82,10 +83,7 @@ import { useLittleFilters } from '../../../littleFilters';
 import TimeSliderQuickFilter from '../../../TimeSliderQuickFilter';
 import { MapTypeHeaderStudyDetails } from '../../MapTypeHeaderStudyDetails';
 import { SubStudies } from '../../../SubStudies';
-import {
-  PanelConfig,
-  defaultVisualizationPanelConfig,
-} from '../../../appState';
+import { defaultVisualizationPanelConfig } from '../../../appState';
 
 const displayName = 'Bar plots';
 
@@ -184,9 +182,17 @@ function ConfigPanelComponent(
     enabled: configuration.selectedCountsOption === 'visible',
   });
 
-  const previewMarkerData = useMarkerData({
+  const overlayConfigQueryResult = useDistributionOverlayConfig({
     studyId,
     filters,
+    binningMethod,
+    overlayVariableDescriptor: selectedVariable,
+    selectedValues,
+  });
+
+  const previewMarkerData = useMarkerData({
+    studyId,
+    filters, // no extra little filters; should reflect whole map and all time
     studyEntities,
     geoConfigs,
     selectedVariable,
@@ -194,6 +200,7 @@ function ConfigPanelComponent(
     binningMethod,
     dependentAxisLogScale,
     valueSpec: selectedPlotMode,
+    overlayConfigQueryResult,
   });
 
   const continuousMarkerPreview = useMemo(() => {
@@ -283,6 +290,7 @@ function ConfigPanelComponent(
         analysisState.analysis?.descriptor.starredVariables ?? []
       }
       toggleStarredVariable={toggleStarredVariable}
+      geoConfigs={geoConfigs}
     />
   );
 
@@ -296,7 +304,7 @@ function ConfigPanelComponent(
   };
 
   const setActiveVisualizationId = useCallback(
-    (activeVisualizationId?: string) => {
+    (activeVisualizationId?: string, isNew?: boolean) => {
       if (configuration == null) return;
       updateConfiguration({
         ...configuration,
@@ -304,6 +312,7 @@ function ConfigPanelComponent(
         visualizationPanelConfig: {
           ...visualizationPanelConfig,
           isVisible: !!activeVisualizationId,
+          ...(isNew ? { hideVizControl: false } : {}),
         },
       });
     },
@@ -334,7 +343,6 @@ function ConfigPanelComponent(
           plugins={plugins}
           geoConfigs={geoConfigs}
           mapType="barplot"
-          setHideVizInputsAndControls={props.setHideVizInputsAndControls}
           setIsSidePanelExpanded={setIsSidePanelExpanded}
         />
       ),
@@ -388,6 +396,14 @@ function MapLayerComponent(
     markerDataFilterFuncs
   );
 
+  const overlayConfigQueryResult = useDistributionOverlayConfig({
+    studyId,
+    filters,
+    binningMethod,
+    overlayVariableDescriptor: selectedVariable,
+    selectedValues,
+  });
+
   const markerData = useMarkerData({
     studyEntities,
     studyId,
@@ -399,6 +415,7 @@ function MapLayerComponent(
     binningMethod,
     dependentAxisLogScale,
     valueSpec: selectedPlotMode,
+    overlayConfigQueryResult,
   });
 
   const handleSelectedMarkerSnackbars = useSelectedMarkerSnackbars(
@@ -467,6 +484,15 @@ function MapOverlayComponent(
   const { selectedMarkers, legendPanelConfig, visualizationPanelConfig } =
     configuration;
 
+  const { binningMethod, selectedVariable, selectedValues } = configuration;
+  const overlayConfigQueryResult = useDistributionOverlayConfig({
+    studyId,
+    filters,
+    binningMethod,
+    overlayVariableDescriptor: selectedVariable,
+    selectedValues,
+  });
+
   const markerData = useMarkerData({
     studyEntities,
     studyId,
@@ -477,6 +503,7 @@ function MapOverlayComponent(
     dependentAxisLogScale: configuration.dependentAxisLogScale,
     selectedValues: configuration.selectedValues,
     valueSpec: configuration.selectedPlotMode,
+    overlayConfigQueryResult,
   });
 
   const legendItems = markerData.legendItems;
@@ -505,52 +532,13 @@ function MapOverlayComponent(
     substudyFilterFuncs
   );
 
-  const updateLegendPosition = useCallback(
-    (position: PanelConfig['position']) => {
-      updateConfiguration({
-        ...configuration,
-        legendPanelConfig: position,
-      });
-    },
-    [updateConfiguration, configuration]
-  );
-
-  const updateVisualizationPosition = useCallback(
-    (position: PanelConfig['position']) => {
-      updateConfiguration({
-        ...configuration,
-        visualizationPanelConfig: {
-          ...visualizationPanelConfig,
-          position,
-        },
-      });
-    },
-    [updateConfiguration, configuration, visualizationPanelConfig]
-  );
-
-  const updateVisualizationDimensions = useCallback(
-    (dimensions: PanelConfig['dimensions']) => {
-      updateConfiguration({
-        ...configuration,
-        visualizationPanelConfig: {
-          ...visualizationPanelConfig,
-          dimensions,
-        },
-      });
-    },
-    [updateConfiguration, configuration, visualizationPanelConfig]
-  );
-
-  const onPanelDismiss = useCallback(() => {
-    updateConfiguration({
-      ...configuration,
-      activeVisualizationId: undefined,
-      visualizationPanelConfig: {
-        ...visualizationPanelConfig,
-        isVisible: false,
-      },
-    });
-  }, [updateConfiguration, configuration, visualizationPanelConfig]);
+  const {
+    updateLegendPosition,
+    updateVisualizationPosition,
+    updateVisualizationDimensions,
+    onPanelDismiss,
+    setHideVizControl,
+  } = useFloatingPanelHandlers({ configuration, updateConfiguration });
 
   return (
     <>
@@ -582,26 +570,30 @@ function MapOverlayComponent(
           )}
         </div>
       </DraggableLegendPanel>
-      <DraggableVisualization
-        analysisState={props.analysisState}
-        visualizationId={configuration.activeVisualizationId}
-        apps={props.apps}
-        plugins={plugins}
-        geoConfigs={geoConfigs}
-        totalCounts={props.totalCounts}
-        filteredCounts={props.filteredCounts}
-        toggleStarredVariable={toggleStarredVariable}
-        filters={filtersForFloaters}
-        // onTouch={moveVizToTop}
-        zIndexForStackingContext={2}
-        hideInputsAndControls={props.hideVizInputsAndControls}
-        setHideInputsAndControls={props.setHideVizInputsAndControls}
-        onDragComplete={updateVisualizationPosition}
-        defaultPosition={visualizationPanelConfig.position}
-        onPanelResize={updateVisualizationDimensions}
-        dimensions={visualizationPanelConfig.dimensions}
-        onPanelDismiss={onPanelDismiss}
-      />
+      {visualizationPanelConfig?.isVisible && (
+        <DraggableVisualization
+          analysisState={props.analysisState}
+          visualizationId={configuration.activeVisualizationId}
+          apps={props.apps}
+          plugins={plugins}
+          geoConfigs={geoConfigs}
+          totalCounts={props.totalCounts}
+          filteredCounts={props.filteredCounts}
+          toggleStarredVariable={toggleStarredVariable}
+          filters={filtersForFloaters}
+          // onTouch={moveVizToTop}
+          zIndexForStackingContext={2}
+          hideInputsAndControls={
+            visualizationPanelConfig.hideVizControl ?? false
+          }
+          setHideInputsAndControls={setHideVizControl}
+          onDragComplete={updateVisualizationPosition}
+          defaultPosition={visualizationPanelConfig.position}
+          onPanelResize={updateVisualizationDimensions}
+          dimensions={visualizationPanelConfig.dimensions}
+          onPanelDismiss={onPanelDismiss}
+        />
+      )}
     </>
   );
 }

@@ -11,9 +11,10 @@ import {
   DETAIL_REMOVE_SUCCESS,
   DETAIL_REMOVE_ERROR,
   SHARING_SUCCESS,
+  SHARING_MODAL_OPEN,
+  SHARING_DATASET_PENDING,
+  SHARING_ERROR,
 } from '../Actions/UserDatasetsActions';
-
-import sharingReducer from '../Components/Sharing/UserDatasetSharingReducer';
 
 import { UserDataset, UserDatasetFileListing } from '../Utils/types';
 
@@ -34,9 +35,13 @@ export interface State {
   userDatasetUpdating: boolean;
   userDatasetLoading: boolean;
   userDatasetRemoving: boolean;
+  sharingModalOpen: boolean;
+  sharingDatasetPending: boolean;
   loadError?: ServiceError;
   updateError?: ServiceError;
   removalError?: ServiceError;
+  shareError: Error | undefined;
+  shareSuccessful: boolean | undefined;
 }
 
 const initialState: State = {
@@ -44,6 +49,10 @@ const initialState: State = {
   userDatasetLoading: false,
   userDatasetUpdating: false,
   userDatasetRemoving: false,
+  sharingModalOpen: false,
+  sharingDatasetPending: false,
+  shareError: undefined,
+  shareSuccessful: undefined,
 };
 
 /**
@@ -136,7 +145,27 @@ export function reduce(state: State = initialState, action: Action): State {
     case SHARING_SUCCESS:
       return {
         ...state,
-        userDatasetsById: sharingReducer(state.userDatasetsById, action),
+        sharingDatasetPending: false,
+        shareSuccessful: action.payload.shareSuccessful,
+      };
+
+    case SHARING_MODAL_OPEN:
+      return {
+        ...state,
+        sharingModalOpen: action.payload.sharingModalOpen,
+      };
+
+    case SHARING_DATASET_PENDING:
+      return {
+        ...state,
+        sharingDatasetPending: action.payload.sharingDatasetPending,
+      };
+
+    case SHARING_ERROR:
+      return {
+        ...state,
+        sharingDatasetPending: false,
+        shareError: action.payload.shareError,
       };
 
     default:

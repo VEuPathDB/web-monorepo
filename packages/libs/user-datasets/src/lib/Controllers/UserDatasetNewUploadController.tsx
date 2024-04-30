@@ -21,7 +21,7 @@ import { StateSlice } from '../StoreModules/types';
 import { datasetIdType, DatasetUploadTypeConfigEntry } from '../Utils/types';
 import { assertIsVdiCompatibleWdkService } from '../Service';
 
-const SUPPORTED_FILE_UPLOAD_TYPES = ['csv', 'gz', 'tgz', 'tsv', 'txt', 'zip'];
+const SUPPORTED_FILE_UPLOAD_TYPES: string[] = [];
 
 interface Props<T extends string = string> {
   baseUrl: string;
@@ -101,7 +101,9 @@ export default function UserDatasetUploadController({
             // callback to redirect to new dataset page
             (datasetId: typeof datasetIdType) =>
               baseUrl &&
-              transitioner.transitionToInternalPage(`${baseUrl}/${datasetId}`)
+              transitioner.transitionToInternalPage(`${baseUrl}/${datasetId}`),
+            // callback to handle bad uploads
+            (error: string) => dispatch(receiveBadUpload(error))
           );
           return requestUploadMessages();
         } catch (err) {

@@ -1,11 +1,6 @@
 import { zipWith } from 'lodash';
 
-import {
-  arrayOf,
-  number,
-  objectOf,
-  record,
-} from '@veupathdb/wdk-client/lib/Utils/Json';
+import { number, objectOf, record } from '@veupathdb/wdk-client/lib/Utils/Json';
 
 import {
   createJsonRequest,
@@ -29,7 +24,7 @@ import { FormSubmission } from '../Components/UploadForm';
 import { makeNewUserDatasetConfig } from '../Utils/upload-user-dataset';
 
 const userIdsByEmailDecoder = record({
-  results: arrayOf(objectOf(number)),
+  results: objectOf(number),
 });
 
 export class UserDatasetApi extends FetchClientWithCredentials {
@@ -65,7 +60,8 @@ export class UserDatasetApi extends FetchClientWithCredentials {
   addUserDataset = async (
     formSubmission: FormSubmission,
     dispatchUploadProgress?: (progress: number | null) => void,
-    dispatchPageRedirect?: (datasetId: typeof datasetIdType) => void
+    dispatchPageRedirect?: (datasetId: typeof datasetIdType) => void,
+    dispatchBadUpload?: (error: string) => void
   ) => {
     const newUserDatasetConfig = await makeNewUserDatasetConfig(
       this.wdkService,
@@ -90,7 +86,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
     });
 
     xhr.addEventListener('readystatechange', () => {
-      if (xhr.readyState === XMLHttpRequest.DONE) {
+      if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
         try {
           const response = JSON.parse(xhr.response);
           dispatchUploadProgress && dispatchUploadProgress(null);
@@ -99,6 +95,12 @@ export class UserDatasetApi extends FetchClientWithCredentials {
           dispatchUploadProgress && dispatchUploadProgress(null);
           console.error(error);
         }
+      }
+      if (xhr.readyState === XMLHttpRequest.DONE && xhr.status >= 400) {
+        const error = new Error(xhr.response);
+        dispatchUploadProgress && dispatchUploadProgress(null);
+        dispatchBadUpload && dispatchBadUpload(String(error));
+        console.log(error);
       }
     });
 

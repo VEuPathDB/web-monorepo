@@ -22,7 +22,7 @@ import { MapTypeConfigPanelProps } from './mapTypes/types';
 interface Props {
   activeVisualizationId: string | undefined;
   analysisState: AnalysisState;
-  setActiveVisualizationId: (id?: string) => void;
+  setActiveVisualizationId: (id?: string, isNew?: boolean) => void;
   apps: ComputationAppOverview[];
   plugins: Partial<Record<string, ComputationPlugin>>;
   //  visualizationPlugins: Partial<Record<string, VisualizationPlugin>>;
@@ -42,15 +42,13 @@ export default function MapVizManagement({
   setActiveVisualizationId,
   plugins,
   mapType,
-  setHideVizInputsAndControls,
   setIsSidePanelExpanded,
 }: Props) {
   const [isVizSelectorVisible, setIsVizSelectorVisible] = useState(false);
 
   function onVisualizationCreated(visualizationId: string) {
     setIsVizSelectorVisible(false);
-    setActiveVisualizationId(visualizationId);
-    setHideVizInputsAndControls(false);
+    setActiveVisualizationId(visualizationId, true);
     setIsSidePanelExpanded(false);
   }
 

@@ -7,9 +7,10 @@ import React, {
   useState,
 } from 'react';
 
+import { Link } from 'react-router-dom';
+
 import { keyBy } from 'lodash';
 
-import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import {
   TextBox,
   TextArea,
@@ -31,6 +32,7 @@ import {
 } from '../Utils/types';
 
 import { Modal } from '@veupathdb/coreui';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 import './UploadForm.scss';
 
@@ -253,9 +255,11 @@ function UploadForm({
 
   const defaultFileInputField = (
     <FileInput
-      accept={supportedFileUploadTypes
-        .map((fileUploadType) => `.${fileUploadType}`)
-        .join(',')}
+      accept={
+        supportedFileUploadTypes
+          ?.map((fileUploadType) => `.${fileUploadType}`)
+          .join(',') || undefined
+      }
       required={dataUploadMode === 'file'}
       disabled={dataUploadMode !== 'file' || useFixedUploadMethod}
       maxSizeBytes={maxSizeBytes}
@@ -380,6 +384,18 @@ function UploadForm({
       {errorMessages.length > 0 && <ErrorMessage errors={errorMessages} />}
       <div>
         <h2>{datasetUploadType.uploadTitle}</h2>
+        <Banner
+          banner={{
+            type: 'warning',
+            message: (
+              <>
+                Before uploading your dataset, please ensure your data is
+                formatted according to the instructions listed in the{' '}
+                <Link to={{ pathname: '../datasets/help' }}>"Help" tab</Link>.
+              </>
+            ),
+          }}
+        />
         <div className="formSection">
           <FieldLabel required htmlFor="data-set-name">
             Name
@@ -539,17 +555,19 @@ function FieldLabel({ children, required, ...labelProps }: FieldLabelProps) {
 
 function ErrorMessage({ errors }: { errors: string[] }) {
   return (
-    <div className="ui-state-error" style={{ fontSize: 'large' }}>
-      <div>
-        <Icon fa="exclamation-triangle" />
-        &nbsp; Could not upload data set
-      </div>
-      {errors.map((error, ix) => (
-        <div key={ix} className="ui-state-error-text">
-          {error}
-        </div>
-      ))}
-    </div>
+    <Banner
+      banner={{
+        type: 'error',
+        message: (
+          <div style={{ lineHeight: 1.5 }}>
+            <span>Could not upload data set</span>
+            {errors.map((error, index) => (
+              <div key={index}>{error}</div>
+            ))}
+          </div>
+        ),
+      }}
+    />
   );
 }
 

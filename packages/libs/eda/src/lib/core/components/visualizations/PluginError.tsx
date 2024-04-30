@@ -6,6 +6,7 @@ interface Props {
   error?: unknown;
   customCases?: Case[];
   outputSize?: number;
+  bannerType?: 'warning' | 'error';
 }
 
 type Case = (error: unknown) => string | ReactFragment | undefined;
@@ -17,7 +18,12 @@ const defaultCases: Case[] = [
 const emptyCaseMessage =
   'The visualization cannot be made because there is no plottable data for selected variable(s) in the current subset.';
 
-export default function PluginError({ error, customCases, outputSize }: Props) {
+export default function PluginError({
+  error,
+  customCases,
+  outputSize,
+  bannerType = 'warning',
+}: Props) {
   // TO DO: errors from back end should arrive with a separate response code property
   // FOR NOW: flatten entire error to a string
   const fallbackErrorMessage =
@@ -36,7 +42,7 @@ export default function PluginError({ error, customCases, outputSize }: Props) {
   return errorContent ? (
     <Banner
       banner={{
-        type: 'warning',
+        type: bannerType,
         message: errorContent,
       }}
     />

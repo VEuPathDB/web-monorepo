@@ -102,7 +102,7 @@ import {
   VariableMapping,
 } from '../../../api/DataClient/types';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
-import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
+import { useOutputEntity } from '../../../hooks/findOutputEntity';
 import { boxplotDefaultDependentAxisMinMax } from '../../../utils/axis-range-calculations';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { LayoutOptions, TitleOptions } from '../../layouts/types';
@@ -378,9 +378,9 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
   // Abundance boxplots already know their entity, x, and y vars. If we're in the abundance app, set
   // the output entity here so that the boxplot can appear on load.
-  const outputEntity = useFindOutputEntity(
+  const outputEntity = useOutputEntity(
     dataElementDependencyOrder,
-    vizConfig,
+    selectedVariables,
     'yAxisVariable',
     computedYAxisDetails?.entityId
   );
@@ -439,7 +439,6 @@ function BoxplotViz(props: VisualizationProps<Options>) {
           (vizConfig.xAxisVariable == null || xAxisVariable == null)) ||
         (computedYAxisDetails == null &&
           (vizConfig.yAxisVariable == null || yAxisVariable == null)) ||
-        outputEntity == null ||
         filteredCounts.pending ||
         filteredCounts.value == null
       )
@@ -466,6 +465,8 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         dataElementConstraints,
         dataElementDependencyOrder
       );
+
+      if (outputEntity == null) return undefined;
 
       // add visualization.type here. valueSpec too?
       const params: BoxplotRequestParams = options?.getRequestParams?.({
@@ -495,7 +496,8 @@ function BoxplotViz(props: VisualizationProps<Options>) {
           : undefined,
       };
 
-      // boxplot
+      // 2024-04-26 - BM wonders why we don't use getBoxplot?
+      // or why we don't just use this for all the visualizations?
       const response = await dataClient.getVisualizationData(
         computation.descriptor.type,
         visualization.descriptor.type,
@@ -584,6 +586,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       visualization.descriptor.type,
       overlayEntity,
       facetEntity,
+      variablesForConstraints,
     ])
   );
 

@@ -91,6 +91,7 @@ interface ExternalLinkMenuItem<T> extends HeaderMenuItemBase<T> {
 interface SubmenuItem<T> extends HeaderMenuItemBase<T> {
   type: 'subMenu';
   items: HeaderMenuItem<T>[];
+  openByDefault?: boolean;
 }
 
 interface CustomMenuItem<T> extends HeaderMenuItemBase<T> {
@@ -374,12 +375,12 @@ const HeaderMenuItemContent = ({
               focusType={focusType}
               setSelectedItems={setSelectedItems}
               setFocusType={setFocusType}
-              dismissSubmenus={dismissSubmenus}
+              dismissSubmenus={() => null}
             />
           </DeferredDiv>
         </div>
       ) : item.type === 'subMenu' ? (
-        <details>
+        <details open={!!item.openByDefault}>
           <summary>
             <span>{item.display}</span>
           </summary>

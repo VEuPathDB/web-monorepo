@@ -14,9 +14,7 @@ import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 import NotFound from '@veupathdb/wdk-client/lib/Views/NotFound/NotFound';
 
 import SharingModal from '../Sharing/UserDatasetSharingModal';
-import UserDatasetStatus, {
-  failedImportAndInstallStatuses,
-} from '../UserDatasetStatus';
+import UserDatasetStatus from '../UserDatasetStatus';
 import { makeClassifier, normalizePercentage } from '../UserDatasetUtils';
 import { ThemedGrantAccessButton } from '../ThemedGrantAccessButton';
 import { ThemedDeleteButton } from '../ThemedDeleteButton';
@@ -30,7 +28,6 @@ const classify = makeClassifier('UserDatasetDetail');
 class UserDatasetDetail extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { sharingModalOpen: false };
 
     this.onMetaSave = this.onMetaSave.bind(this);
     this.isMyDataset = this.isMyDataset.bind(this);
@@ -64,11 +61,13 @@ class UserDatasetDetail extends React.Component {
   }
 
   openSharingModal() {
-    this.setState({ sharingModalOpen: true });
+    this.props.sharingSuccess(undefined);
+    this.props.sharingError(undefined);
+    this.props.updateSharingModalState(true);
   }
 
   closeSharingModal() {
-    this.setState({ sharingModalOpen: false });
+    this.props.updateSharingModalState(false);
   }
 
   validateKey(key) {
@@ -162,6 +161,7 @@ class UserDatasetDetail extends React.Component {
       },
       {
         attribute: 'Status',
+        className: classify('Status'),
         value: (
           <UserDatasetStatus
             linkToDataset={false}
@@ -529,14 +529,7 @@ class UserDatasetDetail extends React.Component {
       installStatusForCurrentProject?.metaStatus,
       installStatusForCurrentProject?.dataStatus,
     ].every((status) => status === 'complete');
-    const hasFailed = [
-      userDataset.status.import,
-      installStatusForCurrentProject?.metaStatus,
-      installStatusForCurrentProject?.dataStatus,
-    ].some((status) => failedImportAndInstallStatuses.includes(status));
 
-    const failedImport =
-      status.import === 'failed' || status.import === 'invalid';
     const isIncompatible =
       installStatusForCurrentProject?.dataStatus === 'missing-dependency';
 
@@ -557,22 +550,10 @@ class UserDatasetDetail extends React.Component {
           <b>{projectId}</b>. It is installed for use.
         </p>
       );
-    } else if (hasFailed) {
-      return (
-        // if we're installable but failed import or install, let's tell user
-        <p className="danger">
-          This {dataNoun.singular.toLowerCase()} failed to{' '}
-          {failedImport ? 'upload' : 'install'}.
-        </p>
-      );
     } else {
-      return (
-        // if we've made it here, we're installable and either import or install is in progress
-        <p className="danger">
-          This {dataNoun.singular.toLowerCase()} is being processed. Please
-          check again soon.
-        </p>
-      );
+      // instead of attempting to provide very granular messaging for when things are neither
+      // compatible nor incompatible, let's let the dataset page's Status messaging handle this
+      return null;
     }
   }
 
@@ -632,6 +613,10 @@ class UserDatasetDetail extends React.Component {
       shareUserDatasets,
       unshareUserDatasets,
       dataNoun,
+      sharingModalOpen,
+      sharingDatasetPending,
+      shareSuccessful,
+      shareError,
     } = this.props;
     const AllDatasetsLink = this.renderAllDatasetsLink;
     if (!userDataset)
@@ -641,7 +626,6 @@ class UserDatasetDetail extends React.Component {
         </NotFound>
       );
     const isOwner = this.isMyDataset();
-    const { sharingModalOpen } = this.state;
 
     return (
       <div className={classify()}>
@@ -654,8 +638,12 @@ class UserDatasetDetail extends React.Component {
             datasets={[userDataset]}
             onClose={this.closeSharingModal}
             shareUserDatasets={shareUserDatasets}
+            context="datasetDetails"
             unshareUserDatasets={unshareUserDatasets}
             dataNoun={dataNoun}
+            sharingDatasetPending={sharingDatasetPending}
+            shareSuccessful={shareSuccessful}
+            shareError={shareError}
           />
         )}
       </div>

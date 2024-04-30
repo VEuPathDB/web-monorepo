@@ -52,6 +52,7 @@ import {
   getErrorOverlayComponent,
   useSelectedMarkerSnackbars,
   selectedMarkersLittleFilter,
+  useFloatingPanelHandlers,
 } from '../../shared';
 import {
   MapTypeConfigPanelProps,
@@ -60,7 +61,7 @@ import {
 } from '../../types';
 import DraggableVisualization from '../../../DraggableVisualization';
 import { VariableDescriptor } from '../../../../../core/types/variable';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import { GeoConfig } from '../../../../../core/types/geoConfig';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
@@ -107,6 +108,18 @@ export const plugin: MapTypePlugin<BubbleMarkerConfiguration> = {
   TimeSliderComponent,
 };
 
+type BubbleLegendData = {
+  bubbleLegendData: {
+    minColorValue: number;
+    maxColorValue: number;
+    minSizeValue: number;
+    maxSizeValue: number;
+  };
+  bubbleValueToDiameterMapper: (value: number) => number;
+  bubbleValueToColorMapper: ((value: number) => string) | undefined;
+  bubbleValueToLegendTickMapper: ((val: number) => string) | undefined;
+};
+
 function BubbleMapConfigurationPanel(
   props: MapTypeConfigPanelProps<BubbleMarkerConfiguration>
 ) {
@@ -119,7 +132,6 @@ function BubbleMapConfigurationPanel(
     filters,
     geoConfigs,
     setIsSidePanelExpanded,
-    setHideVizInputsAndControls,
   } = props;
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
@@ -135,7 +147,7 @@ function BubbleMapConfigurationPanel(
     )?.dataElementConstraints;
 
   const setActiveVisualizationId = useCallback(
-    (activeVisualizationId?: string) => {
+    (activeVisualizationId?: string, isNew?: boolean) => {
       if (markerConfiguration == null) return;
       updateConfiguration({
         ...markerConfiguration,
@@ -143,6 +155,7 @@ function BubbleMapConfigurationPanel(
         visualizationPanelConfig: {
           ...visualizationPanelConfig,
           isVisible: !!activeVisualizationId,
+          ...(isNew ? { hideVizControl: false } : {}),
         },
       });
     },
@@ -173,6 +186,7 @@ function BubbleMapConfigurationPanel(
       toggleStarredVariable={toggleStarredVariable}
       constraints={markerVariableConstraints}
       isValidProportion={isValidProportion}
+      geoConfigs={geoConfigs}
     />
   );
 
@@ -205,7 +219,6 @@ function BubbleMapConfigurationPanel(
           plugins={plugins}
           geoConfigs={geoConfigs}
           mapType="bubble"
-          setHideVizInputsAndControls={setHideVizInputsAndControls}
           setIsSidePanelExpanded={setIsSidePanelExpanded}
         />
       ),
@@ -259,12 +272,20 @@ function BubbleMapLayer(
     markerDataFilterFuncs
   );
 
+  const legendData = useLegendData({
+    studyId,
+    filters,
+    geoConfigs,
+    configuration,
+  });
+
   const markersData = useMarkerData({
     boundsZoomLevel,
     configuration,
     geoConfigs,
     studyId,
     filters: filtersForMarkerData,
+    legendData,
   });
 
   const handleSelectedMarkerSnackbars = useSelectedMarkerSnackbars(
@@ -323,7 +344,6 @@ function BubbleLegendsAndFloater(
     updateConfiguration,
     headerButtons,
     setStudyDetailsPanelConfig,
-    setHideVizInputsAndControls,
   } = props;
   const configuration = props.configuration as BubbleMarkerConfiguration;
 
@@ -380,6 +400,15 @@ function BubbleLegendsAndFloater(
     substudyFilterFuncs
   );
 
+  // use all the handlers except updateLegendPosition
+  const {
+    updateVisualizationPosition,
+    updateVisualizationDimensions,
+    onPanelDismiss,
+    setHideVizControl,
+  } = useFloatingPanelHandlers({ configuration, updateConfiguration });
+
+  // and use the two specialized ones for the legends
   const updateVariableLegendPosition = useCallback(
     (position: PanelConfig['position']) => {
       updateConfiguration({
@@ -405,43 +434,6 @@ function BubbleLegendsAndFloater(
     },
     [updateConfiguration, configuration, legendPanelConfig]
   );
-
-  const updateVisualizationPosition = useCallback(
-    (position: PanelConfig['position']) => {
-      updateConfiguration({
-        ...configuration,
-        visualizationPanelConfig: {
-          ...visualizationPanelConfig,
-          position,
-        },
-      });
-    },
-    [updateConfiguration, configuration, visualizationPanelConfig]
-  );
-
-  const updateVisualizationDimensions = useCallback(
-    (dimensions: PanelConfig['dimensions']) => {
-      updateConfiguration({
-        ...configuration,
-        visualizationPanelConfig: {
-          ...visualizationPanelConfig,
-          dimensions,
-        },
-      });
-    },
-    [updateConfiguration, configuration, visualizationPanelConfig]
-  );
-
-  const onPanelDismiss = useCallback(() => {
-    updateConfiguration({
-      ...configuration,
-      activeVisualizationId: undefined,
-      visualizationPanelConfig: {
-        ...visualizationPanelConfig,
-        isVisible: false,
-      },
-    });
-  }, [updateConfiguration, configuration, visualizationPanelConfig]);
 
   return (
     <>
@@ -502,26 +494,30 @@ function BubbleLegendsAndFloater(
           )}
         </div>
       </DraggableLegendPanel>
-      <DraggableVisualization
-        analysisState={props.analysisState}
-        visualizationId={configuration.activeVisualizationId}
-        apps={props.apps}
-        plugins={plugins}
-        geoConfigs={geoConfigs}
-        totalCounts={props.totalCounts}
-        filteredCounts={props.filteredCounts}
-        toggleStarredVariable={toggleStarredVariable}
-        filters={filtersForFloaters}
-        // onTouch={moveVizToTop}
-        zIndexForStackingContext={2}
-        hideInputsAndControls={props.hideVizInputsAndControls}
-        setHideInputsAndControls={setHideVizInputsAndControls}
-        onDragComplete={updateVisualizationPosition}
-        defaultPosition={visualizationPanelConfig.position}
-        onPanelResize={updateVisualizationDimensions}
-        dimensions={visualizationPanelConfig.dimensions}
-        onPanelDismiss={onPanelDismiss}
-      />
+      {visualizationPanelConfig?.isVisible && (
+        <DraggableVisualization
+          analysisState={props.analysisState}
+          visualizationId={configuration.activeVisualizationId}
+          apps={props.apps}
+          plugins={plugins}
+          geoConfigs={geoConfigs}
+          totalCounts={props.totalCounts}
+          filteredCounts={props.filteredCounts}
+          toggleStarredVariable={toggleStarredVariable}
+          filters={filtersForFloaters}
+          // onTouch={moveVizToTop}
+          zIndexForStackingContext={2}
+          hideInputsAndControls={
+            visualizationPanelConfig.hideVizControl ?? false
+          }
+          setHideInputsAndControls={setHideVizControl}
+          onDragComplete={updateVisualizationPosition}
+          defaultPosition={visualizationPanelConfig.position}
+          onPanelResize={updateVisualizationDimensions}
+          dimensions={visualizationPanelConfig.dimensions}
+          onPanelDismiss={onPanelDismiss}
+        />
+      )}
     </>
   );
 }
@@ -752,6 +748,7 @@ interface DataProps {
   geoConfigs: GeoConfig[];
   studyId: string;
   filters?: Filter[];
+  legendData?: UseQueryResult<BubbleLegendData>;
 }
 
 function useLegendData(props: DataProps) {
@@ -987,10 +984,10 @@ function useRawMarkerData(props: DataProps) {
 }
 
 function useMarkerData(props: DataProps) {
-  const { boundsZoomLevel, configuration, studyId, filters } = props;
+  const { boundsZoomLevel, configuration, studyId, filters, legendData } =
+    props;
 
   const rawMarkersResult = useRawMarkerData(props);
-  const legendDataResult = useLegendData(props);
   const { overlayConfig } = useOverlayConfig({
     studyId,
     filters,
@@ -1004,7 +1001,7 @@ function useMarkerData(props: DataProps) {
      * and create markers.
      */
     const { bubbleValueToColorMapper, bubbleValueToDiameterMapper } =
-      legendDataResult.data ?? {};
+      legendData?.data ?? {};
     const finalMarkersData =
       rawMarkersResult.data != null
         ? processRawBubblesData(
@@ -1022,7 +1019,7 @@ function useMarkerData(props: DataProps) {
         boundsZoomLevel,
       },
     };
-  }, [rawMarkersResult, legendDataResult.data, overlayConfig, boundsZoomLevel]);
+  }, [rawMarkersResult, legendData?.data, overlayConfig, boundsZoomLevel]);
 }
 
 //

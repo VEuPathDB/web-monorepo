@@ -27,6 +27,8 @@ import {
 } from '../../../appState';
 import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 import { SharedMarkerConfigurations } from '../../shared';
+import { GeoConfig } from '../../../../../core/types/geoConfig';
+import { findLeastAncestralGeoConfig } from '../../../../../core/utils/geoVariables';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
@@ -65,6 +67,7 @@ interface Props
    * Only defined and used in categorical table if selectedCountsOption is 'visible'
    */
   allVisibleCategoricalValues: AllValuesDefinition[] | undefined;
+  geoConfigs: GeoConfig[];
 }
 
 // TODO: generalize this and PieMarkerConfigMenu into MarkerConfigurationMenu. Lots of code repetition...
@@ -84,6 +87,7 @@ export function BarPlotMarkerConfigurationMenu({
   continuousMarkerPreview,
   allFilteredCategoricalValues,
   allVisibleCategoricalValues,
+  geoConfigs,
 }: Props) {
   /**
    * Used to track the CategoricalMarkerConfigurationTable's selection state, which allows users to
@@ -154,12 +158,19 @@ export function BarPlotMarkerConfigurationMenu({
       return;
     }
 
+    const geoConfig = findLeastAncestralGeoConfig(
+      geoConfigs,
+      selection.overlayVariable.entityId
+    );
+
     onChange({
       ...configuration,
       selectedVariable: selection.overlayVariable,
       selectedValues: undefined,
+      geoEntityId: geoConfig.entity.id,
     });
   }
+
   function handlePlotModeSelection(option: string) {
     onChange({
       ...configuration,

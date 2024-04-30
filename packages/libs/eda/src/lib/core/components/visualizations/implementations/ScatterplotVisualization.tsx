@@ -133,7 +133,7 @@ import {
 // use Banner from CoreUI for showing message for no smoothing
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
-import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
+import { useOutputEntity } from '../../../hooks/findOutputEntity';
 
 import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import { OverlayOptions, RequestOptions } from '../options/types';
@@ -384,9 +384,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   );
   const colorPaletteOverride =
     neutralPaletteProps.colorPalette ??
-    options?.getOverlayType?.() === 'continuous'
+    (options?.getOverlayType?.() === 'continuous'
       ? SequentialGradientColorscale
-      : ColorPaletteDefault;
+      : ColorPaletteDefault);
   const findEntityAndVariable = useFindEntityAndVariable(filters);
 
   const {
@@ -592,9 +592,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   );
 
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
-  const outputEntity = useFindOutputEntity(
+  const outputEntity = useOutputEntity(
     dataElementDependencyOrder,
-    vizConfig,
+    selectedVariables,
     'yAxisVariable',
     computedYAxisDetails?.entityId
   );
@@ -650,11 +650,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       if (computedYAxisDetails && computeJobStatus !== 'complete')
         return undefined;
 
-      if (
-        outputEntity == null ||
-        filteredCounts.pending ||
-        filteredCounts.value == null
-      )
+      if (filteredCounts.pending || filteredCounts.value == null)
         return undefined;
 
       if (
@@ -674,6 +670,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         dataElementConstraints,
         dataElementDependencyOrder
       );
+
+      if (outputEntity == null) return undefined;
 
       // check log scale and plot mode option for retrieving data
       if (showLogScaleBanner) return undefined;

@@ -241,9 +241,133 @@ const siteAnnouncements = [
   },
 */
 
+  //VectorBase, fuscipes: https://redmine.apidb.org/issues/53163 b68  1 year (April 2024 to April 2025):
+  {
+    id: 'fuscipes',
+    renderDisplay: (props) => {
+      if (
+        (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
+        (props.location.pathname.indexOf('/record/dataset/TMPTX_gfusIAEA2018') >
+          -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_c3e414cbf3') >
+            -1 ||
+          props.location.pathname.indexOf('/record/gene/GQX74_') > -1 ||
+          props.location.pathname.indexOf('/record/dataset/TMPTX_gfusIAEA') >
+            -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_2f0c4b9ff0') >
+            -1 ||
+          props.location.pathname.indexOf('/record/gene/GFUI0') > -1)
+      ) {
+        return (
+          <div key="">
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/TMPTX_gfusIAEA2018">
+              <i>Glossina fuscipes</i> IAEA 2018
+            </a>{' '}
+            is the <b>new reference genome</b> for this tsetse fly species,
+            which means the 'omics' data sets are only aligned to this strain
+            and all the site functionality is activated.{' '}
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/TMPTX_gfusIAEA">
+              <i>Glossina fuscipes</i> IAEA
+            </a>{' '}
+            will remain available on VectorBase, but with limited functionality.
+            Please{' '}
+            <a href="https://vectorbase.org/vectorbase/app/contact-us">
+              contact us
+            </a>{' '}
+            if you have any questions, suggestions or feedback.
+          </div>
+        );
+      }
+      return null;
+    },
+  },
+
+  //VectorBase, sinensis: https://redmine.apidb.org/issues/53172 b68 for 1 year (Nov 2023 to Nov 2024):
+  {
+    id: 'sinensis',
+    renderDisplay: (props) => {
+      if (
+        (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
+        (props.location.pathname.indexOf('/record/dataset/TMPTX_asinChina') >
+          -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_e7fe24aea7') >
+            -1 ||
+          props.location.pathname.indexOf('/record/gene/ASIC0') > -1 ||
+          props.location.pathname.indexOf(
+            '/record/dataset/TMPTX_asinSINENSIS'
+          ) > -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_4011a1b1a3') >
+            -1 ||
+          props.location.pathname.indexOf('/record/gene/ASIS0') > -1)
+      ) {
+        return (
+          <div key="">
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/TMPTX_asinChina">
+              <i>Anopheles sinensis</i> China
+            </a>{' '}
+            is the <b>new reference genome</b> for this mosquito species, which
+            means the 'omics' data sets are only aligned to this strain and all
+            the site functionality is activated.{' '}
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/TMPTX_asinSINENSIS">
+              <i>Anopheles sinensis</i> SINENSIS
+            </a>{' '}
+            will remain available on VectorBase, but with limited functionality.
+            Please{' '}
+            <a href="https://vectorbase.org/vectorbase/app/contact-us">
+              contact us
+            </a>{' '}
+            if you have any questions, suggestions or feedback.
+          </div>
+        );
+      }
+      return null;
+    },
+  },
+
+  //VectorBase, glabrata: https://redmine.apidb.org/issues/53159 b68 for 1 year (April 2024 to April 2025)
+  {
+    id: 'glabrata',
+    renderDisplay: (props) => {
+      if (
+        (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
+        (props.location.pathname.indexOf('/record/dataset/TMPTX_bglaXG47') >
+          -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_b56fe6b141') >
+            -1 ||
+          props.location.pathname.indexOf('/record/gene/BGLAX_') > -1 ||
+          props.location.pathname.indexOf('/record/dataset/TMPTX_bglaBB02') >
+            -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_6841b75d56') >
+            -1 ||
+          props.location.pathname.indexOf('/record/gene/BGLB0') > -1)
+      ) {
+        return (
+          <div key="">
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/TMPTX_bglaXG47">
+              <i>Biomphalaria glabrata</i> XG47
+            </a>{' '}
+            is the <b>new reference genome</b> for this snail species, which
+            means the 'omics' data sets are only aligned to this strain and all
+            the site functionality is activated.{' '}
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/TMPTX_bglaBB02">
+              <i>Biomphalaria glabrata</i> BB02
+            </a>{' '}
+            will remain available on VectorBase, but with limited functionality.
+            Please{' '}
+            <a href="https://vectorbase.org/vectorbase/app/contact-us">
+              contact us
+            </a>{' '}
+            if you have any questions, suggestions or feedback.
+          </div>
+        );
+      }
+      return null;
+    },
+  },
+
   //VectorBase, aziemanni: https://redmine.apidb.org/issues/53767 b68
   {
-    id: 'aziemanni ',
+    id: 'aziemanni',
     renderDisplay: (props) => {
       if (
         (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
@@ -281,7 +405,9 @@ const siteAnnouncements = [
     },
   },
 
-  //VectorBase, aquasalis: https://redmine.apidb.org/issues/53436  Jan 18 2024 -patched prod 66-  for a year
+  //VectorBase, aquasalis: https://redmine.apidb.org/issues/53436
+  //   Jan 18 2024 -patched prod 66-  for a year
+  //  b68 may 1 2024: for 1 year (Jan 2024 to Jan 2025) or until fixed by data provider
   {
     id: 'aquasalis',
     renderDisplay: (props) => {
@@ -298,9 +424,9 @@ const siteAnnouncements = [
             <a href="https://vectorbase.org/vectorbase/app/record/dataset/DS_44554a07c1">
               <i>Anopheles aquasalis</i> AaquGF1
             </a>{' '}
-            has a confusion in chromosome nomenclature. The current X and Y
-            designations should be replaced with XL (X long arm) and XR (X short
-            arm), respectively. While the matter is being addressed in the
+            has a <b>confusion in chromosome nomenclature</b>. The current X and
+            Y designations should be replaced with XL (X long arm) and XR (X
+            short arm), respectively. While the matter is being addressed in the
             primary databases/INSDC and will subsequently be handled at
             VectorBase, feel free to{' '}
             <a href="https://vectorbase.org/vectorbase/app/contact-us">

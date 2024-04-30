@@ -25,6 +25,8 @@ import {
   SelectedValues,
 } from '../../../appState';
 import { SharedMarkerConfigurations } from '../../shared';
+import { GeoConfig } from '../../../../../core/types/geoConfig';
+import { findLeastAncestralGeoConfig } from '../../../../../core/utils/geoVariables';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
@@ -61,6 +63,7 @@ interface Props
    * Only defined and used in categorical table if selectedCountsOption is 'visible'
    */
   allVisibleCategoricalValues: AllValuesDefinition[] | undefined;
+  geoConfigs: GeoConfig[];
 }
 
 // TODO: generalize this and BarPlotMarkerConfigMenu into MarkerConfigurationMenu. Lots of code repetition...
@@ -80,6 +83,7 @@ export function PieMarkerConfigurationMenu({
   continuousMarkerPreview,
   allFilteredCategoricalValues,
   allVisibleCategoricalValues,
+  geoConfigs,
 }: Props) {
   /**
    * Used to track the CategoricalMarkerConfigurationTable's selection state, which allows users to
@@ -150,12 +154,23 @@ export function PieMarkerConfigurationMenu({
       return;
     }
 
+    // With each variable change we set the geo entity for the user to the least ancestral
+    // entity on the path from root to the chosen variable.
+    // However, we could make this choosable via the UI in the future.
+    // (That's one reason why we're storing it in appState.)
+    const geoConfig = findLeastAncestralGeoConfig(
+      geoConfigs,
+      selection.overlayVariable.entityId
+    );
+
     onChange({
       ...configuration,
       selectedVariable: selection.overlayVariable,
       selectedValues: undefined,
+      geoEntityId: geoConfig.entity.id,
     });
   }
+
   function handleBinningMethodSelection(option: string) {
     onChange({
       ...configuration,

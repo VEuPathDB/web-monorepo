@@ -12,9 +12,12 @@ import {
   aggregationHelp,
   AggregationInputs,
 } from '../../../../../core/components/visualizations/implementations/LineplotVisualization';
+import { DataElementConstraint } from '../../../../../core/types/visualization'; // TO DO for dates: remove
 import { SharedMarkerConfigurations } from '../../shared';
 import { invalidProportionText } from '../../../utils/defaultOverlayConfig';
 import { PanelConfig, PanelPositionConfig } from '../../../appState';
+import { GeoConfig } from '../../../../../core/types/geoConfig';
+import { findLeastAncestralGeoConfig } from '../../../../../core/utils/geoVariables';
 
 type AggregatorOption = typeof aggregatorOptions[number];
 const aggregatorOptions = ['mean', 'median'] as const;
@@ -51,6 +54,7 @@ interface Props
   configuration: BubbleMarkerConfiguration;
   overlayConfiguration: BubbleOverlayConfig | undefined;
   isValidProportion: boolean | undefined; // undefined when not categorical mode
+  geoConfigs: GeoConfig[];
 }
 
 export function BubbleMarkerConfigurationMenu({
@@ -62,6 +66,7 @@ export function BubbleMarkerConfigurationMenu({
   toggleStarredVariable,
   constraints,
   isValidProportion,
+  geoConfigs,
 }: Props) {
   function handleInputVariablesOnChange(selection: VariablesByInputName) {
     if (!selection.overlayVariable) {
@@ -71,11 +76,17 @@ export function BubbleMarkerConfigurationMenu({
       return;
     }
 
+    const geoConfig = findLeastAncestralGeoConfig(
+      geoConfigs,
+      selection.overlayVariable.entityId
+    );
+
     onChange({
       ...configuration,
       selectedVariable: selection.overlayVariable,
       numeratorValues: undefined,
       denominatorValues: undefined,
+      geoEntityId: geoConfig.entity.id,
     });
   }
 

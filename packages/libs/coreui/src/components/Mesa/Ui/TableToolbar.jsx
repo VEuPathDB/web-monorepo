@@ -33,29 +33,11 @@ class TableToolbar extends React.PureComponent {
 
   renderCounter() {
     const { rows = {}, options = {}, uiState = {}, eventHandlers } = this.props;
-    const { showCount } = options;
-    if (!showCount) return null;
+    const { showCount, toolbar } = options;
 
-    const { pagination = {}, filteredRowCount = 0 } = uiState;
-    const { totalRows, rowsPerPage } = pagination;
+    if (!showCount || !toolbar) return null;
 
-    const isPaginated = 'onPageChange' in eventHandlers;
-    const isSearching = uiState.searchQuery && uiState.searchQuery.length;
-
-    const count = totalRows ? totalRows : rows.length;
-    const noun =
-      (isSearching ? 'result' : 'row') +
-      (count - filteredRowCount === 1 ? '' : 's');
-    const start = !isPaginated
-      ? null
-      : (pagination.currentPage - 1) * rowsPerPage + 1;
-    const end = !isPaginated
-      ? null
-      : start + rowsPerPage > count - filteredRowCount
-      ? count - filteredRowCount
-      : start - 1 + rowsPerPage;
-
-    const props = { count, noun, start, end, filteredRowCount };
+    const props = { rows, uiState, eventHandlers };
 
     return (
       <div className="TableToolbar-Info">

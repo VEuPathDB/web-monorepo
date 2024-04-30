@@ -113,15 +113,22 @@ export async function getDefaultOverlayConfig(
       entityId: overlayEntity.id,
     };
 
-    if (CategoricalVariableDataShape.is(overlayVariable.dataShape)) {
+    if (
+      CategoricalVariableDataShape.is(overlayVariable.dataShape) &&
+      overlayVariable.vocabulary != null
+    ) {
       // categorical
-      const overlayValues = await getMostFrequentValues({
-        studyId: studyId,
-        ...overlayVariableDescriptor,
-        filters: filters ?? [],
-        numValues: ColorPaletteDefault.length - 1,
-        subsettingClient,
-      });
+      const overlayValues =
+        overlayVariable.vocabulary.length > ColorPaletteDefault.length
+          ? await getMostFrequentValues({
+              // sort by frequency for high-cardinality only
+              studyId: studyId,
+              ...overlayVariableDescriptor,
+              filters: filters ?? [],
+              numValues: ColorPaletteDefault.length - 1,
+              subsettingClient,
+            })
+          : overlayVariable.vocabulary;
 
       return {
         overlayType: 'categorical',
