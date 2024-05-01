@@ -1,10 +1,8 @@
-import { LinkData, NetworkPartition, NodeData } from '../types/plots/network';
-import { truncateWithEllipsis } from '../utils/axis-tick-label-ellipsis';
-import { orderBy } from 'lodash';
+import { LinkData, NodeData } from '../types/plots/network';
+import { isNumber, orderBy } from 'lodash';
 import { LabelPosition, NodeWithLabel } from './Node';
 import { Link } from './Link';
 import { Graph } from '@visx/network';
-import { Text } from '@visx/text';
 import {
   CSSProperties,
   ReactNode,
@@ -26,14 +24,6 @@ import { plotToImage } from './visxVEuPathDB';
 import { GlyphTriangle } from '@visx/visx';
 
 import './NetworkPlot.css';
-
-export interface BipartiteNetworkSVGStyles {
-  width?: number; // svg width
-  height?: number; // svg height
-  topPadding?: number; // space between the top of the svg and the top-most node
-  nodeSpacing?: number; // space between vertically adjacent nodes
-  columnPadding?: number; // space between the left of the svg and the left column, also the right of the svg and the right column.
-}
 
 export interface NodeMenuAction {
   label: ReactNode;
@@ -66,6 +56,9 @@ export interface NetworkPlotProps {
   annotations?: ReactNode[];
 }
 
+const DEFAULT_PLOT_WIDTH = 500;
+const DEFAULT_PLOT_HEIGHT = 500;
+
 const emptyNodes: NodeData[] = [...Array(9).keys()].map((item) => ({
   id: item.toString(),
   color: gray[100],
@@ -73,10 +66,9 @@ const emptyNodes: NodeData[] = [...Array(9).keys()].map((item) => ({
 }));
 const emptyLinks: LinkData[] = [];
 
-// The Network component draws a network of nodes and links. Optionaly, one can pass partitions which
-// then will be used to draw a k-partite network.
-// If no x,y coordinates are provided for nodes in the network, the network will
-// be drawn in a circular layout, or in columns partitions are provided.
+// The Network component draws a network of nodes and links.
+// If no x,y coordinates are provided for nodes in the network, the nodes will
+// be drawn with a default circular layout.
 function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
   const {
     nodes = emptyNodes,
@@ -110,18 +102,26 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
     [toImage]
   );
 
-  // Set up styles for the bipartite network and incorporate overrides
-  const svgStyles = {
-    width: Number(containerStyles?.width) || 400,
-    height: Number(containerStyles?.height) || 500,
-    ...svgStyleOverrides,
-  };
-
   const plotRect = plotRef.current?.getBoundingClientRect();
   const imageHeight = plotRect?.height;
   const imageWidth = plotRect?.width;
 
-  const nodesWithActions = useMemo(
+  // Set up styles for the network and incorporate overrides
+  const svgStyles = {
+    width:
+      containerStyles?.width && isNumber(containerStyles?.width)
+        ? containerStyles.width
+        : DEFAULT_PLOT_WIDTH,
+    height:
+      containerStyles?.height && isNumber(containerStyles?.height)
+        ? containerStyles.height
+        : DEFAULT_PLOT_HEIGHT,
+    ...svgStyleOverrides,
+  };
+
+  // Node processing.
+  // Add actions and default coordinates. The default coordinates arrange nodes in a circle.
+  const processedNodes = useMemo(
     () =>
       nodes.map((node, index) => ({
         labelPosition: 'right' as LabelPosition,
@@ -133,16 +133,18 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
     [getNodeActions, nodes]
   );
 
-  // Assign coordinates to links based on the newly created node coordinates
-  const linksWithCoordinates = useMemo(
+  // Link processing.
+  // Assign coordinates to links based on the newly created node coordinates.
+  // Additionally order links so that the highlighted ones get drawn on top (are at the end of the array).
+  const processedLinks = useMemo(
     () =>
       // Put highlighted links on top of gray links.
       orderBy(
         links.map((link) => {
-          const sourceNode = nodesWithActions.find(
+          const sourceNode = processedNodes.find(
             (node) => node.id === link.source.id
           );
-          const targetNode = nodesWithActions.find(
+          const targetNode = processedNodes.find(
             (node) => node.id === link.target.id
           );
           return {
@@ -171,10 +173,10 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
         // but that's okay, because the overlapping colors will be the same.
         (link) => (link.color === '#eee' ? -1 : 1)
       ),
-    [links, highlightedNodeId, nodesWithActions]
+    [links, highlightedNodeId, processedNodes]
   );
 
-  const activeNode = nodesWithActions.find((node) => node.id === activeNodeId);
+  const activeNode = processedNodes.find((node) => node.id === activeNodeId);
 
   useEffect(() => {
     const element = document.querySelector('.network-plot-container');
@@ -253,8 +255,8 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
             <svg {...svgStyles}>
               <Graph
                 graph={{
-                  nodes: nodesWithActions,
-                  links: linksWithCoordinates,
+                  nodes: processedNodes,
+                  links: processedLinks,
                 }}
                 // Using our Link component so that it uses our nice defaults and
                 // can better expand to handle more complex events (hover and such).
@@ -275,7 +277,7 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
                   return (
                     <>
                       {node.actions?.length && (
-                        <g className="bpnet-hover-dropdown">
+                        <g className="net-hover-dropdown">
                           <rect
                             rx="2.5"
                             width={rectWidth}
@@ -337,11 +339,7 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
           ) : (
             emptyNetworkContent ?? <p>No nodes in the network</p>
           )}
-          {
-            // Note that the spinner shows up in the middle of the network. So when
-            // the network is very long, the spinner will be further down the page than in other vizs.
-            showSpinner && <Spinner />
-          }
+          {showSpinner && <Spinner />}
         </div>
       </div>
       <ExportPlotToImageButton

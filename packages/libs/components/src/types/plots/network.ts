@@ -41,14 +41,15 @@ export type NetworkPlotData = {
   links: LinkData[];
 };
 
+/** Bipartite network data is a regular network with addiitonal declarations of
+ * nodes in each of the two columns.
+ */
 export type NetworkPartition = {
+  /** Ids that allow us to match node ids in NodeData[] of a NetworkPlotData object to this partition. */
   nodeIds: string[];
+  /** Name of the partition. Ex. "Species" */
   name?: string;
 };
-
-/** Bipartite network data is a regular network with addiitonal declarations of
- * nodes in each of the two columns. IDs in columnXNodeIDs must match node ids exactly.
- */
 export type BipartiteNetworkData = {
   partitions: NetworkPartition[];
 } & NetworkPlotData;
