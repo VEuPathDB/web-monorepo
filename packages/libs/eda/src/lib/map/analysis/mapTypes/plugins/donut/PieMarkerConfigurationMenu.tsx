@@ -19,14 +19,13 @@ import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/Radio
 import { useUncontrolledSelections } from '../../../hooks/uncontrolledSelections';
 import {
   BinningMethod,
-  PanelConfig,
-  PanelPositionConfig,
   SelectedCountsOption,
   SelectedValues,
-} from '../../../appState';
-import { SharedMarkerConfigurations } from '../../shared';
+  SharedMarkerConfigurations,
+} from '../../shared';
 import { GeoConfig } from '../../../../../core/types/geoConfig';
 import { findLeastAncestralGeoConfig } from '../../../../../core/utils/geoVariables';
+import { PanelConfig, PanelPositionConfig } from '../../../Types';
 
 interface MarkerConfiguration<T extends string> {
   type: T;

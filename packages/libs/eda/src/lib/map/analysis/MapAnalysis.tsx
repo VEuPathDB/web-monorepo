@@ -1,5 +1,20 @@
 import { useCallback, useMemo, useState } from 'react';
 
+import { EditLocation, InfoOutlined, Notes, Share } from '@material-ui/icons';
+import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
+import {
+  CheckIcon,
+  Download,
+  FilledButton,
+  Filter as FilterIcon,
+  FloatingButton,
+  H5,
+  Modal,
+  Plus,
+  Table,
+} from '@veupathdb/coreui';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { useHistory, useLocation, useRouteMatch } from 'react-router';
 import {
   AnalysisState,
   DEFAULT_ANALYSIS_NAME,
@@ -16,72 +31,53 @@ import {
   useStudyRecord,
   useSubsettingClient,
 } from '../../core';
-import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
-import { useGeoConfig } from '../../core/hooks/geoConfig';
-import { DocumentationContainer } from '../../core/components/docs/DocumentationContainer';
-import {
-  CheckIcon,
-  Download,
-  Plus,
-  FilledButton,
-  Filter as FilterIcon,
-  FloatingButton,
-  H5,
-  Table,
-  Modal,
-} from '@veupathdb/coreui';
-import { useEntityCounts } from '../../core/hooks/entityCounts';
-import ShowHideVariableContextProvider from '../../core/utils/show-hide-variable-context';
-import {
-  AppState,
-  MarkerConfiguration,
-  useAppState,
-  LegacyRedirectState,
-} from './appState';
-import Subsetting from '../../workspace/Subsetting';
-import { MapHeader } from './MapHeader';
 import FilterChipList from '../../core/components/FilterChipList';
 import { VariableLinkConfig } from '../../core/components/VariableLink';
-import { MapSidePanel } from './MapSidePanel';
-import { EditLocation, InfoOutlined, Notes, Share } from '@material-ui/icons';
+import { DocumentationContainer } from '../../core/components/docs/DocumentationContainer';
+import { useEntityCounts } from '../../core/hooks/entityCounts';
+import { useGeoConfig } from '../../core/hooks/geoConfig';
 import { ComputationAppOverview } from '../../core/types/visualization';
-import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import Login from '../../workspace/sharing/Login';
-import { useLoginCallbacks } from '../../workspace/sharing/hooks';
-import NameAnalysis from '../../workspace/sharing/NameAnalysis';
+import ShowHideVariableContextProvider from '../../core/utils/show-hide-variable-context';
 import NotesTab from '../../workspace/NotesTab';
+import Subsetting from '../../workspace/Subsetting';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
-import { useHistory, useLocation, useRouteMatch } from 'react-router';
+import Login from '../../workspace/sharing/Login';
+import NameAnalysis from '../../workspace/sharing/NameAnalysis';
+import { useLoginCallbacks } from '../../workspace/sharing/hooks';
+import { MapHeader } from './MapHeader';
+import { MapSidePanel } from './MapSidePanel';
+import { AppState, LegacyRedirectState, MarkerConfiguration } from './Types';
+import { useAppState } from './appState';
 
+import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
+import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import { uniq } from 'lodash';
 import Path from 'path';
-import DownloadTab from '../../workspace/DownloadTab';
-import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
-import { AllAnalyses } from '../../workspace/AllAnalyses';
-import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
-import { isSavedAnalysis } from '../../core/utils/analysis';
 import { GeoConfig } from '../../core/types/geoConfig';
+import { isSavedAnalysis } from '../../core/utils/analysis';
+import { AllAnalyses } from '../../workspace/AllAnalyses';
+import DownloadTab from '../../workspace/DownloadTab';
+import { SideNavigationItems } from './MapSideNavigation';
 import {
   SidePanelItem,
   SidePanelMenuEntry,
   SiteInformationProps,
 } from './Types';
-import { SideNavigationItems } from './MapSideNavigation';
 import {
-  donutMarkerPlugin,
   barMarkerPlugin,
   bubbleMarkerPlugin,
   collectionBarMarkerPlugin,
+  donutMarkerPlugin,
 } from './mapTypes';
 
-import { MapTypeMapLayerProps } from './mapTypes/types';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
-import AnalysisNameDialog from '../../workspace/AnalysisNameDialog';
+import SettingsButton from '@veupathdb/coreui/lib/components/containers/DraggablePanel/SettingsButton';
+import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import { Page } from '@veupathdb/wdk-client/lib/Components';
 import { AnalysisError } from '../../core/components/AnalysisError';
-import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
-import SettingsButton from '@veupathdb/coreui/lib/components/containers/DraggablePanel/SettingsButton';
 import { getGeoConfig } from '../../core/utils/geoVariables';
+import AnalysisNameDialog from '../../workspace/AnalysisNameDialog';
+import { MapTypeMapLayerProps } from './mapTypes/types';
 
 const singleVariablePlugins = [
   donutMarkerPlugin,

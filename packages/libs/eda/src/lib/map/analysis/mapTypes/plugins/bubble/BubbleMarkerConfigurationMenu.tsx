@@ -15,9 +15,9 @@ import {
 import { DataElementConstraint } from '../../../../../core/types/visualization'; // TO DO for dates: remove
 import { SharedMarkerConfigurations } from '../../shared';
 import { invalidProportionText } from '../../../utils/defaultOverlayConfig';
-import { PanelConfig, PanelPositionConfig } from '../../../appState';
 import { GeoConfig } from '../../../../../core/types/geoConfig';
 import { findLeastAncestralGeoConfig } from '../../../../../core/utils/geoVariables';
+import { PanelConfig, PanelPositionConfig } from '../../../Types';
 
 type AggregatorOption = typeof aggregatorOptions[number];
 const aggregatorOptions = ['mean', 'median'] as const;

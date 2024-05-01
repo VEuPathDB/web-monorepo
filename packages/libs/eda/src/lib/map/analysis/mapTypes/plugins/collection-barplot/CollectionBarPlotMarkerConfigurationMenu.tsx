@@ -18,13 +18,13 @@ import Barplot from '@veupathdb/components/lib/plots/Barplot';
 import { SubsettingClient } from '../../../../../core/api';
 import { Toggle } from '@veupathdb/coreui';
 import { useUncontrolledSelections } from '../../../hooks/uncontrolledSelections';
+import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 import {
   BinningMethod,
   SelectedCountsOption,
   SelectedValues,
-} from '../../../appState';
-import { gray } from '@veupathdb/coreui/lib/definitions/colors';
-import { SharedMarkerConfigurations } from '../../shared';
+  SharedMarkerConfigurations,
+} from '../../shared';
 
 interface MarkerConfiguration<T extends string> {
   type: T;

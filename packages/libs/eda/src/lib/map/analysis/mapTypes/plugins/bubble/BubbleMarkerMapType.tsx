@@ -53,6 +53,7 @@ import {
   useSelectedMarkerSnackbars,
   selectedMarkersLittleFilter,
   useFloatingPanelHandlers,
+  defaultVisualizationPanelConfig,
 } from '../../shared';
 import {
   MapTypeConfigPanelProps,
@@ -73,10 +74,7 @@ import TimeSliderQuickFilter from '../../../TimeSliderQuickFilter';
 import { SubStudies } from '../../../SubStudies';
 import { MapTypeHeaderStudyDetails } from '../../MapTypeHeaderStudyDetails';
 import { STUDIES_ENTITY_ID, STUDY_ID_VARIABLE_ID } from '../../../../constants';
-import {
-  PanelConfig,
-  defaultVisualizationPanelConfig,
-} from '../../../appState';
+import { PanelConfig } from '../../../Types';
 
 const displayName = 'Bubbles';
 

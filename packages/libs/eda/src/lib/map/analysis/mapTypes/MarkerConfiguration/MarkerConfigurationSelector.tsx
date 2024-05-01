@@ -1,6 +1,6 @@
 import { H6 } from '@veupathdb/coreui';
 import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
-import { MarkerConfiguration } from '../../appState';
+import { MarkerConfiguration } from '../../Types';
 
 export interface MarkerConfigurationOption {
   displayName: string;

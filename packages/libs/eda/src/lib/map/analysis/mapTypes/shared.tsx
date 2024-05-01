@@ -42,11 +42,11 @@ import { useCallback, useState } from 'react';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import { PieMarkerConfiguration } from './plugins/donut/PieMarkerConfigurationMenu';
 import { BarPlotMarkerConfiguration } from './plugins/barplot/BarPlotMarkerConfigurationMenu';
-import { PanelConfig, PanelPositionConfig } from '../appState';
 import {
   findLeastAncestralGeoConfig,
   getGeoConfig,
 } from '../../../core/utils/geoVariables';
+import { PanelConfig, PanelPositionConfig } from '../Types';
 
 export const defaultAnimation = {
   method: 'geohash',
@@ -61,6 +61,45 @@ const BubbleLegendPositionConfig = t.type({
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 type BubbleLegendPositionConfig = t.TypeOf<typeof BubbleLegendPositionConfig>;
+
+export const DEFAULT_DRAGGABLE_VIZ_POSITION = {
+  x: 535,
+  y: 220,
+};
+
+export const DEFAULT_DRAGGABLE_VIZ_DIMENSIONS = {
+  width: 'auto',
+  height: 'auto',
+};
+
+export const defaultVisualizationPanelConfig = {
+  isVisible: false,
+  hideVizControl: false,
+  position: DEFAULT_DRAGGABLE_VIZ_POSITION,
+  dimensions: DEFAULT_DRAGGABLE_VIZ_DIMENSIONS,
+};
+
+// user-specified selection
+export type SelectedValues = t.TypeOf<typeof SelectedValues>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+const SelectedValues = t.union([t.array(t.string), t.undefined]);
+
+export type BinningMethod = t.TypeOf<typeof BinningMethod>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+const BinningMethod = t.union([
+  t.literal('equalInterval'),
+  t.literal('quantile'),
+  t.literal('standardDeviation'),
+  t.undefined,
+]);
+
+export type SelectedCountsOption = t.TypeOf<typeof SelectedCountsOption>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+const SelectedCountsOption = t.union([
+  t.literal('filtered'),
+  t.literal('visible'),
+  t.undefined,
+]);
 
 export const markerDataFilterFuncs = [timeSliderLittleFilter];
 export const floaterFilterFuncs = [

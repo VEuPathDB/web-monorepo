@@ -1,7 +1,7 @@
 import DraggablePanel, {
   DraggablePanelCoordinatePair,
 } from '@veupathdb/coreui/lib/components/containers/DraggablePanel';
-import { PanelConfig } from './appState';
+import { PanelConfig } from './Types';
 
 export const DEFAULT_DRAGGABLE_LEGEND_POSITION = {
   x: window.innerWidth,

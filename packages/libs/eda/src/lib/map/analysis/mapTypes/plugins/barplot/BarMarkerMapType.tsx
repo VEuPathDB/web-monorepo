@@ -57,6 +57,7 @@ import {
   getLegendErrorMessage,
   selectedMarkersLittleFilter,
   useFloatingPanelHandlers,
+  defaultVisualizationPanelConfig,
 } from '../../shared';
 import {
   useFindEntityAndVariable,
@@ -83,7 +84,6 @@ import { useLittleFilters } from '../../../littleFilters';
 import TimeSliderQuickFilter from '../../../TimeSliderQuickFilter';
 import { MapTypeHeaderStudyDetails } from '../../MapTypeHeaderStudyDetails';
 import { SubStudies } from '../../../SubStudies';
-import { defaultVisualizationPanelConfig } from '../../../appState';
 
 const displayName = 'Bar plots';
 

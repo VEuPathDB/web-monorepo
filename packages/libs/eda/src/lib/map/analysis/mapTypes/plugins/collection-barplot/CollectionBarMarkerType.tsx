@@ -121,9 +121,12 @@ function ConfigPanelComponent(
               collectionId: configuration.collectionId,
             }}
             onSelect={function (
-              value?: { entityId: string; collectionId: string } | undefined
+              value?:
+                | { entityId: string; collectionId: string }
+                | string
+                | undefined
             ): void {
-              if (value == null) return;
+              if (value == null || typeof value === 'string') return;
               const { entity, variableCollection } =
                 findEntityAndCollection(value) ?? {};
               if (entity == null || variableCollection == null) return;

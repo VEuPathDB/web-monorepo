@@ -12,17 +12,7 @@ import { Filter } from '../../core/types/filter';
 import { FilledButton } from '@veupathdb/coreui';
 import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
 import { ComputationPlugin } from '../../core/components/computations/Types';
-import { PanelConfig } from './appState';
-
-export const DEFAULT_DRAGGABLE_VIZ_POSITION = {
-  x: 535,
-  y: 220,
-};
-
-export const DEFAULT_DRAGGABLE_VIZ_DIMENSIONS = {
-  width: 'auto',
-  height: 'auto',
-};
+import { PanelConfig } from './Types';
 
 interface Props {
   analysisState: AnalysisState;

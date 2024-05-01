@@ -13,7 +13,7 @@ import { useVizIconColors } from '../../core/components/visualizations/implement
 import { GeoConfig } from '../../core/types/geoConfig';
 import { ComputationAppOverview } from '../../core/types/visualization';
 import './MapVizManagement.scss';
-import { MarkerConfiguration } from './appState';
+import { MarkerConfiguration } from './Types';
 import { ComputationPlugin } from '../../core/components/computations/Types';
 import { VisualizationPlugin } from '../../core/components/visualizations/VisualizationPlugin';
 import { StartPage } from '../../core/components/computations/StartPage';

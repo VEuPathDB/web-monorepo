@@ -56,6 +56,7 @@ import {
   useSelectedMarkerSnackbars,
   selectedMarkersLittleFilter,
   useFloatingPanelHandlers,
+  defaultVisualizationPanelConfig,
 } from '../../shared';
 import {
   MapTypeConfigPanelProps,
@@ -79,7 +80,6 @@ import { MapTypeHeaderStudyDetails } from '../../MapTypeHeaderStudyDetails';
 import { SubStudies } from '../../../SubStudies';
 import { useLittleFilters } from '../../../littleFilters';
 import TimeSliderQuickFilter from '../../../TimeSliderQuickFilter';
-import { defaultVisualizationPanelConfig } from '../../../appState';
 
 const displayName = 'Donuts';
 

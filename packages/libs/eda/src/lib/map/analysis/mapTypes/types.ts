@@ -1,3 +1,4 @@
+import { Bounds as BoundsProp } from '@veupathdb/components/lib/map/Types';
 import { ComponentType, SVGProps } from 'react';
 import {
   AnalysisState,
@@ -6,13 +7,16 @@ import {
   StudyEntity,
   StudyMetadata,
 } from '../../../core';
-import { GeoConfig } from '../../../core/types/geoConfig';
-import { ComputationAppOverview } from '../../../core/types/visualization';
-import { AppState, MarkerConfiguration, PanelConfig } from '../appState';
 import { EntityCounts } from '../../../core/hooks/entityCounts';
+import { GeoConfig } from '../../../core/types/geoConfig';
 import { VariableDescriptor } from '../../../core/types/variable';
-import { SiteInformationProps } from '../Types';
-import { Bounds as BoundsProp } from '@veupathdb/components/lib/map/Types';
+import { ComputationAppOverview } from '../../../core/types/visualization';
+import {
+  AppState,
+  MarkerConfiguration,
+  PanelConfig,
+  SiteInformationProps,
+} from '../Types';
 
 export interface MapTypeConfigPanelProps<T extends MarkerConfiguration> {
   apps: ComputationAppOverview[];

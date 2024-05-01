@@ -20,15 +20,14 @@ import { Toggle } from '@veupathdb/coreui';
 import { useUncontrolledSelections } from '../../../hooks/uncontrolledSelections';
 import {
   BinningMethod,
-  PanelConfig,
-  PanelPositionConfig,
   SelectedCountsOption,
   SelectedValues,
-} from '../../../appState';
+} from '../../shared';
 import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 import { SharedMarkerConfigurations } from '../../shared';
 import { GeoConfig } from '../../../../../core/types/geoConfig';
 import { findLeastAncestralGeoConfig } from '../../../../../core/utils/geoVariables';
+import { PanelConfig, PanelPositionConfig } from '../../../Types';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
