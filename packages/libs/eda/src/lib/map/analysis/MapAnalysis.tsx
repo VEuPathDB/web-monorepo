@@ -107,7 +107,7 @@ const mapStyle: React.CSSProperties = {
 
 interface Props {
   analysisId?: string;
-  sharingUrl: string;
+  sharingUrlPrefix?: string;
   singleAppMode?: string;
   studyId: string;
   siteInformationProps: SiteInformationProps;
@@ -215,7 +215,7 @@ function MapAnalysisImpl(props: ImplProps) {
     setViewport,
     setBoundsZoomLevel,
     setSubsetVariableAndEntity,
-    // sharingUrl,
+    sharingUrlPrefix,
     setIsSidePanelExpanded,
     setMarkerConfigurations,
     setActiveMarkerConfigurationType,
@@ -236,9 +236,12 @@ function MapAnalysisImpl(props: ImplProps) {
   const subsettingClient = useSubsettingClient();
   const history = useHistory();
 
-  // FIXME use the sharingUrl prop to construct this
-  const sharingUrl = new URL(`../${analysisId}/import`, window.location.href)
-    .href;
+  const sharingUrl = new URL(
+    sharingUrlPrefix
+      ? `${sharingUrlPrefix}/${analysisId}`
+      : `../${analysisId}/import`,
+    window.location.href
+  ).href;
 
   const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
 

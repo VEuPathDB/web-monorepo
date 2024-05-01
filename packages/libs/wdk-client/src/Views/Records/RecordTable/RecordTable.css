@@ -27,11 +27,6 @@
   overflow-x: auto;
 }
 
-.wdk-RecordTable__Orthologs > .Mesa.MesaComponent > .Toolbar {
-  display: inline-flex;
-  min-height: 50px;
-}
-
 .wdk-RecordTable__Orthologs
   > .Mesa.MesaComponent
   > .Toolbar

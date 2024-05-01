@@ -11,6 +11,9 @@ import {
   unshareUserDatasets,
   updateProjectFilter,
   updateUserDatasetDetail,
+  updateSharingModalState,
+  sharingError,
+  sharingSuccess,
 } from '../Actions/UserDatasetsActions';
 import { requestUploadMessages } from '../Actions/UserDatasetUploadActions';
 
@@ -33,6 +36,9 @@ const ActionCreators = {
   unshareUserDatasets,
   updateProjectFilter,
   requestUploadMessages,
+  updateSharingModalState,
+  sharingError,
+  sharingSuccess,
 };
 
 type StateProps = Pick<
@@ -124,7 +130,15 @@ class UserDatasetListController extends PageController<Props> {
       this.props.ownProps;
 
     const {
-      userDatasetList: { userDatasets, userDatasetsById, filterByProject },
+      userDatasetList: {
+        userDatasets,
+        userDatasetsById,
+        filterByProject,
+        sharingDatasetPending,
+        sharingModalOpen,
+        shareError,
+        shareSuccessful,
+      },
       userDatasetUpload: { uploads },
     } = this.props.stateProps;
 
@@ -137,6 +151,9 @@ class UserDatasetListController extends PageController<Props> {
       removeUserDataset,
       updateUserDatasetDetail,
       updateProjectFilter,
+      updateSharingModalState,
+      sharingSuccess,
+      sharingError,
     } = this.props.dispatchProps;
 
     const listProps = {
@@ -157,6 +174,13 @@ class UserDatasetListController extends PageController<Props> {
       removeUserDataset,
       updateUserDatasetDetail,
       updateProjectFilter,
+      sharingDatasetPending,
+      shareError,
+      shareSuccessful,
+      sharingModalOpen,
+      updateSharingModalState,
+      sharingSuccess,
+      sharingError,
     };
     const noDatasetsForThisProject =
       userDatasets
