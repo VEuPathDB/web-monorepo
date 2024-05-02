@@ -18,7 +18,7 @@ export interface BipartiteNetworkSVGStyles extends SVGAttributes<SVGElement> {
   columnPadding?: number; // space between the left of the svg and the left column, also the right of the svg and the right column.
 }
 
-export interface BipartiteNetworkProps extends NetworkPlotProps {
+export interface BipartiteNetworkPlotProps extends NetworkPlotProps {
   /** Partitions. An array of NetworkPartitions (an array of node ids and optional name) that defines the two node groups */
   partitions: NetworkPartition[] | undefined;
   /** bipartite network-specific styling for the svg itself. These
@@ -51,7 +51,7 @@ const EmptyBipartiteNetworkData: BipartiteNetworkData = {
 // The BipartiteNetworkPlot effectively wraps NetworkPlot by using the 'partitions' argument
 // to layout the network and assigning helpful defaults.
 function BipartiteNetworkPlot(
-  props: BipartiteNetworkProps,
+  props: BipartiteNetworkPlotProps,
   ref: Ref<HTMLDivElement>
 ) {
   const {

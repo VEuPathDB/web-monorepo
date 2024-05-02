@@ -6,7 +6,7 @@ import {
   BipartiteNetworkData,
 } from '../../types/plots/network';
 import BipartiteNetworkPlot, {
-  BipartiteNetworkProps,
+  BipartiteNetworkPlotProps,
 } from '../../plots/BipartiteNetworkPlot';
 import { twoColorPalette } from '../../types/plots/addOns';
 
@@ -15,7 +15,7 @@ export default {
   component: BipartiteNetworkPlot,
 } as Meta;
 
-interface TemplateProps extends BipartiteNetworkProps {
+interface TemplateProps extends BipartiteNetworkPlotProps {
   showThumbnail?: boolean;
   isSelectable?: boolean;
 }
@@ -36,7 +36,7 @@ const Template: Story<TemplateProps> = (args) => {
 
   const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>([]);
 
-  const bipartiteNetworkProps: BipartiteNetworkProps = {
+  const bipartiteNetworkPlotProps: BipartiteNetworkPlotProps = {
     ...args,
     getNodeMenuActions: args.getNodeMenuActions,
     ...(args.isSelectable
@@ -48,7 +48,7 @@ const Template: Story<TemplateProps> = (args) => {
   };
   return (
     <>
-      <BipartiteNetworkPlot ref={ref} {...bipartiteNetworkProps} />
+      <BipartiteNetworkPlot ref={ref} {...bipartiteNetworkPlotProps} />
       {args.showThumbnail && (
         <>
           <br></br>
