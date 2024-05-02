@@ -219,10 +219,12 @@ export function WorkspaceRouter({
                 analysisClient={analysisClient}
                 downloadClient={downloadClient}
                 computeClient={computeClient}
+                isStudyExplorerWorkspace={isStudyExplorerWorkspace}
               >
                 <StandaloneStudyPage
                   studyId={props.match.params.studyId}
                   showUnreleasedData={showUnreleasedData}
+                  isStudyExplorerWorkspace={isStudyExplorerWorkspace}
                 />
               </WorkspaceContainer>
             )}
