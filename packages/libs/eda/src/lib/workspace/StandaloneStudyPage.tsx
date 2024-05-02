@@ -8,6 +8,7 @@ import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 interface Props {
   studyId: string;
   showUnreleasedData: boolean;
+  isStudyExplorerWorkspace?: boolean;
 }
 
 /**
@@ -15,7 +16,11 @@ interface Props {
  * @param props
  */
 export function StandaloneStudyPage(props: Props) {
-  const { studyId, showUnreleasedData } = props;
+  const {
+    studyId,
+    showUnreleasedData,
+    isStudyExplorerWorkspace = false,
+  } = props;
   const studyRecord = useStudyRecord();
   const permissionsValue = usePermissions();
   const approvalStatus: ApprovalStatus = permissionsValue.loading
@@ -29,7 +34,9 @@ export function StandaloneStudyPage(props: Props) {
     : 'not-approved';
   return (
     <RestrictedPage approvalStatus={approvalStatus}>
-      <EDAWorkspaceHeading />
+      <EDAWorkspaceHeading
+        isStudyExplorerWorkspace={isStudyExplorerWorkspace}
+      />
       <RecordController recordClass="dataset" primaryKey={studyId} />
     </RestrictedPage>
   );
