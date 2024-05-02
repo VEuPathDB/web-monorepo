@@ -14,7 +14,6 @@ import { parseQueryString } from '../../Core/RouteEntry';
 import { AnswerSpecResultType, ResultType } from '../../Utils/WdkResult';
 import { AnswerFormatting } from '../../Service/Mixins/SearchReportsService';
 
-// interface TableResultTypePartial extends AnswerSpecResultType {}
 export interface TableResultTypePartial
   extends Omit<AnswerSpecResultType, 'answerSpec'> {
   answerSpec: {
@@ -35,6 +34,7 @@ interface SearchAndAnswerProps {
   getReporterResultType: (records: RecordInstance[]) => ResultType;
   reporterFormatting: AnswerFormatting;
   resultTableConfig: ResultTableConfig;
+  filterClassName?: string;
 }
 
 export function SearchAndAnswer({
@@ -43,6 +43,7 @@ export function SearchAndAnswer({
   getReporterResultType,
   reporterFormatting,
   resultTableConfig,
+  filterClassName,
 }: SearchAndAnswerProps) {
   const location = useLocation();
   const history = useHistory();
@@ -104,11 +105,13 @@ export function SearchAndAnswer({
 
   return (
     <>
-      <SearchAndAnswerFilter
-        recordName={recordName}
-        questionName={tableQuestionName}
-        initialParamData={initialParamData}
-      />
+      <div className={filterClassName}>
+        <SearchAndAnswerFilter
+          recordName={recordName}
+          questionName={tableQuestionName}
+          initialParamData={initialParamData}
+        />
+      </div>
       {!isValid ? (
         <Banner
           banner={{

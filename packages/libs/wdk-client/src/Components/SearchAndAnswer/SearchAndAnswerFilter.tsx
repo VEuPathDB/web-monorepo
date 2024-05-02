@@ -19,7 +19,7 @@ const submissionMetadata: SubmissionMetadata = {
 };
 
 export function SearchAndAnswerFilter(props: Props) {
-  const { recordName, questionName } = props;
+  const { recordName, questionName, initialParamData } = props;
 
   return (
     <QuestionController
@@ -27,7 +27,7 @@ export function SearchAndAnswerFilter(props: Props) {
       recordClass={recordName}
       submissionMetadata={submissionMetadata}
       FormComponent={FormComponent}
-      initialParamData={{}}
+      initialParamData={initialParamData}
       prepopulateWithLastParamValues
     />
   );
