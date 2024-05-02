@@ -48,7 +48,8 @@ export function EDAWorkspaceHeading({
 
   const permissionsValue = usePermissions();
 
-  const studyAccess = getStudyAccess(studyRecord);
+  // Default to `public`, if attribute is not defined
+  const studyAccess = getStudyAccess(studyRecord) ?? 'public';
 
   const showButtons =
     !permissionsValue.loading &&
@@ -82,7 +83,7 @@ export function EDAWorkspaceHeading({
         <div>
           {!permissionsValue.loading &&
             !studyMetadata.isUserStudy &&
-            studyAccess?.toLowerCase() !== 'public' &&
+            studyAccess.toLowerCase() !== 'public' &&
             shouldOfferLinkToDashboard(
               permissionsValue.permissions,
               studyRecord.id[0].value
