@@ -158,12 +158,12 @@ export function useStandaloneVizPlugins({
             vizWithOptions(histogramVisualization),
             histogramRequest
           ),
-          timeline: vizWithCustomizedGetRequest(
-            vizWithOptions(
-              histogramVisualization.withSelectorIcon(HistogramTimelineSVG)
-            ),
-            histogramRequest
-          ),
+          //         timeline: vizWithCustomizedGetRequest(
+          //           vizWithOptions(
+          //             histogramVisualization.withSelectorIcon(HistogramTimelineSVG)
+          //           ),
+          //           histogramRequest
+          //         ),
           boxplot: vizWithCustomizedGetRequest(
             vizWithOptions(boxplotVisualization),
             boxplotRequest
