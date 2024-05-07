@@ -96,9 +96,35 @@ function TimeSlider(props: TimeSliderProps) {
       debounce((domain: Bounds | null) => {
         if (!domain) return;
         const { x0, x1 } = domain;
+
+        // check initial range in pixels: ideally it should be [0, 700] (pixels),
+        // but there exists offset about 2 pixel, i.e., [-2, 702]
+        console.log(`start: ${xBrushScale(x0)}, end: ${xBrushScale(x1)}`);
+
+        // computing offset of 2 pixel in domain (milliseconds)
+        // for the example of Geolocation visualizations of field-based studies
+        // and 'species collection start date' variable,
+        // such a 2 pixel results in about 4 months
+        const brushOffset =
+          xBrushScale.invert(2).getTime() - xBrushScale.domain()[0].getTime();
+
+        // check start/end values without considering offset
+        console.log('start/end date without considering offset', {
+          start: millisecondTodate(x0),
+          end: millisecondTodate(x1),
+        });
+
+        // compensating the offset
         // x0 and x1 are millisecond value
-        const startDate = millisecondTodate(x0);
-        const endDate = millisecondTodate(x1);
+        const startDate = millisecondTodate(x0 + brushOffset);
+        const endDate = millisecondTodate(x1 - brushOffset);
+
+        // check start/end values considering offset
+        console.log('start/end date considering offset', {
+          start: startDate,
+          end: endDate,
+        });
+
         setSelectedRange({
           // don't let range go outside the xAxisRange, if provided
           start: xAxisRange
