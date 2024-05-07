@@ -54,6 +54,7 @@ export default function TimeSliderQuickFilter({
 
   // extend the back end range request if our selectedRange is outside of it
   const extendedDisplayRange =
+    // #761 - also allow NumberVariable
     variableMetadata && DateVariable.is(variableMetadata.variable)
       ? selectedRange == null
         ? {
@@ -72,7 +73,7 @@ export default function TimeSliderQuickFilter({
                 ? variableMetadata.variable.distributionDefaults.rangeMax
                 : selectedRange.end,
           }
-      : undefined;
+      : undefined; // #761 - ordinal string dates will produce undefined
 
   // converting old usePromise code to useQuery in an efficient manner
   const { enabled, queryKey, queryFn } = useMemo(() => {
@@ -80,15 +81,16 @@ export default function TimeSliderQuickFilter({
     if (
       variableMetadata == null ||
       variable == null ||
-      extendedDisplayRange == null ||
-      !DateVariable.is(variableMetadata.variable)
+      extendedDisplayRange == null || // #761 allow request with no binSpec for ordinals
+      !DateVariable.is(variableMetadata.variable) // #761 see above - need to allow numbers and ordinals
     )
       return { enabled: false };
 
     const binSpec = {
+      // #761 allow binSpec=undefined for ordinals
       displayRangeMin:
         extendedDisplayRange.start +
-        (variableMetadata.variable.type === 'date' ? 'T00:00:00Z' : ''),
+        (variableMetadata.variable.type === 'date' ? 'T00:00:00Z' : ''), // #761 this looks good already to handle number variables
       displayRangeMax:
         extendedDisplayRange.end +
         (variableMetadata.variable.type === 'date' ? 'T00:00:00Z' : ''),
@@ -125,6 +127,7 @@ export default function TimeSliderQuickFilter({
             .concat([histo[histo.length - 1].binEnd]),
           // conditionally set y-values to be 1 (with data) and 0 (no data)
           y: histo.map<number>((d) => (d.value >= 1 ? 1 : 0)).concat([0]),
+          // #761 do NOT do the concat for ordinals (because binLabel, binStart and binEnd are identical)
         };
       },
     };

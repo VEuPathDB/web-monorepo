@@ -21,13 +21,13 @@ export type TimeSliderProps = {
   /** Ez time filter data  */
   data: TimeSliderDataProp[];
   /** current state of selectedRange */
-  selectedRange: { start: string; end: string } | undefined;
+  selectedRange: { start: string; end: string } | undefined; // #761 - see appState.ts - maybe also number?
   /** update function selectedRange */
   setSelectedRange: (
     selectedRange: { start: string; end: string } | undefined
   ) => void;
   /** optional xAxisRange - will limit the selection to be within this */
-  xAxisRange?: { start: string; end: string };
+  xAxisRange?: { start: string; end: string }; // #761 or number?
   /** width */
   width?: number;
   /** height */
@@ -88,7 +88,7 @@ function TimeSlider(props: TimeSliderProps) {
   };
 
   // accessors for data
-  const getXData = (d: TimeSliderDataProp) => new Date(d.x);
+  const getXData = (d: TimeSliderDataProp) => new Date(d.x); // #761 - don't convert for non-dates
   const getYData = (d: TimeSliderDataProp) => d.y;
 
   const onBrushChange = useMemo(
@@ -97,6 +97,9 @@ function TimeSlider(props: TimeSliderProps) {
         if (!domain) return;
         const { x0, x1 } = domain;
         // x0 and x1 are millisecond value
+        // #761 only need to convert from milliseconds when the domain is `Date` type
+        // #761 but we may need to convert to string? Depends on types in appState.ts
+        // #761 (best not to convert to string, because of < and > comparisons below)
         const startDate = millisecondTodate(x0);
         const endDate = millisecondTodate(x1);
         setSelectedRange({
@@ -134,7 +137,7 @@ function TimeSlider(props: TimeSliderProps) {
       scaleTime<number>({
         range: [0, xBrushMax],
         domain:
-          data != null ? (extent(data, getXData) as [Date, Date]) : undefined,
+          data != null ? (extent(data, getXData) as [Date, Date]) : undefined, // #761 don't always cast to Date
       }),
     [data, xBrushMax]
   );
@@ -160,7 +163,7 @@ function TimeSlider(props: TimeSliderProps) {
             // then we'll need to figure out why both brush handles drift every time you adjust one of them.
             // The issue is something to do with the round-trip conversion of pixel/date/millisecond positions.
             // A good place to start looking is here.
-            start: { x: xBrushScale(new Date(selectedRange.start)) },
+            start: { x: xBrushScale(new Date(selectedRange.start)) }, // #761 don't convert non-dates
             end: { x: xBrushScale(new Date(selectedRange.end)) },
           }
         : undefined,
@@ -191,7 +194,7 @@ function TimeSlider(props: TimeSliderProps) {
             // subtract a constant to create separate bars for each bin
             const barWidth =
               i + 1 >= data.length
-                ? 0
+                ? 0 // #761 this assumes the final bin is zero width (see `concat` in TimeSliderQuickFilter)
                 : xBrushScale(getXData(data[i + 1])) - x - 1;
             return (
               <React.Fragment key={i}>
