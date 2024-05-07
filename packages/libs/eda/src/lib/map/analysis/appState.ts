@@ -188,8 +188,8 @@ export const AppState = t.intersection([
       variable: t.union([VariableDescriptor, t.undefined]),
       selectedRange: t.union([
         t.type({
-          start: t.string,
-          end: t.string,
+          start: t.string, // #761 these could probably remain strings, even for the number type year variables
+          end: t.string, // though string | number would be backwards compatible
         }),
         t.undefined,
       ]),
