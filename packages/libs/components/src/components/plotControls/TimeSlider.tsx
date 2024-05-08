@@ -96,9 +96,17 @@ function TimeSlider(props: TimeSliderProps) {
       debounce((domain: Bounds | null) => {
         if (!domain) return;
         const { x0, x1 } = domain;
+
+        // computing the offset of 2 pixel (SAFE_PIXEL) in domain (milliseconds)
+        // https://github.com/airbnb/visx/blob/86a851cb3bf622b013b186f02f955bcd6548a87f/packages/visx-brush/src/Brush.tsx#L14
+        const brushOffset =
+          xBrushScale.invert(2).getTime() - xBrushScale.invert(0).getTime();
+
+        // compensating the offset
         // x0 and x1 are millisecond value
-        const startDate = millisecondTodate(x0);
-        const endDate = millisecondTodate(x1);
+        const startDate = millisecondTodate(x0 + brushOffset);
+        const endDate = millisecondTodate(x1 - brushOffset);
+
         setSelectedRange({
           // don't let range go outside the xAxisRange, if provided
           start: xAxisRange
