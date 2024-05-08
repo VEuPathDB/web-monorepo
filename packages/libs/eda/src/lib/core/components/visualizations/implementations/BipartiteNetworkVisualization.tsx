@@ -44,7 +44,7 @@ import { FacetedPlotLayout } from '../../layouts/FacetedPlotLayout';
 import { H6 } from '@veupathdb/coreui';
 import { CorrelationConfig } from '../../../types/apps';
 import { StudyMetadata } from '../../..';
-import { NodeMenuAction } from '@veupathdb/components/lib/plots/NetworkPlot';
+import { NodeMenuAction } from '@veupathdb/components/lib/types/plots/network';
 // end imports
 
 // Defaults
