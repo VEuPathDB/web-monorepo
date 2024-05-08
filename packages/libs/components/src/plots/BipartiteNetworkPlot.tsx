@@ -1,9 +1,4 @@
-import {
-  BipartiteNetworkData,
-  NetworkPartition,
-  NodeData,
-} from '../types/plots/network';
-import { partition } from 'lodash';
+import { BipartiteNetworkData, NetworkPartition } from '../types/plots/network';
 import { LabelPosition } from './Node';
 import { Ref, forwardRef, useMemo, SVGAttributes } from 'react';
 import { gray } from '@veupathdb/coreui/lib/definitions/colors';
@@ -60,6 +55,7 @@ function BipartiteNetworkPlot(
     partitions = EmptyBipartiteNetworkData.partitions,
     containerStyles,
     svgStyleOverrides,
+    getNodeMenuActions: getNodeActions,
   } = props;
 
   // Set up styles for the bipartite network and incorporate overrides
@@ -99,6 +95,7 @@ function BipartiteNetworkPlot(
           labelPosition:
             partitionIndex === 0 ? 'left' : ('right' as LabelPosition),
           ...node,
+          actions: getNodeActions?.(node.id),
         };
       }),
     [

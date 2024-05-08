@@ -1,6 +1,6 @@
-import { LinkData, NodeData } from '../types/plots/network';
+import { LinkData, NodeData, NodeMenuAction } from '../types/plots/network';
 import { isNumber, orderBy } from 'lodash';
-import { LabelPosition, NodeWithLabel } from './Node';
+import { NodeWithLabel } from './Node';
 import { Link } from './Link';
 import { Graph } from '@visx/network';
 import {
@@ -24,12 +24,6 @@ import { plotToImage } from './visxVEuPathDB';
 import { GlyphTriangle } from '@visx/visx';
 
 import './NetworkPlot.css';
-
-export interface NodeMenuAction {
-  label: ReactNode;
-  onClick?: () => void;
-  href?: string;
-}
 
 export interface NetworkPlotProps {
   /** Network nodes */
@@ -59,10 +53,12 @@ export interface NetworkPlotProps {
 const DEFAULT_PLOT_WIDTH = 500;
 const DEFAULT_PLOT_HEIGHT = 500;
 
-const emptyNodes: NodeData[] = [...Array(9).keys()].map((item) => ({
+const emptyNodes: NodeData[] = [...Array(9).keys()].map((item, index) => ({
   id: item.toString(),
   color: gray[100],
   stroke: gray[300],
+  x: 230 + 200 * Math.cos(2 * Math.PI * (index / 9)),
+  y: 230 + 200 * Math.sin(2 * Math.PI * (index / 9)),
 }));
 const emptyLinks: LinkData[] = [];
 
@@ -79,7 +75,6 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
     showSpinner = false,
     labelTruncationLength = 20,
     emptyNetworkContent,
-    getNodeMenuActions: getNodeActions,
     annotations,
   } = props;
 
@@ -119,20 +114,6 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
     ...svgStyleOverrides,
   };
 
-  // Node processing.
-  // Add actions and default coordinates. The default coordinates arrange nodes in a circle.
-  const processedNodes = useMemo(
-    () =>
-      nodes.map((node, index) => ({
-        labelPosition: 'right' as LabelPosition,
-        ...node,
-        x: node.x ?? 230 + 200 * Math.cos(2 * Math.PI * (index / nodes.length)),
-        y: node.y ?? 230 + 200 * Math.sin(2 * Math.PI * (index / nodes.length)),
-        actions: getNodeActions?.(node.id),
-      })),
-    [getNodeActions, nodes]
-  );
-
   // Link processing.
   // Assign coordinates to links based on the newly created node coordinates.
   // Additionally order links so that the highlighted ones get drawn on top (are at the end of the array).
@@ -141,12 +122,8 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
       // Put highlighted links on top of gray links.
       orderBy(
         links.map((link) => {
-          const sourceNode = processedNodes.find(
-            (node) => node.id === link.source.id
-          );
-          const targetNode = processedNodes.find(
-            (node) => node.id === link.target.id
-          );
+          const sourceNode = nodes.find((node) => node.id === link.source.id);
+          const targetNode = nodes.find((node) => node.id === link.target.id);
           return {
             ...link,
             source: {
@@ -173,10 +150,10 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
         // but that's okay, because the overlapping colors will be the same.
         (link) => (link.color === '#eee' ? -1 : 1)
       ),
-    [links, highlightedNodeId, processedNodes]
+    [links, highlightedNodeId, nodes]
   );
 
-  const activeNode = processedNodes.find((node) => node.id === activeNodeId);
+  const activeNode = nodes.find((node) => node.id === activeNodeId);
 
   useEffect(() => {
     const element = document.querySelector('.network-plot-container');
@@ -203,8 +180,8 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
           <div
             style={{
               position: 'absolute',
-              left: activeNode.x,
-              top: activeNode.y + 12,
+              left: activeNode.x && activeNode.x,
+              top: activeNode.y && activeNode.y + 12,
               transform:
                 activeNode.labelPosition === 'left'
                   ? `translate(calc(-2ch - ${
@@ -255,7 +232,7 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
             <svg {...svgStyles}>
               <Graph
                 graph={{
-                  nodes: processedNodes,
+                  nodes: nodes,
                   links: processedLinks,
                 }}
                 // Using our Link component so that it uses our nice defaults and
@@ -276,7 +253,7 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
                     node.labelPosition === 'left' ? rectX + 12 : rectWidth - 24;
                   return (
                     <>
-                      {node.actions?.length && (
+                      {node.actions && node.actions?.length && (
                         <g className="net-hover-dropdown">
                           <rect
                             rx="2.5"

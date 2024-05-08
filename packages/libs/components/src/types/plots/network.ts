@@ -1,6 +1,14 @@
 import { LabelPosition } from '../../plots/Node';
 
 // Types required for creating networks
+import { ReactNode } from 'react';
+
+export interface NodeMenuAction {
+  label: ReactNode;
+  onClick?: () => void;
+  href?: string;
+}
+
 export type NodeData = {
   /** Node ID. Must be unique in the network! */
   id: string;
@@ -20,6 +28,8 @@ export type NodeData = {
   strokeWidth?: number;
   /** Should the node label be drawn to the right or left of the node? */
   labelPosition?: LabelPosition;
+  /** Action menu items for the node */
+  actions?: NodeMenuAction[];
 };
 
 export type LinkData = {

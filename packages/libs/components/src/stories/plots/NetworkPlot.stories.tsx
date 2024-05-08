@@ -1,9 +1,11 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
-import { NodeData, LinkData, NetworkPlotData } from '../../types/plots/network';
-import NetworkPlot, {
-  NetworkPlotProps,
+import {
+  NodeData,
+  LinkData,
+  NetworkPlotData,
   NodeMenuAction,
-} from '../../plots/NetworkPlot';
+} from '../../types/plots/network';
+import NetworkPlot, { NetworkPlotProps } from '../../plots/NetworkPlot';
 import { Text } from '@visx/text';
 import { useEffect, useRef, useState } from 'react';
 
@@ -85,19 +87,6 @@ ManyPoints.args = {
   ...manyPointsData,
 };
 
-// Test the default layout
-const defaultLayoutData = genNetwork(
-  50,
-  false,
-  false,
-  DEFAULT_PLOT_SIZE,
-  DEFAULT_PLOT_SIZE
-);
-export const DefaultLayout = Template.bind({});
-DefaultLayout.args = {
-  ...defaultLayoutData,
-};
-
 // A network with annotations.
 // These can be used to add column labels in the bipartite network, call out
 // a specific node of interest, or just generally add some more info.
@@ -170,9 +159,15 @@ function getNodeActions(nodeId: string): NodeMenuAction[] {
   ];
 }
 
+const simpleWithActions = simpleData;
+simpleWithActions.nodes = simpleData.nodes.map((node) => ({
+  ...node,
+  actions: getNodeActions(node.id),
+}));
+
 export const WithActions = Template.bind({});
 WithActions.args = {
-  ...simpleData,
+  ...simpleWithActions,
   getNodeMenuActions: getNodeActions,
 };
 
