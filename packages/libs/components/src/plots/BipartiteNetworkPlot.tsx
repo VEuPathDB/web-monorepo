@@ -79,42 +79,33 @@ function BipartiteNetworkPlot(
   const column1Position = svgStyles.columnPadding;
   const column2Position = Number(svgStyles.width) - svgStyles.columnPadding;
 
-  // In order to assign coordinates to each node, we'll separate the
-  // nodes based on their partition, then will use their order in the partition
-  // (given by partitionXNodeIDs) to finally assign the coordinates.
-  const nodesByPartition: NodeData[][] = useMemo(
+  // Assign coordinates to each node
+  // We'll draw the bipartite network in two columns. Nodes in the first partition will
+  // get drawn in the left column, and nodes in the second partition will get drawn in the right column.
+  const nodesWithCoordinates = useMemo(
     () =>
-      partition(nodes, (node) => {
-        return partitions[0].nodeIds.includes(node.id);
-      }),
-    [nodes, partitions]
-  );
+      nodes.map((node) => {
+        // Determine if the node is in the left or right partition (partitionIndex = 0 or 1, respectively)
+        const partitionIndex = partitions[0].nodeIds.includes(node.id) ? 0 : 1;
+        const nodeIndexInPartition = partitions[
+          partitionIndex
+        ].nodeIds.findIndex((id) => id === node.id);
 
-  const nodesByPartitionWithCoordinates = useMemo(
-    () =>
-      nodesByPartition.map((partition, partitionIndex) => {
-        const partitionWithCoordinates = partition.map((node) => {
-          // Find the index of the node in the partition
-          const indexInPartition = partitions[partitionIndex].nodeIds.findIndex(
-            (id) => id === node.id
-          );
-
-          return {
-            // partitionIndex of 0 refers to the left-column nodes whereas 1 refers to right-column nodes
-            x: partitionIndex === 0 ? column1Position : column2Position,
-            y: svgStyles.topPadding + svgStyles.nodeSpacing * indexInPartition,
-            labelPosition:
-              partitionIndex === 0 ? 'left' : ('right' as LabelPosition),
-            ...node,
-          };
-        });
-        return partitionWithCoordinates;
+        return {
+          // Recall partitionIndex = 0 refers to the left-column nodes whereas 1 refers to right-column nodes
+          x: partitionIndex === 0 ? column1Position : column2Position,
+          y:
+            svgStyles.topPadding + svgStyles.nodeSpacing * nodeIndexInPartition,
+          labelPosition:
+            partitionIndex === 0 ? 'left' : ('right' as LabelPosition),
+          ...node,
+        };
       }),
     [
+      nodes,
+      partitions,
       column1Position,
       column2Position,
-      partitions,
-      nodesByPartition,
       svgStyles.nodeSpacing,
       svgStyles.topPadding,
     ]
@@ -145,9 +136,7 @@ function BipartiteNetworkPlot(
   return (
     <NetworkPlot
       {...props}
-      nodes={nodesByPartitionWithCoordinates[0].concat(
-        nodesByPartitionWithCoordinates[1]
-      )}
+      nodes={nodesWithCoordinates}
       links={links}
       annotations={[leftColumnLabel, rightColumnLabel]}
       svgStyleOverrides={svgStyles}
