@@ -26,6 +26,8 @@ export function Downloads() {
     [history, location, match]
   );
 
+  console.log('version:', React.version);
+
   const { searchConfig, isValid } = useSelector(
     (state: RootState) => {
       const questionState = state.question.questions[TABLE_QUESTION_NAME];

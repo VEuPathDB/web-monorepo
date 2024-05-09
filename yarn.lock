@@ -8071,8 +8071,8 @@ __metadata:
     "@testing-library/react": 12.1.2
     "@testing-library/user-event": 13.5.0
     "@types/node": ^14.0.0
-    "@types/react": ^17.0.47
-    "@types/react-dom": ^17.0.11
+    "@types/react": ^18.3.1
+    "@types/react-dom": ^18.3.0
     "@types/react-redux": ^7.1.20
     "@types/react-router-dom": ^5.3.3
     "@veupathdb/browserslist-config": "workspace:^"
@@ -8100,9 +8100,9 @@ __metadata:
     popper.js: ^1.16.1
     postcss: ^8.1.0
     querystring-es3: ^0.2.1
-    react: ^17.0.2
+    react: ^18.3.1
     react-app-rewired: ^2.2.1
-    react-dom: ^17.0.2
+    react-dom: ^18.3.1
     react-redux: ^7.1.3
     react-router: ^5.2.0
     react-router-dom: ^5.3.0
@@ -8148,8 +8148,8 @@ __metadata:
     "@material-ui/core": ^4.12.4
     "@material-ui/icons": ^4.11.3
     "@material-ui/lab": ^4.0.0-alpha.61
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^18.3.1
+    "@types/react-dom": ^18.3.0
     "@types/react-router-dom": ^5.3.3
     "@veupathdb/base-webpack-config": "workspace:^"
     "@veupathdb/browserslist-config": "workspace:^"
@@ -8175,8 +8175,8 @@ __metadata:
     mini-css-extract-plugin: ^2.7.6
     notistack: ^1.0.10
     npm-run-all: ^4.1.5
-    react: 17
-    react-dom: 17
+    react: ^18.3.1
+    react-dom: ^18.3.1
     react-redux: ^7.1.3
     react-router-dom: ^5.3.0
     redux: ^4.0.0
@@ -8229,8 +8229,8 @@ __metadata:
     "@types/leaflet": ^1.7.9
     "@types/lodash": ^4.14.164
     "@types/md5": ^2.2.0
-    "@types/react": ^16.9.0
-    "@types/react-dom": ^16.9.0
+    "@types/react": ^18.3.1
+    "@types/react-dom": ^18.3.0
     "@types/react-leaflet": ^2.5.2
     "@types/react-plotly.js": ^2.2.4
     "@types/stats-lite": ^2.2.0
@@ -8273,10 +8273,10 @@ __metadata:
     npm-run-all: ^4.1.5
     plotly.js: ^2.23.2
     re-resizable: ^6.9.0
-    react: ^16.13.1
+    react: ^18.3.1
     react-bootstrap: ^1.3.0
     react-cool-dimensions: ^2.0.7
-    react-dom: ^16.13.1
+    react-dom: ^18.3.1
     react-html-parser: ^2.0.2
     react-leaflet: ^3.2.5
     react-leaflet-drift-marker: ^3.0.0
@@ -8340,9 +8340,9 @@ __metadata:
     lodash: ^4.17.21
     notistack: ^1.0.10
     npm-run-all: ^4.1.5
-    react: ^17.0.2
+    react: ^18.3.1
     react-cool-dimensions: ^2.0.7
-    react-dom: ^17.0.2
+    react-dom: ^18.3.1
     react-draggable: ^4.4.5
     react-responsive-modal: ^6.2.0
     react-table: ^7.7.0
@@ -8390,8 +8390,8 @@ __metadata:
     "@types/lodash": ^4.14.182
     "@types/luxon": ^3.0.1
     "@types/node": ^12.0.0
-    "@types/react": ^16.9.53
-    "@types/react-dom": ^16.9.8
+    "@types/react": ^18.3.1
+    "@types/react-dom": ^18.3.0
     "@types/react-leaflet": ^2.5.2
     "@types/react-resizable": ^1.7.2
     "@types/react-router-dom": ^5.3.3
@@ -8424,10 +8424,10 @@ __metadata:
     postcss-normalize: ^10.0.1
     process: ^0.11.10
     querystring-es3: ^0.2.1
-    react: ^17.0.1
+    react: ^18.3.1
     react-app-rewired: ^2.2.1
     react-cool-dimensions: ^2.0.7
-    react-dom: ^17.0.1
+    react-dom: ^18.3.1
     react-draggable: ^4.4.3
     react-resizable: ^3.0.4
     react-router: ^5.2.1
@@ -8480,8 +8480,8 @@ __metadata:
     "@material-ui/lab": ^4.0.0-alpha.61
     "@types/cytoscape": ^3.14.7
     "@types/jqueryui": ^1.12.16
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^18.3.1
+    "@types/react-dom": ^18.3.0
     "@types/react-router-dom": ^5.3.3
     "@types/react-select": 3
     "@veupathdb/base-webpack-config": "workspace:^"
@@ -8519,8 +8519,8 @@ __metadata:
     notistack: ^1.0.10
     npm-run-all: ^4.1.5
     popper.js: ^1.16.1
-    react: 17
-    react-dom: 17
+    react: ^18.3.1
+    react-dom: ^18.3.1
     react-redux: ^7.1.3
     react-router-dom: ^5.3.0
     react-spring: ^8.0.27
@@ -8576,8 +8576,8 @@ __metadata:
     "@material-ui/core": ^4.12.4
     "@material-ui/icons": ^4.11.3
     "@material-ui/lab": ^4.0.0-alpha.61
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^18.3.1
+    "@types/react-dom": ^18.3.0
     "@types/react-router-dom": ^5.3.3
     "@veupathdb/base-webpack-config": "workspace:^"
     "@veupathdb/browserslist-config": "workspace:^"
@@ -8603,8 +8603,8 @@ __metadata:
     mini-css-extract-plugin: ^2.7.6
     notistack: ^1.0.10
     npm-run-all: ^4.1.5
-    react: 17
-    react-dom: 17
+    react: ^18.3.1
+    react-dom: ^18.3.1
     react-redux: ^7.1.3
     react-router-dom: ^5.3.0
     redux: ^4.0.0
@@ -8644,8 +8644,8 @@ __metadata:
     "@types/jest": ^26.0.15
     "@types/lodash": ^4.14.181
     "@types/node": ^12.0.0
-    "@types/react": ^16.9.53
-    "@types/react-dom": ^16.9.8
+    "@types/react": ^18.3.1
+    "@types/react-dom": ^18.3.0
     "@types/react-redux": ^7.1.5
     "@types/react-router": ^5.1.17
     "@types/react-router-dom": ^5.3.3
@@ -8680,9 +8680,9 @@ __metadata:
     http-proxy-middleware: ^1.0.6
     io-ts: ^2.2.16
     lodash: ^4.17.21
-    react: ^17.0.2
+    react: ^18.3.1
     react-app-rewired: ^2.2.1
-    react-dom: ">=16.14.0"
+    react-dom: ^18.3.1
     react-redux: ^7.2.6
     react-router: ^5.2.0
     react-router-dom: ^5.2.0
@@ -8720,9 +8720,9 @@ __metadata:
     "@material-ui/lab": ^4.0.0-alpha.61
     "@types/cytoscape": ^3.14.7
     "@types/cytoscape-fcose": ^2.1.0
-    "@types/react": 16
+    "@types/react": ^18.3.1
     "@types/react-cytoscapejs": ^1.1.0
-    "@types/react-dom": 16
+    "@types/react-dom": ^18.3.0
     "@types/react-redux": ^7.1.20
     "@types/react-router-dom": 5
     "@veupathdb/base-webpack-config": "workspace:^"
@@ -8756,9 +8756,9 @@ __metadata:
     notistack: ^1.0.10
     npm-run-all: ^4.1.5
     popper.js: ^1.16.1
-    react: 17
+    react: ^18.3.1
     react-cytoscapejs: ^2.0.0
-    react-dom: 17
+    react-dom: ^18.3.1
     react-redux: ^7.1.3
     react-router-dom: ^5.3.0
     react-spring: ^8.0.27
@@ -8796,8 +8796,8 @@ __metadata:
     "@testing-library/user-event": ^12.1.10
     "@types/jest": ^26.0.15
     "@types/node": ^12.0.0
-    "@types/react": ^16.9.53
-    "@types/react-dom": ^16.9.8
+    "@types/react": ^18.3.1
+    "@types/react-dom": ^18.3.0
     "@types/react-router": ^5.1.8
     "@types/react-router-dom": ^5.3.0
     "@typescript-eslint/eslint-plugin": ^4.0.0
@@ -8824,9 +8824,9 @@ __metadata:
     http-proxy-middleware: ^1.0.6
     lodash: ^4.17.21
     notistack: ^1.0.10
-    react: ^17.0.2
+    react: ^18.3.1
     react-app-rewired: ^2.2.1
-    react-dom: ^17.0.2
+    react-dom: ^18.3.1
     react-redux: ^7.2.6
     react-router: ^5.2.0
     react-router-dom: ^5.3.0
@@ -8956,8 +8956,8 @@ __metadata:
     "@testing-library/user-event": 13.5.0
     "@types/history": ^4.7.4
     "@types/node": ^14.0.0
-    "@types/react": ^17.0.38
-    "@types/react-dom": ^17.0.11
+    "@types/react": ^18.3.1
+    "@types/react-dom": ^18.3.0
     "@types/react-redux": ^7.1.20
     "@types/react-router-dom": ^5.3.3
     "@veupathdb/browserslist-config": "workspace:^"
@@ -8982,9 +8982,9 @@ __metadata:
     path-browserify: ^1.0.1
     postcss: ^8.1.0
     querystring-es3: ^0.2.1
-    react: ^17.0.2
+    react: ^18.3.1
     react-app-rewired: ^2.2.1
-    react-dom: ^17.0.2
+    react-dom: ^18.3.1
     react-redux: ^7.1.3
     react-router-dom: ^5.3.0
     react-scripts: 5.0.0
@@ -9030,8 +9030,8 @@ __metadata:
     "@testing-library/user-event": 13.5.0
     "@types/history": ^4.7.4
     "@types/node": ^14.0.0
-    "@types/react": ^17.0.38
-    "@types/react-dom": ^17.0.11
+    "@types/react": ^18.3.1
+    "@types/react-dom": ^18.3.0
     "@types/react-redux": ^7.1.20
     "@types/react-router-dom": ^5.3.3
     "@veupathdb/browserslist-config": "workspace:^"
@@ -9056,9 +9056,9 @@ __metadata:
     path-browserify: ^1.0.1
     postcss: ^8.1.0
     querystring-es3: ^0.2.1
-    react: ^17.0.2
+    react: ^18.3.1
     react-app-rewired: ^2.2.1
-    react-dom: ^17.0.2
+    react-dom: ^18.3.1
     react-redux: ^7.1.3
     react-router-dom: ^5.3.0
     react-scripts: 5.0.0
@@ -9103,8 +9103,8 @@ __metadata:
     "@types/node": ^14.14.7
     "@types/prop-types": ^15.7.3
     "@types/qtip2": ^2.2.29
-    "@types/react": ^16.9.18
-    "@types/react-dom": ^16.9.5
+    "@types/react": ^18.3.1
+    "@types/react-dom": ^18.3.0
     "@types/react-redux": ^7.1.5
     "@types/react-router": ^5.1.4
     "@types/react-router-dom": ^5.1.3
@@ -9133,8 +9133,8 @@ __metadata:
     notistack: ^1.0.10
     npm-run-all: ^4.1.5
     prop-types: ^15.7.2
-    react: ^16.12.0
-    react-dom: ^16.12.0
+    react: ^18.3.1
+    react-dom: ^18.3.1
     react-redux: ^7.1.3
     react-router-dom: ^5.1.2
     react-select: ^3.0.4
@@ -9169,8 +9169,8 @@ __metadata:
     "@material-ui/lab": ^4.0.0-alpha.61
     "@types/jqueryui": ^1.12.16
     "@types/node": ^14.14.7
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^18.3.1
+    "@types/react-dom": ^18.3.0
     "@types/react-router": ^5.1.18
     "@types/react-router-dom": ^5.3.3
     "@types/react-table": ^7.7.11
@@ -9190,8 +9190,8 @@ __metadata:
     md5: ^2.3.0
     notistack: ^1.0.10
     npm-run-all: ^4.1.5
-    react: 16
-    react-dom: 16
+    react: ^18.3.1
+    react-dom: ^18.3.1
     react-router: 5
     react-router-dom: 5
     shelljs: ^0.8.4
