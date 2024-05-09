@@ -1,8 +1,8 @@
-import { BipartiteNetworkData, NodeData } from '../types/plots/network';
-import { orderBy, partition } from 'lodash';
-import { LabelPosition, Link, NodeWithLabel } from './Network';
+import { LinkData, NodeData, NodeMenuAction } from '../types/plots/network';
+import { isNumber, orderBy } from 'lodash';
+import { NodeWithLabel } from './Node';
+import { Link } from './Link';
 import { Graph } from '@visx/network';
-import { Text } from '@visx/text';
 import {
   CSSProperties,
   ReactNode,
@@ -14,6 +14,7 @@ import {
   useState,
   useMemo,
   useEffect,
+  SVGAttributes,
 } from 'react';
 import Spinner from '../components/Spinner';
 import { ToImgopts } from 'plotly.js';
@@ -22,34 +23,19 @@ import { ExportPlotToImageButton } from './ExportPlotToImageButton';
 import { plotToImage } from './visxVEuPathDB';
 import { GlyphTriangle } from '@visx/visx';
 
-import './BipartiteNetwork.css';
+import './NetworkPlot.css';
 
-export interface BipartiteNetworkSVGStyles {
-  width?: number; // svg width
-  topPadding?: number; // space between the top of the svg and the top-most node
-  nodeSpacing?: number; // space between vertically adjacent nodes
-  columnPadding?: number; // space between the left of the svg and the left column, also the right of the svg and the right column.
-}
-
-export interface NodeMenuAction {
-  label: ReactNode;
-  onClick?: () => void;
-  href?: string;
-}
-
-export interface BipartiteNetworkProps {
-  /** Bipartite network data */
-  data: BipartiteNetworkData | undefined;
-  /** Name of partition 1 */
-  partition1Name?: string;
-  /** Name of partition 2 */
-  partition2Name?: string;
+export interface NetworkPlotProps {
+  /** Network nodes */
+  nodes: NodeData[] | undefined;
+  /** Network links */
+  links: LinkData[] | undefined;
   /** styling for the plot's container */
   containerStyles?: CSSProperties;
-  /** bipartite network-specific styling for the svg itself. These
+  /** Network-specific styling for the svg itself. These
    * properties will override any adaptation the network may try to do based on the container styles.
    */
-  svgStyleOverrides?: BipartiteNetworkSVGStyles;
+  svgStyleOverrides?: SVGAttributes<SVGElement>;
   /** container name */
   containerClass?: string;
   /** shall we show the loading spinner? */
@@ -60,39 +46,36 @@ export interface BipartiteNetworkProps {
   emptyNetworkContent?: ReactNode;
   /** Entries for the actions that appear in the menu when you click a node */
   getNodeMenuActions?: (nodeId: string) => NodeMenuAction[];
+  /** Labels, notes, and other annotations to add to the network */
+  annotations?: ReactNode[];
 }
 
-// Show a few gray nodes when there is no real data.
-const EmptyBipartiteNetworkData: BipartiteNetworkData = {
-  partitions: [
-    { nodeIds: ['0', '1', '2', '3', '4', '5'] },
-    { nodeIds: ['6', '7', '8'] },
-  ],
-  nodes: [...Array(9).keys()].map((item) => ({
-    id: item.toString(),
-    color: gray[100],
-    stroke: gray[300],
-  })),
-  links: [],
-};
+const DEFAULT_PLOT_WIDTH = 500;
+const DEFAULT_PLOT_HEIGHT = 500;
 
-// The BipartiteNetwork function takes a network w two partitions of nodes and draws those partitions as columns.
-// This component handles the positioning of each column, and consequently the positioning of nodes and links.
-function BipartiteNetwork(
-  props: BipartiteNetworkProps,
-  ref: Ref<HTMLDivElement>
-) {
+const emptyNodes: NodeData[] = [...Array(9).keys()].map((item, index) => ({
+  id: item.toString(),
+  color: gray[100],
+  stroke: gray[300],
+  x: 230 + 200 * Math.cos(2 * Math.PI * (index / 9)),
+  y: 230 + 200 * Math.sin(2 * Math.PI * (index / 9)),
+}));
+const emptyLinks: LinkData[] = [];
+
+// The Network component draws a network of nodes and links.
+// If no x,y coordinates are provided for nodes in the network, the nodes will
+// be drawn with a default circular layout.
+function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
   const {
-    data = EmptyBipartiteNetworkData,
-    partition1Name,
-    partition2Name,
+    nodes = emptyNodes,
+    links = emptyLinks,
     containerStyles,
     svgStyleOverrides,
     containerClass = 'web-components-plot',
     showSpinner = false,
     labelTruncationLength = 20,
     emptyNetworkContent,
-    getNodeMenuActions: getNodeActions,
+    annotations,
   } = props;
 
   const [highlightedNodeId, setHighlightedNodeId] = useState<string>();
@@ -114,82 +97,44 @@ function BipartiteNetwork(
     [toImage]
   );
 
-  // Set up styles for the bipartite network and incorporate overrides
+  const plotRect = plotRef.current?.getBoundingClientRect();
+  const imageHeight = plotRect?.height;
+  const imageWidth = plotRect?.width;
+
+  // Set up styles for the network and incorporate overrides
   const svgStyles = {
-    width: Number(containerStyles?.width) || 400,
-    topPadding: 40,
-    nodeSpacing: 30,
-    columnPadding: 100,
+    width:
+      containerStyles?.width && isNumber(containerStyles?.width)
+        ? containerStyles.width
+        : DEFAULT_PLOT_WIDTH,
+    height:
+      containerStyles?.height && isNumber(containerStyles?.height)
+        ? containerStyles.height
+        : DEFAULT_PLOT_HEIGHT,
     ...svgStyleOverrides,
   };
 
-  const column1Position = svgStyles.columnPadding;
-  const column2Position = svgStyles.width - svgStyles.columnPadding;
-
-  // In order to assign coordinates to each node, we'll separate the
-  // nodes based on their partition, then will use their order in the partition
-  // (given by partitionXNodeIDs) to finally assign the coordinates.
-  const nodesByPartition: NodeData[][] = useMemo(
-    () =>
-      partition(data.nodes, (node) => {
-        return data.partitions[0].nodeIds.includes(node.id);
-      }),
-    [data.nodes, data.partitions]
-  );
-
-  const nodesByPartitionWithCoordinates = useMemo(
-    () =>
-      nodesByPartition.map((partition, partitionIndex) => {
-        const partitionWithCoordinates = partition.map((node) => {
-          // Find the index of the node in the partition
-          const indexInPartition = data.partitions[
-            partitionIndex
-          ].nodeIds.findIndex((id) => id === node.id);
-
-          return {
-            // partitionIndex of 0 refers to the left-column nodes whereas 1 refers to right-column nodes
-            x: partitionIndex === 0 ? column1Position : column2Position,
-            y: svgStyles.topPadding + svgStyles.nodeSpacing * indexInPartition,
-            labelPosition:
-              partitionIndex === 0 ? 'left' : ('right' as LabelPosition),
-            ...node,
-          };
-        });
-        return partitionWithCoordinates;
-      }),
-    [
-      column1Position,
-      column2Position,
-      data.partitions,
-      nodesByPartition,
-      svgStyles.nodeSpacing,
-      svgStyles.topPadding,
-    ]
-  );
-
-  // Assign coordinates to links based on the newly created node coordinates
-  const linksWithCoordinates = useMemo(
+  // Link processing.
+  // Assign coordinates to links based on the newly created node coordinates.
+  // Additionally order links so that the highlighted ones get drawn on top (are at the end of the array).
+  const processedLinks = useMemo(
     () =>
       // Put highlighted links on top of gray links.
       orderBy(
-        data.links.map((link) => {
-          const sourceNode = nodesByPartitionWithCoordinates[0].find(
-            (node) => node.id === link.source.id
-          );
-          const targetNode = nodesByPartitionWithCoordinates[1].find(
-            (node) => node.id === link.target.id
-          );
+        links.map((link) => {
+          const sourceNode = nodes.find((node) => node.id === link.source.id);
+          const targetNode = nodes.find((node) => node.id === link.target.id);
           return {
             ...link,
             source: {
+              ...link.source,
               x: sourceNode?.x,
               y: sourceNode?.y,
-              ...link.source,
             },
             target: {
+              ...link.target,
               x: targetNode?.x,
               y: targetNode?.y,
-              ...link.target,
             },
             color:
               highlightedNodeId != null &&
@@ -205,28 +150,13 @@ function BipartiteNetwork(
         // but that's okay, because the overlapping colors will be the same.
         (link) => (link.color === '#eee' ? -1 : 1)
       ),
-    [data.links, highlightedNodeId, nodesByPartitionWithCoordinates]
-  );
-
-  const plotRect = plotRef.current?.getBoundingClientRect();
-  const imageHeight = plotRect?.height;
-  const imageWidth = plotRect?.width;
-
-  const nodes = useMemo(
-    () =>
-      nodesByPartitionWithCoordinates[0]
-        .concat(nodesByPartitionWithCoordinates[1])
-        .map((node) => ({
-          ...node,
-          actions: getNodeActions?.(node.id),
-        })),
-    [getNodeActions, nodesByPartitionWithCoordinates]
+    [links, highlightedNodeId, nodes]
   );
 
   const activeNode = nodes.find((node) => node.id === activeNodeId);
 
   useEffect(() => {
-    const element = document.querySelector('.bpnet-plot-container');
+    const element = document.querySelector('.network-plot-container');
     if (element == null) return;
 
     element.addEventListener('click', handler);
@@ -250,8 +180,8 @@ function BipartiteNetwork(
           <div
             style={{
               position: 'absolute',
-              left: activeNode.x,
-              top: activeNode.y + 12,
+              left: activeNode.x && activeNode.x,
+              top: activeNode.y && activeNode.y + 12,
               transform:
                 activeNode.labelPosition === 'left'
                   ? `translate(calc(-2ch - ${
@@ -297,49 +227,13 @@ function BipartiteNetwork(
             ))}
           </div>
         )}
-        <div
-          className="bpnet-plot-container"
-          ref={plotRef}
-          style={{ width: '100%', height: '100%' }}
-        >
-          {nodesByPartitionWithCoordinates[0].length > 0 ? (
-            <svg
-              width={svgStyles.width}
-              height={
-                Math.max(
-                  data.partitions[1].nodeIds.length,
-                  data.partitions[0].nodeIds.length
-                ) *
-                  svgStyles.nodeSpacing +
-                svgStyles.topPadding
-              }
-            >
-              {/* Draw names of node colums if they exist */}
-              {partition1Name && (
-                <Text
-                  x={column1Position}
-                  y={svgStyles.topPadding / 2}
-                  textAnchor="end"
-                  className="BipartiteNetworkPartitionTitle"
-                >
-                  {partition1Name}
-                </Text>
-              )}
-              {partition2Name && (
-                <Text
-                  x={column2Position}
-                  y={svgStyles.topPadding / 2}
-                  textAnchor="start"
-                  className="BipartiteNetworkPartitionTitle"
-                >
-                  {partition2Name}
-                </Text>
-              )}
-
+        <div className="network-plot-container" ref={plotRef}>
+          {nodes.length > 0 ? (
+            <svg {...svgStyles}>
               <Graph
                 graph={{
-                  nodes,
-                  links: linksWithCoordinates,
+                  nodes: nodes,
+                  links: processedLinks,
                 }}
                 // Using our Link component so that it uses our nice defaults and
                 // can better expand to handle more complex events (hover and such).
@@ -359,8 +253,8 @@ function BipartiteNetwork(
                     node.labelPosition === 'left' ? rectX + 12 : rectWidth - 24;
                   return (
                     <>
-                      {node.actions?.length && (
-                        <g className="bpnet-hover-dropdown">
+                      {node.actions && node.actions?.length && (
+                        <g className="net-hover-dropdown">
                           <rect
                             rx="2.5"
                             width={rectWidth}
@@ -414,15 +308,15 @@ function BipartiteNetwork(
                   );
                 }}
               />
+              {annotations &&
+                annotations.map((annotation) => {
+                  return annotation;
+                })}
             </svg>
           ) : (
             emptyNetworkContent ?? <p>No nodes in the network</p>
           )}
-          {
-            // Note that the spinner shows up in the middle of the network. So when
-            // the network is very long, the spinner will be further down the page than in other vizs.
-            showSpinner && <Spinner />
-          }
+          {showSpinner && <Spinner />}
         </div>
       </div>
       <ExportPlotToImageButton
@@ -435,4 +329,4 @@ function BipartiteNetwork(
   );
 }
 
-export default forwardRef(BipartiteNetwork);
+export default forwardRef(NetworkPlot);
