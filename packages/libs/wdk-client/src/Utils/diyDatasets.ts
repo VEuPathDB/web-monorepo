@@ -9,7 +9,7 @@ export function wdkRecordIdToDiyUserDatasetId(wdkDatasetId: string) {
     );
   }
 
-  return Number(wdkDatasetId.replace(/^EDAUD_/, ''));
+  return wdkDatasetId.replace(/^EDAUD_/, '');
 }
 
 export function diyUserDatasetIdToWdkRecordId(userDatasetId: number) {
