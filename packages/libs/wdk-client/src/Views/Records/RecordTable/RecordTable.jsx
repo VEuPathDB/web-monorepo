@@ -270,6 +270,7 @@ class RecordTable extends Component {
           : {}),
       },
       options: {
+        toolbar: isOrthologTableWithData ? false : true,
         childRow: childRow ? this.wrappedChildRow : undefined,
         className: 'wdk-DataTableContainer',
         getRowId: getSortIndex,
