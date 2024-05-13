@@ -10,10 +10,9 @@ import {
 import { RequestOptions } from '../options/types';
 
 // Bipartite network imports
-import BipartiteNetwork, {
-  BipartiteNetworkProps,
-  NodeMenuAction,
-} from '@veupathdb/components/lib/plots/BipartiteNetwork';
+import BipartiteNetworkPlot, {
+  BipartiteNetworkPlotProps,
+} from '@veupathdb/components/lib/plots/BipartiteNetworkPlot';
 import BipartiteNetworkSVG from './selectorIcons/BipartiteNetworkSVG';
 import {
   BipartiteNetworkRequestParams,
@@ -45,6 +44,7 @@ import { FacetedPlotLayout } from '../../layouts/FacetedPlotLayout';
 import { H6 } from '@veupathdb/coreui';
 import { CorrelationConfig } from '../../../types/apps';
 import { StudyMetadata } from '../../..';
+import { NodeMenuAction } from '@veupathdb/components/lib/types/plots/network';
 // end imports
 
 // Defaults
@@ -332,8 +332,10 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     </div>
   );
 
-  const bipartiteNetworkProps: BipartiteNetworkProps = {
-    data: cleanedData ?? undefined,
+  const bipartiteNetworkPlotProps: BipartiteNetworkPlotProps = {
+    nodes: cleanedData ? cleanedData.nodes : undefined,
+    links: cleanedData ? cleanedData.links : undefined,
+    partitions: cleanedData ? cleanedData.partitions : undefined,
     showSpinner: data.pending,
     containerStyles: finalPlotContainerStyles,
     svgStyleOverrides: bipartiteNetworkSVGStyles,
@@ -345,7 +347,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
 
   const plotNode = (
     //@ts-ignore
-    <BipartiteNetwork {...bipartiteNetworkProps} ref={plotRef} />
+    <BipartiteNetworkPlot {...bipartiteNetworkPlotProps} ref={plotRef} />
   );
 
   const controlsNode = <> </>;
