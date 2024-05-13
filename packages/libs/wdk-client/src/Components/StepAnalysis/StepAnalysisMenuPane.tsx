@@ -12,7 +12,7 @@ export interface StepAnalysisMenuPaneProps {
   errorMessage: string | null;
 }
 
-export const StepAnalysisMenuPane: React.SFC<
+export const StepAnalysisMenuPane: React.FC<
   StepAnalysisMenuPaneProps & StepAnalysisEventHandlers
 > = ({
   recordClassDisplayName,

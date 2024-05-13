@@ -1,11 +1,11 @@
-import React, { StatelessComponent } from 'react';
+import React from 'react';
 import { wrappable } from '../../Utils/ComponentUtils';
 
 type Props = {
   scope: string;
 };
 
-let ReporterSortMessage: StatelessComponent<Props> = (props) =>
+let ReporterSortMessage: React.FC<Props> = (props) =>
   props.scope === 'record' ? (
     <noscript />
   ) : (
