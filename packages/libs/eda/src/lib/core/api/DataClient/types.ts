@@ -15,6 +15,7 @@ import {
   keyof,
   boolean,
   literal,
+  any,
 } from 'io-ts';
 import { Filter } from '../../types/filter';
 import {
@@ -394,10 +395,48 @@ export const NodeIdList = type({
 // Bipartite network
 export type BipartiteNetworkResponse = TypeOf<typeof BipartiteNetworkResponse>;
 
-const NodeData = type({
-  id: string,
+const NodeData = intersection([
+  type({
+    id: string,
+  }),
+  partial({
+    x: number,
+    y: number,
+    degree: number,
+  }),
+]);
+
+export const NetworkData = type({
+  nodes: array(NodeData),
+  links: array(
+    intersection([
+      type({
+        source: string,
+        target: string,
+        weight: number,
+      }),
+      partial({
+        color: number,
+        isDirected: boolean,
+      }),
+    ])
+  ),
 });
 
+// @ANN clean your types!
+const NetworkConfig = partial({
+  variables: any,
+  correlationCoefThreshold: number,
+  significanceThreshold: number,
+});
+export const NetworkResponse = type({
+  network: type({
+    data: NetworkData,
+    config: NetworkConfig,
+  }),
+});
+
+// @ANN clean your types!
 export const BipartiteNetworkData = type({
   partitions: array(NodeIdList),
   nodes: array(NodeData),
@@ -440,6 +479,21 @@ export const CorrelationBipartiteNetworkResponse = intersection([
 ]);
 
 export interface BipartiteNetworkRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    correlationCoefThreshold?: number;
+    significanceThreshold?: number;
+  };
+}
+// @ANN can also maybe clean types here
+// Correlation Network
+// a specific flavor of the network that also includes correlationCoefThreshold and significanceThreshold
+export type CorrelationNetworkResponse = TypeOf<
+  typeof CorrelationNetworkResponse
+>;
+export const CorrelationNetworkResponse = NetworkResponse;
+export interface NetworkRequestParams {
   studyId: string;
   filters: Filter[];
   config: {

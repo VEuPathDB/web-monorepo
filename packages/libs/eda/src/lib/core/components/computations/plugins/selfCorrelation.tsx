@@ -12,7 +12,7 @@ import { ComputationStepContainer } from '../ComputationStepContainer';
 import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { H6 } from '@veupathdb/coreui';
-import { bipartiteNetworkVisualization } from '../../visualizations/implementations/BipartiteNetworkVisualization';
+import { networkVisualization } from '../../visualizations/implementations/NetworkVisualization';
 import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
 import SingleSelect, {
   ItemGroup,
@@ -61,7 +61,7 @@ export const plugin: ComputationPlugin = {
     return true;
   },
   visualizationPlugins: {
-    bipartitenetwork: bipartiteNetworkVisualization.withOptions({
+    unipartitenetwork: networkVisualization.withOptions({
       getLegendTitle(config) {
         if (SelfCorrelationConfig.is(config)) {
           return ['absolute correlation coefficient', 'correlation direction'];
