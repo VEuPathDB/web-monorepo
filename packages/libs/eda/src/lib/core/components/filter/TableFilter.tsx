@@ -326,34 +326,36 @@ export function TableFilter({
 
   return (
     <div style={{ position: 'relative' }} className="filter-param">
-      {tableSummary.pending && (
-        <Loading style={{ position: 'absolute', top: '-1.5em' }} radius={2} />
-      )}
-      {tableSummary.error && <pre>{String(tableSummary.error)}</pre>}
-      {tableSummary.value &&
-        tableSummary.value.entityId === entity.id &&
-        tableSummary.value.variableId === variable.id && (
-          <MembershipField
-            displayName={entity.displayNamePlural ?? entity.displayName}
-            dataCount={totalEntityCount}
-            filteredDataCount={filteredEntityCount}
-            filter={tableFilter}
-            activeField={activeField}
-            activeFieldState={activeFieldState}
-            onChange={handleChange}
-            onMemberSort={handleSort}
-            onMemberSearch={handleSearch}
-            onMemberChangeCurrentPage={handlePagination}
-            onMemberChangeRowsPerPage={handleRowsPerPage}
-            selectByDefault={false}
-            fillBarColor={gray}
-            fillFilteredBarColor={red}
-            // set Heading1 prefix
-            filteredCountHeadingPrefix={'Subset of'}
-            unfilteredCountHeadingPrefix={'All'}
-            showInternalMesaCounts={true}
-          />
+      <>
+        {tableSummary.pending && (
+          <Loading style={{ position: 'absolute', top: '-1.5em' }} radius={2} />
         )}
+        {tableSummary.error && <pre>{String(tableSummary.error)}</pre>}
+        {tableSummary.value &&
+          tableSummary.value.entityId === entity.id &&
+          tableSummary.value.variableId === variable.id && (
+            <MembershipField
+              displayName={entity.displayNamePlural ?? entity.displayName}
+              dataCount={totalEntityCount}
+              filteredDataCount={filteredEntityCount}
+              filter={tableFilter}
+              activeField={activeField}
+              activeFieldState={activeFieldState}
+              onChange={handleChange}
+              onMemberSort={handleSort}
+              onMemberSearch={handleSearch}
+              onMemberChangeCurrentPage={handlePagination}
+              onMemberChangeRowsPerPage={handleRowsPerPage}
+              selectByDefault={false}
+              fillBarColor={gray}
+              fillFilteredBarColor={red}
+              // set Heading1 prefix
+              filteredCountHeadingPrefix={'Subset of'}
+              unfilteredCountHeadingPrefix={'All'}
+              showInternalMesaCounts={true}
+            />
+          )}
+      </>
     </div>
   );
 }
