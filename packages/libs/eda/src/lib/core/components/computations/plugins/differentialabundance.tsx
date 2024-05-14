@@ -387,6 +387,7 @@ export function DifferentialAbundanceConfiguration(
                   showClearSelectionButton={false}
                   disableInput={disableGroupValueSelectors}
                   isLoading={continuousVariableBins.pending}
+                  isSearchable={true}
                 />
                 <FloatingButton
                   icon={SwapHorizOutlined}

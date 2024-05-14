@@ -1,6 +1,7 @@
 import SelectList from '@veupathdb/coreui/lib/components/inputs/SelectList';
 import { ReactNode } from 'react';
 import { ClearSelectionButton } from '../../variableSelectors/VariableTreeDropdown';
+import { SearchBox } from '@veupathdb/coreui';
 
 export type ValuePickerProps = {
   allowedValues?: string[];
@@ -13,6 +14,8 @@ export type ValuePickerProps = {
   showClearSelectionButton?: boolean;
   /** Show loading spinner */
   isLoading?: boolean;
+  /** Show a searchbox? */
+  isSearchable?: boolean;
 };
 
 const EMPTY_ALLOWED_VALUES_ARRAY: string[] = [];
@@ -28,6 +31,7 @@ export function ValuePicker({
   disableInput = false,
   showClearSelectionButton = true,
   isLoading = false,
+  isSearchable = false,
 }: ValuePickerProps) {
   const items = allowedValues.map((value) => ({
     display: <span>{value}</span>,
@@ -37,6 +41,7 @@ export function ValuePicker({
 
   return (
     <>
+      {isSearchable && <SearchBox />}
       <SelectList
         defaultButtonDisplayContent={'Select value(s)'}
         items={items}

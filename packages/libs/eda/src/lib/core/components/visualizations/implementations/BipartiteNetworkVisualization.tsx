@@ -19,12 +19,13 @@ import {
   CorrelationBipartiteNetworkResponse,
 } from '../../../api/DataClient/types';
 import { twoColorPalette } from '@veupathdb/components/lib/types/plots/addOns';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { scaleOrdinal } from 'd3-scale';
 import { uniq } from 'lodash';
 import { usePromise } from '../../../hooks/promise';
 import {
   useDataClient,
+  useFindEntityAndVariableCollection,
   useStudyEntities,
   useStudyMetadata,
 } from '../../../hooks/workspace';
@@ -41,7 +42,7 @@ import { NumberInput } from '@veupathdb/components/lib/components/widgets/Number
 import { NumberOrDate } from '@veupathdb/components/lib/types/general';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { FacetedPlotLayout } from '../../layouts/FacetedPlotLayout';
-import { H6 } from '@veupathdb/coreui';
+import { H6, SearchBox, SelectList } from '@veupathdb/coreui';
 import { CorrelationConfig } from '../../../types/apps';
 import { StudyMetadata } from '../../..';
 import { NodeMenuAction } from '@veupathdb/components/lib/types/plots/network';
@@ -122,6 +123,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
+  const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
 
   const computationConfiguration: CorrelationConfig = computation.descriptor
     .configuration as CorrelationConfig;
@@ -177,6 +179,14 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     ])
   );
 
+  const createNodeList = () =>
+    data.value
+      ? data.value.bipartitenetwork.data.nodes.map((node) => node.id)
+      : [];
+  const [keepNodeIds, setKeepNodeIds] = useState<string[]>(createNodeList);
+  // console.log(data.value?.bipartitenetwork.data.nodes.map((node) => node.id));
+  console.log(keepNodeIds);
+
   // Determine min and max stroke widths. For use in scaling the strokes (weightToStrokeWidthMap) and the legend.
   const dataWeights =
     data.value?.bipartitenetwork.data.links.map(
@@ -223,8 +233,9 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
       .range(twoColorPalette); // the output palette may change if this visualization is reused in other contexts (ex. not a correlation app).
 
     // Find display labels
-    const nodesWithLabels = data.value.bipartitenetwork.data.nodes.map(
-      (node) => {
+    const nodesWithLabels = data.value.bipartitenetwork.data.nodes
+      .filter((node) => keepNodeIds.includes(node.id))
+      .map((node) => {
         // node.id is the entityId.variableId
         const displayLabel = fixVarIdLabel(
           node.id.split('.')[1],
@@ -236,8 +247,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
           id: node.id,
           label: displayLabel,
         };
-      }
-    );
+      });
 
     const nodesById = new Map(nodesWithLabels.map((n) => [n.id, n]));
 
@@ -264,16 +274,24 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
       ...data.value.bipartitenetwork.data,
       partitions: orderedPartitions,
       nodes: nodesWithLabels,
-      links: data.value.bipartitenetwork.data.links.map((link) => {
-        return {
-          source: link.source,
-          target: link.target,
-          strokeWidth: weightToStrokeWidthMap(Number(link.weight)),
-          color: link.color ? linkColorScale(link.color.toString()) : '#000000',
-        };
-      }),
+      links: data.value.bipartitenetwork.data.links
+        .filter(
+          (link) =>
+            keepNodeIds.includes(link.source.id) &&
+            keepNodeIds.includes(link.target.id)
+        )
+        .map((link) => {
+          return {
+            source: link.source,
+            target: link.target,
+            strokeWidth: weightToStrokeWidthMap(Number(link.weight)),
+            color: link.color
+              ? linkColorScale(link.color.toString())
+              : '#000000',
+          };
+        }),
     };
-  }, [data.value, entities, minDataWeight, maxDataWeight]);
+  }, [data.value, entities, minDataWeight, maxDataWeight, keepNodeIds]);
 
   const getNodeMenuActions = options?.makeGetNodeMenuActions?.(studyMetadata);
 
@@ -312,6 +330,11 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     },
     [cleanedData]
   );
+
+  const data1DisplayName =
+    findEntityAndVariableCollection(
+      computationConfiguration.data1?.collectionSpec
+    )?.variableCollection.displayName ?? 'Column 1';
 
   // Have the bpnet component say "No nodes" or whatev and have an extra
   // prop called errorMessage or something that displays when there are no nodes.
@@ -450,37 +473,87 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       {!hideInputsAndControls && (
-        <LabelledGroup label="Link thresholds" alignChildrenHorizontally={true}>
-          <NumberInput
-            onValueChange={(newValue?: NumberOrDate) =>
-              updateVizConfig({ correlationCoefThreshold: Number(newValue) })
-            }
-            label={'Absolute correlation coefficient'}
-            minValue={0}
-            maxValue={1}
-            value={
-              vizConfig.correlationCoefThreshold ??
-              DEFAULT_CORRELATION_COEF_THRESHOLD
-            }
-            step={0.05}
-            applyWarningStyles={cleanedData && cleanedData.nodes.length === 0}
-          />
+        <>
+          <LabelledGroup
+            label="Link thresholds"
+            alignChildrenHorizontally={true}
+          >
+            <NumberInput
+              onValueChange={(newValue?: NumberOrDate) =>
+                updateVizConfig({ correlationCoefThreshold: Number(newValue) })
+              }
+              label={'Absolute correlation coefficient'}
+              minValue={0}
+              maxValue={1}
+              value={
+                vizConfig.correlationCoefThreshold ??
+                DEFAULT_CORRELATION_COEF_THRESHOLD
+              }
+              step={0.05}
+              applyWarningStyles={cleanedData && cleanedData.nodes.length === 0}
+            />
 
-          <NumberInput
-            label="P-Value"
-            onValueChange={(newValue?: NumberOrDate) =>
-              updateVizConfig({ significanceThreshold: Number(newValue) })
-            }
-            minValue={0}
-            maxValue={1}
-            value={
-              vizConfig.significanceThreshold ?? DEFAULT_SIGNIFICANCE_THRESHOLD
-            }
-            containerStyles={{ marginLeft: 10 }}
-            step={0.001}
-            applyWarningStyles={cleanedData && cleanedData.nodes.length === 0}
-          />
-        </LabelledGroup>
+            <NumberInput
+              label="P-Value"
+              onValueChange={(newValue?: NumberOrDate) =>
+                updateVizConfig({ significanceThreshold: Number(newValue) })
+              }
+              minValue={0}
+              maxValue={1}
+              value={
+                vizConfig.significanceThreshold ??
+                DEFAULT_SIGNIFICANCE_THRESHOLD
+              }
+              containerStyles={{ marginLeft: 10 }}
+              step={0.001}
+              applyWarningStyles={cleanedData && cleanedData.nodes.length === 0}
+            />
+          </LabelledGroup>
+          <LabelledGroup label="Node filters" alignChildrenHorizontally={true}>
+            {/* <SearchBox
+              // autoFocus={autoFocusSearchBox}
+              searchTerm={searchTerm}
+              onSearchTermChange={onSearchTermChange}
+              placeholderText={searchBoxPlaceholder}
+              // iconName={searchIconName}
+              // iconPosition={searchIconPosition}
+              // helpText={searchBoxHelp}
+              // styleOverrides={styleSpec.searchBox}
+            /> */}
+            <span>{data1DisplayName}</span>
+            <SelectList
+              defaultButtonDisplayContent={'Select value(s)'}
+              items={
+                data.value
+                  ? data.value.bipartitenetwork.data.nodes.map((node) => ({
+                      display: <span>{node.id}</span>,
+                      value: node.id,
+                    }))
+                  : []
+              }
+              onChange={setKeepNodeIds}
+              value={keepNodeIds}
+              isDisabled={false}
+              isLoading={false}
+            />
+            <span>Metadata</span>
+            <SelectList
+              defaultButtonDisplayContent={'Select value(s)'}
+              items={
+                data.value
+                  ? data.value.bipartitenetwork.data.nodes.map((node) => ({
+                      display: <span>{node.id}</span>,
+                      value: node.id,
+                    }))
+                  : []
+              }
+              onChange={setKeepNodeIds}
+              value={keepNodeIds}
+              isDisabled={false}
+              isLoading={false}
+            />
+          </LabelledGroup>
+        </>
       )}
       <OutputEntityTitle subtitle={plotSubtitle} />
       <LayoutComponent
