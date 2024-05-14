@@ -3,9 +3,13 @@ import QueryString from 'querystring';
 import { edaServiceUrl } from '../config';
 import { useConfiguredAnalysisClient } from '@veupathdb/eda/lib/core/hooks/client';
 import { createComputation } from '@veupathdb/eda/lib/core/components/computations/Utils';
-import { makeNewAnalysis } from '@veupathdb/eda/lib/core';
+import {
+  AdditionalAnalysisConfig,
+  makeNewAnalysis,
+} from '@veupathdb/eda/lib/core';
 import { RouteComponentProps } from 'react-router';
 import { LegacyRedirectState } from '@veupathdb/eda/lib/map/analysis/appState';
+import { Computation } from '@veupathdb/eda/lib/core/types/visualization';
 
 // Define constants to create new computations and analyses
 const MEGA_STUDY_ID = 'DS_480c976ef9';
@@ -36,7 +40,11 @@ export function LegacyMapRedirectHandler({
   const [hasCreatedAnalysis, setHasCreatedAnalysis] = useState(false);
 
   const handleLegacyMapRedirect = useCallback(
-    async (computation, additionalConfig = {}, legacyMapRedirectState) => {
+    async (
+      computation: Computation,
+      additionalConfig: AdditionalAnalysisConfig,
+      legacyMapRedirectState: LegacyRedirectState | undefined
+    ) => {
       if (hasCreatedAnalysis) return;
       setHasCreatedAnalysis(true);
       const { analysisId } = await analysisClient.createAnalysis(
@@ -47,7 +55,7 @@ export function LegacyMapRedirectHandler({
           '/legacy-redirect-handler',
           ''
         )}/${MEGA_STUDY_ID}/${analysisId}`,
-        state: legacyMapRedirectState as LegacyRedirectState,
+        state: legacyMapRedirectState,
       });
     },
     [analysisClient, history, match, hasCreatedAnalysis, setHasCreatedAnalysis]
@@ -81,7 +89,7 @@ export function LegacyMapRedirectHandler({
         const additionalAnalysisConfig = {
           ...baseAdditionalAnalysisConfig,
           ...descriptorConfig,
-        };
+        } as AdditionalAnalysisConfig;
         handleLegacyMapRedirect(
           DEFAULT_COMPUTATION,
           additionalAnalysisConfig,
@@ -95,11 +103,11 @@ export function LegacyMapRedirectHandler({
           ...descriptorConfig,
           ...baseAdditionalAnalysisConfig,
           notes,
-        };
+        } as AdditionalAnalysisConfig;
         const legacyMapRedirectState = {
           showLegacyMapRedirectModal: true,
           projectId: queryParams['projectID'],
-        };
+        } as LegacyRedirectState;
         handleLegacyMapRedirect(
           DEFAULT_COMPUTATION,
           additionalAnalysisConfig,
