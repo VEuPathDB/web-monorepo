@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import { LinePlotProps } from '../../plots/LinePlot';
 import TimeSlider, {
   TimeSliderDataProp,
 } from '../../components/plotControls/TimeSlider';
 import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
+
+import AxisRangeControl from '../../components/plotControls/AxisRangeControl';
+import { NumberOrDateRange } from '../../types/general';
 
 export default {
   title: 'Plot Controls/TimeSlider',
@@ -303,6 +306,18 @@ export const TimeFilter: Story<LinePlotProps> = (args: any) => {
   const defaultSymbolSize = 0.8;
   const defaultColor = '#333';
 
+  // control selectedRange
+  const handleAxisRangeChange = useCallback(
+    (newRange?: NumberOrDateRange) => {
+      if (newRange)
+        setSelectedRange({
+          start: newRange.min as string,
+          end: newRange.max as string,
+        });
+    },
+    [setSelectedRange]
+  );
+
   return (
     <DraggablePanel
       key={key}
@@ -329,10 +344,29 @@ export const TimeFilter: Story<LinePlotProps> = (args: any) => {
             paddingTop: '1em',
           }}
         >
-          {/* display start to end value */}
-          <div style={{ gridColumnStart: 2 }}>
-            {selectedRange?.start} ~ {selectedRange?.end}
-          </div>
+          {/* add axis range control */}
+          <AxisRangeControl
+            range={
+              selectedRange != null
+                ? {
+                    min: selectedRange.start,
+                    max: selectedRange.end,
+                  }
+                : undefined
+            }
+            onRangeChange={handleAxisRangeChange}
+            valueType={'date'}
+            // set maxWidth
+            containerStyles={{
+              maxWidth: '350px',
+              gridColumnStart: 2,
+              marginTop: -10,
+              paddingBottom: 5,
+            }}
+            // default height of the input element is 36.5 which may be too high for timeSlider
+            // thus, introduced new prop to control it
+            inputHeight={20}
+          />
         </div>
         <TimeSlider
           data={timeFilterData}

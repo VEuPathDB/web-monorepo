@@ -176,10 +176,10 @@ function TimeSlider(props: TimeSliderProps) {
   );
 
   // `brushKey` makes/fakes the brush as a controlled component,
-  const brushKey = 'not_fake_controlled';
-  //    selectedRange != null
-  //      ? selectedRange.start + ':' + selectedRange.end
-  //      : 'no_brush';
+  const brushKey =
+    selectedRange != null
+      ? selectedRange.start + ':' + selectedRange.end
+      : 'no_brush';
 
   return (
     <div
