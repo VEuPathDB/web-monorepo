@@ -11,6 +11,7 @@ interface Props {
   recordName: string;
   questionName: string;
   initialParamData: Record<string, string>;
+  formComponent?: (props: FormProps) => JSX.Element;
 }
 
 const submissionMetadata: SubmissionMetadata = {
@@ -19,14 +20,14 @@ const submissionMetadata: SubmissionMetadata = {
 };
 
 export function SearchAndAnswerFilter(props: Props) {
-  const { recordName, questionName, initialParamData } = props;
+  const { recordName, questionName, initialParamData, formComponent } = props;
 
   return (
     <QuestionController
       question={questionName}
       recordClass={recordName}
       submissionMetadata={submissionMetadata}
-      FormComponent={FormComponent}
+      FormComponent={formComponent ?? FormComponent}
       initialParamData={initialParamData}
       prepopulateWithLastParamValues
     />
@@ -48,7 +49,7 @@ function FormComponent(props: FormProps) {
                   isSearchPage: true,
                 },
               } as any,
-              parameterElement.props.chilren
+              parameterElement.props.children
             )
           : parameterElement;
       }),

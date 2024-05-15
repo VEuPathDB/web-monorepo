@@ -13,6 +13,7 @@ import { useHistory, useLocation, useRouteMatch } from 'react-router';
 import { parseQueryString } from '../../Core/RouteEntry';
 import { AnswerSpecResultType, ResultType } from '../../Utils/WdkResult';
 import { AnswerFormatting } from '../../Service/Mixins/SearchReportsService';
+import { Props as FormProps } from '../../Views/Question/DefaultQuestionForm';
 
 export interface TableResultTypePartial
   extends Omit<AnswerSpecResultType, 'answerSpec'> {
@@ -35,6 +36,7 @@ interface SearchAndAnswerProps {
   reporterFormatting: AnswerFormatting;
   resultTableConfig: ResultTableConfig;
   filterClassName?: string;
+  formComponent?: (props: FormProps) => JSX.Element;
 }
 
 export function SearchAndAnswer({
@@ -44,6 +46,7 @@ export function SearchAndAnswer({
   reporterFormatting,
   resultTableConfig,
   filterClassName,
+  formComponent,
 }: SearchAndAnswerProps) {
   const location = useLocation();
   const history = useHistory();
@@ -110,6 +113,7 @@ export function SearchAndAnswer({
           recordName={recordName}
           questionName={tableQuestionName}
           initialParamData={initialParamData}
+          formComponent={formComponent}
         />
       </div>
       {!isValid ? (

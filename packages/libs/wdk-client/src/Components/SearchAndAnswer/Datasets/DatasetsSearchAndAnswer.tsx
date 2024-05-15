@@ -1,3 +1,4 @@
+import React, { useMemo, useCallback } from 'react';
 import { RootState } from '../../../Core/State/Types';
 import { useSelector } from 'react-redux';
 import { RecordInstance } from '../../../Utils/WdkModel';
@@ -7,7 +8,11 @@ import {
   DEFAULT_SORTING,
 } from '../../../Controllers/AnswerController';
 import { ResultType } from '../../../Utils/WdkResult';
-import { useCallback } from 'react';
+import { mapValues } from 'lodash';
+import {
+  Props as FormProps,
+  renderDefaultParamGroup,
+} from '../../../Views/Question/DefaultQuestionForm';
 
 const VIEW_ID = 'DatasetsPage';
 const RECORD_NAME = 'dataset';
@@ -21,6 +26,51 @@ const DEFAULT_FORMATTING = {
     sorting: DEFAULT_SORTING,
   },
 };
+
+function DatasetsFormComponent(props: FormProps) {
+  const { state } = props;
+  // Need to add `isSearchPage` prop so that organism prefs are used
+  const parameterElements = useMemo(
+    () =>
+      mapValues(props.parameterElements, (parameterElement) => {
+        return React.isValidElement(parameterElement)
+          ? React.cloneElement(
+              parameterElement,
+              {
+                pluginProps: {
+                  ...parameterElement.props.pluginProps,
+                  isSearchPage: true,
+                },
+              } as any,
+              parameterElement.props.children
+            )
+          : parameterElement;
+      }),
+    [props.parameterElements]
+  );
+
+  const updatedProps = useMemo(
+    () => ({ ...props, parameterElements }),
+    [props, parameterElements]
+  );
+
+  return (
+    <>
+      {state.question.groups
+        .filter((group) => group.displayType !== 'hidden')
+        .map((group) => {
+          const { parameters, ...remainingGroupProperties } = group;
+          const groupWithoutOrgParam = {
+            ...remainingGroupProperties,
+            parameters: parameters.filter(
+              (param) => param !== 'text_search_organism'
+            ),
+          };
+          return renderDefaultParamGroup(groupWithoutOrgParam, updatedProps);
+        })}
+    </>
+  );
+}
 
 export function DatasetsSearchAndAnswer() {
   const tableResultTypePartial = {
@@ -74,6 +124,7 @@ export function DatasetsSearchAndAnswer() {
         showIdAttributeColumn: true,
         showCount: true,
       }}
+      formComponent={DatasetsFormComponent}
     />
   );
 }
