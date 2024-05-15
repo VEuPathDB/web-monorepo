@@ -1,7 +1,7 @@
 import { useMemo, ReactNode } from 'react';
 import { RootState } from '../../Core/State/Types';
 import { useSelector } from 'react-redux';
-import { RecordInstance, SearchConfig } from '../../Utils/WdkModel';
+import { SearchConfig } from '../../Utils/WdkModel';
 import { isEqual } from 'lodash';
 import { isParamValueValid } from '../../Views/Question/Params';
 import { useWdkDependenciesEffect } from '../../Hooks/WdkDependenciesEffect';
@@ -11,9 +11,9 @@ import { SearchAndAnswerTable } from './SearchAndAnswerTable';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { useHistory, useLocation, useRouteMatch } from 'react-router';
 import { parseQueryString } from '../../Core/RouteEntry';
-import { AnswerSpecResultType, ResultType } from '../../Utils/WdkResult';
-import { AnswerFormatting } from '../../Service/Mixins/SearchReportsService';
+import { AnswerSpecResultType } from '../../Utils/WdkResult';
 import { Props as FormProps } from '../../Views/Question/DefaultQuestionForm';
+import { Action } from '../../Views/ResultTableSummaryView/ResultTableSummaryView';
 
 export interface TableResultTypePartial
   extends Omit<AnswerSpecResultType, 'answerSpec'> {
@@ -32,21 +32,21 @@ export interface ResultTableConfig {
 interface SearchAndAnswerProps {
   recordName: string;
   tableResultTypePartial: TableResultTypePartial;
-  getReporterResultType: (records: RecordInstance[]) => ResultType;
-  reporterFormatting: AnswerFormatting;
   resultTableConfig: ResultTableConfig;
   filterClassName?: string;
   formComponent?: (props: FormProps) => JSX.Element;
+  tableActions?: Action[];
+  downloadButton?: ReactNode;
 }
 
 export function SearchAndAnswer({
   recordName,
   tableResultTypePartial,
-  getReporterResultType,
-  reporterFormatting,
   resultTableConfig,
   filterClassName,
   formComponent,
+  tableActions,
+  downloadButton,
 }: SearchAndAnswerProps) {
   const location = useLocation();
   const history = useHistory();
@@ -125,12 +125,14 @@ export function SearchAndAnswer({
           }}
         />
       ) : tableResultType ? (
-        <SearchAndAnswerTable
-          tableResultType={tableResultType}
-          getReporterResultType={getReporterResultType}
-          reporterFormatting={reporterFormatting}
-          resultTableConfig={resultTableConfig}
-        />
+        <>
+          {downloadButton && downloadButton}
+          <SearchAndAnswerTable
+            tableResultType={tableResultType}
+            resultTableConfig={resultTableConfig}
+            tableActions={tableActions}
+          />
+        </>
       ) : null}
     </>
   );

@@ -1,23 +1,37 @@
 import React, { useMemo, useCallback } from 'react';
 import { RootState } from '../../../Core/State/Types';
 import { useSelector } from 'react-redux';
-import { RecordInstance } from '../../../Utils/WdkModel';
 import { SearchAndAnswer, TableResultTypePartial } from '../SearchAndAnswer';
 import {
   DEFAULT_PAGINATION,
   DEFAULT_SORTING,
 } from '../../../Controllers/AnswerController';
-import { ResultType } from '../../../Utils/WdkResult';
+import { downloadReport, ResultType } from '../../../Utils/WdkResult';
 import { mapValues } from 'lodash';
 import {
   Props as FormProps,
   renderDefaultParamGroup,
 } from '../../../Views/Question/DefaultQuestionForm';
+import Icon from '../../Icon/IconAlt';
+import { WdkDependenciesContext } from '../../../Hooks/WdkDependenciesEffect';
+import { useNonNullableContext } from '../../../Hooks/NonNullableContext';
 
 const VIEW_ID = 'DatasetsPage';
 const RECORD_NAME = 'dataset';
 const TABLE_QUESTION_NAME = 'DatasetsByText';
 const BULK_QUESTION_NAME = 'DatasetsById';
+const DEFAULT_RESULT_TYPE = {
+  type: 'answerSpec',
+  displayName: 'Datasets CSV',
+  answerSpec: {
+    searchName: BULK_QUESTION_NAME,
+    searchConfig: {
+      parameters: {
+        dataset_id: JSON.stringify([]),
+      },
+    },
+  },
+};
 const DEFAULT_FORMATTING = {
   format: 'attributesTabular',
   formatConfig: {
@@ -63,7 +77,8 @@ function DatasetsFormComponent(props: FormProps) {
           const groupWithoutOrgParam = {
             ...remainingGroupProperties,
             parameters: parameters.filter(
-              (param) => param !== 'text_search_organism'
+              (param) =>
+                param !== 'text_search_organism' && param !== 'text_fields'
             ),
           };
           return renderDefaultParamGroup(groupWithoutOrgParam, updatedProps);
@@ -73,6 +88,7 @@ function DatasetsFormComponent(props: FormProps) {
 }
 
 export function DatasetsSearchAndAnswer() {
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
   const tableResultTypePartial = {
     type: 'answerSpec',
     displayName: 'Data Sets',
@@ -81,43 +97,61 @@ export function DatasetsSearchAndAnswer() {
     },
   };
 
-  const getReporterResultType = useCallback(
-    (records: RecordInstance[]): ResultType => ({
-      type: 'answerSpec',
-      displayName: 'Datasets CSV',
-      answerSpec: {
-        searchName: BULK_QUESTION_NAME,
-        searchConfig: {
-          parameters: {
-            dataset_id: JSON.stringify(records.map((rec) => rec.id[0].value)),
+  const { resultType, reporterFormatting } = useSelector((state: RootState) => {
+    const answer = state.resultTableSummaryView[VIEW_ID]?.answer;
+    if (!answer)
+      return {
+        resultType: DEFAULT_RESULT_TYPE,
+        reporterFormatting: DEFAULT_FORMATTING,
+      };
+    const { attributes, pagination, sorting } = answer.meta;
+    return {
+      resultType: {
+        ...DEFAULT_RESULT_TYPE,
+        answerSpec: {
+          ...DEFAULT_RESULT_TYPE.answerSpec,
+          searchConfig: {
+            parameters: {
+              dataset_id: JSON.stringify(
+                answer.records.map((rec) => rec.id[0].value)
+              ),
+            },
           },
         },
       },
-    }),
-    []
-  );
-
-  const reporterFormatting = useSelector((state: RootState) => {
-    const meta = state.resultTableSummaryView[VIEW_ID]?.answer?.meta;
-    if (!meta) return DEFAULT_FORMATTING;
-    const { attributes, pagination, sorting } = meta;
-    return {
-      ...DEFAULT_FORMATTING,
-      formatConfig: {
-        ...DEFAULT_FORMATTING.formatConfig,
-        attributes,
-        pagination,
-        sorting,
+      reporterFormatting: {
+        ...DEFAULT_FORMATTING,
+        formatConfig: {
+          ...DEFAULT_FORMATTING.formatConfig,
+          attributes,
+          pagination,
+          sorting,
+        },
       },
     };
   });
+
+  const downloadButton = (
+    <button
+      className="btn"
+      type="button"
+      onClick={() => {
+        downloadReport(
+          wdkService,
+          resultType as ResultType,
+          reporterFormatting,
+          '_blank'
+        );
+      }}
+    >
+      <Icon fa="download" /> Download CSV
+    </button>
+  );
 
   return (
     <SearchAndAnswer
       recordName={RECORD_NAME}
       tableResultTypePartial={tableResultTypePartial as TableResultTypePartial}
-      getReporterResultType={getReporterResultType}
-      reporterFormatting={reporterFormatting}
       resultTableConfig={{
         viewId: VIEW_ID,
         downloadButtonDisplay: 'Download as a CSV',
@@ -125,6 +159,7 @@ export function DatasetsSearchAndAnswer() {
         showCount: true,
       }}
       formComponent={DatasetsFormComponent}
+      downloadButton={downloadButton}
     />
   );
 }
