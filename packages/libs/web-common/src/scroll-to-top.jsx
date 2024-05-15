@@ -2,8 +2,8 @@
  * Created by dfalke on 8/24/16.
  */
 import React from 'react';
-import { render } from 'react-dom';
-import { throttle, once, partial } from 'lodash';
+import { createRoot } from 'react-dom/client';
+import { throttle, partial } from 'lodash';
 
 const visibleStyle = {
   color: 'white',
@@ -34,31 +34,37 @@ const scrollToTop = () => {
   window.scrollTo(window.scrollX, 0);
 };
 
-const ScrollToTop = ({ style }) => (
-  <button
-    type="button"
-    style={style}
-    onClick={scrollToTop}
-    onMouseEnter={renderScrollToTopWithHover}
-    onMouseLeave={renderScrollToTopWithOutHover}
-    title="Go back to the top of the page."
-  >
-    <i className="fa fa-2x fa-arrow-up"></i>
-  </button>
-);
+document.addEventListener('DOMContentLoaded', () => {
+  const root = createRoot(
+    document.body.appendChild(document.createElement('div'))
+  );
+  const renderScrollToTop = (style) =>
+    root.render(
+      <ScrollToTop style={window.scrollY > 250 ? style : hiddenStyle} />
+    );
 
-const getDomNode = once(() =>
-  document.body.appendChild(document.createElement('div'))
-);
+  const renderScrollToTopWithHover = partial(renderScrollToTop, hoverStyle);
 
-const renderScrollToTop = (style) =>
-  render(
-    <ScrollToTop style={window.scrollY > 250 ? style : hiddenStyle} />,
-    getDomNode()
+  const renderScrollToTopWithOutHover = partial(
+    renderScrollToTop,
+    visibleStyle
   );
 
-const renderScrollToTopWithHover = partial(renderScrollToTop, hoverStyle);
+  const ScrollToTop = ({ style }) => (
+    <button
+      type="button"
+      style={style}
+      onClick={scrollToTop}
+      onMouseEnter={renderScrollToTopWithHover}
+      onMouseLeave={renderScrollToTopWithOutHover}
+      title="Go back to the top of the page."
+    >
+      <i className="fa fa-2x fa-arrow-up"></i>
+    </button>
+  );
 
-const renderScrollToTopWithOutHover = partial(renderScrollToTop, visibleStyle);
-
-window.addEventListener('scroll', throttle(renderScrollToTopWithOutHover, 250));
+  window.addEventListener(
+    'scroll',
+    throttle(renderScrollToTopWithOutHover, 250)
+  );
+});

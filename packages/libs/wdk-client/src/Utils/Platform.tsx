@@ -1,5 +1,6 @@
 import React from 'react';
 import * as ReactDOM from 'react-dom';
+import * as ReactDOMClient from 'react-dom/client';
 
 import { CommonModal } from '../Components';
 
@@ -67,15 +68,15 @@ export function dialog(
     };
 
     try {
-      ReactDOM.render(
+      const root = ReactDOMClient.createRoot(dialogNode);
+      root.render(
         <PlatformModal
           title={title}
           message={message}
           buttons={buttons}
           onSelectValue={onSelectValue}
           escapeValue={escapeValue}
-        />,
-        dialogNode
+        />
       );
     } catch (err) {
       reject(err);
