@@ -31,7 +31,7 @@ export const projects = [
 
 type Props = {
   containerClassName?: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 export const Footer: FunctionComponent<Props> = ({

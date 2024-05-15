@@ -72,18 +72,18 @@ type Props = {
 let CategoriesCheckboxTree: FunctionComponent<Props> = (props) => {
   let {
     autoFocusSearchBox,
-    disableHelp,
+    disableHelp = false,
     expandedBranches,
     visibilityFilter,
-    isMultiPick,
-    isSelectable,
-    leafType,
+    isMultiPick = true,
+    isSelectable = true,
+    leafType = 'column',
     name,
     onChange,
     onSearchTermChange,
     onUiChange,
     renderNoResults,
-    renderNode,
+    renderNode = (node: CategoryTreeNode) => <BasicNodeComponent node={node} />,
     searchBoxPlaceholder,
     searchTerm,
     searchIconName = 'filter',
@@ -169,14 +169,6 @@ let CategoriesCheckboxTree: FunctionComponent<Props> = (props) => {
     </div>
   );
 };
-
-CategoriesCheckboxTree.defaultProps = {
-  renderNode: (node: CategoryTreeNode) => <BasicNodeComponent node={node} />,
-  isMultiPick: true,
-  isSelectable: true,
-  leafType: 'column', // TODO remove once all consumers are passing in a value for this
-  disableHelp: false,
-} as Props;
 
 export default wrappable(CategoriesCheckboxTree);
 
