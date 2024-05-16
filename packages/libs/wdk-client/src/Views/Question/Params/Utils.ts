@@ -17,6 +17,7 @@ import {
   QuestionWithParameters,
 } from '../../../Utils/WdkModel';
 import { Props as FormProps } from '../../../Views/Question/DefaultQuestionForm';
+import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 
 // Types
 // -----
@@ -37,6 +38,8 @@ export type Props<T extends Parameter, S = void> = {
   uiState: S;
   dispatch: DispatchAction;
   onParamValueChange: (value: string) => void;
+  placeholder?: string;
+  linksPosition?: LinksPosition;
 };
 
 export type ParamModule<T extends Parameter = Parameter, S = any> = {

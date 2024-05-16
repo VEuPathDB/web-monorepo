@@ -22,7 +22,7 @@ function isType(param: Parameter): param is StringParam {
 }
 
 function Component(props: Props<StringParam, undefined>) {
-  const { parameter, value, onParamValueChange } = props;
+  const { parameter, value, onParamValueChange, placeholder = '' } = props;
   const cols = DEFAULT_COLS;
   const rows = calculateRows(parameter, cols);
   return parameter.isMultiLine ? (
@@ -42,6 +42,7 @@ function Component(props: Props<StringParam, undefined>) {
       onChange={onParamValueChange}
       required={!parameter.allowEmptyValue}
       size={parameter.isNumber ? 20 : 40}
+      placeholder={placeholder}
     />
   );
 }
