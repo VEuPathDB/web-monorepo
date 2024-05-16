@@ -57,12 +57,14 @@ export interface Props {
   updateSelectedIds: UpdateSelectedIds;
   showLoginWarning: ShowLoginWarning;
   renderToolbarContent?: (props: ToolbarContentProps) => React.ReactNode;
+  downloadButton?: React.ReactNode;
 }
 
 export interface ToolbarContentProps {
   addColumnsNode: React.ReactNode;
   addToBasketNode: React.ReactNode;
   downloadLinkNode: React.ReactNode;
+  downloadButton: React.ReactNode;
 }
 
 function ResultTable(props: Props) {
@@ -78,6 +80,7 @@ function ResultTable(props: Props) {
     userIsGuest,
     showLoginWarning,
     renderToolbarContent = defaultRenderToolbarContent,
+    downloadButton,
   } = props;
   const columns = getColumns(props);
   const rows = answer.records;
@@ -179,6 +182,7 @@ function ResultTable(props: Props) {
         addColumnsNode,
         addToBasketNode,
         downloadLinkNode,
+        downloadButton,
       })}
     </Mesa>
   );
@@ -387,6 +391,7 @@ function defaultRenderToolbarContent(props: ToolbarContentProps) {
       {props.downloadLinkNode}
       {props.addToBasketNode}
       {props.addColumnsNode}
+      {props.downloadButton && props.downloadButton}
     </>
   );
 }

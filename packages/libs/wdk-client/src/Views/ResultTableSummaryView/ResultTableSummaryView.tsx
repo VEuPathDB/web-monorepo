@@ -64,6 +64,7 @@ interface Props {
   closeAttributeAnalysis: CloseAttributeAnalysis;
   updateSelectedIds: UpdateSelectedIds;
   showLoginWarning: ShowLoginWarning;
+  downloadButton?: React.ReactNode;
 }
 
 const cx = makeClassNameHelper('ResultTableSummaryView');
@@ -102,6 +103,7 @@ export default function ResultTableSummaryView({
   closeAttributeAnalysis,
   updateSelectedIds,
   showLoginWarning,
+  downloadButton,
 }: Props) {
   return (
     <div className={cx()}>
@@ -152,6 +154,7 @@ export default function ResultTableSummaryView({
           closeAttributeAnalysis={closeAttributeAnalysis}
           updateSelectedIds={updateSelectedIds}
           showLoginWarning={showLoginWarning}
+          downloadButton={downloadButton}
         />
       ) : null}
     </div>

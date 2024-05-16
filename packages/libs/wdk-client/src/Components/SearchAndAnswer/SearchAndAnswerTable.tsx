@@ -7,6 +7,7 @@ interface SearchAndAnswerTableProps {
   tableResultType: ResultType;
   resultTableConfig: ResultTableConfig;
   tableActions?: Action[];
+  downloadButton?: React.ReactNode;
 }
 
 export function SearchAndAnswerTable(props: SearchAndAnswerTableProps) {
@@ -14,6 +15,7 @@ export function SearchAndAnswerTable(props: SearchAndAnswerTableProps) {
     tableResultType,
     resultTableConfig,
     tableActions = undefined,
+    downloadButton,
   } = props;
 
   return (
@@ -24,6 +26,7 @@ export function SearchAndAnswerTable(props: SearchAndAnswerTableProps) {
         resultType={tableResultType}
         showIdAttributeColumn={resultTableConfig.showIdAttributeColumn}
         showCount={resultTableConfig.showCount}
+        downloadButton={downloadButton}
       />
     </>
   );

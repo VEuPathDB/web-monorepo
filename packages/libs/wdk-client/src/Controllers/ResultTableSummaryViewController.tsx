@@ -80,6 +80,7 @@ type OwnProps = {
   tableActions?: TableAction[];
   showIdAttributeColumn?: boolean;
   showCount?: boolean;
+  downloadButton?: React.ReactNode;
 };
 
 type Props = OwnProps &
@@ -99,6 +100,7 @@ function ResultTableSummaryViewController(props: Props) {
     tableActions,
     showCount,
     showIdAttributeColumn,
+    downloadButton,
   } = props;
 
   useEffect(() => {
@@ -119,6 +121,7 @@ function ResultTableSummaryViewController(props: Props) {
       actions={tableActions}
       showCount={showCount}
       showIdAttributeColumn={showIdAttributeColumn}
+      downloadButton={downloadButton}
       {...viewData}
       {...derivedData}
       {...actionCreators}
@@ -285,7 +288,8 @@ const ConnectedController = connect<
 type WithOptionsPropName =
   | 'tableActions'
   | 'showIdAttributeColumn'
-  | 'showCount';
+  | 'showCount'
+  | 'downloadButton';
 
 export default Object.assign(ConnectedController, {
   withOptions:
