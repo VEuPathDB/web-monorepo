@@ -58,16 +58,19 @@ export abstract class FetchClient {
   protected readonly baseUrl: string;
   protected readonly init: RequestInit;
   protected readonly fetchApi: Window['fetch'];
-  protected readonly onNonSuccessResponse: FetchApiOptions['onNonSuccessResponse'];
   // Subclasses can set this to false to disable including a traceparent header with all requests.
   protected readonly includeTraceidHeader: boolean = true;
+  protected get onNonSuccessResponse() {
+    return this._onNonSuccessResponse ?? FetchClient.onNonSuccessResponse;
+  }
+
+  private readonly _onNonSuccessResponse: FetchApiOptions['onNonSuccessResponse'];
 
   constructor(options: FetchApiOptions) {
     this.baseUrl = options.baseUrl;
     this.init = options.init ?? {};
     this.fetchApi = options.fetchApi ?? window.fetch;
-    this.onNonSuccessResponse =
-      options.onNonSuccessResponse ?? FetchClient.onNonSuccessResponse;
+    this._onNonSuccessResponse = options.onNonSuccessResponse;
   }
 
   /**

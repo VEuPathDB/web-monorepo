@@ -16,7 +16,7 @@ import {
 import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import { findEntityAndVariable } from '../../../core/utils/study-metadata';
 import { leastAncestralEntity } from '../../../core/utils/data-element-constraints';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import {
   DefaultOverlayConfigProps,
   getDefaultOverlayConfig,
@@ -175,7 +175,7 @@ export function useDistributionOverlayConfig(
 ) {
   const dataClient = useDataClient();
   const subsettingClient = useSubsettingClient();
-  const findEntityAndVariable = useFindEntityAndVariable();
+  const findEntityAndVariable = useFindEntityAndVariable(props.filters);
   return useQuery({
     keepPreviousData: true,
     queryKey: ['distributionOverlayConfig', props],
@@ -213,19 +213,19 @@ export interface DistributionMarkerDataProps {
   selectedValues: string[] | undefined;
   binningMethod: DefaultOverlayConfigProps['binningMethod'];
   valueSpec: StandaloneMapMarkersRequestParams['config']['valueSpec'];
+  overlayConfigQueryResult: UseQueryResult<OverlayConfig | undefined>;
 }
 
 export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
   const {
     boundsZoomLevel,
     selectedVariable,
-    binningMethod,
     geoConfigs,
     studyId,
     filters,
     studyEntities,
-    selectedValues,
     valueSpec,
+    overlayConfigQueryResult,
   } = props;
 
   const dataClient = useDataClient();
@@ -243,13 +243,7 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
     boundsZoomLevel
   );
 
-  const overlayConfigResult = useDistributionOverlayConfig({
-    studyId,
-    filters,
-    binningMethod,
-    overlayVariableDescriptor: selectedVariable,
-    selectedValues,
-  });
+  const overlayConfig = overlayConfigQueryResult.data;
 
   const requestParams: StandaloneMapMarkersRequestParams = {
     studyId,
@@ -258,13 +252,12 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
       geoAggregateVariable,
       latitudeVariable,
       longitudeVariable,
-      overlayConfig: overlayConfigResult.data,
+      overlayConfig,
       outputEntityId,
       valueSpec,
       viewport,
     },
   };
-  const overlayConfig = overlayConfigResult.data;
 
   const markerQuery = useQuery({
     keepPreviousData: true,
@@ -322,14 +315,14 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
         boundsZoomLevel,
       };
     },
-    enabled: overlayConfig != null && !overlayConfigResult.isFetching,
+    enabled: overlayConfig != null && !overlayConfigQueryResult.isFetching,
   });
 
   return {
     ...markerQuery,
-    error: overlayConfigResult.error ?? markerQuery.error,
-    isFetching: overlayConfigResult.isFetching || markerQuery.isFetching,
-    isPreviousData: overlayConfigResult.error
+    error: overlayConfigQueryResult.error ?? markerQuery.error,
+    isFetching: overlayConfigQueryResult.isFetching || markerQuery.isFetching,
+    isPreviousData: overlayConfigQueryResult.error
       ? false
       : markerQuery.isPreviousData,
   };

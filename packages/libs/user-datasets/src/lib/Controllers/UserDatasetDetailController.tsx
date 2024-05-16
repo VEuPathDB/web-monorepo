@@ -123,12 +123,12 @@ class UserDatasetDetailController extends PageController<MergedProps> {
     }
 
     switch (name) {
-      case 'Bigwigs':
-      case 'BigwigFiles':
+      case 'bigwigs':
+      case 'bigwigfiles':
         return BigwigDatasetDetail;
-      case 'RnaSeq':
+      case 'rnaseq':
         return RnaSeqDatasetDetail;
-      case 'BIOM':
+      case 'biom':
         return BiomDatasetDetail;
       default:
         return UserDatasetDetail;
