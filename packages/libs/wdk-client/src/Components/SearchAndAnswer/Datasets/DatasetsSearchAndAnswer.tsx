@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { RootState } from '../../../Core/State/Types';
 import { useSelector } from 'react-redux';
 import { SearchAndAnswer, TableResultTypePartial } from '../SearchAndAnswer';
@@ -8,13 +8,15 @@ import {
 } from '../../../Controllers/AnswerController';
 import { downloadReport, ResultType } from '../../../Utils/WdkResult';
 import { mapValues } from 'lodash';
-import {
-  Props as FormProps,
-  renderDefaultParamGroup,
-} from '../../../Views/Question/DefaultQuestionForm';
+import { Props as FormProps } from '../../../Views/Question/DefaultQuestionForm';
 import Icon from '../../Icon/IconAlt';
 import { WdkDependenciesContext } from '../../../Hooks/WdkDependenciesEffect';
 import { useNonNullableContext } from '../../../Hooks/NonNullableContext';
+import './DatasetsSearchAndAnswer.scss';
+import HelpIcon from '../../Icon/HelpIcon';
+import { Tooltip } from '@veupathdb/coreui';
+import TabbableContainer from '../../Display/TabbableContainer';
+import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 
 const VIEW_ID = 'DatasetsPage';
 const RECORD_NAME = 'dataset';
@@ -42,47 +44,93 @@ const DEFAULT_FORMATTING = {
 };
 
 function DatasetsFormComponent(props: FormProps) {
-  const { state } = props;
-  // Need to add `isSearchPage` prop so that organism prefs are used
-  const parameterElements = useMemo(
-    () =>
-      mapValues(props.parameterElements, (parameterElement) => {
-        return React.isValidElement(parameterElement)
-          ? React.cloneElement(
-              parameterElement,
-              {
-                pluginProps: {
-                  ...parameterElement.props.pluginProps,
-                  isSearchPage: true,
-                },
-              } as any,
-              parameterElement.props.children
-            )
-          : parameterElement;
-      }),
-    [props.parameterElements]
-  );
+  const [showFields, setShowFields] = useState(false);
 
-  const updatedProps = useMemo(
-    () => ({ ...props, parameterElements }),
-    [props, parameterElements]
-  );
+  const handleDocumentClick = (e: MouseEvent) => {
+    if (
+      e.target instanceof Element &&
+      !e.target.closest('.wdk-Answer-filterFieldSelector')
+    ) {
+      setShowFields(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', handleDocumentClick);
+    return () => document.removeEventListener('click', handleDocumentClick);
+  }, []);
+
+  // Need to add `isSearchPage` prop so that organism prefs are used
+  const parameterElements = useMemo(() => {
+    // Let's go ahead and filter out parameters we aren't going to render
+    const { document_type, text_search_organism, ...elementsToRender } =
+      props.parameterElements;
+    return mapValues(elementsToRender, (parameterElement) => {
+      return React.isValidElement(parameterElement)
+        ? React.cloneElement(
+            parameterElement,
+            {
+              pluginProps: {
+                ...parameterElement.props.pluginProps,
+                isSearchPage: true,
+                ...(parameterElement.props.pluginProps.parameter.name ===
+                'text_expression'
+                  ? {
+                      placeholder: 'Search Data Sets',
+                    }
+                  : undefined),
+                ...(parameterElement.props.pluginProps.parameter.name ===
+                'text_fields'
+                  ? {
+                      linksPosition: LinksPosition.Top,
+                    }
+                  : undefined),
+              },
+            } as any,
+            parameterElement.props.children
+          )
+        : parameterElement;
+    });
+  }, [props.parameterElements]);
 
   return (
     <>
-      {state.question.groups
-        .filter((group) => group.displayType !== 'hidden')
-        .map((group) => {
-          const { parameters, ...remainingGroupProperties } = group;
-          const groupWithoutOrgParam = {
-            ...remainingGroupProperties,
-            parameters: parameters.filter(
-              (param) =>
-                param !== 'text_search_organism' && param !== 'text_fields'
-            ),
-          };
-          return renderDefaultParamGroup(groupWithoutOrgParam, updatedProps);
-        })}
+      <div className="TextExpressionContainer">
+        {parameterElements['text_expression']}
+        <Tooltip title="Show search fields">
+          <button
+            className="fa fa-caret-down wdk-Answer-filterSelectFieldsIcon"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowFields(true);
+            }}
+          />
+        </Tooltip>
+        <span className="HelpIconWrapper">
+          <HelpIcon
+            children={
+              // @ts-ignore
+              parameterElements['text_expression']?.props?.pluginProps.parameter
+                .help ?? ''
+            }
+          />
+        </span>
+      </div>
+      {showFields && (
+        <TabbableContainer
+          autoFocus
+          onKeyDown={(e) => (e.key === 'Escape' ? setShowFields(false) : null)}
+          className="wdk-Answer-filterFieldSelector"
+        >
+          {parameterElements['text_fields']}
+          <div className="wdk-Answer-filterFieldSelectorCloseIconWrapper">
+            <button
+              className="fa fa-close wdk-Answer-filterFieldSelectorCloseIcon"
+              onClick={() => setShowFields(false)}
+            />
+          </div>
+        </TabbableContainer>
+      )}
     </>
   );
 }
@@ -104,7 +152,7 @@ export function DatasetsSearchAndAnswer() {
         resultType: DEFAULT_RESULT_TYPE,
         reporterFormatting: DEFAULT_FORMATTING,
       };
-    const { attributes, pagination, sorting } = answer.meta;
+    const { attributes } = answer.meta;
     return {
       resultType: {
         ...DEFAULT_RESULT_TYPE,
@@ -124,8 +172,6 @@ export function DatasetsSearchAndAnswer() {
         formatConfig: {
           ...DEFAULT_FORMATTING.formatConfig,
           attributes,
-          pagination,
-          sorting,
         },
       },
     };
@@ -133,7 +179,7 @@ export function DatasetsSearchAndAnswer() {
 
   const downloadButton = (
     <button
-      className="btn"
+      className="btn DatasetsSearchAndAnswerBtn"
       type="button"
       onClick={() => {
         downloadReport(
@@ -149,17 +195,24 @@ export function DatasetsSearchAndAnswer() {
   );
 
   return (
-    <SearchAndAnswer
-      recordName={RECORD_NAME}
-      tableResultTypePartial={tableResultTypePartial as TableResultTypePartial}
-      resultTableConfig={{
-        viewId: VIEW_ID,
-        downloadButtonDisplay: 'Download as a CSV',
-        showIdAttributeColumn: true,
-        showCount: true,
-      }}
-      formComponent={DatasetsFormComponent}
-      downloadButton={downloadButton}
-    />
+    <>
+      <h1>Data Sets</h1>
+      <SearchAndAnswer
+        recordName={RECORD_NAME}
+        tableResultTypePartial={
+          tableResultTypePartial as TableResultTypePartial
+        }
+        resultTableConfig={{
+          viewId: VIEW_ID,
+          downloadButtonDisplay: 'Download as a CSV',
+          showIdAttributeColumn: true,
+          showCount: true,
+        }}
+        formComponent={DatasetsFormComponent}
+        downloadButton={downloadButton}
+        filterClassName="DatasetsSearchAndAnswerFilter"
+        tableClassName="DatasetsSearchAndAnswerTableContainer"
+      />
+    </>
   );
 }

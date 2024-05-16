@@ -33,7 +33,9 @@ interface SearchAndAnswerProps {
   recordName: string;
   tableResultTypePartial: TableResultTypePartial;
   resultTableConfig: ResultTableConfig;
+  containerClassName?: string;
   filterClassName?: string;
+  tableClassName?: string;
   formComponent?: (props: FormProps) => JSX.Element;
   tableActions?: Action[];
   downloadButton?: ReactNode;
@@ -43,7 +45,9 @@ export function SearchAndAnswer({
   recordName,
   tableResultTypePartial,
   resultTableConfig,
+  containerClassName,
   filterClassName,
+  tableClassName,
   formComponent,
   tableActions,
   downloadButton,
@@ -107,7 +111,7 @@ export function SearchAndAnswer({
   );
 
   return (
-    <>
+    <div className={containerClassName}>
       <div className={filterClassName}>
         <SearchAndAnswerFilter
           recordName={recordName}
@@ -125,15 +129,15 @@ export function SearchAndAnswer({
           }}
         />
       ) : tableResultType ? (
-        <>
-          {downloadButton && downloadButton}
+        <div className={tableClassName}>
           <SearchAndAnswerTable
             tableResultType={tableResultType}
             resultTableConfig={resultTableConfig}
             tableActions={tableActions}
+            downloadButton={downloadButton}
           />
-        </>
+        </div>
       ) : null}
-    </>
+    </div>
   );
 }
