@@ -1,10 +1,10 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
 import { NodeData } from '../../types/plots/network';
-import { NodeWithLabel } from '../../plots/Network';
+import { NodeWithLabel } from '../../plots/Node';
 import { Group } from '@visx/group';
 
 export default {
-  title: 'Plots/Network/NodeWithLabel',
+  title: 'Plots/Networks/NodeWithLabel',
   component: NodeWithLabel,
 } as Meta;
 
