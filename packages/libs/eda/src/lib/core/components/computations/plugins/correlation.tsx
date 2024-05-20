@@ -99,12 +99,18 @@ export const plugin: ComputationPlugin = {
           const variable = variables.find((v) => v.id === variableId);
           if (variable == null) return [];
 
+          // E.g., "qa."
+          const urlPrefix = window.location.host.replace(
+            /(plasmodb|hostdb)\.org/,
+            ''
+          );
+
           const href = parasiteCollection?.memberVariableIds.includes(
             variable.id
           )
-            ? `https://qa.plasmodb.org/plasmo/app/search/transcript/GenesByRNASeqpfal3D7_Lee_Gambian_ebi_rnaSeq_RSRCWGCNAModules?param.wgcnaParam=${variable.displayName.toLowerCase()}&autoRun=1`
+            ? `//${urlPrefix}plasmodb.org/plasmo/app/search/transcript/GenesByRNASeqpfal3D7_Lee_Gambian_ebi_rnaSeq_RSRCWGCNAModules?param.wgcnaParam=${variable.displayName.toLowerCase()}&autoRun=1`
             : hostCollection?.memberVariableIds.includes(variable.id)
-            ? `https://qa.hostdb.org/hostdb/app/search/transcript/GenesByRNASeqhsapREF_Lee_Gambian_ebi_rnaSeq_RSRCWGCNAModules?param.wgcnaParam=${variable.displayName.toLowerCase()}&autoRun=1`
+            ? `//${urlPrefix}hostdb.org/hostdb/app/search/transcript/GenesByRNASeqhsapREF_Lee_Gambian_ebi_rnaSeq_RSRCWGCNAModules?param.wgcnaParam=${variable.displayName.toLowerCase()}&autoRun=1`
             : undefined;
           if (href == null) return [];
           return [

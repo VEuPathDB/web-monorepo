@@ -1,0 +1,23 @@
+.NodeWithLabel_Node,
+.NodeWithLabel_Label {
+  cursor: pointer;
+}
+
+.network-plot-container {
+  width: 100%;
+  height: 500px;
+  overflow-y: scroll;
+}
+
+.net-hover-dropdown {
+  display: none;
+}
+
+.visx-network-node:hover .net-hover-dropdown {
+  display: unset;
+}
+
+.visx-network-node .hover-trigger:hover {
+  display: unset;
+  fill: #00000017;
+}
