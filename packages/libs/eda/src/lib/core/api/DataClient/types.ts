@@ -23,8 +23,13 @@ import {
   TimeUnit,
   NumberOrNull,
 } from '../../types/general';
-import { VariableDescriptor, StringVariableValue } from '../../types/variable';
+import {
+  VariableDescriptor,
+  StringVariableValue,
+  VariableCollectionDescriptor,
+} from '../../types/variable';
 import { ComputationAppOverview } from '../../types/visualization';
+import { DerivedVariable } from '../../types/analysis';
 
 export const AppsResponse = type({
   apps: array(ComputationAppOverview),
@@ -968,6 +973,63 @@ export const StandaloneMapBubblesLegendResponse = type({
   maxColorValue: string,
   minSizeValue: number,
   maxSizeValue: number,
+});
+
+export interface StandaloneCollectionsMarkerDataRequest {
+  studyId: string;
+  filters?: Filter[];
+  derivedVariables?: DerivedVariable[];
+  config: {
+    outputEntityId: string;
+    geoAggregateVariable: VariableDescriptor;
+    longitudeVariable: VariableDescriptor;
+    latitudeVariable: VariableDescriptor;
+    viewport: LatLonViewport;
+    collectionOverlay: {
+      collection: VariableCollectionDescriptor;
+      selectedMembers: string[];
+    };
+    aggregatorConfig:
+      | {
+          overlayType: 'continuous';
+          aggregator: 'mean' | 'median';
+        }
+      | {
+          overlayType: 'categorical';
+          numeratorValues: string[];
+          denominatorValues: string[];
+        };
+  };
+}
+
+export type StandaloneCollectionsMarkerDataResponse = TypeOf<
+  typeof StandaloneCollectionsMarkerDataResponse
+>;
+
+export const StandaloneCollectionsMarkerDataResponse = type({
+  markers: array(
+    type({
+      geoAggregateValue: string,
+      entityCount: number,
+      avgLat: number,
+      avgLon: number,
+      minLat: number,
+      minLon: number,
+      maxLat: number,
+      maxLon: number,
+      overlayValues: array(
+        type({
+          variableId: string,
+          value: union([number, string]),
+          confidenceInterval: type({
+            min: union([number, string]),
+            max: union([number, string]),
+          }),
+          n: number,
+        })
+      ),
+    })
+  ),
 });
 
 export interface ContinousVariableMetadataRequestParams {
