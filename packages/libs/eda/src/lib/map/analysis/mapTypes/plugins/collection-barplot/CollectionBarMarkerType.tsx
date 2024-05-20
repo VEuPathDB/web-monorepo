@@ -6,9 +6,13 @@ import {
 } from '../../types';
 import {
   CollectionVariableTreeNode,
+  Filter,
+  StandaloneCollectionsMarkerDataRequest,
   StudyEntity,
   Variable,
+  useDataClient,
   useFindEntityAndVariableCollection,
+  useStudyEntities,
 } from '../../../../../core';
 import { VariableCollectionSelectList } from '../../../../../core/components/variableSelectors/VariableCollectionSingleSelect';
 import { SelectList } from '@veupathdb/coreui';
@@ -19,6 +23,19 @@ import { LegendItemsProps } from '@veupathdb/components/lib/components/plotContr
 import { BarPlotMarkerIcon } from '../../MarkerConfiguration/icons';
 import { difference, noop, union, uniq } from 'lodash';
 import { Mesa } from '@veupathdb/coreui';
+import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
+import { useQuery } from '@tanstack/react-query';
+import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
+import { GeoConfig } from '../../../../../core/types/geoConfig';
+import { defaultAnimation, useCommonData } from '../../shared';
+import SemanticMarkers from '@veupathdb/components/lib/map/SemanticMarkers';
+import ChartMarker, {
+  BaseMarkerData,
+} from '@veupathdb/components/lib/map/ChartMarker';
+import { BoundsDriftMarkerProps } from '@veupathdb/components/lib/map/BoundsDriftMarker';
+import { MapFloatingErrorDiv } from '../../../MapFloatingErrorDiv';
+import { mFormatter } from '../../../../../core/utils/big-number-formatters';
+import Spinner from '@veupathdb/components/lib/components/Spinner';
 
 const displayName = 'Bar plots';
 
@@ -35,31 +52,25 @@ export const plugin: MapTypePlugin<CollectionBarMarkerConfiguration> = {
   IconComponent: BarPlotMarkerIcon,
   displayName,
   getDefaultConfig({ study }) {
-    const firstCollection = Array.from(
+    const firstCollectionWithEntity = Array.from(
       preorder(study.rootEntity, (e) => e.children ?? [])
     )
       .flatMap(
         (e) =>
-          e.collections?.map((c): [StudyEntity, CollectionVariableTreeNode] => [
-            e,
-            c,
-          ]) ?? []
+          e.collections
+            ?.filter((c) => c.dataShape === 'categorical')
+            .map((c): [StudyEntity, CollectionVariableTreeNode] => [e, c]) ?? []
       )
       .at(0);
-    if (firstCollection == null)
+    if (firstCollectionWithEntity == null)
       throw new Error('This study does not have any collections.');
-    const [entity, collection] = firstCollection;
-    const selectedValues = entity.variables
-      .filter((variable): variable is Variable =>
-        collection.memberVariableIds.includes(variable.id)
-      )
-      .flatMap((variable) => variable.vocabulary ?? []);
+    const [entity, collection] = firstCollectionWithEntity;
     return {
       type: 'collection-barplot',
       entityId: entity.id,
       collectionId: collection.id,
       selectedVariableIds: collection.memberVariableIds.slice(0, 8),
-      selectedValues: union(selectedValues),
+      selectedValues: collection.vocabulary ?? [],
     };
   },
   ConfigPanelComponent,
@@ -79,14 +90,13 @@ function ConfigPanelComponent(
       entityId: configuration.entityId,
       collectionId: configuration.collectionId,
     }) ?? {};
-  const memberVariableIdSet = new Set(variableCollection?.memberVariableIds);
-  const variables =
-    entity?.variables.filter((v): v is Variable =>
-      memberVariableIdSet.has(v.id)
-    ) ?? [];
-  const valueCheckboxListItems = union(
-    variables?.flatMap((v) => v.vocabulary ?? [])
-  ).map(
+  const variablesById = new Map(entity?.variables.map((v) => [v.id, v]));
+  const variables: Variable[] =
+    variableCollection?.memberVariableIds
+      .map((id) => variablesById.get(id))
+      .filter(Variable.is) ?? [];
+
+  const valueCheckboxListItems = variableCollection?.vocabulary?.map(
     (value): Item<string> => ({
       display: value,
       value,
@@ -116,6 +126,7 @@ function ConfigPanelComponent(
         <div css={{ margin: '1em 0' }}>
           <label>Grouped Variable:</label>
           <VariableCollectionSelectList
+            collectionPredicate={(c) => c.dataShape === 'categorical'}
             value={{
               entityId: configuration.entityId,
               collectionId: configuration.collectionId,
@@ -235,8 +246,55 @@ function ConfigPanelComponent(
   );
 }
 
-function MapLayerComponent() {
-  return <div>I am a map layer component</div>;
+function MapLayerComponent(
+  props: MapTypeMapLayerProps<CollectionBarMarkerConfiguration>
+) {
+  const markerData = useMarkerData({
+    studyId: props.studyId,
+    boundsZoomLevel: props.appState.boundsZoomLevel,
+    configuration: props.configuration as CollectionBarMarkerConfiguration,
+    geoConfigs: props.geoConfigs,
+  });
+
+  if (markerData.isError) {
+    return <MapFloatingErrorDiv error={markerData.error} />;
+  }
+
+  // TODO Order based on collection vocab
+  const markers = markerData.data?.markers.map((marker, index) => {
+    const data: BaseMarkerData[] = marker.overlayValues.map((entry, index) => ({
+      color: ColorPaletteDefault[index],
+      label: entry.variableId,
+      value: Number(entry.value) || 0,
+      count: Number(entry.value) || 0,
+    }));
+    const bounds: BoundsDriftMarkerProps['bounds'] = {
+      southWest: { lat: marker.minLat, lng: marker.minLon },
+      northEast: { lat: marker.maxLat, lng: marker.maxLon },
+    };
+    const position = { lat: marker.avgLat, lng: marker.avgLon };
+
+    return (
+      <ChartMarker
+        data={data}
+        id={marker.geoAggregateValue}
+        key={marker.geoAggregateValue}
+        bounds={bounds}
+        position={position}
+        markerLabel={mFormatter(marker.entityCount)}
+        duration={100}
+      />
+    );
+  });
+
+  if (markers == null) return null;
+
+  return (
+    <>
+      {markerData.isFetching && <Spinner />}
+      <SemanticMarkers animation={defaultAnimation} markers={markers} />;
+    </>
+  );
 }
 
 function MapOverlayComponent(
@@ -256,9 +314,10 @@ function MapOverlayComponent(
       configuration.selectedVariableIds.includes(variable.id)
     )
     .map(
-      (variable): LegendItemsProps => ({
+      (variable, index): LegendItemsProps => ({
         label: variable.displayName,
         marker: 'square',
+        markerColor: ColorPaletteDefault[index],
         hasData: true,
       })
     );
@@ -284,4 +343,88 @@ function MapOverlayComponent(
 
 function MapTypeHeaderDetails() {
   return <div>I am a map type header details component</div>;
+}
+
+interface MarkerDataProps {
+  boundsZoomLevel?: BoundsViewport;
+  configuration: CollectionBarMarkerConfiguration;
+  geoConfigs: GeoConfig[];
+  studyId: string;
+  filters?: Filter[];
+}
+
+function useMarkerData({
+  boundsZoomLevel,
+  configuration,
+  geoConfigs,
+  studyId,
+  filters,
+}: MarkerDataProps) {
+  const dataClient = useDataClient();
+  const studyEntities = useStudyEntities();
+
+  const {
+    outputEntity,
+    latitudeVariable,
+    longitudeVariable,
+    geoAggregateVariable,
+    viewport,
+  } = useCommonData(
+    // FIXME Using a fake overlay variable. We don't need this here.
+    {
+      variableId: configuration.selectedVariableIds[0],
+      entityId: configuration.entityId,
+    },
+    geoConfigs,
+    studyEntities,
+    boundsZoomLevel
+  );
+
+  const collection = studyEntities
+    .filter((entity) => entity.id === configuration.entityId)
+    .flatMap((entity) =>
+      entity.collections?.filter(
+        (collection) => collection.id === configuration.collectionId
+      )
+    )
+    .at(0);
+
+  if (collection == null) {
+    throw new Error('Could not find collection');
+  }
+
+  const requestParams: StandaloneCollectionsMarkerDataRequest = {
+    studyId,
+    filters,
+    config: {
+      outputEntityId: outputEntity.id,
+      geoAggregateVariable,
+      longitudeVariable,
+      latitudeVariable,
+      viewport,
+      collectionOverlay: {
+        collection: {
+          entityId: configuration.entityId,
+          collectionId: configuration.collectionId,
+        },
+        selectedMembers: configuration.selectedVariableIds,
+      },
+      aggregatorConfig: {
+        overlayType: collection.dataShape as any,
+        numeratorValues: configuration.selectedValues,
+        // FIXME Use all values for denominator
+        denominatorValues: (collection as any).vocabulary,
+      },
+    },
+  };
+
+  return useQuery({
+    queryKey: [requestParams],
+    queryFn: async () => {
+      return dataClient.getStandaloneCollectionsMarkerData(
+        'standalone-map',
+        requestParams
+      );
+    },
+  });
 }
