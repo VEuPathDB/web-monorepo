@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { ChevronRight, H6, Toggle } from '@veupathdb/coreui';
 import TimeSlider, {
   TimeSliderDataProp,
@@ -19,6 +19,9 @@ import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
 import { SiteInformationProps } from './Types';
 import { mapSidePanelBackgroundColor } from '../constants';
 import { useQuery } from '@tanstack/react-query';
+
+import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
+import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
 
 interface Props {
   studyId: string;
@@ -178,9 +181,6 @@ export default function TimeSliderQuickFilter({
     });
   }
 
-  // (easily) centering the variable picker requires two same-width divs either side
-  const sideElementStyle = { width: '70px' };
-
   const sliderHeight = minimized ? 50 : 75;
 
   const background =
@@ -249,6 +249,20 @@ export default function TimeSliderQuickFilter({
     </div>
   );
 
+  // control selectedRange
+  const handleAxisRangeChange = useCallback(
+    (newRange?: NumberOrDateRange) => {
+      if (newRange) {
+        const newSelectedRange = {
+          start: newRange.min as string,
+          end: newRange.max as string,
+        };
+        updateConfig({ ...config, selectedRange: newSelectedRange });
+      }
+    },
+    [updateConfig]
+  );
+
   // if no variable in a study is suitable to time slider, do not show time slider
   return variable != null && variableMetadata != null ? (
     <div>
@@ -292,17 +306,16 @@ export default function TimeSliderQuickFilter({
             <HelpIcon children={helpText} />
           </div>
         </div>
+
         <div
           style={{
             display: 'flex',
-            padding: '5px 10px 0px 10px',
-            justifyContent: minimized ? 'center' : 'space-between',
+            flexDirection: 'row',
             alignItems: 'center',
           }}
         >
           {!minimized && (
             <>
-              <div style={sideElementStyle}></div>
               <div style={{}}>
                 <InputVariables
                   inputs={[
@@ -323,7 +336,33 @@ export default function TimeSliderQuickFilter({
                   constraints={timeSliderVariableConstraints}
                 />
               </div>
-              <div style={sideElementStyle}>
+              {/* add axis range control */}
+              <AxisRangeControl
+                range={
+                  selectedRange != null
+                    ? {
+                        min: selectedRange.start,
+                        max: selectedRange.end,
+                      }
+                    : undefined
+                }
+                onRangeChange={handleAxisRangeChange}
+                valueType={'date'}
+                containerStyles={{
+                  flex: 1,
+                  marginLeft: '3em',
+                  marginBottom: '0.5em',
+                }}
+                // change the height of the input element
+                inputHeight={30}
+                disabled={!active}
+              />
+              <div
+                style={{
+                  marginRight: '1em',
+                  marginBottom: '0.5em',
+                }}
+              >
                 <Toggle
                   label={active ? 'On' : 'Off'}
                   labelPosition="left"
