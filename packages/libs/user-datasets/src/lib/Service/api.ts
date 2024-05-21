@@ -91,16 +91,15 @@ export class UserDatasetApi extends FetchClientWithCredentials {
           const response = JSON.parse(xhr.response);
           dispatchUploadProgress && dispatchUploadProgress(null);
           dispatchPageRedirect && dispatchPageRedirect(response.datasetId);
-        } catch (error) {
+        } finally {
           dispatchUploadProgress && dispatchUploadProgress(null);
-          console.error(error);
         }
       }
       if (xhr.readyState === XMLHttpRequest.DONE && xhr.status >= 400) {
         const error = new Error(xhr.response);
         dispatchUploadProgress && dispatchUploadProgress(null);
         dispatchBadUpload && dispatchBadUpload(String(error));
-        console.log(error);
+        this.onNonSuccessResponse?.(error);
       }
     });
 
