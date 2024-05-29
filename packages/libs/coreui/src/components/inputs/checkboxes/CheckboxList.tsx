@@ -5,7 +5,7 @@ import { merge } from 'lodash';
 import { useMemo } from 'react';
 import { UITheme } from '../../theming/types';
 import useUITheme from '../../theming/useUITheme';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '../../info/Tooltip';
 
 export type CheckboxListStyleSpec = {
   container: {

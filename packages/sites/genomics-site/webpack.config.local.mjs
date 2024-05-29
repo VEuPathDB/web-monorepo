@@ -18,6 +18,7 @@ export default configure({
     rootClientUrl: process.env.ROOT_URL,
     proxies: {
       [process.env.WDK_SERVICE_ENDPOINT]: process.env.WDK_SERVICE_URL,
+      [process.env.VDI_SERVICE_ENDPOINT]: process.env.VDI_SERVICE_URL,
       [process.env.SITE_SEARCH_SERVICE_ENDPOINT]: process.env.SITE_SEARCH_SERVICE_URL,
       [process.env.EDA_SERVICE_ENDPOINT]: process.env.EDA_SERVICE_URL,
       [process.env.MULTI_BLAST_ENDPOINT]: process.env.MULTI_BLAST_URL,
@@ -50,6 +51,8 @@ export default configure({
         edaExampleAnalysesAuthor: process.env.EDA_EXAMPLE_ANALYSES_AUTHOR,
         edaServiceUrl: process.env.EDA_SERVICE_ENDPOINT,
         edaSingleAppMode: process.env.EDA_SINGLE_APP_MODE,
+        vdiServiceUrl: process.env.VDI_SERVICE_ENDPOINT,
+        showUnreleasedData: process.env.SHOW_UNRELEASED_DATA === 'true',
 })
     }),
     new HtmlWebpackPlugin({

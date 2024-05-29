@@ -10,11 +10,16 @@ class IsaDatasetDetail extends UserDatasetDetail {
 
   renderEdaLinkout() {
     const {
-      config: { displayName },
-      userDataset: { isInstalled },
+      config: { displayName, projectId },
+      userDataset: { status },
       edaWorkspaceUrl,
       edaMapUrl,
     } = this.props;
+
+    const isInstalled =
+      status?.import === 'complete' &&
+      status?.install?.find((d) => d.projectId === projectId)?.dataStatus ===
+        'complete';
 
     if (!isInstalled) return null;
 

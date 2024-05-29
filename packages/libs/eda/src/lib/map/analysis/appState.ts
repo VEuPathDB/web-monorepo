@@ -20,6 +20,7 @@ import { DEFAULT_DRAGGABLE_LEGEND_POSITION } from './DraggableLegendPanel';
 
 const defaultVisualizationPanelConfig = {
   isVisible: false,
+  hideVizControl: false,
   position: DEFAULT_DRAGGABLE_VIZ_POSITION,
   dimensions: DEFAULT_DRAGGABLE_VIZ_DIMENSIONS,
 };
@@ -37,14 +38,19 @@ const PanelPositionConfig = t.type({
   y: t.number,
 });
 
-const PanelConfig = t.type({
-  isVisible: t.boolean,
-  position: PanelPositionConfig,
-  dimensions: t.type({
-    height: t.union([t.number, t.string]),
-    width: t.union([t.number, t.string]),
+const PanelConfig = t.intersection([
+  t.type({
+    isVisible: t.boolean,
+    position: PanelPositionConfig,
+    dimensions: t.type({
+      height: t.union([t.number, t.string]),
+      width: t.union([t.number, t.string]),
+    }),
   }),
-});
+  t.partial({
+    hideVizControl: t.boolean,
+  }),
+]);
 
 const BubbleLegendPositionConfig = t.type({
   variable: PanelPositionConfig,
@@ -93,6 +99,7 @@ export const MarkerConfiguration = t.intersection([
   }),
   t.partial({
     activeVisualizationId: t.string,
+    geoEntityId: t.string,
   }),
   t.union([
     t.intersection([
@@ -141,6 +148,16 @@ export const MarkerConfiguration = t.intersection([
       }),
     ]),
   ]),
+]);
+
+export type LegacyRedirectState = t.TypeOf<typeof LegacyRedirectState>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const LegacyRedirectState = t.union([
+  t.undefined,
+  t.type({
+    projectId: t.union([t.string, t.undefined]),
+    showLegacyMapRedirectModal: t.boolean,
+  }),
 ]);
 
 export const AppState = t.intersection([
@@ -232,6 +249,7 @@ export function useAppState(
         active: true,
         selectedRange: undefined,
       },
+      hideVizControl: false,
       ...(isMegaStudy
         ? {
             studyDetailsPanelConfig: {

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '@veupathdb/coreui';
 
 import { Cancel } from '@veupathdb/coreui/lib/assets/icons';
 import { gray, red } from '@veupathdb/coreui/lib/definitions/colors';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { FilledButton } from '@veupathdb/coreui';
 import { ComputationAppOverview } from '../../types/visualization';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 import { JobStatus } from './ComputeJobStatusHook';
 import { removeParentheticals } from '../../utils/string-formatters';
 

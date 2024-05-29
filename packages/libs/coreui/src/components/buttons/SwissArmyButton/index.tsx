@@ -20,7 +20,7 @@ export type SwissArmyButtonProps = Omit<
 /** Basic button with a variety of customization options. */
 export default function SwissArmyButton({
   text,
-  textTransform = 'uppercase',
+  textTransform,
   onPress,
   disabled = false,
   tooltip,
@@ -63,7 +63,9 @@ export default function SwissArmyButton({
           fontSize="inherit"
           fill={styleSpec[styleState].textColor}
           css={
-            text && iconPosition === 'left'
+            !text
+              ? { margin: 0 }
+              : iconPosition === 'left'
               ? { marginRight: 10 }
               : { marginLeft: 10 }
           }
@@ -74,7 +76,9 @@ export default function SwissArmyButton({
         fontSize={styleSpec.icon?.fontSize ?? calculatedIconSize}
         fill={styleSpec[styleState].textColor}
         css={
-          text && iconPosition === 'left'
+          !text
+            ? { margin: 0 }
+            : iconPosition === 'left'
             ? { marginRight: 10 }
             : { marginLeft: 10 }
         }

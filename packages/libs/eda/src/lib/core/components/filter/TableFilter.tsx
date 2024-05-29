@@ -233,6 +233,7 @@ export function TableFilter({
         [uiStateKey]: {
           ...uiState,
           sort,
+          currentPage: 1,
         },
       }));
     },
@@ -350,6 +351,7 @@ export function TableFilter({
             // set Heading1 prefix
             filteredCountHeadingPrefix={'Subset of'}
             unfilteredCountHeadingPrefix={'All'}
+            showInternalMesaCounts={true}
           />
         )}
     </div>

@@ -4,7 +4,7 @@ import NewWindowLink from './NewWindowLink';
 import { formatReleaseDate } from '../util/formatters';
 
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 
 import '../components/homepage/ProjectLink.scss';
 

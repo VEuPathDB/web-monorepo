@@ -143,6 +143,7 @@ class MembershipField extends React.PureComponent {
 MembershipField.defaultProps = {
   filteredCountHeadingPrefix: 'Remaining',
   unfilteredCountHeadingPrefix: '',
+  showInternalMesaCounts: false,
 };
 
 function filterBySearchTerm(rows, searchTerm) {
@@ -677,14 +678,26 @@ class MembershipTable extends React.PureComponent {
     return (
       <Mesa
         options={{
-          // isRowSelected: this.isItemSelected,
+          isRowSelected: this.isItemSelected,
           deriveRowClassName: this.deriveRowClassName,
           onRowClick: this.handleRowClick,
           useStickyHeader: true,
           tableBodyMaxHeight: '80vh',
         }}
         uiState={uiState}
-        actions={[]}
+        actions={
+          this.props.showInternalMesaCounts
+            ? [
+                {
+                  selectionRequired: false,
+                  element() {
+                    return null;
+                  },
+                  callback: () => null,
+                },
+              ]
+            : []
+        }
         eventHandlers={eventHandlers}
         rows={rows}
         filteredRows={filteredRows}
@@ -698,6 +711,7 @@ class MembershipTable extends React.PureComponent {
           },
           {
             key: 'value',
+            headingStyle: { minWidth: '12em' },
             inline: true,
             sortable: useSort,
             wrapCustomHeadings: ({ headingRowIndex }) => headingRowIndex === 0,
@@ -709,7 +723,7 @@ class MembershipTable extends React.PureComponent {
           {
             key: 'filteredCount',
             sortable: useSort,
-            width: '12em',
+            headingStyle: { maxWidth: '12em' },
             helpText: (
               <div>
                 The number of <em>{this.props.displayName}</em> that match the
@@ -734,7 +748,7 @@ class MembershipTable extends React.PureComponent {
           {
             key: 'count',
             sortable: useSort,
-            width: '12em',
+            headingStyle: { maxWidth: '12em' },
             helpText: (
               <div>
                 The number of <em>{this.props.displayName}</em> in the dataset

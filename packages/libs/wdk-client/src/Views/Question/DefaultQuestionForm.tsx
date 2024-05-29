@@ -273,7 +273,9 @@ export function QuestionHeader(props: QuestionHeaderProps) {
   return props.showHeader ? (
     <div className={cx('QuestionHeader')}>
       <h1>
-        {props.headerText} {props.isBeta && <BetaIcon />}
+        {/** NOTE: Remove the WGCNA hardcoding when appropriate */}
+        {props.headerText}{' '}
+        {(props.isBeta || props.headerText.includes('WGCNA')) && <BetaIcon />}
       </h1>
     </div>
   ) : (
@@ -330,12 +332,24 @@ export function DefaultGroup(props: DefaultGroupProps) {
       uiState={uiState}
       onVisibilityChange={onVisibilityChange}
     >
-      <ParameterList
-        parameterMap={question.parametersByName}
-        parameterElements={parameterElements}
-        parameters={group.parameters}
-        paramDependenciesUpdating={paramDependenciesUpdating}
-      />
+      <>
+        {question.searchVisibleHelp !== undefined && (
+          <Banner
+            // 'normal' renders a banner w/ gray background
+            banner={{
+              type: 'normal',
+              message: safeHtml(question.searchVisibleHelp, null, 'div'),
+              hideIcon: true,
+            }}
+          />
+        )}
+        <ParameterList
+          parameterMap={question.parametersByName}
+          parameterElements={parameterElements}
+          parameters={group.parameters}
+          paramDependenciesUpdating={paramDependenciesUpdating}
+        />
+      </>
     </Group>
   );
 }
@@ -422,18 +436,55 @@ export function ParameterList(props: ParameterListProps) {
                 !!paramDependenciesUpdating[parameter.name]
               }
             />
-            {parameter.visibleHelp !== undefined && (
-              <Banner
-                banner={{
-                  // 'normal' renders a banner w/ gray background
-                  type: 'normal',
-                  message: safeHtml(parameter.visibleHelp, null, 'div'),
-                  hideIcon: true,
-                }}
-              />
-            )}
-            <div className={cx('ParameterControl')}>
-              {parameterElements[parameter.name]}
+            <div
+              className={cx(
+                'ParameterControlContainer' +
+                  (parameter.visibleHelp
+                    ? parameter.visibleHelpPosition &&
+                      parameter.visibleHelpPosition === 'right'
+                      ? '_VisibleHelpRight'
+                      : ''
+                    : '')
+              )}
+            >
+              {parameter.visibleHelp !== undefined && (
+                <div
+                  className={
+                    parameter.visibleHelpPosition &&
+                    parameter.visibleHelpPosition === 'right'
+                      ? cx('VisibleHelpContainer_Right')
+                      : ''
+                  }
+                >
+                  <Banner
+                    banner={{
+                      // 'normal' renders a banner w/ gray background
+                      type: 'normal',
+                      message: safeHtml(parameter.visibleHelp, null, 'div'),
+                      hideIcon: true,
+                      spacing:
+                        parameter.visibleHelpPosition &&
+                        parameter.visibleHelpPosition === 'right'
+                          ? { margin: '10px' }
+                          : { margin: '10px 0' },
+                      width: 'auto',
+                    }}
+                  />
+                </div>
+              )}
+              <div
+                className={
+                  cx('ParameterControl') +
+                  (parameter.visibleHelp
+                    ? parameter.visibleHelpPosition &&
+                      parameter.visibleHelpPosition === 'right'
+                      ? ' ControlLeft'
+                      : ''
+                    : '')
+                }
+              >
+                {parameterElements[parameter.name]}
+              </div>
             </div>
           </React.Fragment>
         ))}

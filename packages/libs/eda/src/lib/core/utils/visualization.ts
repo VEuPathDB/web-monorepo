@@ -345,38 +345,12 @@ export function filtersFromBoundingBox(
 export function leafletZoomLevelToGeohashLevel(
   leafletZoomLevel: number
 ): number {
-  const roundedZoomLevel = Math.round(leafletZoomLevel);
-
-  if (roundedZoomLevel <= 2) return 1;
-  if (roundedZoomLevel <= 5) return 2;
-  if (roundedZoomLevel <= 8) return 3;
-  if (roundedZoomLevel <= 11) return 4;
-  if (roundedZoomLevel <= 14) return 5;
+  if (leafletZoomLevel <= 3) return 1;
+  if (leafletZoomLevel <= 5.5) return 2;
+  if (leafletZoomLevel <= 8) return 3;
+  if (leafletZoomLevel <= 10.5) return 4;
+  if (leafletZoomLevel <= 13) return 5;
   return 6;
-}
-
-/**
- * DEPRECATED since using geoConfig
- *
- **/
-
-export function geohashLevelToVariableId(geohashLevel: number): string {
-  switch (geohashLevel) {
-    case 1:
-      return 'EUPATH_0043203'; // geohash_1
-    case 2:
-      return 'EUPATH_0043204'; // geohash_2
-    case 3:
-      return 'EUPATH_0043205'; // geohash_3
-    case 4:
-      return 'EUPATH_0043206'; // geohash_4
-    case 5:
-      return 'EUPATH_0043207'; // geohash_5
-    case 6:
-      return 'EUPATH_0043208'; // geohash_6
-    default:
-      return 'EUPATH_0043208'; // geohash_6
-  }
 }
 
 export function getVariableLabel(

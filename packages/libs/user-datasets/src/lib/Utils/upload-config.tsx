@@ -2,7 +2,7 @@ import { intersection } from 'lodash';
 
 import { DatasetUploadPageConfig, DatasetUploadTypeConfig } from './types';
 
-type ImplementedUploadTypes = 'biom' | 'gene-list' | 'isasimple';
+type ImplementedUploadTypes = 'biom' | 'genelist' | 'isasimple';
 
 export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
   {
@@ -14,8 +14,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
           <p className="formInfo">
             We accept any file in the{' '}
             <a href="http://biom-format.org">BIOM format</a>, either JSON-based
-            (BIOM 1.0) or HDF5 (BIOM 2.0+). The maximum allowed file size is 10
-            MB.
+            (BIOM 1.0) or HDF5 (BIOM 2.0+).
             <br />
             <br />
             If possible, try including taxonomic information and rich sample
@@ -26,12 +25,12 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
         ),
         uploadMethodConfig: {
           file: {
-            maxSizeBytes: 1e7, // 10 megabytes
+            maxSizeBytes: 100 * 1000 * 1000, // 100MB
             render: ({ fieldNode }) => (
               <>
                 {fieldNode}
                 <div style={{ marginTop: '0.25em' }}>
-                  File must be 10 MB or smaller.
+                  File must be less than 100MB
                 </div>
               </>
             ),
@@ -39,8 +38,8 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
         },
       },
     },
-    'gene-list': {
-      type: 'gene-list',
+    genelist: {
+      type: 'genelist',
       uploadTitle: 'Upload My Gene List',
       formConfig: {
         uploadMethodConfig: {

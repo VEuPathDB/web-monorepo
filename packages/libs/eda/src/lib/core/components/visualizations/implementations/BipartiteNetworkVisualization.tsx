@@ -10,9 +10,9 @@ import {
 import { RequestOptions } from '../options/types';
 
 // Bipartite network imports
-import BipartiteNetwork, {
-  BipartiteNetworkProps,
-} from '@veupathdb/components/lib/plots/BipartiteNetwork';
+import BipartiteNetworkPlot, {
+  BipartiteNetworkPlotProps,
+} from '@veupathdb/components/lib/plots/BipartiteNetworkPlot';
 import BipartiteNetworkSVG from './selectorIcons/BipartiteNetworkSVG';
 import {
   BipartiteNetworkRequestParams,
@@ -30,8 +30,6 @@ import {
 } from '../../../hooks/workspace';
 import { fixVarIdLabel } from '../../../utils/visualization';
 import DataClient from '../../../api/DataClient';
-import { CorrelationAssayMetadataConfig } from '../../computations/plugins/correlationAssayMetadata';
-import { CorrelationAssayAssayConfig } from '../../computations/plugins/correlationAssayAssay';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { scaleLinear } from 'd3';
 import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
@@ -44,6 +42,9 @@ import { NumberOrDate } from '@veupathdb/components/lib/types/general';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { FacetedPlotLayout } from '../../layouts/FacetedPlotLayout';
 import { H6 } from '@veupathdb/coreui';
+import { CorrelationConfig } from '../../../types/apps';
+import { StudyMetadata } from '../../..';
+import { NodeMenuAction } from '@veupathdb/components/lib/types/plots/network';
 // end imports
 
 // Defaults
@@ -85,7 +86,20 @@ interface Options
   extends LayoutOptions,
     TitleOptions,
     LegendOptions,
-    RequestOptions<BipartiteNetworkConfig, {}, BipartiteNetworkRequestParams> {}
+    RequestOptions<BipartiteNetworkConfig, {}, BipartiteNetworkRequestParams> {
+  makeGetNodeMenuActions?: (
+    studyMetadata: StudyMetadata
+  ) => ((nodeId: string) => NodeMenuAction[]) | undefined;
+  getParitionNames?: (
+    studyMetadata: StudyMetadata,
+    config: unknown
+  ) =>
+    | Partial<{
+        parition1Name: string;
+        partition2Name: string;
+      }>
+    | undefined;
+}
 
 // Bipartite Network Visualization
 // The bipartite network takes no input variables, because the received data will complete the plot.
@@ -109,11 +123,8 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
 
-  const computationConfiguration:
-    | CorrelationAssayMetadataConfig
-    | CorrelationAssayAssayConfig = computation.descriptor.configuration as
-    | CorrelationAssayMetadataConfig
-    | CorrelationAssayAssayConfig;
+  const computationConfiguration: CorrelationConfig = computation.descriptor
+    .configuration as CorrelationConfig;
 
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,
@@ -228,8 +239,30 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
       }
     );
 
+    const nodesById = new Map(nodesWithLabels.map((n) => [n.id, n]));
+
+    // sort node data by label
+    // this is mutating the original paritions arrray :shrug:
+    const orderedPartitions = data.value.bipartitenetwork.data.partitions.map(
+      (partition) => {
+        return {
+          ...partition,
+          nodeIds: partition.nodeIds.concat().sort((a, b) => {
+            const nodeA = nodesById.get(a);
+            const nodeB = nodesById.get(b);
+            if (nodeA == null || nodeB == null) return 0;
+            return nodeA.label.localeCompare(nodeB.label, 'en', {
+              numeric: true,
+              sensitivity: 'base',
+            });
+          }),
+        };
+      }
+    );
+
     return {
       ...data.value.bipartitenetwork.data,
+      partitions: orderedPartitions,
       nodes: nodesWithLabels,
       links: data.value.bipartitenetwork.data.links.map((link) => {
         return {
@@ -242,12 +275,21 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     };
   }, [data.value, entities, minDataWeight, maxDataWeight]);
 
+  const getNodeMenuActions = options?.makeGetNodeMenuActions?.(studyMetadata);
+
   // plot subtitle
-  const plotSubtitle =
-    'Showing links with an absolute correlation coefficient above ' +
-    vizConfig.correlationCoefThreshold?.toString() +
-    ' and a p-value below ' +
-    vizConfig.significanceThreshold?.toString();
+  const plotSubtitle = (
+    <div>
+      <p>
+        {`Showing links with an absolute correlation coefficient above ${vizConfig.correlationCoefThreshold?.toString()} and a p-value below ${vizConfig.significanceThreshold?.toString()}`}
+      </p>
+      <p>
+        Click on a node to highlight its edges.
+        {getNodeMenuActions &&
+          ' A dropdown menu will appear on mouseover, if additional actions are available.'}
+      </p>
+    </div>
+  );
 
   const finalPlotContainerStyles = useMemo(
     () => ({
@@ -290,18 +332,22 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     </div>
   );
 
-  const bipartiteNetworkProps: BipartiteNetworkProps = {
-    data: cleanedData ?? undefined,
+  const bipartiteNetworkPlotProps: BipartiteNetworkPlotProps = {
+    nodes: cleanedData ? cleanedData.nodes : undefined,
+    links: cleanedData ? cleanedData.links : undefined,
+    partitions: cleanedData ? cleanedData.partitions : undefined,
     showSpinner: data.pending,
     containerStyles: finalPlotContainerStyles,
     svgStyleOverrides: bipartiteNetworkSVGStyles,
     labelTruncationLength: 40,
     emptyNetworkContent,
+    getNodeMenuActions,
+    ...options?.getParitionNames?.(studyMetadata, computationConfiguration),
   };
 
   const plotNode = (
     //@ts-ignore
-    <BipartiteNetwork {...bipartiteNetworkProps} ref={plotRef} />
+    <BipartiteNetworkPlot {...bipartiteNetworkPlotProps} ref={plotRef} />
   );
 
   const controlsNode = <> </>;

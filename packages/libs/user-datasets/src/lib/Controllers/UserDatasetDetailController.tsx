@@ -14,6 +14,9 @@ import {
   shareUserDatasets,
   unshareUserDatasets,
   updateUserDatasetDetail,
+  updateSharingModalState,
+  sharingError,
+  sharingSuccess,
 } from '../Actions/UserDatasetsActions';
 
 import BigwigDatasetDetail from '../Components/Detail/BigwigDatasetDetail';
@@ -33,6 +36,9 @@ const ActionCreators = {
   removeUserDataset,
   shareUserDatasets,
   unshareUserDatasets,
+  updateSharingModalState,
+  sharingError,
+  sharingSuccess,
 };
 
 export type UserDatasetDetailProps = any;
@@ -88,9 +94,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
     const idChanged =
       prevProps == null || prevProps.ownProps.id !== this.props.ownProps.id;
     if (idChanged) {
-      this.props.dispatchProps.loadUserDatasetDetail(
-        Number(this.props.ownProps.id)
-      );
+      this.props.dispatchProps.loadUserDatasetDetail(this.props.ownProps.id);
     }
   }
 
@@ -119,12 +123,12 @@ class UserDatasetDetailController extends PageController<MergedProps> {
     }
 
     switch (name) {
-      case 'Bigwigs':
-      case 'BigwigFiles':
+      case 'bigwigs':
+      case 'bigwigfiles':
         return BigwigDatasetDetail;
-      case 'RnaSeq':
+      case 'rnaseq':
         return RnaSeqDatasetDetail;
-      case 'BIOM':
+      case 'biom':
         return BiomDatasetDetail;
       default:
         return UserDatasetDetail;
@@ -155,6 +159,9 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       shareUserDatasets,
       removeUserDataset,
       unshareUserDatasets,
+      updateSharingModalState,
+      sharingSuccess,
+      sharingError,
     } = this.props.dispatchProps;
     const {
       userDatasetsById,
@@ -163,6 +170,10 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       questions,
       config,
       userDatasetUpdating,
+      sharingModalOpen,
+      sharingDatasetPending,
+      shareError,
+      shareSuccessful,
     } = this.props.stateProps;
     const entry = userDatasetsById[id];
     const isOwner = !!(
@@ -184,7 +195,15 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       shareUserDatasets,
       unshareUserDatasets,
       updateUserDatasetDetail,
+      sharingModalOpen,
+      sharingDatasetPending,
+      sharingError,
+      shareError,
+      sharingSuccess,
+      shareSuccessful,
+      updateSharingModalState,
       userDataset: entry.resource,
+      fileListing: entry.fileListing,
       getQuestionUrl: this.getQuestionUrl,
       questionMap: keyBy(questions, 'fullName'),
       workspaceTitle,

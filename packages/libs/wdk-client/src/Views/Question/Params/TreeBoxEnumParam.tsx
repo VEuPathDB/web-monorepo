@@ -37,7 +37,7 @@ import { DispatchAction } from '../../../Core/CommonTypes';
 // -----
 
 export type State = {
-  expandedList: string[];
+  expandedList: string[] | null;
   searchTerm: string;
 };
 
@@ -130,11 +130,13 @@ export function reduce(state: State = {} as State, action: Action): State {
             ? 1
             : 0;
 
+        const initialExpandedList = findBranchTermsUpToDepth(
+          parameter.vocabulary,
+          depthExpanded
+        );
+
         return {
-          expandedList: findBranchTermsUpToDepth(
-            parameter.vocabulary,
-            depthExpanded
-          ),
+          expandedList: initialExpandedList.length ? initialExpandedList : null,
           searchTerm: '',
         };
       }
@@ -254,7 +256,7 @@ export function useDefaultCheckboxTreeProps(
   selectedLeaves: string[]
 ): CheckboxTreeProps<TreeBoxVocabNode> {
   const multiPick =
-    isMultiPick(props.parameter) && props.parameter.maxSelectedCount > 1;
+    isMultiPick(props.parameter) && props.parameter.maxSelectedCount !== 1;
   const handleExpansionChange = useCallback(
     (expandedList: string[]) => {
       props.dispatch(setExpandedList({ ...props.context, expandedList }));

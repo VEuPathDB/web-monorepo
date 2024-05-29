@@ -3,7 +3,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import Path from 'path';
 
 // Components
-import { H3, Table, FloatingButton, FilledButton } from '@veupathdb/coreui';
+import { H3, H4, Table, FloatingButton, FilledButton } from '@veupathdb/coreui';
 
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import AnalysisNameDialog from './AnalysisNameDialog';
@@ -25,11 +25,13 @@ import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 interface EDAWorkspaceHeadingProps {
   /** Optional AnalysisState for "New analysis" button functionality */
   analysisState?: AnalysisState;
+  isStudyExplorerWorkspace?: boolean;
 }
 
 /** Study Header Component */
 export function EDAWorkspaceHeading({
   analysisState,
+  isStudyExplorerWorkspace = false,
 }: EDAWorkspaceHeadingProps) {
   const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();
@@ -45,6 +47,10 @@ export function EDAWorkspaceHeading({
   const analysisId = getAnalysisId(analysis);
 
   const permissionsValue = usePermissions();
+
+  // Default to `public`, if attribute is not defined
+  const studyAccess = getStudyAccess(studyRecord) ?? 'public';
+
   const showButtons =
     !permissionsValue.loading &&
     Boolean(
@@ -60,11 +66,24 @@ export function EDAWorkspaceHeading({
   return (
     <>
       <div className={cx('-Heading')}>
-        <H3 additionalStyles={{ padding: 0 }}>
-          {safeHtml(studyRecord.displayName)}
-        </H3>
+        {isStudyExplorerWorkspace ? (
+          <div>
+            <H3 additionalStyles={{ padding: 0, fontWeight: 500 }}>
+              <em>Study Explorer</em>
+            </H3>
+            <H4 additionalStyles={{ fontWeight: 400 }}>
+              {safeHtml(studyRecord.displayName)}
+            </H4>
+          </div>
+        ) : (
+          <H3 additionalStyles={{ padding: 0 }}>
+            {safeHtml(studyRecord.displayName)}
+          </H3>
+        )}
         <div>
           {!permissionsValue.loading &&
+            !studyMetadata.isUserStudy &&
+            studyAccess.toLowerCase() !== 'public' &&
             shouldOfferLinkToDashboard(
               permissionsValue.permissions,
               studyRecord.id[0].value
@@ -83,13 +102,14 @@ export function EDAWorkspaceHeading({
               </div>
             )}
         </div>
-        <div>
+        <div style={{ height: '100%' }}>
           {showButtons && (
             <div
               style={{
                 display: 'flex',
                 justifyContent: 'flex-end',
-                alignItems: 'center',
+                alignItems: isStudyExplorerWorkspace ? 'flex-end' : 'center',
+                height: '100%',
               }}
             >
               <div>

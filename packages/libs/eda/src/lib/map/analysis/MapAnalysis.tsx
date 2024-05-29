@@ -32,7 +32,12 @@ import {
 } from '@veupathdb/coreui';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
 import ShowHideVariableContextProvider from '../../core/utils/show-hide-variable-context';
-import { AppState, MarkerConfiguration, useAppState } from './appState';
+import {
+  AppState,
+  MarkerConfiguration,
+  useAppState,
+  LegacyRedirectState,
+} from './appState';
 import Subsetting from '../../workspace/Subsetting';
 import { MapHeader } from './MapHeader';
 import FilterChipList from '../../core/components/FilterChipList';
@@ -80,6 +85,7 @@ import { Page } from '@veupathdb/wdk-client/lib/Components';
 import { AnalysisError } from '../../core/components/AnalysisError';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import SettingsButton from '@veupathdb/coreui/lib/components/containers/DraggablePanel/SettingsButton';
+import { getGeoConfig } from '../../core/utils/geoVariables';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -99,16 +105,9 @@ const mapStyle: React.CSSProperties = {
   pointerEvents: 'auto',
 };
 
-export type LegacyRedirectState =
-  | undefined
-  | {
-      projectId?: string;
-      showLegacyMapRedirectModal: boolean;
-    };
-
 interface Props {
   analysisId?: string;
-  sharingUrl: string;
+  sharingUrlPrefix?: string;
   singleAppMode?: string;
   studyId: string;
   siteInformationProps: SiteInformationProps;
@@ -123,8 +122,11 @@ export function MapAnalysis(props: Props) {
   );
   const geoConfigs = useGeoConfig(useStudyEntities());
   const location = useLocation();
-  const locationState = location.state as LegacyRedirectState;
-  const [showRedirectModal, setShowRedirectModal] = useState(!!locationState);
+  const locationState = location.state;
+  const [showRedirectModal, setShowRedirectModal] = useState(
+    LegacyRedirectState.is(locationState) &&
+      !!locationState?.showLegacyMapRedirectModal
+  );
 
   if (geoConfigs == null || geoConfigs.length === 0)
     return (
@@ -151,7 +153,7 @@ export function MapAnalysis(props: Props) {
   return (
     <>
       <Modal
-        visible={Boolean(locationState && showRedirectModal)}
+        visible={showRedirectModal}
         toggleVisible={() => setShowRedirectModal(false)}
         styleOverrides={{
           content: {
@@ -175,7 +177,8 @@ export function MapAnalysis(props: Props) {
         <div className="LegacyMapRedirectModalContainer">
           <p>
             You have been redirected from the legacy PopBio map
-            {locationState?.projectId &&
+            {LegacyRedirectState.is(locationState) &&
+              locationState?.projectId &&
               ` to the same study (${locationState.projectId}) in our new map`}
             . Settings encoded in your URL are not applied but are kept in the{' '}
             <strong>Notes</strong> section (see left side panel).
@@ -212,7 +215,7 @@ function MapAnalysisImpl(props: ImplProps) {
     setViewport,
     setBoundsZoomLevel,
     setSubsetVariableAndEntity,
-    // sharingUrl,
+    sharingUrlPrefix,
     setIsSidePanelExpanded,
     setMarkerConfigurations,
     setActiveMarkerConfigurationType,
@@ -231,14 +234,14 @@ function MapAnalysisImpl(props: ImplProps) {
   const dataClient = useDataClient();
   const downloadClient = useDownloadClient();
   const subsettingClient = useSubsettingClient();
-  const geoConfig = geoConfigs[0];
   const history = useHistory();
-  const [hideVizInputsAndControls, setHideVizInputsAndControls] =
-    useState(false);
 
-  // FIXME use the sharingUrl prop to construct this
-  const sharingUrl = new URL(`../${analysisId}/import`, window.location.href)
-    .href;
+  const sharingUrl = new URL(
+    sharingUrlPrefix
+      ? `${sharingUrlPrefix}/${analysisId}`
+      : `../${analysisId}/import`,
+    window.location.href
+  ).href;
 
   const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
 
@@ -246,6 +249,11 @@ function MapAnalysisImpl(props: ImplProps) {
 
   const activeMarkerConfiguration = markerConfigurations.find(
     (markerConfig) => markerConfig.type === activeMarkerConfigurationType
+  );
+
+  const geoConfig = getGeoConfig(
+    geoConfigs,
+    activeMarkerConfiguration?.geoEntityId
   );
 
   const updateMarkerConfigurations = useCallback(
@@ -408,8 +416,6 @@ function MapAnalysisImpl(props: ImplProps) {
                     geoConfigs={geoConfigs}
                     configuration={activeMarkerConfiguration}
                     updateConfiguration={updateMarkerConfigurations as any}
-                    hideVizInputsAndControls={hideVizInputsAndControls}
-                    setHideVizInputsAndControls={setHideVizInputsAndControls}
                     setIsSidePanelExpanded={setIsSidePanelExpanded}
                   />
                 );
@@ -439,8 +445,6 @@ function MapAnalysisImpl(props: ImplProps) {
                     geoConfigs={geoConfigs}
                     configuration={activeMarkerConfiguration}
                     updateConfiguration={updateMarkerConfigurations as any}
-                    hideVizInputsAndControls={hideVizInputsAndControls}
-                    setHideVizInputsAndControls={setHideVizInputsAndControls}
                     setIsSidePanelExpanded={setIsSidePanelExpanded}
                   />
                 );
@@ -468,8 +472,6 @@ function MapAnalysisImpl(props: ImplProps) {
                     geoConfigs={geoConfigs}
                     configuration={activeMarkerConfiguration}
                     updateConfiguration={updateMarkerConfigurations as any}
-                    hideVizInputsAndControls={hideVizInputsAndControls}
-                    setHideVizInputsAndControls={setHideVizInputsAndControls}
                     setIsSidePanelExpanded={setIsSidePanelExpanded}
                   />
                 );
@@ -780,11 +782,17 @@ function MapAnalysisImpl(props: ImplProps) {
     </div>
   );
 
-  // close left-side panel when map events happen
-  const closePanel = useCallback(
-    () => setIsSidePanelExpanded(false),
-    [setIsSidePanelExpanded]
-  );
+  const deselectMarkersAndClosePanel = useCallback(() => {
+    updateMarkerConfigurations({
+      ...(activeMarkerConfiguration as MarkerConfiguration),
+      selectedMarkers: undefined,
+    });
+    setIsSidePanelExpanded(false);
+  }, [
+    updateMarkerConfigurations,
+    activeMarkerConfiguration,
+    setIsSidePanelExpanded,
+  ]);
 
   const activeMapTypePlugin =
     activeMarkerConfiguration?.type === 'barplot'
@@ -814,8 +822,6 @@ function MapAnalysisImpl(props: ImplProps) {
           updateConfiguration: updateMarkerConfigurations as any,
           totalCounts,
           filteredCounts,
-          hideVizInputsAndControls,
-          setHideVizInputsAndControls,
           setStudyDetailsPanelConfig,
           headerButtons: HeaderButtons,
         };
@@ -902,10 +908,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     }
                     // pass defaultViewport & isStandAloneMap props for custom zoom control
                     defaultViewport={defaultViewport}
-                    // close left-side panel when map events happen
-                    onMapClick={closePanel}
-                    onMapDrag={closePanel}
-                    onMapZoom={closePanel}
+                    onMapClick={deselectMarkersAndClosePanel}
                   >
                     {activeMapTypePlugin?.MapLayerComponent && (
                       <activeMapTypePlugin.MapLayerComponent
