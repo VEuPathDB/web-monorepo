@@ -411,13 +411,13 @@ function isEnabledInPicker({
 
     // Find all variables in any collection, then remove them from the
     // list of all variables to get a list of metadata variables.
-    const variablesInACollection = entities[0].collections?.flatMap(
-      (collection) => {
+    const variablesInACollection = new Set(
+      entities[0].collections?.flatMap((collection) => {
         return collection.memberVariableIds;
-      }
+      })
     );
     metadataVariables = entities[0].variables.filter((variable) => {
-      return !variablesInACollection?.includes(variable.id);
+      return !variablesInACollection.has(variable.id);
     });
   }
 
