@@ -260,7 +260,53 @@ export default function TimeSliderQuickFilter({
         updateConfig({ ...config, selectedRange: newSelectedRange });
       }
     },
-    [updateConfig]
+    [config, updateConfig]
+  );
+
+  // step buttons
+  const handleArrowClick = useCallback(
+    (arrow: string, step: number = 1) => {
+      // let's assume that selectedRange has the format of 'yyyy-mm-dd'
+      if (
+        selectedRange &&
+        selectedRange.start != null &&
+        selectedRange.end != null
+      ) {
+        const selectedRangeArray =
+          arrow === 'left'
+            ? selectedRange.start.split('-')
+            : selectedRange.end.split('-');
+        const addSubtractYear =
+          arrow === 'left'
+            ? String(Number(selectedRangeArray[0]) - step)
+            : String(Number(selectedRangeArray[0]) + step);
+        const newDate =
+          addSubtractYear +
+          '-' +
+          selectedRangeArray[1] +
+          '-' +
+          selectedRangeArray[2];
+        const newSelectedRange =
+          arrow === 'left'
+            ? {
+                start:
+                  extendedDisplayRange && extendedDisplayRange.start < newDate
+                    ? (newDate as string)
+                    : (extendedDisplayRange?.start as string),
+                end: selectedRange.end as string,
+              }
+            : {
+                start: selectedRange.start as string,
+                end:
+                  extendedDisplayRange && extendedDisplayRange.end > newDate
+                    ? (newDate as string)
+                    : (extendedDisplayRange?.end as string),
+              };
+
+        updateConfig({ ...config, selectedRange: newSelectedRange });
+      }
+    },
+    [config, updateConfig, selectedRange]
   );
 
   // if no variable in a study is suitable to time slider, do not show time slider
@@ -336,6 +382,20 @@ export default function TimeSliderQuickFilter({
                   constraints={timeSliderVariableConstraints}
                 />
               </div>
+              <div>
+                <button
+                  title={'-1 year'}
+                  style={{ marginRight: '1em', marginLeft: '2em' }}
+                  onClick={() => handleArrowClick('left')}
+                  disabled={!active}
+                >
+                  <i
+                    className="fa fa-arrow-left"
+                    aria-hidden="true"
+                    style={{ color: active ? 'black' : 'lightgray' }}
+                  ></i>
+                </button>
+              </div>
               {/* add axis range control */}
               <AxisRangeControl
                 range={
@@ -350,17 +410,28 @@ export default function TimeSliderQuickFilter({
                 valueType={'date'}
                 containerStyles={{
                   flex: 1,
-                  marginLeft: '3em',
-                  marginBottom: '0.5em',
                 }}
                 // change the height of the input element
                 inputHeight={30}
                 disabled={!active}
               />
+              <div>
+                <button
+                  title={'+1 year'}
+                  style={{ marginLeft: '1em', marginRight: '1em' }}
+                  onClick={() => handleArrowClick('right')}
+                  disabled={!active}
+                >
+                  <i
+                    className="fa fa-arrow-right"
+                    aria-hidden="true"
+                    style={{ color: active ? 'black' : 'lightgray' }}
+                  ></i>
+                </button>
+              </div>
               <div
                 style={{
                   marginRight: '1em',
-                  marginBottom: '0.5em',
                 }}
               >
                 <Toggle

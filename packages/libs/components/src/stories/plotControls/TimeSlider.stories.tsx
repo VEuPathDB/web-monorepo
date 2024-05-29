@@ -318,6 +318,44 @@ export const TimeFilter: Story<LinePlotProps> = (args: any) => {
     [setSelectedRange]
   );
 
+  const handleArrowClick = useCallback(
+    (arrow: string) => {
+      // let's assume that selectedRange has the format of 'yyyy-mm-dd'
+      if (
+        selectedRange &&
+        selectedRange.start != null &&
+        selectedRange.end != null
+      ) {
+        const selectedRangeArray =
+          arrow === 'left'
+            ? selectedRange.start.split('-')
+            : selectedRange.end.split('-');
+        const addSubtractYear =
+          arrow === 'left'
+            ? String(Number(selectedRangeArray[0]) - 1)
+            : String(Number(selectedRangeArray[0]) + 1);
+        const changeYear =
+          addSubtractYear +
+          '-' +
+          selectedRangeArray[1] +
+          '-' +
+          selectedRangeArray[2];
+        setSelectedRange((prev) => {
+          return arrow === 'left'
+            ? {
+                start: changeYear as string,
+                end: prev?.end as string,
+              }
+            : {
+                start: prev?.start as string,
+                end: changeYear as string,
+              };
+        });
+      }
+    },
+    [selectedRange, setSelectedRange]
+  );
+
   return (
     <DraggablePanel
       key={key}
@@ -337,13 +375,20 @@ export const TimeFilter: Story<LinePlotProps> = (args: any) => {
       >
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr repeat(1, auto) 1fr',
-            gridColumnGap: '5px',
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
             justifyContent: 'center',
-            paddingTop: '1em',
           }}
         >
+          <div>
+            <button
+              style={{ marginRight: '1em' }}
+              onClick={() => handleArrowClick('left')}
+            >
+              <i className="fa fa-arrow-left" aria-hidden="true"></i>
+            </button>
+          </div>
           {/* add axis range control */}
           <AxisRangeControl
             range={
@@ -359,14 +404,19 @@ export const TimeFilter: Story<LinePlotProps> = (args: any) => {
             // set maxWidth
             containerStyles={{
               maxWidth: '350px',
-              gridColumnStart: 2,
-              marginTop: -10,
-              paddingBottom: 5,
             }}
             // default height of the input element is 36.5 which may be too high for timeSlider
             // thus, introduced new prop to control it
             inputHeight={20}
           />
+          <div>
+            <button
+              style={{ marginLeft: '2em' }}
+              onClick={() => handleArrowClick('right')}
+            >
+              <i className="fa fa-arrow-right" aria-hidden="true"></i>
+            </button>
+          </div>
         </div>
         <TimeSlider
           data={timeFilterData}
