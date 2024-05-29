@@ -8,15 +8,16 @@ import {
 } from '@veupathdb/wdk-client/lib/Components';
 import { parseNewick } from 'patristic';
 import { AttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { MesaColumn } from '../../../../../../../libs/coreui/lib/components/Mesa/types';
+import {
+  MesaColumn,
+  MesaStateProps,
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import { groupBy } from 'lodash';
 import { PfamDomainArchitecture } from 'ortho-client/components/pfam-domains/PfamDomainArchitecture';
 import { extractPfamDomain } from 'ortho-client/records/utils';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import Mesa, {
-  RowCounter,
-} from '../../../../../../../libs/coreui/lib/components/Mesa';
+import Mesa, { RowCounter } from '@veupathdb/coreui/lib/components/Mesa';
 import { PfamDomain } from 'ortho-client/components/pfam-domains/PfamDomain';
 
 type RowType = Record<string, AttributeValue>;
@@ -33,6 +34,7 @@ const CorePeripheralFilterStateLabels: Record<
 };
 
 const treeWidth = 200;
+const MIN_SEQUENCES_FOR_TREE = 3;
 
 export function RecordTable_Sequences(
   props: WrappedComponentProps<RecordTableProps>
@@ -56,11 +58,6 @@ export function RecordTable_Sequences(
     throw new Error('groupName is required but was not found in the record.');
   }
 
-  const treeResponse = useOrthoService(
-    (orthoService) => orthoService.getGroupTree(groupName),
-    [groupName]
-  );
-
   const [highlightedNodes, setHighlightedNodes] = useState<string[]>([]);
 
   const mesaColumns: MesaColumn<RowType>[] = props.table.attributes
@@ -73,6 +70,14 @@ export function RecordTable_Sequences(
     .filter(({ key }) => key !== 'clustalInput' && key !== 'sequence_link');
 
   const mesaRows = props.value;
+
+  const numSequences = mesaRows.length;
+  const treeResponse = useOrthoService(
+    numSequences >= MIN_SEQUENCES_FOR_TREE
+      ? (orthoService) => orthoService.getGroupTree(groupName)
+      : () => Promise.resolve(undefined), // avoid making a request we know will fail and cause a "We're sorry, something went wrong." modal
+    [groupName, numSequences]
+  );
 
   // deal with Pfam domain architectures
   const proteinPfams = props.record.tables['ProteinPFams'];
@@ -122,12 +127,14 @@ export function RecordTable_Sequences(
   );
   const leaves = useMemo(() => tree?.getLeaves(), [tree]);
 
-  // sort the table in the same order as the tree's leaves
+  // sort the table in the same order as the tree's leaves (if we have a tree)
   const sortedRows = useMemo(
     () =>
-      leaves
-        ?.map(({ id }) => mesaRows.find(({ full_id }) => full_id === id))
-        .filter((row): row is RowType => row != null),
+      leaves != null
+        ? leaves
+            .map(({ id }) => mesaRows.find(({ full_id }) => full_id === id))
+            .filter((row): row is RowType => row != null)
+        : mesaRows,
     [leaves, mesaRows]
   );
 
@@ -209,10 +216,10 @@ export function RecordTable_Sequences(
     } else return;
   }, [filteredTree, treeResponse, tree, filteredRows]);
 
-  if (treeResponse == null || leaves == null || sortedRows == null)
+  if (numSequences >= MIN_SEQUENCES_FOR_TREE && treeResponse == null)
     return <Loading />;
 
-  if (leaves?.length !== sortedRows?.length)
+  if (leaves != null && leaves.length !== sortedRows?.length)
     return (
       <Banner
         banner={{
@@ -223,7 +230,7 @@ export function RecordTable_Sequences(
       />
     );
 
-  const mesaState = {
+  const mesaState: MesaStateProps<RowType> = {
     options: {
       isRowSelected: (row: RowType) =>
         highlightedNodes.includes(row.full_id as string),
@@ -252,11 +259,12 @@ export function RecordTable_Sequences(
     highlightedNodes == null || highlightedNodes.length < 2;
 
   const pfamRows = props.record.tables['PFams'];
-  const pfamMesaState = {
+  const pfamMesaState: MesaStateProps<RowType> = {
     options: {
       isRowSelected: (row: RowType) =>
         pfamFilterIds.includes(row.accession as string),
     },
+    uiState: {},
     rows: pfamRows,
     columns: [
       {
@@ -331,10 +339,7 @@ export function RecordTable_Sequences(
         />
         <div className="MesaComponent">
           <div className="TableToolbar-Info">
-            <RowCounter
-              count={rowCount}
-              noun={rowCount === 1 ? 'row' : 'rows'}
-            />
+            <RowCounter uiState={{}} eventHandlers={{}} rows={sortedRows} />
           </div>
         </div>
         <RadioButtonGroup
