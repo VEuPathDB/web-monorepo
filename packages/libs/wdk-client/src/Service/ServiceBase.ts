@@ -1,5 +1,5 @@
 import localforage from 'localforage';
-import { keyBy, memoize } from 'lodash';
+import { keyBy, memoize, once } from 'lodash';
 import * as QueryString from 'querystring';
 import { v4 as uuid } from 'uuid';
 import { expandedRecordClassDecoder } from '../Service/Decoders/RecordClassDecoders';
@@ -118,14 +118,19 @@ export type ServiceBase = ReturnType<typeof ServiceBase>;
  * @param {string} serviceUrl Base url for Wdk REST Service.
  */
 export const ServiceBase = (serviceUrl: string) => {
+  /** Cross-session persistence */
   const _store: LocalForage = localforage.createInstance({
     name: 'WdkService/' + serviceUrl,
   });
+  /** In-memory persistence */
   const _cache: Map<string, Promise<any>> = new Map();
-  let _initialCheck: Promise<ServiceConfig> | undefined;
+
+  /** WdkService "version" number */
   let _version: number | undefined;
+  /** Indicates if the cache is being invalidated */
   let _isInvalidating = false;
-  let _firstRealRequestMade = false;
+  /** Indicates if a network request has been made */
+  let _hasRequestBeenMade = false;
 
   /**
    * Get the configuration for the Wdk REST Service that resides at the given base url.
@@ -247,8 +252,8 @@ export const ServiceBase = (serviceUrl: string) => {
       credentials: 'include',
     })
       .then((response) => {
-        let firstRealRequestMade = _firstRealRequestMade;
-        _firstRealRequestMade = true;
+        let hasRequestBeenMade = _hasRequestBeenMade;
+        _hasRequestBeenMade = true;
         if (_isInvalidating) {
           return pendingPromise as Promise<T>;
         }
@@ -281,7 +286,7 @@ export const ServiceBase = (serviceUrl: string) => {
               _store
                 .clear()
                 .then(() =>
-                  firstRealRequestMade
+                  hasRequestBeenMade
                     ? alert(
                         'Reload page',
                         'This page is no longer valid and will be reloaded.'
@@ -340,27 +345,21 @@ export const ServiceBase = (serviceUrl: string) => {
   /**
    * Set the store version
    */
-  function _initializeStore() {
-    if (_initialCheck == null) {
-      _initialCheck = _store
-        .getItem<ServiceConfig>('/__config')
-        .then((storeConfig) => {
-          if (storeConfig == null) {
-            return _fetchJson<ServiceConfig>('GET', '/').then(
-              (serviceConfig) => {
-                return _store.setItem('/__config', serviceConfig);
-              }
-            );
-          }
-          return storeConfig;
-        })
-        .then((config) => {
-          _version = config.startupTime;
-          return config;
-        });
-    }
-    return _initialCheck;
-  }
+  const _initializeStore = once(function _initializeStore() {
+    return _store
+      .getItem<ServiceConfig>('/__config')
+      .then((storeConfig) => {
+        if (storeConfig == null) {
+          return _fetchJson<ServiceConfig>('GET', '/').then((serviceConfig) => {
+            return _store.setItem('/__config', serviceConfig);
+          });
+        }
+        return storeConfig;
+      })
+      .then((config) => {
+        _version = config.startupTime;
+      });
+  });
 
   function _clearCache() {
     return _store.clear();
