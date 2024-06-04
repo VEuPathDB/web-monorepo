@@ -44,6 +44,9 @@ export type TimeSliderProps = {
   debounceRateMs?: number;
   /** all user-interaction disabled */
   disabled?: boolean;
+  /** for resetting disabled left and right arrow buttons when changing brush bounds */
+  setDisableLeftArrow?: (value: boolean) => void;
+  setDisableRightArrow?: (value: boolean) => void;
 };
 
 // using forwardRef
@@ -63,6 +66,8 @@ function TimeSlider(props: TimeSliderProps) {
     debounceRateMs = 500,
     disabled = false,
     xAxisRange,
+    setDisableLeftArrow,
+    setDisableRightArrow,
   } = props;
 
   const resizeTriggerAreas: ResizeTriggerAreas[] = disabled
@@ -120,6 +125,9 @@ function TimeSlider(props: TimeSliderProps) {
               : endDate
             : endDate,
         });
+        // resetting disabled left and arrow buttons
+        if (setDisableLeftArrow) setDisableLeftArrow(false);
+        if (setDisableRightArrow) setDisableRightArrow(false);
       }, debounceRateMs),
     [setSelectedRange, xAxisRange]
   );

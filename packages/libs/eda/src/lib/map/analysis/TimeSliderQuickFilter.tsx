@@ -35,6 +35,11 @@ interface Props {
   siteInformation: SiteInformationProps;
 }
 
+interface selectedRangeProp {
+  start: string;
+  end: string;
+}
+
 export default function TimeSliderQuickFilter({
   studyId,
   entities,
@@ -249,6 +254,10 @@ export default function TimeSliderQuickFilter({
     </div>
   );
 
+  // disable arrow button
+  const [disableLeftArrow, setDisableLeftArrow] = useState(false);
+  const [disableRightArrow, setDisableRightArrow] = useState(false);
+
   // control selectedRange
   const handleAxisRangeChange = useCallback(
     (newRange?: NumberOrDateRange) => {
@@ -258,6 +267,9 @@ export default function TimeSliderQuickFilter({
           end: newRange.max as string,
         };
         updateConfig({ ...config, selectedRange: newSelectedRange });
+        // resetting disabled left and arrow buttons
+        setDisableLeftArrow(false);
+        setDisableRightArrow(false);
       }
     },
     [config, updateConfig]
@@ -265,48 +277,24 @@ export default function TimeSliderQuickFilter({
 
   // step buttons
   const handleArrowClick = useCallback(
-    (arrow: string, step: number = 1) => {
-      // let's assume that selectedRange has the format of 'yyyy-mm-dd'
+    (arrow: string) => {
       if (
+        extendedDisplayRange &&
         selectedRange &&
         selectedRange.start != null &&
         selectedRange.end != null
       ) {
-        const selectedRangeArray =
-          arrow === 'left'
-            ? selectedRange.start.split('-')
-            : selectedRange.end.split('-');
-        const addSubtractYear =
-          arrow === 'left'
-            ? String(Number(selectedRangeArray[0]) - step)
-            : String(Number(selectedRangeArray[0]) + step);
-        const newDate =
-          addSubtractYear +
-          '-' +
-          selectedRangeArray[1] +
-          '-' +
-          selectedRangeArray[2];
-        const newSelectedRange =
-          arrow === 'left'
-            ? {
-                start:
-                  extendedDisplayRange && extendedDisplayRange.start < newDate
-                    ? (newDate as string)
-                    : (extendedDisplayRange?.start as string),
-                end: selectedRange.end as string,
-              }
-            : {
-                start: selectedRange.start as string,
-                end:
-                  extendedDisplayRange && extendedDisplayRange.end > newDate
-                    ? (newDate as string)
-                    : (extendedDisplayRange?.end as string),
-              };
-
+        const newSelectedRange = newArrowRange(
+          extendedDisplayRange,
+          selectedRange,
+          arrow,
+          setDisableLeftArrow,
+          setDisableRightArrow
+        );
         updateConfig({ ...config, selectedRange: newSelectedRange });
       }
     },
-    [config, updateConfig, selectedRange]
+    [config, updateConfig, extendedDisplayRange, selectedRange]
   );
 
   // if no variable in a study is suitable to time slider, do not show time slider
@@ -344,6 +332,9 @@ export default function TimeSliderQuickFilter({
               axisColor={!active ? '#888' : '#000'}
               // disable user-interaction
               disabled={!active}
+              // for resetting disabled left and arrow buttons when changing brush bounds
+              setDisableLeftArrow={setDisableLeftArrow}
+              setDisableRightArrow={setDisableRightArrow}
             />
           ) : (
             <Spinner size={25} />
@@ -384,15 +375,18 @@ export default function TimeSliderQuickFilter({
               </div>
               <div>
                 <button
-                  title={'-1 year'}
+                  title={'move range left'}
                   style={{ marginRight: '1em', marginLeft: '2em' }}
                   onClick={() => handleArrowClick('left')}
-                  disabled={!active}
+                  disabled={!active || disableLeftArrow}
                 >
                   <i
                     className="fa fa-arrow-left"
                     aria-hidden="true"
-                    style={{ color: active ? 'black' : 'lightgray' }}
+                    style={{
+                      color:
+                        active && !disableLeftArrow ? 'black' : 'lightgray',
+                    }}
                   ></i>
                 </button>
               </div>
@@ -417,15 +411,18 @@ export default function TimeSliderQuickFilter({
               />
               <div>
                 <button
-                  title={'+1 year'}
+                  title={'move range right'}
                   style={{ marginLeft: '1em', marginRight: '1em' }}
                   onClick={() => handleArrowClick('right')}
-                  disabled={!active}
+                  disabled={!active || disableRightArrow}
                 >
                   <i
                     className="fa fa-arrow-right"
                     aria-hidden="true"
-                    style={{ color: active ? 'black' : 'lightgray' }}
+                    style={{
+                      color:
+                        active && !disableRightArrow ? 'black' : 'lightgray',
+                    }}
                   ></i>
                 </button>
               </div>
@@ -467,4 +464,61 @@ export default function TimeSliderQuickFilter({
       </div>
     </div>
   ) : null;
+}
+
+function newArrowRange(
+  extendedDisplayRange: selectedRangeProp | undefined,
+  selectedRange: selectedRangeProp | undefined,
+  arrow: string,
+  setDisableLeftArrow: (value: boolean) => void,
+  setDisableRightArrow: (value: boolean) => void
+) {
+  if (extendedDisplayRange && selectedRange) {
+    const diff =
+      new Date(selectedRange.end).getTime() -
+      new Date(selectedRange.start).getTime();
+    if (arrow === 'right') {
+      const endDate = new Date(new Date(selectedRange.end).getTime() + diff)
+        .toISOString()
+        .split('T')[0];
+      if (
+        new Date(endDate).getTime() >
+        new Date(extendedDisplayRange.end).getTime()
+      ) {
+        setDisableRightArrow(true);
+        return selectedRange;
+      } else {
+        setDisableLeftArrow(false);
+        setDisableRightArrow(false);
+        return {
+          start: new Date(new Date(selectedRange.start).getTime() + diff)
+            .toISOString()
+            .split('T')[0],
+          end: endDate,
+        };
+      }
+    } else {
+      const startDate = new Date(new Date(selectedRange.start).getTime() - diff)
+        .toISOString()
+        .split('T')[0];
+      if (
+        new Date(startDate).getTime() <
+        new Date(extendedDisplayRange.start).getTime()
+      ) {
+        setDisableLeftArrow(true);
+        return selectedRange;
+      } else {
+        setDisableLeftArrow(false);
+        setDisableRightArrow(false);
+        return {
+          start: startDate,
+          end: new Date(new Date(selectedRange.end).getTime() - diff)
+            .toISOString()
+            .split('T')[0],
+        };
+      }
+    }
+  } else {
+    return undefined;
+  }
 }
