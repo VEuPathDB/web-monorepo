@@ -132,7 +132,17 @@ export function RecordTable_Sequences(
     () =>
       leaves != null
         ? leaves
-            .map(({ id }) => mesaRows.find(({ full_id }) => full_id === id))
+            .map(({ id }) =>
+              mesaRows.find(({ full_id }) => {
+                // Some full_ids end in :RNA
+                // However, the Newick files seem to be omitting the colon and everything following it.
+                // (Colons are part of Newick format.)
+                // So we remove anything after a ':' and hope it works!
+                // This is the only place where we use the IDs from the tree file.
+                const truncated_id = (full_id as string).split(':')[0];
+                return truncated_id === id;
+              })
+            )
             .filter((row): row is RowType => row != null)
         : mesaRows,
     [leaves, mesaRows]
