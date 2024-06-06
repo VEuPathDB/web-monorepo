@@ -360,7 +360,13 @@ export function RecordTable_Sequences(
         />
         <div className="MesaComponent">
           <div className="TableToolbar-Info">
-            <RowCounter uiState={{}} eventHandlers={{}} rows={sortedRows} />
+            <RowCounter
+              rows={sortedRows}
+              uiState={{
+                filteredRowCount: numSequences - rowCount, // num rows filtered **away**
+              }}
+              eventHandlers={{}}
+            />
           </div>
         </div>
         <RadioButtonGroup
