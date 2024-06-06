@@ -70,6 +70,7 @@ export function RecordTable_Sequences(
     .filter(({ key }) => key !== 'clustalInput' && key !== 'sequence_link');
 
   const mesaRows = props.value;
+  const pfamRows = props.record.tables['PFams'];
 
   const numSequences = mesaRows.length;
   const treeResponse = useOrthoService(
@@ -94,6 +95,16 @@ export function RecordTable_Sequences(
     [proteinPfams]
   );
 
+  const pfamIdToDescription = useMemo(
+    () =>
+      pfamRows.reduce((map, row) => {
+        const pfamId = row.accession as string;
+        const description = row.description as string;
+        return map.set(pfamId, description);
+      }, new Map<string, string>()),
+    [pfamRows]
+  );
+
   mesaColumns.unshift({
     key: 'pfamArchitecture',
     name: 'Domain architecture (all drawn to same length)',
@@ -110,6 +121,7 @@ export function RecordTable_Sequences(
             style={{ width: '150px', top: '10px' }}
             length={proteinLength}
             domains={pfamDomains}
+            pfamDescriptions={pfamIdToDescription}
           />
         );
       } else {
@@ -268,7 +280,6 @@ export function RecordTable_Sequences(
   const clustalDisabled =
     highlightedNodes == null || highlightedNodes.length < 2;
 
-  const pfamRows = props.record.tables['PFams'];
   const pfamMesaState: MesaStateProps<RowType> = {
     options: {
       isRowSelected: (row: RowType) =>

@@ -7,6 +7,7 @@ import './PfamDomainArchitecture.scss';
 interface Props {
   length: number;
   domains: { start: number; end: number; pfamId: string }[];
+  pfamDescriptions?: Map<string, string>;
   style?: React.CSSProperties;
 }
 
@@ -16,7 +17,12 @@ export interface Domain {
   pfamId: string;
 }
 
-export function PfamDomainArchitecture({ length, domains, style }: Props) {
+export function PfamDomainArchitecture({
+  length,
+  domains,
+  style,
+  pfamDescriptions,
+}: Props) {
   return (
     <div className="PfamDomainArchitecture" style={style}>
       <div className="ProteinGraph"></div>
@@ -24,7 +30,7 @@ export function PfamDomainArchitecture({ length, domains, style }: Props) {
         <PfamDomain
           key={`${domain.pfamId}}-${domain.start}-${domain.start}`}
           pfamId={domain.pfamId}
-          title={makeDomainTitle(domain)}
+          title={makeDomainTitle(domain, pfamDescriptions)}
           style={makeDomainPositionStyling(length, domain)}
         />
       ))}
@@ -32,8 +38,13 @@ export function PfamDomainArchitecture({ length, domains, style }: Props) {
   );
 }
 
-function makeDomainTitle({ start, end, pfamId }: Domain) {
-  return `${pfamId} (location: [${start} - ${end}])`;
+function makeDomainTitle(
+  { start, end, pfamId }: Domain,
+  pfamDescriptions?: Map<string, string>
+) {
+  if (pfamDescriptions != null)
+    return `${pfamId} (${pfamDescriptions.get(pfamId)}) [${start} - ${end}]`;
+  else return `${pfamId} (location: [${start} - ${end}])`;
 }
 
 function makeDomainPositionStyling(
