@@ -124,6 +124,7 @@ export function HorizontalDendrogram({
         branchColorMode: highlightMode ?? 'none',
         leavesOnly: true,
         predicate: (node) => highlightedNodeIds.includes(node.__data__.data.id),
+        defaultBranchColor: '#333',
       });
       // no redraw needed, setColorOptions does it
     }

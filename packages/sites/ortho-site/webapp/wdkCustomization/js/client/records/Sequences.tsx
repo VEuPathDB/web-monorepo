@@ -229,13 +229,13 @@ export function RecordTable_Sequences(
   if (numSequences >= MIN_SEQUENCES_FOR_TREE && treeResponse == null)
     return <Loading />;
 
-  if (leaves != null && leaves.length !== sortedRows?.length)
+  if (mesaRows?.length !== sortedRows?.length)
     return (
       <Banner
         banner={{
           type: 'warning',
           message:
-            'Tree and protein list mismatch, please contact the helpdesk',
+            'Tree and protein list mismatch. Please contact the helpdesk',
         }}
       />
     );
