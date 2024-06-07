@@ -9,8 +9,10 @@ import {
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 
 import { isVdiCompatibleWdkService } from '../../Service';
+import { SingleSelect } from '@veupathdb/coreui';
 
 import './UserDatasetSharingModal.scss';
+import { uniq } from 'lodash';
 
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
@@ -425,8 +427,14 @@ class UserDatasetSharingModal extends React.Component {
 
   renderViewContent() {
     const { recipients } = this.state;
-    const { datasets, onClose, dataNoun, shareError, shareSuccessful } =
-      this.props;
+    const {
+      datasets,
+      onClose,
+      dataNoun,
+      shareError,
+      shareSuccessful,
+      updateUserDatasetDetail,
+    } = this.props;
     const datasetNoun = this.getDatasetNoun();
 
     const DatasetList = this.renderDatasetList;
@@ -460,6 +468,16 @@ class UserDatasetSharingModal extends React.Component {
         </div>
       );
     } else {
+      const visibilities = uniq(datasets.map((d) => d.meta.visibility));
+      const visibility =
+        visibilities.length === 1 ? visibilities[0] : undefined;
+      const visibilityItems = [
+        { value: 'private', display: 'Private' },
+        { value: 'public', display: 'Public' },
+      ];
+      const selectedVisibilityItem = visibilityItems.find(
+        (item) => item.value === visibility
+      );
       return (
         <div className="UserDataset-SharingModal-FormView">
           <div className="UserDataset-SharingModal-DatasetSection">
@@ -467,6 +485,27 @@ class UserDatasetSharingModal extends React.Component {
               Share {datasetNoun}:
             </h2>
             <DatasetList datasets={datasets} />
+          </div>
+          <div className="UserDataset-SharingModal-VisibilitySection">
+            <h2 className="UserDatasetSharing-SectionName">
+              General visibility:
+            </h2>
+            <SingleSelect
+              buttonDisplayContent={selectedVisibilityItem?.display}
+              value={visibility}
+              items={[
+                { value: 'private', display: 'Private' },
+                { value: 'public', display: 'Public' },
+              ]}
+              onSelect={(value) => {
+                datasets.forEach((dataset) =>
+                  updateUserDatasetDetail(dataset, {
+                    ...dataset.meta,
+                    visibility: value,
+                  })
+                );
+              }}
+            />
           </div>
           <div className="UserDataset-SharingModal-RecipientSection">
             <h2 className="UserDatasetSharing-SectionName">

@@ -75,7 +75,8 @@ function SiteFooter() {
 
 function SiteHeader() {
   const permissions = usePermissions();
-  const { diyDatasets, reloadDiyDatasets } = useDiyDatasets();
+  const { diyDatasets, communityDatasets, reloadDiyDatasets } =
+    useDiyDatasets();
   const [searchTerm, setSearchTerm] = useSessionBackedState(
     '',
     'SiteHeader__filterString',
@@ -85,6 +86,7 @@ function SiteHeader() {
 
   // for now, we default to each studies section being open
   const [expandUserStudies, setExpandUserStudies] = useState(true);
+  const [expandCommunityStudies, setExpandCommunityStudies] = useState(true);
   const [expandCuratedStudies, setExpandCuratedStudies] = useState(true);
 
   const handleStudiesMenuSearch = useCallback(
@@ -104,9 +106,12 @@ function SiteHeader() {
       makeHeaderMenuItemsFactory(
         permissions,
         diyDatasets,
+        communityDatasets,
         reloadDiyDatasets,
         expandUserStudies,
         setExpandUserStudies,
+        expandCommunityStudies,
+        setExpandCommunityStudies,
         expandCuratedStudies,
         setExpandCuratedStudies
       ),
@@ -236,9 +241,12 @@ function getHomeContent({ studies, searches, visualizations }) {
 function makeHeaderMenuItemsFactory(
   permissionsValue,
   diyDatasets,
+  communityStudies,
   reloadDiyDatasets,
   expandUserStudies,
   setExpandUserStudies,
+  expandCommunityStudies,
+  setExpandCommunityStudies,
   expandCuratedStudies,
   setExpandCuratedStudies
 ) {
@@ -251,8 +259,14 @@ function makeHeaderMenuItemsFactory(
     const { vimeoUrl } = siteConfig;
     const searchTerm = props.searchTerm;
     const setSearchTerm = props.setSearchTerm;
+
     const filteredUserStudies = (
       useEda && useUserDatasetsWorkspace ? diyDatasets : []
+    )?.filter((study) =>
+      stripHTML(study.name.toLowerCase()).includes(searchTerm.toLowerCase())
+    );
+    const filteredCommunityStudies = (
+      useEda && useUserDatasetsWorkspace ? communityStudies : []
     )?.filter((study) =>
       stripHTML(study.name.toLowerCase()).includes(searchTerm.toLowerCase())
     );
@@ -303,6 +317,7 @@ function makeHeaderMenuItemsFactory(
               },
             ].concat(
               filteredCuratedStudies != null &&
+                filteredCommunityStudies != null &&
                 filteredUserStudies != null &&
                 !permissionsValue.loading
                 ? diyDatasets?.length > 0 && studies.entities?.length > 0
@@ -325,6 +340,26 @@ function makeHeaderMenuItemsFactory(
                             )}
                             showDetails={expandUserStudies}
                             setShowDetails={setExpandUserStudies}
+                          />
+                        ),
+                      },
+                      {
+                        isVisible: filteredCommunityStudies.length > 0,
+                        text: (
+                          <CollapsibleDetailsSection
+                            summary="Community studies"
+                            collapsibleDetails={filteredCommunityStudies.map(
+                              (study, idx) => (
+                                <DIYStudyMenuItem
+                                  key={idx}
+                                  name={study.name}
+                                  link={`${study.baseEdaRoute}/new`}
+                                  isChildOfCollapsibleSection={true}
+                                />
+                              )
+                            )}
+                            showDetails={expandCommunityStudies}
+                            setShowDetails={setExpandCommunityStudies}
                           />
                         ),
                       },

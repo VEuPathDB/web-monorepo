@@ -617,6 +617,7 @@ class UserDatasetDetail extends React.Component {
       sharingDatasetPending,
       shareSuccessful,
       shareError,
+      updateUserDatasetDetail,
     } = this.props;
     const AllDatasetsLink = this.renderAllDatasetsLink;
     if (!userDataset)
@@ -644,6 +645,7 @@ class UserDatasetDetail extends React.Component {
             sharingDatasetPending={sharingDatasetPending}
             shareSuccessful={shareSuccessful}
             shareError={shareError}
+            updateUserDatasetDetail={updateUserDatasetDetail}
           />
         )}
       </div>

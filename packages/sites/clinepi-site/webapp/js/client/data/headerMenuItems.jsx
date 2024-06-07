@@ -27,9 +27,12 @@ import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png'
 export default function makeHeaderMenuItemsFactory(
   permissionsValue,
   diyDatasets,
+  communityDatasets,
   reloadDiyDatasets,
   expandUserStudies,
   setExpandUserStudies,
+  expandCommunityStudies,
+  setExpandCommunityStudies,
   expandCuratedStudies,
   setExpandCuratedStudies
 ) {
@@ -63,6 +66,12 @@ export default function makeHeaderMenuItemsFactory(
       useEda && useUserDatasetsWorkspace ? diyDatasets : []
     )?.filter((study) =>
       stripHTML(study.name.toLowerCase()).includes(searchTerm.toLowerCase())
+    );
+
+    const filteredCommunityDatasets = (
+      useEda && useUserDatasetsWorkspace ? communityDatasets : []
+    )?.filter((dataset) =>
+      stripHTML(dataset.name.toLowerCase()).includes(searchTerm.toLowerCase())
     );
 
     const filteredCuratedStudies = studies.entities?.filter((study) =>
@@ -105,6 +114,7 @@ export default function makeHeaderMenuItemsFactory(
             ].concat(
               filteredCuratedStudies != null &&
                 filteredUserStudies != null &&
+                filteredCommunityDatasets != null &&
                 !permissionsValue.loading
                 ? diyDatasets?.length > 0 && studies.entities?.length > 0
                   ? // here we have user studies and curated studies, so render "My studies" and "Curated studies" sections
@@ -126,6 +136,26 @@ export default function makeHeaderMenuItemsFactory(
                             )}
                             showDetails={expandUserStudies}
                             setShowDetails={setExpandUserStudies}
+                          />
+                        ),
+                      },
+                      {
+                        isVisible: filteredCommunityDatasets.length > 0,
+                        text: (
+                          <CollapsibleDetailsSection
+                            summary="Community studies"
+                            collapsibleDetails={filteredCommunityDatasets.map(
+                              (study, idx) => (
+                                <DIYStudyMenuItem
+                                  key={idx}
+                                  name={study.name}
+                                  link={`${study.baseEdaRoute}/new`}
+                                  isChildOfCollapsibleSection={true}
+                                />
+                              )
+                            )}
+                            showDetails={expandCommunityStudies}
+                            setShowDetails={setExpandCommunityStudies}
                           />
                         ),
                       },

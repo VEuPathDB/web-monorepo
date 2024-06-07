@@ -632,6 +632,7 @@ function transformVdiResponseToLegacyResponseHelper(
     created,
     status,
     importMessages,
+    visibility,
   } = ud;
   const { quota } = userQuotaMetadata;
   return {
@@ -647,6 +648,7 @@ function transformVdiResponseToLegacyResponseHelper(
       name,
       description: description ?? '',
       summary: summary ?? '',
+      visibility,
     },
     ownerUserId: owner.userId,
     age: Date.now() - Date.parse(created),

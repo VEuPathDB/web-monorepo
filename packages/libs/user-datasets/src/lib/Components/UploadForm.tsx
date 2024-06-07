@@ -607,6 +607,7 @@ function validateForm<T extends string = string>(
       datasetType: datasetUploadType.type,
       projects: [projectId],
       dataUploadSelection,
+      visibility: 'private',
     },
   };
 }
