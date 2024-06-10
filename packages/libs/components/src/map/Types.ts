@@ -34,6 +34,16 @@ export interface MarkerProps {
       height: number;
     };
   };
+  /* A class to add to the popup element */
+  popupClass?: string;
+  // initialPopupAnchorYPosition?: (markerCenterY: number) => number;
+  // maybe change these to take the whole rect object instead of just the center
+  getVerticalPopupExtraOffset?: (
+    markerCenter: [number, number]
+  ) => [number, number];
+  getHorizontalPopupExtraOffset?: (
+    markerCenter: [number, number]
+  ) => [number, number];
   /* This offset gets added to the default zIndex */
   zIndexOffset?: number;
 }

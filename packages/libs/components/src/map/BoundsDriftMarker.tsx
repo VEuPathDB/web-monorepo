@@ -10,8 +10,6 @@ import { MarkerProps, Bounds } from './Types';
 export interface BoundsDriftMarkerProps extends MarkerProps {
   bounds: Bounds;
   duration: number;
-  // A class to add to the popup element
-  popupClass?: string;
   // selectedMarkers state
   selectedMarkers?: string[];
   // selectedMarkers setState
@@ -25,7 +23,7 @@ export interface BoundsDriftMarkerProps extends MarkerProps {
 const FINE_ADJUSTMENT = 5;
 const OFFSET_ADJUSTMENT = 35;
 // Default offset applied to popups. Not sure how/why the y-value is 7.
-const DEFAULT_OFFSET = [0, 7];
+export const DEFAULT_OFFSET = [0, 7];
 
 // Which direction the popup should come out from the marker
 export type PopupOrientation = 'up' | 'down' | 'left' | 'right';
@@ -44,6 +42,9 @@ export default function BoundsDriftMarker({
   showPopup,
   popupContent,
   popupClass,
+  // initialPopupAnchorYPosition,
+  getVerticalPopupExtraOffset = () => [0, 0],
+  getHorizontalPopupExtraOffset = () => [0, 0],
   zIndexOffset,
   selectedMarkers,
   setSelectedMarkers,
@@ -61,12 +62,13 @@ export default function BoundsDriftMarker({
   // The `interactive` option is set to false, so
   // that it does not react to mouse events, which
   // allows the marker to be clicked, even if the
-  // reactable is above the marker.
+  // rectangle is above the marker.
   const boundsRectangle = L.rectangle(boundingBox, {
     color: 'gray',
     weight: 1,
     pane: 'popupPane',
     interactive: false,
+    className: 'bounds-rectangle',
   });
 
   useEffect(() => {
@@ -186,11 +188,28 @@ export default function BoundsDriftMarker({
      */
     if (!markerRef.current || !popupRef.current || !grayBoundsRect) return;
 
-    const markerRect = markerRef.current._icon.getBoundingClientRect();
+    // const markerRect = markerRef.current._icon.getBoundingClientRect();
     const markerIconRect =
       markerRef.current._icon.firstChild.getBoundingClientRect();
     const anchorRect = popupRef.current._tipContainer.getBoundingClientRect();
-    const { height: anchorHeight, width: anchorWidth } = anchorRect;
+    // The visible height of the anchor is actually half its reported height
+    // Works out to be about 10px
+    const anchorHeight = anchorRect.height / 2;
+    // const { width: anchorWidth } = anchorRect;
+
+    const markerIconCenter = [
+      (markerIconRect.left + markerIconRect.right) / 2,
+      (markerIconRect.top + markerIconRect.bottom) / 2,
+    ] as [number, number];
+    const verticalPopupExtraOffset =
+      getVerticalPopupExtraOffset(markerIconCenter);
+    const horizontalPopupExtraOffset =
+      getHorizontalPopupExtraOffset(markerIconCenter);
+
+    console.log('grayBoundsRect', grayBoundsRect);
+    // console.log('markerRect', markerRect);
+    console.log('markerIconRect', markerIconRect);
+    console.log('anchorRect', anchorRect);
 
     /**
      * Within each conditional block, we will:
@@ -200,38 +219,76 @@ export default function BoundsDriftMarker({
      */
     // with the marker click event for selectedMarkers, popupRef is not used as it changes by click event
     if (orientation === 'down') {
-      const yOffset =
-        (markerIconRect.bottom > grayBoundsRect.bottom
+      // const xAdjustedOffset = 0;
+      const xAdjustedOffset = FINE_ADJUSTMENT / 2 + verticalPopupExtraOffset[0];
+
+      // Initial Y determined by observation when yOffset is set to 0
+      // const yAdjustedOffset = 0;
+      const initialPopupAnchorY = markerIconRect.top;
+      const finalAnchorY =
+        markerIconRect.bottom > grayBoundsRect.bottom
           ? markerIconRect.bottom
-          : grayBoundsRect.bottom) -
-        markerRect.bottom +
-        anchorHeight -
-        FINE_ADJUSTMENT / 2;
-      popupRef.current.options.offset = [FINE_ADJUSTMENT / 2, yOffset];
+          : grayBoundsRect.bottom;
+      const yBaseOffset = finalAnchorY - initialPopupAnchorY;
+      const yAdjustedOffset =
+        yBaseOffset + anchorHeight + verticalPopupExtraOffset[1];
+
+      popupRef.current.options.offset = [xAdjustedOffset, yAdjustedOffset];
     } else if (orientation === 'right') {
-      const xOffset =
-        (markerIconRect.right > grayBoundsRect.right
+      // const xAdjustedOffset = 0;
+      const initialPopupAnchorX = markerIconCenter[0];
+      const finalAnchorX =
+        markerIconRect.right > grayBoundsRect.right
           ? markerIconRect.right
-          : grayBoundsRect.right) +
-        anchorWidth / 2 -
-        markerRect.right;
-      popupRef.current.options.offset = [xOffset, DEFAULT_OFFSET[1]];
+          : grayBoundsRect.right;
+      const xBaseOffset = finalAnchorX - initialPopupAnchorX;
+      const xAdjustedOffset =
+        xBaseOffset +
+        anchorHeight / 2 +
+        FINE_ADJUSTMENT +
+        horizontalPopupExtraOffset[0];
+
+      // const yAdjustedOffset = 0;
+      const initialPopupAnchorY = markerIconRect.top;
+      const finalAnchorY = markerIconCenter[1];
+      const yBaseOffset = finalAnchorY - initialPopupAnchorY;
+      const yAdjustedOffset = yBaseOffset + horizontalPopupExtraOffset[1];
+
+      popupRef.current.options.offset = [xAdjustedOffset, yAdjustedOffset];
     } else if (orientation === 'left') {
-      const xOffset =
-        (markerRect.left < grayBoundsRect.left
-          ? markerRect.left
-          : grayBoundsRect.left) -
-        markerRect.left -
-        anchorWidth / 2;
-      popupRef.current.options.offset = [xOffset, DEFAULT_OFFSET[1]];
+      // const xAdjustedOffset = 0;
+      const initialPopupAnchorX = markerIconCenter[0];
+      const finalAnchorX =
+        markerIconRect.left < grayBoundsRect.left
+          ? markerIconRect.left
+          : grayBoundsRect.left;
+      const xBaseOffset = finalAnchorX - initialPopupAnchorX;
+      const xAdjustedOffset =
+        xBaseOffset - FINE_ADJUSTMENT + horizontalPopupExtraOffset[0];
+
+      // const yAdjustedOffset = 0;
+      const initialPopupAnchorY = markerIconRect.top;
+      const finalAnchorY = markerIconCenter[1];
+      const yBaseOffset = finalAnchorY - initialPopupAnchorY;
+      const yAdjustedOffset = yBaseOffset + horizontalPopupExtraOffset[1];
+
+      popupRef.current.options.offset = [xAdjustedOffset, yAdjustedOffset];
     } else {
-      const yOffset =
-        (markerRect.top < grayBoundsRect.top
-          ? markerRect.top
-          : grayBoundsRect.top) -
-        FINE_ADJUSTMENT / 2 -
-        markerRect.y;
-      popupRef.current.options.offset = [FINE_ADJUSTMENT / 2, yOffset];
+      // orientation === 'up'
+      // const xAdjustedOffset = 0;
+      const xAdjustedOffset = FINE_ADJUSTMENT / 2 + verticalPopupExtraOffset[0];
+
+      // const yAdjustedOffset = 0;
+      const anchorInitialY = markerIconRect.top;
+      const anchorFinalY =
+        markerIconRect.top < grayBoundsRect.top
+          ? markerIconRect.top
+          : grayBoundsRect.top;
+      const yBaseOffset = anchorFinalY - anchorInitialY;
+      const yAdjustedOffset =
+        yBaseOffset - anchorHeight + verticalPopupExtraOffset[1];
+
+      popupRef.current.options.offset = [xAdjustedOffset, yAdjustedOffset];
     }
   };
 
@@ -286,8 +343,8 @@ export default function BoundsDriftMarker({
 
   const handleMouseOut = (e: LeafletMouseEvent) => {
     e.target._icon.classList.remove('top-marker'); // remove marker on top
-    map.removeLayer(boundsRectangle);
-    e.target.closePopup();
+    // map.removeLayer(boundsRectangle);
+    // e.target.closePopup();
   };
 
   // add click events for highlighting markers

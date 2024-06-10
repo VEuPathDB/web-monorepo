@@ -1,5 +1,8 @@
 import L from 'leaflet';
-import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
+import BoundsDriftMarker, {
+  BoundsDriftMarkerProps,
+  DEFAULT_OFFSET,
+} from './BoundsDriftMarker';
 
 import { ContainerStylesAddon } from '../types/plots';
 
@@ -88,6 +91,9 @@ export default function BubbleMarker(props: BubbleMarkerProps) {
           height: popupSize,
         },
       }}
+      // initialPopupAnchorYPosition={(markerCenterY: number) =>
+      //   markerCenterY - DEFAULT_OFFSET[1] * 2
+      // }
       showPopup={props.showPopup}
       // pass selectedMarkers state and setState
       selectedMarkers={selectedMarkers}

@@ -51,7 +51,7 @@
   transform-origin: center bottom;
 }
 
-.plot-marker-popup.popup-right,
+/* .plot-marker-popup.popup-right,
 .plot-marker-popup.popup-left {
   margin-bottom: 7px;
 }
@@ -86,7 +86,7 @@
 
 .plot-marker-popup.donut-popup.popup-down {
   margin-bottom: -12px;
-}
+} */
 
 .plot-marker-popup.popup-up .leaflet-popup-content {
   transform: rotate(0deg);
