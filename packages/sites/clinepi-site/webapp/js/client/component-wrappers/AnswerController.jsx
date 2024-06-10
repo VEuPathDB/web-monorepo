@@ -32,14 +32,19 @@ export default (AnswerController) => (props) => {
 };
 
 function ClinEpiStudyAnswerControllerContainer(props) {
-  const columns = useDiyStudySummaryColumns();
-  const userStudySummaryRows = useDiyStudySummaryRows();
+  const userColumns = useDiyStudySummaryColumns({ linkToUserDatasets: true });
+  const communityColumns = useDiyStudySummaryColumns({
+    linkToUserDatasets: false,
+  });
+  const { userStudySummaryRows, communityStudySummaryRows } =
+    useDiyStudySummaryRows();
 
   return (
     <div className="ClinEpiStudyAnswerController">
       {!props.stateProps.isLoading &&
         userStudySummaryRows != null &&
-        columns != null && (
+        communityStudySummaryRows != null &&
+        userColumns != null && (
           <>
             <h1>Study summaries</h1>
             {useUserDatasetsWorkspace &&
@@ -48,8 +53,26 @@ function ClinEpiStudyAnswerControllerContainer(props) {
                 <>
                   <h2>My studies</h2>
                   <DataGrid
-                    columns={columns}
+                    columns={userColumns}
                     data={userStudySummaryRows}
+                    stylePreset="mesa"
+                    styleOverrides={{
+                      headerCells: {
+                        backgroundColor: '#e2e2e3',
+                        color: '#444',
+                        textTransform: 'none',
+                      },
+                      dataCells: {
+                        fontSize: '1.1em',
+                        color: 'black',
+                        verticalAlign: 'top',
+                      },
+                    }}
+                  />
+                  <h2>Community studies</h2>
+                  <DataGrid
+                    columns={communityColumns.slice(0, -1)}
+                    data={communityStudySummaryRows}
                     stylePreset="mesa"
                     styleOverrides={{
                       headerCells: {
