@@ -568,6 +568,7 @@ class UserDatasetList extends React.Component<Props, State> {
       sharingDatasetPending,
       shareSuccessful,
       shareError,
+      updateUserDatasetDetail,
     } = this.props;
     const { uiState, selectedRows, searchTerm } = this.state;
 
@@ -623,6 +624,7 @@ class UserDatasetList extends React.Component<Props, State> {
                     sharingDatasetPending={sharingDatasetPending}
                     shareSuccessful={shareSuccessful}
                     shareError={shareError}
+                    updateUserDatasetDetail={updateUserDatasetDetail}
                   />
                 ) : null}
                 <SearchBox
