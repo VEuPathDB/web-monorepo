@@ -55,13 +55,20 @@ export function useDiyDatasets() {
   );
 }
 
-function userDatasetToMenuItem(userDataset: UserDatasetVDI) {
+export interface EnrichedUserDataset extends UserDatasetVDI {
+  wdkDatasetId: string;
+  baseEdaRoute: string;
+  userDatasetsRoute: string;
+}
+
+function userDatasetToMenuItem(
+  userDataset: UserDatasetVDI
+): EnrichedUserDataset {
   const wdkDatasetId = `EDAUD_${userDataset.datasetId}`;
   return {
-    name: userDataset.name,
     wdkDatasetId,
-    userDatasetId: userDataset.datasetId,
     baseEdaRoute: `${makeEdaRoute(wdkDatasetId)}`,
     userDatasetsRoute: `/workspace/datasets/${userDataset.datasetId}`,
+    ...userDataset,
   };
 }
