@@ -26,6 +26,8 @@ export function useDiyDatasets() {
   const diyDatasets = useWdkService(
     async (wdkService) => {
       assertIsVdiCompatibleWdkService(wdkService);
+      const user = await wdkService.getCurrentUser();
+      if (user.isGuest) return [];
       const userDatasets = await wdkService.getCurrentUserDatasets(projectId);
       const unsortedDiyEntries = userDatasets.map(userDatasetToMenuItem);
       return orderBy(unsortedDiyEntries, ({ name }) => name);
@@ -36,6 +38,8 @@ export function useDiyDatasets() {
   const communityDatasets = useWdkService(
     async (wdkService) => {
       assertIsVdiCompatibleWdkService(wdkService);
+      const user = await wdkService.getCurrentUser();
+      if (user.isGuest) return [];
       const userDatasets = await wdkService.getCommunityDatasets();
       const unsortedDiyEntries = userDatasets
         .filter((userDataset) => userDataset.projectIds.includes(projectId))
