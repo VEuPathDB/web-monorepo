@@ -151,8 +151,9 @@ export function RecordTable_Sequences(
                 // (Colons are part of Newick format.)
                 // So we remove anything after a ':' and hope it works!
                 // This is the only place where we use the IDs from the tree file.
-                const truncated_id = (full_id as string).split(':')[0];
-                return truncated_id === id;
+                return (
+                  truncate_full_id_for_tree_comparison(full_id as string) === id
+                );
               })
             )
             .filter((row): row is RowType => row != null)
@@ -247,7 +248,9 @@ export function RecordTable_Sequences(
     );
     summarizeIDMismatch(
       (leaves ?? []).map((leaf) => leaf.id),
-      mesaRows.map((row) => row.full_id as string)
+      mesaRows.map((row) =>
+        truncate_full_id_for_tree_comparison(row.full_id as string)
+      )
     );
     return (
       <Banner
@@ -473,4 +476,9 @@ function summarizeIDMismatch(A: string[], B: string[]) {
   console.log(
     `First few IDs in B but not in A: ${inBButNotA.slice(0, 5).join(', ')}`
   );
+}
+
+function truncate_full_id_for_tree_comparison(full_id: string): string {
+  const truncated_id = (full_id as string).split(':')[0];
+  return truncated_id;
 }
