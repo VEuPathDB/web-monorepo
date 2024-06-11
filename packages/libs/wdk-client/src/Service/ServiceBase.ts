@@ -234,7 +234,7 @@ export const ServiceBase = (serviceUrl: string) => {
     return submitErrorIfNot500(error, extra);
   }
 
-  function _fetchJson<T>(
+  async function _fetchJson<T>(
     method: string,
     url: string,
     body?: string,
@@ -244,7 +244,7 @@ export const ServiceBase = (serviceUrl: string) => {
       'Content-Type': 'application/json',
       traceid: makeTraceid(),
     });
-    if (_version) headers.append(CLIENT_WDK_VERSION_HEADER, String(_version));
+    headers.append(CLIENT_WDK_VERSION_HEADER, String(await _initializeStore()));
     return fetchWithRetry(1, isBaseUrl ? url : serviceUrl + url, {
       headers,
       method: method.toUpperCase(),
