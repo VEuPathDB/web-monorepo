@@ -51,43 +51,6 @@
   transform-origin: center bottom;
 }
 
-/* .plot-marker-popup.popup-right,
-.plot-marker-popup.popup-left {
-  margin-bottom: 7px;
-}
-
-.plot-marker-popup.histogram-popup.popup-up {
-  margin-bottom: 36px;
-}
-
-.plot-marker-popup.histogram-popup.popup-right {
-  margin-left: 30px;
-}
-
-.plot-marker-popup.histogram-popup.popup-left {
-  margin-left: -30px;
-}
-
-.plot-marker-popup.histogram-popup.popup-down {
-  margin-bottom: -22px;
-}
-
-.plot-marker-popup.donut-popup.popup-up {
-  margin-bottom: 27px;
-}
-
-.plot-marker-popup.donut-popup.popup-right {
-  margin-left: 20px;
-}
-
-.plot-marker-popup.donut-popup.popup-left {
-  margin-left: -20px;
-}
-
-.plot-marker-popup.donut-popup.popup-down {
-  margin-bottom: -12px;
-} */
-
 .plot-marker-popup.popup-up .leaflet-popup-content {
   transform: rotate(0deg);
 }

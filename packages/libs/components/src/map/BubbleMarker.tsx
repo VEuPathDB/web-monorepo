@@ -1,8 +1,5 @@
 import L from 'leaflet';
-import BoundsDriftMarker, {
-  BoundsDriftMarkerProps,
-  DEFAULT_OFFSET,
-} from './BoundsDriftMarker';
+import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 
 import { ContainerStylesAddon } from '../types/plots';
 

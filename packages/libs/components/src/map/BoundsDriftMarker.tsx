@@ -23,7 +23,7 @@ export interface BoundsDriftMarkerProps extends MarkerProps {
 const FINE_ADJUSTMENT = 5;
 const OFFSET_ADJUSTMENT = 35;
 // Default offset applied to popups. Not sure how/why the y-value is 7.
-export const DEFAULT_OFFSET = [0, 7];
+const DEFAULT_OFFSET = [0, 7];
 
 // Which direction the popup should come out from the marker
 export type PopupOrientation = 'up' | 'down' | 'left' | 'right';
@@ -42,7 +42,6 @@ export default function BoundsDriftMarker({
   showPopup,
   popupContent,
   popupClass,
-  // initialPopupAnchorYPosition,
   getVerticalPopupExtraOffset = () => [0, 0],
   getHorizontalPopupExtraOffset = () => [0, 0],
   zIndexOffset,
@@ -68,7 +67,6 @@ export default function BoundsDriftMarker({
     weight: 1,
     pane: 'popupPane',
     interactive: false,
-    className: 'bounds-rectangle',
   });
 
   useEffect(() => {
@@ -83,7 +81,6 @@ export default function BoundsDriftMarker({
 
   const markerRef = useRef<any>();
   const popupRef = useRef<any>();
-  // const popupRef = useRef<L.Popup>(null);
   const popupOrientationRef = useRef<PopupOrientation>('up');
 
   // Update popupOrientationRef based on whether the marker is close to the map edge.
@@ -332,8 +329,8 @@ export default function BoundsDriftMarker({
 
   const handleMouseOut = (e: LeafletMouseEvent) => {
     e.target._icon.classList.remove('top-marker'); // remove marker on top
-    // map.removeLayer(boundsRectangle);
-    // e.target.closePopup();
+    map.removeLayer(boundsRectangle);
+    e.target.closePopup();
   };
 
   // add click events for highlighting markers
