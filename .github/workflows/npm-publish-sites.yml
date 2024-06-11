@@ -39,9 +39,8 @@ jobs:
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
       - run: node tools/scripts/version.mjs packages/sites/${{ matrix.dir }} ${GITHUB_REF_NAME#v}
-      - id: extract-npm-tag
         # figure out how to tag the release on npm - sets env.npm_tag
-        run: |
+      - run: |
           # Extract the part of the git tag after the 'v' prefix
           git_tag="${GITHUB_REF_NAME#v}"
           # Check if the tag is a plain version (e.g., 1.2.3) and tag 'latest' on npm
