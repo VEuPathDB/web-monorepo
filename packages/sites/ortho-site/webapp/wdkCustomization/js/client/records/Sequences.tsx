@@ -12,7 +12,7 @@ import {
   MesaColumn,
   MesaStateProps,
 } from '@veupathdb/coreui/lib/components/Mesa/types';
-import { groupBy } from 'lodash';
+import { groupBy, difference } from 'lodash';
 import { PfamDomainArchitecture } from 'ortho-client/components/pfam-domains/PfamDomainArchitecture';
 import { extractPfamDomain } from 'ortho-client/records/utils';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
@@ -241,7 +241,14 @@ export function RecordTable_Sequences(
   if (numSequences >= MIN_SEQUENCES_FOR_TREE && treeResponse == null)
     return <Loading />;
 
-  if (mesaRows?.length !== sortedRows?.length)
+  if (mesaRows?.length !== sortedRows?.length) {
+    console.log(
+      'Tree and protein list mismatch. A=Tree, B=Table. Summary below:'
+    );
+    summarizeIDMismatch(
+      (leaves ?? []).map((leaf) => leaf.id),
+      mesaRows.map((row) => row.full_id as string)
+    );
     return (
       <Banner
         banner={{
@@ -251,6 +258,7 @@ export function RecordTable_Sequences(
         }}
       />
     );
+  }
 
   const mesaState: MesaStateProps<RowType> = {
     options: {
@@ -447,4 +455,22 @@ function createSafeSearchRegExp(input: string): RegExp {
     const escapedInput = input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     return new RegExp(escapedInput, 'i');
   }
+}
+
+function summarizeIDMismatch(A: string[], B: string[]) {
+  const inAButNotB = difference(A, B);
+  const inBButNotA = difference(B, A);
+
+  console.log(`Total unique IDs in A: ${new Set(A).size}`);
+  console.log(`Total unique IDs in B: ${new Set(B).size}`);
+
+  console.log(`Number of IDs in A but not in B: ${inAButNotB.length}`);
+  console.log(
+    `First few IDs in A but not in B: ${inAButNotB.slice(0, 5).join(', ')}`
+  );
+
+  console.log(`Number of IDs in B but not in A: ${inBButNotA.length}`);
+  console.log(
+    `First few IDs in B but not in A: ${inBButNotA.slice(0, 5).join(', ')}`
+  );
 }
