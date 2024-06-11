@@ -350,14 +350,19 @@ export const ServiceBase = (serviceUrl: string) => {
       .getItem<ServiceConfig>('/__config')
       .then((storeConfig) => {
         if (storeConfig == null) {
-          return _fetchJson<ServiceConfig>('GET', '/').then((serviceConfig) => {
-            return _store.setItem('/__config', serviceConfig);
-          });
+          return fetch(serviceUrl)
+            .then((response) => response.json())
+            .then((serviceConfig: ServiceConfig) => {
+              return _store
+                .setItem('/__config', serviceConfig)
+                .then(() => serviceConfig);
+            });
         }
         return storeConfig;
       })
       .then((config) => {
         _version = config.startupTime;
+        return _version;
       });
   });
 
