@@ -22,6 +22,8 @@ export interface BoundsViewport {
   zoomLevel: number;
 }
 
+type OffsetGetter = (markerRect: DOMRect) => [number, number];
+
 export interface MarkerProps {
   position: LatLng;
   id: string;
@@ -36,14 +38,8 @@ export interface MarkerProps {
   };
   /* A class to add to the popup element */
   popupClass?: string;
-  // initialPopupAnchorYPosition?: (markerCenterY: number) => number;
-  // maybe change these to take the whole rect object instead of just the center
-  getVerticalPopupExtraOffset?: (
-    markerCenter: [number, number]
-  ) => [number, number];
-  getHorizontalPopupExtraOffset?: (
-    markerCenter: [number, number]
-  ) => [number, number];
+  getVerticalPopupExtraOffset?: OffsetGetter;
+  getHorizontalPopupExtraOffset?: OffsetGetter;
   /* This offset gets added to the default zIndex */
   zIndexOffset?: number;
 }

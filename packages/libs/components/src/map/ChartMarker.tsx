@@ -117,9 +117,6 @@ export default function ChartMarker(props: ChartMarkerProps) {
           width: popupSize,
         },
       }}
-      // initialPopupAnchorYPosition={(markerCenterY: number) =>
-      //   markerCenterY - DEFAULT_OFFSET[1] * 2
-      // }
       getVerticalPopupExtraOffset={() => [-3, -7]}
       getHorizontalPopupExtraOffset={() => [-6, -7]}
       showPopup={props.showPopup}

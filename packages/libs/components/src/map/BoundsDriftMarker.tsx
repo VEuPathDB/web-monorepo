@@ -188,42 +188,37 @@ export default function BoundsDriftMarker({
      */
     if (!markerRef.current || !popupRef.current || !grayBoundsRect) return;
 
-    // const markerRect = markerRef.current._icon.getBoundingClientRect();
     const markerIconRect =
-      markerRef.current._icon.firstChild.getBoundingClientRect();
-    const anchorRect = popupRef.current._tipContainer.getBoundingClientRect();
+      markerRef.current._icon.firstChild.getBoundingClientRect() as DOMRect;
+    const anchorRect =
+      popupRef.current._tipContainer.getBoundingClientRect() as DOMRect;
+
     // The visible height of the anchor is actually half its reported height
-    // Works out to be about 10px
+    // (works out to be about 10px)
     const anchorHeight = anchorRect.height / 2;
-    // const { width: anchorWidth } = anchorRect;
 
     const markerIconCenter = [
       (markerIconRect.left + markerIconRect.right) / 2,
       (markerIconRect.top + markerIconRect.bottom) / 2,
     ] as [number, number];
-    const verticalPopupExtraOffset =
-      getVerticalPopupExtraOffset(markerIconCenter);
-    const horizontalPopupExtraOffset =
-      getHorizontalPopupExtraOffset(markerIconCenter);
 
-    console.log('grayBoundsRect', grayBoundsRect);
-    // console.log('markerRect', markerRect);
-    console.log('markerIconRect', markerIconRect);
-    console.log('anchorRect', anchorRect);
+    const verticalPopupExtraOffset =
+      getVerticalPopupExtraOffset(markerIconRect);
+    const horizontalPopupExtraOffset =
+      getHorizontalPopupExtraOffset(markerIconRect);
 
     /**
      * Within each conditional block, we will:
      *  1.  check the position of the gray box vs the marker to determine which element the popup should
      *      be anchored to
      *  2.  set the popupRef's offset accordingly (with some fuzzy calculations)
+     * Initial popup X and Y values were determined by observation when offsets
+     * were set to 0.
      */
     // with the marker click event for selectedMarkers, popupRef is not used as it changes by click event
     if (orientation === 'down') {
-      // const xAdjustedOffset = 0;
       const xAdjustedOffset = FINE_ADJUSTMENT / 2 + verticalPopupExtraOffset[0];
 
-      // Initial Y determined by observation when yOffset is set to 0
-      // const yAdjustedOffset = 0;
       const initialPopupAnchorY = markerIconRect.top;
       const finalAnchorY =
         markerIconRect.bottom > grayBoundsRect.bottom
@@ -235,7 +230,6 @@ export default function BoundsDriftMarker({
 
       popupRef.current.options.offset = [xAdjustedOffset, yAdjustedOffset];
     } else if (orientation === 'right') {
-      // const xAdjustedOffset = 0;
       const initialPopupAnchorX = markerIconCenter[0];
       const finalAnchorX =
         markerIconRect.right > grayBoundsRect.right
@@ -248,7 +242,6 @@ export default function BoundsDriftMarker({
         FINE_ADJUSTMENT +
         horizontalPopupExtraOffset[0];
 
-      // const yAdjustedOffset = 0;
       const initialPopupAnchorY = markerIconRect.top;
       const finalAnchorY = markerIconCenter[1];
       const yBaseOffset = finalAnchorY - initialPopupAnchorY;
@@ -256,7 +249,6 @@ export default function BoundsDriftMarker({
 
       popupRef.current.options.offset = [xAdjustedOffset, yAdjustedOffset];
     } else if (orientation === 'left') {
-      // const xAdjustedOffset = 0;
       const initialPopupAnchorX = markerIconCenter[0];
       const finalAnchorX =
         markerIconRect.left < grayBoundsRect.left
@@ -266,7 +258,6 @@ export default function BoundsDriftMarker({
       const xAdjustedOffset =
         xBaseOffset - FINE_ADJUSTMENT + horizontalPopupExtraOffset[0];
 
-      // const yAdjustedOffset = 0;
       const initialPopupAnchorY = markerIconRect.top;
       const finalAnchorY = markerIconCenter[1];
       const yBaseOffset = finalAnchorY - initialPopupAnchorY;
@@ -275,10 +266,8 @@ export default function BoundsDriftMarker({
       popupRef.current.options.offset = [xAdjustedOffset, yAdjustedOffset];
     } else {
       // orientation === 'up'
-      // const xAdjustedOffset = 0;
       const xAdjustedOffset = FINE_ADJUSTMENT / 2 + verticalPopupExtraOffset[0];
 
-      // const yAdjustedOffset = 0;
       const anchorInitialY = markerIconRect.top;
       const anchorFinalY =
         markerIconRect.top < grayBoundsRect.top

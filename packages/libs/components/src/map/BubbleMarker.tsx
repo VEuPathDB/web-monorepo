@@ -91,9 +91,14 @@ export default function BubbleMarker(props: BubbleMarkerProps) {
           height: popupSize,
         },
       }}
-      // initialPopupAnchorYPosition={(markerCenterY: number) =>
-      //   markerCenterY - DEFAULT_OFFSET[1] * 2
-      // }
+      getVerticalPopupExtraOffset={(markerRect) => [
+        0,
+        20 - markerRect.height / 2,
+      ]}
+      getHorizontalPopupExtraOffset={(markerRect) => [
+        -3,
+        21 - markerRect.height / 2,
+      ]}
       showPopup={props.showPopup}
       // pass selectedMarkers state and setState
       selectedMarkers={selectedMarkers}
