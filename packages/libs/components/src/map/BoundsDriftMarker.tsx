@@ -205,12 +205,19 @@ export default function BoundsDriftMarker({
       getHorizontalPopupExtraOffset(markerIconRect);
 
     /**
+     *
      * Within each conditional block, we will:
-     *  1.  check the position of the gray box vs the marker to determine which element the popup should
-     *      be anchored to
-     *  2.  set the popupRef's offset accordingly (with some fuzzy calculations)
+     *  1.  Check the position of the gray box vs the marker to determine which
+     *      element the popup should be anchored to
+     *  2.  Set the popupRef's offset accordingly (with some fuzzy calculations)
+     *
      * Initial popup X and Y values were determined by observation when offsets
      * were set to 0.
+     *
+     * NOTE: When slightly adjusting the popup position in the future, prefer
+     * to modify a single marker type's vertical/horizontalPopupExtraOffset
+     * before modifying this code.
+     *
      */
     // with the marker click event for selectedMarkers, popupRef is not used as it changes by click event
     if (orientation === 'down') {

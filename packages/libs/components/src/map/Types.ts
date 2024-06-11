@@ -38,6 +38,8 @@ export interface MarkerProps {
   };
   /* A class to add to the popup element */
   popupClass?: string;
+  // How much extra offset to add to the popup position after initial popup
+  // offset calculation. Determined by trial-and-error observation
   getVerticalPopupExtraOffset?: OffsetGetter;
   getHorizontalPopupExtraOffset?: OffsetGetter;
   /* This offset gets added to the default zIndex */
