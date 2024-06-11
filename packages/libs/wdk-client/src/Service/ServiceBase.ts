@@ -285,14 +285,14 @@ export const ServiceBase = (serviceUrl: string) => {
               _isInvalidating = true;
               _store
                 .clear()
-                .then(() =>
-                  hasRequestBeenMade
-                    ? alert(
-                        'Reload page',
-                        'This page is no longer valid and will be reloaded.'
-                      )
-                    : undefined
-                )
+                .then(() => {
+                  if (hasRequestBeenMade) {
+                    return alert(
+                      'Reload page',
+                      'This page is no longer valid and will be reloaded.'
+                    );
+                  }
+                })
                 .then(() => {
                   window.location.reload();
                 });
