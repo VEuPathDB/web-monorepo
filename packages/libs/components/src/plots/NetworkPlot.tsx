@@ -48,6 +48,10 @@ export interface NetworkPlotProps {
   getNodeMenuActions?: (nodeId: string) => NodeMenuAction[];
   /** Labels, notes, and other annotations to add to the network */
   annotations?: ReactNode[];
+  /** selected node labels */
+  selectedNodeLabels?: (string | undefined)[];
+  /** show node labels */
+  showNodeLabels?: boolean;
 }
 
 const DEFAULT_PLOT_WIDTH = 500;
@@ -76,6 +80,8 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
     labelTruncationLength = 20,
     emptyNetworkContent,
     annotations,
+    selectedNodeLabels,
+    showNodeLabels = false,
   } = props;
 
   const [highlightedNodeId, setHighlightedNodeId] = useState<string>();
@@ -303,6 +309,8 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
                           );
                         }}
                         fontWeight={isHighlighted ? 600 : 400}
+                        selectedNodeLabels={selectedNodeLabels}
+                        showNodeLabels={showNodeLabels}
                       />
                     </>
                   );

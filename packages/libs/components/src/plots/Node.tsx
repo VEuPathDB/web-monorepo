@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { DefaultNode } from '@visx/network';
 import { Text } from '@visx/text';
 import { NodeData } from '../types/plots/network';
@@ -21,6 +22,10 @@ interface NodeWithLabelProps {
   labelColor?: string;
   /** Length for labels before being truncated by ellipsis. Default 20 */
   truncationLength?: number;
+  /** selected node labels */
+  selectedNodeLabels?: (string | undefined)[];
+  /** show node labels */
+  showNodeLabels?: boolean;
 }
 
 // NodeWithLabel draws one node and an optional label for the node. Both the node and
@@ -39,6 +44,8 @@ export function NodeWithLabel(props: NodeWithLabelProps) {
     fontWeight = 400,
     labelColor = '#000',
     truncationLength = 20,
+    selectedNodeLabels = [''],
+    showNodeLabels = false,
   } = props;
 
   const { color, label, stroke, strokeWidth } = node;
@@ -60,28 +67,48 @@ export function NodeWithLabel(props: NodeWithLabelProps) {
     textAnchor = 'end';
   }
 
+  // mouse hover state
+  const [hover, setHover] = useState(false);
+
   return (
-    <g onClick={onClick}>
-      <DefaultNode
-        r={nodeRadius}
-        fill={color ?? DEFAULT_NODE_COLOR}
-        stroke={stroke ?? DEFAULT_STROKE}
-        strokeWidth={strokeWidth ?? DEFAULT_STROKE_WIDTH}
-        className="NodeWithLabel_Node"
-      />
-      {/* Note that Text becomes a tspan */}
-      <Text
-        x={textXOffset}
-        textAnchor={textAnchor}
-        fontSize={fontSize}
-        verticalAnchor="middle"
-        fontWeight={fontWeight}
-        fill={labelColor}
-        className="NodeWithLabel_Label"
-      >
-        {label && truncateWithEllipsis(label, truncationLength)}
-      </Text>
-      <title>{label}</title>
-    </g>
+    <>
+      <g onClick={onClick}>
+        <DefaultNode
+          r={nodeRadius}
+          fill={color ?? DEFAULT_NODE_COLOR}
+          stroke={stroke ?? DEFAULT_STROKE}
+          strokeWidth={strokeWidth ?? DEFAULT_STROKE_WIDTH}
+          className="NodeWithLabel_Node"
+          // hover event
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+        />
+        {/* Note that Text becomes a tspan */}
+        <Text
+          x={textXOffset}
+          textAnchor={textAnchor}
+          fontSize={fontSize}
+          verticalAnchor="middle"
+          fontWeight={fontWeight}
+          fill={labelColor}
+          id="NodeLabelText"
+          style={{
+            cursor: 'ponter',
+            zIndex: 1000,
+            backgroundColor: 'red',
+            display:
+              label && showNodeLabels && selectedNodeLabels.includes(label)
+                ? 'block'
+                : hover
+                ? 'block'
+                : 'none',
+          }}
+        >
+          {label && truncateWithEllipsis(label, truncationLength)}
+        </Text>
+        <title>{label}</title>
+      </g>
+      {/* <use xlinkHref=".NodeLables" /> */}
+    </>
   );
 }
