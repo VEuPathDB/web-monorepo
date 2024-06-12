@@ -350,13 +350,15 @@ export const ServiceBase = (serviceUrl: string) => {
       .getItem<ServiceConfig>('/__config')
       .then((storeConfig) => {
         if (storeConfig == null) {
-          return fetch(serviceUrl)
+          return fetchWithRetry(1, serviceUrl)
             .then((response) => {
               if (!response.ok) {
-                console.error(`Fetching ${serviceUrl} failed for _initializeStore: ${response.statusText}`);
-                throw new Error("Failed to initialize service");
+                console.error(
+                  `Fetching ${serviceUrl} failed for _initializeStore: ${response.statusText}`
+                );
+                throw new Error('Failed to initialize service');
               }
-              return response.json()
+              return response.json();
             })
             .then((serviceConfig: ServiceConfig) => {
               return _store
