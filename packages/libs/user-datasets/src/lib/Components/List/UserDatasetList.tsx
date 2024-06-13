@@ -39,6 +39,8 @@ import { DateTime } from '../DateTime';
 
 import { ThemedGrantAccessButton } from '../ThemedGrantAccessButton';
 import { ThemedDeleteButton } from '../ThemedDeleteButton';
+import { Public } from '@material-ui/icons';
+import { Tooltip } from '@veupathdb/coreui';
 
 interface Props {
   baseUrl: string;
@@ -156,6 +158,19 @@ class UserDatasetList extends React.Component<Props, State> {
     return !dataset.sharedWith || !dataset.sharedWith.length
       ? null
       : dataset.sharedWith.map((share) => share.userDisplayName).join(', ');
+  }
+
+  renderCommunityCell(cellProps: MesaDataCellProps) {
+    const dataset: UserDataset = cellProps.row;
+    const isPublic = dataset.meta.visibility === 'public';
+    if (!isPublic) return null;
+    return (
+      <Tooltip
+        title={`This ${this.props.dataNoun.singular} is visible to the community.`}
+      >
+        <Public className="Community-visible" />
+      </Tooltip>
+    );
   }
 
   renderStatusCell(cellProps: MesaDataCellProps) {
@@ -281,6 +296,14 @@ class UserDatasetList extends React.Component<Props, State> {
         name: 'Shared With',
         sortable: true,
         renderCell: this.renderSharedWithCell,
+      },
+      {
+        key: 'visibility',
+        name: 'Community',
+        sortable: true,
+        helpText: `Indicates if the ${this.props.dataNoun.singular} is visible to the community.`,
+        style: { textAlign: 'center' },
+        renderCell: this.renderCommunityCell.bind(this),
       },
       {
         key: 'created',

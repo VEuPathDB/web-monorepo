@@ -3,7 +3,8 @@
 .UserDatasetList,
 .UserDatasetDetail,
 .UserDataset-SharingModal {
-  .success {
+  .success,
+  .Community-visible {
     color: $green;
   }
   .danger {
