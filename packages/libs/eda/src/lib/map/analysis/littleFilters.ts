@@ -5,7 +5,7 @@ import {
   useFindEntityAndVariable,
 } from '../../core';
 import { useMemo } from 'react';
-import { AppState } from './appState';
+import { AppState } from './Types';
 import { GeoConfig } from '../../core/types/geoConfig';
 import { useDeepValue } from '../../core/hooks/immutability';
 import { VariableDescriptor } from '../../core/types/variable';

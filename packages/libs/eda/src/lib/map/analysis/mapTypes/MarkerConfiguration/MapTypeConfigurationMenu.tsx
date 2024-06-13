@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { H5 } from '@veupathdb/coreui';
-import { MarkerConfiguration } from '../appState';
+import { MarkerConfiguration } from '../../Types';
 import TabbedDisplay, {
   TabbedDisplayProps,
 } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';

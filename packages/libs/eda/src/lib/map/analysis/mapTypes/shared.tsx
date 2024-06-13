@@ -1,3 +1,4 @@
+import * as t from 'io-ts';
 import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/geohash';
 import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
 import { VariableDescriptor } from '../../../core/types/variable';
@@ -39,21 +40,66 @@ import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { NoDataError } from '../../../core/api/DataClient/NoDataError';
 import { useCallback, useState } from 'react';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
-import {
-  BubbleLegendPositionConfig,
-  PanelConfig,
-  PanelPositionConfig,
-} from '../appState';
+import { PieMarkerConfiguration } from './plugins/donut/PieMarkerConfigurationMenu';
+import { BarPlotMarkerConfiguration } from './plugins/barplot/BarPlotMarkerConfigurationMenu';
 import {
   findLeastAncestralGeoConfig,
   getGeoConfig,
 } from '../../../core/utils/geoVariables';
+import { PanelConfig, PanelPositionConfig } from '../Types';
 
 export const defaultAnimation = {
   method: 'geohash',
   animationFunction: geohashAnimation,
   duration: defaultAnimationDuration,
 };
+
+const BubbleLegendPositionConfig = t.type({
+  variable: PanelPositionConfig,
+  count: PanelPositionConfig,
+});
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+type BubbleLegendPositionConfig = t.TypeOf<typeof BubbleLegendPositionConfig>;
+
+export const DEFAULT_DRAGGABLE_VIZ_POSITION = {
+  x: 535,
+  y: 220,
+};
+
+export const DEFAULT_DRAGGABLE_VIZ_DIMENSIONS = {
+  width: 'auto',
+  height: 'auto',
+};
+
+export const defaultVisualizationPanelConfig = {
+  isVisible: false,
+  hideVizControl: false,
+  position: DEFAULT_DRAGGABLE_VIZ_POSITION,
+  dimensions: DEFAULT_DRAGGABLE_VIZ_DIMENSIONS,
+};
+
+// user-specified selection
+export type SelectedValues = t.TypeOf<typeof SelectedValues>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+const SelectedValues = t.union([t.array(t.string), t.undefined]);
+
+export type BinningMethod = t.TypeOf<typeof BinningMethod>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+const BinningMethod = t.union([
+  t.literal('equalInterval'),
+  t.literal('quantile'),
+  t.literal('standardDeviation'),
+  t.undefined,
+]);
+
+export type SelectedCountsOption = t.TypeOf<typeof SelectedCountsOption>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+const SelectedCountsOption = t.union([
+  t.literal('filtered'),
+  t.literal('visible'),
+  t.undefined,
+]);
 
 export const markerDataFilterFuncs = [timeSliderLittleFilter];
 export const floaterFilterFuncs = [
@@ -593,7 +639,7 @@ export function pieOrBarMarkerConfigLittleFilter(
 
   const activeMarkerConfiguration = markerConfigurations.find(
     (markerConfig) => markerConfig.type === activeMarkerConfigurationType
-  );
+  ) as PieMarkerConfiguration | BarPlotMarkerConfiguration;
 
   // This doesn't seem ideal. Do we ever have no active config?
   if (activeMarkerConfiguration == null) return [];

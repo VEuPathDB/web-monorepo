@@ -1,20 +1,24 @@
-import { ComponentType } from 'react';
+import { Bounds as BoundsProp } from '@veupathdb/components/lib/map/Types';
+import { ComponentType, SVGProps } from 'react';
 import {
   AnalysisState,
   Filter,
   PromiseHookState,
   StudyEntity,
+  StudyMetadata,
 } from '../../../core';
-import { GeoConfig } from '../../../core/types/geoConfig';
-import { ComputationAppOverview } from '../../../core/types/visualization';
-import { AppState, PanelConfig } from '../appState';
 import { EntityCounts } from '../../../core/hooks/entityCounts';
-import { SiteInformationProps } from '../Types';
-import { Bounds as BoundsProp } from '@veupathdb/components/lib/map/Types';
+import { GeoConfig } from '../../../core/types/geoConfig';
+import { VariableDescriptor } from '../../../core/types/variable';
+import { ComputationAppOverview } from '../../../core/types/visualization';
+import {
+  AppState,
+  MarkerConfiguration,
+  PanelConfig,
+  SiteInformationProps,
+} from '../Types';
 
-// should we just use one type: MapTypeMapLayerProps?
-// and get rid of this one?
-export interface MapTypeConfigPanelProps {
+export interface MapTypeConfigPanelProps<T extends MarkerConfiguration> {
   apps: ComputationAppOverview[];
   analysisState: AnalysisState;
   appState: AppState;
@@ -23,11 +27,11 @@ export interface MapTypeConfigPanelProps {
   studyEntities: StudyEntity[];
   geoConfigs: GeoConfig[];
   configuration: unknown;
-  updateConfiguration: (configuration: unknown) => void;
+  updateConfiguration: (configuration: T) => void;
   setIsSidePanelExpanded: (isExpanded: boolean) => void;
 }
 
-export interface MapTypeMapLayerProps {
+export interface MapTypeMapLayerProps<T extends MarkerConfiguration> {
   apps: ComputationAppOverview[];
   analysisState: AnalysisState;
   appState: AppState;
@@ -36,7 +40,7 @@ export interface MapTypeMapLayerProps {
   studyEntities: StudyEntity[];
   geoConfigs: GeoConfig[];
   configuration: unknown;
-  updateConfiguration: (configuration: unknown) => void;
+  updateConfiguration: (configuration: T) => void;
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
   setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
@@ -54,29 +58,45 @@ export interface MapTypeMapLayerProps {
  * A plugin containing the pieces needed to render
  * and configure a map type
  */
-export interface MapTypePlugin {
+export interface MapTypePlugin<T extends MarkerConfiguration> {
+  /**
+   * Unique identifier for the map type
+   */
+  type: T['type'];
   /**
    * Display name of map type used for menu, etc.
    */
   displayName: string;
   /**
+   * Icon component
+   */
+  IconComponent: ComponentType<SVGProps<SVGSVGElement>>;
+  /**
+   * Returns a default configuration for this MapType. This is used to
+   * create a set of default configurations for new analyses.
+   */
+  getDefaultConfig(props: {
+    defaultVariable: VariableDescriptor;
+    study: StudyMetadata;
+  }): T;
+  /**
    * Returns a ReactNode used for configuring the map type
    */
-  ConfigPanelComponent: ComponentType<MapTypeConfigPanelProps>;
+  ConfigPanelComponent: ComponentType<MapTypeConfigPanelProps<T>>;
   /**
    * Returns a ReactNode that is rendered as a leaflet map layer
    */
-  MapLayerComponent?: ComponentType<MapTypeMapLayerProps>;
+  MapLayerComponent?: ComponentType<MapTypeMapLayerProps<T>>;
   /**
    * Returns a ReactNode that is rendered on top of the map
    */
-  MapOverlayComponent?: ComponentType<MapTypeMapLayerProps>;
+  MapOverlayComponent?: ComponentType<MapTypeMapLayerProps<T>>;
   /**
    * Returns a ReactNode that is rendered in the map header
    */
-  MapTypeHeaderDetails?: ComponentType<MapTypeMapLayerProps>;
+  MapTypeHeaderDetails?: ComponentType<MapTypeMapLayerProps<T>>;
   /**
    * Returns a ReactNode that is rendered under the map header
    */
-  TimeSliderComponent?: ComponentType<MapTypeMapLayerProps>;
+  TimeSliderComponent?: ComponentType<MapTypeMapLayerProps<T>>;
 }

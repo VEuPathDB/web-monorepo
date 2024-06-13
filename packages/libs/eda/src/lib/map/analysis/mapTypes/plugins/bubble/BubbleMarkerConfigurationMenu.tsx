@@ -1,29 +1,34 @@
 import {
   InputVariables,
   Props as InputVariablesProps,
-} from '../../../core/components/visualizations/InputVariables';
-import { VariableTreeNode } from '../../../core/types/study';
-import { VariablesByInputName } from '../../../core/utils/data-element-constraints';
-import { findEntityAndVariable } from '../../../core/utils/study-metadata';
+} from '../../../../../core/components/visualizations/InputVariables';
+import { VariableTreeNode } from '../../../../../core/types/study';
+import { VariablesByInputName } from '../../../../../core/utils/data-element-constraints';
+import { findEntityAndVariable } from '../../../../../core/utils/study-metadata';
 import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
-import { BubbleOverlayConfig } from '../../../core';
-import PluginError from '../../../core/components/visualizations/PluginError';
+import { BubbleOverlayConfig } from '../../../../../core';
+import PluginError from '../../../../../core/components/visualizations/PluginError';
 import {
   aggregationHelp,
   AggregationInputs,
-} from '../../../core/components/visualizations/implementations/LineplotVisualization';
-import { DataElementConstraint } from '../../../core/types/visualization'; // TO DO for dates: remove
-import { SharedMarkerConfigurations } from '../mapTypes/shared';
-import { invalidProportionText } from '../utils/defaultOverlayConfig';
-import { BubbleLegendPositionConfig, PanelConfig } from '../appState';
-import { GeoConfig } from '../../../core/types/geoConfig';
-import { findLeastAncestralGeoConfig } from '../../../core/utils/geoVariables';
+} from '../../../../../core/components/visualizations/implementations/LineplotVisualization';
+import { DataElementConstraint } from '../../../../../core/types/visualization'; // TO DO for dates: remove
+import { SharedMarkerConfigurations } from '../../shared';
+import { invalidProportionText } from '../../../utils/defaultOverlayConfig';
+import { GeoConfig } from '../../../../../core/types/geoConfig';
+import { findLeastAncestralGeoConfig } from '../../../../../core/utils/geoVariables';
+import { PanelConfig, PanelPositionConfig } from '../../../Types';
 
 type AggregatorOption = typeof aggregatorOptions[number];
 const aggregatorOptions = ['mean', 'median'] as const;
 
 interface MarkerConfiguration<T extends string> {
   type: T;
+}
+
+interface BubbleLegendPositionConfig {
+  variable: PanelPositionConfig;
+  count: PanelPositionConfig;
 }
 
 export interface BubbleMarkerConfiguration

@@ -34,6 +34,8 @@ import {
   ContinousVariableMetadataResponse,
   StandaloneMapBubblesLegendRequestParams,
   StandaloneMapBubblesLegendResponse,
+  StandaloneCollectionsMarkerDataRequest,
+  StandaloneCollectionsMarkerDataResponse,
 } from './types';
 import { NoDataError } from './NoDataError';
 
@@ -216,6 +218,18 @@ export default class DataClient extends FetchClientWithCredentials {
       'map-markers/bubbles/legend',
       params,
       StandaloneMapBubblesLegendResponse
+    );
+  }
+
+  getStandaloneCollectionsMarkerData(
+    computationName: string,
+    params: StandaloneCollectionsMarkerDataRequest
+  ): Promise<StandaloneCollectionsMarkerDataResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'map-markers/collections',
+      params,
+      StandaloneCollectionsMarkerDataResponse
     );
   }
 

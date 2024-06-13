@@ -1,5 +1,20 @@
 import { useCallback, useMemo, useState } from 'react';
 
+import { EditLocation, InfoOutlined, Notes, Share } from '@material-ui/icons';
+import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
+import {
+  CheckIcon,
+  Download,
+  FilledButton,
+  Filter as FilterIcon,
+  FloatingButton,
+  H5,
+  Modal,
+  Plus,
+  Table,
+} from '@veupathdb/coreui';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { useHistory, useLocation, useRouteMatch } from 'react-router';
 import {
   AnalysisState,
   DEFAULT_ANALYSIS_NAME,
@@ -16,76 +31,61 @@ import {
   useStudyRecord,
   useSubsettingClient,
 } from '../../core';
-import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
-import { useGeoConfig } from '../../core/hooks/geoConfig';
-import { DocumentationContainer } from '../../core/components/docs/DocumentationContainer';
-import {
-  CheckIcon,
-  Download,
-  Plus,
-  FilledButton,
-  Filter as FilterIcon,
-  FloatingButton,
-  H5,
-  Table,
-  Modal,
-} from '@veupathdb/coreui';
-import { useEntityCounts } from '../../core/hooks/entityCounts';
-import ShowHideVariableContextProvider from '../../core/utils/show-hide-variable-context';
-import {
-  AppState,
-  MarkerConfiguration,
-  useAppState,
-  LegacyRedirectState,
-} from './appState';
-import Subsetting from '../../workspace/Subsetting';
-import { MapHeader } from './MapHeader';
 import FilterChipList from '../../core/components/FilterChipList';
 import { VariableLinkConfig } from '../../core/components/VariableLink';
-import { MapSidePanel } from './MapSidePanel';
-import { EditLocation, InfoOutlined, Notes, Share } from '@material-ui/icons';
+import { DocumentationContainer } from '../../core/components/docs/DocumentationContainer';
+import { useEntityCounts } from '../../core/hooks/entityCounts';
+import { useGeoConfig } from '../../core/hooks/geoConfig';
 import { ComputationAppOverview } from '../../core/types/visualization';
-import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import Login from '../../workspace/sharing/Login';
-import { useLoginCallbacks } from '../../workspace/sharing/hooks';
-import NameAnalysis from '../../workspace/sharing/NameAnalysis';
+import ShowHideVariableContextProvider from '../../core/utils/show-hide-variable-context';
 import NotesTab from '../../workspace/NotesTab';
+import Subsetting from '../../workspace/Subsetting';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
-import { useHistory, useLocation, useRouteMatch } from 'react-router';
+import Login from '../../workspace/sharing/Login';
+import NameAnalysis from '../../workspace/sharing/NameAnalysis';
+import { useLoginCallbacks } from '../../workspace/sharing/hooks';
+import { MapHeader } from './MapHeader';
+import { MapSidePanel } from './MapSidePanel';
+import { AppState, LegacyRedirectState, MarkerConfiguration } from './Types';
+import { useAppState } from './appState';
 
+import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
+import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import { uniq } from 'lodash';
 import Path from 'path';
-import DownloadTab from '../../workspace/DownloadTab';
-import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
-import {
-  BarPlotMarkerIcon,
-  DonutMarkerIcon,
-  BubbleMarkerIcon,
-} from './MarkerConfiguration/icons';
-import { AllAnalyses } from '../../workspace/AllAnalyses';
-import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
-import { isSavedAnalysis } from '../../core/utils/analysis';
 import { GeoConfig } from '../../core/types/geoConfig';
+import { isSavedAnalysis } from '../../core/utils/analysis';
+import { AllAnalyses } from '../../workspace/AllAnalyses';
+import DownloadTab from '../../workspace/DownloadTab';
+import { SideNavigationItems } from './MapSideNavigation';
 import {
   SidePanelItem,
   SidePanelMenuEntry,
   SiteInformationProps,
 } from './Types';
-import { SideNavigationItems } from './MapSideNavigation';
 import {
   barMarkerPlugin,
   bubbleMarkerPlugin,
+  collectionBarMarkerPlugin,
   donutMarkerPlugin,
 } from './mapTypes';
 
-import { MapTypeMapLayerProps } from './mapTypes/types';
 import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
-import AnalysisNameDialog from '../../workspace/AnalysisNameDialog';
+import SettingsButton from '@veupathdb/coreui/lib/components/containers/DraggablePanel/SettingsButton';
+import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import { Page } from '@veupathdb/wdk-client/lib/Components';
 import { AnalysisError } from '../../core/components/AnalysisError';
-import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
-import SettingsButton from '@veupathdb/coreui/lib/components/containers/DraggablePanel/SettingsButton';
 import { getGeoConfig } from '../../core/utils/geoVariables';
+import AnalysisNameDialog from '../../workspace/AnalysisNameDialog';
+import { MapTypeMapLayerProps } from './mapTypes/types';
+
+const singleVariablePlugins = [
+  donutMarkerPlugin,
+  barMarkerPlugin,
+  bubbleMarkerPlugin,
+];
+
+const groupedVariablePlugins = [collectionBarMarkerPlugin];
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -393,91 +393,64 @@ function MapAnalysisImpl(props: ImplProps) {
         {
           type: 'subheading',
           labelText: MapSideNavItemLabels.SingleVariableMaps,
-          children: [
-            {
-              type: 'item',
-              id: 'single-variable-pie',
-              labelText: donutMarkerPlugin.displayName,
-              rightIcon: <DonutMarkerIcon style={{ height: '1.25em' }} />,
-              leftIcon:
-                activeMarkerConfigurationType === 'pie' ? <CheckIcon /> : null,
-              onActive: () => {
-                setActiveMarkerConfigurationType('pie');
-              },
-              renderSidePanelDrawer(apps) {
-                return (
-                  <donutMarkerPlugin.ConfigPanelComponent
-                    apps={apps}
-                    analysisState={analysisState}
-                    appState={appState}
-                    studyId={studyId}
-                    filters={filters}
-                    studyEntities={studyEntities}
-                    geoConfigs={geoConfigs}
-                    configuration={activeMarkerConfiguration}
-                    updateConfiguration={updateMarkerConfigurations as any}
-                    setIsSidePanelExpanded={setIsSidePanelExpanded}
-                  />
-                );
-              },
+          children: singleVariablePlugins.map((plugin) => ({
+            type: 'item',
+            id: plugin.type,
+            labelText: plugin.displayName,
+            rightIcon: <plugin.IconComponent height="1.25em" />,
+            leftIcon:
+              activeMarkerConfigurationType === plugin.type ? (
+                <CheckIcon />
+              ) : null,
+            onActive: () => {
+              setActiveMarkerConfigurationType(plugin.type);
             },
-            {
-              type: 'item',
-              id: 'single-variable-bar',
-              labelText: barMarkerPlugin.displayName,
-              leftIcon:
-                activeMarkerConfigurationType === 'barplot' ? (
-                  <CheckIcon />
-                ) : null,
-              rightIcon: <BarPlotMarkerIcon style={{ height: '1.25em' }} />,
-              onActive: () => {
-                setActiveMarkerConfigurationType('barplot');
-              },
-              renderSidePanelDrawer(apps) {
-                return (
-                  <barMarkerPlugin.ConfigPanelComponent
-                    apps={apps}
-                    analysisState={analysisState}
-                    appState={appState}
-                    studyId={studyId}
-                    filters={filters}
-                    studyEntities={studyEntities}
-                    geoConfigs={geoConfigs}
-                    configuration={activeMarkerConfiguration}
-                    updateConfiguration={updateMarkerConfigurations as any}
-                    setIsSidePanelExpanded={setIsSidePanelExpanded}
-                  />
-                );
-              },
+            renderSidePanelDrawer: (apps) => (
+              <plugin.ConfigPanelComponent
+                apps={apps}
+                analysisState={analysisState}
+                appState={appState}
+                studyId={studyId}
+                filters={filters}
+                studyEntities={studyEntities}
+                geoConfigs={geoConfigs}
+                configuration={activeMarkerConfiguration}
+                updateConfiguration={updateMarkerConfigurations}
+                setIsSidePanelExpanded={setIsSidePanelExpanded}
+              />
+            ),
+          })),
+        },
+        {
+          type: 'subheading',
+          labelText: MapSideNavItemLabels.GroupedVariableMaps,
+          children: groupedVariablePlugins.map((plugin) => ({
+            type: 'item',
+            id: `grouped-variable-${plugin.type}`,
+            labelText: plugin.displayName,
+            rightIcon: <plugin.IconComponent height="1.25em" />,
+            leftIcon:
+              activeMarkerConfigurationType === plugin.type ? (
+                <CheckIcon />
+              ) : null,
+            onActive: () => {
+              setActiveMarkerConfigurationType(plugin.type);
             },
-            {
-              type: 'item',
-              id: 'single-variable-bubble',
-              labelText: bubbleMarkerPlugin.displayName,
-              rightIcon: <BubbleMarkerIcon style={{ height: '1.25em' }} />,
-              leftIcon:
-                activeMarkerConfigurationType === 'bubble' ? (
-                  <CheckIcon />
-                ) : null,
-              onActive: () => setActiveMarkerConfigurationType('bubble'),
-              renderSidePanelDrawer(apps) {
-                return (
-                  <bubbleMarkerPlugin.ConfigPanelComponent
-                    apps={apps}
-                    analysisState={analysisState}
-                    appState={appState}
-                    studyId={studyId}
-                    filters={filters}
-                    studyEntities={studyEntities}
-                    geoConfigs={geoConfigs}
-                    configuration={activeMarkerConfiguration}
-                    updateConfiguration={updateMarkerConfigurations as any}
-                    setIsSidePanelExpanded={setIsSidePanelExpanded}
-                  />
-                );
-              },
-            },
-          ],
+            renderSidePanelDrawer: (apps) => (
+              <plugin.ConfigPanelComponent
+                apps={apps}
+                analysisState={analysisState}
+                appState={appState}
+                studyId={studyId}
+                filters={filters}
+                studyEntities={studyEntities}
+                geoConfigs={geoConfigs}
+                configuration={activeMarkerConfiguration}
+                updateConfiguration={updateMarkerConfigurations}
+                setIsSidePanelExpanded={setIsSidePanelExpanded}
+              />
+            ),
+          })),
         },
       ],
     },
@@ -794,14 +767,14 @@ function MapAnalysisImpl(props: ImplProps) {
     setIsSidePanelExpanded,
   ]);
 
+  // TODO Add `type` to plugin def and use to look up, so we can remove hard coded strings.
   const activeMapTypePlugin =
-    activeMarkerConfiguration?.type === 'barplot'
-      ? barMarkerPlugin
-      : activeMarkerConfiguration?.type === 'bubble'
-      ? bubbleMarkerPlugin
-      : activeMarkerConfiguration?.type === 'pie'
-      ? donutMarkerPlugin
-      : undefined;
+    singleVariablePlugins.find(
+      (plugin) => plugin.type === activeMarkerConfigurationType
+    ) ??
+    groupedVariablePlugins.find(
+      (plugin) => plugin.type === activeMarkerConfigurationType
+    );
 
   return (
     <PromiseResult state={appsPromiseState}>
@@ -810,21 +783,22 @@ function MapAnalysisImpl(props: ImplProps) {
         const activeSideNavigationItemMenu =
           activePanelItem?.renderSidePanelDrawer(apps) ?? null;
 
-        const mapTypeMapLayerProps: MapTypeMapLayerProps = {
-          apps,
-          analysisState,
-          appState,
-          studyId,
-          filters,
-          studyEntities,
-          geoConfigs,
-          configuration: activeMarkerConfiguration,
-          updateConfiguration: updateMarkerConfigurations as any,
-          totalCounts,
-          filteredCounts,
-          setStudyDetailsPanelConfig,
-          headerButtons: HeaderButtons,
-        };
+        const mapTypeMapLayerProps: MapTypeMapLayerProps<MarkerConfiguration> =
+          {
+            apps,
+            analysisState,
+            appState,
+            studyId,
+            filters,
+            studyEntities,
+            geoConfigs,
+            configuration: activeMarkerConfiguration,
+            updateConfiguration: updateMarkerConfigurations,
+            totalCounts,
+            filteredCounts,
+            setStudyDetailsPanelConfig,
+            headerButtons: HeaderButtons,
+          };
 
         return (
           <ShowHideVariableContextProvider>

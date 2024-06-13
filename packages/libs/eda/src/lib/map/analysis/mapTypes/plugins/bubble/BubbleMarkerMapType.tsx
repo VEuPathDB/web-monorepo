@@ -15,26 +15,31 @@ import {
   Filter,
   useDataClient,
   useStudyEntities,
-} from '../../../../core';
+} from '../../../../../core';
 import {
   BubbleOverlayConfig,
   StandaloneMapBubblesLegendRequestParams,
   StandaloneMapBubblesRequestParams,
   StandaloneMapBubblesResponse,
-} from '../../../../core/api/DataClient/types';
-import { useToggleStarredVariable } from '../../../../core/hooks/starredVariables';
-import { DraggableLegendPanel } from '../../DraggableLegendPanel';
-import { MapLegend } from '../../MapLegend';
-import MapVizManagement from '../../MapVizManagement';
-import { BubbleMarkerConfigurationMenu } from '../../MarkerConfiguration';
-import { BubbleMarkerConfiguration } from '../../MarkerConfiguration/BubbleMarkerConfigurationMenu';
+} from '../../../../../core/api/DataClient/types';
+import { useToggleStarredVariable } from '../../../../../core/hooks/starredVariables';
+import {
+  DEFAULT_DRAGGABLE_LEGEND_POSITION,
+  DraggableLegendPanel,
+} from '../../../DraggableLegendPanel';
+import { MapLegend } from '../../../MapLegend';
+import MapVizManagement from '../../../MapVizManagement';
+import {
+  BubbleMarkerConfiguration,
+  BubbleMarkerConfigurationMenu,
+} from './BubbleMarkerConfigurationMenu';
 import {
   MapTypeConfigurationMenu,
   MarkerConfigurationOption,
 } from '../../MarkerConfiguration/MapTypeConfigurationMenu';
 import { BubbleMarkerIcon } from '../../MarkerConfiguration/icons';
-import { useStandaloneVizPlugins } from '../../hooks/standaloneVizPlugins';
-import { getDefaultBubbleOverlayConfig } from '../../utils/defaultOverlayConfig';
+import { useStandaloneVizPlugins } from '../../../hooks/standaloneVizPlugins';
+import { getDefaultBubbleOverlayConfig } from '../../../utils/defaultOverlayConfig';
 import {
   MAX_FILTERSET_VALUES,
   defaultAnimation,
@@ -48,32 +53,52 @@ import {
   useSelectedMarkerSnackbars,
   selectedMarkersLittleFilter,
   useFloatingPanelHandlers,
-} from '../shared';
+  defaultVisualizationPanelConfig,
+} from '../../shared';
 import {
   MapTypeConfigPanelProps,
   MapTypeMapLayerProps,
   MapTypePlugin,
-} from '../types';
-import DraggableVisualization from '../../DraggableVisualization';
-import { VariableDescriptor } from '../../../../core/types/variable';
+} from '../../types';
+import DraggableVisualization from '../../../DraggableVisualization';
+import { VariableDescriptor } from '../../../../../core/types/variable';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
-import { GeoConfig } from '../../../../core/types/geoConfig';
+import { GeoConfig } from '../../../../../core/types/geoConfig';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import {
   useLittleFilters,
   UseLittleFiltersFuncProps,
-} from '../../littleFilters';
-import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
-import { SubStudies } from '../../SubStudies';
-import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
-import { STUDIES_ENTITY_ID, STUDY_ID_VARIABLE_ID } from '../../../constants';
-import { PanelConfig } from '../../appState';
+} from '../../../littleFilters';
+import TimeSliderQuickFilter from '../../../TimeSliderQuickFilter';
+import { SubStudies } from '../../../SubStudies';
+import { MapTypeHeaderStudyDetails } from '../../MapTypeHeaderStudyDetails';
+import { STUDIES_ENTITY_ID, STUDY_ID_VARIABLE_ID } from '../../../../constants';
+import { PanelConfig } from '../../../Types';
 
 const displayName = 'Bubbles';
 
-export const plugin: MapTypePlugin = {
+export const plugin: MapTypePlugin<BubbleMarkerConfiguration> = {
+  type: 'bubble',
+  IconComponent: BubbleMarkerIcon,
   displayName,
+  getDefaultConfig({ defaultVariable }) {
+    return {
+      type: 'bubble',
+      selectedVariable: defaultVariable,
+      aggregator: 'mean',
+      numeratorValues: undefined,
+      denominatorValues: undefined,
+      legendPanelConfig: {
+        variable: DEFAULT_DRAGGABLE_LEGEND_POSITION,
+        count: {
+          x: window.innerWidth,
+          y: 420,
+        },
+      },
+      visualizationPanelConfig: defaultVisualizationPanelConfig,
+    };
+  },
   ConfigPanelComponent: BubbleMapConfigurationPanel,
   MapLayerComponent: BubbleMapLayer,
   MapOverlayComponent: BubbleLegendsAndFloater,
@@ -93,7 +118,9 @@ type BubbleLegendData = {
   bubbleValueToLegendTickMapper: ((val: number) => string) | undefined;
 };
 
-function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
+function BubbleMapConfigurationPanel(
+  props: MapTypeConfigPanelProps<BubbleMarkerConfiguration>
+) {
   const {
     apps,
     analysisState,
@@ -214,16 +241,14 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
 /**
  * Renders markers
  */
-function BubbleMapLayer(props: MapTypeMapLayerProps) {
+function BubbleMapLayer(
+  props: MapTypeMapLayerProps<BubbleMarkerConfiguration>
+) {
   const {
     studyId,
     filters,
     appState,
-    appState: {
-      boundsZoomLevel,
-      markerConfigurations,
-      activeMarkerConfigurationType,
-    },
+    appState: { boundsZoomLevel },
     updateConfiguration,
     geoConfigs,
   } = props;
@@ -284,10 +309,7 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
     <BubbleMarker {...markerProps} />
   ));
 
-  const selectedMarkers = markerConfigurations.find(
-    (markerConfiguration) =>
-      markerConfiguration.type === activeMarkerConfigurationType
-  )?.selectedMarkers;
+  const selectedMarkers = configuration.selectedMarkers;
 
   return (
     <>
@@ -309,7 +331,9 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
   );
 }
 
-function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
+function BubbleLegendsAndFloater(
+  props: MapTypeMapLayerProps<BubbleMarkerConfiguration>
+) {
   const {
     studyId,
     filters,
@@ -496,7 +520,9 @@ function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
   );
 }
 
-function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
+function MapTypeHeaderDetails(
+  props: MapTypeMapLayerProps<BubbleMarkerConfiguration>
+) {
   const {
     studyEntities,
     filters,
@@ -547,7 +573,9 @@ const substudyFilterFuncs = [
   selectedMarkersLittleFilter,
 ];
 
-export function TimeSliderComponent(props: MapTypeMapLayerProps) {
+export function TimeSliderComponent(
+  props: MapTypeMapLayerProps<BubbleMarkerConfiguration>
+) {
   const {
     studyId,
     studyEntities,
@@ -1009,7 +1037,7 @@ function markerConfigLittleFilter(props: UseLittleFiltersFuncProps): Filter[] {
 
   const activeMarkerConfiguration = markerConfigurations.find(
     (markerConfig) => markerConfig.type === activeMarkerConfigurationType
-  );
+  ) as BubbleMarkerConfiguration;
 
   // This doesn't seem ideal. Do we ever have no active config?
   if (activeMarkerConfiguration == null) return [];

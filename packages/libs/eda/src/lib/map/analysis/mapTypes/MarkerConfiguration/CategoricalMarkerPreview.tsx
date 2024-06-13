@@ -1,16 +1,16 @@
-import { AllValuesDefinition, OverlayConfig } from '../../../core';
+import { AllValuesDefinition, OverlayConfig } from '../../../../core';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
 import {
   ChartMarkerStandalone,
   getChartMarkerDependentAxisRange,
 } from '@veupathdb/components/lib/map/ChartMarker';
 import { DonutMarkerStandalone } from '@veupathdb/components/lib/map/DonutMarker';
-import { UNSELECTED_TOKEN } from '../../constants';
+import { UNSELECTED_TOKEN } from '../../../constants';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import {
   kFormatter,
   mFormatter,
-} from '../../../core/utils/big-number-formatters';
+} from '../../../../core/utils/big-number-formatters';
 import { MAXIMUM_ALLOWABLE_VALUES } from './CategoricalMarkerConfigurationTable';
 
 type Props = {

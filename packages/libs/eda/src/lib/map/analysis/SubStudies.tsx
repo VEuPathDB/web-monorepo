@@ -4,10 +4,10 @@ import { usePermissions } from '@veupathdb/study-data-access/lib/data-restrictio
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
-import { PanelConfig } from './appState';
 import { useDebouncedCallback } from '../../core/hooks/debouncing';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { PanelConfig } from './Types';
 
 interface Props {
   studyId: string;

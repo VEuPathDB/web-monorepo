@@ -12,7 +12,7 @@ import { VariableDescriptor } from '../../core/types/variable';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { useFindEntityAndVariable, Filter } from '../../core';
 import { zip } from 'lodash';
-import { AppState } from './appState';
+import { AppState } from './Types';
 import { timeSliderVariableConstraints } from './config/eztimeslider';
 import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
