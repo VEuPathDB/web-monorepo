@@ -55,6 +55,7 @@ type OwnProps = {
     ComponentType<UserDatasetDetailProps>
   >;
   dataNoun: DataNoun;
+  enablePublicUserDatasets: boolean;
 };
 type MergedProps = {
   ownProps: OwnProps;
@@ -152,8 +153,14 @@ class UserDatasetDetailController extends PageController<MergedProps> {
   }
 
   renderView() {
-    const { baseUrl, detailsPageTitle, id, workspaceTitle, dataNoun } =
-      this.props.ownProps;
+    const {
+      baseUrl,
+      detailsPageTitle,
+      id,
+      workspaceTitle,
+      dataNoun,
+      enablePublicUserDatasets,
+    } = this.props.ownProps;
     const {
       updateUserDatasetDetail,
       shareUserDatasets,
@@ -209,6 +216,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       workspaceTitle,
       detailsPageTitle,
       dataNoun,
+      enablePublicUserDatasets,
     };
 
     const DetailView = this.getDetailView(

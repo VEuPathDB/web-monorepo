@@ -9,7 +9,7 @@ import {
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 
 import { isVdiCompatibleWdkService } from '../../Service';
-import { SingleSelect } from '@veupathdb/coreui';
+import { Toggle } from '@veupathdb/coreui';
 
 import './UserDatasetSharingModal.scss';
 import { uniq } from 'lodash';
@@ -434,6 +434,7 @@ class UserDatasetSharingModal extends React.Component {
       shareError,
       shareSuccessful,
       updateUserDatasetDetail,
+      enablePublicUserDatasets,
     } = this.props;
     const datasetNoun = this.getDatasetNoun();
 
@@ -471,41 +472,37 @@ class UserDatasetSharingModal extends React.Component {
       const visibilities = uniq(datasets.map((d) => d.meta.visibility));
       const visibility =
         visibilities.length === 1 ? visibilities[0] : undefined;
-      const visibilityItems = [
-        { value: 'private', display: 'Private' },
-        { value: 'public', display: 'Public' },
-      ];
-      const selectedVisibilityItem = visibilityItems.find(
-        (item) => item.value === visibility
-      );
       return (
         <div className="UserDataset-SharingModal-FormView">
+          {enablePublicUserDatasets && (
+            <div className="UserDataset-SharingModal-VisibilitySection">
+              <h2 className="UserDatasetSharing-SectionName">
+                Community visibility:
+              </h2>
+              <div
+                className="UserDatasetSharing-Visibility"
+                style={{ padding: '1em' }}
+              >
+                <Toggle
+                  value={visibility === 'public'}
+                  onChange={(value) => {
+                    datasets.forEach((dataset) => {
+                      updateUserDatasetDetail(dataset, {
+                        ...dataset.meta,
+                        visibility: value ? 'public' : 'private',
+                      });
+                    });
+                  }}
+                  label={`Allow ${datasetNoun} to be visible to all users as a Community ${dataNoun.singular}.`}
+                />
+              </div>
+            </div>
+          )}
           <div className="UserDataset-SharingModal-DatasetSection">
             <h2 className="UserDatasetSharing-SectionName">
               Share {datasetNoun}:
             </h2>
             <DatasetList datasets={datasets} />
-          </div>
-          <div className="UserDataset-SharingModal-VisibilitySection">
-            <h2 className="UserDatasetSharing-SectionName">
-              General visibility:
-            </h2>
-            <SingleSelect
-              buttonDisplayContent={selectedVisibilityItem?.display}
-              value={visibility}
-              items={[
-                { value: 'private', display: 'Private' },
-                { value: 'public', display: 'Public' },
-              ]}
-              onSelect={(value) => {
-                datasets.forEach((dataset) =>
-                  updateUserDatasetDetail(dataset, {
-                    ...dataset.meta,
-                    visibility: value,
-                  })
-                );
-              }}
-            />
           </div>
           <div className="UserDataset-SharingModal-RecipientSection">
             <h2 className="UserDatasetSharing-SectionName">

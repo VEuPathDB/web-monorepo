@@ -73,6 +73,7 @@ interface Props {
   updateProjectFilter: (filterByProject: boolean) => any;
   quotaSize: number;
   dataNoun: DataNoun;
+  enablePublicUserDatasets: boolean;
 }
 
 interface State {
@@ -569,6 +570,7 @@ class UserDatasetList extends React.Component<Props, State> {
       shareSuccessful,
       shareError,
       updateUserDatasetDetail,
+      enablePublicUserDatasets,
     } = this.props;
     const { uiState, selectedRows, searchTerm } = this.state;
 
@@ -625,6 +627,7 @@ class UserDatasetList extends React.Component<Props, State> {
                     shareSuccessful={shareSuccessful}
                     shareError={shareError}
                     updateUserDatasetDetail={updateUserDatasetDetail}
+                    enablePublicUserDatasets={enablePublicUserDatasets}
                   />
                 ) : null}
                 <SearchBox
