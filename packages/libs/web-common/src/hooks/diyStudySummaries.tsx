@@ -6,7 +6,6 @@ import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 import { EnrichedUserDataset, useDiyDatasets } from './diyDatasets';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
-import { UserDatasetVDI } from '@veupathdb/user-datasets/lib/Utils/types';
 
 interface UserStudySummaryRow {
   name: string;
@@ -17,28 +16,16 @@ interface UserStudySummaryRow {
   sharedWith: string;
 }
 
-interface UserStudyColumnOptions {
-  linkToUserDatasets?: boolean;
-}
-
-export function useDiyStudySummaryColumns(
-  options: UserStudyColumnOptions = {}
-): Column<UserStudySummaryRow>[] {
-  const { linkToUserDatasets = false } = options;
+export function useDiyStudySummaryColumns(): Column<UserStudySummaryRow>[] {
   return useMemo(
     () => [
-      linkToUserDatasets
-        ? {
-            accessor: 'userDatasetWorkspaceUrl',
-            Header: 'Name',
-            Cell: function ({ value, row }) {
-              return <Link to={value}>{row.original.name}</Link>;
-            },
-          }
-        : {
-            accessor: 'name',
-            Header: 'Name',
-          },
+      {
+        accessor: 'userDatasetWorkspaceUrl',
+        Header: 'Name',
+        Cell: function ({ value, row }) {
+          return <Link to={value}>{row.original.name}</Link>;
+        },
+      },
       {
         accessor: 'edaWorkspaceUrl',
         Header: 'Explore & analyze',

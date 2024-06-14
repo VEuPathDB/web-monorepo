@@ -326,7 +326,9 @@ class UserDatasetDetail extends React.Component {
             onPress={this.openSharingModal}
           />
         )}
-        <ThemedDeleteButton buttonText="Delete" onPress={this.handleDelete} />
+        {isOwner ? (
+          <ThemedDeleteButton buttonText="Delete" onPress={this.handleDelete} />
+        ) : null}
       </div>
     );
   }
