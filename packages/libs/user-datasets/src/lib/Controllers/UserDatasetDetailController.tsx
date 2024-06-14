@@ -100,9 +100,20 @@ class UserDatasetDetailController extends PageController<MergedProps> {
   }
 
   isRenderDataLoadError() {
+    const { loadError } = this.props.stateProps;
+    return loadError != null && loadError.statusCode >= 400;
+  }
+
+  isRenderDataNotFound(): boolean {
+    const { loadError } = this.props.stateProps;
+    return loadError != null && loadError.statusCode === 404;
+  }
+
+  isRenderDataPermissionDenied(): boolean {
+    const { loadError } = this.props.stateProps;
     return (
-      this.props.stateProps.loadError != null &&
-      this.props.stateProps.loadError.status >= 500
+      loadError != null &&
+      (loadError.statusCode === 401 || loadError.statusCode === 403)
     );
   }
 
