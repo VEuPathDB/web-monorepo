@@ -297,14 +297,18 @@ class UserDatasetList extends React.Component<Props, State> {
         sortable: true,
         renderCell: this.renderSharedWithCell,
       },
-      {
-        key: 'visibility',
-        name: 'Community',
-        sortable: true,
-        helpText: `Indicates if the ${this.props.dataNoun.singular} is visible to the community.`,
-        style: { textAlign: 'center' },
-        renderCell: this.renderCommunityCell.bind(this),
-      },
+      ...(this.props.enablePublicUserDatasets
+        ? [
+            {
+              key: 'visibility',
+              name: 'Community',
+              sortable: true,
+              helpText: `Indicates if the ${this.props.dataNoun.singular} is visible to the community.`,
+              style: { textAlign: 'center' },
+              renderCell: this.renderCommunityCell.bind(this),
+            },
+          ]
+        : []),
       {
         key: 'created',
         name: 'Created',
