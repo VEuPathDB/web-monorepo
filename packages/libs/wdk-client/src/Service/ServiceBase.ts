@@ -234,7 +234,7 @@ export const ServiceBase = (serviceUrl: string) => {
     return submitErrorIfNot500(error, extra);
   }
 
-  function _fetchJson<T>(
+  async function _fetchJson<T>(
     method: string,
     url: string,
     body?: string,
@@ -244,7 +244,7 @@ export const ServiceBase = (serviceUrl: string) => {
       'Content-Type': 'application/json',
       traceid: makeTraceid(),
     });
-    if (_version) headers.append(CLIENT_WDK_VERSION_HEADER, String(_version));
+    headers.append(CLIENT_WDK_VERSION_HEADER, String(await _initializeStore()));
     return fetchWithRetry(1, isBaseUrl ? url : serviceUrl + url, {
       headers,
       method: method.toUpperCase(),
@@ -285,14 +285,14 @@ export const ServiceBase = (serviceUrl: string) => {
               _isInvalidating = true;
               _store
                 .clear()
-                .then(() =>
-                  hasRequestBeenMade
-                    ? alert(
-                        'Reload page',
-                        'This page is no longer valid and will be reloaded.'
-                      )
-                    : undefined
-                )
+                .then(() => {
+                  if (hasRequestBeenMade) {
+                    return alert(
+                      'Reload page',
+                      'This page is no longer valid and will be reloaded.'
+                    );
+                  }
+                })
                 .then(() => {
                   window.location.reload();
                 });
@@ -350,14 +350,27 @@ export const ServiceBase = (serviceUrl: string) => {
       .getItem<ServiceConfig>('/__config')
       .then((storeConfig) => {
         if (storeConfig == null) {
-          return _fetchJson<ServiceConfig>('GET', '/').then((serviceConfig) => {
-            return _store.setItem('/__config', serviceConfig);
-          });
+          return fetchWithRetry(1, serviceUrl)
+            .then((response) => {
+              if (!response.ok) {
+                console.error(
+                  `Fetching ${serviceUrl} failed for _initializeStore: ${response.statusText}`
+                );
+                throw new Error('Failed to initialize service');
+              }
+              return response.json();
+            })
+            .then((serviceConfig: ServiceConfig) => {
+              return _store
+                .setItem('/__config', serviceConfig)
+                .then(() => serviceConfig);
+            });
         }
         return storeConfig;
       })
       .then((config) => {
         _version = config.startupTime;
+        return _version;
       });
   });
 
