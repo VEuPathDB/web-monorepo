@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -32,12 +32,17 @@ export default function MultiSelection(props: MultiSelectionProps) {
   const { labels, setSelectedNodeLabels, showNodeLabels } = props;
   const classes = useStyles();
   // default values are select all
-  const [personName, setPersonName] = useState<(string | undefined)[]>(labels);
+  const [value, setValue] = useState<(string | undefined)[]>(labels);
 
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setPersonName(event.target.value as string[]);
+    setValue(event.target.value as string[]);
     setSelectedNodeLabels(event.target.value as string[]);
   };
+
+  // set value as initial labels are most likely empty or undefined due to data request
+  useEffect(() => {
+    setValue(labels);
+  }, [labels]);
 
   return (
     <div>
@@ -49,7 +54,7 @@ export default function MultiSelection(props: MultiSelectionProps) {
           labelId="demo-mutiple-checkbox-label"
           id="demo-mutiple-checkbox"
           multiple
-          value={personName}
+          value={value}
           onChange={handleChange}
           input={<Input />}
           renderValue={(selected) => (selected as string[]).join(', ')}
@@ -62,7 +67,7 @@ export default function MultiSelection(props: MultiSelectionProps) {
                 <MenuItem key={name} value={name}>
                   <Checkbox
                     color="primary"
-                    checked={personName.indexOf(name) > -1}
+                    checked={value.indexOf(name) > -1}
                   />
                   <ListItemText primary={name} />
                 </MenuItem>

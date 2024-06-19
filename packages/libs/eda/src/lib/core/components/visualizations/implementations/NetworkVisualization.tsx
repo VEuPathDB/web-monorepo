@@ -20,7 +20,7 @@ import {
   NetworkResponse,
 } from '../../../api/DataClient/types';
 import { twoColorPalette } from '@veupathdb/components/lib/types/plots/addOns';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { scaleOrdinal } from 'd3-scale';
 import { uniq } from 'lodash';
 import { usePromise } from '../../../hooks/promise';
@@ -47,6 +47,15 @@ import { CorrelationConfig } from '../../../types/apps';
 import { StudyMetadata } from '../../..';
 import { NodeMenuAction } from '@veupathdb/components/lib/types/plots/network';
 import { LabelPosition } from '@veupathdb/components/lib/plots/Node';
+
+// node label control
+import MultiSelection from '@veupathdb/components/lib/components/plotControls/MultiSelection';
+import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
+import Switch from '@material-ui/core/Switch';
+import FormGroup from '@material-ui/core/FormGroup';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+
 // end imports
 
 // Defaults
@@ -185,6 +194,13 @@ function NetworkViz(props: VisualizationProps<Options>) {
   const minYPosition = Math.min(...dataYPositions);
   const maxYPosition = Math.max(...dataYPositions);
 
+  // node label control
+  const [selectedNodeLabels, setSelectedNodeLabels] = useState<
+    (string | undefined)[]
+  >(['']);
+  // show/hide node labels button
+  const [showNodeLabels, setShowNodeLabels] = useState<boolean>(false);
+
   // Clean and finalize data format. Specifically, assign link colors, add display labels
   const cleanedData = useMemo(() => {
     if (!data.value) return undefined;
@@ -247,6 +263,18 @@ function NetworkViz(props: VisualizationProps<Options>) {
       };
     });
 
+    // update selected node label
+    const labels =
+      nodesWithLabels != null
+        ? nodesWithLabels
+            .flatMap((node) => {
+              return node.label != null ? node.label : undefined;
+            })
+            .filter((data) => data != null)
+        : [''];
+
+    setSelectedNodeLabels(labels);
+
     return {
       ...data.value.network.data,
       nodes: nodesWithLabels,
@@ -307,6 +335,17 @@ function NetworkViz(props: VisualizationProps<Options>) {
     </div>
   );
 
+  // list of node labels
+  const labels = useMemo(() => {
+    return cleanedData != null
+      ? cleanedData.nodes
+          .flatMap((node) => {
+            return node.label != null ? node.label : undefined;
+          })
+          .filter((data) => data != null)
+      : [''];
+  }, [cleanedData]);
+
   console.log('cleanedData', cleanedData);
   const networkPlotProps: NetworkPlotProps = {
     nodes: cleanedData ? cleanedData.nodes : undefined,
@@ -315,6 +354,9 @@ function NetworkViz(props: VisualizationProps<Options>) {
     containerStyles: finalPlotContainerStyles,
     labelTruncationLength: 40,
     emptyNetworkContent,
+    // node label control
+    selectedNodeLabels: selectedNodeLabels,
+    showNodeLabels: showNodeLabels,
   };
 
   const plotNode = (
@@ -322,7 +364,91 @@ function NetworkViz(props: VisualizationProps<Options>) {
     <NetworkPlot {...networkPlotProps} ref={plotRef} />
   );
 
-  const controlsNode = <> </>;
+  // show/hide node lables: custom switch based on MUI
+  const AntSwitch = withStyles((theme: Theme) =>
+    createStyles({
+      root: {
+        width: 28,
+        height: 16,
+        padding: 0,
+        display: 'flex',
+      },
+      switchBase: {
+        padding: 2,
+        color: theme.palette.grey[500],
+        '&$checked': {
+          transform: 'translateX(12px)',
+          color: theme.palette.common.white,
+          '& + $track': {
+            opacity: 1,
+            backgroundColor: theme.palette.primary.main,
+            borderColor: theme.palette.primary.main,
+          },
+        },
+      },
+      thumb: {
+        width: 12,
+        height: 12,
+        boxShadow: 'none',
+      },
+      track: {
+        border: `1px solid ${theme.palette.grey[500]}`,
+        borderRadius: 16 / 2,
+        opacity: 1,
+        backgroundColor: theme.palette.common.white,
+      },
+      checked: {},
+    })
+  )(Switch);
+
+  // node label control
+  const controlsNode = (
+    <>
+      <div
+        style={{
+          width: plotContainerStyles.width,
+          marginLeft: '1em',
+          display: 'flex',
+        }}
+      >
+        <div>
+          <FormGroup>
+            <div
+              style={{
+                color: 'black',
+                fontSize: '1em',
+                fontWeight: 600,
+                marginBottom: '0.25em',
+              }}
+            >
+              Node Labels
+            </div>
+            <Typography component="div">
+              <Grid component="label" container alignItems="center" spacing={1}>
+                <Grid item>Hide</Grid>
+                <Grid item>
+                  <AntSwitch
+                    checked={showNodeLabels}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      setShowNodeLabels(event.target.checked);
+                    }}
+                  />
+                </Grid>
+                <Grid item>Show</Grid>
+              </Grid>
+            </Typography>
+          </FormGroup>
+        </div>
+        <div style={{ marginTop: '-0.75em', marginLeft: '1em' }}>
+          <MultiSelection
+            labels={labels}
+            setSelectedNodeLabels={setSelectedNodeLabels}
+            showNodeLabels={showNodeLabels}
+          />
+        </div>
+      </div>
+    </>
+  );
 
   // Create legend for (1) Line/link thickness and (2) Link color.
   // For (1), we'll do the following:
