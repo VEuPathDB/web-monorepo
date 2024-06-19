@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import TreeTable from '@veupathdb/components/lib/components/tidytree/TreeTable';
 import { RecordTableProps, WrappedComponentProps } from './Types';
 import { useOrthoService } from 'ortho-client/hooks/orthoService';
@@ -6,8 +6,11 @@ import {
   Loading,
   RealTimeSearchBox,
 } from '@veupathdb/wdk-client/lib/Components';
-import { parseNewick } from 'patristic';
-import { AttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { Branch, parseNewick } from 'patristic';
+import {
+  AttributeValue,
+  TableValue,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import {
   MesaColumn,
   MesaStateProps,
@@ -35,6 +38,7 @@ const CorePeripheralFilterStateLabels: Record<
 
 const treeWidth = 200;
 const MIN_SEQUENCES_FOR_TREE = 3;
+const MAX_SEQUENCES_TO_SHOW_ALL = 2000;
 
 export function RecordTable_Sequences(
   props: WrappedComponentProps<RecordTableProps>
@@ -44,9 +48,6 @@ export function RecordTable_Sequences(
     () => createSafeSearchRegExp(searchQuery),
     [searchQuery]
   );
-
-  const [corePeripheralFilterState, setCorePeripheralFilterState] =
-    useState<CorePeripheralFilterState>('both');
 
   const [pfamFilterIds, setPfamFilterIds] = useState<string[]>([]);
 
@@ -73,6 +74,13 @@ export function RecordTable_Sequences(
   const pfamRows = props.record.tables['PFams'];
 
   const numSequences = mesaRows.length;
+
+  // show only core as default for large groups
+  const [corePeripheralFilterState, setCorePeripheralFilterState] =
+    useState<CorePeripheralFilterState>(
+      numSequences > MAX_SEQUENCES_TO_SHOW_ALL ? 'core' : 'both'
+    );
+
   const treeResponse = useOrthoService(
     numSequences >= MIN_SEQUENCES_FOR_TREE
       ? (orthoService) => orthoService.getGroupTree(groupName)
@@ -130,36 +138,39 @@ export function RecordTable_Sequences(
     },
   });
 
+  // parse the tree and other expensive processing asynchronously
+  const [tree, setTree] = useState<Branch>();
+  const [leaves, setLeaves] = useState<Branch[]>();
+  const [sortedRows, setSortedRows] = useState<TableValue>();
+
+  useEffect(() => {
+    if (!treeResponse) return;
+
+    let isMounted = true;
+
+    const fetchTree = async () => {
+      try {
+        const parsedTree = await parseNewickAsync(treeResponse.newick);
+        const leaves = await getLeavesAsync(parsedTree);
+        const sortedRows = await sortRowsAsync(leaves, mesaRows);
+        if (isMounted) {
+          setTree(parsedTree);
+          setLeaves(leaves);
+          setSortedRows(sortedRows);
+        }
+      } catch (error) {
+        console.error('Error parsing Newick:', error);
+      }
+    };
+
+    fetchTree();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [treeResponse, mesaRows]);
+
   // do some validation on the tree w.r.t. the table
-
-  // should this be async? it's potentially expensive
-  const tree = useMemo(
-    () => treeResponse && parseNewick(treeResponse.newick),
-    [treeResponse]
-  );
-  const leaves = useMemo(() => tree?.getLeaves(), [tree]);
-
-  // sort the table in the same order as the tree's leaves (if we have a tree)
-  const sortedRows = useMemo(
-    () =>
-      leaves != null
-        ? leaves
-            .map(({ id }) =>
-              mesaRows.find(({ full_id }) => {
-                // Some full_ids end in :RNA
-                // However, the Newick files seem to be omitting the colon and everything following it.
-                // (Colons are part of Newick format.)
-                // So we remove anything after a ':' and hope it works!
-                // This is the only place where we use the IDs from the tree file.
-                return (
-                  truncate_full_id_for_tree_comparison(full_id as string) === id
-                );
-              })
-            )
-            .filter((row): row is RowType => row != null)
-        : mesaRows,
-    [leaves, mesaRows]
-  );
 
   // filter the rows of the table based on
   // 1. user-entered text search
@@ -200,7 +211,7 @@ export function RecordTable_Sequences(
     pfamFilterIds,
   ]);
 
-  // now filter the tree if needed.
+  // now filter the tree if needed - takes a couple of seconds for large trees
   const filteredTree = useMemo(() => {
     if (leaves == null || tree == null || filteredRows?.length === 0) return;
 
@@ -208,7 +219,6 @@ export function RecordTable_Sequences(
       // must work on a copy of the tree because it's destructive
       const treeCopy = tree.clone();
       let leavesRemoved = false;
-
       do {
         const leavesCopy = treeCopy.getLeaves();
         leavesRemoved = false; // Reset flag for each iteration
@@ -239,10 +249,28 @@ export function RecordTable_Sequences(
     } else return;
   }, [filteredTree, treeResponse, tree, filteredRows]);
 
-  if (numSequences >= MIN_SEQUENCES_FOR_TREE && treeResponse == null)
-    return <Loading />;
+  const largeGroupWarning =
+    numSequences > MAX_SEQUENCES_TO_SHOW_ALL
+      ? '(note: this is a large group, only the core sequences will be shown by default)'
+      : '';
+  if (
+    !sortedRows ||
+    (numSequences >= MIN_SEQUENCES_FOR_TREE &&
+      (tree == null || treeResponse == null))
+  ) {
+    return (
+      <>
+        <div>Loading... {largeGroupWarning}</div>
+        <Loading />
+      </>
+    ); // The loading spinner does not show :-(
+  }
 
-  if (mesaRows?.length !== sortedRows?.length) {
+  if (
+    mesaRows != null &&
+    sortedRows != null &&
+    mesaRows.length !== sortedRows.length
+  ) {
     console.log(
       'Tree and protein list mismatch. A=Tree, B=Table. Summary below:'
     );
@@ -481,4 +509,41 @@ function summarizeIDMismatch(A: string[], B: string[]) {
 function truncate_full_id_for_tree_comparison(full_id: string): string {
   const truncated_id = (full_id as string).split(':')[0];
   return truncated_id;
+}
+
+async function parseNewickAsync(treeResponse: string): Promise<Branch> {
+  return new Promise((resolve) => {
+    const result = parseNewick(treeResponse);
+    resolve(result);
+  });
+}
+
+async function getLeavesAsync(tree: Branch): Promise<Branch[]> {
+  return new Promise((resolve) => {
+    const result = tree.getLeaves();
+    resolve(result);
+  });
+}
+
+async function sortRowsAsync(
+  leaves: Branch[],
+  mesaRows: TableValue
+): Promise<TableValue> {
+  if (leaves == null) return mesaRows;
+
+  return new Promise((resolve) => {
+    const result = leaves
+      .map(({ id }) =>
+        mesaRows.find(({ full_id }) => {
+          // Some full_ids end in :RNA
+          // However, the Newick files seem to be omitting the colon and everything following it.
+          // (Colons are part of Newick format.)
+          // So we remove anything after a ':' and hope it works!
+          // This is the only place where we use the IDs from the tree file.
+          return truncate_full_id_for_tree_comparison(full_id as string) === id;
+        })
+      )
+      .filter((row): row is RowType => row != null);
+    resolve(result);
+  });
 }
