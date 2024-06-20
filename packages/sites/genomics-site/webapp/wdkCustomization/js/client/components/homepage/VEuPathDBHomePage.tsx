@@ -682,6 +682,16 @@ const useHeaderMenuItems = (
           url: '/search/dataset/AllDatasets/result',
         },
         {
+          key: 'datasets-beta',
+          display: (
+            <>
+              Data sets in {displayName} <img alt="BETA" src={betaImage} />
+            </>
+          ),
+          type: 'reactRoute',
+          url: '/datasets',
+        },
+        {
           key: 'datasets-in-progress2',
           display: 'Data sets we are working on',
           type: 'reactRoute',

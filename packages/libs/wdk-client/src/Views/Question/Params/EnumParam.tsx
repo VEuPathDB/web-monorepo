@@ -62,6 +62,7 @@ function EnumParamComponent(props: EnumParamProps) {
     parameter,
     value,
     ctx: { searchName },
+    linksPosition,
   } = props;
   switch (parameter.displayType) {
     case 'typeAhead':
@@ -140,6 +141,7 @@ function EnumParamComponent(props: EnumParamProps) {
               value={toMultiValueArray(value)}
               onChange={multiValueChange}
               name={parameterKey}
+              linksPosition={linksPosition}
             />
           ) : (
             <RadioList

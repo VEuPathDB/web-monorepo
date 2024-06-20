@@ -1,0 +1,32 @@
+.DatasetsSearchAndAnswerTableContainer {
+  .ResultTableSummaryView > .MesaComponent {
+    .TableToolbar {
+      .TableToolbar-Info {
+        order: -1;
+      }
+    }
+  }
+}
+
+.DatasetsSearchAndAnswerFilter {
+  .TextExpressionContainer {
+    position: relative;
+  }
+  .wdk-Answer-filterFieldSelector {
+    width: 292px;
+  }
+  .wdk-Answer-filterSelectFieldsIcon {
+    position: relative;
+    right: 25px;
+    padding: 5px;
+  }
+  .HelpIconWrapper {
+    position: relative;
+    right: 12px;
+  }
+}
+
+.DatasetsSearchAndAnswerBtn {
+  width: fit-content;
+  height: fit-content;
+}

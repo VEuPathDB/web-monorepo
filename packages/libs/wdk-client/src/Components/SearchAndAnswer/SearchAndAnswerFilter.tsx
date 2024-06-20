@@ -1,16 +1,17 @@
-import { mapValues } from 'lodash';
 import React, { useMemo } from 'react';
-import { SubmissionMetadata } from '@veupathdb/wdk-client/lib/Actions/QuestionActions';
-import { QuestionController } from '@veupathdb/wdk-client/lib/Controllers';
+import { SubmissionMetadata } from '../../Actions/QuestionActions';
+import { QuestionController } from '../../Controllers';
 import {
   Props as FormProps,
   renderDefaultParamGroup,
-} from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
+} from '../../Views/Question/DefaultQuestionForm';
+import { mapValues } from 'lodash';
 
 interface Props {
   recordName: string;
   questionName: string;
   initialParamData: Record<string, string>;
+  formComponent?: (props: FormProps) => JSX.Element;
 }
 
 const submissionMetadata: SubmissionMetadata = {
@@ -18,15 +19,15 @@ const submissionMetadata: SubmissionMetadata = {
   onStepSubmitted: () => {},
 };
 
-export function DownloadsFilter(props: Props) {
-  const { recordName, questionName, initialParamData } = props;
+export function SearchAndAnswerFilter(props: Props) {
+  const { recordName, questionName, initialParamData, formComponent } = props;
 
   return (
     <QuestionController
       question={questionName}
       recordClass={recordName}
       submissionMetadata={submissionMetadata}
-      FormComponent={FormComponent}
+      FormComponent={formComponent ?? FormComponent}
       initialParamData={initialParamData}
       prepopulateWithLastParamValues
     />
@@ -48,7 +49,7 @@ function FormComponent(props: FormProps) {
                   isSearchPage: true,
                 },
               } as any,
-              parameterElement.props.chilren
+              parameterElement.props.children
             )
           : parameterElement;
       }),

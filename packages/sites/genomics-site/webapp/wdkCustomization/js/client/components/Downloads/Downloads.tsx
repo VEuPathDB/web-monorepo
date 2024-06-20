@@ -1,67 +1,75 @@
-import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import { parseQueryString } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
-import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
-import { useWdkDependenciesEffect } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
-import { updateLastParamValues } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
-import { SearchConfig } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { isParamValueValid } from '@veupathdb/wdk-client/lib/Views/Question/Params';
-import { isEqual } from 'lodash';
 import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import { useHistory, useLocation, useRouteMatch } from 'react-router';
-import { DownloadsFilter } from './DownloadsFilter';
-import { DownloadsTable } from './DownloadsTable';
+import {
+  SearchAndAnswer,
+  TableResultTypePartial,
+} from '@veupathdb/wdk-client/lib/Components/SearchAndAnswer/SearchAndAnswer';
+import {
+  downloadReport,
+  ResultType,
+} from '@veupathdb/wdk-client/lib/Utils/WdkResult';
 import './Downloads.scss';
+import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
+import { Action } from '@veupathdb/wdk-client/lib/Views/ResultTableSummaryView/ResultTableSummaryView';
 
+const VIEW_ID = 'DownloadPage';
 const RECORD_NAME = 'dfile';
 const TABLE_QUESTION_NAME = 'GetAllFileRecords';
 const BULK_QUESTION_NAME = 'GetFileRecordsByID';
 
 export function Downloads() {
-  const location = useLocation();
-  const history = useHistory();
-  const match = useRouteMatch();
-  const initialParamData = useMemo(
-    () => parseQueryString({ location, history, match }),
-    [history, location, match]
-  );
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+  const tableResultTypePartial = {
+    type: 'answerSpec',
+    displayName: 'Download Files',
+    answerSpec: {
+      searchName: TABLE_QUESTION_NAME,
+    },
+  };
 
-  const { searchConfig, isValid } = useSelector(
-    (state: RootState) => {
-      const questionState = state.question.questions[TABLE_QUESTION_NAME];
-      const searchConfig: SearchConfig | undefined =
-        questionState?.paramValues && {
-          parameters: questionState.paramValues,
-        };
-      const isValid = questionState?.paramValues
-        ? questionState.question.parameters.every((parameter) =>
-            isParamValueValid(
-              {
-                searchName: TABLE_QUESTION_NAME,
-                paramValues: questionState?.paramValues,
-                parameter,
+  const tableActions = useMemo((): Action[] => {
+    return [
+      {
+        element: (selectedRecords) => {
+          const reporterResultType = {
+            type: 'answerSpec',
+            displayName: 'Zipped Files',
+            answerSpec: {
+              searchName: BULK_QUESTION_NAME,
+              searchConfig: {
+                parameters: {
+                  fileIds: JSON.stringify(
+                    selectedRecords.map((record) => record.id[0].value)
+                  ),
+                },
               },
-              questionState.paramUIState[parameter.name]
-            )
-          )
-        : true;
-      return { searchConfig, isValid };
-    },
-    (left, right) => isEqual(left, right)
-  );
-
-  useWdkDependenciesEffect(
-    ({ paramValueStore }) => {
-      if (searchConfig == null || !isValid) return;
-      updateLastParamValues(
-        paramValueStore,
-        TABLE_QUESTION_NAME,
-        searchConfig?.parameters,
-        undefined
-      );
-    },
-    [searchConfig, isValid]
-  );
+            },
+          } as ResultType;
+          return (
+            <button
+              className="btn"
+              type="button"
+              disabled={selectedRecords.length === 0}
+              onClick={() => {
+                downloadReport(
+                  wdkService,
+                  reporterResultType,
+                  {
+                    format: 'zippedFiles',
+                    formatConfig: {},
+                  },
+                  '_blank'
+                );
+              }}
+            >
+              <Icon fa="download" /> Download selected files
+            </button>
+          );
+        },
+      },
+    ];
+  }, [wdkService]);
 
   return (
     <div className="Downloads">
@@ -92,28 +100,20 @@ export function Downloads() {
           </li>
         </ul>
       </p>
-      <div className="Downloads-Filter-Container">
-        <DownloadsFilter
-          recordName={RECORD_NAME}
-          questionName={TABLE_QUESTION_NAME}
-          initialParamData={initialParamData}
-        />
-      </div>
-      {!isValid ? (
-        <Banner
-          banner={{
-            type: 'error',
-            message:
-              'One or more parameter selections above is invalid. Fix them to see results.',
-          }}
-        />
-      ) : searchConfig ? (
-        <DownloadsTable
-          tableSearchName={TABLE_QUESTION_NAME}
-          bulkSearchName={BULK_QUESTION_NAME}
-          searchConfig={searchConfig}
-        />
-      ) : null}
+      <SearchAndAnswer
+        recordName={RECORD_NAME}
+        tableResultTypePartial={
+          tableResultTypePartial as TableResultTypePartial
+        }
+        resultTableConfig={{
+          viewId: VIEW_ID,
+          downloadButtonDisplay: 'Download selected files',
+          showIdAttributeColumn: false,
+          showCount: true,
+        }}
+        filterClassName="Downloads-Filter-Container"
+        tableActions={tableActions}
+      />
     </div>
   );
 }

@@ -34,6 +34,7 @@ import { userDatasetRoutes } from './userDatasetRoutes';
 import Downloads from './components/Downloads';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { DatasetsSearchAndAnswer } from '@veupathdb/wdk-client/lib/Components/SearchAndAnswer/Datasets/DatasetsSearchAndAnswer';
 import { Srt } from './components/Srt';
 
 // Project id is not needed for these record classes.
@@ -166,6 +167,11 @@ export const wrapRoutes = (ebrcRoutes) => [
   {
     path: '/downloads',
     component: DownloadsRouteComponent,
+  },
+
+  {
+    path: '/datasets',
+    component: DatasetsSearchAndAnswer,
   },
 
   {
