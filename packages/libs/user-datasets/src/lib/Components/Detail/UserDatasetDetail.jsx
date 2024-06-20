@@ -1,4 +1,5 @@
 import React from 'react';
+import { Public } from '@material-ui/icons';
 
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import SaveableTextEditor from '@veupathdb/wdk-client/lib/Components/InputControls/SaveableTextEditor';
@@ -149,8 +150,8 @@ class UserDatasetDetail extends React.Component {
 
     return [
       {
-        className: classify('Name'),
         attribute: this.props.detailsPageTitle,
+        className: classify('Name'),
         value: (
           <SaveableTextEditor
             value={meta.name}
@@ -161,7 +162,6 @@ class UserDatasetDetail extends React.Component {
       },
       {
         attribute: 'Status',
-        className: classify('Status'),
         value: (
           <UserDatasetStatus
             linkToDataset={false}
@@ -173,6 +173,36 @@ class UserDatasetDetail extends React.Component {
           />
         ),
       },
+      {
+        attribute: 'Visibility',
+        value:
+          meta.visibility === 'public' ? (
+            <>
+              {' '}
+              <Public className="Community-visible" /> This {dataNoun.singular}{' '}
+              is visible to the community.
+            </>
+          ) : (
+            <>
+              This {dataNoun.singular} is only visble to you and those you have
+              shared it with.
+            </>
+          ),
+      },
+      !isOwner || !sharedWith || !sharedWith.length
+        ? null
+        : {
+            attribute: 'Shared with',
+            value: (
+              <ul>
+                {sharedWith.map((share, index) => (
+                  <li key={`${share.userDisplayName}-${index}`}>
+                    {share.userDisplayName}
+                  </li>
+                ))}
+              </ul>
+            ),
+          },
       {
         attribute: 'Owner',
         value: isOwner ? 'Me' : owner,
@@ -222,20 +252,6 @@ class UserDatasetDetail extends React.Component {
             value: `${normalizePercentage(percentQuotaUsed)}% of ${bytesToHuman(
               quotaSize
             )}`,
-          },
-      !isOwner || !sharedWith || !sharedWith.length
-        ? null
-        : {
-            attribute: 'Shared with',
-            value: (
-              <ul>
-                {sharedWith.map((share, index) => (
-                  <li key={`${share.userDisplayName}-${index}`}>
-                    {share.userDisplayName}
-                  </li>
-                ))}
-              </ul>
-            ),
           },
       !questions || !questions.length || !isInstalled
         ? null
@@ -298,7 +314,9 @@ class UserDatasetDetail extends React.Component {
         {attributes.map(({ attribute, value, className }, index) => (
           <div
             className={
-              classify('AttributeRow') + (className ? ' ' + className : '')
+              classify('AttributeRow') +
+              ' ' +
+              (className ?? classify(attribute))
             }
             key={index}
           >

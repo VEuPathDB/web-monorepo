@@ -5,7 +5,8 @@
 .UserDataset-SharingModal {
   .success,
   .Community-visible {
-    color: $green;
+    color: $blue;
+    vertical-align: bottom;
   }
   .danger {
     color: $red;
