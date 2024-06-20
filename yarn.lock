@@ -8073,7 +8073,7 @@ __metadata:
     ify-loader: ^1.1.0
     jquery: 1.9.1
     lodash: ^4.17.21
-    notistack: ^1.0.10
+    notistack: ^3.0.1
     path-browserify: ^1.0.1
     popper.js: ^1.16.1
     postcss: ^8.1.0
@@ -8151,7 +8151,7 @@ __metadata:
     html-webpack-plugin: ^4.5.2
     ify-loader: ^1.1.0
     mini-css-extract-plugin: ^2.7.6
-    notistack: ^1.0.10
+    notistack: ^3.0.1
     npm-run-all: ^4.1.5
     react: ^18.3.1
     react-dom: ^18.3.1
@@ -8316,7 +8316,7 @@ __metadata:
     eslint-plugin-react-hooks: ^4.3.0
     eslint-plugin-storybook: ^0.5.7
     lodash: ^4.17.21
-    notistack: ^1.0.10
+    notistack: ^3.0.1
     npm-run-all: ^4.1.5
     react: ^18.3.1
     react-cool-dimensions: ^2.0.7
@@ -8397,7 +8397,7 @@ __metadata:
     lodash: ^4.17.21
     luxon: ^3.1.1
     monocle-ts: ^2.3.11
-    notistack: ^1.0.10
+    notistack: ^3.0.1
     path-browserify: ^1.0.1
     postcss-normalize: ^10.0.1
     process: ^0.11.10
@@ -8494,7 +8494,7 @@ __metadata:
     jquery: 1.9.1
     js-cookie: ^2.2.0
     mini-css-extract-plugin: ^2.7.6
-    notistack: ^1.0.10
+    notistack: ^3.0.1
     npm-run-all: ^4.1.5
     popper.js: ^1.16.1
     react: ^18.3.1
@@ -8579,7 +8579,7 @@ __metadata:
     html-webpack-plugin: ^4.5.2
     ify-loader: ^1.1.0
     mini-css-extract-plugin: ^2.7.6
-    notistack: ^1.0.10
+    notistack: ^3.0.1
     npm-run-all: ^4.1.5
     react: ^18.3.1
     react-dom: ^18.3.1
@@ -8731,7 +8731,7 @@ __metadata:
     immer: ^7.0.5
     jquery: 1.9.1
     mini-css-extract-plugin: ^2.7.6
-    notistack: ^1.0.10
+    notistack: ^3.0.1
     npm-run-all: ^4.1.5
     popper.js: ^1.16.1
     react: ^18.3.1
@@ -8801,7 +8801,7 @@ __metadata:
     eslint-plugin-react-hooks: ^4.0.8
     http-proxy-middleware: ^1.0.6
     lodash: ^4.17.21
-    notistack: ^1.0.10
+    notistack: ^3.0.1
     react: ^18.3.1
     react-app-rewired: ^2.2.1
     react-dom: ^18.3.1
@@ -8956,7 +8956,7 @@ __metadata:
     eslint-config-react-app: ^7.0.0
     ify-loader: ^1.1.0
     lodash: ^4.17.21
-    notistack: ^1.0.10
+    notistack: ^3.0.1
     path-browserify: ^1.0.1
     postcss: ^8.1.0
     querystring-es3: ^0.2.1
@@ -9030,7 +9030,7 @@ __metadata:
     eslint-config-react-app: ^7.0.0
     ify-loader: ^1.1.0
     lodash: ^4.17.21
-    notistack: ^1.0.10
+    notistack: ^3.0.1
     path-browserify: ^1.0.1
     postcss: ^8.1.0
     querystring-es3: ^0.2.1
@@ -9108,7 +9108,7 @@ __metadata:
     lodash: ^4.17.21
     mansion-ui: 2.5
     natural-sort: ^1.0.0
-    notistack: ^1.0.10
+    notistack: ^3.0.1
     npm-run-all: ^4.1.5
     prop-types: ^15.7.2
     react: ^18.3.1
@@ -9166,7 +9166,7 @@ __metadata:
     icon-font-generator: ^2.1.11
     ify-loader: ^1.1.0
     md5: ^2.3.0
-    notistack: ^1.0.10
+    notistack: ^3.0.1
     npm-run-all: ^4.1.5
     react: ^18.3.1
     react-dom: ^18.3.1
@@ -20514,6 +20514,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"goober@npm:^2.0.33":
+  version: 2.1.14
+  resolution: "goober@npm:2.1.14"
+  peerDependencies:
+    csstype: ^3.0.10
+  checksum: 78978b7192d6a1af5cfbf1fd64b661b5f53ee6c733554b1f1b2ad3e1e2c979847fc080434390647640bb8358c0b193895d0007432c0886d12001f02f8f56b5e6
+  languageName: node
+  linkType: hard
+
 "gopd@npm:^1.0.1":
   version: 1.0.1
   resolution: "gopd@npm:1.0.1"
@@ -27364,17 +27373,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"notistack@npm:^1.0.10":
-  version: 1.0.10
-  resolution: "notistack@npm:1.0.10"
+"notistack@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "notistack@npm:3.0.1"
   dependencies:
     clsx: ^1.1.0
-    hoist-non-react-statics: ^3.3.0
+    goober: ^2.0.33
   peerDependencies:
-    "@material-ui/core": ^4.0.0
-    react: ^16.8.0 || ^17.0.0
-    react-dom: ^16.8.0 || ^17.0.0
-  checksum: 50223dbb30a33318bedfc03adbd81d75e5c74c8b74ae39aa9795377c51f556f0a7daa1061a516804e2a7cabf6a2f5a124dc5ed8e96c80731eec1377d16a65b42
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: 421c970308690b8c8cb2e275e7f66020db7c1955e104f638e7fa562396a6b9322ff95f0e62492b07f3d36b0ef72adb4de2c2ce9803089c1c8f028d1a3b088e01
   languageName: node
   linkType: hard
 

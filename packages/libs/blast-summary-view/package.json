@@ -81,7 +81,7 @@
     "eslint-config-react-app": "^7.0.0",
     "ify-loader": "^1.1.0",
     "jquery": "1.9.1",
-    "notistack": "^1.0.10",
+    "notistack": "^3.0.1",
     "path-browserify": "^1.0.1",
     "popper.js": "^1.16.1",
     "postcss": "^8.1.0",

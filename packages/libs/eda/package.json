@@ -88,7 +88,7 @@
     "buffer": "^6.0.3",
     "http-proxy-middleware": "^2.0.6",
     "ify-loader": "^1.1.0",
-    "notistack": "^1.0.10",
+    "notistack": "^3.0.1",
     "path-browserify": "^1.0.1",
     "postcss-normalize": "^10.0.1",
     "process": "^0.11.10",

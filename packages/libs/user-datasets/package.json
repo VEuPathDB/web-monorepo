@@ -78,7 +78,7 @@
     "eslint": "^8.7.0",
     "eslint-config-react-app": "^7.0.0",
     "ify-loader": "^1.1.0",
-    "notistack": "^1.0.10",
+    "notistack": "^3.0.1",
     "path-browserify": "^1.0.1",
     "postcss": "^8.1.0",
     "querystring-es3": "^0.2.1",
