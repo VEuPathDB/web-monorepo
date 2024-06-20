@@ -51,6 +51,9 @@ body.wdk-ModalOpen {
   border-top-right-radius: 4px;
   background: #eee;
   padding: 0.6em 0.8em;
+}
+
+.wdk-DialogHeader.draggable {
   cursor: move;
 }
 
