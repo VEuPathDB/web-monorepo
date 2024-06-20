@@ -31,6 +31,8 @@ class BiomDatasetDetail extends UserDatasetDetail {
     );
   }
 
+  // See note in the base class, UserDatasetDetail
+  /** @return {import("react").ReactNode[]} */
   getPageSections() {
     const [headerSection, , fileSection] = super.getPageSections();
 
