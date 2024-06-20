@@ -1,17 +1,15 @@
-import { useMap, Popup } from 'react-leaflet';
 import { useRef, useEffect, useCallback } from 'react';
+import L, { LeafletMouseEvent, LatLngBounds } from 'leaflet';
+import { useMap, Popup } from 'react-leaflet';
 // use new ReactLeafletDriftMarker instead of DriftMarker
 import ReactLeafletDriftMarker from 'react-leaflet-drift-marker';
-import { MarkerProps, Bounds } from './Types';
-import L, { LeafletMouseEvent, LatLngBounds } from 'leaflet';
-
 import { debounce } from 'lodash';
+
+import { MarkerProps, Bounds } from './Types';
 
 export interface BoundsDriftMarkerProps extends MarkerProps {
   bounds: Bounds;
   duration: number;
-  // A class to add to the popup element
-  popupClass?: string;
   // selectedMarkers state
   selectedMarkers?: string[];
   // selectedMarkers setState
@@ -44,6 +42,8 @@ export default function BoundsDriftMarker({
   showPopup,
   popupContent,
   popupClass,
+  getVerticalPopupExtraOffset = () => [0, 0],
+  getHorizontalPopupExtraOffset = () => [0, 0],
   zIndexOffset,
   selectedMarkers,
   setSelectedMarkers,
@@ -61,13 +61,14 @@ export default function BoundsDriftMarker({
   // The `interactive` option is set to false, so
   // that it does not react to mouse events, which
   // allows the marker to be clicked, even if the
-  // reactable is above the marker.
+  // rectangle is above the marker.
   const boundsRectangle = L.rectangle(boundingBox, {
     color: 'gray',
     weight: 1,
     pane: 'popupPane',
     interactive: false,
   });
+
   useEffect(() => {
     /**
      * Prevents an edge case where the boundsRectangle persists if simultaneously a marker is hovered
@@ -184,52 +185,103 @@ export default function BoundsDriftMarker({
      */
     if (!markerRef.current || !popupRef.current || !grayBoundsRect) return;
 
-    const markerRect = markerRef.current._icon.getBoundingClientRect();
     const markerIconRect =
-      markerRef.current._icon.firstChild.getBoundingClientRect();
-    const anchorRect = popupRef.current._tipContainer.getBoundingClientRect();
-    const { height: anchorHeight, width: anchorWidth } = anchorRect;
+      markerRef.current._icon.firstChild.getBoundingClientRect() as DOMRect;
+    const anchorRect =
+      popupRef.current._tipContainer.getBoundingClientRect() as DOMRect;
+
+    // The visible height of the anchor is actually half its reported height
+    // (works out to be about 10px)
+    const anchorHeight = anchorRect.height / 2;
+
+    const markerIconCenter = [
+      (markerIconRect.left + markerIconRect.right) / 2,
+      (markerIconRect.top + markerIconRect.bottom) / 2,
+    ] as [number, number];
+
+    const verticalPopupExtraOffset =
+      getVerticalPopupExtraOffset(markerIconRect);
+    const horizontalPopupExtraOffset =
+      getHorizontalPopupExtraOffset(markerIconRect);
 
     /**
+     *
      * Within each conditional block, we will:
-     *  1.  check the position of the gray box vs the marker to determine which element the popup should
-     *      be anchored to
-     *  2.  set the popupRef's offset accordingly (with some fuzzy calculations)
+     *  1.  Check the position of the gray box vs the marker to determine which
+     *      element the popup should be anchored to
+     *  2.  Set the popupRef's offset accordingly (with some fuzzy calculations)
+     *
+     * Initial popup X and Y values were determined by observation when offsets
+     * were set to 0.
+     *
+     * NOTE: When slightly adjusting the popup position in the future, prefer
+     * to modify a single marker type's vertical/horizontalPopupExtraOffset
+     * before modifying this code.
+     *
      */
-    // with the marker clicl event for selectedMarkers, popupRef is not used as it changes by click event
+    // with the marker click event for selectedMarkers, popupRef is not used as it changes by click event
     if (orientation === 'down') {
-      const yOffset =
-        (markerIconRect.bottom > grayBoundsRect.bottom
+      const xAdjustedOffset = FINE_ADJUSTMENT / 2 + verticalPopupExtraOffset[0];
+
+      const initialPopupAnchorY = markerIconRect.top;
+      const finalAnchorY =
+        markerIconRect.bottom > grayBoundsRect.bottom
           ? markerIconRect.bottom
-          : grayBoundsRect.bottom) -
-        markerRect.bottom +
-        anchorHeight -
-        FINE_ADJUSTMENT / 2;
-      popupRef.current.options.offset = [FINE_ADJUSTMENT / 2, yOffset];
+          : grayBoundsRect.bottom;
+      const yBaseOffset = finalAnchorY - initialPopupAnchorY;
+      const yAdjustedOffset =
+        yBaseOffset + anchorHeight + verticalPopupExtraOffset[1];
+
+      popupRef.current.options.offset = [xAdjustedOffset, yAdjustedOffset];
     } else if (orientation === 'right') {
-      const xOffset =
-        (markerIconRect.right > grayBoundsRect.right
+      const initialPopupAnchorX = markerIconCenter[0];
+      const finalAnchorX =
+        markerIconRect.right > grayBoundsRect.right
           ? markerIconRect.right
-          : grayBoundsRect.right) +
-        anchorWidth / 2 -
-        markerRect.right;
-      popupRef.current.options.offset = [xOffset, DEFAULT_OFFSET[1]];
+          : grayBoundsRect.right;
+      const xBaseOffset = finalAnchorX - initialPopupAnchorX;
+      const xAdjustedOffset =
+        xBaseOffset +
+        anchorHeight / 2 +
+        FINE_ADJUSTMENT +
+        horizontalPopupExtraOffset[0];
+
+      const initialPopupAnchorY = markerIconRect.top;
+      const finalAnchorY = markerIconCenter[1];
+      const yBaseOffset = finalAnchorY - initialPopupAnchorY;
+      const yAdjustedOffset = yBaseOffset + horizontalPopupExtraOffset[1];
+
+      popupRef.current.options.offset = [xAdjustedOffset, yAdjustedOffset];
     } else if (orientation === 'left') {
-      const xOffset =
-        (markerRect.left < grayBoundsRect.left
-          ? markerRect.left
-          : grayBoundsRect.left) -
-        markerRect.left -
-        anchorWidth / 2;
-      popupRef.current.options.offset = [xOffset, DEFAULT_OFFSET[1]];
+      const initialPopupAnchorX = markerIconCenter[0];
+      const finalAnchorX =
+        markerIconRect.left < grayBoundsRect.left
+          ? markerIconRect.left
+          : grayBoundsRect.left;
+      const xBaseOffset = finalAnchorX - initialPopupAnchorX;
+      const xAdjustedOffset =
+        xBaseOffset - FINE_ADJUSTMENT + horizontalPopupExtraOffset[0];
+
+      const initialPopupAnchorY = markerIconRect.top;
+      const finalAnchorY = markerIconCenter[1];
+      const yBaseOffset = finalAnchorY - initialPopupAnchorY;
+      const yAdjustedOffset = yBaseOffset + horizontalPopupExtraOffset[1];
+
+      popupRef.current.options.offset = [xAdjustedOffset, yAdjustedOffset];
     } else {
-      const yOffset =
-        (markerRect.top < grayBoundsRect.top
-          ? markerRect.top
-          : grayBoundsRect.top) -
-        FINE_ADJUSTMENT / 2 -
-        markerRect.y;
-      popupRef.current.options.offset = [FINE_ADJUSTMENT / 2, yOffset];
+      // orientation === 'up'
+      const xAdjustedOffset = FINE_ADJUSTMENT / 2 + verticalPopupExtraOffset[0];
+
+      const anchorInitialY = markerIconRect.top;
+      const anchorFinalY =
+        markerIconRect.top < grayBoundsRect.top
+          ? markerIconRect.top
+          : grayBoundsRect.top;
+      const yBaseOffset = anchorFinalY - anchorInitialY;
+      const yAdjustedOffset =
+        yBaseOffset - anchorHeight + verticalPopupExtraOffset[1];
+
+      popupRef.current.options.offset = [xAdjustedOffset, yAdjustedOffset];
     }
   };
 
@@ -269,8 +321,8 @@ export default function BoundsDriftMarker({
       maxHeight={popupContent.size.height}
       autoPan={false}
       closeButton={false}
-      onOpen={() => handlePopupOpen()}
-      onClose={() => handlePopupClose()}
+      onOpen={handlePopupOpen}
+      onClose={handlePopupClose}
     >
       {popupContent.content}
     </Popup>
