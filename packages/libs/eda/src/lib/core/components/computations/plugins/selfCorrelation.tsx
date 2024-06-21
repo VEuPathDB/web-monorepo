@@ -6,6 +6,7 @@ import {
   useConfigChangeHandler,
   assertComputationWithConfig,
   isNotAbsoluteAbundanceVariableCollection,
+  isTaxonomicVariableCollection,
 } from '../Utils';
 import { Computation } from '../../../types/visualization';
 import { ComputationStepContainer } from '../ComputationStepContainer';
@@ -111,9 +112,9 @@ function SelfCorrelationConfigDescriptionComponent({
 }
 
 const CORRELATION_METHODS = [
+  { value: 'sparcc', displayName: 'SparCC' },
   { value: 'spearman', displayName: 'Spearman' },
   { value: 'pearson', displayName: 'Pearson' },
-  { value: 'sparcc', displayName: 'SparCC' },
 ];
 const DEFAULT_PROPORTION_NON_ZERO_THRESHOLD = 0.05;
 const DEFAULT_VARIANCE_THRESHOLD = 0;
@@ -241,7 +242,7 @@ export function SelfCorrelationConfiguration(props: ComputationConfigProps) {
               <VariableCollectionSelectList
                 value={configuration.data1}
                 onSelect={partial(changeConfigHandler, 'data1')}
-                collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
+                collectionPredicate={isTaxonomicVariableCollection}
               />
             </div>
           </div>
