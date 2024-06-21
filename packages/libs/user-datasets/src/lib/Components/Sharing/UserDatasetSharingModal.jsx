@@ -469,6 +469,15 @@ class UserDatasetSharingModal extends React.Component {
         </div>
       );
     } else {
+      // Determine the value for the community visibility toggle:
+      // If a single user dataset is selected, use its value.
+      // If multiple are selected, and they all have the same value,
+      // use that value; otherwise, use undefined.
+      //
+      // Since the former is a subset of the latter, we can implement
+      // only the latter by:
+      // 1. Get an array of unique visbility values.
+      // 2. If the length of the array is 1, use that value; otherwise use undefined.
       const visibilities = uniq(datasets.map((d) => d.meta.visibility));
       const visibility =
         visibilities.length === 1 ? visibilities[0] : undefined;
