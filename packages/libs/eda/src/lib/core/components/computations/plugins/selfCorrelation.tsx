@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { VariableTreeNode, useFindEntityAndVariableCollection } from '../../..';
+import { useFindEntityAndVariableCollection } from '../../..';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { partial } from 'lodash';
 import {
@@ -14,20 +14,11 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { H6 } from '@veupathdb/coreui';
 import { networkVisualization } from '../../visualizations/implementations/NetworkVisualization';
 import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
-import SingleSelect, {
-  ItemGroup,
-} from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
-import {
-  entityTreeToArray,
-  findEntityAndVariableCollection,
-  isVariableCollectionDescriptor,
-} from '../../../utils/study-metadata';
+import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
+import { entityTreeToArray } from '../../../utils/study-metadata';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
-import { ancestorEntitiesForEntityId } from '../../../utils/data-element-constraints';
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
-import { variableCollectionsAreUnique } from '../../../utils/visualization';
-import PluginError from '../../visualizations/PluginError';
 import {
   CompleteSelfCorrelationConfig,
   SelfCorrelationConfig,
@@ -55,10 +46,7 @@ export const plugin: ComputationPlugin = {
     },
   }),
   isConfigurationComplete: (configuration) => {
-    // First, the configuration must be complete
-    // ANN CLEAN
-    if (!CompleteSelfCorrelationConfig.is(configuration)) return false;
-    return true;
+    return CompleteSelfCorrelationConfig.is(configuration);
   },
   visualizationPlugins: {
     unipartitenetwork: networkVisualization.withOptions({
@@ -69,67 +57,11 @@ export const plugin: ComputationPlugin = {
           return [];
         }
       },
-      // makeGetNodeMenuActions(studyMetadata) {
-      //   const entities = entityTreeToArray(studyMetadata.rootEntity);
-      //   const variables = entities.flatMap((e) => e.variables);
-      //   const collections = entities.flatMap(
-      //     (entity) => entity.collections ?? []
-      //   );
-      //   const hostCollection = collections.find(
-      //     (c) => c.id === 'EUPATH_0005050'
-      //   );
-      //   const parasiteCollection = collections.find(
-      //     (c) => c.id === 'EUPATH_0005051'
-      //   );
-      //   return function getNodeActions(nodeId: string) {
-      //     const [, variableId] = nodeId.split('.');
-      //     const variable = variables.find((v) => v.id === variableId);
-      //     if (variable == null) return [];
-
-      //     // E.g., "qa."
-      //     const urlPrefix = window.location.host.replace(
-      //       /(plasmodb|hostdb)\.org/,
-      //       ''
-      //     );
-
-      //     const href = parasiteCollection?.memberVariableIds.includes(
-      //       variable.id
-      //     )
-      //       ? `//${urlPrefix}plasmodb.org/plasmo/app/search/transcript/GenesByRNASeqpfal3D7_Lee_Gambian_ebi_rnaSeq_RSRCWGCNAModules?param.wgcnaParam=${variable.displayName.toLowerCase()}&autoRun=1`
-      //       : hostCollection?.memberVariableIds.includes(variable.id)
-      //       ? `//${urlPrefix}hostdb.org/hostdb/app/search/transcript/GenesByRNASeqhsapREF_Lee_Gambian_ebi_rnaSeq_RSRCWGCNAModules?param.wgcnaParam=${variable.displayName.toLowerCase()}&autoRun=1`
-      //       : undefined;
-      //     if (href == null) return [];
-      //     return [
-      //       {
-      //         label: 'See list of genes',
-      //         href,
-      //       },
-      //     ];
-      //   };
-      // },
-      // getParitionNames(studyMetadata, config) {
-      //   if (CorrelationConfig.is(config)) {
-      //     const entities = entityTreeToArray(studyMetadata.rootEntity);
-      //     const partition1Name = findEntityAndVariableCollection(
-      //       entities,
-      //       config.data1?.collectionSpec
-      //     )?.variableCollection.displayName;
-      //     const partition2Name =
-      //       config.data2?.dataType === 'collection'
-      //         ? findEntityAndVariableCollection(
-      //             entities,
-      //             config.data2?.collectionSpec
-      //           )?.variableCollection.displayName
-      //         : 'Continuous metadata variables';
-      //     return { partition1Name, partition2Name };
-      //   }
-      // },
     }), // Must match name in data service and in visualization.tsx
   },
   isEnabledInPicker: isEnabledInPicker,
   studyRequirements:
-    'These visualizations are only available for studies with compatible metadata.',
+    'These visualizations are only available for studies with compatible collections.',
 };
 
 // Renders on the thumbnail page to give a summary of the app instance
@@ -219,7 +151,65 @@ export function SelfCorrelationConfiguration(props: ComputationConfigProps) {
         For example, the Age and Shoe Size of children are correlated since as a
         child ages, their feet grow.
       </p>
-      {/* ANN FILL IN */}
+      <p>
+        Here we look for correlation between the abundance of different taxa at
+        a given taxonomic level
+      </p>
+      <br></br>
+      <H6>Inputs:</H6>
+      <p>
+        <ul>
+          <li>
+            <strong>Taxonomic Level.</strong> The taxonomic abundance data to be
+            used in the calculation.
+          </li>
+          <li>
+            <strong>Method.</strong> The type of correlation to compute. The
+            Pearson method looks for linear trends in the data, while the
+            Spearman method looks for a monotonic relationship. For Spearman and
+            Pearson correlation, we use the rcorr function from the Hmisc
+            package. The SparCC method is a compositional correlation method
+            appropriate for taxonomic abundance data and any other compositional
+            data.
+          </li>
+          <li>
+            <strong>Prevalence Prefilter.</strong> Remove variables that do not
+            have a set percentage of non-zero abundance across samples. Removing
+            rarely occurring features before calculating correlation can prevent
+            some spurious results.
+          </li>
+        </ul>
+      </p>
+      <br></br>
+      <H6>Outputs:</H6>
+      <p>
+        For each pair of variables, the correlation computation returns
+        <ul>
+          <li>
+            Correlation coefficient. A value between [-1, 1] that describes the
+            similarity of the input variables. Positive values indicate that
+            both variables rise and fall together, whereas negative values
+            indicate that as one rises, the other falls.
+          </li>
+          <li>
+            P Value. A measure of the probability of observing the result by
+            chance.
+          </li>
+        </ul>
+      </p>
+      <br></br>
+      <H6>More Questions?</H6>
+      <p>
+        Check out the{' '}
+        <a href="https://github.com/VEuPathDB/microbiomeComputations/blob/master/R/method-correlation.R">
+          correlation function
+        </a>{' '}
+        in our{' '}
+        <a href="https://github.com/microbiomeDB/MicrobiomeDB">
+          microbiomeComputations
+        </a>{' '}
+        R package.
+      </p>
     </div>
   );
 
@@ -307,9 +297,6 @@ export function SelfCorrelationConfiguration(props: ComputationConfigProps) {
               <span className={cx('-DescriptionContainer')}>% of samples</span>
             </div>
           </div>
-        </div>
-        <div>
-          {/* PluginError here if the method doesn't agree with the data */}
         </div>
         <ExpandablePanel
           title="Learn more about correlation"
