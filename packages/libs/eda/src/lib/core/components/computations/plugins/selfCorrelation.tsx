@@ -5,7 +5,6 @@ import { partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
-  isNotAbsoluteAbundanceVariableCollection,
   isTaxonomicVariableCollection,
 } from '../Utils';
 import { Computation } from '../../../types/visualization';
@@ -30,10 +29,10 @@ const cx = makeClassNameHelper('AppStepConfigurationContainer');
 /**
  * Self-Correlation
  *
- * The Correlation app takes all collections and visualizes the correlation between a collection and itself.
+ * The Correlation app takes a collection and visualizes the correlation between the collection and itself.
  * For example, if the collection is a set of genes, the app will show the correlation between every pair of genes in the collection.
  *
- * As of 05/14/24, this app will only be available for mbio assay data.
+ * As of 05/14/24, this app will only be available for mbio taxonomic data.
  */
 
 export const plugin: ComputationPlugin = {
@@ -96,7 +95,6 @@ function SelfCorrelationConfigDescriptionComponent({
           )}
         </span>
       </h4>
-      {/* The method should be disabled unti lthe data is chosen */}
       <h4>
         Method:{' '}
         <span>

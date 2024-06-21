@@ -73,7 +73,7 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
     svgStyleOverrides,
     containerClass = 'web-components-plot',
     showSpinner = false,
-    labelTruncationLength = 20,
+    labelTruncationLength = 10,
     emptyNetworkContent,
     annotations,
   } = props;

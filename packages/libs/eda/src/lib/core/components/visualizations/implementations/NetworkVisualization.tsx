@@ -15,7 +15,7 @@ import NetworkPlot, {
 } from '@veupathdb/components/lib/plots/NetworkPlot';
 import BipartiteNetworkSVG from './selectorIcons/BipartiteNetworkSVG';
 import {
-  CorrelationNetworkResponse,
+  NetworkResponse,
   NetworkRequestParams,
 } from '../../../api/DataClient/types';
 import { twoColorPalette } from '@veupathdb/components/lib/types/plots/addOns';
@@ -63,7 +63,7 @@ const plotContainerStyles = {
 };
 
 export const networkVisualization = createVisualizationPlugin({
-  selectorIcon: BipartiteNetworkSVG,
+  selectorIcon: BipartiteNetworkSVG, // Placeholder for now until ann has created a new one!
   fullscreenComponent: NetworkViz,
   createDefaultConfig: createDefaultConfig,
 });
@@ -122,7 +122,7 @@ function NetworkViz(props: VisualizationProps<Options>) {
 
   // Get data from the compute job
   const data = usePromise(
-    useCallback(async (): Promise<CorrelationNetworkResponse | undefined> => {
+    useCallback(async (): Promise<NetworkResponse | undefined> => {
       // Only need to check compute job status and filter status, since there are no
       // viz input variables.
       if (computeJobStatus !== 'complete') return undefined;
@@ -143,7 +143,7 @@ function NetworkViz(props: VisualizationProps<Options>) {
         computation.descriptor.type,
         visualization.descriptor.type,
         params,
-        CorrelationNetworkResponse
+        NetworkResponse
       );
 
       return response;
@@ -167,7 +167,7 @@ function NetworkViz(props: VisualizationProps<Options>) {
     data.value?.network.data.links.map(
       (link) => Number(link.weight) // link.weight will always be a number if defined, because it represents the continuous data associated with that link.
     ) ?? [];
-  // Use Set to dedupe the array of dataWeights
+  // Use Set to deduplicate the array of dataWeights
   const uniqueDataWeights = Array.from(new Set(dataWeights));
   const minDataWeight = Math.min(...uniqueDataWeights);
   const maxDataWeight = Math.max(...uniqueDataWeights);
@@ -241,8 +241,14 @@ function NetworkViz(props: VisualizationProps<Options>) {
         y: scaleY(Number(node.y)),
         id: node.id,
         label: displayLabel,
+        // the following attempts to place the label in a "reasonable" position
+        // on the plot. So if a node is far on the left side, the label will be on the left side.
+        // This simple solution attempts to avoid overlapping labels and give us a cheap, clean-ish plot.
         labelPosition:
-          scaleX(Number(node.x)) > 200 ? 'right' : ('left' as LabelPosition),
+          scaleX(Number(node.x)) >
+          (plotContainerStyleOverrides?.width ?? 900) / 2
+            ? 'right'
+            : ('left' as LabelPosition),
       };
     });
 
@@ -267,6 +273,7 @@ function NetworkViz(props: VisualizationProps<Options>) {
     minXPosition,
     maxYPosition,
     minYPosition,
+    plotContainerStyleOverrides?.width,
   ]);
 
   // plot subtitle
@@ -314,13 +321,12 @@ function NetworkViz(props: VisualizationProps<Options>) {
     </div>
   );
 
-  console.log('cleanedData', cleanedData);
   const networkPlotProps: NetworkPlotProps = {
     nodes: cleanedData ? cleanedData.nodes : undefined,
     links: cleanedData ? cleanedData.links : undefined,
     showSpinner: data.pending,
     containerStyles: finalPlotContainerStyles,
-    labelTruncationLength: 40,
+    labelTruncationLength: 30,
     emptyNetworkContent,
   };
 
