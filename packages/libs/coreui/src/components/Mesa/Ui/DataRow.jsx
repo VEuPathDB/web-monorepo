@@ -44,7 +44,6 @@ class DataRow extends React.PureComponent {
     const { row, rowIndex, options } = this.props;
     const { inline, onRowClick, inlineUseTooltips } = options;
     if (!inline && !onRowClick) return;
-    console.log({ options });
     if (inline && !inlineUseTooltips)
       this.setState({ expanded: !this.state.expanded });
     if (typeof onRowClick === 'function') onRowClick(row, rowIndex);
