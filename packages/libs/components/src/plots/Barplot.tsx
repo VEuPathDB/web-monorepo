@@ -168,6 +168,7 @@ const Barplot = makePlotlyPlotComponent(
       range: data.series.length ? undefined : [0, 10],
       tickfont: data.series.length ? {} : { color: 'transparent' },
       showticklabels: showIndependentAxisTickLabel,
+      type: 'category',
     };
 
     // truncation
