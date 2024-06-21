@@ -179,13 +179,13 @@ class UserDatasetDetail extends React.Component {
           meta.visibility === 'public' ? (
             <>
               {' '}
-              <Public className="Community-visible" /> This {dataNoun.singular}{' '}
-              is visible to the community.
+              <Public className="Community-visible" /> This{' '}
+              {dataNoun.singular.toLowerCase()} is visible to the community.
             </>
           ) : (
             <>
-              This {dataNoun.singular} is only visble to you and those you have
-              shared it with.
+              This {dataNoun.singular.toLowerCase()} is only visble to the owner
+              and those they have shared it with.
             </>
           ),
       },
