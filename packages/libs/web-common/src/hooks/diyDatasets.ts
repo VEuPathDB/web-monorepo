@@ -38,8 +38,6 @@ export function useDiyDatasets() {
   const communityDatasets = useWdkService(
     async (wdkService) => {
       assertIsVdiCompatibleWdkService(wdkService);
-      const user = await wdkService.getCurrentUser();
-      if (user.isGuest) return [];
       const userDatasets = await wdkService.getCommunityDatasets();
       const unsortedDiyEntries = userDatasets
         .filter((userDataset) => userDataset.projectIds.includes(projectId))
