@@ -36,6 +36,7 @@ export interface MesaStateProps<
     inline?: boolean;
     inlineMaxWidth?: string;
     inlineMaxHeight?: string;
+    inlineUseTooltips?: boolean; // don't use onClick to show the full contents, use an onMouseOver tooltip instead
     className?: string;
     errOnOverflow?: boolean;
     editableColumns?: boolean;

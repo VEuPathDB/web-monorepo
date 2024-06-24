@@ -81,6 +81,7 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
       ...props.tableProps.options,
       deriveRowClassName: (_) => rowStyleClassName,
       inline: true,
+      inlineUseTooltips: true,
       inlineMaxHeight: `${rowHeight}px`,
       inlineMaxWidth: `${maxColumnWidth}px`,
     },
