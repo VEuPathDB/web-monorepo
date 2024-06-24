@@ -374,6 +374,7 @@ export async function uploadGeneListUserDataset(
     name: step.customName,
     summary: `Genes from step "${step.customName}"`,
     description: datasetDescription,
+    visibility: 'private',
   });
 }
 
