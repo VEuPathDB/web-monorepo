@@ -12,7 +12,6 @@ import {
   EmptyAction,
   emptyAction,
 } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
-import { ServiceError } from '@veupathdb/wdk-client/lib/Service/ServiceError';
 
 import { validateVdiCompatibleThunk } from '../Service';
 
@@ -25,6 +24,7 @@ import {
   UserQuotaMetadata,
   UserDatasetFileListing,
 } from '../Utils/types';
+import { FetchClientError } from '@veupathdb/http-utils';
 
 export type Action =
   | DetailErrorAction
@@ -91,12 +91,12 @@ export const LIST_ERROR_RECEIVED = 'user-dataset/list-error';
 export type ListErrorReceivedAction = {
   type: typeof LIST_ERROR_RECEIVED;
   payload: {
-    error: ServiceError;
+    error: FetchClientError;
   };
 };
 
 export function listErrorReceived(
-  error: ServiceError
+  error: FetchClientError
 ): ListErrorReceivedAction {
   return {
     type: LIST_ERROR_RECEIVED,
@@ -161,11 +161,11 @@ export const DETAIL_ERROR = 'user-datasets/detail-error';
 export type DetailErrorAction = {
   type: typeof DETAIL_ERROR;
   payload: {
-    error: ServiceError;
+    error: FetchClientError;
   };
 };
 
-export function detailError(error: ServiceError): DetailErrorAction {
+export function detailError(error: FetchClientError): DetailErrorAction {
   return {
     type: DETAIL_ERROR,
     payload: {
@@ -217,12 +217,12 @@ export const DETAIL_UPDATE_ERROR = 'user-datasets/detail-update-error';
 export type DetailUpdateErrorAction = {
   type: typeof DETAIL_UPDATE_ERROR;
   payload: {
-    error: ServiceError;
+    error: FetchClientError;
   };
 };
 
 export function detailUpdateError(
-  error: ServiceError
+  error: FetchClientError
 ): DetailUpdateErrorAction {
   return {
     type: DETAIL_UPDATE_ERROR,
@@ -275,12 +275,12 @@ export const DETAIL_REMOVE_ERROR = 'user-datasets/detail-remove-error';
 export type DetailRemoveErrorAction = {
   type: typeof DETAIL_REMOVE_ERROR;
   payload: {
-    error: ServiceError;
+    error: FetchClientError;
   };
 };
 
 export function detailRemoveError(
-  error: ServiceError
+  error: FetchClientError
 ): DetailRemoveErrorAction {
   return {
     type: DETAIL_REMOVE_ERROR,
@@ -485,8 +485,8 @@ export function loadUserDatasetDetailWithoutLoadingIndicator(id: string) {
         };
         return detailReceived(id, transformedResponse, fileListing);
       },
-      (error: ServiceError) =>
-        error.status === 404 ? detailReceived(id) : detailError(error)
+      (error: FetchClientError) =>
+        error.statusCode === 404 ? detailReceived(id) : detailError(error)
     )
   );
 }
@@ -632,6 +632,7 @@ function transformVdiResponseToLegacyResponseHelper(
     created,
     status,
     importMessages,
+    visibility,
   } = ud;
   const { quota } = userQuotaMetadata;
   return {
@@ -647,6 +648,7 @@ function transformVdiResponseToLegacyResponseHelper(
       name,
       description: description ?? '',
       summary: summary ?? '',
+      visibility,
     },
     ownerUserId: owner.userId,
     age: Date.now() - Date.parse(created),
