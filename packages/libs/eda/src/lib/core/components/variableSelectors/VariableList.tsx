@@ -683,15 +683,16 @@ export default function VariableList({
                 padding: '0.25em',
                 margin: 0,
                 color: '#222',
-                fontWeight: 500,
+                fontWeight: 'bold',
               }}
             >
               Featured variables
             </h3>
           </summary>
+          <div style={{ height: '0.5em' }} />
           {Object.entries(groupedFeaturedFields).map(([entityName, fields]) => (
             <>
-              <b>{entityName + ':'}</b>
+              <span style={{ fontWeight: 500 }}>{entityName}</span>
               <ul
                 style={{
                   listStyle: 'none',
@@ -733,7 +734,7 @@ export default function VariableList({
                           position: 'relative',
                           display: 'flex',
                           alignItems: 'center',
-                          marginLeft: '1em',
+                          marginLeft: '0.25em',
                           padding: scope === 'download' ? '0.2em 0' : undefined,
                         }}
                       >
