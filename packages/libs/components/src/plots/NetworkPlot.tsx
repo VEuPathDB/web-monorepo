@@ -22,6 +22,7 @@ import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 import { ExportPlotToImageButton } from './ExportPlotToImageButton';
 import { plotToImage } from './visxVEuPathDB';
 import { GlyphTriangle } from '@visx/visx';
+import { Option as NodeLabelProp } from '../components/plotControls/MultiSelect';
 
 import './NetworkPlot.css';
 
@@ -48,10 +49,8 @@ export interface NetworkPlotProps {
   getNodeMenuActions?: (nodeId: string) => NodeMenuAction[];
   /** Labels, notes, and other annotations to add to the network */
   annotations?: ReactNode[];
-  /** selected node labels */
-  selectedNodeLabels?: (string | undefined)[];
-  /** show node labels */
-  showNodeLabels?: boolean;
+  /** visible node labels */
+  visibleNodeLabels?: NodeLabelProp[];
 }
 
 const DEFAULT_PLOT_WIDTH = 500;
@@ -80,8 +79,7 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
     labelTruncationLength = 20,
     emptyNetworkContent,
     annotations,
-    selectedNodeLabels,
-    showNodeLabels = false,
+    visibleNodeLabels,
   } = props;
 
   const [highlightedNodeId, setHighlightedNodeId] = useState<string>();
@@ -309,8 +307,13 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
                           );
                         }}
                         fontWeight={isHighlighted ? 600 : 400}
-                        selectedNodeLabels={selectedNodeLabels}
-                        showNodeLabels={showNodeLabels}
+                        // pass showLabel as a prop for hover event
+                        showLabel={
+                          node.label != null &&
+                          visibleNodeLabels?.some(
+                            (el) => el.value === node.label
+                          )
+                        }
                       />
                     </>
                   );

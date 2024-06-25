@@ -22,10 +22,8 @@ interface NodeWithLabelProps {
   labelColor?: string;
   /** Length for labels before being truncated by ellipsis. Default 20 */
   truncationLength?: number;
-  /** selected node labels */
-  selectedNodeLabels?: (string | undefined)[];
-  /** show node labels */
-  showNodeLabels?: boolean;
+  /** show node label */
+  showLabel?: boolean;
 }
 
 // NodeWithLabel draws one node and an optional label for the node. Both the node and
@@ -44,8 +42,7 @@ export function NodeWithLabel(props: NodeWithLabelProps) {
     fontWeight = 400,
     labelColor = '#000',
     truncationLength = 20,
-    selectedNodeLabels = [''],
-    showNodeLabels = false,
+    showLabel = true,
   } = props;
 
   const { color, label, stroke, strokeWidth } = node;
@@ -96,19 +93,13 @@ export function NodeWithLabel(props: NodeWithLabelProps) {
             cursor: 'ponter',
             zIndex: 1000,
             backgroundColor: 'red',
-            display:
-              label && showNodeLabels && selectedNodeLabels.includes(label)
-                ? 'block'
-                : hover
-                ? 'block'
-                : 'none',
+            display: showLabel ? 'block' : hover ? 'block' : 'none',
           }}
         >
           {label && truncateWithEllipsis(label, truncationLength)}
         </Text>
         <title>{label}</title>
       </g>
-      {/* <use xlinkHref=".NodeLables" /> */}
     </>
   );
 }

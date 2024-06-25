@@ -8,12 +8,11 @@ import {
 import NetworkPlot, { NetworkPlotProps } from '../../plots/NetworkPlot';
 import { Text } from '@visx/text';
 import { useEffect, useRef, useState } from 'react';
-import MultiSelection from '../../components/plotControls/MultiSelection';
-import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
-import Switch from '@material-ui/core/Switch';
-import FormGroup from '@material-ui/core/FormGroup';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
+import MultiSelect, {
+  Option as NodeLabelProp,
+} from '../../components/plotControls/MultiSelect';
+import LabelledGroup from '../../components/widgets/LabelledGroup';
+import { Undo as UndoIcon } from '@veupathdb/coreui/lib/components/icons';
 
 export default {
   title: 'Plots/Networks/NetworkPlot',
@@ -186,106 +185,61 @@ const SimpleWithControlData = genNetwork(
   DEFAULT_PLOT_SIZE
 );
 
-export const SimpleWithControl: Story<TemplateProps> = () => {
+// node label control
+export const NodeLabelControl: Story<TemplateProps> = () => {
   // list of node labels
-  const labels = SimpleWithControlData.nodes
-    .flatMap((node) => {
-      return node.label != null ? node.label : undefined;
-    })
-    .filter((data) => data != null);
+  const nodeLabels = SimpleWithControlData.nodes.flatMap((node) => {
+    return { value: node.label, label: node.label };
+  });
 
   // all values are selected as default
-  const [selectedNodeLabels, setSelectedNodeLabels] =
-    useState<(string | undefined)[]>(labels);
-  // show/hide node labels button
-  const [showNodeLabels, setShowNodeLabels] = useState<boolean>(false);
+  const [visibleNodeLabels, setVisibleNodeLabels] =
+    useState<NodeLabelProp[]>(nodeLabels);
+
+  const handleChange = (selected: NodeLabelProp[]) => {
+    setVisibleNodeLabels(selected);
+  };
 
   const ref = useRef<any>(null);
-
-  // custom switch based on MUI
-  const AntSwitch = withStyles((theme: Theme) =>
-    createStyles({
-      root: {
-        width: 28,
-        height: 16,
-        padding: 0,
-        display: 'flex',
-      },
-      switchBase: {
-        padding: 2,
-        color: theme.palette.grey[500],
-        '&$checked': {
-          transform: 'translateX(12px)',
-          color: theme.palette.common.white,
-          '& + $track': {
-            opacity: 1,
-            backgroundColor: theme.palette.primary.main,
-            borderColor: theme.palette.primary.main,
-          },
-        },
-      },
-      thumb: {
-        width: 12,
-        height: 12,
-        boxShadow: 'none',
-      },
-      track: {
-        border: `1px solid ${theme.palette.grey[500]}`,
-        borderRadius: 16 / 2,
-        opacity: 1,
-        backgroundColor: theme.palette.common.white,
-      },
-      checked: {},
-    })
-  )(Switch);
 
   return (
     <>
       <NetworkPlot
         containerStyles={{ width: DEFAULT_PLOT_SIZE }}
-        selectedNodeLabels={selectedNodeLabels}
-        showNodeLabels={showNodeLabels}
+        visibleNodeLabels={visibleNodeLabels}
         nodes={SimpleWithControlData.nodes}
         links={SimpleWithControlData.links}
         ref={ref}
       />
-      {/* node label control */}
-      <div style={{ display: 'flex', marginLeft: '2em' }}>
-        <div>
-          <FormGroup>
-            <div
-              style={{
-                color: 'black',
-                fontSize: '1em',
-                fontWeight: 600,
-                marginBottom: '0.25em',
-              }}
-            >
-              Node Labels
+      <div style={{ marginLeft: '1em', width: '800px' }}>
+        <LabelledGroup
+          label={
+            <div css={{ display: 'flex', alignItems: 'center' }}>
+              Network controls
+              <button
+                style={{
+                  padding: 0,
+                  marginLeft: '0.5em',
+                  border: 'none',
+                  background: 'none',
+                }}
+                onClick={(e) => setVisibleNodeLabels(nodeLabels)}
+              >
+                <UndoIcon fill="blue" />
+              </button>
             </div>
-            <Typography component="div">
-              <Grid component="label" container alignItems="center" spacing={1}>
-                <Grid item>Hide</Grid>
-                <Grid item>
-                  <AntSwitch
-                    checked={showNodeLabels}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      setShowNodeLabels(event.target.checked);
-                    }}
-                  />
-                </Grid>
-                <Grid item>Show</Grid>
-              </Grid>
-            </Typography>
-          </FormGroup>
-        </div>
-        <div style={{ marginTop: '-0.25em', marginLeft: '1em' }}>
-          <MultiSelection
-            labels={labels}
-            setSelectedNodeLabels={setSelectedNodeLabels}
-            showNodeLabels={showNodeLabels}
+          }
+        >
+          <h6 style={{ marginTop: '1em' }}>Visible Node Labels</h6>
+          <MultiSelect
+            key="network_multi_select_labels"
+            options={nodeLabels}
+            onChange={handleChange}
+            value={visibleNodeLabels}
+            isSelectAll={true}
+            menuPlacement={'bottom'}
           />
-        </div>
+        </LabelledGroup>
       </div>
     </>
   );
