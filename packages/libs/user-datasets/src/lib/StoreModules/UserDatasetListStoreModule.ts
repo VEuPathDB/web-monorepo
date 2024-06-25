@@ -87,7 +87,7 @@ export function reduce(state: State = initialState, action: Action): State {
       };
 
     case LIST_ERROR_RECEIVED:
-      return action.payload.error.status === 403
+      return action.payload.error.statusCode === 403
         ? {
             ...state,
             status: 'forbidden',
