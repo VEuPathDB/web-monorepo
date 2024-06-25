@@ -237,7 +237,7 @@ export const NodeLabelControl: Story<TemplateProps> = () => {
             onChange={handleChange}
             value={visibleNodeLabels}
             isSelectAll={true}
-            menuPlacement={'bottom'}
+            menuPlacement={'auto'}
           />
         </LabelledGroup>
       </div>

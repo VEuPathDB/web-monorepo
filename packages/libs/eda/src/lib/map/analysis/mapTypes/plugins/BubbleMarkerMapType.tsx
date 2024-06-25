@@ -627,7 +627,7 @@ const processRawBubblesData = (
       const bubbleData = {
         value: entityCount,
         diameter: bubbleValueToDiameterMapper?.(entityCount) ?? 0,
-        colorValue: overlayValue,
+        colorValue: limitPrecisionIfNumber(overlayValue, 4),
         colorLabel: aggregationConfig
           ? aggregationConfig.overlayType === 'continuous'
             ? capitalize(aggregationConfig.aggregator)
@@ -1093,4 +1093,12 @@ function markerConfigLittleFilter(props: UseLittleFiltersFuncProps): Filter[] {
     }
   }
   return [];
+}
+
+function limitPrecisionIfNumber(str: string, precision: number) {
+  const num = parseFloat(str);
+  if (isNaN(num)) {
+    return str; // Return the original string if it's not a number
+  }
+  return num.toPrecision(precision);
 }

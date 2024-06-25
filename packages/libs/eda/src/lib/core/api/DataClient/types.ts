@@ -392,9 +392,10 @@ export const NodeIdList = type({
   nodeIds: array(string),
 });
 
-// Bipartite network
-export type BipartiteNetworkResponse = TypeOf<typeof BipartiteNetworkResponse>;
-
+// Network types (including bipartite network)
+// The network types are all built from nodes and links. Currently we've defined specific
+// flavors of networks, called "correlation" networks, that have extra information
+// about them based on their context.
 const NodeData = intersection([
   type({
     id: string,
@@ -423,7 +424,6 @@ export const NetworkData = type({
   ),
 });
 
-// @ANN clean your types!
 const NetworkConfig = partial({
   variables: any,
   correlationCoefThreshold: number,
@@ -436,7 +436,15 @@ export const NetworkResponse = type({
   }),
 });
 
-// @ANN clean your types!
+export interface NetworkRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    correlationCoefThreshold?: number;
+    significanceThreshold?: number;
+  };
+}
+
 export const BipartiteNetworkData = type({
   partitions: array(NodeIdList),
   nodes: array(NodeData),
@@ -465,6 +473,8 @@ export const BipartiteNetworkResponse = type({
   }),
 });
 
+export type BipartiteNetworkResponse = TypeOf<typeof BipartiteNetworkResponse>;
+
 // Correlation Bipartite Network
 // a specific flavor of the bipartite network that also includes correlationCoefThreshold and significanceThreshold
 export type CorrelationBipartiteNetworkResponse = TypeOf<
@@ -486,21 +496,8 @@ export interface BipartiteNetworkRequestParams {
     significanceThreshold?: number;
   };
 }
-// @ANN can also maybe clean types here
-// Correlation Network
-// a specific flavor of the network that also includes correlationCoefThreshold and significanceThreshold
-export type CorrelationNetworkResponse = TypeOf<
-  typeof CorrelationNetworkResponse
->;
-export const CorrelationNetworkResponse = NetworkResponse;
-export interface NetworkRequestParams {
-  studyId: string;
-  filters: Filter[];
-  config: {
-    correlationCoefThreshold?: number;
-    significanceThreshold?: number;
-  };
-}
+
+export type NetworkResponse = TypeOf<typeof NetworkResponse>;
 
 export type FeaturePrefilterThresholds = TypeOf<
   typeof FeaturePrefilterThresholds

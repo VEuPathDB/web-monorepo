@@ -15,9 +15,8 @@ import NetworkPlot, {
 } from '@veupathdb/components/lib/plots/NetworkPlot';
 import BipartiteNetworkSVG from './selectorIcons/BipartiteNetworkSVG';
 import {
-  CorrelationNetworkResponse,
-  NetworkRequestParams,
   NetworkResponse,
+  NetworkRequestParams,
 } from '../../../api/DataClient/types';
 import { twoColorPalette } from '@veupathdb/components/lib/types/plots/addOns';
 import { useCallback, useMemo, useState } from 'react';
@@ -44,8 +43,6 @@ import { useVizConfig } from '../../../hooks/visualizations';
 import { FacetedPlotLayout } from '../../layouts/FacetedPlotLayout';
 import { H6 } from '@veupathdb/coreui';
 import { CorrelationConfig } from '../../../types/apps';
-import { StudyMetadata } from '../../..';
-import { NodeMenuAction } from '@veupathdb/components/lib/types/plots/network';
 import { LabelPosition } from '@veupathdb/components/lib/plots/Node';
 
 import MultiSelect, {
@@ -63,15 +60,15 @@ const MAX_STROKE_WIDTH = 6; // Maximum stroke width for links in the network. Wi
 const DEFAULT_NUMBER_OF_LINE_LEGEND_ITEMS = 4;
 
 const plotContainerStyles = {
-  width: 800,
-  height: 600,
+  width: 900,
+  height: 800,
   marginLeft: '0.75rem',
   border: '1px solid #dedede',
   boxShadow: '1px 1px 4px #00000066',
 };
 
 export const networkVisualization = createVisualizationPlugin({
-  selectorIcon: BipartiteNetworkSVG,
+  selectorIcon: BipartiteNetworkSVG, // Placeholder for now until ann has created a new one!
   fullscreenComponent: NetworkViz,
   createDefaultConfig: createDefaultConfig,
 });
@@ -96,9 +93,9 @@ interface Options
     LegendOptions,
     RequestOptions<NetworkConfig, {}, NetworkRequestParams> {}
 
-// Bipartite Network Visualization
-// The bipartite network takes no input variables, because the received data will complete the plot.
-// Eventually the user will be able to control the significance and correlation coefficient threshold values.
+// Network Visualization
+// The network takes no input variables, because the received data will complete the plot.
+// The user can control the significance and correlation coefficient threshold values.
 function NetworkViz(props: VisualizationProps<Options>) {
   const {
     options,
@@ -130,7 +127,7 @@ function NetworkViz(props: VisualizationProps<Options>) {
 
   // Get data from the compute job
   const data = usePromise(
-    useCallback(async (): Promise<CorrelationNetworkResponse | undefined> => {
+    useCallback(async (): Promise<NetworkResponse | undefined> => {
       // Only need to check compute job status and filter status, since there are no
       // viz input variables.
       if (computeJobStatus !== 'complete') return undefined;
@@ -151,7 +148,7 @@ function NetworkViz(props: VisualizationProps<Options>) {
         computation.descriptor.type,
         visualization.descriptor.type,
         params,
-        CorrelationNetworkResponse
+        NetworkResponse
       );
 
       return response;
@@ -175,12 +172,12 @@ function NetworkViz(props: VisualizationProps<Options>) {
     data.value?.network.data.links.map(
       (link) => Number(link.weight) // link.weight will always be a number if defined, because it represents the continuous data associated with that link.
     ) ?? [];
-  // Use Set to dedupe the array of dataWeights
+  // Use Set to deduplicate the array of dataWeights
   const uniqueDataWeights = Array.from(new Set(dataWeights));
   const minDataWeight = Math.min(...uniqueDataWeights);
   const maxDataWeight = Math.max(...uniqueDataWeights);
 
-  // Determine min and max x and y positions for nodes. For use in scaling the nodes.
+  // Determine min and max x and y positions for nodes. For use later in scaling the node positions to fit.
   const dataXPositions =
     data.value?.network.data.nodes.map((node) => Number(node.x)) ?? [];
   const dataYPositions =
@@ -204,12 +201,14 @@ function NetworkViz(props: VisualizationProps<Options>) {
   const cleanedData = useMemo(() => {
     if (!data.value) return undefined;
 
+    // Note that after applying a buffer of 150px/100px to the x/y scales, the plot size should be a sqare!
+    // For example, if plotContainerStyles.width=900 and plotContainerStyles.height=800, the scaled network will span 600x600.
     const scaleX = scaleLinear()
       .domain([minXPosition, maxXPosition])
-      .range([80, 500]);
+      .range([150, plotContainerStyles.width - 150]); // Add a little extra room in the x direction to accound for labels.
     const scaleY = scaleLinear()
       .domain([minYPosition, maxYPosition])
-      .range([80, 500]);
+      .range([100, plotContainerStyles.height - 100]);
 
     // Create map that will adjust each link's weight to find a stroke width that spans an appropriate range for this viz.
     const weightToStrokeWidthMap = scaleLinear()
@@ -257,8 +256,14 @@ function NetworkViz(props: VisualizationProps<Options>) {
         y: scaleY(Number(node.y)),
         id: node.id,
         label: displayLabel,
+        // the following attempts to place the label in a "reasonable" position
+        // on the plot. So if a node is far on the left side, the label will be on the left side.
+        // This simple solution attempts to avoid overlapping labels and give us a cheap, clean-ish plot.
         labelPosition:
-          scaleX(Number(node.x)) > 200 ? 'right' : ('left' as LabelPosition),
+          scaleX(Number(node.x)) >
+          (plotContainerStyleOverrides?.width ?? 900) / 2
+            ? 'right'
+            : ('left' as LabelPosition),
       };
     });
 
@@ -281,13 +286,23 @@ function NetworkViz(props: VisualizationProps<Options>) {
         };
       }),
     };
-  }, [data.value, entities, minDataWeight, maxDataWeight]);
+  }, [
+    data.value,
+    entities,
+    minDataWeight,
+    maxDataWeight,
+    maxXPosition,
+    minXPosition,
+    maxYPosition,
+    minYPosition,
+    plotContainerStyleOverrides?.width,
+  ]);
 
   // plot subtitle
   const plotSubtitle = (
     <div>
       <p>
-        {`Showing links with an absolute correlation coefficient above ${vizConfig.correlationCoefThreshold?.toString()} and a p-value below ${vizConfig.significanceThreshold?.toString()}`}
+        {`Showing links with an absolute correlation coefficient above ${vizConfig.correlationCoefThreshold?.toString()} and a p-value below ${vizConfig.significanceThreshold?.toString()}. Network layout computed using the igraph layout_nicely function.`}
       </p>
       <p>Click on a node to highlight its edges.</p>
     </div>
@@ -305,14 +320,13 @@ function NetworkViz(props: VisualizationProps<Options>) {
     updateThumbnail,
     {
       ...finalPlotContainerStyles,
-      height: 400, // no reason for the thumbnail to be as tall as the network (which could be very, very tall!)
+      height: 400,
     },
     [cleanedData]
   );
 
-  // Have the bpnet component say "No nodes" or whatev and have an extra
-  // prop called errorMessage or something that displays when there are no nodes.
-  // that error message can say "your thresholds of blah and blah are too high, change them"
+  // Content for the Network component to display when no nodes
+  // pass the correlation coeff and significance thresholds
   const emptyNetworkContent = (
     <div
       style={{
@@ -343,7 +357,7 @@ function NetworkViz(props: VisualizationProps<Options>) {
     links: cleanedData ? cleanedData.links : undefined,
     showSpinner: data.pending,
     containerStyles: finalPlotContainerStyles,
-    labelTruncationLength: 40,
+    labelTruncationLength: 30,
     emptyNetworkContent,
     // pass visible node labels
     visibleNodeLabels: visibleNodeLabels,
@@ -395,7 +409,7 @@ function NetworkViz(props: VisualizationProps<Options>) {
               onChange={handleChange}
               value={visibleNodeLabels}
               isSelectAll={true}
-              menuPlacement={'bottom'}
+              menuPlacement={'auto'}
             />
           </LabelledGroup>
         </div>
@@ -492,8 +506,8 @@ function NetworkViz(props: VisualizationProps<Options>) {
   );
   const tableGroupNode = <> </>;
 
-  // The bipartite network uses FacetedPlotLayout in order to position the legends
-  // atop the plot. The bipartite network plots are often so tall and so wide that
+  // The network uses FacetedPlotLayout in order to position the legends
+  // atop the plot. The network plots are often so tall and so wide that
   // with the normal PlotLayout component the legends are forced way, way down the screen
   // below the plot.
   const LayoutComponent = options?.layoutComponent ?? FacetedPlotLayout;

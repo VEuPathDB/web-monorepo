@@ -53,15 +53,15 @@ export interface NetworkPlotProps {
   visibleNodeLabels?: NodeLabelProp[];
 }
 
-const DEFAULT_PLOT_WIDTH = 500;
-const DEFAULT_PLOT_HEIGHT = 500;
+const DEFAULT_PLOT_WIDTH = 800;
+const DEFAULT_PLOT_HEIGHT = 900;
 
 const emptyNodes: NodeData[] = [...Array(9).keys()].map((item, index) => ({
   id: item.toString(),
   color: gray[100],
   stroke: gray[300],
-  x: 230 + 200 * Math.cos(2 * Math.PI * (index / 9)),
-  y: 230 + 200 * Math.sin(2 * Math.PI * (index / 9)),
+  x: 400 + 200 * Math.cos(2 * Math.PI * (index / 9)),
+  y: 300 + 200 * Math.sin(2 * Math.PI * (index / 9)),
 }));
 const emptyLinks: LinkData[] = [];
 
@@ -76,7 +76,7 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
     svgStyleOverrides,
     containerClass = 'web-components-plot',
     showSpinner = false,
-    labelTruncationLength = 20,
+    labelTruncationLength = 10,
     emptyNetworkContent,
     annotations,
     visibleNodeLabels,
