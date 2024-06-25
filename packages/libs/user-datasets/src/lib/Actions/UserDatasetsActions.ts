@@ -485,8 +485,7 @@ export function loadUserDatasetDetailWithoutLoadingIndicator(id: string) {
         };
         return detailReceived(id, transformedResponse, fileListing);
       },
-      (error: FetchClientError) =>
-        error.statusCode === 404 ? detailReceived(id) : detailError(error)
+      (error: FetchClientError) => detailError(error)
     )
   );
 }
