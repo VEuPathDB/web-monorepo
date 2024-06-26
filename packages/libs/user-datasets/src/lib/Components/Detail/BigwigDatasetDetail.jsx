@@ -21,11 +21,15 @@ class BigwigDatasetDetail extends UserDatasetDetail {
   }
 
   componentDidMount() {
-    const { userDataset } = this.props;
+    const {
+      userDataset,
+      config: { projectId },
+    } = this.props;
     const { wdkService } = this.context;
     const { dependencies } = userDataset;
+    if (!userDataset.projects.includes(projectId)) return;
     let genome;
-    // FIXME Can a UD have multiple of these dependencies?
+    // There will only ever be one such dependency in this array
     dependencies.forEach(function (dependency) {
       if (dependency.resourceIdentifier.endsWith('_Genome')) {
         const regex = new RegExp(
