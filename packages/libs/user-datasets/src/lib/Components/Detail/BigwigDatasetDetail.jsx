@@ -25,6 +25,7 @@ class BigwigDatasetDetail extends UserDatasetDetail {
     const { wdkService } = this.context;
     const { dependencies } = userDataset;
     let genome;
+    // FIXME Can a UD have multiple of these dependencies?
     dependencies.forEach(function (dependency) {
       if (dependency.resourceIdentifier.endsWith('_Genome')) {
         const regex = new RegExp(
@@ -34,6 +35,7 @@ class BigwigDatasetDetail extends UserDatasetDetail {
         genome = genomeList[1];
       }
     });
+    if (genome == null) return;
     wdkService
       .getAnswerJson(
         {
