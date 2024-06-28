@@ -205,7 +205,7 @@ export default function CheckboxList<T>({
                   </label>
                 </Tooltip>
               ) : (
-                <label>
+                <label css={{ display: 'flex', gap: '1ex' }}>
                   <input {...sharedInputAttributes} /> {item.display}
                 </label>
               )}
