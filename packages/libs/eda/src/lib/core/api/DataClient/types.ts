@@ -396,6 +396,11 @@ export const NodeIdList = type({
 // The network types are all built from nodes and links. Currently we've defined specific
 // flavors of networks, called "correlation" networks, that have extra information
 // about them based on their context.
+
+// NOTE tech debt below! The `sourece` and `target` of the NetworkData links should be
+// NodeData, but the backend is sending us strings. At this point it is unlikely the backend
+// will change for a while to fix this issue. If it does, we can simplify the below and let
+// BipartiteNetworkData extend NetworkData.
 const NodeData = intersection([
   type({
     id: string,
@@ -425,7 +430,7 @@ export const NetworkData = type({
 });
 
 const NetworkConfig = partial({
-  variables: any,
+  variables: unknown,
   correlationCoefThreshold: number,
   significanceThreshold: number,
 });
