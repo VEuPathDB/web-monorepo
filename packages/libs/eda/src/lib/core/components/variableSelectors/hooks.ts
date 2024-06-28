@@ -67,7 +67,7 @@ export const useFlattenedFields = (
 export const useFeaturedFields = (
   entities: StudyEntity[],
   scope: VariableScope
-): Field[] =>
+): FieldWithMetadata[] =>
   useMemo(() => {
     return entities.flatMap((entity) => {
       const hiddenVariablesInScope = makeHiddenVariablesInScope(entity, scope);
@@ -82,7 +82,7 @@ export const useFeaturedFields = (
         .map((variable) => ({
           ...variable,
           id: `${entity.id}/${variable.id}`,
-          displayName: `<span class="Entity">${entity.displayName}</span>: ${variable.displayName}`,
+          entityName: entity.displayName,
         }))
         .map((variable) => edaVariableToWdkField(variable));
     });
@@ -125,8 +125,8 @@ const getFeaturedFieldsFromTreeRecursive = (
       ...treeNode,
       field: {
         ...treeNode.field,
+        entityName,
         parent: treeNode.field.parent?.split('/')[1],
-        display: `<span class="Entity">${entityName}</span>: ${treeNode.field.display}`,
       },
     };
 

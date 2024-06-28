@@ -156,6 +156,7 @@ export function edaVariableToWdkField(
         : variable.type !== 'category'
         ? variable.type
         : undefined,
+    entityName: variable.entityName,
     variableName: variable.providerLabel,
     isFeatured: variable.type !== 'category' ? variable.isFeatured : undefined,
   };
