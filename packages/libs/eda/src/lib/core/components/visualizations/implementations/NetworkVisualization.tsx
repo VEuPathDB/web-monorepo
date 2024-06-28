@@ -268,11 +268,11 @@ function NetworkViz(props: VisualizationProps<Options>) {
     });
 
     // set initial visible node labels
-    const nodeLabels = nodesWithLabels.flatMap((node) => {
+    const defaultNodeLabels = nodesWithLabels.flatMap((node) => {
       return { value: node.label, label: node.label };
     });
 
-    setVisibleNodeLabels(nodeLabels);
+    setVisibleNodeLabels(defaultNodeLabels);
 
     return {
       ...data.value.network.data,

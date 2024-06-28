@@ -92,7 +92,6 @@ export function NodeWithLabel(props: NodeWithLabelProps) {
           style={{
             cursor: 'ponter',
             zIndex: 1000,
-            backgroundColor: 'red',
             display: showLabel ? 'block' : hover ? 'block' : 'none',
           }}
         >
