@@ -10,7 +10,7 @@ interface FormGroupProps {
   formRows: (FormRowProps & { key: string })[];
 }
 
-export const FormGroup: React.SFC<FormGroupProps> = ({
+export const FormGroup: React.FunctionComponent<FormGroupProps> = ({
   groupKey,
   headerContent,
   className,

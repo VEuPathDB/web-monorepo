@@ -12,7 +12,7 @@ interface FeatureTooltipProps {
   recordType: string;
 }
 
-export const FeatureTooltip: React.SFC<FeatureTooltipProps> = ({
+export const FeatureTooltip: React.FunctionComponent<FeatureTooltipProps> = ({
   feature,
   sequence,
   recordType,

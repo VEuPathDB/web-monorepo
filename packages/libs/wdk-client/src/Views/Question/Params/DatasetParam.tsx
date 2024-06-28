@@ -156,7 +156,7 @@ const getStrategyId = (uiState: State, parameter: DatasetParam) =>
 type Section = {
   sourceType: State['sourceType'];
   label: string;
-  render: React.StatelessComponent<Props<DatasetParam, State>>;
+  render: React.FC<Props<DatasetParam, State>>;
   isAvailable?: (props: Props<DatasetParam, State>) => boolean;
 };
 

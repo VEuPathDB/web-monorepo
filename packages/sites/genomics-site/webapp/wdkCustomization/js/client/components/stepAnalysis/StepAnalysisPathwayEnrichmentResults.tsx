@@ -144,7 +144,7 @@ const pathwayButtonsConfigFactory = (
   },
 ];
 
-export const StepAnalysisPathwayEnrichmentResults: React.SFC<StepAnalysisResultPluginProps> =
+export const StepAnalysisPathwayEnrichmentResults: React.FunctionComponent<StepAnalysisResultPluginProps> =
   ({ analysisResult, analysisConfig, webAppUrl }) => {
     const [wordCloudOpen, setWordCloudOpen] = useState(false);
 

@@ -5,7 +5,7 @@ interface StepAnalysisLinksProps {
   duplicateAnalysis: () => void;
 }
 
-export const StepAnalysisLinks: React.SFC<StepAnalysisLinksProps> = ({
+export const StepAnalysisLinks: React.FC<StepAnalysisLinksProps> = ({
   renameAnalysis,
   duplicateAnalysis,
 }) => (

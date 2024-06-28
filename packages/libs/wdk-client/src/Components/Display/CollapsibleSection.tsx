@@ -15,7 +15,7 @@ interface Props {
   isCollapsed?: boolean;
   onCollapsedChange: (isCollapsed: boolean) => void;
   headerContent: React.ReactNode;
-  headerComponent?: React.ReactType;
+  headerComponent?: React.FC | React.ComponentType;
   className?: string;
   children: React.ReactNode;
 }

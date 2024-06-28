@@ -124,11 +124,20 @@ export function MultiFilter(props: Props) {
 
   const [searchTerm, setSearchTerm] = useState('');
 
-  const onMemberSort = useCallback((_, sort) => {
-    setSort(sort);
-  }, []);
+  const onMemberSort = useCallback(
+    (
+      _: any,
+      sort: {
+        columnKey: string;
+        direction: 'asc' | 'desc';
+      }
+    ) => {
+      setSort(sort);
+    },
+    []
+  );
 
-  const onMemberSearch = useCallback((_, searchTerm: string) => {
+  const onMemberSearch = useCallback((_: any, searchTerm: string) => {
     setSearchTerm(searchTerm);
   }, []);
 

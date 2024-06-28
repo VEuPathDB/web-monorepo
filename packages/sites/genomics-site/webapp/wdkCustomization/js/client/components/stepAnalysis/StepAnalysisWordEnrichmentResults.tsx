@@ -103,7 +103,7 @@ const wordEnrichmentButtonsConfigFactory = (
   },
 ];
 
-export const StepAnalysisWordEnrichmentResults: React.SFC<StepAnalysisResultPluginProps> =
+export const StepAnalysisWordEnrichmentResults: React.FunctionComponent<StepAnalysisResultPluginProps> =
   ({ analysisResult, analysisConfig, webAppUrl }) => (
     <Fragment>
       <StepAnalysisButtonArray

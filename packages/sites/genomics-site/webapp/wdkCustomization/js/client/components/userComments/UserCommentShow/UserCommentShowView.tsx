@@ -18,35 +18,36 @@ export interface UserCommentShowViewProps {
   formGroupBodyClassName?: string;
 }
 
-export const UserCommentShowView: React.SFC<UserCommentShowViewProps> = ({
-  title,
-  className,
-  headerClassName,
-  bodyClassName,
-  initialCommentId,
-  ...formBodyProps
-}) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+export const UserCommentShowView: React.FunctionComponent<UserCommentShowViewProps> =
+  ({
+    title,
+    className,
+    headerClassName,
+    bodyClassName,
+    initialCommentId,
+    ...formBodyProps
+  }) => {
+    const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (containerRef.current && initialCommentId) {
-      const initialCommentIdSelector = `[id='${initialCommentId}']`;
-      const commentToScrollTo = containerRef.current.querySelector(
-        initialCommentIdSelector
-      );
+    useEffect(() => {
+      if (containerRef.current && initialCommentId) {
+        const initialCommentIdSelector = `[id='${initialCommentId}']`;
+        const commentToScrollTo = containerRef.current.querySelector(
+          initialCommentIdSelector
+        );
 
-      if (commentToScrollTo) {
-        commentToScrollTo.scrollIntoView();
+        if (commentToScrollTo) {
+          commentToScrollTo.scrollIntoView();
+        }
       }
-    }
-  }, []);
+    }, []);
 
-  return (
-    <div className={className} ref={containerRef}>
-      <div className={headerClassName}>{title}</div>
-      <div className={bodyClassName}>
-        <FormBody {...formBodyProps} />
+    return (
+      <div className={className} ref={containerRef}>
+        <div className={headerClassName}>{title}</div>
+        <div className={bodyClassName}>
+          <FormBody {...formBodyProps} />
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  };

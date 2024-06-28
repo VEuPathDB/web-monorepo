@@ -13,7 +13,7 @@ interface StepAnalysisTileProps {
   loadChoice: () => void;
 }
 
-export const StepAnalysisTile: React.SFC<StepAnalysisTileProps> = ({
+export const StepAnalysisTile: React.FC<StepAnalysisTileProps> = ({
   shortDescription,
   customThumbnailUrl,
   displayName,

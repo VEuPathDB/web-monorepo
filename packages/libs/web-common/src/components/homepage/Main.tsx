@@ -7,6 +7,7 @@ const cx = makeClassNameHelper('ebrc-Main');
 
 type Props = {
   containerClassName?: string;
+  children: React.ReactNode;
 };
 
 export const Main: FunctionComponent<Props> = (props) => (

@@ -12,7 +12,7 @@ interface FormBodyProps {
   formGroupBodyClassName?: string;
 }
 
-export const FormBody: React.SFC<FormBodyProps> = ({
+export const FormBody: React.FunctionComponent<FormBodyProps> = ({
   formGroupFields,
   formGroupHeaders,
   formGroupOrder,
