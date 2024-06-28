@@ -52,6 +52,7 @@ interface OwnProps extends RouteComponentProps<{}> {
   helpRoute: string;
   workspaceTitle: string;
   dataNoun: DataNoun;
+  enablePublicUserDatasets: boolean;
 }
 type Props = {
   ownProps: OwnProps;
@@ -126,8 +127,14 @@ class UserDatasetListController extends PageController<Props> {
 
     const { projectId, displayName: projectName } = config;
 
-    const { baseUrl, hasDirectUpload, helpRoute, location, dataNoun } =
-      this.props.ownProps;
+    const {
+      baseUrl,
+      hasDirectUpload,
+      helpRoute,
+      location,
+      dataNoun,
+      enablePublicUserDatasets,
+    } = this.props.ownProps;
 
     const {
       userDatasetList: {
@@ -165,6 +172,7 @@ class UserDatasetListController extends PageController<Props> {
       projectName,
       numOngoingUploads,
       quotaSize,
+      enablePublicUserDatasets,
       userDatasets: userDatasets.map(
         (id) => userDatasetsById[id].resource
       ) as UserDataset[],

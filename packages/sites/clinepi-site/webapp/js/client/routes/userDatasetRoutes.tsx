@@ -92,6 +92,7 @@ export const userDatasetRoutes: RouteEntry[] = [
               <ExternalContentController url={helpTabContentUrl} />
             }
             dataNoun={{ singular: 'Study', plural: 'Studies' }}
+            enablePublicUserDatasets
           />
         </Suspense>
       );

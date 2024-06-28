@@ -3,14 +3,16 @@
 .UserDatasetList,
 .UserDatasetDetail,
 .UserDataset-SharingModal {
-  .success {
-    color: $green;
+  .success,
+  .Community-visible {
+    color: $blue;
+    vertical-align: bottom;
   }
   .danger {
     color: $red;
   }
   .faded {
-    opacity: 0.5;
+    opacity: 0.85;
   }
 
   input,

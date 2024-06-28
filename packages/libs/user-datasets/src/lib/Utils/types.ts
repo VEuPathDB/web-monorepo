@@ -16,6 +16,7 @@ export interface UserDatasetMeta {
   description: string;
   name: string;
   summary: string;
+  visibility: UserDatasetVisibility;
 }
 
 export interface UserDatasetShare {
@@ -50,6 +51,7 @@ export interface UserDataset {
   status: UserDatasetVDI['status'];
   fileListing?: UserDatasetFileListing;
   importMessages: Array<string>;
+  visibility?: UserDatasetVisibility;
 }
 
 export interface UserDatasetUpload {
@@ -223,6 +225,8 @@ const statusDetails = intersection([
     install: array(installDetails),
   }),
 ]);
+
+export type UserDatasetVisibility = TypeOf<typeof visibilityOptions>;
 
 const visibilityOptions = keyof({
   private: null,

@@ -25,6 +25,7 @@ interface Props<T1 extends string = string, T2 extends string = string> {
     ComponentType<UserDatasetDetailProps>
   >;
   dataNoun: DataNoun;
+  enablePublicUserDatasets?: boolean;
 }
 
 export function UserDatasetRouter<T1 extends string, T2 extends string>({
@@ -36,6 +37,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
   helpTabContents,
   detailComponentsByTypeName,
   dataNoun,
+  enablePublicUserDatasets = false,
 }: Props<T1, T2>) {
   const { path, url } = useRouteMatch();
 
@@ -70,6 +72,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
               workspaceTitle={workspaceTitle}
               helpTabContents={helpTabContents}
               dataNoun={dataNoun}
+              enablePublicUserDatasets={enablePublicUserDatasets}
             />
           );
         }}
@@ -98,6 +101,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
               workspaceTitle={workspaceTitle}
               helpTabContents={helpTabContents}
               dataNoun={dataNoun}
+              enablePublicUserDatasets={enablePublicUserDatasets}
             />
           );
         }}
@@ -154,6 +158,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
               workspaceTitle={workspaceTitle}
               helpTabContents={helpTabContents}
               dataNoun={dataNoun}
+              enablePublicUserDatasets={enablePublicUserDatasets}
             />
           );
         }}
@@ -169,6 +174,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
               workspaceTitle={workspaceTitle}
               detailComponentsByTypeName={detailComponentsByTypeName}
               dataNoun={dataNoun}
+              enablePublicUserDatasets={enablePublicUserDatasets}
               {...props.match.params}
             />
           );

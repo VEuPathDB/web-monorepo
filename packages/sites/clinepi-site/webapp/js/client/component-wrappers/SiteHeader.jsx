@@ -24,10 +24,12 @@ export default function SiteHeaderWrapper() {
 
     const permissions = usePermissions();
 
-    const { diyDatasets, reloadDiyDatasets } = useDiyDatasets();
+    const { diyDatasets, communityDatasets, reloadDiyDatasets } =
+      useDiyDatasets();
 
     // for now, we default to each studies section being open
     const [expandUserStudies, setExpandUserStudies] = useState(true);
+    const [expandCommunityStudies, setExpandCommunityStudies] = useState(true);
     const [expandCuratedStudies, setExpandCuratedStudies] = useState(true);
 
     const handleStudiesMenuSearch = useCallback(
@@ -52,18 +54,24 @@ export default function SiteHeaderWrapper() {
         makeHeaderMenuItemsFactory(
           permissions,
           diyDatasets,
+          communityDatasets,
           reloadDiyDatasets,
           expandUserStudies,
           setExpandUserStudies,
+          expandCommunityStudies,
+          setExpandCommunityStudies,
           expandCuratedStudies,
           setExpandCuratedStudies
         ),
       [
         permissions,
         diyDatasets,
+        communityDatasets,
         reloadDiyDatasets,
         expandUserStudies,
         setExpandUserStudies,
+        expandCommunityStudies,
+        setExpandCommunityStudies,
         expandCuratedStudies,
         setExpandCuratedStudies,
       ]

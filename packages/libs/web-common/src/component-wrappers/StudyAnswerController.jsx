@@ -8,7 +8,14 @@ import CategoryIcon from '../App/Categories/CategoryIcon';
 import StudySearchIconLinks from '../App/Studies/StudySearches';
 import { isPrereleaseStudy } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
 import { makeEdaRoute } from '../routes';
-import { useEda } from '../config';
+import { useEda, useUserDatasetsWorkspace } from '../config';
+
+import {
+  useDiyStudySummaryColumns,
+  useDiyStudySummaryRows,
+} from '../hooks/diyStudySummaries';
+
+import DataGrid from '@veupathdb/coreui/lib/components/grids/DataGrid';
 
 // wrapping WDKClient AnswerController for specific rendering on certain columns
 function StudyAnswerController(props) {
@@ -48,22 +55,86 @@ function StudyAnswerController(props) {
     [props.permissions]
   );
 
+  const curatedStudies = (
+    <props.DefaultComponent
+      {...props}
+      stateProps={{
+        ...props.stateProps,
+        records: visibleRecords,
+        meta: props.stateProps.meta && {
+          ...props.stateProps.meta,
+          totalCount,
+        },
+      }}
+      renderCellContent={renderCellContent}
+      useStickyFirstNColumns={1}
+    />
+  );
+
+  const columns = useDiyStudySummaryColumns();
+  const { userStudySummaryRows, communityStudySummaryRows } =
+    useDiyStudySummaryRows();
+
   return (
-    <React.Fragment>
-      <props.DefaultComponent
-        {...props}
-        stateProps={{
-          ...props.stateProps,
-          records: visibleRecords,
-          meta: props.stateProps.meta && {
-            ...props.stateProps.meta,
-            totalCount,
-          },
-        }}
-        renderCellContent={renderCellContent}
-        useStickyFirstNColumns={1}
-      />
-    </React.Fragment>
+    <div className="ClinEpiStudyAnswerController">
+      {!props.stateProps.isLoading &&
+        userStudySummaryRows != null &&
+        communityStudySummaryRows != null && (
+          <>
+            <h1>Study summaries</h1>
+            {useUserDatasetsWorkspace &&
+              useEda &&
+              userStudySummaryRows.length > 0 && (
+                <>
+                  <h2>My studies</h2>
+                  <DataGrid
+                    columns={columns}
+                    data={userStudySummaryRows}
+                    stylePreset="mesa"
+                    styleOverrides={{
+                      headerCells: {
+                        backgroundColor: '#e2e2e3',
+                        color: '#444',
+                        textTransform: 'none',
+                      },
+                      dataCells: {
+                        fontSize: '1.1em',
+                        color: 'black',
+                        verticalAlign: 'top',
+                      },
+                    }}
+                  />
+                </>
+              )}
+            {useUserDatasetsWorkspace &&
+              useEda &&
+              communityStudySummaryRows.length > 0 && (
+                <>
+                  <h2>Community studies</h2>
+                  <DataGrid
+                    columns={columns.slice(0, -1)}
+                    data={communityStudySummaryRows}
+                    stylePreset="mesa"
+                    styleOverrides={{
+                      headerCells: {
+                        backgroundColor: '#e2e2e3',
+                        color: '#444',
+                        textTransform: 'none',
+                      },
+                      dataCells: {
+                        fontSize: '1.1em',
+                        color: 'black',
+                        verticalAlign: 'top',
+                      },
+                    }}
+                  />
+                </>
+              )}
+            <h2>Curated studies</h2>
+          </>
+        )}
+      {curatedStudies}
+    </div>
   );
 }
 
