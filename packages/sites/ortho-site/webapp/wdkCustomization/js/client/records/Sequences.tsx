@@ -22,6 +22,7 @@ import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import Mesa, { RowCounter } from '@veupathdb/coreui/lib/components/Mesa';
 import { PfamDomain } from 'ortho-client/components/pfam-domains/PfamDomain';
+import { SelectList } from '@veupathdb/coreui';
 
 type RowType = Record<string, AttributeValue>;
 const CorePeripheralFilterStates = ['both', 'core', 'peripheral'] as const;
@@ -320,67 +321,43 @@ export function RecordTable_Sequences(
   const clustalDisabled =
     highlightedNodes == null || highlightedNodes.length < 2;
 
-  const pfamMesaState: MesaStateProps<RowType> = {
-    options: {
-      isRowSelected: (row: RowType) =>
-        pfamFilterIds.includes(row.accession as string),
-    },
-    uiState: {},
-    rows: pfamRows,
-    columns: [
-      {
-        key: 'accession',
-        name: 'PFam accession',
-      },
-      {
-        key: 'symbol',
-        name: 'Symbol',
-      },
-      {
-        key: 'description',
-        name: 'Description',
-      },
-      {
-        key: 'num_proteins',
-        name: 'Count',
-        helpText: 'Number of proteins that contain this domain',
-      },
-      {
-        key: 'graphic',
-        name: 'Graphic',
-        renderCell: (cellProps: { row: RowType }) => {
-          const pfamId = cellProps.row.accession as string;
-          const symbol = cellProps.row.symbol as string;
-          return <PfamDomain pfamId={pfamId} title={`${pfamId} (${symbol})`} />;
-        },
-      },
-    ],
-    eventHandlers: {
-      onRowSelect: (row: RowType) =>
-        setPfamFilterIds((prev) => [...prev, row.accession as string]),
-      onRowDeselect: (row: RowType) =>
-        setPfamFilterIds((prev) => prev.filter((id) => id !== row.accession)),
-    },
-  };
-
   const rowCount = (filteredRows ?? sortedRows).length;
+
+  const pfamDomains = pfamRows.length > 0 && (
+    <SelectList
+      defaultButtonDisplayContent="Pfam domains"
+      items={pfamRows.map((row) => ({
+        display: (
+          <div
+            style={{
+              display: 'flex',
+              margin: '.25em 0',
+              alignItems: 'center',
+              gap: '1em',
+              verticalAlign: 'middle',
+              width: '100%',
+            }}
+          >
+            <PfamDomain
+              style={{ width: 100 }}
+              pfamId={row.accession as string}
+            />
+            <div>{row.accession}</div>
+            <div>{row.description}</div>
+            <div style={{ marginLeft: 'auto' }}>
+              {row.num_proteins} proteins
+            </div>
+          </div>
+        ),
+        value: row.accession as string,
+      }))}
+      value={pfamFilterIds}
+      onChange={setPfamFilterIds}
+    />
+  );
 
   return (
     <>
-      {pfamRows.length > 0 && (
-        <div
-          style={{
-            marginLeft: treeWidth,
-            display: 'flex',
-            flexDirection: 'row-reverse',
-          }}
-        >
-          <div>
-            <h4>PFam legend</h4>
-            <Mesa state={pfamMesaState} />
-          </div>
-        </div>
-      )}
       <div
         style={{
           marginLeft: treeWidth,
@@ -409,6 +386,7 @@ export function RecordTable_Sequences(
             />
           </div>
         </div>
+        {pfamDomains}
         <RadioButtonGroup
           options={[...CorePeripheralFilterStates]}
           optionLabels={CorePeripheralFilterStates.map(
