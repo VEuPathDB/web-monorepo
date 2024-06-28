@@ -127,10 +127,9 @@ export function SelfCorrelationConfiguration(props: ComputationConfigProps) {
     visualizationId,
   } = props;
 
-  const configuration = computation.descriptor
-    .configuration as SelfCorrelationConfig;
-
   assertComputationWithConfig(computation, SelfCorrelationConfig);
+
+  const { configuration } = computation.descriptor;
 
   const changeConfigHandler = useConfigChangeHandler(
     analysisState,
