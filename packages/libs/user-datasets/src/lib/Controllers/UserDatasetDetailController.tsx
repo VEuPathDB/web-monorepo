@@ -55,6 +55,7 @@ type OwnProps = {
     ComponentType<UserDatasetDetailProps>
   >;
   dataNoun: DataNoun;
+  enablePublicUserDatasets: boolean;
 };
 type MergedProps = {
   ownProps: OwnProps;
@@ -99,9 +100,24 @@ class UserDatasetDetailController extends PageController<MergedProps> {
   }
 
   isRenderDataLoadError() {
+    const { loadError } = this.props.stateProps;
     return (
-      this.props.stateProps.loadError != null &&
-      this.props.stateProps.loadError.status >= 500
+      loadError != null &&
+      loadError.statusCode >= 400 &&
+      loadError.statusCode !== 404
+    );
+  }
+
+  isRenderDataNotFound(): boolean {
+    const { loadError } = this.props.stateProps;
+    return loadError != null && loadError.statusCode === 404;
+  }
+
+  isRenderDataPermissionDenied(): boolean {
+    const { loadError } = this.props.stateProps;
+    return (
+      loadError != null &&
+      (loadError.statusCode === 401 || loadError.statusCode === 403)
     );
   }
 
@@ -152,8 +168,14 @@ class UserDatasetDetailController extends PageController<MergedProps> {
   }
 
   renderView() {
-    const { baseUrl, detailsPageTitle, id, workspaceTitle, dataNoun } =
-      this.props.ownProps;
+    const {
+      baseUrl,
+      detailsPageTitle,
+      id,
+      workspaceTitle,
+      dataNoun,
+      enablePublicUserDatasets,
+    } = this.props.ownProps;
     const {
       updateUserDatasetDetail,
       shareUserDatasets,
@@ -209,6 +231,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       workspaceTitle,
       detailsPageTitle,
       dataNoun,
+      enablePublicUserDatasets,
     };
 
     const DetailView = this.getDetailView(

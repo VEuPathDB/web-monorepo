@@ -27,9 +27,12 @@ import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png'
 export default function makeHeaderMenuItemsFactory(
   permissionsValue,
   diyDatasets,
+  communityDatasets,
   reloadDiyDatasets,
   expandUserStudies,
   setExpandUserStudies,
+  expandCommunityStudies,
+  setExpandCommunityStudies,
   expandCuratedStudies,
   setExpandCuratedStudies
 ) {
@@ -65,9 +68,24 @@ export default function makeHeaderMenuItemsFactory(
       stripHTML(study.name.toLowerCase()).includes(searchTerm.toLowerCase())
     );
 
+    const filteredCommunityStudies = (
+      useEda && useUserDatasetsWorkspace ? communityDatasets : []
+    )?.filter((dataset) =>
+      stripHTML(dataset.name.toLowerCase()).includes(searchTerm.toLowerCase())
+    );
+
     const filteredCuratedStudies = studies.entities?.filter((study) =>
       stripHTML(study.name.toLowerCase()).includes(searchTerm.toLowerCase())
     );
+
+    const isLoadingStudies =
+      permissionsValue.loading ||
+      filteredUserStudies == null ||
+      filteredCommunityStudies == null ||
+      filteredCuratedStudies == null;
+
+    const hasUserDatasets =
+      filteredUserStudies?.length > 0 || filteredCommunityStudies?.length > 0;
 
     return {
       mainMenu: [
@@ -103,66 +121,8 @@ export default function makeHeaderMenuItemsFactory(
                 ),
               },
             ].concat(
-              filteredCuratedStudies != null &&
-                filteredUserStudies != null &&
-                !permissionsValue.loading
-                ? diyDatasets?.length > 0 && studies.entities?.length > 0
-                  ? // here we have user studies and curated studies, so render "My studies" and "Curated studies" sections
-                    [
-                      {
-                        isVisible: filteredUserStudies.length > 0,
-                        text: (
-                          <CollapsibleDetailsSection
-                            summary="My studies"
-                            collapsibleDetails={filteredUserStudies.map(
-                              (study, idx) => (
-                                <DIYStudyMenuItem
-                                  key={idx}
-                                  name={study.name}
-                                  link={`${study.baseEdaRoute}/new`}
-                                  isChildOfCollapsibleSection={true}
-                                />
-                              )
-                            )}
-                            showDetails={expandUserStudies}
-                            setShowDetails={setExpandUserStudies}
-                          />
-                        ),
-                      },
-                    ].concat([
-                      {
-                        isVisible: filteredCuratedStudies.length > 0,
-                        text: (
-                          <CollapsibleDetailsSection
-                            summary="Curated studies"
-                            collapsibleDetails={filteredCuratedStudies.map(
-                              (study, idx) => (
-                                <StudyMenuItem
-                                  key={idx}
-                                  study={study}
-                                  config={siteConfig}
-                                  permissions={permissionsValue.permissions}
-                                  isChildOfCollapsibleSection={true}
-                                />
-                              )
-                            )}
-                            showDetails={expandCuratedStudies}
-                            setShowDetails={setExpandCuratedStudies}
-                          />
-                        ),
-                      },
-                    ])
-                  : // here we do not have user studies so no need for sections, just list the studies
-                    filteredCuratedStudies.map((study) => ({
-                      text: (
-                        <StudyMenuItem
-                          study={study}
-                          config={siteConfig}
-                          permissions={permissionsValue.permissions}
-                        />
-                      ),
-                    }))
-                : [
+              isLoadingStudies
+                ? [
                     {
                       text: (
                         <i
@@ -172,6 +132,89 @@ export default function makeHeaderMenuItemsFactory(
                       ),
                     },
                   ]
+                : [].concat(
+                    filteredUserStudies == null
+                      ? []
+                      : [
+                          {
+                            isVisible: filteredUserStudies.length > 0,
+                            text: (
+                              <CollapsibleDetailsSection
+                                summary="My studies"
+                                collapsibleDetails={filteredUserStudies.map(
+                                  (study, idx) => (
+                                    <DIYStudyMenuItem
+                                      key={idx}
+                                      name={study.name}
+                                      link={`${study.baseEdaRoute}/new`}
+                                      isChildOfCollapsibleSection={true}
+                                    />
+                                  )
+                                )}
+                                showDetails={expandUserStudies}
+                                setShowDetails={setExpandUserStudies}
+                              />
+                            ),
+                          },
+                        ],
+                    filteredCommunityStudies == null
+                      ? []
+                      : [
+                          {
+                            isVisible: filteredCommunityStudies.length > 0,
+                            text: (
+                              <CollapsibleDetailsSection
+                                summary="Community studies"
+                                collapsibleDetails={filteredCommunityStudies.map(
+                                  (study, idx) => (
+                                    <DIYStudyMenuItem
+                                      key={idx}
+                                      name={study.name}
+                                      link={`${study.baseEdaRoute}/new`}
+                                      isChildOfCollapsibleSection={true}
+                                    />
+                                  )
+                                )}
+                                showDetails={expandCommunityStudies}
+                                setShowDetails={setExpandCommunityStudies}
+                              />
+                            ),
+                          },
+                        ],
+                    filteredCuratedStudies == null || permissionsValue.loading
+                      ? []
+                      : [
+                          {
+                            isVisible: filteredCuratedStudies.length > 0,
+                            text: hasUserDatasets ? (
+                              <CollapsibleDetailsSection
+                                summary="Curated studies"
+                                collapsibleDetails={filteredCuratedStudies.map(
+                                  (study, idx) => (
+                                    <StudyMenuItem
+                                      key={idx}
+                                      study={study}
+                                      config={siteConfig}
+                                      permissions={permissionsValue.permissions}
+                                      isChildOfCollapsibleSection={true}
+                                    />
+                                  )
+                                )}
+                                showDetails={expandCuratedStudies}
+                                setShowDetails={setExpandCuratedStudies}
+                              />
+                            ) : (
+                              filteredCuratedStudies.map((study) => (
+                                <StudyMenuItem
+                                  study={study}
+                                  config={siteConfig}
+                                  permissions={permissionsValue.permissions}
+                                />
+                              ))
+                            ),
+                          },
+                        ]
+                  )
             ),
         },
         {

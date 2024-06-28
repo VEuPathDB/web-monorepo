@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { default as ReactSelect, components, InputAction } from 'react-select';
+import { default as ReactSelect, components } from 'react-select';
 
 export interface Option {
   value: number | string | undefined;
@@ -67,10 +67,7 @@ const MultiSelect = (props: any) => {
     (value !== '*' && label?.toLowerCase().includes(input.toLowerCase())) ||
     (value === '*' && filteredOptions?.length > 0);
 
-  const onInputChange = (
-    inputValue: string,
-    event: { action: InputAction }
-  ) => {
+  const onInputChange = (inputValue: string, event: { action: any }) => {
     if (event.action === 'input-change') setSelectInput(inputValue);
     else if (event.action === 'menu-close' && selectInput !== '')
       setSelectInput('');

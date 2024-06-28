@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { useFindEntityAndVariableCollection } from '../../..';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { partial } from 'lodash';
@@ -127,10 +126,9 @@ export function SelfCorrelationConfiguration(props: ComputationConfigProps) {
     visualizationId,
   } = props;
 
-  const configuration = computation.descriptor
-    .configuration as SelfCorrelationConfig;
-
   assertComputationWithConfig(computation, SelfCorrelationConfig);
+
+  const { configuration } = computation.descriptor;
 
   const changeConfigHandler = useConfigChangeHandler(
     analysisState,
@@ -212,17 +210,11 @@ export function SelfCorrelationConfiguration(props: ComputationConfigProps) {
     </div>
   );
 
-  const correlationMethodSelectorText = useMemo(() => {
-    if (configuration.correlationMethod) {
-      return (
-        CORRELATION_METHODS.find(
-          (method) => method.value === configuration.correlationMethod
-        )?.displayName ?? 'Select a method'
-      );
-    } else {
-      return 'Select a method';
-    }
-  }, [configuration.correlationMethod]);
+  const correlationMethodSelectorText = configuration.correlationMethod
+    ? CORRELATION_METHODS.find(
+        (method) => method.value === configuration.correlationMethod
+      )?.displayName ?? 'Select a method'
+    : 'Select a method';
 
   return (
     <ComputationStepContainer

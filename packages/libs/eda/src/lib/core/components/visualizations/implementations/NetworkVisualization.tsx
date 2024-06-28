@@ -44,7 +44,6 @@ import { FacetedPlotLayout } from '../../layouts/FacetedPlotLayout';
 import { H6 } from '@veupathdb/coreui';
 import { CorrelationConfig } from '../../../types/apps';
 import { LabelPosition } from '@veupathdb/components/lib/plots/Node';
-
 import MultiSelect, {
   Option as NodeLabelProp,
 } from '@veupathdb/components/lib/components/plotControls/MultiSelect';
