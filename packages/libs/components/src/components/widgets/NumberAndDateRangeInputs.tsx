@@ -43,6 +43,8 @@ export type BaseProps<M extends NumberOrDateRange> = {
   clearButtonLabel?: string;
   /** add disabled prop to disable input fields */
   disabled?: boolean;
+  /** specify the height of the input element */
+  inputHeight?: number;
 };
 
 export type NumberRangeInputProps = BaseProps<NumberRange> & { step?: number };
@@ -86,6 +88,7 @@ function BaseInput({
   clearButtonLabel = 'Clear',
   // add disabled prop to disable input fields
   disabled = false,
+  inputHeight,
   ...props
 }: BaseInputProps) {
   if (validator && required)
@@ -175,7 +178,9 @@ function BaseInput({
           {label}
         </Typography>
       )}
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
+      <div
+        style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
+      >
         {valueType === 'number' ? (
           <NumberInput
             value={min as number}
@@ -192,6 +197,7 @@ function BaseInput({
             // add disabled prop to disable input fields
             disabled={disabled}
             step={step}
+            inputHeight={inputHeight}
           />
         ) : (
           <DateInput
@@ -208,6 +214,7 @@ function BaseInput({
             }}
             // add disabled prop to disable input fields
             disabled={disabled}
+            inputHeight={inputHeight}
           />
         )}
         <div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -241,6 +248,7 @@ function BaseInput({
             // add disabled prop to disable input fields
             disabled={disabled}
             step={step}
+            inputHeight={inputHeight}
           />
         ) : (
           <DateInput
@@ -257,6 +265,7 @@ function BaseInput({
             }}
             // add disabled prop to disable input fields
             disabled={disabled}
+            inputHeight={inputHeight}
           />
         )}
         {showClearButton && (

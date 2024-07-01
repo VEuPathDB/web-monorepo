@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { ChevronRight, H6, Toggle } from '@veupathdb/coreui';
 import TimeSlider, {
   TimeSliderDataProp,
@@ -20,6 +20,9 @@ import { SiteInformationProps } from './Types';
 import { mapSidePanelBackgroundColor } from '../constants';
 import { useQuery } from '@tanstack/react-query';
 
+import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
+import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
+
 interface Props {
   studyId: string;
   entities: StudyEntity[];
@@ -30,6 +33,11 @@ interface Props {
   updateConfig: (newConfig: NonNullable<AppState['timeSliderConfig']>) => void;
   toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
   siteInformation: SiteInformationProps;
+}
+
+interface selectedRangeProp {
+  start: string;
+  end: string;
 }
 
 export default function TimeSliderQuickFilter({
@@ -178,9 +186,6 @@ export default function TimeSliderQuickFilter({
     });
   }
 
-  // (easily) centering the variable picker requires two same-width divs either side
-  const sideElementStyle = { width: '70px' };
-
   const sliderHeight = minimized ? 50 : 75;
 
   const background =
@@ -249,6 +254,49 @@ export default function TimeSliderQuickFilter({
     </div>
   );
 
+  // disable arrow button
+  const [disableLeftArrow, setDisableLeftArrow] = useState(false);
+  const [disableRightArrow, setDisableRightArrow] = useState(false);
+
+  // control selectedRange
+  const handleAxisRangeChange = useCallback(
+    (newRange?: NumberOrDateRange) => {
+      if (newRange) {
+        const newSelectedRange = {
+          start: newRange.min as string,
+          end: newRange.max as string,
+        };
+        updateConfig({ ...config, selectedRange: newSelectedRange });
+        // resetting disabled left and arrow buttons
+        setDisableLeftArrow(false);
+        setDisableRightArrow(false);
+      }
+    },
+    [config, updateConfig]
+  );
+
+  // step buttons
+  const handleArrowClick = useCallback(
+    (arrow: string) => {
+      if (
+        extendedDisplayRange &&
+        selectedRange &&
+        selectedRange.start != null &&
+        selectedRange.end != null
+      ) {
+        const newSelectedRange = newArrowRange(
+          extendedDisplayRange,
+          selectedRange,
+          arrow,
+          setDisableLeftArrow,
+          setDisableRightArrow
+        );
+        updateConfig({ ...config, selectedRange: newSelectedRange });
+      }
+    },
+    [config, updateConfig, extendedDisplayRange, selectedRange]
+  );
+
   // if no variable in a study is suitable to time slider, do not show time slider
   return variable != null && variableMetadata != null ? (
     <div>
@@ -284,6 +332,9 @@ export default function TimeSliderQuickFilter({
               axisColor={!active ? '#888' : '#000'}
               // disable user-interaction
               disabled={!active}
+              // for resetting disabled left and arrow buttons when changing brush bounds
+              setDisableLeftArrow={setDisableLeftArrow}
+              setDisableRightArrow={setDisableRightArrow}
             />
           ) : (
             <Spinner size={25} />
@@ -292,17 +343,16 @@ export default function TimeSliderQuickFilter({
             <HelpIcon children={helpText} />
           </div>
         </div>
+
         <div
           style={{
             display: 'flex',
-            padding: '5px 10px 0px 10px',
-            justifyContent: minimized ? 'center' : 'space-between',
+            flexDirection: 'row',
             alignItems: 'center',
           }}
         >
           {!minimized && (
             <>
-              <div style={sideElementStyle}></div>
               <div style={{}}>
                 <InputVariables
                   inputs={[
@@ -323,7 +373,64 @@ export default function TimeSliderQuickFilter({
                   constraints={timeSliderVariableConstraints}
                 />
               </div>
-              <div style={sideElementStyle}>
+              <div>
+                <button
+                  title={'move range left'}
+                  style={{ marginRight: '1em', marginLeft: '2em' }}
+                  onClick={() => handleArrowClick('left')}
+                  disabled={!active || disableLeftArrow}
+                >
+                  <i
+                    className="fa fa-arrow-left"
+                    aria-hidden="true"
+                    style={{
+                      color:
+                        active && !disableLeftArrow ? 'black' : 'lightgray',
+                    }}
+                  ></i>
+                </button>
+              </div>
+              {/* add axis range control */}
+              <AxisRangeControl
+                range={
+                  selectedRange != null
+                    ? {
+                        min: selectedRange.start,
+                        max: selectedRange.end,
+                      }
+                    : undefined
+                }
+                onRangeChange={handleAxisRangeChange}
+                valueType={'date'}
+                containerStyles={{
+                  flex: 1,
+                }}
+                // change the height of the input element
+                inputHeight={30}
+                disabled={!active}
+              />
+              <div>
+                <button
+                  title={'move range right'}
+                  style={{ marginLeft: '1em', marginRight: '1em' }}
+                  onClick={() => handleArrowClick('right')}
+                  disabled={!active || disableRightArrow}
+                >
+                  <i
+                    className="fa fa-arrow-right"
+                    aria-hidden="true"
+                    style={{
+                      color:
+                        active && !disableRightArrow ? 'black' : 'lightgray',
+                    }}
+                  ></i>
+                </button>
+              </div>
+              <div
+                style={{
+                  marginRight: '1em',
+                }}
+              >
                 <Toggle
                   label={active ? 'On' : 'Off'}
                   labelPosition="left"
@@ -357,4 +464,61 @@ export default function TimeSliderQuickFilter({
       </div>
     </div>
   ) : null;
+}
+
+function newArrowRange(
+  extendedDisplayRange: selectedRangeProp | undefined,
+  selectedRange: selectedRangeProp | undefined,
+  arrow: string,
+  setDisableLeftArrow: (value: boolean) => void,
+  setDisableRightArrow: (value: boolean) => void
+) {
+  if (extendedDisplayRange && selectedRange) {
+    const diff =
+      new Date(selectedRange.end).getTime() -
+      new Date(selectedRange.start).getTime();
+    if (arrow === 'right') {
+      const endDate = new Date(new Date(selectedRange.end).getTime() + diff)
+        .toISOString()
+        .split('T')[0];
+      if (
+        new Date(endDate).getTime() >
+        new Date(extendedDisplayRange.end).getTime()
+      ) {
+        setDisableRightArrow(true);
+        return selectedRange;
+      } else {
+        setDisableLeftArrow(false);
+        setDisableRightArrow(false);
+        return {
+          start: new Date(new Date(selectedRange.start).getTime() + diff)
+            .toISOString()
+            .split('T')[0],
+          end: endDate,
+        };
+      }
+    } else {
+      const startDate = new Date(new Date(selectedRange.start).getTime() - diff)
+        .toISOString()
+        .split('T')[0];
+      if (
+        new Date(startDate).getTime() <
+        new Date(extendedDisplayRange.start).getTime()
+      ) {
+        setDisableLeftArrow(true);
+        return selectedRange;
+      } else {
+        setDisableLeftArrow(false);
+        setDisableRightArrow(false);
+        return {
+          start: startDate,
+          end: new Date(new Date(selectedRange.end).getTime() - diff)
+            .toISOString()
+            .split('T')[0],
+        };
+      }
+    }
+  } else {
+    return undefined;
+  }
 }
