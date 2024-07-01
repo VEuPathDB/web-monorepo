@@ -39,6 +39,8 @@ import { DateTime } from '../DateTime';
 
 import { ThemedGrantAccessButton } from '../ThemedGrantAccessButton';
 import { ThemedDeleteButton } from '../ThemedDeleteButton';
+import { Public } from '@material-ui/icons';
+import { Tooltip } from '@veupathdb/coreui';
 
 interface Props {
   baseUrl: string;
@@ -73,6 +75,7 @@ interface Props {
   updateProjectFilter: (filterByProject: boolean) => any;
   quotaSize: number;
   dataNoun: DataNoun;
+  enablePublicUserDatasets: boolean;
 }
 
 interface State {
@@ -155,6 +158,19 @@ class UserDatasetList extends React.Component<Props, State> {
     return !dataset.sharedWith || !dataset.sharedWith.length
       ? null
       : dataset.sharedWith.map((share) => share.userDisplayName).join(', ');
+  }
+
+  renderCommunityCell(cellProps: MesaDataCellProps) {
+    const dataset: UserDataset = cellProps.row;
+    const isPublic = dataset.meta.visibility === 'public';
+    if (!isPublic) return null;
+    return (
+      <Tooltip
+        title={`This ${this.props.dataNoun.singular} is visible to the community.`}
+      >
+        <Public className="Community-visible" />
+      </Tooltip>
+    );
   }
 
   renderStatusCell(cellProps: MesaDataCellProps) {
@@ -281,6 +297,18 @@ class UserDatasetList extends React.Component<Props, State> {
         sortable: true,
         renderCell: this.renderSharedWithCell,
       },
+      ...(this.props.enablePublicUserDatasets
+        ? [
+            {
+              key: 'visibility',
+              name: 'Community',
+              sortable: true,
+              helpText: `Indicates if the ${this.props.dataNoun.singular} is visible to the community.`,
+              style: { textAlign: 'center' },
+              renderCell: this.renderCommunityCell.bind(this),
+            },
+          ]
+        : []),
       {
         key: 'created',
         name: 'Created',
@@ -568,6 +596,8 @@ class UserDatasetList extends React.Component<Props, State> {
       sharingDatasetPending,
       shareSuccessful,
       shareError,
+      updateUserDatasetDetail,
+      enablePublicUserDatasets,
     } = this.props;
     const { uiState, selectedRows, searchTerm } = this.state;
 
@@ -623,6 +653,8 @@ class UserDatasetList extends React.Component<Props, State> {
                     sharingDatasetPending={sharingDatasetPending}
                     shareSuccessful={shareSuccessful}
                     shareError={shareError}
+                    updateUserDatasetDetail={updateUserDatasetDetail}
+                    enablePublicUserDatasets={enablePublicUserDatasets}
                   />
                 ) : null}
                 <SearchBox

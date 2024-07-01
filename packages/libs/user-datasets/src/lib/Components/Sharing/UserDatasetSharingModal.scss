@@ -41,7 +41,7 @@
 
   .UserDatasetSharing-SectionName {
     margin: 10px 0 -5px;
-    font-weight: 200;
+    font-weight: 400;
   }
 
   fieldset {
@@ -81,6 +81,7 @@
     }
   }
 
+  .UserDatasetSharing-Visibility,
   .UserDatasetSharing-Dataset,
   .UserDatasetSharing-Recipient {
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -167,7 +168,7 @@
   text-align: center;
   padding: 20px 5px;
   h2 {
-    font-weight: 200;
+    font-weight: 400;
     text-align: center;
   }
   button {

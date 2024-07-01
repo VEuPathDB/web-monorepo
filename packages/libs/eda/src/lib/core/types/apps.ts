@@ -25,3 +25,15 @@ export const CorrelationConfig = t.partial({
 
 export const CompleteCorrelationConfig =
   partialToCompleteCodec(CorrelationConfig);
+
+export type SelfCorrelationConfig = t.TypeOf<typeof SelfCorrelationConfig>;
+
+export const SelfCorrelationConfig = t.partial({
+  data1: VariableCollectionDescriptor,
+  correlationMethod: t.string,
+  prefilterThresholds: FeaturePrefilterThresholds,
+});
+
+export const CompleteSelfCorrelationConfig = partialToCompleteCodec(
+  SelfCorrelationConfig
+);
