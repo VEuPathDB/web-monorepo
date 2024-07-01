@@ -130,7 +130,7 @@ export default function FilterChipList(props: Props) {
           } else {
             return (
               <FilterChip
-                tooltipText="This filter contains a reference to a variable that does not exist for this study. Remove this filter to continue working with your analysis."
+                tooltipText="Remove this filter to continue working with your analysis. This filter contains a reference to a variable that does not exist for this study."
                 isActive={false}
                 onDelete={() => removeFilter(filter)}
                 key={`${filter.entityId}/${filter.variableId}`}
