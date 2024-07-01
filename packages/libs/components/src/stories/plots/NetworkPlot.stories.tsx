@@ -8,6 +8,11 @@ import {
 import NetworkPlot, { NetworkPlotProps } from '../../plots/NetworkPlot';
 import { Text } from '@visx/text';
 import { useEffect, useRef, useState } from 'react';
+import MultiSelect, {
+  Option as NodeLabelProp,
+} from '../../components/plotControls/MultiSelect';
+import LabelledGroup from '../../components/widgets/LabelledGroup';
+import { Undo as UndoIcon } from '@veupathdb/coreui/lib/components/icons';
 
 export default {
   title: 'Plots/Networks/NetworkPlot',
@@ -169,6 +174,75 @@ export const WithActions = Template.bind({});
 WithActions.args = {
   ...simpleWithActions,
   getNodeMenuActions: getNodeActions,
+};
+
+// with node label control
+const SimpleWithControlData = genNetwork(
+  20,
+  true,
+  true,
+  DEFAULT_PLOT_SIZE,
+  DEFAULT_PLOT_SIZE
+);
+
+// node label control
+export const NodeLabelControl: Story<TemplateProps> = () => {
+  // list of node labels
+  const nodeLabels = SimpleWithControlData.nodes.flatMap((node) => {
+    return { value: node.label, label: node.label };
+  });
+
+  // all values are selected as default
+  const [visibleNodeLabels, setVisibleNodeLabels] =
+    useState<NodeLabelProp[]>(nodeLabels);
+
+  const handleChange = (selected: NodeLabelProp[]) => {
+    setVisibleNodeLabels(selected);
+  };
+
+  const ref = useRef<any>(null);
+
+  return (
+    <>
+      <NetworkPlot
+        containerStyles={{ width: DEFAULT_PLOT_SIZE }}
+        visibleNodeLabels={visibleNodeLabels}
+        nodes={SimpleWithControlData.nodes}
+        links={SimpleWithControlData.links}
+        ref={ref}
+      />
+      <div style={{ marginLeft: '1em', width: '800px' }}>
+        <LabelledGroup
+          label={
+            <div css={{ display: 'flex', alignItems: 'center' }}>
+              Network controls
+              <button
+                style={{
+                  padding: 0,
+                  marginLeft: '0.5em',
+                  border: 'none',
+                  background: 'none',
+                }}
+                onClick={(e) => setVisibleNodeLabels(nodeLabels)}
+              >
+                <UndoIcon fill="blue" />
+              </button>
+            </div>
+          }
+        >
+          <h6 style={{ marginTop: '1em' }}>Visible Node Labels</h6>
+          <MultiSelect
+            key="network_multi_select_labels"
+            options={nodeLabels}
+            onChange={handleChange}
+            value={visibleNodeLabels}
+            isSelectAll={true}
+            menuPlacement={'auto'}
+          />
+        </LabelledGroup>
+      </div>
+    </>
+  );
 };
 
 // Utility functions
