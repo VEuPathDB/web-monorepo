@@ -367,20 +367,30 @@ export function RecordTable_Sequences(
 
   return (
     <>
-      {pfamRows.length > 0 && (
+      <div
+        style={{
+          marginLeft: treeWidth,
+          display: 'flex',
+          flexDirection: 'row-reverse',
+        }}
+      >
         <div
           style={{
-            marginLeft: treeWidth,
-            display: 'flex',
-            flexDirection: 'row-reverse',
+            border: pfamRows.length === 0 ? '2px dashed #ddd' : '',
+            borderRadius: '5px',
+            padding: '0px 10px 10px 10px',
           }}
         >
-          <div>
-            <h4>PFam legend</h4>
+          <h4>PFam legend</h4>
+          {pfamRows.length > 0 ? (
             <Mesa state={pfamMesaState} />
-          </div>
+          ) : (
+            <span>
+              <em>No data available</em>
+            </span>
+          )}
         </div>
-      )}
+      </div>
       <div
         style={{
           marginLeft: treeWidth,
