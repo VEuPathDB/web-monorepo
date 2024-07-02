@@ -43,6 +43,8 @@ export type LinkData = {
   color?: string;
   /** Link opacity. Must be between 0 and 1 */
   opacity?: number;
+  /** Boolean determining if the edge is directed */
+  isDirected?: boolean;
 };
 
 /** NetworkData is the same format accepted by visx's Graph component. */
