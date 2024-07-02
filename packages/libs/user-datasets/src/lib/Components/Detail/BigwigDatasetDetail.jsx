@@ -21,10 +21,15 @@ class BigwigDatasetDetail extends UserDatasetDetail {
   }
 
   componentDidMount() {
-    const { userDataset } = this.props;
+    const {
+      userDataset,
+      config: { projectId },
+    } = this.props;
     const { wdkService } = this.context;
     const { dependencies } = userDataset;
+    if (!userDataset.projects.includes(projectId)) return;
     let genome;
+    // There will only ever be one such dependency in this array
     dependencies.forEach(function (dependency) {
       if (dependency.resourceIdentifier.endsWith('_Genome')) {
         const regex = new RegExp(
@@ -34,6 +39,7 @@ class BigwigDatasetDetail extends UserDatasetDetail {
         genome = genomeList[1];
       }
     });
+    if (genome == null) return;
     wdkService
       .getAnswerJson(
         {
@@ -93,9 +99,11 @@ class BigwigDatasetDetail extends UserDatasetDetail {
   renderTracksSection() {
     const { userDataset, appUrl, projectName, config, fileListing } =
       this.props;
-    const installFiles = fileListing.install?.contents?.map((file) => ({
-      dataFileName: file.fileName,
-    }));
+    const installFiles = fileListing.install?.contents
+      ?.filter((file) => file.fileName.endsWith('.bw'))
+      .map((file) => ({
+        dataFileName: file.fileName,
+      }));
     const { status } = userDataset;
 
     const rows =
