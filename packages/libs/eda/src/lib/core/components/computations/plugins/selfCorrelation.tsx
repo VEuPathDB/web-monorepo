@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { useFindEntityAndVariableCollection } from '../../..';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { partial } from 'lodash';
