@@ -13,7 +13,7 @@ import { RequestOptions } from '../options/types';
 import NetworkPlot, {
   NetworkPlotProps,
 } from '@veupathdb/components/lib/plots/NetworkPlot';
-import BipartiteNetworkSVG from './selectorIcons/BipartiteNetworkSVG';
+import NetworkSVG from './selectorIcons/NetworkSVG';
 import {
   NetworkResponse,
   NetworkRequestParams,
@@ -67,7 +67,7 @@ const plotContainerStyles = {
 };
 
 export const networkVisualization = createVisualizationPlugin({
-  selectorIcon: BipartiteNetworkSVG, // Placeholder for now until ann has created a new one!
+  selectorIcon: NetworkSVG, // Placeholder for now until ann has created a new one!
   fullscreenComponent: NetworkViz,
   createDefaultConfig: createDefaultConfig,
 });
