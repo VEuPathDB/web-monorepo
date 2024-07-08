@@ -45,84 +45,84 @@ export default function NetworkSVG({
       <g style={{ fill: primaryColor }}>
         <circle
           id="uuid-c5c4f58c-4ae1-4e69-930c-a6fe8cd5cb62"
-          className="uuid-c55ce6aa-77df-4cee-8622-d6eb7412672c"
+          className="nodes"
           cx="66.3"
           cy="169.5"
           r="16.5"
         />
         <circle
           id="uuid-21785f59-91fb-4866-ad0a-b8aaf0dffbe1"
-          className="uuid-c55ce6aa-77df-4cee-8622-d6eb7412672c"
+          className="nodes"
           cx="141.7"
           cy="65.3"
           r="16.5"
         />
         <circle
           id="uuid-aa79ac44-90b7-43e3-9063-e89ec5127190"
-          className="uuid-c55ce6aa-77df-4cee-8622-d6eb7412672c"
+          className="nodes"
           cx="116.6"
           cy="432.6"
           r="16.5"
         />
         <circle
           id="uuid-5364b129-7945-44ff-9e62-c091258eed44"
-          className="uuid-c55ce6aa-77df-4cee-8622-d6eb7412672c"
+          className="nodes"
           cx="402"
           cy="72.1"
           r="16.5"
         />
         <circle
           id="uuid-73ebd4e0-c455-4ee3-92cc-7350ce431000"
-          className="uuid-c55ce6aa-77df-4cee-8622-d6eb7412672c"
+          className="nodes"
           cx="430.4"
           cy="193.9"
           r="16.5"
         />
         <circle
           id="uuid-39fd6320-aba4-4fd2-9e40-fd4e34ff04de"
-          className="uuid-c55ce6aa-77df-4cee-8622-d6eb7412672c"
+          className="nodes"
           cx="191.6"
           cy="353.7"
           r="16.5"
         />
         <circle
           id="uuid-869f9791-cb96-4cb1-8cc6-dd55ac0c619f"
-          className="uuid-c55ce6aa-77df-4cee-8622-d6eb7412672c"
+          className="nodes"
           cx="292.4"
           cy="390.8"
           r="16.5"
         />
         <circle
           id="uuid-6f105e62-decf-4d48-875d-285fd1099436"
-          className="uuid-c55ce6aa-77df-4cee-8622-d6eb7412672c"
+          className="nodes"
           cx="397.4"
           cy="393.6"
           r="16.5"
         />
         <circle
           id="uuid-325dab86-8cdd-43db-81b8-b69ac7ebbebd"
-          className="uuid-c55ce6aa-77df-4cee-8622-d6eb7412672c"
+          className="nodes"
           cx="421.8"
           cy="307.1"
           r="16.5"
         />
         <circle
           id="uuid-8c7789df-90ea-46ff-bcec-772a0385cd19"
-          className="uuid-c55ce6aa-77df-4cee-8622-d6eb7412672c"
+          className="nodes"
           cx="92.3"
           cy="300.5"
           r="16.5"
         />
         <circle
           id="uuid-33c223b9-7ceb-423c-9d50-8e158c4b0c54"
-          className="uuid-c55ce6aa-77df-4cee-8622-d6eb7412672c"
+          className="nodes"
           cx="183"
           cy="158.7"
           r="16.5"
         />
         <circle
           id="uuid-449fc218-e479-4e1b-a1fa-0674a9b9ab4e"
-          className="uuid-c55ce6aa-77df-4cee-8622-d6eb7412672c"
+          className="nodes"
           cx="312.8"
           cy="147.4"
           r="16.5"
@@ -131,7 +131,7 @@ export default function NetworkSVG({
       <g style={{ fill: secondaryColor }}>
         <circle
           id="uuid-f8a68f4c-c4bd-4a49-8e2a-453c82f07fab"
-          className="uuid-d7d5c1c6-5220-44f5-ae66-18a92385fcb6"
+          className="nodes"
           cx="261.2"
           cy="254.5"
           r="16.5"
