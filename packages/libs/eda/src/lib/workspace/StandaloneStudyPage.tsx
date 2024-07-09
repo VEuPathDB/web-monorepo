@@ -48,7 +48,9 @@ export function StandaloneStudyPage(props: Props) {
             key: 'details',
             display: 'Study details',
             content: (
-              <RecordController recordClass="dataset" primaryKey={studyId} />
+              <div style={{ minHeight: '10em' }}>
+                <RecordController recordClass="dataset" primaryKey={studyId} />
+              </div>
             ),
           },
           {
