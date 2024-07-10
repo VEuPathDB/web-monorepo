@@ -391,12 +391,63 @@ export const NodeIdList = type({
   nodeIds: array(string),
 });
 
-// Bipartite network
-export type BipartiteNetworkResponse = TypeOf<typeof BipartiteNetworkResponse>;
+// Network types (including bipartite network)
+// The network types are all built from nodes and links. Currently we've defined specific
+// flavors of networks, called "correlation" networks, that have extra information
+// about them based on their context.
 
-const NodeData = type({
-  id: string,
+// NOTE tech debt below! The `sourece` and `target` of the NetworkData links should be
+// NodeData, but the backend is sending us strings. At this point it is unlikely the backend
+// will change for a while to fix this issue. If it does, we can simplify the below and let
+// BipartiteNetworkData extend NetworkData.
+const NodeData = intersection([
+  type({
+    id: string,
+  }),
+  partial({
+    x: number,
+    y: number,
+    degree: number,
+  }),
+]);
+
+export const NetworkData = type({
+  nodes: array(NodeData),
+  links: array(
+    intersection([
+      type({
+        source: string,
+        target: string,
+        weight: number,
+      }),
+      partial({
+        color: number,
+        isDirected: boolean,
+      }),
+    ])
+  ),
 });
+
+const NetworkConfig = partial({
+  variables: unknown,
+  correlationCoefThreshold: number,
+  significanceThreshold: number,
+});
+export const NetworkResponse = type({
+  network: type({
+    data: NetworkData,
+    config: NetworkConfig,
+  }),
+});
+
+export interface NetworkRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    correlationCoefThreshold?: number;
+    significanceThreshold?: number;
+  };
+}
 
 export const BipartiteNetworkData = type({
   partitions: array(NodeIdList),
@@ -426,6 +477,8 @@ export const BipartiteNetworkResponse = type({
   }),
 });
 
+export type BipartiteNetworkResponse = TypeOf<typeof BipartiteNetworkResponse>;
+
 // Correlation Bipartite Network
 // a specific flavor of the bipartite network that also includes correlationCoefThreshold and significanceThreshold
 export type CorrelationBipartiteNetworkResponse = TypeOf<
@@ -447,6 +500,8 @@ export interface BipartiteNetworkRequestParams {
     significanceThreshold?: number;
   };
 }
+
+export type NetworkResponse = TypeOf<typeof NetworkResponse>;
 
 export type FeaturePrefilterThresholds = TypeOf<
   typeof FeaturePrefilterThresholds
