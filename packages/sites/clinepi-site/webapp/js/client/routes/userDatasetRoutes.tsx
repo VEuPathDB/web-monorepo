@@ -102,7 +102,7 @@ export const userDatasetRoutes: RouteEntry[] = [
 function useEdaStudyMetadata(wdkDatasetId: string) {
   try {
     const subsettingClient = useConfiguredSubsettingClient(edaServiceUrl);
-    return useStudyMetadata(wdkDatasetId, subsettingClient);
+    return useStudyMetadata(wdkDatasetId, subsettingClient).value;
   } catch (error) {
     console.error(error);
     return undefined;
