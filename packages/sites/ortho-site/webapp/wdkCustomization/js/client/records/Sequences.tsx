@@ -78,10 +78,9 @@ export function RecordTable_Sequences(
   const numSequences = mesaRows.length;
 
   // show only core as default for large groups
-  const [corePeripheralFilterState, setCorePeripheralFilterState] =
-    useState<CorePeripheralFilterState>(
-      numSequences > MAX_SEQUENCES_TO_SHOW_ALL ? 'core' : 'both'
-    );
+  const [corePeripheralFilterValue, setCorePeripheralFilterValue] = useState<
+    ('core' | 'peripheral')[]
+  >(numSequences > MAX_SEQUENCES_TO_SHOW_ALL ? ['core'] : []);
 
   const treeResponse = useOrthoService(
     numSequences >= MIN_SEQUENCES_FOR_TREE
@@ -181,7 +180,7 @@ export function RecordTable_Sequences(
   const filteredRows = useMemo(() => {
     if (
       searchQuery !== '' ||
-      corePeripheralFilterState !== 'both' ||
+      corePeripheralFilterValue != null ||
       pfamFilterIds.length > 0
     ) {
       return sortedRows?.filter((row) => {
@@ -194,8 +193,10 @@ export function RecordTable_Sequences(
         const searchMatch =
           searchQuery === '' || rowMatch(row, safeSearchRegexp);
         const corePeripheralMatch =
-          corePeripheralFilterState === 'both' ||
-          rowCorePeripheral === corePeripheralFilterState;
+          corePeripheralFilterValue.length === 0 ||
+          corePeripheralFilterValue.includes(
+            rowCorePeripheral.toLowerCase() as any
+          );
         const pfamIdMatch =
           pfamFilterIds.length === 0 ||
           pfamFilterIds.some((pfamId) => rowPfamIdsSet?.has(pfamId));
@@ -208,7 +209,7 @@ export function RecordTable_Sequences(
     searchQuery,
     safeSearchRegexp,
     sortedRows,
-    corePeripheralFilterState,
+    corePeripheralFilterValue,
     accessionToPfamIds,
     pfamFilterIds,
   ]);
@@ -323,7 +324,7 @@ export function RecordTable_Sequences(
 
   const rowCount = (filteredRows ?? sortedRows).length;
 
-  const pfamDomains = pfamRows.length > 0 && (
+  const pfamFilter = pfamRows.length > 0 && (
     <SelectList
       defaultButtonDisplayContent="Pfam domains"
       items={pfamRows.map((row) => ({
@@ -353,6 +354,24 @@ export function RecordTable_Sequences(
       }))}
       value={pfamFilterIds}
       onChange={setPfamFilterIds}
+    />
+  );
+
+  const corePeripheralFilter = (
+    <SelectList
+      defaultButtonDisplayContent="Core/Peripheral"
+      items={[
+        {
+          display: 'Core',
+          value: 'core',
+        },
+        {
+          display: 'Peripheral',
+          value: 'peripheral',
+        },
+      ]}
+      value={corePeripheralFilterValue}
+      onChange={setCorePeripheralFilterValue}
     />
   );
 
@@ -386,18 +405,19 @@ export function RecordTable_Sequences(
             />
           </div>
         </div>
-        {pfamDomains}
-        <RadioButtonGroup
-          options={[...CorePeripheralFilterStates]}
-          optionLabels={CorePeripheralFilterStates.map(
-            (s) => CorePeripheralFilterStateLabels[s]
-          )}
-          selectedOption={corePeripheralFilterState}
-          onOptionSelected={(newOption: string) =>
-            setCorePeripheralFilterState(newOption as CorePeripheralFilterState)
-          }
-          capitalizeLabels={false}
-        />
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            gap: '1em',
+            alignItems: 'center',
+            marginLeft: 'auto',
+          }}
+        >
+          <strong>Filters: </strong>
+          {pfamFilter}
+          {corePeripheralFilter}
+        </div>
       </div>
       <TreeTable
         rowHeight={rowHeight}
