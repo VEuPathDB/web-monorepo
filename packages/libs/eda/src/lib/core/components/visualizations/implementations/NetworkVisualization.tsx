@@ -13,13 +13,13 @@ import { RequestOptions } from '../options/types';
 import NetworkPlot, {
   NetworkPlotProps,
 } from '@veupathdb/components/lib/plots/NetworkPlot';
-import BipartiteNetworkSVG from './selectorIcons/BipartiteNetworkSVG';
+import NetworkSVG from './selectorIcons/NetworkSVG';
 import {
   NetworkResponse,
   NetworkRequestParams,
 } from '../../../api/DataClient/types';
 import { twoColorPalette } from '@veupathdb/components/lib/types/plots/addOns';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { scaleOrdinal } from 'd3-scale';
 import { uniq } from 'lodash';
 import { usePromise } from '../../../hooks/promise';
@@ -44,6 +44,10 @@ import { FacetedPlotLayout } from '../../layouts/FacetedPlotLayout';
 import { H6 } from '@veupathdb/coreui';
 import { CorrelationConfig } from '../../../types/apps';
 import { LabelPosition } from '@veupathdb/components/lib/plots/Node';
+import MultiSelect, {
+  Option as NodeLabelProp,
+} from '@veupathdb/components/lib/components/plotControls/MultiSelect';
+import { ResetButtonCoreUI } from '../../ResetButton';
 // end imports
 
 // Defaults
@@ -63,7 +67,7 @@ const plotContainerStyles = {
 };
 
 export const networkVisualization = createVisualizationPlugin({
-  selectorIcon: BipartiteNetworkSVG, // Placeholder for now until ann has created a new one!
+  selectorIcon: NetworkSVG, // Placeholder for now until ann has created a new one!
   fullscreenComponent: NetworkViz,
   createDefaultConfig: createDefaultConfig,
 });
@@ -182,6 +186,16 @@ function NetworkViz(props: VisualizationProps<Options>) {
   const minYPosition = Math.min(...dataYPositions);
   const maxYPosition = Math.max(...dataYPositions);
 
+  // for node label control
+  const [visibleNodeLabels, setVisibleNodeLabels] = useState<
+    NodeLabelProp[] | undefined
+  >([]);
+
+  // check/uncheck node label control
+  const handleChange = (selected: NodeLabelProp[]) => {
+    setVisibleNodeLabels(selected);
+  };
+
   // Clean and finalize data format. Specifically, assign link colors, add display labels
   const cleanedData = useMemo(() => {
     if (!data.value) return undefined;
@@ -252,6 +266,13 @@ function NetworkViz(props: VisualizationProps<Options>) {
       };
     });
 
+    // set initial visible node labels
+    const defaultNodeLabels = nodesWithLabels.flatMap((node) => {
+      return { value: node.label, label: node.label };
+    });
+
+    setVisibleNodeLabels(defaultNodeLabels);
+
     return {
       ...data.value.network.data,
       nodes: nodesWithLabels,
@@ -321,6 +342,15 @@ function NetworkViz(props: VisualizationProps<Options>) {
     </div>
   );
 
+  // for the list of node labels with checkboxes
+  const nodeLabels: NodeLabelProp[] | undefined = useMemo(() => {
+    return cleanedData != null
+      ? cleanedData.nodes.flatMap((node) => {
+          return { value: node.label, label: node.label };
+        })
+      : undefined;
+  }, [cleanedData]);
+
   const networkPlotProps: NetworkPlotProps = {
     nodes: cleanedData ? cleanedData.nodes : undefined,
     links: cleanedData ? cleanedData.links : undefined,
@@ -328,6 +358,8 @@ function NetworkViz(props: VisualizationProps<Options>) {
     containerStyles: finalPlotContainerStyles,
     labelTruncationLength: 30,
     emptyNetworkContent,
+    // pass visible node labels
+    visibleNodeLabels: visibleNodeLabels,
   };
 
   const plotNode = (
@@ -335,7 +367,54 @@ function NetworkViz(props: VisualizationProps<Options>) {
     <NetworkPlot {...networkPlotProps} ref={plotRef} />
   );
 
-  const controlsNode = <> </>;
+  // node label control
+  const controlsNode = (
+    <>
+      {nodeLabels != null && (
+        <div
+          style={{
+            width: plotContainerStyles.width,
+            display: 'flex',
+          }}
+        >
+          <LabelledGroup
+            label={
+              <div css={{ display: 'flex', alignItems: 'center' }}>
+                Network controls
+                <ResetButtonCoreUI
+                  size={'medium'}
+                  text={''}
+                  themeRole={'primary'}
+                  tooltip={'Reset'}
+                  disabled={false}
+                  onPress={(e) => setVisibleNodeLabels(nodeLabels)}
+                />
+              </div>
+            }
+          >
+            <div
+              style={{
+                marginTop: '0.5em',
+                marginBottom: '0.5em',
+                fontSize: '1em',
+                fontWeight: 600,
+              }}
+            >
+              Visible Node Labels
+            </div>
+            <MultiSelect
+              key="network_multi_select_labels"
+              options={nodeLabels}
+              onChange={handleChange}
+              value={visibleNodeLabels}
+              isSelectAll={true}
+              menuPlacement={'auto'}
+            />
+          </LabelledGroup>
+        </div>
+      )}
+    </>
+  );
 
   // Create legend for (1) Line/link thickness and (2) Link color.
   // For (1), we'll do the following:

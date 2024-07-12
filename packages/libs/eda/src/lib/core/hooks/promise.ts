@@ -6,6 +6,11 @@ export type PromiseHookState<T> = {
   error?: unknown;
 };
 
+export type PromiseHookOptions = {
+  keepPreviousValue?: boolean;
+  throwError?: boolean;
+};
+
 /**
  * Invokes `task` and returns an object representing its current state and resolved value.
  * The last resolved value will remain util a new promise is resolved.
@@ -15,7 +20,11 @@ export type PromiseHookState<T> = {
  * @param task A function that returns a promise
  * @returns PromiseHookState<T>
  */
-export function usePromise<T>(task: () => Promise<T>): PromiseHookState<T> {
+export function usePromise<T>(
+  task: () => Promise<T>,
+  options: PromiseHookOptions = {}
+): PromiseHookState<T> {
+  const { keepPreviousValue = true, throwError = false } = options;
   const [state, setState] = useState<PromiseHookState<T>>({
     pending: true,
   });
@@ -23,7 +32,7 @@ export function usePromise<T>(task: () => Promise<T>): PromiseHookState<T> {
     let ignoreResolve = false;
     setState((prev) => ({
       pending: true,
-      value: prev.value,
+      value: keepPreviousValue ? prev.value : undefined,
       error: undefined,
     }));
     task().then(
@@ -36,6 +45,9 @@ export function usePromise<T>(task: () => Promise<T>): PromiseHookState<T> {
       },
       (error) => {
         if (ignoreResolve) return;
+        if (throwError) {
+          throw error;
+        }
         setState({
           error,
           pending: false,
@@ -45,6 +57,6 @@ export function usePromise<T>(task: () => Promise<T>): PromiseHookState<T> {
     return function cleanup() {
       ignoreResolve = true;
     };
-  }, [task]);
+  }, [keepPreviousValue, task, throwError]);
   return state;
 }

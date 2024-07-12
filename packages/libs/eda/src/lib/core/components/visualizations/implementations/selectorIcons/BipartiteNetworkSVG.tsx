@@ -11,20 +11,10 @@ export default function BipartiteNetworkSVG({
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 500 500"
     >
-      {/* <defs>
-        <style type="text/css">
-          .primary-markers&#123;fill-rule:evenodd;clip-rule:evenodd;stroke:#FFFFFF;stroke-width:4.0441;stroke-miterlimit:10;&#125;
-          .secondary-markers&#123;fill-rule:evenodd;clip-rule:evenodd;stroke:#FFFFFF;stroke-width:4.0441;stroke-miterlimit:10;&#125;
-        </style>
-      </defs> */}
       <defs>
         <style>
-          {/* .secondary-marker&#123;fill:#9fc5df;&#125; */}
           .nodes&#123;stroke:#fff;stroke-miterlimit:10;stroke-width:4.04px;&#125;
-          {/* .primary-marker&#123;fill:#408abf;&#125; */}
           .edges&#123;fill:none;fill-rule:evenodd;stroke-linejoin:bevel;stroke-width:5.6px;&#125;
-          {/* .primary-stroke&#123;stroke:#408abf;&#125;
-          .secondary-stroke&#123;stroke:#9fc5df;&#125; */}
         </style>
       </defs>
       <g style={{ stroke: primaryColor }}>
