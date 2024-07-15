@@ -57,7 +57,8 @@ export function EDAWorkspaceHeading({
       permissionsValue.permissions.perDataset[
         studyRecord.attributes.dataset_id as string
       ]?.actionAuthorization.subsetting
-    );
+    ) &&
+    !isStubEntity(studyMetadata.rootEntity);
 
   useEffect(() => {
     setDialogIsOpen(false);
@@ -166,8 +167,9 @@ export function EDAWorkspaceHeading({
         isStubEntity(studyMetadata.rootEntity) && (
           <Banner
             banner={{
-              type: 'error',
-              message: 'Data for this study is not currently available.',
+              type: 'info',
+              message:
+                'This study has not been integrated into the analysis workspace, but data files are available on the Download tab.',
             }}
           />
         )}

@@ -34,7 +34,7 @@ import { parsePath } from 'history';
 
 type DownloadsTabProps = {
   downloadClient: DownloadClient;
-  analysisState: AnalysisState;
+  analysisState: AnalysisState | undefined;
   totalCounts: EntityCounts | undefined;
   filteredCounts: EntityCounts | undefined;
 };
@@ -137,7 +137,7 @@ export default function DownloadTab({
    * you have two different variables for study releases here.
    */
   const [downloadServiceStudyReleases, setDownloadServiceStudyReleases] =
-    useState<Array<string>>([]);
+    useState<Array<string> | undefined>(undefined);
   const WDKStudyReleases = useWdkStudyReleases();
 
   // Only fetch study releases if they are expected to be available
@@ -171,8 +171,7 @@ export default function DownloadTab({
    * that doesn't have a match in the WDKService, it gets disregarded.
    *  */
   const mergedReleaseData = useMemo(() => {
-    if (!WDKStudyReleases.length || !downloadServiceStudyReleases.length)
-      return [];
+    if (!WDKStudyReleases || !downloadServiceStudyReleases) return undefined;
 
     /**
      * It turns out there are many "releases" for which the files
@@ -201,7 +200,7 @@ export default function DownloadTab({
 
   const partialCitationData = useMemo(() => {
     let citationUrl;
-    if (analysisState.analysis && 'analysisId' in analysisState.analysis) {
+    if (analysisState?.analysis && 'analysisId' in analysisState.analysis) {
       citationUrl = window.location.href.replace(
         `${analysisState.analysis.analysisId}/download`,
         'new'
@@ -236,43 +235,49 @@ export default function DownloadTab({
         {projectDisplayName === 'ClinEpiDB' &&
           !isUserStudy &&
           (dataAccessDeclaration ?? '')}
-        {mergedReleaseData[0] && (
+        {mergedReleaseData?.[0] && (
           <StudyCitation
             partialCitationData={partialCitationData}
             // use current release
             release={mergedReleaseData[0]}
           />
         )}
-        {
+        {analysisState && (
           <MySubset
             datasetId={datasetId}
             entities={enhancedEntityData}
             analysisState={analysisState}
           />
-        }
-        {mergedReleaseData.map((release, index) =>
-          index === 0 ? (
-            <CurrentRelease
-              key={release.releaseNumber}
-              datasetId={datasetId}
-              studyId={studyMetadata.id}
-              release={release}
-              downloadClient={downloadClient}
-            />
-          ) : (
-            <PastRelease
-              key={release.releaseNumber}
-              datasetId={datasetId}
-              studyId={studyMetadata.id}
-              release={release}
-              downloadClient={downloadClient}
-              citationString={stripHTML(
-                getCitationString({
-                  partialCitationData,
-                  release,
-                })
-              )}
-            />
+        )}
+        {mergedReleaseData == null ? (
+          'Loading...'
+        ) : mergedReleaseData.length === 0 ? (
+          <div>This study does not contain any download files.</div>
+        ) : (
+          mergedReleaseData.map((release, index) =>
+            index === 0 ? (
+              <CurrentRelease
+                key={release.releaseNumber}
+                datasetId={datasetId}
+                studyId={studyMetadata.id}
+                release={release}
+                downloadClient={downloadClient}
+              />
+            ) : (
+              <PastRelease
+                key={release.releaseNumber}
+                datasetId={datasetId}
+                studyId={studyMetadata.id}
+                release={release}
+                downloadClient={downloadClient}
+                citationString={stripHTML(
+                  getCitationString({
+                    partialCitationData,
+                    release,
+                  })
+                )}
+              />
+            )
           )
         )}
       </div>
