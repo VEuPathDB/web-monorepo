@@ -45,9 +45,6 @@ export function usePromise<T>(
       },
       (error) => {
         if (ignoreResolve) return;
-        if (throwError) {
-          throw error;
-        }
         setState({
           error,
           pending: false,
@@ -57,6 +54,7 @@ export function usePromise<T>(
     return function cleanup() {
       ignoreResolve = true;
     };
-  }, [keepPreviousValue, task, throwError]);
+  }, [keepPreviousValue, task]);
+  if (state.error && throwError) throw state.error;
   return state;
 }
