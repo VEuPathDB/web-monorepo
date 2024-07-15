@@ -310,9 +310,10 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
                         // pass showLabel as a prop for hover event
                         showLabel={
                           node.label != null &&
-                          visibleNodeLabels?.some(
+                          (visibleNodeLabels?.some(
                             (el) => el.value === node.label
-                          )
+                          ) ||
+                            highlightedNodeId === node.id)
                         }
                       />
                     </>
