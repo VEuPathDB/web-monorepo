@@ -791,7 +791,7 @@ interface MarkerDataProps extends DistributionMarkerDataProps {
   dependentAxisLogScale: boolean;
 }
 
-function useMarkerData(props: MarkerDataProps) {
+export function useMarkerData(props: MarkerDataProps) {
   const {
     data: markerData,
     error,

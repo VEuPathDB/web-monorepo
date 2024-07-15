@@ -13,6 +13,7 @@ import {
 } from '../../../core';
 import { CategoricalMarkerConfigurationTable } from './CategoricalMarkerConfigurationTable';
 import { CategoricalMarkerPreview } from './CategoricalMarkerPreview';
+import { ContinuousMarkerPreview } from './ContinuousMarkerPreview';
 import Barplot from '@veupathdb/components/lib/plots/Barplot';
 import { SubsettingClient } from '../../../core/api';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
@@ -25,6 +26,7 @@ import {
   SelectedValues,
 } from '../appState';
 import { SharedMarkerConfigurations } from '../mapTypes/shared';
+import { useMarkerData } from '../mapTypes/plugins/DonutMarkerMapType';
 import { GeoConfig } from '../../../core/types/geoConfig';
 import { findLeastAncestralGeoConfig } from '../../../core/utils/geoVariables';
 
@@ -54,7 +56,6 @@ interface Props
   subsettingClient: SubsettingClient;
   studyId: string;
   filters: Filter[] | undefined;
-  continuousMarkerPreview: JSX.Element | undefined;
   /**
    * Always used for categorical marker preview. Also used in categorical table if selectedCountsOption is 'filtered'
    */
@@ -80,7 +81,6 @@ export function PieMarkerConfigurationMenu({
   subsettingClient,
   studyId,
   filters,
-  continuousMarkerPreview,
   allFilteredCategoricalValues,
   allVisibleCategoricalValues,
   geoConfigs,
@@ -220,7 +220,15 @@ export function PieMarkerConfigurationMenu({
             numberSelected={uncontrolledSelections.size}
           />
         ) : (
-          continuousMarkerPreview
+          <ContinuousMarkerPreview
+            configuration={configuration}
+            studyId={studyId}
+            filters={filters}
+            studyEntities={entities}
+            geoConfigs={geoConfigs}
+            useMarkerData={useMarkerData}
+            valueSpec="count"
+          />
         )}
       </div>
       {overlayConfiguration?.overlayType === 'continuous' && (
