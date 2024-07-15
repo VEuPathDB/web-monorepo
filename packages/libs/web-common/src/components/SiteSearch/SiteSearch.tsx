@@ -1302,9 +1302,14 @@ function resultDetails(
 
   // mapveu
   if (documentType.id === 'popbio-sample') {
+    // although it's named project_ids plural, the data has since been recurated so
+    // there is always exactly one project ID (e.g. VBP0000123) per sample.
+    const vbpId = formatSummaryFieldValue(
+      document.summaryFieldData['MULTITEXT__popbio_project_ids']
+    );
     return {
       display: {
-        url: `/popbio-map/web/?sampleID=${document.primaryKey[0]}`,
+        url: `/a/app/workspace/maps/legacy-redirect-handler?projectID=${vbpId}`,
         text: (
           <HtmlString
             value={document.hyperlinkName || document.primaryKey.join(' - ')}
