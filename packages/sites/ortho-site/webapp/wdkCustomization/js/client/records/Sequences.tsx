@@ -23,6 +23,7 @@ import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/Radio
 import Mesa, { RowCounter } from '@veupathdb/coreui/lib/components/Mesa';
 import { PfamDomain } from 'ortho-client/components/pfam-domains/PfamDomain';
 import { SelectList } from '@veupathdb/coreui';
+import { RecordTable_TaxonCounts_Filter } from './RecordTable_TaxonCounts_Filter';
 
 type RowType = Record<string, AttributeValue>;
 const CorePeripheralFilterStates = ['both', 'core', 'peripheral'] as const;
@@ -49,6 +50,8 @@ export function RecordTable_Sequences(
     () => createSafeSearchRegExp(searchQuery),
     [searchQuery]
   );
+
+  const [selectedSpecies, setSelectedSpecies] = useState<string[]>([]);
 
   const [pfamFilterIds, setPfamFilterIds] = useState<string[]>([]);
 
@@ -181,7 +184,8 @@ export function RecordTable_Sequences(
     if (
       searchQuery !== '' ||
       corePeripheralFilterValue != null ||
-      pfamFilterIds.length > 0
+      pfamFilterIds.length > 0 ||
+      selectedSpecies.length > 0
     ) {
       return sortedRows?.filter((row) => {
         const rowCorePeripheral = (
@@ -200,8 +204,13 @@ export function RecordTable_Sequences(
         const pfamIdMatch =
           pfamFilterIds.length === 0 ||
           pfamFilterIds.some((pfamId) => rowPfamIdsSet?.has(pfamId));
+        const speciesMatch =
+          selectedSpecies.length === 0 ||
+          selectedSpecies.some((specie) => row.taxon_abbrev === specie);
 
-        return searchMatch && corePeripheralMatch && pfamIdMatch;
+        return (
+          searchMatch && corePeripheralMatch && pfamIdMatch && speciesMatch
+        );
       });
     }
     return undefined;
@@ -212,6 +221,7 @@ export function RecordTable_Sequences(
     corePeripheralFilterValue,
     accessionToPfamIds,
     pfamFilterIds,
+    selectedSpecies,
   ]);
 
   // now filter the tree if needed - takes a couple of seconds for large trees
@@ -375,6 +385,19 @@ export function RecordTable_Sequences(
     />
   );
 
+  const taxonFilter =
+    props.record.tables.TaxonCounts?.length > 0 ? (
+      <RecordTable_TaxonCounts_Filter
+        selectedSpecies={selectedSpecies}
+        onSpeciesSelected={setSelectedSpecies}
+        record={props.record}
+        recordClass={props.recordClass}
+        table={props.recordClass.tablesMap.TaxonCounts}
+        value={props.record.tables.TaxonCounts}
+        DefaultComponent={props.DefaultComponent}
+      />
+    ) : null;
+
   return (
     <>
       <div
@@ -417,6 +440,7 @@ export function RecordTable_Sequences(
           <strong>Filters: </strong>
           {pfamFilter}
           {corePeripheralFilter}
+          {taxonFilter}
         </div>
       </div>
       <TreeTable

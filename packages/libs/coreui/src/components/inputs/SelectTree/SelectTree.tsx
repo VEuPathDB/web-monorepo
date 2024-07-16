@@ -84,7 +84,9 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
       onClose={onClose}
       isDisabled={props.isDisabled}
     >
-      {wrapPopover ? wrapPopover(checkboxTree) : checkboxTree}
+      <div css={{ margin: '1em' }}>
+        {wrapPopover ? wrapPopover(checkboxTree) : checkboxTree}
+      </div>
     </PopoverButton>
   );
 }
