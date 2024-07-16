@@ -22,6 +22,7 @@ import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 import { ExportPlotToImageButton } from './ExportPlotToImageButton';
 import { plotToImage } from './visxVEuPathDB';
 import { GlyphTriangle } from '@visx/visx';
+import { Option as NodeLabelProp } from '../components/plotControls/MultiSelect';
 
 import './NetworkPlot.css';
 
@@ -48,17 +49,19 @@ export interface NetworkPlotProps {
   getNodeMenuActions?: (nodeId: string) => NodeMenuAction[];
   /** Labels, notes, and other annotations to add to the network */
   annotations?: ReactNode[];
+  /** visible node labels */
+  visibleNodeLabels?: NodeLabelProp[];
 }
 
-const DEFAULT_PLOT_WIDTH = 500;
-const DEFAULT_PLOT_HEIGHT = 500;
+const DEFAULT_PLOT_WIDTH = 800;
+const DEFAULT_PLOT_HEIGHT = 900;
 
 const emptyNodes: NodeData[] = [...Array(9).keys()].map((item, index) => ({
   id: item.toString(),
   color: gray[100],
   stroke: gray[300],
-  x: 230 + 200 * Math.cos(2 * Math.PI * (index / 9)),
-  y: 230 + 200 * Math.sin(2 * Math.PI * (index / 9)),
+  x: 400 + 200 * Math.cos(2 * Math.PI * (index / 9)),
+  y: 300 + 200 * Math.sin(2 * Math.PI * (index / 9)),
 }));
 const emptyLinks: LinkData[] = [];
 
@@ -73,9 +76,10 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
     svgStyleOverrides,
     containerClass = 'web-components-plot',
     showSpinner = false,
-    labelTruncationLength = 20,
+    labelTruncationLength = 10,
     emptyNetworkContent,
     annotations,
+    visibleNodeLabels,
   } = props;
 
   const [highlightedNodeId, setHighlightedNodeId] = useState<string>();
@@ -303,6 +307,14 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
                           );
                         }}
                         fontWeight={isHighlighted ? 600 : 400}
+                        // pass showLabel as a prop for hover event
+                        showLabel={
+                          node.label != null &&
+                          (visibleNodeLabels?.some(
+                            (el) => el.value === node.label
+                          ) ||
+                            highlightedNodeId === node.id)
+                        }
                       />
                     </>
                   );

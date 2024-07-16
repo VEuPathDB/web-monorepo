@@ -5,6 +5,8 @@ import { groupBy, noop } from 'lodash';
 import { Link, IconAlt } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { makeEdaRoute } from '../routes';
+import { colors, Warning } from '@veupathdb/coreui';
 
 const stopIcon = (
   <span className="fa-stack" style={{ fontSize: '1.2em' }}>
@@ -105,6 +107,25 @@ const siteAnnouncements = [
     }
   },
 */
+  {
+    id: 'mbio-variable-fix',
+    category: 'degraded',
+    renderDisplay: (props) => {
+      if (
+        props.projectId !== 'MicrobiomeDB' ||
+        !props.location.pathname.startsWith(makeEdaRoute())
+      )
+        return null;
+      return (
+        <div>
+          Some variable names updates have invalidated some filters. Please
+          remove the invalid filters to continue your work in affected analyses.
+          Invalid filters are marked with a{' '}
+          <Warning fill={colors.warning[500]} /> icon.
+        </div>
+      );
+    },
+  },
 
   {
     id: 'clinepiEDA',
