@@ -55,6 +55,10 @@ export interface HorizontalDendrogramProps {
    * highlight whole subtrees ('monophyletic') or just leaves ('none')
    */
   highlightMode?: 'monophyletic' | 'none';
+  /**
+   * highlight color (optional - default is tidytree's yellow/orange)
+   */
+  highlightColor?: string;
 }
 
 /**
@@ -72,6 +76,7 @@ export function HorizontalDendrogram({
   options: { ruler = false, margin = [0, 0, 0, 0], interactive = true },
   highlightedNodeIds,
   highlightMode,
+  highlightColor,
   hStretch = 1.0,
   containerStyles,
 }: HorizontalDendrogramProps) {
@@ -122,6 +127,7 @@ export function HorizontalDendrogram({
       tidyTreeRef.current.setColorOptions({
         nodeColorMode: 'predicate',
         branchColorMode: highlightMode ?? 'none',
+        highlightColor: highlightColor,
         leavesOnly: true,
         predicate: (node) => highlightedNodeIds.includes(node.__data__.data.id),
         defaultBranchColor: '#333',

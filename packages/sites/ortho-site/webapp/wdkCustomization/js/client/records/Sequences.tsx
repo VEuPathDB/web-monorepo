@@ -23,6 +23,7 @@ import { RowCounter } from '@veupathdb/coreui/lib/components/Mesa';
 import { PfamDomain } from 'ortho-client/components/pfam-domains/PfamDomain';
 import { SelectList } from '@veupathdb/coreui';
 import { RecordTable_TaxonCounts_Filter } from './RecordTable_TaxonCounts_Filter';
+import { css, cx } from '@emotion/css';
 
 type RowType = Record<string, AttributeValue>;
 
@@ -30,6 +31,8 @@ const treeWidth = 200;
 const MIN_SEQUENCES_FOR_TREE = 3;
 const MAX_SEQUENCES_FOR_TREE = 9999;
 const MAX_SEQUENCES_TO_SHOW_ALL = 2000;
+
+const highlightColor = '#feb640';
 
 export function RecordTable_Sequences(
   props: WrappedComponentProps<RecordTableProps>
@@ -296,10 +299,22 @@ export function RecordTable_Sequences(
     );
   }
 
+  const highlightedRowClassName = cx(
+    css`
+      & td {
+        background-color: ${highlightColor} !important;
+      }
+    `
+  );
+
   const mesaState: MesaStateProps<RowType> = {
     options: {
       isRowSelected: (row: RowType) =>
         highlightedNodes.includes(row.full_id as string),
+      deriveRowClassName: (row: RowType) =>
+        highlightedNodes.includes(row.full_id as string)
+          ? highlightedRowClassName
+          : undefined,
     },
     uiState: {},
     rows: sortedRows,
@@ -317,6 +332,7 @@ export function RecordTable_Sequences(
     data: finalNewick,
     width: treeWidth,
     highlightMode: 'monophyletic' as const,
+    highlightColor,
     highlightedNodeIds: highlightedNodes,
   };
 
