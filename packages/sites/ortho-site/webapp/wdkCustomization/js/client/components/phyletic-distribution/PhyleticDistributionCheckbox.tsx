@@ -3,9 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { orderBy } from 'lodash';
 
 import { Checkbox } from '@veupathdb/wdk-client/lib/Components';
-import CheckboxTree, {
-  LinksPosition,
-} from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import {

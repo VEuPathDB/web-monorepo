@@ -19,24 +19,12 @@ import { groupBy, difference } from 'lodash';
 import { PfamDomainArchitecture } from 'ortho-client/components/pfam-domains/PfamDomainArchitecture';
 import { extractPfamDomain } from 'ortho-client/records/utils';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import Mesa, { RowCounter } from '@veupathdb/coreui/lib/components/Mesa';
+import { RowCounter } from '@veupathdb/coreui/lib/components/Mesa';
 import { PfamDomain } from 'ortho-client/components/pfam-domains/PfamDomain';
 import { SelectList } from '@veupathdb/coreui';
 import { RecordTable_TaxonCounts_Filter } from './RecordTable_TaxonCounts_Filter';
 
 type RowType = Record<string, AttributeValue>;
-const CorePeripheralFilterStates = ['both', 'core', 'peripheral'] as const;
-type CorePeripheralFilterState = typeof CorePeripheralFilterStates[number];
-
-const CorePeripheralFilterStateLabels: Record<
-  CorePeripheralFilterState,
-  string
-> = {
-  both: 'Core & Peripheral',
-  core: 'Core only',
-  peripheral: 'Peripheral only',
-};
 
 const treeWidth = 200;
 const MIN_SEQUENCES_FOR_TREE = 3;
