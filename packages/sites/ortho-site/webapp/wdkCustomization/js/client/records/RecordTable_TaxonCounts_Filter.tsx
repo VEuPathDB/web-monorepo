@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { RecordTableProps, WrappedComponentProps } from './Types';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
-import PopoverButton from '@veupathdb/coreui/lib/components/buttons/PopoverButton/PopoverButton';
 import { PhyleticDistributionCheckbox } from 'ortho-client/components/phyletic-distribution/PhyleticDistributionCheckbox';
 import { taxonCountsTableValueToMap } from './utils';
 import { useTaxonUiMetadata } from 'ortho-client/hooks/taxons';

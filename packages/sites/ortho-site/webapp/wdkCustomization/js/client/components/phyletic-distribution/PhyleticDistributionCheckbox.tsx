@@ -89,6 +89,7 @@ export function PhyleticDistributionCheckbox({
           ? selectionConfig.onSpeciesSelected
           : undefined
       }
+      shouldOnlyUpdateOnClose={true}
       selectedList={
         selectionConfig.selectable ? selectionConfig.selectedSpecies : undefined
       }
