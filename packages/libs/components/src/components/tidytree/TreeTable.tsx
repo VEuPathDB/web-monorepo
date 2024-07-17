@@ -87,6 +87,11 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
     },
   };
 
+  // if `hideTree` is used more dynamically than at present
+  // (for example if the user sorts the table)
+  // then the table container styling will need
+  // { marginLeft: hideTree ? props.treeProps.width : 0 }
+  // to stop the table jumping around horizontally
   return (
     <div
       style={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'row' }}
@@ -101,7 +106,6 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
       )}
       <div
         css={{
-          marginLeft: hideTree ? props.treeProps.width : 0,
           flexGrow: 1,
           width: 1 /* arbitrary non-zero width seems necessary for flex */,
           '.DataTable': {

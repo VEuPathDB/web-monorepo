@@ -28,6 +28,7 @@ type RowType = Record<string, AttributeValue>;
 
 const treeWidth = 200;
 const MIN_SEQUENCES_FOR_TREE = 3;
+const MAX_SEQUENCES_FOR_TREE = 9999;
 const MAX_SEQUENCES_TO_SHOW_ALL = 2000;
 
 export function RecordTable_Sequences(
@@ -74,7 +75,8 @@ export function RecordTable_Sequences(
   >(numSequences > MAX_SEQUENCES_TO_SHOW_ALL ? ['core'] : []);
 
   const treeResponse = useOrthoService(
-    numSequences >= MIN_SEQUENCES_FOR_TREE
+    numSequences >= MIN_SEQUENCES_FOR_TREE &&
+      numSequences <= MAX_SEQUENCES_FOR_TREE
       ? (orthoService) => orthoService.getGroupTree(groupName)
       : () => Promise.resolve(undefined), // avoid making a request we know will fail and cause a "We're sorry, something went wrong." modal
     [groupName, numSequences]
@@ -133,7 +135,8 @@ export function RecordTable_Sequences(
   // parse the tree and other expensive processing asynchronously
   const [tree, setTree] = useState<Branch>();
   const [leaves, setLeaves] = useState<Branch[]>();
-  const [sortedRows, setSortedRows] = useState<TableValue>();
+  // default unsorted `sortedRows`!
+  const [sortedRows, setSortedRows] = useState<TableValue>(mesaRows);
 
   useEffect(() => {
     if (!treeResponse) return;
@@ -257,6 +260,7 @@ export function RecordTable_Sequences(
   if (
     !sortedRows ||
     (numSequences >= MIN_SEQUENCES_FOR_TREE &&
+      numSequences <= MAX_SEQUENCES_FOR_TREE &&
       (tree == null || treeResponse == null))
   ) {
     return (
@@ -388,9 +392,17 @@ export function RecordTable_Sequences(
 
   return (
     <>
+      {numSequences > MAX_SEQUENCES_FOR_TREE && (
+        <div>
+          <strong>
+            Note: no phylogenetic tree is displayed because this group has more
+            than {MAX_SEQUENCES_FOR_TREE.toLocaleString()} sequences.
+          </strong>
+        </div>
+      )}
       <div
         style={{
-          marginLeft: treeWidth,
+          marginLeft: finalNewick ? treeWidth : 0,
           padding: '10px',
           display: 'flex',
           flexDirection: 'row',
