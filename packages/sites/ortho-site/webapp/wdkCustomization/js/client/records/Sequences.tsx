@@ -435,6 +435,8 @@ export function RecordTable_Sequences(
             gap: '1em',
             alignItems: 'center',
             marginLeft: 'auto',
+            flexWrap: 'wrap',
+            justifyContent: 'flex-end',
           }}
         >
           <strong>Filters: </strong>

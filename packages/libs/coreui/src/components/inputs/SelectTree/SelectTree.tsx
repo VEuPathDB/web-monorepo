@@ -29,9 +29,27 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
     onClose();
   }, [shouldCloseOnSelection, selectedList]);
 
+  function truncatedButtonContent(selectedList: string[]) {
+    return (
+      <span
+        style={{
+          // this styling is copied from SelectList!
+          maxWidth: '300px',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {selectedList.join(', ')}
+      </span>
+    );
+  }
+
   const onClose = () => {
     setButtonDisplayContent(
-      selectedList.length ? selectedList.join(', ') : props.buttonDisplayContent
+      selectedList.length
+        ? truncatedButtonContent(selectedList)
+        : props.buttonDisplayContent
     );
   };
 
