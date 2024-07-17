@@ -33,6 +33,7 @@ const MAX_SEQUENCES_FOR_TREE = 9999;
 const MAX_SEQUENCES_TO_SHOW_ALL = 2000;
 
 const highlightColor = '#feb640';
+const highlightColor50 = highlightColor + '7f';
 
 export function RecordTable_Sequences(
   props: WrappedComponentProps<RecordTableProps>
@@ -302,7 +303,7 @@ export function RecordTable_Sequences(
   const highlightedRowClassName = cx(
     css`
       & td {
-        background-color: ${highlightColor} !important;
+        background-color: ${highlightColor50} !important;
       }
     `
   );
