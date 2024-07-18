@@ -79,7 +79,10 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
     ...props.tableProps,
     options: {
       ...props.tableProps.options,
-      deriveRowClassName: (_) => rowStyleClassName,
+      deriveRowClassName: mergeDeriveRowClassName(
+        props.tableProps.options?.deriveRowClassName,
+        (_) => rowStyleClassName
+      ),
       inline: true,
       inlineUseTooltips: true,
       inlineMaxHeight: `${rowHeight}px`,
@@ -87,6 +90,11 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
     },
   };
 
+  // if `hideTree` is used more dynamically than at present
+  // (for example if the user sorts the table)
+  // then the table container styling will need
+  // { marginLeft: hideTree ? props.treeProps.width : 0 }
+  // to stop the table jumping around horizontally
   return (
     <div
       style={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'row' }}
@@ -101,7 +109,6 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
       )}
       <div
         css={{
-          marginLeft: hideTree ? props.treeProps.width : 0,
           flexGrow: 1,
           width: 1 /* arbitrary non-zero width seems necessary for flex */,
           '.DataTable': {
@@ -113,4 +120,17 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
       </div>
     </div>
   );
+}
+
+function mergeDeriveRowClassName<RowType>(
+  func1: ((row: RowType) => string | undefined) | undefined,
+  func2: ((row: RowType) => string | undefined) | undefined
+): ((row: RowType) => string | undefined) | undefined {
+  if (func1 == null && func2 == null) return undefined;
+  return (row: RowType) => {
+    const className1 = func1 && func1(row);
+    const className2 = func2 && func2(row);
+    // Combine the class names that are defined
+    return [className1, className2].filter(Boolean).join(' ') || undefined;
+  };
 }

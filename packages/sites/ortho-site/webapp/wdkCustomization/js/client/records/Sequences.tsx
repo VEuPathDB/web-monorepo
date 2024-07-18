@@ -19,26 +19,21 @@ import { groupBy, difference } from 'lodash';
 import { PfamDomainArchitecture } from 'ortho-client/components/pfam-domains/PfamDomainArchitecture';
 import { extractPfamDomain } from 'ortho-client/records/utils';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import Mesa, { RowCounter } from '@veupathdb/coreui/lib/components/Mesa';
+import { RowCounter } from '@veupathdb/coreui/lib/components/Mesa';
 import { PfamDomain } from 'ortho-client/components/pfam-domains/PfamDomain';
+import { SelectList } from '@veupathdb/coreui';
+import { RecordTable_TaxonCounts_Filter } from './RecordTable_TaxonCounts_Filter';
+import { css, cx } from '@emotion/css';
 
 type RowType = Record<string, AttributeValue>;
-const CorePeripheralFilterStates = ['both', 'core', 'peripheral'] as const;
-type CorePeripheralFilterState = typeof CorePeripheralFilterStates[number];
-
-const CorePeripheralFilterStateLabels: Record<
-  CorePeripheralFilterState,
-  string
-> = {
-  both: 'Core & Peripheral',
-  core: 'Core only',
-  peripheral: 'Peripheral only',
-};
 
 const treeWidth = 200;
 const MIN_SEQUENCES_FOR_TREE = 3;
+const MAX_SEQUENCES_FOR_TREE = 9999;
 const MAX_SEQUENCES_TO_SHOW_ALL = 2000;
+
+const highlightColor = '#feb640';
+const highlightColor50 = highlightColor + '7f';
 
 export function RecordTable_Sequences(
   props: WrappedComponentProps<RecordTableProps>
@@ -48,6 +43,8 @@ export function RecordTable_Sequences(
     () => createSafeSearchRegExp(searchQuery),
     [searchQuery]
   );
+
+  const [selectedSpecies, setSelectedSpecies] = useState<string[]>([]);
 
   const [pfamFilterIds, setPfamFilterIds] = useState<string[]>([]);
 
@@ -77,13 +74,13 @@ export function RecordTable_Sequences(
   const numSequences = mesaRows.length;
 
   // show only core as default for large groups
-  const [corePeripheralFilterState, setCorePeripheralFilterState] =
-    useState<CorePeripheralFilterState>(
-      numSequences > MAX_SEQUENCES_TO_SHOW_ALL ? 'core' : 'both'
-    );
+  const [corePeripheralFilterValue, setCorePeripheralFilterValue] = useState<
+    ('core' | 'peripheral')[]
+  >(numSequences > MAX_SEQUENCES_TO_SHOW_ALL ? ['core'] : []);
 
   const treeResponse = useOrthoService(
-    numSequences >= MIN_SEQUENCES_FOR_TREE
+    numSequences >= MIN_SEQUENCES_FOR_TREE &&
+      numSequences <= MAX_SEQUENCES_FOR_TREE
       ? (orthoService) => orthoService.getGroupTree(groupName)
       : () => Promise.resolve(undefined), // avoid making a request we know will fail and cause a "We're sorry, something went wrong." modal
     [groupName, numSequences]
@@ -142,7 +139,8 @@ export function RecordTable_Sequences(
   // parse the tree and other expensive processing asynchronously
   const [tree, setTree] = useState<Branch>();
   const [leaves, setLeaves] = useState<Branch[]>();
-  const [sortedRows, setSortedRows] = useState<TableValue>();
+  // default unsorted `sortedRows`!
+  const [sortedRows, setSortedRows] = useState<TableValue>(mesaRows);
 
   useEffect(() => {
     if (!treeResponse) return;
@@ -180,8 +178,9 @@ export function RecordTable_Sequences(
   const filteredRows = useMemo(() => {
     if (
       searchQuery !== '' ||
-      corePeripheralFilterState !== 'both' ||
-      pfamFilterIds.length > 0
+      corePeripheralFilterValue != null ||
+      pfamFilterIds.length > 0 ||
+      selectedSpecies.length > 0
     ) {
       return sortedRows?.filter((row) => {
         const rowCorePeripheral = (
@@ -193,13 +192,20 @@ export function RecordTable_Sequences(
         const searchMatch =
           searchQuery === '' || rowMatch(row, safeSearchRegexp);
         const corePeripheralMatch =
-          corePeripheralFilterState === 'both' ||
-          rowCorePeripheral === corePeripheralFilterState;
+          corePeripheralFilterValue.length === 0 ||
+          corePeripheralFilterValue.includes(
+            rowCorePeripheral.toLowerCase() as any
+          );
         const pfamIdMatch =
           pfamFilterIds.length === 0 ||
           pfamFilterIds.some((pfamId) => rowPfamIdsSet?.has(pfamId));
+        const speciesMatch =
+          selectedSpecies.length === 0 ||
+          selectedSpecies.some((specie) => row.taxon_abbrev === specie);
 
-        return searchMatch && corePeripheralMatch && pfamIdMatch;
+        return (
+          searchMatch && corePeripheralMatch && pfamIdMatch && speciesMatch
+        );
       });
     }
     return undefined;
@@ -207,9 +213,10 @@ export function RecordTable_Sequences(
     searchQuery,
     safeSearchRegexp,
     sortedRows,
-    corePeripheralFilterState,
+    corePeripheralFilterValue,
     accessionToPfamIds,
     pfamFilterIds,
+    selectedSpecies,
   ]);
 
   // now filter the tree if needed - takes a couple of seconds for large trees
@@ -257,6 +264,7 @@ export function RecordTable_Sequences(
   if (
     !sortedRows ||
     (numSequences >= MIN_SEQUENCES_FOR_TREE &&
+      numSequences <= MAX_SEQUENCES_FOR_TREE &&
       (tree == null || treeResponse == null))
   ) {
     return (
@@ -292,10 +300,22 @@ export function RecordTable_Sequences(
     );
   }
 
+  const highlightedRowClassName = cx(
+    css`
+      & td {
+        background-color: ${highlightColor50} !important;
+      }
+    `
+  );
+
   const mesaState: MesaStateProps<RowType> = {
     options: {
       isRowSelected: (row: RowType) =>
         highlightedNodes.includes(row.full_id as string),
+      deriveRowClassName: (row: RowType) =>
+        highlightedNodes.includes(row.full_id as string)
+          ? highlightedRowClassName
+          : undefined,
     },
     uiState: {},
     rows: sortedRows,
@@ -313,6 +333,7 @@ export function RecordTable_Sequences(
     data: finalNewick,
     width: treeWidth,
     highlightMode: 'monophyletic' as const,
+    highlightColor,
     highlightedNodeIds: highlightedNodes,
   };
 
@@ -320,80 +341,85 @@ export function RecordTable_Sequences(
   const clustalDisabled =
     highlightedNodes == null || highlightedNodes.length < 2;
 
-  const pfamMesaState: MesaStateProps<RowType> = {
-    options: {
-      isRowSelected: (row: RowType) =>
-        pfamFilterIds.includes(row.accession as string),
-    },
-    uiState: {},
-    rows: pfamRows,
-    columns: [
-      {
-        key: 'accession',
-        name: 'PFam accession',
-      },
-      {
-        key: 'symbol',
-        name: 'Symbol',
-      },
-      {
-        key: 'description',
-        name: 'Description',
-      },
-      {
-        key: 'num_proteins',
-        name: 'Count',
-        helpText: 'Number of proteins that contain this domain',
-      },
-      {
-        key: 'graphic',
-        name: 'Graphic',
-        renderCell: (cellProps: { row: RowType }) => {
-          const pfamId = cellProps.row.accession as string;
-          const symbol = cellProps.row.symbol as string;
-          return <PfamDomain pfamId={pfamId} title={`${pfamId} (${symbol})`} />;
-        },
-      },
-    ],
-    eventHandlers: {
-      onRowSelect: (row: RowType) =>
-        setPfamFilterIds((prev) => [...prev, row.accession as string]),
-      onRowDeselect: (row: RowType) =>
-        setPfamFilterIds((prev) => prev.filter((id) => id !== row.accession)),
-    },
-  };
-
   const rowCount = (filteredRows ?? sortedRows).length;
+
+  const pfamFilter = pfamRows.length > 0 && (
+    <SelectList
+      defaultButtonDisplayContent="Pfam domains"
+      items={pfamRows.map((row) => ({
+        display: (
+          <div
+            style={{
+              display: 'flex',
+              margin: '.25em 0',
+              alignItems: 'center',
+              gap: '1em',
+              verticalAlign: 'middle',
+              width: '100%',
+            }}
+          >
+            <PfamDomain
+              style={{ width: 100 }}
+              pfamId={row.accession as string}
+            />
+            <div>{row.accession}</div>
+            <div>{row.description}</div>
+            <div style={{ marginLeft: 'auto' }}>
+              {row.num_proteins} proteins
+            </div>
+          </div>
+        ),
+        value: row.accession as string,
+      }))}
+      value={pfamFilterIds}
+      onChange={setPfamFilterIds}
+    />
+  );
+
+  const corePeripheralFilter = (
+    <SelectList
+      defaultButtonDisplayContent="Core/Peripheral"
+      items={[
+        {
+          display: 'Core',
+          value: 'core',
+        },
+        {
+          display: 'Peripheral',
+          value: 'peripheral',
+        },
+      ]}
+      value={corePeripheralFilterValue}
+      onChange={setCorePeripheralFilterValue}
+    />
+  );
+
+  const taxonFilter =
+    props.record.tables.TaxonCounts?.length > 0 ? (
+      <RecordTable_TaxonCounts_Filter
+        selectedSpecies={selectedSpecies}
+        onSpeciesSelected={setSelectedSpecies}
+        record={props.record}
+        recordClass={props.recordClass}
+        table={props.recordClass.tablesMap.TaxonCounts}
+        value={props.record.tables.TaxonCounts}
+        DefaultComponent={props.DefaultComponent}
+      />
+    ) : null;
 
   return (
     <>
-      <div
-        style={{
-          marginLeft: treeWidth,
-          display: 'flex',
-          flexDirection: 'row-reverse',
-        }}
-      >
-        <div
-          style={{
-            border: pfamRows.length === 0 ? '2px dashed #ddd' : '',
-            borderRadius: '5px',
-            padding: '0px 10px 10px 10px',
-          }}
-        >
-          <h4>PFam legend</h4>
-          {pfamRows.length > 0 ? (
-            <Mesa state={pfamMesaState} />
-          ) : (
-            <span>
-              <em>No data available</em>
-            </span>
-          )}
+      {numSequences > MAX_SEQUENCES_FOR_TREE && (
+        <div>
+          <strong>
+            Note: no phylogenetic tree is displayed because this group has more
+            than {MAX_SEQUENCES_FOR_TREE.toLocaleString()} sequences.
+          </strong>
         </div>
-      </div>
+      )}
       <div
         style={{
-          marginLeft: treeWidth,
+          marginLeft: finalNewick ? treeWidth : 0,
           padding: '10px',
           display: 'flex',
           flexDirection: 'row',
@@ -419,17 +445,22 @@ export function RecordTable_Sequences(
             />
           </div>
         </div>
-        <RadioButtonGroup
-          options={[...CorePeripheralFilterStates]}
-          optionLabels={CorePeripheralFilterStates.map(
-            (s) => CorePeripheralFilterStateLabels[s]
-          )}
-          selectedOption={corePeripheralFilterState}
-          onOptionSelected={(newOption: string) =>
-            setCorePeripheralFilterState(newOption as CorePeripheralFilterState)
-          }
-          capitalizeLabels={false}
-        />
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            gap: '1em',
+            alignItems: 'center',
+            marginLeft: 'auto',
+            flexWrap: 'wrap',
+            justifyContent: 'flex-end',
+          }}
+        >
+          <strong>Filters: </strong>
+          {pfamFilter}
+          {corePeripheralFilter}
+          {taxonFilter}
+        </div>
       </div>
       <TreeTable
         rowHeight={rowHeight}
