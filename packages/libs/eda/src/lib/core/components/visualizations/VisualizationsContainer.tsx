@@ -342,6 +342,10 @@ export function NewVisualizationPicker(props: NewVisualizationPickerProps) {
       <Grid>
         {/* Filter completely skips back-end plugins with no front-end implementations.
          * So there are no more "coming soon" placeholders.
+         * If we want "Coming soon..." icons, we should make a ComingSoonViz
+         * implementation where isEnabledInPicker function returns false.
+         * It should also include a selectorIcon. Other required props can be
+         * stubbed with noops.
          */}
         {visualizationsOverview
           .filter((viz) => viz.name && visualizationPlugins[viz.name])
