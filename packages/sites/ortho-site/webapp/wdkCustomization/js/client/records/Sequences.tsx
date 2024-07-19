@@ -420,7 +420,6 @@ export function RecordTable_Sequences(
       )}
       <div
         style={{
-          marginLeft: finalNewick ? treeWidth : 0,
           padding: '10px',
           display: 'flex',
           flexDirection: 'row',

@@ -156,10 +156,10 @@ const MultiSelect = (props: any) => {
 
     if (filteredSelectedOptions?.length > 0) {
       if (filteredSelectedOptions?.length === filteredOptions?.length)
-        selectAllLabel.current = `All (${filteredOptions.length}) selected`;
+        selectAllLabel.current = `All (${filteredOptions.length}) labels shown`;
       else
-        selectAllLabel.current = `${filteredSelectedOptions?.length} / ${filteredOptions.length} selected`;
-    } else selectAllLabel.current = 'Select all';
+        selectAllLabel.current = `${filteredSelectedOptions?.length} / ${filteredOptions.length} labels shown`;
+    } else selectAllLabel.current = 'Show all labels';
 
     allOption.label = selectAllLabel.current;
 
