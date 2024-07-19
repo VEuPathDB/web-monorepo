@@ -28,6 +28,8 @@ import { css, cx } from '@emotion/css';
 type RowType = Record<string, AttributeValue>;
 
 const treeWidth = 200;
+const maxColumnWidth = 200;
+const maxArchitectureLength = maxColumnWidth - 10 - 10 - 1; // 10px padding each side plus a 1px border
 const MIN_SEQUENCES_FOR_TREE = 3;
 const MAX_SEQUENCES_FOR_TREE = 9999;
 const MAX_SEQUENCES_TO_SHOW_ALL = 2000;
@@ -111,9 +113,19 @@ export function RecordTable_Sequences(
     [pfamRows]
   );
 
+  const maxProteinLength = useMemo(
+    () =>
+      mesaRows.reduce((max, row) => {
+        const length = Number(row['length'] || ('0' as string));
+        return length > max ? length : max;
+      }, 0),
+    [mesaRows]
+  );
+  console.log({ maxProteinLength });
+
   mesaColumns.unshift({
     key: 'pfamArchitecture',
-    name: 'Domain architecture (all drawn to same length)',
+    name: 'Domain architecture',
     renderCell: (cellProps) => {
       const proteinId = cellProps.row.full_id as string;
       const flatPfamData = rowsByAccession[proteinId];
@@ -122,9 +134,12 @@ export function RecordTable_Sequences(
         const proteinLength = Number(
           flatPfamData[0]['protein_length'] as string
         );
+        const architectureLength = Math.floor(
+          (maxArchitectureLength * proteinLength) / maxProteinLength
+        );
         return (
           <PfamDomainArchitecture
-            style={{ width: '150px', top: '10px' }}
+            style={{ width: `${architectureLength}px`, top: '10px' }}
             length={proteinLength}
             domains={pfamDomains}
             pfamDescriptions={pfamIdToDescription}
@@ -466,6 +481,7 @@ export function RecordTable_Sequences(
         treeProps={treeProps}
         tableProps={mesaState}
         hideTree={!finalNewick}
+        maxColumnWidth={maxColumnWidth}
       />
       <form action="/cgi-bin/msaOrthoMCL" target="_blank" method="post">
         <input type="hidden" name="project_id" value="OrthoMCL" />
