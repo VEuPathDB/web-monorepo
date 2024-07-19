@@ -373,6 +373,7 @@ export function RecordTable_Sequences(
       }))}
       value={pfamFilterIds}
       onChange={setPfamFilterIds}
+      instantUpdate={true}
     />
   );
 

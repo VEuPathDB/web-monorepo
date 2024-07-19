@@ -9,6 +9,10 @@ export interface SelectListProps<T> extends CheckboxListProps<T> {
   isDisabled?: boolean;
   /** Are contents loading? */
   isLoading?: boolean;
+  /** If true, don't wait for component to close before calling `onChange`
+   *  with latest selection.
+   */
+  instantUpdate?: boolean;
 }
 
 export default function SelectList<T>({
@@ -21,6 +25,7 @@ export default function SelectList<T>({
   defaultButtonDisplayContent,
   isDisabled = false,
   isLoading = false,
+  instantUpdate = false,
   ...props
 }: SelectListProps<T>) {
   const [selected, setSelected] = useState<SelectListProps<T>['value']>(value);
@@ -29,11 +34,22 @@ export default function SelectList<T>({
   );
 
   const onClose = () => {
+    if (instantUpdate) return; // the next two effects take care of the following when constantly updating
+
     onChange(selected);
     setButtonDisplayContent(
       selected.length ? selected.join(', ') : defaultButtonDisplayContent
     );
   };
+
+  /**
+   * Keep caller up to date with any selection changes
+   */
+  useEffect(() => {
+    if (instantUpdate) {
+      onChange(selected);
+    }
+  }, [onChange, selected, instantUpdate]);
 
   /**
    * Need to ensure that the state syncs with parent component in the event of an external
