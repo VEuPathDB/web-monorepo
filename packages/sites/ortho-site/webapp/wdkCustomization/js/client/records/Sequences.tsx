@@ -32,7 +32,6 @@ const maxColumnWidth = 200;
 const maxArchitectureLength = maxColumnWidth - 10 - 10 - 1; // 10px padding each side plus a 1px border
 const MIN_SEQUENCES_FOR_TREE = 3;
 const MAX_SEQUENCES_FOR_TREE = 9999;
-const MAX_SEQUENCES_TO_SHOW_ALL = 2000;
 
 const highlightColor = '#feb640';
 const highlightColor50 = highlightColor + '7f';
@@ -78,7 +77,7 @@ export function RecordTable_Sequences(
   // show only core as default for large groups
   const [corePeripheralFilterValue, setCorePeripheralFilterValue] = useState<
     ('core' | 'peripheral')[]
-  >(numSequences > MAX_SEQUENCES_TO_SHOW_ALL ? ['core'] : []);
+  >([]);
 
   const treeResponse = useOrthoService(
     numSequences >= MIN_SEQUENCES_FOR_TREE &&
@@ -121,7 +120,6 @@ export function RecordTable_Sequences(
       }, 0),
     [mesaRows]
   );
-  console.log({ maxProteinLength });
 
   mesaColumns.unshift({
     key: 'pfamArchitecture',
@@ -272,10 +270,6 @@ export function RecordTable_Sequences(
     } else return;
   }, [filteredTree, treeResponse, tree, filteredRows]);
 
-  const largeGroupWarning =
-    numSequences > MAX_SEQUENCES_TO_SHOW_ALL
-      ? '(note: this is a large group, only the core sequences will be shown by default)'
-      : '';
   if (
     !sortedRows ||
     (numSequences >= MIN_SEQUENCES_FOR_TREE &&
@@ -284,7 +278,7 @@ export function RecordTable_Sequences(
   ) {
     return (
       <>
-        <div>Loading... {largeGroupWarning}</div>
+        <div>Loading...</div>
         <Loading />
       </>
     ); // The loading spinner does not show :-(
