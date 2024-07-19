@@ -392,6 +392,7 @@ export function RecordTable_Sequences(
       ]}
       value={corePeripheralFilterValue}
       onChange={setCorePeripheralFilterValue}
+      instantUpdate={true}
     />
   );
 
