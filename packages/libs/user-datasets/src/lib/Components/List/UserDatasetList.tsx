@@ -31,6 +31,7 @@ import {
 
 import UserDatasetEmptyState from '../EmptyState';
 import SharingModal from '../Sharing/UserDatasetSharingModal';
+import CommunityModal from '../Sharing/UserDatasetCommunityModal';
 import UserDatasetStatus from '../UserDatasetStatus';
 import { normalizePercentage, textCell } from '../UserDatasetUtils';
 
@@ -76,6 +77,16 @@ interface Props {
   quotaSize: number;
   dataNoun: DataNoun;
   enablePublicUserDatasets: boolean;
+  communityModalOpen: boolean;
+  updateCommunityModalVisibility: (visibility: boolean) => any;
+  updateDatasetCommunityVisibility: (
+    datasetIds: string[],
+    isVisibleToCommunity: boolean,
+    context: 'datasetDetails' | 'datasetsList'
+  ) => any;
+  updateDatasetCommunityVisibilityError: string | undefined;
+  updateDatasetCommunityVisibilityPending: boolean;
+  updateDatasetCommunityVisibilitySuccess: boolean;
 }
 
 interface State {
@@ -406,16 +417,25 @@ class UserDatasetList extends React.Component<Props, State> {
 
   getTableActions() {
     const { isMyDataset } = this;
-    const { removeUserDataset, dataNoun } = this.props;
+    const { removeUserDataset, dataNoun, enablePublicUserDatasets } =
+      this.props;
     return [
       {
-        callback: (rows: UserDataset[]) => {
-          this.openSharingModal();
-        },
+        callback: (rows: UserDataset[]) => {},
         element: (
           <ThemedGrantAccessButton
             buttonText={`Grant Access to ${dataNoun.plural}`}
-            onPress={() => null}
+            onPress={(grantType) => {
+              switch (grantType) {
+                case 'community':
+                  this.props.updateCommunityModalVisibility(true);
+                  break;
+                case 'individual':
+                  this.openSharingModal();
+                  break;
+              }
+            }}
+            enablePublicUserDatasets={enablePublicUserDatasets}
           />
         ),
         selectionRequired: true,
@@ -598,6 +618,11 @@ class UserDatasetList extends React.Component<Props, State> {
       shareError,
       updateUserDatasetDetail,
       enablePublicUserDatasets,
+      updateDatasetCommunityVisibility,
+      updateCommunityModalVisibility,
+      updateDatasetCommunityVisibilityError,
+      updateDatasetCommunityVisibilityPending,
+      updateDatasetCommunityVisibilitySuccess,
     } = this.props;
     const { uiState, selectedRows, searchTerm } = this.state;
 
@@ -655,6 +680,21 @@ class UserDatasetList extends React.Component<Props, State> {
                     shareError={shareError}
                     updateUserDatasetDetail={updateUserDatasetDetail}
                     enablePublicUserDatasets={enablePublicUserDatasets}
+                  />
+                ) : null}
+                {this.props.communityModalOpen && enablePublicUserDatasets ? (
+                  <CommunityModal
+                    user={user}
+                    datasets={selectedDatasets}
+                    context="datasetsList"
+                    onClose={() => updateCommunityModalVisibility(false)}
+                    dataNoun={dataNoun}
+                    updateDatasetCommunityVisibility={
+                      updateDatasetCommunityVisibility
+                    }
+                    updatePending={updateDatasetCommunityVisibilityPending}
+                    updateSuccessful={updateDatasetCommunityVisibilitySuccess}
+                    updateError={updateDatasetCommunityVisibilityError}
                   />
                 ) : null}
                 <SearchBox

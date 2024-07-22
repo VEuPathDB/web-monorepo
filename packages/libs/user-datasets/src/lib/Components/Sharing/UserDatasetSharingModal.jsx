@@ -9,10 +9,8 @@ import {
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 
 import { isVdiCompatibleWdkService } from '../../Service';
-import { Toggle } from '@veupathdb/coreui';
 
 import './UserDatasetSharingModal.scss';
-import { uniq } from 'lodash';
 
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
@@ -427,15 +425,8 @@ class UserDatasetSharingModal extends React.Component {
 
   renderViewContent() {
     const { recipients } = this.state;
-    const {
-      datasets,
-      onClose,
-      dataNoun,
-      shareError,
-      shareSuccessful,
-      updateUserDatasetDetail,
-      enablePublicUserDatasets,
-    } = this.props;
+    const { datasets, onClose, dataNoun, shareError, shareSuccessful } =
+      this.props;
     const datasetNoun = this.getDatasetNoun();
 
     const DatasetList = this.renderDatasetList;
@@ -469,44 +460,8 @@ class UserDatasetSharingModal extends React.Component {
         </div>
       );
     } else {
-      // Determine the value for the community visibility toggle:
-      // If a single user dataset is selected, use its value.
-      // If multiple are selected, and they all have the same value,
-      // use that value; otherwise, use undefined.
-      //
-      // Since the former is a subset of the latter, we can implement
-      // only the latter by:
-      // 1. Get an array of unique visbility values.
-      // 2. If the length of the array is 1, use that value; otherwise use undefined.
-      const visibilities = uniq(datasets.map((d) => d.meta.visibility));
-      const visibility =
-        visibilities.length === 1 ? visibilities[0] : undefined;
       return (
         <div className="UserDataset-SharingModal-FormView">
-          {enablePublicUserDatasets && (
-            <div className="UserDataset-SharingModal-VisibilitySection">
-              <h2 className="UserDatasetSharing-SectionName">
-                Community visibility:
-              </h2>
-              <div
-                className="UserDatasetSharing-Visibility"
-                style={{ padding: '1em' }}
-              >
-                <Toggle
-                  value={visibility === 'public'}
-                  onChange={(value) => {
-                    datasets.forEach((dataset) => {
-                      updateUserDatasetDetail(dataset, {
-                        ...dataset.meta,
-                        visibility: value ? 'public' : 'private',
-                      });
-                    });
-                  }}
-                  label={`Allow ${datasetNoun} to be visible to all users as a Community ${dataNoun.singular}.`}
-                />
-              </div>
-            </div>
-          )}
           <div className="UserDataset-SharingModal-DatasetSection">
             <h2 className="UserDatasetSharing-SectionName">
               Share {datasetNoun}:
