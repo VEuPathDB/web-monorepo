@@ -3,13 +3,11 @@ import React from 'react';
 import {
   IconAlt as Icon,
   Loading,
-  Modal,
   TextBox,
 } from '@veupathdb/wdk-client/lib/Components';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
-
+import { Modal } from '@veupathdb/coreui';
 import { isVdiCompatibleWdkService } from '../../Service';
-
 import './UserDatasetSharingModal.scss';
 
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -463,9 +461,6 @@ class UserDatasetSharingModal extends React.Component {
       return (
         <div className="UserDataset-SharingModal-FormView">
           <div className="UserDataset-SharingModal-DatasetSection">
-            <h2 className="UserDatasetSharing-SectionName">
-              Share {datasetNoun}:
-            </h2>
             <DatasetList datasets={datasets} />
           </div>
           <div className="UserDataset-SharingModal-RecipientSection">
@@ -486,18 +481,17 @@ class UserDatasetSharingModal extends React.Component {
     const ViewContent = this.renderViewContent;
 
     return (
-      <Modal className="UserDataset-SharingModal">
-        <div
-          className="UserDataset-SharingModal-CloseBar"
-          title="Close this window"
-        >
-          <Icon
-            fa="window-close"
-            className="SharingModal-Close"
-            onClick={() => (typeof onClose === 'function' ? onClose() : null)}
-          />
+      <Modal
+        title={`Manage Individual Access to ${this.getDatasetNoun()}`}
+        themeRole="primary"
+        includeCloseButton
+        toggleVisible={onClose}
+        visible
+        titleSize="small"
+      >
+        <div className="UserDataset-SharingModal">
+          {sharingDatasetPending ? <Loading /> : <ViewContent />}
         </div>
-        {sharingDatasetPending ? <Loading /> : <ViewContent />}
       </Modal>
     );
   }
