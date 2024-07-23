@@ -1,12 +1,8 @@
 import React from 'react';
 
-import {
-  IconAlt as Icon,
-  Loading,
-  Modal,
-} from '@veupathdb/wdk-client/lib/Components';
+import { IconAlt as Icon, Loading } from '@veupathdb/wdk-client/lib/Components';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
-
+import { Modal } from '@veupathdb/coreui';
 import { FilledButton } from '@veupathdb/coreui';
 
 import './UserDatasetSharingModal.scss';
@@ -93,9 +89,6 @@ class UserDatasetSharingModal extends React.Component {
       return (
         <div className="UserDataset-SharingModal-FormView">
           <div className="UserDataset-SharingModal-VisibilitySection">
-            <h2 className="UserDatasetSharing-SectionName">
-              Manage Community Access to {datasetNoun}
-            </h2>
             <p className="UserDataset-SharingModal-Subtitle">
               <em>
                 Community {dataNoun.plural} can be viewed and downloaded by all
@@ -167,18 +160,17 @@ class UserDatasetSharingModal extends React.Component {
     const ViewContent = this.renderViewContent;
 
     return (
-      <Modal className="UserDataset-SharingModal">
-        <div
-          className="UserDataset-SharingModal-CloseBar"
-          title="Close this window"
-        >
-          <Icon
-            fa="window-close"
-            className="SharingModal-Close"
-            onClick={() => (typeof onClose === 'function' ? onClose() : null)}
-          />
+      <Modal
+        title={`Manage Community Access to ${this.getDatasetNoun()}`}
+        themeRole="primary"
+        includeCloseButton
+        toggleVisible={onClose}
+        visible
+        titleSize="small"
+      >
+        <div className="UserDataset-SharingModal">
+          {updatePending ? <Loading /> : <ViewContent />}
         </div>
-        {updatePending ? <Loading /> : <ViewContent />}
       </Modal>
     );
   }
