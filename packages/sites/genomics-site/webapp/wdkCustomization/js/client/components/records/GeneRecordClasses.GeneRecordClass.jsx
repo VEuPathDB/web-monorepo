@@ -6,7 +6,7 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { connect } from 'react-redux';
 
 import { RecordActions } from '@veupathdb/wdk-client/lib/Actions';
@@ -61,6 +61,7 @@ export const RecordHeading = connect(
         this.addProductTooltip.bind(this),
         300
       );
+      this.root = null;
     }
 
     componentDidMount() {
@@ -69,8 +70,10 @@ export const RecordHeading = connect(
       this.thumbsContainer = this.node.querySelector(
         '.eupathdb-ThumbnailsContainer'
       );
-      if (this.thumbsContainer) this.renderThumbnails();
-      else console.error('Warning: Could not find ThumbnailsContainer');
+      if (this.thumbsContainer) {
+        this.root = createRoot(this.thumbsContainer);
+        this.renderThumbnails();
+      } else console.error('Warning: Could not find ThumbnailsContainer');
     }
 
     handleThumbnailClick({ anchor }) {
@@ -78,12 +81,11 @@ export const RecordHeading = connect(
     }
 
     componentDidUpdate() {
-      if (this.thumbsContainer) this.renderThumbnails();
+      if (this.thumbsContainer && this.root) this.renderThumbnails();
     }
 
     componentWillUnmount() {
-      if (this.thumbsContainer)
-        ReactDOM.unmountComponentAtNode(this.thumbsContainer);
+      if (this.thumbsContainer && this.root) this.root.unmount();
       window.removeEventListener('resize', this.addProductTooltip);
       this.addProductTooltip.cancel();
     }
@@ -189,13 +191,12 @@ export const RecordHeading = connect(
         )
         .toArray();
 
-      ReactDOM.render(
+      this.root.render(
         <OverviewThumbnails
           title="Gene Features"
           thumbnails={filteredGBrowseContexts}
           onThumbnailClick={this.handleThumbnailClick}
-        />,
-        this.thumbsContainer
+        />
       );
     }
 
