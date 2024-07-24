@@ -679,7 +679,6 @@ class UserDatasetList extends React.Component<Props, State> {
                     shareSuccessful={shareSuccessful}
                     shareError={shareError}
                     updateUserDatasetDetail={updateUserDatasetDetail}
-                    enablePublicUserDatasets={enablePublicUserDatasets}
                   />
                 ) : null}
                 {this.props.communityModalOpen && enablePublicUserDatasets ? (
