@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useEffect } from 'react';
 import { ChevronRight, H6, Toggle } from '@veupathdb/coreui';
 import TimeSlider, {
   TimeSliderDataProp,
@@ -61,26 +61,29 @@ export default function TimeSliderQuickFilter({
   const { siteName } = siteInformation;
 
   // extend the back end range request if our selectedRange is outside of it
-  const extendedDisplayRange =
-    variableMetadata && DateVariable.is(variableMetadata.variable)
-      ? selectedRange == null
-        ? {
-            start: variableMetadata.variable.distributionDefaults.rangeMin,
-            end: variableMetadata.variable.distributionDefaults.rangeMax,
-          }
-        : {
-            start:
-              variableMetadata.variable.distributionDefaults.rangeMin <
-              selectedRange.start
-                ? variableMetadata.variable.distributionDefaults.rangeMin
-                : selectedRange.start,
-            end:
-              variableMetadata.variable.distributionDefaults.rangeMax >
-              selectedRange.end
-                ? variableMetadata.variable.distributionDefaults.rangeMax
-                : selectedRange.end,
-          }
-      : undefined;
+  const extendedDisplayRange = useMemo(
+    () =>
+      variableMetadata && DateVariable.is(variableMetadata.variable)
+        ? selectedRange == null
+          ? {
+              start: variableMetadata.variable.distributionDefaults.rangeMin,
+              end: variableMetadata.variable.distributionDefaults.rangeMax,
+            }
+          : {
+              start:
+                variableMetadata.variable.distributionDefaults.rangeMin <
+                selectedRange.start
+                  ? variableMetadata.variable.distributionDefaults.rangeMin
+                  : selectedRange.start,
+              end:
+                variableMetadata.variable.distributionDefaults.rangeMax >
+                selectedRange.end
+                  ? variableMetadata.variable.distributionDefaults.rangeMax
+                  : selectedRange.end,
+            }
+        : undefined,
+    [variableMetadata, selectedRange]
+  );
 
   // converting old usePromise code to useQuery in an efficient manner
   const { enabled, queryKey, queryFn } = useMemo(() => {
@@ -258,6 +261,9 @@ export default function TimeSliderQuickFilter({
   const [disableLeftArrow, setDisableLeftArrow] = useState(false);
   const [disableRightArrow, setDisableRightArrow] = useState(false);
 
+  // year-based range
+  const [enableYearRange, setEnableYearRange] = useState(false);
+
   // control selectedRange
   const handleAxisRangeChange = useCallback(
     (newRange?: NumberOrDateRange) => {
@@ -288,14 +294,54 @@ export default function TimeSliderQuickFilter({
           extendedDisplayRange,
           selectedRange,
           arrow,
-          setDisableLeftArrow,
-          setDisableRightArrow
+          enableYearRange
         );
         updateConfig({ ...config, selectedRange: newSelectedRange });
       }
     },
     [config, updateConfig, extendedDisplayRange, selectedRange]
   );
+
+  // enabling/disabling date range arrows
+  useEffect(() => {
+    if (extendedDisplayRange && selectedRange) {
+      const diff =
+        new Date(selectedRange.end).getTime() -
+        new Date(selectedRange.start).getTime();
+
+      const expectedStartDate = new Date(
+        new Date(selectedRange.start).getTime() - diff
+      )
+        .toISOString()
+        .split('T')[0];
+
+      const expectedEndDate = new Date(
+        new Date(selectedRange.end).getTime() + diff
+      )
+        .toISOString()
+        .split('T')[0];
+
+      // left arrow
+      if (
+        new Date(expectedStartDate).getTime() <
+        new Date(extendedDisplayRange.start).getTime()
+      ) {
+        setDisableLeftArrow(true);
+      } else {
+        setDisableLeftArrow(false);
+      }
+
+      // right arrow
+      if (
+        new Date(expectedEndDate).getTime() >
+        new Date(extendedDisplayRange.end).getTime()
+      ) {
+        setDisableRightArrow(true);
+      } else {
+        setDisableRightArrow(false);
+      }
+    }
+  }, [extendedDisplayRange, selectedRange]);
 
   // if no variable in a study is suitable to time slider, do not show time slider
   return variable != null && variableMetadata != null ? (
@@ -429,8 +475,17 @@ export default function TimeSliderQuickFilter({
               <div
                 style={{
                   marginRight: '1em',
+                  display: 'flex',
+                  flexDirection: 'column',
                 }}
               >
+                <Toggle
+                  label="Year"
+                  labelPosition="left"
+                  value={enableYearRange}
+                  onChange={(toggle) => setEnableYearRange(toggle)}
+                />
+                <div style={{ marginBottom: '0.25em' }} />
                 <Toggle
                   label={active ? 'On' : 'Off'}
                   labelPosition="left"
@@ -470,53 +525,55 @@ function newArrowRange(
   extendedDisplayRange: selectedRangeProp | undefined,
   selectedRange: selectedRangeProp | undefined,
   arrow: string,
-  setDisableLeftArrow: (value: boolean) => void,
-  setDisableRightArrow: (value: boolean) => void
+  enableYearRange: boolean
 ) {
   if (extendedDisplayRange && selectedRange) {
-    const diff =
-      new Date(selectedRange.end).getTime() -
-      new Date(selectedRange.start).getTime();
-    if (arrow === 'right') {
-      const endDate = new Date(new Date(selectedRange.end).getTime() + diff)
-        .toISOString()
-        .split('T')[0];
-      if (
-        new Date(endDate).getTime() >
-        new Date(extendedDisplayRange.end).getTime()
-      ) {
-        setDisableRightArrow(true);
-        return selectedRange;
-      } else {
-        setDisableLeftArrow(false);
-        setDisableRightArrow(false);
-        return {
-          start: new Date(new Date(selectedRange.start).getTime() + diff)
-            .toISOString()
-            .split('T')[0],
-          end: endDate,
-        };
-      }
+    // if year range is enabled
+    if (enableYearRange) {
+      const selectedRangeStart = selectedRange.start.split('-');
+      const selectedRangeEnd = selectedRange.end.split('-');
+      const diff = Number(selectedRangeEnd[0]) - Number(selectedRangeStart[0]);
+      // if start and end have the same year, then yearDiff = 1 year
+      const yearDiff = diff === 0 ? 1 : diff;
+
+      const startDate =
+        (arrow === 'right'
+          ? String(Number(selectedRangeStart[0]) + yearDiff)
+          : String(Number(selectedRangeStart[0]) - yearDiff)) +
+        '-' +
+        selectedRangeStart[1] +
+        '-' +
+        selectedRangeStart[2];
+      const endDate =
+        (arrow === 'right'
+          ? String(Number(selectedRangeEnd[0]) + yearDiff)
+          : String(Number(selectedRangeEnd[0]) - yearDiff)) +
+        '-' +
+        selectedRangeEnd[1] +
+        '-' +
+        selectedRangeEnd[2];
+
+      return {
+        start: startDate,
+        end: endDate,
+      };
+
+      // relying on (end - start) dates only
     } else {
-      const startDate = new Date(new Date(selectedRange.start).getTime() - diff)
-        .toISOString()
-        .split('T')[0];
-      if (
-        new Date(startDate).getTime() <
-        new Date(extendedDisplayRange.start).getTime()
-      ) {
-        setDisableLeftArrow(true);
-        return selectedRange;
-      } else {
-        setDisableLeftArrow(false);
-        setDisableRightArrow(false);
-        return {
-          start: startDate,
-          end: new Date(new Date(selectedRange.end).getTime() - diff)
-            .toISOString()
-            .split('T')[0],
-        };
-      }
+      const diff =
+        new Date(selectedRange.end).getTime() -
+        new Date(selectedRange.start).getTime();
+
+      const diffSign = arrow === 'right' ? diff : -diff;
+
+      return {
+        start: new Date(new Date(selectedRange.start).getTime() + diffSign)
+          .toISOString()
+          .split('T')[0],
+        end: new Date(new Date(selectedRange.end).getTime() + diffSign)
+          .toISOString()
+          .split('T')[0],
+      };
     }
   } else {
     return undefined;

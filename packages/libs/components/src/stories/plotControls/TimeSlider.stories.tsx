@@ -304,7 +304,6 @@ export const TimeFilter: Story<LinePlotProps> = (args: any) => {
 
   // set constant values
   const defaultSymbolSize = 0.8;
-  const defaultColor = '#333';
 
   // control selectedRange
   const handleAxisRangeChange = useCallback(
