@@ -130,19 +130,25 @@ const siteAnnouncements = [
   {
     id: 'clinepiEDA',
     renderDisplay: (props) => {
-      if (
-        props.projectId == 'ClinEpiDB' &&
-        (props.location.pathname.indexOf('/workspace/analyses/DS_624583e93e/') >
-          -1 ||
-          props.location.pathname.indexOf('/request-access/DS_624583e93e') > -1)
-      ) {
-        return (
-          <div>
-            {' '}
-            Requests to access LLINEUP2 data will not be granted until the
-            manuscript has been published.
-          </div>
-        );
+      const idToDisplay = {
+        DS_624583e93e: 'LLINEUP2',
+        DS_17191d35b9: 'PRISM2 Border Cohort',
+      };
+      if (props.projectId !== 'ClinEpiDB') return null;
+
+      for (const [id, display] of Object.entries(idToDisplay)) {
+        if (
+          props.location.pathname.includes(`/workspace/analyses/${id}`) ||
+          props.location.pathname.includes(`/request-access/${id}`)
+        ) {
+          return (
+            <div>
+              {' '}
+              Requests to access {display} data will not be granted until the
+              manuscript has been published.
+            </div>
+          );
+        }
       }
       return null;
     },
