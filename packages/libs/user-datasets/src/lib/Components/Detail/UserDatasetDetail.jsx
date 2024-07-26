@@ -97,15 +97,28 @@ class UserDatasetDetail extends React.Component {
       this.props;
     const { sharedWith } = userDataset;
     const shareCount = !Array.isArray(sharedWith) ? null : sharedWith.length;
-    const message =
-      `Are you sure you want to ${
-        isOwner ? 'delete' : 'remove'
-      } this ${dataNoun.singular.toLowerCase()}? ` +
-      (!isOwner || !shareCount
+
+    const question = `Are you sure you want to ${
+      isOwner ? 'delete' : 'remove'
+    } this ${dataNoun.singular.toLowerCase()}? `;
+
+    const visibilityMessage =
+      userDataset.meta.visibility === 'public'
+        ? 'It will no longer be visible to the community'
+        : null;
+
+    const shareMessage =
+      !isOwner || !shareCount
         ? ''
         : `${shareCount} collaborator${
             shareCount === 1 ? '' : 's'
-          } you've shared with will lose access.`);
+          } you've shared with will lose access.`;
+
+    const message =
+      question +
+      (visibilityMessage && shareMessage
+        ? `${visibilityMessage}, and ${shareMessage}`
+        : visibilityMessage || shareMessage);
 
     if (window.confirm(message)) {
       removeUserDataset(userDataset, baseUrl);
