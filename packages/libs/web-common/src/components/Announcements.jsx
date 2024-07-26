@@ -132,7 +132,7 @@ const siteAnnouncements = [
     renderDisplay: (props) => {
       const idToDisplay = {
         DS_624583e93e: 'LLINEUP2',
-        DS_17191d35b9: 'PRISM2 Border Cohort',
+        DS_17191d35b9: 'PRISM2 ICEMR Border Cohort',
       };
       if (props.projectId !== 'ClinEpiDB') return null;
 
