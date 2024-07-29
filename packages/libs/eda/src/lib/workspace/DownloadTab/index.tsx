@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, useCallback } from 'react';
 
 import {
   AnalysisState,
+  usePromise,
   useStudyEntities,
   useStudyMetadata,
   useStudyRecord,
@@ -34,7 +35,7 @@ import { parsePath } from 'history';
 
 type DownloadsTabProps = {
   downloadClient: DownloadClient;
-  analysisState: AnalysisState;
+  analysisState: AnalysisState | undefined;
   totalCounts: EntityCounts | undefined;
   filteredCounts: EntityCounts | undefined;
 };
@@ -123,7 +124,7 @@ export default function DownloadTab({
     );
   }, [user, permission, studyRecord, handleClick]);
 
-  /**
+  /*
    * Ok, this is confusing, but there are two places where we need
    * to pull information on "releases." The first is from the download
    * service, which just returns an array of string "release identifiers"
@@ -136,31 +137,25 @@ export default function DownloadTab({
    * We'll merge the info together later, but for now, that's why
    * you have two different variables for study releases here.
    */
-  const [downloadServiceStudyReleases, setDownloadServiceStudyReleases] =
-    useState<Array<string>>([]);
+
   const WDKStudyReleases = useWdkStudyReleases();
 
-  // Only fetch study releases if they are expected to be available
-  const shouldFetchStudyReleases = Boolean(
-    !permission.loading &&
-      permission.permissions.perDataset[datasetId]?.sha1Hash
-  );
-
   // Get a list of all available study releases according to the Download Service.
-  useEffect(() => {
-    if (!shouldFetchStudyReleases) {
-      return;
-    }
-
-    downloadClient.getStudyReleases(studyMetadata.id).then(
-      (result) => {
-        setDownloadServiceStudyReleases(result);
-      },
-      (error) => {
-        console.error('Error fetching download details of study.', error);
+  const downloadServiceStudyReleases = usePromise(
+    useCallback(async () => {
+      // Only fetch study releases if they are expected to be available
+      if (permission.loading) return undefined;
+      if (permission.permissions.perDataset[datasetId]?.sha1Hash == null)
+        return [];
+      try {
+        return await downloadClient.getStudyReleases(studyMetadata.id);
+      } catch (error) {
+        console.log(error);
+        return [];
       }
-    );
-  }, [shouldFetchStudyReleases, downloadClient, studyMetadata]);
+    }, [datasetId, downloadClient, permission, studyMetadata.id]),
+    { keepPreviousValue: false }
+  );
 
   /**
    * Once we have information from both services on available releases
@@ -171,14 +166,14 @@ export default function DownloadTab({
    * that doesn't have a match in the WDKService, it gets disregarded.
    *  */
   const mergedReleaseData = useMemo(() => {
-    if (!WDKStudyReleases.length || !downloadServiceStudyReleases.length)
-      return [];
+    if (!WDKStudyReleases || !downloadServiceStudyReleases.value)
+      return undefined;
 
     /**
      * It turns out there are many "releases" for which the files
      * you can download haven't really changed at all.
      */
-    return downloadServiceStudyReleases.reduce<DownloadTabStudyReleases>(
+    return downloadServiceStudyReleases.value.reduce<DownloadTabStudyReleases>(
       (accumlatedValue, currentRelease) => {
         const currentReleaseNumber = currentRelease.split('-')[1];
         const matchingWDKRelease = WDKStudyReleases.find(
@@ -201,7 +196,7 @@ export default function DownloadTab({
 
   const partialCitationData = useMemo(() => {
     let citationUrl;
-    if (analysisState.analysis && 'analysisId' in analysisState.analysis) {
+    if (analysisState?.analysis && 'analysisId' in analysisState.analysis) {
       citationUrl = window.location.href.replace(
         `${analysisState.analysis.analysisId}/download`,
         'new'
@@ -236,43 +231,49 @@ export default function DownloadTab({
         {projectDisplayName === 'ClinEpiDB' &&
           !isUserStudy &&
           (dataAccessDeclaration ?? '')}
-        {mergedReleaseData[0] && (
+        {mergedReleaseData?.[0] && (
           <StudyCitation
             partialCitationData={partialCitationData}
             // use current release
             release={mergedReleaseData[0]}
           />
         )}
-        {
+        {analysisState && (
           <MySubset
             datasetId={datasetId}
             entities={enhancedEntityData}
             analysisState={analysisState}
           />
-        }
-        {mergedReleaseData.map((release, index) =>
-          index === 0 ? (
-            <CurrentRelease
-              key={release.releaseNumber}
-              datasetId={datasetId}
-              studyId={studyMetadata.id}
-              release={release}
-              downloadClient={downloadClient}
-            />
-          ) : (
-            <PastRelease
-              key={release.releaseNumber}
-              datasetId={datasetId}
-              studyId={studyMetadata.id}
-              release={release}
-              downloadClient={downloadClient}
-              citationString={stripHTML(
-                getCitationString({
-                  partialCitationData,
-                  release,
-                })
-              )}
-            />
+        )}
+        {mergedReleaseData == null ? (
+          'Loading...'
+        ) : mergedReleaseData.length === 0 ? (
+          <div>This study does not contain any download files.</div>
+        ) : (
+          mergedReleaseData.map((release, index) =>
+            index === 0 ? (
+              <CurrentRelease
+                key={release.releaseNumber}
+                datasetId={datasetId}
+                studyId={studyMetadata.id}
+                release={release}
+                downloadClient={downloadClient}
+              />
+            ) : (
+              <PastRelease
+                key={release.releaseNumber}
+                datasetId={datasetId}
+                studyId={studyMetadata.id}
+                release={release}
+                downloadClient={downloadClient}
+                citationString={stripHTML(
+                  getCitationString({
+                    partialCitationData,
+                    release,
+                  })
+                )}
+              />
+            )
           )
         )}
       </div>

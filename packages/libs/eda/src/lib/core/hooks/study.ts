@@ -186,7 +186,7 @@ export function isStubEntity(entity: StudyEntity) {
 
 export function useStudyMetadata(datasetId: string, client: SubsettingClient) {
   const permissionsResponse = usePermissions();
-  const { error, value } = usePromise(
+  return usePromise(
     useCallback(async () => {
       if (permissionsResponse.loading) return;
       const { permissions } = permissionsResponse;
@@ -208,8 +208,10 @@ export function useStudyMetadata(datasetId: string, client: SubsettingClient) {
         }
         throw error;
       }
-    }, [client, datasetId, permissionsResponse])
+    }, [client, datasetId, permissionsResponse]),
+    {
+      keepPreviousValue: false,
+      throwError: true,
+    }
   );
-  if (error) throw error;
-  return value;
 }

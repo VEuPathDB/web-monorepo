@@ -5,7 +5,6 @@ import { Switch, Redirect } from 'react-router-dom';
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
 
-import UserDatasetAllUploadsController from '../Controllers/UserDatasetAllUploadsController';
 import UserDatasetListController from '../Controllers/UserDatasetListController';
 import UserDatasetNewUploadController from '../Controllers/UserDatasetNewUploadController';
 
@@ -19,6 +18,7 @@ interface Props {
   workspaceTitle: string;
   helpTabContents?: ReactNode;
   dataNoun: DataNoun;
+  enablePublicUserDatasets: boolean;
 }
 
 function UserDatasetsWorkspace(props: Props) {
@@ -29,6 +29,7 @@ function UserDatasetsWorkspace(props: Props) {
     workspaceTitle,
     helpTabContents,
     dataNoun,
+    enablePublicUserDatasets,
   } = props;
 
   return (
@@ -77,6 +78,7 @@ function UserDatasetsWorkspace(props: Props) {
               helpRoute={helpRoute}
               workspaceTitle={workspaceTitle}
               dataNoun={dataNoun}
+              enablePublicUserDatasets={enablePublicUserDatasets}
             />
           )}
           disclaimerProps={{ toDoWhatMessage: 'To view your datasets' }}

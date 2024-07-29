@@ -1,4 +1,5 @@
 import React from 'react';
+import { Public } from '@material-ui/icons';
 
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import SaveableTextEditor from '@veupathdb/wdk-client/lib/Components/InputControls/SaveableTextEditor';
@@ -96,15 +97,28 @@ class UserDatasetDetail extends React.Component {
       this.props;
     const { sharedWith } = userDataset;
     const shareCount = !Array.isArray(sharedWith) ? null : sharedWith.length;
-    const message =
-      `Are you sure you want to ${
-        isOwner ? 'delete' : 'remove'
-      } this ${dataNoun.singular.toLowerCase()}? ` +
-      (!isOwner || !shareCount
+
+    const question = `Are you sure you want to ${
+      isOwner ? 'delete' : 'remove'
+    } this ${dataNoun.singular.toLowerCase()}? `;
+
+    const visibilityMessage =
+      userDataset.meta.visibility === 'public'
+        ? 'It will no longer be visible to the community'
+        : null;
+
+    const shareMessage =
+      !isOwner || !shareCount
         ? ''
         : `${shareCount} collaborator${
             shareCount === 1 ? '' : 's'
-          } you've shared with will lose access.`);
+          } you've shared with will lose access.`;
+
+    const message =
+      question +
+      (visibilityMessage && shareMessage
+        ? `${visibilityMessage}, and ${shareMessage}`
+        : visibilityMessage || shareMessage);
 
     if (window.confirm(message)) {
       removeUserDataset(userDataset, baseUrl);
@@ -149,8 +163,8 @@ class UserDatasetDetail extends React.Component {
 
     return [
       {
-        className: classify('Name'),
         attribute: this.props.detailsPageTitle,
+        className: classify('Name'),
         value: (
           <SaveableTextEditor
             value={meta.name}
@@ -161,7 +175,6 @@ class UserDatasetDetail extends React.Component {
       },
       {
         attribute: 'Status',
-        className: classify('Status'),
         value: (
           <UserDatasetStatus
             linkToDataset={false}
@@ -173,6 +186,36 @@ class UserDatasetDetail extends React.Component {
           />
         ),
       },
+      {
+        attribute: 'Visibility',
+        value:
+          meta.visibility === 'public' ? (
+            <>
+              {' '}
+              <Public className="Community-visible" /> This{' '}
+              {dataNoun.singular.toLowerCase()} is visible to the community.
+            </>
+          ) : (
+            <>
+              This {dataNoun.singular.toLowerCase()} is only visble to the owner
+              and those they have shared it with.
+            </>
+          ),
+      },
+      !isOwner || !sharedWith || !sharedWith.length
+        ? null
+        : {
+            attribute: 'Shared with',
+            value: (
+              <ul>
+                {sharedWith.map((share, index) => (
+                  <li key={`${share.userDisplayName}-${index}`}>
+                    {share.userDisplayName}
+                  </li>
+                ))}
+              </ul>
+            ),
+          },
       {
         attribute: 'Owner',
         value: isOwner ? 'Me' : owner,
@@ -222,20 +265,6 @@ class UserDatasetDetail extends React.Component {
             value: `${normalizePercentage(percentQuotaUsed)}% of ${bytesToHuman(
               quotaSize
             )}`,
-          },
-      !isOwner || !sharedWith || !sharedWith.length
-        ? null
-        : {
-            attribute: 'Shared with',
-            value: (
-              <ul>
-                {sharedWith.map((share, index) => (
-                  <li key={`${share.userDisplayName}-${index}`}>
-                    {share.userDisplayName}
-                  </li>
-                ))}
-              </ul>
-            ),
           },
       !questions || !questions.length || !isInstalled
         ? null
@@ -298,7 +327,9 @@ class UserDatasetDetail extends React.Component {
         {attributes.map(({ attribute, value, className }, index) => (
           <div
             className={
-              classify('AttributeRow') + (className ? ' ' + className : '')
+              classify('AttributeRow') +
+              ' ' +
+              (className ?? classify(attribute))
             }
             key={index}
           >
@@ -326,7 +357,9 @@ class UserDatasetDetail extends React.Component {
             onPress={this.openSharingModal}
           />
         )}
-        <ThemedDeleteButton buttonText="Delete" onPress={this.handleDelete} />
+        {isOwner ? (
+          <ThemedDeleteButton buttonText="Delete" onPress={this.handleDelete} />
+        ) : null}
       </div>
     );
   }
@@ -617,6 +650,8 @@ class UserDatasetDetail extends React.Component {
       sharingDatasetPending,
       shareSuccessful,
       shareError,
+      updateUserDatasetDetail,
+      enablePublicUserDatasets,
     } = this.props;
     const AllDatasetsLink = this.renderAllDatasetsLink;
     if (!userDataset)
@@ -644,6 +679,8 @@ class UserDatasetDetail extends React.Component {
             sharingDatasetPending={sharingDatasetPending}
             shareSuccessful={shareSuccessful}
             shareError={shareError}
+            updateUserDatasetDetail={updateUserDatasetDetail}
+            enablePublicUserDatasets={enablePublicUserDatasets}
           />
         )}
       </div>

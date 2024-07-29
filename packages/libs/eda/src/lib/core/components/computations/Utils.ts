@@ -95,7 +95,8 @@ export function isTaxonomicVariableCollection(
   return (
     isNotAbsoluteAbundanceVariableCollection(variableCollection) &&
     (variableCollection.member
-      ? variableCollection.member === 'taxon'
+      ? variableCollection.member === 'taxon' &&
+        !!variableCollection.isCompositional
       : variableCollection.normalizationMethod === 'sumToUnity') // if we have a member annotation, use that. Old datasets may not have this annotation, hence the fall back normalizationMethod check.
   );
 }

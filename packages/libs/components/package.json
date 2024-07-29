@@ -42,6 +42,7 @@
     "react-leaflet": "^3.2.5",
     "react-leaflet-drift-marker": "^3.0.0",
     "react-plotly.js": "^2.4.0",
+    "react-select": "^5.8.0",
     "react-spring": "^9.7.1",
     "react-transition-group": "^4.4.1",
     "shape2geohash": "^1.2.5",

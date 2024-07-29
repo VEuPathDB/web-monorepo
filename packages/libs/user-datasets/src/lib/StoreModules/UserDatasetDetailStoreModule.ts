@@ -1,4 +1,4 @@
-import { ServiceError } from '@veupathdb/wdk-client/lib/Service/ServiceError';
+import { FetchClientError } from '@veupathdb/http-utils';
 import {
   Action,
   DETAIL_LOADING,
@@ -37,9 +37,9 @@ export interface State {
   userDatasetRemoving: boolean;
   sharingModalOpen: boolean;
   sharingDatasetPending: boolean;
-  loadError?: ServiceError;
-  updateError?: ServiceError;
-  removalError?: ServiceError;
+  loadError?: FetchClientError;
+  updateError?: FetchClientError;
+  removalError?: FetchClientError;
   shareError: Error | undefined;
   shareSuccessful: boolean | undefined;
 }
