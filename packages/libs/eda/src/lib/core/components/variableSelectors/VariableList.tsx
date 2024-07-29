@@ -690,97 +690,116 @@ export default function VariableList({
             </h3>
           </summary>
           <div style={{ height: '0.5em' }} />
-          {Object.entries(groupedFeaturedFields).map(([entityName, fields]) => (
-            <>
-              <span style={{ fontWeight: 500 }}>{entityName}</span>
-              <ul
-                style={{
-                  listStyle: 'none',
-                  margin: 0,
-                  marginTop: '0.25em',
-                  padding: 0,
-                }}
-              >
-                {fields.map((field) => {
-                  const isActive = field.term === activeField?.term;
-                  const isDisabled = disabledFields.has(field.term);
-                  const [entityId, variableId] = field.term.split('/');
-                  const CustomCheckbox =
-                    customCheckboxes && field.term in customCheckboxes
-                      ? customCheckboxes[field.term]
-                      : undefined;
-                  const checked = selectedFields.some(
-                    (f) => f.term === field.term
-                  );
-                  const onChange = (node: any, checked: boolean) => {
-                    if (onSelectedFieldsChange == null) return;
-                    const nextSelectedFields = (
-                      checked
-                        ? selectedFields.concat(field)
-                        : selectedFields.filter((f) => f.term !== field.term)
-                    ).map((field) => field.term);
-                    onSelectedFieldsChange(nextSelectedFields);
-                  };
+          <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+            {Object.entries(groupedFeaturedFields).map(
+              ([entityName, fields]) => (
+                <li>
+                  <h4
+                    style={{
+                      fontSize: '1.05em',
+                      marginLeft: '1em',
+                      padding: 0,
+                    }}
+                  >
+                    {entityName}
+                  </h4>
+                  <ul
+                    style={{
+                      listStyle: 'none',
+                      margin: 0,
+                      marginTop: '0.25em',
+                      padding: 0,
+                    }}
+                  >
+                    {fields.map((field) => {
+                      const isActive = field.term === activeField?.term;
+                      const isDisabled = disabledFields.has(field.term);
+                      const [entityId, variableId] = field.term.split('/');
+                      const CustomCheckbox =
+                        customCheckboxes && field.term in customCheckboxes
+                          ? customCheckboxes[field.term]
+                          : undefined;
+                      const checked = selectedFields.some(
+                        (f) => f.term === field.term
+                      );
+                      const onChange = (_node: any, checked: boolean) => {
+                        if (onSelectedFieldsChange == null) return;
+                        const nextSelectedFields = (
+                          checked
+                            ? selectedFields.concat(field)
+                            : selectedFields.filter(
+                                (f) => f.term !== field.term
+                              )
+                        ).map((field) => field.term);
+                        onSelectedFieldsChange(nextSelectedFields);
+                      };
 
-                  return (
-                    <li
-                      key={field.term}
-                      style={{
-                        lineHeight: '15px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          position: 'relative',
-                          display: 'flex',
-                          alignItems: 'center',
-                          marginLeft: '0.25em',
-                          padding: scope === 'download' ? '0.2em 0' : undefined,
-                        }}
-                      >
-                        {isMultiPick &&
-                          (CustomCheckbox ? (
-                            <CustomCheckbox
-                              checked={checked}
-                              onChange={() => onChange(null, checked)}
+                      return (
+                        <li
+                          key={field.term}
+                          style={{
+                            lineHeight: '15px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              position: 'relative',
+                              display: 'flex',
+                              alignItems: 'center',
+                              marginLeft: '1em',
+                              padding:
+                                scope === 'download' ? '0.2em 0' : undefined,
+                            }}
+                          >
+                            {isMultiPick &&
+                              (CustomCheckbox ? (
+                                <CustomCheckbox
+                                  checked={checked}
+                                  onChange={() => onChange(null, checked)}
+                                />
+                              ) : (
+                                <input
+                                  type="checkbox"
+                                  checked={checked}
+                                  onChange={(e) =>
+                                    onChange(null, e.target.checked)
+                                  }
+                                />
+                              ))}
+                            <FieldNode
+                              isMultiPick={isMultiPick}
+                              isMultiFilterDescendant={false}
+                              showMultiFilterDescendants={
+                                showMultiFilterDescendants
+                              }
+                              field={field}
+                              isActive={isActive}
+                              isDisabled={isDisabled}
+                              customDisabledVariableMessage={
+                                customDisabledVariableMessage
+                              }
+                              searchTerm=""
+                              variableLinkConfig={variableLinkConfig}
+                              isStarred={starredVariableTermsSet.has(
+                                field.term
+                              )}
+                              starredVariablesLoading={starredVariablesLoading}
+                              onClickStar={() =>
+                                toggleStarredVariable({ entityId, variableId })
+                              }
+                              scrollIntoView={false}
+                              asDropdown={asDropdown}
+                              isFeaturedField={true}
                             />
-                          ) : (
-                            <input
-                              type="checkbox"
-                              checked={checked}
-                              onChange={(e) => onChange(null, e.target.checked)}
-                            />
-                          ))}
-                        <FieldNode
-                          isMultiPick={isMultiPick}
-                          isMultiFilterDescendant={false}
-                          showMultiFilterDescendants={
-                            showMultiFilterDescendants
-                          }
-                          field={field}
-                          isActive={isActive}
-                          isDisabled={isDisabled}
-                          customDisabledVariableMessage={
-                            customDisabledVariableMessage
-                          }
-                          searchTerm=""
-                          variableLinkConfig={variableLinkConfig}
-                          isStarred={starredVariableTermsSet.has(field.term)}
-                          starredVariablesLoading={starredVariablesLoading}
-                          onClickStar={() =>
-                            toggleStarredVariable({ entityId, variableId })
-                          }
-                          scrollIntoView={false}
-                          asDropdown={asDropdown}
-                          isFeaturedField={true}
-                        />
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </>
-          ))}
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </li>
+              )
+            )}
+          </ul>
         </details>
       </div>
     );
