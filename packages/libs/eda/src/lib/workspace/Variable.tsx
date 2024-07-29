@@ -76,42 +76,40 @@ export function VariableDetails(props: Props) {
         {/* only show provider label info if a meaningful label exists */}
         {providerLabel !== NO_PROVIDER_LABEL_STRING && (
           <div className={cx('-ProviderLabel')}>
-            <>
-              <div className={cx('-ProviderLabelPrefix')}>
-                <i>
-                  Original variable{' '}
-                  {MultiFilterVariable.is(variable) ? 'names' : 'name'}:
-                </i>
-              </div>
-              {/* showing three variables for multifilter or single variable */}
-              &nbsp;{threeProviderLabel}
-              {/* generalize Show/Hide more: there is a case that providerLabel is string */}
-              {Array.isArray(providerLabel) && providerLabel.length > 3 ? (
-                <>
-                  {showMore && providerLabelLeftover}
-                  &nbsp;
-                  <HelpIcon>
-                    The name of this variable in the original data files
-                  </HelpIcon>
-                  &nbsp;&nbsp;
-                  <button
-                    className="variable-show-more-link link"
-                    onClick={() => {
-                      setShowMore(!showMore);
-                    }}
-                  >
-                    {showMoreLink}
-                  </button>
-                </>
-              ) : (
-                <>
-                  &nbsp;
-                  <HelpIcon>
-                    The name of this variable in the original data files
-                  </HelpIcon>
-                </>
-              )}
-            </>
+            <div className={cx('-ProviderLabelPrefix')}>
+              <i>
+                Original variable{' '}
+                {MultiFilterVariable.is(variable) ? 'names' : 'name'}:
+              </i>
+            </div>
+            {/* showing three variables for multifilter or single variable */}
+            <>&nbsp;{threeProviderLabel}</>
+            {/* generalize Show/Hide more: there is a case that providerLabel is string */}
+            {Array.isArray(providerLabel) && providerLabel.length > 3 ? (
+              <>
+                {showMore && providerLabelLeftover}
+                &nbsp;
+                <HelpIcon>
+                  The name of this variable in the original data files
+                </HelpIcon>
+                &nbsp;&nbsp;
+                <button
+                  className="variable-show-more-link link"
+                  onClick={() => {
+                    setShowMore(!showMore);
+                  }}
+                >
+                  {showMoreLink}
+                </button>
+              </>
+            ) : (
+              <>
+                &nbsp;
+                <HelpIcon>
+                  The name of this variable in the original data files
+                </HelpIcon>
+              </>
+            )}
           </div>
         )}
         {/* add variable.definition */}

@@ -27,6 +27,21 @@ const DEFAULT_COMPUTATION = createComputation(
   'Unnamed computation'
 );
 
+type RedirectDescriptor = {
+  descriptor: {
+    subset: {
+      descriptor: [
+        {
+          entityId: string;
+          variableId: string;
+          type: 'stringSet';
+          stringSet: string[];
+        }
+      ];
+    };
+  };
+};
+
 export function LegacyMapRedirectHandler({
   history,
   match,
@@ -68,8 +83,8 @@ export function LegacyMapRedirectHandler({
   const paramKeys = Object.keys(queryParams);
 
   if (paramKeys.length) {
-    if ('projectID' in queryParams) {
-      const descriptorConfig = {
+    if ('projectID' in queryParams && queryParams['projectID'] != null) {
+      const descriptorConfig: RedirectDescriptor = {
         descriptor: {
           subset: {
             descriptor: [
@@ -77,7 +92,9 @@ export function LegacyMapRedirectHandler({
                 entityId: MEGA_STUDIES_ENTITY_ID,
                 variableId: POPBIO_ID_VARIABLE_ID,
                 type: DESCRIPTOR_TYPE,
-                [DESCRIPTOR_TYPE]: [queryParams['projectID']],
+                [DESCRIPTOR_TYPE]: Array.isArray(queryParams['projectID'])
+                  ? queryParams['projectID']
+                  : [queryParams['projectID']],
               },
             ],
           },
@@ -86,10 +103,10 @@ export function LegacyMapRedirectHandler({
 
       if (paramKeys.length === 1) {
         // We know we have only the projectID param, so make new analysis and redirect
-        const additionalAnalysisConfig = {
+        const additionalAnalysisConfig: AdditionalAnalysisConfig = {
           ...baseAdditionalAnalysisConfig,
           ...descriptorConfig,
-        } as AdditionalAnalysisConfig;
+        };
         handleLegacyMapRedirect(
           DEFAULT_COMPUTATION,
           additionalAnalysisConfig,
@@ -99,11 +116,11 @@ export function LegacyMapRedirectHandler({
         // Here we have a projectID and other param(s), so populate the Notes -> Analysis Details info
         // with the additional param(s) and pass along the legacyMapRedirectState object
         const notes = composeParamListForNotesString(queryParams);
-        const additionalAnalysisConfig = {
+        const additionalAnalysisConfig: AdditionalAnalysisConfig = {
           ...descriptorConfig,
           ...baseAdditionalAnalysisConfig,
           notes,
-        } as AdditionalAnalysisConfig;
+        };
         const legacyMapRedirectState = {
           showLegacyMapRedirectModal: true,
           projectId: queryParams['projectID'],
