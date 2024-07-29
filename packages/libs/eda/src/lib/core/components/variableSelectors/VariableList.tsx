@@ -694,13 +694,7 @@ export default function VariableList({
             {Object.entries(groupedFeaturedFields).map(
               ([entityName, fields]) => (
                 <li>
-                  <h4
-                    style={{
-                      fontSize: '1.05em',
-                      marginLeft: '1em',
-                      padding: 0,
-                    }}
-                  >
+                  <h4 style={{ fontSize: '1.05em', padding: 0 }}>
                     {entityName}
                   </h4>
                   <ul
@@ -746,7 +740,7 @@ export default function VariableList({
                               position: 'relative',
                               display: 'flex',
                               alignItems: 'center',
-                              marginLeft: '1em',
+                              marginLeft: '0.25em',
                               padding:
                                 scope === 'download' ? '0.2em 0' : undefined,
                             }}
