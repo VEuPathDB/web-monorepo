@@ -5,15 +5,19 @@ import {
 } from '../../components/tidytree/HorizontalDendrogram';
 import Mesa from '@veupathdb/coreui/lib/components/Mesa';
 import { MesaStateProps } from '../../../../coreui/lib/components/Mesa/types';
-import { css as classNameStyle, cx } from '@emotion/css';
-import { css as globalStyle, Global } from '@emotion/react';
+import { css, cx } from '@emotion/css';
 
 export interface TreeTableProps<RowType> {
   /**
    * number of pixels vertical space for each row of the table and tree
    * (for the table this is a minimum height, so make sure table content doesn't wrap)
+   * required; no default; minimum seems to be 42; suggested value: 45
    */
   rowHeight: number;
+  /**
+   * number of pixels max width for table columns; defaults to 200
+   */
+  maxColumnWidth?: number;
   /**
    * data and options for the tree
    */
@@ -25,7 +29,13 @@ export interface TreeTableProps<RowType> {
    * data and options for the table
    */
   tableProps: MesaStateProps<RowType>;
+  /**
+   * hide the tree (but keep its horizontal space); default = false
+   */
+  hideTree?: boolean;
 }
+
+const margin: [number, number, number, number] = [0, 10, 0, 10];
 
 /**
  * main props are
@@ -42,16 +52,23 @@ export interface TreeTableProps<RowType> {
  * - allow additional Mesa props and options to be passed
  */
 export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
-  const { rowHeight } = props;
-  const { rows } = props.tableProps;
+  const { rowHeight, maxColumnWidth = 200, hideTree = false } = props;
+  const { rows, filteredRows } = props.tableProps;
 
   const rowStyleClassName = useMemo(
     () =>
       cx(
-        classNameStyle({
-          height: rowHeight + 'px',
-          background: 'yellow',
-        })
+        // minimum height for table rows
+        css`
+          height: ${rowHeight}px;
+
+          & td {
+            &:hover {
+              cursor: pointer;
+              position: relative;
+            }
+          }
+        `
       ),
     [rowHeight]
   );
@@ -62,30 +79,58 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
     ...props.tableProps,
     options: {
       ...props.tableProps.options,
-      deriveRowClassName: (_) => rowStyleClassName,
+      deriveRowClassName: mergeDeriveRowClassName(
+        props.tableProps.options?.deriveRowClassName,
+        (_) => rowStyleClassName
+      ),
+      inline: true,
+      inlineUseTooltips: true,
+      inlineMaxHeight: `${rowHeight}px`,
+      inlineMaxWidth: `${maxColumnWidth}px`,
     },
   };
 
+  // if `hideTree` is used more dynamically than at present
+  // (for example if the user sorts the table)
+  // then the table container styling will need
+  // { marginLeft: hideTree ? props.treeProps.width : 0 }
+  // to stop the table jumping around horizontally
   return (
     <div
       style={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'row' }}
     >
-      <HorizontalDendrogram
-        {...props.treeProps}
-        rowHeight={rowHeight}
-        leafCount={rows.length}
-        options={{ margin: [0, 10, 0, 10] }}
-      />
-      <>
-        <Global
-          styles={globalStyle`
-	  .DataTable {
-	    margin-bottom: 0px !important;
-	  }
-	`}
+      {!hideTree && (
+        <HorizontalDendrogram
+          {...props.treeProps}
+          rowHeight={rowHeight}
+          leafCount={filteredRows?.length ?? rows.length}
+          options={{ margin, interactive: false }}
         />
+      )}
+      <div
+        css={{
+          flexGrow: 1,
+          width: 1 /* arbitrary non-zero width seems necessary for flex */,
+          '.DataTable': {
+            marginBottom: '0px !important',
+          },
+        }}
+      >
         <Mesa state={tableState} />
-      </>
+      </div>
     </div>
   );
+}
+
+function mergeDeriveRowClassName<RowType>(
+  func1: ((row: RowType) => string | undefined) | undefined,
+  func2: ((row: RowType) => string | undefined) | undefined
+): ((row: RowType) => string | undefined) | undefined {
+  if (func1 == null && func2 == null) return undefined;
+  return (row: RowType) => {
+    const className1 = func1 && func1(row);
+    const className2 = func2 && func2(row);
+    // Combine the class names that are defined
+    return [className1, className2].filter(Boolean).join(' ') || undefined;
+  };
 }

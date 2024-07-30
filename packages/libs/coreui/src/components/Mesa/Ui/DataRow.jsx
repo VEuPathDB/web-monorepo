@@ -30,22 +30,22 @@ class DataRow extends React.PureComponent {
 
   expandRow() {
     const { options } = this.props;
-    if (!options.inline) return;
+    if (!options.inline || options.inlineUseTooltips) return;
     this.setState({ expanded: true });
   }
 
   collapseRow() {
     const { options } = this.props;
-    if (!options.inline) return;
+    if (!options.inline || options.inlineUseTooltips) return;
     this.setState({ expanded: false });
   }
 
   handleRowClick() {
     const { row, rowIndex, options } = this.props;
-    const { inline, onRowClick } = options;
+    const { inline, onRowClick, inlineUseTooltips } = options;
     if (!inline && !onRowClick) return;
-
-    if (inline) this.setState({ expanded: !this.state.expanded });
+    if (inline && !inlineUseTooltips)
+      this.setState({ expanded: !this.state.expanded });
     if (typeof onRowClick === 'function') onRowClick(row, rowIndex);
   }
 

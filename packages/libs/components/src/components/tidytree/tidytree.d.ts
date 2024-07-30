@@ -15,6 +15,7 @@ interface ColorOptions {
   branchColorMode: 'monophyletic' | 'none';
   highlightColor?: string;
   defaultNodeColor?: string;
+  defaultBranchColor?: string;
 }
 
 declare module 'tidytree' {
