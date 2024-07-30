@@ -261,9 +261,6 @@ export default function TimeSliderQuickFilter({
   const [disableLeftArrow, setDisableLeftArrow] = useState(false);
   const [disableRightArrow, setDisableRightArrow] = useState(false);
 
-  // year-based range
-  const [enableYearRange, setEnableYearRange] = useState(false);
-
   // control selectedRange
   const handleAxisRangeChange = useCallback(
     (newRange?: NumberOrDateRange) => {
@@ -285,17 +282,11 @@ export default function TimeSliderQuickFilter({
   const handleArrowClick = useCallback(
     (arrow: string) => {
       if (
-        extendedDisplayRange &&
         selectedRange &&
         selectedRange.start != null &&
         selectedRange.end != null
       ) {
-        const newSelectedRange = newArrowRange(
-          extendedDisplayRange,
-          selectedRange,
-          arrow,
-          enableYearRange
-        );
+        const newSelectedRange = newArrowRange(selectedRange, arrow);
         updateConfig({ ...config, selectedRange: newSelectedRange });
       }
     },
@@ -475,17 +466,8 @@ export default function TimeSliderQuickFilter({
               <div
                 style={{
                   marginRight: '1em',
-                  display: 'flex',
-                  flexDirection: 'column',
                 }}
               >
-                <Toggle
-                  label="Year"
-                  labelPosition="left"
-                  value={enableYearRange}
-                  onChange={(toggle) => setEnableYearRange(toggle)}
-                />
-                <div style={{ marginBottom: '0.25em' }} />
                 <Toggle
                   label={active ? 'On' : 'Off'}
                   labelPosition="left"
@@ -521,61 +503,73 @@ export default function TimeSliderQuickFilter({
   ) : null;
 }
 
+// compute new range by step button
 function newArrowRange(
-  extendedDisplayRange: selectedRangeProp | undefined,
   selectedRange: selectedRangeProp | undefined,
-  arrow: string,
-  enableYearRange: boolean
+  arrow: string
 ) {
-  if (extendedDisplayRange && selectedRange) {
-    // if year range is enabled
-    if (enableYearRange) {
-      const selectedRangeStart = selectedRange.start.split('-');
-      const selectedRangeEnd = selectedRange.end.split('-');
-      const diff = Number(selectedRangeEnd[0]) - Number(selectedRangeStart[0]);
-      // if start and end have the same year, then yearDiff = 1 year
-      const yearDiff = diff === 0 ? 1 : diff;
+  if (selectedRange) {
+    const diff =
+      new Date(selectedRange.end).getTime() -
+      new Date(selectedRange.start).getTime();
 
-      const startDate =
-        (arrow === 'right'
-          ? String(Number(selectedRangeStart[0]) + yearDiff)
-          : String(Number(selectedRangeStart[0]) - yearDiff)) +
-        '-' +
-        selectedRangeStart[1] +
-        '-' +
-        selectedRangeStart[2];
-      const endDate =
-        (arrow === 'right'
-          ? String(Number(selectedRangeEnd[0]) + yearDiff)
-          : String(Number(selectedRangeEnd[0]) - yearDiff)) +
-        '-' +
-        selectedRangeEnd[1] +
-        '-' +
-        selectedRangeEnd[2];
+    const diffSign = arrow === 'right' ? diff : -diff;
 
-      return {
-        start: startDate,
-        end: endDate,
-      };
+    const newSelectedRange = {
+      start: new Date(new Date(selectedRange.start).getTime() + diffSign)
+        .toISOString()
+        .split('T')[0],
+      end: new Date(new Date(selectedRange.end).getTime() + diffSign)
+        .toISOString()
+        .split('T')[0],
+    };
 
-      // relying on (end - start) dates only
-    } else {
-      const diff =
-        new Date(selectedRange.end).getTime() -
-        new Date(selectedRange.start).getTime();
+    // unit in milliseconds
+    const deltaLeapDaysMS =
+      (countLeapDays(newSelectedRange) - countLeapDays(selectedRange)) *
+      (1000 * 3600 * 24);
 
-      const diffSign = arrow === 'right' ? diff : -diff;
-
-      return {
-        start: new Date(new Date(selectedRange.start).getTime() + diffSign)
-          .toISOString()
-          .split('T')[0],
-        end: new Date(new Date(selectedRange.end).getTime() + diffSign)
-          .toISOString()
-          .split('T')[0],
-      };
-    }
+    return {
+      start: new Date(
+        new Date(newSelectedRange.start).getTime() -
+          (arrow === 'left' ? deltaLeapDaysMS : 0)
+      )
+        .toISOString()
+        .split('T')[0],
+      end: new Date(
+        new Date(newSelectedRange.end).getTime() +
+          (arrow === 'right' ? deltaLeapDaysMS : 0)
+      )
+        .toISOString()
+        .split('T')[0],
+    };
   } else {
     return undefined;
   }
+}
+
+// check whether leap year is
+function isLeapYear(year: number) {
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+}
+
+// compute the number of days of leap years for a date range
+function countLeapDays(dateRange: selectedRangeProp) {
+  const startDate = new Date(dateRange.start);
+  const endDate = new Date(dateRange.end);
+  const startYear = startDate.getFullYear();
+  const endYear = endDate.getFullYear();
+
+  let leapDayCount = 0;
+
+  for (let year = startYear; year <= endYear; year++) {
+    if (isLeapYear(year)) {
+      const leapDay = new Date(year, 1, 29);
+      if (leapDay >= startDate && leapDay <= endDate) {
+        leapDayCount++;
+      }
+    }
+  }
+
+  return leapDayCount;
 }
