@@ -3,7 +3,7 @@ import { colors, MesaButton, Share, SingleSelect } from '@veupathdb/coreui';
 import { PartialButtonStyleSpec } from '@veupathdb/coreui/lib/components/buttons';
 import { useMemo } from 'react';
 
-export interface Props {
+interface Props {
   enablePublicUserDatasets: boolean;
   buttonText: string;
   onPress: (grantType: 'community' | 'individual') => void;

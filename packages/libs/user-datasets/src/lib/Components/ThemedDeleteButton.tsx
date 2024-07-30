@@ -2,7 +2,7 @@ import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import { MesaButton, Trash } from '@veupathdb/coreui';
 import { gray, mutedRed } from '@veupathdb/coreui/lib/definitions/colors';
 
-export interface Props {
+interface Props {
   buttonText: string;
   onPress: () => void;
 }
