@@ -137,7 +137,10 @@ export class UserDatasetApi extends FetchClientWithCredentials {
     );
   };
 
-  updateUserDataset = (datasetId: string, requestBody: UserDatasetMeta) => {
+  updateUserDataset = (
+    datasetId: string,
+    requestBody: Partial<UserDatasetMeta>
+  ) => {
     return this.fetch(
       createJsonRequest({
         path: `/vdi-datasets/${datasetId}`,

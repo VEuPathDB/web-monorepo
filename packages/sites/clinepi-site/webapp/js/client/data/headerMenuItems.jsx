@@ -157,30 +157,6 @@ export default function makeHeaderMenuItemsFactory(
                             ),
                           },
                         ],
-                    filteredCommunityStudies == null
-                      ? []
-                      : [
-                          {
-                            isVisible: filteredCommunityStudies.length > 0,
-                            text: (
-                              <CollapsibleDetailsSection
-                                summary="Community studies"
-                                collapsibleDetails={filteredCommunityStudies.map(
-                                  (study, idx) => (
-                                    <DIYStudyMenuItem
-                                      key={idx}
-                                      name={study.name}
-                                      link={`${study.baseEdaRoute}/new`}
-                                      isChildOfCollapsibleSection={true}
-                                    />
-                                  )
-                                )}
-                                showDetails={expandCommunityStudies}
-                                setShowDetails={setExpandCommunityStudies}
-                              />
-                            ),
-                          },
-                        ],
                     filteredCuratedStudies == null || permissionsValue.loading
                       ? []
                       : [
@@ -211,6 +187,30 @@ export default function makeHeaderMenuItemsFactory(
                                   permissions={permissionsValue.permissions}
                                 />
                               ))
+                            ),
+                          },
+                        ],
+                    filteredCommunityStudies == null
+                      ? []
+                      : [
+                          {
+                            isVisible: filteredCommunityStudies.length > 0,
+                            text: (
+                              <CollapsibleDetailsSection
+                                summary="Community studies"
+                                collapsibleDetails={filteredCommunityStudies.map(
+                                  (study, idx) => (
+                                    <DIYStudyMenuItem
+                                      key={idx}
+                                      name={study.name}
+                                      link={`${study.baseEdaRoute}/new`}
+                                      isChildOfCollapsibleSection={true}
+                                    />
+                                  )
+                                )}
+                                showDetails={expandCommunityStudies}
+                                setShowDetails={setExpandCommunityStudies}
+                              />
                             ),
                           },
                         ]
