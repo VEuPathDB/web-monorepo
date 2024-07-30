@@ -410,7 +410,7 @@ export function projectFilter(filterByProject: boolean): ProjectFilterAction {
 // which reduces boilerplate dramatically.
 
 export const updateCommunityModalVisibility = makeActionCreator(
-  'user-datasets/update-comunity-modal-visibility',
+  'user-datasets/update-community-modal-visibility',
   (isVisible: boolean) => ({ isVisible })
 );
 
