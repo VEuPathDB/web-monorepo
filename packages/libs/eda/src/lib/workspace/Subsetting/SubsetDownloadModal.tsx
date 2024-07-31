@@ -811,19 +811,24 @@ export default function SubsetDownloadModal({
       className="SubsetDownloadModal"
       styleOverrides={{
         content: {
-          padding: {
-            top: 0,
-            right: 25,
-            bottom: 25,
-            left: 25,
-          },
           size: {
             height: '100%',
           },
         },
+        size: {
+          height: '90vh',
+          width: '90vw',
+        },
       }}
     >
-      <div css={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <div
+        css={{
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+          padding: '0 2em 2em 2em',
+        }}
+      >
         <div css={{ display: 'flex', flexDirection: 'column' }}>
           <div
             css={{

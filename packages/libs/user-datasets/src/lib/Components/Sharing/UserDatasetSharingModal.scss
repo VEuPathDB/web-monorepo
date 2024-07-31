@@ -3,28 +3,24 @@
 .UserDataset-SharingModal {
   background-color: white;
   color: black;
-  padding: 30px 20px;
   display: flex;
   flex-flow: column nowrap;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-  max-height: 95vh;
-  overflow-y: auto;
   min-width: 650px;
   max-width: 100%;
+  font-size: 1.2em;
+  padding: 1em;
 
-  .UserDataset-SharingModal-CloseBar {
+  &-CloseBar {
     text-align: right;
   }
-  .UserDataset-SharingModal-FormView {
-    margin-top: -50px;
+  &-FormView {
     display: flex;
     flex-direction: column;
     min-height: 250px;
   }
 
-  .UserDataset-SharingModal-RecipientSection,
-  .UserDataset-SharingModal-DatasetSection {
+  &-RecipientSection,
+  &-DatasetSection {
     flex: 1;
   }
 
@@ -42,6 +38,10 @@
   .UserDatasetSharing-SectionName {
     margin: 10px 0 -5px;
     font-weight: 400;
+  }
+
+  &-Subtitle {
+    margin-bottom: 2em;
   }
 
   fieldset {

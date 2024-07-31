@@ -4,6 +4,7 @@ import { Item } from './checkboxes/CheckboxList';
 import { css } from '@emotion/react';
 import { uniqueId } from 'lodash';
 import { CheckIcon } from '../icons';
+import { PartialButtonStyleSpec } from '../buttons';
 
 export interface ItemGroup<T> {
   label: ReactNode;
@@ -23,6 +24,7 @@ export interface SingleSelectProps<T> {
   onSelect: (value: T) => void;
   buttonDisplayContent: ReactNode;
   isDisabled?: boolean;
+  styleOverrides?: PartialButtonStyleSpec;
 }
 
 const checkIconContainer = { height: 16, width: 16 };
@@ -33,6 +35,7 @@ export default function SingleSelect<T>({
   onSelect,
   buttonDisplayContent,
   isDisabled = false,
+  styleOverrides,
 }: SingleSelectProps<T>) {
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);
 
@@ -88,6 +91,7 @@ export default function SingleSelect<T>({
       buttonDisplayContent={buttonDisplayContent}
       setIsPopoverOpen={setIsPopoverOpen}
       isDisabled={isDisabled}
+      styleOverrides={styleOverrides}
     >
       <ul
         aria-label={'Menu of selectable options'}
