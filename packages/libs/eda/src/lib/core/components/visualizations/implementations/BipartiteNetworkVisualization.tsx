@@ -45,7 +45,6 @@ import { H6 } from '@veupathdb/coreui';
 import { CorrelationConfig } from '../../../types/apps';
 import { StudyMetadata } from '../../..';
 import { NodeMenuAction } from '@veupathdb/components/lib/types/plots/network';
-//DKDK
 import { Option as NodeLabelProp } from '@veupathdb/components/lib/components/plotControls/MultiSelect';
 // end imports
 
@@ -189,7 +188,6 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const minDataWeight = Math.min(...uniqueDataWeights);
   const maxDataWeight = Math.max(...uniqueDataWeights);
 
-  //DKDK
   // for node label control
   const [visibleNodeLabels, setVisibleNodeLabels] = useState<
     NodeLabelProp[] | undefined
@@ -249,7 +247,6 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
 
     const nodesById = new Map(nodesWithLabels.map((n) => [n.id, n]));
 
-    //DKDK
     // set initial visible node labels
     const defaultNodeLabels = nodesWithLabels.flatMap((node) => {
       return { value: node.label, label: node.label };
@@ -358,7 +355,6 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     labelTruncationLength: 40,
     emptyNetworkContent,
     getNodeMenuActions,
-    //DKDK
     // pass visible node labels
     visibleNodeLabels: visibleNodeLabels,
     ...options?.getParitionNames?.(studyMetadata, computationConfiguration),
