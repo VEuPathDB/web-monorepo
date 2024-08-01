@@ -5,12 +5,13 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "veupathdb-react-scripts run-site-dev-server --config webpack.config.local.mjs",
-    "clean": "rm -rf dist && mkdir dist",
+    "clean": "rm -rf dist && mkdir -p dist/bin",
     "copy:webapp": "cp -r webapp/* dist",
     "copy:images": "cp -r ../../../node_modules/@veupathdb/web-common/images dist",
     "compile:check": "tsc --noEmit",
-    "bundle:dev": "npm-run-all clean copy:webapp copy:images && BROWSERSLIST_ENV=modern webpack --mode=development",
-    "bundle:npm": "npm-run-all clean copy:webapp copy:images && BROWSERSLIST_ENV=modern webpack --mode=production && BROWSERSLIST_ENV=legacy webpack --mode=production"
+    "generate:bundlePathScript": "../../../tools/scripts/makeSupportedBrowsersScript.mjs dist/bin/getBundlesSubPath",
+    "bundle:dev": "npm-run-all clean copy:webapp copy:images generate:bundlePathScript && BROWSERSLIST_ENV=modern webpack --mode=development",
+    "bundle:npm": "npm-run-all clean copy:webapp copy:images generate:bundlePathScript && BROWSERSLIST_ENV=modern webpack --mode=production && BROWSERSLIST_ENV=legacy webpack --mode=production"
   },
   "keywords": [],
   "author": "",
@@ -77,7 +78,6 @@
     "webpack-merge": "^4.2.2"
   },
   "files": [
-    "dist",
-    "webapp"
+    "dist"
   ]
 }
