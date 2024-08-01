@@ -84,6 +84,8 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
         (_) => rowStyleClassName
       ),
       inline: true,
+      // TO DO: explore event delegation to avoid each tooltip having handlers
+      //        replace inline mode's inline styling with emotion classes
       inlineUseTooltips: true,
       inlineMaxHeight: `${rowHeight}px`,
       inlineMaxWidth: `${maxColumnWidth}px`,

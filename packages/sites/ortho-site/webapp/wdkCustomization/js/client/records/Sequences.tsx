@@ -162,6 +162,7 @@ export function RecordTable_Sequences(
 
     const fetchTree = async () => {
       try {
+        // TO DO: these do not actually "do stuff in the background"
         const parsedTree = await parseNewickAsync(treeResponse.newick);
         const leaves = await getLeavesAsync(parsedTree);
         const sortedRows = await sortRowsAsync(leaves, mesaRows);
@@ -237,6 +238,10 @@ export function RecordTable_Sequences(
     if (leaves == null || tree == null || filteredRows?.length === 0) return;
 
     if (filteredRows != null && filteredRows.length < leaves.length) {
+      const filteredRowIds = new Set(
+        filteredRows.map(({ full_id }) => full_id as string)
+      );
+
       // must work on a copy of the tree because it's destructive
       const treeCopy = tree.clone();
       let leavesRemoved = false;
@@ -245,15 +250,15 @@ export function RecordTable_Sequences(
         leavesRemoved = false; // Reset flag for each iteration
 
         leavesCopy.forEach((leaf) => {
-          if (!filteredRows.find(({ full_id }) => full_id === leaf.id)) {
+          if (!filteredRowIds.has(leaf.id)) {
             leaf.remove(true); // remove leaf and remove any dangling ancestors
             leavesRemoved = true; // A leaf was removed, so set flag to true
           }
         });
       } while (leavesRemoved); // Continue looping if any leaf was removed
-
       return treeCopy;
     }
+
     return tree;
   }, [tree, leaves, filteredRows]);
 
@@ -292,7 +297,7 @@ export function RecordTable_Sequences(
     console.log(
       'Tree and protein list mismatch. A=Tree, B=Table. Summary below:'
     );
-    summarizeIDMismatch(
+    logIdMismatches(
       (leaves ?? []).map((leaf) => leaf.id),
       mesaRows.map((row) =>
         truncate_full_id_for_tree_comparison(row.full_id as string)
@@ -539,7 +544,7 @@ function createSafeSearchRegExp(input: string): RegExp {
   }
 }
 
-function summarizeIDMismatch(A: string[], B: string[]) {
+function logIdMismatches(A: string[], B: string[]) {
   const inAButNotB = difference(A, B);
   const inBButNotA = difference(B, A);
 
@@ -583,18 +588,24 @@ async function sortRowsAsync(
   if (leaves == null) return mesaRows;
 
   return new Promise((resolve) => {
+    // Some full_ids end in :RNA
+    // However, the Newick files seem to be omitting the colon and everything following it.
+    // (Colons are part of Newick format.)
+    // So we remove anything after a ':' and hope it works!
+    // This is the only place where we use the IDs from the tree file.
+
+    // make a map for performance
+    const rowMap = new Map(
+      mesaRows.map((row) => [
+        truncate_full_id_for_tree_comparison(row.full_id as string),
+        row,
+      ])
+    );
+
     const result = leaves
-      .map(({ id }) =>
-        mesaRows.find(({ full_id }) => {
-          // Some full_ids end in :RNA
-          // However, the Newick files seem to be omitting the colon and everything following it.
-          // (Colons are part of Newick format.)
-          // So we remove anything after a ':' and hope it works!
-          // This is the only place where we use the IDs from the tree file.
-          return truncate_full_id_for_tree_comparison(full_id as string) === id;
-        })
-      )
+      .map(({ id }) => rowMap.get(id))
       .filter((row): row is RowType => row != null);
+
     resolve(result);
   });
 }
