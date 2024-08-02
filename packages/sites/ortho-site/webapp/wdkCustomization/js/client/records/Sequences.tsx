@@ -387,6 +387,7 @@ export function RecordTable_Sequences(
       }))}
       value={pfamFilterIds}
       onChange={setPfamFilterIds}
+      instantUpdate={true}
     />
   );
 
@@ -405,6 +406,7 @@ export function RecordTable_Sequences(
       ]}
       value={corePeripheralFilterValue}
       onChange={setCorePeripheralFilterValue}
+      instantUpdate={true}
     />
   );
 
