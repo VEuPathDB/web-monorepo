@@ -28,9 +28,10 @@ import { css, cx } from '@emotion/css';
 type RowType = Record<string, AttributeValue>;
 
 const treeWidth = 200;
+const maxColumnWidth = 200;
+const maxArchitectureLength = maxColumnWidth - 10 - 10 - 1; // 10px padding each side plus a 1px border
 const MIN_SEQUENCES_FOR_TREE = 3;
 const MAX_SEQUENCES_FOR_TREE = 9999;
-const MAX_SEQUENCES_TO_SHOW_ALL = 2000;
 
 const highlightColor = '#feb640';
 const highlightColor50 = highlightColor + '7f';
@@ -76,7 +77,7 @@ export function RecordTable_Sequences(
   // show only core as default for large groups
   const [corePeripheralFilterValue, setCorePeripheralFilterValue] = useState<
     ('core' | 'peripheral')[]
-  >(numSequences > MAX_SEQUENCES_TO_SHOW_ALL ? ['core'] : []);
+  >([]);
 
   const treeResponse = useOrthoService(
     numSequences >= MIN_SEQUENCES_FOR_TREE &&
@@ -111,9 +112,18 @@ export function RecordTable_Sequences(
     [pfamRows]
   );
 
+  const maxProteinLength = useMemo(
+    () =>
+      mesaRows.reduce((max, row) => {
+        const length = Number(row['length'] || ('0' as string));
+        return length > max ? length : max;
+      }, 0),
+    [mesaRows]
+  );
+
   mesaColumns.unshift({
     key: 'pfamArchitecture',
-    name: 'Domain architecture (all drawn to same length)',
+    name: 'Domain architecture',
     renderCell: (cellProps) => {
       const proteinId = cellProps.row.full_id as string;
       const flatPfamData = rowsByAccession[proteinId];
@@ -122,9 +132,12 @@ export function RecordTable_Sequences(
         const proteinLength = Number(
           flatPfamData[0]['protein_length'] as string
         );
+        const architectureLength = Math.floor(
+          (maxArchitectureLength * proteinLength) / maxProteinLength
+        );
         return (
           <PfamDomainArchitecture
-            style={{ width: '150px', top: '10px' }}
+            style={{ width: `${architectureLength}px`, top: '10px' }}
             length={proteinLength}
             domains={pfamDomains}
             pfamDescriptions={pfamIdToDescription}
@@ -149,6 +162,7 @@ export function RecordTable_Sequences(
 
     const fetchTree = async () => {
       try {
+        // TO DO: these do not actually "do stuff in the background"
         const parsedTree = await parseNewickAsync(treeResponse.newick);
         const leaves = await getLeavesAsync(parsedTree);
         const sortedRows = await sortRowsAsync(leaves, mesaRows);
@@ -224,6 +238,10 @@ export function RecordTable_Sequences(
     if (leaves == null || tree == null || filteredRows?.length === 0) return;
 
     if (filteredRows != null && filteredRows.length < leaves.length) {
+      const filteredRowIds = new Set(
+        filteredRows.map(({ full_id }) => full_id as string)
+      );
+
       // must work on a copy of the tree because it's destructive
       const treeCopy = tree.clone();
       let leavesRemoved = false;
@@ -232,15 +250,15 @@ export function RecordTable_Sequences(
         leavesRemoved = false; // Reset flag for each iteration
 
         leavesCopy.forEach((leaf) => {
-          if (!filteredRows.find(({ full_id }) => full_id === leaf.id)) {
+          if (!filteredRowIds.has(leaf.id)) {
             leaf.remove(true); // remove leaf and remove any dangling ancestors
             leavesRemoved = true; // A leaf was removed, so set flag to true
           }
         });
       } while (leavesRemoved); // Continue looping if any leaf was removed
-
       return treeCopy;
     }
+
     return tree;
   }, [tree, leaves, filteredRows]);
 
@@ -257,10 +275,6 @@ export function RecordTable_Sequences(
     } else return;
   }, [filteredTree, treeResponse, tree, filteredRows]);
 
-  const largeGroupWarning =
-    numSequences > MAX_SEQUENCES_TO_SHOW_ALL
-      ? '(note: this is a large group, only the core sequences will be shown by default)'
-      : '';
   if (
     !sortedRows ||
     (numSequences >= MIN_SEQUENCES_FOR_TREE &&
@@ -269,7 +283,7 @@ export function RecordTable_Sequences(
   ) {
     return (
       <>
-        <div>Loading... {largeGroupWarning}</div>
+        <div>Loading...</div>
         <Loading />
       </>
     ); // The loading spinner does not show :-(
@@ -283,7 +297,7 @@ export function RecordTable_Sequences(
     console.log(
       'Tree and protein list mismatch. A=Tree, B=Table. Summary below:'
     );
-    summarizeIDMismatch(
+    logIdMismatches(
       (leaves ?? []).map((leaf) => leaf.id),
       mesaRows.map((row) =>
         truncate_full_id_for_tree_comparison(row.full_id as string)
@@ -468,6 +482,7 @@ export function RecordTable_Sequences(
         treeProps={treeProps}
         tableProps={mesaState}
         hideTree={!finalNewick}
+        maxColumnWidth={maxColumnWidth}
       />
       <form action="/cgi-bin/msaOrthoMCL" target="_blank" method="post">
         <input type="hidden" name="project_id" value="OrthoMCL" />
@@ -531,7 +546,7 @@ function createSafeSearchRegExp(input: string): RegExp {
   }
 }
 
-function summarizeIDMismatch(A: string[], B: string[]) {
+function logIdMismatches(A: string[], B: string[]) {
   const inAButNotB = difference(A, B);
   const inBButNotA = difference(B, A);
 
@@ -575,18 +590,24 @@ async function sortRowsAsync(
   if (leaves == null) return mesaRows;
 
   return new Promise((resolve) => {
+    // Some full_ids end in :RNA
+    // However, the Newick files seem to be omitting the colon and everything following it.
+    // (Colons are part of Newick format.)
+    // So we remove anything after a ':' and hope it works!
+    // This is the only place where we use the IDs from the tree file.
+
+    // make a map for performance
+    const rowMap = new Map(
+      mesaRows.map((row) => [
+        truncate_full_id_for_tree_comparison(row.full_id as string),
+        row,
+      ])
+    );
+
     const result = leaves
-      .map(({ id }) =>
-        mesaRows.find(({ full_id }) => {
-          // Some full_ids end in :RNA
-          // However, the Newick files seem to be omitting the colon and everything following it.
-          // (Colons are part of Newick format.)
-          // So we remove anything after a ':' and hope it works!
-          // This is the only place where we use the IDs from the tree file.
-          return truncate_full_id_for_tree_comparison(full_id as string) === id;
-        })
-      )
+      .map(({ id }) => rowMap.get(id))
       .filter((row): row is RowType => row != null);
+
     resolve(result);
   });
 }
