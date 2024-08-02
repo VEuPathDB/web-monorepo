@@ -159,6 +159,8 @@ const modalPlotContainerStyles = {
   margin: 'auto',
 };
 
+const EMPTY_ARRAY: string[] = [];
+
 type LinePlotDataSeriesWithType = LinePlotDataSeries & {
   seriesType?: 'standard' | 'zeroOverZero';
   hideFromLegend?: boolean;
@@ -1768,12 +1770,12 @@ function LineplotViz(props: VisualizationProps<Options>) {
           }
         : {
             aggregationType: 'proportion',
-            options: fullVocabulary ?? vocabulary ?? [],
+            options: fullVocabulary ?? vocabulary ?? EMPTY_ARRAY,
             disabledOptions: fullVocabulary
               ? fullVocabulary.filter((value) => vocabulary?.includes(value))
               : [],
-            numeratorValues: vizConfig.numeratorValues ?? [],
-            denominatorValues: vizConfig.denominatorValues ?? [],
+            numeratorValues: vizConfig.numeratorValues ?? EMPTY_ARRAY,
+            denominatorValues: vizConfig.denominatorValues ?? EMPTY_ARRAY,
             // onChange handlers now ensure the available options belong to the vocabulary (which can change due to direct filters)
             onNumeratorChange: (values) =>
               onNumeratorValuesChange(
@@ -2797,7 +2799,7 @@ export function AggregationInputs<F extends string, P extends Array<string>>(
   props: AggregationConfig<F, P>
 ) {
   const classes = useInputStyles();
-
+  console.log(props);
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       {props.aggregationType === 'function' ? (
