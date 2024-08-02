@@ -47,11 +47,12 @@ export default function SelectList<T>({
    */
   const handleCheckboxListUpdate = useCallback(
     (newSelection: SelectListProps<T>['value']) => {
+      setSelected(newSelection);
       if (instantUpdate) {
         onChange(newSelection);
       }
     },
-    [instantUpdate, setSelected]
+    [instantUpdate, setSelected, onChange]
   );
 
   /**
