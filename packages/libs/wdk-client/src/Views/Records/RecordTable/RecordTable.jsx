@@ -114,14 +114,15 @@ class RecordTable extends Component {
     const columns = this.getColumns(this.props);
     const data = this.getOrderedData(this.props);
     const isOrthologTableWithData =
-      this.props.table.name === 'Orthologs' && value.length > 0;
+      this.props.orthoTableProps != null && value.length > 0;
     const clustalInputRow = isOrthologTableWithData
       ? columns.find((c) => c.name === 'clustalInput')
       : undefined;
 
     // Manipulate columns to match properties expected in Mesa
     const mesaReadyColumns = columns
-      .filter((c) => c.isDisplayable)
+      // NOTE: prefer to change ortho's clustalInput columns to not be displayable
+      .filter((c) => c.isDisplayable && c.name !== 'clustalInput')
       .map((c) => {
         const {
           name,
@@ -265,7 +266,8 @@ class RecordTable extends Component {
         sort: this.state.sort,
         expandedRows,
         filteredRowCount: mesaReadyRows.length - filteredRows.length,
-        ...(isOrthologTableWithData
+        ...(isOrthologTableWithData &&
+        this.props.orthoTableProps.groupBySelected != null
           ? { groupBySelected: this.props.orthoTableProps.groupBySelected }
           : {}),
       },
