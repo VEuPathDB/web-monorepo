@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import PopoverButton from '../buttons/PopoverButton/PopoverButton';
 import CheckboxList, { CheckboxListProps } from './checkboxes/CheckboxList';
 
@@ -43,13 +43,16 @@ export default function SelectList<T>({
   };
 
   /**
-   * Keep caller up to date with any selection changes
+   * Keep caller up to date with any selection changes, if required by `instantUpdate`
    */
-  useEffect(() => {
-    if (instantUpdate) {
-      onChange(selected);
-    }
-  }, [onChange, selected, instantUpdate]);
+  const handleCheckboxListUpdate = useCallback(
+    (newSelection: SelectListProps<T>['value']) => {
+      if (instantUpdate) {
+        onChange(newSelection);
+      }
+    },
+    [instantUpdate, setSelected]
+  );
 
   /**
    * Need to ensure that the state syncs with parent component in the event of an external
@@ -91,7 +94,7 @@ export default function SelectList<T>({
           name={name}
           items={items}
           value={selected}
-          onChange={setSelected}
+          onChange={handleCheckboxListUpdate}
           linksPosition={linksPosition}
           {...props}
         />
