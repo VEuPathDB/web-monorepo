@@ -10,8 +10,8 @@ export interface SelectTreeProps<T> extends CheckboxTreeProps<T> {
   shouldCloseOnSelection?: boolean;
   wrapPopover?: (checkboxTree: ReactNode) => ReactNode;
   isDisabled?: boolean;
-  /** only update `selectedList` state when the popover closes */
-  shouldOnlyUpdateOnClose?: boolean;
+  /** update `selectedList` state instantly when a selection is made (default: true) */
+  instantUpdate?: boolean;
 }
 
 function SelectTree<T>(props: SelectTreeProps<T>) {
@@ -24,13 +24,13 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
     selectedList,
     onSelectionChange,
     shouldCloseOnSelection,
-    shouldOnlyUpdateOnClose,
+    instantUpdate = true,
     wrapPopover,
   } = props;
 
   // This local state is updated whenever a checkbox is clicked in the species tree.
-  // When `shouldOnlyUpdateOnClose` is true,  pass the final value to `onSelectionChange` when the popover closes.
-  // When it is false we call `onSelectionChange` whenever `localSelectedList` changes
+  // When `instantUpdate` is false, pass the final value to `onSelectionChange` when the popover closes.
+  // When it is true we call `onSelectionChange` whenever `localSelectedList` changes
   const [localSelectedList, setLocalSelectedList] = useState(selectedList);
 
   /** Used as a hack to "auto close" the popover when shouldCloseOnSelection is true */
@@ -44,7 +44,7 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
 
   // live updates to caller when needed
   useEffect(() => {
-    if (shouldOnlyUpdateOnClose) return;
+    if (!instantUpdate) return;
     onSelectionChange(localSelectedList);
   }, [onSelectionChange, localSelectedList]);
 
@@ -70,7 +70,7 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
         ? truncatedButtonContent(localSelectedList)
         : props.buttonDisplayContent
     );
-    if (shouldOnlyUpdateOnClose) onSelectionChange(localSelectedList);
+    if (!instantUpdate) onSelectionChange(localSelectedList);
   };
 
   const checkboxTree = (
@@ -146,6 +146,7 @@ const defaultProps = {
   searchPredicate: () => true,
   linksPosition: LinksPosition.Both,
   isDisabled: false,
+  instantUpdate: true, // Set default value to true
 };
 
 SelectTree.defaultProps = defaultProps;
