@@ -34,8 +34,6 @@ export default function SelectList<T>({
   );
 
   const onClose = () => {
-    if (instantUpdate) return; // the next two effects take care of the following when constantly updating
-
     onChange(selected);
     setButtonDisplayContent(
       selected.length ? selected.join(', ') : defaultButtonDisplayContent
@@ -61,6 +59,7 @@ export default function SelectList<T>({
    */
   useEffect(() => {
     setSelected(value);
+    if (instantUpdate) return; // we don't want the button text changing on every click
     setButtonDisplayContent(
       value.length ? value.join(', ') : defaultButtonDisplayContent
     );
