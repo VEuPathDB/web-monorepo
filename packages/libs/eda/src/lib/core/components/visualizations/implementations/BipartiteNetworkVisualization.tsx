@@ -19,7 +19,7 @@ import {
   CorrelationBipartiteNetworkResponse,
 } from '../../../api/DataClient/types';
 import { twoColorPalette } from '@veupathdb/components/lib/types/plots/addOns';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { scaleOrdinal } from 'd3-scale';
 import { uniq } from 'lodash';
 import { usePromise } from '../../../hooks/promise';
@@ -45,7 +45,6 @@ import { H6 } from '@veupathdb/coreui';
 import { CorrelationConfig } from '../../../types/apps';
 import { StudyMetadata } from '../../..';
 import { NodeMenuAction } from '@veupathdb/components/lib/types/plots/network';
-import { Option as NodeLabelProp } from '@veupathdb/components/lib/components/plotControls/MultiSelect';
 // end imports
 
 // Defaults
@@ -188,11 +187,6 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const minDataWeight = Math.min(...uniqueDataWeights);
   const maxDataWeight = Math.max(...uniqueDataWeights);
 
-  // for node label control
-  const [visibleNodeLabels, setVisibleNodeLabels] = useState<
-    NodeLabelProp[] | undefined
-  >([]);
-
   // Clean and finalize data format. Specifically, assign link colors, add display labels
   const cleanedData = useMemo(() => {
     if (!data.value) return undefined;
@@ -246,13 +240,6 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     );
 
     const nodesById = new Map(nodesWithLabels.map((n) => [n.id, n]));
-
-    // set initial visible node labels
-    const defaultNodeLabels = nodesWithLabels.flatMap((node) => {
-      return { value: node.label, label: node.label };
-    });
-
-    setVisibleNodeLabels(defaultNodeLabels);
 
     // sort node data by label
     // this is mutating the original paritions arrray :shrug:
@@ -344,6 +331,10 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
       Adjust the correlation coefficient and p-value thresholds to continue.
     </div>
   );
+
+  const visibleNodeLabels = cleanedData?.nodes.flatMap((node) => {
+    return { value: node.label, label: node.label };
+  });
 
   const bipartiteNetworkPlotProps: BipartiteNetworkPlotProps = {
     nodes: cleanedData ? cleanedData.nodes : undefined,
