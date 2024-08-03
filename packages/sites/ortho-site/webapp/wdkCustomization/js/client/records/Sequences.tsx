@@ -21,7 +21,7 @@ import { extractPfamDomain } from 'ortho-client/records/utils';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { RowCounter } from '@veupathdb/coreui/lib/components/Mesa';
 import { PfamDomain } from 'ortho-client/components/pfam-domains/PfamDomain';
-import { SelectList } from '@veupathdb/coreui';
+import { FloatingButton, SelectList, Undo } from '@veupathdb/coreui';
 import { RecordTable_TaxonCounts_Filter } from './RecordTable_TaxonCounts_Filter';
 import { css, cx } from '@emotion/css';
 
@@ -45,9 +45,12 @@ export function RecordTable_Sequences(
     [searchQuery]
   );
 
+  const [resetCounter, setResetCounter] = useState(0); // used for forcing re-render of filter buttons
   const [selectedSpecies, setSelectedSpecies] = useState<string[]>([]);
-
   const [pfamFilterIds, setPfamFilterIds] = useState<string[]>([]);
+  const [corePeripheralFilterValue, setCorePeripheralFilterValue] = useState<
+    ('core' | 'peripheral')[]
+  >([]);
 
   const groupName = props.record.id.find(
     ({ name }) => name === 'group_name'
@@ -73,11 +76,6 @@ export function RecordTable_Sequences(
   const pfamRows = props.record.tables['PFams'];
 
   const numSequences = mesaRows.length;
-
-  // show only core as default for large groups
-  const [corePeripheralFilterValue, setCorePeripheralFilterValue] = useState<
-    ('core' | 'peripheral')[]
-  >([]);
 
   const treeResponse = useOrthoService(
     numSequences >= MIN_SEQUENCES_FOR_TREE &&
@@ -359,6 +357,7 @@ export function RecordTable_Sequences(
 
   const pfamFilter = pfamRows.length > 0 && (
     <SelectList
+      key={`pfamFilter-${resetCounter}`}
       defaultButtonDisplayContent="Pfam domains"
       items={pfamRows.map((row) => ({
         display: (
@@ -393,6 +392,7 @@ export function RecordTable_Sequences(
 
   const corePeripheralFilter = (
     <SelectList
+      key={`corePeripheralFilter-${resetCounter}`}
       defaultButtonDisplayContent="Core/Peripheral"
       items={[
         {
@@ -413,6 +413,7 @@ export function RecordTable_Sequences(
   const taxonFilter =
     props.record.tables.TaxonCounts?.length > 0 ? (
       <RecordTable_TaxonCounts_Filter
+        key={`taxonFilter-${resetCounter}`}
         selectedSpecies={selectedSpecies}
         onSpeciesSelected={setSelectedSpecies}
         record={props.record}
@@ -422,6 +423,29 @@ export function RecordTable_Sequences(
         DefaultComponent={props.DefaultComponent}
       />
     ) : null;
+
+  const resetButton = (
+    <FloatingButton
+      text={''}
+      ariaLabel={'Reset filters'}
+      tooltip={'Reset filters'}
+      disabled={
+        pfamFilterIds.length +
+          corePeripheralFilterValue.length +
+          selectedSpecies.length ===
+        0
+      }
+      icon={Undo}
+      size={'medium'}
+      themeRole={'primary'}
+      onPress={() => {
+        setPfamFilterIds([]);
+        setCorePeripheralFilterValue([]);
+        setSelectedSpecies([]);
+        setResetCounter((prev) => prev + 1);
+      }}
+    />
+  );
 
   return (
     <>
@@ -466,15 +490,15 @@ export function RecordTable_Sequences(
             flexDirection: 'row',
             gap: '1em',
             alignItems: 'center',
-            marginLeft: 'auto',
             flexWrap: 'wrap',
-            justifyContent: 'flex-end',
+            justifyContent: 'flex-start',
           }}
         >
           <strong>Filters: </strong>
           {pfamFilter}
           {corePeripheralFilter}
           {taxonFilter}
+          {resetButton}
         </div>
       </div>
       <TreeTable
