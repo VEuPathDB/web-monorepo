@@ -17,6 +17,8 @@ import {
   updateSharingModalState,
   sharingError,
   sharingSuccess,
+  updateCommunityModalVisibility,
+  updateDatasetCommunityVisibility,
 } from '../Actions/UserDatasetsActions';
 
 import BigwigDatasetDetail from '../Components/Detail/BigwigDatasetDetail';
@@ -39,6 +41,8 @@ const ActionCreators = {
   updateSharingModalState,
   sharingError,
   sharingSuccess,
+  updateCommunityModalVisibility,
+  updateDatasetCommunityVisibility,
 };
 
 export type UserDatasetDetailProps = any;
@@ -184,6 +188,8 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       updateSharingModalState,
       sharingSuccess,
       sharingError,
+      updateCommunityModalVisibility,
+      updateDatasetCommunityVisibility,
     } = this.props.dispatchProps;
     const {
       userDatasetsById,
@@ -196,6 +202,10 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       sharingDatasetPending,
       shareError,
       shareSuccessful,
+      communityModalOpen,
+      updateDatasetCommunityVisibilityError,
+      updateDatasetCommunityVisibilityPending,
+      updateDatasetCommunityVisibilitySuccess,
     } = this.props.stateProps;
     const entry = userDatasetsById[id];
     const isOwner = !!(
@@ -232,6 +242,12 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       detailsPageTitle,
       dataNoun,
       enablePublicUserDatasets,
+      updateCommunityModalVisibility,
+      updateDatasetCommunityVisibility,
+      communityModalOpen,
+      updateDatasetCommunityVisibilityError,
+      updateDatasetCommunityVisibilityPending,
+      updateDatasetCommunityVisibilitySuccess,
     };
 
     const DetailView = this.getDetailView(

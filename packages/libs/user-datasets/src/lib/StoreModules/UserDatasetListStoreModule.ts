@@ -12,6 +12,10 @@ import {
   SHARING_MODAL_OPEN,
   SHARING_DATASET_PENDING,
   SHARING_ERROR,
+  updateCommunityModalVisibility,
+  updateDatasetCommunityVisibilityError,
+  updateDatasetCommunityVisibilityPending,
+  updateDatasetCommunityVisibilitySuccess,
 } from '../Actions/UserDatasetsActions';
 
 import { UserDataset } from '../Utils/types';
@@ -23,6 +27,10 @@ type SharingModalState = {
   sharingDatasetPending: boolean;
   shareError: Error | undefined;
   shareSuccessful: boolean | undefined;
+  communityModalOpen: boolean;
+  updateDatasetCommunityVisibilityPending: boolean;
+  updateDatasetCommunityVisibilitySuccess: boolean;
+  updateDatasetCommunityVisibilityError: string | undefined;
 };
 
 type InitialState = SharingModalState & {
@@ -63,6 +71,10 @@ const initialState: State = {
   sharingDatasetPending: false,
   shareError: undefined,
   shareSuccessful: undefined,
+  communityModalOpen: false,
+  updateDatasetCommunityVisibilityPending: false,
+  updateDatasetCommunityVisibilitySuccess: false,
+  updateDatasetCommunityVisibilityError: undefined,
 };
 
 export function reduce(state: State = initialState, action: Action): State {
@@ -162,6 +174,37 @@ export function reduce(state: State = initialState, action: Action): State {
       }
       return state;
     }
+
+    case updateCommunityModalVisibility.type:
+      return {
+        ...state,
+        communityModalOpen: action.payload.isVisible,
+        // clear related states when closed
+        ...(action.payload.isVisible
+          ? {}
+          : {
+              updateDatasetCommunityVisibilityError: undefined,
+              updateDatasetCommunityVisibilityPending: false,
+              updateDatasetCommunityVisibilitySuccess: false,
+            }),
+      };
+    case updateDatasetCommunityVisibilityError.type:
+      return {
+        ...state,
+        updateDatasetCommunityVisibilityPending: false,
+        updateDatasetCommunityVisibilityError: action.payload.errorMessage,
+      };
+    case updateDatasetCommunityVisibilityPending.type:
+      return {
+        ...state,
+        updateDatasetCommunityVisibilityPending: true,
+      };
+    case updateDatasetCommunityVisibilitySuccess.type:
+      return {
+        ...state,
+        updateDatasetCommunityVisibilityPending: false,
+        updateDatasetCommunityVisibilitySuccess: true,
+      };
 
     default:
       return state;
