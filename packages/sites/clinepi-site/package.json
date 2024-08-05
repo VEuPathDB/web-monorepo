@@ -11,7 +11,8 @@
     "compile:check": "tsc --noEmit",
     "generate:bundlePathScript": "../../../tools/scripts/makeSupportedBrowsersScript.mjs dist/bin/getBundlesSubPath",
     "bundle:dev": "npm-run-all clean copy:webapp copy:images generate:bundlePathScript && BROWSERSLIST_ENV=modern webpack --mode=development && BROWSERSLIST_ENV=legacy webpack --mode=development",
-    "bundle:npm": "npm-run-all clean copy:webapp copy:images generate:bundlePathScript && BROWSERSLIST_ENV=modern webpack --mode=production && BROWSERSLIST_ENV=legacy webpack --mode=production"
+    "bundle:npm": "npm-run-all clean copy:webapp copy:images generate:bundlePathScript && BROWSERSLIST_ENV=modern webpack --mode=production && BROWSERSLIST_ENV=legacy webpack --mode=production",
+    "bundle:analyze": "BROWSERSLIST_ENV=modern webpack --mode=development --config webpack.config.analyze.mjs"
   },
   "keywords": [],
   "author": "",
