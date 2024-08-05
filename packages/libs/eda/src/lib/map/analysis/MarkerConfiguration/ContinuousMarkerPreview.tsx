@@ -9,19 +9,22 @@ import {
 //   ChartMarkerStandalone,
 //   getChartMarkerDependentAxisRange,
 // } from '@veupathdb/components/lib/map/ChartMarker';
-import { DonutMarkerStandalone } from '@veupathdb/components/lib/map/DonutMarker';
+// import { DonutMarkerStandalone } from '@veupathdb/components/lib/map/DonutMarker';
 // import { UNSELECTED_TOKEN } from '../../constants';
 // import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import {
   kFormatter,
-  // mFormatter,
+  mFormatter,
 } from '../../../core/utils/big-number-formatters';
 // import { MAXIMUM_ALLOWABLE_VALUES } from './CategoricalMarkerConfigurationTable';
-import { PieMarkerConfiguration } from './PieMarkerConfigurationMenu';
+// import { PieMarkerConfiguration } from './PieMarkerConfigurationMenu';
 import { useDistributionOverlayConfig } from '../mapTypes/shared';
 // import { useMarkerData } from '../mapTypes/plugins/DonutMarkerMapType';
 import { GeoConfig } from '../../../core/types/geoConfig';
 import { sharedStandaloneMarkerProperties } from './CategoricalMarkerPreview';
+import { MarkerDataProps } from '../mapTypes/plugins/BarMarkerMapType';
+import { NumberRange } from '../../../core/types/general';
+import { getChartMarkerDependentAxisRange } from '@veupathdb/components/lib/map/ChartMarker';
 
 // type Props = {
 //   overlayConfiguration: OverlayConfig | undefined;
@@ -40,14 +43,25 @@ import { sharedStandaloneMarkerProperties } from './CategoricalMarkerPreview';
 //   },
 // };
 
+type SharedStandaloneMarkerProps = typeof sharedStandaloneMarkerProperties;
+
+interface StandaloneMarkerProps extends SharedStandaloneMarkerProps {
+  data: any;
+  markerLabel: string;
+  dependentAxisRange?: NumberRange | null;
+  dependentAxisLogScale?: boolean;
+}
+
 type ContinuousMarkerPreviewProps = {
   configuration: any;
   studyId: string;
   filters: Filter[] | undefined;
   studyEntities: StudyEntity[];
   geoConfigs: GeoConfig[];
-  useMarkerData: (props: any) => any;
-  valueSpec: 'count' | 'value';
+  useMarkerData: (props: MarkerDataProps) => any;
+  valueSpec: 'count' | 'proportion';
+  StandaloneMarkerComponent: (props: StandaloneMarkerProps) => JSX.Element;
+  numberFormat?: 'k' | 'm';
   useCountAsValue?: boolean;
 };
 
@@ -59,9 +73,16 @@ export function ContinuousMarkerPreview({
   geoConfigs,
   useMarkerData,
   valueSpec,
-  useCountAsValue,
+  StandaloneMarkerComponent,
+  numberFormat = 'k',
+  useCountAsValue = false,
 }: ContinuousMarkerPreviewProps) {
-  const { selectedVariable, selectedValues, binningMethod } = configuration;
+  const {
+    selectedVariable,
+    selectedValues,
+    binningMethod,
+    dependentAxisLogScale,
+  } = configuration;
 
   const overlayConfigQueryResult = useDistributionOverlayConfig({
     studyId,
@@ -91,7 +112,7 @@ export function ContinuousMarkerPreview({
     return null;
 
   const initialDataObject = previewMarkerResult.markerProps[0].data.map(
-    (data) => ({
+    (data: any) => ({
       label: data.label,
       value: 0,
       count: 0,
@@ -100,8 +121,8 @@ export function ContinuousMarkerPreview({
   );
 
   const finalData = previewMarkerResult.markerProps.reduce(
-    (prevData, currData) =>
-      currData.data.map((data, index) => ({
+    (prevData: any, currData: any) =>
+      currData.data.map((data: any, index: any) => ({
         label: data.label,
         value: !useCountAsValue
           ? data.value + prevData[index].value
@@ -116,138 +137,24 @@ export function ContinuousMarkerPreview({
     initialDataObject
   );
 
+  const numberFormatter = numberFormat === 'm' ? mFormatter : kFormatter;
+
   return (
     // Might need to just return the data instead of the standalone marker component
-    <DonutMarkerStandalone
+    <StandaloneMarkerComponent
       data={finalData}
-      markerLabel={kFormatter(finalData.reduce((p, c) => p + c.value, 0))}
+      markerLabel={numberFormatter(
+        finalData.reduce(
+          (p: any, c: any) => p + (!useCountAsValue ? c.value : c.count),
+          0
+        )
+      )}
+      dependentAxisLogScale={dependentAxisLogScale}
+      dependentAxisRange={
+        dependentAxisLogScale &&
+        getChartMarkerDependentAxisRange(finalData, dependentAxisLogScale)
+      }
       {...sharedStandaloneMarkerProperties}
     />
   );
 }
-
-// export function CategoricalMarkerPreview({
-//   overlayConfiguration,
-//   allFilteredCategoricalValues,
-//   mapType,
-//   numberSelected,
-//   isDependentAxisLogScaleActive = false,
-// }: Props) {
-//   if (!overlayConfiguration || !allFilteredCategoricalValues) return <></>;
-//   if (overlayConfiguration.overlayType === 'categorical') {
-//     const { overlayValues } = overlayConfiguration;
-
-//     const showTooManySelectionsOverlay =
-//       overlayValues.includes(UNSELECTED_TOKEN) &&
-//       numberSelected > MAXIMUM_ALLOWABLE_VALUES;
-//     /**
-//      * When overlayValues includes UNSELECTED_TOKEN, numberSelected will be calculated with the inclusion of UNSELECTED_TOKEN.
-//      * Since UNSELECTED_TOKEN is not user-generated, we subtract 1 to indicate the actual number of values the user can select.
-//      */
-//     const adjustedNumberSelected = overlayValues.includes(UNSELECTED_TOKEN)
-//       ? numberSelected - 1
-//       : numberSelected;
-//     const tooManySelectionsOverlay = showTooManySelectionsOverlay ? (
-//       <TooManySelectionsOverlay numberSelected={adjustedNumberSelected} />
-//     ) : null;
-
-//     const allOtherValuesCount = allFilteredCategoricalValues.reduce(
-//       (prev, curr) =>
-//         prev + (overlayValues.includes(curr.label) ? 0 : curr.count),
-//       0
-//     );
-
-//     const plotData = overlayValues.map((val, index) => ({
-//       label: val,
-//       color: ColorPaletteDefault[index],
-//       value:
-//         val === UNSELECTED_TOKEN
-//           ? allOtherValuesCount
-//           : allFilteredCategoricalValues.find((v) => v.label === val)?.count ??
-//             0,
-//     }));
-//     if (mapType === 'barplot') {
-//       const dependentAxisRange = getChartMarkerDependentAxisRange(
-//         plotData,
-//         isDependentAxisLogScaleActive
-//       );
-//       return (
-//         <div
-//           style={{
-//             position: 'relative',
-//           }}
-//         >
-//           {tooManySelectionsOverlay}
-//           <ChartMarkerStandalone
-//             data={plotData}
-//             markerLabel={mFormatter(plotData.reduce((p, c) => p + c.value, 0))}
-//             dependentAxisLogScale={isDependentAxisLogScaleActive}
-//             // pass in an axis range to mimic map markers, especially in log scale
-//             dependentAxisRange={dependentAxisRange}
-//             {...sharedStandaloneMarkerProperties}
-//           />
-//         </div>
-//       );
-//     } else if (mapType === 'pie') {
-//       return (
-//         <div
-//           style={{
-//             position: 'relative',
-//           }}
-//         >
-//           {tooManySelectionsOverlay}
-//           <DonutMarkerStandalone
-//             data={plotData}
-//             markerLabel={kFormatter(plotData.reduce((p, c) => p + c.value, 0))}
-//             {...sharedStandaloneMarkerProperties}
-//           />
-//         </div>
-//       );
-//     } else {
-//       return null;
-//     }
-//   } else {
-//     return null;
-//   }
-// }
-
-// function TooManySelectionsOverlay({
-//   numberSelected,
-// }: {
-//   numberSelected: number;
-// }) {
-//   return (
-//     <div
-//       style={{
-//         position: 'absolute',
-//         display: 'flex',
-//         alignItems: 'center',
-//         justifyContent: 'center',
-//         width: '100%',
-//         height: '100%',
-//       }}
-//     >
-//       <Banner
-//         banner={{
-//           type: 'warning',
-//           message: (
-//             <>
-//               <p style={{ margin: 0 }}>Please select fewer values.</p>
-//               <p style={{ margin: 0, marginTop: '0.5em' }}>
-//                 {/**
-//                  * MAXIMUM_ALLOWABLE_VALUES is derived by the color palette and the color palette saves space for
-//                  * the UNSELECTED_TOKEN, hence the user can only select 1 less than the max.
-//                  */}
-//                 Only {MAXIMUM_ALLOWABLE_VALUES - 1} values may be selected. You
-//                 have selected {numberSelected} values.
-//               </p>
-//             </>
-//           ),
-//           spacing: {
-//             margin: 0,
-//           },
-//         }}
-//       />
-//     </div>
-//   );
-// }

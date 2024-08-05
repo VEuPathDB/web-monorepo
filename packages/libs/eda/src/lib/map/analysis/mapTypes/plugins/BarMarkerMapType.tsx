@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { Variable } from '../../../../core/types/study';
 import { findEntityAndVariable } from '../../../../core/utils/study-metadata';
 import {
@@ -20,8 +20,8 @@ import { mFormatter } from '../../../../core/utils/big-number-formatters';
 import ChartMarker, {
   BaseMarkerData,
   ChartMarkerProps,
-  ChartMarkerStandalone,
-  getChartMarkerDependentAxisRange,
+  // ChartMarkerStandalone,
+  // getChartMarkerDependentAxisRange,
 } from '@veupathdb/components/lib/map/ChartMarker';
 import {
   defaultAnimationDuration,
@@ -64,7 +64,7 @@ import {
 } from '../../../../core/hooks/workspace';
 import { DraggableLegendPanel } from '../../DraggableLegendPanel';
 import { MapLegend } from '../../MapLegend';
-import { sharedStandaloneMarkerProperties } from '../../MarkerConfiguration/CategoricalMarkerPreview';
+// import { sharedStandaloneMarkerProperties } from '../../MarkerConfiguration/CategoricalMarkerPreview';
 import { useToggleStarredVariable } from '../../../../core/hooks/starredVariables';
 import DraggableVisualization from '../../DraggableVisualization';
 import { useStandaloneVizPlugins } from '../../hooks/standaloneVizPlugins';
@@ -119,8 +119,8 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     selectedVariable,
     selectedValues,
     binningMethod,
-    dependentAxisLogScale,
-    selectedPlotMode,
+    // dependentAxisLogScale,
+    // selectedPlotMode,
     visualizationPanelConfig,
   } = configuration;
 
@@ -161,78 +161,78 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     enabled: configuration.selectedCountsOption === 'visible',
   });
 
-  const overlayConfigQueryResult = useDistributionOverlayConfig({
-    studyId,
-    filters,
-    binningMethod,
-    overlayVariableDescriptor: selectedVariable,
-    selectedValues,
-  });
+  // const overlayConfigQueryResult = useDistributionOverlayConfig({
+  //   studyId,
+  //   filters,
+  //   binningMethod,
+  //   overlayVariableDescriptor: selectedVariable,
+  //   selectedValues,
+  // });
 
-  const previewMarkerData = useMarkerData({
-    studyId,
-    filters, // no extra little filters; should reflect whole map and all time
-    studyEntities,
-    geoConfigs,
-    selectedVariable,
-    selectedValues,
-    binningMethod,
-    dependentAxisLogScale,
-    valueSpec: selectedPlotMode,
-    overlayConfigQueryResult,
-  });
+  // const previewMarkerData = useMarkerData({
+  //   studyId,
+  //   filters, // no extra little filters; should reflect whole map and all time
+  //   studyEntities,
+  //   geoConfigs,
+  //   selectedVariable,
+  //   selectedValues,
+  //   binningMethod,
+  //   dependentAxisLogScale,
+  //   valueSpec: selectedPlotMode,
+  //   overlayConfigQueryResult,
+  // });
 
-  const continuousMarkerPreview = useMemo(() => {
-    if (
-      !previewMarkerData ||
-      !previewMarkerData.markerProps?.length ||
-      !Array.isArray(previewMarkerData.markerProps[0].data)
-    )
-      return;
-    const initialDataObject = previewMarkerData.markerProps[0].data.map(
-      (data) => ({
-        label: data.label,
-        value: 0,
-        count: 0,
-        ...(data.color ? { color: data.color } : {}),
-      })
-    );
-    /**
-     * In the chart marker's proportion mode, the values are pre-calculated proportion values. Using these pre-calculated proportion values results
-     * in an erroneous totalCount summation and some off visualizations in the marker previews. Since no axes/numbers are displayed in the marker
-     * previews, let's just overwrite the value property with the count property.
-     *
-     * NOTE: the donut preview doesn't have proportion mode and was working just fine, but now it's going to receive count data that it neither
-     * needs nor consumes.
-     */
-    const finalData = previewMarkerData.markerProps.reduce(
-      (prevData, currData) =>
-        currData.data.map((data, index) => ({
-          label: data.label,
-          // here's the overwrite mentioned in the above comment
-          value: data.count + prevData[index].count,
-          count: data.count + prevData[index].count,
-          ...('color' in prevData[index]
-            ? { color: prevData[index].color }
-            : 'color' in data
-            ? { color: data.color }
-            : {}),
-        })),
-      initialDataObject
-    );
-    return (
-      <ChartMarkerStandalone
-        data={finalData}
-        markerLabel={mFormatter(finalData.reduce((p, c) => p + c.count, 0))}
-        dependentAxisLogScale={dependentAxisLogScale}
-        dependentAxisRange={getChartMarkerDependentAxisRange(
-          finalData,
-          dependentAxisLogScale
-        )}
-        {...sharedStandaloneMarkerProperties}
-      />
-    );
-  }, [dependentAxisLogScale, previewMarkerData]);
+  // const continuousMarkerPreview = useMemo(() => {
+  //   if (
+  //     !previewMarkerData ||
+  //     !previewMarkerData.markerProps?.length ||
+  //     !Array.isArray(previewMarkerData.markerProps[0].data)
+  //   )
+  //     return;
+  //   const initialDataObject = previewMarkerData.markerProps[0].data.map(
+  //     (data) => ({
+  //       label: data.label,
+  //       value: 0,
+  //       count: 0,
+  //       ...(data.color ? { color: data.color } : {}),
+  //     })
+  //   );
+  //   /**
+  //    * In the chart marker's proportion mode, the values are pre-calculated proportion values. Using these pre-calculated proportion values results
+  //    * in an erroneous totalCount summation and some off visualizations in the marker previews. Since no axes/numbers are displayed in the marker
+  //    * previews, let's just overwrite the value property with the count property.
+  //    *
+  //    * NOTE: the donut preview doesn't have proportion mode and was working just fine, but now it's going to receive count data that it neither
+  //    * needs nor consumes.
+  //    */
+  //   const finalData = previewMarkerData.markerProps.reduce(
+  //     (prevData, currData) =>
+  //       currData.data.map((data, index) => ({
+  //         label: data.label,
+  //         // here's the overwrite mentioned in the above comment
+  //         value: data.count + prevData[index].count,
+  //         count: data.count + prevData[index].count,
+  //         ...('color' in prevData[index]
+  //           ? { color: prevData[index].color }
+  //           : 'color' in data
+  //           ? { color: data.color }
+  //           : {}),
+  //       })),
+  //     initialDataObject
+  //   );
+  //   return (
+  //     <ChartMarkerStandalone
+  //       data={finalData}
+  //       markerLabel={mFormatter(finalData.reduce((p, c) => p + c.count, 0))}
+  //       dependentAxisLogScale={dependentAxisLogScale}
+  //       dependentAxisRange={getChartMarkerDependentAxisRange(
+  //         finalData,
+  //         dependentAxisLogScale
+  //       )}
+  //       {...sharedStandaloneMarkerProperties}
+  //     />
+  //   );
+  // }, [dependentAxisLogScale, previewMarkerData]);
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
@@ -260,7 +260,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
       subsettingClient={subsettingClient}
       studyId={studyId}
       filters={filters}
-      continuousMarkerPreview={continuousMarkerPreview}
+      // continuousMarkerPreview={continuousMarkerPreview}
       allFilteredCategoricalValues={allFilteredCategoricalValues.data}
       allVisibleCategoricalValues={allVisibleCategoricalValues.data}
       inputs={[{ name: 'overlayVariable', label: 'Overlay' }]}
@@ -787,8 +787,8 @@ function fixLabelForOtherValues(input: string): string {
   return input === UNSELECTED_TOKEN ? UNSELECTED_DISPLAY_TEXT : input;
 }
 
-interface MarkerDataProps extends DistributionMarkerDataProps {
-  dependentAxisLogScale: boolean;
+export interface MarkerDataProps extends DistributionMarkerDataProps {
+  dependentAxisLogScale?: boolean;
 }
 
 export function useMarkerData(props: MarkerDataProps) {
@@ -835,7 +835,7 @@ export function useMarkerData(props: MarkerDataProps) {
   const markerProps = processRawMarkersData(
     mapElements,
     defaultDependentAxisRange,
-    props.dependentAxisLogScale,
+    props.dependentAxisLogScale ?? false,
     getVocabulary(overlayConfig),
     overlayConfig.overlayType
   );

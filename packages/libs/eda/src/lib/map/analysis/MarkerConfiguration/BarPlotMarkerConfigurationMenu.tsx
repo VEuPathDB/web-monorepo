@@ -29,6 +29,9 @@ import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 import { SharedMarkerConfigurations } from '../mapTypes/shared';
 import { GeoConfig } from '../../../core/types/geoConfig';
 import { findLeastAncestralGeoConfig } from '../../../core/utils/geoVariables';
+import { ContinuousMarkerPreview } from './ContinuousMarkerPreview';
+import { useMarkerData } from '../mapTypes/plugins/BarMarkerMapType';
+import { ChartMarkerStandalone } from '@veupathdb/components/lib/map/ChartMarker';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
@@ -58,7 +61,7 @@ interface Props
   subsettingClient: SubsettingClient;
   studyId: string;
   filters: Filter[] | undefined;
-  continuousMarkerPreview: JSX.Element | undefined;
+  // continuousMarkerPreview: JSX.Element | undefined;
   /**
    * Always used for categorical marker preview. Also used in categorical table if selectedCountsOption is 'filtered'
    */
@@ -84,7 +87,7 @@ export function BarPlotMarkerConfigurationMenu({
   subsettingClient,
   studyId,
   filters,
-  continuousMarkerPreview,
+  // continuousMarkerPreview,
   allFilteredCategoricalValues,
   allVisibleCategoricalValues,
   geoConfigs,
@@ -239,7 +242,18 @@ export function BarPlotMarkerConfigurationMenu({
             />
           </>
         ) : (
-          continuousMarkerPreview
+          <ContinuousMarkerPreview
+            configuration={configuration}
+            studyId={studyId}
+            filters={filters}
+            studyEntities={entities}
+            geoConfigs={geoConfigs}
+            useMarkerData={useMarkerData}
+            valueSpec={configuration.selectedPlotMode}
+            StandaloneMarkerComponent={ChartMarkerStandalone}
+            numberFormat="m"
+            useCountAsValue
+          />
         )}
       </div>
       <div style={{ maxWidth: '360px', marginTop: '1em' }}>

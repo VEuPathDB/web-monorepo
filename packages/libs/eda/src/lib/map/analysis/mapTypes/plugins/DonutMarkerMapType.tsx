@@ -11,10 +11,7 @@ import {
   ColorPaletteDefault,
   gradientSequentialColorscaleMap,
 } from '@veupathdb/components/lib/types/plots/addOns';
-import {
-  useCallback,
-  // useMemo,
-} from 'react';
+import { useCallback } from 'react';
 import {
   STUDIES_ENTITY_ID,
   STUDY_ID_VARIABLE_ID,
@@ -156,8 +153,8 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   //   studyEntities,
   //   geoConfigs,
   //   selectedVariable: configuration.selectedVariable,
-  //   binningMethod: configuration.binningMethod,
   //   selectedValues: configuration.selectedValues,
+  //   binningMethod: configuration.binningMethod,
   //   valueSpec: 'count',
   //   overlayConfigQueryResult,
   // });
