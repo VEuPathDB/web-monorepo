@@ -8285,6 +8285,7 @@ __metadata:
     typescript: ~4.3.5
     url-loader: ^1.1.2
     webpack: ^5.84.1
+    webpack-bundle-analyzer: ^4.10.2
     webpack-cli: ^5.1.1
     webpack-dev-server: ^4.15.0
     webpack-merge: ^4.2.2
@@ -8715,6 +8716,7 @@ __metadata:
     typescript: ~4.3.5
     url-loader: ^1.1.2
     webpack: ^5.84.1
+    webpack-bundle-analyzer: ^4.10.2
     webpack-cli: ^5.1.1
     webpack-dev-server: ^4.15.0
     webpack-merge: ^4.2.2
@@ -8869,6 +8871,7 @@ __metadata:
     typescript: ~4.3.5
     url-loader: ^1.1.2
     webpack: ^5.84.1
+    webpack-bundle-analyzer: ^4.10.2
     webpack-cli: ^5.1.1
     webpack-dev-server: ^4.15.0
     webpack-merge: ^4.2.2
@@ -26962,7 +26965,6 @@ __metadata:
     lint-staged: ^13.2.0
     nx: 16.3.2
     webpack: ^5.84.1
-    webpack-bundle-analyzer: ^4.10.2
     webpack-cli: ^5.1.1
   languageName: unknown
   linkType: soft
