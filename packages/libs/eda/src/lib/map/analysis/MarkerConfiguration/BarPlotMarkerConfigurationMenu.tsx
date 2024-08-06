@@ -59,7 +59,6 @@ interface Props
   subsettingClient: SubsettingClient;
   studyId: string;
   filters: Filter[] | undefined;
-  // continuousMarkerPreview: JSX.Element | undefined;
   /**
    * Always used for categorical marker preview. Also used in categorical table if selectedCountsOption is 'filtered'
    */
@@ -85,7 +84,6 @@ export function BarPlotMarkerConfigurationMenu({
   subsettingClient,
   studyId,
   filters,
-  // continuousMarkerPreview,
   allFilteredCategoricalValues,
   allVisibleCategoricalValues,
   geoConfigs,

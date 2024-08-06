@@ -1,6 +1,5 @@
 import DonutMarker, {
   DonutMarkerProps,
-  // DonutMarkerStandalone,
 } from '@veupathdb/components/lib/map/DonutMarker';
 import SemanticMarkers from '@veupathdb/components/lib/map/SemanticMarkers';
 import {
@@ -29,7 +28,6 @@ import { kFormatter } from '../../../../core/utils/big-number-formatters';
 import { findEntityAndVariable } from '../../../../core/utils/study-metadata';
 import { DraggableLegendPanel } from '../../DraggableLegendPanel';
 import { MapLegend } from '../../MapLegend';
-// import { sharedStandaloneMarkerProperties } from '../../MarkerConfiguration/CategoricalMarkerPreview';
 import {
   PieMarkerConfiguration,
   PieMarkerConfigurationMenu,
@@ -139,62 +137,6 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     enabled: configuration.selectedCountsOption === 'visible',
   });
 
-  // const overlayConfigQueryResult = useDistributionOverlayConfig({
-  //   studyId,
-  //   filters,
-  //   binningMethod,
-  //   overlayVariableDescriptor: selectedVariable,
-  //   selectedValues,
-  // });
-
-  // const previewMarkerResult = useMarkerData({
-  //   studyId,
-  //   filters, // no extra little filters; should reflect whole map and all time
-  //   studyEntities,
-  //   geoConfigs,
-  //   selectedVariable: configuration.selectedVariable,
-  //   selectedValues: configuration.selectedValues,
-  //   binningMethod: configuration.binningMethod,
-  //   valueSpec: 'count',
-  //   overlayConfigQueryResult,
-  // });
-
-  // const continuousMarkerPreview = useMemo(() => {
-  //   if (
-  //     !previewMarkerResult ||
-  //     !previewMarkerResult.markerProps?.length ||
-  //     !Array.isArray(previewMarkerResult.markerProps[0].data)
-  //   )
-  //     return;
-  //   const initialDataObject = previewMarkerResult.markerProps[0].data.map(
-  //     (data) => ({
-  //       label: data.label,
-  //       value: 0,
-  //       ...(data.color ? { color: data.color } : {}),
-  //     })
-  //   );
-  //   const finalData = previewMarkerResult.markerProps.reduce(
-  //     (prevData, currData) =>
-  //       currData.data.map((data, index) => ({
-  //         label: data.label,
-  //         value: data.value + prevData[index].value,
-  //         ...('color' in prevData[index]
-  //           ? { color: prevData[index].color }
-  //           : 'color' in data
-  //           ? { color: data.color }
-  //           : {}),
-  //       })),
-  //     initialDataObject
-  //   );
-  //   return (
-  //     <DonutMarkerStandalone
-  //       data={finalData}
-  //       markerLabel={kFormatter(finalData.reduce((p, c) => p + c.value, 0))}
-  //       {...sharedStandaloneMarkerProperties}
-  //     />
-  //   );
-  // }, [previewMarkerResult]);
-
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
   const overlayConfiguration = useDistributionOverlayConfig({
@@ -221,7 +163,6 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
       subsettingClient={subsettingClient}
       studyId={studyId}
       filters={filters}
-      // continuousMarkerPreview={continuousMarkerPreview}
       allFilteredCategoricalValues={allFilteredCategoricalValues.data}
       allVisibleCategoricalValues={allVisibleCategoricalValues.data}
       inputs={[{ name: 'overlayVariable', label: 'Overlay' }]}
