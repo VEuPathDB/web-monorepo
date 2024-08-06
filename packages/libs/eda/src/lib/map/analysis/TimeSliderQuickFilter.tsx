@@ -247,6 +247,8 @@ export default function TimeSliderQuickFilter({
             change the date variable (currently{' '}
             <b>{variableMetadata?.variable.displayName}</b>)
           </li>
+          <li>set start and end dates precisely</li>
+          <li>step the window forwards and backwards through the timeline</li>
           <li>toggle the temporary time window filter on/off</li>
         </ul>
       </p>
