@@ -1,88 +1,44 @@
-import {
-  // AllValuesDefinition,
-  Filter,
-  // OverlayConfig,
-  StudyEntity,
-} from '../../../core';
-// import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
-// import {
-//   ChartMarkerStandalone,
-//   getChartMarkerDependentAxisRange,
-// } from '@veupathdb/components/lib/map/ChartMarker';
-// import { DonutMarkerStandalone } from '@veupathdb/components/lib/map/DonutMarker';
-// import { UNSELECTED_TOKEN } from '../../constants';
-// import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { Filter, StudyEntity } from '../../../core';
 import {
   kFormatter,
   mFormatter,
 } from '../../../core/utils/big-number-formatters';
-// import { MAXIMUM_ALLOWABLE_VALUES } from './CategoricalMarkerConfigurationTable';
-// import { PieMarkerConfiguration } from './PieMarkerConfigurationMenu';
 import { useDistributionOverlayConfig } from '../mapTypes/shared';
-// import { useMarkerData } from '../mapTypes/plugins/DonutMarkerMapType';
 import { GeoConfig } from '../../../core/types/geoConfig';
 import { sharedStandaloneMarkerProperties } from './CategoricalMarkerPreview';
-import { MarkerDataProps } from '../mapTypes/plugins/BarMarkerMapType';
-import { NumberRange } from '../../../core/types/general';
-import { getChartMarkerDependentAxisRange } from '@veupathdb/components/lib/map/ChartMarker';
+import { useMarkerData as useDonutMarkerData } from '../mapTypes/plugins/DonutMarkerMapType';
+import { useMarkerData as useBarMarkerData } from '../mapTypes/plugins/BarMarkerMapType';
+import {
+  ChartMarkerStandalone,
+  getChartMarkerDependentAxisRange,
+} from '@veupathdb/components/lib/map/ChartMarker';
+import { PieMarkerConfiguration } from './PieMarkerConfigurationMenu';
+import { BarPlotMarkerConfiguration } from './BarPlotMarkerConfigurationMenu';
+import { DonutMarkerStandalone } from '@veupathdb/components/lib/map/DonutMarker';
 
-// type Props = {
-//   overlayConfiguration: OverlayConfig | undefined;
-//   mapType: 'barplot' | 'pie';
-//   numberSelected: number;
-//   allFilteredCategoricalValues: AllValuesDefinition[] | undefined;
-//   isDependentAxisLogScaleActive?: boolean;
-// };
-
-// export const sharedStandaloneMarkerProperties = {
-//   markerScale: 2.5,
-//   containerStyles: {
-//     width: 'fit-content',
-//     height: 'fit-content',
-//     margin: 'auto',
-//   },
-// };
-
-type SharedStandaloneMarkerProps = typeof sharedStandaloneMarkerProperties;
-
-interface StandaloneMarkerProps extends SharedStandaloneMarkerProps {
-  data: any;
-  markerLabel: string;
-  dependentAxisRange?: NumberRange | null;
-  dependentAxisLogScale?: boolean;
-}
-
-type ContinuousMarkerPreviewProps = {
-  configuration: any;
+type Props = {
+  configuration: PieMarkerConfiguration | BarPlotMarkerConfiguration;
+  mapType: 'barplot' | 'pie';
   studyId: string;
   filters: Filter[] | undefined;
   studyEntities: StudyEntity[];
   geoConfigs: GeoConfig[];
-  useMarkerData: (props: MarkerDataProps) => any;
-  valueSpec: 'count' | 'proportion';
-  StandaloneMarkerComponent: (props: StandaloneMarkerProps) => JSX.Element;
-  numberFormat?: 'k' | 'm';
-  useCountAsValue?: boolean;
 };
 
 export function ContinuousMarkerPreview({
   configuration,
+  mapType,
   studyId,
   filters,
   studyEntities,
   geoConfigs,
-  useMarkerData,
-  valueSpec,
-  StandaloneMarkerComponent,
-  numberFormat = 'k',
-  useCountAsValue = false,
-}: ContinuousMarkerPreviewProps) {
-  const {
-    selectedVariable,
-    selectedValues,
-    binningMethod,
-    dependentAxisLogScale,
-  } = configuration;
+}: Props) {
+  const { selectedVariable, selectedValues, binningMethod } = configuration;
+
+  const dependentAxisLogScale =
+    'dependentAxisLogScale' in configuration
+      ? configuration.dependentAxisLogScale
+      : undefined;
 
   const overlayConfigQueryResult = useDistributionOverlayConfig({
     studyId,
@@ -91,6 +47,13 @@ export function ContinuousMarkerPreview({
     overlayVariableDescriptor: selectedVariable,
     selectedValues,
   });
+
+  const useMarkerData =
+    mapType === 'pie' ? useDonutMarkerData : useBarMarkerData;
+  const valueSpec =
+    mapType === 'pie'
+      ? 'count'
+      : (configuration as BarPlotMarkerConfiguration).selectedPlotMode;
 
   const previewMarkerResult = useMarkerData({
     studyId,
@@ -112,7 +75,7 @@ export function ContinuousMarkerPreview({
     return null;
 
   const initialDataObject = previewMarkerResult.markerProps[0].data.map(
-    (data: any) => ({
+    (data) => ({
       label: data.label,
       value: 0,
       count: 0,
@@ -120,14 +83,23 @@ export function ContinuousMarkerPreview({
     })
   );
 
+  /**
+   * In the chart marker's proportion mode, the values are pre-calculated proportion values. Using these pre-calculated proportion values results
+   * in an erroneous totalCount summation and some off visualizations in the marker previews. Since no axes/numbers are displayed in the marker
+   * previews, let's just overwrite the value property with the count property.
+   *
+   * NOTE: the donut preview doesn't have proportion mode and was working just fine, but now it's going to receive count data that it neither
+   * needs nor consumes.
+   */
   const finalData = previewMarkerResult.markerProps.reduce(
-    (prevData: any, currData: any) =>
-      currData.data.map((data: any, index: any) => ({
+    (prevData, currData) =>
+      currData.data.map((data, index) => ({
         label: data.label,
-        value: !useCountAsValue
-          ? data.value + prevData[index].value
-          : data.count + prevData[index].count,
-        count: data.count + prevData[index].count,
+        value:
+          mapType === 'barplot'
+            ? (data.count ?? 0) + prevData[index].count
+            : data.value + prevData[index].value,
+        count: (data.count ?? 0) + prevData[index].count,
         ...('color' in prevData[index]
           ? { color: prevData[index].color }
           : 'color' in data
@@ -137,22 +109,21 @@ export function ContinuousMarkerPreview({
     initialDataObject
   );
 
-  const numberFormatter = numberFormat === 'm' ? mFormatter : kFormatter;
-
-  return (
-    // Might need to just return the data instead of the standalone marker component
-    <StandaloneMarkerComponent
+  return mapType === 'pie' ? (
+    <DonutMarkerStandalone
       data={finalData}
-      markerLabel={numberFormatter(
-        finalData.reduce(
-          (p: any, c: any) => p + (!useCountAsValue ? c.value : c.count),
-          0
-        )
-      )}
+      markerLabel={kFormatter(finalData.reduce((p, c) => p + c.value, 0))}
+      {...sharedStandaloneMarkerProperties}
+    />
+  ) : (
+    <ChartMarkerStandalone
+      data={finalData}
+      markerLabel={mFormatter(finalData.reduce((p, c) => p + c.count, 0))}
       dependentAxisLogScale={dependentAxisLogScale}
       dependentAxisRange={
-        dependentAxisLogScale &&
-        getChartMarkerDependentAxisRange(finalData, dependentAxisLogScale)
+        dependentAxisLogScale
+          ? getChartMarkerDependentAxisRange(finalData, dependentAxisLogScale)
+          : undefined
       }
       {...sharedStandaloneMarkerProperties}
     />

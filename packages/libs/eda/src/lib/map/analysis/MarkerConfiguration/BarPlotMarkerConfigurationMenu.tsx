@@ -14,6 +14,7 @@ import {
 } from '../../../core';
 import { CategoricalMarkerConfigurationTable } from './CategoricalMarkerConfigurationTable';
 import { CategoricalMarkerPreview } from './CategoricalMarkerPreview';
+import { ContinuousMarkerPreview } from './ContinuousMarkerPreview';
 import Barplot from '@veupathdb/components/lib/plots/Barplot';
 import { SubsettingClient } from '../../../core/api';
 import { Toggle } from '@veupathdb/coreui';
@@ -29,9 +30,6 @@ import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 import { SharedMarkerConfigurations } from '../mapTypes/shared';
 import { GeoConfig } from '../../../core/types/geoConfig';
 import { findLeastAncestralGeoConfig } from '../../../core/utils/geoVariables';
-import { ContinuousMarkerPreview } from './ContinuousMarkerPreview';
-import { useMarkerData } from '../mapTypes/plugins/BarMarkerMapType';
-import { ChartMarkerStandalone } from '@veupathdb/components/lib/map/ChartMarker';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
@@ -242,18 +240,16 @@ export function BarPlotMarkerConfigurationMenu({
             />
           </>
         ) : (
-          <ContinuousMarkerPreview
-            configuration={configuration}
-            studyId={studyId}
-            filters={filters}
-            studyEntities={entities}
-            geoConfigs={geoConfigs}
-            useMarkerData={useMarkerData}
-            valueSpec={configuration.selectedPlotMode}
-            StandaloneMarkerComponent={ChartMarkerStandalone}
-            numberFormat="m"
-            useCountAsValue
-          />
+          <>
+            <ContinuousMarkerPreview
+              configuration={configuration}
+              mapType="barplot"
+              studyId={studyId}
+              filters={filters}
+              studyEntities={entities}
+              geoConfigs={geoConfigs}
+            />
+          </>
         )}
       </div>
       <div style={{ maxWidth: '360px', marginTop: '1em' }}>

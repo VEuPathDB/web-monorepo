@@ -26,10 +26,8 @@ import {
   SelectedValues,
 } from '../appState';
 import { SharedMarkerConfigurations } from '../mapTypes/shared';
-import { useMarkerData } from '../mapTypes/plugins/DonutMarkerMapType';
 import { GeoConfig } from '../../../core/types/geoConfig';
 import { findLeastAncestralGeoConfig } from '../../../core/utils/geoVariables';
-import { DonutMarkerStandalone } from '@veupathdb/components/lib/map/DonutMarker';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
@@ -223,13 +221,11 @@ export function PieMarkerConfigurationMenu({
         ) : (
           <ContinuousMarkerPreview
             configuration={configuration}
+            mapType="pie"
             studyId={studyId}
             filters={filters}
             studyEntities={entities}
             geoConfigs={geoConfigs}
-            useMarkerData={useMarkerData}
-            valueSpec="count"
-            StandaloneMarkerComponent={DonutMarkerStandalone}
           />
         )}
       </div>
