@@ -332,6 +332,10 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     </div>
   );
 
+  const visibleNodeLabels = cleanedData?.nodes.flatMap((node) => {
+    return { value: node.label, label: node.label };
+  });
+
   const bipartiteNetworkPlotProps: BipartiteNetworkPlotProps = {
     nodes: cleanedData ? cleanedData.nodes : undefined,
     links: cleanedData ? cleanedData.links : undefined,
@@ -342,6 +346,8 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     labelTruncationLength: 40,
     emptyNetworkContent,
     getNodeMenuActions,
+    // pass visible node labels
+    visibleNodeLabels: visibleNodeLabels,
     ...options?.getParitionNames?.(studyMetadata, computationConfiguration),
   };
 
