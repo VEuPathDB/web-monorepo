@@ -1309,7 +1309,7 @@ function resultDetails(
     const projectIds =
       document.summaryFieldData['MULTITEXT__popbio_project_ids'];
 
-    let vbpId = '';
+    let vbpId = 'unknown';
     try {
       // it shouldn't already be an array, but in case it is...
       if (Array.isArray(projectIds)) {
@@ -1322,7 +1322,6 @@ function resultDetails(
       }
     } catch (err) {
       console.error(`Error in parsing popbio-sample VBP ids: ${err}`);
-      vbpId = 'unknown';
     }
 
     return {
