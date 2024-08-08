@@ -90,7 +90,7 @@ export function NodeWithLabel(props: NodeWithLabelProps) {
           fill={labelColor}
           id="NodeLabelText"
           style={{
-            cursor: 'ponter',
+            cursor: 'pointer',
             zIndex: 1000,
             display: showLabel ? 'block' : hover ? 'block' : 'none',
           }}

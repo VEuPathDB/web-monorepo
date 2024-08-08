@@ -10,6 +10,11 @@ import {
   isClientError,
   isInputError,
 } from '../Service/ServiceError';
+import {
+  ValidationBundle,
+  makeErrorMessage as makeValidationBundleErrorMessage,
+} from '../Service/ValidationBundle';
+import { is } from './Json';
 
 type ErrorType<Type, Instance> = {
   type: Type;
@@ -20,6 +25,7 @@ type ErrorType<Type, Instance> = {
 };
 
 export type RuntimeError = ErrorType<'runtime', unknown>;
+export type ValidationError = ErrorType<'validation', ValidationBundle>;
 export type ServerError = ErrorType<'server', ServiceError>;
 export type ClientError = ErrorType<'client', ServiceError>;
 export type InputError = ErrorType<'input', ServiceError>;
@@ -30,6 +36,7 @@ export type DelayedResultError = ErrorType<
 
 export type WdkError =
   | RuntimeError
+  | ValidationError
   | ServerError
   | ClientError
   | InputError
@@ -44,6 +51,15 @@ export function getTypedError(error: unknown, info?: unknown): WdkError {
       error,
       info,
     };
+  if (is(ValidationBundle, error)) {
+    return {
+      type: 'validation',
+      message: makeValidationBundleErrorMessage(error),
+      id: uuid(),
+      error,
+      info,
+    };
+  }
   if (isClientError(error))
     return {
       type: 'client',
