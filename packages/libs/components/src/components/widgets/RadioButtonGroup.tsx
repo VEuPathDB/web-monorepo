@@ -36,7 +36,9 @@ export type RadioButtonGroupProps = {
   margins?: string[];
   /** marginRight of radio button item: default 16px from MUI */
   itemMarginRight?: number | string;
-  /** disabled list to disable radio button item(s): grayed out */
+  /** disabled list (same values as `options`) to disable radio button item(s): grayed out
+   * if a Map is used, then the values are used in Tooltips to explain why each option is disabled
+   */
   disabledList?: string[] | Map<string, ReactNode>;
 };
 
