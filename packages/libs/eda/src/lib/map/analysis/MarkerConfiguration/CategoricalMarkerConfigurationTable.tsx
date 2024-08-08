@@ -250,6 +250,7 @@ export function CategoricalMarkerConfigurationTable<
             // marginTop: 20,
           }
         }
+        labelStyles={{ fontSize: '1.0em', marginBottom: '-0.5em' }}
         label="Show counts for:"
         selectedOption={
           selectedCountsOption == null ? 'filtered' : selectedCountsOption

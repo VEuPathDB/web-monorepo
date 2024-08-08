@@ -242,37 +242,45 @@ export function BarPlotMarkerConfigurationMenu({
           continuousMarkerPreview
         )}
       </div>
-      <div style={{ maxWidth: '360px', marginTop: '1em' }}>
-        <div
-          style={{
-            color: gray[900],
-            fontWeight: 500,
-            fontSize: '1.2em',
-            marginBottom: '0.5em',
-          }}
-        >
-          Marker X-axis controls
-        </div>
-        <RadioButtonGroup
-          containerStyles={
-            {
-              // marginTop: 20,
+      {overlayConfiguration?.overlayType === 'continuous' && (
+        <div style={{ maxWidth: '360px', marginTop: '1em' }}>
+          <div
+            style={{
+              color: gray[900],
+              fontWeight: 500,
+              fontSize: '1.2em',
+              marginBottom: '0.5em',
+            }}
+          >
+            Marker X-axis controls
+          </div>
+          <RadioButtonGroup
+            containerStyles={
+              {
+                // marginTop: 20,
+              }
             }
-          }
-          label="Binning method"
-          selectedOption={configuration.binningMethod ?? 'equalInterval'}
-          options={['equalInterval', 'quantile', 'standardDeviation']}
-          optionLabels={['Equal interval', 'Quantile (10)', 'Std. dev.']}
-          buttonColor={'primary'}
-          // margins={['-1em', '0', '0', '0em']}
-          onOptionSelected={handleBinningMethodSelection}
-          disabledList={
-            overlayConfiguration?.overlayType === 'continuous'
-              ? []
-              : ['equalInterval', 'quantile', 'standardDeviation']
-          }
-        />
-      </div>
+            label="Binning method"
+            labelStyles={{ fontSize: '1.0em', marginBottom: '-0.5em' }}
+            selectedOption={configuration.binningMethod ?? 'equalInterval'}
+            options={['equalInterval', 'quantile', 'standardDeviation']}
+            optionLabels={['Equal interval', 'Quantile (10)', 'Std. dev.']}
+            buttonColor={'primary'}
+            // margins={['-1em', '0', '0', '0em']}
+            onOptionSelected={handleBinningMethodSelection}
+            disabledList={
+              overlayConfiguration?.overlayType === 'continuous'
+                ? new Map([
+                    [
+                      'standardDeviation',
+                      'This option is currently disabled for maintenance reasons',
+                    ],
+                  ])
+                : undefined
+            }
+          />
+        </div>
+      )}
       <div style={{ maxWidth: '360px', marginTop: '1em', marginBottom: '1em' }}>
         <div
           style={{
@@ -291,6 +299,7 @@ export function BarPlotMarkerConfigurationMenu({
             }
           }
           label="Plot mode"
+          labelStyles={{ fontSize: '1.0em', marginBottom: '-0.5em' }}
           selectedOption={configuration.selectedPlotMode || 'count'}
           options={['count', 'proportion']}
           optionLabels={['Count', 'Proportion']}
