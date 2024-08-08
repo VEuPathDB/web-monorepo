@@ -1327,7 +1327,7 @@ function resultDetails(
 
     return {
       display: {
-        url: `/a/app/workspace/maps/legacy-redirect-handler?projectID=${vbpId}`,
+        route: `/workspace/maps/legacy-redirect-handler?projectID=${vbpId}`,
         text: (
           <HtmlString
             value={document.hyperlinkName || document.primaryKey.join(' - ')}
