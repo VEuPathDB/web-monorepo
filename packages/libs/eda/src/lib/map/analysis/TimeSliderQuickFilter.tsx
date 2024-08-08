@@ -234,11 +234,7 @@ export default function TimeSliderQuickFilter({
       <p>
         Expand the panel with the{' '}
         <ChevronRight transform={'matrix(0,1,-1,0,0,0)'} /> tab or click{' '}
-        <a
-          href="/#"
-          style={{ cursor: 'pointer' }}
-          onClick={() => setMinimized(false)}
-        >
+        <a style={{ cursor: 'pointer' }} onClick={() => setMinimized(false)}>
           here
         </a>{' '}
         to reveal further controls that allow you to...
