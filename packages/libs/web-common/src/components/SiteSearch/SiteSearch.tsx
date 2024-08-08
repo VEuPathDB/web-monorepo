@@ -1304,9 +1304,27 @@ function resultDetails(
   if (documentType.id === 'popbio-sample') {
     // although it's named project_ids plural, the data has since been recurated so
     // there is always exactly one project ID (e.g. VBP0000123) per sample.
-    const vbpId = formatSummaryFieldValue(
-      document.summaryFieldData['MULTITEXT__popbio_project_ids']
-    );
+
+    // the string value is in JSON array format
+    const projectIds =
+      document.summaryFieldData['MULTITEXT__popbio_project_ids'];
+
+    let vbpId = '';
+    try {
+      // it shouldn't already be an array, but in case it is...
+      if (Array.isArray(projectIds)) {
+        vbpId = projectIds[0];
+      } else {
+        const parsedValue = JSON.parse(projectIds);
+        if (Array.isArray(parsedValue)) {
+          vbpId = parsedValue[0];
+        }
+      }
+    } catch (err) {
+      console.error(`Error in parsing popbio-sample VBP ids: ${err}`);
+      vbpId = 'unknown';
+    }
+
     return {
       display: {
         url: `/a/app/workspace/maps/legacy-redirect-handler?projectID=${vbpId}`,
