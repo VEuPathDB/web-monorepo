@@ -47,6 +47,7 @@ type ModalStyleSpec = {
     width: CSSProperties['width'];
     height: CSSProperties['height'];
   };
+  position: Pick<CSSProperties, 'top' | 'right' | 'bottom' | 'left'>;
 };
 
 export type ModalProps = {
@@ -102,10 +103,6 @@ export default function Modal({
   // Track the height of the title text.
   const { observe, height: titleHeight } = useDimensions();
 
-  // Track the height of the modal content.
-  const { observe: observeModalContent, height: modalContentHeight } =
-    useDimensions();
-
   const componentStyle: ModalStyleSpec = useMemo(() => {
     const defaultStyle: ModalStyleSpec = {
       border: {
@@ -138,6 +135,7 @@ export default function Modal({
         width: undefined,
         height: undefined,
       },
+      position: {},
     };
 
     // TODO: Handle color problems when level is too dark.
@@ -176,7 +174,6 @@ export default function Modal({
 
   return (
     <ResponsiveModal
-      ref={observeModalContent}
       open={visible}
       onClose={() => toggleVisible && toggleVisible(false)}
       showCloseIcon={false}
@@ -206,13 +203,8 @@ export default function Modal({
         },
         modalContainer: {
           position: 'absolute',
-          ...(componentStyle.size.width
-            ? {
-                width: componentStyle.size.width,
-                height: componentStyle.size.height,
-              }
-            : { top: 75, right: 75, bottom: 75, left: 75 }),
-
+          width: componentStyle.size.width,
+          height: componentStyle.size.height,
           background: colors.white,
           borderRadius: componentStyle.border.radius,
           borderColor: componentStyle.border.color,
@@ -220,6 +212,10 @@ export default function Modal({
           borderStyle: componentStyle.border.style,
           overflow: 'hidden',
           opacity: visible ? 1 : 0,
+          top: componentStyle.position.top,
+          right: componentStyle.position.right,
+          bottom: componentStyle.position.bottom,
+          left: componentStyle.position.left,
         },
         modal: {
           width: '100%',
@@ -299,7 +295,7 @@ export default function Modal({
       )}
       <div
         css={{
-          height: modalContentHeight - headerHeight,
+          height: `calc(100% - ${headerHeight}px)`,
           overflowX: componentStyle.content.overflow.x,
           overflowY: componentStyle.content.overflow.y,
         }}
@@ -313,6 +309,7 @@ export default function Modal({
             paddingRight: componentStyle.content.padding.right,
             paddingBottom: componentStyle.content.padding.bottom,
             paddingLeft: componentStyle.content.padding.left,
+            maxHeight: `calc(90vh - ${headerHeight}px)`,
           }}
         >
           {children}

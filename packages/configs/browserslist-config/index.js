@@ -1,19 +1,9 @@
 module.exports = {
-  production: ['>0.2%', 'not dead', 'not op_mini all'],
-  development: [
-    'last 1 chrome version',
-    'last 1 firefox version',
-    'last 1 safari version',
-  ],
+  production: ['defaults'],
+  development: ['defaults'],
   // Used for production bundles which target "modern" browsers
-  modern: [
-    'last 2 chrome versions',
-    'last 2 firefox versions',
-    'last 2 safari versions',
-    'last 2 edge versions',
-    'last 2 ios versions',
-  ],
+  modern: ['defaults'],
   // Used for production bundles which target "legacy" browsers
-  legacy: ['> 0%'],
+  legacy: ['> 0.2% and not dead'],
   test: ['current node'],
 };
