@@ -2799,7 +2799,6 @@ export function AggregationInputs<F extends string, P extends Array<string>>(
   props: AggregationConfig<F, P>
 ) {
   const classes = useInputStyles();
-  console.log(props);
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       {props.aggregationType === 'function' ? (
