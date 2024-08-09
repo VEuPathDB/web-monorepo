@@ -241,7 +241,7 @@ function nullResponseInterceptor<T>(decoder: Decoder<unknown, T>) {
   return function (body: unknown) {
     if (body == null) {
       throw new NoDataError(
-        'The visualization cannot be made because no data remains after filtering.',
+        undefined, // use default
         'No data',
         204,
         uuid()
