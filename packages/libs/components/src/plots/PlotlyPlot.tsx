@@ -8,7 +8,7 @@ import React, {
   useImperativeHandle,
   useMemo,
 } from 'react';
-import { PlotParams } from 'react-plotly.js';
+import { Figure, PlotParams } from 'react-plotly.js';
 import { legendSpecification } from '../utils/plotly';
 import Spinner from '../components/Spinner';
 import { PlotRef } from '../types/plots';
@@ -220,7 +220,7 @@ function PlotlyPlot<T>(
 
   // ellipsis with tooltip for legend, legend title, and independent axis tick labels
   const onRender = useCallback(
-    (figure, graphDiv: Readonly<HTMLElement>) => {
+    (figure: Figure, graphDiv: Readonly<HTMLElement>) => {
       onPlotlyRender && onPlotlyRender(figure, graphDiv);
       // legend tooltip
       // remove pre-existing title to avoid duplicates
@@ -344,7 +344,7 @@ function PlotlyPlot<T>(
   );
 
   const onInitialized = useCallback(
-    (figure, graphDiv: Readonly<HTMLElement>) => {
+    (figure: Figure, graphDiv: Readonly<HTMLElement>) => {
       onRender(figure, graphDiv);
       sharedPlotCreation.run();
     },

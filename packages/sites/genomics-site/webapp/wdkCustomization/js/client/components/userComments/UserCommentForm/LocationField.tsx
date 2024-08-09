@@ -13,7 +13,7 @@ interface LocationFieldProps {
   onRangesChange: (newValue: string) => void;
 }
 
-export const LocationField: React.SFC<LocationFieldProps> = ({
+export const LocationField: React.FunctionComponent<LocationFieldProps> = ({
   coordinateTypeField,
   rangesField,
   onCoordinateTypeChange,

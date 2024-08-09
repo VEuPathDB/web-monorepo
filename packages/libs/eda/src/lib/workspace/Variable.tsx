@@ -83,7 +83,7 @@ export function VariableDetails(props: Props) {
               </i>
             </div>
             {/* showing three variables for multifilter or single variable */}
-            &nbsp;{threeProviderLabel}
+            <>&nbsp;{threeProviderLabel}</>
             {/* generalize Show/Hide more: there is a case that providerLabel is string */}
             {Array.isArray(providerLabel) && providerLabel.length > 3 ? (
               <>
@@ -199,18 +199,20 @@ function truncateProviderLabel(
         } else {
           return (
             <div key={variable as string}>
-              {variable}
-              {isThreeLabel &&
-                ((providerLabel as string[]).length > 3
-                  ? i === 2
+              <>
+                {variable}
+                {isThreeLabel &&
+                  ((providerLabel as string[]).length > 3
+                    ? i === 2
+                      ? ''
+                      : ','
+                    : i === (providerLabel as string[]).length - 1
                     ? ''
-                    : ','
-                  : i === (providerLabel as string[]).length - 1
-                  ? ''
-                  : ',')}
-              {!isThreeLabel &&
-                (i === (providerLabel as string[]).length - 4 ? '' : ',')}
-              &nbsp;
+                    : ',')}
+                {!isThreeLabel &&
+                  (i === (providerLabel as string[]).length - 4 ? '' : ',')}
+                &nbsp;
+              </>
             </div>
           );
         }

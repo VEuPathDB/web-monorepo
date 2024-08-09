@@ -11,7 +11,7 @@ interface PubmedIdEntryProps {
   entryrowClassName?: string;
 }
 
-export const PubmedIdEntry: React.SFC<PubmedIdEntryProps> = ({
+export const PubmedIdEntry: React.FunctionComponent<PubmedIdEntryProps> = ({
   id,
   title,
   author,

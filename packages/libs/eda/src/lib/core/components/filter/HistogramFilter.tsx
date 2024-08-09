@@ -337,7 +337,7 @@ export function HistogramFilter(props: Props) {
       className="filter-param"
       style={{ position: 'relative', marginTop: '2em' }}
     >
-      {data.error && <pre>{String(data.error)}</pre>}
+      {data.error != null && <pre>{String(data.error)}</pre>}
       <div>
         <div
           style={{

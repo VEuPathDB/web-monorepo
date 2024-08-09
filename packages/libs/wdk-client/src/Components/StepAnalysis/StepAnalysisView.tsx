@@ -46,7 +46,7 @@ export interface StepAnalysisEventHandlers {
   duplicateAnalysis: () => void;
 }
 
-export const StepAnalysisView: React.SFC<
+export const StepAnalysisView: React.FC<
   StepAnalysisStateProps & StepAnalysisEventHandlers
 > = (props) => {
   // only call this once

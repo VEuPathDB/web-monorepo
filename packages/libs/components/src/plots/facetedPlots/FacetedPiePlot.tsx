@@ -26,7 +26,7 @@ type FacetedPiePlotProps = Omit<
 
 const FacetedPiePlot = (facetedPiePlotProps: FacetedPiePlotProps) => {
   const { componentProps } = facetedPiePlotProps;
-  const onPlotlyRender = useCallback((_, graphDiv) => {
+  const onPlotlyRender = useCallback((_: any, graphDiv: HTMLElement) => {
     // Replace each slice DOM node with a copy of itself.
     // This removes the existing click event handler, which
     // otherwise blocks the click handler that opens the modal
