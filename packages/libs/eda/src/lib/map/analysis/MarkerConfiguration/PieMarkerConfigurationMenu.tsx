@@ -13,6 +13,7 @@ import {
 } from '../../../core';
 import { CategoricalMarkerConfigurationTable } from './CategoricalMarkerConfigurationTable';
 import { CategoricalMarkerPreview } from './CategoricalMarkerPreview';
+import { ContinuousMarkerPreview } from './ContinuousMarkerPreview';
 import Barplot from '@veupathdb/components/lib/plots/Barplot';
 import { SubsettingClient } from '../../../core/api';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
@@ -54,7 +55,6 @@ interface Props
   subsettingClient: SubsettingClient;
   studyId: string;
   filters: Filter[] | undefined;
-  continuousMarkerPreview: JSX.Element | undefined;
   /**
    * Always used for categorical marker preview. Also used in categorical table if selectedCountsOption is 'filtered'
    */
@@ -80,7 +80,6 @@ export function PieMarkerConfigurationMenu({
   subsettingClient,
   studyId,
   filters,
-  continuousMarkerPreview,
   allFilteredCategoricalValues,
   allVisibleCategoricalValues,
   geoConfigs,
@@ -220,7 +219,14 @@ export function PieMarkerConfigurationMenu({
             numberSelected={uncontrolledSelections.size}
           />
         ) : (
-          continuousMarkerPreview
+          <ContinuousMarkerPreview
+            configuration={configuration}
+            mapType="pie"
+            studyId={studyId}
+            filters={filters}
+            studyEntities={entities}
+            geoConfigs={geoConfigs}
+          />
         )}
       </div>
       {overlayConfiguration?.overlayType === 'continuous' && (
