@@ -1302,9 +1302,31 @@ function resultDetails(
 
   // mapveu
   if (documentType.id === 'popbio-sample') {
+    // although it's named project_ids plural, the data has since been recurated so
+    // there is always exactly one project ID (e.g. VBP0000123) per sample.
+
+    // the string value is in JSON array format
+    const projectIds =
+      document.summaryFieldData['MULTITEXT__popbio_project_ids'];
+
+    let vbpId = 'unknown';
+    try {
+      // it shouldn't already be an array, but in case it is...
+      if (Array.isArray(projectIds)) {
+        vbpId = projectIds[0];
+      } else {
+        const parsedValue = JSON.parse(projectIds);
+        if (Array.isArray(parsedValue)) {
+          vbpId = parsedValue[0];
+        }
+      }
+    } catch (err) {
+      console.error(`Error in parsing popbio-sample VBP ids: ${err}`);
+    }
+
     return {
       display: {
-        url: `/popbio-map/web/?sampleID=${document.primaryKey[0]}`,
+        route: `/workspace/maps/legacy-redirect-handler?projectID=${vbpId}`,
         text: (
           <HtmlString
             value={document.hyperlinkName || document.primaryKey.join(' - ')}
