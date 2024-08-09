@@ -16,6 +16,7 @@ import {
   getStudyId,
   getStudyName,
 } from '@veupathdb/study-data-access/lib/shared/studies';
+import { diyUserDatasetIdToWdkRecordId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
 
 export interface Props {
   analysisClient: AnalysisClient;
@@ -64,7 +65,4 @@ export function PublicAnalysesRoute({
       exampleAnalysesAuthors={exampleAnalysesAuthors}
     />
   );
-}
-function diyUserDatasetIdToWdkRecordId(datasetId: string): any {
-  throw new Error('Function not implemented.');
 }

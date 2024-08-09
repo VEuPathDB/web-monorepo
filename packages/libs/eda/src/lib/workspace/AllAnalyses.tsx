@@ -55,6 +55,8 @@ import {
   getStudyId,
 } from '@veupathdb/study-data-access/lib/shared/studies';
 
+import { diyUserDatasetIdToWdkRecordId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
+
 interface AnalysisAndDataset {
   analysis: AnalysisSummary & {
     displayNameAndProvenance: string;
@@ -754,7 +756,4 @@ export function AllAnalyses(props: Props) {
       ) : null}
     </div>
   );
-}
-function diyUserDatasetIdToWdkRecordId(datasetId: string): string {
-  throw new Error('Function not implemented.');
 }
