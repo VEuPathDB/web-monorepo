@@ -36,7 +36,10 @@ import {
 import { filtersFromBoundingBox } from '../../../core/utils/visualization';
 import { MapFloatingErrorDiv } from '../MapFloatingErrorDiv';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import { NoDataError } from '../../../core/api/DataClient/NoDataError';
+import {
+  NoDataError,
+  noDataMessage,
+} from '../../../core/api/DataClient/NoDataError';
 import { useCallback, useState } from 'react';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import {
@@ -761,7 +764,7 @@ export function getErrorOverlayComponent(error: unknown) {
       <Banner
         banner={{
           type: 'warning',
-          message: error instanceof Error ? error.message : String(error),
+          message: error instanceof NoDataError ? error.message : noDataMessage,
         }}
       />
     </MapFloatingErrorDiv>
