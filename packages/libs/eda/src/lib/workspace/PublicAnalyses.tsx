@@ -32,7 +32,6 @@ import {
   PromiseHookState,
   PromiseResult,
   PublicAnalysisSummary,
-  StudyRecord,
   useEditablePublicAnalysisList,
 } from '../core';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
@@ -54,17 +53,22 @@ const useStyles = makeStyles({
   },
 });
 
+export interface StudyRecordMetadata {
+  id: string;
+  displayName: string;
+}
+
 interface Props {
   analysisClient: AnalysisClient;
   publicAnalysisListState: PromiseHookState<PublicAnalysisSummary[]>;
-  studyRecords: StudyRecord[] | undefined;
+  studyRecordsMetadata: StudyRecordMetadata[] | undefined;
   makeAnalysisLink: (analysisId: string) => string;
   exampleAnalysesAuthors?: number[];
 }
 
 export function PublicAnalyses({
   publicAnalysisListState,
-  studyRecords,
+  studyRecordsMetadata,
   ...tableProps
 }: Props) {
   const styles = useStyles();
@@ -75,13 +79,13 @@ export function PublicAnalyses({
       <h1>Public Analyses</h1>
       <PromiseResult state={publicAnalysisListState}>
         {(publicAnalysisList) =>
-          studyRecords == null || user == null ? (
+          studyRecordsMetadata == null || user == null ? (
             <Loading />
           ) : (
             <PublicAnalysesTable
               {...tableProps}
               userId={user.id}
-              studyRecords={studyRecords}
+              studyRecordsMetadata={studyRecordsMetadata}
               publicAnalysisList={publicAnalysisList}
             />
           )
@@ -94,7 +98,7 @@ export function PublicAnalyses({
 interface TableProps extends Omit<Props, 'publicAnalysisListState'> {
   userId: number;
   publicAnalysisList: PublicAnalysisSummary[];
-  studyRecords: StudyRecord[];
+  studyRecordsMetadata: StudyRecordMetadata[];
 }
 
 interface PublicAnalysisRow extends PublicAnalysisSummary {
@@ -109,7 +113,7 @@ interface PublicAnalysisRow extends PublicAnalysisSummary {
 function PublicAnalysesTable({
   analysisClient,
   publicAnalysisList,
-  studyRecords,
+  studyRecordsMetadata,
   makeAnalysisLink,
   exampleAnalysesAuthors,
   userId,
@@ -150,7 +154,7 @@ function PublicAnalysesTable({
   );
 
   const unfilteredRows: PublicAnalysisRow[] = useMemo(() => {
-    const studiesById = keyBy(studyRecords, (study) => study.id[0].value);
+    const studiesById = keyBy(studyRecordsMetadata, (study) => study.id);
 
     return publicAnalysesState.map((publicAnalysis) => ({
       ...publicAnalysis,
@@ -168,7 +172,7 @@ function PublicAnalysesTable({
       ),
       isExample: !!exampleAnalysesAuthors?.includes(publicAnalysis.userId),
     }));
-  }, [publicAnalysesState, studyRecords, exampleAnalysesAuthors]);
+  }, [publicAnalysesState, studyRecordsMetadata, exampleAnalysesAuthors]);
 
   const offerExampleSortControl = useMemo(
     () =>
