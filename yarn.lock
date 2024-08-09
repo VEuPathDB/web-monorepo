@@ -9126,7 +9126,6 @@ __metadata:
     "@veupathdb/browserslist-config": "workspace:^"
     "@veupathdb/components": "workspace:^"
     "@veupathdb/coreui": "workspace:^"
-    "@veupathdb/eda": "workspace:^"
     "@veupathdb/eslint-config": "workspace:^"
     "@veupathdb/http-utils": "workspace:^"
     "@veupathdb/react-scripts": "workspace:^"
