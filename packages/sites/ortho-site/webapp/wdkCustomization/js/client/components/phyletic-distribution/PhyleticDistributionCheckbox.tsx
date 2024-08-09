@@ -72,6 +72,7 @@ export function PhyleticDistributionCheckbox({
 
   return (
     <SelectTree
+      hasPopoverButton={selectionConfig.selectable}
       buttonDisplayContent="Species"
       tree={prunedPhyleticDistributionUiTree}
       getNodeId={getTaxonNodeId}
