@@ -8,7 +8,7 @@ import CheckboxTree, {
 export interface SelectTreeProps<T> extends CheckboxTreeProps<T> {
   buttonDisplayContent: ReactNode;
   shouldCloseOnSelection?: boolean;
-  hasPopoverButton?: boolean;
+  hasPopoverButton?: boolean; // default=true
   wrapPopover?: (checkboxTree: ReactNode) => ReactNode;
   isDisabled?: boolean;
   /** update `selectedList` state instantly when a selection is made (default: true) */
