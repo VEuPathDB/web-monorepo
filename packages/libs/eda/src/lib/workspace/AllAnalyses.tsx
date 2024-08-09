@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { orderBy } from 'lodash';
+import { map, orderBy } from 'lodash';
 import Path from 'path';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
@@ -31,7 +31,6 @@ import {
 } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 import { confirm } from '@veupathdb/wdk-client/lib/Utils/Platform';
-import { RecordInstance } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { OverflowingTextCell } from '@veupathdb/wdk-client/lib/Views/Strategy/OverflowingTextCell';
 
 import {
@@ -55,7 +54,6 @@ import {
   getStudyAccess,
   getStudyId,
 } from '@veupathdb/study-data-access/lib/shared/studies';
-import { string } from '@veupathdb/wdk-client/lib/Utils/Json';
 import { diyUserDatasetIdToWdkRecordId } from '@veupathdb/wdk-client/lib/Utils/diyDatasets';
 
 interface AnalysisAndDataset {
@@ -69,6 +67,7 @@ interface AnalysisAndDataset {
     displayName: string;
     studyAccess?: string;
     searchString: string;
+    canMakePublic: boolean;
   };
 }
 
@@ -197,41 +196,46 @@ export function AllAnalyses(props: Props) {
   const { analyses, deleteAnalyses, updateAnalysis, loading, error } =
     useAnalysisList(analysisClient);
 
-  // FIXME Merge datasets, ownUserDatasets, and communityDatasets into Map by datasetId with common interface
-  // { datasetId, displayName, isUserDataset, isPublic }
+  type Entry = [string, AnalysisAndDataset['dataset']];
   const analysesAndDatasets: AnalysisAndDataset[] | undefined = useMemo(() => {
-    const datasetsById = new Map<string, AnalysisAndDataset['dataset']>([
-      ...(datasets?.map((dataset): [string, AnalysisAndDataset['dataset']] => [
-        getStudyId(dataset)!,
-        {
-          id: getStudyId(dataset)!,
-          displayName: dataset.displayName,
-          studyAccess: getStudyAccess(dataset),
-          searchString: stripHTML(dataset.displayName),
-        },
-      ]) ?? []),
-      ...(ownUserDatasets?.map((userDataset): [
-        string,
-        AnalysisAndDataset['dataset']
-      ] => [
-        diyUserDatasetIdToWdkRecordId(userDataset.datasetId),
-        {
-          id: diyUserDatasetIdToWdkRecordId(userDataset.datasetId),
-          displayName: userDataset.name,
-          searchString: userDataset.name,
-        },
-      ]) ?? []),
-      ...(communityDatasets?.map((userDataset): [
-        string,
-        AnalysisAndDataset['dataset']
-      ] => [
-        diyUserDatasetIdToWdkRecordId(userDataset.datasetId),
-        {
-          id: diyUserDatasetIdToWdkRecordId(userDataset.datasetId),
-          displayName: userDataset.name,
-          searchString: userDataset.name,
-        },
-      ]) ?? []),
+    const datasetsById = new Map<Entry[0], Entry[1]>([
+      ...map(
+        datasets,
+        (dataset): Entry => [
+          getStudyId(dataset)!,
+          {
+            id: getStudyId(dataset)!,
+            displayName: dataset.displayName,
+            studyAccess: getStudyAccess(dataset),
+            searchString: stripHTML(dataset.displayName),
+            canMakePublic: true,
+          },
+        ]
+      ),
+      ...map(
+        communityDatasets,
+        (userDataset): Entry => [
+          diyUserDatasetIdToWdkRecordId(userDataset.datasetId),
+          {
+            id: diyUserDatasetIdToWdkRecordId(userDataset.datasetId),
+            displayName: userDataset.name,
+            searchString: userDataset.name,
+            canMakePublic: true,
+          },
+        ]
+      ),
+      ...map(
+        ownUserDatasets,
+        (userDataset): Entry => [
+          diyUserDatasetIdToWdkRecordId(userDataset.datasetId),
+          {
+            id: diyUserDatasetIdToWdkRecordId(userDataset.datasetId),
+            displayName: userDataset.name,
+            searchString: userDataset.name,
+            canMakePublic: userDataset.visibility === 'public',
+          },
+        ]
+      ),
     ]);
 
     return analyses?.map((analysis) => {
@@ -602,10 +606,11 @@ export function AllAnalyses(props: Props) {
             const isPublic = data.row.analysis.isPublic;
             const studyAccessLevel = data.row.dataset?.studyAccess;
             const offerPublicityToggle =
-              studyAccessLevel === 'public' ||
-              studyAccessLevel === 'protected' ||
-              studyAccessLevel === 'controlled' ||
-              studyAccessLevel === null;
+              data.row.dataset?.canMakePublic &&
+              (studyAccessLevel === 'public' ||
+                studyAccessLevel === 'protected' ||
+                studyAccessLevel === 'controlled' ||
+                studyAccessLevel == null);
 
             return (
               <div style={{ display: 'flex', justifyContent: 'center' }}>
