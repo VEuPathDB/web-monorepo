@@ -5,10 +5,6 @@ import { orderBy } from 'lodash';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 import { makeEdaRoute } from '../routes';
-import {
-  isDiyWdkRecordId,
-  wdkRecordIdToDiyUserDatasetId,
-} from '@veupathdb/wdk-client/lib/Utils/diyDatasets';
 import { assertIsVdiCompatibleWdkService } from '@veupathdb/user-datasets/lib/Service';
 import { projectId } from '../config';
 import {
