@@ -3,6 +3,8 @@ import { orderBy } from 'lodash';
 import Path from 'path';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
+import { useWdkServiceWithVdi } from '@veupathdb/user-datasets/lib/Hooks/wdkServiceWithVdi';
+
 import {
   Button,
   Checkbox as MaterialCheckbox,
@@ -49,6 +51,12 @@ import {
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
 import ShareFromAnalysesList from './sharing/ShareFromAnalysesList';
 import { Checkbox, Toggle, Tooltip, colors } from '@veupathdb/coreui';
+import {
+  getStudyAccess,
+  getStudyId,
+} from '@veupathdb/study-data-access/lib/shared/studies';
+import { string } from '@veupathdb/wdk-client/lib/Utils/Json';
+import { diyUserDatasetIdToWdkRecordId } from '@veupathdb/wdk-client/lib/Utils/diyDatasets';
 
 interface AnalysisAndDataset {
   analysis: AnalysisSummary & {
@@ -56,8 +64,11 @@ interface AnalysisAndDataset {
     creationTimeDisplay: string;
     modificationTimeDisplay: string;
   };
-  dataset?: RecordInstance & {
-    displayNameHTML: string;
+  dataset?: {
+    id: string;
+    displayName: string;
+    studyAccess?: string;
+    searchString: string;
   };
 }
 
@@ -173,42 +184,78 @@ export function AllAnalyses(props: Props) {
     attributes: WDK_STUDY_RECORD_ATTRIBUTES,
   });
 
+  const [ownUserDatasets, communityDatasets] =
+    useWdkServiceWithVdi(
+      (wdkService) =>
+        Promise.all([
+          wdkService.getCurrentUserDatasets(),
+          wdkService.getCommunityDatasets(),
+        ]),
+      []
+    ) ?? [];
+
   const { analyses, deleteAnalyses, updateAnalysis, loading, error } =
     useAnalysisList(analysisClient);
 
-  const analysesAndDatasets: AnalysisAndDataset[] | undefined = useMemo(
-    () =>
-      analyses?.map((analysis) => {
-        const dataset = datasets?.find(
-          (d) => d.id[0].value === analysis.studyId
-        );
+  // FIXME Merge datasets, ownUserDatasets, and communityDatasets into Map by datasetId with common interface
+  // { datasetId, displayName, isUserDataset, isPublic }
+  const analysesAndDatasets: AnalysisAndDataset[] | undefined = useMemo(() => {
+    const datasetsById = new Map<string, AnalysisAndDataset['dataset']>([
+      ...(datasets?.map((dataset): [string, AnalysisAndDataset['dataset']] => [
+        getStudyId(dataset)!,
+        {
+          id: getStudyId(dataset)!,
+          displayName: dataset.displayName,
+          studyAccess: getStudyAccess(dataset),
+          searchString: stripHTML(dataset.displayName),
+        },
+      ]) ?? []),
+      ...(ownUserDatasets?.map((userDataset): [
+        string,
+        AnalysisAndDataset['dataset']
+      ] => [
+        diyUserDatasetIdToWdkRecordId(userDataset.datasetId),
+        {
+          id: diyUserDatasetIdToWdkRecordId(userDataset.datasetId),
+          displayName: userDataset.name,
+          searchString: userDataset.name,
+        },
+      ]) ?? []),
+      ...(communityDatasets?.map((userDataset): [
+        string,
+        AnalysisAndDataset['dataset']
+      ] => [
+        diyUserDatasetIdToWdkRecordId(userDataset.datasetId),
+        {
+          id: diyUserDatasetIdToWdkRecordId(userDataset.datasetId),
+          displayName: userDataset.name,
+          searchString: userDataset.name,
+        },
+      ]) ?? []),
+    ]);
 
-        return {
-          analysis: {
-            ...analysis,
-            displayNameAndProvenance:
-              analysis.provenance == null
-                ? analysis.displayName
-                : `${analysis.displayName}\0${makeOnImportProvenanceString(
-                    analysis.creationTime,
-                    analysis.provenance
-                  )}\0${makeCurrentProvenanceString(analysis.provenance)}`,
-            creationTimeDisplay: convertISOToDisplayFormat(
-              analysis.creationTime
-            ),
-            modificationTimeDisplay: convertISOToDisplayFormat(
-              analysis.modificationTime
-            ),
-          },
-          dataset: dataset && {
-            ...dataset,
-            displayName: stripHTML(dataset.displayName),
-            displayNameHTML: dataset.displayName,
-          },
-        };
-      }),
-    [analyses, datasets]
-  );
+    return analyses?.map((analysis) => {
+      const dataset = datasetsById.get(analysis.studyId);
+
+      return {
+        analysis: {
+          ...analysis,
+          displayNameAndProvenance:
+            analysis.provenance == null
+              ? analysis.displayName
+              : `${analysis.displayName}\0${makeOnImportProvenanceString(
+                  analysis.creationTime,
+                  analysis.provenance
+                )}\0${makeCurrentProvenanceString(analysis.provenance)}`,
+          creationTimeDisplay: convertISOToDisplayFormat(analysis.creationTime),
+          modificationTimeDisplay: convertISOToDisplayFormat(
+            analysis.modificationTime
+          ),
+        },
+        dataset,
+      };
+    });
+  }, [analyses, communityDatasets, datasets, ownUserDatasets]);
 
   const searchableAnalysisColumns = useMemo(
     () =>
@@ -221,31 +268,25 @@ export function AllAnalyses(props: Props) {
     []
   );
 
-  const searchableDatasetColumns = useMemo(() => ['displayName'] as const, []);
-
   const filteredAnalysesAndDatasets = useMemo(() => {
     if (!debouncedSearchText && !studyId) return analysesAndDatasets;
     const lowerSearchText = debouncedSearchText.toLowerCase();
 
     return analysesAndDatasets?.filter(({ analysis, dataset }) => {
-      const matchesStudyId =
-        !studyId || dataset?.attributes.dataset_id === studyId;
+      const matchesStudyId = !studyId || dataset?.id === studyId;
       if (!matchesStudyId) return false;
       if (!debouncedSearchText) return true;
       return (
         searchableAnalysisColumns.some((columnKey) =>
           analysis[columnKey]?.toLowerCase().includes(lowerSearchText)
         ) ||
-        searchableDatasetColumns.some((columnKey) =>
-          dataset?.[columnKey].toLowerCase().includes(lowerSearchText)
-        ) ||
+        dataset?.searchString.toLowerCase().includes(lowerSearchText) ||
         (dataset == null &&
           UNKNOWN_DATASET_NAME.toLowerCase().includes(lowerSearchText))
       );
     });
   }, [
     searchableAnalysisColumns,
-    searchableDatasetColumns,
     debouncedSearchText,
     analysesAndDatasets,
     studyId,
@@ -462,7 +503,7 @@ export function AllAnalyses(props: Props) {
                 renderCell: (data: { row: AnalysisAndDataset }) => {
                   const { dataset } = data.row;
                   if (dataset == null) return UNKNOWN_DATASET_NAME;
-                  return safeHtml(dataset.displayNameHTML);
+                  return safeHtml(dataset.displayName);
                 },
               },
             ]),
@@ -559,12 +600,7 @@ export function AllAnalyses(props: Props) {
           sortable: true,
           renderCell: (data: { row: AnalysisAndDataset }) => {
             const isPublic = data.row.analysis.isPublic;
-            const studyAccessAttribute =
-              data.row.dataset?.attributes['study_access'];
-            const studyAccessLevel =
-              typeof studyAccessAttribute === 'string'
-                ? studyAccessAttribute.toLowerCase()
-                : null;
+            const studyAccessLevel = data.row.dataset?.studyAccess;
             const offerPublicityToggle =
               studyAccessLevel === 'public' ||
               studyAccessLevel === 'protected' ||
