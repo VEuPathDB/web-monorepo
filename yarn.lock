@@ -8493,6 +8493,7 @@ __metadata:
     "@veupathdb/react-scripts": "workspace:^"
     "@veupathdb/study-data-access": "workspace:^"
     "@veupathdb/tsconfig": "workspace:^"
+    "@veupathdb/user-datasets": "workspace:^"
     "@veupathdb/wdk-client": "workspace:^"
     assert: ^2.0.0
     babel-loader: ^8.3.0
@@ -9125,7 +9126,6 @@ __metadata:
     "@veupathdb/browserslist-config": "workspace:^"
     "@veupathdb/components": "workspace:^"
     "@veupathdb/coreui": "workspace:^"
-    "@veupathdb/eda": "workspace:^"
     "@veupathdb/eslint-config": "workspace:^"
     "@veupathdb/http-utils": "workspace:^"
     "@veupathdb/react-scripts": "workspace:^"
