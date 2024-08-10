@@ -39,7 +39,7 @@ export function PublicAnalysesRoute({
   const studyRecordsMetadata: StudyRecordMetadata[] = [
     ...map(studyRecords, (record) => ({
       id: getStudyId(record)!,
-      displayName: getStudyName(record) ?? 'Unknown Study',
+      displayName: record.displayName ?? 'Unknown Study',
     })),
     ...map(communityDatasets, (ud) => ({
       id: diyUserDatasetIdToWdkRecordId(ud.datasetId),
