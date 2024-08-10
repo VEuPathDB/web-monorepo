@@ -33,16 +33,18 @@ export function PublicAnalysesRoute({
     []
   );
 
-  const studyRecordsMetadata: StudyRecordMetadata[] = [
-    ...map(studyRecords, (record) => ({
-      id: getStudyId(record)!,
-      displayName: record.displayName ?? 'Unknown Study',
-    })),
-    ...map(communityDatasets, (ud) => ({
-      id: diyUserDatasetIdToWdkRecordId(ud.datasetId),
-      displayName: ud.name,
-    })),
-  ];
+  const studyRecordsMetadata: StudyRecordMetadata[] | undefined =
+    studyRecords &&
+      communityDatasets && [
+        ...map(studyRecords, (record) => ({
+          id: getStudyId(record)!,
+          displayName: record.displayName ?? 'Unknown Study',
+        })),
+        ...map(communityDatasets, (ud) => ({
+          id: diyUserDatasetIdToWdkRecordId(ud.datasetId),
+          displayName: ud.name,
+        })),
+      ];
 
   const location = useLocation();
   const makeAnalysisLink = useCallback(
