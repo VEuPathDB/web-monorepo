@@ -12,10 +12,7 @@ import { PublicAnalyses, StudyRecordMetadata } from './PublicAnalyses';
 import SubsettingClient from '../core/api/SubsettingClient';
 import { useWdkServiceWithVdi } from '@veupathdb/user-datasets/lib/Hooks/wdkServiceWithVdi';
 import { map } from 'lodash';
-import {
-  getStudyId,
-  getStudyName,
-} from '@veupathdb/study-data-access/lib/shared/studies';
+import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 import { diyUserDatasetIdToWdkRecordId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
 
 export interface Props {
@@ -39,7 +36,7 @@ export function PublicAnalysesRoute({
   const studyRecordsMetadata: StudyRecordMetadata[] = [
     ...map(studyRecords, (record) => ({
       id: getStudyId(record)!,
-      displayName: getStudyName(record) ?? 'Unknown Study',
+      displayName: record.displayName ?? 'Unknown Study',
     })),
     ...map(communityDatasets, (ud) => ({
       id: diyUserDatasetIdToWdkRecordId(ud.datasetId),
