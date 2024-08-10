@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import { LinePlotProps } from '../../plots/LinePlot';
 import TimeSlider, {
   TimeSliderDataProp,
 } from '../../components/plotControls/TimeSlider';
 import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
+
+import AxisRangeControl from '../../components/plotControls/AxisRangeControl';
+import { NumberOrDateRange } from '../../types/general';
 
 export default {
   title: 'Plot Controls/TimeSlider',
@@ -301,7 +304,56 @@ export const TimeFilter: Story<LinePlotProps> = (args: any) => {
 
   // set constant values
   const defaultSymbolSize = 0.8;
-  const defaultColor = '#333';
+
+  // control selectedRange
+  const handleAxisRangeChange = useCallback(
+    (newRange?: NumberOrDateRange) => {
+      if (newRange)
+        setSelectedRange({
+          start: newRange.min as string,
+          end: newRange.max as string,
+        });
+    },
+    [setSelectedRange]
+  );
+
+  const handleArrowClick = useCallback(
+    (arrow: string) => {
+      // let's assume that selectedRange has the format of 'yyyy-mm-dd'
+      if (
+        selectedRange &&
+        selectedRange.start != null &&
+        selectedRange.end != null
+      ) {
+        const selectedRangeArray =
+          arrow === 'left'
+            ? selectedRange.start.split('-')
+            : selectedRange.end.split('-');
+        const addSubtractYear =
+          arrow === 'left'
+            ? String(Number(selectedRangeArray[0]) - 1)
+            : String(Number(selectedRangeArray[0]) + 1);
+        const changeYear =
+          addSubtractYear +
+          '-' +
+          selectedRangeArray[1] +
+          '-' +
+          selectedRangeArray[2];
+        setSelectedRange((prev) => {
+          return arrow === 'left'
+            ? {
+                start: changeYear as string,
+                end: prev?.end as string,
+              }
+            : {
+                start: prev?.start as string,
+                end: changeYear as string,
+              };
+        });
+      }
+    },
+    [selectedRange, setSelectedRange]
+  );
 
   return (
     <DraggablePanel
@@ -322,16 +374,47 @@ export const TimeFilter: Story<LinePlotProps> = (args: any) => {
       >
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr repeat(1, auto) 1fr',
-            gridColumnGap: '5px',
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
             justifyContent: 'center',
-            paddingTop: '1em',
           }}
         >
-          {/* display start to end value */}
-          <div style={{ gridColumnStart: 2 }}>
-            {selectedRange?.start} ~ {selectedRange?.end}
+          <div>
+            <button
+              style={{ marginRight: '1em' }}
+              onClick={() => handleArrowClick('left')}
+            >
+              <i className="fa fa-arrow-left" aria-hidden="true"></i>
+            </button>
+          </div>
+          {/* add axis range control */}
+          <AxisRangeControl
+            range={
+              selectedRange != null
+                ? {
+                    min: selectedRange.start,
+                    max: selectedRange.end,
+                  }
+                : undefined
+            }
+            onRangeChange={handleAxisRangeChange}
+            valueType={'date'}
+            // set maxWidth
+            containerStyles={{
+              maxWidth: '350px',
+            }}
+            // default height of the input element is 36.5 which may be too high for timeSlider
+            // thus, introduced new prop to control it
+            inputHeight={20}
+          />
+          <div>
+            <button
+              style={{ marginLeft: '2em' }}
+              onClick={() => handleArrowClick('right')}
+            >
+              <i className="fa fa-arrow-right" aria-hidden="true"></i>
+            </button>
           </div>
         </div>
         <TimeSlider

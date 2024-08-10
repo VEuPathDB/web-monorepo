@@ -1,10 +1,10 @@
-// widget for radio button group
 import React, { ReactNode } from 'react';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { Typography } from '@material-ui/core';
+import { Tooltip } from '@veupathdb/coreui';
 import { DARKEST_GRAY, MEDIUM_GRAY } from '../../constants/colors';
 
 export type RadioButtonGroupProps = {
@@ -22,6 +22,10 @@ export type RadioButtonGroupProps = {
   onOptionSelected: (option: string) => void;
   /** Additional widget container styles. Optional. */
   containerStyles?: React.CSSProperties;
+  /** Additional label (title) styles. Optional. */
+  labelStyles?: React.CSSProperties;
+  /** Additional option label styles. Optional. */
+  optionLabelStyles?: React.CSSProperties;
   /** location of radio button label: start: label & button; end: button & label */
   labelPlacement?: 'start' | 'end' | 'top' | 'bottom';
   /** minimum width to set up equivalently spaced width per item */
@@ -32,8 +36,10 @@ export type RadioButtonGroupProps = {
   margins?: string[];
   /** marginRight of radio button item: default 16px from MUI */
   itemMarginRight?: number | string;
-  /** disabled list to disable radio button item(s): grayed out */
-  disabledList?: string[];
+  /** disabled list (same values as `options`) to disable radio button item(s): grayed out
+   * if a Map is used, then the values are used in Tooltips to explain why each option is disabled
+   */
+  disabledList?: string[] | Map<string, ReactNode>;
 };
 
 /**
@@ -48,6 +54,8 @@ export default function RadioButtonGroup({
   selectedOption,
   onOptionSelected,
   containerStyles = {},
+  labelStyles = {},
+  optionLabelStyles = {},
   labelPlacement,
   minWidth,
   buttonColor = 'primary',
@@ -55,8 +63,20 @@ export default function RadioButtonGroup({
   itemMarginRight,
   disabledList,
 }: RadioButtonGroupProps) {
-  // perhaps not using focused?
-  // const [focused, setFocused] = useState(false);
+  const isDisabled = (option: string) => {
+    if (!disabledList) return false;
+    if (Array.isArray(disabledList)) {
+      return disabledList.includes(option);
+    }
+    return disabledList.has(option);
+  };
+
+  const getDisabledReason = (option: string) => {
+    if (disabledList instanceof Map) {
+      return disabledList.get(option);
+    }
+    return null;
+  };
 
   return (
     <div
@@ -70,14 +90,16 @@ export default function RadioButtonGroup({
         marginLeft: margins ? margins[3] : '',
         ...containerStyles,
       }}
-      // perhaps not using focused?
-      // onMouseOver={() => setFocused(true)}
-      // onMouseOut={() => setFocused(false)}
     >
       {label && (
         <Typography
           variant="button"
-          style={{ color: DARKEST_GRAY, fontWeight: 500, fontSize: '1.2em' }}
+          style={{
+            color: DARKEST_GRAY,
+            fontWeight: 500,
+            fontSize: '1.2em',
+            ...labelStyles,
+          }}
         >
           {label}
         </Typography>
@@ -89,49 +111,50 @@ export default function RadioButtonGroup({
           aria-label={`${label} control button group`}
           row={orientation === 'horizontal' ? true : false}
         >
-          {options.map((option, index) => (
-            <FormControlLabel
-              key={index}
-              value={option}
-              label={
-                optionLabels != null &&
-                optionLabels.length === options.length ? (
-                  <span
-                    style={{
-                      color: disabledList?.includes(option)
-                        ? MEDIUM_GRAY
-                        : DARKEST_GRAY,
-                      fontSize: '0.9em',
-                    }}
-                  >
-                    {optionLabels[index]}
-                  </span>
-                ) : (
-                  <span
-                    style={{
-                      color: disabledList?.includes(option)
-                        ? MEDIUM_GRAY
-                        : DARKEST_GRAY,
-                      fontSize: '0.9em',
-                    }}
-                  >
-                    {option}
-                  </span>
-                )
-              }
-              disabled={disabledList?.includes(option)}
-              labelPlacement={labelPlacement}
-              // primary: blue; secondary: red
-              control={<Radio color={buttonColor} />}
-              style={{
-                marginRight: itemMarginRight,
-                fontSize: '0.75em',
-                fontWeight: 400,
-                textTransform: 'capitalize',
-                minWidth: minWidth,
-              }}
-            />
-          ))}
+          {options.map((option, index) => {
+            const disabled = isDisabled(option);
+            const disabledReason = getDisabledReason(option);
+
+            const labelElement = (
+              <span
+                style={{
+                  color: disabled ? MEDIUM_GRAY : DARKEST_GRAY,
+                  fontSize: '0.9em',
+                  ...optionLabelStyles,
+                }}
+              >
+                {optionLabels != null && optionLabels.length === options.length
+                  ? optionLabels[index]
+                  : option}
+              </span>
+            );
+
+            const formControlLabel = (
+              <FormControlLabel
+                key={index}
+                value={option}
+                label={labelElement}
+                disabled={disabled}
+                labelPlacement={labelPlacement}
+                control={<Radio color={buttonColor} />}
+                style={{
+                  marginRight: itemMarginRight,
+                  fontSize: '0.75em',
+                  fontWeight: 400,
+                  textTransform: 'capitalize',
+                  minWidth: minWidth,
+                }}
+              />
+            );
+
+            return disabledReason ? (
+              <Tooltip title={disabledReason} key={index}>
+                {formControlLabel}
+              </Tooltip>
+            ) : (
+              formControlLabel
+            );
+          })}
         </RadioGroup>
       </FormControl>
     </div>

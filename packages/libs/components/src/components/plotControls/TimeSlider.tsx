@@ -91,46 +91,6 @@ function TimeSlider(props: TimeSliderProps) {
   const getXData = (d: TimeSliderDataProp) => new Date(d.x);
   const getYData = (d: TimeSliderDataProp) => d.y;
 
-  const onBrushChange = useMemo(
-    () =>
-      debounce((domain: Bounds | null) => {
-        if (!domain) return;
-        const { x0, x1 } = domain;
-
-        // computing the offset of 2 pixel (SAFE_PIXEL) in domain (milliseconds)
-        // https://github.com/airbnb/visx/blob/86a851cb3bf622b013b186f02f955bcd6548a87f/packages/visx-brush/src/Brush.tsx#L14
-        const brushOffset =
-          xBrushScale.invert(2).getTime() - xBrushScale.invert(0).getTime();
-
-        // compensating the offset
-        // x0 and x1 are millisecond value
-        const startDate = millisecondTodate(x0 + brushOffset);
-        const endDate = millisecondTodate(x1 - brushOffset);
-
-        setSelectedRange({
-          // don't let range go outside the xAxisRange, if provided
-          start: xAxisRange
-            ? startDate < xAxisRange.start
-              ? xAxisRange.start
-              : startDate
-            : startDate,
-          end: xAxisRange
-            ? endDate > xAxisRange.end
-              ? xAxisRange.end
-              : endDate
-            : endDate,
-        });
-      }, debounceRateMs),
-    [setSelectedRange, xAxisRange]
-  );
-
-  // Cancel any pending onBrushChange requests when this component is unmounted
-  useEffect(() => {
-    return () => {
-      onBrushChange.cancel();
-    };
-  }, []);
-
   // bounds
   const xBrushMax = Math.max(width - margin.left - margin.right, 0);
   // take 70 % of given height considering axis tick/tick labels at the bottom
@@ -176,10 +136,50 @@ function TimeSlider(props: TimeSliderProps) {
   );
 
   // `brushKey` makes/fakes the brush as a controlled component,
-  const brushKey = 'not_fake_controlled';
-  //    selectedRange != null
-  //      ? selectedRange.start + ':' + selectedRange.end
-  //      : 'no_brush';
+  const brushKey =
+    selectedRange != null
+      ? selectedRange.start + ':' + selectedRange.end
+      : 'no_brush';
+
+  const onBrushChange = useMemo(
+    () =>
+      debounce((domain: Bounds | null) => {
+        if (!domain) return;
+        const { x0, x1 } = domain;
+
+        // computing the offset of 2 pixel (SAFE_PIXEL) in domain (milliseconds)
+        // https://github.com/airbnb/visx/blob/86a851cb3bf622b013b186f02f955bcd6548a87f/packages/visx-brush/src/Brush.tsx#L14
+        const brushOffset =
+          xBrushScale.invert(2).getTime() - xBrushScale.invert(0).getTime();
+
+        // compensating the offset
+        // x0 and x1 are millisecond value
+        const startDate = millisecondTodate(x0 + brushOffset);
+        const endDate = millisecondTodate(x1 - brushOffset);
+
+        setSelectedRange({
+          // don't let range go outside the xAxisRange, if provided
+          start: xAxisRange
+            ? startDate < xAxisRange.start
+              ? xAxisRange.start
+              : startDate
+            : startDate,
+          end: xAxisRange
+            ? endDate > xAxisRange.end
+              ? xAxisRange.end
+              : endDate
+            : endDate,
+        });
+      }, debounceRateMs),
+    [setSelectedRange, xAxisRange, debounceRateMs, xBrushScale]
+  );
+
+  // Cancel any pending onBrushChange requests when this component is unmounted
+  useEffect(() => {
+    return () => {
+      onBrushChange.cancel();
+    };
+  }, [onBrushChange]);
 
   return (
     <div
