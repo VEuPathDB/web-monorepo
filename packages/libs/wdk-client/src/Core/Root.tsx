@@ -86,10 +86,7 @@ export default class Root extends React.Component<Props, State> {
       event.ctrlKey ||
       event.button !== 0;
     let hasTarget = target.getAttribute('target') != null;
-    let href = (target.getAttribute('href') || '').replace(
-      RELATIVE_LINK_REGEXP,
-      ''
-    );
+    let href = (target.href || '').replace(RELATIVE_LINK_REGEXP, '');
     let isRouterLink = target.classList.contains(REACT_ROUTER_LINK_CLASSNAME);
 
     if (

@@ -237,6 +237,7 @@ export function PieMarkerConfigurationMenu({
             }
           }
           label="Binning method"
+          labelStyles={{ fontSize: '1.0em', marginBottom: '-0.5em' }}
           selectedOption={configuration.binningMethod ?? 'equalInterval'}
           options={['equalInterval', 'quantile', 'standardDeviation']}
           optionLabels={['Equal interval', 'Quantile (10)', 'Std. dev.']}
@@ -245,8 +246,13 @@ export function PieMarkerConfigurationMenu({
           onOptionSelected={handleBinningMethodSelection}
           disabledList={
             overlayConfiguration?.overlayType === 'continuous'
-              ? []
-              : ['equalInterval', 'quantile', 'standardDeviation']
+              ? new Map([
+                  [
+                    'standardDeviation',
+                    'This option is currently disabled for maintenance reasons',
+                  ],
+                ])
+              : undefined
           }
         />
       )}
