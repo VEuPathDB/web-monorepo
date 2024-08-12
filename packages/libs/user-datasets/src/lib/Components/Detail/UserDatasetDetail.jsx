@@ -198,8 +198,8 @@ class UserDatasetDetail extends React.Component {
             </>
           ) : (
             <>
-              This {dataNoun.singular.toLowerCase()} is only visble to the owner
-              and those they have shared it with.
+              This {dataNoun.singular.toLowerCase()} is only visible to the
+              owner and those they have shared it with.
             </>
           ),
       },
