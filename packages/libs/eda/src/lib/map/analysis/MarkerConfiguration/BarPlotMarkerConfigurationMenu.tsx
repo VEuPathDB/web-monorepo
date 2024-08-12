@@ -14,6 +14,7 @@ import {
 } from '../../../core';
 import { CategoricalMarkerConfigurationTable } from './CategoricalMarkerConfigurationTable';
 import { CategoricalMarkerPreview } from './CategoricalMarkerPreview';
+import { ContinuousMarkerPreview } from './ContinuousMarkerPreview';
 import Barplot from '@veupathdb/components/lib/plots/Barplot';
 import { SubsettingClient } from '../../../core/api';
 import { Toggle } from '@veupathdb/coreui';
@@ -58,7 +59,6 @@ interface Props
   subsettingClient: SubsettingClient;
   studyId: string;
   filters: Filter[] | undefined;
-  continuousMarkerPreview: JSX.Element | undefined;
   /**
    * Always used for categorical marker preview. Also used in categorical table if selectedCountsOption is 'filtered'
    */
@@ -84,7 +84,6 @@ export function BarPlotMarkerConfigurationMenu({
   subsettingClient,
   studyId,
   filters,
-  continuousMarkerPreview,
   allFilteredCategoricalValues,
   allVisibleCategoricalValues,
   geoConfigs,
@@ -239,7 +238,16 @@ export function BarPlotMarkerConfigurationMenu({
             />
           </>
         ) : (
-          continuousMarkerPreview
+          <>
+            <ContinuousMarkerPreview
+              configuration={configuration}
+              mapType="barplot"
+              studyId={studyId}
+              filters={filters}
+              studyEntities={entities}
+              geoConfigs={geoConfigs}
+            />
+          </>
         )}
       </div>
       {overlayConfiguration?.overlayType === 'continuous' && (
