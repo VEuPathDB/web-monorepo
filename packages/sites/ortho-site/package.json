@@ -6,12 +6,14 @@
   "license": "MIT",
   "scripts": {
     "start": "veupathdb-react-scripts run-site-dev-server --config webpack.config.local.mjs",
-    "clean": "rm -rf dist && mkdir dist",
+    "clean": "rm -rf dist && mkdir -p dist/bin",
     "copy:webapp": "cp -r webapp/* dist",
     "copy:images": "cp -r ../../../node_modules/@veupathdb/web-common/images dist",
     "compile:check": "tsc --noEmit",
-    "bundle:dev": "npm-run-all clean copy:webapp copy:images && BROWSERSLIST_ENV=modern webpack --mode=development",
-    "bundle:npm": "npm-run-all clean copy:webapp copy:images && BROWSERSLIST_ENV=modern webpack --mode=production && BROWSERSLIST_ENV=legacy webpack --mode=production"
+    "generate:bundlePathScript": "../../../tools/scripts/makeSupportedBrowsersScript.mjs dist/bin/getBundlesSubPath",
+    "bundle:dev": "npm-run-all clean copy:webapp copy:images generate:bundlePathScript && BROWSERSLIST_ENV=modern webpack --mode=development && BROWSERSLIST_ENV=legacy webpack --mode=development",
+    "bundle:npm": "npm-run-all clean copy:webapp copy:images generate:bundlePathScript && BROWSERSLIST_ENV=modern webpack --mode=production && BROWSERSLIST_ENV=legacy webpack --mode=production",
+    "bundle:analyze": "BROWSERSLIST_ENV=modern webpack --mode=production --config webpack.config.analyze.mjs"
   },
   "browserslist": [
     "extends @veupathdb/browserslist-config"
@@ -82,13 +84,13 @@
     "typescript": "~4.3.5",
     "url-loader": "^1.1.2",
     "webpack": "^5.84.1",
+    "webpack-bundle-analyzer": "^4.10.2",
     "webpack-cli": "^5.1.1",
     "webpack-dev-server": "^4.15.0",
     "webpack-merge": "^4.2.2"
   },
   "files": [
-    "dist",
-    "webapp"
+    "dist"
   ],
   "dependencies": {
     "patristic": "^0.6.0"

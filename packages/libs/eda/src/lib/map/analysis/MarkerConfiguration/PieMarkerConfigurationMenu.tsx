@@ -13,6 +13,7 @@ import {
 } from '../../../core';
 import { CategoricalMarkerConfigurationTable } from './CategoricalMarkerConfigurationTable';
 import { CategoricalMarkerPreview } from './CategoricalMarkerPreview';
+import { ContinuousMarkerPreview } from './ContinuousMarkerPreview';
 import Barplot from '@veupathdb/components/lib/plots/Barplot';
 import { SubsettingClient } from '../../../core/api';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
@@ -54,7 +55,6 @@ interface Props
   subsettingClient: SubsettingClient;
   studyId: string;
   filters: Filter[] | undefined;
-  continuousMarkerPreview: JSX.Element | undefined;
   /**
    * Always used for categorical marker preview. Also used in categorical table if selectedCountsOption is 'filtered'
    */
@@ -80,7 +80,6 @@ export function PieMarkerConfigurationMenu({
   subsettingClient,
   studyId,
   filters,
-  continuousMarkerPreview,
   allFilteredCategoricalValues,
   allVisibleCategoricalValues,
   geoConfigs,
@@ -220,7 +219,14 @@ export function PieMarkerConfigurationMenu({
             numberSelected={uncontrolledSelections.size}
           />
         ) : (
-          continuousMarkerPreview
+          <ContinuousMarkerPreview
+            configuration={configuration}
+            mapType="pie"
+            studyId={studyId}
+            filters={filters}
+            studyEntities={entities}
+            geoConfigs={geoConfigs}
+          />
         )}
       </div>
       {overlayConfiguration?.overlayType === 'continuous' && (
@@ -231,6 +237,7 @@ export function PieMarkerConfigurationMenu({
             }
           }
           label="Binning method"
+          labelStyles={{ fontSize: '1.0em', marginBottom: '-0.5em' }}
           selectedOption={configuration.binningMethod ?? 'equalInterval'}
           options={['equalInterval', 'quantile', 'standardDeviation']}
           optionLabels={['Equal interval', 'Quantile (10)', 'Std. dev.']}
@@ -239,8 +246,13 @@ export function PieMarkerConfigurationMenu({
           onOptionSelected={handleBinningMethodSelection}
           disabledList={
             overlayConfiguration?.overlayType === 'continuous'
-              ? []
-              : ['equalInterval', 'quantile', 'standardDeviation']
+              ? new Map([
+                  [
+                    'standardDeviation',
+                    'This option is currently disabled for maintenance reasons',
+                  ],
+                ])
+              : undefined
           }
         />
       )}

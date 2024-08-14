@@ -15,6 +15,7 @@ import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 import NotFound from '@veupathdb/wdk-client/lib/Views/NotFound/NotFound';
 
 import SharingModal from '../Sharing/UserDatasetSharingModal';
+import CommunityModal from '../Sharing/UserDatasetCommunityModal';
 import UserDatasetStatus from '../UserDatasetStatus';
 import { makeClassifier, normalizePercentage } from '../UserDatasetUtils';
 import { ThemedGrantAccessButton } from '../ThemedGrantAccessButton';
@@ -97,15 +98,28 @@ class UserDatasetDetail extends React.Component {
       this.props;
     const { sharedWith } = userDataset;
     const shareCount = !Array.isArray(sharedWith) ? null : sharedWith.length;
-    const message =
-      `Are you sure you want to ${
-        isOwner ? 'delete' : 'remove'
-      } this ${dataNoun.singular.toLowerCase()}? ` +
-      (!isOwner || !shareCount
+
+    const question = `Are you sure you want to ${
+      isOwner ? 'delete' : 'remove'
+    } this ${dataNoun.singular.toLowerCase()}? `;
+
+    const visibilityMessage =
+      userDataset.meta.visibility === 'public'
+        ? 'It will no longer be visible to the community'
+        : null;
+
+    const shareMessage =
+      !isOwner || !shareCount
         ? ''
         : `${shareCount} collaborator${
             shareCount === 1 ? '' : 's'
-          } you've shared with will lose access.`);
+          } you've shared with will lose access.`;
+
+    const message =
+      question +
+      (visibilityMessage && shareMessage
+        ? `${visibilityMessage}, and ${shareMessage}`
+        : visibilityMessage || shareMessage);
 
     if (window.confirm(message)) {
       removeUserDataset(userDataset, baseUrl);
@@ -184,8 +198,8 @@ class UserDatasetDetail extends React.Component {
             </>
           ) : (
             <>
-              This {dataNoun.singular.toLowerCase()} is only visble to the owner
-              and those they have shared it with.
+              This {dataNoun.singular.toLowerCase()} is only visible to the
+              owner and those they have shared it with.
             </>
           ),
       },
@@ -340,8 +354,21 @@ class UserDatasetDetail extends React.Component {
       <div className={classify('Actions')}>
         {!isOwner ? null : (
           <ThemedGrantAccessButton
-            buttonText={`Grant Access to ${this.props.dataNoun.singular}`}
-            onPress={this.openSharingModal}
+            buttonText={`Grant Access to ${this.props.dataNoun.plural}`}
+            onPress={(grantType) => {
+              switch (grantType) {
+                case 'community':
+                  this.props.updateCommunityModalVisibility(true);
+                  break;
+                case 'individual':
+                  this.openSharingModal();
+                  break;
+                default:
+                  // noop
+                  break;
+              }
+            }}
+            enablePublicUserDatasets={this.props.enablePublicUserDatasets}
           />
         )}
         {isOwner ? (
@@ -639,6 +666,11 @@ class UserDatasetDetail extends React.Component {
       shareError,
       updateUserDatasetDetail,
       enablePublicUserDatasets,
+      updateDatasetCommunityVisibility,
+      updateCommunityModalVisibility,
+      updateDatasetCommunityVisibilityError,
+      updateDatasetCommunityVisibilityPending,
+      updateDatasetCommunityVisibilitySuccess,
     } = this.props;
     const AllDatasetsLink = this.renderAllDatasetsLink;
     if (!userDataset)
@@ -670,6 +702,19 @@ class UserDatasetDetail extends React.Component {
             enablePublicUserDatasets={enablePublicUserDatasets}
           />
         )}
+        {this.props.communityModalOpen && enablePublicUserDatasets ? (
+          <CommunityModal
+            user={user}
+            datasets={[userDataset]}
+            context="datasetDetails"
+            onClose={() => updateCommunityModalVisibility(false)}
+            dataNoun={dataNoun}
+            updateDatasetCommunityVisibility={updateDatasetCommunityVisibility}
+            updatePending={updateDatasetCommunityVisibilityPending}
+            updateSuccessful={updateDatasetCommunityVisibilitySuccess}
+            updateError={updateDatasetCommunityVisibilityError}
+          />
+        ) : null}
       </div>
     );
   }

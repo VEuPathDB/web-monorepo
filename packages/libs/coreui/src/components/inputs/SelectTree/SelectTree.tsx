@@ -8,6 +8,7 @@ import CheckboxTree, {
 export interface SelectTreeProps<T> extends CheckboxTreeProps<T> {
   buttonDisplayContent: ReactNode;
   shouldCloseOnSelection?: boolean;
+  hasPopoverButton?: boolean; // default=true
   wrapPopover?: (checkboxTree: ReactNode) => ReactNode;
   isDisabled?: boolean;
   /** update `selectedList` state instantly when a selection is made (default: true) */
@@ -24,6 +25,7 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
     selectedList,
     onSelectionChange,
     shouldCloseOnSelection,
+    hasPopoverButton = true,
     instantUpdate = true,
     wrapPopover,
   } = props;
@@ -115,7 +117,7 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
     />
   );
 
-  return (
+  return hasPopoverButton ? (
     <PopoverButton
       key={shouldCloseOnSelection ? key : ''}
       buttonDisplayContent={buttonDisplayContent}
@@ -126,6 +128,8 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
         {wrapPopover ? wrapPopover(checkboxTree) : checkboxTree}
       </div>
     </PopoverButton>
+  ) : (
+    <>{wrapPopover ? wrapPopover(checkboxTree) : checkboxTree}</>
   );
 }
 

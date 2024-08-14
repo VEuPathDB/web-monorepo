@@ -14,6 +14,7 @@ import {
 } from '../../../core';
 import { CategoricalMarkerConfigurationTable } from './CategoricalMarkerConfigurationTable';
 import { CategoricalMarkerPreview } from './CategoricalMarkerPreview';
+import { ContinuousMarkerPreview } from './ContinuousMarkerPreview';
 import Barplot from '@veupathdb/components/lib/plots/Barplot';
 import { SubsettingClient } from '../../../core/api';
 import { Toggle } from '@veupathdb/coreui';
@@ -58,7 +59,6 @@ interface Props
   subsettingClient: SubsettingClient;
   studyId: string;
   filters: Filter[] | undefined;
-  continuousMarkerPreview: JSX.Element | undefined;
   /**
    * Always used for categorical marker preview. Also used in categorical table if selectedCountsOption is 'filtered'
    */
@@ -84,7 +84,6 @@ export function BarPlotMarkerConfigurationMenu({
   subsettingClient,
   studyId,
   filters,
-  continuousMarkerPreview,
   allFilteredCategoricalValues,
   allVisibleCategoricalValues,
   geoConfigs,
@@ -239,40 +238,57 @@ export function BarPlotMarkerConfigurationMenu({
             />
           </>
         ) : (
-          continuousMarkerPreview
+          <>
+            <ContinuousMarkerPreview
+              configuration={configuration}
+              mapType="barplot"
+              studyId={studyId}
+              filters={filters}
+              studyEntities={entities}
+              geoConfigs={geoConfigs}
+            />
+          </>
         )}
       </div>
-      <div style={{ maxWidth: '360px', marginTop: '1em' }}>
-        <div
-          style={{
-            color: gray[900],
-            fontWeight: 500,
-            fontSize: '1.2em',
-            marginBottom: '0.5em',
-          }}
-        >
-          Marker X-axis controls
-        </div>
-        <RadioButtonGroup
-          containerStyles={
-            {
-              // marginTop: 20,
+      {overlayConfiguration?.overlayType === 'continuous' && (
+        <div style={{ maxWidth: '360px', marginTop: '1em' }}>
+          <div
+            style={{
+              color: gray[900],
+              fontWeight: 500,
+              fontSize: '1.2em',
+              marginBottom: '0.5em',
+            }}
+          >
+            Marker X-axis controls
+          </div>
+          <RadioButtonGroup
+            containerStyles={
+              {
+                // marginTop: 20,
+              }
             }
-          }
-          label="Binning method"
-          selectedOption={configuration.binningMethod ?? 'equalInterval'}
-          options={['equalInterval', 'quantile', 'standardDeviation']}
-          optionLabels={['Equal interval', 'Quantile (10)', 'Std. dev.']}
-          buttonColor={'primary'}
-          // margins={['-1em', '0', '0', '0em']}
-          onOptionSelected={handleBinningMethodSelection}
-          disabledList={
-            overlayConfiguration?.overlayType === 'continuous'
-              ? []
-              : ['equalInterval', 'quantile', 'standardDeviation']
-          }
-        />
-      </div>
+            label="Binning method"
+            labelStyles={{ fontSize: '1.0em', marginBottom: '-0.5em' }}
+            selectedOption={configuration.binningMethod ?? 'equalInterval'}
+            options={['equalInterval', 'quantile', 'standardDeviation']}
+            optionLabels={['Equal interval', 'Quantile (10)', 'Std. dev.']}
+            buttonColor={'primary'}
+            // margins={['-1em', '0', '0', '0em']}
+            onOptionSelected={handleBinningMethodSelection}
+            disabledList={
+              overlayConfiguration?.overlayType === 'continuous'
+                ? new Map([
+                    [
+                      'standardDeviation',
+                      'This option is currently disabled for maintenance reasons',
+                    ],
+                  ])
+                : undefined
+            }
+          />
+        </div>
+      )}
       <div style={{ maxWidth: '360px', marginTop: '1em', marginBottom: '1em' }}>
         <div
           style={{
@@ -291,6 +307,7 @@ export function BarPlotMarkerConfigurationMenu({
             }
           }
           label="Plot mode"
+          labelStyles={{ fontSize: '1.0em', marginBottom: '-0.5em' }}
           selectedOption={configuration.selectedPlotMode || 'count'}
           options={['count', 'proportion']}
           optionLabels={['Count', 'Proportion']}
