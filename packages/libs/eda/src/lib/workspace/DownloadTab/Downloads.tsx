@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 
 import {
-  AnalysisState,
   usePromise,
   useStudyEntities,
   useStudyMetadata,
@@ -10,10 +9,6 @@ import {
 
 // Utils
 import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
-
-// Definitions
-import { EntityCounts } from '../../core/hooks/entityCounts';
-import { DownloadClient } from '../../core/api/DownloadClient';
 
 // Components
 import MySubset from './MySubset';
@@ -32,6 +27,7 @@ import { useDispatch } from 'react-redux';
 import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 import { useHistory } from 'react-router';
 import { parsePath } from 'history';
+import Loading from '@veupathdb/wdk-client/lib/Components/Loading/Loading';
 
 export default function Downloads({
   downloadClient,
@@ -210,6 +206,8 @@ export default function Downloads({
     analysisState,
   ]);
 
+  if (mergedReleaseData == null) return <Loading />;
+
   return (
     <div style={{ display: 'flex', paddingTop: 10 }}>
       <div
@@ -224,7 +222,7 @@ export default function Downloads({
         {projectDisplayName === 'ClinEpiDB' &&
           !isUserStudy &&
           (dataAccessDeclaration ?? '')}
-        {mergedReleaseData?.[0] && (
+        {mergedReleaseData[0] && (
           <StudyCitation
             partialCitationData={partialCitationData}
             // use current release
@@ -238,35 +236,29 @@ export default function Downloads({
             analysisState={analysisState}
           />
         )}
-        {mergedReleaseData == null ? (
-          'Loading...'
-        ) : mergedReleaseData.length === 0 ? (
-          <div>This study does not contain any download files.</div>
-        ) : (
-          mergedReleaseData.map((release, index) =>
-            index === 0 ? (
-              <CurrentRelease
-                key={release.releaseNumber}
-                datasetId={datasetId}
-                studyId={studyMetadata.id}
-                release={release}
-                downloadClient={downloadClient}
-              />
-            ) : (
-              <PastRelease
-                key={release.releaseNumber}
-                datasetId={datasetId}
-                studyId={studyMetadata.id}
-                release={release}
-                downloadClient={downloadClient}
-                citationString={stripHTML(
-                  getCitationString({
-                    partialCitationData,
-                    release,
-                  })
-                )}
-              />
-            )
+        {mergedReleaseData.map((release, index) =>
+          index === 0 ? (
+            <CurrentRelease
+              key={release.releaseNumber}
+              datasetId={datasetId}
+              studyId={studyMetadata.id}
+              release={release}
+              downloadClient={downloadClient}
+            />
+          ) : (
+            <PastRelease
+              key={release.releaseNumber}
+              datasetId={datasetId}
+              studyId={studyMetadata.id}
+              release={release}
+              downloadClient={downloadClient}
+              citationString={stripHTML(
+                getCitationString({
+                  partialCitationData,
+                  release,
+                })
+              )}
+            />
           )
         )}
       </div>
