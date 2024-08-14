@@ -25,6 +25,10 @@ import {
   UserDatasetFileListing,
 } from '../Utils/types';
 import { FetchClientError } from '@veupathdb/http-utils';
+import {
+  InferAction,
+  makeActionCreator,
+} from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
 
 export type Action =
   | DetailErrorAction
@@ -43,7 +47,8 @@ export type Action =
   | SharingDatasetPendingAction
   | SharingSuccessAction
   | SharingModalOpenAction
-  | SharingErrorAction;
+  | SharingErrorAction
+  | CommunityAction;
 
 //==============================================================================
 
@@ -397,6 +402,77 @@ export function projectFilter(filterByProject: boolean): ProjectFilterAction {
       filterByProject,
     },
   };
+}
+
+//==============================================================================
+
+// Community sharing actions. Note, these are using the `makeActionCreator` utility
+// which reduces boilerplate dramatically.
+
+export const updateCommunityModalVisibility = makeActionCreator(
+  'user-datasets/update-community-modal-visibility',
+  (isVisible: boolean) => ({ isVisible })
+);
+
+export const updateDatasetCommunityVisibilityPending = makeActionCreator(
+  'user-datasets/update-community-visibility-pending'
+);
+
+export const updateDatasetCommunityVisibilitySuccess = makeActionCreator(
+  'user-datasets/update-community-visibility-success'
+);
+
+export const updateDatasetCommunityVisibilityError = makeActionCreator(
+  'user-datastes/update-community-visibility-error',
+  (errorMessage: string) => ({ errorMessage })
+);
+
+type UpdateCommunityVisibilityThunkAction =
+  | InferAction<typeof updateDatasetCommunityVisibilitySuccess>
+  | InferAction<typeof updateDatasetCommunityVisibilityError>
+  | DetailAction
+  | ListAction;
+
+type CommunityAction =
+  | InferAction<typeof updateCommunityModalVisibility>
+  | InferAction<typeof updateDatasetCommunityVisibilityPending>
+  | InferAction<typeof updateDatasetCommunityVisibilitySuccess>
+  | InferAction<typeof updateDatasetCommunityVisibilityError>;
+
+export function updateDatasetCommunityVisibility(
+  datasetIds: string[],
+  isVisibleToCommunity: boolean,
+  context: 'datasetDetails' | 'datasetsList'
+) {
+  return [
+    updateDatasetCommunityVisibilityPending(),
+    validateVdiCompatibleThunk<UpdateCommunityVisibilityThunkAction>(
+      async ({ wdkService }) => {
+        try {
+          await Promise.all(
+            datasetIds.map((datasetId) =>
+              wdkService.updateUserDataset(datasetId, {
+                visibility: isVisibleToCommunity ? 'public' : 'private',
+              })
+            )
+          );
+          if (context === 'datasetDetails') {
+            return [
+              loadUserDatasetDetailWithoutLoadingIndicator(datasetIds[0]),
+              updateDatasetCommunityVisibilitySuccess,
+            ];
+          } else {
+            return [
+              loadUserDatasetListWithoutLoadingIndicator(),
+              updateDatasetCommunityVisibilitySuccess,
+            ];
+          }
+        } catch (error) {
+          return updateDatasetCommunityVisibilityError(String(error));
+        }
+      }
+    ),
+  ];
 }
 
 //==============================================================================

@@ -8,7 +8,6 @@ import {
 } from 'react-router-dom';
 import Path from 'path';
 import { v4 as uuid } from 'uuid';
-import { orderBy } from 'lodash';
 import {
   Link,
   Loading,
@@ -341,72 +340,76 @@ export function NewVisualizationPicker(props: NewVisualizationPickerProps) {
         </>
       )}
       <Grid>
-        {/* orderBy ensures that available visualizations render ahead of those in development */}
-        {orderBy(
-          visualizationsOverview,
-          [(viz) => (viz.name && visualizationPlugins[viz.name] ? 1 : 0)],
-          ['desc']
-        ).map((vizOverview, index) => {
-          const vizPlugin = visualizationPlugins[vizOverview.name!];
-          const disabled =
-            vizPlugin == null ||
-            (vizPlugin.isEnabledInPicker != null &&
-              vizPlugin.isEnabledInPicker({ geoConfigs }) === false);
-          // we could in future pass other study metadata, variable constraints, etc to isEnabledInPicker()
-          return (
-            <div
-              className={cx('-PickerEntry', disabled && 'disabled')}
-              key={`vizType${index}`}
-            >
-              {/* add viz description tooltip for viz picker */}
-              <Tooltip title={<>{vizOverview.description}</>}>
-                <span>
-                  <button
-                    style={{
-                      cursor: disabled ? 'not-allowed' : 'cursor',
-                    }}
-                    type="button"
-                    disabled={disabled}
-                    onClick={async () => {
-                      const visualizationId = uuid();
-                      analysisState.addVisualization(
-                        computation.computationId,
-                        {
-                          visualizationId,
-                          displayName: 'Unnamed visualization',
-                          descriptor: {
-                            type: vizOverview.name!,
-                            configuration: vizPlugin?.createDefaultConfig(),
-                          },
-                        }
-                      );
-                      onVisualizationCreated(visualizationId, computationId);
-                    }}
-                  >
-                    {vizPlugin ? (
-                      <vizPlugin.selectorIcon {...colors} />
-                    ) : (
-                      <PlaceholderIcon name={vizOverview.name} />
-                    )}
-                  </button>
-                </span>
-              </Tooltip>
-              <div className={cx('-PickerEntryName')}>
-                <div>
-                  {vizOverview.displayName
-                    ?.split(/(, )/g)
-                    .map((str, index) =>
-                      str === ', ' ? <br key={index} /> : str
-                    )}
+        {/* Filter completely skips back-end plugins with no front-end implementations.
+         * So there are no more "coming soon" placeholders.
+         * If we want "Coming soon..." icons, we should make a ComingSoonViz
+         * implementation where isEnabledInPicker function returns false.
+         * It should also include a selectorIcon. Other required props can be
+         * stubbed with noops.
+         */}
+        {visualizationsOverview
+          .filter((viz) => viz.name && visualizationPlugins[viz.name])
+          .map((vizOverview, index) => {
+            const vizPlugin = visualizationPlugins[vizOverview.name!];
+            const disabled =
+              vizPlugin == null ||
+              (vizPlugin.isEnabledInPicker != null &&
+                vizPlugin.isEnabledInPicker({ geoConfigs }) === false);
+            // we could in future pass other study metadata, variable constraints, etc to isEnabledInPicker()
+            return (
+              <div
+                className={cx('-PickerEntry', disabled && 'disabled')}
+                key={`vizType${index}`}
+              >
+                {/* add viz description tooltip for viz picker */}
+                <Tooltip title={<>{vizOverview.description}</>}>
+                  <span>
+                    <button
+                      style={{
+                        cursor: disabled ? 'not-allowed' : 'cursor',
+                      }}
+                      type="button"
+                      disabled={disabled}
+                      onClick={async () => {
+                        const visualizationId = uuid();
+                        analysisState.addVisualization(
+                          computation.computationId,
+                          {
+                            visualizationId,
+                            displayName: 'Unnamed visualization',
+                            descriptor: {
+                              type: vizOverview.name!,
+                              configuration: vizPlugin?.createDefaultConfig(),
+                            },
+                          }
+                        );
+                        onVisualizationCreated(visualizationId, computationId);
+                      }}
+                    >
+                      {vizPlugin ? (
+                        <vizPlugin.selectorIcon {...colors} />
+                      ) : (
+                        <PlaceholderIcon name={vizOverview.name} />
+                      )}
+                    </button>
+                  </span>
+                </Tooltip>
+                <div className={cx('-PickerEntryName')}>
+                  <div>
+                    {vizOverview.displayName
+                      ?.split(/(, )/g)
+                      .map((str, index) =>
+                        str === ', ' ? <br key={index} /> : str
+                      )}
+                  </div>
+                  {vizPlugin == null && <i>(Coming soon!)</i>}
+                  {vizPlugin != null && disabled && (
+                    <i>(Not applicable to this study)</i>
+                  )}
                 </div>
-                {vizPlugin == null && <i>(Coming soon!)</i>}
-                {vizPlugin != null && disabled && (
-                  <i>(Not applicable to this study)</i>
-                )}
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
       </Grid>
     </div>
   );

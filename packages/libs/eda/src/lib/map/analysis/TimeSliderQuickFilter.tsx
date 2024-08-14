@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback, useEffect } from 'react';
 import { ChevronRight, H6, Toggle } from '@veupathdb/coreui';
 import TimeSlider, {
   TimeSliderDataProp,
@@ -20,6 +20,9 @@ import { SiteInformationProps } from './Types';
 import { mapSidePanelBackgroundColor } from '../constants';
 import { useQuery } from '@tanstack/react-query';
 
+import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
+import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
+
 interface Props {
   studyId: string;
   entities: StudyEntity[];
@@ -30,6 +33,11 @@ interface Props {
   updateConfig: (newConfig: NonNullable<AppState['timeSliderConfig']>) => void;
   toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
   siteInformation: SiteInformationProps;
+}
+
+interface selectedRangeProp {
+  start: string;
+  end: string;
 }
 
 export default function TimeSliderQuickFilter({
@@ -53,26 +61,29 @@ export default function TimeSliderQuickFilter({
   const { siteName } = siteInformation;
 
   // extend the back end range request if our selectedRange is outside of it
-  const extendedDisplayRange =
-    variableMetadata && DateVariable.is(variableMetadata.variable)
-      ? selectedRange == null
-        ? {
-            start: variableMetadata.variable.distributionDefaults.rangeMin,
-            end: variableMetadata.variable.distributionDefaults.rangeMax,
-          }
-        : {
-            start:
-              variableMetadata.variable.distributionDefaults.rangeMin <
-              selectedRange.start
-                ? variableMetadata.variable.distributionDefaults.rangeMin
-                : selectedRange.start,
-            end:
-              variableMetadata.variable.distributionDefaults.rangeMax >
-              selectedRange.end
-                ? variableMetadata.variable.distributionDefaults.rangeMax
-                : selectedRange.end,
-          }
-      : undefined;
+  const extendedDisplayRange = useMemo(
+    () =>
+      variableMetadata && DateVariable.is(variableMetadata.variable)
+        ? selectedRange == null
+          ? {
+              start: variableMetadata.variable.distributionDefaults.rangeMin,
+              end: variableMetadata.variable.distributionDefaults.rangeMax,
+            }
+          : {
+              start:
+                variableMetadata.variable.distributionDefaults.rangeMin <
+                selectedRange.start
+                  ? variableMetadata.variable.distributionDefaults.rangeMin
+                  : selectedRange.start,
+              end:
+                variableMetadata.variable.distributionDefaults.rangeMax >
+                selectedRange.end
+                  ? variableMetadata.variable.distributionDefaults.rangeMax
+                  : selectedRange.end,
+            }
+        : undefined,
+    [variableMetadata, selectedRange]
+  );
 
   // converting old usePromise code to useQuery in an efficient manner
   const { enabled, queryKey, queryFn } = useMemo(() => {
@@ -129,12 +140,12 @@ export default function TimeSliderQuickFilter({
       },
     };
   }, [
-    variableMetadata?.variable,
     variable,
     subsettingClient,
     filters,
-    extendedDisplayRange?.start,
-    extendedDisplayRange?.end,
+    extendedDisplayRange,
+    studyId,
+    variableMetadata,
   ]);
 
   const timeSliderData = useQuery({
@@ -177,9 +188,6 @@ export default function TimeSliderQuickFilter({
       active: true,
     });
   }
-
-  // (easily) centering the variable picker requires two same-width divs either side
-  const sideElementStyle = { width: '70px' };
 
   const sliderHeight = minimized ? 50 : 75;
 
@@ -235,6 +243,8 @@ export default function TimeSliderQuickFilter({
             change the date variable (currently{' '}
             <b>{variableMetadata?.variable.displayName}</b>)
           </li>
+          <li>set start and end dates precisely</li>
+          <li>step the window forwards and backwards through the timeline</li>
           <li>toggle the temporary time window filter on/off</li>
         </ul>
       </p>
@@ -248,6 +258,80 @@ export default function TimeSliderQuickFilter({
       )}
     </div>
   );
+
+  // disable arrow button
+  const [disableLeftArrow, setDisableLeftArrow] = useState(false);
+  const [disableRightArrow, setDisableRightArrow] = useState(false);
+
+  // control selectedRange
+  const handleAxisRangeChange = useCallback(
+    (newRange?: NumberOrDateRange) => {
+      if (newRange) {
+        const newSelectedRange = {
+          start: newRange.min as string,
+          end: newRange.max as string,
+        };
+        updateConfig({ ...config, selectedRange: newSelectedRange });
+      }
+    },
+    [config, updateConfig]
+  );
+
+  // step buttons
+  const handleArrowClick = useCallback(
+    (arrow: string) => {
+      if (
+        selectedRange &&
+        selectedRange.start != null &&
+        selectedRange.end != null
+      ) {
+        const newSelectedRange = newArrowRange(selectedRange, arrow);
+        updateConfig({ ...config, selectedRange: newSelectedRange });
+      }
+    },
+    [config, updateConfig, selectedRange]
+  );
+
+  // enabling/disabling date range arrows
+  useEffect(() => {
+    if (extendedDisplayRange && selectedRange) {
+      const diff =
+        new Date(selectedRange.end).getTime() -
+        new Date(selectedRange.start).getTime();
+
+      const expectedStartDate = new Date(
+        new Date(selectedRange.start).getTime() - diff
+      )
+        .toISOString()
+        .split('T')[0];
+
+      const expectedEndDate = new Date(
+        new Date(selectedRange.end).getTime() + diff
+      )
+        .toISOString()
+        .split('T')[0];
+
+      // left arrow
+      if (
+        new Date(expectedStartDate).getTime() <
+        new Date(extendedDisplayRange.start).getTime()
+      ) {
+        setDisableLeftArrow(true);
+      } else {
+        setDisableLeftArrow(false);
+      }
+
+      // right arrow
+      if (
+        new Date(expectedEndDate).getTime() >
+        new Date(extendedDisplayRange.end).getTime()
+      ) {
+        setDisableRightArrow(true);
+      } else {
+        setDisableRightArrow(false);
+      }
+    }
+  }, [extendedDisplayRange, selectedRange]);
 
   // if no variable in a study is suitable to time slider, do not show time slider
   return variable != null && variableMetadata != null ? (
@@ -292,17 +376,16 @@ export default function TimeSliderQuickFilter({
             <HelpIcon children={helpText} />
           </div>
         </div>
+
         <div
           style={{
             display: 'flex',
-            padding: '5px 10px 0px 10px',
-            justifyContent: minimized ? 'center' : 'space-between',
+            flexDirection: 'row',
             alignItems: 'center',
           }}
         >
           {!minimized && (
             <>
-              <div style={sideElementStyle}></div>
               <div style={{}}>
                 <InputVariables
                   inputs={[
@@ -323,7 +406,64 @@ export default function TimeSliderQuickFilter({
                   constraints={timeSliderVariableConstraints}
                 />
               </div>
-              <div style={sideElementStyle}>
+              <div>
+                <button
+                  title={'move range left'}
+                  style={{ marginRight: '1em', marginLeft: '2em' }}
+                  onClick={() => handleArrowClick('left')}
+                  disabled={!active || disableLeftArrow}
+                >
+                  <i
+                    className="fa fa-arrow-left"
+                    aria-hidden="true"
+                    style={{
+                      color:
+                        active && !disableLeftArrow ? 'black' : 'lightgray',
+                    }}
+                  ></i>
+                </button>
+              </div>
+              {/* add axis range control */}
+              <AxisRangeControl
+                range={
+                  selectedRange != null
+                    ? {
+                        min: selectedRange.start,
+                        max: selectedRange.end,
+                      }
+                    : undefined
+                }
+                onRangeChange={handleAxisRangeChange}
+                valueType={'date'}
+                containerStyles={{
+                  flex: 1,
+                }}
+                // change the height of the input element
+                inputHeight={30}
+                disabled={!active}
+              />
+              <div>
+                <button
+                  title={'move range right'}
+                  style={{ marginLeft: '1em', marginRight: '1em' }}
+                  onClick={() => handleArrowClick('right')}
+                  disabled={!active || disableRightArrow}
+                >
+                  <i
+                    className="fa fa-arrow-right"
+                    aria-hidden="true"
+                    style={{
+                      color:
+                        active && !disableRightArrow ? 'black' : 'lightgray',
+                    }}
+                  ></i>
+                </button>
+              </div>
+              <div
+                style={{
+                  marginRight: '1em',
+                }}
+              >
                 <Toggle
                   label={active ? 'On' : 'Off'}
                   labelPosition="left"
@@ -357,4 +497,75 @@ export default function TimeSliderQuickFilter({
       </div>
     </div>
   ) : null;
+}
+
+// compute new range by step button
+function newArrowRange(
+  selectedRange: selectedRangeProp | undefined,
+  arrow: string
+) {
+  if (selectedRange) {
+    const diff =
+      new Date(selectedRange.end).getTime() -
+      new Date(selectedRange.start).getTime();
+
+    const diffSign = arrow === 'right' ? diff : -diff;
+
+    const newSelectedRange = {
+      start: new Date(new Date(selectedRange.start).getTime() + diffSign)
+        .toISOString()
+        .split('T')[0],
+      end: new Date(new Date(selectedRange.end).getTime() + diffSign)
+        .toISOString()
+        .split('T')[0],
+    };
+
+    // unit in milliseconds
+    const deltaLeapDaysMS =
+      (countLeapDays(newSelectedRange) - countLeapDays(selectedRange)) *
+      (1000 * 3600 * 24);
+
+    return {
+      start: new Date(
+        new Date(newSelectedRange.start).getTime() -
+          (arrow === 'left' ? deltaLeapDaysMS : 0)
+      )
+        .toISOString()
+        .split('T')[0],
+      end: new Date(
+        new Date(newSelectedRange.end).getTime() +
+          (arrow === 'right' ? deltaLeapDaysMS : 0)
+      )
+        .toISOString()
+        .split('T')[0],
+    };
+  } else {
+    return undefined;
+  }
+}
+
+// check whether leap year is
+function isLeapYear(year: number) {
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+}
+
+// compute the number of days of leap years for a date range
+function countLeapDays(dateRange: selectedRangeProp) {
+  const startDate = new Date(dateRange.start);
+  const endDate = new Date(dateRange.end);
+  const startYear = startDate.getFullYear();
+  const endYear = endDate.getFullYear();
+
+  let leapDayCount = 0;
+
+  for (let year = startYear; year <= endYear; year++) {
+    if (isLeapYear(year)) {
+      const leapDay = new Date(year, 1, 29);
+      if (leapDay >= startDate && leapDay <= endDate) {
+        leapDayCount++;
+      }
+    }
+  }
+
+  return leapDayCount;
 }
