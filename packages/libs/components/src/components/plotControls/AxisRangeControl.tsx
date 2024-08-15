@@ -24,6 +24,8 @@ export interface AxisRangeControlProps
   logScale?: boolean;
   /** specify step for increment/decrement buttons in MUI number inputs; MUI's default is 1 */
   step?: number;
+  /** specify the height of the input element */
+  inputHeight?: number;
 }
 
 export default function AxisRangeControl({
@@ -36,6 +38,7 @@ export default function AxisRangeControl({
   disabled = false,
   logScale = false,
   step = undefined,
+  inputHeight,
 }: AxisRangeControlProps) {
   const validator = useCallback(
     (
@@ -79,6 +82,7 @@ export default function AxisRangeControl({
         validator={validator}
         // add disabled prop to disable input fields
         disabled={disabled}
+        inputHeight={inputHeight}
       />
     ) : (
       <NumberRangeInput
@@ -91,6 +95,7 @@ export default function AxisRangeControl({
         // add disabled prop to disable input fields
         disabled={disabled}
         step={step}
+        inputHeight={inputHeight}
       />
     )
   ) : null;

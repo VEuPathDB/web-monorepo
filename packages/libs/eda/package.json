@@ -8,6 +8,7 @@
     "@veupathdb/coreui": "workspace:^",
     "@veupathdb/http-utils": "workspace:^",
     "@veupathdb/study-data-access": "workspace:^",
+    "@veupathdb/user-datasets": "workspace:^",
     "@veupathdb/wdk-client": "workspace:^",
     "date-fns": "^2.29.3",
     "debounce-promise": "^3.1.2",

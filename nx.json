@@ -52,6 +52,11 @@
         "^build-npm-modules"
       ]
     },
+    "bundle:analyze": {
+      "dependsOn": [
+        "^build-npm-modules"
+      ]
+    },
     "storybook": {
       "dependsOn": [
         "^build-npm-modules"
