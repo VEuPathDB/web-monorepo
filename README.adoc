@@ -1,6 +1,6 @@
 = web-monorepo
 
-Please check our project repos at https://github.com/VEuPathDB.
+This are instructions to work with the VEuPathDB UI either by executing a single workspace’s yarn script -using the nx task runner- (eg the mblast UI or the EDA UI), or by accessing the complete UI by starting a local site. In both cases a webpack server will be started and a new browser tab will be opened. The backend will be accessed via a remote site stated in your monorepo (packages/sites/*website) .env file.
 
 == Prerequisites
 * `Node <=16.17.1`
