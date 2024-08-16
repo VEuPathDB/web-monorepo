@@ -1,6 +1,6 @@
 = web-monorepo
-
 Please check our project repos at https://github.com/VEuPathDB.
+:toc:
 
 == Prerequisites
 * `Node <=16.17.1`
