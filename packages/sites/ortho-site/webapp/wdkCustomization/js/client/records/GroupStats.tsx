@@ -27,7 +27,7 @@ export function RecordTable_GroupStats(
       {regularRecordTable}
       <figure
         style={{
-          width: imgWidth || '100%',
+          width: imgWidth || undefined,
         }}
       >
         <img
@@ -36,11 +36,18 @@ export function RecordTable_GroupStats(
           ref={imgRef}
           onLoad={() => setImgWidth(imgRef.current?.offsetWidth ?? 0)}
         />
-        <figcaption style={{ fontSize: '90%' }}>
-          This histogram is provided to aid the interpretation of E-values in
-          the adjoining table. E-values have been transformed using a negative
-          logarithm, so higher significance is represented further to the right.
-        </figcaption>
+        {imgWidth ? ( // only render the caption after the image is fully loaded so it doesn't shape-shift
+          <figcaption
+            style={{
+              fontSize: '90%',
+            }}
+          >
+            This histogram is provided to aid the interpretation of E-values in
+            the adjoining table. E-values have been transformed using a negative
+            logarithm, so higher significance is represented further to the
+            right.
+          </figcaption>
+        ) : null}
       </figure>
     </div>
   );
