@@ -8,6 +8,8 @@ Please check our project repos at https://github.com/VEuPathDB.
 ** With such a version of `yarn` globally installed, all `yarn` commands executed in this repo will be delegated to the "pinned" `yarn@3.3.1` installation included in `.yarn/releases`.
 ** With such a version of https://volta.sh/[volta] installed, the required version of `yarn` will automatically be installed.
 
+_It is recommended to install volta, as it will keep your local toolchain in sync with the repository._
+
 == Quick Start
 
 === Install yarn dependencies
@@ -18,6 +20,74 @@ From anywhere in the repo:
 ----
 yarn
 ----
+
+== Overview
+
+This repository is a "monorepo", using the https://nx.dev[nx] build system and https://v3.yarnpkg.com/[yarn@3] dependency manager. The source code is divided into one of three types of packages: "config", "lib", and "site".
+
+- "config" packages (`./packages/configs`) include various build and development configurations and tools.
+- "lib" packages (`./packages/libs`) include standalone library and webapp source code.
+- "site" packages (`./packages/sites`) include complete website source code.
+
+Many "lib" and "site" packages include development tools, such as development servers, test scripts, etc.
+
+Many commands require a reference to the package name. All package names are currently prefixed with `@veupathdb/`. For example, the eda package name is `@veupathdb/eda`.
+
+The repository is currently configured as a "package based repository". This is subject to change, in the future (see https://nx.dev/concepts/integrated-vs-package-based to read about the differences between package based and integrated repos).
+ 
+== Common Tasks
+
+The following tasks are common performed by developers. This serves as a reference guide, and is not exhaustive in any way. If you feel something is missing, create an issue, or open a pull request.
+
+_All commands are expected to be run in the repository's root directory, unless otherwise specified._
+
+=== Start a local dev site
+
+"Site" projects are stored in the `packages/sites` directory. Each one corresponds to a "cohort". For example, `packages/sites/genomics-site`
+contains the code used to build the client code for a genomics website.
+
+Each cohort contains a `.env.sample` file. Copy this to a sibling `.env` file. You may need to modify some values, such as usernames,
+passwords, etc. You can also specify a website to use for various services. Typically a deployed QA site will suffice, but you can also run a "local backend" via various methods. (TODO: link to relevants docs/repos).
+
+Once you have created a `.env` file, you can run the local dev site with the command:
+
+[source, shell]
+----
+yarn nx start <package name>
+----
+
+For example, if you want to run a local clinepi site, you would run the command:
+
+[source, shell]
+----
+yarn nx start @veupathdb/clinepi-site
+----
+
+Once the website has been compiled, the dev server will output some build statistics and automatically open a browser tab. You can kill the local dev server with `CTRL-C` in the terminal where you started it. 
+
+=== Modifying code (and updating a running local dev site)
+
+When a local dev site is running, it will detect when build dependencies are updated and reload the active webpage.
+
+__Note: the following refers to code tracked by the monorepo, and not third-party dependencies from npm.__
+
+There are two types of souce code that can be updated:
+
+1. Source code within the package being served.
+2. Source code within a dependent package.
+
+Changes to code within the package being served will be detected automatically. The local dev service should reompile the affected module and reload the website without intervention.
+
+Changes to code within a dependent workspace package will require a build command for the local dev server to detect the change.
+
+For example, if you change code in `packages/libs/eda`, you will need to run this command in a new terminal window, from the repository root:
+
+[source, shell]
+----
+yarn workspace @veupathdb/eda build-npm-modules
+----
+
+Once this command completed, the running dev server will see the updated build artifacts, recompile the website, and reload the webpage. There are some cases where this might not work as expected, such as if the recompile step fails. In those cases, you may need to restart the local dev server. You can monitor the progress of the recompilation step in the terminal where you started the dev server.
 
 === View workspace dependency graph
 
