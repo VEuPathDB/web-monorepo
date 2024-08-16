@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { RecordTable } from './SequenceRecordClasses.SequenceRecordClass';
 import { RecordTableProps, WrappedComponentProps } from './Types';
 
-import eval_hist_img from '../../../images/eval-hist.png';
+import eval_hist_img from './eval-hist.png';
 
 export function RecordTable_GroupStats(
   props: WrappedComponentProps<RecordTableProps>
