@@ -19,7 +19,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
           inputProps: {
             required: false,
             placeholder:
-              'optional longer description of the summary including background, study objectives, methodology, etc.',
+              'optional longer description of the study including background, study objectives, methodology, etc.',
           },
         },
         renderInfo: () => (
