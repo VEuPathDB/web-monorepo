@@ -203,6 +203,30 @@ class UserDatasetDetail extends React.Component {
             </>
           ),
       },
+      {
+        attribute: 'Summary',
+        value: (
+          <SaveableTextEditor
+            multiLine={true}
+            value={meta.summary}
+            readOnly={!isOwner}
+            onSave={onMetaSave('summary')}
+            emptyText="No Summary"
+          />
+        ),
+      },
+      {
+        attribute: 'Description',
+        value: (
+          <SaveableTextEditor
+            value={meta.description}
+            multiLine={true}
+            readOnly={!isOwner}
+            onSave={this.onMetaSave('description')}
+            emptyText="No Description"
+          />
+        ),
+      },
       !isOwner || !sharedWith || !sharedWith.length
         ? null
         : {
@@ -221,18 +245,6 @@ class UserDatasetDetail extends React.Component {
         attribute: 'Owner',
         value: isOwner ? 'Me' : owner,
       },
-      {
-        attribute: 'Description',
-        value: (
-          <SaveableTextEditor
-            value={meta.description}
-            multiLine={true}
-            readOnly={!isOwner}
-            onSave={this.onMetaSave('description')}
-            emptyText="No Description"
-          />
-        ),
-      },
       { attribute: 'ID', value: id },
       {
         attribute: 'Data type',
@@ -240,18 +252,6 @@ class UserDatasetDetail extends React.Component {
           <span>
             {display} ({name} {version})
           </span>
-        ),
-      },
-      {
-        attribute: 'Summary',
-        value: (
-          <SaveableTextEditor
-            multiLine={true}
-            value={meta.summary}
-            readOnly={!isOwner}
-            onSave={onMetaSave('summary')}
-            emptyText="No Summary"
-          />
         ),
       },
       {
