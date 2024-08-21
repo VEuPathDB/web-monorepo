@@ -24,6 +24,7 @@ import { PfamDomain } from 'ortho-client/components/pfam-domains/PfamDomain';
 import { FloatingButton, SelectList, Undo } from '@veupathdb/coreui';
 import { RecordTable_TaxonCounts_Filter } from './RecordTable_TaxonCounts_Filter';
 import { css, cx } from '@emotion/css';
+import { formatAttributeValue } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 type RowType = Record<string, AttributeValue>;
 
@@ -375,14 +376,14 @@ export function RecordTable_Sequences(
               style={{ width: 100 }}
               pfamId={row.accession as string}
             />
-            <div>{row.accession}</div>
-            <div>{row.description}</div>
+            <div>{formatAttributeValue(row.accession)}</div>
+            <div>{formatAttributeValue(row.description)}</div>
             <div style={{ marginLeft: 'auto' }}>
-              {row.num_proteins} proteins
+              {formatAttributeValue(row.num_proteins)} proteins
             </div>
           </div>
         ),
-        value: row.accession as string,
+        value: formatAttributeValue(row.accession),
       }))}
       value={pfamFilterIds}
       onChange={setPfamFilterIds}
