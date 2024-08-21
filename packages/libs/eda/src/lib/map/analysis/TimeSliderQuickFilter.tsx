@@ -406,7 +406,7 @@ export default function TimeSliderQuickFilter({
                   constraints={timeSliderVariableConstraints}
                 />
               </div>
-              <div style={{ marginRight: 'auto', marginLeft: 'auto' }}>
+              <div style={{ marginRight: '1em', marginLeft: 'auto' }}>
                 <button
                   title={'move range left'}
                   onClick={() => handleArrowClick('left')}
@@ -443,7 +443,7 @@ export default function TimeSliderQuickFilter({
                   disabled={!active}
                 />
               </div>
-              <div style={{ marginRight: 'auto', marginLeft: 'auto' }}>
+              <div style={{ marginRight: 'auto', marginLeft: '1em' }}>
                 <button
                   title={'move range right'}
                   onClick={() => handleArrowClick('right')}
