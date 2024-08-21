@@ -9,7 +9,7 @@ interface WordCloudModalProps {
   toolName: string;
 }
 
-export const WordCloudModal: React.SFC<WordCloudModalProps> = ({
+export const WordCloudModal: React.FunctionComponent<WordCloudModalProps> = ({
   imgUrl,
   open,
   onClose,

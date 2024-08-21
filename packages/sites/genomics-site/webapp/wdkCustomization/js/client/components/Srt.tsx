@@ -174,7 +174,10 @@ export function Srt() {
   }, [selectedSrtForm, srtTabsState]);
 
   const updateSrtTabsState = useCallback(
-    (idsState, formState) => {
+    (
+      idsState: string,
+      formState: BaseSrtFormConfig['defaultReporterFormState']
+    ) => {
       if (!selectedSrtForm) return;
       setSrtTabsState((prevTabsState) => ({
         ...prevTabsState,
@@ -305,14 +308,14 @@ function SrtForm({
   }, [defaultIdsState, defaultReporterFormState, updateSrtTabsState]);
 
   const updateIdsState = useCallback(
-    (newIdsState) => {
+    (newIdsState: string) => {
       updateSrtTabsState(newIdsState, formState);
     },
     [formState, updateSrtTabsState]
   );
 
   const updateFormState = useCallback(
-    (newFormState) => {
+    (newFormState: BaseSrtFormConfig['defaultReporterFormState']) => {
       updateSrtTabsState(idsState, newFormState);
     },
     [idsState, updateSrtTabsState]

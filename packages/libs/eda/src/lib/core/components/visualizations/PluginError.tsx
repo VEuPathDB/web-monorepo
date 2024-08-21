@@ -1,5 +1,5 @@
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import { ReactFragment } from 'react';
+import { ReactNode } from 'react';
 import { NoDataError } from '../../api/DataClient/NoDataError';
 
 interface Props {
@@ -9,7 +9,7 @@ interface Props {
   bannerType?: 'warning' | 'error';
 }
 
-type Case = (error: unknown) => string | ReactFragment | undefined;
+type Case = (error: unknown) => string | ReactNode | undefined;
 
 const defaultCases: Case[] = [
   (error) => (error instanceof NoDataError ? error.message : undefined),
@@ -34,7 +34,7 @@ export default function PluginError({
   const errorContent =
     (customCases ?? [])
       .concat([emptyCase, ...defaultCases])
-      .reduce<string | ReactFragment | undefined>(
+      .reduce<string | ReactNode | undefined>(
         (prev, caseFunction) => prev ?? caseFunction(error),
         undefined
       ) ?? fallbackErrorMessage;

@@ -5,6 +5,7 @@ import './GraphAccordion.scss';
 interface Props {
   title: React.ReactNode;
   containerClassName?: string;
+  children: React.ReactNode;
 }
 
 export const GraphAccordion: React.FunctionComponent<Props> = function ({

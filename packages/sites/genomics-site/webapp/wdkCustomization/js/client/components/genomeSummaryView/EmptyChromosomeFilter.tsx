@@ -5,7 +5,7 @@ interface EmptyChromosomesFilterProps {
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const EmptyChromosomesFilter: React.SFC<EmptyChromosomesFilterProps> = ({
+export const EmptyChromosomesFilter: React.FC<EmptyChromosomesFilterProps> = ({
   applied,
   onChange,
 }) => (

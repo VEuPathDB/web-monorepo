@@ -287,9 +287,9 @@ class HeadingCell extends React.PureComponent {
       !column.primary &&
       typeof eventHandlers.onColumnReorder === 'function';
 
-    const props = { style, key, ref, draggable, children, className };
+    const props = { style, ref, draggable, children, className };
 
-    return column.hidden ? null : <th {...props} {...domEvents} />;
+    return column.hidden ? null : <th key={key} {...props} {...domEvents} />;
   }
 }
 
