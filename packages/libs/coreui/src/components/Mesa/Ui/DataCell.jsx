@@ -68,12 +68,11 @@ class DataCell extends React.PureComponent {
     const props = {
       style,
       children,
-      key,
       className,
       ...(isChildRow ? { colSpan: childRowColSpan } : null),
     };
 
-    return column.hidden ? null : <td {...props} />;
+    return column.hidden ? null : <td key={key} {...props} />;
   }
 }
 

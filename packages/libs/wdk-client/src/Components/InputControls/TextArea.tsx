@@ -15,7 +15,7 @@ type Props = InputPropsWithoutOnChange & {
   onChange: (value: string) => void;
 };
 
-let TextArea: React.SFC<Props> = function (props) {
+let TextArea: React.FC<Props> = function (props) {
   return (
     <textarea
       {...props}

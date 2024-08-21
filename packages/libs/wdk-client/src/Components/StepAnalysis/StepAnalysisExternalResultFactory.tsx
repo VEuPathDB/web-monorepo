@@ -35,7 +35,7 @@ export const contextHashQueryParamFactory = ({
 export const stepAnalysisExternalResultFactory =
   (
     queryParamFactories: [string, QueryParamFactory][]
-  ): React.SFC<StepAnalysisResultPluginProps> =>
+  ): React.FC<StepAnalysisResultPluginProps> =>
   (props) =>
     (
       <div className="external-result-container">

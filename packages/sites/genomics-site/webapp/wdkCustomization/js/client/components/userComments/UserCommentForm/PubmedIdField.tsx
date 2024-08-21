@@ -15,7 +15,7 @@ interface PubMedIdsFieldProps {
   previewData?: PubmedPreview;
 }
 
-export const PubMedIdsField: React.SFC<PubMedIdsFieldProps> = ({
+export const PubMedIdsField: React.FunctionComponent<PubMedIdsFieldProps> = ({
   idsField,
   searchField,
   onIdsChange,

@@ -23,7 +23,7 @@ export interface StepAction {
   /** Unique identifier for the action */
   key: string;
   /** Text of the button */
-  display: React.ReactType<Props>;
+  display: React.FC<Props> | React.ComponentType<Props>;
   /** Action to take when user clicks */
   onClick: (props: Props) => void;
   /** The button should be disabled */

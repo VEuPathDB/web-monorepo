@@ -23,7 +23,7 @@ export interface IncompleteResultState {
   reason: ReactNode;
 }
 
-export const StepAnalysisResultsPane: React.SFC<StepAnalysisResultPaneProps> = (
+export const StepAnalysisResultsPane: React.FC<StepAnalysisResultPaneProps> = (
   props
 ) => (
   <div>

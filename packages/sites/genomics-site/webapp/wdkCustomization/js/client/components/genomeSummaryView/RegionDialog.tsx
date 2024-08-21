@@ -20,7 +20,7 @@ interface RegionDialogProps {
   recordType: string;
 }
 
-export const RegionDialog: React.SFC<RegionDialogProps> = ({
+export const RegionDialog: React.FunctionComponent<RegionDialogProps> = ({
   region,
   sequence,
   open,
