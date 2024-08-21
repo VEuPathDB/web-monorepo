@@ -11,7 +11,7 @@ interface PubmedIdPreviewProps {
   className?: string;
 }
 
-export const PubmedIdPreview: React.SFC<PubmedIdPreviewProps> = ({
+export const PubmedIdPreview: React.FunctionComponent<PubmedIdPreviewProps> = ({
   onClose,
   previewData,
   className,

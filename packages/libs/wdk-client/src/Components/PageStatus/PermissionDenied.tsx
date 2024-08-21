@@ -2,7 +2,7 @@ import * as React from 'react';
 import { wrappable } from '../../Utils/ComponentUtils';
 
 type Props = {
-  children?: React.ReactChildren;
+  children?: React.ReactNode;
 };
 
 export default wrappable(function PermissionDenied(props: Props) {
