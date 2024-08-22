@@ -9,6 +9,7 @@ import {
   isServerError,
   isClientError,
   isInputError,
+  isServiceError,
 } from '../Service/ServiceError';
 import {
   ValidationBundle,
@@ -51,16 +52,17 @@ export function getTypedError(error: unknown, info?: unknown): WdkError {
       error,
       info,
     };
-  if (is(ValidationBundle, error)) {
-    return {
-      type: 'validation',
-      message: makeValidationBundleErrorMessage(error),
-      id: uuid(),
-      error,
-      info,
-    };
-  }
-  if (isClientError(error))
+  if (isClientError(error)) {
+    const validationBundle = parseJson(error.response);
+    if (is(ValidationBundle, validationBundle)) {
+      return {
+        type: 'validation',
+        message: makeValidationBundleErrorMessage(validationBundle),
+        id: uuid(),
+        error: validationBundle,
+        info,
+      };
+    }
     return {
       type: 'client',
       message: error.response,
@@ -68,6 +70,7 @@ export function getTypedError(error: unknown, info?: unknown): WdkError {
       error,
       info,
     };
+  }
   if (isInputError(error))
     return {
       type: 'input',
@@ -96,4 +99,12 @@ export function getTypedError(error: unknown, info?: unknown): WdkError {
 
 export function makeCommonErrorMessage(error: unknown) {
   return getTypedError(error).message;
+}
+
+function parseJson(json: string): unknown {
+  try {
+    return JSON.parse(json);
+  } catch {
+    return undefined;
+  }
 }
