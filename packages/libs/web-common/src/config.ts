@@ -23,6 +23,7 @@ export const {
   youtubeUrl = '',
   redditUrl = '',
   vimeoUrl = '',
+  discordUrl = '',
   communitySite = '',
   siteSearchServiceUrl = '',
   retainContainerContent = false,
