@@ -4,12 +4,12 @@ import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
 import { getId } from '../../Utils/CategoryUtils';
 import { wrappable } from '../../Utils/ComponentUtils';
-import { addScrollAnchor, findAncestorNode } from '../../Utils/DomUtils';
+import { findAncestorNode } from '../../Utils/DomUtils';
 import { postorderSeq } from '../../Utils/TreeUtils';
-import '../../Views/Records/Record.css';
 import RecordHeading from '../../Views/Records/RecordHeading';
 import RecordMainSection from '../../Views/Records/RecordMain/RecordMainSection';
 import RecordNavigationSection from '../../Views/Records/RecordNavigation/RecordNavigationSection';
+import '../../Views/Records/Record.css';
 
 /**
  * Renders the main UI for the WDK Record page.
@@ -33,10 +33,7 @@ class RecordUI extends Component {
 
   componentDidMount() {
     this._scrollToActiveSection();
-    this.removeScrollAnchor = addScrollAnchor(
-      this.recordMainSectionNode,
-      document.getElementById(location.hash.slice(1))
-    );
+    this.monitorActiveSection();
   }
 
   componentDidUpdate(prevProps) {
@@ -48,7 +45,6 @@ class RecordUI extends Component {
 
   componentWillUnmount() {
     this.unmonitorActiveSection();
-    this.removeScrollAnchor();
     this._updateActiveSection.cancel();
     this.monitorActiveSection.cancel();
   }
@@ -86,8 +82,6 @@ class RecordUI extends Component {
   }
 
   _scrollToActiveSection() {
-    this.unmonitorActiveSection();
-
     const targetId = location.hash.slice(1);
     const targetNode = document.getElementById(targetId);
 
@@ -105,7 +99,6 @@ class RecordUI extends Component {
       const rect = targetNode.getBoundingClientRect();
       if (rect.top !== this.activeSectionTop) targetNode.scrollIntoView(true);
     }
-    this.monitorActiveSection();
   }
 
   render() {
