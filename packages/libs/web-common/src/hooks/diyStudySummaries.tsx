@@ -94,7 +94,7 @@ function formatDatasets(
           name: userDataset.name,
           userDatasetWorkspaceUrl: userDataset.userDatasetsRoute,
           edaWorkspaceUrl: `${userDataset.baseEdaRoute}/new`,
-          summary: userDataset.description ?? '',
+          summary: userDataset.summary ?? '',
           owner:
             userDataset.owner.userId === currentUser.id
               ? 'Me'

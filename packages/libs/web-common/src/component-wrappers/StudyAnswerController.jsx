@@ -9,6 +9,10 @@ import StudySearchIconLinks from '../App/Studies/StudySearches';
 import { isPrereleaseStudy } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
 import { makeEdaRoute } from '../routes';
 import { useEda, useUserDatasetsWorkspace } from '../config';
+import {
+  RecordFilter,
+  useRecordFilter,
+} from '@veupathdb/wdk-client/lib/Views/Records/RecordTable/RecordFilter';
 
 import {
   useDiyStudySummaryColumns,
@@ -75,6 +79,36 @@ function StudyAnswerController(props) {
   const { userStudySummaryRows, communityStudySummaryRows } =
     useDiyStudySummaryRows();
 
+  const displayableStudyAttributes = columns.map((col) => {
+    if (col.accessor === 'edaWorkspaceUrl') {
+      return { value: 'name', display: col['Header'] };
+    } else {
+      return {
+        value: col.accessor,
+        display: col['Header'],
+      };
+    }
+  });
+
+  const {
+    filteredRows: filteredUserStudyRows,
+    searchTerm: userStudySearchTerm,
+    setSearchTerm: setUserStudySearchTerm,
+    selectedColumnFilters: selectedUserStudyColumnFilters,
+    setSelectedColumnFilters: setSelectedUserStudyColumnFilters,
+  } = useRecordFilter(displayableStudyAttributes, userStudySummaryRows ?? []);
+
+  const {
+    filteredRows: filteredCommunityStudyRows,
+    searchTerm: communityStudySearchTerm,
+    setSearchTerm: setCommunityStudySearchTerm,
+    selectedColumnFilters: selectedCommunityStudyColumnFilters,
+    setSelectedColumnFilters: setSelectedCommunityStudyColumnFilters,
+  } = useRecordFilter(
+    displayableStudyAttributes,
+    communityStudySummaryRows ?? []
+  );
+
   return (
     <div className="ClinEpiStudyAnswerController">
       {!props.stateProps.isLoading &&
@@ -87,9 +121,21 @@ function StudyAnswerController(props) {
               userStudySummaryRows.length > 0 && (
                 <>
                   <h2>My studies</h2>
+                  <RecordFilter
+                    searchTerm={userStudySearchTerm}
+                    onSearchTermChange={(searchTerm) =>
+                      setUserStudySearchTerm(searchTerm)
+                    }
+                    recordDisplayName={'studies'}
+                    filterAttributes={displayableStudyAttributes}
+                    selectedColumnFilters={selectedUserStudyColumnFilters}
+                    onColumnFilterChange={(value) =>
+                      setSelectedUserStudyColumnFilters(value)
+                    }
+                  />
                   <DataGrid
                     columns={columns}
-                    data={userStudySummaryRows}
+                    data={filteredUserStudyRows}
                     stylePreset="mesa"
                     styleOverrides={{
                       headerCells: {
@@ -101,6 +147,7 @@ function StudyAnswerController(props) {
                         fontSize: '1.1em',
                         color: 'black',
                         verticalAlign: 'top',
+                        whiteSpace: 'pre-wrap',
                       },
                     }}
                   />
@@ -111,9 +158,21 @@ function StudyAnswerController(props) {
               communityStudySummaryRows.length > 0 && (
                 <>
                   <h2>Community studies</h2>
+                  <RecordFilter
+                    searchTerm={communityStudySearchTerm}
+                    onSearchTermChange={(searchTerm) =>
+                      setCommunityStudySearchTerm(searchTerm)
+                    }
+                    recordDisplayName={'studies'}
+                    filterAttributes={displayableStudyAttributes}
+                    selectedColumnFilters={selectedCommunityStudyColumnFilters}
+                    onColumnFilterChange={(value) =>
+                      setSelectedCommunityStudyColumnFilters(value)
+                    }
+                  />
                   <DataGrid
                     columns={columns.slice(0, -1)}
-                    data={communityStudySummaryRows}
+                    data={filteredCommunityStudyRows}
                     stylePreset="mesa"
                     styleOverrides={{
                       headerCells: {
@@ -125,6 +184,7 @@ function StudyAnswerController(props) {
                         fontSize: '1.1em',
                         color: 'black',
                         verticalAlign: 'top',
+                        whiteSpace: 'pre-wrap',
                       },
                     }}
                   />
