@@ -147,6 +147,7 @@ function StudyAnswerController(props) {
                         fontSize: '1.1em',
                         color: 'black',
                         verticalAlign: 'top',
+                        whiteSpace: 'pre-wrap',
                       },
                     }}
                   />
@@ -183,6 +184,7 @@ function StudyAnswerController(props) {
                         fontSize: '1.1em',
                         color: 'black',
                         verticalAlign: 'top',
+                        whiteSpace: 'pre-wrap',
                       },
                     }}
                   />
