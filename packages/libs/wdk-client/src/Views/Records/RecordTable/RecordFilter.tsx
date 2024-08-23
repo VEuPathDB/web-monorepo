@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import {
   RealTimeSearchBox,
   HelpIcon,
@@ -7,6 +7,10 @@ import {
 import { Tooltip } from '@veupathdb/coreui';
 import { CheckboxList } from '@veupathdb/coreui';
 import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import {
+  areTermsInStringRegexString,
+  parseSearchQueryString,
+} from '../../../Utils/SearchUtils';
 
 type FilterAttribute = {
   value: string;
@@ -186,4 +190,44 @@ function RecordTableFilterSelector({
       </div>
     </TabbableContainer>
   );
+}
+
+export function useRecordFilter(
+  displayableAttributes: { display: string; value: string }[],
+  rows: unknown[]
+) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedColumnFilters, setSelectedColumnFilters] = useState<string[]>(
+    []
+  );
+  return useMemo(() => {
+    const queryTerms = parseSearchQueryString(searchTerm);
+    const searchTermRegex = areTermsInStringRegexString(queryTerms);
+    const regex = new RegExp(searchTermRegex, 'i');
+    const searchableAttributes = selectedColumnFilters.length
+      ? displayableAttributes.filter((attr) =>
+          selectedColumnFilters.includes(attr.value)
+        )
+      : displayableAttributes;
+    const filteredRows = searchTerm.length
+      ? rows.filter((row) =>
+          // @ts-ignore
+          searchableAttributes.some((attr) => regex.test(row[attr.value]))
+        )
+      : rows;
+    return {
+      filteredRows,
+      searchTerm,
+      setSearchTerm,
+      selectedColumnFilters,
+      setSelectedColumnFilters,
+    };
+  }, [
+    searchTerm,
+    setSearchTerm,
+    selectedColumnFilters,
+    setSelectedColumnFilters,
+    displayableAttributes,
+    rows,
+  ]);
 }
