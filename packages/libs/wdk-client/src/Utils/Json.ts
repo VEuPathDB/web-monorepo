@@ -444,10 +444,6 @@ export function lazy<T>(decoderThunk: () => Decoder<T>) {
 // Decoder
 // -------
 
-export function is<T, S>(decoder: Decoder<T>, value: unknown): value is T {
-  return decoder(value).status === 'ok';
-}
-
 // Run `decoder` on `jsonString`
 export function decode<T>(decoder: Decoder<T>, jsonString: string): T {
   let t: any;
