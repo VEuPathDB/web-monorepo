@@ -9,13 +9,11 @@ import {
   isServerError,
   isClientError,
   isInputError,
-  isServiceError,
 } from '../Service/ServiceError';
 import {
   ValidationBundle,
   makeErrorMessage as makeValidationBundleErrorMessage,
 } from '../Service/ValidationBundle';
-import { is } from './Json';
 
 type ErrorType<Type, Instance> = {
   type: Type;
@@ -53,23 +51,22 @@ export function getTypedError(error: unknown, info?: unknown): WdkError {
       info,
     };
   if (isClientError(error)) {
-    const validationBundle = parseJson(error.response);
-    if (is(ValidationBundle, validationBundle)) {
-      return {
-        type: 'validation',
-        message: makeValidationBundleErrorMessage(validationBundle),
-        id: uuid(),
-        error: validationBundle,
-        info,
-      };
-    }
-    return {
-      type: 'client',
-      message: error.response,
-      id: error.logMarker,
-      error,
-      info,
-    };
+    const result = ValidationBundle(parseJson(error.response));
+    return result.status === 'ok'
+      ? {
+          type: 'validation',
+          message: makeValidationBundleErrorMessage(result.value),
+          id: uuid(),
+          error: result.value,
+          info,
+        }
+      : {
+          type: 'client',
+          message: error.response,
+          id: error.logMarker,
+          error,
+          info,
+        };
   }
   if (isInputError(error))
     return {
