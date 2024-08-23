@@ -14,7 +14,8 @@ export function filterKeysFromObject(object, keys = []) {
 }
 
 export function iconMenuItemsFromSocials(siteConfig = {}) {
-  const { facebookUrl, twitterUrl, youtubeUrl, vimeoUrl } = siteConfig;
+  const { facebookUrl, twitterUrl, youtubeUrl, vimeoUrl, discordUrl } =
+    siteConfig;
   const items = [];
   if (facebookUrl)
     items.push({ type: 'facebook', url: facebookUrl, target: '_blank' });
@@ -23,6 +24,8 @@ export function iconMenuItemsFromSocials(siteConfig = {}) {
   if (youtubeUrl)
     items.push({ type: 'youtube', url: youtubeUrl, target: '_blank' });
   if (vimeoUrl) items.push({ type: 'vimeo', url: vimeoUrl, target: '_blank' });
+  if (discordUrl)
+    items.push({ type: 'discord', url: discordUrl, target: '_blank' });
   return items;
 }
 
