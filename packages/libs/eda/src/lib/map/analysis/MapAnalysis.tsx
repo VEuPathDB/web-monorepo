@@ -707,6 +707,12 @@ function MapAnalysisImpl(props: ImplProps) {
           >
             <H5 additionalStyles={{ margin: '25px 0 0 0' }}>Study Details</H5>
             {studyMetadata.isUserStudy ? (
+              // TODO Make both cases below configurable via the root component.
+              // This will need to be done if we want EDA to stand on its own.
+
+              // Note that we are not inluding the custom detail page.
+              // As of this writing, details pages only add a link to
+              // EDA. Since we are in EDA, we don't want to add it here.
               <UserDatasetDetailController
                 baseUrl={url}
                 detailsPageTitle={'My Study'}
