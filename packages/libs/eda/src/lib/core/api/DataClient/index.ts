@@ -67,11 +67,12 @@ export default class DataClient extends FetchClientWithCredentials {
   // Histogram
   getHistogram(
     computationName: string,
+    pluginName: string, // now handles timeline and histogram
     params: HistogramRequestParams
   ): Promise<HistogramResponse> {
     return this.getVisualizationData(
       computationName,
-      'histogram',
+      pluginName,
       params,
       HistogramResponse
     );
@@ -106,11 +107,12 @@ export default class DataClient extends FetchClientWithCredentials {
   // Lineplot
   getLineplot(
     computationName: string,
+    pluginName: string,
     params: LineplotRequestParams
   ): Promise<LineplotResponse> {
     return this.getVisualizationData(
       computationName,
-      'lineplot',
+      pluginName,
       params,
       LineplotResponse
     );
@@ -239,7 +241,7 @@ function nullResponseInterceptor<T>(decoder: Decoder<unknown, T>) {
   return function (body: unknown) {
     if (body == null) {
       throw new NoDataError(
-        'The visualization cannot be made because no data remains after filtering.',
+        undefined, // use default
         'No data',
         204,
         uuid()

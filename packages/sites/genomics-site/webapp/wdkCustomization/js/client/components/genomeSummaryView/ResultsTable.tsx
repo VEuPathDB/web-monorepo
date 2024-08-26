@@ -13,7 +13,7 @@ import {
   GenomeViewSequenceModel,
 } from '../../util/GenomeSummaryViewUtils';
 import { FeatureTooltip } from './FeatureTooltip';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 
 const resultColumnsFactory = defaultMemoize(
   (
@@ -116,7 +116,7 @@ interface RegionProps {
   showDialog: () => void;
 }
 
-const Region: React.SFC<RegionProps> = ({
+const Region: React.FunctionComponent<RegionProps> = ({
   displayNamePlural,
   region,
   recordType,
@@ -144,7 +144,7 @@ interface MultiFeatureRegionProps {
   showDialog: () => void;
 }
 
-const MultiFeatureRegion: React.SFC<MultiFeatureRegionProps> = ({
+const MultiFeatureRegion: React.FunctionComponent<MultiFeatureRegionProps> = ({
   displayNamePlural,
   region,
   showDialog,
@@ -167,31 +167,27 @@ interface SingleFeatureRegionProps {
   recordType: string;
 }
 
-const SingleFeatureRegion: React.SFC<SingleFeatureRegionProps> = ({
-  region,
-  feature,
-  sequence,
-  recordType,
-}) => (
-  <Tooltip
-    interactive
-    title={
-      <FeatureTooltip
-        feature={feature}
-        sequence={sequence}
-        recordType={recordType}
-      />
-    }
-  >
-    <div
-      className={`feature ${feature.strand}`}
-      style={{
-        left: `${region.percentStart}%`,
-        width: `${region.percentLength}%`,
-      }}
-    ></div>
-  </Tooltip>
-);
+const SingleFeatureRegion: React.FunctionComponent<SingleFeatureRegionProps> =
+  ({ region, feature, sequence, recordType }) => (
+    <Tooltip
+      interactive
+      title={
+        <FeatureTooltip
+          feature={feature}
+          sequence={sequence}
+          recordType={recordType}
+        />
+      }
+    >
+      <div
+        className={`feature ${feature.strand}`}
+        style={{
+          left: `${region.percentStart}%`,
+          width: `${region.percentLength}%`,
+        }}
+      ></div>
+    </Tooltip>
+  );
 
 interface ResultsTableProps {
   emptyChromosomeFilterApplied: boolean;
@@ -210,11 +206,11 @@ const rowsFactory = defaultMemoize(
     report.type === 'truncated'
       ? []
       : emptyChromosomeFilterApplied
-      ? report.sequences.filter(({ featureCount }) => featureCount)
-      : report.sequences
+      ? report.sequences
+      : report.sequences.filter(({ featureCount }) => featureCount)
 );
 
-export const ResultsTable: React.SFC<ResultsTableProps> = ({
+export const ResultsTable: React.FunctionComponent<ResultsTableProps> = ({
   emptyChromosomeFilterApplied,
   report,
   displayName,

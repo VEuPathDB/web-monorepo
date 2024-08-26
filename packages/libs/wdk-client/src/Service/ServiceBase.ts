@@ -1,5 +1,5 @@
 import localforage from 'localforage';
-import { keyBy, memoize } from 'lodash';
+import { keyBy, memoize, once } from 'lodash';
 import * as QueryString from 'querystring';
 import { v4 as uuid } from 'uuid';
 import { expandedRecordClassDecoder } from '../Service/Decoders/RecordClassDecoders';
@@ -118,13 +118,19 @@ export type ServiceBase = ReturnType<typeof ServiceBase>;
  * @param {string} serviceUrl Base url for Wdk REST Service.
  */
 export const ServiceBase = (serviceUrl: string) => {
+  /** Cross-session persistence */
   const _store: LocalForage = localforage.createInstance({
     name: 'WdkService/' + serviceUrl,
   });
+  /** In-memory persistence */
   const _cache: Map<string, Promise<any>> = new Map();
-  let _initialCheck: Promise<number> | undefined;
+
+  /** WdkService "version" number */
   let _version: number | undefined;
+  /** Indicates if the cache is being invalidated */
   let _isInvalidating = false;
+  /** Indicates if a network request has been made */
+  let _hasRequestBeenMade = false;
 
   /**
    * Get the configuration for the Wdk REST Service that resides at the given base url.
@@ -206,7 +212,7 @@ export const ServiceBase = (serviceUrl: string) => {
     console.group('Client error log');
     console.error(error);
     console.groupEnd();
-    return _checkStoreVersion().then(() =>
+    return _initializeStore().then(() =>
       sendRequest(Decode.none, {
         method: 'post',
         path: '/client-errors',
@@ -228,7 +234,7 @@ export const ServiceBase = (serviceUrl: string) => {
     return submitErrorIfNot500(error, extra);
   }
 
-  function _fetchJson<T>(
+  async function _fetchJson<T>(
     method: string,
     url: string,
     body?: string,
@@ -238,7 +244,7 @@ export const ServiceBase = (serviceUrl: string) => {
       'Content-Type': 'application/json',
       traceid: makeTraceid(),
     });
-    if (_version) headers.append(CLIENT_WDK_VERSION_HEADER, String(_version));
+    headers.append(CLIENT_WDK_VERSION_HEADER, String(await _initializeStore()));
     return fetchWithRetry(1, isBaseUrl ? url : serviceUrl + url, {
       headers,
       method: method.toUpperCase(),
@@ -246,6 +252,8 @@ export const ServiceBase = (serviceUrl: string) => {
       credentials: 'include',
     })
       .then((response) => {
+        let hasRequestBeenMade = _hasRequestBeenMade;
+        _hasRequestBeenMade = true;
         if (_isInvalidating) {
           return pendingPromise as Promise<T>;
         }
@@ -273,15 +281,23 @@ export const ServiceBase = (serviceUrl: string) => {
 
         return response.text().then((text) => {
           if (response.status === 409 && text === CLIENT_OUT_OF_SYNC_TEXT) {
-            _isInvalidating = true;
-            Promise.all([
-              _store.clear(),
-              alert(
-                'Reload Page',
-                'This page is no longer valid and will be reloaded.'
-              ),
-            ]).then(() => location.reload(true));
-            return pendingPromise as Promise<T>;
+            if (!_isInvalidating) {
+              _isInvalidating = true;
+              _store
+                .clear()
+                .then(() => {
+                  if (hasRequestBeenMade) {
+                    return alert(
+                      'Reload page',
+                      'This page is no longer valid and will be reloaded.'
+                    );
+                  }
+                })
+                .then(() => {
+                  window.location.reload();
+                });
+              return pendingPromise as Promise<T>;
+            }
           }
 
           // FIXME Get uuid from response header when available
@@ -306,7 +322,7 @@ export const ServiceBase = (serviceUrl: string) => {
     checkCachedValue = (cachedValue: T) => true
   ) {
     if (!_cache.has(key)) {
-      let cacheValue$ = _checkStoreVersion()
+      let cacheValue$ = _initializeStore()
         .then(() => _store.getItem<T>(key))
         .then((storeItem) => {
           if (storeItem != null && checkCachedValue(storeItem))
@@ -326,42 +342,45 @@ export const ServiceBase = (serviceUrl: string) => {
     return <Promise<T>>_cache.get(key);
   }
 
-  function _checkStoreVersion() {
-    if (_initialCheck == null) {
-      let serviceConfig$ = _fetchJson<ServiceConfig>('get', '/');
-      let storeConfig$ = _store.getItem<ServiceConfig>('config');
-      _initialCheck = Promise.all([serviceConfig$, storeConfig$] as const)
-        .then(([serviceConfig, storeConfig]) => {
-          if (
-            storeConfig == null ||
-            storeConfig.startupTime != serviceConfig.startupTime
-          ) {
-            return _store.clear().then(() => {
-              return _store.setItem('config', serviceConfig).catch((err) => {
+  /**
+   * Set the store version
+   */
+  const _initializeStore = once(function _initializeStore() {
+    return _store
+      .getItem<ServiceConfig>('/__config')
+      .then((storeConfig) => {
+        if (storeConfig == null) {
+          return fetchWithRetry(1, serviceUrl)
+            .then((response) => {
+              if (!response.ok) {
                 console.error(
-                  'Unable to store WdkService item with key `config`.',
-                  err
+                  `Fetching ${serviceUrl} failed for _initializeStore: ${response.statusText}`
                 );
-                return serviceConfig;
-              });
+                throw new Error('Failed to initialize service');
+              }
+              return response.json();
+            })
+            .then((serviceConfig: ServiceConfig) => {
+              return _store
+                .setItem('/__config', serviceConfig)
+                .then(() => serviceConfig);
             });
-          }
-          return serviceConfig;
-        })
-        .then((serviceConfig) => {
-          _version = serviceConfig.startupTime;
-          return _version;
-        });
-    }
-    return _initialCheck;
-  }
+        }
+        return storeConfig;
+      })
+      .then((config) => {
+        _version = config.startupTime;
+        return _version;
+      });
+  });
 
   function _clearCache() {
     return _store.clear();
   }
 
-  function getVersion() {
-    return _checkStoreVersion();
+  async function getVersion() {
+    const { startupTime } = await getConfig();
+    return startupTime;
   }
 
   function getRecordTypesPath() {

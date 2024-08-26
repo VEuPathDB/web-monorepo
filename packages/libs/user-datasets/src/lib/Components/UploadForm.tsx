@@ -7,15 +7,17 @@ import React, {
   useState,
 } from 'react';
 
+import { Link } from 'react-router-dom';
+
 import { keyBy } from 'lodash';
 
-import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import {
   TextBox,
   TextArea,
   FileInput,
   RadioList,
   SingleSelect,
+  Loading,
 } from '@veupathdb/wdk-client/lib/Components';
 
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -28,6 +30,9 @@ import {
   NewUserDataset,
   ResultUploadConfig,
 } from '../Utils/types';
+
+import { Modal } from '@veupathdb/coreui';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 import './UploadForm.scss';
 
@@ -42,8 +47,11 @@ interface Props<T extends string = string> {
   strategyOptions: StrategySummary[];
   resultUploadConfig?: ResultUploadConfig;
   clearBadUpload: () => void;
-  submitForm: (newUserDataset: FormSubmission, redirectTo?: string) => void;
+  submitForm: (formSubmission: FormSubmission, baseUrl?: string) => void;
+  uploadProgress?: number | null;
+  dispatchUploadProgress: (progress: number | null) => void;
   supportedFileUploadTypes: string[];
+  maxSizeBytes?: number;
 }
 
 type DataUploadMode = 'file' | 'url' | 'strategy' | 'step';
@@ -92,7 +100,10 @@ function UploadForm({
   resultUploadConfig,
   clearBadUpload,
   submitForm,
+  uploadProgress,
+  dispatchUploadProgress,
   supportedFileUploadTypes,
+  maxSizeBytes,
 }: Props) {
   const strategyOptionsByStrategyId = useMemo(
     () => keyBy(strategyOptions, (option) => option.strategyId),
@@ -204,7 +215,7 @@ function UploadForm({
         setErrorMessages(formValidation.errors);
       } else {
         setSubmitting(true);
-        submitForm(formValidation.submission, `${baseUrl}/recent`);
+        submitForm(formValidation.submission, baseUrl);
       }
     },
     [
@@ -222,10 +233,11 @@ function UploadForm({
 
   useEffect(() => {
     if (badUploadMessage != null) {
+      dispatchUploadProgress(null);
       setErrorMessages([badUploadMessage.message]);
       setSubmitting(false);
     }
-  }, [badUploadMessage]);
+  }, [badUploadMessage, dispatchUploadProgress]);
 
   useEffect(() => {
     return () => {
@@ -243,11 +255,14 @@ function UploadForm({
 
   const defaultFileInputField = (
     <FileInput
-      accept={supportedFileUploadTypes
-        .map((fileUploadType) => `.${fileUploadType}`)
-        .join(',')}
+      accept={
+        supportedFileUploadTypes
+          ?.map((fileUploadType) => `.${fileUploadType}`)
+          .join(',') || undefined
+      }
       required={dataUploadMode === 'file'}
       disabled={dataUploadMode !== 'file' || useFixedUploadMethod}
+      maxSizeBytes={maxSizeBytes}
       onChange={(file) => {
         const fileWithSpacedRemovedFromName =
           file && new File([file], file?.name.replace(/\s+/g, '_'), file);
@@ -369,6 +384,18 @@ function UploadForm({
       {errorMessages.length > 0 && <ErrorMessage errors={errorMessages} />}
       <div>
         <h2>{datasetUploadType.uploadTitle}</h2>
+        <Banner
+          banner={{
+            type: 'warning',
+            message: (
+              <>
+                Before uploading your dataset, please ensure your data is
+                formatted according to the instructions listed in the{' '}
+                <Link to={{ pathname: '../datasets/help' }}>"Help" tab</Link>.
+              </>
+            ),
+          }}
+        />
         <div className="formSection">
           <FieldLabel required htmlFor="data-set-name">
             Name
@@ -437,7 +464,6 @@ function UploadForm({
                       `Unrecognized upload method '${value}' encountered.`
                     );
                   }
-
                   setDataUploadMode(value);
                 }}
                 items={uploadMethodItems}
@@ -449,8 +475,63 @@ function UploadForm({
       <button type="submit" className="btn" disabled={submitting}>
         Upload Data Set
       </button>
+      <Modal
+        visible={submitting && Boolean(uploadProgress)}
+        toggleVisible={() => null}
+        styleOverrides={{
+          content: {
+            size: {
+              height: '100%',
+              width: '100%',
+            },
+            padding: {
+              right: 10,
+              left: 10,
+            },
+          },
+          size: {
+            height: 150,
+            width: 'auto',
+          },
+        }}
+      >
+        <UploadProgress uploadProgress={uploadProgress} />
+      </Modal>
       {datasetUploadType.formConfig?.renderInfo?.()}
     </form>
+  );
+}
+
+function UploadProgress({
+  uploadProgress,
+}: {
+  uploadProgress?: number | null;
+}) {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: '1em',
+        fontSize: '1.5em',
+        height: '100%',
+      }}
+    >
+      {uploadProgress && uploadProgress !== 100 && (
+        <>
+          <progress id="file" max="100" value={uploadProgress} />
+          <label htmlFor="file">Uploading...</label>
+        </>
+      )}
+      {uploadProgress === 100 && (
+        <>
+          <Loading style={{ padding: '1em' }} />
+          <span>Waiting on server response...</span>
+        </>
+      )}
+    </div>
   );
 }
 
@@ -474,17 +555,19 @@ function FieldLabel({ children, required, ...labelProps }: FieldLabelProps) {
 
 function ErrorMessage({ errors }: { errors: string[] }) {
   return (
-    <div className="ui-state-error" style={{ fontSize: 'large' }}>
-      <div>
-        <Icon fa="exclamation-triangle" />
-        &nbsp; Could not upload data set
-      </div>
-      {errors.map((error, ix) => (
-        <div key={ix} className="ui-state-error-text">
-          {error}
-        </div>
-      ))}
-    </div>
+    <Banner
+      banner={{
+        type: 'error',
+        message: (
+          <div style={{ lineHeight: 1.5 }}>
+            <span>Could not upload data set</span>
+            {errors.map((error, index) => (
+              <div key={index}>{error}</div>
+            ))}
+          </div>
+        ),
+      }}
+    />
   );
 }
 
@@ -524,6 +607,7 @@ function validateForm<T extends string = string>(
       datasetType: datasetUploadType.type,
       projects: [projectId],
       dataUploadSelection,
+      visibility: 'private',
     },
   };
 }

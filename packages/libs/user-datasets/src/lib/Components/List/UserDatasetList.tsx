@@ -31,6 +31,7 @@ import {
 
 import UserDatasetEmptyState from '../EmptyState';
 import SharingModal from '../Sharing/UserDatasetSharingModal';
+import CommunityModal from '../Sharing/UserDatasetCommunityModal';
 import UserDatasetStatus from '../UserDatasetStatus';
 import { normalizePercentage, textCell } from '../UserDatasetUtils';
 
@@ -39,6 +40,8 @@ import { DateTime } from '../DateTime';
 
 import { ThemedGrantAccessButton } from '../ThemedGrantAccessButton';
 import { ThemedDeleteButton } from '../ThemedDeleteButton';
+import { Public } from '@material-ui/icons';
+import { Tooltip } from '@veupathdb/coreui';
 
 interface Props {
   baseUrl: string;
@@ -49,13 +52,22 @@ interface Props {
   userDatasets: UserDataset[];
   filterByProject: boolean;
   shareUserDatasets: (
-    userDatasetIds: number[],
-    recipientUserIds: number[]
+    userDatasetIds: string[],
+    recipientUserIds: number[],
+    context: 'datasetDetails' | 'datasetsList'
   ) => any;
   unshareUserDatasets: (
-    userDatasetIds: number[],
-    recipientUserIds: number[]
+    userDatasetId: string,
+    recipientUserId: number,
+    context: 'datasetDetails' | 'datasetsList'
   ) => any;
+  sharingModalOpen: boolean;
+  sharingSuccess: (shareSuccessful: boolean | undefined) => any;
+  sharingError: (shareError: Error | undefined) => any;
+  updateSharingModalState: (isOpen: boolean) => any;
+  sharingDatasetPending: boolean;
+  shareSuccessful: boolean | undefined;
+  shareError: Error | undefined;
   removeUserDataset: (dataset: UserDataset) => any;
   updateUserDatasetDetail: (
     userDataset: UserDataset,
@@ -64,13 +76,23 @@ interface Props {
   updateProjectFilter: (filterByProject: boolean) => any;
   quotaSize: number;
   dataNoun: DataNoun;
+  enablePublicUserDatasets: boolean;
+  communityModalOpen: boolean;
+  updateCommunityModalVisibility: (visibility: boolean) => any;
+  updateDatasetCommunityVisibility: (
+    datasetIds: string[],
+    isVisibleToCommunity: boolean,
+    context: 'datasetDetails' | 'datasetsList'
+  ) => any;
+  updateDatasetCommunityVisibilityError: string | undefined;
+  updateDatasetCommunityVisibilityPending: boolean;
+  updateDatasetCommunityVisibilitySuccess: boolean;
 }
 
 interface State {
-  selectedRows: number[];
+  selectedRows: Array<number | string>;
   uiState: { sort: MesaSortObject };
   searchTerm: string;
-  sharingModalOpen: boolean;
   editingCache: any;
 }
 
@@ -94,7 +116,6 @@ class UserDatasetList extends React.Component<Props, State> {
         },
       },
       editingCache: {},
-      sharingModalOpen: false,
       searchTerm: '',
     };
 
@@ -122,7 +143,7 @@ class UserDatasetList extends React.Component<Props, State> {
   }
 
   isRowSelected(row: UserDataset): boolean {
-    const id: number = row.id;
+    const id: string = row.id;
     const { selectedRows } = this.state;
     return selectedRows.includes(id);
   }
@@ -150,9 +171,22 @@ class UserDatasetList extends React.Component<Props, State> {
       : dataset.sharedWith.map((share) => share.userDisplayName).join(', ');
   }
 
+  renderCommunityCell(cellProps: MesaDataCellProps) {
+    const dataset: UserDataset = cellProps.row;
+    const isPublic = dataset.meta.visibility === 'public';
+    if (!isPublic) return null;
+    return (
+      <Tooltip
+        title={`This ${this.props.dataNoun.singular} is visible to the community.`}
+      >
+        <Public className="Community-visible" />
+      </Tooltip>
+    );
+  }
+
   renderStatusCell(cellProps: MesaDataCellProps) {
     const userDataset: UserDataset = cellProps.row;
-    const { baseUrl, projectId, projectName } = this.props;
+    const { baseUrl, projectId, projectName, dataNoun } = this.props;
     return (
       <UserDatasetStatus
         baseUrl={baseUrl}
@@ -161,6 +195,7 @@ class UserDatasetList extends React.Component<Props, State> {
         userDataset={userDataset}
         projectId={projectId}
         displayName={projectName}
+        dataNoun={dataNoun}
       />
     );
   }
@@ -273,6 +308,18 @@ class UserDatasetList extends React.Component<Props, State> {
         sortable: true,
         renderCell: this.renderSharedWithCell,
       },
+      ...(this.props.enablePublicUserDatasets
+        ? [
+            {
+              key: 'visibility',
+              name: 'Community',
+              sortable: true,
+              helpText: `Indicates if the ${this.props.dataNoun.singular} is visible to the community.`,
+              style: { textAlign: 'center' },
+              renderCell: this.renderCommunityCell.bind(this),
+            },
+          ]
+        : []),
       {
         key: 'created',
         name: 'Created',
@@ -282,9 +329,9 @@ class UserDatasetList extends React.Component<Props, State> {
         )),
       },
       {
-        key: 'datafiles',
+        key: 'fileCount',
         name: 'File Count',
-        renderCell: textCell('datafiles', (files: any[]) => files.length),
+        renderCell: textCell('fileCount', (count: number) => count),
       },
       {
         key: 'size',
@@ -297,25 +344,25 @@ class UserDatasetList extends React.Component<Props, State> {
         name: 'Quota Usage',
         sortable: true,
         renderCell: textCell('percentQuotaUsed', (percent: number) =>
-          percent ? `${normalizePercentage(percent)}%` : null
+          percent || percent === 0 ? `${normalizePercentage(percent)}%` : null
         ),
       },
     ].filter((column) => column);
   }
 
   onRowSelect(row: UserDataset): void {
-    const id: number = row.id;
+    const id: number | string = row.id;
     const { selectedRows } = this.state;
     if (selectedRows.includes(id)) return;
-    const newSelection: number[] = [...selectedRows, id];
+    const newSelection: Array<number | string> = [...selectedRows, id];
     this.setState({ selectedRows: newSelection });
   }
 
   onRowDeselect(row: UserDataset): void {
-    const id: number = row.id;
+    const id: number | string = row.id;
     const { selectedRows } = this.state;
     if (!selectedRows.includes(id)) return;
-    const newSelection: number[] = selectedRows.filter(
+    const newSelection: Array<number | string> = selectedRows.filter(
       (selectedId) => selectedId !== id
     );
     this.setState({ selectedRows: newSelection });
@@ -328,14 +375,19 @@ class UserDatasetList extends React.Component<Props, State> {
       .filter((dataset: UserDataset) => !selectedRows.includes(dataset.id))
       .map((dataset: UserDataset) => dataset.id);
     if (!unselectedRows.length) return;
-    const newSelection: number[] = [...selectedRows, ...unselectedRows];
+    const newSelection: Array<number | string> = [
+      ...selectedRows,
+      ...unselectedRows,
+    ];
     this.setState({ selectedRows: newSelection });
   }
 
   onMultipleRowDeselect(rows: UserDataset[]): void {
     if (!rows.length) return;
     const { selectedRows } = this.state;
-    const deselectedIds: number[] = rows.map((row: UserDataset) => row.id);
+    const deselectedIds: Array<number | string> = rows.map(
+      (row: UserDataset) => row.id
+    );
     const newSelection = selectedRows.filter(
       (id) => !deselectedIds.includes(id)
     );
@@ -365,16 +417,25 @@ class UserDatasetList extends React.Component<Props, State> {
 
   getTableActions() {
     const { isMyDataset } = this;
-    const { removeUserDataset, dataNoun } = this.props;
+    const { removeUserDataset, dataNoun, enablePublicUserDatasets } =
+      this.props;
     return [
       {
-        callback: (rows: UserDataset[]) => {
-          this.openSharingModal();
-        },
+        callback: (rows: UserDataset[]) => {},
         element: (
           <ThemedGrantAccessButton
             buttonText={`Grant Access to ${dataNoun.plural}`}
-            onPress={() => null}
+            onPress={(grantType) => {
+              switch (grantType) {
+                case 'community':
+                  this.props.updateCommunityModalVisibility(true);
+                  break;
+                case 'individual':
+                  this.openSharingModal();
+                  break;
+              }
+            }}
+            enablePublicUserDatasets={enablePublicUserDatasets}
           />
         ),
         selectionRequired: true,
@@ -527,13 +588,13 @@ class UserDatasetList extends React.Component<Props, State> {
   }
 
   closeSharingModal() {
-    const sharingModalOpen = false;
-    this.setState({ sharingModalOpen });
+    this.props.updateSharingModalState(false);
   }
 
   openSharingModal() {
-    const sharingModalOpen = true;
-    this.setState({ sharingModalOpen });
+    this.props.sharingSuccess(undefined);
+    this.props.sharingError(undefined);
+    this.props.updateSharingModalState(true);
   }
 
   toggleProjectScope(newValue: boolean) {
@@ -551,8 +612,19 @@ class UserDatasetList extends React.Component<Props, State> {
       filterByProject,
       quotaSize,
       dataNoun,
+      sharingModalOpen,
+      sharingDatasetPending,
+      shareSuccessful,
+      shareError,
+      updateUserDatasetDetail,
+      enablePublicUserDatasets,
+      updateDatasetCommunityVisibility,
+      updateCommunityModalVisibility,
+      updateDatasetCommunityVisibilityError,
+      updateDatasetCommunityVisibilityPending,
+      updateDatasetCommunityVisibilitySuccess,
     } = this.props;
-    const { uiState, selectedRows, searchTerm, sharingModalOpen } = this.state;
+    const { uiState, selectedRows, searchTerm } = this.state;
 
     const rows = userDatasets;
     const selectedDatasets = rows.filter(isRowSelected);
@@ -578,7 +650,7 @@ class UserDatasetList extends React.Component<Props, State> {
 
     const totalSize = userDatasets
       .filter((ud) => ud.ownerUserId === user.id)
-      .map((ud) => ud.size)
+      .map((ud) => ud.size ?? 0)
       .reduce(add, 0);
 
     const totalPercent = totalSize / quotaSize;
@@ -599,9 +671,29 @@ class UserDatasetList extends React.Component<Props, State> {
                     datasets={selectedDatasets}
                     deselectDataset={this.onRowDeselect}
                     shareUserDatasets={shareUserDatasets}
+                    context="datasetsList"
                     unshareUserDatasets={unshareUserDatasets}
                     onClose={this.closeSharingModal}
                     dataNoun={dataNoun}
+                    sharingDatasetPending={sharingDatasetPending}
+                    shareSuccessful={shareSuccessful}
+                    shareError={shareError}
+                    updateUserDatasetDetail={updateUserDatasetDetail}
+                  />
+                ) : null}
+                {this.props.communityModalOpen && enablePublicUserDatasets ? (
+                  <CommunityModal
+                    user={user}
+                    datasets={selectedDatasets}
+                    context="datasetsList"
+                    onClose={() => updateCommunityModalVisibility(false)}
+                    dataNoun={dataNoun}
+                    updateDatasetCommunityVisibility={
+                      updateDatasetCommunityVisibility
+                    }
+                    updatePending={updateDatasetCommunityVisibilityPending}
+                    updateSuccessful={updateDatasetCommunityVisibilitySuccess}
+                    updateError={updateDatasetCommunityVisibilityError}
                   />
                 ) : null}
                 <SearchBox

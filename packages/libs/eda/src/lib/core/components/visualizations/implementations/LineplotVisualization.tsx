@@ -19,7 +19,7 @@ import {
   useFindEntityAndVariable,
   useStudyEntities,
 } from '../../../hooks/workspace';
-import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
+import { useOutputEntity } from '../../../hooks/findOutputEntity';
 import { Filter } from '../../../types/filter';
 
 import { VariableDescriptor } from '../../../types/variable';
@@ -134,7 +134,7 @@ import { useDeepValue } from '../../../hooks/immutability';
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 import { FloatingLineplotExtraProps } from '../../../../map/analysis/hooks/plugins/lineplot';
 
 import * as DateMath from 'date-arithmetic';
@@ -158,6 +158,8 @@ const modalPlotContainerStyles = {
   height: '100%',
   margin: 'auto',
 };
+
+const EMPTY_ARRAY: string[] = [];
 
 type LinePlotDataSeriesWithType = LinePlotDataSeries & {
   seriesType?: 'standard' | 'zeroOverZero';
@@ -323,9 +325,9 @@ function LineplotViz(props: VisualizationProps<Options>) {
 
   const colorPaletteOverride =
     neutralPaletteProps.colorPalette ??
-    options?.getOverlayType?.() === 'continuous'
+    (options?.getOverlayType?.() === 'continuous'
       ? SequentialGradientColorscale
-      : undefined;
+      : undefined);
 
   const findEntityAndVariable = useFindEntityAndVariable(filters);
 
@@ -620,9 +622,9 @@ function LineplotViz(props: VisualizationProps<Options>) {
     true
   );
 
-  const outputEntity = useFindOutputEntity(
+  const outputEntity = useOutputEntity(
     dataElementDependencyOrder,
-    vizConfig,
+    selectedVariables,
     'yAxisVariable'
   );
 
@@ -693,7 +695,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
   const data = usePromise(
     useCallback(async (): Promise<LinePlotDataWithCoverage | undefined> => {
       if (
-        outputEntity == null ||
         xAxisVariable == null ||
         yAxisVariable == null ||
         filteredCounts.pending ||
@@ -735,6 +736,8 @@ function LineplotViz(props: VisualizationProps<Options>) {
         dataElementDependencyOrder
       );
 
+      if (outputEntity == null) return undefined;
+
       // check independentValueType/dependentValueType
       const independentValueType = xAxisVariable?.type
         ? xAxisVariable.type
@@ -754,6 +757,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
 
       const response = await dataClient.getLineplot(
         computation.descriptor.type,
+        visualization.descriptor.type,
         params
       );
 
@@ -777,9 +781,13 @@ function LineplotViz(props: VisualizationProps<Options>) {
         );
 
       // This is used for reordering series data.
-      // We don't want to do this for non-continuous variables.
+      // We must not reorder binned data from continous vars (number and date)
+      // because then the data gets "lost" - nothing plotted.
+      // Also integer ordinals get binned too - so we disable the vocabulary for them.
       const xAxisVocabulary =
-        xAxisVariable.dataShape === 'continuous'
+        xAxisVariable.dataShape === 'continuous' ||
+        (xAxisVariable.dataShape === 'ordinal' &&
+          xAxisVariable.type === 'integer')
           ? []
           : fixLabelsForNumberVariables(
               xAxisVariable?.vocabulary,
@@ -1762,12 +1770,12 @@ function LineplotViz(props: VisualizationProps<Options>) {
           }
         : {
             aggregationType: 'proportion',
-            options: fullVocabulary ?? vocabulary ?? [],
+            options: fullVocabulary ?? vocabulary ?? EMPTY_ARRAY,
             disabledOptions: fullVocabulary
               ? fullVocabulary.filter((value) => vocabulary?.includes(value))
               : [],
-            numeratorValues: vizConfig.numeratorValues ?? [],
-            denominatorValues: vizConfig.denominatorValues ?? [],
+            numeratorValues: vizConfig.numeratorValues ?? EMPTY_ARRAY,
+            denominatorValues: vizConfig.denominatorValues ?? EMPTY_ARRAY,
             // onChange handlers now ensure the available options belong to the vocabulary (which can change due to direct filters)
             onNumeratorChange: (values) =>
               onNumeratorValuesChange(
@@ -2094,14 +2102,8 @@ function getRequestParams(
     facetVariable,
     valueSpecConfig,
     showMissingness,
-    binWidth = NumberVariable.is(xAxisVariableMetadata) ||
-    DateVariable.is(xAxisVariableMetadata)
-      ? xAxisVariableMetadata.distributionDefaults.binWidthOverride ??
-        xAxisVariableMetadata.distributionDefaults.binWidth
-      : undefined,
-    binWidthTimeUnit = xAxisVariableMetadata?.type === 'date'
-      ? xAxisVariableMetadata.distributionDefaults.binUnits
-      : undefined,
+    binWidth,
+    binWidthTimeUnit,
     useBinning,
     numeratorValues,
     denominatorValues,
@@ -2132,6 +2134,28 @@ function getRequestParams(
       ? 'TRUE'
       : 'FALSE';
 
+  // If a binWidth is passed to the back end, we should send a viewport too.
+  // This helps prevent a 500 in edge-case scenarios where the variable is single-valued.
+  // It doesn't really matter what the viewport is, but we send either the custom range
+  // or the variable's automatically annotated range.
+  // The back end requires strings for some reason.
+  const viewport = binWidth
+    ? vizConfig.independentAxisRange != null
+      ? {
+          xMin: String(vizConfig.independentAxisRange.min),
+          xMax: String(vizConfig.independentAxisRange.max),
+        }
+      : (xAxisVariableMetadata.type === 'integer' ||
+          xAxisVariableMetadata.type === 'number' ||
+          xAxisVariableMetadata.type === 'date') &&
+        xAxisVariableMetadata.distributionDefaults != null
+      ? {
+          xMin: String(xAxisVariableMetadata.distributionDefaults.rangeMin),
+          xMax: String(xAxisVariableMetadata.distributionDefaults.rangeMax),
+        }
+      : undefined
+    : undefined;
+
   return (
     customMakeRequestParams?.({
       studyId,
@@ -2150,6 +2174,7 @@ function getRequestParams(
         xAxisVariable: xAxisVariable!, // these will never be undefined because
         yAxisVariable: yAxisVariable!, // data requests are only made when they have been chosen by user
         ...binSpec,
+        viewport,
         overlayVariable: overlayVariable,
         facetVariable: facetVariable ? [facetVariable] : [],
         showMissingness: showMissingness ? 'TRUE' : 'FALSE',
@@ -2774,7 +2799,6 @@ export function AggregationInputs<F extends string, P extends Array<string>>(
   props: AggregationConfig<F, P>
 ) {
   const classes = useInputStyles();
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       {props.aggregationType === 'function' ? (

@@ -7,7 +7,7 @@ import {
 import Templates from '@veupathdb/coreui/lib/components/Mesa/Templates';
 
 import './StepAnalysisEnrichmentResult.scss';
-import { Tooltip } from '@veupathdb/wdk-client/lib/Components';
+import { Tooltip } from '@veupathdb/coreui';
 
 const baseColumnSettings: Pick<
   ColumnSettings<any>,
@@ -23,7 +23,7 @@ const baseColumnSettings: Pick<
     key: 'experimentName',
     renderCell: (cellProps: any) => (
       <Tooltip
-        content={Templates.htmlCell({
+        title={Templates.htmlCell({
           ...cellProps,
           key: 'description',
           value: cellProps.row.description,
@@ -86,7 +86,7 @@ const hpiGeneListResultColumns = (
     helpText: headerDescription[column.key],
   }));
 
-export const StepAnalysisHpiGeneListResults: React.SFC<StepAnalysisResultPluginProps> =
+export const StepAnalysisHpiGeneListResults: React.FunctionComponent<StepAnalysisResultPluginProps> =
   ({ analysisResult: { resultData, headerRow, headerDescription } }) => (
     <>
       <h3>Analysis Results: </h3>

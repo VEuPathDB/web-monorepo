@@ -2,7 +2,7 @@ import { intersection } from 'lodash';
 
 import { DatasetUploadPageConfig, DatasetUploadTypeConfig } from './types';
 
-type ImplementedUploadTypes = 'biom' | 'gene-list' | 'isasimple';
+type ImplementedUploadTypes = 'biom' | 'genelist' | 'isasimple';
 
 export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
   {
@@ -10,12 +10,23 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
       type: 'biom',
       uploadTitle: 'Upload My Data Set',
       formConfig: {
+        summary: {
+          inputProps: {
+            placeholder: 'brief summary of the data set in 1-2 sentences',
+          },
+        },
+        description: {
+          inputProps: {
+            required: false,
+            placeholder:
+              'optional longer description of the data set including background, study objectives, methodology, etc.',
+          },
+        },
         renderInfo: () => (
           <p className="formInfo">
             We accept any file in the{' '}
             <a href="http://biom-format.org">BIOM format</a>, either JSON-based
-            (BIOM 1.0) or HDF5 (BIOM 2.0+). The maximum allowed file size is
-            1GB.
+            (BIOM 1.0) or HDF5 (BIOM 2.0+).
             <br />
             <br />
             If possible, try including taxonomic information and rich sample
@@ -24,11 +35,23 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
             level, using our filtering and visualisation tools.
           </p>
         ),
-        uploadMethodConfig: {},
+        uploadMethodConfig: {
+          file: {
+            maxSizeBytes: 100 * 1000 * 1000, // 100MB
+            render: ({ fieldNode }) => (
+              <>
+                {fieldNode}
+                <div style={{ marginTop: '0.25em' }}>
+                  File must be less than 100MB
+                </div>
+              </>
+            ),
+          },
+        },
       },
     },
-    'gene-list': {
-      type: 'gene-list',
+    genelist: {
+      type: 'genelist',
       uploadTitle: 'Upload My Gene List',
       formConfig: {
         uploadMethodConfig: {

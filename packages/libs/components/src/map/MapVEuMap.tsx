@@ -28,6 +28,7 @@ import { Map, DomEvent, LatLngBounds } from 'leaflet';
 import domToImage from 'dom-to-image';
 import { makeSharedPromise } from '../utils/promise-utils';
 import { Undo } from '@veupathdb/coreui';
+import { mouseEventHasModifierKey } from './BoundsDriftMarker';
 
 // define Viewport type
 export type Viewport = {
@@ -271,7 +272,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       ) : null}
 
       {showLayerSelector && (
-        <LayersControl position="topleft">
+        <LayersControl position="topright">
           {Object.entries(baseLayers).map(([name, layerProps], i) => (
             <LayersControl.BaseLayer
               name={name}
@@ -366,9 +367,10 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
     baselayerchange: (e: { name: string }) => {
       onBaseLayerChanged && onBaseLayerChanged(e.name as BaseLayerChoice);
     },
-    // map click event: remove selected highlight markers
-    click: () => {
-      if (onMapClick != null) onMapClick();
+    // map click event: remove selected markers and close side panel
+    click: (e) => {
+      if (onMapClick != null && !mouseEventHasModifierKey(e.originalEvent))
+        onMapClick();
     },
   });
 
@@ -436,12 +438,12 @@ function CustomZoomControl(props: CustomZoomControlProps) {
     >
       <div
         className="leaflet-top leaflet-right"
-        style={{ top: '0px', right: '-3px' }}
+        style={{ top: '55px', right: '0px', zIndex: 'auto' }}
       >
         <div className="leaflet-control-zoom leaflet-bar leaflet-control">
           <a
             className={'leaflet-control-zoom-in' + disableMaxZoomButton}
-            href="#"
+            href="/#"
             title="Zoom in"
             role="button"
             aria-label="Zoom in"
@@ -451,7 +453,7 @@ function CustomZoomControl(props: CustomZoomControlProps) {
           </a>
           <a
             className={'leaflet-control-zoom-out' + disableMinZoomButton}
-            href="#"
+            href="/#"
             title="Zoom out"
             role="button"
             aria-label="Zoom out"
@@ -461,7 +463,7 @@ function CustomZoomControl(props: CustomZoomControlProps) {
           </a>
           <a
             className="leaflet-control-zoom-out"
-            href="#"
+            href="/#"
             title="zoom to data"
             role="button"
             aria-label="zoom to data"

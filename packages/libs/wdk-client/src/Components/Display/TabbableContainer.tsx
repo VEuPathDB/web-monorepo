@@ -6,6 +6,7 @@ type Props = {
   autoFocus: boolean;
   className?: string;
   onKeyDown?: (event: RKeyboardEvent) => void;
+  children: React.ReactNode;
 };
 
 /**

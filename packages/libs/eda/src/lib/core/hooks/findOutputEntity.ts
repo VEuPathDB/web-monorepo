@@ -12,7 +12,7 @@ import { leastAncestralVariable } from '../utils/data-element-constraints';
  * @param providedEntityId Provided entity id, in cases where an app provides the output entity.
  * @returns
  */
-export function useFindOutputEntity(
+export function useOutputEntity(
   dataElementDependencyOrder: string[][] | undefined,
   vizConfig: Record<string, unknown>,
   fallbackVariableName: string,

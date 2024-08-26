@@ -5,7 +5,7 @@ import {
   MesaStateProps,
 } from '@veupathdb/coreui/lib/components/Mesa/types';
 import { AllValuesDefinition } from '../../../core';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { UNSELECTED_TOKEN } from '../../constants';
@@ -250,6 +250,7 @@ export function CategoricalMarkerConfigurationTable<
             // marginTop: 20,
           }
         }
+        labelStyles={{ fontSize: '1.0em', marginBottom: '-0.5em' }}
         label="Show counts for:"
         selectedOption={
           selectedCountsOption == null ? 'filtered' : selectedCountsOption

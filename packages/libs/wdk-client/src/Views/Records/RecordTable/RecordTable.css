@@ -1,0 +1,36 @@
+.DataCell:empty:after {
+  content: 'N/A';
+  opacity: 0.4;
+}
+
+.DataCell > .Cell:empty:after {
+  content: 'N/A';
+  opacity: 0.4;
+}
+
+/* Enable this if we want no wrapping */
+/* .DataCell {
+  white-space: nowrap;
+} */
+
+.wdk-RecordFilterSearchBox {
+  width: 300px;
+}
+
+.wdk-RecordTable > .Mesa.MesaComponent > .MesaComponent > .DataTable > table {
+  width: auto;
+}
+
+.MesaComponent > .DataTable {
+  position: relative;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.wdk-RecordTable__Orthologs
+  > .Mesa.MesaComponent
+  > .Toolbar
+  > .ActionToolbar-Info {
+  min-height: auto;
+  padding: 0;
+}

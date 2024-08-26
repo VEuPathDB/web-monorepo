@@ -4,7 +4,7 @@ import { emptyAction } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
 import { getSearchableString } from '@veupathdb/wdk-client/lib/Views/Records/RecordUtils';
 
 import { showUnreleasedData } from '../../config';
-import { isDiyWdkRecordId } from '@veupathdb/wdk-client/lib/Utils/diyDatasets';
+import { isDiyWdkRecordId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
 
 export const STUDIES_REQUESTED = 'studies/studies-requested';
 export const STUDIES_RECEIVED = 'studies/studies-received';

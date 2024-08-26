@@ -2,7 +2,7 @@ import { Close, FloatingButton, H5, Paragraph } from '@veupathdb/coreui';
 import { useState } from 'react';
 import { v4 as uuid } from 'uuid';
 
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '@veupathdb/coreui';
 import { Add } from '@material-ui/icons';
 import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -17,17 +17,18 @@ import { MarkerConfiguration } from './appState';
 import { ComputationPlugin } from '../../core/components/computations/Types';
 import { VisualizationPlugin } from '../../core/components/visualizations/VisualizationPlugin';
 import { StartPage } from '../../core/components/computations/StartPage';
+import { MapTypeConfigPanelProps } from './mapTypes/types';
 
 interface Props {
   activeVisualizationId: string | undefined;
   analysisState: AnalysisState;
-  setActiveVisualizationId: (id?: string) => void;
+  setActiveVisualizationId: (id?: string, isNew?: boolean) => void;
   apps: ComputationAppOverview[];
   plugins: Partial<Record<string, ComputationPlugin>>;
   //  visualizationPlugins: Partial<Record<string, VisualizationPlugin>>;
   geoConfigs: GeoConfig[];
   mapType?: MarkerConfiguration['type'];
-  setHideVizInputsAndControls: (value: boolean) => void;
+  setIsSidePanelExpanded: MapTypeConfigPanelProps['setIsSidePanelExpanded'];
 }
 
 const mapVizManagementClassName = makeClassNameHelper('MapVizManagement');
@@ -40,14 +41,14 @@ export default function MapVizManagement({
   setActiveVisualizationId,
   plugins,
   mapType,
-  setHideVizInputsAndControls,
+  setIsSidePanelExpanded,
 }: Props) {
   const [isVizSelectorVisible, setIsVizSelectorVisible] = useState(false);
 
   function onVisualizationCreated(visualizationId: string) {
     setIsVizSelectorVisible(false);
-    setActiveVisualizationId(visualizationId);
-    setHideVizInputsAndControls(false);
+    setActiveVisualizationId(visualizationId, true);
+    setIsSidePanelExpanded(false);
   }
 
   if (!analysisState.analysis) return null;

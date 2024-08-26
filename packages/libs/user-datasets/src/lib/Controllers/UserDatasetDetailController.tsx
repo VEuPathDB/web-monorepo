@@ -14,6 +14,11 @@ import {
   shareUserDatasets,
   unshareUserDatasets,
   updateUserDatasetDetail,
+  updateSharingModalState,
+  sharingError,
+  sharingSuccess,
+  updateCommunityModalVisibility,
+  updateDatasetCommunityVisibility,
 } from '../Actions/UserDatasetsActions';
 
 import BigwigDatasetDetail from '../Components/Detail/BigwigDatasetDetail';
@@ -33,6 +38,11 @@ const ActionCreators = {
   removeUserDataset,
   shareUserDatasets,
   unshareUserDatasets,
+  updateSharingModalState,
+  sharingError,
+  sharingSuccess,
+  updateCommunityModalVisibility,
+  updateDatasetCommunityVisibility,
 };
 
 export type UserDatasetDetailProps = any;
@@ -49,6 +59,7 @@ type OwnProps = {
     ComponentType<UserDatasetDetailProps>
   >;
   dataNoun: DataNoun;
+  enablePublicUserDatasets: boolean;
 };
 type MergedProps = {
   ownProps: OwnProps;
@@ -88,16 +99,29 @@ class UserDatasetDetailController extends PageController<MergedProps> {
     const idChanged =
       prevProps == null || prevProps.ownProps.id !== this.props.ownProps.id;
     if (idChanged) {
-      this.props.dispatchProps.loadUserDatasetDetail(
-        Number(this.props.ownProps.id)
-      );
+      this.props.dispatchProps.loadUserDatasetDetail(this.props.ownProps.id);
     }
   }
 
   isRenderDataLoadError() {
+    const { loadError } = this.props.stateProps;
     return (
-      this.props.stateProps.loadError != null &&
-      this.props.stateProps.loadError.status >= 500
+      loadError != null &&
+      loadError.statusCode >= 400 &&
+      loadError.statusCode !== 404
+    );
+  }
+
+  isRenderDataNotFound(): boolean {
+    const { loadError } = this.props.stateProps;
+    return loadError != null && loadError.statusCode === 404;
+  }
+
+  isRenderDataPermissionDenied(): boolean {
+    const { loadError } = this.props.stateProps;
+    return (
+      loadError != null &&
+      (loadError.statusCode === 401 || loadError.statusCode === 403)
     );
   }
 
@@ -119,12 +143,12 @@ class UserDatasetDetailController extends PageController<MergedProps> {
     }
 
     switch (name) {
-      case 'Bigwigs':
-      case 'BigwigFiles':
+      case 'bigwigs':
+      case 'bigwigfiles':
         return BigwigDatasetDetail;
-      case 'RnaSeq':
+      case 'rnaseq':
         return RnaSeqDatasetDetail;
-      case 'BIOM':
+      case 'biom':
         return BiomDatasetDetail;
       default:
         return UserDatasetDetail;
@@ -148,13 +172,24 @@ class UserDatasetDetailController extends PageController<MergedProps> {
   }
 
   renderView() {
-    const { baseUrl, detailsPageTitle, id, workspaceTitle, dataNoun } =
-      this.props.ownProps;
+    const {
+      baseUrl,
+      detailsPageTitle,
+      id,
+      workspaceTitle,
+      dataNoun,
+      enablePublicUserDatasets,
+    } = this.props.ownProps;
     const {
       updateUserDatasetDetail,
       shareUserDatasets,
       removeUserDataset,
       unshareUserDatasets,
+      updateSharingModalState,
+      sharingSuccess,
+      sharingError,
+      updateCommunityModalVisibility,
+      updateDatasetCommunityVisibility,
     } = this.props.dispatchProps;
     const {
       userDatasetsById,
@@ -163,6 +198,14 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       questions,
       config,
       userDatasetUpdating,
+      sharingModalOpen,
+      sharingDatasetPending,
+      shareError,
+      shareSuccessful,
+      communityModalOpen,
+      updateDatasetCommunityVisibilityError,
+      updateDatasetCommunityVisibilityPending,
+      updateDatasetCommunityVisibilitySuccess,
     } = this.props.stateProps;
     const entry = userDatasetsById[id];
     const isOwner = !!(
@@ -184,12 +227,27 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       shareUserDatasets,
       unshareUserDatasets,
       updateUserDatasetDetail,
+      sharingModalOpen,
+      sharingDatasetPending,
+      sharingError,
+      shareError,
+      sharingSuccess,
+      shareSuccessful,
+      updateSharingModalState,
       userDataset: entry.resource,
+      fileListing: entry.fileListing,
       getQuestionUrl: this.getQuestionUrl,
       questionMap: keyBy(questions, 'fullName'),
       workspaceTitle,
       detailsPageTitle,
       dataNoun,
+      enablePublicUserDatasets,
+      updateCommunityModalVisibility,
+      updateDatasetCommunityVisibility,
+      communityModalOpen,
+      updateDatasetCommunityVisibilityError,
+      updateDatasetCommunityVisibilityPending,
+      updateDatasetCommunityVisibilitySuccess,
     };
 
     const DetailView = this.getDetailView(

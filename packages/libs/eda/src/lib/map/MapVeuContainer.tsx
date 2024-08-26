@@ -34,7 +34,7 @@ interface Props {
   edaServiceUrl: string;
   singleAppMode?: string;
   siteInformationProps: SiteInformationProps;
-  sharingUrl: string;
+  sharingUrlPrefix?: string;
   showLinkToEda?: boolean;
 }
 
@@ -43,7 +43,7 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
     singleAppMode,
     siteInformationProps,
     edaServiceUrl,
-    sharingUrl,
+    sharingUrlPrefix,
     showLinkToEda,
   } = mapVeuContainerProps;
   const edaClient = useConfiguredSubsettingClient(edaServiceUrl);
@@ -152,7 +152,7 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
                 analysisId={routeProps.match.params.analysisId}
                 siteInformationProps={siteInformationProps}
                 studyId={routeProps.match.params.studyId}
-                sharingUrl={sharingUrl}
+                sharingUrlPrefix={sharingUrlPrefix}
                 showLinkToEda={showLinkToEda}
               />
             </EDAWorkspaceContainer>

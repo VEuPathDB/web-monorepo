@@ -69,6 +69,7 @@ export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
           'request_needs_approval',
           'is_public',
           'study_access',
+          'custom_download_tab',
         ])
         .filter((attribute) => attribute in studyRecordClass.attributesMap);
       const studyRecord = await wdkService
@@ -186,12 +187,16 @@ export function isStubEntity(entity: StudyEntity) {
 
 export function useStudyMetadata(datasetId: string, client: SubsettingClient) {
   const permissionsResponse = usePermissions();
-  const { error, value } = usePromise(
+  return usePromise(
     useCallback(async () => {
       if (permissionsResponse.loading) return;
       const { permissions } = permissionsResponse;
       const studyId = permissions.perDataset[datasetId]?.studyId;
-      if (studyId == null) throw new Error('Not an eda study');
+      if (studyId == null) {
+        throw new Error(
+          `An EDA Study ID could not be found for the Data Set ${datasetId}.`
+        );
+      }
       try {
         return await client.getStudyMetadata(studyId);
       } catch (error) {
@@ -204,8 +209,10 @@ export function useStudyMetadata(datasetId: string, client: SubsettingClient) {
         }
         throw error;
       }
-    }, [client, datasetId, permissionsResponse])
+    }, [client, datasetId, permissionsResponse]),
+    {
+      keepPreviousValue: false,
+      throwError: true,
+    }
   );
-  if (error) throw error;
-  return value;
 }

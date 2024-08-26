@@ -233,6 +233,7 @@ export function TableFilter({
         [uiStateKey]: {
           ...uiState,
           sort,
+          currentPage: 1,
         },
       }));
     },
@@ -328,7 +329,7 @@ export function TableFilter({
       {tableSummary.pending && (
         <Loading style={{ position: 'absolute', top: '-1.5em' }} radius={2} />
       )}
-      {tableSummary.error && <pre>{String(tableSummary.error)}</pre>}
+      {tableSummary.error != null && <pre>{String(tableSummary.error)}</pre>}
       {tableSummary.value &&
         tableSummary.value.entityId === entity.id &&
         tableSummary.value.variableId === variable.id && (
@@ -350,6 +351,7 @@ export function TableFilter({
             // set Heading1 prefix
             filteredCountHeadingPrefix={'Subset of'}
             unfilteredCountHeadingPrefix={'All'}
+            showInternalMesaCounts={true}
           />
         )}
     </div>

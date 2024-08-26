@@ -20,7 +20,7 @@ export type SwissArmyButtonProps = Omit<
 /** Basic button with a variety of customization options. */
 export default function SwissArmyButton({
   text,
-  textTransform = 'uppercase',
+  textTransform,
   onPress,
   disabled = false,
   tooltip,
@@ -28,6 +28,8 @@ export default function SwissArmyButton({
   icon,
   styleSpec,
   ariaLabel,
+  iconPosition = 'left',
+  additionalAriaProperties = {},
 }: SwissArmyButtonProps) {
   const [buttonState, setButtonState] =
     useState<'default' | 'hover' | 'pressed'>('default');
@@ -52,7 +54,7 @@ export default function SwissArmyButton({
     return isMaterialIcon(Icon) ? (
       <span
         css={{
-          fontSize: calculatedIconSize,
+          fontSize: styleSpec.icon?.fontSize ?? calculatedIconSize,
           display: 'flex',
           alignItems: 'center',
         }}
@@ -60,14 +62,26 @@ export default function SwissArmyButton({
         <Icon
           fontSize="inherit"
           fill={styleSpec[styleState].textColor}
-          css={text && { marginRight: 10 }}
+          css={
+            !text
+              ? { margin: 0 }
+              : iconPosition === 'left'
+              ? { marginRight: 10 }
+              : { marginLeft: 10 }
+          }
         />
       </span>
     ) : (
       <Icon
-        fontSize={calculatedIconSize}
+        fontSize={styleSpec.icon?.fontSize ?? calculatedIconSize}
         fill={styleSpec[styleState].textColor}
-        css={text && { marginRight: 10 }}
+        css={
+          !text
+            ? { margin: 0 }
+            : iconPosition === 'left'
+            ? { marginRight: 10 }
+            : { marginLeft: 10 }
+        }
       />
     );
   };
@@ -117,9 +131,11 @@ export default function SwissArmyButton({
           setButtonState('default');
         }}
         onClick={onPress}
+        {...additionalAriaProperties}
       >
-        {renderIcon()}
+        {iconPosition === 'left' && renderIcon()}
         {text}
+        {iconPosition === 'right' && renderIcon()}
       </button>
       {tooltip && (
         <span

@@ -18,6 +18,7 @@ export default configure({
     rootClientUrl: process.env.ROOT_URL,
     proxies: {
       [process.env.WDK_SERVICE_ENDPOINT]: process.env.WDK_SERVICE_URL,
+      [process.env.VDI_SERVICE_ENDPOINT]: process.env.VDI_SERVICE_URL,
       [process.env.SITE_SEARCH_SERVICE_ENDPOINT]: process.env.SITE_SEARCH_SERVICE_URL,
       [process.env.EDA_SERVICE_ENDPOINT]: process.env.EDA_SERVICE_URL,
       [process.env.USER_DATASETS_WORKSPACE_IMPORT_SERVICE_ENDPOINT]: process.env.USER_DATASETS_WORKSPACE_IMPORT_SERVICE_URL,
@@ -53,6 +54,7 @@ export default configure({
         ),
         useUserDatasetsWorkspace: process.env.USER_DATASETS_WORKSPACE_ENABLED === 'true',
         datasetImportUrl: process.env.USER_DATASETS_WORKSPACE_IMPORT_SERVICE_ENDPOINT,
+        vdiServiceUrl: process.env.VDI_SERVICE_ENDPOINT,
       })
     }),
     new HtmlWebpackPlugin({

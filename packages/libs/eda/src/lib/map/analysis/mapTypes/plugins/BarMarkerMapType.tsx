@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { Variable } from '../../../../core/types/study';
 import { findEntityAndVariable } from '../../../../core/utils/study-metadata';
 import {
@@ -20,8 +20,6 @@ import { mFormatter } from '../../../../core/utils/big-number-formatters';
 import ChartMarker, {
   BaseMarkerData,
   ChartMarkerProps,
-  ChartMarkerStandalone,
-  getChartMarkerDependentAxisRange,
 } from '@veupathdb/components/lib/map/ChartMarker';
 import {
   defaultAnimationDuration,
@@ -56,6 +54,7 @@ import {
   getErrorOverlayComponent,
   getLegendErrorMessage,
   selectedMarkersLittleFilter,
+  useFloatingPanelHandlers,
 } from '../shared';
 import {
   useFindEntityAndVariable,
@@ -63,7 +62,6 @@ import {
 } from '../../../../core/hooks/workspace';
 import { DraggableLegendPanel } from '../../DraggableLegendPanel';
 import { MapLegend } from '../../MapLegend';
-import { sharedStandaloneMarkerProperties } from '../../MarkerConfiguration/CategoricalMarkerPreview';
 import { useToggleStarredVariable } from '../../../../core/hooks/starredVariables';
 import DraggableVisualization from '../../DraggableVisualization';
 import { useStandaloneVizPlugins } from '../../hooks/standaloneVizPlugins';
@@ -79,6 +77,7 @@ import { useLittleFilters } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
 import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
 import { SubStudies } from '../../SubStudies';
+
 const displayName = 'Bar plots';
 
 export const plugin: MapTypePlugin = {
@@ -108,6 +107,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     studyId,
     studyEntities,
     filters,
+    setIsSidePanelExpanded,
   } = props;
 
   const subsettingClient = useSubsettingClient();
@@ -116,8 +116,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     selectedVariable,
     selectedValues,
     binningMethod,
-    dependentAxisLogScale,
-    selectedPlotMode,
+    visualizationPanelConfig,
   } = configuration;
 
   const { entity: overlayEntity, variable: overlayVariable } =
@@ -157,70 +156,6 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     enabled: configuration.selectedCountsOption === 'visible',
   });
 
-  const previewMarkerData = useMarkerData({
-    studyId,
-    filters,
-    studyEntities,
-    geoConfigs,
-    selectedVariable,
-    selectedValues,
-    binningMethod,
-    dependentAxisLogScale,
-    valueSpec: selectedPlotMode,
-  });
-
-  const continuousMarkerPreview = useMemo(() => {
-    if (
-      !previewMarkerData ||
-      !previewMarkerData.markerProps?.length ||
-      !Array.isArray(previewMarkerData.markerProps[0].data)
-    )
-      return;
-    const initialDataObject = previewMarkerData.markerProps[0].data.map(
-      (data) => ({
-        label: data.label,
-        value: 0,
-        count: 0,
-        ...(data.color ? { color: data.color } : {}),
-      })
-    );
-    /**
-     * In the chart marker's proportion mode, the values are pre-calculated proportion values. Using these pre-calculated proportion values results
-     * in an erroneous totalCount summation and some off visualizations in the marker previews. Since no axes/numbers are displayed in the marker
-     * previews, let's just overwrite the value property with the count property.
-     *
-     * NOTE: the donut preview doesn't have proportion mode and was working just fine, but now it's going to receive count data that it neither
-     * needs nor consumes.
-     */
-    const finalData = previewMarkerData.markerProps.reduce(
-      (prevData, currData) =>
-        currData.data.map((data, index) => ({
-          label: data.label,
-          // here's the overwrite mentioned in the above comment
-          value: data.count + prevData[index].count,
-          count: data.count + prevData[index].count,
-          ...('color' in prevData[index]
-            ? { color: prevData[index].color }
-            : 'color' in data
-            ? { color: data.color }
-            : {}),
-        })),
-      initialDataObject
-    );
-    return (
-      <ChartMarkerStandalone
-        data={finalData}
-        markerLabel={mFormatter(finalData.reduce((p, c) => p + c.count, 0))}
-        dependentAxisLogScale={dependentAxisLogScale}
-        dependentAxisRange={getChartMarkerDependentAxisRange(
-          finalData,
-          dependentAxisLogScale
-        )}
-        {...sharedStandaloneMarkerProperties}
-      />
-    );
-  }, [dependentAxisLogScale, previewMarkerData]);
-
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
   const overlayConfiguration = useDistributionOverlayConfig({
@@ -247,7 +182,6 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
       subsettingClient={subsettingClient}
       studyId={studyId}
       filters={filters}
-      continuousMarkerPreview={continuousMarkerPreview}
       allFilteredCategoricalValues={allFilteredCategoricalValues.data}
       allVisibleCategoricalValues={allVisibleCategoricalValues.data}
       inputs={[{ name: 'overlayVariable', label: 'Overlay' }]}
@@ -256,6 +190,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
         analysisState.analysis?.descriptor.starredVariables ?? []
       }
       toggleStarredVariable={toggleStarredVariable}
+      geoConfigs={geoConfigs}
     />
   );
 
@@ -269,14 +204,19 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   };
 
   const setActiveVisualizationId = useCallback(
-    (activeVisualizationId?: string) => {
+    (activeVisualizationId?: string, isNew?: boolean) => {
       if (configuration == null) return;
       updateConfiguration({
         ...configuration,
         activeVisualizationId,
+        visualizationPanelConfig: {
+          ...visualizationPanelConfig,
+          isVisible: !!activeVisualizationId,
+          ...(isNew ? { hideVizControl: false } : {}),
+        },
       });
     },
-    [configuration, updateConfiguration]
+    [configuration, updateConfiguration, visualizationPanelConfig]
   );
 
   const plugins = useStandaloneVizPlugins({
@@ -303,7 +243,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
           plugins={plugins}
           geoConfigs={geoConfigs}
           mapType="barplot"
-          setHideVizInputsAndControls={props.setHideVizInputsAndControls}
+          setIsSidePanelExpanded={setIsSidePanelExpanded}
         />
       ),
     },
@@ -357,6 +297,14 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     markerDataFilterFuncs
   );
 
+  const overlayConfigQueryResult = useDistributionOverlayConfig({
+    studyId,
+    filters,
+    binningMethod,
+    overlayVariableDescriptor: selectedVariable,
+    selectedValues,
+  });
+
   const markerData = useMarkerData({
     studyEntities,
     studyId,
@@ -368,6 +316,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     binningMethod,
     dependentAxisLogScale,
     valueSpec: selectedPlotMode,
+    overlayConfigQueryResult,
   });
 
   const handleSelectedMarkerSnackbars = useSelectedMarkerSnackbars(
@@ -426,7 +375,6 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     filters,
     geoConfigs,
     appState,
-    appState: { markerConfigurations, activeMarkerConfigurationType },
     updateConfiguration,
     headerButtons,
     setStudyDetailsPanelConfig,
@@ -437,15 +385,17 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
   const { variable: overlayVariable } =
     findEntityAndVariable(configuration.selectedVariable) ?? {};
 
-  const setActiveVisualizationId = useCallback(
-    (activeVisualizationId?: string) => {
-      updateConfiguration({
-        ...configuration,
-        activeVisualizationId,
-      });
-    },
-    [configuration, updateConfiguration]
-  );
+  const { selectedMarkers, legendPanelConfig, visualizationPanelConfig } =
+    configuration;
+
+  const { binningMethod, selectedVariable, selectedValues } = configuration;
+  const overlayConfigQueryResult = useDistributionOverlayConfig({
+    studyId,
+    filters,
+    binningMethod,
+    overlayVariableDescriptor: selectedVariable,
+    selectedValues,
+  });
 
   const markerData = useMarkerData({
     studyEntities,
@@ -457,12 +407,8 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     dependentAxisLogScale: configuration.dependentAxisLogScale,
     selectedValues: configuration.selectedValues,
     valueSpec: configuration.selectedPlotMode,
+    overlayConfigQueryResult,
   });
-
-  const selectedMarkers = markerConfigurations.find(
-    (markerConfiguration) =>
-      markerConfiguration.type === activeMarkerConfigurationType
-  )?.selectedMarkers;
 
   const legendItems = markerData.legendItems;
   const plugins = useStandaloneVizPlugins({
@@ -490,9 +436,17 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     substudyFilterFuncs
   );
 
+  const {
+    updateLegendPosition,
+    updateVisualizationPosition,
+    updateVisualizationDimensions,
+    onPanelDismiss,
+    setHideVizControl,
+  } = useFloatingPanelHandlers({ configuration, updateConfiguration });
+
   return (
     <>
-      {appState.studyDetailsPanelConfig?.isVisble && (
+      {appState.studyDetailsPanelConfig?.isVisible && (
         <SubStudies
           studyId={studyId}
           entityId={STUDIES_ENTITY_ID}
@@ -507,6 +461,8 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
         panelTitle={overlayVariable?.displayName}
         zIndex={3}
         headerButtons={headerButtons}
+        defaultPosition={legendPanelConfig}
+        onDragComplete={updateLegendPosition}
       >
         <div style={{ padding: '5px 10px' }}>
           {noDataError ?? (
@@ -518,22 +474,30 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
           )}
         </div>
       </DraggableLegendPanel>
-      <DraggableVisualization
-        analysisState={props.analysisState}
-        visualizationId={configuration.activeVisualizationId}
-        setActiveVisualizationId={setActiveVisualizationId}
-        apps={props.apps}
-        plugins={plugins}
-        geoConfigs={geoConfigs}
-        totalCounts={props.totalCounts}
-        filteredCounts={props.filteredCounts}
-        toggleStarredVariable={toggleStarredVariable}
-        filters={filtersForFloaters}
-        // onTouch={moveVizToTop}
-        zIndexForStackingContext={2}
-        hideInputsAndControls={props.hideVizInputsAndControls}
-        setHideInputsAndControls={props.setHideVizInputsAndControls}
-      />
+      {visualizationPanelConfig?.isVisible && (
+        <DraggableVisualization
+          analysisState={props.analysisState}
+          visualizationId={configuration.activeVisualizationId}
+          apps={props.apps}
+          plugins={plugins}
+          geoConfigs={geoConfigs}
+          totalCounts={props.totalCounts}
+          filteredCounts={props.filteredCounts}
+          toggleStarredVariable={toggleStarredVariable}
+          filters={filtersForFloaters}
+          // onTouch={moveVizToTop}
+          zIndexForStackingContext={2}
+          hideInputsAndControls={
+            visualizationPanelConfig.hideVizControl ?? false
+          }
+          setHideInputsAndControls={setHideVizControl}
+          onDragComplete={updateVisualizationPosition}
+          defaultPosition={visualizationPanelConfig.position}
+          onPanelResize={updateVisualizationDimensions}
+          dimensions={visualizationPanelConfig.dimensions}
+          onPanelDismiss={onPanelDismiss}
+        />
+      )}
     </>
   );
 }
@@ -571,10 +535,10 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
       outputEntityId={outputEntityId}
       onShowStudies={
         studyDetailsPanelConfig &&
-        ((isVisble) =>
+        ((isVisible) =>
           props.setStudyDetailsPanelConfig({
             ...studyDetailsPanelConfig,
-            isVisble,
+            isVisible,
           }))
       }
     />
@@ -744,11 +708,11 @@ function fixLabelForOtherValues(input: string): string {
   return input === UNSELECTED_TOKEN ? UNSELECTED_DISPLAY_TEXT : input;
 }
 
-interface MarkerDataProps extends DistributionMarkerDataProps {
-  dependentAxisLogScale: boolean;
+export interface MarkerDataProps extends DistributionMarkerDataProps {
+  dependentAxisLogScale?: boolean;
 }
 
-function useMarkerData(props: MarkerDataProps) {
+export function useMarkerData(props: MarkerDataProps) {
   const {
     data: markerData,
     error,
@@ -792,7 +756,7 @@ function useMarkerData(props: MarkerDataProps) {
   const markerProps = processRawMarkersData(
     mapElements,
     defaultDependentAxisRange,
-    props.dependentAxisLogScale,
+    props.dependentAxisLogScale ?? false,
     getVocabulary(overlayConfig),
     overlayConfig.overlayType
   );

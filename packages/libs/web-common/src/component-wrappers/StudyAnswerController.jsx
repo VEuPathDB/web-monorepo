@@ -8,7 +8,18 @@ import CategoryIcon from '../App/Categories/CategoryIcon';
 import StudySearchIconLinks from '../App/Studies/StudySearches';
 import { isPrereleaseStudy } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
 import { makeEdaRoute } from '../routes';
-import { useEda } from '../config';
+import { useEda, useUserDatasetsWorkspace } from '../config';
+import {
+  RecordFilter,
+  useRecordFilter,
+} from '@veupathdb/wdk-client/lib/Views/Records/RecordTable/RecordFilter';
+
+import {
+  useDiyStudySummaryColumns,
+  useDiyStudySummaryRows,
+} from '../hooks/diyStudySummaries';
+
+import DataGrid from '@veupathdb/coreui/lib/components/grids/DataGrid';
 
 // wrapping WDKClient AnswerController for specific rendering on certain columns
 function StudyAnswerController(props) {
@@ -48,22 +59,142 @@ function StudyAnswerController(props) {
     [props.permissions]
   );
 
+  const curatedStudies = (
+    <props.DefaultComponent
+      {...props}
+      stateProps={{
+        ...props.stateProps,
+        records: visibleRecords,
+        meta: props.stateProps.meta && {
+          ...props.stateProps.meta,
+          totalCount,
+        },
+      }}
+      renderCellContent={renderCellContent}
+      useStickyFirstNColumns={1}
+    />
+  );
+
+  const columns = useDiyStudySummaryColumns();
+  const { userStudySummaryRows, communityStudySummaryRows } =
+    useDiyStudySummaryRows();
+
+  const displayableStudyAttributes = columns.map((col) => {
+    if (col.accessor === 'edaWorkspaceUrl') {
+      return { value: 'name', display: col['Header'] };
+    } else {
+      return {
+        value: col.accessor,
+        display: col['Header'],
+      };
+    }
+  });
+
+  const {
+    filteredRows: filteredUserStudyRows,
+    searchTerm: userStudySearchTerm,
+    setSearchTerm: setUserStudySearchTerm,
+    selectedColumnFilters: selectedUserStudyColumnFilters,
+    setSelectedColumnFilters: setSelectedUserStudyColumnFilters,
+  } = useRecordFilter(displayableStudyAttributes, userStudySummaryRows ?? []);
+
+  const {
+    filteredRows: filteredCommunityStudyRows,
+    searchTerm: communityStudySearchTerm,
+    setSearchTerm: setCommunityStudySearchTerm,
+    selectedColumnFilters: selectedCommunityStudyColumnFilters,
+    setSelectedColumnFilters: setSelectedCommunityStudyColumnFilters,
+  } = useRecordFilter(
+    displayableStudyAttributes,
+    communityStudySummaryRows ?? []
+  );
+
   return (
-    <React.Fragment>
-      <props.DefaultComponent
-        {...props}
-        stateProps={{
-          ...props.stateProps,
-          records: visibleRecords,
-          meta: props.stateProps.meta && {
-            ...props.stateProps.meta,
-            totalCount,
-          },
-        }}
-        renderCellContent={renderCellContent}
-        useStickyFirstNColumns={1}
-      />
-    </React.Fragment>
+    <div className="ClinEpiStudyAnswerController">
+      {!props.stateProps.isLoading &&
+        userStudySummaryRows != null &&
+        communityStudySummaryRows != null && (
+          <>
+            <h1>Study summaries</h1>
+            {useUserDatasetsWorkspace &&
+              useEda &&
+              userStudySummaryRows.length > 0 && (
+                <>
+                  <h2>My studies</h2>
+                  <RecordFilter
+                    searchTerm={userStudySearchTerm}
+                    onSearchTermChange={(searchTerm) =>
+                      setUserStudySearchTerm(searchTerm)
+                    }
+                    recordDisplayName={'studies'}
+                    filterAttributes={displayableStudyAttributes}
+                    selectedColumnFilters={selectedUserStudyColumnFilters}
+                    onColumnFilterChange={(value) =>
+                      setSelectedUserStudyColumnFilters(value)
+                    }
+                  />
+                  <DataGrid
+                    columns={columns}
+                    data={filteredUserStudyRows}
+                    stylePreset="mesa"
+                    styleOverrides={{
+                      headerCells: {
+                        backgroundColor: '#e2e2e3',
+                        color: '#444',
+                        textTransform: 'none',
+                      },
+                      dataCells: {
+                        fontSize: '1.1em',
+                        color: 'black',
+                        verticalAlign: 'top',
+                        whiteSpace: 'pre-wrap',
+                      },
+                    }}
+                  />
+                </>
+              )}
+            {useUserDatasetsWorkspace &&
+              useEda &&
+              communityStudySummaryRows.length > 0 && (
+                <>
+                  <h2>Community studies</h2>
+                  <RecordFilter
+                    searchTerm={communityStudySearchTerm}
+                    onSearchTermChange={(searchTerm) =>
+                      setCommunityStudySearchTerm(searchTerm)
+                    }
+                    recordDisplayName={'studies'}
+                    filterAttributes={displayableStudyAttributes}
+                    selectedColumnFilters={selectedCommunityStudyColumnFilters}
+                    onColumnFilterChange={(value) =>
+                      setSelectedCommunityStudyColumnFilters(value)
+                    }
+                  />
+                  <DataGrid
+                    columns={columns.slice(0, -1)}
+                    data={filteredCommunityStudyRows}
+                    stylePreset="mesa"
+                    styleOverrides={{
+                      headerCells: {
+                        backgroundColor: '#e2e2e3',
+                        color: '#444',
+                        textTransform: 'none',
+                      },
+                      dataCells: {
+                        fontSize: '1.1em',
+                        color: 'black',
+                        verticalAlign: 'top',
+                        whiteSpace: 'pre-wrap',
+                      },
+                    }}
+                  />
+                </>
+              )}
+            <h2>Curated studies</h2>
+          </>
+        )}
+      {curatedStudies}
+    </div>
   );
 }
 

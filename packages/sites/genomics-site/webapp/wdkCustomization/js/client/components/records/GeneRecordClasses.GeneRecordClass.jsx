@@ -6,13 +6,12 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { connect } from 'react-redux';
 
 import { RecordActions } from '@veupathdb/wdk-client/lib/Actions';
 import * as Category from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import {
-  CollapsibleSection,
   CategoriesCheckboxTree,
   Loading,
   RecordTable as WdkRecordTable,
@@ -43,7 +42,6 @@ import {
   usePreferredOrganismsEnabledState,
   usePreferredOrganismsState,
 } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
-import { BlockRecordAttributeSection } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
 import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
 import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { AlphaFoldRecordSection } from './AlphaFoldAttributeSection';
@@ -63,6 +61,7 @@ export const RecordHeading = connect(
         this.addProductTooltip.bind(this),
         300
       );
+      this.root = null;
     }
 
     componentDidMount() {
@@ -71,8 +70,10 @@ export const RecordHeading = connect(
       this.thumbsContainer = this.node.querySelector(
         '.eupathdb-ThumbnailsContainer'
       );
-      if (this.thumbsContainer) this.renderThumbnails();
-      else console.error('Warning: Could not find ThumbnailsContainer');
+      if (this.thumbsContainer) {
+        this.root = createRoot(this.thumbsContainer);
+        this.renderThumbnails();
+      } else console.error('Warning: Could not find ThumbnailsContainer');
     }
 
     handleThumbnailClick({ anchor }) {
@@ -80,12 +81,11 @@ export const RecordHeading = connect(
     }
 
     componentDidUpdate() {
-      if (this.thumbsContainer) this.renderThumbnails();
+      if (this.thumbsContainer && this.root) this.renderThumbnails();
     }
 
     componentWillUnmount() {
-      if (this.thumbsContainer)
-        ReactDOM.unmountComponentAtNode(this.thumbsContainer);
+      if (this.thumbsContainer && this.root) this.root.unmount();
       window.removeEventListener('resize', this.addProductTooltip);
       this.addProductTooltip.cancel();
     }
@@ -191,13 +191,12 @@ export const RecordHeading = connect(
         )
         .toArray();
 
-      ReactDOM.render(
+      this.root.render(
         <OverviewThumbnails
           title="Gene Features"
           thumbnails={filteredGBrowseContexts}
           onThumbnailClick={this.handleThumbnailClick}
-        />,
-        this.thumbsContainer
+        />
       );
     }
 
@@ -1356,11 +1355,55 @@ function OrthologsFormContainer(props) {
 }
 
 class OrthologsForm extends SortKeyTable {
-  toggleAll(checked) {
-    const node = ReactDOM.findDOMNode(this);
-    for (const input of node.querySelectorAll('input[name="gene_ids"]')) {
-      input.checked = checked;
-    }
+  constructor() {
+    super();
+    this.state = {
+      selectedRowIds: [],
+      groupBySelected: false,
+    };
+    this.isRowSelected = this.isRowSelected.bind(this);
+    this.onRowSelect = this.onRowSelect.bind(this);
+    this.onRowDeselect = this.onRowDeselect.bind(this);
+    this.onMultipleRowSelect = this.onMultipleRowSelect.bind(this);
+    this.onMultipleRowDeselect = this.onMultipleRowDeselect.bind(this);
+  }
+
+  isRowSelected({ ortho_gene_source_id }) {
+    return this.state.selectedRowIds.includes(ortho_gene_source_id);
+  }
+
+  onRowSelect({ ortho_gene_source_id }) {
+    this.setState((state) => ({
+      ...state,
+      selectedRowIds: state.selectedRowIds.concat(ortho_gene_source_id),
+    }));
+  }
+
+  onRowDeselect({ ortho_gene_source_id }) {
+    this.setState((state) => ({
+      ...state,
+      selectedRowIds: state.selectedRowIds.filter(
+        (id) => id !== ortho_gene_source_id
+      ),
+    }));
+  }
+
+  onMultipleRowSelect(rows) {
+    this.setState((state) => ({
+      ...state,
+      selectedRowIds: state.selectedRowIds.concat(
+        rows.map((row) => row['ortho_gene_source_id'])
+      ),
+    }));
+  }
+
+  onMultipleRowDeselect(rows) {
+    this.setState((state) => ({
+      ...state,
+      selectedRowIds: state.selectedRowIds.filter((row) =>
+        rows.includes(row['ortho_gene_source_id'])
+      ),
+    }));
   }
 
   render() {
@@ -1371,6 +1414,35 @@ class OrthologsForm extends SortKeyTable {
         ? true
         : false;
     let not_protein = is_protein ? false : true;
+
+    const orthoTableProps = {
+      options: {
+        isRowSelected: this.isRowSelected,
+        selectedNoun: 'gene',
+        selectedPluralNoun: 'genes',
+      },
+      eventHandlers: {
+        onRowSelect: this.onRowSelect,
+        onRowDeselect: this.onRowDeselect,
+        onMultipleRowSelect: this.onMultipleRowSelect,
+        onMultipleRowDeselect: this.onMultipleRowDeselect,
+        onGroupBySelectedChange: () =>
+          this.setState({
+            ...this.state,
+            groupBySelected: !this.state.groupBySelected,
+          }),
+      },
+      actions: [
+        {
+          selectionRequired: false,
+          element() {
+            return null;
+          },
+          callback: () => null,
+        },
+      ],
+      groupBySelected: this.state.groupBySelected,
+    };
 
     if (this.props.value.length === 0 || not_protein) {
       return (
@@ -1385,24 +1457,20 @@ class OrthologsForm extends SortKeyTable {
           <input type="hidden" name="type" value="geneOrthologs" />
           <input type="hidden" name="project_id" value={projectId} />
           <input type="hidden" name="gene_ids" value={source_id} />
+          {this.state.selectedRowIds.map((sourceId) => (
+            <input
+              key={sourceId}
+              type="hidden"
+              name="gene_ids"
+              value={sourceId}
+            />
+          ))}
           {this.props.transcriptFilter}
           <this.props.DefaultComponent
             {...this.props}
             value={this.sortValue(this.props.value)}
+            orthoTableProps={orthoTableProps}
           />
-          <input
-            type="button"
-            name="CheckAll"
-            value="Check All"
-            onClick={() => this.toggleAll(true)}
-          />
-          <input
-            type="button"
-            name="UnCheckAll"
-            value="Uncheck All"
-            onClick={() => this.toggleAll(false)}
-          />
-          <br />
           <p>
             <b>
               Select sequence type for Clustal Omega multiple sequence

@@ -23,6 +23,7 @@ export const {
   youtubeUrl = '',
   redditUrl = '',
   vimeoUrl = '',
+  discordUrl = '',
   communitySite = '',
   siteSearchServiceUrl = '',
   retainContainerContent = false,
@@ -32,6 +33,7 @@ export const {
   useUserDatasetsWorkspace = false,
   datasetImportUrl = '',
   showUnreleasedData = false,
+  vdiServiceUrl = '',
 } = window.__SITE_CONFIG__;
 
 export const edaExampleAnalysesAuthors = !window.__SITE_CONFIG__

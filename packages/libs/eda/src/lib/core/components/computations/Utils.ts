@@ -94,7 +94,10 @@ export function isTaxonomicVariableCollection(
 ): boolean {
   return (
     isNotAbsoluteAbundanceVariableCollection(variableCollection) &&
-    variableCollection.normalizationMethod === 'sumToUnity'
+    (variableCollection.member
+      ? variableCollection.member === 'taxon' &&
+        !!variableCollection.isCompositional
+      : variableCollection.normalizationMethod === 'sumToUnity') // if we have a member annotation, use that. Old datasets may not have this annotation, hence the fall back normalizationMethod check.
   );
 }
 
@@ -107,7 +110,11 @@ export function isTaxonomicVariableCollection(
 export function isFunctionalCollection(
   variableCollection: CollectionVariableTreeNode
 ): boolean {
-  return variableCollection.normalizationMethod === 'RPK'; // reads per kilobase
+  // Use the member annotation if available. Otherwise, use the fallback normalizationMethod annotation.
+  return variableCollection.member
+    ? variableCollection.member === 'pathway' ||
+        variableCollection.member === 'gene'
+    : variableCollection.normalizationMethod === 'RPK'; // reads per kilobase
 }
 
 /**

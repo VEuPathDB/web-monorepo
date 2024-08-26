@@ -106,6 +106,7 @@ export const VariableTreeNode_Base = t.intersection([
     definition: t.string,
     displayOrder: t.number,
     displayType: VariableDisplayType,
+    entityName: t.string,
   }),
 ]);
 
@@ -230,6 +231,8 @@ export const CollectionVariableTreeNode = t.intersection([
     isProportion: t.boolean,
     normalizationMethod: t.string,
     distributionDefaults: NumberDistributionDefaults,
+    member: t.string,
+    memberPlural: t.string,
   }),
 ]);
 
@@ -285,6 +288,7 @@ export const StudyOverview = t.intersection([
   }),
   t.partial({
     hasMap: t.boolean,
+    isUserStudy: t.boolean,
   }),
 ]);
 
@@ -298,6 +302,7 @@ export const StudyMetadata = t.intersection([
 
 export type FieldWithMetadata = Field & {
   precision?: number;
+  entityName?: string;
   variableName?: string;
   isFeatured?: boolean;
 };

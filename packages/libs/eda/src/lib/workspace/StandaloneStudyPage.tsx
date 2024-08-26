@@ -1,13 +1,17 @@
 import { ApprovalStatus } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
 import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restriction/RestrictedPage';
+import { Tabs } from '@veupathdb/wdk-client/lib/Components';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
-import { useStudyRecord } from '../core';
+import { useState } from 'react';
+import { useDownloadClient, useStudyRecord } from '../core';
+import DownloadTab from './DownloadTab';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 
 interface Props {
   studyId: string;
   showUnreleasedData: boolean;
+  isStudyExplorerWorkspace?: boolean;
 }
 
 /**
@@ -15,8 +19,13 @@ interface Props {
  * @param props
  */
 export function StandaloneStudyPage(props: Props) {
-  const { studyId, showUnreleasedData } = props;
+  const {
+    studyId,
+    showUnreleasedData,
+    isStudyExplorerWorkspace = false,
+  } = props;
   const studyRecord = useStudyRecord();
+  const downloadClient = useDownloadClient();
   const permissionsValue = usePermissions();
   const approvalStatus: ApprovalStatus = permissionsValue.loading
     ? 'loading'
@@ -27,10 +36,39 @@ export function StandaloneStudyPage(props: Props) {
         .studyMetadata
     ? 'approved'
     : 'not-approved';
+  const [activeTab, setActiveTab] = useState('details');
   return (
     <RestrictedPage approvalStatus={approvalStatus}>
-      <EDAWorkspaceHeading />
-      <RecordController recordClass="dataset" primaryKey={studyId} />
+      <EDAWorkspaceHeading
+        isStudyExplorerWorkspace={isStudyExplorerWorkspace}
+      />
+      <Tabs
+        tabs={[
+          {
+            key: 'details',
+            display: 'Study details',
+            content: (
+              <div style={{ minHeight: '10em' }}>
+                <RecordController recordClass="dataset" primaryKey={studyId} />
+              </div>
+            ),
+          },
+          {
+            key: 'downloads',
+            display: 'Download',
+            content: (
+              <DownloadTab
+                downloadClient={downloadClient}
+                analysisState={undefined}
+                totalCounts={undefined}
+                filteredCounts={undefined}
+              />
+            ),
+          },
+        ]}
+        activeTab={activeTab}
+        onTabSelected={setActiveTab}
+      />
     </RestrictedPage>
   );
 }

@@ -6,7 +6,7 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 
 import { makeEdaRoute } from '@veupathdb/web-common/lib/routes';
-import { diyUserDatasetIdToWdkRecordId } from '@veupathdb/wdk-client/lib/Utils/diyDatasets';
+import { diyUserDatasetIdToWdkRecordId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
 
 import { UserDatasetDetailProps } from '@veupathdb/user-datasets/lib/Controllers/UserDatasetDetailController';
 
@@ -49,7 +49,7 @@ export const userDatasetRoutes: RouteEntry[] = [
 
       const detailComponentsByTypeName = useMemo(
         () => ({
-          BIOM: function MbioBiomDatasetDetail(props: UserDatasetDetailProps) {
+          biom: function MbioBiomDatasetDetail(props: UserDatasetDetailProps) {
             const wdkDatasetId = diyUserDatasetIdToWdkRecordId(
               props.userDataset.id
             );
@@ -78,6 +78,7 @@ export const userDatasetRoutes: RouteEntry[] = [
               <ExternalContentController url={helpTabContentUrl} />
             }
             dataNoun={{ singular: 'Study', plural: 'Studies' }}
+            enablePublicUserDatasets
           />
         </Suspense>
       );

@@ -18,7 +18,7 @@
 
   &ShowHideGroup {
     border: 1px solid #eaeaea;
-    background-color: #f0f0f0;
+    background-color: #f5f5f5;
     margin-top: 0.5em;
 
     &Toggle {
@@ -42,6 +42,15 @@
     padding-bottom: 0.5rem;
   }
 
+  &ParameterControlContainer {
+    &_VisibleHelpRight {
+      display: grid;
+      align-items: center;
+      grid-template-columns: auto auto;
+      grid-template-rows: auto;
+    }
+  }
+
   &ParameterHeading {
     h2 {
       font-size: 1.6em;
@@ -55,6 +64,17 @@
 
   &ParameterControl {
     padding: 1.3rem;
+    .ControlLeft {
+      grid-column: 1;
+      grid-row: 1;
+    }
+  }
+
+  &VisibleHelpContainer {
+    &_Right {
+      grid-column: 2;
+      grid-row: 1;
+    }
   }
 
   &VisibleHelp {
@@ -106,5 +126,37 @@
   .wdk-CheckboxListLinks,
   .wdk-CheckboxTreeLinks > div {
     text-align: left;
+  }
+
+  .wgcna-banner {
+    display: flex;
+    gap: 2em;
+  }
+
+  .wgcna-banner-img-container {
+    position: relative;
+    background-color: white;
+  }
+
+  .wgcna-banner-img-container > a > img {
+    width: 200px;
+    height: auto;
+    opacity: 0.5;
+  }
+
+  .wgcna-banner-img-container > div {
+    position: absolute;
+    left: 45px;
+    top: 30px;
+    font-size: 1.25em;
+  }
+
+  .wgcna-banner-img-container > div > a {
+    color: inherit;
+  }
+
+  .wgcna-banner-img-container > div > a:hover {
+    color: inherit;
+    text-decoration: none;
   }
 }

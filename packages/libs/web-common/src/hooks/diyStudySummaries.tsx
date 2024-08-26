@@ -1,14 +1,11 @@
 import React, { useMemo } from 'react';
-
 import { Column } from 'react-table';
-
-import { keyBy } from 'lodash';
 
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { assertIsUserDatasetCompatibleWdkService } from '@veupathdb/user-datasets/lib/Service/UserDatasetWrappers';
 
-import { useDiyDatasets } from './diyDatasets';
+import { EnrichedUserDataset, useDiyDatasets } from './diyDatasets';
+import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 interface UserStudySummaryRow {
   name: string;
@@ -62,66 +59,62 @@ export function useDiyStudySummaryColumns(): Column<UserStudySummaryRow>[] {
   );
 }
 
-export function useDiyStudySummaryRows(): UserStudySummaryRow[] | undefined {
+export function useDiyStudySummaryRows(): {
+  userStudySummaryRows?: UserStudySummaryRow[];
+  communityStudySummaryRows?: UserStudySummaryRow[];
+} {
   const currentUser = useWdkService(
     (wdkService) => wdkService.getCurrentUser(),
     []
   );
 
-  const currentUserDatasets = useWdkService(
-    async (wdkService) => {
-      assertIsUserDatasetCompatibleWdkService(wdkService);
-      if (currentUser == null) {
-        return undefined;
-      }
+  const { diyDatasets, communityDatasets } = useDiyDatasets();
 
-      if (currentUser.isGuest) {
-        return [];
-      }
-
-      return wdkService.getCurrentUserDatasets();
-    },
-    [currentUser]
+  const userStudySummaryRows = formatDatasets(currentUser, diyDatasets);
+  const communityStudySummaryRows = formatDatasets(
+    currentUser,
+    communityDatasets
   );
 
-  const { diyDatasets } = useDiyDatasets();
+  return { userStudySummaryRows, communityStudySummaryRows };
+}
 
-  const userStudySummaryRows = useMemo(() => {
-    if (
-      currentUser == null ||
-      currentUserDatasets == null ||
-      diyDatasets == null
-    ) {
+function formatDatasets(
+  currentUser: User | undefined,
+  userDatasets: EnrichedUserDataset[] | undefined
+) {
+  return useMemo(() => {
+    if (currentUser == null || userDatasets == null) {
       return undefined;
     }
 
-    const currentUserDatasetsById = keyBy(currentUserDatasets, ({ id }) => id);
-
-    return diyDatasets.flatMap((diyDataset) => {
-      const userDataset = currentUserDatasetsById[diyDataset.userDatasetId];
-
-      if (userDataset == null) {
-        return [];
-      }
-
+    return userDatasets.flatMap((userDataset) => {
       return [
         {
-          name: diyDataset.name,
-          userDatasetWorkspaceUrl: diyDataset.userDatasetsRoute,
-          edaWorkspaceUrl: `${diyDataset.baseEdaRoute}/new`,
-          summary: userDataset.meta.summary,
+          name: userDataset.name,
+          userDatasetWorkspaceUrl: userDataset.userDatasetsRoute,
+          edaWorkspaceUrl: `${userDataset.baseEdaRoute}/new`,
+          summary: userDataset.summary ?? '',
           owner:
-            userDataset.ownerUserId === currentUser.id
+            userDataset.owner.userId === currentUser.id
               ? 'Me'
-              : userDataset.owner,
-          sharedWith:
-            userDataset.sharedWith
-              ?.map(({ userDisplayName }) => userDisplayName)
-              ?.join(', ') ?? '',
+              : formatUser(userDataset.owner),
+          sharedWith: userDataset.shares?.map(formatUser)?.join(', ') ?? '',
         },
       ];
     });
-  }, [currentUser, currentUserDatasets, diyDatasets]);
+  }, [currentUser, userDatasets]);
+}
 
-  return userStudySummaryRows;
+function formatUser(user: {
+  firstName?: string;
+  lastName?: string;
+  organization?: string;
+}) {
+  const { firstName, lastName, organization } = user;
+  const name =
+    firstName == null && lastName == null
+      ? 'Unknown user'
+      : `${firstName} ${lastName}`;
+  return name + (organization ? `(${organization})` : '');
 }

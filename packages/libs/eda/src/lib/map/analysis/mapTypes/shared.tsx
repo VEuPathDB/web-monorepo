@@ -16,7 +16,7 @@ import {
 import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import { findEntityAndVariable } from '../../../core/utils/study-metadata';
 import { leastAncestralEntity } from '../../../core/utils/data-element-constraints';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import {
   DefaultOverlayConfigProps,
   getDefaultOverlayConfig,
@@ -36,9 +36,21 @@ import {
 import { filtersFromBoundingBox } from '../../../core/utils/visualization';
 import { MapFloatingErrorDiv } from '../MapFloatingErrorDiv';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import { NoDataError } from '../../../core/api/DataClient/NoDataError';
+import {
+  NoDataError,
+  noDataMessage,
+} from '../../../core/api/DataClient/NoDataError';
 import { useCallback, useState } from 'react';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
+import {
+  BubbleLegendPositionConfig,
+  PanelConfig,
+  PanelPositionConfig,
+} from '../appState';
+import {
+  findLeastAncestralGeoConfig,
+  getGeoConfig,
+} from '../../../core/utils/geoVariables';
 
 export const defaultAnimation = {
   method: 'geohash',
@@ -63,6 +75,7 @@ export interface SharedMarkerConfigurations {
   selectedVariable: VariableDescriptor;
   activeVisualizationId?: string;
   selectedMarkers?: string[];
+  geoEntityId?: string;
 }
 
 export function useCommonData(
@@ -71,7 +84,10 @@ export function useCommonData(
   studyEntities: StudyEntity[],
   boundsZoomLevel?: BoundsViewport
 ) {
-  const geoConfig = geoConfigs[0];
+  const geoConfig = findLeastAncestralGeoConfig(
+    geoConfigs,
+    selectedVariable.entityId
+  );
 
   const { entity: overlayEntity, variable: overlayVariable } =
     findEntityAndVariable(studyEntities, selectedVariable) ?? {};
@@ -162,7 +178,7 @@ export function useDistributionOverlayConfig(
 ) {
   const dataClient = useDataClient();
   const subsettingClient = useSubsettingClient();
-  const findEntityAndVariable = useFindEntityAndVariable();
+  const findEntityAndVariable = useFindEntityAndVariable(props.filters);
   return useQuery({
     keepPreviousData: true,
     queryKey: ['distributionOverlayConfig', props],
@@ -200,19 +216,19 @@ export interface DistributionMarkerDataProps {
   selectedValues: string[] | undefined;
   binningMethod: DefaultOverlayConfigProps['binningMethod'];
   valueSpec: StandaloneMapMarkersRequestParams['config']['valueSpec'];
+  overlayConfigQueryResult: UseQueryResult<OverlayConfig | undefined>;
 }
 
 export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
   const {
     boundsZoomLevel,
     selectedVariable,
-    binningMethod,
     geoConfigs,
     studyId,
     filters,
     studyEntities,
-    selectedValues,
     valueSpec,
+    overlayConfigQueryResult,
   } = props;
 
   const dataClient = useDataClient();
@@ -230,13 +246,7 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
     boundsZoomLevel
   );
 
-  const overlayConfigResult = useDistributionOverlayConfig({
-    studyId,
-    filters,
-    binningMethod,
-    overlayVariableDescriptor: selectedVariable,
-    selectedValues,
-  });
+  const overlayConfig = overlayConfigQueryResult.data;
 
   const requestParams: StandaloneMapMarkersRequestParams = {
     studyId,
@@ -245,13 +255,12 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
       geoAggregateVariable,
       latitudeVariable,
       longitudeVariable,
-      overlayConfig: overlayConfigResult.data,
+      overlayConfig,
       outputEntityId,
       valueSpec,
       viewport,
     },
   };
-  const overlayConfig = overlayConfigResult.data;
 
   const markerQuery = useQuery({
     keepPreviousData: true,
@@ -309,14 +318,14 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
         boundsZoomLevel,
       };
     },
-    enabled: overlayConfig != null && !overlayConfigResult.isFetching,
+    enabled: overlayConfig != null && !overlayConfigQueryResult.isFetching,
   });
 
   return {
     ...markerQuery,
-    error: overlayConfigResult.error ?? markerQuery.error,
-    isFetching: overlayConfigResult.isFetching || markerQuery.isFetching,
-    isPreviousData: overlayConfigResult.error
+    error: overlayConfigQueryResult.error ?? markerQuery.error,
+    isFetching: overlayConfigQueryResult.isFetching || markerQuery.isFetching,
+    isPreviousData: overlayConfigQueryResult.error
       ? false
       : markerQuery.isPreviousData,
   };
@@ -406,10 +415,13 @@ export function useSelectedMarkerSnackbars(
       ) {
         const modifierKey =
           window.navigator.platform.indexOf('Mac') === 0 ? 'Cmd' : 'Ctrl';
-        enqueueSnackbar(`Use ${modifierKey}-click to select multiple markers`, {
-          variant: 'info',
-          anchorOrigin: { vertical: 'top', horizontal: 'center' },
-        });
+        enqueueSnackbar(
+          `Use ${modifierKey}-click or ${modifierKey}-drag-rectangle to select multiple markers`,
+          {
+            variant: 'info',
+            anchorOrigin: { vertical: 'top', horizontal: 'center' },
+          }
+        );
         setShownShiftKeySnackbar(true);
       }
       // if the user has managed to select more than one marker, then they don't need help
@@ -423,6 +435,93 @@ export function useSelectedMarkerSnackbars(
       activeVisualizationId,
     ]
   );
+}
+
+/**
+ * DRY up floating visualization handlers
+ */
+
+interface MinimalPanelConfig {
+  visualizationPanelConfig: PanelConfig;
+  legendPanelConfig: PanelPositionConfig | BubbleLegendPositionConfig;
+}
+
+interface UseFloatingPanelHandlersProps<M extends MinimalPanelConfig> {
+  configuration: M;
+  updateConfiguration: (configuration: M) => void;
+}
+
+export function useFloatingPanelHandlers<M extends MinimalPanelConfig>({
+  updateConfiguration,
+  configuration,
+}: UseFloatingPanelHandlersProps<M>) {
+  const updateLegendPosition = useCallback(
+    (position: M['legendPanelConfig']) => {
+      updateConfiguration({
+        ...configuration,
+        legendPanelConfig: position,
+      });
+    },
+    [updateConfiguration, configuration]
+  );
+
+  const updateVisualizationPosition = useCallback(
+    (position: PanelConfig['position']) => {
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...configuration.visualizationPanelConfig,
+          position,
+        },
+      });
+    },
+    [updateConfiguration, configuration]
+  );
+
+  const updateVisualizationDimensions = useCallback(
+    (dimensions: PanelConfig['dimensions']) => {
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...configuration.visualizationPanelConfig,
+          dimensions,
+        },
+      });
+    },
+    [updateConfiguration, configuration]
+  );
+
+  const onPanelDismiss = useCallback(() => {
+    updateConfiguration({
+      ...configuration,
+      activeVisualizationId: undefined,
+      visualizationPanelConfig: {
+        ...configuration.visualizationPanelConfig,
+        isVisible: false,
+      },
+    });
+  }, [updateConfiguration, configuration]);
+
+  const setHideVizControl = useCallback(
+    (hideValue?: boolean) => {
+      updateConfiguration({
+        ...configuration,
+        visualizationPanelConfig: {
+          ...configuration.visualizationPanelConfig,
+          hideVizControl: hideValue,
+        },
+      });
+    },
+    [updateConfiguration, configuration]
+  );
+
+  return {
+    updateLegendPosition,
+    updateVisualizationPosition,
+    updateVisualizationDimensions,
+    onPanelDismiss,
+    setHideVizControl,
+  };
 }
 
 /**
@@ -449,10 +548,20 @@ export function timeSliderLittleFilter(props: UseLittleFiltersProps): Filter[] {
 
 export function viewportLittleFilters(props: UseLittleFiltersProps): Filter[] {
   const {
-    appState: { boundsZoomLevel },
+    appState: {
+      boundsZoomLevel,
+      markerConfigurations,
+      activeMarkerConfigurationType,
+    },
     geoConfigs,
   } = props;
-  const geoConfig = geoConfigs[0]; // not ideal...
+
+  const { geoEntityId } =
+    markerConfigurations.find(
+      (markerConfig) => markerConfig.type === activeMarkerConfigurationType
+    ) ?? {};
+
+  const geoConfig = getGeoConfig(geoConfigs, geoEntityId);
   return boundsZoomLevel == null
     ? []
     : filtersFromBoundingBox(
@@ -603,7 +712,7 @@ export function selectedMarkersLittleFilter(
   // only return a filter if there are selectedMarkers
   if (selectedMarkers && selectedMarkers.length > 0) {
     const { entity, zoomLevelToAggregationLevel, aggregationVariableIds } =
-      geoConfigs[0];
+      getGeoConfig(geoConfigs, activeMarkerConfiguration.geoEntityId);
     const geoAggregationVariableId =
       aggregationVariableIds?.[zoomLevelToAggregationLevel(zoom) - 1];
     if (entity && geoAggregationVariableId)
@@ -655,7 +764,7 @@ export function getErrorOverlayComponent(error: unknown) {
       <Banner
         banner={{
           type: 'warning',
-          message: error instanceof Error ? error.message : String(error),
+          message: error instanceof NoDataError ? error.message : noDataMessage,
         }}
       />
     </MapFloatingErrorDiv>

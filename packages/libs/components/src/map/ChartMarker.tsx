@@ -18,6 +18,7 @@ export type BaseMarkerData = {
   value: number;
   label: string;
   color?: string;
+  count?: number;
 };
 
 export interface ChartMarkerProps
@@ -53,8 +54,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
   // set icon
   let HistogramIcon: any = L.divIcon({
     // add class, highlight-chartmarker, for panning
-    className:
-      'leaflet-canvas-icon ' + 'marker-id-' + props.id + ' chart-marker',
+    className: 'leaflet-canvas-icon marker-id-' + props.id + ' chart-marker',
     iconSize: new L.Point(size, size),
     iconAnchor: new L.Point(size / 2, size / 2), // location of topleft corner: this is used for centering of the icon like transform/translate in CSS
     html: svgHTML, // divIcon HTML svg code generated above
@@ -118,6 +118,8 @@ export default function ChartMarker(props: ChartMarkerProps) {
           width: popupSize,
         },
       }}
+      getVerticalPopupExtraOffset={() => [-3, -7]}
+      getHorizontalPopupExtraOffset={() => [-6, -7]}
       showPopup={props.showPopup}
       popupClass="histogram-popup"
       // pass // selectedMarkers state and setState

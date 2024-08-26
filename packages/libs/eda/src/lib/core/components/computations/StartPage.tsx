@@ -4,7 +4,7 @@ import { isEqual } from 'lodash';
 import { H5, H6 } from '@veupathdb/coreui';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import '../visualizations/Visualizations.scss';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '@veupathdb/coreui';
 import { AnalysisState } from '../../../core';
 import { createComputation } from '../../../core/components/computations/Utils';
 import { v4 as uuid } from 'uuid';

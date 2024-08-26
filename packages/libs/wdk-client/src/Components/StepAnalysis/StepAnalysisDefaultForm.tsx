@@ -82,7 +82,7 @@ interface ParamDisplayNameProps {
   paramSpec: Parameter;
 }
 
-const ParamDisplayName: React.SFC<ParamDisplayNameProps> = ({ paramSpec }) => (
+const ParamDisplayName: React.FC<ParamDisplayNameProps> = ({ paramSpec }) => (
   <>{paramSpec.displayName}</>
 );
 

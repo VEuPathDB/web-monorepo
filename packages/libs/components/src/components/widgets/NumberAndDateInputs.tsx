@@ -35,6 +35,8 @@ type BaseProps<M extends NumberOrDate> = {
   disabled?: boolean;
   /** Style the Text Field with the warning color and bold stroke */
   applyWarningStyles?: boolean;
+  /** specify the height of the input element */
+  inputHeight?: number;
 };
 
 export type NumberInputProps = BaseProps<number> & { step?: number };
@@ -86,6 +88,8 @@ function BaseInput({
   displayRangeViolationWarnings = true,
   disabled = false,
   applyWarningStyles = false,
+  // default value is 36.5
+  inputHeight = 36.5,
   ...props
 }: BaseInputProps) {
   if (validator && (required || minValue != null || maxValue != null))
@@ -102,7 +106,7 @@ function BaseInput({
 
   const classes = makeStyles({
     root: {
-      height: 36.5, // default height is 56 and is waaaay too tall
+      height: inputHeight, // default height is 56 and is waaaay too tall
       // 34.5 is the height of the reset button, but 36.5 lines up better
       // set width for date
       width: valueType === 'date' ? 165 : '',

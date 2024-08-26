@@ -39,13 +39,32 @@ jobs:
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
       - run: node tools/scripts/version.mjs packages/sites/${{ matrix.dir }} ${GITHUB_REF_NAME#v}
+        # figure out how to tag the release on npm - sets env.npm_tag
+      - run: |
+          # Extract the part of the git tag after the 'v' prefix
+          git_tag="${GITHUB_REF_NAME#v}"
+          # Check if the tag is a plain version (e.g., 1.2.3) and tag 'latest' on npm
+          if [[ "$git_tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "npm_tag=latest" >> $GITHUB_ENV
+          # else look for a word-like suffix (ignoring optional trailing .1, .2 etc) and tag with that word
+          # e.g. v.1.2.3-experimental will be tagged 'experimental' on npm
+          elif [[ "$git_tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+-([a-zA-Z0-9]+)(\.[0-9]+)*$ ]]; then
+            npm_tag="${BASH_REMATCH[1]}"
+            echo "npm_tag=$npm_tag" >> $GITHUB_ENV
+          # if prerelease is checked, use "prerelease" for the npm tag
+          elif ${{ github.event.release.prerelease }}; then
+            echo "npm_tag=prerelease" >> $GITHUB_ENV
+          # or fall back to 'latest' just in case
+          else
+            echo "npm_tag=latest" >> $GITHUB_ENV
+          fi
       - uses: JS-DevTools/npm-publish@v2
         if: ${{ startsWith(github.event.release.tag_name, 'v') }}
         with:
           token: ${{ secrets.NPM_TOKEN }}
           access: public
           package: packages/sites/${{ matrix.dir }}/package.json
-          tag: ${{ contains(github.ref_name, '-patch') && 'patch' || 'latest' }}
+          tag: ${{ env.npm_tag }}
       - run: ./tools/scripts/test-report
       - uses: actions/upload-artifact@v3
         with:

@@ -22,6 +22,8 @@ export default function FloatingButton({
   ariaLabel,
   themeRole,
   styleOverrides = {},
+  iconPosition = 'left',
+  additionalAriaProperties = {},
 }: SwissArmyButtonVariantProps) {
   const defaultStyle: ButtonStyleSpec = {
     default: {
@@ -93,6 +95,8 @@ export default function FloatingButton({
       size={size}
       icon={icon}
       ariaLabel={ariaLabel}
+      iconPosition={iconPosition}
+      additionalAriaProperties={additionalAriaProperties}
     />
   );
 }

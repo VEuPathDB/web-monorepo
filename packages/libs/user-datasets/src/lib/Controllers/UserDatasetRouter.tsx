@@ -25,6 +25,7 @@ interface Props<T1 extends string = string, T2 extends string = string> {
     ComponentType<UserDatasetDetailProps>
   >;
   dataNoun: DataNoun;
+  enablePublicUserDatasets?: boolean;
 }
 
 export function UserDatasetRouter<T1 extends string, T2 extends string>({
@@ -36,6 +37,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
   helpTabContents,
   detailComponentsByTypeName,
   dataNoun,
+  enablePublicUserDatasets = false,
 }: Props<T1, T2>) {
   const { path, url } = useRouteMatch();
 
@@ -47,24 +49,8 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
   return (
     <Switch>
       <WdkRoute
-        path={`${path}/:id(\\d+)`}
-        requiresLogin
-        component={(props: RouteComponentProps<{ id: string }>) => {
-          return (
-            <UserDatasetDetailController
-              baseUrl={url}
-              detailsPageTitle={detailsPageTitle}
-              workspaceTitle={workspaceTitle}
-              detailComponentsByTypeName={detailComponentsByTypeName}
-              dataNoun={dataNoun}
-              {...props.match.params}
-            />
-          );
-        }}
-      />
-      <WdkRoute
         path={path}
-        exact={false}
+        exact={true}
         requiresLogin={false} // uses custom guest views
         component={function UserDatasetsWorkspaceRoute(
           props: RouteComponentProps<{}>
@@ -86,6 +72,110 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
               workspaceTitle={workspaceTitle}
               helpTabContents={helpTabContents}
               dataNoun={dataNoun}
+              enablePublicUserDatasets={enablePublicUserDatasets}
+            />
+          );
+        }}
+      />
+      <WdkRoute
+        path={path + '/new'}
+        exact={true}
+        requiresLogin={false} // uses custom guest views
+        component={function UserDatasetsWorkspaceRoute(
+          props: RouteComponentProps<{}>
+        ) {
+          const urlParams = useMemo(() => {
+            const searchParamEntries = new URLSearchParams(
+              props.location.search
+            ).entries();
+
+            return Object.fromEntries(searchParamEntries);
+          }, [props.location.search]);
+
+          return (
+            <UserDatasetsWorkspace
+              baseUrl={url}
+              helpRoute={helpRoute}
+              uploadPageConfig={uploadPageConfig}
+              urlParams={urlParams}
+              workspaceTitle={workspaceTitle}
+              helpTabContents={helpTabContents}
+              dataNoun={dataNoun}
+              enablePublicUserDatasets={enablePublicUserDatasets}
+            />
+          );
+        }}
+      />
+      {/* <WdkRoute
+        path={path + '/recent'}
+        exact={true}
+        requiresLogin={false} // uses custom guest views
+        component={function UserDatasetsWorkspaceRoute(
+          props: RouteComponentProps<{}>
+        ) {
+          const urlParams = useMemo(() => {
+            const searchParamEntries = new URLSearchParams(
+              props.location.search
+            ).entries();
+
+            return Object.fromEntries(searchParamEntries);
+          }, [props.location.search]);
+
+          return (
+            <UserDatasetsWorkspace
+              baseUrl={url}
+              helpRoute={helpRoute}
+              uploadPageConfig={uploadPageConfig}
+              urlParams={urlParams}
+              workspaceTitle={workspaceTitle}
+              helpTabContents={helpTabContents}
+              dataNoun={dataNoun}
+            />
+          );
+        }}
+      /> */}
+      <WdkRoute
+        path={path + '/help'}
+        exact={true}
+        requiresLogin={false} // uses custom guest views
+        component={function UserDatasetsWorkspaceRoute(
+          props: RouteComponentProps<{}>
+        ) {
+          const urlParams = useMemo(() => {
+            const searchParamEntries = new URLSearchParams(
+              props.location.search
+            ).entries();
+
+            return Object.fromEntries(searchParamEntries);
+          }, [props.location.search]);
+
+          return (
+            <UserDatasetsWorkspace
+              baseUrl={url}
+              helpRoute={helpRoute}
+              uploadPageConfig={uploadPageConfig}
+              urlParams={urlParams}
+              workspaceTitle={workspaceTitle}
+              helpTabContents={helpTabContents}
+              dataNoun={dataNoun}
+              enablePublicUserDatasets={enablePublicUserDatasets}
+            />
+          );
+        }}
+      />
+      <WdkRoute
+        path={`${path}/:id`}
+        requiresLogin
+        component={(props: RouteComponentProps<{ id: string }>) => {
+          return (
+            <UserDatasetDetailController
+              baseUrl={url}
+              detailsPageTitle={detailsPageTitle}
+              workspaceTitle={workspaceTitle}
+              detailComponentsByTypeName={detailComponentsByTypeName}
+              dataNoun={dataNoun}
+              enablePublicUserDatasets={enablePublicUserDatasets}
+              {...props.match.params}
             />
           );
         }}

@@ -6,7 +6,7 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 
 import { makeEdaRoute, makeMapRoute } from '@veupathdb/web-common/lib/routes';
-import { diyUserDatasetIdToWdkRecordId } from '@veupathdb/wdk-client/lib/Utils/diyDatasets';
+import { diyUserDatasetIdToWdkRecordId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
 
 import { UserDatasetDetailProps } from '@veupathdb/user-datasets/lib/Controllers/UserDatasetDetailController';
 
@@ -56,7 +56,9 @@ export const userDatasetRoutes: RouteEntry[] = [
 
       const detailComponentsByTypeName = useMemo(
         () => ({
-          ISA: function ClinEpiIsaDatasetDetail(props: UserDatasetDetailProps) {
+          isasimple: function ClinEpiIsaDatasetDetail(
+            props: UserDatasetDetailProps
+          ) {
             const wdkDatasetId = diyUserDatasetIdToWdkRecordId(
               props.userDataset.id
             );
@@ -90,6 +92,7 @@ export const userDatasetRoutes: RouteEntry[] = [
               <ExternalContentController url={helpTabContentUrl} />
             }
             dataNoun={{ singular: 'Study', plural: 'Studies' }}
+            enablePublicUserDatasets
           />
         </Suspense>
       );
@@ -98,6 +101,11 @@ export const userDatasetRoutes: RouteEntry[] = [
 ];
 
 function useEdaStudyMetadata(wdkDatasetId: string) {
-  const subsettingClient = useConfiguredSubsettingClient(edaServiceUrl);
-  return useStudyMetadata(wdkDatasetId, subsettingClient);
+  try {
+    const subsettingClient = useConfiguredSubsettingClient(edaServiceUrl);
+    return useStudyMetadata(wdkDatasetId, subsettingClient).value;
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
 }

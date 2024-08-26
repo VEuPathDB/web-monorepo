@@ -51,43 +51,6 @@
   transform-origin: center bottom;
 }
 
-.plot-marker-popup.popup-right,
-.plot-marker-popup.popup-left {
-  margin-bottom: 7px;
-}
-
-.plot-marker-popup.histogram-popup.popup-up {
-  margin-bottom: 36px;
-}
-
-.plot-marker-popup.histogram-popup.popup-right {
-  margin-left: 30px;
-}
-
-.plot-marker-popup.histogram-popup.popup-left {
-  margin-left: -30px;
-}
-
-.plot-marker-popup.histogram-popup.popup-down {
-  margin-bottom: -22px;
-}
-
-.plot-marker-popup.donut-popup.popup-up {
-  margin-bottom: 27px;
-}
-
-.plot-marker-popup.donut-popup.popup-right {
-  margin-left: 20px;
-}
-
-.plot-marker-popup.donut-popup.popup-left {
-  margin-left: -20px;
-}
-
-.plot-marker-popup.donut-popup.popup-down {
-  margin-bottom: -12px;
-}
-
 .plot-marker-popup.popup-up .leaflet-popup-content {
   transform: rotate(0deg);
 }
@@ -120,4 +83,17 @@
   border-radius: 10px;
   box-shadow: -1px -0.5px 0px 6px rgba(255, 255, 0, 1),
     -1px -0.5px 0px 2px rgba(255, 255, 0, 1) inset;
+}
+
+/* area selection for selecting markers */
+.leaflet-area-selection-box {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  box-sizing: border-box;
+  z-index: 800;
+  border: 6px solid rgba(255, 255, 0, 1);
+  background: rgba(255, 255, 255, 0.5);
 }

@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import { DefaultNode } from '@visx/network';
 import { Text } from '@visx/text';
-import { LinkData, NodeData } from '../types/plots/network';
+import { NodeData } from '../types/plots/network';
 import { truncateWithEllipsis } from '../utils/axis-tick-label-ellipsis';
-import './Network.css';
+import './NetworkPlot.css';
 
 export type LabelPosition = 'right' | 'left';
 
@@ -21,6 +22,8 @@ interface NodeWithLabelProps {
   labelColor?: string;
   /** Length for labels before being truncated by ellipsis. Default 20 */
   truncationLength?: number;
+  /** show node label */
+  showLabel?: boolean;
 }
 
 // NodeWithLabel draws one node and an optional label for the node. Both the node and
@@ -39,6 +42,7 @@ export function NodeWithLabel(props: NodeWithLabelProps) {
     fontWeight = 400,
     labelColor = '#000',
     truncationLength = 20,
+    showLabel = true,
   } = props;
 
   const { color, label, stroke, strokeWidth } = node;
@@ -60,58 +64,41 @@ export function NodeWithLabel(props: NodeWithLabelProps) {
     textAnchor = 'end';
   }
 
+  // mouse hover state
+  const [hover, setHover] = useState(false);
+
   return (
     <>
-      <DefaultNode
-        r={nodeRadius}
-        fill={color ?? DEFAULT_NODE_COLOR}
-        onClick={onClick}
-        stroke={stroke ?? DEFAULT_STROKE}
-        strokeWidth={strokeWidth ?? DEFAULT_STROKE_WIDTH}
-        style={{ cursor: 'default' }}
-        className="NodeWithLabel"
-      />
-      {/* Note that Text becomes a tspan */}
-      <Text
-        x={textXOffset}
-        textAnchor={textAnchor}
-        fontSize={fontSize}
-        verticalAnchor="middle"
-        onClick={onClick}
-        fontWeight={fontWeight}
-        fill={labelColor}
-        style={{ cursor: 'default' }}
-      >
-        {label && truncateWithEllipsis(label, truncationLength)}
-      </Text>
-      <title>{label}</title>
+      <g onClick={onClick}>
+        <DefaultNode
+          r={nodeRadius}
+          fill={color ?? DEFAULT_NODE_COLOR}
+          stroke={stroke ?? DEFAULT_STROKE}
+          strokeWidth={strokeWidth ?? DEFAULT_STROKE_WIDTH}
+          className="NodeWithLabel_Node"
+          // hover event
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+        />
+        {/* Note that Text becomes a tspan */}
+        <Text
+          x={textXOffset}
+          textAnchor={textAnchor}
+          fontSize={fontSize}
+          verticalAnchor="middle"
+          fontWeight={fontWeight}
+          fill={labelColor}
+          id="NodeLabelText"
+          style={{
+            cursor: 'pointer',
+            zIndex: 1000,
+            display: showLabel ? 'block' : hover ? 'block' : 'none',
+          }}
+        >
+          {label && truncateWithEllipsis(label, truncationLength)}
+        </Text>
+        <title>{label}</title>
+      </g>
     </>
-  );
-}
-
-export interface LinkProps {
-  link: LinkData;
-  // onClick?: () => void; To add in the future, maybe also some hover action
-}
-
-// Link component draws a linear edge between two nodes.
-// Eventually can grow into drawing directed edges (edges with arrows) when the time comes.
-export function Link(props: LinkProps) {
-  const DEFAULT_LINK_WIDTH = 1;
-  const DEFAULT_COLOR = '#222';
-  const DEFAULT_OPACITY = 0.95;
-
-  const { link } = props;
-
-  return (
-    <line
-      x1={link.source.x}
-      y1={link.source.y}
-      x2={link.target.x}
-      y2={link.target.y}
-      strokeWidth={link.strokeWidth ?? DEFAULT_LINK_WIDTH}
-      stroke={link.color ?? DEFAULT_COLOR}
-      strokeOpacity={link.opacity ?? DEFAULT_OPACITY}
-    />
   );
 }

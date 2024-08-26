@@ -8,9 +8,11 @@ import {
 } from 'react';
 import { AnimationFunction, Bounds } from './Types';
 import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
-import { useMap, useMapEvents } from 'react-leaflet';
+import { useMap } from 'react-leaflet';
 import { LatLngBounds } from 'leaflet';
 import { debounce, isEqual } from 'lodash';
+import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
+import AreaSelect from './AreaSelect';
 
 export interface SemanticMarkersProps {
   markers: Array<ReactElement<BoundsDriftMarkerProps>>;
@@ -48,12 +50,7 @@ export default function SemanticMarkers({
   // react-leaflet v3
   const map = useMap();
 
-  // cancel marker selection with a single click on the map
-  useMapEvents({
-    click: () => {
-      if (setSelectedMarkers != null) setSelectedMarkers(undefined);
-    },
-  });
+  const { enqueueSnackbar } = useSnackbar();
 
   const [prevRecenteredMarkers, setPrevRecenteredMarkers] =
     useState<ReactElement<BoundsDriftMarkerProps>[]>(markers);
@@ -211,10 +208,36 @@ export default function SemanticMarkers({
         consolidatedMarkers.find(({ props }) => id === props.id)
       );
 
-      if (prunedSelectedMarkers.length < selectedMarkers.length)
+      if (prunedSelectedMarkers.length < selectedMarkers.length) {
+        const consolidatedMarkersElementLength =
+          consolidatedMarkers.length === 0
+            ? 0
+            : consolidatedMarkers[0].props.id.length;
+
+        const selectedMarkersElementLength =
+          selectedMarkers.length === 0 ? 0 : selectedMarkers[0].length;
+
+        const message =
+          consolidatedMarkersElementLength !== selectedMarkersElementLength
+            ? consolidatedMarkersElementLength === 0
+              ? 'Marker selection has been cancelled because there are no visible markers in the current view'
+              : 'Marker selection has been cancelled because aggregation level has changed due to zooming'
+            : 'Selected markers that are no longer visible have been deselected';
+
+        enqueueSnackbar(message, {
+          variant: 'info',
+          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+        });
+
         setSelectedMarkers(prunedSelectedMarkers);
+      }
     }
-  }, [consolidatedMarkers, selectedMarkers, setSelectedMarkers]);
+  }, [
+    consolidatedMarkers,
+    selectedMarkers,
+    setSelectedMarkers,
+    enqueueSnackbar,
+  ]);
 
   // add the selectedMarkers props and callback
   // (and the scheduled-for-removal showPopup prop)
@@ -233,7 +256,40 @@ export default function SemanticMarkers({
   // this should use the unadulterated markers (which are always in the "main world")
   useFlyToMarkers({ markers, flyToMarkers, flyToMarkersDelay });
 
-  return <>{refinedMarkers}</>;
+  // rectangle marker selection
+  const onAreaSelected = useCallback(
+    (boxCoord: Bounds | undefined) => {
+      if (boxCoord != null && setSelectedMarkers != null) {
+        // find markers within area selection
+        const boxCoordMarkers = consolidatedMarkers
+          ?.filter((marker) => {
+            // check if the center of a marker is within selected area
+            return (
+              marker.props.position.lat >= boxCoord.southWest.lat &&
+              marker.props.position.lat <= boxCoord.northEast.lat &&
+              marker.props.position.lng >= boxCoord.southWest.lng &&
+              marker.props.position.lng <= boxCoord.northEast.lng
+            );
+          })
+          .map(({ props: { id } }) => id);
+
+        // combine, de-duplicate, and update selected marker IDs
+        const combinedMarkers = [
+          ...(selectedMarkers ?? []),
+          ...(boxCoordMarkers ?? []),
+        ];
+        setSelectedMarkers(Array.from(new Set(combinedMarkers)));
+      }
+    },
+    [consolidatedMarkers, selectedMarkers, setSelectedMarkers]
+  );
+
+  return (
+    <>
+      <AreaSelect onAreaSelected={onAreaSelected} />
+      {refinedMarkers}
+    </>
+  );
 }
 
 function boundsToGeoBBox(bounds: LatLngBounds): Bounds {

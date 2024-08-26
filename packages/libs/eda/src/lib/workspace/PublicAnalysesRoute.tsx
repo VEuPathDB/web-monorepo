@@ -8,8 +8,12 @@ import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { AnalysisClient, usePublicAnalysisList } from '../core';
 import { useWdkStudyRecords } from '../core/hooks/study';
 
-import { PublicAnalyses } from './PublicAnalyses';
+import { PublicAnalyses, StudyRecordMetadata } from './PublicAnalyses';
 import SubsettingClient from '../core/api/SubsettingClient';
+import { useWdkServiceWithVdi } from '@veupathdb/user-datasets/lib/Hooks/wdkServiceWithVdi';
+import { map } from 'lodash';
+import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
+import { diyUserDatasetIdToWdkRecordId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
 
 export interface Props {
   analysisClient: AnalysisClient;
@@ -24,6 +28,23 @@ export function PublicAnalysesRoute({
 }: Props) {
   const publicAnalysisListState = usePublicAnalysisList(analysisClient);
   const studyRecords = useWdkStudyRecords(subsettingClient);
+  const communityDatasets = useWdkServiceWithVdi(
+    (wdkService) => wdkService.getCommunityDatasets(),
+    []
+  );
+
+  const studyRecordsMetadata: StudyRecordMetadata[] | undefined =
+    studyRecords &&
+      communityDatasets && [
+        ...map(studyRecords, (record) => ({
+          id: getStudyId(record)!,
+          displayName: record.displayName ?? 'Unknown Study',
+        })),
+        ...map(communityDatasets, (ud) => ({
+          id: diyUserDatasetIdToWdkRecordId(ud.datasetId),
+          displayName: ud.name,
+        })),
+      ];
 
   const location = useLocation();
   const makeAnalysisLink = useCallback(
@@ -38,7 +59,7 @@ export function PublicAnalysesRoute({
     <PublicAnalyses
       analysisClient={analysisClient}
       publicAnalysisListState={publicAnalysisListState}
-      studyRecords={studyRecords}
+      studyRecordsMetadata={studyRecordsMetadata}
       makeAnalysisLink={makeAnalysisLink}
       exampleAnalysesAuthors={exampleAnalysesAuthors}
     />

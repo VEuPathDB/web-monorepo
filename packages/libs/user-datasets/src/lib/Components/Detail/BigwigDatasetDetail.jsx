@@ -14,22 +14,60 @@ class BigwigDatasetDetail extends UserDatasetDetail {
     super(props);
     this.renderTracksSection = this.renderTracksSection.bind(this);
     this.getTracksTableColumns = this.getTracksTableColumns.bind(this);
+    this.state = {
+      ...this.state,
+      sequenceId: null,
+    };
+  }
+
+  componentDidMount() {
+    const {
+      userDataset,
+      config: { projectId },
+    } = this.props;
+    const { wdkService } = this.context;
+    const { dependencies } = userDataset;
+    if (!userDataset.projects.includes(projectId)) return;
+    let genome;
+    // There will only ever be one such dependency in this array
+    dependencies.forEach(function (dependency) {
+      if (dependency.resourceIdentifier.endsWith('_Genome')) {
+        const regex = new RegExp(
+          '-' + dependency.resourceVersion + '_(.*)_Genome'
+        );
+        const genomeList = dependency.resourceIdentifier.match(regex);
+        genome = genomeList[1];
+      }
+    });
+    if (genome == null) return;
+    wdkService
+      .getAnswerJson(
+        {
+          searchName: 'LongestSeqForAnOrganism',
+          searchConfig: {
+            parameters: {
+              organismNameForFiles: genome,
+            },
+          },
+        },
+        {}
+      )
+      .then((res) => this.setState({ sequenceId: res.records[0].displayName }));
   }
 
   getTracksTableColumns() {
     const { userDataset, appUrl, config } = this.props;
-    const { id, type, meta, dependencies } = userDataset;
+    const { id, meta, dependencies } = userDataset;
     const name = meta.name;
     const { projectId } = config;
-    const { seqId } = type && type.data ? type.data : { seqId: null };
 
-    var genome;
+    let genome;
     dependencies.forEach(function (dependency) {
       if (dependency.resourceIdentifier.endsWith('_Genome')) {
-        var regex = new RegExp(
+        const regex = new RegExp(
           '-' + dependency.resourceVersion + '_(.*)_Genome'
         );
-        var genomeList = dependency.resourceIdentifier.match(regex);
+        const genomeList = dependency.resourceIdentifier.match(regex);
         genome = genomeList[1];
       }
     });
@@ -38,15 +76,15 @@ class BigwigDatasetDetail extends UserDatasetDetail {
       {
         key: 'datafileName',
         name: 'Filename',
-        renderCell: ({ row }) => <code>{row.datafileName}</code>,
+        renderCell: ({ row }) => <code>{row.dataFileName}</code>,
       },
       {
         key: 'main',
         name: 'Genome Browser Link',
         renderCell: ({ row }) => (
           <BigwigGBrowseUploader
-            sequenceId={seqId}
-            {...row}
+            sequenceId={this.state.sequenceId}
+            dataFileName={row.dataFileName}
             datasetId={id}
             appUrl={appUrl}
             projectId={projectId}
@@ -59,16 +97,26 @@ class BigwigDatasetDetail extends UserDatasetDetail {
   }
 
   renderTracksSection() {
-    const { userDataset, appUrl, projectName } = this.props;
+    const { userDataset, appUrl, projectName, config, fileListing } =
+      this.props;
+    const installFiles = fileListing.install?.contents
+      ?.filter((file) => file.fileName.endsWith('.bw'))
+      .map((file) => ({
+        dataFileName: file.fileName,
+      }));
+    const { status } = userDataset;
 
-    const { type } = userDataset;
-    const { data } = type;
-
-    const rows = data && Array.isArray(data.tracks) ? data.tracks : [];
+    const rows =
+      installFiles && Array.isArray(installFiles) ? installFiles : [];
     const columns = this.getTracksTableColumns({ userDataset, appUrl });
     const tracksTableState = MesaState.create({ rows, columns });
 
-    return !rows.length ? null : userDataset.isInstalled ? (
+    const isInstalled =
+      status?.import === 'complete' &&
+      status?.install?.find((d) => d.projectId === config.projectId)
+        ?.dataStatus === 'complete';
+
+    return !rows.length ? null : isInstalled ? (
       <section>
         <h3 className={classify('SectionTitle')}>
           <Icon fa="bar-chart" />
@@ -85,6 +133,8 @@ class BigwigDatasetDetail extends UserDatasetDetail {
     );
   }
 
+  // See note in the base class, UserDatasetDetail
+  /** @return {import("react").ReactNode[]} */
   getPageSections() {
     const [headerSection, compatSection, fileSection] = super.getPageSections();
     return [

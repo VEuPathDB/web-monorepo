@@ -15,7 +15,7 @@ interface Props {
   isCollapsed?: boolean;
   onCollapsedChange: (isCollapsed: boolean) => void;
   headerContent: React.ReactNode;
-  headerComponent?: React.ReactType;
+  headerComponent?: React.ComponentType;
   className?: string;
   children: React.ReactNode;
 }
@@ -58,9 +58,10 @@ function CollapsibleSection(props: Props) {
   const handleCollapsedChange = useCallback(
     (event: React.MouseEvent<HTMLElement>) => {
       event.currentTarget.blur();
+      event.stopPropagation();
       onCollapsedChange(!isCollapsed);
     },
-    [isCollapsed]
+    [isCollapsed, onCollapsedChange]
   );
 
   return (

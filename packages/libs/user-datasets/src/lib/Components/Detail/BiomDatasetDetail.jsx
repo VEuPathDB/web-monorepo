@@ -10,10 +10,15 @@ class BiomDatasetDetail extends UserDatasetDetail {
 
   renderEdaLinkout() {
     const {
-      config: { displayName },
-      userDataset: { isInstalled },
+      config: { displayName, projectId },
+      userDataset: { status },
       edaWorkspaceUrl,
     } = this.props;
+
+    const isInstalled =
+      status?.import === 'complete' &&
+      status?.install?.find((d) => d.projectId === projectId)?.dataStatus ===
+        'complete';
 
     return !isInstalled || !edaWorkspaceUrl ? null : (
       <section id="eda-linkout">
@@ -26,6 +31,8 @@ class BiomDatasetDetail extends UserDatasetDetail {
     );
   }
 
+  // See note in the base class, UserDatasetDetail
+  /** @return {import("react").ReactNode[]} */
   getPageSections() {
     const [headerSection, , fileSection] = super.getPageSections();
 

@@ -1,4 +1,14 @@
+import { LabelPosition } from '../../plots/Node';
+
 // Types required for creating networks
+import { ReactNode } from 'react';
+
+export interface NodeMenuAction {
+  label: ReactNode;
+  onClick?: () => void;
+  href?: string;
+}
+
 export type NodeData = {
   /** Node ID. Must be unique in the network! */
   id: string;
@@ -16,6 +26,10 @@ export type NodeData = {
   stroke?: string;
   /** Width of node stroke */
   strokeWidth?: number;
+  /** Should the node label be drawn to the right or left of the node? */
+  labelPosition?: LabelPosition;
+  /** Action menu items for the node */
+  actions?: NodeMenuAction[];
 };
 
 export type LinkData = {
@@ -29,21 +43,25 @@ export type LinkData = {
   color?: string;
   /** Link opacity. Must be between 0 and 1 */
   opacity?: number;
+  /** Boolean determining if the edge is directed */
+  isDirected?: boolean;
 };
 
 /** NetworkData is the same format accepted by visx's Graph component. */
-export type NetworkData = {
+export type NetworkPlotData = {
   nodes: NodeData[];
   links: LinkData[];
 };
 
-export type NodeIdList = {
-  nodeIds: string[];
-};
-
 /** Bipartite network data is a regular network with addiitonal declarations of
- * nodes in each of the two columns. IDs in columnXNodeIDs must match node ids exactly.
+ * nodes in each of the two columns.
  */
+export type NetworkPartition = {
+  /** Ids that allow us to match node ids in NodeData[] of a NetworkPlotData object to this partition. */
+  nodeIds: string[];
+  /** Name of the partition. Ex. "Species" */
+  name?: string;
+};
 export type BipartiteNetworkData = {
-  partitions: NodeIdList[];
-} & NetworkData;
+  partitions: NetworkPartition[];
+} & NetworkPlotData;

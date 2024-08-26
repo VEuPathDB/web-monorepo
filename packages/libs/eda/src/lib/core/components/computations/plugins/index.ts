@@ -6,8 +6,10 @@ import { plugin as distributions } from './distributions';
 import { plugin as countsandproportions } from './countsAndProportions';
 import { plugin as abundance } from './abundance';
 import { plugin as differentialabundance } from './differentialabundance';
-import { plugin as correlationassaymetadata } from './correlationAssayMetadata';
-import { plugin as correlationassayassay } from './correlationAssayAssay';
+import { plugin as correlationassaymetadata } from './correlationAssayMetadata'; // mbio
+import { plugin as correlationassayassay } from './correlationAssayAssay'; // mbio
+import { plugin as correlation } from './correlation'; // genomics (- vb)
+import { plugin as selfcorrelation } from './selfCorrelation';
 import { plugin as xyrelationships } from './xyRelationships';
 export const plugins: Record<string, ComputationPlugin> = {
   abundance,
@@ -16,6 +18,8 @@ export const plugins: Record<string, ComputationPlugin> = {
   differentialabundance,
   correlationassaymetadata,
   correlationassayassay,
+  correlation,
+  selfcorrelation,
   countsandproportions,
   distributions,
   pass,

@@ -1,6 +1,70 @@
-import { ReactNode, useState } from 'react';
-import { Button, Popover, makeStyles } from '@material-ui/core';
-import { useEffect } from 'react';
+import { ReactNode, useState, useEffect, useMemo } from 'react';
+import { Popover } from '@material-ui/core';
+import SwissArmyButton from '../SwissArmyButton';
+import { gray } from '../../../definitions/colors';
+import { ButtonStyleSpec, PartialButtonStyleSpec } from '..';
+import { ArrowDown } from '../../icons';
+import { merge } from 'lodash';
+
+// The default styles largely mimic the style of the MUI button was previously used in this component
+const defaultStyle: ButtonStyleSpec = {
+  default: {
+    color: gray[200],
+    textColor: 'black',
+    fontWeight: 500,
+    border: {
+      radius: 5,
+    },
+    dropShadow: {
+      color: gray[500],
+      blurRadius: '5px',
+      offsetX: '0px',
+      offsetY: '2px',
+    },
+  },
+  hover: {
+    color: gray[300],
+    textColor: 'black',
+    fontWeight: 500,
+    border: {
+      radius: 5,
+    },
+    dropShadow: {
+      color: gray[600],
+      blurRadius: '5px',
+      offsetX: '0px',
+      offsetY: '2px',
+    },
+  },
+  pressed: {
+    color: gray[300],
+    fontWeight: 500,
+    textColor: 'black',
+    border: {
+      radius: 5,
+    },
+    dropShadow: {
+      color: gray[600],
+      blurRadius: '7px',
+      offsetX: '0px',
+      offsetY: '4px',
+    },
+  },
+  disabled: {
+    color: gray[100],
+    textColor: gray[300],
+    fontWeight: 500,
+    dropShadow: {
+      color: gray[300],
+      blurRadius: '5px',
+      offsetX: '0px',
+      offsetY: '2px',
+    },
+  },
+  icon: {
+    fontSize: '1em',
+  },
+};
 
 export interface PopoverButtonProps {
   /** Contents of the menu when opened */
@@ -16,13 +80,9 @@ export interface PopoverButtonProps {
   setIsPopoverOpen?: (isOpen: boolean) => void;
 
   isDisabled?: boolean;
-}
 
-const useStyles = makeStyles({
-  focusVisible: {
-    outline: '1px dotted gray',
-  },
-});
+  styleOverrides?: PartialButtonStyleSpec;
+}
 
 /**
  * Renders a button that display `children` in a popover widget.
@@ -34,9 +94,14 @@ export default function PopoverButton(props: PopoverButtonProps) {
     onClose,
     setIsPopoverOpen,
     isDisabled = false,
+    styleOverrides = {},
   } = props;
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const classes = useStyles();
+
+  const finalStyle = useMemo(
+    () => merge({}, defaultStyle, styleOverrides),
+    [styleOverrides]
+  );
 
   const onCloseHandler = () => {
     setAnchorEl(null);
@@ -50,7 +115,7 @@ export default function PopoverButton(props: PopoverButtonProps) {
     } else {
       setIsPopoverOpen(false);
     }
-  }, [anchorEl]);
+  }, [anchorEl, setIsPopoverOpen]);
 
   const menu = (
     <Popover
@@ -74,32 +139,19 @@ export default function PopoverButton(props: PopoverButtonProps) {
   );
 
   const button = (
-    <Button
-      classes={{
-        focusVisible: classes.focusVisible,
-      }}
-      disableRipple
-      aria-controls="dropdown"
-      aria-haspopup="true"
-      color="default"
-      variant="contained"
-      onClick={(event) => {
-        setAnchorEl(event.currentTarget);
-      }}
-      endIcon={
-        <i
-          className="fa fa-caret-down"
-          aria-hidden="true"
-          style={{ width: '20px' }}
-        />
-      }
-      style={{
-        textTransform: 'none',
-      }}
+    <SwissArmyButton
+      text={buttonDisplayContent}
+      textTransform="none"
+      onPress={(event) => setAnchorEl(event.currentTarget)}
       disabled={isDisabled}
-    >
-      {buttonDisplayContent}
-    </Button>
+      styleSpec={finalStyle}
+      icon={ArrowDown}
+      iconPosition="right"
+      additionalAriaProperties={{
+        'aria-controls': 'dropdown',
+        'aria-haspopup': 'true',
+      }}
+    />
   );
 
   return (

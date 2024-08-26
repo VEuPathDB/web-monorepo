@@ -13,16 +13,21 @@ import {
 } from '../../../core';
 import { CategoricalMarkerConfigurationTable } from './CategoricalMarkerConfigurationTable';
 import { CategoricalMarkerPreview } from './CategoricalMarkerPreview';
+import { ContinuousMarkerPreview } from './ContinuousMarkerPreview';
 import Barplot from '@veupathdb/components/lib/plots/Barplot';
 import { SubsettingClient } from '../../../core/api';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { useUncontrolledSelections } from '../hooks/uncontrolledSelections';
 import {
   BinningMethod,
+  PanelConfig,
+  PanelPositionConfig,
   SelectedCountsOption,
   SelectedValues,
 } from '../appState';
 import { SharedMarkerConfigurations } from '../mapTypes/shared';
+import { GeoConfig } from '../../../core/types/geoConfig';
+import { findLeastAncestralGeoConfig } from '../../../core/utils/geoVariables';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
@@ -34,6 +39,8 @@ export interface PieMarkerConfiguration
   binningMethod: BinningMethod;
   selectedValues: SelectedValues;
   selectedCountsOption: SelectedCountsOption;
+  legendPanelConfig: PanelPositionConfig;
+  visualizationPanelConfig: PanelConfig;
 }
 
 interface Props
@@ -48,7 +55,6 @@ interface Props
   subsettingClient: SubsettingClient;
   studyId: string;
   filters: Filter[] | undefined;
-  continuousMarkerPreview: JSX.Element | undefined;
   /**
    * Always used for categorical marker preview. Also used in categorical table if selectedCountsOption is 'filtered'
    */
@@ -57,6 +63,7 @@ interface Props
    * Only defined and used in categorical table if selectedCountsOption is 'visible'
    */
   allVisibleCategoricalValues: AllValuesDefinition[] | undefined;
+  geoConfigs: GeoConfig[];
 }
 
 // TODO: generalize this and BarPlotMarkerConfigMenu into MarkerConfigurationMenu. Lots of code repetition...
@@ -73,9 +80,9 @@ export function PieMarkerConfigurationMenu({
   subsettingClient,
   studyId,
   filters,
-  continuousMarkerPreview,
   allFilteredCategoricalValues,
   allVisibleCategoricalValues,
+  geoConfigs,
 }: Props) {
   /**
    * Used to track the CategoricalMarkerConfigurationTable's selection state, which allows users to
@@ -145,12 +152,23 @@ export function PieMarkerConfigurationMenu({
       return;
     }
 
+    // With each variable change we set the geo entity for the user to the least ancestral
+    // entity on the path from root to the chosen variable.
+    // However, we could make this choosable via the UI in the future.
+    // (That's one reason why we're storing it in appState.)
+    const geoConfig = findLeastAncestralGeoConfig(
+      geoConfigs,
+      selection.overlayVariable.entityId
+    );
+
     onChange({
       ...configuration,
       selectedVariable: selection.overlayVariable,
       selectedValues: undefined,
+      geoEntityId: geoConfig.entity.id,
     });
   }
+
   function handleBinningMethodSelection(option: string) {
     onChange({
       ...configuration,
@@ -201,7 +219,14 @@ export function PieMarkerConfigurationMenu({
             numberSelected={uncontrolledSelections.size}
           />
         ) : (
-          continuousMarkerPreview
+          <ContinuousMarkerPreview
+            configuration={configuration}
+            mapType="pie"
+            studyId={studyId}
+            filters={filters}
+            studyEntities={entities}
+            geoConfigs={geoConfigs}
+          />
         )}
       </div>
       {overlayConfiguration?.overlayType === 'continuous' && (
@@ -212,6 +237,7 @@ export function PieMarkerConfigurationMenu({
             }
           }
           label="Binning method"
+          labelStyles={{ fontSize: '1.0em', marginBottom: '-0.5em' }}
           selectedOption={configuration.binningMethod ?? 'equalInterval'}
           options={['equalInterval', 'quantile', 'standardDeviation']}
           optionLabels={['Equal interval', 'Quantile (10)', 'Std. dev.']}
@@ -220,8 +246,13 @@ export function PieMarkerConfigurationMenu({
           onOptionSelected={handleBinningMethodSelection}
           disabledList={
             overlayConfiguration?.overlayType === 'continuous'
-              ? []
-              : ['equalInterval', 'quantile', 'standardDeviation']
+              ? new Map([
+                  [
+                    'standardDeviation',
+                    'This option is currently disabled for maintenance reasons',
+                  ],
+                ])
+              : undefined
           }
         />
       )}

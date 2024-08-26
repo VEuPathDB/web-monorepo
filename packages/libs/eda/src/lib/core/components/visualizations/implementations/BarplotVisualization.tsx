@@ -104,7 +104,7 @@ import { useDeepValue } from '../../../hooks/immutability';
 
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
-import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
+import { useOutputEntity } from '../../../hooks/findOutputEntity';
 
 // export
 export type BarplotDataWithStatistics = (
@@ -343,9 +343,9 @@ function BarplotViz(props: VisualizationProps<Options>) {
     providedOverlayVariableDescriptor,
   ]);
 
-  const outputEntity = useFindOutputEntity(
+  const outputEntity = useOutputEntity(
     dataElementDependencyOrder,
-    vizConfig,
+    selectedVariables,
     'xAxisVariable'
   );
 
@@ -395,7 +395,6 @@ function BarplotViz(props: VisualizationProps<Options>) {
     useCallback(async (): Promise<BarplotDataWithStatistics | undefined> => {
       if (
         variable == null ||
-        outputEntity == null ||
         filteredCounts.pending ||
         filteredCounts.value == null
       )
@@ -417,6 +416,8 @@ function BarplotViz(props: VisualizationProps<Options>) {
         dataElementConstraints,
         dataElementDependencyOrder
       );
+
+      if (outputEntity == null) return undefined;
 
       const params =
         options?.getRequestParams?.({

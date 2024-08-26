@@ -102,5 +102,16 @@
         flex: 1 1 auto;
       }
     }
+    .UserDatasetDetail-Owner {
+      margin-top: 1em;
+    }
+    .UserDatasetDetail-Summary {
+      margin-top: 2em;
+      margin-bottom: 1em;
+      flex-direction: column;
+    }
+    .UserDatasetDetail-Description {
+      flex-direction: column;
+    }
   }
 }
