@@ -86,6 +86,8 @@ import { AnalysisError } from '../../core/components/AnalysisError';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import SettingsButton from '@veupathdb/coreui/lib/components/containers/DraggablePanel/SettingsButton';
 import { getGeoConfig } from '../../core/utils/geoVariables';
+import UserDatasetDetailController from '@veupathdb/user-datasets/lib/Controllers/UserDatasetDetailController';
+import { wdkRecordIdToDiyUserDatasetId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -235,6 +237,7 @@ function MapAnalysisImpl(props: ImplProps) {
   const downloadClient = useDownloadClient();
   const subsettingClient = useSubsettingClient();
   const history = useHistory();
+  const { url } = useRouteMatch();
 
   const sharingUrl = new URL(
     sharingUrlPrefix
@@ -703,10 +706,28 @@ function MapAnalysisImpl(props: ImplProps) {
             }}
           >
             <H5 additionalStyles={{ margin: '25px 0 0 0' }}>Study Details</H5>
-            <RecordController
-              recordClass="dataset"
-              primaryKey={studyRecord.id.map((p) => p.value).join('/')}
-            />
+            {studyMetadata.isUserStudy ? (
+              <UserDatasetDetailController
+                baseUrl={url}
+                detailsPageTitle={'My Study'}
+                workspaceTitle={'My Studies'}
+                id={wdkRecordIdToDiyUserDatasetId(
+                  studyRecord.attributes.dataset_id as string
+                )}
+                dataNoun={{
+                  singular: 'Study',
+                  plural: 'Studies',
+                }}
+                enablePublicUserDatasets
+                includeAllLink={false}
+                includeNameHeader={false}
+              />
+            ) : (
+              <RecordController
+                recordClass="dataset"
+                primaryKey={studyRecord.id.map((p) => p.value).join('/')}
+              />
+            )}
           </div>
         );
       },
