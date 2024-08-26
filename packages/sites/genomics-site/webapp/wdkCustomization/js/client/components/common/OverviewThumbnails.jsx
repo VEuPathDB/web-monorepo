@@ -106,6 +106,7 @@ export class OverviewThumbnails extends Component {
               onClick={() => this.props.onThumbnailClick(thumbnail)}
             >
               <img
+                alt={thumbnail.displayName}
                 src={
                   '/a/wdkCustomization/images/gene_record_thumbnails/' +
                   thumbnail.anchor +

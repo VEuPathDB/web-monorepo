@@ -1,3 +1,4 @@
+import { isEqual } from 'lodash';
 import React from 'react';
 import { httpGet } from '../util/http';
 import {
@@ -64,7 +65,7 @@ export default class DatasetGraph extends React.PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.rowData !== nextProps.rowData) {
+    if (!isEqual(this.props.rowData, nextProps.rowData)) {
       this.request.abort();
       this.getGraphParts(nextProps);
     }
@@ -109,7 +110,9 @@ export default class DatasetGraph extends React.PureComponent {
     this.setState({ loading: true });
     this.request = httpGet(baseUrl + '&declareParts=1');
     this.request.promise().then((graphs) => {
-      this.setState({ graphs, visibleGraphs: [0], loading: false });
+      if (graphs) {
+        this.setState({ graphs, visibleGraphs: [0], loading: false });
+      }
     });
   }
 
@@ -226,7 +229,7 @@ export default class DatasetGraph extends React.PureComponent {
               let { height, width, visible_part } = graphs[index];
               let fullUrl = `${imgUrl}&vp=${visible_part}`;
               return (
-                <ExternalResource>
+                <ExternalResource key={index}>
                   <object
                     style={{ height, width }}
                     data={fullUrl}

@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import { cloneDeep, uniqueId } from 'lodash';
 import $ from 'jquery';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -1727,50 +1726,32 @@ class GraphSelector extends React.Component {
 }
 
 /** Render pathway node details */
-class NodeDetails extends React.Component {
-  componentDidMount() {
-    $(this.refs.container).draggable({ handle: this.refs.handle });
-  }
-
-  render() {
-    const type = this.props.nodeData.node_type;
-
-    const details =
-      type === 'enzyme' ? (
-        <EnzymeNodeDetails {...this.props} />
-      ) : type === 'molecular entity' ? (
-        <MolecularEntityNodeDetails {...this.props} />
-      ) : type === 'metabolic process' ? (
-        <MetabolicProcessNodeDetails {...this.props} />
-      ) : type === 'nodeOfNodes' ? (
-        <NodeOfNodesNodeDetails {...this.props} />
-      ) : type === 'cellular_location' ? (
-        <CellularLocationNodeDetails {...this.props} />
-      ) : null;
-
-    return (
-      <div ref="container" className="eupathdb-PathwayNodeDetailsContainer">
-        <div ref="handle" className="eupathdb-PathwayNodeDetailsHeader">
-          <button
-            type="button"
-            style={{ position: 'absolute', right: 6, top: 3 }}
-            onClick={this.props.onClose}
-          >
-            <i className="fa fa-close" />
-          </button>
-          <div>Node Details</div>
-        </div>
-        <div style={{ padding: '12px' }}>{details}</div>
-      </div>
-    );
-  }
+function NodeDetails(props) {
+  const type = props.nodeData.node_type;
+  const details =
+    type === 'enzyme' ? (
+      <EnzymeNodeDetails {...props} />
+    ) : type === 'molecular entity' ? (
+      <MolecularEntityNodeDetails {...props} />
+    ) : type === 'metabolic process' ? (
+      <MetabolicProcessNodeDetails {...props} />
+    ) : type === 'nodeOfNodes' ? (
+      <NodeOfNodesNodeDetails {...props} />
+    ) : type === 'cellular_location' ? (
+      <CellularLocationNodeDetails {...props} />
+    ) : null;
+  return (
+    <Dialog
+      open
+      title="Node Details"
+      draggable
+      onClose={props.onClose}
+      className="PathwayNodeDetails"
+    >
+      {details}
+    </Dialog>
+  );
 }
-
-NodeDetails.propTypes = {
-  nodeData: PropTypes.object.isRequired,
-  pathwaySource: PropTypes.string.isRequired,
-  onClose: PropTypes.func.isRequired,
-};
 
 function EnzymeNodeDetails(props) {
   let { display_label, name, gene_count, image, cellular_location, url } =

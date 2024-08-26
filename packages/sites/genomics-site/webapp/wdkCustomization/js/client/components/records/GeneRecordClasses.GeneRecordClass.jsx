@@ -110,7 +110,7 @@ export const RecordHeading = connect(
 
     renderThumbnails() {
       let { categoryTree, recordClass } = this.props;
-      let { attributes, tables } = this.props.record;
+      let { tables } = this.props.record;
       // Get field present in record instance. This is leveraging the fact that
       // we filter the category tree in the store based on the contents of
       // MetaTable.
@@ -124,6 +124,7 @@ export const RecordHeading = connect(
         displayName: 'Transcriptomics',
         element: (
           <img
+            alt="Transcript summary"
             src={
               webAppUrl + '/wdkCustomization/images/transcription_summary.png'
             }
@@ -136,6 +137,7 @@ export const RecordHeading = connect(
         displayName: 'Phenotype',
         element: (
           <img
+            alt="Phenotype graphs"
             src={webAppUrl + '/wdkCustomization/images/transcriptomics.jpg'}
           />
         ),
@@ -146,6 +148,7 @@ export const RecordHeading = connect(
         displayName: 'Phenotype',
         element: (
           <img
+            alt="Crispr phenotype graphs"
             src={webAppUrl + '/wdkCustomization/images/transcriptomics.jpg'}
           />
         ),
@@ -179,12 +182,6 @@ export const RecordHeading = connect(
                 },
               })
             : Object.assign({}, context, {
-                element: (
-                  <Gbrowse.GbrowseImage
-                    url={attributes[context.gbrowse_url]}
-                    includeImageMap={true}
-                  />
-                ),
                 displayName:
                   recordClass.attributesMap[context.gbrowse_url].displayName,
               })
@@ -556,6 +553,7 @@ function makeDatasetGraphChildRow(
           contXAxisMetadataTableName,
         ].filter((tableName) => tableName != null),
       });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     return <DatasetGraph {...props} />;
   }
@@ -609,7 +607,6 @@ const SequencesTableChildRow = pure(function SequencesTableChildRow(props) {
     transcript_sequence,
     genomic_sequence,
     protein_length,
-    is_pseudo,
     transcript_length,
     genomic_sequence_length,
     five_prime_utr_coords,
@@ -728,7 +725,7 @@ function addChildren(t, rows, n) {
     let parent = rows[i].parent;
     let organism = rows[i].organism;
     let abbrev = rows[i].abbrev;
-    if (parent == Category.getId(t)) {
+    if (parent === Category.getId(t)) {
       let node = n(abbrev, organism, null, []);
       t.children.push(node);
     }
@@ -919,7 +916,7 @@ class WolfPsortForm extends React.Component {
     }
   }
   printInputs(t) {
-    if (t.length == 1) {
+    if (t.length === 1) {
       return (
         <input type="hidden" name="source_ID" value={t[0].protein_source_id} />
       );
@@ -935,7 +932,6 @@ class WolfPsortForm extends React.Component {
   }
 
   render() {
-    let { project_id } = this.props.record.attributes;
     let t = this.props.value;
     return (
       <div>
@@ -973,7 +969,7 @@ class BlastpForm extends React.Component {
   }
 
   printInputs(t) {
-    if (t.length == 1) {
+    if (t.length === 1) {
       return (
         <input type="hidden" name="source_ID" value={t[0].protein_source_id} />
       );
@@ -990,7 +986,6 @@ class BlastpForm extends React.Component {
   }
 
   render() {
-    let { project_id } = this.props.record.attributes;
     let t = this.props.value;
 
     return (
@@ -1046,7 +1041,7 @@ class MitoprotForm extends React.Component {
   }
 
   printInputs(t) {
-    if (t.length == 1) {
+    if (t.length === 1) {
       return (
         <input type="hidden" name="source_ID" value={t[0].protein_source_id} />
       );
@@ -1063,7 +1058,6 @@ class MitoprotForm extends React.Component {
   }
 
   render() {
-    let { project_id } = this.props.record.attributes;
     let t = this.props.value;
     return (
       <div>
@@ -1089,7 +1083,7 @@ class InterProForm extends React.Component {
   }
 
   printInputs(t) {
-    if (t.length == 1) {
+    if (t.length === 1) {
       return (
         <input type="hidden" name="source_ID" value={t[0].protein_source_id} />
       );
@@ -1106,7 +1100,6 @@ class InterProForm extends React.Component {
   }
 
   render() {
-    let { project_id } = this.props.record.attributes;
     let t = this.props.value;
     return (
       <div>
@@ -1133,7 +1126,7 @@ class MendelGPIForm extends React.Component {
   }
 
   printInputs(t) {
-    if (t.length == 1) {
+    if (t.length === 1) {
       return (
         <input type="hidden" name="source_ID" value={t[0].protein_source_id} />
       );
@@ -1150,7 +1143,6 @@ class MendelGPIForm extends React.Component {
   }
 
   render() {
-    let { project_id } = this.props.record.attributes;
     let t = this.props.value;
     return (
       <div>
@@ -1180,7 +1172,7 @@ class FungalGPIForm extends React.Component {
   }
 
   printInputs(t) {
-    if (t.length == 1) {
+    if (t.length === 1) {
       return (
         <input type="hidden" name="source_ID" value={t[0].protein_source_id} />
       );
@@ -1197,7 +1189,6 @@ class FungalGPIForm extends React.Component {
   }
 
   render() {
-    let { project_id } = this.props.record.attributes;
     let t = this.props.value;
     return (
       <div>
@@ -1221,7 +1212,7 @@ class StringDBForm extends React.Component {
   }
 
   printInputs(t) {
-    if (t.length == 1) {
+    if (t.length === 1) {
       return (
         <input type="hidden" name="source_ID" value={t[0].protein_source_id} />
       );
@@ -1250,7 +1241,7 @@ class StringDBForm extends React.Component {
   }
 
   render() {
-    let { project_id, genus_species } = this.props.record.attributes;
+    let { genus_species } = this.props.record.attributes;
     let t = this.props.value;
     let s = JSON.parse(t[0].jsonString);
     return (
@@ -1685,6 +1676,7 @@ const TranscriptionSummaryForm = connect(
             isError={this.state.summaryIframeState.isError}
           >
             <iframe
+              title="Transcription Summary"
               onError={() => {
                 this.setState({
                   summaryIframeState: {
@@ -1792,14 +1784,7 @@ class CellxgeneIframe extends SortKeyTable {
 
     let height = 350;
     let width = 800;
-    console.log(this.props);
     const sourceIdAr = source_ids.split(';');
-
-    /* if (this.props.value.length === 0) {
-         return (
-         <p><em>No data available</em></p>
-         );
-         }  */
     return (
       <div id="cellxgene">
         <ExternalResourceContainer
@@ -1807,6 +1792,7 @@ class CellxgeneIframe extends SortKeyTable {
           isError={this.state.CellxgeneIframeState.isError}
         >
           <iframe
+            title="CellxGene"
             onError={() => {
               this.setState({
                 CellxgeneIframeState: {
@@ -1830,13 +1816,14 @@ class CellxgeneIframe extends SortKeyTable {
           <br />
           <br />
           Explore source identifiers mapped to {source_id} in cellxgene.
-          <img src={betaImage} />
+          <img alt="Beta" src={betaImage} />
           <ul>
             {sourceIdAr.map((id, i) => {
               return (
                 <li>
                   <a
                     target="_blank"
+                    rel="noreferrer"
                     href={this._makeGeneAppUrl(dataset_name, source_ids)}
                   >
                     {id}
@@ -1847,21 +1834,30 @@ class CellxgeneIframe extends SortKeyTable {
           </ul>
           <br />
           <br />
-          <a target="_blank" href={this._makeAppUrl(dataset_name)}>
+          <a
+            target="_blank"
+            href={this._makeAppUrl(dataset_name)}
+            rel="noreferrer"
+          >
             Explore the full dataset in cellxgene
           </a>
-          .<img src={betaImage} />
+          .<img alt="Beta" src={betaImage} />
           <br />
           <br />
           For help using cellxgene see{' '}
           <a
             target="_blank"
+            rel="noreferrer"
             href="https://icbi-lab.github.io/cellxgene-user-guide/"
           >
             this tutorial
           </a>{' '}
           or{' '}
-          <a target="_blank" href="https://youtu.be/5Fg5admFe9M">
+          <a
+            target="_blank"
+            rel="noreferrer"
+            href="https://youtu.be/5Fg5admFe9M"
+          >
             this YouTube video
           </a>
           .<br />
