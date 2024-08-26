@@ -6,11 +6,16 @@ import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import { CategoryTreeNode } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import { decode, arrayOf, string } from '@veupathdb/wdk-client/lib/Utils/Json';
+import { getSearchMenuCategoryTree } from '@veupathdb/web-common/lib/util/category';
 
 export function useSearchTree() {
   return useSelector(
-    (state: RootState) =>
-      get(state.globalData, 'searchTree') as CategoryTreeNode | undefined
+    ({ globalData: { ontology, recordClasses } }: RootState) =>
+      (ontology &&
+        recordClasses &&
+        getSearchMenuCategoryTree(ontology, recordClasses)) as
+        | CategoryTreeNode
+        | undefined
   );
 }
 
