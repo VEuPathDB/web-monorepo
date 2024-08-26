@@ -4,6 +4,7 @@ import { IconAlt as Icon, Loading } from '@veupathdb/wdk-client/lib/Components';
 import { Modal } from '@veupathdb/coreui';
 import { FilledButton } from '@veupathdb/coreui';
 
+import '../UserDatasets.scss';
 import './UserDatasetSharingModal.scss';
 
 export default function UserDatasetSharingModal(props) {

@@ -23,6 +23,7 @@ import { ThemedDeleteButton } from '../ThemedDeleteButton';
 
 import { DateTime } from '../DateTime';
 
+import '../UserDatasets.scss';
 import './UserDatasetDetail.scss';
 
 const classify = makeClassifier('UserDatasetDetail');
