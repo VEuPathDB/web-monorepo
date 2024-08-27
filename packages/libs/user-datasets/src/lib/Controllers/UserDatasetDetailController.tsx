@@ -60,6 +60,8 @@ type OwnProps = {
   >;
   dataNoun: DataNoun;
   enablePublicUserDatasets: boolean;
+  includeAllLink: boolean;
+  includeNameHeader: boolean;
 };
 type MergedProps = {
   ownProps: OwnProps;
@@ -179,6 +181,8 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       workspaceTitle,
       dataNoun,
       enablePublicUserDatasets,
+      includeAllLink,
+      includeNameHeader,
     } = this.props.ownProps;
     const {
       updateUserDatasetDetail,
@@ -216,6 +220,8 @@ class UserDatasetDetailController extends PageController<MergedProps> {
 
     const props = {
       baseUrl,
+      includeAllLink,
+      includeNameHeader,
       user,
       config,
       isOwner,

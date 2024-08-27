@@ -29,6 +29,7 @@ import { useGeoConfig } from '../core/hooks/geoConfig';
 
 // Components
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
+import UserDatasetDetailController from '@veupathdb/user-datasets/lib/Controllers/UserDatasetDetailController';
 import { AnalysisSummary } from './AnalysisSummary';
 import { EntityDiagram } from '../core';
 import { ComputationRoute } from './ComputationRoute';
@@ -56,6 +57,7 @@ import FilterChipList from '../core/components/FilterChipList';
 import { Public } from '@material-ui/icons';
 import { Link } from 'react-router-dom';
 import { AnalysisError } from '../core/components/AnalysisError';
+import { wdkRecordIdToDiyUserDatasetId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
 
 const AnalysisTabErrorBoundary = ({
   children,
@@ -418,10 +420,34 @@ export function AnalysisPanel({
             path={`${routeBase}/details`}
             render={() => (
               <AnalysisTabErrorBoundary>
-                <RecordController
-                  recordClass="dataset"
-                  primaryKey={studyRecord.id.map((p) => p.value).join('/')}
-                />
+                {studyMetadata.isUserStudy ? (
+                  // TODO Make both cases below configurable via the root component.
+                  // This will need to be done if we want EDA to stand on its own.
+
+                  // Note that we are not inluding the custom detail page.
+                  // As of this writing, details pages only add a link to
+                  // EDA. Since we are in EDA, we don't want to add it here.
+                  <UserDatasetDetailController
+                    baseUrl={`${routeBase}/details`}
+                    detailsPageTitle={'My Study'}
+                    workspaceTitle={'My Studies'}
+                    id={wdkRecordIdToDiyUserDatasetId(
+                      studyRecord.attributes.dataset_id as string
+                    )}
+                    dataNoun={{
+                      singular: 'Study',
+                      plural: 'Studies',
+                    }}
+                    enablePublicUserDatasets={true}
+                    includeAllLink={false}
+                    includeNameHeader={false}
+                  />
+                ) : (
+                  <RecordController
+                    recordClass="dataset"
+                    primaryKey={studyRecord.id.map((p) => p.value).join('/')}
+                  />
+                )}
               </AnalysisTabErrorBoundary>
             )}
           />
