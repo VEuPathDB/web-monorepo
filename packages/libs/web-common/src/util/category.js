@@ -18,7 +18,7 @@ let isSearchMenuScope = isQualifying({ targetType: 'search', scope: 'menu' });
  *
  * @param {Ontology} ontology
  * @param {RecordClass[]} recordClasses
- * @returns RecordClassTree
+ * @returns {import('@veupathdb/wdk-client/lib/Utils/CategoryUtils').CategoryTreeNode}
  */
 export function getSearchMenuCategoryTree(ontology, recordClasses) {
   let recordClassMap = new Map(recordClasses.map((rc) => [rc.fullName, rc]));
