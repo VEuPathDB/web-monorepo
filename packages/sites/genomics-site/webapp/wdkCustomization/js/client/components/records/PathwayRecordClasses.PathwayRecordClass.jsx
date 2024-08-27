@@ -31,6 +31,8 @@ import 'site/wdkCustomization/css/pathway.css';
 import * as QueryString from 'querystring';
 import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 
+const { ChemDoodle } = window;
+
 export const RECORD_CLASS_NAME = 'PathwayRecordClasses.PathwayRecordClass';
 
 const EC_NUMBER_SEARCH_PREFIX =
