@@ -50,6 +50,7 @@ function Dialog(props: Props) {
       </button>,
     ],
     leftButtons,
+    draggable = true,
   } = props;
 
   const handleDragStart = (e: React.MouseEvent) => {
@@ -99,9 +100,9 @@ function Dialog(props: Props) {
         className={makeClassName(
           props.className,
           'Header',
-          props.draggable ? ' draggable' : ''
+          draggable ? ' draggable' : ''
         )}
-        {...(props.draggable
+        {...(draggable
           ? {
               onMouseDown: handleDragStart,
               onMouseMove: handleDrag,
