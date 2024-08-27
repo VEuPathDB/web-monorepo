@@ -23,6 +23,7 @@ import { ThemedDeleteButton } from '../ThemedDeleteButton';
 
 import { DateTime } from '../DateTime';
 
+import '../UserDatasets.scss';
 import './UserDatasetDetail.scss';
 
 const classify = makeClassifier('UserDatasetDetail');
@@ -127,6 +128,7 @@ class UserDatasetDetail extends React.Component {
   }
 
   renderAllDatasetsLink() {
+    if (!this.props.includeAllLink) return null;
     return (
       <Link className="AllDatasetsLink" to={this.props.baseUrl}>
         <Icon fa="chevron-left" />
@@ -163,17 +165,19 @@ class UserDatasetDetail extends React.Component {
     );
 
     return [
-      {
-        attribute: this.props.detailsPageTitle,
-        className: classify('Name'),
-        value: (
-          <SaveableTextEditor
-            value={meta.name}
-            readOnly={!isOwner}
-            onSave={this.onMetaSave('name')}
-          />
-        ),
-      },
+      this.props.includeNameHeader
+        ? {
+            attribute: this.props.detailsPageTitle,
+            className: classify('Name'),
+            value: (
+              <SaveableTextEditor
+                value={meta.name}
+                readOnly={!isOwner}
+                onSave={this.onMetaSave('name')}
+              />
+            ),
+          }
+        : null,
       {
         attribute: 'Status',
         value: (
