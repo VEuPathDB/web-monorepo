@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 
 import UserDatasetDetail from './UserDatasetDetail';
 
+import './EdaDatasetDetail.scss';
+
 class BiomDatasetDetail extends UserDatasetDetail {
   constructor(props) {
     super(props);
@@ -21,22 +23,14 @@ class BiomDatasetDetail extends UserDatasetDetail {
         'complete';
 
     return !isInstalled || !edaWorkspaceUrl ? null : (
-      <section id="eda-linkout">
-        <h2>
+      <ul className="eda-linkout">
+        <li>
           <Link to={edaWorkspaceUrl}>
             <i className="ebrc-icon-edaIcon"></i> Explore in {displayName}
           </Link>
-        </h2>
-      </section>
+        </li>
+      </ul>
     );
-  }
-
-  // See note in the base class, UserDatasetDetail
-  /** @return {import("react").ReactNode[]} */
-  getPageSections() {
-    const [headerSection, , fileSection] = super.getPageSections();
-
-    return [headerSection, this.renderEdaLinkout, fileSection];
   }
 }
 

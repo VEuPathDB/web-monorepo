@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 
 import UserDatasetDetail from './UserDatasetDetail';
 
+import './EdaDatasetDetail.scss';
+
 class IsaDatasetDetail extends UserDatasetDetail {
   constructor(props) {
     super(props);
@@ -23,36 +25,40 @@ class IsaDatasetDetail extends UserDatasetDetail {
 
     if (!isInstalled) return null;
 
+    if (edaWorkspaceUrl == null || edaMapUrl == null) return null;
+
     return (
-      <>
+      <ul className="eda-linkout">
         {!edaWorkspaceUrl ? null : (
-          <section id="eda-linkout">
-            <h2>
-              <Link to={edaWorkspaceUrl}>
-                <i className="ebrc-icon-edaIcon"></i> Explore in {displayName}
-              </Link>
-            </h2>
-          </section>
+          <li>
+            <Link to={edaWorkspaceUrl}>
+              <i className="ebrc-icon-edaIcon"></i> Explore in {displayName}
+            </Link>
+          </li>
         )}
         {!edaMapUrl ? null : (
-          <section id="eda-linkout">
-            <h2>
-              <Link to={edaMapUrl}>
-                <i className="ebrc-icon-edaIcon"></i> Explore in MapVEu
-              </Link>
-            </h2>
-          </section>
+          <li>
+            <Link to={edaMapUrl}>
+              <i className="ebrc-icon-edaIcon"></i> Explore in MapVEu
+            </Link>
+          </li>
         )}
-      </>
+      </ul>
     );
   }
 
-  // See note in the base class, UserDatasetDetail
-  /** @return {import("react").ReactNode[]} */
-  getPageSections() {
-    const [headerSection, , fileSection] = super.getPageSections();
-
-    return [headerSection, this.renderEdaLinkout, fileSection];
+  getAttributes() {
+    const edaLinks = {
+      attribute: 'Explore',
+      value: this.renderEdaLinkout(),
+    };
+    const attributes = super.getAttributes();
+    const spliceIndex = this.props.includeNameHeader ? 3 : 2;
+    return [
+      ...attributes.slice(0, spliceIndex),
+      edaLinks,
+      ...attributes.slice(spliceIndex),
+    ];
   }
 }
 
