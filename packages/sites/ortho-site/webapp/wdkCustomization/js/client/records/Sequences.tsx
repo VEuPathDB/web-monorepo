@@ -499,8 +499,7 @@ export function RecordTable_Sequences(
             flexDirection: 'row',
             gap: '1em',
             alignItems: 'center',
-            flexWrap: 'wrap',
-            justifyContent: 'flex-start',
+            justifyContent: 'flex-end',
           }}
         >
           <strong>Filters: </strong>
