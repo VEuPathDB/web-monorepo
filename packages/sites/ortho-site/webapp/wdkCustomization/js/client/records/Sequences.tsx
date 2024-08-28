@@ -74,7 +74,12 @@ export function RecordTable_Sequences(
     .filter(
       ({ key }) =>
         key !== 'clustalInput' && key !== 'full_id' && key !== 'taxon_abbrev'
-    );
+    )
+    // rename some headings (shouldn't this be done on the back end?)
+    .map((column) => ({
+      ...column,
+      name: column.name === 'Taxon' ? 'Clade' : column.name,
+    }));
 
   const mesaRows = props.value;
   const pfamRows = props.record.tables['PFams'];
