@@ -71,7 +71,10 @@ export function RecordTable_Sequences(
     }))
     // and remove a raw HTML checkbox field - we'll use Mesa's built-in checkboxes for this
     // and an object-laden 'sequence_link' field - the ID seems to be replicated in the full_id field
-    .filter(({ key }) => key !== 'clustalInput' && key !== 'full_id');
+    .filter(
+      ({ key }) =>
+        key !== 'clustalInput' && key !== 'full_id' && key !== 'taxon_abbrev'
+    );
 
   const mesaRows = props.value;
   const pfamRows = props.record.tables['PFams'];
