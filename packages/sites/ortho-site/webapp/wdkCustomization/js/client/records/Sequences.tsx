@@ -2,10 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import TreeTable from '@veupathdb/components/lib/components/tidytree/TreeTable';
 import { RecordTableProps, WrappedComponentProps } from './Types';
 import { useOrthoService } from 'ortho-client/hooks/orthoService';
-import {
-  Loading,
-  RealTimeSearchBox,
-} from '@veupathdb/wdk-client/lib/Components';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { Branch, parseNewick } from 'patristic';
 import {
   AttributeValue,
@@ -25,6 +22,7 @@ import { FloatingButton, SelectList, Undo } from '@veupathdb/coreui';
 import { RecordTable_TaxonCounts_Filter } from './RecordTable_TaxonCounts_Filter';
 import { css, cx } from '@emotion/css';
 import { formatAttributeValue } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { RecordFilter } from '@veupathdb/wdk-client/lib/Views/Records/RecordTable/RecordFilter';
 
 type RowType = Record<string, AttributeValue>;
 
@@ -33,6 +31,8 @@ const maxColumnWidth = 200;
 const maxArchitectureLength = maxColumnWidth - 10 - 10 - 1; // 10px padding each side plus a 1px border
 const MIN_SEQUENCES_FOR_TREE = 3;
 const MAX_SEQUENCES_FOR_TREE = 9999;
+
+const PFAM_ARCH_COLUMN_KEY = 'pfamArchitecture';
 
 const highlightColor = '#feb640';
 const highlightColor50 = highlightColor + '7f';
@@ -129,7 +129,7 @@ export function RecordTable_Sequences(
   );
 
   mesaColumns.unshift({
-    key: 'pfamArchitecture',
+    key: PFAM_ARCH_COLUMN_KEY,
     name: 'Domain architecture',
     renderCell: (cellProps) => {
       const proteinId = cellProps.row.full_id as string;
@@ -196,6 +196,11 @@ export function RecordTable_Sequences(
   // 1. user-entered text search
   // 2. core-peripheral radio button
   // 3. checked boxes in the Pfam legend
+
+  const [selectedColumnFilters, setSelectedColumnFilters] = useState<string[]>(
+    []
+  );
+
   const filteredRows = useMemo(() => {
     if (
       searchQuery !== '' ||
@@ -211,7 +216,8 @@ export function RecordTable_Sequences(
         const rowPfamIdsSet = accessionToPfamIds.get(rowFullId);
 
         const searchMatch =
-          searchQuery === '' || rowMatch(row, safeSearchRegexp);
+          searchQuery === '' ||
+          rowMatch(row, safeSearchRegexp, selectedColumnFilters);
         const corePeripheralMatch =
           corePeripheralFilterValue.length === 0 ||
           corePeripheralFilterValue.includes(
@@ -232,6 +238,7 @@ export function RecordTable_Sequences(
     return undefined;
   }, [
     searchQuery,
+    selectedColumnFilters,
     safeSearchRegexp,
     sortedRows,
     corePeripheralFilterValue,
@@ -295,6 +302,11 @@ export function RecordTable_Sequences(
       </>
     ); // The loading spinner does not show :-(
   }
+
+  // list of column keys and display names to show in the checkbox dropdown in the table text search box (RecordFilter)
+  const filterAttributes = mesaColumns
+    .map(({ key, name }) => ({ value: key, display: name ?? 'Unknown column' }))
+    .filter(({ value }) => value !== PFAM_ARCH_COLUMN_KEY);
 
   if (
     mesaRows != null &&
@@ -475,12 +487,13 @@ export function RecordTable_Sequences(
           justifyContent: 'space-between',
         }}
       >
-        <RealTimeSearchBox
+        <RecordFilter
           searchTerm={searchQuery}
           onSearchTermChange={setSearchQuery}
-          delayMs={0}
-          className="wdk-RecordFilterSearchBox"
-          placeholderText="Search this table..."
+          recordDisplayName="Proteins"
+          filterAttributes={filterAttributes}
+          selectedColumnFilters={selectedColumnFilters}
+          onColumnFilterChange={(keys) => setSelectedColumnFilters(keys)}
         />
         <div className="MesaComponent">
           <div className="TableToolbar-Info">
@@ -550,9 +563,13 @@ export function RecordTable_Sequences(
   );
 }
 
-function rowMatch(row: RowType, query: RegExp): boolean {
+function rowMatch(row: RowType, query: RegExp, keys?: string[]): boolean {
+  // Get the values to search in based on the optionally provided keys
+  const valuesToSearch =
+    keys && keys.length > 0 ? keys.map((key) => row[key]) : Object.values(row);
+
   return (
-    Object.values(row).find((value) => {
+    valuesToSearch.find((value) => {
       if (value != null) {
         if (typeof value === 'string') return value.match(query);
         else if (
