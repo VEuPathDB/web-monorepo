@@ -23,9 +23,9 @@ import ExternalContentController from '@veupathdb/web-common/lib/controllers/Ext
 import { useConfiguredSubsettingClient } from '@veupathdb/eda/lib/core/hooks/client';
 import { useStudyMetadata } from '@veupathdb/eda/lib/core/hooks/study';
 
-const IsaDatasetDetail = React.lazy(
+const EdaDatasetDetail = React.lazy(
   () =>
-    import('@veupathdb/user-datasets/lib/Components/Detail/IsaDatasetDetail')
+    import('@veupathdb/user-datasets/lib/Components/Detail/EdaDatasetDetail')
 );
 
 const UserDatasetRouter = React.lazy(
@@ -56,7 +56,7 @@ export const userDatasetRoutes: RouteEntry[] = [
 
       const detailComponentsByTypeName = useMemo(
         () => ({
-          isasimple: function ClinEpiIsaDatasetDetail(
+          isasimple: function ClinEpiEdaDatasetDetail(
             props: UserDatasetDetailProps
           ) {
             const wdkDatasetId = diyUserDatasetIdToWdkRecordId(
@@ -64,7 +64,7 @@ export const userDatasetRoutes: RouteEntry[] = [
             );
             const edaStudyMetadata = useEdaStudyMetadata(wdkDatasetId);
             return (
-              <IsaDatasetDetail
+              <EdaDatasetDetail
                 {...props}
                 edaWorkspaceUrl={`${makeEdaRoute(wdkDatasetId)}/new`}
                 edaMapUrl={

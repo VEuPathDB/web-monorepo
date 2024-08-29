@@ -427,21 +427,23 @@ export function AnalysisPanel({
                   // Note that we are not inluding the custom detail page.
                   // As of this writing, details pages only add a link to
                   // EDA. Since we are in EDA, we don't want to add it here.
-                  <UserDatasetDetailController
-                    baseUrl={`${routeBase}/details`}
-                    detailsPageTitle={'My Study'}
-                    workspaceTitle={'My Studies'}
-                    id={wdkRecordIdToDiyUserDatasetId(
-                      studyRecord.attributes.dataset_id as string
-                    )}
-                    dataNoun={{
-                      singular: 'Study',
-                      plural: 'Studies',
-                    }}
-                    enablePublicUserDatasets={true}
-                    includeAllLink={false}
-                    includeNameHeader={false}
-                  />
+                  <div style={{ marginBlockStart: '1em' }}>
+                    <UserDatasetDetailController
+                      baseUrl={`${routeBase}/details`}
+                      detailsPageTitle={'My Study'}
+                      workspaceTitle={'My Studies'}
+                      id={wdkRecordIdToDiyUserDatasetId(
+                        studyRecord.attributes.dataset_id as string
+                      )}
+                      dataNoun={{
+                        singular: 'Study',
+                        plural: 'Studies',
+                      }}
+                      enablePublicUserDatasets={true}
+                      includeAllLink={false}
+                      includeNameHeader={false}
+                    />
+                  </div>
                 ) : (
                   <RecordController
                     recordClass="dataset"
