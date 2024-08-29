@@ -109,17 +109,21 @@ function StudyAnswerController(props) {
     communityStudySummaryRows ?? []
   );
 
+  const showUserDatasetTables =
+    !props.stateProps.isLoading &&
+    userStudySummaryRows != null &&
+    communityStudySummaryRows != null;
+
   return (
-    <div className="ClinEpiStudyAnswerController">
-      {!props.stateProps.isLoading &&
-        userStudySummaryRows != null &&
-        communityStudySummaryRows != null && (
+    <>
+      <h1>Study summaries</h1>
+      <div className="ClinEpiStudyAnswerController">
+        {showUserDatasetTables && (
           <>
-            <h1>Study summaries</h1>
             {useUserDatasetsWorkspace &&
               useEda &&
               userStudySummaryRows.length > 0 && (
-                <>
+                <div>
                   <h2>My studies</h2>
                   <RecordFilter
                     searchTerm={userStudySearchTerm}
@@ -151,12 +155,12 @@ function StudyAnswerController(props) {
                       },
                     }}
                   />
-                </>
+                </div>
               )}
             {useUserDatasetsWorkspace &&
               useEda &&
               communityStudySummaryRows.length > 0 && (
-                <>
+                <div>
                   <h2>Community studies</h2>
                   <RecordFilter
                     searchTerm={communityStudySearchTerm}
@@ -188,13 +192,16 @@ function StudyAnswerController(props) {
                       },
                     }}
                   />
-                </>
+                </div>
               )}
-            <h2>Curated studies</h2>
           </>
         )}
-      {curatedStudies}
-    </div>
+        <div>
+          {showUserDatasetTables && <h2>Curated studies</h2>}
+          {curatedStudies}
+        </div>
+      </div>
+    </>
   );
 }
 
