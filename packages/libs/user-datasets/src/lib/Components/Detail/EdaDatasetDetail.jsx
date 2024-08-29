@@ -2,9 +2,7 @@ import { Link } from 'react-router-dom';
 
 import UserDatasetDetail from './UserDatasetDetail';
 
-import './EdaDatasetDetail.scss';
-
-class IsaDatasetDetail extends UserDatasetDetail {
+class EdaDatasetDetail extends UserDatasetDetail {
   constructor(props) {
     super(props);
     this.renderEdaLinkout = this.renderEdaLinkout.bind(this);
@@ -25,7 +23,7 @@ class IsaDatasetDetail extends UserDatasetDetail {
 
     if (!isInstalled) return null;
 
-    if (edaWorkspaceUrl == null || edaMapUrl == null) return null;
+    if (edaWorkspaceUrl == null && edaMapUrl == null) return null;
 
     return (
       <ul className="eda-linkout">
@@ -48,12 +46,15 @@ class IsaDatasetDetail extends UserDatasetDetail {
   }
 
   getAttributes() {
+    const attributes = super.getAttributes();
+
+    if (!this.isInstalled()) return attributes;
+
     const edaLinks = {
       attribute: 'Explore',
       value: this.renderEdaLinkout(),
     };
-    const attributes = super.getAttributes();
-    const spliceIndex = this.props.includeNameHeader ? 3 : 2;
+    const spliceIndex = this.props.includeNameHeader ? 2 : 1;
     return [
       ...attributes.slice(0, spliceIndex),
       edaLinks,
@@ -62,4 +63,4 @@ class IsaDatasetDetail extends UserDatasetDetail {
   }
 }
 
-export default IsaDatasetDetail;
+export default EdaDatasetDetail;

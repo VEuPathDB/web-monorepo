@@ -4,11 +4,7 @@ import { Public } from '@material-ui/icons';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import SaveableTextEditor from '@veupathdb/wdk-client/lib/Components/InputControls/SaveableTextEditor';
 import Link from '@veupathdb/wdk-client/lib/Components/Link';
-import {
-  AnchoredTooltip,
-  Mesa,
-  MesaState,
-} from '@veupathdb/coreui/lib/components/Mesa';
+import { Mesa, MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 
@@ -131,17 +127,24 @@ class UserDatasetDetail extends React.Component {
     );
   }
 
+  isInstalled() {
+    const { config } = this.props;
+    const { status } = this.props.userDataset;
+    return (
+      status?.import === 'complete' &&
+      status?.install?.find((d) => d.projectId === config.projectId)
+        ?.dataStatus === 'complete'
+    );
+  }
+
   getAttributes() {
-    const { userDataset, questionMap, dataNoun, config } = this.props;
+    const { userDataset, questionMap, dataNoun } = this.props;
     const { onMetaSave } = this;
     const { id, type, meta, size, owner, created, sharedWith, status } =
       userDataset;
     const { display, name, version } = type;
     const isOwner = this.isMyDataset();
-    const isInstalled =
-      status?.import === 'complete' &&
-      status?.install?.find((d) => d.projectId === config.projectId)
-        ?.dataStatus === 'complete';
+    const isInstalled = this.isInstalled();
     const questions = Object.values(questionMap).filter(
       (q) =>
         'userDatasetType' in q.properties &&
@@ -174,23 +177,6 @@ class UserDatasetDetail extends React.Component {
             dataNoun={dataNoun}
           />
         ),
-      },
-      {
-        attribute: 'Visibility',
-        value:
-          meta.visibility === 'public' ? (
-            <>
-              {' '}
-              <Public className="Community-visible" /> This{' '}
-              {dataNoun.singular.toLowerCase()} is visible to the public. It is
-              a "Community Study" made available by user {owner}.
-            </>
-          ) : (
-            <>
-              This {dataNoun.singular.toLowerCase()} is only visible to the
-              owner and those they have shared it with.
-            </>
-          ),
       },
       !questions || !questions.length || !isInstalled
         ? null
@@ -227,6 +213,23 @@ class UserDatasetDetail extends React.Component {
         attribute: 'Owner',
         value: isOwner ? 'Me' : owner,
       },
+      {
+        attribute: 'Visibility',
+        value:
+          meta.visibility === 'public' ? (
+            <>
+              {' '}
+              <Public className="Community-visible" /> This is a "Community{' '}
+              {dataNoun.singular}" made accessible to the public by user {owner}
+              .
+            </>
+          ) : (
+            <>
+              This {dataNoun.singular.toLowerCase()} is only visible to the
+              owner and those they have shared it with.
+            </>
+          ),
+      },
       !isOwner || !sharedWith || !sharedWith.length
         ? null
         : {
@@ -242,20 +245,6 @@ class UserDatasetDetail extends React.Component {
               </ul>
             ),
           },
-      {
-        attribute: 'Data type',
-        value: (
-          <span>
-            {display} ({name} {version})
-          </span>
-        ),
-      },
-      { attribute: 'ID', value: id },
-      {
-        attribute: 'Created',
-        value: <DateTime datetime={created} />,
-      },
-      { attribute: 'Data set size', value: bytesToHuman(size) },
       {
         attribute: 'Summary',
         value: (
@@ -278,6 +267,20 @@ class UserDatasetDetail extends React.Component {
             onSave={this.onMetaSave('description')}
             emptyText="No Description"
           />
+        ),
+      },
+      {
+        attribute: 'Created',
+        value: <DateTime datetime={created} />,
+      },
+      { attribute: 'Data set size', value: bytesToHuman(size) },
+      { attribute: 'ID', value: id },
+      {
+        attribute: 'Data type',
+        value: (
+          <span>
+            {display} ({name} {version})
+          </span>
         ),
       },
     ].filter((attr) => attr);

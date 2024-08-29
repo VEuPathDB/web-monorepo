@@ -93,6 +93,10 @@
         margin-bottom: 0;
       }
 
+      a {
+        font-weight: 500;
+      }
+
       &.UserDatasetDetail-Name {
         font-weight: 400;
         font-size: 2.8em;
@@ -124,10 +128,9 @@
       }
     }
     .UserDatasetDetail {
-      &-Owner {
-        margin-top: 1em;
-      }
-      &-Summary {
+      &-Owner,
+      &-Summary,
+      &-Created {
         margin-top: 1em;
       }
     }

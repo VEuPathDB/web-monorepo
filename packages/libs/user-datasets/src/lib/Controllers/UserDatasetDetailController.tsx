@@ -22,7 +22,6 @@ import {
 } from '../Actions/UserDatasetsActions';
 
 import BigwigDatasetDetail from '../Components/Detail/BigwigDatasetDetail';
-import BiomDatasetDetail from '../Components/Detail/BiomDatasetDetail';
 import RnaSeqDatasetDetail from '../Components/Detail/RnaSeqDatasetDetail';
 import UserDatasetDetail from '../Components/Detail/UserDatasetDetail';
 import EmptyState from '../Components/EmptyState';
@@ -150,8 +149,6 @@ class UserDatasetDetailController extends PageController<MergedProps> {
         return BigwigDatasetDetail;
       case 'rnaseq':
         return RnaSeqDatasetDetail;
-      case 'biom':
-        return BiomDatasetDetail;
       default:
         return UserDatasetDetail;
     }
