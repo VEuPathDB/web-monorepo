@@ -54,16 +54,7 @@ class RowCounter extends React.PureComponent {
     }
 
     return (
-      <div
-        className="RowCounter"
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          columnGap: '1em',
-        }}
-      >
+      <div className="RowCounter">
         {countString}
         {filterString}
       </div>
