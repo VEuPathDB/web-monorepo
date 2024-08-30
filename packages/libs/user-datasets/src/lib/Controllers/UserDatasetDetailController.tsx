@@ -22,7 +22,6 @@ import {
 } from '../Actions/UserDatasetsActions';
 
 import BigwigDatasetDetail from '../Components/Detail/BigwigDatasetDetail';
-import BiomDatasetDetail from '../Components/Detail/BiomDatasetDetail';
 import RnaSeqDatasetDetail from '../Components/Detail/RnaSeqDatasetDetail';
 import UserDatasetDetail from '../Components/Detail/UserDatasetDetail';
 import EmptyState from '../Components/EmptyState';
@@ -60,6 +59,8 @@ type OwnProps = {
   >;
   dataNoun: DataNoun;
   enablePublicUserDatasets: boolean;
+  includeAllLink: boolean;
+  includeNameHeader: boolean;
 };
 type MergedProps = {
   ownProps: OwnProps;
@@ -148,8 +149,6 @@ class UserDatasetDetailController extends PageController<MergedProps> {
         return BigwigDatasetDetail;
       case 'rnaseq':
         return RnaSeqDatasetDetail;
-      case 'biom':
-        return BiomDatasetDetail;
       default:
         return UserDatasetDetail;
     }
@@ -179,6 +178,8 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       workspaceTitle,
       dataNoun,
       enablePublicUserDatasets,
+      includeAllLink,
+      includeNameHeader,
     } = this.props.ownProps;
     const {
       updateUserDatasetDetail,
@@ -216,6 +217,8 @@ class UserDatasetDetailController extends PageController<MergedProps> {
 
     const props = {
       baseUrl,
+      includeAllLink,
+      includeNameHeader,
       user,
       config,
       isOwner,

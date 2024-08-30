@@ -72,6 +72,7 @@ import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { Tooltip, Warning } from '@veupathdb/coreui';
 
 import './VEuPathDBHomePage.scss';
+import { searchTree } from '../../selectors/QueryGridSelectors';
 
 const vpdbCx = makeVpdbClassNameHelper('');
 
@@ -1135,8 +1136,7 @@ const filterMenuItemEntry = (
 
 // FIXME: Use a hook instead of "connect" to provide the global data
 const mapStateToProps = (state: RootState) => ({
-  // FIXME: This is not typesafe.
-  searchTree: get(state.globalData, 'searchTree') as CategoryTreeNode,
+  searchTree: searchTree(state),
   buildNumber: state.globalData.config?.buildNumber,
   releaseDate: state.globalData.config?.releaseDate,
   displayName: state.globalData.config?.displayName,

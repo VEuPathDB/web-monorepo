@@ -10,6 +10,18 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
       type: 'biom',
       uploadTitle: 'Upload My Data Set',
       formConfig: {
+        summary: {
+          inputProps: {
+            placeholder: 'brief summary of the study in a few sentences',
+          },
+        },
+        description: {
+          inputProps: {
+            required: false,
+            placeholder:
+              'optional longer description of the summary including background, study objectives, methodology, etc.',
+          },
+        },
         renderInfo: () => (
           <p className="formInfo">
             We accept any file in the{' '}
@@ -66,14 +78,14 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
       formConfig: {
         summary: {
           inputProps: {
-            placeholder: 'brief summary of the data set in 1-2 sentences',
+            placeholder: 'brief summary of the study in a few sentences',
           },
         },
         description: {
           inputProps: {
             required: false,
             placeholder:
-              'optional longer description of the data set including background, study objectives, methodology, etc.',
+              'optional longer description of the study including background, study objectives, methodology, etc.',
           },
         },
         uploadMethodConfig: {

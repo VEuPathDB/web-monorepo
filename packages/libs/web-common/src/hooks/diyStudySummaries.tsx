@@ -20,26 +20,10 @@ export function useDiyStudySummaryColumns(): Column<UserStudySummaryRow>[] {
   return useMemo(
     () => [
       {
-        accessor: 'userDatasetWorkspaceUrl',
+        accessor: 'edaWorkspaceUrl',
         Header: 'Name',
         Cell: function ({ value, row }) {
           return <Link to={value}>{row.original.name}</Link>;
-        },
-      },
-      {
-        accessor: 'edaWorkspaceUrl',
-        Header: 'Explore & analyze',
-        Cell: function ({ value }) {
-          return (
-            <div style={{ textAlign: 'center' }}>
-              <Link to={value} className="StudyMenuItem-RecordLink">
-                <i
-                  style={{ color: 'black', fontSize: '2em' }}
-                  className="ebrc-icon-edaIcon"
-                ></i>
-              </Link>
-            </div>
-          );
         },
       },
       {
