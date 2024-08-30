@@ -64,21 +64,11 @@ export function RecordTable_Sequences(
   const [highlightedNodes, setHighlightedNodes] = useState<string[]>([]);
 
   const mesaColumns: MesaColumn<RowType>[] = props.table.attributes
+    .filter(({ isDisplayable }) => isDisplayable)
     .map(({ name, displayName, type }) => ({
       key: name,
       name: displayName,
       type: type === 'link' ? 'wdkLink' : type,
-    }))
-    // and remove a raw HTML checkbox field - we'll use Mesa's built-in checkboxes for this
-    // and an object-laden 'sequence_link' field - the ID seems to be replicated in the full_id field
-    .filter(
-      ({ key }) =>
-        key !== 'clustalInput' && key !== 'full_id' && key !== 'taxon_abbrev'
-    )
-    // rename some headings (shouldn't this be done on the back end?)
-    .map((column) => ({
-      ...column,
-      name: column.name === 'Taxon' ? 'Clade' : column.name,
     }));
 
   const mesaRows = props.value;
