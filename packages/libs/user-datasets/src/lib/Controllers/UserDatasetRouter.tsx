@@ -175,6 +175,8 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
               detailComponentsByTypeName={detailComponentsByTypeName}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
+              includeAllLink
+              includeNameHeader
               {...props.match.params}
             />
           );

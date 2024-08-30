@@ -4,11 +4,7 @@ import { Public } from '@material-ui/icons';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import SaveableTextEditor from '@veupathdb/wdk-client/lib/Components/InputControls/SaveableTextEditor';
 import Link from '@veupathdb/wdk-client/lib/Components/Link';
-import {
-  AnchoredTooltip,
-  Mesa,
-  MesaState,
-} from '@veupathdb/coreui/lib/components/Mesa';
+import { Mesa, MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 
@@ -17,12 +13,13 @@ import NotFound from '@veupathdb/wdk-client/lib/Views/NotFound/NotFound';
 import SharingModal from '../Sharing/UserDatasetSharingModal';
 import CommunityModal from '../Sharing/UserDatasetCommunityModal';
 import UserDatasetStatus from '../UserDatasetStatus';
-import { makeClassifier, normalizePercentage } from '../UserDatasetUtils';
+import { makeClassifier } from '../UserDatasetUtils';
 import { ThemedGrantAccessButton } from '../ThemedGrantAccessButton';
 import { ThemedDeleteButton } from '../ThemedDeleteButton';
 
 import { DateTime } from '../DateTime';
 
+import '../UserDatasets.scss';
 import './UserDatasetDetail.scss';
 
 const classify = makeClassifier('UserDatasetDetail');
@@ -40,12 +37,6 @@ class UserDatasetDetail extends React.Component {
     this.renderAttributeList = this.renderAttributeList.bind(this);
     this.renderHeaderSection = this.renderHeaderSection.bind(this);
     this.renderDatasetActions = this.renderDatasetActions.bind(this);
-
-    this.renderCompatibilitySection =
-      this.renderCompatibilitySection.bind(this);
-    this.getCompatibilityStatus = this.getCompatibilityStatus.bind(this);
-    this.getCompatibilityTableColumns =
-      this.getCompatibilityTableColumns.bind(this);
 
     this.openSharingModal = this.openSharingModal.bind(this);
     this.renderFileSection = this.renderFileSection.bind(this);
@@ -127,6 +118,7 @@ class UserDatasetDetail extends React.Component {
   }
 
   renderAllDatasetsLink() {
+    if (!this.props.includeAllLink) return null;
     return (
       <Link className="AllDatasetsLink" to={this.props.baseUrl}>
         <Icon fa="chevron-left" />
@@ -135,27 +127,24 @@ class UserDatasetDetail extends React.Component {
     );
   }
 
-  getAttributes() {
-    const { userDataset, quotaSize, questionMap, dataNoun, config } =
-      this.props;
-    const { onMetaSave } = this;
-    const {
-      id,
-      type,
-      meta,
-      size,
-      percentQuotaUsed,
-      owner,
-      created,
-      sharedWith,
-      status,
-    } = userDataset;
-    const { display, name, version } = type;
-    const isOwner = this.isMyDataset();
-    const isInstalled =
+  isInstalled() {
+    const { config } = this.props;
+    const { status } = this.props.userDataset;
+    return (
       status?.import === 'complete' &&
       status?.install?.find((d) => d.projectId === config.projectId)
-        ?.dataStatus === 'complete';
+        ?.dataStatus === 'complete'
+    );
+  }
+
+  getAttributes() {
+    const { userDataset, questionMap, dataNoun } = this.props;
+    const { onMetaSave } = this;
+    const { id, type, meta, size, owner, created, sharedWith, status } =
+      userDataset;
+    const { display, name, version } = type;
+    const isOwner = this.isMyDataset();
+    const isInstalled = this.isInstalled();
     const questions = Object.values(questionMap).filter(
       (q) =>
         'userDatasetType' in q.properties &&
@@ -163,17 +152,19 @@ class UserDatasetDetail extends React.Component {
     );
 
     return [
-      {
-        attribute: this.props.detailsPageTitle,
-        className: classify('Name'),
-        value: (
-          <SaveableTextEditor
-            value={meta.name}
-            readOnly={!isOwner}
-            onSave={this.onMetaSave('name')}
-          />
-        ),
-      },
+      this.props.includeNameHeader
+        ? {
+            attribute: this.props.detailsPageTitle,
+            className: classify('Name'),
+            value: (
+              <SaveableTextEditor
+                value={meta.name}
+                readOnly={!isOwner}
+                onSave={this.onMetaSave('name')}
+              />
+            ),
+          }
+        : null,
       {
         attribute: 'Status',
         value: (
@@ -187,86 +178,6 @@ class UserDatasetDetail extends React.Component {
           />
         ),
       },
-      {
-        attribute: 'Visibility',
-        value:
-          meta.visibility === 'public' ? (
-            <>
-              {' '}
-              <Public className="Community-visible" /> This{' '}
-              {dataNoun.singular.toLowerCase()} is visible to the community.
-            </>
-          ) : (
-            <>
-              This {dataNoun.singular.toLowerCase()} is only visble to the owner
-              and those they have shared it with.
-            </>
-          ),
-      },
-      !isOwner || !sharedWith || !sharedWith.length
-        ? null
-        : {
-            attribute: 'Shared with',
-            value: (
-              <ul>
-                {sharedWith.map((share, index) => (
-                  <li key={`${share.userDisplayName}-${index}`}>
-                    {share.userDisplayName}
-                  </li>
-                ))}
-              </ul>
-            ),
-          },
-      {
-        attribute: 'Owner',
-        value: isOwner ? 'Me' : owner,
-      },
-      {
-        attribute: 'Description',
-        value: (
-          <SaveableTextEditor
-            value={meta.description}
-            multiLine={true}
-            readOnly={!isOwner}
-            onSave={this.onMetaSave('description')}
-            emptyText="No Description"
-          />
-        ),
-      },
-      { attribute: 'ID', value: id },
-      {
-        attribute: 'Data type',
-        value: (
-          <span>
-            {display} ({name} {version})
-          </span>
-        ),
-      },
-      {
-        attribute: 'Summary',
-        value: (
-          <SaveableTextEditor
-            multiLine={true}
-            value={meta.summary}
-            readOnly={!isOwner}
-            onSave={onMetaSave('summary')}
-            emptyText="No Summary"
-          />
-        ),
-      },
-      {
-        attribute: 'Created',
-        value: <DateTime datetime={created} />,
-      },
-      { attribute: 'Data set size', value: bytesToHuman(size) },
-      !isOwner
-        ? null
-        : {
-            attribute: 'Quota usage',
-            value: `${normalizePercentage(percentQuotaUsed)}% of ${bytesToHuman(
-              quotaSize
-            )}`,
-          },
       !questions || !questions.length || !isInstalled
         ? null
         : {
@@ -298,6 +209,80 @@ class UserDatasetDetail extends React.Component {
               </ul>
             ),
           },
+      {
+        attribute: 'Owner',
+        value: isOwner ? 'Me' : owner,
+      },
+      {
+        attribute: 'Visibility',
+        value:
+          meta.visibility === 'public' ? (
+            <>
+              {' '}
+              <Public className="Community-visible" /> This is a "Community{' '}
+              {dataNoun.singular}" made accessible to the public by user {owner}
+              .
+            </>
+          ) : (
+            <>
+              This {dataNoun.singular.toLowerCase()} is only visible to the
+              owner and those they have shared it with.
+            </>
+          ),
+      },
+      !isOwner || !sharedWith || !sharedWith.length
+        ? null
+        : {
+            attribute: 'Shared with',
+            className: classify('SharedWith'),
+            value: (
+              <ul>
+                {sharedWith.map((share, index) => (
+                  <li key={`${share.userDisplayName}-${index}`}>
+                    {share.userDisplayName}
+                  </li>
+                ))}
+              </ul>
+            ),
+          },
+      {
+        attribute: 'Summary',
+        value: (
+          <SaveableTextEditor
+            multiLine={true}
+            value={meta.summary}
+            readOnly={!isOwner}
+            onSave={onMetaSave('summary')}
+            emptyText="No Summary"
+          />
+        ),
+      },
+      {
+        attribute: 'Description',
+        value: (
+          <SaveableTextEditor
+            value={meta.description}
+            multiLine={true}
+            readOnly={!isOwner}
+            onSave={this.onMetaSave('description')}
+            emptyText="No Description"
+          />
+        ),
+      },
+      {
+        attribute: 'Created',
+        value: <DateTime datetime={created} />,
+      },
+      { attribute: 'Data set size', value: bytesToHuman(size) },
+      { attribute: 'ID', value: id },
+      {
+        attribute: 'Data type',
+        value: (
+          <span>
+            {display} ({name} {version})
+          </span>
+        ),
+      },
     ].filter((attr) => attr);
   }
 
@@ -412,12 +397,12 @@ class UserDatasetDetail extends React.Component {
     return (
       <section id="dataset-files">
         <h2>Data Files</h2>
-        <h3 className={classify('SectionTitle')}>
+        <h3>
           <Icon fa="files-o" />
           Uploaded Files in {dataNoun.singular}
         </h3>
         <Mesa state={uploadZipFileState} />
-        <h3 className={classify('SectionTitle')}>
+        <h3>
           <Icon fa="files-o" />
           Processed Files in {dataNoun.singular}
         </h3>
@@ -514,128 +499,6 @@ class UserDatasetDetail extends React.Component {
 
   /* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-                                Compatible Table
-
-   -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= */
-
-  renderCompatibilitySection() {
-    const { userDataset, config, dataNoun } = this.props;
-    const { displayName } = config;
-
-    const compatibilityTableState = MesaState.create({
-      columns: this.getCompatibilityTableColumns(userDataset),
-      rows: userDataset.dependencies,
-    });
-
-    const compatibilityStatus = this.getCompatibilityStatus();
-
-    return (
-      <section id="dataset-compatibility">
-        <h2>
-          Use This {dataNoun.singular} in {displayName}
-        </h2>
-        <h3 className={classify('SectionTitle')}>
-          <Icon fa="puzzle-piece" />
-          Compatibility Information &nbsp;
-          <AnchoredTooltip
-            content={`The data and genomes listed here are requisite for using the data in this user ${dataNoun.singular.toLowerCase()}.`}
-          >
-            <div className="HelpTrigger">
-              <Icon fa="question-circle" />
-            </div>
-          </AnchoredTooltip>
-        </h3>
-        <div style={{ maxWidth: '600px' }}>
-          <Mesa state={compatibilityTableState} />
-        </div>
-        {compatibilityStatus}
-      </section>
-    );
-  }
-
-  getCompatibilityStatus() {
-    const { userDataset, config, dataNoun } = this.props;
-    const { projectId } = config;
-
-    const { status, projects } = userDataset;
-
-    /**
-     * In VDI, we know a dataset is compatible when the site-specific's install status
-     * indicates a successful install.
-     *
-     * We know a dataset is incompatible when the site-specific's install status
-     * indicates `missing-dependency`
-     */
-    const installStatusForCurrentProject = status.install?.find(
-      (d) => d.projectId === projectId
-    );
-
-    const isTargetingCurrentSite = projects.includes(projectId);
-    const isInstalled = [
-      userDataset.status.import,
-      installStatusForCurrentProject?.metaStatus,
-      installStatusForCurrentProject?.dataStatus,
-    ].every((status) => status === 'complete');
-
-    const isIncompatible =
-      installStatusForCurrentProject?.dataStatus === 'missing-dependency';
-
-    if (!isTargetingCurrentSite || (isTargetingCurrentSite && isIncompatible)) {
-      return (
-        // if projectIds don't match, then we're not installable and thus incompatible
-        // if we're installable but failed due to a missing dependency, we're incompatible
-        <p className="danger">
-          This {dataNoun.singular.toLowerCase()} is not compatible with{' '}
-          <b>{projectId}</b>.
-        </p>
-      );
-    } else if (isInstalled) {
-      return (
-        // if we've installed successfully and we're installable, we're compatible
-        <p className="success">
-          This {dataNoun.singular.toLowerCase()} is compatible with{' '}
-          <b>{projectId}</b>. It is installed for use.
-        </p>
-      );
-    } else {
-      // instead of attempting to provide very granular messaging for when things are neither
-      // compatible nor incompatible, let's let the dataset page's Status messaging handle this
-      return null;
-    }
-  }
-
-  getCompatibilityTableColumns() {
-    const { userDataset } = this.props;
-    const { projects } = userDataset;
-    return [
-      {
-        key: 'project',
-        name: 'VEuPathDB Website',
-        renderCell() {
-          return projects.join(', ');
-        },
-      },
-      {
-        key: 'resourceDisplayName',
-        name: 'Required Resource',
-        renderCell({ row }) {
-          const { resourceDisplayName } = row;
-          return resourceDisplayName;
-        },
-      },
-      {
-        key: 'resourceVersion',
-        name: 'Required Resource Release',
-        renderCell({ row }) {
-          const { resourceVersion } = row;
-          return resourceVersion;
-        },
-      },
-    ];
-  }
-
-  /* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
                                 General Rendering
 
    -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= */
@@ -646,11 +509,7 @@ class UserDatasetDetail extends React.Component {
   // The ReactNode type is better suited, here, since it allows for null values.
   /** @return {import("react").ReactNode[]} */
   getPageSections() {
-    return [
-      this.renderHeaderSection,
-      this.renderCompatibilitySection,
-      this.renderFileSection,
-    ];
+    return [this.renderHeaderSection, this.renderFileSection];
   }
 
   render() {

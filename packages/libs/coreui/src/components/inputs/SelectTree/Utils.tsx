@@ -78,7 +78,7 @@ export function mapStructure<T, U>(
   getChildren: ChildrenGetter<T>,
   root: T
 ): U {
-  let mappedChildren = Seq.from(getChildren(root))
+  const mappedChildren = Seq.from(getChildren(root))
     .map((child) => mapStructure(mapFn, getChildren, child))
     .toArray();
   return mapFn(root, mappedChildren);
@@ -136,8 +136,8 @@ export function* preorder<T>(
   getChildren: ChildrenGetter<T>
 ): Iterable<T> {
   yield root;
-  let children = getChildren(root);
-  let length = children.length;
+  const children = getChildren(root);
+  const length = children.length;
   for (let i = 0; i < length; i++) {
     yield* preorder(children[i], getChildren);
   }
@@ -293,7 +293,7 @@ export function* concat<T>(...iterables: Iterable<T>[]) {
 
 export function* map<T, U>(fn: Mapper<T, U>, iterable: Iterable<T>) {
   for (let iter = iterable[Symbol.iterator](); ; ) {
-    let { done, value } = iter.next();
+    const { done, value } = iter.next();
     if (done) break;
     yield fn(value);
   }
@@ -301,16 +301,16 @@ export function* map<T, U>(fn: Mapper<T, U>, iterable: Iterable<T>) {
 
 export function* flatMap<T, U>(fn: FlatMapper<T, U>, iterable: Iterable<T>) {
   for (let iter = iterable[Symbol.iterator](); ; ) {
-    let { done, value } = iter.next();
+    const { done, value } = iter.next();
     if (done) break;
     yield* fn(value);
   }
 }
 
 export function* uniq<T>(iterable: Iterable<T>) {
-  let values = new Set();
+  const values = new Set();
   for (let iter = iterable[Symbol.iterator](); ; ) {
-    let { done, value } = iter.next();
+    const { done, value } = iter.next();
     if (done) break;
     if (values.has(value) === false) {
       values.add(value);
@@ -326,7 +326,7 @@ export function filter<T, U extends T>(
 export function filter<T>(fn: Predicate<T>, iterable: Iterable<T>): Iterable<T>;
 export function* filter<T>(fn: Predicate<T>, iterable: Iterable<T>) {
   for (let iter = iterable[Symbol.iterator](); ; ) {
-    let { done, value } = iter.next();
+    const { done, value } = iter.next();
     if (done) break;
     if (fn(value)) yield value;
   }
@@ -334,7 +334,7 @@ export function* filter<T>(fn: Predicate<T>, iterable: Iterable<T>) {
 
 export function some<T>(test: Predicate<T>, iterable: Iterable<T>): boolean {
   for (let iter = iterable[Symbol.iterator](); ; ) {
-    let { done, value } = iter.next();
+    const { done, value } = iter.next();
     if (done) break;
     if (test(value) === true) return true;
   }
@@ -351,7 +351,7 @@ export function reduce<T, U>(
 ): U {
   let result = seedValue;
   for (let iter = iterable[Symbol.iterator](); ; ) {
-    let { done, value } = iter.next();
+    const { done, value } = iter.next();
     if (done) break;
     result = fn(result, value);
   }
@@ -369,7 +369,7 @@ export function safeHtml<P>(
 export function safeHtml<P>(
   str: string,
   props?: P,
-  Component?: React.StatelessComponent<P>
+  Component?: React.FunctionComponent<P>
 ): JSX.Element;
 export function safeHtml<P>(
   str: string,
@@ -385,7 +385,7 @@ export function safeHtml<P>(
     return <Component {...props}>{str}</Component>;
   }
   // Use innerHTML to auto close tags
-  let container = document.createElement('div');
+  const container = document.createElement('div');
   container.innerHTML = str;
   return (
     <Component
@@ -418,7 +418,7 @@ export function addOrRemove<T>(array: T[], value: T): T[] {
  * @returns {Array<String>} A set of query terms parsed from searchQueryString
  */
 export function parseSearchQueryString(searchQueryString: string) {
-  let match = searchQueryString.match(/[^\s"]+|"[^"]*"/g);
+  const match = searchQueryString.match(/[^\s"]+|"[^"]*"/g);
   if (match == null) return [];
   return match.map(function (queryTerm) {
     if (queryTerm.startsWith('"')) {

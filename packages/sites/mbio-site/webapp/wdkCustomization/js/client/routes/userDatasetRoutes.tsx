@@ -16,9 +16,9 @@ import { communitySite, projectId } from '@veupathdb/web-common/lib/config';
 
 import ExternalContentController from '@veupathdb/web-common/lib/controllers/ExternalContentController';
 
-const BiomDatasetDetail = React.lazy(
+const EdaDatasetDetail = React.lazy(
   () =>
-    import('@veupathdb/user-datasets/lib/Components/Detail/BiomDatasetDetail')
+    import('@veupathdb/user-datasets/lib/Components/Detail/EdaDatasetDetail')
 );
 
 const UserDatasetRouter = React.lazy(
@@ -49,13 +49,13 @@ export const userDatasetRoutes: RouteEntry[] = [
 
       const detailComponentsByTypeName = useMemo(
         () => ({
-          biom: function MbioBiomDatasetDetail(props: UserDatasetDetailProps) {
+          biom: function MbioEdaDatasetDetail(props: UserDatasetDetailProps) {
             const wdkDatasetId = diyUserDatasetIdToWdkRecordId(
               props.userDataset.id
             );
 
             return (
-              <BiomDatasetDetail
+              <EdaDatasetDetail
                 {...props}
                 edaWorkspaceUrl={`${makeEdaRoute(wdkDatasetId)}/new`}
               />

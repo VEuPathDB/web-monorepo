@@ -39,7 +39,6 @@ export interface UserDataset {
   meta: UserDatasetMeta;
   owner: string;
   ownerUserId: number;
-  percentQuotaUsed: number;
   sharedWith: UserDatasetShare[] | undefined;
   size?: number;
   type: {

@@ -2,7 +2,7 @@
  * Register DOM element names to use the provided React Component.
  */
 
-import { render, unmountComponentAtNode } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import React, { Component } from 'react';
 
 let reactCustomElements = new Map();
@@ -39,23 +39,24 @@ export function renderWithCustomElements(html) {
 class ReactElementsContainer extends Component {
   constructor(props) {
     super(props);
-    this.targets = [];
+    this.roots = [];
   }
 
   componentDidMount() {
     this.node.innerHTML = this.props.html;
     for (let [nodeName, reactElementFactory] of reactCustomElements) {
       for (let target of this.node.querySelectorAll(nodeName)) {
-        this.targets.push(target);
+        const root = createRoot(target);
+        this.roots.push(root);
         let reactElement = reactElementFactory(target);
-        render(reactElement, target);
+        root.render(reactElement);
       }
     }
   }
 
   componentWillUnmount() {
-    this.targets.forEach(function (target) {
-      unmountComponentAtNode(target);
+    this.roots.forEach(function (root) {
+      root.unmount();
     });
   }
 

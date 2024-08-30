@@ -18,6 +18,7 @@ export type BaseMarkerData = {
   value: number;
   label: string;
   color?: string;
+  count?: number;
 };
 
 export interface ChartMarkerProps

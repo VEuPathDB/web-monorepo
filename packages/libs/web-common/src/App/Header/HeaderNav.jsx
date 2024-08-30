@@ -139,6 +139,8 @@ class HeaderNav extends React.Component {
         return 'youtube-play';
       case 'vimeo':
         return 'vimeo-square';
+      case 'discord':
+        return ' ebrc-icon-discord-logo';
       default:
         return type;
     }
@@ -150,7 +152,7 @@ class HeaderNav extends React.Component {
       <a
         href={url}
         target="_blank"
-        name={name ? name : `Visit us on ${type}`}
+        title={name ? name : `Visit us on ${type}`}
         className="HeaderNav-Social-Link"
       >
         <Icon fa={icon} />

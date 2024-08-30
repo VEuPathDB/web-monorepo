@@ -1,5 +1,5 @@
 import React from 'react';
-import * as ReactDOM from 'react-dom';
+import * as ReactDOMClient from 'react-dom/client';
 
 import { CommonModal } from '../Components';
 
@@ -59,23 +59,23 @@ export function dialog(
   return new Promise(function (resolve, reject) {
     const dialogNode = document.createElement('div');
     document.body.appendChild(dialogNode);
+    const root = ReactDOMClient.createRoot(dialogNode);
 
     const onSelectValue = (value: any) => {
       resolve(value);
-      ReactDOM.unmountComponentAtNode(dialogNode);
+      root.unmount();
       document.body.removeChild(dialogNode);
     };
 
     try {
-      ReactDOM.render(
+      root.render(
         <PlatformModal
           title={title}
           message={message}
           buttons={buttons}
           onSelectValue={onSelectValue}
           escapeValue={escapeValue}
-        />,
-        dialogNode
+        />
       );
     } catch (err) {
       reject(err);

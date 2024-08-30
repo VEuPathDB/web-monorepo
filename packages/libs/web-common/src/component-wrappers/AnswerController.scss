@@ -4,6 +4,20 @@
   }
 }
 .ClinEpiStudyAnswerController {
+  h2 {
+    padding: 0;
+  }
+
+  > * + * {
+    margin-block-start: 2em;
+    margin-block-end: 2em;
+  }
+
+  > * > * + * {
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+  }
+
   .wdk-AnswerHeader {
     display: none;
   }

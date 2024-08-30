@@ -4,7 +4,7 @@ interface StepAnalysisButtonArrayProps {
   configs: StepAnalysisButtonConfig[];
 }
 
-export const StepAnalysisButtonArray: React.SFC<StepAnalysisButtonArrayProps> =
+export const StepAnalysisButtonArray: React.FC<StepAnalysisButtonArrayProps> =
   ({ configs }) => (
     <div
       style={{
@@ -30,7 +30,7 @@ interface StepAnalysisButtonProps {
   contents?: ReactNode;
 }
 
-const StepAnalysisButton: React.SFC<StepAnalysisButtonProps> = ({
+const StepAnalysisButton: React.FC<StepAnalysisButtonProps> = ({
   onClick,
   customButton,
   href,

@@ -25,7 +25,7 @@ export interface StepAnalysisFormPluginEventHandlers {
   onFormSubmit: () => void;
 }
 
-export const StepAnalysisFormPane: React.SFC<StepAnalysisFormPaneProps> = ({
+export const StepAnalysisFormPane: React.FC<StepAnalysisFormPaneProps> = ({
   formKey,
   formExpanded,
   formRenderer,
