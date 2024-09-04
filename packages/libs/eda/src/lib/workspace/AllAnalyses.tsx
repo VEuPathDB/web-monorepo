@@ -3,7 +3,7 @@ import { map, orderBy } from 'lodash';
 import Path from 'path';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
-import { useWdkServiceWithVdi } from '@veupathdb/user-datasets/lib/Hooks/wdkServiceWithVdi';
+import { isVdiCompatibleWdkService } from '@veupathdb/user-datasets/lib/Service';
 
 import {
   Button,
@@ -185,14 +185,15 @@ export function AllAnalyses(props: Props) {
   });
 
   const [ownUserDatasets, communityDatasets] =
-    useWdkServiceWithVdi(
-      (wdkService) =>
-        Promise.all([
+    useWdkService(async (wdkService) => {
+      if (isVdiCompatibleWdkService(wdkService)) {
+        return Promise.all([
           wdkService.getCurrentUserDatasets(),
           wdkService.getCommunityDatasets(),
-        ]),
-      []
-    ) ?? [];
+        ]);
+      }
+      return [];
+    }, []) ?? [];
 
   const { analyses, deleteAnalyses, updateAnalysis, loading, error } =
     useAnalysisList(analysisClient);
