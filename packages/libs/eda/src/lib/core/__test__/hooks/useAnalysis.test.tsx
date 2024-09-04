@@ -69,7 +69,9 @@ const analysisClient: AnalysisClient = {
   },
 } as AnalysisClient;
 
-const wrapper: React.ComponentType = ({ children }) => (
+const wrapper: React.ComponentType<{ children: React.ReactNode }> = ({
+  children,
+}) => (
   <WorkspaceContext.Provider
     value={{
       analysisClient,
