@@ -1,15 +1,13 @@
 import './globals';
+
 import React, { Suspense } from 'react';
 import { Redirect, RouteComponentProps } from 'react-router';
 import { RecoilRoot } from 'recoil';
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
-import {
-  BlastSummaryViewPlugin,
-  GenomeSummaryViewPlugin,
-  ResultTableSummaryViewPlugin,
-} from '@veupathdb/wdk-client/lib/Plugins';
+import { ResultTableSummaryViewPlugin } from '@veupathdb/wdk-client/lib/Plugins';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import { ClientPluginRegistryEntry } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
+import BlastSummaryViewPlugin from '@veupathdb/blast-summary-view/lib/Controllers/BlastSummaryViewController';
 
 import {
   OrganismParam,
@@ -92,11 +90,6 @@ initialize({
       type: 'summaryView',
       name: '_default',
       component: ResultTableSummaryViewPlugin,
-    },
-    {
-      type: 'summaryView',
-      name: 'genomic-view',
-      component: GenomeSummaryViewPlugin,
     },
     {
       type: 'summaryView',

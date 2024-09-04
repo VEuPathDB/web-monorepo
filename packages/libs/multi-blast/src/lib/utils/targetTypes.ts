@@ -11,6 +11,7 @@ export interface TargetMetadata {
 
 export type BlastOntologyDatabase = 'blast-est-ontology' | 'blast-orf-ontology';
 
+// Keys are blast database names
 const targetMetadataByDataType: Record<string, TargetMetadata> = {
   AnnotatedTranscripts: {
     blastOntologyDatabase: 'blast-est-ontology',

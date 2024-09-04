@@ -1,4 +1,4 @@
-const path = require('path');
+const webpack = require('webpack');
 
 /*
  * The following gives preference to the project's root node_modules directory when loading modules and loaders.
@@ -10,18 +10,37 @@ module.exports = function override(config, env) {
     ...config,
     resolve: {
       ...config.resolve,
-      modules: [
-        path.join(__dirname, 'node_modules'),
-        ...(config.resolve.modules || ['node_modules']),
-      ],
+      fallback: {
+        path: 'path-browserify',
+        stream: 'stream-browserify',
+        querystring: 'querystring-es3',
+        assert: 'assert',
+        buffer: 'buffer',
+        fs: false,
+      },
     },
-    resolveLoader: {
-      ...config.resolveLoader,
-      modules: [
-        path.join(__dirname, 'node_modules'),
-        ...(config.resolveLoader.modules || ['node_modules']),
-      ],
-    },
+    plugins: [
+      ...config.plugins,
+      new webpack.ProvidePlugin({
+        // This is needed by shape2geohash, used by MapVEuMap
+        process: 'process/browser',
+      }),
+    ],
     externals: [{ jquery: 'jQuery' }],
+    module: {
+      ...config.module,
+      rules: [
+        ...config.module.rules,
+        {
+          test: /\.(js|jsx|ts|tsx)$/,
+          exclude: /node_modules\/(?!(@veupathdb))/,
+          enforce: 'pre',
+          use: 'source-map-loader',
+        },
+      ],
+    },
+    snapshot: {
+      managedPaths: [],
+    },
   };
 };
