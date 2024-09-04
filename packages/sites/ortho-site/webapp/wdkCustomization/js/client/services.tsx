@@ -1,5 +1,7 @@
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 
+import { wrapWdkService as addMultiBlastService } from '@veupathdb/multi-blast/lib/utils/wdkServiceIntegration';
+
 import {
   ProteomeSummaryRows,
   proteomeSummaryRowsDecoder,
@@ -12,7 +14,7 @@ import { TaxonEntries, taxonEntriesDecoder } from 'ortho-client/utils/taxons';
 
 export function wrapWdkService(wdkService: WdkService): OrthoService {
   return {
-    ...wdkService,
+    ...addMultiBlastService(wdkService),
     getGroupLayout: orthoServiceWrappers.getGroupLayout(wdkService),
     getProteomeSummary: orthoServiceWrappers.getProteomeSummary(wdkService),
     getTaxons: orthoServiceWrappers.getTaxons(wdkService),
