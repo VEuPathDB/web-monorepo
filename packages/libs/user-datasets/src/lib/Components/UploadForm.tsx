@@ -254,7 +254,6 @@ function UploadForm({
   const descriptionRequired = descriptionInputProps?.required ?? false;
 
   const summaryMaxLength = summaryInputProps?.maxLength ?? 4000;
-  const summaryExceedsMaxLength = summary.length > summaryMaxLength;
 
   const defaultFileInputField = (
     <FileInput
