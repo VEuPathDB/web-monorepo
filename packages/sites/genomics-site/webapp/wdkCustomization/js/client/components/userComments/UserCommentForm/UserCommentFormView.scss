@@ -88,7 +88,7 @@
           width: calc(100ch + 4px);
         }
 
-        > div > textarea {
+        > div textarea {
           height: 5em;
           box-sizing: content-box;
           width: calc(100ch + 4px);
@@ -135,6 +135,7 @@
               margin-bottom: 0.5em;
             }
 
+            .TextArea-container,
             textarea {
               height: 5em;
               width: 100%;
