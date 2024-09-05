@@ -253,6 +253,9 @@ function UploadForm({
   const summaryRequired = summaryInputProps?.required ?? true;
   const descriptionRequired = descriptionInputProps?.required ?? false;
 
+  const summaryMaxLength = summaryInputProps?.maxLength ?? 4000;
+  const summaryExceedsMaxLength = summary.length > summaryMaxLength;
+
   const defaultFileInputField = (
     <FileInput
       accept={
@@ -415,11 +418,13 @@ function UploadForm({
           <FieldLabel htmlFor="data-set-summary" required={summaryRequired}>
             Summary
           </FieldLabel>
-          <TextBox
+          <TextArea
             type="input"
             id="data-set-summary"
             placeholder="brief summary of the data set contents in a few sentences"
             required={summaryRequired}
+            cols={2}
+            maxLength={summaryMaxLength}
             {...summaryInputProps}
             value={summary}
             onChange={setSummary}
