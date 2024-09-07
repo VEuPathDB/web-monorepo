@@ -111,7 +111,7 @@ class RecordController extends PageController<Props> {
           return (
             attributes?.includes(id) ||
             tables?.includes(id) ||
-            scopes.includes('record-internal')
+            scopes.includes('record-internal') // do we need to handle 'record-collapsed'?
           );
         })
         .toArray();

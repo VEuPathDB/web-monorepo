@@ -85,7 +85,14 @@ export const isInternalNode = partial(
   'scope',
   'record-internal'
 );
-export const isNotInternalNode = partial(nodeHasProperty, 'scope', 'record');
+const isRecordNode = partial(nodeHasProperty, 'scope', 'record');
+const isRecordCollapsedNode = partial(
+  nodeHasProperty,
+  'scope',
+  'record-collapsed'
+);
+export const isNotInternalNode = (node: CategoryTreeNode) =>
+  isRecordNode(node) || isRecordCollapsedNode(node);
 export const isAttributeNode = partial(
   nodeHasProperty,
   'targetType',
