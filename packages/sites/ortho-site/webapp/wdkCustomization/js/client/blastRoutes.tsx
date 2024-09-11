@@ -11,10 +11,9 @@ const BlastWorkspaceRouter = React.lazy(
 import { TargetMetadataByDataType } from '@veupathdb/multi-blast/lib/utils/targetTypes';
 
 const targetMetadataByDataType: ContextType<typeof TargetMetadataByDataType> = {
-  MultiDiamond: {
-    blastOntologyDatabase: 'blast-est-ontology',
+  AnnotatedProteins: {
     recordClassUrlSegment: 'sequence',
-    searchUrlSegment: 'MultiDiamond',
+    searchUrlSegment: 'ByMultiBlast',
   },
 };
 
