@@ -28,6 +28,7 @@ import { scrollIntoView } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 import {
   Parameter,
   ParameterGroup,
+  SelectEnumParam,
 } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import DefaultQuestionForm, {
   ParameterList,
@@ -106,8 +107,17 @@ function BlastFormWithTransformedQuestion(props: Props) {
 
   const targetType = props.state.paramValues[BLAST_DATABASE_TYPE_PARAM_NAME];
 
+  const blastAlgorithmParameter = props.state.question.parametersByName[
+    BLAST_ALGORITHM_PARAM_NAME
+  ] as SelectEnumParam;
+
   const selectedBlastAlgorithm =
     props.state.paramValues[BLAST_ALGORITHM_PARAM_NAME];
+
+  const selectedBlastAlgorithmDisplay =
+    blastAlgorithmParameter.vocabulary.find(
+      ([term]) => term === selectedBlastAlgorithm
+    )?.[1] ?? selectedBlastAlgorithm;
 
   const restrictedAdvancedParamGroup = useMemo(() => {
     const fullAdvancedParamGroup =
@@ -115,14 +125,14 @@ function BlastFormWithTransformedQuestion(props: Props) {
 
     return {
       ...fullAdvancedParamGroup,
-      displayName: `Advanced ${selectedBlastAlgorithm.toUpperCase()} Parameters`,
+      displayName: `Advanced ${selectedBlastAlgorithmDisplay.toUpperCase()} Parameters`,
       parameters: fullAdvancedParamGroup.parameters.filter(
         (paramName) =>
           !isOmittedParam(props.state.question.parametersByName[paramName])
       ),
     };
   }, [
-    selectedBlastAlgorithm,
+    selectedBlastAlgorithmDisplay,
     props.state.question.groupsByName,
     props.state.question.parametersByName,
   ]);
@@ -241,7 +251,7 @@ function BlastFormWithTransformedQuestion(props: Props) {
   );
   const dynamicOrganismParam =
     props.state.question.parametersByName[BLAST_DATABASE_ORGANISM_PARAM_NAME];
-  const organismParamElement = (
+  const organismParamElement = dynamicOrganismParam && (
     <Plugin
       context={{
         type: 'questionFormParameter',
