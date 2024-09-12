@@ -371,6 +371,8 @@ function BlastSummary({
           <span className="InlineHeader">Program:</span>
           <span>
             {jobDetails.config.tool === 'tblastx' ||
+            jobDetails.config.tool === 'diamond-blastp' ||
+            jobDetails.config.tool === 'diamond-blastx' ||
             jobDetails.config.task == null
               ? jobDetails.config.tool
               : jobDetails.config.task}
