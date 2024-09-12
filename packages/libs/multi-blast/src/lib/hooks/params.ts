@@ -196,7 +196,7 @@ async function fetchDefaultAlgorithmAdvancedParams(
   const searchName = question.urlSegment;
 
   const advancedParamNames =
-    question.groupsByName[ADVANCED_PARAMS_GROUP_NAME].parameters;
+    question.groupsByName[ADVANCED_PARAMS_GROUP_NAME]?.parameters ?? [];
   const defaultAdvancedParams = advancedParamNames.map(
     (advancedParamName) => question.parametersByName[advancedParamName]
   );

@@ -1,5 +1,4 @@
 import {
-  ChangeEvent,
   FormEvent,
   useCallback,
   useContext,
@@ -39,7 +38,6 @@ import DefaultQuestionForm, {
 import { Plugin } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
 import {
   makeParamDependenciesUpdating,
-  useChangeParamValue,
   useDependentParamsAreUpdating,
 } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
 
@@ -123,6 +121,10 @@ function BlastFormWithTransformedQuestion(props: Props) {
     const fullAdvancedParamGroup =
       props.state.question.groupsByName[ADVANCED_PARAMS_GROUP_NAME];
 
+    if (fullAdvancedParamGroup == null) {
+      return undefined;
+    }
+
     return {
       ...fullAdvancedParamGroup,
       displayName: `Advanced ${selectedBlastAlgorithmDisplay.toUpperCase()} Parameters`,
@@ -138,26 +140,6 @@ function BlastFormWithTransformedQuestion(props: Props) {
   ]);
 
   const enabledAlgorithms = useEnabledAlgorithms(targetType);
-
-  const updateQueryParam = useChangeParamValue(
-    props.state.question.parametersByName[BLAST_QUERY_SEQUENCE_PARAM_NAME],
-    props.state,
-    props.eventHandlers.updateParamValue
-  );
-
-  const onQueryFileInputChanged = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      const file =
-        event.target.files == null || event.target.files.length === 0
-          ? null
-          : event.target.files[0];
-
-      if (file != null) {
-        file.text().then(updateQueryParam);
-      }
-    },
-    [updateQueryParam]
-  );
 
   const defaultAdvancedParamsMetadata = useDefaultAdvancedParams(
     props.state.question
@@ -218,6 +200,11 @@ function BlastFormWithTransformedQuestion(props: Props) {
     props.eventHandlers.updateParamValue
   );
 
+  const enableSequenceTextArea =
+    !props.state.question.parametersByName[
+      BLAST_QUERY_SEQUENCE_PARAM_NAME
+    ]?.properties?.['multiBlastOptions']?.includes('fileOnly');
+
   const targetParamElement = (
     <RadioList
       {...targetParamProps}
@@ -233,19 +220,24 @@ function BlastFormWithTransformedQuestion(props: Props) {
   const sequenceParamElement = (
     <div className="SequenceParam">
       <div className="SequenceParamInstructions">
-        {props.isMultiBlast
-          ? 'Paste one or several sequences, or upload a FASTA file.'
-          : 'Paste one sequence, or upload a one-sequence FASTA file.'}
+        {enableSequenceTextArea
+          ? props.isMultiBlast
+            ? 'Paste one or several sequences, or upload a FASTA file. If both are provided, the file will be used.'
+            : 'Paste one sequence, or upload a one-sequence FASTA file. If both are provided, the file will be used.'
+          : props.isMultiBlast
+          ? 'Upload a FASTA file.'
+          : 'Upload a one-sequence FASTA file.'}
       </div>
-      <TextArea
-        {...sequenceParamProps}
-        name={`${props.state.question.urlSegment}/${BLAST_QUERY_SEQUENCE_PARAM_NAME}`}
-      />
+      {enableSequenceTextArea && (
+        <TextArea
+          {...sequenceParamProps}
+          name={`${props.state.question.urlSegment}/${BLAST_QUERY_SEQUENCE_PARAM_NAME}`}
+        />
+      )}
       <input
         type="file"
         accept="text/*"
         name={`${props.state.question.urlSegment}/${BLAST_QUERY_SEQUENCE_PARAM_NAME}__file`}
-        onChange={onQueryFileInputChanged}
       />
     </div>
   );
@@ -294,9 +286,7 @@ function BlastFormWithTransformedQuestion(props: Props) {
   const renderBlastParamGroup = useCallback(
     (group: ParameterGroup, formProps: Props) => (
       <div key={group.name} className={blastFormCx('Group', group.name)}>
-        {group.name !== ADVANCED_PARAMS_GROUP_NAME ? (
-          renderDefaultParamGroup(group, formProps)
-        ) : (
+        {group.name === restrictedAdvancedParamGroup?.name ? (
           <AdvancedParamGroup
             key={group.name}
             searchName={formProps.state.question.urlSegment}
@@ -324,6 +314,8 @@ function BlastFormWithTransformedQuestion(props: Props) {
               />
             </>
           </AdvancedParamGroup>
+        ) : (
+          renderDefaultParamGroup(group, formProps)
         )}
       </div>
     ),
@@ -414,7 +406,7 @@ function NewJobForm(props: NewJobFormProps) {
   const history = useHistory();
 
   const onSubmit = useCallback(
-    async (event: FormEvent) => {
+    async (event: FormEvent<HTMLFormElement>) => {
       if (api == null) {
         throw new Error('To use this form, the BLAST api must be configured.');
       }
@@ -465,7 +457,21 @@ function NewJobForm(props: NewJobFormProps) {
         target: `${organism}${dbTargetName}`,
       }));
 
-      const query = props.state.paramValues[BLAST_QUERY_SEQUENCE_PARAM_NAME];
+      // React's typescript definitions do not make it easy to access the form element this event was attached to.
+      // event.target has a generic Event type; event.currentTarget has a FormEvent type, but this is not accurate, since it is `null`
+      const queryFileInput = (
+        event.target as HTMLFormElement
+      ).elements.namedItem(
+        `${props.state.question.urlSegment}/${BLAST_QUERY_SEQUENCE_PARAM_NAME}__file`
+      );
+      const queryFile =
+        queryFileInput instanceof HTMLInputElement &&
+        queryFileInput.type === 'file'
+          ? queryFileInput.files?.[0]
+          : undefined;
+
+      const query =
+        queryFile ?? props.state.paramValues[BLAST_QUERY_SEQUENCE_PARAM_NAME];
 
       const config = paramValuesToBlastConfig(props.state.paramValues);
 
@@ -501,11 +507,12 @@ function NewJobForm(props: NewJobFormProps) {
     },
     [
       api,
-      history,
-      targetMetadataByDataType,
       wdkDependencies,
-      props.state.paramValues,
       submissionDisabled,
+      props.state.paramValues,
+      props.state.question.urlSegment,
+      targetMetadataByDataType,
+      history,
     ]
   );
 
