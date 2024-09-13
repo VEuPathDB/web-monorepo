@@ -548,7 +548,7 @@ export type IoSensitivity = TypeOf<typeof ioSensitivity>;
 
 const ioDiamondConfigShared = partial({
   query: string,
-  eValue: string,
+  eValue: number,
   maxTargetSeqs: number,
   // TODO This can be a union of string literal
   sensitivity: ioSensitivity,
