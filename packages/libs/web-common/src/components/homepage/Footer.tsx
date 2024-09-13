@@ -46,13 +46,6 @@ export const Footer: FunctionComponent<Props> = ({
         <div>
           <a
             target="_blank"
-            href="https://www.niaid.nih.gov/research/bioinformatics-resource-centers"
-          >
-            <img src="/assets/images/BRC_Logo_transparent-01.png"></img>
-          </a>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          <a
-            target="_blank"
             href="https://globalbiodata.org/scientific-activities/global-core-biodata-resources"
           >
             <img src="/assets/images/GCBR-Logo-CMYK.png"></img>
