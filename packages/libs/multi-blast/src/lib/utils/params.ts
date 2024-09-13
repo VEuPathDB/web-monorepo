@@ -207,9 +207,9 @@ export function paramValuesToBlastConfig(
   if (selectedTool === 'diamond-blastp') {
     return {
       tool: selectedTool,
-      eValue: eValue,
+      eValue: eValue ? Number(eValue) : undefined,
       sensitivity: sensitivity as IoSensitivity,
-      maxTargetSeqs: Number(maxTargetSeqs),
+      maxTargetSeqs: maxTargetSeqs ? Number(maxTargetSeqs) : undefined,
       reportUnaligned: reportUnaligned === '1',
       compBasedStats:
         compBasedStatsDiamond as IoDiamondBlastPConfig['compBasedStats'],
@@ -232,21 +232,37 @@ export function blastConfigToParamValues(
     [BLAST_ALGORITHM_PARAM_NAME]: blastConfig.tool,
   };
 
+  // Handle Diamond blast configurations
   if (
     blastConfig.tool === 'diamond-blastp' ||
     blastConfig.tool === 'diamond-blastx'
   ) {
-    return Object.assign(parameterValues, {
-      [EXPECTATION_VALUE_PARAM_NAME]: blastConfig.eValue,
-      [SENSITIVITY_PARAM_NAME]: blastConfig.sensitivity,
-      [MAX_TARGET_SEQS_PARAM_NAME]: blastConfig.maxTargetSeqs?.toString(),
-      [REPORT_UNALIGNED_PARAM_NAME]: blastConfig.reportUnaligned ? '1' : '0',
-      [COMP_BASED_STATS_PARAM_NAME]: blastConfig.compBasedStats,
-      [MASKING_PARAM_NAME]: blastConfig.masking,
-      [ITERATE_PARAM_NAME]: blastConfig.iterate ? 'yes' : 'no',
-      [DIAMOND_OUTPUT_FIELDS_PARAM_NAME]:
-        blastConfig.outFormat?.fields.join(' '),
-    });
+    if (blastConfig.eValue != null) {
+      parameterValues[EXPECTATION_VALUE_PARAM_NAME] =
+        blastConfig.eValue.toString();
+    }
+    if (blastConfig.sensitivity != null) {
+      parameterValues[SENSITIVITY_PARAM_NAME] = blastConfig.sensitivity;
+    }
+    if (blastConfig.maxTargetSeqs != null) {
+      parameterValues[MAX_TARGET_SEQS_PARAM_NAME] =
+        blastConfig.maxTargetSeqs.toString();
+    }
+    if (blastConfig.compBasedStats != null) {
+      parameterValues[COMP_BASED_STATS_PARAM_NAME] = blastConfig.compBasedStats;
+    }
+    if (blastConfig.masking) {
+      parameterValues[MASKING_PARAM_NAME] = blastConfig.masking;
+    }
+    if (blastConfig.outFormat != null) {
+      parameterValues[DIAMOND_OUTPUT_FIELDS_PARAM_NAME] =
+        blastConfig.outFormat.fields.join(' ');
+    }
+    parameterValues[REPORT_UNALIGNED_PARAM_NAME] = blastConfig.reportUnaligned
+      ? '1'
+      : '0';
+    parameterValues[ITERATE_PARAM_NAME] = blastConfig.iterate ? 'yes' : 'no';
+    return parameterValues;
   }
 
   if (blastConfig.eValue != null) {
