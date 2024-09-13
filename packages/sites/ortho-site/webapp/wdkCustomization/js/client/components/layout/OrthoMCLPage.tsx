@@ -241,7 +241,7 @@ function useHeaderMenuItems() {
             key: 'proteome-upload',
             display: 'Assign proteins to groups in Galaxy',
             type: 'reactRoute',
-            url: '/galaxy-orientation',
+            url: makeStaticPageRoute(`/prot-mapping-warn.html`),
           },
           {
             key: 'blast',
@@ -279,7 +279,7 @@ function useHeaderMenuItems() {
             key: 'galaxy-analyses',
             display: 'Assign my proteins to groups in Galaxy',
             type: 'reactRoute',
-            url: '/galaxy-orientation',
+            url: makeStaticPageRoute(`/prot-mapping-warn.html`),
           },
           {
             key: 'basket',
