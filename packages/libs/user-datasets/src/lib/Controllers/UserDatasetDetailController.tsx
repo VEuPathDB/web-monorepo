@@ -257,7 +257,9 @@ class UserDatasetDetailController extends PageController<MergedProps> {
     const DetailView = this.getDetailView(
       typeof entry?.resource === 'object' ? entry.resource.type : null
     );
-    return user && user.isGuest ? (
+    return entry?.resource?.meta.visibility !== 'public' &&
+      user &&
+      user.isGuest ? (
       this.renderGuestView()
     ) : (
       <DetailView {...props} />
