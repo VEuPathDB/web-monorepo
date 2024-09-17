@@ -1,5 +1,5 @@
 import { isLeft, map } from 'fp-ts/Either';
-import { array, string } from 'io-ts';
+import { array, string, unknown } from 'io-ts';
 import { identity, memoize, omit } from 'lodash';
 
 import {
@@ -218,6 +218,21 @@ export class BlastApi extends FetchClientWithCredentials {
       path: `${REPORTS_PATH}/${reportId}`,
       method: 'POST',
       transformResponse: identity,
+    });
+  }
+
+  fetchSingleFileReport(
+    reportId: string,
+    fileName: string,
+    maxSize: number = 10 * 10 ** 6 // 10 MB
+  ) {
+    return this.taggedFetch({
+      path: `${REPORTS_PATH}/${reportId}/files/${fileName}?download=false`,
+      headers: {
+        'Content-Max-Length': `${maxSize}`,
+      },
+      method: 'GET',
+      transformResponse: ioTransformer(unknown),
     });
   }
 
