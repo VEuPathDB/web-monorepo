@@ -21,7 +21,7 @@ export const proteinMappingRoutes: RouteEntry[] = [
     component: () => (
       <Suspense fallback={<Loading />}>
         <TargetMetadataByDataType.Provider value={targetMetadataByDataType}>
-          <BlastWorkspaceRouter workspaceHeading="Map Proteins" />
+          <BlastWorkspaceRouter workspaceHeading="Map proteins to OrthoMCL with Diamond blastp" />
         </TargetMetadataByDataType.Provider>
       </Suspense>
     ),
