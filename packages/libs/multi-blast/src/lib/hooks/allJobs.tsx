@@ -126,7 +126,7 @@ export function useMesaOptions() {
           <div className="EmptyState-BodyWrapper">
             <p>You do not have any BLAST jobs</p>
             <p>
-              Please run a <Link to="/workspace/blast/new">new job</Link>{' '}
+              Please run a <Link to="./new">new job</Link>{' '}
             </p>
           </div>
         </div>
