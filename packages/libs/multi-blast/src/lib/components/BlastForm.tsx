@@ -22,7 +22,10 @@ import {
   TextArea,
 } from '@veupathdb/wdk-client/lib/Components';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
-import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import {
+  makeClassNameHelper,
+  safeHtml,
+} from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { scrollIntoView } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 import {
   Parameter,
@@ -73,6 +76,7 @@ import { AdvancedParamGroup } from './AdvancedParamGroup';
 import { BlastFormValidationInfo } from './BlastFormValidationInfo';
 
 import './BlastForm.scss';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 export const blastFormCx = makeClassNameHelper('wdk-QuestionForm');
 
@@ -83,6 +87,10 @@ const BLAST_FORM_CONTAINER_NAME = 'MultiBlast';
 export interface Props extends DefaultQuestionFormProps {
   canChangeRecordType?: boolean;
   isMultiBlast?: boolean;
+}
+
+interface TransformedProps extends Props {
+  originalQuestion: Props['state']['question'];
 }
 
 export function BlastForm(props: Props) {
@@ -100,7 +108,7 @@ export function BlastForm(props: Props) {
   );
 }
 
-function BlastFormWithTransformedQuestion(props: Props) {
+function BlastFormWithTransformedQuestion(props: TransformedProps) {
   const canChangeRecordType = props.canChangeRecordType ?? false;
 
   const targetType = props.state.paramValues[BLAST_DATABASE_TYPE_PARAM_NAME];
@@ -220,13 +228,16 @@ function BlastFormWithTransformedQuestion(props: Props) {
   const sequenceParamElement = (
     <div className="SequenceParam">
       <div className="SequenceParamInstructions">
-        {enableSequenceTextArea
-          ? props.isMultiBlast
-            ? 'Paste one or several sequences, or upload a FASTA file. If both are provided, the file will be used.'
-            : 'Paste one sequence, or upload a one-sequence FASTA file. If both are provided, the file will be used.'
-          : props.isMultiBlast
-          ? 'Upload a FASTA file.'
-          : 'Upload a one-sequence FASTA file.'}
+        {props.originalQuestion.parametersByName[
+          BLAST_QUERY_SEQUENCE_PARAM_NAME
+        ]?.visibleHelp ??
+          (enableSequenceTextArea
+            ? props.isMultiBlast
+              ? 'Paste one or several sequences, or upload a FASTA file. If both are provided, the file will be used.'
+              : 'Paste one sequence, or upload a one-sequence FASTA file. If both are provided, the file will be used.'
+            : props.isMultiBlast
+            ? 'Upload a FASTA file.'
+            : 'Upload a one-sequence FASTA file.')}
       </div>
       {enableSequenceTextArea && (
         <TextArea
@@ -518,6 +529,15 @@ function NewJobForm(props: NewJobFormProps) {
 
   return api == null ? null : (
     <div className={props.containerClassName} ref={containerRef}>
+      {props.state.question.description && (
+        <Banner
+          banner={{
+            type: 'info',
+            hideIcon: true,
+            message: safeHtml(props.state.question.description, null, 'div'),
+          }}
+        />
+      )}
       {inputErrors != null && <BlastFormValidationInfo errors={inputErrors} />}
       <form onSubmit={onSubmit}>
         {props.state.question.groups
@@ -540,7 +560,7 @@ function transformFormQuestion(
   formProps: Props,
   isMultiBlast: boolean = false,
   targetRecordType: string
-): Props {
+): Props & { originalQuestion: Props['state']['question'] } {
   const transformedParameters = formProps.state.question.parameters.reduce(
     (memo, parameter) => {
       if (parameter.name === JOB_DESCRIPTION_PARAM_NAME && !isMultiBlast) {
@@ -562,6 +582,7 @@ function transformFormQuestion(
                 Learn more about BLAST query inputs here.
               </a>
             `,
+          visibleHelp: undefined,
         });
 
         return memo;
@@ -613,5 +634,6 @@ function transformFormQuestion(
         groupsByName: transformedGroupsByName,
       },
     },
+    originalQuestion: formProps.state.question,
   };
 }
