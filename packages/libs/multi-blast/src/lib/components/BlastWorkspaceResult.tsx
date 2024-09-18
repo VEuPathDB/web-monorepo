@@ -229,8 +229,9 @@ function CompleteBlastResult(props: CompleteBlastResultProps) {
 
   const targets = props.jobDetails.targets;
 
-  const { targetTypeTerm, wdkRecordType } =
-    useTargetTypeTermAndWdkRecordType(targets);
+  const { targetTypeTerm, wdkRecordType } = useTargetTypeTermAndWdkRecordType(
+    targets ?? []
+  );
 
   const organismToFilenameMapsResult = useBlastCompatibleWdkService(
     async (wdkService) =>
@@ -265,7 +266,7 @@ function CompleteBlastResult(props: CompleteBlastResultProps) {
     <BlastSummary
       filesToOrganisms={organismToFilenameMapsResult.filesToOrganisms}
       jobDetails={props.jobDetails}
-      targets={targets}
+      targets={targets ?? []}
       multiQueryReportResult={props.multiQueryReportResult}
       query={props.query}
       individualQueries={props.individualQueries}
