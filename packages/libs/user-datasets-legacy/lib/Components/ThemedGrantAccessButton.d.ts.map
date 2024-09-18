@@ -1,0 +1,1 @@
+{"version":3,"file":"ThemedGrantAccessButton.d.ts","sourceRoot":"","sources":["../../src/lib/Components/ThemedGrantAccessButton.tsx"],"names":[],"mappings":";AAGA,MAAM,MAAM,iBAAiB,GAAG;IAC9B,UAAU,EAAE,MAAM,CAAC;IACnB,OAAO,EAAE,MAAM,IAAI,CAAC;CACrB,CAAC;AAEF,wBAAgB,uBAAuB,CAAC,EACtC,UAAU,EACV,OAAO,GACR,EAAE,iBAAiB,eAyCnB"}
