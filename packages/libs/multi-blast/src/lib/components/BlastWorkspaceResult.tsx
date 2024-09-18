@@ -40,6 +40,7 @@ import { BlastRequestError } from './BlastRequestError';
 import { ResultContainer } from './ResultContainer';
 
 import './BlastWorkspaceResult.scss';
+import { DiamondResultContainer } from './DiamondResultContainer';
 
 interface Props {
   jobId: string;
@@ -64,12 +65,47 @@ export function BlastWorkspaceResult(props: Props) {
     [blastApi, props.jobId]
   );
 
+  if (jobResult.value == null || queryResult.value == null) {
+    return <LoadingBlastResult {...props} />;
+  }
+
+  return jobResult.value != null &&
+    jobResult.value.status === 'request-error' ? (
+    <BlastRequestError errorDetails={jobResult.value.details} />
+  ) : jobResult.value != null && jobResult.value.status === 'error' ? (
+    <BlastRerunError {...props} />
+  ) : jobResult.value != null && jobResult.value.status === 'queueing-error' ? (
+    <ErrorPage message="We were unable to queue your job." />
+  ) : queryResult.value != null && queryResult.value.status === 'error' ? (
+    <BlastRequestError errorDetails={queryResult.value.details} />
+  ) : jobResult.value.job.config.tool.startsWith('diamond-') ? (
+    <DiamondResultContainer
+      {...props}
+      job={jobResult.value.job}
+      query={queryResult.value.value}
+    />
+  ) : (
+    <StandardBlastResult
+      {...props}
+      job={jobResult.value.job}
+      query={queryResult.value.value}
+    />
+  );
+}
+
+function StandardBlastResult(
+  props: Props & {
+    job: LongJobResponse;
+    query: string;
+  }
+) {
+  const { job, query } = props;
+  const blastApi = useBlastApi();
+  // TODO Add numRows, or whatever, for diamond results
   const reportResult = usePromise(
     async () =>
-      jobResult.value?.status !== 'job-completed'
-        ? undefined
-        : makeReportPollingPromise(blastApi, props.jobId, 'single-file-json'),
-    [blastApi, jobResult.value?.status]
+      makeReportPollingPromise(blastApi, props.jobId, 'single-file-json'),
+    [blastApi]
   );
 
   const multiQueryReportResult = usePromise(
@@ -83,16 +119,10 @@ export function BlastWorkspaceResult(props: Props) {
   );
 
   const individualQueriesResult = usePromise(async () => {
-    if (jobResult.value?.status !== 'job-completed') {
-      return undefined;
-    }
-
-    const childJobIds = jobResult.value.job?.childJobs?.map(({ id }) => id);
+    const childJobIds = job.childJobs?.map(({ id }) => id);
 
     const subJobIds =
-      childJobIds == null || childJobIds.length === 0
-        ? [jobResult.value.job.id]
-        : childJobIds;
+      childJobIds == null || childJobIds.length === 0 ? [job.id] : childJobIds;
 
     const queryResults = await Promise.all(
       subJobIds.map((id) =>
@@ -125,18 +155,9 @@ export function BlastWorkspaceResult(props: Props) {
             }[]
           ).map((queryResult) => queryResult.value),
         } as ApiResultSuccess<IndividualQuery[]>);
-  }, [jobResult.value]);
+  }, [job]);
 
-  return jobResult.value != null &&
-    jobResult.value.status === 'request-error' ? (
-    <BlastRequestError errorDetails={jobResult.value.details} />
-  ) : jobResult.value != null && jobResult.value.status === 'error' ? (
-    <BlastRerunError {...props} />
-  ) : jobResult.value != null && jobResult.value.status === 'queueing-error' ? (
-    <ErrorPage message="We were unable to queue your job." />
-  ) : queryResult.value != null && queryResult.value.status === 'error' ? (
-    <BlastRequestError errorDetails={queryResult.value.details} />
-  ) : reportResult.value != null &&
+  return reportResult.value != null &&
     reportResult.value.status === 'request-error' ? (
     <BlastRequestError errorDetails={reportResult.value.details} />
   ) : reportResult.value != null &&
@@ -145,17 +166,14 @@ export function BlastWorkspaceResult(props: Props) {
   ) : individualQueriesResult.value != null &&
     individualQueriesResult.value.status === 'error' ? (
     <BlastRequestError errorDetails={individualQueriesResult.value.details} />
-  ) : queryResult.value == null ||
-    jobResult.value == null ||
-    reportResult.value == null ||
-    individualQueriesResult.value == null ? (
+  ) : reportResult.value == null || individualQueriesResult.value == null ? (
     <LoadingBlastResult {...props} />
   ) : (
     <CompleteBlastResult
       {...props}
       individualQueries={individualQueriesResult.value.value}
-      jobDetails={jobResult.value.job}
-      query={queryResult.value.value}
+      jobDetails={job}
+      query={query}
       multiQueryReportResult={multiQueryReportResult}
     />
   );
@@ -277,6 +295,7 @@ function CompleteBlastResult(props: CompleteBlastResultProps) {
   );
 }
 
+// TODO Move this to an external file to remove circular dependency
 interface BlastSummaryProps {
   filesToOrganisms: Record<string, string>;
   jobDetails: LongJobResponse;
@@ -523,7 +542,7 @@ export async function makeReportPollingPromise(
       return makeReportPollingPromise(
         blastApi,
         jobId,
-        'single-file-json',
+        format,
         reportRequest.value.reportID
       );
     } else {
@@ -553,12 +572,7 @@ export async function makeReportPollingPromise(
 
     await waitForNextPoll();
 
-    return makeReportPollingPromise(
-      blastApi,
-      jobId,
-      'single-file-json',
-      report.reportID
-    );
+    return makeReportPollingPromise(blastApi, jobId, format, report.reportID);
   } else {
     return {
       ...reportRequest,
