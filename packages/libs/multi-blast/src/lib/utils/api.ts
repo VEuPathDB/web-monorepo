@@ -236,6 +236,10 @@ export class BlastApi extends FetchClientWithCredentials {
     });
   }
 
+  getSingleFileReportUrl(reportId: string, fileName: string): string {
+    return `${this.baseUrl}${REPORTS_PATH}/${reportId}/files/${fileName}`;
+  }
+
   fetchSingleFileJsonReport(
     reportId: string,
     maxSize: number = 10 * 10 ** 6 // 10 MB
