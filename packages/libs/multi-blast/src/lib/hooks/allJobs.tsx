@@ -24,7 +24,7 @@ export function useAllJobsColumns(): MesaColumn<JobRow>[] {
         key: 'jobId',
         name: 'Job Id',
         renderCell: ({ row }: { row: JobRow }) => (
-          <Link to={`/workspace/blast/result/${row.jobId}`}>{row.jobId}</Link>
+          <Link to={`./result/${row.jobId}`}>{row.jobId}</Link>
         ),
         sortable: true,
       },
@@ -51,7 +51,7 @@ export function useAllJobsColumns(): MesaColumn<JobRow>[] {
             {row.status === 'expired' && (
               <>
                 {' '}
-                (<Link to={`/workspace/blast/result/${row.jobId}`}>rerun</Link>)
+                (<Link to={`./result/${row.jobId}`}>rerun</Link>)
               </>
             )}
           </div>

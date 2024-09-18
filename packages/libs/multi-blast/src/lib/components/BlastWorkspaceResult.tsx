@@ -175,10 +175,9 @@ function LoadingBlastResult(props: Props) {
           </p>
           <p className="Instructions">
             This job could take some time to run. You may leave this page and
-            access the result from your{' '}
-            <Link to="/workspace/blast/all">jobs list</Link> later, or{' '}
-            <Link to="/workspace/blast/new">submit another BLAST job</Link>{' '}
-            while you wait.
+            access the result from your <Link to="../all">jobs list</Link>{' '}
+            later, or <Link to="../new">submit another BLAST job</Link> while
+            you wait.
           </p>
         </div>
       </Loading>
@@ -340,7 +339,7 @@ function BlastSummary({
   return (
     <div className={blastWorkspaceCx('Result', 'Complete')}>
       <h1>BLAST Job - result</h1>
-      <Link className="BackToAllJobs" to="/workspace/blast/all">
+      <Link className="BackToAllJobs" to="../all">
         &lt;&lt; All my BLAST Jobs
       </Link>
       <div className="ConfigDetailsContainer">
@@ -352,7 +351,7 @@ function BlastSummary({
               <Link
                 className="EditJob"
                 to={{
-                  pathname: '/workspace/blast/new',
+                  pathname: '../new',
                   state: {
                     parameterValues: multiQueryParamValues,
                   },

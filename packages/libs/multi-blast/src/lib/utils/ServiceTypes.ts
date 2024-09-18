@@ -4,6 +4,7 @@ import {
   boolean,
   intersection,
   literal,
+  nullType,
   number,
   partial,
   record,
@@ -607,11 +608,11 @@ export const shortJobResponse = intersection([
     status: ioJobStatus,
     created: string,
     site: string,
-    targets: array(target),
     // FIXME: This field no longer appears in the response. Service bug?
     // expires: string,
   }),
   partial({
+    targets: array(target),
     description: string,
     // FIXME: This field is missing from "secondary" jobs. Service bug?
     isPrimary: boolean,
@@ -666,7 +667,7 @@ export const shortReportResponse = intersection([
   type({
     jobID: string,
     reportID: string,
-    config: reportConfig,
+    config: union([reportConfig, nullType]),
     status: ioJobStatus,
   }),
   partial({
