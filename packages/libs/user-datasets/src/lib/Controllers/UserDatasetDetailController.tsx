@@ -29,6 +29,7 @@ import { quotaSize } from '../Components/UserDatasetUtils';
 
 import { StateSlice } from '../StoreModules/types';
 import { DataNoun } from '../Utils/types';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
 const ActionCreators = {
   showLoginForm,
@@ -254,10 +255,10 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       updateDatasetCommunityVisibilitySuccess,
     };
 
-    const DetailView = this.getDetailView(
-      typeof entry?.resource === 'object' ? entry.resource.type : null
-    );
-    return entry?.resource?.meta.visibility !== 'public' &&
+    if (entry?.resource == null) return <Loading />;
+
+    const DetailView = this.getDetailView(typeof entry.resource.type);
+    return entry.resource.meta.visibility !== 'public' &&
       user &&
       user.isGuest ? (
       this.renderGuestView()
