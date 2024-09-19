@@ -251,7 +251,7 @@ function UploadForm({
     datasetUploadType.formConfig.description?.inputProps;
 
   const summaryRequired = summaryInputProps?.required ?? true;
-  const descriptionRequired = descriptionInputProps?.required ?? true;
+  const descriptionRequired = descriptionInputProps?.required ?? false;
 
   const defaultFileInputField = (
     <FileInput
@@ -418,7 +418,7 @@ function UploadForm({
           <TextBox
             type="input"
             id="data-set-summary"
-            placeholder="brief summary of the data set contents"
+            placeholder="brief summary of the data set contents in a few sentences"
             required={summaryRequired}
             {...summaryInputProps}
             value={summary}
@@ -434,7 +434,7 @@ function UploadForm({
           </FieldLabel>
           <TextArea
             id="data-set-description"
-            placeholder="brief description of the data set contents"
+            placeholder="longer description of the data set contents"
             required={descriptionRequired}
             {...descriptionInputProps}
             value={description}

@@ -490,7 +490,7 @@ const useHeaderMenuItems = (
           key: 'galaxy',
           display: 'Galaxy',
           type: 'reactRoute',
-          url: '/galaxy-orientation',
+          url: makeStaticPageRoute(`/genomics-galaxy-warn.html`),
         },
         {
           key: 'jbrowse',
@@ -614,7 +614,7 @@ const useHeaderMenuItems = (
           key: 'galaxy-analyses',
           display: 'Analyze my data (Galaxy)',
           type: 'reactRoute',
-          url: '/galaxy-orientation',
+          url: makeStaticPageRoute(`/genomics-galaxy-warn.html`),
         },
         {
           key: 'basket',
