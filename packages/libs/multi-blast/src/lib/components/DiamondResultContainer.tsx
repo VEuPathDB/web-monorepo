@@ -71,7 +71,10 @@ export function DiamondResultContainer(props: Props) {
                   // paths are relative to the application root
                   // and not the current location. So, we need
                   // to get a handle on the current location to
-                  // create a path relative to it.
+                  // create a path relative to it. Furthermore,
+                  // we need to use path.join to normalize the
+                  // path (remove the .. parts) so that
+                  // react-router recognizes it.
                   pathname: path.join(location.pathname, './../../new'),
                   state: {
                     parameterValues,
