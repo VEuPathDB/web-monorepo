@@ -221,13 +221,19 @@ export class BlastApi extends FetchClientWithCredentials {
     });
   }
 
+  /** Request a preview of the file */
   fetchSingleFileReport(
     reportId: string,
     fileName: string,
+    headerRow?: string[],
+    lines?: string,
     maxSize: number = 10 * 10 ** 6 // 10 MB
   ) {
+    let query = '?download=false';
+    if (headerRow) query += `&headers=${headerRow}`;
+    if (lines) query += `&lines=${lines}`;
     return this.taggedFetch({
-      path: `${REPORTS_PATH}/${reportId}/files/${fileName}?download=false`,
+      path: `${REPORTS_PATH}/${reportId}/files/${fileName}${query}`,
       headers: {
         'Content-Max-Length': `${maxSize}`,
       },

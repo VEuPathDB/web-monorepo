@@ -5,12 +5,12 @@ import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 import { blastWorkspaceCx } from './BlastWorkspace';
 import { Link } from 'react-router-dom';
 import { blastConfigToParamValues } from '../utils/params';
-import { ReactNode, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { upperFirst, zip } from 'lodash';
 import Mesa from '@veupathdb/coreui/lib/components/Mesa/Ui/Mesa';
 import { create as createMesaState } from '@veupathdb/coreui/lib/components/Mesa/Utils/MesaState';
-import { FilledButton, MesaButton } from '@veupathdb/coreui';
+import { FilledButton } from '@veupathdb/coreui';
 
 interface Props {
   job: LongJobResponse;
@@ -26,6 +26,10 @@ export function DiamondResultContainer(props: Props) {
 
   const blastApi = useBlastApi();
 
+  const headerRow = job.config.outFormat?.fields?.map((field) =>
+    upperFirst(field.replaceAll('-', ' '))
+  );
+
   const reportMetadataResult = usePromise(
     () => blastApi.fetchReport(job.id),
     [blastApi, job.id]
@@ -37,7 +41,9 @@ export function DiamondResultContainer(props: Props) {
         ? undefined
         : blastApi.fetchSingleFileReport(
             reportMetadataResult.value.value.reportID,
-            reportMetadataResult.value.value.files?.[0]!
+            reportMetadataResult.value.value.files?.[0]!,
+            headerRow,
+            '1-100'
           ),
     [blastApi, reportMetadataResult.value]
   );
@@ -142,11 +148,17 @@ export function DiamondResultContainer(props: Props) {
             >
               <h2>Mapped proteins</h2>
               <form
+                method="get"
                 action={blastApi.getSingleFileReportUrl(
                   reportMetadataResult.value.value.reportID,
                   reportMetadataResult.value.value.files?.[0]!
                 )}
               >
+                <input
+                  type="hidden"
+                  name="headers"
+                  value={headerRow?.join(',')}
+                />
                 <FilledButton
                   onPress={() => {
                     /* This prop is required, but is not needed when submitting a form */
@@ -175,21 +187,22 @@ interface DiamondResultTableProps {
   fields: string[];
 }
 function DiamondResultTable(props: DiamondResultTableProps) {
-  const { rawResult, fields } = props;
+  const { rawResult } = props;
   const tableState = useMemo(() => {
+    const [fields, ...rawRows] = rawResult
+      .trim()
+      .split(/\n/g)
+      .map((row) => row.split(/\t/g));
     const columns = fields.map((field) => ({
       key: field,
       name: upperFirst(field.replaceAll('-', ' ')),
     }));
-    const rows = rawResult
-      .trim()
-      .split(/\n/g)
-      .map((row) => Object.fromEntries(zip(fields, row.split(/\t/g))));
+    const rows = rawRows.map((row) => Object.fromEntries(zip(fields, row)));
     return createMesaState({
       columns,
       rows,
     });
-  }, [fields, rawResult]);
+  }, [rawResult]);
 
   return <Mesa state={tableState} />;
 }
