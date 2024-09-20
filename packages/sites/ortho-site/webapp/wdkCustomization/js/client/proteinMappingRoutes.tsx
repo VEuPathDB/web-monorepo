@@ -3,6 +3,8 @@ import { TargetMetadataByDataType } from '@veupathdb/multi-blast/lib/utils/targe
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
+import { communitySite } from '@veupathdb/web-common/lib/config';
+
 const BlastWorkspaceRouter = React.lazy(
   () => import('./controllers/BlastWorkspaceRouter')
 );
@@ -21,7 +23,10 @@ export const proteinMappingRoutes: RouteEntry[] = [
     component: () => (
       <Suspense fallback={<Loading />}>
         <TargetMetadataByDataType.Provider value={targetMetadataByDataType}>
-          <BlastWorkspaceRouter workspaceHeading="Map proteins to OrthoMCL with Diamond blastp" />
+          <BlastWorkspaceRouter
+            helpPageUrl={communitySite + 'protein-mapping.html'}
+            workspaceHeading="Map proteins to OrthoMCL with Diamond blastp"
+          />
         </TargetMetadataByDataType.Provider>
       </Suspense>
     ),

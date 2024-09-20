@@ -9,6 +9,7 @@ const BlastWorkspaceRouter = React.lazy(
 );
 
 import { TargetMetadataByDataType } from '@veupathdb/multi-blast/lib/utils/targetTypes';
+import { communitySite } from '@veupathdb/web-common/lib/config';
 
 const targetMetadataByDataType: ContextType<typeof TargetMetadataByDataType> = {
   AnnotatedProteins: {
@@ -24,7 +25,9 @@ export const blastRoutes: RouteEntry[] = [
     component: () => (
       <Suspense fallback={<Loading />}>
         <TargetMetadataByDataType.Provider value={targetMetadataByDataType}>
-          <BlastWorkspaceRouter />
+          <BlastWorkspaceRouter
+            helpPageUrl={communitySite + 'multiblast.html'}
+          />
         </TargetMetadataByDataType.Provider>
       </Suspense>
     ),

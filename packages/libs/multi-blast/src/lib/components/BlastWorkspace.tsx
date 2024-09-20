@@ -17,13 +17,14 @@ import { ReactNode } from 'react';
 export const blastWorkspaceCx = makeClassNameHelper('BlastWorkspace');
 
 interface Props {
+  helpPageUrl: string;
   workspaceUrl: string;
   workspaceHeading?: ReactNode;
 }
 
 export function BlastWorkspace(props: Props) {
   useSetDocumentTitle('BLAST Workspace');
-  const { workspaceUrl, workspaceHeading = 'BLAST' } = props;
+  const { helpPageUrl, workspaceUrl, workspaceHeading = 'BLAST' } = props;
 
   return (
     <div className={blastWorkspaceCx()}>
@@ -59,7 +60,9 @@ export function BlastWorkspace(props: Props) {
         <WdkRoute
           path={workspaceUrl + '/help'}
           requiresLogin={false}
-          component={BlastWorkspaceHelp}
+          component={() => {
+            return <BlastWorkspaceHelp helpPageUrl={helpPageUrl} />;
+          }}
         />
         <Redirect to={workspaceUrl + '/all'} />
       </Switch>

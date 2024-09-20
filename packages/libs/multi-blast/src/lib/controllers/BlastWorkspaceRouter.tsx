@@ -8,11 +8,12 @@ import { ReactNode } from 'react';
 
 interface Props {
   workspaceHeading?: ReactNode;
+  helpPageUrl: string;
 }
 
 export function BlastWorkspaceRouter(props: Props) {
   const { path, url } = useRouteMatch();
-  const { workspaceHeading } = props;
+  const { workspaceHeading, helpPageUrl } = props;
 
   return (
     <Switch>
@@ -21,6 +22,7 @@ export function BlastWorkspaceRouter(props: Props) {
         exact
         render={() => (
           <BlastWorkspace
+            helpPageUrl={helpPageUrl}
             workspaceUrl={url}
             workspaceHeading={workspaceHeading}
           />
