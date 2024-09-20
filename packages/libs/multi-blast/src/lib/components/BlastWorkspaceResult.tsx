@@ -1,10 +1,10 @@
+import path from 'path';
 import { Fragment, useContext, useEffect, useMemo, useState } from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, Link } from 'react-router-dom';
 
 import {
   CollapsibleSection,
   Error as ErrorPage,
-  Link,
   Loading,
 } from '@veupathdb/wdk-client/lib/Components';
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
@@ -356,10 +356,15 @@ function BlastSummary({
 
   const [showMore, setShowMore] = useState<boolean>(false);
 
+  // The different types of searchResult have different
+  // nesting levels relative to the workspace root.
+  const relativeUrlPrefix =
+    selectedResult.type === 'combined' ? '../../' : '../../../';
+
   return (
     <div className={blastWorkspaceCx('Result', 'Complete')}>
       <h1>BLAST Job - result</h1>
-      <Link className="BackToAllJobs" to="../all">
+      <Link className="BackToAllJobs" to={relativeUrlPrefix + 'all'}>
         &lt;&lt; All my BLAST Jobs
       </Link>
       <div className="ConfigDetailsContainer">
@@ -370,12 +375,22 @@ function BlastSummary({
             {multiQueryParamValues && (
               <Link
                 className="EditJob"
-                to={{
-                  pathname: '../new',
+                to={(location) => ({
+                  // When providing a location object, relative
+                  // paths are relative to the application root
+                  // and not the current location. So, we need
+                  // to get a handle on the current location to
+                  // create a path relative to it. Furthermore,
+                  // we need to use path.join to normalize the
+                  // path (remove the .. parts) so that
+                  // react-router recognizes it.
+                  pathname: path.join(
+                    location.pathname + './../' + relativeUrlPrefix + 'new'
+                  ),
                   state: {
                     parameterValues: multiQueryParamValues,
                   },
-                }}
+                })}
               >
                 Revise and rerun
               </Link>

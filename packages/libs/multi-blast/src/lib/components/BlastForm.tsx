@@ -503,7 +503,7 @@ function NewJobForm(props: NewJobFormProps) {
 
         setSubmitting(false);
 
-        history.push(`/workspace/blast/result/${jobId}`);
+        history.push(`result/${jobId}`);
       } else if (createJobResult.details.status === 'invalid-input') {
         setInputErrors(createJobResult.details.errors);
 

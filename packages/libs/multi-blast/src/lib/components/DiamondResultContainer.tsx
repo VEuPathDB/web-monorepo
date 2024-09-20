@@ -67,7 +67,12 @@ export function DiamondResultContainer(props: Props) {
               <Link
                 className="EditJob"
                 to={(location) => ({
-                  pathname: path.join(location.pathname, '../new'),
+                  // When providing a location object, relative
+                  // paths are relative to the application root
+                  // and not the current location. So, we need
+                  // to get a handle on the current location to
+                  // create a path relative to it.
+                  pathname: path.join(location.pathname, './../../new'),
                   state: {
                     parameterValues,
                   },
