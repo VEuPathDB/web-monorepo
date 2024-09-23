@@ -18,16 +18,14 @@ interface Props {
 }
 
 export function DiamondResultContainer(props: Props) {
-  // TODO Add result summary verbiage
-  // TODO Add download button for full tsv file
-  // TODO Show tsv preview in a <pre> tag
-
   const { job, query } = props;
 
   const blastApi = useBlastApi();
 
-  const headerRow = job.config.outFormat?.fields?.map((field) =>
-    upperFirst(field.replaceAll('-', ' '))
+  const headerRow = job.config.outFormat?.fields?.flatMap((field) =>
+    field === 'subject-title' || field === 'stitle'
+      ? ['Subject sequence id', 'OrthoMCL group id', 'Description']
+      : [upperFirst(field.replaceAll('-', ' '))]
   );
 
   const reportMetadataResult = usePromise(
