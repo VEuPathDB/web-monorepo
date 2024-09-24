@@ -167,7 +167,7 @@ export const makePreferredOrganismsRecoilState = memoize(
             );
           }
 
-          onSet((newValue) => {
+          onSet((newValue: boolean | DefaultValue) => {
             const newValueBoolean =
               newValue instanceof DefaultValue ? true : newValue;
 

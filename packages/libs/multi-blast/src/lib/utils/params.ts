@@ -21,6 +21,8 @@ import {
   IOBlastPScoringMatrix,
   IoBlastSegMask,
   IOBlastXScoringMatrix,
+  IoDiamondBlastPConfig,
+  IoSensitivity,
   IOTBlastNScoringMatrix,
   IOTBlastXScoringMatrix,
   LongJobResponse,
@@ -52,6 +54,15 @@ export const LOWER_CASE_MASK_PARAM_NAME = 'LowerCaseMask';
 export const GAP_COSTS_PARAM_NAME = 'GapCosts';
 export const MATCH_MISMATCH_SCORE = 'MatchMismatchScore';
 
+// Diamond
+export const SENSITIVITY_PARAM_NAME = 'Sensitivity';
+export const MAX_TARGET_SEQS_PARAM_NAME = 'MaxTargetSeqs';
+export const REPORT_UNALIGNED_PARAM_NAME = 'ReportUnaligned';
+export const MASKING_PARAM_NAME = 'Masking';
+export const COMP_BASED_STATS_PARAM_NAME = 'CompBasedStats';
+export const ITERATE_PARAM_NAME = 'Iterate';
+export const DIAMOND_OUTPUT_FIELDS_PARAM_NAME = 'DiamondOutputFields';
+
 export const ADVANCED_PARAMS_GROUP_NAME = 'advancedParams';
 
 export const OMIT_PARAM_TERM = 'none';
@@ -80,7 +91,6 @@ export function paramValuesToBlastConfig(
   paramValues: ParameterValues
 ): IoBlastConfig {
   const {
-    [BLAST_QUERY_SEQUENCE_PARAM_NAME]: query,
     [BLAST_ALGORITHM_PARAM_NAME]: selectedTool,
     [EXPECTATION_VALUE_PARAM_NAME]: eValue,
     [NUM_QUERY_RESULTS_PARAM_NAME]: numQueryResultsStr,
@@ -93,13 +103,19 @@ export function paramValuesToBlastConfig(
     [LOWER_CASE_MASK_PARAM_NAME]: lowerCaseMaskStr,
     [GAP_COSTS_PARAM_NAME]: gapCostsStr,
     [MATCH_MISMATCH_SCORE]: matchMismatchStr,
+    [SENSITIVITY_PARAM_NAME]: sensitivity,
+    [MAX_TARGET_SEQS_PARAM_NAME]: maxTargetSeqs,
+    [REPORT_UNALIGNED_PARAM_NAME]: reportUnaligned,
+    [MASKING_PARAM_NAME]: masking,
+    [COMP_BASED_STATS_PARAM_NAME]: compBasedStatsDiamond,
+    [ITERATE_PARAM_NAME]: iterate,
+    [DIAMOND_OUTPUT_FIELDS_PARAM_NAME]: diamondOutputFields,
   } = paramValues;
 
   const maxHSPsConfig =
     Number(maxMatchesStr) >= 1 ? { maxHSPs: Number(maxMatchesStr) } : {};
 
   const baseConfig = {
-    query,
     eValue,
     maxTargetSeqs: Number(numQueryResultsStr),
     wordSize: Number(wordSizeStr),
@@ -188,6 +204,24 @@ export function paramValuesToBlastConfig(
     };
   }
 
+  if (selectedTool === 'diamond-blastp') {
+    return {
+      tool: selectedTool,
+      eValue: eValue ? Number(eValue) : undefined,
+      sensitivity: sensitivity as IoSensitivity,
+      maxTargetSeqs: maxTargetSeqs ? Number(maxTargetSeqs) : undefined,
+      reportUnaligned: reportUnaligned === '1',
+      compBasedStats:
+        compBasedStatsDiamond as IoDiamondBlastPConfig['compBasedStats'],
+      masking: masking as IoDiamondBlastPConfig['masking'],
+      iterate: iterate === 'yes' ? [] : undefined,
+      outFormat: {
+        format: 'blast-tab',
+        fields: diamondOutputFields?.split(/\s+/g) ?? [],
+      },
+    };
+  }
+
   throw new Error(`The BLAST tool '${selectedTool}' is not supported.`);
 }
 
@@ -197,6 +231,39 @@ export function blastConfigToParamValues(
   const parameterValues: ParameterValues = {
     [BLAST_ALGORITHM_PARAM_NAME]: blastConfig.tool,
   };
+
+  // Handle Diamond blast configurations
+  if (
+    blastConfig.tool === 'diamond-blastp' ||
+    blastConfig.tool === 'diamond-blastx'
+  ) {
+    if (blastConfig.eValue != null) {
+      parameterValues[EXPECTATION_VALUE_PARAM_NAME] =
+        blastConfig.eValue.toString();
+    }
+    if (blastConfig.sensitivity != null) {
+      parameterValues[SENSITIVITY_PARAM_NAME] = blastConfig.sensitivity;
+    }
+    if (blastConfig.maxTargetSeqs != null) {
+      parameterValues[MAX_TARGET_SEQS_PARAM_NAME] =
+        blastConfig.maxTargetSeqs.toString();
+    }
+    if (blastConfig.compBasedStats != null) {
+      parameterValues[COMP_BASED_STATS_PARAM_NAME] = blastConfig.compBasedStats;
+    }
+    if (blastConfig.masking) {
+      parameterValues[MASKING_PARAM_NAME] = blastConfig.masking;
+    }
+    if (blastConfig.outFormat != null) {
+      parameterValues[DIAMOND_OUTPUT_FIELDS_PARAM_NAME] =
+        blastConfig.outFormat.fields.join(' ');
+    }
+    parameterValues[REPORT_UNALIGNED_PARAM_NAME] = blastConfig.reportUnaligned
+      ? '1'
+      : '0';
+    parameterValues[ITERATE_PARAM_NAME] = blastConfig.iterate ? 'yes' : 'no';
+    return parameterValues;
+  }
 
   if (blastConfig.eValue != null) {
     parameterValues[EXPECTATION_VALUE_PARAM_NAME] = blastConfig.eValue;

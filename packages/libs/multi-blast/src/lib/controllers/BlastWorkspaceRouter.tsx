@@ -4,16 +4,29 @@ import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
 
 import { BlastWorkspace } from '../components/BlastWorkspace';
 import { BlastWorkspaceResult } from '../components/BlastWorkspaceResult';
+import { ReactNode } from 'react';
 
-export function BlastWorkspaceRouter() {
-  const { path } = useRouteMatch();
+interface Props {
+  workspaceHeading?: ReactNode;
+  helpPageUrl: string;
+}
+
+export function BlastWorkspaceRouter(props: Props) {
+  const { path, url } = useRouteMatch();
+  const { workspaceHeading, helpPageUrl } = props;
 
   return (
     <Switch>
       <Route
         path={`${path}/:tab(new|all|help)?`}
         exact
-        component={BlastWorkspace}
+        render={() => (
+          <BlastWorkspace
+            helpPageUrl={helpPageUrl}
+            workspaceUrl={url}
+            workspaceHeading={workspaceHeading}
+          />
+        )}
       />
       <Route
         path={`${path}/result/:jobId/combined`}

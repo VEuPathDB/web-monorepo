@@ -8556,7 +8556,7 @@ __metadata:
     react-redux: ^7.1.3
     react-router-dom: ^5.3.0
     react-spring: ^8.0.27
-    recoil: ^0.2.0
+    recoil: ^0.7.7
     redux: ^4.0.0
     redux-observable: ^1.2.0
     relative-deps: ^1.0.7
@@ -8720,10 +8720,10 @@ __metadata:
     react-redux: ^7.2.6
     react-router: ^5.2.0
     react-router-dom: ^5.2.0
-    react-scripts: 4.0.1
+    react-scripts: 5.0.1
     react-select: ^3.0.4
     read: ^1.0.7
-    recoil: ^0.2.0
+    recoil: ^0.7.7
     redux: ^4.0.0
     sass: ^1.56.2
     script-loader: ^0.7.2
@@ -8766,6 +8766,7 @@ __metadata:
     "@veupathdb/coreui": "workspace:^"
     "@veupathdb/eda": "workspace:^"
     "@veupathdb/http-utils": "workspace:^"
+    "@veupathdb/multi-blast": "workspace:^"
     "@veupathdb/react-scripts": "workspace:^"
     "@veupathdb/site-babel-config": "workspace:^"
     "@veupathdb/site-tsconfig": "workspace:^"
@@ -8868,7 +8869,7 @@ __metadata:
     react-scripts: 4.0.3
     react-select: ^3.0.4
     read: ^1.0.7
-    recoil: ^0.2.0
+    recoil: ^0.7.7
     sass: ^1.56.2
     script-loader: ^0.7.2
     set-cookie-parser: ^2.4.6
@@ -32520,9 +32521,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"recoil@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "recoil@npm:0.2.0"
+"recoil@npm:^0.7.7":
+  version: 0.7.7
+  resolution: "recoil@npm:0.7.7"
   dependencies:
     hamt_plus: 1.0.2
   peerDependencies:
@@ -32532,7 +32533,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: f3a4ec26c167d12919b3d37b95f3c1a99642e69841a02f683daaab235d3716c10f41e9c61afa5859f2ae14c105cd3f5bd487df5fa9b07b312b6a6573bd078bde
+  checksum: 65edecbcb8d2cde89bfd61ec679c200483472a6cd343c33e4e9142b6ce524fb17d1fecc2bfd8c392926aaa8178c81457f165b32abce2a9662f51f98822c0a9cc
   languageName: node
   linkType: hard
 

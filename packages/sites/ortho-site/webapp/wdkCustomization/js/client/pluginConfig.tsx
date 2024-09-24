@@ -5,6 +5,12 @@ import { ClientPluginRegistryEntry } from '@veupathdb/wdk-client/lib/Utils/Clien
 
 import { Form as GroupsByPhyleticPatternForm } from '../questions/GroupsByPhyleticPattern/Form';
 
+import { isMultiBlastQuestion } from '@veupathdb/multi-blast/lib/utils/pluginConfig';
+
+const BlastForm = React.lazy(() => import('./plugins/BlastForm'));
+const BlastQuestionController = React.lazy(
+  () => import('./plugins/BlastQuestionController')
+);
 const BlastSummaryViewPlugin = React.lazy(
   () =>
     import(
@@ -24,6 +30,25 @@ const orthoPluginConfig: ClientPluginRegistryEntry<any>[] = [
     component: (props) => (
       <Suspense fallback={<Loading />}>
         <BlastSummaryViewPlugin {...props} />
+      </Suspense>
+    ),
+  },
+  {
+    type: 'questionController',
+    test: isMultiBlastQuestion,
+    component: (props) => (
+      <Suspense fallback={<Loading />}>
+        <BlastQuestionController {...props} />
+      </Suspense>
+    ),
+  },
+  {
+    type: 'questionForm',
+    test: ({ question }) =>
+      question != null && question.urlSegment.endsWith('MultiBlast'),
+    component: (props) => (
+      <Suspense fallback={<Loading />}>
+        <BlastForm {...props} />
       </Suspense>
     ),
   },

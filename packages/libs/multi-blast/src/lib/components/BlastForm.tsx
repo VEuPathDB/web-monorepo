@@ -1,5 +1,4 @@
 import {
-  ChangeEvent,
   FormEvent,
   useCallback,
   useContext,
@@ -23,11 +22,15 @@ import {
   TextArea,
 } from '@veupathdb/wdk-client/lib/Components';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
-import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import {
+  makeClassNameHelper,
+  safeHtml,
+} from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { scrollIntoView } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 import {
   Parameter,
   ParameterGroup,
+  SelectEnumParam,
 } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import DefaultQuestionForm, {
   ParameterList,
@@ -38,7 +41,6 @@ import DefaultQuestionForm, {
 import { Plugin } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
 import {
   makeParamDependenciesUpdating,
-  useChangeParamValue,
   useDependentParamsAreUpdating,
 } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
 
@@ -74,6 +76,7 @@ import { AdvancedParamGroup } from './AdvancedParamGroup';
 import { BlastFormValidationInfo } from './BlastFormValidationInfo';
 
 import './BlastForm.scss';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 export const blastFormCx = makeClassNameHelper('wdk-QuestionForm');
 
@@ -84,6 +87,10 @@ const BLAST_FORM_CONTAINER_NAME = 'MultiBlast';
 export interface Props extends DefaultQuestionFormProps {
   canChangeRecordType?: boolean;
   isMultiBlast?: boolean;
+}
+
+interface TransformedProps extends Props {
+  originalQuestion: Props['state']['question'];
 }
 
 export function BlastForm(props: Props) {
@@ -101,53 +108,46 @@ export function BlastForm(props: Props) {
   );
 }
 
-function BlastFormWithTransformedQuestion(props: Props) {
+function BlastFormWithTransformedQuestion(props: TransformedProps) {
   const canChangeRecordType = props.canChangeRecordType ?? false;
 
   const targetType = props.state.paramValues[BLAST_DATABASE_TYPE_PARAM_NAME];
 
+  const blastAlgorithmParameter = props.state.question.parametersByName[
+    BLAST_ALGORITHM_PARAM_NAME
+  ] as SelectEnumParam;
+
   const selectedBlastAlgorithm =
     props.state.paramValues[BLAST_ALGORITHM_PARAM_NAME];
+
+  const selectedBlastAlgorithmDisplay =
+    blastAlgorithmParameter.vocabulary.find(
+      ([term]) => term === selectedBlastAlgorithm
+    )?.[1] ?? selectedBlastAlgorithm;
 
   const restrictedAdvancedParamGroup = useMemo(() => {
     const fullAdvancedParamGroup =
       props.state.question.groupsByName[ADVANCED_PARAMS_GROUP_NAME];
 
+    if (fullAdvancedParamGroup == null) {
+      return undefined;
+    }
+
     return {
       ...fullAdvancedParamGroup,
-      displayName: `Advanced ${selectedBlastAlgorithm.toUpperCase()} Parameters`,
+      displayName: `Advanced ${selectedBlastAlgorithmDisplay.toUpperCase()} Parameters`,
       parameters: fullAdvancedParamGroup.parameters.filter(
         (paramName) =>
           !isOmittedParam(props.state.question.parametersByName[paramName])
       ),
     };
   }, [
-    selectedBlastAlgorithm,
+    selectedBlastAlgorithmDisplay,
     props.state.question.groupsByName,
     props.state.question.parametersByName,
   ]);
 
   const enabledAlgorithms = useEnabledAlgorithms(targetType);
-
-  const updateQueryParam = useChangeParamValue(
-    props.state.question.parametersByName[BLAST_QUERY_SEQUENCE_PARAM_NAME],
-    props.state,
-    props.eventHandlers.updateParamValue
-  );
-
-  const onQueryFileInputChanged = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      const file =
-        event.target.files == null || event.target.files.length === 0
-          ? null
-          : event.target.files[0];
-
-      if (file != null) {
-        file.text().then(updateQueryParam);
-      }
-    },
-    [updateQueryParam]
-  );
 
   const defaultAdvancedParamsMetadata = useDefaultAdvancedParams(
     props.state.question
@@ -208,6 +208,11 @@ function BlastFormWithTransformedQuestion(props: Props) {
     props.eventHandlers.updateParamValue
   );
 
+  const enableSequenceTextArea =
+    !props.state.question.parametersByName[
+      BLAST_QUERY_SEQUENCE_PARAM_NAME
+    ]?.properties?.['multiBlastOptions']?.includes('fileOnly');
+
   const targetParamElement = (
     <RadioList
       {...targetParamProps}
@@ -223,25 +228,33 @@ function BlastFormWithTransformedQuestion(props: Props) {
   const sequenceParamElement = (
     <div className="SequenceParam">
       <div className="SequenceParamInstructions">
-        {props.isMultiBlast
-          ? 'Paste one or several sequences, or upload a FASTA file.'
-          : 'Paste one sequence, or upload a one-sequence FASTA file.'}
+        {props.originalQuestion.parametersByName[
+          BLAST_QUERY_SEQUENCE_PARAM_NAME
+        ]?.visibleHelp ??
+          (enableSequenceTextArea
+            ? props.isMultiBlast
+              ? 'Paste one or several sequences, or upload a FASTA file. If both are provided, the file will be used.'
+              : 'Paste one sequence, or upload a one-sequence FASTA file. If both are provided, the file will be used.'
+            : props.isMultiBlast
+            ? 'Upload a FASTA file.'
+            : 'Upload a one-sequence FASTA file.')}
       </div>
-      <TextArea
-        {...sequenceParamProps}
-        name={`${props.state.question.urlSegment}/${BLAST_QUERY_SEQUENCE_PARAM_NAME}`}
-      />
+      {enableSequenceTextArea && (
+        <TextArea
+          {...sequenceParamProps}
+          name={`${props.state.question.urlSegment}/${BLAST_QUERY_SEQUENCE_PARAM_NAME}`}
+        />
+      )}
       <input
         type="file"
         accept="text/*"
         name={`${props.state.question.urlSegment}/${BLAST_QUERY_SEQUENCE_PARAM_NAME}__file`}
-        onChange={onQueryFileInputChanged}
       />
     </div>
   );
   const dynamicOrganismParam =
     props.state.question.parametersByName[BLAST_DATABASE_ORGANISM_PARAM_NAME];
-  const organismParamElement = (
+  const organismParamElement = dynamicOrganismParam && (
     <Plugin
       context={{
         type: 'questionFormParameter',
@@ -284,9 +297,7 @@ function BlastFormWithTransformedQuestion(props: Props) {
   const renderBlastParamGroup = useCallback(
     (group: ParameterGroup, formProps: Props) => (
       <div key={group.name} className={blastFormCx('Group', group.name)}>
-        {group.name !== ADVANCED_PARAMS_GROUP_NAME ? (
-          renderDefaultParamGroup(group, formProps)
-        ) : (
+        {group.name === restrictedAdvancedParamGroup?.name ? (
           <AdvancedParamGroup
             key={group.name}
             searchName={formProps.state.question.urlSegment}
@@ -314,6 +325,8 @@ function BlastFormWithTransformedQuestion(props: Props) {
               />
             </>
           </AdvancedParamGroup>
+        ) : (
+          renderDefaultParamGroup(group, formProps)
         )}
       </div>
     ),
@@ -404,7 +417,7 @@ function NewJobForm(props: NewJobFormProps) {
   const history = useHistory();
 
   const onSubmit = useCallback(
-    async (event: FormEvent) => {
+    async (event: FormEvent<HTMLFormElement>) => {
       if (api == null) {
         throw new Error('To use this form, the BLAST api must be configured.');
       }
@@ -455,7 +468,21 @@ function NewJobForm(props: NewJobFormProps) {
         target: `${organism}${dbTargetName}`,
       }));
 
-      const query = props.state.paramValues[BLAST_QUERY_SEQUENCE_PARAM_NAME];
+      // React's typescript definitions do not make it easy to access the form element this event was attached to.
+      // event.target has a generic Event type; event.currentTarget has a FormEvent type, but this is not accurate, since it is `null`
+      const queryFileInput = (
+        event.target as HTMLFormElement
+      ).elements.namedItem(
+        `${props.state.question.urlSegment}/${BLAST_QUERY_SEQUENCE_PARAM_NAME}__file`
+      );
+      const queryFile =
+        queryFileInput instanceof HTMLInputElement &&
+        queryFileInput.type === 'file'
+          ? queryFileInput.files?.[0]
+          : undefined;
+
+      const query =
+        queryFile ?? props.state.paramValues[BLAST_QUERY_SEQUENCE_PARAM_NAME];
 
       const config = paramValuesToBlastConfig(props.state.paramValues);
 
@@ -476,7 +503,7 @@ function NewJobForm(props: NewJobFormProps) {
 
         setSubmitting(false);
 
-        history.push(`/workspace/blast/result/${jobId}`);
+        history.push(`result/${jobId}`);
       } else if (createJobResult.details.status === 'invalid-input') {
         setInputErrors(createJobResult.details.errors);
 
@@ -491,16 +518,26 @@ function NewJobForm(props: NewJobFormProps) {
     },
     [
       api,
-      history,
-      targetMetadataByDataType,
       wdkDependencies,
-      props.state.paramValues,
       submissionDisabled,
+      props.state.paramValues,
+      props.state.question.urlSegment,
+      targetMetadataByDataType,
+      history,
     ]
   );
 
   return api == null ? null : (
     <div className={props.containerClassName} ref={containerRef}>
+      {props.state.question.description && (
+        <Banner
+          banner={{
+            type: 'info',
+            hideIcon: true,
+            message: safeHtml(props.state.question.description, null, 'div'),
+          }}
+        />
+      )}
       {inputErrors != null && <BlastFormValidationInfo errors={inputErrors} />}
       <form onSubmit={onSubmit}>
         {props.state.question.groups
@@ -523,7 +560,7 @@ function transformFormQuestion(
   formProps: Props,
   isMultiBlast: boolean = false,
   targetRecordType: string
-): Props {
+): Props & { originalQuestion: Props['state']['question'] } {
   const transformedParameters = formProps.state.question.parameters.reduce(
     (memo, parameter) => {
       if (parameter.name === JOB_DESCRIPTION_PARAM_NAME && !isMultiBlast) {
@@ -545,6 +582,7 @@ function transformFormQuestion(
                 Learn more about BLAST query inputs here.
               </a>
             `,
+          visibleHelp: undefined,
         });
 
         return memo;
@@ -596,5 +634,6 @@ function transformFormQuestion(
         groupsByName: transformedGroupsByName,
       },
     },
+    originalQuestion: formProps.state.question,
   };
 }
