@@ -487,12 +487,6 @@ const useHeaderMenuItems = (
           },
         },
         {
-          key: 'galaxy',
-          display: 'Galaxy',
-          type: 'reactRoute',
-          url: makeStaticPageRoute(`/genomics-galaxy-warn.html`),
-        },
-        {
           key: 'jbrowse',
           display: 'Genome browser',
           type: 'reactRoute',
@@ -610,12 +604,6 @@ const useHeaderMenuItems = (
       display: 'My Workspace',
       type: 'subMenu',
       items: [
-        {
-          key: 'galaxy-analyses',
-          display: 'Analyze my data (Galaxy)',
-          type: 'reactRoute',
-          url: makeStaticPageRoute(`/genomics-galaxy-warn.html`),
-        },
         {
           key: 'basket',
           display: 'My baskets',
