@@ -61,7 +61,7 @@ export function BlastWorkspaceResult(props: Props) {
   );
 
   const jobResult = usePromise(
-    () => makeJobPollingPromise(blastApi, props.jobId),
+    ({ signal }) => makeJobPollingPromise(blastApi, props.jobId, signal),
     [blastApi, props.jobId]
   );
 
@@ -498,7 +498,8 @@ interface JobPollingError {
 
 async function makeJobPollingPromise(
   blastApi: BlastApi,
-  jobId: string
+  jobId: string,
+  signal: AbortSignal
 ): Promise<JobPollingResult | ApiResultError<ErrorDetails>> {
   const jobRequest = await blastApi.fetchJob(jobId);
 
@@ -521,7 +522,14 @@ async function makeJobPollingPromise(
 
     await waitForNextPoll();
 
-    return makeJobPollingPromise(blastApi, jobId);
+    if (signal.aborted) {
+      return {
+        status: 'error',
+        details: signal.reason,
+      };
+    }
+
+    return makeJobPollingPromise(blastApi, jobId, signal);
   } else {
     return {
       ...jobRequest,
