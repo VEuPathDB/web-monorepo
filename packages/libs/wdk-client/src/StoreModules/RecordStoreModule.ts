@@ -40,9 +40,14 @@ import { RootState } from '../Core/State/Types';
 import { EpicDependencies, ModuleEpic } from '../Core/Store';
 import { getValue, preferences, setValue } from '../Preferences';
 import { ServiceError } from '../Service/ServiceError';
-import { CategoryTreeNode, getId, getTargetType } from '../Utils/CategoryUtils';
+import {
+  CategoryTreeNode,
+  getId,
+  getRefName,
+  getTargetType,
+} from '../Utils/CategoryUtils';
 import { stateEffect } from '../Utils/ObserverUtils';
-import { filterNodes } from '../Utils/TreeUtils';
+import { filterNodes, getLeaves } from '../Utils/TreeUtils';
 import { RecordClass, RecordInstance } from '../Utils/WdkModel';
 
 export const key = 'record';
@@ -84,11 +89,22 @@ export function reduce(state: State = {} as State, action: Action): State {
     case RECORD_RECEIVED: {
       if (action.id !== state.requestId) return state;
       let { record, recordClass, categoryTree } = action.payload;
+
+      const collapsedSections = getLeaves(categoryTree, (node) => node.children)
+        .filter(
+          (
+            node
+          ): node is CategoryTreeNode & { properties: { name: string[] } } =>
+            !!node.properties.scope?.includes('record-collapsed') &&
+            !!node.properties.name
+        )
+        .map((node) => getRefName(node));
+
       return {
         ...state,
         record,
         recordClass,
-        collapsedSections: [],
+        collapsedSections,
         navigationCategoriesExpanded: state.navigationCategoriesExpanded || [],
         isLoading: false,
         categoryTree,
