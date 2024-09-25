@@ -156,6 +156,7 @@ export const wrapRoutes = (wdkRoutes) => [
 
   {
     path: `${STATIC_ROUTE_PATH}/:path*`,
+    requiresLogin: false,
     component: (props) => (
       <ExternalContentController
         url={
