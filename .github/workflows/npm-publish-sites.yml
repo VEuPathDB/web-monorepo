@@ -3,9 +3,9 @@
 
 name: NPM Publish Sites
 on:
-  release:
-    types:
-      - published
+  push:
+    tags:
+      - v*
 
 jobs:
   # Gather the names of the sites directories and store it as an output variable
@@ -51,9 +51,6 @@ jobs:
           elif [[ "$git_tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+-([a-zA-Z0-9]+)(\.[0-9]+)*$ ]]; then
             npm_tag="${BASH_REMATCH[1]}"
             echo "npm_tag=$npm_tag" >> $GITHUB_ENV
-          # if prerelease is checked, use "prerelease" for the npm tag
-          elif ${{ github.event.release.prerelease }}; then
-            echo "npm_tag=prerelease" >> $GITHUB_ENV
           # or fall back to 'latest' just in case
           else
             echo "npm_tag=latest" >> $GITHUB_ENV
