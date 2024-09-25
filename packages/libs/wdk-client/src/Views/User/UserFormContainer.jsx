@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { getChangeHandler, wrappable } from '../../Utils/ComponentUtils';
 import UserAccountForm from '../../Views/User/UserAccountForm';
 
@@ -72,90 +71,6 @@ export function IntroComponent() {
   );
 }
 
-function OutroComponent(props) {
-  const projectId = useSelector(
-    (state) => state.globalData.siteConfig.projectId
-  );
-  let showCrossBrcInfo =
-    projectId != 'ClinEpiDB' &&
-    projectId != 'MicrobiomeDB' &&
-    projectId != 'AllClinEpiDB';
-  return !showCrossBrcInfo ? null : (
-    <div style={getDescriptionBoxStyle()}>
-      <h4>About Bioinformatics Resource Centers</h4>
-      <p>
-        The{' '}
-        <a
-          target="_blank"
-          href="https://www.niaid.nih.gov/research/bioinformatics-resource-centers"
-        >
-          Bioinformatics Resource Centers
-        </a>{' '}
-        (BRCs) for Infectious Diseases program was initiated in 2004&nbsp; with
-        the main objective of providing public access to computational platforms
-        and analysis tools&nbsp; that enable collecting, archiving, updating,
-        and integrating a variety of genomics and related&nbsp; research data
-        relevant to infectious diseases, and pathogens and their interaction
-        with hosts.
-      </p>
-      <VisitOtherBrc {...props} />
-      <p>
-        Sign up for cross-BRC email alerts{' '}
-        <a
-          target="_blank"
-          href="https://lists.brcgateway.org/mailman/listinfo/brc-all"
-        >
-          here
-        </a>
-        .
-      </p>
-    </div>
-  );
-}
-
-export function VisitOtherBrc({ user }) {
-  const projectId = useSelector(
-    (state) => state.globalData.siteConfig.projectId
-  );
-  if (projectId == 'ClinEpiDB' || projectId == 'MicrobiomeDB') return null;
-  let clean = (val) => (val ? encodeURIComponent(val) : '');
-  let userDataQueryString =
-    '?email=' +
-    clean(user.email) +
-    '&username=' +
-    clean(user.properties.username) +
-    '&first_name=' +
-    clean(user.properties.firstName) +
-    '&middle_name=' +
-    clean(user.properties.middleName) +
-    '&last_name=' +
-    clean(user.properties.lastName) +
-    '&affiliation=' +
-    clean(user.properties.organization) +
-    '&interests=' +
-    clean(user.properties.interests);
-  return (
-    <p style={{ margin: '1.5em 0' }}>
-      Visit our partner Bioinformatics Resource Center,&nbsp;
-      <a target="_blank" href="https://www.bv-brc.org">
-        BV-BRC
-      </a>
-      , and&nbsp;
-      <a target="_blank" href="https://www.bv-brc.org/login">
-        log in
-      </a>{' '}
-      there or&nbsp;
-      <a
-        target="_blank"
-        href={'https://www.bv-brc.org/register' + userDataQueryString}
-      >
-        register
-      </a>
-      .
-    </p>
-  );
-}
-
 /**
  * React component for the user profile/account form
  * @type {*|Function}
@@ -201,7 +116,6 @@ class UserFormContainer extends React.Component {
               submitButtonText={this.props.submitButtonText}
               wdkConfig={this.props.globalData.config}
             />
-            <OutroComponent user={this.props.userFormData} />
           </div>
         )}
       </div>
