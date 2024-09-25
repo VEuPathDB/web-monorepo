@@ -22,6 +22,8 @@ import {
   WdkDependencies,
   WdkDependenciesContext,
 } from '../Hooks/WdkDependenciesEffect';
+import { showLoginForm } from '../Actions/UserSessionActions';
+import { User } from '../Utils/WdkUser';
 
 type Props = {
   requireLogin: boolean;
@@ -37,6 +39,7 @@ type Props = {
 
 interface State {
   location: Location;
+  accessDenied?: boolean;
 }
 
 const REACT_ROUTER_LINK_CLASSNAME = 'wdk-ReactRouterLink';
@@ -102,9 +105,46 @@ export default class Root extends React.Component<Props, State> {
     event.preventDefault();
   }
 
+  getActiveRoute() {
+    const { location } = this.state;
+    return this.props.routes.find(({ path, exact = true }) =>
+      matchPath(location.pathname, { path, exact })
+    );
+  }
+
+  doLoginLogic() {
+    // allow some pages non-login access
+    const activeRoute = this.getActiveRoute();
+    const requireLogin =
+      activeRoute?.requiresLogin === false ? false : this.props.requireLogin;
+    const dispatch = this.props.store.dispatch;
+
+    if (!requireLogin) {
+      this.setState({ accessDenied: false });
+    } else {
+      this.props.wdkDependencies.wdkService.getCurrentUser().then((user) => {
+        this.setState({ accessDenied: user.isGuest });
+        if (user.isGuest) {
+          dispatch(showLoginForm());
+        }
+      });
+    }
+  }
+
   componentDidMount() {
     /** install global click handler */
     document.addEventListener('click', this.handleGlobalClick);
+    this.doLoginLogic();
+  }
+
+  componentDidUpdate(
+    prevProps: Readonly<Props>,
+    prevState: Readonly<State>,
+    snapshot?: any
+  ): void {
+    if (this.state.location.pathname !== prevState.location.pathname) {
+      this.doLoginLogic();
+    }
   }
 
   componentWillUnmount() {
@@ -113,13 +153,13 @@ export default class Root extends React.Component<Props, State> {
   }
 
   render() {
-    const { routes, staticContent } = this.props;
-    const { location } = this.state;
-    const activeRoute = routes.find(({ path, exact = true }) =>
-      matchPath(location.pathname, { path, exact })
-    );
+    const { staticContent } = this.props;
+    const activeRoute = this.getActiveRoute();
     const rootClassNameModifier = activeRoute?.rootClassNameModifier;
     const isFullscreen = activeRoute?.isFullscreen;
+
+    if (this.state.accessDenied == null) return null;
+
     return (
       <Provider store={this.props.store}>
         <ErrorBoundary>
@@ -130,34 +170,38 @@ export default class Root extends React.Component<Props, State> {
               >
                 <UnhandledErrorsController />
                 <LoginFormController />
-                <Page
-                  classNameModifier={rootClassNameModifier}
-                  requireLogin={this.props.requireLogin}
-                  isFullScreen={isFullscreen}
-                >
-                  {staticContent ? (
-                    safeHtml(staticContent, null, 'div')
-                  ) : (
-                    <Switch>
-                      {this.props.routes.map(
-                        ({
-                          path,
-                          exact = true,
-                          component,
-                          requiresLogin = false,
-                        }) => (
-                          <WdkRoute
-                            key={path}
-                            exact={exact == null ? false : exact}
-                            path={path}
-                            component={component}
-                            requiresLogin={requiresLogin}
-                          />
-                        )
-                      )}
-                    </Switch>
-                  )}
-                </Page>
+                {this.state.accessDenied ? (
+                  <div>You must be logged in to access this website</div>
+                ) : (
+                  <Page
+                    classNameModifier={rootClassNameModifier}
+                    requireLogin={this.props.requireLogin}
+                    isFullScreen={isFullscreen}
+                  >
+                    {staticContent ? (
+                      safeHtml(staticContent, null, 'div')
+                    ) : (
+                      <Switch>
+                        {this.props.routes.map(
+                          ({
+                            path,
+                            exact = true,
+                            component,
+                            requiresLogin = false,
+                          }) => (
+                            <WdkRoute
+                              key={path}
+                              exact={exact == null ? false : exact}
+                              path={path}
+                              component={component}
+                              requiresLogin={requiresLogin}
+                            />
+                          )
+                        )}
+                      </Switch>
+                    )}
+                  </Page>
+                )}
               </PluginContext.Provider>
             </WdkDependenciesContext.Provider>
           </Router>
