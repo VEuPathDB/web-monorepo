@@ -40,7 +40,12 @@ import { RootState } from '../Core/State/Types';
 import { EpicDependencies, ModuleEpic } from '../Core/Store';
 import { getValue, preferences, setValue } from '../Preferences';
 import { ServiceError } from '../Service/ServiceError';
-import { CategoryTreeNode, getId, getTargetType } from '../Utils/CategoryUtils';
+import {
+  CategoryTreeNode,
+  getId,
+  getRefName,
+  getTargetType,
+} from '../Utils/CategoryUtils';
 import { stateEffect } from '../Utils/ObserverUtils';
 import { filterNodes, getLeaves } from '../Utils/TreeUtils';
 import { RecordClass, RecordInstance } from '../Utils/WdkModel';
@@ -93,7 +98,7 @@ export function reduce(state: State = {} as State, action: Action): State {
             !!node.properties.scope?.includes('record-collapsed') &&
             !!node.properties.name
         )
-        .map((node) => node.properties.name[0]);
+        .map((node) => getRefName(node));
 
       return {
         ...state,
