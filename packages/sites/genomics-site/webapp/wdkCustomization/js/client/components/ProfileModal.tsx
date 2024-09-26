@@ -1,35 +1,36 @@
+import { Modal } from '@veupathdb/coreui';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { UserProfileController } from '@veupathdb/wdk-client/lib/Controllers';
-import { useWdkDependenciesEffect } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
-import React, { useRef } from 'react';
+import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 export function ProfileModal() {
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  useWdkDependenciesEffect(async ({ wdkService }) => {
-    const [projectConfig, user] = await Promise.all([
-      wdkService.getConfig(),
-      wdkService.getCurrentUser(),
-    ]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [user, projectConfig] = useSelector(
+    (state: RootState) =>
+      [state.globalData.user, state.globalData.config] as const
+  );
 
-    if (user.isGuest) return;
+  useEffect(() => {
+    if (user == null || projectConfig == null || user.isGuest) return;
 
-    for (const profileProperty of projectConfig.userProfileProperties) {
-      if (
-        profileProperty.isRequired &&
-        user.properties[profileProperty.name] == null
-      ) {
-        dialogRef.current?.showModal();
-      }
-    }
-  }, []);
+    const visible = projectConfig.userProfileProperties.some(
+      (prop) => prop.isRequired && user.properties[prop.name] == null
+    );
+
+    setModalVisible(visible);
+  }, [user, projectConfig]);
+
   return (
-    <dialog ref={dialogRef}>
+    <Modal toggleVisible={setModalVisible} visible={modalVisible}>
       <div
         style={{
-          maxWidth: '70em',
+          maxWidth: '75em',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
+          padding: '1em 2em',
         }}
       >
         <Banner
@@ -49,6 +50,6 @@ export function ProfileModal() {
         />
         <UserProfileController />
       </div>
-    </dialog>
+    </Modal>
   );
 }

@@ -193,7 +193,7 @@ export default function Modal({
           zIndex,
         },
         overlay: {
-          backgroundColor: gray[700] + '90',
+          backgroundColor: '#0000009c',
           position: 'fixed',
           top: 0,
           left: 0,
