@@ -26,7 +26,11 @@ const UserAccountForm = (props) => {
     submitButtonText,
   } = props;
   const vocabulary = useWdkService(
-    (wdkService) => wdkService.getUserProfileVocabulary().catch(() => ({})),
+    (wdkService) =>
+      wdkService.getUserProfileVocabulary().catch((error) => {
+        console.error(error);
+        return {};
+      }),
     []
   );
   return (
