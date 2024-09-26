@@ -23,7 +23,11 @@ export function ProfileModal() {
   }, [user, projectConfig]);
 
   return (
-    <Modal toggleVisible={setModalVisible} visible={modalVisible}>
+    <Modal
+      closeOnEsc={false}
+      toggleVisible={setModalVisible}
+      visible={modalVisible}
+    >
       <div
         style={{
           maxWidth: '75em',
