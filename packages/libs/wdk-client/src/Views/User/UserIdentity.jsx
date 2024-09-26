@@ -11,7 +11,7 @@ import { wrappable } from '../../Utils/ComponentUtils';
  * @constructor
  */
 const UserIdentity = (props) => {
-  let { user, onPropertyChange } = props;
+  let { user, onPropertyChange, vocabulary } = props;
   return (
     <fieldset>
       <legend>Identification</legend>
@@ -46,7 +46,15 @@ const UserIdentity = (props) => {
         />
       </div>
       {props.propDefs.map((propDef) => {
-        let { name, displayName, isMultiLine, isRequired } = propDef;
+        let {
+          name,
+          help,
+          suggest,
+          displayName,
+          isMultiLine,
+          inputType,
+          isRequired,
+        } = propDef;
         let value = user.properties[name] ? user.properties[name] : '';
         return (
           <div key={name}>
@@ -54,24 +62,40 @@ const UserIdentity = (props) => {
               {isRequired ? <i className="fa fa-asterisk"></i> : ''}
               {displayName}:
             </label>
-            {isMultiLine ? (
-              <TextArea
-                id="{name}"
-                value={value}
-                required={isRequired}
-                onChange={onPropertyChange(name)}
-                maxLength="3000"
-                style={{ width: '40em', height: '5em' }}
-              />
-            ) : (
+            {/* Replace with type */}
+            {inputType === 'TEXT' ? (
               <TextBox
-                id="{name}"
+                name={name}
+                placeholder={suggest}
                 value={value}
                 required={isRequired}
                 onChange={onPropertyChange(name)}
                 maxLength="255"
                 size="80"
               />
+            ) : inputType === 'TEXTBOX' ? (
+              <TextArea
+                name={name}
+                placeholder={suggest}
+                value={value}
+                required={isRequired}
+                onChange={onPropertyChange(name)}
+                maxLength="3000"
+                style={{ width: '40em', height: '5em' }}
+              />
+            ) : inputType === 'SELECT' ? (
+              <select
+                name={name}
+                value={value}
+                required={isRequired}
+                onChange={onPropertyChange(name)}
+              >
+                {vocabulary[name]?.map(({ value, display }) => (
+                  <option value={value}>{display}</option>
+                ))}
+              </select>
+            ) : (
+              <em>Unknown input type: {inputType}</em>
             )}
           </div>
         );

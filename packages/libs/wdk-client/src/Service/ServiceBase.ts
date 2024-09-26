@@ -80,8 +80,10 @@ export interface ServiceConfig {
   userProfileProperties: Array<{
     name: string;
     displayName: string;
+    inputType: 'text' | 'select';
+    help?: string;
+    suggest?: string;
     isRequired: boolean;
-    isMultiLine: boolean;
     isPublic: boolean;
   }>;
 }
@@ -104,8 +106,13 @@ const configDecoder: Decode.Decoder<ServiceConfig> = Decode.record({
     Decode.record({
       name: Decode.string,
       displayName: Decode.string,
+      inputType: Decode.oneOf(
+        Decode.constant('text'),
+        Decode.constant('select')
+      ),
+      help: Decode.optional(Decode.string),
+      suggest: Decode.optional(Decode.string),
       isRequired: Decode.boolean,
-      isMultiLine: Decode.boolean,
       isPublic: Decode.boolean,
     })
   ),
@@ -143,6 +150,21 @@ export const ServiceBase = (serviceUrl: string) => {
       cacheId: 'config',
     });
   }
+
+  const getUserProfileVocabulary = once(
+    async function getUserProfileVocabulary() {
+      const decoder = Decode.objectOf(Decode.arrayOf(Decode.string));
+      const config = await getConfig();
+      const vocabUrl =
+        config.authentication.oauthUrl + '/assets/public/profile-vocabs.json';
+      const response = await fetch(vocabUrl);
+      const json = await response.json();
+      const result = decoder(json);
+      if (result.status === 'err')
+        throw new Error('Unexpected backend type from ' + vocabUrl);
+      return result.value;
+    }
+  );
 
   /**
    * Send a request to a resource of the Wdk REST Service, and returns a Promise
@@ -508,6 +530,7 @@ export const ServiceBase = (serviceUrl: string) => {
     submitErrorIfNot500,
     submitErrorIfUndelayedAndNot500,
     getConfig,
+    getUserProfileVocabulary,
     getVersion,
     getRecordClasses,
     findRecordClass,
