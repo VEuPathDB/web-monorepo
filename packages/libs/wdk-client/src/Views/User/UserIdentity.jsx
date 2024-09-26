@@ -63,7 +63,7 @@ const UserIdentity = (props) => {
               {displayName}:
             </label>
             {/* Replace with type */}
-            {inputType === 'TEXT' ? (
+            {inputType === 'text' ? (
               <TextBox
                 name={name}
                 placeholder={suggest}
@@ -73,7 +73,7 @@ const UserIdentity = (props) => {
                 maxLength="255"
                 size="80"
               />
-            ) : inputType === 'TEXTBOX' ? (
+            ) : inputType === 'textbox' ? (
               <TextArea
                 name={name}
                 placeholder={suggest}
@@ -83,7 +83,7 @@ const UserIdentity = (props) => {
                 maxLength="3000"
                 style={{ width: '40em', height: '5em' }}
               />
-            ) : inputType === 'SELECT' ? (
+            ) : inputType === 'select' ? (
               <select
                 name={name}
                 value={value}

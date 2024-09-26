@@ -29,6 +29,7 @@ const UserAccountForm = (props) => {
     (wdkService) => wdkService.getUserProfileVocabulary().catch(() => ({})),
     []
   );
+  if (vocabulary == null) return null;
   return (
     <form
       className="wdk-UserProfile-profileForm"

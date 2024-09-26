@@ -80,7 +80,7 @@ export interface ServiceConfig {
   userProfileProperties: Array<{
     name: string;
     displayName: string;
-    inputType: 'text' | 'select';
+    inputType: 'text' | 'textbox' | 'select';
     help?: string;
     suggest?: string;
     isRequired: boolean;
@@ -108,6 +108,7 @@ const configDecoder: Decode.Decoder<ServiceConfig> = Decode.record({
       displayName: Decode.string,
       inputType: Decode.oneOf(
         Decode.constant('text'),
+        Decode.constant('textbox'),
         Decode.constant('select')
       ),
       help: Decode.optional(Decode.string),
@@ -157,7 +158,10 @@ export const ServiceBase = (serviceUrl: string) => {
       const config = await getConfig();
       const vocabUrl =
         config.authentication.oauthUrl + '/assets/public/profile-vocabs.json';
-      const response = await fetch(vocabUrl);
+      const response = await fetch(vocabUrl, {
+        mode: 'cors',
+        credentials: 'include',
+      });
       const json = await response.json();
       const result = decoder(json);
       if (result.status === 'err')
