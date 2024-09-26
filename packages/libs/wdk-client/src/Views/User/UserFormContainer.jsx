@@ -60,9 +60,9 @@ export function IntroComponent() {
     <div style={{ paddingBottom: '2em' }}>
       Review our&nbsp;
       <a
-        title="It will open in a new tab"
+        title="View the privacy policy in a new tab"
         target="_blank"
-        href="/a/app/static-content/privacyPolicy.html"
+        href="https://static-content.veupathdb.org/privacyPolicy.html"
       >
         <b>VEuPathDB Websites Privacy Policy</b>
       </a>
