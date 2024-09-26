@@ -56,7 +56,6 @@ jobs:
             echo "npm_tag=latest" >> $GITHUB_ENV
           fi
       - uses: JS-DevTools/npm-publish@v2
-        if: ${{ startsWith(github.event.release.tag_name, 'v') }}
         with:
           token: ${{ secrets.NPM_TOKEN }}
           access: public
