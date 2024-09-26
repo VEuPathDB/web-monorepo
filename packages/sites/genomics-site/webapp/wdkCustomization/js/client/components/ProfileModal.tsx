@@ -37,6 +37,7 @@ export function ProfileModal() {
           banner={{
             type: 'warning',
             hideIcon: true,
+            fontSize: '1.2em',
             message: (
               <div>
                 As of October 2024, VEuPathDB is moving to a new funding model.
