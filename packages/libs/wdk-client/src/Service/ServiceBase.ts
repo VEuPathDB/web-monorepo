@@ -151,20 +151,24 @@ export const ServiceBase = (serviceUrl: string) => {
     });
   }
 
-  const getUserProfileVocabulary = once(
-    async function getUserProfileVocabulary() {
-      const decoder = Decode.objectOf(Decode.arrayOf(Decode.string));
-      const config = await getConfig();
-      const vocabUrl =
-        config.authentication.oauthUrl + '/assets/public/profile-vocabs.json';
-      const response = await fetch(vocabUrl);
-      const json = await response.json();
-      const result = decoder(json);
-      if (result.status === 'err')
-        throw new Error('Unexpected backend type from ' + vocabUrl);
-      return result.value;
-    }
-  );
+  /**
+   * Get vocabularies for user profile properties.
+   */
+  function getUserProfileVocabulary() {
+    const decoder = Decode.objectOf(
+      Decode.arrayOf(
+        Decode.record({
+          value: Decode.string,
+          display: Decode.string,
+        })
+      )
+    );
+    return sendRequest(decoder, {
+      method: 'get',
+      path: '/user-profile-vocabularies',
+      useCache: true,
+    });
+  }
 
   /**
    * Send a request to a resource of the Wdk REST Service, and returns a Promise
