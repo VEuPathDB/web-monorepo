@@ -247,7 +247,7 @@ function BlastFormWithTransformedQuestion(props: TransformedProps) {
       )}
       <input
         type="file"
-        accept="text/*"
+        accept="*"
         name={`${props.state.question.urlSegment}/${BLAST_QUERY_SEQUENCE_PARAM_NAME}__file`}
       />
     </div>
