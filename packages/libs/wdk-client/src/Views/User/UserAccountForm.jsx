@@ -4,6 +4,7 @@ import { wrappable } from '../../Utils/ComponentUtils';
 import ApplicationSpecificProperties from '../../Views/User/ApplicationSpecificProperties';
 import UserPassword from '../../Views/User/Password/UserPassword';
 import UserIdentity from '../../Views/User/UserIdentity';
+import { useWdkService } from '../../Hooks/WdkServiceHook';
 
 /**
  * This React component provides the form wrapper and enclosed fieldsets for the user profile/account form.
@@ -24,6 +25,10 @@ const UserAccountForm = (props) => {
     onSubmit,
     submitButtonText,
   } = props;
+  const vocabulary = useWdkService(
+    (wdkService) => wdkService.getUserProfileVocabulary().catch(() => ({})),
+    []
+  );
   return (
     <form
       className="wdk-UserProfile-profileForm"
@@ -39,6 +44,7 @@ const UserAccountForm = (props) => {
         onConfirmEmailChange={onConfirmEmailChange}
         onPropertyChange={onPropertyChange}
         propDefs={wdkConfig.userProfileProperties}
+        vocabulary={vocabulary}
       />
       <br />
       {!showChangePasswordBox ? (
