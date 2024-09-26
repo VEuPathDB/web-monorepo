@@ -3,6 +3,7 @@ import React from 'react';
 import TextArea from '../../Components/InputControls/TextArea';
 import TextBox from '../../Components/InputControls/TextBox';
 import { wrappable } from '../../Utils/ComponentUtils';
+import { SelectList } from '@veupathdb/coreui';
 
 /**
  * This React stateless function displays the user identification fieldset of the form.
@@ -49,7 +50,7 @@ const UserIdentity = (props) => {
         let {
           name,
           help,
-          suggest,
+          suggestText,
           displayName,
           isMultiLine,
           inputType,
@@ -66,7 +67,7 @@ const UserIdentity = (props) => {
             {inputType === 'text' ? (
               <TextBox
                 name={name}
-                placeholder={suggest}
+                placeholder={suggestText}
                 value={value}
                 required={isRequired}
                 onChange={onPropertyChange(name)}
@@ -76,7 +77,7 @@ const UserIdentity = (props) => {
             ) : inputType === 'textbox' ? (
               <TextArea
                 name={name}
-                placeholder={suggest}
+                placeholder={suggestText}
                 value={value}
                 required={isRequired}
                 onChange={onPropertyChange(name)}
@@ -90,6 +91,7 @@ const UserIdentity = (props) => {
                 required={isRequired}
                 onChange={onPropertyChange(name)}
               >
+                <option value="">--</option>
                 {vocabulary[name]?.map(({ value, display }) => (
                   <option value={value}>{display}</option>
                 ))}
