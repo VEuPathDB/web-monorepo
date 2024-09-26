@@ -514,6 +514,25 @@ function HistogramPlotWithControls({
     return { min: filter.min, max: filter.max } as NumberOrDateRange;
   }, [filter]);
 
+  // For integer variables, the graphical range highlighting needs to extend to (max + 1).
+  // This compensates for the (max - 1) adjustment in handleSelectedRangeChange.
+  // The (max - 1) logic is necessitated by the both-ends-inclusivity of filters, which is most
+  // noticable with integers. This approach does not handle real-valued variables with values
+  // that coincide with bin boundaries, and we don't have a plan yet how to deal with it. Subtracting
+  // 1e-8 does not seem attractive!
+  // Full description in https://github.com/VEuPathDB/web-monorepo/issues/1200
+  const selectedRangeForHighlighting = useMemo(():
+    | NumberOrDateRange
+    | undefined => {
+    if (selectedRange == null || variable == null) return;
+    if (variable.type === 'integer') {
+      return {
+        min: selectedRange.min,
+        max: (selectedRange.max as number) + 1,
+      } as NumberRange;
+    } else return selectedRange;
+  }, [selectedRange, variable]);
+
   // selectedRangeBounds is used for auto-filling the start (or end)
   // in the SelectedRangeControl
   const selectedRangeBounds = useMemo((): NumberOrDateRange | undefined => {
@@ -530,28 +549,32 @@ function HistogramPlotWithControls({
 
   const handleSelectedRangeChange = useCallback(
     (range?: NumberOrDateRange) => {
-      if (range) {
-        updateFilter(
-          enforceBounds(
-            {
-              min:
-                typeof range.min === 'string'
-                  ? padISODateTime(range.min)
-                  : range.min,
-              max:
-                typeof range.max === 'string'
-                  ? padISODateTime(range.max)
-                  : range.max,
-            } as NumberOrDateRange,
-            selectedRangeBounds
-          )
-        );
-      } else {
-        updateFilter(); // clear the filter if range is undefined
+      if (variable) {
+        if (range) {
+          updateFilter(
+            enforceBounds(
+              {
+                min:
+                  typeof range.min === 'string'
+                    ? padISODateTime(range.min)
+                    : range.min,
+                max:
+                  typeof range.max === 'string'
+                    ? padISODateTime(range.max)
+                    : variable.type === 'integer'
+                    ? range.max - 1
+                    : range.max,
+              } as NumberOrDateRange,
+              selectedRangeBounds
+            )
+          );
+        } else {
+          updateFilter(); // clear the filter if range is undefined
+        }
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [updateFilter, selectedRangeBounds]
+    [updateFilter, selectedRangeBounds, variable]
   );
 
   const widgetHeight = '4em';
@@ -609,13 +632,14 @@ function HistogramPlotWithControls({
         selectedRangeBounds={selectedRangeBounds}
         onSelectedRangeChange={handleSelectedRangeChange}
       />
+      <span>inclusive range</span>
       <Histogram
         {...histogramProps}
         data={data}
         binStartType="inclusive"
         binEndType="exclusive"
         interactive={true}
-        selectedRange={selectedRange}
+        selectedRange={selectedRangeForHighlighting}
         opacity={opacity}
         displayLegend={displayLegend}
         displayLibraryControls={displayLibraryControls}
