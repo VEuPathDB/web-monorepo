@@ -16,7 +16,7 @@ export function ProfileModal() {
     if (user == null || projectConfig == null || user.isGuest) return;
 
     const visible = projectConfig.userProfileProperties.some(
-      (prop) => prop.isRequired && user.properties[prop.name] == null
+      (prop) => prop.isRequired && !user.properties[prop.name]
     );
 
     setModalVisible(visible);
