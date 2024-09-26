@@ -74,6 +74,8 @@ export type ModalProps = {
   toggleVisible: (visible: boolean) => void;
   /** Controls the visibility of the modal. */
   visible: boolean;
+  /** Close modal when ESC is pressed */
+  closeOnEsc?: boolean;
   /** Optional. Control the zIndex of the modal. Defaults to 1000. */
   zIndex?: number;
   /** Allows you to adjust the style of the modal. Applied *after* theming augmentation. */
@@ -97,6 +99,7 @@ export default function Modal({
   styleOverrides = {},
   children,
   className,
+  closeOnEsc = true,
 }: ModalProps) {
   const theme = useUITheme();
 
@@ -177,7 +180,7 @@ export default function Modal({
       open={visible}
       onClose={() => toggleVisible && toggleVisible(false)}
       showCloseIcon={false}
-      closeOnEsc={true}
+      closeOnEsc={closeOnEsc}
       classNames={{ root: className }}
       styles={{
         root: {
