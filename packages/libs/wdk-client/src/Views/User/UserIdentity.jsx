@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import TextArea from '../../Components/InputControls/TextArea';
 import TextBox from '../../Components/InputControls/TextBox';
+import SingleSelect from '../../Components/InputControls/SingleSelect';
 import { wrappable } from '../../Utils/ComponentUtils';
-import { SelectList } from '@veupathdb/coreui';
 
 /**
  * This React stateless function displays the user identification fieldset of the form.
@@ -47,25 +47,18 @@ const UserIdentity = (props) => {
         />
       </div>
       {props.propDefs.map((propDef) => {
-        let {
-          name,
-          help,
-          suggestText,
-          displayName,
-          isMultiLine,
-          inputType,
-          isRequired,
-        } = propDef;
+        let { name, help, suggestText, displayName, inputType, isRequired } =
+          propDef;
         let value = user.properties[name] ? user.properties[name] : '';
         return (
           <div key={name}>
-            <label htmlFor="{name}">
+            <label htmlFor={name}>
               {isRequired ? <i className="fa fa-asterisk"></i> : ''}
               {displayName}:
             </label>
-            {/* Replace with type */}
-            {inputType === 'TEXT' ? (
+            {inputType === 'text' ? (
               <TextBox
+                id={name}
                 name={name}
                 placeholder={suggestText}
                 value={value}
@@ -76,6 +69,7 @@ const UserIdentity = (props) => {
               />
             ) : inputType === 'TEXTBOX' ? (
               <TextArea
+                id={name}
                 name={name}
                 placeholder={suggestText}
                 value={value}
@@ -84,18 +78,15 @@ const UserIdentity = (props) => {
                 maxLength="3000"
                 style={{ width: '40em', height: '5em' }}
               />
-            ) : inputType === 'SELECT' ? (
-              <select
+            ) : inputType === 'select' ? (
+              <SingleSelect
+                id={name}
                 name={name}
                 value={value}
                 required={isRequired}
                 onChange={onPropertyChange(name)}
-              >
-                <option value="">--</option>
-                {vocabulary[name]?.map(({ value, display }) => (
-                  <option value={value}>{display}</option>
-                ))}
-              </select>
+                items={[{ value: '', display: '--' }].concat(vocabulary[name])}
+              />
             ) : (
               <em>Unknown input type: {inputType}</em>
             )}
