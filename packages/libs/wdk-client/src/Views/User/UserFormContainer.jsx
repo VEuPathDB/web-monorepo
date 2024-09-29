@@ -102,7 +102,11 @@ class UserFormContainer extends React.Component {
         ) : (
           <div>
             <h1>{this.props.titleText}</h1>
-            <IntroComponent />
+            {this.props.introComponent ? (
+              <this.props.introComponent />
+            ) : (
+              <IntroComponent />
+            )}
             {formConfig.messageElement}
             <UserAccountForm
               user={this.props.userFormData}
