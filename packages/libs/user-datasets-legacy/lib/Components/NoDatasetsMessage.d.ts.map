@@ -1,0 +1,1 @@
+{"version":3,"file":"NoDatasetsMessage.d.ts","sourceRoot":"","sources":["../../src/lib/Components/NoDatasetsMessage.tsx"],"names":[],"mappings":";AAEA,UAAU,KAAK;IACb,OAAO,EAAE,MAAM,CAAC;IAChB,eAAe,EAAE,OAAO,CAAC;IACzB,SAAS,EAAE,MAAM,CAAC;CACnB;AAED,iBAAS,iBAAiB,CAAC,EAAE,OAAO,EAAE,eAAe,EAAE,SAAS,EAAE,EAAE,KAAK,eAyBxE;AAED,eAAe,iBAAiB,CAAC"}

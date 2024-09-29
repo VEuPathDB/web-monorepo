@@ -1,0 +1,37 @@
+@import '@veupathdb/wdk-client/lib/Core/Style/palette';
+
+.BigwigGBrowseUploader {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  flex-flow: row nowrap;
+
+  .BigwigGBrowseUploader-Message {
+    flex: 1;
+  }
+
+  .BigwigGBrowseUploader-Buttons {
+    flex: 0 0 auto;
+    margin-left: 20px;
+    button[disabled] {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .BigwigGBrowseUploader-Icon {
+    flex: 0 0 auto;
+    margin-right: 10px;
+    .wdk-Icon {
+      font-size: 20px;
+      transition: all 0.3s;
+      color: #bbb;
+      &.fa-check-circle-o {
+        color: $green;
+      }
+      &.fa-spin {
+        color: $blue;
+      }
+    }
+  }
+}
