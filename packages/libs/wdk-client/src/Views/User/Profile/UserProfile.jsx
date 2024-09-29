@@ -3,7 +3,7 @@ import { wrappable } from '../../../Utils/ComponentUtils';
 import UserFormContainer, {
   UserFormContainerPropTypes,
 } from '../../../Views/User/UserFormContainer';
-import '../../../Views/User/Profile/UserProfile.css';
+import '../../../Views/User/Profile/UserProfile.scss';
 
 /**
  * React component for the user profile/account form
