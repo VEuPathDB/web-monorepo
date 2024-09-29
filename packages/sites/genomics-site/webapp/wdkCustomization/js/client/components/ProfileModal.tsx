@@ -5,6 +5,10 @@ import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
+/**
+ * If a user has missing required profile fields, show a modal with the user profile form.
+ * Once the required fields are updated, close the modal.
+ */
 export function ProfileModal() {
   const [modalVisible, setModalVisible] = useState(false);
   const [user, projectConfig] = useSelector(
