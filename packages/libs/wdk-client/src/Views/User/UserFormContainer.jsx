@@ -100,7 +100,7 @@ class UserFormContainer extends React.Component {
         {this.props.shouldHideForm ? (
           <div>{this.props.hiddenFormMessage}</div>
         ) : (
-          <div>
+          <>
             <h1>{this.props.titleText}</h1>
             {this.props.introComponent ? (
               <this.props.introComponent />
@@ -120,7 +120,7 @@ class UserFormContainer extends React.Component {
               submitButtonText={this.props.submitButtonText}
               wdkConfig={this.props.globalData.config}
             />
-          </div>
+          </>
         )}
       </div>
     );
