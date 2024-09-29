@@ -37,24 +37,32 @@ export function ProfileModal() {
           padding: '1em 2em',
         }}
       >
-        <Banner
-          banner={{
-            type: 'warning',
-            hideIcon: true,
-            fontSize: '1.2em',
-            message: (
-              <div>
-                As of October 2024, VEuPathDB is moving to a new funding model.
-                Users must be logged in to use the platform, which helps us
-                collect accurate usage data. Please register or update your
-                registration details - you only need to do this once. We will
-                never share your information and adhere to GDPR rules.
-              </div>
-            ),
-          }}
+        <UserProfileController
+          introComponent={NewProfilePropertiesBanner}
+          showChangePasswordBox={false}
         />
-        <UserProfileController />
       </div>
     </Modal>
+  );
+}
+
+function NewProfilePropertiesBanner() {
+  return (
+    <Banner
+      banner={{
+        type: 'warning',
+        hideIcon: true,
+        fontSize: '1.2em',
+        message: (
+          <div>
+            As of October 2024, VEuPathDB is moving to a new funding model.
+            Users must be logged in to use the platform, which helps us collect
+            accurate usage data. Please register or update your registration
+            details - you only need to do this once. We will never share your
+            information and adhere to GDPR rules.
+          </div>
+        ),
+      }}
+    />
   );
 }
