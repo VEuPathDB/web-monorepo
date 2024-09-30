@@ -67,7 +67,7 @@ const UserIdentity = (props) => {
                 maxLength="255"
                 size="80"
               />
-            ) : inputType === 'TEXTBOX' ? (
+            ) : inputType === 'textbox' ? (
               <TextArea
                 id={name}
                 name={name}
