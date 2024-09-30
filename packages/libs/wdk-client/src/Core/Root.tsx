@@ -2,6 +2,7 @@ import { History, Location } from 'history';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { Router, Switch, matchPath } from 'react-router';
+import { noop } from 'lodash';
 
 import {
   ClientPluginRegistryEntry,
@@ -24,6 +25,9 @@ import {
 } from '../Hooks/WdkDependenciesEffect';
 import { showLoginForm } from '../Actions/UserSessionActions';
 import { User } from '../Utils/WdkUser';
+import { Modal } from '@veupathdb/coreui';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { Link } from 'react-router-dom';
 
 type Props = {
   requireLogin: boolean;
@@ -124,9 +128,9 @@ export default class Root extends React.Component<Props, State> {
     } else {
       this.props.wdkDependencies.wdkService.getCurrentUser().then((user) => {
         this.setState({ accessDenied: user.isGuest });
-        if (user.isGuest) {
-          dispatch(showLoginForm());
-        }
+        // if (user.isGuest) {
+        //   dispatch(showLoginForm());
+        // }
       });
     }
   }
@@ -170,40 +174,91 @@ export default class Root extends React.Component<Props, State> {
               >
                 <UnhandledErrorsController />
                 <LoginFormController />
-                {this.state.accessDenied ? (
-                  <div>
-                    <em>You must be logged in to access this page.</em>
+                <Modal
+                  visible={this.state.accessDenied}
+                  toggleVisible={noop}
+                  styleOverrides={{
+                    position: {
+                      top: '20vh',
+                    },
+                  }}
+                >
+                  <div style={{ width: '35em', padding: '2em' }}>
+                    <h1
+                      style={{
+                        fontSize: '2em',
+                        fontWeight: 500,
+                        textAlign: 'center',
+                        paddingTop: 0,
+                      }}
+                    >
+                      Please log in to access this page
+                    </h1>
+                    <Banner
+                      banner={{
+                        type: 'info',
+                        hideIcon: true,
+                        message: (
+                          <>
+                            Starting in October 2024, VEuPathDB is transitioning
+                            to a new funding model. In order to use VEuPathDB
+                            knowledgebases, you’ll need to log. This helps us
+                            understand how the platform supports your work and
+                            shapes our plans for the future
+                          </>
+                        ),
+                      }}
+                    />
+                    <p
+                      style={{
+                        fontSize: '1.3em',
+                        marginTop: '2em',
+                        textAlign: 'center',
+                      }}
+                    >
+                      To use this page, please{' '}
+                      <Link
+                        to={{
+                          pathname: '/user/login',
+                          search:
+                            '?destination=' +
+                            encodeURIComponent(window.location.toString()),
+                        }}
+                      >
+                        log in
+                      </Link>{' '}
+                      or <Link to="/user/register">register</Link>.
+                    </p>
                   </div>
-                ) : (
-                  <Page
-                    classNameModifier={rootClassNameModifier}
-                    requireLogin={this.props.requireLogin}
-                    isFullScreen={isFullscreen}
-                  >
-                    {staticContent ? (
-                      safeHtml(staticContent, null, 'div')
-                    ) : (
-                      <Switch>
-                        {this.props.routes.map(
-                          ({
-                            path,
-                            exact = true,
-                            component,
-                            requiresLogin = false,
-                          }) => (
-                            <WdkRoute
-                              key={path}
-                              exact={exact == null ? false : exact}
-                              path={path}
-                              component={component}
-                              requiresLogin={requiresLogin}
-                            />
-                          )
-                        )}
-                      </Switch>
-                    )}
-                  </Page>
-                )}
+                </Modal>
+                <Page
+                  classNameModifier={rootClassNameModifier}
+                  requireLogin={this.props.requireLogin}
+                  isFullScreen={isFullscreen}
+                >
+                  {staticContent ? (
+                    safeHtml(staticContent, null, 'div')
+                  ) : (
+                    <Switch>
+                      {this.props.routes.map(
+                        ({
+                          path,
+                          exact = true,
+                          component,
+                          requiresLogin = false,
+                        }) => (
+                          <WdkRoute
+                            key={path}
+                            exact={exact == null ? false : exact}
+                            path={path}
+                            component={component}
+                            requiresLogin={requiresLogin}
+                          />
+                        )
+                      )}
+                    </Switch>
+                  )}
+                </Page>
               </PluginContext.Provider>
             </WdkDependenciesContext.Provider>
           </Router>
