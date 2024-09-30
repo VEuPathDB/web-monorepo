@@ -148,6 +148,7 @@ export const wrapRoutes = (wdkRoutes) => [
 
   {
     path: '/contact-us',
+    requiresLogin: false,
     component: (props) => {
       const params = new URLSearchParams(props.location.search);
       return <ContactUsController context={params.get('ctx')} />;
