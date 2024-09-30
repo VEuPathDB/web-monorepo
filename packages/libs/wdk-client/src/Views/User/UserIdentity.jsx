@@ -85,7 +85,9 @@ const UserIdentity = (props) => {
                 value={value}
                 required={isRequired}
                 onChange={onPropertyChange(name)}
-                items={[{ value: '', display: '--' }].concat(vocabulary[name])}
+                items={[{ value: '', display: '--' }].concat(
+                  vocabulary?.[name] ?? []
+                )}
               />
             ) : (
               <em>Unknown input type: {inputType}</em>
