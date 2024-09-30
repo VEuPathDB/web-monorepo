@@ -183,7 +183,9 @@ export default class Root extends React.Component<Props, State> {
                     },
                   }}
                 >
-                  <div style={{ width: '35em', padding: '2em' }}>
+                  <div
+                    style={{ width: '80vw', maxWidth: '35em', padding: '2em' }}
+                  >
                     <h1
                       style={{
                         fontSize: '2em',

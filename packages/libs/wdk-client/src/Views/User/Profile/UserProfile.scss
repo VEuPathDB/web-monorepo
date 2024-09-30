@@ -86,4 +86,10 @@
   &-profileForm .wdk-CheckboxListItem input {
     margin-right: 0.5em;
   }
+
+  input,
+  select,
+  textarea {
+    max-width: 73vw;
+  }
 }
