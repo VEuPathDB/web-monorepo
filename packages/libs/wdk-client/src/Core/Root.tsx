@@ -158,7 +158,7 @@ export default class Root extends React.Component<Props, State> {
     const rootClassNameModifier = activeRoute?.rootClassNameModifier;
     const isFullscreen = activeRoute?.isFullscreen;
 
-    if (this.state.accessDenied == null) return null;
+    if (this.state.accessDenied == null) return 'Loading...';
 
     return (
       <Provider store={this.props.store}>
@@ -171,7 +171,9 @@ export default class Root extends React.Component<Props, State> {
                 <UnhandledErrorsController />
                 <LoginFormController />
                 {this.state.accessDenied ? (
-                  <div>You must be logged in to access this website</div>
+                  <div>
+                    <em>You must be logged in to access this page.</em>
+                  </div>
                 ) : (
                   <Page
                     classNameModifier={rootClassNameModifier}
