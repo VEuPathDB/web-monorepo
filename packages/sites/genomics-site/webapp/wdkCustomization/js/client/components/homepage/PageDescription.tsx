@@ -59,7 +59,7 @@ function DefaultComponentSiteDescription({ displayName }: DescriptionProps) {
       </p>
       <p>
         This project is funded by the Fund for Advancement of Science and
-        Medicine, Open Philanthropy and the Chan Zuckerberg Initiative, with
+        Medicine, Open Philanthropy, and the Chan Zuckerberg Initiative, with
         additional support from the Universities of Pennsylvania and Georgia and
         the Wellcome Trust (Resource Grants 212929 & 218288).
       </p>
