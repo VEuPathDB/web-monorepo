@@ -41,15 +41,8 @@ function DefaultComponentSiteDescription({ displayName }: DescriptionProps) {
   return (
     <Fragment>
       <p>
-        The <span className={cx('--DisplayName')}>VEuPathDB</span>{' '}
-        <a
-          href="https://www.niaid.nih.gov/research/bioinformatics-resource-centers"
-          target="_blank"
-        >
-          Bioinformatics Resource Center
-        </a>{' '}
-        makes genomic, phenotypic, and population-centric data accessible to the
-        scientific community.{' '}
+        VEuPathDB makes genomic, phenotypic, and population-centric data
+        accessible to the scientific community.{' '}
         <span className={cx('--DisplayName')}>{displayName}</span> provides
         support for{' '}
         <Link to="/search/organism/GenomeDataTypes/result">
@@ -59,9 +52,16 @@ function DefaultComponentSiteDescription({ displayName }: DescriptionProps) {
       </p>
       <p>
         This project is funded by the Fund for Advancement of Science and
-        Medicine, Open Philanthropy, and the Chan Zuckerberg Initiative, with
-        additional support from the Universities of Pennsylvania and Georgia and
-        the Wellcome Trust (Resource Grants 212929 & 218288).
+        Medicine,{' '}
+        <a
+          href="https://www.goodventures.org/our-portfolio/grants/university-of-pennsylvania-veupath-database/"
+          target="_blank"
+        >
+          Open Philanthropy
+        </a>{' '}
+        and the Chan Zuckerberg Initiative, with additional support from the
+        Universities of Pennsylvania and Georgia and the Wellcome Trust
+        (Resource Grants 212929 & 218288).
       </p>
     </Fragment>
   );
