@@ -73,7 +73,7 @@ import { Tooltip, Warning } from '@veupathdb/coreui';
 
 import './VEuPathDBHomePage.scss';
 import { searchTree } from '../../selectors/QueryGridSelectors';
-import { ProfileModal } from '../ProfileModal';
+import { ProfileModal } from '@veupathdb/web-common/lib/components/ProfileModal';
 
 const vpdbCx = makeVpdbClassNameHelper('');
 

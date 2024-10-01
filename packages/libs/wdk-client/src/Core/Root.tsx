@@ -23,8 +23,6 @@ import {
   WdkDependencies,
   WdkDependenciesContext,
 } from '../Hooks/WdkDependenciesEffect';
-import { showLoginForm } from '../Actions/UserSessionActions';
-import { User } from '../Utils/WdkUser';
 import { Modal } from '@veupathdb/coreui';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { Link } from 'react-router-dom';
@@ -123,16 +121,11 @@ export default class Root extends React.Component<Props, State> {
     const activeRoute = this.getActiveRoute();
     const requireLogin =
       activeRoute?.requiresLogin === false ? false : this.props.requireLogin;
-    const dispatch = this.props.store.dispatch;
-
     if (!requireLogin) {
       this.setState({ accessDenied: false });
     } else {
       this.props.wdkDependencies.wdkService.getCurrentUser().then((user) => {
         this.setState({ accessDenied: user.isGuest });
-        // if (user.isGuest) {
-        //   dispatch(showLoginForm());
-        // }
       });
     }
   }
@@ -204,11 +197,11 @@ export default class Root extends React.Component<Props, State> {
                         hideIcon: true,
                         message: (
                           <>
-                            Starting in October 2024, VEuPathDB is transitioning
-                            to a new funding model. In order to use VEuPathDB
-                            knowledgebases, you’ll need to log. This helps us
-                            understand how the platform supports your work and
-                            shapes our plans for the future
+                            VEuPathDB is evolving under a new organizational
+                            structure. In order to use VEuPathDB resources, you
+                            will now need to log into your free account. This
+                            helps us collect accurate user metrics to guide
+                            future development.
                           </>
                         ),
                       }}
