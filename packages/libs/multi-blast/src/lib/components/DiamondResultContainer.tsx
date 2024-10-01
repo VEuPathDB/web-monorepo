@@ -50,6 +50,10 @@ export function DiamondResultContainer(props: Props) {
     return blastConfigToParamValues(job.config);
   }, [job]);
 
+  // somewhat crude determination if this is an unrevisable job (e.g. OrthoMCL map proteins to groups)
+  const isUnrevisableJob =
+    job.config.maxTargetSeqs === 1 && job.config.tool === 'diamond-blastp';
+
   return (
     <div className={blastWorkspaceCx('Result', 'Complete')}>
       <h1>Diamond Job - result</h1>
@@ -61,7 +65,7 @@ export function DiamondResultContainer(props: Props) {
           <span className="InlineHeader">Job Id:</span>
           <span className="JobId">
             {job.id}
-            {parameterValues && (
+            {parameterValues && !isUnrevisableJob && (
               <Link
                 className="EditJob"
                 to={(location) => ({
