@@ -50,10 +50,6 @@ export function DiamondResultContainer(props: Props) {
     return blastConfigToParamValues(job.config);
   }, [job]);
 
-  // somewhat crude determination if this is an unrevisable job (e.g. OrthoMCL map proteins to groups)
-  const isUnrevisableJob =
-    job.config.maxTargetSeqs === 1 && job.config.tool === 'diamond-blastp';
-
   return (
     <div className={blastWorkspaceCx('Result', 'Complete')}>
       <h1>Diamond Job - result</h1>
@@ -63,30 +59,7 @@ export function DiamondResultContainer(props: Props) {
       <div className="ConfigDetailsContainer">
         <div className="ConfigDetails">
           <span className="InlineHeader">Job Id:</span>
-          <span className="JobId">
-            {job.id}
-            {parameterValues && !isUnrevisableJob && (
-              <Link
-                className="EditJob"
-                to={(location) => ({
-                  // When providing a location object, relative
-                  // paths are relative to the application root
-                  // and not the current location. So, we need
-                  // to get a handle on the current location to
-                  // create a path relative to it. Furthermore,
-                  // we need to use path.join to normalize the
-                  // path (remove the .. parts) so that
-                  // react-router recognizes it.
-                  pathname: path.join(location.pathname, './../../new'),
-                  state: {
-                    parameterValues,
-                  },
-                })}
-              >
-                Revise and rerun
-              </Link>
-            )}
-          </span>
+          <span className="JobId">{job.id}</span>
           {job.description != null && (
             <>
               <span className="InlineHeader">Description:</span>
@@ -95,40 +68,6 @@ export function DiamondResultContainer(props: Props) {
           )}
           <span className="InlineHeader">Program:</span>
           <span>{job.config.tool}</span>
-          {/* <span className="InlineHeader">Target Type:</span>
-          <span>{hitTypeDisplayName}</span> */}
-          {/* <span className="InlineHeader">
-            {databases.length > 1 ? 'Databases' : 'Database'}:
-          </span>
-          <span>
-            {databasesStr.length > MAX_DATABASE_STRING_LENGTH ? (
-              <CollapsibleSection
-                isCollapsed={!showMore}
-                onCollapsedChange={() => setShowMore(!showMore)}
-                headerContent={
-                  <>
-                    {!showMore ? (
-                      <span>
-                        {databasesStr.slice(0, MAX_DATABASE_STRING_LENGTH)}...{' '}
-                        <span className="link">Show more</span>
-                      </span>
-                    ) : (
-                      <div
-                        style={{
-                          height: '2em',
-                        }}
-                      >
-                        <span className="link">Show less</span>
-                      </div>
-                    )}
-                  </>
-                }
-                children={databasesStr}
-              />
-            ) : (
-              databasesStr
-            )}
-          </span> */}
         </div>
       </div>
       <div className="ResultContainer">
