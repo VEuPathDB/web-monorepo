@@ -225,7 +225,11 @@ export default class Root extends React.Component<Props, State> {
                       >
                         Log in
                       </Link>
-                      <Link className="register-button" to="/user/register">
+                      <Link
+                        className="register-button"
+                        target="_blank"
+                        to="/user/registration"
+                      >
                         Register
                       </Link>
                       .
