@@ -194,8 +194,8 @@ function LoadingBlastResult(props: Props) {
           <p className="Instructions">
             This job could take some time to run. You may leave this page and
             access the result from your <Link to="../all">jobs list</Link>{' '}
-            later, or <Link to="../new">submit another BLAST job</Link> while
-            you wait.
+            later, or <Link to="../new">submit another job</Link> while you
+            wait.
           </p>
         </div>
       </Loading>
