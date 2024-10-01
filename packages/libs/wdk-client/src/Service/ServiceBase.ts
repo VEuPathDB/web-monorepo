@@ -80,8 +80,10 @@ export interface ServiceConfig {
   userProfileProperties: Array<{
     name: string;
     displayName: string;
+    inputType: 'text' | 'textbox' | 'select';
+    help?: string;
+    suggest?: string;
     isRequired: boolean;
-    isMultiLine: boolean;
     isPublic: boolean;
   }>;
 }
@@ -104,8 +106,14 @@ const configDecoder: Decode.Decoder<ServiceConfig> = Decode.record({
     Decode.record({
       name: Decode.string,
       displayName: Decode.string,
+      inputType: Decode.oneOf(
+        Decode.constant('text'),
+        Decode.constant('textbox'),
+        Decode.constant('select')
+      ),
+      help: Decode.optional(Decode.string),
+      suggest: Decode.optional(Decode.string),
       isRequired: Decode.boolean,
-      isMultiLine: Decode.boolean,
       isPublic: Decode.boolean,
     })
   ),
@@ -141,6 +149,25 @@ export const ServiceBase = (serviceUrl: string) => {
       path: '/',
       useCache: true,
       cacheId: 'config',
+    });
+  }
+
+  /**
+   * Get vocabularies for user profile properties.
+   */
+  function getUserProfileVocabulary() {
+    const decoder = Decode.objectOf(
+      Decode.arrayOf(
+        Decode.record({
+          value: Decode.string,
+          display: Decode.string,
+        })
+      )
+    );
+    return sendRequest(decoder, {
+      method: 'get',
+      path: '/user-profile-vocabularies',
+      useCache: true,
     });
   }
 
@@ -508,6 +535,7 @@ export const ServiceBase = (serviceUrl: string) => {
     submitErrorIfNot500,
     submitErrorIfUndelayedAndNot500,
     getConfig,
+    getUserProfileVocabulary,
     getVersion,
     getRecordClasses,
     findRecordClass,

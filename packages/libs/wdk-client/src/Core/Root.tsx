@@ -2,6 +2,7 @@ import { History, Location } from 'history';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { Router, Switch, matchPath } from 'react-router';
+import { noop } from 'lodash';
 
 import {
   ClientPluginRegistryEntry,
@@ -22,6 +23,11 @@ import {
   WdkDependencies,
   WdkDependenciesContext,
 } from '../Hooks/WdkDependenciesEffect';
+import { Modal } from '@veupathdb/coreui';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { Link } from 'react-router-dom';
+
+import './Style/wdk-Button.scss';
 
 type Props = {
   requireLogin: boolean;
@@ -37,6 +43,7 @@ type Props = {
 
 interface State {
   location: Location;
+  accessDenied?: boolean;
 }
 
 const REACT_ROUTER_LINK_CLASSNAME = 'wdk-ReactRouterLink';
@@ -102,9 +109,41 @@ export default class Root extends React.Component<Props, State> {
     event.preventDefault();
   }
 
+  getActiveRoute() {
+    const { location } = this.state;
+    return this.props.routes.find(({ path, exact = true }) =>
+      matchPath(location.pathname, { path, exact })
+    );
+  }
+
+  doLoginLogic() {
+    // allow some pages non-login access
+    const activeRoute = this.getActiveRoute();
+    const requireLogin =
+      activeRoute?.requiresLogin === false ? false : this.props.requireLogin;
+    if (!requireLogin) {
+      this.setState({ accessDenied: false });
+    } else {
+      this.props.wdkDependencies.wdkService.getCurrentUser().then((user) => {
+        this.setState({ accessDenied: user.isGuest });
+      });
+    }
+  }
+
   componentDidMount() {
     /** install global click handler */
     document.addEventListener('click', this.handleGlobalClick);
+    this.doLoginLogic();
+  }
+
+  componentDidUpdate(
+    prevProps: Readonly<Props>,
+    prevState: Readonly<State>,
+    snapshot?: any
+  ): void {
+    if (this.state.location.pathname !== prevState.location.pathname) {
+      this.doLoginLogic();
+    }
   }
 
   componentWillUnmount() {
@@ -113,13 +152,13 @@ export default class Root extends React.Component<Props, State> {
   }
 
   render() {
-    const { routes, staticContent } = this.props;
-    const { location } = this.state;
-    const activeRoute = routes.find(({ path, exact = true }) =>
-      matchPath(location.pathname, { path, exact })
-    );
+    const { staticContent } = this.props;
+    const activeRoute = this.getActiveRoute();
     const rootClassNameModifier = activeRoute?.rootClassNameModifier;
     const isFullscreen = activeRoute?.isFullscreen;
+
+    if (this.state.accessDenied == null) return 'Loading...';
+
     return (
       <Provider store={this.props.store}>
         <ErrorBoundary>
@@ -130,6 +169,73 @@ export default class Root extends React.Component<Props, State> {
               >
                 <UnhandledErrorsController />
                 <LoginFormController />
+                <Modal
+                  visible={this.state.accessDenied}
+                  toggleVisible={noop}
+                  styleOverrides={{
+                    position: {
+                      top: '20vh',
+                    },
+                  }}
+                >
+                  <div
+                    style={{ width: '80vw', maxWidth: '35em', padding: '2em' }}
+                  >
+                    <h1
+                      style={{
+                        fontSize: '2em',
+                        fontWeight: 500,
+                        textAlign: 'center',
+                        paddingTop: 0,
+                      }}
+                    >
+                      Please log in to access this page
+                    </h1>
+                    <Banner
+                      banner={{
+                        type: 'info',
+                        hideIcon: true,
+                        message: (
+                          <>
+                            VEuPathDB is evolving under a new organizational
+                            structure. In order to use VEuPathDB resources, you
+                            will now need to log into your free account. This
+                            helps us collect accurate user metrics to guide
+                            future development.
+                          </>
+                        ),
+                      }}
+                    />
+                    <div
+                      style={{
+                        fontSize: '1.3em',
+                        marginTop: '2em',
+                        display: 'flex',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <Link
+                        className="login-button"
+                        to={{
+                          pathname: '/user/login',
+                          search:
+                            '?destination=' +
+                            encodeURIComponent(window.location.toString()),
+                        }}
+                      >
+                        Log in
+                      </Link>
+                      <Link
+                        className="register-button"
+                        target="_blank"
+                        to="/user/registration"
+                      >
+                        Register
+                      </Link>
+                      .
+                    </div>
+                  </div>
+                </Modal>
                 <Page
                   classNameModifier={rootClassNameModifier}
                   requireLogin={this.props.requireLogin}

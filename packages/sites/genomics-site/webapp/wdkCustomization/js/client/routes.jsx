@@ -203,6 +203,7 @@ export const wrapRoutes = (ebrcRoutes) => [
 
   {
     path: '/',
+    requiresLogin: false,
     component: () => (
       <React.Fragment>
         <FeaturedTools />
