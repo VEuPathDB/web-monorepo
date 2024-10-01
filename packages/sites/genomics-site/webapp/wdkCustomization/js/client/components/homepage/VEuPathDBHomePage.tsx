@@ -73,6 +73,7 @@ import { Tooltip, Warning } from '@veupathdb/coreui';
 
 import './VEuPathDBHomePage.scss';
 import { searchTree } from '../../selectors/QueryGridSelectors';
+import { ProfileModal } from '../ProfileModal';
 
 const vpdbCx = makeVpdbClassNameHelper('');
 
@@ -287,6 +288,7 @@ const VEuPathDBHomePageViewStandard: FunctionComponent<Props> = (props) => {
             </ErrorBoundary>
           )}
           <Main containerClassName={mainClassName}>{props.children}</Main>
+          <ProfileModal />
           {isHomePage && (
             <ErrorBoundary>
               <NewsPane

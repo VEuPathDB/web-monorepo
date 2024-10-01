@@ -182,6 +182,7 @@ const routes: RouteEntry[] = [
 
   {
     path: '/user/login',
+    requiresLogin: false,
     component: (props: RouteComponentProps<void>) => {
       const { destination } = parseQueryString(props);
       return <UserLoginController destination={destination} />;
@@ -200,6 +201,7 @@ const routes: RouteEntry[] = [
         <UserRegistrationController initialFormFields={initialFormFields} />
       );
     },
+    requiresLogin: false,
   },
 
   {
@@ -210,11 +212,13 @@ const routes: RouteEntry[] = [
   {
     path: '/user/profile/password',
     component: () => <UserPasswordChangeController />,
+    requiresLogin: false,
   },
 
   {
     path: '/user/forgot-password',
     component: () => <UserPasswordResetController />,
+    requiresLogin: false,
   },
 
   {

@@ -1,0 +1,31 @@
+a.login-button,
+a.register-button {
+  border: 1px solid #076a9b;
+  padding: 0.5em 0.75em;
+  border-radius: 0.25em;
+  text-decoration: none;
+  display: inline-block;
+  transition: background-color 250ms ease-in;
+  width: 30%;
+  text-align: center;
+  font-weight: 500;
+}
+
+a.login-button {
+  background: #076a9b;
+  color: white;
+  margin-right: 2em;
+  &:hover,
+  &:active {
+    background: #034f75;
+    text-decoration: none;
+  }
+}
+
+a.register-button {
+  &:hover,
+  &:active {
+    background: #d1eaf7;
+    text-decoration: none;
+  }
+}
