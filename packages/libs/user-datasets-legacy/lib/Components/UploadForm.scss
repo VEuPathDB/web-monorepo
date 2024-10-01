@@ -1,0 +1,68 @@
+.UploadForm {
+  h2 {
+    color: #222;
+    font-size: 1.5em;
+    font-weight: 500;
+    margin: 0;
+    padding: 22px 0 8px 0;
+  }
+  .formSection > label {
+    font-size: medium;
+  }
+  #data-set-name {
+    min-width: 300px;
+  }
+  #data-set-summary {
+    width: 100%;
+  }
+  #data-set-description {
+    width: 100%;
+    height: 8em;
+  }
+  #data-set-url {
+    width: 100%;
+    max-width: 51em;
+  }
+  .formInfo {
+    width: 80%;
+    text-align: justify;
+  }
+  .formSection {
+    margin: 1em 0;
+  }
+  select {
+    max-width: 450px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  & &--UploadMethodSelector {
+    margin-top: 2em;
+    margin-bottom: 3.5em;
+
+    li > label {
+      display: grid;
+      grid-template-columns: auto 10em 1fr;
+
+      label {
+        font-size: medium;
+        margin-left: 0.25em;
+      }
+    }
+  }
+  & &--UploadMethodSelector &--FixedUploadItem {
+    display: grid;
+    grid-template-columns: 10em 1fr;
+
+    label {
+      font-size: medium;
+      margin-left: 0.25em;
+    }
+  }
+  & &--UploadMethodField {
+    &__disabled {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+  }
+}
