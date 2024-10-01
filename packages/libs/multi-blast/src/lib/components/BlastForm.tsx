@@ -225,6 +225,12 @@ function BlastFormWithTransformedQuestion(props: TransformedProps) {
       name={`${props.state.question.urlSegment}/${BLAST_ALGORITHM_PARAM_NAME}`}
     />
   );
+
+  const [fileSelected, setFileSelected] = useState(false);
+  // this is not the main handler - it's just for showing the drag and drop guidance
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFileSelected(e.target.files !== null && e.target.files.length > 0);
+  };
   const sequenceParamElement = (
     <div className="SequenceParam">
       <div className="SequenceParamInstructions">
@@ -245,11 +251,24 @@ function BlastFormWithTransformedQuestion(props: TransformedProps) {
           name={`${props.state.question.urlSegment}/${BLAST_QUERY_SEQUENCE_PARAM_NAME}`}
         />
       )}
-      <input
-        type="file"
-        accept="*"
-        name={`${props.state.question.urlSegment}/${BLAST_QUERY_SEQUENCE_PARAM_NAME}__file`}
-      />
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          gap: '2em',
+        }}
+      >
+        <input
+          type="file"
+          accept="*"
+          name={`${props.state.question.urlSegment}/${BLAST_QUERY_SEQUENCE_PARAM_NAME}__file`}
+          onChange={handleFileChange}
+        />
+        {!fileSelected && (
+          <span>(You can drag and drop a file onto the button.)</span>
+        )}
+      </div>
     </div>
   );
   const dynamicOrganismParam =
