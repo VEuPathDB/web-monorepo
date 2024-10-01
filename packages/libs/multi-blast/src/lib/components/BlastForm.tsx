@@ -230,6 +230,10 @@ function BlastFormWithTransformedQuestion(props: TransformedProps) {
   // this is not the main handler - it's just for showing the drag and drop guidance
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFileSelected(e.target.files !== null && e.target.files.length > 0);
+    if (enableSequenceTextArea && e.target.files?.[0]) {
+      e.target.files[0].text().then(sequenceParamProps.onChange);
+      e.target.value = '';
+    }
   };
   const sequenceParamElement = (
     <div className="SequenceParam">
@@ -239,8 +243,8 @@ function BlastFormWithTransformedQuestion(props: TransformedProps) {
         ]?.visibleHelp ??
           (enableSequenceTextArea
             ? props.isMultiBlast
-              ? 'Paste one or several sequences, or upload a FASTA file. If both are provided, the file will be used.'
-              : 'Paste one sequence, or upload a one-sequence FASTA file. If both are provided, the file will be used.'
+              ? 'Paste one or several sequences, or upload a FASTA file.'
+              : 'Paste one sequence, or upload a one-sequence FASTA file.'
             : props.isMultiBlast
             ? 'Upload a FASTA file.'
             : 'Upload a one-sequence FASTA file.')}
