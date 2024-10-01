@@ -29,6 +29,8 @@ import { Modal } from '@veupathdb/coreui';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { Link } from 'react-router-dom';
 
+import './Style/wdk-Button.scss';
+
 type Props = {
   requireLogin: boolean;
   rootUrl: string;
@@ -211,15 +213,16 @@ export default class Root extends React.Component<Props, State> {
                         ),
                       }}
                     />
-                    <p
+                    <div
                       style={{
                         fontSize: '1.3em',
                         marginTop: '2em',
-                        textAlign: 'center',
+                        display: 'flex',
+                        justifyContent: 'center',
                       }}
                     >
-                      To use this page, please{' '}
                       <Link
+                        className="login-button"
                         to={{
                           pathname: '/user/login',
                           search:
@@ -227,10 +230,13 @@ export default class Root extends React.Component<Props, State> {
                             encodeURIComponent(window.location.toString()),
                         }}
                       >
-                        log in
-                      </Link>{' '}
-                      or <Link to="/user/register">register</Link>.
-                    </p>
+                        Log in
+                      </Link>
+                      <Link className="register-button" to="/user/register">
+                        Register
+                      </Link>
+                      .
+                    </div>
                   </div>
                 </Modal>
                 <Page
