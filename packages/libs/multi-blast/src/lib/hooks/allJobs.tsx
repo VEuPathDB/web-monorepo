@@ -23,9 +23,12 @@ export function useAllJobsColumns(): MesaColumn<JobRow>[] {
       {
         key: 'jobId',
         name: 'Job Id',
-        renderCell: ({ row }: { row: JobRow }) => (
-          <Link to={`./result/${row.jobId}`}>{row.jobId}</Link>
-        ),
+        renderCell: ({ row }: { row: JobRow }) =>
+          row.status === 'expired' && !row.rerunnable ? (
+            row.jobId
+          ) : (
+            <Link to={`./result/${row.jobId}`}>{row.jobId}</Link>
+          ),
         sortable: true,
       },
       {
@@ -48,7 +51,7 @@ export function useAllJobsColumns(): MesaColumn<JobRow>[] {
         renderCell: ({ row }: { row: JobRow }) => (
           <div>
             {row.status}
-            {row.status === 'expired' && (
+            {row.status === 'expired' && row.rerunnable && (
               <>
                 {' '}
                 (<Link to={`./result/${row.jobId}`}>rerun</Link>)
@@ -84,6 +87,11 @@ export function useRawJobRows(
               description: jobEntity.description ?? null,
               created: jobEntity.created,
               status: entityStatusToReadableStatus(jobEntity.status),
+              // Diamond blastp protein-to-ortho-group mapping jobs shouldn't be rerunnable because
+              // we're not storing the (large) query sequences in the user database. However,
+              // we don't have specific information from the `jobs` endpoint that identifies
+              // a Diamond job, so for now we will assume the only jobs with no target species are these jobs.
+              rerunnable: !!jobEntity.targets && jobEntity.targets.length > 0,
             })),
         };
   }, []);
@@ -131,6 +139,8 @@ export function useMesaOptions() {
           </div>
         </div>
       ),
+      deriveRowClassName: ({ status, rerunnable }: JobRow) =>
+        status === 'expired' && !rerunnable ? 'grayed-out' : undefined,
     }),
     []
   );
