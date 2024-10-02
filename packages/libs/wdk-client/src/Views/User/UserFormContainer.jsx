@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { getChangeHandler, wrappable } from '../../Utils/ComponentUtils';
 import UserAccountForm from '../../Views/User/UserAccountForm';
 
@@ -59,13 +60,13 @@ export function IntroComponent() {
   return (
     <div style={{ paddingBottom: '2em' }}>
       Review our&nbsp;
-      <a
+      <Link
         title="View the privacy policy in a new tab"
         target="_blank"
-        href="https://static-content.veupathdb.org/privacyPolicy.html"
+        to="/static-content/privacyPolicy.html"
       >
         <b>VEuPathDB Websites Privacy Policy</b>
-      </a>
+      </Link>
       .
     </div>
   );
