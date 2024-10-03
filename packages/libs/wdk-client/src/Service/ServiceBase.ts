@@ -307,9 +307,8 @@ export const ServiceBase = (serviceUrl: string) => {
         }
 
         return response.text().then((text) => {
-          // Return a Promise that never resolves, if we get an out-of-sync response;
-          // and clear the data cache store.
           if (response.status === 409 && text === CLIENT_OUT_OF_SYNC_TEXT) {
+            // Clear the data cache store and set _isInvalidating to true.
             if (!_isInvalidating) {
               _isInvalidating = true;
               _store
@@ -328,6 +327,9 @@ export const ServiceBase = (serviceUrl: string) => {
             }
           }
 
+          // Return a Promise that never resolves if we are invalidating.
+          // This prevents additional out-of-sync responses and prevents
+          // further updates to the UI.
           if (_isInvalidating) {
             return pendingPromise as Promise<T>;
           }
