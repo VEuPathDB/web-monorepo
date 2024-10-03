@@ -307,6 +307,8 @@ export const ServiceBase = (serviceUrl: string) => {
         }
 
         return response.text().then((text) => {
+          // Return a Promise that never resolves, if we get an out-of-sync response;
+          // and clear the data cache store.
           if (response.status === 409 && text === CLIENT_OUT_OF_SYNC_TEXT) {
             if (!_isInvalidating) {
               _isInvalidating = true;
@@ -323,8 +325,8 @@ export const ServiceBase = (serviceUrl: string) => {
                 .then(() => {
                   window.location.reload();
                 });
-              return pendingPromise as Promise<T>;
             }
+            return pendingPromise as Promise<T>;
           }
 
           // FIXME Get uuid from response header when available
