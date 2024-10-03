@@ -29,6 +29,7 @@ import {
   LongReportResponse,
   MultiQueryReportJson,
   Target,
+  permanentlyExpiredError,
 } from '../utils/ServiceTypes';
 import { BlastApi } from '../utils/api';
 import { fetchOrganismToFilenameMaps } from '../utils/organisms';
@@ -69,14 +70,16 @@ export function BlastWorkspaceResult(props: Props) {
     return <LoadingBlastResult {...props} />;
   }
 
-  return jobResult.value != null &&
-    jobResult.value.status === 'request-error' ? (
+  return jobResult.value?.status === 'request-error' ? (
     <BlastRequestError errorDetails={jobResult.value.details} />
-  ) : jobResult.value != null && jobResult.value.status === 'error' ? (
+  ) : jobResult.value?.status === 'error' &&
+    permanentlyExpiredError.is(jobResult.value.details) ? (
+    <BlastRequestError errorDetails={jobResult.value.details} />
+  ) : jobResult.value?.status === 'error' ? (
     <BlastRerunError {...props} />
-  ) : jobResult.value != null && jobResult.value.status === 'queueing-error' ? (
+  ) : jobResult.value?.status === 'queueing-error' ? (
     <ErrorPage message="We were unable to queue your job." />
-  ) : queryResult.value != null && queryResult.value.status === 'error' ? (
+  ) : queryResult.value?.status === 'error' ? (
     <BlastRequestError errorDetails={queryResult.value.details} />
   ) : jobResult.value.job.config.tool.startsWith('diamond-') ? (
     <DiamondResultContainer
@@ -513,10 +516,20 @@ async function makeJobPollingPromise(
       };
     }
 
-    if (job.status === 'expired' && (job.isRerunnable ?? true)) {
-      const apiResult = await blastApi.rerunJob(job.id);
-      if (apiResult.status === 'error') {
-        return apiResult;
+    if (job.status === 'expired') {
+      if (job.isRerunnable ?? true) {
+        const apiResult = await blastApi.rerunJob(job.id);
+        if (apiResult.status === 'error') {
+          return apiResult;
+        }
+      } else {
+        return {
+          status: 'error',
+          details: {
+            status: 'permanently-expired',
+            message: 'Sorry, your job has expired and is not rerunnable.',
+          },
+        };
       }
     }
 
