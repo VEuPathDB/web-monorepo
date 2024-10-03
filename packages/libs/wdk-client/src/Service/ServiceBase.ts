@@ -529,11 +529,16 @@ export const ServiceBase = (serviceUrl: string) => {
     });
   }
 
+  function getIsInvalidating() {
+    return _isInvalidating;
+  }
+
   return {
     _version,
     _fetchJson,
     _getFromCache,
     _clearCache,
+    getIsInvalidating,
     serviceUrl,
     sendRequest,
     submitError,
