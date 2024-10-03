@@ -1,10 +1,8 @@
-import path from 'path';
 import { LongJobResponse } from '../utils/ServiceTypes';
 import { useBlastApi } from '../hooks/api';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 import { blastWorkspaceCx } from './BlastWorkspace';
 import { Link } from 'react-router-dom';
-import { blastConfigToParamValues } from '../utils/params';
 import { useMemo } from 'react';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { upperFirst, zip } from 'lodash';
@@ -12,13 +10,15 @@ import Mesa from '@veupathdb/coreui/lib/components/Mesa/Ui/Mesa';
 import { create as createMesaState } from '@veupathdb/coreui/lib/components/Mesa/Utils/MesaState';
 import { FilledButton } from '@veupathdb/coreui';
 
+const ROW_LIMIT = 100;
+
 interface Props {
   job: LongJobResponse;
   query: string;
 }
 
 export function DiamondResultContainer(props: Props) {
-  const { job, query } = props;
+  const { job } = props;
 
   const blastApi = useBlastApi();
 
@@ -41,9 +41,15 @@ export function DiamondResultContainer(props: Props) {
             reportMetadataResult.value.value.reportID,
             reportMetadataResult.value.value.files?.[0]!,
             headerRow,
-            '1-100'
+            `1-${ROW_LIMIT}`
           ),
     [blastApi, reportMetadataResult.value]
+  );
+
+  const { rows, columns } = useDiamondData(
+    reportResult.value && reportResult.value.status === 'ok'
+      ? (reportResult.value.value as string)
+      : undefined
   );
 
   return (
@@ -76,7 +82,7 @@ export function DiamondResultContainer(props: Props) {
             Unable to load results:{' '}
             {JSON.stringify(reportMetadataResult.value.details)}
           </div>
-        ) : reportResult.value == null ? (
+        ) : reportResult.value == null || rows == null || columns == null ? (
           <Loading>
             <div className="wdk-LoadingData">Loading data...</div>
           </Loading>
@@ -91,7 +97,11 @@ export function DiamondResultContainer(props: Props) {
                 alignItems: 'end',
               }}
             >
-              <h2>Mapped proteins</h2>
+              <h2>
+                {rows.length < ROW_LIMIT
+                  ? `Showing all ${rows.length} sequences in your query file.`
+                  : `Showing the first ${ROW_LIMIT} sequences in your query file.`}
+              </h2>
               <form
                 method="get"
                 action={blastApi.getSingleFileReportUrl(
@@ -116,10 +126,7 @@ export function DiamondResultContainer(props: Props) {
                 />
               </form>
             </div>
-            <DiamondResultTable
-              rawResult={reportResult.value.value as string}
-              fields={job.config.outFormat?.fields!}
-            ></DiamondResultTable>
+            <DiamondResultTable rows={rows} columns={columns} />
           </>
         )}
       </div>
@@ -128,12 +135,25 @@ export function DiamondResultContainer(props: Props) {
 }
 
 interface DiamondResultTableProps {
-  rawResult: string;
-  fields: string[];
+  rows: object[];
+  columns: { key: string; name: string }[];
 }
+
 function DiamondResultTable(props: DiamondResultTableProps) {
-  const { rawResult } = props;
+  const { rows, columns } = props;
   const tableState = useMemo(() => {
+    return createMesaState({
+      columns,
+      rows,
+    });
+  }, [rows, columns]);
+
+  return <Mesa state={tableState} />;
+}
+
+function useDiamondData(rawResult: string | undefined) {
+  return useMemo(() => {
+    if (rawResult == null) return {};
     const [fields, ...rawRows] = rawResult
       .trim()
       .split(/\n/g)
@@ -142,12 +162,9 @@ function DiamondResultTable(props: DiamondResultTableProps) {
       key: field,
       name: upperFirst(field.replaceAll('-', ' ')),
     }));
-    const rows = rawRows.map((row) => Object.fromEntries(zip(fields, row)));
-    return createMesaState({
-      columns,
-      rows,
-    });
+    const rows = rawRows.map((row) =>
+      Object.fromEntries(zip(fields, row))
+    ) as object[];
+    return { columns, rows };
   }, [rawResult]);
-
-  return <Mesa state={tableState} />;
 }
