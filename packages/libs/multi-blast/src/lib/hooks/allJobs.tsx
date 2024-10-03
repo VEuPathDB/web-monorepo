@@ -87,11 +87,7 @@ export function useRawJobRows(
               description: jobEntity.description ?? null,
               created: jobEntity.created,
               status: entityStatusToReadableStatus(jobEntity.status),
-              // Diamond blastp protein-to-ortho-group mapping jobs shouldn't be rerunnable because
-              // we're not storing the (large) query sequences in the user database. However,
-              // we don't have specific information from the `jobs` endpoint that identifies
-              // a Diamond job, so for now we will assume the only jobs with no target species are these jobs.
-              rerunnable: !!jobEntity.targets && jobEntity.targets.length > 0,
+              rerunnable: jobEntity.isRerunnable ?? true,
             })),
         };
   }, []);

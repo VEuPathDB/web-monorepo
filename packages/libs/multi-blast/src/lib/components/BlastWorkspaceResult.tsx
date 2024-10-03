@@ -513,7 +513,7 @@ async function makeJobPollingPromise(
       };
     }
 
-    if (job.status === 'expired') {
+    if (job.status === 'expired' && (job.isRerunnable ?? true)) {
       const apiResult = await blastApi.rerunJob(job.id);
       if (apiResult.status === 'error') {
         return apiResult;

@@ -46,10 +46,6 @@ export function DiamondResultContainer(props: Props) {
     [blastApi, reportMetadataResult.value]
   );
 
-  const parameterValues = useMemo(() => {
-    return blastConfigToParamValues(job.config);
-  }, [job]);
-
   return (
     <div className={blastWorkspaceCx('Result', 'Complete')}>
       <h1>Diamond Job - result</h1>

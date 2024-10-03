@@ -616,6 +616,7 @@ export const shortJobResponse = intersection([
     description: string,
     // FIXME: This field is missing from "secondary" jobs. Service bug?
     isPrimary: boolean,
+    isRerunnable: boolean,
     childJobs: array(
       type({
         id: string,
