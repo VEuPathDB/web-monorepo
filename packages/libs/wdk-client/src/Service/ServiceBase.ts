@@ -326,6 +326,9 @@ export const ServiceBase = (serviceUrl: string) => {
                   window.location.reload();
                 });
             }
+          }
+
+          if (_isInvalidating) {
             return pendingPromise as Promise<T>;
           }
 
