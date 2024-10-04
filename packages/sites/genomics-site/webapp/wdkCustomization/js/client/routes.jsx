@@ -10,8 +10,6 @@ import QueryGridController from './components/controllers/QueryGridController';
 import { JBrowseController } from './components/controllers/JBrowseController';
 import { PlasmoApController } from './components/controllers/PlasmoApController';
 
-import { FeaturedTools } from '@veupathdb/web-common/lib/components/homepage/FeaturedTools';
-import { WorkshopExercises } from '@veupathdb/web-common/lib/components/homepage/WorkshopExercises';
 import { useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
 
 import {
@@ -35,7 +33,6 @@ import Downloads from './components/Downloads';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { Srt } from './components/Srt';
-import IndexController from './controllers/IndexController';
 
 // Project id is not needed for these record classes.
 // Matches urlSegment.
@@ -200,12 +197,6 @@ export const wrapRoutes = (ebrcRoutes) => [
   {
     path: '/sample-form',
     component: () => <SampleForm />,
-  },
-
-  {
-    path: '/',
-    requiresLogin: false,
-    component: IndexController,
   },
 
   {

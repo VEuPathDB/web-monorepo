@@ -27,7 +27,7 @@ import { apiActions } from './components/strategies/ApiStepDetailsActions';
 import { VEuPathDBHomePage } from './components/homepage/VEuPathDBHomePage';
 import { BlockRecordAttributeSection } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
 
-import IndexController from './controllers/IndexController';
+import GenomicsIndexController from './controllers/GenomicsIndexController';
 
 import './record-page-new-feature.scss';
 
@@ -482,8 +482,12 @@ export function StrategyWorkspaceController(DefaultComponent) {
   };
 }
 
+export function IndexController() {
+  return GenomicsIndexController;
+}
+
 export function Page() {
-  return function VuPathDBPage({ children, ...props }) {
+  return function VuPathDBPage(props) {
     useScrollUpOnRouteChange();
 
     const location = useLocation();
@@ -491,14 +495,6 @@ export function Page() {
     const params = new URLSearchParams(location.search);
     const galaxyUrl = params.get('galaxy_url');
     const MUITheme = createMUITheme(MUIThemeOptions);
-
-    children = props.isAccessDenied ? (
-      <ErrorBoundary>
-        <IndexController />
-      </ErrorBoundary>
-    ) : (
-      children
-    );
 
     React.useEffect(() => {
       if (galaxyUrl != null) sessionStorage.setItem('galaxyUrl', galaxyUrl);
@@ -515,11 +511,7 @@ export function Page() {
               },
             }}
           >
-            <VEuPathDBHomePage
-              {...props}
-              children={children}
-              isHomePage={isHomePage}
-            />
+            <VEuPathDBHomePage {...props} isHomePage={isHomePage} />
           </UIThemeProvider>
         </MUIThemeProvider>
       </RecoilRoot>

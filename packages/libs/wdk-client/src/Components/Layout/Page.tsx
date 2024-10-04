@@ -12,7 +12,6 @@ import { useScrollUpOnRouteChange } from '../../Hooks/Page';
 export type Props = RouteComponentProps<any> & {
   classNameModifier?: string;
   children: React.ReactNode;
-  requireLogin: boolean;
   isFullScreen?: boolean;
   isAccessDenied?: boolean;
 };

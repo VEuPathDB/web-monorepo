@@ -2,7 +2,7 @@ import { FeaturedTools } from '@veupathdb/web-common/lib/components/homepage/Fea
 import { WorkshopExercises } from '@veupathdb/web-common/lib/components/homepage/WorkshopExercises';
 import React from 'react';
 
-export default function IndexController() {
+export default function GenomicsIndexController() {
   return (
     <React.Fragment>
       <FeaturedTools />
