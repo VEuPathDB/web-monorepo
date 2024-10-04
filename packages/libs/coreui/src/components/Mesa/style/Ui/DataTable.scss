@@ -14,26 +14,24 @@
       display: block;
       overflow: auto;
       position: relative;
+      z-index: 0;
       max-height: 70vh;
 
       .DataTable-Header,
       .DataTable-Body {
         display: block;
-        // table { table-layout: fixed; }
       }
 
       .DataTable-Body {
+        position: relative;
         padding-bottom: 1.5em; /* prevent macos scrollbar from occluding last row */
       }
 
       .DataTable-Header {
         overflow: visible;
         top: 0;
-
-        /* set sticky header table width to auto so that scrollbars in the body section don't throw off cell widths */
-        // table {
-        //   width: auto;
-        // }
+        position: sticky;
+        z-index: 1;
       }
     }
   }
