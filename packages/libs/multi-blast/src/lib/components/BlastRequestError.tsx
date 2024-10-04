@@ -8,15 +8,16 @@ import ExpiredDiamondJob from './ExpiredDiamondJob';
 
 interface Props {
   errorDetails: ErrorDetails;
+  workspaceShortName?: string;
 }
 
-export function BlastRequestError({ errorDetails }: Props) {
+export function BlastRequestError({ errorDetails, workspaceShortName }: Props) {
   return errorDetails.status === 'not-found' ? (
     <NotFoundController />
   ) : errorDetails.status === 'unauthorized' ? (
     <PermissionDenied />
   ) : permanentlyExpiredError.is(errorDetails) ? (
-    <ExpiredDiamondJob>
+    <ExpiredDiamondJob workspaceShortName={workspaceShortName}>
       <p>{errorDetails.message}</p>
     </ExpiredDiamondJob>
   ) : (

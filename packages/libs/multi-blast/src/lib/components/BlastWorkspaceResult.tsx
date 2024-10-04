@@ -46,13 +46,17 @@ import { DiamondResultContainer } from './DiamondResultContainer';
 interface Props {
   jobId: string;
   selectedResult?: SelectedResult;
+  workspaceShortName?: string;
 }
 
 const POLLING_INTERVAL = 3000;
 const MAX_DATABASE_STRING_LENGTH = 500;
+const DEFAULT_SHORTNAME = 'BLAST';
 
 export function BlastWorkspaceResult(props: Props) {
-  useSetDocumentTitle(`BLAST Job ${props.jobId}`);
+  useSetDocumentTitle(
+    `${props.workspaceShortName ?? DEFAULT_SHORTNAME} Job ${props.jobId}`
+  );
 
   const blastApi = useBlastApi();
 
@@ -74,7 +78,7 @@ export function BlastWorkspaceResult(props: Props) {
     <BlastRequestError errorDetails={jobResult.value.details} />
   ) : jobResult.value?.status === 'error' &&
     permanentlyExpiredError.is(jobResult.value.details) ? (
-    <BlastRequestError errorDetails={jobResult.value.details} />
+    <BlastRequestError {...props} errorDetails={jobResult.value.details} />
   ) : jobResult.value?.status === 'error' ? (
     <BlastRerunError {...props} />
   ) : jobResult.value?.status === 'queueing-error' ? (
@@ -185,7 +189,7 @@ function StandardBlastResult(
 function LoadingBlastResult(props: Props) {
   return (
     <div className={blastWorkspaceCx('Result', 'Loading')}>
-      <h1>BLAST Job - pending</h1>
+      <h1>{props.workspaceShortName ?? DEFAULT_SHORTNAME} Job - pending...</h1>
       <p className="JobId">
         <span className="InlineHeader">Job Id:</span> {props.jobId}
       </p>
@@ -209,7 +213,7 @@ function LoadingBlastResult(props: Props) {
 function BlastRerunError(props: Props) {
   return (
     <div className={blastWorkspaceCx('Result', 'Loading')}>
-      <h1>BLAST Job - error</h1>
+      <h1>{props.workspaceShortName ?? DEFAULT_SHORTNAME} Job - error</h1>
       <p className="JobId">
         <span className="InlineHeader">Job Id:</span> {props.jobId}
       </p>
@@ -218,7 +222,9 @@ function BlastRerunError(props: Props) {
           <span className="InlineHeader">Status:</span> error
         </p>
         <p>
-          We were unable to rerun your BLAST job due to a server error.{' '}
+          We were unable to rerun your{' '}
+          {props.workspaceShortName ?? DEFAULT_SHORTNAME} job due to a server
+          error.{' '}
           <Link to="/contact-us" target="_blank">
             Contact us
           </Link>{' '}

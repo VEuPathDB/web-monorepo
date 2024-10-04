@@ -20,11 +20,17 @@ interface Props {
   helpPageUrl: string;
   workspaceUrl: string;
   workspaceHeading?: ReactNode;
+  workspaceShortName?: string;
 }
 
 export function BlastWorkspace(props: Props) {
-  useSetDocumentTitle('BLAST Workspace');
-  const { helpPageUrl, workspaceUrl, workspaceHeading = 'BLAST' } = props;
+  const {
+    helpPageUrl,
+    workspaceUrl,
+    workspaceHeading = 'BLAST',
+    workspaceShortName = 'BLAST',
+  } = props;
+  useSetDocumentTitle(`${workspaceShortName} Workspace`);
 
   return (
     <div className={blastWorkspaceCx()}>

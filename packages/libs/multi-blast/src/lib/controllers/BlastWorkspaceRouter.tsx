@@ -8,12 +8,13 @@ import { ReactNode } from 'react';
 
 interface Props {
   workspaceHeading?: ReactNode;
+  workspaceShortName?: string;
   helpPageUrl: string;
 }
 
 export function BlastWorkspaceRouter(props: Props) {
   const { path, url } = useRouteMatch();
-  const { workspaceHeading, helpPageUrl } = props;
+  const { workspaceHeading, workspaceShortName, helpPageUrl } = props;
 
   return (
     <Switch>
@@ -25,6 +26,7 @@ export function BlastWorkspaceRouter(props: Props) {
             helpPageUrl={helpPageUrl}
             workspaceUrl={url}
             workspaceHeading={workspaceHeading}
+            workspaceShortName={workspaceShortName}
           />
         )}
       />
@@ -38,6 +40,7 @@ export function BlastWorkspaceRouter(props: Props) {
             <BlastWorkspaceResult
               jobId={jobId}
               selectedResult={{ type: 'combined' }}
+              workspaceShortName={workspaceShortName}
             />
           );
         }}
@@ -56,6 +59,7 @@ export function BlastWorkspaceRouter(props: Props) {
                 type: 'individual',
                 resultIndex,
               }}
+              workspaceShortName={workspaceShortName}
             />
           );
         }}
@@ -67,7 +71,11 @@ export function BlastWorkspaceRouter(props: Props) {
           const jobId = props.match.params.jobId as string;
 
           return (
-            <BlastWorkspaceResult jobId={jobId} selectedResult={undefined} />
+            <BlastWorkspaceResult
+              jobId={jobId}
+              selectedResult={undefined}
+              workspaceShortName={workspaceShortName}
+            />
           );
         }}
       />

@@ -15,6 +15,7 @@ const ROW_LIMIT = 100;
 interface Props {
   job: LongJobResponse;
   query: string;
+  workspaceShortName?: string;
 }
 
 export function DiamondResultContainer(props: Props) {
@@ -54,9 +55,9 @@ export function DiamondResultContainer(props: Props) {
 
   return (
     <div className={blastWorkspaceCx('Result', 'Complete')}>
-      <h1>Diamond Job - result</h1>
+      <h1>{props.workspaceShortName ?? 'DIAMOND'} Job - result</h1>
       <Link className="BackToAllJobs" to="../all">
-        &lt;&lt; All my Diamond Jobs
+        &lt;&lt; All my {props.workspaceShortName ?? 'DIAMOND'} Jobs
       </Link>
       <div className="ConfigDetailsContainer">
         <div className="ConfigDetails">
