@@ -27,6 +27,8 @@ import { apiActions } from './components/strategies/ApiStepDetailsActions';
 import { VEuPathDBHomePage } from './components/homepage/VEuPathDBHomePage';
 import { BlockRecordAttributeSection } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
 
+import IndexController from './controllers/IndexController';
+
 import './record-page-new-feature.scss';
 
 import {
@@ -38,6 +40,7 @@ import { workspaceThemeOptions as MUIThemeOptions } from '@veupathdb/eda/lib/wor
 
 import UIThemeProvider from '@veupathdb/coreui/lib/components/theming/UIThemeProvider';
 import { colors } from '@veupathdb/coreui';
+import { ErrorBoundary } from '@veupathdb/wdk-client/lib/Controllers';
 
 export const SiteHeader = () => ApiSiteHeader;
 
@@ -480,14 +483,22 @@ export function StrategyWorkspaceController(DefaultComponent) {
 }
 
 export function Page() {
-  return function VuPathDBPage(props) {
+  return function VuPathDBPage({ children, ...props }) {
     useScrollUpOnRouteChange();
 
     const location = useLocation();
-    const isHomePage = location.pathname === '/';
+    const isHomePage = location.pathname === '/' || props.isAccessDenied;
     const params = new URLSearchParams(location.search);
     const galaxyUrl = params.get('galaxy_url');
     const MUITheme = createMUITheme(MUIThemeOptions);
+
+    children = props.isAccessDenied ? (
+      <ErrorBoundary>
+        <IndexController />
+      </ErrorBoundary>
+    ) : (
+      children
+    );
 
     React.useEffect(() => {
       if (galaxyUrl != null) sessionStorage.setItem('galaxyUrl', galaxyUrl);
@@ -504,7 +515,11 @@ export function Page() {
               },
             }}
           >
-            <VEuPathDBHomePage {...props} isHomePage={isHomePage} />
+            <VEuPathDBHomePage
+              {...props}
+              children={children}
+              isHomePage={isHomePage}
+            />
           </UIThemeProvider>
         </MUIThemeProvider>
       </RecoilRoot>

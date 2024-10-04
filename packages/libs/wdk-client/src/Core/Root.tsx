@@ -240,6 +240,7 @@ export default class Root extends React.Component<Props, State> {
                   classNameModifier={rootClassNameModifier}
                   requireLogin={this.props.requireLogin}
                   isFullScreen={isFullscreen}
+                  isAccessDenied={this.state.accessDenied}
                 >
                   {staticContent ? (
                     safeHtml(staticContent, null, 'div')

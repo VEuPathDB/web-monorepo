@@ -35,6 +35,7 @@ import Downloads from './components/Downloads';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { Srt } from './components/Srt';
+import IndexController from './controllers/IndexController';
 
 // Project id is not needed for these record classes.
 // Matches urlSegment.
@@ -204,13 +205,7 @@ export const wrapRoutes = (ebrcRoutes) => [
   {
     path: '/',
     requiresLogin: false,
-    component: () => (
-      <React.Fragment>
-        <FeaturedTools />
-        <hr />
-        <WorkshopExercises />
-      </React.Fragment>
-    ),
+    component: IndexController,
   },
 
   {
