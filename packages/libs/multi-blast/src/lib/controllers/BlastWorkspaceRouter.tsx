@@ -10,11 +10,17 @@ interface Props {
   workspaceHeading?: ReactNode;
   workspaceShortName?: string;
   helpPageUrl: string;
+  submitButtonText?: string;
 }
 
 export function BlastWorkspaceRouter(props: Props) {
   const { path, url } = useRouteMatch();
-  const { workspaceHeading, workspaceShortName, helpPageUrl } = props;
+  const {
+    workspaceHeading,
+    workspaceShortName,
+    helpPageUrl,
+    submitButtonText,
+  } = props;
 
   return (
     <Switch>
@@ -27,6 +33,7 @@ export function BlastWorkspaceRouter(props: Props) {
             workspaceUrl={url}
             workspaceHeading={workspaceHeading}
             workspaceShortName={workspaceShortName}
+            submitButtonText={submitButtonText}
           />
         )}
       />
