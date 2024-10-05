@@ -270,7 +270,7 @@ function BlastFormWithTransformedQuestion(props: TransformedProps) {
           onChange={handleFileChange}
         />
         {!fileSelected && (
-          <span>(You can drag and drop a file onto the button.)</span>
+          <span>(You can also drag and drop a file onto the button.)</span>
         )}
       </div>
     </div>
