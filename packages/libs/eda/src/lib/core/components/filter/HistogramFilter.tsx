@@ -631,8 +631,8 @@ function HistogramPlotWithControls({
         selectedRange={selectedRange}
         selectedRangeBounds={selectedRangeBounds}
         onSelectedRangeChange={handleSelectedRangeChange}
+        inclusive={true}
       />
-      <span>inclusive range</span>
       <Histogram
         {...histogramProps}
         data={data}
