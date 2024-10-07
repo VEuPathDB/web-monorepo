@@ -897,7 +897,7 @@ function formatStatValue(
       ? String(value).replace(/T.*$/, '')
       : // set conditions similar to plotly
       gt(Number(value), 100000) ||
-        (Number(value) != 0 && lt(Math.abs(Number(value)), 0.0001))
+        (Number(value) !== 0 && lt(Math.abs(Number(value)), 0.0001))
       ? Number(value).toExponential(4)
       : Number.isInteger(value)
       ? Number(value)
