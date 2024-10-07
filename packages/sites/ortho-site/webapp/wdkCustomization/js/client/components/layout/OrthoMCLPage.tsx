@@ -239,7 +239,7 @@ function useHeaderMenuItems() {
         items: [
           {
             key: 'proteome-upload',
-            display: 'Map proteins to OrthoMCL with Diamond blastp',
+            display: 'Map proteins to OrthoMCL with DIAMOND blastp',
             type: 'reactRoute',
             url: '/workspace/map-proteins/new',
           },

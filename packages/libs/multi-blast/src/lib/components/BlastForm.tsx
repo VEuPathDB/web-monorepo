@@ -30,6 +30,8 @@ import { scrollIntoView } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 import {
   Parameter,
   ParameterGroup,
+  Question,
+  QuestionWithParameters,
   SelectEnumParam,
 } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import DefaultQuestionForm, {
@@ -77,6 +79,7 @@ import { BlastFormValidationInfo } from './BlastFormValidationInfo';
 
 import './BlastForm.scss';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { QuestionWithMappedParameters } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
 
 export const blastFormCx = makeClassNameHelper('wdk-QuestionForm');
 
@@ -208,10 +211,9 @@ function BlastFormWithTransformedQuestion(props: TransformedProps) {
     props.eventHandlers.updateParamValue
   );
 
-  const enableSequenceTextArea =
-    !props.state.question.parametersByName[
-      BLAST_QUERY_SEQUENCE_PARAM_NAME
-    ]?.properties?.['multiBlastOptions']?.includes('fileOnly');
+  const enableSequenceTextArea = !isInputParameterFileOnly(
+    props.state.question
+  );
 
   const targetParamElement = (
     <RadioList
@@ -592,10 +594,13 @@ function transformFormQuestion(
         parameter.name === BLAST_QUERY_SEQUENCE_PARAM_NAME &&
         isMultiBlast
       ) {
+        const isFileOnly = isInputParameterFileOnly(formProps.state.question);
         memo.push({
           ...parameter,
           displayName: 'Input Sequence(s)',
-          help: `
+          help: isFileOnly
+            ? parameter.help
+            : `
               <p>Paste your Input Sequence(s) in the text box, or upload a FASTA file.</p>
               <a
                 href='https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=BlastHelp#filter'
@@ -659,4 +664,10 @@ function transformFormQuestion(
     },
     originalQuestion: formProps.state.question,
   };
+}
+
+function isInputParameterFileOnly(question: QuestionWithMappedParameters) {
+  return question.parametersByName[
+    BLAST_QUERY_SEQUENCE_PARAM_NAME
+  ]?.properties?.['multiBlastOptions']?.includes('fileOnly');
 }
