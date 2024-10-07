@@ -10,8 +10,6 @@ import QueryGridController from './components/controllers/QueryGridController';
 import { JBrowseController } from './components/controllers/JBrowseController';
 import { PlasmoApController } from './components/controllers/PlasmoApController';
 
-import { FeaturedTools } from '@veupathdb/web-common/lib/components/homepage/FeaturedTools';
-import { WorkshopExercises } from '@veupathdb/web-common/lib/components/homepage/WorkshopExercises';
 import { useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
 
 import {
@@ -199,18 +197,6 @@ export const wrapRoutes = (ebrcRoutes) => [
   {
     path: '/sample-form',
     component: () => <SampleForm />,
-  },
-
-  {
-    path: '/',
-    requiresLogin: false,
-    component: () => (
-      <React.Fragment>
-        <FeaturedTools />
-        <hr />
-        <WorkshopExercises />
-      </React.Fragment>
-    ),
   },
 
   {

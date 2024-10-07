@@ -96,7 +96,7 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
           path={`${path}/studies`}
           exact
           render={() => (
-            <Page requireLogin={false}>
+            <Page>
               <StudyList subsettingClient={edaClient} />
             </Page>
           )}
@@ -104,7 +104,7 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
         <Route
           path={`${path}/public`}
           render={() => (
-            <Page requireLogin={false}>
+            <Page>
               <PublicAnalysesRoute
                 analysisClient={analysisClient}
                 subsettingClient={edaClient}
@@ -121,7 +121,7 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
             }>
           ) => {
             return (
-              <Page requireLogin={false}>
+              <Page>
                 <ImportAnalysis
                   {...props.match.params}
                   analysisClient={analysisClient}
