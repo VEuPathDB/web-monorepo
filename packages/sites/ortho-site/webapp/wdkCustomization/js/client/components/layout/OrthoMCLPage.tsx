@@ -276,12 +276,6 @@ function useHeaderMenuItems() {
         type: 'subMenu',
         items: [
           {
-            key: 'galaxy-analyses',
-            display: 'Assign my proteins to groups in Galaxy',
-            type: 'reactRoute',
-            url: '/workspace/map-proteins/new',
-          },
-          {
             key: 'basket',
             display: 'My baskets',
             type: 'reactRoute',
