@@ -25,7 +25,9 @@ export const proteinMappingRoutes: RouteEntry[] = [
         <TargetMetadataByDataType.Provider value={targetMetadataByDataType}>
           <BlastWorkspaceRouter
             helpPageUrl={communitySite + 'protein-mapping.html'}
-            workspaceHeading="Map proteins to OrthoMCL with Diamond blastp"
+            workspaceHeading="Map proteins to OrthoMCL with DIAMOND blastp"
+            workspaceShortName="DIAMOND Mapping"
+            submitButtonText="Map proteins!"
           />
         </TargetMetadataByDataType.Provider>
       </Suspense>

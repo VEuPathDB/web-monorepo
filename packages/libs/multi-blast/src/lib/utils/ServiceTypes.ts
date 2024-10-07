@@ -616,6 +616,7 @@ export const shortJobResponse = intersection([
     description: string,
     // FIXME: This field is missing from "secondary" jobs. Service bug?
     isPrimary: boolean,
+    isRerunnable: boolean,
     childJobs: array(
       type({
         id: string,
@@ -828,6 +829,13 @@ export const notFoundError = type({
 
 export type NotFoundError = TypeOf<typeof notFoundError>;
 
+export const permanentlyExpiredError = type({
+  status: literal('permanently-expired'),
+  message: string,
+});
+
+export type PermanentlyExpiredError = TypeOf<typeof permanentlyExpiredError>;
+
 export const methodNotAllowedError = type({
   status: literal('bad-method'),
   message: string,
@@ -870,6 +878,7 @@ export const errorDetails = union([
   unauthorizedError,
   forbiddenError,
   notFoundError,
+  permanentlyExpiredError,
   methodNotAllowedError,
   unprocessableEntityError,
   serverError,
