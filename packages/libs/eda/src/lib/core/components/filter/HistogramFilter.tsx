@@ -2,7 +2,6 @@ import SelectedRangeControl from '@veupathdb/components/lib/components/plotContr
 import BinWidthControl from '@veupathdb/components/lib/components/plotControls/BinWidthControl';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
 import { Toggle } from '@veupathdb/coreui';
-import Button from '@veupathdb/components/lib/components/widgets/Button';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateRangeInputs';
 
@@ -547,35 +546,18 @@ function HistogramPlotWithControls({
       : undefined;
   }, [data?.series, data?.binWidthSlider?.valueType]);
 
-  const handleSelectedRangeChange = useCallback(
-    (range?: NumberOrDateRange) => {
-      if (variable) {
-        if (range) {
-          updateFilter(
-            enforceBounds(
-              {
-                min:
-                  typeof range.min === 'string'
-                    ? padISODateTime(range.min)
-                    : range.min,
-                max:
-                  typeof range.max === 'string'
-                    ? padISODateTime(range.max)
-                    : variable.type === 'integer'
-                    ? range.max - 1
-                    : range.max,
-              } as NumberOrDateRange,
-              selectedRangeBounds
-            )
-          );
-        } else {
-          updateFilter(); // clear the filter if range is undefined
-        }
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [updateFilter, selectedRangeBounds, variable]
-  );
+  const handleSelectedRangeChangeForHistogram = useRangeChangeHandler({
+    selectedRangeBounds,
+    variable,
+    updateFilter,
+    adjustMax: true,
+  });
+  const handleSelectedRangeChangeForTextInputs = useRangeChangeHandler({
+    selectedRangeBounds,
+    variable,
+    updateFilter,
+    adjustMax: false,
+  });
 
   const widgetHeight = '4em';
 
@@ -596,11 +578,7 @@ function HistogramPlotWithControls({
         {}, // no overrides
         true // use inclusive less than or equal to for min
       ),
-    [
-      defaultUIState.independentAxisRange,
-      defaultDependentAxisRange,
-      uiState.dependentAxisRange,
-    ]
+    [defaultUIState.independentAxisRange, dependentAxisMinPosMaxRange, uiState]
   );
 
   // set useEffect for changing truncation warning message
@@ -630,7 +608,7 @@ function HistogramPlotWithControls({
         valueType={data?.binWidthSlider?.valueType}
         selectedRange={selectedRange}
         selectedRangeBounds={selectedRangeBounds}
-        onSelectedRangeChange={handleSelectedRangeChange}
+        onSelectedRangeChange={handleSelectedRangeChangeForTextInputs}
         inclusive={true}
       />
       <Histogram
@@ -643,7 +621,7 @@ function HistogramPlotWithControls({
         opacity={opacity}
         displayLegend={displayLegend}
         displayLibraryControls={displayLibraryControls}
-        onSelectedRangeChange={handleSelectedRangeChange}
+        onSelectedRangeChange={handleSelectedRangeChangeForHistogram}
         barLayout={barLayout}
         dependentAxisLabel="Count"
         independentAxisLabel={variableDisplayWithUnit(variable)}
@@ -973,3 +951,42 @@ const DisplayStats = (props: DisplayStatsProps) => {
     </>
   );
 };
+
+// hook to make two flavours of range change handler
+function useRangeChangeHandler(props: {
+  updateFilter: (selectedRange?: NumberRange | DateRange) => void;
+  variable: HistogramVariable | undefined;
+  adjustMax: boolean;
+  selectedRangeBounds: NumberRange | DateRange | undefined;
+}) {
+  const { updateFilter, variable, adjustMax, selectedRangeBounds } = props;
+
+  return useCallback(
+    (range?: NumberOrDateRange) => {
+      if (variable) {
+        if (range) {
+          updateFilter(
+            enforceBounds(
+              {
+                min:
+                  typeof range.min === 'string'
+                    ? padISODateTime(range.min)
+                    : range.min,
+                max:
+                  typeof range.max === 'string'
+                    ? padISODateTime(range.max)
+                    : variable.type === 'integer' && adjustMax
+                    ? range.max - 1
+                    : range.max,
+              } as NumberOrDateRange,
+              selectedRangeBounds
+            )
+          );
+        } else {
+          updateFilter(); // clear the filter if range is undefined
+        }
+      }
+    },
+    [updateFilter, selectedRangeBounds, variable, adjustMax]
+  );
+}
