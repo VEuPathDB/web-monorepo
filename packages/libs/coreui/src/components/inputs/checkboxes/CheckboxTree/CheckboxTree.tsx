@@ -163,7 +163,7 @@ export type CheckboxTreeProps<T> = {
   isSelectable?: boolean;
 
   /** List of selected nodes as represented by their ids, defaults to [ ] */
-  selectedList: string[];
+  selectedList?: string[];
 
   /**
    * List of filtered nodes as represented by their ids used to determine isLeafVisible node status.
@@ -183,7 +183,7 @@ export type CheckboxTreeProps<T> = {
 
   /** Takes array of ids, thus encapsulates:
    selectAll, clearAll, selectDefault, selectCurrent (i.e. reset) */
-  onSelectionChange: ChangeHandler;
+  onSelectionChange?: ChangeHandler;
 
   /** List of “current” ids, if omitted (undefined or null), then don’t display link */
   currentList?: string[];
@@ -470,6 +470,9 @@ function applyPropsToStatefulTree<T>(
   isLeafVisible: (id: string) => boolean,
   stateExpandedList?: string[]
 ) {
+  // set default vaule of selectedList to []
+  selectedList = selectedList || [];
+
   // if single-pick then trim selected list so at most 1 item present
   if (!isMultiPick && selectedList.length > 1) {
     console.warn(
@@ -696,32 +699,38 @@ function CheckboxTree<T>(props: CheckboxTreeProps<T>) {
     tree,
     getNodeId,
     getNodeChildren,
-    searchTerm,
-    selectedList,
+    searchTerm = '',
+    selectedList = [],
     currentList,
     defaultList,
-    isSearchable,
+    expandedList = null,
+    isSearchable = false,
     isAdditionalFilterApplied,
     name,
     shouldExpandDescendantsWithOneChild,
     onExpansionChange,
-    isSelectable,
-    isMultiPick,
-    onSelectionChange,
-    showRoot,
+    onSelectionChange = () => {
+      //
+    },
+    isSelectable = false,
+    isMultiPick = true,
+    showRoot = false,
     additionalActions,
     linksPosition = LinksPosition.Both,
-    showSearchBox,
+    showSearchBox = true,
     autoFocusSearchBox,
-    onSearchTermChange,
-    searchBoxPlaceholder,
+    onSearchTermChange = () => {
+      //
+    },
+    searchBoxPlaceholder = 'Search...',
     searchIconName,
     searchIconPosition,
-    searchBoxHelp,
+    searchBoxHelp = '',
+    searchPredicate = () => true,
     additionalFilters,
     wrapTreeSection,
     shouldExpandOnClick = true,
-    customCheckboxes,
+    customCheckboxes = {},
     renderNoResults,
     styleOverrides = {},
     customTreeNodeCssSelectors = {},
@@ -765,7 +774,7 @@ function CheckboxTree<T>(props: CheckboxTreeProps<T>) {
    * Creates a function that will handle selection-related tree link clicks
    */
   function createSelector(listFetcher: ListFetcher) {
-    return createLinkHandler(listFetcher, props.onSelectionChange);
+    return createLinkHandler(listFetcher, onSelectionChange);
   }
 
   // define event handlers related to expansion
@@ -1071,29 +1080,6 @@ function defaultRenderNoResults() {
   );
 }
 
-const defaultProps = {
-  showRoot: false,
-  expandedList: null,
-  isSelectable: false,
-  selectedList: [],
-  customCheckboxes: {},
-  isMultiPick: true,
-  onSelectionChange: () => {
-    /* */
-  },
-  isSearchable: false,
-  showSearchBox: true,
-  searchBoxPlaceholder: 'Search...',
-  searchBoxHelp: '',
-  searchTerm: '',
-  onSearchTermChange: () => {
-    /* */
-  },
-  searchPredicate: () => true,
-  linksPosition: LinksPosition.Both,
-};
-
-CheckboxTree.defaultProps = defaultProps;
 CheckboxTree.LinkPlacement = LinksPosition;
 export default CheckboxTree;
 

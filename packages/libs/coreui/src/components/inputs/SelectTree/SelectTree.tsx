@@ -18,7 +18,7 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
       ? props.currentList.join(', ')
       : props.buttonDisplayContent
   );
-  const { selectedList, shouldCloseOnSelection, wrapPopover } = props;
+  const { selectedList = [], shouldCloseOnSelection, wrapPopover } = props;
 
   /** Used as a hack to "auto close" the popover when shouldCloseOnSelection is true */
   const [key, setKey] = useState('');
