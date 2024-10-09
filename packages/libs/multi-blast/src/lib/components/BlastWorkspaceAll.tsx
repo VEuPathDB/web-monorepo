@@ -23,6 +23,7 @@ export interface JobRow {
   description: string | null;
   created: string;
   status: 'queued' | 'running' | 'finished' | 'expired' | 'errored';
+  rerunnable: boolean;
 }
 
 export function BlastWorkspaceAll() {

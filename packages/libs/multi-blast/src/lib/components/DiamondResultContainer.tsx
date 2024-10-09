@@ -1,10 +1,8 @@
-import path from 'path';
 import { LongJobResponse } from '../utils/ServiceTypes';
 import { useBlastApi } from '../hooks/api';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 import { blastWorkspaceCx } from './BlastWorkspace';
 import { Link } from 'react-router-dom';
-import { blastConfigToParamValues } from '../utils/params';
 import { useMemo } from 'react';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { upperFirst, zip } from 'lodash';
@@ -12,13 +10,16 @@ import Mesa from '@veupathdb/coreui/lib/components/Mesa/Ui/Mesa';
 import { create as createMesaState } from '@veupathdb/coreui/lib/components/Mesa/Utils/MesaState';
 import { FilledButton } from '@veupathdb/coreui';
 
+const ROW_LIMIT = 100;
+
 interface Props {
   job: LongJobResponse;
   query: string;
+  workspaceShortName?: string;
 }
 
 export function DiamondResultContainer(props: Props) {
-  const { job, query } = props;
+  const { job } = props;
 
   const blastApi = useBlastApi();
 
@@ -41,48 +42,27 @@ export function DiamondResultContainer(props: Props) {
             reportMetadataResult.value.value.reportID,
             reportMetadataResult.value.value.files?.[0]!,
             headerRow,
-            '1-100'
+            `1-${ROW_LIMIT}`
           ),
     [blastApi, reportMetadataResult.value]
   );
 
-  const parameterValues = useMemo(() => {
-    return blastConfigToParamValues(job.config);
-  }, [job]);
+  const { rows, columns } = useDiamondData(
+    reportResult.value && reportResult.value.status === 'ok'
+      ? (reportResult.value.value as string)
+      : undefined
+  );
 
   return (
     <div className={blastWorkspaceCx('Result', 'Complete')}>
-      <h1>Diamond Job - result</h1>
+      <h1>{props.workspaceShortName ?? 'DIAMOND'} Job - result</h1>
       <Link className="BackToAllJobs" to="../all">
-        &lt;&lt; All my Diamond Jobs
+        &lt;&lt; All my {props.workspaceShortName ?? 'DIAMOND'} Jobs
       </Link>
       <div className="ConfigDetailsContainer">
         <div className="ConfigDetails">
           <span className="InlineHeader">Job Id:</span>
-          <span className="JobId">
-            {job.id}
-            {parameterValues && (
-              <Link
-                className="EditJob"
-                to={(location) => ({
-                  // When providing a location object, relative
-                  // paths are relative to the application root
-                  // and not the current location. So, we need
-                  // to get a handle on the current location to
-                  // create a path relative to it. Furthermore,
-                  // we need to use path.join to normalize the
-                  // path (remove the .. parts) so that
-                  // react-router recognizes it.
-                  pathname: path.join(location.pathname, './../../new'),
-                  state: {
-                    parameterValues,
-                  },
-                })}
-              >
-                Revise and rerun
-              </Link>
-            )}
-          </span>
+          <span className="JobId">{job.id}</span>
           {job.description != null && (
             <>
               <span className="InlineHeader">Description:</span>
@@ -91,40 +71,6 @@ export function DiamondResultContainer(props: Props) {
           )}
           <span className="InlineHeader">Program:</span>
           <span>{job.config.tool}</span>
-          {/* <span className="InlineHeader">Target Type:</span>
-          <span>{hitTypeDisplayName}</span> */}
-          {/* <span className="InlineHeader">
-            {databases.length > 1 ? 'Databases' : 'Database'}:
-          </span>
-          <span>
-            {databasesStr.length > MAX_DATABASE_STRING_LENGTH ? (
-              <CollapsibleSection
-                isCollapsed={!showMore}
-                onCollapsedChange={() => setShowMore(!showMore)}
-                headerContent={
-                  <>
-                    {!showMore ? (
-                      <span>
-                        {databasesStr.slice(0, MAX_DATABASE_STRING_LENGTH)}...{' '}
-                        <span className="link">Show more</span>
-                      </span>
-                    ) : (
-                      <div
-                        style={{
-                          height: '2em',
-                        }}
-                      >
-                        <span className="link">Show less</span>
-                      </div>
-                    )}
-                  </>
-                }
-                children={databasesStr}
-              />
-            ) : (
-              databasesStr
-            )}
-          </span> */}
         </div>
       </div>
       <div className="ResultContainer">
@@ -137,7 +83,7 @@ export function DiamondResultContainer(props: Props) {
             Unable to load results:{' '}
             {JSON.stringify(reportMetadataResult.value.details)}
           </div>
-        ) : reportResult.value == null ? (
+        ) : reportResult.value == null || rows == null || columns == null ? (
           <Loading>
             <div className="wdk-LoadingData">Loading data...</div>
           </Loading>
@@ -152,7 +98,11 @@ export function DiamondResultContainer(props: Props) {
                 alignItems: 'end',
               }}
             >
-              <h2>Mapped proteins</h2>
+              <h2>
+                {rows.length < ROW_LIMIT
+                  ? `Showing all ${rows.length} sequences in your query file.`
+                  : `Showing the first ${ROW_LIMIT} sequences in your query file.`}
+              </h2>
               <form
                 method="get"
                 action={blastApi.getSingleFileReportUrl(
@@ -177,10 +127,7 @@ export function DiamondResultContainer(props: Props) {
                 />
               </form>
             </div>
-            <DiamondResultTable
-              rawResult={reportResult.value.value as string}
-              fields={job.config.outFormat?.fields!}
-            ></DiamondResultTable>
+            <DiamondResultTable rows={rows} columns={columns} />
           </>
         )}
       </div>
@@ -189,12 +136,25 @@ export function DiamondResultContainer(props: Props) {
 }
 
 interface DiamondResultTableProps {
-  rawResult: string;
-  fields: string[];
+  rows: object[];
+  columns: { key: string; name: string }[];
 }
+
 function DiamondResultTable(props: DiamondResultTableProps) {
-  const { rawResult } = props;
+  const { rows, columns } = props;
   const tableState = useMemo(() => {
+    return createMesaState({
+      columns,
+      rows,
+    });
+  }, [rows, columns]);
+
+  return <Mesa state={tableState} />;
+}
+
+function useDiamondData(rawResult: string | undefined) {
+  return useMemo(() => {
+    if (rawResult == null) return {};
     const [fields, ...rawRows] = rawResult
       .trim()
       .split(/\n/g)
@@ -203,12 +163,9 @@ function DiamondResultTable(props: DiamondResultTableProps) {
       key: field,
       name: upperFirst(field.replaceAll('-', ' ')),
     }));
-    const rows = rawRows.map((row) => Object.fromEntries(zip(fields, row)));
-    return createMesaState({
-      columns,
-      rows,
-    });
+    const rows = rawRows.map((row) =>
+      Object.fromEntries(zip(fields, row))
+    ) as object[];
+    return { columns, rows };
   }, [rawResult]);
-
-  return <Mesa state={tableState} />;
 }

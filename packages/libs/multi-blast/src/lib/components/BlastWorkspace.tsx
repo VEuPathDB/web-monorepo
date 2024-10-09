@@ -9,7 +9,7 @@ import {
 
 import { BlastWorkspaceAll } from './BlastWorkspaceAll';
 import { BlastWorkspaceHelp } from './BlastWorkspaceHelp';
-import { BlastWorkspaceNew } from './BlastWorkspaceNew';
+import { BlastWorkspaceNew, BlastWorkspaceNewProps } from './BlastWorkspaceNew';
 
 import './BlastWorkspace.scss';
 import { ReactNode } from 'react';
@@ -20,11 +20,19 @@ interface Props {
   helpPageUrl: string;
   workspaceUrl: string;
   workspaceHeading?: ReactNode;
+  workspaceShortName?: string;
+  submitButtonText?: string;
 }
 
 export function BlastWorkspace(props: Props) {
-  useSetDocumentTitle('BLAST Workspace');
-  const { helpPageUrl, workspaceUrl, workspaceHeading = 'BLAST' } = props;
+  const {
+    helpPageUrl,
+    workspaceUrl,
+    workspaceHeading = 'BLAST',
+    workspaceShortName = 'BLAST',
+    submitButtonText = 'BLAST',
+  } = props;
+  useSetDocumentTitle(`${workspaceShortName} Workspace`);
 
   return (
     <div className={blastWorkspaceCx()}>
@@ -50,7 +58,9 @@ export function BlastWorkspace(props: Props) {
         <WdkRoute
           path={workspaceUrl + '/new'}
           requiresLogin={false}
-          component={BlastWorkspaceNew}
+          component={(props: BlastWorkspaceNewProps) => (
+            <BlastWorkspaceNew {...props} submitButtonText={submitButtonText} />
+          )}
         />
         <WdkRoute
           path={workspaceUrl + '/all'}
