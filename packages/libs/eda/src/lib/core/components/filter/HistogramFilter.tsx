@@ -24,7 +24,7 @@ import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import { number, partial, TypeOf, boolean, type, intersection } from 'io-ts';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { usePromise } from '../../hooks/promise';
+import { useCachedPromise } from '../../hooks/cachedPromise';
 import { AnalysisState } from '../../hooks/analysis';
 import { useSubsettingClient } from '../../hooks/workspace';
 import { DateRangeFilter, NumberRangeFilter } from '../../types/filter';
@@ -229,8 +229,9 @@ export function HistogramFilter(props: Props) {
       variable,
     ]
   );
-  const data = usePromise(
-    useCallback(() => getData(uiStateForData), [getData, uiStateForData])
+  const data = useCachedPromise(
+    () => getData(uiStateForData),
+    [getData, uiStateForData]
   );
 
   const filter = filters?.find(
