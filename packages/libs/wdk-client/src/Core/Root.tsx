@@ -28,7 +28,6 @@ import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { Link } from 'react-router-dom';
 
 import './Style/wdk-Button.scss';
-import { User } from '../Utils/WdkUser';
 import { IndexController, NotFoundController } from '../Controllers';
 
 type Props = {
@@ -45,7 +44,7 @@ type Props = {
 
 interface State {
   location: Location;
-  user?: User;
+  userIsGuest?: boolean;
 }
 
 const REACT_ROUTER_LINK_CLASSNAME = 'wdk-ReactRouterLink';
@@ -119,9 +118,7 @@ export default class Root extends React.Component<Props, State> {
   }
 
   loadUser() {
-    this.props.wdkDependencies.wdkService.getCurrentUser().then((user) => {
-      this.setState({ user });
-    });
+    this.setState({ userIsGuest: isUserGuest() });
   }
 
   componentDidMount() {
@@ -137,17 +134,17 @@ export default class Root extends React.Component<Props, State> {
 
   render() {
     const { staticContent, routes } = this.props;
-    const { user } = this.state;
+    const { userIsGuest } = this.state;
     const activeRoute = this.getActiveRoute();
     const rootClassNameModifier = activeRoute?.rootClassNameModifier;
     const isFullscreen = activeRoute?.isFullscreen;
 
-    if (user == null) return 'Loading...';
+    if (userIsGuest == null) return 'Loading...';
 
     // allow some pages non-login access
     const requireLogin =
       activeRoute?.requiresLogin === false ? false : this.props.requireLogin;
-    const accessDenied = requireLogin ? user.isGuest : false;
+    const accessDenied = requireLogin ? userIsGuest : false;
     const activeRouteContent = (
       <Switch>
         {accessDenied ? (
@@ -262,5 +259,19 @@ export default class Root extends React.Component<Props, State> {
         </ErrorBoundary>
       </Provider>
     );
+  }
+}
+
+function isUserGuest() {
+  try {
+    return !!JSON.parse(
+      atob(
+        document.cookie
+          .match(/(^| )Authorization=([^;]+)/)?.[2]
+          .split('.')[1] ?? ''
+      )
+    ).is_guest;
+  } catch {
+    return true;
   }
 }
