@@ -126,13 +126,11 @@ export function HistogramFilter(props: Props) {
       getOrElse((): UIState => defaultUIState)
     );
   }, [variableUISettings, uiStateKey, defaultUIState]);
-  const uiStateForData = useDebounce(uiState, 1000);
+  const dataParams = useDebounce(uiState, 1000);
   const subsettingClient = useSubsettingClient();
 
-  const getData = useCallback(
-    async (
-      dataParams: UIState
-    ): Promise<
+  const data = useCachedPromise(
+    async (): Promise<
       HistogramData & {
         variableId: string;
         entityId: string;
@@ -220,18 +218,14 @@ export function HistogramFilter(props: Props) {
       };
     },
     [
+      dataParams,
       otherFilters,
       entity.displayName,
       entity.displayNamePlural,
       entity.id,
       studyMetadata.id,
-      subsettingClient,
       variable,
-    ]
-  );
-  const data = useCachedPromise(
-    () => getData(uiStateForData),
-    [getData, uiStateForData]
+    ] // used to have `subsettingClient`
   );
 
   const filter = filters?.find(

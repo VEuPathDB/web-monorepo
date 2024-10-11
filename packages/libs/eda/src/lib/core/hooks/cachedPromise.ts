@@ -1,17 +1,13 @@
-import { useMemo } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { PromiseHookState } from './promise';
 
 export function useCachedPromise<T>(
   task: () => Promise<T>,
-  deps: any[]
+  queryKey: any[] | undefined
 ): PromiseHookState<T> {
-  // generate a serialisable key for react-query from a mix of data and class/function dependencies
-  const uniqueKey = useMemo(() => uuidv4(), deps);
   // Using useQuery from react-query with the unique key
   const { data, error, isLoading } = useQuery({
-    queryKey: ['useCachedPromise', uniqueKey],
+    queryKey: ['useCachedPromise', ...(queryKey ?? [])],
     queryFn: task,
   });
 

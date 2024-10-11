@@ -9,7 +9,6 @@ import {
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 
 import { AnalysisState } from '../../hooks/analysis';
-import { usePromise } from '../../hooks/promise';
 import { useSubsettingClient } from '../../hooks/workspace';
 import { MultiFilter as MultiFilterType } from '../../types/filter';
 import {
@@ -33,6 +32,7 @@ import { gray, red } from './colors';
 import { debounce } from 'lodash';
 import { isTableVariable } from './guards';
 import { useDeepValue } from '../../hooks/immutability';
+import { useCachedPromise } from '../../hooks/cachedPromise';
 
 export interface Props {
   analysisState: AnalysisState;
@@ -193,8 +193,8 @@ export function MultiFilter(props: Props) {
   }, [_thisFilter, thisFilter]);
 
   // Counts retrieved from the backend, used for the table display.
-  const leafSummariesPromise = usePromise(
-    useCallback(() => {
+  const leafSummariesPromise = useCachedPromise(
+    () => {
       return Promise.all(
         leaves.map((leaf) => {
           const thisFilterWithoutLeaf = thisFilter && {
@@ -258,15 +258,15 @@ export function MultiFilter(props: Props) {
           });
         })
       );
-    }, [
+    },
+    [
       thisFilter,
       otherFilters,
       leaves,
       entity.id,
-      subsettingClient,
       studyMetadata.id,
       variablesById,
-    ])
+    ] // used to have `subsettingClient`
   );
 
   // Sorted counts. This is done separately from retrieving the data so that
