@@ -1,7 +1,9 @@
+import * as React from 'react';
+import { Store } from 'redux';
+import { Provider } from 'react-redux';
+import { Link, Router, Switch, matchPath } from 'react-router-dom';
 import { History, Location } from 'history';
 import PropTypes from 'prop-types';
-import * as React from 'react';
-import { Router, Switch, matchPath } from 'react-router';
 import { noop } from 'lodash';
 
 import {
@@ -13,8 +15,6 @@ import ErrorBoundary from '../Core/Controllers/ErrorBoundary';
 import LoginFormController from '../Controllers/LoginFormController';
 import Page from '../Components/Layout/Page';
 
-import { Store } from 'redux';
-import { Provider } from 'react-redux';
 import { RouteEntry } from '../Core/RouteEntry';
 import WdkRoute from '../Core/WdkRoute';
 import { safeHtml } from '../Utils/ComponentUtils';
@@ -25,7 +25,6 @@ import {
 } from '../Hooks/WdkDependenciesEffect';
 import { Modal } from '@veupathdb/coreui';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import { Link } from 'react-router-dom';
 
 import './Style/wdk-Button.scss';
 import { IndexController, NotFoundController } from '../Controllers';
@@ -55,18 +54,6 @@ const RELATIVE_LINK_REGEXP = new RegExp(
 
 /** WDK Application Root */
 export default class Root extends React.Component<Props, State> {
-  static propTypes = {
-    rootUrl: PropTypes.string,
-    routes: PropTypes.array.isRequired,
-    onLocationChange: PropTypes.func,
-    staticContent: PropTypes.string,
-  };
-
-  static defaultProps = {
-    rootUrl: '/',
-    onLocationChange: () => {}, // noop
-  };
-
   removeHistoryListener: () => void;
 
   constructor(props: Props) {
