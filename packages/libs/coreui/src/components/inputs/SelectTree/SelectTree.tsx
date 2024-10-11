@@ -13,12 +13,18 @@ export interface SelectTreeProps<T> extends CheckboxTreeProps<T> {
 }
 
 function SelectTree<T>(props: SelectTreeProps<T>) {
+  const {
+    shouldCloseOnSelection,
+    wrapPopover,
+    currentList,
+    selectedList = [],
+  } = props;
+
   const [buttonDisplayContent, setButtonDisplayContent] = useState<ReactNode>(
-    props.currentList && props.currentList.length
-      ? props.currentList.join(', ')
+    currentList && currentList.length
+      ? currentList.join(', ')
       : props.buttonDisplayContent
   );
-  const { selectedList = [], shouldCloseOnSelection, wrapPopover } = props;
 
   /** Used as a hack to "auto close" the popover when shouldCloseOnSelection is true */
   const [key, setKey] = useState('');
@@ -35,47 +41,7 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
     );
   };
 
-  const checkboxTree = (
-    <CheckboxTree
-      tree={props.tree}
-      getNodeId={props.getNodeId}
-      getNodeChildren={props.getNodeChildren}
-      onExpansionChange={props.onExpansionChange}
-      shouldExpandDescendantsWithOneChild={
-        props.shouldExpandDescendantsWithOneChild
-      }
-      shouldExpandOnClick={props.shouldExpandOnClick}
-      showRoot={props.showRoot}
-      renderNode={props.renderNode}
-      expandedList={props.expandedList}
-      isSelectable={props.isSelectable}
-      selectedList={selectedList}
-      filteredList={props.filteredList}
-      customCheckboxes={props.customCheckboxes}
-      isMultiPick={props.isMultiPick}
-      name={props.name}
-      onSelectionChange={props.onSelectionChange}
-      currentList={props.currentList}
-      defaultList={props.defaultList}
-      isSearchable={props.isSearchable}
-      autoFocusSearchBox={props.autoFocusSearchBox}
-      showSearchBox={props.showSearchBox}
-      searchBoxPlaceholder={props.searchBoxPlaceholder}
-      searchIconName={props.searchIconName}
-      searchBoxHelp={props.searchBoxHelp}
-      searchTerm={props.searchTerm}
-      onSearchTermChange={props.onSearchTermChange}
-      searchPredicate={props.searchPredicate}
-      renderNoResults={props.renderNoResults}
-      linksPosition={props.linksPosition}
-      additionalActions={props.additionalActions}
-      additionalFilters={props.additionalFilters}
-      isAdditionalFilterApplied={props.isAdditionalFilterApplied}
-      wrapTreeSection={props.wrapTreeSection}
-      styleOverrides={props.styleOverrides}
-      customTreeNodeCssSelectors={props.customTreeNodeCssSelectors}
-    />
-  );
+  const checkboxTree = <CheckboxTree {...props} selectedList={selectedList} />;
 
   return (
     <PopoverButton
@@ -89,25 +55,5 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
   );
 }
 
-const defaultProps = {
-  showRoot: false,
-  expandedList: null,
-  isSelectable: false,
-  selectedList: [],
-  customCheckboxes: {},
-  isMultiPick: true,
-  onSelectionChange: () => {},
-  isSearchable: false,
-  showSearchBox: true,
-  searchBoxPlaceholder: 'Search...',
-  searchBoxHelp: '',
-  searchTerm: '',
-  onSearchTermChange: () => {},
-  searchPredicate: () => true,
-  linksPosition: LinksPosition.Both,
-  isDisabled: false,
-};
-
-SelectTree.defaultProps = defaultProps;
 SelectTree.LinkPlacement = LinksPosition;
 export default SelectTree;
