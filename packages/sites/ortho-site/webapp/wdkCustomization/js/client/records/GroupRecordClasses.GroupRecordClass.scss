@@ -16,4 +16,10 @@
       min-width: 0.41666666666em;
     }
   }
+
+  #Sequences .MesaComponent > .DataTable {
+    max-width: unset;
+    width: unset;
+    overflow-x: unset;
+  }
 }

@@ -18,6 +18,14 @@
   .TableToolbar-Info {
     font-size: 80%;
     padding: 0px 20px 0px 10px;
+
+    .RowCounter {
+      display: flex;
+      justify-content: flex-start;
+      flex-direction: row;
+      flex-wrap: wrap;
+      column-gap: 1em;
+    }
   }
 
   .TableToolbar-Children {

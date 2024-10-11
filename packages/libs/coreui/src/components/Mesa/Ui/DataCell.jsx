@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import Templates from '../Templates';
 import { makeClassifier } from '../Utils/Utils';
 
+import { Tooltip } from '../../../components/info/Tooltip';
+
 const dataCellClass = makeClassifier('DataCell');
 
 class DataCell extends React.PureComponent {
@@ -64,7 +66,29 @@ class DataCell extends React.PureComponent {
     width = width ? { width, maxWidth: width, minWidth: width } : {};
     style = Object.assign({}, style, width, whiteSpace);
     className = dataCellClass() + (className ? ' ' + className : '');
-    const children = this.renderContent();
+
+    const content = this.renderContent();
+    const columnName = column.name ?? column.key;
+
+    // Ideally the tooltip would also be conditional on there
+    // being actual content, but this is not trivial without
+    // copy-pasting the getValue logic from this.renderContent().
+    // Verdict: not worth it
+    const children = options.inlineUseTooltips ? (
+      <Tooltip
+        title={
+          <>
+            {columnName && <span>{columnName}:</span>}
+            {content}
+          </>
+        }
+      >
+        {content}
+      </Tooltip>
+    ) : (
+      content
+    );
+
     const props = {
       style,
       children,

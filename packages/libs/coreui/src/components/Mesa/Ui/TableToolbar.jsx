@@ -23,12 +23,18 @@ class TableToolbar extends React.PureComponent {
   }
 
   renderSearch() {
-    const { uiState, eventHandlers } = this.props;
+    const { uiState, eventHandlers, options } = this.props;
     const { onSearch } = eventHandlers;
     const { searchQuery } = uiState;
 
     if (!onSearch) return null;
-    return <TableSearch query={searchQuery} onSearch={onSearch} />;
+    return (
+      <TableSearch
+        searchQuery={searchQuery}
+        onSearch={onSearch}
+        options={options}
+      />
+    );
   }
 
   renderCounter() {

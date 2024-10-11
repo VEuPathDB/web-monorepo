@@ -25,6 +25,7 @@ export type TargetType = 'search' | 'attribute' | 'table';
 export type Scope =
   | 'record'
   | 'record-internal'
+  | 'record-collapsed'
   | 'results'
   | 'results-internal'
   | 'download'

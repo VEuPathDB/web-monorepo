@@ -18,7 +18,7 @@ class TableSearch extends React.PureComponent {
   clearSearchQuery() {
     const query = null;
     const { onSearch } = this.props;
-    if (onSearch) onSearch(query);
+    if (onSearch) onSearch('');
   }
 
   render() {

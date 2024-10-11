@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import PopoverButton from '../buttons/PopoverButton/PopoverButton';
 import CheckboxList, { CheckboxListProps } from './checkboxes/CheckboxList';
 
@@ -9,6 +9,10 @@ export interface SelectListProps<T> extends CheckboxListProps<T> {
   isDisabled?: boolean;
   /** Are contents loading? */
   isLoading?: boolean;
+  /** If true, don't wait for component to close before calling `onChange`
+   *  with latest selection.
+   */
+  instantUpdate?: boolean;
 }
 
 export default function SelectList<T>({
@@ -21,6 +25,7 @@ export default function SelectList<T>({
   defaultButtonDisplayContent,
   isDisabled = false,
   isLoading = false,
+  instantUpdate = false,
   ...props
 }: SelectListProps<T>) {
   const [selected, setSelected] = useState<SelectListProps<T>['value']>(value);
@@ -36,11 +41,25 @@ export default function SelectList<T>({
   };
 
   /**
+   * Keep caller up to date with any selection changes, if required by `instantUpdate`
+   */
+  const handleCheckboxListUpdate = useCallback(
+    (newSelection: SelectListProps<T>['value']) => {
+      setSelected(newSelection);
+      if (instantUpdate) {
+        onChange(newSelection);
+      }
+    },
+    [instantUpdate, setSelected, onChange]
+  );
+
+  /**
    * Need to ensure that the state syncs with parent component in the event of an external
    * clearSelection button, as is the case in EDA's line plot controls
    */
   useEffect(() => {
     setSelected(value);
+    if (instantUpdate) return; // we don't want the button text changing on every click
     setButtonDisplayContent(
       value.length ? value.join(', ') : defaultButtonDisplayContent
     );
@@ -75,7 +94,7 @@ export default function SelectList<T>({
           name={name}
           items={items}
           value={selected}
-          onChange={setSelected}
+          onChange={handleCheckboxListUpdate}
           linksPosition={linksPosition}
           {...props}
         />
