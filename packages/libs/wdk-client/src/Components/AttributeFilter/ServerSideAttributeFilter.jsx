@@ -27,7 +27,9 @@ function ServerSideAttributeFilter(props) {
 
   return (
     <div style={{ overflowX: 'auto', marginRight: '1em' }}>
-      {hideFilterPanel || <FilterList {...props} />}
+      {hideFilterPanel || (
+        <FilterList {...props} hideGlobalCounts={hideGlobalCounts} />
+      )}
 
       {/* Main selection UI */}
       <div className="filters ui-helper-clearfix">
