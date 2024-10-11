@@ -10,7 +10,16 @@ import FieldFilter from '../../Components/AttributeFilter/FieldFilter';
  * Filtering UI for server-side filtering.
  */
 function ServerSideAttributeFilter(props) {
-  var { displayName, fieldTree, hideFilterPanel, hideFieldPanel } = props;
+  const {
+    fieldTree,
+    displayName = 'Items',
+    hideFilterPanel = false,
+    hideFieldPanel = false,
+    hideGlobalCounts = false,
+    selectByDefault = false,
+    histogramScaleYAxisDefault = true,
+    histogramTruncateYAxisDefault = false,
+  } = props;
 
   if (fieldTree == null) {
     return <h3>Data is not available for {displayName}.</h3>;
@@ -77,16 +86,6 @@ ServerSideAttributeFilter.propTypes = {
   onMemberSort: PropTypes.func.isRequired,
   onMemberSearch: PropTypes.func.isRequired,
   onRangeScaleChange: PropTypes.func.isRequired,
-};
-
-ServerSideAttributeFilter.defaultProps = {
-  displayName: 'Items',
-  hideFilterPanel: false,
-  hideFieldPanel: false,
-  hideGlobalCounts: false,
-  selectByDefault: false,
-  histogramScaleYAxisDefault: true,
-  histogramTruncateYAxisDefault: false,
 };
 
 export default wrappable(ServerSideAttributeFilter);
