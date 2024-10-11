@@ -11,8 +11,7 @@ import {
   get,
 } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React, { createRef } from 'react';
 import { lazy } from '../../Utils/ComponentUtils';
 import { Seq } from '../../Utils/IterableUtils';
 import DateRangeSelector from '../../Components/InputControls/DateRangeSelector';
@@ -64,6 +63,8 @@ const PLOT_SETTINGS_OPEN_KEY = 'wdk/filterParam/plotSettingsOpen';
 var Histogram = (function () {
   /** Common histogram component */
   class LazyHistogram extends React.Component {
+    inputRef = createRef();
+
     constructor(props) {
       super(props);
       this.handleResize = throttle(this.handleResize.bind(this), 100);
@@ -80,7 +81,7 @@ var Histogram = (function () {
 
     componentDidMount() {
       $(window).on('resize', this.handleResize);
-      $(ReactDOM.findDOMNode(this))
+      $(this.inputRef.current)
         .on('plotselected .chart', this.handlePlotSelected.bind(this))
         .on('plotselecting .chart', this.handlePlotSelecting.bind(this))
         .on('plotunselected .chart', this.handlePlotUnselected.bind(this))
@@ -416,7 +417,7 @@ var Histogram = (function () {
 
       if (this.plot) this.plot.destroy();
 
-      this.$chart = $(ReactDOM.findDOMNode(this)).find('.chart');
+      this.$chart = $(this.inputRef.current).find('.chart');
       this.plot = $.plot(this.$chart, seriesData, plotOptions);
     }
 

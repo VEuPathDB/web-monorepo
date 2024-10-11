@@ -1,6 +1,5 @@
 import { flow } from 'lodash';
-import React from 'react';
-import { findDOMNode } from 'react-dom';
+import React, { createRef } from 'react';
 import { Spinner } from 'spin.js';
 import { delay, wrappable } from '../../Utils/ComponentUtils';
 
@@ -32,6 +31,8 @@ type Props = {
 class Loading extends React.Component<Props> {
   private spinner?: Spinner;
 
+  inputRef = createRef();
+
   componentDidMount() {
     const { radius = 8, top = '50%', left = '50%' } = this.props;
     const opts = {
@@ -52,7 +53,7 @@ class Loading extends React.Component<Props> {
       top, // Top position relative to parent
       left, // Left position relative to parent
     };
-    const node = findDOMNode(this) as HTMLElement;
+    const node = this.inputRef.current as HTMLElement;
     this.spinner = new Spinner(opts).spin(node);
   }
 
