@@ -194,7 +194,7 @@ export type CheckboxTreeProps<T> = {
   //%%%%%%%%%%% Properties associated with search %%%%%%%%%%%
 
   /** Indicates whether this is a searchable CBT.  If so, then show boxes and respect the optional parameters below, also turn off expansion; default to false */
-  isSearchable: boolean;
+  isSearchable?: boolean;
 
   /** Indicates if the search box should have autoFocus set to true */
   autoFocusSearchBox?: boolean;
@@ -203,7 +203,7 @@ export type CheckboxTreeProps<T> = {
   showSearchBox?: boolean;
 
   /** PlaceHolder text; shown in grey if searchTerm is empty */
-  searchBoxPlaceholder: string;
+  searchBoxPlaceholder?: string;
 
   /** Name of icon to show in search box */
   searchIconName?: 'search' | 'filter';
@@ -215,13 +215,13 @@ export type CheckboxTreeProps<T> = {
   searchBoxHelp?: string;
 
   /** Current search term; if non-empty, expandability is disabled */
-  searchTerm: string;
+  searchTerm?: string;
 
   /** Takes single arg: the new search text.  Called when user types into the search box */
-  onSearchTermChange: (term: string) => void;
+  onSearchTermChange?: (term: string) => void;
 
   /** Takes (node, searchTerms) and returns boolean. searchTerms is a list of query terms, parsed from the original input string. This function returns a boolean indicating if a node matches search criteria and should be shown */
-  searchPredicate: (node: T, terms: string[]) => boolean;
+  searchPredicate?: (node: T, terms: string[]) => boolean;
 
   renderNoResults?: (searchTerm: string, tree: T) => React.ReactNode;
 
@@ -245,6 +245,29 @@ export type CheckboxTreeProps<T> = {
   styleOverrides?: CheckboxTreeStyleSpec;
 
   customTreeNodeCssSelectors?: object;
+};
+
+// Default values. Used across multiple functions in this file.
+const defaultCheckboxTreeProps = {
+  showRoot: false,
+  expandedList: null,
+  isSelectable: false,
+  selectedList: [],
+  customCheckboxes: {},
+  isMultiPick: true,
+  onSelectionChange: () => {
+    /* */
+  },
+  isSearchable: false,
+  showSearchBox: true,
+  searchBoxPlaceholder: 'Search...',
+  searchBoxHelp: '',
+  searchTerm: '',
+  onSearchTermChange: () => {
+    /* */
+  },
+  searchPredicate: () => true,
+  linksPosition: LinksPosition.Both,
 };
 
 type TreeLinkHandler = MouseEventHandler<HTMLButtonElement>;
@@ -464,15 +487,12 @@ function applyPropsToStatefulTree<T>(
   isSearchable: CheckboxTreeProps<T>['isSearchable'],
   isMultiPick: CheckboxTreeProps<T>['isMultiPick'],
   searchTerm: CheckboxTreeProps<T>['searchTerm'],
-  selectedList: CheckboxTreeProps<T>['selectedList'],
+  selectedList: CheckboxTreeProps<T>['selectedList'] = defaultCheckboxTreeProps.selectedList,
   propsExpandedList: CheckboxTreeProps<T>['expandedList'],
   isAdditionalFilterApplied: CheckboxTreeProps<T>['isAdditionalFilterApplied'],
   isLeafVisible: (id: string) => boolean,
   stateExpandedList?: string[]
 ) {
-  // set default vaule of selectedList to []
-  selectedList = selectedList || [];
-
   // if single-pick then trim selected list so at most 1 item present
   if (!isMultiPick && selectedList.length > 1) {
     console.warn(
@@ -593,8 +613,8 @@ function applyPropsToStatefulTree<T>(
  */
 function isActiveSearch<T>(
   isAdditionalFilterApplied: CheckboxTreeProps<T>['isAdditionalFilterApplied'],
-  isSearchable: CheckboxTreeProps<T>['isSearchable'],
-  searchTerm: CheckboxTreeProps<T>['searchTerm']
+  isSearchable: CheckboxTreeProps<T>['isSearchable'] = defaultCheckboxTreeProps.isSearchable,
+  searchTerm: CheckboxTreeProps<T>['searchTerm'] = defaultCheckboxTreeProps.searchTerm
 ) {
   return isSearchable && isFiltered(searchTerm, isAdditionalFilterApplied);
 }
@@ -629,12 +649,12 @@ function isFiltered(searchTerm: string, isAdditionalFilterApplied?: boolean) {
  */
 function createIsLeafVisible<T>(
   tree: CheckboxTreeProps<T>['tree'],
-  searchTerm: CheckboxTreeProps<T>['searchTerm'],
-  searchPredicate: CheckboxTreeProps<T>['searchPredicate'],
+  searchTerm: CheckboxTreeProps<T>['searchTerm'] = defaultCheckboxTreeProps.searchTerm,
+  searchPredicate: CheckboxTreeProps<T>['searchPredicate'] = defaultCheckboxTreeProps.searchPredicate,
   getNodeId: CheckboxTreeProps<T>['getNodeId'],
   getNodeChildren: CheckboxTreeProps<T>['getNodeChildren'],
   isAdditionalFilterApplied: CheckboxTreeProps<T>['isAdditionalFilterApplied'],
-  isSearchable: CheckboxTreeProps<T>['isSearchable'],
+  isSearchable: CheckboxTreeProps<T>['isSearchable'] = defaultCheckboxTreeProps.isSearchable,
   filteredList: CheckboxTreeProps<T>['filteredList']
 ) {
   // if not searching, if no additional filters are applied, and if filteredList is undefined, then all nodes are visible
