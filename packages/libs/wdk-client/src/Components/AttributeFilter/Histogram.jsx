@@ -11,7 +11,7 @@ import {
   get,
 } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { createRef } from 'react';
+import React from 'react';
 import { lazy } from '../../Utils/ComponentUtils';
 import { Seq } from '../../Utils/IterableUtils';
 import DateRangeSelector from '../../Components/InputControls/DateRangeSelector';
@@ -63,8 +63,7 @@ const PLOT_SETTINGS_OPEN_KEY = 'wdk/filterParam/plotSettingsOpen';
 var Histogram = (function () {
   /** Common histogram component */
   class LazyHistogram extends React.Component {
-    inputRef = createRef();
-
+    histoRef = React.createRef();
     constructor(props) {
       super(props);
       this.handleResize = throttle(this.handleResize.bind(this), 100);
@@ -81,11 +80,14 @@ var Histogram = (function () {
 
     componentDidMount() {
       $(window).on('resize', this.handleResize);
-      $(this.inputRef.current)
-        .on('plotselected .chart', this.handlePlotSelected.bind(this))
-        .on('plotselecting .chart', this.handlePlotSelecting.bind(this))
-        .on('plotunselected .chart', this.handlePlotUnselected.bind(this))
-        .on('plothover .chart', this.handlePlotHover.bind(this));
+      const histoContainer = this.histoRef.current;
+      if (histoContainer) {
+        $(histoContainer)
+          .on('plotselected .chart', this.handlePlotSelected.bind(this))
+          .on('plotselecting .chart', this.handlePlotSelecting.bind(this))
+          .on('plotunselected .chart', this.handlePlotUnselected.bind(this))
+          .on('plothover .chart', this.handlePlotHover.bind(this));
+      }
 
       this.createPlot();
       this.createTooltip();
@@ -417,7 +419,7 @@ var Histogram = (function () {
 
       if (this.plot) this.plot.destroy();
 
-      this.$chart = $(this.inputRef.current).find('.chart');
+      this.$chart = $(this.histoRef.current).find('.chart');
       this.plot = $.plot(this.$chart, seriesData, plotOptions);
     }
 
@@ -657,7 +659,7 @@ var Histogram = (function () {
       );
 
       return (
-        <div className="chart-container">
+        <div className="chart-container" ref={this.histoRef}>
           <div className="chart"></div>
           <div className="chart-title y-axis">
             <div>{yaxisLabel}</div>
