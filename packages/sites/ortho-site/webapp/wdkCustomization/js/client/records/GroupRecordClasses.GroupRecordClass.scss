@@ -21,5 +21,9 @@
     max-width: unset;
     width: unset;
     overflow-x: unset;
+
+    tr:has(> td.SelectionCell > div > input:checked) > td {
+      background-color: var(--row-hl-bg-color) !important;
+    }
   }
 }
