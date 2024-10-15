@@ -82,7 +82,23 @@ export function BlastWorkspaceResult(props: Props) {
   ) : jobResult.value?.status === 'error' ? (
     <BlastRerunError {...props} />
   ) : jobResult.value?.status === 'queueing-error' ? (
-    <ErrorPage message="We were unable to queue your job." />
+    <ErrorPage>
+      <div style={{ fontSize: 'larger' }}>
+        Your job did not run successfully. Please{' '}
+        <Link
+          target="_blank"
+          to={{
+            pathname: '/contact-us',
+            search: new URLSearchParams({
+              ctx: 'multi-blast job ' + jobResult.value.job.id,
+            }).toString(),
+          }}
+        >
+          contact us
+        </Link>{' '}
+        for support.
+      </div>
+    </ErrorPage>
   ) : queryResult.value?.status === 'error' ? (
     <BlastRequestError errorDetails={queryResult.value.details} />
   ) : jobResult.value.job.config.tool.startsWith('diamond-') ? (
@@ -169,7 +185,23 @@ function StandardBlastResult(
     <BlastRequestError errorDetails={reportResult.value.details} />
   ) : reportResult.value != null &&
     reportResult.value.status === 'queueing-error' ? (
-    <ErrorPage message="We were unable to queue your combined results report." />
+    <ErrorPage>
+      <div style={{ fontSize: 'larger' }}>
+        We were unable to create your combined results report. Please{' '}
+        <Link
+          target="_blank"
+          to={{
+            pathname: '/contact-us',
+            search: new URLSearchParams({
+              ctx: 'multi-blast job ' + reportResult.value.report.jobID,
+            }).toString(),
+          }}
+        >
+          contact us
+        </Link>{' '}
+        for support.
+      </div>
+    </ErrorPage>
   ) : individualQueriesResult.value != null &&
     individualQueriesResult.value.status === 'error' ? (
     <BlastRequestError errorDetails={individualQueriesResult.value.details} />
