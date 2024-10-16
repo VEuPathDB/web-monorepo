@@ -19,7 +19,7 @@
     "@veupathdb/wdk-client": "workspace:^",
     "@veupathdb/web-common": "workspace:^",
     "lodash": "^4.17.21",
-    "recoil": "^0.2.0"
+    "recoil": "^0.7.7"
   },
   "peerDependencies": {
     "react": ">=16.14.0",

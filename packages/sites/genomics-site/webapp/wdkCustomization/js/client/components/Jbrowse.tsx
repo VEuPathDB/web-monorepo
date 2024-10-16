@@ -42,12 +42,13 @@ export default function Jbrowse(props: Props) {
 
   return (
     <iframe
+      title="JBrowse"
+      referrerPolicy="no-referrer"
       onLoad={onLoad}
       id="jbrowse_iframe"
       src={props.src}
       width="100%"
       height="100%"
-      scrolling="no"
       allowFullScreen
     ></iframe>
   );

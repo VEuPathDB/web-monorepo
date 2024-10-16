@@ -43,6 +43,7 @@
     "@veupathdb/coreui": "workspace:^",
     "@veupathdb/eda": "workspace:^",
     "@veupathdb/http-utils": "workspace:^",
+    "@veupathdb/multi-blast": "workspace:^",
     "@veupathdb/react-scripts": "workspace:^",
     "@veupathdb/site-babel-config": "workspace:^",
     "@veupathdb/site-tsconfig": "workspace:^",
