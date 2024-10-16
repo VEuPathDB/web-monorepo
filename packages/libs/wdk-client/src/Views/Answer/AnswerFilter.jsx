@@ -1,6 +1,5 @@
 import { debounce } from 'lodash';
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React, { createRef } from 'react';
 import { HelpTrigger } from '@veupathdb/coreui/lib/components/Mesa';
 import { Tooltip } from '@veupathdb/coreui';
 import { wrappable } from '../../Utils/ComponentUtils';
@@ -27,6 +26,7 @@ class AnswerFilter extends React.Component {
     this.toggleTable = this.toggleTable.bind(this);
     this.selectAll = this.selectAll.bind(this);
     this.clearAll = this.clearAll.bind(this);
+    this.filterInputRef = createRef();
 
     let { filterAttributes, filterTables } = this.props;
     this.state = {
@@ -53,7 +53,8 @@ class AnswerFilter extends React.Component {
   }
 
   handleFilter() {
-    let value = ReactDOM.findDOMNode(this.refs.filterInput).value;
+    let value =
+      this.filterInputRef.current && this.filterInputRef.current.value;
     let { filterAttributes, filterTables } = this.state;
     this.props.onFilter(value, filterAttributes, filterTables);
   }
@@ -146,7 +147,7 @@ class AnswerFilter extends React.Component {
     return (
       <div className="wdk-Answer-filter">
         <input
-          ref="filterInput"
+          ref={this.filterInputRef}
           className="wdk-Answer-filterInput"
           defaultValue={filterTerm}
           placeholder={`Search ${displayNamePlural}`}
