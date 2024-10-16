@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
 class Sticky extends React.Component {
+  inputRef = React.createRef();
+
   constructor(props) {
     super(props);
     this.updateIsFixed = this.updateIsFixed.bind(this);
@@ -10,7 +12,7 @@ class Sticky extends React.Component {
   }
 
   componentDidMount() {
-    this.node = ReactDOM.findDOMNode(this);
+    this.node = inputRef.current;
     window.addEventListener('scroll', this.updateIsFixed, { passive: true });
     window.addEventListener('wheel', this.updateIsFixed, { passive: true });
     window.addEventListener('resize', this.updateIsFixed, { passive: true });
