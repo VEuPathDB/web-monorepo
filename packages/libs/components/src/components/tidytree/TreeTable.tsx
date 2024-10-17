@@ -79,9 +79,6 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
       rowHeight={rowHeight}
       leafCount={filteredRows?.length ?? rows.length}
       options={{ margin, interactive: false }}
-      containerStyles={{
-        flex: `0 0 ${props.treeProps.width}px`,
-      }}
     />
   );
 
