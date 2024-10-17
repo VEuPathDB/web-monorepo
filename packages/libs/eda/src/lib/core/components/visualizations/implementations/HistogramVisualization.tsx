@@ -563,7 +563,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
       }
     }
     return undefined;
-  }, [distributionDataPromise]);
+  }, [distributionDataPromise, xAxisVariable]);
 
   const independentAxisMinMax = useMemo(() => {
     return {
