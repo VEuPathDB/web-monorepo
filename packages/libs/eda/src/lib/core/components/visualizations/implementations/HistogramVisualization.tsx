@@ -35,7 +35,6 @@ import {
   HistogramResponse,
 } from '../../../api/DataClient';
 import DataClient from '../../../api/DataClient';
-import { usePromise } from '../../../hooks/promise';
 import {
   useDataClient,
   useStudyMetadata,
@@ -127,6 +126,7 @@ import { useOutputEntity } from '../../../hooks/findOutputEntity';
 import { useSubsettingClient } from '../../../hooks/workspace';
 import { red } from '../../filter/colors';
 import { min, max } from 'lodash';
+import { useCachedPromise } from '../../../hooks/cachedPromise';
 
 export type HistogramDataWithCoverageStatistics = (
   | HistogramData
@@ -461,71 +461,76 @@ function HistogramViz(props: VisualizationProps<Options>) {
   // get distribution data
   const subsettingClient = useSubsettingClient();
 
-  const distributionDataPromise = usePromise(
-    useCallback(async () => {
-      if (vizConfig.xAxisVariable != null && xAxisVariable != null) {
-        const [displayRangeMin, displayRangeMax, binWidth, binUnits] =
-          NumberVariable.is(xAxisVariable)
-            ? [
-                xAxisVariable.distributionDefaults.displayRangeMin ??
-                  xAxisVariable.distributionDefaults.rangeMin,
-                xAxisVariable.distributionDefaults.displayRangeMax ??
-                  xAxisVariable.distributionDefaults.rangeMax,
-                xAxisVariable.distributionDefaults.binWidth,
-                undefined,
-              ]
-            : [
-                (xAxisVariable as DateVariable).distributionDefaults
-                  .displayRangeMin ??
-                  (xAxisVariable as DateVariable).distributionDefaults.rangeMin,
-                (xAxisVariable as DateVariable).distributionDefaults
-                  .displayRangeMax ??
-                  (xAxisVariable as DateVariable).distributionDefaults.rangeMax,
-                (xAxisVariable as DateVariable).distributionDefaults.binWidth,
-                (xAxisVariable as DateVariable).distributionDefaults.binUnits,
-              ];
+  const distributionDataArgs:
+    | Parameters<typeof subsettingClient.getDistribution>
+    | undefined = useMemo(() => {
+    if (vizConfig.xAxisVariable == null || xAxisVariable == null) return;
 
-        // try to call once
-        const distribution = await subsettingClient.getDistribution(
-          studyMetadata.id,
-          vizConfig.xAxisVariable?.entityId ?? '',
-          vizConfig.xAxisVariable?.variableId ?? '',
-          {
-            valueSpec: 'count',
-            filters,
-            binSpec: {
-              // Note: technically any arbitrary values can be used here for displayRangeMin/Max
-              // but used more accurate value anyway
-              displayRangeMin: DateVariable.is(xAxisVariable)
-                ? displayRangeMin + 'T00:00:00Z'
-                : displayRangeMin,
-              displayRangeMax: DateVariable.is(xAxisVariable)
-                ? displayRangeMax + 'T00:00:00Z'
-                : displayRangeMax,
-              binWidth: binWidth ?? 1,
-              binUnits: binUnits,
-            },
-          }
-        );
+    const [displayRangeMin, displayRangeMax, binWidth, binUnits] =
+      NumberVariable.is(xAxisVariable)
+        ? [
+            xAxisVariable.distributionDefaults.displayRangeMin ??
+              xAxisVariable.distributionDefaults.rangeMin,
+            xAxisVariable.distributionDefaults.displayRangeMax ??
+              xAxisVariable.distributionDefaults.rangeMax,
+            xAxisVariable.distributionDefaults.binWidth,
+            undefined,
+          ]
+        : [
+            (xAxisVariable as DateVariable).distributionDefaults
+              .displayRangeMin ??
+              (xAxisVariable as DateVariable).distributionDefaults.rangeMin,
+            (xAxisVariable as DateVariable).distributionDefaults
+              .displayRangeMax ??
+              (xAxisVariable as DateVariable).distributionDefaults.rangeMax,
+            (xAxisVariable as DateVariable).distributionDefaults.binWidth,
+            (xAxisVariable as DateVariable).distributionDefaults.binUnits,
+          ];
 
-        // return series using foreground response
-        const series = {
-          series: [
-            distributionResponseToDataSeries(
-              'Subset',
-              distribution,
-              red,
-              NumberVariable.is(xAxisVariable) ? 'number' : 'date'
-            ),
-          ],
-        };
+    return [
+      studyMetadata.id,
+      vizConfig.xAxisVariable?.entityId ?? '',
+      vizConfig.xAxisVariable?.variableId ?? '',
+      {
+        valueSpec: 'count',
+        filters,
+        binSpec: {
+          // Note: technically any arbitrary values can be used here for displayRangeMin/Max
+          // but used more accurate value anyway
+          displayRangeMin: DateVariable.is(xAxisVariable)
+            ? displayRangeMin + 'T00:00:00Z'
+            : displayRangeMin,
+          displayRangeMax: DateVariable.is(xAxisVariable)
+            ? displayRangeMax + 'T00:00:00Z'
+            : displayRangeMax,
+          binWidth: binWidth ?? 1,
+          binUnits: binUnits,
+        },
+      },
+    ];
+  }, [vizConfig, xAxisVariable, studyMetadata]);
 
-        return series;
-      }
+  const distributionDataPromise = useCachedPromise(async () => {
+    if (!distributionDataArgs)
+      throw new Error('distributionDataArgs is undefined');
+    const distribution = await subsettingClient.getDistribution(
+      ...distributionDataArgs
+    );
 
-      return undefined;
-    }, [filters, xAxisVariable, vizConfig.xAxisVariable, subsettingClient])
-  );
+    // return series using foreground response
+    const series = {
+      series: [
+        distributionResponseToDataSeries(
+          'Subset',
+          distribution,
+          red,
+          NumberVariable.is(xAxisVariable) ? 'number' : 'date'
+        ),
+      ],
+    };
+
+    return series;
+  }, [distributionDataArgs, xAxisVariable]);
 
   // Note: Histogram distribution data contains statistical values such as summary.min/max,
   // however, it does not fully respect multiple filters.
@@ -571,7 +576,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
         summaryBasedIndependentAxisMinMax?.max,
       ]),
     };
-  }, [distributionDataPromise]);
+  }, [dataBasedIndependentAxisMinMax, summaryBasedIndependentAxisMinMax]);
 
   // Note: defaultIndependentRange in the Histogram Viz should keep its initial range
   // regardless of the change of the data to ensure the truncation behavior
@@ -589,138 +594,119 @@ function HistogramViz(props: VisualizationProps<Options>) {
     vizConfig.independentAxisValueSpec
   );
 
-  const dataRequestConfig: DataRequestConfig = useDeepValue(
-    pick(vizConfig, [
-      'valueSpec',
-      'independentAxisValueSpec',
-      'binWidth',
-      'binWidthTimeUnit',
-      'valueSpec',
-      'overlayVariable',
-      'facetVariable',
-      'xAxisVariable',
-      'independentAxisRange',
-      'showMissingness',
-    ])
-  );
-
-  const data = usePromise(
-    useCallback(async (): Promise<
-      HistogramDataWithCoverageStatistics | undefined
-    > => {
-      if (
-        dataRequestConfig.xAxisVariable == null ||
-        xAxisVariable == null ||
-        filteredCounts.pending ||
-        filteredCounts.value == null
-      )
-        return undefined;
-
-      if (
-        !variablesAreUnique([
+  const dataRequestProps =
+    vizConfig.xAxisVariable == null ||
+    xAxisVariable == null ||
+    filteredCounts.pending ||
+    filteredCounts.value == null
+      ? undefined // no data request will be made if undefined
+      : {
+          // pick only the props that should affect data requests
+          // e.g. changes in dependentAxisLogScale should NOT trigger new data
+          dataRequestConfig: pick(vizConfig, [
+            'valueSpec',
+            'independentAxisValueSpec',
+            'binWidth',
+            'binWidthTimeUnit',
+            'valueSpec',
+            'overlayVariable',
+            'facetVariable',
+            'xAxisVariable',
+            'independentAxisRange',
+            'showMissingness',
+          ]),
+          filteredCounts: filteredCounts.value,
           xAxisVariable,
-          overlayVariable && (providedOverlayVariable ?? overlayVariable),
-          facetVariable,
-        ])
-      )
-        throw new Error(nonUniqueWarning);
+        };
 
-      assertValidInputVariables(
-        inputs,
-        selectedVariables,
-        entities,
-        dataElementConstraints,
-        dataElementDependencyOrder
-      );
+  const data = useCachedPromise(async (): Promise<
+    HistogramDataWithCoverageStatistics | undefined
+  > => {
+    if (!dataRequestProps) throw new Error('dataRequestProps is not defined');
 
-      // We test this after assertValidInputVariables because
-      // that gives a useful message to users. Returning undefined doesn't.
-      if (outputEntity == null) return undefined;
+    const { dataRequestConfig, filteredCounts, xAxisVariable } =
+      dataRequestProps;
 
-      const params = getRequestParams(
-        studyId,
-        filters ?? [],
-        valueType,
-        dataRequestConfig,
+    if (
+      !variablesAreUnique([
         xAxisVariable,
-        outputEntity,
-        defaultIndependentRange,
-        options?.getRequestParams
-      );
-      const response = await dataClient.getHistogram(
-        computation.descriptor.type,
-        visualization.descriptor.type,
-        params
-      );
+        overlayVariable && (providedOverlayVariable ?? overlayVariable),
+        facetVariable,
+      ])
+    )
+      throw new Error(nonUniqueWarning);
 
-      const showMissingOverlay =
-        dataRequestConfig.showMissingness &&
-        hasIncompleteCases(
-          overlayEntity,
-          overlayVariable,
-          outputEntity,
-          filteredCounts.value,
-          response.completeCasesTable
-        );
-      const showMissingFacet =
-        dataRequestConfig.showMissingness &&
-        hasIncompleteCases(
-          facetEntity,
-          facetVariable,
-          outputEntity,
-          filteredCounts.value,
-          response.completeCasesTable
-        );
-
-      const overlayVocabulary =
-        (overlayVariable && options?.getOverlayVocabulary?.()) ??
-        fixLabelsForNumberVariables(
-          overlayVariable?.vocabulary,
-          overlayVariable
-        );
-      const facetVocabulary = fixLabelsForNumberVariables(
-        facetVariable?.vocabulary,
-        facetVariable
-      );
-
-      return grayOutLastSeries(
-        substituteUnselectedToken(
-          reorderData(
-            histogramResponseToData(
-              response,
-              xAxisVariable,
-              overlayVariable,
-              facetVariable
-            ),
-            vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
-            vocabularyWithMissingData(facetVocabulary, showMissingFacet)
-          )
-        ),
-        showMissingOverlay
-      );
-    }, [
-      dataRequestConfig,
-      xAxisVariable,
-      outputEntity,
-      filteredCounts.pending,
-      filteredCounts.value,
-      overlayVariable,
-      facetVariable,
+    assertValidInputVariables(
       inputs,
       selectedVariables,
       entities,
       dataElementConstraints,
-      dataElementDependencyOrder,
-      filters,
+      dataElementDependencyOrder
+    );
+
+    // We test this after assertValidInputVariables because
+    // that gives a useful message to users. Returning undefined doesn't. TO DO FIX COMMENTS<<<<<<
+    if (outputEntity == null) throw new Error('this is crazy');
+
+    const params = getRequestParams(
       studyId,
+      filters ?? [],
       valueType,
-      dataClient,
+      dataRequestConfig,
+      xAxisVariable,
+      outputEntity,
+      defaultIndependentRange,
+      options?.getRequestParams
+    );
+    const response = await dataClient.getHistogram(
       computation.descriptor.type,
-      overlayEntity,
-      facetEntity,
       visualization.descriptor.type,
-    ])
-  );
+      params
+    );
+
+    const showMissingOverlay =
+      dataRequestConfig.showMissingness &&
+      hasIncompleteCases(
+        overlayEntity,
+        overlayVariable,
+        outputEntity,
+        filteredCounts,
+        response.completeCasesTable
+      );
+    const showMissingFacet =
+      dataRequestConfig.showMissingness &&
+      hasIncompleteCases(
+        facetEntity,
+        facetVariable,
+        outputEntity,
+        filteredCounts,
+        response.completeCasesTable
+      );
+
+    const overlayVocabulary =
+      (overlayVariable && options?.getOverlayVocabulary?.()) ??
+      fixLabelsForNumberVariables(overlayVariable?.vocabulary, overlayVariable);
+    const facetVocabulary = fixLabelsForNumberVariables(
+      facetVariable?.vocabulary,
+      facetVariable
+    );
+
+    return grayOutLastSeries(
+      substituteUnselectedToken(
+        reorderData(
+          histogramResponseToData(
+            response,
+            xAxisVariable,
+            overlayVariable,
+            facetVariable
+          ),
+          vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
+          vocabularyWithMissingData(facetVocabulary, showMissingFacet)
+        )
+      ),
+      showMissingOverlay
+    );
+  }, [dataRequestProps]);
 
   const [checkData, isEmptyData] = useMemo(() => {
     // controls need the bin info from just one facet (not an empty one)
