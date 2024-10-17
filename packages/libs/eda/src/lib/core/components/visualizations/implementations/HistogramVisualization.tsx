@@ -644,9 +644,8 @@ function HistogramViz(props: VisualizationProps<Options>) {
       dataElementDependencyOrder
     );
 
-    // We test this after assertValidInputVariables because
-    // that gives a useful message to users. Returning undefined doesn't. TO DO FIX COMMENTS<<<<<<
-    if (outputEntity == null) throw new Error('this is crazy');
+    // sanity check for typescript - should never throw
+    if (outputEntity == null) throw new Error('outputEntity is not defined');
 
     const params = getRequestParams(
       studyId,
