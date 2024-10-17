@@ -323,7 +323,7 @@ export function RecordTable_Sequences(
       isRowSelected: (row: RowType) =>
         highlightedNodes.includes(row.full_id as string),
       useStickyHeader: true,
-      tableBodyMaxHeight: '80vh',
+      tableBodyMaxHeight: 'calc(100vh - 500px)', // 500px accounts for header/footer/pagination/etc
     },
     uiState: {
       pagination: {
