@@ -73,6 +73,18 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
     [rowHeight]
   );
 
+  const tree = hideTree ? null : (
+    <HorizontalDendrogram
+      {...props.treeProps}
+      rowHeight={rowHeight}
+      leafCount={filteredRows?.length ?? rows.length}
+      options={{ margin, interactive: false }}
+      containerStyles={{
+        flex: `0 0 ${props.treeProps.width}px`,
+      }}
+    />
+  );
+
   // tableState is just the tableProps with an extra CSS class
   // to make sure the height is consistent with the tree
   const tableState: MesaStateProps<RowType> = {
@@ -89,6 +101,7 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
       inlineUseTooltips: true,
       inlineMaxHeight: `${rowHeight}px`,
       inlineMaxWidth: `${maxColumnWidth}px`,
+      marginContent: tree,
     },
   };
 
@@ -97,31 +110,7 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
   // then the table container styling will need
   // { marginLeft: hideTree ? props.treeProps.width : 0 }
   // to stop the table jumping around horizontally
-  return (
-    <div
-      style={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'row' }}
-    >
-      {!hideTree && (
-        <HorizontalDendrogram
-          {...props.treeProps}
-          rowHeight={rowHeight}
-          leafCount={filteredRows?.length ?? rows.length}
-          options={{ margin, interactive: false }}
-        />
-      )}
-      <div
-        css={{
-          flexGrow: 1,
-          width: 1 /* arbitrary non-zero width seems necessary for flex */,
-          '.DataTable': {
-            marginBottom: '0px !important',
-          },
-        }}
-      >
-        <Mesa state={tableState} />
-      </div>
-    </div>
-  );
+  return <Mesa state={tableState} />;
 }
 
 function mergeDeriveRowClassName<RowType>(
