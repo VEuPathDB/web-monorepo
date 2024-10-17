@@ -264,35 +264,8 @@ class DataTable extends React.Component {
     );
   }
 
-  renderPlainTable() {
-    const { props } = this;
-    const { options, columns } = props;
-
-    const stickyColumns = options.useStickyFirstNColumns
-      ? this.makeFirstNColumnsSticky(columns, options.useStickyFirstNColumns)
-      : columns;
-    const newProps = {
-      ...props,
-      columns: stickyColumns,
-    };
-
-    return (
-      <div className="MesaComponent">
-        <div className={dataTableClass()}>
-          {this.props.options.marginContent ?? null}
-          <table cellSpacing="0" cellPadding="0">
-            <HeadingRow {...newProps} />
-            <DataRowList {...newProps} />
-          </table>
-        </div>
-      </div>
-    );
-  }
-
   render() {
-    const { shouldUseStickyHeader, renderStickyTable, renderPlainTable } = this;
-    return renderStickyTable();
-    // return shouldUseStickyHeader() ? renderStickyTable() : renderPlainTable();
+    return this.renderStickyTable();
   }
 }
 
