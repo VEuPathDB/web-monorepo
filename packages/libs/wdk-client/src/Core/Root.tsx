@@ -1,7 +1,9 @@
+import * as React from 'react';
+import { Store } from 'redux';
+import { Provider } from 'react-redux';
+import { Link, Router, Switch, matchPath } from 'react-router-dom';
 import { History, Location } from 'history';
 import PropTypes from 'prop-types';
-import * as React from 'react';
-import { Router, Switch, matchPath } from 'react-router';
 import { noop } from 'lodash';
 
 import {
@@ -13,8 +15,6 @@ import ErrorBoundary from '../Core/Controllers/ErrorBoundary';
 import LoginFormController from '../Controllers/LoginFormController';
 import Page from '../Components/Layout/Page';
 
-import { Store } from 'redux';
-import { Provider } from 'react-redux';
 import { RouteEntry } from '../Core/RouteEntry';
 import WdkRoute from '../Core/WdkRoute';
 import { safeHtml } from '../Utils/ComponentUtils';
@@ -25,10 +25,8 @@ import {
 } from '../Hooks/WdkDependenciesEffect';
 import { Modal } from '@veupathdb/coreui';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import { Link } from 'react-router-dom';
 
 import './Style/wdk-Button.scss';
-import { User } from '../Utils/WdkUser';
 import { IndexController, NotFoundController } from '../Controllers';
 
 type Props = {
@@ -45,7 +43,7 @@ type Props = {
 
 interface State {
   location: Location;
-  user?: User;
+  userIsGuest?: boolean;
 }
 
 const REACT_ROUTER_LINK_CLASSNAME = 'wdk-ReactRouterLink';
@@ -56,18 +54,6 @@ const RELATIVE_LINK_REGEXP = new RegExp(
 
 /** WDK Application Root */
 export default class Root extends React.Component<Props, State> {
-  static propTypes = {
-    rootUrl: PropTypes.string,
-    routes: PropTypes.array.isRequired,
-    onLocationChange: PropTypes.func,
-    staticContent: PropTypes.string,
-  };
-
-  static defaultProps = {
-    rootUrl: '/',
-    onLocationChange: () => {}, // noop
-  };
-
   removeHistoryListener: () => void;
 
   constructor(props: Props) {
@@ -119,9 +105,7 @@ export default class Root extends React.Component<Props, State> {
   }
 
   loadUser() {
-    this.props.wdkDependencies.wdkService.getCurrentUser().then((user) => {
-      this.setState({ user });
-    });
+    this.setState({ userIsGuest: isUserGuest() });
   }
 
   componentDidMount() {
@@ -137,17 +121,17 @@ export default class Root extends React.Component<Props, State> {
 
   render() {
     const { staticContent, routes } = this.props;
-    const { user } = this.state;
+    const { userIsGuest } = this.state;
     const activeRoute = this.getActiveRoute();
     const rootClassNameModifier = activeRoute?.rootClassNameModifier;
     const isFullscreen = activeRoute?.isFullscreen;
 
-    if (user == null) return 'Loading...';
+    if (userIsGuest == null) return 'Loading...';
 
     // allow some pages non-login access
     const requireLogin =
       activeRoute?.requiresLogin === false ? false : this.props.requireLogin;
-    const accessDenied = requireLogin ? user.isGuest : false;
+    const accessDenied = requireLogin ? userIsGuest : false;
     const activeRouteContent = (
       <Switch>
         {accessDenied ? (
@@ -262,5 +246,19 @@ export default class Root extends React.Component<Props, State> {
         </ErrorBoundary>
       </Provider>
     );
+  }
+}
+
+function isUserGuest() {
+  try {
+    return !!JSON.parse(
+      atob(
+        document.cookie
+          .match(/(^| )Authorization=([^;]+)/)?.[2]
+          .split('.')[1] ?? ''
+      )
+    ).is_guest;
+  } catch {
+    return true;
   }
 }
