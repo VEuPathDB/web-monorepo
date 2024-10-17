@@ -16,7 +16,6 @@ class DataTable extends React.Component {
     super(props);
     this.widthCache = {};
     this.state = { dynamicWidths: null, tableWrapperWidth: null };
-    this.renderPlainTable = this.renderPlainTable.bind(this);
     this.renderStickyTable = this.renderStickyTable.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
     this.getInnerCellWidth = this.getInnerCellWidth.bind(this);
