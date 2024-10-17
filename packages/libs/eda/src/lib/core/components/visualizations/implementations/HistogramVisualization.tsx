@@ -508,7 +508,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
         },
       },
     ];
-  }, [vizConfig, xAxisVariable, studyMetadata]);
+  }, [vizConfig, xAxisVariable, studyMetadata, filters]);
 
   const distributionDataPromise = useCachedPromise(async () => {
     if (!distributionDataArgs)
