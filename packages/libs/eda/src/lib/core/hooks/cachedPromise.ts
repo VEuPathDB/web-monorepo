@@ -14,11 +14,12 @@ export function useCachedPromise<T>(
   task: () => Promise<T>,
   queryKey: [any, ...any[]]
 ): PromiseHookState<T> {
-  // Using useQuery from react-query with the unique key
-  const { data, error, isLoading } = useQuery({
+  const enabled = queryKey.every((val) => val != null);
+
+  const { data, error, isLoading, isFetching } = useQuery({
     queryKey: ['useCachedPromise', ...(queryKey ?? [])],
     queryFn: task,
-    enabled: queryKey.every((val) => val != null),
+    enabled,
   });
 
   // Mapping the state from useQuery to PromiseHookState<T>
@@ -26,10 +27,10 @@ export function useCachedPromise<T>(
   const state: PromiseHookState<T> = useMemo(
     () => ({
       value: data,
-      pending: isLoading,
+      pending: enabled && (isLoading || isFetching),
       error: error,
     }),
-    [data, isLoading, error]
+    [data, enabled, isLoading, isFetching, error]
   );
 
   return state;
