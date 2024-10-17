@@ -201,10 +201,8 @@ class DataTable extends React.Component {
             columns: stickyColumns,
             dynamicWidths,
           });
-    const bodyWrapperStyle = {
-      maxHeight: options ? options.tableBodyMaxHeight : null,
-    };
     const wrapperStyle = {
+      maxHeight: options ? options.tableBodyMaxHeight : null,
       minWidth: dynamicWidths
         ? combineWidths(columns.map(({ width }) => width))
         : null,
@@ -225,34 +223,42 @@ class DataTable extends React.Component {
     };
     return (
       <div ref={(node) => (this.mainRef = node)} className="MesaComponent">
-        <div className={dataTableClass()} style={wrapperStyle}>
-          <div className={dataTableClass('Sticky')} style={wrapperStyle}>
-            <div
-              style={headerWrapperStyleMerged}
-              ref={(node) => (this.headerNode = node)}
-              className={dataTableClass('Header')}
-            >
-              <table cellSpacing={0} cellPadding={0} style={tableLayout}>
-                <HeadingRow {...tableProps} />
-              </table>
-            </div>
-            <div
-              style={bodyWrapperStyle}
-              ref={(node) => (this.bodyNode = node)}
-              className={dataTableClass('Body')}
-              onScroll={this.handleTableBodyScroll}
-            >
-              <table
-                cellSpacing={0}
-                cellPadding={0}
-                style={tableLayout}
-                ref={(node) => (this.contentTable = node)}
-              >
-                {dynamicWidths == null ? <HeadingRow {...tableProps} /> : null}
-                <DataRowList {...tableProps} />
-              </table>
-            </div>
+        <div
+          className={dataTableClass(
+            null,
+            options.useStickyHeader ? 'Sticky' : null
+          )}
+          style={wrapperStyle}
+        >
+          <div
+            style={headerWrapperStyleMerged}
+            ref={(node) => (this.headerNode = node)}
+            className={dataTableClass('Header')}
+          >
+            <table cellSpacing={0} cellPadding={0} style={{ ...tableLayout }}>
+              <HeadingRow {...tableProps} />
+            </table>
           </div>
+          <div
+            ref={(node) => (this.bodyNode = node)}
+            className={dataTableClass('Body')}
+            onScroll={this.handleTableBodyScroll}
+          >
+            <table
+              cellSpacing={0}
+              cellPadding={0}
+              style={tableLayout}
+              ref={(node) => (this.contentTable = node)}
+            >
+              {dynamicWidths == null ? <HeadingRow {...tableProps} /> : null}
+              <DataRowList {...tableProps} />
+            </table>
+          </div>
+          {this.props.options.marginContent && (
+            <div className={dataTableClass('Margin')}>
+              {this.props.options.marginContent}
+            </div>
+          )}
         </div>
       </div>
     );
@@ -273,6 +279,7 @@ class DataTable extends React.Component {
     return (
       <div className="MesaComponent">
         <div className={dataTableClass()}>
+          {this.props.options.marginContent ?? null}
           <table cellSpacing="0" cellPadding="0">
             <HeadingRow {...newProps} />
             <DataRowList {...newProps} />
@@ -284,7 +291,8 @@ class DataTable extends React.Component {
 
   render() {
     const { shouldUseStickyHeader, renderStickyTable, renderPlainTable } = this;
-    return shouldUseStickyHeader() ? renderStickyTable() : renderPlainTable();
+    return renderStickyTable();
+    // return shouldUseStickyHeader() ? renderStickyTable() : renderPlainTable();
   }
 }
 

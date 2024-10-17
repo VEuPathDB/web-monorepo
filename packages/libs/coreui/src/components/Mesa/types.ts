@@ -68,6 +68,12 @@ export interface MesaStateProps<
      */
     childRow?: (props: ChildRowProps<Row>) => ReactElement<ChildRowProps<Row>>;
     getRowId?: (row: Row) => string | number;
+    /**
+     * Renders the node in the left margin of the table.
+     * This can be useful for rendering a graphic that
+     * aligns with table rows, etc.
+     */
+    marginContent?: React.ReactNode;
   };
   actions?: MesaAction<Row, Key>[];
   eventHandlers?: {
