@@ -72,6 +72,11 @@ export function RecordTable_Sequences(
     [groupName, numSequences]
   );
 
+  const treeUrl = useOrthoService(
+    async (orthoService) => orthoService.getGroupTreeUrl(groupName),
+    [groupName]
+  );
+
   // deal with Pfam domain architectures
   const proteinPfams = props.record.tables['ProteinPFams'];
   const rowsByAccession = groupBy(proteinPfams, 'full_id');
@@ -155,7 +160,7 @@ export function RecordTable_Sequences(
   const [tablePageNumber, setTablePageNumber] = useState(1);
 
   const { tree, leaves, sortedRows } = useMemo(() => {
-    const tree = treeResponse && parseNewick(treeResponse.newick);
+    const tree = treeResponse == null ? undefined : parseNewick(treeResponse);
     const leaves = tree && getLeaves(tree);
     const sortedRows = leaves && sortRows(leaves, mesaRows);
     return { tree, leaves, sortedRows };
@@ -250,7 +255,7 @@ export function RecordTable_Sequences(
   // make a newick string from the filtered tree if needed
   const finalNewick = useMemo(() => {
     if (filteredTree === tree && treeResponse != null) {
-      return treeResponse.newick; // no filtering so return what we read from the back end
+      return treeResponse; // no filtering so return what we read from the back end
     } else if (
       filteredTree != null &&
       filteredRows != null &&
@@ -317,6 +322,8 @@ export function RecordTable_Sequences(
     options: {
       isRowSelected: (row: RowType) =>
         highlightedNodes.includes(row.full_id as string),
+      useStickyHeader: true,
+      tableBodyMaxHeight: '80vh',
     },
     uiState: {
       pagination: {
@@ -337,7 +344,6 @@ export function RecordTable_Sequences(
       onRowDeselect: (row: RowType) =>
         setHighlightedNodes((prev) => prev.filter((id) => id !== row.full_id)),
       onPageChange: (page: number) => setTablePageNumber(page),
-      // onRowsPerPageChange: () => { },
     },
   };
 
@@ -385,13 +391,16 @@ export function RecordTable_Sequences(
         value: formatAttributeValue(row.accession),
       }))}
       value={pfamFilterIds}
-      onChange={setPfamFilterIds}
+      onChange={(ids) => {
+        setPfamFilterIds(ids);
+        setTablePageNumber(1);
+      }}
       instantUpdate={true}
     />
   );
 
   const corePeripheralFilter = (
-    <SelectList
+    <SelectList<'core' | 'peripheral'>
       key={`corePeripheralFilter-${resetCounter}`}
       defaultButtonDisplayContent="Core/Peripheral"
       items={[
@@ -405,17 +414,24 @@ export function RecordTable_Sequences(
         },
       ]}
       value={corePeripheralFilterValue}
-      onChange={setCorePeripheralFilterValue}
+      onChange={(value) => {
+        setCorePeripheralFilterValue(value);
+        setTablePageNumber(1);
+      }}
       instantUpdate={true}
     />
   );
 
   const taxonFilter =
     props.record.tables.TaxonCounts?.length > 0 ? (
+      // eslint-disable-next-line react/jsx-pascal-case
       <RecordTable_TaxonCounts_Filter
         key={`taxonFilter-${resetCounter}`}
         selectedSpecies={selectedSpecies}
-        onSpeciesSelected={setSelectedSpecies}
+        onSpeciesSelected={(species) => {
+          setSelectedSpecies(species);
+          setTablePageNumber(1);
+        }}
         record={props.record}
         recordClass={props.recordClass}
         table={props.recordClass.tablesMap.TaxonCounts}
@@ -443,6 +459,7 @@ export function RecordTable_Sequences(
         setCorePeripheralFilterValue([]);
         setSelectedSpecies([]);
         setResetCounter((prev) => prev + 1);
+        setTablePageNumber(1);
       }}
     />
   );
@@ -457,18 +474,25 @@ export function RecordTable_Sequences(
         } as CSSProperties
       }
     >
-      {numSequences > MAX_SEQUENCES_FOR_TREE && (
-        <div>
-          <strong>
-            Note: no phylogenetic tree is displayed because this group has more
-            than {MAX_SEQUENCES_FOR_TREE.toLocaleString()} sequences.
-          </strong>
-        </div>
+      {filteredRows.length > MAX_SEQUENCES_FOR_TREE && (
+        <Banner
+          banner={{
+            type: 'warning',
+            message: (
+              <>
+                To see a phylogenetic tree please use a filter to display fewer
+                than {MAX_SEQUENCES_FOR_TREE.toLocaleString()} sequences
+              </>
+            ),
+          }}
+        />
       )}
       <div
         style={{
           padding: '10px',
           display: 'flex',
+          flexWrap: 'wrap',
+          gap: '1em',
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -482,7 +506,7 @@ export function RecordTable_Sequences(
           selectedColumnFilters={selectedColumnFilters}
           onColumnFilterChange={(keys) => setSelectedColumnFilters(keys)}
         />
-        <div className="MesaComponent">
+        <div className="MesaComponent" style={{ marginRight: 'auto' }}>
           <div className="TableToolbar-Info">
             <RowCounter
               rows={sortedRows}
@@ -561,6 +585,11 @@ export function RecordTable_Sequences(
           </form>
         </>
       )}
+      <p>
+        <a href={treeUrl}>
+          <i className="fa fa-download"></i> Download raw newick file
+        </a>
+      </p>
     </div>
   );
 }
