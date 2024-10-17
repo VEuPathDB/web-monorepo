@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { PromiseHookState } from './promise';
+import { useMemo } from 'react';
 
 // This is a wrapper around `useQuery` to replace our `usePromise` hook.
 // This will provide full client-side cacheing (cache size > 1!)
@@ -21,11 +22,15 @@ export function useCachedPromise<T>(
   });
 
   // Mapping the state from useQuery to PromiseHookState<T>
-  const state: PromiseHookState<T> = {
-    value: data,
-    pending: isLoading,
-    error: error,
-  };
+  // and return something stable
+  const state: PromiseHookState<T> = useMemo(
+    () => ({
+      value: data,
+      pending: isLoading,
+      error: error,
+    }),
+    [data, isLoading, error]
+  );
 
   return state;
 }
