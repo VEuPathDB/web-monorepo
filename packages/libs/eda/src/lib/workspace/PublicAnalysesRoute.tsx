@@ -10,10 +10,11 @@ import { useWdkStudyRecords } from '../core/hooks/study';
 
 import { PublicAnalyses, StudyRecordMetadata } from './PublicAnalyses';
 import SubsettingClient from '../core/api/SubsettingClient';
-import { useWdkServiceWithVdi } from '@veupathdb/user-datasets/lib/Hooks/wdkServiceWithVdi';
+import { isVdiCompatibleWdkService } from '@veupathdb/user-datasets/lib/Service';
 import { map } from 'lodash';
 import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 import { diyUserDatasetIdToWdkRecordId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 export interface Props {
   analysisClient: AnalysisClient;
@@ -28,10 +29,11 @@ export function PublicAnalysesRoute({
 }: Props) {
   const publicAnalysisListState = usePublicAnalysisList(analysisClient);
   const studyRecords = useWdkStudyRecords(subsettingClient);
-  const communityDatasets = useWdkServiceWithVdi(
-    (wdkService) => wdkService.getCommunityDatasets(),
-    []
-  );
+  const communityDatasets = useWdkService(async (wdkService) => {
+    if (isVdiCompatibleWdkService(wdkService))
+      return wdkService.getCommunityDatasets();
+    return [];
+  }, []);
 
   const studyRecordsMetadata: StudyRecordMetadata[] | undefined =
     studyRecords &&

@@ -4,6 +4,7 @@ import {
   boolean,
   intersection,
   literal,
+  nullType,
   number,
   partial,
   record,
@@ -526,7 +527,61 @@ export const ioTBlastXConfig = intersection([
   }),
 ]);
 
+export const ioDiamondBlastOutputFormat = type({
+  format: literal('blast-tab'),
+  fields: array(string),
+});
+
 export type IoTBlastXConfig = TypeOf<typeof ioTBlastXConfig>;
+
+const ioSensitivity = union([
+  literal('faster'),
+  literal('fast'),
+  literal('mid-sensitive'),
+  literal('shapes-30x10'),
+  literal('sensitive'),
+  literal('more-sensitive'),
+  literal('very-sensitive'),
+  literal('ultra-sensitive'),
+]);
+
+export type IoSensitivity = TypeOf<typeof ioSensitivity>;
+
+const ioDiamondConfigShared = partial({
+  query: string,
+  eValue: number,
+  maxTargetSeqs: number,
+  // TODO This can be a union of string literal
+  sensitivity: ioSensitivity,
+  masking: union([literal('none'), literal('tantan'), literal('seq')]),
+  compBasedStats: union([
+    literal('disabled'),
+    literal('hauser'),
+    literal('hauser-and-matrix-adjust'),
+    literal('matrix-adjust'),
+  ]),
+  iterate: array(ioSensitivity),
+  reportUnaligned: boolean,
+  outFormat: ioDiamondBlastOutputFormat,
+});
+
+export const ioDiamondBlastPConfig = intersection([
+  type({
+    tool: literal('diamond-blastp'),
+  }),
+  ioDiamondConfigShared,
+]);
+
+export type IoDiamondBlastPConfig = TypeOf<typeof ioDiamondBlastPConfig>;
+
+export const ioDiamondBlastXConfig = intersection([
+  type({
+    tool: literal('diamond-blastx'),
+  }),
+  ioDiamondConfigShared,
+]);
+
+export type IoDiamondBlastXConfig = TypeOf<typeof ioDiamondBlastXConfig>;
 
 export const ioBlastConfig = union([
   ioBlastNConfig,
@@ -534,6 +589,8 @@ export const ioBlastConfig = union([
   ioBlastXConfig,
   ioTBlastNConfig,
   ioTBlastXConfig,
+  ioDiamondBlastPConfig,
+  ioDiamondBlastXConfig,
 ]);
 
 export type IoBlastConfig = TypeOf<typeof ioBlastConfig>;
@@ -551,14 +608,15 @@ export const shortJobResponse = intersection([
     status: ioJobStatus,
     created: string,
     site: string,
-    targets: array(target),
     // FIXME: This field no longer appears in the response. Service bug?
     // expires: string,
   }),
   partial({
+    targets: array(target),
     description: string,
     // FIXME: This field is missing from "secondary" jobs. Service bug?
     isPrimary: boolean,
+    isRerunnable: boolean,
     childJobs: array(
       type({
         id: string,
@@ -610,7 +668,7 @@ export const shortReportResponse = intersection([
   type({
     jobID: string,
     reportID: string,
-    config: reportConfig,
+    config: union([reportConfig, nullType]),
     status: ioJobStatus,
   }),
   partial({
@@ -771,6 +829,13 @@ export const notFoundError = type({
 
 export type NotFoundError = TypeOf<typeof notFoundError>;
 
+export const permanentlyExpiredError = type({
+  status: literal('permanently-expired'),
+  message: string,
+});
+
+export type PermanentlyExpiredError = TypeOf<typeof permanentlyExpiredError>;
+
 export const methodNotAllowedError = type({
   status: literal('bad-method'),
   message: string,
@@ -813,6 +878,7 @@ export const errorDetails = union([
   unauthorizedError,
   forbiddenError,
   notFoundError,
+  permanentlyExpiredError,
   methodNotAllowedError,
   unprocessableEntityError,
   serverError,

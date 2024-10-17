@@ -1,5 +1,7 @@
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 
+import { wrapWdkService as addMultiBlastService } from '@veupathdb/multi-blast/lib/utils/wdkServiceIntegration';
+
 import {
   ProteomeSummaryRows,
   proteomeSummaryRowsDecoder,
@@ -9,15 +11,12 @@ import {
   groupLayoutResponseDecoder,
 } from 'ortho-client/utils/groupLayout';
 import { TaxonEntries, taxonEntriesDecoder } from 'ortho-client/utils/taxons';
-import {
-  GroupTreeResponse,
-  groupTreeResponseDecoder,
-} from 'ortho-client/utils/tree';
 
 export function wrapWdkService(wdkService: WdkService): OrthoService {
   return {
-    ...wdkService,
+    ...addMultiBlastService(wdkService),
     getGroupLayout: orthoServiceWrappers.getGroupLayout(wdkService),
+    getGroupTreeUrl: orthoServiceWrappers.getGroupTreeUrl(wdkService),
     getGroupTree: orthoServiceWrappers.getGroupTree(wdkService),
     getProteomeSummary: orthoServiceWrappers.getProteomeSummary(wdkService),
     getTaxons: orthoServiceWrappers.getTaxons(wdkService),
@@ -31,12 +30,14 @@ const orthoServiceWrappers = {
       method: 'get',
       path: `/group/${groupName}/layout`,
     }),
+  getGroupTreeUrl: (wdkService: WdkService) => (groupName: string) =>
+    wdkService.serviceUrl + '/newick-protein-tree/' + groupName,
   getGroupTree: (wdkService: WdkService) => (groupName: string) =>
-    wdkService.sendRequest(groupTreeResponseDecoder, {
-      useCache: true,
-      method: 'get',
-      path: `/newick-protein-tree/${groupName}`,
-    }),
+    // this endpoint does not return json, so no need to use helper
+    // method `sendRequest`
+    window
+      .fetch(`${wdkService.serviceUrl}/newick-protein-tree/${groupName}`)
+      .then((resp) => resp.text()),
   getProteomeSummary: (wdkService: WdkService) => () =>
     wdkService.sendRequest(proteomeSummaryRowsDecoder, {
       useCache: true,
@@ -53,7 +54,8 @@ const orthoServiceWrappers = {
 
 export interface OrthoService extends WdkService {
   getGroupLayout: (groupName: string) => Promise<GroupLayoutResponse>;
-  getGroupTree: (groupName: string) => Promise<GroupTreeResponse>;
+  getGroupTreeUrl: (groupName: string) => string;
+  getGroupTree: (groupName: string) => Promise<string>;
   getProteomeSummary: () => Promise<ProteomeSummaryRows>;
   getTaxons: () => Promise<TaxonEntries>;
 }

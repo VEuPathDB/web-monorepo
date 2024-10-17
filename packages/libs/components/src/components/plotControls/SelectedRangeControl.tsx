@@ -22,6 +22,8 @@ export interface SelectedRangeControlProps
   enforceBounds?: boolean;
   /** show a clear button, optional, default is true */
   showClearButton?: boolean;
+  /** display 'inclusive' after the from/to inputs */
+  inclusive?: boolean;
 }
 
 export default function SelectedRangeControl({
@@ -33,6 +35,7 @@ export default function SelectedRangeControl({
   enforceBounds = false,
   showClearButton = true,
   containerStyles,
+  inclusive = false,
 }: SelectedRangeControlProps) {
   const validator = enforceBounds
     ? undefined
@@ -67,6 +70,7 @@ export default function SelectedRangeControl({
           showClearButton={showClearButton}
           containerStyles={containerStyles}
           validator={validator}
+          inclusive={inclusive}
         />
       ) : (
         <NumberRangeInput
@@ -77,6 +81,7 @@ export default function SelectedRangeControl({
           showClearButton={showClearButton}
           containerStyles={containerStyles}
           validator={validator}
+          inclusive={inclusive}
         />
       )}
     </LabelledGroup>

@@ -3,7 +3,6 @@ import { wrappable } from '../../../Utils/ComponentUtils';
 import UserFormContainer, {
   UserFormContainerPropTypes,
   FormMessage,
-  VisitOtherBrc,
   getDescriptionBoxStyle,
 } from '../../../Views/User/UserFormContainer';
 
@@ -32,7 +31,6 @@ let interpretFormStatus = (formStatus, userFormData, errorMessage) => {
             You have registered successfully. Please check your email (inbox and
             spam folder) for a temporary password.
           </p>
-          <VisitOtherBrc user={userFormData} />
         </div>
       );
       messageClass += 'wdk-UserProfile-success';

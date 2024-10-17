@@ -16,7 +16,6 @@ class DataTable extends React.Component {
     super(props);
     this.widthCache = {};
     this.state = { dynamicWidths: null, tableWrapperWidth: null };
-    this.renderPlainTable = this.renderPlainTable.bind(this);
     this.renderStickyTable = this.renderStickyTable.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
     this.getInnerCellWidth = this.getInnerCellWidth.bind(this);
@@ -201,10 +200,8 @@ class DataTable extends React.Component {
             columns: stickyColumns,
             dynamicWidths,
           });
-    const bodyWrapperStyle = {
-      maxHeight: options ? options.tableBodyMaxHeight : null,
-    };
     const wrapperStyle = {
+      maxHeight: options ? options.tableBodyMaxHeight : null,
       minWidth: dynamicWidths
         ? combineWidths(columns.map(({ width }) => width))
         : null,
@@ -225,66 +222,49 @@ class DataTable extends React.Component {
     };
     return (
       <div ref={(node) => (this.mainRef = node)} className="MesaComponent">
-        <div className={dataTableClass()} style={wrapperStyle}>
-          <div className={dataTableClass('Sticky')} style={wrapperStyle}>
-            <div
-              style={headerWrapperStyleMerged}
-              ref={(node) => (this.headerNode = node)}
-              className={dataTableClass('Header')}
-            >
-              <table cellSpacing={0} cellPadding={0} style={tableLayout}>
-                <HeadingRow {...tableProps} />
-              </table>
-            </div>
-            <div
-              style={bodyWrapperStyle}
-              ref={(node) => (this.bodyNode = node)}
-              className={dataTableClass('Body')}
-              onScroll={this.handleTableBodyScroll}
-            >
-              <table
-                cellSpacing={0}
-                cellPadding={0}
-                style={tableLayout}
-                ref={(node) => (this.contentTable = node)}
-              >
-                {dynamicWidths == null ? <HeadingRow {...tableProps} /> : null}
-                <DataRowList {...tableProps} />
-              </table>
-            </div>
+        <div
+          className={dataTableClass(
+            null,
+            options.useStickyHeader ? 'Sticky' : null
+          )}
+          style={wrapperStyle}
+        >
+          <div
+            style={headerWrapperStyleMerged}
+            ref={(node) => (this.headerNode = node)}
+            className={dataTableClass('Header')}
+          >
+            <table cellSpacing={0} cellPadding={0} style={{ ...tableLayout }}>
+              <HeadingRow {...tableProps} />
+            </table>
           </div>
-        </div>
-      </div>
-    );
-  }
-
-  renderPlainTable() {
-    const { props } = this;
-    const { options, columns } = props;
-
-    const stickyColumns = options.useStickyFirstNColumns
-      ? this.makeFirstNColumnsSticky(columns, options.useStickyFirstNColumns)
-      : columns;
-    const newProps = {
-      ...props,
-      columns: stickyColumns,
-    };
-
-    return (
-      <div className="MesaComponent">
-        <div className={dataTableClass()}>
-          <table cellSpacing="0" cellPadding="0">
-            <HeadingRow {...newProps} />
-            <DataRowList {...newProps} />
-          </table>
+          <div
+            ref={(node) => (this.bodyNode = node)}
+            className={dataTableClass('Body')}
+            onScroll={this.handleTableBodyScroll}
+          >
+            <table
+              cellSpacing={0}
+              cellPadding={0}
+              style={tableLayout}
+              ref={(node) => (this.contentTable = node)}
+            >
+              {dynamicWidths == null ? <HeadingRow {...tableProps} /> : null}
+              <DataRowList {...tableProps} />
+            </table>
+          </div>
+          {this.props.options.marginContent && (
+            <div className={dataTableClass('Margin')}>
+              {this.props.options.marginContent}
+            </div>
+          )}
         </div>
       </div>
     );
   }
 
   render() {
-    const { shouldUseStickyHeader, renderStickyTable, renderPlainTable } = this;
-    return shouldUseStickyHeader() ? renderStickyTable() : renderPlainTable();
+    return this.renderStickyTable();
   }
 }
 

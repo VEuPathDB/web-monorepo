@@ -49,8 +49,14 @@ class DataCell extends React.PureComponent {
     }
   }
 
+  setTitle(el) {
+    if (el == null || el.scrollWidth <= el.clientWidth) return;
+    el.title = el.innerText;
+  }
+
   render() {
-    let { column, inline, options, isChildRow, childRowColSpan } = this.props;
+    let { column, inline, options, isChildRow, childRowColSpan, rowIndex } =
+      this.props;
     let { style, width, className, key } = column;
 
     let whiteSpace = !inline
@@ -68,35 +74,21 @@ class DataCell extends React.PureComponent {
     className = dataCellClass() + (className ? ' ' + className : '');
 
     const content = this.renderContent();
-    const columnName = column.name ?? column.key;
-
-    // Ideally the tooltip would also be conditional on there
-    // being actual content, but this is not trivial without
-    // copy-pasting the getValue logic from this.renderContent().
-    // Verdict: not worth it
-    const children = options.inlineUseTooltips ? (
-      <Tooltip
-        title={
-          <>
-            {columnName && <span>{columnName}:</span>}
-            {content}
-          </>
-        }
-      >
-        {content}
-      </Tooltip>
-    ) : (
-      content
-    );
 
     const props = {
       style,
-      children,
+      children: content,
       className,
       ...(isChildRow ? { colSpan: childRowColSpan } : null),
     };
 
-    return column.hidden ? null : <td key={key} {...props} />;
+    return column.hidden ? null : (
+      <td
+        ref={(el) => this.setTitle(el)}
+        key={key + '_' + rowIndex}
+        {...props}
+      />
+    );
   }
 }
 

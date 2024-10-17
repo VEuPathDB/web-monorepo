@@ -7,6 +7,8 @@ import { projectId } from '../../config';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
 import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 import { isUserApprovedForAction } from '@veupathdb/study-data-access/lib/study-access/permission';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 // Use Element.innerText to strip XML
 function stripXML(str) {
@@ -100,6 +102,7 @@ export function RecordHeading(props) {
     newcategory,
     megabase_pairs,
     study_access,
+    custom_download_tab,
   } = attributes;
 
   let version = getSourceVersion(attributes, tables);
@@ -332,30 +335,45 @@ function StudyAccessOverviewItem(props) {
   );
 
   function makeMessage() {
-    switch (study_access) {
-      case 'Prerelease':
-        return 'Data downloads for this study are not yet available on this website.';
-      case 'Public':
-        return 'Data downloads for this study are public. Data are available without logging in.';
-      case 'Controlled':
-        return isUserApproved ? (
-          'You have been granted access to download the data.'
-        ) : (
-          <>
-            To download data, please {requestAccessButton}. Data will be
-            available immediately after submitting the request.
-          </>
-        );
-      case 'Protected':
-      default:
-        return isUserApproved ? (
-          'You have been granted access to download the data.'
-        ) : (
-          <>
-            To download data, please {requestAccessButton}. Data will be
-            available upon study team review and approval.
-          </>
-        );
+    if (typeof record.attributes.custom_download_tab === 'string') {
+      return (
+        <Banner
+          banner={{
+            type: 'info',
+            message: safeHtml(
+              record.attributes.custom_download_tab,
+              null,
+              'div'
+            ),
+          }}
+        />
+      );
+    } else {
+      switch (study_access) {
+        case 'Prerelease':
+          return 'Data downloads for this study are not yet available on this website.';
+        case 'Public':
+          return 'Data downloads for this study are public. Data are available without logging in.';
+        case 'Controlled':
+          return isUserApproved ? (
+            'You have been granted access to download the data.'
+          ) : (
+            <>
+              To download data, please {requestAccessButton}. Data will be
+              available immediately after submitting the request.
+            </>
+          );
+        case 'Protected':
+        default:
+          return isUserApproved ? (
+            'You have been granted access to download the data.'
+          ) : (
+            <>
+              To download data, please {requestAccessButton}. Data will be
+              available upon study team review and approval.
+            </>
+          );
+      }
     }
   }
 

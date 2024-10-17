@@ -4,16 +4,38 @@ import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
 
 import { BlastWorkspace } from '../components/BlastWorkspace';
 import { BlastWorkspaceResult } from '../components/BlastWorkspaceResult';
+import { ReactNode } from 'react';
 
-export function BlastWorkspaceRouter() {
-  const { path } = useRouteMatch();
+interface Props {
+  workspaceHeading?: ReactNode;
+  workspaceShortName?: string;
+  helpPageUrl: string;
+  submitButtonText?: string;
+}
+
+export function BlastWorkspaceRouter(props: Props) {
+  const { path, url } = useRouteMatch();
+  const {
+    workspaceHeading,
+    workspaceShortName,
+    helpPageUrl,
+    submitButtonText,
+  } = props;
 
   return (
     <Switch>
       <Route
         path={`${path}/:tab(new|all|help)?`}
         exact
-        component={BlastWorkspace}
+        render={() => (
+          <BlastWorkspace
+            helpPageUrl={helpPageUrl}
+            workspaceUrl={url}
+            workspaceHeading={workspaceHeading}
+            workspaceShortName={workspaceShortName}
+            submitButtonText={submitButtonText}
+          />
+        )}
       />
       <Route
         path={`${path}/result/:jobId/combined`}
@@ -25,6 +47,7 @@ export function BlastWorkspaceRouter() {
             <BlastWorkspaceResult
               jobId={jobId}
               selectedResult={{ type: 'combined' }}
+              workspaceShortName={workspaceShortName}
             />
           );
         }}
@@ -43,6 +66,7 @@ export function BlastWorkspaceRouter() {
                 type: 'individual',
                 resultIndex,
               }}
+              workspaceShortName={workspaceShortName}
             />
           );
         }}
@@ -54,7 +78,11 @@ export function BlastWorkspaceRouter() {
           const jobId = props.match.params.jobId as string;
 
           return (
-            <BlastWorkspaceResult jobId={jobId} selectedResult={undefined} />
+            <BlastWorkspaceResult
+              jobId={jobId}
+              selectedResult={undefined}
+              workspaceShortName={workspaceShortName}
+            />
           );
         }}
       />

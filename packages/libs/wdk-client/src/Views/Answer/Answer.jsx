@@ -155,7 +155,7 @@ function useTableState(props) {
     () => ({
       useStickyHeader: true,
       useStickyFirstNColumns,
-      tableBodyMaxHeight: 'unset',
+      tableBodyMaxHeight: '70vh',
       deriveRowClassName:
         deriveRowClassName &&
         ((record) => deriveRowClassName({ recordClass, record })),

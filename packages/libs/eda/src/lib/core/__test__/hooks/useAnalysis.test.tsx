@@ -17,6 +17,7 @@ import {
 import SubsettingClient from '../../api/SubsettingClient';
 import { DownloadClient } from '../../api/DownloadClient';
 import { ComputeClient } from '../../api/ComputeClient';
+import { PropsWithChildren } from 'react';
 
 const analysisId = '123';
 
@@ -69,7 +70,7 @@ const analysisClient: AnalysisClient = {
   },
 } as AnalysisClient;
 
-const wrapper: React.ComponentType = ({ children }) => (
+const wrapper: React.FC<PropsWithChildren> = ({ children }) => (
   <WorkspaceContext.Provider
     value={{
       analysisClient,

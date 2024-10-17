@@ -4,6 +4,19 @@
 
 $expand-child-row-toggle-width: 3em;
 
+dialog {
+  border: none;
+  border-radius: 0.25em;
+  &::backdrop {
+    background-color: #000000a8;
+  }
+}
+
+// Prevent scrollbar on body when dialog is open
+body:has(dialog[open]) {
+  overflow: hidden;
+}
+
 body,
 h1,
 h2,

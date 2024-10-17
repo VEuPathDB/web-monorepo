@@ -31,7 +31,10 @@ class RowCounter extends React.PureComponent {
       : start - 1 + rowsPerPage;
 
     let filterString = !filteredRowCount ? null : (
-      <span className="faded"> (filtered from a total of {count})</span>
+      <span className="faded">
+        {' '}
+        (filtered from a total of {count.toLocaleString()})
+      </span>
     );
     const remainingRowCount = !filteredRowCount
       ? count
@@ -39,7 +42,7 @@ class RowCounter extends React.PureComponent {
 
     let countString = (
       <span>
-        <b>{remainingRowCount}</b> {noun}
+        <b>{remainingRowCount.toLocaleString()}</b> {noun}
       </span>
     );
     let allResultsShown =

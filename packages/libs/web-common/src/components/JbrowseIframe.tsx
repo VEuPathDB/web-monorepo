@@ -140,11 +140,11 @@ export function JbrowseIframe(props: Props) {
       </div>
       <iframe
         key={'jbrowse-iframe-' + counter}
+        referrerPolicy="no-referrer"
         onLoad={onLoad}
         src={jbrowseUrl + '&tracklist=0&nav=1&overview=0&fullviewlink=0&menu=0'}
         width="100%"
         height={height}
-        scrolling="no"
         allowFullScreen={false}
       />
     </div>

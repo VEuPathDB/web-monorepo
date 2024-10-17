@@ -12,7 +12,8 @@
     "src/lib"
   ],
   "sideEffects": [
-    "*.scss"
+    "*.scss",
+    "src/globals.js"
   ],
   "dependencies": {
     "@veupathdb/coreui": "workspace:^",
@@ -99,9 +100,9 @@
     "react-redux": "^7.2.6",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.1",
+    "react-scripts": "5.0.1",
     "read": "^1.0.7",
-    "recoil": "^0.2.0",
+    "recoil": "^0.7.7",
     "redux": "^4.0.0",
     "sass": "^1.56.2",
     "script-loader": "^0.7.2",

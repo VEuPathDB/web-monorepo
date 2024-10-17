@@ -13,4 +13,10 @@
       font-weight: 500;
     }
   }
+
+  .DataRow.grayed-out {
+    td {
+      color: #888;
+    }
+  }
 }

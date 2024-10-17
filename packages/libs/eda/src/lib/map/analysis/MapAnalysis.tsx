@@ -132,7 +132,7 @@ export function MapAnalysis(props: Props) {
 
   if (geoConfigs == null || geoConfigs.length === 0)
     return (
-      <Page requireLogin={false}>
+      <Page>
         <h1>Incompatible Study</h1>
         <div css={{ fontSize: '1.2em' }}>
           <p>This study does not contain map-specific variables.</p>
@@ -141,7 +141,7 @@ export function MapAnalysis(props: Props) {
     );
   if (appStateAndSetters.analysisState.error) {
     return (
-      <Page requireLogin={false}>
+      <Page>
         <AnalysisError
           error={appStateAndSetters.analysisState.error}
           baseAnalysisPath={location.pathname}

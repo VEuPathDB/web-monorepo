@@ -92,12 +92,16 @@ export function useAlgorithmParamProps(
         .filter(
           ([value]) =>
             canChangeWdkRecordType ||
-            enabledAlgorithmsForWdkRecordType?.includes(value)
+            enabledAlgorithmsForWdkRecordType?.includes(value) ||
+            enabledAlgorithmsForWdkRecordType === '_ALL_'
         )
         .map(([value, display]) => ({
           value,
           display: safeHtml(display),
-          disabled: !enabledAlgorithmsForTargetType?.includes(value),
+          disabled:
+            enabledAlgorithmsForTargetType != null &&
+            enabledAlgorithmsForTargetType !== '_ALL_' &&
+            !enabledAlgorithmsForTargetType.includes(value),
         })),
     [
       parameter,
@@ -114,14 +118,20 @@ export function useAlgorithmParamProps(
     state.question.urlSegment
   );
 
+  // If the selected algorithm is not enabled for the selected
+  // record type, then default to the first available algorithm
+  // that is enabled for the selected record type.
+  // This can happen if the user selects a new record type
+  // that does not include the previously selected algorithm.
   useEffect(() => {
     if (
       enabledAlgorithmsForTargetType != null &&
+      enabledAlgorithmsForTargetType !== '_ALL_' &&
       !enabledAlgorithmsForTargetType.includes(algorithm)
     ) {
       onChange(enabledAlgorithmsForTargetType[0]);
     }
-  }, [algorithm, enabledAlgorithmsForTargetType, onChange]);
+  }, [algorithm, enabledAlgorithmsForTargetType, onChange, parameter]);
 
   return {
     items,
@@ -186,7 +196,7 @@ async function fetchDefaultAlgorithmAdvancedParams(
   const searchName = question.urlSegment;
 
   const advancedParamNames =
-    question.groupsByName[ADVANCED_PARAMS_GROUP_NAME].parameters;
+    question.groupsByName[ADVANCED_PARAMS_GROUP_NAME]?.parameters ?? [];
   const defaultAdvancedParams = advancedParamNames.map(
     (advancedParamName) => question.parametersByName[advancedParamName]
   );

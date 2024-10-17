@@ -10,6 +10,9 @@ import { OrthoMCLHomePageController } from 'ortho-client/controllers/OrthoMCLHom
 import { ProteomeSummaryController } from 'ortho-client/controllers/ProteomeSummaryController';
 import { GroupClusterGraphController } from 'ortho-client/controllers/GroupClusterGraphController';
 
+import { blastRoutes } from './blastRoutes';
+import { proteinMappingRoutes } from './proteinMappingRoutes';
+
 export function wrapRoutes(ebrcRoutes: RouteEntry[]): RouteEntry[] {
   return [
     {
@@ -33,6 +36,8 @@ export function wrapRoutes(ebrcRoutes: RouteEntry[]): RouteEntry[] {
       path: '/search',
       component: () => <SiteSearchController offerOrganismFilter={false} />,
     },
+    ...blastRoutes,
+    ...proteinMappingRoutes,
     ...ebrcRoutes,
   ];
 }

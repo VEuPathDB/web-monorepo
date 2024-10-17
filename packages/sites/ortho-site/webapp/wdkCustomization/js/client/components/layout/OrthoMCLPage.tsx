@@ -239,9 +239,9 @@ function useHeaderMenuItems() {
         items: [
           {
             key: 'proteome-upload',
-            display: 'Assign proteins to groups in Galaxy',
+            display: 'Map proteins to OrthoMCL with DIAMOND blastp',
             type: 'reactRoute',
-            url: '/galaxy-orientation',
+            url: '/workspace/map-proteins/new',
           },
           {
             key: 'blast',
@@ -275,12 +275,6 @@ function useHeaderMenuItems() {
         display: 'My Workspace',
         type: 'subMenu',
         items: [
-          {
-            key: 'galaxy-analyses',
-            display: 'Assign my proteins to groups in Galaxy',
-            type: 'reactRoute',
-            url: '/galaxy-orientation',
-          },
           {
             key: 'basket',
             display: 'My baskets',

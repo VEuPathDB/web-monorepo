@@ -83,12 +83,10 @@ export function useIndividualResultProps({
       actionMeta: ActionMeta<IndividualQueryOption>
     ) => {
       if (actionMeta.action === 'select-option' && selection != null) {
-        history.push(
-          `/workspace/blast/result/${jobId}/individual/${selection.value}`
-        );
+        history.push(selection.value.toString());
       }
     },
-    [history, jobId]
+    [history]
   );
 
   const answerResultConfig = useMemo(

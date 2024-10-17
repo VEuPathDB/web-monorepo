@@ -45,6 +45,8 @@ export type BaseProps<M extends NumberOrDateRange> = {
   disabled?: boolean;
   /** specify the height of the input element */
   inputHeight?: number;
+  /** add 'inclusive' text after the second range box */
+  inclusive?: boolean;
 };
 
 export type NumberRangeInputProps = BaseProps<NumberRange> & { step?: number };
@@ -89,6 +91,7 @@ function BaseInput({
   // add disabled prop to disable input fields
   disabled = false,
   inputHeight,
+  inclusive = false,
   ...props
 }: BaseInputProps) {
   if (validator && required)
@@ -267,6 +270,23 @@ function BaseInput({
             disabled={disabled}
             inputHeight={inputHeight}
           />
+        )}
+        {inclusive && (
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            {/* change margin */}
+            <div
+              style={{
+                margin: 'auto 10px',
+              }}
+            >
+              <Typography
+                variant="button"
+                style={{ color: disabled ? MEDIUM_GRAY : DARKEST_GRAY }}
+              >
+                inclusive
+              </Typography>
+            </div>
+          </div>
         )}
         {showClearButton && (
           <Button

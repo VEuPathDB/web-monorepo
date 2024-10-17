@@ -27,6 +27,8 @@ import { apiActions } from './components/strategies/ApiStepDetailsActions';
 import { VEuPathDBHomePage } from './components/homepage/VEuPathDBHomePage';
 import { BlockRecordAttributeSection } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
 
+import GenomicsIndexController from './controllers/GenomicsIndexController';
+
 import './record-page-new-feature.scss';
 
 import {
@@ -38,6 +40,7 @@ import { workspaceThemeOptions as MUIThemeOptions } from '@veupathdb/eda/lib/wor
 
 import UIThemeProvider from '@veupathdb/coreui/lib/components/theming/UIThemeProvider';
 import { colors } from '@veupathdb/coreui';
+import { ErrorBoundary } from '@veupathdb/wdk-client/lib/Controllers';
 
 export const SiteHeader = () => ApiSiteHeader;
 
@@ -479,12 +482,16 @@ export function StrategyWorkspaceController(DefaultComponent) {
   };
 }
 
+export function IndexController() {
+  return GenomicsIndexController;
+}
+
 export function Page() {
   return function VuPathDBPage(props) {
     useScrollUpOnRouteChange();
 
     const location = useLocation();
-    const isHomePage = location.pathname === '/';
+    const isHomePage = location.pathname === '/' || props.isAccessDenied;
     const params = new URLSearchParams(location.search);
     const galaxyUrl = params.get('galaxy_url');
     const MUITheme = createMUITheme(MUIThemeOptions);

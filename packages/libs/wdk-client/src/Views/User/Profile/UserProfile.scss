@@ -1,0 +1,95 @@
+.wdk-UserProfile {
+  h1 {
+    padding: 0;
+    margin: 0.5em 0;
+  }
+
+  > * + * {
+    margin-block-start: 1em;
+  }
+
+  &-banner {
+    font-size: 1.3em;
+    display: inline-block;
+    padding: 0.4em 1.2em;
+    border-radius: 7px;
+    border: 1px solid #d3d3d3;
+  }
+
+  &-modified {
+    background: lightblue;
+  }
+
+  &-pending {
+    background: lightyellow;
+  }
+
+  &-error {
+    background: rgba(125, 0, 0, 0.4);
+  }
+
+  &-success {
+    background: rgba(0, 125, 0, 0.4);
+  }
+
+  &-profileForm fieldset {
+    margin-bottom: 2em;
+    display: inline;
+  }
+
+  &-profileForm legend {
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  &-profileForm i {
+    color: red;
+    font-size: 0.75em;
+    margin-right: 0.4em;
+  }
+
+  &-profileForm fieldset > div {
+    padding: 0.3em;
+  }
+
+  &-profileForm fieldset {
+    vertical-align: top;
+  }
+
+  &-profileForm label {
+    display: inline-block;
+    width: 11em;
+    font-weight: bold;
+    padding-right: 1em;
+    text-align: right;
+    vertical-align: top;
+  }
+
+  &-profileForm input[type='text|email'] {
+    display: inline-block;
+  }
+
+  &-profileForm .wdk-CheckboxListItem {
+    display: inline;
+    line-height: 1.5em;
+  }
+
+  &-profileForm .wdk-CheckboxListItem label {
+    text-align: left;
+  }
+
+  &-profileForm .wdk-CheckboxListItem:nth-child(6n):after {
+    content: ' ';
+    display: block;
+  }
+
+  &-profileForm .wdk-CheckboxListItem input {
+    margin-right: 0.5em;
+  }
+
+  input,
+  select,
+  textarea {
+    max-width: 73vw;
+  }
+}

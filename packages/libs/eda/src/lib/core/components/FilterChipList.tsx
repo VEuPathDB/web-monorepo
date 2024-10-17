@@ -65,8 +65,12 @@ export default function FilterChipList(props: Props) {
                 filterValueDisplay = filter.dateSet.join(' | ');
                 break;
               case 'numberRange':
+                filterValueDisplay = `from ${filter.min} to ${filter.max}, inclusive`;
+                break;
               case 'dateRange':
-                filterValueDisplay = `from ${filter.min} to ${filter.max}`;
+                filterValueDisplay = `from ${filter.min.split('T')[0]} to ${
+                  filter.max.split('T')[0]
+                }, inclusive`;
                 break;
               case 'multiFilter':
                 filterValueDisplay = filter.subFilters

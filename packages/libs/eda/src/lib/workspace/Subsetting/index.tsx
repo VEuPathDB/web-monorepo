@@ -65,21 +65,15 @@ export default function Subsetting({
     [entity, variable]
   );
 
-  if (
-    entity == null ||
-    (!Variable.is(variable) && !MultiFilterVariable.is(variable))
-  ) {
-    return <div>Could not find specified variable.</div>;
-  }
-
   if (multiFilterParent) {
     return <Redirect to={multiFilterParent.id} />;
   }
 
-  const totalEntityCount = totalCounts && totalCounts[entity.id];
+  const totalEntityCount = totalCounts && entity && totalCounts[entity.id];
 
   // This will give you the count of rows for the current entity.
-  const filteredEntityCount = filteredCounts && filteredCounts[entity.id];
+  const filteredEntityCount =
+    filteredCounts && entity && filteredCounts[entity.id];
 
   const starredVariables = analysisState.analysis?.descriptor.starredVariables;
 
@@ -88,22 +82,27 @@ export default function Subsetting({
       <div className="Variables">
         <VariableTree
           scope={scope}
-          entityId={entity.id}
+          entityId={entity?.id}
           starredVariables={starredVariables}
           toggleStarredVariable={toggleStarredVariable}
-          variableId={variable.id}
+          variableId={variable?.id}
           variableLinkConfig={variableLinkConfig}
         />
       </div>
 
       <div className="Filter">
-        <VariableDetails
-          entity={entity}
-          variable={variable}
-          analysisState={analysisState}
-          totalEntityCount={totalEntityCount}
-          filteredEntityCount={filteredEntityCount}
-        />
+        {entity == null ||
+        (!Variable.is(variable) && !MultiFilterVariable.is(variable)) ? (
+          <div>Could not find specified variable in this study.</div>
+        ) : (
+          <VariableDetails
+            entity={entity}
+            variable={variable}
+            analysisState={analysisState}
+            totalEntityCount={totalEntityCount}
+            filteredEntityCount={filteredEntityCount}
+          />
+        )}
       </div>
     </div>
   );
