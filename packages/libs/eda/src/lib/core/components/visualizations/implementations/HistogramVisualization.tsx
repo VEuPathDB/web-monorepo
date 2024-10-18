@@ -617,6 +617,8 @@ function HistogramViz(props: VisualizationProps<Options>) {
           ]),
           filteredCounts: filteredCounts.value,
           xAxisVariable,
+          filters,
+          providedOverlayVariable,
         };
 
   const data = useCachedPromise(async (): Promise<
@@ -624,8 +626,13 @@ function HistogramViz(props: VisualizationProps<Options>) {
   > => {
     if (!dataRequestProps) throw new Error('dataRequestProps is not defined');
 
-    const { dataRequestConfig, filteredCounts, xAxisVariable } =
-      dataRequestProps;
+    const {
+      dataRequestConfig,
+      filteredCounts,
+      xAxisVariable,
+      filters,
+      providedOverlayVariable,
+    } = dataRequestProps;
 
     if (
       !variablesAreUnique([
