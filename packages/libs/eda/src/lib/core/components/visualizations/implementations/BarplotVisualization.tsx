@@ -20,7 +20,6 @@ import DataClient, {
   BarplotRequestParams,
 } from '../../../api/DataClient';
 
-import { usePromise } from '../../../hooks/promise';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import {
   useDataClient,
@@ -105,6 +104,7 @@ import { useDeepValue } from '../../../hooks/immutability';
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
 import { useOutputEntity } from '../../../hooks/findOutputEntity';
+import { useCachedPromise } from '../../../hooks/cachedPromise';
 
 // export
 export type BarplotDataWithStatistics = (
@@ -381,136 +381,141 @@ function BarplotViz(props: VisualizationProps<Options>) {
     [options, providedOverlayVariable, providedOverlayVariableDescriptor]
   );
 
-  const dataRequestConfig: DataRequestConfig = useDeepValue(
-    pick(vizConfig, [
-      'xAxisVariable',
-      'overlayVariable',
-      'facetVariable',
-      'valueSpec',
-      'showMissingness',
-    ])
-  );
-
-  const data = usePromise(
-    useCallback(async (): Promise<BarplotDataWithStatistics | undefined> => {
-      if (
-        variable == null ||
-        filteredCounts.pending ||
-        filteredCounts.value == null
-      )
-        return undefined;
-
-      if (
-        !variablesAreUnique([
+  // See HistogramVisualization for explanation
+  const dataRequestDeps =
+    variable == null || filteredCounts.pending || filteredCounts.value == null
+      ? undefined
+      : {
+          dataRequestConfig: pick(vizConfig, [
+            'xAxisVariable',
+            'overlayVariable',
+            'facetVariable',
+            'valueSpec',
+            'showMissingness',
+          ]),
+          filteredCounts: filteredCounts.value,
           variable,
-          overlayVariable && (providedOverlayVariable ?? overlayVariable),
-          facetVariable,
-        ])
-      )
-        throw new Error(nonUniqueWarning);
-
-      assertValidInputVariables(
-        inputs,
-        selectedVariables,
-        entities,
-        dataElementConstraints,
-        dataElementDependencyOrder
-      );
-
-      if (outputEntity == null) return undefined;
-
-      const params =
-        options?.getRequestParams?.({
-          studyId,
           filters,
-          vizConfig: dataRequestConfig,
-          outputEntityId: outputEntity.id,
-        }) ??
-        getRequestParams(
-          studyId,
-          filters ?? [],
-          dataRequestConfig,
-          outputEntity
-        );
+          providedOverlayVariable,
+        };
 
-      const response = await dataClient.getBarplot(
-        computation.descriptor.type,
-        params
-      );
+  const data = useCachedPromise(async (): Promise<
+    BarplotDataWithStatistics | undefined
+  > => {
+    if (!dataRequestDeps) throw new Error('dataRequestDeps not defined');
 
-      // figure out if we need to show the missing data for the stratification variables
-      // if it has no incomplete cases we don't have to
-      const showMissingOverlay =
-        dataRequestConfig.showMissingness &&
-        hasIncompleteCases(
-          overlayEntity,
-          overlayVariable,
-          outputEntity,
-          filteredCounts.value,
-          response.completeCasesTable
-        );
-      const showMissingFacet =
-        dataRequestConfig.showMissingness &&
-        hasIncompleteCases(
-          facetEntity,
-          facetVariable,
-          outputEntity,
-          filteredCounts.value,
-          response.completeCasesTable
-        );
-
-      const vocabulary = fixLabelsForNumberVariables(
-        variable?.vocabulary,
-        variable
-      );
-      const overlayVocabulary =
-        (overlayVariable && options?.getOverlayVocabulary?.()) ??
-        fixLabelsForNumberVariables(
-          overlayVariable?.vocabulary,
-          overlayVariable
-        );
-      const facetVocabulary = fixLabelsForNumberVariables(
-        facetVariable?.vocabulary,
-        facetVariable
-      );
-
-      return grayOutLastSeries(
-        substituteUnselectedToken(
-          reorderData(
-            barplotResponseToData(
-              response,
-              variable,
-              overlayVariable,
-              facetVariable
-            ),
-            vocabulary,
-            vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
-            vocabularyWithMissingData(facetVocabulary, showMissingFacet)
-          )
-        ),
-        showMissingOverlay
-      );
-    }, [
+    const {
+      dataRequestConfig,
+      filteredCounts,
       variable,
-      outputEntity,
-      filteredCounts.pending,
-      filteredCounts.value,
-      overlayVariable,
-      facetVariable,
+      filters,
+      providedOverlayVariable,
+    } = dataRequestDeps;
+
+    if (
+      !variablesAreUnique([
+        variable,
+        overlayVariable && (providedOverlayVariable ?? overlayVariable),
+        facetVariable,
+      ])
+    )
+      throw new Error(nonUniqueWarning);
+
+    assertValidInputVariables(
       inputs,
       selectedVariables,
       entities,
       dataElementConstraints,
-      dataElementDependencyOrder,
-      filters,
-      studyId,
-      dataRequestConfig,
-      dataClient,
+      dataElementDependencyOrder
+    );
+
+    if (outputEntity == null) return undefined;
+
+    const params =
+      options?.getRequestParams?.({
+        studyId,
+        filters,
+        vizConfig: dataRequestConfig,
+        outputEntityId: outputEntity.id,
+      }) ??
+      getRequestParams(studyId, filters ?? [], dataRequestConfig, outputEntity);
+
+    const response = await dataClient.getBarplot(
       computation.descriptor.type,
-      overlayEntity,
-      facetEntity,
-    ])
-  );
+      params
+    );
+
+    // figure out if we need to show the missing data for the stratification variables
+    // if it has no incomplete cases we don't have to
+    const showMissingOverlay =
+      dataRequestConfig.showMissingness &&
+      hasIncompleteCases(
+        overlayEntity,
+        overlayVariable,
+        outputEntity,
+        filteredCounts,
+        response.completeCasesTable
+      );
+    const showMissingFacet =
+      dataRequestConfig.showMissingness &&
+      hasIncompleteCases(
+        facetEntity,
+        facetVariable,
+        outputEntity,
+        filteredCounts,
+        response.completeCasesTable
+      );
+
+    const vocabulary = fixLabelsForNumberVariables(
+      variable?.vocabulary,
+      variable
+    );
+    const overlayVocabulary =
+      (overlayVariable && options?.getOverlayVocabulary?.()) ??
+      fixLabelsForNumberVariables(overlayVariable?.vocabulary, overlayVariable);
+    const facetVocabulary = fixLabelsForNumberVariables(
+      facetVariable?.vocabulary,
+      facetVariable
+    );
+
+    return grayOutLastSeries(
+      substituteUnselectedToken(
+        reorderData(
+          barplotResponseToData(
+            response,
+            variable,
+            overlayVariable,
+            facetVariable
+          ),
+          vocabulary,
+          vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
+          vocabularyWithMissingData(facetVocabulary, showMissingFacet)
+        )
+      ),
+      showMissingOverlay
+    );
+  }, [dataRequestDeps]);
+
+  //      variable,
+  //      outputEntity,
+  //      filteredCounts.pending,
+  //      filteredCounts.value,
+  //      overlayVariable,
+  //      facetVariable,
+  //      inputs,
+  //      selectedVariables,
+  //      entities,
+  //      dataElementConstraints,
+  //      dataElementDependencyOrder,
+  //      filters,
+  //      studyId,
+  //      dataRequestConfig,
+  //      dataClient,
+  //      computation.descriptor.type,
+  //      overlayEntity,
+  //      facetEntity,
+  //    ]
+  //  );
 
   const outputSize =
     (overlayVariable != null || facetVariable != null) &&
