@@ -6,8 +6,16 @@
     margin: 0;
     padding: 22px 0 8px 0;
   }
-  .formSection > label {
-    font-size: medium;
+  .formSection {
+    & + & {
+      margin-block-start: 0.5em;
+    }
+    > * + * {
+      margin-block-start: 0.25em;
+    }
+    > label {
+      font-size: medium;
+    }
   }
   #data-set-name {
     min-width: 300px;
@@ -42,6 +50,7 @@
 
     li > label {
       display: grid;
+      align-items: baseline;
       grid-template-columns: auto 10em 1fr;
 
       label {
