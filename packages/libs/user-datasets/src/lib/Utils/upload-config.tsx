@@ -2,10 +2,113 @@ import { intersection } from 'lodash';
 
 import { DatasetUploadPageConfig, DatasetUploadTypeConfig } from './types';
 
-type ImplementedUploadTypes = 'biom' | 'genelist' | 'isasimple';
+type ImplementedUploadTypes =
+  | 'biom'
+  | 'genelist'
+  | 'isasimple'
+  | 'bw'
+  | 'rnaseq';
 
 export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
   {
+    rnaseq: {
+      type: 'rnaseq',
+      uploadTitle: 'Upload My RNASeq Data Set',
+      formConfig: {
+        summary: {
+          inputProps: {
+            placeholder: 'brief summary of the study in a few sentences',
+          },
+        },
+        description: {
+          inputProps: {
+            required: false,
+            placeholder: 'optional longer description of the summary',
+          },
+        },
+        renderInfo: () => (
+          <p className="formInfo">
+            Please upload a zip file with your RNASeq results: your bigWig and
+            fpkm fastq files containing your processed reads.
+            <br />
+            Each file in the collection of FPKM or TPM files should be a two
+            column tab-delimited file where the first column contains gene ids,
+            and the second column contains normalized counts for each gene,
+            either FPKM or TPM. The first line must have column headings
+            'gene_id' and either 'FPKM' or 'TMP'.
+            <br />
+            <br />
+            The files must be mapped to the reference genome that you select
+            below.
+            <br />
+            Only letters, numbers, spaces and dashes are allowed in the file
+            name.
+            <br />
+            Please restrict the name to 100 characters or less.
+          </p>
+        ),
+        uploadMethodConfig: {
+          file: {
+            maxSizeBytes: 100 * 1000 * 1000, // 100MB
+            render: ({ fieldNode }) => (
+              <>
+                {fieldNode}
+                <div style={{ marginTop: '0.25em' }}>
+                  File must be less than 100MB
+                </div>
+              </>
+            ),
+          },
+        },
+      },
+    },
+    bw: {
+      type: 'bw',
+      uploadTitle: 'Upload My bigWig Data Set',
+      formConfig: {
+        summary: {
+          inputProps: {
+            placeholder: 'brief summary in a few sentences',
+          },
+        },
+        description: {
+          inputProps: {
+            required: false,
+            placeholder: 'optional longer description of the summary.',
+          },
+        },
+        renderInfo: () => (
+          <p className="formInfo">
+            We accept any file in the{' '}
+            <a href="https://genome.ucsc.edu/goldenpath/help/bigWig.html">
+              bigWig format
+            </a>
+            .
+            <br />
+            The bigwig files you select here must be mapped to the reference
+            genome that you select below.
+            <br />
+            Only letters, numbers, spaces and dashes are allowed in the file
+            name.
+            <br />
+            Please restrict the name to 100 characters or less.
+          </p>
+        ),
+        uploadMethodConfig: {
+          file: {
+            maxSizeBytes: 100 * 1000 * 1000, // 100MB
+            render: ({ fieldNode }) => (
+              <>
+                {fieldNode}
+                <div style={{ marginTop: '0.25em' }}>
+                  File must be less than 100MB
+                </div>
+              </>
+            ),
+          },
+        },
+      },
+    },
     biom: {
       type: 'biom',
       uploadTitle: 'Upload My Data Set',

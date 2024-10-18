@@ -14,7 +14,7 @@ const UserDatasetRouter = React.lazy(
   () => import('./controllers/UserDatasetRouter')
 );
 
-const availableUploadTypes = ['genelist'];
+const availableUploadTypes = ['genelist', 'bw', 'rnaseq'];
 
 const USER_DATASETS_HELP_PAGE = 'user_datasets_help.html';
 
