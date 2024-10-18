@@ -496,27 +496,6 @@ function BarplotViz(props: VisualizationProps<Options>) {
     );
   }, [dataRequestDeps]);
 
-  //      variable,
-  //      outputEntity,
-  //      filteredCounts.pending,
-  //      filteredCounts.value,
-  //      overlayVariable,
-  //      facetVariable,
-  //      inputs,
-  //      selectedVariables,
-  //      entities,
-  //      dataElementConstraints,
-  //      dataElementDependencyOrder,
-  //      filters,
-  //      studyId,
-  //      dataRequestConfig,
-  //      dataClient,
-  //      computation.descriptor.type,
-  //      overlayEntity,
-  //      facetEntity,
-  //    ]
-  //  );
-
   const outputSize =
     (overlayVariable != null || facetVariable != null) &&
     !vizConfig.showMissingness
