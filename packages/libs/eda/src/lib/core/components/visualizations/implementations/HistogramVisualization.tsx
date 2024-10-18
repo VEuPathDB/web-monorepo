@@ -627,7 +627,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
   const data = useCachedPromise(async (): Promise<
     HistogramDataWithCoverageStatistics | undefined
   > => {
-    if (!dataRequestDeps) throw new Error('dataRequestDeps is not defined');
+    if (!dataRequestDeps) throw new Error('dataRequestDeps is undefined');
 
     const {
       dataRequestConfig,

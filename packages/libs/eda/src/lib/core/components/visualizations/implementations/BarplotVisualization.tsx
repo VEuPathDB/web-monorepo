@@ -429,7 +429,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
       dataElementDependencyOrder
     );
 
-    if (outputEntity == null) return undefined;
+    if (outputEntity == null) throw new Error('outputEntity is undefined');
 
     const params =
       options?.getRequestParams?.({
