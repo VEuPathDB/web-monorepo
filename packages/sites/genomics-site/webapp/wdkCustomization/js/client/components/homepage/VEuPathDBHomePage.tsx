@@ -73,6 +73,7 @@ import { Tooltip, Warning } from '@veupathdb/coreui';
 
 import './VEuPathDBHomePage.scss';
 import { searchTree } from '../../selectors/QueryGridSelectors';
+import { ProfileModal } from '@veupathdb/web-common/lib/components/ProfileModal';
 
 const vpdbCx = makeVpdbClassNameHelper('');
 
@@ -287,6 +288,7 @@ const VEuPathDBHomePageViewStandard: FunctionComponent<Props> = (props) => {
             </ErrorBoundary>
           )}
           <Main containerClassName={mainClassName}>{props.children}</Main>
+          <ProfileModal />
           {isHomePage && (
             <ErrorBoundary>
               <NewsPane
@@ -487,12 +489,6 @@ const useHeaderMenuItems = (
           },
         },
         {
-          key: 'galaxy',
-          display: 'Galaxy',
-          type: 'reactRoute',
-          url: '/galaxy-orientation',
-        },
-        {
           key: 'jbrowse',
           display: 'Genome browser',
           type: 'reactRoute',
@@ -611,12 +607,6 @@ const useHeaderMenuItems = (
       type: 'subMenu',
       items: [
         {
-          key: 'galaxy-analyses',
-          display: 'Analyze my data (Galaxy)',
-          type: 'reactRoute',
-          url: '/galaxy-orientation',
-        },
-        {
           key: 'basket',
           display: 'My baskets',
           type: 'reactRoute',
@@ -681,12 +671,6 @@ const useHeaderMenuItems = (
           display: `Data sets in ${displayName}`,
           type: 'reactRoute',
           url: '/search/dataset/AllDatasets/result',
-        },
-        {
-          key: 'datasets-in-progress2',
-          display: 'Data sets we are working on',
-          type: 'reactRoute',
-          url: makeStaticPageRoute('/dataInprogress.html'),
         },
         {
           key: 'data-files-eupathdb-beta',

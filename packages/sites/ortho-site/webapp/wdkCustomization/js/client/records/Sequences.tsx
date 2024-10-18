@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { CSSProperties, useMemo, useState } from 'react';
 import TreeTable from '@veupathdb/components/lib/components/tidytree/TreeTable';
 import { RecordTableProps, WrappedComponentProps } from './Types';
 import { useOrthoService } from 'ortho-client/hooks/orthoService';
@@ -20,7 +20,6 @@ import { RowCounter } from '@veupathdb/coreui/lib/components/Mesa';
 import { PfamDomain } from 'ortho-client/components/pfam-domains/PfamDomain';
 import { FloatingButton, SelectList, Undo } from '@veupathdb/coreui';
 import { RecordTable_TaxonCounts_Filter } from './RecordTable_TaxonCounts_Filter';
-import { css, cx } from '@emotion/css';
 import { formatAttributeValue } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { RecordFilter } from '@veupathdb/wdk-client/lib/Views/Records/RecordTable/RecordFilter';
 
@@ -30,7 +29,7 @@ const treeWidth = 200;
 const maxColumnWidth = 200;
 const maxArchitectureLength = maxColumnWidth - 10 - 10 - 1; // 10px padding each side plus a 1px border
 const MIN_SEQUENCES_FOR_TREE = 3;
-const MAX_SEQUENCES_FOR_TREE = 9999;
+const MAX_SEQUENCES_FOR_TREE = 1000;
 
 const PFAM_ARCH_COLUMN_KEY = 'pfamArchitecture';
 
@@ -63,25 +62,19 @@ export function RecordTable_Sequences(
 
   const [highlightedNodes, setHighlightedNodes] = useState<string[]>([]);
 
-  const mesaColumns: MesaColumn<RowType>[] = props.table.attributes
-    .filter(({ isDisplayable }) => isDisplayable)
-    .map(({ name, displayName, type }) => ({
-      key: name,
-      name: displayName,
-      type: type === 'link' ? 'wdkLink' : type,
-    }));
-
   const mesaRows = props.value;
   const pfamRows = props.record.tables['PFams'];
 
   const numSequences = mesaRows.length;
 
   const treeResponse = useOrthoService(
-    numSequences >= MIN_SEQUENCES_FOR_TREE &&
-      numSequences <= MAX_SEQUENCES_FOR_TREE
-      ? (orthoService) => orthoService.getGroupTree(groupName)
-      : () => Promise.resolve(undefined), // avoid making a request we know will fail and cause a "We're sorry, something went wrong." modal
+    (orthoService) => orthoService.getGroupTree(groupName),
     [groupName, numSequences]
+  );
+
+  const treeUrl = useOrthoService(
+    async (orthoService) => orthoService.getGroupTreeUrl(groupName),
+    [groupName]
   );
 
   // deal with Pfam domain architectures
@@ -118,66 +111,59 @@ export function RecordTable_Sequences(
     [mesaRows]
   );
 
-  mesaColumns.unshift({
-    key: PFAM_ARCH_COLUMN_KEY,
-    name: 'Domain architecture',
-    renderCell: (cellProps) => {
-      const proteinId = cellProps.row.full_id as string;
-      const flatPfamData = rowsByAccession[proteinId];
-      if (flatPfamData && flatPfamData.length > 0) {
-        const pfamDomains = flatPfamData.flatMap(extractPfamDomain);
-        const proteinLength = Number(
-          flatPfamData[0]['protein_length'] as string
-        );
-        const architectureLength = Math.floor(
-          (maxArchitectureLength * proteinLength) / maxProteinLength
-        );
-        return (
-          <PfamDomainArchitecture
-            style={{ width: `${architectureLength}px`, top: '10px' }}
-            length={proteinLength}
-            domains={pfamDomains}
-            pfamDescriptions={pfamIdToDescription}
-          />
-        );
-      } else {
-        return <span>no PFAM domains</span>;
-      }
-    },
-  });
+  const mesaColumns = useMemo((): MesaColumn<RowType>[] => {
+    const mesaColumnsFromAttrs: MesaColumn<RowType>[] = props.table.attributes
+      .filter(({ isDisplayable }) => isDisplayable)
+      .map(({ name, displayName, type }) => ({
+        key: name,
+        name: displayName,
+        type: type === 'link' ? 'wdkLink' : type,
+      }));
 
-  // parse the tree and other expensive processing asynchronously
-  const [tree, setTree] = useState<Branch>();
-  const [leaves, setLeaves] = useState<Branch[]>();
-  // default unsorted `sortedRows`!
-  const [sortedRows, setSortedRows] = useState<TableValue>(mesaRows);
+    return [
+      {
+        key: PFAM_ARCH_COLUMN_KEY,
+        name: 'Domain architecture',
+        renderCell: (cellProps) => {
+          const proteinId = cellProps.row.full_id as string;
+          const flatPfamData = rowsByAccession[proteinId];
+          if (flatPfamData && flatPfamData.length > 0) {
+            const pfamDomains = flatPfamData.flatMap(extractPfamDomain);
+            const proteinLength = Number(
+              flatPfamData[0]['protein_length'] as string
+            );
+            const architectureLength = Math.floor(
+              (maxArchitectureLength * proteinLength) / maxProteinLength
+            );
+            return (
+              <PfamDomainArchitecture
+                style={{ width: `${architectureLength}px`, top: '10px' }}
+                length={proteinLength}
+                domains={pfamDomains}
+                pfamDescriptions={pfamIdToDescription}
+              />
+            );
+          } else {
+            return <span>no PFAM domains</span>;
+          }
+        },
+      },
+      ...mesaColumnsFromAttrs,
+    ];
+  }, [
+    maxProteinLength,
+    pfamIdToDescription,
+    props.table.attributes,
+    rowsByAccession,
+  ]);
 
-  useEffect(() => {
-    if (!treeResponse) return;
+  const [tablePageNumber, setTablePageNumber] = useState(1);
 
-    let isMounted = true;
-
-    const fetchTree = async () => {
-      try {
-        // TO DO: these do not actually "do stuff in the background"
-        const parsedTree = await parseNewickAsync(treeResponse.newick);
-        const leaves = await getLeavesAsync(parsedTree);
-        const sortedRows = await sortRowsAsync(leaves, mesaRows);
-        if (isMounted) {
-          setTree(parsedTree);
-          setLeaves(leaves);
-          setSortedRows(sortedRows);
-        }
-      } catch (error) {
-        console.error('Error parsing Newick:', error);
-      }
-    };
-
-    fetchTree();
-
-    return () => {
-      isMounted = false;
-    };
+  const { tree, leaves, sortedRows } = useMemo(() => {
+    const tree = treeResponse == null ? undefined : parseNewick(treeResponse);
+    const leaves = tree && getLeaves(tree);
+    const sortedRows = leaves && sortRows(leaves, mesaRows);
+    return { tree, leaves, sortedRows };
   }, [treeResponse, mesaRows]);
 
   // do some validation on the tree w.r.t. the table
@@ -253,12 +239,12 @@ export function RecordTable_Sequences(
         const leavesCopy = treeCopy.getLeaves();
         leavesRemoved = false; // Reset flag for each iteration
 
-        leavesCopy.forEach((leaf) => {
+        for (const leaf of leavesCopy) {
           if (!filteredRowIds.has(leaf.id)) {
             leaf.remove(true); // remove leaf and remove any dangling ancestors
             leavesRemoved = true; // A leaf was removed, so set flag to true
           }
-        });
+        }
       } while (leavesRemoved); // Continue looping if any leaf was removed
       return treeCopy;
     }
@@ -269,7 +255,7 @@ export function RecordTable_Sequences(
   // make a newick string from the filtered tree if needed
   const finalNewick = useMemo(() => {
     if (filteredTree === tree && treeResponse != null) {
-      return treeResponse.newick; // no filtering so return what we read from the back end
+      return treeResponse; // no filtering so return what we read from the back end
     } else if (
       filteredTree != null &&
       filteredRows != null &&
@@ -278,6 +264,18 @@ export function RecordTable_Sequences(
       return filteredTree.toNewick(); // make new newick data from the filtered tree
     } else return;
   }, [filteredTree, treeResponse, tree, filteredRows]);
+
+  // list of column keys and display names to show in the checkbox dropdown in the table text search box (RecordFilter)
+  const filterAttributes = useMemo(
+    () =>
+      mesaColumns
+        .map(({ key, name }) => ({
+          value: key,
+          display: name ?? 'Unknown column',
+        }))
+        .filter(({ value }) => value !== PFAM_ARCH_COLUMN_KEY),
+    [mesaColumns]
+  );
 
   if (
     !sortedRows ||
@@ -292,11 +290,6 @@ export function RecordTable_Sequences(
       </>
     ); // The loading spinner does not show :-(
   }
-
-  // list of column keys and display names to show in the checkbox dropdown in the table text search box (RecordFilter)
-  const filterAttributes = mesaColumns
-    .map(({ key, name }) => ({ value: key, display: name ?? 'Unknown column' }))
-    .filter(({ value }) => value !== PFAM_ARCH_COLUMN_KEY);
 
   if (
     mesaRows != null &&
@@ -323,32 +316,34 @@ export function RecordTable_Sequences(
     );
   }
 
-  const highlightedRowClassName = cx(
-    css`
-      & td {
-        background-color: ${highlightColor50} !important;
-      }
-    `
-  );
+  const firstRowIndex = (tablePageNumber - 1) * MAX_SEQUENCES_FOR_TREE;
 
   const mesaState: MesaStateProps<RowType> = {
     options: {
       isRowSelected: (row: RowType) =>
         highlightedNodes.includes(row.full_id as string),
-      deriveRowClassName: (row: RowType) =>
-        highlightedNodes.includes(row.full_id as string)
-          ? highlightedRowClassName
-          : undefined,
+      useStickyHeader: true,
+      tableBodyMaxHeight: 'calc(100vh - 200px)', // 200px accounts for header/footer
     },
-    uiState: {},
+    uiState: {
+      pagination: {
+        currentPage: tablePageNumber,
+        rowsPerPage: MAX_SEQUENCES_FOR_TREE,
+        totalRows: filteredRows?.length ?? 0,
+      },
+    },
     rows: sortedRows,
-    filteredRows,
+    filteredRows: filteredRows?.slice(
+      firstRowIndex,
+      firstRowIndex + MAX_SEQUENCES_FOR_TREE
+    ),
     columns: mesaColumns,
     eventHandlers: {
       onRowSelect: (row: RowType) =>
         setHighlightedNodes((prev) => [...prev, row.full_id as string]),
       onRowDeselect: (row: RowType) =>
         setHighlightedNodes((prev) => prev.filter((id) => id !== row.full_id)),
+      onPageChange: (page: number) => setTablePageNumber(page),
     },
   };
 
@@ -396,13 +391,16 @@ export function RecordTable_Sequences(
         value: formatAttributeValue(row.accession),
       }))}
       value={pfamFilterIds}
-      onChange={setPfamFilterIds}
+      onChange={(ids) => {
+        setPfamFilterIds(ids);
+        setTablePageNumber(1);
+      }}
       instantUpdate={true}
     />
   );
 
   const corePeripheralFilter = (
-    <SelectList
+    <SelectList<'core' | 'peripheral'>
       key={`corePeripheralFilter-${resetCounter}`}
       defaultButtonDisplayContent="Core/Peripheral"
       items={[
@@ -416,17 +414,24 @@ export function RecordTable_Sequences(
         },
       ]}
       value={corePeripheralFilterValue}
-      onChange={setCorePeripheralFilterValue}
+      onChange={(value) => {
+        setCorePeripheralFilterValue(value);
+        setTablePageNumber(1);
+      }}
       instantUpdate={true}
     />
   );
 
   const taxonFilter =
     props.record.tables.TaxonCounts?.length > 0 ? (
+      // eslint-disable-next-line react/jsx-pascal-case
       <RecordTable_TaxonCounts_Filter
         key={`taxonFilter-${resetCounter}`}
         selectedSpecies={selectedSpecies}
-        onSpeciesSelected={setSelectedSpecies}
+        onSpeciesSelected={(species) => {
+          setSelectedSpecies(species);
+          setTablePageNumber(1);
+        }}
         record={props.record}
         recordClass={props.recordClass}
         table={props.recordClass.tablesMap.TaxonCounts}
@@ -454,24 +459,45 @@ export function RecordTable_Sequences(
         setCorePeripheralFilterValue([]);
         setSelectedSpecies([]);
         setResetCounter((prev) => prev + 1);
+        setTablePageNumber(1);
       }}
     />
   );
 
+  if (filteredRows == null) return null;
+
   return (
-    <>
-      {numSequences > MAX_SEQUENCES_FOR_TREE && (
-        <div>
-          <strong>
-            Note: no phylogenetic tree is displayed because this group has more
-            than {MAX_SEQUENCES_FOR_TREE.toLocaleString()} sequences.
-          </strong>
+    <div
+      style={
+        {
+          '--row-hl-bg-color': highlightColor50,
+        } as CSSProperties
+      }
+    >
+      {filteredRows.length > MAX_SEQUENCES_FOR_TREE && (
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            borderLeft: '.2em solid rgb(225, 133, 133)',
+            borderRight: '.2em solid rgb(225, 133, 133)',
+            padding: '.5em 1em',
+            background: 'rgb(255, 228, 228)',
+            gap: '1em',
+            marginBottom: '1em',
+            fontWeight: 500,
+          }}
+        >
+          To see a phylogenetic tree please use a filter to display fewer than{' '}
+          {MAX_SEQUENCES_FOR_TREE.toLocaleString()} sequences
         </div>
       )}
       <div
         style={{
           padding: '10px',
           display: 'flex',
+          flexWrap: 'wrap',
+          gap: '1em',
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -485,7 +511,7 @@ export function RecordTable_Sequences(
           selectedColumnFilters={selectedColumnFilters}
           onColumnFilterChange={(keys) => setSelectedColumnFilters(keys)}
         />
-        <div className="MesaComponent">
+        <div className="MesaComponent" style={{ marginRight: 'auto' }}>
           <div className="TableToolbar-Info">
             <RowCounter
               rows={sortedRows}
@@ -512,44 +538,64 @@ export function RecordTable_Sequences(
           {resetButton}
         </div>
       </div>
-      <TreeTable
-        rowHeight={rowHeight}
-        treeProps={treeProps}
-        tableProps={mesaState}
-        hideTree={!finalNewick}
-        maxColumnWidth={maxColumnWidth}
-      />
-      <form action="/cgi-bin/msaOrthoMCL" target="_blank" method="post">
-        <input type="hidden" name="project_id" value="OrthoMCL" />
-        {highlightedNodes.map((id) => (
-          <input type="hidden" name="msa_full_ids" value={id} key={id} />
-        ))}
-        <p>
-          Please note: selecting a large number of proteins will take several
-          minutes to align.
-        </p>
-        <div id="userOptions">
-          <p>
-            Output format: &nbsp;
-            <select name="clustalOutFormat">
-              <option value="clu">Mismatches highlighted</option>
-              <option value="fasta">FASTA</option>
-              <option value="phy">PHYLIP</option>
-              <option value="st">STOCKHOLM</option>
-              <option value="vie">VIENNA</option>
-            </select>
-          </p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <button type="submit" disabled={clustalDisabled}>
-              Run Clustal Omega for selected proteins
-            </button>
-            {clustalDisabled && (
-              <span>(You must select at least two proteins.)</span>
-            )}
-          </div>
+      {filteredRows && filteredRows?.length > Infinity ? (
+        <div>
+          Sorry, too many proteins selected:{' '}
+          {filteredRows.length.toLocaleString()}. Please use filters to select
+          up to {MAX_SEQUENCES_FOR_TREE.toLocaleString()}
         </div>
-      </form>
-    </>
+      ) : (
+        <>
+          <TreeTable
+            rowHeight={rowHeight}
+            treeProps={treeProps}
+            tableProps={mesaState}
+            hideTree={
+              filteredRows?.length > MAX_SEQUENCES_FOR_TREE ||
+              filteredRows?.length < MIN_SEQUENCES_FOR_TREE
+            }
+            maxColumnWidth={maxColumnWidth}
+          ></TreeTable>
+          <form action="/cgi-bin/msaOrthoMCL" target="_blank" method="post">
+            <input type="hidden" name="project_id" value="OrthoMCL" />
+            {highlightedNodes.map((id) => (
+              <input type="hidden" name="msa_full_ids" value={id} key={id} />
+            ))}
+            <p>
+              Please note: selecting a large number of proteins will take
+              several minutes to align.
+            </p>
+            <div id="userOptions">
+              <p>
+                Output format: &nbsp;
+                <select name="clustalOutFormat">
+                  <option value="clu">Mismatches highlighted</option>
+                  <option value="fasta">FASTA</option>
+                  <option value="phy">PHYLIP</option>
+                  <option value="st">STOCKHOLM</option>
+                  <option value="vie">VIENNA</option>
+                </select>
+              </p>
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
+              >
+                <button type="submit" disabled={clustalDisabled}>
+                  Run Clustal Omega for selected proteins
+                </button>
+                {clustalDisabled && (
+                  <span>(You must select at least two proteins.)</span>
+                )}
+              </div>
+            </div>
+          </form>
+        </>
+      )}
+      <p>
+        <a href={treeUrl}>
+          <i className="fa fa-download"></i> Download raw newick file
+        </a>
+      </p>
+    </div>
   );
 }
 
@@ -608,45 +654,28 @@ function truncate_full_id_for_tree_comparison(full_id: string): string {
   return truncated_id;
 }
 
-async function parseNewickAsync(treeResponse: string): Promise<Branch> {
-  return new Promise((resolve) => {
-    const result = parseNewick(treeResponse);
-    resolve(result);
-  });
+function getLeaves(tree: Branch): Branch[] {
+  return tree.getLeaves();
 }
 
-async function getLeavesAsync(tree: Branch): Promise<Branch[]> {
-  return new Promise((resolve) => {
-    const result = tree.getLeaves();
-    resolve(result);
-  });
-}
-
-async function sortRowsAsync(
-  leaves: Branch[],
-  mesaRows: TableValue
-): Promise<TableValue> {
+function sortRows(leaves: Branch[], mesaRows: TableValue): TableValue {
   if (leaves == null) return mesaRows;
 
-  return new Promise((resolve) => {
-    // Some full_ids end in :RNA
-    // However, the Newick files seem to be omitting the colon and everything following it.
-    // (Colons are part of Newick format.)
-    // So we remove anything after a ':' and hope it works!
-    // This is the only place where we use the IDs from the tree file.
+  // Some full_ids end in :RNA
+  // However, the Newick files seem to be omitting the colon and everything following it.
+  // (Colons are part of Newick format.)
+  // So we remove anything after a ':' and hope it works!
+  // This is the only place where we use the IDs from the tree file.
 
-    // make a map for performance
-    const rowMap = new Map(
-      mesaRows.map((row) => [
-        truncate_full_id_for_tree_comparison(row.full_id as string),
-        row,
-      ])
-    );
+  // make a map for performance
+  const rowMap = new Map(
+    mesaRows.map((row) => [
+      truncate_full_id_for_tree_comparison(row.full_id as string),
+      row,
+    ])
+  );
 
-    const result = leaves
-      .map(({ id }) => rowMap.get(id))
-      .filter((row): row is RowType => row != null);
-
-    resolve(result);
-  });
+  return leaves
+    .map(({ id }) => rowMap.get(id))
+    .filter((row): row is RowType => row != null);
 }

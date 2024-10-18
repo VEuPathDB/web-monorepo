@@ -9,20 +9,36 @@ import {
 
 import { BlastWorkspaceAll } from './BlastWorkspaceAll';
 import { BlastWorkspaceHelp } from './BlastWorkspaceHelp';
-import { BlastWorkspaceNew } from './BlastWorkspaceNew';
+import { BlastWorkspaceNew, BlastWorkspaceNewProps } from './BlastWorkspaceNew';
 
 import './BlastWorkspace.scss';
+import { ReactNode } from 'react';
 
 export const blastWorkspaceCx = makeClassNameHelper('BlastWorkspace');
 
-export function BlastWorkspace() {
-  useSetDocumentTitle('BLAST Workspace');
+interface Props {
+  helpPageUrl: string;
+  workspaceUrl: string;
+  workspaceHeading?: ReactNode;
+  workspaceShortName?: string;
+  submitButtonText?: string;
+}
+
+export function BlastWorkspace(props: Props) {
+  const {
+    helpPageUrl,
+    workspaceUrl,
+    workspaceHeading = 'BLAST',
+    workspaceShortName = 'BLAST',
+    submitButtonText = 'BLAST',
+  } = props;
+  useSetDocumentTitle(`${workspaceShortName} Workspace`);
 
   return (
     <div className={blastWorkspaceCx()}>
       <WorkspaceNavigation
-        heading="BLAST"
-        routeBase="/workspace/blast"
+        heading={workspaceHeading}
+        routeBase={workspaceUrl}
         items={[
           {
             display: 'New job',
@@ -40,21 +56,25 @@ export function BlastWorkspace() {
       />
       <Switch>
         <WdkRoute
-          path="/workspace/blast/new"
+          path={workspaceUrl + '/new'}
           requiresLogin={false}
-          component={BlastWorkspaceNew}
+          component={(props: BlastWorkspaceNewProps) => (
+            <BlastWorkspaceNew {...props} submitButtonText={submitButtonText} />
+          )}
         />
         <WdkRoute
-          path="/workspace/blast/all"
+          path={workspaceUrl + '/all'}
           requiresLogin={false}
           component={BlastWorkspaceAll}
         />
         <WdkRoute
-          path="/workspace/blast/help"
+          path={workspaceUrl + '/help'}
           requiresLogin={false}
-          component={BlastWorkspaceHelp}
+          component={() => {
+            return <BlastWorkspaceHelp helpPageUrl={helpPageUrl} />;
+          }}
         />
-        <Redirect to="/workspace/blast/all" />
+        <Redirect to={workspaceUrl + '/all'} />
       </Switch>
     </div>
   );

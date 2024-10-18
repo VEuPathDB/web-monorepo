@@ -92,7 +92,7 @@ function ApiApplicationSpecificProperties(props) {
   return (
     <fieldset>
       <legend>Preferences</legend>
-      <p>Send me email alerts about:</p>
+      <p>Send me email alerts about new updates and features:</p>
       <CheckboxList
         name="emailAlerts"
         items={emailPrefData}

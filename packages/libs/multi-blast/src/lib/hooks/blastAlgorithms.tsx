@@ -1,4 +1,4 @@
-import { useContext, useMemo } from 'react';
+import { useContext } from 'react';
 
 import { keyBy, zip } from 'lodash';
 
@@ -10,6 +10,7 @@ import {
   EnabledAlgorithms,
   TargetMetadataByDataType,
 } from '../utils/targetTypes';
+import WdkService from '@veupathdb/wdk-client/lib/Service/WdkService';
 
 const blastOntologyDatabases: BlastOntologyDatabase[] = [
   'blast-est-ontology',
@@ -24,82 +25,96 @@ const algorithmTermTables: Record<BlastOntologyDatabase, string> = {
 export function useEnabledAlgorithms(
   targetDataType: string
 ): EnabledAlgorithms | undefined {
-  const algorithmTermsByDatabase = useAlgorithmTermsByDatabase();
   const targetMetadataByDataType = useContext(TargetMetadataByDataType);
 
-  const enabledAlgorithms = useMemo(() => {
-    if (algorithmTermsByDatabase == null) {
-      return undefined;
-    }
+  const enabledAlgorithms = useWdkService(
+    async (wdkService): Promise<EnabledAlgorithms> => {
+      const targetMetadata = targetMetadataByDataType[targetDataType];
+      const targetOntologyDatabaseName = targetMetadata.blastOntologyDatabase;
+      const targetwdkRecordType = targetMetadata.recordClassUrlSegment;
 
-    const targetMetadata = targetMetadataByDataType[targetDataType];
-    const targetOntologyDatabaseName = targetMetadata.blastOntologyDatabase;
-    const targetwdkRecordType = targetMetadata.recordClassUrlSegment;
+      // If the target datatype does not specify a blastOntologyDatabase,
+      // the allow all provided algorithms.
+      if (targetOntologyDatabaseName == null)
+        return {
+          enabledAlgorithmsForTargetType: '_ALL_',
+          enabledAlgorithmsForWdkRecordType: '_ALL_',
+        };
 
-    const enabledAlgorithmsForTargetType =
-      algorithmTermsByDatabase[targetOntologyDatabaseName];
+      const algorithmTermsByDatabase = await getAlgorithmTermsByDatabase(
+        wdkService
+      );
 
-    const enabledAlgorithmsForWdkRecordType = Object.values(
-      targetMetadataByDataType
-    ).reduce((memo, { blastOntologyDatabase, recordClassUrlSegment }) => {
-      if (recordClassUrlSegment === targetwdkRecordType) {
-        memo.push(...algorithmTermsByDatabase[blastOntologyDatabase]);
-      }
+      const enabledAlgorithmsForTargetType =
+        algorithmTermsByDatabase[targetOntologyDatabaseName];
 
-      return memo;
-    }, [] as string[]);
+      const enabledAlgorithmsForWdkRecordType = Object.values(
+        targetMetadataByDataType
+      ).reduce((memo, { blastOntologyDatabase, recordClassUrlSegment }) => {
+        if (
+          blastOntologyDatabase != null &&
+          recordClassUrlSegment === targetwdkRecordType
+        ) {
+          memo.push(...(algorithmTermsByDatabase[blastOntologyDatabase] ?? []));
+        }
 
-    return {
-      enabledAlgorithmsForTargetType,
-      enabledAlgorithmsForWdkRecordType,
-    };
-  }, [algorithmTermsByDatabase, targetDataType, targetMetadataByDataType]);
+        return memo;
+      }, [] as string[]);
+
+      return {
+        enabledAlgorithmsForTargetType,
+        enabledAlgorithmsForWdkRecordType,
+      };
+    },
+    [targetDataType, targetMetadataByDataType]
+  );
 
   return enabledAlgorithms;
 }
 
-function useAlgorithmTermsByDatabase() {
-  const algorithmTermsByDatabase = useWdkService(async (wdkService) => {
-    const [projectId, recordClasses] = await Promise.all([
-      wdkService.getConfig().then(({ projectId }) => projectId),
-      wdkService.getRecordClasses(),
-    ]);
+async function getAlgorithmTermsByDatabase(wdkService: WdkService) {
+  const [projectId, recordClasses] = await Promise.all([
+    wdkService.getConfig().then(({ projectId }) => projectId),
+    wdkService.getRecordClasses(),
+  ]);
 
-    const recordClassesByUrlSegment = keyBy(
-      recordClasses,
-      (recordClass) => recordClass.urlSegment
-    );
+  const recordClassesByUrlSegment = keyBy(
+    recordClasses,
+    (recordClass) => recordClass.urlSegment
+  );
 
-    const recordPromises = blastOntologyDatabases.map((databaseName) => {
-      const recordClass = recordClassesByUrlSegment[databaseName];
+  const recordPromises = blastOntologyDatabases.map((databaseName) => {
+    const recordClass = recordClassesByUrlSegment[databaseName];
 
-      const primaryKey = recordClass.primaryKeyColumnRefs.map((columnName) => ({
-        name: columnName,
-        value: columnName === 'project_id' ? projectId : 'fill',
-      }));
+    if (recordClass == null) return undefined;
 
-      return wdkService.getRecord(recordClass.urlSegment, primaryKey, {
-        tables: [algorithmTermTables[databaseName]],
-      });
+    const primaryKey = recordClass.primaryKeyColumnRefs.map((columnName) => ({
+      name: columnName,
+      value: columnName === 'project_id' ? projectId : 'fill',
+    }));
+
+    return wdkService.getRecord(recordClass.urlSegment, primaryKey, {
+      tables: [algorithmTermTables[databaseName]],
     });
+  });
 
-    const databaseRecords = await Promise.all(recordPromises);
+  const databaseRecords = await Promise.all(recordPromises);
 
-    const result = zip(blastOntologyDatabases, databaseRecords).reduce(
-      (memo, [databaseName, record]) => ({
-        ...memo,
-        [databaseName as BlastOntologyDatabase]: recordToTerms(
-          databaseName as BlastOntologyDatabase,
-          record as RecordInstance
-        ).map(({ term }) => term),
-      }),
-      {} as Record<BlastOntologyDatabase, string[]>
-    );
+  const result = zip(blastOntologyDatabases, databaseRecords).reduce(
+    (memo, [databaseName, record]) =>
+      record == null
+        ? memo
+        : {
+            ...memo,
+            [databaseName as BlastOntologyDatabase]: recordToTerms(
+              databaseName as BlastOntologyDatabase,
+              record as RecordInstance
+            ).map(({ term }) => term),
+          },
+    {} as Record<BlastOntologyDatabase, string[]>
+  );
 
-    return result;
-  }, []);
-
-  return algorithmTermsByDatabase;
+  return result;
 }
 
 function recordToTerms(

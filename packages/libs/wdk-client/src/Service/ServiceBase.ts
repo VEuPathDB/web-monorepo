@@ -80,8 +80,10 @@ export interface ServiceConfig {
   userProfileProperties: Array<{
     name: string;
     displayName: string;
+    inputType: 'text' | 'textbox' | 'select';
+    help?: string;
+    suggest?: string;
     isRequired: boolean;
-    isMultiLine: boolean;
     isPublic: boolean;
   }>;
 }
@@ -104,8 +106,14 @@ const configDecoder: Decode.Decoder<ServiceConfig> = Decode.record({
     Decode.record({
       name: Decode.string,
       displayName: Decode.string,
+      inputType: Decode.oneOf(
+        Decode.constant('text'),
+        Decode.constant('textbox'),
+        Decode.constant('select')
+      ),
+      help: Decode.optional(Decode.string),
+      suggest: Decode.optional(Decode.string),
       isRequired: Decode.boolean,
-      isMultiLine: Decode.boolean,
       isPublic: Decode.boolean,
     })
   ),
@@ -141,6 +149,25 @@ export const ServiceBase = (serviceUrl: string) => {
       path: '/',
       useCache: true,
       cacheId: 'config',
+    });
+  }
+
+  /**
+   * Get vocabularies for user profile properties.
+   */
+  function getUserProfileVocabulary() {
+    const decoder = Decode.objectOf(
+      Decode.arrayOf(
+        Decode.record({
+          value: Decode.string,
+          display: Decode.string,
+        })
+      )
+    );
+    return sendRequest(decoder, {
+      method: 'get',
+      path: '/user-profile-vocabularies',
+      useCache: true,
     });
   }
 
@@ -281,6 +308,7 @@ export const ServiceBase = (serviceUrl: string) => {
 
         return response.text().then((text) => {
           if (response.status === 409 && text === CLIENT_OUT_OF_SYNC_TEXT) {
+            // Clear the data cache store and set _isInvalidating to true.
             if (!_isInvalidating) {
               _isInvalidating = true;
               _store
@@ -296,8 +324,14 @@ export const ServiceBase = (serviceUrl: string) => {
                 .then(() => {
                   window.location.reload();
                 });
-              return pendingPromise as Promise<T>;
             }
+          }
+
+          // Return a Promise that never resolves if we are invalidating.
+          // This prevents additional out-of-sync responses and prevents
+          // further updates to the UI.
+          if (_isInvalidating) {
+            return pendingPromise as Promise<T>;
           }
 
           // FIXME Get uuid from response header when available
@@ -497,17 +531,23 @@ export const ServiceBase = (serviceUrl: string) => {
     });
   }
 
+  function getIsInvalidating() {
+    return _isInvalidating;
+  }
+
   return {
     _version,
     _fetchJson,
     _getFromCache,
     _clearCache,
+    getIsInvalidating,
     serviceUrl,
     sendRequest,
     submitError,
     submitErrorIfNot500,
     submitErrorIfUndelayedAndNot500,
     getConfig,
+    getUserProfileVocabulary,
     getVersion,
     getRecordClasses,
     findRecordClass,

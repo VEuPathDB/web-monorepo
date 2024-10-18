@@ -1,10 +1,10 @@
+import path from 'path';
 import { Fragment, useContext, useEffect, useMemo, useState } from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, Link } from 'react-router-dom';
 
 import {
   CollapsibleSection,
   Error as ErrorPage,
-  Link,
   Loading,
 } from '@veupathdb/wdk-client/lib/Components';
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
@@ -29,6 +29,7 @@ import {
   LongReportResponse,
   MultiQueryReportJson,
   Target,
+  permanentlyExpiredError,
 } from '../utils/ServiceTypes';
 import { BlastApi } from '../utils/api';
 import { fetchOrganismToFilenameMaps } from '../utils/organisms';
@@ -40,17 +41,22 @@ import { BlastRequestError } from './BlastRequestError';
 import { ResultContainer } from './ResultContainer';
 
 import './BlastWorkspaceResult.scss';
+import { DiamondResultContainer } from './DiamondResultContainer';
 
 interface Props {
   jobId: string;
   selectedResult?: SelectedResult;
+  workspaceShortName?: string;
 }
 
 const POLLING_INTERVAL = 3000;
 const MAX_DATABASE_STRING_LENGTH = 500;
+const DEFAULT_SHORTNAME = 'BLAST';
 
 export function BlastWorkspaceResult(props: Props) {
-  useSetDocumentTitle(`BLAST Job ${props.jobId}`);
+  useSetDocumentTitle(
+    `${props.workspaceShortName ?? DEFAULT_SHORTNAME} Job ${props.jobId}`
+  );
 
   const blastApi = useBlastApi();
 
@@ -60,16 +66,53 @@ export function BlastWorkspaceResult(props: Props) {
   );
 
   const jobResult = usePromise(
-    () => makeJobPollingPromise(blastApi, props.jobId),
+    ({ signal }) => makeJobPollingPromise(blastApi, props.jobId, signal),
     [blastApi, props.jobId]
   );
 
+  if (jobResult.value == null || queryResult.value == null) {
+    return <LoadingBlastResult {...props} />;
+  }
+
+  return jobResult.value?.status === 'request-error' ? (
+    <BlastRequestError errorDetails={jobResult.value.details} />
+  ) : jobResult.value?.status === 'error' &&
+    permanentlyExpiredError.is(jobResult.value.details) ? (
+    <BlastRequestError {...props} errorDetails={jobResult.value.details} />
+  ) : jobResult.value?.status === 'error' ? (
+    <BlastRerunError {...props} />
+  ) : jobResult.value?.status === 'queueing-error' ? (
+    <ErrorPage message="We were unable to queue your job." />
+  ) : queryResult.value?.status === 'error' ? (
+    <BlastRequestError errorDetails={queryResult.value.details} />
+  ) : jobResult.value.job.config.tool.startsWith('diamond-') ? (
+    <DiamondResultContainer
+      {...props}
+      job={jobResult.value.job}
+      query={queryResult.value.value}
+    />
+  ) : (
+    <StandardBlastResult
+      {...props}
+      job={jobResult.value.job}
+      query={queryResult.value.value}
+    />
+  );
+}
+
+function StandardBlastResult(
+  props: Props & {
+    job: LongJobResponse;
+    query: string;
+  }
+) {
+  const { job, query } = props;
+  const blastApi = useBlastApi();
+  // TODO Add numRows, or whatever, for diamond results
   const reportResult = usePromise(
     async () =>
-      jobResult.value?.status !== 'job-completed'
-        ? undefined
-        : makeReportPollingPromise(blastApi, props.jobId, 'single-file-json'),
-    [blastApi, jobResult.value?.status]
+      makeReportPollingPromise(blastApi, props.jobId, 'single-file-json'),
+    [blastApi]
   );
 
   const multiQueryReportResult = usePromise(
@@ -83,16 +126,10 @@ export function BlastWorkspaceResult(props: Props) {
   );
 
   const individualQueriesResult = usePromise(async () => {
-    if (jobResult.value?.status !== 'job-completed') {
-      return undefined;
-    }
-
-    const childJobIds = jobResult.value.job?.childJobs?.map(({ id }) => id);
+    const childJobIds = job.childJobs?.map(({ id }) => id);
 
     const subJobIds =
-      childJobIds == null || childJobIds.length === 0
-        ? [jobResult.value.job.id]
-        : childJobIds;
+      childJobIds == null || childJobIds.length === 0 ? [job.id] : childJobIds;
 
     const queryResults = await Promise.all(
       subJobIds.map((id) =>
@@ -125,18 +162,9 @@ export function BlastWorkspaceResult(props: Props) {
             }[]
           ).map((queryResult) => queryResult.value),
         } as ApiResultSuccess<IndividualQuery[]>);
-  }, [jobResult.value]);
+  }, [job]);
 
-  return jobResult.value != null &&
-    jobResult.value.status === 'request-error' ? (
-    <BlastRequestError errorDetails={jobResult.value.details} />
-  ) : jobResult.value != null && jobResult.value.status === 'error' ? (
-    <BlastRerunError {...props} />
-  ) : jobResult.value != null && jobResult.value.status === 'queueing-error' ? (
-    <ErrorPage message="We were unable to queue your job." />
-  ) : queryResult.value != null && queryResult.value.status === 'error' ? (
-    <BlastRequestError errorDetails={queryResult.value.details} />
-  ) : reportResult.value != null &&
+  return reportResult.value != null &&
     reportResult.value.status === 'request-error' ? (
     <BlastRequestError errorDetails={reportResult.value.details} />
   ) : reportResult.value != null &&
@@ -145,17 +173,14 @@ export function BlastWorkspaceResult(props: Props) {
   ) : individualQueriesResult.value != null &&
     individualQueriesResult.value.status === 'error' ? (
     <BlastRequestError errorDetails={individualQueriesResult.value.details} />
-  ) : queryResult.value == null ||
-    jobResult.value == null ||
-    reportResult.value == null ||
-    individualQueriesResult.value == null ? (
+  ) : reportResult.value == null || individualQueriesResult.value == null ? (
     <LoadingBlastResult {...props} />
   ) : (
     <CompleteBlastResult
       {...props}
       individualQueries={individualQueriesResult.value.value}
-      jobDetails={jobResult.value.job}
-      query={queryResult.value.value}
+      jobDetails={job}
+      query={query}
       multiQueryReportResult={multiQueryReportResult}
     />
   );
@@ -164,7 +189,7 @@ export function BlastWorkspaceResult(props: Props) {
 function LoadingBlastResult(props: Props) {
   return (
     <div className={blastWorkspaceCx('Result', 'Loading')}>
-      <h1>BLAST Job - pending</h1>
+      <h1>{props.workspaceShortName ?? DEFAULT_SHORTNAME} Job - pending...</h1>
       <p className="JobId">
         <span className="InlineHeader">Job Id:</span> {props.jobId}
       </p>
@@ -175,10 +200,9 @@ function LoadingBlastResult(props: Props) {
           </p>
           <p className="Instructions">
             This job could take some time to run. You may leave this page and
-            access the result from your{' '}
-            <Link to="/workspace/blast/all">jobs list</Link> later, or{' '}
-            <Link to="/workspace/blast/new">submit another BLAST job</Link>{' '}
-            while you wait.
+            access the result from your <Link to="../all">jobs list</Link>{' '}
+            later, or <Link to="../new">submit another job</Link> while you
+            wait.
           </p>
         </div>
       </Loading>
@@ -189,7 +213,7 @@ function LoadingBlastResult(props: Props) {
 function BlastRerunError(props: Props) {
   return (
     <div className={blastWorkspaceCx('Result', 'Loading')}>
-      <h1>BLAST Job - error</h1>
+      <h1>{props.workspaceShortName ?? DEFAULT_SHORTNAME} Job - error</h1>
       <p className="JobId">
         <span className="InlineHeader">Job Id:</span> {props.jobId}
       </p>
@@ -198,7 +222,9 @@ function BlastRerunError(props: Props) {
           <span className="InlineHeader">Status:</span> error
         </p>
         <p>
-          We were unable to rerun your BLAST job due to a server error.{' '}
+          We were unable to rerun your{' '}
+          {props.workspaceShortName ?? DEFAULT_SHORTNAME} job due to a server
+          error.{' '}
           <Link to="/contact-us" target="_blank">
             Contact us
           </Link>{' '}
@@ -230,8 +256,9 @@ function CompleteBlastResult(props: CompleteBlastResultProps) {
 
   const targets = props.jobDetails.targets;
 
-  const { targetTypeTerm, wdkRecordType } =
-    useTargetTypeTermAndWdkRecordType(targets);
+  const { targetTypeTerm, wdkRecordType } = useTargetTypeTermAndWdkRecordType(
+    targets ?? []
+  );
 
   const organismToFilenameMapsResult = useBlastCompatibleWdkService(
     async (wdkService) =>
@@ -266,7 +293,7 @@ function CompleteBlastResult(props: CompleteBlastResultProps) {
     <BlastSummary
       filesToOrganisms={organismToFilenameMapsResult.filesToOrganisms}
       jobDetails={props.jobDetails}
-      targets={targets}
+      targets={targets ?? []}
       multiQueryReportResult={props.multiQueryReportResult}
       query={props.query}
       individualQueries={props.individualQueries}
@@ -277,6 +304,7 @@ function CompleteBlastResult(props: CompleteBlastResultProps) {
   );
 }
 
+// TODO Move this to an external file to remove circular dependency
 interface BlastSummaryProps {
   filesToOrganisms: Record<string, string>;
   jobDetails: LongJobResponse;
@@ -337,10 +365,15 @@ function BlastSummary({
 
   const [showMore, setShowMore] = useState<boolean>(false);
 
+  // The different types of searchResult have different
+  // nesting levels relative to the workspace root.
+  const relativeUrlPrefix =
+    selectedResult.type === 'combined' ? '../../' : '../../../';
+
   return (
     <div className={blastWorkspaceCx('Result', 'Complete')}>
       <h1>BLAST Job - result</h1>
-      <Link className="BackToAllJobs" to="/workspace/blast/all">
+      <Link className="BackToAllJobs" to={relativeUrlPrefix + 'all'}>
         &lt;&lt; All my BLAST Jobs
       </Link>
       <div className="ConfigDetailsContainer">
@@ -351,12 +384,22 @@ function BlastSummary({
             {multiQueryParamValues && (
               <Link
                 className="EditJob"
-                to={{
-                  pathname: '/workspace/blast/new',
+                to={(location) => ({
+                  // When providing a location object, relative
+                  // paths are relative to the application root
+                  // and not the current location. So, we need
+                  // to get a handle on the current location to
+                  // create a path relative to it. Furthermore,
+                  // we need to use path.join to normalize the
+                  // path (remove the .. parts) so that
+                  // react-router recognizes it.
+                  pathname: path.join(
+                    location.pathname + './../' + relativeUrlPrefix + 'new'
+                  ),
                   state: {
                     parameterValues: multiQueryParamValues,
                   },
-                }}
+                })}
               >
                 Revise and rerun
               </Link>
@@ -371,6 +414,8 @@ function BlastSummary({
           <span className="InlineHeader">Program:</span>
           <span>
             {jobDetails.config.tool === 'tblastx' ||
+            jobDetails.config.tool === 'diamond-blastp' ||
+            jobDetails.config.tool === 'diamond-blastx' ||
             jobDetails.config.task == null
               ? jobDetails.config.tool
               : jobDetails.config.task}
@@ -462,7 +507,8 @@ interface JobPollingError {
 
 async function makeJobPollingPromise(
   blastApi: BlastApi,
-  jobId: string
+  jobId: string,
+  signal: AbortSignal
 ): Promise<JobPollingResult | ApiResultError<ErrorDetails>> {
   const jobRequest = await blastApi.fetchJob(jobId);
 
@@ -477,15 +523,32 @@ async function makeJobPollingPromise(
     }
 
     if (job.status === 'expired') {
-      const apiResult = await blastApi.rerunJob(job.id);
-      if (apiResult.status === 'error') {
-        return apiResult;
+      if (job.isRerunnable ?? true) {
+        const apiResult = await blastApi.rerunJob(job.id);
+        if (apiResult.status === 'error') {
+          return apiResult;
+        }
+      } else {
+        return {
+          status: 'error',
+          details: {
+            status: 'permanently-expired',
+            message: 'Sorry, your job has expired and is not rerunnable.',
+          },
+        };
       }
     }
 
     await waitForNextPoll();
 
-    return makeJobPollingPromise(blastApi, jobId);
+    if (signal.aborted) {
+      return {
+        status: 'error',
+        details: signal.reason,
+      };
+    }
+
+    return makeJobPollingPromise(blastApi, jobId, signal);
   } else {
     return {
       ...jobRequest,
@@ -521,7 +584,7 @@ export async function makeReportPollingPromise(
       return makeReportPollingPromise(
         blastApi,
         jobId,
-        'single-file-json',
+        format,
         reportRequest.value.reportID
       );
     } else {
@@ -551,12 +614,7 @@ export async function makeReportPollingPromise(
 
     await waitForNextPoll();
 
-    return makeReportPollingPromise(
-      blastApi,
-      jobId,
-      'single-file-json',
-      report.reportID
-    );
+    return makeReportPollingPromise(blastApi, jobId, format, report.reportID);
   } else {
     return {
       ...reportRequest,

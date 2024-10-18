@@ -15,7 +15,12 @@ type StateProps = Pick<RootState, 'globalData'> & RootState['userProfile'];
 
 type DispatchProps = { userEvents: typeof actionCreators };
 
-type Props = DispatchProps & StateProps;
+type OwnProps = {
+  introComponent?: React.ComponentType;
+  showChangePasswordBox?: boolean;
+};
+
+type Props = DispatchProps & StateProps & OwnProps;
 
 class UserProfileController extends PageController<Props> {
   isRenderDataLoaded() {
@@ -38,7 +43,7 @@ class UserProfileController extends PageController<Props> {
 const enhance = connect<
   StateProps,
   typeof actionCreators,
-  {},
+  OwnProps,
   Props,
   RootState
 >(
@@ -53,7 +58,11 @@ const enhance = connect<
     },
   }),
   actionCreators,
-  (stateProps, dispatchProps) => ({ ...stateProps, userEvents: dispatchProps })
+  (stateProps, dispatchProps, ownProps) => ({
+    ...stateProps,
+    userEvents: dispatchProps,
+    ...ownProps,
+  })
 );
 
 export default enhance(wrappable(UserProfileController));
