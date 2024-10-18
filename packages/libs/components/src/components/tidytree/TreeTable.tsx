@@ -33,6 +33,10 @@ export interface TreeTableProps<RowType> {
    * hide the tree (but keep its horizontal space); default = false
    */
   hideTree?: boolean;
+  /**
+   * Passed as children to the `Mesa` component
+   */
+  children?: React.ReactNode;
 }
 
 const margin: [number, number, number, number] = [0, 10, 0, 10];
@@ -52,7 +56,7 @@ const margin: [number, number, number, number] = [0, 10, 0, 10];
  * - allow additional Mesa props and options to be passed
  */
 export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
-  const { rowHeight, maxColumnWidth = 200, hideTree = false } = props;
+  const { rowHeight, maxColumnWidth = 200, hideTree = false, children } = props;
   const { rows, filteredRows } = props.tableProps;
 
   const rowStyleClassName = useMemo(
@@ -107,7 +111,7 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
   // then the table container styling will need
   // { marginLeft: hideTree ? props.treeProps.width : 0 }
   // to stop the table jumping around horizontally
-  return <Mesa state={tableState} />;
+  return <Mesa state={tableState} children={children} />;
 }
 
 function mergeDeriveRowClassName<RowType>(
