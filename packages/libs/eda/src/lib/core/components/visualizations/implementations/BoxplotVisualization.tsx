@@ -8,7 +8,6 @@ import { useCallback, useMemo, useState, useEffect } from 'react';
 // need to set for Boxplot
 import DataClient, { BoxplotResponse } from '../../../api/DataClient';
 
-import { usePromise } from '../../../hooks/promise';
 import {
   useFindEntityAndVariable,
   useStudyEntities,
@@ -111,6 +110,7 @@ import { useDeepValue } from '../../../hooks/immutability';
 
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
+import { useCachedPromise } from '../../../hooks/cachedPromise';
 
 type BoxplotData = { series: BoxplotSeries };
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
@@ -430,165 +430,144 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     ]
   );
 
+  const dataRequestDeps =
+    // check for vizConfig variables only if provided variables are not defined.
+    (providedXAxisVariable == null &&
+      (vizConfig.xAxisVariable == null || xAxisVariable == null)) ||
+    (computedYAxisDetails == null &&
+      (vizConfig.yAxisVariable == null || yAxisVariable == null)) ||
+    filteredCounts.pending ||
+    filteredCounts.value == null ||
+    // If this boxplot has a computed variable and the compute job is anything but complete, do not proceed with getting data.
+    (computedYAxisDetails && computeJobStatus !== 'complete')
+      ? undefined
+      : {
+          vizConfig,
+          filteredCounts: filteredCounts.value,
+          filters,
+          providedOverlayVariable,
+          computation,
+        };
+
   // add to support both alphadiv and abundance
-  const data = usePromise(
-    useCallback(async (): Promise<BoxplotDataWithCoverage | undefined> => {
-      if (
-        // check for vizConfig variables only if provided variables are not defined.
-        (providedXAxisVariable == null &&
-          (vizConfig.xAxisVariable == null || xAxisVariable == null)) ||
-        (computedYAxisDetails == null &&
-          (vizConfig.yAxisVariable == null || yAxisVariable == null)) ||
-        filteredCounts.pending ||
-        filteredCounts.value == null
-      )
-        return undefined;
+  const data = useCachedPromise(async (): Promise<
+    BoxplotDataWithCoverage | undefined
+  > => {
+    if (!dataRequestDeps) throw new Error('dataRequestDeps is not defined');
 
-      // If this boxplot has a computed variable and the compute job is anything but complete, do not proceed with getting data.
-      if (computedYAxisDetails && computeJobStatus !== 'complete')
-        return undefined;
+    const {
+      vizConfig,
+      filteredCounts,
+      filters,
+      providedOverlayVariable,
+      computation,
+    } = dataRequestDeps;
 
-      if (
-        !variablesAreUnique([
-          xAxisVariable,
-          yAxisVariable,
-          overlayVariable && (providedOverlayVariable ?? overlayVariable),
-          facetVariable,
-        ])
-      )
-        throw new Error(nonUniqueWarning);
+    if (
+      !variablesAreUnique([
+        xAxisVariable,
+        yAxisVariable,
+        overlayVariable && (providedOverlayVariable ?? overlayVariable),
+        facetVariable,
+      ])
+    )
+      throw new Error(nonUniqueWarning);
 
-      assertValidInputVariables(
-        inputs,
-        variablesForConstraints,
-        entities,
-        dataElementConstraints,
-        dataElementDependencyOrder
-      );
-
-      if (outputEntity == null) return undefined;
-
-      // add visualization.type here. valueSpec too?
-      const params: BoxplotRequestParams = options?.getRequestParams?.({
-        studyId,
-        filters: filters ?? [],
-        vizConfig,
-        outputEntityId: outputEntity.id,
-        computation,
-      }) ?? {
-        studyId,
-        filters: filters ?? [],
-        config: {
-          outputEntityId: outputEntity.id,
-          // post options: 'all', 'outliers'
-          points: 'outliers',
-          mean: 'TRUE',
-          xAxisVariable: vizConfig.xAxisVariable,
-          yAxisVariable: vizConfig.yAxisVariable,
-          overlayVariable: vizConfig.overlayVariable,
-          facetVariable: vizConfig.facetVariable
-            ? [vizConfig.facetVariable]
-            : [],
-          showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
-        },
-        computeConfig: copmutationAppOverview.computeName
-          ? computation.descriptor.configuration
-          : undefined,
-      };
-
-      // 2024-04-26 - BM wonders why we don't use getBoxplot?
-      // or why we don't just use this for all the visualizations?
-      const response = await dataClient.getVisualizationData(
-        computation.descriptor.type,
-        visualization.descriptor.type,
-        params,
-        BoxplotResponse
-      );
-
-      const showMissingOverlay =
-        vizConfig.showMissingness &&
-        hasIncompleteCases(
-          overlayEntity,
-          overlayVariable,
-          outputEntity,
-          filteredCounts.value,
-          response.completeCasesTable
-        );
-      const showMissingFacet =
-        vizConfig.showMissingness &&
-        hasIncompleteCases(
-          facetEntity,
-          facetVariable,
-          outputEntity,
-          filteredCounts.value,
-          response.completeCasesTable
-        );
-
-      const vocabulary = fixLabelsForNumberVariables(
-        xAxisVariable?.vocabulary,
-        xAxisVariable
-      );
-      const overlayVocabulary =
-        (overlayVariable && options?.getOverlayVocabulary?.()) ??
-        fixLabelsForNumberVariables(
-          overlayVariable?.vocabulary,
-          overlayVariable
-        );
-      const facetVocabulary = fixLabelsForNumberVariables(
-        facetVariable?.vocabulary,
-        facetVariable
-      );
-      return grayOutLastSeries(
-        substituteUnselectedToken(
-          reorderData(
-            boxplotResponseToData(
-              response,
-              xAxisVariable,
-              overlayVariable,
-              facetVariable,
-              entities
-            ),
-            vocabulary,
-            vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
-            vocabularyWithMissingData(facetVocabulary, showMissingFacet),
-            entities
-          )
-        ),
-        showMissingOverlay,
-        '#a0a0a0'
-      );
-    }, [
-      providedXAxisVariable,
-      vizConfig.xAxisVariable,
-      vizConfig.yAxisVariable,
-      vizConfig.overlayVariable,
-      vizConfig.facetVariable,
-      vizConfig.showMissingness,
-      xAxisVariable,
-      computedYAxisDetails,
-      yAxisVariable,
-      outputEntity,
-      filteredCounts.pending,
-      filteredCounts.value,
-      computeJobStatus,
-      overlayVariable,
-      facetVariable,
+    assertValidInputVariables(
       inputs,
-      selectedVariables,
+      variablesForConstraints,
       entities,
       dataElementConstraints,
-      dataElementDependencyOrder,
-      filters,
+      dataElementDependencyOrder
+    );
+
+    if (outputEntity == null) throw new Error('outputEntity is undefined');
+
+    // add visualization.type here. valueSpec too?
+    const params: BoxplotRequestParams = options?.getRequestParams?.({
       studyId,
-      computation.descriptor.configuration,
+      filters: filters ?? [],
+      vizConfig,
+      outputEntityId: outputEntity.id,
+      computation,
+    }) ?? {
+      studyId,
+      filters: filters ?? [],
+      config: {
+        outputEntityId: outputEntity.id,
+        // post options: 'all', 'outliers'
+        points: 'outliers',
+        mean: 'TRUE',
+        xAxisVariable: vizConfig.xAxisVariable,
+        yAxisVariable: vizConfig.yAxisVariable,
+        overlayVariable: vizConfig.overlayVariable,
+        facetVariable: vizConfig.facetVariable ? [vizConfig.facetVariable] : [],
+        showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
+      },
+      computeConfig: copmutationAppOverview.computeName
+        ? computation.descriptor.configuration
+        : undefined,
+    };
+
+    // 2024-04-26 - BM wonders why we don't use getBoxplot?
+    // or why we don't just use this for all the visualizations?
+    const response = await dataClient.getVisualizationData(
       computation.descriptor.type,
-      dataClient,
       visualization.descriptor.type,
-      overlayEntity,
-      facetEntity,
-      variablesForConstraints,
-    ])
-  );
+      params,
+      BoxplotResponse
+    );
+
+    const showMissingOverlay =
+      vizConfig.showMissingness &&
+      hasIncompleteCases(
+        overlayEntity,
+        overlayVariable,
+        outputEntity,
+        filteredCounts,
+        response.completeCasesTable
+      );
+    const showMissingFacet =
+      vizConfig.showMissingness &&
+      hasIncompleteCases(
+        facetEntity,
+        facetVariable,
+        outputEntity,
+        filteredCounts,
+        response.completeCasesTable
+      );
+
+    const vocabulary = fixLabelsForNumberVariables(
+      xAxisVariable?.vocabulary,
+      xAxisVariable
+    );
+    const overlayVocabulary =
+      (overlayVariable && options?.getOverlayVocabulary?.()) ??
+      fixLabelsForNumberVariables(overlayVariable?.vocabulary, overlayVariable);
+    const facetVocabulary = fixLabelsForNumberVariables(
+      facetVariable?.vocabulary,
+      facetVariable
+    );
+    return grayOutLastSeries(
+      substituteUnselectedToken(
+        reorderData(
+          boxplotResponseToData(
+            response,
+            xAxisVariable,
+            overlayVariable,
+            facetVariable,
+            entities
+          ),
+          vocabulary,
+          vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
+          vocabularyWithMissingData(facetVocabulary, showMissingFacet),
+          entities
+        )
+      ),
+      showMissingOverlay,
+      '#a0a0a0'
+    );
+  }, [dataRequestDeps]);
 
   const outputSize =
     (overlayVariable != null || facetVariable != null) &&
