@@ -14,9 +14,12 @@ import { useMemo } from 'react';
 // Note: the task may not return undefined, but the hook will return `value: undefined`
 // when disabled.
 //
+// cacheTime is optional and in milliseconds - default from react-query is 5 minutes
+//
 export function useCachedPromise<T>(
   task: () => Promise<T>,
-  queryKey: [any, ...any[]]
+  queryKey: [any, ...any[]],
+  cacheTime?: number
 ): PromiseHookState<T> {
   const enabled = queryKey.every((val) => val != null);
 
@@ -25,6 +28,7 @@ export function useCachedPromise<T>(
     queryFn: task,
     enabled,
     keepPreviousData: enabled,
+    ...(cacheTime != null ? { cacheTime } : {}),
   });
 
   // Mapping the state from useQuery to PromiseHookState<T>
