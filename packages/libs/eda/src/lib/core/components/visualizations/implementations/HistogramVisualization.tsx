@@ -594,12 +594,15 @@ function HistogramViz(props: VisualizationProps<Options>) {
     vizConfig.independentAxisValueSpec
   );
 
-  const dataRequestProps =
+  // Serialisable values which will trigger a new data request when they change.
+  // Object will be undefined if certain critical things are missing.
+  // When undefined, no data request will be made.
+  const dataRequestDeps =
     vizConfig.xAxisVariable == null ||
     xAxisVariable == null ||
     filteredCounts.pending ||
     filteredCounts.value == null
-      ? undefined // no data request will be made if undefined
+      ? undefined
       : {
           // pick only the props that should affect data requests
           // e.g. changes in dependentAxisLogScale should NOT trigger new data
@@ -624,7 +627,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
   const data = useCachedPromise(async (): Promise<
     HistogramDataWithCoverageStatistics | undefined
   > => {
-    if (!dataRequestProps) throw new Error('dataRequestProps is not defined');
+    if (!dataRequestDeps) throw new Error('dataRequestDeps is not defined');
 
     const {
       dataRequestConfig,
@@ -632,7 +635,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
       xAxisVariable,
       filters,
       providedOverlayVariable,
-    } = dataRequestProps;
+    } = dataRequestDeps;
 
     if (
       !variablesAreUnique([
@@ -712,7 +715,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
       ),
       showMissingOverlay
     );
-  }, [dataRequestProps]);
+  }, [dataRequestDeps]);
 
   const [checkData, isEmptyData] = useMemo(() => {
     // controls need the bin info from just one facet (not an empty one)
