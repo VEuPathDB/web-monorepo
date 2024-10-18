@@ -475,17 +475,22 @@ export function RecordTable_Sequences(
       }
     >
       {filteredRows.length > MAX_SEQUENCES_FOR_TREE && (
-        <Banner
-          banner={{
-            type: 'warning',
-            message: (
-              <>
-                To see a phylogenetic tree please use a filter to display fewer
-                than {MAX_SEQUENCES_FOR_TREE.toLocaleString()} sequences
-              </>
-            ),
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            borderLeft: '.2em solid rgb(225, 133, 133)',
+            borderRight: '.2em solid rgb(225, 133, 133)',
+            padding: '.5em 1em',
+            background: 'rgb(255, 228, 228)',
+            gap: '1em',
+            marginBottom: '1em',
+            fontWeight: 500,
           }}
-        />
+        >
+          To see a phylogenetic tree please use a filter to display fewer than{' '}
+          {MAX_SEQUENCES_FOR_TREE.toLocaleString()} sequences
+        </div>
       )}
       <div
         style={{
@@ -550,7 +555,7 @@ export function RecordTable_Sequences(
               filteredRows?.length < MIN_SEQUENCES_FOR_TREE
             }
             maxColumnWidth={maxColumnWidth}
-          />
+          ></TreeTable>
           <form action="/cgi-bin/msaOrthoMCL" target="_blank" method="post">
             <input type="hidden" name="project_id" value="OrthoMCL" />
             {highlightedNodes.map((id) => (

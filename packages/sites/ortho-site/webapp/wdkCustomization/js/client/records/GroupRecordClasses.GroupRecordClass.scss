@@ -23,6 +23,12 @@
   #Sequences .Mesa.MesaComponent {
     display: flex;
     flex-wrap: wrap;
+    > .Toolbar {
+      &,
+      & > * {
+        width: 100%;
+      }
+    }
     > .MesaComponent {
       width: 100%;
       > .DataTable {
