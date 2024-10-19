@@ -58,13 +58,17 @@ function NewProfilePropertiesBanner() {
         hideIcon: true,
         fontSize: '1.2em',
         message: (
-          <div>
-            As of October 2024, VEuPathDB is moving to a new funding model.
-            Users must be logged in to use the platform, which helps us collect
-            accurate usage data. Please register or update your registration
-            details - you only need to do this once. We will never share your
-            information and adhere to GDPR rules.
-          </div>
+          <>
+            Please take a moment to update your user profile. This will help us
+            understand how our platform contributes to your research and in
+            making future improvements. We value your privacy and comply with
+            the General Data Protection Regulation (
+            <a target="_blank" rel="noreferrer" href="https://gdpr-info.eu/">
+              GDPR
+            </a>
+            ). Your information is safe with us. Thanks for being part of our
+            community!
+          </>
         ),
       }}
     />

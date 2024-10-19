@@ -308,6 +308,7 @@ export const ServiceBase = (serviceUrl: string) => {
 
         return response.text().then((text) => {
           if (response.status === 409 && text === CLIENT_OUT_OF_SYNC_TEXT) {
+            // Clear the data cache store and set _isInvalidating to true.
             if (!_isInvalidating) {
               _isInvalidating = true;
               _store
@@ -323,8 +324,14 @@ export const ServiceBase = (serviceUrl: string) => {
                 .then(() => {
                   window.location.reload();
                 });
-              return pendingPromise as Promise<T>;
             }
+          }
+
+          // Return a Promise that never resolves if we are invalidating.
+          // This prevents additional out-of-sync responses and prevents
+          // further updates to the UI.
+          if (_isInvalidating) {
+            return pendingPromise as Promise<T>;
           }
 
           // FIXME Get uuid from response header when available
@@ -524,11 +531,16 @@ export const ServiceBase = (serviceUrl: string) => {
     });
   }
 
+  function getIsInvalidating() {
+    return _isInvalidating;
+  }
+
   return {
     _version,
     _fetchJson,
     _getFromCache,
     _clearCache,
+    getIsInvalidating,
     serviceUrl,
     sendRequest,
     submitError,

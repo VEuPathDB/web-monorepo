@@ -1,7 +1,9 @@
+import * as React from 'react';
+import { Store } from 'redux';
+import { Provider } from 'react-redux';
+import { Link, Router, Switch, matchPath } from 'react-router-dom';
 import { History, Location } from 'history';
 import PropTypes from 'prop-types';
-import * as React from 'react';
-import { Router, Switch, matchPath } from 'react-router';
 import { noop } from 'lodash';
 
 import {
@@ -13,8 +15,6 @@ import ErrorBoundary from '../Core/Controllers/ErrorBoundary';
 import LoginFormController from '../Controllers/LoginFormController';
 import Page from '../Components/Layout/Page';
 
-import { Store } from 'redux';
-import { Provider } from 'react-redux';
 import { RouteEntry } from '../Core/RouteEntry';
 import WdkRoute from '../Core/WdkRoute';
 import { safeHtml } from '../Utils/ComponentUtils';
@@ -23,13 +23,11 @@ import {
   WdkDependencies,
   WdkDependenciesContext,
 } from '../Hooks/WdkDependenciesEffect';
-import { showLoginForm } from '../Actions/UserSessionActions';
-import { User } from '../Utils/WdkUser';
 import { Modal } from '@veupathdb/coreui';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import { Link } from 'react-router-dom';
 
 import './Style/wdk-Button.scss';
+import { IndexController, NotFoundController } from '../Controllers';
 
 type Props = {
   requireLogin: boolean;
@@ -45,7 +43,7 @@ type Props = {
 
 interface State {
   location: Location;
-  accessDenied?: boolean;
+  userIsGuest?: boolean;
 }
 
 const REACT_ROUTER_LINK_CLASSNAME = 'wdk-ReactRouterLink';
@@ -56,18 +54,6 @@ const RELATIVE_LINK_REGEXP = new RegExp(
 
 /** WDK Application Root */
 export default class Root extends React.Component<Props, State> {
-  static propTypes = {
-    rootUrl: PropTypes.string,
-    routes: PropTypes.array.isRequired,
-    onLocationChange: PropTypes.func,
-    staticContent: PropTypes.string,
-  };
-
-  static defaultProps = {
-    rootUrl: '/',
-    onLocationChange: () => {}, // noop
-  };
-
   removeHistoryListener: () => void;
 
   constructor(props: Props) {
@@ -118,39 +104,14 @@ export default class Root extends React.Component<Props, State> {
     );
   }
 
-  doLoginLogic() {
-    // allow some pages non-login access
-    const activeRoute = this.getActiveRoute();
-    const requireLogin =
-      activeRoute?.requiresLogin === false ? false : this.props.requireLogin;
-    const dispatch = this.props.store.dispatch;
-
-    if (!requireLogin) {
-      this.setState({ accessDenied: false });
-    } else {
-      this.props.wdkDependencies.wdkService.getCurrentUser().then((user) => {
-        this.setState({ accessDenied: user.isGuest });
-        // if (user.isGuest) {
-        //   dispatch(showLoginForm());
-        // }
-      });
-    }
+  loadUser() {
+    this.setState({ userIsGuest: isUserGuest() });
   }
 
   componentDidMount() {
     /** install global click handler */
     document.addEventListener('click', this.handleGlobalClick);
-    this.doLoginLogic();
-  }
-
-  componentDidUpdate(
-    prevProps: Readonly<Props>,
-    prevState: Readonly<State>,
-    snapshot?: any
-  ): void {
-    if (this.state.location.pathname !== prevState.location.pathname) {
-      this.doLoginLogic();
-    }
+    this.loadUser();
   }
 
   componentWillUnmount() {
@@ -159,13 +120,40 @@ export default class Root extends React.Component<Props, State> {
   }
 
   render() {
-    const { staticContent } = this.props;
+    const { staticContent, routes } = this.props;
+    const { userIsGuest } = this.state;
     const activeRoute = this.getActiveRoute();
     const rootClassNameModifier = activeRoute?.rootClassNameModifier;
     const isFullscreen = activeRoute?.isFullscreen;
 
-    if (this.state.accessDenied == null) return 'Loading...';
+    if (userIsGuest == null) return 'Loading...';
 
+    // allow some pages non-login access
+    const requireLogin =
+      activeRoute?.requiresLogin === false ? false : this.props.requireLogin;
+    const accessDenied = requireLogin ? userIsGuest : false;
+    const activeRouteContent = (
+      <Switch>
+        {accessDenied ? (
+          <WdkRoute
+            key="/"
+            path="*"
+            component={IndexController}
+            requiresLogin={false}
+          />
+        ) : (
+          routes.map((route) => (
+            <WdkRoute
+              key={route.path}
+              path={route.path}
+              component={route.component}
+              exact={route.exact ?? true}
+              requiresLogin={route.requiresLogin ?? false}
+            />
+          ))
+        )}
+      </Switch>
+    );
     return (
       <Provider store={this.props.store}>
         <ErrorBoundary>
@@ -177,7 +165,7 @@ export default class Root extends React.Component<Props, State> {
                 <UnhandledErrorsController />
                 <LoginFormController />
                 <Modal
-                  visible={this.state.accessDenied}
+                  visible={accessDenied}
                   toggleVisible={noop}
                   styleOverrides={{
                     position: {
@@ -204,11 +192,11 @@ export default class Root extends React.Component<Props, State> {
                         hideIcon: true,
                         message: (
                           <>
-                            Starting in October 2024, VEuPathDB is transitioning
-                            to a new funding model. In order to use VEuPathDB
-                            knowledgebases, you’ll need to log. This helps us
-                            understand how the platform supports your work and
-                            shapes our plans for the future
+                            VEuPathDB is evolving under a new organizational
+                            structure. In order to use VEuPathDB resources, you
+                            will now need to log into your free account. This
+                            helps us collect accurate user metrics to guide
+                            future development.
                           </>
                         ),
                       }}
@@ -232,7 +220,11 @@ export default class Root extends React.Component<Props, State> {
                       >
                         Log in
                       </Link>
-                      <Link className="register-button" to="/user/register">
+                      <Link
+                        className="register-button"
+                        target="_blank"
+                        to="/user/registration"
+                      >
                         Register
                       </Link>
                       .
@@ -241,31 +233,12 @@ export default class Root extends React.Component<Props, State> {
                 </Modal>
                 <Page
                   classNameModifier={rootClassNameModifier}
-                  requireLogin={this.props.requireLogin}
                   isFullScreen={isFullscreen}
+                  isAccessDenied={accessDenied}
                 >
-                  {staticContent ? (
-                    safeHtml(staticContent, null, 'div')
-                  ) : (
-                    <Switch>
-                      {this.props.routes.map(
-                        ({
-                          path,
-                          exact = true,
-                          component,
-                          requiresLogin = false,
-                        }) => (
-                          <WdkRoute
-                            key={path}
-                            exact={exact == null ? false : exact}
-                            path={path}
-                            component={component}
-                            requiresLogin={requiresLogin}
-                          />
-                        )
-                      )}
-                    </Switch>
-                  )}
+                  {staticContent
+                    ? safeHtml(staticContent, null, 'div')
+                    : activeRouteContent}
                 </Page>
               </PluginContext.Provider>
             </WdkDependenciesContext.Provider>
@@ -273,5 +246,19 @@ export default class Root extends React.Component<Props, State> {
         </ErrorBoundary>
       </Provider>
     );
+  }
+}
+
+function isUserGuest() {
+  try {
+    return !!JSON.parse(
+      atob(
+        document.cookie
+          .match(/(^| )Authorization=([^;]+)/)?.[2]
+          .split('.')[1] ?? ''
+      )
+    ).is_guest;
+  } catch {
+    return true;
   }
 }

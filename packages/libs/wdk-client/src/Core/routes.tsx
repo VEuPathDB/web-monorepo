@@ -33,7 +33,8 @@ import Error from '../Components/PageStatus/Error';
 const routes: RouteEntry[] = [
   {
     path: '/',
-    component: () => <IndexController />,
+    requiresLogin: false,
+    component: IndexController,
   },
 
   {

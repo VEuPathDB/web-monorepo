@@ -73,7 +73,7 @@ import { Tooltip, Warning } from '@veupathdb/coreui';
 
 import './VEuPathDBHomePage.scss';
 import { searchTree } from '../../selectors/QueryGridSelectors';
-import { ProfileModal } from '../ProfileModal';
+import { ProfileModal } from '@veupathdb/web-common/lib/components/ProfileModal';
 
 const vpdbCx = makeVpdbClassNameHelper('');
 
@@ -671,12 +671,6 @@ const useHeaderMenuItems = (
           display: `Data sets in ${displayName}`,
           type: 'reactRoute',
           url: '/search/dataset/AllDatasets/result',
-        },
-        {
-          key: 'datasets-in-progress2',
-          display: 'Data sets we are working on',
-          type: 'reactRoute',
-          url: makeStaticPageRoute('/dataInprogress.html'),
         },
         {
           key: 'data-files-eupathdb-beta',

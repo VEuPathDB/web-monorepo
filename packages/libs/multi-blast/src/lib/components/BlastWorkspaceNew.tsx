@@ -24,13 +24,16 @@ type WorkspaceMetadata =
       searchName: string;
     };
 
-export function BlastWorkspaceNew(
-  props: RouteComponentProps<
+export interface BlastWorkspaceNewProps
+  extends RouteComponentProps<
     {},
     StaticContext,
     { parameterValues?: ParameterValues }
-  >
-) {
+  > {
+  submitButtonText?: string;
+}
+
+export function BlastWorkspaceNew(props: BlastWorkspaceNewProps) {
   const targetMetadataByDataType = useContext(TargetMetadataByDataType);
 
   const workspaceMetadata = useMemo((): WorkspaceMetadata => {
@@ -101,7 +104,7 @@ export function BlastWorkspaceNew(
         shouldChangeDocumentTitle: false,
         autoRun: false,
         prepopulateWithLastParamValues: false,
-        submitButtonText: 'BLAST',
+        submitButtonText: props.submitButtonText ?? 'BLAST',
         initialParamData: props.location?.state?.parameterValues ?? undefined,
         FormComponent,
       }}

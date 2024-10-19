@@ -60,7 +60,9 @@ export function observe(
     'unhandledrejection'
   ).pipe(
     filter((event: PromiseRejectionEvent) => {
-      return !ignoreError(String(event.reason));
+      return (
+        !ignoreError(String(event.reason)) && !wdkService.getIsInvalidating()
+      );
     }),
     map((event: PromiseRejectionEvent) => notifyUnhandledError(event.reason))
   );
@@ -70,7 +72,7 @@ export function observe(
     'error'
   ).pipe(
     filter((event: ErrorEvent) => {
-      return !ignoreError(event.message);
+      return !ignoreError(event.message) && !wdkService.getIsInvalidating();
     }),
     map((event: ErrorEvent) => {
       return notifyUnhandledError(event.error ?? event.message);

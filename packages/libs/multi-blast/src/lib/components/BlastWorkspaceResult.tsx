@@ -29,6 +29,7 @@ import {
   LongReportResponse,
   MultiQueryReportJson,
   Target,
+  permanentlyExpiredError,
 } from '../utils/ServiceTypes';
 import { BlastApi } from '../utils/api';
 import { fetchOrganismToFilenameMaps } from '../utils/organisms';
@@ -45,13 +46,17 @@ import { DiamondResultContainer } from './DiamondResultContainer';
 interface Props {
   jobId: string;
   selectedResult?: SelectedResult;
+  workspaceShortName?: string;
 }
 
 const POLLING_INTERVAL = 3000;
 const MAX_DATABASE_STRING_LENGTH = 500;
+const DEFAULT_SHORTNAME = 'BLAST';
 
 export function BlastWorkspaceResult(props: Props) {
-  useSetDocumentTitle(`BLAST Job ${props.jobId}`);
+  useSetDocumentTitle(
+    `${props.workspaceShortName ?? DEFAULT_SHORTNAME} Job ${props.jobId}`
+  );
 
   const blastApi = useBlastApi();
 
@@ -69,14 +74,16 @@ export function BlastWorkspaceResult(props: Props) {
     return <LoadingBlastResult {...props} />;
   }
 
-  return jobResult.value != null &&
-    jobResult.value.status === 'request-error' ? (
+  return jobResult.value?.status === 'request-error' ? (
     <BlastRequestError errorDetails={jobResult.value.details} />
-  ) : jobResult.value != null && jobResult.value.status === 'error' ? (
+  ) : jobResult.value?.status === 'error' &&
+    permanentlyExpiredError.is(jobResult.value.details) ? (
+    <BlastRequestError {...props} errorDetails={jobResult.value.details} />
+  ) : jobResult.value?.status === 'error' ? (
     <BlastRerunError {...props} />
-  ) : jobResult.value != null && jobResult.value.status === 'queueing-error' ? (
+  ) : jobResult.value?.status === 'queueing-error' ? (
     <ErrorPage message="We were unable to queue your job." />
-  ) : queryResult.value != null && queryResult.value.status === 'error' ? (
+  ) : queryResult.value?.status === 'error' ? (
     <BlastRequestError errorDetails={queryResult.value.details} />
   ) : jobResult.value.job.config.tool.startsWith('diamond-') ? (
     <DiamondResultContainer
@@ -182,7 +189,7 @@ function StandardBlastResult(
 function LoadingBlastResult(props: Props) {
   return (
     <div className={blastWorkspaceCx('Result', 'Loading')}>
-      <h1>BLAST Job - pending</h1>
+      <h1>{props.workspaceShortName ?? DEFAULT_SHORTNAME} Job - pending...</h1>
       <p className="JobId">
         <span className="InlineHeader">Job Id:</span> {props.jobId}
       </p>
@@ -194,8 +201,8 @@ function LoadingBlastResult(props: Props) {
           <p className="Instructions">
             This job could take some time to run. You may leave this page and
             access the result from your <Link to="../all">jobs list</Link>{' '}
-            later, or <Link to="../new">submit another BLAST job</Link> while
-            you wait.
+            later, or <Link to="../new">submit another job</Link> while you
+            wait.
           </p>
         </div>
       </Loading>
@@ -206,7 +213,7 @@ function LoadingBlastResult(props: Props) {
 function BlastRerunError(props: Props) {
   return (
     <div className={blastWorkspaceCx('Result', 'Loading')}>
-      <h1>BLAST Job - error</h1>
+      <h1>{props.workspaceShortName ?? DEFAULT_SHORTNAME} Job - error</h1>
       <p className="JobId">
         <span className="InlineHeader">Job Id:</span> {props.jobId}
       </p>
@@ -215,7 +222,9 @@ function BlastRerunError(props: Props) {
           <span className="InlineHeader">Status:</span> error
         </p>
         <p>
-          We were unable to rerun your BLAST job due to a server error.{' '}
+          We were unable to rerun your{' '}
+          {props.workspaceShortName ?? DEFAULT_SHORTNAME} job due to a server
+          error.{' '}
           <Link to="/contact-us" target="_blank">
             Contact us
           </Link>{' '}
@@ -514,9 +523,19 @@ async function makeJobPollingPromise(
     }
 
     if (job.status === 'expired') {
-      const apiResult = await blastApi.rerunJob(job.id);
-      if (apiResult.status === 'error') {
-        return apiResult;
+      if (job.isRerunnable ?? true) {
+        const apiResult = await blastApi.rerunJob(job.id);
+        if (apiResult.status === 'error') {
+          return apiResult;
+        }
+      } else {
+        return {
+          status: 'error',
+          details: {
+            status: 'permanently-expired',
+            message: 'Sorry, your job has expired and is not rerunnable.',
+          },
+        };
       }
     }
 
