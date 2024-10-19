@@ -446,7 +446,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
           filteredCounts: filteredCounts.value,
           filters,
           providedOverlayVariable,
-          computation,
+          computationDescriptor: computation.descriptor, // computation.visualizations is not stable
         };
 
   // add to support both alphadiv and abundance
@@ -460,7 +460,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       filteredCounts,
       filters,
       providedOverlayVariable,
-      computation,
+      computationDescriptor,
     } = dataRequestDeps;
 
     if (
@@ -505,14 +505,14 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
       },
       computeConfig: copmutationAppOverview.computeName
-        ? computation.descriptor.configuration
+        ? computationDescriptor.configuration
         : undefined,
     };
 
     // 2024-04-26 - BM wonders why we don't use getBoxplot?
     // or why we don't just use this for all the visualizations?
     const response = await dataClient.getVisualizationData(
-      computation.descriptor.type,
+      computationDescriptor.type,
       visualization.descriptor.type,
       params,
       BoxplotResponse
