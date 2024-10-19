@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useIsRefOverflowingVertically } from '@veupathdb/wdk-client/lib/Hooks/Overflow';
 import { writeTextToClipboard } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 
-const NUM_COLS = 8000000;
+const NUM_COLS = 80;
 
 interface Props {
   accession?: string;
