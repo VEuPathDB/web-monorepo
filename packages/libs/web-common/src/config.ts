@@ -22,6 +22,7 @@ export const {
   twitterUrl2 = '',
   youtubeUrl = '',
   redditUrl = '',
+  linkedinUrl = '',
   vimeoUrl = '',
   discordUrl = '',
   communitySite = '',
