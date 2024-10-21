@@ -728,7 +728,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
       filteredCounts,
     } = dataRequestDeps;
 
-    if (!variablesAreUnique) throw new Error(nonUniqueWarning);
+    if (!varsAreUnique) throw new Error(nonUniqueWarning);
 
     if (
       categoricalMode &&
