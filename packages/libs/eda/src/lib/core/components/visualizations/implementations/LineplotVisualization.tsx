@@ -705,7 +705,9 @@ function LineplotViz(props: VisualizationProps<Options>) {
     yAxisVariable == null ||
     filteredCounts.pending ||
     filteredCounts.value == null ||
-    (varsAreUnique && categoricalMode && !valuesAreSpecified)
+    (varsAreUnique && categoricalMode && !valuesAreSpecified) ||
+    showIndependentAxisBanner ||
+    showDependentAxisBanner
       ? undefined
       : {
           dataRequestConfig,
@@ -739,12 +741,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
       )
     )
       throw new Error(invalidProportionText);
-
-    // no data request if banner should be shown
-    if (showIndependentAxisBanner || showDependentAxisBanner)
-      throw new Error(
-        'what are these showIndependentAxisBanner and showDependentAxisBanner all about??????'
-      );
 
     assertValidInputVariables(
       inputs,
@@ -1296,7 +1292,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
         }}
       >
         {/* independent axis banner */}
-        {vizConfig.independentAxisLogScale && vizConfig.useBinning && (
+        {showIndependentAxisBanner && (
           <Banner
             banner={{
               type: 'warning',
@@ -1320,7 +1316,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
           />
         )}
         {/* dependent axis banner */}
-        {vizConfig.dependentAxisLogScale && vizConfig.showErrorBars && (
+        {showDependentAxisBanner && (
           <Banner
             banner={{
               type: 'warning',
@@ -1395,8 +1391,8 @@ function LineplotViz(props: VisualizationProps<Options>) {
             >
               {independentAllNegative &&
               !dismissedIndependentAllNegativeWarning &&
-              !(vizConfig.independentAxisLogScale && vizConfig.useBinning) &&
-              !(vizConfig.dependentAxisLogScale && vizConfig.showErrorBars) ? (
+              !showIndependentAxisBanner &&
+              !showDependentAxisBanner ? (
                 <Notification
                   title={''}
                   text={
@@ -1513,8 +1509,8 @@ function LineplotViz(props: VisualizationProps<Options>) {
               {/* truncation notification */}
               {truncatedIndependentAxisWarning &&
               !independentAllNegative &&
-              !(vizConfig.independentAxisLogScale && vizConfig.useBinning) &&
-              !(vizConfig.dependentAxisLogScale && vizConfig.showErrorBars) ? (
+              !showIndependentAxisBanner &&
+              !showDependentAxisBanner ? (
                 <Notification
                   title={''}
                   text={truncatedIndependentAxisWarning}
@@ -1595,8 +1591,8 @@ function LineplotViz(props: VisualizationProps<Options>) {
             >
               {dependentAllNegative &&
               !dismissedDependentAllNegativeWarning &&
-              !(vizConfig.independentAxisLogScale && vizConfig.useBinning) &&
-              !(vizConfig.dependentAxisLogScale && vizConfig.showErrorBars) ? (
+              !showIndependentAxisBanner &&
+              !showDependentAxisBanner ? (
                 <Notification
                   title={''}
                   text={
@@ -1668,8 +1664,8 @@ function LineplotViz(props: VisualizationProps<Options>) {
               {/* truncation notification */}
               {truncatedDependentAxisWarning &&
               !dependentAllNegative &&
-              !(vizConfig.independentAxisLogScale && vizConfig.useBinning) &&
-              !(vizConfig.dependentAxisLogScale && vizConfig.showErrorBars) ? (
+              !showIndependentAxisBanner &&
+              !showDependentAxisBanner ? (
                 <Notification
                   title={''}
                   text={truncatedDependentAxisWarning}
