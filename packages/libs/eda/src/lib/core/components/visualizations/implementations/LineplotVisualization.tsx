@@ -713,6 +713,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
           dataRequestConfig,
           xAxisVariable,
           yAxisVariable,
+          inputs, // includes providedOverlayVariable
           filters,
           filteredCounts: filteredCounts.value,
         };
@@ -726,6 +727,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
       dataRequestConfig,
       xAxisVariable,
       yAxisVariable,
+      inputs,
       filters,
       filteredCounts,
     } = dataRequestDeps;
@@ -825,39 +827,9 @@ function LineplotViz(props: VisualizationProps<Options>) {
       facetVocabulary,
       facetVariable,
       colorPaletteOverride,
-      // pass showmarginalHistogram
       showMarginalHistogram
     );
   }, [dataRequestDeps]);
-
-  //    [
-  //      outputEntity,
-  //      xAxisVariable,
-  //      yAxisVariable,
-  //      filteredCounts.pending,
-  //      filteredCounts.value,
-  //      overlayVariable,
-  //      facetVariable,
-  //      categoricalMode,
-  //      valuesAreSpecified,
-  //      inputs,
-  //      selectedVariables,
-  //      entities,
-  //      dataElementConstraints,
-  //      dataElementDependencyOrder,
-  //      filters,
-  //      studyId,
-  //      dataRequestConfig,
-  //      dataClient,
-  //      computation.descriptor.type,
-  //      overlayEntity,
-  //      facetEntity,
-  //      visualization.descriptor.type,
-  //      neutralPaletteProps.colorPalette,
-  //      showIndependentAxisBanner,
-  //      showDependentAxisBanner,
-  //    ])
-  //  );
 
   const outputSize =
     overlayVariable != null && !vizConfig.showMissingness
