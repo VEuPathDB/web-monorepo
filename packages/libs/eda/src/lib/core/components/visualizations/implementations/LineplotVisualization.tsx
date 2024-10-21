@@ -11,7 +11,7 @@ import DataClient, {
   LineplotResponse,
 } from '../../../api/DataClient';
 
-import { usePromise, PromiseHookState } from '../../../hooks/promise';
+import { PromiseHookState } from '../../../hooks/promise';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import {
   useDataClient,
@@ -142,6 +142,7 @@ import {
   invalidProportionText,
   validateProportionValues,
 } from '../../../../map/analysis/utils/defaultOverlayConfig';
+import { useCachedPromise } from '../../../hooks/cachedPromise';
 
 const plotContainerStyles = {
   width: 750,
@@ -692,164 +693,175 @@ function LineplotViz(props: VisualizationProps<Options>) {
   const showDependentAxisBanner =
     vizConfig.dependentAxisLogScale && vizConfig.showErrorBars;
 
-  const data = usePromise(
-    useCallback(async (): Promise<LinePlotDataWithCoverage | undefined> => {
-      if (
-        xAxisVariable == null ||
-        yAxisVariable == null ||
-        filteredCounts.pending ||
-        filteredCounts.value == null
-      )
-        return undefined;
+  const varsAreUnique = variablesAreUnique([
+    xAxisVariable,
+    yAxisVariable,
+    overlayVariable && (providedOverlayVariable ?? overlayVariable),
+    facetVariable,
+  ]);
 
-      if (
-        !variablesAreUnique([
+  const dataRequestDeps =
+    xAxisVariable == null ||
+    yAxisVariable == null ||
+    filteredCounts.pending ||
+    filteredCounts.value == null ||
+    (varsAreUnique && categoricalMode && !valuesAreSpecified)
+      ? undefined
+      : {
+          dataRequestConfig,
           xAxisVariable,
           yAxisVariable,
-          overlayVariable && (providedOverlayVariable ?? overlayVariable),
-          facetVariable,
-        ])
-      )
-        throw new Error(nonUniqueWarning);
+          filters,
+          filteredCounts: filteredCounts.value,
+        };
 
-      if (categoricalMode && !valuesAreSpecified) return undefined;
+  const data = useCachedPromise(async (): Promise<
+    LinePlotDataWithCoverage | undefined
+  > => {
+    if (!dataRequestDeps) throw new Error('dataRequestDeps is undefined');
 
-      if (
-        categoricalMode &&
-        !validateProportionValues(
-          dataRequestConfig.numeratorValues,
-          dataRequestConfig.denominatorValues,
-          yAxisVariable?.vocabulary
-        )
-      )
-        throw new Error(invalidProportionText);
-
-      // no data request if banner should be shown
-      if (showIndependentAxisBanner || showDependentAxisBanner)
-        return undefined;
-
-      assertValidInputVariables(
-        inputs,
-        selectedVariables,
-        entities,
-        dataElementConstraints,
-        dataElementDependencyOrder
-      );
-
-      if (outputEntity == null) return undefined;
-
-      // check independentValueType/dependentValueType
-      const independentValueType = xAxisVariable?.type
-        ? xAxisVariable.type
-        : '';
-      const dependentValueType = yAxisVariable?.type ? yAxisVariable.type : '';
-
-      // add visualization.type here. valueSpec too?
-      const params = getRequestParams(
-        studyId,
-        filters ?? [],
-        dataRequestConfig,
-        xAxisVariable,
-        yAxisVariable,
-        outputEntity,
-        options?.getRequestParams
-      );
-
-      const response = await dataClient.getLineplot(
-        computation.descriptor.type,
-        visualization.descriptor.type,
-        params
-      );
-
-      const showMissingOverlay =
-        dataRequestConfig.showMissingness &&
-        hasIncompleteCases(
-          overlayEntity,
-          overlayVariable,
-          outputEntity,
-          filteredCounts.value,
-          response.completeCasesTable
-        );
-      const showMissingFacet =
-        dataRequestConfig.showMissingness &&
-        hasIncompleteCases(
-          facetEntity,
-          facetVariable,
-          outputEntity,
-          filteredCounts.value,
-          response.completeCasesTable
-        );
-
-      // This is used for reordering series data.
-      // We must not reorder binned data from continous vars (number and date)
-      // because then the data gets "lost" - nothing plotted.
-      // Also integer ordinals get binned too - so we disable the vocabulary for them.
-      const xAxisVocabulary =
-        xAxisVariable.dataShape === 'continuous' ||
-        (xAxisVariable.dataShape === 'ordinal' &&
-          xAxisVariable.type === 'integer')
-          ? []
-          : fixLabelsForNumberVariables(
-              xAxisVariable?.vocabulary,
-              xAxisVariable
-            );
-      const overlayVocabulary =
-        (overlayVariable && options?.getOverlayVocabulary?.()) ??
-        fixLabelsForNumberVariables(
-          overlayVariable?.vocabulary,
-          overlayVariable
-        );
-      const facetVocabulary = fixLabelsForNumberVariables(
-        facetVariable?.vocabulary,
-        facetVariable
-      );
-
-      return lineplotResponseToData(
-        response,
-        categoricalMode,
-        visualization.descriptor.type,
-        independentValueType,
-        dependentValueType,
-        params.config.valueSpec === 'proportion',
-        showMissingOverlay,
-        xAxisVocabulary,
-        overlayVocabulary,
-        overlayVariable,
-        showMissingFacet,
-        facetVocabulary,
-        facetVariable,
-        colorPaletteOverride,
-        // pass showmarginalHistogram
-        showMarginalHistogram
-      );
-    }, [
-      outputEntity,
+    const {
+      dataRequestConfig,
       xAxisVariable,
       yAxisVariable,
-      filteredCounts.pending,
-      filteredCounts.value,
-      overlayVariable,
-      facetVariable,
-      categoricalMode,
-      valuesAreSpecified,
+      filters,
+      filteredCounts,
+    } = dataRequestDeps;
+
+    if (!variablesAreUnique) throw new Error(nonUniqueWarning);
+
+    if (
+      categoricalMode &&
+      !validateProportionValues(
+        dataRequestConfig.numeratorValues,
+        dataRequestConfig.denominatorValues,
+        yAxisVariable?.vocabulary
+      )
+    )
+      throw new Error(invalidProportionText);
+
+    // no data request if banner should be shown
+    if (showIndependentAxisBanner || showDependentAxisBanner)
+      throw new Error(
+        'what are these showIndependentAxisBanner and showDependentAxisBanner all about??????'
+      );
+
+    assertValidInputVariables(
       inputs,
       selectedVariables,
       entities,
       dataElementConstraints,
-      dataElementDependencyOrder,
-      filters,
+      dataElementDependencyOrder
+    );
+
+    if (outputEntity == null) throw new Error('outputEntity is undefined');
+
+    // check independentValueType/dependentValueType
+    const independentValueType = xAxisVariable?.type ? xAxisVariable.type : '';
+    const dependentValueType = yAxisVariable?.type ? yAxisVariable.type : '';
+
+    // add visualization.type here. valueSpec too?
+    const params = getRequestParams(
       studyId,
+      filters ?? [],
       dataRequestConfig,
-      dataClient,
+      xAxisVariable,
+      yAxisVariable,
+      outputEntity,
+      options?.getRequestParams
+    );
+
+    const response = await dataClient.getLineplot(
       computation.descriptor.type,
-      overlayEntity,
-      facetEntity,
       visualization.descriptor.type,
-      neutralPaletteProps.colorPalette,
-      showIndependentAxisBanner,
-      showDependentAxisBanner,
-    ])
-  );
+      params
+    );
+
+    const showMissingOverlay =
+      dataRequestConfig.showMissingness &&
+      hasIncompleteCases(
+        overlayEntity,
+        overlayVariable,
+        outputEntity,
+        filteredCounts,
+        response.completeCasesTable
+      );
+    const showMissingFacet =
+      dataRequestConfig.showMissingness &&
+      hasIncompleteCases(
+        facetEntity,
+        facetVariable,
+        outputEntity,
+        filteredCounts,
+        response.completeCasesTable
+      );
+
+    // This is used for reordering series data.
+    // We must not reorder binned data from continous vars (number and date)
+    // because then the data gets "lost" - nothing plotted.
+    // Also integer ordinals get binned too - so we disable the vocabulary for them.
+    const xAxisVocabulary =
+      xAxisVariable.dataShape === 'continuous' ||
+      (xAxisVariable.dataShape === 'ordinal' &&
+        xAxisVariable.type === 'integer')
+        ? []
+        : fixLabelsForNumberVariables(xAxisVariable?.vocabulary, xAxisVariable);
+    const overlayVocabulary =
+      (overlayVariable && options?.getOverlayVocabulary?.()) ??
+      fixLabelsForNumberVariables(overlayVariable?.vocabulary, overlayVariable);
+    const facetVocabulary = fixLabelsForNumberVariables(
+      facetVariable?.vocabulary,
+      facetVariable
+    );
+
+    return lineplotResponseToData(
+      response,
+      categoricalMode,
+      visualization.descriptor.type,
+      independentValueType,
+      dependentValueType,
+      params.config.valueSpec === 'proportion',
+      showMissingOverlay,
+      xAxisVocabulary,
+      overlayVocabulary,
+      overlayVariable,
+      showMissingFacet,
+      facetVocabulary,
+      facetVariable,
+      colorPaletteOverride,
+      // pass showmarginalHistogram
+      showMarginalHistogram
+    );
+  }, [dataRequestDeps]);
+
+  //    [
+  //      outputEntity,
+  //      xAxisVariable,
+  //      yAxisVariable,
+  //      filteredCounts.pending,
+  //      filteredCounts.value,
+  //      overlayVariable,
+  //      facetVariable,
+  //      categoricalMode,
+  //      valuesAreSpecified,
+  //      inputs,
+  //      selectedVariables,
+  //      entities,
+  //      dataElementConstraints,
+  //      dataElementDependencyOrder,
+  //      filters,
+  //      studyId,
+  //      dataRequestConfig,
+  //      dataClient,
+  //      computation.descriptor.type,
+  //      overlayEntity,
+  //      facetEntity,
+  //      visualization.descriptor.type,
+  //      neutralPaletteProps.colorPalette,
+  //      showIndependentAxisBanner,
+  //      showDependentAxisBanner,
+  //    ])
+  //  );
 
   const outputSize =
     overlayVariable != null && !vizConfig.showMissingness
@@ -2076,14 +2088,6 @@ type DataRequestConfig = Omit<
   'dependentAxisRange' | 'checkedLegendItems'
 >;
 
-/**
- * Passing the whole of `vizConfig` creates a problem with the TypeScript compiler warnings
- * for the dependencies of the `data = usePromise(...)` that calls this function. It warns
- * that `vizConfig` is a missing dependency because it see it being used (passed to `getRequestParams()`)
- * We can't use the whole of `vizConfig` as a dependency because then data will be re-requested
- * when only client-side configs are changed. There should probably be two sub-objects of `vizConfig`,
- * for client and server-side configs.
- */
 function getRequestParams(
   studyId: string,
   filters: Filter[],
