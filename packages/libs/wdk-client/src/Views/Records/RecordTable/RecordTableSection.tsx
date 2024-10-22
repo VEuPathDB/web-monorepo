@@ -1,5 +1,5 @@
 import { includes } from 'lodash';
-import React from 'react';
+import React, { useState } from 'react';
 import { useEffect, useRef } from 'react';
 import CollapsibleSection from '../../../Components/Display/CollapsibleSection';
 import ErrorBoundary from '../../../Core/Controllers/ErrorBoundary';
@@ -24,6 +24,9 @@ export interface Props {
   recordClass: RecordClass;
   requestPartialRecord: (request: PartialRecordRequest) => void;
   title?: React.ReactNode;
+  deferLoadingData?: boolean;
+  deferLoadingText?: (requestData: () => void) => React.ReactNode;
+  requestOptions?: PartialRecordRequest;
 }
 
 /** Record table section on record page */
@@ -36,22 +39,34 @@ function RecordTableSection(props: Props) {
     onCollapsedChange,
     requestPartialRecord,
     title,
+    deferLoadingData,
+    deferLoadingText,
+    requestOptions = {
+      tables: [table.name],
+    },
   } = props;
   let { displayName, help, name } = table;
   let value = record.tables[name];
   let isError = includes(record.tableErrors, name);
-  let isLoading = value == null;
   let className = ['wdk-RecordTable', 'wdk-RecordTable__' + table.name].join(
     ' '
   );
 
   const requestedRef = useRef(false);
 
+  const [canMakeRequest, setCanMakeRequest] = useState(!deferLoadingData);
+
+  const isLoading =
+    canMakeRequest &&
+    ((requestOptions.attributes?.some((a) => record.attributes[a] == null) ??
+      false) ||
+      (requestOptions.tables?.some((t) => record.tables[t] == null) ?? false));
+
   useEffect(() => {
-    if (isCollapsed || requestedRef.current) return;
-    requestPartialRecord({ tables: [name] });
+    if (isCollapsed || requestedRef.current || !canMakeRequest) return;
+    requestPartialRecord(requestOptions);
     requestedRef.current = true;
-  }, [isCollapsed]);
+  }, [isCollapsed, canMakeRequest]);
 
   const headerContent = title ?? (
     <DefaultSectionTitle displayName={displayName} help={help} />
@@ -77,6 +92,12 @@ function RecordTableSection(props: Props) {
           </p>
         ) : isLoading ? (
           <p>Loading...</p>
+        ) : canMakeRequest === false ? (
+          deferLoadingText?.(() => setCanMakeRequest(true)) ?? (
+            <button type="button" onClick={() => setCanMakeRequest(true)}>
+              Load data
+            </button>
+          )
         ) : (
           <RecordTable
             className={className}

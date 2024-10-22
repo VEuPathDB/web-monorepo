@@ -91,7 +91,7 @@ class RecordController extends PageController<Props> {
       // all attributes
       {
         attributes: getAttributeNames(categoryTree),
-        tables: getTableNames(categoryTree),
+        tables: [],
       },
     ];
   }

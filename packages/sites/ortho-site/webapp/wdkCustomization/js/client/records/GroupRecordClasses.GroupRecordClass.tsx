@@ -26,6 +26,7 @@ import {
   RecordTableProps,
   WrappedComponentProps,
 } from 'ortho-client/records/Types';
+import { Props as RecordTableSectionProps } from '@veupathdb/wdk-client/lib/Views/Records/RecordTable/RecordTableSection';
 import {
   ACCESSION_ATTRIBUTE_NAME,
   DOMAIN_END_ATTRIBUTE_NAME,
@@ -43,6 +44,7 @@ import {
 } from 'ortho-client/records/utils';
 
 import './GroupRecordClasses.GroupRecordClass.scss';
+import { FilledButton } from '@veupathdb/coreui';
 
 const CLUSTER_PAGE_ATTRIBUTE_NAME = 'cluster_page';
 const LAYOUT_ATTRIBUTE_NAME = 'layout';
@@ -138,6 +140,33 @@ export function RecordTable(props: WrappedComponentProps<RecordTableProps>) {
     recordTableWrappers[props.table.name] ?? props.DefaultComponent;
 
   return <Component {...props} />;
+}
+
+export function RecordTableSection(
+  props: WrappedComponentProps<RecordTableSectionProps>
+) {
+  if (props.table.name === 'Sequences') {
+    return (
+      <props.DefaultComponent
+        {...props}
+        deferLoadingData
+        deferLoadingText={(loadData) => (
+          <div className="DeferredLoadingNote">
+            <div>
+              <strong>
+                Computing the data for this section can take some time.
+              </strong>
+            </div>
+            <FilledButton text="Load this section" onPress={loadData} />
+          </div>
+        )}
+        requestOptions={{
+          tables: ['Sequences', 'PFams', 'ProteinPFams', 'TaxonCounts'],
+        }}
+      />
+    );
+  }
+  return <props.DefaultComponent {...props} />;
 }
 
 const transformPfamsAttributeFields = curry(

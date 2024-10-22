@@ -1,6 +1,8 @@
+import { flow } from 'lodash';
 import React from 'react';
 
 import { Props as RecordAttributeSectionProps } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
+import { Props as RecordTableSectionProps } from '@veupathdb/wdk-client/lib/Views/Records/RecordTable/RecordTableSection';
 
 import { OrthoMCLPage } from 'ortho-client/components/layout/OrthoMCLPage';
 import { SiteSearchInput } from 'ortho-client/components/site-search/SiteSearchInput';
@@ -8,6 +10,7 @@ import {
   RecordAttribute as GroupRecordAttribute,
   RecordAttributeSection as GroupRecordAttributeSection,
   RecordTable as GroupRecordTable,
+  RecordTableSection as GroupRecordTableSection,
 } from 'ortho-client/records/GroupRecordClasses.GroupRecordClass';
 import {
   RecordTable as SequenceRecordTable,
@@ -33,7 +36,13 @@ export default {
     'RecordTable',
     (props: RecordTableProps) => props.recordClass.fullName
   ),
-  RecordTableSection,
+  RecordTableSection: flow(
+    makeDynamicWrapper(
+      'RecordTableSection',
+      (props: RecordTableSectionProps) => props.recordClass.fullName
+    ),
+    RecordTableSection
+  ),
   SiteSearchInput,
 };
 
@@ -48,6 +57,7 @@ const wrappedComponentsByRecordClass: Record<
     RecordAttribute: GroupRecordAttribute,
     RecordAttributeSection: GroupRecordAttributeSection,
     RecordTable: GroupRecordTable,
+    RecordTableSection: GroupRecordTableSection,
   },
   [SEQUENCE_RECORD_CLASS_NAME]: {
     RecordAttributeSection: SequenceRecordAttributeSection,

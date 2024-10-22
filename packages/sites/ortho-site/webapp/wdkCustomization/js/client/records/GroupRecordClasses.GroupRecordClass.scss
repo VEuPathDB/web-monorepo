@@ -2,6 +2,15 @@
   --row-hl-bg-color: wheat;
   --row-hl-fg-color: inherit;
 
+  .DeferredLoadingNote {
+    display: flex;
+    flex-direction: column;
+    margin-top: 2em;
+    gap: 1em;
+    align-items: center;
+    justify-content: center;
+  }
+
   .wdk-MissingMsaAttribute {
     color: darkred;
   }
