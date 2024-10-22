@@ -1,4 +1,9 @@
-import React, { CSSProperties, useMemo, useState } from 'react';
+import React, {
+  CSSProperties,
+  useDeferredValue,
+  useMemo,
+  useState,
+} from 'react';
 import TreeTable from '@veupathdb/components/lib/components/tidytree/TreeTable';
 import { RecordTableProps, WrappedComponentProps } from './Types';
 import { useOrthoService } from 'ortho-client/hooks/orthoService';
@@ -46,11 +51,18 @@ export function RecordTable_Sequences(
   );
 
   const [resetCounter, setResetCounter] = useState(0); // used for forcing re-render of filter buttons
-  const [selectedSpecies, setSelectedSpecies] = useState<string[]>([]);
-  const [pfamFilterIds, setPfamFilterIds] = useState<string[]>([]);
-  const [corePeripheralFilterValue, setCorePeripheralFilterValue] = useState<
-    ('core' | 'peripheral')[]
-  >([]);
+
+  const [volatileSelectedSpecies, setSelectedSpecies] = useState<string[]>([]);
+  const selectedSpecies = useDeferredValue(volatileSelectedSpecies);
+
+  const [volatilePfamFilterIds, setPfamFilterIds] = useState<string[]>([]);
+  const pfamFilterIds = useDeferredValue(volatilePfamFilterIds);
+
+  const [volatileCorePeripheralFilterValue, setCorePeripheralFilterValue] =
+    useState<('core' | 'peripheral')[]>([]);
+  const corePeripheralFilterValue = useDeferredValue(
+    volatileCorePeripheralFilterValue
+  );
 
   const groupName = props.record.id.find(
     ({ name }) => name === 'group_name'
@@ -390,7 +402,7 @@ export function RecordTable_Sequences(
         ),
         value: formatAttributeValue(row.accession),
       }))}
-      value={pfamFilterIds}
+      value={volatilePfamFilterIds}
       onChange={(ids) => {
         setPfamFilterIds(ids);
         setTablePageNumber(1);
@@ -413,7 +425,7 @@ export function RecordTable_Sequences(
           value: 'peripheral',
         },
       ]}
-      value={corePeripheralFilterValue}
+      value={volatileCorePeripheralFilterValue}
       onChange={(value) => {
         setCorePeripheralFilterValue(value);
         setTablePageNumber(1);
@@ -427,7 +439,7 @@ export function RecordTable_Sequences(
       // eslint-disable-next-line react/jsx-pascal-case
       <RecordTable_TaxonCounts_Filter
         key={`taxonFilter-${resetCounter}`}
-        selectedSpecies={selectedSpecies}
+        selectedSpecies={volatileSelectedSpecies}
         onSpeciesSelected={(species) => {
           setSelectedSpecies(species);
           setTablePageNumber(1);
