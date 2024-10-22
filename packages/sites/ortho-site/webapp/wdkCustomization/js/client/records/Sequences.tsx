@@ -474,7 +474,8 @@ export function RecordTable_Sequences(
         } as CSSProperties
       }
     >
-      {filteredRows.length > MAX_SEQUENCES_FOR_TREE && (
+      {(filteredRows.length > MAX_SEQUENCES_FOR_TREE ||
+        filteredRows.length < MIN_SEQUENCES_FOR_TREE) && (
         <div
           style={{
             display: 'flex',
@@ -488,7 +489,8 @@ export function RecordTable_Sequences(
             fontWeight: 500,
           }}
         >
-          To see a phylogenetic tree please use a filter to display fewer than{' '}
+          To see a phylogenetic tree please use a filter to display between{' '}
+          {MIN_SEQUENCES_FOR_TREE.toLocaleString()} and{' '}
           {MAX_SEQUENCES_FOR_TREE.toLocaleString()} sequences
         </div>
       )}
