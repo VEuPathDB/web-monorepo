@@ -1099,7 +1099,6 @@ export default CheckboxTree;
 function useTreeState<T>(props: CheckboxTreeProps<T>) {
   const {
     tree,
-    searchTerm: volatileSearchTerm,
     searchPredicate,
     getNodeId,
     getNodeChildren,
@@ -1112,7 +1111,7 @@ function useTreeState<T>(props: CheckboxTreeProps<T>) {
     filteredList,
   } = props;
 
-  const searchTerm = useDeferredValue(volatileSearchTerm);
+  const searchTerm = useDeferredValue(props.searchTerm);
 
   const statefulTree = useMemo(
     () => createStatefulTree(tree, getNodeChildren),
