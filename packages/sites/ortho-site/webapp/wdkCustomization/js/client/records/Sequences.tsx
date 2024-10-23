@@ -1,5 +1,6 @@
 import React, {
   CSSProperties,
+  useCallback,
   useDeferredValue,
   useMemo,
   useState,
@@ -289,6 +290,14 @@ export function RecordTable_Sequences(
     [mesaColumns]
   );
 
+  const handleSpeciesSelection = useCallback(
+    (species: string[]) => {
+      setSelectedSpecies(species);
+      setTablePageNumber(1);
+    },
+    [setSelectedSpecies, setTablePageNumber]
+  );
+
   if (
     !sortedRows ||
     (numSequences >= MIN_SEQUENCES_FOR_TREE &&
@@ -440,10 +449,7 @@ export function RecordTable_Sequences(
       <RecordTable_TaxonCounts_Filter
         key={`taxonFilter-${resetCounter}`}
         selectedSpecies={volatileSelectedSpecies}
-        onSpeciesSelected={(species) => {
-          setSelectedSpecies(species);
-          setTablePageNumber(1);
-        }}
+        onSpeciesSelected={handleSpeciesSelection}
         record={props.record}
         recordClass={props.recordClass}
         table={props.recordClass.tablesMap.TaxonCounts}
