@@ -1,10 +1,4 @@
-import React, {
-  CSSProperties,
-  useCallback,
-  useDeferredValue,
-  useMemo,
-  useState,
-} from 'react';
+import React, { CSSProperties, useCallback, useMemo, useState } from 'react';
 import TreeTable from '@veupathdb/components/lib/components/tidytree/TreeTable';
 import { RecordTableProps, WrappedComponentProps } from './Types';
 import { useOrthoService } from 'ortho-client/hooks/orthoService';
@@ -24,7 +18,12 @@ import { extractPfamDomain } from 'ortho-client/records/utils';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { RowCounter } from '@veupathdb/coreui/lib/components/Mesa';
 import { PfamDomain } from 'ortho-client/components/pfam-domains/PfamDomain';
-import { FloatingButton, SelectList, Undo } from '@veupathdb/coreui';
+import {
+  FloatingButton,
+  SelectList,
+  Undo,
+  useDeferredState,
+} from '@veupathdb/coreui';
 import { RecordTable_TaxonCounts_Filter } from './RecordTable_TaxonCounts_Filter';
 import { formatAttributeValue } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { RecordFilter } from '@veupathdb/wdk-client/lib/Views/Records/RecordTable/RecordFilter';
@@ -53,17 +52,17 @@ export function RecordTable_Sequences(
 
   const [resetCounter, setResetCounter] = useState(0); // used for forcing re-render of filter buttons
 
-  const [volatileSelectedSpecies, setSelectedSpecies] = useState<string[]>([]);
-  const selectedSpecies = useDeferredValue(volatileSelectedSpecies);
+  const [selectedSpecies, setSelectedSpecies, volatileSelectedSpecies] =
+    useDeferredState<string[]>([]);
 
-  const [volatilePfamFilterIds, setPfamFilterIds] = useState<string[]>([]);
-  const pfamFilterIds = useDeferredValue(volatilePfamFilterIds);
+  const [pfamFilterIds, setPfamFilterIds, volatilePfamFilterIds] =
+    useDeferredState<string[]>([]);
 
-  const [volatileCorePeripheralFilterValue, setCorePeripheralFilterValue] =
-    useState<('core' | 'peripheral')[]>([]);
-  const corePeripheralFilterValue = useDeferredValue(
-    volatileCorePeripheralFilterValue
-  );
+  const [
+    corePeripheralFilterValue,
+    setCorePeripheralFilterValue,
+    volatileCorePeripheralFilterValue,
+  ] = useDeferredState<('core' | 'peripheral')[]>([]);
 
   const groupName = props.record.id.find(
     ({ name }) => name === 'group_name'
