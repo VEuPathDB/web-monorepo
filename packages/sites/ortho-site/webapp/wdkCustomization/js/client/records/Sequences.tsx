@@ -1,4 +1,4 @@
-import React, { CSSProperties, useMemo, useState } from 'react';
+import React, { CSSProperties, useCallback, useMemo, useState } from 'react';
 import TreeTable from '@veupathdb/components/lib/components/tidytree/TreeTable';
 import { RecordTableProps, WrappedComponentProps } from './Types';
 import { useOrthoService } from 'ortho-client/hooks/orthoService';
@@ -18,7 +18,12 @@ import { extractPfamDomain } from 'ortho-client/records/utils';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { RowCounter } from '@veupathdb/coreui/lib/components/Mesa';
 import { PfamDomain } from 'ortho-client/components/pfam-domains/PfamDomain';
-import { FloatingButton, SelectList, Undo } from '@veupathdb/coreui';
+import {
+  FloatingButton,
+  SelectList,
+  Undo,
+  useDeferredState,
+} from '@veupathdb/coreui';
 import { RecordTable_TaxonCounts_Filter } from './RecordTable_TaxonCounts_Filter';
 import { formatAttributeValue } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { RecordFilter } from '@veupathdb/wdk-client/lib/Views/Records/RecordTable/RecordFilter';
@@ -46,11 +51,18 @@ export function RecordTable_Sequences(
   );
 
   const [resetCounter, setResetCounter] = useState(0); // used for forcing re-render of filter buttons
-  const [selectedSpecies, setSelectedSpecies] = useState<string[]>([]);
-  const [pfamFilterIds, setPfamFilterIds] = useState<string[]>([]);
-  const [corePeripheralFilterValue, setCorePeripheralFilterValue] = useState<
-    ('core' | 'peripheral')[]
-  >([]);
+
+  const [selectedSpecies, setSelectedSpecies, volatileSelectedSpecies] =
+    useDeferredState<string[]>([]);
+
+  const [pfamFilterIds, setPfamFilterIds, volatilePfamFilterIds] =
+    useDeferredState<string[]>([]);
+
+  const [
+    corePeripheralFilterValue,
+    setCorePeripheralFilterValue,
+    volatileCorePeripheralFilterValue,
+  ] = useDeferredState<('core' | 'peripheral')[]>([]);
 
   const groupName = props.record.id.find(
     ({ name }) => name === 'group_name'
@@ -277,6 +289,14 @@ export function RecordTable_Sequences(
     [mesaColumns]
   );
 
+  const handleSpeciesSelection = useCallback(
+    (species: string[]) => {
+      setSelectedSpecies(species);
+      setTablePageNumber(1);
+    },
+    [setSelectedSpecies, setTablePageNumber]
+  );
+
   if (
     !sortedRows ||
     (numSequences >= MIN_SEQUENCES_FOR_TREE &&
@@ -390,7 +410,7 @@ export function RecordTable_Sequences(
         ),
         value: formatAttributeValue(row.accession),
       }))}
-      value={pfamFilterIds}
+      value={volatilePfamFilterIds}
       onChange={(ids) => {
         setPfamFilterIds(ids);
         setTablePageNumber(1);
@@ -413,7 +433,7 @@ export function RecordTable_Sequences(
           value: 'peripheral',
         },
       ]}
-      value={corePeripheralFilterValue}
+      value={volatileCorePeripheralFilterValue}
       onChange={(value) => {
         setCorePeripheralFilterValue(value);
         setTablePageNumber(1);
@@ -427,11 +447,8 @@ export function RecordTable_Sequences(
       // eslint-disable-next-line react/jsx-pascal-case
       <RecordTable_TaxonCounts_Filter
         key={`taxonFilter-${resetCounter}`}
-        selectedSpecies={selectedSpecies}
-        onSpeciesSelected={(species) => {
-          setSelectedSpecies(species);
-          setTablePageNumber(1);
-        }}
+        selectedSpecies={volatileSelectedSpecies}
+        onSpeciesSelected={handleSpeciesSelection}
         record={props.record}
         recordClass={props.recordClass}
         table={props.recordClass.tablesMap.TaxonCounts}
