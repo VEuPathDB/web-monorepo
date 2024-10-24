@@ -9,14 +9,14 @@ import {
   twitterUrl2,
   facebookUrl,
   youtubeUrl,
-  redditUrl,
+  linkedinUrl,
 } from '../../config';
 import {
   AnnouncementsToggle,
   Twitter,
   Facebook,
   YouTube,
-  Reddit,
+  Linkedin,
 } from './SocialMediaIcons';
 
 import './SocialMediaLinks.scss';
@@ -66,8 +66,8 @@ export const SocialMediaLinks = ({
         <Facebook />
       </a>
 
-      <a href={redditUrl} target="_blank">
-        <Reddit />
+      <a href={linkedinUrl} target="_blank">
+        <Linkedin />
       </a>
 
       <a href={youtubeUrl} target="_blank">
