@@ -3,7 +3,10 @@ import React, { useMemo, useState } from 'react';
 import { orderBy } from 'lodash';
 
 import { Checkbox } from '@veupathdb/wdk-client/lib/Components';
-import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import {
+  CheckboxTreeStyleSpec,
+  LinksPosition,
+} from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import {
@@ -26,6 +29,18 @@ import './PhyleticDistributionCheckbox.scss';
 import { SelectTree } from '@veupathdb/coreui';
 
 const cx = makeClassNameHelper('PhyleticDistributionCheckbox');
+
+const styleOverridesForPopover: CheckboxTreeStyleSpec = {
+  treeSection: {
+    container: {
+      width: 500,
+      height: 'min(600px, 75vh)',
+    },
+  },
+  searchAndFilterWrapper: {
+    width: 500,
+  },
+};
 
 interface Props {
   selectionConfig: SelectionConfig;
@@ -72,6 +87,9 @@ export function PhyleticDistributionCheckbox({
 
   return (
     <SelectTree
+      styleOverrides={
+        selectionConfig.selectable ? styleOverridesForPopover : undefined
+      }
       hasPopoverButton={selectionConfig.selectable}
       buttonDisplayContent="Organism"
       tree={prunedPhyleticDistributionUiTree}
