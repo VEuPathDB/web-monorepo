@@ -19,7 +19,6 @@ import DataClient, {
   facetVariableDetailsType,
 } from '../../../api/DataClient';
 import { useCallback, useMemo, useState } from 'react';
-import { usePromise } from '../../../hooks/promise';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import {
   useDataClient,
@@ -71,6 +70,7 @@ import { useInputStyles } from '../inputStyles';
 import { ClearSelectionButton } from '../../variableSelectors/VariableTreeDropdown';
 import { Tooltip } from '@veupathdb/coreui';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { useCachedPromise } from '../../../hooks/cachedPromise';
 
 /**
  * Note: When options.hideFacetInputs is true, the mosaic plot is not shown.
@@ -377,135 +377,87 @@ function MosaicViz(props: Props<Options>) {
     [isTwoByTwo, options?.hideFacetInputs]
   );
 
-  const data = usePromise(
-    useCallback(async (): Promise<
-      TwoByTwoDataWithCoverage | ContTableDataWithCoverage | undefined
-    > => {
-      if (
-        vizConfig.xAxisVariable == null ||
-        xAxisVariable == null ||
-        vizConfig.yAxisVariable == null ||
-        yAxisVariable == null
-      )
-        return undefined;
+  const dataRequestDeps =
+    vizConfig.xAxisVariable == null ||
+    xAxisVariable == null ||
+    vizConfig.yAxisVariable == null ||
+    yAxisVariable == null ||
+    (isTwoByTwo && (xAxisReferenceValue == null || yAxisReferenceValue == null))
+      ? undefined
+      : {
+          xAxisVariable,
+          yAxisVariable,
+          vizConfig,
+        };
 
-      if (!variablesAreUnique([xAxisVariable, yAxisVariable, facetVariable]))
-        throw new Error(nonUniqueWarning);
+  const data = useCachedPromise(async (): Promise<
+    TwoByTwoDataWithCoverage | ContTableDataWithCoverage | undefined
+  > => {
+    if (!dataRequestDeps) throw new Error('dataRequestDeps is undefined');
 
-      assertValidInputVariables(
-        inputs,
-        selectedVariables,
-        entities,
-        dataElementConstraints
-      );
+    const { xAxisVariable, yAxisVariable, vizConfig } = dataRequestDeps;
 
-      if (outputEntity == null) return undefined;
+    if (!variablesAreUnique([xAxisVariable, yAxisVariable, facetVariable]))
+      throw new Error(nonUniqueWarning);
 
-      const xAxisVocabulary = fixLabelsForNumberVariables(
-        xAxisVariable.vocabulary,
-        xAxisVariable
-      );
-      const yAxisVocabulary = fixLabelsForNumberVariables(
-        yAxisVariable.vocabulary,
-        yAxisVariable
-      );
-      const facetVocabulary = fixLabelsForNumberVariables(
-        facetVariable?.vocabulary,
-        facetVariable
-      );
-
-      if (isTwoByTwo) {
-        if (
-          !vizConfig.xAxisReferenceValue ||
-          !xAxisReferenceValue ||
-          !vizConfig.yAxisReferenceValue ||
-          !yAxisReferenceValue
-        )
-          return undefined;
-
-        const params = getRequestParams(
-          studyId,
-          filters ?? [],
-          vizConfig.xAxisVariable,
-          vizConfig.yAxisVariable,
-          outputEntity.id,
-          vizConfig.facetVariable,
-          vizConfig.showMissingness,
-          vizConfig.xAxisReferenceValue,
-          vizConfig.yAxisReferenceValue,
-          options
-        );
-
-        const response = dataClient.getTwoByTwo(
-          computation.descriptor.type,
-          params
-        );
-
-        return reorderData(
-          twoByTwoResponseToData(
-            await response,
-            xAxisVariable,
-            yAxisVariable,
-            facetVariable
-          ),
-          xAxisVocabulary,
-          yAxisVocabulary,
-          vocabularyWithMissingData(facetVocabulary, vizConfig.showMissingness)
-        ) as TwoByTwoDataWithCoverage;
-      } else {
-        const params = getRequestParams(
-          studyId,
-          filters ?? [],
-          vizConfig.xAxisVariable,
-          vizConfig.yAxisVariable,
-          outputEntity?.id ?? '',
-          vizConfig.facetVariable,
-          vizConfig.showMissingness,
-          undefined,
-          undefined,
-          options
-        );
-        const response = dataClient.getContTable(
-          computation.descriptor.type,
-          params
-        );
-
-        return reorderData(
-          contTableResponseToData(
-            await response,
-            xAxisVariable,
-            yAxisVariable,
-            facetVariable
-          ),
-          xAxisVocabulary,
-          yAxisVocabulary,
-          vocabularyWithMissingData(facetVocabulary, vizConfig.showMissingness)
-        ) as ContTableDataWithCoverage;
-      }
-    }, [
-      vizConfig.xAxisVariable,
-      vizConfig.yAxisVariable,
-      vizConfig.xAxisReferenceValue,
-      vizConfig.yAxisReferenceValue,
-      vizConfig.facetVariable,
-      vizConfig.showMissingness,
-      xAxisVariable,
-      yAxisVariable,
-      facetVariable,
+    assertValidInputVariables(
       inputs,
       selectedVariables,
       entities,
-      dataElementConstraints,
-      filters,
-      isTwoByTwo,
-      xAxisReferenceValue,
-      yAxisReferenceValue,
+      dataElementConstraints
+    );
+
+    if (outputEntity == null) throw new Error('outputEntity is undefined');
+
+    const xAxisVocabulary = fixLabelsForNumberVariables(
+      xAxisVariable.vocabulary,
+      xAxisVariable
+    );
+    const yAxisVocabulary = fixLabelsForNumberVariables(
+      yAxisVariable.vocabulary,
+      yAxisVariable
+    );
+    const facetVocabulary = fixLabelsForNumberVariables(
+      facetVariable?.vocabulary,
+      facetVariable
+    );
+
+    const params = getRequestParams(
       studyId,
-      outputEntity?.id,
-      dataClient,
-      computation.descriptor.type,
-    ])
-  );
+      filters ?? [],
+      vizConfig.xAxisVariable!,
+      vizConfig.yAxisVariable!,
+      outputEntity.id,
+      vizConfig.facetVariable,
+      vizConfig.showMissingness,
+      xAxisReferenceValue, // always undefined
+      yAxisReferenceValue, // in twoByTwo mode
+      options
+    );
+
+    const response = isTwoByTwo
+      ? dataClient.getTwoByTwo(computation.descriptor.type, params)
+      : dataClient.getContTable(computation.descriptor.type, params);
+
+    return reorderData(
+      isTwoByTwo
+        ? twoByTwoResponseToData(
+            await response,
+            xAxisVariable,
+            yAxisVariable,
+            facetVariable
+          )
+        : contTableResponseToData(
+            await response,
+            xAxisVariable,
+            yAxisVariable,
+            facetVariable
+          ),
+      xAxisVocabulary,
+      yAxisVocabulary,
+      vocabularyWithMissingData(facetVocabulary, vizConfig.showMissingness)
+    ) as TwoByTwoDataWithCoverage | ContTableDataWithCoverage;
+  }, [dataRequestDeps]);
 
   const xAxisLabel = variableDisplayWithUnit(xAxisVariable);
   const yAxisLabel = variableDisplayWithUnit(yAxisVariable);
@@ -1626,8 +1578,12 @@ function ContTableStats(props?: {
  * Reformat response from mosaic endpoints into complete MosaicData
  * @param response
  * @returns MosaicData
+ *
+ * NOTE: this and twoByTwoResponseToData ought to be refactored into one function
+ * because they share a lot of logic. However the TypeScript seems tricky, so we haven't so far.
+ *
  */
-export function contTableResponseToData(
+function contTableResponseToData(
   response: ContTableResponse,
   xVariable: Variable,
   yVariable: Variable,
@@ -1706,7 +1662,7 @@ export function contTableResponseToData(
  * @param response
  * @returns MosaicData
  */
-export function twoByTwoResponseToData(
+function twoByTwoResponseToData(
   response: TwoByTwoResponse,
   xVariable: Variable,
   yVariable: Variable,
