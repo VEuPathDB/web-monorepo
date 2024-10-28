@@ -17,6 +17,7 @@ import { PfamDomainArchitecture } from 'ortho-client/components/pfam-domains/Pfa
 import { extractPfamDomain } from 'ortho-client/records/utils';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { RowCounter } from '@veupathdb/coreui/lib/components/Mesa';
+import PopoverButton from '@veupathdb/coreui/lib/components/buttons/PopoverButton/PopoverButton';
 import { PfamDomain } from 'ortho-client/components/pfam-domains/PfamDomain';
 import {
   FloatingButton,
@@ -303,12 +304,7 @@ export function RecordTable_Sequences(
       numSequences <= MAX_SEQUENCES_FOR_TREE &&
       (tree == null || treeResponse == null))
   ) {
-    return (
-      <>
-        <div>Loading...</div>
-        <Loading />
-      </>
-    ); // The loading spinner does not show :-(
+    return <Loading />;
   }
 
   if (
@@ -457,6 +453,21 @@ export function RecordTable_Sequences(
       />
     ) : null;
 
+  const proteinFilter = (
+    <PopoverButton buttonDisplayContent={'Proteins'} onClose={() => {}}>
+      <div style={{ margin: '1em' }}>
+        {highlightedNodes.length === 0 ? (
+          <p>Select some proteins using the checkboxes in the table below</p>
+        ) : (
+          <p>
+            You have {highlightedNodes.length.toLocaleString()} proteins
+            selected
+          </p>
+        )}
+      </div>
+    </PopoverButton>
+  );
+
   const resetButton = (
     <FloatingButton
       text={''}
@@ -551,6 +562,7 @@ export function RecordTable_Sequences(
           }}
         >
           <strong>Filters: </strong>
+          {proteinFilter}
           {pfamFilter}
           {corePeripheralFilter}
           {taxonFilter}
