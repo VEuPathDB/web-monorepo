@@ -20,7 +20,9 @@ import { RowCounter } from '@veupathdb/coreui/lib/components/Mesa';
 import PopoverButton from '@veupathdb/coreui/lib/components/buttons/PopoverButton/PopoverButton';
 import { PfamDomain } from 'ortho-client/components/pfam-domains/PfamDomain';
 import {
+  FilledButton,
   FloatingButton,
+  OutlinedButton,
   SelectList,
   Undo,
   useDeferredState,
@@ -28,6 +30,7 @@ import {
 import { RecordTable_TaxonCounts_Filter } from './RecordTable_TaxonCounts_Filter';
 import { formatAttributeValue } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { RecordFilter } from '@veupathdb/wdk-client/lib/Views/Records/RecordTable/RecordFilter';
+import { Button } from '@material-ui/core';
 
 type RowType = Record<string, AttributeValue>;
 
@@ -52,6 +55,9 @@ export function RecordTable_Sequences(
   );
 
   const [resetCounter, setResetCounter] = useState(0); // used for forcing re-render of filter buttons
+
+  const [proteinFilterIds, setProteinFilterIds, volatileProteinFilterIds] =
+    useDeferredState<string[]>([]);
 
   const [selectedSpecies, setSelectedSpecies, volatileSelectedSpecies] =
     useDeferredState<string[]>([]);
@@ -218,9 +224,16 @@ export function RecordTable_Sequences(
         const speciesMatch =
           selectedSpecies.length === 0 ||
           selectedSpecies.some((specie) => row.taxon_abbrev === specie);
+        const proteinMatch =
+          proteinFilterIds.length === 0 ||
+          proteinFilterIds.some((proteinId) => rowFullId === proteinId);
 
         return (
-          searchMatch && corePeripheralMatch && pfamIdMatch && speciesMatch
+          searchMatch &&
+          corePeripheralMatch &&
+          pfamIdMatch &&
+          speciesMatch &&
+          proteinMatch
         );
       });
     }
@@ -234,6 +247,7 @@ export function RecordTable_Sequences(
     accessionToPfamIds,
     pfamFilterIds,
     selectedSpecies,
+    proteinFilterIds,
   ]);
 
   // now filter the tree if needed - takes a couple of seconds for large trees
@@ -454,15 +468,76 @@ export function RecordTable_Sequences(
     ) : null;
 
   const proteinFilter = (
-    <PopoverButton buttonDisplayContent={'Proteins'} onClose={() => {}}>
-      <div style={{ margin: '1em' }}>
+    <PopoverButton
+      buttonDisplayContent={`Proteins${
+        volatileProteinFilterIds.length > 0
+          ? ` (${volatileProteinFilterIds.length})`
+          : ''
+      }`}
+      key={volatileProteinFilterIds.join(':')}
+    >
+      <div
+        style={{
+          margin: '1em',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1em',
+        }}
+      >
         {highlightedNodes.length === 0 ? (
-          <p>Select some proteins using the checkboxes in the table below</p>
+          volatileProteinFilterIds.length === 0 ? (
+            <div>
+              Select some proteins using the checkboxes in the table below.
+            </div>
+          ) : (
+            <>
+              <div>
+                You are filtering on{' '}
+                {volatileProteinFilterIds.length.toLocaleString()} proteins.
+              </div>
+              <OutlinedButton
+                text="Reset protein filter"
+                onPress={() => {
+                  setProteinFilterIds([]);
+                }}
+              />
+            </>
+          )
+        ) : volatileProteinFilterIds.length === 0 ? (
+          <>
+            <div>
+              You have checked {highlightedNodes.length.toLocaleString()}{' '}
+              proteins in the table.
+            </div>
+            <FilledButton
+              text="Filter to keep only these proteins"
+              onPress={() => {
+                setProteinFilterIds(highlightedNodes);
+                setHighlightedNodes([]);
+              }}
+            />
+          </>
         ) : (
-          <p>
-            You have {highlightedNodes.length.toLocaleString()} proteins
-            selected
-          </p>
+          <>
+            <div>
+              You have checked {highlightedNodes.length.toLocaleString()}{' '}
+              proteins in the table and are already filtering on{' '}
+              {volatileProteinFilterIds.length.toLocaleString()} proteins.
+            </div>
+            <FilledButton
+              text="Refine filter to keep only checked proteins"
+              onPress={() => {
+                setProteinFilterIds(highlightedNodes);
+                setHighlightedNodes([]);
+              }}
+            />
+            <OutlinedButton
+              text="Reset protein filter"
+              onPress={() => {
+                setProteinFilterIds([]);
+              }}
+            />
+          </>
         )}
       </div>
     </PopoverButton>
