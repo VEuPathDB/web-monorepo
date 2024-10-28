@@ -551,13 +551,15 @@ export function RecordTable_Sequences(
       disabled={
         pfamFilterIds.length +
           corePeripheralFilterValue.length +
-          selectedSpecies.length ===
+          selectedSpecies.length +
+          proteinFilterIds.length ===
         0
       }
       icon={Undo}
       size={'medium'}
       themeRole={'primary'}
       onPress={() => {
+        setProteinFilterIds([]);
         setPfamFilterIds([]);
         setCorePeripheralFilterValue([]);
         setSelectedSpecies([]);
