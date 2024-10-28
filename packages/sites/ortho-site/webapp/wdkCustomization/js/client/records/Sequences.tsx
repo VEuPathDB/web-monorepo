@@ -467,6 +467,20 @@ export function RecordTable_Sequences(
       />
     ) : null;
 
+  const resetProteinFilterButton = (
+    <OutlinedButton
+      text="Reset protein filter"
+      onPress={() => {
+        setProteinFilterIds([]);
+      }}
+    />
+  );
+
+  const updateProteinFilterIds = () => {
+    setProteinFilterIds(highlightedNodes);
+    setHighlightedNodes([]);
+  };
+
   const proteinFilter = (
     <PopoverButton
       buttonDisplayContent={`Proteins${
@@ -495,12 +509,7 @@ export function RecordTable_Sequences(
                 You are filtering on{' '}
                 {volatileProteinFilterIds.length.toLocaleString()} proteins.
               </div>
-              <OutlinedButton
-                text="Reset protein filter"
-                onPress={() => {
-                  setProteinFilterIds([]);
-                }}
-              />
+              {resetProteinFilterButton}
             </>
           )
         ) : volatileProteinFilterIds.length === 0 ? (
@@ -511,10 +520,7 @@ export function RecordTable_Sequences(
             </div>
             <FilledButton
               text="Filter to keep only these proteins"
-              onPress={() => {
-                setProteinFilterIds(highlightedNodes);
-                setHighlightedNodes([]);
-              }}
+              onPress={updateProteinFilterIds}
             />
           </>
         ) : (
@@ -526,17 +532,9 @@ export function RecordTable_Sequences(
             </div>
             <FilledButton
               text="Refine filter to keep only checked proteins"
-              onPress={() => {
-                setProteinFilterIds(highlightedNodes);
-                setHighlightedNodes([]);
-              }}
+              onPress={updateProteinFilterIds}
             />
-            <OutlinedButton
-              text="Reset protein filter"
-              onPress={() => {
-                setProteinFilterIds([]);
-              }}
-            />
+            {resetProteinFilterButton}
           </>
         )}
       </div>
