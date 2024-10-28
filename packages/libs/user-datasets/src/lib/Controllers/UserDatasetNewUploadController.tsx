@@ -20,20 +20,70 @@ import { StateSlice } from '../StoreModules/types';
 
 import { datasetIdType, DatasetUploadTypeConfigEntry } from '../Utils/types';
 import { assertIsVdiCompatibleWdkService } from '../Service';
+import { Link, Redirect, useRouteMatch } from 'react-router-dom';
+import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
 
 const SUPPORTED_FILE_UPLOAD_TYPES: string[] = [];
 
-interface Props<T extends string = string> {
+interface Props {
+  baseUrl: string;
+  type?: string;
+  availableTypes: string[];
+  datasetUploadTypes: Record<string, DatasetUploadTypeConfigEntry<string>>;
+  urlParams: Record<string, string>;
+}
+
+export default function UserDatasetUploadSelector(props: Props) {
+  const { baseUrl, type, availableTypes, datasetUploadTypes, urlParams } =
+    props;
+
+  const { url } = useRouteMatch();
+
+  if (type == null && availableTypes.length !== 1) {
+    return (
+      <div>
+        <h2>Choose an upload type</h2>
+        <ul>
+          {availableTypes.map((type) => {
+            const datasetUploadType = datasetUploadTypes[type];
+            return (
+              datasetUploadType && (
+                <li>
+                  <Link to={url + '/' + type}>
+                    {datasetUploadType.uploadTitle}
+                  </Link>
+                </li>
+              )
+            );
+          })}
+        </ul>
+      </div>
+    );
+  }
+  const datasetUploadType = datasetUploadTypes[type ?? availableTypes[0]];
+  if (datasetUploadType == null) {
+    return <NotFoundController />;
+  }
+  return (
+    <InnerUserDatasetUploadController
+      baseUrl={baseUrl}
+      datasetUploadType={datasetUploadType}
+      urlParams={urlParams}
+    />
+  );
+}
+
+interface InnerProps<T extends string = string> {
   baseUrl: string;
   datasetUploadType: DatasetUploadTypeConfigEntry<T>;
   urlParams: Record<string, string>;
 }
 
-export default function UserDatasetUploadController({
+function InnerUserDatasetUploadController({
   baseUrl,
   datasetUploadType,
   urlParams,
-}: Props) {
+}: InnerProps) {
   useSetDocumentTitle(datasetUploadType.uploadTitle);
 
   const projectId = useWdkService(

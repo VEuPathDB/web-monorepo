@@ -43,6 +43,7 @@
     li > label {
       display: grid;
       grid-template-columns: auto 10em 1fr;
+      align-items: baseline;
 
       label {
         font-size: medium;

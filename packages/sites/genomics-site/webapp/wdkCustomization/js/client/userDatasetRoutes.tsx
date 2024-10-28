@@ -8,13 +8,13 @@ import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import { communitySite } from '@veupathdb/web-common/lib/config';
 import ExternalContentController from '@veupathdb/web-common/lib/controllers/ExternalContentController';
 
-import { uploadTypeConfig } from '@veupathdb/user-datasets/lib/Utils/upload-config';
+import { uploadTypeConfig } from '@veupathdb/web-common/lib/user-dataset-upload-config';
 
 const UserDatasetRouter = React.lazy(
   () => import('./controllers/UserDatasetRouter')
 );
 
-const availableUploadTypes = ['genelist', 'bw', 'rnaseq'];
+const availableUploadTypes = ['genelist', 'bigwigfiles', 'rnaseq'];
 
 const USER_DATASETS_HELP_PAGE = 'user_datasets_help.html';
 

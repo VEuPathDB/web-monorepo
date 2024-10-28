@@ -29,6 +29,7 @@ import {
   DatasetUploadTypeConfigEntry,
   NewUserDataset,
   ResultUploadConfig,
+  UserDataset,
 } from '../Utils/types';
 
 import { Modal } from '@veupathdb/coreui';
@@ -72,6 +73,7 @@ interface FormContent {
   summary: string;
   description: string;
   dataUploadSelection: DataUploadSelection;
+  dependencies?: UserDataset['dependencies'];
 }
 
 export type FormValidation = InvalidForm | ValidForm;
@@ -131,6 +133,9 @@ function UploadForm({
   const [description, setDescription] = useState(
     urlParams.datasetDescription ?? ''
   );
+
+  const [dependencies, setDependencies] =
+    useState<UserDataset['dependencies']>();
 
   const [dataUploadMode, setDataUploadMode] = useState<DataUploadMode>(
     urlParams.datasetStepId
@@ -208,6 +213,7 @@ function UploadForm({
           summary,
           description,
           dataUploadSelection,
+          dependencies,
         }
       );
 
@@ -226,6 +232,7 @@ function UploadForm({
       name,
       summary,
       description,
+      dependencies,
       dataUploadSelection,
       submitForm,
     ]
@@ -441,6 +448,21 @@ function UploadForm({
             onChange={setDescription}
           />
         </div>
+        {datasetUploadType.formConfig.dependencies && (
+          <div className="formSection">
+            <FieldLabel
+              required={
+                datasetUploadType.formConfig.dependencies.required ?? false
+              }
+            >
+              {datasetUploadType.formConfig.dependencies.label}
+            </FieldLabel>
+            {datasetUploadType.formConfig.dependencies.render({
+              value: dependencies,
+              onChange: setDependencies,
+            })}
+          </div>
+        )}
         {
           <div className="formSection">
             {uploadMethodItems.length === 1 ? (
@@ -577,7 +599,8 @@ function validateForm<T extends string = string>(
   enableResultUploadMethod: boolean,
   formContent: FormContent
 ): FormValidation {
-  const { name, summary, description, dataUploadSelection } = formContent;
+  const { name, summary, description, dataUploadSelection, dependencies } =
+    formContent;
 
   if (!isCompleteDataUploadSelection(dataUploadSelection)) {
     return {
@@ -607,6 +630,7 @@ function validateForm<T extends string = string>(
       datasetType: datasetUploadType.type,
       projects: [projectId],
       dataUploadSelection,
+      dependencies,
       visibility: 'private',
     },
   };
