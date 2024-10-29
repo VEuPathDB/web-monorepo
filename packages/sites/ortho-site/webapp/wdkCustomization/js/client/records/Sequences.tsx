@@ -196,9 +196,11 @@ export function RecordTable_Sequences(
   // 2. core-peripheral radio button
   // 3. checked boxes in the Pfam legend
 
-  const [selectedColumnFilters, setSelectedColumnFilters] = useState<string[]>(
-    []
-  );
+  const [
+    selectedColumnFilters,
+    setSelectedColumnFilters,
+    volatileSelectedColumnFilters,
+  ] = useDeferredState<string[]>([]);
 
   const filteredRows = useMemo(() => {
     if (
@@ -626,7 +628,7 @@ export function RecordTable_Sequences(
           onSearchTermChange={setSearchQuery}
           recordDisplayName="Proteins"
           filterAttributes={filterAttributes}
-          selectedColumnFilters={selectedColumnFilters}
+          selectedColumnFilters={volatileSelectedColumnFilters}
           onColumnFilterChange={(keys) => setSelectedColumnFilters(keys)}
         />
         <div className="MesaComponent" style={{ marginRight: 'auto' }}>
