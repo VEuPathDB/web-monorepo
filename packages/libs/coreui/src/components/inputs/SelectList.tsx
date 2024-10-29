@@ -29,15 +29,13 @@ export default function SelectList<T>({
   ...props
 }: SelectListProps<T>) {
   const [selected, setSelected] = useState<SelectListProps<T>['value']>(value);
-  const [buttonDisplayContent, setButtonDisplayContent] = useState<ReactNode>(
-    value.length ? value.join(', ') : defaultButtonDisplayContent
-  );
+
+  const buttonDisplayContent = value.length
+    ? value.join(', ')
+    : defaultButtonDisplayContent;
 
   const onClose = () => {
     onChange(selected);
-    setButtonDisplayContent(
-      selected.length ? selected.join(', ') : defaultButtonDisplayContent
-    );
   };
 
   /**
@@ -59,11 +57,7 @@ export default function SelectList<T>({
    */
   useEffect(() => {
     setSelected(value);
-    if (instantUpdate) return; // we don't want the button text changing on every click
-    setButtonDisplayContent(
-      value.length ? value.join(', ') : defaultButtonDisplayContent
-    );
-  }, [value, defaultButtonDisplayContent]);
+  }, [value]);
 
   const buttonLabel = (
     <span
