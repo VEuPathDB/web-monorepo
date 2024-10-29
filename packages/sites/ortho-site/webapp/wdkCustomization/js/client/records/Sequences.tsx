@@ -1,4 +1,10 @@
-import React, { CSSProperties, useCallback, useMemo, useState } from 'react';
+import React, {
+  CSSProperties,
+  useCallback,
+  useDeferredValue,
+  useMemo,
+  useState,
+} from 'react';
 import TreeTable from '@veupathdb/components/lib/components/tidytree/TreeTable';
 import { RecordTableProps, WrappedComponentProps } from './Types';
 import { useOrthoService } from 'ortho-client/hooks/orthoService';
@@ -30,7 +36,6 @@ import {
 import { RecordTable_TaxonCounts_Filter } from './RecordTable_TaxonCounts_Filter';
 import { formatAttributeValue } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { RecordFilter } from '@veupathdb/wdk-client/lib/Views/Records/RecordTable/RecordFilter';
-import { Button } from '@material-ui/core';
 
 type RowType = Record<string, AttributeValue>;
 
@@ -49,9 +54,8 @@ export function RecordTable_Sequences(
   props: WrappedComponentProps<RecordTableProps>
 ) {
   const [searchQuery, setSearchQuery] = useState('');
-  const safeSearchRegexp = useMemo(
-    () => createSafeSearchRegExp(searchQuery),
-    [searchQuery]
+  const safeSearchRegexp = useDeferredValue(
+    useMemo(() => createSafeSearchRegExp(searchQuery), [searchQuery])
   );
 
   const [resetCounter, setResetCounter] = useState(0); // used for forcing re-render of filter buttons
@@ -198,7 +202,7 @@ export function RecordTable_Sequences(
 
   const filteredRows = useMemo(() => {
     if (
-      searchQuery !== '' ||
+      safeSearchRegexp != null ||
       corePeripheralFilterValue != null ||
       pfamFilterIds.length > 0 ||
       selectedSpecies.length > 0
@@ -211,7 +215,7 @@ export function RecordTable_Sequences(
         const rowPfamIdsSet = accessionToPfamIds.get(rowFullId);
 
         const searchMatch =
-          searchQuery === '' ||
+          safeSearchRegexp == null ||
           rowMatch(row, safeSearchRegexp, selectedColumnFilters);
         const corePeripheralMatch =
           corePeripheralFilterValue.length === 0 ||
@@ -239,7 +243,6 @@ export function RecordTable_Sequences(
     }
     return undefined;
   }, [
-    searchQuery,
     selectedColumnFilters,
     safeSearchRegexp,
     sortedRows,
@@ -496,6 +499,7 @@ export function RecordTable_Sequences(
           display: 'flex',
           flexDirection: 'column',
           gap: '1em',
+          maxWidth: '300px',
         }}
       >
         {highlightedNodes.length === 0 ? (
@@ -523,7 +527,7 @@ export function RecordTable_Sequences(
               onPress={updateProteinFilterIds}
             />
           </>
-        ) : (
+        ) : highlightedNodes.length < volatileProteinFilterIds.length ? (
           <>
             <div>
               You have checked {highlightedNodes.length.toLocaleString()}{' '}
@@ -534,6 +538,15 @@ export function RecordTable_Sequences(
               text="Refine filter to keep only checked proteins"
               onPress={updateProteinFilterIds}
             />
+            {resetProteinFilterButton}
+          </>
+        ) : (
+          <>
+            <div>
+              You have checked all the proteins that are currently being
+              filtered on. Either uncheck one or more proteins or reset the
+              filter entirely using the button below.
+            </div>
             {resetProteinFilterButton}
           </>
         )}
@@ -726,7 +739,8 @@ function rowMatch(row: RowType, query: RegExp, keys?: string[]): boolean {
   );
 }
 
-function createSafeSearchRegExp(input: string): RegExp {
+function createSafeSearchRegExp(input: string): RegExp | undefined {
+  if (input === '') return undefined;
   try {
     // Attempt to create a RegExp from the user input directly
     return new RegExp(input, 'i');
