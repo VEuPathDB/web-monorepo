@@ -61,12 +61,12 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
         ),
         uploadMethodConfig: {
           file: {
-            maxSizeBytes: 100 * 1000 * 1000, // 100MB
+            maxSizeBytes: 10 * 1000 * 1000 * 1000, // 10GB
             render: ({ fieldNode }) => (
               <>
                 {fieldNode}
                 <div style={{ marginTop: '0.25em' }}>
-                  File must be less than 100MB
+                  File must be less than 10GB
                 </div>
               </>
             ),
@@ -113,12 +113,12 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
         ),
         uploadMethodConfig: {
           file: {
-            maxSizeBytes: 100 * 1000 * 1000, // 100MB
+            maxSizeBytes: 10 * 1000 * 1000 * 1000, // 10GB
             render: ({ fieldNode }) => (
               <>
                 {fieldNode}
                 <div style={{ marginTop: '0.25em' }}>
-                  File must be less than 100MB
+                  File must be less than 10GB
                 </div>
               </>
             ),
