@@ -1,13 +1,16 @@
 import {
   DatasetUploadTypeConfig,
   DependencyProps,
+  UserDataset,
 } from '@veupathdb/user-datasets/lib/Utils/types';
 import { useOrganismTree } from './hooks/organisms';
 import { SelectTree } from '@veupathdb/coreui';
-import { useCallback, useMemo, useState } from 'react';
-import { getLeaves } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { useCallback, useState } from 'react';
+import { projectId } from './config';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { useWdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { Node } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { areTermsInString } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 
 type ImplementedUploadTypes =
   | 'biom'
@@ -227,31 +230,61 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
     },
   };
 
+const styleOverrides = {
+  treeNode: {
+    labelTextWrapper: {
+      fontSize: '1.1em',
+    },
+  },
+};
+
 function ReferenceGenomeDepdency(props: DependencyProps) {
   const { value, onChange } = props;
-  const selectedList = value?.map((entry) => entry.resourceIdentifier);
+  const selectedList = value?.map((entry) => entry.resourceDisplayName);
   const organismTree = useOrganismTree(true);
-  const leavesByTerm = useMemo(() => {
-    const leaves = organismTree
-      ? getLeaves(organismTree, (node) => node.children)
-      : [];
-    return new Map(leaves.map((node) => [node.data.term, node.data]));
-  }, [organismTree]);
-  const { wdkService } = useWdkDependenciesContext();
+  const fileNameByTerm = useWdkService(async (wdkService) => {
+    const genomeDataTypesResult = await wdkService.getAnswerJson(
+      {
+        searchName: 'GenomeDataTypes',
+        searchConfig: { parameters: {} },
+      },
+      {
+        attributes: ['organism_full', 'name_for_filenames'],
+        pagination: {
+          numRecords: -1,
+          offset: 0,
+        },
+      }
+    );
+    return new Map(
+      genomeDataTypesResult.records.map((rec) => [
+        rec.attributes.organism_full as string,
+        rec.attributes.name_for_filenames as string,
+      ])
+    );
+  }, []);
+  const buildNumber = useWdkService(async (wdkService) => {
+    const config = await wdkService.getConfig();
+    return config.buildNumber;
+  }, []);
   const onSelectionChange = useCallback(
-    async function handleChange(selection: string[]) {
-      const projectInfo = await wdkService.getConfig();
-      const nodes = selection
-        .map((term) => leavesByTerm.get(term))
-        .filter((node): node is TreeBoxVocabNode['data'] => node != null);
-      const dependencies = nodes.map((node) => ({
-        resourceDisplayName: node.display,
-        resourceIdentifier: node.term,
-        resourceVersion: projectInfo.buildNumber,
-      }));
+    function handleChange(selection: string[]) {
+      if (fileNameByTerm == null || buildNumber == null) return;
+      const dependencies = selection
+        .map((term) => {
+          const fileName = fileNameByTerm.get(term);
+          return fileName == null
+            ? undefined
+            : {
+                resourceDisplayName: term,
+                resourceIdentifier: `${projectId}-${buildNumber}_${fileName}_Genome`,
+                resourceVersion: buildNumber,
+              };
+        })
+        .filter((dep) => dep != null) as UserDataset['dependencies'];
       onChange(dependencies);
     },
-    [leavesByTerm, onChange, wdkService]
+    [buildNumber, fileNameByTerm, onChange]
   );
   const [expandedNodes, setExpandedNodes] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -260,30 +293,30 @@ function ReferenceGenomeDepdency(props: DependencyProps) {
     <SelectTree
       buttonDisplayContent="Choose reference genome"
       tree={organismTree}
-      getNodeId={(node) => node.data.term}
-      getNodeChildren={(node) => node.children}
+      getNodeId={getNodeId}
+      getNodeChildren={getNodeChildren}
       onExpansionChange={setExpandedNodes}
       expandedList={expandedNodes}
       isMultiPick={false}
       isSearchable
       searchTerm={searchTerm}
       onSearchTermChange={setSearchTerm}
-      searchPredicate={(node, terms) =>
-        terms.some((term) =>
-          node.data.display.toLowerCase().includes(term.toLowerCase())
-        )
-      }
+      searchPredicate={searchPredicate}
       isSelectable
       selectedList={selectedList}
       onSelectionChange={onSelectionChange}
       linksPosition={SelectTree.LinkPlacement.Top}
-      styleOverrides={{
-        treeNode: {
-          labelTextWrapper: {
-            fontSize: '1.1em',
-          },
-        },
-      }}
+      styleOverrides={styleOverrides}
     />
   );
+}
+
+function getNodeId(node: Node<TreeBoxVocabNode>) {
+  return node.data.term;
+}
+function getNodeChildren(node: Node<TreeBoxVocabNode>) {
+  return node.children;
+}
+function searchPredicate(node: Node<TreeBoxVocabNode>, terms: string[]) {
+  return areTermsInString(terms, node.data.display);
 }
