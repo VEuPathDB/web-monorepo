@@ -403,11 +403,10 @@ function UploadForm({
             ),
           }}
         />
-        <div className="formSection">
+        <div className="formSection formSection--data-set-name">
           <FieldLabel required htmlFor="data-set-name">
             Name
           </FieldLabel>
-          <br />
           <TextBox
             type="input"
             id="data-set-name"
@@ -418,21 +417,22 @@ function UploadForm({
             onChange={setName}
           />
         </div>
-        <div className="formSection">
+        <div className="formSection formSection--data-set-summary">
           <FieldLabel htmlFor="data-set-summary" required={summaryRequired}>
             Summary
           </FieldLabel>
-          <TextBox
+          <TextArea
             type="input"
             id="data-set-summary"
             placeholder="brief summary of the data set contents in a few sentences"
             required={summaryRequired}
+            rows={2}
             {...summaryInputProps}
             value={summary}
             onChange={setSummary}
           />
         </div>
-        <div className="formSection">
+        <div className="formSection formSection--data-set-description">
           <FieldLabel
             htmlFor="data-set-description"
             required={descriptionRequired}
@@ -443,13 +443,14 @@ function UploadForm({
             id="data-set-description"
             placeholder="longer description of the data set contents"
             required={descriptionRequired}
+            rows={6}
             {...descriptionInputProps}
             value={description}
             onChange={setDescription}
           />
         </div>
         {datasetUploadType.formConfig.dependencies && (
-          <div className="formSection">
+          <div className="formSection formSection--data-set-dependencies">
             <FieldLabel
               required={
                 datasetUploadType.formConfig.dependencies.required ?? false
@@ -464,7 +465,7 @@ function UploadForm({
           </div>
         )}
         {
-          <div className="formSection">
+          <div className="formSection formSection--data-set-file">
             {uploadMethodItems.length === 1 ? (
               <div className={cx('--UploadMethodSelector')}>
                 <div className={cx('--FixedUploadItem')}>

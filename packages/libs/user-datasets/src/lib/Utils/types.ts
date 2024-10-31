@@ -85,7 +85,7 @@ export interface DatasetUploadTypeConfigEntry<T extends string> {
       inputProps: Partial<React.InputHTMLAttributes<HTMLInputElement>>;
     };
     summary?: {
-      inputProps: Partial<React.InputHTMLAttributes<HTMLInputElement>>;
+      inputProps: Partial<React.InputHTMLAttributes<HTMLTextAreaElement>>;
     };
     description?: {
       inputProps: Partial<React.TextareaHTMLAttributes<HTMLTextAreaElement>>;

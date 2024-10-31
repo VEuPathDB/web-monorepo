@@ -1,4 +1,11 @@
 .UploadForm {
+  max-width: 1000px;
+  padding: 1em 3em;
+
+  > * + * {
+    margin-block-start: 1em;
+  }
+
   h2 {
     color: #222;
     font-size: 1.5em;
@@ -6,29 +13,26 @@
     margin: 0;
     padding: 22px 0 8px 0;
   }
-  .formSection > label {
-    font-size: medium;
-  }
-  #data-set-name {
-    min-width: 300px;
-  }
-  #data-set-summary {
-    width: 100%;
-  }
-  #data-set-description {
-    width: 100%;
-    height: 8em;
-  }
-  #data-set-url {
-    width: 100%;
-    max-width: 51em;
+  .formSection {
+    > & {
+      margin-block-start: 1em;
+    }
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+
+    > label {
+      font-size: medium;
+    }
+
+    #data-set-name {
+      width: 300px;
+    }
   }
   .formInfo {
     width: 80%;
     text-align: justify;
-  }
-  .formSection {
-    margin: 1em 0;
   }
   select {
     max-width: 450px;
