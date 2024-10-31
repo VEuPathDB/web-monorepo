@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import PopoverButton from '../../buttons/PopoverButton/PopoverButton';
 import CheckboxTree, {
   CheckboxTreeProps,
@@ -16,11 +16,11 @@ export interface SelectTreeProps<T> extends CheckboxTreeProps<T> {
 }
 
 function SelectTree<T>(props: SelectTreeProps<T>) {
-  const buttonDisplayContent =
-    props.selectedList && props.selectedList.length
-      ? truncatedButtonContent(props.selectedList)
-      : props.buttonDisplayContent;
-
+  const [buttonDisplayContent, setButtonDisplayContent] = useState<ReactNode>(
+    props.currentList && props.currentList.length
+      ? props.currentList.join(', ')
+      : props.buttonDisplayContent
+  );
   const {
     selectedList,
     onSelectionChange,
@@ -38,21 +38,42 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
   /** Used as a hack to "auto close" the popover when shouldCloseOnSelection is true */
   const [key, setKey] = useState('');
 
-  const onClose = useCallback(() => {
-    if (!instantUpdate) onSelectionChange(localSelectedList);
-  }, [instantUpdate, localSelectedList, onSelectionChange]);
-
   useEffect(() => {
     if (!shouldCloseOnSelection) return;
     setKey(selectedList.join(', '));
     onClose();
-  }, [shouldCloseOnSelection, localSelectedList, selectedList, onClose]);
+  }, [shouldCloseOnSelection, localSelectedList]);
 
   // live updates to caller when needed
   useEffect(() => {
     if (!instantUpdate) return;
     onSelectionChange(localSelectedList);
-  }, [onSelectionChange, localSelectedList, instantUpdate]);
+  }, [onSelectionChange, localSelectedList]);
+
+  function truncatedButtonContent(selectedList: string[]) {
+    return (
+      <span
+        style={{
+          // this styling is copied from SelectList!
+          maxWidth: '300px',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {selectedList.join(', ')}
+      </span>
+    );
+  }
+
+  const onClose = () => {
+    setButtonDisplayContent(
+      localSelectedList.length
+        ? truncatedButtonContent(localSelectedList)
+        : props.buttonDisplayContent
+    );
+    if (!instantUpdate) onSelectionChange(localSelectedList);
+  };
 
   const checkboxTree = (
     <CheckboxTree
@@ -135,19 +156,3 @@ const defaultProps = {
 SelectTree.defaultProps = defaultProps;
 SelectTree.LinkPlacement = LinksPosition;
 export default SelectTree;
-
-function truncatedButtonContent(selectedList: string[]) {
-  return (
-    <span
-      style={{
-        // this styling is copied from SelectList!
-        maxWidth: '300px',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-      }}
-    >
-      {selectedList.join(', ')}
-    </span>
-  );
-}

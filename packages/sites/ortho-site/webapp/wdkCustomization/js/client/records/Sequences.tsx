@@ -50,6 +50,8 @@ export function RecordTable_Sequences(
     [searchQuery]
   );
 
+  const [resetCounter, setResetCounter] = useState(0); // used for forcing re-render of filter buttons
+
   const [selectedSpecies, setSelectedSpecies, volatileSelectedSpecies] =
     useDeferredState<string[]>([]);
 
@@ -381,6 +383,7 @@ export function RecordTable_Sequences(
 
   const pfamFilter = pfamRows.length > 0 && (
     <SelectList
+      key={`pfamFilter-${resetCounter}`}
       defaultButtonDisplayContent="Pfam domains"
       items={pfamRows.map((row) => ({
         display: (
@@ -418,6 +421,7 @@ export function RecordTable_Sequences(
 
   const corePeripheralFilter = (
     <SelectList<'core' | 'peripheral'>
+      key={`corePeripheralFilter-${resetCounter}`}
       defaultButtonDisplayContent="Core/Peripheral"
       items={[
         {
@@ -442,6 +446,7 @@ export function RecordTable_Sequences(
     props.record.tables.TaxonCounts?.length > 0 ? (
       // eslint-disable-next-line react/jsx-pascal-case
       <RecordTable_TaxonCounts_Filter
+        key={`taxonFilter-${resetCounter}`}
         selectedSpecies={volatileSelectedSpecies}
         onSpeciesSelected={handleSpeciesSelection}
         record={props.record}
@@ -470,6 +475,7 @@ export function RecordTable_Sequences(
         setPfamFilterIds([]);
         setCorePeripheralFilterValue([]);
         setSelectedSpecies([]);
+        setResetCounter((prev) => prev + 1);
         setTablePageNumber(1);
       }}
     />
