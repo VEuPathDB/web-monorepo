@@ -205,7 +205,7 @@ export function RecordTable_Sequences(
   const filteredRows = useMemo(() => {
     if (
       safeSearchRegexp != null ||
-      corePeripheralFilterValue != null ||
+      corePeripheralFilterValue.length > 0 ||
       pfamFilterIds.length > 0 ||
       selectedSpecies.length > 0
     ) {
@@ -243,7 +243,7 @@ export function RecordTable_Sequences(
         );
       });
     }
-    return undefined;
+    return sortedRows;
   }, [
     selectedColumnFilters,
     safeSearchRegexp,
@@ -257,9 +257,15 @@ export function RecordTable_Sequences(
 
   // now filter the tree if needed - takes a couple of seconds for large trees
   const filteredTree = useMemo(() => {
-    if (leaves == null || tree == null || filteredRows?.length === 0) return;
+    if (
+      leaves == null ||
+      tree == null ||
+      filteredRows == null ||
+      filteredRows.length === 0
+    )
+      return;
 
-    if (filteredRows != null && filteredRows.length < leaves.length) {
+    if (filteredRows.length < leaves.length) {
       const filteredRowIds = new Set(
         filteredRows.map(({ full_id }) => full_id as string)
       );
@@ -286,16 +292,17 @@ export function RecordTable_Sequences(
 
   // make a newick string from the filtered tree if needed
   const finalNewick = useMemo(() => {
-    if (filteredTree === tree && treeResponse != null) {
-      return treeResponse; // no filtering so return what we read from the back end
-    } else if (
-      filteredTree != null &&
-      filteredRows != null &&
-      filteredRows.length > 0
-    ) {
-      return filteredTree.toNewick(); // make new newick data from the filtered tree
-    } else return;
-  }, [filteredTree, treeResponse, tree, filteredRows]);
+    if (treeResponse != null) {
+      if (filteredTree != null) {
+        if (filteredTree === tree) {
+          return treeResponse; // no filtering so return what we read from the back end
+        } else {
+          return filteredTree.toNewick(); // make new newick data from the filtered tree
+        }
+      }
+    }
+    return;
+  }, [filteredTree, treeResponse, tree]);
 
   // list of column keys and display names to show in the checkbox dropdown in the table text search box (RecordFilter)
   const filterAttributes = useMemo(
