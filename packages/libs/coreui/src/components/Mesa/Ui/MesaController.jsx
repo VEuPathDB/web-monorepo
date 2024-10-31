@@ -97,8 +97,10 @@ class MesaController extends React.Component {
     const PageNav = this.renderPaginationMenu;
     const Empty = this.renderEmptyState;
 
+    const className = (options.className ?? '') + ' Mesa MesaComponent';
+
     return (
-      <div className="Mesa MesaComponent">
+      <div className={className} style={options.style}>
         <Toolbar />
         <ActionBar />
         <PageNav />
