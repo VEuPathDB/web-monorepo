@@ -1,4 +1,11 @@
-import React, { CSSProperties, useCallback, useMemo, useState } from 'react';
+import React, {
+  CSSProperties,
+  useCallback,
+  useDeferredValue,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import TreeTable from '@veupathdb/components/lib/components/tidytree/TreeTable';
 import { RecordTableProps, WrappedComponentProps } from './Types';
 import { useOrthoService } from 'ortho-client/hooks/orthoService';
@@ -17,9 +24,14 @@ import { PfamDomainArchitecture } from 'ortho-client/components/pfam-domains/Pfa
 import { extractPfamDomain } from 'ortho-client/records/utils';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { RowCounter } from '@veupathdb/coreui/lib/components/Mesa';
+import PopoverButton, {
+  PopoverButtonHandle,
+} from '@veupathdb/coreui/lib/components/buttons/PopoverButton/PopoverButton';
 import { PfamDomain } from 'ortho-client/components/pfam-domains/PfamDomain';
 import {
+  FilledButton,
   FloatingButton,
+  OutlinedButton,
   SelectList,
   Undo,
   useDeferredState,
@@ -45,12 +57,14 @@ export function RecordTable_Sequences(
   props: WrappedComponentProps<RecordTableProps>
 ) {
   const [searchQuery, setSearchQuery] = useState('');
-  const safeSearchRegexp = useMemo(
-    () => createSafeSearchRegExp(searchQuery),
-    [searchQuery]
+  const safeSearchRegexp = useDeferredValue(
+    useMemo(() => createSafeSearchRegExp(searchQuery), [searchQuery])
   );
 
   const [resetCounter, setResetCounter] = useState(0); // used for forcing re-render of filter buttons
+
+  const [proteinFilterIds, setProteinFilterIds, volatileProteinFilterIds] =
+    useDeferredState<string[]>([]);
 
   const [selectedSpecies, setSelectedSpecies, volatileSelectedSpecies] =
     useDeferredState<string[]>([]);
@@ -91,7 +105,10 @@ export function RecordTable_Sequences(
 
   // deal with Pfam domain architectures
   const proteinPfams = props.record.tables['ProteinPFams'];
-  const rowsByAccession = groupBy(proteinPfams, 'full_id');
+  const rowsByAccession = useMemo(
+    () => groupBy(proteinPfams, 'full_id'),
+    [proteinPfams]
+  );
 
   const accessionToPfamIds = useMemo(
     () =>
@@ -185,16 +202,19 @@ export function RecordTable_Sequences(
   // 2. core-peripheral radio button
   // 3. checked boxes in the Pfam legend
 
-  const [selectedColumnFilters, setSelectedColumnFilters] = useState<string[]>(
-    []
-  );
+  const [
+    selectedColumnFilters,
+    setSelectedColumnFilters,
+    volatileSelectedColumnFilters,
+  ] = useDeferredState<string[]>([]);
 
   const filteredRows = useMemo(() => {
     if (
-      searchQuery !== '' ||
-      corePeripheralFilterValue != null ||
+      safeSearchRegexp != null ||
+      corePeripheralFilterValue.length > 0 ||
       pfamFilterIds.length > 0 ||
-      selectedSpecies.length > 0
+      selectedSpecies.length > 0 ||
+      proteinFilterIds.length > 0
     ) {
       return sortedRows?.filter((row) => {
         const rowCorePeripheral = (
@@ -204,7 +224,7 @@ export function RecordTable_Sequences(
         const rowPfamIdsSet = accessionToPfamIds.get(rowFullId);
 
         const searchMatch =
-          searchQuery === '' ||
+          safeSearchRegexp == null ||
           rowMatch(row, safeSearchRegexp, selectedColumnFilters);
         const corePeripheralMatch =
           corePeripheralFilterValue.length === 0 ||
@@ -217,15 +237,21 @@ export function RecordTable_Sequences(
         const speciesMatch =
           selectedSpecies.length === 0 ||
           selectedSpecies.some((specie) => row.taxon_abbrev === specie);
+        const proteinMatch =
+          proteinFilterIds.length === 0 ||
+          proteinFilterIds.some((proteinId) => rowFullId === proteinId);
 
         return (
-          searchMatch && corePeripheralMatch && pfamIdMatch && speciesMatch
+          searchMatch &&
+          corePeripheralMatch &&
+          pfamIdMatch &&
+          speciesMatch &&
+          proteinMatch
         );
       });
     }
-    return undefined;
+    return sortedRows;
   }, [
-    searchQuery,
     selectedColumnFilters,
     safeSearchRegexp,
     sortedRows,
@@ -233,13 +259,20 @@ export function RecordTable_Sequences(
     accessionToPfamIds,
     pfamFilterIds,
     selectedSpecies,
+    proteinFilterIds,
   ]);
 
   // now filter the tree if needed - takes a couple of seconds for large trees
   const filteredTree = useMemo(() => {
-    if (leaves == null || tree == null || filteredRows?.length === 0) return;
+    if (
+      leaves == null ||
+      tree == null ||
+      filteredRows == null ||
+      filteredRows.length === 0
+    )
+      return;
 
-    if (filteredRows != null && filteredRows.length < leaves.length) {
+    if (filteredRows.length < leaves.length) {
       const filteredRowIds = new Set(
         filteredRows.map(({ full_id }) => full_id as string)
       );
@@ -266,16 +299,17 @@ export function RecordTable_Sequences(
 
   // make a newick string from the filtered tree if needed
   const finalNewick = useMemo(() => {
-    if (filteredTree === tree && treeResponse != null) {
-      return treeResponse; // no filtering so return what we read from the back end
-    } else if (
-      filteredTree != null &&
-      filteredRows != null &&
-      filteredRows.length > 0
-    ) {
-      return filteredTree.toNewick(); // make new newick data from the filtered tree
-    } else return;
-  }, [filteredTree, treeResponse, tree, filteredRows]);
+    if (treeResponse != null) {
+      if (filteredTree != null) {
+        if (filteredTree === tree) {
+          return treeResponse; // no filtering so return what we read from the back end
+        } else {
+          return filteredTree.toNewick(); // make new newick data from the filtered tree
+        }
+      }
+    }
+    return;
+  }, [filteredTree, treeResponse, tree]);
 
   // list of column keys and display names to show in the checkbox dropdown in the table text search box (RecordFilter)
   const filterAttributes = useMemo(
@@ -297,18 +331,74 @@ export function RecordTable_Sequences(
     [setSelectedSpecies, setTablePageNumber]
   );
 
+  const firstRowIndex = (tablePageNumber - 1) * MAX_SEQUENCES_FOR_TREE;
+
+  const mesaState: MesaStateProps<RowType> | undefined = useMemo(() => {
+    if (sortedRows == null) return;
+    return {
+      options: {
+        isRowSelected: (row: RowType) =>
+          highlightedNodes.includes(row.full_id as string),
+        useStickyHeader: true,
+        tableBodyMaxHeight: 'calc(100vh - 200px)', // 200px accounts for header/footer
+      },
+      uiState: {
+        pagination: {
+          currentPage: tablePageNumber,
+          rowsPerPage: MAX_SEQUENCES_FOR_TREE,
+          totalRows: filteredRows?.length ?? 0,
+        },
+      },
+      rows: sortedRows,
+      filteredRows: filteredRows?.slice(
+        firstRowIndex,
+        firstRowIndex + MAX_SEQUENCES_FOR_TREE
+      ),
+      columns: mesaColumns,
+      eventHandlers: {
+        onRowSelect: (row: RowType) =>
+          setHighlightedNodes((prev) => [...prev, row.full_id as string]),
+        onRowDeselect: (row: RowType) =>
+          setHighlightedNodes((prev) =>
+            prev.filter((id) => id !== row.full_id)
+          ),
+        onPageChange: (page: number) => setTablePageNumber(page),
+      },
+    };
+  }, [
+    sortedRows,
+    filteredRows,
+    highlightedNodes,
+    tablePageNumber,
+    firstRowIndex,
+    mesaColumns,
+    setHighlightedNodes,
+    setTablePageNumber,
+  ]);
+
+  const treeProps = useMemo(
+    () => ({
+      data: finalNewick,
+      width: treeWidth,
+      highlightMode: 'monophyletic' as const,
+      highlightColor,
+      highlightedNodeIds: highlightedNodes,
+    }),
+    [finalNewick, treeWidth, highlightColor, highlightedNodes]
+  );
+
+  const proteinFilterButtonRef = useRef<PopoverButtonHandle>(null);
+
+  // None shall pass! (hooks, at least)
+
   if (
+    !mesaState ||
     !sortedRows ||
     (numSequences >= MIN_SEQUENCES_FOR_TREE &&
       numSequences <= MAX_SEQUENCES_FOR_TREE &&
       (tree == null || treeResponse == null))
   ) {
-    return (
-      <>
-        <div>Loading...</div>
-        <Loading />
-      </>
-    ); // The loading spinner does not show :-(
+    return <Loading />;
   }
 
   if (
@@ -335,45 +425,6 @@ export function RecordTable_Sequences(
       />
     );
   }
-
-  const firstRowIndex = (tablePageNumber - 1) * MAX_SEQUENCES_FOR_TREE;
-
-  const mesaState: MesaStateProps<RowType> = {
-    options: {
-      isRowSelected: (row: RowType) =>
-        highlightedNodes.includes(row.full_id as string),
-      useStickyHeader: true,
-      tableBodyMaxHeight: 'calc(100vh - 200px)', // 200px accounts for header/footer
-    },
-    uiState: {
-      pagination: {
-        currentPage: tablePageNumber,
-        rowsPerPage: MAX_SEQUENCES_FOR_TREE,
-        totalRows: filteredRows?.length ?? 0,
-      },
-    },
-    rows: sortedRows,
-    filteredRows: filteredRows?.slice(
-      firstRowIndex,
-      firstRowIndex + MAX_SEQUENCES_FOR_TREE
-    ),
-    columns: mesaColumns,
-    eventHandlers: {
-      onRowSelect: (row: RowType) =>
-        setHighlightedNodes((prev) => [...prev, row.full_id as string]),
-      onRowDeselect: (row: RowType) =>
-        setHighlightedNodes((prev) => prev.filter((id) => id !== row.full_id)),
-      onPageChange: (page: number) => setTablePageNumber(page),
-    },
-  };
-
-  const treeProps = {
-    data: finalNewick,
-    width: treeWidth,
-    highlightMode: 'monophyletic' as const,
-    highlightColor,
-    highlightedNodeIds: highlightedNodes,
-  };
 
   const rowHeight = 45;
   const clustalDisabled =
@@ -457,6 +508,92 @@ export function RecordTable_Sequences(
       />
     ) : null;
 
+  const resetProteinFilterButton = (
+    <OutlinedButton
+      text="Reset protein filter"
+      onPress={() => {
+        proteinFilterButtonRef.current?.close();
+        setProteinFilterIds([]);
+      }}
+    />
+  );
+
+  const updateProteinFilterIds = () => {
+    proteinFilterButtonRef.current?.close();
+    setProteinFilterIds(highlightedNodes);
+    setHighlightedNodes([]);
+  };
+
+  const proteinFilter = (
+    <PopoverButton
+      ref={proteinFilterButtonRef}
+      buttonDisplayContent={`Proteins${
+        volatileProteinFilterIds.length > 0
+          ? ` (${volatileProteinFilterIds.length})`
+          : ''
+      }${highlightedNodes.length > 0 ? '*' : ''}`}
+    >
+      <div
+        style={{
+          margin: '1em',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1em',
+          maxWidth: '300px',
+        }}
+      >
+        {highlightedNodes.length === 0 ? (
+          volatileProteinFilterIds.length === 0 ? (
+            <div>
+              Select some proteins using the checkboxes in the table below.
+            </div>
+          ) : (
+            <>
+              <div>
+                You are filtering on{' '}
+                {volatileProteinFilterIds.length.toLocaleString()} proteins.
+              </div>
+              {resetProteinFilterButton}
+            </>
+          )
+        ) : volatileProteinFilterIds.length === 0 ? (
+          <>
+            <div>
+              * You have checked {highlightedNodes.length.toLocaleString()}{' '}
+              proteins in the table.
+            </div>
+            <FilledButton
+              text="Filter to keep only these proteins"
+              onPress={updateProteinFilterIds}
+            />
+          </>
+        ) : highlightedNodes.length < volatileProteinFilterIds.length ? (
+          <>
+            <div>
+              * You have checked {highlightedNodes.length.toLocaleString()}{' '}
+              proteins in the table that is already filtered on{' '}
+              {volatileProteinFilterIds.length.toLocaleString()} proteins.
+            </div>
+            <FilledButton
+              text="Refine filter to keep only checked proteins"
+              onPress={updateProteinFilterIds}
+            />
+            {resetProteinFilterButton}
+          </>
+        ) : (
+          <>
+            <div>
+              You have checked all the proteins that are currently being
+              filtered on. Either uncheck one or more proteins or reset the
+              filter entirely using the button below.
+            </div>
+            {resetProteinFilterButton}
+          </>
+        )}
+      </div>
+    </PopoverButton>
+  );
+
   const resetButton = (
     <FloatingButton
       text={''}
@@ -465,13 +602,15 @@ export function RecordTable_Sequences(
       disabled={
         pfamFilterIds.length +
           corePeripheralFilterValue.length +
-          selectedSpecies.length ===
+          selectedSpecies.length +
+          proteinFilterIds.length ===
         0
       }
       icon={Undo}
       size={'medium'}
       themeRole={'primary'}
       onPress={() => {
+        setProteinFilterIds([]);
         setPfamFilterIds([]);
         setCorePeripheralFilterValue([]);
         setSelectedSpecies([]);
@@ -527,7 +666,7 @@ export function RecordTable_Sequences(
           onSearchTermChange={setSearchQuery}
           recordDisplayName="Proteins"
           filterAttributes={filterAttributes}
-          selectedColumnFilters={selectedColumnFilters}
+          selectedColumnFilters={volatileSelectedColumnFilters}
           onColumnFilterChange={(keys) => setSelectedColumnFilters(keys)}
         />
         <div className="MesaComponent" style={{ marginRight: 'auto' }}>
@@ -547,10 +686,11 @@ export function RecordTable_Sequences(
             flexDirection: 'row',
             gap: '1em',
             alignItems: 'center',
-            justifyContent: 'flex-end',
+            marginLeft: 'auto',
           }}
         >
           <strong>Filters: </strong>
+          {proteinFilter}
           {pfamFilter}
           {corePeripheralFilter}
           {taxonFilter}
@@ -639,7 +779,8 @@ function rowMatch(row: RowType, query: RegExp, keys?: string[]): boolean {
   );
 }
 
-function createSafeSearchRegExp(input: string): RegExp {
+function createSafeSearchRegExp(input: string): RegExp | undefined {
+  if (input === '') return undefined;
   try {
     // Attempt to create a RegExp from the user input directly
     return new RegExp(input, 'i');
