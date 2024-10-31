@@ -492,7 +492,7 @@ export function RecordTable_Sequences(
         volatileProteinFilterIds.length > 0
           ? ` (${volatileProteinFilterIds.length})`
           : ''
-      }`}
+      }${highlightedNodes.length > 0 ? '*' : ''}`}
       key={volatileProteinFilterIds.join(':')}
     >
       <div
@@ -521,7 +521,7 @@ export function RecordTable_Sequences(
         ) : volatileProteinFilterIds.length === 0 ? (
           <>
             <div>
-              You have checked {highlightedNodes.length.toLocaleString()}{' '}
+              * You have checked {highlightedNodes.length.toLocaleString()}{' '}
               proteins in the table.
             </div>
             <FilledButton
@@ -532,7 +532,7 @@ export function RecordTable_Sequences(
         ) : highlightedNodes.length < volatileProteinFilterIds.length ? (
           <>
             <div>
-              You have checked {highlightedNodes.length.toLocaleString()}{' '}
+              * You have checked {highlightedNodes.length.toLocaleString()}{' '}
               proteins in the table and are already filtering on{' '}
               {volatileProteinFilterIds.length.toLocaleString()} proteins.
             </div>
@@ -648,7 +648,7 @@ export function RecordTable_Sequences(
             flexDirection: 'row',
             gap: '1em',
             alignItems: 'center',
-            justifyContent: 'flex-end',
+            marginLeft: 'auto',
           }}
         >
           <strong>Filters: </strong>
