@@ -5,7 +5,8 @@ import {
 } from '../../components/tidytree/HorizontalDendrogram';
 import Mesa from '@veupathdb/coreui/lib/components/Mesa';
 import { MesaStateProps } from '../../../../coreui/lib/components/Mesa/types';
-import { css, cx } from '@emotion/css';
+
+import './TreeTable.scss';
 
 export interface TreeTableProps<RowType> {
   /**
@@ -59,52 +60,44 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
   const { rowHeight, maxColumnWidth = 200, hideTree = false, children } = props;
   const { rows, filteredRows } = props.tableProps;
 
-  const rowStyleClassName = useMemo(
-    () =>
-      cx(
-        // minimum height for table rows
-        css`
-          height: ${rowHeight}px;
-
-          & td {
-            &:hover {
-              cursor: pointer;
-              position: relative;
-            }
-          }
-        `
-      ),
-    [rowHeight]
-  );
-
-  const tree = hideTree ? null : (
-    <HorizontalDendrogram
-      {...props.treeProps}
-      rowHeight={rowHeight}
-      leafCount={filteredRows?.length ?? rows.length}
-      options={{ margin, interactive: false }}
-    />
-  );
-
   // tableState is just the tableProps with an extra CSS class
   // to make sure the height is consistent with the tree
-  const tableState: MesaStateProps<RowType> = {
-    ...props.tableProps,
-    options: {
-      ...props.tableProps.options,
-      deriveRowClassName: mergeDeriveRowClassName(
-        props.tableProps.options?.deriveRowClassName,
-        (_) => rowStyleClassName
-      ),
-      inline: true,
-      // TO DO: explore event delegation to avoid each tooltip having handlers
-      //        replace inline mode's inline styling with emotion classes
-      inlineUseTooltips: true,
-      inlineMaxHeight: `${rowHeight}px`,
-      inlineMaxWidth: `${maxColumnWidth}px`,
-      marginContent: tree,
-    },
-  };
+  const tableState: MesaStateProps<RowType> = useMemo(() => {
+    const tree = hideTree ? null : (
+      <HorizontalDendrogram
+        {...props.treeProps}
+        rowHeight={rowHeight}
+        leafCount={filteredRows?.length ?? rows.length}
+        options={{ margin, interactive: false }}
+      />
+    );
+
+    return {
+      ...props.tableProps,
+      options: {
+        ...props.tableProps.options,
+        className: 'TreeTable',
+        style: {
+          '--tree-table-row-height': rowHeight + 'px',
+        } as React.CSSProperties,
+        inline: true,
+        // TO DO: explore event delegation to avoid each tooltip having handlers
+        //        replace inline mode's inline styling with emotion classes
+        inlineUseTooltips: true,
+        inlineMaxHeight: `${rowHeight}px`,
+        inlineMaxWidth: `${maxColumnWidth}px`,
+        marginContent: tree,
+      },
+    };
+  }, [
+    filteredRows?.length,
+    hideTree,
+    maxColumnWidth,
+    props.tableProps,
+    props.treeProps,
+    rowHeight,
+    rows.length,
+  ]);
 
   // if `hideTree` is used more dynamically than at present
   // (for example if the user sorts the table)
@@ -112,17 +105,4 @@ export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
   // { marginLeft: hideTree ? props.treeProps.width : 0 }
   // to stop the table jumping around horizontally
   return <Mesa state={tableState} children={children} />;
-}
-
-function mergeDeriveRowClassName<RowType>(
-  func1: ((row: RowType) => string | undefined) | undefined,
-  func2: ((row: RowType) => string | undefined) | undefined
-): ((row: RowType) => string | undefined) | undefined {
-  if (func1 == null && func2 == null) return undefined;
-  return (row: RowType) => {
-    const className1 = func1 && func1(row);
-    const className2 = func2 && func2(row);
-    // Combine the class names that are defined
-    return [className1, className2].filter(Boolean).join(' ') || undefined;
-  };
 }
