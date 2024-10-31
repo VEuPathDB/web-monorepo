@@ -23,7 +23,9 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
   {
     rnaseq: {
       type: 'rnaseq',
-      uploadTitle: 'Upload My RNASeq Data Set',
+      displayName: 'RNA-Seq',
+      description: `Integrate your RNA-Seq data in ${projectId}.`,
+      uploadTitle: 'Upload My RNA-Seq Data Set',
       formConfig: {
         summary: {
           inputProps: {
@@ -79,6 +81,8 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
     },
     bigwigfiles: {
       type: 'bigwigfiles',
+      displayName: 'bigWig',
+      description: `Integrate your BigWig data in ${projectId}.`,
       uploadTitle: 'Upload My bigWig Data Set',
       formConfig: {
         summary: {
@@ -131,6 +135,8 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
     },
     biom: {
       type: 'biom',
+      displayName: 'BIOM',
+      description: `Integrate your BIOM study data in ${projectId}.`,
       uploadTitle: 'Upload My Data Set',
       formConfig: {
         summary: {
@@ -175,6 +181,8 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
     },
     genelist: {
       type: 'genelist',
+      displayName: 'Gene List',
+      description: `Integrate your gene list in ${projectId}.`,
       uploadTitle: 'Upload My Gene List',
       formConfig: {
         uploadMethodConfig: {
@@ -197,6 +205,8 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
     },
     isasimple: {
       type: 'isasimple',
+      displayName: 'ISA Study',
+      description: `Integrate your study data in ${projectId}.`,
       uploadTitle: 'Upload My Study',
       formConfig: {
         summary: {

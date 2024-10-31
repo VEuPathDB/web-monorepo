@@ -20,8 +20,8 @@ import { StateSlice } from '../StoreModules/types';
 
 import { datasetIdType, DatasetUploadTypeConfigEntry } from '../Utils/types';
 import { assertIsVdiCompatibleWdkService } from '../Service';
-import { Link, Redirect, useRouteMatch } from 'react-router-dom';
 import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
+import { UploadFormMenu } from '../Components/UploadFormMenu';
 
 const SUPPORTED_FILE_UPLOAD_TYPES: string[] = [];
 
@@ -37,29 +37,15 @@ export default function UserDatasetUploadSelector(props: Props) {
   const { baseUrl, type, availableTypes, datasetUploadTypes, urlParams } =
     props;
 
-  const { url } = useRouteMatch();
-
   if (type == null && availableTypes.length !== 1) {
     return (
-      <div>
-        <h2>Choose an upload type</h2>
-        <ul>
-          {availableTypes.map((type) => {
-            const datasetUploadType = datasetUploadTypes[type];
-            return (
-              datasetUploadType && (
-                <li>
-                  <Link to={url + '/' + type}>
-                    {datasetUploadType.uploadTitle}
-                  </Link>
-                </li>
-              )
-            );
-          })}
-        </ul>
-      </div>
+      <UploadFormMenu
+        availableTypes={availableTypes}
+        datasetUploadTypes={datasetUploadTypes}
+      />
     );
   }
+
   const datasetUploadType = datasetUploadTypes[type ?? availableTypes[0]];
   if (datasetUploadType == null) {
     return <NotFoundController />;

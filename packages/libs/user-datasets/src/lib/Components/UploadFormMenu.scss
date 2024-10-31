@@ -1,0 +1,35 @@
+.UserDatasetUploadFormMenu {
+  menu {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    gap: 1em;
+    padding: 0;
+    width: max-content;
+
+    a.btn {
+      display: inline-block;
+      width: 100%;
+      padding: 1.25em;
+      // background: rgba(149, 204, 240, 0.65);
+      // border-color: transparent;
+      // color: black;
+      font-size: 1.1em;
+
+      .title {
+        font-size: 1.5em;
+        font-weight: 600;
+        &:after {
+          content: ' >>';
+          margin-left: 0.75ex;
+        }
+      }
+      .description {
+        font-size: 1.1em;
+        font-weight: 500;
+        margin: 0;
+        margin-top: 1em;
+      }
+    }
+  }
+}

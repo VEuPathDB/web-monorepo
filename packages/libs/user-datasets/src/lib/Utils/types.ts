@@ -77,6 +77,8 @@ export type DatasetUploadTypeConfig<T extends string> = {
 
 export interface DatasetUploadTypeConfigEntry<T extends string> {
   type: T;
+  displayName: string;
+  description: React.ReactNode;
   uploadTitle: string;
   formConfig: {
     name?: {
