@@ -50,8 +50,8 @@ class DataCell extends React.PureComponent {
   }
 
   setTitle(el) {
-    if (el == null || el.scrollWidth <= el.clientWidth) return;
-    el.title = el.innerText;
+    if (el == null) return;
+    el.title = el.scrollWidth <= el.clientWidth ? '' : el.innerText;
   }
 
   render() {
@@ -84,7 +84,8 @@ class DataCell extends React.PureComponent {
 
     return column.hidden ? null : (
       <td
-        ref={(el) => this.setTitle(el)}
+        onMouseEnter={(e) => this.setTitle(e.target)}
+        onMouseLeave={() => this.setTitle()}
         key={key + '_' + rowIndex}
         {...props}
       />

@@ -38,6 +38,7 @@ export interface MesaStateProps<
     inlineMaxHeight?: string;
     inlineUseTooltips?: boolean; // don't use onClick to show the full contents, use an onMouseOver tooltip instead
     className?: string;
+    style?: React.CSSProperties;
     errOnOverflow?: boolean;
     editableColumns?: boolean;
     overflowHeight?: string;
