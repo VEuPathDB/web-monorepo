@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useDeferredValue,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import TreeTable from '@veupathdb/components/lib/components/tidytree/TreeTable';
@@ -23,7 +24,9 @@ import { PfamDomainArchitecture } from 'ortho-client/components/pfam-domains/Pfa
 import { extractPfamDomain } from 'ortho-client/records/utils';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { RowCounter } from '@veupathdb/coreui/lib/components/Mesa';
-import PopoverButton from '@veupathdb/coreui/lib/components/buttons/PopoverButton/PopoverButton';
+import PopoverButton, {
+  PopoverButtonHandle,
+} from '@veupathdb/coreui/lib/components/buttons/PopoverButton/PopoverButton';
 import { PfamDomain } from 'ortho-client/components/pfam-domains/PfamDomain';
 import {
   FilledButton,
@@ -384,6 +387,10 @@ export function RecordTable_Sequences(
     [finalNewick, treeWidth, highlightColor, highlightedNodes]
   );
 
+  const proteinFilterButtonRef = useRef<PopoverButtonHandle>(null);
+
+  // None shall pass! (hooks, at least)
+
   if (
     !mesaState ||
     !sortedRows ||
@@ -505,24 +512,26 @@ export function RecordTable_Sequences(
     <OutlinedButton
       text="Reset protein filter"
       onPress={() => {
+        proteinFilterButtonRef.current?.close();
         setProteinFilterIds([]);
       }}
     />
   );
 
   const updateProteinFilterIds = () => {
+    proteinFilterButtonRef.current?.close();
     setProteinFilterIds(highlightedNodes);
     setHighlightedNodes([]);
   };
 
   const proteinFilter = (
     <PopoverButton
+      ref={proteinFilterButtonRef}
       buttonDisplayContent={`Proteins${
         volatileProteinFilterIds.length > 0
           ? ` (${volatileProteinFilterIds.length})`
           : ''
       }${highlightedNodes.length > 0 ? '*' : ''}`}
-      key={volatileProteinFilterIds.join(':')}
     >
       <div
         style={{
