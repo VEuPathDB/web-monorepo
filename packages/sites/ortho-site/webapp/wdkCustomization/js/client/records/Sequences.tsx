@@ -373,6 +373,17 @@ export function RecordTable_Sequences(
     setTablePageNumber,
   ]);
 
+  const treeProps = useMemo(
+    () => ({
+      data: finalNewick,
+      width: treeWidth,
+      highlightMode: 'monophyletic' as const,
+      highlightColor,
+      highlightedNodeIds: highlightedNodes,
+    }),
+    [finalNewick, treeWidth, highlightColor, highlightedNodes]
+  );
+
   if (
     !mesaState ||
     !sortedRows ||
@@ -687,13 +698,7 @@ export function RecordTable_Sequences(
         <>
           <TreeTable
             rowHeight={rowHeight}
-            treeProps={{
-              data: finalNewick,
-              width: treeWidth,
-              highlightMode: 'monophyletic' as const,
-              highlightColor,
-              highlightedNodeIds: highlightedNodes,
-            }}
+            treeProps={treeProps}
             tableProps={mesaState}
             hideTree={
               filteredRows?.length > MAX_SEQUENCES_FOR_TREE ||
