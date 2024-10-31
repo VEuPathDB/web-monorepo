@@ -102,7 +102,10 @@ export function RecordTable_Sequences(
 
   // deal with Pfam domain architectures
   const proteinPfams = props.record.tables['ProteinPFams'];
-  const rowsByAccession = groupBy(proteinPfams, 'full_id');
+  const rowsByAccession = useMemo(
+    () => groupBy(proteinPfams, 'full_id'),
+    [proteinPfams]
+  );
 
   const accessionToPfamIds = useMemo(
     () =>
@@ -207,7 +210,8 @@ export function RecordTable_Sequences(
       safeSearchRegexp != null ||
       corePeripheralFilterValue.length > 0 ||
       pfamFilterIds.length > 0 ||
-      selectedSpecies.length > 0
+      selectedSpecies.length > 0 ||
+      proteinFilterIds.length > 0
     ) {
       return sortedRows?.filter((row) => {
         const rowCorePeripheral = (
@@ -324,7 +328,53 @@ export function RecordTable_Sequences(
     [setSelectedSpecies, setTablePageNumber]
   );
 
+  const firstRowIndex = (tablePageNumber - 1) * MAX_SEQUENCES_FOR_TREE;
+
+  const mesaState: MesaStateProps<RowType> | undefined = useMemo(() => {
+    if (sortedRows == null) return;
+    return {
+      options: {
+        isRowSelected: (row: RowType) =>
+          highlightedNodes.includes(row.full_id as string),
+        useStickyHeader: true,
+        tableBodyMaxHeight: 'calc(100vh - 200px)', // 200px accounts for header/footer
+      },
+      uiState: {
+        pagination: {
+          currentPage: tablePageNumber,
+          rowsPerPage: MAX_SEQUENCES_FOR_TREE,
+          totalRows: filteredRows?.length ?? 0,
+        },
+      },
+      rows: sortedRows,
+      filteredRows: filteredRows?.slice(
+        firstRowIndex,
+        firstRowIndex + MAX_SEQUENCES_FOR_TREE
+      ),
+      columns: mesaColumns,
+      eventHandlers: {
+        onRowSelect: (row: RowType) =>
+          setHighlightedNodes((prev) => [...prev, row.full_id as string]),
+        onRowDeselect: (row: RowType) =>
+          setHighlightedNodes((prev) =>
+            prev.filter((id) => id !== row.full_id)
+          ),
+        onPageChange: (page: number) => setTablePageNumber(page),
+      },
+    };
+  }, [
+    sortedRows,
+    filteredRows,
+    highlightedNodes,
+    tablePageNumber,
+    firstRowIndex,
+    mesaColumns,
+    setHighlightedNodes,
+    setTablePageNumber,
+  ]);
+
   if (
+    !mesaState ||
     !sortedRows ||
     (numSequences >= MIN_SEQUENCES_FOR_TREE &&
       numSequences <= MAX_SEQUENCES_FOR_TREE &&
@@ -357,45 +407,6 @@ export function RecordTable_Sequences(
       />
     );
   }
-
-  const firstRowIndex = (tablePageNumber - 1) * MAX_SEQUENCES_FOR_TREE;
-
-  const mesaState: MesaStateProps<RowType> = {
-    options: {
-      isRowSelected: (row: RowType) =>
-        highlightedNodes.includes(row.full_id as string),
-      useStickyHeader: true,
-      tableBodyMaxHeight: 'calc(100vh - 200px)', // 200px accounts for header/footer
-    },
-    uiState: {
-      pagination: {
-        currentPage: tablePageNumber,
-        rowsPerPage: MAX_SEQUENCES_FOR_TREE,
-        totalRows: filteredRows?.length ?? 0,
-      },
-    },
-    rows: sortedRows,
-    filteredRows: filteredRows?.slice(
-      firstRowIndex,
-      firstRowIndex + MAX_SEQUENCES_FOR_TREE
-    ),
-    columns: mesaColumns,
-    eventHandlers: {
-      onRowSelect: (row: RowType) =>
-        setHighlightedNodes((prev) => [...prev, row.full_id as string]),
-      onRowDeselect: (row: RowType) =>
-        setHighlightedNodes((prev) => prev.filter((id) => id !== row.full_id)),
-      onPageChange: (page: number) => setTablePageNumber(page),
-    },
-  };
-
-  const treeProps = {
-    data: finalNewick,
-    width: treeWidth,
-    highlightMode: 'monophyletic' as const,
-    highlightColor,
-    highlightedNodeIds: highlightedNodes,
-  };
 
   const rowHeight = 45;
   const clustalDisabled =
@@ -540,7 +551,7 @@ export function RecordTable_Sequences(
           <>
             <div>
               * You have checked {highlightedNodes.length.toLocaleString()}{' '}
-              proteins in the table and are already filtering on{' '}
+              proteins in the table that is already filtered on{' '}
               {volatileProteinFilterIds.length.toLocaleString()} proteins.
             </div>
             <FilledButton
@@ -676,7 +687,13 @@ export function RecordTable_Sequences(
         <>
           <TreeTable
             rowHeight={rowHeight}
-            treeProps={treeProps}
+            treeProps={{
+              data: finalNewick,
+              width: treeWidth,
+              highlightMode: 'monophyletic' as const,
+              highlightColor,
+              highlightedNodeIds: highlightedNodes,
+            }}
             tableProps={mesaState}
             hideTree={
               filteredRows?.length > MAX_SEQUENCES_FOR_TREE ||
