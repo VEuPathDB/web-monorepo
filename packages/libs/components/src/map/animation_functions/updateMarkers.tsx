@@ -22,6 +22,9 @@ export default function updateMarkers(
       // Clone marker element with new position
       markerCloneProps = {
         position: matchingMarkers[0].props.position,
+        // ideally we would put the modified markers on top
+        // but this doesn't seem to work:
+        // zIndexOffset: -1000, // or +1000
       };
     }
 

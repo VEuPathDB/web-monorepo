@@ -22,9 +22,9 @@ export default function geohashAnimation({
   if (prevGeoHash.length > currentGeohash.length) {
     zoomType = 'out';
     const hashDif = prevGeoHash.length - currentGeohash.length;
-    // Get a new array of existing markers with new position property
+    // Get array of old markers with new positions
     const cloneArray = updateMarkers(prevMarkers, markers, hashDif);
-    // Combine the new and existing markers
+    // Combine the new and old markers
     consolidatedMarkers = [...markers, ...cloneArray];
   } else if (prevGeoHash.length < currentGeohash.length) {
     /** Zoom In - New markers start at old position
@@ -33,10 +33,9 @@ export default function geohashAnimation({
      **/
     zoomType = 'in';
     const hashDif = currentGeohash.length - prevGeoHash.length;
-    // Get a new array of new markers with existing position property
-    // Set final render markers to the cloneArray which holds the new markers with
-    // their new starting location
-    consolidatedMarkers = updateMarkers(markers, prevMarkers, hashDif);
+    // Get array of new markers with old positions
+    const cloneArray = updateMarkers(markers, prevMarkers, hashDif);
+    consolidatedMarkers = [...prevMarkers, ...cloneArray];
   } else {
     /** No difference in geohashes - Render markers as they are **/
     zoomType = null;
