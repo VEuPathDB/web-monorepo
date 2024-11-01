@@ -24,6 +24,8 @@ export function wrapWdkService(
     ...wdkService,
     getBlastParamInternalValues:
       blastCompatibleWdkServiceWrappers.getBlastParamInternalValues(wdkService),
+    // Send an empty input query value, since they can potentially be very large
+    // when multiple sequences are included.
     getRefreshedDependentParams(
       questionUrlSegment,
       paramName,
@@ -43,6 +45,8 @@ export function wrapWdkService(
         paramValues
       );
     },
+    // Send an empty input query value, since they can potentially be very large
+    // when multiple sequences are included.
     getQuestionGivenParameters(questionUrlSegment, paramValues) {
       if (questionUrlSegment.endsWith('MultiBlast')) {
         paramValues = {
