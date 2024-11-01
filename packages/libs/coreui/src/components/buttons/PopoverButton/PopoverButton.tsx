@@ -5,6 +5,7 @@ import {
   useMemo,
   forwardRef,
   useImperativeHandle,
+  useCallback,
 } from 'react';
 import { Popover } from '@material-ui/core';
 import SwissArmyButton from '../SwissArmyButton';
@@ -117,15 +118,19 @@ const PopoverButton = forwardRef<PopoverButtonHandle, PopoverButtonProps>(
       [styleOverrides]
     );
 
-    const onCloseHandler = () => {
+    const onCloseHandler = useCallback(() => {
       setAnchorEl(null);
       onClose && onClose();
-    };
+    }, [onClose]);
 
     // Expose the `close()` method to external components via ref
-    useImperativeHandle(ref, () => ({
-      close: onCloseHandler,
-    }));
+    useImperativeHandle(
+      ref,
+      () => ({
+        close: onCloseHandler,
+      }),
+      [onCloseHandler]
+    );
 
     useEffect(() => {
       if (!setIsPopoverOpen) return;
