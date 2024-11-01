@@ -524,6 +524,7 @@ export function RecordTable_Sequences(
       onPress={() => {
         proteinFilterButtonRef.current?.close();
         setProteinFilterIds([]);
+        setTablePageNumber(1);
       }}
     />
   );
@@ -532,6 +533,7 @@ export function RecordTable_Sequences(
     proteinFilterButtonRef.current?.close();
     setProteinFilterIds(highlightedNodes);
     setHighlightedNodes([]);
+    setTablePageNumber(1);
   };
 
   const proteinFilter = (
