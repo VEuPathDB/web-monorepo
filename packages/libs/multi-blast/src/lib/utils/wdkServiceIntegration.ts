@@ -5,6 +5,8 @@ import {
   record,
   string,
 } from '@veupathdb/wdk-client/lib/Utils/Json';
+import { omit } from 'lodash';
+import { BLAST_QUERY_SEQUENCE_PARAM_NAME } from './params';
 
 const blastParamInternalValues = objectOf(
   record({
@@ -22,6 +24,37 @@ export function wrapWdkService(
     ...wdkService,
     getBlastParamInternalValues:
       blastCompatibleWdkServiceWrappers.getBlastParamInternalValues(wdkService),
+    getRefreshedDependentParams(
+      questionUrlSegment,
+      paramName,
+      paramValue,
+      paramValues
+    ) {
+      if (questionUrlSegment.endsWith('MultiBlast')) {
+        paramValues = {
+          ...paramValues,
+          [BLAST_QUERY_SEQUENCE_PARAM_NAME]: '',
+        };
+      }
+      return wdkService.getRefreshedDependentParams(
+        questionUrlSegment,
+        paramName,
+        paramValue,
+        paramValues
+      );
+    },
+    getQuestionGivenParameters(questionUrlSegment, paramValues) {
+      if (questionUrlSegment.endsWith('MultiBlast')) {
+        paramValues = {
+          ...paramValues,
+          [BLAST_QUERY_SEQUENCE_PARAM_NAME]: '',
+        };
+      }
+      return wdkService.getQuestionGivenParameters(
+        questionUrlSegment,
+        paramValues
+      );
+    },
   };
 }
 
