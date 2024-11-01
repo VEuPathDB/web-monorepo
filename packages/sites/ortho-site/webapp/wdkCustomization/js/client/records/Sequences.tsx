@@ -9,7 +9,7 @@ import React, {
 import TreeTable from '@veupathdb/components/lib/components/tidytree/TreeTable';
 import { RecordTableProps, WrappedComponentProps } from './Types';
 import { useOrthoService } from 'ortho-client/hooks/orthoService';
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { Loading, Link } from '@veupathdb/wdk-client/lib/Components';
 import { Branch, parseNewick } from 'patristic';
 import {
   AttributeValue,
@@ -404,7 +404,8 @@ export function RecordTable_Sequences(
   if (
     mesaRows != null &&
     sortedRows != null &&
-    mesaRows.length !== sortedRows.length
+    (mesaRows.length !== sortedRows.length ||
+      mesaRows.length !== leaves?.length)
   ) {
     console.log(
       'Tree and protein list mismatch. A=Tree, B=Table. Summary below:'
@@ -419,8 +420,13 @@ export function RecordTable_Sequences(
       <Banner
         banner={{
           type: 'warning',
-          message:
-            'Tree and protein list mismatch. Please contact the helpdesk',
+          message: (
+            <span>
+              A data processing error has occurred on our end. We apologize for
+              the inconvenience. If this problem persists, please{' '}
+              <Link to="/contact-us">contact us</Link>.
+            </span>
+          ),
         }}
       />
     );
