@@ -622,6 +622,22 @@ export function RecordTable_Sequences(
 
   if (filteredRows == null) return null;
 
+  const warningText =
+    filteredRows.length > MAX_SEQUENCES_FOR_TREE ||
+    filteredRows.length < MIN_SEQUENCES_FOR_TREE ? (
+      <span>
+        To see a phylogenetic tree please use a filter to display between{' '}
+        {MIN_SEQUENCES_FOR_TREE.toLocaleString()} and{' '}
+        {MAX_SEQUENCES_FOR_TREE.toLocaleString()} sequences
+      </span>
+    ) : filteredRows.length < sortedRows.length ? (
+      <span>
+        Note: The ortholog group's phylogeny has been pruned to display only the
+        currently filtered proteins. This may differ from a tree constructed{' '}
+        <i>de novo</i> using only these sequences.
+      </span>
+    ) : undefined;
+
   return (
     <div
       style={
@@ -630,8 +646,7 @@ export function RecordTable_Sequences(
         } as CSSProperties
       }
     >
-      {(filteredRows.length > MAX_SEQUENCES_FOR_TREE ||
-        filteredRows.length < MIN_SEQUENCES_FOR_TREE) && (
+      {warningText && (
         <div
           style={{
             display: 'flex',
@@ -645,9 +660,7 @@ export function RecordTable_Sequences(
             fontWeight: 500,
           }}
         >
-          To see a phylogenetic tree please use a filter to display between{' '}
-          {MIN_SEQUENCES_FOR_TREE.toLocaleString()} and{' '}
-          {MAX_SEQUENCES_FOR_TREE.toLocaleString()} sequences
+          {warningText}
         </div>
       )}
       <div
