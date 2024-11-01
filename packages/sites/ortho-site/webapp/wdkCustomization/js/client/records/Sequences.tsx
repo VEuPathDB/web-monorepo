@@ -39,6 +39,10 @@ import {
 import { RecordTable_TaxonCounts_Filter } from './RecordTable_TaxonCounts_Filter';
 import { formatAttributeValue } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { RecordFilter } from '@veupathdb/wdk-client/lib/Views/Records/RecordTable/RecordFilter';
+import {
+  areTermsInStringRegexString,
+  parseSearchQueryString,
+} from '../../../../../../../libs/wdk-client/lib/Utils/SearchUtils';
 
 type RowType = Record<string, AttributeValue>;
 
@@ -800,14 +804,9 @@ function rowMatch(row: RowType, query: RegExp, keys?: string[]): boolean {
 
 function createSafeSearchRegExp(input: string): RegExp | undefined {
   if (input === '') return undefined;
-  try {
-    // Attempt to create a RegExp from the user input directly
-    return new RegExp(input, 'i');
-  } catch (error) {
-    // If an error occurs (e.g., invalid RegExp), escape the input and create a literal search RegExp
-    const escapedInput = input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    return new RegExp(escapedInput, 'i');
-  }
+  const queryTerms = parseSearchQueryString(input);
+  const searchTermRegex = areTermsInStringRegexString(queryTerms);
+  return new RegExp(searchTermRegex, 'i');
 }
 
 function logIdMismatches(A: string[], B: string[]) {
