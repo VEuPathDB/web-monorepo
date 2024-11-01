@@ -8,12 +8,12 @@ export default function updateMarkers(
 ) {
   return toChangeMarkers.map((markerObj) => {
     // Calculate the matching geohash
-    const sourceKey = markerObj.key as string;
+    const sourceKey = markerObj.props.id as string;
     const sourceHash = sourceKey.slice(0, -hashDif);
 
     // Find the object with the matching geohash
     const matchingMarkers = sourceMarkers.filter((obj) => {
-      return obj.key === sourceHash;
+      return obj.props.id === sourceHash;
     });
 
     // Clone marker element with new position

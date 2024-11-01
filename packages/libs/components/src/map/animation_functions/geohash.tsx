@@ -11,8 +11,8 @@ export default function geohashAnimation({
   prevMarkers,
   markers,
 }: geoHashAnimation) {
-  const prevGeoHash = prevMarkers[0].key as string;
-  const currentGeohash = markers[0].key as string;
+  const prevGeoHash = prevMarkers[0].props.id as string;
+  const currentGeohash = markers[0].props.id as string;
   let zoomType, consolidatedMarkers;
 
   /** Zoom Out - Move existing markers to new position
