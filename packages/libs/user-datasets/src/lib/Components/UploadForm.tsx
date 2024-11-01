@@ -603,6 +603,16 @@ function validateForm<T extends string = string>(
   const { name, summary, description, dataUploadSelection, dependencies } =
     formContent;
 
+  if (
+    datasetUploadType.formConfig.dependencies?.required &&
+    dependencies == null
+  ) {
+    return {
+      valid: false,
+      errors: [`Required: ${datasetUploadType.formConfig.dependencies.label}`],
+    };
+  }
+
   if (!isCompleteDataUploadSelection(dataUploadSelection)) {
     return {
       valid: false,
