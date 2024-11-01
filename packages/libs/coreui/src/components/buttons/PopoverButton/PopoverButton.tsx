@@ -150,6 +150,7 @@ export default function PopoverButton(props: PopoverButtonProps) {
       additionalAriaProperties={{
         'aria-controls': 'dropdown',
         'aria-haspopup': 'true',
+        type: 'button',
       }}
     />
   );
