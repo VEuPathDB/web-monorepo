@@ -1,6 +1,9 @@
 import { ReactNode, useCallback, useEffect, useState } from 'react';
 import PopoverButton from '../buttons/PopoverButton/PopoverButton';
-import CheckboxList, { CheckboxListProps } from './checkboxes/CheckboxList';
+import CheckboxList, {
+  CheckboxListProps,
+  Item,
+} from './checkboxes/CheckboxList';
 
 export interface SelectListProps<T> extends CheckboxListProps<T> {
   children?: ReactNode;
@@ -30,13 +33,13 @@ export default function SelectList<T>({
 }: SelectListProps<T>) {
   const [selected, setSelected] = useState<SelectListProps<T>['value']>(value);
   const [buttonDisplayContent, setButtonDisplayContent] = useState<ReactNode>(
-    value.length ? value.join(', ') : defaultButtonDisplayContent
+    getDisplayContent(value, items, defaultButtonDisplayContent)
   );
 
   const onClose = () => {
     onChange(selected);
     setButtonDisplayContent(
-      selected.length ? selected.join(', ') : defaultButtonDisplayContent
+      getDisplayContent(selected, items, defaultButtonDisplayContent)
     );
   };
 
@@ -61,9 +64,9 @@ export default function SelectList<T>({
     setSelected(value);
     if (instantUpdate) return; // we don't want the button text changing on every click
     setButtonDisplayContent(
-      value.length ? value.join(', ') : defaultButtonDisplayContent
+      getDisplayContent(value, items, defaultButtonDisplayContent)
     );
-  }, [value, defaultButtonDisplayContent]);
+  }, [value, items, defaultButtonDisplayContent]);
 
   const buttonLabel = (
     <span
@@ -102,4 +105,18 @@ export default function SelectList<T>({
       </div>
     </PopoverButton>
   );
+}
+
+// Returns button display content based on `value` array, mapping to display names from `items` when available.
+// If no matching display name is found, uses the value itself. Returns `defaultContent` if `value` is empty.
+function getDisplayContent<T>(
+  value: T[],
+  items: Item<T>[],
+  defaultContent: ReactNode
+): ReactNode {
+  return value.length
+    ? value
+        .map((v) => items.find((item) => item.value === v)?.display ?? v)
+        .join(', ')
+    : defaultContent;
 }
