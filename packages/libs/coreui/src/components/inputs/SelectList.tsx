@@ -18,7 +18,7 @@ export interface SelectListProps<T> extends CheckboxListProps<T> {
   instantUpdate?: boolean;
 }
 
-export default function SelectList<T>({
+export default function SelectList<T extends ReactNode>({
   name,
   items,
   value,
@@ -109,14 +109,16 @@ export default function SelectList<T>({
 
 // Returns button display content based on `value` array, mapping to display names from `items` when available.
 // If no matching display name is found, uses the value itself. Returns `defaultContent` if `value` is empty.
-function getDisplayContent<T>(
+function getDisplayContent<T extends ReactNode>(
   value: T[],
   items: Item<T>[],
   defaultContent: ReactNode
 ): ReactNode {
   return value.length
     ? value
-        .map((v) => items.find((item) => item.value === v)?.display ?? v)
-        .join(', ')
+        .map<ReactNode>(
+          (v) => items.find((item) => item.value === v)?.display ?? v
+        )
+        .reduce((accum, elem) => (accum ? [accum, ',', elem] : elem), null)
     : defaultContent;
 }
