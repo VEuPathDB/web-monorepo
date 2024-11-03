@@ -35,7 +35,10 @@ export default function geohashAnimation({
     const hashDif = currentGeohash.length - prevGeoHash.length;
     // Get array of new markers with old positions
     const cloneArray = updateMarkers(markers, prevMarkers, hashDif);
-    consolidatedMarkers = [...prevMarkers, ...cloneArray];
+    // put them first - ideally underneath the old markers
+    // (though it seems impossible to get this to work)
+    // ((see also updateMarkers zIndexOffset failed attempt))
+    consolidatedMarkers = [...cloneArray, ...prevMarkers];
   } else {
     /** No difference in geohashes - Render markers as they are **/
     zoomType = null;
