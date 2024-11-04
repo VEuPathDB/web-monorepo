@@ -56,7 +56,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
             <br />
             <br />
             The files must be mapped to the reference genome that you select
-            below.
+            above.
             <br />
             Only letters, numbers, spaces and dashes are allowed in the file
             name.
@@ -110,7 +110,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
             .
             <br />
             The bigwig files you select here must be mapped to the reference
-            genome that you select below.
+            genome that you select above.
             <br />
             Only letters, numbers, spaces and dashes are allowed in the file
             name.
@@ -301,6 +301,7 @@ function ReferenceGenomeDepdency(props: DependencyProps) {
   if (organismTree == null) return null;
   return (
     <SelectTree
+      shouldCloseOnSelection
       buttonDisplayContent="Choose reference genome"
       tree={organismTree}
       getNodeId={getNodeId}
