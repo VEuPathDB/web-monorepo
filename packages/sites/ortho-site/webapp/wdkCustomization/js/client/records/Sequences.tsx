@@ -42,7 +42,7 @@ import { RecordFilter } from '@veupathdb/wdk-client/lib/Views/Records/RecordTabl
 import {
   areTermsInStringRegexString,
   parseSearchQueryString,
-} from '../../../../../../../libs/wdk-client/lib/Utils/SearchUtils';
+} from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 
 type RowType = Record<string, AttributeValue>;
 
