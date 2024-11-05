@@ -623,12 +623,13 @@ export function RecordTable_Sequences(
           corePeripheralFilterValue.length +
           selectedSpecies.length +
           proteinFilterIds.length ===
-        0
+          0 && searchQuery === ''
       }
       icon={Undo}
       size={'medium'}
       themeRole={'primary'}
       onPress={() => {
+        setSearchQuery('');
         setProteinFilterIds([]);
         setPfamFilterIds([]);
         setCorePeripheralFilterValue([]);
@@ -695,6 +696,7 @@ export function RecordTable_Sequences(
         }}
       >
         <RecordFilter
+          key={`text-search-${resetCounter}`}
           searchTerm={searchQuery}
           onSearchTermChange={setSearchQuery}
           recordDisplayName="Proteins"
