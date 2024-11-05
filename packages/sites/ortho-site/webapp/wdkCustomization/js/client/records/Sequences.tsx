@@ -98,7 +98,10 @@ export function RecordTable_Sequences(
   const numSequences = mesaRows.length;
 
   const treeResponse = useOrthoService(
-    (orthoService) => orthoService.getGroupTree(groupName),
+    (orthoService) => {
+      if (numSequences < 3) return Promise.resolve(undefined);
+      return orthoService.getGroupTree(groupName);
+    },
     [groupName, numSequences]
   );
 
@@ -195,7 +198,7 @@ export function RecordTable_Sequences(
   const { tree, leaves, sortedRows } = useMemo(() => {
     const tree = treeResponse == null ? undefined : parseNewick(treeResponse);
     const leaves = tree && getLeaves(tree);
-    const sortedRows = leaves && sortRows(leaves, mesaRows);
+    const sortedRows = leaves ? sortRows(leaves, mesaRows) : mesaRows;
     return { tree, leaves, sortedRows };
   }, [treeResponse, mesaRows]);
 
@@ -406,6 +409,7 @@ export function RecordTable_Sequences(
   }
 
   if (
+    numSequences >= 3 &&
     mesaRows != null &&
     sortedRows != null &&
     (mesaRows.length !== sortedRows.length ||
@@ -638,8 +642,9 @@ export function RecordTable_Sequences(
   if (filteredRows == null) return null;
 
   const warningText =
-    filteredRows.length > MAX_SEQUENCES_FOR_TREE ||
-    filteredRows.length < MIN_SEQUENCES_FOR_TREE ? (
+    numSequences >= 3 &&
+    (filteredRows.length > MAX_SEQUENCES_FOR_TREE ||
+      filteredRows.length < MIN_SEQUENCES_FOR_TREE) ? (
       <span>
         To see a phylogenetic tree please use a filter to display between{' '}
         {MIN_SEQUENCES_FOR_TREE.toLocaleString()} and{' '}
