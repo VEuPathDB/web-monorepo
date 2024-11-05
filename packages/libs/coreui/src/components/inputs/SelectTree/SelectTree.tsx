@@ -85,11 +85,7 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
       isDisabled={props.isDisabled}
     >
       <div
-        style={{
-          padding: '1em 1em 1em .5em',
-          width: '30em',
-          height: 'min(60vh, 40em)',
-        }}
+        style={{ padding: '.5em .5em .5em 0', width: '30em', height: '60vh' }}
       >
         {wrapPopover ? wrapPopover(checkboxTree) : checkboxTree}
       </div>

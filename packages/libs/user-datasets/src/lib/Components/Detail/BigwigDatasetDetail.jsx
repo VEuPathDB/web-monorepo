@@ -108,7 +108,7 @@ class BigwigDatasetDetail extends UserDatasetDetail {
   renderTracksSection() {
     const { userDataset, appUrl, projectName, config, fileListing } =
       this.props;
-    const installFiles = fileListing?.install?.contents
+    const installFiles = fileListing.install?.contents
       ?.filter((file) => file.fileName.endsWith('.bw'))
       .map((file) => ({
         dataFileName: file.fileName,
