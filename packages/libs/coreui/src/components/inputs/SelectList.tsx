@@ -5,7 +5,8 @@ import CheckboxList, {
   Item,
 } from './checkboxes/CheckboxList';
 
-export interface SelectListProps<T> extends CheckboxListProps<T> {
+export interface SelectListProps<T extends string>
+  extends CheckboxListProps<T> {
   children?: ReactNode;
   /** A button's content if/when no values are currently selected */
   defaultButtonDisplayContent: ReactNode;
@@ -18,7 +19,7 @@ export interface SelectListProps<T> extends CheckboxListProps<T> {
   instantUpdate?: boolean;
 }
 
-export default function SelectList<T extends ReactNode>({
+export default function SelectList<T extends string>({
   name,
   items,
   value,
@@ -109,7 +110,7 @@ export default function SelectList<T extends ReactNode>({
 
 // Returns button display content based on `value` array, mapping to display names from `items` when available.
 // If no matching display name is found, uses the value itself. Returns `defaultContent` if `value` is empty.
-function getDisplayContent<T extends ReactNode>(
+function getDisplayContent<T extends string>(
   value: T[],
   items: Item<T>[],
   defaultContent: ReactNode
