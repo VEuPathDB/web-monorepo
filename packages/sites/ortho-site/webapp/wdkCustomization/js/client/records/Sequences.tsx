@@ -428,7 +428,10 @@ export function RecordTable_Sequences(
             <span>
               A data processing error has occurred on our end. We apologize for
               the inconvenience. If this problem persists, please{' '}
-              <Link to="/contact-us">contact us</Link>.
+              <Link target="_blank" to="/contact-us">
+                contact us
+              </Link>
+              .
             </span>
           ),
         }}
