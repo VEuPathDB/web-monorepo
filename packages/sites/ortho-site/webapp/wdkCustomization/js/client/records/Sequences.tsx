@@ -99,7 +99,8 @@ export function RecordTable_Sequences(
 
   const treeResponse = useOrthoService(
     (orthoService) => {
-      if (numSequences < 3) return Promise.resolve(undefined);
+      if (numSequences < MIN_SEQUENCES_FOR_TREE)
+        return Promise.resolve(undefined);
       return orthoService.getGroupTree(groupName);
     },
     [groupName, numSequences]
@@ -403,7 +404,7 @@ export function RecordTable_Sequences(
   }
 
   if (
-    numSequences >= 3 &&
+    numSequences >= MIN_SEQUENCES_FOR_TREE &&
     mesaRows != null &&
     sortedRows != null &&
     (mesaRows.length !== sortedRows.length ||
@@ -637,7 +638,7 @@ export function RecordTable_Sequences(
   if (filteredRows == null) return null;
 
   const warningText =
-    numSequences >= 3 &&
+    numSequences >= MIN_SEQUENCES_FOR_TREE &&
     (filteredRows.length > MAX_SEQUENCES_FOR_TREE ||
       filteredRows.length < MIN_SEQUENCES_FOR_TREE) ? (
       <span>
