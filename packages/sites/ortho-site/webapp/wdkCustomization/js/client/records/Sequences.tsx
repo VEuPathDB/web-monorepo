@@ -9,7 +9,7 @@ import React, {
 import TreeTable from '@veupathdb/components/lib/components/tidytree/TreeTable';
 import { RecordTableProps, WrappedComponentProps } from './Types';
 import { useOrthoService } from 'ortho-client/hooks/orthoService';
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { Loading, Link } from '@veupathdb/wdk-client/lib/Components';
 import { Branch, parseNewick } from 'patristic';
 import {
   AttributeValue,
@@ -39,6 +39,10 @@ import {
 import { RecordTable_TaxonCounts_Filter } from './RecordTable_TaxonCounts_Filter';
 import { formatAttributeValue } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { RecordFilter } from '@veupathdb/wdk-client/lib/Views/Records/RecordTable/RecordFilter';
+import {
+  areTermsInStringRegexString,
+  parseSearchQueryString,
+} from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 
 type RowType = Record<string, AttributeValue>;
 
@@ -94,7 +98,11 @@ export function RecordTable_Sequences(
   const numSequences = mesaRows.length;
 
   const treeResponse = useOrthoService(
-    (orthoService) => orthoService.getGroupTree(groupName),
+    (orthoService) => {
+      if (numSequences < MIN_SEQUENCES_FOR_TREE)
+        return Promise.resolve(undefined);
+      return orthoService.getGroupTree(groupName);
+    },
     [groupName, numSequences]
   );
 
@@ -191,7 +199,7 @@ export function RecordTable_Sequences(
   const { tree, leaves, sortedRows } = useMemo(() => {
     const tree = treeResponse == null ? undefined : parseNewick(treeResponse);
     const leaves = tree && getLeaves(tree);
-    const sortedRows = leaves && sortRows(leaves, mesaRows);
+    const sortedRows = leaves ? sortRows(leaves, mesaRows) : mesaRows;
     return { tree, leaves, sortedRows };
   }, [treeResponse, mesaRows]);
 
@@ -391,20 +399,16 @@ export function RecordTable_Sequences(
 
   // None shall pass! (hooks, at least)
 
-  if (
-    !mesaState ||
-    !sortedRows ||
-    (numSequences >= MIN_SEQUENCES_FOR_TREE &&
-      numSequences <= MAX_SEQUENCES_FOR_TREE &&
-      (tree == null || treeResponse == null))
-  ) {
+  if (!mesaState || !sortedRows || !tree || !treeResponse) {
     return <Loading />;
   }
 
   if (
+    numSequences >= MIN_SEQUENCES_FOR_TREE &&
     mesaRows != null &&
     sortedRows != null &&
-    mesaRows.length !== sortedRows.length
+    (mesaRows.length !== sortedRows.length ||
+      mesaRows.length !== leaves?.length)
   ) {
     console.log(
       'Tree and protein list mismatch. A=Tree, B=Table. Summary below:'
@@ -419,8 +423,16 @@ export function RecordTable_Sequences(
       <Banner
         banner={{
           type: 'warning',
-          message:
-            'Tree and protein list mismatch. Please contact the helpdesk',
+          message: (
+            <span>
+              A data processing error has occurred on our end. We apologize for
+              the inconvenience. If this problem persists, please{' '}
+              <Link target="_blank" to="/contact-us">
+                contact us
+              </Link>
+              .
+            </span>
+          ),
         }}
       />
     );
@@ -514,6 +526,7 @@ export function RecordTable_Sequences(
       onPress={() => {
         proteinFilterButtonRef.current?.close();
         setProteinFilterIds([]);
+        setTablePageNumber(1);
       }}
     />
   );
@@ -522,6 +535,7 @@ export function RecordTable_Sequences(
     proteinFilterButtonRef.current?.close();
     setProteinFilterIds(highlightedNodes);
     setHighlightedNodes([]);
+    setTablePageNumber(1);
   };
 
   const proteinFilter = (
@@ -604,12 +618,13 @@ export function RecordTable_Sequences(
           corePeripheralFilterValue.length +
           selectedSpecies.length +
           proteinFilterIds.length ===
-        0
+          0 && searchQuery === ''
       }
       icon={Undo}
       size={'medium'}
       themeRole={'primary'}
       onPress={() => {
+        setSearchQuery('');
         setProteinFilterIds([]);
         setPfamFilterIds([]);
         setCorePeripheralFilterValue([]);
@@ -622,6 +637,23 @@ export function RecordTable_Sequences(
 
   if (filteredRows == null) return null;
 
+  const warningText =
+    numSequences >= MIN_SEQUENCES_FOR_TREE &&
+    (filteredRows.length > MAX_SEQUENCES_FOR_TREE ||
+      filteredRows.length < MIN_SEQUENCES_FOR_TREE) ? (
+      <span>
+        To see a phylogenetic tree please use a filter to display between{' '}
+        {MIN_SEQUENCES_FOR_TREE.toLocaleString()} and{' '}
+        {MAX_SEQUENCES_FOR_TREE.toLocaleString()} sequences
+      </span>
+    ) : filteredRows.length < sortedRows.length ? (
+      <span>
+        Note: The ortholog group's phylogeny has been pruned to display only the
+        currently filtered proteins. This may differ from a tree constructed{' '}
+        <i>de novo</i> using only these sequences.
+      </span>
+    ) : undefined;
+
   return (
     <div
       style={
@@ -630,8 +662,7 @@ export function RecordTable_Sequences(
         } as CSSProperties
       }
     >
-      {(filteredRows.length > MAX_SEQUENCES_FOR_TREE ||
-        filteredRows.length < MIN_SEQUENCES_FOR_TREE) && (
+      {warningText && (
         <div
           style={{
             display: 'flex',
@@ -645,9 +676,7 @@ export function RecordTable_Sequences(
             fontWeight: 500,
           }}
         >
-          To see a phylogenetic tree please use a filter to display between{' '}
-          {MIN_SEQUENCES_FOR_TREE.toLocaleString()} and{' '}
-          {MAX_SEQUENCES_FOR_TREE.toLocaleString()} sequences
+          {warningText}
         </div>
       )}
       <div
@@ -662,6 +691,7 @@ export function RecordTable_Sequences(
         }}
       >
         <RecordFilter
+          key={`text-search-${resetCounter}`}
           searchTerm={searchQuery}
           onSearchTermChange={setSearchQuery}
           recordDisplayName="Proteins"
@@ -781,14 +811,9 @@ function rowMatch(row: RowType, query: RegExp, keys?: string[]): boolean {
 
 function createSafeSearchRegExp(input: string): RegExp | undefined {
   if (input === '') return undefined;
-  try {
-    // Attempt to create a RegExp from the user input directly
-    return new RegExp(input, 'i');
-  } catch (error) {
-    // If an error occurs (e.g., invalid RegExp), escape the input and create a literal search RegExp
-    const escapedInput = input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    return new RegExp(escapedInput, 'i');
-  }
+  const queryTerms = parseSearchQueryString(input);
+  const searchTermRegex = areTermsInStringRegexString(queryTerms);
+  return new RegExp(searchTermRegex, 'i');
 }
 
 function logIdMismatches(A: string[], B: string[]) {
