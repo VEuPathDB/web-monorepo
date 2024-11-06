@@ -16,6 +16,18 @@ export const WdkDependenciesContext =
 
 export type WdkDependenciesEffectCallback = DepEffectCallback<WdkDependencies>;
 
+export function useWdkDependenciesContext() {
+  const wdkDependencies = useContext(WdkDependenciesContext);
+
+  if (wdkDependencies == null) {
+    throw new Error(
+      'useWdkDependenciesEffect requires WdkDependencies to be provided via React context'
+    );
+  }
+
+  return wdkDependencies;
+}
+
 export const useWdkDependenciesEffect = (
   effect: WdkDependenciesEffectCallback,
   deps?: DependencyList

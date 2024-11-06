@@ -257,7 +257,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
 
     if (entry?.resource == null) return <Loading />;
 
-    const DetailView = this.getDetailView(typeof entry.resource.type);
+    const DetailView = this.getDetailView(entry.resource.type);
     return entry.resource.meta.visibility !== 'public' &&
       user &&
       user.isGuest ? (
