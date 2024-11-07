@@ -14,6 +14,14 @@
     "build-npm-modules": "npm-run-all build generate-icons",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "eslintConfig": {
+    "extends": [
+      "@veupathdb"
+    ]
+  },
+  "browserslist": [
+    "extends @veupathdb/browserslist-config"
+  ],
   "files": [
     "dist",
     "src",

@@ -10,7 +10,7 @@ import { diyUserDatasetIdToWdkRecordId } from '@veupathdb/user-datasets/lib/Util
 
 import { UserDatasetDetailProps } from '@veupathdb/user-datasets/lib/Controllers/UserDatasetDetailController';
 
-import { uploadTypeConfig } from '@veupathdb/user-datasets/lib/Utils/upload-config';
+import { uploadTypeConfig } from '@veupathdb/web-common/lib/user-dataset-upload-config';
 
 import {
   communitySite,

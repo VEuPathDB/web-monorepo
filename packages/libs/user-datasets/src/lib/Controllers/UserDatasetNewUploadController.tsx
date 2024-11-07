@@ -20,20 +20,56 @@ import { StateSlice } from '../StoreModules/types';
 
 import { datasetIdType, DatasetUploadTypeConfigEntry } from '../Utils/types';
 import { assertIsVdiCompatibleWdkService } from '../Service';
+import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
+import { UploadFormMenu } from '../Components/UploadFormMenu';
 
 const SUPPORTED_FILE_UPLOAD_TYPES: string[] = [];
 
-interface Props<T extends string = string> {
+interface Props {
+  baseUrl: string;
+  type?: string;
+  availableTypes: string[];
+  datasetUploadTypes: Record<string, DatasetUploadTypeConfigEntry<string>>;
+  urlParams: Record<string, string>;
+}
+
+export default function UserDatasetUploadSelector(props: Props) {
+  const { baseUrl, type, availableTypes, datasetUploadTypes, urlParams } =
+    props;
+
+  if (type == null && availableTypes.length !== 1) {
+    return (
+      <UploadFormMenu
+        availableTypes={availableTypes}
+        datasetUploadTypes={datasetUploadTypes}
+      />
+    );
+  }
+
+  const datasetUploadType = datasetUploadTypes[type ?? availableTypes[0]];
+  if (datasetUploadType == null) {
+    return <NotFoundController />;
+  }
+  return (
+    <InnerUserDatasetUploadController
+      baseUrl={baseUrl}
+      datasetUploadType={datasetUploadType}
+      urlParams={urlParams}
+    />
+  );
+}
+
+interface InnerProps<T extends string = string> {
   baseUrl: string;
   datasetUploadType: DatasetUploadTypeConfigEntry<T>;
   urlParams: Record<string, string>;
 }
 
-export default function UserDatasetUploadController({
+function InnerUserDatasetUploadController({
   baseUrl,
   datasetUploadType,
   urlParams,
-}: Props) {
+}: InnerProps) {
   useSetDocumentTitle(datasetUploadType.uploadTitle);
 
   const projectId = useWdkService(

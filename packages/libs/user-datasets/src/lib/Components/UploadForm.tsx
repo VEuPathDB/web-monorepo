@@ -29,6 +29,7 @@ import {
   DatasetUploadTypeConfigEntry,
   NewUserDataset,
   ResultUploadConfig,
+  UserDataset,
 } from '../Utils/types';
 
 import { Modal } from '@veupathdb/coreui';
@@ -72,6 +73,7 @@ interface FormContent {
   summary: string;
   description: string;
   dataUploadSelection: DataUploadSelection;
+  dependencies?: UserDataset['dependencies'];
 }
 
 export type FormValidation = InvalidForm | ValidForm;
@@ -131,6 +133,9 @@ function UploadForm({
   const [description, setDescription] = useState(
     urlParams.datasetDescription ?? ''
   );
+
+  const [dependencies, setDependencies] =
+    useState<UserDataset['dependencies']>();
 
   const [dataUploadMode, setDataUploadMode] = useState<DataUploadMode>(
     urlParams.datasetStepId
@@ -208,6 +213,7 @@ function UploadForm({
           summary,
           description,
           dataUploadSelection,
+          dependencies,
         }
       );
 
@@ -226,6 +232,7 @@ function UploadForm({
       name,
       summary,
       description,
+      dependencies,
       dataUploadSelection,
       submitForm,
     ]
@@ -396,11 +403,10 @@ function UploadForm({
             ),
           }}
         />
-        <div className="formSection">
+        <div className="formSection formSection--data-set-name">
           <FieldLabel required htmlFor="data-set-name">
             Name
           </FieldLabel>
-          <br />
           <TextBox
             type="input"
             id="data-set-name"
@@ -411,21 +417,22 @@ function UploadForm({
             onChange={setName}
           />
         </div>
-        <div className="formSection">
+        <div className="formSection formSection--data-set-summary">
           <FieldLabel htmlFor="data-set-summary" required={summaryRequired}>
             Summary
           </FieldLabel>
-          <TextBox
+          <TextArea
             type="input"
             id="data-set-summary"
             placeholder="brief summary of the data set contents in a few sentences"
             required={summaryRequired}
+            rows={2}
             {...summaryInputProps}
             value={summary}
             onChange={setSummary}
           />
         </div>
-        <div className="formSection">
+        <div className="formSection formSection--data-set-description">
           <FieldLabel
             htmlFor="data-set-description"
             required={descriptionRequired}
@@ -436,13 +443,29 @@ function UploadForm({
             id="data-set-description"
             placeholder="longer description of the data set contents"
             required={descriptionRequired}
+            rows={6}
             {...descriptionInputProps}
             value={description}
             onChange={setDescription}
           />
         </div>
+        {datasetUploadType.formConfig.dependencies && (
+          <div className="formSection formSection--data-set-dependencies">
+            <FieldLabel
+              required={
+                datasetUploadType.formConfig.dependencies.required ?? false
+              }
+            >
+              {datasetUploadType.formConfig.dependencies.label}
+            </FieldLabel>
+            {datasetUploadType.formConfig.dependencies.render({
+              value: dependencies,
+              onChange: setDependencies,
+            })}
+          </div>
+        )}
         {
-          <div className="formSection">
+          <div className="formSection formSection--data-set-file">
             {uploadMethodItems.length === 1 ? (
               <div className={cx('--UploadMethodSelector')}>
                 <div className={cx('--FixedUploadItem')}>
@@ -577,7 +600,18 @@ function validateForm<T extends string = string>(
   enableResultUploadMethod: boolean,
   formContent: FormContent
 ): FormValidation {
-  const { name, summary, description, dataUploadSelection } = formContent;
+  const { name, summary, description, dataUploadSelection, dependencies } =
+    formContent;
+
+  if (
+    datasetUploadType.formConfig.dependencies?.required &&
+    dependencies == null
+  ) {
+    return {
+      valid: false,
+      errors: [`Required: ${datasetUploadType.formConfig.dependencies.label}`],
+    };
+  }
 
   if (!isCompleteDataUploadSelection(dataUploadSelection)) {
     return {
@@ -607,6 +641,7 @@ function validateForm<T extends string = string>(
       datasetType: datasetUploadType.type,
       projects: [projectId],
       dataUploadSelection,
+      dependencies,
       visibility: 'private',
     },
   };
