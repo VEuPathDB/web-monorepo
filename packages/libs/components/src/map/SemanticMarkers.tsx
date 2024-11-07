@@ -106,6 +106,15 @@ export default function SemanticMarkers({
                 lnMin += 360;
                 recentered = true;
               }
+
+              // Is the new position inside the "viewport"?
+              // (strictly this is the un-greyed-out region in the middle when zoomed well out)
+              const inBounds =
+                lng <= bounds.northEast.lng &&
+                lng >= bounds.southWest.lng &&
+                lat <= bounds.northEast.lat &&
+                lat >= bounds.southWest.lat;
+
               return recentered
                 ? cloneElement(marker, {
                     position: { lat, lng },
@@ -113,6 +122,8 @@ export default function SemanticMarkers({
                       southWest: { lat: ltMin, lng: lnMin },
                       northEast: { lat: ltMax, lng: lnMax },
                     },
+                    // to prevent "fly-bys" (see #628) disable animation for out-of-bounds markers
+                    ...(inBounds ? {} : { duration: -1 }),
                   })
                 : marker;
             })
