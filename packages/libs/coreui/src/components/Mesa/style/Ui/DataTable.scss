@@ -35,5 +35,30 @@
       width: 100%;
       border-collapse: separate;
     }
+
+    .DataTable-Sticky {
+      display: block;
+      overflow: auto;
+      position: relative;
+      z-index: 0;
+      max-height: 70vh;
+
+      .DataTable-Header,
+      .DataTable-Body {
+        display: block;
+      }
+
+      .DataTable-Body {
+        position: relative;
+        padding-bottom: 1.5em; /* prevent macos scrollbar from occluding last row */
+      }
+
+      .DataTable-Header {
+        overflow: visible;
+        top: 0;
+        position: sticky;
+        z-index: 1;
+      }
+    }
   }
 }

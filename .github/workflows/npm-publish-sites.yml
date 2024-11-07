@@ -53,7 +53,7 @@ jobs:
             echo "npm_tag=$npm_tag" >> $GITHUB_ENV
           # or fall back to 'latest' just in case
           else
-            echo "npm_tag=latest" >> $GITHUB_ENV
+            echo "npm_tag=alpha" >> $GITHUB_ENV
           fi
       - uses: JS-DevTools/npm-publish@v2
         with:

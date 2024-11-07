@@ -870,9 +870,6 @@ export default function VariableList({
             style={{
               position: 'relative',
               borderRadius: '0.25em',
-              padding: '0.5em 0.5em 0.5em 0',
-              height: '60vh',
-              width: '30em',
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
