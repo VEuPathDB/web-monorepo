@@ -3,9 +3,27 @@ import { once, debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { httpGet } from '@veupathdb/web-common/lib/util/http';
-import { JbrowseIframe } from '@veupathdb/web-common/lib/components/JbrowseIframe';
+// import { JbrowseIframe } from '@veupathdb/web-common/lib/components/JbrowseIframe';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import newFeatureImage from '@veupathdb/wdk-client/lib/Core/Style/images/new-feature.png';
+
+// temporary disabling of JbrowseIframe
+function JbrowseIframe(props) {
+  return (
+    <div
+      style={{
+        border: '1px solid #ccc',
+        padding: '10px',
+        height: `${props.height ?? 400}px`,
+        overflowY: 'auto',
+        boxShadow: '0 0 8px rgba(0, 0, 0, 0.1)',
+      }}
+    >
+      There used to be a JBrowse iframe here. Its props were
+      <pre>{JSON.stringify(props, null, 2)}</pre>
+    </div>
+  );
+}
 
 const JBrowseLinkContainerStyle = {
   display: 'flex',
