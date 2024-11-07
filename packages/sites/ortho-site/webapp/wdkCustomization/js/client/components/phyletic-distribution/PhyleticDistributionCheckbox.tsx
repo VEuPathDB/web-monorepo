@@ -30,18 +30,6 @@ import { SelectTree } from '@veupathdb/coreui';
 
 const cx = makeClassNameHelper('PhyleticDistributionCheckbox');
 
-const styleOverridesForPopover: CheckboxTreeStyleSpec = {
-  treeSection: {
-    container: {
-      width: 500,
-      height: 'min(600px, 75vh)',
-    },
-  },
-  searchAndFilterWrapper: {
-    width: 500,
-  },
-};
-
 interface Props {
   selectionConfig: SelectionConfig;
   speciesCounts: Record<string, number>;
@@ -87,9 +75,6 @@ export function PhyleticDistributionCheckbox({
 
   return (
     <SelectTree
-      styleOverrides={
-        selectionConfig.selectable ? styleOverridesForPopover : undefined
-      }
       hasPopoverButton={selectionConfig.selectable}
       buttonDisplayContent="Organism"
       tree={prunedPhyleticDistributionUiTree}
