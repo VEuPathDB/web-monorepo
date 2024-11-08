@@ -17,6 +17,7 @@ export default configure({
   ...makeCommonDevServerConfig({
     rootClientUrl: process.env.ROOT_URL,
     proxies: {
+      [process.env.JBROWSE2_ENDPOINT]: process.env.JBROWSE2_URL,
       [process.env.WDK_SERVICE_ENDPOINT]: process.env.WDK_SERVICE_URL,
       [process.env.VDI_SERVICE_ENDPOINT]: process.env.VDI_SERVICE_URL,
       [process.env.SITE_SEARCH_SERVICE_ENDPOINT]: process.env.SITE_SEARCH_SERVICE_URL,
