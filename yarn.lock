@@ -4516,8 +4516,8 @@ __metadata:
   linkType: hard
 
 "@mui/x-data-grid@npm:^7.0.0":
-  version: 7.22.1
-  resolution: "@mui/x-data-grid@npm:7.22.1"
+  version: 7.22.2
+  resolution: "@mui/x-data-grid@npm:7.22.2"
   dependencies:
     "@babel/runtime": ^7.25.7
     "@mui/utils": ^5.16.6 || ^6.0.0
@@ -4537,7 +4537,7 @@ __metadata:
       optional: true
     "@emotion/styled":
       optional: true
-  checksum: 691fe51e254b1f754d69889e8347710a27bd65fc751726d719f52e85e2656fc1d158fc837484f729120b85aca988e2783e22831105aac665da9c9db4256b0310
+  checksum: 44273628e210c700f75f5bb0d9a8d542be3023503867b25c3204df7c5ac865cd19e428c05d7124df187c7aa99c8577ed7b50aa21fbeca1ad6bedfc5eae861319
   languageName: node
   linkType: hard
 
@@ -9667,6 +9667,7 @@ __metadata:
     "@emotion/react": ^11.11.4
     "@emotion/serialize": ^1.0.2
     "@emotion/styled": ^11.11.5
+    "@jbrowse/react-linear-genome-view": ^2.16.1
     "@material-ui/core": ^4.12.4
     "@material-ui/icons": ^4.11.3
     "@material-ui/lab": ^4.0.0-alpha.61
@@ -28226,7 +28227,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "monorepo-prototype@workspace:."
   dependencies:
-    "@jbrowse/react-linear-genome-view": ^2.16.1
     "@veupathdb/browserslist-config": "workspace:^"
     "@veupathdb/prettier-config": "workspace:^"
     browserslist-useragent-regexp: ^4.1.3
