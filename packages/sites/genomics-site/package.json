@@ -94,5 +94,8 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "@jbrowse/react-linear-genome-view": "^2.16.1"
+  }
 }
