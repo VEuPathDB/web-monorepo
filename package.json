@@ -36,6 +36,7 @@
     "node": "<=16.17.1"
   },
   "dependencies": {
+    "@jbrowse/react-linear-genome-view": "^2.16.1",
     "webpack": "^5.84.1",
     "webpack-cli": "^5.1.1"
   }
