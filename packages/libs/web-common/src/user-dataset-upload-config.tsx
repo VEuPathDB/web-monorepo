@@ -23,9 +23,9 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
   {
     rnaseq: {
       type: 'rnaseq',
-      displayName: 'RNA-Seq',
-      description: `Integrate your RNA-Seq data in ${projectId}.`,
-      uploadTitle: 'Upload My RNA-Seq Data Set',
+      displayName: 'Normalized RNA-Seq',
+      description: `Integrate your Normalized RNA-Seq data in ${projectId}.`,
+      uploadTitle: 'Upload My Normalized RNA-Seq Data Set',
       formConfig: {
         summary: {
           inputProps: {

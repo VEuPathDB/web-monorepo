@@ -10,13 +10,17 @@ import {
 
 import VariableTreeDropdown from '../variableSelectors/VariableTreeDropdown';
 import { Toggle } from '@veupathdb/coreui';
-import { makeEntityDisplayName } from '../../utils/study-metadata';
+import {
+  findEntityAndVariable,
+  makeEntityDisplayName,
+} from '../../utils/study-metadata';
 import { useInputStyles } from './inputStyles';
 import { Tooltip } from '@veupathdb/coreui';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { isEqual } from 'lodash';
 import { red } from '@veupathdb/coreui/lib/definitions/colors';
 import { CSSProperties } from '@material-ui/core/styles/withStyles';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 export interface InputSpec {
   name: string;
@@ -182,12 +186,27 @@ export function InputVariables(props: Props) {
     onChange({ ...selectedVariables, [inputName]: selectedVariable });
   };
 
+  const invalidInputs = inputs.filter((inputSpec) => {
+    const variableDescriptor = selectedVariables[inputSpec.name];
+    if (variableDescriptor == null) return false;
+    const entityAndVariable = findEntityAndVariable(
+      entities,
+      variableDescriptor
+    );
+    return (
+      entityAndVariable == null ||
+      entityAndVariable.variable.type === 'category'
+    );
+  });
+
   // Find entities that are excluded for each variable, and union their variables
   // with the disabled variables.
   const disabledVariablesByInputName: Record<string, VariableDescriptor[]> =
     useMemo(
       () =>
         inputs.reduce((map, input) => {
+          // ignore invalid inputs
+          if (invalidInputs.includes(input)) return map;
           // For each input (ex. xAxisVariable), determine its constraints based on which patterns any other selected variables match.
           const filteredConstraints =
             constraints &&
@@ -210,6 +229,7 @@ export function InputVariables(props: Props) {
         }, {} as Record<string, VariableDescriptor[]>),
       [
         inputs,
+        invalidInputs,
         constraints,
         selectedVariables,
         entities,
@@ -270,7 +290,8 @@ export function InputVariables(props: Props) {
                           constraints &&
                           constraints.length &&
                           constraints[0][input.name]?.isRequired &&
-                          !selectedVariables[input.name]
+                          (!selectedVariables[input.name] ||
+                            invalidInputs.includes(input))
                             ? requiredInputLabelStyle
                             : input.role === 'stratification' &&
                               hasMultipleStratificationValues
@@ -351,8 +372,16 @@ export function InputVariables(props: Props) {
                         }
                         starredVariables={starredVariables}
                         toggleStarredVariable={toggleStarredVariable}
-                        entityId={selectedVariables[input.name]?.entityId}
-                        variableId={selectedVariables[input.name]?.variableId}
+                        entityId={
+                          invalidInputs.includes(input)
+                            ? undefined
+                            : selectedVariables[input.name]?.entityId
+                        }
+                        variableId={
+                          invalidInputs.includes(input)
+                            ? undefined
+                            : selectedVariables[input.name]?.variableId
+                        }
                         variableLinkConfig={{
                           type: 'button',
                           onClick: (variable) =>
@@ -396,6 +425,30 @@ export function InputVariables(props: Props) {
           {content}
         </div>
       ))}
+      {invalidInputs.length > 0 && (
+        <Banner
+          banner={{
+            type: 'error',
+            message: (
+              <div>
+                The following inputs reference a variable that no longer exists.
+                Use the dropdown to choose a new variable.
+                {
+                  <ul>
+                    {invalidInputs.map((inputSpec) => {
+                      return (
+                        <li>
+                          <strong>{inputSpec.label}</strong>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                }
+              </div>
+            ),
+          }}
+        />
+      )}
     </div>
   );
 }
