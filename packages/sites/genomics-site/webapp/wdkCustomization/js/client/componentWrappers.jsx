@@ -109,6 +109,11 @@ export function RecordController(WdkRecordController) {
         },
       ];
     }
+    getDefaultExpandedSections(recordClass) {
+      if (recordClass.urlSegment === 'gene') {
+        return ['GeneModelGbrowseUrl'];
+      }
+    }
     loadData(prevProps) {
       super.loadData(prevProps);
       // special loading for Pathways- if gene step ID (i.e. the step passed to
@@ -154,8 +159,8 @@ export const RecordUI = makeDynamicWrapper(
 );
 export const RecordMainSection = makeDynamicWrapper('RecordMainSection');
 export const RecordTable = makeDynamicWrapper(
-  'RecordTable',
-  RecordTableContainer
+  'RecordTable'
+  // RecordTableContainer
 );
 export const RecordTableDescription = makeDynamicWrapper(
   'RecordTableDescription'

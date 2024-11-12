@@ -26,6 +26,7 @@ export type Action =
   | RecordLoadingAction
   | RecordErrorAction
   | SectionVisibilityAction
+  | UpdateTableStateAction
   | SetCollapsedSectionsAction
   | AllFieldVisibilityAction
   | NavigationVisibilityAction
@@ -43,6 +44,7 @@ export type RecordReceivedAction = {
     record: RecordInstance;
     recordClass: RecordClass;
     categoryTree: CategoryTreeNode;
+    defaultExpandedSections?: string[];
   };
 };
 
@@ -209,6 +211,30 @@ export function setCollapsedSections(
 
 //==============================================================================
 
+export const TABLE_STATE_UPDATED = 'record-view/table-state-updated';
+
+export type UpdateTableStateAction = {
+  type: typeof TABLE_STATE_UPDATED;
+  payload: {
+    tableName: string;
+    tableState: {
+      searchTerm: string;
+      selectedRow?: number;
+      expandedRows: number[];
+    };
+  };
+};
+
+export const updateTableState = (
+  tableName: string,
+  tableState: UpdateTableStateAction['payload']['tableState']
+): UpdateTableStateAction => ({
+  type: TABLE_STATE_UPDATED,
+  payload: { tableName, tableState },
+});
+
+//==============================================================================
+
 export const ALL_FIELD_VISIBILITY = 'record-view/all-field-visibility-changed';
 
 export type AllFieldVisibilityAction = {
@@ -325,6 +351,12 @@ interface RequestRequestOptionsGetter {
   ): RecordRequestOptions[];
 }
 
+interface DefaultExpandedSectionsGetter {
+  (recordClass: RecordClass, categoryTree: CategoryTreeNode):
+    | string[]
+    | undefined;
+}
+
 interface CategoryTreePruner {
   (recordClass: RecordClass, categoryTree: CategoryTreeNode): CategoryTreeNode;
 }
@@ -334,14 +366,16 @@ export function loadRecordData(
   recordClass: string,
   primaryKeyValues: string[],
   getRecordRequestOptions: RequestRequestOptionsGetter,
-  pruneCategoryTree: CategoryTreePruner
+  pruneCategoryTree: CategoryTreePruner,
+  getDefaultExpandedSections: DefaultExpandedSectionsGetter
 ): ActionThunk<LoadRecordAction | UserAction | EmptyAction> {
   return function run({ wdkService }) {
     return setActiveRecord(
       recordClass,
       primaryKeyValues,
       getRecordRequestOptions,
-      pruneCategoryTree
+      pruneCategoryTree,
+      getDefaultExpandedSections
     );
   };
 }
@@ -357,7 +391,8 @@ function setActiveRecord(
   recordClassUrlSegment: string,
   primaryKeyValues: string[],
   getRecordRequestOptions: RequestRequestOptionsGetter,
-  pruneCategoryTree: CategoryTreePruner
+  pruneCategoryTree: CategoryTreePruner,
+  getDefaultExpandedSections: DefaultExpandedSectionsGetter
 ): ActionThunk<LoadRecordAction | UserAction | EmptyAction> {
   return ({ wdkService }) => {
     const id = uniqueId('recordViewId');
@@ -381,6 +416,10 @@ function setActiveRecord(
             { name: '__', tree: prunedCategoryTree },
             isNotInternalNode
           );
+          const defaultExpandedSections = getDefaultExpandedSections(
+            recordClass,
+            categoryTree
+          );
           const initialAction$ = wdkService
             .getRecord(recordClass.urlSegment, primaryKey, initialOptions)
             .then((record) =>
@@ -388,6 +427,7 @@ function setActiveRecord(
                 record,
                 recordClass,
                 categoryTree,
+                defaultExpandedSections,
               })
             );
           const additionalActions = additionalOptions.map((options) =>
