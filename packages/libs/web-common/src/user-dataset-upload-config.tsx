@@ -82,7 +82,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
     bigwigfiles: {
       type: 'bigwigfiles',
       displayName: 'bigWig',
-      description: `Integrate your BigWig data in ${projectId}.`,
+      description: `Integrate your bigWig data in ${projectId}.`,
       uploadTitle: 'Upload My bigWig Data Set',
       formConfig: {
         summary: {
