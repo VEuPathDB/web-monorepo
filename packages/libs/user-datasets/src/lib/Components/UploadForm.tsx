@@ -398,7 +398,7 @@ function UploadForm({
               <>
                 Before uploading your dataset, please ensure your data is
                 formatted according to the instructions listed in the{' '}
-                <Link to={{ pathname: '../datasets/help' }}>"Help" tab</Link>.
+                <Link to={{ pathname: '/datasets/help' }}>"Help" tab</Link>.
               </>
             ),
           }}
