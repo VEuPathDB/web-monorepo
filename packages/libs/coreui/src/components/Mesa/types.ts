@@ -36,7 +36,9 @@ export interface MesaStateProps<
     inline?: boolean;
     inlineMaxWidth?: string;
     inlineMaxHeight?: string;
+    inlineUseTooltips?: boolean; // don't use onClick to show the full contents, use an onMouseOver tooltip instead
     className?: string;
+    style?: React.CSSProperties;
     errOnOverflow?: boolean;
     editableColumns?: boolean;
     overflowHeight?: string;
@@ -67,6 +69,12 @@ export interface MesaStateProps<
      */
     childRow?: (props: ChildRowProps<Row>) => ReactElement<ChildRowProps<Row>>;
     getRowId?: (row: Row) => string | number;
+    /**
+     * Renders the node in the left margin of the table.
+     * This can be useful for rendering a graphic that
+     * aligns with table rows, etc.
+     */
+    marginContent?: React.ReactNode;
   };
   actions?: MesaAction<Row, Key>[];
   eventHandlers?: {
