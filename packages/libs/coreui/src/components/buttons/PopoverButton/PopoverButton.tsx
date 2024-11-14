@@ -1,4 +1,12 @@
-import { ReactNode, useState, useEffect, useMemo } from 'react';
+import {
+  ReactNode,
+  useState,
+  useEffect,
+  useMemo,
+  forwardRef,
+  useImperativeHandle,
+  useCallback,
+} from 'react';
 import { Popover } from '@material-ui/core';
 import SwissArmyButton from '../SwissArmyButton';
 import { gray } from '../../../definitions/colors';
@@ -66,6 +74,11 @@ const defaultStyle: ButtonStyleSpec = {
   },
 };
 
+export interface PopoverButtonHandle {
+  /** Closes the popover */
+  close: () => void;
+}
+
 export interface PopoverButtonProps {
   /** Contents of the menu when opened */
   children: ReactNode;
@@ -87,87 +100,100 @@ export interface PopoverButtonProps {
 /**
  * Renders a button that display `children` in a popover widget.
  */
-export default function PopoverButton(props: PopoverButtonProps) {
-  const {
-    children,
-    buttonDisplayContent,
-    onClose,
-    setIsPopoverOpen,
-    isDisabled = false,
-    styleOverrides = {},
-  } = props;
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
-  const finalStyle = useMemo(
-    () => merge({}, defaultStyle, styleOverrides),
-    [styleOverrides]
-  );
+const PopoverButton = forwardRef<PopoverButtonHandle, PopoverButtonProps>(
+  function PopoverButton(props, ref) {
+    const {
+      children,
+      buttonDisplayContent,
+      onClose,
+      setIsPopoverOpen,
+      isDisabled = false,
+      styleOverrides = {},
+    } = props;
+    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
-  const onCloseHandler = () => {
-    setAnchorEl(null);
-    onClose && onClose();
-  };
+    const finalStyle = useMemo(
+      () => merge({}, defaultStyle, styleOverrides),
+      [styleOverrides]
+    );
 
-  useEffect(() => {
-    if (!setIsPopoverOpen) return;
-    if (anchorEl) {
-      setIsPopoverOpen(true);
-    } else {
-      setIsPopoverOpen(false);
-    }
-  }, [anchorEl, setIsPopoverOpen]);
+    const onCloseHandler = useCallback(() => {
+      setAnchorEl(null);
+      onClose && onClose();
+    }, [onClose]);
 
-  const menu = (
-    <Popover
-      id="dropdown"
-      aria-expanded={!!anchorEl}
-      open={Boolean(anchorEl)}
-      onClose={onCloseHandler}
-      anchorEl={anchorEl}
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'left',
-      }}
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'left',
-      }}
-      keepMounted
-    >
-      {children}
-    </Popover>
-  );
+    // Expose the `close()` method to external components via ref
+    useImperativeHandle(
+      ref,
+      () => ({
+        close: onCloseHandler,
+      }),
+      [onCloseHandler]
+    );
 
-  const button = (
-    <SwissArmyButton
-      text={buttonDisplayContent}
-      textTransform="none"
-      onPress={(event) => setAnchorEl(event.currentTarget)}
-      disabled={isDisabled}
-      styleSpec={finalStyle}
-      icon={ArrowDown}
-      iconPosition="right"
-      additionalAriaProperties={{
-        'aria-controls': 'dropdown',
-        'aria-haspopup': 'true',
-        type: 'button',
-      }}
-    />
-  );
+    useEffect(() => {
+      if (!setIsPopoverOpen) return;
+      if (anchorEl) {
+        setIsPopoverOpen(true);
+      } else {
+        setIsPopoverOpen(false);
+      }
+    }, [anchorEl, setIsPopoverOpen]);
 
-  return (
-    <div
-      style={{
-        width: 'fit-content',
-        ...(isDisabled ? { cursor: 'not-allowed' } : {}),
-      }}
-      onClick={(event) => {
-        // prevent click event from propagating to ancestor nodes
-        event.stopPropagation();
-      }}
-    >
-      {button}
-      {menu}
-    </div>
-  );
-}
+    const menu = (
+      <Popover
+        id="dropdown"
+        aria-expanded={!!anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={onCloseHandler}
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        keepMounted
+      >
+        {children}
+      </Popover>
+    );
+
+    const button = (
+      <SwissArmyButton
+        text={buttonDisplayContent}
+        textTransform="none"
+        onPress={(event) => setAnchorEl(event.currentTarget)}
+        disabled={isDisabled}
+        styleSpec={finalStyle}
+        icon={ArrowDown}
+        iconPosition="right"
+        additionalAriaProperties={{
+          'aria-controls': 'dropdown',
+          'aria-haspopup': 'true',
+        }}
+      />
+    );
+
+    return (
+      <div
+        style={{
+          width: 'fit-content',
+          ...(isDisabled ? { cursor: 'not-allowed' } : {}),
+        }}
+        onClick={(event) => {
+          // prevent click event from propagating to ancestor nodes
+          event.stopPropagation();
+        }}
+      >
+        {button}
+        {menu}
+      </div>
+    );
+  }
+);
+
+export default PopoverButton;

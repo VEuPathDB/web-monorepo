@@ -1,6 +1,5 @@
 import HelpIcon from '../../Components/Icon/HelpIcon';
-import { debounce } from 'lodash';
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../../Components/SearchBox/RealTimeSearchBox.css';
 // use safeHtml for enabling html (e.g., italic) at helpText
 import { safeHtml } from '../../Utils/ComponentUtils';
@@ -43,138 +42,76 @@ type Props = {
   cancelBtnRightMargin?: React.CSSProperties['right'];
 };
 
-type State = {
-  /** local reference to search term for rendering */
-  searchTerm: string;
-};
-
 /**
  * A 'real time' search box.  Changes are throttled by 'debounce' so text
  * change events are delayed to prevent repetitive costly searching.  Useful
  * when expensive operations are performed (e.g. search) in real time as the
  * user types in the box.  Also provides reset button to clear the box.
  */
-export default class RealTimeSearchBox extends Component<Props, State> {
-  static defaultProps = {
-    className: '',
-    autoFocus: false,
-    searchTerm: '',
-    onSearchTermChange: () => {},
-    placeholderText: '',
-    helpText: '',
-    delayMs: 250,
-    iconName: 'search',
-  };
+export default function RealTimeSearchBox(props: Props) {
+  const {
+    className,
+    helpText,
+    placeholderText,
+    autoFocus,
+    iconName,
+    cancelBtnRightMargin,
+    onSearchTermChange,
+    delayMs,
+  } = props;
+  const [searchTerm, setSearchTerm] = useState(props.searchTerm ?? '');
+  const isActiveSearch = searchTerm.length > 0;
+  const activeModifier = isActiveSearch ? 'active' : 'inactive';
+  const helpModifier = helpText ? 'withHelp' : '';
 
-  emitSearchTermChange = debounce((searchTerm: string) =>
-    this.props.onSearchTermChange!(searchTerm)
-  );
-
-  input: HTMLInputElement | null = null;
-
-  constructor(props: Props) {
-    super(props);
-    this.handleSearchTermChange = this.handleSearchTermChange.bind(this);
-    this.handleResetClick = this.handleResetClick.bind(this);
-    this.handleKeyDown = this.handleKeyDown.bind(this);
-    this.state = { searchTerm: this.props.searchTerm! };
-  }
-
-  componentDidMount() {
-    if (this.props.autoFocus && this.input != null) this.input.autofocus = true;
-  }
-
-  componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.searchTerm !== this.state.searchTerm) {
-      this.setState({ searchTerm: nextProps.searchTerm! }, () =>
-        this.emitSearchTermChange(nextProps.searchTerm!)
-      );
+  useEffect(() => {
+    if (onSearchTermChange) {
+      const id = setTimeout(onSearchTermChange, 250, searchTerm);
+      return function cancel() {
+        clearTimeout(id);
+      };
     }
-  }
+  }, [delayMs, searchTerm, onSearchTermChange]);
 
-  componentWillUnmount() {
-    this.emitSearchTermChange.cancel();
-  }
-
-  /**
-   * Update the state of this Component, and call debounced onSearchTermSet
-   * callback.
-   */
-  handleSearchTermChange(e: React.ChangeEvent<HTMLInputElement>) {
-    let searchTerm = e.currentTarget.value;
-    this.setState({ searchTerm });
-    this.emitSearchTermChange(searchTerm);
-  }
-
-  /**
-   * Reset input if Escape is pressed.
-   */
-  handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === 'Escape') {
-      this.setState({ searchTerm: '' });
-      this.props.onSearchTermChange!('');
-      e.stopPropagation();
-    }
-  }
-
-  /**
-   * Update the state of this Component, and call onSearchTermSet callback
-   * immediately.
-   */
-  handleResetClick() {
-    this.setState({ searchTerm: '' });
-    this.props.onSearchTermChange!('');
-  }
-
-  render() {
-    let {
-      className,
-      helpText,
-      placeholderText,
-      autoFocus,
-      iconName,
-      cancelBtnRightMargin,
-    } = this.props;
-    let searchTerm = this.state.searchTerm;
-    let isActiveSearch = searchTerm.length > 0;
-    let activeModifier = isActiveSearch ? 'active' : 'inactive';
-    let helpModifier = helpText ? 'withHelp' : '';
-    return (
-      <div
-        className={
-          classname(baseClassName, activeModifier, helpModifier) +
-          ' ' +
-          classname(className!, activeModifier, helpModifier)
-        }
-      >
-        <label className={labelClassName}>
-          <input
-            type="search"
-            autoFocus={autoFocus}
-            ref={(node) => (this.input = node)}
-            className={inputClassName}
-            onChange={this.handleSearchTermChange}
-            onKeyDown={this.handleKeyDown}
-            placeholder={placeholderText}
-            value={searchTerm}
-          />
-          <i className={`fa fa-${iconName} ${searchIconClassName}`} />
-          <button
-            className={cancelBtnClassName}
-            style={
-              cancelBtnRightMargin ? { right: cancelBtnRightMargin } : undefined
+  return (
+    <div
+      className={
+        classname(baseClassName, activeModifier, helpModifier) +
+        ' ' +
+        classname(className!, activeModifier, helpModifier)
+      }
+    >
+      <label className={labelClassName}>
+        <input
+          type="search"
+          autoFocus={autoFocus}
+          className={inputClassName}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              e.stopPropagation();
+              setSearchTerm('');
             }
-            type="button"
-            onClick={this.handleResetClick}
-          >
-            <i className={'fa fa-close ' + cancelIconClassName} />
-          </button>
-        </label>
-        {/* use safeHtml for helpText to allow italic */}
-        {!helpText ? null : <HelpIcon>{safeHtml(helpText)}</HelpIcon>}
-      </div>
-    );
-  }
+          }}
+          placeholder={placeholderText}
+          value={searchTerm}
+        />
+        <i className={`fa fa-${iconName} ${searchIconClassName}`} />
+        <button
+          className={cancelBtnClassName}
+          style={
+            cancelBtnRightMargin ? { right: cancelBtnRightMargin } : undefined
+          }
+          type="button"
+          onClick={() => setSearchTerm('')}
+        >
+          <i className={'fa fa-close ' + cancelIconClassName} />
+        </button>
+      </label>
+      {/* use safeHtml for helpText to allow italic */}
+      {!helpText ? null : <HelpIcon>{safeHtml(helpText)}</HelpIcon>}
+    </div>
+  );
 }
 
 /**
@@ -185,12 +122,8 @@ export default class RealTimeSearchBox extends Component<Props, State> {
  * @example
  * let allClassNames = className('Thing', 'active', 'blue');
  * //=> 'Thing Thing__active Thing__blue'
- *
- * @param {string} base
- * @param {string} ...modifiers
- * @returns {string}
  */
-function classname(base: string, ...modifiers: string[]) {
+function classname(base: string, ...modifiers: string[]): string {
   return modifiers.reduce((classnames, modifier) => {
     return modifier ? classnames + ' ' + base + '__' + modifier : classnames;
   }, base);

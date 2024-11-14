@@ -2,8 +2,34 @@
   .DataTable {
     font-size: $fontSize;
     width: 100%;
-    display: block;
     margin-bottom: 1.5em;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      '. header'
+      'margin body';
+    z-index: 0;
+
+    &--Sticky {
+      overflow: auto;
+      .DataTable-Header {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+      }
+    }
+
+    .DataTable-Header {
+      grid-area: header;
+    }
+
+    .DataTable-Body {
+      grid-area: body;
+    }
+
+    .DataTable-Margin {
+      grid-area: margin;
+    }
 
     table {
       width: 100%;

@@ -3,7 +3,8 @@ import React, { useMemo, useState } from 'react';
 import { orderBy } from 'lodash';
 
 import { Checkbox } from '@veupathdb/wdk-client/lib/Components';
-import CheckboxTree, {
+import {
+  CheckboxTreeStyleSpec,
   LinksPosition,
 } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -25,6 +26,7 @@ import {
 } from 'ortho-client/utils/taxons';
 
 import './PhyleticDistributionCheckbox.scss';
+import { SelectTree } from '@veupathdb/coreui';
 
 const cx = makeClassNameHelper('PhyleticDistributionCheckbox');
 
@@ -41,6 +43,7 @@ type SelectionConfig =
   | {
       selectable: true;
       onSpeciesSelected: (selection: string[]) => void;
+      selectedSpecies: string[];
     };
 
 export function PhyleticDistributionCheckbox({
@@ -71,40 +74,44 @@ export function PhyleticDistributionCheckbox({
   );
 
   return (
-    <div className={cx()}>
-      <CheckboxTree
-        tree={prunedPhyleticDistributionUiTree}
-        getNodeId={getTaxonNodeId}
-        getNodeChildren={getNodeChildren}
-        onExpansionChange={setExpandedNodes}
-        shouldExpandOnClick={false}
-        expandedList={expandedNodes}
-        renderNode={renderNode}
-        isMultiPick={selectionConfig.selectable}
-        isSelectable={selectionConfig.selectable}
-        onSelectionChange={
-          selectionConfig.selectable
-            ? selectionConfig.onSpeciesSelected
-            : undefined
-        }
-        isSearchable
-        searchBoxPlaceholder="Type a taxonomic name"
-        searchBoxHelp={makeSearchHelpText('the taxons below')}
-        searchTerm={searchTerm}
-        onSearchTermChange={setSearchTerm}
-        searchPredicate={taxonSearchPredicate}
-        linksPosition={LinksPosition.Top}
-        additionalActions={[
-          <label className={cx('--MissingSpeciesFilter')}>
-            <Checkbox
-              value={hideMissingSpecies}
-              onChange={setHideMissingSpecies}
-            />
-            &nbsp; Hide zero counts
-          </label>,
-        ]}
-      />
-    </div>
+    <SelectTree
+      hasPopoverButton={selectionConfig.selectable}
+      buttonDisplayContent="Organism"
+      tree={prunedPhyleticDistributionUiTree}
+      getNodeId={getTaxonNodeId}
+      getNodeChildren={getNodeChildren}
+      onExpansionChange={setExpandedNodes}
+      shouldExpandOnClick={false}
+      expandedList={expandedNodes}
+      renderNode={renderNode}
+      isMultiPick={selectionConfig.selectable}
+      isSelectable={selectionConfig.selectable}
+      onSelectionChange={
+        selectionConfig.selectable
+          ? selectionConfig.onSpeciesSelected
+          : undefined
+      }
+      instantUpdate={true}
+      selectedList={
+        selectionConfig.selectable ? selectionConfig.selectedSpecies : undefined
+      }
+      isSearchable
+      searchBoxPlaceholder="Type a taxonomic name"
+      searchBoxHelp={makeSearchHelpText('the taxons below')}
+      searchTerm={searchTerm}
+      onSearchTermChange={setSearchTerm}
+      searchPredicate={taxonSearchPredicate}
+      linksPosition={LinksPosition.Top}
+      additionalActions={[
+        <label className={cx('--MissingSpeciesFilter')}>
+          <Checkbox
+            value={hideMissingSpecies}
+            onChange={setHideMissingSpecies}
+          />
+          &nbsp; Hide zero counts
+        </label>,
+      ]}
+    />
   );
 }
 

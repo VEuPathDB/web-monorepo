@@ -1,0 +1,6 @@
+.TreeTable {
+  --tree-table-row-height: 1em;
+  tr {
+    height: var(--tree-table-row-height);
+  }
+}
