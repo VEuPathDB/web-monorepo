@@ -104,6 +104,9 @@ export default function PopoverButton(props: PopoverButtonProps) {
   );
 
   const onCloseHandler = () => {
+    setTimeout(() => {
+      anchorEl?.focus(); // return focus to button
+    });
     setAnchorEl(null);
     onClose && onClose();
   };
