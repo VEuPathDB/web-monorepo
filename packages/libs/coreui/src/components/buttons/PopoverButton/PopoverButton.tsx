@@ -119,9 +119,12 @@ const PopoverButton = forwardRef<PopoverButtonHandle, PopoverButtonProps>(
     );
 
     const onCloseHandler = useCallback(() => {
+      setTimeout(() => {
+        anchorEl?.focus(); // return focus to button
+      });
       setAnchorEl(null);
       onClose && onClose();
-    }, [onClose]);
+    }, [anchorEl, onClose]);
 
     // Expose the `close()` method to external components via ref
     useImperativeHandle(

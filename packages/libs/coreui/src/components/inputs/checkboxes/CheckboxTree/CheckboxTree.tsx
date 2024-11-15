@@ -968,6 +968,7 @@ function CheckboxTree<T>(props: CheckboxTreeProps<T>) {
       },
       '.arrow-container': {
         height: '1em',
+        'outline-offset': '-1px',
       },
       '.arrow-icon': {
         fill: '#aaa',

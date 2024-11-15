@@ -132,6 +132,12 @@
           border: 0.2em solid #00304c;
         }
       }
+
+      &:focus,
+      &__selected:focus {
+        outline: none;
+        text-decoration: underline;
+      }
     }
   }
 

@@ -63,6 +63,7 @@ const MesaTooltip = ({
       enterDelay={showDelay}
       className={(className ?? '') + (corner ? ` ${corner}` : '')}
       style={finalStyle}
+      tabIndex={0}
     >
       {children}
     </Tooltip>

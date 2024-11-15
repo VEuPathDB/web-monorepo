@@ -21,9 +21,22 @@ $white: #e0e0e0;
     padding: 5px;
     font-style: italic;
   }
+
+  &:focus-within,
+  &:hover {
+    .UserMenu-Pane {
+      opacity: 1;
+      pointer-events: all;
+      transition: none;
+    }
+  }
 }
 
 .UserMenu-Pane {
+  transition: opacity 500ms 500ms;
+  opacity: 0;
+  pointer-events: none;
+
   right: 0;
   top: 100%;
   color: black;
@@ -33,16 +46,11 @@ $white: #e0e0e0;
   min-width: 150px;
   position: absolute;
   border-radius: 10px;
-  transition: all 0.2s;
   line-height: 1em;
   background-color: $white;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   .fa {
     color: $red;
-  }
-  &.inert {
-    opacity: 0;
-    pointer-events: none;
   }
   &::after {
     top: -3px;
