@@ -18,7 +18,7 @@ export default function UIThemeProvider({
     <ThemeProvider theme={theme}>
       <Global
         styles={css`
-          *:focus {
+          *:focus-visible {
             outline: 2px solid
               ${theme.palette.primary.hue[theme.palette.primary.level]};
           }
