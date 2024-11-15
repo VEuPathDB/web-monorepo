@@ -398,7 +398,7 @@ function UploadForm({
               <>
                 Before uploading your dataset, please ensure your data is
                 formatted according to the instructions listed in the{' '}
-                <Link to={{ pathname: '../datasets/help' }}>"Help" tab</Link>.
+                <Link to={{ pathname: `${baseUrl}/help` }}>"Help" tab</Link>.
               </>
             ),
           }}
@@ -628,7 +628,9 @@ function validateForm<T extends string = string>(
   ) {
     return {
       valid: false,
-      errors: ['The provided data URL does not seem valid'],
+      errors: [
+        'The provided data URL does not seem valid. A valid URL must start with "http://" or "https://".',
+      ],
     };
   }
 
@@ -655,12 +657,13 @@ function isCompleteDataUploadSelection(
 
 // https://stackoverflow.com/a/43467144
 function isValidUrl(string: string) {
+  let url: URL;
   try {
-    new URL(string);
+    url = new URL(string);
   } catch (_) {
     return false;
   }
-  return true;
+  return url.protocol === 'http' || url.protocol === 'https';
 }
 
 export default UploadForm;
