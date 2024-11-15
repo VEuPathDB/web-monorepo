@@ -28,7 +28,7 @@ export function BlastWorkspace(props: Props) {
   const {
     helpPageUrl,
     workspaceUrl,
-    workspaceHeading = 'BLAST',
+    workspaceHeading = 'My BLAST Jobs',
     workspaceShortName = 'BLAST',
     submitButtonText = 'BLAST',
   } = props;
@@ -41,12 +41,12 @@ export function BlastWorkspace(props: Props) {
         routeBase={workspaceUrl}
         items={[
           {
-            display: 'New job',
-            route: '/new',
+            display: 'All',
+            route: '/all',
           },
           {
-            display: 'My jobs',
-            route: '/all',
+            display: 'New job',
+            route: '/new',
           },
           {
             display: 'Help',

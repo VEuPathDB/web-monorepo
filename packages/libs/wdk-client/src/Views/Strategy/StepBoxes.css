@@ -419,7 +419,8 @@ button.StepBoxes--EditButton:hover {
   background: yellow;
 }
 
-.StrategyPanel--Panel:hover button.StepBoxes--EditButton {
+.StrategyPanel--Panel:hover button.StepBoxes--EditButton,
+.StrategyPanel--Panel:focus-within button.StepBoxes--EditButton {
   display: inline;
 }
 
