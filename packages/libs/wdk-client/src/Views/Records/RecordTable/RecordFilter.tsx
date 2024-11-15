@@ -28,7 +28,7 @@ type RecordFilterSelectorProps = {
 interface RecordFilterProps
   extends Omit<
     RecordFilterSelectorProps,
-    'toggleFilterFieldSelect' | 'containerClassName'
+    'toggleFilterFieldSelector' | 'containerClassName'
   > {
   searchTerm: string;
   onSearchTermChange: (searchTerm: string) => void;

@@ -76,7 +76,7 @@ export type Item<T> = {
   disabled?: boolean;
 };
 
-export type CheckboxListProps<T> = {
+export type CheckboxListProps<T extends string> = {
   /** Optional name attribute for the native input element */
   name?: string;
 
@@ -99,7 +99,7 @@ export type CheckboxListProps<T> = {
   disabledCheckboxTooltipContent?: ReactNode;
 };
 
-export default function CheckboxList<T>({
+export default function CheckboxList<T extends string>({
   name,
   items,
   value,
@@ -205,7 +205,7 @@ export default function CheckboxList<T>({
                   </label>
                 </Tooltip>
               ) : (
-                <label>
+                <label css={{ display: 'flex', gap: '1ex' }}>
                   <input {...sharedInputAttributes} /> {item.display}
                 </label>
               )}
