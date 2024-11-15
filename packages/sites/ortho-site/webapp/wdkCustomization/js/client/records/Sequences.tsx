@@ -31,6 +31,7 @@ import { PfamDomain } from 'ortho-client/components/pfam-domains/PfamDomain';
 import {
   FilledButton,
   FloatingButton,
+  NoteBox,
   OutlinedButton,
   SelectList,
   Undo,
@@ -662,23 +663,7 @@ export function RecordTable_Sequences(
         } as CSSProperties
       }
     >
-      {warningText && (
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            borderLeft: '.2em solid rgb(225, 133, 133)',
-            borderRight: '.2em solid rgb(225, 133, 133)',
-            padding: '.5em 1em',
-            background: 'rgb(255, 228, 228)',
-            gap: '1em',
-            marginBottom: '1em',
-            fontWeight: 500,
-          }}
-        >
-          {warningText}
-        </div>
-      )}
+      {warningText && <NoteBox type="error">{warningText}</NoteBox>}
       <div
         style={{
           padding: '10px',
