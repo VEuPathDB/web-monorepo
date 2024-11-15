@@ -177,6 +177,7 @@ const PopoverButton = forwardRef<PopoverButtonHandle, PopoverButtonProps>(
         additionalAriaProperties={{
           'aria-controls': 'dropdown',
           'aria-haspopup': 'true',
+          type: 'button',
         }}
       />
     );
