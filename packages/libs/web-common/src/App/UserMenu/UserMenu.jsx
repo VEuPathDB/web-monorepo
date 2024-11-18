@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import './UserMenu.scss';
 
 import { IconAlt as Icon } from '@veupathdb/wdk-client/lib/Components';
+import { showLogoutWarning } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 
 class UserMenu extends React.Component {
   constructor(props) {
@@ -12,13 +13,15 @@ class UserMenu extends React.Component {
   }
 
   renderMenu() {
-    const { user } = this.props;
+    const { user, actions } = this.props;
     const items = user.isGuest
       ? [
           {
             icon: 'sign-in',
             text: 'Login',
-            route: '/user/login',
+            route: `/user/login?destination=${encodeURIComponent(
+              window.location
+            )}`,
           },
           {
             icon: 'user-plus',
@@ -36,15 +39,24 @@ class UserMenu extends React.Component {
           {
             icon: 'power-off',
             text: 'Log Out',
-            route: '/user/logout',
+            onClick: () => actions.showLogoutWarning(),
           },
         ];
 
     return (
       <div className="UserMenu-Pane">
         {items.map((item, key) => {
-          const { route, target } = item;
+          const { route, target, onClick } = item;
           const className = 'UserMenu-Pane-Item';
+
+          if (onClick) {
+            return (
+              <button type="button" className={className} onClick={onClick}>
+                <Icon fa={item.icon + ' UserMenu-Pane-Item-Icon'} />
+                {item.text}
+              </button>
+            );
+          }
 
           return (
             <Link key={key} className={className} to={route} target={target}>
