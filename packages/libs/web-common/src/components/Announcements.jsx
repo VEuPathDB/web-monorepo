@@ -121,7 +121,7 @@ const siteAnnouncements = [
               full tutorial here
             </a>
             . While we transition to making this beta site permanent,{' '}
-            <a target="_blank" href="https://orthomcl.org">
+            <a target="_blank" rel="noreferrer" href="https://orthomcl.org">
               OrthoMCL 6_21
             </a>{' '}
             is still available.
