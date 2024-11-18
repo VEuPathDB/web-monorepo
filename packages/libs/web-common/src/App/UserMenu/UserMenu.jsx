@@ -1,10 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import './UserMenu.scss';
-
 import { IconAlt as Icon } from '@veupathdb/wdk-client/lib/Components';
-import { showLogoutWarning } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
+
+import './UserMenu.scss';
 
 class UserMenu extends React.Component {
   constructor(props) {
@@ -19,9 +18,7 @@ class UserMenu extends React.Component {
           {
             icon: 'sign-in',
             text: 'Login',
-            route: `/user/login?destination=${encodeURIComponent(
-              window.location
-            )}`,
+            onClick: () => actions.showLoginForm(window.location),
           },
           {
             icon: 'user-plus',
