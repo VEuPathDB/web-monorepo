@@ -64,31 +64,71 @@ const siteAnnouncements = [
       }
     },
   },
-  /*
-  { 
-    id: 'live-beta',
-    renderDisplay: props => {
-      if ( isGenomicHomePage(props.projectId, props.location) ) {
-        if (props.projectId == 'VectorBase' || props.projectId == 'OrthoMCL') return (
-          <div key="live-beta">
-            Welcome to {props.displayName} <i>beta</i> where you will find the newest versions of our interface, features, tools and data.  
-            While we transition to making this beta site permanent, <a target="_blank" href={`https://legacy.${props.projectId.toLowerCase()}.${props.projectId === 'SchistoDB' ? 'net' : 'org'}`}>
-            legacy.{props.projectId.toLowerCase()}.org</a> is still available. 
-            Here is a <a target="_blank" href="https://upenn.co1.qualtrics.com/jfe/form/SV_9N2RTXq7ljpZnDv">form for sending your feedback</a> on the beta sites.
+
+  {
+    id: 'ortho-live',
+    renderDisplay: (props) => {
+      if (props.projectId == 'OrthoMCL' && props.buildNumber == '6.21')
+        return (
+          <div key="ortho621">
+            Visit the new{' '}
+            <a target="_blank" href="https://beta.orthomcl.org">
+              <b>OrthoMCL 7 beta</b>
+            </a>{' '}
+            with OrthoFinder clustering, Similar Groups, and Phylogenetic Trees!
+            <a
+              target="_blank"
+              href="https://qa.static-content.veupathdb.org/documents/Read_more_Ortho7_new.pdf"
+            >
+              {' '}
+              Read more about the new features
+            </a>
+            , and see a{' '}
+            <a
+              target="_blank"
+              href="https://qa.static-content.veupathdb.org/documents/Ortho7_basic_functionality_tutorial.pdf"
+            >
+              {' '}
+              full tutorial here
+            </a>
+            .
           </div>
-        )
-        else return (
-          <div key="live-beta">
-            Welcome to {props.displayName} <i>beta</i> where you will find the newest versions of our interface, features, tools and data.
-            While we transition to making this beta site permanent, <a target="_blank" href={`https://legacy.${props.projectId.toLowerCase()}.${props.projectId === 'SchistoDB' ? 'net' : 'org'}`}>
-            legacy.{props.projectId.toLowerCase()}.org</a> is still available (to be retired March 2nd).
-            Here is a <a target="_blank" href="https://upenn.co1.qualtrics.com/jfe/form/SV_9N2RTXq7ljpZnDv">form for sending your feedback</a> on the beta sites.
-          </div> 
-        )
-      }
-    }
+        );
+    },
   },
-*/
+
+  {
+    id: 'ortho-beta',
+    renderDisplay: (props) => {
+      if (props.projectId == 'OrthoMCL' && props.buildNumber == '7.0')
+        return (
+          <div key="ortho7">
+            Welcome to <b>OrthoMCL 7 beta</b> with OrthoFinder clustering,
+            Similar Groups, and Phylogenetic Trees!
+            <a
+              target="_blank"
+              href="https://qa.static-content.veupathdb.org/documents/Read_more_Ortho7_new.pdf"
+            >
+              {' '}
+              Read more about the new features
+            </a>
+            , and see a{' '}
+            <a
+              target="_blank"
+              href="https://qa.static-content.veupathdb.org/documents/Ortho7_basic_functionality_tutorial.pdf"
+            >
+              {' '}
+              full tutorial here
+            </a>
+            . While we transition to making this beta site permanent,{' '}
+            <a target="_blank" rel="noreferrer" href="https://orthomcl.org">
+              OrthoMCL 6_21
+            </a>{' '}
+            is still available.
+          </div>
+        );
+    },
+  },
 
   /*
 {   
@@ -1268,6 +1308,12 @@ function param(name, { search = '' }) {
 
 function isGenomicSite(projectId) {
   return !/ClinEpiDB|MicrobiomeDB/i.test(projectId);
+}
+function isQASite() {
+  return (
+    param('qa', window.location) === 'true' ||
+    /^(qa|q1|q2)/.test(window.location.hostname)
+  );
 }
 function isBetaSite() {
   return (
