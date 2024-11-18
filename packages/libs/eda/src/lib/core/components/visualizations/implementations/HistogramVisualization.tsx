@@ -894,17 +894,18 @@ function HistogramViz(props: VisualizationProps<Options>) {
             ? { dependentAxisRange: minPosMax }
             : {}),
         },
-        vizConfig,
+        {
+          independentAxisRange: vizConfig.independentAxisRange,
+          dependentAxisRange: vizConfig.dependentAxisRange,
+        },
         {}, // no overrides
         true // use inclusive less than equal for the range min
       ),
     [
       defaultUIState,
-      dependentMinPosMax,
+      minPosMax,
       vizConfig.independentAxisRange,
       vizConfig.dependentAxisRange,
-      vizConfig.independentAxisValueSpec,
-      vizConfig.dependentAxisValueSpec,
     ]
   );
 
