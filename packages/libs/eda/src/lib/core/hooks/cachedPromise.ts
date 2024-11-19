@@ -33,13 +33,14 @@ export function useCachedPromise<T>(
 
   // Mapping the state from useQuery to PromiseHookState<T>
   // and return something stable
+  const isPending = isLoading || isFetching;
   const state: PromiseHookState<T> = useMemo(
     () => ({
       value: enabled ? data : undefined,
-      pending: enabled && (isLoading || isFetching),
+      pending: enabled && isPending,
       error: error,
     }),
-    [data, enabled, isLoading || isFetching, error]
+    [data, enabled, isPending, error]
   );
 
   return state;

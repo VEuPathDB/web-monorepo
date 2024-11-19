@@ -71,7 +71,6 @@ import { CoverageStatistics } from '../../../types/visualization';
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import {
-  NumberVariable,
   DateVariable,
   StudyEntity,
   Variable,
@@ -477,8 +476,10 @@ function LineplotViz(props: VisualizationProps<Options>) {
       vizConfig.dependentAxisLogScale,
       vizConfig.independentAxisValueSpec,
       vizConfig.dependentAxisValueSpec,
+      vizConfig.useBinning,
       findEntityAndVariable,
       updateVizConfig,
+      showMarginalHistogram,
     ]
   );
 
@@ -1183,7 +1184,11 @@ function LineplotViz(props: VisualizationProps<Options>) {
     });
     // add reset for truncation message: including dependent axis warning as well
     setTruncatedIndependentAxisWarning('');
-  }, [updateVizConfig, setTruncatedIndependentAxisWarning]);
+  }, [
+    updateVizConfig,
+    setTruncatedIndependentAxisWarning,
+    alwaysEnableUseBinning,
+  ]);
 
   const handleDependentAxisRangeChange = useCallback(
     (newRange?: NumberOrDateRange) => {
@@ -1214,7 +1219,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
-  }, [updateVizConfig, categoricalMode]);
+  }, [updateVizConfig, setTruncatedDependentAxisWarning]);
 
   // set useEffect for changing truncation warning message
   useEffect(() => {
