@@ -5,7 +5,10 @@ import { useLocation } from 'react-router-dom';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 
-import { communitySite } from '@veupathdb/web-common/lib/config';
+import {
+  communitySite,
+  userDatasetsUploadTypes,
+} from '@veupathdb/web-common/lib/config';
 import ExternalContentController from '@veupathdb/web-common/lib/controllers/ExternalContentController';
 
 import { uploadTypeConfig } from '@veupathdb/web-common/lib/user-dataset-upload-config';
@@ -14,7 +17,9 @@ const UserDatasetRouter = React.lazy(
   () => import('./controllers/UserDatasetRouter')
 );
 
-const availableUploadTypes = ['genelist', 'bigwigfiles', 'rnaseq'];
+const availableUploadTypes = userDatasetsUploadTypes.trim()
+  ? userDatasetsUploadTypes.split(/,\s*/g)
+  : ['genelist', 'bigwigfiles', 'rnaseq'];
 
 const USER_DATASETS_HELP_PAGE = 'user_datasets_help.html';
 

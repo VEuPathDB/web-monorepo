@@ -110,7 +110,7 @@ export default function SwissArmyButton({
               styleSpec[styleState].color ?? 'transparent'
             } !important`,
             borderRadius: styleSpec[styleState].border?.radius ?? 5,
-            outlineStyle: styleSpec[styleState].border?.style ?? 'none',
+            outlineStyle: styleSpec[styleState].border?.style,
             outlineColor: styleSpec[styleState].border?.color,
             outlineWidth: styleSpec[styleState].border?.width,
             outlineOffset: styleSpec[styleState].border?.width

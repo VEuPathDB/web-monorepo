@@ -92,5 +92,8 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "patristic": "^0.6.0"
+  }
 }

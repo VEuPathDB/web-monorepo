@@ -23,9 +23,9 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
   {
     rnaseq: {
       type: 'rnaseq',
-      displayName: 'RNA-Seq',
-      description: `Integrate your RNA-Seq data in ${projectId}.`,
-      uploadTitle: 'Upload My RNA-Seq Data Set',
+      displayName: 'Normalized RNA-Seq',
+      description: `Integrate your Normalized RNA-Seq data in ${projectId}.`,
+      uploadTitle: 'Upload My Normalized RNA-Seq Data Set',
       formConfig: {
         summary: {
           inputProps: {
@@ -45,23 +45,18 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
         },
         renderInfo: () => (
           <p className="formInfo">
-            Please upload a zip file with your RNASeq results: your bigWig and
-            fpkm fastq files containing your processed reads.
-            <br />
-            Each file in the collection of FPKM or TPM files should be a two
-            column tab-delimited file where the first column contains gene ids,
-            and the second column contains normalized counts for each gene,
-            either FPKM or TPM. The first line must have column headings
-            'gene_id' and either 'FPKM' or 'TMP'.
-            <br />
-            <br />
-            The files must be mapped to the reference genome that you select
-            above.
-            <br />
-            Only letters, numbers, spaces and dashes are allowed in the file
-            name.
-            <br />
-            Please restrict the name to 100 characters or less.
+            Complete the Upload My Normalized RNA-Seq form. Name, Summary and
+            Upload File/URL are required. Three types of files – bigWig, counts
+            and index – are supported in the uploaded zip file. BigWig files are
+            not required but will allow visualization in the genome browser if
+            included. The counts (FPKM/TPM) files should be tab-delimited and
+            contain two columns with column headers: 'gene_id', and either
+            'FPKM' or 'TMP'. The index file should be named manifest.txt and
+            consist of a tab delimited txt file with three columns (no column
+            headers): sample name, filename, and strandedness
+            (unstranded/stranded). Upload Data Set initiates the transfer and
+            will create a record page for your data set that contains links to
+            the fold change search, and bigWig files if included.
           </p>
         ),
         uploadMethodConfig: {
@@ -82,7 +77,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
     bigwigfiles: {
       type: 'bigwigfiles',
       displayName: 'bigWig',
-      description: `Integrate your BigWig data in ${projectId}.`,
+      description: `Integrate your bigWig data in ${projectId}.`,
       uploadTitle: 'Upload My bigWig Data Set',
       formConfig: {
         summary: {

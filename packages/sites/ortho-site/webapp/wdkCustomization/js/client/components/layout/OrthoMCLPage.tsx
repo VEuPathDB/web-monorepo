@@ -40,6 +40,8 @@ import {
 } from 'ortho-client/hooks/searchCheckboxTree';
 
 import './OrthoMCLPage.scss';
+import { colors } from '@veupathdb/coreui';
+import { UIThemeProvider } from '@veupathdb/coreui/lib/components/theming';
 
 const cx = makeClassNameHelper('vpdb-');
 
@@ -86,37 +88,46 @@ export const OrthoMCLPage: FunctionComponent<Props> = (props) => {
   );
 
   return (
-    <OrthoMCLSnackbarProvider styleProps={snackbarStyleProps}>
-      <ReduxNotificationHandler>
-        <div className={cx('RootContainer', props.classNameModifier)}>
-          <ErrorBoundary>
-            <Header
-              menuItems={menuItems}
-              containerClassName={cx(
-                'Header',
-                isHeaderExpanded ? 'expanded' : 'collapsed'
-              )}
-              onShowAnnouncements={onShowAnnouncements}
-              showAnnouncementsToggle={showAnnouncementsToggle}
-              branding={branding}
-            />
-          </ErrorBoundary>
-          <div className={cx('Announcements')}>
-            <Announcements
-              closedBanners={closedBanners}
-              setClosedBanners={setClosedBanners}
-            />
+    <UIThemeProvider
+      theme={{
+        palette: {
+          primary: { hue: colors.mutedBlue, level: 600 },
+          secondary: { hue: colors.mutedRed, level: 500 },
+        },
+      }}
+    >
+      <OrthoMCLSnackbarProvider styleProps={snackbarStyleProps}>
+        <ReduxNotificationHandler>
+          <div className={cx('RootContainer', props.classNameModifier)}>
+            <ErrorBoundary>
+              <Header
+                menuItems={menuItems}
+                containerClassName={cx(
+                  'Header',
+                  isHeaderExpanded ? 'expanded' : 'collapsed'
+                )}
+                onShowAnnouncements={onShowAnnouncements}
+                showAnnouncementsToggle={showAnnouncementsToggle}
+                branding={branding}
+              />
+            </ErrorBoundary>
+            <div className={cx('Announcements')}>
+              <Announcements
+                closedBanners={closedBanners}
+                setClosedBanners={setClosedBanners}
+              />
+            </div>
+            <Main containerClassName={cx('Main')}>{props.children}</Main>
+            <ErrorBoundary>
+              <Footer containerClassName={cx('Footer')}></Footer>
+            </ErrorBoundary>
+            <ErrorBoundary>
+              <CookieBanner />
+            </ErrorBoundary>
           </div>
-          <Main containerClassName={cx('Main')}>{props.children}</Main>
-          <ErrorBoundary>
-            <Footer containerClassName={cx('Footer')}></Footer>
-          </ErrorBoundary>
-          <ErrorBoundary>
-            <CookieBanner />
-          </ErrorBoundary>
-        </div>
-      </ReduxNotificationHandler>
-    </OrthoMCLSnackbarProvider>
+        </ReduxNotificationHandler>
+      </OrthoMCLSnackbarProvider>
+    </UIThemeProvider>
   );
 };
 

@@ -73,6 +73,8 @@ class RecordTable extends Component {
       getOrderedData
     );
     this.onSort = this.onSort.bind(this);
+    this.onSearchTermChange = this.onSearchTermChange.bind(this);
+    this.onColumnFilterChange = this.onColumnFilterChange.bind(this);
     this.wrappedChildRow = this.wrappedChildRow.bind(this);
     this.state = {
       searchTerm: this.props.searchTerm ?? '',
@@ -84,6 +86,20 @@ class RecordTable extends Component {
   onSort(column, direction) {
     const columnKey = column.key;
     this.setState((state) => ({ ...state, sort: { columnKey, direction } }));
+  }
+
+  onSearchTermChange(searchTerm) {
+    this.setState((state) => ({
+      ...state,
+      searchTerm,
+    }));
+  }
+
+  onColumnFilterChange(selectedColumnFilters) {
+    this.setState((state) => ({
+      ...state,
+      selectedColumnFilters,
+    }));
   }
 
   wrappedChildRow(rowIndex, rowData) {
@@ -324,24 +340,14 @@ class RecordTable extends Component {
           {mesaReadyRows.length > 1 && (
             <RecordFilter
               searchTerm={this.state.searchTerm}
-              onSearchTermChange={(searchTerm) =>
-                this.setState((state) => ({
-                  ...state,
-                  searchTerm,
-                }))
-              }
+              onSearchTermChange={this.onSearchTermChange}
               recordDisplayName={this.props.recordClass.displayNamePlural}
               filterAttributes={displayableAttributes.map((attr) => ({
                 value: attr.name,
                 display: attr.displayName,
               }))}
               selectedColumnFilters={this.state.selectedColumnFilters}
-              onColumnFilterChange={(value) =>
-                this.setState((state) => ({
-                  ...state,
-                  selectedColumnFilters: value,
-                }))
-              }
+              onColumnFilterChange={this.onColumnFilterChange}
             />
           )}
         </Mesa>
