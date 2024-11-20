@@ -10,7 +10,6 @@ import { useCallback, useMemo, useState, useEffect } from 'react';
 
 import DataClient, { ScatterplotResponse } from '../../../api/DataClient';
 
-import { usePromise } from '../../../hooks/promise';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import {
   useDataClient,
@@ -60,6 +59,7 @@ import {
   uniqBy,
   filter,
   isEqual,
+  omit,
 } from 'lodash';
 // directly use RadioButtonGroup instead of ScatterPlotControls
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
@@ -149,6 +149,7 @@ import SliderWidget, {
 import { FloatingScatterplotExtraProps } from '../../../../map/analysis/hooks/plugins/scatterplot';
 
 import { Override } from '../../../types/utility';
+import { useCachedPromise } from '../../../hooks/cachedPromise';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -644,14 +645,58 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     []
   );
 
-  const data = usePromise(
-    useCallback(async (): Promise<ScatterPlotDataWithCoverage | undefined> => {
-      // If this scatterplot has a computed variable and the compute job is anything but complete, do not proceed with getting data.
-      if (computedYAxisDetails && computeJobStatus !== 'complete')
-        return undefined;
+  const dataRequestDeps =
+    // If this scatterplot has a computed variable and the compute job is anything but complete, do not proceed with getting data.
+    (computedYAxisDetails && computeJobStatus !== 'complete') ||
+    // the usual conditions for not showing a plot:
+    filteredCounts.pending ||
+    filteredCounts.value == null ||
+    showLogScaleBanner ||
+    showContinousOverlayBanner ||
+    // check for required variables when not a compute
+    (computedXAxisDetails == null &&
+      (vizConfig.xAxisVariable == null || xAxisVariable == null)) ||
+    (computedYAxisDetails == null &&
+      (vizConfig.yAxisVariable == null || yAxisVariable == null))
+      ? undefined
+      : {
+          vizConfig: omit(
+            // same as additional dependencies to useUpdateThumbnailEffect
+            vizConfig,
+            [
+              'checkedLegendItems',
+              'independentAxisRange',
+              'dependentAxisRange',
+              'independentAxisLogScale',
+              'dependentAxisLogScale',
+              'independentAxisValueSpec',
+              'dependentAxisValueSpec',
+              'markerBodyOpacity',
+            ]
+          ),
+          filteredCounts: filteredCounts.value,
+          providedOverlayVariable,
+          computationDescriptor: computation.descriptor,
+          hideTrendlines: options?.hideTrendlines,
+          overlayMin,
+          overlayMax,
+          computedOverlayVariableDescriptor,
+        };
 
-      if (filteredCounts.pending || filteredCounts.value == null)
-        return undefined;
+  const data = useCachedPromise(
+    async (): Promise<ScatterPlotDataWithCoverage | undefined> => {
+      if (!dataRequestDeps) throw new Error('dataRequestDeps is undefined');
+
+      const {
+        vizConfig,
+        filteredCounts,
+        providedOverlayVariable,
+        computationDescriptor,
+        hideTrendlines,
+        overlayMin,
+        overlayMax,
+        computedOverlayVariableDescriptor,
+      } = dataRequestDeps;
 
       if (
         !variablesAreUnique([
@@ -671,27 +716,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         dataElementDependencyOrder
       );
 
-      if (outputEntity == null) return undefined;
-
-      // check log scale and plot mode option for retrieving data
-      if (showLogScaleBanner) return undefined;
-
-      // check variable inputs: this is necessary to prevent from data post
-      if (
-        computedXAxisDetails == null &&
-        (vizConfig.xAxisVariable == null || xAxisVariable == null)
-      )
-        return undefined;
-      else if (
-        computedYAxisDetails == null &&
-        (vizConfig.yAxisVariable == null || yAxisVariable == null)
-      )
-        return undefined;
-
-      // prevent data request for the case of  plot option != Raw when using continuous overlayVariable
-      if (showContinousOverlayBanner) {
-        return undefined;
-      }
+      if (outputEntity == null) throw new Error('outputEntity is undefined');
 
       // Convert valueSpecConfig to valueSpecValue for the data client request.
       let valueSpecValue: ScatterplotRequestParams['config']['valueSpec'] =
@@ -708,13 +733,13 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         filters,
         outputEntityId: outputEntity.id,
         vizConfig,
-        valueSpec: options?.hideTrendlines ? undefined : valueSpecValue,
+        valueSpec: hideTrendlines ? undefined : valueSpecValue,
       }) ?? {
         studyId,
         filters,
         config: {
           outputEntityId: outputEntity.id,
-          valueSpec: options?.hideTrendlines ? undefined : valueSpecValue,
+          valueSpec: hideTrendlines ? undefined : valueSpecValue,
           xAxisVariable: vizConfig.xAxisVariable,
           yAxisVariable: vizConfig.yAxisVariable,
           overlayVariable: vizConfig.overlayVariable,
@@ -724,12 +749,12 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
         },
         computeConfig: copmutationAppOverview.computeName
-          ? computation.descriptor.configuration
+          ? computationDescriptor.configuration
           : undefined,
       };
 
       const response = await dataClient.getVisualizationData(
-        computation.descriptor.type,
+        computationDescriptor.type,
         visualization.descriptor.type,
         params,
         ScatterplotResponse
@@ -741,7 +766,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           overlayEntity,
           overlayVariable,
           outputEntity,
-          filteredCounts.value,
+          filteredCounts,
           response.completeCasesTable
         );
       const showMissingFacet =
@@ -750,7 +775,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           facetEntity,
           facetVariable,
           outputEntity,
-          filteredCounts.value,
+          filteredCounts,
           response.completeCasesTable
         );
 
@@ -789,8 +814,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         showMissingFacet,
         facetVocabulary,
         facetVariable,
-        // pass computation
-        computation.descriptor.type,
+        computationDescriptor.type,
         entities,
         colorPaletteOverride
       );
@@ -798,44 +822,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         ...returnData,
         overlayValueToColorMapper,
       };
-    }, [
-      computedYAxisDetails,
-      computeJobStatus,
-      outputEntity,
-      filteredCounts.pending,
-      filteredCounts.value,
-      xAxisVariable,
-      yAxisVariable,
-      overlayVariable,
-      facetVariable,
-      inputsForValidation,
-      selectedVariables,
-      entities,
-      dataElementConstraints,
-      dataElementDependencyOrder,
-      filters,
-      vizConfig.valueSpecConfig,
-      vizConfig.xAxisVariable,
-      vizConfig.yAxisVariable,
-      vizConfig.overlayVariable,
-      vizConfig.facetVariable,
-      vizConfig.showMissingness,
-      computedXAxisDetails,
-      showLogScaleBanner,
-      showContinousOverlayBanner,
-      studyId,
-      options?.hideTrendlines,
-      computation.descriptor.configuration,
-      computation.descriptor.type,
-      dataClient,
-      visualization.descriptor.type,
-      overlayEntity,
-      facetEntity,
-      computedOverlayVariableDescriptor,
-      neutralPaletteProps.colorPalette,
-      overlayMin,
-      overlayMax,
-    ])
+    },
+    [dataRequestDeps],
+    60 * 1000 // 60 seconds cache time
   );
 
   const outputSize =

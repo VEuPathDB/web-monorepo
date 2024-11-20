@@ -15,6 +15,8 @@ import { VariableDescriptor } from '../core/types/variable';
 import { cx, findFirstVariable } from './Utils';
 
 import { makeStyles } from '@material-ui/core/styles';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from '../core/api/queryClient';
 
 const useStyles = makeStyles({
   workspace: {
@@ -73,19 +75,21 @@ export function WorkspaceContainer({
   const classes = useStyles();
 
   return (
-    <EDAWorkspaceContainer
-      studyId={studyId}
-      className={`${cx()} ${
-        isStudyExplorerWorkspace ? 'StudyExplorerWorkspace' : ''
-      } ${classes.workspace}`}
-      analysisClient={analysisClient}
-      dataClient={dataClient}
-      subsettingClient={subsettingClient}
-      downloadClient={downloadClient}
-      computeClient={computeClient}
-      initializeMakeVariableLink={initializeMakeVariableLink}
-    >
-      {children}
-    </EDAWorkspaceContainer>
+    <QueryClientProvider client={queryClient}>
+      <EDAWorkspaceContainer
+        studyId={studyId}
+        className={`${cx()} ${
+          isStudyExplorerWorkspace ? 'StudyExplorerWorkspace' : ''
+        } ${classes.workspace}`}
+        analysisClient={analysisClient}
+        dataClient={dataClient}
+        subsettingClient={subsettingClient}
+        downloadClient={downloadClient}
+        computeClient={computeClient}
+        initializeMakeVariableLink={initializeMakeVariableLink}
+      >
+        {children}
+      </EDAWorkspaceContainer>
+    </QueryClientProvider>
   );
 }

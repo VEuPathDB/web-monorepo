@@ -24,7 +24,7 @@ import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import { number, partial, TypeOf, boolean, type, intersection } from 'io-ts';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { usePromise } from '../../hooks/promise';
+import { useCachedPromise } from '../../hooks/cachedPromise';
 import { AnalysisState } from '../../hooks/analysis';
 import { useSubsettingClient } from '../../hooks/workspace';
 import { DateRangeFilter, NumberRangeFilter } from '../../types/filter';
@@ -126,13 +126,11 @@ export function HistogramFilter(props: Props) {
       getOrElse((): UIState => defaultUIState)
     );
   }, [variableUISettings, uiStateKey, defaultUIState]);
-  const uiStateForData = useDebounce(uiState, 1000);
+  const dataParams = useDebounce(uiState, 1000);
   const subsettingClient = useSubsettingClient();
 
-  const getData = useCallback(
-    async (
-      dataParams: UIState
-    ): Promise<
+  const data = useCachedPromise(
+    async (): Promise<
       HistogramData & {
         variableId: string;
         entityId: string;
@@ -220,17 +218,14 @@ export function HistogramFilter(props: Props) {
       };
     },
     [
+      dataParams,
       otherFilters,
       entity.displayName,
       entity.displayNamePlural,
       entity.id,
       studyMetadata.id,
-      subsettingClient,
       variable,
-    ]
-  );
-  const data = usePromise(
-    useCallback(() => getData(uiStateForData), [getData, uiStateForData])
+    ] // used to have `subsettingClient`
   );
 
   const filter = filters?.find(
