@@ -60,6 +60,7 @@ import './index.css';
 
 // snackbar
 import makeSnackbarProvider from '@veupathdb/coreui/lib/components/notifications/SnackbarProvider';
+import NotebookRoute from './lib/notebook/NotebookRoute';
 
 // Set singleAppMode to the name of one app, if the eda should use one instance of one app only.
 // Otherwise, let singleAppMode remain undefined or set it to '' to allow multiple app instances.
@@ -169,8 +170,19 @@ initialize({
               <Link to="/maps/studies">All studies</Link>
             </li>
           </ul>
+          <h3>Notebook Links</h3>
+          <ul>
+            <li>
+              <Link to="/notebook">All notebooks</Link>
+            </li>
+          </ul>
         </div>
       ),
+    },
+    {
+      path: '/notebook',
+      exact: false,
+      component: () => <NotebookRoute edaServiceUrl={edaEndpoint} />,
     },
     {
       path: '/eda',
