@@ -74,6 +74,8 @@ export type Item<T> = {
   display: ReactNode;
   value: T;
   disabled?: boolean;
+  /** an optional alternative display - perhaps a shortened version for use in popover buttons */
+  altDisplay?: ReactNode;
 };
 
 export type CheckboxListProps<T extends string> = {

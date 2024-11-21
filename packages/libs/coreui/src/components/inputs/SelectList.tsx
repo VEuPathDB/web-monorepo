@@ -108,7 +108,7 @@ export default function SelectList<T extends string>({
   );
 }
 
-// Returns button display content based on `value` array, mapping to display names from `items` when available.
+// Returns button display content based on `value` array, mapping to altDisplay, display, or value from `items` in that order of preference.
 // If no matching display name is found, uses the value itself. Returns `defaultContent` if `value` is empty.
 function getDisplayContent<T extends string>(
   value: T[],
@@ -117,9 +117,10 @@ function getDisplayContent<T extends string>(
 ): ReactNode {
   return value.length
     ? value
-        .map<ReactNode>(
-          (v) => items.find((item) => item.value === v)?.display ?? v
-        )
+        .map<ReactNode>((v) => {
+          const item = items.find((item) => item.value === v);
+          return item?.altDisplay ?? item?.display ?? v;
+        })
         .reduce((accum, elem) => (accum ? [accum, ',', elem] : elem), null)
     : defaultContent;
 }
