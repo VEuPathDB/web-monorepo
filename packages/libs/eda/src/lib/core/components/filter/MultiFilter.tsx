@@ -9,7 +9,6 @@ import {
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 
 import { AnalysisState } from '../../hooks/analysis';
-import { usePromise } from '../../hooks/promise';
 import { useSubsettingClient } from '../../hooks/workspace';
 import { MultiFilter as MultiFilterType } from '../../types/filter';
 import {
@@ -33,6 +32,7 @@ import { gray, red } from './colors';
 import { debounce } from 'lodash';
 import { isTableVariable } from './guards';
 import { useDeepValue } from '../../hooks/immutability';
+import { useCachedPromise } from '../../hooks/cachedPromise';
 
 export interface Props {
   analysisState: AnalysisState;
@@ -193,81 +193,78 @@ export function MultiFilter(props: Props) {
   }, [_thisFilter, thisFilter]);
 
   // Counts retrieved from the backend, used for the table display.
-  const leafSummariesPromise = usePromise(
-    useCallback(() => {
-      return Promise.all(
-        leaves.map((leaf) => {
-          const thisFilterWithoutLeaf = thisFilter && {
-            ...thisFilter,
-            subFilters: thisFilter.subFilters.filter(
-              (f) => f.variableId !== leaf.term
-            ),
+  const leafSummariesPromise = useCachedPromise(() => {
+    return Promise.all(
+      leaves.map((leaf) => {
+        const thisFilterWithoutLeaf = thisFilter && {
+          ...thisFilter,
+          subFilters: thisFilter.subFilters.filter(
+            (f) => f.variableId !== leaf.term
+          ),
+        };
+        return getDistribution(
+          {
+            entityId: entity.id,
+            variableId: leaf.term,
+            filters:
+              thisFilterWithoutLeaf == null ||
+              thisFilterWithoutLeaf.subFilters.length === 0 ||
+              thisFilterWithoutLeaf.operation === 'union'
+                ? otherFilters
+                : [...(otherFilters || []), thisFilterWithoutLeaf],
+          },
+          (filters) =>
+            subsettingClient.getDistribution(
+              studyMetadata.id,
+              entity.id,
+              leaf.term,
+              {
+                filters,
+                valueSpec: 'count',
+              }
+            )
+        ).then((distribution) => {
+          const fgValueByLabel = Object.fromEntries(
+            distribution.foreground.histogram.map(({ binLabel, value }) => [
+              binLabel,
+              value ?? 0,
+            ])
+          );
+          const bgValueByLabel = Object.fromEntries(
+            distribution.background.histogram.map(({ binLabel, value }) => [
+              binLabel,
+              value ?? 0,
+            ])
+          );
+          const variable = variablesById[leaf.term];
+          if (variable == null || !isTableVariable(variable))
+            throw new Error(
+              `Could not find a categorical EDA variable associated with the leaf field "${leaf.term}".`
+            );
+          return {
+            term: leaf.term,
+            display: leaf.display,
+            valueCounts: variable.vocabulary?.map((label) => ({
+              value: label,
+              count: bgValueByLabel[label],
+              filteredCount: fgValueByLabel[label] ?? 0,
+            })),
+            internalsCount:
+              distribution.background.statistics.numDistinctEntityRecords,
+            internalsFilteredCount:
+              distribution.foreground.statistics.numDistinctEntityRecords,
           };
-          return getDistribution(
-            {
-              entityId: entity.id,
-              variableId: leaf.term,
-              filters:
-                thisFilterWithoutLeaf == null ||
-                thisFilterWithoutLeaf.subFilters.length === 0 ||
-                thisFilterWithoutLeaf.operation === 'union'
-                  ? otherFilters
-                  : [...(otherFilters || []), thisFilterWithoutLeaf],
-            },
-            (filters) =>
-              subsettingClient.getDistribution(
-                studyMetadata.id,
-                entity.id,
-                leaf.term,
-                {
-                  filters,
-                  valueSpec: 'count',
-                }
-              )
-          ).then((distribution) => {
-            const fgValueByLabel = Object.fromEntries(
-              distribution.foreground.histogram.map(({ binLabel, value }) => [
-                binLabel,
-                value ?? 0,
-              ])
-            );
-            const bgValueByLabel = Object.fromEntries(
-              distribution.background.histogram.map(({ binLabel, value }) => [
-                binLabel,
-                value ?? 0,
-              ])
-            );
-            const variable = variablesById[leaf.term];
-            if (variable == null || !isTableVariable(variable))
-              throw new Error(
-                `Could not find a categorical EDA variable associated with the leaf field "${leaf.term}".`
-              );
-            return {
-              term: leaf.term,
-              display: leaf.display,
-              valueCounts: variable.vocabulary?.map((label) => ({
-                value: label,
-                count: bgValueByLabel[label],
-                filteredCount: fgValueByLabel[label] ?? 0,
-              })),
-              internalsCount:
-                distribution.background.statistics.numDistinctEntityRecords,
-              internalsFilteredCount:
-                distribution.foreground.statistics.numDistinctEntityRecords,
-            };
-          });
-        })
-      );
-    }, [
-      thisFilter,
-      otherFilters,
-      leaves,
-      entity.id,
-      subsettingClient,
-      studyMetadata.id,
-      variablesById,
-    ])
-  );
+        });
+      })
+    );
+  }, [
+    thisFilter ? thisFilter : { type: 'NO_FILTER' },
+    otherFilters,
+    leaves,
+    entity.id,
+    studyMetadata.id,
+    variablesById,
+  ]);
 
   // Sorted counts. This is done separately from retrieving the data so that
   // updates to sorting don't incur backend requests.

@@ -36,6 +36,8 @@ class RecordMainCategorySection extends React.PureComponent {
     let {
       record,
       recordClass,
+      tableStates,
+      updateTableState,
       category,
       depth,
       isCollapsed,
@@ -62,6 +64,10 @@ class RecordMainCategorySection extends React.PureComponent {
         return (
           <RecordTableSection
             table={category.wdkReference}
+            tableState={tableStates[category.wdkReference.name]}
+            updateTableState={(tableState) =>
+              updateTableState(category.wdkReference.name, tableState)
+            }
             ontologyProperties={category.properties}
             record={record}
             recordClass={recordClass}
