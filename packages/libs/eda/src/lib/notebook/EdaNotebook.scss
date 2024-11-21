@@ -1,0 +1,35 @@
+.EdaNotebook {
+  .Heading {
+    display: flex;
+    gap: 2em;
+    align-items: baseline;
+  }
+
+  .Paper {
+    max-width: 1250px;
+    padding: 1em;
+    margin: 1em auto;
+    background-color: #f3f3f3;
+    box-shadow: 0 0 2px #b5b5b5;
+
+    > * + * {
+      margin-block-start: 1rem;
+    }
+    h2,
+    h3 {
+      padding: 0;
+    }
+    h3 {
+      font-size: 1em;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+  }
+
+  .Title {
+    fieldset {
+      padding: 0;
+      margin: 0;
+    }
+  }
+}
