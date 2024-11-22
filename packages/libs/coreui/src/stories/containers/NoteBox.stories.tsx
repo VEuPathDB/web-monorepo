@@ -11,22 +11,25 @@ export default {
 
 const Template: Story<Props> = function Template(props) {
   return (
-    <UIThemeProvider
-      theme={{
-        palette: {
-          primary: { hue: mutedGreen, level: 500 },
-          secondary: { hue: mutedMagenta, level: 500 },
-        },
-      }}
-    >
-      <NoteBox {...props} />
-    </UIThemeProvider>
+    <div style={{ fontFamily: 'sans-serif' }}>
+      <UIThemeProvider
+        theme={{
+          palette: {
+            primary: { hue: mutedGreen, level: 500 },
+            secondary: { hue: mutedMagenta, level: 500 },
+          },
+        }}
+      >
+        <NoteBox {...props} />
+      </UIThemeProvider>
+    </div>
   );
 };
 
-export const Info = Object.assign(Template.bind({}), {
+export const InfoWithoutIcon = Object.assign(Template.bind({}), {
   args: {
     type: 'info',
+    showIcon: false,
     children: (
       <div>
         This is some general information about the content that follows on the
@@ -36,18 +39,20 @@ export const Info = Object.assign(Template.bind({}), {
   },
 });
 
-export const Warning = Object.assign(Template.bind({}), {
+export const WarningWithoutIcon = Object.assign(Template.bind({}), {
   args: {
     type: 'warning',
+    showIcon: false,
     children: (
       <div>This is a warning about the content that follows on the page.</div>
     ),
   },
 });
 
-export const Error = Object.assign(Template.bind({}), {
+export const ErrorWithoutIcon = Object.assign(Template.bind({}), {
   args: {
     type: 'error',
+    showIcon: false,
     children: (
       <div>
         This is an error message about the content that follows on the page.
@@ -56,9 +61,10 @@ export const Error = Object.assign(Template.bind({}), {
   },
 });
 
-export const LongContent = Object.assign(Template.bind({}), {
+export const LongContentWithoutIcon = Object.assign(Template.bind({}), {
   args: {
     type: 'info',
+    showIcon: false,
     children: (
       <div>
         Lorem ipsum odor amet, consectetuer adipiscing elit. Faucibus morbi ac
@@ -69,6 +75,82 @@ export const LongContent = Object.assign(Template.bind({}), {
         eleifend eleifend eget. Auctor sed nullam vestibulum quisque egestas;
         nullam aenean ante.
       </div>
+    ),
+  },
+});
+
+export const InfoWithIcon = Object.assign(Template.bind({}), {
+  args: {
+    type: 'info',
+    showIcon: true,
+    children: (
+      <div>
+        This is some general information about the content that follows on the
+        page.
+      </div>
+    ),
+  },
+});
+
+export const WarningWithIcon = Object.assign(Template.bind({}), {
+  args: {
+    type: 'warning',
+    showIcon: true,
+    children: (
+      <div>This is a warning about the content that follows on the page.</div>
+    ),
+  },
+});
+
+export const ErrorWithIcon = Object.assign(Template.bind({}), {
+  args: {
+    type: 'error',
+    showIcon: true,
+    children: (
+      <div>
+        This is an error message about the content that follows on the page.
+      </div>
+    ),
+  },
+});
+
+export const LongContentWithIcon = Object.assign(Template.bind({}), {
+  args: {
+    type: 'info',
+    showIcon: true,
+    children: (
+      <div>
+        Lorem ipsum odor amet, consectetuer adipiscing elit. Faucibus morbi ac
+        ultrices purus urna tristique mattis consequat. Posuere volutpat
+        facilisi natoque dictumst dignissim magna dapibus. Taciti vel a etiam
+        curabitur velit torquent. Fusce interdum dictum vulputate sollicitudin
+        nulla. Orci placerat congue odio aptent enim mauris. Turpis nec rhoncus
+        eleifend eleifend eget. Auctor sed nullam vestibulum quisque egestas;
+        nullam aenean ante.
+      </div>
+    ),
+  },
+});
+
+export const ExpandableContentWithIcon = Object.assign(Template.bind({}), {
+  args: {
+    type: 'info',
+    showIcon: true,
+    children: (
+      <details>
+        <summary style={{ cursor: 'pointer' }}>
+          There are some interesting things about this...
+        </summary>
+        <p>
+          Lorem ipsum odor amet, consectetuer adipiscing elit. Faucibus morbi ac
+          ultrices purus urna tristique mattis consequat. Posuere volutpat
+          facilisi natoque dictumst dignissim magna dapibus. Taciti vel a etiam
+          curabitur velit torquent. Fusce interdum dictum vulputate sollicitudin
+          nulla. Orci placerat congue odio aptent enim mauris. Turpis nec
+          rhoncus eleifend eleifend eget. Auctor sed nullam vestibulum quisque
+          egestas; nullam aenean ante.
+        </p>
+      </details>
     ),
   },
 });

@@ -1,19 +1,22 @@
 import { css } from '@emotion/react';
 import React, { ReactNode } from 'react';
 import { error, warning, mutedBlue } from '../../definitions/colors';
+import { Error, Info, Warning } from '@material-ui/icons';
 
 export interface Props {
   type: 'info' | 'warning' | 'error';
+  showIcon?: boolean;
   children: ReactNode;
 }
 
 const baseCss = css`
-  border-left: 0.25em solid var(--note-box-border-color);
+  border-left: 0.35em solid var(--note-box-border-color);
   border-radius: 0.25em;
-  padding: 0.5em 1em;
+  padding: 1em 3em;
   background: var(--note-box-bg-color);
   gap: 1em;
   margin-bottom: 1em;
+  position: relative;
 `;
 
 const infoCss = css`
@@ -36,6 +39,12 @@ const errorCss = css`
   ${baseCss};
 `;
 
+const iconCss = css`
+  position: absolute;
+  left: 0.5em;
+  font-size: 1.5em;
+`;
+
 export function NoteBox(props: Props) {
   const finalCss =
     props.type === 'warning'
@@ -43,5 +52,20 @@ export function NoteBox(props: Props) {
       : props.type === 'error'
       ? errorCss
       : infoCss;
-  return <div css={finalCss}>{props.children}</div>;
+
+  const Icon =
+    props.showIcon === true
+      ? props.type === 'info'
+        ? Info
+        : props.type === 'warning'
+        ? Warning
+        : props.type === 'error'
+        ? Error
+        : null
+      : null;
+  return (
+    <div css={finalCss}>
+      {Icon ? <Icon css={iconCss} /> : null} {props.children}
+    </div>
+  );
 }
