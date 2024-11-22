@@ -18,7 +18,7 @@ import { ExpandablePanel } from '@veupathdb/coreui';
 import { NotebookCell as NotebookCellType } from './Types';
 import { NotebookCell } from './NotebookCell';
 
-import './EdaNotebook.scss';
+import './EdaNotebook.css';
 
 interface NotebookSettings {
   /** Ordered array of notebook cells */
@@ -70,30 +70,26 @@ export function EdaNotebookAnalysis(props: Props) {
   );
   return (
     <div className="EdaNotebook">
-      <div className="Heading">
-        <h1>EDA Notebook</h1>
-      </div>
       <div className="Paper">
-        <div>
-          <h2>
+        <div className="Heading">
+          <h1>
             <SaveableTextEditor
               className="Title"
               value={analysisState.analysis?.displayName ?? ''}
               onSave={analysisState.setName}
             />
-          </h2>
-          <h3>Study: {safeHtml(studyRecord.displayName)}</h3>
+          </h1>
+          <h2>{safeHtml(studyRecord.displayName)}</h2>
         </div>
         {notebookSettings.cells.map((cell, index) => (
-          <ExpandablePanel title={cell.title} subTitle={{}} themeRole="primary">
-            <div style={{ padding: '1em' }}>
-              <NotebookCell
-                analysisState={analysisState}
-                cell={cell}
-                updateCell={(update) => updateCell(update, index)}
-              />
-            </div>
-          </ExpandablePanel>
+          <details>
+            <summary>{cell.title}</summary>
+            <NotebookCell
+              analysisState={analysisState}
+              cell={cell}
+              updateCell={(update) => updateCell(update, index)}
+            />
+          </details>
         ))}
       </div>
     </div>
