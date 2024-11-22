@@ -638,7 +638,7 @@ export function RecordTable_Sequences(
 
   if (filteredRows == null) return null;
 
-  const warningText =
+  const errorText =
     numSequences >= MIN_SEQUENCES_FOR_TREE &&
     (filteredRows.length > MAX_SEQUENCES_FOR_TREE ||
       filteredRows.length < MIN_SEQUENCES_FOR_TREE) ? (
@@ -663,7 +663,7 @@ export function RecordTable_Sequences(
         } as CSSProperties
       }
     >
-      {warningText && <NoteBox type="error">{warningText}</NoteBox>}
+      {errorText && <NoteBox type="error">{errorText}</NoteBox>}
       <div
         style={{
           padding: '10px',
