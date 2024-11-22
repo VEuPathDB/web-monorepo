@@ -3,6 +3,7 @@ import { css, Global, ThemeProvider } from '@emotion/react';
 import { useCoreUIFonts } from '../../hooks';
 
 import { UITheme } from './types';
+import colors from '../../definitions/colors';
 
 export type UIThemeProviderProps = {
   theme: UITheme;
@@ -21,6 +22,15 @@ export default function UIThemeProvider({
       <Global
         styles={css`
           :root {
+            ${Object.entries(colors).flatMap(([colorName, byHueOrValue]) =>
+              typeof byHueOrValue === 'string'
+                ? [`--coreui-${colorName}: ${byHueOrValue};`]
+                : Object.entries(byHueOrValue).map(
+                    ([hueName, colorValue]) =>
+                      `--coreui-${colorName}-${hueName}: ${colorValue};`
+                  )
+            )}
+
             --coreui-color-primary: ${theme.palette.primary.hue[
               theme.palette.primary.level
             ]};
