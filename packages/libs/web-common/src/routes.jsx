@@ -160,12 +160,7 @@ export const wrapRoutes = (wdkRoutes) => [
     requiresLogin: false,
     component: (props) => (
       <ExternalContentController
-        url={
-          communitySite +
-          props.match.params.path +
-          props.location.search +
-          props.location.hash
-        }
+        url={communitySite + props.match.params.path + props.location.search}
       />
     ),
   },
