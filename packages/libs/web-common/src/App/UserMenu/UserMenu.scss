@@ -27,16 +27,17 @@ $white: #e0e0e0;
     .UserMenu-Pane {
       opacity: 1;
       transition: none;
+      top: 100%;
     }
   }
 }
 
 .UserMenu-Pane {
-  transition: opacity 500ms 1s;
+  transition: opacity 500ms 1s, top 0s 1s;
   opacity: 0;
 
   right: 0;
-  top: 100%;
+  top: -100000px;
   color: black;
   display: flex;
   flex-direction: column;
