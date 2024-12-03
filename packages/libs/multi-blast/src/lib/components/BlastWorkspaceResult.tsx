@@ -42,6 +42,7 @@ import { ResultContainer } from './ResultContainer';
 
 import './BlastWorkspaceResult.scss';
 import { DiamondResultContainer } from './DiamondResultContainer';
+import { BlastJobError } from './BlastJobError';
 
 interface Props {
   jobId: string;
@@ -82,23 +83,7 @@ export function BlastWorkspaceResult(props: Props) {
   ) : jobResult.value?.status === 'error' ? (
     <BlastRerunError {...props} />
   ) : jobResult.value?.status === 'queueing-error' ? (
-    <ErrorPage>
-      <div style={{ fontSize: 'larger' }}>
-        Your job did not run successfully. Please{' '}
-        <Link
-          target="_blank"
-          to={{
-            pathname: '/contact-us',
-            search: new URLSearchParams({
-              ctx: 'multi-blast job ' + jobResult.value.job.id,
-            }).toString(),
-          }}
-        >
-          contact us
-        </Link>{' '}
-        for support.
-      </div>
-    </ErrorPage>
+    <BlastJobError job={jobResult.value.job} />
   ) : queryResult.value?.status === 'error' ? (
     <BlastRequestError errorDetails={queryResult.value.details} />
   ) : jobResult.value.job.config.tool.startsWith('diamond-') ? (
