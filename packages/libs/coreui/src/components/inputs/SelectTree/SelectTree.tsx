@@ -21,6 +21,9 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
     wrapPopover,
     currentList,
     selectedList = [],
+    onSelectionChange,
+    hasPopoverButton = true,
+    instantUpdate = true,
   } = props;
 
   const [buttonDisplayContent, setButtonDisplayContent] = useState<ReactNode>(
@@ -28,14 +31,6 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
       ? currentList.join(', ')
       : props.buttonDisplayContent
   );
-  const {
-    selectedList,
-    onSelectionChange,
-    shouldCloseOnSelection,
-    hasPopoverButton = true,
-    instantUpdate = true,
-    wrapPopover,
-  } = props;
 
   // This local state is updated whenever a checkbox is clicked in the species tree.
   // When `instantUpdate` is false, pass the final value to `onSelectionChange` when the popover closes.
@@ -55,7 +50,7 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
   useEffect(() => {
     if (!instantUpdate) return;
     onSelectionChange(localSelectedList);
-  }, [onSelectionChange, localSelectedList]);
+  }, [onSelectionChange, localSelectedList, instantUpdate]);
 
   function truncatedButtonContent(selectedList: string[]) {
     return (
@@ -82,47 +77,11 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
     if (!instantUpdate) onSelectionChange(localSelectedList);
   };
 
-  //  ANN LOOK HERE
-  // const checkboxTree = <CheckboxTree {...props} selectedList={selectedList} />;
   const checkboxTree = (
     <CheckboxTree
-      tree={props.tree}
-      getNodeId={props.getNodeId}
-      getNodeChildren={props.getNodeChildren}
-      onExpansionChange={props.onExpansionChange}
-      shouldExpandDescendantsWithOneChild={
-        props.shouldExpandDescendantsWithOneChild
-      }
-      shouldExpandOnClick={props.shouldExpandOnClick}
-      showRoot={props.showRoot}
-      renderNode={props.renderNode}
-      expandedList={props.expandedList}
-      isSelectable={props.isSelectable}
+      {...props}
       selectedList={localSelectedList}
-      filteredList={props.filteredList}
-      customCheckboxes={props.customCheckboxes}
-      isMultiPick={props.isMultiPick}
-      name={props.name}
       onSelectionChange={setLocalSelectedList}
-      currentList={props.currentList}
-      defaultList={props.defaultList}
-      isSearchable={props.isSearchable}
-      autoFocusSearchBox={props.autoFocusSearchBox}
-      showSearchBox={props.showSearchBox}
-      searchBoxPlaceholder={props.searchBoxPlaceholder}
-      searchIconName={props.searchIconName}
-      searchBoxHelp={props.searchBoxHelp}
-      searchTerm={props.searchTerm}
-      onSearchTermChange={props.onSearchTermChange}
-      searchPredicate={props.searchPredicate}
-      renderNoResults={props.renderNoResults}
-      linksPosition={props.linksPosition}
-      additionalActions={props.additionalActions}
-      additionalFilters={props.additionalFilters}
-      isAdditionalFilterApplied={props.isAdditionalFilterApplied}
-      wrapTreeSection={props.wrapTreeSection}
-      styleOverrides={props.styleOverrides}
-      customTreeNodeCssSelectors={props.customTreeNodeCssSelectors}
     />
   );
 
