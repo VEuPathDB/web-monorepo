@@ -14,9 +14,12 @@ import RecordTable from '../../../Views/Records/RecordTable/RecordTable';
 import RecordTableDescription from '../../../Views/Records/RecordTable/RecordTableDescription';
 import { PartialRecordRequest } from '../../../Views/Records/RecordUtils';
 import { DefaultSectionTitle } from '../../../Views/Records/SectionTitle';
+import { TableState } from '../../../StoreModules/RecordStoreModule';
 
 export interface Props {
   table: TableField;
+  tableState: TableState;
+  updateTableState: (tableState: TableState) => void;
   isCollapsed: boolean;
   onCollapsedChange: () => void;
   ontologyProperties: CategoryTreeNode['properties'];
@@ -30,6 +33,11 @@ export interface Props {
 function RecordTableSection(props: Props) {
   let {
     table,
+    tableState = {
+      expandedRows: [0],
+      searchTerm: '',
+    },
+    updateTableState,
     record,
     recordClass,
     isCollapsed,
@@ -85,6 +93,14 @@ function RecordTableSection(props: Props) {
             // @ts-ignore
             record={record}
             recordClass={recordClass}
+            expandedRows={tableState.expandedRows}
+            searchTerm={tableState.searchTerm}
+            onExpandedRowsChange={(expandedRows) =>
+              updateTableState({ ...tableState, expandedRows })
+            }
+            onSearchTermChange={(searchTerm) =>
+              updateTableState({ ...tableState, searchTerm })
+            }
           />
         )}
       </ErrorBoundary>

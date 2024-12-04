@@ -25,6 +25,12 @@ export const Twitter = () => (
   </div>
 );
 
+export const Linkedin = () => (
+  <div className={cx()}>
+    <IconAlt fa="linkedin" />
+  </div>
+);
+
 export const Reddit = () => (
   <div className={cx()}>
     <IconAlt fa="reddit" />

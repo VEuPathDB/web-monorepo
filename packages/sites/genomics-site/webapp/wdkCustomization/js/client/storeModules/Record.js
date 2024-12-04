@@ -1,53 +1,17 @@
-import { empty, of, merge } from 'rxjs';
-import {
-  filter,
-  map,
-  mergeMap,
-  mergeMapTo,
-  switchMap,
-  tap,
-} from 'rxjs/operators';
+import { EMPTY, of, merge } from 'rxjs';
+import { filter, map, mergeMap, mergeMapTo, tap } from 'rxjs/operators';
 import * as RecordStoreModule from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
 import {
   QuestionActions,
   RecordActions,
 } from '@veupathdb/wdk-client/lib/Actions';
-import { difference, get, uniq, flow, partialRight } from 'lodash';
+import { uniq, flow, partialRight } from 'lodash';
 import * as tree from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import * as cat from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
-import * as persistence from '@veupathdb/web-common/lib/util/persistence';
-import {
-  TABLE_STATE_UPDATED,
-  PATHWAY_DYN_COLS_LOADED,
-} from '../actioncreators/RecordViewActionCreators';
+import { PATHWAY_DYN_COLS_LOADED } from '../actioncreators/RecordViewActionCreators';
 import { isGenomicsService } from '../wrapWdkService';
-import { fullyCollapsedOnLoad } from '../components/common/RecordTableContainer';
 
 export const key = 'record';
-
-const storageItems = {
-  tables: {
-    path: 'eupathdb.tables',
-    isRecordScoped: true,
-  },
-  collapsedSections: {
-    path: 'collapsedSections',
-    isRecordScoped: false,
-  },
-  expandedSections: {
-    path: 'expandedSections',
-    getValue: (state) =>
-      difference(
-        RecordStoreModule.getAllFields(state),
-        state.collapsedSections
-      ),
-    isRecordScoped: false,
-  },
-  navigationVisible: {
-    path: 'navigationVisible',
-    isRecordScoped: false,
-  },
-};
 
 export function reduce(state, action) {
   state = RecordStoreModule.reduce(state, action);
@@ -55,7 +19,6 @@ export function reduce(state, action) {
   // state = QuestionStoreModule.reduce(state, action);
   state = Object.assign({}, state, {
     pathwayRecord: handlePathwayRecordAction(state.pathwayRecord, action),
-    eupathdb: handleEuPathDBAction(state.eupathdb, action),
     dynamicColsOfIncomingStep: handleDynColsOfIncomingStepAction(
       state.dynamicColsOfIncomingStep,
       action
@@ -76,9 +39,7 @@ export function reduce(state, action) {
 export function observe(action$, state$, services) {
   return merge(
     RecordStoreModule.observe(action$, state$, services),
-    // QuestionStoreModule.observe(action$, state$, services),
     observeSnpsAlignment(action$, state$, services),
-    observeUserSettings(action$, state$, services),
     observeRequestedOrganisms(action$, state$, services)
   );
 }
@@ -115,21 +76,6 @@ function handlePathwayRecordAction(state = initialPathwayRecordState, action) {
     case 'pathway-record/set-filtered-nodeList':
       return Object.assign({}, state, {
         filteredNodeList: action.payload.filteredNodeList,
-      });
-
-    default:
-      return state;
-  }
-}
-
-/** Handle eupathdb actions */
-function handleEuPathDBAction(state = { tables: {} }, { type, payload }) {
-  switch (type) {
-    case TABLE_STATE_UPDATED:
-      return Object.assign({}, state, {
-        tables: Object.assign({}, state.tables, {
-          [payload.tableName]: payload.tableState,
-        }),
       });
 
     default:
@@ -291,86 +237,6 @@ function pruneByDatasetCategory(categoryTree, record) {
 // dispatched to the store.
 
 /**
- * When record is loaded, read state from storage and emit actions to restore state.
- * When state is changed, write state to storage.
- */
-function observeUserSettings(action$, state$) {
-  return action$.pipe(
-    filter((action) => action.type === RecordActions.RECORD_RECEIVED),
-    switchMap((action) => {
-      let state = state$.value[key];
-
-      /** Show navigation for genes, but hide for all other record types */
-      let navigationVisible = getStateFromStorage(
-        storageItems.navigationVisible,
-        state,
-        isGeneRecord(state.record)
-      );
-
-      let allFields = RecordStoreModule.getAllFields(state);
-
-      /** merge stored visibleSections */
-      let expandedSections = getStateFromStorage(
-        storageItems.expandedSections,
-        state,
-        action.payload.recordClass.urlSegment === 'gene'
-          ? ['GeneModelGbrowseUrl']
-          : allFields
-      );
-
-      let collapsedSections = expandedSections
-        ? difference(allFields, expandedSections)
-        : state.collapsedSections;
-
-      let tableStates = getStateFromStorage(storageItems.tables, state, {});
-
-      return merge(
-        of(
-          RecordActions.updateNavigationVisibility(navigationVisible),
-          RecordActions.setCollapsedSections(collapsedSections),
-          ...Object.entries(tableStates).map(([tableName, tableState]) => ({
-            type: TABLE_STATE_UPDATED,
-            payload: { tableName, tableState },
-          }))
-        ),
-        action$.pipe(
-          mergeMap((action) => {
-            switch (action.type) {
-              case RecordActions.SECTION_VISIBILITY:
-              case RecordActions.ALL_FIELD_VISIBILITY:
-                setStateInStorage(
-                  storageItems.expandedSections,
-                  state$.value[key]
-                );
-                break;
-              case RecordActions.NAVIGATION_VISIBILITY:
-                setStateInStorage(
-                  storageItems.navigationVisible,
-                  state$.value[key]
-                );
-                break;
-              case TABLE_STATE_UPDATED:
-                // Do not store the expanded rows for these tables.
-                if (fullyCollapsedOnLoad.has(action.payload.tableName)) {
-                  console.info(
-                    'Table state for',
-                    action.payload.tableName,
-                    'is not being stored.'
-                  );
-                } else {
-                  setStateInStorage(storageItems.tables, state$.value[key]);
-                }
-                break;
-            }
-            return empty();
-          })
-        )
-      );
-    })
-  );
-}
-
-/**
  * Load filterParam data for snp alignment form.
  */
 function observeSnpsAlignment(action$) {
@@ -382,7 +248,7 @@ function observeSnpsAlignment(action$) {
         ? of(action.payload.record.attributes.organism_full)
         : isSnpsRecord(action.payload.record)
         ? of(action.payload.record.attributes.organism_text)
-        : empty()
+        : EMPTY
     ),
     map((organismSinglePick) => {
       return QuestionActions.updateActiveQuestion({
@@ -419,7 +285,7 @@ function observeRequestedOrganisms(action$, state$, { wdkService }) {
         wdkService.incrementOrganismCount(recordOrganism);
       });
     }),
-    mergeMapTo(empty())
+    mergeMapTo(EMPTY)
   );
 }
 
@@ -452,51 +318,6 @@ function getRecordOrganisms({
   } else {
     return undefined;
   }
-}
-
-/** Read state property value from storage */
-function getStateFromStorage(descriptor, state, defaultValue) {
-  try {
-    let key = getStorageKey(descriptor, state.record);
-    return persistence.get(key, defaultValue);
-  } catch (error) {
-    console.error(
-      'Warning: Could not retrieve %s from local storage.',
-      descriptor.path,
-      error
-    );
-    return defaultValue;
-  }
-}
-
-/** Write state property value to storage */
-function setStateInStorage(descriptor, state) {
-  try {
-    let key = getStorageKey(descriptor, state.record);
-    persistence.set(
-      key,
-      typeof descriptor.getValue === 'function'
-        ? descriptor.getValue(state)
-        : get(state, descriptor.path)
-    );
-  } catch (error) {
-    console.error(
-      'Warning: Could not set %s to local storage.',
-      descriptor.path,
-      error
-    );
-  }
-}
-
-/** Create storage key for property */
-function getStorageKey(descriptor, record) {
-  let { path, isRecordScoped } = descriptor;
-  return (
-    path +
-    '/' +
-    record.recordClassName +
-    (isRecordScoped ? '/' + record.id.map((p) => p.value).join('/') : '')
-  );
 }
 
 function isGeneRecord(record) {

@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { Switch, Redirect } from 'react-router-dom';
+import { Switch, Redirect, RouteComponentProps } from 'react-router-dom';
 
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
@@ -49,11 +49,8 @@ function UserDatasetsWorkspace(props: Props) {
                 {
                   display: 'New upload',
                   route: '/new',
+                  exact: false,
                 },
-                // {
-                //   display: 'Recent uploads',
-                //   route: '/recent',
-                // },
               ]
             : [],
           helpTabContents != null
@@ -87,16 +84,13 @@ function UserDatasetsWorkspace(props: Props) {
           <WdkRoute
             requiresLogin
             exact
-            path={`${baseUrl}/new`}
-            component={() => (
+            path={`${baseUrl}/new/:type?`}
+            component={(childProps: RouteComponentProps<{ type?: string }>) => (
               <UserDatasetNewUploadController
                 baseUrl={baseUrl}
-                // TODO When more than one type is available, offer a data type selector
-                datasetUploadType={
-                  uploadPageConfig.uploadTypeConfig[
-                    uploadPageConfig.availableUploadTypes[0]
-                  ]
-                }
+                type={childProps.match.params.type}
+                availableTypes={uploadPageConfig.availableUploadTypes}
+                datasetUploadTypes={uploadPageConfig.uploadTypeConfig}
                 urlParams={props.urlParams}
               />
             )}

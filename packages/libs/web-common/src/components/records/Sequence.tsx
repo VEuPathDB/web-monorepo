@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useIsRefOverflowingVertically } from '@veupathdb/wdk-client/lib/Hooks/Overflow';
 import { writeTextToClipboard } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 
-const NUM_COLS = 80;
+const NUM_COLS = 8000000;
 
 interface Props {
   accession?: string;
@@ -28,7 +28,7 @@ function Sequence(props: Props) {
   const onClickCopyButton = useCallback(() => {
     if (ref.current) {
       const sequenceLines = makeSequenceLines(ref.current.textContent ?? '');
-
+      //const sequenceLines = ref.current.textContent ?? '';
       const newClipboardLines =
         accession == null
           ? sequenceLines
@@ -48,7 +48,6 @@ function Sequence(props: Props) {
   }, [ref.current, isExpanded]);
 
   const style = {
-    width: `${NUM_COLS + 0.5}ch`,
     whiteSpace: 'break-spaces',
     wordBreak: 'break-all',
     maxHeight: isExpanded ? '' : '30vh',
@@ -141,8 +140,9 @@ Sequence.propTypes = {
 
 function handleCopy(event: React.ClipboardEvent) {
   const string = window.getSelection()?.toString() ?? '';
-  const selection = makeSequenceLines(string).join('\n');
-  event.clipboardData.setData('text/plain', selection);
+  //const selection = makeSequenceLines(string).join('\n');
+  //event.clipboardData.setData('text/plain', selection);
+  event.clipboardData.setData('text/plain', string);
   event.preventDefault();
 }
 

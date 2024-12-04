@@ -194,6 +194,8 @@ class RecordUI extends Component {
             collapsedSections={this.props.collapsedSections}
             onSectionToggle={this.props.updateSectionVisibility}
             requestPartialRecord={this.props.requestPartialRecord}
+            tableStates={this.props.tableStates}
+            updateTableState={this.props.updateTableState}
           />
         </div>
       </div>

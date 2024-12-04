@@ -2,8 +2,7 @@ import React, {
   useCallback,
   MouseEventHandler,
   useMemo,
-  useState,
-  useEffect,
+  useDeferredValue,
 } from 'react';
 import { css } from '@emotion/react';
 import { merge } from 'lodash';
@@ -998,6 +997,7 @@ function CheckboxTree<T>(props: CheckboxTreeProps<T>) {
       },
       '.arrow-container': {
         height: '1em',
+        'outline-offset': '-1px',
       },
       '.arrow-icon': {
         fill: '#aaa',
@@ -1106,7 +1106,6 @@ export default CheckboxTree;
 function useTreeState<T>(props: CheckboxTreeProps<T>) {
   const {
     tree,
-    searchTerm,
     searchPredicate,
     getNodeId,
     getNodeChildren,
@@ -1118,13 +1117,16 @@ function useTreeState<T>(props: CheckboxTreeProps<T>) {
     expandedList,
     filteredList,
   } = props;
+
+  const searchTerm = useDeferredValue(props.searchTerm);
+
   const statefulTree = useMemo(
     () => createStatefulTree(tree, getNodeChildren),
     [tree, getNodeChildren]
   );
 
   // initialize stateful tree; this immutable tree structure will be replaced with each state change
-  const makeTreeState = useCallback(() => {
+  const treeState = useMemo(() => {
     const isLeafVisible = createIsLeafVisible(
       tree,
       searchTerm,
@@ -1168,22 +1170,6 @@ function useTreeState<T>(props: CheckboxTreeProps<T>) {
     expandedList,
     filteredList,
   ]);
-
-  const [treeState, setTreeState] = useState(makeTreeState);
-
-  useEffect(() => {
-    function performUpdate() {
-      setTreeState(makeTreeState());
-    }
-    if (searchTerm) {
-      const timerId = setTimeout(performUpdate, 250);
-      return function cancel() {
-        clearTimeout(timerId);
-      };
-    } else {
-      performUpdate();
-    }
-  }, [makeTreeState, searchTerm]);
 
   return treeState;
 }

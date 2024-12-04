@@ -47,6 +47,7 @@ function addScrollAnchor__loop(
   let containerRect = container.getBoundingClientRect();
   const offsetParent = container.offsetParent || document.body;
   let parentSize = offsetParent.clientHeight;
+  let anchorNodePosition = anchorNode && getNodePosition(anchorNode);
   let animId: number;
 
   function loop() {
@@ -69,7 +70,8 @@ function addScrollAnchor__loop(
 
   function updateAnchor() {
     anchorNode = findAnchorNode(container);
-    console.debug('updating anchorNode', anchorNode);
+    anchorNodePosition = anchorNode && getNodePosition(anchorNode);
+    console.debug('updating anchorNode', anchorNode, anchorNodePosition);
   }
 
   function parentSizeChanged(): boolean {
@@ -88,7 +90,11 @@ function addScrollAnchor__loop(
   }
 
   function scrollToAnchor() {
-    if (anchorNode != null) {
+    if (
+      anchorNode != null &&
+      // only scroll to anchor node if its position has changed by a threshold
+      Math.abs(getNodePosition(anchorNode) - (anchorNodePosition ?? 0)) > 10
+    ) {
       anchorNode.scrollIntoView();
       console.debug('scrolling to anchorNode', anchorNode);
     }
@@ -186,16 +192,20 @@ function monitorScroll(scrollHandler: () => void) {
  */
 function findAnchorNode(element: Element) {
   // skip if element is below top of viewport
-  if (element.getBoundingClientRect().top > 0) return;
+  if (getNodePosition(element) > 0) return;
 
   return find(
-    (node: Element) => node.getBoundingClientRect().top > 0,
+    (node: Element) => getNodePosition(node) > 0,
     preorder(element, getElementChildren)
   );
 }
 
 function getElementChildren(el: Element) {
   return Array.from(el.children);
+}
+
+function getNodePosition(element: Element) {
+  return element.getBoundingClientRect().top;
 }
 
 /**

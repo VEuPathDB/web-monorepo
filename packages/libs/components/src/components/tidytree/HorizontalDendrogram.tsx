@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { CSSProperties, useEffect, useLayoutEffect, useRef } from 'react';
 import { TidyTree as TidyTreeJS } from 'tidytree';
 
 export interface HorizontalDendrogramProps {
@@ -19,6 +19,7 @@ export interface HorizontalDendrogramProps {
        for now just default to all zero margins (left-most edges 
      */
     margin?: [number, number, number, number];
+    interactive?: boolean;
   };
 
   /// The remaining props are handled with a redraw: ///
@@ -32,9 +33,20 @@ export interface HorizontalDendrogramProps {
    */
   width: number;
   /**
+   * hopefully temporary prop that we can get rid of when we understand the
+   * horizontal layout behaviour of the tree (with respect to number of nodes)
+   * which will come with testing with more examples. Defaults to 1.0
+   * update: possibly wasn't needed in the end!
+   */
+  hStretch?: number;
+  /**
    * number of pixels height taken per leaf
    */
   rowHeight: number;
+  /**
+   * CSS styles for the container div
+   */
+  containerStyles?: CSSProperties;
   /**
    * which leaf nodes to highlight
    */
@@ -43,6 +55,10 @@ export interface HorizontalDendrogramProps {
    * highlight whole subtrees ('monophyletic') or just leaves ('none')
    */
   highlightMode?: 'monophyletic' | 'none';
+  /**
+   * highlight color (optional - default is tidytree's yellow/orange)
+   */
+  highlightColor?: string;
 }
 
 /**
@@ -57,9 +73,12 @@ export function HorizontalDendrogram({
   leafCount,
   rowHeight,
   width,
-  options: { ruler = false, margin = [0, 0, 0, 0] },
+  options: { ruler = false, margin = [0, 0, 0, 0], interactive = true },
   highlightedNodeIds,
   highlightMode,
+  highlightColor,
+  hStretch = 1.0,
+  containerStyles,
 }: HorizontalDendrogramProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const tidyTreeRef = useRef<TidyTreeJS>();
@@ -80,13 +99,15 @@ export function HorizontalDendrogram({
       equidistantLeaves: true,
       ruler,
       margin,
+      hStretch,
       animation: 0, // it's naff and it reveals edge lengths/weights momentarily
+      interactive,
     });
     tidyTreeRef.current = instance;
     return function cleanup() {
       instance.destroy();
     };
-  }, [data, ruler, margin]);
+  }, [data, ruler, margin, hStretch, interactive, containerRef]);
 
   // redraw when the container size changes
   // useLayoutEffect ensures that the redraw is not called for brand new TidyTreeJS objects
@@ -106,12 +127,15 @@ export function HorizontalDendrogram({
       tidyTreeRef.current.setColorOptions({
         nodeColorMode: 'predicate',
         branchColorMode: highlightMode ?? 'none',
+        highlightColor: highlightColor,
         leavesOnly: true,
         predicate: (node) => highlightedNodeIds.includes(node.__data__.data.id),
+        defaultBranchColor: '#333',
       });
       // no redraw needed, setColorOptions does it
     }
-  }, [highlightedNodeIds, highlightMode, tidyTreeRef]);
+  }, [highlightedNodeIds, highlightMode, tidyTreeRef, data]);
+  // `data` not used in effect but needed to trigger recoloring
 
   const containerHeight = leafCount * rowHeight;
   return (
@@ -119,6 +143,7 @@ export function HorizontalDendrogram({
       style={{
         width: width + 'px',
         height: containerHeight + 'px',
+        ...containerStyles,
       }}
       ref={containerRef}
     />

@@ -123,11 +123,15 @@ type ExpansionBarProps = {
 
 function ExpansionBar(props: ExpansionBarProps) {
   return (
-    <div className={cx('--ExpansionBar')} onClick={props.onClick}>
+    <button
+      type="button"
+      className={cx('--ExpansionBar')}
+      onClick={props.onClick}
+    >
       {props.arrow}
       <span className={cx('--ExpansionBarText')}>{props.message}</span>
       {props.arrow}
-    </div>
+    </button>
   );
 }
 

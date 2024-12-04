@@ -1,6 +1,10 @@
-import { chunk, difference, union, uniq } from 'lodash';
-import { ActionsObservable, StateObservable } from 'redux-observable';
-import { Observable, from } from 'rxjs';
+import { chunk, difference, get, union, uniq } from 'lodash';
+import {
+  ActionsObservable,
+  combineEpics,
+  StateObservable,
+} from 'redux-observable';
+import { EMPTY, Observable, from, merge, of } from 'rxjs';
 import {
   bufferTime,
   filter,
@@ -22,11 +26,14 @@ import {
   REQUEST_PARTIAL_RECORD,
   SECTION_VISIBILITY,
   SET_COLLAPSED_SECTIONS,
+  TABLE_STATE_UPDATED,
   RequestPartialRecord,
   RecordReceivedAction,
   RecordUpdatedAction,
   getPrimaryKey,
   updateNavigationVisibility,
+  setCollapsedSections,
+  updateTableState,
 } from '../Actions/RecordActions';
 import {
   BASKET_STATUS_ERROR,
@@ -40,12 +47,23 @@ import { RootState } from '../Core/State/Types';
 import { EpicDependencies, ModuleEpic } from '../Core/Store';
 import { getValue, preferences, setValue } from '../Preferences';
 import { ServiceError } from '../Service/ServiceError';
-import { CategoryTreeNode, getId, getTargetType } from '../Utils/CategoryUtils';
+import {
+  CategoryTreeNode,
+  getId,
+  getRefName,
+  getTargetType,
+} from '../Utils/CategoryUtils';
 import { stateEffect } from '../Utils/ObserverUtils';
-import { filterNodes } from '../Utils/TreeUtils';
+import { filterNodes, getLeaves } from '../Utils/TreeUtils';
 import { RecordClass, RecordInstance } from '../Utils/WdkModel';
 
 export const key = 'record';
+
+export interface TableState {
+  selectedRow?: number;
+  searchTerm: string;
+  expandedRows: number[];
+}
 
 export type State = {
   isLoading: boolean;
@@ -56,6 +74,9 @@ export type State = {
   error?: ServiceError;
 
   collapsedSections: string[];
+
+  // keyed by table name
+  tableStates: Record<string, TableState>;
 
   navigationVisible: boolean;
   navigationQuery: string;
@@ -84,14 +105,36 @@ export function reduce(state: State = {} as State, action: Action): State {
     case RECORD_RECEIVED: {
       if (action.id !== state.requestId) return state;
       let { record, recordClass, categoryTree } = action.payload;
+
+      const collapsedSections = getLeaves(categoryTree, (node) => node.children)
+        .filter(
+          (
+            node
+          ): node is CategoryTreeNode & { properties: { name: string[] } } =>
+            !!node.properties.scope?.includes('record-collapsed') &&
+            !!node.properties.name
+        )
+        .map((node) => getRefName(node));
+
       return {
         ...state,
         record,
         recordClass,
-        collapsedSections: [],
+        tableStates: {},
+        collapsedSections,
         navigationCategoriesExpanded: state.navigationCategoriesExpanded || [],
         isLoading: false,
         categoryTree,
+      };
+    }
+
+    case TABLE_STATE_UPDATED: {
+      return {
+        ...state,
+        tableStates: {
+          ...state.tableStates,
+          [action.payload.tableName]: action.payload.tableState,
+        },
       };
     }
 
@@ -236,7 +279,34 @@ type RecordOptions = {
   tables: string[];
 };
 
-export const observe = observeRecordRequests;
+export const observe = combineEpics(observeRecordRequests, observeUserSettings);
+
+interface StorageDescriptor {
+  path: string;
+  isRecordScoped: boolean;
+  getValue?: (state: State) => unknown;
+}
+
+const storageItems: Record<string, StorageDescriptor> = {
+  tables: {
+    path: 'tableStates',
+    isRecordScoped: true,
+  },
+  collapsedSections: {
+    path: 'collapsedSections',
+    isRecordScoped: false,
+  },
+  expandedSections: {
+    path: 'expandedSections',
+    getValue: (state) =>
+      difference(getAllFields(state), state.collapsedSections),
+    isRecordScoped: false,
+  },
+  navigationVisible: {
+    path: 'navigationVisible',
+    isRecordScoped: false,
+  },
+};
 
 function observeRecordRequests(
   action$: ActionsObservable<Action>,
@@ -289,6 +359,86 @@ function observeRecordRequests(
         })
       )
     )
+  );
+}
+
+/**
+ * When record is loaded, read state from storage and emit actions to restore state.
+ * When state is changed, write state to storage.
+ */
+function observeUserSettings(
+  action$: ActionsObservable<Action>,
+  state$: StateObservable<RootState>,
+  deps: EpicDependencies
+) {
+  return action$.pipe(
+    filter(
+      (action): action is RecordReceivedAction =>
+        action.type === RECORD_RECEIVED
+    ),
+    switchMap((action) => {
+      let state = state$.value[key];
+      let allFields = getAllFields(state);
+
+      /** Show navigation for records with at least 5 categories */
+      let navigationVisible = getStateFromStorage(
+        storageItems.navigationVisible,
+        state,
+        state.categoryTree.children.length >= 5
+      );
+
+      /** merge stored visibleSections */
+      let expandedSections = getStateFromStorage(
+        storageItems.expandedSections,
+        state,
+        action.payload.defaultExpandedSections ?? allFields
+      );
+
+      let collapsedSections = expandedSections
+        ? difference(allFields, expandedSections)
+        : state.collapsedSections;
+
+      let tableStates = getStateFromStorage(
+        storageItems.tables,
+        state,
+        {}
+      ) as Record<string, TableState>;
+
+      return merge(
+        from(
+          Object.entries(tableStates).map(([tableName, tableState]) =>
+            updateTableState(tableName, tableState)
+          )
+        ),
+        of(
+          updateNavigationVisibility(navigationVisible),
+          setCollapsedSections(collapsedSections)
+        ),
+        action$.pipe(
+          mergeMap((action) => {
+            switch (action.type) {
+              case SECTION_VISIBILITY:
+              case ALL_FIELD_VISIBILITY:
+                setStateInStorage(
+                  storageItems.expandedSections,
+                  state$.value[key]
+                );
+                break;
+              case NAVIGATION_VISIBILITY:
+                setStateInStorage(
+                  storageItems.navigationVisible,
+                  state$.value[key]
+                );
+                break;
+              case TABLE_STATE_UPDATED:
+                setStateInStorage(storageItems.tables, state$.value[key]);
+                break;
+            }
+            return EMPTY;
+          })
+        )
+      );
+    })
   );
 }
 
@@ -349,3 +499,83 @@ export function makeNavigationVisibilityPreferenceEpics(
     observeNavigationVisibilityState,
   };
 }
+
+/** Read state property value from storage */
+function getStateFromStorage(
+  descriptor: StorageDescriptor,
+  state: State,
+  defaultValue: unknown
+) {
+  try {
+    let key = getStorageKey(descriptor, state.record);
+    return persistence.get(key, defaultValue);
+  } catch (error) {
+    console.error(
+      'Warning: Could not retrieve %s from local storage.',
+      descriptor.path,
+      error
+    );
+    return defaultValue;
+  }
+}
+
+/** Write state property value to storage */
+function setStateInStorage(descriptor: StorageDescriptor, state: State) {
+  try {
+    let key = getStorageKey(descriptor, state.record);
+    persistence.set(
+      key,
+      typeof descriptor.getValue === 'function'
+        ? descriptor.getValue(state)
+        : get(state, descriptor.path)
+    );
+  } catch (error) {
+    console.error(
+      'Warning: Could not set %s to local storage.',
+      descriptor.path,
+      error
+    );
+  }
+}
+
+/** Create storage key for property */
+function getStorageKey(descriptor: StorageDescriptor, record: RecordInstance) {
+  let { path, isRecordScoped } = descriptor;
+  return (
+    path +
+    '/' +
+    record.recordClassName +
+    (isRecordScoped ? '/' + record.id.map((p) => p.value).join('/') : '')
+  );
+}
+
+const persistence = (function makePersistenceModule() {
+  const store = window.localStorage;
+  const prefix = '@@ebrc@@';
+
+  /**
+   * Set the value for the key in the store
+   */
+  function set(key: string, value: unknown) {
+    try {
+      store.setItem(prefix + '/' + key, JSON.stringify(value));
+    } catch (e) {
+      console.error('Unable to set value to localStorage.', e);
+    }
+  }
+
+  /**
+   * Get the value for the key from the store
+   */
+  function get(key: string, defaultValue: unknown) {
+    try {
+      let item = store.getItem(prefix + '/' + key);
+      return item == null ? defaultValue : JSON.parse(item);
+    } catch (e) {
+      console.error('Unable to get value from localStorage.', e);
+      return defaultValue;
+    }
+  }
+
+  return { get, set };
+})();

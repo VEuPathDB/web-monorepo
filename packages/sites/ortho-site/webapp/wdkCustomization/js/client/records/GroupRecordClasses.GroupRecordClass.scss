@@ -1,4 +1,7 @@
 .wdk-RecordContainer__GroupRecordClasses\.GroupRecordClass {
+  --row-hl-bg-color: wheat;
+  --row-hl-fg-color: inherit;
+
   .wdk-MissingMsaAttribute {
     color: darkred;
   }
@@ -14,6 +17,31 @@
 
     .PfamDomain {
       min-width: 0.41666666666em;
+    }
+  }
+
+  #Sequences .Mesa.MesaComponent {
+    display: flex;
+    flex-wrap: wrap;
+    > .Toolbar {
+      &,
+      & > * {
+        width: 100%;
+      }
+    }
+    > .MesaComponent {
+      width: 100%;
+      > .DataTable {
+        max-width: unset;
+        width: unset;
+        overflow-x: unset;
+
+        // Set background-color of selected rows
+        tr:has(> td.SelectionCell > div > input:checked) > td {
+          background-color: var(--row-hl-bg-color) !important;
+          color: var(--row-hl-fg-color) !important;
+        }
+      }
     }
   }
 }

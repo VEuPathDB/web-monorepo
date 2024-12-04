@@ -74,6 +74,7 @@ export default class Root extends React.Component<Props, State> {
     if (!target || !(target instanceof HTMLAnchorElement)) return;
 
     let isDefaultPrevented = event.defaultPrevented;
+    let isHashChange = target.getAttribute('href')?.startsWith('#');
     let hasModifiers =
       event.metaKey ||
       event.altKey ||
@@ -89,6 +90,7 @@ export default class Root extends React.Component<Props, State> {
       hasModifiers ||
       hasTarget ||
       !href.startsWith(this.props.rootUrl) ||
+      isHashChange ||
       isRouterLink
     )
       return;

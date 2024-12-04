@@ -40,6 +40,8 @@ export type RadioButtonGroupProps = {
    * if a Map is used, then the values are used in Tooltips to explain why each option is disabled
    */
   disabledList?: string[] | Map<string, ReactNode>;
+  /** capitalize of the labels; default: true */
+  capitalizeLabels?: boolean;
 };
 
 /**
@@ -62,6 +64,7 @@ export default function RadioButtonGroup({
   margins,
   itemMarginRight,
   disabledList,
+  capitalizeLabels = true,
 }: RadioButtonGroupProps) {
   const isDisabled = (option: string) => {
     if (!disabledList) return false;
@@ -141,7 +144,7 @@ export default function RadioButtonGroup({
                   marginRight: itemMarginRight,
                   fontSize: '0.75em',
                   fontWeight: 400,
-                  textTransform: 'capitalize',
+                  textTransform: capitalizeLabels ? 'capitalize' : undefined,
                   minWidth: minWidth,
                 }}
               />

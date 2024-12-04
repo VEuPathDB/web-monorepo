@@ -64,7 +64,7 @@ export default function SemanticMarkers({
     // 2023-11: it does seem to be needed for zoom-in animation to work.
     const debouncedUpdateMarkerPositions = debounce(
       updateMarkerPositions,
-      1000
+      animation ? animation.duration : 0
     );
     // call it at least once at the beginning of the life cycle
     debouncedUpdateMarkerPositions();
@@ -106,6 +106,15 @@ export default function SemanticMarkers({
                 lnMin += 360;
                 recentered = true;
               }
+
+              // Is the new position inside the "viewport"?
+              // (strictly this is the un-greyed-out region in the middle when zoomed well out)
+              const inBounds =
+                lng <= bounds.northEast.lng &&
+                lng >= bounds.southWest.lng &&
+                lat <= bounds.northEast.lat &&
+                lat >= bounds.southWest.lat;
+
               return recentered
                 ? cloneElement(marker, {
                     position: { lat, lng },
@@ -113,6 +122,8 @@ export default function SemanticMarkers({
                       southWest: { lat: ltMin, lng: lnMin },
                       northEast: { lat: ltMax, lng: lnMax },
                     },
+                    // to prevent "fly-bys" (see #628) disable animation for out-of-bounds markers
+                    ...(inBounds ? {} : { duration: -1 }),
                   })
                 : marker;
             })
@@ -126,27 +137,23 @@ export default function SemanticMarkers({
       ) {
         // get the position-modified markers from `animationFunction`
         // see geohash.tsx for example
-        const animationValues = animation.animationFunction({
-          prevMarkers: prevRecenteredMarkers,
-          markers: recenteredMarkers,
-        });
+        const { markers: oldAndNewRepositionedMarkers } =
+          animation.animationFunction({
+            prevMarkers: prevRecenteredMarkers,
+            markers: recenteredMarkers,
+          });
         // set them as current
         // any marker that already existed will move to the modified position
         if (
           !isEqual(
-            animationValues.markers.map(({ props }) => props),
+            oldAndNewRepositionedMarkers.map(({ props }) => props),
             consolidatedMarkers.map(({ props }) => props)
           )
         )
-          setConsolidatedMarkers(animationValues.markers);
-        // then set a timer to remove the old markers when zooming out
-        // or if zooming in, switch to just the new markers straight away
-        // (their starting position was set by `animationFunction`)
-        // It's complicated but it works!
-        timeoutVariable = enqueueZoom(
-          animationValues.zoomType,
-          recenteredMarkers
-        );
+          setConsolidatedMarkers(oldAndNewRepositionedMarkers);
+
+        // we used to set a timer to remove the old markers when zooming out
+        // but now we just let the next render cycle do it.
       } else {
         /** First render of markers **/
         if (
@@ -170,27 +177,6 @@ export default function SemanticMarkers({
         )
       )
         setPrevRecenteredMarkers(recenteredMarkers);
-    }
-
-    function enqueueZoom(
-      zoomType: string | null,
-      nextMarkers: ReactElement<BoundsDriftMarkerProps>[]
-    ) {
-      /** If we are zooming in then reset the marker elements. When initially rendered
-       * the new markers will start at the matching existing marker's location and here we will
-       * reset marker elements so they will animated to their final position
-       **/
-      if (zoomType === 'in') {
-        setConsolidatedMarkers(nextMarkers);
-      } else if (zoomType === 'out') {
-        /** If we are zooming out then remove the old markers after they finish animating. **/
-        return window.setTimeout(
-          () => {
-            setConsolidatedMarkers(nextMarkers);
-          },
-          animation ? animation.duration : 0
-        );
-      }
     }
   }, [
     animation,
