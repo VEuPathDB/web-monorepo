@@ -31,7 +31,6 @@ import {
   isNodeOverflowing,
 } from '@veupathdb/web-common/lib/util/domUtils';
 
-import { updateTableState } from '../../actioncreators/RecordViewActionCreators';
 import { projectId, webAppUrl } from '../../config';
 import * as Gbrowse from '../common/Gbrowse';
 import { OverviewThumbnails } from '../common/OverviewThumbnails';
@@ -1552,11 +1551,11 @@ class OrthologsForm extends SortKeyTable {
 
 const TranscriptionSummaryForm = connect(
   ({ record }) => ({
-    expressionGraphsTableState: record.eupathdb.tables?.ExpressionGraphs,
+    expressionGraphsTableState: record.tableStates?.ExpressionGraphs,
   }),
   {
     updateSectionVisibility: RecordActions.updateSectionVisibility,
-    updateTableState,
+    updateTableState: RecordActions.updateTableState,
   }
 )(
   class TranscriptionSummaryFormPres extends SortKeyTable {
@@ -1643,10 +1642,7 @@ const TranscriptionSummaryForm = connect(
                 this.props.updateTableState('ExpressionGraphs', {
                   ...this.props.expressionGraphsTableState,
                   searchTerm: '',
-                  selectedRow: {
-                    index: expressionGraphIndex,
-                    id: `ExpressionGraphs__${ExpressionGraphs[expressionGraphIndex].dataset_id}`,
-                  },
+                  selectedRow: expressionGraphIndex,
                 });
               }
             );

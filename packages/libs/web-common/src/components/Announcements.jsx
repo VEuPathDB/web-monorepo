@@ -120,7 +120,20 @@ const siteAnnouncements = [
               {' '}
               full tutorial here
             </a>
-            . While we transition to making this beta site permanent,{' '}
+            . Please be aware that your work on this beta site may not be saved.{' '}
+            After you have explored this beta site,{' '}
+            <b>
+              please help us by answering a few questions in{' '}
+              <a
+                target="_blank"
+                href="https://upenn.co1.qualtrics.com/jfe/form/SV_enBiVFxV5mT3Dz8"
+              >
+                {' '}
+                this survey
+              </a>
+              .
+            </b>{' '}
+            While we transition to making this beta site permanent,{' '}
             <a target="_blank" rel="noreferrer" href="https://orthomcl.org">
               OrthoMCL 6_21
             </a>{' '}
