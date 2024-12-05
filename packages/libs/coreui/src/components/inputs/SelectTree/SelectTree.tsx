@@ -49,6 +49,7 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
   // live updates to caller when needed
   useEffect(() => {
     if (!instantUpdate) return;
+    if (!onSelectionChange) return;
     onSelectionChange(localSelectedList);
   }, [onSelectionChange, localSelectedList, instantUpdate]);
 
@@ -74,7 +75,8 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
         ? truncatedButtonContent(localSelectedList)
         : props.buttonDisplayContent
     );
-    if (!instantUpdate) onSelectionChange(localSelectedList);
+    if (!instantUpdate && onSelectionChange)
+      onSelectionChange(localSelectedList);
   };
 
   const checkboxTree = (
