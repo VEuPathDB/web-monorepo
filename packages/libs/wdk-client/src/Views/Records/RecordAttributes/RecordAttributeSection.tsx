@@ -26,18 +26,7 @@ export interface Props {
 
 /** Record attribute section container for record page */
 function RecordAttributeSection(props: Props) {
-  let value = props.record.attributes[props.attribute.name];
-  const textLength = useMemo(() => {
-    return value == null
-      ? -1
-      : typeof value === 'string'
-      ? stripHTML(value).length
-      : value.displayText != null
-      ? stripHTML(value.displayText).length
-      : value.url.length;
-  }, [value]);
-  if (textLength < 150) return <InlineRecordAttributeSection {...props} />;
-  else return <BlockRecordAttributeSection {...props} />;
+  return <BlockRecordAttributeSection {...props} />;
 }
 
 export default wrappable(RecordAttributeSection);

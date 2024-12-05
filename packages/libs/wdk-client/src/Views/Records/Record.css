@@ -201,6 +201,15 @@ h2.wdk-RecordNavigationSectionHeader {
   visibility: visible;
 }
 
+.wdk-CollapsibleSectionHeader:before {
+  content: '\f078';
+  margin-right: 2ex;
+  width: 1ex;
+}
+.wdk-CollapsibleSectionHeader__collapsed:before {
+  content: '\f107';
+}
+
 .wdk-RecordSectionHeader:before,
 .wdk-RecordSectionHeader__collapsed:before {
   display: none;
@@ -235,7 +244,7 @@ h2.wdk-RecordNavigationSectionHeader {
 .wdk-RecordAttributeSectionItem,
 .wdk-RecordTableContainer,
 .wdk-RecordSubsection {
-  margin: 1.5rem 1rem;
+  margin: 0.24rem 1rem;
 }
 
 .wdk-RecordAttributeName,
@@ -254,8 +263,12 @@ h2.wdk-RecordNavigationSectionHeader {
 
 .wdk-RecordTableContainerContent,
 .wdk-RecordAttributeSectionItemContent {
-  padding-left: 1rem;
-  margin: 1em 0 2em;
+  font-size: 1.2em;
+  padding: 1em;
+  margin: 0;
+  margin-left: -1.1em;
+  border: 1px solid #f3f3f3;
+  border-radius: 0.25em;
 }
 
 .wdk-RecordAttributeSectionItemHeader,
@@ -265,8 +278,12 @@ h2.wdk-RecordNavigationSectionHeader {
 
 .wdk-RecordAttributeName,
 .wdk-RecordMain .wdk-CollapsibleSectionHeader:not(.wdk-RecordSectionHeader) {
-  font-size: 1.2em;
-  font-weight: 500;
+  font-size: 1.4em;
+  font-weight: 600;
+  background: #f3f3f3;
+  padding: 0.5em;
+  border-radius: 0.25em;
+  border: 1px solid #e3e3e3;
 }
 
 .wdk-RecordMain .wdk-CollapsibleSectionHeader.wdk-RecordSubsectionHeader {
