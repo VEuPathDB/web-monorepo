@@ -472,6 +472,8 @@ export function RecordTable_Sequences(
           </div>
         ),
         value: formatAttributeValue(row.accession),
+        // unexciting display for the popover button:
+        altDisplay: formatAttributeValue(row.accession),
       }))}
       value={volatilePfamFilterIds}
       onChange={(ids) => {
