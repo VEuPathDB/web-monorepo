@@ -3,7 +3,6 @@ import { debounce } from 'lodash';
 
 import MesaTooltip from './MesaTooltip';
 import Events from '../Utils/Events';
-import { MESA_SCROLL_EVENT, MESA_REFLOW_EVENT } from '../Ui/MesaContants';
 
 class AnchoredTooltip extends React.Component {
   constructor(props) {
@@ -19,8 +18,6 @@ class AnchoredTooltip extends React.Component {
     this.listeners = {
       scroll: Events.add('scroll', this.updatePosition),
       resize: Events.add('resize', this.updatePosition),
-      MesaScroll: Events.add(MESA_SCROLL_EVENT, this.updatePosition),
-      MesaReflow: Events.add(MESA_REFLOW_EVENT, this.updatePosition),
     };
   }
 

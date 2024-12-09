@@ -2,8 +2,6 @@
 @import './AllSites.scss';
 @import './question-wizard.css';
 
-$expand-child-row-toggle-width: 3em;
-
 dialog {
   border: none;
   border-radius: 0.25em;
@@ -109,42 +107,6 @@ h4 {
 
 .wdk-UserDatasetSectionHeading {
   font-size: 1.4em;
-}
-
-.wdk-DataTableCellExpand > svg {
-  fill: #777;
-}
-
-tr._childIsExpanded
-  > .wdk-DataTableCell__childRowToggle
-  > .wdk-DataTableCellExpand
-  > svg {
-  fill: black;
-}
-
-.wdk-DataTableCellExpand:hover > svg {
-  fill: black;
-}
-
-.wdk-DataTableCellExpand {
-  width: $expand-child-row-toggle-width;
-  padding: 0;
-  border: none;
-  line-height: 2;
-  background: transparent !important;
-}
-
-.wdk-DataTableCell.wdk-DataTableCell__childRowToggle {
-  width: $expand-child-row-toggle-width;
-}
-
-th > .wdk-DataTableCellExpand {
-  display: flex;
-  justify-content: center;
-}
-
-td.wdk-DataTable.wdk-DataTableCell__childRowToggle {
-  vertical-align: middle;
 }
 
 td.wdk-DataTableCell__thumbnail {
