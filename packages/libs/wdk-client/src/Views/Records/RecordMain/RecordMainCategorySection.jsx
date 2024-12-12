@@ -94,12 +94,20 @@ class RecordMainCategorySection extends React.PureComponent {
             </a>
           </span>
         );
+        if (depth === 0) {
+          return (
+            <>
+              <Header className="wdk-RecordSectionHeader">
+                {headerContent}
+              </Header>
+              {children}
+            </>
+          );
+        }
         return (
           <CollapsibleSection
             id={id}
-            className={
-              depth === 0 ? 'wdk-RecordSection' : 'wdk-RecordSubsection'
-            }
+            className={'wdk-RecordSubsection'}
             headerComponent={Header}
             headerContent={headerContent}
             isCollapsed={isCollapsed}

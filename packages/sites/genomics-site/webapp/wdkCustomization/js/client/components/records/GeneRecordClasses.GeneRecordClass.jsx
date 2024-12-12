@@ -220,7 +220,7 @@ export const RecordMainSection = connect(null)(
     return (
       <React.Fragment>
         {props.depth == null && (
-          <div style={{ position: 'absolute', right: '3em' }}>
+          <div style={{ position: 'absolute', right: '3em', zIndex: 1 }}>
             <i className="fa fa-exclamation-triangle" />
             &nbsp;
             <button
