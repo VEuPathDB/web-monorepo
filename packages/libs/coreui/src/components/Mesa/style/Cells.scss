@@ -1,6 +1,9 @@
 $StickyColumnBorderColor: rgb(204, 204, 204);
 
 .MesaComponent {
+  tr {
+    white-space: break-spaces;
+  }
   th {
     background-color: #e2e2e2;
     transition: background 0.25s;
