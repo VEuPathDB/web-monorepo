@@ -34,7 +34,7 @@
 
 .wdk-RecordMain,
 .wdk-RecordSidebar {
-  padding: 2.5em 3em;
+  padding: 2.5em 3em 2.5em 0;
   transition: margin-left 250ms ease;
   transition: left 250ms ease;
 }
@@ -42,6 +42,7 @@
 .wdk-RecordMain {
   /* make prevent contents panel from being clipped. */
   min-height: 65vh;
+  margin-left: 2em;
 }
 
 .wdk-RecordSidebarContainer {
@@ -50,8 +51,8 @@
 }
 
 .wdk-RecordSidebar {
-  left: -332px;
-  width: 282px;
+  left: -395px;
+  width: 340px;
   position: absolute;
   padding-right: 48px;
   transition: right 250ms ease;
@@ -60,6 +61,13 @@
   padding: 0 8px;
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.3);
   border: 1px solid #ccc;
+
+  .wdk-RecordNavigationSection {
+    font-size: 1.3em;
+    ul {
+      padding-left: 0.5em !important;
+    }
+  }
 }
 
 .wdk-RecordSidebarHeader {
@@ -86,7 +94,7 @@ h2.wdk-RecordNavigationSectionHeader {
 }
 
 .wdk-RecordContainer__withSidebar .wdk-RecordMain {
-  margin-left: 290px;
+  margin-left: 350px;
 }
 
 .wdk-RecordContainer__withSidebar .wdk-RecordSidebar {
@@ -205,6 +213,7 @@ h2.wdk-RecordNavigationSectionHeader {
   margin-right: 1ex;
   width: 1ex;
   transition: transform 150ms;
+  font-size: 1.75em;
 }
 .wdk-CollapsibleSectionHeader__collapsed:before {
   transform: rotate(-90deg);
@@ -251,16 +260,22 @@ h2.wdk-RecordNavigationSectionHeader {
   margin: 0.5em 0;
 }
 
-.wdk-RecordAttributeName,
-.wdk-RecordAttributeValue {
-  display: inline-block;
-  vertical-align: middle;
-  position: relative;
+.wdk-RecordAttributeInline {
+  display: flex;
+  align-items: center;
+  gap: 1em;
   z-index: 1;
+  background: #f3f3f3;
+  padding: 0.5em 0.75em;
+  border: 1px solid #e0e0e0;
+}
+
+.wdk-RecordAttributeName {
+  font-size: 1.2em;
+  font-weight: 500;
 }
 
 .wdk-RecordAttributeValue {
-  padding: 0 0.5em;
   word-break: break-word;
   top: 1px;
 }
@@ -274,17 +289,19 @@ h2.wdk-RecordNavigationSectionHeader {
   border-top: none;
 }
 
-.wdk-RecordAttributeName,
 .wdk-RecordMain .wdk-CollapsibleSectionHeader:not(.wdk-RecordSectionHeader) {
   font-size: 1.2em;
   font-weight: 600;
-  background: #f3f3f3;
+  background: #333333;
+  color: #eeeeee;
   padding: 0.5em 0.75em;
   border: 1px solid #e0e0e0;
+  border-top-right-radius: 0.5em;
+  border-top-left-radius: 0.5em;
 
   &:hover,
   button:focus > & {
-    background: #eaeaea;
+    background: #222222;
   }
 }
 

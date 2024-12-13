@@ -97,7 +97,7 @@ class RecordMainCategorySection extends React.PureComponent {
         if (depth === 0) {
           return (
             <>
-              <Header className="wdk-RecordSectionHeader">
+              <Header id={id} className="wdk-RecordSectionHeader">
                 {headerContent}
               </Header>
               {children}
