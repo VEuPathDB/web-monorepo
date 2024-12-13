@@ -227,6 +227,7 @@ h2.wdk-RecordNavigationSectionHeader {
 
 .wdk-RecordSubsectionContent {
   margin-left: 1em;
+  padding-top: 1em;
 }
 
 .wdk-RecordSectionHeaderTopLink {
@@ -247,7 +248,7 @@ h2.wdk-RecordNavigationSectionHeader {
 .wdk-RecordAttributeSectionItem,
 .wdk-RecordTableContainer,
 .wdk-RecordSubsection {
-  margin: 0.25em 0;
+  margin: 0.5em 0;
 }
 
 .wdk-RecordAttributeName,
