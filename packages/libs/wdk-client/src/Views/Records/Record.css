@@ -202,7 +202,7 @@ h2.wdk-RecordNavigationSectionHeader {
 
 .wdk-CollapsibleSectionHeader:before {
   content: '\f107'; /* angle-down */
-  margin-right: 2ex;
+  margin-right: 1ex;
   width: 1ex;
   transition: transform 150ms;
 }
