@@ -34,7 +34,7 @@
 
 .wdk-RecordMain,
 .wdk-RecordSidebar {
-  padding: 2.5em 3em 2.5em 0;
+  padding: 2.5em 0;
   transition: margin-left 250ms ease;
   transition: left 250ms ease;
 }
@@ -196,6 +196,24 @@ h2.wdk-RecordNavigationSectionHeader {
   position: relative;
   border-bottom: 2px solid #a9a9a9;
   cursor: default;
+  & + div + & {
+    margin-block-start: 1em;
+  }
+}
+
+.wdk-RecordSectionChildren {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  margin-block-start: 0.5em;
+
+  > * {
+    order: 0;
+  }
+
+  .wdk-CollapsibleSection {
+    order: 1;
+  }
 }
 
 .wdk-RecordSectionLink {
@@ -213,7 +231,6 @@ h2.wdk-RecordNavigationSectionHeader {
   margin-right: 1ex;
   width: 1ex;
   transition: transform 150ms;
-  font-size: 1.75em;
 }
 .wdk-CollapsibleSectionHeader__collapsed:before {
   transform: rotate(-90deg);
@@ -254,17 +271,11 @@ h2.wdk-RecordNavigationSectionHeader {
   display: inline-block;
 }
 
-.wdk-RecordAttributeSectionItem,
-.wdk-RecordTableContainer,
-.wdk-RecordSubsection {
-  margin: 0.5em 0;
-}
-
 .wdk-RecordAttributeInline {
   display: flex;
   align-items: center;
   gap: 1em;
-  z-index: 1;
+  position: relative;
   background: #f3f3f3;
   padding: 0.5em 0.75em;
   border: 1px solid #e0e0e0;
@@ -292,7 +303,7 @@ h2.wdk-RecordNavigationSectionHeader {
 .wdk-RecordMain .wdk-CollapsibleSectionHeader:not(.wdk-RecordSectionHeader) {
   font-size: 1.2em;
   font-weight: 600;
-  background: #333333;
+  background: #4f4f4f;
   color: #eeeeee;
   padding: 0.5em 0.75em;
   border: 1px solid #e0e0e0;
@@ -301,7 +312,19 @@ h2.wdk-RecordNavigationSectionHeader {
 
   &:hover,
   button:focus > & {
-    background: #222222;
+    background: #444444;
+  }
+
+  > .HelpTrigger > i,
+  button.wdk-Link,
+  a {
+    color: #ffffff;
+  }
+
+  button.wdk-Link,
+  a {
+    color: #ffffff;
+    text-decoration: underline;
   }
 }
 

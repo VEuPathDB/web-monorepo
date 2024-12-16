@@ -100,7 +100,7 @@ class RecordMainCategorySection extends React.PureComponent {
               <Header id={id} className="wdk-RecordSectionHeader">
                 {headerContent}
               </Header>
-              {children}
+              <div className="wdk-RecordSectionChildren">{children}</div>
             </>
           );
         }

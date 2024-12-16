@@ -24,7 +24,7 @@ export function RecordMainSection(DefaultComponent) {
     makeDynamicWrapper('RecordMainSection')(DefaultComponent);
   return function EbrcRecordMainSection(props) {
     return (
-      <div>
+      <>
         <DynamicRecordMainSection {...props} />
         {!props.depth && 'attribution' in props.record.attributes && (
           <div className="RecordAttribution">
@@ -37,7 +37,7 @@ export function RecordMainSection(DefaultComponent) {
             />
           </div>
         )}
-      </div>
+      </>
     );
   };
 }
