@@ -143,6 +143,32 @@
   padding: 10px 0;
 }
 
+.eupathdb-RecordOverviewLeft table {
+  font-size: 1.4em;
+  border-collapse: collapse;
+  tr:has(td:empty) {
+    display: none;
+  }
+  th,
+  td {
+    border: none;
+    vertical-align: baseline;
+    padding: 0.1em;
+  }
+  td {
+    font-weight: 300;
+  }
+  th {
+    padding-right: 1em;
+  }
+  tr.space-above {
+    th,
+    td {
+      padding-top: 1em;
+    }
+  }
+}
+
 /* Hide sections based on gene type */
 .eupathdb-RecordOverview[data-show-gene-type] {
   display: none;
