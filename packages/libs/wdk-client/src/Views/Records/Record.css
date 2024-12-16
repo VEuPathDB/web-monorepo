@@ -253,7 +253,10 @@ h2.wdk-RecordNavigationSectionHeader {
 
 .wdk-RecordSubsectionContent {
   margin-left: 1em;
-  padding-top: 1em;
+  margin-top: 0.5em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
 }
 
 .wdk-RecordSectionHeaderTopLink {
@@ -303,16 +306,15 @@ h2.wdk-RecordNavigationSectionHeader {
 .wdk-RecordMain .wdk-CollapsibleSectionHeader:not(.wdk-RecordSectionHeader) {
   font-size: 1.2em;
   font-weight: 600;
-  background: #4f4f4f;
-  color: #eeeeee;
+  background: #666666;
+  color: #ffffff;
   padding: 0.5em 0.75em;
-  border: 1px solid #e0e0e0;
   border-top-right-radius: 0.5em;
   border-top-left-radius: 0.5em;
 
   &:hover,
   button:focus > & {
-    background: #444444;
+    background: #555555;
   }
 
   > .HelpTrigger > i,
