@@ -132,6 +132,7 @@
   .eupathdb-RecordOverviewLeft {
     margin-right: 60px;
     max-width: 450px;
+    margin-right: calc(calc(50vw - 450px) / 2);
   }
   .eupathdb-RecordOverviewRight {
     flex: 1;
