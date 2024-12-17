@@ -306,27 +306,16 @@ h2.wdk-RecordNavigationSectionHeader {
 .wdk-RecordMain .wdk-CollapsibleSectionHeader:not(.wdk-RecordSectionHeader) {
   font-size: 1.2em;
   font-weight: 600;
-  background: #666666;
-  color: #ffffff;
+  background: #dddddd;
+  color: #222222;
   padding: 0.5em 0.75em;
   border-top-right-radius: 0.5em;
   border-top-left-radius: 0.5em;
+  border: 1px solid #cccccc;
 
   &:hover,
   button:focus > & {
-    background: #555555;
-  }
-
-  > .HelpTrigger > i,
-  button.wdk-Link,
-  a {
-    color: #ffffff;
-  }
-
-  button.wdk-Link,
-  a {
-    color: #ffffff;
-    text-decoration: underline;
+    background: #dadada;
   }
 }
 
