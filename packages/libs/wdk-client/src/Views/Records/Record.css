@@ -61,13 +61,6 @@
   padding: 0 8px;
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.3);
   border: 1px solid #ccc;
-
-  .wdk-RecordNavigationSection {
-    font-size: 1.3em;
-    ul {
-      padding-left: 0.5em !important;
-    }
-  }
 }
 
 .wdk-RecordSidebarHeader {
@@ -193,8 +186,8 @@ h2.wdk-RecordNavigationSectionHeader {
 }
 
 .wdk-RecordSectionHeader {
+  font-size: 1.9em;
   position: relative;
-  border-bottom: 2px solid #a9a9a9;
   cursor: default;
   & + div + & {
     margin-block-start: 1em;
