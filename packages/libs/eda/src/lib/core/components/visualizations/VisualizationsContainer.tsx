@@ -833,7 +833,8 @@ function ConfiguredVisualizationGrayOut({
     }
 
     // using lodash isEqual to compare two objects
-    if (!isEqual(filters, currentPlotFilters)) {
+    // Sometimes filters or currentPlotFilters are undefined. In that case, assume there are no filters applied.
+    if (!isEqual(filters ?? [], currentPlotFilters ?? [])) {
       return (
         <>
           Open to sync with

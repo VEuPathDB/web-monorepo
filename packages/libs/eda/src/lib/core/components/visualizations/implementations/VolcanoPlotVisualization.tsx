@@ -136,9 +136,6 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     plotContainerStyleOverrides,
   } = props;
 
-  // If no filters applied, the currentPlotFilters will be undefined. It should be an empty array.
-  visualization.descriptor.currentPlotFilters =
-    visualization.descriptor.currentPlotFilters ?? [];
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
