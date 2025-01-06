@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import { createRoot } from 'react-dom/client';
 import { connect } from 'react-redux';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { RecordActions } from '@veupathdb/wdk-client/lib/Actions';
 import * as Category from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
@@ -489,7 +490,7 @@ const RodMalPhenotypeTableChildRow = pure(function RodMalPhenotypeTableChildRow(
   let { phenotype } = props.rowData;
   return (
     <div>
-      <b>Phenotype</b>:{phenotype == null ? null : phenotype}
+      <b>Phenotype</b>:{phenotype == null ? null : safeHtml(henotype)}
     </div>
   );
 });
