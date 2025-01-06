@@ -490,7 +490,7 @@ const RodMalPhenotypeTableChildRow = pure(function RodMalPhenotypeTableChildRow(
   let { phenotype } = props.rowData;
   return (
     <div>
-      <b>Phenotype</b>:{phenotype == null ? null : safeHtml(henotype)}
+      <b>Phenotype</b>:{phenotype == null ? null : safeHtml(phenotype)}
     </div>
   );
 });
