@@ -52,7 +52,7 @@ export const RecordHeading = connect(
   (state) => ({ categoryTree: state.record.categoryTree }),
   RecordActions
 )(
-  class RecordHeading extends Component {
+  class GeneRecordHeading extends Component {
     constructor(...args) {
       super(...args);
       this.handleThumbnailClick = this.handleThumbnailClick.bind(this);
@@ -202,14 +202,15 @@ export const RecordHeading = connect(
     render() {
       // FungiVBOrgLinkoutsTable is requested in componentWrappers
       return (
-        <React.Fragment>
-          <div ref={(node) => (this.node = node)}>
-            <this.props.DefaultComponent {...this.props} />
-          </div>
+        <>
+          <this.props.DefaultComponent
+            {...this.props}
+            overviewRef={(node) => (this.node = node)}
+          />
           <FungiVBOrgLinkoutsTable
             value={this.props.record.tables.FungiVBOrgLinkoutsTable}
           />
-        </React.Fragment>
+        </>
       );
     }
   }
@@ -220,7 +221,14 @@ export const RecordMainSection = connect(null)(
     return (
       <React.Fragment>
         {props.depth == null && (
-          <div style={{ position: 'absolute', right: '3em', zIndex: 1 }}>
+          <div
+            style={{
+              position: 'absolute',
+              right: '3em',
+              top: '4em',
+              zIndex: 1,
+            }}
+          >
             <i className="fa fa-exclamation-triangle" />
             &nbsp;
             <button

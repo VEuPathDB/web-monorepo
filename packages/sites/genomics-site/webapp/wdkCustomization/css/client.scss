@@ -63,7 +63,7 @@
 }
 
 .eupathdb-RecordOverview {
-  overflow: auto;
+  margin-bottom: 2rem;
 }
 
 .eupathdb-RecordOverviewTitle,
@@ -74,6 +74,18 @@
   width: 100%;
   padding: 0.5em 0 0;
   font-size: 2em;
+}
+
+.eupathdb-RecordOverviewTitle {
+  position: sticky;
+  top: 100px; /* TODO Use a CSS custon property to set offset */
+  z-index: 2;
+  background: white;
+  width: auto;
+  margin-left: -1.25rem;
+  margin-right: -1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 .eupathdb-GeneOverviewSubtitle {
@@ -161,6 +173,7 @@
   }
   th {
     padding-right: 1em;
+    font-weight: 400;
   }
   tr.space-above {
     th,
@@ -206,12 +219,12 @@
 }
 
 /*Hide Apollo link based on attribute */
-.eupathdb-RecordOverview [data-show-apollo] {
+.eupathdb-RecordOverview tr:has([data-show-apollo]) {
   display: none;
 }
 
-.eupathdb-RecordOverview[data-apollo='1'] [data-show-apollo='1'] {
-  display: initial;
+.eupathdb-RecordOverview[data-apollo='1'] tr:has([data-show-apollo='1']) {
+  display: table-row;
 }
 
 .GeneOverviewIntent {
@@ -270,7 +283,7 @@
 
 .eupathdb-ThumbnailsTitle {
   font-size: 1.5em;
-  font-weight: 500;
+  font-weight: 400;
   margin-bottom: 0.5em;
 }
 
@@ -696,4 +709,9 @@ div#userOptions input[value='genomic']:checked ~ span.genomic {
   font-size: 0.4em;
   height: 1em;
   top: 1.2em;
+}
+
+.ebrc-Main:has(.wdk-RecordContainer) + footer {
+  margin-left: calc(1.25rem + 350px);
+  border-left: 1px solid #c0c0c0;
 }

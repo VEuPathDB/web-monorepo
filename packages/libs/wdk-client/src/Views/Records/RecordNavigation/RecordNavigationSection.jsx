@@ -80,15 +80,14 @@ class RecordNavigationSection extends React.PureComponent {
       onNavigationCategoryExpansionChange,
       onSectionToggle,
       visibilityFilter = stubTrue,
+      visibilityToggle,
     } = this.props;
 
     return (
       <div className="wdk-RecordNavigationSection">
-        <h2 className="wdk-RecordNavigationSectionHeader">
-          <span dangerouslySetInnerHTML={{ __html: heading }} />
-        </h2>
         <CategoriesCheckboxTree
           disableHelp
+          additionalFilters={[visibilityToggle]}
           visibilityFilter={visibilityFilter}
           searchBoxPlaceholder="Search section names..."
           tree={categoryTree}
@@ -116,10 +115,8 @@ class RecordNavigationSection extends React.PureComponent {
             },
             treeNode: {
               nodeWrapper: {
-                padding: '0.25em 0 0.25em 0.5em',
-              },
-              topLevelNodeWrapper: {
                 padding: '0.25em 0',
+                alignItems: 'center',
               },
             },
           }}

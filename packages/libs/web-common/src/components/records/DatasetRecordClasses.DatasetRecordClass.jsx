@@ -109,7 +109,7 @@ export function RecordHeading(props) {
   let primaryPublication = getPrimaryPublication(record);
 
   return (
-    <div>
+    <>
       <props.DefaultComponent {...props} />
       <div className="wdk-RecordOverview eupathdb-RecordOverview">
         {organism_prefix ? (
@@ -179,7 +179,7 @@ export function RecordHeading(props) {
           />
         ) : null}
       </div>
-    </div>
+    </>
   );
 }
 

@@ -12,7 +12,6 @@ import { submitAsForm } from '@veupathdb/wdk-client/lib/Utils/FormSubmitter';
 import { makeDynamicWrapper, findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
 import Sequence from '@veupathdb/web-common/lib/components/records/Sequence';
-import RecordTableContainer from './components/common/RecordTableContainer';
 import { loadPathwayGeneDynamicCols } from './actioncreators/RecordViewActionCreators';
 import ApiSiteHeader from './components/SiteHeader';
 import OrganismFilter from './components/OrganismFilter';
@@ -158,11 +157,7 @@ export const RecordUI = makeDynamicWrapper(
   EnhancedRecordUIContainer
 );
 export const RecordMainSection = makeDynamicWrapper('RecordMainSection');
-export const RecordTable = makeDynamicWrapper(
-  'RecordTable'
-  // RecordTableContainer
-);
-export const RecordTableDescription = makeDynamicWrapper(
+const DynamicRecordTableDescription = makeDynamicWrapper(
   'RecordTableDescription'
 );
 export const ResultTable = makeDynamicWrapper('ResultTable');
@@ -232,7 +227,8 @@ function downloadRecordTable(record, tableName) {
   };
 }
 
-export function RecordTableSection(DefaultComponent) {
+export function RecordTableDescription(DefaultComponent) {
+  DefaultComponent = DynamicRecordTableDescription(DefaultComponent);
   return connect(null, { downloadRecordTable })(
     class ApiRecordTableSection extends React.PureComponent {
       render() {
@@ -279,26 +275,22 @@ export function RecordTableSection(DefaultComponent) {
           hasTaxonId = 1;
         }
 
-        const title = (
-          <span>
-            {table.displayName}{' '}
-            {showDownload && (
-              <span
-                style={{
-                  fontSize: '.8em',
-                  fontWeight: 'normal',
-                  marginLeft: '1em',
-                }}
+        const links = (
+          <div style={{ marginBottom: '1em' }}>
+            <span
+              style={{
+                fontSize: '.8em',
+                fontWeight: 'normal',
+              }}
+            >
+              <button
+                type="button"
+                className="wdk-Link"
+                onClick={callDownloadTable}
               >
-                <button
-                  type="button"
-                  className="wdk-Link"
-                  onClick={callDownloadTable}
-                >
-                  <i className="fa fa-download" /> Download
-                </button>
-              </span>
-            )}
+                <i className="fa fa-download" /> Download
+              </button>
+            </span>
             {hasTaxonId == 0 && showDatasetsLink && (
               <Link
                 style={{
@@ -338,14 +330,24 @@ export function RecordTableSection(DefaultComponent) {
                 <i className="fa fa-database" /> Data sets
               </Link>
             )}
-          </span>
+          </div>
         );
 
-        return <DefaultComponent {...this.props} title={title} />;
+        return (
+          <>
+            {links}
+            <DefaultComponent {...this.props} />
+          </>
+        );
       }
     }
   );
 }
+
+export const RecordTable = makeDynamicWrapper(
+  'RecordTable'
+  // RecordTableContainer
+);
 
 function getGbrowseContext(attributeName) {
   return Gbrowse.contexts.find(

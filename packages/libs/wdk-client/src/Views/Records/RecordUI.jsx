@@ -124,6 +124,25 @@ class RecordUI extends Component {
       'fa-angle-double-up': this.props.navigationVisible,
     });
 
+    let visibilityToggle = (
+      <button
+        type="button"
+        className="wdk-RecordSidebarToggle"
+        onClick={() => {
+          if (!this.props.navigationVisible) window.scrollTo(0, window.scrollY);
+          this.props.updateNavigationVisibility(!this.props.navigationVisible);
+        }}
+      >
+        {this.props.navigationVisible ? '' : 'Show Contents '}
+        <i
+          className={sidebarIconClass}
+          title={
+            this.props.navigationVisible ? 'Close sidebar' : 'Open sidebar'
+          }
+        />
+      </button>
+    );
+
     return (
       <div className={classNames}>
         <RecordHeading
@@ -133,49 +152,33 @@ class RecordUI extends Component {
         />
         <div className="wdk-RecordSidebarContainer">
           <div className="wdk-RecordSidebar">
-            <button
-              type="button"
-              className="wdk-RecordSidebarToggle"
-              onClick={() => {
-                if (!this.props.navigationVisible)
-                  window.scrollTo(0, window.scrollY);
-                this.props.updateNavigationVisibility(
-                  !this.props.navigationVisible
-                );
-              }}
-            >
-              {this.props.navigationVisible ? '' : 'Show Contents '}
-              <i
-                className={sidebarIconClass}
-                title={
-                  this.props.navigationVisible
-                    ? 'Close sidebar'
-                    : 'Open sidebar'
+            {this.props.navigationVisible ? (
+              <RecordNavigationSection
+                visibilityToggle={visibilityToggle}
+                heading={this.props.record.displayName}
+                record={this.props.record}
+                recordClass={this.props.recordClass}
+                categoryTree={this.props.categoryTree}
+                collapsedSections={this.props.collapsedSections}
+                activeSection={this.props.activeSection}
+                navigationQuery={this.props.navigationQuery}
+                navigationExpanded={this.props.navigationExpanded}
+                navigationCategoriesExpanded={
+                  this.props.navigationCategoriesExpanded
                 }
+                onSectionToggle={this.props.updateSectionVisibility}
+                onNavigationVisibilityChange={
+                  this.props.updateNavigationVisibility
+                }
+                onNavigationCategoryExpansionChange={
+                  this.props.updateNavigationCategoryExpansion
+                }
+                onNavigationQueryChange={this.props.updateNavigationQuery}
+                requestPartialRecord={this.props.requestPartialRecord}
               />
-            </button>
-            <RecordNavigationSection
-              heading={this.props.record.displayName}
-              record={this.props.record}
-              recordClass={this.props.recordClass}
-              categoryTree={this.props.categoryTree}
-              collapsedSections={this.props.collapsedSections}
-              activeSection={this.props.activeSection}
-              navigationQuery={this.props.navigationQuery}
-              navigationExpanded={this.props.navigationExpanded}
-              navigationCategoriesExpanded={
-                this.props.navigationCategoriesExpanded
-              }
-              onSectionToggle={this.props.updateSectionVisibility}
-              onNavigationVisibilityChange={
-                this.props.updateNavigationVisibility
-              }
-              onNavigationCategoryExpansionChange={
-                this.props.updateNavigationCategoryExpansion
-              }
-              onNavigationQueryChange={this.props.updateNavigationQuery}
-              requestPartialRecord={this.props.requestPartialRecord}
-            />
+            ) : (
+              visibilityToggle
+            )}
           </div>
         </div>
         <div className="wdk-RecordMain">

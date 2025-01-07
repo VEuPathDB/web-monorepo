@@ -76,11 +76,6 @@ h4 {
   clear: both;
 }
 
-/* FIXME: Remove when rest of page is responsive */
-.wdk-RecordContainer {
-  max-width: calc(100vw - 4em);
-}
-
 .wdk-RecordAttributeValue,
 .wdk-RecordTableContainerContent,
 .wdk-RecordAttributeSectionItemContent {
@@ -133,6 +128,10 @@ td.wdk-DataTableCell__thumbnail {
 .wdk-RecordSectionHeader,
 .wdk-RecordSubsectionHeader {
   color: black;
+}
+
+.eupathdb-RecordOverview {
+  display: contents;
 }
 
 .eupathdb-RecordOverviewItem {
@@ -229,6 +228,10 @@ td.wdk-DataTableCell__thumbnail {
   min-height: 100px;
   display: flex;
   flex-wrap: wrap;
+  gap: 1em;
+  > * > * + * {
+    margin-block-start: 0.5em;
+  }
 }
 .eupathdb-DatasetGraphContainer2 > h4 {
   position: absolute;

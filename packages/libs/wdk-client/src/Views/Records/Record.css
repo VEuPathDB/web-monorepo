@@ -17,6 +17,10 @@
 .wdk-RecordHeading {
   clear: both;
   padding: 10px 0;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: white;
 }
 
 .wdk-RecordActionItem {
@@ -37,6 +41,7 @@
   padding: 2.5em 0;
   transition: margin-left 250ms ease;
   transition: left 250ms ease;
+  position: relative;
 }
 
 .wdk-RecordMain {
@@ -52,15 +57,21 @@
 
 .wdk-RecordSidebar {
   left: -395px;
+  top: 3em;
   width: 340px;
   position: absolute;
-  padding-right: 48px;
+  padding-right: 1em;
   transition: right 250ms ease;
   z-index: 10;
   background: white;
-  padding: 0 8px;
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.3);
-  border: 1px solid #ccc;
+
+  .wdk-RecordNavigationSection {
+    font-size: 1.3em;
+    padding-top: 0.5em;
+    ul {
+      padding-left: 0.5em !important;
+    }
+  }
 }
 
 .wdk-RecordSidebarHeader {
@@ -69,7 +80,6 @@
 
 .wdk-RecordSidebarToggle {
   position: absolute;
-  top: 16px;
   right: -50px;
   background: white;
   z-index: 1;
@@ -79,11 +89,25 @@
   padding: 4px 8px;
 }
 
+h2.wdk-RecordNavigationSectionHeader {
+  padding-right: 1em;
+}
+
 .wdk-RecordSidebarToggle,
 h2.wdk-RecordNavigationSectionHeader {
   word-wrap: break-word;
   color: black;
   font-weight: 400;
+}
+
+.wdk-RecordNavigationItem {
+  padding: 0.5em;
+  margin: 0;
+  border-radius: 0.35em;
+}
+
+.wdk-RecordNavigationItem__active {
+  background: #d5eaf5;
 }
 
 .wdk-RecordContainer__withSidebar .wdk-RecordMain {
@@ -92,13 +116,20 @@ h2.wdk-RecordNavigationSectionHeader {
 
 .wdk-RecordContainer__withSidebar .wdk-RecordSidebar {
   left: 0;
+  top: 0;
 }
 
 .wdk-RecordContainer__withSidebar .wdk-RecordSidebarToggle {
-  right: 12px;
+  position: unset;
   border: 0;
   transform: rotate(-90deg);
-  padding: 0;
+  transition: color 50ms;
+  background: none;
+
+  &:hover {
+    background: none;
+    color: #333333;
+  }
 }
 
 .wdk-RecordNavigationSection .wdk-RealTimeSearchBox {
@@ -131,11 +162,6 @@ h2.wdk-RecordNavigationSectionHeader {
 
 .wdk-RecordNavigationSection .wdk-CheckboxTreeNodeWrapper {
   padding: 4px 0 4px 1.5em;
-}
-
-.wdk-RecordNavigationSectionHeader {
-  margin-left: 0;
-  padding-bottom: 0;
 }
 
 .wdk-RecordNavigationSearchInput {
@@ -187,6 +213,7 @@ h2.wdk-RecordNavigationSectionHeader {
 
 .wdk-RecordSectionHeader {
   font-size: 1.9em;
+  font-weight: 400;
   position: relative;
   cursor: default;
   & + div + & {
@@ -204,7 +231,7 @@ h2.wdk-RecordNavigationSectionHeader {
     order: 0;
   }
 
-  .wdk-CollapsibleSection {
+  > .wdk-CollapsibleSection {
     order: 1;
   }
 }
@@ -279,7 +306,7 @@ h2.wdk-RecordNavigationSectionHeader {
 
 .wdk-RecordAttributeName {
   font-size: 1.2em;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .wdk-RecordAttributeValue {
@@ -297,19 +324,26 @@ h2.wdk-RecordNavigationSectionHeader {
 }
 
 .wdk-RecordMain .wdk-CollapsibleSectionHeader:not(.wdk-RecordSectionHeader) {
+  --border-radius: 0.5em;
   font-size: 1.2em;
-  font-weight: 600;
+  font-weight: 500;
   background: #dddddd;
   color: #222222;
   padding: 0.5em 0.75em;
-  border-top-right-radius: 0.5em;
-  border-top-left-radius: 0.5em;
+  border-top-right-radius: var(--border-radius);
+  border-top-left-radius: var(--border-radius);
   border: 1px solid #cccccc;
 
   &:hover,
   button:focus > & {
     background: #dadada;
   }
+}
+
+.wdk-RecordMain
+  .wdk-CollapsibleSectionHeader__collapsed:not(.wdk-RecordSectionHeader) {
+  border-bottom-left-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
 }
 
 .wdk-RecordMain .wdk-CollapsibleSectionHeader.wdk-RecordSubsectionHeader {

@@ -12,6 +12,7 @@ import { makeSearchHelpText } from '../../Utils/SearchUtils';
 import CheckboxTree, {
   LinksPosition,
   CheckboxTreeStyleSpec,
+  CheckboxTreeProps,
 } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import {
   getFilteredNodeChildren,
@@ -20,7 +21,7 @@ import {
 
 const sharedCheckboxTreeContainerStyleSpec: React.CSSProperties = {
   position: 'relative',
-  maxHeight: '75vh',
+  maxHeight: 'calc(100vh - 115px)',
   overflow: 'hidden',
   display: 'flex',
   flexDirection: 'column',
@@ -67,6 +68,7 @@ type Props = {
    * If omitted, the container uses the sharedCheckboxTreeContainerStyleSpec default styles
    */
   type?: 'headerMenu' | 'searchPane';
+  additionalFilters?: CheckboxTreeProps<unknown>['additionalFilters'];
 };
 
 let CategoriesCheckboxTree: FunctionComponent<Props> = (props) => {
@@ -98,6 +100,7 @@ let CategoriesCheckboxTree: FunctionComponent<Props> = (props) => {
     containerClassName = '',
     styleOverrides = {},
     type,
+    additionalFilters,
   } = props;
 
   if (tree.children.length == 0) {
@@ -164,6 +167,7 @@ let CategoriesCheckboxTree: FunctionComponent<Props> = (props) => {
           onExpansionChange={onUiChange}
           onSearchTermChange={onSearchTermChange}
           styleOverrides={styleOverrides}
+          additionalFilters={additionalFilters}
         />
       </div>
     </div>

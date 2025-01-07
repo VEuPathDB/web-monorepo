@@ -1,23 +1,25 @@
 import React from 'react';
-import { wrappable } from '../../../Utils/ComponentUtils';
+import { makeClassNameHelper, wrappable } from '../../../Utils/ComponentUtils';
 import {
   getId,
   getDisplayName,
   isIndividual,
 } from '../../../Utils/CategoryUtils';
 
+let cx = makeClassNameHelper('wdk-RecordNavigationItem');
+
 let RecordNavigationItem = ({
-  node: category,
+  node,
   path,
   activeCategory,
   checked,
   onSectionToggle,
 }) => {
-  let id = getId(category);
+  let id = getId(node);
   let activeId = activeCategory && getId(activeCategory);
-  let displayName = getDisplayName(category);
+  let displayName = getDisplayName(node);
 
-  let enumeration = isIndividual(category)
+  let enumeration = isIndividual(node)
     ? null
     : path.map((n) => n + 1).join('.');
 
@@ -25,29 +27,12 @@ let RecordNavigationItem = ({
 
   return (
     <div
-      className="wdk-RecordNavigationItem"
+      className={cx('', activeId === id ? 'active' : 'inactive')}
       style={{
         display: 'flex',
         position: 'relative',
       }}
     >
-      {activeId === id ? (
-        <i
-          className="fa fa-circle wdk-Link wdk-RecordNavigationIndicator"
-          style={{
-            left: '-2.25em',
-            cursor: 'pointer',
-          }}
-        />
-      ) : null}
-      {offerCheckbox && (
-        <input
-          className="wdk-Record-sidebar-checkbox"
-          type="checkbox"
-          checked={checked}
-          onChange={(e) => void onSectionToggle(id, e.target.checked)}
-        />
-      )}
       <a
         href={'#' + id}
         className="wdk-Record-sidebar-title"
@@ -57,7 +42,7 @@ let RecordNavigationItem = ({
         }}
       >
         {' '}
-        {enumeration} {displayName}{' '}
+        {displayName}{' '}
       </a>
     </div>
   );

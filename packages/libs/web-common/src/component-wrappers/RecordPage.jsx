@@ -11,10 +11,13 @@ export function RecordHeading(DefaultComponent) {
     makeDynamicWrapper('RecordHeading')(DefaultComponent);
   return function EbrcRecordHeading(props) {
     return (
-      <div className="eupathdb-RecordOverviewContainer">
+      <React.Fragment>
         <DynamicRecordHeading {...props} />
-        {renderWithCustomElements(props.record.attributes.record_overview)}
-      </div>
+        {renderWithCustomElements(props.record.attributes.record_overview, {
+          className: 'eupathdb-RecordOverviewContainer',
+          innerRef: props.overviewRef,
+        })}
+      </React.Fragment>
     );
   };
 }

@@ -142,6 +142,7 @@ const routes: RouteEntry[] = [
 
   {
     path: '/record/:recordClass/:primaryKey+',
+    rootClassNameModifier: 'record',
     component: (
       props: RouteComponentProps<{ recordClass: string; primaryKey: string }>
     ) => <RecordController {...props.match.params} />,

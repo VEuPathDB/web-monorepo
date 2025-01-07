@@ -83,7 +83,6 @@ class RecordMainCategorySection extends React.PureComponent {
         let Header = 'h' + Math.min(depth + 2, 6);
         let headerContent = (
           <span>
-            <span className="wdk-RecordSectionEnumeration">{enumeration}</span>{' '}
             {categoryName}
             <a
               className="wdk-RecordSectionLink"
