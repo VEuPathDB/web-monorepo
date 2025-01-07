@@ -21,7 +21,7 @@ import {
 
 const sharedCheckboxTreeContainerStyleSpec: React.CSSProperties = {
   position: 'relative',
-  maxHeight: 'calc(100vh - 115px)',
+  maxHeight: 'calc(100vh - 150px)',
   overflow: 'hidden',
   display: 'flex',
   flexDirection: 'column',

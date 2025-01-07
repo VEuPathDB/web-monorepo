@@ -66,10 +66,21 @@
   background: white;
 
   .wdk-RecordNavigationSection {
-    font-size: 1.3em;
+    font-size: 1.45em;
     padding-top: 0.5em;
     ul {
       padding-left: 0.5em !important;
+    }
+
+    .wdk-RecordNavigationSectionHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      h1 {
+        font-size: 1.3em;
+        font-weight: 400;
+        padding: 0;
+      }
     }
   }
 }
@@ -83,7 +94,7 @@
   right: -50px;
   background: white;
   z-index: 1;
-  font-size: 1.5em;
+  font-size: 1.3em;
   transform: rotate(-90deg) translateY(76px) translateX(-62px);
   border: 1px solid;
   padding: 4px 8px;
@@ -221,10 +232,10 @@ h2.wdk-RecordNavigationSectionHeader {
   }
 }
 
-.wdk-RecordSectionChildren {
+.wdk-RecordSectionChildren,
+.wdk-RecordSubsectionContent {
   display: flex;
   flex-direction: column;
-  margin-block-start: 0.5em;
 
   > * {
     order: 0;
@@ -274,9 +285,6 @@ h2.wdk-RecordNavigationSectionHeader {
 .wdk-RecordSubsectionContent {
   margin-left: 1em;
   margin-top: 0.5em;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5em;
 }
 
 .wdk-RecordSectionHeaderTopLink {
@@ -294,25 +302,14 @@ h2.wdk-RecordNavigationSectionHeader {
   display: inline-block;
 }
 
-.wdk-RecordSectionChildren {
+.wdk-RecordSectionChildren,
+.wdk-RecordSubsectionContent {
   .wdk-RecordAttributeInline {
     display: flex;
     align-items: center;
     gap: 1em;
     position: relative;
-    background: #f3f3f3;
     padding: 0.5em 0.75em;
-    border: 1px solid #e0e0e0;
-    border-top-width: 0;
-    border-bottom-width: 0;
-  }
-
-  > *:has(.wdk-RecordAttributeInline):first-child .wdk-RecordAttributeInline {
-    border-top-width: 1px;
-  }
-
-  > *:has(.wdk-RecordAttributeInline):last-child .wdk-RecordAttributeInline {
-    border-bottom-width: 1px;
   }
 }
 

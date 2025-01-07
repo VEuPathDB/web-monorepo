@@ -85,9 +85,12 @@ class RecordNavigationSection extends React.PureComponent {
 
     return (
       <div className="wdk-RecordNavigationSection">
+        <div className="wdk-RecordNavigationSectionHeader">
+          <h1>{heading}</h1>
+          {visibilityToggle}
+        </div>
         <CategoriesCheckboxTree
           disableHelp
-          additionalFilters={[visibilityToggle]}
           visibilityFilter={visibilityFilter}
           searchBoxPlaceholder="Search section names..."
           tree={categoryTree}
