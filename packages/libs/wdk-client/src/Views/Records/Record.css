@@ -224,7 +224,6 @@ h2.wdk-RecordNavigationSectionHeader {
 .wdk-RecordSectionChildren {
   display: flex;
   flex-direction: column;
-  gap: 0.5em;
   margin-block-start: 0.5em;
 
   > * {
@@ -233,6 +232,7 @@ h2.wdk-RecordNavigationSectionHeader {
 
   > .wdk-CollapsibleSection {
     order: 1;
+    margin-block-start: 0.5em;
   }
 }
 
@@ -294,14 +294,26 @@ h2.wdk-RecordNavigationSectionHeader {
   display: inline-block;
 }
 
-.wdk-RecordAttributeInline {
-  display: flex;
-  align-items: center;
-  gap: 1em;
-  position: relative;
-  background: #f3f3f3;
-  padding: 0.5em 0.75em;
-  border: 1px solid #e0e0e0;
+.wdk-RecordSectionChildren {
+  .wdk-RecordAttributeInline {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    position: relative;
+    background: #f3f3f3;
+    padding: 0.5em 0.75em;
+    border: 1px solid #e0e0e0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+  }
+
+  > *:has(.wdk-RecordAttributeInline):first-child .wdk-RecordAttributeInline {
+    border-top-width: 1px;
+  }
+
+  > *:has(.wdk-RecordAttributeInline):last-child .wdk-RecordAttributeInline {
+    border-bottom-width: 1px;
+  }
 }
 
 .wdk-RecordAttributeName {
