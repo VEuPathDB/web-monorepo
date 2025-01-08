@@ -188,11 +188,8 @@ td.wdk-DataTableCell__thumbnail {
   gap: 4em;
 }
 
-/* gene page overview */
-@media all and (min-width: 1000px) {
-  .eupathdb-RecordOverviewLeft {
-    margin-right: 6em;
-  }
+.eupathdb-RecordOverviewLeft {
+  margin-right: 8vw;
 }
 
 .eupathdb-RecordOverviewLeft h1,
