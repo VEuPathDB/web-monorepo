@@ -113,7 +113,7 @@ class RecordNavigationSection extends React.PureComponent {
           styleOverrides={{
             treeSection: {
               ul: {
-                padding: '0 0 0 1.5em',
+                padding: '0 0 0 1em',
               },
             },
             treeNode: {

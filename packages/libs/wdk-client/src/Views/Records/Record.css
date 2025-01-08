@@ -68,9 +68,6 @@
   .wdk-RecordNavigationSection {
     font-size: 1.45em;
     padding-top: 0.5em;
-    ul {
-      padding-left: 0.5em !important;
-    }
 
     .wdk-RecordNavigationSectionHeader {
       display: flex;
