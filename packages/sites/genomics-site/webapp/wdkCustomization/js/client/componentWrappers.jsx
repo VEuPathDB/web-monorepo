@@ -249,7 +249,6 @@ export function RecordTableDescription(DefaultComponent) {
           downloadRecordTable(record, table.name);
         };
 
-        // FIXME Revise this since we now lazy load tables...
         let showDownload =
           record.tables[table.name] &&
           record.tables[table.name].length > 0 &&
