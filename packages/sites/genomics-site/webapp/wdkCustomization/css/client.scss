@@ -62,32 +62,6 @@
   display: none;
 }
 
-.eupathdb-RecordOverview {
-  margin-bottom: 2rem;
-}
-
-.eupathdb-RecordOverviewTitle,
-.eupathdb-GeneOverviewSubtitle {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 100%;
-  padding: 0.5em 0 0;
-  font-size: 2em;
-}
-
-.eupathdb-RecordOverviewTitle {
-  /* position: sticky; */
-  top: 100px; /* TODO Use a CSS custon property to set offset */
-  z-index: 2;
-  background: white;
-  width: auto;
-  margin-left: -1.25rem;
-  margin-right: -1rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
 .eupathdb-GeneOverviewSubtitle {
   padding: 0 !important; /* i give up */
   font-size: 1rem;
@@ -103,84 +77,10 @@
   background-color: #e6e6e6;
 }
 
-.eupathdb-RecordOverviewId,
-.eupathdb-RecordOverviewDescription {
-  display: inline;
-}
-
-.eupathdb-RecordOverviewId {
-  font-size: 1.3em;
-}
-
-.eupathdb-GeneOverviewSubtitle .eupathdb-RecordOverviewId {
-  visibility: hidden;
-  line-height: 0;
-  display: inline-block;
-  height: 0;
-  padding: 0;
-  font-size: 1.95em;
-}
-
-.eupathdb-RecordOverviewDescription {
-  font-weight: 300;
-  font-size: 1.1em;
-  margin-left: 0.5em;
-}
-
 .eupathdb-GeneOverviewSubtitle .eupathdb-RecordOverviewDescription {
   font-size: 1rem;
   font-style: italic;
   vertical-align: text-top;
-}
-
-.eupathdb-RecordOverviewPanels {
-  margin-top: 2em;
-  display: flex;
-  flex-wrap: wrap;
-}
-
-/* gene page overview */
-@media all and (min-width: 1000px) {
-  .eupathdb-RecordOverviewLeft {
-    margin-right: 60px;
-    max-width: 450px;
-    margin-right: calc(calc(50vw - 450px) / 2);
-  }
-  .eupathdb-RecordOverviewRight {
-    flex: 1;
-  }
-}
-
-.eupathdb-RecordOverviewLeft h1,
-.eupathdb-RecordOverviewRight .GeneOverviewProduct {
-  padding: 10px 0;
-}
-
-.eupathdb-RecordOverviewLeft table {
-  font-size: 1.4em;
-  border-collapse: collapse;
-  tr:has(td:empty) {
-    display: none;
-  }
-  th,
-  td {
-    border: none;
-    vertical-align: baseline;
-    padding: 0.1em;
-  }
-  td {
-    font-weight: 300;
-  }
-  th {
-    padding-right: 1em;
-    font-weight: 400;
-  }
-  tr.space-above {
-    th,
-    td {
-      padding-top: 1em;
-    }
-  }
 }
 
 /* Hide sections based on gene type */
@@ -218,13 +118,14 @@
   display: initial;
 }
 
-/*Hide Apollo link based on attribute */
-.eupathdb-RecordOverview tr:has([data-show-apollo]) {
-  display: none;
-}
-
-.eupathdb-RecordOverview[data-apollo='1'] tr:has([data-show-apollo='1']) {
-  display: table-row;
+.eupathdb-RecordOverview {
+  [data-show-apollo] {
+    display: contents;
+  }
+  &[data-apollo='0'] [data-show-apollo],
+  [data-show-apollo='0'] {
+    display: none;
+  }
 }
 
 .GeneOverviewIntent {
@@ -711,7 +612,7 @@ div#userOptions input[value='genomic']:checked ~ span.genomic {
   top: 1.2em;
 }
 
-.ebrc-Main:has(.wdk-RecordContainer) + footer {
+.ebrc-Main:has(.wdk-RecordContainer__withSidebar) + footer {
   margin-left: calc(1.25rem + 350px);
   border-left: 1px solid #c0c0c0;
 }

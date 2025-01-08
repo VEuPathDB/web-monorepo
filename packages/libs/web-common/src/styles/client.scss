@@ -131,7 +131,34 @@ td.wdk-DataTableCell__thumbnail {
 }
 
 .eupathdb-RecordOverview {
-  display: contents;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #aaa;
+}
+
+.eupathdb-RecordOverviewTitle {
+  display: flex;
+  align-items: baseline;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  padding: 0.5em 0 1em 0;
+  font-size: 2em;
+}
+
+.eupathdb-RecordOverviewId,
+.eupathdb-RecordOverviewDescription {
+  padding: 0;
+}
+
+.eupathdb-RecordOverviewId {
+  font-size: 1.3em;
+}
+
+.eupathdb-RecordOverviewDescription {
+  font-weight: 300;
+  font-size: 1.1em;
+  margin-left: 0.5em;
 }
 
 .eupathdb-RecordOverviewItem {
@@ -153,6 +180,49 @@ td.wdk-DataTableCell__thumbnail {
 
 .eupathdb-RecordOverviewItem:empty {
   display: none;
+}
+
+.eupathdb-RecordOverviewPanels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4em;
+}
+
+/* gene page overview */
+@media all and (min-width: 1000px) {
+  .eupathdb-RecordOverviewLeft {
+    margin-right: 6em;
+  }
+}
+
+.eupathdb-RecordOverviewLeft h1,
+.eupathdb-RecordOverviewRight .GeneOverviewProduct {
+  padding: 10px 0;
+}
+
+.eupathdb-RecordOverview {
+  dl {
+    font-size: 1.4em;
+    row-gap: 0.2em;
+    margin: 0;
+  }
+  dt {
+    justify-self: start;
+    font-weight: 400;
+  }
+  dd {
+    font-weight: 300;
+  }
+
+  dt:has(+ dd:empty),
+  dd:empty {
+    display: none;
+  }
+
+  dt.space-above,
+  dt.space-above + dd {
+    margin-top: 1em;
+  }
 }
 
 .eupathdb-ReporterFormSubmit {

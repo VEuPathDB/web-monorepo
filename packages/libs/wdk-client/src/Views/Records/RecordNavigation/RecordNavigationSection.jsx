@@ -8,7 +8,7 @@ import {
   getTargetType,
   isIndividual,
 } from '../../../Utils/CategoryUtils';
-import { wrappable } from '../../../Utils/ComponentUtils';
+import { safeHtml, wrappable } from '../../../Utils/ComponentUtils';
 import { Seq } from '../../../Utils/IterableUtils';
 import { preorderSeq, pruneDescendantNodes } from '../../../Utils/TreeUtils';
 import RecordNavigationItem from '../../../Views/Records/RecordNavigation/RecordNavigationItem';
@@ -86,7 +86,7 @@ class RecordNavigationSection extends React.PureComponent {
     return (
       <div className="wdk-RecordNavigationSection">
         <div className="wdk-RecordNavigationSectionHeader">
-          <h1>{heading}</h1>
+          {safeHtml(heading, null, 'h1')}
           {visibilityToggle}
         </div>
         <CategoriesCheckboxTree
@@ -118,7 +118,6 @@ class RecordNavigationSection extends React.PureComponent {
             },
             treeNode: {
               nodeWrapper: {
-                padding: '0.25em 0',
                 alignItems: 'center',
               },
             },
