@@ -276,20 +276,22 @@ export function RecordTableDescription(DefaultComponent) {
 
         const links = (
           <div style={{ marginBottom: '1em' }}>
-            <span
-              style={{
-                fontSize: '.8em',
-                fontWeight: 'normal',
-              }}
-            >
-              <button
-                type="button"
-                className="wdk-Link"
-                onClick={callDownloadTable}
+            {showDownload && (
+              <span
+                style={{
+                  fontSize: '.8em',
+                  fontWeight: 'normal',
+                }}
               >
-                <i className="fa fa-download" /> Download
-              </button>
-            </span>
+                <button
+                  type="button"
+                  className="wdk-Link"
+                  onClick={callDownloadTable}
+                >
+                  <i className="fa fa-download" /> Download
+                </button>
+              </span>
+            )}
             {hasTaxonId == 0 && showDatasetsLink && (
               <Link
                 style={{
