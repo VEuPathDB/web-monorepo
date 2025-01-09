@@ -159,9 +159,13 @@
   }
 }
 
-// Fix for question page sticky header
-body.vpdb-Body .wdk-QuestionFormQuestionHeader {
-  top: 8.5em;
+:root {
+  --page-offset-top: 103px;
+}
+
+html {
+  overflow-y: auto;
+  scroll-padding-top: var(--page-offset-top);
 }
 
 // Fix for Preferred Organisms config page header
@@ -173,19 +177,4 @@ body.vpdb-Body .PreferredOrganismsConfig {
   &--ToggleHelp::after {
     right: 3.48em;
   }
-}
-
-// Various offsets for header on record pages
-body.vpdb-Body .wdk-RecordAttributeSectionItem:before,
-body.vpdb-Body .wdk-RecordTableContainer:before,
-body.vpdb-Body .wdk-RecordSubsection:before,
-body.vpdb-Body .wdk-RecordSection:before {
-  height: 103px;
-  margin-top: -103px;
-}
-
-// Offset for header on static content pages {
-body.vpdb-Body .ExternalContentController a[name]::before {
-  height: 139px;
-  margin-top: -139px;
 }

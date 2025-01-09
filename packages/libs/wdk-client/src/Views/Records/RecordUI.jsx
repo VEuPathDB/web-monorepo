@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import { debounce, get } from 'lodash';
+import { debounce, get, memoize } from 'lodash';
 import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
 import { getId } from '../../Utils/CategoryUtils';
@@ -27,6 +27,9 @@ class RecordUI extends Component {
       100
     );
 
+    // We are assuming this value will not change
+    this.getHeaderOffset = memoize(this.getHeaderOffset);
+
     this.recordMainSectionNode = null;
     this.activeSectionTop = null;
 
@@ -41,6 +44,7 @@ class RecordUI extends Component {
       this.recordMainSectionNode,
       document.getElementById(location.hash.slice(1))
     );
+    this.monitorActiveSection();
   }
 
   componentDidUpdate(prevProps) {
@@ -69,14 +73,21 @@ class RecordUI extends Component {
     });
   }
 
+  getHeaderOffset() {
+    const headerOffsetString = getComputedStyle(document.body).getPropertyValue(
+      '--page-offset-top'
+    );
+    return parseInt(headerOffsetString) || 0;
+  }
+
   _updateActiveSection() {
-    const headerOffsetPx = 100;
+    let headerOffsetPx = this.getHeaderOffset();
     let activeElement = postorderSeq(this.props.categoryTree)
       .map((node) => document.getElementById(getId(node)))
       .filter((el) => el != null)
       .findLast((el) => {
         let rect = el.getBoundingClientRect();
-        return rect.top < headerOffsetPx;
+        return Math.floor(rect.top) <= headerOffsetPx;
       });
     let activeSection = get(activeElement, 'id');
     console.debug(Date.now(), 'updated activeSection', activeSection);

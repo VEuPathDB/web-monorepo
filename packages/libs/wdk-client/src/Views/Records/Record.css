@@ -58,7 +58,7 @@
 .wdk-RecordSidebar {
   position: sticky;
   left: 0;
-  top: 80px;
+  top: calc(var(--page-offset-top, 0px) - 2.5em);
   align-self: flex-start;
   height: auto;
   width: 340px;
