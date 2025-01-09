@@ -1,5 +1,10 @@
 @import './collapsed-header-mixins.scss';
 
+html {
+  overflow: auto;
+  scroll-padding-top: 107px;
+}
+
 .vpdb-Header {
   grid-area: header;
 

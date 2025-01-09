@@ -29,6 +29,10 @@ class RecordUI extends Component {
 
     this.recordMainSectionNode = null;
     this.activeSectionTop = null;
+
+    this.state = {
+      activeSectionId: null,
+    };
   }
 
   componentDidMount() {
@@ -66,13 +70,13 @@ class RecordUI extends Component {
   }
 
   _updateActiveSection() {
+    const headerOffsetPx = 100;
     let activeElement = postorderSeq(this.props.categoryTree)
       .map((node) => document.getElementById(getId(node)))
       .filter((el) => el != null)
-      .find((el) => {
+      .findLast((el) => {
         let rect = el.getBoundingClientRect();
-        const bottomOffset = this.props.bottomOffset ?? 50;
-        return rect.top <= 50 && rect.bottom > bottomOffset;
+        return rect.top < headerOffsetPx;
       });
     let activeSection = get(activeElement, 'id');
     console.debug(Date.now(), 'updated activeSection', activeSection);
@@ -81,12 +85,11 @@ class RecordUI extends Component {
       location.search +
       (activeSection ? '#' + activeSection : '');
     history.replaceState(null, null, newUrl);
-    this.activeSectionTop =
-      activeElement && activeElement.getBoundingClientRect().top;
+    this.setState({ activeSectionId: activeSection });
   }
 
   _scrollToActiveSection() {
-    this.unmonitorActiveSection();
+    // this.unmonitorActiveSection();
 
     const targetId = location.hash.slice(1);
     const targetNode = document.getElementById(targetId);
@@ -105,7 +108,7 @@ class RecordUI extends Component {
       const rect = targetNode.getBoundingClientRect();
       if (rect.top !== this.activeSectionTop) targetNode.scrollIntoView(true);
     }
-    this.monitorActiveSection();
+    // this.monitorActiveSection();
   }
 
   render() {
@@ -160,7 +163,7 @@ class RecordUI extends Component {
                 recordClass={this.props.recordClass}
                 categoryTree={this.props.categoryTree}
                 collapsedSections={this.props.collapsedSections}
-                activeSection={this.props.activeSection}
+                activeSection={this.state.activeSectionId}
                 navigationQuery={this.props.navigationQuery}
                 navigationExpanded={this.props.navigationExpanded}
                 navigationCategoriesExpanded={
@@ -180,26 +183,26 @@ class RecordUI extends Component {
               visibilityToggle
             )}
           </div>
-        </div>
-        <div className="wdk-RecordMain">
-          {/* <div className="wdk-RecordMainSectionFieldToggles">
-            <button type="button" title="Expand all content" className="wdk-Link"
-              onClick={this.props.updateAllFieldVisibility.bind(null, true)}>Expand All</button>
-            {' | '}
-            <button type="button" title="Collapse all content" className="wdk-Link"
-              onClick={this.props.updateAllFieldVisibility.bind(null, false)}>Collapse All</button>
-          </div> */}
-          <RecordMainSection
-            ref={(c) => (this.recordMainSectionNode = findDOMNode(c))}
-            record={this.props.record}
-            recordClass={this.props.recordClass}
-            categories={this.props.categoryTree.children}
-            collapsedSections={this.props.collapsedSections}
-            onSectionToggle={this.props.updateSectionVisibility}
-            requestPartialRecord={this.props.requestPartialRecord}
-            tableStates={this.props.tableStates}
-            updateTableState={this.props.updateTableState}
-          />
+          <div className="wdk-RecordMain">
+            {/* <div className="wdk-RecordMainSectionFieldToggles">
+              <button type="button" title="Expand all content" className="wdk-Link"
+                onClick={this.props.updateAllFieldVisibility.bind(null, true)}>Expand All</button>
+              {' | '}
+              <button type="button" title="Collapse all content" className="wdk-Link"
+                onClick={this.props.updateAllFieldVisibility.bind(null, false)}>Collapse All</button>
+            </div> */}
+            <RecordMainSection
+              ref={(c) => (this.recordMainSectionNode = findDOMNode(c))}
+              record={this.props.record}
+              recordClass={this.props.recordClass}
+              categories={this.props.categoryTree.children}
+              collapsedSections={this.props.collapsedSections}
+              onSectionToggle={this.props.updateSectionVisibility}
+              requestPartialRecord={this.props.requestPartialRecord}
+              tableStates={this.props.tableStates}
+              updateTableState={this.props.updateTableState}
+            />
+          </div>
         </div>
       </div>
     );

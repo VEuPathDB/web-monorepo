@@ -5,18 +5,18 @@ import {
   getDisplayName,
   isIndividual,
 } from '../../../Utils/CategoryUtils';
+import { useLocation } from 'react-router';
 
 let cx = makeClassNameHelper('wdk-RecordNavigationItem');
 
 let RecordNavigationItem = ({
   node,
   path,
-  activeCategory,
+  activeSection,
   checked,
   onSectionToggle,
 }) => {
   let id = getId(node);
-  let activeId = activeCategory && getId(activeCategory);
   let displayName = getDisplayName(node);
 
   let enumeration = isIndividual(node)
@@ -27,7 +27,7 @@ let RecordNavigationItem = ({
 
   return (
     <div
-      className={cx('', activeId === id ? 'active' : 'inactive')}
+      className={cx('', activeSection === id ? 'active' : 'inactive')}
       style={{
         display: 'flex',
         position: 'relative',

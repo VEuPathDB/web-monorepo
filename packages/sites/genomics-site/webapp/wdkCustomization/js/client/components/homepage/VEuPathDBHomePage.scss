@@ -189,8 +189,3 @@ body.vpdb-Body .ExternalContentController a[name]::before {
   height: 139px;
   margin-top: -139px;
 }
-
-// Fix for RecordSidebar sticky container
-body.vpdb-Body .wdk-RecordSidebarContainer {
-  top: 6em;
-}
