@@ -1,11 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { makeClassNameHelper, wrappable } from '../../../Utils/ComponentUtils';
-import {
-  getId,
-  getDisplayName,
-  isIndividual,
-} from '../../../Utils/CategoryUtils';
-import { useLocation } from 'react-router';
+import { getId, getDisplayName } from '../../../Utils/CategoryUtils';
+
+import { preorderSeq } from '../../../Utils/TreeUtils';
 
 let cx = makeClassNameHelper('wdk-RecordNavigationItem');
 
@@ -19,15 +16,16 @@ let RecordNavigationItem = ({
   let id = getId(node);
   let displayName = getDisplayName(node);
 
-  let enumeration = isIndividual(node)
-    ? null
-    : path.map((n) => n + 1).join('.');
-
   let offerCheckbox = path.length === 1;
+
+  let isActive = useMemo(
+    () => preorderSeq(node).some((node) => getId(node) === activeSection),
+    [node, activeSection]
+  );
 
   return (
     <div
-      className={cx('', activeSection === id ? 'active' : 'inactive')}
+      className={cx('', isActive ? 'active' : 'inactive')}
       style={{
         display: 'flex',
         position: 'relative',

@@ -1,11 +1,11 @@
 import classnames from 'classnames';
-import { debounce, get, memoize } from 'lodash';
+import { get, memoize, throttle } from 'lodash';
 import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
 import { getId } from '../../Utils/CategoryUtils';
 import { wrappable } from '../../Utils/ComponentUtils';
 import { addScrollAnchor, findAncestorNode } from '../../Utils/DomUtils';
-import { postorderSeq } from '../../Utils/TreeUtils';
+import { postorderSeq, preorderSeq } from '../../Utils/TreeUtils';
 import '../../Views/Records/Record.css';
 import RecordHeading from '../../Views/Records/RecordHeading';
 import RecordMainSection from '../../Views/Records/RecordMain/RecordMainSection';
@@ -18,12 +18,8 @@ class RecordUI extends Component {
   constructor(props) {
     super(props);
     // bind event handlers
-    this._updateActiveSection = debounce(
+    this._updateActiveSection = throttle(
       this._updateActiveSection.bind(this),
-      100
-    );
-    this.monitorActiveSection = debounce(
-      this.monitorActiveSection.bind(this),
       100
     );
 
@@ -50,6 +46,7 @@ class RecordUI extends Component {
   componentDidUpdate(prevProps) {
     let recordChanged = prevProps.record !== this.props.record;
     if (recordChanged) {
+      this._updateActiveSection.flush();
       this._scrollToActiveSection();
     }
   }
@@ -58,7 +55,6 @@ class RecordUI extends Component {
     this.unmonitorActiveSection();
     this.removeScrollAnchor();
     this._updateActiveSection.cancel();
-    this.monitorActiveSection.cancel();
   }
 
   monitorActiveSection() {
@@ -82,7 +78,7 @@ class RecordUI extends Component {
 
   _updateActiveSection() {
     let headerOffsetPx = this.getHeaderOffset();
-    let activeElement = postorderSeq(this.props.categoryTree)
+    let activeElement = preorderSeq(this.props.categoryTree)
       .map((node) => document.getElementById(getId(node)))
       .filter((el) => el != null)
       .findLast((el) => {
@@ -100,8 +96,6 @@ class RecordUI extends Component {
   }
 
   _scrollToActiveSection() {
-    // this.unmonitorActiveSection();
-
     const targetId = location.hash.slice(1);
     const targetNode = document.getElementById(targetId);
 
@@ -119,7 +113,6 @@ class RecordUI extends Component {
       const rect = targetNode.getBoundingClientRect();
       if (rect.top !== this.activeSectionTop) targetNode.scrollIntoView(true);
     }
-    // this.monitorActiveSection();
   }
 
   render() {

@@ -48,6 +48,7 @@
   /* make prevent contents panel from being clipped. */
   min-height: 65vh;
   margin-left: 2em;
+  flex-basis: 100%;
 }
 
 .wdk-RecordSidebarContainer {
@@ -128,7 +129,7 @@ h2.wdk-RecordNavigationSectionHeader {
 }
 
 .wdk-RecordContainer__withSidebar .wdk-RecordSidebar {
-  flex-basis: 650px;
+  flex-basis: 450px;
 }
 
 .wdk-RecordContainer__withSidebar .wdk-RecordSidebarToggle {
