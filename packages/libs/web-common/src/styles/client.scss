@@ -113,18 +113,6 @@ td.wdk-DataTableCell__thumbnail {
   display: none;
 }
 
-/* Offset for menu */
-.wdk-RecordAttributeSectionItem:before,
-.wdk-RecordTableContainer:before,
-.wdk-RecordSubsection:before,
-.wdk-RecordSection:before,
-.ExternalContentController a[name]::before {
-  content: '';
-  display: block;
-  height: 68px;
-  margin-top: -68px;
-}
-
 .wdk-RecordSectionHeader,
 .wdk-RecordSubsectionHeader {
   color: black;
@@ -171,11 +159,6 @@ td.wdk-DataTableCell__thumbnail {
   font-size: 1.4em;
   font-weight: 300;
   max-width: 95%;
-}
-
-.eupathdb-RecordOverviewItem[data-label]:before {
-  content: attr(data-label) ': ';
-  font-weight: bold;
 }
 
 .eupathdb-RecordOverviewItem:empty {

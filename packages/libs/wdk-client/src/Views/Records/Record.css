@@ -240,12 +240,7 @@ h2.wdk-RecordNavigationSectionHeader {
   display: flex;
   flex-direction: column;
 
-  > * {
-    order: 0;
-  }
-
   > .wdk-CollapsibleSection {
-    order: 1;
     margin-block-start: 0.5em;
   }
 }

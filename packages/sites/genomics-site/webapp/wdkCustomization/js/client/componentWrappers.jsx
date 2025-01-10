@@ -147,15 +147,8 @@ export function RecordController(WdkRecordController) {
   return enhance(ApiRecordController);
 }
 
-function EnhancedRecordUIContainer(props) {
-  return cloneElement(props.children, { bottomOffset: 100 });
-}
-
 export const RecordHeading = makeDynamicWrapper('RecordHeading');
-export const RecordUI = makeDynamicWrapper(
-  'RecordUI',
-  EnhancedRecordUIContainer
-);
+export const RecordUI = makeDynamicWrapper('RecordUI');
 export const RecordMainSection = makeDynamicWrapper('RecordMainSection');
 const DynamicRecordTableDescription = makeDynamicWrapper(
   'RecordTableDescription'
@@ -345,10 +338,7 @@ export function RecordTableDescription(DefaultComponent) {
   );
 }
 
-export const RecordTable = makeDynamicWrapper(
-  'RecordTable'
-  // RecordTableContainer
-);
+export const RecordTable = makeDynamicWrapper('RecordTable');
 
 function getGbrowseContext(attributeName) {
   return Gbrowse.contexts.find(
