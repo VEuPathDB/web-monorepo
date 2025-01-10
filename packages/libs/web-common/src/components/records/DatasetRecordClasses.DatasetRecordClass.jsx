@@ -9,6 +9,7 @@ import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-
 import { isUserApprovedForAction } from '@veupathdb/study-data-access/lib/study-access/permission';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { BlockRecordAttributeSection } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
 
 // Use Element.innerText to strip XML
 function stripXML(str) {
@@ -254,6 +255,13 @@ const ConnectedReferences = connect(
   }),
   null
 )(References);
+
+export function RecordAttributeSection({ DefaultComponent, ...props }) {
+  if (props.attribute.name === 'description') {
+    return <BlockRecordAttributeSection {...props} />;
+  }
+  return <DefaultComponent {...props} />;
+}
 
 export function RecordTable(props) {
   if (props.table.name === 'References') {
