@@ -122,6 +122,7 @@ let CategoriesCheckboxTree: FunctionComponent<Props> = (props) => {
       ? {
           ...sharedCheckboxTreeContainerStyleSpec,
           minWidth: '18.75em',
+          maxHeight: 'none',
         }
       : {
           ...sharedCheckboxTreeContainerStyleSpec,
