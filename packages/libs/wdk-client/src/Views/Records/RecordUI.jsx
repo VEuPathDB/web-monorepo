@@ -1,15 +1,16 @@
 import classnames from 'classnames';
-import { get, memoize, throttle } from 'lodash';
+import { debounce, get, memoize } from 'lodash';
 import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
 import { getId } from '../../Utils/CategoryUtils';
 import { wrappable } from '../../Utils/ComponentUtils';
 import { addScrollAnchor, findAncestorNode } from '../../Utils/DomUtils';
 import { postorderSeq, preorderSeq } from '../../Utils/TreeUtils';
-import '../../Views/Records/Record.css';
 import RecordHeading from '../../Views/Records/RecordHeading';
 import RecordMainSection from '../../Views/Records/RecordMain/RecordMainSection';
 import RecordNavigationSection from '../../Views/Records/RecordNavigation/RecordNavigationSection';
+
+import '../../Views/Records/Record.css';
 
 /**
  * Renders the main UI for the WDK Record page.
@@ -17,11 +18,10 @@ import RecordNavigationSection from '../../Views/Records/RecordNavigation/Record
 class RecordUI extends Component {
   constructor(props) {
     super(props);
-    // bind event handlers
-    this._updateActiveSection = throttle(
-      this._updateActiveSection.bind(this),
-      100
-    );
+
+    this._updateActiveSection = this._updateActiveSection.bind(this);
+
+    this._updateUrl = debounce(this._updateUrl.bind(this), 100);
 
     // We are assuming this value will not change
     this.getHeaderOffset = memoize(this.getHeaderOffset);
@@ -46,7 +46,6 @@ class RecordUI extends Component {
   componentDidUpdate(prevProps) {
     let recordChanged = prevProps.record !== this.props.record;
     if (recordChanged) {
-      this._updateActiveSection.flush();
       this._scrollToActiveSection();
     }
   }
@@ -54,7 +53,6 @@ class RecordUI extends Component {
   componentWillUnmount() {
     this.unmonitorActiveSection();
     this.removeScrollAnchor();
-    this._updateActiveSection.cancel();
   }
 
   monitorActiveSection() {
@@ -86,13 +84,23 @@ class RecordUI extends Component {
         return Math.floor(rect.top) <= headerOffsetPx;
       });
     let activeSection = get(activeElement, 'id');
-    console.debug(Date.now(), 'updated activeSection', activeSection);
-    let newUrl =
-      location.pathname +
-      location.search +
-      (activeSection ? '#' + activeSection : '');
-    history.replaceState(null, null, newUrl);
-    this.setState({ activeSectionId: activeSection });
+
+    if (activeSection !== this.state.activeSectionId) {
+      this.setState({ activeSectionId: activeSection }, () => {
+        this._updateUrl(this.state.activeSectionId);
+      });
+    }
+  }
+
+  _updateUrl(activeSection) {
+    let hash = activeSection ? `#${activeSection}` : location;
+    let newUrl = new URL(hash, location);
+    try {
+      history.replaceState(null, null, newUrl);
+    } catch (error) {
+      console.error('Could not replace history state', newUrl);
+      console.error(error);
+    }
   }
 
   _scrollToActiveSection() {
@@ -188,13 +196,6 @@ class RecordUI extends Component {
             )}
           </div>
           <div className="wdk-RecordMain">
-            {/* <div className="wdk-RecordMainSectionFieldToggles">
-              <button type="button" title="Expand all content" className="wdk-Link"
-                onClick={this.props.updateAllFieldVisibility.bind(null, true)}>Expand All</button>
-              {' | '}
-              <button type="button" title="Collapse all content" className="wdk-Link"
-                onClick={this.props.updateAllFieldVisibility.bind(null, false)}>Collapse All</button>
-            </div> */}
             <RecordMainSection
               ref={(c) => (this.recordMainSectionNode = findDOMNode(c))}
               record={this.props.record}
