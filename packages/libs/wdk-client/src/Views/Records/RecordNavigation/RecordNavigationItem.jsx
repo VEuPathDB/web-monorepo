@@ -6,17 +6,9 @@ import { preorderSeq } from '../../../Utils/TreeUtils';
 
 let cx = makeClassNameHelper('wdk-RecordNavigationItem');
 
-let RecordNavigationItem = ({
-  node,
-  path,
-  activeSection,
-  checked,
-  onSectionToggle,
-}) => {
+let RecordNavigationItem = ({ node, activeSection, onSectionToggle }) => {
   let id = getId(node);
   let displayName = getDisplayName(node);
-
-  let offerCheckbox = path.length === 1;
 
   let isActive = useMemo(
     () => preorderSeq(node).some((node) => getId(node) === activeSection),
@@ -24,25 +16,18 @@ let RecordNavigationItem = ({
   );
 
   return (
-    <div
+    <a
       className={cx('', isActive ? 'active' : 'inactive')}
-      style={{
-        display: 'flex',
-        position: 'relative',
+      href={'#' + id}
+      onClick={(event) => {
+        event.stopPropagation();
+        if (node.wdkReference != null) {
+          onSectionToggle(id, true);
+        }
       }}
     >
-      <a
-        href={'#' + id}
-        className="wdk-Record-sidebar-title"
-        onClick={(event) => {
-          if (!offerCheckbox || checked) onSectionToggle(id, true);
-          event.stopPropagation();
-        }}
-      >
-        {' '}
-        {displayName}{' '}
-      </a>
-    </div>
+      {displayName}
+    </a>
   );
 };
 
