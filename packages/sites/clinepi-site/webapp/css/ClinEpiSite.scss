@@ -626,6 +626,10 @@ button.ebrc-QuestionWizardParamGroupButton__active:hover {
   z-index: 2;
 }
 
+:root {
+  --page-offset-top: 80px;
+}
+
 /* Hide action links on Dataset page for now */
 .wdk-RecordContainer__DatasetRecordClasses\.DatasetRecordClass
   .wdk-RecordActions {
@@ -666,24 +670,13 @@ div.wdk-CollapsibleSectionContent li {
   margin-top: 2em;
 }
 
-.eupathdb-RecordOverviewItem {
-  line-height: 150%;
-}
-
-.wdk-RecordMain div#Publications {
+.wdk-RecordMain div#Publications .wdk-CollapsibleSectionContent > * {
   line-height: 200%;
 }
 
-.wdk-RecordMain div#description {
+.wdk-RecordMain div#description .wdk-CollapsibleSectionContent > * {
   line-height: 200%;
   max-width: 80em;
-}
-
-.wdk-RecordAttributeName,
-.wdk-RecordAttributeSectionItemHeader,
-.wdk-RecordTableContainerHeader {
-  color: #3e3e3e;
-  font-size: 130%;
 }
 
 .wdk-RecordAttributeValue,

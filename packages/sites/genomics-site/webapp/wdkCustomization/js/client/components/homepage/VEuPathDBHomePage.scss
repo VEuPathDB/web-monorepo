@@ -163,11 +163,6 @@
   --page-offset-top: 103px;
 }
 
-html {
-  overflow-y: auto;
-  scroll-padding-top: var(--page-offset-top);
-}
-
 // Fix for Preferred Organisms config page header
 body.vpdb-Body .PreferredOrganismsConfig {
   h1 {

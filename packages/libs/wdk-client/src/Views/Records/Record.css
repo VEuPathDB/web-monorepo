@@ -191,7 +191,7 @@ h2.wdk-RecordNavigationSectionHeader {
   flex-direction: column;
 
   > .wdk-CollapsibleSection {
-    margin-block-start: 0.5em;
+    padding-block-start: 0.5em;
   }
 }
 
