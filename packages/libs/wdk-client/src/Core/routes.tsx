@@ -231,6 +231,7 @@ const routes: RouteEntry[] = [
         {...props.match.params}
       />
     ),
+    requiresLogin: false,
   },
 
   {
@@ -291,16 +292,19 @@ const routes: RouteEntry[] = [
   {
     path: '/401',
     component: PermissionDenied,
+    requiresLogin: false,
   },
 
   {
     path: '/404',
     component: NotFound,
+    requiresLogin: false,
   },
 
   {
     path: '/500',
     component: Error,
+    requiresLogin: false,
   },
 
   {
