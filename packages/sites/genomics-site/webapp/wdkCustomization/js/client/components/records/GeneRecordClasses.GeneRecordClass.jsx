@@ -1655,7 +1655,7 @@ const TranscriptionSummaryForm = connect(
               ...this.props.expressionGraphsTableState,
               selectedRow: expressionGraphIndex,
               expandedRows: (
-                this.props.expressionGraphsTableState.expandedRows ?? []
+                this.props.expressionGraphsTableState?.expandedRows ?? []
               ).concat([expressionGraphIndex]),
             });
           }
