@@ -564,7 +564,7 @@ function makeDatasetGraphChildRow(
           contXAxisMetadataTableName,
         ].filter((tableName) => tableName != null),
       });
-    }, []);
+    }, [requestFields]);
     return <DatasetGraph {...props} />;
   }
 }
@@ -1609,6 +1609,10 @@ const TranscriptionSummaryForm = connect(
     }
 
     _handleIframeLoad(loadEvent) {
+      // Open the ExpressionGraphs record section so that the
+      // table is available when the user clicks on annotations.
+      this.props.updateSectionVisibility('ExpressionGraphs', true);
+
       loadEvent.target.contentDocument?.body.addEventListener('click', (e) => {
         const { ExpressionGraphs } = this.props.record.tables;
 
@@ -1632,29 +1636,28 @@ const TranscriptionSummaryForm = connect(
           const expressionGraphTableElement =
             document.getElementById('ExpressionGraphs');
 
+          const expressionGraphTableRowElement =
+            expressionGraphTableElement?.querySelector(
+              `tr#row_id_${expressionGraphIndex}`
+            );
+
           // If the expression graph table is available...
           if (
             expressionGraphIndex !== -1 &&
-            expressionGraphTableElement != null
+            expressionGraphTableRowElement != null
           ) {
-            // Open the ExpressionGraphs record section
-            this.props.updateSectionVisibility('ExpressionGraphs', true);
+            // Add a history entry so users can use the back button to go back to *this* section
+            window.history.pushState(null, null, '#ExpressionGraphs');
 
-            // Scroll to the ExpressionGraphs record section
-            const position =
-              expressionGraphTableElement.getBoundingClientRect();
-            scrollTo(
-              position.top + window.scrollY,
-              // When the scroll is complete, clear the table's search term
-              // and "select" the expresion graph row
-              () => {
-                this.props.updateTableState('ExpressionGraphs', {
-                  ...this.props.expressionGraphsTableState,
-                  searchTerm: '',
-                  selectedRow: expressionGraphIndex,
-                });
-              }
-            );
+            expressionGraphTableRowElement.scrollIntoView();
+
+            this.props.updateTableState('ExpressionGraphs', {
+              ...this.props.expressionGraphsTableState,
+              selectedRow: expressionGraphIndex,
+              expandedRows: (
+                this.props.expressionGraphsTableState.expandedRows ?? []
+              ).concat([expressionGraphIndex]),
+            });
           }
         }
       });
