@@ -91,6 +91,11 @@ export type State = {
   favoritesError?: Error;
 };
 
+export const DEFAULT_TABLE_STATE: TableState = {
+  expandedRows: [0],
+  searchTerm: '',
+};
+
 /** Store for record page */
 export function reduce(state: State = {} as State, action: Action): State {
   switch (action.type) {
