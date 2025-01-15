@@ -45,6 +45,7 @@ import {
 import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
 import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { AlphaFoldRecordSection } from './AlphaFoldAttributeSection';
+import { DEFAULT_TABLE_STATE } from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
 
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
@@ -1552,7 +1553,8 @@ class OrthologsForm extends SortKeyTable {
 
 const TranscriptionSummaryForm = connect(
   ({ record }) => ({
-    expressionGraphsTableState: record.tableStates?.ExpressionGraphs,
+    expressionGraphsTableState:
+      record.tableStates?.ExpressionGraphs ?? DEFAULT_TABLE_STATE,
   }),
   {
     updateSectionVisibility: RecordActions.updateSectionVisibility,
