@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import { debounce, get, memoize } from 'lodash';
+import { debounce, get, isEqual, memoize } from 'lodash';
 import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
 import { getId } from '../../Utils/CategoryUtils';
@@ -35,7 +35,7 @@ class RecordUI extends Component {
   }
 
   componentDidMount() {
-    this._scrollToActiveSection();
+    this._scrollToActiveSection(true);
     this.removeScrollAnchor = addScrollAnchor(
       this.recordMainSectionNode,
       document.getElementById(location.hash.slice(1))
@@ -46,7 +46,9 @@ class RecordUI extends Component {
   componentDidUpdate(prevProps) {
     let recordChanged = prevProps.record !== this.props.record;
     if (recordChanged) {
-      this._scrollToActiveSection();
+      this._scrollToActiveSection(
+        !isEqual(this.props.record.id, prevProps.record.id)
+      );
     }
   }
 
@@ -85,6 +87,11 @@ class RecordUI extends Component {
       });
     let activeSection = get(activeElement, 'id');
 
+    // keep track of the activeElement's top value. This helps to determine if
+    // the page's scroll position needs to be updated, when the record data is
+    // updated.
+    this.activeSectionTop = activeElement?.getBoundingClientRect().top;
+
     if (activeSection !== this.state.activeSectionId) {
       this.setState({ activeSectionId: activeSection }, () => {
         this._updateUrl(this.state.activeSectionId);
@@ -103,7 +110,7 @@ class RecordUI extends Component {
     }
   }
 
-  _scrollToActiveSection() {
+  _scrollToActiveSection(isFirstLoadForRecordId) {
     const targetId = location.hash.slice(1);
     const targetNode = document.getElementById(targetId);
 
@@ -116,10 +123,20 @@ class RecordUI extends Component {
     );
 
     if (targetNode != null && sectionNode != null) {
-      this.props.updateSectionVisibility(sectionNode.id, true);
+      if (isFirstLoadForRecordId) {
+        // open the target section
+        this.props.updateSectionVisibility(sectionNode.id, true);
+      }
 
       const rect = targetNode.getBoundingClientRect();
-      if (rect.top !== this.activeSectionTop) targetNode.scrollIntoView(true);
+
+      if (isFirstLoadForRecordId) {
+        // always scroll the target into view on the first page load
+        targetNode.scrollIntoView(true);
+      } else if (rect.top !== this.activeSectionTop) {
+        // retain the top position of the active section, to prevent page jumps
+        window.scrollBy(0, this.activeSectionTop - rect.top);
+      }
     }
   }
 
