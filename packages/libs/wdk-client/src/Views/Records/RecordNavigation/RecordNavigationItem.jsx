@@ -25,10 +25,16 @@ let RecordNavigationItem = ({ node, activeSection, onSectionToggle }) => {
       )}
       href={'#' + id}
       onClick={(event) => {
-        const sectionIsActive =
-          location.hash === event.target.getAttribute('href');
         if (isField) {
-          onSectionToggle(id, sectionIsActive ? undefined : true);
+          onSectionToggle(id, isActive ? undefined : true);
+          return;
+        }
+
+        // If the category is active, then do not jump to
+        // its location on the page, but do allow the nav item
+        // to toggle.
+        if (isActive) {
+          event.preventDefault();
           return;
         }
 
@@ -38,7 +44,7 @@ let RecordNavigationItem = ({ node, activeSection, onSectionToggle }) => {
         // Prevent nav section toggle if the corresponding section is not active
         // and the nav section is expanded.
         // In other words, do not collapse the nav section if it is reselected.
-        if (!sectionIsActive && navSectionIsExpanded) {
+        if (navSectionIsExpanded) {
           event.stopPropagation();
         }
       }}
