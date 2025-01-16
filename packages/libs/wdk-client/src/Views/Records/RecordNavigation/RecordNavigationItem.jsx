@@ -25,17 +25,20 @@ let RecordNavigationItem = ({ node, activeSection, onSectionToggle }) => {
       )}
       href={'#' + id}
       onClick={(event) => {
+        const sectionIsActive =
+          location.hash === event.target.getAttribute('href');
         if (isField) {
-          event.stopPropagation();
-          onSectionToggle(id, true);
+          onSectionToggle(id, sectionIsActive ? undefined : true);
           return;
         }
 
-        const hasChildren =
+        const navSectionIsExpanded =
           event.target.closest('li')?.querySelector('ul') != null;
 
-        // allow toggle if node is active, or if it does not have children
-        if (!isActive && hasChildren) {
+        // Prevent nav section toggle if the corresponding section is not active
+        // and the nav section is expanded.
+        // In other words, do not collapse the nav section if it is reselected.
+        if (!sectionIsActive && navSectionIsExpanded) {
           event.stopPropagation();
         }
       }}
