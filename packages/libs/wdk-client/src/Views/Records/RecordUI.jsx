@@ -85,15 +85,15 @@ class RecordUI extends Component {
         let rect = el.getBoundingClientRect();
         return Math.floor(rect.top) <= headerOffsetPx;
       });
-    let activeSection = get(activeElement, 'id');
+    let activeSectionId = get(activeElement, 'id');
 
     // keep track of the activeElement's top value. This helps to determine if
     // the page's scroll position needs to be updated, when the record data is
     // updated.
     this.activeSectionTop = activeElement?.getBoundingClientRect().top;
 
-    if (activeSection !== this.state.activeSectionId) {
-      this.setState({ activeSectionId: activeSection }, () => {
+    if (activeSectionId !== this.state.activeSectionId) {
+      this.setState({ activeSectionId }, () => {
         this._updateUrl(this.state.activeSectionId);
       });
     }
@@ -133,7 +133,10 @@ class RecordUI extends Component {
       if (isFirstLoadForRecordId) {
         // always scroll the target into view on the first page load
         targetNode.scrollIntoView(true);
-      } else if (rect.top !== this.activeSectionTop) {
+      } else if (
+        this.activeSectionTop != null &&
+        rect.top !== this.activeSectionTop
+      ) {
         // retain the top position of the active section, to prevent page jumps
         window.scrollBy(0, this.activeSectionTop - rect.top);
       }
@@ -161,7 +164,6 @@ class RecordUI extends Component {
         type="button"
         className="wdk-RecordSidebarToggle"
         onClick={() => {
-          if (!this.props.navigationVisible) window.scrollTo(0, window.scrollY);
           this.props.updateNavigationVisibility(!this.props.navigationVisible);
         }}
       >

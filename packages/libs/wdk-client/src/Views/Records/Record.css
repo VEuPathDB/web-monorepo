@@ -50,7 +50,6 @@
   /* make prevent contents panel from being clipped. */
   min-height: 65vh;
   margin-left: 2em;
-  flex-basis: 100%;
 }
 
 .wdk-RecordSidebar {
@@ -67,7 +66,7 @@
   flex-basis: 0px;
 
   .wdk-RecordNavigationSection {
-    font-size: 1.45em;
+    font-size: 1.35em;
     padding-top: 0.5em;
 
     .wdk-RecordNavigationSectionHeader {
@@ -126,8 +125,18 @@ h2.wdk-RecordNavigationSectionHeader {
   background: #d5eaf5;
 }
 
-.wdk-RecordContainer__withSidebar .wdk-RecordSidebar {
-  flex-basis: 450px;
+.wdk-RecordNavigationItem__field {
+  font-size: 0.9em;
+  padding: 0.35em 0.5em 0.35em 0.75em;
+}
+
+.wdk-RecordContainer__withSidebar {
+  .wdk-RecordSidebar {
+    flex: 0 0 350px;
+  }
+  .wdk-RecordMain {
+    max-width: calc(100% - 2em - 350px);
+  }
 }
 
 .wdk-RecordContainer__withSidebar .wdk-RecordSidebarToggle {

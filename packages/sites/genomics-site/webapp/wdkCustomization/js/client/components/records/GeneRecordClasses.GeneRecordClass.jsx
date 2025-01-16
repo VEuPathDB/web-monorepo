@@ -1689,7 +1689,7 @@ const TranscriptionSummaryForm = connect(
       }
 
       return (
-        <div id="transcriptionSummary">
+        <div id="transcriptionSummary" style={{ overflow: 'auto' }}>
           <ExternalResourceContainer
             isLoading={this.state.summaryIframeState.isLoading}
             isError={this.state.summaryIframeState.isError}
