@@ -1648,6 +1648,8 @@ const TranscriptionSummaryForm = connect(
             expressionGraphIndex !== -1 &&
             expressionGraphTableRowElement != null
           ) {
+            // Make sure the table section is open
+            this.props.updateSectionVisibility('ExpressionGraphs', true);
             // Add a history entry so users can use the back button to go back to *this* section
             window.history.pushState(null, null, '#ExpressionGraphs');
 
