@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
 import { getId } from '../../Utils/CategoryUtils';
 import { wrappable } from '../../Utils/ComponentUtils';
-import { addScrollAnchor, findAncestorNode } from '../../Utils/DomUtils';
+import { findAncestorNode } from '../../Utils/DomUtils';
 import { postorderSeq, preorderSeq } from '../../Utils/TreeUtils';
 import RecordHeading from '../../Views/Records/RecordHeading';
 import RecordMainSection from '../../Views/Records/RecordMain/RecordMainSection';
@@ -36,10 +36,6 @@ class RecordUI extends Component {
 
   componentDidMount() {
     this._scrollToActiveSection(true);
-    this.removeScrollAnchor = addScrollAnchor(
-      this.recordMainSectionNode,
-      document.getElementById(location.hash.slice(1))
-    );
     this.monitorActiveSection();
   }
 
@@ -54,7 +50,6 @@ class RecordUI extends Component {
 
   componentWillUnmount() {
     this.unmonitorActiveSection();
-    this.removeScrollAnchor();
   }
 
   monitorActiveSection() {
@@ -100,7 +95,7 @@ class RecordUI extends Component {
   }
 
   _updateUrl(activeSection) {
-    let hash = activeSection ? `#${activeSection}` : location;
+    let hash = activeSection ? `#${activeSection}` : '';
     let newUrl = new URL(hash, location);
     try {
       history.replaceState(null, null, newUrl);
@@ -138,7 +133,7 @@ class RecordUI extends Component {
         rect.top !== this.activeSectionTop
       ) {
         // retain the top position of the active section, to prevent page jumps
-        window.scrollBy(0, this.activeSectionTop - rect.top);
+        window.scrollBy(0, rect.top - this.activeSectionTop);
       }
     }
   }
