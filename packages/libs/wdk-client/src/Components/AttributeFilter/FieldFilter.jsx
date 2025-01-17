@@ -12,12 +12,14 @@ const cx = makeClassNameHelper('field-detail');
  * Main interactive filtering interface for a particular field.
  */
 function FieldFilter(props) {
+  const { displayName = 'Items' } = props;
+
   let className = cx('', props.hideFieldPanel && 'fullWidth');
 
   return (
     <div className={className}>
       {!props.activeField ? (
-        <EmptyField displayName={props.displayName} />
+        <EmptyField displayName={displayName} />
       ) : (
         <React.Fragment>
           <h3>
@@ -48,9 +50,9 @@ function FieldFilter(props) {
               props.activeFieldState.summary == null &&
               props.activeFieldState.leafSummaries == null) ||
             props.dataCount == null ? null : isMulti(props.activeField) ? (
-            <MultiFieldFilter {...props} />
+            <MultiFieldFilter {...props} displayName={displayName} />
           ) : (
-            <SingleFieldFilter {...props} />
+            <SingleFieldFilter {...props} displayName={displayName} />
           )}
         </React.Fragment>
       )}
@@ -93,10 +95,6 @@ FieldFilter.propTypes = {
 
   hideFieldPanel: PropTypes.bool,
   selectByDefault: PropTypes.bool.isRequired,
-};
-
-FieldFilter.defaultProps = {
-  displayName: 'Items',
 };
 
 export default FieldFilter;
