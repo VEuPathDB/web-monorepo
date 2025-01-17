@@ -51,17 +51,21 @@ export function InlineRecordAttributeSection(props: Props) {
       id={name}
       className={`wdk-RecordAttributeSectionItem wdk-RecordAttributeSectionItem__${name}`}
     >
-      <div className="wdk-RecordAttributeName">
-        {title ?? <DefaultSectionTitle displayName={displayName} help={help} />}
-      </div>{' '}
-      <div className="wdk-RecordAttributeValue">
-        <ErrorBoundary>
-          <RecordAttribute
-            attribute={attribute}
-            record={record}
-            recordClass={recordClass}
-          />
-        </ErrorBoundary>
+      <div className="wdk-RecordAttributeInline">
+        <div className="wdk-RecordAttributeName">
+          {title ?? (
+            <DefaultSectionTitle displayName={displayName} help={help} />
+          )}
+        </div>
+        <div className="wdk-RecordAttributeValue">
+          <ErrorBoundary>
+            <RecordAttribute
+              attribute={attribute}
+              record={record}
+              recordClass={recordClass}
+            />
+          </ErrorBoundary>
+        </div>
       </div>
     </div>
   );

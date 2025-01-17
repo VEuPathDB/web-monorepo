@@ -1,65 +1,56 @@
-import React from 'react';
-import { wrappable } from '../../../Utils/ComponentUtils';
-import {
-  getId,
-  getDisplayName,
-  isIndividual,
-} from '../../../Utils/CategoryUtils';
+import React, { useMemo } from 'react';
+import { makeClassNameHelper, wrappable } from '../../../Utils/ComponentUtils';
+import { getId, getDisplayName } from '../../../Utils/CategoryUtils';
 
-let RecordNavigationItem = ({
-  node: category,
-  path,
-  activeCategory,
-  checked,
-  onSectionToggle,
-}) => {
-  let id = getId(category);
-  let activeId = activeCategory && getId(activeCategory);
-  let displayName = getDisplayName(category);
+import { preorderSeq } from '../../../Utils/TreeUtils';
 
-  let enumeration = isIndividual(category)
-    ? null
-    : path.map((n) => n + 1).join('.');
+let cx = makeClassNameHelper('wdk-RecordNavigationItem');
 
-  let offerCheckbox = path.length === 1;
+let RecordNavigationItem = ({ node, activeSection, onSectionToggle }) => {
+  let id = getId(node);
+  let displayName = getDisplayName(node);
+  let isField = node.wdkReference != null;
+
+  let isActive = useMemo(
+    () => preorderSeq(node).some((node) => getId(node) === activeSection),
+    [node, activeSection]
+  );
 
   return (
-    <div
-      className="wdk-RecordNavigationItem"
-      style={{
-        display: 'flex',
-        position: 'relative',
+    <a
+      className={cx(
+        '',
+        isActive ? 'active' : 'inactive',
+        isField ? 'field' : 'category'
+      )}
+      href={'#' + id}
+      onClick={(event) => {
+        if (isField) {
+          onSectionToggle(id, isActive ? undefined : true);
+          return;
+        }
+
+        // If the category is active, then do not jump to
+        // its location on the page, but do allow the nav item
+        // to toggle.
+        if (isActive) {
+          event.preventDefault();
+          return;
+        }
+
+        const navSectionIsExpanded =
+          event.target.closest('li')?.querySelector('ul') != null;
+
+        // Prevent nav section toggle if the corresponding section is not active
+        // and the nav section is expanded.
+        // In other words, do not collapse the nav section if it is reselected.
+        if (navSectionIsExpanded) {
+          event.stopPropagation();
+        }
       }}
     >
-      {activeId === id ? (
-        <i
-          className="fa fa-circle wdk-Link wdk-RecordNavigationIndicator"
-          style={{
-            left: '-2.25em',
-            cursor: 'pointer',
-          }}
-        />
-      ) : null}
-      {offerCheckbox && (
-        <input
-          className="wdk-Record-sidebar-checkbox"
-          type="checkbox"
-          checked={checked}
-          onChange={(e) => void onSectionToggle(id, e.target.checked)}
-        />
-      )}
-      <a
-        href={'#' + id}
-        className="wdk-Record-sidebar-title"
-        onClick={(event) => {
-          if (!offerCheckbox || checked) onSectionToggle(id, true);
-          event.stopPropagation();
-        }}
-      >
-        {' '}
-        {enumeration} {displayName}{' '}
-      </a>
-    </div>
+      {displayName}
+    </a>
   );
 };
 

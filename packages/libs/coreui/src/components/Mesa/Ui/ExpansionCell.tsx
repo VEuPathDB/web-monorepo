@@ -11,11 +11,13 @@ type Props = {
   heading: boolean;
 };
 
+const EMPTY_ARRAY: Props['expandedRows'] = [];
+
 export default function ExpansionCell({
   rows,
   row,
   onExpandedRowsChange,
-  expandedRows,
+  expandedRows = EMPTY_ARRAY,
   getRowId,
   inert,
   heading,

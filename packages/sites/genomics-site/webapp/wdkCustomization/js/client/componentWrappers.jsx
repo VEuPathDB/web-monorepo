@@ -12,7 +12,6 @@ import { submitAsForm } from '@veupathdb/wdk-client/lib/Utils/FormSubmitter';
 import { makeDynamicWrapper, findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
 import Sequence from '@veupathdb/web-common/lib/components/records/Sequence';
-import RecordTableContainer from './components/common/RecordTableContainer';
 import { loadPathwayGeneDynamicCols } from './actioncreators/RecordViewActionCreators';
 import ApiSiteHeader from './components/SiteHeader';
 import OrganismFilter from './components/OrganismFilter';
@@ -148,21 +147,10 @@ export function RecordController(WdkRecordController) {
   return enhance(ApiRecordController);
 }
 
-function EnhancedRecordUIContainer(props) {
-  return cloneElement(props.children, { bottomOffset: 100 });
-}
-
 export const RecordHeading = makeDynamicWrapper('RecordHeading');
-export const RecordUI = makeDynamicWrapper(
-  'RecordUI',
-  EnhancedRecordUIContainer
-);
+export const RecordUI = makeDynamicWrapper('RecordUI');
 export const RecordMainSection = makeDynamicWrapper('RecordMainSection');
-export const RecordTable = makeDynamicWrapper(
-  'RecordTable'
-  // RecordTableContainer
-);
-export const RecordTableDescription = makeDynamicWrapper(
+const DynamicRecordTableDescription = makeDynamicWrapper(
   'RecordTableDescription'
 );
 export const ResultTable = makeDynamicWrapper('ResultTable');
@@ -232,7 +220,8 @@ function downloadRecordTable(record, tableName) {
   };
 }
 
-export function RecordTableSection(DefaultComponent) {
+export function RecordTableDescription(DefaultComponent) {
+  DefaultComponent = DynamicRecordTableDescription(DefaultComponent);
   return connect(null, { downloadRecordTable })(
     class ApiRecordTableSection extends React.PureComponent {
       render() {
@@ -253,7 +242,6 @@ export function RecordTableSection(DefaultComponent) {
           downloadRecordTable(record, table.name);
         };
 
-        // FIXME Revise this since we now lazy load tables...
         let showDownload =
           record.tables[table.name] &&
           record.tables[table.name].length > 0 &&
@@ -279,15 +267,13 @@ export function RecordTableSection(DefaultComponent) {
           hasTaxonId = 1;
         }
 
-        const title = (
-          <span>
-            {table.displayName}{' '}
+        const links = (
+          <div style={{ marginBottom: '1em' }}>
             {showDownload && (
               <span
                 style={{
                   fontSize: '.8em',
                   fontWeight: 'normal',
-                  marginLeft: '1em',
                 }}
               >
                 <button
@@ -338,14 +324,21 @@ export function RecordTableSection(DefaultComponent) {
                 <i className="fa fa-database" /> Data sets
               </Link>
             )}
-          </span>
+          </div>
         );
 
-        return <DefaultComponent {...this.props} title={title} />;
+        return (
+          <>
+            {links}
+            <DefaultComponent {...this.props} />
+          </>
+        );
       }
     }
   );
 }
+
+export const RecordTable = makeDynamicWrapper('RecordTable');
 
 function getGbrowseContext(attributeName) {
   return Gbrowse.contexts.find(

@@ -44,6 +44,7 @@ function RecordTableSection(props: Props) {
     onCollapsedChange,
     requestPartialRecord,
     title,
+    ontologyProperties,
   } = props;
   let { displayName, help, name } = table;
   let value = record.tables[name];
@@ -75,6 +76,7 @@ function RecordTableSection(props: Props) {
     >
       <ErrorBoundary>
         <RecordTableDescription
+          ontologyProperties={ontologyProperties}
           table={table}
           record={record}
           recordClass={recordClass}
@@ -95,6 +97,7 @@ function RecordTableSection(props: Props) {
             recordClass={recordClass}
             expandedRows={tableState.expandedRows}
             searchTerm={tableState.searchTerm}
+            ontologyProperties={ontologyProperties}
             onExpandedRowsChange={(expandedRows) =>
               updateTableState({ ...tableState, expandedRows })
             }

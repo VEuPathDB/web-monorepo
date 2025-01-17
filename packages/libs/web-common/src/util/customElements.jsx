@@ -32,8 +32,8 @@ export function registerCustomElement(nodeName, reactElementFactory) {
  * Render provided HTML string as a React Component, replacing registered
  * custom elements with associated components.
  */
-export function renderWithCustomElements(html) {
-  return <ReactElementsContainer html={html} />;
+export function renderWithCustomElements(html, props) {
+  return <ReactElementsContainer html={html} {...props} />;
 }
 
 class ReactElementsContainer extends Component {
@@ -52,6 +52,7 @@ class ReactElementsContainer extends Component {
         root.render(reactElement);
       }
     }
+    this.props.innerRef?.(this.node);
   }
 
   componentWillUnmount() {
@@ -61,7 +62,9 @@ class ReactElementsContainer extends Component {
   }
 
   render() {
-    return <div ref={(node) => (this.node = node)} />;
+    return (
+      <div ref={(node) => (this.node = node)} style={{ display: 'contents' }} />
+    );
   }
 }
 

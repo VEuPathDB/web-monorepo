@@ -9,6 +9,7 @@ import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-
 import { isUserApprovedForAction } from '@veupathdb/study-data-access/lib/study-access/permission';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { BlockRecordAttributeSection } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
 
 // Use Element.innerText to strip XML
 function stripXML(str) {
@@ -109,77 +110,76 @@ export function RecordHeading(props) {
   let primaryPublication = getPrimaryPublication(record);
 
   return (
-    <div>
+    <>
       <props.DefaultComponent {...props} />
       <div className="wdk-RecordOverview eupathdb-RecordOverview">
-        {organism_prefix ? (
-          <div className="eupathdb-RecordOverviewItem">
-            <strong>Organism (source or reference): </strong>
-            <span dangerouslySetInnerHTML={{ __html: organism_prefix }} />
-          </div>
-        ) : null}
+        <dl>
+          {organism_prefix ? (
+            <>
+              <dt>Organism (source or reference)</dt>
+              <dd dangerouslySetInnerHTML={{ __html: organism_prefix }} />
+            </>
+          ) : null}
 
-        {newcategory ? (
-          <div className="eupathdb-RecordOverviewItem">
-            <strong>Category: </strong>
-            <span>{newcategory}</span>
-          </div>
-        ) : null}
+          {newcategory ? (
+            <>
+              <dt>Category</dt>
+              <dd>{newcategory}</dd>
+            </>
+          ) : null}
 
-        {primaryPublication && primaryPublication.pubmed_link ? (
-          <div className="eupathdb-RecordOverviewItem">
-            <strong>Primary publication: </strong>
-            <span>{renderPrimaryPublication(primaryPublication)}</span>
-          </div>
-        ) : null}
+          {primaryPublication && primaryPublication.pubmed_link ? (
+            <>
+              <dt>Primary publication</dt>
+              <dd>{renderPrimaryPublication(primaryPublication)}</dd>
+            </>
+          ) : null}
 
-        {contact && institution ? (
-          <div className="eupathdb-RecordOverviewItem">
-            <strong>Primary contact: </strong>
+          {contact && institution ? (
+            <>
+              <dt>Primary contact</dt>
+              <dd>
+                {renderPrimaryContact(contact, institution, email, record)}
+              </dd>
+            </>
+          ) : null}
 
-            <span>
-              {renderPrimaryContact(contact, institution, email, record)}
-            </span>
-          </div>
-        ) : null}
+          {version ? (
+            <>
+              <dt>Source version(s)</dt>
+              <dd>{renderSourceVersion(version, newcategory)}</dd>
+            </>
+          ) : null}
 
-        {version ? (
-          <div className="eupathdb-RecordOverviewItem">
-            <strong>Source version(s): </strong>
-            <span>{renderSourceVersion(version, newcategory)}</span>
-          </div>
-        ) : null}
+          {eupath_release ? (
+            <>
+              <dt>Release # / date</dt>
+              <dd>{eupath_release}</dd>
+            </>
+          ) : null}
 
-        {eupath_release ? (
-          <div className="eupathdb-RecordOverviewItem">
-            <strong>Release # / date: </strong>
-            <span>{eupath_release}</span>
-          </div>
-        ) : null}
-
-        <div className="eupathdb-RecordOverviewItem">
-          <strong>Summary: </strong>
-          <span
+          <dt>Summary</dt>
+          <dd
             style={{ whiteSpace: 'normal' }}
             dangerouslySetInnerHTML={{ __html: summary }}
           />
-        </div>
 
-        {megabase_pairs ? (
-          <div className="eupathdb-RecordOverviewItem">
-            <strong>Megabase Pairs: </strong>
-            <span>{megabase_pairs}</span>
-          </div>
-        ) : null}
+          {megabase_pairs ? (
+            <>
+              <dt>Megabase Pairs</dt>
+              <dd>{megabase_pairs}</dd>
+            </>
+          ) : null}
 
-        {study_access ? (
-          <StudyAccessOverviewItem
-            study_access={study_access}
-            record={record}
-          />
-        ) : null}
+          {study_access ? (
+            <StudyAccessOverviewItem
+              study_access={study_access}
+              record={record}
+            />
+          ) : null}
+        </dl>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -255,6 +255,13 @@ const ConnectedReferences = connect(
   }),
   null
 )(References);
+
+export function RecordAttributeSection({ DefaultComponent, ...props }) {
+  if (props.attribute.name === 'description') {
+    return <BlockRecordAttributeSection {...props} />;
+  }
+  return <DefaultComponent {...props} />;
+}
 
 export function RecordTable(props) {
   if (props.table.name === 'References') {
@@ -379,13 +386,15 @@ function StudyAccessOverviewItem(props) {
 
   return (
     <>
-      <div className="eupathdb-RecordOverviewItem">
-        <strong>Data accessibility: </strong>
-        <span>{study_access}</span>
-      </div>
-      {loading ? null : (
-        <div style={{ color: '#666', fontSize: '1.2em' }}>{makeMessage()}</div>
-      )}
+      <dt>Data accessibility</dt>
+      <dd>
+        {study_access}
+        {loading ? null : (
+          <div style={{ color: '#666', fontSize: '.8em', fontWeight: 400 }}>
+            {makeMessage()}
+          </div>
+        )}
+      </dd>
     </>
   );
 }

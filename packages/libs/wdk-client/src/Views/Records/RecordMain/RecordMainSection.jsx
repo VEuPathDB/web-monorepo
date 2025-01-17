@@ -21,7 +21,7 @@ const RecordMainSection = ({
   requestPartialRecord,
 }) =>
   categories == null ? null : (
-    <div>
+    <>
       {categories.map((category, index) => {
         let categoryName = getLabel(category);
         let categoryId = getId(category);
@@ -60,7 +60,7 @@ const RecordMainSection = ({
           </RecordMainCategorySection>
         );
       })}
-    </div>
+    </>
   );
 
 RecordMainSection.propTypes = {

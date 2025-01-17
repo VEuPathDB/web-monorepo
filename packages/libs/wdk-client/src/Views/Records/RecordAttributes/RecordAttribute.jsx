@@ -6,12 +6,7 @@ import { renderAttributeValue, wrappable } from '../../../Utils/ComponentUtils';
 function RecordAttribute(props) {
   const { record, attribute } = props;
   const value = record.attributes[attribute.name];
-  if (value == null)
-    return (
-      <p>
-        <em>No data available</em>
-      </p>
-    );
+  if (value == null) return <em>No data available</em>;
   return renderAttributeValue(record.attributes[attribute.name], null, 'div');
 }
 

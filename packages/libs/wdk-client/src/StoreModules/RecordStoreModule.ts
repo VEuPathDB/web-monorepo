@@ -160,7 +160,10 @@ export function reduce(state: State = {} as State, action: Action): State {
     case SECTION_VISIBILITY: {
       let collapsedSections = updateList(
         action.payload.name,
-        !action.payload.isVisible,
+        !(
+          action.payload.isVisible ??
+          state.collapsedSections.includes(action.payload.name)
+        ),
         state.collapsedSections
       );
       return { ...state, collapsedSections };

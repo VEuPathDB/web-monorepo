@@ -173,7 +173,7 @@ export type SectionVisibilityAction = {
   type: typeof SECTION_VISIBILITY;
   payload: {
     name: string;
-    isVisible: boolean;
+    isVisible?: boolean;
   };
 };
 

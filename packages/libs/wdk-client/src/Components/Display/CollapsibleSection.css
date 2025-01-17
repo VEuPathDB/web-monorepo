@@ -2,7 +2,7 @@
   cursor: pointer;
   position: relative;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .wdk-CollapsibleSectionHeader:before {
