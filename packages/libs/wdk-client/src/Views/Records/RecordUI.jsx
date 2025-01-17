@@ -1,7 +1,6 @@
 import classnames from 'classnames';
 import { debounce, get } from 'lodash';
-import React, { Component } from 'react';
-import { findDOMNode } from 'react-dom';
+import React, { Component, createRef } from 'react';
 import { getId } from '../../Utils/CategoryUtils';
 import { wrappable } from '../../Utils/ComponentUtils';
 import { addScrollAnchor, findAncestorNode } from '../../Utils/DomUtils';
@@ -27,14 +26,14 @@ class RecordUI extends Component {
       100
     );
 
-    this.recordMainSectionNode = null;
+    this.recordMainSectionNode = createRef();
     this.activeSectionTop = null;
   }
 
   componentDidMount() {
     this._scrollToActiveSection();
     this.removeScrollAnchor = addScrollAnchor(
-      this.recordMainSectionNode,
+      this.recordMainSectionNode.current,
       document.getElementById(location.hash.slice(1))
     );
   }
@@ -178,7 +177,7 @@ class RecordUI extends Component {
             />
           </div>
         </div>
-        <div className="wdk-RecordMain">
+        <div className="wdk-RecordMain" ref={this.recordMainSectionNode}>
           {/* <div className="wdk-RecordMainSectionFieldToggles">
             <button type="button" title="Expand all content" className="wdk-Link"
               onClick={this.props.updateAllFieldVisibility.bind(null, true)}>Expand All</button>
@@ -187,7 +186,6 @@ class RecordUI extends Component {
               onClick={this.props.updateAllFieldVisibility.bind(null, false)}>Collapse All</button>
           </div> */}
           <RecordMainSection
-            ref={(c) => (this.recordMainSectionNode = findDOMNode(c))}
             record={this.props.record}
             recordClass={this.props.recordClass}
             categories={this.props.categoryTree.children}

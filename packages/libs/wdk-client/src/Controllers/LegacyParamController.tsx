@@ -1,5 +1,5 @@
 import { debounce, get } from 'lodash';
-import React from 'react';
+import React, { createRef } from 'react';
 import ReactDOM from 'react-dom';
 
 import {
@@ -47,6 +47,8 @@ class LegacyParamController extends ViewController<Props> {
   static readonly PARAM_VALID_EVENT = 'param-valid';
   static readonly PARAM_INVALID_EVENT = 'param-invalid';
 
+  inputRef = createRef();
+
   paramModules = ParamModules;
 
   componentWillUnmount() {
@@ -93,7 +95,7 @@ class LegacyParamController extends ViewController<Props> {
       });
     }
 
-    const node = ReactDOM.findDOMNode(this);
+    const node = this.inputRef.current as HTMLElement;
 
     // Trigger event in case of question error
     if (
