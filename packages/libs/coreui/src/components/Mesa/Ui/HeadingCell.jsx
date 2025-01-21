@@ -6,7 +6,6 @@ import Icon from '../Components/Icon';
 import HelpTrigger from '../Components/HelpTrigger';
 import { makeClassifier } from '../Utils/Utils';
 import Events, { EventsFactory } from '../Utils/Events';
-import { MESA_SCROLL_EVENT, MESA_REFLOW_EVENT } from './MesaContants';
 
 const headingCellClass = makeClassifier('HeadingCell');
 
@@ -42,8 +41,6 @@ class HeadingCell extends React.PureComponent {
     this.listeners = {
       scroll: Events.add('scroll', this.updateOffset),
       resize: Events.add('resize', this.updateOffset),
-      MesaScroll: Events.add(MESA_SCROLL_EVENT, this.updateOffset),
-      MesaReflow: Events.add(MESA_REFLOW_EVENT, this.updateOffset),
     };
   }
 
