@@ -17,14 +17,14 @@
   width: 300px;
 }
 
-.wdk-RecordTable > .Mesa.MesaComponent > .MesaComponent > .DataTable > table {
-  width: auto;
-}
-
-.MesaComponent > .DataTable {
+.wdk-RecordTable > .Mesa.MesaComponent > .MesaComponent > .DataTable {
   position: relative;
   max-width: 100%;
   overflow-x: auto;
+}
+
+.wdk-RecordTable > .Mesa.MesaComponent > .MesaComponent > .DataTable > table {
+  width: auto;
 }
 
 .wdk-RecordTable__Orthologs

@@ -408,6 +408,7 @@ function makeComparator(
   questions: Dict<Question>
 ) {
   return composeComparators(
+    compareByTargetType,
     compareByChildren,
     compareBySortNumber,
     makeCompareBySortName(recordClasses, questions)
@@ -425,6 +426,14 @@ function composeComparators(...comparators: NodeComparator[]): NodeComparator {
         .find((n) => n !== 0) || 0
     );
   };
+}
+
+function compareByTargetType(nodeA: CategoryTreeNode, nodeB: CategoryTreeNode) {
+  const nodeATargetType = getTargetType(nodeA);
+  const nodeBTargetType = getTargetType(nodeB);
+  if (nodeATargetType === 'attribute' && nodeBTargetType === 'table') return -1;
+  if (nodeATargetType === 'table' && nodeBTargetType === 'attribute') return 1;
+  return 0;
 }
 
 /**

@@ -18,7 +18,7 @@ class UserMenu extends React.Component {
           {
             icon: 'sign-in',
             text: 'Login',
-            onClick: () => actions.showLoginForm(window.location),
+            onClick: () => actions.showLoginForm(window.location.href),
           },
           {
             icon: 'user-plus',
