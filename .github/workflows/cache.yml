@@ -3,11 +3,14 @@ on:
   push:
     branches:
       - main
+    paths:
+      - yarn.lock
 jobs:
   # Cache yarn install command
   # See https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows#example-using-the-cache-action
   cache-yarn:
     name: Generate yarn cache
+    if: github.push.pa
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
