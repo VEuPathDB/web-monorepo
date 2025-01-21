@@ -38,6 +38,17 @@ html {
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      =Header offset for fragment IDs, etc
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+:root {
+  --page-offset-top: 100px;
+}
+html {
+  overflow: auto;
+  scroll-padding-top: var(--page-offset-top);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    Create main stacking context
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
@@ -169,9 +180,6 @@ a[name] {
   text-decoration: underline;
 }
 
-:focus {
-  outline: thin dotted;
-}
 a.eupathdb-BigButton,
 input[type='submit'] {
   color: #3e3e3e;
@@ -796,11 +804,6 @@ span.smallTitle {
   left: 0;
   right: 0;
   border-top: 1px solid white;
-}
-
-/** This is needed due to .fixed-menu css **/
-.wdk-RecordSidebar {
-  margin-top: 7em; /* it depends on the header width  */
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
