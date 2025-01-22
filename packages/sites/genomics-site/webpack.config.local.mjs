@@ -58,7 +58,7 @@ export default configure({
 })
     }),
     new HtmlWebpackPlugin({
-      inject: 'head',
+      inject: 'body',
       template: 'index.local.html',
       favicon: `${__dirname}/webapp/images/${process.env.PROJECT_ID}/favicon.ico`
     })

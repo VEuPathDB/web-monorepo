@@ -143,7 +143,8 @@ const analysisEventEmitter = new AnalysisEventEmitter();
  * */
 export function useAnalysis(
   analysisId: string | undefined,
-  singleAppMode?: string
+  singleAppMode?: string,
+  autoSave?: false
 ): AnalysisState {
   const analysisClient = useAnalysisClient();
   const datasetRecord = useStudyRecord();
@@ -275,7 +276,7 @@ export function useAnalysis(
     return useCallback(
       (
         nestedValue: T | ((nestedValue: T) => T),
-        createIfUnsaved = _createIfUnsaved
+        createIfUnsaved = autoSave == null ? _createIfUnsaved : autoSave
       ) => {
         // Always schedule a save, unless it's a "new" analysis and we're being
         // told to not schedule a save.
