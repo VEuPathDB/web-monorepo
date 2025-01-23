@@ -13,7 +13,7 @@ import {
 } from '../Utils/OntologyUtils';
 import { areTermsInString } from '../Utils/SearchUtils';
 import { Seq } from '../Utils/IterableUtils';
-import { preorderSeq, getBranches } from '../Utils/TreeUtils';
+import { preorderSeq, getBranches, foldStructure } from '../Utils/TreeUtils';
 import { Question, RecordClass } from '../Utils/WdkModel';
 // import {Tooltip} from '@veupathdb/components/lib/components/widgets/Tooltip';
 
@@ -134,6 +134,30 @@ export function getSynonyms(node: CategoryTreeNode) {
 
 export function getChildren(node: CategoryTreeNode) {
   return node.children;
+}
+
+export function getAncestors(
+  tree: CategoryTreeNode,
+  descendantId: string
+): CategoryTreeNode[] {
+  return foldStructure<CategoryTreeNode, CategoryTreeNode[]>(
+    (acc, node) => {
+      const directDescendantId = acc[0] && getId(acc[0]);
+      if (
+        node.children.some((childNode) => {
+          const childNodeId = getId(childNode);
+          return (
+            childNodeId === directDescendantId || childNodeId === descendantId
+          );
+        })
+      ) {
+        return [node, ...acc];
+      }
+      return acc;
+    },
+    [],
+    tree
+  ).slice(0, -1);
 }
 
 // TODO Make this more genericL createCategoryNode and createWdkEntityNode (or, createLeafNode??)
