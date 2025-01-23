@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import { debounce, get, isEqual, memoize } from 'lodash';
 import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
-import { getId } from '../../Utils/CategoryUtils';
+import { getAncestors, getId } from '../../Utils/CategoryUtils';
 import { wrappable } from '../../Utils/ComponentUtils';
 import { findAncestorNode } from '../../Utils/DomUtils';
 import { postorderSeq, preorderSeq } from '../../Utils/TreeUtils';
@@ -121,6 +121,12 @@ class RecordUI extends Component {
       if (isFirstLoadForRecordId) {
         // open the target section
         this.props.updateSectionVisibility(sectionNode.id, true);
+        const ancestorCategoryNodes = getAncestors(
+          this.props.categoryTree,
+          sectionNode.id
+        ).slice(1);
+        const ancestorNodeId = ancestorCategoryNodes.map(getId);
+        this.props.updateNavigationCategoryExpansion(ancestorNodeId);
       }
 
       const rect = targetNode.getBoundingClientRect();

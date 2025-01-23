@@ -119,6 +119,7 @@ td.wdk-DataTableCell__thumbnail {
 }
 
 .eupathdb-RecordOverview {
+  padding-top: 1rem;
   padding-bottom: 2rem;
   border-bottom: 1px solid #aaa;
 }
@@ -183,8 +184,8 @@ td.wdk-DataTableCell__thumbnail {
 .eupathdb-RecordOverview {
   dl {
     font-size: 1.4em;
-    row-gap: 0.2em;
     margin: 0;
+    line-height: 1.3em;
   }
   dt {
     justify-self: start;
