@@ -408,7 +408,7 @@ function makeComparator(
   questions: Dict<Question>
 ) {
   return composeComparators(
-    compareByTargetType,
+    // compareByTargetType,
     compareByChildren,
     compareBySortNumber,
     makeCompareBySortName(recordClasses, questions)
