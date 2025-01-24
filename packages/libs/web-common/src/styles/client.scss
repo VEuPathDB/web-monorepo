@@ -126,6 +126,8 @@ td.wdk-DataTableCell__thumbnail {
 
 .eupathdb-RecordOverviewTitle {
   display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
   align-items: baseline;
   white-space: nowrap;
   overflow: hidden;
@@ -147,7 +149,6 @@ td.wdk-DataTableCell__thumbnail {
 .eupathdb-RecordOverviewDescription {
   font-weight: 300;
   font-size: 1.1em;
-  margin-left: 0.5em;
 }
 
 .eupathdb-RecordOverviewItem {
@@ -206,12 +207,31 @@ td.wdk-DataTableCell__thumbnail {
   }
 }
 
+@media all and (max-width: 400px) {
+  .eupathdb-RecordOverview {
+    dl {
+      display: initial;
+    }
+    dd {
+      margin-bottom: 0.3em;
+      margin-left: 1ex;
+    }
+    dt.space-above + dd {
+      margin-top: 0;
+    }
+  }
+}
+
 .eupathdb-ReporterFormSubmit {
   text-align: center;
   margin: 1em 0;
 }
 
 @media all and (min-width: 800px) {
+  .eupathdb-RecordOverviewTitle {
+    flex-wrap: nowrap;
+  }
+
   .eupathdb-ReporterFormWrapper {
     width: fit-content;
   }

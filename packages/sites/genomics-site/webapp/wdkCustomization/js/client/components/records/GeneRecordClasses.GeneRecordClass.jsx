@@ -242,9 +242,8 @@ export const RecordMainSection = connect(null)(
           <div
             style={{
               position: 'absolute',
-              right: '3em',
-              top: '4em',
-              zIndex: 1,
+              right: 0,
+              top: '1em',
             }}
           >
             <i className="fa fa-exclamation-triangle" />
