@@ -157,7 +157,7 @@ export function getAncestors(
     },
     [],
     tree
-  ).slice(0, -1);
+  );
 }
 
 // TODO Make this more genericL createCategoryNode and createWdkEntityNode (or, createLeafNode??)
