@@ -39,6 +39,7 @@ import {
   OrganismParam,
   isOrganismParam,
 } from '@veupathdb/preferred-organisms/lib/components/OrganismParam';
+import { EdaSubsettingParameter } from './components/questions/EdaSubsettingParameter';
 
 const BlastForm = React.lazy(() => import('./plugins/BlastForm'));
 const BlastQuestionController = React.lazy(
@@ -198,6 +199,11 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
     type: 'questionForm',
     name: 'GenesByOrthologPattern',
     component: GenesByOrthologPattern,
+  },
+  {
+    type: 'questionFormParameter',
+    name: 'edaSubsetting',
+    component: EdaSubsettingParameter,
   },
   {
     type: 'questionFormParameter',
