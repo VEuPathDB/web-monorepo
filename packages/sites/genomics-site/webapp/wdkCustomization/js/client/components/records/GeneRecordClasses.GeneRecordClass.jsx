@@ -85,7 +85,7 @@ export const RecordHeading = connect(
       const parentCategories = Category.getAncestors(
         this.props.categoryTree,
         anchor
-      ).slice(1);
+      ); //.slice(1);
       const parentCategoryIds = parentCategories.map(Category.getId);
       const nextExpandedNavCats = Array.from(
         new Set([
