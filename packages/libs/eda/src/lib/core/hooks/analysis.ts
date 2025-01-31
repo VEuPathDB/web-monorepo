@@ -142,10 +142,14 @@ const analysisEventEmitter = new AnalysisEventEmitter();
  * interacted with a segment of a given study's data.
  * */
 export function useAnalysis(
-  analysisId: string | undefined,
+  analysisIdOrDescriptor: string | NewAnalysis | undefined,
   singleAppMode?: string,
   autoSave?: false
 ): AnalysisState {
+  const analysisId =
+    typeof analysisIdOrDescriptor === 'string'
+      ? analysisIdOrDescriptor
+      : undefined;
   const analysisClient = useAnalysisClient();
   const datasetRecord = useStudyRecord();
   const studyId = getStudyId(datasetRecord);
@@ -167,6 +171,9 @@ export function useAnalysis(
 
   // Used when `analysisId` is undefined.
   const defaultAnalysis = useMemo(() => {
+    if (typeof analysisIdOrDescriptor === 'object') {
+      return analysisIdOrDescriptor;
+    }
     // When we only want to use a single app, extract the computation and pass it to
     // makeNewAnalysis so that by default we will only use this single computation.
     const singleAppComputationId =
@@ -183,7 +190,7 @@ export function useAnalysis(
         )
       : undefined;
     return makeNewAnalysis(studyId, computation);
-  }, [singleAppMode, studyId]);
+  }, [analysisIdOrDescriptor, singleAppMode, studyId]);
 
   // Used to convert an unsaved analysis to a saved analysis.
   // This will also change the current url to that of the saved analysis.
