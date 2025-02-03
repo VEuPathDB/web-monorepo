@@ -1,21 +1,23 @@
-import React, { useEffect, useMemo, useState } from 'react';
+// FIXME Remove starred variables button
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { Props } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
 import { StringParam } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { Subsetting } from '@veupathdb/eda/lib/workspace';
 import { WorkspaceContainer } from '@veupathdb/eda/lib/workspace/WorkspaceContainer';
 import {
-  Analysis,
+  AnalysisChangeHandler,
   AnalysisState,
   Filter,
+  makeNewAnalysis,
   NewAnalysis,
-  Status,
-  useAnalysis,
+  useAnalysisState,
   useConfiguredAnalysisClient,
   useConfiguredComputeClient,
   useConfiguredDataClient,
   useConfiguredDownloadClient,
   useConfiguredSubsettingClient,
+  useGetDefaultVariableDescriptor,
   useStudyEntities,
 } from '@veupathdb/eda/lib/core';
 import { VariableLinkConfig } from '@veupathdb/eda/lib/core/components/VariableLink';
@@ -24,13 +26,35 @@ import { DocumentationContainer } from '@veupathdb/eda/lib/core/components/docs/
 import { useEntityCounts } from '@veupathdb/eda/lib/core/hooks/entityCounts';
 import FilterChipList from '@veupathdb/eda/lib/core/components/FilterChipList';
 
+import './EdaSubsettingParameter.scss';
+
 export function EdaSubsettingParameter(props: Props<StringParam>) {
-  const studyId = props.parameter.properties?.edaProperties?.[0];
+  const datasetIdParamName = props.parameter.properties
+    ?.edaDatasetIdParamName?.[0] as string;
+  const studyId = props.ctx.paramValues[datasetIdParamName];
   const subsettingClient = useConfiguredSubsettingClient(edaServiceUrl);
   const dataClient = useConfiguredDataClient(edaServiceUrl);
   const analysisClient = useConfiguredAnalysisClient(edaServiceUrl);
   const downloadClient = useConfiguredDownloadClient(edaServiceUrl);
   const computeClient = useConfiguredComputeClient(edaServiceUrl);
+
+  const analysisDescriptor = useMemo(() => {
+    const jsonParsedParamValue = parseJson(props.value);
+    return NewAnalysis.is(jsonParsedParamValue)
+      ? jsonParsedParamValue
+      : makeNewAnalysis(studyId);
+  }, [props.value, studyId]);
+
+  const { onParamValueChange } = props;
+  const onAnalysisChange = useCallback<AnalysisChangeHandler>(
+    (analysis) => {
+      const paramValue = JSON.stringify(analysis);
+      onParamValueChange(paramValue);
+    },
+    [onParamValueChange]
+  );
+
+  const analysisState = useAnalysisState(analysisDescriptor, onAnalysisChange);
 
   if (studyId == null) return <div>Could not find eda study id</div>;
 
@@ -44,27 +68,26 @@ export function EdaSubsettingParameter(props: Props<StringParam>) {
         downloadClient={downloadClient}
         computeClient={computeClient}
       >
-        <SubsettingContainer
-          onAnalysisChange={function (
-            analysis?: AnalysisState['analysis']
-          ): void {
-            console.log({ analysis });
-          }}
-        />
+        <SubsettingContainer analysisState={analysisState} />
       </WorkspaceContainer>
     </DocumentationContainer>
   );
 }
 
 interface SubsettingContainerProps {
-  onAnalysisChange: (analysis?: AnalysisState['analysis']) => void;
+  analysisState: AnalysisState;
 }
 
 function SubsettingContainer(props: SubsettingContainerProps) {
-  const { onAnalysisChange } = props;
-  const [entityId, setEntityId] = useState<string>();
-  const [variableId, setVariableId] = useState<string>();
-  const analysisState = useAnalysis(undefined, undefined, false);
+  const { analysisState } = props;
+  const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
+  const varAndEnt = getDefaultVariableDescriptor();
+  const [entityId, setEntityId] = useState<string | undefined>(
+    varAndEnt.entityId
+  );
+  const [variableId, setVariableId] = useState<string | undefined>(
+    varAndEnt.variableId
+  );
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
   const entities = useStudyEntities();
   const totalCounts = useEntityCounts();
@@ -80,26 +103,48 @@ function SubsettingContainer(props: SubsettingContainerProps) {
       },
     };
   }, []);
-  useEffect(() => {
-    onAnalysisChange(analysisState.analysis);
-  }, [analysisState.analysis, onAnalysisChange]);
+  const baseEntity = entities[0];
+  const filteredCount = filteredCounts.value?.[baseEntity.id];
+  const totalCount = totalCounts.value?.[baseEntity.id];
+
   return (
-    <>
-      <FilterChipList
-        filters={filters}
-        selectedEntityId={entityId}
-        selectedVariableId={variableId}
-        entities={entities}
-        removeFilter={function (filter: Filter): void {
-          const nextFilters = filters?.filter(
-            (f) =>
-              f.entityId !== filter.entityId ||
-              f.variableId !== filter.variableId
-          );
-          analysisState.setFilters(nextFilters ?? []);
-        }}
-        variableLinkConfig={variableLinkConfig}
-      />
+    <div className="EdaSubsettingParameter">
+      <div className="EdaSubsettingParameterCounts">
+        <div className="EdaSubsettingParameterCounts-Total">
+          {totalCount != null &&
+            totalCount.toLocaleString() +
+              ' ' +
+              baseEntity.displayNamePlural +
+              ' Total'}
+        </div>
+        <div className="EdaSubsettingParameterCounts-FiltersAndChips">
+          <div className="EdaSubsettingParameterCounts-Filtered">
+            {totalCount != null &&
+              filteredCount != null &&
+              filteredCount.toLocaleString() +
+                ' of ' +
+                totalCount.toLocaleString() +
+                ' ' +
+                baseEntity.displayNamePlural +
+                ' selected'}
+          </div>
+          <FilterChipList
+            filters={filters}
+            selectedEntityId={entityId}
+            selectedVariableId={variableId}
+            entities={entities}
+            removeFilter={function (filter: Filter): void {
+              const nextFilters = filters?.filter(
+                (f) =>
+                  f.entityId !== filter.entityId ||
+                  f.variableId !== filter.variableId
+              );
+              analysisState.setFilters(nextFilters ?? []);
+            }}
+            variableLinkConfig={variableLinkConfig}
+          />
+        </div>
+      </div>
       <Subsetting
         analysisState={analysisState}
         entityId={entityId ?? ''}
@@ -108,48 +153,14 @@ function SubsettingContainer(props: SubsettingContainerProps) {
         totalCounts={totalCounts.value}
         filteredCounts={filteredCounts.value}
       />
-    </>
+    </div>
   );
 }
 
-// function useAnalysis(studyId: string): AnalysisState {
-//   const [analysis, setAnalysis] = useState<NewAnalysis>({
-//     apiVersion: 'v1',
-//     studyId,
-//     studyVersion: 'v1',
-//     isPublic: false,
-//     displayName: 'Unnamed analysis',
-//     descriptor: {
-//       subset: {
-//         descriptor: [],
-//         uiSettings: {},
-//       },
-//       computations: [],
-//       starredVariables: [],
-//       dataTableConfig: {},
-//       derivedVariables: [],
-//     }
-//   });
-//
-//   function makeSetter<T extends keyof NewAnalysis>(property: T) {
-//     return function setProperty(value: (NewAnalysis[T] | ((value: NewAnalysis[T]) => NewAnalysis[T]))) {
-//       setAnalysis(analysis => ({
-//         ...analysis,
-//         [property]: typeof value === 'function'
-//           ? value(analysis[property])
-//           : value
-//       }));
-//     }
-//   }
-//
-//   const analysisState: AnalysisState = {
-//     status: Status.Loaded,
-//     analysis,
-//     hasUnsavedChanges: true,
-//     setName: makeSetter('displayName'),
-//     setDescription: makeSetter('description'),
-//     setNotes: makeSetter('notes'),
-//     setIsPublic: makeSetter('isPublic'),
-//     setFilters: mak
-//   };
-// }
+function parseJson(str: string) {
+  try {
+    return JSON.parse(str);
+  } catch {
+    return undefined;
+  }
+}
