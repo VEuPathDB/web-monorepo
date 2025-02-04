@@ -609,12 +609,6 @@ function useHeaderMenuItems() {
             type: 'reactRoute',
             url: '/reset-session',
           },
-          {
-            key: 'user-doc',
-            display: 'Downloadable User documentation',
-            type: 'externalLink',
-            url: '/reports/VEuPathDB_User_Documentation.pdf',
-          },
         ],
       },
       {

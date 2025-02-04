@@ -46,12 +46,16 @@ import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png'
 import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { AlphaFoldRecordSection } from './AlphaFoldAttributeSection';
 import { DEFAULT_TABLE_STATE } from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
+import { findAncestorFields } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
 
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
  */
 export const RecordHeading = connect(
-  (state) => ({ categoryTree: state.record.categoryTree }),
+  (state) => ({
+    categoryTree: state.record.categoryTree,
+    navigationCategoriesExpanded: state.record.navigationCategoriesExpanded,
+  }),
   RecordActions
 )(
   class GeneRecordHeading extends Component {
@@ -78,7 +82,19 @@ export const RecordHeading = connect(
     }
 
     handleThumbnailClick({ anchor }) {
+      const parentCategories = Category.getAncestors(
+        this.props.categoryTree,
+        anchor
+      ); //.slice(1);
+      const parentCategoryIds = parentCategories.map(Category.getId);
+      const nextExpandedNavCats = Array.from(
+        new Set([
+          ...this.props.navigationCategoriesExpanded,
+          ...parentCategoryIds,
+        ])
+      );
       this.props.updateSectionVisibility(anchor, true);
+      this.props.updateNavigationCategoryExpansion(nextExpandedNavCats);
     }
 
     componentDidUpdate() {
@@ -226,9 +242,8 @@ export const RecordMainSection = connect(null)(
           <div
             style={{
               position: 'absolute',
-              right: '3em',
-              top: '4em',
-              zIndex: 1,
+              right: 0,
+              top: '1em',
             }}
           >
             <i className="fa fa-exclamation-triangle" />
