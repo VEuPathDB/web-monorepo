@@ -36,6 +36,7 @@ interface SubsettingProps {
    * used to disable FieldNode's scrollIntoView property in map scope
    */
   scope?: VariableScope;
+  hideStarredVariables?: boolean;
 }
 
 /** Allow user to filter study data based on the value(s) of any available variable. */
@@ -47,6 +48,7 @@ export default function Subsetting({
   filteredCounts,
   variableLinkConfig,
   scope = 'variableTree',
+  hideStarredVariables = false,
 }: SubsettingProps) {
   // Obtain all entities and associated variables.
   const entities = useStudyEntities();
@@ -84,7 +86,9 @@ export default function Subsetting({
           scope={scope}
           entityId={entity?.id}
           starredVariables={starredVariables}
-          toggleStarredVariable={toggleStarredVariable}
+          toggleStarredVariable={
+            hideStarredVariables ? undefined : toggleStarredVariable
+          }
           variableId={variable?.id}
           variableLinkConfig={variableLinkConfig}
         />

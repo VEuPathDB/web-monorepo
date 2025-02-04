@@ -152,6 +152,7 @@ function SubsettingContainer(props: SubsettingContainerProps) {
         variableLinkConfig={variableLinkConfig}
         totalCounts={totalCounts.value}
         filteredCounts={filteredCounts.value}
+        hideStarredVariables
       />
     </div>
   );
