@@ -45,18 +45,21 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
         },
         renderInfo: () => (
           <p className="formInfo">
-            Complete the Upload My Normalized RNA-Seq form. Name, Summary and
-            Upload File/URL are required. Three types of files – bigWig, counts
-            and index – are supported in the uploaded zip file. bigWig files are
-            not required but will allow visualization in the genome browser if
-            included. The counts (FPKM/TPM) files should be tab-delimited and
+            Upload your Normalized RNA-Seq in a zip file. Three types of files –
+            bigWig, counts and index – are supported in the uploaded zip file.
+            <br />- The counts (FPKM/TPM) files should be tab-delimited and
             contain two columns with column headers: 'gene_id', and either
-            'FPKM' or 'TMP'. The index file should be named manifest.txt and
-            consist of a tab delimited txt file with three columns (no column
-            headers): sample name, filename, and strandedness
-            (unstranded/stranded). Upload Data Set initiates the transfer and
-            will create a record page for your data set that contains links to
-            the fold change search, and bigWig files if included.
+            'FPKM' or 'TMP'.
+            <br />- The index file should be named manifest.txt and consist of a
+            tab delimited txt file with three columns (no column headers):
+            sample name, filename, and strandedness (unstranded/stranded).
+            <br />- bigWig files are not required but will allow visualization
+            in the genome browser if included.
+            <br />
+            <br />
+            The Upload Data Set service initiates the transfer and will create a
+            record page for your data set that contains links to the fold change
+            search, and bigWig files if included.
           </p>
         ),
         uploadMethodConfig: {
@@ -104,8 +107,11 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
             </a>
             .
             <br />
-            The bigwig files you select here must be mapped to the reference
+            The bigWig files you upload here must be mapped to the reference
             genome that you select above.
+            <br />
+            If you need to upload more than one file please make a compressed
+            file with all your bigWig files.
             <br />
             Only letters, numbers, spaces and dashes are allowed in the file
             name.
