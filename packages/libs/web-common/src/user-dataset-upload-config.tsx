@@ -45,8 +45,9 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
         },
         renderInfo: () => (
           <p className="formInfo">
-            Upload your Normalized RNA-Seq in a zip file. Three types of files –
-            bigWig, counts and index – are supported in the uploaded zip file.
+            Upload your Normalized RNA-Seq in a tar.gz, tgz or zip file. Three
+            types of files – bigWig, counts and index – are supported in the
+            uploaded zip file.
             <br />- The counts (FPKM/TPM) files should be tab-delimited and
             contain two columns with column headers: 'gene_id', and either
             'FPKM' or 'TMP'.
@@ -111,7 +112,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
             genome that you select above.
             <br />
             If you need to upload more than one file please make a compressed
-            file with all your bigWig files.
+            file with all your bigWig files (a tar.gz, tgz or zip file).
             <br />
             Only letters, numbers, spaces and dashes are allowed in the file
             name.
