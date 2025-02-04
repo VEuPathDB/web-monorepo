@@ -32,7 +32,7 @@ export const PubmedIdEntry: React.FunctionComponent<PubmedIdEntryProps> = ({
     <label>Author:</label>
     <div>{author}</div>
 
-    <label>Title:</label>
+    <label>Journal:</label>
     <div>{journal}</div>
   </div>
 );
