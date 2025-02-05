@@ -11,7 +11,6 @@
 .wdk-RecordActions {
   padding: 0;
   margin: 0;
-  padding-top: 1em;
 }
 
 .wdk-RecordHeading {
@@ -50,6 +49,7 @@
   /* make prevent contents panel from being clipped. */
   min-height: 65vh;
   margin-left: 2em;
+  width: 100%;
 }
 
 .wdk-RecordSidebar {
