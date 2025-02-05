@@ -1,4 +1,3 @@
-// FIXME Remove starred variables button
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { Props } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
@@ -12,11 +11,6 @@ import {
   makeNewAnalysis,
   NewAnalysis,
   useAnalysisState,
-  useConfiguredAnalysisClient,
-  useConfiguredComputeClient,
-  useConfiguredDataClient,
-  useConfiguredDownloadClient,
-  useConfiguredSubsettingClient,
   useGetDefaultVariableDescriptor,
   useStudyEntities,
 } from '@veupathdb/eda/lib/core';
@@ -32,11 +26,6 @@ export function EdaSubsettingParameter(props: Props<StringParam>) {
   const datasetIdParamName = props.parameter.properties
     ?.edaDatasetIdParamName?.[0] as string;
   const studyId = props.ctx.paramValues[datasetIdParamName];
-  const subsettingClient = useConfiguredSubsettingClient(edaServiceUrl);
-  const dataClient = useConfiguredDataClient(edaServiceUrl);
-  const analysisClient = useConfiguredAnalysisClient(edaServiceUrl);
-  const downloadClient = useConfiguredDownloadClient(edaServiceUrl);
-  const computeClient = useConfiguredComputeClient(edaServiceUrl);
 
   const analysisDescriptor = useMemo(() => {
     const jsonParsedParamValue = parseJson(props.value);
@@ -60,14 +49,7 @@ export function EdaSubsettingParameter(props: Props<StringParam>) {
 
   return (
     <DocumentationContainer>
-      <WorkspaceContainer
-        studyId={studyId}
-        subsettingClient={subsettingClient}
-        dataClient={dataClient}
-        analysisClient={analysisClient}
-        downloadClient={downloadClient}
-        computeClient={computeClient}
-      >
+      <WorkspaceContainer studyId={studyId} edaServiceUrl={edaServiceUrl}>
         <SubsettingContainer analysisState={analysisState} />
       </WorkspaceContainer>
     </DocumentationContainer>
