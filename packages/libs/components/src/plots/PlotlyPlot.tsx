@@ -68,7 +68,7 @@ export interface PlotProps<T> extends ColorPaletteAddon {
   checkedLegendItems?: string[];
   /** A function to call each time after plotly renders the plot */
   onPlotlyRender?: PlotParams['onUpdate'];
-  /** array of annotations to show on the plot */
+  /** array of annotations to show on the plot. Can be used with any plotly plot type */
   plotAnnotations?: PlotParams['layout']['annotations'];
 }
 

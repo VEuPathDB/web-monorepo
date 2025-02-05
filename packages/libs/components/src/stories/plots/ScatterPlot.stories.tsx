@@ -434,5 +434,5 @@ Annotations.args = {
   data: dataSetProcess,
   interactive: true,
   displayLegend: true,
-  plotAnnotations: plotAnnotations,
+  plotAnnotations,
 };

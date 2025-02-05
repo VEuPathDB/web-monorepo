@@ -18,6 +18,7 @@ import {
   FacetedData,
 } from '../../types/plots';
 import FacetedHistogram from '../../plots/facetedPlots/FacetedHistogram';
+import { PlotParams } from 'react-plotly.js';
 
 export default {
   title: 'Plots/Histogram',
@@ -559,4 +560,23 @@ Faceted.args = {
       margin: 'auto',
     },
   },
+};
+
+const plotAnnotations: PlotParams['layout']['annotations'] = [
+  {
+    xref: 'paper',
+    yref: 'paper',
+    x: 0.1,
+    xanchor: 'left',
+    y: 0.9,
+    yanchor: 'top',
+    text: 'Annotation <b>inside</b> the plot',
+    showarrow: false,
+  },
+];
+export const WithAnnotations = TemplateStaticWithRangeControls.bind({});
+WithAnnotations.args = {
+  data: staticData,
+  interactive: true,
+  plotAnnotations,
 };
