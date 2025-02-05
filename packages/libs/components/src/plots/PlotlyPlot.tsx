@@ -68,6 +68,8 @@ export interface PlotProps<T> extends ColorPaletteAddon {
   checkedLegendItems?: string[];
   /** A function to call each time after plotly renders the plot */
   onPlotlyRender?: PlotParams['onUpdate'];
+  /** array of annotations to show on the plot. Paper referenced */
+  plotAnnotations?: PlotParams['layout']['annotations'];
 }
 
 const Plot = lazy(() => import('react-plotly.js'));
@@ -111,6 +113,7 @@ function PlotlyPlot<T>(
     checkedLegendItems,
     colorPalette = ColorPaletteDefault,
     onPlotlyRender,
+    plotAnnotations,
     ...plotlyProps
   } = props;
 
@@ -180,6 +183,7 @@ function PlotlyPlot<T>(
       },
       autosize: true, // responds properly to enclosing div resizing (not to be confused with config.responsive)
       colorway: colorPalette,
+      annotations: plotAnnotations,
     }),
     [
       plotlyProps.layout,

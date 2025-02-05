@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ScatterPlot, { ScatterPlotProps } from '../../plots/ScatterPlot';
 import { Story, Meta } from '@storybook/react/types-6-0';
+import { PlotParams } from 'react-plotly.js';
 // test to use RadioButtonGroup directly instead of ScatterPlotControls
 import RadioButtonGroup from '../../components/widgets/RadioButtonGroup';
 import { FacetedData, ScatterPlotData } from '../../types/plots';
@@ -382,4 +383,36 @@ export const opacitySlider = () => {
       />
     </>
   );
+};
+
+// Plot annotations
+const plotAnnotations: PlotParams['layout']['annotations'] = [
+  {
+    xref: 'paper',
+    yref: 'paper',
+    x: 0,
+    xanchor: 'right',
+    y: 1,
+    yanchor: 'bottom',
+    text: 'X axis label',
+    showarrow: false,
+  },
+  {
+    xref: 'paper',
+    yref: 'paper',
+    x: 1,
+    xanchor: 'left',
+    y: 0,
+    yanchor: 'top',
+    text: 'Y axis label',
+    showarrow: false,
+  },
+];
+
+export const Annotations: Story<ScatterPlotProps> = Template.bind({});
+Annotations.args = {
+  data: dataSetProcess,
+  interactive: true,
+  displayLegend: true,
+  plotAnnotations: plotAnnotations,
 };
