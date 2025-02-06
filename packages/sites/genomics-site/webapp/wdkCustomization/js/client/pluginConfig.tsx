@@ -136,7 +136,7 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   },
   // {
   //   type: 'questionForm',
-  //   name: 'GenesByEda',
+  //   name: 'GenesByEdaSubset',
   //   component: GenesByEdaSubsetting,
   // },
   {
@@ -208,7 +208,10 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   },
   {
     type: 'questionFormParameter',
-    name: 'edaSubsetting',
+    name: 'eda_analysis_spec',
+    test: ({ question }) => {
+      return question?.queryName === 'GenesByEdaSubset';
+    },
     component: EdaSubsettingParameter,
   },
   {

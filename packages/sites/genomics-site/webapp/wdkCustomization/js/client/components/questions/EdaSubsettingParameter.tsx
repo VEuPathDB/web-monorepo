@@ -22,9 +22,9 @@ import FilterChipList from '@veupathdb/eda/lib/core/components/FilterChipList';
 
 import './EdaSubsettingParameter.scss';
 
+const datasetIdParamName = 'eda_dataset_id';
+
 export function EdaSubsettingParameter(props: Props<StringParam>) {
-  const datasetIdParamName = props.parameter.properties
-    ?.edaDatasetIdParamName?.[0] as string;
   const studyId = props.ctx.paramValues[datasetIdParamName];
 
   const analysisDescriptor = useMemo(() => {
