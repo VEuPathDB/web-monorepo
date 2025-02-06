@@ -1,5 +1,5 @@
 import { keyBy } from 'lodash';
-import { find } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
+import { find, Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import {
   CollectionVariableTreeNode,
   MultiFilterVariable,
@@ -13,7 +13,9 @@ import {
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 export function entityTreeToArray(rootEntity: StudyEntity): StudyEntity[] {
-  return Array.from(preorder(rootEntity, (e) => e.children ?? []));
+  return Seq.from(preorder(rootEntity, (e) => e.children ?? []))
+    .orderBy((node) => node.displayName)
+    .toArray();
 }
 
 export interface EntityAndVariable {
