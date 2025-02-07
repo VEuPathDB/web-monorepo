@@ -13,9 +13,7 @@ import {
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 export function entityTreeToArray(rootEntity: StudyEntity): StudyEntity[] {
-  return Seq.from(preorder(rootEntity, (e) => e.children ?? []))
-    .orderBy((node) => node.displayName)
-    .toArray();
+  return Array.from(preorder(rootEntity, (e) => e.children ?? []));
 }
 
 export interface EntityAndVariable {
