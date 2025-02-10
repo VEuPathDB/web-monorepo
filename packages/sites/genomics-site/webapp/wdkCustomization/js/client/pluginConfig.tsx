@@ -134,11 +134,11 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
       </Suspense>
     ),
   },
-  // {
-  //   type: 'questionForm',
-  //   name: 'GenesByEdaSubset',
-  //   component: GenesByEdaSubsetting,
-  // },
+  {
+    type: 'questionForm',
+    name: 'GenesByEdaSubset',
+    component: GenesByEdaSubsetting,
+  },
   {
     type: 'questionForm',
     name: 'ByGenotypeNumber',

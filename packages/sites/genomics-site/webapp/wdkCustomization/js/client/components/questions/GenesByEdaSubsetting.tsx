@@ -3,12 +3,19 @@ import React, { useMemo } from 'react';
 import { EbrcDefaultQuestionForm } from '@veupathdb/web-common/lib/components/questions/EbrcDefaultQuestionForm';
 
 import { Props } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
-import { useLocation } from 'react-router-dom';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 export function GenesByEdaSubsetting(props: Props) {
-  const location = useLocation();
-  const params = new URLSearchParams(location.search);
-  const datasetId = params.get('datasetId');
+  const datasetId = props.state.paramValues['eda_dataset_id'];
+  const datasetRecord = useWdkService(
+    async (wdkService) => {
+      if (datasetId == null) return;
+      return wdkService.getRecord('dataset', [
+        { name: 'dataset_id', value: datasetId },
+      ]);
+    },
+    [datasetId]
+  );
   const xformProps = useMemo(() => {
     return {
       ...props,
@@ -16,15 +23,11 @@ export function GenesByEdaSubsetting(props: Props) {
         ...props.state,
         question: {
           ...props.state.question,
-          displayName: `${props.state.question.displayName}: ${datasetId}`,
+          displayName:
+            datasetRecord?.displayName ?? props.state.question.displayName,
         },
       },
     };
-  }, [datasetId, props]);
-  return (
-    <>
-      <pre>{JSON.stringify({ datasetId })}</pre>
-      <EbrcDefaultQuestionForm {...xformProps} />
-    </>
-  );
+  }, [datasetRecord, props]);
+  return <EbrcDefaultQuestionForm {...xformProps} />;
 }
