@@ -6,6 +6,7 @@ import { PlotParams } from 'react-plotly.js';
 import RadioButtonGroup from '../../components/widgets/RadioButtonGroup';
 import { FacetedData, ScatterPlotData } from '../../types/plots';
 import FacetedScatterPlot from '../../plots/facetedPlots/FacetedScatterPlot';
+import { VEuPathDBAnnotation } from '../../types/plots';
 import SliderWidget, {
   SliderWidgetProps,
 } from '../../components/widgets/Slider';
@@ -16,6 +17,7 @@ import {
   dateStringDataSet,
   processInputData,
 } from './ScatterPlot.storyData';
+import { Annotations } from 'plotly.js';
 
 export default {
   title: 'Plots/ScatterPlot',
@@ -386,51 +388,46 @@ export const opacitySlider = () => {
 };
 
 // Plot annotations
-const plotAnnotations: PlotParams['layout']['annotations'] = [
+const plotAnnotations: Array<VEuPathDBAnnotation> = [
   {
-    xref: 'paper',
-    yref: 'paper',
-    x: 0.1,
-    xanchor: 'left',
-    y: 0.9,
-    yanchor: 'top',
-    text: 'Annotation <b>inside</b> the plot',
-    showarrow: false,
-  },
-  {
-    xref: 'paper',
-    yref: 'paper',
-    x: 1,
-    xanchor: 'left',
-    y: 0,
-    yanchor: 'top',
-    text: 'Annotation <i>outside</i> the plot',
-    showarrow: false,
-  },
-  {
+    xSubject: 0.1,
+    ySubject: 0.9,
     xref: 'x',
     yref: 'y',
-    x: 33,
-    y: 3,
+    xAnchor: 'center',
+    yAnchor: 'top',
+    text: 'Annotation <i>inside</i> the plot, xy ref',
+  },
+  {
+    xSubject: 1,
+    ySubject: 0,
+    xref: 'paper',
+    yref: 'paper',
+    xAnchor: 'left',
+    yAnchor: 'top',
+    dx: 5,
+    dy: 20,
+    text: 'Annotation <i>outside</i> the plot, paper ref',
+  },
+  {
+    xSubject: 33,
+    ySubject: 3,
+    xref: 'x',
+    yref: 'y',
     text: 'Annotating a point, fancy style',
-    showarrow: true,
-    ax: 0,
-    ay: -40,
-    font: {
+    subjectConnector: 'arrow',
+    dx: 0,
+    dy: -40,
+    fontStyles: {
       family: 'Courier New, monospace',
       size: 16,
-      color: '#ffffff',
+      color: 'blue',
     },
-    bordercolor: '#c7c7c7',
-    borderwidth: 2,
-    borderpad: 4,
-    bgcolor: '#ff20ff',
-    opacity: 0.8,
   },
 ];
 
-export const Annotations: Story<ScatterPlotProps> = Template.bind({});
-Annotations.args = {
+export const PlotAnnotations: Story<ScatterPlotProps> = Template.bind({});
+PlotAnnotations.args = {
   data: dataSetProcess,
   interactive: true,
   displayLegend: true,
