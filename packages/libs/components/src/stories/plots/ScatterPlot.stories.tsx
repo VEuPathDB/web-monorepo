@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import ScatterPlot, { ScatterPlotProps } from '../../plots/ScatterPlot';
 import { Story, Meta } from '@storybook/react/types-6-0';
+import { PlotParams } from 'react-plotly.js';
 // test to use RadioButtonGroup directly instead of ScatterPlotControls
 import RadioButtonGroup from '../../components/widgets/RadioButtonGroup';
 import { FacetedData, ScatterPlotData } from '../../types/plots';
 import FacetedScatterPlot from '../../plots/facetedPlots/FacetedScatterPlot';
+import { VEuPathDBAnnotation } from '../../types/plots';
 import SliderWidget, {
   SliderWidgetProps,
 } from '../../components/widgets/Slider';
@@ -15,6 +17,7 @@ import {
   dateStringDataSet,
   processInputData,
 } from './ScatterPlot.storyData';
+import { Annotations } from 'plotly.js';
 
 export default {
   title: 'Plots/ScatterPlot',
@@ -382,4 +385,51 @@ export const opacitySlider = () => {
       />
     </>
   );
+};
+
+// Plot annotations
+const plotAnnotations: Array<VEuPathDBAnnotation> = [
+  {
+    xSubject: 0.1,
+    ySubject: 0.9,
+    xref: 'x',
+    yref: 'y',
+    xAnchor: 'center',
+    yAnchor: 'top',
+    text: 'Annotation <i>inside</i> the plot, xy ref',
+  },
+  {
+    xSubject: 1,
+    ySubject: 0,
+    xref: 'paper',
+    yref: 'paper',
+    xAnchor: 'left',
+    yAnchor: 'top',
+    dx: 5,
+    dy: 20,
+    text: 'Annotation <i>outside</i> the plot, paper ref',
+  },
+  {
+    xSubject: 33,
+    ySubject: 3,
+    xref: 'x',
+    yref: 'y',
+    text: 'Annotating a point, fancy style',
+    subjectConnector: 'arrow',
+    dx: 0,
+    dy: -40,
+    fontStyles: {
+      family: 'Courier New, monospace',
+      size: 16,
+      color: 'blue',
+    },
+  },
+];
+
+export const PlotAnnotations: Story<ScatterPlotProps> = Template.bind({});
+PlotAnnotations.args = {
+  data: dataSetProcess,
+  interactive: true,
+  displayLegend: true,
+  plotAnnotations,
 };
