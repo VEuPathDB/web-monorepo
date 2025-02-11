@@ -14,6 +14,7 @@ import { ClearSelectionButton } from './VariableTreeDropdown';
 import { VariableLinkConfig } from '../VariableLink';
 import { useHistory } from 'react-router';
 import { useMemo } from 'react';
+import { orderBy } from 'lodash';
 
 export interface VariableTreeProps {
   starredVariables?: VariableDescriptor[];
@@ -44,7 +45,7 @@ export default function VariableTree({
   scope,
   asDropdown,
 }: VariableTreeProps) {
-  const entities = useStudyEntities();
+  const entities = orderBy(useStudyEntities(), 'displayName');
   const valuesMap = useValuesMap(entities);
   const flattenedFields = useFlattenedFields(entities, scope);
   const fieldsByTerm = useFlattenFieldsByTerm(flattenedFields);

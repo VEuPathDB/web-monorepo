@@ -17,7 +17,7 @@ import {
   RecordAttributeProps,
   RecordTableProps,
 } from 'ortho-client/records/Types';
-import { RecordTableSection } from 'ortho-client/records/RecordTableSection';
+import { RecordTableDescription } from 'ortho-client/records/RecordTableSection';
 
 export default {
   Page: () => OrthoMCLPage,
@@ -33,7 +33,7 @@ export default {
     'RecordTable',
     (props: RecordTableProps) => props.recordClass.fullName
   ),
-  RecordTableSection,
+  RecordTableDescription,
   SiteSearchInput,
 };
 

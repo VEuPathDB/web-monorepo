@@ -1,5 +1,5 @@
 import { keyBy } from 'lodash';
-import { find } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
+import { find, Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import {
   CollectionVariableTreeNode,
   MultiFilterVariable,

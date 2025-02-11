@@ -7,22 +7,19 @@ import { defaultMemoize } from 'reselect';
 import HeadingRow from './HeadingRow';
 import DataRowList from './DataRowList';
 import { makeClassifier, combineWidths } from '../Utils/Utils';
-import { MESA_SCROLL_EVENT, MESA_REFLOW_EVENT } from './MesaContants';
 
 const dataTableClass = makeClassifier('DataTable');
 
 class DataTable extends React.Component {
   constructor(props) {
     super(props);
-    this.widthCache = {};
-    this.state = { dynamicWidths: null, tableWrapperWidth: null };
+    this.widthCache = [];
     this.renderStickyTable = this.renderStickyTable.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
-    this.getInnerCellWidth = this.getInnerCellWidth.bind(this);
     this.hasSelectionColumn = this.hasSelectionColumn.bind(this);
+    this.hasExpansionColumn = this.hasExpansionColumn.bind(this);
     this.shouldUseStickyHeader = this.shouldUseStickyHeader.bind(this);
     this.makeFirstNColumnsSticky = this.makeFirstNColumnsSticky.bind(this);
-    this.handleTableBodyScroll = this.handleTableBodyScroll.bind(this);
     this.setDynamicWidths = this.setDynamicWidths.bind(this);
     this.resizeId = -1;
     this.mainRef = null;
@@ -40,7 +37,7 @@ class DataTable extends React.Component {
   }
 
   makeFirstNColumnsSticky(columns, n) {
-    const { dynamicWidths } = this.state;
+    const dynamicWidths = this.widthCache;
 
     if (n <= columns.length) {
       const stickyColumns = columns.slice(0, n).map((column, index) => {
@@ -95,14 +92,16 @@ class DataTable extends React.Component {
   }
 
   attachLoadEventHandlers() {
-    if (this.bodyNode == null) return;
-    this.bodyNode.querySelectorAll('img, iframe, object').forEach((node) => {
-      if (node.complete) return;
-      node.addEventListener('load', (event) => {
-        const el = event.target.offsetParent || event.target;
-        if (el.scrollWidth > el.clientWidth) this.setDynamicWidths();
+    if (this.contentTable == null) return;
+    this.contentTable
+      .querySelectorAll('img, iframe, object')
+      .forEach((node) => {
+        if (node.complete) return;
+        node.addEventListener('load', (event) => {
+          const el = event.target.offsetParent || event.target;
+          if (el.scrollWidth > el.clientWidth) this.setDynamicWidths();
+        });
       });
-    });
   }
 
   attachResizeHandler() {
@@ -123,11 +122,9 @@ class DataTable extends React.Component {
     if (this.props.rows.length === 0 || this.props.filteredRows.length === 0)
       return;
 
-    this.setState({ dynamicWidths: null, tableWrapperWidth: null }, () => {
-      this.widthCache = {};
-      const { columns } = this.props;
-      const hasSelectionColumn = this.hasSelectionColumn();
-      const { contentTable, getInnerCellWidth } = this;
+    this.setState({ dynamicWidths: null }, () => {
+      this.widthCache = [];
+      const { contentTable } = this;
       if (!contentTable) return;
       const contentCells = Array.from(
         contentTable.querySelectorAll('tbody > tr:first-child > td')
@@ -137,26 +134,18 @@ class DataTable extends React.Component {
         return;
       }
 
-      if (hasSelectionColumn) {
-        contentCells.shift();
-      }
-
-      const dynamicWidths = columns.map(
-        (c, i) =>
-          getInnerCellWidth(contentCells[i], c) -
-          (hasSelectionColumn && !i ? 1 : 0)
+      this.widthCache = contentCells.map(
+        (cell) => cell.getBoundingClientRect().width
       );
-      this.setState({ dynamicWidths }, () => {
-        window.dispatchEvent(new CustomEvent(MESA_REFLOW_EVENT));
-        const tableWrapperWidth = this.bodyNode && this.bodyNode.clientWidth;
-        this.setState({ tableWrapperWidth });
-      });
     });
   }
 
-  getInnerCellWidth(cell, { key }) {
-    if (key && key in this.widthCache) return this.widthCache[key];
-    return (this.widthCache[key] = cell.clientWidth);
+  hasExpansionColumn() {
+    const { options, eventHandlers } = this.props;
+    return (
+      typeof options.childRow === 'function' &&
+      typeof eventHandlers.onExpandedRowsChange === 'function'
+    );
   }
 
   hasSelectionColumn() {
@@ -166,12 +155,6 @@ class DataTable extends React.Component {
       typeof eventHandlers.onRowSelect === 'function' &&
       typeof eventHandlers.onRowDeselect === 'function'
     );
-  }
-
-  handleTableBodyScroll() {
-    const offset = this.bodyNode.scrollLeft;
-    this.headerNode.scrollLeft = offset;
-    window.dispatchEvent(new CustomEvent(MESA_SCROLL_EVENT));
   }
 
   // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -187,30 +170,15 @@ class DataTable extends React.Component {
       uiState,
       headerWrapperStyle,
     } = this.props;
-    const { dynamicWidths } = this.state;
-    const stickyColumns = options.useStickyFirstNColumns
+    const newColumns = options.useStickyFirstNColumns
       ? this.makeFirstNColumnsSticky(columns, options.useStickyFirstNColumns)
       : columns;
-    const newColumns =
-      stickyColumns.every(({ width }) => width) ||
-      !dynamicWidths ||
-      dynamicWidths.length == 0
-        ? stickyColumns
-        : makeColumnsWithDynamicWidths({
-            columns: stickyColumns,
-            dynamicWidths,
-          });
     const wrapperStyle = {
       maxHeight: options ? options.tableBodyMaxHeight : null,
-      minWidth: dynamicWidths
-        ? combineWidths(columns.map(({ width }) => width))
-        : null,
     };
-    const headerWrapperStyleMerged = {
-      display: dynamicWidths == null ? 'none' : 'block',
-      ...headerWrapperStyle,
+    const tableStyle = {
+      tableLayout: 'auto',
     };
-    const tableLayout = { tableLayout: dynamicWidths ? 'fixed' : 'auto' };
     const tableProps = {
       options,
       rows,
@@ -223,36 +191,21 @@ class DataTable extends React.Component {
     return (
       <div ref={(node) => (this.mainRef = node)} className="MesaComponent">
         <div
-          className={dataTableClass(
-            null,
-            options.useStickyHeader ? 'Sticky' : null
-          )}
+          className={dataTableClass(null, [
+            options.useStickyHeader ? 'Sticky' : undefined,
+            options.marginContent ? 'HasMargin' : undefined,
+          ])}
           style={wrapperStyle}
         >
-          <div
-            style={headerWrapperStyleMerged}
-            ref={(node) => (this.headerNode = node)}
-            className={dataTableClass('Header')}
+          <table
+            cellSpacing={0}
+            cellPadding={0}
+            style={tableStyle}
+            ref={(node) => (this.contentTable = node)}
           >
-            <table cellSpacing={0} cellPadding={0} style={{ ...tableLayout }}>
-              <HeadingRow {...tableProps} />
-            </table>
-          </div>
-          <div
-            ref={(node) => (this.bodyNode = node)}
-            className={dataTableClass('Body')}
-            onScroll={this.handleTableBodyScroll}
-          >
-            <table
-              cellSpacing={0}
-              cellPadding={0}
-              style={tableLayout}
-              ref={(node) => (this.contentTable = node)}
-            >
-              {dynamicWidths == null ? <HeadingRow {...tableProps} /> : null}
-              <DataRowList {...tableProps} />
-            </table>
-          </div>
+            <HeadingRow {...tableProps} />
+            <DataRowList {...tableProps} />
+          </table>
           {this.props.options.marginContent && (
             <div className={dataTableClass('Margin')}>
               {this.props.options.marginContent}
@@ -288,13 +241,5 @@ DataTable.propTypes = {
   uiState: PropTypes.object,
   eventHandlers: PropTypes.objectOf(PropTypes.func),
 };
-
-const makeColumnsWithDynamicWidths = defaultMemoize(
-  ({ columns, dynamicWidths }) =>
-    columns.map((column, index) =>
-      Object.assign({}, column, { width: dynamicWidths[index] })
-    ),
-  (a, b) => a.columns === b.columns && isEqual(a.dynamicWidths, b.dynamicWidths)
-);
 
 export default DataTable;

@@ -110,6 +110,7 @@ class DataRow extends React.PureComponent {
     return (
       <>
         <tr
+          id={getRowId ? 'row_id_' + getRowId(row) : undefined}
           className={className
             .concat(showChildRow ? ' _childIsExpanded' : '')
             .concat(hasExpansionColumn ? ' _isExpandable' : '')}

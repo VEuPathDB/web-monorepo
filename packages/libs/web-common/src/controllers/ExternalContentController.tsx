@@ -1,11 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 
-import { useLocation } from 'react-router-dom';
-
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { scrollIntoView } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 
 interface Props {
   url: string;
@@ -16,11 +13,10 @@ const EXTERNAL_CONTENT_CONTROLLER_CLASSNAME = 'ExternalContentController';
 export default function ExternalContentController(props: Props) {
   const { url } = props;
   const ref = useRef<HTMLDivElement>(null);
-  const location = useLocation();
 
   const { value: content } = usePromise(async () => {
     try {
-      const response = await fetch(url, { mode: 'cors' });
+      const response = await fetch(`https://${url}`, { mode: 'cors' });
       if (response.ok) return response.text();
       return `<h1>${response.statusText}</h1>`;
     } catch (error) {
@@ -33,8 +29,8 @@ export default function ExternalContentController(props: Props) {
     if (content == null || ref.current == null) return;
 
     try {
-      if (location.hash) {
-        const fragementId = location.hash.slice(1);
+      if (window.location.hash) {
+        const fragementId = window.location.hash.slice(1);
         const querySelector = `[id=${fragementId}], [name=${fragementId}]`;
         // open detail with id or name attribute matching location.hash
         const target = ref.current.querySelector(querySelector);
@@ -43,13 +39,13 @@ export default function ExternalContentController(props: Props) {
         }
         // scroll to element identified by hash
         if (target instanceof HTMLElement) {
-          scrollIntoView(target);
+          target.scrollIntoView();
         }
       }
     } catch (error) {
       console.error(error);
     }
-  }, [location.hash, content]);
+  }, [content]);
 
   if (content == null) return <Loading />;
 
