@@ -159,7 +159,7 @@ function PlotlyPlot<T>(
         ax: annotation.dx,
         ay: annotation.dy,
         showarrow:
-          annotation.subjectConnector &&
+          typeof annotation.subjectConnector !== 'undefined' &&
           annotation.subjectConnector === 'arrow',
         font: annotation.fontStyles,
       };
