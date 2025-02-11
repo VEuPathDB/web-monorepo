@@ -175,6 +175,14 @@ export class BlastApi extends FetchClientWithCredentials {
     });
   }
 
+  fetchJobError(jobId: string) {
+    return this.fetch({
+      path: `${JOBS_PATH}/${jobId}/error`,
+      method: 'GET',
+      transformResponse: ioTransformer(string),
+    });
+  }
+
   rerunJob(jobId: string) {
     return this.taggedFetch({
       path: `${JOBS_PATH}/${jobId}`,

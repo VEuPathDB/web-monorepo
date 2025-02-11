@@ -273,14 +273,11 @@
   top: 0;
   right: 1em;
 }
-.filter-param .membership-filter .HeadingRow:first-child {
+.filter-param .membership-filter .HeadingRow:first-child > th {
   border-top: 1px solid #ccc;
 }
-.filter-param .membership-filter .HeadingRow:last-child {
+.filter-param .membership-filter .HeadingRow:last-child > th {
   border-bottom: 1px solid #ccc;
-}
-.filter-param .membership-filter .DataTable table {
-  border-collapse: collapse;
 }
 .filter-param .membership-filter .DataRow,
 .filter-param .membership-filter .HeadingRow {

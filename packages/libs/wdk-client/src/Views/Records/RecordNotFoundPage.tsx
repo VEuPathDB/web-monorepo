@@ -12,17 +12,15 @@ export function RecordNotFoundPage({ sourceID }: Props) {
     `/search?q=${sourceID}`
   );
   return (
-    <div>
-      <h1 className="wdk-RecordNotFoundHeader">
-        No results for <strong>{sourceID}</strong>
-      </h1>
-      <p className="wdk-RecordNotFoundParagraph">
-        The ID may have changed. Please use our site search feature to find
-        matches for{' '}
+    <div className="wdk-RecordNotFoundParagraph">
+      <p>
+        <strong>{sourceID}</strong> is not a current identifier.
+      </p>
+      <p>
         <a href={searchUrl}>
+          <i className="fa fa-search"></i> Search our site for{' '}
           <strong>{sourceID}</strong>
         </a>
-        .
       </p>
     </div>
   );

@@ -1,16 +1,10 @@
 import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
-import { includes, memoize, throttle, stubTrue } from 'lodash';
+import { includes, stubTrue } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import CategoriesCheckboxTree from '../../../Components/CheckboxTree/CategoriesCheckboxTree';
-import {
-  getId,
-  getTargetType,
-  isIndividual,
-} from '../../../Utils/CategoryUtils';
-import { wrappable } from '../../../Utils/ComponentUtils';
-import { Seq } from '../../../Utils/IterableUtils';
-import { preorderSeq, pruneDescendantNodes } from '../../../Utils/TreeUtils';
+import { getId } from '../../../Utils/CategoryUtils';
+import { safeHtml, wrappable } from '../../../Utils/ComponentUtils';
 import RecordNavigationItem from '../../../Views/Records/RecordNavigation/RecordNavigationItem';
 
 /** Navigation panel for record page */
@@ -18,52 +12,7 @@ class RecordNavigationSection extends React.PureComponent {
   constructor(props) {
     super(props);
     this.handleSearchTermChange = this.handleSearchTermChange.bind(this);
-    this.setActiveCategory = throttle(this.setActiveCategory.bind(this), 300);
     this.state = { activeCategory: null };
-  }
-
-  componentDidMount() {
-    window.addEventListener('scroll', this.setActiveCategory, {
-      passive: true,
-    });
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('scroll', this.setActiveCategory, {
-      passive: true,
-    });
-  }
-
-  componentDidUpdate(previousProps) {
-    if (
-      this.props.collapsedSections !== previousProps.collapsedSections ||
-      this.props.showChildren !== previousProps.showChildren
-    ) {
-      this.setActiveCategory();
-    }
-  }
-
-  setActiveCategory() {
-    let { categoryTree, navigationCategoriesExpanded } = this.props;
-    let activeCategory = Seq.from(removeFields(categoryTree).children)
-      // transform each top-level node into a list of all nodes of that branch
-      // of the tree that are visible in this section
-      .flatMap((topLevelNode) => [
-        topLevelNode,
-        ...preorderSeq(topLevelNode)
-          .filter((node) => navigationCategoriesExpanded.includes(getId(node)))
-          .flatMap((node) => node.children),
-      ])
-      // find the category whose content is near the top of the viewport
-      .findLast((node) => {
-        let id = getId(node);
-        let domNode = document.getElementById(id);
-        if (domNode == null) return;
-        let rect = domNode.getBoundingClientRect();
-        return rect.top <= 10;
-      });
-
-    this.setState({ activeCategory });
   }
 
   handleSearchTermChange(term) {
@@ -72,6 +21,7 @@ class RecordNavigationSection extends React.PureComponent {
 
   render() {
     let {
+      activeSection,
       categoryTree,
       collapsedSections,
       heading,
@@ -80,13 +30,15 @@ class RecordNavigationSection extends React.PureComponent {
       onNavigationCategoryExpansionChange,
       onSectionToggle,
       visibilityFilter = stubTrue,
+      visibilityToggle,
     } = this.props;
 
     return (
       <div className="wdk-RecordNavigationSection">
-        <h2 className="wdk-RecordNavigationSectionHeader">
-          <span dangerouslySetInnerHTML={{ __html: heading }} />
-        </h2>
+        <div className="wdk-RecordNavigationSectionHeader">
+          {safeHtml(heading, null, 'h1')}
+          {visibilityToggle}
+        </div>
         <CategoriesCheckboxTree
           disableHelp
           visibilityFilter={visibilityFilter}
@@ -102,8 +54,8 @@ class RecordNavigationSection extends React.PureComponent {
             <RecordNavigationItem
               node={node}
               path={path}
+              activeSection={activeSection}
               onSectionToggle={onSectionToggle}
-              activeCategory={this.state.activeCategory}
               checked={!includes(collapsedSections, getId(node))}
             />
           )}
@@ -111,15 +63,12 @@ class RecordNavigationSection extends React.PureComponent {
           styleOverrides={{
             treeSection: {
               ul: {
-                padding: '0 0 0 1.5em',
+                padding: '0 0 0 1em',
               },
             },
             treeNode: {
               nodeWrapper: {
-                padding: '0.25em 0 0.25em 0.5em',
-              },
-              topLevelNodeWrapper: {
-                padding: '0.25em 0',
+                alignItems: 'center',
               },
             },
           }}
@@ -141,7 +90,3 @@ RecordNavigationSection.defaultProps = {
 };
 
 export default wrappable(RecordNavigationSection);
-
-const removeFields = memoize((root) =>
-  pruneDescendantNodes((node) => !isIndividual(node), root)
-);

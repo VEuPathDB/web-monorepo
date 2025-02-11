@@ -13,12 +13,12 @@ import { WrappedComponentProps } from 'ortho-client/records/Types';
 
 type Props = WrappedComponentProps<RecordTableSectionProps>;
 
-export function RecordTableSection(
+export function RecordTableDescription(
   DefaultComponent: React.ComponentType<
     WrappedComponentProps<RecordTableSectionProps>
   >
 ) {
-  return function OrthoRecordTableSection(props: Props) {
+  return function OrthoRecordTableDescription(props: Props) {
     const { table, record, ontologyProperties } = props;
 
     const wdkDependencies = useContext(WdkDependenciesContext);
@@ -29,35 +29,38 @@ export function RecordTableSection(
       [wdkService, record, table.name]
     );
 
-    // FIXME Revise this since we now lazy load tables...
     const showDownload =
       record.tables[table.name] &&
       record.tables[table.name].length > 0 &&
       ontologyProperties.scope?.includes('download');
 
-    const title = (
-      <span>
-        <DefaultSectionTitle
-          displayName={table.displayName}
-          help={table.help}
-        />{' '}
+    const links = (
+      <div style={{ marginBottom: '1em' }}>
         {showDownload && (
           <span
             style={{
               fontSize: '.8em',
               fontWeight: 'normal',
-              marginLeft: '1em',
             }}
           >
-            <a role="button" tabIndex={0} onClick={downloadRecordTable}>
+            <button
+              type="button"
+              className="wdk-Link"
+              onClick={downloadRecordTable}
+            >
               <i className="fa fa-download" /> Download
-            </a>
+            </button>
           </span>
         )}
-      </span>
+      </div>
     );
 
-    return <DefaultComponent {...props} title={title} />;
+    return (
+      <>
+        {links}
+        <DefaultComponent {...props} />
+      </>
+    );
   };
 }
 

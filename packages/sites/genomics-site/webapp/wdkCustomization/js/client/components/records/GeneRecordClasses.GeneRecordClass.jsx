@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import { createRoot } from 'react-dom/client';
 import { connect } from 'react-redux';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { RecordActions } from '@veupathdb/wdk-client/lib/Actions';
 import * as Category from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
@@ -31,7 +32,6 @@ import {
   isNodeOverflowing,
 } from '@veupathdb/web-common/lib/util/domUtils';
 
-import { updateTableState } from '../../actioncreators/RecordViewActionCreators';
 import { projectId, webAppUrl } from '../../config';
 import * as Gbrowse from '../common/Gbrowse';
 import { OverviewThumbnails } from '../common/OverviewThumbnails';
@@ -45,15 +45,20 @@ import {
 import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
 import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { AlphaFoldRecordSection } from './AlphaFoldAttributeSection';
+import { DEFAULT_TABLE_STATE } from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
+import { findAncestorFields } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
 
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
  */
 export const RecordHeading = connect(
-  (state) => ({ categoryTree: state.record.categoryTree }),
+  (state) => ({
+    categoryTree: state.record.categoryTree,
+    navigationCategoriesExpanded: state.record.navigationCategoriesExpanded,
+  }),
   RecordActions
 )(
-  class RecordHeading extends Component {
+  class GeneRecordHeading extends Component {
     constructor(...args) {
       super(...args);
       this.handleThumbnailClick = this.handleThumbnailClick.bind(this);
@@ -77,7 +82,19 @@ export const RecordHeading = connect(
     }
 
     handleThumbnailClick({ anchor }) {
+      const parentCategories = Category.getAncestors(
+        this.props.categoryTree,
+        anchor
+      ); //.slice(1);
+      const parentCategoryIds = parentCategories.map(Category.getId);
+      const nextExpandedNavCats = Array.from(
+        new Set([
+          ...this.props.navigationCategoriesExpanded,
+          ...parentCategoryIds,
+        ])
+      );
       this.props.updateSectionVisibility(anchor, true);
+      this.props.updateNavigationCategoryExpansion(nextExpandedNavCats);
     }
 
     componentDidUpdate() {
@@ -203,14 +220,15 @@ export const RecordHeading = connect(
     render() {
       // FungiVBOrgLinkoutsTable is requested in componentWrappers
       return (
-        <React.Fragment>
-          <div ref={(node) => (this.node = node)}>
-            <this.props.DefaultComponent {...this.props} />
-          </div>
+        <>
+          <this.props.DefaultComponent
+            {...this.props}
+            overviewRef={(node) => (this.node = node)}
+          />
           <FungiVBOrgLinkoutsTable
             value={this.props.record.tables.FungiVBOrgLinkoutsTable}
           />
-        </React.Fragment>
+        </>
       );
     }
   }
@@ -221,7 +239,13 @@ export const RecordMainSection = connect(null)(
     return (
       <React.Fragment>
         {props.depth == null && (
-          <div style={{ position: 'absolute', right: '3em' }}>
+          <div
+            style={{
+              position: 'absolute',
+              right: 0,
+              top: '1em',
+            }}
+          >
             <i className="fa fa-exclamation-triangle" />
             &nbsp;
             <button
@@ -490,7 +514,7 @@ const RodMalPhenotypeTableChildRow = pure(function RodMalPhenotypeTableChildRow(
   let { phenotype } = props.rowData;
   return (
     <div>
-      <b>Phenotype</b>:{phenotype == null ? null : phenotype}
+      <b>Phenotype</b>:{phenotype == null ? null : safeHtml(phenotype)}
     </div>
   );
 });
@@ -556,7 +580,7 @@ function makeDatasetGraphChildRow(
           contXAxisMetadataTableName,
         ].filter((tableName) => tableName != null),
       });
-    }, []);
+    }, [requestFields]);
     return <DatasetGraph {...props} />;
   }
 }
@@ -1552,11 +1576,12 @@ class OrthologsForm extends SortKeyTable {
 
 const TranscriptionSummaryForm = connect(
   ({ record }) => ({
-    expressionGraphsTableState: record.eupathdb.tables?.ExpressionGraphs,
+    expressionGraphsTableState:
+      record.tableStates?.ExpressionGraphs ?? DEFAULT_TABLE_STATE,
   }),
   {
     updateSectionVisibility: RecordActions.updateSectionVisibility,
-    updateTableState,
+    updateTableState: RecordActions.updateTableState,
   }
 )(
   class TranscriptionSummaryFormPres extends SortKeyTable {
@@ -1601,6 +1626,10 @@ const TranscriptionSummaryForm = connect(
     }
 
     _handleIframeLoad(loadEvent) {
+      // Open the ExpressionGraphs record section so that the
+      // table is available when the user clicks on annotations.
+      this.props.updateSectionVisibility('ExpressionGraphs', true);
+
       loadEvent.target.contentDocument?.body.addEventListener('click', (e) => {
         const { ExpressionGraphs } = this.props.record.tables;
 
@@ -1624,32 +1653,30 @@ const TranscriptionSummaryForm = connect(
           const expressionGraphTableElement =
             document.getElementById('ExpressionGraphs');
 
+          const expressionGraphTableRowElement =
+            expressionGraphTableElement?.querySelector(
+              `tr#row_id_${expressionGraphIndex}`
+            );
+
           // If the expression graph table is available...
           if (
             expressionGraphIndex !== -1 &&
-            expressionGraphTableElement != null
+            expressionGraphTableRowElement != null
           ) {
-            // Open the ExpressionGraphs record section
+            // Make sure the table section is open
             this.props.updateSectionVisibility('ExpressionGraphs', true);
+            // Add a history entry so users can use the back button to go back to *this* section
+            window.history.pushState(null, null, '#ExpressionGraphs');
 
-            // Scroll to the ExpressionGraphs record section
-            const position =
-              expressionGraphTableElement.getBoundingClientRect();
-            scrollTo(
-              position.top + window.scrollY,
-              // When the scroll is complete, clear the table's search term
-              // and "select" the expresion graph row
-              () => {
-                this.props.updateTableState('ExpressionGraphs', {
-                  ...this.props.expressionGraphsTableState,
-                  searchTerm: '',
-                  selectedRow: {
-                    index: expressionGraphIndex,
-                    id: `ExpressionGraphs__${ExpressionGraphs[expressionGraphIndex].dataset_id}`,
-                  },
-                });
-              }
-            );
+            expressionGraphTableRowElement.scrollIntoView();
+
+            this.props.updateTableState('ExpressionGraphs', {
+              ...this.props.expressionGraphsTableState,
+              selectedRow: expressionGraphIndex,
+              expandedRows: (
+                this.props.expressionGraphsTableState?.expandedRows ?? []
+              ).concat([expressionGraphIndex]),
+            });
           }
         }
       });
@@ -1679,7 +1706,7 @@ const TranscriptionSummaryForm = connect(
       }
 
       return (
-        <div id="transcriptionSummary">
+        <div id="transcriptionSummary" style={{ overflow: 'auto' }}>
           <ExternalResourceContainer
             isLoading={this.state.summaryIframeState.isLoading}
             isError={this.state.summaryIframeState.isError}

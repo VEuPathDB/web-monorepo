@@ -26,16 +26,7 @@ interface Props {
 export function EntityDiagram(props: Props) {
   const { selectedEntity, selectedVariable, variableLinkConfig } = props;
   const studyMetadata = useStudyMetadata();
-  const entityTree = useMemo((): StudyEntity => {
-    return mapStructure(
-      (node, children) => ({
-        ...node,
-        children: children.slice().reverse(),
-      }),
-      (entity) => entity.children ?? [],
-      studyMetadata.rootEntity
-    );
-  }, [studyMetadata.rootEntity]);
+  const entityTree = studyMetadata.rootEntity;
   const [lastVariableMap, setLastVariableMap] = useState<
     Record<string, string>
   >({});

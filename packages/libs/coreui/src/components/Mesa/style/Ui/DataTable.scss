@@ -1,63 +1,71 @@
 .MesaComponent {
   .DataTable {
     font-size: $fontSize;
-    width: 100%;
+    display: inline-block;
     margin-bottom: 1.5em;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-areas:
-      '. header'
-      'margin body';
-    z-index: 0;
+    width: 100%;
+
+    &--HasMargin {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      grid-template-areas: 'margin table';
+
+      .DataTable-Margin {
+        grid-area: margin;
+      }
+      align-items: end;
+
+      table {
+        grid-area: table;
+      }
+    }
 
     &--Sticky {
-      overflow: auto;
-      .DataTable-Header {
-        position: sticky;
-        top: 0;
-        z-index: 1;
-      }
-    }
-
-    .DataTable-Header {
-      grid-area: header;
-    }
-
-    .DataTable-Body {
-      grid-area: body;
-    }
-
-    .DataTable-Margin {
-      grid-area: margin;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: separate;
-    }
-
-    .DataTable-Sticky {
-      display: block;
+      z-index: 0;
       overflow: auto;
       position: relative;
-      z-index: 0;
       max-height: 70vh;
-
-      .DataTable-Header,
-      .DataTable-Body {
-        display: block;
-      }
-
-      .DataTable-Body {
-        position: relative;
-        padding-bottom: 1.5em; /* prevent macos scrollbar from occluding last row */
-      }
-
-      .DataTable-Header {
-        overflow: visible;
-        top: 0;
+      padding-bottom: 1.5em; /* prevent macos scrollbar from occluding last row */
+      thead {
         position: sticky;
-        z-index: 1;
+        top: 0;
+        z-index: 2;
+        overflow: visible;
+      }
+    }
+
+    > table {
+      width: 100%;
+      border-collapse: separate;
+
+      td,
+      tr {
+        .ChildRowToggle {
+          width: 4em;
+          vertical-align: middle;
+          text-align: center;
+          padding: 0;
+
+          > button {
+            width: 100%;
+            padding: 0;
+            border: none;
+            line-height: 2;
+            background: transparent !important;
+
+            > svg {
+              fill: #777;
+            }
+
+            &:hover > svg {
+              fill: black;
+            }
+          }
+        }
+      }
+
+      tr._childIsExpanded > .ChildRowToggle > button > svg {
+        fill: black;
       }
     }
   }

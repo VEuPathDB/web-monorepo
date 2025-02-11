@@ -4,9 +4,18 @@ import { safeHtml, wrappable } from '../../Utils/ComponentUtils';
 import RecordActionLink from '../../Views/Records/RecordActionLink';
 
 let RecordHeading = (props) => {
-  let { record, recordClass, headerActions } = props;
+  let {
+    record,
+    recordClass,
+    headerActions,
+    displayName = (
+      <>
+        {recordClass.displayName}: {safeHtml(record.displayName)}
+      </>
+    ),
+  } = props;
   return (
-    <div>
+    <>
       <ul className="wdk-RecordActions">
         {headerActions.map((action, index) => {
           return (
@@ -16,10 +25,8 @@ let RecordHeading = (props) => {
           );
         })}
       </ul>
-      <h1 className="wdk-RecordHeading">
-        {recordClass.displayName}: {safeHtml(record.displayName)}
-      </h1>
-    </div>
+      <h1 className="wdk-RecordHeading">{displayName}</h1>
+    </>
   );
 };
 

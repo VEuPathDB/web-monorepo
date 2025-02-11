@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import Header from '@veupathdb/web-common/lib/App/Header';
 import Footer from '@veupathdb/web-common/lib/components/Footer';
@@ -43,16 +44,21 @@ export default {
   SiteHeader: () => SiteHeader,
   IndexController: () => IndexController,
   Footer: () => SiteFooter,
-  RecordHeading: (DefaultComponent) => (props) =>
-    props.recordClass.urlSegment === 'dataset' ? (
+  RecordHeading: (DefaultComponent) => (props) => {
+    const location = useLocation();
+    const isRecordRoute = location.pathname.startsWith('/record');
+    return props.recordClass.urlSegment === 'dataset' ? (
       <StudyRecordHeading
         {...props}
         DefaultComponent={DefaultComponent}
-        showSearches
+        showSearches={!useEda}
+        showDownload={!useEda}
+        showAnalyzeLink={useEda && isRecordRoute}
       />
     ) : (
       <DefaultComponent {...props} />
-    ),
+    );
+  },
   AnswerController: (DefaultComponent) => (props) =>
     props.ownProps.recordClass === 'dataset' ? (
       <StudyAnswerController {...props} DefaultComponent={DefaultComponent} />

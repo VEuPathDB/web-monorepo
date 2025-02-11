@@ -12,6 +12,8 @@ const RecordMainSection = ({
   depth = 0,
   record,
   recordClass,
+  tableStates,
+  updateTableState,
   categories,
   collapsedSections,
   parentEnumeration,
@@ -19,7 +21,7 @@ const RecordMainSection = ({
   requestPartialRecord,
 }) =>
   categories == null ? null : (
-    <div>
+    <>
       {categories.map((category, index) => {
         let categoryName = getLabel(category);
         let categoryId = getId(category);
@@ -39,27 +41,32 @@ const RecordMainSection = ({
             onSectionToggle={onSectionToggle}
             record={record}
             recordClass={recordClass}
+            tableStates={tableStates}
             requestPartialRecord={requestPartialRecord}
+            updateTableState={updateTableState}
           >
             <RecordMainSection$
               depth={depth + 1}
               record={record}
               recordClass={recordClass}
+              tableStates={tableStates}
               categories={category.children}
               collapsedSections={collapsedSections}
               parentEnumeration={enumeration}
               onSectionToggle={onSectionToggle}
               requestPartialRecord={requestPartialRecord}
+              updateTableState={updateTableState}
             />
           </RecordMainCategorySection>
         );
       })}
-    </div>
+    </>
   );
 
 RecordMainSection.propTypes = {
   record: PropTypes.object.isRequired,
   recordClass: PropTypes.object.isRequired,
+  tableStates: PropTypes.object.isRequired,
   categories: PropTypes.array.isRequired,
   collapsedSections: PropTypes.array.isRequired,
   onSectionToggle: PropTypes.func.isRequired,
