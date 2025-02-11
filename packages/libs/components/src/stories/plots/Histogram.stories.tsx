@@ -16,6 +16,7 @@ import {
   HistogramData,
   AxisTruncationConfig,
   FacetedData,
+  VEuPathDBAnnotation,
 } from '../../types/plots';
 import FacetedHistogram from '../../plots/facetedPlots/FacetedHistogram';
 
@@ -559,4 +560,23 @@ Faceted.args = {
       margin: 'auto',
     },
   },
+};
+
+const plotAnnotations: VEuPathDBAnnotation[] = [
+  {
+    xref: 'paper',
+    yref: 'paper',
+    xSubject: 0.1,
+    xAnchor: 'left',
+    ySubject: 0.9,
+    yAnchor: 'top',
+    text: 'Annotation <b>inside</b> the plot',
+  },
+];
+
+export const WithAnnotations = TemplateStaticWithRangeControls.bind({});
+WithAnnotations.args = {
+  data: staticData,
+  interactive: true,
+  plotAnnotations,
 };
