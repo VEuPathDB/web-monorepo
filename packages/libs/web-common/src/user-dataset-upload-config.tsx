@@ -45,18 +45,26 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
         },
         renderInfo: () => (
           <p className="formInfo">
-            Upload your Normalized RNA-Seq in a tar.gz, tgz or zip file. Three
-            types of files – bigWig, counts and index – are supported in the
-            uploaded zip file.
-            <br />- The counts (FPKM/TPM) files should be tab-delimited and
-            contain two columns with column headers: 'gene_id', and either
-            'FPKM' or 'TMP'.
-            <br />- The index file should be named manifest.txt and consist of a
-            tab delimited txt file with three columns (no column headers):
-            sample name, filename, and strandedness (unstranded/stranded).
-            <br />- bigWig files are not required but will allow visualization
-            in the genome browser if included.
-            <br />
+            Upload your Normalized RNA-Seq dataset files by zipping them into a
+            tar.gz, tgz or zip file. Two files are required: a counts file and a
+            manifest file; bigWig files are also allowed but not required.
+            <ul>
+              <li>
+                The counts (FPKM/TPM) file should be tab-delimited with two
+                columns; the column headers should be 'gene_id', and either
+                'FPKM' or 'TPM'.
+              </li>
+              <li>
+                The manifest file should be named manifest.txt and be a tab
+                delimited with three columns (no column headers): sample name,
+                filename, and strandedness (unstranded/stranded). We only
+                support unstranded for the time being.
+              </li>
+              <li>
+                bigWig files are not required but will allow visualization in
+                the genome browser if included.
+              </li>
+            </ul>
             <br />
             The Upload Data Set service initiates the transfer and will create a
             record page for your data set that contains links to the fold change
