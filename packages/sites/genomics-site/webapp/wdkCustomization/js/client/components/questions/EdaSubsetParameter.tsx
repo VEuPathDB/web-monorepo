@@ -20,11 +20,11 @@ import { DocumentationContainer } from '@veupathdb/eda/lib/core/components/docs/
 import { useEntityCounts } from '@veupathdb/eda/lib/core/hooks/entityCounts';
 import FilterChipList from '@veupathdb/eda/lib/core/components/FilterChipList';
 
-import './EdaSubsettingParameter.scss';
+import './EdaSubsetParameter.scss';
 
 const datasetIdParamName = 'eda_dataset_id';
 
-export function EdaSubsettingParameter(props: Props<StringParam>) {
+export function EdaSubsetParameter(props: Props<StringParam>) {
   const studyId = props.ctx.paramValues[datasetIdParamName];
 
   const analysisDescriptor = useMemo(() => {

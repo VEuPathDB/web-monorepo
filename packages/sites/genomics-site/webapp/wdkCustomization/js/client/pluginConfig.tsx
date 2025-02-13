@@ -39,8 +39,8 @@ import {
   OrganismParam,
   isOrganismParam,
 } from '@veupathdb/preferred-organisms/lib/components/OrganismParam';
-import { EdaSubsettingParameter } from './components/questions/EdaSubsettingParameter';
-import { GenesByEdaSubsetting } from './components/questions/GenesByEdaSubsetting';
+import { EdaSubsetParameter } from './components/questions/EdaSubsetParameter';
+import { GenesByEdaSubset } from './components/questions/GenesByEdaSubset';
 
 const BlastForm = React.lazy(() => import('./plugins/BlastForm'));
 const BlastQuestionController = React.lazy(
@@ -137,7 +137,7 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
     type: 'questionForm',
     name: 'GenesByEdaSubset',
-    component: GenesByEdaSubsetting,
+    component: GenesByEdaSubset,
   },
   {
     type: 'questionForm',
@@ -212,7 +212,7 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
     test: ({ question }) => {
       return question?.queryName === 'GenesByPhenotypeEdaGeneric';
     },
-    component: EdaSubsettingParameter,
+    component: EdaSubsetParameter,
   },
   {
     type: 'questionFormParameter',
