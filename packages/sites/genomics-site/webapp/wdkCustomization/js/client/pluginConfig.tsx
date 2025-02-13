@@ -210,7 +210,7 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
     type: 'questionFormParameter',
     name: 'eda_analysis_spec',
     test: ({ question }) => {
-      return question?.queryName === 'GenesByPhenotypeEdaSubset';
+      return question?.queryName === 'GenesByPhenotypeEdaGeneric';
     },
     component: EdaSubsettingParameter,
   },
