@@ -5,7 +5,7 @@ import { EbrcDefaultQuestionForm } from '@veupathdb/web-common/lib/components/qu
 import { Props } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
-export function GenesByEdaSubsetting(props: Props) {
+export function GenesByEdaSubset(props: Props) {
   const datasetId = props.state.paramValues['eda_dataset_id'];
   const datasetRecord = useWdkService(
     async (wdkService) => {
