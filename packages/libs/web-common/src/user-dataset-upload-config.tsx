@@ -45,26 +45,36 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
         },
         renderInfo: () => (
           <p className="formInfo">
-            Upload your Normalized RNA-Seq dataset files by zipping them into a
-            tar.gz, tgz or zip file. Two files are required: a counts file and a
-            manifest file; bigWig files are also allowed but not required.
-            <ul>
+            <b>Upload your Normalized RNA-Seq data set</b>
+            <br />
+            To upload your data set, compress the files into a .tar.gz, .tgz or
+            .zip file. The upload requires:
+            <ol>
               <li>
-                The counts (FPKM/TPM) file should be tab-delimited with two
-                columns; the column headers should be 'gene_id', and either
-                'FPKM' or 'TPM'.
+                <b>Counts file(s)</b> - Each sample must have a tab-delimited
+                file containing two columns with these headers:
+                <ul>
+                  <li>'gene_id'</li>
+                  <li>'FPKM' or 'TPM'</li>
+                </ul>
               </li>
               <li>
-                The manifest file should be named manifest.txt and be a tab
-                delimited with three columns (no column headers): sample name,
-                filename, and strandedness (unstranded/stranded). We only
-                support unstranded for the time being.
+                <b>Manifest file</b> - A tab-delimited file named
+                'manifest.txt', containing three columns without headers:
+                <ul>
+                  <li>sample name</li>
+                  <li>file name (must match a counts file)</li>
+                  <li>
+                    strandedness ('unstranded' or 'stranded') - Only
+                    'unstranded' is currently supported.
+                  </li>
+                </ul>
               </li>
-              <li>
-                bigWig files are not required but will allow visualization in
-                the genome browser if included.
-              </li>
-            </ul>
+            </ol>
+            Optionally, you may include <b>bigWig files</b> (.bw extension) in
+            your uploaded compressed file. They are not required but will allow
+            visualization in the genome browser. Do not add these file names in
+            the manifest file.
             <br />
             The Upload Data Set service initiates the transfer and will create a
             record page for your data set that contains links to the fold change
@@ -110,22 +120,25 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
         },
         renderInfo: () => (
           <p className="formInfo">
-            We accept any file in the{' '}
+            We accept .bw files in the{' '}
             <a href="https://genome.ucsc.edu/goldenpath/help/bigWig.html">
               bigWig format
             </a>
             .
             <br />
-            The bigWig files you upload here must be mapped to the reference
-            genome that you select above.
-            <br />
             If you need to upload more than one file please make a compressed
-            file with all your bigWig files (a tar.gz, tgz or zip file).
-            <br />
-            Only letters, numbers, spaces and dashes are allowed in the file
-            name.
-            <br />
-            Please restrict the name to 100 characters or less.
+            file with all your bigWig files (a .tar.gz, .tgz or .zip file).
+            <ul>
+              <li>
+                Each bigWig file must be mapped to the genome that you selected
+                above.
+              </li>
+              <li>Each individual file cannot be &gt; 500MB.</li>
+              <li>
+                Please restrict the .bw file names to &lt; 100 chars and use
+                only letters, numbers, spaces and dashes.
+              </li>
+            </ul>
           </p>
         ),
         uploadMethodConfig: {
