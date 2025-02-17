@@ -70,12 +70,12 @@ export const VariableLink = forwardRef(
         tabIndex={0}
         style={finalStyle}
         onKeyDown={(event) => {
-          event.preventDefault();
           if (disabled) {
             return;
           }
           if (event.key === 'Enter' || event.key === ' ') {
             linkConfig.onClick(value);
+            event.preventDefault();
           }
         }}
         onClick={(event) => {
