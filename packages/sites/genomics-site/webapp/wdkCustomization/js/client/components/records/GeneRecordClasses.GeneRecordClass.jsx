@@ -205,9 +205,8 @@ function RecordOverview(props) {
     >
       <div
         onMouseOver={(event) => {
-          event.target.title = isNodeOverflowing(event.target)
-            ? event.target.textContent
-            : '';
+          const target = event.currentTarget;
+          target.title = isNodeOverflowing(target) ? target.textContent : '';
         }}
         className="eupathdb-RecordOverviewTitle"
       >
