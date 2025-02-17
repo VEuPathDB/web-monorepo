@@ -20,6 +20,7 @@ export interface VEuPathDBScatterPlotData {
       bestFitLineX?: number[] | string[];
       bestFitLineY?: number[];
       seriesGradientColorscale?: number[] | string[];
+      pointIds?: string[];
     }>;
   };
 }
@@ -56,6 +57,7 @@ export const dataSetSequentialGradient: VEuPathDBScatterPlotData = {
         seriesX: randPosNegvalues,
         seriesY: randNegvalues,
         seriesGradientColorscale: randomPosValues,
+        pointIds: sequentialIntegers.map((i) => i.toString()),
       },
     ],
   },
@@ -564,6 +566,7 @@ export function processInputData<T extends number | string>(
   independentValueType: string,
   dependentValueType: string,
   defineColors: boolean,
+  highlightIds?: string[],
   colorPaletteOverride?: string[]
 ) {
   // set fillAreaValue for densityplot
@@ -600,6 +603,21 @@ export function processInputData<T extends number | string>(
 
   // set dataSetProcess as any
   let dataSetProcess: any = [];
+
+  // Set empty highlightTrace. Will be populated if there are any highlighted points.
+  let highlightTrace: any = {
+    x: [],
+    y: [],
+    name: 'highlight',
+    mode: 'markers',
+    type: 'scattergl',
+    marker: {
+      color: 'rgb(255, 0, 0)',
+      size: 30,
+      symbol: 'circle',
+    },
+    pointIds: [],
+  };
 
   // drawing raw data (markers) at first
   plotDataSet.data.forEach(function (el: any, index: number) {
@@ -734,8 +752,16 @@ export function processInputData<T extends number | string>(
         }
       }
 
+      // Make size 0 if it's getting highlighted
+      const markerSizes =
+        el.pointIds && highlightIds
+          ? el.pointIds.map((id: string) =>
+              highlightIds.includes(id) ? 30 : 12
+            )
+          : 12;
+
       // add scatter data considering input options
-      dataSetProcess.push({
+      const newTrace = {
         x: seriesX,
         y: seriesY,
         // distinguish X/Y Data from Overlay
@@ -757,7 +783,7 @@ export function processInputData<T extends number | string>(
               : seriesGradientColorscale?.length > 0
               ? markerColorsGradient
               : undefined,
-          size: 12,
+          size: markerSizes,
           line: {
             color:
               defineColors || colorPaletteOverride
@@ -775,7 +801,38 @@ export function processInputData<T extends number | string>(
           color: defineColors ? 'rgb(' + markerColors[index] + ')' : undefined,
           shape: 'spline',
         },
-      });
+        pointIds: el.pointIds,
+      };
+
+      dataSetProcess.push(newTrace);
+
+      // If there are any highlihgted points, we need to add those to the highlight trace
+      if (
+        highlightIds &&
+        el.pointIds &&
+        highlightIds.some((id) => el.pointIds.includes(id))
+      ) {
+        // Extract the appropriate indices of highlighted points.
+        const highlightIndices = el.pointIds
+          .map((id: string, index: number) =>
+            highlightIds.includes(id) ? index : -1
+          )
+          .filter((index: number) => index !== -1);
+        if (highlightIndices && highlightIndices.length !== 0) {
+          highlightTrace.x.push(
+            ...(highlightIndices.map((index: string) => el.seriesX[index]) ||
+              [])
+          );
+          highlightTrace.y.push(
+            ...(highlightIndices.map((index: string) => el.seriesY[index]) ||
+              [])
+          );
+          highlightTrace.pointIds.push(
+            ...(highlightIndices.map((index: string) => el.pointIds[index]) ||
+              [])
+          );
+        }
+      }
     }
   });
 
@@ -969,6 +1026,12 @@ export function processInputData<T extends number | string>(
     // set yMin/yMax to be NaN so that plotly uses autoscale for date type
     yMin = NaN;
     yMax = NaN;
+  }
+
+  // If there are any highlighted points, add that trace to datasetProcess
+  if (highlightTrace.x.length > 0) {
+    console.log('hello');
+    dataSetProcess.push(highlightTrace);
   }
 
   return { dataSetProcess: { series: dataSetProcess }, yMin, yMax };

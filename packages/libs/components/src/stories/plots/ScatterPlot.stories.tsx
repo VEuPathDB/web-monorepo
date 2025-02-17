@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import ScatterPlot, { ScatterPlotProps } from '../../plots/ScatterPlot';
 import { Story, Meta } from '@storybook/react/types-6-0';
-import { PlotParams } from 'react-plotly.js';
 // test to use RadioButtonGroup directly instead of ScatterPlotControls
 import RadioButtonGroup from '../../components/widgets/RadioButtonGroup';
 import { FacetedData, ScatterPlotData } from '../../types/plots';
@@ -14,10 +13,8 @@ import SliderWidget, {
 import {
   dataSetSequentialGradient,
   dataSet,
-  dateStringDataSet,
   processInputData,
 } from './ScatterPlot.storyData';
-import { Annotations } from 'plotly.js';
 
 export default {
   title: 'Plots/ScatterPlot',
@@ -432,4 +429,48 @@ PlotAnnotations.args = {
   interactive: true,
   displayLegend: true,
   plotAnnotations,
+};
+
+// Highlighting points
+// use dataSetProcessSequentialGradient
+const TestTemplate = (args: any) => {
+  console.log(args.data);
+  return <ScatterPlot {...args} />;
+};
+// At this point, raw data has been processed, colored, etc.
+// Now is the time to split highlighted from non-highlighted. This timing retains
+// the ability to later allow different types of highlighting and keeping the underlying
+// data color information. For example, highlighted points get a different shape but
+// all points retain their normal color.
+
+// Why not have the backend do it? Because then we'd have the backend handling logic for
+// overlay vs highlighted. Let's say highlighted becomes another "facet", basically. Then we still
+// also have to have logic in processInputData that's ugly and deals with overlay color + highlight status.
+// Not a great option either.
+// Having its own funciton is absolutely ugly, but it seems the least awful. It has the advantage
+// of keeping the logic all in one place.
+
+// Some thoughts about the highlighted points (just trying to brain dump and hope it provides some clarity)
+// We want to see highlighted points in the legend, so we need a new trace/series.
+// Should the original traces retain the highlighted points? Or should they get removed?
+// No. We’ll pluck the highlighted points out of the original traces. That way when we click the legend to turn off the highlighted points, they’d disappear. Seems reasonable.
+// But, that means we’re separating points from their original grouping. If a user changed their highlighted points and we didn’t want to have to re-request the data,
+// Make a new trace for highlighted points. Set opacity of points in the original trace to 0. Best-ish of both worlds
+const highlightedPointIds = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+const { dataSetProcess: dataSetProcessSequentialGradientHighlight } =
+  processInputData(
+    dataSetSequentialGradient,
+    'scatterplot',
+    'markers',
+    independentValueType,
+    dependentValueType,
+    false,
+    highlightedPointIds
+  );
+console.log(dataSetProcessSequentialGradientHighlight);
+export const HighlightPoints: Story<ScatterPlotProps> = TestTemplate.bind({});
+HighlightPoints.args = {
+  data: dataSetProcessSequentialGradientHighlight,
+  interactive: true,
+  displayLegend: true,
 };
