@@ -50,17 +50,17 @@ export function EdaSubsetParameter(props: Props<StringParam>) {
   return (
     <DocumentationContainer>
       <WorkspaceContainer studyId={studyId} edaServiceUrl={edaServiceUrl}>
-        <SubsettingContainer analysisState={analysisState} />
+        <SubsettingAdapter analysisState={analysisState} />
       </WorkspaceContainer>
     </DocumentationContainer>
   );
 }
 
-interface SubsettingContainerProps {
+interface SubsettingAdapterProps {
   analysisState: AnalysisState;
 }
 
-function SubsettingContainer(props: SubsettingContainerProps) {
+function SubsettingAdapter(props: SubsettingAdapterProps) {
   const { analysisState } = props;
   const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
   const varAndEnt = getDefaultVariableDescriptor();
