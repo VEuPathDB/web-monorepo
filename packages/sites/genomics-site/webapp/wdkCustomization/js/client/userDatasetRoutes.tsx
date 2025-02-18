@@ -44,6 +44,7 @@ export const userDatasetRoutes: RouteEntry[] = [
       return (
         <Suspense fallback={<Loading />}>
           <UserDatasetRouter
+            enablePublicUserDatasets
             availableUploadTypes={availableUploadTypes}
             detailsPageTitle="My Data Set"
             helpRoute="/workspace/datasets/help"
