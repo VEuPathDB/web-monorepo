@@ -324,6 +324,7 @@ export const ScatterplotResponseData = array(
       tuple([StringVariableValue]),
       tuple([StringVariableValue, StringVariableValue]),
     ]),
+    pointIds: array(string),
   })
 );
 
