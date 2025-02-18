@@ -1,13 +1,16 @@
 import { NumberOrDateRange } from '../../types/general';
-import { ScatterPlotData } from '../../types/plots';
+import { ScatterPlotData, ScatterPlotDataSeries } from '../../types/plots';
 import { min, max, lte, gte } from 'lodash';
 import {
   gradientSequentialColorscaleMap,
   gradientDivergingColorscaleMap,
   DefaultHighlightColor,
   DefaultNonHighlightColor,
+  DefaultHighlightMarkerStyle,
 } from '../../types/plots/addOns';
 import { scaleLinear } from 'd3-scale';
+import { Default } from '../AnimatedMarkers.stories';
+import { PlotParams } from 'react-plotly.js';
 
 // set data array types for VEuPathDB scatter plot: https://redmine.apidb.org/issues/41310
 // but changed to new format: most likely x & y data are row/column vector format; also standardError is not a single value but vector
@@ -101,48 +104,72 @@ export const dataSetCategoricalOverlay: VEuPathDBScatterPlotData = {
         seriesY: sequentialIntegers
           .slice(nPoints / 2)
           .map((i) => Math.random()),
+        pointIds: sequentialIntegers
+          .slice(nPoints / 2)
+          .map((i) => i.toString()),
       },
       {
         seriesX: sequentialIntegers.slice(nPoints / 2),
         seriesY: sequentialIntegers
           .slice(nPoints / 2)
           .map((i) => Math.random()),
+        pointIds: sequentialIntegers
+          .slice(nPoints / 2)
+          .map((i) => (i + nPoints / 2).toString()),
       },
       {
         seriesX: sequentialIntegers.slice(nPoints / 2),
         seriesY: sequentialIntegers
           .slice(nPoints / 2)
           .map((i) => Math.random()),
+        pointIds: sequentialIntegers
+          .slice(nPoints / 2)
+          .map((i) => (i + nPoints).toString()),
       },
       {
         seriesX: sequentialIntegers.slice(nPoints / 2),
         seriesY: sequentialIntegers
           .slice(nPoints / 2)
           .map((i) => Math.random()),
+        pointIds: sequentialIntegers
+          .slice(nPoints / 2)
+          .map((i) => (i + (3 * nPoints) / 2).toString()),
       },
       {
         seriesX: sequentialIntegers.slice(nPoints / 2),
         seriesY: sequentialIntegers
           .slice(nPoints / 2)
           .map((i) => Math.random()),
+        pointIds: sequentialIntegers
+          .slice(nPoints / 2)
+          .map((i) => (i + 2 * nPoints).toString()),
       },
       {
         seriesX: sequentialIntegers.slice(nPoints / 2),
         seriesY: sequentialIntegers
           .slice(nPoints / 2)
           .map((i) => Math.random()),
+        pointIds: sequentialIntegers
+          .slice(nPoints / 2)
+          .map((i) => (i + (5 * nPoints) / 2).toString()),
       },
       {
         seriesX: sequentialIntegers.slice(nPoints / 2),
         seriesY: sequentialIntegers
           .slice(nPoints / 2)
           .map((i) => Math.random()),
+        pointIds: sequentialIntegers
+          .slice(nPoints / 2)
+          .map((i) => (i + 3 * nPoints).toString()),
       },
       {
         seriesX: sequentialIntegers.slice(nPoints / 2),
         seriesY: sequentialIntegers
           .slice(nPoints / 2)
           .map((i) => Math.random()),
+        pointIds: sequentialIntegers
+          .slice(nPoints / 2)
+          .map((i) => (i + (7 * nPoints) / 2).toString()),
       },
     ],
   },
@@ -569,6 +596,7 @@ export function processInputData<T extends number | string>(
   dependentValueType: string,
   defineColors: boolean,
   highlightIds?: string[],
+  highlightMarkerStyleOverride?: ScatterPlotDataSeries['marker'],
   colorPaletteOverride?: string[]
 ) {
   // set fillAreaValue for densityplot
@@ -588,6 +616,8 @@ export function processInputData<T extends number | string>(
   // set variables for x- and yaxis ranges
   let yMin: number | string | undefined = 0;
   let yMax: number | string | undefined = 0;
+
+  console.log('the data', plotDataSet.data);
 
   // coloring: using plotly.js default colors instead of web-components default palette
   const markerColors = colorPaletteOverride ?? [
@@ -616,13 +646,10 @@ export function processInputData<T extends number | string>(
     name: 'highlight',
     mode: 'markers',
     type: 'scattergl',
-    marker: {
-      color: DefaultHighlightColor,
-      size: 30,
-      symbol: 'circle',
-    },
+    marker: highlightMarkerStyleOverride ?? DefaultHighlightMarkerStyle,
     pointIds: [],
   };
+  console.log('highlightTrace', highlightTrace);
 
   // drawing raw data (markers) at first
   plotDataSet.data.forEach(function (el: any, index: number) {
@@ -822,6 +849,7 @@ export function processInputData<T extends number | string>(
         highlightIds.some((id) => el.pointIds.includes(id))
       ) {
         // Extract the indices of highlighted points.
+        console.log('adding highlight points');
         const highlightIndices = el.pointIds
           .map((id: string, index: number) =>
             highlightIds.includes(id) ? index : -1

@@ -14,7 +14,9 @@ import {
   dataSetSequentialGradient,
   dataSet,
   processInputData,
+  dataSetCategoricalOverlay,
 } from './ScatterPlot.storyData';
+import { symbol } from 'd3';
 
 export default {
   title: 'Plots/ScatterPlot',
@@ -433,10 +435,7 @@ PlotAnnotations.args = {
 
 // Highlighting points
 // use dataSetProcessSequentialGradient
-const TestTemplate = (args: any) => {
-  console.log(args.data);
-  return <ScatterPlot {...args} />;
-};
+
 // At this point, raw data has been processed, colored, etc.
 // Now is the time to split highlighted from non-highlighted. This timing retains
 // the ability to later allow different types of highlighting and keeping the underlying
@@ -467,10 +466,42 @@ const { dataSetProcess: dataSetProcessSequentialGradientHighlight } =
     false,
     highlightedPointIds
   );
-console.log(dataSetProcessSequentialGradientHighlight);
-export const HighlightPoints: Story<ScatterPlotProps> = TestTemplate.bind({});
+
+export const HighlightPoints: Story<ScatterPlotProps> = Template.bind({});
 HighlightPoints.args = {
   data: dataSetProcessSequentialGradientHighlight,
+  interactive: true,
+  displayLegend: true,
+};
+
+// Highlight points with a specialized input
+const highlightStyleOverride = {
+  line: {
+    color: 'red',
+    width: 2,
+  },
+  color: 'blue',
+  size: 15,
+  symbol: 'star',
+};
+
+const highlightPointIds2 =
+  dataSetCategoricalOverlay.scatterplot.data[0]?.pointIds?.slice(0, 10) ?? [];
+const { dataSetProcess: dataSetCategoricalOverlayHighlight } = processInputData(
+  dataSetCategoricalOverlay,
+  'scatterplot',
+  'markers',
+  independentValueType,
+  dependentValueType,
+  false,
+  highlightPointIds2,
+  highlightStyleOverride
+);
+
+export const HighlightPointsWithStyleOverride: Story<ScatterPlotProps> =
+  Template.bind({});
+HighlightPointsWithStyleOverride.args = {
+  data: dataSetCategoricalOverlayHighlight,
   interactive: true,
   displayLegend: true,
 };
