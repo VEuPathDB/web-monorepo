@@ -242,6 +242,12 @@ const Berlin = [
   'rgb(255, 173, 173)',
 ];
 
+/**
+ * Highlighting colors for points
+ */
+export const DefaultHighlightColor = 'rgb(10, 222, 81)';
+export const DefaultNonHighlightColor = 'rgb(160, 160, 157)';
+
 export const getValueToGradientColorMapper = (
   minValue: number,
   maxValue: number

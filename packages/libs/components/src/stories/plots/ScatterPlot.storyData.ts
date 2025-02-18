@@ -4,6 +4,8 @@ import { min, max, lte, gte } from 'lodash';
 import {
   gradientSequentialColorscaleMap,
   gradientDivergingColorscaleMap,
+  DefaultHighlightColor,
+  DefaultNonHighlightColor,
 } from '../../types/plots/addOns';
 import { scaleLinear } from 'd3-scale';
 
@@ -605,6 +607,9 @@ export function processInputData<T extends number | string>(
   let dataSetProcess: any = [];
 
   // Set empty highlightTrace. Will be populated if there are any highlighted points.
+  // Currently we import the defalut highlight styling, but in the future the marker styling could
+  // also be passed as a prop. Highlighting is currently limited to points, though it could extend
+  // similarly to lines, boxes, etc.
   let highlightTrace: any = {
     x: [],
     y: [],
@@ -612,7 +617,7 @@ export function processInputData<T extends number | string>(
     mode: 'markers',
     type: 'scattergl',
     marker: {
-      color: 'rgb(255, 0, 0)',
+      color: DefaultHighlightColor,
       size: 30,
       symbol: 'circle',
     },
@@ -756,7 +761,7 @@ export function processInputData<T extends number | string>(
       const markerSizes =
         el.pointIds && highlightIds
           ? el.pointIds.map((id: string) =>
-              highlightIds.includes(id) ? 30 : 12
+              highlightIds.includes(id) ? 0 : 12
             )
           : 12;
 
@@ -778,7 +783,9 @@ export function processInputData<T extends number | string>(
         fill: fillAreaValue,
         marker: {
           color:
-            defineColors || colorPaletteOverride
+            highlightIds && highlightIds.length > 0
+              ? DefaultNonHighlightColor
+              : defineColors || colorPaletteOverride
               ? markerColors[index]
               : seriesGradientColorscale?.length > 0
               ? markerColorsGradient
@@ -786,7 +793,9 @@ export function processInputData<T extends number | string>(
           size: markerSizes,
           line: {
             color:
-              defineColors || colorPaletteOverride
+              highlightIds && highlightIds.length > 0
+                ? DefaultNonHighlightColor
+                : defineColors || colorPaletteOverride
                 ? markerColors[index]
                 : seriesGradientColorscale?.length > 0
                 ? markerColorsGradient
@@ -812,7 +821,7 @@ export function processInputData<T extends number | string>(
         el.pointIds &&
         highlightIds.some((id) => el.pointIds.includes(id))
       ) {
-        // Extract the appropriate indices of highlighted points.
+        // Extract the indices of highlighted points.
         const highlightIndices = el.pointIds
           .map((id: string, index: number) =>
             highlightIds.includes(id) ? index : -1
