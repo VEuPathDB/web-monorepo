@@ -176,6 +176,13 @@ function formatParameterValue(
   if (parameter.name === 'eda_analysis_spec' && value != null) {
     const obj = parseJson(value);
     if (NewAnalysis.is(obj) || Analysis.is(obj)) {
+      if (obj.descriptor.subset.descriptor.length === 0) {
+        return (
+          <div>
+            <em>No filters applied.</em>
+          </div>
+        );
+      }
       return (
         <div style={{ whiteSpace: 'pre-line' }}>
           {obj.descriptor.subset.descriptor.map((filter) => (
