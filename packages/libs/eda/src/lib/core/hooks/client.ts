@@ -1,6 +1,5 @@
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
-import { useMemo } from 'react';
 import { AnalysisClient } from '../api/AnalysisClient';
 import { ComputeClient } from '../api/ComputeClient';
 import DataClient from '../api/DataClient';
@@ -14,40 +13,25 @@ function useWdkServiceContext() {
 
 export function useConfiguredAnalysisClient(baseUrl: string) {
   const wdkService = useWdkServiceContext();
-  return useMemo(
-    () => new AnalysisClient({ baseUrl }, wdkService),
-    [baseUrl, wdkService]
-  );
+  return AnalysisClient.getClient(baseUrl, wdkService);
 }
 
 export function useConfiguredDataClient(baseUrl: string) {
   const wdkService = useWdkServiceContext();
-  return useMemo(
-    () => new DataClient({ baseUrl }, wdkService),
-    [baseUrl, wdkService]
-  );
+  return DataClient.getClient(baseUrl, wdkService);
 }
 
 export function useConfiguredSubsettingClient(baseUrl: string) {
   const wdkService = useWdkServiceContext();
-  return useMemo(
-    () => new SubsettingClient({ baseUrl }, wdkService),
-    [baseUrl, wdkService]
-  );
+  return SubsettingClient.getClient(baseUrl, wdkService);
 }
 
 export function useConfiguredDownloadClient(baseUrl: string) {
   const wdkService = useWdkServiceContext();
-  return useMemo(
-    () => new DownloadClient({ baseUrl }, wdkService),
-    [baseUrl, wdkService]
-  );
+  return DownloadClient.getClient(baseUrl, wdkService);
 }
 
 export function useConfiguredComputeClient(baseUrl: string) {
   const wdkService = useWdkServiceContext();
-  return useMemo(
-    () => new ComputeClient({ baseUrl }, wdkService),
-    [baseUrl, wdkService]
-  );
+  return ComputeClient.getClient(baseUrl, wdkService);
 }
