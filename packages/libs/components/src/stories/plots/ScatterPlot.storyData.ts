@@ -857,15 +857,15 @@ export function processInputData<T extends number | string>(
           .filter((index: number) => index !== -1);
         if (highlightIndices && highlightIndices.length !== 0) {
           highlightTrace.x.push(
-            ...(highlightIndices.map((index: string) => el.seriesX[index]) ||
+            ...(highlightIndices.map((index: number) => el.seriesX[index]) ||
               [])
           );
           highlightTrace.y.push(
-            ...(highlightIndices.map((index: string) => el.seriesY[index]) ||
+            ...(highlightIndices.map((index: number) => el.seriesY[index]) ||
               [])
           );
           highlightTrace.pointIds.push(
-            ...(highlightIndices.map((index: string) => el.pointIds[index]) ||
+            ...(highlightIndices.map((index: number) => el.pointIds[index]) ||
               [])
           );
         }

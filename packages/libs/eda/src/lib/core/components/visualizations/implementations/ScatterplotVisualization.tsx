@@ -93,6 +93,8 @@ import {
   ColorPaletteDark,
   SequentialGradientColorscale,
   getValueToGradientColorMapper,
+  DefaultNonHighlightColor,
+  DefaultHighlightMarkerStyle,
 } from '@veupathdb/components/lib/types/plots/addOns';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { useRouteMatch } from 'react-router';
@@ -211,7 +213,7 @@ type DataSetProcessType = Override<
     y: (number | string)[] | null[];
     marker?: {
       color?: string | string[];
-      size?: number;
+      size?: number | number[];
       symbol?: string;
       line?: {
         color?: string | string[];
@@ -220,6 +222,7 @@ type DataSetProcessType = Override<
     };
     type?: string;
     r2?: number | null;
+    pointIds?: string[];
   }
 >;
 
@@ -259,6 +262,7 @@ export const ScatterplotConfig = t.partial({
   independentAxisValueSpec: t.string,
   dependentAxisValueSpec: t.string,
   markerBodyOpacity: t.number,
+  returnPointIds: t.boolean,
 });
 
 interface Options
@@ -2274,7 +2278,9 @@ function processInputData(
   facetVariable?: Variable,
   computationType?: string,
   entities?: StudyEntity[],
-  colorPaletteOverride?: string[]
+  colorPaletteOverride?: string[],
+  highlightIds?: string[],
+  highlightMarkerStyleOverride?: ScatterPlotDataSeries['marker']
 ) {
   // set variables for x- and yaxis ranges: no default values are set
   let xMin: number | string | undefined;
@@ -2348,6 +2354,21 @@ function processInputData(
 
   // data array to return
   let dataSetProcess: DataSetProcessType[] = [];
+
+  // Set empty highlightTrace. Will be populated if there are any highlighted points.
+  // Currently we import the defalut highlight styling, but in the future the marker styling could
+  // also be passed as a prop. Highlighting is currently limited to points, though it could extend
+  // similarly to lines, boxes, etc.
+  let highlightTrace: any = {
+    x: [],
+    y: [],
+    name: 'highlight',
+    mode: 'markers',
+    type: 'scattergl',
+    marker: highlightMarkerStyleOverride ?? DefaultHighlightMarkerStyle,
+    pointIds: [],
+  };
+  console.log('highlightTrace', highlightTrace);
 
   responseScatterplotData.some(function (
     el: ScatterplotResponse['scatterplot']['data'][number],
@@ -2468,6 +2489,16 @@ function processInputData(
         }
       }
 
+      // Set marker sizes based on if the marker is highlighted. These sizes will be applied
+      // to the original traces. We set marker size to 0 in the original traces so they are hidden
+      // on the plot. Highlighted points will be added to the plot in highlightTrace.
+      const markerSizes =
+        el.pointIds && highlightIds
+          ? el.pointIds.map((id: string) =>
+              highlightIds.includes(id) ? 0 : 12
+            )
+          : 12;
+
       // add scatter data considering input options
       dataSetProcess.push({
         x: seriesX.length ? seriesX : [null], // [null] hack required to make sure
@@ -2478,8 +2509,10 @@ function processInputData(
         type: scatterPlotType, // for the raw data of the scatterplot
         marker: {
           color:
-            seriesGradientColorscale?.length > 0 &&
-            markerSymbolGradient === 'circle'
+            highlightIds && highlightIds.length > 0
+              ? DefaultNonHighlightColor
+              : seriesGradientColorscale?.length > 0 &&
+                markerSymbolGradient === 'circle'
               ? markerColorsGradient
               : markerColor(index),
           symbol:
@@ -2487,10 +2520,13 @@ function processInputData(
               ? markerSymbolGradient
               : markerSymbol(index),
           // need to set marker.line for a transparent case (opacity != 1)
+          size: markerSizes,
           line: {
             color:
-              seriesGradientColorscale?.length > 0 &&
-              markerSymbolGradient === 'circle'
+              highlightIds && highlightIds.length > 0
+                ? DefaultNonHighlightColor
+                : seriesGradientColorscale?.length > 0 &&
+                  markerSymbolGradient === 'circle'
                 ? markerColorsGradient
                 : markerColor(index),
             width: 1,
@@ -2498,7 +2534,43 @@ function processInputData(
         },
         // this needs to be here for the case of markers with line or lineplot.
         line: { color: markerColor(index), shape: 'linear' },
+        pointIds: el.pointIds,
       });
+
+      // If there are any highlihgted points, we need to add those to the highlight trace
+      if (
+        highlightIds &&
+        el.pointIds &&
+        highlightIds.some((id) => el.pointIds?.includes(id))
+      ) {
+        // Extract the indices of highlighted points.
+        console.log('adding highlight points');
+        const highlightIndices = el.pointIds
+          .map((id: string, index: number) =>
+            highlightIds.includes(id) ? index : -1
+          )
+          .filter((index: number) => index !== -1);
+        if (
+          highlightIndices &&
+          highlightIndices.length !== 0 &&
+          el.seriesX &&
+          el.seriesY
+        ) {
+          highlightTrace.x.push(
+            ...(highlightIndices.map((index: number) => el.seriesX[index]) ||
+              [])
+          );
+          highlightTrace.y.push(
+            ...(highlightIndices.map((index: number) => el.seriesY[index]) ||
+              [])
+          );
+          highlightTrace.pointIds.push(
+            ...(highlightIndices.map((index: number) => el.pointIds[index]) ||
+              [])
+          );
+        }
+      }
+
       return breakAfterThisSeries(index);
     }
     return false;
@@ -2732,6 +2804,12 @@ function processInputData(
     }
     return breakAfterThisSeries(index);
   });
+
+  // If there are any highlighted points, add that trace to datasetProcess
+  if (highlightTrace.x.length > 0) {
+    console.log('hello');
+    dataSetProcess.push(highlightTrace);
+  }
 
   return {
     dataSetProcess: { series: dataSetProcess },
