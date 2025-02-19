@@ -1,5 +1,5 @@
 import { keyBy } from 'lodash';
-import { find, Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
+import { find } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import {
   CollectionVariableTreeNode,
   MultiFilterVariable,
@@ -11,6 +11,7 @@ import {
   VariableDescriptor,
 } from '../types/variable';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { Filter } from '../types/filter';
 
 export function entityTreeToArray(rootEntity: StudyEntity): StudyEntity[] {
   return Array.from(preorder(rootEntity, (e) => e.children ?? []));
@@ -172,4 +173,32 @@ export function findMultiFilterParent(
     if (MultiFilterVariable.is(parent)) return parent;
   }
   return;
+}
+
+export function formatFilterDisplayValue(filter: Filter): string {
+  // Set filterValueDisplay based on the filter's type
+  switch (filter.type) {
+    case 'stringSet':
+      return filter.stringSet.join(' | ');
+    case 'numberSet':
+      return filter.numberSet.join(' | ');
+    case 'dateSet':
+      return filter.dateSet.join(' | ');
+    case 'numberRange':
+      return `from ${filter.min} to ${filter.max}, inclusive`;
+    case 'dateRange':
+      return `from ${filter.min.split('T')[0]} to ${
+        filter.max.split('T')[0]
+      }, inclusive`;
+    case 'multiFilter':
+      return filter.subFilters
+        .map((subFilter) => {
+          return `${filter.variableId} = ${subFilter.stringSet.join(
+            filter.operation === 'union' ? ' | ' : ' & '
+          )}`;
+        })
+        .join('\n');
+    default:
+      return '';
+  }
 }
