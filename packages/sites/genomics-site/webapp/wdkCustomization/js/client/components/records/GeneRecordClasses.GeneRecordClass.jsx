@@ -1,4 +1,4 @@
-import lodash, { memoize } from 'lodash';
+import lodash from 'lodash';
 import React, {
   Suspense,
   useCallback,
@@ -171,25 +171,14 @@ function Shortcuts(props) {
 }
 
 function RecordOverview(props) {
-  const { record, recordClass, requestId, requestPartialRecord } = props;
-
-  console.log('RecordOverview', 'rendering');
-
-  const requestAttribute = useMemo(() => {
-    return memoize((attributeName) => {
-      requestPartialRecord(
-        requestId,
-        recordClass.urlSegment,
-        record.id.map((part) => part.value),
-        [attributeName]
-      );
-      console.log('RecordOverview', 'requestion partial record', attributeName);
-    });
-  }, [requestPartialRecord, record.id, recordClass.urlSegment, requestId]);
+  const { record } = props;
 
   function r(attributeName) {
     if (!(attributeName in record.attributes)) {
-      requestAttribute(attributeName);
+      console.warn(
+        'Attempting to render an attribute value that has not been requested. ' +
+          'It may need to be added to the ontology with a scope of "record-internal".'
+      );
     }
     const rawValue = record.attributes[attributeName];
     if (rawValue == null) return '';
