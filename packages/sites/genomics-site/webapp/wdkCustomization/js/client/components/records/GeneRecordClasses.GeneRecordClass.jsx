@@ -1,14 +1,16 @@
 import lodash from 'lodash';
 import React, {
-  Component,
   Suspense,
+  useCallback,
   useEffect,
   useMemo,
   useState,
 } from 'react';
-import { createRoot } from 'react-dom/client';
 import { connect } from 'react-redux';
-import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import {
+  formatAttributeValue,
+  safeHtml,
+} from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { RecordActions } from '@veupathdb/wdk-client/lib/Actions';
 import * as Category from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
@@ -27,10 +29,7 @@ import { preorderSeq } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import DatasetGraph from '@veupathdb/web-common/lib/components/DatasetGraph';
 import { ExternalResourceContainer } from '@veupathdb/web-common/lib/components/ExternalResource';
 import Sequence from '@veupathdb/web-common/lib/components/records/Sequence';
-import {
-  findChildren,
-  isNodeOverflowing,
-} from '@veupathdb/web-common/lib/util/domUtils';
+import { isNodeOverflowing } from '@veupathdb/web-common/lib/util/domUtils';
 
 import { projectId, webAppUrl } from '../../config';
 import * as Gbrowse from '../common/Gbrowse';
@@ -46,7 +45,7 @@ import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png'
 import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { AlphaFoldRecordSection } from './AlphaFoldAttributeSection';
 import { DEFAULT_TABLE_STATE } from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
-import { findAncestorFields } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
+import { Link } from 'react-router-dom';
 
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
@@ -55,184 +54,270 @@ export const RecordHeading = connect(
   (state) => ({
     categoryTree: state.record.categoryTree,
     navigationCategoriesExpanded: state.record.navigationCategoriesExpanded,
+    requestId: state.record.requestId,
   }),
   RecordActions
-)(
-  class GeneRecordHeading extends Component {
-    constructor(...args) {
-      super(...args);
-      this.handleThumbnailClick = this.handleThumbnailClick.bind(this);
-      this.addProductTooltip = lodash.debounce(
-        this.addProductTooltip.bind(this),
-        300
-      );
-      this.root = null;
-    }
+)(RecordOverview);
 
-    componentDidMount() {
-      this.addProductTooltip();
-      window.addEventListener('resize', this.addProductTooltip);
-      this.thumbsContainer = this.node.querySelector(
-        '.eupathdb-ThumbnailsContainer'
-      );
-      if (this.thumbsContainer) {
-        this.root = createRoot(this.thumbsContainer);
-        this.renderThumbnails();
-      } else console.error('Warning: Could not find ThumbnailsContainer');
-    }
+function Shortcuts(props) {
+  const {
+    categoryTree,
+    recordClass,
+    navigationCategoriesExpanded,
+    updateSectionVisibility,
+    updateNavigationCategoryExpansion,
+  } = props;
+  let { attributes, tables } = props.record;
 
-    handleThumbnailClick({ anchor }) {
-      const parentCategories = Category.getAncestors(
-        this.props.categoryTree,
-        anchor
-      ); //.slice(1);
+  const handleThumbnailClick = useCallback(
+    ({ anchor }) => {
+      const parentCategories = Category.getAncestors(categoryTree, anchor); //.slice(1);
       const parentCategoryIds = parentCategories.map(Category.getId);
       const nextExpandedNavCats = Array.from(
-        new Set([
-          ...this.props.navigationCategoriesExpanded,
-          ...parentCategoryIds,
-        ])
+        new Set([...navigationCategoriesExpanded, ...parentCategoryIds])
       );
-      this.props.updateSectionVisibility(anchor, true);
-      this.props.updateNavigationCategoryExpansion(nextExpandedNavCats);
-    }
+      updateSectionVisibility(anchor, true);
+      updateNavigationCategoryExpansion(nextExpandedNavCats);
+    },
+    [
+      categoryTree,
+      navigationCategoriesExpanded,
+      updateNavigationCategoryExpansion,
+      updateSectionVisibility,
+    ]
+  );
 
-    componentDidUpdate() {
-      if (this.thumbsContainer && this.root) this.renderThumbnails();
-    }
+  // Get field present in record instance. This is leveraging the fact that
+  // we filter the category tree in the store based on the contents of
+  // MetaTable.
+  const instanceFields = new Set(
+    preorderSeq(categoryTree)
+      .filter((node) => !node.children.length)
+      .map((node) => node.properties.name[0])
+  );
 
-    componentWillUnmount() {
-      if (this.thumbsContainer && this.root) this.root.unmount();
-      window.removeEventListener('resize', this.addProductTooltip);
-      this.addProductTooltip.cancel();
-    }
+  const transcriptomicsThumbnail = {
+    displayName: 'Transcriptomics',
+    element: (
+      <img
+        src={webAppUrl + '/wdkCustomization/images/transcription_summary.png'}
+      />
+    ),
+    anchor: 'TranscriptionSummary',
+  };
 
-    addProductTooltip() {
-      let products = Seq.from(
-        this.node.querySelectorAll(
-          '.eupathdb-RecordOverviewTitle, .eupathdb-GeneOverviewSubtitle'
-        )
-      )
-        .filter(isNodeOverflowing)
-        .flatMap(findChildren('.eupathdb-RecordOverviewDescription'));
+  const phenotypeThumbnail = {
+    displayName: 'Phenotype',
+    element: (
+      <img src={webAppUrl + '/wdkCustomization/images/transcriptomics.jpg'} />
+    ),
+    anchor: 'PhenotypeGraphs',
+  };
 
-      let items = Seq.from(
-        this.node.querySelectorAll('.eupathdb-RecordOverviewItem')
-      ).filter(isNodeOverflowing);
+  const crisprPhenotypeThumbnail = {
+    displayName: 'Phenotype',
+    element: (
+      <img src={webAppUrl + '/wdkCustomization/images/transcriptomics.jpg'} />
+    ),
+    anchor: 'CrisprPhenotypeGraphs',
+  };
 
-      products.concat(items).forEach((target) => {
-        target.title = target.textContent;
-      });
-    }
+  const filteredGBrowseContexts = Seq.from(Gbrowse.contexts)
+    .filter((context) => context.includeInThumbnails !== false)
+    // inject transcriptomicsThumbnail before protein thumbnails
+    .flatMap((context) => {
+      if (context.gbrowse_url === 'SnpsGbrowseUrl') {
+        return [phenotypeThumbnail, crisprPhenotypeThumbnail, context];
+      }
+      if (context.gbrowse_url === 'FeaturesPbrowseUrl') {
+        return [transcriptomicsThumbnail, context];
+      }
+      return [context];
+    })
+    // remove thumbnails whose associated fields are not present in record instance
+    .filter((context) => instanceFields.has(context.anchor))
+    .map((context) =>
+      context === transcriptomicsThumbnail ||
+      context === phenotypeThumbnail ||
+      context === crisprPhenotypeThumbnail
+        ? Object.assign({}, context, {
+            data: {
+              count:
+                tables &&
+                tables[context.anchor] &&
+                tables[context.anchor].length,
+            },
+          })
+        : Object.assign({}, context, {
+            element: (
+              <Gbrowse.GbrowseImage
+                url={attributes[context.gbrowse_url]}
+                includeImageMap={true}
+              />
+            ),
+            displayName:
+              recordClass.attributesMap[context.gbrowse_url].displayName,
+          })
+    )
+    .toArray();
 
-    renderThumbnails() {
-      let { categoryTree, recordClass } = this.props;
-      let { attributes, tables } = this.props.record;
-      // Get field present in record instance. This is leveraging the fact that
-      // we filter the category tree in the store based on the contents of
-      // MetaTable.
-      let instanceFields = new Set(
-        preorderSeq(categoryTree)
-          .filter((node) => !node.children.length)
-          .map((node) => node.properties.name[0])
-      );
+  return (
+    <OverviewThumbnails
+      title="Gene Features"
+      thumbnails={filteredGBrowseContexts}
+      onThumbnailClick={handleThumbnailClick}
+    />
+  );
+}
 
-      let transcriptomicsThumbnail = {
-        displayName: 'Transcriptomics',
-        element: (
-          <img
-            src={
-              webAppUrl + '/wdkCustomization/images/transcription_summary.png'
-            }
-          />
-        ),
-        anchor: 'TranscriptionSummary',
-      };
+function RecordOverview(props) {
+  const { record } = props;
 
-      let phenotypeThumbnail = {
-        displayName: 'Phenotype',
-        element: (
-          <img
-            src={webAppUrl + '/wdkCustomization/images/transcriptomics.jpg'}
-          />
-        ),
-        anchor: 'PhenotypeGraphs',
-      };
-
-      let crisprPhenotypeThumbnail = {
-        displayName: 'Phenotype',
-        element: (
-          <img
-            src={webAppUrl + '/wdkCustomization/images/transcriptomics.jpg'}
-          />
-        ),
-        anchor: 'CrisprPhenotypeGraphs',
-      };
-
-      let filteredGBrowseContexts = Seq.from(Gbrowse.contexts)
-        .filter((context) => context.includeInThumbnails !== false)
-        // inject transcriptomicsThumbnail before protein thumbnails
-        .flatMap((context) => {
-          if (context.gbrowse_url === 'SnpsGbrowseUrl') {
-            return [phenotypeThumbnail, crisprPhenotypeThumbnail, context];
-          }
-          if (context.gbrowse_url === 'FeaturesPbrowseUrl') {
-            return [transcriptomicsThumbnail, context];
-          }
-          return [context];
-        })
-        // remove thumbnails whose associated fields are not present in record instance
-        .filter((context) => instanceFields.has(context.anchor))
-        .map((context) =>
-          context === transcriptomicsThumbnail ||
-          context === phenotypeThumbnail ||
-          context === crisprPhenotypeThumbnail
-            ? Object.assign({}, context, {
-                data: {
-                  count:
-                    tables &&
-                    tables[context.anchor] &&
-                    tables[context.anchor].length,
-                },
-              })
-            : Object.assign({}, context, {
-                element: (
-                  <Gbrowse.GbrowseImage
-                    url={attributes[context.gbrowse_url]}
-                    includeImageMap={true}
-                  />
-                ),
-                displayName:
-                  recordClass.attributesMap[context.gbrowse_url].displayName,
-              })
-        )
-        .toArray();
-
-      this.root.render(
-        <OverviewThumbnails
-          title="Gene Features"
-          thumbnails={filteredGBrowseContexts}
-          onThumbnailClick={this.handleThumbnailClick}
-        />
+  function r(attributeName) {
+    if (!(attributeName in record.attributes)) {
+      console.warn(
+        'Attempting to render an attribute value that has not been requested. ' +
+          'It may need to be added to the ontology with a scope of "record-internal".'
       );
     }
-
-    render() {
-      // FungiVBOrgLinkoutsTable is requested in componentWrappers
-      return (
-        <>
-          <this.props.DefaultComponent
-            {...this.props}
-            overviewRef={(node) => (this.node = node)}
-          />
-          <FungiVBOrgLinkoutsTable
-            value={this.props.record.tables.FungiVBOrgLinkoutsTable}
-          />
-        </>
-      );
-    }
+    const rawValue = record.attributes[attributeName];
+    if (rawValue == null) return '';
+    return formatAttributeValue(rawValue);
   }
-);
+
+  return (
+    <div
+      className="eupathdb-RecordOverview"
+      data-gene-type={r('gene_type')}
+      data-num-user-comments={r('num_user_comments')}
+      data-apollo={r('show_apollo')}
+    >
+      <div
+        onMouseOver={(event) => {
+          const target = event.currentTarget;
+          target.title = isNodeOverflowing(target) ? target.textContent : '';
+        }}
+        className="eupathdb-RecordOverviewTitle"
+      >
+        <h1 className="eupathdb-RecordOverviewId">{r('source_id')}</h1>
+        <h2 className="eupathdb-RecordOverviewDescription">{r('product')}</h2>
+      </div>
+
+      <div className="eupathdb-RecordOverviewPanels">
+        <div className="eupathdb-RecordOverviewLeft">
+          <dl>
+            <dt>Name</dt>
+            <dd>{r('name')}</dd>
+
+            <dt>Gene Type</dt>
+            <dd>
+              <a
+                target="_blank"
+                href="http://www.sequenceontology.org/browser/obob.cgi"
+              >
+                {r('type_with_pseudo')}
+              </a>
+            </dd>
+
+            <dt>Biotype Classification</dt>
+            <dd>
+              <a
+                target="_blank"
+                href="https://grch37.ensembl.org/info/genome/genebuild/biotypes.html"
+              >
+                {r('gene_ebi_biotype')}
+              </a>
+            </dd>
+
+            <dt>Chromosome</dt>
+            <dd>{r('chromosome')}</dd>
+
+            <dt>Location</dt>
+            <dd>{r('location_text')}</dd>
+
+            <dt className="space-above">Species</dt>
+            <dd>
+              <i>{r('genus_species')}</i>
+            </dd>
+
+            <dt>Strain</dt>
+            <dd>
+              {r('strain')}
+              <Link
+                style={{ fontSize: '90%', marginLeft: '1em' }}
+                to={`/record/dataset/${r('dataset_id')}`}
+              >
+                <i className="fa fa-database"></i> Data set
+              </Link>
+            </dd>
+
+            <dt>Status</dt>
+            <dd>{r('genome_status')}</dd>
+
+            <dt className="space-above">User Comments</dt>
+            <dd>
+              <div data-show-num-user-comments="+1" data-label="User Comments">
+                <a href="#UserComments">
+                  View{' '}
+                  <span className="eupathdb-GeneOverviewHighlighted">
+                    {r('num_user_comments')}
+                  </span>{' '}
+                  / Add a new one
+                </a>
+              </div>
+              <div data-show-num-user-comments="0" data-label="User Comments">
+                <a href="{r('user_comment_link_url')}">
+                  Add the first <i className="fa fa-comment"></i>
+                </a>
+              </div>
+            </dd>
+
+            <div data-show-apollo="1">
+              <dt>Community Annotations</dt>
+              <dd>
+                <a
+                  href={`https://apollo.veupathdb.org/annotator/loadLink?organism=${r(
+                    'apollo_ident'
+                  )}&loc=${r('sequence_id')}:${r('start_min')}..${r(
+                    'end_max'
+                  )}&tracks=gene%2CRNA-Seq%20Evidence%20for%20Introns%2CCommunity%20annotations%20from%20Apollo`}
+                >
+                  View / Update
+                </a>{' '}
+                in Apollo editor
+              </dd>
+            </div>
+
+            <FungiVBOrgLinkoutsTable
+              value={props.record.tables.FungiVBOrgLinkoutsTable}
+            />
+          </dl>
+        </div>
+
+        <div className="eupathdb-RecordOverviewRight">
+          <div className="GeneOverviewIntent">{r('data_release_policy')}</div>
+          <div className="eupathdb-ThumbnailsTitle">Shortcuts</div>
+          <div className="eupathdb-ThumbnailsContainer">
+            <Shortcuts {...props} />
+          </div>
+          <div className="eupathdb-RecordOverviewItem">
+            Also see {r('source_id')} in the{' '}
+            <a href="{r('jbrowseLink')}" target="_blank">
+              Genome Browser
+            </a>
+            <span data-show-gene-type="protein coding">
+              {' '}
+              or{' '}
+              <a href={`${r('pbrowseLink')}`} target="_blank">
+                Protein Browser
+              </a>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export const RecordMainSection = connect(null)(
   ({ DefaultComponent, dispatch, ...props }) => {
@@ -278,22 +363,22 @@ function FungiVBOrgLinkoutsTable(props) {
   if (props.value == null || props.value.length === 0) return null;
   const groupedLinks = lodash.groupBy(props.value, 'dataset');
   return (
-    <div style={{ marginTop: '2em' }}>
-      <div className="eupathdb-RecordOverviewItem">
+    <>
+      <div style={{ marginTop: '1em' }}>
         <strong>Model Organism Database(s)</strong>
       </div>
       {Object.entries(groupedLinks).map(([dataset, rows]) => (
-        <div key={dataset} className="eupathdb-RecordOverviewItem">
-          <strong>{dataset}:</strong>{' '}
+        <>
+          <dt>{dataset}</dt>
           {rows.map((row, index) => (
-            <React.Fragment key={index}>
+            <dd key={index}>
               {renderAttributeValue(row.link)}
               {index === rows.length - 1 ? null : ', '}
-            </React.Fragment>
+            </dd>
           ))}
-        </div>
+        </>
       ))}
-    </div>
+    </>
   );
 }
 
