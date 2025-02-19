@@ -295,6 +295,7 @@ export interface ScatterplotRequestParams {
     facetVariable?: ZeroToTwoVariables;
     showMissingness?: 'TRUE' | 'FALSE';
     maxAllowedDataPoints?: number;
+    returnPointIds?: boolean;
   };
 }
 

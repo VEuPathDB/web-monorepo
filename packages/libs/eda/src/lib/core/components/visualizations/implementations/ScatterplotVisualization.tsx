@@ -160,6 +160,7 @@ const CI95TEXT = '95% Confidence interval';
 const CI95SUFFIX = `, ${CI95TEXT}`;
 const BESTFITTEXT = 'Best fit';
 const BESTFITSUFFIX = `, ${BESTFITTEXT}`;
+const TESTHIGHLIGHTIDS = ['SRR7047967 (16S)', 'SRR7054402 (16S)'];
 
 const plotContainerStyles = {
   width: 750,
@@ -240,6 +241,7 @@ function createDefaultConfig(): ScatterplotConfig {
     independentAxisValueSpec: 'Full',
     dependentAxisValueSpec: 'Full',
     markerBodyOpacity: 0.5,
+    returnPointIds: true,
   };
 }
 
@@ -751,6 +753,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             ? [vizConfig.facetVariable]
             : undefined,
           showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
+          returnPointIds: vizConfig.returnPointIds ?? true,
         },
         computeConfig: copmutationAppOverview.computeName
           ? computationDescriptor.configuration
@@ -822,6 +825,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         entities,
         colorPaletteOverride
       );
+      console.log('returned data', returnData);
       return {
         ...returnData,
         overlayValueToColorMapper,
@@ -2209,7 +2213,8 @@ export function scatterplotResponseToData(
         // pass computation here to add conditions for apps
         computationType,
         entities,
-        colorPaletteOverride
+        colorPaletteOverride,
+        TESTHIGHLIGHTIDS
       );
 
     return {
@@ -2364,11 +2369,10 @@ function processInputData(
     y: [],
     name: 'highlight',
     mode: 'markers',
-    type: 'scattergl',
+    type: 'scatter', // 'scatter' not 'scattergl' or hovering doesn't work correctly.
     marker: highlightMarkerStyleOverride ?? DefaultHighlightMarkerStyle,
     pointIds: [],
   };
-  console.log('highlightTrace', highlightTrace);
 
   responseScatterplotData.some(function (
     el: ScatterplotResponse['scatterplot']['data'][number],
@@ -2489,15 +2493,20 @@ function processInputData(
         }
       }
 
-      // Set marker sizes based on if the marker is highlighted. These sizes will be applied
-      // to the original traces. We set marker size to 0 in the original traces so they are hidden
-      // on the plot. Highlighted points will be added to the plot in highlightTrace.
-      const markerSizes =
-        el.pointIds && highlightIds
-          ? el.pointIds.map((id: string) =>
-              highlightIds.includes(id) ? 0 : 12
-            )
-          : 12;
+      // If a point is highlighted, we have to set its y value to null, otherwise it will
+      // still have a tooltip (regardless of marker size, color, etc.)
+      if (
+        el.pointIds &&
+        highlightIds &&
+        highlightIds.length > 0 &&
+        highlightIds.some((id) => el.pointIds?.includes(id))
+      ) {
+        seriesY.forEach((_value, index: number) => {
+          if (el.pointIds && highlightIds.includes(el.pointIds[index])) {
+            seriesY[index] = null;
+          }
+        });
+      }
 
       // add scatter data considering input options
       dataSetProcess.push({
@@ -2520,7 +2529,6 @@ function processInputData(
               ? markerSymbolGradient
               : markerSymbol(index),
           // need to set marker.line for a transparent case (opacity != 1)
-          size: markerSizes,
           line: {
             color:
               highlightIds && highlightIds.length > 0
@@ -2544,29 +2552,26 @@ function processInputData(
         highlightIds.some((id) => el.pointIds?.includes(id))
       ) {
         // Extract the indices of highlighted points.
-        console.log('adding highlight points');
         const highlightIndices = el.pointIds
           .map((id: string, index: number) =>
             highlightIds.includes(id) ? index : -1
           )
           .filter((index: number) => index !== -1);
-        if (
-          highlightIndices &&
-          highlightIndices.length !== 0 &&
-          el.seriesX &&
-          el.seriesY
-        ) {
+        if (highlightIndices && highlightIndices.length !== 0) {
           highlightTrace.x.push(
-            ...(highlightIndices.map((index: number) => el.seriesX[index]) ||
-              [])
+            ...(highlightIndices.map(
+              (index: number) => el.seriesX && el.seriesX[index]
+            ) || [])
           );
           highlightTrace.y.push(
-            ...(highlightIndices.map((index: number) => el.seriesY[index]) ||
-              [])
+            ...(highlightIndices.map(
+              (index: number) => el.seriesY && el.seriesY[index]
+            ) || [])
           );
           highlightTrace.pointIds.push(
-            ...(highlightIndices.map((index: number) => el.pointIds[index]) ||
-              [])
+            ...(highlightIndices.map(
+              (index: number) => el.pointIds && el.pointIds[index]
+            ) || [])
           );
         }
       }
@@ -2807,7 +2812,6 @@ function processInputData(
 
   // If there are any highlighted points, add that trace to datasetProcess
   if (highlightTrace.x.length > 0) {
-    console.log('hello');
     dataSetProcess.push(highlightTrace);
   }
 
