@@ -25,6 +25,7 @@ import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import { preorderSeq } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 import DatasetGraph from '@veupathdb/web-common/lib/components/DatasetGraph';
+import { EdaDatasetGraph } from '@veupathdb/web-common/lib/components/EdaDatasetGraph';
 import { ExternalResourceContainer } from '@veupathdb/web-common/lib/components/ExternalResource';
 import Sequence from '@veupathdb/web-common/lib/components/records/Sequence';
 import {
@@ -297,24 +298,36 @@ function FungiVBOrgLinkoutsTable(props) {
   );
 }
 
-const ExpressionChildRow = makeDatasetGraphChildRow(
-  'ExpressionGraphsDataTable'
-);
-const HostResponseChildRow = makeDatasetGraphChildRow(
-  'HostResponseGraphsDataTable',
-  'FacetMetadata',
-  'ContXAxisMetadata'
-);
-const CrisprPhenotypeChildRow = makeDatasetGraphChildRow(
-  'CrisprPhenotypeGraphsDataTable'
-);
-const PhenotypeScoreChildRow = makeDatasetGraphChildRow(
-  'PhenotypeScoreGraphsDataTable'
-);
-const PhenotypeChildRow = makeDatasetGraphChildRow('PhenotypeGraphsDataTable');
-const UDTranscriptomicsChildRow = makeDatasetGraphChildRow(
-  'UserDatasetsTranscriptomicsGraphsDataTable'
-);
+const ExpressionChildRow = makeDatasetGraphChildRow({
+  dataTableName: 'ExpressionGraphsDataTable',
+  DatasetGraphComponent: DatasetGraph,
+});
+const HostResponseChildRow = makeDatasetGraphChildRow({
+  dataTableName: 'HostResponseGraphsDataTable',
+  facetMetadataTableName: 'FacetMetadata',
+  contXAxisMetadataTableName: 'ContXAxisMetadata',
+  DatasetGraphComponent: DatasetGraph,
+});
+const CrisprPhenotypeChildRow = makeDatasetGraphChildRow({
+  dataTableName: 'CrisprPhenotypeGraphsDataTable',
+  DatasetGraphComponent: DatasetGraph,
+});
+const PhenotypeScoreChildRow = makeDatasetGraphChildRow({
+  dataTableName: 'PhenotypeScoreGraphsDataTable',
+  DatasetGraphComponent: DatasetGraph,
+});
+const PhenotypeChildRow = makeDatasetGraphChildRow({
+  dataTableName: 'PhenotypeGraphsDataTable',
+  DatasetGraphComponent: DatasetGraph,
+});
+const EdaPhenotypeChildRow = makeDatasetGraphChildRow({
+  dataTableName: 'EdaPhenotypeGraphsDataTable',
+  DatasetGraphComponent: EdaDatasetGraph,
+});
+const UDTranscriptomicsChildRow = makeDatasetGraphChildRow({
+  dataTableName: 'UserDatasetsTranscriptomicsGraphsDataTable',
+  DatasetGraphComponent: DatasetGraph,
+});
 
 export function RecordTable(props) {
   switch (props.table.name) {
@@ -346,6 +359,11 @@ export function RecordTable(props) {
 
     case 'PhenotypeGraphs':
       return <props.DefaultComponent {...props} childRow={PhenotypeChildRow} />;
+
+    case 'EdaPhenotypeGraphs':
+      return (
+        <props.DefaultComponent {...props} childRow={EdaPhenotypeChildRow} />
+      );
 
     case 'UserDatasetsTranscriptomicsGraphs':
       return (
@@ -532,11 +550,12 @@ const CellxgeneTableChildRow = pure(function CellxgeneTableChildRow(props) {
   );
 });
 
-function makeDatasetGraphChildRow(
+function makeDatasetGraphChildRow({
   dataTableName,
   facetMetadataTableName,
-  contXAxisMetadataTableName
-) {
+  contXAxisMetadataTableName,
+  DatasetGraphComponent,
+}) {
   let DefaultComponent = WdkRecordTable;
   return connect((state) => {
     let { record, recordClass } = state.record;
@@ -581,7 +600,7 @@ function makeDatasetGraphChildRow(
         ].filter((tableName) => tableName != null),
       });
     }, [requestFields]);
-    return <DatasetGraph {...props} />;
+    return <DatasetGraphComponent {...props} />;
   }
 }
 
