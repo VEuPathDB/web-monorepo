@@ -23,7 +23,7 @@ import {
 // add d3.select
 import { select } from 'd3';
 // 3rd party toImage function from plotly
-import Plotly, { ToImgopts, DataTitle } from 'plotly.js';
+import { ToImgopts, DataTitle } from 'plotly.js';
 import { uniqueId } from 'lodash';
 import { makeSharedPromise } from '../utils/promise-utils';
 import NoDataOverlay from '../components/NoDataOverlay';
@@ -402,7 +402,8 @@ function PlotlyPlot<T>(
       try {
         await sharedPlotCreation.promise;
         // Call the 3rd party function that actually creates the image
-        return await Plotly.toImage(plotId, imageOpts);
+        const plotlyModule = await import('plotly.js');
+        return await plotlyModule.default.toImage(plotId, imageOpts);
       } catch (error) {
         console.error('Could not create image for plot:', error);
       }

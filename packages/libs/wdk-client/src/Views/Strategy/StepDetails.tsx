@@ -44,21 +44,6 @@ interface DispatchProps {
 export type LeafStepDetailsProps = StepDetailProps<UiStepTree> & DispatchProps;
 
 function StepDetails(props: LeafStepDetailsProps) {
-  return (
-    <Plugin
-      context={{
-        type: 'stepDetails',
-        name: 'leaf',
-        searchName: props.stepTree.step.searchName,
-        recordClassName: props.stepTree.step.recordClassName,
-      }}
-      pluginProps={props}
-      defaultComponent={DefaultStepDetails}
-    />
-  );
-}
-
-export function DefaultStepDetails(props: LeafStepDetailsProps) {
   const {
     stepTree: { step },
   } = props;
@@ -67,16 +52,31 @@ export function DefaultStepDetails(props: LeafStepDetailsProps) {
   const { weight, weightCollapsed, setWeightCollapsed } =
     useStepDetailsWeightControls(step);
 
+  const pluginProps = {
+    ...props,
+    question,
+    datasetParamItems,
+    weight,
+    weightCollapsed,
+    setWeightCollapsed,
+  };
+
   return (
-    <DefaultStepDetailsContent
-      {...props}
-      question={question}
-      datasetParamItems={datasetParamItems}
-      weight={weight}
-      weightCollapsed={weightCollapsed}
-      setWeightCollapsed={setWeightCollapsed}
+    <Plugin
+      context={{
+        type: 'stepDetails',
+        name: 'leaf',
+        searchName: props.stepTree.step.searchName,
+        recordClassName: props.stepTree.step.recordClassName,
+      }}
+      pluginProps={pluginProps}
+      defaultComponent={DefaultStepDetails}
     />
   );
+}
+
+export function DefaultStepDetails(props: LeafStepDetailsContentProps) {
+  return <DefaultStepDetailsContent {...props} />;
 }
 
 export function useStepDetailsWeightControls(step: Step) {
@@ -136,6 +136,7 @@ export interface LeafStepDetailsContentProps extends LeafStepDetailsProps {
   weight: string;
   weightCollapsed: boolean;
   setWeightCollapsed: (isCollapsed: boolean) => void;
+  formatParameterValue?: typeof defaultFormatParameterValue;
 }
 
 export function DefaultStepDetailsContent({
@@ -146,6 +147,7 @@ export function DefaultStepDetailsContent({
   weight,
   weightCollapsed,
   setWeightCollapsed,
+  formatParameterValue = defaultFormatParameterValue,
 }: LeafStepDetailsContentProps) {
   return (
     <React.Fragment>
@@ -211,7 +213,7 @@ export function DefaultStepDetailsContent({
   );
 }
 
-function formatParameterValue(
+export function defaultFormatParameterValue(
   parameter: Parameter,
   value: string | undefined,
   datasetParamItems: Record<string, DatasetItem[]> | undefined

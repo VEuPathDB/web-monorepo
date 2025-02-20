@@ -66,10 +66,8 @@ export function WorkspaceRouter({
   const { path, url } = useRouteMatch();
 
   const subsettingClient = useConfiguredSubsettingClient(edaServiceUrl);
-  const dataClient = useConfiguredDataClient(edaServiceUrl);
   const analysisClient = useConfiguredAnalysisClient(edaServiceUrl);
   const downloadClient = useConfiguredDownloadClient(edaServiceUrl);
-  const computeClient = useConfiguredComputeClient(edaServiceUrl);
 
   const projectId = useWdkService(
     async (wdkService) => (await wdkService.getConfig()).projectId
@@ -214,11 +212,7 @@ export function WorkspaceRouter({
             render={(props: RouteComponentProps<{ studyId: string }>) => (
               <WorkspaceContainer
                 {...props.match.params}
-                subsettingClient={subsettingClient}
-                dataClient={dataClient}
-                analysisClient={analysisClient}
-                downloadClient={downloadClient}
-                computeClient={computeClient}
+                edaServiceUrl={edaServiceUrl}
                 isStudyExplorerWorkspace={isStudyExplorerWorkspace}
               >
                 <StandaloneStudyPage
@@ -234,11 +228,7 @@ export function WorkspaceRouter({
             render={(props: RouteComponentProps<{ studyId: string }>) => (
               <WorkspaceContainer
                 {...props.match.params}
-                subsettingClient={subsettingClient}
-                dataClient={dataClient}
-                analysisClient={analysisClient}
-                downloadClient={downloadClient}
-                computeClient={computeClient}
+                edaServiceUrl={edaServiceUrl}
                 isStudyExplorerWorkspace={isStudyExplorerWorkspace}
               >
                 <AnalysisPanel
@@ -305,11 +295,7 @@ export function WorkspaceRouter({
             ) => (
               <WorkspaceContainer
                 {...props.match.params}
-                subsettingClient={subsettingClient}
-                dataClient={dataClient}
-                analysisClient={analysisClient}
-                downloadClient={downloadClient}
-                computeClient={computeClient}
+                edaServiceUrl={edaServiceUrl}
                 isStudyExplorerWorkspace={isStudyExplorerWorkspace}
               >
                 <AnalysisPanel
