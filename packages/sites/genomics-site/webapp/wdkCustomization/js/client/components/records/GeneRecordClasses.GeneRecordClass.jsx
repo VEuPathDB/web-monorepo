@@ -44,6 +44,7 @@ import {
 import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
 import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { AlphaFoldRecordSection } from './AlphaFoldAttributeSection';
+import { AiExpressionSummary } from './AiExpressionSummary';
 import { DEFAULT_TABLE_STATE } from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
 import { Link } from 'react-router-dom';
 
@@ -354,6 +355,8 @@ export function RecordAttributeSection(props) {
   switch (restProps.attribute.name) {
     case 'alphafold_url':
       return <AlphaFoldRecordSection {...restProps} />;
+    case 'ai_expression':
+      return <AiExpressionSummary {...restProps} />;
     default:
       return <DefaultComponent {...restProps} />;
   }
