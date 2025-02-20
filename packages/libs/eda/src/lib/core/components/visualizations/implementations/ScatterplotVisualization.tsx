@@ -825,7 +825,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         entities,
         colorPaletteOverride
       );
-      console.log('returned data', returnData);
+
       return {
         ...returnData,
         overlayValueToColorMapper,
