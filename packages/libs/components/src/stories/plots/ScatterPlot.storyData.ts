@@ -640,7 +640,7 @@ export function processInputData<T extends number | string>(
     y: [],
     name: highlightTraceName ?? 'highlight',
     mode: 'markers',
-    type: 'scatter',
+    type: 'scattergl',
     marker: highlightMarkerStyleOverride ?? DefaultHighlightMarkerStyle,
     pointIds: [],
   };
@@ -818,7 +818,6 @@ export function processInputData<T extends number | string>(
               : seriesGradientColorscale?.length > 0
               ? markerColorsGradient
               : undefined,
-          size: 12,
           line: {
             color:
               highlightIds && highlightIds.length > 0

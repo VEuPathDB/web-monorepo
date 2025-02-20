@@ -249,7 +249,6 @@ export const DefaultHighlightColor = '#D246FF';
 export const DefaultNonHighlightColor = '#95929C';
 export const DefaultHighlightMarkerStyle = {
   color: DefaultHighlightColor,
-  size: 12,
   symbol: 'circle',
   line: {
     color: DefaultHighlightColor,

@@ -453,7 +453,11 @@ HighlightPoints.args = {
   displayLegend: true,
 };
 
-// Highlight points with a specialized style
+// Highlight points with a specialized style.
+// This story uses data that's already been broken up by an overlay variable. The result
+// currently looks a bit ridiculuous - we have a bunch of gray Data rows in the legend. However, this is actually
+// the desired behavior. In practice each of those gray Data traces would have a name, so we'd see helpful group names. Additionally,
+// we want to be sure we can highlight points from any of the traces, even if they're split up like in an overlay.
 const highlightStyleOverride = {
   line: {
     color: 'red',
