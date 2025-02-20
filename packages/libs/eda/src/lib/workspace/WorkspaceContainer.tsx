@@ -33,6 +33,8 @@ interface Props {
   analysisId?: string;
   children: ReactNode;
   isStudyExplorerWorkspace?: boolean;
+  // overrides default class names
+  className?: string;
 }
 
 /** Allows a user to create a new analysis or edit an existing one. */
@@ -41,6 +43,7 @@ export function WorkspaceContainer({
   edaServiceUrl,
   children,
   isStudyExplorerWorkspace = false,
+  className,
 }: Props) {
   const { url } = useRouteMatch();
   const subsettingClient = useConfiguredSubsettingClient(edaServiceUrl);
@@ -72,13 +75,17 @@ export function WorkspaceContainer({
   );
   const classes = useStyles();
 
+  const finalClassName =
+    className ??
+    `${cx()} ${isStudyExplorerWorkspace ? 'StudyExplorerWorkspace' : ''} ${
+      classes.workspace
+    }`;
+
   return (
     <QueryClientProvider client={queryClient}>
       <EDAWorkspaceContainer
         studyId={studyId}
-        className={`${cx()} ${
-          isStudyExplorerWorkspace ? 'StudyExplorerWorkspace' : ''
-        } ${classes.workspace}`}
+        className={finalClassName}
         analysisClient={analysisClient}
         dataClient={dataClient}
         subsettingClient={subsettingClient}

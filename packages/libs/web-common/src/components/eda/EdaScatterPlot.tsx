@@ -27,7 +27,11 @@ export function EdaScatterPlot(props: Props) {
   const { datasetId } = props;
   return (
     <DocumentationContainer>
-      <WorkspaceContainer studyId={datasetId} edaServiceUrl={edaServiceUrl}>
+      <WorkspaceContainer
+        studyId={datasetId}
+        edaServiceUrl={edaServiceUrl}
+        className=""
+      >
         <ScatterPlotAdapter {...props} />
       </WorkspaceContainer>
     </DocumentationContainer>
