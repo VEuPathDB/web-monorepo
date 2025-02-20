@@ -474,7 +474,8 @@ const { dataSetProcess: dataSetCategoricalOverlayHighlight } = processInputData(
   dependentValueType,
   false,
   highlightPointIdsStyled,
-  highlightStyleOverride
+  highlightStyleOverride,
+  'My Highlight Trace'
 );
 
 export const HighlightPointsWithStyleOverride: Story<ScatterPlotProps> =

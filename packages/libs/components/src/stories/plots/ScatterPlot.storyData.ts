@@ -593,6 +593,7 @@ export function processInputData<T extends number | string>(
   defineColors: boolean,
   highlightIds?: string[],
   highlightMarkerStyleOverride?: ScatterPlotDataSeries['marker'],
+  highlightTraceName?: string,
   colorPaletteOverride?: string[]
 ) {
   // set fillAreaValue for densityplot
@@ -637,7 +638,7 @@ export function processInputData<T extends number | string>(
   let highlightTrace: any = {
     x: [],
     y: [],
-    name: 'highlight',
+    name: highlightTraceName ?? 'highlight',
     mode: 'markers',
     type: 'scatter',
     marker: highlightMarkerStyleOverride ?? DefaultHighlightMarkerStyle,
@@ -808,7 +809,6 @@ export function processInputData<T extends number | string>(
             ? 'scatter'
             : 'scattergl', // for the raw data of the scatterplot
         fill: fillAreaValue,
-        size: 12,
         marker: {
           color:
             highlightIds && highlightIds.length > 0
@@ -818,6 +818,7 @@ export function processInputData<T extends number | string>(
               : seriesGradientColorscale?.length > 0
               ? markerColorsGradient
               : undefined,
+          size: 12,
           line: {
             color:
               highlightIds && highlightIds.length > 0
