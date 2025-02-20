@@ -1,16 +1,12 @@
-import { NumberOrDateRange } from '../../types/general';
-import { ScatterPlotData, ScatterPlotDataSeries } from '../../types/plots';
+import { ScatterPlotDataSeries } from '../../types/plots';
 import { min, max, lte, gte } from 'lodash';
 import {
   gradientSequentialColorscaleMap,
   gradientDivergingColorscaleMap,
-  DefaultHighlightColor,
   DefaultNonHighlightColor,
   DefaultHighlightMarkerStyle,
 } from '../../types/plots/addOns';
 import { scaleLinear } from 'd3-scale';
-import { Default } from '../AnimatedMarkers.stories';
-import { PlotParams } from 'react-plotly.js';
 
 // set data array types for VEuPathDB scatter plot: https://redmine.apidb.org/issues/41310
 // but changed to new format: most likely x & y data are row/column vector format; also standardError is not a single value but vector
@@ -617,8 +613,6 @@ export function processInputData<T extends number | string>(
   let yMin: number | string | undefined = 0;
   let yMax: number | string | undefined = 0;
 
-  console.log('the data', plotDataSet.data);
-
   // coloring: using plotly.js default colors instead of web-components default palette
   const markerColors = colorPaletteOverride ?? [
     'rgb(31, 119, 180)', //'#1f77b4',  // muted blue
@@ -645,11 +639,10 @@ export function processInputData<T extends number | string>(
     y: [],
     name: 'highlight',
     mode: 'markers',
-    type: 'scattergl',
+    type: 'scatter',
     marker: highlightMarkerStyleOverride ?? DefaultHighlightMarkerStyle,
     pointIds: [],
   };
-  console.log('highlightTrace', highlightTrace);
 
   // drawing raw data (markers) at first
   plotDataSet.data.forEach(function (el: any, index: number) {
@@ -784,16 +777,23 @@ export function processInputData<T extends number | string>(
         }
       }
 
-      // Make size 0 if it's getting highlighted
-      const markerSizes =
-        el.pointIds && highlightIds
-          ? el.pointIds.map((id: string) =>
-              highlightIds.includes(id) ? 0 : 12
-            )
-          : 12;
+      // If a point is highlighted, we have to set its y value to null, otherwise it will
+      // still have a tooltip (regardless of marker size, color, etc.)
+      if (
+        el.pointIds &&
+        highlightIds &&
+        highlightIds.length > 0 &&
+        highlightIds.some((id) => el.pointIds?.includes(id))
+      ) {
+        seriesY.forEach((_value: number, index: number) => {
+          if (el.pointIds && highlightIds.includes(el.pointIds[index])) {
+            seriesY[index] = null;
+          }
+        });
+      }
 
       // add scatter data considering input options
-      const newTrace = {
+      dataSetProcess.push({
         x: seriesX,
         y: seriesY,
         // distinguish X/Y Data from Overlay
@@ -808,6 +808,7 @@ export function processInputData<T extends number | string>(
             ? 'scatter'
             : 'scattergl', // for the raw data of the scatterplot
         fill: fillAreaValue,
+        size: 12,
         marker: {
           color:
             highlightIds && highlightIds.length > 0
@@ -817,7 +818,6 @@ export function processInputData<T extends number | string>(
               : seriesGradientColorscale?.length > 0
               ? markerColorsGradient
               : undefined,
-          size: markerSizes,
           line: {
             color:
               highlightIds && highlightIds.length > 0
@@ -829,7 +829,7 @@ export function processInputData<T extends number | string>(
                 : undefined,
             width: 2,
           },
-          symbol: 'circle',
+          symbol: 'none',
         },
         // this needs to be here for the case of markers with line or lineplot.
         // always use spline?
@@ -838,9 +838,7 @@ export function processInputData<T extends number | string>(
           shape: 'spline',
         },
         pointIds: el.pointIds,
-      };
-
-      dataSetProcess.push(newTrace);
+      });
 
       // If there are any highlihgted points, we need to add those to the highlight trace
       if (
@@ -849,7 +847,6 @@ export function processInputData<T extends number | string>(
         highlightIds.some((id) => el.pointIds.includes(id))
       ) {
         // Extract the indices of highlighted points.
-        console.log('adding highlight points');
         const highlightIndices = el.pointIds
           .map((id: string, index: number) =>
             highlightIds.includes(id) ? index : -1
@@ -1067,7 +1064,6 @@ export function processInputData<T extends number | string>(
 
   // If there are any highlighted points, add that trace to datasetProcess
   if (highlightTrace.x.length > 0) {
-    console.log('hello');
     dataSetProcess.push(highlightTrace);
   }
 
