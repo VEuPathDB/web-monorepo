@@ -2369,7 +2369,7 @@ function processInputData(
     y: [],
     name: 'highlight',
     mode: 'markers',
-    type: 'scatter', // 'scatter' not 'scattergl' or hovering doesn't work correctly.
+    type: 'scattergl',
     marker: highlightMarkerStyleOverride ?? DefaultHighlightMarkerStyle,
     pointIds: [],
   };
