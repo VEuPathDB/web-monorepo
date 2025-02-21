@@ -44,7 +44,10 @@ html {
   --page-offset-top: 100px;
 }
 html {
-  overflow: auto;
+  // The following rule causes the page to jump around when using the mui
+  // Popover component. I'm leaving this commented-out rule in place for
+  // future reference.
+  // overflow: auto;
   scroll-padding-top: var(--page-offset-top);
 }
 
