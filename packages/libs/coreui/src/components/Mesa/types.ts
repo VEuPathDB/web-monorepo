@@ -2,7 +2,7 @@ import React, { CSSProperties, ReactElement, ReactNode } from 'react';
 
 type DefaultColumnKey<Row> = Extract<keyof Row, string>;
 
-type ChildRowProps<Row> = {
+export type ChildRowProps<Row> = {
   rowIndex: number;
   rowData: Row;
 };

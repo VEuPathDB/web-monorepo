@@ -8,6 +8,7 @@ import {
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import ExternalResource from './ExternalResource';
 import { JbrowseIframe } from './JbrowseIframe';
+import { EdaScatterPlot } from './eda/EdaScatterPlot';
 
 /**
  * Renders an Dataset graph with the provided rowData.
@@ -223,6 +224,25 @@ export default class DatasetGraph extends React.PureComponent {
         <div className="eupathdb-DatasetGraphContainer">
           <div className="eupathdb-DatasetGraph">
             {visibleGraphs.map((index) => {
+              // Hardcoded to render an EDA Scatterplot
+              // TODO Replace hardcoded values with rowData attributes.
+              if (dataset_id === 'DS_d4745ea297') {
+                return (
+                  <EdaScatterPlot
+                    datasetId={dataset_id}
+                    xAxisVariable={{
+                      entityId: 'genePhenotypeData',
+                      // Phenotype rank
+                      variableId: 'VAR_9f0d6627',
+                    }}
+                    yAxisVariable={{
+                      entityId: 'genePhenotypeData',
+                      // Mean Phenotype score
+                      variableId: 'VAR_40829b7e',
+                    }}
+                  />
+                );
+              }
               let { height, width, visible_part } = graphs[index];
               let fullUrl = `${imgUrl}&vp=${visible_part}`;
               return (

@@ -6,7 +6,7 @@
  */
 
 import { zipWith } from 'lodash';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, ReactHTML } from 'react';
 import { wrappable } from '../../Utils/ComponentUtils';
 import './CollapsibleSection.css';
 
@@ -15,7 +15,7 @@ interface Props {
   isCollapsed?: boolean;
   onCollapsedChange: (isCollapsed: boolean) => void;
   headerContent: React.ReactNode;
-  headerComponent?: React.ComponentType;
+  headerComponent?: React.ComponentType | keyof ReactHTML;
   className?: string;
   children: React.ReactNode;
 }
