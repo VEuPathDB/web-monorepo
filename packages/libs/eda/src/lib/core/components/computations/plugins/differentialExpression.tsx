@@ -191,11 +191,11 @@ const DIFFERENTIAL_EXPRESSION_METHOD_CITATIONS: DifferentialExpressionMethodCita
         (Love et al., 2014)
       </a>
     ),
-  }; // + deseq paper in the future
+  };
 
 const DIFFERENTIAL_EXPRESSION_METHODS = Object.keys(
   DIFFERENTIAL_EXPRESSION_METHOD_CITATIONS
-); // + 'DESeq' in the future
+);
 
 export function DifferentialExpressionConfiguration(
   props: ComputationConfigProps
@@ -230,7 +230,6 @@ export function DifferentialExpressionConfiguration(
     changeConfigHandler('pValueFloor', '1e-200');
   }
 
-  // Only releasing Maaslin for b66
   if (configuration && !configuration.differentialExpressionMethod) {
     changeConfigHandler(
       'differentialExpressionMethod',

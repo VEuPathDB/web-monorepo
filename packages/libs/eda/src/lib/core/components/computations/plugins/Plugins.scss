@@ -18,6 +18,19 @@
     }
   }
 
+  &-DiffExpressionOuterConfigContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75em;
+    span {
+      white-space: nowrap;
+    }
+    &GroupComparison {
+      display: flex;
+      gap: 1.5em;
+    }
+  }
+
   &-CorrelationOuterConfigContainer {
     display: flex;
     flex-direction: column;
