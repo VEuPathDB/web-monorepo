@@ -57,7 +57,14 @@ export const RecordHeading = connect(
     requestId: state.record.requestId,
   }),
   RecordActions
-)(RecordOverview);
+)(function RecordHeadingWrapper({ DefaultComponent, ...props }) {
+  return (
+    <>
+      <DefaultComponent {...props} />
+      <RecordOverview {...props} />
+    </>
+  );
+});
 
 function Shortcuts(props) {
   const {
