@@ -295,6 +295,7 @@ export interface ScatterplotRequestParams {
     facetVariable?: ZeroToTwoVariables;
     showMissingness?: 'TRUE' | 'FALSE';
     maxAllowedDataPoints?: number;
+    returnPointIds?: boolean;
   };
 }
 
@@ -324,6 +325,7 @@ export const ScatterplotResponseData = array(
       tuple([StringVariableValue]),
       tuple([StringVariableValue, StringVariableValue]),
     ]),
+    pointIds: array(string),
   })
 );
 
