@@ -1,4 +1,15 @@
-export interface AiExpressionSummaryResponse {
+export type AiExpressionSummaryResponse = Record<
+  string,
+  AiExpressionGeneResponse
+>;
+
+export interface AiExpressionGeneResponse {
+  cacheStatus: 'hit' | 'miss';
+  reason?: string; // only for misses
+  expressionSummary: AiExpressionSummary;
+}
+
+export interface AiExpressionSummary {
   headline: string;
   one_paragraph_summary: string;
   sections: AiExpressionSummarySection[];

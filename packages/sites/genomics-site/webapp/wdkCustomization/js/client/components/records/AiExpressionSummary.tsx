@@ -1,8 +1,5 @@
-import React from 'react';
-import {
-  CollapsibleSection,
-  RecordAttribute,
-} from '@veupathdb/wdk-client/lib/Components';
+import React, { useEffect, useState } from 'react';
+import { CollapsibleSection } from '@veupathdb/wdk-client/lib/Components';
 import { Props } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
 
 import { DefaultSectionTitle } from '@veupathdb/wdk-client/lib/Views/Records/SectionTitle';
@@ -10,22 +7,13 @@ import { ErrorBoundary } from '@veupathdb/wdk-client/lib/Controllers';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { isGenomicsService } from '../../wrapWdkService';
 import {
-  AnswerSpec,
-  StandardReportConfig,
-} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { AiExpressionSummaryResponse } from '../../types/aiExpressionTypes';
-import { AnswerFormatting } from '@veupathdb/wdk-client/lib/Service/Mixins/SearchReportsService';
+  AiExpressionSummary,
+  AiExpressionSummaryResponse,
+} from '../../types/aiExpressionTypes';
 
 /** Display AI Expression Summary UI and results in a collapsible section */
 export function AiExpressionSummary(props: Props) {
-  const {
-    attribute,
-    record,
-    recordClass,
-    isCollapsed,
-    onCollapsedChange,
-    title,
-  } = props;
+  const { attribute, record, isCollapsed, onCollapsedChange, title } = props;
   const { displayName, help, name } = attribute;
 
   const headerContent = title ?? (
@@ -42,7 +30,7 @@ export function AiExpressionSummary(props: Props) {
     >
       <ErrorBoundary>
         {record.attributes['ai_expression'] == 'YES' ? (
-          <CacheGate {...props} />
+          <AiSummaryGate {...props} />
         ) : (
           <div>Sorry, this feature is not currently available.</div>
         )}
@@ -51,21 +39,64 @@ export function AiExpressionSummary(props: Props) {
   );
 }
 
-// if the AI expression summary is cached, render it
+// If the AI expression summary is cached, render it
 // otherwise render a "gate" where the user is given some verbiage
 // about the request taking a minute or two and a button to initiate
 // the request.
 
-function CacheGate(props: Props) {
+function AiSummaryGate(props: Props) {
   const geneId = props.record.attributes['source_id']?.toString();
-  if (geneId == null) return null;
+  if (geneId == null) throw new Error('geneId should not be missing');
 
-  const cachedSummary = useAiExpression(geneId, false); // do not populate cache
+  const [shouldPopulateCache, setShouldPopulateCache] = useState(false);
 
-  return <div>this is going to be the AI summary</div>;
+  const aiExpressionSummary = useAiExpressionSummary(
+    geneId,
+    shouldPopulateCache
+  );
+
+  if (aiExpressionSummary) {
+    if (aiExpressionSummary[geneId]?.cacheStatus === 'hit') {
+      const summary = aiExpressionSummary[geneId].expressionSummary;
+      return <AiExpressionResult summary={summary} {...props} />;
+    } else {
+      // Cache miss: render button to populate cache
+      return (
+        <div>
+          <p>
+            Click below to start an AI summary of this gene. It could take up to
+            three minutes.
+          </p>
+          <button onClick={() => setShouldPopulateCache(true)}>
+            Start AI Summary
+          </button>
+
+          {/* Debugging: Display cache miss reason if present */}
+          {aiExpressionSummary[geneId]?.reason && (
+            <p style={{ color: 'red' }}>
+              Debug: Cache miss reason - {aiExpressionSummary[geneId].reason}
+            </p>
+          )}
+        </div>
+      );
+    }
+  }
+
+  return <div>🤖 Summarising... 🤖</div>;
 }
 
-function useAiExpression(
+function AiExpressionResult(props: Props & { summary: AiExpressionSummary }) {
+  const headline = props.summary.headline;
+  return (
+    <div>
+      Here are today's headlines:
+      <br />
+      {headline}
+    </div>
+  );
+}
+
+function useAiExpressionSummary(
   geneId: string,
   shouldPopulateCache: boolean
 ): AiExpressionSummaryResponse | undefined {
