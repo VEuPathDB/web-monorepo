@@ -108,7 +108,7 @@ interface MesaAction<Row, Key = DefaultColumnKey<Row>> {
 
 type DefaultColumnValue<Row, Key> = Key extends keyof Row ? Row[Key] : unknown;
 
-interface CellProps<
+export interface CellProps<
   Row,
   Key = DefaultColumnKey<Row>,
   Value = DefaultColumnValue<Row, Key>

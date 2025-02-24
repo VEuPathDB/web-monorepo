@@ -15,7 +15,7 @@ export interface AiExpressionSummary {
   sections: AiExpressionSummarySection[];
 }
 
-interface AiExpressionSummarySection {
+export interface AiExpressionSummarySection {
   headline: string;
   one_sentence_summary: string;
   dataset_ids: string[];

@@ -9,7 +9,15 @@ import { isGenomicsService } from '../../wrapWdkService';
 import {
   AiExpressionSummary,
   AiExpressionSummaryResponse,
+  AiExpressionSummarySection,
 } from '../../types/aiExpressionTypes';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { AttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import Mesa from '@veupathdb/coreui/lib/components/Mesa';
+import {
+  MesaStateProps,
+  CellProps,
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 
 /** Display AI Expression Summary UI and results in a collapsible section */
 export function AiExpressionSummary(props: Props) {
@@ -88,13 +96,63 @@ function AiSummaryGate(props: Props) {
   }
 }
 
+// Note that `safeHtml()` does NOT sanitise dangerous HTML elements and attributes.
+// for example, this would render and the JavaScript will execute:
+// const danger = `<img src="x" onerror="alert('XSS!')" />`;
+// See https://github.com/VEuPathDB/web-monorepo/issues/1170
+
 function AiExpressionResult(props: Props & { summary: AiExpressionSummary }) {
-  const headline = props.summary.headline;
+  const {
+    record,
+    summary: { headline, one_paragraph_summary, sections },
+  } = props;
+
+  // make a lookup from dataset_id to the experiment info (display_name, assay_type) etc
+  const expressionGraphs = record.tables['ExpressionGraphs'];
+  const experiments = expressionGraphs.reduce<
+    Record<string, Record<string, AttributeValue>>
+  >((result, current) => {
+    const dataset_id = current['dataset_id'] as string;
+    result[dataset_id] = { ...current };
+    return result;
+  }, {});
+
+  const renderCell = (props: CellProps<AiExpressionSummarySection>) =>
+    safeHtml(props.value.toString());
+
+  // create the sections table
+  const mesaState: MesaStateProps<AiExpressionSummarySection> = {
+    rows: sections,
+    columns: [
+      {
+        key: 'headline',
+        name: 'Section',
+        renderCell,
+        style: { fontWeight: 'bold' },
+      },
+      {
+        key: 'one_sentence_summary',
+        name: 'Summary',
+        renderCell,
+      },
+    ],
+    options: {},
+  };
+
   return (
-    <div>
-      Here are today's headlines:
-      <br />
-      {headline}
+    <div className="ai-generated">
+      {safeHtml(headline, undefined, 'h4')}
+      <div style={{ maxWidth: '40em' }}>
+        {safeHtml(one_paragraph_summary, undefined, 'p')}
+      </div>
+      <p>
+        <i>
+          The AI has organized {expressionGraphs.length} experiments into{' '}
+          {sections.length} sections, hopefully with the most biologically
+          relevant first:
+        </i>
+      </p>
+      <Mesa state={mesaState} />
     </div>
   );
 }
