@@ -4,6 +4,7 @@ import {
   useDataClient,
   useFindEntityAndVariable,
   useStudyMetadata,
+  useSubsettingClient,
 } from '@veupathdb/eda/lib/core';
 import { DocumentationContainer } from '@veupathdb/eda/lib/core/components/docs/DocumentationContainer';
 import { scatterplotResponseToData } from '@veupathdb/eda/lib/core/components/visualizations/implementations/ScatterplotVisualization';
@@ -12,11 +13,17 @@ import { VariableDescriptor } from '@veupathdb/eda/lib/core/types/variable';
 import { WorkspaceContainer } from '@veupathdb/eda/lib/workspace/WorkspaceContainer';
 import { edaServiceUrl } from '../../config';
 
+interface HighlightSpec {
+  ids: string[];
+  variableId: string;
+  entityId: string;
+}
+
 interface Props {
   datasetId: string;
   xAxisVariable: VariableDescriptor;
   yAxisVariable: VariableDescriptor;
-  hightlightIds?: string[];
+  highlightSpec?: HighlightSpec;
 }
 
 /**
@@ -42,29 +49,57 @@ export function EdaScatterPlot(props: Props) {
 interface AdapterProps {
   xAxisVariable: VariableDescriptor;
   yAxisVariable: VariableDescriptor;
-  hightlightIds?: string[];
+  highlightSpec?: HighlightSpec;
 }
 
 function ScatterPlotAdapter(props: AdapterProps) {
-  const { xAxisVariable, yAxisVariable, hightlightIds } = props;
+  const { xAxisVariable, yAxisVariable, highlightSpec } = props;
   const { id: studyId } = useStudyMetadata();
   const dataClient = useDataClient();
+  const subsettingClient = useSubsettingClient();
   const findEntityAndVariable = useFindEntityAndVariable();
   const data = useCachedPromise(
     async function getData() {
-      const response = await dataClient.getScatterplot('xyrelationships', {
-        studyId,
-        filters: [],
-        config: {
-          outputEntityId: xAxisVariable.entityId,
-          valueSpec: 'raw',
-          xAxisVariable,
-          yAxisVariable,
-          returnPointIds: true,
-        },
-      });
+      const scatterplotDataResponse$ = dataClient.getScatterplot(
+        'xyrelationships',
+        {
+          studyId,
+          filters: [],
+          config: {
+            outputEntityId: xAxisVariable.entityId,
+            valueSpec: 'raw',
+            xAxisVariable,
+            yAxisVariable,
+            returnPointIds: true,
+          },
+        }
+      );
+
+      const hightlightDataResponse$ = highlightSpec
+        ? subsettingClient.getTabularData(studyId, highlightSpec.entityId, {
+            filters: [
+              {
+                type: 'stringSet',
+                entityId: highlightSpec.entityId,
+                variableId: highlightSpec.variableId,
+                stringSet: highlightSpec.ids,
+              },
+            ],
+            outputVariableIds: [highlightSpec.variableId],
+          })
+        : undefined;
+
+      const [scatterplotDataResponse, hightlightDataResponse] =
+        await Promise.all([scatterplotDataResponse$, hightlightDataResponse$]);
+
+      const hightlightIds = hightlightDataResponse
+        ?.slice(1)
+        .map((row) => row[0]);
+
+      console.log({ hightlightIds });
+
       return scatterplotResponseToData(
-        response,
+        scatterplotDataResponse,
         undefined,
         undefined,
         undefined,
@@ -72,12 +107,13 @@ function ScatterPlotAdapter(props: AdapterProps) {
         undefined,
         undefined,
         undefined,
+        'xyrelationships',
         undefined,
         undefined,
         hightlightIds
       ).dataSetProcess;
     },
-    ['ScatterPlotAdapter', studyId, xAxisVariable, yAxisVariable]
+    ['ScatterPlotAdapter', studyId, xAxisVariable, yAxisVariable, highlightSpec]
   );
 
   const xAxisEntityAndVariable = findEntityAndVariable(xAxisVariable);
@@ -95,7 +131,7 @@ function ScatterPlotAdapter(props: AdapterProps) {
     <ScatterPlot
       interactive
       showSpinner={data.pending}
-      markerBodyOpacity={0.5}
+      markerBodyOpacity={1}
       data={data.value}
       dependentAxisLabel={yAxisEntityAndVariable?.variable.displayName}
       independentAxisLabel={xAxisEntityAndVariable?.variable.displayName}
