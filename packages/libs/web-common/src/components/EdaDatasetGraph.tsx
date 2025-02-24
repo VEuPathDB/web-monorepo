@@ -69,7 +69,6 @@ export function EdaDatasetGraph(props: Props) {
     return <div>Could not parse plot_configs_json</div>;
   }
 
-  // TODO Pass to scatterplot as highlight ids
   const graphIds = graph_ids?.toString().split(/\s*,\s*/) ?? [];
 
   const selectedPlotConfigs = plotConfigs.filter((_, index) =>
@@ -129,6 +128,7 @@ export function EdaDatasetGraph(props: Props) {
                 datasetId={dataset_id as string}
                 xAxisVariable={xAxisVariable}
                 yAxisVariable={yAxisVariable}
+                hightlightIds={graphIds}
               />
             </div>
           );
