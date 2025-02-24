@@ -93,6 +93,8 @@ import {
   ColorPaletteDark,
   SequentialGradientColorscale,
   getValueToGradientColorMapper,
+  DefaultNonHighlightColor,
+  DefaultHighlightMarkerStyle,
 } from '@veupathdb/components/lib/types/plots/addOns';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { useRouteMatch } from 'react-router';
@@ -158,6 +160,7 @@ const CI95TEXT = '95% Confidence interval';
 const CI95SUFFIX = `, ${CI95TEXT}`;
 const BESTFITTEXT = 'Best fit';
 const BESTFITSUFFIX = `, ${BESTFITTEXT}`;
+const TESTHIGHLIGHTIDS = ['SRR7047967 (16S)', 'SRR7054402 (16S)'];
 
 const plotContainerStyles = {
   width: 750,
@@ -211,7 +214,7 @@ type DataSetProcessType = Override<
     y: (number | string)[] | null[];
     marker?: {
       color?: string | string[];
-      size?: number;
+      size?: number | number[];
       symbol?: string;
       line?: {
         color?: string | string[];
@@ -220,6 +223,7 @@ type DataSetProcessType = Override<
     };
     type?: string;
     r2?: number | null;
+    pointIds?: string[];
   }
 >;
 
@@ -237,6 +241,7 @@ function createDefaultConfig(): ScatterplotConfig {
     independentAxisValueSpec: 'Full',
     dependentAxisValueSpec: 'Full',
     markerBodyOpacity: 0.5,
+    returnPointIds: true,
   };
 }
 
@@ -259,6 +264,7 @@ export const ScatterplotConfig = t.partial({
   independentAxisValueSpec: t.string,
   dependentAxisValueSpec: t.string,
   markerBodyOpacity: t.number,
+  returnPointIds: t.boolean,
 });
 
 interface Options
@@ -747,6 +753,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             ? [vizConfig.facetVariable]
             : undefined,
           showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
+          returnPointIds: vizConfig.returnPointIds ?? true,
         },
         computeConfig: copmutationAppOverview.computeName
           ? computationDescriptor.configuration
@@ -818,6 +825,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         entities,
         colorPaletteOverride
       );
+
       return {
         ...returnData,
         overlayValueToColorMapper,
@@ -2205,7 +2213,8 @@ export function scatterplotResponseToData(
         // pass computation here to add conditions for apps
         computationType,
         entities,
-        colorPaletteOverride
+        colorPaletteOverride,
+        TESTHIGHLIGHTIDS
       );
 
     return {
@@ -2274,7 +2283,9 @@ function processInputData(
   facetVariable?: Variable,
   computationType?: string,
   entities?: StudyEntity[],
-  colorPaletteOverride?: string[]
+  colorPaletteOverride?: string[],
+  highlightIds?: string[],
+  highlightMarkerStyleOverride?: ScatterPlotDataSeries['marker']
 ) {
   // set variables for x- and yaxis ranges: no default values are set
   let xMin: number | string | undefined;
@@ -2348,6 +2359,20 @@ function processInputData(
 
   // data array to return
   let dataSetProcess: DataSetProcessType[] = [];
+
+  // Set empty highlightTrace. Will be populated if there are any highlighted points.
+  // Currently we import the defalut highlight styling, but in the future the marker styling could
+  // also be passed as a prop. Highlighting is currently limited to points, though it could extend
+  // similarly to lines, boxes, etc.
+  let highlightTrace: any = {
+    x: [],
+    y: [],
+    name: 'highlight',
+    mode: 'markers',
+    type: 'scattergl',
+    marker: highlightMarkerStyleOverride ?? DefaultHighlightMarkerStyle,
+    pointIds: [],
+  };
 
   responseScatterplotData.some(function (
     el: ScatterplotResponse['scatterplot']['data'][number],
@@ -2468,6 +2493,21 @@ function processInputData(
         }
       }
 
+      // If a point is highlighted, we have to set its y value to null, otherwise it will
+      // still have a tooltip (regardless of marker size, color, etc.)
+      if (
+        el.pointIds &&
+        highlightIds &&
+        highlightIds.length > 0 &&
+        highlightIds.some((id) => el.pointIds?.includes(id))
+      ) {
+        seriesY.forEach((_value, index: number) => {
+          if (el.pointIds && highlightIds.includes(el.pointIds[index])) {
+            seriesY[index] = null;
+          }
+        });
+      }
+
       // add scatter data considering input options
       dataSetProcess.push({
         x: seriesX.length ? seriesX : [null], // [null] hack required to make sure
@@ -2478,8 +2518,10 @@ function processInputData(
         type: scatterPlotType, // for the raw data of the scatterplot
         marker: {
           color:
-            seriesGradientColorscale?.length > 0 &&
-            markerSymbolGradient === 'circle'
+            highlightIds && highlightIds.length > 0
+              ? DefaultNonHighlightColor
+              : seriesGradientColorscale?.length > 0 &&
+                markerSymbolGradient === 'circle'
               ? markerColorsGradient
               : markerColor(index),
           symbol:
@@ -2489,8 +2531,10 @@ function processInputData(
           // need to set marker.line for a transparent case (opacity != 1)
           line: {
             color:
-              seriesGradientColorscale?.length > 0 &&
-              markerSymbolGradient === 'circle'
+              highlightIds && highlightIds.length > 0
+                ? DefaultNonHighlightColor
+                : seriesGradientColorscale?.length > 0 &&
+                  markerSymbolGradient === 'circle'
                 ? markerColorsGradient
                 : markerColor(index),
             width: 1,
@@ -2498,7 +2542,40 @@ function processInputData(
         },
         // this needs to be here for the case of markers with line or lineplot.
         line: { color: markerColor(index), shape: 'linear' },
+        pointIds: el.pointIds,
       });
+
+      // If there are any highlihgted points, we need to add those to the highlight trace
+      if (
+        highlightIds &&
+        el.pointIds &&
+        highlightIds.some((id) => el.pointIds?.includes(id))
+      ) {
+        // Extract the indices of highlighted points.
+        const highlightIndices = el.pointIds
+          .map((id: string, index: number) =>
+            highlightIds.includes(id) ? index : -1
+          )
+          .filter((index: number) => index !== -1);
+        if (highlightIndices && highlightIndices.length !== 0) {
+          highlightTrace.x.push(
+            ...(highlightIndices.map(
+              (index: number) => el.seriesX && el.seriesX[index]
+            ) || [])
+          );
+          highlightTrace.y.push(
+            ...(highlightIndices.map(
+              (index: number) => el.seriesY && el.seriesY[index]
+            ) || [])
+          );
+          highlightTrace.pointIds.push(
+            ...(highlightIndices.map(
+              (index: number) => el.pointIds && el.pointIds[index]
+            ) || [])
+          );
+        }
+      }
+
       return breakAfterThisSeries(index);
     }
     return false;
@@ -2732,6 +2809,11 @@ function processInputData(
     }
     return breakAfterThisSeries(index);
   });
+
+  // If there are any highlighted points, add that trace to datasetProcess
+  if (highlightTrace.x.length > 0) {
+    dataSetProcess.push(highlightTrace);
+  }
 
   return {
     dataSetProcess: { series: dataSetProcess },
