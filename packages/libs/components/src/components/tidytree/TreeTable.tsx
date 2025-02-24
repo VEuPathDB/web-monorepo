@@ -4,7 +4,7 @@ import {
   HorizontalDendrogramProps,
 } from '../../components/tidytree/HorizontalDendrogram';
 import Mesa from '@veupathdb/coreui/lib/components/Mesa';
-import { MesaStateProps } from '../../../../coreui/lib/components/Mesa/types';
+import { MesaStateProps } from '@veupathdb/coreui/lib/components/Mesa/types';
 
 import './TreeTable.scss';
 
