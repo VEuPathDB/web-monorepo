@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { CollapsibleSection } from '@veupathdb/wdk-client/lib/Components';
 import { Props } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
 
@@ -64,8 +64,8 @@ function AiSummaryGate(props: Props) {
       return (
         <div>
           <p>
-            Click below to start an AI summary of this gene. It could take up to
-            three minutes.
+            Click below to request an AI summary of this gene. It could take up
+            to three minutes. When complete it will be cached for all users.
           </p>
           <button onClick={() => setShouldPopulateCache(true)}>
             Start AI Summary
@@ -81,8 +81,11 @@ function AiSummaryGate(props: Props) {
       );
     }
   }
-
-  return <div>🤖 Summarising... 🤖</div>;
+  if (shouldPopulateCache) {
+    return <div>🤖 Summarising... 🤖</div>;
+  } else {
+    return <div>Loading...</div>;
+  }
 }
 
 function AiExpressionResult(props: Props & { summary: AiExpressionSummary }) {
@@ -100,26 +103,29 @@ function useAiExpressionSummary(
   geneId: string,
   shouldPopulateCache: boolean
 ): AiExpressionSummaryResponse | undefined {
-  return useWdkService(async (wdkService) => {
-    if (!isGenomicsService(wdkService)) throw new Error('nasty');
-    const { projectId } = await wdkService.getConfig();
-    const answerSpec = {
-      searchName: 'single_record_question_GeneRecordClasses_GeneRecordClass',
-      searchConfig: {
-        parameters: {
-          primaryKeys: `${geneId},${projectId}`,
+  return useWdkService(
+    async (wdkService) => {
+      if (!isGenomicsService(wdkService)) throw new Error('nasty');
+      const { projectId } = await wdkService.getConfig();
+      const answerSpec = {
+        searchName: 'single_record_question_GeneRecordClasses_GeneRecordClass',
+        searchConfig: {
+          parameters: {
+            primaryKeys: `${geneId},${projectId}`,
+          },
         },
-      },
-    };
-    const formatting = {
-      format: 'aiExpression',
-      formatConfig: {
-        shouldPopulateCache,
-      },
-    };
-    return await wdkService.getAnswer<AiExpressionSummaryResponse>(
-      answerSpec,
-      formatting
-    );
-  });
+      };
+      const formatting = {
+        format: 'aiExpression',
+        formatConfig: {
+          populateIfNotPresent: shouldPopulateCache,
+        },
+      };
+      return await wdkService.getAnswer<AiExpressionSummaryResponse>(
+        answerSpec,
+        formatting
+      );
+    },
+    [geneId, shouldPopulateCache]
+  );
 }
