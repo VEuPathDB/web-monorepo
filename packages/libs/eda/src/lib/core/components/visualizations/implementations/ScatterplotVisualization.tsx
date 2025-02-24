@@ -160,7 +160,6 @@ const CI95TEXT = '95% Confidence interval';
 const CI95SUFFIX = `, ${CI95TEXT}`;
 const BESTFITTEXT = 'Best fit';
 const BESTFITSUFFIX = `, ${BESTFITTEXT}`;
-const TESTHIGHLIGHTIDS = ['SRR7047967 (16S)', 'SRR7054402 (16S)'];
 
 const plotContainerStyles = {
   width: 750,
@@ -2167,7 +2166,8 @@ export function scatterplotResponseToData(
   facetVariable?: Variable,
   computationType?: string,
   entities?: StudyEntity[],
-  colorPaletteOverride?: string[]
+  colorPaletteOverride?: string[],
+  highlightIds?: string[]
 ): ScatterPlotDataWithCoverage {
   const modeValue = 'markers';
 
@@ -2214,7 +2214,7 @@ export function scatterplotResponseToData(
         computationType,
         entities,
         colorPaletteOverride,
-        TESTHIGHLIGHTIDS
+        highlightIds
       );
 
     return {

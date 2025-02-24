@@ -16,6 +16,7 @@ interface Props {
   datasetId: string;
   xAxisVariable: VariableDescriptor;
   yAxisVariable: VariableDescriptor;
+  hightlightIds?: string[];
 }
 
 /**
@@ -41,10 +42,11 @@ export function EdaScatterPlot(props: Props) {
 interface AdapterProps {
   xAxisVariable: VariableDescriptor;
   yAxisVariable: VariableDescriptor;
+  hightlightIds?: string[];
 }
 
 function ScatterPlotAdapter(props: AdapterProps) {
-  const { xAxisVariable, yAxisVariable } = props;
+  const { xAxisVariable, yAxisVariable, hightlightIds } = props;
   const { id: studyId } = useStudyMetadata();
   const dataClient = useDataClient();
   const findEntityAndVariable = useFindEntityAndVariable();
@@ -58,10 +60,22 @@ function ScatterPlotAdapter(props: AdapterProps) {
           valueSpec: 'raw',
           xAxisVariable,
           yAxisVariable,
-          // maxAllowedDataPoints: 1_000,
+          returnPointIds: true,
         },
       });
-      return scatterplotResponseToData(response).dataSetProcess;
+      return scatterplotResponseToData(
+        response,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        hightlightIds
+      ).dataSetProcess;
     },
     ['ScatterPlotAdapter', studyId, xAxisVariable, yAxisVariable]
   );
