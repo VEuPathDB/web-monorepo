@@ -2047,7 +2047,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                 options?.getOverlayVariable != null
                   ? providedOverlayVariableDescriptor
                     ? variableDisplayWithUnit(providedOverlayVariable)
-                    : 'None. ' + options?.getOverlayVariableHelp?.() ?? ''
+                    : 'None. ' + (options?.getOverlayVariableHelp?.() ?? '')
                   : undefined,
             } as const,
           ]),
