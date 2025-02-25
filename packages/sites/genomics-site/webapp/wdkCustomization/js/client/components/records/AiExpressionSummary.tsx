@@ -135,6 +135,8 @@ type AiExpressionResultProps = Props & {
   summary: AiExpressionSummary;
 } & PropsFromRedux;
 
+type RowType = AiExpressionSummarySection & { rowId: number };
+
 const AiExpressionResult = connector((props: AiExpressionResultProps) => {
   const {
     record,
@@ -154,12 +156,17 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
   }, {});
 
   // custom renderer (to handle <i>tags</i> mainly)
-  const renderCell = (props: CellProps<AiExpressionSummarySection>) =>
+  const renderCell = (props: CellProps<RowType>) =>
     safeHtml(props.value.toString());
 
+  const numberedSections = sections.map((section, index) => ({
+    ...section,
+    rowId: index,
+  }));
+
   // create the sections table
-  const mainTableState: MesaStateProps<AiExpressionSummarySection> = {
-    rows: sections,
+  const mainTableState: MesaStateProps<RowType> = {
+    rows: numberedSections,
     columns: [
       {
         key: 'headline',
@@ -231,7 +238,7 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
           </ErrorBoundary>
         );
       },
-      getRowId: (row) => row.headline,
+      getRowId: (row) => row.rowId,
     },
     eventHandlers: {
       onExpandedRowsChange: (rowIndexes) => setExpandedRows(rowIndexes),
