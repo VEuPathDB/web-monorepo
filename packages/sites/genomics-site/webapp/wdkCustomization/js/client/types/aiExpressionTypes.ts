@@ -18,5 +18,14 @@ export interface AiExpressionSummary {
 export interface AiExpressionSummarySection {
   headline: string;
   one_sentence_summary: string;
-  dataset_ids: string[];
+  summaries: AiExperimentSummary[];
+}
+
+export interface AiExperimentSummary {
+  one_sentence_summary: string;
+  notes: string;
+  confidence: number;
+  biological_importance: number;
+  dataset_id: string;
+  experiment_keywords: string[];
 }

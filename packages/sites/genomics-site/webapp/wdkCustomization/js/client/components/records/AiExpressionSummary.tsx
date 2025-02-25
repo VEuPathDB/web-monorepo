@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { CollapsibleSection } from '@veupathdb/wdk-client/lib/Components';
+import {
+  CollapsibleSection,
+  Loading,
+} from '@veupathdb/wdk-client/lib/Components';
 import { Props } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
 
 import { DefaultSectionTitle } from '@veupathdb/wdk-client/lib/Views/Records/SectionTitle';
@@ -37,11 +40,13 @@ export function AiExpressionSummary(props: Props) {
       onCollapsedChange={onCollapsedChange}
     >
       <ErrorBoundary>
-        {record.attributes['ai_expression'] == 'YES' ? (
-          <AiSummaryGate {...props} />
-        ) : (
-          <div>Sorry, this feature is not currently available.</div>
-        )}
+        <div style={{ minHeight: '8em' }}>
+          {record.attributes['ai_expression'] == 'YES' ? (
+            <AiSummaryGate {...props} />
+          ) : (
+            <div>Sorry, this feature is not currently available.</div>
+          )}
+        </div>
       </ErrorBoundary>
     </CollapsibleSection>
   );
@@ -67,7 +72,7 @@ function AiSummaryGate(props: Props) {
     if (aiExpressionSummary[geneId]?.cacheStatus === 'hit') {
       const summary = aiExpressionSummary[geneId].expressionSummary;
       return <AiExpressionResult summary={summary} {...props} />;
-    } else {
+    } else if (!shouldPopulateCache) {
       // Cache miss: render button to populate cache
       return (
         <div>
@@ -90,7 +95,12 @@ function AiSummaryGate(props: Props) {
     }
   }
   if (shouldPopulateCache) {
-    return <div>🤖 Summarising... 🤖</div>;
+    return (
+      <>
+        <div>🤖 Summarising... 🤖</div>
+        <Loading />
+      </>
+    );
   } else {
     return <div>Loading...</div>;
   }
@@ -117,6 +127,7 @@ function AiExpressionResult(props: Props & { summary: AiExpressionSummary }) {
     return result;
   }, {});
 
+  // custom renderer (to handle <i>tags</i> mainly)
   const renderCell = (props: CellProps<AiExpressionSummarySection>) =>
     safeHtml(props.value.toString());
 
@@ -134,6 +145,12 @@ function AiExpressionResult(props: Props & { summary: AiExpressionSummary }) {
         key: 'one_sentence_summary',
         name: 'Summary',
         renderCell,
+      },
+      {
+        key: 'summaries',
+        name: '# Experiments',
+        renderCell: (cellProps) => cellProps.row.summaries.length,
+        style: { textAlign: 'right' },
       },
     ],
     options: {},
