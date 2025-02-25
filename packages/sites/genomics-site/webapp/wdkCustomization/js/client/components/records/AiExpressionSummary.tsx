@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
+import { connect, ConnectedProps } from 'react-redux';
 import {
   CollapsibleSection,
-  Link,
   Loading,
 } from '@veupathdb/wdk-client/lib/Components';
 import { Props } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
@@ -22,6 +22,10 @@ import {
   MesaStateProps,
   CellProps,
 } from '@veupathdb/coreui/lib/components/Mesa/types';
+import { RecordActions } from '@veupathdb/wdk-client/lib/Actions';
+import { DEFAULT_TABLE_STATE } from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
+import { State as ReduxState } from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
+import { scrollToAndOpenExpressionGraph } from './utils';
 
 // Styles
 import './AiExpressionSummary.scss';
@@ -115,7 +119,23 @@ function AiSummaryGate(props: Props) {
 // const danger = `<img src="x" onerror="alert('XSS!')" />`;
 // See https://github.com/VEuPathDB/web-monorepo/issues/1170
 
-function AiExpressionResult(props: Props & { summary: AiExpressionSummary }) {
+const mapState = (record: ReduxState) => ({
+  expressionGraphsTableState:
+    record.tableStates?.ExpressionGraphs ?? DEFAULT_TABLE_STATE,
+});
+
+const mapDispatch = {
+  updateSectionVisibility: RecordActions.updateSectionVisibility,
+  updateTableState: RecordActions.updateTableState,
+};
+
+const connector = connect(mapState, mapDispatch);
+type PropsFromRedux = ConnectedProps<typeof connector>;
+type AiExpressionResultProps = Props & {
+  summary: AiExpressionSummary;
+} & PropsFromRedux;
+
+const AiExpressionResult = connector((props: AiExpressionResultProps) => {
   const {
     record,
     summary: { headline, one_paragraph_summary, sections },
@@ -161,11 +181,11 @@ function AiExpressionResult(props: Props & { summary: AiExpressionSummary }) {
       },
     ],
     options: {
-      childRow: (props) => {
+      childRow: (badProps) => {
         // NOTE: the typing of `ChildRowProps` seems wrong
         // as it is called with two args, not one, see
         // https://github.com/VEuPathDB/web-monorepo/blob/d1d03fcd051cd7a54706fe879e4af4b1fc220d88/packages/libs/coreui/src/components/Mesa/Ui/DataCell.jsx#L26
-        const rowIndex = props as unknown as number;
+        const rowIndex = badProps as unknown as number;
         const rowData = sections[rowIndex];
         return (
           <ErrorBoundary>
@@ -181,9 +201,25 @@ function AiExpressionResult(props: Props & { summary: AiExpressionSummary }) {
                     }}
                   >
                     <>
-                      <Link to="#ExpressionGraphs">
-                        {experiments[summary.dataset_id].display_name}
-                      </Link>{' '}
+                      <a
+                        onClick={() =>
+                          scrollToAndOpenExpressionGraph({
+                            expressionGraphs: expressionGraphs,
+                            findIndexFn: ({
+                              dataset_id,
+                            }: {
+                              dataset_id: string;
+                            }) => dataset_id === summary.dataset_id,
+                            tableId: 'ExpressionGraphs',
+                            updateSectionVisibility:
+                              props.updateSectionVisibility,
+                            updateTableState: props.updateTableState,
+                            tableState: props.expressionGraphsTableState,
+                          })
+                        }
+                      >
+                        {experiments[summary.dataset_id].display_name as string}
+                      </a>{' '}
                       ({experiments[summary.dataset_id].assay_type})
                       <br />
                       {safeHtml(summary.one_sentence_summary)}
@@ -225,7 +261,7 @@ function AiExpressionResult(props: Props & { summary: AiExpressionSummary }) {
       <Mesa state={mainTableState} />
     </div>
   );
-}
+});
 
 function useAiExpressionSummary(
   geneId: string,
