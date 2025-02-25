@@ -96,10 +96,10 @@ function AiSummaryGate(props: Props) {
   }
   if (shouldPopulateCache) {
     return (
-      <>
-        <div>🤖 Summarising... 🤖</div>
+      <div>
+        <p>🤖 Summarising... 🤖</p>
         <Loading />
-      </>
+      </div>
     );
   } else {
     return <div>Loading...</div>;
@@ -148,7 +148,7 @@ function AiExpressionResult(props: Props & { summary: AiExpressionSummary }) {
       },
       {
         key: 'summaries',
-        name: '# Experiments',
+        name: '# Datasets',
         renderCell: (cellProps) => cellProps.row.summaries.length,
         style: { textAlign: 'right' },
       },
