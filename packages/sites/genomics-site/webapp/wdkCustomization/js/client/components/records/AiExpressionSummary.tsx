@@ -174,7 +174,11 @@ function AiExpressionResult(props: Props & { summary: AiExpressionSummary }) {
                 return (
                   <li
                     key={summary.dataset_id}
-                    style={{ marginBottom: '0.5em', marginLeft: '4em' }}
+                    style={{
+                      marginBottom: '0.5em',
+                      marginLeft: '4em',
+                      marginRight: '4em',
+                    }}
                   >
                     <>
                       <Link to="#ExpressionGraphs" onclick="alert('hello')">
