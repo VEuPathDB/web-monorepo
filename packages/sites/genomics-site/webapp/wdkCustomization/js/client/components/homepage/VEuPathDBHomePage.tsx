@@ -1045,6 +1045,13 @@ const useHeaderMenuItems = (
       ],
     },
     {
+      key: 'subscr',
+      display: 'Subscriptions',
+      type: 'reactRoute',
+      target: '_blank',
+      url: makeStaticPageRoute('/subscriptions.html'),
+    },
+    {
       key: 'contact-us',
       display: 'Contact Us',
       type: 'reactRoute',
