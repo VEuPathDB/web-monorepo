@@ -181,7 +181,7 @@ function AiExpressionResult(props: Props & { summary: AiExpressionSummary }) {
                     }}
                   >
                     <>
-                      <Link to="#ExpressionGraphs" onclick="alert('hello')">
+                      <Link to="#ExpressionGraphs">
                         {experiments[summary.dataset_id].display_name}
                       </Link>{' '}
                       ({experiments[summary.dataset_id].assay_type})
