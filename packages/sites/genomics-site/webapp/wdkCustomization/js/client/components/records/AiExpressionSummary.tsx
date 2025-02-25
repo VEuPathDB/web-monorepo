@@ -114,36 +114,29 @@ function AiSummaryGate(props: Props) {
   }
 }
 
-// Note that `safeHtml()` does NOT sanitise dangerous HTML elements and attributes.
-// for example, this would render and the JavaScript will execute:
-// const danger = `<img src="x" onerror="alert('XSS!')" />`;
-// See https://github.com/VEuPathDB/web-monorepo/issues/1170
+type RowType = AiExpressionSummarySection & { rowId: number };
 
+// Jump through some hoops to connect the redux store
 const mapState = (record: ReduxState) => ({
   expressionGraphsTableState:
     record.tableStates?.ExpressionGraphs ?? DEFAULT_TABLE_STATE,
 });
-
 const mapDispatch = {
   updateSectionVisibility: RecordActions.updateSectionVisibility,
   updateTableState: RecordActions.updateTableState,
 };
-
 const connector = connect(mapState, mapDispatch);
 type PropsFromRedux = ConnectedProps<typeof connector>;
+
 type AiExpressionResultProps = Props & {
   summary: AiExpressionSummary;
 } & PropsFromRedux;
-
-type RowType = AiExpressionSummarySection & { rowId: number };
 
 const AiExpressionResult = connector((props: AiExpressionResultProps) => {
   const {
     record,
     summary: { headline, one_paragraph_summary, sections },
   } = props;
-
-  const [expandedRows, setExpandedRows] = useState<number[]>([]);
 
   // make a lookup from dataset_id to the experiment info (display_name, assay_type) etc
   const expressionGraphs = record.tables['ExpressionGraphs'];
@@ -155,9 +148,28 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
     return result;
   }, {});
 
-  // custom renderer (to handle <i>tags</i> mainly)
-  const renderCell = (props: CellProps<RowType>) =>
-    safeHtml(props.value.toString());
+  // custom renderer (to handle <i>, <ul>, <li> and <strong> tags, mainly)
+  // and provide click to toggle row expansion functionality
+
+  const [expandedRows, setExpandedRows] = useState<number[]>([]);
+
+  const RenderCellWithHtmlAndClickHandler = (props: CellProps<RowType>) => {
+    const myRowId = props.row.rowId;
+    const handleClick = () => {
+      setExpandedRows(
+        (prevRows) =>
+          prevRows.includes(myRowId)
+            ? prevRows.filter((id) => id !== myRowId) // Remove if already expanded
+            : [...prevRows, myRowId] // Add if not expanded
+      );
+    };
+    return <div onClick={handleClick}>{safeHtml(props.value.toString())}</div>;
+  };
+
+  // Note that `safeHtml()` does NOT sanitise dangerous HTML elements and attributes.
+  // for example, this would render and the JavaScript will execute:
+  // const danger = `<img src="x" onerror="alert('XSS!')" />`;
+  // See https://github.com/VEuPathDB/web-monorepo/issues/1170
 
   const numberedSections = sections.map((section, index) => ({
     ...section,
@@ -171,13 +183,13 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
       {
         key: 'headline',
         name: 'Topic',
-        renderCell,
+        renderCell: RenderCellWithHtmlAndClickHandler,
         style: { fontWeight: 'bold' },
       },
       {
         key: 'one_sentence_summary',
         name: 'Summary',
-        renderCell,
+        renderCell: RenderCellWithHtmlAndClickHandler,
         //	style: { maxWidth: '30em' },
       },
       {
