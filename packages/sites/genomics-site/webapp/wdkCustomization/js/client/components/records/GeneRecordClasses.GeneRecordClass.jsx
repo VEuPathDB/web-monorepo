@@ -37,7 +37,7 @@ import * as Gbrowse from '../common/Gbrowse';
 import { OverviewThumbnails } from '../common/OverviewThumbnails';
 import { SnpsAlignmentForm } from '../common/Snps';
 import { addCommentLink } from '../common/UserComments';
-import { withRequestFields } from './utils';
+import { withRequestFields, scrollToAndOpenExpressionGraph } from './utils';
 import {
   usePreferredOrganismsEnabledState,
   usePreferredOrganismsState,
@@ -1757,39 +1757,15 @@ const TranscriptionSummaryForm = connect(
           // Find the associated expression graph row data
           // FIXME: Look up the expression graph entry by dataset_id instead of display_name
           // This will require adding the dataset_id as a data attribute
-          const expressionGraphIndex = ExpressionGraphs.findIndex(
-            ({ display_name }) =>
-              e.target.dataset.unformatted.startsWith(display_name)
-          );
-
-          const expressionGraphTableElement =
-            document.getElementById('ExpressionGraphs');
-
-          const expressionGraphTableRowElement =
-            expressionGraphTableElement?.querySelector(
-              `tr#row_id_${expressionGraphIndex}`
-            );
-
-          // If the expression graph table is available...
-          if (
-            expressionGraphIndex !== -1 &&
-            expressionGraphTableRowElement != null
-          ) {
-            // Make sure the table section is open
-            this.props.updateSectionVisibility('ExpressionGraphs', true);
-            // Add a history entry so users can use the back button to go back to *this* section
-            window.history.pushState(null, null, '#ExpressionGraphs');
-
-            expressionGraphTableRowElement.scrollIntoView();
-
-            this.props.updateTableState('ExpressionGraphs', {
-              ...this.props.expressionGraphsTableState,
-              selectedRow: expressionGraphIndex,
-              expandedRows: (
-                this.props.expressionGraphsTableState?.expandedRows ?? []
-              ).concat([expressionGraphIndex]),
-            });
-          }
+          scrollToAndOpenExpressionGraph({
+            expressionGraphs: ExpressionGraphs,
+            findIndexFn: ({ display_name }) =>
+              e.target.dataset.unformatted.startsWith(display_name),
+            tableId: 'ExpressionGraphs',
+            updateSectionVisibility: this.props.updateSectionVisibility,
+            updateTableState: this.props.updateTableState,
+            tableState: this.props.expressionGraphsTableState,
+          });
         }
       });
 

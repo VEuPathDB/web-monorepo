@@ -51,3 +51,43 @@ export function renderNodeLabelMarkup(dataProp) {
 
   return memoize(compose(stripHTML, getDataProperty), getDataProperty);
 }
+
+export function scrollToAndOpenExpressionGraph({
+  expressionGraphs,
+  findIndexFn,
+  tableId,
+  updateSectionVisibility,
+  updateTableState,
+  tableState,
+}) {
+  // Find the associated expression graph row data
+  const expressionGraphIndex = expressionGraphs.findIndex(findIndexFn);
+
+  const expressionGraphTableElement = document.getElementById(tableId);
+
+  const expressionGraphTableRowElement =
+    expressionGraphTableElement?.querySelector(
+      `tr#row_id_${expressionGraphIndex}`
+    );
+
+  // If the expression graph table is available...
+  if (expressionGraphIndex !== -1 && expressionGraphTableRowElement != null) {
+    // Ensure the table section is visible
+    updateSectionVisibility(tableId, true);
+
+    // Add a history entry so users can use the back button to go back to this section
+    window.history.pushState(null, null, `#${tableId}`);
+
+    // Scroll to the expression graph row
+    expressionGraphTableRowElement.scrollIntoView();
+
+    // Update table state (select and expand the row)
+    updateTableState(tableId, {
+      ...tableState,
+      selectedRow: expressionGraphIndex,
+      expandedRows: (tableState?.expandedRows ?? []).concat([
+        expressionGraphIndex,
+      ]),
+    });
+  }
+}
