@@ -27,6 +27,7 @@ import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import { preorderSeq } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 import DatasetGraph from '@veupathdb/web-common/lib/components/DatasetGraph';
+import { EdaDatasetGraph } from '@veupathdb/web-common/lib/components/EdaDatasetGraph';
 import { ExternalResourceContainer } from '@veupathdb/web-common/lib/components/ExternalResource';
 import Sequence from '@veupathdb/web-common/lib/components/records/Sequence';
 import { isNodeOverflowing } from '@veupathdb/web-common/lib/util/domUtils';
@@ -190,15 +191,15 @@ function RecordOverview(props) {
     }
     const rawValue = record.attributes[attributeName];
     if (rawValue == null) return '';
-    return formatAttributeValue(rawValue);
+    return renderAttributeValue(rawValue);
   }
 
   return (
     <div
       className="eupathdb-RecordOverview"
-      data-gene-type={r('gene_type')}
-      data-num-user-comments={r('num_user_comments')}
-      data-apollo={r('show_apollo')}
+      data-gene-type={record.attributes['gene_type']}
+      data-num-user-comments={record.attributes['num_user_comments']}
+      data-apollo={record.attributes['show_apollo']}
     >
       <div
         onMouseOver={(event) => {
@@ -253,7 +254,7 @@ function RecordOverview(props) {
               {r('strain')}
               <Link
                 style={{ fontSize: '90%', marginLeft: '1em' }}
-                to={`/record/dataset/${r('dataset_id')}`}
+                to={`/record/dataset/${record.attributes['dataset_id']}`}
               >
                 <i className="fa fa-database"></i> Data set
               </Link>
@@ -274,7 +275,7 @@ function RecordOverview(props) {
                 </a>
               </div>
               <div data-show-num-user-comments="0" data-label="User Comments">
-                <a href="{r('user_comment_link_url')}">
+                <a href={record.attributes['user_comment_link_url']}>
                   Add the first <i className="fa fa-comment"></i>
                 </a>
               </div>
@@ -284,11 +285,7 @@ function RecordOverview(props) {
               <dt>Community Annotations</dt>
               <dd>
                 <a
-                  href={`https://apollo.veupathdb.org/annotator/loadLink?organism=${r(
-                    'apollo_ident'
-                  )}&loc=${r('sequence_id')}:${r('start_min')}..${r(
-                    'end_max'
-                  )}&tracks=gene%2CRNA-Seq%20Evidence%20for%20Introns%2CCommunity%20annotations%20from%20Apollo`}
+                  href={`https://apollo.veupathdb.org/annotator/loadLink?organism=${record.attributes['apollo_ident']}&loc=${record.attributes['sequence_id']}:${record.attributes['start_min']}..${record.attributes['end_max']}&tracks=gene%2CRNA-Seq%20Evidence%20for%20Introns%2CCommunity%20annotations%20from%20Apollo`}
                 >
                   View / Update
                 </a>{' '}
@@ -303,20 +300,22 @@ function RecordOverview(props) {
         </div>
 
         <div className="eupathdb-RecordOverviewRight">
-          <div className="GeneOverviewIntent">{r('data_release_policy')}</div>
+          <div className="GeneOverviewIntent">
+            {record.attributes['data_release_policy']}
+          </div>
           <div className="eupathdb-ThumbnailsTitle">Shortcuts</div>
           <div className="eupathdb-ThumbnailsContainer">
             <Shortcuts {...props} />
           </div>
           <div className="eupathdb-RecordOverviewItem">
             Also see {r('source_id')} in the{' '}
-            <a href="{r('jbrowseLink')}" target="_blank">
+            <a href={record.attributes['jbrowseLink']} target="_blank">
               Genome Browser
             </a>
             <span data-show-gene-type="protein coding">
               {' '}
               or{' '}
-              <a href={`${r('pbrowseLink')}`} target="_blank">
+              <a href={record.attributes['pbrowseLink']} target="_blank">
                 Protein Browser
               </a>
             </span>
@@ -392,24 +391,36 @@ function FungiVBOrgLinkoutsTable(props) {
   );
 }
 
-const ExpressionChildRow = makeDatasetGraphChildRow(
-  'ExpressionGraphsDataTable'
-);
-const HostResponseChildRow = makeDatasetGraphChildRow(
-  'HostResponseGraphsDataTable',
-  'FacetMetadata',
-  'ContXAxisMetadata'
-);
-const CrisprPhenotypeChildRow = makeDatasetGraphChildRow(
-  'CrisprPhenotypeGraphsDataTable'
-);
-const PhenotypeScoreChildRow = makeDatasetGraphChildRow(
-  'PhenotypeScoreGraphsDataTable'
-);
-const PhenotypeChildRow = makeDatasetGraphChildRow('PhenotypeGraphsDataTable');
-const UDTranscriptomicsChildRow = makeDatasetGraphChildRow(
-  'UserDatasetsTranscriptomicsGraphsDataTable'
-);
+const ExpressionChildRow = makeDatasetGraphChildRow({
+  dataTableName: 'ExpressionGraphsDataTable',
+  DatasetGraphComponent: DatasetGraph,
+});
+const HostResponseChildRow = makeDatasetGraphChildRow({
+  dataTableName: 'HostResponseGraphsDataTable',
+  facetMetadataTableName: 'FacetMetadata',
+  contXAxisMetadataTableName: 'ContXAxisMetadata',
+  DatasetGraphComponent: DatasetGraph,
+});
+const CrisprPhenotypeChildRow = makeDatasetGraphChildRow({
+  dataTableName: 'CrisprPhenotypeGraphsDataTable',
+  DatasetGraphComponent: DatasetGraph,
+});
+const PhenotypeScoreChildRow = makeDatasetGraphChildRow({
+  dataTableName: 'PhenotypeScoreGraphsDataTable',
+  DatasetGraphComponent: DatasetGraph,
+});
+const PhenotypeChildRow = makeDatasetGraphChildRow({
+  dataTableName: 'PhenotypeGraphsDataTable',
+  DatasetGraphComponent: DatasetGraph,
+});
+const EdaPhenotypeChildRow = makeDatasetGraphChildRow({
+  dataTableName: 'EdaPhenotypeGraphsDataTable',
+  DatasetGraphComponent: EdaDatasetGraph,
+});
+const UDTranscriptomicsChildRow = makeDatasetGraphChildRow({
+  dataTableName: 'UserDatasetsTranscriptomicsGraphsDataTable',
+  DatasetGraphComponent: DatasetGraph,
+});
 
 export function RecordTable(props) {
   switch (props.table.name) {
@@ -441,6 +452,11 @@ export function RecordTable(props) {
 
     case 'PhenotypeGraphs':
       return <props.DefaultComponent {...props} childRow={PhenotypeChildRow} />;
+
+    case 'EdaPhenotypeGraphs':
+      return (
+        <props.DefaultComponent {...props} childRow={EdaPhenotypeChildRow} />
+      );
 
     case 'UserDatasetsTranscriptomicsGraphs':
       return (
@@ -627,11 +643,12 @@ const CellxgeneTableChildRow = pure(function CellxgeneTableChildRow(props) {
   );
 });
 
-function makeDatasetGraphChildRow(
+function makeDatasetGraphChildRow({
   dataTableName,
   facetMetadataTableName,
-  contXAxisMetadataTableName
-) {
+  contXAxisMetadataTableName,
+  DatasetGraphComponent,
+}) {
   let DefaultComponent = WdkRecordTable;
   return connect((state) => {
     let { record, recordClass } = state.record;
@@ -676,7 +693,7 @@ function makeDatasetGraphChildRow(
         ].filter((tableName) => tableName != null),
       });
     }, [requestFields]);
-    return <DatasetGraph {...props} />;
+    return <DatasetGraphComponent {...props} />;
   }
 }
 
