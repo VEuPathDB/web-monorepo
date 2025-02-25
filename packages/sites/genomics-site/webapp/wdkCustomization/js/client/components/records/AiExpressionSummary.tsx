@@ -14,7 +14,6 @@ import {
   AiExpressionSummary,
   AiExpressionSummaryResponse,
   AiExpressionSummarySection,
-  AiExperimentSummary,
 } from '../../types/aiExpressionTypes';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { AttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
@@ -23,6 +22,9 @@ import {
   MesaStateProps,
   CellProps,
 } from '@veupathdb/coreui/lib/components/Mesa/types';
+
+// Styles
+import './AiExpressionSummary.scss';
 
 /** Display AI Expression Summary UI and results in a collapsible section */
 export function AiExpressionSummary(props: Props) {
@@ -201,19 +203,18 @@ function AiExpressionResult(props: Props & { summary: AiExpressionSummary }) {
 
   return (
     <div className="ai-generated">
-      <div style={{ marginLeft: '15px', maxWidth: '50em' }}>
+      <div
+        className="ai-summary"
+        style={{ marginLeft: '15px', maxWidth: '50em' }}
+      >
         {safeHtml(headline, undefined, 'h4')}
-        {safeHtml(
-          one_paragraph_summary,
-          { style: { background: 'yellow' } },
-          'p'
-        )}
+        {safeHtml(one_paragraph_summary, undefined, 'p')}
         <p>
           <i>
-            The AI has classified {expressionGraphs.length} experiments into the{' '}
-            {sections.length} topics below, aiming to present the most
-            biologically relevant information first. As this method is still
-            evolving, results may vary.
+            The results from {expressionGraphs.length} experiments have been
+            organized into the {sections.length} topics below. The AI was
+            instructed to present the most biologically relevant information
+            first. As this method is still evolving, results may vary.
           </i>
         </p>
       </div>
