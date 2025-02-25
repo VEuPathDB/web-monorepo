@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   CollapsibleSection,
+  Link,
   Loading,
 } from '@veupathdb/wdk-client/lib/Components';
 import { Props } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
@@ -13,6 +14,7 @@ import {
   AiExpressionSummary,
   AiExpressionSummaryResponse,
   AiExpressionSummarySection,
+  AiExperimentSummary,
 } from '../../types/aiExpressionTypes';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { AttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
@@ -117,6 +119,8 @@ function AiExpressionResult(props: Props & { summary: AiExpressionSummary }) {
     summary: { headline, one_paragraph_summary, sections },
   } = props;
 
+  const [expandedRows, setExpandedRows] = useState<number[]>([]);
+
   // make a lookup from dataset_id to the experiment info (display_name, assay_type) etc
   const expressionGraphs = record.tables['ExpressionGraphs'];
   const experiments = expressionGraphs.reduce<
@@ -132,12 +136,12 @@ function AiExpressionResult(props: Props & { summary: AiExpressionSummary }) {
     safeHtml(props.value.toString());
 
   // create the sections table
-  const mesaState: MesaStateProps<AiExpressionSummarySection> = {
+  const mainTableState: MesaStateProps<AiExpressionSummarySection> = {
     rows: sections,
     columns: [
       {
         key: 'headline',
-        name: 'Section',
+        name: 'Topic',
         renderCell,
         style: { fontWeight: 'bold' },
       },
@@ -145,31 +149,75 @@ function AiExpressionResult(props: Props & { summary: AiExpressionSummary }) {
         key: 'one_sentence_summary',
         name: 'Summary',
         renderCell,
+        //	style: { maxWidth: '30em' },
       },
       {
         key: 'summaries',
-        name: '# Datasets',
+        name: `#\u00A0Datasets`, // non-breaking space
         renderCell: (cellProps) => cellProps.row.summaries.length,
         style: { textAlign: 'right' },
       },
     ],
-    options: {},
+    options: {
+      childRow: (props) => {
+        // NOTE: the typing of `ChildRowProps` seems wrong
+        // as it is called with two args, not one, see
+        // https://github.com/VEuPathDB/web-monorepo/blob/d1d03fcd051cd7a54706fe879e4af4b1fc220d88/packages/libs/coreui/src/components/Mesa/Ui/DataCell.jsx#L26
+        const rowIndex = props as unknown as number;
+        const rowData = sections[rowIndex];
+        return (
+          <ErrorBoundary>
+            <ul>
+              {rowData.summaries.map((summary) => {
+                return (
+                  <li
+                    key={summary.dataset_id}
+                    style={{ marginBottom: '0.5em', marginLeft: '4em' }}
+                  >
+                    <>
+                      <Link to="#ExpressionGraphs" onclick="alert('hello')">
+                        {experiments[summary.dataset_id].display_name}
+                      </Link>{' '}
+                      ({experiments[summary.dataset_id].assay_type})
+                      <br />
+                      {safeHtml(summary.one_sentence_summary)}
+                    </>
+                  </li>
+                );
+              })}
+            </ul>
+          </ErrorBoundary>
+        );
+      },
+      getRowId: (row) => row.headline,
+    },
+    eventHandlers: {
+      onExpandedRowsChange: (rowIndexes) => setExpandedRows(rowIndexes),
+    },
+    uiState: {
+      expandedRows,
+    },
   };
 
   return (
     <div className="ai-generated">
-      {safeHtml(headline, undefined, 'h4')}
-      <div style={{ maxWidth: '40em' }}>
-        {safeHtml(one_paragraph_summary, undefined, 'p')}
+      <div style={{ marginLeft: '15px', maxWidth: '50em' }}>
+        {safeHtml(headline, undefined, 'h4')}
+        {safeHtml(
+          one_paragraph_summary,
+          { style: { background: 'yellow' } },
+          'p'
+        )}
+        <p>
+          <i>
+            The AI has classified {expressionGraphs.length} experiments into the{' '}
+            {sections.length} topics below, aiming to present the most
+            biologically relevant information first. As this method is still
+            evolving, results may vary.
+          </i>
+        </p>
       </div>
-      <p>
-        <i>
-          The AI has organized {expressionGraphs.length} experiments into{' '}
-          {sections.length} sections, hopefully with the most biologically
-          relevant first:
-        </i>
-      </p>
-      <Mesa state={mesaState} />
+      <Mesa state={mainTableState} />
     </div>
   );
 }
