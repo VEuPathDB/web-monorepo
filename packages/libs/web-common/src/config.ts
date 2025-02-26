@@ -22,6 +22,7 @@ export const {
   twitterUrl2 = '',
   youtubeUrl = '',
   redditUrl = '',
+  linkedinUrl = '',
   vimeoUrl = '',
   discordUrl = '',
   communitySite = '',
@@ -34,6 +35,7 @@ export const {
   datasetImportUrl = '',
   showUnreleasedData = false,
   vdiServiceUrl = '',
+  userDatasetsUploadTypes = '',
 } = window.__SITE_CONFIG__;
 
 export const edaExampleAnalysesAuthors = !window.__SITE_CONFIG__

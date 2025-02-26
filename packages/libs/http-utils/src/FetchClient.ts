@@ -33,7 +33,7 @@ export interface ApiRequest<T> {
 export interface FetchApiOptions {
   /** Base url for service endpoint. */
   baseUrl: string;
-  /** Global optoins for all requests. */
+  /** Global options for all requests. */
   init?: RequestInit;
   /** Implementation of `fetch` function. Defaults to `window.fetch`. */
   fetchApi?: Window['fetch'];

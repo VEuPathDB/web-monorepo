@@ -34,6 +34,7 @@ export default configure({
   plugins: [
     new webpack.DefinePlugin({
       'window.__SITE_CONFIG__': JSON.stringify({
+        requireLogin: process.env.REQUIRE_LOGIN === 'true',
         rootElement: process.env.ROOT_ELEMENT,
         rootUrl: process.env.ROOT_URL,
         endpoint: process.env.WDK_SERVICE_ENDPOINT,
@@ -47,6 +48,7 @@ export default configure({
         siteSearchServiceUrl: process.env.SITE_SEARCH_SERVICE_ENDPOINT,
         useUserDatasetsWorkspace: process.env.USER_DATASETS_WORKSPACE_ENABLED === 'true',
         datasetImportUrl: process.env.USER_DATASETS_WORKSPACE_IMPORT_SERVICE_ENDPOINT,
+        userDatasetsUploadTypes: process.env.USER_DATASETS_UPLOAD_TYPES,
         useEda: process.env.EDA_ENABLED === "true",
         edaExampleAnalysesAuthor: process.env.EDA_EXAMPLE_ANALYSES_AUTHOR,
         edaServiceUrl: process.env.EDA_SERVICE_ENDPOINT,

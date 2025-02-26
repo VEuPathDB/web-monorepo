@@ -1,4 +1,11 @@
 .UploadForm {
+  max-width: 1000px;
+  padding: 1em 3em;
+
+  > * + * {
+    margin-block-start: 1em;
+  }
+
   h2 {
     color: #222;
     font-size: 1.5em;
@@ -7,12 +14,14 @@
     padding: 22px 0 8px 0;
   }
   .formSection {
-    & + & {
-      margin-block-start: 0.5em;
+    > & {
+      margin-block-start: 1em;
     }
-    > * + * {
-      margin-block-start: 0.25em;
-    }
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+
     > label {
       font-size: medium;
     }
@@ -32,11 +41,9 @@
     max-width: 51em;
   }
   .formInfo {
-    width: 80%;
+    width: 90%;
     text-align: justify;
-  }
-  .formSection {
-    margin: 1em 0;
+    font-size: 1.2em;
   }
   select {
     max-width: 450px;
@@ -52,6 +59,7 @@
       display: grid;
       align-items: baseline;
       grid-template-columns: auto 10em 1fr;
+      align-items: baseline;
 
       label {
         font-size: medium;

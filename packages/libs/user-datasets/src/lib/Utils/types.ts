@@ -77,6 +77,8 @@ export type DatasetUploadTypeConfig<T extends string> = {
 
 export interface DatasetUploadTypeConfigEntry<T extends string> {
   type: T;
+  displayName: string;
+  description: React.ReactNode;
   uploadTitle: string;
   formConfig: {
     name?: {
@@ -88,6 +90,11 @@ export interface DatasetUploadTypeConfigEntry<T extends string> {
     description?: {
       inputProps: Partial<React.TextareaHTMLAttributes<HTMLTextAreaElement>>;
     };
+    dependencies?: {
+      label: ReactNode;
+      render: (props: DependencyProps) => ReactNode;
+      required?: boolean;
+    };
     uploadMethodConfig: {
       file?: FileUploadConfig;
       url?: UrlUploadConfig;
@@ -95,6 +102,11 @@ export interface DatasetUploadTypeConfigEntry<T extends string> {
     };
     renderInfo?: () => ReactNode;
   };
+}
+
+export interface DependencyProps {
+  value: UserDataset['dependencies'];
+  onChange: (value: UserDataset['dependencies']) => void;
 }
 
 export interface FileUploadConfig {
@@ -130,6 +142,7 @@ export type DatasetUploadPageConfig<
 export interface NewUserDataset extends UserDatasetMeta {
   datasetType: string; // In prototype, the only value is "biom" - will eventually be an enum
   projects: string[];
+  dependencies?: UserDataset['dependencies'];
   uploadMethod:
     | {
         type: 'file';

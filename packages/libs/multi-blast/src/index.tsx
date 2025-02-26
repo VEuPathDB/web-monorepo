@@ -1,15 +1,22 @@
 import './globals';
+
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import '!!script-loader!@veupathdb/wdk-client/vendored/jquery';
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import '!!script-loader!@veupathdb/wdk-client/vendored/jquery-migrate-1.2.1';
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import '!!script-loader!@veupathdb/wdk-client/vendored/jquery-ui';
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import '!!script-loader!@veupathdb/wdk-client/vendored/jquery.qtip.min';
+
 import React, { Suspense } from 'react';
 import { Redirect, RouteComponentProps } from 'react-router';
 import { RecoilRoot } from 'recoil';
-import { initialize } from '@veupathdb/web-common/lib/bootstrap';
-import {
-  BlastSummaryViewPlugin,
-  GenomeSummaryViewPlugin,
-  ResultTableSummaryViewPlugin,
-} from '@veupathdb/wdk-client/lib/Plugins';
+import { initialize } from '@veupathdb/wdk-client';
+import { ResultTableSummaryViewPlugin } from '@veupathdb/wdk-client/lib/Plugins';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import { ClientPluginRegistryEntry } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
+import BlastSummaryViewPlugin from '@veupathdb/blast-summary-view/lib/Controllers/BlastSummaryViewController';
 
 import {
   OrganismParam,
@@ -27,9 +34,6 @@ import { BlastQuestionController } from './lib/controllers/BlastQuestionControll
 import { BlastWorkspaceRouter } from './lib/controllers/BlastWorkspaceRouter';
 import { isMultiBlastQuestion } from './lib/utils/pluginConfig';
 import { wrapWdkService } from './lib/utils/wdkServiceIntegration';
-
-import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
-import '@veupathdb/web-common/lib/styles/client.scss';
 
 import './index.css';
 
@@ -92,11 +96,6 @@ initialize({
       type: 'summaryView',
       name: '_default',
       component: ResultTableSummaryViewPlugin,
-    },
-    {
-      type: 'summaryView',
-      name: 'genomic-view',
-      component: GenomeSummaryViewPlugin,
     },
     {
       type: 'summaryView',

@@ -21,11 +21,23 @@ $white: #e0e0e0;
     padding: 5px;
     font-style: italic;
   }
+
+  &:focus-within,
+  &:hover {
+    .UserMenu-Pane {
+      opacity: 1;
+      transition: none;
+      top: 100%;
+    }
+  }
 }
 
 .UserMenu-Pane {
+  transition: opacity 500ms 1s, top 0s 1s;
+  opacity: 0;
+
   right: 0;
-  top: 100%;
+  top: -100000px;
   color: black;
   display: flex;
   flex-direction: column;
@@ -33,16 +45,11 @@ $white: #e0e0e0;
   min-width: 150px;
   position: absolute;
   border-radius: 10px;
-  transition: all 0.2s;
   line-height: 1em;
   background-color: $white;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   .fa {
     color: $red;
-  }
-  &.inert {
-    opacity: 0;
-    pointer-events: none;
   }
   &::after {
     top: -3px;
@@ -57,6 +64,10 @@ $white: #e0e0e0;
     transform: rotateZ(45deg);
     background-color: #e0e0e0;
   }
+  button.UserMenu-Pane-Item {
+    background: transparent;
+    border: none;
+  }
   .UserMenu-Pane-Item {
     &,
     &:link,
@@ -66,15 +77,15 @@ $white: #e0e0e0;
       text-decoration: none;
     }
     flex: 1;
+    border-radius: 0.2em;
     display: flex;
     font-size: 1.3em;
     padding: 5px;
     flex-direction: row;
     white-space: nowrap;
     cursor: pointer;
-    transition: all 0.4s;
     &:hover {
-      transform: scale(1.04);
+      font-weight: 500;
     }
     .UserMenu-Pane-Item-Icon {
       width: 20px;

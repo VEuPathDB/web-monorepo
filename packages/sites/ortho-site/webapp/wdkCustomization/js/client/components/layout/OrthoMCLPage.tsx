@@ -40,6 +40,8 @@ import {
 } from 'ortho-client/hooks/searchCheckboxTree';
 
 import './OrthoMCLPage.scss';
+import { colors } from '@veupathdb/coreui';
+import { UIThemeProvider } from '@veupathdb/coreui/lib/components/theming';
 
 const cx = makeClassNameHelper('vpdb-');
 
@@ -86,37 +88,46 @@ export const OrthoMCLPage: FunctionComponent<Props> = (props) => {
   );
 
   return (
-    <OrthoMCLSnackbarProvider styleProps={snackbarStyleProps}>
-      <ReduxNotificationHandler>
-        <div className={cx('RootContainer', props.classNameModifier)}>
-          <ErrorBoundary>
-            <Header
-              menuItems={menuItems}
-              containerClassName={cx(
-                'Header',
-                isHeaderExpanded ? 'expanded' : 'collapsed'
-              )}
-              onShowAnnouncements={onShowAnnouncements}
-              showAnnouncementsToggle={showAnnouncementsToggle}
-              branding={branding}
-            />
-          </ErrorBoundary>
-          <div className={cx('Announcements')}>
-            <Announcements
-              closedBanners={closedBanners}
-              setClosedBanners={setClosedBanners}
-            />
+    <UIThemeProvider
+      theme={{
+        palette: {
+          primary: { hue: colors.mutedBlue, level: 600 },
+          secondary: { hue: colors.mutedRed, level: 500 },
+        },
+      }}
+    >
+      <OrthoMCLSnackbarProvider styleProps={snackbarStyleProps}>
+        <ReduxNotificationHandler>
+          <div className={cx('RootContainer', props.classNameModifier)}>
+            <ErrorBoundary>
+              <Header
+                menuItems={menuItems}
+                containerClassName={cx(
+                  'Header',
+                  isHeaderExpanded ? 'expanded' : 'collapsed'
+                )}
+                onShowAnnouncements={onShowAnnouncements}
+                showAnnouncementsToggle={showAnnouncementsToggle}
+                branding={branding}
+              />
+            </ErrorBoundary>
+            <div className={cx('Announcements')}>
+              <Announcements
+                closedBanners={closedBanners}
+                setClosedBanners={setClosedBanners}
+              />
+            </div>
+            <Main containerClassName={cx('Main')}>{props.children}</Main>
+            <ErrorBoundary>
+              <Footer containerClassName={cx('Footer')}></Footer>
+            </ErrorBoundary>
+            <ErrorBoundary>
+              <CookieBanner />
+            </ErrorBoundary>
           </div>
-          <Main containerClassName={cx('Main')}>{props.children}</Main>
-          <ErrorBoundary>
-            <Footer containerClassName={cx('Footer')}></Footer>
-          </ErrorBoundary>
-          <ErrorBoundary>
-            <CookieBanner />
-          </ErrorBoundary>
-        </div>
-      </ReduxNotificationHandler>
-    </OrthoMCLSnackbarProvider>
+        </ReduxNotificationHandler>
+      </OrthoMCLSnackbarProvider>
+    </UIThemeProvider>
   );
 };
 
@@ -239,9 +250,9 @@ function useHeaderMenuItems() {
         items: [
           {
             key: 'proteome-upload',
-            display: 'Assign proteins to groups in Galaxy',
+            display: 'Map proteins to OrthoMCL with DIAMOND blastp',
             type: 'reactRoute',
-            url: '/galaxy-orientation',
+            url: '/workspace/map-proteins/new',
           },
           {
             key: 'blast',
@@ -275,12 +286,6 @@ function useHeaderMenuItems() {
         display: 'My Workspace',
         type: 'subMenu',
         items: [
-          {
-            key: 'galaxy-analyses',
-            display: 'Assign my proteins to groups in Galaxy',
-            type: 'reactRoute',
-            url: '/galaxy-orientation',
-          },
           {
             key: 'basket',
             display: 'My baskets',
@@ -603,12 +608,6 @@ function useHeaderMenuItems() {
             tooltip: 'Login first to keep your work',
             type: 'reactRoute',
             url: '/reset-session',
-          },
-          {
-            key: 'user-doc',
-            display: 'Downloadable User documentation',
-            type: 'externalLink',
-            url: '/reports/VEuPathDB_User_Documentation.pdf',
           },
         ],
       },

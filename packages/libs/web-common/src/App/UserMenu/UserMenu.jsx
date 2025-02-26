@@ -1,40 +1,18 @@
 import React from 'react';
-
-import './UserMenu.scss';
+import { Link } from 'react-router-dom';
 
 import { IconAlt as Icon } from '@veupathdb/wdk-client/lib/Components';
+
+import './UserMenu.scss';
 
 class UserMenu extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { isEntered: false, isHovered: false };
     this.renderMenu = this.renderMenu.bind(this);
-    this.onMouseEnter = this.onMouseEnter.bind(this);
-    this.onMouseLeave = this.onMouseLeave.bind(this);
-  }
-
-  onMouseEnter(event) {
-    this.setState({ isEntered: true, isHovered: true });
-  }
-
-  onMouseLeave(event) {
-    this.setState({ isEntered: false });
-
-    setTimeout(() => {
-      if (!this.state.isEntered) {
-        this.setState({ isHovered: false });
-      }
-    }, 500);
   }
 
   renderMenu() {
-    const { user, actions, webAppUrl } = this.props;
-    const { showLoginForm } = actions;
-    const { isHovered } = this.state;
-    const { properties } = user.properties ? user : { properties: null };
-    const { firstName, lastName } = properties
-      ? properties
-      : { firstName: '', lastName: '' };
+    const { user, actions } = this.props;
     const items = user.isGuest
       ? [
           {
@@ -45,7 +23,7 @@ class UserMenu extends React.Component {
           {
             icon: 'user-plus',
             text: 'Register',
-            href: webAppUrl + '/app/user/registration',
+            route: '/user/registration',
             target: '_blank',
           },
         ]
@@ -53,33 +31,35 @@ class UserMenu extends React.Component {
           {
             icon: 'vcard',
             text: 'My Profile',
-            href: webAppUrl + '/app/user/profile',
+            route: '/user/profile',
           },
           {
             icon: 'power-off',
             text: 'Log Out',
-            onClick: () => actions.showLogoutWarning(window.location.href),
+            onClick: () => actions.showLogoutWarning(),
           },
         ];
 
     return (
-      <div className={'UserMenu-Pane' + (!isHovered ? ' inert' : '')}>
+      <div className="UserMenu-Pane">
         {items.map((item, key) => {
-          const { onClick, href, target } = item;
+          const { route, target, onClick } = item;
           const className = 'UserMenu-Pane-Item';
 
-          let props = {
-            className,
-            onClick: onClick ? onClick : () => null,
-          };
-          if (href) props = Object.assign({}, props, { href, target });
-          const Element = href ? 'a' : 'div';
+          if (onClick) {
+            return (
+              <button type="button" className={className} onClick={onClick}>
+                <Icon fa={item.icon + ' UserMenu-Pane-Item-Icon'} />
+                {item.text}
+              </button>
+            );
+          }
 
           return (
-            <Element key={key} {...props}>
+            <Link key={key} className={className} to={route} target={target}>
               <Icon fa={item.icon + ' UserMenu-Pane-Item-Icon'} />
               {item.text}
-            </Element>
+            </Link>
           );
         })}
       </div>
@@ -87,7 +67,6 @@ class UserMenu extends React.Component {
   }
 
   render() {
-    const { onMouseEnter, onMouseLeave } = this;
     const { user } = this.props;
     if (!user) return null;
 
@@ -96,11 +75,7 @@ class UserMenu extends React.Component {
     const Menu = this.renderMenu;
 
     return (
-      <div
-        className="box UserMenu"
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-      >
+      <div className="box UserMenu">
         <Icon className="UserMenu-Icon" fa={iconClass} />
         <span className="UserMenu-Title">
           {typeof isGuest === 'undefined'

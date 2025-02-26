@@ -8318,7 +8318,7 @@ __metadata:
     shape2geohash: ^1.2.5
     stats-lite: ^2.2.0
     storybook: ^6.5.14
-    tidytree: "github:d-callan/TidyTree"
+    tidytree: "https://github.com/d-callan/TidyTree.git#commit=9063e2df3d93c72743702a6d8f43169a1461e5b0"
     typescript: 4.3.4
   peerDependencies:
     "@emotion/react": ^11.10.0
@@ -8556,7 +8556,7 @@ __metadata:
     react-redux: ^7.1.3
     react-router-dom: ^5.3.0
     react-spring: ^8.0.27
-    recoil: ^0.2.0
+    recoil: ^0.7.7
     redux: ^4.0.0
     redux-observable: ^1.2.0
     relative-deps: ^1.0.7
@@ -8720,10 +8720,10 @@ __metadata:
     react-redux: ^7.2.6
     react-router: ^5.2.0
     react-router-dom: ^5.2.0
-    react-scripts: 4.0.1
+    react-scripts: 5.0.1
     react-select: ^3.0.4
     read: ^1.0.7
-    recoil: ^0.2.0
+    recoil: ^0.7.7
     redux: ^4.0.0
     sass: ^1.56.2
     script-loader: ^0.7.2
@@ -8766,6 +8766,7 @@ __metadata:
     "@veupathdb/coreui": "workspace:^"
     "@veupathdb/eda": "workspace:^"
     "@veupathdb/http-utils": "workspace:^"
+    "@veupathdb/multi-blast": "workspace:^"
     "@veupathdb/react-scripts": "workspace:^"
     "@veupathdb/site-babel-config": "workspace:^"
     "@veupathdb/site-tsconfig": "workspace:^"
@@ -8789,6 +8790,7 @@ __metadata:
     mini-css-extract-plugin: ^2.7.6
     notistack: ^3.0.1
     npm-run-all: ^4.1.5
+    patristic: ^0.6.0
     popper.js: ^1.16.1
     react: ^18.3.1
     react-cytoscapejs: ^2.0.0
@@ -8868,7 +8870,7 @@ __metadata:
     react-scripts: 4.0.3
     react-select: ^3.0.4
     read: ^1.0.7
-    recoil: ^0.2.0
+    recoil: ^0.7.7
     sass: ^1.56.2
     script-loader: ^0.7.2
     set-cookie-parser: ^2.4.6
@@ -28579,6 +28581,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"patristic@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "patristic@npm:0.6.0"
+  checksum: b2253b1dcc9ca85e8a4c50f3d496d50bff45f8378f6a5b2e4ec03f69b2332c51d374bcd5e90b4387222ec98c8fb6b26b4788784a6df8234530557dac9e4b0b6f
+  languageName: node
+  linkType: hard
+
 "pbf@npm:^3.2.1":
   version: 3.2.1
   resolution: "pbf@npm:3.2.1"
@@ -32520,9 +32529,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"recoil@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "recoil@npm:0.2.0"
+"recoil@npm:^0.7.7":
+  version: 0.7.7
+  resolution: "recoil@npm:0.7.7"
   dependencies:
     hamt_plus: 1.0.2
   peerDependencies:
@@ -32532,7 +32541,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: f3a4ec26c167d12919b3d37b95f3c1a99642e69841a02f683daaab235d3716c10f41e9c61afa5859f2ae14c105cd3f5bd487df5fa9b07b312b6a6573bd078bde
+  checksum: 65edecbcb8d2cde89bfd61ec679c200483472a6cd343c33e4e9142b6ce524fb17d1fecc2bfd8c392926aaa8178c81457f165b32abce2a9662f51f98822c0a9cc
   languageName: node
   linkType: hard
 
@@ -36297,13 +36306,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tidytree@github:d-callan/TidyTree":
-  version: 0.6.0
-  resolution: "tidytree@https://github.com/d-callan/TidyTree.git#commit=01715074da658ba390fdc652dfd04aecb985cd37"
+"tidytree@https://github.com/d-callan/TidyTree.git#commit=9063e2df3d93c72743702a6d8f43169a1461e5b0":
+  version: 0.7.0
+  resolution: "tidytree@https://github.com/d-callan/TidyTree.git#commit=9063e2df3d93c72743702a6d8f43169a1461e5b0"
   dependencies:
     d3: ^7.6.1
     patristic: "github:CDCgov/patristic"
-  checksum: a1411f00e012cd1e5aaf503de0d03425ea5aef95df257145d05aee58a0af5bbbeb6f453474094e2fada11ca0609d20339d43ce7674fa4bb5bff76387a145aa03
+  checksum: 243e27ebe6061ff00f66f8de7168eebb09ab2070bdcf429a283ddab307be1adbdbca3623a2779f8bef0a81776956e7e538eb6110fedc9581804ba795017a5a23
   languageName: node
   linkType: hard
 

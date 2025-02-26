@@ -2,7 +2,7 @@ import { cloneElement, Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
-import { updateTableState } from '../../actioncreators/RecordViewActionCreators';
+import { updateTableState } from '@veupathdb/wdk-client/lib/Actions/RecordActions';
 
 /**
  * Tables that are fully collapsed on load.
@@ -126,7 +126,7 @@ RecordTableContainer.propTypes = {
 
 const enhance = connect(
   ({ record: state }, props) => ({
-    tableState: get(state, 'eupathdb.tables.' + props.table.name),
+    tableState: get(state, 'tableStates.' + props.table.name),
   }),
   { updateTableState }
 );

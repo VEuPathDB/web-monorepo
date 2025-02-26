@@ -289,11 +289,7 @@ function useCombinedResultColumns(
         key: 'queryIndex',
         name: 'Individual Result',
         renderCell: ({ row }: { row: CombinedResultRow }) => (
-          <Link
-            to={`/workspace/blast/result/${jobId}/individual/${row.queryIndex}`}
-          >
-            See Result
-          </Link>
+          <Link to={`individual/${row.queryIndex}`}>See Result</Link>
         ),
         helpText: INDIVIDUAL_RESULT_HELP_TEXT,
       },
