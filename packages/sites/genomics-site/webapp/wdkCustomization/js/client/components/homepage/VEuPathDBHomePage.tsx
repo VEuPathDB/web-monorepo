@@ -718,6 +718,12 @@ const useHeaderMenuItems = (
           url: makeStaticPageRoute('/about.html'),
         },
         {
+          key: 'about-faq',
+          display: 'FAQs',
+          type: 'reactRoute',
+          url: makeStaticPageRoute('/faq.html'),
+        },
+        {
           key: 'switchsites',
           display: 'VEuPathDB sites',
           type: 'subMenu',
