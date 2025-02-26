@@ -5,7 +5,7 @@ import { MultiFilterVariable, Variable, VariableScope } from '../../core';
 
 // Components
 import { VariableDetails } from '../Variable';
-import VariableTree from '../../core/components/variableTrees/VariableTree';
+import VariableTree from '../../core/components/variableSelectors/VariableTree';
 
 // Hooks
 import { EntityCounts } from '../../core/hooks/entityCounts';
@@ -36,6 +36,7 @@ interface SubsettingProps {
    * used to disable FieldNode's scrollIntoView property in map scope
    */
   scope?: VariableScope;
+  hideStarredVariables?: boolean;
 }
 
 /** Allow user to filter study data based on the value(s) of any available variable. */
@@ -47,6 +48,7 @@ export default function Subsetting({
   filteredCounts,
   variableLinkConfig,
   scope = 'variableTree',
+  hideStarredVariables = false,
 }: SubsettingProps) {
   // Obtain all entities and associated variables.
   const entities = useStudyEntities();
@@ -65,21 +67,15 @@ export default function Subsetting({
     [entity, variable]
   );
 
-  if (
-    entity == null ||
-    (!Variable.is(variable) && !MultiFilterVariable.is(variable))
-  ) {
-    return <div>Could not find specified variable.</div>;
-  }
-
   if (multiFilterParent) {
     return <Redirect to={multiFilterParent.id} />;
   }
 
-  const totalEntityCount = totalCounts && totalCounts[entity.id];
+  const totalEntityCount = totalCounts && entity && totalCounts[entity.id];
 
   // This will give you the count of rows for the current entity.
-  const filteredEntityCount = filteredCounts && filteredCounts[entity.id];
+  const filteredEntityCount =
+    filteredCounts && entity && filteredCounts[entity.id];
 
   const starredVariables = analysisState.analysis?.descriptor.starredVariables;
 
@@ -88,22 +84,29 @@ export default function Subsetting({
       <div className="Variables">
         <VariableTree
           scope={scope}
-          entityId={entity.id}
+          entityId={entity?.id}
           starredVariables={starredVariables}
-          toggleStarredVariable={toggleStarredVariable}
-          variableId={variable.id}
+          toggleStarredVariable={
+            hideStarredVariables ? undefined : toggleStarredVariable
+          }
+          variableId={variable?.id}
           variableLinkConfig={variableLinkConfig}
         />
       </div>
 
       <div className="Filter">
-        <VariableDetails
-          entity={entity}
-          variable={variable}
-          analysisState={analysisState}
-          totalEntityCount={totalEntityCount}
-          filteredEntityCount={filteredEntityCount}
-        />
+        {entity == null ||
+        (!Variable.is(variable) && !MultiFilterVariable.is(variable)) ? (
+          <div>Could not find specified variable in this study.</div>
+        ) : (
+          <VariableDetails
+            entity={entity}
+            variable={variable}
+            analysisState={analysisState}
+            totalEntityCount={totalEntityCount}
+            filteredEntityCount={filteredEntityCount}
+          />
+        )}
       </div>
     </div>
   );

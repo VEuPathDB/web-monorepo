@@ -1,7 +1,7 @@
 import { difference, union } from 'lodash';
 import { map, filter } from 'rxjs/operators';
 import { Favorite, RecordClass } from '../Utils/WdkModel';
-import { MesaState } from '../Components/Mesa';
+import { MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 import {
   TYPE_GETTER,
   SORT_TABLE,

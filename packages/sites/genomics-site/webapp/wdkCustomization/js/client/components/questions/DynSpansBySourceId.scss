@@ -14,13 +14,14 @@
       justify-content: flex-end;
       border-bottom: unset;
 
-      h2 {
+      h3 {
         display: flex;
         flex-direction: row-reverse;
         align-items: center;
         font-size: 0.75rem;
         margin: 0.75em;
         padding: unset;
+        gap: 1ex;
 
         .HelpTrigger {
           margin-left: 0.5em;

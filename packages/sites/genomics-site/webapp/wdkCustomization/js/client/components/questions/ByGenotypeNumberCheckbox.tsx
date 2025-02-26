@@ -263,7 +263,10 @@ interface TableBodyProps {
   checkedValues: Record<string, boolean>;
 }
 
-const TableBody: React.SFC<TableBodyProps> = ({ checkedValues, onToggle }) => (
+const TableBody: React.FunctionComponent<TableBodyProps> = ({
+  checkedValues,
+  onToggle,
+}) => (
   <tbody>
     {rowKeys.map((rowKey, i) => (
       <tr key={rowKey}>

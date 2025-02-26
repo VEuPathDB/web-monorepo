@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
-import Mesa, { MesaState } from '@veupathdb/wdk-client/lib/Components/Mesa';
-import { MesaSortObject } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+import Mesa, { MesaState } from '@veupathdb/coreui/lib/components/Mesa';
+import { MesaSortObject } from '@veupathdb/coreui/lib/components/Mesa/types';
 
 import {
   useAllJobsColumns,
@@ -23,6 +23,7 @@ export interface JobRow {
   description: string | null;
   created: string;
   status: 'queued' | 'running' | 'finished' | 'expired' | 'errored';
+  rerunnable: boolean;
 }
 
 export function BlastWorkspaceAll() {

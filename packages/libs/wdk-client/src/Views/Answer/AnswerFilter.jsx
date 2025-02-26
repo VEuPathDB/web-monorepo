@@ -1,8 +1,8 @@
 import { debounce } from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { HelpTrigger } from '../../Components/Mesa';
-import Tooltip from '../../Components/Overlays/Tooltip';
+import { HelpTrigger } from '@veupathdb/coreui/lib/components/Mesa';
+import { Tooltip } from '@veupathdb/coreui';
 import { wrappable } from '../../Utils/ComponentUtils';
 import AnswerFilterSelector from '../../Views/Answer/AnswerFilterSelector';
 
@@ -152,7 +152,7 @@ class AnswerFilter extends React.Component {
           placeholder={`Search ${displayNamePlural}`}
           onChange={this.handleFilter}
         />
-        <Tooltip content="Show search fields">
+        <Tooltip title="Show search fields">
           <button
             className="fa fa-caret-down wdk-Answer-filterSelectFieldsIcon"
             onClick={(e) => {

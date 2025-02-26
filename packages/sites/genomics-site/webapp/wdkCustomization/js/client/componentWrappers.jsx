@@ -12,7 +12,6 @@ import { submitAsForm } from '@veupathdb/wdk-client/lib/Utils/FormSubmitter';
 import { makeDynamicWrapper, findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
 import Sequence from '@veupathdb/web-common/lib/components/records/Sequence';
-import RecordTableContainer from './components/common/RecordTableContainer';
 import { loadPathwayGeneDynamicCols } from './actioncreators/RecordViewActionCreators';
 import ApiSiteHeader from './components/SiteHeader';
 import OrganismFilter from './components/OrganismFilter';
@@ -27,6 +26,8 @@ import { apiActions } from './components/strategies/ApiStepDetailsActions';
 import { VEuPathDBHomePage } from './components/homepage/VEuPathDBHomePage';
 import { BlockRecordAttributeSection } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
 
+import GenomicsIndexController from './controllers/GenomicsIndexController';
+
 import './record-page-new-feature.scss';
 
 import {
@@ -38,6 +39,7 @@ import { workspaceThemeOptions as MUIThemeOptions } from '@veupathdb/eda/lib/wor
 
 import UIThemeProvider from '@veupathdb/coreui/lib/components/theming/UIThemeProvider';
 import { colors } from '@veupathdb/coreui';
+import { ErrorBoundary } from '@veupathdb/wdk-client/lib/Controllers';
 
 export const SiteHeader = () => ApiSiteHeader;
 
@@ -65,11 +67,19 @@ export function RecordController(WdkRecordController) {
         recordClass,
         categoryTree
       );
+
+      // This is a request for a custom page, so use default
+      // request props.
+      if (this.props.attributes || this.props.tables) {
+        return requestOptions;
+      }
+
       if (
         recordClass.urlSegment !== 'gene' &&
         recordClass.urlSegment !== 'dataset'
-      )
+      ) {
         return requestOptions;
+      }
 
       // Dataset records
       if (recordClass.urlSegment === 'dataset') {
@@ -84,36 +94,24 @@ export function RecordController(WdkRecordController) {
       // Gene records
       return [
         {
+          // This includes all attributes
           attributes: requestOptions[0].attributes,
-          tables: requestOptions[0].tables
-            .concat(['MetaTable'])
-            .concat(
-              'TranscriptionSummary' in recordClass.tablesMap
-                ? ['TranscriptionSummary']
-                : []
-            )
-            .concat(
-              'ExpressionGraphs' in recordClass.tablesMap
-                ? ['ExpressionGraphs']
-                : []
-            )
-            .concat(
-              'PhenotypeGraphs' in recordClass.tablesMap
-                ? ['PhenotypeGraphs']
-                : []
-            )
-            .concat(
-              'CrisprPhenotypeGraphs' in recordClass.tablesMap
-                ? ['CrisprPhenotypeGraphs']
-                : []
-            )
-            .concat(
-              'FungiVBOrgLinkoutsTable' in recordClass.tablesMap
-                ? ['FungiVBOrgLinkoutsTable']
-                : []
-            ),
+          // Preload these tables. Others are lazy-loaded.
+          tables: [
+            'MetaTable',
+            'TranscriptionSummary',
+            'ExpressionGraphs',
+            'PhenotypeGraphs',
+            'CrisprPhenotypeGraphs',
+            'FungiVBOrgLinkoutsTable',
+          ].filter((tableName) => tableName in recordClass.tablesMap),
         },
       ];
+    }
+    getDefaultExpandedSections(recordClass) {
+      if (recordClass.urlSegment === 'gene') {
+        return ['GeneModelGbrowseUrl'];
+      }
     }
     loadData(prevProps) {
       super.loadData(prevProps);
@@ -149,21 +147,10 @@ export function RecordController(WdkRecordController) {
   return enhance(ApiRecordController);
 }
 
-function EnhancedRecordUIContainer(props) {
-  return cloneElement(props.children, { bottomOffset: 100 });
-}
-
 export const RecordHeading = makeDynamicWrapper('RecordHeading');
-export const RecordUI = makeDynamicWrapper(
-  'RecordUI',
-  EnhancedRecordUIContainer
-);
+export const RecordUI = makeDynamicWrapper('RecordUI');
 export const RecordMainSection = makeDynamicWrapper('RecordMainSection');
-export const RecordTable = makeDynamicWrapper(
-  'RecordTable',
-  RecordTableContainer
-);
-export const RecordTableDescription = makeDynamicWrapper(
+const DynamicRecordTableDescription = makeDynamicWrapper(
   'RecordTableDescription'
 );
 export const ResultTable = makeDynamicWrapper('ResultTable');
@@ -233,7 +220,8 @@ function downloadRecordTable(record, tableName) {
   };
 }
 
-export function RecordTableSection(DefaultComponent) {
+export function RecordTableDescription(DefaultComponent) {
+  DefaultComponent = DynamicRecordTableDescription(DefaultComponent);
   return connect(null, { downloadRecordTable })(
     class ApiRecordTableSection extends React.PureComponent {
       render() {
@@ -254,7 +242,6 @@ export function RecordTableSection(DefaultComponent) {
           downloadRecordTable(record, table.name);
         };
 
-        // FIXME Revise this since we now lazy load tables...
         let showDownload =
           record.tables[table.name] &&
           record.tables[table.name].length > 0 &&
@@ -280,15 +267,13 @@ export function RecordTableSection(DefaultComponent) {
           hasTaxonId = 1;
         }
 
-        const title = (
-          <span>
-            {table.displayName}{' '}
+        const links = (
+          <div style={{ marginBottom: '1em' }}>
             {showDownload && (
               <span
                 style={{
                   fontSize: '.8em',
                   fontWeight: 'normal',
-                  marginLeft: '1em',
                 }}
               >
                 <button
@@ -339,14 +324,21 @@ export function RecordTableSection(DefaultComponent) {
                 <i className="fa fa-database" /> Data sets
               </Link>
             )}
-          </span>
+          </div>
         );
 
-        return <DefaultComponent {...this.props} title={title} />;
+        return (
+          <>
+            {links}
+            <DefaultComponent {...this.props} />
+          </>
+        );
       }
     }
   );
 }
+
+export const RecordTable = makeDynamicWrapper('RecordTable');
 
 function getGbrowseContext(attributeName) {
   return Gbrowse.contexts.find(
@@ -488,12 +480,16 @@ export function StrategyWorkspaceController(DefaultComponent) {
   };
 }
 
+export function IndexController() {
+  return GenomicsIndexController;
+}
+
 export function Page() {
   return function VuPathDBPage(props) {
     useScrollUpOnRouteChange();
 
     const location = useLocation();
-    const isHomePage = location.pathname === '/';
+    const isHomePage = location.pathname === '/' || props.isAccessDenied;
     const params = new URLSearchParams(location.search);
     const galaxyUrl = params.get('galaxy_url');
     const MUITheme = createMUITheme(MUIThemeOptions);

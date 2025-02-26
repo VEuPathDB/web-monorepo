@@ -4,7 +4,7 @@ interface StepAnalysisErrorsPaneProps {
   errors: string[];
 }
 
-export const StepAnalysisErrorsPane: React.SFC<StepAnalysisErrorsPaneProps> = ({
+export const StepAnalysisErrorsPane: React.FC<StepAnalysisErrorsPaneProps> = ({
   errors,
 }) => (
   <div className="step-analysis-errors-pane">

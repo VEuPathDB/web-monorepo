@@ -41,7 +41,7 @@ let SequenceRegionRange = (props) => {
         end={10000}
         step={1}
         onChange={getUpdateHandler(offset)}
-        size="6"
+        size={6}
       />
       nucleotides
     </React.Fragment>

@@ -1,15 +1,25 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import PopoverButton from '../buttons/PopoverButton/PopoverButton';
-import CheckboxList, { CheckboxListProps } from './checkboxes/CheckboxList';
+import CheckboxList, {
+  CheckboxListProps,
+  Item,
+} from './checkboxes/CheckboxList';
 
-export interface SelectListProps<T> extends CheckboxListProps<T> {
+export interface SelectListProps<T extends string>
+  extends CheckboxListProps<T> {
   children?: ReactNode;
   /** A button's content if/when no values are currently selected */
   defaultButtonDisplayContent: ReactNode;
   isDisabled?: boolean;
+  /** Are contents loading? */
+  isLoading?: boolean;
+  /** If true, don't wait for component to close before calling `onChange`
+   *  with latest selection.
+   */
+  instantUpdate?: boolean;
 }
 
-export default function SelectList<T>({
+export default function SelectList<T extends string>({
   name,
   items,
   value,
@@ -18,19 +28,34 @@ export default function SelectList<T>({
   children,
   defaultButtonDisplayContent,
   isDisabled = false,
+  isLoading = false,
+  instantUpdate = false,
   ...props
 }: SelectListProps<T>) {
   const [selected, setSelected] = useState<SelectListProps<T>['value']>(value);
   const [buttonDisplayContent, setButtonDisplayContent] = useState<ReactNode>(
-    value.length ? value.join(', ') : defaultButtonDisplayContent
+    getDisplayContent(value, items, defaultButtonDisplayContent)
   );
 
   const onClose = () => {
     onChange(selected);
     setButtonDisplayContent(
-      selected.length ? selected.join(', ') : defaultButtonDisplayContent
+      getDisplayContent(selected, items, defaultButtonDisplayContent)
     );
   };
+
+  /**
+   * Keep caller up to date with any selection changes, if required by `instantUpdate`
+   */
+  const handleCheckboxListUpdate = useCallback(
+    (newSelection: SelectListProps<T>['value']) => {
+      setSelected(newSelection);
+      if (instantUpdate) {
+        onChange(newSelection);
+      }
+    },
+    [instantUpdate, setSelected, onChange]
+  );
 
   /**
    * Need to ensure that the state syncs with parent component in the event of an external
@@ -38,10 +63,11 @@ export default function SelectList<T>({
    */
   useEffect(() => {
     setSelected(value);
+    if (instantUpdate) return; // we don't want the button text changing on every click
     setButtonDisplayContent(
-      value.length ? value.join(', ') : defaultButtonDisplayContent
+      getDisplayContent(value, items, defaultButtonDisplayContent)
     );
-  }, [value, defaultButtonDisplayContent]);
+  }, [value, items, defaultButtonDisplayContent]);
 
   const buttonLabel = (
     <span
@@ -67,11 +93,12 @@ export default function SelectList<T>({
           margin: '0.5em',
         }}
       >
+        {isLoading && <div css={{ height: '20px' }}>Loading...</div>}
         <CheckboxList
           name={name}
           items={items}
           value={selected}
-          onChange={setSelected}
+          onChange={handleCheckboxListUpdate}
           linksPosition={linksPosition}
           {...props}
         />
@@ -79,4 +106,21 @@ export default function SelectList<T>({
       </div>
     </PopoverButton>
   );
+}
+
+// Returns button display content based on `value` array, mapping to altDisplay, display, or value from `items` in that order of preference.
+// If no matching display name is found, uses the value itself. Returns `defaultContent` if `value` is empty.
+function getDisplayContent<T extends string>(
+  value: T[],
+  items: Item<T>[],
+  defaultContent: ReactNode
+): ReactNode {
+  return value.length
+    ? value
+        .map<ReactNode>((v) => {
+          const item = items.find((item) => item.value === v);
+          return item?.altDisplay ?? item?.display ?? v;
+        })
+        .reduce((accum, elem) => (accum ? [accum, ',', elem] : elem), null)
+    : defaultContent;
 }

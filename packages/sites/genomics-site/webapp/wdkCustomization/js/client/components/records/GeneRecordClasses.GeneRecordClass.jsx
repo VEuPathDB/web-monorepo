@@ -1,12 +1,20 @@
 import lodash from 'lodash';
-import React, { Component, Suspense, useEffect, useMemo } from 'react';
-import ReactDOM from 'react-dom';
+import React, {
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { connect } from 'react-redux';
+import {
+  formatAttributeValue,
+  safeHtml,
+} from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { RecordActions } from '@veupathdb/wdk-client/lib/Actions';
 import * as Category from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import {
-  CollapsibleSection,
   CategoriesCheckboxTree,
   Loading,
   RecordTable as WdkRecordTable,
@@ -19,14 +27,11 @@ import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import { preorderSeq } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 import DatasetGraph from '@veupathdb/web-common/lib/components/DatasetGraph';
+import { EdaDatasetGraph } from '@veupathdb/web-common/lib/components/EdaDatasetGraph';
 import { ExternalResourceContainer } from '@veupathdb/web-common/lib/components/ExternalResource';
 import Sequence from '@veupathdb/web-common/lib/components/records/Sequence';
-import {
-  findChildren,
-  isNodeOverflowing,
-} from '@veupathdb/web-common/lib/util/domUtils';
+import { isNodeOverflowing } from '@veupathdb/web-common/lib/util/domUtils';
 
-import { updateTableState } from '../../actioncreators/RecordViewActionCreators';
 import { projectId, webAppUrl } from '../../config';
 import * as Gbrowse from '../common/Gbrowse';
 import { OverviewThumbnails } from '../common/OverviewThumbnails';
@@ -37,186 +42,301 @@ import {
   usePreferredOrganismsEnabledState,
   usePreferredOrganismsState,
 } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
-import { BlockRecordAttributeSection } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
 import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
 import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { AlphaFoldRecordSection } from './AlphaFoldAttributeSection';
+import { DEFAULT_TABLE_STATE } from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
+import { Link } from 'react-router-dom';
 
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
  */
 export const RecordHeading = connect(
-  (state) => ({ categoryTree: state.record.categoryTree }),
+  (state) => ({
+    categoryTree: state.record.categoryTree,
+    navigationCategoriesExpanded: state.record.navigationCategoriesExpanded,
+    requestId: state.record.requestId,
+  }),
   RecordActions
-)(
-  class RecordHeading extends Component {
-    constructor(...args) {
-      super(...args);
-      this.handleThumbnailClick = this.handleThumbnailClick.bind(this);
-      this.addProductTooltip = lodash.debounce(
-        this.addProductTooltip.bind(this),
-        300
+)(function RecordHeadingWrapper({ DefaultComponent, ...props }) {
+  return (
+    <>
+      <DefaultComponent {...props} />
+      <RecordOverview {...props} />
+    </>
+  );
+});
+
+function Shortcuts(props) {
+  const {
+    categoryTree,
+    recordClass,
+    navigationCategoriesExpanded,
+    updateSectionVisibility,
+    updateNavigationCategoryExpansion,
+  } = props;
+  let { attributes, tables } = props.record;
+
+  const handleThumbnailClick = useCallback(
+    ({ anchor }) => {
+      const parentCategories = Category.getAncestors(categoryTree, anchor); //.slice(1);
+      const parentCategoryIds = parentCategories.map(Category.getId);
+      const nextExpandedNavCats = Array.from(
+        new Set([...navigationCategoriesExpanded, ...parentCategoryIds])
+      );
+      updateSectionVisibility(anchor, true);
+      updateNavigationCategoryExpansion(nextExpandedNavCats);
+    },
+    [
+      categoryTree,
+      navigationCategoriesExpanded,
+      updateNavigationCategoryExpansion,
+      updateSectionVisibility,
+    ]
+  );
+
+  // Get field present in record instance. This is leveraging the fact that
+  // we filter the category tree in the store based on the contents of
+  // MetaTable.
+  const instanceFields = new Set(
+    preorderSeq(categoryTree)
+      .filter((node) => !node.children.length)
+      .map((node) => node.properties.name[0])
+  );
+
+  const transcriptomicsThumbnail = {
+    displayName: 'Transcriptomics',
+    element: (
+      <img
+        src={webAppUrl + '/wdkCustomization/images/transcription_summary.png'}
+      />
+    ),
+    anchor: 'TranscriptionSummary',
+  };
+
+  const phenotypeThumbnail = {
+    displayName: 'Phenotype',
+    element: (
+      <img src={webAppUrl + '/wdkCustomization/images/transcriptomics.jpg'} />
+    ),
+    anchor: 'PhenotypeGraphs',
+  };
+
+  const crisprPhenotypeThumbnail = {
+    displayName: 'Phenotype',
+    element: (
+      <img src={webAppUrl + '/wdkCustomization/images/transcriptomics.jpg'} />
+    ),
+    anchor: 'CrisprPhenotypeGraphs',
+  };
+
+  const filteredGBrowseContexts = Seq.from(Gbrowse.contexts)
+    .filter((context) => context.includeInThumbnails !== false)
+    // inject transcriptomicsThumbnail before protein thumbnails
+    .flatMap((context) => {
+      if (context.gbrowse_url === 'SnpsGbrowseUrl') {
+        return [phenotypeThumbnail, crisprPhenotypeThumbnail, context];
+      }
+      if (context.gbrowse_url === 'FeaturesPbrowseUrl') {
+        return [transcriptomicsThumbnail, context];
+      }
+      return [context];
+    })
+    // remove thumbnails whose associated fields are not present in record instance
+    .filter((context) => instanceFields.has(context.anchor))
+    .map((context) =>
+      context === transcriptomicsThumbnail ||
+      context === phenotypeThumbnail ||
+      context === crisprPhenotypeThumbnail
+        ? Object.assign({}, context, {
+            data: {
+              count:
+                tables &&
+                tables[context.anchor] &&
+                tables[context.anchor].length,
+            },
+          })
+        : Object.assign({}, context, {
+            element: (
+              <Gbrowse.GbrowseImage
+                url={attributes[context.gbrowse_url]}
+                includeImageMap={true}
+              />
+            ),
+            displayName:
+              recordClass.attributesMap[context.gbrowse_url].displayName,
+          })
+    )
+    .toArray();
+
+  return (
+    <OverviewThumbnails
+      title="Gene Features"
+      thumbnails={filteredGBrowseContexts}
+      onThumbnailClick={handleThumbnailClick}
+    />
+  );
+}
+
+function RecordOverview(props) {
+  const { record } = props;
+
+  function r(attributeName) {
+    if (!(attributeName in record.attributes)) {
+      console.warn(
+        'Attempting to render an attribute value that has not been requested. ' +
+          'It may need to be added to the ontology with a scope of "record-internal".'
       );
     }
-
-    componentDidMount() {
-      this.addProductTooltip();
-      window.addEventListener('resize', this.addProductTooltip);
-      this.thumbsContainer = this.node.querySelector(
-        '.eupathdb-ThumbnailsContainer'
-      );
-      if (this.thumbsContainer) this.renderThumbnails();
-      else console.error('Warning: Could not find ThumbnailsContainer');
-    }
-
-    handleThumbnailClick({ anchor }) {
-      this.props.updateSectionVisibility(anchor, true);
-    }
-
-    componentDidUpdate() {
-      if (this.thumbsContainer) this.renderThumbnails();
-    }
-
-    componentWillUnmount() {
-      if (this.thumbsContainer)
-        ReactDOM.unmountComponentAtNode(this.thumbsContainer);
-      window.removeEventListener('resize', this.addProductTooltip);
-      this.addProductTooltip.cancel();
-    }
-
-    addProductTooltip() {
-      let products = Seq.from(
-        this.node.querySelectorAll(
-          '.eupathdb-RecordOverviewTitle, .eupathdb-GeneOverviewSubtitle'
-        )
-      )
-        .filter(isNodeOverflowing)
-        .flatMap(findChildren('.eupathdb-RecordOverviewDescription'));
-
-      let items = Seq.from(
-        this.node.querySelectorAll('.eupathdb-RecordOverviewItem')
-      ).filter(isNodeOverflowing);
-
-      products.concat(items).forEach((target) => {
-        target.title = target.textContent;
-      });
-    }
-
-    renderThumbnails() {
-      let { categoryTree, recordClass } = this.props;
-      let { attributes, tables } = this.props.record;
-      // Get field present in record instance. This is leveraging the fact that
-      // we filter the category tree in the store based on the contents of
-      // MetaTable.
-      let instanceFields = new Set(
-        preorderSeq(categoryTree)
-          .filter((node) => !node.children.length)
-          .map((node) => node.properties.name[0])
-      );
-
-      let transcriptomicsThumbnail = {
-        displayName: 'Transcriptomics',
-        element: (
-          <img
-            src={
-              webAppUrl + '/wdkCustomization/images/transcription_summary.png'
-            }
-          />
-        ),
-        anchor: 'TranscriptionSummary',
-      };
-
-      let phenotypeThumbnail = {
-        displayName: 'Phenotype',
-        element: (
-          <img
-            src={webAppUrl + '/wdkCustomization/images/transcriptomics.jpg'}
-          />
-        ),
-        anchor: 'PhenotypeGraphs',
-      };
-
-      let crisprPhenotypeThumbnail = {
-        displayName: 'Phenotype',
-        element: (
-          <img
-            src={webAppUrl + '/wdkCustomization/images/transcriptomics.jpg'}
-          />
-        ),
-        anchor: 'CrisprPhenotypeGraphs',
-      };
-
-      let filteredGBrowseContexts = Seq.from(Gbrowse.contexts)
-        .filter((context) => context.includeInThumbnails !== false)
-        // inject transcriptomicsThumbnail before protein thumbnails
-        .flatMap((context) => {
-          if (context.gbrowse_url === 'SnpsGbrowseUrl') {
-            return [phenotypeThumbnail, crisprPhenotypeThumbnail, context];
-          }
-          if (context.gbrowse_url === 'FeaturesPbrowseUrl') {
-            return [transcriptomicsThumbnail, context];
-          }
-          return [context];
-        })
-        // remove thumbnails whose associated fields are not present in record instance
-        .filter((context) => instanceFields.has(context.anchor))
-        .map((context) =>
-          context === transcriptomicsThumbnail ||
-          context === phenotypeThumbnail ||
-          context === crisprPhenotypeThumbnail
-            ? Object.assign({}, context, {
-                data: {
-                  count:
-                    tables &&
-                    tables[context.anchor] &&
-                    tables[context.anchor].length,
-                },
-              })
-            : Object.assign({}, context, {
-                element: (
-                  <Gbrowse.GbrowseImage
-                    url={attributes[context.gbrowse_url]}
-                    includeImageMap={true}
-                  />
-                ),
-                displayName:
-                  recordClass.attributesMap[context.gbrowse_url].displayName,
-              })
-        )
-        .toArray();
-
-      ReactDOM.render(
-        <OverviewThumbnails
-          title="Gene Features"
-          thumbnails={filteredGBrowseContexts}
-          onThumbnailClick={this.handleThumbnailClick}
-        />,
-        this.thumbsContainer
-      );
-    }
-
-    render() {
-      // FungiVBOrgLinkoutsTable is requested in componentWrappers
-      return (
-        <React.Fragment>
-          <div ref={(node) => (this.node = node)}>
-            <this.props.DefaultComponent {...this.props} />
-          </div>
-          <FungiVBOrgLinkoutsTable
-            value={this.props.record.tables.FungiVBOrgLinkoutsTable}
-          />
-        </React.Fragment>
-      );
-    }
+    const rawValue = record.attributes[attributeName];
+    if (rawValue == null) return '';
+    return renderAttributeValue(rawValue);
   }
-);
+
+  return (
+    <div
+      className="eupathdb-RecordOverview"
+      data-gene-type={record.attributes['gene_type']}
+      data-num-user-comments={record.attributes['num_user_comments']}
+      data-apollo={record.attributes['show_apollo']}
+    >
+      <div
+        onMouseOver={(event) => {
+          const target = event.currentTarget;
+          target.title = isNodeOverflowing(target) ? target.textContent : '';
+        }}
+        className="eupathdb-RecordOverviewTitle"
+      >
+        <h1 className="eupathdb-RecordOverviewId">{r('source_id')}</h1>
+        <h2 className="eupathdb-RecordOverviewDescription">{r('product')}</h2>
+      </div>
+
+      <div className="eupathdb-RecordOverviewPanels">
+        <div className="eupathdb-RecordOverviewLeft">
+          <dl>
+            <dt>Name</dt>
+            <dd>{r('name')}</dd>
+
+            <dt>Gene Type</dt>
+            <dd>
+              <a
+                target="_blank"
+                href="http://www.sequenceontology.org/browser/obob.cgi"
+              >
+                {r('type_with_pseudo')}
+              </a>
+            </dd>
+
+            <dt>Biotype Classification</dt>
+            <dd>
+              <a
+                target="_blank"
+                href="https://grch37.ensembl.org/info/genome/genebuild/biotypes.html"
+              >
+                {r('gene_ebi_biotype')}
+              </a>
+            </dd>
+
+            <dt>Chromosome</dt>
+            <dd>{r('chromosome')}</dd>
+
+            <dt>Location</dt>
+            <dd>{r('location_text')}</dd>
+
+            <dt className="space-above">Species</dt>
+            <dd>
+              <i>{r('genus_species')}</i>
+            </dd>
+
+            <dt>Strain</dt>
+            <dd>
+              {r('strain')}
+              <Link
+                style={{ fontSize: '90%', marginLeft: '1em' }}
+                to={`/record/dataset/${record.attributes['dataset_id']}`}
+              >
+                <i className="fa fa-database"></i> Data set
+              </Link>
+            </dd>
+
+            <dt>Status</dt>
+            <dd>{r('genome_status')}</dd>
+
+            <dt className="space-above">User Comments</dt>
+            <dd>
+              <div data-show-num-user-comments="+1" data-label="User Comments">
+                <a href="#UserComments">
+                  View{' '}
+                  <span className="eupathdb-GeneOverviewHighlighted">
+                    {r('num_user_comments')}
+                  </span>{' '}
+                  / Add a new one
+                </a>
+              </div>
+              <div data-show-num-user-comments="0" data-label="User Comments">
+                <a href={record.attributes['user_comment_link_url']}>
+                  Add the first <i className="fa fa-comment"></i>
+                </a>
+              </div>
+            </dd>
+
+            <div data-show-apollo="1">
+              <dt>Community Annotations</dt>
+              <dd>
+                <a
+                  href={`https://apollo.veupathdb.org/annotator/loadLink?organism=${record.attributes['apollo_ident']}&loc=${record.attributes['sequence_id']}:${record.attributes['start_min']}..${record.attributes['end_max']}&tracks=gene%2CRNA-Seq%20Evidence%20for%20Introns%2CCommunity%20annotations%20from%20Apollo`}
+                >
+                  View / Update
+                </a>{' '}
+                in Apollo editor
+              </dd>
+            </div>
+
+            <FungiVBOrgLinkoutsTable
+              value={props.record.tables.FungiVBOrgLinkoutsTable}
+            />
+          </dl>
+        </div>
+
+        <div className="eupathdb-RecordOverviewRight">
+          <div className="GeneOverviewIntent">
+            {record.attributes['data_release_policy']}
+          </div>
+          <div className="eupathdb-ThumbnailsTitle">Shortcuts</div>
+          <div className="eupathdb-ThumbnailsContainer">
+            <Shortcuts {...props} />
+          </div>
+          <div className="eupathdb-RecordOverviewItem">
+            Also see {r('source_id')} in the{' '}
+            <a href={record.attributes['jbrowseLink']} target="_blank">
+              Genome Browser
+            </a>
+            <span data-show-gene-type="protein coding">
+              {' '}
+              or{' '}
+              <a href={record.attributes['pbrowseLink']} target="_blank">
+                Protein Browser
+              </a>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export const RecordMainSection = connect(null)(
   ({ DefaultComponent, dispatch, ...props }) => {
     return (
       <React.Fragment>
         {props.depth == null && (
-          <div style={{ position: 'absolute', right: '3em' }}>
+          <div
+            style={{
+              position: 'absolute',
+              right: 0,
+              top: '1em',
+            }}
+          >
             <i className="fa fa-exclamation-triangle" />
             &nbsp;
             <button
@@ -249,43 +369,55 @@ function FungiVBOrgLinkoutsTable(props) {
   if (props.value == null || props.value.length === 0) return null;
   const groupedLinks = lodash.groupBy(props.value, 'dataset');
   return (
-    <div style={{ marginTop: '2em' }}>
-      <div className="eupathdb-RecordOverviewItem">
+    <>
+      <div style={{ marginTop: '1em' }}>
         <strong>Model Organism Database(s)</strong>
       </div>
       {Object.entries(groupedLinks).map(([dataset, rows]) => (
-        <div key={dataset} className="eupathdb-RecordOverviewItem">
-          <strong>{dataset}:</strong>{' '}
+        <>
+          <dt>{dataset}</dt>
           {rows.map((row, index) => (
-            <React.Fragment key={index}>
+            <dd key={index}>
               {renderAttributeValue(row.link)}
               {index === rows.length - 1 ? null : ', '}
-            </React.Fragment>
+            </dd>
           ))}
-        </div>
+        </>
       ))}
-    </div>
+    </>
   );
 }
 
-const ExpressionChildRow = makeDatasetGraphChildRow(
-  'ExpressionGraphsDataTable'
-);
-const HostResponseChildRow = makeDatasetGraphChildRow(
-  'HostResponseGraphsDataTable',
-  'FacetMetadata',
-  'ContXAxisMetadata'
-);
-const CrisprPhenotypeChildRow = makeDatasetGraphChildRow(
-  'CrisprPhenotypeGraphsDataTable'
-);
-const PhenotypeScoreChildRow = makeDatasetGraphChildRow(
-  'PhenotypeScoreGraphsDataTable'
-);
-const PhenotypeChildRow = makeDatasetGraphChildRow('PhenotypeGraphsDataTable');
-const UDTranscriptomicsChildRow = makeDatasetGraphChildRow(
-  'UserDatasetsTranscriptomicsGraphsDataTable'
-);
+const ExpressionChildRow = makeDatasetGraphChildRow({
+  dataTableName: 'ExpressionGraphsDataTable',
+  DatasetGraphComponent: DatasetGraph,
+});
+const HostResponseChildRow = makeDatasetGraphChildRow({
+  dataTableName: 'HostResponseGraphsDataTable',
+  facetMetadataTableName: 'FacetMetadata',
+  contXAxisMetadataTableName: 'ContXAxisMetadata',
+  DatasetGraphComponent: DatasetGraph,
+});
+const CrisprPhenotypeChildRow = makeDatasetGraphChildRow({
+  dataTableName: 'CrisprPhenotypeGraphsDataTable',
+  DatasetGraphComponent: DatasetGraph,
+});
+const PhenotypeScoreChildRow = makeDatasetGraphChildRow({
+  dataTableName: 'PhenotypeScoreGraphsDataTable',
+  DatasetGraphComponent: DatasetGraph,
+});
+const PhenotypeChildRow = makeDatasetGraphChildRow({
+  dataTableName: 'PhenotypeGraphsDataTable',
+  DatasetGraphComponent: DatasetGraph,
+});
+const EdaPhenotypeChildRow = makeDatasetGraphChildRow({
+  dataTableName: 'EdaPhenotypeGraphsDataTable',
+  DatasetGraphComponent: EdaDatasetGraph,
+});
+const UDTranscriptomicsChildRow = makeDatasetGraphChildRow({
+  dataTableName: 'UserDatasetsTranscriptomicsGraphsDataTable',
+  DatasetGraphComponent: DatasetGraph,
+});
 
 export function RecordTable(props) {
   switch (props.table.name) {
@@ -317,6 +449,11 @@ export function RecordTable(props) {
 
     case 'PhenotypeGraphs':
       return <props.DefaultComponent {...props} childRow={PhenotypeChildRow} />;
+
+    case 'EdaPhenotypeGraphs':
+      return (
+        <props.DefaultComponent {...props} childRow={EdaPhenotypeChildRow} />
+      );
 
     case 'UserDatasetsTranscriptomicsGraphs':
       return (
@@ -485,7 +622,7 @@ const RodMalPhenotypeTableChildRow = pure(function RodMalPhenotypeTableChildRow(
   let { phenotype } = props.rowData;
   return (
     <div>
-      <b>Phenotype</b>:{phenotype == null ? null : phenotype}
+      <b>Phenotype</b>:{phenotype == null ? null : safeHtml(phenotype)}
     </div>
   );
 });
@@ -503,11 +640,12 @@ const CellxgeneTableChildRow = pure(function CellxgeneTableChildRow(props) {
   );
 });
 
-function makeDatasetGraphChildRow(
+function makeDatasetGraphChildRow({
   dataTableName,
   facetMetadataTableName,
-  contXAxisMetadataTableName
-) {
+  contXAxisMetadataTableName,
+  DatasetGraphComponent,
+}) {
   let DefaultComponent = WdkRecordTable;
   return connect((state) => {
     let { record, recordClass } = state.record;
@@ -551,8 +689,8 @@ function makeDatasetGraphChildRow(
           contXAxisMetadataTableName,
         ].filter((tableName) => tableName != null),
       });
-    }, []);
-    return <DatasetGraph {...props} />;
+    }, [requestFields]);
+    return <DatasetGraphComponent {...props} />;
   }
 }
 
@@ -1276,6 +1414,24 @@ function OrthologsFormContainer(props) {
 
   const [preferredOrganisms] = usePreferredOrganismsState();
 
+  const [showLongestTranscriptPerGene, setShowLongestTranscriptPerGene] =
+    useState(false);
+
+  const transcriptFilter = useMemo(
+    () => (
+      <label style={{ display: 'inline-block', margin: '0.5em 0' }}>
+        <input
+          type="checkbox"
+          onChange={(e) => setShowLongestTranscriptPerGene(e.target.checked)}
+        />{' '}
+        <strong>
+          <em>Show only one transcript per gene</em>
+        </strong>
+      </label>
+    ),
+    [setShowLongestTranscriptPerGene]
+  );
+
   const filteredValue = useMemo(() => {
     if (!preferredOrganismsEnabled) {
       return props.value;
@@ -1288,15 +1444,99 @@ function OrthologsFormContainer(props) {
     );
   }, [props.value, preferredOrganisms, preferredOrganismsEnabled]);
 
-  return <OrthologsForm {...props} value={filteredValue} />;
+  const transcriptFilterAwareValues = useMemo(() => {
+    if (!showLongestTranscriptPerGene) return filteredValue;
+    const dataWithLongestTranscriptPerGene = [];
+    // loop through the data to create a new array that replaces duplicates with longest protein length
+    for (const datum of filteredValue) {
+      // check if we have matching ortho source ids between our new array and the data array
+      const matchingGene = dataWithLongestTranscriptPerGene.find(
+        (d) => d['ortho_gene_source_id'] === datum['ortho_gene_source_id']
+      );
+      // NOTE: below matchingGene is for testing on PlasmoDB since I can't find an ortho/paralogs table that actually has duplicates since VectorBase isn't working...
+      // const matchingGene = dataWithLongestTranscriptPerGene.find(
+      //   (d) =>
+      //     d['ortho_gene_source_id'].split('_')[0] ===
+      //     datum['ortho_gene_source_id'].split('_')[0]
+      // );
+      if (matchingGene) {
+        // we have a match, so check protein length and continue if new array's matching gene has greater or equal length
+        // otherwise, find its index and rewrite it with the current dataum
+        if (
+          Number(matchingGene['protein_length']) >=
+          Number(datum['protein_length'])
+        )
+          continue;
+        const indexToReplace =
+          dataWithLongestTranscriptPerGene.indexOf(matchingGene);
+        dataWithLongestTranscriptPerGene[indexToReplace] = datum;
+      } else {
+        // no existing gene found, so push datum onto array
+        dataWithLongestTranscriptPerGene.push(datum);
+      }
+    }
+    return dataWithLongestTranscriptPerGene;
+  }, [showLongestTranscriptPerGene, filteredValue]);
+
+  return (
+    <OrthologsForm
+      {...props}
+      value={transcriptFilterAwareValues}
+      transcriptFilter={transcriptFilter}
+    />
+  );
 }
 
 class OrthologsForm extends SortKeyTable {
-  toggleAll(checked) {
-    const node = ReactDOM.findDOMNode(this);
-    for (const input of node.querySelectorAll('input[name="gene_ids"]')) {
-      input.checked = checked;
-    }
+  constructor() {
+    super();
+    this.state = {
+      selectedRowIds: [],
+      groupBySelected: false,
+    };
+    this.isRowSelected = this.isRowSelected.bind(this);
+    this.onRowSelect = this.onRowSelect.bind(this);
+    this.onRowDeselect = this.onRowDeselect.bind(this);
+    this.onMultipleRowSelect = this.onMultipleRowSelect.bind(this);
+    this.onMultipleRowDeselect = this.onMultipleRowDeselect.bind(this);
+  }
+
+  isRowSelected({ ortho_gene_source_id }) {
+    return this.state.selectedRowIds.includes(ortho_gene_source_id);
+  }
+
+  onRowSelect({ ortho_gene_source_id }) {
+    this.setState((state) => ({
+      ...state,
+      selectedRowIds: state.selectedRowIds.concat(ortho_gene_source_id),
+    }));
+  }
+
+  onRowDeselect({ ortho_gene_source_id }) {
+    this.setState((state) => ({
+      ...state,
+      selectedRowIds: state.selectedRowIds.filter(
+        (id) => id !== ortho_gene_source_id
+      ),
+    }));
+  }
+
+  onMultipleRowSelect(rows) {
+    this.setState((state) => ({
+      ...state,
+      selectedRowIds: state.selectedRowIds.concat(
+        rows.map((row) => row['ortho_gene_source_id'])
+      ),
+    }));
+  }
+
+  onMultipleRowDeselect(rows) {
+    this.setState((state) => ({
+      ...state,
+      selectedRowIds: state.selectedRowIds.filter((row) =>
+        rows.includes(row['ortho_gene_source_id'])
+      ),
+    }));
   }
 
   render() {
@@ -1307,6 +1547,35 @@ class OrthologsForm extends SortKeyTable {
         ? true
         : false;
     let not_protein = is_protein ? false : true;
+
+    const orthoTableProps = {
+      options: {
+        isRowSelected: this.isRowSelected,
+        selectedNoun: 'gene',
+        selectedPluralNoun: 'genes',
+      },
+      eventHandlers: {
+        onRowSelect: this.onRowSelect,
+        onRowDeselect: this.onRowDeselect,
+        onMultipleRowSelect: this.onMultipleRowSelect,
+        onMultipleRowDeselect: this.onMultipleRowDeselect,
+        onGroupBySelectedChange: () =>
+          this.setState({
+            ...this.state,
+            groupBySelected: !this.state.groupBySelected,
+          }),
+      },
+      actions: [
+        {
+          selectionRequired: false,
+          element() {
+            return null;
+          },
+          callback: () => null,
+        },
+      ],
+      groupBySelected: this.state.groupBySelected,
+    };
 
     if (this.props.value.length === 0 || not_protein) {
       return (
@@ -1321,24 +1590,20 @@ class OrthologsForm extends SortKeyTable {
           <input type="hidden" name="type" value="geneOrthologs" />
           <input type="hidden" name="project_id" value={projectId} />
           <input type="hidden" name="gene_ids" value={source_id} />
-
+          {this.state.selectedRowIds.map((sourceId) => (
+            <input
+              key={sourceId}
+              type="hidden"
+              name="gene_ids"
+              value={sourceId}
+            />
+          ))}
+          {this.props.transcriptFilter}
           <this.props.DefaultComponent
             {...this.props}
             value={this.sortValue(this.props.value)}
+            orthoTableProps={orthoTableProps}
           />
-          <input
-            type="button"
-            name="CheckAll"
-            value="Check All"
-            onClick={() => this.toggleAll(true)}
-          />
-          <input
-            type="button"
-            name="UnCheckAll"
-            value="Uncheck All"
-            onClick={() => this.toggleAll(false)}
-          />
-          <br />
           <p>
             <b>
               Select sequence type for Clustal Omega multiple sequence
@@ -1420,11 +1685,12 @@ class OrthologsForm extends SortKeyTable {
 
 const TranscriptionSummaryForm = connect(
   ({ record }) => ({
-    expressionGraphsTableState: record.eupathdb.tables?.ExpressionGraphs,
+    expressionGraphsTableState:
+      record.tableStates?.ExpressionGraphs ?? DEFAULT_TABLE_STATE,
   }),
   {
     updateSectionVisibility: RecordActions.updateSectionVisibility,
-    updateTableState,
+    updateTableState: RecordActions.updateTableState,
   }
 )(
   class TranscriptionSummaryFormPres extends SortKeyTable {
@@ -1469,6 +1735,10 @@ const TranscriptionSummaryForm = connect(
     }
 
     _handleIframeLoad(loadEvent) {
+      // Open the ExpressionGraphs record section so that the
+      // table is available when the user clicks on annotations.
+      this.props.updateSectionVisibility('ExpressionGraphs', true);
+
       loadEvent.target.contentDocument?.body.addEventListener('click', (e) => {
         const { ExpressionGraphs } = this.props.record.tables;
 
@@ -1492,32 +1762,30 @@ const TranscriptionSummaryForm = connect(
           const expressionGraphTableElement =
             document.getElementById('ExpressionGraphs');
 
+          const expressionGraphTableRowElement =
+            expressionGraphTableElement?.querySelector(
+              `tr#row_id_${expressionGraphIndex}`
+            );
+
           // If the expression graph table is available...
           if (
             expressionGraphIndex !== -1 &&
-            expressionGraphTableElement != null
+            expressionGraphTableRowElement != null
           ) {
-            // Open the ExpressionGraphs record section
+            // Make sure the table section is open
             this.props.updateSectionVisibility('ExpressionGraphs', true);
+            // Add a history entry so users can use the back button to go back to *this* section
+            window.history.pushState(null, null, '#ExpressionGraphs');
 
-            // Scroll to the ExpressionGraphs record section
-            const position =
-              expressionGraphTableElement.getBoundingClientRect();
-            scrollTo(
-              position.top + window.scrollY,
-              // When the scroll is complete, clear the table's search term
-              // and "select" the expresion graph row
-              () => {
-                this.props.updateTableState('ExpressionGraphs', {
-                  ...this.props.expressionGraphsTableState,
-                  searchTerm: '',
-                  selectedRow: {
-                    index: expressionGraphIndex,
-                    id: `ExpressionGraphs__${ExpressionGraphs[expressionGraphIndex].dataset_id}`,
-                  },
-                });
-              }
-            );
+            expressionGraphTableRowElement.scrollIntoView();
+
+            this.props.updateTableState('ExpressionGraphs', {
+              ...this.props.expressionGraphsTableState,
+              selectedRow: expressionGraphIndex,
+              expandedRows: (
+                this.props.expressionGraphsTableState?.expandedRows ?? []
+              ).concat([expressionGraphIndex]),
+            });
           }
         }
       });
@@ -1547,7 +1815,7 @@ const TranscriptionSummaryForm = connect(
       }
 
       return (
-        <div id="transcriptionSummary">
+        <div id="transcriptionSummary" style={{ overflow: 'auto' }}>
           <ExternalResourceContainer
             isLoading={this.state.summaryIframeState.isLoading}
             isError={this.state.summaryIframeState.isError}

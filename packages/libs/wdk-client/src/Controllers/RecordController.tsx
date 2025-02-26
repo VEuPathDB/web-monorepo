@@ -1,3 +1,4 @@
+// TODO When in "embed mode", disable coallpsing, hiding, and TOC
 import { isEqual } from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -16,9 +17,15 @@ import {
   updateNavigationVisibility,
   updateSectionVisibility,
   requestPartialRecord,
+  updateTableState,
 } from '../Actions/RecordActions';
 
-import { CategoryTreeNode } from '../Utils/CategoryUtils';
+import {
+  CategoryTreeNode,
+  getNodeId,
+  getRecordClassName,
+  getScopes,
+} from '../Utils/CategoryUtils';
 import { stripHTML } from '../Utils/DomUtils';
 import { RecordClass } from '../Utils/WdkModel';
 import {
@@ -27,6 +34,8 @@ import {
   getTableNames,
 } from '../Views/Records/RecordUtils';
 import { RootState } from '../Core/State/Types';
+import { preorderSeq } from '../Utils/TreeUtils';
+import { RecordNotFoundPage } from '../Views/Records/RecordNotFoundPage';
 
 const ActionCreators = {
   ...UserActionCreators,
@@ -34,6 +43,7 @@ const ActionCreators = {
   loadRecordData,
   updateSectionVisibility,
   updateNavigationQuery,
+  updateTableState,
   updateAllFieldVisibility,
   updateNavigationCategoryExpansion,
   updateNavigationVisibility,
@@ -42,7 +52,13 @@ const ActionCreators = {
 
 type StateProps = RootState['record'];
 type DispatchProps = typeof ActionCreators;
-type OwnProps = { recordClass: string; primaryKey: string };
+type OwnProps = {
+  recordClass: string;
+  primaryKey: string;
+  attributes?: string[];
+  tables?: string[];
+  compressedUI?: boolean;
+};
 type Props = { ownProps: OwnProps } & StateProps & DispatchProps;
 
 // FIXME Remove when RecordUI is converted to Typescript
@@ -77,14 +93,44 @@ class RecordController extends PageController<Props> {
       // all attributes
       {
         attributes: getAttributeNames(categoryTree),
-        tables: [],
-      },
-      // all tables
-      {
-        attributes: [],
         tables: getTableNames(categoryTree),
       },
     ];
+  }
+
+  getDefaultExpandedSections(
+    recordClass: RecordClass,
+    categoryTree: CategoryTreeNode
+  ): string[] | undefined {
+    return undefined;
+  }
+
+  pruneCategoryTree(
+    recordClass: RecordClass,
+    categoryTree: CategoryTreeNode
+  ): CategoryTreeNode {
+    const { attributes, tables } = this.props.ownProps;
+    if (attributes || tables) {
+      const nodes = preorderSeq(categoryTree)
+        .filter((node) => {
+          const recordClassName = getRecordClassName(node);
+          const id = getNodeId(node);
+          const scopes = getScopes(node);
+          if (recordClassName !== recordClass.fullName) return false;
+          return (
+            attributes?.includes(id) ||
+            tables?.includes(id) ||
+            scopes.includes('record-internal')
+          );
+        })
+        .toArray();
+      const root: CategoryTreeNode = {
+        properties: {},
+        children: nodes,
+      };
+      return root;
+    }
+    return categoryTree;
   }
 
   isRenderDataLoaded() {
@@ -106,6 +152,11 @@ class RecordController extends PageController<Props> {
 
   isRenderDataNotFound() {
     return this.props.error != null && this.props.error.status === 404;
+  }
+
+  renderDataNotFound() {
+    const sourceID = this.props.ownProps.primaryKey.split('/')[0];
+    return <RecordNotFoundPage sourceID={sourceID} />;
   }
 
   getTitle() {
@@ -133,7 +184,9 @@ class RecordController extends PageController<Props> {
       this.props.loadRecordData(
         recordClass,
         pkValues,
-        this.getRecordRequestOptions
+        this.getRecordRequestOptions.bind(this),
+        this.pruneCategoryTree.bind(this),
+        this.getDefaultExpandedSections.bind(this)
       );
     }
   }

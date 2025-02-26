@@ -17,6 +17,8 @@ type Props = {
 
   /** Whether or not the element is spinning */
   spinning: boolean;
+
+  children?: React.ReactNode;
 };
 
 /**

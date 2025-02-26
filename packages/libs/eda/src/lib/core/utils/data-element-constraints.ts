@@ -286,6 +286,13 @@ export function filterConstraints(
       if (value == null) return true;
       // Ignore constraints that are on this selectedVarReference
       if (selectedVarReference === variableName) return true;
+      // {{ treat invalid selections as "empty" and return true
+      const entityAndVariable = findEntityAndVariable(entities, value);
+      if (entityAndVariable == null) return true;
+      const { variable } = entityAndVariable;
+      if (variable.type === 'category') return true;
+      // }}
+
       // If a constraint does not declare shapes or types and it allows multivalued variables, then any value is allowed, thus the constraint is "in-play"
       if (
         isEmpty(constraint.allowedShapes) &&
@@ -296,15 +303,8 @@ export function filterConstraints(
         constraint.allowMultiValued
       )
         return true;
+
       // Check that the value's associated variable has compatible characteristics
-      const entityAndVariable = findEntityAndVariable(entities, value);
-      if (entityAndVariable == null)
-        throw new Error(
-          `Could not find selected entity and variable: entityId = ${value.entityId}; variableId = ${value.variableId}.`
-        );
-      const { variable } = entityAndVariable;
-      if (variable.type === 'category')
-        throw new Error('Categories are not allowed for variable constraints.');
       const typeIsValid =
         isEmpty(constraint.allowedTypes) ||
         constraint.allowedTypes?.includes(variable.type);
@@ -502,10 +502,7 @@ export function leastAncestralVariable(
       )
     )
       return variable;
-    else
-      throw new Error(
-        'Error: variables not expected to be in different branches of entity diagram'
-      );
+    else return undefined; // they are not on the same branch
   } else return undefined;
 }
 

@@ -5,7 +5,7 @@ import Select from 'react-select';
 import { Link, RealTimeSearchBox } from '@veupathdb/wdk-client/lib/Components';
 import { projectId } from '../../config';
 import PlaceholderCard from './PlaceholderCard';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 
 const CLASS_NAME = 'CardList';
 const SHOW_CATEGORIES_DROPDOWN = projectId === 'MicrobiomeDB';

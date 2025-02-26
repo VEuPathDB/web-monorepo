@@ -8,6 +8,7 @@
     "sourceMap": true,
     "declarationMap": true,
     "outDir": "lib",
+    "allowJs": true,
     "esModuleInterop": true,
     "strict": true,
     "target": "ES5",

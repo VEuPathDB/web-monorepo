@@ -15,11 +15,11 @@ import {
   Mesa,
   SaveableTextEditor,
 } from '@veupathdb/wdk-client/lib/Components';
-import { create as createTableState } from '@veupathdb/wdk-client/lib/Components/Mesa/Utils/MesaState';
+import { create as createTableState } from '@veupathdb/coreui/lib/components/Mesa/Utils/MesaState';
 import {
   MesaColumn,
   MesaSortObject,
-} from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -32,7 +32,6 @@ import {
   PromiseHookState,
   PromiseResult,
   PublicAnalysisSummary,
-  StudyRecord,
   useEditablePublicAnalysisList,
 } from '../core';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
@@ -54,17 +53,22 @@ const useStyles = makeStyles({
   },
 });
 
+export interface StudyRecordMetadata {
+  id: string;
+  displayName: string;
+}
+
 interface Props {
   analysisClient: AnalysisClient;
   publicAnalysisListState: PromiseHookState<PublicAnalysisSummary[]>;
-  studyRecords: StudyRecord[] | undefined;
+  studyRecordsMetadata: StudyRecordMetadata[] | undefined;
   makeAnalysisLink: (analysisId: string) => string;
-  exampleAnalysesAuthor?: number;
+  exampleAnalysesAuthors?: number[];
 }
 
 export function PublicAnalyses({
   publicAnalysisListState,
-  studyRecords,
+  studyRecordsMetadata,
   ...tableProps
 }: Props) {
   const styles = useStyles();
@@ -75,13 +79,13 @@ export function PublicAnalyses({
       <h1>Public Analyses</h1>
       <PromiseResult state={publicAnalysisListState}>
         {(publicAnalysisList) =>
-          studyRecords == null || user == null ? (
+          studyRecordsMetadata == null || user == null ? (
             <Loading />
           ) : (
             <PublicAnalysesTable
               {...tableProps}
               userId={user.id}
-              studyRecords={studyRecords}
+              studyRecordsMetadata={studyRecordsMetadata}
               publicAnalysisList={publicAnalysisList}
             />
           )
@@ -94,7 +98,7 @@ export function PublicAnalyses({
 interface TableProps extends Omit<Props, 'publicAnalysisListState'> {
   userId: number;
   publicAnalysisList: PublicAnalysisSummary[];
-  studyRecords: StudyRecord[];
+  studyRecordsMetadata: StudyRecordMetadata[];
 }
 
 interface PublicAnalysisRow extends PublicAnalysisSummary {
@@ -109,9 +113,9 @@ interface PublicAnalysisRow extends PublicAnalysisSummary {
 function PublicAnalysesTable({
   analysisClient,
   publicAnalysisList,
-  studyRecords,
+  studyRecordsMetadata,
   makeAnalysisLink,
-  exampleAnalysesAuthor,
+  exampleAnalysesAuthors,
   userId,
 }: TableProps) {
   const { publicAnalysesState, updateAnalysis } = useEditablePublicAnalysisList(
@@ -150,7 +154,7 @@ function PublicAnalysesTable({
   );
 
   const unfilteredRows: PublicAnalysisRow[] = useMemo(() => {
-    const studiesById = keyBy(studyRecords, (study) => study.id[0].value);
+    const studiesById = keyBy(studyRecordsMetadata, (study) => study.id);
 
     return publicAnalysesState.map((publicAnalysis) => ({
       ...publicAnalysis,
@@ -166,9 +170,9 @@ function PublicAnalysesTable({
       modificationTimeDisplay: convertISOToDisplayFormat(
         publicAnalysis.modificationTime
       ),
-      isExample: publicAnalysis.userId === exampleAnalysesAuthor,
+      isExample: !!exampleAnalysesAuthors?.includes(publicAnalysis.userId),
     }));
-  }, [publicAnalysesState, studyRecords, exampleAnalysesAuthor]);
+  }, [publicAnalysesState, studyRecordsMetadata, exampleAnalysesAuthors]);
 
   const offerExampleSortControl = useMemo(
     () =>
@@ -241,7 +245,7 @@ function PublicAnalysesTable({
     [filteredRows, tableSort, exampleSort, offerExampleSortControl]
   );
 
-  const columns: MesaColumn<keyof PublicAnalysisRow>[] = useMemo(
+  const columns: MesaColumn<PublicAnalysisRow>[] = useMemo(
     () => [
       {
         key: 'studyId',
@@ -287,7 +291,7 @@ function PublicAnalysesTable({
           const analysisId = data.row.analysisId;
           const descriptionStr = data.row.description ?? '';
 
-          return userId === exampleAnalysesAuthor &&
+          return exampleAnalysesAuthors?.includes(userId) &&
             data.row.userId === userId ? (
             <div style={{ display: 'block', maxWidth: '100%' }}>
               <SaveableTextEditor
@@ -331,7 +335,7 @@ function PublicAnalysesTable({
           data.row.modificationTimeDisplay,
       },
     ],
-    [makeAnalysisLink, updateAnalysis, exampleAnalysesAuthor, userId]
+    [makeAnalysisLink, updateAnalysis, exampleAnalysesAuthors, userId]
   );
 
   const tableUiState = useMemo(() => ({ sort: tableSort }), [tableSort]);

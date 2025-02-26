@@ -1,27 +1,22 @@
-import React from 'react';
 import { range } from 'd3';
+import { truncateWithEllipsis } from '../../utils/axis-tick-label-ellipsis';
 
 // set props for custom legend function
 export interface PlotLegendGradientProps {
   legendMax: number;
   legendMin: number;
   valueToColorMapper: (a: number) => string;
+  valueToTickStringMapper?: (a: number) => string;
   nTicks?: number; // MUST be odd!
   showMissingness?: boolean;
 }
-
-// legend ellipsis function for legend title and legend items (from custom legend work)
-const legendEllipsis = (label: string, ellipsisLength: number) => {
-  return (label || '').length > ellipsisLength
-    ? (label || '').substring(0, ellipsisLength) + '...'
-    : label;
-};
 
 // make gradient colorscale legend into a component so it can be more easily incorporated into DK's custom legend if we need
 export default function PlotGradientLegend({
   legendMax,
   legendMin,
   valueToColorMapper,
+  valueToTickStringMapper = (val: number) => val.toPrecision(3),
   nTicks = 5,
   showMissingness,
 }: PlotLegendGradientProps) {
@@ -70,10 +65,9 @@ export default function PlotGradientLegend({
           dominantBaseline="middle"
           fontSize={tickFontSize}
         >
-          {(
-            (a / (nTicks! - 1)) * (legendMax - legendMin) +
-            legendMin
-          ).toPrecision(3)}
+          {valueToTickStringMapper(
+            (a / (nTicks! - 1)) * (legendMax - legendMin) + legendMin
+          )}
         </text>
       </g>
     );
@@ -84,7 +78,7 @@ export default function PlotGradientLegend({
       <svg
         id="gradientLegend"
         height={gradientBoxHeight + 20}
-        width={gradientBoxWidth + 60}
+        width={gradientBoxWidth + 80}
       >
         <defs>
           <linearGradient id="linearGradient" x1="0" x2="0" y1="1" y2="0">
@@ -119,7 +113,7 @@ export default function PlotGradientLegend({
           <label
             title={'No data'}
             style={{
-              cursor: 'pointer',
+              cursor: 'default',
               display: 'flex',
               alignItems: 'center',
               fontSize: legendTextSize,
@@ -127,7 +121,7 @@ export default function PlotGradientLegend({
               margin: 0,
             }}
           >
-            <i>{legendEllipsis('No data', 20)}</i>
+            <i>{truncateWithEllipsis('No data', 20)}</i>
           </label>
         </div>
       )}

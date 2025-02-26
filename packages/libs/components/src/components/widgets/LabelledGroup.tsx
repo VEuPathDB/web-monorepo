@@ -42,7 +42,7 @@ export default function LabelledGroup(props: LabelledGroupProps) {
         padding: '1em',
         //        minWidth: '45%',
         // marginTop: '1.5625em',
-        marginRight: '1.5625em',
+        // marginRight: '1.5625em',
         ...containerStyles,
       }}
     >

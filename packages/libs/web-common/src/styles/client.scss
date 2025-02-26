@@ -2,6 +2,19 @@
 @import './AllSites.scss';
 @import './question-wizard.css';
 
+dialog {
+  border: none;
+  border-radius: 0.25em;
+  &::backdrop {
+    background-color: #000000a8;
+  }
+}
+
+// Prevent scrollbar on body when dialog is open
+body:has(dialog[open]) {
+  overflow: hidden;
+}
+
 body,
 h1,
 h2,
@@ -63,11 +76,6 @@ h4 {
   clear: both;
 }
 
-/* FIXME: Remove when rest of page is responsive */
-.wdk-RecordContainer {
-  max-width: calc(100vw - 4em);
-}
-
 .wdk-RecordAttributeValue,
 .wdk-RecordTableContainerContent,
 .wdk-RecordAttributeSectionItemContent {
@@ -96,10 +104,6 @@ h4 {
   font-size: 1.4em;
 }
 
-.wdk-DataTableCellExpand {
-  color: #777;
-}
-
 td.wdk-DataTableCell__thumbnail {
   vertical-align: middle;
   height: 50px;
@@ -109,21 +113,42 @@ td.wdk-DataTableCell__thumbnail {
   display: none;
 }
 
-/* Offset for menu */
-.wdk-RecordAttributeSectionItem:before,
-.wdk-RecordTableContainer:before,
-.wdk-RecordSubsection:before,
-.wdk-RecordSection:before,
-.ExternalContentController a[name]::before {
-  content: '';
-  display: block;
-  height: 68px;
-  margin-top: -68px;
-}
-
 .wdk-RecordSectionHeader,
 .wdk-RecordSubsectionHeader {
   color: black;
+}
+
+.eupathdb-RecordOverview {
+  padding-top: 1rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #aaa;
+}
+
+.eupathdb-RecordOverviewTitle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  align-items: baseline;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  padding: 0.5em 0 1em 0;
+  font-size: 2em;
+}
+
+.eupathdb-RecordOverviewId,
+.eupathdb-RecordOverviewDescription {
+  padding: 0;
+}
+
+.eupathdb-RecordOverviewId {
+  font-size: 1.3em;
+}
+
+.eupathdb-RecordOverviewDescription {
+  font-weight: 300;
+  font-size: 1.1em;
 }
 
 .eupathdb-RecordOverviewItem {
@@ -135,16 +160,66 @@ td.wdk-DataTableCell__thumbnail {
   margin: 0.2em 0;
   font-size: 1.4em;
   font-weight: 300;
-  max-width: 95%;
-}
-
-.eupathdb-RecordOverviewItem[data-label]:before {
-  content: attr(data-label) ': ';
-  font-weight: bold;
+  max-width: 100%;
 }
 
 .eupathdb-RecordOverviewItem:empty {
   display: none;
+}
+
+.eupathdb-RecordOverviewPanels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4em;
+}
+
+.eupathdb-RecordOverviewLeft {
+  margin-right: 8vw;
+}
+
+.eupathdb-RecordOverviewLeft h1,
+.eupathdb-RecordOverviewRight .GeneOverviewProduct {
+  padding: 10px 0;
+}
+
+.eupathdb-RecordOverview {
+  dl {
+    font-size: 1.4em;
+    margin: 0;
+    line-height: 1.3em;
+  }
+  dt {
+    justify-self: start;
+    font-weight: 400;
+  }
+  dd {
+    font-weight: 300;
+  }
+
+  dt:has(+ dd:empty),
+  dd:empty {
+    display: none;
+  }
+
+  dt.space-above,
+  dt.space-above + dd {
+    margin-top: 1em;
+  }
+}
+
+@media all and (max-width: 400px) {
+  .eupathdb-RecordOverview {
+    dl {
+      display: initial;
+    }
+    dd {
+      margin-bottom: 0.3em;
+      margin-left: 1ex;
+    }
+    dt.space-above + dd {
+      margin-top: 0;
+    }
+  }
 }
 
 .eupathdb-ReporterFormSubmit {
@@ -153,6 +228,10 @@ td.wdk-DataTableCell__thumbnail {
 }
 
 @media all and (min-width: 800px) {
+  .eupathdb-RecordOverviewTitle {
+    flex-wrap: nowrap;
+  }
+
   .eupathdb-ReporterFormWrapper {
     width: fit-content;
   }
@@ -220,6 +299,10 @@ td.wdk-DataTableCell__thumbnail {
   min-height: 100px;
   display: flex;
   flex-wrap: wrap;
+  gap: 1em;
+  > * > * + * {
+    margin-block-start: 0.5em;
+  }
 }
 .eupathdb-DatasetGraphContainer2 > h4 {
   position: absolute;
@@ -428,4 +511,17 @@ div.eupathdb-content {
 }
 .smaller-font {
   font-size: 90%;
+}
+
+.LegacyMapRedirectModalContainer {
+  font-size: 1.2em;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: justify;
+  p {
+    margin-top: 0;
+    margin-bottom: 2em;
+  }
 }

@@ -15,6 +15,7 @@ import { EbrcDefaultQuestionForm } from '@veupathdb/web-common/lib/components/qu
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import './GenesByOrthologPattern.scss';
+import { areTermsInString } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 
 const cx = makeClassNameHelper('GenesByOrthologPattern');
 const cxDefaultQuestionForm = makeClassNameHelper('wdk-QuestionForm');
@@ -204,6 +205,15 @@ function ProfileParameter({
     [constraints, nodeMap, profileTree, eventHandlers, questionState]
   );
 
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const searchPredicate = useCallback(
+    (node: ProfileNode, searchTerms: string[]) => {
+      return areTermsInString(searchTerms, node.display + ' ' + node.term);
+    },
+    []
+  );
+
   return (
     <div className={cx('ProfileParameter')}>
       <div className={cx('ProfileParameterHelp')}>
@@ -219,16 +229,22 @@ function ProfileParameter({
           <ConstraintIcon constraintType="mixed" /> = mixture of constraints )
         </div>
       </div>
-      <CheckboxTree<ProfileNode>
-        tree={profileTree}
-        getNodeId={getNodeId}
-        getNodeChildren={getNodeChildren}
-        onExpansionChange={onExpansionChange}
-        renderNode={renderNode}
-        expandedList={expandedList}
-        showRoot
-        linksPosition={LinksPosition.Top}
-      />
+      <div className={cx('ProfileParameterTreeWrapper')}>
+        <CheckboxTree<ProfileNode>
+          tree={profileTree}
+          getNodeId={getNodeId}
+          getNodeChildren={getNodeChildren}
+          onExpansionChange={onExpansionChange}
+          renderNode={renderNode}
+          expandedList={expandedList}
+          showRoot
+          linksPosition={LinksPosition.Top}
+          isSearchable
+          searchTerm={searchTerm}
+          onSearchTermChange={setSearchTerm}
+          searchPredicate={searchPredicate}
+        />
+      </div>
     </div>
   );
 }
@@ -295,7 +311,7 @@ function makeRenderNode(
       <span
         className={cx(
           'ProfileNodeDisplay',
-          node.term == ALL_ORGANISMS_TERM ? 'root-node' : 'interior-node'
+          node.term === ALL_ORGANISMS_TERM ? 'root-node' : 'interior-node'
         )}
       >
         {node.display}

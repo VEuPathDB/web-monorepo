@@ -22,6 +22,8 @@ export default function FilledButton({
   ariaLabel,
   themeRole,
   styleOverrides = {},
+  iconPosition = 'left',
+  additionalAriaProperties = {},
 }: SwissArmyButtonVariantProps) {
   const defaultStyle: ButtonStyleSpec = {
     default: {
@@ -111,6 +113,8 @@ export default function FilledButton({
       size={size}
       icon={icon}
       ariaLabel={ariaLabel}
+      iconPosition={iconPosition}
+      additionalAriaProperties={additionalAriaProperties}
     />
   );
 }

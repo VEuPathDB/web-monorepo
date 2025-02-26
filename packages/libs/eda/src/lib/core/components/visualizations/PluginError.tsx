@@ -1,27 +1,32 @@
-import { ReactFragment } from 'react';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { ReactNode } from 'react';
+import { NoDataError } from '../../api/DataClient/NoDataError';
 
 interface Props {
   error?: unknown;
   customCases?: Case[];
   outputSize?: number;
+  bannerType?: 'warning' | 'error';
 }
 
-type Case = (errorString: string) => string | ReactFragment | undefined;
+type Case = (error: unknown) => string | ReactNode | undefined;
 
 const defaultCases: Case[] = [
-  (errorString) =>
-    errorString.match(/did not contain any data/i)
-      ? 'The visualization cannot be made because the current subset is empty.'
-      : undefined,
+  (error) => (error instanceof NoDataError ? error.message : undefined),
 ];
 
 const emptyCaseMessage =
   'The visualization cannot be made because there is no plottable data for selected variable(s) in the current subset.';
 
-export default function PluginError({ error, customCases, outputSize }: Props) {
+export default function PluginError({
+  error,
+  customCases,
+  outputSize,
+  bannerType = 'warning',
+}: Props) {
   // TO DO: errors from back end should arrive with a separate response code property
   // FOR NOW: flatten entire error to a string
-  const errorMessage =
+  const fallbackErrorMessage =
     error == null ? '' : error instanceof Error ? error.message : String(error);
 
   const emptyCase = () => (outputSize === 0 ? emptyCaseMessage : undefined);
@@ -29,26 +34,17 @@ export default function PluginError({ error, customCases, outputSize }: Props) {
   const errorContent =
     (customCases ?? [])
       .concat([emptyCase, ...defaultCases])
-      .reduce<string | ReactFragment | undefined>(
-        (prev, caseFunction) => prev ?? caseFunction(errorMessage),
+      .reduce<string | ReactNode | undefined>(
+        (prev, caseFunction) => prev ?? caseFunction(error),
         undefined
-      ) ?? errorMessage;
+      ) ?? fallbackErrorMessage;
 
   return errorContent ? (
-    <div
-      style={{
-        fontSize: '1.2em',
-        padding: '1em',
-        background: 'rgb(255, 233, 233) none repeat scroll 0% 0%',
-        borderRadius: '.5em',
-        margin: '.5em 0',
-        color: '#333',
-        border: '1px solid #d9cdcd',
-        display: 'flex',
+    <Banner
+      banner={{
+        type: bannerType,
+        message: errorContent,
       }}
-    >
-      <i className="fa fa-warning" style={{ marginRight: '1ex' }}></i>{' '}
-      {errorContent}
-    </div>
+    />
   ) : null;
 }

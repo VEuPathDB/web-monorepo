@@ -18,6 +18,16 @@
     }
   }
 
+  &-CorrelationOuterConfigContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75em;
+    span {
+      white-space: nowrap;
+    }
+    text-transform: capitalize;
+  }
+
   &-InputContainer {
     display: flex;
     gap: 0.75em;
@@ -25,12 +35,27 @@
     span {
       font-weight: 500;
     }
+    .FixedInput {
+      text-transform: none;
+    }
+    .FixedInputValue {
+      font-weight: normal;
+    }
     &__disabled {
       cursor: not-allowed;
       span {
         opacity: 0.5;
       }
     }
+  }
+
+  &-DescriptionContainer {
+    font-weight: normal !important;
+    text-transform: none;
+  }
+
+  &-HelpInfoContainer {
+    padding: 20px 40px;
   }
 }
 

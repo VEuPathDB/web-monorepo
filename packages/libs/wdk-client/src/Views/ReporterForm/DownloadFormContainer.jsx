@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { WdkStatusIcon } from '../../Components/Icon/WdkStatusIcon';
 import RadioList from '../../Components/InputControls/RadioList';
 import {
   filterOutProps,
@@ -6,7 +7,6 @@ import {
   safeHtml,
 } from '../../Utils/ComponentUtils';
 import DownloadForm from '../../Views/ReporterForm/DownloadForm';
-import PrimaryKeySpan from '../../Views/ReporterForm/PrimaryKeySpan';
 
 let NO_REPORTER_SELECTED = '_none_';
 
@@ -16,8 +16,14 @@ let ReporterSelect = (props) => {
   let nestedDivStyle = { display: 'inline-block', verticalAlign: 'top' };
   let items = reporters.map((reporter) => ({
     value: reporter.name,
-    display: reporter.displayName,
+    display: (
+      <>
+        {reporter.displayName}
+        <WdkStatusIcon buildIntroduced={reporter.newBuild} />
+      </>
+    ),
     description: reporter.description,
+    newBuild: reporter.newBuild,
   }));
   return (
     <div style={{ margin: '20px 0' }}>
@@ -92,10 +98,10 @@ class DownloadFormContainer extends Component {
   }
 
   // create parameterless form submission function for forms to use
-  onSubmit() {
+  async onSubmit() {
     let { submitForm, resultType, selectedReporter, formState, viewFilters } =
       this.props;
-    submitForm(resultType, selectedReporter, formState, viewFilters);
+    await submitForm(resultType, selectedReporter, formState, viewFilters);
   }
 
   render() {
@@ -108,6 +114,7 @@ class DownloadFormContainer extends Component {
       selectReporter,
       includeTitle,
       includeSubmit,
+      includeSelector = true,
     } = this.props;
 
     // create page title element
@@ -126,12 +133,19 @@ class DownloadFormContainer extends Component {
 
     return (
       <div style={{ padding: '1em 3em' }}>
-        {includeTitle && title}
-        <ReporterSelect
-          reporters={availableReporters}
-          selected={selectedReporter}
-          onChange={selectReporter}
-        />
+        {includeTitle && (
+          <>
+            {title}
+            <hr />
+          </>
+        )}
+        {includeSelector && (
+          <ReporterSelect
+            reporters={availableReporters}
+            selected={selectedReporter}
+            onChange={selectReporter}
+          />
+        )}
         <DownloadForm
           {...formProps}
           onSubmit={this.onSubmit}

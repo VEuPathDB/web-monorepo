@@ -44,6 +44,7 @@ export default function PlotLegend({
             width: 400,
             overflowX: 'hidden',
             overflowY: 'auto',
+            cursor: 'default',
             ...containerStyles,
           }}
         >
@@ -51,7 +52,7 @@ export default function PlotLegend({
             title={legendTitle}
             // style={{ cursor: 'pointer', fontSize: legendTextSize, fontWeight: 'bold', margin: '0 0 0 0.15em' }}
             style={{
-              cursor: 'pointer',
+              cursor: 'default',
               fontSize: legendTextSize,
               fontWeight: 'bold',
               marginLeft: '0.15em',

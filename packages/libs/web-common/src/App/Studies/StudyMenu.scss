@@ -38,6 +38,9 @@ $red: #dd314e;
       color: $red !important;
     }
   }
+  .CollapsibleSectionChild {
+    padding: 5px;
+  }
 }
 
 span:has(> div.StudyMenuItem--disabled) {

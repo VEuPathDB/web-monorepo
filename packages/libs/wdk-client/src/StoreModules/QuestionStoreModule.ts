@@ -256,7 +256,13 @@ function reduceQuestionState(
         weight: action.payload.weight,
       };
 
-    case UPDATE_PARAM_VALUE:
+    case UPDATE_PARAM_VALUE: {
+      const paramName = action.payload.parameter.name;
+      const paramValue = action.payload.paramValue;
+
+      // don't do anything if the value is the same
+      if (state.paramValues[paramName] === paramValue) return state;
+
       const groupIx = state.question.groups.findIndex(
         (group) => group.name === action.payload.parameter.group
       );
@@ -299,6 +305,7 @@ function reduceQuestionState(
           ...newGroupUIState,
         },
       };
+    }
 
     case PARAM_ERROR:
       return {
@@ -429,7 +436,7 @@ function reduceParamState(state: QuestionState, action: Action) {
     'parameter' in action.payload
   ) {
     const { parameter } = action.payload;
-    if (parameter) {
+    if (parameter && state.paramUIState) {
       const paramState = paramReducer(
         parameter,
         state.paramUIState[parameter.name],

@@ -133,6 +133,7 @@ export default class FilterParamNew extends React.PureComponent<Props> {
               this.props.parameter.ontology,
               sort
             ),
+            currentPage: 1,
           },
         })
       );
@@ -161,6 +162,7 @@ export default class FilterParamNew extends React.PureComponent<Props> {
                 filter
               ),
             },
+            currentPage: 1,
           },
         })
       );

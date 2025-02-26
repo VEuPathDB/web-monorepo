@@ -10,6 +10,10 @@ body.vpdb-Body .vpdb-RootContainer {
 
   grid-template-rows: 11em auto auto 1fr auto;
 
+  @media screen and (max-width: $hamburger-width) {
+    grid-template-rows: auto auto auto 1fr auto;
+  }
+
   &__home {
     grid-template-areas:
       'header header header'
@@ -31,6 +35,19 @@ body.vpdb-Body .vpdb-RootContainer {
         'nav content content'
         'nav side side'
         'footer footer footer';
+    }
+
+    @media screen and (max-width: $mobile-width) {
+      grid-template-areas:
+        'header'
+        'subheader'
+        'banner'
+        'nav'
+        'content'
+        'side'
+        'footer';
+
+      grid-template-rows: auto auto auto auto 1fr auto auto;
     }
   }
 

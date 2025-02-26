@@ -1,4 +1,3 @@
-// import React from 'react';
 import L from 'leaflet';
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 
@@ -6,13 +5,15 @@ import { ContainerStylesAddon } from '../types/plots';
 
 export interface BubbleMarkerProps extends BoundsDriftMarkerProps {
   data: {
-    /* The size value */
+    /* The size value that is displayed in the popup as Count: */
     value: number;
+    /* The diameter of the marker */
     diameter: number;
-    /* The color value (shown in the popup) */
-    colorValue?: number;
+    /* The color value shown in the popup as `colorLabel:` */
+    colorValue?: string;
     /* Label shown next to the color value in the popup */
     colorLabel?: string;
+    /* The color to fill the bubble marker with */
     color?: string;
   };
   // isAtomic: add a special thumbtack icon if this is true
@@ -24,11 +25,14 @@ export interface BubbleMarkerProps extends BoundsDriftMarkerProps {
  * this is a SVG bubble marker icon
  */
 export default function BubbleMarker(props: BubbleMarkerProps) {
+  const selectedMarkers = props.selectedMarkers;
+  const setSelectedMarkers = props.setSelectedMarkers;
+
   const { html: svgHTML, diameter: size } = bubbleMarkerSVGIcon(props);
 
   // set icon as divIcon
   const SVGBubbleIcon = L.divIcon({
-    className: 'leaflet-canvas-icon', // may need to change this className but just leave it as it for now
+    className: 'leaflet-canvas-icon marker-id-' + props.id + ' bubble-marker',
     iconSize: new L.Point(size, size), // this will make icon to cover up SVG area!
     iconAnchor: new L.Point(size / 2, size / 2), // location of topleft corner: this is used for centering of the icon like transform/translate in CSS
     html: svgHTML, // divIcon HTML svg code generated above
@@ -36,18 +40,33 @@ export default function BubbleMarker(props: BubbleMarkerProps) {
 
   // anim check duration exists or not
   const duration: number = props.duration ? props.duration : 300;
+  const popupSize = 120;
 
   const popupContent = (
-    <div style={{ fontSize: 16, lineHeight: '150%' }}>
-      <div>
-        <b style={{ marginRight: '0.15rem' }}>Count</b> {props.data.value}
-      </div>
-      {props.data.colorValue && (
-        <div style={{ marginTop: '0.5rem' }}>
-          <b style={{ marginRight: '0.15rem' }}>{props.data.colorLabel}</b>{' '}
-          {props.data.colorValue}
+    <div style={{ position: 'relative', height: popupSize, width: popupSize }}>
+      <div
+        style={{
+          fontSize: 16,
+          lineHeight: '150%',
+          height: popupSize / 2,
+          width: popupSize,
+          position: 'absolute',
+          top: '50%',
+          transform: 'translateY(-50%)',
+        }}
+      >
+        <div>
+          <b style={{ marginRight: '0.15rem' }}>Count</b> {props.data.value}
         </div>
-      )}
+        {props.data.colorValue && (
+          <div style={{ marginTop: '1rem' }}>
+            <b style={{ marginRight: '0.15rem' }}>
+              {props.data.colorLabel ?? 'Value'}
+            </b>{' '}
+            {props.data.colorValue}
+          </div>
+        )}
+      </div>
     </div>
   );
 
@@ -65,11 +84,22 @@ export default function BubbleMarker(props: BubbleMarkerProps) {
       popupContent={{
         content: popupContent,
         size: {
-          width: 170,
-          height: 100,
+          width: popupSize,
+          height: popupSize,
         },
       }}
+      getVerticalPopupExtraOffset={(markerRect) => [
+        0,
+        20 - markerRect.height / 2,
+      ]}
+      getHorizontalPopupExtraOffset={(markerRect) => [
+        -3,
+        21 - markerRect.height / 2,
+      ]}
       showPopup={props.showPopup}
+      // pass selectedMarkers state and setState
+      selectedMarkers={selectedMarkers}
+      setSelectedMarkers={setSelectedMarkers}
     />
   );
 }
@@ -148,7 +178,7 @@ function bubbleMarkerSVGIcon(props: BubbleMarkerStandaloneProps): {
     '" r="' +
     radius +
     '" stroke="white" stroke-width="0" fill="' +
-    props.data.color +
+    (props.data.color ?? '') +
     '" />';
 
   //TODO: do we need to show total number for bubble marker?

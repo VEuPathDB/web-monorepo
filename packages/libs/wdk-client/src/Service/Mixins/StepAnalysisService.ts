@@ -12,7 +12,7 @@ import {
   StepAnalysisType,
   StepAnalysisConfig,
 } from '../../Utils/StepAnalysisUtils';
-import { parametersDecoder } from '../../Service/Mixins/SearchesService';
+import { parametersDecoder } from '../../Service/Decoders/QuestionDecoders';
 import { Parameter, ParameterValues } from '../../Utils/WdkModel';
 import { extractParamValues } from '../../Utils/WdkUser';
 import { makeTraceid } from '../ServiceUtils';

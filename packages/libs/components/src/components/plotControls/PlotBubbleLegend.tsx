@@ -8,13 +8,6 @@ export interface PlotLegendBubbleProps {
   valueToDiameterMapper: ((value: number) => number) | undefined;
 }
 
-// legend ellipsis function for legend title and legend items (from custom legend work)
-// const legendEllipsis = (label: string, ellipsisLength: number) => {
-//   return (label || '').length > ellipsisLength
-//     ? (label || '').substring(0, ellipsisLength) + '...'
-//     : label;
-// };
-
 export default function PlotBubbleLegend({
   legendMax,
   valueToDiameterMapper,

@@ -52,35 +52,38 @@ export const Visualization = intersection([
   }),
 ]);
 
-// alphadiv abundance
-export type ComputationDescriptor = TypeOf<typeof ComputationDescriptor>;
-export const ComputationDescriptor = type({
-  type: string,
-  // handle configuration=null for ZeroConfiguration
-  // configuration: union([ComputationConfiguration, nullType]),
-  configuration: unknown,
-});
-
 /**
  * App object stored in user's analysis
  */
-export interface Computation<ConfigType = unknown> {
-  computationId: string;
-  displayName?: string;
+export interface Computation<ConfigType = unknown>
+  extends t.TypeOf<typeof Computation> {
   descriptor: {
     type: string;
     configuration: ConfigType;
   };
-  visualizations: Visualization[];
 }
-export const Computation: t.Type<Computation> = t.interface({
+
+export const Computation = t.type({
   computationId: string,
+  displayName: t.union([t.string, t.undefined]),
   descriptor: type({
     type: string,
     configuration: unknown,
   }),
   visualizations: array(Visualization),
 });
+
+export function makeComputationWithConfigDecoder<T>(
+  configDecoder: t.Type<T>
+): t.Type<Computation<T>> {
+  return t.type({
+    ...Computation.props,
+    descriptor: t.type({
+      ...Computation.props.descriptor.props,
+      configuration: configDecoder,
+    }),
+  });
+}
 
 const Thing = intersection([
   type({

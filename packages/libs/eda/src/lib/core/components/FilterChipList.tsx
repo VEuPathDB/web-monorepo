@@ -5,6 +5,7 @@ import { Filter } from '../types/filter';
 import { findEntityAndVariable } from '../utils/study-metadata';
 import { ReactNode, Fragment } from 'react';
 import { VariableLink, VariableLinkConfig } from './VariableLink';
+import { colors, Warning } from '@veupathdb/coreui';
 
 // Material UI CSS declarations
 const useStyles = makeStyles((theme) => ({
@@ -64,8 +65,12 @@ export default function FilterChipList(props: Props) {
                 filterValueDisplay = filter.dateSet.join(' | ');
                 break;
               case 'numberRange':
+                filterValueDisplay = `from ${filter.min} to ${filter.max}, inclusive`;
+                break;
               case 'dateRange':
-                filterValueDisplay = `from ${filter.min} to ${filter.max}`;
+                filterValueDisplay = `from ${filter.min.split('T')[0]} to ${
+                  filter.max.split('T')[0]
+                }, inclusive`;
                 break;
               case 'multiFilter':
                 filterValueDisplay = filter.subFilters
@@ -127,7 +132,18 @@ export default function FilterChipList(props: Props) {
               </FilterChip>
             );
           } else {
-            return null;
+            return (
+              <FilterChip
+                tooltipText="Remove this filter to continue working with your analysis. This filter contains a reference to a variable that does not exist for this study."
+                isActive={false}
+                onDelete={() => removeFilter(filter)}
+                key={`${filter.entityId}/${filter.variableId}`}
+              >
+                <>
+                  <Warning fill={colors.warning[600]} /> Invalid filter
+                </>
+              </FilterChip>
+            );
           }
         })}
       </div>

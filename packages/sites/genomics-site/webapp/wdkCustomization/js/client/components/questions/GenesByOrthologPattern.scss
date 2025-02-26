@@ -1,42 +1,44 @@
 .GenesByOrthologPattern {
   &ProfileParameter {
-    .wdk-CheckboxTree {
-      width: 50%;
+    &TreeWrapper {
+      max-width: 650px;
       position: relative;
 
-      > .wdk-CheckboxTreeList
-        > .wdk-CheckboxTreeItem
-        > .wdk-CheckboxTreeNodeWrapper
-        > i {
-        visibility: hidden;
-      }
+      [class$='-CheckboxTree'] {
+        > [class$='-CheckboxTreeList']
+          > [class$='-CheckboxTreeItem']
+          > [class$='-CheckboxTreeNodeWrapper']
+          > i {
+          visibility: hidden;
+        }
 
-      .GenesByOrthologPatternConstraintIcon {
-        cursor: pointer;
-      }
-    }
-
-    .wdk-CheckboxTreeList {
-      .wdk-CheckboxTreeToggle {
-        &__collapsed {
-          margin-left: 0.1em;
+        .GenesByOrthologPatternConstraintIcon {
+          cursor: pointer;
         }
       }
-    }
 
-    .wdk-CheckboxTreeNodeContent {
-      margin-left: 1em;
-    }
+      [class$='-CheckboxTreeList'] {
+        .wdk-CheckboxTreeToggle {
+          &__collapsed {
+            margin-left: 0.1em;
+          }
+        }
+      }
 
-    .wdk-CheckboxTreeLinks {
-      position: absolute;
-      top: 1.1em;
-      left: 9.5em;
-      z-index: 1;
-      margin: 0 0 0 1rem;
+      [class$='-CheckboxTreeNodeContent'] {
+        margin-left: 1em;
+      }
 
-      > div {
-        text-align: left;
+      [class$='-CheckboxTreeLinks'] {
+        position: absolute;
+        top: 1.1em;
+        left: 9.5em;
+        z-index: 1;
+        margin: 0 0 0 1rem;
+
+        > div {
+          text-align: left;
+        }
       }
     }
   }

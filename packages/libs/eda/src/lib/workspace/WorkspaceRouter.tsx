@@ -25,10 +25,13 @@ import { StudyList } from './StudyList';
 import { WorkspaceContainer } from './WorkspaceContainer';
 import { AnalysisPanel } from './AnalysisPanel';
 import { StandaloneStudyPage } from './StandaloneStudyPage';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+
+const EDA_PROJECT_IDS = ['ClinEpiDB', 'MicrobiomeDB'];
 
 type Props = {
   edaServiceUrl: string;
-  exampleAnalysesAuthor?: number;
+  exampleAnalysesAuthors?: number[];
   showUnreleasedData?: boolean;
   /**
    * The base of the URL from which to being sharing links.
@@ -43,6 +46,7 @@ type Props = {
    * or left undefined to use all apps associated with the project.
    * This is passed down through several component layers. */
   singleAppMode?: string;
+  helpTabContents?: React.ReactNode;
 };
 
 /**
@@ -50,21 +54,26 @@ type Props = {
  */
 export function WorkspaceRouter({
   edaServiceUrl,
-  exampleAnalysesAuthor,
+  exampleAnalysesAuthors,
   sharingUrlPrefix,
   showLoginForm,
   singleAppMode,
   showUnreleasedData = false,
+  helpTabContents,
 }: Props) {
   const coreUITheme = useUITheme();
   const coreUIPrimaryColor = coreUITheme?.palette.primary;
   const { path, url } = useRouteMatch();
 
   const subsettingClient = useConfiguredSubsettingClient(edaServiceUrl);
-  const dataClient = useConfiguredDataClient(edaServiceUrl);
   const analysisClient = useConfiguredAnalysisClient(edaServiceUrl);
   const downloadClient = useConfiguredDownloadClient(edaServiceUrl);
-  const computeClient = useConfiguredComputeClient(edaServiceUrl);
+
+  const projectId = useWdkService(
+    async (wdkService) => (await wdkService.getConfig()).projectId
+  );
+  const isStudyExplorerWorkspace =
+    projectId != null && !EDA_PROJECT_IDS.includes(projectId);
 
   // The following useEffect handles when the user presses the back button and
   // is inadvertently moved back to a new analysis URL from their saved analysis URL
@@ -157,7 +166,7 @@ export function WorkspaceRouter({
               <AllAnalyses
                 analysisClient={analysisClient}
                 subsettingClient={subsettingClient}
-                exampleAnalysesAuthor={exampleAnalysesAuthor}
+                exampleAnalysesAuthors={exampleAnalysesAuthors}
                 showLoginForm={showLoginForm}
                 synchronizeWithUrl
                 updateDocumentTitle
@@ -193,7 +202,7 @@ export function WorkspaceRouter({
               <PublicAnalysesRoute
                 analysisClient={analysisClient}
                 subsettingClient={subsettingClient}
-                exampleAnalysesAuthor={exampleAnalysesAuthor}
+                exampleAnalysesAuthors={exampleAnalysesAuthors}
               />
             )}
           />
@@ -203,15 +212,13 @@ export function WorkspaceRouter({
             render={(props: RouteComponentProps<{ studyId: string }>) => (
               <WorkspaceContainer
                 {...props.match.params}
-                subsettingClient={subsettingClient}
-                dataClient={dataClient}
-                analysisClient={analysisClient}
-                downloadClient={downloadClient}
-                computeClient={computeClient}
+                edaServiceUrl={edaServiceUrl}
+                isStudyExplorerWorkspace={isStudyExplorerWorkspace}
               >
                 <StandaloneStudyPage
                   studyId={props.match.params.studyId}
                   showUnreleasedData={showUnreleasedData}
+                  isStudyExplorerWorkspace={isStudyExplorerWorkspace}
                 />
               </WorkspaceContainer>
             )}
@@ -221,11 +228,8 @@ export function WorkspaceRouter({
             render={(props: RouteComponentProps<{ studyId: string }>) => (
               <WorkspaceContainer
                 {...props.match.params}
-                subsettingClient={subsettingClient}
-                dataClient={dataClient}
-                analysisClient={analysisClient}
-                downloadClient={downloadClient}
-                computeClient={computeClient}
+                edaServiceUrl={edaServiceUrl}
+                isStudyExplorerWorkspace={isStudyExplorerWorkspace}
               >
                 <AnalysisPanel
                   {...props.match.params}
@@ -235,6 +239,8 @@ export function WorkspaceRouter({
                   downloadClient={downloadClient}
                   singleAppMode={singleAppMode}
                   showUnreleasedData={showUnreleasedData}
+                  helpTabContents={helpTabContents}
+                  isStudyExplorerWorkspace={isStudyExplorerWorkspace}
                 />
               </WorkspaceContainer>
             )}
@@ -289,11 +295,8 @@ export function WorkspaceRouter({
             ) => (
               <WorkspaceContainer
                 {...props.match.params}
-                subsettingClient={subsettingClient}
-                dataClient={dataClient}
-                analysisClient={analysisClient}
-                downloadClient={downloadClient}
-                computeClient={computeClient}
+                edaServiceUrl={edaServiceUrl}
+                isStudyExplorerWorkspace={isStudyExplorerWorkspace}
               >
                 <AnalysisPanel
                   {...props.match.params}
@@ -302,6 +305,8 @@ export function WorkspaceRouter({
                   downloadClient={downloadClient}
                   singleAppMode={singleAppMode}
                   showUnreleasedData={showUnreleasedData}
+                  helpTabContents={helpTabContents}
+                  isStudyExplorerWorkspace={isStudyExplorerWorkspace}
                 />
               </WorkspaceContainer>
             )}

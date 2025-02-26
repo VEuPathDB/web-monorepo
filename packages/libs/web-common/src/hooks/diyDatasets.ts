@@ -5,10 +5,12 @@ import { orderBy } from 'lodash';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 import { makeEdaRoute } from '../routes';
+import { assertIsVdiCompatibleWdkService } from '@veupathdb/user-datasets/lib/Service';
+import { projectId } from '../config';
 import {
-  isDiyWdkRecordId,
-  wdkRecordIdToDiyUserDatasetId,
-} from '@veupathdb/wdk-client/lib/Utils/diyDatasets';
+  UserDataset,
+  UserDatasetVDI,
+} from '@veupathdb/user-datasets/lib/Utils/types';
 
 export function useDiyDatasets() {
   const [requestTimestamp, setRequestTimestamp] = useState(() => Date.now());
@@ -19,40 +21,23 @@ export function useDiyDatasets() {
 
   const diyDatasets = useWdkService(
     async (wdkService) => {
-      const { records: datasetRecords } = await wdkService.getAnswerJson(
-        {
-          searchName: 'AllDatasets',
-          searchConfig: {
-            parameters: {},
-          },
-        },
-        {
-          attributes: [],
-        }
-      );
+      assertIsVdiCompatibleWdkService(wdkService);
+      const user = await wdkService.getCurrentUser();
+      if (user.isGuest) return [];
+      const userDatasets = await wdkService.getCurrentUserDatasets(projectId);
+      const unsortedDiyEntries = userDatasets.map(userDatasetToMenuItem);
+      return orderBy(unsortedDiyEntries, ({ name }) => name);
+    },
+    [requestTimestamp]
+  );
 
-      const unsortedDiyEntries = datasetRecords.flatMap((record) => {
-        const wdkDatasetId = record.id
-          .filter((part) => part.name === 'dataset_id')
-          .map((part) => part.value)[0];
-
-        if (wdkDatasetId == null || !isDiyWdkRecordId(wdkDatasetId)) {
-          return [];
-        }
-
-        const userDatasetId = wdkRecordIdToDiyUserDatasetId(wdkDatasetId);
-
-        return [
-          {
-            name: record.displayName,
-            wdkDatasetId,
-            userDatasetId,
-            baseEdaRoute: `${makeEdaRoute(wdkDatasetId)}`,
-            userDatasetsRoute: `/workspace/datasets/${userDatasetId}`,
-          },
-        ];
-      });
-
+  const communityDatasets = useWdkService(
+    async (wdkService) => {
+      assertIsVdiCompatibleWdkService(wdkService);
+      const userDatasets = await wdkService.getCommunityDatasets();
+      const unsortedDiyEntries = userDatasets
+        .filter((userDataset) => userDataset.projectIds.includes(projectId))
+        .map(userDatasetToMenuItem);
       return orderBy(unsortedDiyEntries, ({ name }) => name);
     },
     [requestTimestamp]
@@ -61,8 +46,27 @@ export function useDiyDatasets() {
   return useMemo(
     () => ({
       diyDatasets,
+      communityDatasets,
       reloadDiyDatasets,
     }),
-    [diyDatasets, reloadDiyDatasets]
+    [diyDatasets, communityDatasets, reloadDiyDatasets]
   );
+}
+
+export interface EnrichedUserDataset extends UserDatasetVDI {
+  wdkDatasetId: string;
+  baseEdaRoute: string;
+  userDatasetsRoute: string;
+}
+
+function userDatasetToMenuItem(
+  userDataset: UserDatasetVDI
+): EnrichedUserDataset {
+  const wdkDatasetId = `EDAUD_${userDataset.datasetId}`;
+  return {
+    wdkDatasetId,
+    baseEdaRoute: `${makeEdaRoute(wdkDatasetId)}`,
+    userDatasetsRoute: `/workspace/datasets/${userDataset.datasetId}`,
+    ...userDataset,
+  };
 }

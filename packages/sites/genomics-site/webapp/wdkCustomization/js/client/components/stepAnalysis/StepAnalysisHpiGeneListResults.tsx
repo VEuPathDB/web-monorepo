@@ -4,13 +4,13 @@ import {
   CommonResultTable,
   ColumnSettings,
 } from '@veupathdb/wdk-client/lib/Components/Shared/CommonResultTable';
-import Templates from '@veupathdb/wdk-client/lib/Components/Mesa/Templates';
+import Templates from '@veupathdb/coreui/lib/components/Mesa/Templates';
 
 import './StepAnalysisEnrichmentResult.scss';
-import { Tooltip } from '@veupathdb/wdk-client/lib/Components';
+import { Tooltip } from '@veupathdb/coreui';
 
 const baseColumnSettings: Pick<
-  ColumnSettings,
+  ColumnSettings<any>,
   'key' | 'renderCell' | 'sortable' | 'sortType' | 'type'
 >[] = [
   {
@@ -23,7 +23,7 @@ const baseColumnSettings: Pick<
     key: 'experimentName',
     renderCell: (cellProps: any) => (
       <Tooltip
-        content={Templates.htmlCell({
+        title={Templates.htmlCell({
           ...cellProps,
           key: 'description',
           value: cellProps.row.description,
@@ -79,14 +79,14 @@ const baseColumnSettings: Pick<
 const hpiGeneListResultColumns = (
   headerRow: any,
   headerDescription: any
-): ColumnSettings[] =>
+): ColumnSettings<any>[] =>
   baseColumnSettings.map((column) => ({
     ...column,
     name: headerRow[column.key],
     helpText: headerDescription[column.key],
   }));
 
-export const StepAnalysisHpiGeneListResults: React.SFC<StepAnalysisResultPluginProps> =
+export const StepAnalysisHpiGeneListResults: React.FunctionComponent<StepAnalysisResultPluginProps> =
   ({ analysisResult: { resultData, headerRow, headerDescription } }) => (
     <>
       <h3>Analysis Results: </h3>

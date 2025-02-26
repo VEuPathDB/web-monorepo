@@ -1,11 +1,10 @@
 import { ReactNode } from 'react';
 
-import { Switch, Redirect } from 'react-router-dom';
+import { Switch, Redirect, RouteComponentProps } from 'react-router-dom';
 
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
 
-import UserDatasetAllUploadsController from '../Controllers/UserDatasetAllUploadsController';
 import UserDatasetListController from '../Controllers/UserDatasetListController';
 import UserDatasetNewUploadController from '../Controllers/UserDatasetNewUploadController';
 
@@ -19,6 +18,7 @@ interface Props {
   workspaceTitle: string;
   helpTabContents?: ReactNode;
   dataNoun: DataNoun;
+  enablePublicUserDatasets: boolean;
 }
 
 function UserDatasetsWorkspace(props: Props) {
@@ -29,6 +29,7 @@ function UserDatasetsWorkspace(props: Props) {
     workspaceTitle,
     helpTabContents,
     dataNoun,
+    enablePublicUserDatasets,
   } = props;
 
   return (
@@ -48,10 +49,7 @@ function UserDatasetsWorkspace(props: Props) {
                 {
                   display: 'New upload',
                   route: '/new',
-                },
-                {
-                  display: 'Recent uploads',
-                  route: '/recent',
+                  exact: false,
                 },
               ]
             : [],
@@ -77,6 +75,7 @@ function UserDatasetsWorkspace(props: Props) {
               helpRoute={helpRoute}
               workspaceTitle={workspaceTitle}
               dataNoun={dataNoun}
+              enablePublicUserDatasets={enablePublicUserDatasets}
             />
           )}
           disclaimerProps={{ toDoWhatMessage: 'To view your datasets' }}
@@ -85,16 +84,13 @@ function UserDatasetsWorkspace(props: Props) {
           <WdkRoute
             requiresLogin
             exact
-            path={`${baseUrl}/new`}
-            component={() => (
+            path={`${baseUrl}/new/:type?`}
+            component={(childProps: RouteComponentProps<{ type?: string }>) => (
               <UserDatasetNewUploadController
                 baseUrl={baseUrl}
-                // TODO When more than one type is available, offer a data type selector
-                datasetUploadType={
-                  uploadPageConfig.uploadTypeConfig[
-                    uploadPageConfig.availableUploadTypes[0]
-                  ]
-                }
+                type={childProps.match.params.type}
+                availableTypes={uploadPageConfig.availableUploadTypes}
+                datasetUploadTypes={uploadPageConfig.uploadTypeConfig}
                 urlParams={props.urlParams}
               />
             )}
@@ -102,16 +98,31 @@ function UserDatasetsWorkspace(props: Props) {
               toDoWhatMessage: `To upload your dataset`,
               extraParagraphContent:
                 Object.entries(props.urlParams).length === 0 ? undefined : (
-                  <div>
-                    Afterwards, you will be taken back to an upload page with
-                    these details:
+                  <div style={{ width: '100%', paddingBottom: 20 }}>
+                    <div style={{ paddingBottom: 5, textAlign: 'center' }}>
+                      Afterwards, you will be taken back to an upload page with
+                      these details:
+                    </div>
+
                     <ul style={{ listStyle: 'none' }}>
                       {Object.entries(props.urlParams).map((e) => (
-                        <li key={e.join(' ')}>
-                          {e[0].charAt(0).toUpperCase() +
-                            e[0].slice(1).replace('_', ' ') +
-                            ': '}
-                          <code>{e[1]}</code>
+                        <li
+                          key={e.join(' ')}
+                          style={{
+                            paddingBottom: 5,
+                            maxWidth: '100%',
+                            overflowX: 'auto',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          <span style={{ fontWeight: 'bold' }}>
+                            {e[0].charAt(0).toUpperCase() +
+                              e[0].slice(1).replace('_', ' ') +
+                              ': '}
+                          </span>
+                          <code style={{ verticalAlign: 'bottom' }}>
+                            {e[1].trim()}
+                          </code>
                         </li>
                       ))}
                     </ul>
@@ -120,7 +131,7 @@ function UserDatasetsWorkspace(props: Props) {
             }}
           />
         )}
-        {uploadPageConfig.hasDirectUpload && (
+        {/* {uploadPageConfig.hasDirectUpload && (
           <WdkRoute
             requiresLogin
             exact
@@ -130,7 +141,7 @@ function UserDatasetsWorkspace(props: Props) {
             )}
             disclaimerProps={{ toDoWhatMessage: 'To view your recent uploads' }}
           />
-        )}
+        )} */}
         {helpTabContents != null && (
           <WdkRoute
             requiresLogin={false}

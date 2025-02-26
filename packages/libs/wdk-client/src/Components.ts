@@ -16,7 +16,6 @@ import ApplicationSpecificProperties from './Views/User/ApplicationSpecificPrope
 import ServerSideAttributeFilter from './Components/AttributeFilter/ServerSideAttributeFilter';
 import AccordionButton from './Components/CheckboxTree/AccordionButton';
 import CategoriesCheckboxTree from './Components/CheckboxTree/CategoriesCheckboxTree';
-import DataTable from './Components/DataTable/DataTable';
 import CollapsibleSection from './Components/Display/CollapsibleSection';
 import Sticky from './Components/Display/Sticky';
 import TabbableContainer from './Components/Display/TabbableContainer';
@@ -49,12 +48,11 @@ import LoadError from './Components/PageStatus/LoadError';
 import PermissionDenied from './Components/PageStatus/PermissionDenied';
 import Loading from './Components/Loading/Loading';
 import LoadingOverlay from './Components/Loading/LoadingOverlay';
-import * as Mesa from './Components/Mesa';
+import * as Mesa from '@veupathdb/coreui/lib/components/Mesa';
 import CommonModal from './Components/Overlays/CommonModal';
 import Dialog from './Components/Overlays/Dialog';
 import Modal from './Components/Overlays/Modal';
 import Popup from './Components/Overlays/Popup';
-import Tooltip from './Components/Overlays/Tooltip';
 import Tabs from './Components/Tabs/Tabs';
 import RealTimeSearchBox from './Components/SearchBox/RealTimeSearchBox';
 import AttributeCell from './Views/ResultTableSummaryView/AttributeCell';
@@ -69,6 +67,10 @@ import SliderInput from './Components/InputControls/SliderInput';
 import UnhandledErrors from './Views/UnhandledErrors/UnhandledErrors';
 import RecordNavigationSection from './Views/Records/RecordNavigation/RecordNavigationSection';
 import { SearchInputSelector } from './Views/Strategy/SearchInputSelector';
+import CollapsibleDetailsSection from './Components/Display/CollapsibleDetailsSection';
+
+export { NewIcon } from './Core/Style/Icons/NewIcon';
+export { BetaIcon } from './Core/Style/Icons/BetaIcon';
 
 export {
   AccordionButton,
@@ -79,8 +81,8 @@ export {
   Checkbox,
   CheckboxList,
   CollapsibleSection,
+  CollapsibleDetailsSection,
   CommonModal,
-  DataTable,
   DateRangeSelector,
   DateSelector,
   Dialog,
@@ -136,7 +138,6 @@ export {
   TextArea,
   TextBox,
   TextBoxMultivalued,
-  Tooltip,
   UnhandledErrors,
   AttributeCell,
   ResultTable,

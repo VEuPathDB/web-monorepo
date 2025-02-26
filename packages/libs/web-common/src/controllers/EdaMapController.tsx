@@ -20,13 +20,11 @@ export function EdaMapController() {
         siteInformationProps={{
           loginUrl: '/user/login',
           siteHomeUrl: webAppUrl,
-          // TODO Remove hardcoded logo after demo
-          // Hardcode veupathdb logo for now.
-          // siteLogoSrc: `${webAppUrl}/images/VEuPathDB/icons-footer/${projectId.toLowerCase()}.png`,
-          siteLogoSrc: `${webAppUrl}/images/VEuPathDB/icons-footer/VEuPathDB.png`,
+          siteLogoSrc: `${webAppUrl}/images/VEuPathDB/icons-footer/${projectId.toLowerCase()}.png`,
           siteName: projectConfig?.displayName ?? '',
         }}
-        sharingUrl={''}
+        sharingUrlPrefix={'/maps'}
+        showLinkToEda={projectId === 'ClinEpiDB'}
       />
     </Suspense>
   );

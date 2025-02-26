@@ -13,7 +13,6 @@ import {
   Trash,
 } from '@veupathdb/coreui/lib/components/icons';
 import { Chip, FilledButton, FloatingButton } from '@veupathdb/coreui';
-
 interface Props {
   analysis: Analysis | NewAnalysis;
   setAnalysisName: (name: string) => void;

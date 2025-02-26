@@ -1,6 +1,6 @@
 import { makeActionCreator, InferAction } from '../Utils/ActionCreatorUtils';
 import { StrategySummary } from '../Utils/WdkUser';
-import { MesaSortObject } from '../Core/CommonTypes';
+import { MesaSortObject } from '@veupathdb/coreui/lib/components/Mesa/types';
 
 export const openStrategiesListView = makeActionCreator('strategiesList/open');
 

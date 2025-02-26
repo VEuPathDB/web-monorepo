@@ -27,3 +27,30 @@
     }
   }
 }
+
+// marker highlight
+.highlight-marker {
+  &.chart-marker {
+    /* the rounded corner of the chart marker has 10px in radius */
+    border-radius: 10px;
+    /* add inset to reduce a gap between the element and the box-shadow */
+    box-shadow: -1px -0.5px 0px 6px rgba(255, 255, 0, 1),
+      -1px -0.5px 0px 2px rgba(255, 255, 0, 1) inset;
+  }
+
+  &.donut-marker,
+  &.bubble-marker {
+    /* probably add `&.bubble-marker` here too, after adding it in BubbleMarker.tsx's `L.divIcon()` */
+    border-radius: 50%;
+    /* add inset to reduce a gap between the element and the box-shadow */
+    box-shadow: 2.5px 2.5px 0px 6px rgba(255, 255, 0, 1),
+      2.5px 2.5px 0px 2px rgba(255, 255, 0, 1) inset;
+  }
+}
+
+// marker popup highlight
+.marker-popup-highlight .leaflet-popup-content-wrapper {
+  border-radius: 10px;
+  box-shadow: -1px -0.5px 0px 6px rgba(255, 255, 0, 1),
+    -1px -0.5px 0px 2px rgba(255, 255, 0, 1) inset;
+}

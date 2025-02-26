@@ -22,7 +22,7 @@ interface AnalysisNameDialogProps {
   redirectToNewAnalysis: () => void;
 }
 
-export function AnalysisNameDialog({
+export default function AnalysisNameDialog({
   isOpen,
   setIsOpen,
   initialAnalysisName,
@@ -30,11 +30,17 @@ export function AnalysisNameDialog({
   redirectToNewAnalysis,
 }: AnalysisNameDialogProps) {
   const [inputText, setInputText] = useState(initialAnalysisName);
+  const [continueText, setContinueText] =
+    useState<'Continue' | 'Rename and continue'>('Continue');
   const [nameIsValid, setNameIsValid] = useState(true);
+  const [disableButtons, setDisableButtons] = useState(false);
 
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newText = event.target.value;
     setInputText(newText);
+    setContinueText(
+      newText === initialAnalysisName ? 'Continue' : 'Rename and continue'
+    );
     // Currently the only requirement is no empty name
     newText.length > 0 ? setNameIsValid(true) : setNameIsValid(false);
   };
@@ -44,11 +50,12 @@ export function AnalysisNameDialog({
     setInputText(initialAnalysisName);
   };
 
-  const handleContinue = async () => {
-    // TypeScript says this `await` has no effect, but it seems to be required
-    // for this function to finish before the page redirect
-    await setAnalysisName(inputText);
-    redirectToNewAnalysis();
+  const handleContinue = () => {
+    setDisableButtons(true);
+    setAnalysisName(inputText);
+    // The timeout for saving an analysis is 1 second,
+    // so wait a bit longer than that
+    setTimeout(redirectToNewAnalysis, 1200);
   };
 
   return (
@@ -74,20 +81,23 @@ export function AnalysisNameDialog({
           error={!nameIsValid}
           // Currently the only requirement is no empty name
           helperText={nameIsValid ? ' ' : 'Name must not be blank'}
+          disabled={disableButtons}
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleCancel} color="secondary">
+        <Button
+          onClick={handleCancel}
+          color="secondary"
+          disabled={disableButtons}
+        >
           Cancel
         </Button>
         <Button
           onClick={handleContinue}
           color="primary"
-          disabled={!nameIsValid}
+          disabled={!nameIsValid || disableButtons}
         >
-          {inputText === initialAnalysisName
-            ? 'Continue'
-            : 'Rename and continue'}
+          {continueText}
         </Button>
       </DialogActions>
     </Dialog>

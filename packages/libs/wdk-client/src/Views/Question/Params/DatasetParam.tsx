@@ -156,14 +156,14 @@ const getStrategyId = (uiState: State, parameter: DatasetParam) =>
 type Section = {
   sourceType: State['sourceType'];
   label: string;
-  render: React.StatelessComponent<Props<DatasetParam, State>>;
+  render: React.FC<Props<DatasetParam, State>>;
   isAvailable?: (props: Props<DatasetParam, State>) => boolean;
 };
 
 const sections: Section[] = [
   {
     sourceType: 'idList',
-    label: 'Enter a list of IDs or text',
+    label: 'Enter a list of IDs',
     isAvailable: ({ uiState }) => !uiState.loadingIdList,
     render: ({ ctx, dispatch, parameter, uiState }) => (
       <div

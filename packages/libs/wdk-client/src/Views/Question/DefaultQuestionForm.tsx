@@ -30,6 +30,8 @@ import StepValidationInfo from '../../Views/Question/StepValidationInfo';
 import { Tabs } from '../../Components';
 
 import '../../Views/Question/DefaultQuestionForm.scss';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { BetaIcon } from '../../Core/Style/Icons/BetaIcon';
 
 type TextboxChangeHandler = (
   event: React.ChangeEvent<HTMLInputElement>
@@ -239,6 +241,7 @@ export default function DefaultQuestionForm(props: Props) {
           submissionMetadata.type === 'edit-step'
         }
         headerText={`Identify ${recordClass.displayNamePlural} based on ${question.displayName}`}
+        isBeta={question.isBeta}
       />
       <Tabs
         activeTab={selectedTab}
@@ -263,12 +266,17 @@ export default function DefaultQuestionForm(props: Props) {
 type QuestionHeaderProps = {
   headerText: string;
   showHeader: boolean;
+  isBeta?: boolean;
 };
 
 export function QuestionHeader(props: QuestionHeaderProps) {
   return props.showHeader ? (
     <div className={cx('QuestionHeader')}>
-      <h1>{props.headerText}</h1>
+      <h1>
+        {/** NOTE: Remove the WGCNA hardcoding when appropriate */}
+        {safeHtml(props.headerText)}{' '}
+        {(props.isBeta || props.headerText.includes('WGCNA')) && <BetaIcon />}
+      </h1>
     </div>
   ) : (
     <></>
@@ -324,12 +332,24 @@ export function DefaultGroup(props: DefaultGroupProps) {
       uiState={uiState}
       onVisibilityChange={onVisibilityChange}
     >
-      <ParameterList
-        parameterMap={question.parametersByName}
-        parameterElements={parameterElements}
-        parameters={group.parameters}
-        paramDependenciesUpdating={paramDependenciesUpdating}
-      />
+      <>
+        {question.searchVisibleHelp !== undefined && (
+          <Banner
+            // 'normal' renders a banner w/ gray background
+            banner={{
+              type: 'normal',
+              message: safeHtml(question.searchVisibleHelp, null, 'div'),
+              hideIcon: true,
+            }}
+          />
+        )}
+        <ParameterList
+          parameterMap={question.parametersByName}
+          parameterElements={parameterElements}
+          parameters={group.parameters}
+          paramDependenciesUpdating={paramDependenciesUpdating}
+        />
+      </>
     </Group>
   );
 }
@@ -375,6 +395,15 @@ function ShowHideGroup(props: GroupProps) {
         {group.displayName}
       </button>
       <div className={cx('ShowHideGroupContent')}>
+        {isVisible && group.description && (
+          <Banner
+            banner={{
+              type: 'normal',
+              hideIcon: true,
+              message: safeHtml(group.description, null, 'div'),
+            }}
+          />
+        )}
         {isVisible ? props.children : null}
       </div>
     </div>
@@ -407,13 +436,55 @@ export function ParameterList(props: ParameterListProps) {
                 !!paramDependenciesUpdating[parameter.name]
               }
             />
-            {parameter.visibleHelp !== undefined && (
-              <div className={cx('VisibleHelp')}>
-                {safeHtml(parameter.visibleHelp)}
+            <div
+              className={cx(
+                'ParameterControlContainer' +
+                  (parameter.visibleHelp
+                    ? parameter.visibleHelpPosition &&
+                      parameter.visibleHelpPosition === 'right'
+                      ? '_VisibleHelpRight'
+                      : ''
+                    : '')
+              )}
+            >
+              {parameter.visibleHelp !== undefined && (
+                <div
+                  className={
+                    parameter.visibleHelpPosition &&
+                    parameter.visibleHelpPosition === 'right'
+                      ? cx('VisibleHelpContainer_Right')
+                      : ''
+                  }
+                >
+                  <Banner
+                    banner={{
+                      // 'normal' renders a banner w/ gray background
+                      type: 'normal',
+                      message: safeHtml(parameter.visibleHelp, null, 'div'),
+                      hideIcon: true,
+                      spacing:
+                        parameter.visibleHelpPosition &&
+                        parameter.visibleHelpPosition === 'right'
+                          ? { margin: '10px' }
+                          : { margin: '10px 0' },
+                      width: 'auto',
+                    }}
+                  />
+                </div>
+              )}
+              <div
+                className={
+                  cx('ParameterControl') +
+                  (parameter.visibleHelp
+                    ? parameter.visibleHelpPosition &&
+                      parameter.visibleHelpPosition === 'right'
+                      ? ' ControlLeft'
+                      : ''
+                    : '')
+                }
+              >
+                {parameterElements[parameter.name]}
               </div>
-            )}
-            <div className={cx('ParameterControl')}>
-              {parameterElements[parameter.name]}
             </div>
           </React.Fragment>
         ))}
@@ -428,12 +499,12 @@ function ParameterHeading(props: {
   const { parameter, paramDependencyUpdating } = props;
   return (
     <div className={cx('ParameterHeading')}>
-      <h2>
+      <h4>
         <HelpIcon>{safeHtml(parameter.help)}</HelpIcon> {parameter.displayName}
         {paramDependencyUpdating && (
           <IconAlt fa="circle-o-notch" className="fa-spin fa-fw" />
         )}
-      </h2>
+      </h4>
     </div>
   );
 }

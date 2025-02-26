@@ -18,7 +18,7 @@ let sequenceTypes = [
 ];
 
 let defLineOptions = [
-  { value: '1', display: 'Only Gene ID' },
+  { value: '1', display: 'Only Unique ID' },
   { value: '0', display: 'Full Fasta Header' },
 ];
 

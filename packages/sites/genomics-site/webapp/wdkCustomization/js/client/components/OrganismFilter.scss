@@ -89,6 +89,12 @@
     white-space: nowrap;
     width: 18em;
 
+    &:hover,
+    &:focus {
+      background-color: #396aa4;
+      background-image: none;
+    }
+
     &Text {
       margin: 0 2em;
     }

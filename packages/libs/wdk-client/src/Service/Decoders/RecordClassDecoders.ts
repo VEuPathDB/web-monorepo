@@ -23,7 +23,7 @@ export const reporterDecoder: Decode.Decoder<Reporter> = Decode.combine(
   Decode.field('name', Decode.string),
   Decode.field('type', Decode.string),
   Decode.field('displayName', Decode.string),
-  Decode.field('description', Decode.string),
+  Decode.field('description', Decode.optional(Decode.string)),
   Decode.field('isInReport', Decode.boolean),
   Decode.field('scopes', Decode.arrayOf(Decode.string))
 );
@@ -32,6 +32,7 @@ export const attributeFieldDecoder: Decode.Decoder<AttributeField> =
   Decode.combine(
     namedModelEntityDecoder,
     Decode.field('help', Decode.optional(Decode.string)),
+    Decode.field('htmlHelp', Decode.optional(Decode.string)),
     Decode.field('align', Decode.optional(Decode.string)),
     Decode.field('isSortable', Decode.boolean),
     Decode.field('isRemovable', Decode.boolean),

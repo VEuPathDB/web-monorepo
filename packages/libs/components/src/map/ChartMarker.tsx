@@ -1,4 +1,3 @@
-import React from 'react';
 import L from 'leaflet';
 
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
@@ -15,17 +14,20 @@ import {
   MarkerScaleDefault,
 } from '../types/plots';
 
+export type BaseMarkerData = {
+  value: number;
+  label: string;
+  color?: string;
+  count?: number;
+};
+
 export interface ChartMarkerProps
   extends BoundsDriftMarkerProps,
     MarkerScaleAddon,
     DependentAxisLogScaleAddon {
   borderColor?: string;
   borderWidth?: number;
-  data: {
-    value: number;
-    label: string;
-    color?: string;
-  }[];
+  data: BaseMarkerData[];
   isAtomic?: boolean; // add a special thumbtack icon if this is true (it's a marker that won't disaggregate if zoomed in further)
   // changed to dependentAxisRange
   dependentAxisRange?: NumberRange | null; // y-axis range for setting global max
@@ -44,11 +46,15 @@ export interface ChartMarkerProps
  * - accordingly icon size could be reduced
  */
 export default function ChartMarker(props: ChartMarkerProps) {
+  const selectedMarkers = props.selectedMarkers;
+  const setSelectedMarkers = props.setSelectedMarkers;
+
   const { html: svgHTML, size, sumValuesString } = chartMarkerSVGIcon(props);
 
   // set icon
   let HistogramIcon: any = L.divIcon({
-    className: 'leaflet-canvas-icon',
+    // add class, highlight-chartmarker, for panning
+    className: 'leaflet-canvas-icon marker-id-' + props.id + ' chart-marker',
     iconSize: new L.Point(size, size),
     iconAnchor: new L.Point(size / 2, size / 2), // location of topleft corner: this is used for centering of the icon like transform/translate in CSS
     html: svgHTML, // divIcon HTML svg code generated above
@@ -112,8 +118,13 @@ export default function ChartMarker(props: ChartMarkerProps) {
           width: popupSize,
         },
       }}
+      getVerticalPopupExtraOffset={() => [-3, -7]}
+      getHorizontalPopupExtraOffset={() => [-6, -7]}
       showPopup={props.showPopup}
       popupClass="histogram-popup"
+      // pass // selectedMarkers state and setState
+      selectedMarkers={selectedMarkers}
+      setSelectedMarkers={setSelectedMarkers}
     />
   );
 }
@@ -313,5 +324,20 @@ function chartMarkerSVGIcon(props: ChartMarkerStandaloneProps): {
     html: svgHTML,
     size: xSize + marginX + borderWidth,
     sumValuesString,
+  };
+}
+
+export function getChartMarkerDependentAxisRange(
+  data: ChartMarkerProps['data'],
+  isLogScale: boolean
+) {
+  return {
+    min: isLogScale
+      ? Math.min(
+          0.1,
+          ...data.filter(({ value }) => value > 0).map(({ value }) => value)
+        )
+      : 0,
+    max: Math.max(...data.map((d) => d.value)),
   };
 }

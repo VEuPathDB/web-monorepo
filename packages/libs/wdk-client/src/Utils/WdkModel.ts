@@ -46,7 +46,7 @@ export interface Reporter {
   name: string;
   type: string;
   displayName: string;
-  description: string;
+  description?: string;
   isInReport: boolean;
   scopes: string[];
 }
@@ -60,11 +60,14 @@ interface ParameterBase extends NamedModelEntity {
   dependentParams: string[];
   allowEmptyValue: boolean;
   visibleHelp?: string;
+  visibleHelpPosition?: string;
 }
 
 export interface StringParam extends ParameterBase {
   type: 'string';
   length: number;
+  isMultiLine: boolean;
+  isNumber: boolean;
 }
 
 export interface TimestampParam extends ParameterBase {
@@ -270,6 +273,8 @@ export interface Question extends UrlModelEntity {
   paramNames: string[];
   queryName?: string;
   isCacheable: boolean;
+  isBeta?: boolean;
+  searchVisibleHelp?: string;
 }
 
 export interface QuestionWithParameters extends Question {
@@ -308,6 +313,7 @@ export type ParamUIState =
 
 export interface AttributeField extends NamedModelEntity {
   help?: string;
+  htmlHelp?: string;
   align?: string;
   isSortable: boolean;
   isRemovable: boolean;

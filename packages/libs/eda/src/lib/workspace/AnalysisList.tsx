@@ -131,7 +131,7 @@ export function AnalysisList(props: Props) {
           ),
         },
       ],
-      rows: analysisList,
+      rows: analysisList ?? [],
       columns: [
         {
           key: 'name',

@@ -52,7 +52,10 @@ class RadioList extends React.Component<Props> {
     return (
       <ul className={className}>
         {this.props.items.map((item) => (
-          <li key={item.value} className={item.disabled ? 'disabled' : ''}>
+          <li
+            key={item.value}
+            className={item.disabled ? 'disabled' : undefined}
+          >
             <label>
               <input
                 type="radio"

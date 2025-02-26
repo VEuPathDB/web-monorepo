@@ -7,11 +7,14 @@ import React, {
   useMemo,
 } from 'react';
 import { connect, useSelector } from 'react-redux';
+import { useLocation } from 'react-router';
 
 import { get, memoize } from 'lodash';
 
 // @ts-ignore
 import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
+// @ts-ignore
+import newImage from '@veupathdb/wdk-client/lib/Core/Style/images/new-feature.png';
 
 import makeSnackbarProvider, {
   SnackbarStyleProps,
@@ -45,14 +48,13 @@ import {
 } from '@veupathdb/web-common/lib/components/homepage/Utils';
 import {
   useUserDatasetsWorkspace,
-  useEda,
   edaServiceUrl,
+  showUnreleasedData,
 } from '@veupathdb/web-common/lib/config';
 import { useAnnouncementsState } from '@veupathdb/web-common/lib/hooks/announcements';
 import { useCommunitySiteRootUrl } from '@veupathdb/web-common/lib/hooks/staticData';
 import { STATIC_ROUTE_PATH } from '@veupathdb/web-common/lib/routes';
 import { formatReleaseDate } from '@veupathdb/web-common/lib/util/formatters';
-import { useWdkStudyRecords } from '@veupathdb/eda/lib/core/hooks/study';
 import { getWdkStudyRecords } from '@veupathdb/eda/lib/core/utils/study-records';
 
 import { PreferredOrganismsSummary } from '@veupathdb/preferred-organisms/lib/components/PreferredOrganismsSummary';
@@ -62,15 +64,16 @@ import { Props as PageProps } from '@veupathdb/wdk-client/lib/Components/Layout/
 import { PageDescription } from './PageDescription';
 import { makeVpdbClassNameHelper } from './Utils';
 
-import './VEuPathDBHomePage.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import SubsettingClient from '@veupathdb/eda/lib/core/api/SubsettingClient';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
-import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { StudyRecord } from '@veupathdb/eda/lib/core/types/study';
-import { Warning } from '@veupathdb/coreui';
+import { Tooltip, Warning } from '@veupathdb/coreui';
+
+import './VEuPathDBHomePage.scss';
+import { searchTree } from '../../selectors/QueryGridSelectors';
+import { ProfileModal } from '@veupathdb/web-common/lib/components/ProfileModal';
 
 const vpdbCx = makeVpdbClassNameHelper('');
 
@@ -115,6 +118,10 @@ const VEuPathDBHomePageViewStandard: FunctionComponent<Props> = (props) => {
   const { isHomePage, classNameModifier } = props;
   const [headerExpanded, setHeaderExpanded] = useState(true);
   const [footerThin, setFooterThin] = useState(true);
+
+  const location = useLocation();
+  const shouldHideOrgPrefsSubheader =
+    location.pathname.includes('workspace/analyses');
 
   useEffect(() => {
     if (isHomePage && props.displayName) {
@@ -261,9 +268,11 @@ const VEuPathDBHomePageViewStandard: FunctionComponent<Props> = (props) => {
               branding={branding}
             />
           </ErrorBoundary>
-          <div className={subHeaderClassName}>
-            <PreferredOrganismsSummary />
-          </div>
+          {!shouldHideOrgPrefsSubheader && (
+            <div className={subHeaderClassName}>
+              <PreferredOrganismsSummary />
+            </div>
+          )}
           <div className={vpdbCx('Announcements')}>
             <Announcements
               closedBanners={closedBanners}
@@ -279,6 +288,7 @@ const VEuPathDBHomePageViewStandard: FunctionComponent<Props> = (props) => {
             </ErrorBoundary>
           )}
           <Main containerClassName={mainClassName}>{props.children}</Main>
+          <ProfileModal />
           {isHomePage && (
             <ErrorBoundary>
               <NewsPane
@@ -330,9 +340,7 @@ const VEuPathDB = 'VEuPathDB';
 const UniDB = 'UniDB';
 const DB = 'DB';
 
-// TODO Update this const once we know the question name to use.
-// const QUESTION_FOR_MAP_DATASETS = 'DatasetsForMapMenu';
-const QUESTION_FOR_MAP_DATASETS = 'AllDatasets';
+const QUESTION_FOR_MAP_DATASETS = 'MapStudiesForToolbar';
 
 function makeStaticPageRoute(subPath: string) {
   return `${STATIC_ROUTE_PATH}${subPath}`;
@@ -368,9 +376,8 @@ const useHeaderMenuItems = (
       (q) => q.urlSegment === QUESTION_FOR_MAP_DATASETS
     )
   );
-  // const showInteractiveMaps = mapMenuItemsQuestion != null;
-  // const mapMenuItems = useMapMenuItems(mapMenuItemsQuestion);
-  const showInteractiveMaps = projectId === VectorBase && !!useEda;
+  const showInteractiveMaps = mapMenuItemsQuestion != null;
+  const mapMenuItems = useMapMenuItems(mapMenuItemsQuestion);
 
   // type: reactRoute, webAppRoute, externalLink, subMenu, custom
   const fullMenuItemEntries: HeaderMenuItemEntry[] = [
@@ -412,7 +419,6 @@ const useHeaderMenuItems = (
           tooltip: 'Instantaneous, collaborative, genome annotation editor',
           type: 'reactRoute',
           url: makeStaticPageRoute(`/apollo_help.html`),
-          target: '_blank',
           metadata: {
             include: [
               AmoebaDB,
@@ -437,7 +443,6 @@ const useHeaderMenuItems = (
           display: 'BLAST (multi-query capable)',
           type: 'reactRoute',
           url: '/workspace/blast/new',
-          target: '_blank',
         },
         {
           key: 'companion',
@@ -446,7 +451,6 @@ const useHeaderMenuItems = (
           tooltip:
             'Annotate your sequence and determine orthology, phylogeny & synteny',
           url: 'https://companion.ac.uk/',
-          target: '_blank',
           metadata: {
             exclude: [VectorBase],
           },
@@ -458,7 +462,6 @@ const useHeaderMenuItems = (
           tooltip:
             'CRISPR GuideXpress at DRSC/TRiP Functional Genomics Resources',
           url: 'https://www.flyrnai.org/tools/fly2mosquito/web/',
-          target: '_blank',
           metadata: {
             include: [VectorBase],
           },
@@ -469,7 +472,6 @@ const useHeaderMenuItems = (
           type: 'externalLink',
           tooltip: 'Eukaryotic Pathogen CRISPR guide RNA/DNA Design Tool',
           url: 'http://grna.ctegd.uga.edu',
-          target: '_blank',
           metadata: {
             exclude: [VectorBase],
           },
@@ -487,30 +489,12 @@ const useHeaderMenuItems = (
           },
         },
         {
-          key: 'galaxy',
-          display: 'Galaxy',
-          type: 'reactRoute',
-          url: '/galaxy-orientation',
-          target: '_blank',
-        },
-        {
           key: 'jbrowse',
           display: 'Genome browser',
           type: 'reactRoute',
           url: '/jbrowse?data=/a/service/jbrowse/tracks/default',
-          target: '_blank',
           metadata: {
             exclude: [EuPathDB],
-          },
-        },
-        {
-          key: 'ancillary-genome-browser',
-          display: 'Ancillary genome browser',
-          type: 'externalLink',
-          url: 'http://ancillary.toxodb.org',
-          target: '_blank',
-          metadata: {
-            include: [ToxoDB],
           },
         },
         {
@@ -519,7 +503,6 @@ const useHeaderMenuItems = (
           tooltip: 'Free to use pictures of vectors',
           type: 'reactRoute',
           url: makeStaticPageRoute('/VectorBase/imageGallery.html'),
-          target: '_blank',
           metadata: {
             include: [VectorBase],
           },
@@ -531,17 +514,60 @@ const useHeaderMenuItems = (
             'Your online resource for CRISPR Cas9 T7 RNA Polymerase gene editing in kinetoplastids',
           type: 'externalLink',
           url: 'http://www.leishgedit.net',
-          target: '_blank',
           metadata: {
             include: [TriTrypDB],
           },
+        },
+        !showInteractiveMaps
+          ? {
+              type: 'custom',
+              key: 'maps-alpha',
+              display: null,
+              metadata: {
+                test: () => showInteractiveMaps,
+              },
+            }
+          : mapMenuItems == null
+          ? {
+              key: 'maps-alpha',
+              type: 'custom',
+              display: (
+                <>
+                  MapVEu &mdash; Interactive maps{' '}
+                  <Loading
+                    style={{
+                      display: 'inline-block',
+                      height: '1em',
+                      width: '1em',
+                      padding: 0,
+                    }}
+                    radius={1}
+                  />
+                </>
+              ),
+            }
+          : mapMenuItems.length === 1
+          ? {
+              ...mapMenuItems[0],
+              display: <>MapVEu &mdash; {mapMenuItems[0].display} </>,
+            }
+          : {
+              key: 'maps-alpha',
+              type: 'subMenu',
+              display: <>MapVEu &mdash; Interactive maps </>,
+              items: mapMenuItems,
+            },
+        {
+          key: 'ncbi-primer3',
+          display: 'NCBI Primer3',
+          type: 'externalLink',
+          url: 'https://www.ncbi.nlm.nih.gov/tools/primer-blast/',
         },
         {
           key: 'plasmoap',
           display: 'PlasmoAP',
           type: 'reactRoute',
           url: '/plasmoap',
-          target: '_blank',
           metadata: {
             include: [PlasmoDB],
           },
@@ -551,87 +577,27 @@ const useHeaderMenuItems = (
           display: 'PATS',
           type: 'externalLink',
           url: 'http://modlabcadd.ethz.ch/software/pats/',
-          target: '_blank',
           metadata: {
             include: [ PlasmoDB ]
           }
         },*/
         {
-          key: 'mapveu',
-          display: 'MapVEu',
-          tooltip: 'Population Biology map',
-          type: 'externalLink',
-          url: '/popbio-map/web/',
-          target: '_blank',
-          metadata: {
-            include: [VectorBase],
-          },
-        },
-        {
-          key: 'mapveu',
-          display: 'MapVEu',
-          tooltip: 'Population Biology map',
-          type: 'externalLink',
-          url: 'https://vectorbase.org/popbio-map/web/',
-          target: '_blank',
-          metadata: {
-            include: [EuPathDB, UniDB],
-          },
-        },
-        // {
-        //   key: 'maps-alpha',
-        //   display: (
-        //     <>
-        //       Interactive maps <img alt="BETA" src={betaImage} />
-        //     </>
-        //   ),
-        //   type: 'subMenu',
-        //   metadata: {
-        //     test: () => showInteractiveMaps,
-        //   },
-        //   items: mapMenuItems ?? [
-        //     {
-        //       key: 'maps-loading',
-        //       type: 'custom',
-        //       display: <Loading radius={4} />,
-        //     },
-        //   ],
-        // },
-        {
-          type: 'reactRoute',
-          display: (
-            <>
-              MapVEu - Multi-study Interactive Map{' '}
-              <img alt="BETA" src={betaImage} />
-            </>
-          ),
-          key: 'map--mega-study',
-          url: '/workspace/maps/DS_480c976ef9/new',
-          target: '_blank',
-          metadata: {
-            test: () => showInteractiveMaps,
-          },
-        },
-        {
           key: 'pubcrawler',
           display: 'PubMed and Entrez',
           type: 'externalLink',
           url: `/pubcrawler/${displayName}`,
-          target: '_blank',
         },
         {
           key: 'srt',
           display: 'Sequence retrieval',
           type: 'reactRoute',
           url: '/fasta-tool',
-          target: '_blank',
         },
         {
           key: 'webservices',
           display: 'Web services',
           type: 'reactRoute',
           url: makeStaticPageRoute(`/content/${displayName}/webServices.html`),
-          target: '_blank',
         },
       ],
     },
@@ -640,12 +606,6 @@ const useHeaderMenuItems = (
       display: 'My Workspace',
       type: 'subMenu',
       items: [
-        {
-          key: 'galaxy-analyses',
-          display: 'Analyze my data (Galaxy)',
-          type: 'reactRoute',
-          url: '/galaxy-orientation',
-        },
         {
           key: 'basket',
           display: 'My baskets',
@@ -713,32 +673,10 @@ const useHeaderMenuItems = (
           url: '/search/dataset/AllDatasets/result',
         },
         {
-          key: 'datasets-in-progress2',
-          display: 'Data sets we are working on',
-          type: 'reactRoute',
-          url: makeStaticPageRoute('/dataInprogress.html'),
-        },
-        {
-          key: 'data-files-eupathdb',
-          display: 'Download data files',
-          type: 'externalLink',
-          url: '/common/downloads',
-          metadata: {
-            exclude: [EuPathDB],
-          },
-        },
-        {
           key: 'data-files-eupathdb-beta',
-          display: (
-            <>
-              Download data files <img alt="BETA" src={betaImage} />
-            </>
-          ),
+          display: <>Download data files</>,
           type: 'reactRoute',
           url: '/downloads',
-          metadata: {
-            exclude: [EuPathDB],
-          },
         },
         {
           key: 'mahpic-data',
@@ -789,98 +727,84 @@ const useHeaderMenuItems = (
               display: 'VEuPathDB',
               type: 'externalLink',
               url: 'https://veupathdb.org',
-              target: '_blank',
             },
             {
               key: 'amoebadb',
               display: 'AmoebaDB',
               type: 'externalLink',
               url: 'https://amoebadb.org',
-              target: '_blank',
             },
             {
               key: 'cryptodb',
               display: 'CryptoDB',
               type: 'externalLink',
               url: 'https://cryptodb.org',
-              target: '_blank',
             },
             {
               key: 'fungidb',
               display: 'FungiDB',
               type: 'externalLink',
               url: 'https://fungidb.org',
-              target: '_blank',
             },
             {
               key: 'giardiadb',
               display: 'GiardiaDB',
               type: 'externalLink',
               url: 'https://giardiadb.org',
-              target: '_blank',
             },
             {
               key: 'hostdb',
               display: 'HostDB',
               type: 'externalLink',
               url: 'https://hostdb.org',
-              target: '_blank',
             },
             {
               key: 'microsporidiadb',
               display: 'MicrosporidiaDB',
               type: 'externalLink',
               url: 'https://microsporidiadb.org',
-              target: '_blank',
             },
             {
               key: 'piroplasmadb',
               display: 'PiroplasmaDB',
               type: 'externalLink',
               url: 'https://piroplasmadb.org',
-              target: '_blank',
             },
             {
               key: 'plasmodb',
               display: 'PlasmoDB',
               type: 'externalLink',
               url: 'https://plasmodb.org',
-              target: '_blank',
             },
             {
               key: 'toxodb',
               display: 'ToxoDB',
               type: 'externalLink',
               url: 'https://toxodb.org',
-              target: '_blank',
             },
             {
               key: 'trichdb',
               display: 'TrichDB',
               type: 'externalLink',
               url: 'https://trichdb.org',
-              target: '_blank',
             },
             {
               key: 'tritrypdb',
               display: 'TriTrypDB',
               type: 'externalLink',
               url: 'https://tritrypdb.org',
-              target: '_blank',
             },
             {
               key: 'vectorbase',
               display: 'VectorBase',
               type: 'externalLink',
               url: 'https://vectorbase.org',
-              target: '_blank',
             },
             {
               key: 'orthomcl',
               display: 'OrthoMCL',
               type: 'externalLink',
               url: 'https://orthomcl.org',
-              target: '_blank',
             },
           ],
         },
@@ -925,7 +849,6 @@ const useHeaderMenuItems = (
               display: 'Publications that use our resources',
               type: 'externalLink',
               url: 'https://scholar.google.com/scholar?hl=en&as_sdt=0,39&q=OrthoMCL+OR+PlasmoDB+OR+ToxoDB+OR+CryptoDB+OR+TrichDB+OR+GiardiaDB+OR+TriTrypDB+OR+AmoebaDB+OR+MicrosporidiaDB+OR+%22FungiDB%22+OR+PiroplasmaDB+OR+%22vectorbase%22+OR+veupathdb+OR+ApiDB+OR+EuPathDB+-encrypt+-cryptography+-hymenoptera&scisbd=1',
-              target: '_blank',
             },
           ],
         },
@@ -1029,23 +952,10 @@ const useHeaderMenuItems = (
               url: makeStaticPageRoute('/infrastructure.html'),
             },
             {
-              key: 'usage-metrics',
-              display: 'Monthly Usage Metrics',
-              type: 'externalLink',
-              url: '/reports/VEuPathDB_BRC4_usage_metrics_report.pdf',
-            },
-            {
-              key: 'perf-metrics',
-              display: 'Monthly Performance Metrics',
-              type: 'externalLink',
-              url: '/reports/VEuPathDB_BRC4_performance_metrics_report.pdf',
-            },
-            {
               key: 'usage-statistics',
               display: 'Website usage statistics',
               type: 'externalLink',
               url: '/awstats/awstats.pl',
-              target: '_blank',
               metadata: {
                 exclude: [EuPathDB],
               },
@@ -1055,7 +965,6 @@ const useHeaderMenuItems = (
               display: 'All websites usage statistics',
               type: 'externalLink',
               url: '/awstats/awstats.pl?config=All_EBRC_Combined',
-              target: '_blank',
               metadata: {
                 include: [EuPathDB],
               },
@@ -1070,11 +979,56 @@ const useHeaderMenuItems = (
       type: 'subMenu',
       items: [
         {
-          key: 'landing',
+          key: 'learning',
           display: 'Learn how to use VEuPathDB',
-          type: 'reactRoute',
-          url: makeStaticPageRoute('/landing.html'),
+          type: 'subMenu',
+          openByDefault: true,
+          items: [
+            {
+              key: 'faqs',
+              display: 'FAQs',
+              type: 'reactRoute',
+              url: makeStaticPageRoute(`/faq.html`),
+            },
+            {
+              key: 'webinars',
+              display: 'Webinars',
+              type: 'reactRoute',
+              url: makeStaticPageRoute(`/webinars.html`),
+            },
+            {
+              key: 'workshops',
+              display: 'Workshops',
+              type: 'reactRoute',
+              url: makeStaticPageRoute(`/workshops.html`),
+            },
+            {
+              key: 'tutorials',
+              display: 'Tutorials',
+              type: 'reactRoute',
+              url: makeStaticPageRoute(`/tutorials.html`),
+            },
+            {
+              key: 'videos',
+              display: 'Videos',
+              type: 'externalLink',
+              url: 'https://www.youtube.com/user/EuPathDB/playlists',
+            },
+            {
+              key: 'methods',
+              display: 'Analysis methods',
+              type: 'reactRoute',
+              url: makeStaticPageRoute(`/methods.html`),
+            },
+            {
+              key: 'landing',
+              display: 'All learning resources',
+              type: 'reactRoute',
+              url: makeStaticPageRoute('/landing.html'),
+            },
+          ],
         },
+
         {
           key: 'our-glossary',
           display: `VEuPathDB glossary`,
@@ -1088,20 +1042,21 @@ const useHeaderMenuItems = (
           type: 'reactRoute',
           url: '/reset-session',
         },
-        {
-          key: 'user-doc',
-          display: 'Downloadable User documentation',
-          type: 'externalLink',
-          url: '/reports/VEuPathDB_User_Documentation.pdf',
-        },
       ],
+    },
+    {
+      key: 'subscr',
+      display: 'Subscriptions',
+      type: 'reactRoute',
+      target: '_blank',
+      url: makeStaticPageRoute('/subscriptions.html'),
     },
     {
       key: 'contact-us',
       display: 'Contact Us',
       type: 'reactRoute',
-      url: '/contact-us',
       target: '_blank',
+      url: '/contact-us',
     },
   ];
 
@@ -1154,8 +1109,7 @@ const filterMenuItemEntry = (
 
 // FIXME: Use a hook instead of "connect" to provide the global data
 const mapStateToProps = (state: RootState) => ({
-  // FIXME: This is not typesafe.
-  searchTree: get(state.globalData, 'searchTree') as CategoryTreeNode,
+  searchTree: searchTree(state),
   buildNumber: state.globalData.config?.buildNumber,
   releaseDate: state.globalData.config?.releaseDate,
   displayName: state.globalData.config?.displayName,
@@ -1188,28 +1142,54 @@ export const VEuPathDBHomePage = connect(mapStateToProps)(
 
 function useMapMenuItems(question?: Question) {
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
-  const studyAccessApi = useStudyAccessApi();
+  const studyAccessApi = useStudyAccessApi_tryCatch();
   const subsettingClient = useMemo(
     () => new SubsettingClient({ baseUrl: edaServiceUrl }, wdkService),
     [wdkService]
   );
-  const [mapMenuItems, setMapMenuItems] = useState<HeaderMenuItem[]>();
+  const [mapMenuItems, setMapMenuItems] = useState<HeaderMenuItemEntry[]>();
   useEffect(() => {
-    if (question == null) return;
+    if (question == null || studyAccessApi == null) return;
     getWdkStudyRecords(
       { studyAccessApi, subsettingClient, wdkService },
-      { searchName: question.urlSegment }
+      {
+        searchName: question.urlSegment,
+        attributes: ['is_public'],
+        // hasMap: true,
+      }
     ).then(
       (records) => {
-        const menuItems = records.map(
-          (record): HeaderMenuItem => ({
-            key: `map-${record.id[0].value}`,
-            display: record.displayName,
-            type: 'reactRoute',
-            url: `/workspace/maps/${record.id[0].value}/new`,
-          })
-        );
-        setMapMenuItems(menuItems);
+        const menuItems = records
+          .filter(
+            (record) =>
+              record.attributes.is_public === 'true' || showUnreleasedData
+          )
+          .map(
+            (record): HeaderMenuItemEntry => ({
+              key: `map-${record.id[0].value}`,
+              display:
+                record.attributes.is_public === 'true' ? (
+                  record.displayName
+                ) : (
+                  <Tooltip title="This dataset is under development and will not appear on live sites.">
+                    <div style={{ display: 'inline' }}>
+                      &#128679; {record.displayName}
+                    </div>
+                  </Tooltip>
+                ),
+              type: 'reactRoute',
+              url: `/workspace/maps/${record.id[0].value}/new`,
+            })
+          );
+        if (menuItems.length > 0) setMapMenuItems(menuItems);
+        else
+          setMapMenuItems([
+            {
+              key: 'map-empty',
+              type: 'custom',
+              display: 'No map datasets found',
+            },
+          ]);
       },
       (error) => {
         console.error(error);
@@ -1228,4 +1208,15 @@ function useMapMenuItems(question?: Question) {
     );
   }, [question, studyAccessApi, subsettingClient, wdkService]);
   return mapMenuItems;
+}
+
+function useStudyAccessApi_tryCatch() {
+  // useStudyAccessApi() will throw if WdkService isn't configured for study
+  // access. We can ignore the error and return `undefined` to allow the
+  // application to handle the absence of the configuration.
+  try {
+    return useStudyAccessApi();
+  } catch {
+    return;
+  }
 }

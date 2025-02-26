@@ -17,6 +17,7 @@ import {
 } from '../Utils/WdkUser';
 import { UserProfileFormData } from '../StoreModules/UserProfileStoreModule';
 import { InferType } from 'prop-types';
+import { makeCommonErrorMessage } from '../Utils/Errors';
 
 export type Action =
   | UserUpdateAction
@@ -516,11 +517,7 @@ export function submitProfileForm(
             ]),
         ])
         .catch((error) => {
-          let message =
-            error.status >= 400 && error.status !== 422
-              ? error.response
-              : // happen to know that 422s will have a general validation error message
-                JSON.parse(error.response).errors.general[0];
+          const message = makeCommonErrorMessage(error);
           console.error(message);
           return profileFormSubmissionStatus('error', formData, message);
         }),
@@ -554,11 +551,7 @@ export function submitRegistrationForm(
           profileFormSubmissionStatus('success', formData),
         ])
         .catch((error) => {
-          let message =
-            error.status >= 500
-              ? error.response
-              : // happen to know that 400s will have a general validation error message
-                JSON.parse(error.response).errors.general[0];
+          const message = makeCommonErrorMessage(error);
           console.error(message);
           return profileFormSubmissionStatus('error', formData, message);
         }),

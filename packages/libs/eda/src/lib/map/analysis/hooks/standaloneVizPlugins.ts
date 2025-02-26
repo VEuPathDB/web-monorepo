@@ -1,9 +1,12 @@
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import * as t from 'io-ts';
 import { ComputationPlugin } from '../../../core/components/computations/Types';
-import { ZeroConfigWithButton } from '../../../core/components/computations/ZeroConfiguration';
+import { ZeroConfiguration } from '../../../core/components/computations/ZeroConfiguration';
 import { FloatingLayout } from '../../../core/components/layouts/FloatingLayout';
-import { LayoutOptions } from '../../../core/components/layouts/types';
+import {
+  LayoutOptions,
+  TitleOptions,
+} from '../../../core/components/layouts/types';
 import {
   OverlayOptions,
   RequestOptionProps,
@@ -29,21 +32,30 @@ import { histogramRequest } from './plugins/histogram';
 import { scatterplotRequest } from './plugins/scatterplot';
 
 import TimeSeriesSVG from '../../../core/components/visualizations/implementations/selectorIcons/TimeSeriesSVG';
+import HistogramTimelineSVG from '../../../core/components/visualizations/implementations/selectorIcons/HistogramTimelineSVG';
+
 import _ from 'lodash';
+import { EntitySubtitleForViz } from '../mapTypes/shared';
 
 interface Props {
   selectedOverlayConfig?: OverlayConfig | BubbleOverlayConfig;
+  overlayHelp?: ReactNode;
+  selectedMarkers?: string[] | undefined;
 }
 
-type StandaloneVizOptions = LayoutOptions & OverlayOptions;
+type StandaloneVizOptions = LayoutOptions & OverlayOptions & TitleOptions;
 
 export function useStandaloneVizPlugins({
   selectedOverlayConfig,
+  overlayHelp = 'The overlay variable can be selected via the top-right panel.',
+  selectedMarkers,
 }: Props): Record<string, ComputationPlugin> {
   return useMemo(() => {
     function vizWithOptions(
       visualization: VisualizationPlugin<StandaloneVizOptions>
     ) {
+      const modifierKey =
+        window.navigator.platform.indexOf('Mac') === 0 ? 'Cmd' : 'Ctrl';
       return visualization.withOptions({
         hideFacetInputs: true, // will also enable table-only mode for mosaic
         hideShowMissingnessToggle: true,
@@ -67,8 +79,18 @@ export function useStandaloneVizPlugins({
             return overlayValues;
           }
         },
-        getOverlayVariableHelp: () =>
-          'The overlay variable can be selected via the top-right panel.',
+        getOverlayVariableHelp: () => overlayHelp,
+        getPlotSubtitle: () =>
+          selectedMarkers && selectedMarkers.length > 0
+            ? selectedMarkers.length > 1
+              ? EntitySubtitleForViz({ subtitle: 'for selected markers' })
+              : EntitySubtitleForViz({
+                  subtitle: `for selected marker - ${modifierKey}-click to add more`,
+                })
+            : EntitySubtitleForViz({
+                subtitle:
+                  'for all visible data on map - click markers to refine',
+              }),
       });
     }
 
@@ -99,8 +121,8 @@ export function useStandaloneVizPlugins({
     }
 
     const pluginBasics = {
-      configurationComponent: ZeroConfigWithButton,
-      isConfigurationValid: t.undefined.is,
+      configurationComponent: ZeroConfiguration,
+      isConfigurationComplete: t.undefined.is,
       createDefaultConfiguration: () => undefined,
     };
 
@@ -136,6 +158,12 @@ export function useStandaloneVizPlugins({
             vizWithOptions(histogramVisualization),
             histogramRequest
           ),
+          timeline: vizWithCustomizedGetRequest(
+            vizWithOptions(
+              histogramVisualization.withSelectorIcon(HistogramTimelineSVG)
+            ),
+            histogramRequest
+          ),
           boxplot: vizWithCustomizedGetRequest(
             vizWithOptions(boxplotVisualization),
             boxplotRequest
@@ -153,5 +181,5 @@ export function useStandaloneVizPlugins({
         },
       },
     };
-  }, [selectedOverlayConfig]);
+  }, [overlayHelp, selectedOverlayConfig, selectedMarkers]);
 }

@@ -9,49 +9,72 @@ import { StrategySummary } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import {
   clearBadUpload,
-  submitUploadForm,
+  receiveBadUpload,
+  requestUploadMessages,
+  trackUploadProgress,
 } from '../Actions/UserDatasetUploadActions';
 
 import UploadForm, { FormSubmission } from '../Components/UploadForm';
 
-import { assertIsUserDatasetUploadCompatibleWdkService } from '../Service/UserDatasetUploadWrappers';
-
 import { StateSlice } from '../StoreModules/types';
 
-import { DatasetUploadTypeConfigEntry } from '../Utils/types';
+import { datasetIdType, DatasetUploadTypeConfigEntry } from '../Utils/types';
+import { assertIsVdiCompatibleWdkService } from '../Service';
+import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
+import { UploadFormMenu } from '../Components/UploadFormMenu';
 
-interface Props<T extends string = string> {
+const SUPPORTED_FILE_UPLOAD_TYPES: string[] = [];
+
+interface Props {
+  baseUrl: string;
+  type?: string;
+  availableTypes: string[];
+  datasetUploadTypes: Record<string, DatasetUploadTypeConfigEntry<string>>;
+  urlParams: Record<string, string>;
+}
+
+export default function UserDatasetUploadSelector(props: Props) {
+  const { baseUrl, type, availableTypes, datasetUploadTypes, urlParams } =
+    props;
+
+  if (type == null && availableTypes.length !== 1) {
+    return (
+      <UploadFormMenu
+        availableTypes={availableTypes}
+        datasetUploadTypes={datasetUploadTypes}
+      />
+    );
+  }
+
+  const datasetUploadType = datasetUploadTypes[type ?? availableTypes[0]];
+  if (datasetUploadType == null) {
+    return <NotFoundController />;
+  }
+  return (
+    <InnerUserDatasetUploadController
+      baseUrl={baseUrl}
+      datasetUploadType={datasetUploadType}
+      urlParams={urlParams}
+    />
+  );
+}
+
+interface InnerProps<T extends string = string> {
   baseUrl: string;
   datasetUploadType: DatasetUploadTypeConfigEntry<T>;
   urlParams: Record<string, string>;
 }
 
-export default function UserDatasetUploadController({
+function InnerUserDatasetUploadController({
   baseUrl,
   datasetUploadType,
   urlParams,
-}: Props) {
+}: InnerProps) {
   useSetDocumentTitle(datasetUploadType.uploadTitle);
 
   const projectId = useWdkService(
     (wdkService) => wdkService.getConfig().then((config) => config.projectId),
     []
-  );
-
-  const supportedFileUploadTypes = useWdkService(
-    async (wdkService) => {
-      assertIsUserDatasetUploadCompatibleWdkService(wdkService);
-
-      if (projectId == null) {
-        return undefined;
-      }
-
-      return wdkService.getSupportedFileUploadTypes(
-        projectId,
-        datasetUploadType.type
-      );
-    },
-    [projectId, datasetUploadType.type]
   );
 
   const strategyOptions = useWdkService(
@@ -87,21 +110,48 @@ export default function UserDatasetUploadController({
     (stateSlice: StateSlice) => stateSlice.userDatasetUpload.badUploadMessage
   );
 
+  const uploadProgress = useSelector(
+    (stateSlice: StateSlice) => stateSlice.userDatasetUpload.uploadProgress
+  );
+
   const dispatch = useDispatch();
 
   const clearBadUploadMessage = useCallback(() => {
     dispatch(clearBadUpload);
   }, [dispatch]);
 
+  const dispatchUploadProgress = useCallback(() => {
+    dispatch(trackUploadProgress);
+  }, [dispatch]);
+
   const submitForm = useCallback(
-    (formSubmission: FormSubmission, redirectTo?: string) => {
-      dispatch(submitUploadForm(formSubmission, redirectTo));
+    (formSubmission: FormSubmission, baseUrl?: string) => {
+      dispatch(async ({ wdkService, transitioner }) => {
+        try {
+          assertIsVdiCompatibleWdkService(wdkService);
+          wdkService.addUserDataset(
+            formSubmission,
+            // callback to handle progress events
+            (progress: number | null) =>
+              dispatch(trackUploadProgress(progress)),
+            // callback to redirect to new dataset page
+            (datasetId: typeof datasetIdType) =>
+              baseUrl &&
+              transitioner.transitionToInternalPage(`${baseUrl}/${datasetId}`),
+            // callback to handle bad uploads
+            (error: string) => dispatch(receiveBadUpload(error))
+          );
+          return requestUploadMessages();
+        } catch (err) {
+          return receiveBadUpload(String(err) ?? 'Failed to upload dataset');
+        }
+      });
     },
     [dispatch]
   );
 
   return projectId == null ||
-    supportedFileUploadTypes == null ||
+    SUPPORTED_FILE_UPLOAD_TYPES == null ||
     strategyOptions == null ? (
     <Loading />
   ) : (
@@ -113,12 +163,17 @@ export default function UserDatasetUploadController({
         badUploadMessage={badUploadMessage}
         clearBadUpload={clearBadUploadMessage}
         submitForm={submitForm}
+        dispatchUploadProgress={dispatchUploadProgress}
+        uploadProgress={uploadProgress?.progress}
         urlParams={urlParams}
         strategyOptions={strategyOptions}
         resultUploadConfig={
           datasetUploadType.formConfig.uploadMethodConfig.result
         }
-        supportedFileUploadTypes={supportedFileUploadTypes}
+        supportedFileUploadTypes={SUPPORTED_FILE_UPLOAD_TYPES}
+        maxSizeBytes={
+          datasetUploadType.formConfig.uploadMethodConfig.file?.maxSizeBytes
+        }
       />
     </div>
   );

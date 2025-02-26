@@ -33,6 +33,7 @@ import MapVEuMap, { MapVEuMapProps } from '../map/MapVEuMap';
 // import Geohash from 'latlon-geohash';
 // import {DriftMarker} from "leaflet-drift-marker";
 import geohashAnimation from '../map/animation_functions/geohash';
+import SemanticMarkers from '../map/SemanticMarkers';
 
 export default {
   title: 'Sidebar/Sidebar in map',
@@ -231,9 +232,12 @@ export const SidebarResize: Story<MapVEuMapProps> = (args) => {
         {...args}
         viewport={viewport}
         onBoundsChanged={handleViewportChanged}
-        markers={markerElements}
-        animation={defaultAnimation}
-      />
+      >
+        <SemanticMarkers
+          markers={markerElements}
+          animation={defaultAnimation}
+        />
+      </MapVEuMap>
     </>
   );
 };

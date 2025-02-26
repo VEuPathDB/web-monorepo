@@ -7,15 +7,17 @@ import React, {
   useState,
 } from 'react';
 
+import { Link } from 'react-router-dom';
+
 import { keyBy } from 'lodash';
 
-import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import {
   TextBox,
   TextArea,
   FileInput,
   RadioList,
   SingleSelect,
+  Loading,
 } from '@veupathdb/wdk-client/lib/Components';
 
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -27,7 +29,11 @@ import {
   DatasetUploadTypeConfigEntry,
   NewUserDataset,
   ResultUploadConfig,
+  UserDataset,
 } from '../Utils/types';
+
+import { Modal } from '@veupathdb/coreui';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 import './UploadForm.scss';
 
@@ -42,8 +48,11 @@ interface Props<T extends string = string> {
   strategyOptions: StrategySummary[];
   resultUploadConfig?: ResultUploadConfig;
   clearBadUpload: () => void;
-  submitForm: (newUserDataset: FormSubmission, redirectTo?: string) => void;
+  submitForm: (formSubmission: FormSubmission, baseUrl?: string) => void;
+  uploadProgress?: number | null;
+  dispatchUploadProgress: (progress: number | null) => void;
   supportedFileUploadTypes: string[];
+  maxSizeBytes?: number;
 }
 
 type DataUploadMode = 'file' | 'url' | 'strategy' | 'step';
@@ -64,6 +73,7 @@ interface FormContent {
   summary: string;
   description: string;
   dataUploadSelection: DataUploadSelection;
+  dependencies?: UserDataset['dependencies'];
 }
 
 export type FormValidation = InvalidForm | ValidForm;
@@ -92,7 +102,10 @@ function UploadForm({
   resultUploadConfig,
   clearBadUpload,
   submitForm,
+  uploadProgress,
+  dispatchUploadProgress,
   supportedFileUploadTypes,
+  maxSizeBytes,
 }: Props) {
   const strategyOptionsByStrategyId = useMemo(
     () => keyBy(strategyOptions, (option) => option.strategyId),
@@ -120,6 +133,9 @@ function UploadForm({
   const [description, setDescription] = useState(
     urlParams.datasetDescription ?? ''
   );
+
+  const [dependencies, setDependencies] =
+    useState<UserDataset['dependencies']>();
 
   const [dataUploadMode, setDataUploadMode] = useState<DataUploadMode>(
     urlParams.datasetStepId
@@ -197,6 +213,7 @@ function UploadForm({
           summary,
           description,
           dataUploadSelection,
+          dependencies,
         }
       );
 
@@ -204,7 +221,7 @@ function UploadForm({
         setErrorMessages(formValidation.errors);
       } else {
         setSubmitting(true);
-        submitForm(formValidation.submission, `${baseUrl}/recent`);
+        submitForm(formValidation.submission, baseUrl);
       }
     },
     [
@@ -215,6 +232,7 @@ function UploadForm({
       name,
       summary,
       description,
+      dependencies,
       dataUploadSelection,
       submitForm,
     ]
@@ -222,10 +240,11 @@ function UploadForm({
 
   useEffect(() => {
     if (badUploadMessage != null) {
+      dispatchUploadProgress(null);
       setErrorMessages([badUploadMessage.message]);
       setSubmitting(false);
     }
-  }, [badUploadMessage]);
+  }, [badUploadMessage, dispatchUploadProgress]);
 
   useEffect(() => {
     return () => {
@@ -239,15 +258,18 @@ function UploadForm({
     datasetUploadType.formConfig.description?.inputProps;
 
   const summaryRequired = summaryInputProps?.required ?? true;
-  const descriptionRequired = descriptionInputProps?.required ?? true;
+  const descriptionRequired = descriptionInputProps?.required ?? false;
 
   const defaultFileInputField = (
     <FileInput
-      accept={supportedFileUploadTypes
-        .map((fileUploadType) => `.${fileUploadType}`)
-        .join(',')}
+      accept={
+        supportedFileUploadTypes
+          ?.map((fileUploadType) => `.${fileUploadType}`)
+          .join(',') || undefined
+      }
       required={dataUploadMode === 'file'}
       disabled={dataUploadMode !== 'file' || useFixedUploadMethod}
+      maxSizeBytes={maxSizeBytes}
       onChange={(file) => {
         const fileWithSpacedRemovedFromName =
           file && new File([file], file?.name.replace(/\s+/g, '_'), file);
@@ -369,11 +391,22 @@ function UploadForm({
       {errorMessages.length > 0 && <ErrorMessage errors={errorMessages} />}
       <div>
         <h2>{datasetUploadType.uploadTitle}</h2>
-        <div className="formSection">
+        <Banner
+          banner={{
+            type: 'warning',
+            message: (
+              <>
+                Before uploading your dataset, please ensure your data is
+                formatted according to the instructions listed in the{' '}
+                <Link to={{ pathname: `${baseUrl}/help` }}>"Help" tab</Link>.
+              </>
+            ),
+          }}
+        />
+        <div className="formSection formSection--data-set-name">
           <FieldLabel required htmlFor="data-set-name">
             Name
           </FieldLabel>
-          <br />
           <TextBox
             type="input"
             id="data-set-name"
@@ -384,21 +417,22 @@ function UploadForm({
             onChange={setName}
           />
         </div>
-        <div className="formSection">
+        <div className="formSection formSection--data-set-summary">
           <FieldLabel htmlFor="data-set-summary" required={summaryRequired}>
             Summary
           </FieldLabel>
-          <TextBox
+          <TextArea
             type="input"
             id="data-set-summary"
-            placeholder="brief summary of the data set contents"
+            placeholder="brief summary of the data set contents in a few sentences"
             required={summaryRequired}
+            rows={2}
             {...summaryInputProps}
             value={summary}
             onChange={setSummary}
           />
         </div>
-        <div className="formSection">
+        <div className="formSection formSection--data-set-description">
           <FieldLabel
             htmlFor="data-set-description"
             required={descriptionRequired}
@@ -407,15 +441,31 @@ function UploadForm({
           </FieldLabel>
           <TextArea
             id="data-set-description"
-            placeholder="brief description of the data set contents"
+            placeholder="longer description of the data set contents"
             required={descriptionRequired}
+            rows={6}
             {...descriptionInputProps}
             value={description}
             onChange={setDescription}
           />
         </div>
+        {datasetUploadType.formConfig.dependencies && (
+          <div className="formSection formSection--data-set-dependencies">
+            <FieldLabel
+              required={
+                datasetUploadType.formConfig.dependencies.required ?? false
+              }
+            >
+              {datasetUploadType.formConfig.dependencies.label}
+            </FieldLabel>
+            {datasetUploadType.formConfig.dependencies.render({
+              value: dependencies,
+              onChange: setDependencies,
+            })}
+          </div>
+        )}
         {
-          <div className="formSection">
+          <div className="formSection formSection--data-set-file">
             {uploadMethodItems.length === 1 ? (
               <div className={cx('--UploadMethodSelector')}>
                 <div className={cx('--FixedUploadItem')}>
@@ -437,7 +487,6 @@ function UploadForm({
                       `Unrecognized upload method '${value}' encountered.`
                     );
                   }
-
                   setDataUploadMode(value);
                 }}
                 items={uploadMethodItems}
@@ -449,8 +498,63 @@ function UploadForm({
       <button type="submit" className="btn" disabled={submitting}>
         Upload Data Set
       </button>
+      <Modal
+        visible={submitting && Boolean(uploadProgress)}
+        toggleVisible={() => null}
+        styleOverrides={{
+          content: {
+            size: {
+              height: '100%',
+              width: '100%',
+            },
+            padding: {
+              right: 10,
+              left: 10,
+            },
+          },
+          size: {
+            height: 150,
+            width: 'auto',
+          },
+        }}
+      >
+        <UploadProgress uploadProgress={uploadProgress} />
+      </Modal>
       {datasetUploadType.formConfig?.renderInfo?.()}
     </form>
+  );
+}
+
+function UploadProgress({
+  uploadProgress,
+}: {
+  uploadProgress?: number | null;
+}) {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: '1em',
+        fontSize: '1.5em',
+        height: '100%',
+      }}
+    >
+      {uploadProgress && uploadProgress !== 100 && (
+        <>
+          <progress id="file" max="100" value={uploadProgress} />
+          <label htmlFor="file">Uploading...</label>
+        </>
+      )}
+      {uploadProgress === 100 && (
+        <>
+          <Loading style={{ padding: '1em' }} />
+          <span>Waiting on server response...</span>
+        </>
+      )}
+    </div>
   );
 }
 
@@ -474,17 +578,19 @@ function FieldLabel({ children, required, ...labelProps }: FieldLabelProps) {
 
 function ErrorMessage({ errors }: { errors: string[] }) {
   return (
-    <div className="ui-state-error" style={{ fontSize: 'large' }}>
-      <div>
-        <Icon fa="exclamation-triangle" />
-        &nbsp; Could not upload data set
-      </div>
-      {errors.map((error, ix) => (
-        <div key={ix} className="ui-state-error-text">
-          {error}
-        </div>
-      ))}
-    </div>
+    <Banner
+      banner={{
+        type: 'error',
+        message: (
+          <div style={{ lineHeight: 1.5 }}>
+            <span>Could not upload data set</span>
+            {errors.map((error, index) => (
+              <div key={index}>{error}</div>
+            ))}
+          </div>
+        ),
+      }}
+    />
   );
 }
 
@@ -494,7 +600,18 @@ function validateForm<T extends string = string>(
   enableResultUploadMethod: boolean,
   formContent: FormContent
 ): FormValidation {
-  const { name, summary, description, dataUploadSelection } = formContent;
+  const { name, summary, description, dataUploadSelection, dependencies } =
+    formContent;
+
+  if (
+    datasetUploadType.formConfig.dependencies?.required &&
+    dependencies == null
+  ) {
+    return {
+      valid: false,
+      errors: [`Required: ${datasetUploadType.formConfig.dependencies.label}`],
+    };
+  }
 
   if (!isCompleteDataUploadSelection(dataUploadSelection)) {
     return {
@@ -511,7 +628,9 @@ function validateForm<T extends string = string>(
   ) {
     return {
       valid: false,
-      errors: ['The provided data URL does not seem valid'],
+      errors: [
+        'The provided data URL does not seem valid. A valid URL must start with "http://" or "https://".',
+      ],
     };
   }
 
@@ -524,6 +643,8 @@ function validateForm<T extends string = string>(
       datasetType: datasetUploadType.type,
       projects: [projectId],
       dataUploadSelection,
+      dependencies,
+      visibility: 'private',
     },
   };
 }
@@ -536,12 +657,13 @@ function isCompleteDataUploadSelection(
 
 // https://stackoverflow.com/a/43467144
 function isValidUrl(string: string) {
+  let url: URL;
   try {
-    new URL(string);
+    url = new URL(string);
   } catch (_) {
     return false;
   }
-  return true;
+  return url.protocol === 'http' || url.protocol === 'https';
 }
 
 export default UploadForm;

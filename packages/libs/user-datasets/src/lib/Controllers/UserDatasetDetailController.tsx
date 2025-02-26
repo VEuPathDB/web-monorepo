@@ -14,10 +14,14 @@ import {
   shareUserDatasets,
   unshareUserDatasets,
   updateUserDatasetDetail,
+  updateSharingModalState,
+  sharingError,
+  sharingSuccess,
+  updateCommunityModalVisibility,
+  updateDatasetCommunityVisibility,
 } from '../Actions/UserDatasetsActions';
 
 import BigwigDatasetDetail from '../Components/Detail/BigwigDatasetDetail';
-import BiomDatasetDetail from '../Components/Detail/BiomDatasetDetail';
 import RnaSeqDatasetDetail from '../Components/Detail/RnaSeqDatasetDetail';
 import UserDatasetDetail from '../Components/Detail/UserDatasetDetail';
 import EmptyState from '../Components/EmptyState';
@@ -25,6 +29,7 @@ import { quotaSize } from '../Components/UserDatasetUtils';
 
 import { StateSlice } from '../StoreModules/types';
 import { DataNoun } from '../Utils/types';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
 const ActionCreators = {
   showLoginForm,
@@ -33,6 +38,11 @@ const ActionCreators = {
   removeUserDataset,
   shareUserDatasets,
   unshareUserDatasets,
+  updateSharingModalState,
+  sharingError,
+  sharingSuccess,
+  updateCommunityModalVisibility,
+  updateDatasetCommunityVisibility,
 };
 
 export type UserDatasetDetailProps = any;
@@ -49,6 +59,9 @@ type OwnProps = {
     ComponentType<UserDatasetDetailProps>
   >;
   dataNoun: DataNoun;
+  enablePublicUserDatasets: boolean;
+  includeAllLink: boolean;
+  includeNameHeader: boolean;
 };
 type MergedProps = {
   ownProps: OwnProps;
@@ -88,16 +101,29 @@ class UserDatasetDetailController extends PageController<MergedProps> {
     const idChanged =
       prevProps == null || prevProps.ownProps.id !== this.props.ownProps.id;
     if (idChanged) {
-      this.props.dispatchProps.loadUserDatasetDetail(
-        Number(this.props.ownProps.id)
-      );
+      this.props.dispatchProps.loadUserDatasetDetail(this.props.ownProps.id);
     }
   }
 
   isRenderDataLoadError() {
+    const { loadError } = this.props.stateProps;
     return (
-      this.props.stateProps.loadError != null &&
-      this.props.stateProps.loadError.status >= 500
+      loadError != null &&
+      loadError.statusCode >= 400 &&
+      loadError.statusCode !== 404
+    );
+  }
+
+  isRenderDataNotFound(): boolean {
+    const { loadError } = this.props.stateProps;
+    return loadError != null && loadError.statusCode === 404;
+  }
+
+  isRenderDataPermissionDenied(): boolean {
+    const { loadError } = this.props.stateProps;
+    return (
+      loadError != null &&
+      (loadError.statusCode === 401 || loadError.statusCode === 403)
     );
   }
 
@@ -119,13 +145,11 @@ class UserDatasetDetailController extends PageController<MergedProps> {
     }
 
     switch (name) {
-      case 'Bigwigs':
-      case 'BigwigFiles':
+      case 'bigwigs':
+      case 'bigwigfiles':
         return BigwigDatasetDetail;
-      case 'RnaSeq':
+      case 'rnaseq':
         return RnaSeqDatasetDetail;
-      case 'BIOM':
-        return BiomDatasetDetail;
       default:
         return UserDatasetDetail;
     }
@@ -148,13 +172,26 @@ class UserDatasetDetailController extends PageController<MergedProps> {
   }
 
   renderView() {
-    const { baseUrl, detailsPageTitle, id, workspaceTitle, dataNoun } =
-      this.props.ownProps;
+    const {
+      baseUrl,
+      detailsPageTitle,
+      id,
+      workspaceTitle,
+      dataNoun,
+      enablePublicUserDatasets,
+      includeAllLink,
+      includeNameHeader,
+    } = this.props.ownProps;
     const {
       updateUserDatasetDetail,
       shareUserDatasets,
       removeUserDataset,
       unshareUserDatasets,
+      updateSharingModalState,
+      sharingSuccess,
+      sharingError,
+      updateCommunityModalVisibility,
+      updateDatasetCommunityVisibility,
     } = this.props.dispatchProps;
     const {
       userDatasetsById,
@@ -163,16 +200,27 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       questions,
       config,
       userDatasetUpdating,
+      sharingModalOpen,
+      sharingDatasetPending,
+      shareError,
+      shareSuccessful,
+      communityModalOpen,
+      updateDatasetCommunityVisibilityError,
+      updateDatasetCommunityVisibilityPending,
+      updateDatasetCommunityVisibilitySuccess,
     } = this.props.stateProps;
     const entry = userDatasetsById[id];
     const isOwner = !!(
       user &&
+      entry &&
       entry.resource &&
       entry.resource.ownerUserId === user.id
     );
 
     const props = {
       baseUrl,
+      includeAllLink,
+      includeNameHeader,
       user,
       config,
       isOwner,
@@ -184,18 +232,35 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       shareUserDatasets,
       unshareUserDatasets,
       updateUserDatasetDetail,
-      userDataset: entry.resource,
+      sharingModalOpen,
+      sharingDatasetPending,
+      sharingError,
+      shareError,
+      sharingSuccess,
+      shareSuccessful,
+      updateSharingModalState,
+      userDataset: entry?.resource,
+      fileListing: entry?.fileListing,
       getQuestionUrl: this.getQuestionUrl,
       questionMap: keyBy(questions, 'fullName'),
       workspaceTitle,
       detailsPageTitle,
       dataNoun,
+      enablePublicUserDatasets,
+      updateCommunityModalVisibility,
+      updateDatasetCommunityVisibility,
+      communityModalOpen,
+      updateDatasetCommunityVisibilityError,
+      updateDatasetCommunityVisibilityPending,
+      updateDatasetCommunityVisibilitySuccess,
     };
 
-    const DetailView = this.getDetailView(
-      typeof entry.resource === 'object' ? entry.resource.type : null
-    );
-    return user && user.isGuest ? (
+    if (entry?.resource == null) return <Loading />;
+
+    const DetailView = this.getDetailView(entry.resource.type);
+    return entry.resource.meta.visibility !== 'public' &&
+      user &&
+      user.isGuest ? (
       this.renderGuestView()
     ) : (
       <DetailView {...props} />

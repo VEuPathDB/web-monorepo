@@ -1,7 +1,7 @@
 import { isEmpty, uniq } from 'lodash';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { Tooltip } from '@veupathdb/wdk-client/lib/Components';
+import { Tooltip } from '@veupathdb/coreui';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import {
   makeClassNameHelper,
@@ -162,7 +162,7 @@ export const SiteSearchInput = wrappable(function ({
         onClearRecentSearches={clearRecentSearches}
       />
       {location.pathname !== SITE_SEARCH_ROUTE && lastSearchQueryString && (
-        <Tooltip content="Go back to your last search result">
+        <Tooltip title="Go back to your last search result">
           <button
             className="back"
             type="button"
@@ -173,7 +173,7 @@ export const SiteSearchInput = wrappable(function ({
         </Tooltip>
       )}
       <Tooltip
-        content={
+        title={
           hasFilters
             ? 'Update your search, keeping existing filters'
             : 'Run a new search'

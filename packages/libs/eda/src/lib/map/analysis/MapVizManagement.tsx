@@ -2,33 +2,33 @@ import { Close, FloatingButton, H5, Paragraph } from '@veupathdb/coreui';
 import { useState } from 'react';
 import { v4 as uuid } from 'uuid';
 
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '@veupathdb/coreui';
 import { Add } from '@material-ui/icons';
 import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { mapNavigationBorder } from '..';
+import { mapSidePanelBorder } from '../constants';
 import { AnalysisState } from '../../core';
 import PlaceholderIcon from '../../core/components/visualizations/PlaceholderIcon';
 import { useVizIconColors } from '../../core/components/visualizations/implementations/selectorIcons/types';
 import { GeoConfig } from '../../core/types/geoConfig';
 import { ComputationAppOverview } from '../../core/types/visualization';
 import './MapVizManagement.scss';
-import { MarkerConfiguration, useAppState } from './appState';
+import { MarkerConfiguration } from './appState';
 import { ComputationPlugin } from '../../core/components/computations/Types';
 import { VisualizationPlugin } from '../../core/components/visualizations/VisualizationPlugin';
 import { StartPage } from '../../core/components/computations/StartPage';
+import { MapTypeConfigPanelProps } from './mapTypes/types';
 
 interface Props {
   activeVisualizationId: string | undefined;
   analysisState: AnalysisState;
-  setActiveVisualizationId: ReturnType<
-    typeof useAppState
-  >['setActiveVisualizationId'];
+  setActiveVisualizationId: (id?: string, isNew?: boolean) => void;
   apps: ComputationAppOverview[];
   plugins: Partial<Record<string, ComputationPlugin>>;
   //  visualizationPlugins: Partial<Record<string, VisualizationPlugin>>;
   geoConfigs: GeoConfig[];
   mapType?: MarkerConfiguration['type'];
+  setIsSidePanelExpanded: MapTypeConfigPanelProps['setIsSidePanelExpanded'];
 }
 
 const mapVizManagementClassName = makeClassNameHelper('MapVizManagement');
@@ -41,12 +41,14 @@ export default function MapVizManagement({
   setActiveVisualizationId,
   plugins,
   mapType,
+  setIsSidePanelExpanded,
 }: Props) {
   const [isVizSelectorVisible, setIsVizSelectorVisible] = useState(false);
 
   function onVisualizationCreated(visualizationId: string) {
     setIsVizSelectorVisible(false);
-    setActiveVisualizationId(visualizationId);
+    setActiveVisualizationId(visualizationId, true);
+    setIsSidePanelExpanded(false);
   }
 
   if (!analysisState.analysis) return null;
@@ -128,7 +130,7 @@ export default function MapVizManagement({
       {isVizSelectorVisible && totalVisualizationCount > 0 && (
         <div
           style={{
-            borderLeft: mapNavigationBorder,
+            borderLeft: mapSidePanelBorder,
           }}
           className={mapVizManagementClassName('-NewVizPicker')}
         >
@@ -243,7 +245,12 @@ function VisualizationsList({
                               analysisState.deleteVisualization(
                                 viz.visualizationId
                               );
-                              setActiveVisualizationId(undefined);
+                              if (
+                                activeVisualization?.visualizationId ===
+                                viz.visualizationId
+                              ) {
+                                setActiveVisualizationId(undefined);
+                              }
                             }}
                           >
                             <i aria-hidden className="fa fa-trash"></i>

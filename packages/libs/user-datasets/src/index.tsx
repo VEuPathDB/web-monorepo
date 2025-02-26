@@ -1,4 +1,5 @@
 import './globals';
+import { vdiServiceUrl } from './constants';
 
 import { RouteComponentProps } from 'react-router-dom';
 
@@ -35,8 +36,6 @@ const hasDirectUpload = makeDatasetUploadPageConfig(
   uploadTypeConfig
 ).hasDirectUpload;
 
-const datasetImportUrl = hasDirectUpload ? '/dataset-import' : undefined;
-
 initialize({
   rootUrl,
   rootElement,
@@ -55,6 +54,10 @@ initialize({
           helpRoute="/help"
           workspaceTitle="My Data Sets"
           uploadTypeConfig={uploadTypeConfig}
+          dataNoun={{
+            singular: 'Data set',
+            plural: 'Data sets',
+          }}
         />
       ),
     },
@@ -86,15 +89,9 @@ initialize({
   },
   endpoint,
   wrapStoreModules,
-  wrapWdkService: partial(
-    wrapWdkService,
-    datasetImportUrl == null || process.env.REACT_APP_WDK_SERVICE_URL == null
-      ? undefined
-      : {
-          datasetImportUrl,
-          fullWdkServiceUrl: process.env.REACT_APP_WDK_SERVICE_URL,
-        }
-  ),
+  wrapWdkService: partial(wrapWdkService, {
+    vdiServiceUrl,
+  }),
 } as any);
 
 // If you want to start measuring performance in your app, pass a function

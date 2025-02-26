@@ -21,11 +21,19 @@ import { createComputation } from '../components/computations/Utils';
 import { useHistory } from 'react-router-dom';
 import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 import { Computation, Visualization } from '../types/visualization';
+import EventEmitter from 'events';
+
+async function notImplemented(): Promise<any> {
+  throw new Error('This function is not implemented');
+}
 
 /**
  * Type definition for function that will set an attribute of an Analysis.
  */
-type Setter<T> = (value: T | ((value: T) => T)) => void;
+type Setter<T> = (
+  value: T | ((value: T) => T),
+  createIfUnsaved?: boolean
+) => void;
 
 /** Status options for an analysis. */
 export enum Status {
@@ -38,19 +46,31 @@ export enum Status {
 export type AnalysisState = {
   /** Current status of the analysis. */
   status: Status;
+  /** Indicates if the analysis has changes that have not yet been persisted to storage. */
   hasUnsavedChanges: boolean;
   /** Optional. Previously saved analysis or analysis in construction. */
   analysis?: Analysis | NewAnalysis;
+  /** Error object related to loading an analysis */
   error?: unknown;
+  /** Set the display name of the analysis. See {@link Setter}. */
   setName: Setter<Analysis['displayName']>;
+  /** Set the description of the analysis. See {@link Setter}. */
   setDescription: Setter<Analysis['description']>;
+  /** Set the notes of an analysis. See {@link Setter}. */
   setNotes: Setter<Analysis['notes']>;
+  /** Set the isPublic flag of an anlysis. See {@link Setter}. */
   setIsPublic: Setter<Analysis['isPublic']>;
+  /** Set the filters of an analysis. See {@link Setter}. */
   setFilters: Setter<Analysis['descriptor']['subset']['descriptor']>;
+  /** Set the list of configured computations of the analysis. See {@link Setter}. */
   setComputations: Setter<Analysis['descriptor']['computations']>;
+  /** Set the list of derived variables of an analysis. See {@link Setter}. */
   setDerivedVariables: Setter<Analysis['descriptor']['derivedVariables']>;
+  /** Set the list of starred variables of an analysis. See {@link Setter}. */
   setStarredVariables: Setter<Analysis['descriptor']['starredVariables']>;
+  /** Set the UI state of variables in an analysis. See {@link Setter}. */
   setVariableUISettings: Setter<Analysis['descriptor']['subset']['uiSettings']>;
+  /** Set the datatable config of an analysis. See {@link Setter}. */
   setDataTableConfig: Setter<Analysis['descriptor']['dataTableConfig']>;
 
   /** Convenience methods for manipulating visualizations nested inside computations.
@@ -86,6 +106,38 @@ export type AnalysisState = {
 
 // Used to store loaded analyses. Looks to be a performance enhancement.
 const analysisCache = new Map<string, Analysis>();
+
+class AnalysisEventEmitter {
+  private _emitter = new EventEmitter();
+  private _analysisUpdateEvent = 'analysis_update';
+  private _listUpdateEvent = 'list_update';
+
+  onAnalysisUpdate(callback: (analysis: Analysis) => void) {
+    const { _emitter, _analysisUpdateEvent } = this;
+    _emitter.on(_analysisUpdateEvent, callback);
+    return function cancel() {
+      _emitter.off(_analysisUpdateEvent, callback);
+    };
+  }
+
+  onListUpdate(callback: (analysisList: AnalysisSummary[]) => void) {
+    const { _emitter, _listUpdateEvent } = this;
+    _emitter.on(_listUpdateEvent, callback);
+    return function cancel() {
+      _emitter.off(_listUpdateEvent, callback);
+    };
+  }
+
+  triggerAnalysisUpdate(analysis: Analysis) {
+    this._emitter.emit(this._analysisUpdateEvent, analysis);
+  }
+
+  triggerListUpdate(list: AnalysisSummary[]) {
+    this._emitter.emit(this._listUpdateEvent, list);
+  }
+}
+
+const analysisEventEmitter = new AnalysisEventEmitter();
 
 /**
  * Provide access to a user created analysis and associated functionality.
@@ -184,6 +236,7 @@ export function useAnalysis(
     else if (analysis !== analysisCache.get(analysis.analysisId)) {
       await analysisClient.updateAnalysis(analysis.analysisId, analysis);
       analysisCache.set(analysis.analysisId, analysis);
+      analysisEventEmitter.triggerAnalysisUpdate(analysis);
     }
   }, [analysisClient, createAnalysis]);
 
@@ -218,43 +271,146 @@ export function useAnalysis(
     });
   }, [analysisClient]);
 
-  // Helper function to create stable callbacks
-  const useSetter = <T>(
-    nestedValueLens: Lens<Analysis | NewAnalysis, T>,
-    createIfUnsaved = true
-  ) => {
-    // Always schedule a save, unless it's a "new" analysis and we're being
-    // told to not schedule a save.
-    const scheduleUpdate = analysisId != null || createIfUnsaved;
-    return useCallback(
-      (nestedValue: T | ((nestedValue: T) => T)) => {
-        setAnalysis((analysis) => {
-          if (analysis == null)
-            throw new Error(
-              "Cannot update an analysis before it's been loaded."
-            );
-          return updateAnalysis(analysis, nestedValueLens, nestedValue);
-        });
-        setUpdateScheduled(scheduleUpdate);
-      },
-      [nestedValueLens, scheduleUpdate]
-    );
-  };
-
-  // Setters
-  const setName = useSetter(analysisToNameLens);
-  const setDescription = useSetter(analysisToDescriptionLens);
-  const setNotes = useSetter(analysisToNotesLens);
-  const setIsPublic = useSetter(analysisToIsPublicLens);
-  const setFilters = useSetter(analysisToFiltersLens);
-  const setComputations = useSetter(analysisToComputationsLens);
-  const setDerivedVariables = useSetter(analysisToDerivedVariablesLens);
-  const setStarredVariables = useSetter(analysisToStarredVariablesLens);
-  const setVariableUISettings = useSetter(
-    analysisToVariableUISettingsLens,
-    false
+  const onAnalysisChange = useCallback<AnalysisChangeHandler>(
+    (analysis, { skipServerCreate }) => {
+      const scheduleUpdate = Analysis.is(analysis) || !skipServerCreate;
+      setAnalysis(analysis);
+      setUpdateScheduled(scheduleUpdate);
+    },
+    []
   );
-  const setDataTableConfig = useSetter(analysisToDataTableConfig);
+
+  const analysisState = useAnalysisState(analysis, onAnalysisChange);
+
+  // Retrieve an Analysis from the data store whenever `analysisID` updates.
+  const loadAnalysis = useCallback(() => {
+    setUpdateScheduled(false);
+    if (analysisId == null) {
+      setStatus(Status.Loaded);
+      setError(undefined);
+      setAnalysis(defaultAnalysis);
+    } else {
+      const analysisCacheEntry = analysisCache.get(analysisId);
+      if (analysisCacheEntry != null) {
+        setAnalysis(analysisCacheEntry);
+        setStatus(Status.Loaded);
+        setError(undefined);
+      } else {
+        setStatus(Status.InProgress);
+        analysisClient.getAnalysis(analysisId).then(
+          (analysis) => {
+            setAnalysis(analysis);
+            setStatus(Status.Loaded);
+            analysisCache.set(analysis.analysisId, analysis);
+          },
+          (error) => {
+            setError(error);
+            setStatus(Status.Error);
+          }
+        );
+      }
+    }
+  }, [analysisClient, analysisId, defaultAnalysis]);
+
+  useEffect(() => {
+    loadAnalysis();
+  }, [loadAnalysis]);
+
+  useEffect(() => {
+    // TODO only update if the active analysis has changed... or merge in the change!
+    return analysisEventEmitter.onListUpdate((list) => {
+      if (analysisId == null) return;
+      const update = list.find((summary) => summary.analysisId === analysisId);
+      if (update) {
+        setAnalysis((analysis) => analysis && { ...analysis, ...update });
+        const analysis = analysisCache.get(analysisId);
+        if (analysis) {
+          analysisCache.set(analysisId, { ...analysis, ...update });
+        }
+      }
+    });
+  }, [analysisId, loadAnalysis]);
+
+  // Reactively save analysis when it has been modified
+  useEffect(() => {
+    const id = setTimeout(function deferredSave() {
+      if (updateScheduled) {
+        saveAnalysis();
+        setUpdateScheduled(false);
+      }
+    }, 1000);
+    return function cleanup() {
+      clearTimeout(id);
+    };
+  }, [saveAnalysis, updateScheduled]);
+
+  return {
+    ...analysisState,
+    status,
+    error,
+    hasUnsavedChanges: updateScheduled,
+    copyAnalysis,
+    deleteAnalysis,
+    saveAnalysis,
+  };
+}
+
+interface AnalysisChangeHandlerData {
+  skipServerCreate: boolean;
+}
+
+export interface AnalysisChangeHandler {
+  (analysis: NewAnalysis | Analysis, data: AnalysisChangeHandlerData): void;
+}
+
+export function useAnalysisState(
+  analysis: NewAnalysis | Analysis | undefined,
+  onAnalysisChange: AnalysisChangeHandler
+) {
+  // Setters
+  const setName = useSetter(analysis, analysisToNameLens, onAnalysisChange);
+  const setDescription = useSetter(
+    analysis,
+    analysisToDescriptionLens,
+    onAnalysisChange
+  );
+  const setNotes = useSetter(analysis, analysisToNotesLens, onAnalysisChange);
+  const setIsPublic = useSetter(
+    analysis,
+    analysisToIsPublicLens,
+    onAnalysisChange
+  );
+  const setFilters = useSetter(
+    analysis,
+    analysisToFiltersLens,
+    onAnalysisChange
+  );
+  const setComputations = useSetter(
+    analysis,
+    analysisToComputationsLens,
+    onAnalysisChange
+  );
+  const setDerivedVariables = useSetter(
+    analysis,
+    analysisToDerivedVariablesLens,
+    onAnalysisChange
+  );
+  const setStarredVariables = useSetter(
+    analysis,
+    analysisToStarredVariablesLens,
+    onAnalysisChange
+  );
+  const setVariableUISettings = useSetter(
+    analysis,
+    analysisToVariableUISettingsLens,
+    onAnalysisChange,
+    true
+  );
+  const setDataTableConfig = useSetter(
+    analysis,
+    analysisToDataTableConfig,
+    onAnalysisChange
+  );
 
   // Visualization manipulations
   const getVisualizations = useCallback(
@@ -341,54 +497,10 @@ export function useAnalysis(
     [setComputations]
   );
 
-  // Retrieve an Analysis from the data store whenever `analysisID` updates.
-  useEffect(() => {
-    setUpdateScheduled(false);
-    if (analysisId == null) {
-      setStatus(Status.Loaded);
-      setError(undefined);
-      setAnalysis(defaultAnalysis);
-    } else {
-      const analysisCacheEntry = analysisCache.get(analysisId);
-      if (analysisCacheEntry != null) {
-        setAnalysis(analysisCacheEntry);
-        setStatus(Status.Loaded);
-        setError(undefined);
-      } else {
-        setStatus(Status.InProgress);
-        analysisClient.getAnalysis(analysisId).then(
-          (analysis) => {
-            setAnalysis(analysis);
-            setStatus(Status.Loaded);
-            analysisCache.set(analysis.analysisId, analysis);
-          },
-          (error) => {
-            setError(error);
-            setStatus(Status.Error);
-          }
-        );
-      }
-    }
-  }, [defaultAnalysis, analysisId, analysisClient]);
-
-  // Reactively save analysis when it has been modified
-  useEffect(() => {
-    const id = setTimeout(function deferredSave() {
-      if (updateScheduled) {
-        saveAnalysis();
-        setUpdateScheduled(false);
-      }
-    }, 1000);
-    return function cleanup() {
-      clearTimeout(id);
-    };
-  }, [saveAnalysis, updateScheduled]);
-
-  return {
-    status,
+  const analysisState: AnalysisState = {
+    status: Status.Loaded,
     analysis,
-    error,
-    hasUnsavedChanges: updateScheduled,
+    hasUnsavedChanges: false,
     setName,
     setDescription,
     setNotes,
@@ -399,9 +511,9 @@ export function useAnalysis(
     setStarredVariables,
     setVariableUISettings,
     setDataTableConfig,
-    copyAnalysis,
-    deleteAnalysis,
-    saveAnalysis,
+    copyAnalysis: notImplemented,
+    deleteAnalysis: notImplemented,
+    saveAnalysis: notImplemented,
     getVisualizations,
     getVisualization,
     getVisualizationAndComputation,
@@ -409,6 +521,8 @@ export function useAnalysis(
     addVisualization,
     updateVisualization,
   };
+
+  return analysisState;
 }
 
 export function useAnalysisList(analysisClient: AnalysisClient) {
@@ -416,7 +530,8 @@ export function useAnalysisList(analysisClient: AnalysisClient) {
   const [analyses, setAnalyses] = useState<AnalysisSummary[]>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
-  useEffect(() => {
+
+  const loadList = useCallback(() => {
     setLoading(true);
     analysisClient.getAnalyses().then(
       (analyses) => {
@@ -429,6 +544,18 @@ export function useAnalysisList(analysisClient: AnalysisClient) {
       }
     );
   }, [analysisClient]);
+
+  useEffect(() => {
+    loadList();
+    // TODO Merge in change!
+    return analysisEventEmitter.onAnalysisUpdate((analysis) => {
+      setAnalyses((analyses) =>
+        analyses?.map((a) =>
+          a.analysisId === analysis.analysisId ? { ...a, ...analysis } : a
+        )
+      );
+    });
+  }, [loadList]);
 
   const deleteAnalysis = useCallback(
     async (id: string) => {
@@ -479,6 +606,11 @@ export function useAnalysisList(analysisClient: AnalysisClient) {
       setLoading(true);
       try {
         await analysisClient.updateAnalysis(id, patch);
+        const analysis = analysisCache.get(id);
+        if (analysis) {
+          analysisCache.set(id, { ...analysis, ...patch });
+        }
+        analysisCache.delete(id);
         setAnalyses(
           (analyses) =>
             analyses &&
@@ -494,6 +626,10 @@ export function useAnalysisList(analysisClient: AnalysisClient) {
     },
     [analysisClient]
   );
+
+  useEffect(() => {
+    if (analyses) analysisEventEmitter.triggerListUpdate(analyses);
+  }, [analyses]);
 
   return {
     analyses,
@@ -606,4 +742,28 @@ function updateAnalysis<T>(
     return nestedValueLens.set(newNestedValue)(analysis);
   }
   return analysis;
+}
+// Helper function to create stable callbacks
+function useSetter<T>(
+  analysis: NewAnalysis | Analysis | undefined,
+  nestedValueLens: Lens<Analysis | NewAnalysis, T>,
+  onAnalysisChange: AnalysisChangeHandler,
+  skipServerCreate = false
+) {
+  const analysisRef = useRef(analysis);
+  useEffect(() => {
+    analysisRef.current = analysis;
+  });
+  return useCallback(
+    (nestedValue: T | ((nestedValue: T) => T)) => {
+      if (analysisRef.current == null) return; // TODO Should this throw an error?
+      onAnalysisChange(
+        updateAnalysis(analysisRef.current, nestedValueLens, nestedValue),
+        {
+          skipServerCreate,
+        }
+      );
+    },
+    [nestedValueLens, onAnalysisChange, skipServerCreate]
+  );
 }

@@ -11,6 +11,11 @@ import {
   unshareUserDatasets,
   updateProjectFilter,
   updateUserDatasetDetail,
+  updateSharingModalState,
+  sharingError,
+  sharingSuccess,
+  updateCommunityModalVisibility,
+  updateDatasetCommunityVisibility,
 } from '../Actions/UserDatasetsActions';
 import { requestUploadMessages } from '../Actions/UserDatasetUploadActions';
 
@@ -33,6 +38,11 @@ const ActionCreators = {
   unshareUserDatasets,
   updateProjectFilter,
   requestUploadMessages,
+  updateSharingModalState,
+  sharingError,
+  sharingSuccess,
+  updateCommunityModalVisibility,
+  updateDatasetCommunityVisibility,
 };
 
 type StateProps = Pick<
@@ -46,6 +56,7 @@ interface OwnProps extends RouteComponentProps<{}> {
   helpRoute: string;
   workspaceTitle: string;
   dataNoun: DataNoun;
+  enablePublicUserDatasets: boolean;
 }
 type Props = {
   ownProps: OwnProps;
@@ -100,8 +111,9 @@ class UserDatasetListController extends PageController<Props> {
       this.props.stateProps.userDatasetList.status !== 'not-requested' &&
       this.props.stateProps.userDatasetList.status !== 'loading' &&
       this.props.stateProps.globalData.config != null &&
-      this.props.stateProps.globalData.user != null &&
-      !this.needsUploadMessages()
+      this.props.stateProps.globalData.user != null
+      // &&
+      // !this.needsUploadMessages()
     );
   }
 
@@ -119,11 +131,29 @@ class UserDatasetListController extends PageController<Props> {
 
     const { projectId, displayName: projectName } = config;
 
-    const { baseUrl, hasDirectUpload, helpRoute, location, dataNoun } =
-      this.props.ownProps;
+    const {
+      baseUrl,
+      hasDirectUpload,
+      helpRoute,
+      location,
+      dataNoun,
+      enablePublicUserDatasets,
+    } = this.props.ownProps;
 
     const {
-      userDatasetList: { userDatasets, userDatasetsById, filterByProject },
+      userDatasetList: {
+        userDatasets,
+        userDatasetsById,
+        filterByProject,
+        sharingDatasetPending,
+        sharingModalOpen,
+        shareError,
+        shareSuccessful,
+        communityModalOpen,
+        updateDatasetCommunityVisibilityError,
+        updateDatasetCommunityVisibilityPending,
+        updateDatasetCommunityVisibilitySuccess,
+      },
       userDatasetUpload: { uploads },
     } = this.props.stateProps;
 
@@ -136,6 +166,11 @@ class UserDatasetListController extends PageController<Props> {
       removeUserDataset,
       updateUserDatasetDetail,
       updateProjectFilter,
+      updateSharingModalState,
+      sharingSuccess,
+      sharingError,
+      updateCommunityModalVisibility,
+      updateDatasetCommunityVisibility,
     } = this.props.dispatchProps;
 
     const listProps = {
@@ -147,6 +182,7 @@ class UserDatasetListController extends PageController<Props> {
       projectName,
       numOngoingUploads,
       quotaSize,
+      enablePublicUserDatasets,
       userDatasets: userDatasets.map(
         (id) => userDatasetsById[id].resource
       ) as UserDataset[],
@@ -156,6 +192,19 @@ class UserDatasetListController extends PageController<Props> {
       removeUserDataset,
       updateUserDatasetDetail,
       updateProjectFilter,
+      sharingDatasetPending,
+      shareError,
+      shareSuccessful,
+      sharingModalOpen,
+      updateSharingModalState,
+      sharingSuccess,
+      sharingError,
+      updateCommunityModalVisibility,
+      updateDatasetCommunityVisibility,
+      communityModalOpen,
+      updateDatasetCommunityVisibilityError,
+      updateDatasetCommunityVisibilityPending,
+      updateDatasetCommunityVisibilitySuccess,
     };
     const noDatasetsForThisProject =
       userDatasets

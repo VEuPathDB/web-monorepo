@@ -10,6 +10,7 @@ import {
   Link,
   Loading,
   IconAlt,
+  BetaIcon,
 } from '@veupathdb/wdk-client/lib/Components';
 import {
   LinksPosition,
@@ -32,7 +33,7 @@ import {
 import { decode, arrayOf, string } from '@veupathdb/wdk-client/lib/Utils/Json';
 import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
-import { HtmlTooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 
 import {
   combineClassNames,
@@ -245,15 +246,15 @@ function SearchPaneNode({
       : { isSearch: false };
 
   const baseUrlSegment = nodeMetadata.isSearch ? nodeMetadata.searchName : null;
+  const question = questionsByUrlSegment[baseUrlSegment];
 
   // autoRun searches whose questions (1) require no parameters and (2) are not internal dataset questions
   // (N.B.: internal dataset questions are currently being detected by the presence of
   // "datasetCategory" and "datasetSubtype" properties)
   const urlSegment =
-    questionsByUrlSegment[baseUrlSegment]?.paramNames.length === 0 &&
-    questionsByUrlSegment[baseUrlSegment]?.properties?.datasetCategory ==
-      null &&
-    questionsByUrlSegment[baseUrlSegment]?.properties?.datasetSubtype == null
+    question?.paramNames.length === 0 &&
+    question?.properties?.datasetCategory == null &&
+    question?.properties?.datasetSubtype == null
       ? `${baseUrlSegment}?autoRun`
       : baseUrlSegment;
 
@@ -268,6 +269,7 @@ function SearchPaneNode({
       <div
         style={{
           display: 'flex',
+          alignItems: 'baseline',
         }}
       >
         <div
@@ -282,7 +284,9 @@ function SearchPaneNode({
             <IconAlt fa="search" />
           </span>
         </div>
-        <span style={{ color: '#069' }}>{displayName}</span>
+        <span style={{ color: '#069' }}>
+          {displayName} {question.isBeta && <BetaIcon />}
+        </span>
       </div>
     </Link>
   ) : (
@@ -304,7 +308,7 @@ function SearchPaneNode({
   const tooltipContent = getFormattedTooltipContent(node);
 
   return tooltipContent && offerTooltip ? (
-    <HtmlTooltip title={tooltipContent}>{displayElement}</HtmlTooltip>
+    <Tooltip title={tooltipContent}>{displayElement}</Tooltip>
   ) : (
     displayElement
   );

@@ -21,6 +21,7 @@ import {
   blue,
   ColorHue,
 } from '../../definitions/colors';
+import { useUITheme } from '../theming';
 
 export type BannerProps = {
   type: 'warning' | 'danger' | 'error' | 'success' | 'info' | 'normal';
@@ -40,12 +41,13 @@ export type BannerProps = {
   showMoreLinkColor?: string;
   // is showMoreLink bold?
   isShowMoreLinkBold?: boolean;
-  // banner margin, padding, text font size
+  // banner margin, padding, text font size, width
   spacing?: {
     margin?: CSSProperties['margin'];
     padding?: CSSProperties['padding'];
   };
   fontSize?: CSSProperties['fontSize'];
+  width?: CSSProperties['width'];
   // implementing Banner timeout
   showBanner?: boolean;
   setShowBanner?: (newValue: boolean) => void;
@@ -53,6 +55,7 @@ export type BannerProps = {
   // fadeout effect when timeout
   fadeoutEffect?: boolean;
   setFadeoutEffect?: (newValue: boolean) => void;
+  hideIcon?: boolean;
 };
 
 export type BannerComponentProps = {
@@ -102,6 +105,8 @@ export default function Banner(props: BannerComponentProps) {
   // add CollapsibleContent
   const { banner, onClose, CollapsibleContent } = props;
 
+  const theme = useUITheme();
+
   // set default values of showMoreLinkText and showLessLinkText
   const {
     type,
@@ -110,16 +115,18 @@ export default function Banner(props: BannerComponentProps) {
     intense,
     showMoreLinkText = 'Show more >>',
     showLessLinkText = 'Show less <<',
-    showMoreLinkColor,
+    showMoreLinkColor = theme?.palette.primary.hue[theme.palette.primary.level],
     isShowMoreLinkBold = false,
     additionalMessage,
     spacing,
     fontSize,
+    width,
     showBanner = true,
     setShowBanner,
     autoHideDuration,
     fadeoutEffect,
     setFadeoutEffect,
+    hideIcon = false,
   } = banner;
 
   const [isShowMore, setIsShowMore] = useState(false);
@@ -133,15 +140,6 @@ export default function Banner(props: BannerComponentProps) {
   const collapsibleIcon = isShowMore ? <ExpandLessIcon /> : <ExpandMoreIcon />;
   // using native CoreUI icons? but no mouseover event is supported
   // const collapsibleIcon = isShowMore ? <CaretUp color={ '#000000' } /> : <CaretDown color={ '#000000' } />;
-
-  // hover effect
-  const [isHover, setIsHover] = useState(false);
-  const onMouseEnter = () => {
-    setIsHover(true);
-  };
-  const onMouseLeave = () => {
-    setIsHover(false);
-  };
 
   // Banner timeout with fadeout
   useEffect(() => {
@@ -190,7 +188,7 @@ export default function Banner(props: BannerComponentProps) {
             box-sizing: border-box;
             border-radius: ${CollapsibleContent != null ? '0' : '7px'};
             margin: ${spacing?.margin != null ? spacing.margin : '10px 0'};
-            width: 100%;
+            width: ${width ?? '100%'};
             padding: ${spacing?.padding != null ? spacing.padding : '10px'};
             align-items: center;
             font-family: 'Roboto', 'Helvetica Neue', Helvetica, 'Segoe UI',
@@ -214,47 +212,53 @@ export default function Banner(props: BannerComponentProps) {
                 align-items: center;
               `}
             >
-              <IconComponent
-                css={css`
-                  color: ${intense
-                    ? 'white'
-                    : CollapsibleContent != null
-                    ? '#00008B'
-                    : 'black'};
-                  font-size: 1.4em;
-                  line-height: 1.4em;
-                  width: 30px;
-                  text-align: center;
-                  margin-right: 5px;
-                `}
-              ></IconComponent>
+              {!hideIcon && (
+                <IconComponent
+                  css={css`
+                    color: ${intense
+                      ? 'white'
+                      : CollapsibleContent != null
+                      ? '#00008B'
+                      : 'black'};
+                    font-size: 1.4em;
+                    line-height: 1.4em;
+                    width: 30px;
+                    text-align: center;
+                    margin-right: 5px;
+                  `}
+                />
+              )}
               <span
                 css={css`
                   margin-right: auto;
                 `}
               >
                 {/* showMore implementation */}
-                {message}&nbsp;
+                {message}
                 {(additionalMessage != null || CollapsibleContent != null) && (
                   <>
+                    {' '}
                     {isShowMore && additionalMessage}
                     <button
                       css={css`
                         background-color: transparent;
                         border: none;
                         text-align: center;
-                        text-decoration: ${isHover ? 'underline' : 'none'};
                         color: ${showMoreLinkColor};
                         display: inline-block;
                         cursor: pointer;
+                        :hover,
+                        :active,
+                        :focus {
+                          text-decoration: underline;
+                          background-color: transparent;
+                        }
                       `}
                       onClick={() => {
                         setIsShowMore != null
                           ? setIsShowMore(!isShowMore)
                           : null;
                       }}
-                      onMouseEnter={onMouseEnter}
-                      onMouseLeave={onMouseLeave}
                     >
                       {/* set bold here: somehow font-weight does not work */}
                       {isShowMoreLinkBold ? (

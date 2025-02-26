@@ -1,4 +1,5 @@
-import { CSSProperties } from 'react';
+import { FilledButton } from '@veupathdb/coreui';
+import { CSSProperties, useState } from 'react';
 import { FloatingDiv } from '../../../map/analysis/FloatingDiv';
 import { RequiredInputsPrompt } from './RequiredInputPrompts';
 
@@ -7,6 +8,7 @@ import { LayoutProps } from './types';
 export interface Props extends LayoutProps {
   showRequiredInputsPrompt?: boolean;
   isMosaicPlot?: boolean;
+  hideControls?: boolean;
 }
 
 const defaultContainerStyles: CSSProperties = {
@@ -27,15 +29,18 @@ export function FloatingLayout({
   plotStyles,
   showRequiredInputsPrompt,
   isMosaicPlot,
+  hideControls,
 }: Props) {
   return (
     <div style={{ ...defaultContainerStyles, ...containerStyles }}>
       <div style={{ ...defaultPlotStyles, ...plotStyles }}>
-        {showRequiredInputsPrompt && (
-          <RequiredInputsPrompt isMosaicPlot={isMosaicPlot} />
-        )}
-        {plotNode}
-        {controlsNode}
+        <div>
+          {showRequiredInputsPrompt && (
+            <RequiredInputsPrompt isMosaicPlot={isMosaicPlot} />
+          )}
+          {plotNode}
+          {!hideControls && controlsNode}
+        </div>
       </div>
     </div>
   );

@@ -67,7 +67,7 @@ export function useComputeJobStatus(
   useEffect(() => {
     if (
       !jobStatusDeps.computeName ||
-      !computePlugin.isConfigurationValid(jobStatusDeps.config)
+      !computePlugin.isConfigurationComplete(jobStatusDeps.config)
     )
       return;
     // Track if effect has been "cancelled"
@@ -104,7 +104,7 @@ export function useComputeJobStatus(
   }, [computeClient, computePlugin, jobStatusDeps]);
 
   const createJob = useCallback(async () => {
-    if (!computePlugin.isConfigurationValid(jobStatusDeps.config)) return;
+    if (!computePlugin.isConfigurationComplete(jobStatusDeps.config)) return;
     setJobStatus('requesting');
     if (jobStatusDeps.computeName == null) return;
     const { status } = await computeClient.createJob(

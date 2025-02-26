@@ -16,7 +16,11 @@ const ChangePasswordLink = (props) => {
     let url = props.changePasswordUrl
       .replace('{{returnUrl}}', encodeURIComponent(window.location))
       .replace('{{suggestedUsername}}', encodeURIComponent(props.userEmail));
-    return <a href={url}>{props.children}</a>;
+    return (
+      <a href={url} target="_self">
+        {props.children}
+      </a>
+    );
   } else {
     // use default WDK change password page
     return <Link to={`/user/profile/password`}>{props.children}</Link>;

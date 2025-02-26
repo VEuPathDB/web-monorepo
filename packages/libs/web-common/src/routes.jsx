@@ -1,7 +1,7 @@
-import React, { Suspense, useCallback } from 'react';
+import React, { Suspense, useCallback, useMemo } from 'react';
 
 import { useDispatch } from 'react-redux';
-import { Redirect } from 'react-router';
+import { Redirect, useLocation } from 'react-router';
 
 import { communitySite } from './config';
 
@@ -17,17 +17,23 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { showLoginForm as showLoginFormAction } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 
 import {
-  edaExampleAnalysesAuthor,
+  edaExampleAnalysesAuthors,
   edaServiceUrl,
   edaSingleAppMode,
   showUnreleasedData,
 } from './config';
 import { EdaMapController } from './controllers/EdaMapController';
+import { LegacyMapRedirectHandler } from './controllers/LegacyMapRedirectHandler';
 
 export const STATIC_ROUTE_PATH = '/static-content';
+const WGCNA_HELP_PAGE = '/wgcna_help.html';
 
 export function makeEdaRoute(studyId) {
   return '/workspace/analyses' + (studyId ? `/${studyId}` : '');
+}
+
+export function makeMapRoute(studyId) {
+  return '/workspace/maps' + (studyId ? `/${studyId}` : '');
 }
 
 const EdaWorkspace = React.lazy(() => import('@veupathdb/eda/lib/workspace'));
@@ -54,15 +60,28 @@ export const wrapRoutes = (wdkRoutes) => [
         dispatch(showLoginFormAction());
       }, [dispatch]);
 
+      const location = useLocation();
+
+      const helpTabContentUrl = useMemo(
+        () =>
+          [communitySite, WGCNA_HELP_PAGE, location.search, location.hash].join(
+            ''
+          ),
+        [location.search, location.hash]
+      );
+
       return (
         <Suspense fallback={<Loading />}>
           <EdaWorkspace
             showUnreleasedData={showUnreleasedData}
             edaServiceUrl={edaServiceUrl}
-            exampleAnalysesAuthor={edaExampleAnalysesAuthor}
+            exampleAnalysesAuthors={edaExampleAnalysesAuthors}
             sharingUrlPrefix={window.location.origin}
             showLoginForm={showLoginForm}
             singleAppMode={edaSingleAppMode}
+            helpTabContents={
+              <ExternalContentController url={helpTabContentUrl} />
+            }
           />
         </Suspense>
       );
@@ -70,13 +89,21 @@ export const wrapRoutes = (wdkRoutes) => [
   },
 
   {
-    path: '/workspace/maps',
+    path: makeMapRoute(),
     exact: true,
     component: EdaMapController,
   },
 
   {
-    path: '/workspace/maps',
+    path: makeMapRoute() + '/legacy-redirect-handler',
+    exact: false,
+    isFullscreen: true,
+    rootClassNameModifier: 'MapVEu',
+    component: LegacyMapRedirectHandler,
+  },
+
+  {
+    path: makeMapRoute(),
     exact: false,
     isFullscreen: true,
     rootClassNameModifier: 'MapVEu',
@@ -88,7 +115,7 @@ export const wrapRoutes = (wdkRoutes) => [
     exact: false,
     isFullscreen: true,
     rootClassNameModifier: 'MapVEu',
-    component: () => <Redirect to="/workspace/maps" />,
+    component: () => <Redirect to={makeMapRoute()} />,
   },
 
   {
@@ -121,6 +148,7 @@ export const wrapRoutes = (wdkRoutes) => [
 
   {
     path: '/contact-us',
+    requiresLogin: false,
     component: (props) => {
       const params = new URLSearchParams(props.location.search);
       return <ContactUsController context={params.get('ctx')} />;
@@ -129,14 +157,10 @@ export const wrapRoutes = (wdkRoutes) => [
 
   {
     path: `${STATIC_ROUTE_PATH}/:path*`,
+    requiresLogin: false,
     component: (props) => (
       <ExternalContentController
-        url={
-          communitySite +
-          props.match.params.path +
-          props.location.search +
-          props.location.hash
-        }
+        url={communitySite + props.match.params.path + props.location.search}
       />
     ),
   },

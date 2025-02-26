@@ -8,11 +8,11 @@ import ConfirmShareAnalysis from './ConfirmShareAnalysis';
 import { Modal } from '@veupathdb/coreui';
 
 // Utilities
-import { getAnalysisId } from '../../core/utils/analysis';
 import {
   isDiyWdkRecordId,
   wdkRecordIdToDiyUserDatasetId,
-} from '@veupathdb/wdk-client/lib/Utils/diyDatasets';
+} from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
+import { getAnalysisId } from '../../core/utils/analysis';
 
 // Hooks
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';

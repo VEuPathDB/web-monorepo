@@ -1,8 +1,9 @@
 import React from 'react';
 import { FilledButton } from '@veupathdb/coreui';
 import { ComputationAppOverview } from '../../types/visualization';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 import { JobStatus } from './ComputeJobStatusHook';
+import { removeParentheticals } from '../../utils/string-formatters';
 
 interface Props {
   computationAppOverview: ComputationAppOverview;
@@ -27,7 +28,10 @@ export function RunComputeButton(props: Props) {
     >
       <FilledButton
         themeRole="primary"
-        text={`Generate ${computationAppOverview.displayName} results`}
+        // Remove any parentheticals from the button text
+        text={`Generate ${removeParentheticals(
+          computationAppOverview.displayName
+        )} results`}
         textTransform="none"
         onPress={createJob}
         disabled={!status || !['no-such-job', 'expired'].includes(status)}

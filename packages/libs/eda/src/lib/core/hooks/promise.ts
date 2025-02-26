@@ -1,9 +1,15 @@
 import { useEffect, useState } from 'react';
+import { useValueBasedUpdater } from './state';
 
 export type PromiseHookState<T> = {
   value?: T;
   pending: boolean;
   error?: unknown;
+};
+
+export type PromiseHookOptions = {
+  keepPreviousValue?: boolean;
+  throwError?: boolean;
 };
 
 /**
@@ -15,17 +21,26 @@ export type PromiseHookState<T> = {
  * @param task A function that returns a promise
  * @returns PromiseHookState<T>
  */
-export function usePromise<T>(task: () => Promise<T>): PromiseHookState<T> {
+export function usePromise<T>(
+  task: () => Promise<T>,
+  options: PromiseHookOptions = {}
+): PromiseHookState<T> {
+  const { keepPreviousValue = true, throwError = false } = options;
   const [state, setState] = useState<PromiseHookState<T>>({
     pending: true,
   });
-  useEffect(() => {
-    let ignoreResolve = false;
+
+  // Set pending state synchronously
+  useValueBasedUpdater(task, () => {
     setState((prev) => ({
       pending: true,
-      value: prev.value,
+      value: keepPreviousValue ? prev.value : undefined,
       error: undefined,
     }));
+  });
+
+  useEffect(() => {
+    let ignoreResolve = false;
     task().then(
       (value) => {
         if (ignoreResolve) return;
@@ -46,5 +61,6 @@ export function usePromise<T>(task: () => Promise<T>): PromiseHookState<T> {
       ignoreResolve = true;
     };
   }, [task]);
+  if (state.error && throwError) throw state.error;
   return state;
 }

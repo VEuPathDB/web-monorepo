@@ -1,4 +1,5 @@
 import { TypeOf, Decoder } from 'io-ts';
+import { v4 as uuid } from 'uuid';
 
 import {
   createJsonRequest,
@@ -34,6 +35,7 @@ import {
   StandaloneMapBubblesLegendRequestParams,
   StandaloneMapBubblesLegendResponse,
 } from './types';
+import { NoDataError } from './NoDataError';
 
 export default class DataClient extends FetchClientWithCredentials {
   getApps(): Promise<TypeOf<typeof AppsResponse>> {
@@ -57,7 +59,7 @@ export default class DataClient extends FetchClientWithCredentials {
         method: 'POST',
         path: `/apps/${computationName}/visualizations/${visualizationName}`,
         body: params,
-        transformResponse: ioTransformer(decoder),
+        transformResponse: nullResponseInterceptor(decoder),
       })
     );
   }
@@ -65,11 +67,12 @@ export default class DataClient extends FetchClientWithCredentials {
   // Histogram
   getHistogram(
     computationName: string,
+    pluginName: string, // now handles timeline and histogram
     params: HistogramRequestParams
   ): Promise<HistogramResponse> {
     return this.getVisualizationData(
       computationName,
-      'histogram',
+      pluginName,
       params,
       HistogramResponse
     );
@@ -104,11 +107,12 @@ export default class DataClient extends FetchClientWithCredentials {
   // Lineplot
   getLineplot(
     computationName: string,
+    pluginName: string,
     params: LineplotRequestParams
   ): Promise<LineplotResponse> {
     return this.getVisualizationData(
       computationName,
-      'lineplot',
+      pluginName,
       params,
       LineplotResponse
     );
@@ -224,10 +228,27 @@ export default class DataClient extends FetchClientWithCredentials {
         method: 'POST',
         path: `/filter-aware-metadata/continuous-variable`,
         body: params,
-        transformResponse: ioTransformer(ContinousVariableMetadataResponse),
+        transformResponse: nullResponseInterceptor(
+          ContinousVariableMetadataResponse
+        ),
       })
     );
   }
+}
+
+// intercept a null body response and throw a '204' internally
+function nullResponseInterceptor<T>(decoder: Decoder<unknown, T>) {
+  return function (body: unknown) {
+    if (body == null) {
+      throw new NoDataError(
+        undefined, // use default
+        'No data',
+        204,
+        uuid()
+      );
+    }
+    return ioTransformer(decoder)(body);
+  };
 }
 
 export * from './types';

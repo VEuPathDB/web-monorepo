@@ -16,7 +16,7 @@ export const EmptyAtStart: Story<NumberRangeInputProps> = () => {
   const [range, setRange] = useState<NumberRange | undefined>();
 
   const handleChange = useCallback(
-    (newRange) => {
+    (newRange: any) => {
       console.log(`new range = ${newRange?.min} to ${newRange?.max}`);
       setRange(newRange);
     },
@@ -32,7 +32,7 @@ export const NoPartialRangesWithClear: Story<NumberRangeInputProps> = () => {
   const [range, setRange] = useState<NumberRange | undefined>();
 
   const handleChange = useCallback(
-    (newRange) => {
+    (newRange: any) => {
       console.log(`new range = ${newRange?.min} to ${newRange?.max}`);
       setRange(newRange);
     },
@@ -57,7 +57,7 @@ export const ControlledLinked: Story<NumberRangeInputProps> = () => {
   // there must be a cleverer way to do this
   // avoiding the cut and paste
   const handleChangeA = useCallback(
-    (newRange) => {
+    (newRange: any) => {
       console.log(`A: new range = ${newRange?.min} to ${newRange?.max}`);
       setRange(newRange);
     },
@@ -65,7 +65,7 @@ export const ControlledLinked: Story<NumberRangeInputProps> = () => {
   );
 
   const handleChangeB = useCallback(
-    (newRange) => {
+    (newRange: any) => {
       console.log(`B: new range = ${newRange?.min} to ${newRange?.max}`);
       setRange(newRange);
     },
@@ -101,14 +101,14 @@ export const CustomValidator: Story<NumberRangeInputProps> = () => {
   const [range, setRange] = useState<NumberRange | undefined>();
 
   const handleChange = useCallback(
-    (newRange) => {
+    (newRange: any) => {
       console.log(`new range = ${newRange?.min} to ${newRange?.max}`);
       setRange(newRange);
     },
     [setRange]
   );
   const validate = useCallback(
-    (range) => {
+    (range: any) => {
       console.log(`validating range ${range.min} to ${range.max}`);
       if (range && range.max != null && range.min != null) {
         if (range.max - range.min === 5) {

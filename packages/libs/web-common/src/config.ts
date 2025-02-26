@@ -22,7 +22,9 @@ export const {
   twitterUrl2 = '',
   youtubeUrl = '',
   redditUrl = '',
+  linkedinUrl = '',
   vimeoUrl = '',
+  discordUrl = '',
   communitySite = '',
   siteSearchServiceUrl = '',
   retainContainerContent = false,
@@ -32,15 +34,14 @@ export const {
   useUserDatasetsWorkspace = false,
   datasetImportUrl = '',
   showUnreleasedData = false,
+  vdiServiceUrl = '',
+  userDatasetsUploadTypes = '',
 } = window.__SITE_CONFIG__;
 
-const edaExampleAnalysesAuthorNum = parseInt(
-  window.__SITE_CONFIG__.edaExampleAnalysesAuthor ?? '',
-  10
-);
-
-export const edaExampleAnalysesAuthor = Number.isNaN(
-  edaExampleAnalysesAuthorNum
-)
+export const edaExampleAnalysesAuthors = !window.__SITE_CONFIG__
+  .edaExampleAnalysesAuthor
   ? undefined
-  : edaExampleAnalysesAuthorNum;
+  : window.__SITE_CONFIG__.edaExampleAnalysesAuthor
+      .split(/\s*,\s*/)
+      .map((stringVal) => parseInt(stringVal, 10))
+      .filter((numberVal) => Number.isInteger(numberVal));

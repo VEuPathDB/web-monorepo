@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { orderBy } from 'lodash';
 
 import { RealTimeSearchBox } from '@veupathdb/wdk-client/lib/Components';
-import { Mesa, MesaState } from '@veupathdb/wdk-client/lib/Components/Mesa';
+import { Mesa, MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import {
   areTermsInString,
@@ -91,6 +91,11 @@ export function OrthoDataTable<R, C extends DataTableColumnKey<R>>({
     ]
   );
 
+  const peripheralCount = mesaFilteredRows.filter(
+    (row) => row['core_peripheral'] === 'Peripheral'
+  ).length;
+  const coreCount = mesaFilteredRows.length - peripheralCount;
+
   return (
     <div className="OrthoDataTable">
       <Mesa state={mesaState}>
@@ -101,6 +106,10 @@ export function OrthoDataTable<R, C extends DataTableColumnKey<R>>({
             onSearchTermChange={setSearchTerm}
             helpText="The entire table will be searched"
           />
+          <span className="Counts">
+            Showing {mesaFilteredRows.length} of {mesaRows.length} Organisms (
+            {coreCount} Core and {peripheralCount} Peripheral)
+          </span>
         </div>
       </Mesa>
     </div>

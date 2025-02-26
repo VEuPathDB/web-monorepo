@@ -1,5 +1,6 @@
 import React from 'react';
-import { RadioList, CheckboxList } from '@veupathdb/wdk-client/lib/Components';
+import { RadioList } from '@veupathdb/wdk-client/lib/Components';
+import CheckboxList from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxList';
 
 let FeaturesList = (props) => {
   let { features, field, formState, getUpdateHandler } = props;
@@ -37,6 +38,7 @@ let ComponentsList = (props) => {
           onChange={getUpdateHandler(field)}
           items={features}
           linksPosition={null}
+          disabledCheckboxTooltipContent="Required field"
         />
       </div>
     </div>

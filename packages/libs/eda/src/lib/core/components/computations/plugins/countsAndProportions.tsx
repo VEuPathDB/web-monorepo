@@ -6,11 +6,11 @@ import {
 } from '../../visualizations/implementations/MosaicVisualization';
 import { testVisualization } from '../../visualizations/implementations/TestVisualization';
 import { ComputationPlugin } from '../Types';
-import { ZeroConfigWithButton } from '../ZeroConfiguration';
+import { ZeroConfiguration } from '../ZeroConfiguration';
 
 export const plugin: ComputationPlugin = {
-  configurationComponent: ZeroConfigWithButton,
-  isConfigurationValid: t.undefined.is,
+  configurationComponent: ZeroConfiguration,
+  isConfigurationComplete: t.undefined.is,
   createDefaultConfiguration: () => undefined,
   visualizationPlugins: {
     testVisualization,

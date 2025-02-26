@@ -4,7 +4,7 @@ interface ResultsLegendProps {
   displayNamePlural: string;
 }
 
-export const ResultsLegend: React.SFC<ResultsLegendProps> = ({
+export const ResultsLegend: React.FunctionComponent<ResultsLegendProps> = ({
   displayNamePlural,
 }) => (
   <div className="legend">

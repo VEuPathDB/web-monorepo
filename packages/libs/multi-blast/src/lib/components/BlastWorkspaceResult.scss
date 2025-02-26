@@ -19,6 +19,15 @@
       margin-top: 1em;
     }
 
+    .ResultContainer > * + * {
+      margin-top: 0.5em;
+    }
+
+    h2 {
+      font-weight: 400;
+      padding: 0;
+    }
+
     a.BackToAllJobs {
       font-size: 1.2em;
     }

@@ -26,6 +26,7 @@ export type Action =
   | RecordLoadingAction
   | RecordErrorAction
   | SectionVisibilityAction
+  | UpdateTableStateAction
   | SetCollapsedSectionsAction
   | AllFieldVisibilityAction
   | NavigationVisibilityAction
@@ -43,6 +44,7 @@ export type RecordReceivedAction = {
     record: RecordInstance;
     recordClass: RecordClass;
     categoryTree: CategoryTreeNode;
+    defaultExpandedSections?: string[];
   };
 };
 
@@ -171,7 +173,7 @@ export type SectionVisibilityAction = {
   type: typeof SECTION_VISIBILITY;
   payload: {
     name: string;
-    isVisible: boolean;
+    isVisible?: boolean;
   };
 };
 
@@ -206,6 +208,30 @@ export function setCollapsedSections(
     payload: { names },
   };
 }
+
+//==============================================================================
+
+export const TABLE_STATE_UPDATED = 'record-view/table-state-updated';
+
+export type UpdateTableStateAction = {
+  type: typeof TABLE_STATE_UPDATED;
+  payload: {
+    tableName: string;
+    tableState: {
+      searchTerm: string;
+      selectedRow?: number;
+      expandedRows: number[];
+    };
+  };
+};
+
+export const updateTableState = (
+  tableName: string,
+  tableState: UpdateTableStateAction['payload']['tableState']
+): UpdateTableStateAction => ({
+  type: TABLE_STATE_UPDATED,
+  payload: { tableName, tableState },
+});
 
 //==============================================================================
 
@@ -325,17 +351,31 @@ interface RequestRequestOptionsGetter {
   ): RecordRequestOptions[];
 }
 
+interface DefaultExpandedSectionsGetter {
+  (recordClass: RecordClass, categoryTree: CategoryTreeNode):
+    | string[]
+    | undefined;
+}
+
+interface CategoryTreePruner {
+  (recordClass: RecordClass, categoryTree: CategoryTreeNode): CategoryTreeNode;
+}
+
 /** Fetch page data from services */
 export function loadRecordData(
   recordClass: string,
   primaryKeyValues: string[],
-  getRecordRequestOptions: RequestRequestOptionsGetter
+  getRecordRequestOptions: RequestRequestOptionsGetter,
+  pruneCategoryTree: CategoryTreePruner,
+  getDefaultExpandedSections: DefaultExpandedSectionsGetter
 ): ActionThunk<LoadRecordAction | UserAction | EmptyAction> {
   return function run({ wdkService }) {
     return setActiveRecord(
       recordClass,
       primaryKeyValues,
-      getRecordRequestOptions
+      getRecordRequestOptions,
+      pruneCategoryTree,
+      getDefaultExpandedSections
     );
   };
 }
@@ -350,7 +390,9 @@ export function loadRecordData(
 function setActiveRecord(
   recordClassUrlSegment: string,
   primaryKeyValues: string[],
-  getRecordRequestOptions: RequestRequestOptionsGetter
+  getRecordRequestOptions: RequestRequestOptionsGetter,
+  pruneCategoryTree: CategoryTreePruner,
+  getDefaultExpandedSections: DefaultExpandedSectionsGetter
 ): ActionThunk<LoadRecordAction | UserAction | EmptyAction> {
   return ({ wdkService }) => {
     const id = uniqueId('recordViewId');
@@ -364,11 +406,19 @@ function setActiveRecord(
         getCategoryTree(wdkService, recordClassUrlSegment),
       ]).then(
         ([recordClass, primaryKey, fullCategoryTree]) => {
+          const prunedCategoryTree = pruneCategoryTree(
+            recordClass,
+            fullCategoryTree
+          );
           const [initialOptions, ...additionalOptions] =
-            getRecordRequestOptions(recordClass, fullCategoryTree);
+            getRecordRequestOptions(recordClass, prunedCategoryTree);
           const categoryTree = getTree(
-            { name: '__', tree: fullCategoryTree },
+            { name: '__', tree: prunedCategoryTree },
             isNotInternalNode
+          );
+          const defaultExpandedSections = getDefaultExpandedSections(
+            recordClass,
+            categoryTree
           );
           const initialAction$ = wdkService
             .getRecord(recordClass.urlSegment, primaryKey, initialOptions)
@@ -377,6 +427,7 @@ function setActiveRecord(
                 record,
                 recordClass,
                 categoryTree,
+                defaultExpandedSections,
               })
             );
           const additionalActions = additionalOptions.map((options) =>

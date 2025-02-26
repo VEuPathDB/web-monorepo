@@ -14,7 +14,7 @@ export default {
 const ControlledTemplate: Story<DateInputProps> = (args) => {
   const [value, setValue] = useState<string>('2005-01-03');
   const onValueChange = useCallback(
-    (newValue) => {
+    (newValue: any) => {
       console.log(`new value = ${newValue}`);
       setValue(newValue as string);
     },

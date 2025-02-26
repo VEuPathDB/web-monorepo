@@ -1,9 +1,8 @@
 import React, { useCallback } from 'react';
-import { makeNewAnalysis, useStudyRecord } from '../core';
+import { makeNewAnalysis, useAnalysisList, useStudyRecord } from '../core';
 import { useRouteMatch, Link, useHistory } from 'react-router-dom';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { AnalysisClient } from '../core/api/AnalysisClient';
-import { usePromise } from '../core/hooks/promise';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { createComputation } from '../core/components/computations/Utils';
 
@@ -16,12 +15,8 @@ interface Props {
 export function AnalysisList(props: Props) {
   const { analysisStore, studyId, singleAppMode } = props;
   const studyRecord = useStudyRecord();
-  const list = usePromise(
-    useCallback(async () => {
-      const analyses = await analysisStore.getAnalyses();
-      return analyses.filter((analysis) => analysis.studyId === studyId);
-    }, [studyId, analysisStore])
-  );
+  const { analyses } = useAnalysisList(analysisStore);
+  const list = analyses?.filter((analysis) => analysis.studyId === studyId);
   const { url } = useRouteMatch();
   const history = useHistory();
   const createAnalysis = useCallback(async () => {
@@ -51,13 +46,13 @@ export function AnalysisList(props: Props) {
           New Analysis
         </button>
       </div>
-      {list.pending ? (
+      {list == null ? (
         <Loading />
-      ) : list.value?.length === 0 ? (
+      ) : list.length === 0 ? (
         <em>You do not have any analyses for this study.</em>
       ) : (
         <ul>
-          {list.value?.map((analysis) => (
+          {list.map((analysis) => (
             <li key={analysis.analysisId}>
               <Link to={`${url}/${analysis.analysisId}`}>
                 {safeHtml(analysis.displayName)}

@@ -1,19 +1,52 @@
 .wdk-RecordContainer__GroupRecordClasses\.GroupRecordClass {
+  --row-hl-bg-color: wheat;
+  --row-hl-fg-color: inherit;
+
   .wdk-MissingMsaAttribute {
     color: darkred;
   }
 
-  th.wdk-DataTableCell__domains {
+  th.HeadingCell--key-domains {
     width: 35em;
   }
 
-  td.wdk-DataTableCell__domains {
+  td > .Cell-domains {
     vertical-align: middle;
     padding-top: 1.2em;
     padding-bottom: 1.2em;
 
     .PfamDomain {
       min-width: 0.41666666666em;
+    }
+  }
+
+  #Sequences .Mesa.MesaComponent {
+    display: flex;
+    flex-wrap: wrap;
+    > .Toolbar {
+      &,
+      & > * {
+        width: 100%;
+      }
+    }
+    > .MesaComponent {
+      width: 100%;
+      > .DataTable {
+        max-width: unset;
+        width: unset;
+        overflow-x: unset;
+        width: 100%;
+
+        table {
+          width: 100%;
+        }
+
+        // Set background-color of selected rows
+        tr:has(> td.SelectionCell > div > input:checked) > td {
+          background-color: var(--row-hl-bg-color) !important;
+          color: var(--row-hl-fg-color) !important;
+        }
+      }
     }
   }
 }

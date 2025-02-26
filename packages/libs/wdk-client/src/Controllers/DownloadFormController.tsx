@@ -12,14 +12,18 @@ import {
   updateFormUi,
   submitForm,
   updateViewFilters,
+  loadPageDataFromAnswerSpec,
 } from '../Actions/DownloadFormActions';
 import DownloadFormContainer from '../Views/ReporterForm/DownloadFormContainer';
 import { RootState } from '../Core/State/Types';
+import { AnswerSpec, FilterValueArray } from '../Utils/WdkModel';
+import { ResultType } from '../Utils/WdkResult';
 
 const DownloadFormActionCreators = {
   loadPageDataFromRecord,
   loadPageDataFromBasketName,
   loadPageDataFromStepId,
+  loadPageDataFromAnswerSpec,
   selectReporter,
   submitForm,
   updateFormState: updateForm,
@@ -30,12 +34,23 @@ const DownloadFormActionCreators = {
 type Options = Partial<{
   format: string;
   summaryView: string;
+  includeSelector?: boolean;
+  includeTitle?: boolean;
+  includeSubmit?: boolean;
+  onFormSubmit?: (
+    resultType: ResultType,
+    selectedReporter: string,
+    formState: any,
+    viewFilters?: FilterValueArray,
+    target?: string
+  ) => void;
 }>;
 
 type OwnProps =
   | ({ basketName: string } & Options)
   | ({ recordClass: string; primaryKey: string } & Options)
-  | ({ stepId: number } & Options);
+  | ({ stepId: number } & Options)
+  | ({ answerSpec: AnswerSpec } & Options);
 
 type StateProps = RootState['downloadForm'];
 
@@ -83,12 +98,14 @@ class DownloadFormController extends PageController<Props> {
     // build props object to pass to form component
     let formProps = {
       ...this.props,
+      submitForm: this.props.ownProps.onFormSubmit ?? this.props.submitForm,
     };
     return (
       <DownloadFormContainer
         {...formProps}
-        includeTitle={true}
-        includeSubmit={true}
+        includeTitle={this.props.ownProps.includeTitle ?? true}
+        includeSubmit={this.props.ownProps.includeSubmit ?? true}
+        includeSelector={this.props.ownProps.includeSelector}
       />
     );
   }
@@ -99,6 +116,7 @@ class DownloadFormController extends PageController<Props> {
       loadPageDataFromRecord,
       loadPageDataFromStepId,
       loadPageDataFromBasketName,
+      loadPageDataFromAnswerSpec,
     } = this.props;
 
     if (prevProps && isEqual(ownProps, prevProps.ownProps)) return;
@@ -114,6 +132,8 @@ class DownloadFormController extends PageController<Props> {
       );
     } else if ('basketName' in ownProps) {
       loadPageDataFromBasketName(ownProps.basketName, ownProps.format);
+    } else if ('answerSpec' in ownProps) {
+      loadPageDataFromAnswerSpec(ownProps.answerSpec, ownProps.format);
     } else {
       console.error(
         'Neither stepId nor recordClass param was passed ' +

@@ -8,22 +8,45 @@ import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { AnalysisClient, usePublicAnalysisList } from '../core';
 import { useWdkStudyRecords } from '../core/hooks/study';
 
-import { PublicAnalyses } from './PublicAnalyses';
+import { PublicAnalyses, StudyRecordMetadata } from './PublicAnalyses';
 import SubsettingClient from '../core/api/SubsettingClient';
+import { isVdiCompatibleWdkService } from '@veupathdb/user-datasets/lib/Service';
+import { map } from 'lodash';
+import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
+import { diyUserDatasetIdToWdkRecordId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 export interface Props {
   analysisClient: AnalysisClient;
   subsettingClient: SubsettingClient;
-  exampleAnalysesAuthor?: number;
+  exampleAnalysesAuthors?: number[];
 }
 
 export function PublicAnalysesRoute({
   analysisClient,
   subsettingClient,
-  exampleAnalysesAuthor,
+  exampleAnalysesAuthors,
 }: Props) {
   const publicAnalysisListState = usePublicAnalysisList(analysisClient);
   const studyRecords = useWdkStudyRecords(subsettingClient);
+  const communityDatasets = useWdkService(async (wdkService) => {
+    if (isVdiCompatibleWdkService(wdkService))
+      return wdkService.getCommunityDatasets();
+    return [];
+  }, []);
+
+  const studyRecordsMetadata: StudyRecordMetadata[] | undefined =
+    studyRecords &&
+      communityDatasets && [
+        ...map(studyRecords, (record) => ({
+          id: getStudyId(record)!,
+          displayName: record.displayName ?? 'Unknown Study',
+        })),
+        ...map(communityDatasets, (ud) => ({
+          id: diyUserDatasetIdToWdkRecordId(ud.datasetId),
+          displayName: ud.name,
+        })),
+      ];
 
   const location = useLocation();
   const makeAnalysisLink = useCallback(
@@ -38,9 +61,9 @@ export function PublicAnalysesRoute({
     <PublicAnalyses
       analysisClient={analysisClient}
       publicAnalysisListState={publicAnalysisListState}
-      studyRecords={studyRecords}
+      studyRecordsMetadata={studyRecordsMetadata}
       makeAnalysisLink={makeAnalysisLink}
-      exampleAnalysesAuthor={exampleAnalysesAuthor}
+      exampleAnalysesAuthors={exampleAnalysesAuthors}
     />
   );
 }

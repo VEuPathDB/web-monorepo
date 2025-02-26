@@ -1,13 +1,13 @@
-import { DonutMarker } from './DonutMarker';
-import { DonutMarkers } from './DonutMarkers';
-import { BarPlotMarker } from './BarPlotMarker';
-import { BarPlotMarkers } from './BarPlotMarkers';
-import { BubbleMarker } from './BubbleMarker';
+import { DonutMarkerIcon } from './DonutMarkerIcon';
+import { DonutMarkersIcon } from './DonutMarkersIcon';
+import { BarPlotMarkerIcon } from './BarPlotMarkerIcon';
+import { BarPlotMarkersIcon } from './BarPlotMarkersIcon';
+import { BubbleMarkerIcon } from './BubbleMarkerIcon';
 
 export {
-  DonutMarker,
-  DonutMarkers,
-  BarPlotMarker,
-  BarPlotMarkers,
-  BubbleMarker,
+  DonutMarkerIcon,
+  DonutMarkersIcon,
+  BarPlotMarkerIcon,
+  BarPlotMarkersIcon,
+  BubbleMarkerIcon,
 };

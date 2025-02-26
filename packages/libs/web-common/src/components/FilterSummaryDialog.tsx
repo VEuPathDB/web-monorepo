@@ -22,6 +22,7 @@ type Props = {
   isPinned: boolean;
   setVisible: (visible: boolean) => any;
   setPinned: (pinned: boolean) => any;
+  children?: React.ReactNode;
 };
 
 class FilterSummaryDialog extends React.Component<Props> {

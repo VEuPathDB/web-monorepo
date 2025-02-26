@@ -55,7 +55,7 @@ export type Action =
   | InferAction<typeof loadError>;
 
 // TODO Refactor this using mrate
-export function loadAllStaticData(
+export async function loadAllStaticData(
   wdkService: CompositeService,
   dispatch: DispatchAction
 ) {
@@ -73,22 +73,29 @@ export function loadAllStaticData(
     dispatch
   );
 
-  const config$ = wdkService.getConfig();
-
-  Promise.all([
-    config$.then(staticDataFulfillers.configLoaded),
-    config$
-      .then((config) => wdkService.getOntology(config.categoriesOntologyName))
-      .then(staticDataFulfillers.ontologyLoaded),
-    wdkService.getQuestions().then(staticDataFulfillers.questionsLoaded),
-    wdkService
-      .getRecordClasses()
-      .then(staticDataFulfillers.recordClassesLoaded),
-    wdkService.getCurrentUser().then(staticDataFulfillers.userLoaded),
-    wdkService
-      .getCurrentUserPreferences()
-      .then(staticDataFulfillers.preferencesLoaded),
-  ])
-    .then(staticDataFulfillers.allDataLoaded)
-    .catch(staticDataFulfillers.loadError);
+  try {
+    // Call this endpoint before calling the rest. This ensures that we don't get
+    // conflicting Set-Cookie headers
+    const config = await wdkService.getConfig();
+    // Call these in parallel
+    await Promise.all([
+      staticDataFulfillers.configLoaded(config),
+      staticDataFulfillers.ontologyLoaded(
+        await wdkService.getOntology(config.categoriesOntologyName)
+      ),
+      staticDataFulfillers.questionsLoaded(await wdkService.getQuestions()),
+      staticDataFulfillers.recordClassesLoaded(
+        await wdkService.getRecordClasses()
+      ),
+      staticDataFulfillers.userLoaded(await wdkService.getCurrentUser()),
+      staticDataFulfillers.preferencesLoaded(
+        await wdkService.getCurrentUserPreferences()
+      ),
+    ]);
+    staticDataFulfillers.allDataLoaded();
+  } catch (error) {
+    staticDataFulfillers.loadError(
+      error instanceof Error ? error : new Error(String(error))
+    );
+  }
 }

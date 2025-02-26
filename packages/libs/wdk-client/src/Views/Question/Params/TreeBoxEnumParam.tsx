@@ -37,7 +37,7 @@ import { DispatchAction } from '../../../Core/CommonTypes';
 // -----
 
 export type State = {
-  expandedList: string[];
+  expandedList: string[] | null;
   searchTerm: string;
 };
 
@@ -130,11 +130,13 @@ export function reduce(state: State = {} as State, action: Action): State {
             ? 1
             : 0;
 
+        const initialExpandedList = findBranchTermsUpToDepth(
+          parameter.vocabulary,
+          depthExpanded
+        );
+
         return {
-          expandedList: findBranchTermsUpToDepth(
-            parameter.vocabulary,
-            depthExpanded
-          ),
+          expandedList: initialExpandedList.length ? initialExpandedList : null,
           searchTerm: '',
         };
       }
@@ -253,6 +255,8 @@ export function useDefaultCheckboxTreeProps(
   tree: TreeBoxVocabNode,
   selectedLeaves: string[]
 ): CheckboxTreeProps<TreeBoxVocabNode> {
+  const multiPick =
+    isMultiPick(props.parameter) && props.parameter.maxSelectedCount !== 1;
   const handleExpansionChange = useCallback(
     (expandedList: string[]) => {
       props.dispatch(setExpandedList({ ...props.context, expandedList }));
@@ -261,7 +265,9 @@ export function useDefaultCheckboxTreeProps(
   );
   const handleSelectionChange = useCallback(
     (ids: string[]) => {
-      const idsWithBranches = ids.concat(deriveSelectedBranches(tree, ids));
+      const idsWithBranches = multiPick
+        ? ids.concat(deriveSelectedBranches(tree, ids))
+        : ids;
       props.onChange(idsWithBranches);
     },
     [props.onChange, tree]
@@ -275,7 +281,7 @@ export function useDefaultCheckboxTreeProps(
 
   return {
     isSelectable: true,
-    isMultiPick: isMultiPick(props.parameter),
+    isMultiPick: multiPick,
     linksPosition: LinksPosition.Top,
     showRoot: false,
     shouldExpandDescendantsWithOneChild: false,

@@ -81,7 +81,7 @@ interface ActionProps extends DispatchProps {
 interface StrategyAction {
   iconName: string;
   title: string;
-  render: React.ReactType<ActionProps>;
+  render: React.FC<ActionProps> | React.ComponentType<ActionProps>;
   loginRequired?: boolean;
 }
 

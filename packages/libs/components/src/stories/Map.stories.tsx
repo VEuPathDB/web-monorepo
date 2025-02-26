@@ -25,6 +25,7 @@ import { Checkbox } from '@material-ui/core';
 import geohashAnimation from '../map/animation_functions/geohash';
 import { MouseMode } from '../map/MouseTools';
 import { PlotRef } from '../types/plots';
+import SemanticMarkers, { SemanticMarkersProps } from '../map/SemanticMarkers';
 
 export default {
   title: 'Map/General',
@@ -105,11 +106,14 @@ export const Spinner: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={viewport}
-        onBoundsChanged={handleViewportChanged}
-        markers={markerElements}
-        animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-      />
+        onBoundsChanged={handleViewportChanged}
+      >
+        <SemanticMarkers
+          markers={markerElements}
+          animation={defaultAnimation}
+        />
+      </MapVEuMap>
       <MapVEuLegendSampleList
         legendType={legendType}
         data={legendData}
@@ -153,11 +157,14 @@ export const NoDataOverlay: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={viewport}
-        onBoundsChanged={handleViewportChanged}
-        markers={markerElements}
-        animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-      />
+        onBoundsChanged={handleViewportChanged}
+      >
+        <SemanticMarkers
+          markers={markerElements}
+          animation={defaultAnimation}
+        />
+      </MapVEuMap>
       <MapVEuLegendSampleList
         legendType={legendType}
         data={legendData}
@@ -201,11 +208,14 @@ export const Windowed: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={viewport}
-        onBoundsChanged={handleViewportChanged}
-        markers={markerElements}
-        animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-      />
+        onBoundsChanged={handleViewportChanged}
+      >
+        <SemanticMarkers
+          markers={markerElements}
+          animation={defaultAnimation}
+        />
+      </MapVEuMap>
       <MapVEuLegendSampleList
         legendType={legendType}
         data={legendData}
@@ -229,9 +239,10 @@ Windowed.args = {
   showGrid: true,
 };
 
-export const ScreenshotOnLoad: Story<MapVEuMapProps> = function ScreenhotOnLoad(
-  args
-) {
+export const ScreenshotOnLoad: Story<{
+  mapProps: MapVEuMapProps;
+  markerProps: SemanticMarkersProps;
+}> = function ScreenhotOnLoad(args) {
   const mapRef = useRef<PlotRef>(null);
   const [image, setImage] = useState('');
   useEffect(() => {
@@ -239,36 +250,43 @@ export const ScreenshotOnLoad: Story<MapVEuMapProps> = function ScreenhotOnLoad(
     // because the size of the base64 encoding causes "too much recursion".
     mapRef.current
       ?.toImage({
-        height: args.height as number,
-        width: args.width as number,
+        height: args.mapProps.height as number,
+        width: args.mapProps.width as number,
         format: 'png',
       })
       .then(fetch)
       .then((res) => res.blob())
       .then(URL.createObjectURL)
       .then(setImage);
-  }, []);
+  }, [args.mapProps.height, args.mapProps.width]);
 
   return (
     <div style={{ display: 'flex' }}>
       <MapVEuMap
-        {...args}
+        {...args.mapProps}
         ref={mapRef}
-        animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-      />
-      <img src={image} />
+      >
+        <SemanticMarkers {...args.markerProps} />
+      </MapVEuMap>
+      <img alt="Map screenshot" src={image} />
     </div>
   );
 };
 
 ScreenshotOnLoad.args = {
-  height: 500,
-  width: 700,
-  showGrid: true,
-  markers: [],
-  viewport: { center: [13, 16], zoom: 4 },
-  onBoundsChanged: () => {},
+  mapProps: {
+    height: 500,
+    width: 700,
+    showGrid: true,
+    viewport: { center: [13, 16], zoom: 4 },
+    onViewportChanged: () => {},
+    onBoundsChanged: () => {},
+  },
+  markerProps: {
+    markers: [],
+    animation: null,
+  },
 };
 
 export const Tiny: Story<MapVEuMapProps> = (args) => {
@@ -298,11 +316,14 @@ export const Tiny: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={viewport}
-        onBoundsChanged={handleViewportChanged}
-        markers={markerElements}
-        animation={defaultAnimation}
         zoomLevelToGeohashLevel={tinyLeafletZoomLevelToGeohashLevel}
-      />
+        onBoundsChanged={handleViewportChanged}
+      >
+        <SemanticMarkers
+          markers={markerElements}
+          animation={defaultAnimation}
+        />
+      </MapVEuMap>
     </>
   );
 };
@@ -384,12 +405,15 @@ export const ScrollAndZoom: Story<MapVEuMapProps> = (args) => {
           {...args}
           viewport={viewport}
           onViewportChanged={setViewport}
-          onBoundsChanged={handleViewportChanged}
-          markers={markerElements}
-          animation={defaultAnimation}
           zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
           scrollingEnabled={mapScroll}
-        />
+          onBoundsChanged={handleViewportChanged}
+        >
+          <SemanticMarkers
+            markers={markerElements}
+            animation={defaultAnimation}
+          />
+        </MapVEuMap>
       </div>
     </>
   );

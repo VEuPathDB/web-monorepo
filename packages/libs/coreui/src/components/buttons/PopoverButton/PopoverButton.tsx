@@ -1,6 +1,83 @@
-import { ReactNode, useState } from 'react';
-import { Button, Popover, makeStyles } from '@material-ui/core';
-import { useEffect } from 'react';
+import {
+  ReactNode,
+  useState,
+  useEffect,
+  useMemo,
+  forwardRef,
+  useImperativeHandle,
+  useCallback,
+} from 'react';
+import { Popover } from '@material-ui/core';
+import SwissArmyButton from '../SwissArmyButton';
+import { gray } from '../../../definitions/colors';
+import { ButtonStyleSpec, PartialButtonStyleSpec } from '..';
+import { ArrowDown } from '../../icons';
+import { merge } from 'lodash';
+
+// The default styles largely mimic the style of the MUI button was previously used in this component
+const defaultStyle: ButtonStyleSpec = {
+  default: {
+    color: gray[200],
+    textColor: 'black',
+    fontWeight: 500,
+    border: {
+      radius: 5,
+    },
+    dropShadow: {
+      color: gray[500],
+      blurRadius: '5px',
+      offsetX: '0px',
+      offsetY: '2px',
+    },
+  },
+  hover: {
+    color: gray[300],
+    textColor: 'black',
+    fontWeight: 500,
+    border: {
+      radius: 5,
+    },
+    dropShadow: {
+      color: gray[600],
+      blurRadius: '5px',
+      offsetX: '0px',
+      offsetY: '2px',
+    },
+  },
+  pressed: {
+    color: gray[300],
+    fontWeight: 500,
+    textColor: 'black',
+    border: {
+      radius: 5,
+    },
+    dropShadow: {
+      color: gray[600],
+      blurRadius: '7px',
+      offsetX: '0px',
+      offsetY: '4px',
+    },
+  },
+  disabled: {
+    color: gray[100],
+    textColor: gray[300],
+    fontWeight: 500,
+    dropShadow: {
+      color: gray[300],
+      blurRadius: '5px',
+      offsetX: '0px',
+      offsetY: '2px',
+    },
+  },
+  icon: {
+    fontSize: '1em',
+  },
+};
+
+export interface PopoverButtonHandle {
+  /** Closes the popover */
+  close: () => void;
+}
 
 export interface PopoverButtonProps {
   /** Contents of the menu when opened */
@@ -16,101 +93,111 @@ export interface PopoverButtonProps {
   setIsPopoverOpen?: (isOpen: boolean) => void;
 
   isDisabled?: boolean;
-}
 
-const useStyles = makeStyles({
-  focusVisible: {
-    outline: '1px dotted gray',
-  },
-});
+  styleOverrides?: PartialButtonStyleSpec;
+}
 
 /**
  * Renders a button that display `children` in a popover widget.
  */
-export default function PopoverButton(props: PopoverButtonProps) {
-  const {
-    children,
-    buttonDisplayContent,
-    onClose,
-    setIsPopoverOpen,
-    isDisabled = false,
-  } = props;
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const classes = useStyles();
 
-  const onCloseHandler = () => {
-    setAnchorEl(null);
-    onClose && onClose();
-  };
+const PopoverButton = forwardRef<PopoverButtonHandle, PopoverButtonProps>(
+  function PopoverButton(props, ref) {
+    const {
+      children,
+      buttonDisplayContent,
+      onClose,
+      setIsPopoverOpen,
+      isDisabled = false,
+      styleOverrides = {},
+    } = props;
+    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
-  useEffect(() => {
-    if (!setIsPopoverOpen) return;
-    if (anchorEl) {
-      setIsPopoverOpen(true);
-    } else {
-      setIsPopoverOpen(false);
-    }
-  }, [anchorEl]);
+    const finalStyle = useMemo(
+      () => merge({}, defaultStyle, styleOverrides),
+      [styleOverrides]
+    );
 
-  const menu = (
-    <Popover
-      id="dropdown"
-      aria-expanded={!!anchorEl}
-      open={Boolean(anchorEl)}
-      onClose={onCloseHandler}
-      anchorEl={anchorEl}
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'left',
-      }}
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'left',
-      }}
-      keepMounted
-    >
-      {children}
-    </Popover>
-  );
+    const onCloseHandler = useCallback(() => {
+      setTimeout(() => {
+        anchorEl?.focus(); // return focus to button
+      });
+      setAnchorEl(null);
+      onClose && onClose();
+    }, [anchorEl, onClose]);
 
-  const button = (
-    <Button
-      classes={{
-        focusVisible: classes.focusVisible,
-      }}
-      disableRipple
-      aria-controls="dropdown"
-      aria-haspopup="true"
-      color="default"
-      variant="contained"
-      onClick={(event) => {
-        setAnchorEl(event.currentTarget);
-      }}
-      endIcon={
-        <i
-          className="fa fa-caret-down"
-          aria-hidden="true"
-          style={{ width: '20px' }}
-        />
+    // Expose the `close()` method to external components via ref
+    useImperativeHandle(
+      ref,
+      () => ({
+        close: onCloseHandler,
+      }),
+      [onCloseHandler]
+    );
+
+    useEffect(() => {
+      if (!setIsPopoverOpen) return;
+      if (anchorEl) {
+        setIsPopoverOpen(true);
+      } else {
+        setIsPopoverOpen(false);
       }
-      style={{
-        textTransform: 'none',
-      }}
-      disabled={isDisabled}
-    >
-      {buttonDisplayContent}
-    </Button>
-  );
+    }, [anchorEl, setIsPopoverOpen]);
 
-  return (
-    <div
-      style={{
-        width: 'fit-content',
-        ...(isDisabled ? { cursor: 'not-allowed' } : {}),
-      }}
-    >
-      {button}
-      {menu}
-    </div>
-  );
-}
+    const menu = (
+      <Popover
+        id="dropdown"
+        aria-expanded={!!anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={onCloseHandler}
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        keepMounted
+      >
+        {children}
+      </Popover>
+    );
+
+    const button = (
+      <SwissArmyButton
+        text={buttonDisplayContent}
+        textTransform="none"
+        onPress={(event) => setAnchorEl(event.currentTarget)}
+        disabled={isDisabled}
+        styleSpec={finalStyle}
+        icon={ArrowDown}
+        iconPosition="right"
+        additionalAriaProperties={{
+          'aria-controls': 'dropdown',
+          'aria-haspopup': 'true',
+          type: 'button',
+        }}
+      />
+    );
+
+    return (
+      <div
+        style={{
+          width: 'fit-content',
+          ...(isDisabled ? { cursor: 'not-allowed' } : {}),
+        }}
+        onClick={(event) => {
+          // prevent click event from propagating to ancestor nodes
+          event.stopPropagation();
+        }}
+      >
+        {button}
+        {menu}
+      </div>
+    );
+  }
+);
+
+export default PopoverButton;

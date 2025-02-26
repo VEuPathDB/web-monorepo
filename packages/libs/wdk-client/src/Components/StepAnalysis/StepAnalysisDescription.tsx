@@ -9,7 +9,7 @@ interface StepAnalysisDescriptionProps {
   toggleDescription: () => void;
 }
 
-export const StepAnalysisDescription: React.SFC<StepAnalysisDescriptionProps> =
+export const StepAnalysisDescription: React.FC<StepAnalysisDescriptionProps> =
   ({
     shortDescription,
     description,

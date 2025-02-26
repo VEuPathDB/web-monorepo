@@ -15,7 +15,10 @@ import {
 } from '../api/DataClient';
 import { Bounds } from '@veupathdb/components/lib/map/Types';
 import { Filter } from '../types/filter';
-import { VariableDescriptor } from '../types/variable';
+import {
+  VariableDescriptor,
+  VariableCollectionDescriptor,
+} from '../types/variable';
 import { findEntityAndVariable } from './study-metadata';
 import { variableDisplayWithUnit } from './variable-display';
 import { InputSpec } from '../components/visualizations/InputVariables';
@@ -25,7 +28,7 @@ import {
   VariablesByInputName,
 } from './data-element-constraints';
 import { isEqual } from 'lodash';
-import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../../map';
+import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../../map/constants';
 
 // was: BarplotData | HistogramData | { series: BoxplotData };
 type SeriesWithStatistics<T> = T & CoverageStatistics;
@@ -224,10 +227,29 @@ export function vocabularyWithMissingData(
     : vocabulary;
 }
 
+/**
+ * Checks if non-null values in an array are unique.
+ *
+ * @param {T[]} array - The array, possibly containing containing null values.
+ * @return {boolean} Returns true if the non-null values in the array are unique, false otherwise.
+ */
+export function nonNullValuesAreUnique<T>(array: (T | undefined)[]): boolean {
+  const defined = array.filter((item) => item != null);
+  const unique = new Set(defined);
+  return defined.length === unique.size;
+}
+
+// leaving these in as an alias, and so i dont have to hunt down places already in use
 export function variablesAreUnique(vars: (Variable | undefined)[]): boolean {
-  const defined = vars.filter((item) => item != null);
-  const unique = defined.filter((item, i, ar) => ar.indexOf(item) === i);
-  return defined.length === unique.length;
+  return nonNullValuesAreUnique(vars);
+}
+
+export function variableCollectionsAreUnique(
+  variableCollections: (VariableCollectionDescriptor | undefined)[]
+): boolean {
+  return nonNullValuesAreUnique(
+    variableCollections.map((desc) => desc && desc.entityId + desc.collectionId)
+  );
 }
 
 /**
@@ -323,57 +345,12 @@ export function filtersFromBoundingBox(
 export function leafletZoomLevelToGeohashLevel(
   leafletZoomLevel: number
 ): number {
-  switch (leafletZoomLevel) {
-    case 1:
-    case 2:
-      return 1;
-    case 3:
-    case 4:
-    case 5:
-      return 2;
-    case 6:
-    case 7:
-    case 8:
-      return 3;
-    case 9:
-    case 10:
-    case 11:
-      return 4;
-    case 12:
-    case 13:
-    case 14:
-      return 5;
-    case 15:
-    case 16:
-    case 17:
-      return 6;
-    default:
-      return 6;
-  }
-}
-
-/**
- * DEPRECATED since using geoConfig
- *
- **/
-
-export function geohashLevelToVariableId(geohashLevel: number): string {
-  switch (geohashLevel) {
-    case 1:
-      return 'EUPATH_0043203'; // geohash_1
-    case 2:
-      return 'EUPATH_0043204'; // geohash_2
-    case 3:
-      return 'EUPATH_0043205'; // geohash_3
-    case 4:
-      return 'EUPATH_0043206'; // geohash_4
-    case 5:
-      return 'EUPATH_0043207'; // geohash_5
-    case 6:
-      return 'EUPATH_0043208'; // geohash_6
-    default:
-      return 'EUPATH_0043208'; // geohash_6
-  }
+  if (leafletZoomLevel <= 3) return 1;
+  if (leafletZoomLevel <= 5.5) return 2;
+  if (leafletZoomLevel <= 8) return 3;
+  if (leafletZoomLevel <= 10.5) return 4;
+  if (leafletZoomLevel <= 13) return 5;
+  return 6;
 }
 
 export function getVariableLabel(

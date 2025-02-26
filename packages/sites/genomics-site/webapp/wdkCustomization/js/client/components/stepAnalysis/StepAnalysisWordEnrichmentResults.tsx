@@ -87,7 +87,7 @@ const wordEnrichmentResultColumns = [
     sortable: true,
     sortType: 'number',
   },
-] as ColumnSettings[];
+] as ColumnSettings<any>[];
 
 const wordEnrichmentButtonsConfigFactory = (
   stepId: number,
@@ -103,7 +103,7 @@ const wordEnrichmentButtonsConfigFactory = (
   },
 ];
 
-export const StepAnalysisWordEnrichmentResults: React.SFC<StepAnalysisResultPluginProps> =
+export const StepAnalysisWordEnrichmentResults: React.FunctionComponent<StepAnalysisResultPluginProps> =
   ({ analysisResult, analysisConfig, webAppUrl }) => (
     <Fragment>
       <StepAnalysisButtonArray

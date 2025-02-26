@@ -5,7 +5,6 @@ import { getOrElse, map } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import { boolean, keyof, number, partial, string, type, TypeOf } from 'io-ts';
 import { useCallback, useMemo } from 'react';
-import { usePromise } from '../../hooks/promise';
 import { AnalysisState } from '../../hooks/analysis';
 import { useSubsettingClient } from '../../hooks/workspace';
 import { Filter } from '../../types/filter';
@@ -18,6 +17,7 @@ import { gray, red } from './colors';
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../utils/variable-display';
 import { useDeepValue } from '../../hooks/immutability';
+import { useCachedPromise } from '../../hooks/cachedPromise';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -80,8 +80,8 @@ export function TableFilter({
       (f) => f.entityId !== entity.id || f.variableId !== variable.id
     )
   );
-  const tableSummary = usePromise(
-    useCallback(async () => {
+  const tableSummary = useCachedPromise(
+    async () => {
       const distribution = await getDistribution<DistributionResponse>(
         {
           entityId: entity.id,
@@ -127,7 +127,8 @@ export function TableFilter({
         filteredEntitiesCount:
           distribution.foreground.statistics.numDistinctEntityRecords,
       };
-    }, [entity.id, variable, otherFilters, subsettingClient, studyMetadata.id])
+    },
+    [entity.id, variable, otherFilters, studyMetadata.id] // used to have `subsettingClient`
   );
   const activeField = useMemo(
     () => ({
@@ -233,6 +234,7 @@ export function TableFilter({
         [uiStateKey]: {
           ...uiState,
           sort,
+          currentPage: 1,
         },
       }));
     },
@@ -328,7 +330,7 @@ export function TableFilter({
       {tableSummary.pending && (
         <Loading style={{ position: 'absolute', top: '-1.5em' }} radius={2} />
       )}
-      {tableSummary.error && <pre>{String(tableSummary.error)}</pre>}
+      {tableSummary.error != null && <pre>{String(tableSummary.error)}</pre>}
       {tableSummary.value &&
         tableSummary.value.entityId === entity.id &&
         tableSummary.value.variableId === variable.id && (
@@ -350,6 +352,7 @@ export function TableFilter({
             // set Heading1 prefix
             filteredCountHeadingPrefix={'Subset of'}
             unfilteredCountHeadingPrefix={'All'}
+            showInternalMesaCounts={true}
           />
         )}
     </div>

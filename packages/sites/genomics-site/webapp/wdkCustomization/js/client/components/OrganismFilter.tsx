@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { intersection } from 'lodash/fp';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
@@ -38,6 +38,10 @@ import {
   usePreferredOrganismsEnabledState,
   usePreferredOrganismsState,
 } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
+
+import { useReferenceStrains } from '@veupathdb/preferred-organisms/lib/hooks/referenceStrains';
+
+import { Tooltip } from '@veupathdb/coreui';
 
 import './OrganismFilter.scss';
 
@@ -119,11 +123,15 @@ type ExpansionBarProps = {
 
 function ExpansionBar(props: ExpansionBarProps) {
   return (
-    <div className={cx('--ExpansionBar')} onClick={props.onClick}>
+    <button
+      type="button"
+      className={cx('--ExpansionBar')}
+      onClick={props.onClick}
+    >
       {props.arrow}
       <span className={cx('--ExpansionBarText')}>{props.message}</span>
       {props.arrow}
-    </div>
+    </button>
   );
 }
 
@@ -165,6 +173,42 @@ function OrganismFilterForStep({
 }: OrganismFilterForStepProps) {
   const [preferredOrganismsEnabled] = usePreferredOrganismsEnabledState();
   const [preferredOrganisms] = usePreferredOrganismsState();
+  const referenceStrains = useReferenceStrains();
+  const [showOnlyReferenceOrganisms, setShowOnlyReferenceOrganisms] =
+    useState<boolean>(false);
+
+  const renderTaxonomyNode = useCallback(
+    (node: TaxonomyNodeWithCount) => {
+      const organismName = node.term;
+      return (
+        <div style={{ display: 'flex', marginLeft: '0.25em' }}>
+          <div>
+            {node.display}{' '}
+            {referenceStrains?.has(organismName) && (
+              <span style={{ fontSize: '0.9em' }}>
+                <strong>[Ref]</strong>
+              </span>
+            )}
+          </div>
+          <div style={{ marginLeft: 'auto' }}>
+            {node.count.toLocaleString()}
+          </div>
+        </div>
+      );
+    },
+    [referenceStrains]
+  );
+
+  const nodeMeetsSearchCriteria = useCallback(
+    (node: TaxonomyNodeWithCount, terms: string[]) => {
+      const organismName = node.term;
+      const display = referenceStrains?.has(organismName)
+        ? node.display + ' [Ref]'
+        : node.display;
+      return areTermsInString(terms, display);
+    },
+    [referenceStrains]
+  );
 
   // if temporary value assigned, use until user clears or hits apply;
   // else check step for a filter value and if present, use; else use empty string (no filter)
@@ -334,6 +378,12 @@ function OrganismFilterForStep({
             shouldExpandDescendantsWithOneChild
             renderNode={renderTaxonomyNode}
             expandedList={expandedNodeIds}
+            filteredList={
+              showOnlyReferenceOrganisms && referenceStrains
+                ? Array.from(referenceStrains)
+                : undefined
+            }
+            isAdditionalFilterApplied={showOnlyReferenceOrganisms}
             currentList={appliedFilterList}
             isSelectable={true}
             selectedList={selectedLeaves}
@@ -362,6 +412,26 @@ function OrganismFilterForStep({
                 />
                 Hide zero counts
               </label>,
+              <Tooltip
+                title={
+                  <span style={{ fontWeight: 'normal' }}>
+                    Show only reference organisms{' '}
+                    <span style={{ fontWeight: 'bolder' }}>[Ref]</span>
+                  </span>
+                }
+              >
+                <label className={cx('--OnlyMatchesToggle')}>
+                  <input
+                    style={{ marginRight: '0.25em' }}
+                    type="checkbox"
+                    checked={showOnlyReferenceOrganisms}
+                    onChange={() =>
+                      setShowOnlyReferenceOrganisms((value) => !value)
+                    }
+                  />
+                  <span style={{ fontSize: '0.95em' }}>Reference only</span>
+                </label>
+              </Tooltip>,
             ]}
             styleOverrides={{
               treeLinks: {
@@ -494,10 +564,6 @@ function createDisplayableTree(
   );
 }
 
-function nodeMeetsSearchCriteria(node: TaxonomyNodeWithCount, terms: string[]) {
-  return areTermsInString(terms, node.display);
-}
-
 function isSameConfig(a: OrgFilterConfig, b: OrgFilterConfig): boolean {
   if (a === NO_ORGANISM_FILTER_APPLIED && b === NO_ORGANISM_FILTER_APPLIED) {
     return true;
@@ -508,15 +574,6 @@ function isSameConfig(a: OrgFilterConfig, b: OrgFilterConfig): boolean {
   return (
     a.values.length === b.values.length &&
     a.values.length === intersection(a.values, b.values).length
-  );
-}
-
-function renderTaxonomyNode(node: TaxonomyNodeWithCount) {
-  return (
-    <div style={{ display: 'flex', marginLeft: '0.25em' }}>
-      <div>{node.display}</div>
-      <div style={{ marginLeft: 'auto' }}>{node.count.toLocaleString()}</div>
-    </div>
   );
 }
 

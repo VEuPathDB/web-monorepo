@@ -27,6 +27,7 @@ import DonutMarker, {
   DonutMarkerProps,
   DonutMarkerStandalone,
 } from '../map/DonutMarker';
+import SemanticMarkers from '../map/SemanticMarkers';
 
 export default {
   title: 'Map/Donut Markers',
@@ -112,11 +113,14 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
         {...args}
         viewport={viewport}
         onViewportChanged={setViewport}
-        onBoundsChanged={handleViewportChanged}
-        markers={markerElements}
-        animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-      />
+        onBoundsChanged={handleViewportChanged}
+      >
+        <SemanticMarkers
+          markers={markerElements}
+          animation={defaultAnimation}
+        />
+      </MapVEuMap>
       <MapVEuLegendSampleList
         legendType={legendType}
         data={legendData}
@@ -163,11 +167,14 @@ export const FirstRequest: Story<MapVEuMapProps> = (args) => {
         {...args}
         viewport={viewport}
         onViewportChanged={setViewport}
-        onBoundsChanged={handleViewportChanged}
-        markers={markerElements}
-        animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-      />
+        onBoundsChanged={handleViewportChanged}
+      >
+        <SemanticMarkers
+          markers={markerElements}
+          animation={defaultAnimation}
+        />
+      </MapVEuMap>
       <MapVEuLegendSampleList
         legendType={legendType}
         data={legendData}
@@ -244,11 +251,14 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
         {...args}
         viewport={viewport}
         onViewportChanged={setViewport}
-        onBoundsChanged={handleViewportChanged}
-        markers={markerElements}
-        animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-      />
+        onBoundsChanged={handleViewportChanged}
+      >
+        <SemanticMarkers
+          markers={markerElements}
+          animation={defaultAnimation}
+        />
+      </MapVEuMap>
       <MapVEuLegendSampleList
         legendType={legendType}
         data={legendData}
@@ -333,11 +343,11 @@ export const CumulativeMarkers: Story<MapVEuMapProps> = (args) => {
     <MapVEuMap
       {...args}
       viewport={viewport}
-      markers={markerElements}
-      onBoundsChanged={() => {}}
-      animation={defaultAnimation}
       zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-    />
+      onBoundsChanged={() => {}}
+    >
+      <SemanticMarkers markers={markerElements} animation={defaultAnimation} />
+    </MapVEuMap>
   );
 };
 

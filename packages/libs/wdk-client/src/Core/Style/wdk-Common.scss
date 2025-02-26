@@ -96,6 +96,28 @@ td {
   vertical-align: baseline;
 }
 
+// =begin <dl>
+// Definition list styling
+
+dl {
+  display: grid;
+  grid-template-columns: max-content auto;
+  row-gap: 0.3em;
+  column-gap: 1em;
+}
+
+dt {
+  grid-column-start: 1;
+  justify-self: end;
+  font-weight: bold;
+}
+
+dd {
+  grid-column-start: 2;
+  margin: 0;
+}
+// =end <dl>
+
 img[data-assets-src] {
   visibility: hidden;
 }

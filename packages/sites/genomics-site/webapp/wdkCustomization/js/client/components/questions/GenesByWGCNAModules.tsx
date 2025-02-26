@@ -13,6 +13,13 @@ export const GenesByWGCNAModules = (props: Props<Parameter>) => {
       const cleanPropValue = props.value.split(' [')[0];
       eigengeneImage.src = `/cgi-bin/dataPlotter.pl?project_id=PlasmoDB&id=${cleanPropValue}&type=WGCNA::Eigengene&model=plasmo&fmt=png&datasetId=DS_b1ac1e329c`;
     }
+
+    const wgcnaHelpBannerImage = document.getElementById(
+      'wgcna_help_image'
+    ) as HTMLImageElement;
+    if (wgcnaHelpBannerImage) {
+      wgcnaHelpBannerImage.src = '/a/images/wgcna/wgcna-preview.png';
+    }
   }, [props.value]);
 
   return <ParameterComponent {...props} />;

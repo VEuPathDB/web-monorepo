@@ -3,8 +3,11 @@ import React, { useCallback, useMemo } from 'react';
 import { orderBy } from 'lodash';
 
 import { Checkbox, Icon, Link, RealTimeSearchBox } from '../../Components';
-import { MesaState, Mesa } from '../../Components/Mesa';
-import { MesaSortObject, MesaColumn } from '../../Core/CommonTypes';
+import { MesaState, Mesa } from '@veupathdb/coreui/lib/components/Mesa';
+import {
+  MesaSortObject,
+  MesaColumn,
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import { makeClassNameHelper } from '../../Utils/ComponentUtils';
 import { StrategySummary } from '../../Utils/WdkUser';
 import { RecordClass } from '../../Utils/WdkModel';
@@ -131,21 +134,16 @@ export const PublicStrategies = ({
   );
 };
 
-interface RenderCellProps<T> {
-  row: StrategySummary;
-  value: T;
-}
-
 function makeMesaColumns(
   recordClassToDisplayString: (urlSegment: string | null) => string
-): MesaColumn<keyof StrategySummary>[] {
+): MesaColumn<StrategySummary>[] {
   return [
     {
       key: 'name',
       name: 'Strategy',
       className: cx('--NameCell'),
       sortable: true,
-      renderCell: (props: RenderCellProps<string>) => (
+      renderCell: (props) => (
         <Link to={`/workspace/strategies/import/${props.row.signature}`}>
           {props.value}
         </Link>
@@ -157,16 +155,19 @@ function makeMesaColumns(
       name: 'Returns',
       className: cx('--RecordClassCell'),
       sortable: true,
-      renderCell: (props: RenderCellProps<string | null>) =>
-        recordClassToDisplayString(props.value),
+      renderCell: (props) =>
+        recordClassToDisplayString(props.value as string | null),
     },
     {
       key: 'description',
       name: 'Description',
       className: cx('--DescriptionCell'),
       sortable: true,
-      renderCell: (props: RenderCellProps<string | undefined>) => (
-        <OverflowingTextCell {...props} key={props.row.strategyId} />
+      renderCell: (props) => (
+        <OverflowingTextCell
+          value={props.value as string}
+          key={props.row.strategyId}
+        />
       ),
       width: '25em',
     },
@@ -187,8 +188,7 @@ function makeMesaColumns(
       name: 'Modified',
       className: cx('--LastModifiedCell'),
       sortable: true,
-      renderCell: (props: RenderCellProps<string>) =>
-        formatDateTimeString(props.value),
+      renderCell: (props) => formatDateTimeString(props.value as string),
     },
   ];
 }
@@ -218,7 +218,7 @@ function makeMesaRows(
 
 function makeMesaFilteredRows(
   rows: Props['publicStrategySummaries'],
-  columns: MesaColumn<keyof StrategySummary>[],
+  columns: MesaColumn<StrategySummary>[],
   searchTerm: string,
   recordClassToDisplayString: (urlSegment: string | null) => string
 ) {

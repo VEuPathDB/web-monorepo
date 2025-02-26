@@ -273,10 +273,10 @@
   top: 0;
   right: 1em;
 }
-.filter-param .membership-filter .HeadingRow:first-child {
+.filter-param .membership-filter .HeadingRow:first-child > th {
   border-top: 1px solid #ccc;
 }
-.filter-param .membership-filter .HeadingRow:last-child {
+.filter-param .membership-filter .HeadingRow:last-child > th {
   border-bottom: 1px solid #ccc;
 }
 .filter-param .membership-filter .DataRow,
@@ -728,4 +728,12 @@
 }
 .filter-param .wdk-MultiFieldFilterCountCell > div:last-child {
   text-align: left;
+}
+
+/* make Mesa's action bar as small as possible when not rendered */
+.membership-filter
+  > .Mesa.MesaComponent
+  > .ActionToolbar.Toolbar
+  > .ActionToolbar-Info {
+  min-height: auto;
 }

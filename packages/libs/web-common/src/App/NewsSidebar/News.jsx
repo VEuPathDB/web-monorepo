@@ -4,6 +4,7 @@ import React from 'react';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { STATIC_ROUTE_PATH } from '../../routes';
 import TwitterTimeline from '../../components/TwitterTimeline';
@@ -44,10 +45,13 @@ const News = ({ twitterUrls, news, error }) => {
               )}
               {Seq.from(news ? news.records : Seq.empty())
                 .map(({ attributes }) => (
-                  <div className="NewsEntry" key={attributes.id}>
+                  <div
+                    className="NewsEntry"
+                    key={attributes.date + '__' + attributes.tag}
+                  >
                     <h4 className="NewsHeadline">
                       <Link to={`${newsUrl}#${attributes.tag}`}>
-                        {attributes.headline}
+                        {safeHtml(attributes.headline)}
                       </Link>
                     </h4>
                     <div className="NewsDate">

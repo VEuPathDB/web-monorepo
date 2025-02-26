@@ -2,9 +2,6 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,500,600,700&display=swap');
 @import './breakpoints.scss';
 
-$expanded-header-height: 11em;
-$collapsed-header-height: 5.5em;
-
 body.vpdb-Body {
   background-image: unset;
   font-family: Roboto, 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans,
@@ -33,10 +30,10 @@ body.vpdb-Body {
       'content'
       'footer';
 
-    grid-template-rows: $expanded-header-height auto 1fr auto;
+    grid-template-rows: auto auto 1fr auto;
 
     @media screen and (max-width: $hamburger-width) {
-      grid-template-rows: auto auto 1fr auto !important;
+      grid-template-rows: auto auto 1fr auto;
     }
 
     grid-template-columns: 100%;
@@ -58,7 +55,7 @@ body.vpdb-Body {
 
   // Fix for question page sticky header
   .wdk-QuestionFormQuestionHeader {
-    top: $collapsed-header-height;
+    top: var(--page-offset-top);
 
     @media screen and (max-width: $hamburger-width) {
       top: 0 !important;

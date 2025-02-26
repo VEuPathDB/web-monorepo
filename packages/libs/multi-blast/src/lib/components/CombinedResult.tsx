@@ -1,6 +1,6 @@
 import { Either, isLeft } from 'fp-ts/Either';
 
-import Mesa from '@veupathdb/wdk-client/lib/Components/Mesa';
+import Mesa from '@veupathdb/coreui/lib/components/Mesa';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { ErrorDetails } from '../utils/ServiceTypes';

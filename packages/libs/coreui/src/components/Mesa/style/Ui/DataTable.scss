@@ -1,0 +1,72 @@
+.MesaComponent {
+  .DataTable {
+    font-size: $fontSize;
+    display: inline-block;
+    margin-bottom: 1.5em;
+    width: 100%;
+
+    &--HasMargin {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      grid-template-areas: 'margin table';
+
+      .DataTable-Margin {
+        grid-area: margin;
+      }
+      align-items: end;
+
+      table {
+        grid-area: table;
+      }
+    }
+
+    &--Sticky {
+      z-index: 0;
+      overflow: auto;
+      position: relative;
+      max-height: 70vh;
+      padding-bottom: 1.5em; /* prevent macos scrollbar from occluding last row */
+      thead {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        overflow: visible;
+      }
+    }
+
+    > table {
+      width: 100%;
+      border-collapse: separate;
+
+      td,
+      tr {
+        .ChildRowToggle {
+          width: 4em;
+          vertical-align: middle;
+          text-align: center;
+          padding: 0;
+
+          > button {
+            width: 100%;
+            padding: 0;
+            border: none;
+            line-height: 2;
+            background: transparent !important;
+
+            > svg {
+              fill: #777;
+            }
+
+            &:hover > svg {
+              fill: black;
+            }
+          }
+        }
+      }
+
+      tr._childIsExpanded > .ChildRowToggle > button > svg {
+        fill: black;
+      }
+    }
+  }
+}

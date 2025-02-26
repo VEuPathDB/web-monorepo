@@ -19,6 +19,7 @@ import { PhyleticDistributionCheckbox } from 'ortho-client/components/phyletic-d
 import { PfamDomainArchitecture } from 'ortho-client/components/pfam-domains/PfamDomainArchitecture';
 
 import { RecordTable_Sequences } from 'ortho-client/records/Sequences';
+import { RecordTable_GroupStats } from './GroupStats';
 
 import {
   RecordAttributeProps,
@@ -50,6 +51,7 @@ const MSA_ATTRIBUTE_NAME = 'msa';
 const PFAMS_TABLE_NAME = 'PFams';
 const PROTEIN_PFAMS_TABLE_NAME = 'ProteinPFams';
 const SEQUENCES_TABLE_NAME = 'Sequences';
+const GROUP_STATS_TABLE_NAME = 'GroupStat';
 
 const CORE_PERIPHERAL_ATTRIBUTE_NAME = 'core_peripheral';
 const PROTEIN_LENGTH_ATTRIBUTE_NAME = 'protein_length';
@@ -142,7 +144,7 @@ const transformPfamsAttributeFields = curry(
   (isGraphic: boolean, attributeFields: AttributeField[]): AttributeField[] => {
     const renamedAttributeFields = attributeFields.map((attributeField) =>
       attributeField.name === ACCESSION_ATTRIBUTE_NAME
-        ? { ...attributeField, displayName: 'Accession' }
+        ? { ...attributeField, displayName: 'Accession', type: 'link' }
         : attributeField
     );
 
@@ -187,6 +189,7 @@ const makeProteinDomainLocationAttributeFields =
     {
       name: SOURCE_ID_ATTRIBUTE_NAME,
       displayName: 'Accession',
+      type: 'link',
     },
     {
       name: TAXON_ATTRIBUTE_NAME,
@@ -219,6 +222,7 @@ const makeProteinDomainArchitectureAttributeFields =
     {
       name: SOURCE_ID_ATTRIBUTE_NAME,
       displayName: 'Accession',
+      type: 'link',
     },
     {
       name: TAXON_ATTRIBUTE_NAME,
@@ -362,4 +366,5 @@ const recordTableWrappers: Record<
   [PROTEIN_PFAMS_TABLE_NAME]: RecordTable_ProteinDomainArchitectures,
   [TAXON_COUNTS_TABLE_NAME]: RecordTable_TaxonCounts,
   [SEQUENCES_TABLE_NAME]: RecordTable_Sequences,
+  [GROUP_STATS_TABLE_NAME]: RecordTable_GroupStats,
 };

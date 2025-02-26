@@ -5,7 +5,6 @@ import {
   QUICK_SEARCH_LOADED,
 } from './actioncreators/GlobalActionCreators';
 import * as contactUs from './store-modules/ContactUsStoreModule';
-import { getSearchMenuCategoryTree } from './util/category';
 import { selectReporterComponent } from './util/reporter';
 
 import * as galaxyTerms from './store-modules/GalaxyTerms';
@@ -82,15 +81,6 @@ function ebrcGlobalData(state, { type, payload }) {
         quickSearches: payload.questions,
         quickSearchesLoading: false,
       });
-
-    case 'static/all-data-loaded':
-      return {
-        ...state,
-        searchTree: getSearchMenuCategoryTree(
-          state.ontology,
-          state.recordClasses
-        ),
-      };
 
     default:
       return state;

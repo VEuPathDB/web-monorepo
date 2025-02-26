@@ -1,6 +1,5 @@
 import { ReactElement } from 'react';
 import { LatLngLiteral, Icon } from 'leaflet';
-import { PlotProps } from '../plots/PlotlyPlot';
 
 export type LatLng = LatLngLiteral;
 // from leaflet:
@@ -23,6 +22,8 @@ export interface BoundsViewport {
   zoomLevel: number;
 }
 
+type OffsetGetter = (markerRect: DOMRect) => [number, number];
+
 export interface MarkerProps {
   position: LatLng;
   id: string;
@@ -35,19 +36,25 @@ export interface MarkerProps {
       height: number;
     };
   };
+  /* A class to add to the popup element */
+  popupClass?: string;
+  // How much extra offset to add to the popup position after initial popup
+  // offset calculation. Determined by trial-and-error observation
+  getVerticalPopupExtraOffset?: OffsetGetter;
+  getHorizontalPopupExtraOffset?: OffsetGetter;
   /* This offset gets added to the default zIndex */
   zIndexOffset?: number;
 }
 
-export type AnimationFunction = ({
+export type AnimationFunction<T extends MarkerProps = MarkerProps> = ({
   prevMarkers,
   markers,
 }: {
-  prevMarkers: ReactElement<MarkerProps>[];
-  markers: ReactElement<MarkerProps>[];
+  prevMarkers: ReactElement<T>[];
+  markers: ReactElement<T>[];
 }) => {
   zoomType: string | null;
-  markers: ReactElement<MarkerProps>[];
+  markers: ReactElement<T>[];
 };
 
 /**

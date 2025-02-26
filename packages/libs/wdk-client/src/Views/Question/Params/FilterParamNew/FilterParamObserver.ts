@@ -508,24 +508,39 @@ function getOntologyTermSummary(
         })
       ),
       from(
-        getSummaries.then((summaries) =>
-          updateFieldState({
-            searchName,
-            parameter,
-            paramValues,
-            field: ontologyTerm,
-            fieldState: {
-              loading: false,
-              invalid: false,
-              sort,
-              leafSummaries: sortMultiFieldSummary(
-                summaries,
-                parameter.ontology,
-                sort
-              ),
-              searchTerm: '',
-            },
-          })
+        getSummaries.then(
+          (summaries) =>
+            updateFieldState({
+              searchName,
+              parameter,
+              paramValues,
+              field: ontologyTerm,
+              fieldState: {
+                loading: false,
+                invalid: false,
+                errorMessage: undefined,
+                sort,
+                leafSummaries: sortMultiFieldSummary(
+                  summaries,
+                  parameter.ontology,
+                  sort
+                ),
+                searchTerm: '',
+              },
+            }),
+          () =>
+            updateFieldState({
+              searchName,
+              parameter,
+              paramValues,
+              field: ontologyTerm,
+              fieldState: {
+                invalid: false,
+                loading: false,
+                errorMessage:
+                  'Unable to load summary for "' + ontologyTerm + '".',
+              },
+            })
         )
       )
     );
@@ -581,6 +596,7 @@ function updateOntologyTermSummary(
             ? {
                 invalid: false,
                 loading: false,
+                errorMessage: undefined,
                 sort,
                 currentPage: 1,
                 rowsPerPage: 100,
@@ -593,6 +609,7 @@ function updateOntologyTermSummary(
             : {
                 invalid: false,
                 loading: false,
+                errorMessage: undefined,
                 summary: summary,
               };
 

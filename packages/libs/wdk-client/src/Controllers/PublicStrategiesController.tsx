@@ -10,7 +10,8 @@ import {
   setPrioritizeExamples,
 } from '../Actions/PublicStrategyActions';
 import { Loading } from '../Components';
-import { MesaSortObject, DispatchAction } from '../Core/CommonTypes';
+import { DispatchAction } from '../Core/CommonTypes';
+import { MesaSortObject } from '@veupathdb/coreui/lib/components/Mesa/types';
 import { RootState } from '../Core/State/Types';
 import { wrappable, propertyIsNonNull } from '../Utils/ComponentUtils';
 import { RecordClass } from '../Utils/WdkModel';

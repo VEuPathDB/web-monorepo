@@ -9,14 +9,8 @@ interface Props {
 export function DateTime(props: Props) {
   try {
     const dateObj = new Date(props.datetime);
-    const isoString = dateObj.toISOString();
-    const [_, date = 'Unknown', time = ''] =
-      dateObj.toISOString().match(/(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}).*/) ?? [];
-    return (
-      <div title={isoString}>
-        {date} {time}
-      </div>
-    );
+    const localeString = dateObj.toLocaleString();
+    return <div title={localeString}>{localeString}</div>;
   } catch {
     return <div>Unknown</div>;
   }

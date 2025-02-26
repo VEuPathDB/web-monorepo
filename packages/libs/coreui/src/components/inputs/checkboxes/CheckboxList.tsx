@@ -5,7 +5,7 @@ import { merge } from 'lodash';
 import { useMemo } from 'react';
 import { UITheme } from '../../theming/types';
 import useUITheme from '../../theming/useUITheme';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '../../info/Tooltip';
 
 export type CheckboxListStyleSpec = {
   container: {
@@ -74,9 +74,11 @@ export type Item<T> = {
   display: ReactNode;
   value: T;
   disabled?: boolean;
+  /** an optional alternative display - perhaps a shortened version for use in popover buttons */
+  altDisplay?: ReactNode;
 };
 
-export type CheckboxListProps<T> = {
+export type CheckboxListProps<T extends string> = {
   /** Optional name attribute for the native input element */
   name?: string;
 
@@ -99,7 +101,7 @@ export type CheckboxListProps<T> = {
   disabledCheckboxTooltipContent?: ReactNode;
 };
 
-export default function CheckboxList<T>({
+export default function CheckboxList<T extends string>({
   name,
   items,
   value,
@@ -205,7 +207,7 @@ export default function CheckboxList<T>({
                   </label>
                 </Tooltip>
               ) : (
-                <label>
+                <label css={{ display: 'flex', gap: '1ex' }}>
                   <input {...sharedInputAttributes} /> {item.display}
                 </label>
               )}

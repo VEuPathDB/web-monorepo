@@ -18,7 +18,7 @@ import {
 
 import { FieldWithMetadata, StudyMetadata } from '..';
 
-import { useFieldTree, useFlattenedFields } from './variableTrees/hooks';
+import { useFieldTree, useFlattenedFields } from './variableSelectors/hooks';
 import { DownloadClient } from '../api/DownloadClient';
 import { entityTreeToArray } from '../utils/study-metadata';
 import { ComputeClient } from '../api/ComputeClient';
@@ -44,12 +44,13 @@ export function EDAWorkspaceContainer(props: Props) {
 
   const wdkStudyRecordState = useWdkStudyRecord(studyId);
   const studyMetadata = useStudyMetadata(studyId, subsettingClient);
-  if (wdkStudyRecordState == null || studyMetadata == null) return <Loading />;
+  if (wdkStudyRecordState == null || studyMetadata.value == null)
+    return <Loading />;
   return (
     <EDAWorkspaceContainerWithLoadedData
       {...props}
       wdkStudyRecord={wdkStudyRecordState}
-      studyMetadata={studyMetadata}
+      studyMetadata={studyMetadata.value}
     />
   );
 }

@@ -18,6 +18,7 @@ export default configure({
     rootClientUrl: process.env.ROOT_URL,
     proxies: {
       [process.env.WDK_SERVICE_ENDPOINT]: process.env.WDK_SERVICE_URL,
+      [process.env.VDI_SERVICE_ENDPOINT]: process.env.VDI_SERVICE_URL,
       [process.env.SITE_SEARCH_SERVICE_ENDPOINT]: process.env.SITE_SEARCH_SERVICE_URL,
       [process.env.EDA_SERVICE_ENDPOINT]: process.env.EDA_SERVICE_URL,
       [process.env.MULTI_BLAST_ENDPOINT]: process.env.MULTI_BLAST_URL,
@@ -33,6 +34,7 @@ export default configure({
   plugins: [
     new webpack.DefinePlugin({
       'window.__SITE_CONFIG__': JSON.stringify({
+        requireLogin: process.env.REQUIRE_LOGIN === 'true',
         rootElement: process.env.ROOT_ELEMENT,
         rootUrl: process.env.ROOT_URL,
         endpoint: process.env.WDK_SERVICE_ENDPOINT,
@@ -46,10 +48,13 @@ export default configure({
         siteSearchServiceUrl: process.env.SITE_SEARCH_SERVICE_ENDPOINT,
         useUserDatasetsWorkspace: process.env.USER_DATASETS_WORKSPACE_ENABLED === 'true',
         datasetImportUrl: process.env.USER_DATASETS_WORKSPACE_IMPORT_SERVICE_ENDPOINT,
+        userDatasetsUploadTypes: process.env.USER_DATASETS_UPLOAD_TYPES,
         useEda: process.env.EDA_ENABLED === "true",
         edaExampleAnalysesAuthor: process.env.EDA_EXAMPLE_ANALYSES_AUTHOR,
         edaServiceUrl: process.env.EDA_SERVICE_ENDPOINT,
         edaSingleAppMode: process.env.EDA_SINGLE_APP_MODE,
+        vdiServiceUrl: process.env.VDI_SERVICE_ENDPOINT,
+        showUnreleasedData: process.env.SHOW_UNRELEASED_DATA === 'true',
 })
     }),
     new HtmlWebpackPlugin({

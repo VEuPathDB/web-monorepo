@@ -1,5 +1,6 @@
+import { orderBy } from 'lodash';
 import React, { Suspense } from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, useHistory, useRouteMatch } from 'react-router-dom';
 
 import SiteSearchController from '@veupathdb/web-common/lib/controllers/SiteSearchController';
 
@@ -9,8 +10,6 @@ import QueryGridController from './components/controllers/QueryGridController';
 import { JBrowseController } from './components/controllers/JBrowseController';
 import { PlasmoApController } from './components/controllers/PlasmoApController';
 
-import { FeaturedTools } from '@veupathdb/web-common/lib/components/homepage/FeaturedTools';
-import { WorkshopExercises } from '@veupathdb/web-common/lib/components/homepage/WorkshopExercises';
 import { useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
 
 import {
@@ -24,17 +23,23 @@ import { useReferenceStrains } from '@veupathdb/preferred-organisms/lib/hooks/re
 import { PageLoading } from './components/common/PageLoading';
 import SampleForm from './components/samples/SampleForm';
 
-import { projectId } from './config';
+import { projectId, webAppUrl } from './config';
 
 import { blastRoutes } from './blastRoutes';
 import { preferredOrganismsRoutes } from './preferredOrganismRoutes';
 import { userCommentRoutes } from './userCommentRoutes';
 import { userDatasetRoutes } from './userDatasetRoutes';
 import Downloads from './components/Downloads';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { Srt } from './components/Srt';
 
 // Project id is not needed for these record classes.
 // Matches urlSegment.
 const RECORD_CLASSES_WITHOUT_PROJECT_ID = ['dataset', 'sample'];
+
+// Used to hardcode a redirect to eda workspace from the datatsets table
+const GAMBIAN_WGCNA_DATASET = 'DS_82dc5abc7f';
 
 const projectRegExp = new RegExp('/' + projectId + '$');
 
@@ -117,13 +122,48 @@ function SiteSearchRouteComponent() {
   );
 }
 
+function DownloadsRouteComponent() {
+  const config = useWdkService((wdkService) => wdkService.getConfig(), []);
+  const { path } = useRouteMatch();
+  const history = useHistory();
+  const localHref = history.createHref({ pathname: path });
+  const remoteHrefSuffix = localHref.replace(webAppUrl, '');
+  if (!config) return <Loading />;
+  return projectId === 'EuPathDB' ? (
+    <div className="Downloads">
+      <h1>Download Data Files</h1>
+      <p className="Downloads-Instructions portal">
+        Please go to a specific organism site in order to download files:
+      </p>
+      <ul>
+        {orderBy(
+          Object.entries(config.projectUrls),
+          ([project]) => project
+        ).map(([project, url]) => (
+          <li key={project}>
+            <a
+              target="_blank"
+              href={url.replace(/\/$/, '') + remoteHrefSuffix}
+              rel="noreferrer"
+            >
+              {project}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  ) : (
+    <Downloads />
+  );
+}
+
 /**
  * Wrap Ebrc Routes
  */
 export const wrapRoutes = (ebrcRoutes) => [
   {
     path: '/downloads',
-    component: Downloads,
+    component: DownloadsRouteComponent,
   },
 
   {
@@ -133,10 +173,20 @@ export const wrapRoutes = (ebrcRoutes) => [
     ),
   },
 
+  // hardcodes a redirect from the datasets table to the EDA "study explorer"
+  {
+    path: `/record/dataset/${GAMBIAN_WGCNA_DATASET}`,
+    exact: true,
+    component: () => (
+      <Redirect to={`/workspace/analyses/${GAMBIAN_WGCNA_DATASET}/new`} />
+    ),
+  },
+
   {
     path: '/fasta-tool',
     exact: false,
-    component: () => <FastaConfigController />,
+    component: () =>
+      projectId === 'EuPathDB' ? <Srt /> : <FastaConfigController />,
   },
 
   {
@@ -147,17 +197,6 @@ export const wrapRoutes = (ebrcRoutes) => [
   {
     path: '/sample-form',
     component: () => <SampleForm />,
-  },
-
-  {
-    path: '/',
-    component: () => (
-      <React.Fragment>
-        <FeaturedTools />
-        <hr />
-        <WorkshopExercises />
-      </React.Fragment>
-    ),
   },
 
   {

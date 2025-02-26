@@ -98,7 +98,6 @@ export function ReportSelect({
             }
           } else {
             await downloadReportCallback(
-              jobId,
               selectedReportOption.value.format,
               selectedReportOption.value.shouldZip
             );
@@ -155,6 +154,12 @@ export function ReportSelect({
       controlShouldRenderValue={false}
       onChange={onChangeReport}
       options={options}
+      styles={{
+        menu: (baseStyles, state) => ({
+          ...baseStyles,
+          zIndex: 3,
+        }),
+      }}
     />
   );
 }

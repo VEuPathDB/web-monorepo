@@ -19,7 +19,6 @@ import DataClient, {
   facetVariableDetailsType,
 } from '../../../api/DataClient';
 import { useCallback, useMemo, useState } from 'react';
-import { usePromise } from '../../../hooks/promise';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import {
   useDataClient,
@@ -27,7 +26,7 @@ import {
   useFindEntityAndVariable,
   useStudyEntities,
 } from '../../../hooks/workspace';
-import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
+import { useOutputEntity } from '../../../hooks/findOutputEntity';
 import { Filter } from '../../../types/filter';
 import { VariableDescriptor } from '../../../types/variable';
 import { CoverageStatistics } from '../../../types/visualization';
@@ -65,12 +64,13 @@ import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import FacetedMosaicPlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedMosaicPlot';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
-import { LayoutOptions } from '../../layouts/types';
+import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { useInputStyles } from '../inputStyles';
-import { ClearSelectionButton } from '../../variableTrees/VariableTreeDropdown';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { ClearSelectionButton } from '../../variableSelectors/VariableTreeDropdown';
+import { Tooltip } from '@veupathdb/coreui';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { useCachedPromise } from '../../../hooks/cachedPromise';
 
 /**
  * Note: When options.hideFacetInputs is true, the mosaic plot is not shown.
@@ -87,10 +87,6 @@ const plotContainerStyles = {
 };
 
 const plotSpacingOptions = {};
-
-const statsTableStyles = {
-  width: plotContainerStyles.width,
-};
 
 const facetedStatsTableStyles = {};
 
@@ -156,7 +152,7 @@ export const twoByTwoVisualization = createVisualizationPlugin({
   createDefaultConfig: createDefaultConfig,
 });
 
-interface Options extends LayoutOptions {}
+interface Options extends LayoutOptions, TitleOptions {}
 
 function ContTableFullscreenComponent(props: VisualizationProps<Options>) {
   return <MosaicViz {...props} />;
@@ -200,11 +196,20 @@ function MosaicViz(props: Props<Options>) {
     toggleStarredVariable,
     totalCounts,
     filteredCounts,
+    hideInputsAndControls,
+    plotContainerStyleOverrides,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
+  const finalPlotContainerStyles = useMemo(
+    () => ({
+      ...plotContainerStyles,
+      ...plotContainerStyleOverrides,
+    }),
+    [plotContainerStyleOverrides]
+  );
 
   // set default tab to Mosaic in TabbedDisplay component
   const [activeTab, setActiveTab] = useState(
@@ -327,13 +332,6 @@ function MosaicViz(props: Props<Options>) {
     [xAxisReferenceValue, yAxisReferenceValue]
   );
 
-  // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
-  const outputEntity = useFindOutputEntity(
-    dataElementDependencyOrder,
-    vizConfig,
-    'xAxisVariable'
-  );
-
   const selectedVariables = useMemo(
     () => ({
       xAxisVariable: vizConfig.xAxisVariable,
@@ -341,6 +339,13 @@ function MosaicViz(props: Props<Options>) {
       facetVariable: vizConfig.facetVariable,
     }),
     [vizConfig.facetVariable, vizConfig.xAxisVariable, vizConfig.yAxisVariable]
+  );
+
+  // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
+  const outputEntity = useOutputEntity(
+    dataElementDependencyOrder,
+    selectedVariables,
+    'xAxisVariable'
   );
 
   const inputs = useMemo(
@@ -372,133 +377,87 @@ function MosaicViz(props: Props<Options>) {
     [isTwoByTwo, options?.hideFacetInputs]
   );
 
-  const data = usePromise(
-    useCallback(async (): Promise<
-      TwoByTwoDataWithCoverage | ContTableDataWithCoverage | undefined
-    > => {
-      if (
-        vizConfig.xAxisVariable == null ||
-        xAxisVariable == null ||
-        vizConfig.yAxisVariable == null ||
-        yAxisVariable == null
-      )
-        return undefined;
+  const dataRequestDeps =
+    vizConfig.xAxisVariable == null ||
+    xAxisVariable == null ||
+    vizConfig.yAxisVariable == null ||
+    yAxisVariable == null ||
+    (isTwoByTwo && (xAxisReferenceValue == null || yAxisReferenceValue == null))
+      ? undefined
+      : {
+          xAxisVariable,
+          yAxisVariable,
+          vizConfig,
+        };
 
-      if (!variablesAreUnique([xAxisVariable, yAxisVariable, facetVariable]))
-        throw new Error(nonUniqueWarning);
+  const data = useCachedPromise(async (): Promise<
+    TwoByTwoDataWithCoverage | ContTableDataWithCoverage | undefined
+  > => {
+    if (!dataRequestDeps) throw new Error('dataRequestDeps is undefined');
 
-      assertValidInputVariables(
-        inputs,
-        selectedVariables,
-        entities,
-        dataElementConstraints
-      );
+    const { xAxisVariable, yAxisVariable, vizConfig } = dataRequestDeps;
 
-      const xAxisVocabulary = fixLabelsForNumberVariables(
-        xAxisVariable.vocabulary,
-        xAxisVariable
-      );
-      const yAxisVocabulary = fixLabelsForNumberVariables(
-        yAxisVariable.vocabulary,
-        yAxisVariable
-      );
-      const facetVocabulary = fixLabelsForNumberVariables(
-        facetVariable?.vocabulary,
-        facetVariable
-      );
+    if (!variablesAreUnique([xAxisVariable, yAxisVariable, facetVariable]))
+      throw new Error(nonUniqueWarning);
 
-      if (isTwoByTwo) {
-        if (
-          !vizConfig.xAxisReferenceValue ||
-          !xAxisReferenceValue ||
-          !vizConfig.yAxisReferenceValue ||
-          !yAxisReferenceValue
-        )
-          return undefined;
-
-        const params = getRequestParams(
-          studyId,
-          filters ?? [],
-          vizConfig.xAxisVariable,
-          vizConfig.yAxisVariable,
-          outputEntity?.id ?? '',
-          vizConfig.facetVariable,
-          vizConfig.showMissingness,
-          vizConfig.xAxisReferenceValue,
-          vizConfig.yAxisReferenceValue,
-          options
-        );
-
-        const response = dataClient.getTwoByTwo(
-          computation.descriptor.type,
-          params
-        );
-
-        return reorderData(
-          twoByTwoResponseToData(
-            await response,
-            xAxisVariable,
-            yAxisVariable,
-            facetVariable
-          ),
-          xAxisVocabulary,
-          yAxisVocabulary,
-          vocabularyWithMissingData(facetVocabulary, vizConfig.showMissingness)
-        ) as TwoByTwoDataWithCoverage;
-      } else {
-        const params = getRequestParams(
-          studyId,
-          filters ?? [],
-          vizConfig.xAxisVariable,
-          vizConfig.yAxisVariable,
-          outputEntity?.id ?? '',
-          vizConfig.facetVariable,
-          vizConfig.showMissingness,
-          undefined,
-          undefined,
-          options
-        );
-        const response = dataClient.getContTable(
-          computation.descriptor.type,
-          params
-        );
-
-        return reorderData(
-          contTableResponseToData(
-            await response,
-            xAxisVariable,
-            yAxisVariable,
-            facetVariable
-          ),
-          xAxisVocabulary,
-          yAxisVocabulary,
-          vocabularyWithMissingData(facetVocabulary, vizConfig.showMissingness)
-        ) as ContTableDataWithCoverage;
-      }
-    }, [
-      vizConfig.xAxisVariable,
-      vizConfig.yAxisVariable,
-      vizConfig.xAxisReferenceValue,
-      vizConfig.yAxisReferenceValue,
-      vizConfig.facetVariable,
-      vizConfig.showMissingness,
-      xAxisVariable,
-      yAxisVariable,
-      facetVariable,
+    assertValidInputVariables(
       inputs,
       selectedVariables,
       entities,
-      dataElementConstraints,
-      filters,
-      isTwoByTwo,
-      xAxisReferenceValue,
-      yAxisReferenceValue,
+      dataElementConstraints
+    );
+
+    if (outputEntity == null) throw new Error('outputEntity is undefined');
+
+    const xAxisVocabulary = fixLabelsForNumberVariables(
+      xAxisVariable.vocabulary,
+      xAxisVariable
+    );
+    const yAxisVocabulary = fixLabelsForNumberVariables(
+      yAxisVariable.vocabulary,
+      yAxisVariable
+    );
+    const facetVocabulary = fixLabelsForNumberVariables(
+      facetVariable?.vocabulary,
+      facetVariable
+    );
+
+    const params = getRequestParams(
       studyId,
-      outputEntity?.id,
-      dataClient,
-      computation.descriptor.type,
-    ])
-  );
+      filters ?? [],
+      vizConfig.xAxisVariable!,
+      vizConfig.yAxisVariable!,
+      outputEntity.id,
+      vizConfig.facetVariable,
+      vizConfig.showMissingness,
+      xAxisReferenceValue, // always undefined
+      yAxisReferenceValue, // in twoByTwo mode
+      options
+    );
+
+    const response = isTwoByTwo
+      ? dataClient.getTwoByTwo(computation.descriptor.type, params)
+      : dataClient.getContTable(computation.descriptor.type, params);
+
+    return reorderData(
+      isTwoByTwo
+        ? twoByTwoResponseToData(
+            await response,
+            xAxisVariable,
+            yAxisVariable,
+            facetVariable
+          )
+        : contTableResponseToData(
+            await response,
+            xAxisVariable,
+            yAxisVariable,
+            facetVariable
+          ),
+      xAxisVocabulary,
+      yAxisVocabulary,
+      vocabularyWithMissingData(facetVocabulary, vizConfig.showMissingness)
+    ) as TwoByTwoDataWithCoverage | ContTableDataWithCoverage;
+  }, [dataRequestDeps]);
 
   const xAxisLabel = variableDisplayWithUnit(xAxisVariable);
   const yAxisLabel = variableDisplayWithUnit(yAxisVariable);
@@ -549,12 +508,14 @@ function MosaicViz(props: Props<Options>) {
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
-    plotContainerStyles,
+    finalPlotContainerStyles,
     [data]
   );
 
   const mosaicProps: MosaicPlotProps = {
-    containerStyles: !isFaceted(data.value) ? plotContainerStyles : undefined,
+    containerStyles: !isFaceted(data.value)
+      ? finalPlotContainerStyles
+      : undefined,
     spacingOptions: !isFaceted(data.value) ? plotSpacingOptions : undefined,
     independentAxisLabel: xAxisLabel ?? 'X-axis',
     dependentAxisLabel: yAxisLabel ?? 'Y-axis',
@@ -562,6 +523,7 @@ function MosaicViz(props: Props<Options>) {
     interactive: true,
     showSpinner: data.pending,
     displayLibraryControls: false,
+    showExportButton: true,
   };
 
   const plotNode = (
@@ -611,7 +573,7 @@ function MosaicViz(props: Props<Options>) {
                 tableContainerStyles={
                   isFaceted(data.value)
                     ? facetedStatsTableStyles
-                    : statsTableStyles
+                    : { width: finalPlotContainerStyles.width }
                 }
                 facetedContainerStyles={facetedStatsTableContainerStyles}
                 independentVariable={xAxisLabel ?? 'X-axis'}
@@ -728,7 +690,7 @@ function MosaicViz(props: Props<Options>) {
   }, [dataElementConstraints, isTwoByTwo, vizConfig]);
 
   const LayoutComponent = options?.layoutComponent ?? PlotLayout;
-
+  const plotSubtitle = options?.getPlotSubtitle?.();
   const classes = useInputStyles();
 
   /**
@@ -982,36 +944,44 @@ function MosaicViz(props: Props<Options>) {
       )}
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
-          <InputVariables
-            inputs={inputs}
-            customSections={
-              isTwoByTwo ? twoByTwoReferenceValueInputs : undefined
-            }
-            entities={entities}
-            selectedVariables={selectedVariables}
-            onChange={handleInputVariableChange}
-            constraints={dataElementConstraints}
-            dataElementDependencyOrder={dataElementDependencyOrder}
-            starredVariables={starredVariables}
-            toggleStarredVariable={toggleStarredVariable}
-            enableShowMissingnessToggle={
-              facetVariable != null &&
-              data.value?.completeCasesAllVars !==
-                data.value?.completeCasesAxesVars
-            }
-            showMissingness={vizConfig.showMissingness}
-            // this can be used to show and hide no data control
-            onShowMissingnessChange={
-              computation.descriptor.type === 'pass'
-                ? onShowMissingnessChange
-                : undefined
-            }
-            outputEntity={outputEntity}
-          />
+          {!hideInputsAndControls && (
+            <InputVariables
+              inputs={inputs}
+              customSections={
+                isTwoByTwo ? twoByTwoReferenceValueInputs : undefined
+              }
+              entities={entities}
+              selectedVariables={selectedVariables}
+              onChange={handleInputVariableChange}
+              constraints={dataElementConstraints}
+              dataElementDependencyOrder={dataElementDependencyOrder}
+              starredVariables={starredVariables}
+              toggleStarredVariable={toggleStarredVariable}
+              enableShowMissingnessToggle={
+                facetVariable != null &&
+                data.value?.completeCasesAllVars !==
+                  data.value?.completeCasesAxesVars
+              }
+              showMissingness={vizConfig.showMissingness}
+              // this can be used to show and hide no data control
+              onShowMissingnessChange={
+                computation.descriptor.type === 'pass'
+                  ? onShowMissingnessChange
+                  : undefined
+              }
+              outputEntity={outputEntity}
+            />
+          )}
         </div>
 
         <PluginError error={data.error} outputSize={outputSize} />
-        <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+        {!hideInputsAndControls && (
+          <OutputEntityTitle
+            entity={outputEntity}
+            outputSize={outputSize}
+            subtitle={plotSubtitle}
+          />
+        )}
         <LayoutComponent
           isFaceted={isFaceted(data.value)}
           plotNode={plotNode}
@@ -1019,6 +989,7 @@ function MosaicViz(props: Props<Options>) {
           tableGroupNode={tableGroupNode}
           showRequiredInputsPrompt={!areRequiredInputsSelected}
           isMosaicPlot={true}
+          hideControls={hideInputsAndControls}
         />
       </div>
     </>
@@ -1607,8 +1578,12 @@ function ContTableStats(props?: {
  * Reformat response from mosaic endpoints into complete MosaicData
  * @param response
  * @returns MosaicData
+ *
+ * NOTE: this and twoByTwoResponseToData ought to be refactored into one function
+ * because they share a lot of logic. However the TypeScript seems tricky, so we haven't so far.
+ *
  */
-export function contTableResponseToData(
+function contTableResponseToData(
   response: ContTableResponse,
   xVariable: Variable,
   yVariable: Variable,
@@ -1687,7 +1662,7 @@ export function contTableResponseToData(
  * @param response
  * @returns MosaicData
  */
-export function twoByTwoResponseToData(
+function twoByTwoResponseToData(
   response: TwoByTwoResponse,
   xVariable: Variable,
   yVariable: Variable,

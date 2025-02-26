@@ -159,19 +159,8 @@
   }
 }
 
-// Fix for question page sticky header
-body.vpdb-Body .wdk-QuestionFormQuestionHeader {
-  top: 8.5em;
-}
-
-// Fix for All Datasets sticky header
-body.vpdb-Body
-  .wdk-Answer
-  .MesaComponent
-  .DataTable
-  .DataTable-Sticky
-  .DataTable-Header {
-  top: 103px;
+:root {
+  --page-offset-top: 103px;
 }
 
 // Fix for Preferred Organisms config page header
@@ -182,40 +171,5 @@ body.vpdb-Body .PreferredOrganismsConfig {
 
   &--ToggleHelp::after {
     right: 3.48em;
-  }
-}
-
-// Various offsets for header on record pages
-body.vpdb-Body .wdk-RecordAttributeSectionItem:before,
-body.vpdb-Body .wdk-RecordTableContainer:before,
-body.vpdb-Body .wdk-RecordSubsection:before,
-body.vpdb-Body .wdk-RecordSection:before {
-  height: 103px;
-  margin-top: -103px;
-}
-
-// Offset for header on static content pages {
-body.vpdb-Body .ExternalContentController a[name]::before {
-  height: 139px;
-  margin-top: -139px;
-}
-
-// Fix for RecordSidebar sticky container
-body.vpdb-Body .wdk-RecordSidebarContainer {
-  top: 2em;
-}
-
-body.vpdb-Body .vpdb-RootContainer {
-  @media screen and (max-width: $mobile-width) {
-    grid-template-areas:
-      'header'
-      'subheader'
-      'banner'
-      'nav'
-      'content'
-      'side'
-      'footer';
-
-    grid-template-rows: auto auto auto auto 1fr auto auto;
   }
 }

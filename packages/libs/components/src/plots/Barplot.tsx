@@ -121,7 +121,12 @@ const Barplot = makePlotlyPlotComponent(
               orientation: orientation === 'vertical' ? 'v' : 'h',
               opacity: calculatedOpacity,
               type: 'bar',
-              text: showValues ? el.value : undefined,
+              // two decimal points for y values
+              text: showValues
+                ? el.value.map(
+                    (value: number) => `${Number.parseFloat(value.toFixed(2))}`
+                  )
+                : undefined,
               textposition: showValues ? 'auto' : undefined,
               marker: {
                 color: el.color,
@@ -163,6 +168,7 @@ const Barplot = makePlotlyPlotComponent(
       range: data.series.length ? undefined : [0, 10],
       tickfont: data.series.length ? {} : { color: 'transparent' },
       showticklabels: showIndependentAxisTickLabel,
+      type: 'category',
     };
 
     // truncation

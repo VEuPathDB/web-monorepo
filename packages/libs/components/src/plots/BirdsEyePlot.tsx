@@ -186,6 +186,7 @@ export default function BirdsEyePlot({
       layout={layout}
       {...restProps}
       checkedLegendItems={barLabels}
+      showExportButton={false}
     />
   );
 }

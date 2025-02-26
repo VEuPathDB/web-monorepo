@@ -16,6 +16,10 @@
     font-size: 1.15em;
   }
 
+  &-ConfiguredVizLink {
+    width: 100%;
+  }
+
   &-ConfiguredVisualization {
     height: 15em;
     width: 25em;
@@ -95,6 +99,14 @@
     &Subtitle {
       margin-top: 0.25em;
       font-weight: 300;
+    }
+  }
+  // Add disabled effects for the app rows
+  &-AppPicker {
+    &__disabled {
+      cursor: not-allowed;
+      border-radius: 20px;
+      color: #a6a6a6;
     }
   }
 
@@ -242,6 +254,10 @@ $data-table-thick-border: 2px solid #262626;
   }
   th {
     vertical-align: baseline;
+  }
+  td {
+    padding-right: 10px;
+    word-break: break-word;
   }
 }
 
@@ -423,7 +439,7 @@ $data-table-thick-border: 2px solid #262626;
 .OutputEntitySubtitle {
   font-style: italic;
   font-size: 0.9em;
-  margin-top: -10px;
+  margin-top: 0.4em;
 }
 
 // R-square table for Scatter plot's Best fit option
@@ -441,4 +457,11 @@ $data-table-thick-border: 2px solid #262626;
   th:first-of-type {
     border-bottom: $data-table-inner-border;
   }
+}
+
+.MultiLegendContaner {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 20px;
 }

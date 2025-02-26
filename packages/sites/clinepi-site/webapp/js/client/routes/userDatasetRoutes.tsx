@@ -5,20 +5,27 @@ import { useLocation } from 'react-router-dom';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 
-import { makeEdaRoute } from '@veupathdb/web-common/lib/routes';
-import { diyUserDatasetIdToWdkRecordId } from '@veupathdb/wdk-client/lib/Utils/diyDatasets';
+import { makeEdaRoute, makeMapRoute } from '@veupathdb/web-common/lib/routes';
+import { diyUserDatasetIdToWdkRecordId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
 
 import { UserDatasetDetailProps } from '@veupathdb/user-datasets/lib/Controllers/UserDatasetDetailController';
 
-import { uploadTypeConfig } from '@veupathdb/user-datasets/lib/Utils/upload-config';
+import { uploadTypeConfig } from '@veupathdb/web-common/lib/user-dataset-upload-config';
 
-import { communitySite, projectId } from '@veupathdb/web-common/lib/config';
+import {
+  communitySite,
+  edaServiceUrl,
+  projectId,
+} from '@veupathdb/web-common/lib/config';
 
 import ExternalContentController from '@veupathdb/web-common/lib/controllers/ExternalContentController';
 
-const IsaDatasetDetail = React.lazy(
+import { useConfiguredSubsettingClient } from '@veupathdb/eda/lib/core/hooks/client';
+import { useStudyMetadata } from '@veupathdb/eda/lib/core/hooks/study';
+
+const EdaDatasetDetail = React.lazy(
   () =>
-    import('@veupathdb/user-datasets/lib/Components/Detail/IsaDatasetDetail')
+    import('@veupathdb/user-datasets/lib/Components/Detail/EdaDatasetDetail')
 );
 
 const UserDatasetRouter = React.lazy(
@@ -49,15 +56,22 @@ export const userDatasetRoutes: RouteEntry[] = [
 
       const detailComponentsByTypeName = useMemo(
         () => ({
-          ISA: function ClinEpiIsaDatasetDetail(props: UserDatasetDetailProps) {
+          isasimple: function ClinEpiEdaDatasetDetail(
+            props: UserDatasetDetailProps
+          ) {
             const wdkDatasetId = diyUserDatasetIdToWdkRecordId(
               props.userDataset.id
             );
-
+            const edaStudyMetadata = useEdaStudyMetadata(wdkDatasetId);
             return (
-              <IsaDatasetDetail
+              <EdaDatasetDetail
                 {...props}
                 edaWorkspaceUrl={`${makeEdaRoute(wdkDatasetId)}/new`}
+                edaMapUrl={
+                  edaStudyMetadata?.hasMap
+                    ? `${makeMapRoute(wdkDatasetId)}/new`
+                    : undefined
+                }
               />
             );
           },
@@ -78,9 +92,20 @@ export const userDatasetRoutes: RouteEntry[] = [
               <ExternalContentController url={helpTabContentUrl} />
             }
             dataNoun={{ singular: 'Study', plural: 'Studies' }}
+            enablePublicUserDatasets
           />
         </Suspense>
       );
     },
   },
 ];
+
+function useEdaStudyMetadata(wdkDatasetId: string) {
+  try {
+    const subsettingClient = useConfiguredSubsettingClient(edaServiceUrl);
+    return useStudyMetadata(wdkDatasetId, subsettingClient).value;
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
+}

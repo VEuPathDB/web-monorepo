@@ -14,7 +14,7 @@ interface AnyObject {
  * Stateless function component decorator that prevents rerendering
  * when props are equal use shallow comparison.
  */
-export function pure<P>(Component: React.StatelessComponent<P>) {
+export function pure<P>(Component: React.FC<P>) {
   return class PureWrapper extends React.PureComponent<P> {
     static get displayName() {
       return `PureWrapper(${Component.displayName || Component.name})`;
@@ -148,9 +148,7 @@ interface LazyEnhance<T> {
  * })(ComponentThatNeedsData);
  */
 export function lazy<T>(load: (props: T) => Promise<void>): LazyEnhance<T> {
-  return function (
-    Component: React.ComponentClass<T> | React.StatelessComponent<T>
-  ) {
+  return function (Component: React.ComponentClass<T> | React.FC<T>) {
     class Lazy extends React.Component<T, { loading: boolean }> {
       displayName = `Lazy(${Component.displayName || Component.name})`;
       mounted?: boolean;
@@ -194,7 +192,7 @@ export function instrument<P>(
   options: InstrumentOptions
 ): React.ComponentClass<P>;
 export function instrument<P>(
-  Component: React.StatelessComponent<P>,
+  Component: React.FC<P>,
   options: InstrumentOptions
 ): React.ComponentClass<P>;
 export function instrument<P>(
@@ -248,7 +246,7 @@ export function safeHtml<P>(
 export function safeHtml<P>(
   str: string,
   props?: P,
-  Component?: React.StatelessComponent<P>
+  Component?: React.FC<P>
 ): JSX.Element;
 export function safeHtml<P>(
   str: string,

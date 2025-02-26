@@ -6,7 +6,7 @@ import { Link } from '@veupathdb/wdk-client/lib/Components';
 import {
   MesaColumn,
   MesaSortObject,
-} from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 import { JobRow } from '../components/BlastWorkspaceAll';
@@ -17,15 +17,18 @@ import {
 } from '../utils/allJobs';
 import { BlastApi } from '../utils/api';
 
-export function useAllJobsColumns(): MesaColumn<keyof JobRow>[] {
+export function useAllJobsColumns(): MesaColumn<JobRow>[] {
   return useMemo(
     () => [
       {
         key: 'jobId',
         name: 'Job Id',
-        renderCell: ({ row }: { row: JobRow }) => (
-          <Link to={`/workspace/blast/result/${row.jobId}`}>{row.jobId}</Link>
-        ),
+        renderCell: ({ row }: { row: JobRow }) =>
+          row.status === 'expired' && !row.rerunnable ? (
+            row.jobId
+          ) : (
+            <Link to={`./result/${row.jobId}`}>{row.jobId}</Link>
+          ),
         sortable: true,
       },
       {
@@ -48,10 +51,10 @@ export function useAllJobsColumns(): MesaColumn<keyof JobRow>[] {
         renderCell: ({ row }: { row: JobRow }) => (
           <div>
             {row.status}
-            {row.status === 'expired' && (
+            {row.status === 'expired' && row.rerunnable && (
               <>
                 {' '}
-                (<Link to={`/workspace/blast/result/${row.jobId}`}>rerun</Link>)
+                (<Link to={`./result/${row.jobId}`}>rerun</Link>)
               </>
             )}
           </div>
@@ -84,6 +87,7 @@ export function useRawJobRows(
               description: jobEntity.description ?? null,
               created: jobEntity.created,
               status: entityStatusToReadableStatus(jobEntity.status),
+              rerunnable: jobEntity.isRerunnable ?? true,
             })),
         };
   }, []);
@@ -126,11 +130,13 @@ export function useMesaOptions() {
           <div className="EmptyState-BodyWrapper">
             <p>You do not have any BLAST jobs</p>
             <p>
-              Please run a <Link to="/workspace/blast/new">new job</Link>{' '}
+              Please run a <Link to="./new">new job</Link>{' '}
             </p>
           </div>
         </div>
       ),
+      deriveRowClassName: ({ status, rerunnable }: JobRow) =>
+        status === 'expired' && !rerunnable ? 'grayed-out' : undefined,
     }),
     []
   );

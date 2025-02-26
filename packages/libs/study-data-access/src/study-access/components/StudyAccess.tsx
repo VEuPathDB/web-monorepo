@@ -1,6 +1,9 @@
 import React from 'react';
 
-import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import {
+  makeClassNameHelper,
+  safeHtml,
+} from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { UserTableDialog } from './UserTableDialog';
 import { UserTableSection } from './UserTableSection';
@@ -36,7 +39,7 @@ export function StudyAccess({
   return (
     <div className={cx()}>
       <div className={cx('--TitleLine')}>
-        <h1>{title}</h1>
+        <h1>{typeof title === 'string' ? safeHtml(title) : title}</h1>
       </div>
       <UserTableSection {...endUserTableConfig} />
       <UserTableSection {...providerTableConfig} />

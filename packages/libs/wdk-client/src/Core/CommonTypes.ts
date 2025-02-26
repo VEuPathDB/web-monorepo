@@ -17,23 +17,3 @@ export interface DispatchAction<
 > {
   (action: ActionCreatorResult<Action, S>): any;
 }
-
-export interface MesaColumn<K extends string = string> {
-  key: K;
-  name?: string;
-  type?: string;
-  sortable?: boolean;
-  filterable?: boolean;
-  helpText?: string;
-  style?: any;
-  className?: string;
-  width?: any;
-  renderCell?: any;
-  renderHeading?: any;
-  wrapCustomHeadings?: any;
-}
-
-export interface MesaSortObject {
-  columnKey: string;
-  direction: 'asc' | 'desc';
-}

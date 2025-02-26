@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { uniq } from 'lodash';
 import Path from 'path';
 import {
   Redirect,
   Route,
   RouteComponentProps,
-  useHistory,
   useLocation,
   useRouteMatch,
 } from 'react-router';
@@ -15,6 +14,10 @@ import { cx } from './Utils';
 
 // Definitions
 import { Status, useStudyEntities } from '../core';
+
+// This is likely temporary, so not investing too much effort
+// @ts-ignore
+import betaImage from '../images/beta2-30.png';
 
 // Hooks
 import { useEntityCounts } from '../core/hooks/entityCounts';
@@ -26,6 +29,7 @@ import { useGeoConfig } from '../core/hooks/geoConfig';
 
 // Components
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
+import UserDatasetDetailController from '@veupathdb/user-datasets/lib/Controllers/UserDatasetDetailController';
 import { AnalysisSummary } from './AnalysisSummary';
 import { EntityDiagram } from '../core';
 import { ComputationRoute } from './ComputationRoute';
@@ -50,6 +54,10 @@ import { DownloadClient } from '../core/api/DownloadClient';
 import useUITheme from '@veupathdb/coreui/lib/components/theming/useUITheme';
 import { VariableLinkConfig } from '../core/components/VariableLink';
 import FilterChipList from '../core/components/FilterChipList';
+import { Public } from '@material-ui/icons';
+import { Link } from 'react-router-dom';
+import { AnalysisError } from '../core/components/AnalysisError';
+import { wdkRecordIdToDiyUserDatasetId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
 
 const AnalysisTabErrorBoundary = ({
   children,
@@ -91,6 +99,8 @@ interface Props {
   downloadClient: DownloadClient;
   singleAppMode?: string;
   showUnreleasedData: boolean;
+  helpTabContents?: ReactNode;
+  isStudyExplorerWorkspace?: boolean;
 }
 
 /**
@@ -110,12 +120,15 @@ export function AnalysisPanel({
   downloadClient,
   singleAppMode,
   showUnreleasedData,
+  helpTabContents,
+  isStudyExplorerWorkspace = false,
 }: Props) {
   const studyRecord = useStudyRecord();
   const analysisState = useAnalysis(analysisId, singleAppMode);
 
   const {
     status,
+    error,
     analysis,
     setName,
     copyAnalysis,
@@ -133,6 +146,10 @@ export function AnalysisPanel({
   const filteredEntities = uniq(filters?.map((f) => f.entityId));
   const geoConfigs = useGeoConfig(entities);
   const location = useLocation();
+  const mapLink =
+    geoConfigs.length > 0
+      ? routeBase.replace('/analyses/', '/maps/')
+      : undefined;
 
   const [lastVarPath, setLastVarPath] = useState('');
   const [lastVizPath, setLastVizPath] = useState('');
@@ -220,6 +237,10 @@ export function AnalysisPanel({
     },
   };
 
+  if (error) {
+    return <AnalysisError error={error} baseAnalysisPath={routeBase} />;
+  }
+
   if (status === Status.Error)
     return (
       <div>
@@ -240,7 +261,10 @@ export function AnalysisPanel({
   return (
     <RestrictedPage approvalStatus={approvalStatus}>
       <ShowHideVariableContextProvider>
-        <EDAWorkspaceHeading analysisState={analysisState} />
+        <EDAWorkspaceHeading
+          analysisState={analysisState}
+          isStudyExplorerWorkspace={isStudyExplorerWorkspace}
+        />
         <ShareFromAnalysis
           visible={sharingModalVisible}
           toggleVisible={setSharingModalVisible}
@@ -353,8 +377,35 @@ export function AnalysisPanel({
                   display: 'Record Notes',
                   route: '/notes',
                 },
-              ]}
+              ].concat(
+                isStudyExplorerWorkspace
+                  ? {
+                      display: 'Learn',
+                      route: '/learn',
+                    }
+                  : []
+              )}
             />
+            {mapLink && (
+              <Link
+                to={mapLink}
+                style={{
+                  color: themePrimaryColor?.hue[themePrimaryColor?.level],
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                  fontSize: '1.2em',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '.5ex',
+                  position: 'absolute',
+                  right: '0',
+                  bottom: '.5em',
+                }}
+              >
+                <Public /> Explore in Interactive Map{' '}
+                <img alt="BETA" src={betaImage} />
+              </Link>
+            )}
           </div>
           <Route
             path={routeBase}
@@ -369,10 +420,36 @@ export function AnalysisPanel({
             path={`${routeBase}/details`}
             render={() => (
               <AnalysisTabErrorBoundary>
-                <RecordController
-                  recordClass="dataset"
-                  primaryKey={studyRecord.id.map((p) => p.value).join('/')}
-                />
+                {studyMetadata.isUserStudy ? (
+                  // TODO Make both cases below configurable via the root component.
+                  // This will need to be done if we want EDA to stand on its own.
+
+                  // Note that we are not inluding the custom detail page.
+                  // As of this writing, details pages only add a link to
+                  // EDA. Since we are in EDA, we don't want to add it here.
+                  <div style={{ marginBlockStart: '1em' }}>
+                    <UserDatasetDetailController
+                      baseUrl={`${routeBase}/details`}
+                      detailsPageTitle={'My Study'}
+                      workspaceTitle={'My Studies'}
+                      id={wdkRecordIdToDiyUserDatasetId(
+                        studyRecord.attributes.dataset_id as string
+                      )}
+                      dataNoun={{
+                        singular: 'Study',
+                        plural: 'Studies',
+                      }}
+                      enablePublicUserDatasets={true}
+                      includeAllLink={false}
+                      includeNameHeader={false}
+                    />
+                  </div>
+                ) : (
+                  <RecordController
+                    recordClass="dataset"
+                    primaryKey={studyRecord.id.map((p) => p.value).join('/')}
+                  />
+                )}
               </AnalysisTabErrorBoundary>
             )}
           />
@@ -435,6 +512,14 @@ export function AnalysisPanel({
             render={() => (
               <AnalysisTabErrorBoundary>
                 <NotesTab analysisState={analysisState} />
+              </AnalysisTabErrorBoundary>
+            )}
+          />
+          <Route
+            path={`${routeBase}/learn`}
+            render={() => (
+              <AnalysisTabErrorBoundary>
+                {helpTabContents}
               </AnalysisTabErrorBoundary>
             )}
           />

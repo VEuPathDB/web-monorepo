@@ -31,7 +31,7 @@ body.vpdb-Body .vpdb-RootContainer.vpdb-RootContainer__home-page {
   }
 
   .vpdb-SearchPane {
-    min-height: 100vh;
+    padding-bottom: 12em;
   }
 
   .vpdb-MainContent {
@@ -78,6 +78,7 @@ body.vpdb-Body .vpdb-RootContainer.vpdb-RootContainer__home-page {
       position: fixed;
       bottom: 0;
       width: 100%;
+      z-index: 1;
     }
   }
 

@@ -12,6 +12,7 @@ import { makeSearchHelpText } from '../../Utils/SearchUtils';
 import CheckboxTree, {
   LinksPosition,
   CheckboxTreeStyleSpec,
+  CheckboxTreeProps,
 } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import {
   getFilteredNodeChildren,
@@ -20,7 +21,7 @@ import {
 
 const sharedCheckboxTreeContainerStyleSpec: React.CSSProperties = {
   position: 'relative',
-  maxHeight: '75vh',
+  maxHeight: 'calc(100vh - 2.5em - var(--page-offset-top, 0px))',
   overflow: 'hidden',
   display: 'flex',
   flexDirection: 'column',
@@ -67,23 +68,24 @@ type Props = {
    * If omitted, the container uses the sharedCheckboxTreeContainerStyleSpec default styles
    */
   type?: 'headerMenu' | 'searchPane';
+  additionalFilters?: CheckboxTreeProps<unknown>['additionalFilters'];
 };
 
 let CategoriesCheckboxTree: FunctionComponent<Props> = (props) => {
   let {
     autoFocusSearchBox,
-    disableHelp,
+    disableHelp = false,
     expandedBranches,
     visibilityFilter,
-    isMultiPick,
-    isSelectable,
-    leafType,
+    isMultiPick = true,
+    isSelectable = true,
+    leafType = 'column',
     name,
     onChange,
     onSearchTermChange,
     onUiChange,
     renderNoResults,
-    renderNode,
+    renderNode = (node: CategoryTreeNode) => <BasicNodeComponent node={node} />,
     searchBoxPlaceholder,
     searchTerm,
     searchIconName = 'filter',
@@ -98,6 +100,7 @@ let CategoriesCheckboxTree: FunctionComponent<Props> = (props) => {
     containerClassName = '',
     styleOverrides = {},
     type,
+    additionalFilters,
   } = props;
 
   if (tree.children.length == 0) {
@@ -119,6 +122,7 @@ let CategoriesCheckboxTree: FunctionComponent<Props> = (props) => {
       ? {
           ...sharedCheckboxTreeContainerStyleSpec,
           minWidth: '18.75em',
+          maxHeight: 'none',
         }
       : {
           ...sharedCheckboxTreeContainerStyleSpec,
@@ -164,19 +168,12 @@ let CategoriesCheckboxTree: FunctionComponent<Props> = (props) => {
           onExpansionChange={onUiChange}
           onSearchTermChange={onSearchTermChange}
           styleOverrides={styleOverrides}
+          additionalFilters={additionalFilters}
         />
       </div>
     </div>
   );
 };
-
-CategoriesCheckboxTree.defaultProps = {
-  renderNode: (node: CategoryTreeNode) => <BasicNodeComponent node={node} />,
-  isMultiPick: true,
-  isSelectable: true,
-  leafType: 'column', // TODO remove once all consumers are passing in a value for this
-  disableHelp: false,
-} as Props;
 
 export default wrappable(CategoriesCheckboxTree);
 

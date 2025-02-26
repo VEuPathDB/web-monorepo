@@ -11,10 +11,13 @@ export function RecordHeading(DefaultComponent) {
     makeDynamicWrapper('RecordHeading')(DefaultComponent);
   return function EbrcRecordHeading(props) {
     return (
-      <div>
+      <React.Fragment>
         <DynamicRecordHeading {...props} />
-        {renderWithCustomElements(props.record.attributes.record_overview)}
-      </div>
+        {renderWithCustomElements(props.record.attributes.record_overview, {
+          className: 'eupathdb-RecordOverviewContainer',
+          innerRef: props.overviewRef,
+        })}
+      </React.Fragment>
     );
   };
 }
@@ -24,7 +27,7 @@ export function RecordMainSection(DefaultComponent) {
     makeDynamicWrapper('RecordMainSection')(DefaultComponent);
   return function EbrcRecordMainSection(props) {
     return (
-      <div>
+      <>
         <DynamicRecordMainSection {...props} />
         {!props.depth && 'attribution' in props.record.attributes && (
           <div className="RecordAttribution">
@@ -37,13 +40,16 @@ export function RecordMainSection(DefaultComponent) {
             />
           </div>
         )}
-      </div>
+      </>
     );
   };
 }
 
 export const RecordUI = makeDynamicWrapper('RecordUI');
 export const RecordTable = makeDynamicWrapper('RecordTable');
+export const RecordAttributeSection = makeDynamicWrapper(
+  'RecordAttributeSection'
+);
 
 // Helpers
 // -------

@@ -3,15 +3,11 @@ import {
   InferAction,
 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
 
-import { FormSubmission } from '../Components/UploadForm';
-import { UserDatasetUpload } from '../Utils/types';
+// import { UserDatasetUpload } from '../Utils/types';
 
-export const submitUploadForm = makeActionCreator(
-  'user-dataset-upload/submit-form',
-  (formSubmission: FormSubmission, redirectTo?: string) => ({
-    formSubmission,
-    redirectTo,
-  })
+export const trackUploadProgress = makeActionCreator(
+  'user-dataset-upload/upload-progress',
+  (progress: number | null) => ({ progress })
 );
 
 export const receiveBadUpload = makeActionCreator(
@@ -39,10 +35,10 @@ export const requestUploadMessages = makeActionCreator(
   () => {}
 );
 
-export const receiveUploadMessages = makeActionCreator(
-  'user-dataset-upload/receive-upload-messages',
-  (uploads: Array<UserDatasetUpload>) => ({ uploads })
-);
+// export const receiveUploadMessages = makeActionCreator(
+//   'user-dataset-upload/receive-upload-messages',
+//   (uploads: Array<UserDatasetUpload>) => ({ uploads })
+// );
 
 export const receiveBadUploadHistoryAction = makeActionCreator(
   'user-dataset-upload/receive-bad-upload-history-action',
@@ -50,11 +46,11 @@ export const receiveBadUploadHistoryAction = makeActionCreator(
 );
 
 export type Action =
-  | InferAction<typeof submitUploadForm>
+  | InferAction<typeof trackUploadProgress>
   | InferAction<typeof receiveBadUpload>
   | InferAction<typeof clearBadUpload>
   | InferAction<typeof cancelCurrentUpload>
   | InferAction<typeof clearMessages>
   | InferAction<typeof requestUploadMessages>
-  | InferAction<typeof receiveUploadMessages>
+  // | InferAction<typeof receiveUploadMessages>
   | InferAction<typeof receiveBadUploadHistoryAction>;

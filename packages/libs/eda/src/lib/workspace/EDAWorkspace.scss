@@ -12,11 +12,6 @@
     font-size: 0.9em;
   }
 
-  .wdk-RecordSidebarToggle,
-  .wdk-RecordSidebar {
-    background-color: #eaeaea;
-  }
-
   .wdk-RecordActions,
   .wdk-RecordHeading {
     display: none;
@@ -25,7 +20,7 @@
   &-Heading {
     display: grid;
     grid:
-      'title linkouts' auto
+      'title data-access-btn linkouts' auto
       / auto 1fr;
     gap: 1em;
     align-items: center;
@@ -247,4 +242,8 @@
     margin-top: 0.3em;
     margin-bottom: 0.5em;
   }
+}
+
+.StudyExplorerWorkspace {
+  padding-top: 0;
 }

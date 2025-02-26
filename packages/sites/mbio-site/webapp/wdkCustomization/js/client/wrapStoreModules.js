@@ -1,7 +1,5 @@
 import { compose, curryN, identity, partition, update } from 'lodash/fp';
 
-import { getLeaves } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-
 import { useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
 
 import { wrapStoreModules as addUserDatasetStoreModules } from '@veupathdb/user-datasets/lib/StoreModules';
@@ -16,28 +14,12 @@ const composeReducerWith = curryN(2, composeReducers);
 
 export default compose(
   useUserDatasetsWorkspace ? addUserDatasetStoreModules : identity,
-  update('globalData.reduce', composeReducerWith(mbioGlobalData)),
   update(
     'studies.reduce',
     composeReducerWith(applyCustomDisplayNameToStudySearches)
   ),
   update('searchCards.reduce', composeReducerWith(applyCustomIconToSearchCards))
 );
-
-function mbioGlobalData(state, action) {
-  switch (action.type) {
-    // flatten search tree
-    case 'static/all-data-loaded':
-      return {
-        ...state,
-        searchTree: {
-          children: getLeaves(state.searchTree, (node) => node.children),
-        },
-      };
-    default:
-      return state;
-  }
-}
 
 function applyCustomDisplayNameToStudySearches(studies) {
   return {

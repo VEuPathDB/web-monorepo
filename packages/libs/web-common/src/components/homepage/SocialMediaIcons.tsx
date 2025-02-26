@@ -21,7 +21,13 @@ export const ContactUs = () => (
 
 export const Twitter = () => (
   <div className={cx()}>
-    <IconAlt fa="twitter" />
+    <i className="ebrc-icon-x-logo"></i>
+  </div>
+);
+
+export const Linkedin = () => (
+  <div className={cx()}>
+    <IconAlt fa="linkedin" />
   </div>
 );
 

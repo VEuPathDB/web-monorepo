@@ -40,7 +40,7 @@ export function EDAAnalysisListContainer(props: Props) {
   const studyMetadata = useStudyMetadata(studyId, subsettingClient);
   const contextValue = useDeepValue({
     ...studyRecordState,
-    studyMetadata,
+    studyMetadata: studyMetadata.value,
     analysisClient,
     subsettingClient,
     dataClient,

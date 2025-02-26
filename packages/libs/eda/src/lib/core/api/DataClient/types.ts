@@ -87,17 +87,20 @@ const variableSpec = type({
 });
 
 export type PlotReferenceValue = TypeOf<typeof plotReferenceValue>;
-const plotReferenceValue = keyof({
-  xAxis: null,
-  yAxis: null,
-  zAxis: null,
-  overlay: null,
-  facet1: null,
-  facet2: null,
-  geo: null,
-  latitude: null,
-  longitude: null,
-});
+const plotReferenceValue = union([
+  keyof({
+    xAxis: null,
+    yAxis: null,
+    zAxis: null,
+    overlay: null,
+    facet1: null,
+    facet2: null,
+    geo: null,
+    latitude: null,
+    longitude: null,
+  }),
+  nullType,
+]);
 
 export type API_VariableType = TypeOf<typeof API_VariableType>;
 const API_VariableType = keyof({
@@ -122,13 +125,13 @@ export const VariableMapping = intersection([
   type({
     variableClass,
     variableSpec,
-    plotReference: plotReferenceValue,
     dataType: API_VariableType,
     dataShape: API_VariableDataShape,
     isCollection: boolean,
     imputeZero: boolean,
   }),
   partial({
+    plotReference: plotReferenceValue,
     displayName: string,
     displayRangeMin: union([string, number]),
     displayRangeMax: union([string, number]),
@@ -292,6 +295,7 @@ export interface ScatterplotRequestParams {
     facetVariable?: ZeroToTwoVariables;
     showMissingness?: 'TRUE' | 'FALSE';
     maxAllowedDataPoints?: number;
+    returnPointIds?: boolean;
   };
 }
 
@@ -321,6 +325,7 @@ export const ScatterplotResponseData = array(
       tuple([StringVariableValue]),
       tuple([StringVariableValue, StringVariableValue]),
     ]),
+    pointIds: array(string),
   })
 );
 
@@ -357,21 +362,157 @@ export const ScatterplotResponse = intersection([
 // The volcano plot response type MUST be the same as the VolcanoPlotData type defined in the components package
 export type VolcanoPlotResponse = TypeOf<typeof VolcanoPlotResponse>;
 
-// TEMP - Many of these can be simplified after some backend work is merged (microbiomeComputations #37)
-export const VolcanoPlotResponse = array(
+export const VolcanoPlotStatistics = array(
   partial({
-    log2foldChange: string,
+    effectSize: string,
     pValue: string,
     adjustedPValue: string,
     pointID: string,
   })
 );
 
+export const VolcanoPlotResponse = intersection([
+  type({
+    effectSizeLabel: string,
+    statistics: VolcanoPlotStatistics,
+  }),
+  partial({
+    pValueFloor: string,
+    adjustedPValueFloor: union([string, nullType]),
+  }),
+]);
+
 export interface VolcanoPlotRequestParams {
   studyId: string;
   filters: Filter[];
   config: {}; // Empty viz config because there are no viz input vars
 }
+
+export type NodeIdList = TypeOf<typeof NodeIdList>;
+export const NodeIdList = type({
+  nodeIds: array(string),
+});
+
+// Network types (including bipartite network)
+// The network types are all built from nodes and links. Currently we've defined specific
+// flavors of networks, called "correlation" networks, that have extra information
+// about them based on their context.
+
+// NOTE tech debt below! The `sourece` and `target` of the NetworkData links should be
+// NodeData, but the backend is sending us strings. At this point it is unlikely the backend
+// will change for a while to fix this issue. If it does, we can simplify the below and let
+// BipartiteNetworkData extend NetworkData.
+const NodeData = intersection([
+  type({
+    id: string,
+  }),
+  partial({
+    x: number,
+    y: number,
+    degree: number,
+  }),
+]);
+
+export const NetworkData = type({
+  nodes: array(NodeData),
+  links: array(
+    intersection([
+      type({
+        source: string,
+        target: string,
+        weight: number,
+      }),
+      partial({
+        color: number,
+        isDirected: boolean,
+      }),
+    ])
+  ),
+});
+
+const NetworkConfig = partial({
+  variables: unknown,
+  correlationCoefThreshold: number,
+  significanceThreshold: number,
+});
+export const NetworkResponse = type({
+  network: type({
+    data: NetworkData,
+    config: NetworkConfig,
+  }),
+});
+
+export interface NetworkRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    correlationCoefThreshold?: number;
+    significanceThreshold?: number;
+  };
+}
+
+export const BipartiteNetworkData = type({
+  partitions: array(NodeIdList),
+  nodes: array(NodeData),
+  links: array(
+    intersection([
+      type({
+        source: NodeData,
+        target: NodeData,
+        weight: string,
+      }),
+      partial({
+        color: string,
+      }),
+    ])
+  ),
+});
+
+const BipartiteNetworkConfig = type({
+  partitionsMetadata: array(string),
+});
+
+export const BipartiteNetworkResponse = type({
+  bipartitenetwork: type({
+    data: BipartiteNetworkData,
+    config: BipartiteNetworkConfig,
+  }),
+});
+
+export type BipartiteNetworkResponse = TypeOf<typeof BipartiteNetworkResponse>;
+
+// Correlation Bipartite Network
+// a specific flavor of the bipartite network that also includes correlationCoefThreshold and significanceThreshold
+export type CorrelationBipartiteNetworkResponse = TypeOf<
+  typeof CorrelationBipartiteNetworkResponse
+>;
+export const CorrelationBipartiteNetworkResponse = intersection([
+  BipartiteNetworkResponse,
+  type({
+    correlationCoefThreshold: number,
+    significanceThreshold: number,
+  }),
+]);
+
+export interface BipartiteNetworkRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    correlationCoefThreshold?: number;
+    significanceThreshold?: number;
+  };
+}
+
+export type NetworkResponse = TypeOf<typeof NetworkResponse>;
+
+export type FeaturePrefilterThresholds = TypeOf<
+  typeof FeaturePrefilterThresholds
+>;
+export const FeaturePrefilterThresholds = type({
+  proportionNonZero: number,
+  variance: number,
+  standardDeviation: number,
+});
 
 ////////////////
 // Table Data //
@@ -538,9 +679,9 @@ export const ContTableResponse = intersection([
   partial({
     statsTable: array(
       partial({
-        pvalue: union([number, string]), // TO DO: should these three stats values all be optional?
-        degreesFreedom: number,
-        chisq: number,
+        pvalue: union([number, string, nullType]), // TO DO: should these three stats values all be optional?
+        degreesFreedom: NumberOrNull,
+        chisq: NumberOrNull,
         facetVariableDetails: union([
           tuple([StringVariableValue]),
           tuple([StringVariableValue, StringVariableValue]),
@@ -855,7 +996,7 @@ export const StandaloneMapBubblesResponse = type({
     intersection([
       MapElement,
       type({
-        overlayValue: number,
+        overlayValue: string,
       }),
     ])
   ),
@@ -880,8 +1021,8 @@ export type StandaloneMapBubblesLegendResponse = TypeOf<
   typeof StandaloneMapBubblesLegendResponse
 >;
 export const StandaloneMapBubblesLegendResponse = type({
-  minColorValue: number,
-  maxColorValue: number,
+  minColorValue: string,
+  maxColorValue: string,
   minSizeValue: number,
   maxSizeValue: number,
 });
@@ -901,6 +1042,17 @@ export const BinRange = type({
   binEnd: string,
   binLabel: string,
 });
+
+export type LabeledRange = TypeOf<typeof LabeledRange>;
+export const LabeledRange = intersection([
+  type({
+    label: string,
+  }),
+  partial({
+    max: string,
+    min: string,
+  }),
+]);
 
 export type ContinousVariableMetadataResponse = TypeOf<
   typeof ContinousVariableMetadataResponse

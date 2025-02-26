@@ -19,28 +19,29 @@ export function useEntityCounts(filters?: Filter[]) {
   // debounce to prevent a back end call for each click on a filter checkbox
   const debouncedFilters = useDebounce(filters, 2000);
 
-  return usePromise(
+  return usePromise<Record<string, number>>(
     useCallback(async () => {
       if (isStubEntity(rootEntity))
         return {
           [STUB_ENTITY.id]: 0,
         };
       const countsEntries = await Promise.all(
-        entities.map((entity) =>
-          subsettingClient
-            .getEntityCount(id, entity.id, debouncedFilters ?? [])
-            .then(
-              ({ count }) => [entity.id, count],
-              (error) => {
-                console.warn(
-                  'Could not load count for entity',
-                  entity.id,
-                  entity.displayName
-                );
-                console.error(error);
-                return [entity.id, 0];
-              }
-            )
+        entities.map(
+          (entity): Promise<[string, number]> =>
+            subsettingClient
+              .getEntityCount(id, entity.id, debouncedFilters ?? [])
+              .then(
+                ({ count }) => [entity.id, count],
+                (error) => {
+                  console.warn(
+                    'Could not load count for entity',
+                    entity.id,
+                    entity.displayName
+                  );
+                  console.error(error);
+                  return [entity.id, 0];
+                }
+              )
         )
       );
       return Object.fromEntries(countsEntries);

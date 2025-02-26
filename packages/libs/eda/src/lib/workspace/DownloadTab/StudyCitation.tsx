@@ -64,10 +64,8 @@ export default function StudyCitation({
   };
 
   return (
-    <>
-      <H5 additionalStyles={{ marginBottom: 0, marginTop: 20 }}>
-        Dataset Citation:{' '}
-      </H5>
+    <div>
+      <H5 additionalStyles={{ margin: 0 }}>Dataset Citation: </H5>
       <Paragraph
         color={colors.gray[600]}
         styleOverrides={{ margin: 0 }}
@@ -106,6 +104,6 @@ export default function StudyCitation({
           </div>
         </span>
       </Paragraph>
-    </>
+    </div>
   );
 }

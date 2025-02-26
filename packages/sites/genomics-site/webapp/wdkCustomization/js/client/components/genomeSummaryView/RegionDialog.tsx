@@ -7,7 +7,7 @@ import {
 } from '../../util/GenomeSummaryViewUtils';
 import { FeatureTable } from './FeatureTable';
 import { FeatureTooltip } from './FeatureTooltip';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 
 interface RegionDialogProps {
   region: GenomeViewRegionModel;
@@ -20,7 +20,7 @@ interface RegionDialogProps {
   recordType: string;
 }
 
-export const RegionDialog: React.SFC<RegionDialogProps> = ({
+export const RegionDialog: React.FunctionComponent<RegionDialogProps> = ({
   region,
   sequence,
   open,

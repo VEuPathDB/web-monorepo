@@ -33,7 +33,7 @@ export interface ApiRequest<T> {
 export interface FetchApiOptions {
   /** Base url for service endpoint. */
   baseUrl: string;
-  /** Global optoins for all requests. */
+  /** Global options for all requests. */
   init?: RequestInit;
   /** Implementation of `fetch` function. Defaults to `window.fetch`. */
   fetchApi?: Window['fetch'];
@@ -44,8 +44,11 @@ export interface FetchApiOptions {
   onNonSuccessResponse?: (error: Error) => void;
 }
 
-class FetchClientError extends Error {
+export class FetchClientError extends Error {
   name = 'FetchClientError';
+  constructor(message: string, public statusCode: number) {
+    super(message);
+  }
 }
 
 export abstract class FetchClient {
@@ -55,16 +58,19 @@ export abstract class FetchClient {
   protected readonly baseUrl: string;
   protected readonly init: RequestInit;
   protected readonly fetchApi: Window['fetch'];
-  protected readonly onNonSuccessResponse: FetchApiOptions['onNonSuccessResponse'];
   // Subclasses can set this to false to disable including a traceparent header with all requests.
   protected readonly includeTraceidHeader: boolean = true;
+  protected get onNonSuccessResponse() {
+    return this._onNonSuccessResponse ?? FetchClient.onNonSuccessResponse;
+  }
+
+  private readonly _onNonSuccessResponse: FetchApiOptions['onNonSuccessResponse'];
 
   constructor(options: FetchApiOptions) {
     this.baseUrl = options.baseUrl;
     this.init = options.init ?? {};
     this.fetchApi = options.fetchApi ?? window.fetch;
-    this.onNonSuccessResponse =
-      options.onNonSuccessResponse ?? FetchClient.onNonSuccessResponse;
+    this._onNonSuccessResponse = options.onNonSuccessResponse;
   }
 
   /**
@@ -104,18 +110,28 @@ export abstract class FetchClient {
 
       return await transformResponse(responseBody);
     }
+    const { status, statusText } = response;
+    const { headers, method, url } = request;
+    const traceid = headers.get('traceid');
     const fetchError = new FetchClientError(
-      `${response.status} ${
-        response.statusText
-      }: ${request.method.toUpperCase()} ${request.url}
-      ${'\n'}${await response.text()}`
+      [
+        `${status} ${statusText}: ${method.toUpperCase()} ${url}`,
+        traceid != null ? 'Traceid: ' + traceid + '\n' : '',
+        await response.text(),
+      ].join('\n'),
+      status
     );
+
     this.onNonSuccessResponse?.(fetchError);
     throw fetchError;
   }
 }
 
 async function fetchResponseBody(response: Response) {
+  if (response.status === 204) {
+    return undefined;
+  }
+
   const contentType = response.headers.get('Content-Type');
 
   return contentType == null

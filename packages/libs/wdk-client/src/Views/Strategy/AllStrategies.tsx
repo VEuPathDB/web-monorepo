@@ -4,12 +4,12 @@ import React, { useMemo } from 'react';
 import { StrategySummary } from '../../Utils/WdkUser';
 import { formatDateTimeString } from '../../Views/Strategy/StrategyUtils';
 import { Link } from 'react-router-dom';
-import { MesaState, Mesa } from '../../Components/Mesa';
+import { MesaState, Mesa } from '@veupathdb/coreui/lib/components/Mesa';
 import { RecordClass } from '../../Utils/WdkModel';
 import Tabs from '../../Components/Tabs/Tabs';
 import { makeClassNameHelper } from '../../Utils/ComponentUtils';
 
-import { MesaSortObject } from '../../Core/CommonTypes';
+import { MesaSortObject } from '@veupathdb/coreui/lib/components/Mesa/types';
 import RealTimeSearchBox from '../../Components/SearchBox/RealTimeSearchBox';
 import { StrategyControls } from '../../Views/Strategy/StrategyControls';
 
@@ -17,7 +17,7 @@ import Icon from '../../Components/Icon/IconAlt';
 import LoadingOverlay from '../../Components/Loading/LoadingOverlay';
 
 import './AllStrategies.scss';
-import Tooltip from '../../Components/Overlays/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 import { OverflowingTextCell } from '../../Views/Strategy/OverflowingTextCell';
 
 const cx = makeClassNameHelper('AllStrategies');
@@ -174,7 +174,7 @@ interface CellRenderProps<T> {
 }
 
 const invalidIcon = (
-  <Tooltip content="Indicates that a strategy is invalid. You can fix errors by opening your strategy and updating steps marked as invalid.">
+  <Tooltip title="Indicates that a strategy is invalid. You can fix errors by opening your strategy and updating steps marked as invalid.">
     <i className={`${cx('--InvalidIcon')} fa fa-ban`} />
   </Tooltip>
 );

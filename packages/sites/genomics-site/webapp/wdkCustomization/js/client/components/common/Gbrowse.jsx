@@ -171,7 +171,6 @@ export function GbrowseContext(props) {
       return (
         <div>
           <p>
-            <img src={newFeatureImage} />
             This gene is available in <b>Apollo</b> for community annotation. To
             find out more about Apollo, please visit{' '}
             <a href={apolloHelp}>this help page.</a>

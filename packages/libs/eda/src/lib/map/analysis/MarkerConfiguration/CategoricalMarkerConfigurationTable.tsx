@@ -1,13 +1,18 @@
 import { useState } from 'react';
-import Mesa from '@veupathdb/wdk-client/lib/Components/Mesa';
-import { MesaSortObject } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+import Mesa from '@veupathdb/coreui/lib/components/Mesa';
+import {
+  MesaSortObject,
+  MesaStateProps,
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import { AllValuesDefinition } from '../../../core';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { Tooltip } from '@veupathdb/coreui';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import { UNSELECTED_TOKEN } from '../../';
+import { UNSELECTED_TOKEN } from '../../constants';
 import { orderBy } from 'lodash';
 import { SelectedCountsOption } from '../appState';
+import Spinner from '@veupathdb/components/lib/components/Spinner';
+import { SharedMarkerConfigurations } from '../mapTypes/shared';
 
 type Props<T> = {
   overlayValues: string[];
@@ -26,7 +31,9 @@ const DEFAULT_SORTING: MesaSortObject = {
 
 export const MAXIMUM_ALLOWABLE_VALUES = ColorPaletteDefault.length;
 
-export function CategoricalMarkerConfigurationTable<T>({
+export function CategoricalMarkerConfigurationTable<
+  T extends SharedMarkerConfigurations
+>({
   overlayValues,
   configuration,
   onChange,
@@ -36,7 +43,7 @@ export function CategoricalMarkerConfigurationTable<T>({
   selectedCountsOption,
 }: Props<T>) {
   const [sort, setSort] = useState<MesaSortObject>(DEFAULT_SORTING);
-  const totalCount = allCategoricalValues.reduce(
+  const totalCount = allCategoricalValues?.reduce(
     (prev, curr) => prev + curr.count,
     0
   );
@@ -67,8 +74,8 @@ export function CategoricalMarkerConfigurationTable<T>({
             .slice(0, overlayValues.length - 1)
             .concat(newArrayValues),
         });
-        // can set the new configuration without worrying about the "All other values" data
       } else {
+        // no "All other values" data so we need
         onChange({
           ...configuration,
           selectedValues: overlayValues.concat(data.label),
@@ -110,7 +117,10 @@ export function CategoricalMarkerConfigurationTable<T>({
     });
   }
 
-  const tableState = {
+  const tableState: MesaStateProps<
+    AllValuesDefinition,
+    keyof AllValuesDefinition | 'distribution'
+  > = {
     options: {
       isRowSelected: (value: AllValuesDefinition) =>
         uncontrolledSelections.has(value.label),
@@ -141,12 +151,20 @@ export function CategoricalMarkerConfigurationTable<T>({
       },
       onMultipleRowDeselect: () => {
         /**
-         * This handler actually deselects all values by setting the table state and the configuration to the "All other labels" value
+         * This handler actually deselects all values by setting the table
+         * state and the configuration to the "All other labels" value.
+         * However, if there are only a few possible values,
+         * we won't show "All other labels".
          */
-        setUncontrolledSelections(new Set([UNSELECTED_TOKEN]));
+        const emptySelection =
+          numberOfAvailableValues < MAXIMUM_ALLOWABLE_VALUES
+            ? []
+            : [UNSELECTED_TOKEN];
+
+        setUncontrolledSelections(new Set(emptySelection));
         onChange({
           ...configuration,
-          selectedValues: [UNSELECTED_TOKEN],
+          selectedValues: emptySelection,
         });
       },
       onSort: (
@@ -169,6 +187,10 @@ export function CategoricalMarkerConfigurationTable<T>({
          */
         key: 'label',
         name: 'Values',
+        style: {
+          wordBreak: 'break-word',
+          hyphens: 'auto',
+        },
         sortable: true,
         renderCell: (data: { row: AllValuesDefinition }) => (
           <>{data.row.label}</>
@@ -191,22 +213,36 @@ export function CategoricalMarkerConfigurationTable<T>({
       },
     ],
   };
+
   return (
     <div
       style={{
-        padding: 15,
+        padding: 10,
         border: `1px solid rgb(204,204,204)`,
         width: 'fit-content',
       }}
     >
       <div
         style={{
-          maxWidth: '50vw',
+          maxWidth: '340px',
           maxHeight: 300,
+          minHeight: 60,
           overflow: 'auto',
         }}
       >
-        <Mesa state={tableState} />
+        {tableState.rows.length === 0 ? (
+          <Spinner
+            size={50}
+            styleOverrides={{
+              position: 'relative',
+              top: '0%',
+              left: '0%',
+              transform: '',
+            }}
+          />
+        ) : (
+          <Mesa state={tableState} />
+        )}
       </div>
       <RadioButtonGroup
         containerStyles={
@@ -214,6 +250,7 @@ export function CategoricalMarkerConfigurationTable<T>({
             // marginTop: 20,
           }
         }
+        labelStyles={{ fontSize: '1.0em', marginBottom: '-0.5em' }}
         label="Show counts for:"
         selectedOption={
           selectedCountsOption == null ? 'filtered' : selectedCountsOption
@@ -221,7 +258,7 @@ export function CategoricalMarkerConfigurationTable<T>({
         options={['filtered', 'visible']}
         optionLabels={['Filtered', 'Visible']}
         buttonColor={'primary'}
-        // margins={['0em', '0', '0', '1em']}
+        margins={['1em', '0', '0', '0em']}
         onOptionSelected={handleCountsSelection}
       />
     </div>

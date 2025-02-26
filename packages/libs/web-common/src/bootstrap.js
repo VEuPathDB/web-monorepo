@@ -69,6 +69,7 @@ export function initialize(options = {}) {
     additionalMiddleware,
   } = options;
 
+  fixForwardSlashes();
   unaliasWebappUrl();
   removeJsessionid();
   preventButtonOutlineOnClick();
@@ -101,6 +102,14 @@ export function initialize(options = {}) {
   });
 
   return context;
+}
+
+function fixForwardSlashes() {
+  const { pathname } = window.location;
+  if (pathname.includes('//') || pathname.endsWith('/')) {
+    const newPathname = (pathname + '/').replace(/[/]+/g, '/').slice(0, -1);
+    window.history.replaceState(null, '', newPathname);
+  }
 }
 
 /**
@@ -140,11 +149,13 @@ function makeLocationHandler() {
   // save previousLocation so we can conditionally send pageview events
   let previousLocation;
 
-  /** Send pageview events to Google Analytics */
+  /**
+   * Send pageview events to Google Analytics and other
+   * metrics enpoints. Note thaat the location object
+   * comes from the `history` package, and the pathname
+   * property is relative to the application root url.
+   */
   return debounce(function onLocationChange(location) {
-    // skip if google analytics object is not defined
-    if (!window.ga) return;
-
     // skip if the previous pathname and new pathname are the same, since
     // hash changes are currently detected.
     if (previousLocation && previousLocation.pathname === location.pathname)
@@ -153,7 +164,13 @@ function makeLocationHandler() {
     // update previousLocation
     previousLocation = location;
 
-    window.ga('send', 'pageview', {
+    // Send pageview event to WDK endpoint.
+    window.fetch(
+      endpoint + '/system/metrics/count-page-view' + window.location.pathname
+    );
+
+    // If google analystics is available, send a pageview event.
+    window.ga?.('send', 'pageview', {
       page: location.pathname,
       title: location.pathname,
     });

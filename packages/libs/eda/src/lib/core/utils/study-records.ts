@@ -18,6 +18,7 @@ interface WdkStudyRecordsOptions {
   attributes?: AnswerJsonFormatConfig['attributes'];
   tables?: AnswerJsonFormatConfig['tables'];
   searchName?: string;
+  hasMap?: boolean;
 }
 
 const DEFAULT_STUDY_ATTRIBUTES = ['dataset_id'];
@@ -64,7 +65,10 @@ export async function getWdkStudyRecords(
       }
     ),
   ]);
-  const studyIds = new Set(edaStudies.map((s) => s.id));
+  const filteredStudies = options?.hasMap
+    ? edaStudies.filter((study) => study.hasMap)
+    : edaStudies;
+  const studyIds = new Set(filteredStudies.map((s) => s.id));
   return answer.records.filter((record) => {
     const datasetId = getStudyId(record);
     if (datasetId == null) {

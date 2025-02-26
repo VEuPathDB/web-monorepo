@@ -14,6 +14,7 @@ export { default as Filter } from './Filter';
 export { default as Loading } from './Loading';
 export { default as NoEdit } from './NoEdit';
 export { default as Pencil } from './Pencil';
+export { default as Plus } from './Plus';
 export { default as SampleDetailsDark } from './SampleDetailsDark';
 export { default as SampleDetailsLight } from './SampleDetailsLight';
 export { default as Share } from './Share';

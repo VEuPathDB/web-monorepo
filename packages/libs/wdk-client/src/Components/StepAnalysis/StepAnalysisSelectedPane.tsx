@@ -43,7 +43,7 @@ interface PluginRenderers {
   resultRenderer: (props: StepAnalysisResultPluginProps) => React.ReactNode;
 }
 
-export const StepAnalysisSelectedPane: React.SFC<StepAnalysisSelectedPaneProps> =
+export const StepAnalysisSelectedPane: React.FC<StepAnalysisSelectedPaneProps> =
   ({
     analysisName,
     descriptionState,

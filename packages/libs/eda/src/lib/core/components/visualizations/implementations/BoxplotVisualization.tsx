@@ -8,7 +8,6 @@ import { useCallback, useMemo, useState, useEffect } from 'react';
 // need to set for Boxplot
 import DataClient, { BoxplotResponse } from '../../../api/DataClient';
 
-import { usePromise } from '../../../hooks/promise';
 import {
   useFindEntityAndVariable,
   useStudyEntities,
@@ -90,14 +89,19 @@ import { truncationConfig } from '../../../utils/truncation-config-utils';
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 // alphadiv abundance this should be used for collection variable
-import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
+import {
+  findEntityAndDynamicData,
+  getTreeNode,
+  isVariableCollectionDescriptor,
+  isVariableDescriptor,
+} from '../../../utils/study-metadata';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
 import {
   BoxplotRequestParams,
   VariableMapping,
 } from '../../../api/DataClient/types';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
-import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
+import { useOutputEntity } from '../../../hooks/findOutputEntity';
 import { boxplotDefaultDependentAxisMinMax } from '../../../utils/axis-range-calculations';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { LayoutOptions, TitleOptions } from '../../layouts/types';
@@ -106,6 +110,7 @@ import { useDeepValue } from '../../../hooks/immutability';
 
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
+import { useCachedPromise } from '../../../hooks/cachedPromise';
 
 type BoxplotData = { series: BoxplotSeries };
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
@@ -180,6 +185,7 @@ export const BoxplotConfig = t.partial({
 function BoxplotViz(props: VisualizationProps<Options>) {
   const {
     computation,
+    copmutationAppOverview,
     options,
     visualization,
     updateConfiguration,
@@ -192,11 +198,20 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     totalCounts,
     filteredCounts,
     computeJobStatus,
+    hideInputsAndControls,
+    plotContainerStyleOverrides,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
+  const finalPlotContainerStyles = useMemo(
+    () => ({
+      ...plotContainerStyles,
+      ...plotContainerStyleOverrides,
+    }),
+    [plotContainerStyleOverrides]
+  );
 
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,
@@ -363,9 +378,9 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
   // Abundance boxplots already know their entity, x, and y vars. If we're in the abundance app, set
   // the output entity here so that the boxplot can appear on load.
-  const outputEntity = useFindOutputEntity(
+  const outputEntity = useOutputEntity(
     dataElementDependencyOrder,
-    vizConfig,
+    selectedVariables,
     'yAxisVariable',
     computedYAxisDetails?.entityId
   );
@@ -415,160 +430,144 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     ]
   );
 
+  const dataRequestDeps =
+    // check for vizConfig variables only if provided variables are not defined.
+    (providedXAxisVariable == null &&
+      (vizConfig.xAxisVariable == null || xAxisVariable == null)) ||
+    (computedYAxisDetails == null &&
+      (vizConfig.yAxisVariable == null || yAxisVariable == null)) ||
+    filteredCounts.pending ||
+    filteredCounts.value == null ||
+    // If this boxplot has a computed variable and the compute job is anything but complete, do not proceed with getting data.
+    (computedYAxisDetails && computeJobStatus !== 'complete')
+      ? undefined
+      : {
+          vizConfig,
+          filteredCounts: filteredCounts.value,
+          filters,
+          providedOverlayVariable,
+          computationDescriptor: computation.descriptor, // computation.visualizations is not stable
+        };
+
   // add to support both alphadiv and abundance
-  const data = usePromise(
-    useCallback(async (): Promise<BoxplotDataWithCoverage | undefined> => {
-      if (
-        // check for vizConfig variables only if provided variables are not defined.
-        (providedXAxisVariable == null &&
-          (vizConfig.xAxisVariable == null || xAxisVariable == null)) ||
-        (computedYAxisDetails == null &&
-          (vizConfig.yAxisVariable == null || yAxisVariable == null)) ||
-        outputEntity == null ||
-        filteredCounts.pending ||
-        filteredCounts.value == null
-      )
-        return undefined;
+  const data = useCachedPromise(async (): Promise<
+    BoxplotDataWithCoverage | undefined
+  > => {
+    if (!dataRequestDeps) throw new Error('dataRequestDeps is not defined');
 
-      // If this boxplot has a computed variable and the compute job is anything but complete, do not proceed with getting data.
-      if (computedYAxisDetails && computeJobStatus !== 'complete')
-        return undefined;
+    const {
+      vizConfig,
+      filteredCounts,
+      filters,
+      providedOverlayVariable,
+      computationDescriptor,
+    } = dataRequestDeps;
 
-      if (
-        !variablesAreUnique([
-          xAxisVariable,
-          yAxisVariable,
-          overlayVariable && (providedOverlayVariable ?? overlayVariable),
-          facetVariable,
-        ])
-      )
-        throw new Error(nonUniqueWarning);
+    if (
+      !variablesAreUnique([
+        xAxisVariable,
+        yAxisVariable,
+        overlayVariable && (providedOverlayVariable ?? overlayVariable),
+        facetVariable,
+      ])
+    )
+      throw new Error(nonUniqueWarning);
 
-      assertValidInputVariables(
-        inputs,
-        variablesForConstraints,
-        entities,
-        dataElementConstraints,
-        dataElementDependencyOrder
-      );
-
-      // add visualization.type here. valueSpec too?
-      const params: BoxplotRequestParams = options?.getRequestParams?.({
-        studyId,
-        filters: filters ?? [],
-        vizConfig,
-        outputEntityId: outputEntity.id,
-        computation,
-      }) ?? {
-        studyId,
-        filters: filters ?? [],
-        config: {
-          outputEntityId: outputEntity.id,
-          // post options: 'all', 'outliers'
-          points: 'outliers',
-          mean: 'TRUE',
-          xAxisVariable: vizConfig.xAxisVariable,
-          yAxisVariable: vizConfig.yAxisVariable,
-          overlayVariable: vizConfig.overlayVariable,
-          facetVariable: vizConfig.facetVariable
-            ? [vizConfig.facetVariable]
-            : [],
-          showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
-        },
-        computeConfig: computation.descriptor.configuration,
-      };
-
-      // boxplot
-      const response = await dataClient.getVisualizationData(
-        computation.descriptor.type,
-        visualization.descriptor.type,
-        params,
-        BoxplotResponse
-      );
-
-      const showMissingOverlay =
-        vizConfig.showMissingness &&
-        hasIncompleteCases(
-          overlayEntity,
-          overlayVariable,
-          outputEntity,
-          filteredCounts.value,
-          response.completeCasesTable
-        );
-      const showMissingFacet =
-        vizConfig.showMissingness &&
-        hasIncompleteCases(
-          facetEntity,
-          facetVariable,
-          outputEntity,
-          filteredCounts.value,
-          response.completeCasesTable
-        );
-
-      const vocabulary = fixLabelsForNumberVariables(
-        xAxisVariable?.vocabulary,
-        xAxisVariable
-      );
-      const overlayVocabulary =
-        (overlayVariable && options?.getOverlayVocabulary?.()) ??
-        fixLabelsForNumberVariables(
-          overlayVariable?.vocabulary,
-          overlayVariable
-        );
-      const facetVocabulary = fixLabelsForNumberVariables(
-        facetVariable?.vocabulary,
-        facetVariable
-      );
-      return grayOutLastSeries(
-        substituteUnselectedToken(
-          reorderData(
-            boxplotResponseToData(
-              response,
-              xAxisVariable,
-              overlayVariable,
-              facetVariable,
-              entities
-            ),
-            vocabulary,
-            vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
-            vocabularyWithMissingData(facetVocabulary, showMissingFacet),
-            entities
-          )
-        ),
-        showMissingOverlay,
-        '#a0a0a0'
-      );
-    }, [
-      providedXAxisVariable,
-      vizConfig.xAxisVariable,
-      vizConfig.yAxisVariable,
-      vizConfig.overlayVariable,
-      vizConfig.facetVariable,
-      vizConfig.showMissingness,
-      xAxisVariable,
-      computedYAxisDetails,
-      yAxisVariable,
-      outputEntity,
-      filteredCounts.pending,
-      filteredCounts.value,
-      computeJobStatus,
-      overlayVariable,
-      facetVariable,
+    assertValidInputVariables(
       inputs,
-      selectedVariables,
+      variablesForConstraints,
       entities,
       dataElementConstraints,
-      dataElementDependencyOrder,
-      filters,
+      dataElementDependencyOrder
+    );
+
+    if (outputEntity == null) throw new Error('outputEntity is undefined');
+
+    // add visualization.type here. valueSpec too?
+    const params: BoxplotRequestParams = options?.getRequestParams?.({
       studyId,
-      computation.descriptor.configuration,
-      computation.descriptor.type,
-      dataClient,
+      filters: filters ?? [],
+      vizConfig,
+      outputEntityId: outputEntity.id,
+      computation,
+    }) ?? {
+      studyId,
+      filters: filters ?? [],
+      config: {
+        outputEntityId: outputEntity.id,
+        // post options: 'all', 'outliers'
+        points: 'outliers',
+        mean: 'TRUE',
+        xAxisVariable: vizConfig.xAxisVariable,
+        yAxisVariable: vizConfig.yAxisVariable,
+        overlayVariable: vizConfig.overlayVariable,
+        facetVariable: vizConfig.facetVariable ? [vizConfig.facetVariable] : [],
+        showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
+      },
+      computeConfig: copmutationAppOverview.computeName
+        ? computationDescriptor.configuration
+        : undefined,
+    };
+
+    // 2024-04-26 - BM wonders why we don't use getBoxplot?
+    // or why we don't just use this for all the visualizations?
+    const response = await dataClient.getVisualizationData(
+      computationDescriptor.type,
       visualization.descriptor.type,
-      overlayEntity,
-      facetEntity,
-    ])
-  );
+      params,
+      BoxplotResponse
+    );
+
+    const showMissingOverlay =
+      vizConfig.showMissingness &&
+      hasIncompleteCases(
+        overlayEntity,
+        overlayVariable,
+        outputEntity,
+        filteredCounts,
+        response.completeCasesTable
+      );
+    const showMissingFacet =
+      vizConfig.showMissingness &&
+      hasIncompleteCases(
+        facetEntity,
+        facetVariable,
+        outputEntity,
+        filteredCounts,
+        response.completeCasesTable
+      );
+
+    const vocabulary = fixLabelsForNumberVariables(
+      xAxisVariable?.vocabulary,
+      xAxisVariable
+    );
+    const overlayVocabulary =
+      (overlayVariable && options?.getOverlayVocabulary?.()) ??
+      fixLabelsForNumberVariables(overlayVariable?.vocabulary, overlayVariable);
+    const facetVocabulary = fixLabelsForNumberVariables(
+      facetVariable?.vocabulary,
+      facetVariable
+    );
+    return grayOutLastSeries(
+      substituteUnselectedToken(
+        reorderData(
+          boxplotResponseToData(
+            response,
+            xAxisVariable,
+            overlayVariable,
+            facetVariable,
+            entities
+          ),
+          vocabulary,
+          vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
+          vocabularyWithMissingData(facetVocabulary, showMissingFacet),
+          entities
+        )
+      ),
+      showMissingOverlay,
+      '#a0a0a0'
+    );
+  }, [dataRequestDeps]);
 
   const outputSize =
     (overlayVariable != null || facetVariable != null) &&
@@ -597,46 +596,55 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   ) as NumberRange;
 
   // custom legend items for checkbox
-  const legendItems: LegendItemsProps[] = useMemo(() => {
-    const legendData = !isFaceted(data.value)
-      ? data.value?.series
-      : data.value?.facets.find(
-          ({ data }) => data != null && data.series.length > 0
-        )?.data?.series;
+  const [legendItems, isEmptyData]: [LegendItemsProps[], boolean] =
+    useMemo(() => {
+      const legendData = !isFaceted(data.value)
+        ? data.value?.series
+        : data.value?.facets.find(
+            ({ data }) => data != null && data.series.length > 0
+          )?.data?.series;
 
-    return legendData != null
-      ? legendData.map((dataItem: BoxplotDataObject, index: number) => {
-          return {
-            label: dataItem.name ?? '',
-            // histogram plot does not have mode, so set to square for now
-            marker: 'lightSquareBorder',
-            markerColor:
-              dataItem.name === 'No data'
-                ? // boxplot uses slightly fainted color
-                  'rgb(191, 191, 191)' // #bfbfbf
-                : ColorPaletteDefault[index],
-            // deep comparison is required for faceted plot
-            hasData: !isFaceted(data.value) // no faceted plot
-              ? dataItem.q1.some((el: number | string) => el != null)
-                ? true
-                : false
-              : data.value?.facets
-                  .map((el: { label: string; data?: BoxplotData }) => {
-                    // faceted plot: here data.value is full data
-                    // need to check whether el.data.series[index] exists
-                    return el.data?.series[index]?.q1.some(
-                      (el: number | string) => el != null
-                    );
-                  })
-                  .includes(true)
-              ? true
-              : false,
-            group: 1,
-            rank: 1,
-          };
-        })
-      : [];
-  }, [data]);
+      const legendItems =
+        legendData != null
+          ? legendData.map((dataItem: BoxplotDataObject, index: number) => {
+              return {
+                label: dataItem.name ?? '',
+                marker: 'lightSquareBorder' as const,
+                markerColor:
+                  dataItem.name === 'No data'
+                    ? // boxplot uses slightly fainted color
+                      'rgb(191, 191, 191)' // #bfbfbf
+                    : ColorPaletteDefault[index],
+                // deep comparison is required for faceted plot
+                hasData: !isFaceted(data.value) // no faceted plot
+                  ? dataItem.q1.some((el: number | string) => el != null)
+                    ? true
+                    : false
+                  : data.value?.facets
+                      .map((el: { label: string; data?: BoxplotData }) => {
+                        // faceted plot: here data.value is full data
+                        // need to check whether el.data.series[index] exists
+                        return el.data?.series[index]?.q1.some(
+                          (el: number | string) => el != null
+                        );
+                      })
+                      .includes(true)
+                  ? true
+                  : false,
+                group: 1,
+                rank: 1,
+              };
+            })
+          : [];
+
+      // use legendData also to determine if there's no data at all (for PluginError banner)
+      // because outputSize can't always rely on data.value.completeCasesAllVars and friend
+      const isEmptyData =
+        data.value != null &&
+        legendData?.find((series) => series.label.length > 0) == null;
+
+      return [legendItems, isEmptyData];
+    }, [data]);
 
   // set checkedLegendItems to either the config-stored items, or all items if
   // nothing stored (or if no overlay locally configured)
@@ -652,12 +660,11 @@ function BoxplotViz(props: VisualizationProps<Options>) {
 
   // alphadiv abundance findEntityAndVariable does not work properly for collection variable
   const independentAxisEntityAndVariable = useMemo(
-    () =>
-      findCollectionVariableEntityAndVariable(entities, providedXAxisVariable),
+    () => findEntityAndDynamicData(entities, providedXAxisVariable),
     [entities, providedXAxisVariable]
   );
   const independentAxisLabel =
-    independentAxisEntityAndVariable?.variable.displayName ??
+    getTreeNode(independentAxisEntityAndVariable)?.displayName ??
     variableDisplayWithUnit(xAxisVariable) ??
     'X-axis';
 
@@ -686,7 +693,9 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       // data.value
       data={data.value}
       updateThumbnail={updateThumbnail}
-      containerStyles={!isFaceted(data.value) ? plotContainerStyles : undefined}
+      containerStyles={
+        !isFaceted(data.value) ? finalPlotContainerStyles : undefined
+      }
       spacingOptions={!isFaceted(data.value) ? plotSpacingOptions : undefined}
       orientation={'vertical'}
       displayLegend={false}
@@ -696,6 +705,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       // show/hide independent/dependent axis tick label
       showIndependentAxisTickLabel={true}
       showDependentAxisTickLabel={true}
+      showExportButton={true}
       showMean={true}
       interactive={!isFaceted(data.value) ? true : false}
       showSpinner={data.pending || filteredCounts.pending}
@@ -752,6 +762,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     />
   );
 
+  // TODO understand how we know this is a collection without checking isCollection?
   // List variables in a collection one by one in the variable coverage table. Create these extra rows
   // here and then append to the variable coverage table rows array.
   const collectionVariableMetadata = data.value?.computedVariableMetadata?.find(
@@ -797,7 +808,12 @@ function BoxplotViz(props: VisualizationProps<Options>) {
             role: 'X-axis',
             required: true,
             display: independentAxisLabel,
-            variable: providedXAxisVariable ?? vizConfig.xAxisVariable,
+            variable:
+              (isVariableDescriptor(providedOverlayVariable) ||
+                isVariableCollectionDescriptor(providedOverlayVariable)) &&
+              providedOverlayVariable != null
+                ? providedOverlayVariable
+                : providedXAxisVariable ?? vizConfig.xAxisVariable,
           },
           ...additionalVariableCoverageTableRows,
           {
@@ -824,7 +840,6 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     </>
   );
 
-  // plot subtitle
   const plotSubtitle = options?.getPlotSubtitle?.(
     computation.descriptor.configuration
   );
@@ -871,38 +886,45 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
-        <InputVariables
-          inputs={finalizedInputs}
-          entities={entities}
-          selectedVariables={selectedVariables}
-          variablesForConstraints={variablesForConstraints}
-          onChange={handleInputVariableChange}
-          constraints={dataElementConstraints}
-          dataElementDependencyOrder={dataElementDependencyOrder}
-          starredVariables={starredVariables}
-          toggleStarredVariable={toggleStarredVariable}
-          enableShowMissingnessToggle={
-            (overlayVariable != null || facetVariable != null) &&
-            data.value?.completeCasesAllVars !==
-              data.value?.completeCasesAxesVars
-          }
-          showMissingness={vizConfig.showMissingness}
-          // this can be used to show and hide no data control
-          onShowMissingnessChange={
-            options?.hideShowMissingnessToggle
-              ? undefined
-              : onShowMissingnessChange
-          }
-          outputEntity={outputEntity}
-        />
+        {!hideInputsAndControls && (
+          <InputVariables
+            inputs={finalizedInputs}
+            entities={entities}
+            selectedVariables={selectedVariables}
+            variablesForConstraints={variablesForConstraints}
+            onChange={handleInputVariableChange}
+            constraints={dataElementConstraints}
+            dataElementDependencyOrder={dataElementDependencyOrder}
+            starredVariables={starredVariables}
+            toggleStarredVariable={toggleStarredVariable}
+            enableShowMissingnessToggle={
+              (overlayVariable != null || facetVariable != null) &&
+              data.value?.completeCasesAllVars !==
+                data.value?.completeCasesAxesVars
+            }
+            showMissingness={vizConfig.showMissingness}
+            // this can be used to show and hide no data control
+            onShowMissingnessChange={
+              options?.hideShowMissingnessToggle
+                ? undefined
+                : onShowMissingnessChange
+            }
+            outputEntity={outputEntity}
+          />
+        )}
       </div>
 
-      <PluginError error={data.error} outputSize={outputSize} />
-      <OutputEntityTitle
-        entity={outputEntity}
-        outputSize={outputSize}
-        subtitle={plotSubtitle}
+      <PluginError
+        error={data.error}
+        outputSize={isEmptyData ? 0 : outputSize}
       />
+      {!hideInputsAndControls && (
+        <OutputEntityTitle
+          entity={outputEntity}
+          outputSize={outputSize}
+          subtitle={plotSubtitle}
+        />
+      )}
       <LayoutComponent
         isFaceted={isFaceted(data.value)}
         legendNode={showOverlayLegend ? legendNode : null}
@@ -910,6 +932,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         controlsNode={controlsNode}
         tableGroupNode={tableGroupNode}
         showRequiredInputsPrompt={!areRequiredInputsSelected}
+        hideControls={hideInputsAndControls}
       />
     </div>
   );
@@ -1091,82 +1114,75 @@ function Controls({
       {/* Y-axis range control */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {/* set Undo icon and its behavior */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
-          >
-            <LabelledGroup label="Y-axis controls"> </LabelledGroup>
-            {/* using CoreUI: icon only */}
-            <div style={{ marginLeft: '-2.6em', width: '50%' }}>
-              <ResetButtonCoreUI
-                size={'medium'}
-                text={''}
-                themeRole={'primary'}
-                tooltip={'Reset to defaults'}
-                disabled={false}
-                onPress={handleDependentAxisSettingsReset}
-              />
-            </div>
-          </div>
-
           <LabelledGroup
-            label="Y-axis range"
-            containerStyles={{
-              fontSize: '0.9em',
-              // width: '350px',
-              marginTop: '-0.8em',
-            }}
+            label={
+              <div css={{ display: 'flex', alignItems: 'center' }}>
+                Y-axis controls
+                <ResetButtonCoreUI
+                  size={'medium'}
+                  text={''}
+                  themeRole={'primary'}
+                  tooltip={'Reset to defaults'}
+                  disabled={false}
+                  onPress={handleDependentAxisSettingsReset}
+                />
+              </div>
+            }
           >
-            <RadioButtonGroup
-              options={axisRangeOptions}
-              selectedOption={dependentAxisValueSpec}
-              onOptionSelected={(newAxisRangeOption: string) => {
-                onDependentAxisValueSpecChange(newAxisRangeOption);
+            <LabelledGroup
+              label="Y-axis range"
+              containerStyles={{
+                fontSize: '0.9em',
+                padding: '1em 0',
               }}
-              orientation={'horizontal'}
-              labelPlacement={'end'}
-              buttonColor={'primary'}
-              margins={['0em', '0', '0', '0em']}
-              itemMarginRight={25}
-            />
-            {/* Y-axis range control */}
-            <NumberRangeInput
-              label="Range"
-              // add range: for now, handle number only
-              range={
-                (vizConfig.dependentAxisRange as NumberRange) ??
-                defaultDependentAxisRange
-              }
-              onRangeChange={(newRange?: NumberOrDateRange) => {
-                handleDependentAxisRangeChange(newRange as NumberRange);
-              }}
-              allowPartialRange={false}
-              // set maxWidth
-              containerStyles={{ maxWidth: '350px' }}
-              disabled={
-                vizConfig.dependentAxisValueSpec === 'Full' ||
-                vizConfig.dependentAxisValueSpec === 'Auto-zoom'
-              }
-            />
-            {/* truncation notification */}
-            {truncatedDependentAxisWarning ? (
-              <Notification
-                title={''}
-                text={truncatedDependentAxisWarning}
-                // this was defined as LIGHT_BLUE
-                color={'#5586BE'}
-                onAcknowledgement={() => {
-                  setTruncatedDependentAxisWarning('');
+            >
+              <RadioButtonGroup
+                options={axisRangeOptions}
+                selectedOption={dependentAxisValueSpec}
+                onOptionSelected={(newAxisRangeOption: string) => {
+                  onDependentAxisValueSpecChange(newAxisRangeOption);
                 }}
-                showWarningIcon={true}
-                // change maxWidth
-                containerStyles={{ maxWidth: '350px' }}
+                orientation={'horizontal'}
+                labelPlacement={'end'}
+                buttonColor={'primary'}
+                margins={['0em', '0', '0', '0em']}
+                itemMarginRight={25}
               />
-            ) : null}
+              {/* Y-axis range control */}
+              <NumberRangeInput
+                label="Range"
+                // add range: for now, handle number only
+                range={
+                  (vizConfig.dependentAxisRange as NumberRange) ??
+                  defaultDependentAxisRange
+                }
+                onRangeChange={(newRange?: NumberOrDateRange) => {
+                  handleDependentAxisRangeChange(newRange as NumberRange);
+                }}
+                allowPartialRange={false}
+                // set maxWidth
+                containerStyles={{ maxWidth: '350px' }}
+                disabled={
+                  vizConfig.dependentAxisValueSpec === 'Full' ||
+                  vizConfig.dependentAxisValueSpec === 'Auto-zoom'
+                }
+              />
+              {/* truncation notification */}
+              {truncatedDependentAxisWarning ? (
+                <Notification
+                  title={''}
+                  text={truncatedDependentAxisWarning}
+                  // this was defined as LIGHT_BLUE
+                  color={'#5586BE'}
+                  onAcknowledgement={() => {
+                    setTruncatedDependentAxisWarning('');
+                  }}
+                  showWarningIcon={true}
+                  // change maxWidth
+                  containerStyles={{ maxWidth: '350px' }}
+                />
+              ) : null}
+            </LabelledGroup>
           </LabelledGroup>
         </div>
       </div>

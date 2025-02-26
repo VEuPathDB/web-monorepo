@@ -6,7 +6,7 @@ import '../Core/Style/index.scss';
 import { createBrowserHistory } from 'history';
 import { identity, isString } from 'lodash';
 import { createElement } from 'react';
-import * as ReactDOM from 'react-dom';
+import * as ReactDOMClient from 'react-dom/client';
 import * as Components from '../Components';
 import { ClientPluginRegistryEntry } from '../Utils/ClientPlugin'; // eslint-disable-line no-unused-vars
 import { createMockHistory } from '../Utils/MockHistory';
@@ -127,7 +127,8 @@ export function initialize(options) {
         wdkDependencies,
         staticContent: retainContainerContent ? container.innerHTML : undefined,
       });
-      ReactDOM.render(applicationElement, container);
+      const root = ReactDOMClient.createRoot(container);
+      root.render(applicationElement);
     } else if (__DEV__) {
       console.debug(
         'Could not resolve rootElement %o. Application will not render automatically.',
