@@ -1,0 +1,27 @@
+.EdaSubsettingParameter {
+  &Counts {
+    display: flex;
+    align-items: baseline;
+    gap: 3em;
+
+    &-Total {
+      font-weight: bold;
+      font-size: 1.1em;
+      width: 20%;
+      min-width: 200px;
+    }
+
+    &-FiltersAndChips {
+      display: flex;
+      align-items: baseline;
+      gap: 1em;
+    }
+
+    &-Filtered {
+      display: flex;
+      align-items: baseline;
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+  }
+}

@@ -1,7 +1,7 @@
 /**
  * Additional reusable modules to extend PlotProps and PlotData props
  */
-import { CSSProperties } from 'react';
+import { CSSProperties, ReactNode } from 'react';
 import { BarLayoutOptions, OrientationOptions } from '.';
 import { scaleLinear } from 'd3-scale';
 import { interpolateLab, range } from 'd3';
@@ -242,6 +242,20 @@ const Berlin = [
   'rgb(255, 173, 173)',
 ];
 
+/**
+ * Highlighting colors for points
+ */
+export const DefaultHighlightColor = '#D246FF';
+export const DefaultNonHighlightColor = '#95929C';
+export const DefaultHighlightMarkerStyle = {
+  color: DefaultHighlightColor,
+  symbol: 'circle',
+  line: {
+    color: DefaultHighlightColor,
+    width: 1,
+  },
+};
+
 export const getValueToGradientColorMapper = (
   minValue: number,
   maxValue: number
@@ -358,3 +372,45 @@ export type AxisTruncationConfig = {
     max?: boolean;
   };
 };
+
+// Generalized annotation type for VEuPathDB plots
+// Attemps to provide a uniform api for annotations, regardless of plotting library.
+// For reference, plotly js annotation api: https://plotly.com/javascript/reference/layout/annotations/
+// visx annotation docs: https://airbnb.io/visx/docs/annotation
+// Note, the 'subject' is the point on the plot for which we want to provide an annotation. This may be
+// a data point, a part of the axis, etc. The 'subject' verbiage comes from visx.
+export interface VEuPathDBAnnotation {
+  /** x position of the thing being annotated */
+  xSubject: number;
+  /** y position of the thing being annotated */
+  ySubject: number;
+  /** Text of the annotation */
+  text: string;
+  /** Horizontal reference.
+   * Maps positions to the chart area (paper) or axis (x).
+   * See plotly "paper reference" for more. */
+  xref: 'paper' | 'x';
+  /** Vertical reference.
+   * Maps positions to the chart area (paper) or axis (y).
+   * See plotly "paper reference" for more. */
+  yref: 'paper' | 'y';
+  /** Horizontal alignment of the text */
+  xAnchor?: 'left' | 'center' | 'right';
+  /** Vertical alignment of the text */
+  yAnchor?: 'top' | 'middle' | 'bottom';
+  /** Horizontal text offset from the subject */
+  dx?: number;
+  /** Vertical text offset from the subject */
+  dy?: number;
+  /** Shape connecting the label to the subject */
+  subjectConnector?: 'line' | 'arrow';
+  /** Visx ONLY. Additional content to render wthin the visx Annotation component */
+  children?: ReactNode;
+  /** Font styles */
+  fontStyles?: {
+    size?: number;
+    color?: string;
+    family?: string;
+    weight?: number;
+  };
+}

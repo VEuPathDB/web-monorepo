@@ -8,12 +8,24 @@ interface AuthorizationToken {
   value: string;
 }
 
+interface Constructor<M> {
+  new (...args: any[]): M;
+}
+
+const getMemoizedInstance = memoize(function getInstance<
+  T extends FetchClientWithCredentials
+>(ctor: Constructor<T>, baseUrl: string, wdkService: WdkService) {
+  return new ctor({ baseUrl }, wdkService);
+});
+
 export class FetchClientWithCredentials extends FetchClient {
-  public static getClient = memoize(
-    (baseUrl: string, wdkService: WdkService) => {
-      return new this({ baseUrl }, wdkService);
-    }
-  );
+  public static getClient<T extends FetchClientWithCredentials>(
+    this: Constructor<T>,
+    baseUrl: string,
+    wdkService: WdkService
+  ) {
+    return getMemoizedInstance(this, baseUrl, wdkService);
+  }
 
   protected readonly getUser = once(() => this.wdkService.getCurrentUser());
 
