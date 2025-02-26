@@ -145,7 +145,7 @@ interface FieldNodeProps {
   activeFieldEntity?: string;
   isStarred: boolean;
   starredVariablesLoading: boolean;
-  onClickStar: () => void;
+  onClickStar?: () => void;
   scrollIntoView: boolean;
   asDropdown?: boolean;
   isFeaturedField?: boolean;
@@ -189,7 +189,7 @@ interface VariableListProps {
   fieldTree: VariableFieldTreeNode;
   autoFocus: boolean;
   starredVariables?: VariableDescriptor[];
-  toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
+  toggleStarredVariable?: (targetVariableId: VariableDescriptor) => void;
   disabledFieldIds?: string[];
   customDisabledVariableMessage?: string;
   featuredFields: FieldWithMetadata[];
@@ -441,7 +441,10 @@ export default function VariableList({
           activeFieldEntity={activeFieldEntity}
           isStarred={starredVariableTermsSet.has(fieldTerm)}
           starredVariablesLoading={starredVariablesLoading}
-          onClickStar={() => toggleStarredVariable({ entityId, variableId })}
+          onClickStar={
+            toggleStarredVariable &&
+            (() => toggleStarredVariable({ entityId, variableId }))
+          }
           /**
            * map UI has limited space, so let's disable scrollIntoView
            * in the map context so that we don't inadvertantly hide
@@ -466,6 +469,7 @@ export default function VariableList({
       starredVariablesLoading,
       asDropdown,
       toggleStarredVariable,
+      scope,
     ]
   );
 
@@ -477,44 +481,48 @@ export default function VariableList({
     !showOnlyStarredVariables && starredVariableTermsSet.size === 0;
 
   const additionalFilters = useMemo(
-    () => [
-      <Tooltip
-        title={makeStarredVariablesFilterTooltipContent(
-          showOnlyStarredVariables,
-          starredVariableToggleDisabled
-        )}
-      >
-        <div>
-          <button
-            className="btn"
-            style={{
-              display: 'grid',
-              padding: '0.5em',
-              gridAutoFlow: 'column',
-              gap: '0.4em',
-              cursor: starredVariableToggleDisabled ? 'not-allowed' : 'default',
-              opacity: starredVariableToggleDisabled ? '0.5' : '1',
-              color: '#f8cb6a',
-            }}
-            type="button"
-            onClick={toggleShowOnlyStarredVariables}
-          >
-            <Toggle
-              value={showOnlyStarredVariables}
-              onChange={() => {}}
-              disabled={starredVariableToggleDisabled}
-              size="small"
-              themeRole="primary"
-            />
-            <Icon fa="star" />
-          </button>
-        </div>
-      </Tooltip>,
-    ],
+    () =>
+      toggleStarredVariable && [
+        <Tooltip
+          title={makeStarredVariablesFilterTooltipContent(
+            showOnlyStarredVariables,
+            starredVariableToggleDisabled
+          )}
+        >
+          <div>
+            <button
+              className="btn"
+              style={{
+                display: 'grid',
+                padding: '0.5em',
+                gridAutoFlow: 'column',
+                gap: '0.4em',
+                cursor: starredVariableToggleDisabled
+                  ? 'not-allowed'
+                  : 'default',
+                opacity: starredVariableToggleDisabled ? '0.5' : '1',
+                color: '#f8cb6a',
+              }}
+              type="button"
+              onClick={toggleShowOnlyStarredVariables}
+            >
+              <Toggle
+                value={showOnlyStarredVariables}
+                onChange={() => {}}
+                disabled={starredVariableToggleDisabled}
+                size="small"
+                themeRole="primary"
+              />
+              <Icon fa="star" />
+            </button>
+          </div>
+        </Tooltip>,
+      ],
     [
       showOnlyStarredVariables,
       starredVariableToggleDisabled,
       toggleShowOnlyStarredVariables,
+      toggleStarredVariable,
     ]
   );
 
@@ -778,8 +786,13 @@ export default function VariableList({
                                 field.term
                               )}
                               starredVariablesLoading={starredVariablesLoading}
-                              onClickStar={() =>
-                                toggleStarredVariable({ entityId, variableId })
+                              onClickStar={
+                                toggleStarredVariable &&
+                                (() =>
+                                  toggleStarredVariable({
+                                    entityId,
+                                    variableId,
+                                  }))
                               }
                               scrollIntoView={false}
                               asDropdown={asDropdown}
@@ -1019,7 +1032,7 @@ const FieldNode = ({
     <div css={{ ...fieldNodeCssSelectors, width: '100%' }}>
       <div className={canBeStarred ? 'starred-var-container' : ''}>
         {fieldContents}
-        {isFilterField(field) && !isMultiFilterDescendant && (
+        {onClickStar && isFilterField(field) && !isMultiFilterDescendant && (
           /**
            * Temporarily replace Tooltip components with title attribute to alleviate performance issues in new CheckboxTree.
            * We are currently rendering 2 Tooltips per variable, which in Microbiome equates to several thousand Tooltips
@@ -1046,7 +1059,7 @@ const FieldNode = ({
   ) : (
     <div className={canBeStarred ? 'starred-var-container' : ''}>
       {fieldContents}
-      {isFilterField(field) && !isMultiFilterDescendant && (
+      {onClickStar && isFilterField(field) && !isMultiFilterDescendant && (
         /**
          * Temporarily replace Tooltip components with title attribute to alleviate performance issues in new CheckboxTree.
          * We are currently rendering 2 Tooltips per variable, which in Microbiome equates to several thousand Tooltips

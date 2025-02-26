@@ -5,6 +5,7 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import RadioButtonGroup from '../../components/widgets/RadioButtonGroup';
 import { FacetedData, ScatterPlotData } from '../../types/plots';
 import FacetedScatterPlot from '../../plots/facetedPlots/FacetedScatterPlot';
+import { VEuPathDBAnnotation } from '../../types/plots';
 import SliderWidget, {
   SliderWidgetProps,
 } from '../../components/widgets/Slider';
@@ -12,9 +13,10 @@ import SliderWidget, {
 import {
   dataSetSequentialGradient,
   dataSet,
-  dateStringDataSet,
   processInputData,
+  dataSetCategoricalOverlay,
 } from './ScatterPlot.storyData';
+import { symbol } from 'd3';
 
 export default {
   title: 'Plots/ScatterPlot',
@@ -382,4 +384,108 @@ export const opacitySlider = () => {
       />
     </>
   );
+};
+
+// Plot annotations
+const plotAnnotations: Array<VEuPathDBAnnotation> = [
+  {
+    xSubject: 0.1,
+    ySubject: 0.9,
+    xref: 'x',
+    yref: 'y',
+    xAnchor: 'center',
+    yAnchor: 'top',
+    text: 'Annotation <i>inside</i> the plot, xy ref',
+  },
+  {
+    xSubject: 1,
+    ySubject: 0,
+    xref: 'paper',
+    yref: 'paper',
+    xAnchor: 'left',
+    yAnchor: 'top',
+    dx: 5,
+    dy: 20,
+    text: 'Annotation <i>outside</i> the plot, paper ref',
+  },
+  {
+    xSubject: 33,
+    ySubject: 3,
+    xref: 'x',
+    yref: 'y',
+    text: 'Annotating a point, fancy style',
+    subjectConnector: 'arrow',
+    dx: 0,
+    dy: -40,
+    fontStyles: {
+      family: 'Courier New, monospace',
+      size: 16,
+      color: 'blue',
+    },
+  },
+];
+
+export const PlotAnnotations: Story<ScatterPlotProps> = Template.bind({});
+PlotAnnotations.args = {
+  data: dataSetProcess,
+  interactive: true,
+  displayLegend: true,
+  plotAnnotations,
+};
+
+// Highlight specific points in the scatterplot
+const highlightedPointIds = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+const { dataSetProcess: dataSetProcessSequentialGradientHighlight } =
+  processInputData(
+    dataSetSequentialGradient,
+    'scatterplot',
+    'markers',
+    independentValueType,
+    dependentValueType,
+    false,
+    highlightedPointIds
+  );
+
+export const HighlightPoints: Story<ScatterPlotProps> = Template.bind({});
+HighlightPoints.args = {
+  data: dataSetProcessSequentialGradientHighlight,
+  interactive: true,
+  displayLegend: true,
+};
+
+// Highlight points with a specialized style.
+// This story uses data that's already been broken up by an overlay variable. The result
+// currently looks a bit ridiculuous - we have a bunch of gray Data rows in the legend. However, this is actually
+// the desired behavior. In practice each of those gray Data traces would have a name, so we'd see helpful group names. Additionally,
+// we want to be sure we can highlight points from any of the traces, even if they're split up like in an overlay.
+const highlightStyleOverride = {
+  line: {
+    color: 'red',
+    width: 2,
+  },
+  color: 'blue',
+  size: 15,
+  symbol: 'star',
+};
+
+const highlightPointIdsStyled =
+  dataSetCategoricalOverlay.scatterplot.data[0]?.pointIds?.slice(0, 10) ?? [];
+const { dataSetProcess: dataSetCategoricalOverlayHighlight } = processInputData(
+  dataSetCategoricalOverlay,
+  'scatterplot',
+  'markers',
+  independentValueType,
+  dependentValueType,
+  false,
+  highlightPointIdsStyled,
+  highlightStyleOverride,
+  'My Highlight Trace'
+);
+
+export const HighlightPointsWithStyleOverride: Story<ScatterPlotProps> =
+  Template.bind({});
+HighlightPointsWithStyleOverride.args = {
+  data: dataSetCategoricalOverlayHighlight,
+  interactive: true,
+  displayLegend: true,
 };

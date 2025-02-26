@@ -39,6 +39,11 @@ import {
   OrganismParam,
   isOrganismParam,
 } from '@veupathdb/preferred-organisms/lib/components/OrganismParam';
+import {
+  EdaSubsetParameter,
+  EdaSubsetStepDetails,
+} from './components/questions/EdaSubsetParameter';
+import { GenesByEdaSubset } from './components/questions/GenesByEdaSubset';
 
 const BlastForm = React.lazy(() => import('./plugins/BlastForm'));
 const BlastQuestionController = React.lazy(
@@ -62,6 +67,10 @@ const isMutuallyExclusiveParamQuestion: ClientPluginRegistryEntry<any>['test'] =
     question != null &&
     question.urlSegment.endsWith('ByLocation') &&
     hasChromosomeAndSequenceIDXorGroup(question);
+
+const isPhenotypeSubsetSearch: ClientPluginRegistryEntry<any>['test'] = ({
+  question,
+}) => question?.queryName === 'GenesByPhenotypeEdaGeneric';
 
 const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
@@ -134,6 +143,11 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   },
   {
     type: 'questionForm',
+    name: 'GenesByEdaSubset',
+    component: GenesByEdaSubset,
+  },
+  {
+    type: 'questionForm',
     name: 'ByGenotypeNumber',
     component: ByGenotypeNumber,
   },
@@ -201,6 +215,12 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   },
   {
     type: 'questionFormParameter',
+    name: 'eda_analysis_spec',
+    test: isPhenotypeSubsetSearch,
+    component: EdaSubsetParameter,
+  },
+  {
+    type: 'questionFormParameter',
     name: 'genotype',
     searchName: 'ByGenotypeNumber',
     component: ByGenotypeNumberCheckbox,
@@ -239,6 +259,11 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
     type: 'stepDetails',
     test: isMutuallyExclusiveParamQuestion,
     component: ByLocationStepDetails,
+  },
+  {
+    type: 'stepDetails',
+    test: isPhenotypeSubsetSearch,
+    component: EdaSubsetStepDetails,
   },
 ];
 

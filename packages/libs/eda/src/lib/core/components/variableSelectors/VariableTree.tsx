@@ -18,7 +18,7 @@ import { orderBy } from 'lodash';
 
 export interface VariableTreeProps {
   starredVariables?: VariableDescriptor[];
-  toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
+  toggleStarredVariable?: (targetVariableId: VariableDescriptor) => void;
   entityId?: string;
   variableId?: string;
   disabledVariables?: VariableDescriptor[];

@@ -3,14 +3,15 @@ import { useRouteMatch } from 'react-router';
 
 import { TreeNode } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 
-import { EDAWorkspaceContainer, FieldWithMetadata } from '../core';
 import {
-  AnalysisClient,
-  ComputeClient,
-  DataClient,
-  DownloadClient,
-  SubsettingClient,
-} from '../core/api';
+  EDAWorkspaceContainer,
+  FieldWithMetadata,
+  useConfiguredAnalysisClient,
+  useConfiguredComputeClient,
+  useConfiguredDataClient,
+  useConfiguredDownloadClient,
+  useConfiguredSubsettingClient,
+} from '../core';
 import { VariableDescriptor } from '../core/types/variable';
 import { cx, findFirstVariable } from './Utils';
 
@@ -28,28 +29,28 @@ const useStyles = makeStyles({
 
 interface Props {
   studyId: string;
+  edaServiceUrl: string;
   analysisId?: string;
   children: ReactNode;
-  analysisClient: AnalysisClient;
-  computeClient: ComputeClient;
-  dataClient: DataClient;
-  downloadClient: DownloadClient;
-  subsettingClient: SubsettingClient;
   isStudyExplorerWorkspace?: boolean;
+  // overrides default class names
+  className?: string;
 }
 
 /** Allows a user to create a new analysis or edit an existing one. */
 export function WorkspaceContainer({
   studyId,
-  subsettingClient,
-  dataClient,
-  analysisClient,
-  downloadClient,
-  computeClient,
+  edaServiceUrl,
   children,
   isStudyExplorerWorkspace = false,
+  className,
 }: Props) {
   const { url } = useRouteMatch();
+  const subsettingClient = useConfiguredSubsettingClient(edaServiceUrl);
+  const dataClient = useConfiguredDataClient(edaServiceUrl);
+  const analysisClient = useConfiguredAnalysisClient(edaServiceUrl);
+  const downloadClient = useConfiguredDownloadClient(edaServiceUrl);
+  const computeClient = useConfiguredComputeClient(edaServiceUrl);
 
   const initializeMakeVariableLink = useCallback(
     (fieldTree: TreeNode<FieldWithMetadata>) =>
@@ -74,13 +75,17 @@ export function WorkspaceContainer({
   );
   const classes = useStyles();
 
+  const finalClassName =
+    className ??
+    `${cx()} ${isStudyExplorerWorkspace ? 'StudyExplorerWorkspace' : ''} ${
+      classes.workspace
+    }`;
+
   return (
     <QueryClientProvider client={queryClient}>
       <EDAWorkspaceContainer
         studyId={studyId}
-        className={`${cx()} ${
-          isStudyExplorerWorkspace ? 'StudyExplorerWorkspace' : ''
-        } ${classes.workspace}`}
+        className={finalClassName}
         analysisClient={analysisClient}
         dataClient={dataClient}
         subsettingClient={subsettingClient}
