@@ -67,7 +67,7 @@ interface FeatureTableProps {
   recordType: string;
 }
 
-export const FeatureTable: React.SFC<FeatureTableProps> = ({
+export const FeatureTable: React.FunctionComponent<FeatureTableProps> = ({
   region,
   sequence,
   displayName,

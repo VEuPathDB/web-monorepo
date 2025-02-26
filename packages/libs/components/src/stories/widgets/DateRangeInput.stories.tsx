@@ -21,7 +21,7 @@ export const ControlledLinked: Story<DateRangeInputProps> = () => {
   // there must be a cleverer way to do this
   // avoiding the cut and paste
   const handleChangeA = useCallback(
-    (newRange) => {
+    (newRange: any) => {
       console.log(`A: new range = ${newRange.min} to ${newRange.max}`);
       setRange(newRange);
     },
@@ -29,7 +29,7 @@ export const ControlledLinked: Story<DateRangeInputProps> = () => {
   );
 
   const handleChangeB = useCallback(
-    (newRange) => {
+    (newRange: any) => {
       console.log(`B: new range = ${newRange.min} to ${newRange.max}`);
       setRange(newRange);
     },

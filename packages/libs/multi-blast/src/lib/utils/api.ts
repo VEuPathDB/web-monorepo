@@ -1,5 +1,5 @@
 import { isLeft, map } from 'fp-ts/Either';
-import { array, string } from 'io-ts';
+import { array, string, unknown } from 'io-ts';
 import { identity, memoize, omit } from 'lodash';
 
 import {
@@ -175,6 +175,14 @@ export class BlastApi extends FetchClientWithCredentials {
     });
   }
 
+  fetchJobError(jobId: string) {
+    return this.fetch({
+      path: `${JOBS_PATH}/${jobId}/error`,
+      method: 'GET',
+      transformResponse: ioTransformer(string),
+    });
+  }
+
   rerunJob(jobId: string) {
     return this.taggedFetch({
       path: `${JOBS_PATH}/${jobId}`,
@@ -219,6 +227,31 @@ export class BlastApi extends FetchClientWithCredentials {
       method: 'POST',
       transformResponse: identity,
     });
+  }
+
+  /** Request a preview of the file */
+  fetchSingleFileReport(
+    reportId: string,
+    fileName: string,
+    headerRow?: string[],
+    lines?: string,
+    maxSize: number = 10 * 10 ** 6 // 10 MB
+  ) {
+    let query = '?download=false';
+    if (headerRow) query += `&headers=${headerRow}`;
+    if (lines) query += `&lines=${lines}`;
+    return this.taggedFetch({
+      path: `${REPORTS_PATH}/${reportId}/files/${fileName}${query}`,
+      headers: {
+        'Content-Max-Length': `${maxSize}`,
+      },
+      method: 'GET',
+      transformResponse: ioTransformer(unknown),
+    });
+  }
+
+  getSingleFileReportUrl(reportId: string, fileName: string): string {
+    return `${this.baseUrl}${REPORTS_PATH}/${reportId}/files/${fileName}`;
   }
 
   fetchSingleFileJsonReport(

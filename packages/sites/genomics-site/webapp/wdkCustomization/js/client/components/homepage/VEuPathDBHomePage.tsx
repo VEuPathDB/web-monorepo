@@ -72,6 +72,8 @@ import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { Tooltip, Warning } from '@veupathdb/coreui';
 
 import './VEuPathDBHomePage.scss';
+import { searchTree } from '../../selectors/QueryGridSelectors';
+import { ProfileModal } from '@veupathdb/web-common/lib/components/ProfileModal';
 
 const vpdbCx = makeVpdbClassNameHelper('');
 
@@ -286,6 +288,7 @@ const VEuPathDBHomePageViewStandard: FunctionComponent<Props> = (props) => {
             </ErrorBoundary>
           )}
           <Main containerClassName={mainClassName}>{props.children}</Main>
+          <ProfileModal />
           {isHomePage && (
             <ErrorBoundary>
               <NewsPane
@@ -486,12 +489,6 @@ const useHeaderMenuItems = (
           },
         },
         {
-          key: 'galaxy',
-          display: 'Galaxy',
-          type: 'reactRoute',
-          url: '/galaxy-orientation',
-        },
-        {
           key: 'jbrowse',
           display: 'Genome browser',
           type: 'reactRoute',
@@ -610,12 +607,6 @@ const useHeaderMenuItems = (
       type: 'subMenu',
       items: [
         {
-          key: 'galaxy-analyses',
-          display: 'Analyze my data (Galaxy)',
-          type: 'reactRoute',
-          url: '/galaxy-orientation',
-        },
-        {
           key: 'basket',
           display: 'My baskets',
           type: 'reactRoute',
@@ -680,12 +671,6 @@ const useHeaderMenuItems = (
           display: `Data sets in ${displayName}`,
           type: 'reactRoute',
           url: '/search/dataset/AllDatasets/result',
-        },
-        {
-          key: 'datasets-in-progress2',
-          display: 'Data sets we are working on',
-          type: 'reactRoute',
-          url: makeStaticPageRoute('/dataInprogress.html'),
         },
         {
           key: 'data-files-eupathdb-beta',
@@ -967,18 +952,6 @@ const useHeaderMenuItems = (
               url: makeStaticPageRoute('/infrastructure.html'),
             },
             {
-              key: 'usage-metrics',
-              display: 'Monthly Usage Metrics',
-              type: 'externalLink',
-              url: '/reports/VEuPathDB_BRC4_usage_metrics_report.pdf',
-            },
-            {
-              key: 'perf-metrics',
-              display: 'Monthly Performance Metrics',
-              type: 'externalLink',
-              url: '/reports/VEuPathDB_BRC4_performance_metrics_report.pdf',
-            },
-            {
               key: 'usage-statistics',
               display: 'Website usage statistics',
               type: 'externalLink',
@@ -1069,13 +1042,14 @@ const useHeaderMenuItems = (
           type: 'reactRoute',
           url: '/reset-session',
         },
-        {
-          key: 'user-doc',
-          display: 'Downloadable User documentation',
-          type: 'externalLink',
-          url: '/reports/VEuPathDB_User_Documentation.pdf',
-        },
       ],
+    },
+    {
+      key: 'subscr',
+      display: 'Subscriptions',
+      type: 'reactRoute',
+      target: '_blank',
+      url: makeStaticPageRoute('/subscriptions.html'),
     },
     {
       key: 'contact-us',
@@ -1135,8 +1109,7 @@ const filterMenuItemEntry = (
 
 // FIXME: Use a hook instead of "connect" to provide the global data
 const mapStateToProps = (state: RootState) => ({
-  // FIXME: This is not typesafe.
-  searchTree: get(state.globalData, 'searchTree') as CategoryTreeNode,
+  searchTree: searchTree(state),
   buildNumber: state.globalData.config?.buildNumber,
   releaseDate: state.globalData.config?.releaseDate,
   displayName: state.globalData.config?.displayName,

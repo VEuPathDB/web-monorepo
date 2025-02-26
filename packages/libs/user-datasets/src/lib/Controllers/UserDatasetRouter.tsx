@@ -78,7 +78,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
         }}
       />
       <WdkRoute
-        path={path + '/new'}
+        path={path + '/new/:type?'}
         exact={true}
         requiresLogin={false} // uses custom guest views
         component={function UserDatasetsWorkspaceRoute(
@@ -175,6 +175,8 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
               detailComponentsByTypeName={detailComponentsByTypeName}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
+              includeAllLink
+              includeNameHeader
               {...props.match.params}
             />
           );

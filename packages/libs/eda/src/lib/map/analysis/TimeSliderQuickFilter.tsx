@@ -386,7 +386,7 @@ export default function TimeSliderQuickFilter({
         >
           {!minimized && (
             <>
-              <div style={{}}>
+              <div style={{ maxWidth: 200, marginRight: 'auto' }}>
                 <InputVariables
                   inputs={[
                     {
@@ -406,10 +406,9 @@ export default function TimeSliderQuickFilter({
                   constraints={timeSliderVariableConstraints}
                 />
               </div>
-              <div>
+              <div style={{ marginRight: '1em', marginLeft: 'auto' }}>
                 <button
                   title={'move range left'}
-                  style={{ marginRight: '1em', marginLeft: '2em' }}
                   onClick={() => handleArrowClick('left')}
                   disabled={!active || disableLeftArrow}
                 >
@@ -424,28 +423,29 @@ export default function TimeSliderQuickFilter({
                 </button>
               </div>
               {/* add axis range control */}
-              <AxisRangeControl
-                range={
-                  selectedRange != null
-                    ? {
-                        min: selectedRange.start,
-                        max: selectedRange.end,
-                      }
-                    : undefined
-                }
-                onRangeChange={handleAxisRangeChange}
-                valueType={'date'}
-                containerStyles={{
-                  flex: 1,
-                }}
-                // change the height of the input element
-                inputHeight={30}
-                disabled={!active}
-              />
               <div>
+                <AxisRangeControl
+                  range={
+                    selectedRange != null
+                      ? {
+                          min: selectedRange.start,
+                          max: selectedRange.end,
+                        }
+                      : undefined
+                  }
+                  onRangeChange={handleAxisRangeChange}
+                  valueType={'date'}
+                  containerStyles={{
+                    flex: 1,
+                  }}
+                  // change the height of the input element
+                  inputHeight={30}
+                  disabled={!active}
+                />
+              </div>
+              <div style={{ marginRight: 'auto', marginLeft: '1em' }}>
                 <button
                   title={'move range right'}
-                  style={{ marginLeft: '1em', marginRight: '1em' }}
                   onClick={() => handleArrowClick('right')}
                   disabled={!active || disableRightArrow}
                 >

@@ -22,7 +22,6 @@ import {
 } from '../Actions/UserDatasetsActions';
 
 import BigwigDatasetDetail from '../Components/Detail/BigwigDatasetDetail';
-import BiomDatasetDetail from '../Components/Detail/BiomDatasetDetail';
 import RnaSeqDatasetDetail from '../Components/Detail/RnaSeqDatasetDetail';
 import UserDatasetDetail from '../Components/Detail/UserDatasetDetail';
 import EmptyState from '../Components/EmptyState';
@@ -30,6 +29,7 @@ import { quotaSize } from '../Components/UserDatasetUtils';
 
 import { StateSlice } from '../StoreModules/types';
 import { DataNoun } from '../Utils/types';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
 const ActionCreators = {
   showLoginForm,
@@ -60,6 +60,8 @@ type OwnProps = {
   >;
   dataNoun: DataNoun;
   enablePublicUserDatasets: boolean;
+  includeAllLink: boolean;
+  includeNameHeader: boolean;
 };
 type MergedProps = {
   ownProps: OwnProps;
@@ -148,8 +150,6 @@ class UserDatasetDetailController extends PageController<MergedProps> {
         return BigwigDatasetDetail;
       case 'rnaseq':
         return RnaSeqDatasetDetail;
-      case 'biom':
-        return BiomDatasetDetail;
       default:
         return UserDatasetDetail;
     }
@@ -179,6 +179,8 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       workspaceTitle,
       dataNoun,
       enablePublicUserDatasets,
+      includeAllLink,
+      includeNameHeader,
     } = this.props.ownProps;
     const {
       updateUserDatasetDetail,
@@ -210,12 +212,15 @@ class UserDatasetDetailController extends PageController<MergedProps> {
     const entry = userDatasetsById[id];
     const isOwner = !!(
       user &&
+      entry &&
       entry.resource &&
       entry.resource.ownerUserId === user.id
     );
 
     const props = {
       baseUrl,
+      includeAllLink,
+      includeNameHeader,
       user,
       config,
       isOwner,
@@ -234,8 +239,8 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       sharingSuccess,
       shareSuccessful,
       updateSharingModalState,
-      userDataset: entry.resource,
-      fileListing: entry.fileListing,
+      userDataset: entry?.resource,
+      fileListing: entry?.fileListing,
       getQuestionUrl: this.getQuestionUrl,
       questionMap: keyBy(questions, 'fullName'),
       workspaceTitle,
@@ -250,10 +255,12 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       updateDatasetCommunityVisibilitySuccess,
     };
 
-    const DetailView = this.getDetailView(
-      typeof entry.resource === 'object' ? entry.resource.type : null
-    );
-    return user && user.isGuest ? (
+    if (entry?.resource == null) return <Loading />;
+
+    const DetailView = this.getDetailView(entry.resource.type);
+    return entry.resource.meta.visibility !== 'public' &&
+      user &&
+      user.isGuest ? (
       this.renderGuestView()
     ) : (
       <DetailView {...props} />

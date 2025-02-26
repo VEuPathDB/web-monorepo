@@ -36,6 +36,8 @@ class RecordMainCategorySection extends React.PureComponent {
     let {
       record,
       recordClass,
+      tableStates,
+      updateTableState,
       category,
       depth,
       isCollapsed,
@@ -62,6 +64,10 @@ class RecordMainCategorySection extends React.PureComponent {
         return (
           <RecordTableSection
             table={category.wdkReference}
+            tableState={tableStates[category.wdkReference.name]}
+            updateTableState={(tableState) =>
+              updateTableState(category.wdkReference.name, tableState)
+            }
             ontologyProperties={category.properties}
             record={record}
             recordClass={recordClass}
@@ -77,7 +83,6 @@ class RecordMainCategorySection extends React.PureComponent {
         let Header = 'h' + Math.min(depth + 2, 6);
         let headerContent = (
           <span>
-            <span className="wdk-RecordSectionEnumeration">{enumeration}</span>{' '}
             {categoryName}
             <a
               className="wdk-RecordSectionLink"
@@ -88,12 +93,20 @@ class RecordMainCategorySection extends React.PureComponent {
             </a>
           </span>
         );
+        if (depth === 0) {
+          return (
+            <>
+              <Header id={id} className="wdk-RecordSectionHeader">
+                {headerContent}
+              </Header>
+              <div className="wdk-RecordSectionChildren">{children}</div>
+            </>
+          );
+        }
         return (
           <CollapsibleSection
             id={id}
-            className={
-              depth === 0 ? 'wdk-RecordSection' : 'wdk-RecordSubsection'
-            }
+            className={'wdk-RecordSubsection'}
             headerComponent={Header}
             headerContent={headerContent}
             isCollapsed={isCollapsed}

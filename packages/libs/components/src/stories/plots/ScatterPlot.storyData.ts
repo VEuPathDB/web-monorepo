@@ -1,9 +1,10 @@
-import { NumberOrDateRange } from '../../types/general';
-import { ScatterPlotData } from '../../types/plots';
+import { ScatterPlotDataSeries } from '../../types/plots';
 import { min, max, lte, gte } from 'lodash';
 import {
   gradientSequentialColorscaleMap,
   gradientDivergingColorscaleMap,
+  DefaultNonHighlightColor,
+  DefaultHighlightMarkerStyle,
 } from '../../types/plots/addOns';
 import { scaleLinear } from 'd3-scale';
 
@@ -20,6 +21,7 @@ export interface VEuPathDBScatterPlotData {
       bestFitLineX?: number[] | string[];
       bestFitLineY?: number[];
       seriesGradientColorscale?: number[] | string[];
+      pointIds?: string[];
     }>;
   };
 }
@@ -56,6 +58,7 @@ export const dataSetSequentialGradient: VEuPathDBScatterPlotData = {
         seriesX: randPosNegvalues,
         seriesY: randNegvalues,
         seriesGradientColorscale: randomPosValues,
+        pointIds: sequentialIntegers.map((i) => i.toString()),
       },
     ],
   },
@@ -97,48 +100,72 @@ export const dataSetCategoricalOverlay: VEuPathDBScatterPlotData = {
         seriesY: sequentialIntegers
           .slice(nPoints / 2)
           .map((i) => Math.random()),
+        pointIds: sequentialIntegers
+          .slice(nPoints / 2)
+          .map((i) => i.toString()),
       },
       {
         seriesX: sequentialIntegers.slice(nPoints / 2),
         seriesY: sequentialIntegers
           .slice(nPoints / 2)
           .map((i) => Math.random()),
+        pointIds: sequentialIntegers
+          .slice(nPoints / 2)
+          .map((i) => (i + nPoints / 2).toString()),
       },
       {
         seriesX: sequentialIntegers.slice(nPoints / 2),
         seriesY: sequentialIntegers
           .slice(nPoints / 2)
           .map((i) => Math.random()),
+        pointIds: sequentialIntegers
+          .slice(nPoints / 2)
+          .map((i) => (i + nPoints).toString()),
       },
       {
         seriesX: sequentialIntegers.slice(nPoints / 2),
         seriesY: sequentialIntegers
           .slice(nPoints / 2)
           .map((i) => Math.random()),
+        pointIds: sequentialIntegers
+          .slice(nPoints / 2)
+          .map((i) => (i + (3 * nPoints) / 2).toString()),
       },
       {
         seriesX: sequentialIntegers.slice(nPoints / 2),
         seriesY: sequentialIntegers
           .slice(nPoints / 2)
           .map((i) => Math.random()),
+        pointIds: sequentialIntegers
+          .slice(nPoints / 2)
+          .map((i) => (i + 2 * nPoints).toString()),
       },
       {
         seriesX: sequentialIntegers.slice(nPoints / 2),
         seriesY: sequentialIntegers
           .slice(nPoints / 2)
           .map((i) => Math.random()),
+        pointIds: sequentialIntegers
+          .slice(nPoints / 2)
+          .map((i) => (i + (5 * nPoints) / 2).toString()),
       },
       {
         seriesX: sequentialIntegers.slice(nPoints / 2),
         seriesY: sequentialIntegers
           .slice(nPoints / 2)
           .map((i) => Math.random()),
+        pointIds: sequentialIntegers
+          .slice(nPoints / 2)
+          .map((i) => (i + 3 * nPoints).toString()),
       },
       {
         seriesX: sequentialIntegers.slice(nPoints / 2),
         seriesY: sequentialIntegers
           .slice(nPoints / 2)
           .map((i) => Math.random()),
+        pointIds: sequentialIntegers
+          .slice(nPoints / 2)
+          .map((i) => (i + (7 * nPoints) / 2).toString()),
       },
     ],
   },
@@ -564,6 +591,9 @@ export function processInputData<T extends number | string>(
   independentValueType: string,
   dependentValueType: string,
   defineColors: boolean,
+  highlightIds?: string[],
+  highlightMarkerStyleOverride?: ScatterPlotDataSeries['marker'],
+  highlightTraceName?: string,
   colorPaletteOverride?: string[]
 ) {
   // set fillAreaValue for densityplot
@@ -600,6 +630,20 @@ export function processInputData<T extends number | string>(
 
   // set dataSetProcess as any
   let dataSetProcess: any = [];
+
+  // Set empty highlightTrace. Will be populated if there are any highlighted points.
+  // Currently we import the defalut highlight styling, but in the future the marker styling could
+  // also be passed as a prop. Highlighting is currently limited to points, though it could extend
+  // similarly to lines, boxes, etc.
+  let highlightTrace: any = {
+    x: [],
+    y: [],
+    name: highlightTraceName ?? 'highlight',
+    mode: 'markers',
+    type: 'scattergl',
+    marker: highlightMarkerStyleOverride ?? DefaultHighlightMarkerStyle,
+    pointIds: [],
+  };
 
   // drawing raw data (markers) at first
   plotDataSet.data.forEach(function (el: any, index: number) {
@@ -734,6 +778,21 @@ export function processInputData<T extends number | string>(
         }
       }
 
+      // If a point is highlighted, we have to set its y value to null, otherwise it will
+      // still have a tooltip (regardless of marker size, color, etc.)
+      if (
+        el.pointIds &&
+        highlightIds &&
+        highlightIds.length > 0 &&
+        highlightIds.some((id) => el.pointIds?.includes(id))
+      ) {
+        seriesY.forEach((_value: number, index: number) => {
+          if (el.pointIds && highlightIds.includes(el.pointIds[index])) {
+            seriesY[index] = null;
+          }
+        });
+      }
+
       // add scatter data considering input options
       dataSetProcess.push({
         x: seriesX,
@@ -752,22 +811,25 @@ export function processInputData<T extends number | string>(
         fill: fillAreaValue,
         marker: {
           color:
-            defineColors || colorPaletteOverride
+            highlightIds && highlightIds.length > 0
+              ? DefaultNonHighlightColor
+              : defineColors || colorPaletteOverride
               ? markerColors[index]
               : seriesGradientColorscale?.length > 0
               ? markerColorsGradient
               : undefined,
-          size: 12,
           line: {
             color:
-              defineColors || colorPaletteOverride
+              highlightIds && highlightIds.length > 0
+                ? DefaultNonHighlightColor
+                : defineColors || colorPaletteOverride
                 ? markerColors[index]
                 : seriesGradientColorscale?.length > 0
                 ? markerColorsGradient
                 : undefined,
             width: 2,
           },
-          symbol: 'circle',
+          symbol: 'none',
         },
         // this needs to be here for the case of markers with line or lineplot.
         // always use spline?
@@ -775,7 +837,36 @@ export function processInputData<T extends number | string>(
           color: defineColors ? 'rgb(' + markerColors[index] + ')' : undefined,
           shape: 'spline',
         },
+        pointIds: el.pointIds,
       });
+
+      // If there are any highlihgted points, we need to add those to the highlight trace
+      if (
+        highlightIds &&
+        el.pointIds &&
+        highlightIds.some((id) => el.pointIds.includes(id))
+      ) {
+        // Extract the indices of highlighted points.
+        const highlightIndices = el.pointIds
+          .map((id: string, index: number) =>
+            highlightIds.includes(id) ? index : -1
+          )
+          .filter((index: number) => index !== -1);
+        if (highlightIndices && highlightIndices.length !== 0) {
+          highlightTrace.x.push(
+            ...(highlightIndices.map((index: number) => el.seriesX[index]) ||
+              [])
+          );
+          highlightTrace.y.push(
+            ...(highlightIndices.map((index: number) => el.seriesY[index]) ||
+              [])
+          );
+          highlightTrace.pointIds.push(
+            ...(highlightIndices.map((index: number) => el.pointIds[index]) ||
+              [])
+          );
+        }
+      }
     }
   });
 
@@ -969,6 +1060,11 @@ export function processInputData<T extends number | string>(
     // set yMin/yMax to be NaN so that plotly uses autoscale for date type
     yMin = NaN;
     yMax = NaN;
+  }
+
+  // If there are any highlighted points, add that trace to datasetProcess
+  if (highlightTrace.x.length > 0) {
+    dataSetProcess.push(highlightTrace);
   }
 
   return { dataSetProcess: { series: dataSetProcess }, yMin, yMax };

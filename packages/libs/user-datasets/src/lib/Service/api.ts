@@ -70,12 +70,12 @@ export class UserDatasetApi extends FetchClientWithCredentials {
     const { uploadMethod, ...remainingConfig } = newUserDatasetConfig;
 
     const meta: NewUserDatasetMeta = {
+      dependencies: [],
       ...remainingConfig,
       datasetType: {
         name: newUserDatasetConfig.datasetType,
         version: '1.0',
       },
-      dependencies: [],
       origin: 'direct-upload',
     };
 

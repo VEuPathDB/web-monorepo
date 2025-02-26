@@ -11,11 +11,13 @@ type Props = {
   heading: boolean;
 };
 
+const EMPTY_ARRAY: Props['expandedRows'] = [];
+
 export default function ExpansionCell({
   rows,
   row,
   onExpandedRowsChange,
-  expandedRows,
+  expandedRows = EMPTY_ARRAY,
   getRowId,
   inert,
   heading,
@@ -42,21 +44,13 @@ export default function ExpansionCell({
     const title = 'Show or hide all row details';
 
     return (
-      <th className="wdk-DataTableCell wdk-DataTableCell__childRowToggle">
+      <th className="HeadingCell ChildRowToggle">
         {inert ? null : areAllRowsExpanded ? (
-          <button
-            className="wdk-DataTableCellExpand"
-            title={title}
-            onClick={handler}
-          >
+          <button title={title} onClick={handler}>
             <ArrowDown />
           </button>
         ) : (
-          <button
-            className="wdk-DataTableCellExpand"
-            title={title}
-            onClick={handler}
-          >
+          <button title={title} onClick={handler}>
             <ArrowRight />
           </button>
         )}
@@ -82,13 +76,13 @@ export default function ExpansionCell({
     };
 
     return (
-      <td className="wdk-DataTable wdk-DataTableCell__childRowToggle">
+      <td className="ChildRowToggle">
         {inert ? null : isExpanded ? (
-          <button className="wdk-DataTableCellExpand" onClick={handler}>
+          <button onClick={handler}>
             <ArrowDown />
           </button>
         ) : (
-          <button className="wdk-DataTableCellExpand" onClick={handler}>
+          <button onClick={handler}>
             <ArrowRight />
           </button>
         )}

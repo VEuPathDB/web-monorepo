@@ -86,7 +86,7 @@ const hpiGeneListResultColumns = (
     helpText: headerDescription[column.key],
   }));
 
-export const StepAnalysisHpiGeneListResults: React.SFC<StepAnalysisResultPluginProps> =
+export const StepAnalysisHpiGeneListResults: React.FunctionComponent<StepAnalysisResultPluginProps> =
   ({ analysisResult: { resultData, headerRow, headerDescription } }) => (
     <>
       <h3>Analysis Results: </h3>

@@ -38,6 +38,7 @@ export default configure({
         facebookUrl: process.env.FACEBOOK_URL,
         twitterUrl: process.env.TWITTER_URL,
         vimeoUrl: process.env.VIMEO_URL,
+        discordUrl: process.env.DISCORD_URL,
         communitySite: process.env.COMMUNITY_SITE,
         siteSearchServiceUrl: process.env.SITE_SEARCH_SERVICE_ENDPOINT,
         ...(

@@ -161,33 +161,28 @@ export default function CheckboxTreeNode<T>({
         {isLeafNode ? null : isActiveSearch ? (
           // this retains the space of the expansion toggle icons for easier formatting
           <div className="active-search-buffer"></div>
-        ) : isExpanded ? (
-          <div className="arrow-container">
-            <ArrowDown
-              className="arrow-icon"
-              tabIndex={0}
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleExpansion(node);
-              }}
-              onKeyDown={(e) =>
-                e.key === 'Enter' ? toggleExpansion(node) : null
-              }
-            />
-          </div>
         ) : (
-          <div className="arrow-container">
-            <ArrowRight
-              className="arrow-icon"
-              tabIndex={0}
-              onClick={(e) => {
-                e.stopPropagation();
+          <div
+            className="arrow-container"
+            tabIndex={0}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleExpansion(node);
+            }}
+            onKeyDown={(e) => {
+              const toggleKeys = isExpanded
+                ? ['Enter', 'ArrowLeft']
+                : ['Enter', 'ArrowRight'];
+              if (toggleKeys.includes(e.key)) {
                 toggleExpansion(node);
-              }}
-              onKeyDown={(e) =>
-                e.key === 'Enter' ? toggleExpansion(node) : null
               }
-            />
+            }}
+          >
+            {isExpanded ? (
+              <ArrowDown className="arrow-icon" />
+            ) : (
+              <ArrowRight className="arrow-icon" />
+            )}
           </div>
         )}
         {!isSelectable || (!isMultiPick && !isLeafNode) ? (

@@ -31,6 +31,7 @@ export const projects = [
 
 type Props = {
   containerClassName?: string;
+  children?: React.ReactNode;
 };
 
 export const Footer: FunctionComponent<Props> = ({
@@ -43,13 +44,6 @@ export const Footer: FunctionComponent<Props> = ({
     <div className={cx('SiteFamilyRow')}>
       <div className={cx('Copyright')}>
         <div>
-          <a
-            target="_blank"
-            href="https://www.niaid.nih.gov/research/bioinformatics-resource-centers"
-          >
-            <img src="/assets/images/BRC_Logo_transparent-01.png"></img>
-          </a>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <a
             target="_blank"
             href="https://globalbiodata.org/scientific-activities/global-core-biodata-resources"

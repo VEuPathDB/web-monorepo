@@ -7,7 +7,7 @@ export interface FormRowProps {
   fieldClassName?: string;
 }
 
-export const FormRow: React.SFC<FormRowProps> = ({
+export const FormRow: React.FunctionComponent<FormRowProps> = ({
   label,
   field,
   labelClassName,

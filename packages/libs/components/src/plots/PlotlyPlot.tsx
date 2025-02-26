@@ -8,7 +8,7 @@ import React, {
   useImperativeHandle,
   useMemo,
 } from 'react';
-import { PlotParams } from 'react-plotly.js';
+import { Figure, PlotParams } from 'react-plotly.js';
 import { legendSpecification } from '../utils/plotly';
 import Spinner from '../components/Spinner';
 import { PlotRef } from '../types/plots';
@@ -18,11 +18,12 @@ import {
   PlotSpacingDefault,
   ColorPaletteAddon,
   ColorPaletteDefault,
+  VEuPathDBAnnotation,
 } from '../types/plots/addOns';
 // add d3.select
 import { select } from 'd3';
 // 3rd party toImage function from plotly
-import Plotly, { ToImgopts, DataTitle } from 'plotly.js';
+import { ToImgopts, DataTitle } from 'plotly.js';
 import { uniqueId } from 'lodash';
 import { makeSharedPromise } from '../utils/promise-utils';
 import NoDataOverlay from '../components/NoDataOverlay';
@@ -68,6 +69,8 @@ export interface PlotProps<T> extends ColorPaletteAddon {
   checkedLegendItems?: string[];
   /** A function to call each time after plotly renders the plot */
   onPlotlyRender?: PlotParams['onUpdate'];
+  /** array of annotations to show on the plot. Can be used with any plotly plot type */
+  plotAnnotations?: VEuPathDBAnnotation[];
 }
 
 const Plot = lazy(() => import('react-plotly.js'));
@@ -111,6 +114,7 @@ function PlotlyPlot<T>(
     checkedLegendItems,
     colorPalette = ColorPaletteDefault,
     onPlotlyRender,
+    plotAnnotations,
     ...plotlyProps
   } = props;
 
@@ -140,6 +144,27 @@ function PlotlyPlot<T>(
 
   const xAxisTitle = plotlyProps?.layout?.xaxis?.title;
   const yAxisTitle = plotlyProps?.layout?.yaxis?.title;
+
+  // Convert generalized annotation object to plotly-specific annotation
+  const plotlyAnnotations: PlotParams['layout']['annotations'] = useMemo(() => {
+    return plotAnnotations?.map((annotation) => {
+      return {
+        x: annotation.xSubject,
+        y: annotation.ySubject,
+        text: annotation.text,
+        xref: annotation.xref,
+        yref: annotation.yref,
+        xanchor: annotation.xAnchor,
+        yanchor: annotation.yAnchor,
+        ax: annotation.dx,
+        ay: annotation.dy,
+        showarrow:
+          typeof annotation.subjectConnector !== 'undefined' &&
+          annotation.subjectConnector === 'arrow',
+        font: annotation.fontStyles,
+      };
+    });
+  }, [plotAnnotations]);
 
   const finalLayout = useMemo(
     (): PlotParams['layout'] => ({
@@ -180,6 +205,7 @@ function PlotlyPlot<T>(
       },
       autosize: true, // responds properly to enclosing div resizing (not to be confused with config.responsive)
       colorway: colorPalette,
+      annotations: plotlyAnnotations,
     }),
     [
       plotlyProps.layout,
@@ -220,7 +246,7 @@ function PlotlyPlot<T>(
 
   // ellipsis with tooltip for legend, legend title, and independent axis tick labels
   const onRender = useCallback(
-    (figure, graphDiv: Readonly<HTMLElement>) => {
+    (figure: Figure, graphDiv: Readonly<HTMLElement>) => {
       onPlotlyRender && onPlotlyRender(figure, graphDiv);
       // legend tooltip
       // remove pre-existing title to avoid duplicates
@@ -344,7 +370,7 @@ function PlotlyPlot<T>(
   );
 
   const onInitialized = useCallback(
-    (figure, graphDiv: Readonly<HTMLElement>) => {
+    (figure: Figure, graphDiv: Readonly<HTMLElement>) => {
       onRender(figure, graphDiv);
       sharedPlotCreation.run();
     },
@@ -376,7 +402,8 @@ function PlotlyPlot<T>(
       try {
         await sharedPlotCreation.promise;
         // Call the 3rd party function that actually creates the image
-        return await Plotly.toImage(plotId, imageOpts);
+        const plotlyModule = await import('plotly.js');
+        return await plotlyModule.default.toImage(plotId, imageOpts);
       } catch (error) {
         console.error('Could not create image for plot:', error);
       }

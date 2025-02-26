@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, styled } from '@material-ui/core';
 import { CSSProperties, StyleRules } from '@material-ui/core/styles/withStyles';
 import {
   CombinedClassKey,
   SnackbarProvider,
   SnackbarProviderProps,
-  VariantClassKey,
+  MaterialDesignContent,
 } from 'notistack';
 
 import {
@@ -36,19 +36,10 @@ export interface WrappedSnackbarProviderProps<StyleProps>
 export default function makeSnackbarProvider<
   StyleProps extends { theme?: UITheme },
   ClassKey extends CombinedClassKey
->(
-  styles?: StyleRules<ClassKey, StyleProps>,
-  displayName: string = 'SnackbarProvider'
-) {
+>(styles?: StyleRules<ClassKey, StyleProps>, displayName = 'SnackbarProvider') {
   const useStyles = makeStyles({
-    variantSuccess: makeSnackbarVariantStyles(success),
-    variantError: makeSnackbarVariantStyles(error),
-    variantWarning: makeSnackbarVariantStyles(warning),
-    variantInfo({ theme }) {
-      return makeSnackbarVariantStyles(theme?.palette.primary.hue ?? mutedBlue);
-    },
     ...styles,
-  } as StyleRules<ClassKey | VariantClassKey, StyleProps>);
+  } as StyleRules<ClassKey, StyleProps>);
 
   function WrappedSnackbarProvider({
     styleProps,
@@ -65,10 +56,28 @@ export default function makeSnackbarProvider<
       [theme, styleProps]
     );
 
+    const StyledSnackbarContent = styled(MaterialDesignContent)({
+      '&.notistack-MuiContent-success': makeSnackbarVariantStyles(success),
+      '&.notistack-MuiContent-error': makeSnackbarVariantStyles(error),
+      '&.notistack-MuiContent-warning': makeSnackbarVariantStyles(warning),
+      '&.notistack-MuiContent-info': makeSnackbarVariantStyles(
+        theme?.palette.primary.hue ?? mutedBlue
+      ),
+    });
+
     const classes = useStyles(fullStyleProps);
 
     return (
-      <SnackbarProvider classes={classes} {...snackbarProps}>
+      <SnackbarProvider
+        classes={classes}
+        Components={{
+          success: StyledSnackbarContent,
+          error: StyledSnackbarContent,
+          warning: StyledSnackbarContent,
+          info: StyledSnackbarContent,
+        }}
+        {...snackbarProps}
+      >
         {snackbarProps.children}
       </SnackbarProvider>
     );
@@ -90,7 +99,7 @@ export function makeSnackbarVariantStyles(variantHue: ColorHue): CSSProperties {
       fontWeight: 'bold',
     },
     '& svg': {
-      fill: variantHue[600],
+      fill: `${variantHue[600]} !important`,
     },
   };
 }

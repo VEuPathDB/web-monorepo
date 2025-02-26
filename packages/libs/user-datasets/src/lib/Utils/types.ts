@@ -39,7 +39,6 @@ export interface UserDataset {
   meta: UserDatasetMeta;
   owner: string;
   ownerUserId: number;
-  percentQuotaUsed: number;
   sharedWith: UserDatasetShare[] | undefined;
   size?: number;
   type: {
@@ -78,16 +77,23 @@ export type DatasetUploadTypeConfig<T extends string> = {
 
 export interface DatasetUploadTypeConfigEntry<T extends string> {
   type: T;
+  displayName: string;
+  description: React.ReactNode;
   uploadTitle: string;
   formConfig: {
     name?: {
       inputProps: Partial<React.InputHTMLAttributes<HTMLInputElement>>;
     };
     summary?: {
-      inputProps: Partial<React.InputHTMLAttributes<HTMLInputElement>>;
+      inputProps: Partial<React.InputHTMLAttributes<HTMLTextAreaElement>>;
     };
     description?: {
       inputProps: Partial<React.TextareaHTMLAttributes<HTMLTextAreaElement>>;
+    };
+    dependencies?: {
+      label: ReactNode;
+      render: (props: DependencyProps) => ReactNode;
+      required?: boolean;
     };
     uploadMethodConfig: {
       file?: FileUploadConfig;
@@ -96,6 +102,11 @@ export interface DatasetUploadTypeConfigEntry<T extends string> {
     };
     renderInfo?: () => ReactNode;
   };
+}
+
+export interface DependencyProps {
+  value: UserDataset['dependencies'];
+  onChange: (value: UserDataset['dependencies']) => void;
 }
 
 export interface FileUploadConfig {
@@ -131,6 +142,7 @@ export type DatasetUploadPageConfig<
 export interface NewUserDataset extends UserDatasetMeta {
   datasetType: string; // In prototype, the only value is "biom" - will eventually be an enum
   projects: string[];
+  dependencies?: UserDataset['dependencies'];
   uploadMethod:
     | {
         type: 'file';

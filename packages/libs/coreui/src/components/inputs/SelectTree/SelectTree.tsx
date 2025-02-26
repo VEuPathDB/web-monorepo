@@ -8,8 +8,11 @@ import CheckboxTree, {
 export interface SelectTreeProps<T> extends CheckboxTreeProps<T> {
   buttonDisplayContent: ReactNode;
   shouldCloseOnSelection?: boolean;
+  hasPopoverButton?: boolean; // default=true
   wrapPopover?: (checkboxTree: ReactNode) => ReactNode;
   isDisabled?: boolean;
+  /** update `selectedList` state instantly when a selection is made (default: true) */
+  instantUpdate?: boolean;
 }
 
 function SelectTree<T>(props: SelectTreeProps<T>) {
@@ -18,7 +21,19 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
       ? props.currentList.join(', ')
       : props.buttonDisplayContent
   );
-  const { selectedList, shouldCloseOnSelection, wrapPopover } = props;
+  const {
+    selectedList,
+    onSelectionChange,
+    shouldCloseOnSelection,
+    hasPopoverButton = true,
+    instantUpdate = true,
+    wrapPopover,
+  } = props;
+
+  // This local state is updated whenever a checkbox is clicked in the species tree.
+  // When `instantUpdate` is false, pass the final value to `onSelectionChange` when the popover closes.
+  // When it is true we call `onSelectionChange` whenever `localSelectedList` changes
+  const [localSelectedList, setLocalSelectedList] = useState(selectedList);
 
   /** Used as a hack to "auto close" the popover when shouldCloseOnSelection is true */
   const [key, setKey] = useState('');
@@ -27,12 +42,37 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
     if (!shouldCloseOnSelection) return;
     setKey(selectedList.join(', '));
     onClose();
-  }, [shouldCloseOnSelection, selectedList]);
+  }, [shouldCloseOnSelection, localSelectedList]);
+
+  // live updates to caller when needed
+  useEffect(() => {
+    if (!instantUpdate) return;
+    onSelectionChange(localSelectedList);
+  }, [onSelectionChange, localSelectedList]);
+
+  function truncatedButtonContent(selectedList: string[]) {
+    return (
+      <span
+        style={{
+          // this styling is copied from SelectList!
+          maxWidth: '300px',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {selectedList.join(', ')}
+      </span>
+    );
+  }
 
   const onClose = () => {
     setButtonDisplayContent(
-      selectedList.length ? selectedList.join(', ') : props.buttonDisplayContent
+      localSelectedList.length
+        ? truncatedButtonContent(localSelectedList)
+        : props.buttonDisplayContent
     );
+    if (!instantUpdate) onSelectionChange(localSelectedList);
   };
 
   const checkboxTree = (
@@ -49,12 +89,12 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
       renderNode={props.renderNode}
       expandedList={props.expandedList}
       isSelectable={props.isSelectable}
-      selectedList={selectedList}
+      selectedList={localSelectedList}
       filteredList={props.filteredList}
       customCheckboxes={props.customCheckboxes}
       isMultiPick={props.isMultiPick}
       name={props.name}
-      onSelectionChange={props.onSelectionChange}
+      onSelectionChange={setLocalSelectedList}
       currentList={props.currentList}
       defaultList={props.defaultList}
       isSearchable={props.isSearchable}
@@ -77,15 +117,25 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
     />
   );
 
-  return (
+  return hasPopoverButton ? (
     <PopoverButton
       key={shouldCloseOnSelection ? key : ''}
       buttonDisplayContent={buttonDisplayContent}
       onClose={onClose}
       isDisabled={props.isDisabled}
     >
-      {wrapPopover ? wrapPopover(checkboxTree) : checkboxTree}
+      <div
+        style={{
+          padding: '1em 1em 1em .5em',
+          width: '30em',
+          height: 'min(60vh, 40em)',
+        }}
+      >
+        {wrapPopover ? wrapPopover(checkboxTree) : checkboxTree}
+      </div>
     </PopoverButton>
+  ) : (
+    <>{wrapPopover ? wrapPopover(checkboxTree) : checkboxTree}</>
   );
 }
 
@@ -106,6 +156,7 @@ const defaultProps = {
   searchPredicate: () => true,
   linksPosition: LinksPosition.Both,
   isDisabled: false,
+  instantUpdate: true, // Set default value to true
 };
 
 SelectTree.defaultProps = defaultProps;

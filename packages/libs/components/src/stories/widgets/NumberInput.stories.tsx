@@ -14,7 +14,7 @@ export default {
 const ControlledTemplate: Story<NumberInputProps> = (args) => {
   const [value, setValue] = useState<number | undefined>(args.value ?? 1);
   const onValueChange = useCallback(
-    (newValue) => {
+    (newValue: any) => {
       console.log(`new value = ${newValue}`);
       setValue(newValue as number);
     },

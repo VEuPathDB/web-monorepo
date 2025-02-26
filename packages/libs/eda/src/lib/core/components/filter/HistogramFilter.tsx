@@ -2,7 +2,6 @@ import SelectedRangeControl from '@veupathdb/components/lib/components/plotContr
 import BinWidthControl from '@veupathdb/components/lib/components/plotControls/BinWidthControl';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
 import { Toggle } from '@veupathdb/coreui';
-import Button from '@veupathdb/components/lib/components/widgets/Button';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateRangeInputs';
 
@@ -25,7 +24,7 @@ import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import { number, partial, TypeOf, boolean, type, intersection } from 'io-ts';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { usePromise } from '../../hooks/promise';
+import { useCachedPromise } from '../../hooks/cachedPromise';
 import { AnalysisState } from '../../hooks/analysis';
 import { useSubsettingClient } from '../../hooks/workspace';
 import { DateRangeFilter, NumberRangeFilter } from '../../types/filter';
@@ -127,13 +126,11 @@ export function HistogramFilter(props: Props) {
       getOrElse((): UIState => defaultUIState)
     );
   }, [variableUISettings, uiStateKey, defaultUIState]);
-  const uiStateForData = useDebounce(uiState, 1000);
+  const dataParams = useDebounce(uiState, 1000);
   const subsettingClient = useSubsettingClient();
 
-  const getData = useCallback(
-    async (
-      dataParams: UIState
-    ): Promise<
+  const data = useCachedPromise(
+    async (): Promise<
       HistogramData & {
         variableId: string;
         entityId: string;
@@ -221,17 +218,14 @@ export function HistogramFilter(props: Props) {
       };
     },
     [
+      dataParams,
       otherFilters,
       entity.displayName,
       entity.displayNamePlural,
       entity.id,
       studyMetadata.id,
-      subsettingClient,
       variable,
-    ]
-  );
-  const data = usePromise(
-    useCallback(() => getData(uiStateForData), [getData, uiStateForData])
+    ] // used to have `subsettingClient`
   );
 
   const filter = filters?.find(
@@ -337,7 +331,7 @@ export function HistogramFilter(props: Props) {
       className="filter-param"
       style={{ position: 'relative', marginTop: '2em' }}
     >
-      {data.error && <pre>{String(data.error)}</pre>}
+      {data.error != null && <pre>{String(data.error)}</pre>}
       <div>
         <div
           style={{
@@ -514,6 +508,25 @@ function HistogramPlotWithControls({
     return { min: filter.min, max: filter.max } as NumberOrDateRange;
   }, [filter]);
 
+  // For integer variables, the graphical range highlighting needs to extend to (max + 1).
+  // This compensates for the (max - 1) adjustment in handleSelectedRangeChange.
+  // The (max - 1) logic is necessitated by the both-ends-inclusivity of filters, which is most
+  // noticable with integers. This approach does not handle real-valued variables with values
+  // that coincide with bin boundaries, and we don't have a plan yet how to deal with it. Subtracting
+  // 1e-8 does not seem attractive!
+  // Full description in https://github.com/VEuPathDB/web-monorepo/issues/1200
+  const selectedRangeForHighlighting = useMemo(():
+    | NumberOrDateRange
+    | undefined => {
+    if (selectedRange == null || variable == null) return;
+    if (variable.type === 'integer') {
+      return {
+        min: selectedRange.min,
+        max: (selectedRange.max as number) + 1,
+      } as NumberRange;
+    } else return selectedRange;
+  }, [selectedRange, variable]);
+
   // selectedRangeBounds is used for auto-filling the start (or end)
   // in the SelectedRangeControl
   const selectedRangeBounds = useMemo((): NumberOrDateRange | undefined => {
@@ -528,31 +541,18 @@ function HistogramPlotWithControls({
       : undefined;
   }, [data?.series, data?.binWidthSlider?.valueType]);
 
-  const handleSelectedRangeChange = useCallback(
-    (range?: NumberOrDateRange) => {
-      if (range) {
-        updateFilter(
-          enforceBounds(
-            {
-              min:
-                typeof range.min === 'string'
-                  ? padISODateTime(range.min)
-                  : range.min,
-              max:
-                typeof range.max === 'string'
-                  ? padISODateTime(range.max)
-                  : range.max,
-            } as NumberOrDateRange,
-            selectedRangeBounds
-          )
-        );
-      } else {
-        updateFilter(); // clear the filter if range is undefined
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [updateFilter, selectedRangeBounds]
-  );
+  const handleSelectedRangeChangeForHistogram = useRangeChangeHandler({
+    selectedRangeBounds,
+    variable,
+    updateFilter,
+    adjustMax: true,
+  });
+  const handleSelectedRangeChangeForTextInputs = useRangeChangeHandler({
+    selectedRangeBounds,
+    variable,
+    updateFilter,
+    adjustMax: false,
+  });
 
   const widgetHeight = '4em';
 
@@ -573,11 +573,7 @@ function HistogramPlotWithControls({
         {}, // no overrides
         true // use inclusive less than or equal to for min
       ),
-    [
-      defaultUIState.independentAxisRange,
-      defaultDependentAxisRange,
-      uiState.dependentAxisRange,
-    ]
+    [defaultUIState.independentAxisRange, dependentAxisMinPosMaxRange, uiState]
   );
 
   // set useEffect for changing truncation warning message
@@ -607,7 +603,8 @@ function HistogramPlotWithControls({
         valueType={data?.binWidthSlider?.valueType}
         selectedRange={selectedRange}
         selectedRangeBounds={selectedRangeBounds}
-        onSelectedRangeChange={handleSelectedRangeChange}
+        onSelectedRangeChange={handleSelectedRangeChangeForTextInputs}
+        inclusive={true}
       />
       <Histogram
         {...histogramProps}
@@ -615,11 +612,11 @@ function HistogramPlotWithControls({
         binStartType="inclusive"
         binEndType="exclusive"
         interactive={true}
-        selectedRange={selectedRange}
+        selectedRange={selectedRangeForHighlighting}
         opacity={opacity}
         displayLegend={displayLegend}
         displayLibraryControls={displayLibraryControls}
-        onSelectedRangeChange={handleSelectedRangeChange}
+        onSelectedRangeChange={handleSelectedRangeChangeForHistogram}
         barLayout={barLayout}
         dependentAxisLabel="Count"
         independentAxisLabel={variableDisplayWithUnit(variable)}
@@ -873,7 +870,7 @@ function formatStatValue(
       ? String(value).replace(/T.*$/, '')
       : // set conditions similar to plotly
       gt(Number(value), 100000) ||
-        (Number(value) != 0 && lt(Math.abs(Number(value)), 0.0001))
+        (Number(value) !== 0 && lt(Math.abs(Number(value)), 0.0001))
       ? Number(value).toExponential(4)
       : Number.isInteger(value)
       ? Number(value)
@@ -949,3 +946,42 @@ const DisplayStats = (props: DisplayStatsProps) => {
     </>
   );
 };
+
+// hook to make two flavours of range change handler
+function useRangeChangeHandler(props: {
+  updateFilter: (selectedRange?: NumberRange | DateRange) => void;
+  variable: HistogramVariable | undefined;
+  adjustMax: boolean;
+  selectedRangeBounds: NumberRange | DateRange | undefined;
+}) {
+  const { updateFilter, variable, adjustMax, selectedRangeBounds } = props;
+
+  return useCallback(
+    (range?: NumberOrDateRange) => {
+      if (variable) {
+        if (range) {
+          updateFilter(
+            enforceBounds(
+              {
+                min:
+                  typeof range.min === 'string'
+                    ? padISODateTime(range.min)
+                    : range.min,
+                max:
+                  typeof range.max === 'string'
+                    ? padISODateTime(range.max)
+                    : variable.type === 'integer' && adjustMax
+                    ? range.max - 1
+                    : range.max,
+              } as NumberOrDateRange,
+              selectedRangeBounds
+            )
+          );
+        } else {
+          updateFilter(); // clear the filter if range is undefined
+        }
+      }
+    },
+    [updateFilter, selectedRangeBounds, variable, adjustMax]
+  );
+}

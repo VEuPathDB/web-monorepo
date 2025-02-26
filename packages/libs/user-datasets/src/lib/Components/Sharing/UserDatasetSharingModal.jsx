@@ -8,6 +8,7 @@ import {
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { Modal } from '@veupathdb/coreui';
 import { isVdiCompatibleWdkService } from '../../Service';
+import '../UserDatasets.scss';
 import './UserDatasetSharingModal.scss';
 
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);

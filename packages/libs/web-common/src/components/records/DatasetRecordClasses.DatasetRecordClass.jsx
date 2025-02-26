@@ -7,6 +7,9 @@ import { projectId } from '../../config';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
 import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 import { isUserApprovedForAction } from '@veupathdb/study-data-access/lib/study-access/permission';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { BlockRecordAttributeSection } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
 
 // Use Element.innerText to strip XML
 function stripXML(str) {
@@ -100,83 +103,83 @@ export function RecordHeading(props) {
     newcategory,
     megabase_pairs,
     study_access,
+    custom_download_tab,
   } = attributes;
 
   let version = getSourceVersion(attributes, tables);
   let primaryPublication = getPrimaryPublication(record);
 
   return (
-    <div>
+    <>
       <props.DefaultComponent {...props} />
       <div className="wdk-RecordOverview eupathdb-RecordOverview">
-        {organism_prefix ? (
-          <div className="eupathdb-RecordOverviewItem">
-            <strong>Organism (source or reference): </strong>
-            <span dangerouslySetInnerHTML={{ __html: organism_prefix }} />
-          </div>
-        ) : null}
+        <dl>
+          {organism_prefix ? (
+            <>
+              <dt>Organism (source or reference)</dt>
+              <dd dangerouslySetInnerHTML={{ __html: organism_prefix }} />
+            </>
+          ) : null}
 
-        {newcategory ? (
-          <div className="eupathdb-RecordOverviewItem">
-            <strong>Category: </strong>
-            <span>{newcategory}</span>
-          </div>
-        ) : null}
+          {newcategory ? (
+            <>
+              <dt>Category</dt>
+              <dd>{newcategory}</dd>
+            </>
+          ) : null}
 
-        {primaryPublication && primaryPublication.pubmed_link ? (
-          <div className="eupathdb-RecordOverviewItem">
-            <strong>Primary publication: </strong>
-            <span>{renderPrimaryPublication(primaryPublication)}</span>
-          </div>
-        ) : null}
+          {primaryPublication && primaryPublication.pubmed_link ? (
+            <>
+              <dt>Primary publication</dt>
+              <dd>{renderPrimaryPublication(primaryPublication)}</dd>
+            </>
+          ) : null}
 
-        {contact && institution ? (
-          <div className="eupathdb-RecordOverviewItem">
-            <strong>Primary contact: </strong>
+          {contact && institution ? (
+            <>
+              <dt>Primary contact</dt>
+              <dd>
+                {renderPrimaryContact(contact, institution, email, record)}
+              </dd>
+            </>
+          ) : null}
 
-            <span>
-              {renderPrimaryContact(contact, institution, email, record)}
-            </span>
-          </div>
-        ) : null}
+          {version ? (
+            <>
+              <dt>Source version(s)</dt>
+              <dd>{renderSourceVersion(version, newcategory)}</dd>
+            </>
+          ) : null}
 
-        {version ? (
-          <div className="eupathdb-RecordOverviewItem">
-            <strong>Source version(s): </strong>
-            <span>{renderSourceVersion(version, newcategory)}</span>
-          </div>
-        ) : null}
+          {eupath_release ? (
+            <>
+              <dt>Release # / date</dt>
+              <dd>{eupath_release}</dd>
+            </>
+          ) : null}
 
-        {eupath_release ? (
-          <div className="eupathdb-RecordOverviewItem">
-            <strong>Release # / date: </strong>
-            <span>{eupath_release}</span>
-          </div>
-        ) : null}
-
-        <div className="eupathdb-RecordOverviewItem">
-          <strong>Summary: </strong>
-          <span
+          <dt>Summary</dt>
+          <dd
             style={{ whiteSpace: 'normal' }}
             dangerouslySetInnerHTML={{ __html: summary }}
           />
-        </div>
 
-        {megabase_pairs ? (
-          <div className="eupathdb-RecordOverviewItem">
-            <strong>Megabase Pairs: </strong>
-            <span>{megabase_pairs}</span>
-          </div>
-        ) : null}
+          {megabase_pairs ? (
+            <>
+              <dt>Megabase Pairs</dt>
+              <dd>{megabase_pairs}</dd>
+            </>
+          ) : null}
 
-        {study_access ? (
-          <StudyAccessOverviewItem
-            study_access={study_access}
-            record={record}
-          />
-        ) : null}
+          {study_access ? (
+            <StudyAccessOverviewItem
+              study_access={study_access}
+              record={record}
+            />
+          ) : null}
+        </dl>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -252,6 +255,13 @@ const ConnectedReferences = connect(
   }),
   null
 )(References);
+
+export function RecordAttributeSection({ DefaultComponent, ...props }) {
+  if (props.attribute.name === 'description') {
+    return <BlockRecordAttributeSection {...props} />;
+  }
+  return <DefaultComponent {...props} />;
+}
 
 export function RecordTable(props) {
   if (props.table.name === 'References') {
@@ -332,42 +342,59 @@ function StudyAccessOverviewItem(props) {
   );
 
   function makeMessage() {
-    switch (study_access) {
-      case 'Prerelease':
-        return 'Data downloads for this study are not yet available on this website.';
-      case 'Public':
-        return 'Data downloads for this study are public. Data are available without logging in.';
-      case 'Controlled':
-        return isUserApproved ? (
-          'You have been granted access to download the data.'
-        ) : (
-          <>
-            To download data, please {requestAccessButton}. Data will be
-            available immediately after submitting the request.
-          </>
-        );
-      case 'Protected':
-      default:
-        return isUserApproved ? (
-          'You have been granted access to download the data.'
-        ) : (
-          <>
-            To download data, please {requestAccessButton}. Data will be
-            available upon study team review and approval.
-          </>
-        );
+    if (typeof record.attributes.custom_download_tab === 'string') {
+      return (
+        <Banner
+          banner={{
+            type: 'info',
+            message: safeHtml(
+              record.attributes.custom_download_tab,
+              null,
+              'div'
+            ),
+          }}
+        />
+      );
+    } else {
+      switch (study_access) {
+        case 'Prerelease':
+          return 'Data downloads for this study are not yet available on this website.';
+        case 'Public':
+          return 'Data downloads for this study are public. Data are available without logging in.';
+        case 'Controlled':
+          return isUserApproved ? (
+            'You have been granted access to download the data.'
+          ) : (
+            <>
+              To download data, please {requestAccessButton}. Data will be
+              available immediately after submitting the request.
+            </>
+          );
+        case 'Protected':
+        default:
+          return isUserApproved ? (
+            'You have been granted access to download the data.'
+          ) : (
+            <>
+              To download data, please {requestAccessButton}. Data will be
+              available upon study team review and approval.
+            </>
+          );
+      }
     }
   }
 
   return (
     <>
-      <div className="eupathdb-RecordOverviewItem">
-        <strong>Data accessibility: </strong>
-        <span>{study_access}</span>
-      </div>
-      {loading ? null : (
-        <div style={{ color: '#666', fontSize: '1.2em' }}>{makeMessage()}</div>
-      )}
+      <dt>Data accessibility</dt>
+      <dd>
+        {study_access}
+        {loading ? null : (
+          <div style={{ color: '#666', fontSize: '.8em', fontWeight: 400 }}>
+            {makeMessage()}
+          </div>
+        )}
+      </dd>
     </>
   );
 }

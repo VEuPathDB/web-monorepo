@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 
+interface PromiseFactoryProps {
+  signal: AbortSignal;
+}
 interface PromiseFactory<T> {
-  (): Promise<T>;
+  (props: PromiseFactoryProps): Promise<T>;
 }
 
 /**
@@ -14,8 +17,12 @@ export function usePromise<T>(factory: PromiseFactory<T>, deps?: any[]) {
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     let doSetValue = true;
+    const controller = new AbortController();
+    const props = { signal: controller.signal };
     setLoading(true);
-    factory().then((value) => {
+    // Pass AbortSignal to factory function so it can handle
+    // abort, if it so chooses.
+    factory(props).then((value) => {
       if (doSetValue) {
         setValue(value);
         setLoading(false);
@@ -23,6 +30,7 @@ export function usePromise<T>(factory: PromiseFactory<T>, deps?: any[]) {
     });
     return () => {
       doSetValue = false;
+      controller.abort();
     };
   }, deps);
   return { value, loading };

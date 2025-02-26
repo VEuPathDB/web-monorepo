@@ -5,15 +5,20 @@ import {
 } from '../../components/tidytree/HorizontalDendrogram';
 import Mesa from '@veupathdb/coreui/lib/components/Mesa';
 import { MesaStateProps } from '../../../../coreui/lib/components/Mesa/types';
-import { css as classNameStyle, cx } from '@emotion/css';
-import { css as globalStyle, Global } from '@emotion/react';
+
+import './TreeTable.scss';
 
 export interface TreeTableProps<RowType> {
   /**
    * number of pixels vertical space for each row of the table and tree
    * (for the table this is a minimum height, so make sure table content doesn't wrap)
+   * required; no default; minimum seems to be 42; suggested value: 45
    */
   rowHeight: number;
+  /**
+   * number of pixels max width for table columns; defaults to 200
+   */
+  maxColumnWidth?: number;
   /**
    * data and options for the tree
    */
@@ -25,7 +30,17 @@ export interface TreeTableProps<RowType> {
    * data and options for the table
    */
   tableProps: MesaStateProps<RowType>;
+  /**
+   * hide the tree (but keep its horizontal space); default = false
+   */
+  hideTree?: boolean;
+  /**
+   * Passed as children to the `Mesa` component
+   */
+  children?: React.ReactNode;
 }
+
+const margin: [number, number, number, number] = [0, 10, 0, 10];
 
 /**
  * main props are
@@ -42,50 +57,52 @@ export interface TreeTableProps<RowType> {
  * - allow additional Mesa props and options to be passed
  */
 export default function TreeTable<RowType>(props: TreeTableProps<RowType>) {
-  const { rowHeight } = props;
-  const { rows } = props.tableProps;
-
-  const rowStyleClassName = useMemo(
-    () =>
-      cx(
-        classNameStyle({
-          height: rowHeight + 'px',
-          background: 'yellow',
-        })
-      ),
-    [rowHeight]
-  );
+  const { rowHeight, maxColumnWidth = 200, hideTree = false, children } = props;
+  const { rows, filteredRows } = props.tableProps;
 
   // tableState is just the tableProps with an extra CSS class
   // to make sure the height is consistent with the tree
-  const tableState: MesaStateProps<RowType> = {
-    ...props.tableProps,
-    options: {
-      ...props.tableProps.options,
-      deriveRowClassName: (_) => rowStyleClassName,
-    },
-  };
-
-  return (
-    <div
-      style={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'row' }}
-    >
+  const tableState: MesaStateProps<RowType> = useMemo(() => {
+    const tree = hideTree ? null : (
       <HorizontalDendrogram
         {...props.treeProps}
         rowHeight={rowHeight}
-        leafCount={rows.length}
-        options={{ margin: [0, 10, 0, 10] }}
+        leafCount={filteredRows?.length ?? rows.length}
+        options={{ margin, interactive: false }}
       />
-      <>
-        <Global
-          styles={globalStyle`
-	  .DataTable {
-	    margin-bottom: 0px !important;
-	  }
-	`}
-        />
-        <Mesa state={tableState} />
-      </>
-    </div>
-  );
+    );
+
+    return {
+      ...props.tableProps,
+      options: {
+        ...props.tableProps.options,
+        className: 'TreeTable',
+        style: {
+          '--tree-table-row-height': rowHeight + 'px',
+        } as React.CSSProperties,
+        inline: true,
+        // TO DO: explore event delegation to avoid each tooltip having handlers
+        //        replace inline mode's inline styling with emotion classes
+        inlineUseTooltips: true,
+        inlineMaxHeight: `${rowHeight}px`,
+        inlineMaxWidth: `${maxColumnWidth}px`,
+        marginContent: tree,
+      },
+    };
+  }, [
+    filteredRows?.length,
+    hideTree,
+    maxColumnWidth,
+    props.tableProps,
+    props.treeProps,
+    rowHeight,
+    rows.length,
+  ]);
+
+  // if `hideTree` is used more dynamically than at present
+  // (for example if the user sorts the table)
+  // then the table container styling will need
+  // { marginLeft: hideTree ? props.treeProps.width : 0 }
+  // to stop the table jumping around horizontally
+  return <Mesa state={tableState} children={children} />;
 }

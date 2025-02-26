@@ -17,6 +17,7 @@ import {
   updateNavigationVisibility,
   updateSectionVisibility,
   requestPartialRecord,
+  updateTableState,
 } from '../Actions/RecordActions';
 
 import {
@@ -42,6 +43,7 @@ const ActionCreators = {
   loadRecordData,
   updateSectionVisibility,
   updateNavigationQuery,
+  updateTableState,
   updateAllFieldVisibility,
   updateNavigationCategoryExpansion,
   updateNavigationVisibility,
@@ -94,6 +96,13 @@ class RecordController extends PageController<Props> {
         tables: getTableNames(categoryTree),
       },
     ];
+  }
+
+  getDefaultExpandedSections(
+    recordClass: RecordClass,
+    categoryTree: CategoryTreeNode
+  ): string[] | undefined {
+    return undefined;
   }
 
   pruneCategoryTree(
@@ -176,7 +185,8 @@ class RecordController extends PageController<Props> {
         recordClass,
         pkValues,
         this.getRecordRequestOptions.bind(this),
-        this.pruneCategoryTree.bind(this)
+        this.pruneCategoryTree.bind(this),
+        this.getDefaultExpandedSections.bind(this)
       );
     }
   }

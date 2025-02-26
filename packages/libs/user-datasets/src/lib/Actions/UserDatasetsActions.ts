@@ -21,7 +21,6 @@ import {
   UserDatasetDetails,
   UserDatasetMeta,
   UserDatasetVDI,
-  UserQuotaMetadata,
   UserDatasetFileListing,
 } from '../Utils/types';
 import { FetchClientError } from '@veupathdb/http-utils';
@@ -504,13 +503,12 @@ export function loadUserDatasetListWithoutLoadingIndicator() {
         () => false
       ),
       wdkService.getCurrentUserDatasets(),
-      wdkService.getUserQuotaMetadata(),
-    ]).then(([filterByProject, userDatasets, userQuotaMetadata]) => {
+    ]).then(([filterByProject, userDatasets]) => {
       const vdiToExistingUds = userDatasets.map(
         (ud: UserDatasetVDI): UserDataset => {
           const { fileCount, shares, fileSizeTotal } = ud;
           const partiallyTransformedResponse =
-            transformVdiResponseToLegacyResponseHelper(ud, userQuotaMetadata);
+            transformVdiResponseToLegacyResponseHelper(ud);
           return {
             ...partiallyTransformedResponse,
             fileCount,
@@ -535,16 +533,12 @@ export function loadUserDatasetDetailWithoutLoadingIndicator(id: string) {
   return validateVdiCompatibleThunk<DetailAction>(({ wdkService }) =>
     Promise.all([
       wdkService.getUserDataset(id),
-      wdkService.getUserQuotaMetadata(),
       wdkService.getUserDatasetFileListing(id),
     ]).then(
-      ([userDataset, userQuotaMetadata, fileListing]) => {
+      ([userDataset, fileListing]) => {
         const { shares, dependencies } = userDataset as UserDatasetDetails;
         const partiallyTransformedResponse =
-          transformVdiResponseToLegacyResponseHelper(
-            userDataset,
-            userQuotaMetadata
-          );
+          transformVdiResponseToLegacyResponseHelper(userDataset);
         const transformedResponse = {
           ...partiallyTransformedResponse,
           fileListing,
@@ -693,8 +687,7 @@ type PartialLegacyUserDataset = Omit<
 >;
 
 function transformVdiResponseToLegacyResponseHelper(
-  ud: UserDatasetDetails | UserDatasetVDI,
-  userQuotaMetadata: UserQuotaMetadata
+  ud: UserDatasetDetails | UserDatasetVDI
 ): PartialLegacyUserDataset {
   const {
     name,
@@ -709,7 +702,6 @@ function transformVdiResponseToLegacyResponseHelper(
     importMessages,
     visibility,
   } = ud;
-  const { quota } = userQuotaMetadata;
   return {
     owner: owner.firstName + ' ' + owner.lastName,
     projects: projectIds ?? [],
@@ -728,7 +720,6 @@ function transformVdiResponseToLegacyResponseHelper(
     ownerUserId: owner.userId,
     age: Date.now() - Date.parse(created),
     id: datasetId,
-    percentQuotaUsed: quota.usage / quota.limit,
     status,
     importMessages: importMessages ?? [],
   };

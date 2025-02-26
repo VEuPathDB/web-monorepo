@@ -13,52 +13,53 @@ interface FileInputSubfieldProps {
   className?: string;
 }
 
-export const FileInputSubfield: React.SFC<FileInputSubfieldProps> = ({
-  onFileChange,
-  onDescriptionChange,
-  onRemove,
-  filename,
-  description,
-  disabled,
-  className,
-}) => (
-  <div className={className}>
-    {disabled ? (
-      <FormRow label="Select a file:" field={filename} />
-    ) : (
-      <FormRow
-        label="Select a file:"
-        field={<FileInput required onChange={onFileChange} />}
-      />
-    )}
-    {
-      <a
-        href="#"
-        onClick={(event) => {
-          event.preventDefault();
-          onRemove();
-        }}
-      >
-        <i className="fa fa-times" />
-      </a>
-    }
-    <FormRow
-      label={
-        <>
-          Brief Description:
-          <br />
-          (4000 max characters)
-        </>
-      }
-      field={
-        <TextArea
-          required
-          maxLength={4000}
-          disabled={disabled}
-          onChange={onDescriptionChange}
-          value={description}
+export const FileInputSubfield: React.FunctionComponent<FileInputSubfieldProps> =
+  ({
+    onFileChange,
+    onDescriptionChange,
+    onRemove,
+    filename,
+    description,
+    disabled,
+    className,
+  }) => (
+    <div className={className}>
+      {disabled ? (
+        <FormRow label="Select a file:" field={filename} />
+      ) : (
+        <FormRow
+          label="Select a file:"
+          field={<FileInput required onChange={onFileChange} />}
         />
+      )}
+      {
+        <a
+          href="#"
+          onClick={(event) => {
+            event.preventDefault();
+            onRemove();
+          }}
+        >
+          <i className="fa fa-times" />
+        </a>
       }
-    />
-  </div>
-);
+      <FormRow
+        label={
+          <>
+            Brief Description:
+            <br />
+            (4000 max characters)
+          </>
+        }
+        field={
+          <TextArea
+            required
+            maxLength={4000}
+            disabled={disabled}
+            onChange={onDescriptionChange}
+            value={description}
+          />
+        }
+      />
+    </div>
+  );

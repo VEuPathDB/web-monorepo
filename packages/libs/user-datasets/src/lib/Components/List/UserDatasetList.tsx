@@ -35,6 +35,7 @@ import CommunityModal from '../Sharing/UserDatasetCommunityModal';
 import UserDatasetStatus from '../UserDatasetStatus';
 import { normalizePercentage, textCell } from '../UserDatasetUtils';
 
+import '../UserDatasets.scss';
 import './UserDatasetList.scss';
 import { DateTime } from '../DateTime';
 

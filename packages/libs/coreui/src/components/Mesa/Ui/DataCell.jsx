@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import Templates from '../Templates';
 import { makeClassifier } from '../Utils/Utils';
 
+import { Tooltip } from '../../../components/info/Tooltip';
+
 const dataCellClass = makeClassifier('DataCell');
 
 class DataCell extends React.PureComponent {
@@ -47,8 +49,14 @@ class DataCell extends React.PureComponent {
     }
   }
 
+  setTitle(el) {
+    if (el == null) return;
+    el.title = el.scrollWidth <= el.clientWidth ? '' : el.innerText;
+  }
+
   render() {
-    let { column, inline, options, isChildRow, childRowColSpan } = this.props;
+    let { column, inline, options, isChildRow, childRowColSpan, rowIndex } =
+      this.props;
     let { style, width, className, key } = column;
 
     let whiteSpace = !inline
@@ -64,16 +72,24 @@ class DataCell extends React.PureComponent {
     width = width ? { width, maxWidth: width, minWidth: width } : {};
     style = Object.assign({}, style, width, whiteSpace);
     className = dataCellClass() + (className ? ' ' + className : '');
-    const children = this.renderContent();
+
+    const content = this.renderContent();
+
     const props = {
       style,
-      children,
-      key,
+      children: content,
       className,
       ...(isChildRow ? { colSpan: childRowColSpan } : null),
     };
 
-    return column.hidden ? null : <td {...props} />;
+    return column.hidden ? null : (
+      <td
+        onMouseEnter={(e) => this.setTitle(e.target)}
+        onMouseLeave={() => this.setTitle()}
+        key={key + '_' + rowIndex}
+        {...props}
+      />
+    );
   }
 }
 

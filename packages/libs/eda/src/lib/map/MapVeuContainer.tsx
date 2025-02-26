@@ -6,7 +6,9 @@ import {
   useHistory,
 } from 'react-router';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from '../core/api/queryClient';
+
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { EDAAnalysisListContainer, EDAWorkspaceContainer } from '../core';
@@ -59,22 +61,6 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
     history.push(loginUrl);
   }
 
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        // This is similar behavior to our custom usePromise hook.
-        // It can be overridden on an individual basis, if needed.
-        keepPreviousData: true,
-        // We presume data will not go stale during the lifecycle of an application.
-        staleTime: Infinity,
-        // Do not attempt to retry if an error is encountered
-        retry: false,
-        // Do not referch when the browser tab is focused again
-        refetchOnWindowFocus: false,
-      },
-    },
-  });
-
   // This will get the matched path of the active parent route.
   // This is useful so we don't have to hardcode the path root.
   const { path } = useRouteMatch();
@@ -96,7 +82,7 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
           path={`${path}/studies`}
           exact
           render={() => (
-            <Page requireLogin={false}>
+            <Page>
               <StudyList subsettingClient={edaClient} />
             </Page>
           )}
@@ -104,7 +90,7 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
         <Route
           path={`${path}/public`}
           render={() => (
-            <Page requireLogin={false}>
+            <Page>
               <PublicAnalysesRoute
                 analysisClient={analysisClient}
                 subsettingClient={edaClient}
@@ -121,7 +107,7 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
             }>
           ) => {
             return (
-              <Page requireLogin={false}>
+              <Page>
                 <ImportAnalysis
                   {...props.match.params}
                   analysisClient={analysisClient}

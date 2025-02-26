@@ -10,7 +10,6 @@ import { useCallback, useMemo, useState, useEffect } from 'react';
 
 import DataClient, { ScatterplotResponse } from '../../../api/DataClient';
 
-import { usePromise } from '../../../hooks/promise';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import {
   useDataClient,
@@ -60,6 +59,7 @@ import {
   uniqBy,
   filter,
   isEqual,
+  omit,
 } from 'lodash';
 // directly use RadioButtonGroup instead of ScatterPlotControls
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
@@ -93,6 +93,8 @@ import {
   ColorPaletteDark,
   SequentialGradientColorscale,
   getValueToGradientColorMapper,
+  DefaultNonHighlightColor,
+  DefaultHighlightMarkerStyle,
 } from '@veupathdb/components/lib/types/plots/addOns';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { useRouteMatch } from 'react-router';
@@ -149,6 +151,7 @@ import SliderWidget, {
 import { FloatingScatterplotExtraProps } from '../../../../map/analysis/hooks/plugins/scatterplot';
 
 import { Override } from '../../../types/utility';
+import { useCachedPromise } from '../../../hooks/cachedPromise';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -210,7 +213,7 @@ type DataSetProcessType = Override<
     y: (number | string)[] | null[];
     marker?: {
       color?: string | string[];
-      size?: number;
+      size?: number | number[];
       symbol?: string;
       line?: {
         color?: string | string[];
@@ -219,6 +222,7 @@ type DataSetProcessType = Override<
     };
     type?: string;
     r2?: number | null;
+    pointIds?: string[];
   }
 >;
 
@@ -236,6 +240,7 @@ function createDefaultConfig(): ScatterplotConfig {
     independentAxisValueSpec: 'Full',
     dependentAxisValueSpec: 'Full',
     markerBodyOpacity: 0.5,
+    returnPointIds: true,
   };
 }
 
@@ -258,6 +263,7 @@ export const ScatterplotConfig = t.partial({
   independentAxisValueSpec: t.string,
   dependentAxisValueSpec: t.string,
   markerBodyOpacity: t.number,
+  returnPointIds: t.boolean,
 });
 
 interface Options
@@ -644,14 +650,58 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     []
   );
 
-  const data = usePromise(
-    useCallback(async (): Promise<ScatterPlotDataWithCoverage | undefined> => {
-      // If this scatterplot has a computed variable and the compute job is anything but complete, do not proceed with getting data.
-      if (computedYAxisDetails && computeJobStatus !== 'complete')
-        return undefined;
+  const dataRequestDeps =
+    // If this scatterplot has a computed variable and the compute job is anything but complete, do not proceed with getting data.
+    (computedYAxisDetails && computeJobStatus !== 'complete') ||
+    // the usual conditions for not showing a plot:
+    filteredCounts.pending ||
+    filteredCounts.value == null ||
+    showLogScaleBanner ||
+    showContinousOverlayBanner ||
+    // check for required variables when not a compute
+    (computedXAxisDetails == null &&
+      (vizConfig.xAxisVariable == null || xAxisVariable == null)) ||
+    (computedYAxisDetails == null &&
+      (vizConfig.yAxisVariable == null || yAxisVariable == null))
+      ? undefined
+      : {
+          vizConfig: omit(
+            // same as additional dependencies to useUpdateThumbnailEffect
+            vizConfig,
+            [
+              'checkedLegendItems',
+              'independentAxisRange',
+              'dependentAxisRange',
+              'independentAxisLogScale',
+              'dependentAxisLogScale',
+              'independentAxisValueSpec',
+              'dependentAxisValueSpec',
+              'markerBodyOpacity',
+            ]
+          ),
+          filteredCounts: filteredCounts.value,
+          providedOverlayVariable,
+          computationDescriptor: computation.descriptor,
+          hideTrendlines: options?.hideTrendlines,
+          overlayMin,
+          overlayMax,
+          computedOverlayVariableDescriptor,
+        };
 
-      if (filteredCounts.pending || filteredCounts.value == null)
-        return undefined;
+  const data = useCachedPromise(
+    async (): Promise<ScatterPlotDataWithCoverage | undefined> => {
+      if (!dataRequestDeps) throw new Error('dataRequestDeps is undefined');
+
+      const {
+        vizConfig,
+        filteredCounts,
+        providedOverlayVariable,
+        computationDescriptor,
+        hideTrendlines,
+        overlayMin,
+        overlayMax,
+        computedOverlayVariableDescriptor,
+      } = dataRequestDeps;
 
       if (
         !variablesAreUnique([
@@ -671,27 +721,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         dataElementDependencyOrder
       );
 
-      if (outputEntity == null) return undefined;
-
-      // check log scale and plot mode option for retrieving data
-      if (showLogScaleBanner) return undefined;
-
-      // check variable inputs: this is necessary to prevent from data post
-      if (
-        computedXAxisDetails == null &&
-        (vizConfig.xAxisVariable == null || xAxisVariable == null)
-      )
-        return undefined;
-      else if (
-        computedYAxisDetails == null &&
-        (vizConfig.yAxisVariable == null || yAxisVariable == null)
-      )
-        return undefined;
-
-      // prevent data request for the case of  plot option != Raw when using continuous overlayVariable
-      if (showContinousOverlayBanner) {
-        return undefined;
-      }
+      if (outputEntity == null) throw new Error('outputEntity is undefined');
 
       // Convert valueSpecConfig to valueSpecValue for the data client request.
       let valueSpecValue: ScatterplotRequestParams['config']['valueSpec'] =
@@ -708,13 +738,13 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         filters,
         outputEntityId: outputEntity.id,
         vizConfig,
-        valueSpec: options?.hideTrendlines ? undefined : valueSpecValue,
+        valueSpec: hideTrendlines ? undefined : valueSpecValue,
       }) ?? {
         studyId,
         filters,
         config: {
           outputEntityId: outputEntity.id,
-          valueSpec: options?.hideTrendlines ? undefined : valueSpecValue,
+          valueSpec: hideTrendlines ? undefined : valueSpecValue,
           xAxisVariable: vizConfig.xAxisVariable,
           yAxisVariable: vizConfig.yAxisVariable,
           overlayVariable: vizConfig.overlayVariable,
@@ -722,14 +752,15 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             ? [vizConfig.facetVariable]
             : undefined,
           showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
+          returnPointIds: vizConfig.returnPointIds ?? true,
         },
         computeConfig: copmutationAppOverview.computeName
-          ? computation.descriptor.configuration
+          ? computationDescriptor.configuration
           : undefined,
       };
 
       const response = await dataClient.getVisualizationData(
-        computation.descriptor.type,
+        computationDescriptor.type,
         visualization.descriptor.type,
         params,
         ScatterplotResponse
@@ -741,7 +772,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           overlayEntity,
           overlayVariable,
           outputEntity,
-          filteredCounts.value,
+          filteredCounts,
           response.completeCasesTable
         );
       const showMissingFacet =
@@ -750,7 +781,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           facetEntity,
           facetVariable,
           outputEntity,
-          filteredCounts.value,
+          filteredCounts,
           response.completeCasesTable
         );
 
@@ -789,53 +820,18 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         showMissingFacet,
         facetVocabulary,
         facetVariable,
-        // pass computation
-        computation.descriptor.type,
+        computationDescriptor.type,
         entities,
         colorPaletteOverride
       );
+
       return {
         ...returnData,
         overlayValueToColorMapper,
       };
-    }, [
-      computedYAxisDetails,
-      computeJobStatus,
-      outputEntity,
-      filteredCounts.pending,
-      filteredCounts.value,
-      xAxisVariable,
-      yAxisVariable,
-      overlayVariable,
-      facetVariable,
-      inputsForValidation,
-      selectedVariables,
-      entities,
-      dataElementConstraints,
-      dataElementDependencyOrder,
-      filters,
-      vizConfig.valueSpecConfig,
-      vizConfig.xAxisVariable,
-      vizConfig.yAxisVariable,
-      vizConfig.overlayVariable,
-      vizConfig.facetVariable,
-      vizConfig.showMissingness,
-      computedXAxisDetails,
-      showLogScaleBanner,
-      showContinousOverlayBanner,
-      studyId,
-      options?.hideTrendlines,
-      computation.descriptor.configuration,
-      computation.descriptor.type,
-      dataClient,
-      visualization.descriptor.type,
-      overlayEntity,
-      facetEntity,
-      computedOverlayVariableDescriptor,
-      neutralPaletteProps.colorPalette,
-      overlayMin,
-      overlayMax,
-    ])
+    },
+    [dataRequestDeps],
+    60 * 1000 // 60 seconds cache time
   );
 
   const outputSize =
@@ -2050,7 +2046,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                 options?.getOverlayVariable != null
                   ? providedOverlayVariableDescriptor
                     ? variableDisplayWithUnit(providedOverlayVariable)
-                    : 'None. ' + options?.getOverlayVariableHelp?.() ?? ''
+                    : 'None. ' + (options?.getOverlayVariableHelp?.() ?? '')
                   : undefined,
             } as const,
           ]),
@@ -2170,7 +2166,8 @@ export function scatterplotResponseToData(
   facetVariable?: Variable,
   computationType?: string,
   entities?: StudyEntity[],
-  colorPaletteOverride?: string[]
+  colorPaletteOverride?: string[],
+  highlightIds?: string[]
 ): ScatterPlotDataWithCoverage {
   const modeValue = 'markers';
 
@@ -2216,7 +2213,8 @@ export function scatterplotResponseToData(
         // pass computation here to add conditions for apps
         computationType,
         entities,
-        colorPaletteOverride
+        colorPaletteOverride,
+        highlightIds
       );
 
     return {
@@ -2285,7 +2283,9 @@ function processInputData(
   facetVariable?: Variable,
   computationType?: string,
   entities?: StudyEntity[],
-  colorPaletteOverride?: string[]
+  colorPaletteOverride?: string[],
+  highlightIds?: string[],
+  highlightMarkerStyleOverride?: ScatterPlotDataSeries['marker']
 ) {
   // set variables for x- and yaxis ranges: no default values are set
   let xMin: number | string | undefined;
@@ -2359,6 +2359,20 @@ function processInputData(
 
   // data array to return
   let dataSetProcess: DataSetProcessType[] = [];
+
+  // Set empty highlightTrace. Will be populated if there are any highlighted points.
+  // Currently we import the defalut highlight styling, but in the future the marker styling could
+  // also be passed as a prop. Highlighting is currently limited to points, though it could extend
+  // similarly to lines, boxes, etc.
+  let highlightTrace: any = {
+    x: [],
+    y: [],
+    name: 'highlight',
+    mode: 'markers',
+    type: 'scattergl',
+    marker: highlightMarkerStyleOverride ?? DefaultHighlightMarkerStyle,
+    pointIds: [],
+  };
 
   responseScatterplotData.some(function (
     el: ScatterplotResponse['scatterplot']['data'][number],
@@ -2479,6 +2493,21 @@ function processInputData(
         }
       }
 
+      // If a point is highlighted, we have to set its y value to null, otherwise it will
+      // still have a tooltip (regardless of marker size, color, etc.)
+      if (
+        el.pointIds &&
+        highlightIds &&
+        highlightIds.length > 0 &&
+        highlightIds.some((id) => el.pointIds?.includes(id))
+      ) {
+        seriesY.forEach((_value, index: number) => {
+          if (el.pointIds && highlightIds.includes(el.pointIds[index])) {
+            seriesY[index] = null;
+          }
+        });
+      }
+
       // add scatter data considering input options
       dataSetProcess.push({
         x: seriesX.length ? seriesX : [null], // [null] hack required to make sure
@@ -2489,8 +2518,10 @@ function processInputData(
         type: scatterPlotType, // for the raw data of the scatterplot
         marker: {
           color:
-            seriesGradientColorscale?.length > 0 &&
-            markerSymbolGradient === 'circle'
+            highlightIds && highlightIds.length > 0
+              ? DefaultNonHighlightColor
+              : seriesGradientColorscale?.length > 0 &&
+                markerSymbolGradient === 'circle'
               ? markerColorsGradient
               : markerColor(index),
           symbol:
@@ -2500,8 +2531,10 @@ function processInputData(
           // need to set marker.line for a transparent case (opacity != 1)
           line: {
             color:
-              seriesGradientColorscale?.length > 0 &&
-              markerSymbolGradient === 'circle'
+              highlightIds && highlightIds.length > 0
+                ? DefaultNonHighlightColor
+                : seriesGradientColorscale?.length > 0 &&
+                  markerSymbolGradient === 'circle'
                 ? markerColorsGradient
                 : markerColor(index),
             width: 1,
@@ -2509,7 +2542,40 @@ function processInputData(
         },
         // this needs to be here for the case of markers with line or lineplot.
         line: { color: markerColor(index), shape: 'linear' },
+        pointIds: el.pointIds,
       });
+
+      // If there are any highlihgted points, we need to add those to the highlight trace
+      if (
+        highlightIds &&
+        el.pointIds &&
+        highlightIds.some((id) => el.pointIds?.includes(id))
+      ) {
+        // Extract the indices of highlighted points.
+        const highlightIndices = el.pointIds
+          .map((id: string, index: number) =>
+            highlightIds.includes(id) ? index : -1
+          )
+          .filter((index: number) => index !== -1);
+        if (highlightIndices && highlightIndices.length !== 0) {
+          highlightTrace.x.push(
+            ...(highlightIndices.map(
+              (index: number) => el.seriesX && el.seriesX[index]
+            ) || [])
+          );
+          highlightTrace.y.push(
+            ...(highlightIndices.map(
+              (index: number) => el.seriesY && el.seriesY[index]
+            ) || [])
+          );
+          highlightTrace.pointIds.push(
+            ...(highlightIndices.map(
+              (index: number) => el.pointIds && el.pointIds[index]
+            ) || [])
+          );
+        }
+      }
+
       return breakAfterThisSeries(index);
     }
     return false;
@@ -2743,6 +2809,11 @@ function processInputData(
     }
     return breakAfterThisSeries(index);
   });
+
+  // If there are any highlighted points, add that trace to datasetProcess
+  if (highlightTrace.x.length > 0) {
+    dataSetProcess.push(highlightTrace);
+  }
 
   return {
     dataSetProcess: { series: dataSetProcess },
