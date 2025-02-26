@@ -242,6 +242,20 @@ const Berlin = [
   'rgb(255, 173, 173)',
 ];
 
+/**
+ * Highlighting colors for points
+ */
+export const DefaultHighlightColor = '#D246FF';
+export const DefaultNonHighlightColor = '#95929C';
+export const DefaultHighlightMarkerStyle = {
+  color: DefaultHighlightColor,
+  symbol: 'circle',
+  line: {
+    color: DefaultHighlightColor,
+    width: 1,
+  },
+};
+
 export const getValueToGradientColorMapper = (
   minValue: number,
   maxValue: number
