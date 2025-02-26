@@ -128,7 +128,7 @@ export const SiteSearchInput = wrappable(function ({
       autoComplete="off"
     >
       {hasFilters ? (
-        <Tooltip content="Run a new search, without your existing filters">
+        <Tooltip title="Run a new search, without your existing filters">
           <button
             className="reset"
             type="button"
