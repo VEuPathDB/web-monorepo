@@ -24,8 +24,8 @@ library.
 
 In order to use the code in a website, the top-level javascript file and css
 file must be included on a webpage. Because the application is a single-page
-application, routing is done client-side. It is standard practice to service the
-html that for the webpage in such a way that requests for URLs that start with a
+application, routing is done client-side. It is standard practice to serve the
+html for the webpage in such a way that requests for URLs that start with a
 specific path are all routed to the HTML file. The javascript code will
 dynamically determine what to display on the screen, based on the URL.
 
@@ -36,6 +36,14 @@ RewriteEngine On
 RewriteBase "/app"
 RewriteRule "." "/index.html" [L]
 ```
+
+This rule tells the Apache web server to serve the file `index.html` for _any_
+url that starts with `/app`. This makes it possible to link to a subpage of the
+website, and have the browser load the "skeleton" html defined in `index.html`,
+which will then load the javascript and css code.
+
+When running a local dev site (using a command like `yarn nx start @veupathdb/genomics-site`), a local webpack-dev server starts up and does
+something similar, in terms of routing.
 
 ## Layering
 
