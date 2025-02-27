@@ -12,7 +12,7 @@ import {
   boolean,
 } from 'io-ts';
 
-export interface UserDatasetMeta {
+export interface LegacyUserDatasetMeta {
   description: string;
   name: string;
   summary: string;
@@ -36,7 +36,7 @@ export interface UserDataset {
   }>;
   projects: string[];
   id: string;
-  meta: UserDatasetMeta;
+  meta: LegacyUserDatasetMeta;
   owner: string;
   ownerUserId: number;
   sharedWith: UserDatasetShare[] | undefined;
@@ -139,7 +139,7 @@ export type DatasetUploadPageConfig<
       uploadTypeConfig: DatasetUploadTypeConfig<T2>;
     };
 
-export interface NewUserDataset extends UserDatasetMeta {
+export interface NewUserDataset extends LegacyUserDatasetMeta {
   datasetType: string; // In prototype, the only value is "biom" - will eventually be an enum
   projects: string[];
   dependencies?: UserDataset['dependencies'];
@@ -407,7 +407,7 @@ interface UserDatasetContact {
   address?: string;
   isPrimary?: boolean;
 }
-export interface NewUserDatasetMeta {
+export interface VDIUserDatasetMeta {
   name: string;
   datasetType: {
     name: string;

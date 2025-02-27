@@ -25,7 +25,7 @@ import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import {
   DataNoun,
   UserDataset,
-  UserDatasetMeta,
+  LegacyUserDatasetMeta,
   UserDatasetShare,
 } from '../../Utils/types';
 
@@ -72,7 +72,7 @@ interface Props {
   removeUserDataset: (dataset: UserDataset) => any;
   updateUserDatasetDetail: (
     userDataset: UserDataset,
-    meta: UserDatasetMeta
+    meta: LegacyUserDatasetMeta
   ) => any;
   updateProjectFilter: (filterByProject: boolean) => any;
   quotaSize: number;

@@ -10,8 +10,8 @@ import {
 
 import {
   userDataset,
-  UserDatasetMeta,
-  NewUserDatasetMeta,
+  LegacyUserDatasetMeta,
+  VDIUserDatasetMeta,
   userDatasetDetails,
   userQuotaMetadata,
   userDatasetFileListing,
@@ -69,7 +69,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
     );
     const { uploadMethod, ...remainingConfig } = newUserDatasetConfig;
 
-    const meta: NewUserDatasetMeta = {
+    const meta: VDIUserDatasetMeta = {
       dependencies: [],
       ...remainingConfig,
       datasetType: {
@@ -139,7 +139,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
 
   updateUserDataset = (
     datasetId: string,
-    requestBody: Partial<UserDatasetMeta>
+    requestBody: Partial<LegacyUserDatasetMeta>
   ) => {
     return this.fetch(
       createJsonRequest({
