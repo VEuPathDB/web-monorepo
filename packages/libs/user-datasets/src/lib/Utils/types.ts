@@ -344,11 +344,6 @@ const datasetDependency = type({
   resourceVersion: string,
 });
 
-// To do
-// 1. Update this io-ts type. DONE :)
-// 2. Find where response from getUserDataset is used
-// 3. Update where it's used.
-
 export const userDatasetDetails = intersection([
   datasetIdType,
   type({
