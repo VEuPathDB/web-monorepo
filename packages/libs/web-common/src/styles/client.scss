@@ -130,8 +130,6 @@ td.wdk-DataTableCell__thumbnail {
   gap: 0.5em;
   align-items: baseline;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   width: 100%;
   padding: 0.5em 0 1em 0;
   font-size: 2em;
@@ -149,6 +147,9 @@ td.wdk-DataTableCell__thumbnail {
 .eupathdb-RecordOverviewDescription {
   font-weight: 300;
   font-size: 1.1em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .eupathdb-RecordOverviewItem {
