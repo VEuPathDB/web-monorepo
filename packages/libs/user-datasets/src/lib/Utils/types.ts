@@ -19,6 +19,14 @@ export interface UserDatasetMeta_UI {
   name: string;
   summary: string;
   visibility: UserDatasetVisibility;
+  shortName?: string;
+  shortAttribution?: string;
+  category?: string;
+  publications?: UserDatasetPublication[];
+  hyperlinks?: UserDatasetHyperlink[];
+  organisms?: string[];
+  contacts?: UserDatasetContact[];
+  createdOn?: string;
 }
 
 export interface UserDatasetShare {
@@ -257,36 +265,6 @@ const userDatasetRecipientDetails = type({
 
 export const datasetIdType = type({ datasetId: string });
 
-export const userDataset = intersection([
-  datasetIdType,
-  type({
-    owner: ownerDetails,
-    datasetType: datasetTypeDetails,
-    visibility: visibilityOptions,
-    name: string,
-    origin: string,
-    projectIds: array(string),
-    status: statusDetails,
-    created: string,
-    fileCount: number,
-    fileSizeTotal: number,
-  }),
-  partial({
-    summary: string,
-    description: string,
-    sourceUrl: string,
-    shares: array(
-      intersection([userDatasetRecipientDetails, type({ accepted: boolean })])
-    ),
-    importMessages: array(string),
-  }),
-]);
-
-const userDatasetDetailsShareDetails = type({
-  status: keyof({ grant: null, revoke: null }),
-  recipient: userDatasetRecipientDetails,
-});
-
 const userDatasetPublication = intersection([
   type({
     pubMedId: string,
@@ -321,6 +299,44 @@ const userDatasetContact = intersection([
     isPrimary: boolean,
   }),
 ]);
+
+export const userDataset = intersection([
+  datasetIdType,
+  type({
+    owner: ownerDetails,
+    datasetType: datasetTypeDetails,
+    visibility: visibilityOptions,
+    name: string,
+    origin: string,
+    projectIds: array(string),
+    status: statusDetails,
+    created: string,
+    fileCount: number,
+    fileSizeTotal: number,
+  }),
+  partial({
+    summary: string,
+    description: string,
+    sourceUrl: string,
+    shares: array(
+      intersection([userDatasetRecipientDetails, type({ accepted: boolean })])
+    ),
+    importMessages: array(string),
+    shortName: string,
+    shortAttribution: string,
+    category: string,
+    publications: array(userDatasetPublication),
+    hyperlinks: array(userDatasetHyperlink),
+    organisms: array(string),
+    contacts: array(userDatasetContact),
+    createdOn: string,
+  }),
+]);
+
+const userDatasetDetailsShareDetails = type({
+  status: keyof({ grant: null, revoke: null }),
+  recipient: userDatasetRecipientDetails,
+});
 
 const datasetDependency = type({
   resourceIdentifier: string,
@@ -387,19 +403,19 @@ interface UserDatasetDependency {
   resourceVersion: string;
 }
 
-interface UserDatasetPublication {
+export interface UserDatasetPublication {
   pubMedId: string;
   citation?: string;
 }
 
-interface UserDatasetHyperlink {
+export interface UserDatasetHyperlink {
   url: string;
   text: string;
   description?: string;
   isPublication?: boolean;
 }
 
-interface UserDatasetContact {
+export interface UserDatasetContact {
   name: string;
   email?: string;
   affiliation?: string;

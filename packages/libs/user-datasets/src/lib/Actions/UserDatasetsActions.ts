@@ -22,6 +22,9 @@ import {
   UserDatasetMeta_UI,
   UserDatasetVDI,
   UserDatasetFileListing,
+  UserDatasetContact,
+  UserDatasetHyperlink,
+  UserDatasetPublication,
 } from '../Utils/types';
 import { FetchClientError } from '@veupathdb/http-utils';
 import {
@@ -701,6 +704,14 @@ function transformVdiResponseToLegacyResponseHelper(
     status,
     importMessages,
     visibility,
+    shortName,
+    shortAttribution,
+    category,
+    publications,
+    hyperlinks,
+    organisms,
+    contacts,
+    createdOn,
   } = ud;
   return {
     owner: owner.firstName + ' ' + owner.lastName,
@@ -716,6 +727,14 @@ function transformVdiResponseToLegacyResponseHelper(
       description: description ?? '',
       summary: summary ?? '',
       visibility,
+      shortName: shortName ?? '',
+      shortAttribution: shortAttribution ?? '',
+      category: category ?? '',
+      publications: publications ?? ([] as UserDatasetPublication[]),
+      hyperlinks: hyperlinks ?? ([] as UserDatasetHyperlink[]),
+      organisms: organisms ?? [],
+      contacts: contacts ?? ([] as UserDatasetContact[]),
+      createdOn: createdOn ?? '',
     },
     ownerUserId: owner.userId,
     age: Date.now() - Date.parse(created),
