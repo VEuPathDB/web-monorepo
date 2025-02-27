@@ -12,7 +12,9 @@ import {
   boolean,
 } from 'io-ts';
 
-export interface LegacyUserDatasetMeta {
+// User dataset metadata type used by the UI (as opposed to the type
+// used by VDI).
+export interface UserDatasetMeta_UI {
   description: string;
   name: string;
   summary: string;
@@ -36,7 +38,7 @@ export interface UserDataset {
   }>;
   projects: string[];
   id: string;
-  meta: LegacyUserDatasetMeta;
+  meta: UserDatasetMeta_UI;
   owner: string;
   ownerUserId: number;
   sharedWith: UserDatasetShare[] | undefined;
@@ -139,7 +141,7 @@ export type DatasetUploadPageConfig<
       uploadTypeConfig: DatasetUploadTypeConfig<T2>;
     };
 
-export interface NewUserDataset extends LegacyUserDatasetMeta {
+export interface NewUserDataset extends UserDatasetMeta_UI {
   datasetType: string; // In prototype, the only value is "biom" - will eventually be an enum
   projects: string[];
   dependencies?: UserDataset['dependencies'];
@@ -407,7 +409,10 @@ interface UserDatasetContact {
   address?: string;
   isPrimary?: boolean;
 }
-export interface VDIUserDatasetMeta {
+
+// Interface for the dataset metadata used by VDI. Will get transformed into
+// UserDatasetMeta_UI for the the client.
+export interface UserDatasetMeta_VDI {
   name: string;
   datasetType: {
     name: string;

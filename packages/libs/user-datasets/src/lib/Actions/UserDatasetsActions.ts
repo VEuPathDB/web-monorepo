@@ -19,7 +19,7 @@ import { FILTER_BY_PROJECT_PREF } from '../Utils/project-filter';
 import {
   UserDataset,
   UserDatasetDetails,
-  LegacyUserDatasetMeta,
+  UserDatasetMeta_UI,
   UserDatasetVDI,
   UserDatasetFileListing,
 } from '../Utils/types';
@@ -633,7 +633,7 @@ export function unshareUserDatasets(
 
 export function updateUserDatasetDetail(
   userDataset: UserDataset,
-  meta: LegacyUserDatasetMeta
+  meta: UserDatasetMeta_UI
 ) {
   return validateVdiCompatibleThunk<UpdateAction>(({ wdkService }) => [
     detailUpdating(),
