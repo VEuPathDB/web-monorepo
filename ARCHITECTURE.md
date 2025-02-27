@@ -85,3 +85,15 @@ that may vary between sites.
 > serve as libraries. In a perfect world, with infinite time, these pieces would
 > extracted into their own packages, to minimize confusion. But, alas, the world
 > is not perfect, and time remains finite... wait... that can't be right...
+
+## Routing
+
+TODO
+
+## Controller and View Components
+
+TODO
+
+## Redux and RxJS
+
+TODO
