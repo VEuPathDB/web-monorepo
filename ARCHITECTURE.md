@@ -76,6 +76,10 @@ typically includes things related to specific record types or business logic
 that may vary between sites.
 
 > [!NOTE]
+> Modules from other packages in `packages/libs` can be included in any of these
+> layers. This includes larger features, such as `eda` and `user-datasets`, and
+> small and medium sized libraries, such as `http-utils` or `components`.
+
 > Both `wdk-client` and `web-common` also contain utilities and components that
 > may be imported and used by other layers. In that sense, these packages also
 > serve as libraries. In a perfect world, with infinite time, these pieces would
