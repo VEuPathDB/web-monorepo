@@ -75,11 +75,11 @@ customizations and features are added to the single-page application. This
 typically includes things related to specific record types or business logic
 that may vary between sites.
 
-> [!NOTE]
-> Modules from other packages in `packages/libs` can be included in any of these
-> layers. This includes larger features, such as `eda` and `user-datasets`, and
-> small and medium sized libraries, such as `http-utils` or `components`.
+Modules from other packages in `packages/libs` can be included in any of these
+layers. This includes larger features, such as `eda` and `user-datasets`, and
+small and medium sized libraries, such as `http-utils` or `components`.
 
+> [!NOTE]
 > Both `wdk-client` and `web-common` also contain utilities and components that
 > may be imported and used by other layers. In that sense, these packages also
 > serve as libraries. In a perfect world, with infinite time, these pieces would
@@ -88,11 +88,48 @@ that may vary between sites.
 
 ## Routing
 
-TODO
+Client side routing is handled by the library [react-router
+v5](https://v5.reactrouter.com/). The library is configured in the `Root.tsx`
+component in `packages/lib/wdk-client`. It takes an array of `RouteEntry`
+objects, which can be extended by each "layer" (see section
+[layering](#layering) above). This array consitutes the "top-level routes" of
+the application. Each `RouteEntry` will declare what route path it matches, and
+what component to render when it's path is matched. When the URL of the page is
+updated, the router will look for the _first_ route that matches the path, and
+use that to render content on the screen. A `RouteEntry` can declare other
+options, such as if login is required.
+
+In addtion to the array of `RouteEntry` objects, the router also takes a
+`History` object, which is configured to prepend a path to all routes. In
+practive, this is `{tomcatWebappUrl}/app`. So, for example, `/plasmo/app`.
 
 ## Controller and View Components
 
-TODO
+A `RouteEntry` will typically reference a "Controller" component. In other parts
+of the React ecosystem, these are referred to as "smart" or "container"
+components. The basic idea is that these are top-level components that are aware
+of application-level libraries, such as redux, react-router, etc. They know how
+to take a set of props, translate that into requests for data (e.g., from a
+backend service, from a redux store, etc).
+
+Some examples of Controller components are:
+
+- `RecordController`
+- `QuestionController`
+
+In contrast, "View" components should not make assumptions about where its data
+is coming from, nor how it is persisted. They primarily encapsulate a collection
+of components used for a particular feature, such as a Record page or a Question
+page.
+
+> [!NOTE]
+> Use of the "Controller" suffix is not consistent. For example, the components
+> used for eda routes do not include the suffix "Controller". The idea was to
+> distinguish these components from those that use redux. In hindsight, it may
+> only lead to confusion. If one gets lost, it is probably a good idea to start
+> by finding the `RouteEntry` for the page you are working on, and go from
+> there. The browser dev tools is also a great way to figure out where things
+> are.
 
 ## Redux and RxJS
 
