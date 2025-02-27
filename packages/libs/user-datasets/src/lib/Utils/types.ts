@@ -285,11 +285,51 @@ const userDatasetDetailsShareDetails = type({
   recipient: userDatasetRecipientDetails,
 });
 
+const userDatasetPublication = intersection([
+  type({
+    pubMedId: string,
+  }),
+  partial({
+    citation: string,
+  }),
+]);
+
+const userDatasetHyperlink = intersection([
+  type({
+    url: string,
+    text: string,
+  }),
+  partial({
+    description: string,
+    isPublication: boolean,
+  }),
+]);
+
+const userDatasetContact = intersection([
+  type({
+    name: string,
+  }),
+  partial({
+    email: string,
+    affiliation: string,
+    city: string,
+    state: string,
+    country: string,
+    address: string,
+    isPrimary: boolean,
+  }),
+]);
+
 const datasetDependency = type({
   resourceIdentifier: string,
   resourceDisplayName: string,
   resourceVersion: string,
 });
+
+// To do
+// 1. Update this io-ts type. DONE :)
+// 2. Find where response from getUserDataset is used
+// 3. Update where it's used.
 
 export const userDatasetDetails = intersection([
   datasetIdType,
@@ -310,6 +350,14 @@ export const userDatasetDetails = intersection([
     sourceUrl: string,
     shares: array(userDatasetDetailsShareDetails),
     importMessages: array(string),
+    shortName: string,
+    shortAttribution: string,
+    category: string,
+    publications: array(userDatasetPublication),
+    hyperlinks: array(userDatasetHyperlink),
+    organisms: array(string),
+    contacts: array(userDatasetContact),
+    createdOn: string,
   }),
 ]);
 
@@ -331,22 +379,54 @@ export const userDatasetFileListing = partial({
   }),
 });
 
+interface UserDatasetDependency {
+  resourceIdentifier: string;
+  resourceDisplayName: string;
+  resourceVersion: string;
+}
+
+interface UserDatasetPublication {
+  pubMedId: string;
+  citation?: string;
+}
+
+interface UserDatasetHyperlink {
+  url: string;
+  text: string;
+  description?: string;
+  isPublication?: boolean;
+}
+
+interface UserDatasetContact {
+  name: string;
+  email?: string;
+  affiliation?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  address?: string;
+  isPrimary?: boolean;
+}
 export interface NewUserDatasetMeta {
   name: string;
   datasetType: {
     name: string;
     version: string;
   };
-  origin: string;
-  projects: string[];
-  dependencies: {
-    resourceDisplayName: string;
-    resourceIdentifier: string;
-    resourceVersion: string;
-  }[];
+  shortName?: string;
+  shortAttribution?: string;
+  category?: string;
   visibility?: 'private' | 'public' | 'protected';
   summary?: string;
   description?: string;
+  origin: string;
+  projects: string[];
+  dependencies: UserDatasetDependency[];
+  publications?: UserDatasetPublication[];
+  hyperlinks?: UserDatasetHyperlink[];
+  organisms?: string[];
+  contacts?: UserDatasetContact[];
+  createdOn?: string;
 }
 
 export type UserDatasetVDI = TypeOf<typeof userDataset>;
