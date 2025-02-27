@@ -23,9 +23,9 @@ of these sites follow the same architecture, which is based on the React
 library.
 
 In order to use the code in a website, the top-level javascript file and css
-file must be included on a webpage. Because the application is a single-page
+file must be included on a web page. Because the application is a single-page
 application, routing is done client-side. It is standard practice to serve the
-html for the webpage in such a way that requests for URLs that start with a
+html for the web page in such a way that requests for URLs that start with a
 specific path are all routed to the HTML file. The javascript code will
 dynamically determine what to display on the screen, based on the URL.
 
@@ -38,7 +38,7 @@ RewriteRule "." "/index.html" [L]
 ```
 
 This rule tells the Apache web server to serve the file `index.html` for _any_
-url that starts with `/app`. This makes it possible to link to a subpage of the
+URL that starts with `/app`. This makes it possible to link to a subpage of the
 website, and have the browser load the "skeleton" html defined in `index.html`,
 which will then load the javascript and css code.
 
@@ -59,10 +59,10 @@ react-router, state management via redux and rxjs, and a collection of features,
 such as wdk strategies and record pages, and core styling. An `initialize`
 function is exposed as a top-level export. The function takes many options that
 are used to initialize the single-page application, including things like the
-base url, the root dom node to render, the url for the WDK REST service, etc. It
+base URL, the root DOM node to render, the URL for the WDK REST service, etc. It
 also provides some hooks for adding additional features and customizations, such
 as wrapping components, extending the WdkService module, adding addition slots
-to the redux store, adding addtional routes, etc.
+to the redux store, adding additional routes, etc.
 
 The second layer is the `web-common` package. It exposes its own `initialize`
 function, which ultimately calls the `wdk-client` `initialize` function. The
@@ -92,16 +92,16 @@ Client side routing is handled by the library [react-router
 v5](https://v5.reactrouter.com/). The library is configured in the `Root.tsx`
 component in `packages/lib/wdk-client`. It takes an array of `RouteEntry`
 objects, which can be extended by each "layer" (see section
-[layering](#layering) above). This array consitutes the "top-level routes" of
+[layering](#layering) above). This array constitutes the "top-level routes" of
 the application. Each `RouteEntry` will declare what route path it matches, and
 what component to render when it's path is matched. When the URL of the page is
 updated, the router will look for the _first_ route that matches the path, and
 use that to render content on the screen. A `RouteEntry` can declare other
 options, such as if login is required.
 
-In addtion to the array of `RouteEntry` objects, the router also takes a
+In addition to the array of `RouteEntry` objects, the router also takes a
 `History` object, which is configured to prepend a path to all routes. In
-practive, this is `{tomcatWebappUrl}/app`. So, for example, `/plasmo/app`.
+practice, this is `{tomcatWebappUrl}/app`. So, for example, `/plasmo/app`.
 
 ## Controller and View Components
 
@@ -110,7 +110,7 @@ of the React ecosystem, these are referred to as "smart" or "container"
 components. The basic idea is that these are top-level components that are aware
 of application-level libraries, such as redux, react-router, etc. They know how
 to take a set of props, translate that into requests for data (e.g., from a
-backend service, from a redux store, etc).
+back end service, from a redux store, etc.).
 
 Some examples of Controller components are:
 
@@ -124,7 +124,7 @@ page.
 
 > [!NOTE]
 > Use of the "Controller" suffix is not consistent. For example, the components
-> used for eda routes do not include the suffix "Controller". The idea was to
+> used for EDA routes do not include the suffix "Controller". The idea was to
 > distinguish these components from those that use redux. In hindsight, it may
 > only lead to confusion. If one gets lost, it is probably a good idea to start
 > by finding the `RouteEntry` for the page you are working on, and go from
