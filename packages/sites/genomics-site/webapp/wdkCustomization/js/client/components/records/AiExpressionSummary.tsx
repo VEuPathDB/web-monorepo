@@ -221,6 +221,7 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
                   >
                     <>
                       <a
+                        className="javascript-link"
                         onClick={() =>
                           scrollToAndOpenExpressionGraph({
                             expressionGraphs: expressionGraphs,
