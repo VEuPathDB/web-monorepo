@@ -135,7 +135,7 @@ type AiExpressionResultProps = Props & {
 const AiExpressionResult = connector((props: AiExpressionResultProps) => {
   const {
     record,
-    summary: { headline, one_paragraph_summary, sections },
+    summary: { headline, one_paragraph_summary, topics },
   } = props;
 
   // make a lookup from dataset_id to the experiment info (display_name, assay_type) etc
@@ -171,14 +171,14 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
   // const danger = `<img src="x" onerror="alert('XSS!')" />`;
   // See https://github.com/VEuPathDB/web-monorepo/issues/1170
 
-  const numberedSections = sections.map((section, index) => ({
-    ...section,
+  const numberedTopics = topics.map((topic, index) => ({
+    ...topic,
     rowId: index,
   }));
 
-  // create the sections table
+  // create the topics table
   const mainTableState: MesaStateProps<RowType> = {
-    rows: numberedSections,
+    rows: numberedTopics,
     columns: [
       {
         key: 'headline',
@@ -205,7 +205,7 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
         // as it is called with two args, not one, see
         // https://github.com/VEuPathDB/web-monorepo/blob/d1d03fcd051cd7a54706fe879e4af4b1fc220d88/packages/libs/coreui/src/components/Mesa/Ui/DataCell.jsx#L26
         const rowIndex = badProps as unknown as number;
-        const rowData = sections[rowIndex];
+        const rowData = topics[rowIndex];
         return (
           <ErrorBoundary>
             <ul>
@@ -271,7 +271,7 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
         <p>
           <i>
             The results from {expressionGraphs.length} experiments have been
-            organized into the {sections.length} topics below. The AI was
+            organized into the {topics.length} topics below. The AI was
             instructed to present the most biologically relevant information
             first. As this method is still evolving, results may vary.
           </i>

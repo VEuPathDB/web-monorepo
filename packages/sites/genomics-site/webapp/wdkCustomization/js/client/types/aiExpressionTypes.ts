@@ -12,7 +12,7 @@ export interface AiExpressionGeneResponse {
 export interface AiExpressionSummary {
   headline: string;
   one_paragraph_summary: string;
-  sections: AiExpressionSummarySection[];
+  topics: AiExpressionSummarySection[];
 }
 
 export interface AiExpressionSummarySection {
