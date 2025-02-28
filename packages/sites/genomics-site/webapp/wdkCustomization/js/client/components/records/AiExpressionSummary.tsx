@@ -30,6 +30,8 @@ import { scrollToAndOpenExpressionGraph } from './utils';
 // Styles
 import './AiExpressionSummary.scss';
 
+const MIN_DATASETS_FOR_AI_SUMMARY = 5;
+
 /** Display AI Expression Summary UI and results in a collapsible section */
 export function AiExpressionSummary(props: Props) {
   const { attribute, record, isCollapsed, onCollapsedChange, title } = props;
@@ -38,6 +40,16 @@ export function AiExpressionSummary(props: Props) {
   const headerContent = title ?? (
     <DefaultSectionTitle displayName={displayName} help={help} />
   );
+
+  const microarrayDatasetCount = props.record.attributes[
+    'microarray_dataset_count'
+  ]
+    ? Number(props.record.attributes['microarray_dataset_count'].toString())
+    : 0;
+  const rnaseqDatasetCount = props.record.attributes['rnaseq_dataset_count']
+    ? Number(props.record.attributes['rnaseq_dataset_count'].toString())
+    : 0;
+  const datasetCount = microarrayDatasetCount + rnaseqDatasetCount;
 
   return (
     <CollapsibleSection
@@ -48,13 +60,20 @@ export function AiExpressionSummary(props: Props) {
       onCollapsedChange={onCollapsedChange}
     >
       <ErrorBoundary>
-        <div style={{ minHeight: '8em' }}>
-          {record.attributes['ai_expression'] == 'YES' ? (
-            <AiSummaryGate {...props} />
+        {record.attributes['ai_expression'] == 'YES' ? (
+          datasetCount < MIN_DATASETS_FOR_AI_SUMMARY ? (
+            <div>
+              The AI Expression Summary feature is not available for genes with
+              fewer than {MIN_DATASETS_FOR_AI_SUMMARY} transcriptomics datasets.
+            </div>
           ) : (
-            <div>Sorry, this feature is not currently available.</div>
-          )}
-        </div>
+            <div style={{ minHeight: '8em' }}>
+              <AiSummaryGate {...props} />
+            </div>
+          )
+        ) : (
+          <div>Sorry, this feature is not currently available.</div>
+        )}
       </ErrorBoundary>
     </CollapsibleSection>
   );
