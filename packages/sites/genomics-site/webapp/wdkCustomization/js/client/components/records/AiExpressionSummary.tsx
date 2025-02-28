@@ -105,7 +105,7 @@ function AiSummaryGate(props: Props) {
   if (shouldPopulateCache) {
     return (
       <div>
-        <p>🤖 Summarizing... 🤖</p>
+        <p>🤖 Summarizing... (can take up to three minutes) 🤖</p>
         <Loading />
       </div>
     );
