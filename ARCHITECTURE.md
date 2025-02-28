@@ -131,6 +131,122 @@ page.
 > there. The browser dev tools is also a great way to figure out where things
 > are.
 
-## Redux and RxJS
+## State Management
 
-TODO
+### Redux and RxJS
+
+The majority of the single-page application uses a fairly customized
+[redux](https://redux.js.org/) store for state management concerns. The redux
+store is created in `wdk-client`, and is configured from a collection of
+`StoreModules`. Each layer of the application can modify the collection of
+`StoreModules`, either adding additional capabilities, or modifying existing
+behavior.
+
+To fully appreciate and understand the role of a `StoreModule`, a basic
+understand of redux is needed. Redux is a library designed to manage application
+state. There are two ways to interact with a redux store: read state, and
+dispatch action. Reading state is pretty self-explanatory. It is worth
+mentioning that Redux state is treated as immutable--it should not be directly
+modified. Redux leverages immutibilty to know when to signal that the state has
+been modified. All state updates are handled by a reducer funtion that is
+invoked any time an action is dispatched. The reducer function is passed the
+action, and the current state object; it returns either the same state object,
+or a new state object with updates that are based on the action. An action is
+an object that typically has a `type` property and a `payload` property. The
+`type` property identifies the type of action, which a reducer typically uses in
+a switch-statement. The `payload` property includes data that is specific to the
+action being dispatched. I like to think of an action's `type` as a the name of
+a function to call, and the `payload` as the parameters with which to call the
+function.
+
+> [!NOTE]
+> For a more detailed overview of redux, see
+> https://redux.js.org/tutorials/essentials/part-1-overview-concepts
+
+With that background out of the way, we can return to specifics of our use of
+redux. `StoreModules` allows the final redux store to be constructed from
+smaller pieces that focus on a specific part of the application. Each top-level
+property of the redux store's state is managed by a `StoreModule`. Each store
+module has a `reduce` function, and top-level `reduce` function of the redux
+store will delegate to the `StoreModule` reduce functions, passing the action
+being dispatched, and the sub-state associated with that `StoreModule`.
+
+For example, if we have three `StoreModules`: `search`, `record`, and `author`,
+the resulting redux state would look something like:
+
+```typescript
+interface State {
+  search: SearchState;
+  record: RecordState;
+  author: AuthorState;
+}
+```
+
+The top-level reduce function would look something like this:
+
+```typescript
+function reduce(state: State, action: Action) {
+  return storeModules.reduce((state, storeModule) => {
+    // Current state associated with storeModule
+    const subState = state[storeModule.key];
+    // Delegate to storeModule's reduce function
+    const nextSubState = storeModule.reduce(subState, action);
+    // If the storeModule's reduce function returns a new state object
+    // then we will return a new top-level state object, replacing the
+    // state associated with the storeModule
+    if (nextSubState !== subState) {
+      return {
+        ...state,
+        [storeModule.key]: nextSubState,
+      };
+    }
+    // If the new state object is the same, then return the top-level
+    // state as-is.
+    return state;
+  }, state);
+}
+```
+
+In addition to a `reduce` function, a `StoreModule` can optionally define an
+`observe` function. This function can be used to perform "side-effects". In
+redux, a side-effect is some process that may result in dispatching a new
+action. We use the library [redux-observable](https://redux-observable.js.org)
+for this. The `observe` function is what the library calls an
+[Epic](https://redux-observable.js.org/docs/basics/Epics.html).
+
+In sum, a `StoreModule` is an object with three properties:
+
+1. `key` -- A string that becomes the top-level state property name to access
+   the `StoreModule`'s state.
+2. `reduce` -- A function that takes the `StoreModule`'s slice of state, and an
+   action. The function returns a new slice of state, which is then integrated
+   into the redux store's state.
+3. `observe` -- An optional function for performing side-effects.
+
+The other important part of our redux impementation are **Action Creators**. An
+action creator is a function that returns any value supported by our redux
+middleware `WdkMiddleware`. See the type `ActionCreatorResult` for details. This
+is a recursive type, which allows for complex delegation. Roughly speaking, the
+type of `ActionCreatorResult` is:
+
+- A redux `Action`
+- A function that is called with `ActionCreatorServices`, and returns
+  `ActionCreatorResult`
+- A `Promise` that resolves to `ActionCreatorResult`.
+- An `Array` of `ActionCreatorResult`.
+
+> [!TIP]
+> When trying to understand part of an application, start by looking at the
+> `StoreModule`, and the actions that it responds to.
+
+### Recoil
+
+The package `preferred-organisms` uses [Recoil](https://recoiljs.org/) for state
+management. The library is used in a straightforward way, so there isn't too
+much to say here.
+
+### React Component State
+
+The package `eda` does not use a state management library. It just uses
+Component state (via `useState`), and exposes that state via React Context, to
+allow descendent Components easy access to parts of the state.
