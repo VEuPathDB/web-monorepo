@@ -718,6 +718,12 @@ const useHeaderMenuItems = (
           url: makeStaticPageRoute('/about.html'),
         },
         {
+          key: 'about-faq',
+          display: 'FAQs',
+          type: 'reactRoute',
+          url: makeStaticPageRoute('/faq.html'),
+        },
+        {
           key: 'switchsites',
           display: 'VEuPathDB sites',
           type: 'subMenu',
@@ -1043,6 +1049,13 @@ const useHeaderMenuItems = (
           url: '/reset-session',
         },
       ],
+    },
+    {
+      key: 'subscr',
+      display: 'Subscriptions',
+      type: 'reactRoute',
+      target: '_blank',
+      url: makeStaticPageRoute('/subscriptions.html'),
     },
     {
       key: 'contact-us',
