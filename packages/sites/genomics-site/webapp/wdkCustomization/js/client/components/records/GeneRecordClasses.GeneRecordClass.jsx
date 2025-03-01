@@ -201,15 +201,17 @@ function RecordOverview(props) {
       data-num-user-comments={record.attributes['num_user_comments']}
       data-apollo={record.attributes['show_apollo']}
     >
-      <div
-        onMouseOver={(event) => {
-          const target = event.currentTarget;
-          target.title = isNodeOverflowing(target) ? target.textContent : '';
-        }}
-        className="eupathdb-RecordOverviewTitle"
-      >
+      <div className="eupathdb-RecordOverviewTitle">
         <h1 className="eupathdb-RecordOverviewId">{r('source_id')}</h1>
-        <h2 className="eupathdb-RecordOverviewDescription">{r('product')}</h2>
+        <h2
+          onMouseOver={(event) => {
+            const target = event.currentTarget;
+            target.title = isNodeOverflowing(target) ? target.textContent : '';
+          }}
+          className="eupathdb-RecordOverviewDescription"
+        >
+          {r('product')}
+        </h2>
       </div>
 
       <div className="eupathdb-RecordOverviewPanels">
