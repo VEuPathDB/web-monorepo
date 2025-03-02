@@ -45,18 +45,40 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
         },
         renderInfo: () => (
           <p className="formInfo">
-            Complete the Upload My Normalized RNA-Seq form. Name, Summary and
-            Upload File/URL are required. Three types of files – bigWig, counts
-            and index – are supported in the uploaded zip file. bigWig files are
-            not required but will allow visualization in the genome browser if
-            included. The counts (FPKM/TPM) files should be tab-delimited and
-            contain two columns with column headers: 'gene_id', and either
-            'FPKM' or 'TMP'. The index file should be named manifest.txt and
-            consist of a tab delimited txt file with three columns (no column
-            headers): sample name, filename, and strandedness
-            (unstranded/stranded). Upload Data Set initiates the transfer and
-            will create a record page for your data set that contains links to
-            the fold change search, and bigWig files if included.
+            <b>Upload your Normalized RNA-Seq data set</b>
+            <br />
+            To upload your data set, compress the files into a .tar.gz, .tgz or
+            .zip file. The upload requires:
+            <ol>
+              <li>
+                <b>Counts file(s)</b> - Each sample must have a tab-delimited
+                file containing two columns with these headers:
+                <ul>
+                  <li>'gene_id'</li>
+                  <li>'FPKM' or 'TPM'</li>
+                </ul>
+              </li>
+              <li>
+                <b>Manifest file</b> - A tab-delimited file named
+                'manifest.txt', containing three columns without headers:
+                <ul>
+                  <li>sample name</li>
+                  <li>file name (must match a counts file)</li>
+                  <li>
+                    strandedness ('unstranded' or 'stranded') - Only
+                    'unstranded' is currently supported.
+                  </li>
+                </ul>
+              </li>
+            </ol>
+            Optionally, you may include <b>bigWig files</b> (.bw extension) in
+            your uploaded compressed file. They are not required but will allow
+            visualization in the genome browser. Do not add these file names in
+            the manifest file.
+            <br />
+            The Upload Data Set service initiates the transfer and will create a
+            record page for your data set that contains links to the fold change
+            search, and bigWig files if included.
           </p>
         ),
         uploadMethodConfig: {
@@ -98,19 +120,25 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
         },
         renderInfo: () => (
           <p className="formInfo">
-            We accept any file in the{' '}
+            We accept .bw files in the{' '}
             <a href="https://genome.ucsc.edu/goldenpath/help/bigWig.html">
               bigWig format
             </a>
             .
             <br />
-            The bigwig files you select here must be mapped to the reference
-            genome that you select above.
-            <br />
-            Only letters, numbers, spaces and dashes are allowed in the file
-            name.
-            <br />
-            Please restrict the name to 100 characters or less.
+            If you need to upload more than one file please make a compressed
+            file with all your bigWig files (a .tar.gz, .tgz or .zip file).
+            <ul>
+              <li>
+                Each bigWig file must be mapped to the genome that you selected
+                above.
+              </li>
+              <li>Each individual file cannot be &gt; 500MB.</li>
+              <li>
+                Please restrict the .bw file names to &lt; 100 chars and use
+                only letters, numbers, spaces and dashes.
+              </li>
+            </ul>
           </p>
         ),
         uploadMethodConfig: {
