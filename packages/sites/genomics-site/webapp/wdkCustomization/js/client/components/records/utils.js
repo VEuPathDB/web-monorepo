@@ -86,10 +86,7 @@ export function scrollToAndOpenExpressionGraph({
         ]),
       });
 
-      // Delay scrolling by 100ms
-      setTimeout(() => {
-        expressionGraphTableRowElement.scrollIntoView();
-      }, 100);
+      expressionGraphTableRowElement.scrollIntoView();
     }
   }
 }

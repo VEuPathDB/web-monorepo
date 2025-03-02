@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import {
   CollapsibleSection,
@@ -166,6 +166,11 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
     result[dataset_id] = { ...current };
     return result;
   }, {});
+
+  // pre-open the main expression table so the links to it work reliably
+  useEffect(() => {
+    props.updateSectionVisibility('ExpressionGraphs', true);
+  }, []);
 
   // custom renderer (to handle <i>, <ul>, <li> and <strong> tags, mainly)
   // and provide click to toggle row expansion functionality
