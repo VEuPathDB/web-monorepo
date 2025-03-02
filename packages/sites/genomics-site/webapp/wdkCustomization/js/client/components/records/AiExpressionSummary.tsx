@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import {
   CollapsibleSection,
@@ -30,6 +30,8 @@ import { scrollToAndOpenExpressionGraph } from './utils';
 // Styles
 import './AiExpressionSummary.scss';
 
+const MIN_DATASETS_FOR_AI_SUMMARY = 5;
+
 /** Display AI Expression Summary UI and results in a collapsible section */
 export function AiExpressionSummary(props: Props) {
   const { attribute, record, isCollapsed, onCollapsedChange, title } = props;
@@ -38,6 +40,16 @@ export function AiExpressionSummary(props: Props) {
   const headerContent = title ?? (
     <DefaultSectionTitle displayName={displayName} help={help} />
   );
+
+  const microarrayDatasetCount = props.record.attributes[
+    'microarray_dataset_count'
+  ]
+    ? Number(props.record.attributes['microarray_dataset_count'].toString())
+    : 0;
+  const rnaseqDatasetCount = props.record.attributes['rnaseq_dataset_count']
+    ? Number(props.record.attributes['rnaseq_dataset_count'].toString())
+    : 0;
+  const datasetCount = microarrayDatasetCount + rnaseqDatasetCount;
 
   return (
     <CollapsibleSection
@@ -48,13 +60,20 @@ export function AiExpressionSummary(props: Props) {
       onCollapsedChange={onCollapsedChange}
     >
       <ErrorBoundary>
-        <div style={{ minHeight: '8em' }}>
-          {record.attributes['ai_expression'] == 'YES' ? (
-            <AiSummaryGate {...props} />
+        {record.attributes['ai_expression'] == 'YES' ? (
+          datasetCount < MIN_DATASETS_FOR_AI_SUMMARY ? (
+            <div>
+              The AI Expression Summary feature is not available for genes with
+              fewer than {MIN_DATASETS_FOR_AI_SUMMARY} transcriptomics datasets.
+            </div>
           ) : (
-            <div>Sorry, this feature is not currently available.</div>
-          )}
-        </div>
+            <div style={{ minHeight: '8em' }}>
+              <AiSummaryGate {...props} />
+            </div>
+          )
+        ) : (
+          <div>Sorry, this feature is not currently available.</div>
+        )}
       </ErrorBoundary>
     </CollapsibleSection>
   );
@@ -105,7 +124,7 @@ function AiSummaryGate(props: Props) {
   if (shouldPopulateCache) {
     return (
       <div>
-        <p>🤖 Summarizing... 🤖</p>
+        <p>🤖 Summarizing... (can take up to three minutes) 🤖</p>
         <Loading />
       </div>
     );
@@ -135,7 +154,7 @@ type AiExpressionResultProps = Props & {
 const AiExpressionResult = connector((props: AiExpressionResultProps) => {
   const {
     record,
-    summary: { headline, one_paragraph_summary, sections },
+    summary: { headline, one_paragraph_summary, topics },
   } = props;
 
   // make a lookup from dataset_id to the experiment info (display_name, assay_type) etc
@@ -147,6 +166,11 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
     result[dataset_id] = { ...current };
     return result;
   }, {});
+
+  // pre-open the main expression table so the links to it work reliably
+  useEffect(() => {
+    props.updateSectionVisibility('ExpressionGraphs', true);
+  }, []);
 
   // custom renderer (to handle <i>, <ul>, <li> and <strong> tags, mainly)
   // and provide click to toggle row expansion functionality
@@ -171,14 +195,14 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
   // const danger = `<img src="x" onerror="alert('XSS!')" />`;
   // See https://github.com/VEuPathDB/web-monorepo/issues/1170
 
-  const numberedSections = sections.map((section, index) => ({
-    ...section,
+  const numberedTopics = topics.map((topic, index) => ({
+    ...topic,
     rowId: index,
   }));
 
-  // create the sections table
+  // create the topics table
   const mainTableState: MesaStateProps<RowType> = {
-    rows: numberedSections,
+    rows: numberedTopics,
     columns: [
       {
         key: 'headline',
@@ -205,7 +229,7 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
         // as it is called with two args, not one, see
         // https://github.com/VEuPathDB/web-monorepo/blob/d1d03fcd051cd7a54706fe879e4af4b1fc220d88/packages/libs/coreui/src/components/Mesa/Ui/DataCell.jsx#L26
         const rowIndex = badProps as unknown as number;
-        const rowData = sections[rowIndex];
+        const rowData = topics[rowIndex];
         return (
           <ErrorBoundary>
             <ul>
@@ -221,6 +245,7 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
                   >
                     <>
                       <a
+                        className="javascript-link"
                         onClick={() =>
                           scrollToAndOpenExpressionGraph({
                             expressionGraphs: expressionGraphs,
@@ -271,7 +296,7 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
         <p>
           <i>
             The results from {expressionGraphs.length} experiments have been
-            organized into the {sections.length} topics below. The AI was
+            organized into the {topics.length} topics below. The AI was
             instructed to present the most biologically relevant information
             first. As this method is still evolving, results may vary.
           </i>
