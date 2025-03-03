@@ -51,7 +51,7 @@ the code for those features. Many have dedicated packages, but some do not.
 - Entry points:
   - [MapVeuContainer](packages/libs/eda/src/lib/map/MapVeuContainer.tsx)
 
-## Dataset Access Management Dashboard (aka, Study Access Management Dashboard)
+## Dataset / Study Access Management Dashboard
 
 - Entry points:
   - [StudyAccessController](packages/libs/study-data-access/src/study-access/components/StudyAccessController.tsx)
