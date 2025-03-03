@@ -19,7 +19,7 @@ monorepo support.
 | ------- | ----------------- |
 | 16      | https://16.nx.dev |
 
-This repository uses [Nx](https://nx.dev/) for monorepo support. At the time of
+This repository uses Nx for monorepo support. At the time of
 this writing, we are using v16, and we are using a package-based repo. In
 brief, this means each package declares it's own set of dependencies and build
 scripts. See https://16.nx.dev/concepts/integrated-vs-package-based for more
@@ -35,8 +35,7 @@ upgrading to the latest version.
 | ------- | ----------------------------------------------------------------------------- |
 | 5       | https://github.com/facebook/create-react-app/tree/main/packages/react-scripts |
 
-[react-scripts](https://github.com/facebook/create-react-app/tree/main/packages/react-scripts)
-is used for the following things:
+react-scripts is used for the following things:
 
 - Local development sites (see [run-site-dev-server.js](packages/configs/react-scripts/scripts/run-site-dev-server.js) and [start.js](packages/configs/react-scripts/scripts/start.js)).
 - Build scripts (see [compile.js](packages/configs/react-scripts/scripts/compile.js), and [copy-assets](packages/configs/react-scripts/scripts/copy-assets.js)).
@@ -47,7 +46,7 @@ is used for the following things:
 | ------- | ----------------------- |
 | 5       | https://webpack.js.org/ |
 
-Website assets are built with [webpack](https://webpack.js.org/). Each package
+Website assets are built with webpack. Each package
 in `packages/sites` has scripts called `build:dev` and `bundle:npm`. The former
 produces development bundles, while the latter produces production bundles. The
 differences are primarily related to code minification and [tree
@@ -67,7 +66,7 @@ are a few exceptions:
 | 2       | https://prettier.io/docs/ |
 
 We use prettier to enforce code formatting rules. A pre-commit hook (see
-[below](#husky)) calls prettier to format any staged code. Our prettier
+[below](#lint-staged-and-husky)) calls prettier to format any staged code. Our prettier
 configuration lives in
 [packages/configs/prettier-config](packages/configs/prettier-config).
 
