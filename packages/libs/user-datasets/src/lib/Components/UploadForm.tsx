@@ -33,7 +33,7 @@ import {
   UserDatasetPublication,
 } from '../Utils/types';
 
-import { Modal } from '@veupathdb/coreui';
+import { FloatingButton, Modal } from '@veupathdb/coreui';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 import './UploadForm.scss';
@@ -147,8 +147,11 @@ function UploadForm({
   const [publications, setPublications] = useState<UserDatasetPublication[]>(
     []
   );
+  const [nPublicationInputBoxes, setNPublicationInputBoxes] = useState(0);
 
   console.log(publications);
+  console.log(nPublicationInputBoxes);
+  console.log(Array(nPublicationInputBoxes));
 
   // Don't want to really use a ton of state hooks. Instead could get all the info from form data
   // Could replace all the useState hooks with one that contains all the properties.
@@ -539,93 +542,30 @@ function UploadForm({
                 htmlFor="data-set-publications-pubMedId"
                 required={false}
               >
-                First Publication, pubmed id
+                Publications
               </FieldLabel>
-              <TextBox
-                type="input"
-                id="data-set-publications-pubMedId"
-                placeholder="pubMedId TEST"
-                required
-                value={publications[0]?.pubMedId}
-                // Update only the first publication pubmedid prop
-                onChange={(value) =>
-                  setPublications([
-                    {
-                      ...publications[0],
-                      pubMedId: value,
-                    },
-                  ])
-                }
-              />
-              <FieldLabel
-                htmlFor="data-set-publications-citation"
-                required={false}
-              >
-                First Publication, citation
-              </FieldLabel>
-              <TextBox
-                type="input"
-                id="data-set-publications-citation"
-                placeholder="citation TEST"
-                required={false}
-                value={publications[0]?.citation}
-                // Update only the first publication pubmedid prop
-                onChange={(value) =>
-                  setPublications([
-                    {
-                      ...publications[0],
-                      citation: value,
-                    },
-                    ...publications,
-                  ])
-                }
-              />
-              {/* Second publication */}
-              <FieldLabel
-                htmlFor="data-set-publications-pubMedId"
-                required={false}
-              >
-                Second Publication, pubmed id
-              </FieldLabel>
-              <TextBox
-                type="input"
-                id="data-set-publications-pubMedId"
-                placeholder="pubMedId TEST"
-                required
-                value={publications[1]?.pubMedId}
-                // Update only the first publication pubmedid prop
-                onChange={(value) =>
-                  setPublications([
-                    publications[0],
-                    {
-                      ...publications[1],
-                      pubMedId: value,
-                    },
-                    ...publications.slice(2),
-                  ])
-                }
-              />
-              <FieldLabel
-                htmlFor="data-set-publications-citation"
-                required={false}
-              >
-                Second Publication, citation
-              </FieldLabel>
-              <TextBox
-                type="input"
-                id="data-set-publications-citation"
-                placeholder="citation TEST"
-                required={false}
-                value={publications[1]?.citation}
-                // Update only the first publication pubmedid prop
-                onChange={(value) =>
-                  setPublications([
-                    {
-                      ...publications[1],
-                      citation: value,
-                    },
-                  ])
-                }
+              {[...Array(nPublicationInputBoxes).keys()].map((index) => {
+                return (
+                  <PublicationInput
+                    n={index}
+                    value={publications[index]?.pubMedId}
+                    onAdd={(value: string) => {
+                      const updatedPublications = [...publications];
+                      updatedPublications[index] = { pubMedId: value };
+                      setPublications(updatedPublications);
+                    }}
+                    onRemove={() => {
+                      const updatedPublications = [...publications];
+                      updatedPublications.splice(index, 1);
+                      setPublications(updatedPublications);
+                      setNPublicationInputBoxes((n) => n - 1);
+                    }}
+                  />
+                );
+              })}
+              <FloatingButton
+                text="Add Publication"
+                onPress={() => setNPublicationInputBoxes((n) => n + 1)}
               />
             </div>
           </details>
@@ -828,6 +768,37 @@ function validateForm<T extends string = string>(
       visibility: 'private',
     },
   };
+}
+
+// Create publication input UI
+interface PublicationInputProps {
+  n: number;
+  value: string;
+  onAdd: (value: string) => void;
+  onRemove: () => void;
+}
+
+function PublicationInput(props: PublicationInputProps): JSX.Element {
+  const { n, value, onAdd, onRemove } = props;
+  return (
+    <div>
+      <FloatingButton
+        text=""
+        onPress={onRemove}
+        icon={() => <i className="fa fa-trash"></i>}
+      />
+      <div>
+        <TextBox
+          type="input"
+          id={`data-set-publications-pubMedId-${n}`}
+          placeholder="PubMed ID"
+          required
+          value={value}
+          onChange={onAdd}
+        />
+      </div>
+    </div>
+  );
 }
 
 function isCompleteDataUploadSelection(
