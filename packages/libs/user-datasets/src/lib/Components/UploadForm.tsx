@@ -30,6 +30,7 @@ import {
   NewUserDataset,
   ResultUploadConfig,
   UserDataset,
+  UserDatasetPublication,
 } from '../Utils/types';
 
 import { Modal } from '@veupathdb/coreui';
@@ -44,7 +45,7 @@ interface Props<T extends string = string> {
   datasetUploadType: DatasetUploadTypeConfigEntry<T>;
   projectId: string;
   badUploadMessage: State['badUploadMessage'];
-  urlParams: Record<string, string>;
+  urlParams: Record<string, string>; // Assume we want to support this for all of our new fields
   strategyOptions: StrategySummary[];
   resultUploadConfig?: ResultUploadConfig;
   clearBadUpload: () => void;
@@ -68,12 +69,17 @@ type DataUploadSelection =
 
 type CompleteDataUploadSelection = Required<DataUploadSelection>;
 
+// ANN think about if this can just pull from the user dataset interface.
 interface FormContent {
   name: string;
   summary: string;
   description: string;
   dataUploadSelection: DataUploadSelection;
   dependencies?: UserDataset['dependencies'];
+  shortName?: string;
+  shortAttribution?: string;
+  category?: string;
+  publications?: UserDatasetPublication[];
 }
 
 export type FormValidation = InvalidForm | ValidForm;
@@ -133,6 +139,34 @@ function UploadForm({
   const [description, setDescription] = useState(
     urlParams.datasetDescription ?? ''
   );
+  const [shortName, setShortName] = useState(urlParams.datasetShortName ?? '');
+  const [shortAttribution, setShortAttribution] = useState(
+    urlParams.datasetShortAttribution ?? ''
+  );
+  const [category, setCategory] = useState(urlParams.datasetCategory ?? '');
+  const [publications, setPublications] = useState<UserDatasetPublication[]>(
+    []
+  );
+
+  console.log(publications);
+
+  // Don't want to really use a ton of state hooks. Instead could get all the info from form data
+  // Could replace all the useState hooks with one that contains all the properties.
+  // A little more difficult to debug issues with specific input.
+  // Neither are super different from react's perspective.
+  // There could be a nice utility that reads the big object and based on the properties make inputs.
+  // But our current multiple useStates setup is simple :)
+
+  // Is this the same as the edit form?
+
+  // Some of the new imputs are strings, and some are objects. For objects, we'd want
+  // individual inputs for each.
+
+  // 0. Write down all the new inputs :)
+  // 1. Update the state (whichever direction we take)
+  // 2. Add new input fields and connect to state
+  // 3. Modify if needed (callbacks, utility functions, etc)
+  // 4.
 
   const [dependencies, setDependencies] =
     useState<UserDataset['dependencies']>();
@@ -214,6 +248,10 @@ function UploadForm({
           description,
           dataUploadSelection,
           dependencies,
+          shortName,
+          shortAttribution,
+          category,
+          publications,
         }
       );
 
@@ -235,6 +273,10 @@ function UploadForm({
       dependencies,
       dataUploadSelection,
       submitForm,
+      shortName,
+      shortAttribution,
+      category,
+      publications,
     ]
   );
 
@@ -448,6 +490,145 @@ function UploadForm({
             value={description}
             onChange={setDescription}
           />
+        </div>
+        <div>
+          <details>
+            <summary>Additional Details</summary>
+            <div className="formSection formSection--data-set-shortName">
+              <FieldLabel htmlFor="data-set-shortName" required={false}>
+                Short Name
+              </FieldLabel>
+              <TextBox
+                type="input"
+                id="data-set-shortName"
+                placeholder="short name of the data set TEST"
+                required={false}
+                value={shortName}
+                onChange={setShortName}
+              />
+            </div>
+            <div className="formSection formSection--data-set-shortAttribution">
+              <FieldLabel htmlFor="data-set-shortAttribution" required={false}>
+                Short Attribution
+              </FieldLabel>
+              <TextBox
+                type="input"
+                id="data-set-shortAttribution"
+                placeholder="short attribution of the data set TEST"
+                required={false}
+                value={shortAttribution}
+                onChange={setShortAttribution}
+              />
+            </div>
+            <div className="formSection formSection--data-set-category">
+              <FieldLabel htmlFor="data-set-category" required={false}>
+                Category TEST
+              </FieldLabel>
+              <TextBox
+                type="input"
+                id="data-set-category"
+                placeholder="category TEST"
+                required={false}
+                value={category}
+                onChange={setCategory}
+              />
+            </div>
+            {/* Need to add the option to add a publication, because pubs aren't required */}
+            <div className="formSection formSection--data-set-publications">
+              <FieldLabel
+                htmlFor="data-set-publications-pubMedId"
+                required={false}
+              >
+                First Publication, pubmed id
+              </FieldLabel>
+              <TextBox
+                type="input"
+                id="data-set-publications-pubMedId"
+                placeholder="pubMedId TEST"
+                required
+                value={publications[0]?.pubMedId}
+                // Update only the first publication pubmedid prop
+                onChange={(value) =>
+                  setPublications([
+                    {
+                      ...publications[0],
+                      pubMedId: value,
+                    },
+                  ])
+                }
+              />
+              <FieldLabel
+                htmlFor="data-set-publications-citation"
+                required={false}
+              >
+                First Publication, citation
+              </FieldLabel>
+              <TextBox
+                type="input"
+                id="data-set-publications-citation"
+                placeholder="citation TEST"
+                required={false}
+                value={publications[0]?.citation}
+                // Update only the first publication pubmedid prop
+                onChange={(value) =>
+                  setPublications([
+                    {
+                      ...publications[0],
+                      citation: value,
+                    },
+                    ...publications,
+                  ])
+                }
+              />
+              {/* Second publication */}
+              <FieldLabel
+                htmlFor="data-set-publications-pubMedId"
+                required={false}
+              >
+                Second Publication, pubmed id
+              </FieldLabel>
+              <TextBox
+                type="input"
+                id="data-set-publications-pubMedId"
+                placeholder="pubMedId TEST"
+                required
+                value={publications[1]?.pubMedId}
+                // Update only the first publication pubmedid prop
+                onChange={(value) =>
+                  setPublications([
+                    publications[0],
+                    {
+                      ...publications[1],
+                      pubMedId: value,
+                    },
+                    ...publications.slice(2),
+                  ])
+                }
+              />
+              <FieldLabel
+                htmlFor="data-set-publications-citation"
+                required={false}
+              >
+                Second Publication, citation
+              </FieldLabel>
+              <TextBox
+                type="input"
+                id="data-set-publications-citation"
+                placeholder="citation TEST"
+                required={false}
+                value={publications[1]?.citation}
+                // Update only the first publication pubmedid prop
+                onChange={(value) =>
+                  setPublications([
+                    {
+                      ...publications[1],
+                      citation: value,
+                    },
+                  ])
+                }
+              />
+            </div>
+          </details>
         </div>
         {datasetUploadType.formConfig.dependencies && (
           <div className="formSection formSection--data-set-dependencies">

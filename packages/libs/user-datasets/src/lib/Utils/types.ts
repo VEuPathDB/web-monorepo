@@ -429,20 +429,20 @@ export interface UserDatasetMeta_VDI {
     name: string;
     version: string;
   };
-  shortName?: string;
-  shortAttribution?: string;
-  category?: string;
+  shortName?: string; // new
+  shortAttribution?: string; // new
+  category?: string; // ANN - will be a little special. Might be hidden and prepopulated
   visibility?: 'private' | 'public' | 'protected';
   summary?: string;
   description?: string;
   origin: string;
   projects: string[];
   dependencies: UserDatasetDependency[];
-  publications?: UserDatasetPublication[];
-  hyperlinks?: UserDatasetHyperlink[];
-  organisms?: string[];
-  contacts?: UserDatasetContact[];
-  createdOn?: string;
+  publications?: UserDatasetPublication[]; // new
+  hyperlinks?: UserDatasetHyperlink[]; // new
+  organisms?: string[]; // new
+  contacts?: UserDatasetContact[]; // new
+  createdOn?: string; // new
 }
 
 export type UserDatasetVDI = TypeOf<typeof userDataset>;
