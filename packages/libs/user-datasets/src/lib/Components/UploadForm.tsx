@@ -35,6 +35,8 @@ import {
 
 import { FloatingButton, Modal } from '@veupathdb/coreui';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import AddIcon from '@material-ui/icons/Add';
+import Trash from '@veupathdb/coreui/lib/components/icons/Trash';
 
 import './UploadForm.scss';
 
@@ -525,7 +527,7 @@ function UploadForm({
             </div>
             <div className="formSection formSection--data-set-category">
               <FieldLabel htmlFor="data-set-category" required={false}>
-                Category TEST
+                Category
               </FieldLabel>
               <TextBox
                 type="input"
@@ -542,7 +544,7 @@ function UploadForm({
                 htmlFor="data-set-publications-pubMedId"
                 required={false}
               >
-                Publications
+                Publications (Optional)
               </FieldLabel>
               {[...Array(nPublicationInputBoxes).keys()].map((index) => {
                 return (
@@ -578,6 +580,7 @@ function UploadForm({
               <FloatingButton
                 text="Add Publication"
                 onPress={() => setNPublicationInputBoxes((n) => n + 1)}
+                icon={AddIcon}
               />
             </div>
           </details>
@@ -802,13 +805,28 @@ function PublicationInput(props: PublicationInputProps): JSX.Element {
     citation,
   } = props;
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <FieldLabel required={false}>Publication {n + 1}</FieldLabel>
+    <div
+      style={{
+        borderStyle: 'solid',
+        borderWidth: '0.5px',
+        borderColor: 'lightgray',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          paddingLeft: '1em',
+        }}
+      >
+        <FieldLabel required={false} style={{ fontSize: '1.2em' }}>
+          Publication {n + 1}
+        </FieldLabel>
         <FloatingButton
-          text=""
+          text="Remove"
           onPress={onRemovePublication}
-          icon={() => <i className="fa fa-trash"></i>}
+          icon={Trash}
         />
       </div>
       <div
@@ -817,6 +835,8 @@ function PublicationInput(props: PublicationInputProps): JSX.Element {
           gridTemplateColumns: '11em 10em',
           alignItems: 'baseline',
           gridTemplateRows: '2.5em 2.5em',
+          paddingLeft: '2em',
+          marginBottom: '1em',
         }}
       >
         <FieldLabel required>PubMed ID</FieldLabel>
