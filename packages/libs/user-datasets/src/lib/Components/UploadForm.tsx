@@ -548,17 +548,29 @@ function UploadForm({
                 return (
                   <PublicationInput
                     n={index}
-                    value={publications[index]?.pubMedId}
-                    onAdd={(value: string) => {
+                    pubMedId={publications[index]?.pubMedId}
+                    onAddPubmedId={(value: string) => {
                       const updatedPublications = [...publications];
-                      updatedPublications[index] = { pubMedId: value };
+                      updatedPublications[index] = {
+                        pubMedId: value,
+                        citation: updatedPublications[index]?.citation,
+                      };
                       setPublications(updatedPublications);
                     }}
-                    onRemove={() => {
+                    onRemovePublication={() => {
                       const updatedPublications = [...publications];
                       updatedPublications.splice(index, 1);
                       setPublications(updatedPublications);
                       setNPublicationInputBoxes((n) => n - 1);
+                    }}
+                    citation={publications[index]?.citation}
+                    onAddCitation={(value: string) => {
+                      const updatedPublications = [...publications];
+                      updatedPublications[index] = {
+                        pubMedId: updatedPublications[index]?.pubMedId,
+                        citation: value,
+                      };
+                      setPublications(updatedPublications);
                     }}
                   />
                 );
@@ -773,28 +785,57 @@ function validateForm<T extends string = string>(
 // Create publication input UI
 interface PublicationInputProps {
   n: number;
-  value: string;
-  onAdd: (value: string) => void;
-  onRemove: () => void;
+  pubMedId: string;
+  onAddPubmedId: (value: string) => void;
+  onAddCitation: (value: string) => void;
+  onRemovePublication: () => void;
+  citation?: string;
 }
 
 function PublicationInput(props: PublicationInputProps): JSX.Element {
-  const { n, value, onAdd, onRemove } = props;
+  const {
+    n,
+    pubMedId,
+    onAddPubmedId,
+    onRemovePublication,
+    onAddCitation,
+    citation,
+  } = props;
   return (
     <div>
-      <FloatingButton
-        text=""
-        onPress={onRemove}
-        icon={() => <i className="fa fa-trash"></i>}
-      />
-      <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <FieldLabel required={false}>Publication {n + 1}</FieldLabel>
+        <FloatingButton
+          text=""
+          onPress={onRemovePublication}
+          icon={() => <i className="fa fa-trash"></i>}
+        />
+      </div>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '11em 10em',
+          alignItems: 'baseline',
+          gridTemplateRows: '2.5em 2.5em',
+        }}
+      >
+        <FieldLabel required>PubMed ID</FieldLabel>
         <TextBox
           type="input"
           id={`data-set-publications-pubMedId-${n}`}
           placeholder="PubMed ID"
           required
-          value={value}
-          onChange={onAdd}
+          value={pubMedId}
+          onChange={onAddPubmedId}
+        />
+        <FieldLabel required={false}>Citation</FieldLabel>
+        <TextBox
+          type="input"
+          id={`data-set-publications-citation-${n}`}
+          placeholder="Citation"
+          required={false}
+          value={citation}
+          onChange={onAddCitation}
         />
       </div>
     </div>
