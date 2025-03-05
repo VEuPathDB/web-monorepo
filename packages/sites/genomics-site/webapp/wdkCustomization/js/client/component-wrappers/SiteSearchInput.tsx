@@ -4,6 +4,7 @@ import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { DatasetParam } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import { Props } from '@veupathdb/web-common/lib/components/SiteSearch/SiteSearchInput';
+import { siteSearchServiceUrl } from '@veupathdb/web-common/lib/config';
 
 export function SiteSearchInput(DefaultComponent: React.ComponentType<Props>) {
   return function () {
@@ -24,6 +25,11 @@ export function SiteSearchInput(DefaultComponent: React.ComponentType<Props>) {
       return 'Site search, e.g. ' + examples;
     }, []);
 
-    return <DefaultComponent placeholderText={placeholderText} />;
+    return (
+      <DefaultComponent
+        placeholderText={placeholderText}
+        siteSearchURL={siteSearchServiceUrl}
+      />
+    );
   };
 }
