@@ -30,6 +30,7 @@ import {
   NewUserDataset,
   ResultUploadConfig,
   UserDataset,
+  UserDatasetHyperlink,
   UserDatasetPublication,
 } from '../Utils/types';
 
@@ -82,6 +83,7 @@ interface FormContent {
   shortAttribution?: string;
   category?: string;
   publications?: UserDatasetPublication[];
+  hyperlinks?: UserDatasetHyperlink[];
 }
 
 export type FormValidation = InvalidForm | ValidForm;
@@ -149,11 +151,9 @@ function UploadForm({
   const [publications, setPublications] = useState<UserDatasetPublication[]>(
     []
   );
+  const [hyperlinks, setHyperlinks] = useState<UserDatasetHyperlink[]>([]);
   const [nPublicationInputBoxes, setNPublicationInputBoxes] = useState(0);
-
-  console.log(publications);
-  console.log(nPublicationInputBoxes);
-  console.log(Array(nPublicationInputBoxes));
+  const [nHyperlinkInputBoxes, setNHyperlinkInputBoxes] = useState(0);
 
   // Don't want to really use a ton of state hooks. Instead could get all the info from form data
   // Could replace all the useState hooks with one that contains all the properties.
@@ -257,6 +257,7 @@ function UploadForm({
           shortAttribution,
           category,
           publications,
+          hyperlinks,
         }
       );
 
@@ -282,6 +283,7 @@ function UploadForm({
       shortAttribution,
       category,
       publications,
+      hyperlinks,
     ]
   );
 
@@ -538,7 +540,6 @@ function UploadForm({
                 onChange={setCategory}
               />
             </div>
-            {/* Need to add the option to add a publication, because pubs aren't required */}
             <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-publications">
               <FieldLabel
                 htmlFor="data-set-publications-pubMedId"
@@ -579,7 +580,83 @@ function UploadForm({
               })}
               <FloatingButton
                 text="Add Publication"
-                onPress={() => setNPublicationInputBoxes((n) => n + 1)}
+                onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
+                  event.preventDefault();
+                  setNPublicationInputBoxes((n) => n + 1);
+                }}
+                icon={AddIcon}
+              />
+            </div>
+            <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-hyperlinks">
+              <FieldLabel
+                htmlFor="data-set-publications-hyperlinks"
+                required={false}
+              >
+                Hyperlinks (Optional)
+              </FieldLabel>
+              {[...Array(nHyperlinkInputBoxes).keys()].map((index) => {
+                return (
+                  <HyperlinkInput
+                    n={index}
+                    url={hyperlinks[index]?.url}
+                    onAddUrl={(value: string) => {
+                      const updatedHyperlinks = [...hyperlinks];
+                      updatedHyperlinks[index] = {
+                        url: value,
+                        text: updatedHyperlinks[index]?.text,
+                        description: updatedHyperlinks[index]?.description,
+                        isPublication: updatedHyperlinks[index]?.isPublication,
+                      };
+                      setHyperlinks(updatedHyperlinks);
+                    }}
+                    onRemoveHyperlink={() => {
+                      const updatedHyperlinks = [...hyperlinks];
+                      updatedHyperlinks.splice(index, 1);
+                      setHyperlinks(updatedHyperlinks);
+                      setNHyperlinkInputBoxes((n) => n - 1);
+                    }}
+                    text={hyperlinks[index]?.text}
+                    onAddText={(value: string) => {
+                      const updatedHyperlinks = [...hyperlinks];
+                      updatedHyperlinks[index] = {
+                        url: updatedHyperlinks[index]?.url,
+                        text: value,
+                        description: updatedHyperlinks[index]?.description,
+                        isPublication: updatedHyperlinks[index]?.isPublication,
+                      };
+                      setHyperlinks(updatedHyperlinks);
+                    }}
+                    description={hyperlinks[index]?.description}
+                    onAddDescription={(value: string) => {
+                      const updatedHyperlinks = [...hyperlinks];
+                      updatedHyperlinks[index] = {
+                        url: updatedHyperlinks[index]?.url,
+                        text: updatedHyperlinks[index]?.text,
+                        description: value,
+                        isPublication: updatedHyperlinks[index]?.isPublication,
+                      };
+                      setHyperlinks(updatedHyperlinks);
+                    }}
+                    isPublication={hyperlinks[index]?.isPublication}
+                    onAddIsPublication={(value: boolean) => {
+                      const updatedHyperlinks = [...hyperlinks];
+                      updatedHyperlinks[index] = {
+                        url: updatedHyperlinks[index]?.url,
+                        text: updatedHyperlinks[index]?.text,
+                        description: updatedHyperlinks[index]?.description,
+                        isPublication: value,
+                      };
+                      setHyperlinks(updatedHyperlinks);
+                    }}
+                  />
+                );
+              })}
+              <FloatingButton
+                text="Add Hyperlink"
+                onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
+                  event.preventDefault();
+                  setNHyperlinkInputBoxes((n) => n + 1);
+                }}
                 icon={AddIcon}
               />
             </div>
@@ -834,6 +911,86 @@ function PublicationInput(props: PublicationInputProps): JSX.Element {
           required={false}
           value={citation}
           onChange={onAddCitation}
+        />
+      </div>
+    </div>
+  );
+}
+
+// UI for hyperlinks
+interface HyperlinkInputProps {
+  n: number;
+  url: string;
+  text: string;
+  onAddUrl: (value: string) => void;
+  onAddText: (value: string) => void;
+  onAddDescription: (value: string) => void;
+  onAddIsPublication: (value: boolean) => void;
+  onRemoveHyperlink: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  description?: string;
+  isPublication?: boolean;
+}
+
+function HyperlinkInput(props: HyperlinkInputProps): JSX.Element {
+  const {
+    n,
+    url,
+    onAddUrl,
+    onRemoveHyperlink,
+    text,
+    onAddText,
+    description,
+    onAddDescription,
+    isPublication,
+    onAddIsPublication,
+  } = props;
+  return (
+    <div className={cx('--NestedInputContainer')}>
+      <div className={cx('--NestedInputTitle')}>
+        <FieldLabel required={false} style={{ fontSize: '1.2em' }}>
+          Hyperlink {n + 1}
+        </FieldLabel>
+        <FloatingButton
+          text="Remove"
+          onPress={onRemoveHyperlink}
+          icon={Trash}
+        />
+      </div>
+      <div className={cx('--NestedInputFields')}>
+        <FieldLabel required>URL</FieldLabel>
+        <TextBox
+          type="input"
+          id={`data-set-hyperlink-url-${n}`}
+          placeholder="url"
+          required
+          value={url}
+          onChange={onAddUrl}
+        />
+        <FieldLabel required>Text</FieldLabel>
+        <TextBox
+          type="input"
+          id={`data-set-hyperlink-text-${n}`}
+          placeholder="Text to show for the hyperlink"
+          value={text}
+          onChange={onAddText}
+        />
+        <FieldLabel required={false}>Description</FieldLabel>
+        <TextBox
+          type="input"
+          id={`data-set-hyperlink-description-${n}`}
+          placeholder="Description of the hyperlink"
+          value={description}
+          required={false}
+          onChange={onAddDescription}
+        />
+        <FieldLabel required={false}>Is publication?</FieldLabel>
+        <TextBox
+          type="input"
+          id={`data-set-hyperlink-description-${n}`}
+          placeholder="Description of the hyperlink"
+          value={text}
+          required={false}
+          onChange={onAddDescription}
         />
       </div>
     </div>

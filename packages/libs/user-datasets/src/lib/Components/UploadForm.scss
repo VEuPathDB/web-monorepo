@@ -101,8 +101,8 @@
   }
   & &--NestedInputContainer &--NestedInputFields {
     display: grid;
-    grid-template-columns: 11em 10em;
-    grid-template-rows: 2.5em 2.5em;
+    grid-template-columns: 11em 50em;
+    grid-template-rows: 2.5em 2.5em 2.5em;
     align-items: baseline;
     padding-left: 2.5em;
     margin-bottom: 1em;

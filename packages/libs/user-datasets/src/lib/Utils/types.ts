@@ -438,7 +438,7 @@ export interface UserDatasetMeta_VDI {
   origin: string;
   projects: string[];
   dependencies: UserDatasetDependency[];
-  publications?: UserDatasetPublication[]; // new
+  publications?: UserDatasetPublication[]; // new, done
   hyperlinks?: UserDatasetHyperlink[]; // new
   organisms?: string[]; // new
   contacts?: UserDatasetContact[]; // new
