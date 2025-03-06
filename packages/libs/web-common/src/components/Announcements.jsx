@@ -179,7 +179,7 @@ const siteAnnouncements = [
       );
     },
   },
-
+  /*
   {
     id: 'clinepiEDA',
     renderDisplay: (props) => {
@@ -206,7 +206,7 @@ const siteAnnouncements = [
       return null;
     },
   },
-
+*/
   // clinepi workshop
   /* 
  {
