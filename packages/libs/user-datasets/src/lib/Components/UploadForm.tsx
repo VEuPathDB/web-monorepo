@@ -496,50 +496,50 @@ function UploadForm({
             onChange={setDescription}
           />
         </div>
-        <div>
-          <details>
+        <div className={'formSection'}>
+          <details className={cx('--AdditionalDetails')}>
             <summary>Additional Details</summary>
-            <div className="formSection formSection--data-set-shortName">
+            <div className="additionalDetailsFormSection additionalDetailsFormSection--additionalDetailsField formSection--data-set-shortName">
               <FieldLabel htmlFor="data-set-shortName" required={false}>
                 Short Name
               </FieldLabel>
               <TextBox
                 type="input"
                 id="data-set-shortName"
-                placeholder="short name of the data set TEST"
+                placeholder="Short name for the dataset"
                 required={false}
                 value={shortName}
                 onChange={setShortName}
               />
             </div>
-            <div className="formSection formSection--data-set-shortAttribution">
+            <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-shortAttribution">
               <FieldLabel htmlFor="data-set-shortAttribution" required={false}>
                 Short Attribution
               </FieldLabel>
               <TextBox
                 type="input"
                 id="data-set-shortAttribution"
-                placeholder="short attribution of the data set TEST"
+                placeholder="Short attribution for the dataset"
                 required={false}
                 value={shortAttribution}
                 onChange={setShortAttribution}
               />
             </div>
-            <div className="formSection formSection--data-set-category">
+            <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-category">
               <FieldLabel htmlFor="data-set-category" required={false}>
                 Category
               </FieldLabel>
               <TextBox
                 type="input"
                 id="data-set-category"
-                placeholder="category TEST"
+                placeholder="Category"
                 required={false}
                 value={category}
                 onChange={setCategory}
               />
             </div>
             {/* Need to add the option to add a publication, because pubs aren't required */}
-            <div className="formSection formSection--data-set-publications">
+            <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-publications">
               <FieldLabel
                 htmlFor="data-set-publications-pubMedId"
                 required={false}
@@ -805,21 +805,8 @@ function PublicationInput(props: PublicationInputProps): JSX.Element {
     citation,
   } = props;
   return (
-    <div
-      style={{
-        borderStyle: 'solid',
-        borderWidth: '0.5px',
-        borderColor: 'lightgray',
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          paddingLeft: '1em',
-        }}
-      >
+    <div className={cx('--NestedInputContainer')}>
+      <div className={cx('--NestedInputTitle')}>
         <FieldLabel required={false} style={{ fontSize: '1.2em' }}>
           Publication {n + 1}
         </FieldLabel>
@@ -829,16 +816,7 @@ function PublicationInput(props: PublicationInputProps): JSX.Element {
           icon={Trash}
         />
       </div>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '11em 10em',
-          alignItems: 'baseline',
-          gridTemplateRows: '2.5em 2.5em',
-          paddingLeft: '2em',
-          marginBottom: '1em',
-        }}
-      >
+      <div className={cx('--NestedInputFields')}>
         <FieldLabel required>PubMed ID</FieldLabel>
         <TextBox
           type="input"

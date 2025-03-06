@@ -15,7 +15,7 @@
   }
   .formSection {
     > & {
-      margin-block-start: 1em;
+      margin-block-start: 2em;
     }
 
     display: flex;
@@ -28,6 +28,21 @@
 
     #data-set-name {
       width: 300px;
+    }
+  }
+  .additionalDetailsFormSection {
+    > & {
+      margin-block-start: 2em;
+    }
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    padding-left: 1em;
+    padding-right: 1em;
+
+    > label {
+      font-size: medium;
     }
   }
   .formInfo {
@@ -70,5 +85,46 @@
       opacity: 0.3;
       pointer-events: none;
     }
+  }
+  & &--NestedInputContainer {
+    border-style: solid;
+    border-width: 0.5px;
+    border-color: lightgray;
+  }
+  & &--NestedInputContainer &--NestedInputTitle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 1.5em;
+    margin-top: 0.5em;
+    margin-right: 0.5em;
+  }
+  & &--NestedInputContainer &--NestedInputFields {
+    display: grid;
+    grid-template-columns: 11em 10em;
+    grid-template-rows: 2.5em 2.5em;
+    align-items: baseline;
+    padding-left: 2.5em;
+    margin-bottom: 1em;
+  }
+  & &--AdditionalDetails {
+    // Style the <summary> element
+    summary {
+      list-style-position: outside;
+      margin-left: 2em;
+      padding: 10px 10px 10px 20px;
+      cursor: pointer;
+      font-size: 1.2em;
+
+      // Style the marker (disclosure triangle)
+      &::marker {
+        font-size: 1.2em; // Change the size of the marker
+      }
+    }
+
+    // Additional styles for the <details> element if needed
+    padding: 10px;
+    background-color: #fafafa;
+    color: #333;
   }
 }
