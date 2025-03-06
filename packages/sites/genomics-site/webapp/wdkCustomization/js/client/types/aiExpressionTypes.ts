@@ -3,10 +3,21 @@ export type AiExpressionSummaryResponse = Record<
   AiExpressionGeneResponse
 >;
 
+type StatusString =
+  | 'present'
+  | 'missing'
+  | 'failed'
+  | 'expired'
+  | 'corrupted'
+  | 'undetermined';
+
+type SummaryStatusString = StatusString | 'experiments_incomplete';
+
 export interface AiExpressionGeneResponse {
-  cacheStatus: 'hit' | 'miss';
-  reason?: string; // only for misses
-  expressionSummary: AiExpressionSummary;
+  resultStatus: SummaryStatusString;
+  numExperiments?: number;
+  numExperimentsComplete?: number;
+  expressionSummary?: AiExpressionSummary;
 }
 
 export interface AiExpressionSummary {
