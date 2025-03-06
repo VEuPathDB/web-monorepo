@@ -116,7 +116,9 @@ function AiSummaryGate(props: Props) {
     return () => clearTimeout(pollingTimeout.current);
   }, [shouldPopulateCache, completeExpressionSummary, pollingCounter]);
 
-  if (completeExpressionSummary) {
+  if (aiExpressionSummary == null) {
+    return <div>Loading...</div>;
+  } else if (completeExpressionSummary) {
     return (
       <AiExpressionResult summary={completeExpressionSummary} {...props} />
     );
@@ -138,8 +140,7 @@ function AiSummaryGate(props: Props) {
         </p>
       </div>
     );
-  }
-  if (shouldPopulateCache) {
+  } else {
     const { numExperiments = 0, numExperimentsComplete = 0 } =
       pollingResponse?.[geneId] ?? {};
 
@@ -151,8 +152,6 @@ function AiSummaryGate(props: Props) {
         </Loading>
       </div>
     );
-  } else {
-    return <div>Loading...</div>;
   }
 }
 
