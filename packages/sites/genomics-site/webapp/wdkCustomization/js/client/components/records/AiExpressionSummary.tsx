@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import {
   CollapsibleSection,
@@ -31,6 +31,7 @@ import { scrollToAndOpenExpressionGraph } from './utils';
 import './AiExpressionSummary.scss';
 
 const MIN_DATASETS_FOR_AI_SUMMARY = 5;
+const POLL_TIME_MS = 5000;
 
 /** Display AI Expression Summary UI and results in a collapsible section */
 export function AiExpressionSummary(props: Props) {
@@ -94,42 +95,66 @@ function AiSummaryGate(props: Props) {
     geneId,
     shouldPopulateCache
   );
+  const geneResponse = aiExpressionSummary?.[geneId];
+  const completeExpressionSummary =
+    geneResponse?.resultStatus === 'present' && geneResponse?.expressionSummary
+      ? geneResponse.expressionSummary
+      : undefined;
 
-  if (aiExpressionSummary) {
-    if (aiExpressionSummary[geneId]?.cacheStatus === 'hit') {
-      const summary = aiExpressionSummary[geneId].expressionSummary;
-      return <AiExpressionResult summary={summary} {...props} />;
-    } else if (!shouldPopulateCache) {
-      // Cache miss: render button to populate cache
-      return (
-        <div>
-          <p>
-            Click below to request an AI summary of this gene. It could take up
-            to three minutes. When complete it will be cached for all users.
-          </p>
-          <button onClick={() => setShouldPopulateCache(true)}>
-            Start AI Summary
-          </button>
+  const [pollingCounter, setPollingCounter] = useState(-1);
+  const pollingTimeout = useRef<ReturnType<typeof setTimeout>>();
+  const pollingResponse = useAiExpressionSummary(geneId, false, pollingCounter);
 
-          {/* Debugging: Display cache miss reason if present */}
-          {aiExpressionSummary[geneId]?.reason && (
-            <p style={{ color: 'red' }}>
-              Debug: Cache miss reason - {aiExpressionSummary[geneId].reason}
-            </p>
-          )}
-        </div>
+  // update polling counter when the main request is active
+  useEffect(() => {
+    if (shouldPopulateCache && completeExpressionSummary == null) {
+      pollingTimeout.current = setTimeout(
+        () => setPollingCounter(pollingCounter + 1),
+        POLL_TIME_MS
       );
     }
-  }
-  if (shouldPopulateCache) {
+    return () => clearTimeout(pollingTimeout.current);
+  }, [shouldPopulateCache, completeExpressionSummary, pollingCounter]);
+
+  if (aiExpressionSummary == null) {
+    return <div>Loading...</div>;
+  } else if (completeExpressionSummary) {
+    return (
+      <AiExpressionResult summary={completeExpressionSummary} {...props} />
+    );
+  } else if (!shouldPopulateCache) {
+    // Cache miss: render button to populate cache
     return (
       <div>
-        <p>🤖 Summarizing... (can take up to three minutes) 🤖</p>
-        <Loading />
+        <p>
+          Click below to request an AI summary of this gene. It could take up to
+          three minutes. When complete it will be cached for all users.
+        </p>
+        <button onClick={() => setShouldPopulateCache(true)}>
+          Start AI Summary
+        </button>
+
+        {/* Debugging: Display cache miss reason if present */}
+        <p style={{ color: 'red' }}>
+          Debug: resultStatus = {geneResponse?.resultStatus}
+        </p>
       </div>
     );
   } else {
-    return <div>Loading...</div>;
+    const { numExperiments, numExperimentsComplete } =
+      pollingResponse?.[geneId] ?? {};
+    const progressString =
+      numExperiments != null && numExperimentsComplete != null
+        ? `${numExperimentsComplete}/${numExperiments + 1}`
+        : '';
+    return (
+      <div>
+        <p>🤖 Summarizing... 🤖</p>
+        <Loading radius={25} className="AiExpressionResult-Loading">
+          <span>{progressString}</span>
+        </Loading>
+      </div>
+    );
   }
 }
 
@@ -309,11 +334,13 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
 
 function useAiExpressionSummary(
   geneId: string,
-  shouldPopulateCache: boolean
+  shouldPopulateCache: boolean,
+  pollingCounter: number = 0
 ): AiExpressionSummaryResponse | undefined {
   return useWdkService(
     async (wdkService) => {
       if (!isGenomicsService(wdkService)) throw new Error('nasty');
+      if (pollingCounter < 0) return undefined;
       const { projectId } = await wdkService.getConfig();
       const answerSpec = {
         searchName: 'single_record_question_GeneRecordClasses_GeneRecordClass',
@@ -334,6 +361,6 @@ function useAiExpressionSummary(
         formatting
       );
     },
-    [geneId, shouldPopulateCache]
+    [geneId, shouldPopulateCache, pollingCounter]
   );
 }
