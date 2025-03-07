@@ -127,6 +127,13 @@
     background-color: #fafafa;
     color: #333;
   }
+  & &--OrganismInputFields {
+    display: grid;
+    grid-template-columns: 10em 30em 11em;
+    align-items: center;
+    padding-left: 2.5em;
+    column-gap: 1em;
+  }
 }
 .wdk-RadioList.horizontal {
   display: flex;

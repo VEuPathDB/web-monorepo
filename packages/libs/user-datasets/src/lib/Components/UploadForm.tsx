@@ -84,6 +84,7 @@ interface FormContent {
   category?: string;
   publications?: UserDatasetPublication[];
   hyperlinks?: UserDatasetHyperlink[];
+  organisms?: string[];
 }
 
 export type FormValidation = InvalidForm | ValidForm;
@@ -152,9 +153,10 @@ function UploadForm({
     []
   );
   const [hyperlinks, setHyperlinks] = useState<UserDatasetHyperlink[]>([]);
-  console.log(hyperlinks);
+  const [organisms, setOrganisms] = useState<string[]>([]);
   const [nPublicationInputBoxes, setNPublicationInputBoxes] = useState(0);
   const [nHyperlinkInputBoxes, setNHyperlinkInputBoxes] = useState(0);
+  const [nOrganismInputBoxes, setNOrganismInputBoxes] = useState(0);
 
   // Don't want to really use a ton of state hooks. Instead could get all the info from form data
   // Could replace all the useState hooks with one that contains all the properties.
@@ -259,6 +261,7 @@ function UploadForm({
           category,
           publications,
           hyperlinks,
+          organisms,
         }
       );
 
@@ -285,6 +288,7 @@ function UploadForm({
       category,
       publications,
       hyperlinks,
+      organisms,
     ]
   );
 
@@ -661,6 +665,58 @@ function UploadForm({
                 onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
                   event.preventDefault();
                   setNHyperlinkInputBoxes((n) => n + 1);
+                }}
+                icon={AddIcon}
+              />
+            </div>
+            <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-organisms">
+              <FieldLabel
+                htmlFor="data-set-publications-organisms"
+                required={false}
+              >
+                Organisms (Optional)
+              </FieldLabel>
+              <div>
+                {[...Array(nOrganismInputBoxes).keys()].map((index) => {
+                  return (
+                    <div className={cx('--OrganismInputFields')}>
+                      <FieldLabel required={false} key={index}>
+                        Organism {index + 1}
+                      </FieldLabel>
+                      <TextBox
+                        type="input"
+                        id={`data-set-organisms-${index}`}
+                        placeholder="Organism"
+                        required={false}
+                        value={organisms[index]}
+                        onChange={(value) => {
+                          const updatedOrganisms = [...organisms];
+                          updatedOrganisms[index] = value;
+                          setOrganisms(updatedOrganisms);
+                        }}
+                      />
+                      <FloatingButton
+                        text="Remove"
+                        onPress={(
+                          event: React.MouseEvent<HTMLButtonElement>
+                        ) => {
+                          event.preventDefault();
+                          const updatedOrganisms = [...organisms];
+                          updatedOrganisms.splice(index, 1);
+                          setOrganisms(updatedOrganisms);
+                          setNOrganismInputBoxes((n) => n - 1);
+                        }}
+                        icon={Trash}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+              <FloatingButton
+                text="Add Organisms"
+                onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
+                  event.preventDefault();
+                  setNOrganismInputBoxes((n) => n + 1);
                 }}
                 icon={AddIcon}
               />
