@@ -128,3 +128,12 @@
     color: #333;
   }
 }
+.wdk-RadioList.horizontal {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap; /* Optional: allows wrapping to the next line if there are too many items */
+  gap: 1em;
+}
+.wdk-RadioList.horizontal li {
+  list-style: none;
+}

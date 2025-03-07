@@ -152,6 +152,7 @@ function UploadForm({
     []
   );
   const [hyperlinks, setHyperlinks] = useState<UserDatasetHyperlink[]>([]);
+  console.log(hyperlinks);
   const [nPublicationInputBoxes, setNPublicationInputBoxes] = useState(0);
   const [nHyperlinkInputBoxes, setNHyperlinkInputBoxes] = useState(0);
 
@@ -609,7 +610,10 @@ function UploadForm({
                       };
                       setHyperlinks(updatedHyperlinks);
                     }}
-                    onRemoveHyperlink={() => {
+                    onRemoveHyperlink={(
+                      event: React.MouseEvent<HTMLButtonElement>
+                    ) => {
+                      event.preventDefault();
                       const updatedHyperlinks = [...hyperlinks];
                       updatedHyperlinks.splice(index, 1);
                       setHyperlinks(updatedHyperlinks);
@@ -638,7 +642,7 @@ function UploadForm({
                       setHyperlinks(updatedHyperlinks);
                     }}
                     isPublication={hyperlinks[index]?.isPublication}
-                    onAddIsPublication={(value: boolean) => {
+                    onAddIsPublication={(value: boolean | undefined) => {
                       const updatedHyperlinks = [...hyperlinks];
                       updatedHyperlinks[index] = {
                         url: updatedHyperlinks[index]?.url,
@@ -647,6 +651,7 @@ function UploadForm({
                         isPublication: value,
                       };
                       setHyperlinks(updatedHyperlinks);
+                      return;
                     }}
                   />
                 );
@@ -925,7 +930,7 @@ interface HyperlinkInputProps {
   onAddUrl: (value: string) => void;
   onAddText: (value: string) => void;
   onAddDescription: (value: string) => void;
-  onAddIsPublication: (value: boolean) => void;
+  onAddIsPublication: (value: boolean | undefined) => void;
   onRemoveHyperlink: (event: React.MouseEvent<HTMLButtonElement>) => void;
   description?: string;
   isPublication?: boolean;
@@ -944,6 +949,7 @@ function HyperlinkInput(props: HyperlinkInputProps): JSX.Element {
     isPublication,
     onAddIsPublication,
   } = props;
+  console.log('in component', isPublication);
   return (
     <div className={cx('--NestedInputContainer')}>
       <div className={cx('--NestedInputTitle')}>
@@ -984,13 +990,26 @@ function HyperlinkInput(props: HyperlinkInputProps): JSX.Element {
           onChange={onAddDescription}
         />
         <FieldLabel required={false}>Is publication?</FieldLabel>
-        <TextBox
-          type="input"
-          id={`data-set-hyperlink-description-${n}`}
-          placeholder="Description of the hyperlink"
-          value={text}
-          required={false}
-          onChange={onAddDescription}
+        <RadioList
+          name={`isPublication-${n}`}
+          className="horizontal"
+          value={
+            isPublication === true
+              ? 'true'
+              : isPublication === false
+              ? 'false'
+              : 'undefined'
+          }
+          onChange={(value) => {
+            onAddIsPublication(
+              value === 'true' ? true : value === 'false' ? false : undefined
+            );
+          }}
+          items={[
+            { value: 'true', display: 'Yes' },
+            { value: 'false', display: 'No' },
+            { value: 'undefined', display: 'NA' },
+          ]}
         />
       </div>
     </div>
