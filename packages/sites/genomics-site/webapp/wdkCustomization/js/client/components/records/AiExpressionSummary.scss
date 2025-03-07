@@ -10,3 +10,11 @@ div.ai-summary {
 a.javascript-link {
   cursor: grab;
 }
+
+.AiExpressionResult-Loading {
+  text-align: center;
+  padding: 0;
+  margin-top: 4em;
+  height: unset;
+  max-width: 125px;
+}

@@ -141,14 +141,17 @@ function AiSummaryGate(props: Props) {
       </div>
     );
   } else {
-    const { numExperiments = 0, numExperimentsComplete = 0 } =
+    const { numExperiments, numExperimentsComplete } =
       pollingResponse?.[geneId] ?? {};
-
+    const progressString =
+      numExperiments != null && numExperimentsComplete != null
+        ? `${numExperimentsComplete}/${numExperiments + 1}`
+        : '';
     return (
       <div>
         <p>🤖 Summarizing... 🤖</p>
-        <Loading>
-          {numExperimentsComplete}/{numExperiments}
+        <Loading radius={25} className="AiExpressionResult-Loading">
+          <span>{progressString}</span>
         </Loading>
       </div>
     );
