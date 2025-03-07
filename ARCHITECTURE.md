@@ -135,6 +135,8 @@ page.
 
 ### Redux and RxJS
 
+#### Overview
+
 The majority of the single-page application uses a fairly customized
 [redux](https://redux.js.org/) store for state management concerns. The redux
 store is created in `wdk-client`, and is configured from a collection of
@@ -162,6 +164,8 @@ function.
 > [!NOTE]
 > For a more detailed overview of redux, see
 > https://redux.js.org/tutorials/essentials/part-1-overview-concepts
+
+#### StoreModules
 
 With that background out of the way, we can return to specifics of our use of
 redux. `StoreModules` allows the final redux store to be constructed from
@@ -222,6 +226,8 @@ In sum, a `StoreModule` is an object with three properties:
    action. The function returns a new slice of state, which is then integrated
    into the redux store's state.
 3. `observe` -- An optional function for performing side-effects.
+
+#### ActionCreators and WdkMiddleware
 
 The other important part of our redux impementation are **Action Creators**. An
 action creator is a function that returns any value supported by our redux
