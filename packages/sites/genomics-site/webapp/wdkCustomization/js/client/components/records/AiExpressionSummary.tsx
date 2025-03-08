@@ -146,10 +146,10 @@ function AiSummaryGate(props: Props) {
     const progressString =
       numExperiments != null && numExperimentsComplete != null
         ? `${numExperimentsComplete}/${numExperiments + 1}`
-        : '';
+        : '🤖';
     return (
       <div>
-        <p>🤖 Summarizing... 🤖</p>
+        <p>Summarizing...</p>
         <Loading radius={25} className="AiExpressionResult-Loading">
           <span>{progressString}</span>
         </Loading>
