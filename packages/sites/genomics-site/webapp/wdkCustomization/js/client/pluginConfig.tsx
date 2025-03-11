@@ -143,7 +143,7 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   },
   {
     type: 'questionForm',
-    name: 'GenesByEdaSubset',
+    name: 'GenesByPhenotypeUserDataset',
     component: GenesByEdaSubset,
   },
   {
