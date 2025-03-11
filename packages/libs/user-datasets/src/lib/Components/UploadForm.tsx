@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
+  useReducer,
   useState,
 } from 'react';
 
@@ -156,11 +157,14 @@ function UploadForm({
   );
   const [hyperlinks, setHyperlinks] = useState<UserDatasetHyperlink[]>([]);
   const [organisms, setOrganisms] = useState<string[]>([]);
-  const [contacts, setContacts] = useState<UserDatasetContact[]>([]);
-  console.log(contacts);
+  const [contacts, setContacts] = useState<UserDatasetContact[]>(
+    [] as UserDatasetContact[]
+  );
+
   const [nPublicationInputBoxes, setNPublicationInputBoxes] = useState(0);
   const [nHyperlinkInputBoxes, setNHyperlinkInputBoxes] = useState(0);
   const [nOrganismInputBoxes, setNOrganismInputBoxes] = useState(0);
+  const forceUpdate = useReducer((x) => x + 1, 0)[1];
 
   // Don't want to really use a ton of state hooks. Instead could get all the info from form data
   // Could replace all the useState hooks with one that contains all the properties.
@@ -441,7 +445,6 @@ function UploadForm({
             },
           ]
     );
-
   return (
     <form
       className={cx()}
@@ -475,6 +478,7 @@ function UploadForm({
             required
             value={name}
             onChange={setName}
+            key={`mykey-name${name}`}
           />
         </div>
         <div className="formSection formSection--data-set-summary">
@@ -817,7 +821,8 @@ function UploadForm({
                       event.preventDefault();
                       const updatedContacts = [...contacts];
                       updatedContacts.splice(index, 1);
-                      setContacts(updatedContacts);
+                      setContacts((old) => old.filter((_, i) => i !== index));
+                      forceUpdate();
                     }}
                   />
                 );
@@ -1210,14 +1215,14 @@ interface ContactInputProps {
 function ContactInput(props: ContactInputProps): JSX.Element {
   const {
     n,
-    name,
-    email,
-    affiliation,
-    city,
-    state,
-    country,
-    address,
-    isPrimary,
+    name = '',
+    email = '',
+    affiliation = '',
+    city = '',
+    state = '',
+    country = '',
+    address = '',
+    isPrimary = false,
     onAddName,
     onAddEmail,
     onAddAffiliation,
@@ -1228,6 +1233,7 @@ function ContactInput(props: ContactInputProps): JSX.Element {
     onAddIsPrimary,
     onRemoveContact,
   } = props;
+
   return (
     <div className={cx('--NestedInputContainer')}>
       <div className={cx('--NestedInputTitle')}>
@@ -1304,22 +1310,13 @@ function ContactInput(props: ContactInputProps): JSX.Element {
         <RadioList
           name={`isPrimary-${n}`}
           className="horizontal"
-          value={
-            isPrimary === true
-              ? 'true'
-              : isPrimary === false
-              ? 'false'
-              : 'undefined'
-          }
+          value={isPrimary === true ? 'true' : 'false'}
           onChange={(value) => {
-            onAddIsPrimary(
-              value === 'true' ? true : value === 'false' ? false : undefined
-            );
+            onAddIsPrimary(value === 'true' ? true : false);
           }}
           items={[
             { value: 'true', display: 'Yes' },
             { value: 'false', display: 'No' },
-            { value: 'undefined', display: 'NA' },
           ]}
         />
       </div>
