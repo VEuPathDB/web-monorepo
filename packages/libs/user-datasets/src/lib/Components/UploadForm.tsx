@@ -106,6 +106,28 @@ export interface FormSubmission extends Omit<NewUserDataset, 'uploadMethod'> {
   dataUploadSelection: CompleteDataUploadSelection;
 }
 
+// A little helper to simplify updating fields of the nested inputs
+interface AddNestedInputChildProps {
+  nestedInputObject:
+    | UserDatasetPublication[]
+    | UserDatasetHyperlink[]
+    | UserDatasetContact[];
+  index: number;
+}
+
+const createNestedInputUpdater = function (props: AddNestedInputChildProps) {
+  const { nestedInputObject, index } = props;
+
+  return function (newValue: string | boolean, inputName: string) {
+    const updatedNestedInputObject = [...nestedInputObject];
+    updatedNestedInputObject[index] = {
+      ...nestedInputObject[index],
+      [inputName]: newValue,
+    };
+    return updatedNestedInputObject;
+  };
+};
+
 function UploadForm({
   badUploadMessage,
   baseUrl,
@@ -155,6 +177,7 @@ function UploadForm({
   const [publications, setPublications] = useState<UserDatasetPublication[]>(
     []
   );
+
   const [hyperlinks, setHyperlinks] = useState<UserDatasetHyperlink[]>([]);
   const [organisms, setOrganisms] = useState<string[]>([]);
   const [contacts, setContacts] = useState<UserDatasetContact[]>(
@@ -558,16 +581,19 @@ function UploadForm({
                 Publications (Optional)
               </FieldLabel>
               {publications.map((publication, index) => {
+                const updatePublicationsObject = createNestedInputUpdater({
+                  nestedInputObject: publications,
+                  index,
+                });
                 return (
                   <PublicationInput
                     n={index}
                     pubMedId={publication.pubMedId}
                     onAddPubmedId={(value: string) => {
-                      const updatedPublications = [...publications];
-                      updatedPublications[index] = {
-                        ...publication,
-                        pubMedId: value,
-                      };
+                      const updatedPublications = updatePublicationsObject(
+                        value,
+                        'pubMedId'
+                      ) as UserDatasetPublication[];
                       setPublications(updatedPublications);
                     }}
                     onRemovePublication={(
@@ -580,11 +606,10 @@ function UploadForm({
                     }}
                     citation={publication.citation}
                     onAddCitation={(value: string) => {
-                      const updatedPublications = [...publications];
-                      updatedPublications[index] = {
-                        ...publication,
-                        citation: value,
-                      };
+                      const updatedPublications = updatePublicationsObject(
+                        value,
+                        'citation'
+                      ) as UserDatasetPublication[];
                       setPublications(updatedPublications);
                     }}
                   />
@@ -610,16 +635,19 @@ function UploadForm({
                 Hyperlinks (Optional)
               </FieldLabel>
               {hyperlinks.map((hyperlink, index) => {
+                const updateHyperlinksObject = createNestedInputUpdater({
+                  nestedInputObject: hyperlinks,
+                  index,
+                });
                 return (
                   <HyperlinkInput
                     n={index}
                     url={hyperlink.url}
                     onAddUrl={(value: string) => {
-                      const updatedHyperlinks = [...hyperlinks];
-                      updatedHyperlinks[index] = {
-                        ...hyperlink,
-                        url: value,
-                      };
+                      const updatedHyperlinks = updateHyperlinksObject(
+                        value,
+                        'url'
+                      ) as UserDatasetHyperlink[];
                       setHyperlinks(updatedHyperlinks);
                     }}
                     onRemoveHyperlink={(
@@ -632,29 +660,26 @@ function UploadForm({
                     }}
                     text={hyperlink.text}
                     onAddText={(value: string) => {
-                      const updatedHyperlinks = [...hyperlinks];
-                      updatedHyperlinks[index] = {
-                        ...hyperlink,
-                        text: value,
-                      };
+                      const updatedHyperlinks = updateHyperlinksObject(
+                        value,
+                        'text'
+                      ) as UserDatasetHyperlink[];
                       setHyperlinks(updatedHyperlinks);
                     }}
                     description={hyperlinks[index]?.description}
                     onAddDescription={(value: string) => {
-                      const updatedHyperlinks = [...hyperlinks];
-                      updatedHyperlinks[index] = {
-                        ...hyperlink,
-                        description: value,
-                      };
+                      const updatedHyperlinks = updateHyperlinksObject(
+                        value,
+                        'description'
+                      ) as UserDatasetHyperlink[];
                       setHyperlinks(updatedHyperlinks);
                     }}
                     isPublication={hyperlinks[index]?.isPublication}
-                    onAddIsPublication={(value: boolean | undefined) => {
-                      const updatedHyperlinks = [...hyperlinks];
-                      updatedHyperlinks[index] = {
-                        ...hyperlink,
-                        isPublication: value,
-                      };
+                    onAddIsPublication={(value: boolean) => {
+                      const updatedHyperlinks = updateHyperlinksObject(
+                        value,
+                        'publication'
+                      ) as UserDatasetHyperlink[];
                       setHyperlinks(updatedHyperlinks);
                       return;
                     }}
@@ -732,79 +757,75 @@ function UploadForm({
                 Contacts (Optional)
               </FieldLabel>
               {contacts.map((contact, index) => {
+                const updateContactsObject = createNestedInputUpdater({
+                  nestedInputObject: contacts,
+                  index,
+                });
                 return (
                   <ContactInput
                     n={index}
                     name={contact.name}
                     onAddName={(value: string) => {
-                      const updatedContacts = [...contacts];
-                      updatedContacts[index] = {
-                        ...contact,
-                        name: value,
-                      };
+                      const updatedContacts = updateContactsObject(
+                        value,
+                        'name'
+                      ) as UserDatasetContact[];
                       setContacts(updatedContacts);
                     }}
                     email={contact.email}
                     onAddEmail={(value: string) => {
-                      const updatedContacts = [...contacts];
-                      updatedContacts[index] = {
-                        ...contact,
-                        email: value,
-                      };
+                      const updatedContacts = updateContactsObject(
+                        value,
+                        'email'
+                      ) as UserDatasetContact[];
                       setContacts(updatedContacts);
                     }}
                     affiliation={contact.affiliation}
                     onAddAffiliation={(value: string) => {
-                      const updatedContacts = [...contacts];
-                      updatedContacts[index] = {
-                        ...contact,
-                        affiliation: value,
-                      };
+                      const updatedContacts = updateContactsObject(
+                        value,
+                        'affiliation'
+                      ) as UserDatasetContact[];
                       setContacts(updatedContacts);
                     }}
                     city={contact.city}
                     onAddCity={(value: string) => {
-                      const updatedContacts = [...contacts];
-                      updatedContacts[index] = {
-                        ...contact,
-                        city: value,
-                      };
+                      const updatedContacts = updateContactsObject(
+                        value,
+                        'city'
+                      ) as UserDatasetContact[];
                       setContacts(updatedContacts);
                     }}
                     state={contact.state}
                     onAddState={(value: string) => {
-                      const updatedContacts = [...contacts];
-                      updatedContacts[index] = {
-                        ...contact,
-                        state: value,
-                      };
+                      const updatedContacts = updateContactsObject(
+                        value,
+                        'state'
+                      ) as UserDatasetContact[];
                       setContacts(updatedContacts);
                     }}
                     country={contact.country}
                     onAddCountry={(value: string) => {
-                      const updatedContacts = [...contacts];
-                      updatedContacts[index] = {
-                        ...contact,
-                        country: value,
-                      };
+                      const updatedContacts = updateContactsObject(
+                        value,
+                        'country'
+                      ) as UserDatasetContact[];
                       setContacts(updatedContacts);
                     }}
                     address={contact.address}
                     onAddAddress={(value: string) => {
-                      const updatedContacts = [...contacts];
-                      updatedContacts[index] = {
-                        ...contact,
-                        address: value,
-                      };
+                      const updatedContacts = updateContactsObject(
+                        value,
+                        'address'
+                      ) as UserDatasetContact[];
                       setContacts(updatedContacts);
                     }}
                     isPrimary={contact.isPrimary}
-                    onAddIsPrimary={(value: boolean | undefined) => {
-                      const updatedContacts = [...contacts];
-                      updatedContacts[index] = {
-                        ...contact,
-                        isPrimary: value,
-                      };
+                    onAddIsPrimary={(value: boolean) => {
+                      const updatedContacts = updateContactsObject(
+                        value,
+                        'isPrimary'
+                      ) as UserDatasetContact[];
                       setContacts(updatedContacts);
                       return;
                     }}
@@ -1096,7 +1117,7 @@ interface HyperlinkInputProps {
   onAddUrl: (value: string) => void;
   onAddText: (value: string) => void;
   onAddDescription: (value: string) => void;
-  onAddIsPublication: (value: boolean | undefined) => void;
+  onAddIsPublication: (value: boolean) => void;
   onRemoveHyperlink: (event: React.MouseEvent<HTMLButtonElement>) => void;
   description?: string;
   isPublication?: boolean;
@@ -1191,7 +1212,7 @@ interface ContactInputProps {
   onAddState: (value: string) => void;
   onAddCountry: (value: string) => void;
   onAddAddress: (value: string) => void;
-  onAddIsPrimary: (value: boolean | undefined) => void;
+  onAddIsPrimary: (value: boolean) => void;
   onRemoveContact: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
