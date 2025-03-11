@@ -161,11 +161,6 @@ function UploadForm({
     [] as UserDatasetContact[]
   );
 
-  const [nPublicationInputBoxes, setNPublicationInputBoxes] = useState(0);
-  const [nHyperlinkInputBoxes, setNHyperlinkInputBoxes] = useState(0);
-  const [nOrganismInputBoxes, setNOrganismInputBoxes] = useState(0);
-  const forceUpdate = useReducer((x) => x + 1, 0)[1];
-
   // Don't want to really use a ton of state hooks. Instead could get all the info from form data
   // Could replace all the useState hooks with one that contains all the properties.
   // A little more difficult to debug issues with specific input.
@@ -562,30 +557,32 @@ function UploadForm({
               >
                 Publications (Optional)
               </FieldLabel>
-              {[...Array(nPublicationInputBoxes).keys()].map((index) => {
+              {publications.map((publication, index) => {
                 return (
                   <PublicationInput
                     n={index}
-                    pubMedId={publications[index]?.pubMedId}
+                    pubMedId={publication.pubMedId}
                     onAddPubmedId={(value: string) => {
                       const updatedPublications = [...publications];
                       updatedPublications[index] = {
+                        ...publication,
                         pubMedId: value,
-                        citation: updatedPublications[index]?.citation,
                       };
                       setPublications(updatedPublications);
                     }}
-                    onRemovePublication={() => {
+                    onRemovePublication={(
+                      event: React.MouseEvent<HTMLButtonElement>
+                    ) => {
+                      event.preventDefault();
                       const updatedPublications = [...publications];
                       updatedPublications.splice(index, 1);
                       setPublications(updatedPublications);
-                      setNPublicationInputBoxes((n) => n - 1);
                     }}
-                    citation={publications[index]?.citation}
+                    citation={publication.citation}
                     onAddCitation={(value: string) => {
                       const updatedPublications = [...publications];
                       updatedPublications[index] = {
-                        pubMedId: updatedPublications[index]?.pubMedId,
+                        ...publication,
                         citation: value,
                       };
                       setPublications(updatedPublications);
@@ -597,7 +594,10 @@ function UploadForm({
                 text="Add Publication"
                 onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
                   event.preventDefault();
-                  setNPublicationInputBoxes((n) => n + 1);
+                  setPublications((oldPublications) => [
+                    ...oldPublications,
+                    {} as UserDatasetPublication,
+                  ]);
                 }}
                 icon={AddIcon}
               />
@@ -609,18 +609,16 @@ function UploadForm({
               >
                 Hyperlinks (Optional)
               </FieldLabel>
-              {[...Array(nHyperlinkInputBoxes).keys()].map((index) => {
+              {hyperlinks.map((hyperlink, index) => {
                 return (
                   <HyperlinkInput
                     n={index}
-                    url={hyperlinks[index]?.url}
+                    url={hyperlink.url}
                     onAddUrl={(value: string) => {
                       const updatedHyperlinks = [...hyperlinks];
                       updatedHyperlinks[index] = {
+                        ...hyperlink,
                         url: value,
-                        text: updatedHyperlinks[index]?.text,
-                        description: updatedHyperlinks[index]?.description,
-                        isPublication: updatedHyperlinks[index]?.isPublication,
                       };
                       setHyperlinks(updatedHyperlinks);
                     }}
@@ -631,16 +629,13 @@ function UploadForm({
                       const updatedHyperlinks = [...hyperlinks];
                       updatedHyperlinks.splice(index, 1);
                       setHyperlinks(updatedHyperlinks);
-                      setNHyperlinkInputBoxes((n) => n - 1);
                     }}
-                    text={hyperlinks[index]?.text}
+                    text={hyperlink.text}
                     onAddText={(value: string) => {
                       const updatedHyperlinks = [...hyperlinks];
                       updatedHyperlinks[index] = {
-                        url: updatedHyperlinks[index]?.url,
+                        ...hyperlink,
                         text: value,
-                        description: updatedHyperlinks[index]?.description,
-                        isPublication: updatedHyperlinks[index]?.isPublication,
                       };
                       setHyperlinks(updatedHyperlinks);
                     }}
@@ -648,10 +643,8 @@ function UploadForm({
                     onAddDescription={(value: string) => {
                       const updatedHyperlinks = [...hyperlinks];
                       updatedHyperlinks[index] = {
-                        url: updatedHyperlinks[index]?.url,
-                        text: updatedHyperlinks[index]?.text,
+                        ...hyperlink,
                         description: value,
-                        isPublication: updatedHyperlinks[index]?.isPublication,
                       };
                       setHyperlinks(updatedHyperlinks);
                     }}
@@ -659,9 +652,7 @@ function UploadForm({
                     onAddIsPublication={(value: boolean | undefined) => {
                       const updatedHyperlinks = [...hyperlinks];
                       updatedHyperlinks[index] = {
-                        url: updatedHyperlinks[index]?.url,
-                        text: updatedHyperlinks[index]?.text,
-                        description: updatedHyperlinks[index]?.description,
+                        ...hyperlink,
                         isPublication: value,
                       };
                       setHyperlinks(updatedHyperlinks);
@@ -674,7 +665,10 @@ function UploadForm({
                 text="Add Hyperlink"
                 onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
                   event.preventDefault();
-                  setNHyperlinkInputBoxes((n) => n + 1);
+                  setHyperlinks((oldHyperlinks) => [
+                    ...oldHyperlinks,
+                    {} as UserDatasetHyperlink,
+                  ]);
                 }}
                 icon={AddIcon}
               />
@@ -687,7 +681,7 @@ function UploadForm({
                 Organisms (Optional)
               </FieldLabel>
               <div>
-                {[...Array(nOrganismInputBoxes).keys()].map((index) => {
+                {organisms.map((organism, index) => {
                   return (
                     <div className={cx('--OrganismInputFields')}>
                       <FieldLabel required={false} key={index}>
@@ -698,7 +692,7 @@ function UploadForm({
                         id={`data-set-organisms-${index}`}
                         placeholder="Organism"
                         required={false}
-                        value={organisms[index]}
+                        value={organism}
                         onChange={(value) => {
                           const updatedOrganisms = [...organisms];
                           updatedOrganisms[index] = value;
@@ -714,7 +708,6 @@ function UploadForm({
                           const updatedOrganisms = [...organisms];
                           updatedOrganisms.splice(index, 1);
                           setOrganisms(updatedOrganisms);
-                          setNOrganismInputBoxes((n) => n - 1);
                         }}
                         icon={Trash}
                       />
@@ -726,7 +719,7 @@ function UploadForm({
                 text="Add Organisms"
                 onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
                   event.preventDefault();
-                  setNOrganismInputBoxes((n) => n + 1);
+                  setOrganisms((oldOrganisms) => [...oldOrganisms, '']);
                 }}
                 icon={AddIcon}
               />
@@ -821,8 +814,7 @@ function UploadForm({
                       event.preventDefault();
                       const updatedContacts = [...contacts];
                       updatedContacts.splice(index, 1);
-                      setContacts((old) => old.filter((_, i) => i !== index));
-                      forceUpdate();
+                      setContacts(updatedContacts);
                     }}
                   />
                 );
@@ -1047,18 +1039,18 @@ interface PublicationInputProps {
   pubMedId: string;
   onAddPubmedId: (value: string) => void;
   onAddCitation: (value: string) => void;
-  onRemovePublication: () => void;
+  onRemovePublication: (event: React.MouseEvent<HTMLButtonElement>) => void;
   citation?: string;
 }
 
 function PublicationInput(props: PublicationInputProps): JSX.Element {
   const {
     n,
-    pubMedId,
+    pubMedId = '',
+    citation = '',
     onAddPubmedId,
-    onRemovePublication,
     onAddCitation,
-    citation,
+    onRemovePublication,
   } = props;
   return (
     <div className={cx('--NestedInputContainer')}>
@@ -1113,17 +1105,17 @@ interface HyperlinkInputProps {
 function HyperlinkInput(props: HyperlinkInputProps): JSX.Element {
   const {
     n,
-    url,
+    url = '',
+    text = '',
+    description = '',
+    isPublication = false,
     onAddUrl,
-    onRemoveHyperlink,
-    text,
     onAddText,
-    description,
     onAddDescription,
-    isPublication,
     onAddIsPublication,
+    onRemoveHyperlink,
   } = props;
-  console.log('in component', isPublication);
+
   return (
     <div className={cx('--NestedInputContainer')}>
       <div className={cx('--NestedInputTitle')}>
@@ -1167,22 +1159,13 @@ function HyperlinkInput(props: HyperlinkInputProps): JSX.Element {
         <RadioList
           name={`isPublication-${n}`}
           className="horizontal"
-          value={
-            isPublication === true
-              ? 'true'
-              : isPublication === false
-              ? 'false'
-              : 'undefined'
-          }
+          value={isPublication === true ? 'true' : 'false'}
           onChange={(value) => {
-            onAddIsPublication(
-              value === 'true' ? true : value === 'false' ? false : undefined
-            );
+            onAddIsPublication(value === 'true' ? true : false);
           }}
           items={[
             { value: 'true', display: 'Yes' },
             { value: 'false', display: 'No' },
-            { value: 'undefined', display: 'NA' },
           ]}
         />
       </div>
