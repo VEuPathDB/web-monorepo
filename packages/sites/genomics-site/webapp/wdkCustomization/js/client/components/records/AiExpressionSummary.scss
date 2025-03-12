@@ -1,0 +1,20 @@
+div.ai-summary {
+  p {
+    ul {
+      margin-top: 0.5em;
+      margin-bottom: 1em;
+    }
+  }
+}
+
+a.javascript-link {
+  cursor: grab;
+}
+
+.AiExpressionResult-Loading {
+  text-align: center;
+  padding: 0;
+  margin-top: 3em;
+  height: unset;
+  max-width: 75px;
+}
