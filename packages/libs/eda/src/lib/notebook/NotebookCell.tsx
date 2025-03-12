@@ -1,6 +1,7 @@
 import { AnalysisState } from '../core';
 import { NotebookCell as NotebookCellType } from './Types';
 import { SubsettingNotebookCell } from './SubsettingNotebookCell';
+import { TextNotebookCell } from './TextNotebookCell';
 
 interface Props {
   analysisState: AnalysisState;
@@ -17,6 +18,14 @@ export function NotebookCell(props: Props) {
     case 'subset':
       return (
         <SubsettingNotebookCell
+          cell={cell}
+          analysisState={analysisState}
+          updateCell={updateCell}
+        />
+      );
+    case 'text':
+      return (
+        <TextNotebookCell
           cell={cell}
           analysisState={analysisState}
           updateCell={updateCell}

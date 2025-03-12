@@ -41,12 +41,18 @@ export function EdaNotebookAnalysis(props: Props) {
   const notebookSettings = useMemo((): NotebookSettings => {
     const storedSettings =
       analysis?.descriptor.subset.uiSettings[NOTEBOOK_UI_SETTINGS_KEY];
+    console.log('storedSettings', storedSettings);
     if (storedSettings == null)
       return {
         cells: [
           {
             type: 'subset',
             title: 'Subset data',
+          },
+          {
+            type: 'text',
+            text: 'will be text',
+            title: 'Documentaion',
           },
         ],
       };
