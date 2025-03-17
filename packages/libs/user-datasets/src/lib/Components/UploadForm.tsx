@@ -4,7 +4,6 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useReducer,
   useState,
 } from 'react';
 
@@ -74,7 +73,6 @@ type DataUploadSelection =
 
 type CompleteDataUploadSelection = Required<DataUploadSelection>;
 
-// ANN think about if this can just pull from the user dataset interface.
 interface FormContent {
   name: string;
   summary: string;
@@ -183,24 +181,6 @@ function UploadForm({
   const [contacts, setContacts] = useState<UserDatasetContact[]>(
     [] as UserDatasetContact[]
   );
-
-  // Don't want to really use a ton of state hooks. Instead could get all the info from form data
-  // Could replace all the useState hooks with one that contains all the properties.
-  // A little more difficult to debug issues with specific input.
-  // Neither are super different from react's perspective.
-  // There could be a nice utility that reads the big object and based on the properties make inputs.
-  // But our current multiple useStates setup is simple :)
-
-  // Is this the same as the edit form?
-
-  // Some of the new imputs are strings, and some are objects. For objects, we'd want
-  // individual inputs for each.
-
-  // 0. Write down all the new inputs :)
-  // 1. Update the state (whichever direction we take)
-  // 2. Add new input fields and connect to state
-  // 3. Modify if needed (callbacks, utility functions, etc)
-  // 4.
 
   const [dependencies, setDependencies] =
     useState<UserDataset['dependencies']>();
@@ -496,7 +476,6 @@ function UploadForm({
             required
             value={name}
             onChange={setName}
-            key={`mykey-name${name}`}
           />
         </div>
         <div className="formSection formSection--data-set-summary">
