@@ -6,7 +6,9 @@ const { additionalConfig } = await import('./webpack.config.js');
 export default configure({
   ...additionalConfig,
   plugins: [
-    new BundleAnalyzerPlugin()
+    new BundleAnalyzerPlugin({
+      analyzerPort: process.env.PORT // default is 8888
+    })
   ]
 });
 
