@@ -250,19 +250,6 @@ function useHeaderMenuItems() {
             url: '/search/sequence/ByBlast',
           },
           {
-            key: 'download-software',
-            display: 'Download OrthoMCL software',
-            type: 'reactRoute',
-            url: '/downloads/software',
-          },
-          {
-            key: 'publications',
-            display: 'Publications mentioning OrthoMCL',
-            type: 'externalLink',
-            target: '_blank',
-            url: 'http://scholar.google.com/scholar?as_q=&num=10&as_epq=&as_oq=OrthoMCL&as_eq=encrypt+cryptography+hymenoptera&as_occt=any&as_sauthors=&as_publication=&as_ylo=&as_yhi=&as_sdt=1.&as_sdtp=on&as_sdtf=&as_sdts=39&btnG=Search+Scholar&hl=en',
-          },
-          {
             key: 'web-services',
             display: 'Web services',
             type: 'reactRoute',
@@ -475,6 +462,13 @@ function useHeaderMenuItems() {
             display: 'Publications',
             items: [
               {
+                key: 'publications',
+                display: 'Publications mentioning OrthoMCL',
+                type: 'externalLink',
+                target: '_blank',
+                url: 'http://scholar.google.com/scholar?as_q=&num=10&as_epq=&as_oq=OrthoMCL&as_eq=encrypt+cryptography+hymenoptera&as_occt=any&as_sauthors=&as_publication=&as_ylo=&as_yhi=&as_sdt=1.&as_sdtp=on&as_sdtf=&as_sdts=39&btnG=Search+Scholar&hl=en',
+              },
+              {
                 key: 'eupathdb-publications',
                 display: 'Publications on VEuPathDB sites',
                 type: 'reactRoute',
@@ -482,7 +476,7 @@ function useHeaderMenuItems() {
               },
               {
                 key: 'citations',
-                display: 'Publications that use our resources',
+                display: 'Publications that use VEuPathDB resources',
                 type: 'externalLink',
                 url: 'https://scholar.google.com/scholar?hl=en&as_sdt=0,39&q=OrthoMCL+OR+PlasmoDB+OR+ToxoDB+OR+CryptoDB+OR+TrichDB+OR+GiardiaDB+OR+TriTrypDB+OR+AmoebaDB+OR+MicrosporidiaDB+OR+%22FungiDB%22+OR+PiroplasmaDB+OR+%22vectorbase%22+OR+veupathdb+OR+ApiDB+OR+EuPathDB+-encrypt+-cryptography+-hymenoptera&scisbd=1',
                 target: '_blank',
@@ -597,12 +591,6 @@ function useHeaderMenuItems() {
             tooltip: 'Login first to keep your work',
             type: 'reactRoute',
             url: '/reset-session',
-          },
-          {
-            key: 'user-doc',
-            display: 'Downloadable User documentation',
-            type: 'externalLink',
-            url: '/reports/VEuPathDB_User_Documentation.pdf',
           },
         ],
       },
