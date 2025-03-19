@@ -104,6 +104,11 @@ export type AnalysisState = {
   deleteAnalysis: () => Promise<void>;
 };
 
+type AnalysisChangeHandler = (
+  update: React.SetStateAction<NewAnalysis | Analysis | undefined>,
+  skipServerCreate?: boolean
+) => void;
+
 // Used to store loaded analyses. Looks to be a performance enhancement.
 const analysisCache = new Map<string, Analysis>();
 
@@ -364,17 +369,6 @@ export function useAnalysis(
     deleteAnalysis,
     saveAnalysis,
   };
-}
-
-export interface AnalysisChangeHandler {
-  (
-    update:
-      | NewAnalysis
-      | Analysis
-      | undefined
-      | ((prev: NewAnalysis | Analysis | undefined) => NewAnalysis | Analysis),
-    skipServerCreate?: boolean
-  ): void;
 }
 
 export function useAnalysisState(
