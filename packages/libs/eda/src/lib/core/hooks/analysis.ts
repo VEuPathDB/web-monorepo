@@ -274,16 +274,7 @@ export function useAnalysis(
   // this is an enhanced version of `setAnalysis()` which also takes care of
   // skipServerCreate
   const analysisChangeHandler: AnalysisChangeHandler = useCallback(
-    (
-      update:
-        | NewAnalysis
-        | Analysis
-        | undefined
-        | ((
-            prev: NewAnalysis | Analysis | undefined
-          ) => NewAnalysis | Analysis),
-      skipServerCreate = false
-    ) => {
+    (update, skipServerCreate = false) => {
       setAnalysis((prevAnalysis) => {
         const newAnalysis =
           typeof update === 'function' ? update(prevAnalysis) : update;
@@ -297,7 +288,7 @@ export function useAnalysis(
         return newAnalysis;
       });
     },
-    [] // No dependencies needed (it's stable)
+    [] // No dependencies needed (setters are stable)
   );
 
   const analysisState = useAnalysisState(analysis, analysisChangeHandler);
