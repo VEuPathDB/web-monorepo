@@ -17,7 +17,8 @@ type ImplementedUploadTypes =
   | 'genelist'
   | 'isasimple'
   | 'bigwigfiles'
-  | 'rnaseq';
+  | 'rnaseq'
+  | 'phenotype';
 
 export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
   {
@@ -207,6 +208,30 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
       displayName: 'Gene List',
       description: `Integrate your gene list in ${projectId}.`,
       uploadTitle: 'Upload My Gene List',
+      formConfig: {
+        uploadMethodConfig: {
+          result: {
+            offerStrategyUpload: false,
+            compatibleRecordTypes: {
+              transcript: {
+                reportName: 'attributesTabular',
+                reportConfig: {
+                  attributes: ['primary_key'],
+                  includeHeader: false,
+                  attachmentType: 'plain',
+                  applyFilter: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    phenotype: {
+      type: 'phenotype',
+      displayName: 'Phenotype',
+      description: `Integrate your Phenotype data in ${projectId}.`,
+      uploadTitle: 'Upload My Phenotype data set',
       formConfig: {
         uploadMethodConfig: {
           result: {
