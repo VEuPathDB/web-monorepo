@@ -139,6 +139,8 @@ class HeaderNav extends React.Component {
         return 'youtube-play';
       case 'vimeo':
         return 'vimeo-square';
+      case 'bluesky':
+        return 'bluesky-logo';
       case 'discord':
         return ' ebrc-icon-discord-logo';
       default:
