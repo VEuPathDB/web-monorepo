@@ -1,0 +1,12 @@
+name: Debug GitHub Context
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print GitHub Context
+        run: echo '${{ toJson(github) }}'
