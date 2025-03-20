@@ -19,6 +19,7 @@ export function iconMenuItemsFromSocials(siteConfig = {}) {
     twitterUrl,
     youtubeUrl,
     vimeoUrl,
+    blueskyUrl,
     discordUrl,
     linkedinUrl,
   } = siteConfig;
@@ -30,6 +31,8 @@ export function iconMenuItemsFromSocials(siteConfig = {}) {
   if (youtubeUrl)
     items.push({ type: 'youtube', url: youtubeUrl, target: '_blank' });
   if (vimeoUrl) items.push({ type: 'vimeo', url: vimeoUrl, target: '_blank' });
+  if (blueskyUrl)
+    items.push({ type: 'bluesky', url: blueskyUrl, target: '_blank' });
   if (discordUrl)
     items.push({ type: 'discord', url: discordUrl, target: '_blank' });
   if (linkedinUrl)
