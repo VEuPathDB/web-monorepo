@@ -2,7 +2,7 @@ name: Debug GitHub Context
 on:
   push:
     branches:
-      - main
+      - bob-action-debugging
 
 jobs:
   debug:
