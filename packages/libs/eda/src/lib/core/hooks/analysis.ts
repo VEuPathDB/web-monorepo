@@ -104,7 +104,7 @@ export type AnalysisState = {
   deleteAnalysis: () => Promise<void>;
 };
 
-type AnalysisChangeHandler = (
+export type AnalysisChangeHandler = (
   update: React.SetStateAction<NewAnalysis | Analysis | undefined>,
   skipServerCreate?: boolean
 ) => void;
