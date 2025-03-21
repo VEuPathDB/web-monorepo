@@ -1,5 +1,5 @@
 .ebrc-SocialMediaIcon {
-  width: 1em;
+  /*width: 1em;*/
 
   &__wide {
     width: 1.125em;
@@ -8,4 +8,10 @@
   .fa-envelope-o {
     margin-bottom: 0.25em;
   }
+}
+img.bluesky-logo {
+  width: 1.2em;
+  position: relative;
+  top: 2px;
+  border-radius: 2px;
 }
