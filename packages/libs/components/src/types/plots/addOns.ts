@@ -245,15 +245,17 @@ const Berlin = [
 /**
  * Highlighting colors for points
  */
-export const DefaultHighlightColor = '#D246FF';
-export const DefaultNonHighlightColor = '#95929C';
+
+export const DefaultHighlightColor = '#4F0CFE';
+export const DefaultNonHighlightColor = '#B1AFBA';
 export const DefaultHighlightMarkerStyle = {
   color: DefaultHighlightColor,
   symbol: 'circle',
   line: {
-    color: DefaultHighlightColor,
+    color: 'black',
     width: 1,
   },
+  size: '9', // This is just slightly larger than the default. Ideally we could make the stroke be outside the marker... but alas.
 };
 
 export const getValueToGradientColorMapper = (
