@@ -246,13 +246,13 @@ const Berlin = [
  * Highlighting colors for points
  */
 
-export const DefaultHighlightColor = '#FE3AD3';
-export const DefaultNonHighlightColor = '#95929C';
+export const DefaultHighlightColor = '#4F0CFE';
+export const DefaultNonHighlightColor = '#B1AFBA';
 export const DefaultHighlightMarkerStyle = {
   color: DefaultHighlightColor,
   symbol: 'circle',
   line: {
-    color: 'rgb(19, 19, 19)',
+    color: 'black',
     width: 1,
   },
   size: '9', // This is just slightly larger than the default. Ideally we could make the stroke be outside the marker... but alas.
