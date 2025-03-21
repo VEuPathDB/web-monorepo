@@ -31,6 +31,7 @@ import {
   ResultUploadConfig,
   UserDataset,
   UserDatasetContact,
+  UserDatasetFormContent,
   UserDatasetHyperlink,
   UserDatasetPublication,
 } from '../Utils/types';
@@ -73,19 +74,9 @@ type DataUploadSelection =
 
 type CompleteDataUploadSelection = Required<DataUploadSelection>;
 
-interface FormContent {
-  name: string;
-  summary: string;
-  description: string;
+interface FormContent extends UserDatasetFormContent {
   dataUploadSelection: DataUploadSelection;
   dependencies?: UserDataset['dependencies'];
-  shortName?: string;
-  shortAttribution?: string;
-  category?: string;
-  publications?: UserDatasetPublication[];
-  hyperlinks?: UserDatasetHyperlink[];
-  organisms?: string[];
-  contacts?: UserDatasetContact[];
 }
 
 export type FormValidation = InvalidForm | ValidForm;

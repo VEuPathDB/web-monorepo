@@ -12,20 +12,23 @@ import {
   boolean,
 } from 'io-ts';
 
-// User dataset metadata type used by the UI (as opposed to the type
-// used by VDI).
-export interface UserDatasetMeta_UI {
-  description: string;
+export interface UserDatasetFormContent {
   name: string;
   summary: string;
+  shortName?: string; // new
+  shortAttribution?: string; // new
+  category?: string; // ANN - will be a little special. Might be hidden and prepopulated
+  description?: string;
+  publications?: UserDatasetPublication[]; // new, done
+  hyperlinks?: UserDatasetHyperlink[]; // new, done
+  organisms?: string[]; // new, done
+  contacts?: UserDatasetContact[]; // new
+}
+
+// User dataset metadata type used by the UI (as opposed to the type
+// used by VDI).
+export interface UserDatasetMeta_UI extends UserDatasetFormContent {
   visibility: UserDatasetVisibility;
-  shortName?: string;
-  shortAttribution?: string;
-  category?: string;
-  publications?: UserDatasetPublication[];
-  hyperlinks?: UserDatasetHyperlink[];
-  organisms?: string[];
-  contacts?: UserDatasetContact[];
   createdOn?: string;
 }
 
@@ -423,25 +426,15 @@ export interface UserDatasetContact {
 
 // Interface for the dataset metadata used by VDI. Will get transformed into
 // UserDatasetMeta_UI for the the client.
-export interface UserDatasetMeta_VDI {
-  name: string;
+export interface UserDatasetMeta_VDI extends UserDatasetFormContent {
   datasetType: {
     name: string;
     version: string;
   };
-  shortName?: string; // new
-  shortAttribution?: string; // new
-  category?: string; // ANN - will be a little special. Might be hidden and prepopulated
-  visibility?: 'private' | 'public' | 'protected';
-  summary?: string;
-  description?: string;
+  visibility?: UserDatasetVisibility;
   origin: string;
   projects: string[];
   dependencies: UserDatasetDependency[];
-  publications?: UserDatasetPublication[]; // new, done
-  hyperlinks?: UserDatasetHyperlink[]; // new, done
-  organisms?: string[]; // new, done
-  contacts?: UserDatasetContact[]; // new
   createdOn?: string; // new
 }
 
