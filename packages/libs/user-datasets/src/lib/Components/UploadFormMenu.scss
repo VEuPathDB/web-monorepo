@@ -10,15 +10,16 @@
   }
   menu {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     list-style: none;
     gap: 1em;
     padding: 0;
-    width: max-content;
+    /*width: max-content;*/
 
     a.btn {
       display: inline-block;
-      width: 100%;
+      width: 30em; /*100%;*/
       padding: 1.25em;
       font-size: 1.1em;
 

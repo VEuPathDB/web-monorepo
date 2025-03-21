@@ -19,7 +19,7 @@ const UserDatasetRouter = React.lazy(
 
 const availableUploadTypes = userDatasetsUploadTypes.trim()
   ? userDatasetsUploadTypes.split(/,\s*/g)
-  : ['genelist', 'bigwigfiles', 'rnaseq'];
+  : ['genelist', 'bigwigfiles', 'rnaseq', 'wrangler'];
 
 const USER_DATASETS_HELP_PAGE = 'user_datasets_help.html';
 
@@ -44,6 +44,7 @@ export const userDatasetRoutes: RouteEntry[] = [
       return (
         <Suspense fallback={<Loading />}>
           <UserDatasetRouter
+            enablePublicUserDatasets
             availableUploadTypes={availableUploadTypes}
             detailsPageTitle="My Data Set"
             helpRoute="/workspace/datasets/help"
