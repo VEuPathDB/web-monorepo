@@ -6,7 +6,7 @@ import { H6 } from '@veupathdb/coreui/lib/components/typography/headers';
 
 export function TextNotebookCell(props: NotebookCellComponentProps<'text'>) {
   const { analysisState, cell, updateCell } = props;
-
+  const { text } = cell;
   const entity = useStudyEntities()[0];
   const totalCountsResult = useEntityCounts();
   const filteredCountsResult = useEntityCounts(
@@ -15,8 +15,8 @@ export function TextNotebookCell(props: NotebookCellComponentProps<'text'>) {
   return (
     <div>
       <H6>I'm the title</H6>
-      <p>Lots of documentation that is helpful.</p>
-      {/* Show totalCountsResult and filteredCountsResult */}
+      <p>This is my text:</p>
+      {text}
       <p>
         Total Counts Result:{' '}
         {totalCountsResult.value

@@ -2,6 +2,7 @@ import { AnalysisState } from '../core';
 import { NotebookCell as NotebookCellType } from './Types';
 import { SubsettingNotebookCell } from './SubsettingNotebookCell';
 import { TextNotebookCell } from './TextNotebookCell';
+import { VisualizationNotebookCell } from './VisualizationNotebookCell';
 
 interface Props {
   analysisState: AnalysisState;
@@ -26,6 +27,14 @@ export function NotebookCell(props: Props) {
     case 'text':
       return (
         <TextNotebookCell
+          cell={cell}
+          analysisState={analysisState}
+          updateCell={updateCell}
+        />
+      );
+    case 'visualization':
+      return (
+        <VisualizationNotebookCell
           cell={cell}
           analysisState={analysisState}
           updateCell={updateCell}

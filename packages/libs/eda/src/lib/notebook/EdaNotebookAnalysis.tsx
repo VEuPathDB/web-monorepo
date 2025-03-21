@@ -38,6 +38,7 @@ export function EdaNotebookAnalysis(props: Props) {
     analysisId === 'new' ? undefined : analysisId
   );
   const { analysis } = analysisState;
+  console.log(analysis);
   const notebookSettings = useMemo((): NotebookSettings => {
     const storedSettings =
       analysis?.descriptor.subset.uiSettings[NOTEBOOK_UI_SETTINGS_KEY];
@@ -51,8 +52,13 @@ export function EdaNotebookAnalysis(props: Props) {
           },
           {
             type: 'text',
-            text: 'will be text',
-            title: 'Documentaion',
+            text: 'Helpful text',
+            title: 'Documentation',
+          },
+          {
+            type: 'visualization',
+            title: 'Visualization cell',
+            visualizationId: '',
           },
         ],
       };
