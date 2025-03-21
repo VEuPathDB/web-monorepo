@@ -17,6 +17,7 @@ interface HighlightSpec {
   ids: string[];
   variableId: string;
   entityId: string;
+  traceName?: string;
 }
 
 interface Props {
@@ -110,7 +111,9 @@ function ScatterPlotAdapter(props: AdapterProps) {
         'xyrelationships',
         undefined,
         undefined,
-        hightlightIds
+        hightlightIds,
+        undefined,
+        highlightSpec?.traceName
       ).dataSetProcess;
     },
     ['ScatterPlotAdapter', studyId, xAxisVariable, yAxisVariable, highlightSpec]
