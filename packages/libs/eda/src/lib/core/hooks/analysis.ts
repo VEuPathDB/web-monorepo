@@ -104,6 +104,11 @@ export type AnalysisState = {
   deleteAnalysis: () => Promise<void>;
 };
 
+export type AnalysisChangeHandler = (
+  update: React.SetStateAction<NewAnalysis | Analysis | undefined>,
+  skipServerCreate?: boolean
+) => void;
+
 // Used to store loaded analyses. Looks to be a performance enhancement.
 const analysisCache = new Map<string, Analysis>();
 
@@ -271,16 +276,27 @@ export function useAnalysis(
     });
   }, [analysisClient]);
 
-  const onAnalysisChange = useCallback<AnalysisChangeHandler>(
-    (analysis, { skipServerCreate }) => {
-      const scheduleUpdate = Analysis.is(analysis) || !skipServerCreate;
-      setAnalysis(analysis);
-      setUpdateScheduled(scheduleUpdate);
+  // this is an enhanced version of `setAnalysis()` which also takes care of
+  // skipServerCreate
+  const analysisChangeHandler: AnalysisChangeHandler = useCallback(
+    (update, skipServerCreate = false) => {
+      setAnalysis((prevAnalysis) => {
+        const newAnalysis =
+          typeof update === 'function' ? update(prevAnalysis) : update;
+
+        // Check if we need to schedule an update
+        const scheduleUpdate = Analysis.is(newAnalysis) || !skipServerCreate;
+
+        // Update state
+        setUpdateScheduled(scheduleUpdate);
+
+        return newAnalysis;
+      });
     },
-    []
+    [] // No dependencies needed (setters are stable)
   );
 
-  const analysisState = useAnalysisState(analysis, onAnalysisChange);
+  const analysisState = useAnalysisState(analysis, analysisChangeHandler);
 
   // Retrieve an Analysis from the data store whenever `analysisID` updates.
   const loadAnalysis = useCallback(() => {
@@ -355,61 +371,39 @@ export function useAnalysis(
   };
 }
 
-interface AnalysisChangeHandlerData {
-  skipServerCreate: boolean;
-}
-
-export interface AnalysisChangeHandler {
-  (analysis: NewAnalysis | Analysis, data: AnalysisChangeHandlerData): void;
-}
-
 export function useAnalysisState(
   analysis: NewAnalysis | Analysis | undefined,
-  onAnalysisChange: AnalysisChangeHandler
+  analysisChangeHandler: AnalysisChangeHandler
 ) {
   // Setters
-  const setName = useSetter(analysis, analysisToNameLens, onAnalysisChange);
+  const setName = useSetter(analysisChangeHandler, analysisToNameLens);
   const setDescription = useSetter(
-    analysis,
-    analysisToDescriptionLens,
-    onAnalysisChange
+    analysisChangeHandler,
+    analysisToDescriptionLens
   );
-  const setNotes = useSetter(analysis, analysisToNotesLens, onAnalysisChange);
-  const setIsPublic = useSetter(
-    analysis,
-    analysisToIsPublicLens,
-    onAnalysisChange
-  );
-  const setFilters = useSetter(
-    analysis,
-    analysisToFiltersLens,
-    onAnalysisChange
-  );
+  const setNotes = useSetter(analysisChangeHandler, analysisToNotesLens);
+  const setIsPublic = useSetter(analysisChangeHandler, analysisToIsPublicLens);
+  const setFilters = useSetter(analysisChangeHandler, analysisToFiltersLens);
   const setComputations = useSetter(
-    analysis,
-    analysisToComputationsLens,
-    onAnalysisChange
+    analysisChangeHandler,
+    analysisToComputationsLens
   );
   const setDerivedVariables = useSetter(
-    analysis,
-    analysisToDerivedVariablesLens,
-    onAnalysisChange
+    analysisChangeHandler,
+    analysisToDerivedVariablesLens
   );
   const setStarredVariables = useSetter(
-    analysis,
-    analysisToStarredVariablesLens,
-    onAnalysisChange
+    analysisChangeHandler,
+    analysisToStarredVariablesLens
   );
   const setVariableUISettings = useSetter(
-    analysis,
+    analysisChangeHandler,
     analysisToVariableUISettingsLens,
-    onAnalysisChange,
     true
   );
   const setDataTableConfig = useSetter(
-    analysis,
-    analysisToDataTableConfig,
-    onAnalysisChange
+    analysisChangeHandler,
+    analysisToDataTableConfig
   );
 
   // Visualization manipulations
@@ -727,6 +721,7 @@ const analysisToDataTableConfig = Lens.fromPath<NewAnalysis | Analysis>()([
   'dataTableConfig',
 ]);
 
+// Helper to apply an update using a lens
 function updateAnalysis<T>(
   analysis: NewAnalysis | Analysis,
   nestedValueLens: Lens<NewAnalysis | Analysis, T>,
@@ -743,27 +738,23 @@ function updateAnalysis<T>(
   }
   return analysis;
 }
+
 // Helper function to create stable callbacks
 function useSetter<T>(
-  analysis: NewAnalysis | Analysis | undefined,
+  analysisChangeHandler: AnalysisChangeHandler,
   nestedValueLens: Lens<Analysis | NewAnalysis, T>,
-  onAnalysisChange: AnalysisChangeHandler,
-  skipServerCreate = false
+  skipServerCreate: boolean = false
 ) {
-  const analysisRef = useRef(analysis);
-  useEffect(() => {
-    analysisRef.current = analysis;
-  });
   return useCallback(
     (nestedValue: T | ((nestedValue: T) => T)) => {
-      if (analysisRef.current == null) return; // TODO Should this throw an error?
-      onAnalysisChange(
-        updateAnalysis(analysisRef.current, nestedValueLens, nestedValue),
-        {
-          skipServerCreate,
-        }
-      );
+      // use the functional update form `analysisChangeHandler()`
+      // (it's `setAnalysis()` under the hood.
+      analysisChangeHandler((prev) => {
+        if (prev == null)
+          throw new Error("Cannot update an analysis before it's been loaded.");
+        return updateAnalysis(prev, nestedValueLens, nestedValue);
+      }, skipServerCreate);
     },
-    [nestedValueLens, onAnalysisChange, skipServerCreate]
+    [nestedValueLens, analysisChangeHandler, skipServerCreate]
   );
 }
