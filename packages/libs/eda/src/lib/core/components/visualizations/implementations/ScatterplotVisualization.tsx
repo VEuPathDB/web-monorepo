@@ -2167,7 +2167,9 @@ export function scatterplotResponseToData(
   computationType?: string,
   entities?: StudyEntity[],
   colorPaletteOverride?: string[],
-  highlightIds?: string[]
+  highlightIds?: string[],
+  highlightMarkerStyleOverride?: ScatterPlotDataSeries['marker'],
+  highlightTraceName?: string
 ): ScatterPlotDataWithCoverage {
   const modeValue = 'markers';
 
@@ -2214,7 +2216,9 @@ export function scatterplotResponseToData(
         computationType,
         entities,
         colorPaletteOverride,
-        highlightIds
+        highlightIds,
+        highlightMarkerStyleOverride,
+        highlightTraceName
       );
 
     return {
@@ -2285,7 +2289,8 @@ function processInputData(
   entities?: StudyEntity[],
   colorPaletteOverride?: string[],
   highlightIds?: string[],
-  highlightMarkerStyleOverride?: ScatterPlotDataSeries['marker']
+  highlightMarkerStyleOverride?: ScatterPlotDataSeries['marker'],
+  highlightTraceName?: string
 ) {
   // set variables for x- and yaxis ranges: no default values are set
   let xMin: number | string | undefined;
@@ -2367,7 +2372,7 @@ function processInputData(
   let highlightTrace: any = {
     x: [],
     y: [],
-    name: 'highlight',
+    name: highlightTraceName ?? 'Highlighted Points',
     mode: 'markers',
     type: 'scattergl',
     marker: highlightMarkerStyleOverride ?? DefaultHighlightMarkerStyle,
