@@ -134,6 +134,7 @@ export function EdaDatasetGraph(props: Props) {
                     // gene id
                     variableId: 'VAR_bdc8e679',
                     entityId: plotConfig.xAxisEntityId,
+                    traceName: source_id?.toString(),
                   }
                 }
               />

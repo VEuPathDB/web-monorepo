@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import { Props } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
 import {
@@ -46,15 +46,26 @@ export function EdaSubsetParameter(props: Props<StringParam>) {
   }, [props.value, studyId]);
 
   const { onParamValueChange } = props;
-  const onAnalysisChange = useCallback<AnalysisChangeHandler>(
-    (analysis) => {
-      const paramValue = JSON.stringify(analysis);
-      onParamValueChange(paramValue);
+
+  // Use a ref to store `analysis` and simulate a React state setter while
+  // also triggering the upstream state persistence
+  const analysisRef =
+    useRef<Analysis | NewAnalysis | undefined>(analysisDescriptor);
+  const persistAnalysis = useCallback<AnalysisChangeHandler>(
+    (update) => {
+      // Update the ref with the new analysis value.
+      analysisRef.current =
+        typeof update === 'function' ? update(analysisRef.current) : update;
+
+      // Sync the update with the upstream store.
+      if (analysisRef.current != null) {
+        onParamValueChange(JSON.stringify(analysisRef.current));
+      }
     },
     [onParamValueChange]
   );
 
-  const analysisState = useAnalysisState(analysisDescriptor, onAnalysisChange);
+  const analysisState = useAnalysisState(analysisDescriptor, persistAnalysis);
 
   if (studyId == null) return <div>Could not find eda study id</div>;
 
