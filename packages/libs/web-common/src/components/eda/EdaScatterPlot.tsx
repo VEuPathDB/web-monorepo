@@ -97,8 +97,6 @@ function ScatterPlotAdapter(props: AdapterProps) {
         ?.slice(1)
         .map((row) => row[0]);
 
-      console.log({ hightlightIds });
-
       return scatterplotResponseToData(
         scatterplotDataResponse,
         undefined,
