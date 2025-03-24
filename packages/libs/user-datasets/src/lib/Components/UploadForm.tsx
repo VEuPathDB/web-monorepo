@@ -504,50 +504,8 @@ function UploadForm({
         <div className={'formSection'}>
           <details className={cx('--AdditionalDetails')}>
             <summary>Additional Details</summary>
-            <div className="additionalDetailsFormSection additionalDetailsFormSection--additionalDetailsField formSection--data-set-shortName">
-              <FieldLabel htmlFor="data-set-shortName" required={false}>
-                Short Name
-              </FieldLabel>
-              <TextBox
-                type="input"
-                id="data-set-shortName"
-                placeholder="Short name for the dataset"
-                required={false}
-                value={shortName}
-                onChange={setShortName}
-              />
-            </div>
-            <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-shortAttribution">
-              <FieldLabel htmlFor="data-set-shortAttribution" required={false}>
-                Short Attribution
-              </FieldLabel>
-              <TextBox
-                type="input"
-                id="data-set-shortAttribution"
-                placeholder="Short attribution for the dataset"
-                required={false}
-                value={shortAttribution}
-                onChange={setShortAttribution}
-              />
-            </div>
-            <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-category">
-              <FieldLabel htmlFor="data-set-category" required={false}>
-                Category
-              </FieldLabel>
-              <TextBox
-                type="input"
-                id="data-set-category"
-                placeholder="Category"
-                required={false}
-                value={category}
-                onChange={setCategory}
-              />
-            </div>
             <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-publications">
-              <FieldLabel
-                htmlFor="data-set-publications-pubMedId"
-                required={false}
-              >
+              <FieldLabel htmlFor="data-set-publications" required={false}>
                 Publications (Optional)
               </FieldLabel>
               {publications.map((publication, index) => {

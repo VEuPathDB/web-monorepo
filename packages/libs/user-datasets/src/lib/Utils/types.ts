@@ -15,14 +15,14 @@ import {
 export interface UserDatasetFormContent {
   name: string;
   summary: string;
-  shortName?: string; // new
-  shortAttribution?: string; // new
-  category?: string; // ANN - will be a little special. Might be hidden and prepopulated
+  shortName?: string;
+  shortAttribution?: string;
+  category?: string;
   description?: string;
-  publications?: UserDatasetPublication[]; // new, done
-  hyperlinks?: UserDatasetHyperlink[]; // new, done
-  organisms?: string[]; // new, done
-  contacts?: UserDatasetContact[]; // new
+  publications?: UserDatasetPublication[];
+  hyperlinks?: UserDatasetHyperlink[];
+  organisms?: string[];
+  contacts?: UserDatasetContact[];
 }
 
 // User dataset metadata type used by the UI (as opposed to the type
