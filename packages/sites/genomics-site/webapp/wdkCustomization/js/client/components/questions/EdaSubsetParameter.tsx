@@ -14,6 +14,7 @@ import {
   Filter,
   makeNewAnalysis,
   NewAnalysis,
+  useAnalysisChangeHandler,
   useAnalysisState,
   useGetDefaultVariableDescriptor,
   useStudyEntities,
@@ -47,25 +48,15 @@ export function EdaSubsetParameter(props: Props<StringParam>) {
 
   const { onParamValueChange } = props;
 
-  // Use a ref to store `analysis` and simulate a React state setter while
-  // also triggering the upstream state persistence
-  const analysisRef =
-    useRef<Analysis | NewAnalysis | undefined>(analysisDescriptor);
-  const persistAnalysis = useCallback<AnalysisChangeHandler>(
-    (update) => {
-      // Update the ref with the new analysis value.
-      analysisRef.current =
-        typeof update === 'function' ? update(analysisRef.current) : update;
-
-      // Sync the update with the upstream store.
-      if (analysisRef.current != null) {
-        onParamValueChange(JSON.stringify(analysisRef.current));
-      }
-    },
-    [onParamValueChange]
+  const analysisChangeHandler = useAnalysisChangeHandler(
+    analysisDescriptor,
+    (analysis: Analysis | NewAnalysis) =>
+      onParamValueChange(JSON.stringify(analysis))
   );
-
-  const analysisState = useAnalysisState(analysisDescriptor, persistAnalysis);
+  const analysisState = useAnalysisState(
+    analysisDescriptor,
+    analysisChangeHandler
+  );
 
   if (studyId == null) return <div>Could not find eda study id</div>;
 
