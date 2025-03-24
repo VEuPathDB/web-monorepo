@@ -17,6 +17,7 @@ interface HighlightSpec {
   ids: string[];
   variableId: string;
   entityId: string;
+  traceName?: string;
 }
 
 interface Props {
@@ -24,6 +25,7 @@ interface Props {
   xAxisVariable: VariableDescriptor;
   yAxisVariable: VariableDescriptor;
   highlightSpec?: HighlightSpec;
+  plotTitle?: string;
 }
 
 /**
@@ -50,10 +52,11 @@ interface AdapterProps {
   xAxisVariable: VariableDescriptor;
   yAxisVariable: VariableDescriptor;
   highlightSpec?: HighlightSpec;
+  plotTitle?: string;
 }
 
 function ScatterPlotAdapter(props: AdapterProps) {
-  const { xAxisVariable, yAxisVariable, highlightSpec } = props;
+  const { xAxisVariable, yAxisVariable, highlightSpec, plotTitle } = props;
   const { id: studyId } = useStudyMetadata();
   const dataClient = useDataClient();
   const subsettingClient = useSubsettingClient();
@@ -96,8 +99,6 @@ function ScatterPlotAdapter(props: AdapterProps) {
         ?.slice(1)
         .map((row) => row[0]);
 
-      console.log({ hightlightIds });
-
       return scatterplotResponseToData(
         scatterplotDataResponse,
         undefined,
@@ -110,7 +111,9 @@ function ScatterPlotAdapter(props: AdapterProps) {
         'xyrelationships',
         undefined,
         undefined,
-        hightlightIds
+        hightlightIds,
+        undefined,
+        highlightSpec?.traceName
       ).dataSetProcess;
     },
     ['ScatterPlotAdapter', studyId, xAxisVariable, yAxisVariable, highlightSpec]
@@ -135,6 +138,7 @@ function ScatterPlotAdapter(props: AdapterProps) {
       data={data.value}
       dependentAxisLabel={yAxisEntityAndVariable?.variable.displayName}
       independentAxisLabel={xAxisEntityAndVariable?.variable.displayName}
+      title={plotTitle}
     />
   );
 }

@@ -134,8 +134,10 @@ export function EdaDatasetGraph(props: Props) {
                     // gene id
                     variableId: 'VAR_bdc8e679',
                     entityId: plotConfig.xAxisEntityId,
+                    traceName: source_id?.toString(),
                   }
                 }
+                plotTitle={plotConfig.plotName}
               />
             </div>
           );
@@ -143,13 +145,14 @@ export function EdaDatasetGraph(props: Props) {
       </div>
       <div>
         <div style={{ display: 'flex', gap: '3ex' }}>
-          <h4>
+          {/* <h4>
             <Link
               to={`/workspace/analyses/${dataset_id}/new/visualizations/new`}
             >
               Use the Study Explorer for more advanced plot options
             </Link>
           </h4>
+         */}
           <h4>
             <Link to={`/record/dataset/${dataset_id}`}>
               See the full dataset description

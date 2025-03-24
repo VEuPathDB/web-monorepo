@@ -24,6 +24,7 @@ export const {
   redditUrl = '',
   linkedinUrl = '',
   vimeoUrl = '',
+  blueskyUrl = '',
   discordUrl = '',
   communitySite = '',
   siteSearchServiceUrl = '',
