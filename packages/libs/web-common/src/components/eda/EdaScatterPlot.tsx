@@ -25,6 +25,7 @@ interface Props {
   xAxisVariable: VariableDescriptor;
   yAxisVariable: VariableDescriptor;
   highlightSpec?: HighlightSpec;
+  plotTitle?: string;
 }
 
 /**
@@ -51,10 +52,11 @@ interface AdapterProps {
   xAxisVariable: VariableDescriptor;
   yAxisVariable: VariableDescriptor;
   highlightSpec?: HighlightSpec;
+  plotTitle?: string;
 }
 
 function ScatterPlotAdapter(props: AdapterProps) {
-  const { xAxisVariable, yAxisVariable, highlightSpec } = props;
+  const { xAxisVariable, yAxisVariable, highlightSpec, plotTitle } = props;
   const { id: studyId } = useStudyMetadata();
   const dataClient = useDataClient();
   const subsettingClient = useSubsettingClient();
@@ -136,6 +138,7 @@ function ScatterPlotAdapter(props: AdapterProps) {
       data={data.value}
       dependentAxisLabel={yAxisEntityAndVariable?.variable.displayName}
       independentAxisLabel={xAxisEntityAndVariable?.variable.displayName}
+      title={plotTitle}
     />
   );
 }
