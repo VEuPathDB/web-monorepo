@@ -137,6 +137,7 @@ export function EdaDatasetGraph(props: Props) {
                     traceName: source_id?.toString(),
                   }
                 }
+                plotTitle={plotConfig.plotName}
               />
             </div>
           );
