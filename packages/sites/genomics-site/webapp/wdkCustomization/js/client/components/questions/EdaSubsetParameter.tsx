@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { Props } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
 import {
@@ -9,15 +9,14 @@ import { Subsetting } from '@veupathdb/eda/lib/workspace';
 import { WorkspaceContainer } from '@veupathdb/eda/lib/workspace/WorkspaceContainer';
 import {
   Analysis,
-  AnalysisChangeHandler,
   AnalysisState,
   Filter,
   makeNewAnalysis,
   NewAnalysis,
-  useAnalysisChangeHandler,
   useAnalysisState,
   useGetDefaultVariableDescriptor,
   useStudyEntities,
+  useSetterWithCallback,
 } from '@veupathdb/eda/lib/core';
 import { VariableLinkConfig } from '@veupathdb/eda/lib/core/components/VariableLink';
 import { edaServiceUrl } from '@veupathdb/web-common/lib/config';
@@ -48,15 +47,21 @@ export function EdaSubsetParameter(props: Props<StringParam>) {
 
   const { onParamValueChange } = props;
 
-  const analysisChangeHandler = useAnalysisChangeHandler(
-    analysisDescriptor,
-    (analysis: Analysis | NewAnalysis) =>
-      onParamValueChange(JSON.stringify(analysis))
+  const serialiseAndPersist = useCallback(
+    (analysis: Analysis | NewAnalysis | undefined) => {
+      if (analysis != null) {
+        onParamValueChange(JSON.stringify(analysis));
+      }
+    },
+    [onParamValueChange]
   );
-  const analysisState = useAnalysisState(
+
+  const setter = useSetterWithCallback<Analysis | NewAnalysis | undefined>(
     analysisDescriptor,
-    analysisChangeHandler
+    serialiseAndPersist
   );
+
+  const analysisState = useAnalysisState(analysisDescriptor, setter);
 
   if (studyId == null) return <div>Could not find eda study id</div>;
 

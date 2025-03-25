@@ -758,29 +758,3 @@ function useSetter<T>(
     [nestedValueLens, analysisChangeHandler, skipServerCreate]
   );
 }
-
-// Helper hook to create an analysisChangeHandler that calls
-// another function (e.g for upstream state setting)
-export function useAnalysisChangeHandler(
-  analysis: Analysis | NewAnalysis | undefined,
-  callback: (analysis: Analysis | NewAnalysis) => void
-) {
-  // Use a ref to store `analysis` and simulate a React state setter while
-  // also triggering the upstream state persistence
-  const analysisRef = useRef<Analysis | NewAnalysis | undefined>(analysis);
-  const persistAnalysis = useCallback<AnalysisChangeHandler>(
-    (update) => {
-      // Update the ref with the new analysis value.
-      analysisRef.current =
-        typeof update === 'function' ? update(analysisRef.current) : update;
-
-      // Sync the update with the upstream store.
-      if (analysisRef.current != null) {
-        callback(analysisRef.current);
-      }
-    },
-    [callback]
-  );
-
-  return persistAnalysis;
-}
