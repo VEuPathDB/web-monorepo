@@ -15,6 +15,11 @@ import React, { useCallback, useRef } from 'react';
  * a hook or component that expects a function like `(update: T | ((prev: T) => T)) => void` to
  * handle state changes.
  *
+ * Note: The returned setter should be the exclusive mechanism for updating the value.
+ * If the value is also updated externally (e.g., via re-renders with a new `initialValue`),
+ * those changes will not be reflected in this hook's internal state. This hook is intended for
+ * cases where *all* updates flow through the returned setter function.
+ *
  * @param initialValue - The initial value to store in the ref.
  * @param callback - A function called with the new value after each update.
  * @returns A setter function compatible with `React.SetStateAction<T>`.

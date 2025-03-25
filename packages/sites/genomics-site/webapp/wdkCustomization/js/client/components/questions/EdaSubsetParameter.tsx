@@ -47,7 +47,8 @@ export function EdaSubsetParameter(props: Props<StringParam>) {
 
   const { onParamValueChange } = props;
 
-  const serialiseAndPersist = useCallback(
+  // serialize and persist with `onParamValueChange`
+  const persistAnalysis = useCallback(
     (analysis: Analysis | NewAnalysis | undefined) => {
       if (analysis != null) {
         onParamValueChange(JSON.stringify(analysis));
@@ -56,12 +57,15 @@ export function EdaSubsetParameter(props: Props<StringParam>) {
     [onParamValueChange]
   );
 
-  const setter = useSetterWithCallback<Analysis | NewAnalysis | undefined>(
-    analysisDescriptor,
-    serialiseAndPersist
-  );
+  // wrap `persistAnalysis` inside a state setter function with 'functional update' functionality
+  const wrappedPersistAnalysis = useSetterWithCallback<
+    Analysis | NewAnalysis | undefined
+  >(analysisDescriptor, persistAnalysis);
 
-  const analysisState = useAnalysisState(analysisDescriptor, setter);
+  const analysisState = useAnalysisState(
+    analysisDescriptor,
+    wrappedPersistAnalysis
+  );
 
   if (studyId == null) return <div>Could not find eda study id</div>;
 
