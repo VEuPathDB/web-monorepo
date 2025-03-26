@@ -279,11 +279,9 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
                           onClick={() =>
                             scrollToAndOpenExpressionGraph({
                               expressionGraphs: expressionGraphs,
-                              findIndexFn: ({
-                                dataset_id,
-                              }: {
+                              findIndexFn: (expressionGraph: {
                                 dataset_id: string;
-                              }) => dataset_id === dataset_id,
+                              }) => expressionGraph.dataset_id === dataset_id,
                               tableId: 'ExpressionGraphs',
                               updateSectionVisibility:
                                 props.updateSectionVisibility,
