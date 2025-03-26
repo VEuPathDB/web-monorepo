@@ -30,7 +30,7 @@ export interface UserDatasetMeta_VDI extends UserDatasetFormContent {
   origin: string;
   projects: string[];
   dependencies: UserDatasetDependency[];
-  createdOn?: string; // new
+  createdOn?: string;
 }
 
 export interface UserDatasetShare {
