@@ -257,7 +257,16 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
         const rowData = topics[rowIndex];
         return (
           <ErrorBoundary>
-            <ul>
+            <div className="ai-topic-heading">
+              <span
+                className="badge"
+                title={`AI-estimated biological importance`}
+                aria-label={`Column heading for AI-estimated importance score`}
+              >
+                Biological Relevance
+              </span>
+            </div>
+            <ul className="ai-topic">
               {rowData.summaries.map(
                 ({
                   dataset_id,
@@ -265,14 +274,7 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
                   one_sentence_summary,
                 }) => {
                   return (
-                    <li
-                      key={dataset_id}
-                      style={{
-                        marginBottom: '0.5em',
-                        marginLeft: '4em',
-                        marginRight: '4em',
-                      }}
-                    >
+                    <li key={dataset_id}>
                       <>
                         <a
                           className="javascript-link"
@@ -298,8 +300,7 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
                           title={`AI-estimated biological importance: ${biological_importance}/5`}
                           aria-label={`Importance score: ${biological_importance} out of 5`}
                         >
-                          {'★'.repeat(biological_importance) +
-                            '☆'.repeat(5 - biological_importance)}
+                          {biological_importance}
                         </span>
                         <br />
                         {safeHtml(one_sentence_summary)}

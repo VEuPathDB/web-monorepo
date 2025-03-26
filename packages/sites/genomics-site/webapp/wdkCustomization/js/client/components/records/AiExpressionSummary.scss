@@ -29,3 +29,22 @@ a.javascript-link {
     color: #333;
   }
 }
+
+div.ai-topic-heading {
+  margin-bottom: 0.5em;
+  margin-right: 6em;
+
+  &::after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+ul.ai-topic {
+  li {
+    margin-bottom: 0.5em;
+    margin-left: 4em;
+    margin-right: 6em;
+  }
+}
