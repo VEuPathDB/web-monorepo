@@ -258,44 +258,58 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
         return (
           <ErrorBoundary>
             <ul>
-              {rowData.summaries.map((summary) => {
-                return (
-                  <li
-                    key={summary.dataset_id}
-                    style={{
-                      marginBottom: '0.5em',
-                      marginLeft: '4em',
-                      marginRight: '4em',
-                    }}
-                  >
-                    <>
-                      <a
-                        className="javascript-link"
-                        onClick={() =>
-                          scrollToAndOpenExpressionGraph({
-                            expressionGraphs: expressionGraphs,
-                            findIndexFn: ({
-                              dataset_id,
-                            }: {
-                              dataset_id: string;
-                            }) => dataset_id === summary.dataset_id,
-                            tableId: 'ExpressionGraphs',
-                            updateSectionVisibility:
-                              props.updateSectionVisibility,
-                            updateTableState: props.updateTableState,
-                            tableState: props.expressionGraphsTableState,
-                          })
-                        }
-                      >
-                        {experiments[summary.dataset_id].display_name as string}
-                      </a>{' '}
-                      ({experiments[summary.dataset_id].assay_type})
-                      <br />
-                      {safeHtml(summary.one_sentence_summary)}
-                    </>
-                  </li>
-                );
-              })}
+              {rowData.summaries.map(
+                ({
+                  dataset_id,
+                  biological_importance,
+                  one_sentence_summary,
+                }) => {
+                  return (
+                    <li
+                      key={dataset_id}
+                      style={{
+                        marginBottom: '0.5em',
+                        marginLeft: '4em',
+                        marginRight: '4em',
+                      }}
+                    >
+                      <>
+                        <a
+                          className="javascript-link"
+                          onClick={() =>
+                            scrollToAndOpenExpressionGraph({
+                              expressionGraphs: expressionGraphs,
+                              findIndexFn: ({
+                                dataset_id,
+                              }: {
+                                dataset_id: string;
+                              }) => dataset_id === dataset_id,
+                              tableId: 'ExpressionGraphs',
+                              updateSectionVisibility:
+                                props.updateSectionVisibility,
+                              updateTableState: props.updateTableState,
+                              tableState: props.expressionGraphsTableState,
+                            })
+                          }
+                        >
+                          {experiments[dataset_id].display_name as string}
+                        </a>{' '}
+                        ({experiments[dataset_id].assay_type})
+                        <span
+                          className="badge"
+                          title={`AI-estimated biological importance: ${biological_importance}/5`}
+                          aria-label={`Importance score: ${biological_importance} out of 5`}
+                        >
+                          {'★'.repeat(biological_importance) +
+                            '☆'.repeat(5 - biological_importance)}
+                        </span>
+                        <br />
+                        {safeHtml(one_sentence_summary)}
+                      </>
+                    </li>
+                  );
+                }
+              )}
             </ul>
           </ErrorBoundary>
         );

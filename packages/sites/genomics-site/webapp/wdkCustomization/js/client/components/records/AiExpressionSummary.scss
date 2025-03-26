@@ -18,3 +18,14 @@ a.javascript-link {
   height: unset;
   max-width: 75px;
 }
+
+.ai-generated {
+  .badge {
+    float: right;
+    background: #eef;
+    border-radius: 5px;
+    padding: 2px 8px;
+    font-size: 0.8rem;
+    color: #333;
+  }
+}
