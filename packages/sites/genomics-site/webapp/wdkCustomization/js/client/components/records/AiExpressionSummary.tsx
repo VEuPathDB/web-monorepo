@@ -263,7 +263,7 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
                 title={`AI-estimated biological importance`}
                 aria-label={`Column heading for AI-estimated importance score`}
               >
-                Biological Relevance
+                Relevance
               </span>
             </div>
             <ul className="ai-topic">
