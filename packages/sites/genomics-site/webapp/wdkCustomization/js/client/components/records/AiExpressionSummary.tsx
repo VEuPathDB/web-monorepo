@@ -26,6 +26,7 @@ import { RecordActions } from '@veupathdb/wdk-client/lib/Actions';
 import { DEFAULT_TABLE_STATE } from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
 import { State as ReduxState } from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
 import { scrollToAndOpenExpressionGraph } from './utils';
+import { ExpressionChildRow } from './GeneRecordClasses.GeneRecordClass';
 
 // Styles
 import './AiExpressionSummary.scss';
@@ -276,6 +277,12 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
                   return (
                     <li key={dataset_id}>
                       <>
+                        <ExpressionChildRow
+                          rowData={expressionGraphs.find(
+                            (expressionGraph) =>
+                              expressionGraph.dataset_id === dataset_id
+                          )}
+                        />
                         <a
                           className="javascript-link"
                           onClick={() =>
