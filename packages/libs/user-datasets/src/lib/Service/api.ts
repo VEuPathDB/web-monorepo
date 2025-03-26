@@ -9,7 +9,7 @@ import {
 } from '@veupathdb/http-utils';
 
 import {
-  userDataset,
+  userDatasetDetails_VDI,
   UserDatasetMeta_UI,
   UserDatasetMeta_VDI,
   userDatasetDetails,
@@ -52,7 +52,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
       createJsonRequest({
         path: '/vdi-datasets' + queryString,
         method: 'GET',
-        transformResponse: ioTransformer(array(userDataset)),
+        transformResponse: ioTransformer(array(userDatasetDetails_VDI)),
       })
     );
   };
@@ -166,7 +166,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
       createJsonRequest({
         path: `/vdi-datasets/community`,
         method: 'GET',
-        transformResponse: ioTransformer(array(userDataset)),
+        transformResponse: ioTransformer(array(userDatasetDetails_VDI)),
       })
     );
   };

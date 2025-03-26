@@ -540,13 +540,9 @@ export function loadUserDatasetDetailWithoutLoadingIndicator(id: string) {
     ]).then(
       ([userDataset, fileListing]) => {
         const { shares, dependencies } = userDataset as UserDatasetDetails;
-        console.log('userDataset', userDataset);
         const partiallyTransformedResponse =
           transformVdiResponseToLegacyResponseHelper(userDataset);
-        console.log(
-          'partiallyTransformedResponse',
-          partiallyTransformedResponse
-        );
+
         const transformedResponse = {
           ...partiallyTransformedResponse,
           fileListing,
@@ -735,7 +731,7 @@ function transformVdiResponseToLegacyResponseHelper(
       shortName: shortName ?? '',
       shortAttribution: shortAttribution ?? '',
       category: category ?? '',
-      publications: publications, // ANN repeat for all. No need to store this all in the database if they're empty.
+      publications: publications ?? ([] as UserDatasetPublication[]),
       hyperlinks: hyperlinks ?? ([] as UserDatasetHyperlink[]),
       organisms: organisms ?? [],
       contacts: contacts ?? ([] as UserDatasetContact[]),

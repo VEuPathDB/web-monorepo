@@ -12,24 +12,25 @@ import {
   boolean,
 } from 'io-ts';
 
-export interface UserDatasetFormContent {
-  name: string;
-  summary: string;
-  shortName?: string;
-  shortAttribution?: string;
-  category?: string;
-  description?: string;
-  publications?: UserDatasetPublication[];
-  hyperlinks?: UserDatasetHyperlink[];
-  organisms?: string[];
-  contacts?: UserDatasetContact[];
-}
-
 // User dataset metadata type used by the UI (as opposed to the type
 // used by VDI).
 export interface UserDatasetMeta_UI extends UserDatasetFormContent {
   visibility: UserDatasetVisibility;
   createdOn?: string;
+}
+
+// Interface for the dataset metadata used by VDI. Will get transformed into
+// UserDatasetMeta_UI for the the client.
+export interface UserDatasetMeta_VDI extends UserDatasetFormContent {
+  datasetType: {
+    name: string;
+    version: string;
+  };
+  visibility?: UserDatasetVisibility;
+  origin: string;
+  projects: string[];
+  dependencies: UserDatasetDependency[];
+  createdOn?: string; // new
 }
 
 export interface UserDatasetShare {
@@ -268,6 +269,7 @@ const userDatasetRecipientDetails = type({
 
 export const datasetIdType = type({ datasetId: string });
 
+export type UserDatasetPublication = TypeOf<typeof userDatasetPublication>;
 const userDatasetPublication = intersection([
   type({
     pubMedId: string,
@@ -277,6 +279,7 @@ const userDatasetPublication = intersection([
   }),
 ]);
 
+export type UserDatasetHyperlink = TypeOf<typeof userDatasetHyperlink>;
 const userDatasetHyperlink = intersection([
   type({
     url: string,
@@ -288,6 +291,7 @@ const userDatasetHyperlink = intersection([
   }),
 ]);
 
+export type UserDatasetContact = TypeOf<typeof userDatasetContact>;
 const userDatasetContact = intersection([
   type({
     name: string,
@@ -303,36 +307,56 @@ const userDatasetContact = intersection([
   }),
 ]);
 
-export const userDataset = intersection([
-  datasetIdType,
+export type UserDatasetFormContent = TypeOf<typeof userDatasetFormContent>;
+export const userDatasetFormContent = intersection([
   type({
-    owner: ownerDetails,
-    datasetType: datasetTypeDetails,
-    visibility: visibilityOptions,
     name: string,
-    origin: string,
-    projectIds: array(string),
-    status: statusDetails,
-    created: string,
-    fileCount: number,
-    fileSizeTotal: number,
+    summary: string,
   }),
   partial({
-    summary: string,
-    description: string,
-    sourceUrl: string,
-    shares: array(
-      intersection([userDatasetRecipientDetails, type({ accepted: boolean })])
-    ),
-    importMessages: array(string),
     shortName: string,
     shortAttribution: string,
     category: string,
+    description: string,
     publications: array(userDatasetPublication),
     hyperlinks: array(userDatasetHyperlink),
     organisms: array(string),
     contacts: array(userDatasetContact),
+  }),
+]);
+
+// Many of these user dataset details are in both the vdi and wdk user datasets.
+// This base type defines the fields common to both.
+const userDatasetDetails_base = intersection([
+  datasetIdType,
+  userDatasetFormContent,
+  type({
+    owner: ownerDetails,
+    datasetType: datasetTypeDetails,
+    visibility: visibilityOptions,
+    origin: string,
+    projectIds: array(string),
+    status: statusDetails,
+    created: string,
+  }),
+  partial({
+    sourceUrl: string,
+    importMessages: array(string),
     createdOn: string,
+  }),
+]);
+
+export const userDatasetDetails_VDI = intersection([
+  datasetIdType,
+  userDatasetDetails_base,
+  type({
+    fileCount: number,
+    fileSizeTotal: number,
+  }),
+  partial({
+    shares: array(
+      intersection([userDatasetRecipientDetails, type({ accepted: boolean })])
+    ),
   }),
 ]);
 
@@ -341,7 +365,8 @@ const userDatasetDetailsShareDetails = type({
   recipient: userDatasetRecipientDetails,
 });
 
-const datasetDependency = type({
+export type UserDatasetDependency = TypeOf<typeof userDatasetDependency>;
+const userDatasetDependency = type({
   resourceIdentifier: string,
   resourceDisplayName: string,
   resourceVersion: string,
@@ -349,31 +374,12 @@ const datasetDependency = type({
 
 export const userDatasetDetails = intersection([
   datasetIdType,
+  userDatasetDetails_base,
   type({
-    owner: ownerDetails,
-    datasetType: datasetTypeDetails,
-    visibility: visibilityOptions,
-    name: string,
-    origin: string,
-    projectIds: array(string),
-    status: statusDetails,
-    created: string,
-    dependencies: array(datasetDependency),
+    dependencies: array(userDatasetDependency),
   }),
   partial({
-    summary: string,
-    description: string,
-    sourceUrl: string,
     shares: array(userDatasetDetailsShareDetails),
-    importMessages: array(string),
-    shortName: string,
-    shortAttribution: string,
-    category: string,
-    publications: array(userDatasetPublication),
-    hyperlinks: array(userDatasetHyperlink),
-    organisms: array(string),
-    contacts: array(userDatasetContact),
-    createdOn: string,
   }),
 ]);
 
@@ -395,50 +401,7 @@ export const userDatasetFileListing = partial({
   }),
 });
 
-interface UserDatasetDependency {
-  resourceIdentifier: string;
-  resourceDisplayName: string;
-  resourceVersion: string;
-}
-
-export interface UserDatasetPublication {
-  pubMedId: string;
-  citation?: string;
-}
-
-export interface UserDatasetHyperlink {
-  url: string;
-  text: string;
-  description?: string;
-  isPublication?: boolean;
-}
-
-export interface UserDatasetContact {
-  name: string;
-  email?: string;
-  affiliation?: string;
-  city?: string;
-  state?: string;
-  country?: string;
-  address?: string;
-  isPrimary?: boolean;
-}
-
-// Interface for the dataset metadata used by VDI. Will get transformed into
-// UserDatasetMeta_UI for the the client.
-export interface UserDatasetMeta_VDI extends UserDatasetFormContent {
-  datasetType: {
-    name: string;
-    version: string;
-  };
-  visibility?: UserDatasetVisibility;
-  origin: string;
-  projects: string[];
-  dependencies: UserDatasetDependency[];
-  createdOn?: string; // new
-}
-
-export type UserDatasetVDI = TypeOf<typeof userDataset>;
+export type UserDatasetVDI = TypeOf<typeof userDatasetDetails_VDI>;
 export type UserDatasetDetails = TypeOf<typeof userDatasetDetails>;
 export type UserQuotaMetadata = TypeOf<typeof userQuotaMetadata>;
 export type UserDatasetFileListing = TypeOf<typeof userDatasetFileListing>;
