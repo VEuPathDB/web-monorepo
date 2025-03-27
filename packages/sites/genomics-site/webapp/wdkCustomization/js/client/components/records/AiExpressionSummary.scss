@@ -30,6 +30,10 @@ a.javascript-link {
   }
 }
 
+span.ai-one-sentence-summary {
+  padding-right: 2em;
+}
+
 div.ai-topic-heading {
   margin-bottom: 0.5em;
   margin-right: 6em;
@@ -47,4 +51,20 @@ ul.ai-topic {
     margin-left: 4em;
     margin-right: 6em;
   }
+}
+
+.ai-floater-header {
+  white-space: normal;
+  text-align: center;
+}
+
+@import '../stepAnalysis/StepAnalysisEnrichmentResult';
+
+.ai-expression-graph-modal {
+  @extend %word-cloud-base;
+  height: 450px;
+}
+
+.ai-expression-graph-modalContent {
+  display: block;
 }

@@ -14,12 +14,10 @@ import {
   AiExpressionSummary,
   AiExpressionSummaryResponse,
   AiExpressionSummarySection,
+  AiExperimentSummary,
 } from '../../types/aiExpressionTypes';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import {
-  AttributeValue,
-  TableValue,
-} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { AttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import Mesa from '@veupathdb/coreui/lib/components/Mesa';
 import {
   MesaStateProps,
@@ -196,6 +194,15 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
     return result;
   }, {});
 
+  // make another lookup for dataset_id -> topics[].summaries[]
+  const summaries = topics
+    .flatMap((topic) => topic.summaries)
+    .reduce<Record<string, AiExperimentSummary>>((result, current) => {
+      const dataset_id = current['dataset_id'] as string;
+      result[dataset_id] = { ...current };
+      return result;
+    }, {});
+
   // pre-open the main expression table so the links to it work reliably
   useEffect(() => {
     props.updateSectionVisibility('ExpressionGraphs', true);
@@ -290,15 +297,9 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
                           {experiments[dataset_id].display_name as string}
                         </a>{' '}
                         ({experiments[dataset_id].assay_type})
-                        <span
-                          className="badge"
-                          title={`AI-estimated biological importance: ${biological_importance}/5`}
-                          aria-label={`Importance score: ${biological_importance} out of 5`}
-                        >
-                          {biological_importance}
-                        </span>
-                        <br />
-                        {safeHtml(one_sentence_summary)}
+                        <AiExperimentSummary
+                          {...{ biological_importance, one_sentence_summary }}
+                        />
                       </>
                     </li>
                   );
@@ -323,7 +324,8 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
       <ExpressionGraphModal
         open={modalDatasetId != null}
         onClose={() => setModalDatasetId(undefined)}
-        expressionGraphs={expressionGraphs}
+        experiments={experiments}
+        summaries={summaries}
         datasetId={modalDatasetId}
       />
       <div
@@ -345,6 +347,31 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
     </div>
   );
 });
+
+interface AiExperimentSummaryProps {
+  biological_importance: number;
+  one_sentence_summary: string;
+}
+
+function AiExperimentSummary({
+  biological_importance,
+  one_sentence_summary,
+}: AiExperimentSummaryProps) {
+  return (
+    <div>
+      <span
+        className="badge"
+        title={`AI-estimated biological importance: ${biological_importance}/5`}
+        aria-label={`Importance score: ${biological_importance} out of 5`}
+      >
+        {biological_importance}
+      </span>
+      <span className="ai-one-sentence-summary">
+        {safeHtml(one_sentence_summary)}
+      </span>
+    </div>
+  );
+}
 
 function useAiExpressionSummary(
   geneId: string,
@@ -382,36 +409,44 @@ function useAiExpressionSummary(
 interface ExpressionGraphModalProps {
   open: boolean;
   onClose: () => void;
-  expressionGraphs: TableValue;
+  experiments: Record<string, Record<string, AttributeValue>>;
+  summaries: Record<string, AiExperimentSummary>;
   datasetId: string | undefined;
 }
 
 export function ExpressionGraphModal({
   open,
   onClose,
-  expressionGraphs,
+  experiments,
+  summaries,
   datasetId,
 }: ExpressionGraphModalProps) {
   if (datasetId != null) {
-    const rowData = expressionGraphs.find(
-      ({ dataset_id }) => dataset_id === datasetId
-    );
+    const rowData = experiments[datasetId];
+    const title = rowData.display_name;
+    const summary = summaries[datasetId];
 
-    const title = 'TO DO';
-
-    return (
-      <Dialog
-        open={open}
-        resizable
-        draggable
-        onClose={onClose}
-        title={title}
-        className="word-cloud-modal"
-      >
-        <ExpressionGraph rowData={rowData} />
-      </Dialog>
-    );
-  } else {
-    return null;
+    if (rowData != null && summary != null) {
+      return (
+        <Dialog
+          open={open}
+          resizable
+          draggable
+          onClose={onClose}
+          title={<div className="ai-floater-header">{title?.toString()}</div>}
+          className="ai-expression-graph-modal"
+        >
+          <section className="ai-generated">
+            <h4>AI summary</h4>
+            <AiExperimentSummary {...summary} />
+          </section>
+          <section>
+            <h4>Experimental data</h4>
+            <ExpressionGraph rowData={rowData} />
+          </section>
+        </Dialog>
+      );
+    }
   }
+  return null;
 }
