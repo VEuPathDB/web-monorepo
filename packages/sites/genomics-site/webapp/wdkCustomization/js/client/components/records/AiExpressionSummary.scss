@@ -60,11 +60,11 @@ ul.ai-topic {
 
 @import '../stepAnalysis/StepAnalysisEnrichmentResult';
 
-.ai-expression-graph-modal {
+.ai-expression-graph-floater {
   @extend %word-cloud-base;
   height: 450px;
 }
 
-.ai-expression-graph-modalContent {
+.ai-expression-graph-floaterContent {
   display: block;
 }

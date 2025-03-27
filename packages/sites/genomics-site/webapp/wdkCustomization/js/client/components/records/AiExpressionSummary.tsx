@@ -226,8 +226,8 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
     return <div onClick={handleClick}>{safeHtml(props.value.toString())}</div>;
   };
 
-  // modal management
-  const [modalDatasetId, setModalDatasetId] = useState<string>();
+  // floater management
+  const [floaterDatasetId, setFloaterDatasetId] = useState<string>();
 
   // Note that `safeHtml()` does NOT sanitise dangerous HTML elements and attributes.
   // for example, this would render and the JavaScript will execute:
@@ -292,7 +292,7 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
                       <>
                         <a
                           className="javascript-link"
-                          onClick={() => setModalDatasetId(dataset_id)}
+                          onClick={() => setFloaterDatasetId(dataset_id)}
                         >
                           {experiments[dataset_id].display_name as string}
                         </a>{' '}
@@ -321,12 +321,12 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
 
   return (
     <div className="ai-generated">
-      <ExpressionGraphModal
-        open={modalDatasetId != null}
-        onClose={() => setModalDatasetId(undefined)}
+      <ExpressionGraphFloater
+        open={floaterDatasetId != null}
+        onClose={() => setFloaterDatasetId(undefined)}
         experiments={experiments}
         summaries={summaries}
-        datasetId={modalDatasetId}
+        datasetId={floaterDatasetId}
       />
       <div
         className="ai-summary"
@@ -406,7 +406,7 @@ function useAiExpressionSummary(
   );
 }
 
-interface ExpressionGraphModalProps {
+interface ExpressionGraphFloaterProps {
   open: boolean;
   onClose: () => void;
   experiments: Record<string, Record<string, AttributeValue>>;
@@ -414,13 +414,13 @@ interface ExpressionGraphModalProps {
   datasetId: string | undefined;
 }
 
-export function ExpressionGraphModal({
+export function ExpressionGraphFloater({
   open,
   onClose,
   experiments,
   summaries,
   datasetId,
-}: ExpressionGraphModalProps) {
+}: ExpressionGraphFloaterProps) {
   if (datasetId != null) {
     const rowData = experiments[datasetId];
     const title = rowData.display_name;
@@ -434,7 +434,7 @@ export function ExpressionGraphModal({
           draggable
           onClose={onClose}
           title={<div className="ai-floater-header">{title?.toString()}</div>}
-          className="ai-expression-graph-modal"
+          className="ai-expression-graph-floater"
         >
           <section className="ai-generated">
             <h4>AI summary</h4>
