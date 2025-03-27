@@ -16,7 +16,10 @@ import {
   AiExpressionSummarySection,
 } from '../../types/aiExpressionTypes';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { AttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import {
+  AttributeValue,
+  TableValue,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import Mesa from '@veupathdb/coreui/lib/components/Mesa';
 import {
   MesaStateProps,
@@ -25,8 +28,8 @@ import {
 import { RecordActions } from '@veupathdb/wdk-client/lib/Actions';
 import { DEFAULT_TABLE_STATE } from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
 import { State as ReduxState } from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
-import { scrollToAndOpenExpressionGraph } from './utils';
-import { ExpressionChildRow } from './GeneRecordClasses.GeneRecordClass';
+import { ExpressionChildRow as ExpressionGraph } from './GeneRecordClasses.GeneRecordClass';
+import { Dialog } from '@veupathdb/wdk-client/lib/Components';
 
 // Styles
 import './AiExpressionSummary.scss';
@@ -216,6 +219,9 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
     return <div onClick={handleClick}>{safeHtml(props.value.toString())}</div>;
   };
 
+  // modal management
+  const [modalDatasetId, setModalDatasetId] = useState<string>();
+
   // Note that `safeHtml()` does NOT sanitise dangerous HTML elements and attributes.
   // for example, this would render and the JavaScript will execute:
   // const danger = `<img src="x" onerror="alert('XSS!')" />`;
@@ -277,27 +283,9 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
                   return (
                     <li key={dataset_id}>
                       <>
-                        <ExpressionChildRow
-                          rowData={expressionGraphs.find(
-                            (expressionGraph) =>
-                              expressionGraph.dataset_id === dataset_id
-                          )}
-                        />
                         <a
                           className="javascript-link"
-                          onClick={() =>
-                            scrollToAndOpenExpressionGraph({
-                              expressionGraphs: expressionGraphs,
-                              findIndexFn: (expressionGraph: {
-                                dataset_id: string;
-                              }) => expressionGraph.dataset_id === dataset_id,
-                              tableId: 'ExpressionGraphs',
-                              updateSectionVisibility:
-                                props.updateSectionVisibility,
-                              updateTableState: props.updateTableState,
-                              tableState: props.expressionGraphsTableState,
-                            })
-                          }
+                          onClick={() => setModalDatasetId(dataset_id)}
                         >
                           {experiments[dataset_id].display_name as string}
                         </a>{' '}
@@ -332,6 +320,12 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
 
   return (
     <div className="ai-generated">
+      <ExpressionGraphModal
+        open={modalDatasetId != null}
+        onClose={() => setModalDatasetId(undefined)}
+        expressionGraphs={expressionGraphs}
+        datasetId={modalDatasetId}
+      />
       <div
         className="ai-summary"
         style={{ marginLeft: '15px', maxWidth: '50em' }}
@@ -383,4 +377,41 @@ function useAiExpressionSummary(
     },
     [geneId, shouldPopulateCache, pollingCounter]
   );
+}
+
+interface ExpressionGraphModalProps {
+  open: boolean;
+  onClose: () => void;
+  expressionGraphs: TableValue;
+  datasetId: string | undefined;
+}
+
+export function ExpressionGraphModal({
+  open,
+  onClose,
+  expressionGraphs,
+  datasetId,
+}: ExpressionGraphModalProps) {
+  if (datasetId != null) {
+    const rowData = expressionGraphs.find(
+      ({ dataset_id }) => dataset_id === datasetId
+    );
+
+    const title = 'TO DO';
+
+    return (
+      <Dialog
+        open={open}
+        resizable
+        draggable
+        onClose={onClose}
+        title={title}
+        className="word-cloud-modal"
+      >
+        <ExpressionGraph rowData={rowData} />
+      </Dialog>
+    );
+  } else {
+    return null;
+  }
 }
