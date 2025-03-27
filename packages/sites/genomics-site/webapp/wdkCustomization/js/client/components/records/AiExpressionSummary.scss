@@ -30,6 +30,10 @@ a.javascript-link {
   }
 }
 
+span.ai-one-sentence-summary {
+  padding-right: 2em;
+}
+
 div.ai-topic-heading {
   margin-bottom: 0.5em;
   margin-right: 6em;
@@ -47,4 +51,27 @@ ul.ai-topic {
     margin-left: 4em;
     margin-right: 6em;
   }
+
+  li.ai-floater-inactive::marker {
+    content: '●  ';
+  }
+  li.ai-floater-active::marker {
+    content: '▶  ';
+  }
+}
+
+.ai-floater-header {
+  white-space: normal;
+  text-align: center;
+}
+
+@import '../stepAnalysis/StepAnalysisEnrichmentResult';
+
+.ai-expression-graph-floater {
+  @extend %word-cloud-base;
+  height: 450px;
+}
+
+.ai-expression-graph-floaterContent {
+  display: block;
 }

@@ -25,12 +25,31 @@ function Dialog(props: Props) {
   useBodyScrollManager(props.open && !!props.modal);
   useRestorePrevoiusFocus(props.open);
 
+  // global document keyboard handler(s) while the dialog is open
+  useEffect(() => {
+    if (!props.open) return;
+
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' || e.key === 'Esc') {
+        props.onClose?.();
+      }
+    };
+
+    document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
+  }, [props.open]);
+
   if (!props.open) return null;
 
   const {
     onClose = () => {},
     buttons = [
-      <button key="close" type="button" onClick={() => onClose()}>
+      <button
+        title="Keyboard shortcut: ESC"
+        key="close"
+        type="button"
+        onClick={() => onClose()}
+      >
         <Icon type="close" />
       </button>,
     ],
@@ -38,10 +57,7 @@ function Dialog(props: Props) {
   } = props;
 
   const content = (
-    <div
-      onKeyDown={handleKeyDown}
-      className={makeClassName(props.className, '', props.modal && 'modal')}
-    >
+    <div className={makeClassName(props.className, '', props.modal && 'modal')}>
       <div
         ref={headerNode}
         className={makeClassName(props.className, 'Header')}
@@ -72,12 +88,6 @@ function Dialog(props: Props) {
       {content}
     </Popup>
   );
-
-  function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
-    if (event.key === 'Escape' || event.key === 'Esc') {
-      onClose();
-    }
-  }
 }
 
 let c = makeClassNameHelper('wdk-Dialog');
