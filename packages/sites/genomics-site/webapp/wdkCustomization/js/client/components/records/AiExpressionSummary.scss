@@ -51,6 +51,13 @@ ul.ai-topic {
     margin-left: 4em;
     margin-right: 6em;
   }
+
+  li.ai-floater-inactive::marker {
+    content: '●  ';
+  }
+  li.ai-floater-active::marker {
+    content: '▶  ';
+  }
 }
 
 .ai-floater-header {

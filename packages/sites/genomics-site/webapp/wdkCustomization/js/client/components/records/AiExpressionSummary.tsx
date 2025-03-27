@@ -288,7 +288,14 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
                   one_sentence_summary,
                 }) => {
                   return (
-                    <li key={dataset_id}>
+                    <li
+                      key={dataset_id}
+                      className={
+                        dataset_id === floaterDatasetId
+                          ? 'ai-floater-active'
+                          : 'ai-floater-inactive'
+                      }
+                    >
                       <>
                         <a
                           className="javascript-link"
