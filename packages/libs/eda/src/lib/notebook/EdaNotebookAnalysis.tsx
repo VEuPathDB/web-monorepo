@@ -18,6 +18,7 @@ import {
   NewAnalysis,
   useAnalysis,
   useAnalysisState,
+  useSetterWithCallback,
   useStudyRecord,
 } from '../core';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -58,22 +59,24 @@ export function EdaNotebookAnalysis(props: Props) {
     return makeNewAnalysis(studyId);
   }, [studyId]);
 
-  // Use a ref to store `analysis` and simulate a React state setter while
-  // also triggering the upstream state persistence
-  const analysisRef =
-    useRef<Analysis | NewAnalysis | undefined>(analysisDescriptor);
-  const persistAnalysis = useCallback<AnalysisChangeHandler>((update) => {
-    // Update the ref with the new analysis value.
-    analysisRef.current =
-      typeof update === 'function' ? update(analysisRef.current) : update;
+  // serialize and persist with `onParamValueChange`
+  const persistAnalysis = useCallback(
+    (analysis: Analysis | NewAnalysis | undefined) => {
+      if (analysis != null) {
+        onParamValueChange(JSON.stringify(analysis));
+      }
+    },
+    [onParamValueChange]
+  );
 
-    // Sync the update with the upstream store.
-    if (analysisRef.current != null) {
-      onParamValueChange(JSON.stringify(analysisRef.current));
-    }
-  }, []);
-
-  const analysisState = useAnalysisState(analysisDescriptor, persistAnalysis);
+  // wrap `persistAnalysis` inside a state setter function with 'functional update' functionality
+  const wrappedPersistAnalysis = useSetterWithCallback<
+    Analysis | NewAnalysis | undefined
+  >(analysisDescriptor, persistAnalysis);
+  const analysisState = useAnalysisState(
+    analysisDescriptor,
+    wrappedPersistAnalysis
+  );
 
   const { analysis } = analysisState;
   console.log('analysis', analysis);
