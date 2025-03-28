@@ -96,15 +96,14 @@ export interface FormSubmission extends Omit<NewUserDataset, 'uploadMethod'> {
 }
 
 // A little helper to simplify updating fields of the nested inputs
-interface AddNestedInputChildProps {
-  nestedInputObject:
-    | UserDatasetPublication[]
-    | UserDatasetHyperlink[]
-    | UserDatasetContact[];
+interface AddNestedInputChildProps<T> {
+  nestedInputObject: T[];
   index: number;
 }
 
-const createNestedInputUpdater = function (props: AddNestedInputChildProps) {
+const createNestedInputUpdater = function <T>(
+  props: AddNestedInputChildProps<T>
+) {
   const { nestedInputObject, index } = props;
 
   return function (newValue: string | boolean, inputName: string) {
@@ -158,11 +157,6 @@ function UploadForm({
   const [description, setDescription] = useState(
     urlParams.datasetDescription ?? ''
   );
-  const [shortName, setShortName] = useState(urlParams.datasetShortName ?? '');
-  const [shortAttribution, setShortAttribution] = useState(
-    urlParams.datasetShortAttribution ?? ''
-  );
-  const [category, setCategory] = useState(urlParams.datasetCategory ?? '');
   const [publications, setPublications] = useState<UserDatasetPublication[]>(
     []
   );
@@ -253,9 +247,6 @@ function UploadForm({
           description,
           dataUploadSelection,
           dependencies,
-          shortName,
-          shortAttribution,
-          category,
           publications,
           hyperlinks,
           organisms,
@@ -281,9 +272,6 @@ function UploadForm({
       dependencies,
       dataUploadSelection,
       submitForm,
-      shortName,
-      shortAttribution,
-      category,
       publications,
       hyperlinks,
       organisms,
@@ -521,7 +509,7 @@ function UploadForm({
                       const updatedPublications = updatePublicationsObject(
                         value,
                         'pubMedId'
-                      ) as UserDatasetPublication[];
+                      );
                       setPublications(updatedPublications);
                     }}
                     onRemovePublication={(
@@ -537,7 +525,7 @@ function UploadForm({
                       const updatedPublications = updatePublicationsObject(
                         value,
                         'citation'
-                      ) as UserDatasetPublication[];
+                      );
                       setPublications(updatedPublications);
                     }}
                   />
@@ -575,7 +563,7 @@ function UploadForm({
                       const updatedHyperlinks = updateHyperlinksObject(
                         value,
                         'url'
-                      ) as UserDatasetHyperlink[];
+                      );
                       setHyperlinks(updatedHyperlinks);
                     }}
                     onRemoveHyperlink={(
@@ -591,7 +579,7 @@ function UploadForm({
                       const updatedHyperlinks = updateHyperlinksObject(
                         value,
                         'text'
-                      ) as UserDatasetHyperlink[];
+                      );
                       setHyperlinks(updatedHyperlinks);
                     }}
                     description={hyperlinks[index]?.description}
@@ -599,7 +587,7 @@ function UploadForm({
                       const updatedHyperlinks = updateHyperlinksObject(
                         value,
                         'description'
-                      ) as UserDatasetHyperlink[];
+                      );
                       setHyperlinks(updatedHyperlinks);
                     }}
                     isPublication={hyperlinks[index]?.isPublication}
@@ -607,7 +595,7 @@ function UploadForm({
                       const updatedHyperlinks = updateHyperlinksObject(
                         value,
                         'publication'
-                      ) as UserDatasetHyperlink[];
+                      );
                       setHyperlinks(updatedHyperlinks);
                       return;
                     }}
@@ -697,7 +685,7 @@ function UploadForm({
                       const updatedContacts = updateContactsObject(
                         value,
                         'name'
-                      ) as UserDatasetContact[];
+                      );
                       setContacts(updatedContacts);
                     }}
                     email={contact.email}
@@ -705,7 +693,7 @@ function UploadForm({
                       const updatedContacts = updateContactsObject(
                         value,
                         'email'
-                      ) as UserDatasetContact[];
+                      );
                       setContacts(updatedContacts);
                     }}
                     affiliation={contact.affiliation}
@@ -713,7 +701,7 @@ function UploadForm({
                       const updatedContacts = updateContactsObject(
                         value,
                         'affiliation'
-                      ) as UserDatasetContact[];
+                      );
                       setContacts(updatedContacts);
                     }}
                     city={contact.city}
@@ -721,7 +709,7 @@ function UploadForm({
                       const updatedContacts = updateContactsObject(
                         value,
                         'city'
-                      ) as UserDatasetContact[];
+                      );
                       setContacts(updatedContacts);
                     }}
                     state={contact.state}
@@ -729,7 +717,7 @@ function UploadForm({
                       const updatedContacts = updateContactsObject(
                         value,
                         'state'
-                      ) as UserDatasetContact[];
+                      );
                       setContacts(updatedContacts);
                     }}
                     country={contact.country}
@@ -737,7 +725,7 @@ function UploadForm({
                       const updatedContacts = updateContactsObject(
                         value,
                         'country'
-                      ) as UserDatasetContact[];
+                      );
                       setContacts(updatedContacts);
                     }}
                     address={contact.address}
@@ -745,7 +733,7 @@ function UploadForm({
                       const updatedContacts = updateContactsObject(
                         value,
                         'address'
-                      ) as UserDatasetContact[];
+                      );
                       setContacts(updatedContacts);
                     }}
                     isPrimary={contact.isPrimary}
@@ -753,7 +741,7 @@ function UploadForm({
                       const updatedContacts = updateContactsObject(
                         value,
                         'isPrimary'
-                      ) as UserDatasetContact[];
+                      );
                       setContacts(updatedContacts);
                       return;
                     }}
