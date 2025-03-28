@@ -16,6 +16,8 @@ export function VisualizationNotebookCell(
   const filteredCountsResult = useEntityCounts(
     analysisState.analysis?.descriptor.subset.descriptor
   );
+
+  console.log('in viz', analysisState);
   return (
     <div>
       <h2>Plot here.</h2>

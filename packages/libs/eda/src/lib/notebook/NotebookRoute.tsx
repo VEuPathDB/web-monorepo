@@ -13,6 +13,7 @@ import {
 import { DocumentationContainer } from '../core/components/docs/DocumentationContainer';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '../core/api/queryClient';
+import { updateParamValues } from '@veupathdb/wdk-client/lib/Actions/StepAnalysis/StepAnalysisActionCreators';
 
 interface Props {
   edaServiceUrl: string;
@@ -28,6 +29,12 @@ export default function NotebookRoute(props: Props) {
   const downloadClient = useConfiguredDownloadClient(edaServiceUrl);
   const dataClient = useConfiguredDataClient(edaServiceUrl);
   const computeClient = useConfiguredComputeClient(edaServiceUrl);
+  // const onParamValueChangeTest = (value) => {
+  //   updateParamValues({
+  //     ...paramValues,
+  //     [paramSpec.name]: value,
+  //   });
+  // }
 
   return (
     <DocumentationContainer>
@@ -53,6 +60,7 @@ export default function NotebookRoute(props: Props) {
               >
                 <EdaNotebookAnalysis
                   analysisId={props.match.params.analysisId}
+                  studyId={props.match.params.datasetId}
                 />
               </EDAWorkspaceContainer>
             )}
