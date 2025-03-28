@@ -420,36 +420,10 @@ export function AnalysisPanel({
             path={`${routeBase}/details`}
             render={() => (
               <AnalysisTabErrorBoundary>
-                {studyMetadata.isUserStudy ? (
-                  // TODO Make both cases below configurable via the root component.
-                  // This will need to be done if we want EDA to stand on its own.
-
-                  // Note that we are not inluding the custom detail page.
-                  // As of this writing, details pages only add a link to
-                  // EDA. Since we are in EDA, we don't want to add it here.
-                  <div style={{ marginBlockStart: '1em' }}>
-                    <UserDatasetDetailController
-                      baseUrl={`${routeBase}/details`}
-                      detailsPageTitle={'My Study'}
-                      workspaceTitle={'My Studies'}
-                      id={wdkRecordIdToDiyUserDatasetId(
-                        studyRecord.attributes.dataset_id as string
-                      )}
-                      dataNoun={{
-                        singular: 'Study',
-                        plural: 'Studies',
-                      }}
-                      enablePublicUserDatasets={true}
-                      includeAllLink={false}
-                      includeNameHeader={false}
-                    />
-                  </div>
-                ) : (
-                  <RecordController
-                    recordClass="dataset"
-                    primaryKey={studyRecord.id.map((p) => p.value).join('/')}
-                  />
-                )}
+                <RecordController
+                  recordClass="dataset"
+                  primaryKey={studyRecord.id.map((p) => p.value).join('/')}
+                />
               </AnalysisTabErrorBoundary>
             )}
           />
