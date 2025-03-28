@@ -1,0 +1,50 @@
+div.ai-summary {
+  p {
+    ul {
+      margin-top: 0.5em;
+      margin-bottom: 1em;
+    }
+  }
+}
+
+a.javascript-link {
+  cursor: grab;
+}
+
+.AiExpressionResult-Loading {
+  text-align: center;
+  padding: 0;
+  margin-top: 3em;
+  height: unset;
+  max-width: 75px;
+}
+
+.ai-generated {
+  .badge {
+    float: right;
+    background: #eef;
+    border-radius: 5px;
+    padding: 2px 8px;
+    font-size: 0.8rem;
+    color: #333;
+  }
+}
+
+div.ai-topic-heading {
+  margin-bottom: 0.5em;
+  margin-right: 6em;
+
+  &::after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+ul.ai-topic {
+  li {
+    margin-bottom: 0.5em;
+    margin-left: 4em;
+    margin-right: 6em;
+  }
+}
