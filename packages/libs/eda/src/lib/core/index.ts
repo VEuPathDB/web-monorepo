@@ -6,6 +6,7 @@ export * from './hooks/client';
 export * from './hooks/promise';
 export * from './hooks/publicAnalyses';
 export * from './hooks/workspace';
+export * from './hooks/setterWithCallback';
 export * from './api/SubsettingClient';
 export * from './api/DataClient';
 export * from './api/AnalysisClient';

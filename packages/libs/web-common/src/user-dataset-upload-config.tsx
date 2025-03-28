@@ -17,7 +17,8 @@ type ImplementedUploadTypes =
   | 'genelist'
   | 'isasimple'
   | 'bigwigfiles'
-  | 'rnaseq';
+  | 'rnaseq'
+  | 'wrangler';
 
 export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
   {
@@ -222,6 +223,62 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
                 },
               },
             },
+          },
+        },
+      },
+    },
+    wrangler: {
+      type: 'wrangler',
+      displayName: 'Phenotype',
+      description: `Integrate your Phenotype data in ${projectId}.`,
+      uploadTitle: 'Upload My Phenotype data set',
+      formConfig: {
+        summary: {
+          inputProps: {
+            placeholder: 'brief summary in a few sentences',
+          },
+        },
+        description: {
+          inputProps: {
+            required: false,
+            placeholder: 'optional longer description of the summary.',
+          },
+        },
+        renderInfo: () => (
+          <p className="formInfo">
+            Upload your phenotype data in a tab delimited file.
+            <br />
+            The file name should be &lt; 100 chars and use only letters,
+            numbers, spaces and dashes.
+            <br />
+            The file should contain:
+            <ul>
+              <li>Meaningful column headers</li>
+              <li>A gene Id column with header "Gene ID"</li>
+              <li>
+                Valid gene Ids should:
+                <ul>
+                  <li>include only these charatacers [a-zA-Z0-9().:_-]*$</li>
+                  <li>have at least one alphabetical character</li>
+                  <li>be at most 40 characters</li>
+                </ul>
+              </li>
+            </ul>
+            Rows with invalid IDs will be discarded.
+          </p>
+        ),
+        uploadMethodConfig: {
+          file: {
+            maxSizeBytes: 10 * 1000 * 1000 * 1000, // 10GB
+            render: ({ fieldNode }) => (
+              <>
+                {fieldNode}
+                <div style={{ marginTop: '0.25em' }}>
+                  File must be a tab-delimited .txt file File must be less than
+                  xxGB
+                </div>
+              </>
+            ),
           },
         },
       },
