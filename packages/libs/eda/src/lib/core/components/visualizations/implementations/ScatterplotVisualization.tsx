@@ -754,7 +754,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             : undefined,
           showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
           returnPointIds:
-            options?.returnPointIds ?? vizConfig.returnPointIds ?? true,
+            options?.returnPointIds ?? true,
         },
         computeConfig: copmutationAppOverview.computeName
           ? computationDescriptor.configuration
