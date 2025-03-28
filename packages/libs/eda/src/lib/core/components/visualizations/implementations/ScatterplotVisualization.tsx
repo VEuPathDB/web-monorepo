@@ -240,7 +240,6 @@ function createDefaultConfig(): ScatterplotConfig {
     independentAxisValueSpec: 'Full',
     dependentAxisValueSpec: 'Full',
     markerBodyOpacity: 0.5,
-    returnPointIds: true,
   };
 }
 
@@ -263,7 +262,6 @@ export const ScatterplotConfig = t.partial({
   independentAxisValueSpec: t.string,
   dependentAxisValueSpec: t.string,
   markerBodyOpacity: t.number,
-  returnPointIds: t.boolean,
 });
 
 interface Options
@@ -286,7 +284,7 @@ interface Options
   ): VariableDescriptor | VariableCollectionDescriptor | undefined;
   hideTrendlines?: boolean;
   hideLogScale?: boolean;
-  returnPointIds?: boolean; // for ScatterplotRequestParams
+  returnPointIds?: boolean; // Determines whether the backend should return the ids of each point in the scatterplot
 }
 
 function ScatterplotViz(props: VisualizationProps<Options>) {
@@ -753,8 +751,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             ? [vizConfig.facetVariable]
             : undefined,
           showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
-          returnPointIds:
-            options?.returnPointIds ?? true,
+          returnPointIds: options?.returnPointIds ?? true,
         },
         computeConfig: copmutationAppOverview.computeName
           ? computationDescriptor.configuration
