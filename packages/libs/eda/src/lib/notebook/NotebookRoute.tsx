@@ -1,4 +1,4 @@
-import React, { ComponentType } from 'react';
+import React, { ComponentType, useState } from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import { EdaNotebookLandingPage } from './EdaNotebookLandingPage';
 import { EdaNotebookAnalysis } from './EdaNotebookAnalysis';
@@ -36,6 +36,11 @@ export default function NotebookRoute(props: Props) {
   //   });
   // }
 
+  // dummy state management (will be handled by WDK in genomics-site)
+  // should this be here?
+  // if it's only used for the barebones dev site, maybe yes?
+  const [paramValue, onParamValueChange] = useState<string>();
+
   return (
     <DocumentationContainer>
       <QueryClientProvider client={queryClient}>
@@ -61,6 +66,7 @@ export default function NotebookRoute(props: Props) {
                 <EdaNotebookAnalysis
                   analysisId={props.match.params.analysisId}
                   studyId={props.match.params.datasetId}
+                  onParamValueChange={onParamValueChange}
                 />
               </EDAWorkspaceContainer>
             )}
