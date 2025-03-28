@@ -371,6 +371,29 @@ export function useAnalysis(
   };
 }
 
+/**
+ * Returns a suite of lens-based setter functions and utilities for working with an Analysis object.
+ * The second argument, `analysisChangeHandler`, is a function used to update the full analysis object.
+ *
+ * Typically this handler is implemented via a React state setter or similar function. It must accept
+ * a React-style `SetStateAction`, i.e. either a new value or a functional updater:
+ *
+ *    (update: Analysis | ((prev: Analysis) => Analysis)) => void
+ *
+ * If you need to intercept changes for side effects (e.g., serializing to JSON, persisting to storage),
+ * you can use the `useSetterWithCallback` hook to wrap your side-effecting logic around the setter.
+ *
+ * @example
+ * const persist = useCallback((analysis) => {
+ *   if (analysis != null) {
+ *     onParamValueChange(JSON.stringify(analysis));
+ *   }
+ * }, [onParamValueChange]);
+ *
+ * const handler = useSetterWithCallback(analysis, persist);
+ * const analysisState = useAnalysisState(analysis, handler);
+ */
+
 export function useAnalysisState(
   analysis: NewAnalysis | Analysis | undefined,
   analysisChangeHandler: AnalysisChangeHandler
