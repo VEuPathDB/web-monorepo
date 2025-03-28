@@ -62,6 +62,7 @@ export const plugin: ComputationPlugin = {
         hideTrendlines: true,
         hideFacetInputs: true,
         hideLogScale: true,
+        returnPointIds: false,
       })
       .withSelectorIcon(ScatterBetadivSVG),
   },

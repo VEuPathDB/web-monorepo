@@ -286,6 +286,7 @@ interface Options
   ): VariableDescriptor | VariableCollectionDescriptor | undefined;
   hideTrendlines?: boolean;
   hideLogScale?: boolean;
+  returnPointIds?: boolean; // for ScatterplotRequestParams
 }
 
 function ScatterplotViz(props: VisualizationProps<Options>) {
@@ -752,7 +753,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             ? [vizConfig.facetVariable]
             : undefined,
           showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
-          returnPointIds: vizConfig.returnPointIds ?? true,
+          returnPointIds:
+            options?.returnPointIds ?? vizConfig.returnPointIds ?? true,
         },
         computeConfig: copmutationAppOverview.computeName
           ? computationDescriptor.configuration
