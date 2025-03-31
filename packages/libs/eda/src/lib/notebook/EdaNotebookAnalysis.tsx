@@ -54,16 +54,16 @@ export function EdaNotebookAnalysis(props: Props) {
   const { studyId, onAnalysisChange } = props;
   const studyRecord = useStudyRecord();
 
-  const analysisDescriptor = useMemo(() => {
-    return props.analysis == null ? makeNewAnalysis(studyId) : props.analysis;
-  }, [props.analysis, studyId]);
+  // const analysisDescriptor = useMemo(() => {
+  //   return props.analysis == null ? makeNewAnalysis(studyId) : props.analysis;
+  // }, [props.analysis, studyId]);
 
   const wrappedOnAnalysisChange = useSetterWithCallback<
     Analysis | NewAnalysis | undefined
   >(props.analysis, onAnalysisChange);
 
   const analysisState = useAnalysisState(
-    analysisDescriptor,
+    props.analysis,
     wrappedOnAnalysisChange
   );
   console.log('analysisState', analysisState);
@@ -104,7 +104,6 @@ export function EdaNotebookAnalysis(props: Props) {
       analysisState.analysis?.descriptor.subset.uiSettings[
         NOTEBOOK_UI_SETTINGS_KEY
       ];
-    console.log('storedSettings', storedSettings);
     // if (storedSettings == null)
     return {
       cells: [
@@ -143,6 +142,7 @@ export function EdaNotebookAnalysis(props: Props) {
     },
     [analysisState, notebookSettings]
   );
+  console.log('analysisState2', analysisState);
   return (
     <div className="EdaNotebook">
       <div className="Paper">

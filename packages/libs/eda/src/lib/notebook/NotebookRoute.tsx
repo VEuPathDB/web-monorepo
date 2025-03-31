@@ -1,4 +1,4 @@
-import React, { ComponentType, useState, useCallback } from 'react';
+import React, { ComponentType, useState, useCallback, useMemo } from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import { EdaNotebookLandingPage } from './EdaNotebookLandingPage';
 import { EdaNotebookAnalysis } from './EdaNotebookAnalysis';
@@ -9,6 +9,7 @@ import {
   useConfiguredDataClient,
   useConfiguredDownloadClient,
   useConfiguredSubsettingClient,
+  makeNewAnalysis,
 } from '../core';
 import { DocumentationContainer } from '../core/components/docs/DocumentationContainer';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -34,8 +35,14 @@ export default function NotebookRoute(props: Props) {
   // dummy state management (will be handled by WDK in genomics-site)
   // should this be here?
   // if it's only used for the barebones dev site, maybe yes?
+  console.log(props.datasetId);
+  const fakeStudyId = 'DS_82dc5abc7f';
+  const initialAnalysis = useMemo(() => {
+    return makeNewAnalysis(fakeStudyId);
+  }, []);
+  console.log(initialAnalysis);
   const [analysis, setAnalysis] =
-    useState<Analysis | NewAnalysis | undefined>();
+    useState<Analysis | NewAnalysis | undefined>(initialAnalysis);
 
   return (
     <DocumentationContainer>
