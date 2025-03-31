@@ -1,10 +1,9 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { useStudyEntities } from '../core/hooks/workspace';
 import { NotebookCellComponentProps } from './Types';
-import { VariableLinkConfig } from '../core/components/VariableLink';
-import FilterChipList from '../core/components/FilterChipList';
-import Subsetting from '../workspace/Subsetting';
+import { createComputation } from '../core/components/computations/Utils';
+import { DifferentialAbundanceConfig } from '../core/components/computations/plugins/differentialabundance';
 
 export function VisualizationNotebookCell(
   props: NotebookCellComponentProps<'visualization'>
@@ -17,6 +16,22 @@ export function VisualizationNotebookCell(
     analysisState.analysis?.descriptor.subset.descriptor
   );
 
+  // const computation = useMemo(() => {
+  //   return createComputation(
+  //     'differentialabundance',
+  //     {} as DifferentialAbundanceConfig,
+  //     [],
+  //     []
+  //   );
+  // }, []);
+
+  // useEffect(() => {
+  //   if (!computation) {return;}
+  //   console.log(computation);
+  //   analysisState.setComputations([computation]);
+  // }, [analysisState, computation]);
+
+  // Needs to take the analysisState so that updates can go to the analysisState
   console.log('in viz', analysisState);
   return (
     <div>

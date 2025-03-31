@@ -10,10 +10,11 @@
 // - Do we want download cells? It could have a preview.
 //
 
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useMemo, useRef, useEffect } from 'react';
 import {
   Analysis,
   AnalysisChangeHandler,
+  AnalysisState,
   makeNewAnalysis,
   NewAnalysis,
   useAnalysis,
@@ -34,6 +35,8 @@ import { createComputation } from '../core/components/computations/Utils';
 import { plugins } from '../core/components/computations/plugins';
 import { DifferentialAbundanceConfig } from '../core/components/computations/plugins/differentialabundance';
 
+import { parseJson } from './Utils';
+
 interface NotebookSettings {
   /** Ordered array of notebook cells */
   cells: NotebookCellType[];
@@ -42,44 +45,28 @@ interface NotebookSettings {
 const NOTEBOOK_UI_SETTINGS_KEY = '@@NOTEBOOK@@';
 
 interface Props {
-  analysisId: string;
+  analysis: Analysis | NewAnalysis | undefined;
   studyId: string;
-  onParamValueChange: (value: string) => void;
+  onAnalysisChange: (value: Analysis | NewAnalysis | undefined) => void;
 }
 
 export function EdaNotebookAnalysis(props: Props) {
-  const { analysisId, studyId, onParamValueChange } = props;
+  const { studyId, onAnalysisChange } = props;
   const studyRecord = useStudyRecord();
-  // const analysisState = useAnalysis(
-  //   analysisId === 'new' ? undefined : analysisId
-  // );
 
-  // TODO fix me. I should be a real analysis if i exist
   const analysisDescriptor = useMemo(() => {
-    return makeNewAnalysis(studyId);
-  }, [studyId]);
+    return props.analysis == null ? makeNewAnalysis(studyId) : props.analysis;
+  }, [props.analysis, studyId]);
 
-  // serialize and persist with `onParamValueChange`
-  const persistAnalysis = useCallback(
-    (analysis: Analysis | NewAnalysis | undefined) => {
-      if (analysis != null) {
-        onParamValueChange(JSON.stringify(analysis));
-      }
-    },
-    [onParamValueChange]
-  );
-
-  // wrap `persistAnalysis` inside a state setter function with 'functional update' functionality
-  const wrappedPersistAnalysis = useSetterWithCallback<
+  const wrappedOnAnalysisChange = useSetterWithCallback<
     Analysis | NewAnalysis | undefined
-  >(analysisDescriptor, persistAnalysis);
+  >(props.analysis, onAnalysisChange);
+
   const analysisState = useAnalysisState(
     analysisDescriptor,
-    wrappedPersistAnalysis
+    wrappedOnAnalysisChange
   );
-
-  const { analysis } = analysisState;
-  console.log('analysis', analysis);
+  console.log('analysisState', analysisState);
 
   // Let's make a fake visualization and computation (because they go togehter)
   const visualizationId = uuid();
@@ -91,18 +78,21 @@ export function EdaNotebookAnalysis(props: Props) {
       configuration: volcanoPlotVisualization.createDefaultConfig(),
     },
   };
-  const computation = createComputation(
-    'differentialabundance',
-    {} as DifferentialAbundanceConfig,
-    [],
-    [newVisualization]
-  );
-  console.log('computation', computation);
-  analysisState.setComputations([computation]);
-  console.log(
-    'analysisState computation',
-    analysisState.analysis?.descriptor.computations
-  );
+
+  const computation = useMemo(() => {
+    return createComputation(
+      'differentialabundance',
+      {} as DifferentialAbundanceConfig,
+      [],
+      []
+    );
+  }, []);
+
+  // useEffect(() => {
+  //   if (!computation || !analysisState) {return;}
+  //   console.log(computation);
+  //   analysisState.setComputations([computation]);
+  // }, [analysisState, computation]);
 
   // analysisState.addVisualization(
   //   computation.computationId,
@@ -110,9 +100,11 @@ export function EdaNotebookAnalysis(props: Props) {
   // );
 
   const notebookSettings = useMemo((): NotebookSettings => {
-    // const storedSettings =
-    //   analysis?.descriptor.subset.uiSettings[NOTEBOOK_UI_SETTINGS_KEY];
-    // console.log('storedSettings', storedSettings);
+    const storedSettings =
+      analysisState.analysis?.descriptor.subset.uiSettings[
+        NOTEBOOK_UI_SETTINGS_KEY
+      ];
+    console.log('storedSettings', storedSettings);
     // if (storedSettings == null)
     return {
       cells: [
@@ -134,6 +126,7 @@ export function EdaNotebookAnalysis(props: Props) {
     };
     // return storedSettings as any as NotebookSettings;
   }, [visualizationId]);
+
   const updateCell = useCallback(
     (cell: Partial<Omit<NotebookCellType, 'type'>>, cellIndex: number) => {
       const oldCell = notebookSettings.cells[cellIndex];

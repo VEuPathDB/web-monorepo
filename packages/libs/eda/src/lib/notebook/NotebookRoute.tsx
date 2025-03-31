@@ -1,4 +1,4 @@
-import React, { ComponentType, useState } from 'react';
+import React, { ComponentType, useState, useCallback } from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import { EdaNotebookLandingPage } from './EdaNotebookLandingPage';
 import { EdaNotebookAnalysis } from './EdaNotebookAnalysis';
@@ -13,7 +13,8 @@ import {
 import { DocumentationContainer } from '../core/components/docs/DocumentationContainer';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '../core/api/queryClient';
-import { updateParamValues } from '@veupathdb/wdk-client/lib/Actions/StepAnalysis/StepAnalysisActionCreators';
+import { Analysis, NewAnalysis } from '../core/types/analysis';
+import { useAnalysisState } from '../core';
 
 interface Props {
   edaServiceUrl: string;
@@ -29,17 +30,12 @@ export default function NotebookRoute(props: Props) {
   const downloadClient = useConfiguredDownloadClient(edaServiceUrl);
   const dataClient = useConfiguredDataClient(edaServiceUrl);
   const computeClient = useConfiguredComputeClient(edaServiceUrl);
-  // const onParamValueChangeTest = (value) => {
-  //   updateParamValues({
-  //     ...paramValues,
-  //     [paramSpec.name]: value,
-  //   });
-  // }
 
   // dummy state management (will be handled by WDK in genomics-site)
   // should this be here?
   // if it's only used for the barebones dev site, maybe yes?
-  const [paramValue, onParamValueChange] = useState<string>();
+  const [analysis, setAnalysis] =
+    useState<Analysis | NewAnalysis | undefined>();
 
   return (
     <DocumentationContainer>
@@ -64,9 +60,9 @@ export default function NotebookRoute(props: Props) {
                 computeClient={computeClient}
               >
                 <EdaNotebookAnalysis
-                  analysisId={props.match.params.analysisId}
+                  analysis={analysis}
                   studyId={props.match.params.datasetId}
-                  onParamValueChange={onParamValueChange}
+                  onAnalysisChange={setAnalysis}
                 />
               </EDAWorkspaceContainer>
             )}
