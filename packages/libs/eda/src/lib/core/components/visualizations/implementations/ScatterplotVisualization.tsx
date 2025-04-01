@@ -2519,7 +2519,10 @@ function processInputData(
         x: seriesX.length ? seriesX : [null], // [null] hack required to make sure
         y: seriesY.length ? seriesY : [null], // Plotly has a legend entry for empty traces
         // distinguish X/Y Data from Overlay
-        name: fixedOverlayLabel ?? 'Data',
+        name:
+          fixedOverlayLabel ??
+          highlightedPointsDetails?.nonHighlightTraceName ??
+          'Data',
         mode: modeValue,
         type: scatterPlotType, // for the raw data of the scatterplot
         marker: {

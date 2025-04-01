@@ -12,6 +12,7 @@ import { useCachedPromise } from '@veupathdb/eda/lib/core/hooks/cachedPromise';
 import { VariableDescriptor } from '@veupathdb/eda/lib/core/types/variable';
 import { WorkspaceContainer } from '@veupathdb/eda/lib/workspace/WorkspaceContainer';
 import { edaServiceUrl } from '../../config';
+import { HighlightedPointsDetails } from '@veupathdb/components/src/types/general';
 
 interface HighlightSpec {
   ids: string[];
@@ -78,7 +79,7 @@ function ScatterPlotAdapter(props: AdapterProps) {
         }
       );
 
-      const hightlightDataResponse$ = highlightSpec
+      const highlightDataResponse$ = highlightSpec
         ? subsettingClient.getTabularData(studyId, highlightSpec.entityId, {
             filters: [
               {
@@ -92,12 +93,23 @@ function ScatterPlotAdapter(props: AdapterProps) {
           })
         : undefined;
 
-      const [scatterplotDataResponse, hightlightDataResponse] =
-        await Promise.all([scatterplotDataResponse$, hightlightDataResponse$]);
+      const [scatterplotDataResponse, highlightDataResponse] =
+        await Promise.all([scatterplotDataResponse$, highlightDataResponse$]);
 
-      const hightlightIds = hightlightDataResponse
-        ?.slice(1)
-        .map((row) => row[0]);
+      const highlightVar = findEntityAndVariable({
+        variableId: highlightSpec?.variableId || '',
+        entityId: highlightSpec?.entityId || '',
+      });
+
+      const highlightIds = highlightDataResponse?.slice(1).map((row) => row[0]);
+
+      const highlightedPointsDetails: HighlightedPointsDetails = {
+        pointIds: highlightIds ?? [],
+        highlightTraceName: highlightSpec?.traceName,
+        nonHighlightTraceName: highlightVar
+          ? `All ${highlightVar?.variable.displayName.toLowerCase()}s`
+          : undefined,
+      };
 
       return scatterplotResponseToData(
         scatterplotDataResponse,
@@ -111,9 +123,7 @@ function ScatterPlotAdapter(props: AdapterProps) {
         'xyrelationships',
         undefined,
         undefined,
-        hightlightIds,
-        undefined,
-        highlightSpec?.traceName
+        highlightIds && highlightedPointsDetails
       ).dataSetProcess;
     },
     ['ScatterPlotAdapter', studyId, xAxisVariable, yAxisVariable, highlightSpec]
