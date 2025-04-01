@@ -505,7 +505,9 @@ function HistogramPlotWithControls({
 
   const selectedRange = useMemo((): NumberOrDateRange | undefined => {
     if (filter == null) return;
-    return { min: filter.min, max: filter.max } as NumberOrDateRange;
+    const mymin = Number(filter.min).toFixed(2);
+    const mymax = Number(filter.max).toFixed(2);
+    return { min: mymin, max: mymax } as NumberOrDateRange;
   }, [filter]);
 
   // For integer variables, the graphical range highlighting needs to extend to (max + 1).
