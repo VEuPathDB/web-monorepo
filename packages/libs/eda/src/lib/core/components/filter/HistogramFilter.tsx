@@ -47,6 +47,7 @@ import { useDebounce } from '../../hooks/debouncing';
 import { useDeepValue } from '../../hooks/immutability';
 // reset to defaults button
 import { ResetButtonCoreUI } from '../ResetButton';
+import { numberSignificantFigures } from '../../utils/number-significant-figures';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -96,8 +97,10 @@ export function HistogramFilter(props: Props) {
       return {
         binWidth:
           variable.distributionDefaults.binWidthOverride ??
-          variable.distributionDefaults.binWidth ??
-          0.1,
+          numberSignificantFigures(
+            variable.distributionDefaults.binWidth ?? 0.1,
+            2
+          ),
         binWidthTimeUnit: undefined,
         independentAxisRange: defaultIndependentRange as NumberRange,
         ...otherDefaults,
