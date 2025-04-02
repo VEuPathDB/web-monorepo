@@ -13,6 +13,7 @@ import { VariableDescriptor } from '@veupathdb/eda/lib/core/types/variable';
 import { WorkspaceContainer } from '@veupathdb/eda/lib/workspace/WorkspaceContainer';
 import { edaServiceUrl } from '../../config';
 import { HighlightedPointsDetails } from '@veupathdb/components/src/types/general';
+import pluralize from 'pluralize';
 
 interface HighlightSpec {
   ids: string[];
@@ -107,7 +108,10 @@ function ScatterPlotAdapter(props: AdapterProps) {
         pointIds: highlightIds ?? [],
         highlightTraceName: highlightSpec?.traceName,
         nonHighlightTraceName: highlightVar
-          ? `All ${highlightVar?.variable.displayName.toLowerCase()}s`
+          ? `All ${pluralize(
+              highlightVar?.variable.displayName.toLowerCase(),
+              2
+            )}`
           : undefined,
       };
 
