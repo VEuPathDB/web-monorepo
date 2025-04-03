@@ -428,6 +428,14 @@ export function ExpressionGraphFloater({
   summaries,
   datasetId,
 }: ExpressionGraphFloaterProps) {
+  // ref and effect to scroll-to-top in popup when a new dataset is shown
+  const floaterContentRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (datasetId != null && floaterContentRef.current != null) {
+      floaterContentRef.current.scrollTop = 0;
+    }
+  }, [datasetId]);
+
   if (datasetId != null) {
     const rowData = experiments[datasetId];
     const title = rowData.display_name;
@@ -442,6 +450,7 @@ export function ExpressionGraphFloater({
           onClose={onClose}
           title={<div className="ai-floater-header">{title?.toString()}</div>}
           className="ai-expression-graph-floater"
+          contentRef={floaterContentRef}
         >
           <section className="ai-generated">
             <h4>AI summary</h4>

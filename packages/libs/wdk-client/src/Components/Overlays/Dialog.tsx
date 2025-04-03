@@ -18,6 +18,7 @@ type Props = {
   className?: string;
   onOpen?: () => void;
   onClose?: () => void;
+  contentRef?: React.RefObject<HTMLDivElement>; // a ref for resetting vertical scroll, for example
 };
 
 function Dialog(props: Props) {
@@ -72,7 +73,10 @@ function Dialog(props: Props) {
           {buttons}
         </div>
       </div>
-      <div className={makeClassName(props.className, 'Content')}>
+      <div
+        className={makeClassName(props.className, 'Content')}
+        ref={props.contentRef}
+      >
         {props.children}
       </div>
     </div>
