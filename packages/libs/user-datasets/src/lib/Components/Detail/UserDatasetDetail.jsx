@@ -521,6 +521,40 @@ class UserDatasetDetail extends React.Component {
           </div>
         ),
       },
+      {
+        attribute: 'Organisms',
+        value: (
+          <div>
+            <br></br>
+            <div>
+              {meta.organisms.map((organism, index) => {
+                return (
+                  <div className={classify('NestedFieldValues-Organisms')}>
+                    <span>Organism {index + 1}: </span>
+                    <SaveableTextEditor
+                      value={organism || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave('description')}
+                      emptyText="No Organism"
+                    />
+                  </div>
+                );
+              })}
+            </div>
+            <OutlinedButton
+              text="Add Organism"
+              onPress={(event) => {
+                event.preventDefault();
+                console.log('Adding new organism');
+                // Logic to add a new organism entry
+              }}
+              icon={AddIcon}
+            />
+            <br></br>
+          </div>
+        ),
+      },
     ].filter((attr) => attr);
   }
 
