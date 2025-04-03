@@ -21,6 +21,9 @@ import { DateTime } from '../DateTime';
 
 import '../UserDatasets.scss';
 import './UserDatasetDetail.scss';
+import { PublicationInput } from '../UploadForm';
+import OutlinedButton from '@veupathdb/coreui/lib/components/buttons/OutlinedButton';
+import AddIcon from '@material-ui/icons/Add';
 
 const classify = makeClassifier('UserDatasetDetail');
 
@@ -142,6 +145,7 @@ class UserDatasetDetail extends React.Component {
     const { onMetaSave } = this;
     const { id, type, meta, size, owner, created, sharedWith, status } =
       userDataset;
+    console.log('userDataset', userDataset);
     const { display, name, version } = type;
     const isOwner = this.isMyDataset();
     const isInstalled = this.isInstalled();
@@ -150,6 +154,49 @@ class UserDatasetDetail extends React.Component {
         'userDatasetType' in q.properties &&
         q.properties.userDatasetType.includes(type.name)
     );
+    // FOR TESTING ONLY
+    meta.publications = [
+      {
+        pubMedId: 'id1',
+        citation: 'citation1',
+      },
+      {
+        pubMedId: 'id2',
+        citation: 'citation2',
+      },
+    ];
+    meta.contacts = [
+      {
+        name: 'Kay',
+        email: 'buzz.com',
+      },
+      {
+        name: 'Ray',
+        city: 'Pizza place',
+      },
+      {
+        name: 'Fey',
+        affiliation: 'A hundred and 3 University',
+      },
+    ];
+    meta.hyperlinks = [
+      {
+        url: 'abc.com',
+        text: 'abc',
+        description: 'abc description',
+        isPublication: false, // this is optional, default is false
+      },
+    ];
+    meta.organisms = ['E coli', 'Staph', 'Beavers'];
+    meta.publications = [
+      {
+        pubMedId: 'id1',
+        citation: 'citation1',
+      },
+      {
+        pubMedId: 'id2',
+      },
+    ];
 
     return [
       this.props.includeNameHeader
@@ -281,6 +328,197 @@ class UserDatasetDetail extends React.Component {
           <span>
             {display} ({name} {version})
           </span>
+        ),
+      },
+      {
+        attribute: 'Publications',
+        value: (
+          <div>
+            <br></br>
+            {meta.publications.map((publication, index) => {
+              return (
+                <div className={classify('NestedField')}>
+                  <span>Publication {index + 1}</span>
+                  <div className={classify('NestedFieldValues')}>
+                    <span>PubMed ID: </span>
+                    <SaveableTextEditor
+                      value={publication.pubMedId || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave('description')}
+                      emptyText="No PubMed ID"
+                    />
+                    <span>Citation : </span>
+                    <SaveableTextEditor
+                      value={publication.citation || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave('description')}
+                      emptyText="No Citation"
+                    />
+                  </div>
+                </div>
+              );
+            })}
+            <OutlinedButton
+              text="Add Publication"
+              onPress={(event) => {
+                event.preventDefault();
+                console.log('Adding new publication');
+                // Logic to add a new publication entry
+              }}
+              icon={AddIcon}
+            />
+            <br></br>
+          </div>
+        ),
+      },
+      {
+        attribute: 'Contacts',
+        value: (
+          <div>
+            <br></br>
+            {meta.contacts.map((contact, index) => {
+              return (
+                <div className={classify('NestedField')}>
+                  <span>Contact {index + 1}</span>
+                  <div className={classify('NestedFieldValues')}>
+                    <span>Name: </span>
+                    <SaveableTextEditor
+                      value={contact.name || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave('description')}
+                      emptyText="No Contact Name"
+                    />
+                    <span>Email: </span>
+                    <SaveableTextEditor
+                      value={contact.email || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave('description')}
+                      emptyText="No Contact Email"
+                    />
+                    <span>Affiliation: </span>
+                    <SaveableTextEditor
+                      value={contact.affiliation || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave('description')}
+                      emptyText="No Contact Affiliation"
+                    />
+                    <span>City: </span>
+                    <SaveableTextEditor
+                      value={contact.city || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave('description')}
+                      emptyText="No Contact City"
+                    />
+                    <span>State: </span>
+                    <SaveableTextEditor
+                      value={contact.state || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave('description')}
+                      emptyText="No Contact State"
+                    />
+                    <span>Country: </span>
+                    <SaveableTextEditor
+                      value={contact.country || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave('description')}
+                      emptyText="No Contact Country"
+                    />
+                    <span>Address: </span>
+                    <SaveableTextEditor
+                      value={contact.address || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave('description')}
+                      emptyText="No Contact Address"
+                    />
+                    <span>Is Primary: </span>
+                    <SaveableTextEditor
+                      value={contact.state || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave('description')}
+                      emptyText="How do we do this??"
+                    />
+                  </div>
+                </div>
+              );
+            })}
+            <OutlinedButton
+              text="Add Contact"
+              onPress={(event) => {
+                event.preventDefault();
+                console.log('Adding new contact');
+              }}
+              icon={AddIcon}
+            />
+            <br></br>
+          </div>
+        ),
+      },
+      {
+        attribute: 'Hyperlinks',
+        value: (
+          <div>
+            <br></br>
+            {meta.hyperlinks.map((hyperlink, index) => {
+              return (
+                <div className={classify('NestedField')}>
+                  <span>Hyperlink {index + 1}</span>
+                  <div className={classify('NestedFieldValues')}>
+                    <span>URL: </span>
+                    <SaveableTextEditor
+                      value={hyperlink.url || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave('description')}
+                      emptyText="No Hyperlink URL"
+                    />
+                    <span>Text: </span>
+                    <SaveableTextEditor
+                      value={hyperlink.text || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave('description')}
+                      emptyText="No Hyperlink Text"
+                    />
+                    <span>Description: </span>
+                    <SaveableTextEditor
+                      value={hyperlink.description || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave('description')}
+                      emptyText="No Hyperlink Description"
+                    />
+                    <span>Is Publication: </span>
+                    <SaveableTextEditor
+                      value={hyperlink.isPublication || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave('description')}
+                      emptyText="How do we do this??"
+                    />
+                  </div>
+                </div>
+              );
+            })}
+            <OutlinedButton
+              text="Add Hyperlink"
+              onPress={(event) => {
+                event.preventDefault();
+                console.log('Adding new hyperlink');
+              }}
+              icon={AddIcon}
+            />
+            <br></br>
+          </div>
         ),
       },
     ].filter((attr) => attr);

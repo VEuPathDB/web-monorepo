@@ -126,6 +126,17 @@
           }
         }
       }
+      .UserDatasetDetail-NestedField {
+        margin-left: -3em;
+      }
+      .UserDatasetDetail-NestedFieldValues {
+        display: grid;
+        grid-template-columns: 7em 20em;
+        align-items: baseline;
+        padding-left: 2em;
+        margin-bottom: 1em;
+        margin-top: 0.3em;
+      }
     }
     .UserDatasetDetail {
       &-Owner,
