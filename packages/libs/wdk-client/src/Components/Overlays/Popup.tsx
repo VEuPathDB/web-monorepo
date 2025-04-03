@@ -34,6 +34,14 @@ type Props = {
    */
   dragHandleSelector?: () => Element;
 
+  /**
+   * controls for the position
+   *
+   */
+  x?: number;
+  y?: number;
+  onMove?: (x: number, y: number) => void;
+
   /** Content of popup */
   children: React.ReactElement<any>;
 };
@@ -121,6 +129,11 @@ class Popup extends React.Component<Props> {
           this.props.dragHandleSelector == null
             ? false
             : this.props.dragHandleSelector(),
+        stop: (_event, ui) => {
+          if (this.props.onMove) {
+            this.props.onMove(ui.position.left, ui.position.top);
+          }
+        },
       })
       .toggle(this.props.open);
 
@@ -129,6 +142,15 @@ class Popup extends React.Component<Props> {
         handles: 'all',
         minWidth: 100,
         minHeight: 100,
+      });
+    }
+
+    // Apply position
+    if (typeof this.props.x === 'number' && typeof this.props.y === 'number') {
+      $node.css({
+        left: this.props.x,
+        top: this.props.y,
+        position: 'absolute',
       });
     }
   }

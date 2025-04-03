@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useRef } from 'react';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import Icon from '../../Components/Icon/Icon';
 import { useBodyScrollManager } from '../../Components/Overlays/BodyScrollManager';
 import Popup from '../../Components/Overlays/Popup';
@@ -21,14 +21,59 @@ type Props = {
   contentRef?: React.RefObject<HTMLDivElement>; // a ref for resetting vertical scroll, for example
 };
 
+const isMovingHighlightColor = '#FF3131';
+
 function Dialog(props: Props) {
   const headerNode = useRef<HTMLDivElement>(null);
   useBodyScrollManager(props.open && !!props.modal);
   useRestorePreviousFocus(props.open);
 
+  // keyboard-based placement
+  const [isMoving, setIsMoving] = useState(false);
+  const [x, setX] = useState(0);
+  const [y, setY] = useState(0);
+
+  useEffect(() => {
+    if (!isMoving) return;
+
+    const handleKey = (e: KeyboardEvent) => {
+      let handled = false;
+
+      switch (e.key) {
+        case 'ArrowUp':
+          setY((y) => y - 10);
+          handled = true;
+          break;
+        case 'ArrowDown':
+          setY((y) => y + 10);
+          handled = true;
+          break;
+        case 'ArrowLeft':
+          setX((x) => x - 10);
+          handled = true;
+          break;
+        case 'ArrowRight':
+          setX((x) => x + 10);
+          handled = true;
+          break;
+        case 'Escape':
+          setIsMoving(false);
+          handled = true;
+          break;
+      }
+
+      if (handled) {
+        e.preventDefault(); // Only block default behavior if we handled the key
+      }
+    };
+
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [isMoving]);
+
   // global document keyboard handler(s) while the dialog is open
   useEffect(() => {
-    if (!props.open) return;
+    if (!props.open || isMoving) return;
 
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape' || e.key === 'Esc') {
@@ -38,7 +83,7 @@ function Dialog(props: Props) {
 
     document.addEventListener('keydown', handleKey);
     return () => document.removeEventListener('keydown', handleKey);
-  }, [props.open]);
+  }, [props.open, isMoving]);
 
   if (!props.open) return null;
 
@@ -54,7 +99,17 @@ function Dialog(props: Props) {
         <Icon type="close" />
       </button>,
     ],
-    leftButtons,
+    leftButtons = [
+      <button
+        title="Toggle keyboard placement mode"
+        key="move"
+        type="button"
+        onClick={() => setIsMoving((prev) => !prev)}
+        style={isMoving ? { color: isMovingHighlightColor } : {}}
+      >
+        <Icon type="move" />
+      </button>,
+    ],
   } = props;
 
   const content = (
@@ -67,7 +122,7 @@ function Dialog(props: Props) {
           {leftButtons}
         </div>
         <div className={makeClassName(props.className, 'Title')}>
-          {props.title}
+          {isMoving ? <KeyboardMovingHelp /> : props.title}
         </div>
         <div className={makeClassName(props.className, 'RightButtons')}>
           {buttons}
@@ -88,6 +143,12 @@ function Dialog(props: Props) {
       dragHandleSelector={() => headerNode.current as HTMLDivElement}
       open={props.open}
       resizable={props.resizable}
+      x={x}
+      y={y}
+      onMove={(x, y) => {
+        setX(x);
+        setY(y);
+      }}
     >
       {content}
     </Popup>
@@ -121,6 +182,14 @@ function useRestorePreviousFocus(isOpen: boolean) {
       }
     }
   }, [isOpen]);
+}
+
+function KeyboardMovingHelp() {
+  return (
+    <span style={{ color: isMovingHighlightColor }}>
+      ≫ Use arrow keys to move. Press <kbd>Esc</kbd> to exit. ≪
+    </span>
+  );
 }
 
 export default wrappable(Dialog);
