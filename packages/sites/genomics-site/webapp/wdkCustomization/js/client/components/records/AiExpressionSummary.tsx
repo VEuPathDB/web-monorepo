@@ -297,12 +297,12 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
                       }
                     >
                       <>
-                        <a
-                          className="javascript-link"
+                        <button
+                          className="ai-link-button"
                           onClick={() => setFloaterDatasetId(dataset_id)}
                         >
                           {experiments[dataset_id].display_name as string}
-                        </a>{' '}
+                        </button>{' '}
                         ({experiments[dataset_id].assay_type})
                         <AiExperimentSummary
                           {...{ biological_importance, one_sentence_summary }}

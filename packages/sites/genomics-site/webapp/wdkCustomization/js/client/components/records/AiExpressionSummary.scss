@@ -75,3 +75,24 @@ ul.ai-topic {
 .ai-expression-graph-floaterContent {
   display: block;
 }
+
+/**
+ * color is copied from AllSites.scss
+ * can't seem to `@extend` styles from other files
+ *
+ */
+.ai-link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: #069;
+  text-decoration: none;
+  cursor: pointer;
+  font: inherit;
+
+  &:hover {
+    text-decoration: underline;
+    background: none;
+  }
+}
