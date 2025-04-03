@@ -24,7 +24,7 @@ type Props = {
 function Dialog(props: Props) {
   const headerNode = useRef<HTMLDivElement>(null);
   useBodyScrollManager(props.open && !!props.modal);
-  useRestorePrevoiusFocus(props.open);
+  useRestorePreviousFocus(props.open);
 
   // global document keyboard handler(s) while the dialog is open
   useEffect(() => {
@@ -104,7 +104,7 @@ function makeClassName(className?: string, suffix = '', ...modifiers: any[]) {
   );
 }
 
-function useRestorePrevoiusFocus(isOpen: boolean) {
+function useRestorePreviousFocus(isOpen: boolean) {
   const previousActiveRef = useRef<Element | null>();
   useEffect(() => {
     if (isOpen) {
