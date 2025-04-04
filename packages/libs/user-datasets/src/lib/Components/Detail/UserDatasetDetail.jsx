@@ -7,6 +7,7 @@ import Link from '@veupathdb/wdk-client/lib/Components/Link';
 import { Mesa, MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
+import RadioList from '@veupathdb/wdk-client/lib/Components/InputControls/RadioList';
 
 import NotFound from '@veupathdb/wdk-client/lib/Views/NotFound/NotFound';
 
@@ -21,6 +22,9 @@ import { DateTime } from '../DateTime';
 
 import '../UserDatasets.scss';
 import './UserDatasetDetail.scss';
+import { PublicationInput } from '../UploadForm';
+import OutlinedButton from '@veupathdb/coreui/lib/components/buttons/OutlinedButton';
+import AddIcon from '@material-ui/icons/Add';
 
 const classify = makeClassifier('UserDatasetDetail');
 
@@ -64,23 +68,87 @@ class UserDatasetDetail extends React.Component {
   }
 
   validateKey(key) {
-    const META_KEYS = ['name', 'summary', 'description'];
+    const META_KEYS = [
+      'name',
+      'summary',
+      'description',
+      'publications',
+      'contacts',
+      'hyperlinks',
+      'organisms',
+    ];
     if (typeof key !== 'string' || !META_KEYS.includes(key))
       throw new TypeError(
         `Can't edit meta for invalid key: ${JSON.stringify(key)}`
       );
   }
 
-  onMetaSave(key) {
+  // Sets values within the meta object.
+  // There are multiple types of metadata fields.
+  // First, the easy key-value example. this.onMetaSave('name')('my new name');
+  // Second, for fields that are arrays of objects, like meta.publications[index].name, specify the nestedKey and index. this.onMetaSave('publications', 'pubMedId', 0)('new pubMedId value');
+  // Third, for arrays of strings, like meta.organisms[index], just specify the index. this.onMetaSave('organisms', undefined, 0)('new organism value');
+  onMetaSave(
+    key,
+    nestedKey = undefined,
+    index = undefined,
+    emptyObject = undefined
+  ) {
     this.validateKey(key);
+
     return (value) => {
-      if (typeof value !== 'string')
+      if (typeof value !== 'string' && typeof value !== 'boolean') {
         throw new TypeError(
-          `onMetaSave: expected input value to be string; got ${typeof value}`
+          `onMetaSave: expected input value to be string or boolean; got ${typeof value}`
         );
+      }
+      if (nestedKey && typeof nestedKey !== 'string') {
+        throw new TypeError(
+          `onMetaSave: expected nestedKey to be a string; got ${typeof nestedKey}`
+        );
+      }
+      if (index && !Number.isInteger(index)) {
+        throw new TypeError(
+          `onMetaSave: expected index to be an integer; got ${typeof index} with value ${index}`
+        );
+      }
+      if (emptyObject && typeof emptyObject !== 'object') {
+        throw new TypeError(
+          `onMetaSave: expected emptyObject to be an object; got ${typeof emptyObject}`
+        );
+      }
+
       const { userDataset, updateUserDatasetDetail } = this.props;
-      const meta = { ...userDataset.meta, [key]: value };
-      return updateUserDatasetDetail(userDataset, meta);
+      let updatedMeta = {};
+      if (index !== undefined && Number.isInteger(index) && index >= 0) {
+        // Handle nested array case, for example meta.contacts[index].name
+        let arrayField = [...userDataset.meta[key]];
+        const arrayLength = arrayField.length ?? 0;
+        if (index <= arrayLength - 1) {
+          if (nestedKey !== undefined && typeof nestedKey === 'string') {
+            // Update the nested key at the correct index in the array of objects.
+            // Example: meta.contacts
+            arrayField[index][nestedKey] = value;
+          } else {
+            // With no nestedKey, just set the value directly on the array.
+            // Example: meta.organisms
+            arrayField[index] = value;
+          }
+          updatedMeta = { ...userDataset.meta, [key]: arrayField };
+        } else {
+          // Add new entry to the array
+          arrayField.push(emptyObject);
+          updatedMeta = { ...userDataset.meta, [key]: arrayField };
+        }
+      } else {
+        // Regular key-value update.
+        updatedMeta = { ...userDataset.meta, [key]: value };
+      }
+
+      // FOR TESTSING ONLY
+      console.log('updatedMeta', updatedMeta);
+
+      return updateUserDatasetDetail(userDataset, updatedMeta);
     };
   }
 
@@ -142,6 +210,7 @@ class UserDatasetDetail extends React.Component {
     const { onMetaSave } = this;
     const { id, type, meta, size, owner, created, sharedWith, status } =
       userDataset;
+    console.log('userDataset', userDataset);
     const { display, name, version } = type;
     const isOwner = this.isMyDataset();
     const isInstalled = this.isInstalled();
@@ -150,6 +219,49 @@ class UserDatasetDetail extends React.Component {
         'userDatasetType' in q.properties &&
         q.properties.userDatasetType.includes(type.name)
     );
+    // FOR TESTING ONLY
+    meta.publications = [
+      {
+        pubMedId: 'id1',
+        citation: 'citation1',
+      },
+      {
+        pubMedId: 'id2',
+        citation: 'citation2',
+      },
+    ];
+    meta.contacts = [
+      {
+        name: 'Kay',
+        email: 'buzz.com',
+      },
+      {
+        name: 'Ray',
+        city: 'Pizza place',
+      },
+      {
+        name: 'Fey',
+        affiliation: 'A hundred and 3 University',
+      },
+    ];
+    meta.hyperlinks = [
+      {
+        url: 'abc.com',
+        text: 'abc',
+        description: 'abc description',
+        isPublication: false, // this is optional, default is false
+      },
+    ];
+    meta.organisms = ['E coli', 'Staph', 'Beavers'];
+    meta.publications = [
+      {
+        pubMedId: 'id1',
+        citation: 'citation1',
+      },
+      {
+        pubMedId: 'id2',
+      },
+    ];
 
     return [
       this.props.includeNameHeader
@@ -281,6 +393,297 @@ class UserDatasetDetail extends React.Component {
           <span>
             {display} ({name} {version})
           </span>
+        ),
+      },
+      {
+        attribute: 'Publications',
+        value: (
+          <div>
+            <br></br>
+            {meta.publications.map((publication, index) => {
+              return (
+                <div className={classify('NestedField')}>
+                  <span>Publication {index + 1}</span>
+                  <div className={classify('NestedFieldValues')}>
+                    <span>PubMed ID: </span>
+                    <SaveableTextEditor
+                      value={publication.pubMedId || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave(
+                        'publications',
+                        'pubMedId',
+                        index
+                      )} // Save PubMed ID for the specific publication entry
+                      emptyText="No PubMed ID"
+                    />
+                    <span>Citation : </span>
+                    <SaveableTextEditor
+                      value={publication.citation || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave(
+                        'publications',
+                        'citation',
+                        index
+                      )} // Save citation for the specific publication entry
+                      emptyText="No Citation"
+                    />
+                  </div>
+                </div>
+              );
+            })}
+            <OutlinedButton
+              text="Add Publication"
+              onPress={(event) => {
+                event.preventDefault();
+                this.onMetaSave(
+                  'publications',
+                  undefined,
+                  meta.publications.length,
+                  { pubMedId: '', citation: '' }
+                )();
+              }}
+              icon={AddIcon}
+            />
+            <br></br>
+          </div>
+        ),
+      },
+      {
+        attribute: 'Contacts',
+        value: (
+          <div>
+            <br></br>
+            {meta.contacts.map((contact, index) => {
+              return (
+                <div className={classify('NestedField')}>
+                  <span>Contact {index + 1}</span>
+                  <div className={classify('NestedFieldValues')}>
+                    <span>Name: </span>
+                    <SaveableTextEditor
+                      value={contact.name || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave('contacts', 'name', index)}
+                      emptyText="No Contact Name"
+                    />
+                    <span>Email: </span>
+                    <SaveableTextEditor
+                      value={contact.email || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave('contacts', 'email', index)}
+                      emptyText="No Contact Email"
+                    />
+                    <span>Affiliation: </span>
+                    <SaveableTextEditor
+                      value={contact.affiliation || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave('contacts', 'affiliation', index)}
+                      emptyText="No Contact Affiliation"
+                    />
+                    <span>City: </span>
+                    <SaveableTextEditor
+                      value={contact.city || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave('contacts', 'city', index)}
+                      emptyText="No Contact City"
+                    />
+                    <span>State: </span>
+                    <SaveableTextEditor
+                      value={contact.state || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave('contacts', 'state', index)}
+                      emptyText="No Contact State"
+                    />
+                    <span>Country: </span>
+                    <SaveableTextEditor
+                      value={contact.country || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave('contacts', 'country', index)}
+                      emptyText="No Contact Country"
+                    />
+                    <span>Address: </span>
+                    <SaveableTextEditor
+                      value={contact.address || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave('contacts', 'address', index)}
+                      emptyText="No Contact Address"
+                    />
+                    <span>Is Primary: </span>
+                    <RadioList
+                      name={`isPrimary-${index}`}
+                      className="horizontal"
+                      value={contact.isPrimary === true ? 'true' : 'false'}
+                      onChange={(value) => {
+                        this.onMetaSave(
+                          'contacts',
+                          'isPrimary', // this is the key in the hyperlink object
+                          index // the index of the hyperlink in the array
+                        )(value === 'true' ? true : false);
+                      }}
+                      items={[
+                        { value: 'true', display: 'Yes' },
+                        { value: 'false', display: 'No' },
+                      ]}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+            <OutlinedButton
+              text="Add Contact"
+              onPress={(event) => {
+                event.preventDefault();
+                this.onMetaSave(
+                  'contacts',
+                  undefined, // no nested key since we're adding a new contact
+                  meta.contacts.length, // add to the end of the array
+                  {
+                    // new contact entry
+                    name: '',
+                    email: '',
+                    affiliation: '',
+                    city: '',
+                    state: '',
+                    country: '',
+                    address: '',
+                    isPrimary: false,
+                  }
+                )();
+              }}
+              icon={AddIcon}
+            />
+            <br></br>
+          </div>
+        ),
+      },
+      {
+        attribute: 'Hyperlinks',
+        value: (
+          <div>
+            <br></br>
+            {meta.hyperlinks.map((hyperlink, index) => {
+              return (
+                <div className={classify('NestedField')}>
+                  <span>Hyperlink {index + 1}</span>
+                  <div className={classify('NestedFieldValues')}>
+                    <span>URL: </span>
+                    <SaveableTextEditor
+                      value={hyperlink.url || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave('hyperlinks', 'url', index)}
+                      emptyText="No Hyperlink URL"
+                    />
+                    <span>Text: </span>
+                    <SaveableTextEditor
+                      value={hyperlink.text || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave('hyperlinks', 'text', index)}
+                      emptyText="No Hyperlink Text"
+                    />
+                    <span>Description: </span>
+                    <SaveableTextEditor
+                      value={hyperlink.description || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave(
+                        'hyperlinks',
+                        'description',
+                        index
+                      )}
+                      emptyText="No Hyperlink Description"
+                    />
+                    <span>Is Publication: </span>
+                    <RadioList
+                      name={`isPublication-${index}`}
+                      className="horizontal"
+                      value={
+                        hyperlink.isPublication === true ? 'true' : 'false'
+                      }
+                      onChange={(value) => {
+                        this.onMetaSave(
+                          'hyperlinks',
+                          'isPublication', // this is the key in the hyperlink object
+                          index // the index of the hyperlink in the array
+                        )(value === 'true' ? true : false);
+                      }}
+                      items={[
+                        { value: 'true', display: 'Yes' },
+                        { value: 'false', display: 'No' },
+                      ]}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+            <OutlinedButton
+              text="Add Hyperlink"
+              onPress={(event) => {
+                event.preventDefault();
+                this.onMetaSave(
+                  'hyperlinks',
+                  undefined, // no nested key since we're adding a new hyperlink
+                  meta.hyperlinks.length, // add to the end of the array
+                  {
+                    // new hyperlink entry
+                    url: '',
+                    text: '',
+                    description: '',
+                    isPublication: false, // default to false unless specified
+                  }
+                )();
+              }}
+              icon={AddIcon}
+            />
+            <br></br>
+          </div>
+        ),
+      },
+      {
+        attribute: 'Organisms',
+        value: (
+          <div>
+            <br></br>
+            <div>
+              {meta.organisms.map((organism, index) => {
+                return (
+                  <div className={classify('NestedFieldValues-Organisms')}>
+                    <span>Organism {index + 1}: </span>
+                    <SaveableTextEditor
+                      value={organism || ''}
+                      multiLine={false}
+                      readOnly={!isOwner}
+                      onSave={this.onMetaSave('organisms', undefined, index)}
+                      emptyText="No Organism"
+                    />
+                  </div>
+                );
+              })}
+            </div>
+            <OutlinedButton
+              text="Add Organism"
+              onPress={(event) => {
+                event.preventDefault();
+                this.onMetaSave(
+                  'organisms',
+                  undefined, // no nested key since we're adding a new organism
+                  meta.organisms.length ?? 0, // add to the end of the array
+                  '' // default value for new organism entry
+                )();
+              }}
+              icon={AddIcon}
+            />
+            <br></br>
+          </div>
         ),
       },
     ].filter((attr) => attr);

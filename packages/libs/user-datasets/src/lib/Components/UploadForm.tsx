@@ -981,7 +981,7 @@ interface PublicationInputProps {
   citation?: string;
 }
 
-function PublicationInput(props: PublicationInputProps): JSX.Element {
+export function PublicationInput(props: PublicationInputProps): JSX.Element {
   const {
     n,
     pubMedId = '',
