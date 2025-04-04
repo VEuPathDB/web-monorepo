@@ -718,6 +718,12 @@ const useHeaderMenuItems = (
           url: makeStaticPageRoute('/about.html'),
         },
         {
+          key: 'why-support',
+          display: 'Why support us?',
+          type: 'reactRoute',
+          url: makeStaticPageRoute('/why-support.html'),
+        },
+        {
           key: 'about-faq',
           display: 'FAQs',
           type: 'reactRoute',
