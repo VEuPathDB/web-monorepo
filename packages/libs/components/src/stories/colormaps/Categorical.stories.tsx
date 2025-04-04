@@ -51,6 +51,7 @@ const Template: Story<TemplateProps> = (args) => {
     'number',
     'number',
     false,
+    undefined,
     ColorPaletteDefault
   );
 
