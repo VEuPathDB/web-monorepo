@@ -126,9 +126,9 @@
           }
         }
       }
-      .UserDatasetDetail-NestedField {
-        margin-left: -3em;
-      }
+      // .UserDatasetDetail-NestedField {
+      //   margin-left: -3em;
+      // }
       .UserDatasetDetail-NestedFieldValues {
         display: grid;
         grid-template-columns: 7em 20em;
@@ -141,7 +141,7 @@
         display: grid;
         grid-template-columns: 7em 20em;
         align-items: baseline;
-        margin-bottom: 0.1em;
+        margin-bottom: 0.3em;
       }
     }
     .UserDatasetDetail {

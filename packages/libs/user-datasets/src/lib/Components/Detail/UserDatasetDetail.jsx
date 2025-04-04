@@ -7,6 +7,7 @@ import Link from '@veupathdb/wdk-client/lib/Components/Link';
 import { Mesa, MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
+import RadioList from '@veupathdb/wdk-client/lib/Components/InputControls/RadioList';
 
 import NotFound from '@veupathdb/wdk-client/lib/Views/NotFound/NotFound';
 
@@ -96,9 +97,9 @@ class UserDatasetDetail extends React.Component {
     this.validateKey(key);
 
     return (value) => {
-      if (value && typeof value !== 'string') {
+      if (typeof value !== 'string' && typeof value !== 'boolean') {
         throw new TypeError(
-          `onMetaSave: expected input value to be string; got ${typeof value}`
+          `onMetaSave: expected input value to be string or boolean; got ${typeof value}`
         );
       }
       if (nestedKey && typeof nestedKey !== 'string') {
@@ -516,12 +517,21 @@ class UserDatasetDetail extends React.Component {
                       emptyText="No Contact Address"
                     />
                     <span>Is Primary: </span>
-                    <SaveableTextEditor
-                      value={contact.state || ''}
-                      multiLine={false}
-                      readOnly={!isOwner}
-                      onSave={this.onMetaSave('contacts', 'isPrimary', index)}
-                      emptyText="How do we do this??"
+                    <RadioList
+                      name={`isPrimary-${index}`}
+                      className="horizontal"
+                      value={contact.isPrimary === true ? 'true' : 'false'}
+                      onChange={(value) => {
+                        this.onMetaSave(
+                          'contacts',
+                          'isPrimary', // this is the key in the hyperlink object
+                          index // the index of the hyperlink in the array
+                        )(value === 'true' ? true : false);
+                      }}
+                      items={[
+                        { value: 'true', display: 'Yes' },
+                        { value: 'false', display: 'No' },
+                      ]}
                     />
                   </div>
                 </div>
@@ -544,6 +554,7 @@ class UserDatasetDetail extends React.Component {
                     state: '',
                     country: '',
                     address: '',
+                    isPrimary: false,
                   }
                 )();
               }}
@@ -592,12 +603,23 @@ class UserDatasetDetail extends React.Component {
                       emptyText="No Hyperlink Description"
                     />
                     <span>Is Publication: </span>
-                    <SaveableTextEditor
-                      value={hyperlink.isPublication || ''}
-                      multiLine={false}
-                      readOnly={!isOwner}
-                      onSave={this.onMetaSave('description')}
-                      emptyText="How do we do this??"
+                    <RadioList
+                      name={`isPublication-${index}`}
+                      className="horizontal"
+                      value={
+                        hyperlink.isPublication === true ? 'true' : 'false'
+                      }
+                      onChange={(value) => {
+                        this.onMetaSave(
+                          'hyperlinks',
+                          'isPublication', // this is the key in the hyperlink object
+                          index // the index of the hyperlink in the array
+                        )(value === 'true' ? true : false);
+                      }}
+                      items={[
+                        { value: 'true', display: 'Yes' },
+                        { value: 'false', display: 'No' },
+                      ]}
                     />
                   </div>
                 </div>
