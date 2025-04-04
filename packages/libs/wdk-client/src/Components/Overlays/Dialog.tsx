@@ -30,8 +30,14 @@ function Dialog(props: Props) {
 
   // keyboard-based placement
   const [isMoving, setIsMoving] = useState(false);
-  const [x, setX] = useState(0);
-  const [y, setY] = useState(0);
+  const [x, setX] = useState<number>();
+  const [y, setY] = useState<number>();
+
+  const handlePopupReady = (node: HTMLElement) => {
+    const rect = node.getBoundingClientRect();
+    setX((x) => (x == null ? -rect.width / 2 : x));
+    setY((y) => (y == null ? -rect.height / 2 : y));
+  };
 
   useEffect(() => {
     if (!isMoving) return;
@@ -41,19 +47,19 @@ function Dialog(props: Props) {
 
       switch (e.key) {
         case 'ArrowUp':
-          setY((y) => y - 10);
+          setY((y) => (y == null ? y : y - 10));
           handled = true;
           break;
         case 'ArrowDown':
-          setY((y) => y + 10);
+          setY((y) => (y == null ? y : y + 10));
           handled = true;
           break;
         case 'ArrowLeft':
-          setX((x) => x - 10);
+          setX((x) => (x == null ? x : x - 10));
           handled = true;
           break;
         case 'ArrowRight':
-          setX((x) => x + 10);
+          setX((x) => (x == null ? x : x + 10));
           handled = true;
           break;
         case 'Escape':
@@ -149,6 +155,7 @@ function Dialog(props: Props) {
         setX(x);
         setY(y);
       }}
+      onReady={handlePopupReady}
     >
       {content}
     </Popup>

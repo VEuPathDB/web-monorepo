@@ -3,6 +3,8 @@ body.wdk-ModalOpen {
 }
 
 .wdk-Dialog {
+  left: 0;
+  top: 0;
   padding: 0;
   border: 1px solid #999;
   border-radius: 4px;
@@ -36,9 +38,6 @@ body.wdk-ModalOpen {
   z-index: 1;
   height: 0px;
   width: 0px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .wdk-DialogHeader {

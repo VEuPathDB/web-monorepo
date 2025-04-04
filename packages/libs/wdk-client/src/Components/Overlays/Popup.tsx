@@ -41,6 +41,7 @@ type Props = {
   x?: number;
   y?: number;
   onMove?: (x: number, y: number) => void;
+  onReady?: (node: HTMLElement) => void;
 
   /** Content of popup */
   children: React.ReactElement<any>;
@@ -152,6 +153,11 @@ class Popup extends React.Component<Props> {
         top: this.props.y,
         position: 'absolute',
       });
+    }
+
+    // expose myself
+    if (this.popupNode && this.props.onReady) {
+      this.props.onReady(this.popupNode as HTMLElement);
     }
   }
 
