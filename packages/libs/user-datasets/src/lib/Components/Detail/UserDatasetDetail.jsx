@@ -67,23 +67,87 @@ class UserDatasetDetail extends React.Component {
   }
 
   validateKey(key) {
-    const META_KEYS = ['name', 'summary', 'description'];
+    const META_KEYS = [
+      'name',
+      'summary',
+      'description',
+      'publications',
+      'contacts',
+      'hyperlinks',
+      'organisms',
+    ];
     if (typeof key !== 'string' || !META_KEYS.includes(key))
       throw new TypeError(
         `Can't edit meta for invalid key: ${JSON.stringify(key)}`
       );
   }
 
-  onMetaSave(key) {
+  // Sets values within the meta object.
+  // There are multiple types of metadata fields.
+  // First, the easy key-value example. this.onMetaSave('name')('my new name');
+  // Second, for fields that are arrays of objects, like meta.publications[index].name, specify the nestedKey and index. this.onMetaSave('publications', 'pubMedId', 0)('new pubMedId value');
+  // Third, for arrays of strings, like meta.organisms[index], just specify the index. this.onMetaSave('organisms', undefined, 0)('new organism value');
+  onMetaSave(
+    key,
+    nestedKey = undefined,
+    index = undefined,
+    emptyObject = undefined
+  ) {
     this.validateKey(key);
+
     return (value) => {
-      if (typeof value !== 'string')
+      if (value && typeof value !== 'string') {
         throw new TypeError(
           `onMetaSave: expected input value to be string; got ${typeof value}`
         );
+      }
+      if (nestedKey && typeof nestedKey !== 'string') {
+        throw new TypeError(
+          `onMetaSave: expected nestedKey to be a string; got ${typeof nestedKey}`
+        );
+      }
+      if (index && !Number.isInteger(index)) {
+        throw new TypeError(
+          `onMetaSave: expected index to be an integer; got ${typeof index} with value ${index}`
+        );
+      }
+      if (emptyObject && typeof emptyObject !== 'object') {
+        throw new TypeError(
+          `onMetaSave: expected emptyObject to be an object; got ${typeof emptyObject}`
+        );
+      }
+
       const { userDataset, updateUserDatasetDetail } = this.props;
-      const meta = { ...userDataset.meta, [key]: value };
-      return updateUserDatasetDetail(userDataset, meta);
+      let updatedMeta = {};
+      if (index !== undefined && Number.isInteger(index) && index >= 0) {
+        // Handle nested array case, for example meta.contacts[index].name
+        let arrayField = [...userDataset.meta[key]];
+        const arrayLength = arrayField.length ?? 0;
+        if (index <= arrayLength - 1) {
+          if (nestedKey !== undefined && typeof nestedKey === 'string') {
+            // Update the nested key at the correct index in the array of objects.
+            // Example: meta.contacts
+            arrayField[index][nestedKey] = value;
+          } else {
+            // With no nestedKey, just set the value directly on the array.
+            // Example: meta.organisms
+            arrayField[index] = value;
+          }
+          updatedMeta = { ...userDataset.meta, [key]: arrayField };
+        } else {
+          // Add new entry to the array
+          arrayField.push(emptyObject);
+          updatedMeta = { ...userDataset.meta, [key]: arrayField };
+        }
+      } else {
+        // Regular key-value update.
+        updatedMeta = { ...userDataset.meta, [key]: value };
+      }
+
+      // FOR TESTSING ONLY
+      console.log('updatedMeta', updatedMeta);
+
+      return updateUserDatasetDetail(userDataset, updatedMeta);
     };
   }
 
@@ -345,7 +409,11 @@ class UserDatasetDetail extends React.Component {
                       value={publication.pubMedId || ''}
                       multiLine={false}
                       readOnly={!isOwner}
-                      onSave={this.onMetaSave('description')}
+                      onSave={this.onMetaSave(
+                        'publications',
+                        'pubMedId',
+                        index
+                      )} // Save PubMed ID for the specific publication entry
                       emptyText="No PubMed ID"
                     />
                     <span>Citation : </span>
@@ -353,7 +421,11 @@ class UserDatasetDetail extends React.Component {
                       value={publication.citation || ''}
                       multiLine={false}
                       readOnly={!isOwner}
-                      onSave={this.onMetaSave('description')}
+                      onSave={this.onMetaSave(
+                        'publications',
+                        'citation',
+                        index
+                      )} // Save citation for the specific publication entry
                       emptyText="No Citation"
                     />
                   </div>
@@ -364,8 +436,12 @@ class UserDatasetDetail extends React.Component {
               text="Add Publication"
               onPress={(event) => {
                 event.preventDefault();
-                console.log('Adding new publication');
-                // Logic to add a new publication entry
+                this.onMetaSave(
+                  'publications',
+                  undefined,
+                  meta.publications.length,
+                  { pubMedId: '', citation: '' }
+                )();
               }}
               icon={AddIcon}
             />
@@ -388,7 +464,7 @@ class UserDatasetDetail extends React.Component {
                       value={contact.name || ''}
                       multiLine={false}
                       readOnly={!isOwner}
-                      onSave={this.onMetaSave('description')}
+                      onSave={this.onMetaSave('contacts', 'name', index)}
                       emptyText="No Contact Name"
                     />
                     <span>Email: </span>
@@ -396,7 +472,7 @@ class UserDatasetDetail extends React.Component {
                       value={contact.email || ''}
                       multiLine={false}
                       readOnly={!isOwner}
-                      onSave={this.onMetaSave('description')}
+                      onSave={this.onMetaSave('contacts', 'email', index)}
                       emptyText="No Contact Email"
                     />
                     <span>Affiliation: </span>
@@ -404,7 +480,7 @@ class UserDatasetDetail extends React.Component {
                       value={contact.affiliation || ''}
                       multiLine={false}
                       readOnly={!isOwner}
-                      onSave={this.onMetaSave('description')}
+                      onSave={this.onMetaSave('contacts', 'affiliation', index)}
                       emptyText="No Contact Affiliation"
                     />
                     <span>City: </span>
@@ -412,7 +488,7 @@ class UserDatasetDetail extends React.Component {
                       value={contact.city || ''}
                       multiLine={false}
                       readOnly={!isOwner}
-                      onSave={this.onMetaSave('description')}
+                      onSave={this.onMetaSave('contacts', 'city', index)}
                       emptyText="No Contact City"
                     />
                     <span>State: </span>
@@ -420,7 +496,7 @@ class UserDatasetDetail extends React.Component {
                       value={contact.state || ''}
                       multiLine={false}
                       readOnly={!isOwner}
-                      onSave={this.onMetaSave('description')}
+                      onSave={this.onMetaSave('contacts', 'state', index)}
                       emptyText="No Contact State"
                     />
                     <span>Country: </span>
@@ -428,7 +504,7 @@ class UserDatasetDetail extends React.Component {
                       value={contact.country || ''}
                       multiLine={false}
                       readOnly={!isOwner}
-                      onSave={this.onMetaSave('description')}
+                      onSave={this.onMetaSave('contacts', 'country', index)}
                       emptyText="No Contact Country"
                     />
                     <span>Address: </span>
@@ -436,7 +512,7 @@ class UserDatasetDetail extends React.Component {
                       value={contact.address || ''}
                       multiLine={false}
                       readOnly={!isOwner}
-                      onSave={this.onMetaSave('description')}
+                      onSave={this.onMetaSave('contacts', 'address', index)}
                       emptyText="No Contact Address"
                     />
                     <span>Is Primary: </span>
@@ -444,7 +520,7 @@ class UserDatasetDetail extends React.Component {
                       value={contact.state || ''}
                       multiLine={false}
                       readOnly={!isOwner}
-                      onSave={this.onMetaSave('description')}
+                      onSave={this.onMetaSave('contacts', 'isPrimary', index)}
                       emptyText="How do we do this??"
                     />
                   </div>
@@ -455,7 +531,21 @@ class UserDatasetDetail extends React.Component {
               text="Add Contact"
               onPress={(event) => {
                 event.preventDefault();
-                console.log('Adding new contact');
+                this.onMetaSave(
+                  'contacts',
+                  undefined, // no nested key since we're adding a new contact
+                  meta.contacts.length, // add to the end of the array
+                  {
+                    // new contact entry
+                    name: '',
+                    email: '',
+                    affiliation: '',
+                    city: '',
+                    state: '',
+                    country: '',
+                    address: '',
+                  }
+                )();
               }}
               icon={AddIcon}
             />
@@ -478,7 +568,7 @@ class UserDatasetDetail extends React.Component {
                       value={hyperlink.url || ''}
                       multiLine={false}
                       readOnly={!isOwner}
-                      onSave={this.onMetaSave('description')}
+                      onSave={this.onMetaSave('hyperlinks', 'url', index)}
                       emptyText="No Hyperlink URL"
                     />
                     <span>Text: </span>
@@ -486,7 +576,7 @@ class UserDatasetDetail extends React.Component {
                       value={hyperlink.text || ''}
                       multiLine={false}
                       readOnly={!isOwner}
-                      onSave={this.onMetaSave('description')}
+                      onSave={this.onMetaSave('hyperlinks', 'text', index)}
                       emptyText="No Hyperlink Text"
                     />
                     <span>Description: </span>
@@ -494,7 +584,11 @@ class UserDatasetDetail extends React.Component {
                       value={hyperlink.description || ''}
                       multiLine={false}
                       readOnly={!isOwner}
-                      onSave={this.onMetaSave('description')}
+                      onSave={this.onMetaSave(
+                        'hyperlinks',
+                        'description',
+                        index
+                      )}
                       emptyText="No Hyperlink Description"
                     />
                     <span>Is Publication: </span>
@@ -513,7 +607,18 @@ class UserDatasetDetail extends React.Component {
               text="Add Hyperlink"
               onPress={(event) => {
                 event.preventDefault();
-                console.log('Adding new hyperlink');
+                this.onMetaSave(
+                  'hyperlinks',
+                  undefined, // no nested key since we're adding a new hyperlink
+                  meta.hyperlinks.length, // add to the end of the array
+                  {
+                    // new hyperlink entry
+                    url: '',
+                    text: '',
+                    description: '',
+                    isPublication: false, // default to false unless specified
+                  }
+                )();
               }}
               icon={AddIcon}
             />
@@ -535,7 +640,7 @@ class UserDatasetDetail extends React.Component {
                       value={organism || ''}
                       multiLine={false}
                       readOnly={!isOwner}
-                      onSave={this.onMetaSave('description')}
+                      onSave={this.onMetaSave('organisms', undefined, index)}
                       emptyText="No Organism"
                     />
                   </div>
@@ -546,8 +651,12 @@ class UserDatasetDetail extends React.Component {
               text="Add Organism"
               onPress={(event) => {
                 event.preventDefault();
-                console.log('Adding new organism');
-                // Logic to add a new organism entry
+                this.onMetaSave(
+                  'organisms',
+                  undefined, // no nested key since we're adding a new organism
+                  meta.organisms.length ?? 0, // add to the end of the array
+                  '' // default value for new organism entry
+                )();
               }}
               icon={AddIcon}
             />
