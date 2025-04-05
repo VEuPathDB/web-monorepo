@@ -2,6 +2,7 @@ import React, {
   ReactNode,
   useCallback,
   useEffect,
+  useId,
   useRef,
   useState,
 } from 'react';
@@ -17,8 +18,18 @@ type Props = {
   children: ReactNode;
   modal?: boolean;
   title?: ReactNode;
-  leftButtons?: ReactNode[];
+  /**
+   * An optional description for screen readers only
+   */
+  description?: ReactNode;
+  /**
+   * Optional arrays of buttons for the title bar.
+   * Note that the default buttons provide onClose and
+   * keyboard-positioning functionality, which you will need to restore.
+   */
   buttons?: ReactNode[];
+  leftButtons?: ReactNode[];
+
   draggable?: boolean;
   resizable?: boolean;
   className?: string;
@@ -163,6 +174,10 @@ function Dialog(props: Props) {
           }
         }
       }
+      // M key to enter toggle keyboard moving mode
+      if (e.key === 'M' || e.key === 'm') {
+        setIsMoving(true);
+      }
       // Tab will do its normal thing but also show the focus key help
       if (e.key == 'Tab') {
         setShowFocusHint(true);
@@ -204,12 +219,16 @@ function Dialog(props: Props) {
     return () => window.removeEventListener('resize', constrainPosition);
   }, [x, y, popupWidth, popupHeight]);
 
+  // aria-related
+  const titleId = useId();
+  const descriptionId = useId();
+
   if (!props.open) return null;
 
   const {
     buttons = [
       <button
-        title="Keyboard shortcut: ESC"
+        title="Close this dialog (shortcut key: ESC)"
         key="close"
         type="button"
         onClick={() => closeHandler()}
@@ -219,7 +238,7 @@ function Dialog(props: Props) {
     ],
     leftButtons = [
       <button
-        title="Toggle keyboard placement mode"
+        title="Toggle keyboard placement mode (shortcut key: M)"
         key="move"
         type="button"
         onClick={() => setIsMoving((prev) => !prev)}
@@ -231,7 +250,13 @@ function Dialog(props: Props) {
   } = props;
 
   const content = (
-    <div className={makeClassName(props.className, '', props.modal && 'modal')}>
+    <div
+      role="dialog"
+      aria-labelledby={titleId}
+      aria-describedby={props.description ? descriptionId : undefined}
+      aria-modal={props.modal}
+      className={makeClassName(props.className, '', props.modal && 'modal')}
+    >
       <div
         ref={headerNode}
         className={makeClassName(props.className, 'Header')}
@@ -239,10 +264,10 @@ function Dialog(props: Props) {
         <div className={makeClassName(props.className, 'LeftButtons')}>
           {leftButtons}
         </div>
-        <div className={makeClassName(props.className, 'Title')}>
+        <div id={titleId} className={makeClassName(props.className, 'Title')}>
           {isMoving ? (
             <KeyboardMovingHelp />
-          ) : showFocusHint ? (
+          ) : showFocusHint && props.contentRef && props.parentRef ? (
             <FocusToggleHelp />
           ) : (
             props.title
@@ -256,6 +281,11 @@ function Dialog(props: Props) {
         className={makeClassName(props.className, 'Content')}
         ref={props.contentRef}
       >
+        {props.description && (
+          <p id={descriptionId} className="wdk-Dialog-screen-reader-only">
+            {props.description}
+          </p>
+        )}
         {props.children}
       </div>
     </div>
