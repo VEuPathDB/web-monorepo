@@ -1,4 +1,10 @@
-import React, { ReactNode, useEffect, useRef, useState } from 'react';
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import Icon from '../../Components/Icon/Icon';
 import { useBodyScrollManager } from '../../Components/Overlays/BodyScrollManager';
 import Popup from '../../Components/Overlays/Popup';
@@ -18,7 +24,17 @@ type Props = {
   className?: string;
   onOpen?: () => void;
   onClose?: () => void;
-  contentRef?: React.RefObject<HTMLDivElement>; // a ref for resetting vertical scroll, for example
+  /**
+   * A ref for resetting vertical scroll, for example.
+   * Also enables keyboard toggling between main page content and popup
+   * (non-modal mode only)
+   */
+  contentRef?: React.RefObject<HTMLDivElement>;
+  /**
+   * A ref to the div to return keyboard focus to when toggling
+   * focus out of the popup.
+   */
+  parentRef?: React.RefObject<HTMLElement>;
 };
 
 const isMovingHighlightColor = '#FF3131';
@@ -36,10 +52,8 @@ function Dialog(props: Props) {
   const [y, setY] = useState<number>();
   const [popupWidth, setPopupWidth] = useState<number>();
   const [popupHeight, setPopupHeight] = useState<number>();
-  const [popupNode, setPopupNode] = useState<HTMLElement>();
 
   const handlePopupReady = (node: HTMLElement) => {
-    setPopupNode(node);
     const rect = node.getBoundingClientRect();
     setPopupWidth(rect.width);
     setPopupHeight(rect.height);
@@ -95,23 +109,77 @@ function Dialog(props: Props) {
     return () => window.removeEventListener('keydown', handleKeys);
   }, [isMoving, popupWidth, popupHeight]);
 
+  // keyboard-based focus toggling
+  const [focusState, setFocusState] = useState<'popup' | 'parent'>('parent');
+  const [showFocusHint, setShowFocusHint] = useState(false);
+
+  // cancel focus hint if showing a new title
+  useEffect(() => {
+    if (props.title) {
+      setShowFocusHint(false);
+    }
+  }, [props.title]);
+
+  const closeHandler = useCallback(() => {
+    props.onClose?.();
+
+    if (props.parentRef?.current) {
+      props.parentRef.current.focus();
+    }
+    setFocusState('parent');
+  }, [props.onClose]);
+
+  // keep keyboard focus state in sync with mouse-based events
+  useEffect(() => {
+    // set focusState on change to open
+    if (props.open) {
+      setFocusState('popup');
+    }
+  }, [props.open]);
+
   // global document keyboard handler(s) while the dialog is open
   useEffect(() => {
     if (!props.open || isMoving) return;
 
     const handleKeys = (e: KeyboardEvent) => {
+      // ESC key closes popup
       if (e.key === 'Escape' || e.key === 'Esc') {
-        props.onClose?.();
+        closeHandler();
       }
-      if (e.key === 'G' || e.key === 'g') {
-        console.log('Gee!');
-        popupNode?.focus();
+      // F/f key toggles focus between popup content
+      // (only if `props.contentRef` and `props.parentRef` are provided, and not for modals)
+      if (e.key === 'F' || e.key === 'f') {
+        if (
+          !props.modal &&
+          props.contentRef?.current &&
+          props.parentRef?.current
+        ) {
+          if (focusState === 'parent') {
+            props.contentRef.current.focus();
+            setFocusState('popup');
+          } else {
+            props.parentRef.current.focus();
+            setFocusState('parent');
+          }
+        }
+      }
+      // Tab will do its normal thing but also show the focus key help
+      if (e.key == 'Tab') {
+        setShowFocusHint(true);
+        setTimeout(() => setShowFocusHint(false), 5000); // auto-hide after 5s
       }
     };
 
     document.addEventListener('keydown', handleKeys);
     return () => document.removeEventListener('keydown', handleKeys);
-  }, [props.open, isMoving, popupNode]);
+  }, [
+    props.open,
+    closeHandler,
+    isMoving,
+    props.contentRef,
+    props.parentRef,
+    focusState,
+  ]);
 
   // constrain popup position to inside the viewport
   useEffect(() => {
@@ -139,13 +207,12 @@ function Dialog(props: Props) {
   if (!props.open) return null;
 
   const {
-    onClose = () => {},
     buttons = [
       <button
         title="Keyboard shortcut: ESC"
         key="close"
         type="button"
-        onClick={() => onClose()}
+        onClick={() => closeHandler()}
       >
         <Icon type="close" />
       </button>,
@@ -173,7 +240,13 @@ function Dialog(props: Props) {
           {leftButtons}
         </div>
         <div className={makeClassName(props.className, 'Title')}>
-          {isMoving ? <KeyboardMovingHelp /> : props.title}
+          {isMoving ? (
+            <KeyboardMovingHelp />
+          ) : showFocusHint ? (
+            <FocusToggleHelp />
+          ) : (
+            props.title
+          )}
         </div>
         <div className={makeClassName(props.className, 'RightButtons')}>
           {buttons}
@@ -240,6 +313,14 @@ function KeyboardMovingHelp() {
   return (
     <span style={{ color: isMovingHighlightColor }}>
       ≫ Use arrow keys to move. Press <kbd>Esc</kbd> to exit. ≪
+    </span>
+  );
+}
+
+function FocusToggleHelp() {
+  return (
+    <span style={{ color: isMovingHighlightColor }}>
+      ↹ Press <kbd>F</kbd> to toggle focus. ↹
     </span>
   );
 }

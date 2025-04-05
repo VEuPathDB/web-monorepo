@@ -184,6 +184,8 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
     summary: { headline, one_paragraph_summary, topics },
   } = props;
 
+  const activeDatasetLinkRef = useRef<HTMLElement | null>(null);
+
   // make a lookup from dataset_id to the experiment info (display_name, assay_type) etc
   const expressionGraphs = record.tables['ExpressionGraphs'];
   const experiments = expressionGraphs.reduce<
@@ -298,6 +300,11 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
                     >
                       <>
                         <button
+                          ref={(node: HTMLElement | null) => {
+                            if (dataset_id === floaterDatasetId) {
+                              activeDatasetLinkRef.current = node;
+                            }
+                          }}
                           className="ai-link-button"
                           onClick={() => setFloaterDatasetId(dataset_id)}
                         >
@@ -334,6 +341,7 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
         experiments={experiments}
         summaries={summaries}
         datasetId={floaterDatasetId}
+        parentRef={activeDatasetLinkRef}
       />
       <div
         className="ai-summary"
@@ -419,6 +427,7 @@ interface ExpressionGraphFloaterProps {
   experiments: Record<string, Record<string, AttributeValue>>;
   summaries: Record<string, AiExperimentSummary>;
   datasetId: string | undefined;
+  parentRef?: React.RefObject<HTMLElement>;
 }
 
 export function ExpressionGraphFloater({
@@ -427,6 +436,7 @@ export function ExpressionGraphFloater({
   experiments,
   summaries,
   datasetId,
+  parentRef,
 }: ExpressionGraphFloaterProps) {
   // ref and effect to scroll-to-top in popup when a new dataset is shown
   const floaterContentRef = useRef<HTMLDivElement>(null);
@@ -451,6 +461,7 @@ export function ExpressionGraphFloater({
           title={<div className="ai-floater-header">{title?.toString()}</div>}
           className="ai-expression-graph-floater"
           contentRef={floaterContentRef}
+          parentRef={parentRef}
         >
           <section className="ai-generated">
             <h4>AI summary</h4>
