@@ -431,10 +431,10 @@ export function ExpressionGraphFloater({
   // ref and effect to scroll-to-top in popup when a new dataset is shown
   const floaterContentRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (datasetId != null && floaterContentRef.current != null) {
+    if (open && datasetId != null && floaterContentRef.current != null) {
       floaterContentRef.current.scrollTop = 0;
     }
-  }, [datasetId]);
+  }, [datasetId, open]);
 
   if (datasetId != null) {
     const rowData = experiments[datasetId];
