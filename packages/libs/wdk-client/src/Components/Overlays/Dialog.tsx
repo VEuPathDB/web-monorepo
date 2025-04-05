@@ -22,6 +22,8 @@ type Props = {
 };
 
 const isMovingHighlightColor = '#FF3131';
+const moveAmount = 20;
+const edgePadding = 10;
 
 function Dialog(props: Props) {
   const headerNode = useRef<HTMLDivElement>(null);
@@ -32,34 +34,50 @@ function Dialog(props: Props) {
   const [isMoving, setIsMoving] = useState(false);
   const [x, setX] = useState<number>();
   const [y, setY] = useState<number>();
+  const [popupWidth, setPopupWidth] = useState<number>();
+  const [popupHeight, setPopupHeight] = useState<number>();
+  const [popupNode, setPopupNode] = useState<HTMLElement>();
 
   const handlePopupReady = (node: HTMLElement) => {
+    setPopupNode(node);
     const rect = node.getBoundingClientRect();
+    setPopupWidth(rect.width);
+    setPopupHeight(rect.height);
     setX((x) => (x == null ? -rect.width / 2 : x));
     setY((y) => (y == null ? -rect.height / 2 : y));
   };
 
   useEffect(() => {
     if (!isMoving) return;
+    if (popupWidth == null || popupHeight == null) return;
 
-    const handleKey = (e: KeyboardEvent) => {
+    const minX = -window.innerWidth / 2 + edgePadding;
+    const maxX = window.innerWidth / 2 - popupWidth - edgePadding;
+    const minY = -window.innerHeight / 2 + edgePadding;
+    const maxY = window.innerHeight / 2 - popupHeight - edgePadding;
+
+    // functions to prevent moving the popup out of viewport
+    const clampX = (x: number) => Math.min(Math.max(x, minX), maxX);
+    const clampY = (y: number) => Math.min(Math.max(y, minY), maxY);
+
+    const handleKeys = (e: KeyboardEvent) => {
       let handled = false;
 
       switch (e.key) {
         case 'ArrowUp':
-          setY((y) => (y == null ? y : y - 10));
+          setY((y) => (y == null ? y : clampY(y - moveAmount)));
           handled = true;
           break;
         case 'ArrowDown':
-          setY((y) => (y == null ? y : y + 10));
+          setY((y) => (y == null ? y : clampY(y + moveAmount)));
           handled = true;
           break;
         case 'ArrowLeft':
-          setX((x) => (x == null ? x : x - 10));
+          setX((x) => (x == null ? x : clampX(x - moveAmount)));
           handled = true;
           break;
         case 'ArrowRight':
-          setX((x) => (x == null ? x : x + 10));
+          setX((x) => (x == null ? x : clampX(x + moveAmount)));
           handled = true;
           break;
         case 'Escape':
@@ -73,23 +91,50 @@ function Dialog(props: Props) {
       }
     };
 
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [isMoving]);
+    window.addEventListener('keydown', handleKeys);
+    return () => window.removeEventListener('keydown', handleKeys);
+  }, [isMoving, popupWidth, popupHeight]);
 
   // global document keyboard handler(s) while the dialog is open
   useEffect(() => {
     if (!props.open || isMoving) return;
 
-    const handleKey = (e: KeyboardEvent) => {
+    const handleKeys = (e: KeyboardEvent) => {
       if (e.key === 'Escape' || e.key === 'Esc') {
         props.onClose?.();
       }
+      if (e.key === 'G' || e.key === 'g') {
+        console.log('Gee!');
+        popupNode?.focus();
+      }
     };
 
-    document.addEventListener('keydown', handleKey);
-    return () => document.removeEventListener('keydown', handleKey);
-  }, [props.open, isMoving]);
+    document.addEventListener('keydown', handleKeys);
+    return () => document.removeEventListener('keydown', handleKeys);
+  }, [props.open, isMoving, popupNode]);
+
+  // constrain popup position to inside the viewport
+  useEffect(() => {
+    function constrainPosition() {
+      if (x == null || y == null || popupWidth == null || popupHeight == null)
+        return;
+      const padding = edgePadding;
+
+      const minX = -window.innerWidth / 2 + padding;
+      const maxX = window.innerWidth / 2 - popupWidth - padding;
+
+      const minY = -window.innerHeight / 2 + padding;
+      const maxY = window.innerHeight / 2 - popupHeight - padding;
+
+      setX((x) => Math.min(Math.max(x ?? 0, minX), maxX));
+      setY((y) => Math.min(Math.max(y ?? 0, minY), maxY));
+    }
+
+    constrainPosition(); // run immediately
+
+    window.addEventListener('resize', constrainPosition);
+    return () => window.removeEventListener('resize', constrainPosition);
+  }, [x, y, popupWidth, popupHeight]);
 
   if (!props.open) return null;
 
