@@ -30,6 +30,10 @@ a.javascript-link {
   }
 }
 
+span.ai-one-sentence-summary {
+  padding-right: 2em;
+}
+
 div.ai-topic-heading {
   margin-bottom: 0.5em;
   margin-right: 6em;
@@ -46,5 +50,49 @@ ul.ai-topic {
     margin-bottom: 0.5em;
     margin-left: 4em;
     margin-right: 6em;
+  }
+
+  li.ai-floater-inactive::marker {
+    content: '●  ';
+  }
+  li.ai-floater-active::marker {
+    content: '▶  ';
+  }
+}
+
+.ai-floater-header {
+  white-space: normal;
+  text-align: center;
+}
+
+@import '../stepAnalysis/StepAnalysisEnrichmentResult';
+
+.ai-expression-graph-floater {
+  @extend %word-cloud-base;
+  height: 450px;
+}
+
+.ai-expression-graph-floaterContent {
+  display: block;
+}
+
+/**
+ * color is copied from AllSites.scss
+ * can't seem to `@extend` styles from other files
+ *
+ */
+.ai-link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: #069;
+  text-decoration: none;
+  cursor: pointer;
+  font: inherit;
+
+  &:hover {
+    text-decoration: underline;
+    background: none;
   }
 }

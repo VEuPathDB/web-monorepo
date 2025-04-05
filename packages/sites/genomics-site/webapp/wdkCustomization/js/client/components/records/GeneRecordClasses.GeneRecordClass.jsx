@@ -393,7 +393,7 @@ function FungiVBOrgLinkoutsTable(props) {
   );
 }
 
-const ExpressionChildRow = makeDatasetGraphChildRow({
+export const ExpressionChildRow = makeDatasetGraphChildRow({
   dataTableName: 'ExpressionGraphsDataTable',
   DatasetGraphComponent: DatasetGraph,
 });
