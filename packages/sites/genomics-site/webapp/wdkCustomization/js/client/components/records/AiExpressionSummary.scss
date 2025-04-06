@@ -1,8 +1,35 @@
+div.ai-summary-flex-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 2em;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
 div.ai-summary {
+  flex: 1 1 50em;
+  margin-left: 15px;
+  max-width: 50em;
+
   p {
     ul {
       margin-top: 0.5em;
       margin-bottom: 1em;
+    }
+  }
+}
+
+div.ai-disclaimer {
+  flex: 1 1 15em;
+  min-width: 15em;
+  max-width: 50em;
+  margin-bottom: 1em;
+
+  details {
+    summary {
+      cursor: pointer;
+      padding: 0.2em 0.4em;
+      font-weight: bold;
     }
   }
 }
