@@ -7,6 +7,7 @@ import {
   DefaultHighlightMarkerStyle,
 } from '../../types/plots/addOns';
 import { scaleLinear } from 'd3-scale';
+import { HighlightedPointsDetails } from '../../types/general';
 
 // set data array types for VEuPathDB scatter plot: https://redmine.apidb.org/issues/41310
 // but changed to new format: most likely x & y data are row/column vector format; also standardError is not a single value but vector
@@ -591,9 +592,7 @@ export function processInputData<T extends number | string>(
   independentValueType: string,
   dependentValueType: string,
   defineColors: boolean,
-  highlightIds?: string[],
-  highlightMarkerStyleOverride?: ScatterPlotDataSeries['marker'],
-  highlightTraceName?: string,
+  highlightedPointsDetails?: HighlightedPointsDetails,
   colorPaletteOverride?: string[]
 ) {
   // set fillAreaValue for densityplot
@@ -638,10 +637,12 @@ export function processInputData<T extends number | string>(
   let highlightTrace: any = {
     x: [],
     y: [],
-    name: highlightTraceName ?? 'highlight',
+    name: highlightedPointsDetails?.highlightTraceName ?? 'highlight',
     mode: 'markers',
     type: 'scattergl',
-    marker: highlightMarkerStyleOverride ?? DefaultHighlightMarkerStyle,
+    marker:
+      highlightedPointsDetails?.highlightMarkerStyleOverrides ??
+      DefaultHighlightMarkerStyle,
     pointIds: [],
   };
 
@@ -782,12 +783,17 @@ export function processInputData<T extends number | string>(
       // still have a tooltip (regardless of marker size, color, etc.)
       if (
         el.pointIds &&
-        highlightIds &&
-        highlightIds.length > 0 &&
-        highlightIds.some((id) => el.pointIds?.includes(id))
+        highlightedPointsDetails &&
+        highlightedPointsDetails.pointIds.length > 0 &&
+        highlightedPointsDetails.pointIds.some((id: string) =>
+          el.pointIds?.includes(id)
+        )
       ) {
         seriesY.forEach((_value: number, index: number) => {
-          if (el.pointIds && highlightIds.includes(el.pointIds[index])) {
+          if (
+            el.pointIds &&
+            highlightedPointsDetails.pointIds.includes(el.pointIds[index])
+          ) {
             seriesY[index] = null;
           }
         });
@@ -800,7 +806,7 @@ export function processInputData<T extends number | string>(
         // distinguish X/Y Data from Overlay
         name: el.overlayVariableDetails
           ? el.overlayVariableDetails.value
-          : 'Data',
+          : highlightedPointsDetails?.nonHighlightTraceName ?? 'Data',
         mode: modeValue,
         type:
           vizType === 'lineplot'
@@ -811,7 +817,8 @@ export function processInputData<T extends number | string>(
         fill: fillAreaValue,
         marker: {
           color:
-            highlightIds && highlightIds.length > 0
+            highlightedPointsDetails &&
+            highlightedPointsDetails.pointIds.length > 0
               ? DefaultNonHighlightColor
               : defineColors || colorPaletteOverride
               ? markerColors[index]
@@ -820,7 +827,8 @@ export function processInputData<T extends number | string>(
               : undefined,
           line: {
             color:
-              highlightIds && highlightIds.length > 0
+              highlightedPointsDetails &&
+              highlightedPointsDetails.pointIds.length > 0
                 ? DefaultNonHighlightColor
                 : defineColors || colorPaletteOverride
                 ? markerColors[index]
@@ -842,14 +850,16 @@ export function processInputData<T extends number | string>(
 
       // If there are any highlihgted points, we need to add those to the highlight trace
       if (
-        highlightIds &&
+        highlightedPointsDetails &&
         el.pointIds &&
-        highlightIds.some((id) => el.pointIds.includes(id))
+        highlightedPointsDetails.pointIds.some((id: string) =>
+          el.pointIds.includes(id)
+        )
       ) {
         // Extract the indices of highlighted points.
         const highlightIndices = el.pointIds
           .map((id: string, index: number) =>
-            highlightIds.includes(id) ? index : -1
+            highlightedPointsDetails.pointIds.includes(id) ? index : -1
           )
           .filter((index: number) => index !== -1);
         if (highlightIndices && highlightIndices.length !== 0) {
