@@ -25,6 +25,7 @@ import './UserDatasetDetail.scss';
 import { PublicationInput } from '../UploadForm';
 import OutlinedButton from '@veupathdb/coreui/lib/components/buttons/OutlinedButton';
 import AddIcon from '@material-ui/icons/Add';
+import { FloatingButton, Trash } from '@veupathdb/coreui';
 
 const classify = makeClassifier('UserDatasetDetail');
 
@@ -210,7 +211,6 @@ class UserDatasetDetail extends React.Component {
     const { onMetaSave } = this;
     const { id, type, meta, size, owner, created, sharedWith, status } =
       userDataset;
-    console.log('userDataset', userDataset);
     const { display, name, version } = type;
     const isOwner = this.isMyDataset();
     const isInstalled = this.isInstalled();
@@ -397,13 +397,29 @@ class UserDatasetDetail extends React.Component {
       },
       {
         attribute: 'Publications',
+        className: 'NestedFieldsSection',
         value: (
-          <div>
-            <br></br>
+          <div className={classify('NestedFields')}>
             {meta.publications.map((publication, index) => {
               return (
                 <div className={classify('NestedField')}>
-                  <span>Publication {index + 1}</span>
+                  <div className={classify('NestedFieldHeader')}>
+                    <span>Publication {index + 1}</span>
+                    <FloatingButton
+                      text="Remove"
+                      icon={Trash}
+                      onPress={(event) => {
+                        event.preventDefault();
+                        // Remove the organism from the array
+                        const newPublications = [...meta.publications];
+                        newPublications.splice(index, 1); // remove the item at index
+                        this.props.updateUserDatasetDetail(userDataset, {
+                          ...userDataset.meta,
+                          publications: newPublications,
+                        });
+                      }}
+                    />
+                  </div>
                   <div className={classify('NestedFieldValues')}>
                     <span>PubMed ID: </span>
                     <SaveableTextEditor
@@ -446,19 +462,34 @@ class UserDatasetDetail extends React.Component {
               }}
               icon={AddIcon}
             />
-            <br></br>
           </div>
         ),
       },
       {
         attribute: 'Contacts',
+        className: 'NestedFieldsSection',
         value: (
-          <div>
-            <br></br>
+          <div className={classify('NestedFields')}>
             {meta.contacts.map((contact, index) => {
               return (
                 <div className={classify('NestedField')}>
-                  <span>Contact {index + 1}</span>
+                  <div className={classify('NestedFieldHeader')}>
+                    <span>Contact {index + 1}</span>
+                    <FloatingButton
+                      text="Remove"
+                      icon={Trash}
+                      onPress={(event) => {
+                        event.preventDefault();
+                        // Remove the organism from the array
+                        const newContacts = [...meta.contacts];
+                        newContacts.splice(index, 1); // remove the item at index
+                        this.props.updateUserDatasetDetail(userDataset, {
+                          ...userDataset.meta,
+                          contacts: newContacts,
+                        });
+                      }}
+                    />
+                  </div>
                   <div className={classify('NestedFieldValues')}>
                     <span>Name: </span>
                     <SaveableTextEditor
@@ -560,19 +591,34 @@ class UserDatasetDetail extends React.Component {
               }}
               icon={AddIcon}
             />
-            <br></br>
           </div>
         ),
       },
       {
         attribute: 'Hyperlinks',
+        className: 'NestedFieldsSection',
         value: (
-          <div>
-            <br></br>
+          <div className={classify('NestedFields')}>
             {meta.hyperlinks.map((hyperlink, index) => {
               return (
                 <div className={classify('NestedField')}>
-                  <span>Hyperlink {index + 1}</span>
+                  <div className={classify('NestedFieldHeader')}>
+                    <span>Hyperlink {index + 1}</span>
+                    <FloatingButton
+                      text="Remove"
+                      icon={Trash}
+                      onPress={(event) => {
+                        event.preventDefault();
+                        // Remove the organism from the array
+                        const newHyperlinks = [...meta.hyperlinks];
+                        newHyperlinks.splice(index, 1); // remove the item at index
+                        this.props.updateUserDatasetDetail(userDataset, {
+                          ...userDataset.meta,
+                          hyperlinks: newHyperlinks,
+                        });
+                      }}
+                    />
+                  </div>
                   <div className={classify('NestedFieldValues')}>
                     <span>URL: </span>
                     <SaveableTextEditor
@@ -644,15 +690,14 @@ class UserDatasetDetail extends React.Component {
               }}
               icon={AddIcon}
             />
-            <br></br>
           </div>
         ),
       },
       {
         attribute: 'Organisms',
+        className: 'NestedFieldsSection',
         value: (
-          <div>
-            <br></br>
+          <div className={classify('NestedFields')}>
             <div>
               {meta.organisms.map((organism, index) => {
                 return (
@@ -664,6 +709,20 @@ class UserDatasetDetail extends React.Component {
                       readOnly={!isOwner}
                       onSave={this.onMetaSave('organisms', undefined, index)}
                       emptyText="No Organism"
+                    />
+                    <FloatingButton
+                      text="Remove"
+                      icon={Trash}
+                      onPress={(event) => {
+                        event.preventDefault();
+                        // Remove the organism from the array
+                        const newOrganisms = [...meta.organisms];
+                        newOrganisms.splice(index, 1); // remove the item at index
+                        this.props.updateUserDatasetDetail(userDataset, {
+                          ...userDataset.meta,
+                          organisms: newOrganisms,
+                        });
+                      }}
                     />
                   </div>
                 );
@@ -682,7 +741,6 @@ class UserDatasetDetail extends React.Component {
               }}
               icon={AddIcon}
             />
-            <br></br>
           </div>
         ),
       },
