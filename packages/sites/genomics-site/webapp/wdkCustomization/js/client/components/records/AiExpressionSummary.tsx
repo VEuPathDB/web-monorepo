@@ -129,17 +129,14 @@ function AiSummaryGate(props: Props) {
     return (
       <div>
         <p>
-          Click below to request an AI summary of this gene. It could take up to
-          three minutes. When complete it will be cached for all users.
+          Click below to request an AI summary of this gene's expression across
+          all the experiments shown in the "Transcript Expression" section
+          below. It could take up to three minutes. When complete it will be
+          cached for all users.
         </p>
         <button onClick={() => setShouldPopulateCache(true)}>
           Start AI Summary
         </button>
-
-        {/* Debugging: Display cache miss reason if present */}
-        <p style={{ color: 'red' }}>
-          Debug: resultStatus = {geneResponse?.resultStatus}
-        </p>
       </div>
     );
   } else {
