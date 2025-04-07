@@ -89,18 +89,17 @@ class UserDatasetDetail extends React.Component {
   // First, the easy key-value example. this.onMetaSave('name')('my new name');
   // Second, for fields that are arrays of objects, like meta.publications[index].name, specify the nestedKey and index. this.onMetaSave('publications', 'pubMedId', 0)('new pubMedId value');
   // Third, for arrays of strings, like meta.organisms[index], just specify the index. this.onMetaSave('organisms', undefined, 0)('new organism value');
-  onMetaSave(
-    key,
-    nestedKey = undefined,
-    index = undefined,
-    emptyObject = undefined
-  ) {
+  onMetaSave(key, nestedKey = undefined, index = undefined) {
     this.validateKey(key);
 
     return (value) => {
-      if (typeof value !== 'string' && typeof value !== 'boolean') {
+      if (
+        typeof value !== 'string' &&
+        typeof value !== 'boolean' &&
+        typeof value !== 'object'
+      ) {
         throw new TypeError(
-          `onMetaSave: expected input value to be string or boolean; got ${typeof value}`
+          `onMetaSave: expected input value to be string or boolean or object; got ${typeof value}`
         );
       }
       if (nestedKey && typeof nestedKey !== 'string') {
@@ -111,11 +110,6 @@ class UserDatasetDetail extends React.Component {
       if (index && !Number.isInteger(index)) {
         throw new TypeError(
           `onMetaSave: expected index to be an integer; got ${typeof index} with value ${index}`
-        );
-      }
-      if (emptyObject && typeof emptyObject !== 'object') {
-        throw new TypeError(
-          `onMetaSave: expected emptyObject to be an object; got ${typeof emptyObject}`
         );
       }
 
@@ -138,7 +132,8 @@ class UserDatasetDetail extends React.Component {
           updatedMeta = { ...userDataset.meta, [key]: arrayField };
         } else {
           // Add new entry to the array
-          arrayField.push(emptyObject);
+          // We use this case to add new empty objects to the array.
+          arrayField.push(value);
           updatedMeta = { ...userDataset.meta, [key]: arrayField };
         }
       } else {
@@ -456,9 +451,8 @@ class UserDatasetDetail extends React.Component {
                 this.onMetaSave(
                   'publications',
                   undefined,
-                  meta.publications.length,
-                  { pubMedId: '', citation: '' }
-                )();
+                  meta.publications.length
+                )({ pubMedId: '', citation: '' });
               }}
               icon={AddIcon}
             />
@@ -575,19 +569,18 @@ class UserDatasetDetail extends React.Component {
                 this.onMetaSave(
                   'contacts',
                   undefined, // no nested key since we're adding a new contact
-                  meta.contacts.length, // add to the end of the array
-                  {
-                    // new contact entry
-                    name: '',
-                    email: '',
-                    affiliation: '',
-                    city: '',
-                    state: '',
-                    country: '',
-                    address: '',
-                    isPrimary: false,
-                  }
-                )();
+                  meta.contacts.length // add to the end of the array
+                )({
+                  // new contact entry
+                  name: '',
+                  email: '',
+                  affiliation: '',
+                  city: '',
+                  state: '',
+                  country: '',
+                  address: '',
+                  isPrimary: false,
+                });
               }}
               icon={AddIcon}
             />
@@ -678,15 +671,14 @@ class UserDatasetDetail extends React.Component {
                 this.onMetaSave(
                   'hyperlinks',
                   undefined, // no nested key since we're adding a new hyperlink
-                  meta.hyperlinks.length, // add to the end of the array
-                  {
-                    // new hyperlink entry
-                    url: '',
-                    text: '',
-                    description: '',
-                    isPublication: false, // default to false unless specified
-                  }
-                )();
+                  meta.hyperlinks.length // add to the end of the array
+                )({
+                  // new hyperlink entry
+                  url: '',
+                  text: '',
+                  description: '',
+                  isPublication: false, // default to false unless specified
+                });
               }}
               icon={AddIcon}
             />
@@ -735,9 +727,8 @@ class UserDatasetDetail extends React.Component {
                 this.onMetaSave(
                   'organisms',
                   undefined, // no nested key since we're adding a new organism
-                  meta.organisms.length ?? 0, // add to the end of the array
-                  '' // default value for new organism entry
-                )();
+                  meta.organisms.length ?? 0 // add to the end of the array
+                )('');
               }}
               icon={AddIcon}
             />
