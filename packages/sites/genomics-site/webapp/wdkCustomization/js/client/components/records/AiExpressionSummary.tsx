@@ -284,6 +284,7 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
                 ({
                   dataset_id,
                   biological_importance,
+                  confidence,
                   one_sentence_summary,
                 }) => {
                   return (
@@ -309,7 +310,11 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
                         </button>{' '}
                         ({experiments[dataset_id].assay_type})
                         <AiExperimentSummary
-                          {...{ biological_importance, one_sentence_summary }}
+                          {...{
+                            biological_importance,
+                            confidence,
+                            one_sentence_summary,
+                          }}
                         />
                       </>
                     </li>
@@ -376,21 +381,25 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
 
 interface AiExperimentSummaryProps {
   biological_importance: number;
+  confidence: number;
   one_sentence_summary: string;
 }
 
 function AiExperimentSummary({
   biological_importance,
+  confidence,
   one_sentence_summary,
 }: AiExperimentSummaryProps) {
+  const confidenceGrade = String.fromCharCode(65 + 5 - confidence);
   return (
     <div>
       <span
         className="badge"
-        title={`AI-estimated biological importance: ${biological_importance}/5`}
+        title={`AI-estimated biological importance: ${biological_importance}/5 (confidence: ${confidenceGrade})`}
         aria-label={`Importance score: ${biological_importance} out of 5`}
       >
         {biological_importance}
+        {confidenceGrade}
       </span>
       <span className="ai-one-sentence-summary">
         {safeHtml(one_sentence_summary)}
