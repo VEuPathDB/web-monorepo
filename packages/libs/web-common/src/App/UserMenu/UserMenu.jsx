@@ -42,23 +42,28 @@ class UserMenu extends React.Component {
 
     return (
       <div className="UserMenu-Pane">
-        {items.map((item, key) => {
-          const { route, target, onClick } = item;
+        {items.map(({ route, target, onClick, icon, text }) => {
+          const key = icon; // previously we used the index but this was creating a warning
           const className = 'UserMenu-Pane-Item';
 
           if (onClick) {
             return (
-              <button type="button" className={className} onClick={onClick}>
-                <Icon fa={item.icon + ' UserMenu-Pane-Item-Icon'} />
-                {item.text}
+              <button
+                key={key}
+                type="button"
+                className={className}
+                onClick={onClick}
+              >
+                <Icon fa={icon + ' UserMenu-Pane-Item-Icon'} />
+                {text}
               </button>
             );
           }
 
           return (
             <Link key={key} className={className} to={route} target={target}>
-              <Icon fa={item.icon + ' UserMenu-Pane-Item-Icon'} />
-              {item.text}
+              <Icon fa={icon + ' UserMenu-Pane-Item-Icon'} />
+              {text}
             </Link>
           );
         })}

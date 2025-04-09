@@ -110,6 +110,20 @@
         }
       }
 
+      &.NestedFieldsSection {
+        flex: auto;
+        flex-direction: column;
+        margin-bottom: 1.5em;
+      }
+
+      .UserDatasetDetail-NestedFields {
+        margin-left: 1em;
+      }
+
+      // .UserDatasetDetail-NestedField {
+      //   margin-left: 2em;
+      // }
+
       .UserDatasetDetail-AttributeName {
         flex: 0 0 auto;
         padding-right: 10px;
@@ -125,6 +139,26 @@
             margin: 0 1ex;
           }
         }
+      }
+      .UserDatasetDetail-NestedFieldValues {
+        display: grid;
+        grid-template-columns: 7em 20em;
+        align-items: baseline;
+        padding-left: 1em;
+        margin-bottom: 1em;
+        margin-top: 0.3em;
+      }
+      .UserDatasetDetail-NestedFieldValues-Organisms {
+        display: grid;
+        grid-template-columns: 7em 20em 5em;
+        align-items: center;
+        margin-bottom: 0.3em;
+      }
+      .UserDatasetDetail-NestedFieldHeader {
+        display: flex;
+        gap: 45px;
+        align-items: center;
+        font-weight: bolder;
       }
     }
     .UserDatasetDetail {
