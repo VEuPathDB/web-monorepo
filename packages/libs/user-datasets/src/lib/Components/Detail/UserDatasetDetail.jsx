@@ -762,14 +762,14 @@ class UserDatasetDetail extends React.Component {
     const attributes = this.getAttributes();
     return (
       <div className={classify('AttributeList')}>
-        {attributes.map(({ attribute, value, className }, index) => (
+        {attributes.map(({ attribute, value, className }) => (
           <div
             className={
               classify('AttributeRow') +
               ' ' +
               (className ?? classify(attribute))
             }
-            key={index}
+            key={attribute}
           >
             <div className={classify('AttributeName')}>
               {typeof attribute === 'string' ? (
