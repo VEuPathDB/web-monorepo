@@ -89,6 +89,8 @@ import { getGeoConfig } from '../../core/utils/geoVariables';
 import UserDatasetDetailController from '@veupathdb/user-datasets/lib/Controllers/UserDatasetDetailController';
 import { wdkRecordIdToDiyUserDatasetId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
 
+import { communityDatasetsEnabled } from '@veupathdb/web-common/lib/config';
+
 enum MapSideNavItemLabels {
   Download = 'Download',
   Filter = 'Filter',
@@ -724,7 +726,7 @@ function MapAnalysisImpl(props: ImplProps) {
                   singular: 'Study',
                   plural: 'Studies',
                 }}
-                enablePublicUserDatasets
+                enablePublicUserDatasets={!!communityDatasetsEnabled}
                 includeAllLink={false}
                 includeNameHeader={false}
               />
