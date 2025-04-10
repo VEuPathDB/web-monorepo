@@ -27,6 +27,7 @@ import { Dialog } from '@veupathdb/wdk-client/lib/Components';
 
 // Styles
 import './AiExpressionSummary.scss';
+import { warning } from '@veupathdb/coreui/lib/definitions/colors';
 
 const MIN_DATASETS_FOR_AI_SUMMARY = 5;
 const POLL_TIME_MS = 5000;
@@ -338,7 +339,12 @@ const AiExpressionResult = (props: AiExpressionResultProps) => {
           </p>
         </div>
         <div className="ai-disclaimer">
-          <details>
+          <details
+            style={{
+              background: warning[100],
+              border: `1px solid ${warning[600]}`,
+            }}
+          >
             <summary>⚠️ AI content warning</summary>
             <p>
               Summaries provided by AI are designed to aid in interpreting gene
