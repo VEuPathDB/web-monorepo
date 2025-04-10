@@ -6,6 +6,7 @@ import {
   edaSingleAppMode,
   projectId,
   webAppUrl,
+  communityDatasetsEnabled,
 } from '../config';
 
 const EdaMap = React.lazy(() => import('@veupathdb/eda/lib/map'));
@@ -25,6 +26,7 @@ export function EdaMapController() {
         }}
         sharingUrlPrefix={'/maps'}
         showLinkToEda={projectId === 'ClinEpiDB'}
+        enablePublicUserDatasets={!!communityDatasetsEnabled}
       />
     </Suspense>
   );

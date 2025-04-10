@@ -6,6 +6,7 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 
 import {
+  communityDatasetsEnabled,
   communitySite,
   userDatasetsUploadTypes,
 } from '@veupathdb/web-common/lib/config';
@@ -44,7 +45,7 @@ export const userDatasetRoutes: RouteEntry[] = [
       return (
         <Suspense fallback={<Loading />}>
           <UserDatasetRouter
-            enablePublicUserDatasets
+            enablePublicUserDatasets={!!communityDatasetsEnabled}
             availableUploadTypes={availableUploadTypes}
             detailsPageTitle="My Data Set"
             helpRoute="/workspace/datasets/help"
