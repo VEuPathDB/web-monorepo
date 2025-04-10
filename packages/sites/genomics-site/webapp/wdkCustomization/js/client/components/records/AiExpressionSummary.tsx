@@ -255,7 +255,7 @@ const AiExpressionResult = (props: AiExpressionResultProps) => {
                 title={`AI-estimated biological importance`}
                 aria-label={`Column heading for AI-estimated importance score`}
               >
-                Relevance
+                Importance
               </span>
             </div>
             <ul className="ai-topic">
@@ -332,7 +332,7 @@ const AiExpressionResult = (props: AiExpressionResultProps) => {
             <i>
               The results from {expressionGraphs.length} experiments have been
               organized into the {topics.length} topics below. The AI was
-              instructed to present the most biologically relevant information
+              instructed to present the most biologically important information
               first. As this method is still evolving, results may vary.
             </i>
           </p>
