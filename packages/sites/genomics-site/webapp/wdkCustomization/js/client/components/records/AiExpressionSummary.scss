@@ -1,9 +1,9 @@
 div.ai-summary-flex-container {
   display: flex;
   justify-content: space-between;
-  gap: 2em;
+  column-gap: 2em;
   flex-direction: row;
-  flex-wrap: wrap;
+  flex-wrap: wrap-reverse;
 }
 
 div.ai-summary {
@@ -23,9 +23,12 @@ div.ai-disclaimer {
   flex: 1 1 15em;
   min-width: 15em;
   max-width: 50em;
-  margin-bottom: 1em;
 
   details {
+    background: #fff480; /* same as @veupathdb/components truncation-layout-shapes.ts */
+    border-radius: 8px;
+    padding: 8px;
+
     summary {
       cursor: pointer;
       padding: 0.2em 0.4em;

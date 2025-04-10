@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
 import {
   CollapsibleSection,
   Loading,
@@ -23,9 +22,6 @@ import {
   MesaStateProps,
   CellProps,
 } from '@veupathdb/coreui/lib/components/Mesa/types';
-import { RecordActions } from '@veupathdb/wdk-client/lib/Actions';
-import { DEFAULT_TABLE_STATE } from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
-import { State as ReduxState } from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
 import { ExpressionChildRow as ExpressionGraph } from './GeneRecordClasses.GeneRecordClass';
 import { Dialog } from '@veupathdb/wdk-client/lib/Components';
 
@@ -159,23 +155,11 @@ function AiSummaryGate(props: Props) {
 
 type RowType = AiExpressionSummarySection & { rowId: number };
 
-// Jump through some hoops to connect the redux store
-const mapState = (record: ReduxState) => ({
-  expressionGraphsTableState:
-    record.tableStates?.ExpressionGraphs ?? DEFAULT_TABLE_STATE,
-});
-const mapDispatch = {
-  updateSectionVisibility: RecordActions.updateSectionVisibility,
-  updateTableState: RecordActions.updateTableState,
-};
-const connector = connect(mapState, mapDispatch);
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
 type AiExpressionResultProps = Props & {
   summary: AiExpressionSummary;
-} & PropsFromRedux;
+};
 
-const AiExpressionResult = connector((props: AiExpressionResultProps) => {
+const AiExpressionResult = (props: AiExpressionResultProps) => {
   const {
     record,
     summary: { headline, one_paragraph_summary, topics },
@@ -201,11 +185,6 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
       result[dataset_id] = { ...current };
       return result;
     }, {});
-
-  // pre-open the main expression table so the links to it work reliably
-  useEffect(() => {
-    props.updateSectionVisibility('ExpressionGraphs', true);
-  }, []);
 
   // custom renderer (to handle <i>, <ul>, <li> and <strong> tags, mainly)
   // and provide click to toggle row expansion functionality
@@ -365,8 +344,10 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
               Summaries provided by AI are designed to aid in interpreting gene
               expression data. However, these summaries may occasionally
               misrepresent the underlying results.{' '}
+            </p>
+            <p>
               <strong>
-                It is recommended to consult gene expression and other data on
+                Users are advised to consult gene expression and other data on
                 this page before making decisions that may significantly impact
                 research direction, resource allocation, or downstream analysis.
               </strong>
@@ -377,7 +358,7 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
       <Mesa state={mainTableState} />
     </div>
   );
-});
+};
 
 interface AiExperimentSummaryProps {
   biological_importance: number;
