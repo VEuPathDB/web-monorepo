@@ -34,6 +34,30 @@ type Props = {
    */
   dragHandleSelector?: () => Element;
 
+  /**
+   * Controls for the position
+   *
+   * x and y coordinates (`left` and `top` offsets from the center of the window)
+   */
+  x?: number;
+  y?: number;
+  /**
+   * Callback invoked with the popup's updated coordinates whenever it is moved.
+   * Typically used to synchronize the popup's position (`left` and `top` in CSS pixels)
+   * with external state or parent components.
+   */
+  onMove?: (x: number, y: number) => void;
+  /**
+   * Callback fired with the DOM element when it becomes available.
+   * This is necessary because the popup content is rendered via a React portal
+   * and internally cloned, so direct `ref` forwarding does not work reliably.
+   */
+  onReady?: (node: HTMLElement) => void;
+  /**
+   * Callback to track the mouse-based dragging state of the popup.
+   */
+  setIsDragging?: (state: boolean) => void;
+
   /** Content of popup */
   children: React.ReactElement<any>;
 };
@@ -115,12 +139,25 @@ class Popup extends React.Component<Props> {
         addClasses: false,
         containment:
           this.props.containerSelector == null
-            ? 'document'
+            ? 'window'
             : this.props.containerSelector(),
         handle:
           this.props.dragHandleSelector == null
             ? false
             : this.props.dragHandleSelector(),
+        start: () => {
+          if (this.props.setIsDragging) {
+            this.props.setIsDragging(true);
+          }
+        },
+        stop: (_event, ui) => {
+          if (this.props.onMove) {
+            this.props.onMove(ui.position.left, ui.position.top);
+          }
+          if (this.props.setIsDragging) {
+            this.props.setIsDragging(false);
+          }
+        },
       })
       .toggle(this.props.open);
 
@@ -130,6 +167,20 @@ class Popup extends React.Component<Props> {
         minWidth: 100,
         minHeight: 100,
       });
+    }
+
+    // Apply position
+    if (typeof this.props.x === 'number' && typeof this.props.y === 'number') {
+      $node.css({
+        left: this.props.x,
+        top: this.props.y,
+        position: 'absolute',
+      });
+    }
+
+    // expose myself
+    if (this.popupNode && this.props.onReady) {
+      this.props.onReady(this.popupNode as HTMLElement);
     }
   }
 

@@ -1,0 +1,127 @@
+div.ai-summary-flex-container {
+  display: flex;
+  justify-content: space-between;
+  column-gap: 2em;
+  flex-direction: row;
+  flex-wrap: wrap-reverse;
+}
+
+div.ai-summary {
+  flex: 1 1 50em;
+  margin-left: 15px;
+  max-width: 50em;
+
+  p {
+    ul {
+      margin-top: 0.5em;
+      margin-bottom: 1em;
+    }
+  }
+}
+
+div.ai-disclaimer {
+  flex: 1 1 15em;
+  min-width: 15em;
+  max-width: 50em;
+
+  details {
+    border-radius: 8px;
+    padding: 8px;
+
+    summary {
+      cursor: pointer;
+      padding: 0.2em 0.4em;
+      font-weight: bold;
+    }
+  }
+}
+
+a.javascript-link {
+  cursor: grab;
+}
+
+.AiExpressionResult-Loading {
+  text-align: center;
+  padding: 0;
+  margin-top: 3em;
+  height: unset;
+  max-width: 75px;
+}
+
+.ai-generated {
+  .badge {
+    float: right;
+    background: #eef;
+    border-radius: 5px;
+    padding: 2px 8px;
+    font-size: 0.8rem;
+    color: #333;
+  }
+}
+
+span.ai-one-sentence-summary {
+  padding-right: 2em;
+}
+
+div.ai-topic-heading {
+  margin-bottom: 0.5em;
+  margin-right: 6em;
+
+  &::after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+ul.ai-topic {
+  li {
+    margin-bottom: 0.5em;
+    margin-left: 4em;
+    margin-right: 6em;
+  }
+
+  li.ai-floater-inactive::marker {
+    content: '●  ';
+  }
+  li.ai-floater-active::marker {
+    content: '▶  ';
+  }
+}
+
+.ai-floater-header {
+  white-space: normal;
+  text-align: center;
+}
+
+@import '../stepAnalysis/StepAnalysisEnrichmentResult';
+
+.ai-expression-graph-floater {
+  @extend %word-cloud-base;
+  height: 450px;
+}
+
+.ai-expression-graph-floaterContent {
+  display: block;
+}
+
+/**
+ * color is copied from AllSites.scss
+ * can't seem to `@extend` styles from other files
+ *
+ */
+.ai-link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: #069;
+  text-decoration: none;
+  cursor: pointer;
+  font: inherit;
+
+  &:hover {
+    text-decoration: underline;
+    background: none;
+  }
+}
