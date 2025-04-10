@@ -6,6 +6,7 @@ const iconClassNames = {
   info: 'fa fa-info-circle',
   help: 'fa fa-question-circle',
   close: 'fa fa-close',
+  move: 'fa fa-arrows',
 };
 
 type Props = {

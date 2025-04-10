@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
 import {
   CollapsibleSection,
   Loading,
@@ -14,6 +13,7 @@ import {
   AiExpressionSummary,
   AiExpressionSummaryResponse,
   AiExpressionSummarySection,
+  AiExperimentSummary,
 } from '../../types/aiExpressionTypes';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { AttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
@@ -22,10 +22,8 @@ import {
   MesaStateProps,
   CellProps,
 } from '@veupathdb/coreui/lib/components/Mesa/types';
-import { RecordActions } from '@veupathdb/wdk-client/lib/Actions';
-import { DEFAULT_TABLE_STATE } from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
-import { State as ReduxState } from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
-import { scrollToAndOpenExpressionGraph } from './utils';
+import { ExpressionChildRow as ExpressionGraph } from './GeneRecordClasses.GeneRecordClass';
+import { Dialog } from '@veupathdb/wdk-client/lib/Components';
 
 // Styles
 import './AiExpressionSummary.scss';
@@ -157,27 +155,17 @@ function AiSummaryGate(props: Props) {
 
 type RowType = AiExpressionSummarySection & { rowId: number };
 
-// Jump through some hoops to connect the redux store
-const mapState = (record: ReduxState) => ({
-  expressionGraphsTableState:
-    record.tableStates?.ExpressionGraphs ?? DEFAULT_TABLE_STATE,
-});
-const mapDispatch = {
-  updateSectionVisibility: RecordActions.updateSectionVisibility,
-  updateTableState: RecordActions.updateTableState,
-};
-const connector = connect(mapState, mapDispatch);
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
 type AiExpressionResultProps = Props & {
   summary: AiExpressionSummary;
-} & PropsFromRedux;
+};
 
-const AiExpressionResult = connector((props: AiExpressionResultProps) => {
+const AiExpressionResult = (props: AiExpressionResultProps) => {
   const {
     record,
     summary: { headline, one_paragraph_summary, topics },
   } = props;
+
+  const activeDatasetLinkRef = useRef<HTMLElement | null>(null);
 
   // make a lookup from dataset_id to the experiment info (display_name, assay_type) etc
   const expressionGraphs = record.tables['ExpressionGraphs'];
@@ -189,10 +177,14 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
     return result;
   }, {});
 
-  // pre-open the main expression table so the links to it work reliably
-  useEffect(() => {
-    props.updateSectionVisibility('ExpressionGraphs', true);
-  }, []);
+  // make another lookup for dataset_id -> topics[].summaries[]
+  const summaries = topics
+    .flatMap((topic) => topic.summaries)
+    .reduce<Record<string, AiExperimentSummary>>((result, current) => {
+      const dataset_id = current['dataset_id'] as string;
+      result[dataset_id] = { ...current };
+      return result;
+    }, {});
 
   // custom renderer (to handle <i>, <ul>, <li> and <strong> tags, mainly)
   // and provide click to toggle row expansion functionality
@@ -211,6 +203,9 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
     };
     return <div onClick={handleClick}>{safeHtml(props.value.toString())}</div>;
   };
+
+  // floater management
+  const [floaterDatasetId, setFloaterDatasetId] = useState<string>();
 
   // Note that `safeHtml()` does NOT sanitise dangerous HTML elements and attributes.
   // for example, this would render and the JavaScript will execute:
@@ -268,39 +263,38 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
                 ({
                   dataset_id,
                   biological_importance,
+                  confidence,
                   one_sentence_summary,
                 }) => {
                   return (
-                    <li key={dataset_id}>
+                    <li
+                      key={dataset_id}
+                      className={
+                        dataset_id === floaterDatasetId
+                          ? 'ai-floater-active'
+                          : 'ai-floater-inactive'
+                      }
+                    >
                       <>
-                        <a
-                          className="javascript-link"
-                          onClick={() =>
-                            scrollToAndOpenExpressionGraph({
-                              expressionGraphs: expressionGraphs,
-                              findIndexFn: (expressionGraph: {
-                                dataset_id: string;
-                              }) => expressionGraph.dataset_id === dataset_id,
-                              tableId: 'ExpressionGraphs',
-                              updateSectionVisibility:
-                                props.updateSectionVisibility,
-                              updateTableState: props.updateTableState,
-                              tableState: props.expressionGraphsTableState,
-                            })
-                          }
+                        <button
+                          ref={(node: HTMLElement | null) => {
+                            if (dataset_id === floaterDatasetId) {
+                              activeDatasetLinkRef.current = node;
+                            }
+                          }}
+                          className="ai-link-button"
+                          onClick={() => setFloaterDatasetId(dataset_id)}
                         >
                           {experiments[dataset_id].display_name as string}
-                        </a>{' '}
+                        </button>{' '}
                         ({experiments[dataset_id].assay_type})
-                        <span
-                          className="badge"
-                          title={`AI-estimated biological importance: ${biological_importance}/5`}
-                          aria-label={`Importance score: ${biological_importance} out of 5`}
-                        >
-                          {biological_importance}
-                        </span>
-                        <br />
-                        {safeHtml(one_sentence_summary)}
+                        <AiExperimentSummary
+                          {...{
+                            biological_importance,
+                            confidence,
+                            one_sentence_summary,
+                          }}
+                        />
                       </>
                     </li>
                   );
@@ -322,6 +316,14 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
 
   return (
     <div className="ai-generated">
+      <ExpressionGraphFloater
+        open={floaterDatasetId != null}
+        onClose={() => setFloaterDatasetId(undefined)}
+        experiments={experiments}
+        summaries={summaries}
+        datasetId={floaterDatasetId}
+        parentRef={activeDatasetLinkRef}
+      />
       <div className="ai-summary-flex-container">
         <div className="ai-summary">
           {safeHtml(headline, undefined, 'h4')}
@@ -342,8 +344,10 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
               Summaries provided by AI are designed to aid in interpreting gene
               expression data. However, these summaries may occasionally
               misrepresent the underlying results.{' '}
+            </p>
+            <p>
               <strong>
-                It is recommended to consult gene expression and other data on
+                Users are advised to consult gene expression and other data on
                 this page before making decisions that may significantly impact
                 research direction, resource allocation, or downstream analysis.
               </strong>
@@ -354,7 +358,36 @@ const AiExpressionResult = connector((props: AiExpressionResultProps) => {
       <Mesa state={mainTableState} />
     </div>
   );
-});
+};
+
+interface AiExperimentSummaryProps {
+  biological_importance: number;
+  confidence: number;
+  one_sentence_summary: string;
+}
+
+function AiExperimentSummary({
+  biological_importance,
+  confidence,
+  one_sentence_summary,
+}: AiExperimentSummaryProps) {
+  const confidenceGrade = String.fromCharCode(65 + 5 - confidence);
+  return (
+    <div>
+      <span
+        className="badge"
+        title={`AI-estimated biological importance: ${biological_importance}/5 (confidence: ${confidenceGrade})`}
+        aria-label={`Importance score: ${biological_importance} out of 5`}
+      >
+        {biological_importance}
+        {confidenceGrade}
+      </span>
+      <span className="ai-one-sentence-summary">
+        {safeHtml(one_sentence_summary)}
+      </span>
+    </div>
+  );
+}
 
 function useAiExpressionSummary(
   geneId: string,
@@ -387,4 +420,62 @@ function useAiExpressionSummary(
     },
     [geneId, shouldPopulateCache, pollingCounter]
   );
+}
+
+interface ExpressionGraphFloaterProps {
+  open: boolean;
+  onClose: () => void;
+  experiments: Record<string, Record<string, AttributeValue>>;
+  summaries: Record<string, AiExperimentSummary>;
+  datasetId: string | undefined;
+  parentRef?: React.RefObject<HTMLElement>;
+}
+
+export function ExpressionGraphFloater({
+  open,
+  onClose,
+  experiments,
+  summaries,
+  datasetId,
+  parentRef,
+}: ExpressionGraphFloaterProps) {
+  // ref and effect to scroll-to-top in popup when a new dataset is shown
+  const floaterContentRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (open && datasetId != null && floaterContentRef.current != null) {
+      floaterContentRef.current.scrollTop = 0;
+    }
+  }, [datasetId, open]);
+
+  if (datasetId != null) {
+    const rowData = experiments[datasetId];
+    const title = rowData.display_name;
+    const summary = summaries[datasetId];
+
+    if (rowData != null && summary != null) {
+      return (
+        <Dialog
+          open={open}
+          resizable
+          draggable
+          onClose={onClose}
+          title={<div className="ai-floater-header">{title?.toString()}</div>}
+          description="This floating, keyboard-positionable popup shows one per-experiment AI summary and gene expression data side-by-side. Press the tab key to navigate and the F key to restore focus to the list of experiments. Press M to enter keyboard-positioning mode."
+          className="ai-expression-graph-floater"
+          contentRef={floaterContentRef}
+          parentRef={parentRef}
+        >
+          <section className="ai-generated">
+            <h4>AI summary</h4>
+            <AiExperimentSummary {...summary} />
+          </section>
+          <section>
+            <h4>Experimental data</h4>
+            <ExpressionGraph rowData={rowData} />
+          </section>
+        </Dialog>
+      );
+    }
+  }
+  return null;
 }
