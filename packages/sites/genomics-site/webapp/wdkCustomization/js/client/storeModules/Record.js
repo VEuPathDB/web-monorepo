@@ -85,13 +85,14 @@ function handlePathwayRecordAction(state = initialPathwayRecordState, action) {
 
 /** prune categoryTree */
 function pruneCategories(nextState) {
-  let { record, categoryTree } = nextState;
+  let { record, recordClass, categoryTree } = nextState;
   if (isGeneRecord(record)) {
     categoryTree = flow(
       partialRight(pruneCategoryBasedOnShowStrains, record),
       partialRight(pruneCategoryBasedOnHasAlphaFold, record),
       partialRight(pruneCategoriesByMetaTable, record),
-      partialRight(removeProteinCategories, record)
+      partialRight(removeProteinCategories, record),
+      partialRight(pruneCategoriesBasedOnHasAiExpression, recordClass)
     )(categoryTree);
     nextState = Object.assign({}, nextState, { categoryTree });
   }
@@ -228,6 +229,18 @@ function pruneByDatasetCategory(categoryTree, record) {
     }, categoryTree);
   }
   return categoryTree;
+}
+
+/** Remove "AI Expression Summary" from tree if not needed */
+function pruneCategoriesBasedOnHasAiExpression(categoryTree, recordClass) {
+  // check if there is a reporter called aiExpression
+  return recordClass.formats.some((format) => format.name === 'aiExpression')
+    ? categoryTree
+    : // Remove ai_expression node from tree
+      tree.pruneDescendantNodes(
+        (individual) => cat.getRefName(individual) !== 'ai_expression',
+        categoryTree
+      );
 }
 
 // Custom observers
