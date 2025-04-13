@@ -67,7 +67,7 @@ export function AiExpressionSummary(props: Props) {
               fewer than {MIN_DATASETS_FOR_AI_SUMMARY} transcriptomics datasets.
             </div>
           ) : (
-            <div style={{ minHeight: '8em' }}>
+            <div className="ai-gateway">
               <AiSummaryGate {...props} />
             </div>
           )
@@ -88,11 +88,12 @@ function AiSummaryGate(props: Props) {
   const geneId = props.record.attributes['source_id']?.toString();
   if (geneId == null) throw new Error('geneId should not be missing');
 
-  const [shouldPopulateCache, setShouldPopulateCache] = useState(false);
+  const [summaryGenerationRequested, setSummaryGenerationRequested] =
+    useState(false);
 
   const aiExpressionSummary = useAiExpressionSummary(
     geneId,
-    shouldPopulateCache
+    summaryGenerationRequested
   );
   const geneResponse = aiExpressionSummary?.[geneId];
   const completeExpressionSummary =
@@ -106,14 +107,14 @@ function AiSummaryGate(props: Props) {
 
   // update polling counter when the main request is active
   useEffect(() => {
-    if (shouldPopulateCache && completeExpressionSummary == null) {
+    if (summaryGenerationRequested && completeExpressionSummary == null) {
       pollingTimeout.current = setTimeout(
         () => setPollingCounter(pollingCounter + 1),
         POLL_TIME_MS
       );
     }
     return () => clearTimeout(pollingTimeout.current);
-  }, [shouldPopulateCache, completeExpressionSummary, pollingCounter]);
+  }, [summaryGenerationRequested, completeExpressionSummary, pollingCounter]);
 
   if (aiExpressionSummary == null) {
     return <div>Loading...</div>;
@@ -121,17 +122,17 @@ function AiSummaryGate(props: Props) {
     return (
       <AiExpressionResult summary={completeExpressionSummary} {...props} />
     );
-  } else if (!shouldPopulateCache) {
+  } else if (!summaryGenerationRequested) {
     // Cache miss: render button to populate cache
     return (
       <div>
         <p>
           Click below to request an AI summary of this gene's expression across
           all the experiments shown in the "Transcript Expression" section
-          below. It could take up to three minutes. When complete it will be
-          cached for all users.
+          below. It could take up to three minutes. When complete, the results
+          will be cached for all users.
         </p>
-        <button onClick={() => setShouldPopulateCache(true)}>
+        <button onClick={() => setSummaryGenerationRequested(true)}>
           Start AI Summary
         </button>
       </div>
@@ -397,7 +398,7 @@ function AiExperimentSummary({
 
 function useAiExpressionSummary(
   geneId: string,
-  shouldPopulateCache: boolean,
+  summaryGenerationRequested: boolean,
   pollingCounter: number = 0
 ): AiExpressionSummaryResponse | undefined {
   return useWdkService(
@@ -416,7 +417,7 @@ function useAiExpressionSummary(
       const formatting = {
         format: 'aiExpression',
         formatConfig: {
-          populateIfNotPresent: shouldPopulateCache,
+          populateIfNotPresent: summaryGenerationRequested,
         },
       };
       return await wdkService.getAnswer<AiExpressionSummaryResponse>(
@@ -424,7 +425,7 @@ function useAiExpressionSummary(
         formatting
       );
     },
-    [geneId, shouldPopulateCache, pollingCounter]
+    [geneId, summaryGenerationRequested, pollingCounter]
   );
 }
 
