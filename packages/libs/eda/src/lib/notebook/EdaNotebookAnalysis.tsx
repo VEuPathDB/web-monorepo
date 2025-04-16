@@ -21,6 +21,7 @@ import {
   useAnalysisState,
   useSetterWithCallback,
   useStudyRecord,
+  useDataClient,
 } from '../core';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
@@ -54,9 +55,27 @@ export function EdaNotebookAnalysis(props: Props) {
   const { studyId, onAnalysisChange } = props;
   const studyRecord = useStudyRecord();
 
-  // const analysisDescriptor = useMemo(() => {
-  //   return props.analysis == null ? makeNewAnalysis(studyId) : props.analysis;
-  // }, [props.analysis, studyId]);
+  // The following two lines to move to compute Cell eventually
+  const dataClient = useDataClient();
+  // let { apps } = await dataClient.getApps(); // gotta wire this part up, too
+  const diffabundAppOverview = {
+    name: 'differentialabundance',
+    displayName: 'Differential Abundance',
+    description:
+      'Find taxa or genes that are differentially abundant between two groups.',
+    projects: ['MicrobiomeDB'],
+    computeName: 'differentialabundance',
+    visualizations: [
+      {
+        name: 'volcanoplot',
+        displayName: 'Volcano plot',
+        description:
+          'Display effect size vs. significance for a differential abundance analysis.',
+        projects: ['MicrobiomeDB'],
+        maxPanels: 1,
+      },
+    ],
+  };
 
   const wrappedOnAnalysisChange = useSetterWithCallback<
     Analysis | NewAnalysis | undefined
@@ -68,16 +87,9 @@ export function EdaNotebookAnalysis(props: Props) {
   );
   console.log('analysisState', analysisState);
 
-  // Let's make a fake visualization and computation (because they go togehter)
-  const visualizationId = uuid();
-  const newVisualization = {
-    visualizationId,
-    displayName: 'Unnamed visualization',
-    descriptor: {
-      type: 'volcanoplot',
-      configuration: volcanoPlotVisualization.createDefaultConfig(),
-    },
-  };
+  const visualizationId = useMemo(() => {
+    return uuid();
+  }, []);
 
   const computation = useMemo(() => {
     return createComputation(
@@ -88,16 +100,18 @@ export function EdaNotebookAnalysis(props: Props) {
     );
   }, []);
 
-  // useEffect(() => {
-  //   if (!computation || !analysisState) {return;}
-  //   console.log(computation);
-  //   analysisState.setComputations([computation]);
-  // }, [analysisState, computation]);
+  useEffect(() => {
+    if (!computation) return;
 
-  // analysisState.addVisualization(
-  //   computation.computationId,
-  //   newVisualization
-  // );
+    // Avoid updating if the computation already exists
+    const existingComputation =
+      analysisState.analysis?.descriptor.computations.find(
+        (comp) => comp.computationId === computation.computationId
+      );
+    if (existingComputation) return;
+
+    analysisState.setComputations([computation]);
+  }, [analysisState, computation]);
 
   const notebookSettings = useMemo((): NotebookSettings => {
     const storedSettings =
@@ -115,6 +129,13 @@ export function EdaNotebookAnalysis(props: Props) {
           type: 'text',
           text: 'Helpful text',
           title: 'Documentation',
+        },
+        {
+          type: 'compute',
+          title: 'Compute cell',
+          computeId: '1',
+          computationAppOverview: diffabundAppOverview,
+          computation: computation,
         },
         {
           type: 'visualization',

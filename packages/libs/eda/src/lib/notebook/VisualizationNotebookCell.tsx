@@ -16,23 +16,8 @@ export function VisualizationNotebookCell(
     analysisState.analysis?.descriptor.subset.descriptor
   );
 
-  // const computation = useMemo(() => {
-  //   return createComputation(
-  //     'differentialabundance',
-  //     {} as DifferentialAbundanceConfig,
-  //     [],
-  //     []
-  //   );
-  // }, []);
-
-  // useEffect(() => {
-  //   if (!computation) {return;}
-  //   console.log(computation);
-  //   analysisState.setComputations([computation]);
-  // }, [analysisState, computation]);
-
   // Needs to take the analysisState so that updates can go to the analysisState
-  console.log('in viz', analysisState);
+
   return (
     <div>
       <h2>Plot here.</h2>

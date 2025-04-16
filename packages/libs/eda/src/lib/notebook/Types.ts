@@ -1,5 +1,6 @@
 import { AnalysisState } from '../core/hooks/analysis';
 import { VariableDescriptor } from '../core/types/variable';
+import { Computation } from '../core/types/visualization';
 
 export interface NotebookCellBase<T extends string> {
   type: T;
@@ -12,6 +13,8 @@ export interface SubsettingNotebookCell extends NotebookCellBase<'subset'> {
 
 export interface ComputeNotebookCell extends NotebookCellBase<'compute'> {
   computeId: string;
+  computationAppOverview: any;
+  computation: Computation;
 }
 
 export interface VisualizationNotebookCell
