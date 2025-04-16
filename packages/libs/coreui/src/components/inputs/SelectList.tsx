@@ -42,14 +42,7 @@ export default function SelectList<T extends string>({
     setButtonDisplayContent(
       getDisplayContent(selected, items, defaultButtonDisplayContent)
     );
-  }, [
-    instantUpdate,
-    selected,
-    items,
-    defaultButtonDisplayContent,
-    onChange,
-    setButtonDisplayContent,
-  ]);
+  }, [instantUpdate, selected, items, defaultButtonDisplayContent, onChange]);
 
   /**
    * Keep caller up to date with any selection changes, if required by `instantUpdate`
