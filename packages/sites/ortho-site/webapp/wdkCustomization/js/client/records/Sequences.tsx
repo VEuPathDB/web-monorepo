@@ -397,6 +397,11 @@ export function RecordTable_Sequences(
 
   const proteinFilterButtonRef = useRef<PopoverButtonHandle>(null);
 
+  const handleOnChange = useCallback((ids: string[]) => {
+    setPfamFilterIds(ids);
+    setTablePageNumber(1);
+  }, []);
+
   // None shall pass! (hooks, at least)
 
   if (
@@ -480,10 +485,7 @@ export function RecordTable_Sequences(
         altDisplay: formatAttributeValue(row.accession),
       }))}
       value={volatilePfamFilterIds}
-      onChange={(ids) => {
-        setPfamFilterIds(ids);
-        setTablePageNumber(1);
-      }}
+      onChange={handleOnChange}
       instantUpdate={true}
     />
   );

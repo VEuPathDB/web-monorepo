@@ -37,12 +37,19 @@ export default function SelectList<T extends string>({
     getDisplayContent(value, items, defaultButtonDisplayContent)
   );
 
-  const onClose = () => {
-    onChange(selected);
+  const onClose = useCallback(() => {
+    if (!instantUpdate) onChange(selected);
     setButtonDisplayContent(
       getDisplayContent(selected, items, defaultButtonDisplayContent)
     );
-  };
+  }, [
+    instantUpdate,
+    selected,
+    items,
+    defaultButtonDisplayContent,
+    onChange,
+    setButtonDisplayContent,
+  ]);
 
   /**
    * Keep caller up to date with any selection changes, if required by `instantUpdate`
