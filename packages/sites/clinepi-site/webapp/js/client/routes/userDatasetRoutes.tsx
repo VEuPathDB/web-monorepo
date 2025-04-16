@@ -13,6 +13,7 @@ import { UserDatasetDetailProps } from '@veupathdb/user-datasets/lib/Controllers
 import { uploadTypeConfig } from '@veupathdb/web-common/lib/user-dataset-upload-config';
 
 import {
+  communityDatasetsEnabled,
   communitySite,
   edaServiceUrl,
   projectId,
@@ -92,7 +93,7 @@ export const userDatasetRoutes: RouteEntry[] = [
               <ExternalContentController url={helpTabContentUrl} />
             }
             dataNoun={{ singular: 'Study', plural: 'Studies' }}
-            enablePublicUserDatasets
+            enablePublicUserDatasets={!!communityDatasetsEnabled}
           />
         </Suspense>
       );

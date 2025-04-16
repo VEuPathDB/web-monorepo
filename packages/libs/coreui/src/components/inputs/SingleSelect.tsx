@@ -127,6 +127,7 @@ export default function SingleSelect<T>({
                     onKeyDown={onKeyDown}
                     shouldFocus={aggregateIndex === indexOfFocusedElement}
                     isSelected={value === item.value}
+                    isDisabled={!!item.disabled}
                   />
                 ),
               ],
@@ -202,6 +203,7 @@ interface OptionProps<T> {
   onKeyDown: (key: string, value: T) => void;
   shouldFocus: boolean;
   isSelected: boolean;
+  isDisabled?: boolean;
 }
 
 export function Option<T>({
@@ -210,6 +212,7 @@ export function Option<T>({
   onKeyDown,
   shouldFocus,
   isSelected,
+  isDisabled = false,
 }: OptionProps<T>) {
   const optionRef = useRef<HTMLLIElement>(null);
 
@@ -228,23 +231,30 @@ export function Option<T>({
         gap: 0.25em;
         padding: 0.5em;
         line-height: 1.25;
-        cursor: pointer;
+        cursor: ${isDisabled ? 'not-allowed' : 'pointer'};
+        opacity: ${isDisabled ? 0.5 : 1};
         scroll-margin-top: 2em;
         &:focus {
           outline: none;
-          background-color: #f3f3f3;
+          background-color: ${isDisabled ? 'inherit' : '#f3f3f3'};
         }
         &:hover {
-          background-color: #3375e1;
-          color: white;
-          fill: white;
+          background-color: ${isDisabled ? 'inherit' : '#3375e1'};
+          color: ${isDisabled ? 'inherit' : 'white'};
+          fill: ${isDisabled ? 'inherit' : 'white'};
         }
       `}
       tabIndex={-1}
-      onClick={() => onSelect(item.value)}
+      onClick={() => {
+        if (!isDisabled) {
+          onSelect(item.value);
+        }
+      }}
       onKeyDown={(e) => {
         e.preventDefault();
-        onKeyDown(e.key, item.value);
+        if (!isDisabled) {
+          onKeyDown(e.key, item.value);
+        }
       }}
     >
       <span css={checkIconContainer}>
