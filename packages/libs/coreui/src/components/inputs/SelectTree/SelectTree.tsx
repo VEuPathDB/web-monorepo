@@ -1,5 +1,7 @@
 import { ReactNode, useEffect, useState } from 'react';
-import PopoverButton from '../../buttons/PopoverButton/PopoverButton';
+import PopoverButton, {
+  PopoverButtonProps,
+} from '../../buttons/PopoverButton/PopoverButton';
 import CheckboxTree, {
   CheckboxTreeProps,
   LinksPosition,
@@ -13,6 +15,13 @@ export interface SelectTreeProps<T> extends CheckboxTreeProps<T> {
   isDisabled?: boolean;
   /** update `selectedList` state instantly when a selection is made (default: true) */
   instantUpdate?: boolean;
+
+  /** Optional to provide animated appear/disappear
+   * provide either an integer milliseconds (appear and disappear)
+   * or an object with separate timings: { enter: 300, exit: 600 }
+   * Only relevant in popover mode.
+   */
+  transitionDuration?: PopoverButtonProps['transitionDuration'];
 }
 
 function SelectTree<T>(props: SelectTreeProps<T>) {

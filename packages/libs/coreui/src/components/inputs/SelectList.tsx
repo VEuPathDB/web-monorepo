@@ -1,5 +1,7 @@
 import { ReactNode, useCallback, useEffect, useState } from 'react';
-import PopoverButton from '../buttons/PopoverButton/PopoverButton';
+import PopoverButton, {
+  PopoverButtonProps,
+} from '../buttons/PopoverButton/PopoverButton';
 import CheckboxList, {
   CheckboxListProps,
   Item,
@@ -17,6 +19,11 @@ export interface SelectListProps<T extends string>
    *  with latest selection.
    */
   instantUpdate?: boolean;
+  /** Optional to provide animated appear/disappear
+   * provide either an integer milliseconds (appear and disappear)
+   * or an object with separate timings: { enter: 300, exit: 600 }
+   */
+  transitionDuration?: PopoverButtonProps['transitionDuration'];
 }
 
 export default function SelectList<T extends string>({
@@ -30,6 +37,7 @@ export default function SelectList<T extends string>({
   isDisabled = false,
   isLoading = false,
   instantUpdate = false,
+  transitionDuration,
   ...props
 }: SelectListProps<T>) {
   const [selected, setSelected] = useState<SelectListProps<T>['value']>(value);
@@ -87,6 +95,7 @@ export default function SelectList<T extends string>({
       buttonDisplayContent={buttonLabel}
       onClose={onClose}
       isDisabled={isDisabled}
+      transitionDuration={transitionDuration}
     >
       <div
         css={{

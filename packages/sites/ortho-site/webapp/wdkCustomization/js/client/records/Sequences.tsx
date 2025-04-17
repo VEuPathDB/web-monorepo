@@ -51,11 +51,14 @@ const maxColumnWidth = 200;
 const maxArchitectureLength = maxColumnWidth - 10 - 10 - 1; // 10px padding each side plus a 1px border
 const MIN_SEQUENCES_FOR_TREE = 3;
 const MAX_SEQUENCES_FOR_TREE = 1000;
+const popoverButtonTransitionDuration = { enter: 300, exit: 1000 };
 
 const PFAM_ARCH_COLUMN_KEY = 'pfamArchitecture';
 
 const highlightColor = '#feb640';
 const highlightColor50 = highlightColor + '7f';
+
+type CoreOrPeripheral = 'core' | 'peripheral';
 
 export function RecordTable_Sequences(
   props: WrappedComponentProps<RecordTableProps>
@@ -80,7 +83,7 @@ export function RecordTable_Sequences(
     corePeripheralFilterValue,
     setCorePeripheralFilterValue,
     volatileCorePeripheralFilterValue,
-  ] = useDeferredState<('core' | 'peripheral')[]>([]);
+  ] = useDeferredState<CoreOrPeripheral[]>([]);
 
   const groupName = props.record.id.find(
     ({ name }) => name === 'group_name'
@@ -276,7 +279,8 @@ export function RecordTable_Sequences(
       leaves == null ||
       tree == null ||
       filteredRows == null ||
-      filteredRows.length === 0
+      filteredRows.length === 0 ||
+      filteredRows.length > MAX_SEQUENCES_FOR_TREE
     )
       return;
 
@@ -331,12 +335,17 @@ export function RecordTable_Sequences(
     [mesaColumns]
   );
 
-  const handleSpeciesSelection = useCallback(
-    (species: string[]) => {
-      setSelectedSpecies(species);
+  const handleSpeciesSelection = useCallback((species: string[]) => {
+    setSelectedSpecies(species);
+    setTablePageNumber(1);
+  }, []);
+
+  const handleCorePeripheralSelection = useCallback(
+    (value: CoreOrPeripheral[]) => {
+      setCorePeripheralFilterValue(value);
       setTablePageNumber(1);
     },
-    [setSelectedSpecies, setTablePageNumber]
+    []
   );
 
   const firstRowIndex = (tablePageNumber - 1) * MAX_SEQUENCES_FOR_TREE;
@@ -397,7 +406,7 @@ export function RecordTable_Sequences(
 
   const proteinFilterButtonRef = useRef<PopoverButtonHandle>(null);
 
-  const handleOnChangePfamFilterIds = useCallback((ids: string[]) => {
+  const onPfamFilterChange = useCallback((ids: string[]) => {
     setPfamFilterIds(ids);
     setTablePageNumber(1);
   }, []);
@@ -485,13 +494,14 @@ export function RecordTable_Sequences(
         altDisplay: formatAttributeValue(row.accession),
       }))}
       value={volatilePfamFilterIds}
-      onChange={handleOnChangePfamFilterIds}
+      onChange={onPfamFilterChange}
       instantUpdate={true}
+      transitionDuration={popoverButtonTransitionDuration}
     />
   );
 
   const corePeripheralFilter = (
-    <SelectList<'core' | 'peripheral'>
+    <SelectList<CoreOrPeripheral>
       key={`corePeripheralFilter-${resetCounter}`}
       defaultButtonDisplayContent="Core/Peripheral"
       items={[
@@ -505,11 +515,9 @@ export function RecordTable_Sequences(
         },
       ]}
       value={volatileCorePeripheralFilterValue}
-      onChange={(value) => {
-        setCorePeripheralFilterValue(value);
-        setTablePageNumber(1);
-      }}
+      onChange={handleCorePeripheralSelection}
       instantUpdate={true}
+      transitionDuration={popoverButtonTransitionDuration}
     />
   );
 
@@ -525,6 +533,7 @@ export function RecordTable_Sequences(
         table={props.recordClass.tablesMap.TaxonCounts}
         value={props.record.tables.TaxonCounts}
         DefaultComponent={props.DefaultComponent}
+        transitionDuration={popoverButtonTransitionDuration}
       />
     ) : null;
 
@@ -554,6 +563,7 @@ export function RecordTable_Sequences(
           ? ` (${volatileProteinFilterIds.length})`
           : ''
       }${highlightedNodes.length > 0 ? '*' : ''}`}
+      transitionDuration={popoverButtonTransitionDuration}
     >
       <div
         style={{
