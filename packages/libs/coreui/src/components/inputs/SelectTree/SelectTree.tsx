@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import PopoverButton, {
   PopoverButtonProps,
 } from '../../buttons/PopoverButton/PopoverButton';
@@ -37,12 +37,14 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
     hasPopoverButton = true,
     instantUpdate = true,
     wrapPopover,
+    transitionDuration,
   } = props;
 
   // This local state is updated whenever a checkbox is clicked in the species tree.
   // When `instantUpdate` is false, pass the final value to `onSelectionChange` when the popover closes.
   // When it is true we call `onSelectionChange` whenever `localSelectedList` changes
   const [localSelectedList, setLocalSelectedList] = useState(selectedList);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   /** Used as a hack to "auto close" the popover when shouldCloseOnSelection is true */
   const [key, setKey] = useState('');
@@ -58,6 +60,15 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
     if (!instantUpdate) return;
     onSelectionChange(localSelectedList);
   }, [onSelectionChange, localSelectedList]);
+
+  // only used when there's a popover
+  // prevents selections being made while popover is transitioning away
+  const handleUpdateWithPopover = useCallback(
+    (update: string[]) => {
+      if (isPopoverOpen) setLocalSelectedList(update);
+    },
+    [isPopoverOpen]
+  );
 
   function truncatedButtonContent(selectedList: string[]) {
     return (
@@ -103,7 +114,9 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
       customCheckboxes={props.customCheckboxes}
       isMultiPick={props.isMultiPick}
       name={props.name}
-      onSelectionChange={setLocalSelectedList}
+      onSelectionChange={
+        hasPopoverButton ? handleUpdateWithPopover : setLocalSelectedList
+      }
       currentList={props.currentList}
       defaultList={props.defaultList}
       isSearchable={props.isSearchable}
@@ -132,6 +145,8 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
       buttonDisplayContent={buttonDisplayContent}
       onClose={onClose}
       isDisabled={props.isDisabled}
+      transitionDuration={transitionDuration}
+      setIsPopoverOpen={setIsPopoverOpen}
     >
       <div
         style={{

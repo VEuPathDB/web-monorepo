@@ -44,6 +44,7 @@ export default function SelectList<T extends string>({
   const [buttonDisplayContent, setButtonDisplayContent] = useState<ReactNode>(
     getDisplayContent(value, items, defaultButtonDisplayContent)
   );
+  const [isOpen, setIsOpen] = useState(false);
 
   const onClose = useCallback(() => {
     if (!instantUpdate) onChange(selected);
@@ -57,12 +58,15 @@ export default function SelectList<T extends string>({
    */
   const handleCheckboxListUpdate = useCallback(
     (newSelection: SelectListProps<T>['value']) => {
+      // only allow updates while open
+      // seems obvious, but animated transitions blur the lines
+      if (!isOpen) return;
       setSelected(newSelection);
       if (instantUpdate) {
         onChange(newSelection);
       }
     },
-    [instantUpdate, setSelected, onChange]
+    [instantUpdate, onChange, isOpen]
   );
 
   /**
@@ -96,6 +100,7 @@ export default function SelectList<T extends string>({
       onClose={onClose}
       isDisabled={isDisabled}
       transitionDuration={transitionDuration}
+      setIsPopoverOpen={setIsOpen}
     >
       <div
         css={{
