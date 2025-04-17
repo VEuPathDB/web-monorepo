@@ -51,7 +51,6 @@ const maxColumnWidth = 200;
 const maxArchitectureLength = maxColumnWidth - 10 - 10 - 1; // 10px padding each side plus a 1px border
 const MIN_SEQUENCES_FOR_TREE = 3;
 const MAX_SEQUENCES_FOR_TREE = 1000;
-const popoverButtonTransitionDuration = { enter: 300, exit: 1000 };
 
 const PFAM_ARCH_COLUMN_KEY = 'pfamArchitecture';
 
@@ -99,6 +98,11 @@ export function RecordTable_Sequences(
   const pfamRows = props.record.tables['PFams'];
 
   const numSequences = mesaRows.length;
+
+  const popoverButtonTransitionDuration = {
+    enter: 300,
+    exit: Math.max(300, numSequences / 10),
+  };
 
   const treeResponse = useOrthoService(
     (orthoService) => {
@@ -227,11 +231,16 @@ export function RecordTable_Sequences(
       selectedSpecies.length > 0 ||
       proteinFilterIds.length > 0
     ) {
+      // these two are likely to be selected in large numbers
+      const selectedSpeciesSet = new Set(selectedSpecies);
+      const proteinFilterIdsSet = new Set(proteinFilterIds);
+
       return sortedRows?.filter((row) => {
         const rowCorePeripheral = (
-          (row['core_peripheral'] as string) ?? ''
+          (row.core_peripheral as string) ?? ''
         ).toLowerCase();
-        const rowFullId = row['full_id'] as string;
+        const rowFullId = row.full_id as string;
+        const rowTaxon = row.taxon_abbrev as string;
         const rowPfamIdsSet = accessionToPfamIds.get(rowFullId);
 
         const searchMatch =
@@ -246,11 +255,9 @@ export function RecordTable_Sequences(
           pfamFilterIds.length === 0 ||
           pfamFilterIds.some((pfamId) => rowPfamIdsSet?.has(pfamId));
         const speciesMatch =
-          selectedSpecies.length === 0 ||
-          selectedSpecies.some((specie) => row.taxon_abbrev === specie);
+          selectedSpeciesSet.size === 0 || selectedSpeciesSet.has(rowTaxon);
         const proteinMatch =
-          proteinFilterIds.length === 0 ||
-          proteinFilterIds.some((proteinId) => rowFullId === proteinId);
+          proteinFilterIdsSet.size === 0 || proteinFilterIdsSet.has(rowFullId);
 
         return (
           searchMatch &&
