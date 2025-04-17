@@ -35,8 +35,10 @@ import { volcanoPlotVisualization } from '../core/components/visualizations/impl
 import { createComputation } from '../core/components/computations/Utils';
 import { plugins } from '../core/components/computations/plugins';
 import { DifferentialAbundanceConfig } from '../core/components/computations/plugins/differentialabundance';
-
+import { AppsResponse } from '../core/api/DataClient/types';
 import { parseJson } from './Utils';
+import { useCachedPromise } from '../core/hooks/cachedPromise';
+import { differentialAbundanceNotebook } from './NotebookPresets';
 
 interface NotebookSettings {
   /** Ordered array of notebook cells */
@@ -44,6 +46,7 @@ interface NotebookSettings {
 }
 
 const NOTEBOOK_UI_SETTINGS_KEY = '@@NOTEBOOK@@';
+const NOTEBOOK_PRESET_TEST = differentialAbundanceNotebook;
 
 interface Props {
   analysis: Analysis | NewAnalysis | undefined;
@@ -56,26 +59,20 @@ export function EdaNotebookAnalysis(props: Props) {
   const studyRecord = useStudyRecord();
 
   // The following two lines to move to compute Cell eventually
+
   const dataClient = useDataClient();
-  // let { apps } = await dataClient.getApps(); // gotta wire this part up, too
-  const diffabundAppOverview = {
-    name: 'differentialabundance',
-    displayName: 'Differential Abundance',
-    description:
-      'Find taxa or genes that are differentially abundant between two groups.',
-    projects: ['MicrobiomeDB'],
-    computeName: 'differentialabundance',
-    visualizations: [
-      {
-        name: 'volcanoplot',
-        displayName: 'Volcano plot',
-        description:
-          'Display effect size vs. significance for a differential abundance analysis.',
-        projects: ['MicrobiomeDB'],
-        maxPanels: 1,
-      },
-    ],
+
+  const fetchApps = async () => {
+    let { apps } = await dataClient.getApps();
+    return { apps };
   };
+
+  const apps = useCachedPromise(fetchApps, [studyId]);
+  console.log(apps);
+
+  const appOverview = apps.value?.apps.find(
+    (app) => app.name === NOTEBOOK_PRESET_TEST.computationName
+  );
 
   const wrappedOnAnalysisChange = useSetterWithCallback<
     Analysis | NewAnalysis | undefined
@@ -137,7 +134,7 @@ export function EdaNotebookAnalysis(props: Props) {
           type: 'compute',
           title: 'Compute cell',
           computeId: computation.computationId,
-          computationAppOverview: diffabundAppOverview,
+          computationAppOverview: appOverview,
           computation: analysisState.analysis?.descriptor.computations[0],
         },
         {
@@ -152,7 +149,7 @@ export function EdaNotebookAnalysis(props: Props) {
     analysisState.analysis?.descriptor.subset.uiSettings,
     analysisState.analysis?.descriptor.computations,
     computation.computationId,
-    diffabundAppOverview,
+    appOverview,
     visualizationId,
   ]);
 

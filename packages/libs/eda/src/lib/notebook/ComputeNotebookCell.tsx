@@ -1,11 +1,12 @@
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useEntityCounts } from '../core/hooks/entityCounts';
-import { useStudyEntities } from '../core/hooks/workspace';
+import { useDataClient, useStudyEntities } from '../core/hooks/workspace';
 import { NotebookCellComponentProps } from './Types';
 import { createComputation } from '../core/components/computations/Utils';
 import { DifferentialAbundanceConfig } from '../core/components/computations/plugins/differentialabundance';
 import { DifferentialAbundanceConfiguration } from '../core/components/computations/plugins/differentialabundance';
 import { isEqual } from 'lodash';
+import { AppsResponse } from '../core/api/DataClient/types';
 
 export function ComputeNotebookCell(
   props: NotebookCellComponentProps<'compute'>
@@ -25,16 +26,15 @@ export function ComputeNotebookCell(
     'in compute computatoin',
     analysisState.analysis?.descriptor.computations
   );
-  // INFININTE LOOP.
-  // i think because the existing computation is never found.
+
   const changeConfigHandler = (propertyName: string, value?: any) => {
     if (!computation) return;
     if (!analysisState.analysis?.descriptor.computations[0]) return;
 
     console.log('changeConfigHandler', propertyName, value);
     // update the analysis state
-    // @ts-ignore
     const updatedConfiguration = {
+      // @ts-ignore
       ...computation.descriptor.configuration,
       [propertyName]: value,
     };
