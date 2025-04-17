@@ -35,12 +35,12 @@ export default function NotebookRoute(props: Props) {
   // dummy state management (will be handled by WDK in genomics-site)
   // should this be here?
   // if it's only used for the barebones dev site, maybe yes?
-  console.log(props.datasetId);
+
   const fakeStudyId = 'DS_82dc5abc7f';
   const initialAnalysis = useMemo(() => {
     return makeNewAnalysis(fakeStudyId);
   }, []);
-  console.log(initialAnalysis);
+
   const [analysis, setAnalysis] =
     useState<Analysis | NewAnalysis | undefined>(initialAnalysis);
 

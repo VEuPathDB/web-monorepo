@@ -750,14 +750,11 @@ function updateAnalysis<T>(
   nestedValueLens: Lens<NewAnalysis | Analysis, T>,
   nestedValue: T | ((nestedValue: T) => T)
 ) {
-  console.log('updating analysis');
   const oldNestedValue = nestedValueLens.get(analysis);
   const newNestedValue =
     typeof nestedValue === 'function'
       ? (nestedValue as (nestedValue: T) => T)(oldNestedValue)
       : nestedValue;
-  console.log('oldNestedValue', oldNestedValue);
-  console.log('newNestedValue', newNestedValue);
 
   if (oldNestedValue !== newNestedValue) {
     return nestedValueLens.set(newNestedValue)(analysis);

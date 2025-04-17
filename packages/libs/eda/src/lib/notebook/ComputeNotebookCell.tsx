@@ -5,6 +5,7 @@ import { NotebookCellComponentProps } from './Types';
 import { createComputation } from '../core/components/computations/Utils';
 import { DifferentialAbundanceConfig } from '../core/components/computations/plugins/differentialabundance';
 import { DifferentialAbundanceConfiguration } from '../core/components/computations/plugins/differentialabundance';
+import { isEqual } from 'lodash';
 
 export function ComputeNotebookCell(
   props: NotebookCellComponentProps<'compute'>
@@ -20,19 +21,74 @@ export function ComputeNotebookCell(
   );
 
   // Needs to take the analysisState so that updates can go to the analysisState
-  console.log('in compute', analysisState);
-  return (
+  console.log(
+    'in compute computatoin',
+    analysisState.analysis?.descriptor.computations
+  );
+  // INFININTE LOOP.
+  // i think because the existing computation is never found.
+  const changeConfigHandler = (propertyName: string, value?: any) => {
+    if (!computation) return;
+    if (!analysisState.analysis?.descriptor.computations[0]) return;
+
+    console.log('changeConfigHandler', propertyName, value);
+    // update the analysis state
+    // @ts-ignore
+    const updatedConfiguration = {
+      ...computation.descriptor.configuration,
+      [propertyName]: value,
+    };
+
+    // const updatedConfiguration = { ...computation.descriptor.configuration, [propertyName]: value },
+
+    // only update if there isn't already this computation around
+    console.log(computation.descriptor.configuration);
+    console.log(analysisState.analysis?.descriptor.computations[0]);
+    console.log(updatedConfiguration);
+
+    const existingComputation =
+      analysisState.analysis?.descriptor.computations.find(
+        (comp) => isEqual(comp.descriptor.configuration, updatedConfiguration) //&&
+        // c.descriptor.type === computation.descriptor.type
+      );
+    console.log('existingComputation', existingComputation);
+    if (existingComputation) return;
+
+    // In eda we make a new computation. I don't want to do that I don't think
+    // const newComputation = createComputation(
+    //   computation.descriptor.type,
+    //   updatedConfiguration,
+    //   analysisState.analysis?.descriptor.computations,
+    //   []
+    // );
+    const updatedComputation = {
+      ...computation,
+      descriptor: {
+        ...computation.descriptor,
+        configuration: updatedConfiguration,
+      },
+    };
+
+    analysisState.setComputations([updatedComputation]);
+  };
+
+  return computation ? (
     <div>
-      {/* <DifferentialAbundanceConfiguration
+      <DifferentialAbundanceConfiguration
         analysisState={analysisState}
         computation={computation}
         totalCounts={totalCountsResult}
         filteredCounts={filteredCountsResult}
-        visualizationId='1'
+        visualizationId="1"
         addNewComputation={(name, configuration) => console.log('hi')}
         computationAppOverview={computationAppOverview}
         geoConfigs={[]}
-      /> */}
+        changeConfigHandlerOverride={changeConfigHandler}
+      />
+    </div>
+  ) : (
+    <div>
+      <p>"Loading"</p>
     </div>
   );
 }

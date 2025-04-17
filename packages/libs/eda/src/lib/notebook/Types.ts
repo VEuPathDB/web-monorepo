@@ -14,7 +14,7 @@ export interface SubsettingNotebookCell extends NotebookCellBase<'subset'> {
 export interface ComputeNotebookCell extends NotebookCellBase<'compute'> {
   computeId: string;
   computationAppOverview: any;
-  computation: Computation;
+  computation?: Computation;
 }
 
 export interface VisualizationNotebookCell

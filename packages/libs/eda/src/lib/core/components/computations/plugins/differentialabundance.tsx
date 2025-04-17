@@ -205,6 +205,7 @@ export function DifferentialAbundanceConfiguration(
     computation,
     analysisState,
     visualizationId,
+    changeConfigHandlerOverride,
   } = props;
 
   const configuration = computation.descriptor
@@ -217,11 +218,15 @@ export function DifferentialAbundanceConfiguration(
 
   assertComputationWithConfig(computation, DifferentialAbundanceConfig);
 
-  const changeConfigHandler = useConfigChangeHandler(
+  const workspaceChangeConfigHandler = useConfigChangeHandler(
     analysisState,
     computation,
     visualizationId
   );
+
+  // This is cheating. Needs to be cleaned up before merging.
+  const changeConfigHandler =
+    changeConfigHandlerOverride ?? workspaceChangeConfigHandler;
 
   // Set the pValueFloor here. May change for other apps.
   // Note this is intentionally different than the default pValueFloor used in the Volcano component. By default

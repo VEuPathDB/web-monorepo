@@ -85,7 +85,10 @@ export function EdaNotebookAnalysis(props: Props) {
     props.analysis,
     wrappedOnAnalysisChange
   );
-  console.log('analysisState', analysisState);
+  console.log(
+    'analysisState comp',
+    analysisState.analysis?.descriptor.computations
+  );
 
   const visualizationId = useMemo(() => {
     return uuid();
@@ -133,9 +136,9 @@ export function EdaNotebookAnalysis(props: Props) {
         {
           type: 'compute',
           title: 'Compute cell',
-          computeId: '1',
+          computeId: computation.computationId,
           computationAppOverview: diffabundAppOverview,
-          computation: computation,
+          computation: analysisState.analysis?.descriptor.computations[0],
         },
         {
           type: 'visualization',
@@ -145,7 +148,13 @@ export function EdaNotebookAnalysis(props: Props) {
       ],
     };
     // return storedSettings as any as NotebookSettings;
-  }, [visualizationId]);
+  }, [
+    analysisState.analysis?.descriptor.subset.uiSettings,
+    analysisState.analysis?.descriptor.computations,
+    computation.computationId,
+    diffabundAppOverview,
+    visualizationId,
+  ]);
 
   const updateCell = useCallback(
     (cell: Partial<Omit<NotebookCellType, 'type'>>, cellIndex: number) => {
@@ -163,7 +172,7 @@ export function EdaNotebookAnalysis(props: Props) {
     },
     [analysisState, notebookSettings]
   );
-  console.log('analysisState2', analysisState);
+
   return (
     <div className="EdaNotebook">
       <div className="Paper">
