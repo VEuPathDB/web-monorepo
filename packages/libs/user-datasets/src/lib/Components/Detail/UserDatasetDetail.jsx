@@ -214,49 +214,6 @@ class UserDatasetDetail extends React.Component {
         'userDatasetType' in q.properties &&
         q.properties.userDatasetType.includes(type.name)
     );
-    // FOR TESTING ONLY
-    meta.publications = [
-      {
-        pubMedId: 'id1',
-        citation: 'citation1',
-      },
-      {
-        pubMedId: 'id2',
-        citation: 'citation2',
-      },
-    ];
-    meta.contacts = [
-      {
-        name: 'Kay',
-        email: 'buzz.com',
-      },
-      {
-        name: 'Ray',
-        city: 'Pizza place',
-      },
-      {
-        name: 'Fey',
-        affiliation: 'A hundred and 3 University',
-      },
-    ];
-    meta.hyperlinks = [
-      {
-        url: 'abc.com',
-        text: 'abc',
-        description: 'abc description',
-        isPublication: false, // this is optional, default is false
-      },
-    ];
-    meta.organisms = ['E coli', 'Staph', 'Beavers'];
-    meta.publications = [
-      {
-        pubMedId: 'id1',
-        citation: 'citation1',
-      },
-      {
-        pubMedId: 'id2',
-      },
-    ];
 
     return [
       this.props.includeNameHeader
