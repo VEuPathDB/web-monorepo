@@ -286,14 +286,16 @@ export function RecordTable_Sequences(
       leaves == null ||
       tree == null ||
       filteredRows == null ||
-      filteredRows.length === 0 ||
+      filteredRows.length < MIN_SEQUENCES_FOR_TREE ||
       filteredRows.length > MAX_SEQUENCES_FOR_TREE
     )
       return;
 
     if (filteredRows.length < leaves.length) {
       const filteredRowIds = new Set(
-        filteredRows.map(({ full_id }) => full_id as string)
+        filteredRows.map(({ full_id }) =>
+          truncate_full_id_for_tree_comparison(full_id as string)
+        )
       );
 
       // must work on a copy of the tree because it's destructive
@@ -860,7 +862,7 @@ function logIdMismatches(A: string[], B: string[]) {
 }
 
 function truncate_full_id_for_tree_comparison(full_id: string): string {
-  const truncated_id = (full_id as string).split(':')[0];
+  const truncated_id = full_id.split(':')[0];
   return truncated_id;
 }
 
