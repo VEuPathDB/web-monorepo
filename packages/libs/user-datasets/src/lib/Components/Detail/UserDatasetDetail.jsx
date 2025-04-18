@@ -141,9 +141,6 @@ class UserDatasetDetail extends React.Component {
         updatedMeta = { ...userDataset.meta, [key]: value };
       }
 
-      // FOR TESTSING ONLY
-      console.log('updatedMeta', updatedMeta);
-
       return updateUserDatasetDetail(userDataset, updatedMeta);
     };
   }
