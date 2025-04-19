@@ -21,6 +21,7 @@ export interface ComputationConfigProps extends ComputationProps {
   computation: Computation;
   visualizationId: string;
   addNewComputation: (name: string, configuration: unknown) => void;
+  changeConfigHandlerOverride?: (propertyName: string, value: any) => void;
 }
 
 export interface ComputationOverviewProps extends ComputationProps {}
