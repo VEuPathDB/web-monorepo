@@ -7,7 +7,7 @@ import {
   useImperativeHandle,
   useCallback,
 } from 'react';
-import { Popover } from '@material-ui/core';
+import { Popover, PopoverProps } from '@material-ui/core';
 import SwissArmyButton from '../SwissArmyButton';
 import { gray } from '../../../definitions/colors';
 import { ButtonStyleSpec, PartialButtonStyleSpec } from '..';
@@ -95,6 +95,12 @@ export interface PopoverButtonProps {
   isDisabled?: boolean;
 
   styleOverrides?: PartialButtonStyleSpec;
+
+  /** Optional to provide animated appear/disappear
+   * provide either an integer milliseconds (appear and disappear)
+   * or an object with separate timings: { enter: 300, exit: 600 }
+   */
+  transitionDuration?: PopoverProps['transitionDuration'];
 }
 
 /**
@@ -110,6 +116,7 @@ const PopoverButton = forwardRef<PopoverButtonHandle, PopoverButtonProps>(
       setIsPopoverOpen,
       isDisabled = false,
       styleOverrides = {},
+      transitionDuration,
     } = props;
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -160,6 +167,7 @@ const PopoverButton = forwardRef<PopoverButtonHandle, PopoverButtonProps>(
           horizontal: 'left',
         }}
         keepMounted
+        transitionDuration={transitionDuration}
       >
         {children}
       </Popover>

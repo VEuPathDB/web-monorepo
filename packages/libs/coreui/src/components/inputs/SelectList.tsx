@@ -1,5 +1,7 @@
 import { ReactNode, useCallback, useEffect, useState } from 'react';
-import PopoverButton from '../buttons/PopoverButton/PopoverButton';
+import PopoverButton, {
+  PopoverButtonProps,
+} from '../buttons/PopoverButton/PopoverButton';
 import CheckboxList, {
   CheckboxListProps,
   Item,
@@ -17,6 +19,11 @@ export interface SelectListProps<T extends string>
    *  with latest selection.
    */
   instantUpdate?: boolean;
+  /** Optional to provide animated appear/disappear
+   * provide either an integer milliseconds (appear and disappear)
+   * or an object with separate timings: { enter: 300, exit: 600 }
+   */
+  transitionDuration?: PopoverButtonProps['transitionDuration'];
 }
 
 export default function SelectList<T extends string>({
@@ -30,31 +37,36 @@ export default function SelectList<T extends string>({
   isDisabled = false,
   isLoading = false,
   instantUpdate = false,
+  transitionDuration,
   ...props
 }: SelectListProps<T>) {
   const [selected, setSelected] = useState<SelectListProps<T>['value']>(value);
   const [buttonDisplayContent, setButtonDisplayContent] = useState<ReactNode>(
     getDisplayContent(value, items, defaultButtonDisplayContent)
   );
+  const [isOpen, setIsOpen] = useState(false);
 
-  const onClose = () => {
-    onChange(selected);
+  const onClose = useCallback(() => {
+    if (!instantUpdate) onChange(selected);
     setButtonDisplayContent(
       getDisplayContent(selected, items, defaultButtonDisplayContent)
     );
-  };
+  }, [instantUpdate, selected, items, defaultButtonDisplayContent, onChange]);
 
   /**
    * Keep caller up to date with any selection changes, if required by `instantUpdate`
    */
   const handleCheckboxListUpdate = useCallback(
     (newSelection: SelectListProps<T>['value']) => {
+      // only allow updates while open
+      // seems obvious, but animated transitions blur the lines
+      if (!isOpen) return;
       setSelected(newSelection);
       if (instantUpdate) {
         onChange(newSelection);
       }
     },
-    [instantUpdate, setSelected, onChange]
+    [instantUpdate, onChange, isOpen]
   );
 
   /**
@@ -87,6 +99,8 @@ export default function SelectList<T extends string>({
       buttonDisplayContent={buttonLabel}
       onClose={onClose}
       isDisabled={isDisabled}
+      transitionDuration={transitionDuration}
+      setIsPopoverOpen={setIsOpen}
     >
       <div
         css={{
