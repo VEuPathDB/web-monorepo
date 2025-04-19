@@ -37,13 +37,6 @@ export function AiExpressionSummary(props: Props) {
   const { attribute, record, isCollapsed, onCollapsedChange, title } = props;
   const { displayName, help, name } = attribute;
 
-  // No gene page section at all if there's no reporter available on the back end
-  if (
-    !props.recordClass.formats.some((format) => format.name === 'aiExpression')
-  ) {
-    return null;
-  }
-
   const headerContent = title ?? (
     <DefaultSectionTitle displayName={displayName} help={help} />
   );
@@ -67,7 +60,7 @@ export function AiExpressionSummary(props: Props) {
       onCollapsedChange={onCollapsedChange}
     >
       <ErrorBoundary>
-        {record.attributes['ai_expression'] == 'YES' ? (
+        {record.attributes['ai_expression'] === 'YES' ? (
           datasetCount < MIN_DATASETS_FOR_AI_SUMMARY ? (
             <div>
               The AI Expression Summary feature is not available for genes with
