@@ -619,14 +619,14 @@ function UploadForm({
                 htmlFor="data-set-publications-organisms"
                 required={false}
               >
-                Organisms
+                Related Organisms
               </FieldLabel>
               <div>
                 {organisms.map((organism, index) => {
                   return (
                     <div className={cx('--OrganismInputFields')}>
                       <FieldLabel required={false} key={index}>
-                        Organism {index + 1}
+                        Related Organism {index + 1}
                       </FieldLabel>
                       <TextBox
                         type="input"
