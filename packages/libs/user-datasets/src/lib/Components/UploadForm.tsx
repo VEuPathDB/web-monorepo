@@ -494,7 +494,7 @@ function UploadForm({
             <summary>Additional Details</summary>
             <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-publications">
               <FieldLabel htmlFor="data-set-publications" required={false}>
-                Publications (Optional)
+                Publications
               </FieldLabel>
               {publications.map((publication, index) => {
                 const updatePublicationsObject = createNestedInputUpdater({
@@ -548,7 +548,7 @@ function UploadForm({
                 htmlFor="data-set-publications-hyperlinks"
                 required={false}
               >
-                Hyperlinks (Optional)
+                Hyperlinks
               </FieldLabel>
               {hyperlinks.map((hyperlink, index) => {
                 const updateHyperlinksObject = createNestedInputUpdater({
@@ -619,7 +619,7 @@ function UploadForm({
                 htmlFor="data-set-publications-organisms"
                 required={false}
               >
-                Organisms (Optional)
+                Organisms
               </FieldLabel>
               <div>
                 {organisms.map((organism, index) => {
@@ -670,7 +670,7 @@ function UploadForm({
                 htmlFor="data-set-publications-contacts"
                 required={false}
               >
-                Contacts (Optional)
+                Contacts
               </FieldLabel>
               {contacts.map((contact, index) => {
                 const updateContactsObject = createNestedInputUpdater({
