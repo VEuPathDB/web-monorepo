@@ -3,10 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { orderBy } from 'lodash';
 
 import { Checkbox } from '@veupathdb/wdk-client/lib/Components';
-import {
-  CheckboxTreeStyleSpec,
-  LinksPosition,
-} from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import {
@@ -27,6 +24,7 @@ import {
 
 import './PhyleticDistributionCheckbox.scss';
 import { SelectTree } from '@veupathdb/coreui';
+import { PopoverButtonProps } from '@veupathdb/coreui/lib/components/buttons/PopoverButton/PopoverButton';
 
 const cx = makeClassNameHelper('PhyleticDistributionCheckbox');
 
@@ -44,6 +42,8 @@ type SelectionConfig =
       selectable: true;
       onSpeciesSelected: (selection: string[]) => void;
       selectedSpecies: string[];
+      /** Optional. When true, popover closing will be deferred until this becomes false */
+      deferPopoverClosing?: boolean;
     };
 
 export function PhyleticDistributionCheckbox({
@@ -76,6 +76,11 @@ export function PhyleticDistributionCheckbox({
   return (
     <SelectTree
       hasPopoverButton={selectionConfig.selectable}
+      deferPopoverClosing={
+        selectionConfig.selectable
+          ? selectionConfig.deferPopoverClosing
+          : undefined
+      }
       buttonDisplayContent="Organism"
       tree={prunedPhyleticDistributionUiTree}
       getNodeId={getTaxonNodeId}

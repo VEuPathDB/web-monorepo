@@ -13,6 +13,7 @@ import { gray } from '../../../definitions/colors';
 import { ButtonStyleSpec, PartialButtonStyleSpec } from '..';
 import { ArrowDown } from '../../icons';
 import { merge } from 'lodash';
+import { Dimmable } from '../../containers';
 
 // The default styles largely mimic the style of the MUI button was previously used in this component
 const defaultStyle: ButtonStyleSpec = {
@@ -89,6 +90,9 @@ export interface PopoverButtonProps {
   /** Allows for additional cleanup when popover closes */
   onClose?: () => void;
 
+  /** Don't let popover close while this is true */
+  deferClosing?: boolean;
+
   /** Used in SingleSelect component to set focus when popover opens */
   setIsPopoverOpen?: (isOpen: boolean) => void;
 
@@ -110,8 +114,10 @@ const PopoverButton = forwardRef<PopoverButtonHandle, PopoverButtonProps>(
       setIsPopoverOpen,
       isDisabled = false,
       styleOverrides = {},
+      deferClosing,
     } = props;
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+    const [isClosePending, setIsClosePending] = useState(false);
 
     const finalStyle = useMemo(
       () => merge({}, defaultStyle, styleOverrides),
@@ -119,20 +125,32 @@ const PopoverButton = forwardRef<PopoverButtonHandle, PopoverButtonProps>(
     );
 
     const onCloseHandler = useCallback(() => {
+      if (deferClosing) {
+        setIsClosePending(true);
+        return;
+      }
       setTimeout(() => {
         anchorEl?.focus(); // return focus to button
       });
       setAnchorEl(null);
       onClose && onClose();
-    }, [anchorEl, onClose]);
+    }, [anchorEl, onClose, deferClosing]);
 
-    // Expose the `close()` method to external components via ref
+    // mop up any deferred closing that needs to be done
+    useEffect(() => {
+      if (isClosePending && !deferClosing) {
+        setIsClosePending(false);
+        onCloseHandler();
+      }
+    }, [isClosePending, deferClosing, onCloseHandler]);
+
+    // Expose a `close()` method to external components via ref
     useImperativeHandle(
       ref,
       () => ({
-        close: onCloseHandler,
+        close: () => setIsClosePending(true),
       }),
-      [onCloseHandler]
+      []
     );
 
     useEffect(() => {
@@ -161,7 +179,9 @@ const PopoverButton = forwardRef<PopoverButtonHandle, PopoverButtonProps>(
         }}
         keepMounted
       >
-        {children}
+        <Dimmable dimmed={isClosePending} blocking fullscreen>
+          {children}
+        </Dimmable>
       </Popover>
     );
 
