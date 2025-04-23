@@ -17,6 +17,7 @@ import {
   dataSetCategoricalOverlay,
 } from './ScatterPlot.storyData';
 import { symbol } from 'd3';
+import { HighlightedPointsDetails } from '../../types/general';
 
 export default {
   title: 'Plots/ScatterPlot',
@@ -443,7 +444,11 @@ const { dataSetProcess: dataSetProcessSequentialGradientHighlight } =
     independentValueType,
     dependentValueType,
     false,
-    highlightedPointIds
+    {
+      pointIds: highlightedPointIds,
+      highlightTraceName: 'My Highlight Trace',
+      nonHighlightTraceName: 'The other points',
+    }
   );
 
 export const HighlightPoints: Story<ScatterPlotProps> = Template.bind({});
@@ -470,6 +475,11 @@ const highlightStyleOverride = {
 
 const highlightPointIdsStyled =
   dataSetCategoricalOverlay.scatterplot.data[0]?.pointIds?.slice(0, 10) ?? [];
+const highlightedPointsStyledDetails: HighlightedPointsDetails = {
+  pointIds: highlightPointIdsStyled,
+  highlightTraceName: 'My Highlight Trace',
+  highlightMarkerStyleOverrides: highlightStyleOverride,
+};
 const { dataSetProcess: dataSetCategoricalOverlayHighlight } = processInputData(
   dataSetCategoricalOverlay,
   'scatterplot',
@@ -477,9 +487,7 @@ const { dataSetProcess: dataSetCategoricalOverlayHighlight } = processInputData(
   independentValueType,
   dependentValueType,
   false,
-  highlightPointIdsStyled,
-  highlightStyleOverride,
-  'My Highlight Trace'
+  highlightedPointsStyledDetails
 );
 
 export const HighlightPointsWithStyleOverride: Story<ScatterPlotProps> =

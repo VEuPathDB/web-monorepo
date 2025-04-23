@@ -399,7 +399,11 @@ export function RecordTable_Sequences(
 
   // None shall pass! (hooks, at least)
 
-  if (!mesaState || !sortedRows || !tree || !treeResponse) {
+  if (
+    !mesaState ||
+    !sortedRows ||
+    (numSequences >= MIN_SEQUENCES_FOR_TREE && (!tree || !treeResponse))
+  ) {
     return <Loading />;
   }
 

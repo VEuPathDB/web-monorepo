@@ -9,9 +9,9 @@ import {
 } from '@veupathdb/http-utils';
 
 import {
-  userDataset,
-  UserDatasetMeta,
-  NewUserDatasetMeta,
+  userDatasetDetails_VDI,
+  UserDatasetMeta_UI,
+  UserDatasetMeta_VDI,
   userDatasetDetails,
   userQuotaMetadata,
   userDatasetFileListing,
@@ -52,7 +52,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
       createJsonRequest({
         path: '/vdi-datasets' + queryString,
         method: 'GET',
-        transformResponse: ioTransformer(array(userDataset)),
+        transformResponse: ioTransformer(array(userDatasetDetails_VDI)),
       })
     );
   };
@@ -69,7 +69,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
     );
     const { uploadMethod, ...remainingConfig } = newUserDatasetConfig;
 
-    const meta: NewUserDatasetMeta = {
+    const meta: UserDatasetMeta_VDI = {
       dependencies: [],
       ...remainingConfig,
       datasetType: {
@@ -139,7 +139,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
 
   updateUserDataset = (
     datasetId: string,
-    requestBody: Partial<UserDatasetMeta>
+    requestBody: Partial<UserDatasetMeta_UI>
   ) => {
     return this.fetch(
       createJsonRequest({
@@ -166,7 +166,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
       createJsonRequest({
         path: `/vdi-datasets/community`,
         method: 'GET',
-        transformResponse: ioTransformer(array(userDataset)),
+        transformResponse: ioTransformer(array(userDatasetDetails_VDI)),
       })
     );
   };

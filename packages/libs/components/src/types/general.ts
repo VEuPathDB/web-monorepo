@@ -1,3 +1,4 @@
+import { ScatterPlotDataSeries } from '../types/plots/scatterplot';
 /**
  * General type definitions that don't fit into a more specialized category.
  * Or, at least, haven't found a more specific home yet.
@@ -71,3 +72,10 @@ export type BinWidthSlider = {
    * user drags the slider to the left or right. */
   binWidthStep: number;
 };
+
+export interface HighlightedPointsDetails {
+  pointIds: string[];
+  highlightMarkerStyleOverrides?: ScatterPlotDataSeries['marker'];
+  highlightTraceName?: string;
+  nonHighlightTraceName?: string; // Will rename *all* other traces.
+}

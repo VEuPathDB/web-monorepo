@@ -61,6 +61,7 @@ export const plugin: ComputationPlugin = {
         }
       },
       hideShowMissingnessToggle: true,
+      returnPointIds: false,
     }),
   },
   isEnabledInPicker: isEnabledInPicker,
