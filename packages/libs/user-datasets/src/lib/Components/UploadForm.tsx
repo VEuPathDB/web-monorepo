@@ -154,6 +154,7 @@ function UploadForm({
   const enableStrategyUploadMethod =
     Boolean(displayStrategyUploadMethod) && strategyOptions.length > 0;
 
+  console.log(datasetUploadType.formConfig.hideRelatedOrganisms);
   const [name, setName] = useState(urlParams.datasetName ?? '');
   const [summary, setSummary] = useState(urlParams.datasetSummary ?? '');
   const [description, setDescription] = useState(
@@ -618,57 +619,61 @@ function UploadForm({
               styleOverrides={OutlinedButtonWDKStyle}
             />
           </div>
-          <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-organisms">
-            <FieldLabel
-              htmlFor="data-set-publications-organisms"
-              required={false}
-            >
-              Related Organisms
-            </FieldLabel>
-            <div>
-              {organisms.map((organism, index) => {
-                return (
-                  <div className={cx('--OrganismInputFields')}>
-                    <FieldLabel required={false} key={index}>
-                      Related Organism {index + 1}
-                    </FieldLabel>
-                    <TextBox
-                      type="input"
-                      id={`data-set-organisms-${index}`}
-                      placeholder="Organism"
-                      required={false}
-                      value={organism}
-                      onChange={(value) => {
-                        const updatedOrganisms = [...organisms];
-                        updatedOrganisms[index] = value;
-                        setOrganisms(updatedOrganisms);
-                      }}
-                    />
-                    <FloatingButton
-                      text="Remove"
-                      onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
-                        event.preventDefault();
-                        const updatedOrganisms = [...organisms];
-                        updatedOrganisms.splice(index, 1);
-                        setOrganisms(updatedOrganisms);
-                      }}
-                      icon={Trash}
-                      styleOverrides={FloatingButtonWDKStyle}
-                    />
-                  </div>
-                );
-              })}
+          {!datasetUploadType.formConfig.hideRelatedOrganisms && (
+            <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-organisms">
+              <FieldLabel
+                htmlFor="data-set-publications-organisms"
+                required={false}
+              >
+                Related Organisms
+              </FieldLabel>
+              <div>
+                {organisms.map((organism, index) => {
+                  return (
+                    <div className={cx('--OrganismInputFields')}>
+                      <FieldLabel required={false} key={index}>
+                        Related Organism {index + 1}
+                      </FieldLabel>
+                      <TextBox
+                        type="input"
+                        id={`data-set-organisms-${index}`}
+                        placeholder="Organism"
+                        required={false}
+                        value={organism}
+                        onChange={(value) => {
+                          const updatedOrganisms = [...organisms];
+                          updatedOrganisms[index] = value;
+                          setOrganisms(updatedOrganisms);
+                        }}
+                      />
+                      <FloatingButton
+                        text="Remove"
+                        onPress={(
+                          event: React.MouseEvent<HTMLButtonElement>
+                        ) => {
+                          event.preventDefault();
+                          const updatedOrganisms = [...organisms];
+                          updatedOrganisms.splice(index, 1);
+                          setOrganisms(updatedOrganisms);
+                        }}
+                        icon={Trash}
+                        styleOverrides={FloatingButtonWDKStyle}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+              <OutlinedButton
+                text="Add Related Organism"
+                onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
+                  event.preventDefault();
+                  setOrganisms((oldOrganisms) => [...oldOrganisms, '']);
+                }}
+                icon={AddIcon}
+                styleOverrides={OutlinedButtonWDKStyle}
+              />
             </div>
-            <OutlinedButton
-              text="Add Organisms"
-              onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
-                event.preventDefault();
-                setOrganisms((oldOrganisms) => [...oldOrganisms, '']);
-              }}
-              icon={AddIcon}
-              styleOverrides={OutlinedButtonWDKStyle}
-            />
-          </div>
+          )}
           <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-contacts">
             <FieldLabel
               htmlFor="data-set-publications-contacts"
