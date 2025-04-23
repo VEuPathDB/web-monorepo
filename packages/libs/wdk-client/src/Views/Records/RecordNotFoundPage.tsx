@@ -7,15 +7,15 @@ type Props = {
 
 export function RecordNotFoundPage({ sourceID }: Props) {
   const location = useLocation();
-  const searchUrl = window.location.href.replace(
-    location.pathname,
-    `/search?q=${sourceID}`
-  );
+  const searchUrl = window.location.href
+    .replace(location.pathname, `/search?q=${sourceID}`)
+    .replace(window.location.search, '');
   return (
     <div className="wdk-RecordNotFoundParagraph">
       <p>
         <strong>{sourceID}</strong> is not a current identifier.
       </p>
+      <p>It may be outdated but still retrievable via search.</p>
       <p>
         <a href={searchUrl}>
           <i className="fa fa-search"></i> Search our site for{' '}
