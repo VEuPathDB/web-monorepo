@@ -1,7 +1,6 @@
 import React, {
   CSSProperties,
   useCallback,
-  useDeferredValue,
   useMemo,
   useRef,
   useState,
@@ -687,6 +686,23 @@ export function RecordTable_Sequences(
       </span>
     ) : undefined;
 
+  // We tried using a `<Loading />` spinner but its hardcoded 200ms delay
+  // was causing problems. This looks great on top of the greyed out table though.
+  const LOADING = (
+    <span
+      style={{
+        fontSize: '3rem',
+        fontWeight: '700',
+        color: 'rgba(0, 0, 0, 0.25)',
+        textShadow: '0 1px 2px rgba(255, 255, 255, 0.8)',
+        pointerEvents: 'none',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      LOADING
+    </span>
+  );
+
   return (
     <div
       style={
@@ -767,7 +783,7 @@ export function RecordTable_Sequences(
           up to {MAX_SEQUENCES_FOR_TREE.toLocaleString()}
         </div>
       ) : (
-        <Dimmable dimmed={isFiltering}>
+        <Dimmable dimmed={isFiltering} spinner={LOADING}>
           <TreeTable
             rowHeight={rowHeight}
             treeProps={treeProps}
