@@ -2,7 +2,7 @@
 
 import { ComputationPlugin } from '../core/components/computations/Types';
 import { plugin as differentialabundance } from '../core/components/computations/plugins/differentialabundance';
-import { plugin as correlationassaymetadata } from '../core/components/computations/plugins/correlationAssayMetadata';
+import { plugin as correlation } from '../core/components/computations/plugins/correlation';
 
 type PresetNotebook = {
   name: string;
@@ -29,8 +29,8 @@ export const differentialAbundanceNotebook: PresetNotebook = {
 export const wgcnaCorrelationNotebook: PresetNotebook = {
   name: 'wgcnacorrelation',
   displayName: 'WGCNA Correlation Notebook',
-  computationName: 'correlationassayassay',
+  computationName: 'correlation',
   visualizations: ['bipartitenetwork'],
   projects: ['MicrobiomeDB'],
-  plugin: correlationassaymetadata,
+  plugin: correlation,
 };

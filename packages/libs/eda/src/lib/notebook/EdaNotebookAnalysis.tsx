@@ -38,8 +38,13 @@ import { DifferentialAbundanceConfig } from '../core/components/computations/plu
 import { AppsResponse } from '../core/api/DataClient/types';
 import { parseJson } from './Utils';
 import { useCachedPromise } from '../core/hooks/cachedPromise';
-import { differentialAbundanceNotebook } from './NotebookPresets';
+import {
+  differentialAbundanceNotebook,
+  wgcnaCorrelationNotebook,
+} from './NotebookPresets';
 import { useComputeJobStatus } from '../core/components/computations/ComputeJobStatusHook';
+import { useStudyMetadata } from '../core/hooks/study';
+import { Note } from '@material-ui/icons';
 
 interface NotebookSettings {
   /** Ordered array of notebook cells */
@@ -47,7 +52,7 @@ interface NotebookSettings {
 }
 
 const NOTEBOOK_UI_SETTINGS_KEY = '@@NOTEBOOK@@';
-const NOTEBOOK_PRESET_TEST = differentialAbundanceNotebook;
+const NOTEBOOK_PRESET_TEST = wgcnaCorrelationNotebook;
 
 interface Props {
   analysis: Analysis | NewAnalysis | undefined;
@@ -103,12 +108,7 @@ export function EdaNotebookAnalysis(props: Props) {
   }, []);
 
   const computation = useMemo(() => {
-    return createComputation(
-      NOTEBOOK_PRESET_TEST.computationName,
-      {} as DifferentialAbundanceConfig,
-      [],
-      []
-    );
+    return createComputation(NOTEBOOK_PRESET_TEST.computationName, {}, [], []);
   }, []);
 
   useEffect(() => {

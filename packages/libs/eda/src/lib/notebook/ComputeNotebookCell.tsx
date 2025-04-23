@@ -59,6 +59,7 @@ export function ComputeNotebookCell(
     computationAppOverview?.computeName ?? ''
   );
 
+  console.log('config', computation.descriptor.configuration);
   const isComputationConfigurationValid = !!plugin?.isConfigurationComplete(
     computation.descriptor.configuration
   );
