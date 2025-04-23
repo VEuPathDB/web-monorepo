@@ -39,6 +39,7 @@ import { AppsResponse } from '../core/api/DataClient/types';
 import { parseJson } from './Utils';
 import { useCachedPromise } from '../core/hooks/cachedPromise';
 import { differentialAbundanceNotebook } from './NotebookPresets';
+import { useComputeJobStatus } from '../core/components/computations/ComputeJobStatusHook';
 
 interface NotebookSettings {
   /** Ordered array of notebook cells */
@@ -58,8 +59,6 @@ export function EdaNotebookAnalysis(props: Props) {
   const { studyId, onAnalysisChange } = props;
   const studyRecord = useStudyRecord();
 
-  // The following two lines to move to compute Cell eventually
-
   const dataClient = useDataClient();
 
   const fetchApps = async () => {
@@ -68,11 +67,21 @@ export function EdaNotebookAnalysis(props: Props) {
   };
 
   const apps = useCachedPromise(fetchApps, [studyId]);
-  console.log(apps);
 
-  const appOverview = apps.value?.apps.find(
-    (app) => app.name === NOTEBOOK_PRESET_TEST.computationName
-  );
+  // apps are what are defined in the data service.
+  // plugins are defined in the client. We want to make sure
+  // our project ID is included in the app's allowed projects,
+  // and then ensure we have a plugin for that app.
+
+  const appOverview =
+    apps &&
+    apps.value?.apps.find(
+      (app) => app.name === NOTEBOOK_PRESET_TEST.computationName
+    );
+
+  const plugin = plugins[appOverview?.computeName ?? ''];
+  if (appOverview && plugin == null)
+    throw new Error('Cannot find plugin for computation.');
 
   const wrappedOnAnalysisChange = useSetterWithCallback<
     Analysis | NewAnalysis | undefined
@@ -86,6 +95,8 @@ export function EdaNotebookAnalysis(props: Props) {
     'analysisState comp',
     analysisState.analysis?.descriptor.computations
   );
+  const { analysis } = analysisState;
+  if (analysis == null) throw new Error('Cannot find analysis.');
 
   const visualizationId = useMemo(() => {
     return uuid();
@@ -93,7 +104,7 @@ export function EdaNotebookAnalysis(props: Props) {
 
   const computation = useMemo(() => {
     return createComputation(
-      'differentialabundance',
+      NOTEBOOK_PRESET_TEST.computationName,
       {} as DifferentialAbundanceConfig,
       [],
       []
@@ -113,37 +124,54 @@ export function EdaNotebookAnalysis(props: Props) {
     analysisState.setComputations([computation]);
   }, [analysisState, computation]);
 
+  const { jobStatus, createJob } = useComputeJobStatus(
+    analysis,
+    computation,
+    appOverview?.computeName ?? ''
+  );
+
   const notebookSettings = useMemo((): NotebookSettings => {
     const storedSettings =
       analysisState.analysis?.descriptor.subset.uiSettings[
         NOTEBOOK_UI_SETTINGS_KEY
       ];
     // if (storedSettings == null)
-    return {
-      cells: [
-        {
-          type: 'subset',
-          title: 'Subset data',
-        },
-        {
-          type: 'text',
-          text: 'Helpful text',
-          title: 'Documentation',
-        },
-        {
-          type: 'compute',
-          title: 'Compute cell',
-          computeId: computation.computationId,
-          computationAppOverview: appOverview,
-          computation: analysisState.analysis?.descriptor.computations[0],
-        },
-        {
-          type: 'visualization',
-          title: 'Visualization cell',
-          visualizationId: visualizationId,
-        },
-      ],
-    };
+    // eventually read this from the preset notebook
+    return appOverview
+      ? {
+          cells: [
+            {
+              type: 'subset',
+              title: 'Subset data',
+            },
+            {
+              type: 'text',
+              text: 'Helpful text',
+              title: 'Documentation',
+            },
+            {
+              type: 'compute',
+              title: 'Compute cell',
+              computeId: computation.computationId,
+              computationAppOverview: appOverview,
+              computation: analysisState.analysis?.descriptor.computations[0],
+            },
+            {
+              type: 'visualization',
+              title: 'Visualization cell',
+              visualizationId: visualizationId,
+            },
+          ],
+        }
+      : {
+          cells: [
+            {
+              type: 'text',
+              text: 'No app overview found. Please select an app.',
+              title: 'Error',
+            },
+          ],
+        };
     // return storedSettings as any as NotebookSettings;
   }, [
     analysisState.analysis?.descriptor.subset.uiSettings,
