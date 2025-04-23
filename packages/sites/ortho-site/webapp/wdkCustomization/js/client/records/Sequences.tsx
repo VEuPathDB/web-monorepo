@@ -1,7 +1,6 @@
 import React, {
   CSSProperties,
   useCallback,
-  useDeferredValue,
   useMemo,
   useRef,
   useState,
@@ -29,6 +28,7 @@ import PopoverButton, {
 } from '@veupathdb/coreui/lib/components/buttons/PopoverButton/PopoverButton';
 import { PfamDomain } from 'ortho-client/components/pfam-domains/PfamDomain';
 import {
+  Dimmable,
   FilledButton,
   FloatingButton,
   OutlinedButton,
@@ -57,13 +57,13 @@ const PFAM_ARCH_COLUMN_KEY = 'pfamArchitecture';
 const highlightColor = '#feb640';
 const highlightColor50 = highlightColor + '7f';
 
+type CoreOrPeripheral = 'core' | 'peripheral';
+
 export function RecordTable_Sequences(
   props: WrappedComponentProps<RecordTableProps>
 ) {
-  const [searchQuery, setSearchQuery] = useState('');
-  const safeSearchRegexp = useDeferredValue(
-    useMemo(() => createSafeSearchRegExp(searchQuery), [searchQuery])
-  );
+  const [searchQuery, setSearchQuery, volatileSearchQuery] =
+    useDeferredState('');
 
   const [resetCounter, setResetCounter] = useState(0); // used for forcing re-render of filter buttons
 
@@ -80,7 +80,7 @@ export function RecordTable_Sequences(
     corePeripheralFilterValue,
     setCorePeripheralFilterValue,
     volatileCorePeripheralFilterValue,
-  ] = useDeferredState<('core' | 'peripheral')[]>([]);
+  ] = useDeferredState<CoreOrPeripheral[]>([]);
 
   const groupName = props.record.id.find(
     ({ name }) => name === 'group_name'
@@ -218,17 +218,24 @@ export function RecordTable_Sequences(
 
   const filteredRows = useMemo(() => {
     if (
-      safeSearchRegexp != null ||
+      searchQuery != null ||
       corePeripheralFilterValue.length > 0 ||
       pfamFilterIds.length > 0 ||
       selectedSpecies.length > 0 ||
       proteinFilterIds.length > 0
     ) {
+      // these two are likely to be selected in large numbers
+      const selectedSpeciesSet = new Set(selectedSpecies);
+      const proteinFilterIdsSet = new Set(proteinFilterIds);
+
+      const safeSearchRegexp = createSafeSearchRegExp(searchQuery);
+
       return sortedRows?.filter((row) => {
         const rowCorePeripheral = (
-          (row['core_peripheral'] as string) ?? ''
+          (row.core_peripheral as string) ?? ''
         ).toLowerCase();
-        const rowFullId = row['full_id'] as string;
+        const rowFullId = row.full_id as string;
+        const rowTaxon = row.taxon_abbrev as string;
         const rowPfamIdsSet = accessionToPfamIds.get(rowFullId);
 
         const searchMatch =
@@ -243,11 +250,9 @@ export function RecordTable_Sequences(
           pfamFilterIds.length === 0 ||
           pfamFilterIds.some((pfamId) => rowPfamIdsSet?.has(pfamId));
         const speciesMatch =
-          selectedSpecies.length === 0 ||
-          selectedSpecies.some((specie) => row.taxon_abbrev === specie);
+          selectedSpeciesSet.size === 0 || selectedSpeciesSet.has(rowTaxon);
         const proteinMatch =
-          proteinFilterIds.length === 0 ||
-          proteinFilterIds.some((proteinId) => rowFullId === proteinId);
+          proteinFilterIdsSet.size === 0 || proteinFilterIdsSet.has(rowFullId);
 
         return (
           searchMatch &&
@@ -261,7 +266,7 @@ export function RecordTable_Sequences(
     return sortedRows;
   }, [
     selectedColumnFilters,
-    safeSearchRegexp,
+    searchQuery,
     sortedRows,
     corePeripheralFilterValue,
     accessionToPfamIds,
@@ -276,13 +281,16 @@ export function RecordTable_Sequences(
       leaves == null ||
       tree == null ||
       filteredRows == null ||
-      filteredRows.length === 0
+      filteredRows.length < MIN_SEQUENCES_FOR_TREE ||
+      filteredRows.length > MAX_SEQUENCES_FOR_TREE
     )
       return;
 
     if (filteredRows.length < leaves.length) {
       const filteredRowIds = new Set(
-        filteredRows.map(({ full_id }) => full_id as string)
+        filteredRows.map(({ full_id }) =>
+          truncate_full_id_for_tree_comparison(full_id as string)
+        )
       );
 
       // must work on a copy of the tree because it's destructive
@@ -331,12 +339,17 @@ export function RecordTable_Sequences(
     [mesaColumns]
   );
 
-  const handleSpeciesSelection = useCallback(
-    (species: string[]) => {
-      setSelectedSpecies(species);
+  const handleSpeciesSelection = useCallback((species: string[]) => {
+    setSelectedSpecies(species);
+    setTablePageNumber(1);
+  }, []);
+
+  const handleCorePeripheralSelection = useCallback(
+    (value: CoreOrPeripheral[]) => {
+      setCorePeripheralFilterValue(value);
       setTablePageNumber(1);
     },
-    [setSelectedSpecies, setTablePageNumber]
+    []
   );
 
   const firstRowIndex = (tablePageNumber - 1) * MAX_SEQUENCES_FOR_TREE;
@@ -397,7 +410,21 @@ export function RecordTable_Sequences(
 
   const proteinFilterButtonRef = useRef<PopoverButtonHandle>(null);
 
+  const onPfamFilterChange = useCallback((ids: string[]) => {
+    setPfamFilterIds(ids);
+    setTablePageNumber(1);
+  }, []);
+
   // None shall pass! (hooks, at least)
+
+  const isFiltering =
+    pfamFilterIds !== volatilePfamFilterIds ||
+    proteinFilterIds !== volatileProteinFilterIds ||
+    corePeripheralFilterValue !== volatileCorePeripheralFilterValue ||
+    selectedSpecies !== volatileSelectedSpecies ||
+    searchQuery !== volatileSearchQuery ||
+    (searchQuery !== '' &&
+      selectedColumnFilters !== volatileSelectedColumnFilters);
 
   if (
     !mesaState ||
@@ -480,16 +507,14 @@ export function RecordTable_Sequences(
         altDisplay: formatAttributeValue(row.accession),
       }))}
       value={volatilePfamFilterIds}
-      onChange={(ids) => {
-        setPfamFilterIds(ids);
-        setTablePageNumber(1);
-      }}
+      onChange={onPfamFilterChange}
       instantUpdate={true}
+      deferPopoverClosing={isFiltering}
     />
   );
 
   const corePeripheralFilter = (
-    <SelectList<'core' | 'peripheral'>
+    <SelectList<CoreOrPeripheral>
       key={`corePeripheralFilter-${resetCounter}`}
       defaultButtonDisplayContent="Core/Peripheral"
       items={[
@@ -503,11 +528,9 @@ export function RecordTable_Sequences(
         },
       ]}
       value={volatileCorePeripheralFilterValue}
-      onChange={(value) => {
-        setCorePeripheralFilterValue(value);
-        setTablePageNumber(1);
-      }}
+      onChange={handleCorePeripheralSelection}
       instantUpdate={true}
+      deferPopoverClosing={isFiltering}
     />
   );
 
@@ -523,6 +546,7 @@ export function RecordTable_Sequences(
         table={props.recordClass.tablesMap.TaxonCounts}
         value={props.record.tables.TaxonCounts}
         DefaultComponent={props.DefaultComponent}
+        deferPopoverClosing={isFiltering}
       />
     ) : null;
 
@@ -547,11 +571,13 @@ export function RecordTable_Sequences(
   const proteinFilter = (
     <PopoverButton
       ref={proteinFilterButtonRef}
+      key={`proteinFilter-${resetCounter}`}
       buttonDisplayContent={`Proteins${
         volatileProteinFilterIds.length > 0
           ? ` (${volatileProteinFilterIds.length})`
           : ''
       }${highlightedNodes.length > 0 ? '*' : ''}`}
+      deferClosing={isFiltering}
     >
       <div
         style={{
@@ -660,6 +686,23 @@ export function RecordTable_Sequences(
       </span>
     ) : undefined;
 
+  // We tried using a `<Loading />` spinner but its hardcoded 200ms delay
+  // was causing problems. This looks great on top of the greyed out table though.
+  const LOADING = (
+    <span
+      style={{
+        fontSize: '3rem',
+        fontWeight: '700',
+        color: 'rgba(0, 0, 0, 0.25)',
+        textShadow: '0 1px 2px rgba(255, 255, 255, 0.8)',
+        pointerEvents: 'none',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      LOADING
+    </span>
+  );
+
   return (
     <div
       style={
@@ -740,7 +783,7 @@ export function RecordTable_Sequences(
           up to {MAX_SEQUENCES_FOR_TREE.toLocaleString()}
         </div>
       ) : (
-        <>
+        <Dimmable dimmed={isFiltering} spinner={LOADING}>
           <TreeTable
             rowHeight={rowHeight}
             treeProps={treeProps}
@@ -783,7 +826,7 @@ export function RecordTable_Sequences(
               </div>
             </div>
           </form>
-        </>
+        </Dimmable>
       )}
       <p>
         <a href={treeUrl}>
@@ -841,7 +884,7 @@ function logIdMismatches(A: string[], B: string[]) {
 }
 
 function truncate_full_id_for_tree_comparison(full_id: string): string {
-  const truncated_id = (full_id as string).split(':')[0];
+  const truncated_id = full_id.split(':')[0];
   return truncated_id;
 }
 
