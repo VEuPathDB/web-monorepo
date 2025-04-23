@@ -16,19 +16,21 @@ export interface SelectTreeProps<T> extends CheckboxTreeProps<T> {
 }
 
 function SelectTree<T>(props: SelectTreeProps<T>) {
-  const [buttonDisplayContent, setButtonDisplayContent] = useState<ReactNode>(
-    props.currentList && props.currentList.length
-      ? props.currentList.join(', ')
-      : props.buttonDisplayContent
-  );
   const {
-    selectedList,
-    onSelectionChange,
     shouldCloseOnSelection,
+    wrapPopover,
+    currentList,
+    selectedList = [],
+    onSelectionChange,
     hasPopoverButton = true,
     instantUpdate = true,
-    wrapPopover,
   } = props;
+
+  const [buttonDisplayContent, setButtonDisplayContent] = useState<ReactNode>(
+    currentList && currentList.length
+      ? currentList.join(', ')
+      : props.buttonDisplayContent
+  );
 
   // This local state is updated whenever a checkbox is clicked in the species tree.
   // When `instantUpdate` is false, pass the final value to `onSelectionChange` when the popover closes.
@@ -47,8 +49,9 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
   // live updates to caller when needed
   useEffect(() => {
     if (!instantUpdate) return;
+    if (!onSelectionChange) return;
     onSelectionChange(localSelectedList);
-  }, [onSelectionChange, localSelectedList]);
+  }, [onSelectionChange, localSelectedList, instantUpdate]);
 
   function truncatedButtonContent(selectedList: string[]) {
     return (
@@ -72,48 +75,15 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
         ? truncatedButtonContent(localSelectedList)
         : props.buttonDisplayContent
     );
-    if (!instantUpdate) onSelectionChange(localSelectedList);
+    if (!instantUpdate && onSelectionChange)
+      onSelectionChange(localSelectedList);
   };
 
   const checkboxTree = (
     <CheckboxTree
-      tree={props.tree}
-      getNodeId={props.getNodeId}
-      getNodeChildren={props.getNodeChildren}
-      onExpansionChange={props.onExpansionChange}
-      shouldExpandDescendantsWithOneChild={
-        props.shouldExpandDescendantsWithOneChild
-      }
-      shouldExpandOnClick={props.shouldExpandOnClick}
-      showRoot={props.showRoot}
-      renderNode={props.renderNode}
-      expandedList={props.expandedList}
-      isSelectable={props.isSelectable}
+      {...props}
       selectedList={localSelectedList}
-      filteredList={props.filteredList}
-      customCheckboxes={props.customCheckboxes}
-      isMultiPick={props.isMultiPick}
-      name={props.name}
       onSelectionChange={setLocalSelectedList}
-      currentList={props.currentList}
-      defaultList={props.defaultList}
-      isSearchable={props.isSearchable}
-      autoFocusSearchBox={props.autoFocusSearchBox}
-      showSearchBox={props.showSearchBox}
-      searchBoxPlaceholder={props.searchBoxPlaceholder}
-      searchIconName={props.searchIconName}
-      searchBoxHelp={props.searchBoxHelp}
-      searchTerm={props.searchTerm}
-      onSearchTermChange={props.onSearchTermChange}
-      searchPredicate={props.searchPredicate}
-      renderNoResults={props.renderNoResults}
-      linksPosition={props.linksPosition}
-      additionalActions={props.additionalActions}
-      additionalFilters={props.additionalFilters}
-      isAdditionalFilterApplied={props.isAdditionalFilterApplied}
-      wrapTreeSection={props.wrapTreeSection}
-      styleOverrides={props.styleOverrides}
-      customTreeNodeCssSelectors={props.customTreeNodeCssSelectors}
     />
   );
 

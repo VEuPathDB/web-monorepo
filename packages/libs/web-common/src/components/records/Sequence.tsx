@@ -138,10 +138,6 @@ Sequence.propTypes = {
   ),
 };
 
-Sequence.defaultProps = {
-  highlightRegions: [],
-};
-
 function handleCopy(event: React.ClipboardEvent) {
   const string = window.getSelection()?.toString() ?? '';
   //const selection = makeSequenceLines(string).join('\n');
