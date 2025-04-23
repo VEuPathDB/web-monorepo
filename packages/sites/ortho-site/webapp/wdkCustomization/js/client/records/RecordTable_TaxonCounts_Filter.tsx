@@ -4,23 +4,19 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { PhyleticDistributionCheckbox } from 'ortho-client/components/phyletic-distribution/PhyleticDistributionCheckbox';
 import { taxonCountsTableValueToMap } from './utils';
 import { useTaxonUiMetadata } from 'ortho-client/hooks/taxons';
-import { PopoverButtonProps } from '@veupathdb/coreui/lib/components/buttons/PopoverButton/PopoverButton';
 
 export interface Props extends WrappedComponentProps<RecordTableProps> {
   selectedSpecies: string[];
   onSpeciesSelected: (taxons: string[]) => void;
-  /** Optional to provide animated appear/disappear for popover button
-   * provide either an integer milliseconds (appear and disappear)
-   * or an object with separate timings: { enter: 300, exit: 600 }
-   */
-  transitionDuration?: PopoverButtonProps['transitionDuration'];
+  /** Optional. When true, popover (if using) closing will be deferred until this becomes false */
+  deferPopoverClosing?: boolean;
 }
 
 export function RecordTable_TaxonCounts_Filter({
   value,
   selectedSpecies,
   onSpeciesSelected,
-  transitionDuration,
+  deferPopoverClosing,
 }: Props) {
   const selectionConfig = useMemo(
     () =>
@@ -28,9 +24,9 @@ export function RecordTable_TaxonCounts_Filter({
         selectable: true,
         onSpeciesSelected,
         selectedSpecies,
-        transitionDuration,
+        deferPopoverClosing,
       } as const),
-    [onSpeciesSelected, selectedSpecies, transitionDuration]
+    [onSpeciesSelected, selectedSpecies, deferPopoverClosing]
   );
 
   const speciesCounts = useMemo(

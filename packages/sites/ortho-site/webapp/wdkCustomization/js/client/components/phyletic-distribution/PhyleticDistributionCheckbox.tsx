@@ -42,11 +42,8 @@ type SelectionConfig =
       selectable: true;
       onSpeciesSelected: (selection: string[]) => void;
       selectedSpecies: string[];
-      /** Optional to provide animated appear/disappear for popover button
-       * provide either an integer milliseconds (appear and disappear)
-       * or an object with separate timings: { enter: 300, exit: 600 }
-       */
-      transitionDuration?: PopoverButtonProps['transitionDuration'];
+      /** Optional. When true, popover closing will be deferred until this becomes false */
+      deferPopoverClosing?: boolean;
     };
 
 export function PhyleticDistributionCheckbox({
@@ -79,9 +76,9 @@ export function PhyleticDistributionCheckbox({
   return (
     <SelectTree
       hasPopoverButton={selectionConfig.selectable}
-      transitionDuration={
+      deferPopoverClosing={
         selectionConfig.selectable
-          ? selectionConfig.transitionDuration
+          ? selectionConfig.deferPopoverClosing
           : undefined
       }
       buttonDisplayContent="Organism"

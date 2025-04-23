@@ -29,6 +29,7 @@ import PopoverButton, {
 } from '@veupathdb/coreui/lib/components/buttons/PopoverButton/PopoverButton';
 import { PfamDomain } from 'ortho-client/components/pfam-domains/PfamDomain';
 import {
+  Dimmable,
   FilledButton,
   FloatingButton,
   OutlinedButton,
@@ -62,10 +63,8 @@ type CoreOrPeripheral = 'core' | 'peripheral';
 export function RecordTable_Sequences(
   props: WrappedComponentProps<RecordTableProps>
 ) {
-  const [searchQuery, setSearchQuery] = useState('');
-  const safeSearchRegexp = useDeferredValue(
-    useMemo(() => createSafeSearchRegExp(searchQuery), [searchQuery])
-  );
+  const [searchQuery, setSearchQuery, volatileSearchQuery] =
+    useDeferredState('');
 
   const [resetCounter, setResetCounter] = useState(0); // used for forcing re-render of filter buttons
 
@@ -98,11 +97,6 @@ export function RecordTable_Sequences(
   const pfamRows = props.record.tables['PFams'];
 
   const numSequences = mesaRows.length;
-
-  const popoverButtonTransitionDuration = {
-    enter: 300,
-    exit: Math.max(300, numSequences / 10),
-  };
 
   const treeResponse = useOrthoService(
     (orthoService) => {
@@ -225,7 +219,7 @@ export function RecordTable_Sequences(
 
   const filteredRows = useMemo(() => {
     if (
-      safeSearchRegexp != null ||
+      searchQuery != null ||
       corePeripheralFilterValue.length > 0 ||
       pfamFilterIds.length > 0 ||
       selectedSpecies.length > 0 ||
@@ -234,6 +228,8 @@ export function RecordTable_Sequences(
       // these two are likely to be selected in large numbers
       const selectedSpeciesSet = new Set(selectedSpecies);
       const proteinFilterIdsSet = new Set(proteinFilterIds);
+
+      const safeSearchRegexp = createSafeSearchRegExp(searchQuery);
 
       return sortedRows?.filter((row) => {
         const rowCorePeripheral = (
@@ -271,7 +267,7 @@ export function RecordTable_Sequences(
     return sortedRows;
   }, [
     selectedColumnFilters,
-    safeSearchRegexp,
+    searchQuery,
     sortedRows,
     corePeripheralFilterValue,
     accessionToPfamIds,
@@ -422,6 +418,15 @@ export function RecordTable_Sequences(
 
   // None shall pass! (hooks, at least)
 
+  const isFiltering =
+    pfamFilterIds !== volatilePfamFilterIds ||
+    proteinFilterIds !== volatileProteinFilterIds ||
+    corePeripheralFilterValue !== volatileCorePeripheralFilterValue ||
+    selectedSpecies !== volatileSelectedSpecies ||
+    searchQuery !== volatileSearchQuery ||
+    (searchQuery !== '' &&
+      selectedColumnFilters !== volatileSelectedColumnFilters);
+
   if (
     !mesaState ||
     !sortedRows ||
@@ -505,7 +510,7 @@ export function RecordTable_Sequences(
       value={volatilePfamFilterIds}
       onChange={onPfamFilterChange}
       instantUpdate={true}
-      transitionDuration={popoverButtonTransitionDuration}
+      deferPopoverClosing={isFiltering}
     />
   );
 
@@ -526,7 +531,7 @@ export function RecordTable_Sequences(
       value={volatileCorePeripheralFilterValue}
       onChange={handleCorePeripheralSelection}
       instantUpdate={true}
-      transitionDuration={popoverButtonTransitionDuration}
+      deferPopoverClosing={isFiltering}
     />
   );
 
@@ -542,7 +547,7 @@ export function RecordTable_Sequences(
         table={props.recordClass.tablesMap.TaxonCounts}
         value={props.record.tables.TaxonCounts}
         DefaultComponent={props.DefaultComponent}
-        transitionDuration={popoverButtonTransitionDuration}
+        deferPopoverClosing={isFiltering}
       />
     ) : null;
 
@@ -567,12 +572,13 @@ export function RecordTable_Sequences(
   const proteinFilter = (
     <PopoverButton
       ref={proteinFilterButtonRef}
+      key={`proteinFilter-${resetCounter}`}
       buttonDisplayContent={`Proteins${
         volatileProteinFilterIds.length > 0
           ? ` (${volatileProteinFilterIds.length})`
           : ''
       }${highlightedNodes.length > 0 ? '*' : ''}`}
-      transitionDuration={popoverButtonTransitionDuration}
+      deferClosing={isFiltering}
     >
       <div
         style={{
@@ -761,7 +767,7 @@ export function RecordTable_Sequences(
           up to {MAX_SEQUENCES_FOR_TREE.toLocaleString()}
         </div>
       ) : (
-        <>
+        <Dimmable dimmed={isFiltering}>
           <TreeTable
             rowHeight={rowHeight}
             treeProps={treeProps}
@@ -804,7 +810,7 @@ export function RecordTable_Sequences(
               </div>
             </div>
           </form>
-        </>
+        </Dimmable>
       )}
       <p>
         <a href={treeUrl}>
