@@ -124,6 +124,14 @@ export function EdaNotebookAnalysis(props: Props) {
     analysisState.setComputations([computation]);
   }, [analysisState, computation]);
 
+  // Who should care about this? The cell or the analysis?
+  // Probably the cell. Can the cell call another cell then? Because
+  // if the compute cell finishes, only its linked viz cells should care.
+  // Or maybe they don't have to and they just ask hey is there data ready
+  // and they don't even know where it comes from.
+  // But the viz cell needs the computation config... that part is tricky.
+  // If we continue on our one compute per notebook assumption, this is all
+  // far easier and we can leave it here.
   const { jobStatus, createJob } = useComputeJobStatus(
     analysis,
     computation,

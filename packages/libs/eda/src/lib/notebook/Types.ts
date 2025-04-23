@@ -15,6 +15,7 @@ export interface ComputeNotebookCell extends NotebookCellBase<'compute'> {
   computeId: string;
   computationAppOverview: any;
   computation?: Computation;
+  createJob?: () => void;
 }
 
 export interface VisualizationNotebookCell

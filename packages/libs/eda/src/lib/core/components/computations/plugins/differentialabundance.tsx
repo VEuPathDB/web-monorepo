@@ -89,7 +89,7 @@ const CompleteDifferentialAbundanceConfig = partialToCompleteCodec(
 
 // Check to ensure the entirety of the configuration is filled out before enabling the
 // Generate Results button.
-function isCompleteDifferentialAbundanceConfig(config: unknown) {
+export function isCompleteDifferentialAbundanceConfig(config: unknown) {
   return (
     CompleteDifferentialAbundanceConfig.is(config) &&
     config.comparator.groupA != null &&
