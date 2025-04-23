@@ -1,3 +1,4 @@
+import { ComputationPlugin } from '../core/components/computations/Types';
 import { AnalysisState } from '../core/hooks/analysis';
 import { VariableDescriptor } from '../core/types/variable';
 import { Computation } from '../core/types/visualization';
@@ -16,6 +17,7 @@ export interface ComputeNotebookCell extends NotebookCellBase<'compute'> {
   computationAppOverview: any;
   computation?: Computation;
   createJob?: () => void;
+  plugin: ComputationPlugin; // perhaps we can use the computeId to look through a list of plugins and find the right one?
 }
 
 export interface VisualizationNotebookCell

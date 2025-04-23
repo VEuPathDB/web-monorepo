@@ -163,6 +163,7 @@ export function EdaNotebookAnalysis(props: Props) {
               computeId: computation.computationId,
               computationAppOverview: appOverview,
               computation: analysisState.analysis?.descriptor.computations[0],
+              plugin: plugin,
             },
             {
               type: 'visualization',
