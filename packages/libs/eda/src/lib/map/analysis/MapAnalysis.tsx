@@ -114,6 +114,7 @@ interface Props {
   studyId: string;
   siteInformationProps: SiteInformationProps;
   showLinkToEda?: boolean;
+  enablePublicUserDatasets?: boolean;
 }
 
 export function MapAnalysis(props: Props) {
@@ -225,6 +226,7 @@ function MapAnalysisImpl(props: ImplProps) {
     geoConfigs,
     setTimeSliderConfig,
     showLinkToEda = false,
+    enablePublicUserDatasets = false,
   } = props;
   const { activeMarkerConfigurationType, markerConfigurations } = appState;
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
@@ -724,7 +726,7 @@ function MapAnalysisImpl(props: ImplProps) {
                   singular: 'Study',
                   plural: 'Studies',
                 }}
-                enablePublicUserDatasets
+                enablePublicUserDatasets={enablePublicUserDatasets}
                 includeAllLink={false}
                 includeNameHeader={false}
               />

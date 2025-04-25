@@ -146,12 +146,16 @@ class RecordController extends PageController<Props> {
     return (
       this.props.error != null &&
       this.props.error.status !== 404 &&
+      this.props.error.status !== 300 &&
       this.props.record == null
     );
   }
 
   isRenderDataNotFound() {
-    return this.props.error != null && this.props.error.status === 404;
+    return (
+      this.props.error != null &&
+      (this.props.error.status === 404 || this.props.error.status == 300)
+    );
   }
 
   renderDataNotFound() {

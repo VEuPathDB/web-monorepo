@@ -12,7 +12,11 @@ import { UserDatasetDetailProps } from '@veupathdb/user-datasets/lib/Controllers
 
 import { uploadTypeConfig } from '@veupathdb/web-common/lib/user-dataset-upload-config';
 
-import { communitySite, projectId } from '@veupathdb/web-common/lib/config';
+import {
+  communityDatasetsEnabled,
+  communitySite,
+  projectId,
+} from '@veupathdb/web-common/lib/config';
 
 import ExternalContentController from '@veupathdb/web-common/lib/controllers/ExternalContentController';
 
@@ -78,7 +82,7 @@ export const userDatasetRoutes: RouteEntry[] = [
               <ExternalContentController url={helpTabContentUrl} />
             }
             dataNoun={{ singular: 'Study', plural: 'Studies' }}
-            enablePublicUserDatasets
+            enablePublicUserDatasets={!!communityDatasetsEnabled}
           />
         </Suspense>
       );

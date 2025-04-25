@@ -13,6 +13,8 @@ export interface SelectTreeProps<T> extends CheckboxTreeProps<T> {
   isDisabled?: boolean;
   /** update `selectedList` state instantly when a selection is made (default: true) */
   instantUpdate?: boolean;
+  /** Optional. When true, popover (if using) closing will be deferred until this becomes false */
+  deferPopoverClosing?: boolean;
 }
 
 function SelectTree<T>(props: SelectTreeProps<T>) {
@@ -28,6 +30,7 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
     hasPopoverButton = true,
     instantUpdate = true,
     wrapPopover,
+    deferPopoverClosing = false,
   } = props;
 
   // This local state is updated whenever a checkbox is clicked in the species tree.
@@ -123,6 +126,7 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
       buttonDisplayContent={buttonDisplayContent}
       onClose={onClose}
       isDisabled={props.isDisabled}
+      deferClosing={deferPopoverClosing}
     >
       <div
         style={{
