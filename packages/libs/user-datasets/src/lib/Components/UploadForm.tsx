@@ -154,7 +154,6 @@ function UploadForm({
   const enableStrategyUploadMethod =
     Boolean(displayStrategyUploadMethod) && strategyOptions.length > 0;
 
-  console.log(datasetUploadType.formConfig.hideRelatedOrganisms);
   const [name, setName] = useState(urlParams.datasetName ?? '');
   const [summary, setSummary] = useState(urlParams.datasetSummary ?? '');
   const [description, setDescription] = useState(
@@ -493,8 +492,6 @@ function UploadForm({
           />
         </div>
         <div className={'formSection'}>
-          {/* <details className={cx('--AdditionalDetails')}>
-            <summary>Additional Details</summary> */}
           <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-publications">
             <FieldLabel htmlFor="data-set-publications" required={false}>
               Publications
@@ -772,7 +769,6 @@ function UploadForm({
               styleOverrides={OutlinedButtonWDKStyle}
             />
           </div>
-          {/* </details> */}
         </div>
         {datasetUploadType.formConfig.dependencies && (
           <div className="formSection formSection--data-set-dependencies">

@@ -302,6 +302,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
               'optional longer description of the study including background, study objectives, methodology, etc.',
           },
         },
+        hideRelatedOrganisms: true,
         uploadMethodConfig: {
           file: {
             render: ({ fieldNode }) => (
