@@ -26,7 +26,6 @@ import { PublicationInput } from '../UploadForm';
 import OutlinedButton from '@veupathdb/coreui/lib/components/buttons/OutlinedButton';
 import AddIcon from '@material-ui/icons/Add';
 import { FloatingButton, Trash } from '@veupathdb/coreui';
-import { showExtraMetadata } from '@veupathdb/web-common/lib/config';
 
 const classify = makeClassifier('UserDatasetDetail');
 
@@ -345,7 +344,7 @@ class UserDatasetDetail extends React.Component {
           </span>
         ),
       },
-      showExtraMetadata && {
+      this.props.showExtraMetadata && {
         attribute: 'Publications',
         className: 'NestedFieldsSection',
         value: (
@@ -414,7 +413,7 @@ class UserDatasetDetail extends React.Component {
           </div>
         ),
       },
-      showExtraMetadata && {
+      this.props.showExtraMetadata && {
         attribute: 'Contacts',
         className: 'NestedFieldsSection',
         value: (
@@ -542,7 +541,7 @@ class UserDatasetDetail extends React.Component {
           </div>
         ),
       },
-      showExtraMetadata && {
+      this.props.showExtraMetadata && {
         attribute: 'Hyperlinks',
         className: 'NestedFieldsSection',
         value: (
@@ -640,7 +639,7 @@ class UserDatasetDetail extends React.Component {
           </div>
         ),
       },
-      showExtraMetadata && {
+      this.props.showExtraMetadata && {
         attribute: 'Organisms',
         className: 'NestedFieldsSection',
         value: (

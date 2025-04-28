@@ -40,7 +40,6 @@ import { FloatingButton, Modal } from '@veupathdb/coreui';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import AddIcon from '@material-ui/icons/Add';
 import Trash from '@veupathdb/coreui/lib/components/icons/Trash';
-import { showExtraMetadata } from '@veupathdb/web-common/lib/config';
 
 import './UploadForm.scss';
 
@@ -60,6 +59,7 @@ interface Props<T extends string = string> {
   dispatchUploadProgress: (progress: number | null) => void;
   supportedFileUploadTypes: string[];
   maxSizeBytes?: number;
+  showExtraMetadata?: boolean; // Show/hide the additional metadata fields.
 }
 
 type DataUploadMode = 'file' | 'url' | 'strategy' | 'step';
@@ -131,6 +131,7 @@ function UploadForm({
   dispatchUploadProgress,
   supportedFileUploadTypes,
   maxSizeBytes,
+  showExtraMetadata = false,
 }: Props) {
   const strategyOptionsByStrategyId = useMemo(
     () => keyBy(strategyOptions, (option) => option.strategyId),
