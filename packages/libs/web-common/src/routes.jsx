@@ -6,6 +6,7 @@ import { Redirect, useLocation } from 'react-router';
 import { communitySite } from './config';
 
 import TreeDataViewerController from './controllers/TreeDataViewerController';
+import DonationController from './controllers/DonationController';
 import ContactUsController from './controllers/ContactUsController';
 import GalaxyTermsController from './controllers/GalaxyTermsController';
 import ExternalContentController from './controllers/ExternalContentController';
@@ -144,6 +145,12 @@ export const wrapRoutes = (wdkRoutes) => [
   {
     path: '/galaxy-orientation/sign-up',
     component: () => <GalaxyTermsController signUp />,
+  },
+
+  {
+    path: '/donate',
+    requiresLogin: false,
+    component: () => <DonationController />,
   },
 
   {
