@@ -501,7 +501,7 @@ const useHeaderMenuItems = (
           key: 'gp60',
           display: (
             <>
-              <i>gp60</i>
+              <i>gp60</i> Resource page
             </>
           ),
           type: 'reactRoute',
