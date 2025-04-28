@@ -175,6 +175,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
               'optional longer description of the summary including background, study objectives, methodology, etc.',
           },
         },
+        hideRelatedOrganisms: true,
         renderInfo: () => (
           <p className="formInfo">
             We accept any file in the{' '}
@@ -301,6 +302,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
               'optional longer description of the study including background, study objectives, methodology, etc.',
           },
         },
+        hideRelatedOrganisms: true,
         uploadMethodConfig: {
           file: {
             render: ({ fieldNode }) => (
