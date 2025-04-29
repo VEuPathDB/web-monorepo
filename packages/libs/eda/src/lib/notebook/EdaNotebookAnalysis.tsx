@@ -53,7 +53,7 @@ interface NotebookSettings {
 }
 
 const NOTEBOOK_UI_SETTINGS_KEY = '@@NOTEBOOK@@';
-const NOTEBOOK_PRESET_TEST = boxplotNotebook;
+const NOTEBOOK_PRESET_TEST = wgcnaCorrelationNotebook;
 
 interface Props {
   analysis: Analysis | NewAnalysis | undefined;
@@ -85,9 +85,6 @@ export function EdaNotebookAnalysis(props: Props) {
       (app) => app.name === NOTEBOOK_PRESET_TEST.computationName
     );
 
-  console.log(plugins);
-  console.log('appOverview', appOverview);
-
   // Stuck here. Non computes don't have a computename...
   const plugin =
     plugins[appOverview?.computeName ?? NOTEBOOK_PRESET_TEST.computationName];
@@ -102,10 +99,8 @@ export function EdaNotebookAnalysis(props: Props) {
     props.analysis,
     wrappedOnAnalysisChange
   );
-  console.log(
-    'analysisState comp',
-    analysisState.analysis?.descriptor.computations
-  );
+  console.log(analysisState.analysis?.descriptor.subset.descriptor);
+
   const { analysis } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
 
@@ -165,61 +160,60 @@ export function EdaNotebookAnalysis(props: Props) {
       analysisState.analysis?.descriptor.subset.uiSettings[
         NOTEBOOK_UI_SETTINGS_KEY
       ];
-    // if (storedSettings == null)
-    // eventually read this from the preset notebook
-    return appOverview &&
-      vizPlugin &&
-      plugin &&
-      analysisState.analysis?.descriptor.computations[0]
-      ? {
-          cells: [
-            {
-              type: 'subset',
-              title: 'Subset data',
-            },
-            {
-              type: 'text',
-              text: 'Helpful text',
-              title: 'Documentation',
-            },
-            {
-              type: 'compute',
-              title: 'Compute cell',
-              computeId: computation.computationId,
-              computationAppOverview: appOverview,
-              computation: analysisState.analysis?.descriptor.computations[0],
-              plugin: plugin,
-            },
-            {
-              type: 'visualization',
-              title: 'Compute visualization cell',
-              visualizationId: visualizationId,
-              computeId: computation.computationId,
-              computationAppOverview: appOverview,
-              plugin: vizPlugin,
-              computation: analysisState.analysis?.descriptor.computations[0],
-            },
-            {
-              type: 'visualization',
-              title: 'Visualization cell',
-              visualizationId: visualizationId,
-              plugin: vizPlugin,
-              computeId: computation.computationId,
-              computationAppOverview: appOverview,
-              computation: analysisState.analysis?.descriptor.computations[0],
-            },
-          ],
-        }
-      : {
-          cells: [
-            {
-              type: 'text',
-              text: 'No app overview found. Please select an app.',
-              title: 'Error',
-            },
-          ],
-        };
-    // return storedSettings as any as NotebookSettings;
+    if (storedSettings == null) {
+      // eventually read this from the preset notebook?
+      return appOverview &&
+        vizPlugin &&
+        plugin &&
+        analysisState.analysis?.descriptor.computations[0]
+        ? {
+            cells: [
+              {
+                type: 'subset',
+                title: 'Subset data',
+              },
+              {
+                type: 'text',
+                text: 'Helpful text',
+                title: 'Documentation',
+              },
+              {
+                type: 'compute',
+                title: 'Compute cell',
+                computeId: computation.computationId,
+                computationAppOverview: appOverview,
+                plugin: plugin,
+              },
+              {
+                type: 'visualization',
+                title: 'Compute visualization cell',
+                visualizationId: visualizationId,
+                computeId: computation.computationId,
+                computationAppOverview: appOverview,
+                plugin: vizPlugin,
+              },
+              {
+                type: 'visualization',
+                title: 'Visualization cell',
+                visualizationId: visualizationId,
+                plugin: vizPlugin,
+                computeId: computation.computationId,
+                computationAppOverview: appOverview,
+              },
+            ],
+          }
+        : {
+            cells: [
+              {
+                type: 'text',
+                text: 'No app overview found. Please select an app.',
+                title: 'Error',
+              },
+            ],
+          };
+    } else {
+      return storedSettings as any as NotebookSettings;
+    }
   }, [
     analysisState.analysis?.descriptor.subset.uiSettings,
     analysisState.analysis?.descriptor.computations,
@@ -234,6 +228,8 @@ export function EdaNotebookAnalysis(props: Props) {
     (cell: Partial<Omit<NotebookCellType, 'type'>>, cellIndex: number) => {
       const oldCell = notebookSettings.cells[cellIndex];
       const newCell = { ...oldCell, ...cell };
+      console.log('oldCell', oldCell);
+      console.log('newCell', newCell); // good
       const nextCells = notebookSettings.cells.concat();
       nextCells[cellIndex] = newCell;
       const nextSettings = {
@@ -243,6 +239,7 @@ export function EdaNotebookAnalysis(props: Props) {
       analysisState.setVariableUISettings({
         [NOTEBOOK_UI_SETTINGS_KEY]: nextSettings,
       });
+      console.log('nextSettings', nextSettings);
     },
     [analysisState, notebookSettings]
   );

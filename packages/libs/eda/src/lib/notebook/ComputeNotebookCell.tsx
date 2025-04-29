@@ -14,7 +14,10 @@ export function ComputeNotebookCell(
   if (analysis == null) throw new Error('Cannot find analysis.');
   // Eventually this cell should get the plugin list and use the name
   // from the analysis state computation id to get the plugin and the computationAppOverview
-  const { computeId, computationAppOverview, computation, plugin } = cell;
+  const { computeId, computationAppOverview, plugin } = cell;
+  const computation = analysis.descriptor.computations.find(
+    (comp) => comp.computationId === computeId
+  );
   if (computation == null) throw new Error('Cannot find computation.');
 
   const entities = useStudyEntities();

@@ -20,6 +20,7 @@ export function SubsettingNotebookCell(
     (): VariableLinkConfig => ({
       type: 'button',
       onClick: (selectedVariable) => {
+        console.log(selectedVariable);
         updateCell({ selectedVariable });
       },
     }),

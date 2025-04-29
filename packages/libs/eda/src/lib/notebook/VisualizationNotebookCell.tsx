@@ -25,20 +25,13 @@ export function VisualizationNotebookCell(
 
   // Eventually this cell should get the plugin list and use the name
   // from the analysis state computation id to get the plugin and the computationAppOverview
-  const {
-    visualizationId,
-    computeId,
-    plugin,
-    computationAppOverview,
-    computation,
-  } = cell;
-  // do later?
+  const { visualizationId, computeId, plugin, computationAppOverview } = cell;
+
   // use computeId to find the computation in the analysis state
-  // const computation = analysis.descriptor.computations.find(
-  //   (comp) => comp.computationId === computeId
-  // );
-  if (computeId && computation == null)
-    throw new Error('Cannot find computation.');
+  const computation = analysis.descriptor.computations.find(
+    (comp) => comp.computationId === computeId
+  );
+  if (computation == null) throw new Error('Cannot find computation.');
 
   const { jobStatus, createJob } = useComputeJobStatus(
     analysis,
@@ -60,19 +53,19 @@ export function VisualizationNotebookCell(
   // regular updater (no ref)
   const updateConfiguration = useCallback(
     (configuration: unknown) => {
-      console.log('updating config');
       if (viz != null) {
         updateVisualization({
           ...viz,
           descriptor: { ...viz.descriptor, configuration },
         });
+        // and then update the cell?
+        // const newComputation = analysis.descriptor.computations[0];
+        // updateCell({
+        //   computation: newComputation
+        // });
       }
     },
-    [updateVisualization, viz]
-  );
-  console.log(
-    analysisState.analysis?.descriptor.computations[0]?.visualizations[0]
-      .descriptor.configuration
+    [updateVisualization, viz, analysis]
   );
 
   const vizOverview = computationAppOverview.visualizations.find(
