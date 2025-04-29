@@ -35,3 +35,12 @@ export const wgcnaCorrelationNotebook: PresetNotebook = {
   projects: ['MicrobiomeDB'],
   plugin: correlation,
 };
+
+export const boxplotNotebook: PresetNotebook = {
+  name: 'boxplot',
+  displayName: 'Boxplot Notebook',
+  computationName: 'pass',
+  visualizations: ['boxplot'],
+  projects: ['MicrobiomeDB'],
+  plugin: correlation,
+};

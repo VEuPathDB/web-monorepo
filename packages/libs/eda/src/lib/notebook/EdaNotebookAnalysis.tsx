@@ -39,6 +39,7 @@ import { AppsResponse } from '../core/api/DataClient/types';
 import { parseJson } from './Utils';
 import { useCachedPromise } from '../core/hooks/cachedPromise';
 import {
+  boxplotNotebook,
   differentialAbundanceNotebook,
   wgcnaCorrelationNotebook,
 } from './NotebookPresets';
@@ -52,7 +53,7 @@ interface NotebookSettings {
 }
 
 const NOTEBOOK_UI_SETTINGS_KEY = '@@NOTEBOOK@@';
-const NOTEBOOK_PRESET_TEST = wgcnaCorrelationNotebook;
+const NOTEBOOK_PRESET_TEST = boxplotNotebook;
 
 interface Props {
   analysis: Analysis | NewAnalysis | undefined;
@@ -84,7 +85,12 @@ export function EdaNotebookAnalysis(props: Props) {
       (app) => app.name === NOTEBOOK_PRESET_TEST.computationName
     );
 
-  const plugin = plugins[appOverview?.computeName ?? ''];
+  console.log(plugins);
+  console.log('appOverview', appOverview);
+
+  // Stuck here. Non computes don't have a computename...
+  const plugin =
+    plugins[appOverview?.computeName ?? NOTEBOOK_PRESET_TEST.computationName];
   if (appOverview && plugin == null)
     throw new Error('Cannot find plugin for computation.');
 
