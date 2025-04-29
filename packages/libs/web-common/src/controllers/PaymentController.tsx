@@ -82,18 +82,23 @@ export default function PaymentController(props: Props) {
   if (formData == null) {
     return (
       <div className="payment-form">
-        <h1>Make an annual subscription payment</h1>
+        <h1>Make a credit card payment based on your VEuPathDB invoice</h1>
         <p id="warning">
           Payments are processed securely by CyberSource.
-          <br /> VEuPathDB does not store or has access to your payment
-          information.
+          <br /> VEuPathDB does not store nor has access to your payment
+          information. <br />
+          See{' '}
+          <a href="/a/app/static-content/subscriptions.html">
+            VEuPathDB Subscriptions
+          </a>{' '}
+          to learn about subscriptions and make an invoice.
         </p>
         <div className="error-message">
           <p>{errorMessage}</p>
         </div>
         <div className="amount">
           <p>
-            Please enter the amount in USD$:&nbsp;&nbsp;
+            Please enter the amount from your invoice in USD:&nbsp;&nbsp;
             <input
               type="text"
               value={amount}
