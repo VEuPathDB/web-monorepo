@@ -6,7 +6,7 @@ import { Redirect, useLocation } from 'react-router';
 import { communitySite } from './config';
 
 import TreeDataViewerController from './controllers/TreeDataViewerController';
-import DonationController from './controllers/DonationController';
+import PaymentController from './controllers/PaymentController';
 import ContactUsController from './controllers/ContactUsController';
 import GalaxyTermsController from './controllers/GalaxyTermsController';
 import ExternalContentController from './controllers/ExternalContentController';
@@ -148,9 +148,9 @@ export const wrapRoutes = (wdkRoutes) => [
   },
 
   {
-    path: '/donate',
+    path: '/payment',
     requiresLogin: false,
-    component: () => <DonationController />,
+    component: () => <PaymentController />,
   },
 
   {

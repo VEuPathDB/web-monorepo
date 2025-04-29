@@ -35,7 +35,7 @@ async function getFormData(
   setErrorMessage: (s: string) => void
 ) {
   try {
-    const url = webAppUrl + '/service/donation-form-content?amount=' + amount;
+    const url = webAppUrl + '/service/payment-form-content?amount=' + amount;
     const response = await fetch(url);
     if (!response.ok) {
       setErrorMessage('Cannot connect to payment system.');
@@ -48,6 +48,7 @@ async function getFormData(
 
 function generateForm(
   amount: string,
+  setAmount: (a: string) => void,
   setFormData: (b: any) => void,
   setErrorMessage: (s: string) => void
 ) {
@@ -57,7 +58,8 @@ function generateForm(
   } else {
     setErrorMessage('Please wait...');
     amountNum = Math.floor(amountNum * 100) / 100;
-    console.log('Submitting form with donation amount $' + amountNum);
+    setAmount(amountNum.toString());
+    console.log('Submitting form with payment amount $' + amountNum);
     getFormData(amountNum, setErrorMessage)
       .then((formData) => {
         setFormData(formData);
@@ -69,7 +71,7 @@ function generateForm(
   }
 }
 
-export default function DonationController(props: Props) {
+export default function PaymentController(props: Props) {
   const [formData, setFormData] = useState(null);
   const [amount, setAmount] = useState('0.00');
   const [errorMessage, setErrorMessage] = useState('');
@@ -78,13 +80,13 @@ export default function DonationController(props: Props) {
   if (formData == null) {
     return (
       <div>
-        <h3>Please Consider Donating to VEuPathDB</h3>
+        <h3>Make Payment to VEuPathDB</h3>
         <hr />
         <div>
           <span style={{ color: 'red' }}>{errorMessage}</span>
         </div>
         <div>
-          <span>How much can you donate today? $</span>
+          <span>How much will you be paying today? $</span>
           <input
             type="text"
             value={amount}
@@ -95,8 +97,13 @@ export default function DonationController(props: Props) {
           <input
             type="button"
             value="Pay Now with Credit Card"
-            onClick={(e) => generateForm(amount, setFormData, setErrorMessage)}
+            onClick={(e) =>
+              generateForm(amount, setAmount, setFormData, setErrorMessage)
+            }
           />
+        </div>
+        <div>
+          <span>Payments processed securely by CyberSource</span>
         </div>
       </div>
     );
