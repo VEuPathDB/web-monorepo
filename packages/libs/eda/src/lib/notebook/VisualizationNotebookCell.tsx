@@ -75,6 +75,12 @@ export function VisualizationNotebookCell(
       .descriptor.configuration
   );
 
+  const vizOverview = computationAppOverview.visualizations.find(
+    (v) => v.name === viz.descriptor.type
+  );
+  const constraints = vizOverview?.dataElementConstraints;
+  const dataElementDependencyOrder = vizOverview?.dataElementDependencyOrder;
+
   return (
     <div>
       <h2>Plot here.</h2>
@@ -82,8 +88,8 @@ export function VisualizationNotebookCell(
       {computation && (
         <plugin.fullscreenComponent
           options={plugin.options}
-          // dataElementConstraints={constraints}
-          // dataElementDependencyOrder={dataElementDependencyOrder}
+          dataElementConstraints={constraints}
+          dataElementDependencyOrder={dataElementDependencyOrder}
           visualization={viz}
           computation={computation}
           copmutationAppOverview={computationAppOverview}

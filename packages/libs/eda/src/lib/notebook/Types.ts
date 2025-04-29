@@ -2,7 +2,10 @@ import { ComputationPlugin } from '../core/components/computations/Types';
 import { VisualizationPlugin } from '../core/components/visualizations/VisualizationPlugin';
 import { AnalysisState } from '../core/hooks/analysis';
 import { VariableDescriptor } from '../core/types/variable';
-import { Computation } from '../core/types/visualization';
+import {
+  Computation,
+  ComputationAppOverview,
+} from '../core/types/visualization';
 
 export interface NotebookCellBase<T extends string> {
   type: T;
@@ -15,7 +18,7 @@ export interface SubsettingNotebookCell extends NotebookCellBase<'subset'> {
 
 export interface ComputeNotebookCell extends NotebookCellBase<'compute'> {
   computeId: string;
-  computationAppOverview: any;
+  computationAppOverview: ComputationAppOverview;
   computation: Computation;
   createJob?: () => void;
   plugin: ComputationPlugin; // perhaps we can use the computeId to look through a list of plugins and find the right one?
@@ -26,7 +29,7 @@ export interface VisualizationNotebookCell
   visualizationId: string;
   plugin: VisualizationPlugin;
   computeId: string; // Used to link the visualization to a specific compute cell.
-  computationAppOverview: any;
+  computationAppOverview: ComputationAppOverview;
   computation: Computation; // The computation that this visualization is based on.
 }
 
