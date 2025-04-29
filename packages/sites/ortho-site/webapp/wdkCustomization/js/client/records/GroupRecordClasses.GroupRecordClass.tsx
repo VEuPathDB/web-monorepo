@@ -285,6 +285,21 @@ function RecordTable_TaxonCounts({
       selectionConfig={selectionConfig}
       speciesCounts={speciesCounts}
       taxonTree={taxonUiMetadata.taxonTree}
+      styleOverrides={{
+        searchAndFilterWrapper: {
+          justifyContent: 'flex-start',
+        },
+        searchBox: {
+          container: {
+            width: '300px',
+          },
+        },
+        treeSection: {
+          container: {
+            width: '50%',
+          },
+        },
+      }}
     />
   );
 }

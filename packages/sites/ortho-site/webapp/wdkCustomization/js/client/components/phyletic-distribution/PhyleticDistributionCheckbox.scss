@@ -10,6 +10,7 @@
   &--Node {
     display: flex;
     justify-content: space-between;
+    column-gap: 1em;
     width: calc(100% - 2em);
 
     font-weight: bold;
