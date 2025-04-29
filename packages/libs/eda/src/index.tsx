@@ -69,6 +69,9 @@ const singleAppMode = process.env.REACT_APP_SINGLE_APP_MODE;
 const showUnreleasedData =
   process.env.REACT_APP_SHOW_UNRELEASED_DATA === 'true';
 
+const enablePublicUserDatasets =
+  process.env.COMMUNITY_DATASETS_ENABLED === 'true';
+
 const exampleAnalysesAuthors = process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR
   ? process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR.split(/\s*,\s*/)
       .map((v) => Number(v))
@@ -220,6 +223,7 @@ initialize({
           singleAppMode={singleAppMode}
           edaServiceUrl={edaEndpoint}
           sharingUrlPrefix={window.location.href}
+          enablePublicUserDatasets={enablePublicUserDatasets}
         />
       ),
       exact: false,

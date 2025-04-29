@@ -15,7 +15,7 @@ export function RecordNotFoundPage({ sourceID }: Props) {
       <p>
         <strong>{sourceID}</strong> is not a current identifier.
       </p>
-      <p>It may be outdated but still retrievable via search.</p>
+      <p>References to this identifier may exist in other records.</p>
       <p>
         <a href={searchUrl}>
           <i className="fa fa-search"></i> Search our site for{' '}

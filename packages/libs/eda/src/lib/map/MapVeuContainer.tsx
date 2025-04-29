@@ -38,6 +38,7 @@ interface Props {
   siteInformationProps: SiteInformationProps;
   sharingUrlPrefix?: string;
   showLinkToEda?: boolean;
+  enablePublicUserDatasets?: boolean;
 }
 
 export function MapVeuContainer(mapVeuContainerProps: Props) {
@@ -47,6 +48,7 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
     edaServiceUrl,
     sharingUrlPrefix,
     showLinkToEda,
+    enablePublicUserDatasets = false,
   } = mapVeuContainerProps;
   const edaClient = useConfiguredSubsettingClient(edaServiceUrl);
   const dataClient = useConfiguredDataClient(edaServiceUrl);
@@ -140,6 +142,7 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
                 studyId={routeProps.match.params.studyId}
                 sharingUrlPrefix={sharingUrlPrefix}
                 showLinkToEda={showLinkToEda}
+                enablePublicUserDatasets={enablePublicUserDatasets}
               />
             </EDAWorkspaceContainer>
           )}

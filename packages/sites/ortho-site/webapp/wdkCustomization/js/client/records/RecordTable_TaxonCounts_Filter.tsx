@@ -8,12 +8,15 @@ import { useTaxonUiMetadata } from 'ortho-client/hooks/taxons';
 export interface Props extends WrappedComponentProps<RecordTableProps> {
   selectedSpecies: string[];
   onSpeciesSelected: (taxons: string[]) => void;
+  /** Optional. When true, popover (if using) closing will be deferred until this becomes false */
+  deferPopoverClosing?: boolean;
 }
 
 export function RecordTable_TaxonCounts_Filter({
   value,
   selectedSpecies,
   onSpeciesSelected,
+  deferPopoverClosing,
 }: Props) {
   const selectionConfig = useMemo(
     () =>
@@ -21,8 +24,9 @@ export function RecordTable_TaxonCounts_Filter({
         selectable: true,
         onSpeciesSelected,
         selectedSpecies,
+        deferPopoverClosing,
       } as const),
-    [onSpeciesSelected, selectedSpecies]
+    [onSpeciesSelected, selectedSpecies, deferPopoverClosing]
   );
 
   const speciesCounts = useMemo(

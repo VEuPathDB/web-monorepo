@@ -31,11 +31,18 @@ interface Props {
   availableTypes: string[];
   datasetUploadTypes: Record<string, DatasetUploadTypeConfigEntry<string>>;
   urlParams: Record<string, string>;
+  showExtraMetadata?: boolean; // Used in the upload form
 }
 
 export default function UserDatasetUploadSelector(props: Props) {
-  const { baseUrl, type, availableTypes, datasetUploadTypes, urlParams } =
-    props;
+  const {
+    baseUrl,
+    type,
+    availableTypes,
+    datasetUploadTypes,
+    urlParams,
+    showExtraMetadata = false,
+  } = props;
 
   if (type == null && availableTypes.length !== 1) {
     return (
@@ -55,6 +62,7 @@ export default function UserDatasetUploadSelector(props: Props) {
       baseUrl={baseUrl}
       datasetUploadType={datasetUploadType}
       urlParams={urlParams}
+      showExtraMetadata={showExtraMetadata}
     />
   );
 }
@@ -63,12 +71,14 @@ interface InnerProps<T extends string = string> {
   baseUrl: string;
   datasetUploadType: DatasetUploadTypeConfigEntry<T>;
   urlParams: Record<string, string>;
+  showExtraMetadata?: boolean; // Used in the upload form
 }
 
 function InnerUserDatasetUploadController({
   baseUrl,
   datasetUploadType,
   urlParams,
+  showExtraMetadata = false,
 }: InnerProps) {
   useSetDocumentTitle(datasetUploadType.uploadTitle);
 
@@ -174,6 +184,7 @@ function InnerUserDatasetUploadController({
         maxSizeBytes={
           datasetUploadType.formConfig.uploadMethodConfig.file?.maxSizeBytes
         }
+        showExtraMetadata={showExtraMetadata}
       />
     </div>
   );
