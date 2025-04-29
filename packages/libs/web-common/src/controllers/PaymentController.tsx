@@ -85,13 +85,13 @@ export default function PaymentController(props: Props) {
         <h1>Make a credit card payment based on your VEuPathDB invoice</h1>
         <p id="warning">
           Payments are processed securely by CyberSource.
-          <br /> VEuPathDB does not store nor has access to your payment
+          <br /> VEuPathDB does not store or have access to your credit card
           information. <br />
           See{' '}
           <a href="/a/app/static-content/subscriptions.html">
             VEuPathDB Subscriptions
           </a>{' '}
-          to learn about subscriptions and make an invoice.
+          to learn about subscriptions and create an invoice.
         </p>
         <div className="error-message">
           <p>{errorMessage}</p>
