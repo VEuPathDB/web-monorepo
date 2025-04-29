@@ -11,6 +11,7 @@ type PresetNotebook = {
   visualizations: string[];
   projects: string[];
   plugin: ComputationPlugin;
+  // cells: NotebookCell[]; // This could be used to define a preset notebook with cells already defined.
 };
 
 // For the differential expression (faking with diff abund right now)

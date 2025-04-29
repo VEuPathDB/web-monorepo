@@ -107,8 +107,24 @@ export function EdaNotebookAnalysis(props: Props) {
     return uuid();
   }, []);
 
+  const vizName = NOTEBOOK_PRESET_TEST.visualizations[0];
+  const vizPlugin = plugin && plugin.visualizationPlugins[vizName];
+
   const computation = useMemo(() => {
-    return createComputation(NOTEBOOK_PRESET_TEST.computationName, {}, [], []);
+    const newVisualization = {
+      visualizationId,
+      displayName: 'Unnamed visualization',
+      descriptor: {
+        type: vizName,
+        configuration: vizPlugin?.createDefaultConfig() ?? {},
+      },
+    };
+    return createComputation(
+      NOTEBOOK_PRESET_TEST.computationName,
+      {},
+      [],
+      [newVisualization]
+    );
   }, []);
 
   useEffect(() => {
@@ -145,7 +161,7 @@ export function EdaNotebookAnalysis(props: Props) {
       ];
     // if (storedSettings == null)
     // eventually read this from the preset notebook
-    return appOverview
+    return appOverview && vizPlugin
       ? {
           cells: [
             {
@@ -167,8 +183,19 @@ export function EdaNotebookAnalysis(props: Props) {
             },
             {
               type: 'visualization',
+              title: 'Compute visualization cell',
+              visualizationId: visualizationId,
+              computeId: computation.computationId,
+              computationAppOverview: appOverview,
+              plugin: vizPlugin,
+            },
+            {
+              type: 'visualization',
               title: 'Visualization cell',
               visualizationId: visualizationId,
+              plugin: vizPlugin,
+              computeId: computation.computationId,
+              computationAppOverview: appOverview,
             },
           ],
         }

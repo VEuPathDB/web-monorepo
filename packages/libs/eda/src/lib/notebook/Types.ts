@@ -1,4 +1,5 @@
 import { ComputationPlugin } from '../core/components/computations/Types';
+import { VisualizationPlugin } from '../core/components/visualizations/VisualizationPlugin';
 import { AnalysisState } from '../core/hooks/analysis';
 import { VariableDescriptor } from '../core/types/variable';
 import { Computation } from '../core/types/visualization';
@@ -23,6 +24,9 @@ export interface ComputeNotebookCell extends NotebookCellBase<'compute'> {
 export interface VisualizationNotebookCell
   extends NotebookCellBase<'visualization'> {
   visualizationId: string;
+  plugin: VisualizationPlugin;
+  computeId: string; // Used to link the visualization to a specific compute cell.
+  computationAppOverview: any;
 }
 
 export interface TextNotebookCell extends NotebookCellBase<'text'> {
