@@ -161,7 +161,10 @@ export function EdaNotebookAnalysis(props: Props) {
       ];
     // if (storedSettings == null)
     // eventually read this from the preset notebook
-    return appOverview && vizPlugin
+    return appOverview &&
+      vizPlugin &&
+      plugin &&
+      analysisState.analysis?.descriptor.computations[0]
       ? {
           cells: [
             {
@@ -188,6 +191,7 @@ export function EdaNotebookAnalysis(props: Props) {
               computeId: computation.computationId,
               computationAppOverview: appOverview,
               plugin: vizPlugin,
+              computation: analysisState.analysis?.descriptor.computations[0],
             },
             {
               type: 'visualization',
@@ -196,6 +200,7 @@ export function EdaNotebookAnalysis(props: Props) {
               plugin: vizPlugin,
               computeId: computation.computationId,
               computationAppOverview: appOverview,
+              computation: analysisState.analysis?.descriptor.computations[0],
             },
           ],
         }
@@ -215,6 +220,8 @@ export function EdaNotebookAnalysis(props: Props) {
     computation.computationId,
     appOverview,
     visualizationId,
+    plugin,
+    vizPlugin,
   ]);
 
   const updateCell = useCallback(

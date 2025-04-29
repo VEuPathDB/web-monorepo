@@ -16,7 +16,7 @@ export interface SubsettingNotebookCell extends NotebookCellBase<'subset'> {
 export interface ComputeNotebookCell extends NotebookCellBase<'compute'> {
   computeId: string;
   computationAppOverview: any;
-  computation?: Computation;
+  computation: Computation;
   createJob?: () => void;
   plugin: ComputationPlugin; // perhaps we can use the computeId to look through a list of plugins and find the right one?
 }
@@ -27,6 +27,7 @@ export interface VisualizationNotebookCell
   plugin: VisualizationPlugin;
   computeId: string; // Used to link the visualization to a specific compute cell.
   computationAppOverview: any;
+  computation: Computation; // The computation that this visualization is based on.
 }
 
 export interface TextNotebookCell extends NotebookCellBase<'text'> {
