@@ -24,7 +24,6 @@ import {
 
 import './PhyleticDistributionCheckbox.scss';
 import { SelectTree } from '@veupathdb/coreui';
-import { PopoverButtonProps } from '@veupathdb/coreui/lib/components/buttons/PopoverButton/PopoverButton';
 
 const cx = makeClassNameHelper('PhyleticDistributionCheckbox');
 

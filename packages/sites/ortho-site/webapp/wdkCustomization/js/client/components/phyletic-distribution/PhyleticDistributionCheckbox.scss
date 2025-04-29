@@ -17,6 +17,10 @@
     &__species {
       font-weight: normal;
     }
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05); /* subtle grey */
+    }
   }
 
   .wdk-CheckboxTreeItem .wdk-CheckboxTreeNodeWrapper:hover {
