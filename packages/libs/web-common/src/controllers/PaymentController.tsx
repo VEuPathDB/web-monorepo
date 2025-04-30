@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { webAppUrl } from '../config';
 
+import '../styles/Payment.scss';
+
 // may want to use this later
 //import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
@@ -79,31 +81,40 @@ export default function PaymentController(props: Props) {
   // initially show the starter form
   if (formData == null) {
     return (
-      <div>
-        <h3>Make Payment to VEuPathDB</h3>
-        <hr />
-        <div>
-          <span style={{ color: 'red' }}>{errorMessage}</span>
+      <div className="payment-form">
+        <h1>Make a credit card payment based on your VEuPathDB invoice</h1>
+        <p id="warning">
+          Payments are processed securely by CyberSource.
+          <br /> VEuPathDB does not store or have access to your credit card
+          information. <br />
+          See{' '}
+          <a href="/a/app/static-content/subscriptions.html">
+            VEuPathDB Subscriptions
+          </a>{' '}
+          to learn about subscriptions and create an invoice.
+        </p>
+        <div className="error-message">
+          <p>{errorMessage}</p>
         </div>
-        <div>
-          <span>How much will you be paying today? $</span>
-          <input
-            type="text"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-          />
+        <div className="amount">
+          <p>
+            Please enter the amount from your invoice in USD:&nbsp;&nbsp;
+            <input
+              type="text"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+            />
+          </p>
         </div>
-        <div>
+        <div className="button">
           <input
             type="button"
-            value="Pay Now with Credit Card"
+            value="Pay with Credit Card"
             onClick={(e) =>
               generateForm(amount, setAmount, setFormData, setErrorMessage)
             }
           />
-        </div>
-        <div>
-          <span>Payments processed securely by CyberSource</span>
+          <p>(Clicking the button will take you to secure.cybersource.com.)</p>
         </div>
       </div>
     );
