@@ -26,6 +26,7 @@ interface Props<T1 extends string = string, T2 extends string = string> {
   >;
   dataNoun: DataNoun;
   enablePublicUserDatasets?: boolean;
+  showExtraMetadata?: boolean; // Used in the upload form
 }
 
 export function UserDatasetRouter<T1 extends string, T2 extends string>({
@@ -38,6 +39,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
   detailComponentsByTypeName,
   dataNoun,
   enablePublicUserDatasets = false,
+  showExtraMetadata = false,
 }: Props<T1, T2>) {
   const { path, url } = useRouteMatch();
 
@@ -73,6 +75,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
               helpTabContents={helpTabContents}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
+              showExtraMetadata={showExtraMetadata}
             />
           );
         }}
@@ -102,6 +105,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
               helpTabContents={helpTabContents}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
+              showExtraMetadata={showExtraMetadata}
             />
           );
         }}
@@ -159,6 +163,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
               helpTabContents={helpTabContents}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
+              showExtraMetadata={showExtraMetadata}
             />
           );
         }}
@@ -175,6 +180,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
               detailComponentsByTypeName={detailComponentsByTypeName}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
+              showExtraMetadata={showExtraMetadata}
               includeAllLink
               includeNameHeader
               {...props.match.params}

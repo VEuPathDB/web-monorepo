@@ -498,6 +498,19 @@ const useHeaderMenuItems = (
           },
         },
         {
+          key: 'gp60',
+          display: (
+            <>
+              <i>gp60</i> Resource page
+            </>
+          ),
+          type: 'reactRoute',
+          url: makeStaticPageRoute('/gp60.html'),
+          metadata: {
+            include: [CryptoDB],
+          },
+        },
+        {
           key: 'vb-images',
           display: 'Image gallery',
           tooltip: 'Free to use pictures of vectors',

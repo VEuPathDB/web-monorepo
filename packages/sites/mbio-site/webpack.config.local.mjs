@@ -55,6 +55,7 @@ export default configure({
         datasetImportUrl: process.env.USER_DATASETS_WORKSPACE_IMPORT_SERVICE_ENDPOINT,
         vdiServiceUrl: process.env.VDI_SERVICE_ENDPOINT,
 	communityDatasetsEnabled: process.env.COMMUNITY_DATASETS_ENABLED === 'true',
+        showExtraMetadata: process.env.SHOW_EXTRA_METADATA === 'true',
       })
     }),
     new HtmlWebpackPlugin({
