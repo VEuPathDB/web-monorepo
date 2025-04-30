@@ -56,7 +56,7 @@ function generateForm(
   if (isNaN(amountNum) || amountNum <= 0) {
     setErrorMessage('You must enter a positive number amount.');
   } else {
-    setErrorMessage('Please wait...');
+    setErrorMessage('');
     amountNum = Math.floor(amountNum * 100) / 100;
     setAmount(amountNum.toString());
     console.log('Submitting form with payment amount $' + amountNum);
