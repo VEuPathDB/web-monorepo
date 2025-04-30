@@ -7,6 +7,7 @@ import { communitySite } from './config';
 
 import TreeDataViewerController from './controllers/TreeDataViewerController';
 import ContactUsController from './controllers/ContactUsController';
+import PaymentController from './controllers/PaymentController';
 import GalaxyTermsController from './controllers/GalaxyTermsController';
 import ExternalContentController from './controllers/ExternalContentController';
 import { ResetSessionController } from './controllers/ResetSessionController';
@@ -153,6 +154,12 @@ export const wrapRoutes = (wdkRoutes) => [
       const params = new URLSearchParams(props.location.search);
       return <ContactUsController context={params.get('ctx')} />;
     },
+  },
+
+  {
+    path: '/payment',
+    requiresLogin: false,
+    component: () => <PaymentController />,
   },
 
   {
