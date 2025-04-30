@@ -60,13 +60,13 @@ export default function PaymentController() {
       setErrorMessage('');
       amountNum = Math.floor(amountNum * 100) / 100;
       setAmount(amountNum.toString());
-      console.log('Submitting form with payment amount $' + amountNum);
+      // console.log('Submitting form with payment amount $' + amountNum);
       getFormData(amountNum)
         .then((formData) => {
           setFormData(formData);
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
           setErrorMessage(
             <>
               Cannot connect to payment system. <br />
