@@ -17,6 +17,7 @@ import {
   communitySite,
   edaServiceUrl,
   projectId,
+  showExtraMetadata,
 } from '@veupathdb/web-common/lib/config';
 
 import ExternalContentController from '@veupathdb/web-common/lib/controllers/ExternalContentController';
@@ -94,6 +95,7 @@ export const userDatasetRoutes: RouteEntry[] = [
             }
             dataNoun={{ singular: 'Study', plural: 'Studies' }}
             enablePublicUserDatasets={!!communityDatasetsEnabled}
+            showExtraMetadata={!!showExtraMetadata}
           />
         </Suspense>
       );

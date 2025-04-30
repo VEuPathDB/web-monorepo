@@ -60,6 +60,7 @@ type OwnProps = {
   >;
   dataNoun: DataNoun;
   enablePublicUserDatasets: boolean;
+  showExtraMetadata: boolean; // Used in user dataset detail view
   includeAllLink: boolean;
   includeNameHeader: boolean;
 };
@@ -179,6 +180,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       workspaceTitle,
       dataNoun,
       enablePublicUserDatasets,
+      showExtraMetadata,
       includeAllLink,
       includeNameHeader,
     } = this.props.ownProps;
@@ -253,6 +255,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       updateDatasetCommunityVisibilityError,
       updateDatasetCommunityVisibilityPending,
       updateDatasetCommunityVisibilitySuccess,
+      showExtraMetadata,
     };
 
     if (entry?.resource == null) return <Loading />;
