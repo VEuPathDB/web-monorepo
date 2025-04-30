@@ -33,18 +33,21 @@ function AutoSubmitForm(props: FormProps) {
 }
 
 async function getFormData(
-  amount: number,
+  amount: string,
   setErrorMessage: (s: string) => void
 ) {
   try {
     const url = webAppUrl + '/service/payment-form-content?amount=' + amount;
     const response = await fetch(url);
     if (!response.ok) {
-      setErrorMessage('Cannot connect to payment system.');
+      console.log(
+        'Non-2xx response from form data generation service: ' + response.status
+      );
+      setErrorMessage('Error connecting to payment system.');
     }
     return await response.json();
   } catch (error) {
-    console.error(error);
+    console.error('Error connecting 1: ' + error);
   }
 }
 
@@ -59,15 +62,15 @@ function generateForm(
     setErrorMessage('You must enter a positive number amount.');
   } else {
     setErrorMessage('');
-    amountNum = Math.floor(amountNum * 100) / 100;
-    setAmount(amountNum.toString());
-    console.log('Submitting form with payment amount $' + amountNum);
-    getFormData(amountNum, setErrorMessage)
+    amount = amountNum.toFixed(2);
+    setAmount(amount);
+    console.log('Generating form with payment amount $' + amount);
+    getFormData(amount, setErrorMessage)
       .then((formData) => {
         setFormData(formData);
       })
       .catch((error) => {
-        console.log(error);
+        console.log('Error connecting 2: ' + error);
         setErrorMessage('Cannot connect to payment system.');
       });
   }
