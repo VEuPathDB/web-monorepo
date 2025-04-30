@@ -1,19 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, ReactNode } from 'react';
 import { webAppUrl } from '../config';
 
 import '../styles/Payment.scss';
+import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
 
-// may want to use this later
-//import { Loading } from '@veupathdb/wdk-client/lib/Components';
-
-interface Props {}
-
-interface FormProps {
+interface AutoSubmitFormProps {
   actionUrl: string;
   params: any;
 }
 
-function AutoSubmitForm(props: FormProps) {
+function AutoSubmitForm(props: AutoSubmitFormProps) {
   // submit form as soon as it is rendered
   const formRef = useRef<HTMLFormElement>(null);
   useEffect(() => {
@@ -26,57 +22,65 @@ function AutoSubmitForm(props: FormProps) {
   return (
     <form ref={formRef} method="POST" action={props.actionUrl}>
       {Object.keys(props.params).map((name) => (
-        <input type="hidden" name={name} value={props.params[name]}></input>
+        <input
+          type="hidden"
+          key={name}
+          name={name}
+          value={props.params[name]}
+        ></input>
       ))}
     </form>
   );
 }
 
-async function getFormData(
-  amount: number,
-  setErrorMessage: (s: string) => void
-) {
-  try {
-    const url = webAppUrl + '/service/payment-form-content?amount=' + amount;
-    const response = await fetch(url);
-    if (!response.ok) {
-      setErrorMessage('Cannot connect to payment system.');
-    }
-    return await response.json();
-  } catch (error) {
-    console.error(error);
+async function getFormData(amount: number) {
+  const url = webAppUrl + '/service/payment-form-content?amount=' + amount;
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error('Pre-payment form service error');
   }
+  return await response.json();
 }
 
-function generateForm(
-  amount: string,
-  setAmount: (a: string) => void,
-  setFormData: (b: any) => void,
-  setErrorMessage: (s: string) => void
-) {
-  var amountNum: number = parseFloat(amount);
-  if (isNaN(amountNum) || amountNum <= 0) {
-    setErrorMessage('You must enter a positive number amount.');
-  } else {
-    setErrorMessage('');
-    amountNum = Math.floor(amountNum * 100) / 100;
-    setAmount(amountNum.toString());
-    console.log('Submitting form with payment amount $' + amountNum);
-    getFormData(amountNum, setErrorMessage)
-      .then((formData) => {
-        setFormData(formData);
-      })
-      .catch((error) => {
-        console.log(error);
-        setErrorMessage('Cannot connect to payment system.');
-      });
-  }
-}
-
-export default function PaymentController(props: Props) {
+export default function PaymentController() {
   const [formData, setFormData] = useState(null);
   const [amount, setAmount] = useState('0.00');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState<ReactNode>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleUserSubmit = () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
+    var amountNum: number = parseFloat(amount);
+    if (isNaN(amountNum) || amountNum <= 0) {
+      setErrorMessage('You must enter a positive number amount.');
+      setIsSubmitting(false);
+    } else {
+      setErrorMessage('');
+      amountNum = Math.floor(amountNum * 100) / 100;
+      setAmount(amountNum.toString());
+      console.log('Submitting form with payment amount $' + amountNum);
+      getFormData(amountNum)
+        .then((formData) => {
+          setFormData(formData);
+        })
+        .catch((error) => {
+          console.log(error);
+          setErrorMessage(
+            <>
+              Cannot connect to payment system. <br />
+              Please{' '}
+              <Link to="/contact-us" target="_blank">
+                let us know
+              </Link>{' '}
+              about this.
+            </>
+          );
+          setIsSubmitting(false);
+        });
+    }
+  };
 
   // initially show the starter form
   if (formData == null) {
@@ -93,9 +97,6 @@ export default function PaymentController(props: Props) {
           </a>{' '}
           to learn about subscriptions and create an invoice.
         </p>
-        <div className="error-message">
-          <p>{errorMessage}</p>
-        </div>
         <div className="amount">
           <p>
             Please enter the amount from your invoice in USD:&nbsp;&nbsp;
@@ -106,13 +107,16 @@ export default function PaymentController(props: Props) {
             />
           </p>
         </div>
+        <div className="error-message">
+          <p>{errorMessage}</p>
+        </div>
         <div className="button">
+          {isSubmitting && <Loading />}
           <input
             type="button"
             value="Pay with Credit Card"
-            onClick={(e) =>
-              generateForm(amount, setAmount, setFormData, setErrorMessage)
-            }
+            disabled={isSubmitting}
+            onClick={handleUserSubmit}
           />
           <p>(Clicking the button will take you to secure.cybersource.com.)</p>
         </div>
