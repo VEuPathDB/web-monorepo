@@ -10,12 +10,17 @@
   &--Node {
     display: flex;
     justify-content: space-between;
+    column-gap: 1em;
     width: calc(100% - 2em);
 
     font-weight: bold;
 
     &__species {
       font-weight: normal;
+    }
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05); /* subtle grey */
     }
   }
 
