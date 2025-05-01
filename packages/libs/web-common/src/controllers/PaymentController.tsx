@@ -52,13 +52,18 @@ export default function PaymentController() {
     if (isSubmitting) return;
     setIsSubmitting(true);
 
-    var amountNum: number = parseFloat(amount);
+    var amountNum: number = Number(removeCommaThousandSeparators(amount));
     if (isNaN(amountNum) || amountNum <= 0) {
       setErrorMessage('You must enter a positive number amount.');
       setIsSubmitting(false);
     } else {
       setErrorMessage('');
       // console.log('Submitting form with payment amount $' + amountNum.toFixed(2));
+
+      // optionally update UI with trimmed amount
+      // (will only be visible for a short time, so potentially panic-inducing?)
+      // setAmount(amountNum.toFixed(2));
+
       getFormData(amountNum.toFixed(2))
         .then((formData) => {
           setFormData(formData);
@@ -129,4 +134,8 @@ export default function PaymentController() {
       params={formData}
     />
   );
+}
+
+function removeCommaThousandSeparators(input: string) {
+  return input.replace(/,(\d{3})(?!\d)/g, '$1');
 }
