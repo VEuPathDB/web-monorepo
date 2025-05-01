@@ -11,19 +11,50 @@ div.payment-container {
     margin-top: 3.5em;
     text-align: center;
 
-    div.amount {
-      p {
-        font-size: 142%;
+    div.form-row {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      width: 20em;
+      margin-left: auto;
+      margin-right: auto;
+      align-items: center;
+      margin-bottom: 1em;
+      font-size: 1.5em;
 
-        input {
-          width: 5em;
+      label {
+        margin-bottom: 0.3em;
+      }
 
-          &.hasError {
-            border: 0.5px solid red !important;
-          }
+      input {
+        padding: 0.4em;
+        width: 12em;
+        border-radius: 0.25em;
+        border: 1px solid #666 !important;
+
+        &.hasError {
+          border: 0.5px solid red !important;
+        }
+      }
+
+      input#amount {
+        text-align: right;
+        width: 6em;
+      }
+
+      &.optional label {
+        color: #666;
+      }
+
+      &.optional input {
+        border: 1px solid #eee !important;
+
+        &::placeholder {
+          color: #666;
         }
       }
     }
+
     div.button {
       input {
         width: 12em;

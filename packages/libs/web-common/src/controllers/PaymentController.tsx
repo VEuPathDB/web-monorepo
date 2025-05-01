@@ -33,8 +33,12 @@ function AutoSubmitForm(props: AutoSubmitFormProps) {
   );
 }
 
-async function getFormData(amount: string) {
-  const url = webAppUrl + '/service/payment-form-content?amount=' + amount;
+async function getFormData(amount: string, invoiceNumber?: string) {
+  const url =
+    webAppUrl +
+    '/service/payment-form-content?amount=' +
+    amount +
+    (invoiceNumber != null ? '&invoice_number=' + invoiceNumber : '');
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error('Pre-payment form service error');
@@ -44,7 +48,8 @@ async function getFormData(amount: string) {
 
 export default function PaymentController() {
   const [formData, setFormData] = useState(null);
-  const [amount, setAmount] = useState('0.00');
+  const [amount, setAmount] = useState('');
+  const [invoiceNumber, setInvoiceNumber] = useState('');
   const [errorMessage, setErrorMessage] = useState<ReactNode>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -85,7 +90,7 @@ export default function PaymentController() {
       // (will only be visible for a short time, so potentially panic-inducing?)
       // setAmount(amountNum.toFixed(2));
 
-      getFormData(amountNum.toFixed(2))
+      getFormData(amountNum.toFixed(2), invoiceNumber)
         .then((formData) => {
           setFormData(formData);
         })
@@ -125,17 +130,30 @@ export default function PaymentController() {
           <div className="error-message">
             <p>{errorMessage}</p>
           </div>
-          <div className="amount">
-            <p>
-              Please enter the amount from your invoice in USD:&nbsp;&nbsp;
-              <input
-                className={errorMessage ? 'hasError' : undefined}
-                type="text"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-              />
-            </p>
+
+          <div className="form-row">
+            <label htmlFor="amount">Amount (USD):&nbsp;*</label>
+            <input
+              id="amount"
+              className={errorMessage ? 'hasError' : undefined}
+              type="text"
+              value={amount}
+              placeholder="0.00"
+              onChange={(e) => setAmount(e.target.value)}
+            />
           </div>
+
+          <div className="form-row optional">
+            <label htmlFor="invoiceNumber">Invoice number:</label>
+            <input
+              id="invoiceNumber"
+              type="text"
+              value={invoiceNumber}
+              placeholder="VEuPathDB-####-####"
+              onChange={(e) => setInvoiceNumber(e.target.value)}
+            />
+          </div>
+
           <div className="button">
             {isSubmitting && <Loading />}
             <input
@@ -144,6 +162,7 @@ export default function PaymentController() {
               disabled={isSubmitting}
               onClick={handleUserSubmit}
             />
+            <p>* indicates required field</p>
             <p>
               (Clicking the button will take you to secure.cybersource.com.)
             </p>
