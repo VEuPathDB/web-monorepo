@@ -54,7 +54,12 @@ export default function PaymentController() {
 
     var amountNum: number = Number(removeCommaThousandSeparators(amount));
     if (isNaN(amountNum) || amountNum <= 0) {
-      setErrorMessage('You must enter a positive number amount.');
+      setErrorMessage(
+        <>
+          You must enter a positive number amount. <br />
+          Do not use commas for decimals.
+        </>
+      );
       setIsSubmitting(false);
     } else {
       setErrorMessage('');
