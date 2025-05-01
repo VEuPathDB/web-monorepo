@@ -33,12 +33,14 @@ function AutoSubmitForm(props: AutoSubmitFormProps) {
   );
 }
 
-async function getFormData(amount: string, invoiceNumber?: string) {
+// empty string invoiceNumber is a valid arg
+async function getFormData(amount: string, invoiceNumber: string) {
   const url =
     webAppUrl +
     '/service/payment-form-content?amount=' +
     amount +
-    (invoiceNumber != null ? '&invoice_number=' + invoiceNumber : '');
+    '&invoice_number=' +
+    invoiceNumber;
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error('Pre-payment form service error');
