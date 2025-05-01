@@ -33,7 +33,7 @@ function AutoSubmitForm(props: AutoSubmitFormProps) {
   );
 }
 
-async function getFormData(amount: number) {
+async function getFormData(amount: string) {
   const url = webAppUrl + '/service/payment-form-content?amount=' + amount;
   const response = await fetch(url);
   if (!response.ok) {
@@ -58,10 +58,8 @@ export default function PaymentController() {
       setIsSubmitting(false);
     } else {
       setErrorMessage('');
-      amountNum = Math.floor(amountNum * 100) / 100;
-      setAmount(amountNum.toString());
-      // console.log('Submitting form with payment amount $' + amountNum);
-      getFormData(amountNum)
+      // console.log('Submitting form with payment amount $' + amountNum.toFixed(2));
+      getFormData(amountNum.toFixed(2))
         .then((formData) => {
           setFormData(formData);
         })
