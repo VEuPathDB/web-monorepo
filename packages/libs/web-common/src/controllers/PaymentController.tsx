@@ -109,7 +109,7 @@ export default function PaymentController() {
   // initially show the starter form
   if (formData == null) {
     return (
-      <div className="payment-form">
+      <div className="payment-container">
         <h1>Make a credit card payment based on your VEuPathDB invoice</h1>
         <p id="warning">
           Payments are processed securely by CyberSource.
@@ -121,28 +121,33 @@ export default function PaymentController() {
           </a>{' '}
           to learn about subscriptions and create an invoice.
         </p>
-        <div className="amount">
-          <p>
-            Please enter the amount from your invoice in USD:&nbsp;&nbsp;
+        <div className="payment-form">
+          <div className="error-message">
+            <p>{errorMessage}</p>
+          </div>
+          <div className="amount">
+            <p>
+              Please enter the amount from your invoice in USD:&nbsp;&nbsp;
+              <input
+                className={errorMessage ? 'hasError' : undefined}
+                type="text"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+              />
+            </p>
+          </div>
+          <div className="button">
+            {isSubmitting && <Loading />}
             <input
-              type="text"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              type="button"
+              value="Pay with Credit Card"
+              disabled={isSubmitting}
+              onClick={handleUserSubmit}
             />
-          </p>
-        </div>
-        <div className="error-message">
-          <p>{errorMessage}</p>
-        </div>
-        <div className="button">
-          {isSubmitting && <Loading />}
-          <input
-            type="button"
-            value="Pay with Credit Card"
-            disabled={isSubmitting}
-            onClick={handleUserSubmit}
-          />
-          <p>(Clicking the button will take you to secure.cybersource.com.)</p>
+            <p>
+              (Clicking the button will take you to secure.cybersource.com.)
+            </p>
+          </div>
         </div>
       </div>
     );
