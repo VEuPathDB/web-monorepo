@@ -48,6 +48,22 @@ export default function PaymentController() {
   const [errorMessage, setErrorMessage] = useState<ReactNode>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // If we're showing a persisted page from a back-button navigation
+  // we need to reset some state.
+  useEffect(() => {
+    function handlePageShow(event: PageTransitionEvent) {
+      if (event.persisted) {
+        setFormData(null); // Clear stale formData
+        setIsSubmitting(false); // and clear this, so the button can be pressed again
+      }
+    }
+
+    window.addEventListener('pageshow', handlePageShow);
+    return () => {
+      window.removeEventListener('pageshow', handlePageShow);
+    };
+  }, []);
+
   const handleUserSubmit = () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
