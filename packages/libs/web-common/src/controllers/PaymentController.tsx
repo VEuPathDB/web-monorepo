@@ -53,10 +53,10 @@ export default function PaymentController() {
     setIsSubmitting(true);
 
     var amountNum: number = Number(removeCommaThousandSeparators(amount));
-    if (isNaN(amountNum) || amountNum <= 0) {
+    if (isNaN(amountNum) || amountNum < 0.01) {
       setErrorMessage(
         <>
-          You must enter a positive number amount. <br />
+          You must enter a positive dollar amount. <br />
           Do not use commas for decimals.
         </>
       );
