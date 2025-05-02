@@ -9,6 +9,8 @@ interface AutoSubmitFormProps {
   params: any;
 }
 
+type ErrorKey = 'amount' | 'invoiceNumber' | 'general';
+
 function AutoSubmitForm(props: AutoSubmitFormProps) {
   // submit form as soon as it is rendered
   const formRef = useRef<HTMLFormElement>(null);
@@ -52,7 +54,10 @@ export default function PaymentController() {
   const [formData, setFormData] = useState(null);
   const [amount, setAmount] = useState('');
   const [invoiceNumber, setInvoiceNumber] = useState('');
-  const [errorMessage, setErrorMessage] = useState<ReactNode>('');
+  // errorType => errorMessage
+  const [errors, setErrors] = useState<Partial<Record<ErrorKey, ReactNode>>>(
+    {}
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // If we're showing a persisted page from a back-button navigation
@@ -73,41 +78,60 @@ export default function PaymentController() {
 
   const handleUserSubmit = () => {
     if (isSubmitting) return;
-    setIsSubmitting(true);
 
+    // invoiceNumber validation
+    // see https://github.com/VEuPathDB/EbrcWebsiteCommon/blob/baf3e3c6936b309b6d677019351c1a5fe06c08f0/Model/src/main/java/org/eupathdb/common/service/CyberSourceFormService.java#L58
+
+    const invoiceNumberIsValid =
+      invoiceNumber === '' || invoiceNumber.match(/^[0-9a-zA-Z\-]+$/);
+    setErrors((errors) => ({
+      ...errors,
+      invoiceNumber: invoiceNumberIsValid ? undefined : (
+        <>
+          Invoice numbers may contain only A-Z a-z 0-9 and dash ('-')
+          characters.
+        </>
+      ),
+    }));
+
+    // amount validation
     var amountNum: number = Number(removeCommaThousandSeparators(amount));
     if (isNaN(amountNum) || amountNum < 0.01) {
-      setErrorMessage(
-        <>
-          You must enter a positive dollar amount. <br />
-          Do not use commas for decimals.
-        </>
-      );
+      setErrors((errors) => ({
+        ...errors,
+        amount: (
+          <>
+            You must enter a positive dollar amount. <br />
+            Do not use commas for decimals.
+          </>
+        ),
+      }));
       setIsSubmitting(false);
-    } else {
-      setErrorMessage('');
+    } else if (invoiceNumberIsValid) {
+      // submit to our service
+      setErrors({});
       // console.log('Submitting form with payment amount $' + amountNum.toFixed(2));
 
-      // optionally update UI with trimmed amount
-      // (will only be visible for a short time, so potentially panic-inducing?)
-      // setAmount(amountNum.toFixed(2));
-
+      setIsSubmitting(true);
       getFormData(amountNum.toFixed(2), invoiceNumber)
         .then((formData) => {
           setFormData(formData);
         })
         .catch((error) => {
           console.error(error);
-          setErrorMessage(
-            <>
-              Cannot connect to payment system. <br />
-              Please{' '}
-              <Link to="/contact-us" target="_blank">
-                let us know
-              </Link>{' '}
-              about this.
-            </>
-          );
+          setErrors((errors) => ({
+            ...errors,
+            general: (
+              <>
+                Cannot connect to payment system. <br />
+                Please{' '}
+                <Link to="/contact-us" target="_blank">
+                  let us know
+                </Link>{' '}
+                about this.
+              </>
+            ),
+          }));
           setIsSubmitting(false);
         });
     }
@@ -130,19 +154,23 @@ export default function PaymentController() {
         </p>
         <div className="payment-form">
           <div className="error-message">
-            <p>{errorMessage}</p>
+            <p>{errors['amount']}</p>
           </div>
 
           <div className="form-row">
             <label htmlFor="amount">Amount (USD):&nbsp;*</label>
             <input
               id="amount"
-              className={errorMessage ? 'hasError' : undefined}
+              className={errors['amount'] ? 'hasError' : undefined}
               type="text"
               value={amount}
               placeholder="0.00"
               onChange={(e) => setAmount(e.target.value)}
             />
+          </div>
+
+          <div className="error-message">
+            <p>{errors['invoiceNumber']}</p>
           </div>
 
           <div className="form-row optional">
@@ -154,6 +182,10 @@ export default function PaymentController() {
               placeholder="VEuPathDB-####-####"
               onChange={(e) => setInvoiceNumber(e.target.value)}
             />
+          </div>
+
+          <div className="error-message">
+            <p>{errors['general']}</p>
           </div>
 
           <div className="button">
