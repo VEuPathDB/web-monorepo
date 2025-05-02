@@ -94,24 +94,28 @@ export default function PaymentController() {
       ),
     }));
 
-    // amount validation
-    var amountNum: number = Number(removeCommaThousandSeparators(amount));
-    if (isNaN(amountNum) || amountNum < 0.01) {
-      setErrors((errors) => ({
-        ...errors,
-        amount: (
-          <>
-            You must enter a positive dollar amount. <br />
-            Do not use commas for decimals.
-          </>
-        ),
-      }));
-      setIsSubmitting(false);
-    } else if (invoiceNumberIsValid) {
-      // submit to our service
-      setErrors({});
-      // console.log('Submitting form with payment amount $' + amountNum.toFixed(2));
+    // amount validation and remove any leading dollar sign
+    const amountNum: number = Number(
+      removeCommaThousandSeparators(amount).replace(/^\$/, '')
+    );
+    const amountIsValid = !isNaN(amountNum) && amountNum >= 0.01;
 
+    setErrors((errors) => ({
+      ...errors,
+      amount: amountIsValid ? undefined : (
+        <>
+          You must enter a positive dollar amount. <br />
+          Do not use commas for decimals.
+        </>
+      ),
+    }));
+
+    if (amountIsValid && invoiceNumberIsValid) {
+      // submit to our service
+      // clear all errors including 'general'
+      setErrors({});
+
+      // console.log('Submitting form with payment amount $' + amountNum.toFixed(2));
       setIsSubmitting(true);
       getFormData(amountNum.toFixed(2), invoiceNumber)
         .then((formData) => {
