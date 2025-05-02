@@ -2,7 +2,10 @@ $StickyColumnBorderColor: rgb(204, 204, 204);
 
 .MesaComponent {
   tr {
-    white-space: break-spaces;
+    /* white-space: break-spaces; */
+    /* introduced in https://github.com/VEuPathDB/web-monorepo/pull/1298 */
+    /* can't figure out why - gene and ortho record tables seem fine without */
+    /* so do strategy search result tables */
   }
   th {
     background-color: #e2e2e2;
