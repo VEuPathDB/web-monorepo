@@ -26,6 +26,14 @@ div.payment-container {
         margin-bottom: 0.3em;
       }
 
+      &.optional input {
+        border: 1px solid #eee !important;
+
+        &::placeholder {
+          color: #666;
+        }
+      }
+
       input {
         padding: 0.4em;
         width: 12em;
@@ -33,7 +41,7 @@ div.payment-container {
         border: 1px solid #666 !important;
 
         &.hasError {
-          border: 0.5px solid red !important;
+          border: 0.5px solid red !important; /* more important than the .optional grey */
         }
       }
 
@@ -44,14 +52,6 @@ div.payment-container {
 
       &.optional label {
         color: #666;
-      }
-
-      &.optional input {
-        border: 1px solid #eee !important;
-
-        &::placeholder {
-          color: #666;
-        }
       }
     }
 

@@ -154,14 +154,14 @@ export default function PaymentController() {
         </p>
         <div className="payment-form">
           <div className="error-message">
-            <p>{errors['amount']}</p>
+            <p>{errors.amount}</p>
           </div>
 
           <div className="form-row">
             <label htmlFor="amount">Amount (USD):&nbsp;*</label>
             <input
               id="amount"
-              className={errors['amount'] ? 'hasError' : undefined}
+              className={errors.amount ? 'hasError' : undefined}
               type="text"
               value={amount}
               placeholder="0.00"
@@ -170,13 +170,14 @@ export default function PaymentController() {
           </div>
 
           <div className="error-message">
-            <p>{errors['invoiceNumber']}</p>
+            <p>{errors.invoiceNumber}</p>
           </div>
 
           <div className="form-row optional">
             <label htmlFor="invoiceNumber">Invoice number:</label>
             <input
               id="invoiceNumber"
+              className={errors.invoiceNumber ? 'hasError' : undefined}
               type="text"
               value={invoiceNumber}
               placeholder="VEuPathDB-####-####"
@@ -185,7 +186,7 @@ export default function PaymentController() {
           </div>
 
           <div className="error-message">
-            <p>{errors['general']}</p>
+            <p>{errors.general}</p>
           </div>
 
           <div className="button">
