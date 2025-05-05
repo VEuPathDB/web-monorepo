@@ -5,30 +5,38 @@ import { plugin as differentialabundance } from '../core/components/computations
 import { plugin as correlation } from '../core/components/computations/plugins/correlation';
 import { NotebookCell } from './Types';
 
-export type NotebookCellDescriptor = {
+// export type NotebookCellDescriptor = {
+//   title: string;
+//   subCells?: (
+//     | VisualizationCellDescriptor
+//     | ComputeCellDescriptor
+//     | TextCellDescriptor
+//   )[];
+// };
+export interface NotebookCellDescriptorBase<T extends string> {
+  type: T;
   title: string;
   subCells?: (
     | VisualizationCellDescriptor
     | ComputeCellDescriptor
     | TextCellDescriptor
   )[];
-};
-type VisualizationCellDescriptor = NotebookCellDescriptor & {
-  type: 'visualization';
+}
+
+interface VisualizationCellDescriptor
+  extends NotebookCellDescriptorBase<'visualization'> {
   visualizationName: string;
   computationName: string;
-};
+}
 
-type ComputeCellDescriptor = NotebookCellDescriptor & {
-  type: 'compute';
+interface ComputeCellDescriptor extends NotebookCellDescriptorBase<'compute'> {
   plugin: ComputationPlugin;
   computationName: string;
-};
+}
 
-type TextCellDescriptor = NotebookCellDescriptor & {
-  type: 'text';
+interface TextCellDescriptor extends NotebookCellDescriptorBase<'text'> {
   text: string;
-};
+}
 
 type PresetNotebook = {
   name: string;
