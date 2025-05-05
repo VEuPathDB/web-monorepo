@@ -132,8 +132,6 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     createDefaultConfig,
     updateConfiguration
   );
-  console.log('viz config', vizConfig);
-  console.log('viz descriptor config', visualization.descriptor.configuration);
 
   // Get data from the compute job
   const data = usePromise(

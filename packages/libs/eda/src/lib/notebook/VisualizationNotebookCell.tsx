@@ -28,6 +28,9 @@ export function VisualizationNotebookCell(
   const { visualizationId, computeId, plugin, computationAppOverview } = cell;
 
   // use computeId to find the computation in the analysis state
+  console.log('computeId', computeId);
+  console.log('analysis', analysis);
+  console.log('visualizationId', visualizationId);
   const computation = analysis.descriptor.computations.find(
     (comp) => comp.computationId === computeId
   );
@@ -45,6 +48,7 @@ export function VisualizationNotebookCell(
     (v) => v.visualizationId === visualizationId
   );
   if (viz == null) throw new Error('Cannot find visualization.');
+
   if (computationAppOverview == null)
     throw new Error(
       'Visualizations associated with a computation must have an app overview.'

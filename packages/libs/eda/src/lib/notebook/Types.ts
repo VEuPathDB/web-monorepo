@@ -2,10 +2,7 @@ import { ComputationPlugin } from '../core/components/computations/Types';
 import { VisualizationPlugin } from '../core/components/visualizations/VisualizationPlugin';
 import { AnalysisState } from '../core/hooks/analysis';
 import { VariableDescriptor } from '../core/types/variable';
-import {
-  Computation,
-  ComputationAppOverview,
-} from '../core/types/visualization';
+import { ComputationAppOverview } from '../core/types/visualization';
 
 export interface NotebookCellBase<T extends string> {
   type: T;
@@ -21,6 +18,7 @@ export interface ComputeNotebookCell extends NotebookCellBase<'compute'> {
   computationAppOverview: ComputationAppOverview;
   createJob?: () => void;
   plugin: ComputationPlugin; // perhaps we can use the computeId to look through a list of plugins and find the right one?
+  subCells?: NotebookCell[]; // Sub-cells that are part of the compute cell, e.g., visualizations or text cells.
 }
 
 export interface VisualizationNotebookCell

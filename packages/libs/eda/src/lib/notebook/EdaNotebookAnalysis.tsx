@@ -26,7 +26,12 @@ import {
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
 import { ExpandablePanel } from '@veupathdb/coreui';
-import { NotebookCell as NotebookCellType } from './Types';
+import {
+  ComputeNotebookCell,
+  NotebookCell as NotebookCellType,
+  TextNotebookCell,
+  VisualizationNotebookCell,
+} from './Types';
 import { NotebookCell } from './NotebookCell';
 import { v4 as uuid } from 'uuid';
 
@@ -39,13 +44,14 @@ import { AppsResponse } from '../core/api/DataClient/types';
 import { parseJson } from './Utils';
 import { useCachedPromise } from '../core/hooks/cachedPromise';
 import {
-  boxplotNotebook,
   differentialAbundanceNotebook,
   wgcnaCorrelationNotebook,
 } from './NotebookPresets';
 import { useComputeJobStatus } from '../core/components/computations/ComputeJobStatusHook';
 import { useStudyMetadata } from '../core/hooks/study';
 import { Note } from '@material-ui/icons';
+import { composeTraversal } from 'monocle-ts/lib/Traversal';
+import { ANALYSIS_MENU_STATE } from '@veupathdb/wdk-client/lib/StoreModules/StepAnalysis/StepAnalysisState';
 
 interface NotebookSettings {
   /** Ordered array of notebook cells */
@@ -74,23 +80,6 @@ export function EdaNotebookAnalysis(props: Props) {
 
   const apps = useCachedPromise(fetchApps, [studyId]);
 
-  // apps are what are defined in the data service.
-  // plugins are defined in the client. We want to make sure
-  // our project ID is included in the app's allowed projects,
-  // and then ensure we have a plugin for that app.
-
-  const appOverview =
-    apps &&
-    apps.value?.apps.find(
-      (app) => app.name === NOTEBOOK_PRESET_TEST.computationName
-    );
-
-  // Stuck here. Non computes don't have a computename...
-  const plugin =
-    plugins[appOverview?.computeName ?? NOTEBOOK_PRESET_TEST.computationName];
-  if (appOverview && plugin == null)
-    throw new Error('Cannot find plugin for computation.');
-
   const wrappedOnAnalysisChange = useSetterWithCallback<
     Analysis | NewAnalysis | undefined
   >(props.analysis, onAnalysisChange);
@@ -104,31 +93,41 @@ export function EdaNotebookAnalysis(props: Props) {
   const { analysis } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
 
-  const visualizationId = useMemo(() => {
-    return uuid();
-  }, []);
+  // Who should care about this? The cell or the analysis?
+  // Probably the cell. Can the cell call another cell then? Because
+  // if the compute cell finishes, only its linked viz cells should care.
+  // Or maybe they don't have to and they just ask hey is there data ready
+  // and they don't even know where it comes from.
+  // But the viz cell needs the computation config... that part is tricky.
+  // If we continue on our one compute per notebook assumption, this is all
+  // far easier and we can leave it here.
+  // const { jobStatus, createJob } = useComputeJobStatus(
+  //   analysis,
+  //   computation,
+  //   appOverview?.computeName ?? ''
+  // );
+  //@ts-ignore
+  const compNameTemp = NOTEBOOK_PRESET_TEST.skeleton[0].computationName;
+  console.log('compNameTemp', compNameTemp);
 
-  const vizName = NOTEBOOK_PRESET_TEST.visualizations[0];
-  const vizPlugin = plugin && plugin.visualizationPlugins[vizName];
+  const appOverview =
+    apps && apps.value?.apps.find((app) => app.name === compNameTemp);
+  console.log('apps', apps);
+  console.log('appOverview', appOverview);
+
+  const plugin = plugins[compNameTemp];
+
+  if (appOverview && plugin == null)
+    throw new Error('Cannot find plugin for computation.');
 
   const computation = useMemo(() => {
-    const newVisualization = {
-      visualizationId,
-      displayName: 'Unnamed visualization',
-      descriptor: {
-        type: vizName,
-        configuration: vizPlugin?.createDefaultConfig() ?? {},
-      },
-    };
-    return createComputation(
-      NOTEBOOK_PRESET_TEST.computationName,
-      {},
-      [],
-      [newVisualization]
-    );
+    return createComputation(compNameTemp, {}, [], []);
   }, []);
 
   useEffect(() => {
+    console.log('useeffect triggered');
+    console.log('computation', computation);
+    console.log('analysisState', analysisState);
     if (!computation) return;
 
     // Avoid updating if the computation already exists
@@ -141,19 +140,74 @@ export function EdaNotebookAnalysis(props: Props) {
     analysisState.setComputations([computation]);
   }, [analysisState, computation]);
 
-  // Who should care about this? The cell or the analysis?
-  // Probably the cell. Can the cell call another cell then? Because
-  // if the compute cell finishes, only its linked viz cells should care.
-  // Or maybe they don't have to and they just ask hey is there data ready
-  // and they don't even know where it comes from.
-  // But the viz cell needs the computation config... that part is tricky.
-  // If we continue on our one compute per notebook assumption, this is all
-  // far easier and we can leave it here.
-  const { jobStatus, createJob } = useComputeJobStatus(
-    analysis,
-    computation,
-    appOverview?.computeName ?? ''
-  );
+  const presetNotebookCells = useMemo(() => {
+    return (
+      appOverview &&
+      plugin &&
+      NOTEBOOK_PRESET_TEST.skeleton.map((cell) => {
+        if (cell.type === 'compute') {
+          return {
+            ...cell,
+            computeId: computation.computationId,
+            computationAppOverview: appOverview,
+            plugin: plugin,
+          } as ComputeNotebookCell;
+        } else if (cell.type === 'visualization') {
+          // const visualizationId = useMemo(() => {
+          //   return uuid();
+          // }, []);
+          const visualizationId = 'abcde';
+
+          // const vizName = cell.visualizationName;
+          const vizName = 'bipartitenetwork';
+          const vizPlugin = plugin && plugin.visualizationPlugins[vizName];
+          // Add to analysis state ONLY if it doesn't exist
+          const existingVisualization =
+            analysisState.analysis?.descriptor.computations
+              .find((comp) => comp.computationId === computation.computationId)
+              ?.visualizations.find(
+                (viz) => viz.visualizationId === visualizationId
+              );
+
+          console.log('existingVisualization', existingVisualization);
+          if (existingVisualization == null) {
+            const newVisualization = {
+              visualizationId,
+              displayName: 'Unnamed visualization',
+              descriptor: {
+                type: vizName,
+                configuration: vizPlugin?.createDefaultConfig() ?? {},
+              },
+            };
+
+            console.log('adding new viz');
+
+            analysisState.addVisualization(
+              computation.computationId,
+              newVisualization
+            );
+          }
+
+          return existingVisualization
+            ? ({
+                ...cell,
+                visualizationId: visualizationId,
+                computeId: computation.computationId,
+                computationAppOverview: appOverview,
+                plugin: vizPlugin,
+              } as VisualizationNotebookCell)
+            : ({
+                title: 'Loading visualization...',
+                type: 'text',
+              } as TextNotebookCell);
+        } else {
+          return cell as NotebookCellType;
+        }
+      })
+    );
+  }, [appOverview, computation, plugin, analysisState]);
+  console.log('presetNotebookCells', presetNotebookCells);
+  console.log('analysisState', analysisState.analysis?.descriptor.computations);
 
   const notebookSettings = useMemo((): NotebookSettings => {
     const storedSettings =
@@ -161,12 +215,11 @@ export function EdaNotebookAnalysis(props: Props) {
         NOTEBOOK_UI_SETTINGS_KEY
       ];
     if (storedSettings == null) {
-      // eventually read this from the preset notebook?
-      return appOverview &&
-        vizPlugin &&
-        plugin &&
-        analysisState.analysis?.descriptor.computations[0]
+      return presetNotebookCells && presetNotebookCells.length > 0
         ? {
+            cells: presetNotebookCells,
+          }
+        : {
             cells: [
               {
                 type: 'subset',
@@ -177,38 +230,6 @@ export function EdaNotebookAnalysis(props: Props) {
                 text: 'Helpful text',
                 title: 'Documentation',
               },
-              {
-                type: 'compute',
-                title: 'Compute cell',
-                computeId: computation.computationId,
-                computationAppOverview: appOverview,
-                plugin: plugin,
-              },
-              {
-                type: 'visualization',
-                title: 'Compute visualization cell',
-                visualizationId: visualizationId,
-                computeId: computation.computationId,
-                computationAppOverview: appOverview,
-                plugin: vizPlugin,
-              },
-              {
-                type: 'visualization',
-                title: 'Visualization cell',
-                visualizationId: visualizationId,
-                plugin: vizPlugin,
-                computeId: computation.computationId,
-                computationAppOverview: appOverview,
-              },
-            ],
-          }
-        : {
-            cells: [
-              {
-                type: 'text',
-                text: 'No app overview found. Please select an app.',
-                title: 'Error',
-              },
             ],
           };
     } else {
@@ -216,20 +237,15 @@ export function EdaNotebookAnalysis(props: Props) {
     }
   }, [
     analysisState.analysis?.descriptor.subset.uiSettings,
-    analysisState.analysis?.descriptor.computations,
-    computation.computationId,
-    appOverview,
-    visualizationId,
-    plugin,
-    vizPlugin,
+    presetNotebookCells,
   ]);
 
   const updateCell = useCallback(
     (cell: Partial<Omit<NotebookCellType, 'type'>>, cellIndex: number) => {
       const oldCell = notebookSettings.cells[cellIndex];
       const newCell = { ...oldCell, ...cell };
-      console.log('oldCell', oldCell);
-      console.log('newCell', newCell); // good
+      // console.log('oldCell', oldCell);
+      // console.log('newCell', newCell); // good
       const nextCells = notebookSettings.cells.concat();
       nextCells[cellIndex] = newCell;
       const nextSettings = {
