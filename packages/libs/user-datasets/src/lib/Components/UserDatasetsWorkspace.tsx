@@ -19,6 +19,7 @@ interface Props {
   helpTabContents?: ReactNode;
   dataNoun: DataNoun;
   enablePublicUserDatasets: boolean;
+  showExtraMetadata?: boolean; // Used in the upload form
 }
 
 function UserDatasetsWorkspace(props: Props) {
@@ -30,6 +31,7 @@ function UserDatasetsWorkspace(props: Props) {
     helpTabContents,
     dataNoun,
     enablePublicUserDatasets,
+    showExtraMetadata = false,
   } = props;
 
   return (
@@ -92,6 +94,7 @@ function UserDatasetsWorkspace(props: Props) {
                 availableTypes={uploadPageConfig.availableUploadTypes}
                 datasetUploadTypes={uploadPageConfig.uploadTypeConfig}
                 urlParams={props.urlParams}
+                showExtraMetadata={showExtraMetadata}
               />
             )}
             disclaimerProps={{

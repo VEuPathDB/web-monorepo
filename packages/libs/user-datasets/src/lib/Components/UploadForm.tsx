@@ -59,6 +59,7 @@ interface Props<T extends string = string> {
   dispatchUploadProgress: (progress: number | null) => void;
   supportedFileUploadTypes: string[];
   maxSizeBytes?: number;
+  showExtraMetadata?: boolean; // Show/hide the additional metadata fields.
 }
 
 type DataUploadMode = 'file' | 'url' | 'strategy' | 'step';
@@ -130,6 +131,7 @@ function UploadForm({
   dispatchUploadProgress,
   supportedFileUploadTypes,
   maxSizeBytes,
+  showExtraMetadata = false,
 }: Props) {
   const strategyOptionsByStrategyId = useMemo(
     () => keyBy(strategyOptions, (option) => option.strategyId),
@@ -489,287 +491,289 @@ function UploadForm({
             onChange={setDescription}
           />
         </div>
-        <div className={'formSection'}>
-          <details className={cx('--AdditionalDetails')}>
-            <summary>Additional Details</summary>
-            <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-publications">
-              <FieldLabel htmlFor="data-set-publications" required={false}>
-                Publications (Optional)
-              </FieldLabel>
-              {publications.map((publication, index) => {
-                const updatePublicationsObject = createNestedInputUpdater({
-                  nestedInputObject: publications,
-                  index,
-                });
-                return (
-                  <PublicationInput
-                    n={index}
-                    pubMedId={publication.pubMedId}
-                    onAddPubmedId={(value: string) => {
-                      const updatedPublications = updatePublicationsObject(
-                        value,
-                        'pubMedId'
-                      );
-                      setPublications(updatedPublications);
-                    }}
-                    onRemovePublication={(
-                      event: React.MouseEvent<HTMLButtonElement>
-                    ) => {
-                      event.preventDefault();
-                      const updatedPublications = [...publications];
-                      updatedPublications.splice(index, 1);
-                      setPublications(updatedPublications);
-                    }}
-                    citation={publication.citation}
-                    onAddCitation={(value: string) => {
-                      const updatedPublications = updatePublicationsObject(
-                        value,
-                        'citation'
-                      );
-                      setPublications(updatedPublications);
-                    }}
-                  />
-                );
-              })}
-              <FloatingButton
-                text="Add Publication"
-                onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
-                  event.preventDefault();
-                  setPublications((oldPublications) => [
-                    ...oldPublications,
-                    {} as UserDatasetPublication,
-                  ]);
-                }}
-                icon={AddIcon}
-              />
-            </div>
-            <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-hyperlinks">
-              <FieldLabel
-                htmlFor="data-set-publications-hyperlinks"
-                required={false}
-              >
-                Hyperlinks (Optional)
-              </FieldLabel>
-              {hyperlinks.map((hyperlink, index) => {
-                const updateHyperlinksObject = createNestedInputUpdater({
-                  nestedInputObject: hyperlinks,
-                  index,
-                });
-                return (
-                  <HyperlinkInput
-                    n={index}
-                    url={hyperlink.url}
-                    onAddUrl={(value: string) => {
-                      const updatedHyperlinks = updateHyperlinksObject(
-                        value,
-                        'url'
-                      );
-                      setHyperlinks(updatedHyperlinks);
-                    }}
-                    onRemoveHyperlink={(
-                      event: React.MouseEvent<HTMLButtonElement>
-                    ) => {
-                      event.preventDefault();
-                      const updatedHyperlinks = [...hyperlinks];
-                      updatedHyperlinks.splice(index, 1);
-                      setHyperlinks(updatedHyperlinks);
-                    }}
-                    text={hyperlink.text}
-                    onAddText={(value: string) => {
-                      const updatedHyperlinks = updateHyperlinksObject(
-                        value,
-                        'text'
-                      );
-                      setHyperlinks(updatedHyperlinks);
-                    }}
-                    description={hyperlinks[index]?.description}
-                    onAddDescription={(value: string) => {
-                      const updatedHyperlinks = updateHyperlinksObject(
-                        value,
-                        'description'
-                      );
-                      setHyperlinks(updatedHyperlinks);
-                    }}
-                    isPublication={hyperlinks[index]?.isPublication}
-                    onAddIsPublication={(value: boolean) => {
-                      const updatedHyperlinks = updateHyperlinksObject(
-                        value,
-                        'publication'
-                      );
-                      setHyperlinks(updatedHyperlinks);
-                      return;
-                    }}
-                  />
-                );
-              })}
-              <FloatingButton
-                text="Add Hyperlink"
-                onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
-                  event.preventDefault();
-                  setHyperlinks((oldHyperlinks) => [
-                    ...oldHyperlinks,
-                    {} as UserDatasetHyperlink,
-                  ]);
-                }}
-                icon={AddIcon}
-              />
-            </div>
-            <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-organisms">
-              <FieldLabel
-                htmlFor="data-set-publications-organisms"
-                required={false}
-              >
-                Organisms (Optional)
-              </FieldLabel>
-              <div>
-                {organisms.map((organism, index) => {
+        {showExtraMetadata && (
+          <div className={'formSection'}>
+            <details className={cx('--AdditionalDetails')}>
+              <summary>Additional Details</summary>
+              <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-publications">
+                <FieldLabel htmlFor="data-set-publications" required={false}>
+                  Publications (Optional)
+                </FieldLabel>
+                {publications.map((publication, index) => {
+                  const updatePublicationsObject = createNestedInputUpdater({
+                    nestedInputObject: publications,
+                    index,
+                  });
                   return (
-                    <div className={cx('--OrganismInputFields')}>
-                      <FieldLabel required={false} key={index}>
-                        Organism {index + 1}
-                      </FieldLabel>
-                      <TextBox
-                        type="input"
-                        id={`data-set-organisms-${index}`}
-                        placeholder="Organism"
-                        required={false}
-                        value={organism}
-                        onChange={(value) => {
-                          const updatedOrganisms = [...organisms];
-                          updatedOrganisms[index] = value;
-                          setOrganisms(updatedOrganisms);
-                        }}
-                      />
-                      <FloatingButton
-                        text="Remove"
-                        onPress={(
-                          event: React.MouseEvent<HTMLButtonElement>
-                        ) => {
-                          event.preventDefault();
-                          const updatedOrganisms = [...organisms];
-                          updatedOrganisms.splice(index, 1);
-                          setOrganisms(updatedOrganisms);
-                        }}
-                        icon={Trash}
-                      />
-                    </div>
+                    <PublicationInput
+                      n={index}
+                      pubMedId={publication.pubMedId}
+                      onAddPubmedId={(value: string) => {
+                        const updatedPublications = updatePublicationsObject(
+                          value,
+                          'pubMedId'
+                        );
+                        setPublications(updatedPublications);
+                      }}
+                      onRemovePublication={(
+                        event: React.MouseEvent<HTMLButtonElement>
+                      ) => {
+                        event.preventDefault();
+                        const updatedPublications = [...publications];
+                        updatedPublications.splice(index, 1);
+                        setPublications(updatedPublications);
+                      }}
+                      citation={publication.citation}
+                      onAddCitation={(value: string) => {
+                        const updatedPublications = updatePublicationsObject(
+                          value,
+                          'citation'
+                        );
+                        setPublications(updatedPublications);
+                      }}
+                    />
                   );
                 })}
+                <FloatingButton
+                  text="Add Publication"
+                  onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
+                    event.preventDefault();
+                    setPublications((oldPublications) => [
+                      ...oldPublications,
+                      {} as UserDatasetPublication,
+                    ]);
+                  }}
+                  icon={AddIcon}
+                />
               </div>
-              <FloatingButton
-                text="Add Organisms"
-                onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
-                  event.preventDefault();
-                  setOrganisms((oldOrganisms) => [...oldOrganisms, '']);
-                }}
-                icon={AddIcon}
-              />
-            </div>
-            <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-contacts">
-              <FieldLabel
-                htmlFor="data-set-publications-contacts"
-                required={false}
-              >
-                Contacts (Optional)
-              </FieldLabel>
-              {contacts.map((contact, index) => {
-                const updateContactsObject = createNestedInputUpdater({
-                  nestedInputObject: contacts,
-                  index,
-                });
-                return (
-                  <ContactInput
-                    n={index}
-                    name={contact.name}
-                    onAddName={(value: string) => {
-                      const updatedContacts = updateContactsObject(
-                        value,
-                        'name'
-                      );
-                      setContacts(updatedContacts);
-                    }}
-                    email={contact.email}
-                    onAddEmail={(value: string) => {
-                      const updatedContacts = updateContactsObject(
-                        value,
-                        'email'
-                      );
-                      setContacts(updatedContacts);
-                    }}
-                    affiliation={contact.affiliation}
-                    onAddAffiliation={(value: string) => {
-                      const updatedContacts = updateContactsObject(
-                        value,
-                        'affiliation'
-                      );
-                      setContacts(updatedContacts);
-                    }}
-                    city={contact.city}
-                    onAddCity={(value: string) => {
-                      const updatedContacts = updateContactsObject(
-                        value,
-                        'city'
-                      );
-                      setContacts(updatedContacts);
-                    }}
-                    state={contact.state}
-                    onAddState={(value: string) => {
-                      const updatedContacts = updateContactsObject(
-                        value,
-                        'state'
-                      );
-                      setContacts(updatedContacts);
-                    }}
-                    country={contact.country}
-                    onAddCountry={(value: string) => {
-                      const updatedContacts = updateContactsObject(
-                        value,
-                        'country'
-                      );
-                      setContacts(updatedContacts);
-                    }}
-                    address={contact.address}
-                    onAddAddress={(value: string) => {
-                      const updatedContacts = updateContactsObject(
-                        value,
-                        'address'
-                      );
-                      setContacts(updatedContacts);
-                    }}
-                    isPrimary={contact.isPrimary}
-                    onAddIsPrimary={(value: boolean) => {
-                      const updatedContacts = updateContactsObject(
-                        value,
-                        'isPrimary'
-                      );
-                      setContacts(updatedContacts);
-                      return;
-                    }}
-                    onRemoveContact={(
-                      event: React.MouseEvent<HTMLButtonElement>
-                    ) => {
-                      event.preventDefault();
-                      const updatedContacts = [...contacts];
-                      updatedContacts.splice(index, 1);
-                      setContacts(updatedContacts);
-                    }}
-                  />
-                );
-              })}
-              <FloatingButton
-                text="Add Contact"
-                onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
-                  event.preventDefault();
-                  setContacts((contacts) => [
-                    ...contacts,
-                    {} as UserDatasetContact,
-                  ]);
-                }}
-                icon={AddIcon}
-              />
-            </div>
-          </details>
-        </div>
+              <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-hyperlinks">
+                <FieldLabel
+                  htmlFor="data-set-publications-hyperlinks"
+                  required={false}
+                >
+                  Hyperlinks (Optional)
+                </FieldLabel>
+                {hyperlinks.map((hyperlink, index) => {
+                  const updateHyperlinksObject = createNestedInputUpdater({
+                    nestedInputObject: hyperlinks,
+                    index,
+                  });
+                  return (
+                    <HyperlinkInput
+                      n={index}
+                      url={hyperlink.url}
+                      onAddUrl={(value: string) => {
+                        const updatedHyperlinks = updateHyperlinksObject(
+                          value,
+                          'url'
+                        );
+                        setHyperlinks(updatedHyperlinks);
+                      }}
+                      onRemoveHyperlink={(
+                        event: React.MouseEvent<HTMLButtonElement>
+                      ) => {
+                        event.preventDefault();
+                        const updatedHyperlinks = [...hyperlinks];
+                        updatedHyperlinks.splice(index, 1);
+                        setHyperlinks(updatedHyperlinks);
+                      }}
+                      text={hyperlink.text}
+                      onAddText={(value: string) => {
+                        const updatedHyperlinks = updateHyperlinksObject(
+                          value,
+                          'text'
+                        );
+                        setHyperlinks(updatedHyperlinks);
+                      }}
+                      description={hyperlinks[index]?.description}
+                      onAddDescription={(value: string) => {
+                        const updatedHyperlinks = updateHyperlinksObject(
+                          value,
+                          'description'
+                        );
+                        setHyperlinks(updatedHyperlinks);
+                      }}
+                      isPublication={hyperlinks[index]?.isPublication}
+                      onAddIsPublication={(value: boolean) => {
+                        const updatedHyperlinks = updateHyperlinksObject(
+                          value,
+                          'publication'
+                        );
+                        setHyperlinks(updatedHyperlinks);
+                        return;
+                      }}
+                    />
+                  );
+                })}
+                <FloatingButton
+                  text="Add Hyperlink"
+                  onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
+                    event.preventDefault();
+                    setHyperlinks((oldHyperlinks) => [
+                      ...oldHyperlinks,
+                      {} as UserDatasetHyperlink,
+                    ]);
+                  }}
+                  icon={AddIcon}
+                />
+              </div>
+              <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-organisms">
+                <FieldLabel
+                  htmlFor="data-set-publications-organisms"
+                  required={false}
+                >
+                  Organisms (Optional)
+                </FieldLabel>
+                <div>
+                  {organisms.map((organism, index) => {
+                    return (
+                      <div className={cx('--OrganismInputFields')}>
+                        <FieldLabel required={false} key={index}>
+                          Organism {index + 1}
+                        </FieldLabel>
+                        <TextBox
+                          type="input"
+                          id={`data-set-organisms-${index}`}
+                          placeholder="Organism"
+                          required={false}
+                          value={organism}
+                          onChange={(value) => {
+                            const updatedOrganisms = [...organisms];
+                            updatedOrganisms[index] = value;
+                            setOrganisms(updatedOrganisms);
+                          }}
+                        />
+                        <FloatingButton
+                          text="Remove"
+                          onPress={(
+                            event: React.MouseEvent<HTMLButtonElement>
+                          ) => {
+                            event.preventDefault();
+                            const updatedOrganisms = [...organisms];
+                            updatedOrganisms.splice(index, 1);
+                            setOrganisms(updatedOrganisms);
+                          }}
+                          icon={Trash}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+                <FloatingButton
+                  text="Add Organisms"
+                  onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
+                    event.preventDefault();
+                    setOrganisms((oldOrganisms) => [...oldOrganisms, '']);
+                  }}
+                  icon={AddIcon}
+                />
+              </div>
+              <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-contacts">
+                <FieldLabel
+                  htmlFor="data-set-publications-contacts"
+                  required={false}
+                >
+                  Contacts (Optional)
+                </FieldLabel>
+                {contacts.map((contact, index) => {
+                  const updateContactsObject = createNestedInputUpdater({
+                    nestedInputObject: contacts,
+                    index,
+                  });
+                  return (
+                    <ContactInput
+                      n={index}
+                      name={contact.name}
+                      onAddName={(value: string) => {
+                        const updatedContacts = updateContactsObject(
+                          value,
+                          'name'
+                        );
+                        setContacts(updatedContacts);
+                      }}
+                      email={contact.email}
+                      onAddEmail={(value: string) => {
+                        const updatedContacts = updateContactsObject(
+                          value,
+                          'email'
+                        );
+                        setContacts(updatedContacts);
+                      }}
+                      affiliation={contact.affiliation}
+                      onAddAffiliation={(value: string) => {
+                        const updatedContacts = updateContactsObject(
+                          value,
+                          'affiliation'
+                        );
+                        setContacts(updatedContacts);
+                      }}
+                      city={contact.city}
+                      onAddCity={(value: string) => {
+                        const updatedContacts = updateContactsObject(
+                          value,
+                          'city'
+                        );
+                        setContacts(updatedContacts);
+                      }}
+                      state={contact.state}
+                      onAddState={(value: string) => {
+                        const updatedContacts = updateContactsObject(
+                          value,
+                          'state'
+                        );
+                        setContacts(updatedContacts);
+                      }}
+                      country={contact.country}
+                      onAddCountry={(value: string) => {
+                        const updatedContacts = updateContactsObject(
+                          value,
+                          'country'
+                        );
+                        setContacts(updatedContacts);
+                      }}
+                      address={contact.address}
+                      onAddAddress={(value: string) => {
+                        const updatedContacts = updateContactsObject(
+                          value,
+                          'address'
+                        );
+                        setContacts(updatedContacts);
+                      }}
+                      isPrimary={contact.isPrimary}
+                      onAddIsPrimary={(value: boolean) => {
+                        const updatedContacts = updateContactsObject(
+                          value,
+                          'isPrimary'
+                        );
+                        setContacts(updatedContacts);
+                        return;
+                      }}
+                      onRemoveContact={(
+                        event: React.MouseEvent<HTMLButtonElement>
+                      ) => {
+                        event.preventDefault();
+                        const updatedContacts = [...contacts];
+                        updatedContacts.splice(index, 1);
+                        setContacts(updatedContacts);
+                      }}
+                    />
+                  );
+                })}
+                <FloatingButton
+                  text="Add Contact"
+                  onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
+                    event.preventDefault();
+                    setContacts((contacts) => [
+                      ...contacts,
+                      {} as UserDatasetContact,
+                    ]);
+                  }}
+                  icon={AddIcon}
+                />
+              </div>
+            </details>
+          </div>
+        )}
         {datasetUploadType.formConfig.dependencies && (
           <div className="formSection formSection--data-set-dependencies">
             <FieldLabel
@@ -981,7 +985,7 @@ interface PublicationInputProps {
   citation?: string;
 }
 
-function PublicationInput(props: PublicationInputProps): JSX.Element {
+export function PublicationInput(props: PublicationInputProps): JSX.Element {
   const {
     n,
     pubMedId = '',

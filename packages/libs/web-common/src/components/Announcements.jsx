@@ -64,7 +64,7 @@ const siteAnnouncements = [
       }
     },
   },
-
+  /*
   {
     id: 'ortho-live',
     renderDisplay: (props) => {
@@ -96,7 +96,9 @@ const siteAnnouncements = [
         );
     },
   },
+*/
 
+  /*
   {
     id: 'ortho-beta',
     renderDisplay: (props) => {
@@ -142,7 +144,7 @@ const siteAnnouncements = [
         );
     },
   },
-
+*/
   /*
 {   
     id: 'mbio-beta',

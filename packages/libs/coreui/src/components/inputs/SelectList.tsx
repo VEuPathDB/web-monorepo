@@ -17,6 +17,8 @@ export interface SelectListProps<T extends string>
    *  with latest selection.
    */
   instantUpdate?: boolean;
+  /** Optional. When true, popover closing will be deferred until this becomes false */
+  deferPopoverClosing?: boolean;
 }
 
 export default function SelectList<T extends string>({
@@ -30,6 +32,7 @@ export default function SelectList<T extends string>({
   isDisabled = false,
   isLoading = false,
   instantUpdate = false,
+  deferPopoverClosing = false,
   ...props
 }: SelectListProps<T>) {
   const [selected, setSelected] = useState<SelectListProps<T>['value']>(value);
@@ -37,12 +40,12 @@ export default function SelectList<T extends string>({
     getDisplayContent(value, items, defaultButtonDisplayContent)
   );
 
-  const onClose = () => {
-    onChange(selected);
+  const onClose = useCallback(() => {
+    if (!instantUpdate) onChange(selected);
     setButtonDisplayContent(
       getDisplayContent(selected, items, defaultButtonDisplayContent)
     );
-  };
+  }, [instantUpdate, selected, items, defaultButtonDisplayContent, onChange]);
 
   /**
    * Keep caller up to date with any selection changes, if required by `instantUpdate`
@@ -54,7 +57,7 @@ export default function SelectList<T extends string>({
         onChange(newSelection);
       }
     },
-    [instantUpdate, setSelected, onChange]
+    [instantUpdate, onChange]
   );
 
   /**
@@ -87,6 +90,7 @@ export default function SelectList<T extends string>({
       buttonDisplayContent={buttonLabel}
       onClose={onClose}
       isDisabled={isDisabled}
+      deferClosing={deferPopoverClosing}
     >
       <div
         css={{

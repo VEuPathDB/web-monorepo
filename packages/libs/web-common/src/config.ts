@@ -37,6 +37,8 @@ export const {
   showUnreleasedData = false,
   vdiServiceUrl = '',
   userDatasetsUploadTypes = '',
+  communityDatasetsEnabled = false,
+  showExtraMetadata = false,
 } = window.__SITE_CONFIG__;
 
 export const edaExampleAnalysesAuthors = !window.__SITE_CONFIG__
