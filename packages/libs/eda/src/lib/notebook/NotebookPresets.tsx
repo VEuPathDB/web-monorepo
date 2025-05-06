@@ -90,31 +90,33 @@ export const wgcnaCorrelationNotebook: PresetNotebook = {
   skeleton: [
     {
       type: 'compute',
-      title: 'WGCNA Compute Cell',
+      title: 'WGCNA Correlation',
       computationName: 'correlation',
       plugin: correlation,
+      subCells: [
+        {
+          type: 'text',
+          title: 'Readme',
+          text: 'This is a sub text cell for the WGCNA correlation notebook.',
+        },
+        {
+          type: 'visualization',
+          title: 'Correlation Plot',
+          visualizationName: 'bipartiteNetwork',
+          computationName: 'correlation',
+        },
+        // {
+        //   type: 'visualization',
+        //   title: 'Correlation plot 2',
+        //   visualizationName: 'bipartiteNetwork',
+        //   computationName: 'correlation',
+        // },
+      ],
     },
-    {
-      type: 'visualization',
-      title: 'Correlation Plot',
-      visualizationName: 'bipartiteNetwork',
-      computationName: 'correlation',
-    },
-    // {
-    //   type: 'visualization',
-    //   title: 'Correlation plot 2',
-    //   visualizationName: 'bipartiteNetwork',
-    //   computationName: 'correlation',
-    // },
     {
       type: 'text',
-      title: 'Sub Text Cell',
-      text: 'This is a sub text cell for the WGCNA correlation notebook.',
-    },
-    {
-      type: 'text',
-      title: 'Text Cell',
-      text: 'This is a text cell for the WGCNA correlation notebook.',
+      title: 'Extra help',
+      text: 'Some more text for the WGCNA correlation notebook.',
     },
   ],
 };

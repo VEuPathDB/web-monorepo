@@ -5,7 +5,7 @@ import { NotebookCellComponentProps } from './Types';
 import { H6 } from '@veupathdb/coreui/lib/components/typography/headers';
 
 export function TextNotebookCell(props: NotebookCellComponentProps<'text'>) {
-  const { analysisState, cell, updateCell } = props;
+  const { analysisState, cell, updateCell, isSubCell } = props;
   const { text } = cell;
   const entity = useStudyEntities()[0];
   const totalCountsResult = useEntityCounts();
@@ -13,16 +13,19 @@ export function TextNotebookCell(props: NotebookCellComponentProps<'text'>) {
     analysisState.analysis?.descriptor.subset.descriptor
   );
   return (
-    <div>
-      <H6>I'm the title</H6>
-      <p>This is my text:</p>
-      {text}
-      <p>
-        Total Counts Result:{' '}
-        {totalCountsResult.value
-          ? JSON.stringify(totalCountsResult.value)
-          : 'No data available'}{' '}
-      </p>
-    </div>
+    <details className={isSubCell ? 'subCell' : ''}>
+      <summary>{cell.title}</summary>
+      <div>
+        <H6>I'm the title</H6>
+        <p>This is my text:</p>
+        {text}
+        <p>
+          Total Counts Result:{' '}
+          {totalCountsResult.value
+            ? JSON.stringify(totalCountsResult.value)
+            : 'No data available'}{' '}
+        </p>
+      </div>
+    </details>
   );
 }

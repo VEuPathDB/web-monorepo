@@ -11,7 +11,7 @@ import { Computation } from '../core/types/visualization';
 export function VisualizationNotebookCell(
   props: NotebookCellComponentProps<'visualization'>
 ) {
-  const { analysisState, cell, updateCell } = props;
+  const { analysisState, cell, updateCell, isSubCell } = props;
   const { analysis } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
   const { updateVisualization } = analysisState;
@@ -79,33 +79,36 @@ export function VisualizationNotebookCell(
   const dataElementDependencyOrder = vizOverview?.dataElementDependencyOrder;
 
   return (
-    <div>
-      <h2>Plot here.</h2>
-      {/* <plugin.fullscreenComponent /> */}
-      {computation && (
-        <plugin.fullscreenComponent
-          options={plugin.options}
-          dataElementConstraints={constraints}
-          dataElementDependencyOrder={dataElementDependencyOrder}
-          visualization={viz}
-          computation={computation}
-          copmutationAppOverview={computationAppOverview}
-          filters={[]} // to be implemented
-          starredVariables={[]} // to be implemented
-          toggleStarredVariable={() => {}}
-          updateConfiguration={updateConfiguration}
-          // updateThumbnail={
-          //   disableThumbnailCreation ? undefined : updateThumbnail
-          // }
-          totalCounts={totalCountsResult}
-          filteredCounts={filteredCountsResult}
-          geoConfigs={geoConfigs}
-          otherVizOverviews={[]} // to be implemented
-          computeJobStatus={jobStatus}
-          hideInputsAndControls={false}
-          // plotContainerStyleOverrides={plotContainerStyleOverrides}
-        />
-      )}
-    </div>
+    <details className={isSubCell ? 'subCell' : ''}>
+      <summary>{cell.title}</summary>
+      <div>
+        <h2>Plot here.</h2>
+        {/* <plugin.fullscreenComponent /> */}
+        {computation && (
+          <plugin.fullscreenComponent
+            options={plugin.options}
+            dataElementConstraints={constraints}
+            dataElementDependencyOrder={dataElementDependencyOrder}
+            visualization={viz}
+            computation={computation}
+            copmutationAppOverview={computationAppOverview}
+            filters={[]} // to be implemented
+            starredVariables={[]} // to be implemented
+            toggleStarredVariable={() => {}}
+            updateConfiguration={updateConfiguration}
+            // updateThumbnail={
+            //   disableThumbnailCreation ? undefined : updateThumbnail
+            // }
+            totalCounts={totalCountsResult}
+            filteredCounts={filteredCountsResult}
+            geoConfigs={geoConfigs}
+            otherVizOverviews={[]} // to be implemented
+            computeJobStatus={jobStatus}
+            hideInputsAndControls={false}
+            // plotContainerStyleOverrides={plotContainerStyleOverrides}
+          />
+        )}
+      </div>
+    </details>
   );
 }

@@ -9,13 +9,14 @@ interface Props {
   analysisState: AnalysisState;
   cell: NotebookCellType;
   updateCell: (cell: Partial<Omit<NotebookCellType, 'type'>>) => void;
+  isSubCell?: boolean; // Indicates if this cell is a sub-cell of another cell. Affects styling.
 }
 
 /**
  * Top-level component that delegates to imeplementations of NotebookCell variants.
  */
 export function NotebookCell(props: Props) {
-  const { cell, analysisState, updateCell } = props;
+  const { cell, analysisState, updateCell, isSubCell } = props;
   switch (cell.type) {
     case 'subset':
       return (
@@ -23,6 +24,7 @@ export function NotebookCell(props: Props) {
           cell={cell}
           analysisState={analysisState}
           updateCell={updateCell}
+          isSubCell={isSubCell ?? false}
         />
       );
     case 'text':
@@ -31,6 +33,7 @@ export function NotebookCell(props: Props) {
           cell={cell}
           analysisState={analysisState}
           updateCell={updateCell}
+          isSubCell={isSubCell ?? false}
         />
       );
     case 'visualization':
@@ -39,6 +42,7 @@ export function NotebookCell(props: Props) {
           cell={cell}
           analysisState={analysisState}
           updateCell={updateCell}
+          isSubCell={isSubCell ?? false}
         />
       );
     case 'compute':
@@ -47,6 +51,7 @@ export function NotebookCell(props: Props) {
           cell={cell}
           analysisState={analysisState}
           updateCell={updateCell}
+          isSubCell={isSubCell ?? false}
         />
       );
     default:

@@ -53,6 +53,12 @@ import { useStudyMetadata } from '../core/hooks/study';
 import { Note } from '@material-ui/icons';
 import { composeTraversal } from 'monocle-ts/lib/Traversal';
 import { ANALYSIS_MENU_STATE } from '@veupathdb/wdk-client/lib/StoreModules/StepAnalysis/StepAnalysisState';
+import {
+  Computation,
+  ComputationAppOverview,
+} from '../core/types/visualization';
+import { ComputationPlugin } from '../core/components/computations/Types';
+import { VisualizationPlugin } from '../core/components/visualizations/VisualizationPlugin';
 
 interface NotebookSettings {
   /** Ordered array of notebook cells */
@@ -138,82 +144,18 @@ export function EdaNotebookAnalysis(props: Props) {
     analysisState.setComputations([computation]);
   }, [analysisState, computation]);
 
-  // A skeleton has to start up everything from scratch. Can assume there are no preexisting computations
-  // or visualizations.
-  const notebookSkeletonToCell = function (
-    cellDescriptor: NotebookCellDescriptorBase<string>
-  ): NotebookCellType {
-    if (cellDescriptor.type === 'compute') {
-      // Create computation
-      // to do
-      return {
-        ...cellDescriptor,
-        computeId: computation.computationId,
-        computationAppOverview: appOverview,
-        plugin: plugin,
-        subcells: cellDescriptor.subCells?.map((subCell) =>
-          notebookSkeletonToCell(subCell)
-        ),
-      } as ComputeNotebookCell;
-    } else if (cellDescriptor.type === 'visualization') {
-      // const visualizationId = useMemo(() => {
-      //   return uuid();
-      // }, []);
-      const visualizationId = 'abcde';
-
-      // const vizName = cell.visualizationName;
-      const vizName = 'bipartitenetwork';
-      const vizPlugin = plugin && plugin.visualizationPlugins[vizName];
-      // Add to analysis state ONLY if it doesn't exist
-      const existingVisualization =
-        analysisState.analysis?.descriptor.computations
-          .find((comp) => comp.computationId === computation.computationId)
-          ?.visualizations.find(
-            (viz) => viz.visualizationId === visualizationId
-          );
-
-      console.log('existingVisualization', existingVisualization);
-      if (existingVisualization == null) {
-        const newVisualization = {
-          visualizationId,
-          displayName: 'Unnamed visualization',
-          descriptor: {
-            type: vizName,
-            configuration: vizPlugin?.createDefaultConfig() ?? {},
-          },
-        };
-
-        console.log('adding new viz');
-
-        analysisState.addVisualization(
-          computation.computationId,
-          newVisualization
-        );
-      }
-
-      return existingVisualization
-        ? ({
-            ...cellDescriptor,
-            visualizationId: visualizationId,
-            computeId: computation.computationId,
-            computationAppOverview: appOverview,
-            plugin: vizPlugin,
-          } as VisualizationNotebookCell)
-        : ({
-            title: 'Loading visualization...',
-            type: 'text',
-          } as TextNotebookCell);
-    } else {
-      return cellDescriptor as NotebookCellType;
-    }
-  };
-
   const presetNotebookCells = useMemo(() => {
     return (
       appOverview &&
       plugin &&
       NOTEBOOK_PRESET_TEST.skeleton.map((cellDescriptor) => {
-        return notebookSkeletonToCell(cellDescriptor);
+        return notebookSkeletonToCell(
+          cellDescriptor,
+          analysisState,
+          computation,
+          appOverview,
+          plugin
+        );
       })
     );
   }, [appOverview, computation, plugin, analysisState]);
@@ -285,16 +227,103 @@ export function EdaNotebookAnalysis(props: Props) {
           <h2>{safeHtml(studyRecord.displayName)}</h2>
         </div>
         {notebookSettings.cells.map((cell, index) => (
-          <details>
-            <summary>{cell.title}</summary>
-            <NotebookCell
-              analysisState={analysisState}
-              cell={cell}
-              updateCell={(update) => updateCell(update, index)}
-            />
-          </details>
+          // <details>
+          //   <summary>{cell.title}</summary>
+          <NotebookCell
+            analysisState={analysisState}
+            cell={cell}
+            updateCell={(update) => updateCell(update, index)}
+          />
+          // </details>
         ))}
       </div>
     </div>
   );
 }
+
+// A skeleton has to start up everything from scratch. Can assume there are no preexisting computations
+// or visualizations.
+const notebookSkeletonToCell = function (
+  cellDescriptor: NotebookCellDescriptorBase<string>,
+  analysisState: AnalysisState,
+  computation?: Computation,
+  appOverview?: ComputationAppOverview,
+  appPlugin?: ComputationPlugin
+): NotebookCellType {
+  if (
+    cellDescriptor.type === 'compute' &&
+    computation &&
+    appOverview &&
+    appPlugin
+  ) {
+    // Create computation
+    // to do
+    return {
+      ...cellDescriptor,
+      computeId: computation.computationId,
+      computationAppOverview: appOverview,
+      plugin: appPlugin,
+      subCells: cellDescriptor.subCells?.map((subCell) =>
+        notebookSkeletonToCell(
+          subCell,
+          analysisState,
+          computation,
+          appOverview,
+          appPlugin
+        )
+      ),
+    } as ComputeNotebookCell;
+  } else if (
+    cellDescriptor.type === 'visualization' &&
+    computation &&
+    appOverview
+  ) {
+    // const visualizationId = useMemo(() => {
+    //   return uuid();
+    // }, []);
+    const visualizationId = 'abcde';
+
+    // const vizName = cell.visualizationName;
+    const vizName = 'bipartitenetwork';
+    const vizPlugin = appPlugin && appPlugin.visualizationPlugins[vizName];
+    // Add to analysis state ONLY if it doesn't exist
+    const existingVisualization =
+      analysisState.analysis?.descriptor.computations
+        .find((comp) => comp.computationId === computation.computationId)
+        ?.visualizations.find((viz) => viz.visualizationId === visualizationId);
+
+    console.log('existingVisualization', existingVisualization);
+    if (existingVisualization == null) {
+      const newVisualization = {
+        visualizationId,
+        displayName: 'Unnamed visualization',
+        descriptor: {
+          type: vizName,
+          configuration: vizPlugin?.createDefaultConfig() ?? {},
+        },
+      };
+
+      console.log('adding new viz');
+
+      analysisState.addVisualization(
+        computation.computationId,
+        newVisualization
+      );
+    }
+
+    return existingVisualization
+      ? ({
+          ...cellDescriptor,
+          visualizationId: visualizationId,
+          computeId: computation.computationId,
+          computationAppOverview: appOverview,
+          plugin: vizPlugin,
+        } as VisualizationNotebookCell)
+      : ({
+          title: 'Loading visualization...',
+          type: 'text',
+        } as TextNotebookCell);
+  } else {
+    return cellDescriptor as NotebookCellType;
+  }
+};

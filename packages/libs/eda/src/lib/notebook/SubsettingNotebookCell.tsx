@@ -9,7 +9,7 @@ import Subsetting from '../workspace/Subsetting';
 export function SubsettingNotebookCell(
   props: NotebookCellComponentProps<'subset'>
 ) {
-  const { analysisState, cell, updateCell } = props;
+  const { analysisState, cell, updateCell, isSubCell } = props;
   const { selectedVariable } = cell;
   const entities = useStudyEntities();
   const totalCountsResult = useEntityCounts();
@@ -27,7 +27,8 @@ export function SubsettingNotebookCell(
     [updateCell]
   );
   return (
-    <div>
+    <details className={isSubCell ? 'subCell' : ''}>
+      <summary>{cell.title}</summary>
       <div>
         <FilterChipList
           filters={analysisState.analysis?.descriptor.subset.descriptor}
@@ -54,6 +55,6 @@ export function SubsettingNotebookCell(
         filteredCounts={filteredCountsResult.value}
         variableLinkConfig={variableLinkConfig}
       />
-    </div>
+    </details>
   );
 }

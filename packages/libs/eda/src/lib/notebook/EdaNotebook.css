@@ -50,6 +50,7 @@
       }
     }
 
+    /* Notebook cell styling */
     > details {
       border: 1px solid;
       border-color: color-mix(
@@ -104,6 +105,9 @@
       > div {
         padding: 1em;
       }
+    }
+    > details.subCell {
+      margin-left: 2em;
     }
   }
 

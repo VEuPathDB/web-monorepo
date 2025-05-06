@@ -5,16 +5,17 @@ import { NotebookCellComponentProps } from './Types';
 import { isEqual } from 'lodash';
 import { RunComputeButton } from '../core/components/computations/RunComputeButton';
 import { useComputeJobStatus } from '../core/components/computations/ComputeJobStatusHook';
+import { NotebookCell } from './NotebookCell';
 
 export function ComputeNotebookCell(
   props: NotebookCellComponentProps<'compute'>
 ) {
-  const { analysisState, cell, updateCell } = props;
+  const { analysisState, cell, updateCell, isSubCell } = props;
   const { analysis } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
   // Eventually this cell should get the plugin list and use the name
   // from the analysis state computation id to get the plugin and the computationAppOverview
-  const { computeId, computationAppOverview, plugin } = cell;
+  const { computeId, computationAppOverview, plugin, subCells } = cell;
   const computation = analysis.descriptor.computations.find(
     (comp) => comp.computationId === computeId
   );
@@ -67,25 +68,47 @@ export function ComputeNotebookCell(
   );
 
   return computation ? (
-    <div>
-      <plugin.configurationComponent
-        analysisState={analysisState}
-        computation={computation}
-        totalCounts={totalCountsResult}
-        filteredCounts={filteredCountsResult}
-        visualizationId="1"
-        addNewComputation={(name, configuration) => console.log('hi')}
-        computationAppOverview={computationAppOverview}
-        geoConfigs={[]}
-        changeConfigHandlerOverride={changeConfigHandler}
-      />
-      <RunComputeButton
-        computationAppOverview={computationAppOverview}
-        status={jobStatus}
-        isConfigured={isComputationConfigurationValid}
-        createJob={createJob}
-      />
-    </div>
+    <>
+      <details className={isSubCell ? 'subCell' : ''}>
+        <summary>{cell.title}</summary>
+        <div>
+          <plugin.configurationComponent
+            analysisState={analysisState}
+            computation={computation}
+            totalCounts={totalCountsResult}
+            filteredCounts={filteredCountsResult}
+            visualizationId="1"
+            addNewComputation={(name, configuration) => console.log('hi')}
+            computationAppOverview={computationAppOverview}
+            geoConfigs={[]}
+            changeConfigHandlerOverride={changeConfigHandler}
+          />
+          <RunComputeButton
+            computationAppOverview={computationAppOverview}
+            status={jobStatus}
+            isConfigured={isComputationConfigurationValid}
+            createJob={createJob}
+          />
+        </div>
+      </details>
+      {subCells &&
+        subCells.map((subCell) => {
+          // Append extra title
+          const subTitle = subCell.title + ' - ' + cell.title;
+          const subCellWithTitle = {
+            ...subCell,
+            title: subTitle,
+          };
+          return (
+            <NotebookCell
+              analysisState={analysisState}
+              cell={subCellWithTitle}
+              updateCell={(update) => updateCell(update)}
+              isSubCell={true}
+            />
+          );
+        })}
+    </>
   ) : (
     <div>
       <p>"Loading"</p>
