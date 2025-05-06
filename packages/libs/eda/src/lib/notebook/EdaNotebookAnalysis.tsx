@@ -100,32 +100,13 @@ export function EdaNotebookAnalysis(props: Props) {
   const { analysis } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
 
-  // Who should care about this? The cell or the analysis?
-  // Probably the cell. Can the cell call another cell then? Because
-  // if the compute cell finishes, only its linked viz cells should care.
-  // Or maybe they don't have to and they just ask hey is there data ready
-  // and they don't even know where it comes from.
-  // But the viz cell needs the computation config... that part is tricky.
-  // If we continue on our one compute per notebook assumption, this is all
-  // far easier and we can leave it here.
-  // const { jobStatus, createJob } = useComputeJobStatus(
-  //   analysis,
-  //   computation,
-  //   appOverview?.computeName ?? ''
-  // );
   //@ts-ignore
   const compNameTemp = NOTEBOOK_PRESET_TEST.skeleton[0].computationName;
   console.log('compNameTemp', compNameTemp);
 
+  //
   const appOverview =
     apps && apps.value?.apps.find((app) => app.name === compNameTemp);
-  console.log('apps', apps);
-  console.log('appOverview', appOverview);
-
-  const plugin = plugins[compNameTemp];
-
-  if (appOverview && plugin == null)
-    throw new Error('Cannot find plugin for computation.');
 
   const computation = useMemo(() => {
     return createComputation(compNameTemp, {}, [], []);
@@ -147,20 +128,16 @@ export function EdaNotebookAnalysis(props: Props) {
   const presetNotebookCells = useMemo(() => {
     return (
       appOverview &&
-      plugin &&
       NOTEBOOK_PRESET_TEST.skeleton.map((cellDescriptor) => {
         return notebookSkeletonToCell(
           cellDescriptor,
           analysisState,
           computation,
-          appOverview,
-          plugin
+          appOverview
         );
       })
     );
-  }, [appOverview, computation, plugin, analysisState]);
-  console.log('presetNotebookCells', presetNotebookCells);
-  console.log('analysisState', analysisState.analysis?.descriptor.computations);
+  }, [appOverview, computation, analysisState]);
 
   const notebookSettings = useMemo((): NotebookSettings => {
     const storedSettings =
@@ -244,30 +221,17 @@ const notebookSkeletonToCell = function (
   cellDescriptor: NotebookCellDescriptorBase<string>,
   analysisState: AnalysisState,
   computation?: Computation,
-  appOverview?: ComputationAppOverview,
-  appPlugin?: ComputationPlugin
+  appOverview?: ComputationAppOverview
 ): NotebookCellType {
-  if (
-    cellDescriptor.type === 'compute' &&
-    computation &&
-    appOverview &&
-    appPlugin
-  ) {
+  if (cellDescriptor.type === 'compute' && computation && appOverview) {
     // Create computation
     // to do
     return {
       ...cellDescriptor,
       computeId: computation.computationId,
       computationAppOverview: appOverview,
-      plugin: appPlugin,
       subCells: cellDescriptor.subCells?.map((subCell) =>
-        notebookSkeletonToCell(
-          subCell,
-          analysisState,
-          computation,
-          appOverview,
-          appPlugin
-        )
+        notebookSkeletonToCell(subCell, analysisState, computation, appOverview)
       ),
     } as ComputeNotebookCell;
   } else if (
@@ -282,6 +246,7 @@ const notebookSkeletonToCell = function (
 
     // const vizName = cell.visualizationName;
     const vizName = 'bipartitenetwork';
+    const appPlugin = plugins[computation.descriptor.type];
     const vizPlugin = appPlugin && appPlugin.visualizationPlugins[vizName];
     // Add to analysis state ONLY if it doesn't exist
     const existingVisualization =

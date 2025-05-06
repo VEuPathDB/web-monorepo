@@ -18,14 +18,12 @@ export interface ComputeNotebookCell extends NotebookCellBase<'compute'> {
   computeId: string;
   computationAppOverview: ComputationAppOverview;
   createJob?: () => void;
-  plugin: ComputationPlugin; // perhaps we can use the computeId to look through a list of plugins and find the right one?
   subCells?: NotebookCell[]; // Sub-cells that are part of the compute cell, e.g., visualizations or text cells.
 }
 
 export interface VisualizationNotebookCell
   extends NotebookCellBase<'visualization'> {
   visualizationId: string;
-  plugin: VisualizationPlugin;
   computeId: string; // Used to link the visualization to a specific compute cell.
   computationAppOverview: ComputationAppOverview;
 }

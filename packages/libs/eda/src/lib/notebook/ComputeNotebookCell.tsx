@@ -10,6 +10,8 @@ import {
 import { useComputeJobStatus } from '../core/components/computations/ComputeJobStatusHook';
 import { NotebookCell } from './NotebookCell';
 import { gray } from '@veupathdb/coreui/lib/definitions/colors';
+import { plugins } from '../core/components/computations/plugins';
+import { ComputationPlugin } from '../core/components/computations/Types';
 
 export function ComputeNotebookCell(
   props: NotebookCellComponentProps<'compute'>
@@ -19,7 +21,7 @@ export function ComputeNotebookCell(
   if (analysis == null) throw new Error('Cannot find analysis.');
   // Eventually this cell should get the plugin list and use the name
   // from the analysis state computation id to get the plugin and the computationAppOverview
-  const { computeId, computationAppOverview, plugin, subCells } = cell;
+  const { computeId, computationAppOverview, subCells } = cell;
   const computation = analysis.descriptor.computations.find(
     (comp) => comp.computationId === computeId
   );
@@ -30,6 +32,9 @@ export function ComputeNotebookCell(
   const filteredCountsResult = useEntityCounts(
     analysis.descriptor.subset.descriptor
   );
+  console.log(computation.descriptor.type);
+  const plugin = plugins[computation.descriptor.type];
+  if (plugin == null) throw new Error('Computation plugin not found.');
 
   const changeConfigHandler = (propertyName: string, value?: any) => {
     if (!computation) return;

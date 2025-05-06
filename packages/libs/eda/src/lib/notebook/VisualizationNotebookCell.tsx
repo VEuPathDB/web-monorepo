@@ -7,6 +7,7 @@ import { DifferentialAbundanceConfig } from '../core/components/computations/plu
 import { useGeoConfig } from '../core/hooks/geoConfig';
 import { useComputeJobStatus } from '../core/components/computations/ComputeJobStatusHook';
 import { Computation } from '../core/types/visualization';
+import { plugins } from '../core/components/computations/plugins';
 
 export function VisualizationNotebookCell(
   props: NotebookCellComponentProps<'visualization'>
@@ -25,7 +26,7 @@ export function VisualizationNotebookCell(
 
   // Eventually this cell should get the plugin list and use the name
   // from the analysis state computation id to get the plugin and the computationAppOverview
-  const { visualizationId, computeId, plugin, computationAppOverview } = cell;
+  const { visualizationId, computeId, computationAppOverview } = cell;
 
   // use computeId to find the computation in the analysis state
   console.log('computeId', computeId);
@@ -78,15 +79,17 @@ export function VisualizationNotebookCell(
   const constraints = vizOverview?.dataElementConstraints;
   const dataElementDependencyOrder = vizOverview?.dataElementDependencyOrder;
 
+  const appPlugin = plugins[computation.descriptor.type];
+  const vizPlugin =
+    appPlugin && appPlugin.visualizationPlugins[viz.descriptor.type];
+
   return (
     <details className={isSubCell ? 'subCell' : ''}>
       <summary>{cell.title}</summary>
       <div>
-        <h2>Plot here.</h2>
-        {/* <plugin.fullscreenComponent /> */}
-        {computation && (
-          <plugin.fullscreenComponent
-            options={plugin.options}
+        {computation && vizPlugin && (
+          <vizPlugin.fullscreenComponent
+            options={vizPlugin.options}
             dataElementConstraints={constraints}
             dataElementDependencyOrder={dataElementDependencyOrder}
             visualization={viz}

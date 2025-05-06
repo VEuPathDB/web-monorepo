@@ -22,7 +22,6 @@ interface VisualizationCellDescriptor
 }
 
 interface ComputeCellDescriptor extends NotebookCellDescriptorBase<'compute'> {
-  plugin: ComputationPlugin;
   computationName: string;
 }
 
@@ -51,7 +50,6 @@ export const differentialAbundanceNotebook: PresetNotebook = {
       type: 'compute',
       title: 'diff abund title',
       computationName: 'differentialabundance',
-      plugin: differentialabundance,
     },
     {
       type: 'visualization',
@@ -84,7 +82,6 @@ export const wgcnaCorrelationNotebook: PresetNotebook = {
       type: 'compute',
       title: 'WGCNA Correlation',
       computationName: 'correlation',
-      plugin: correlation,
       subCells: [
         {
           type: 'text',
