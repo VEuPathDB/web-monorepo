@@ -1,3 +1,4 @@
+import React from 'react';
 import { ComputationPlugin } from '../core/components/computations/Types';
 import { VisualizationPlugin } from '../core/components/visualizations/VisualizationPlugin';
 import { AnalysisState } from '../core/hooks/analysis';
@@ -6,7 +7,7 @@ import { ComputationAppOverview } from '../core/types/visualization';
 
 export interface NotebookCellBase<T extends string> {
   type: T;
-  title: string;
+  title: string | React.ReactNode; // Title of the cell, can be a string or a React node for more complex titles.
 }
 
 export interface SubsettingNotebookCell extends NotebookCellBase<'subset'> {

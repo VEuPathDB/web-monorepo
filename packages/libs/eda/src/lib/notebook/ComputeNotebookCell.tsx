@@ -3,9 +3,13 @@ import { useEntityCounts } from '../core/hooks/entityCounts';
 import { useStudyEntities } from '../core/hooks/workspace';
 import { NotebookCellComponentProps } from './Types';
 import { isEqual } from 'lodash';
-import { RunComputeButton } from '../core/components/computations/RunComputeButton';
+import {
+  RunComputeButton,
+  StatusIcon,
+} from '../core/components/computations/RunComputeButton';
 import { useComputeJobStatus } from '../core/components/computations/ComputeJobStatusHook';
 import { NotebookCell } from './NotebookCell';
+import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 
 export function ComputeNotebookCell(
   props: NotebookCellComponentProps<'compute'>
@@ -93,8 +97,24 @@ export function ComputeNotebookCell(
       </details>
       {subCells &&
         subCells.map((subCell) => {
-          // Append extra title
-          const subTitle = subCell.title + ' - ' + cell.title;
+          // Add extra flair for subCell titles
+          const subTitle = (
+            <div
+              style={{
+                display: 'inline-flex',
+                gap: '0.5em',
+                fontWeight: 'bold',
+              }}
+            >
+              <span>{subCell.title}</span>
+              <span
+                style={{ color: gray[600], fontWeight: 400, marginLeft: '1em' }}
+              >
+                {cell.title}
+              </span>
+              {jobStatus && <StatusIcon status={jobStatus} showLabel={false} />}
+            </div>
+          );
           const subCellWithTitle = {
             ...subCell,
             title: subTitle,

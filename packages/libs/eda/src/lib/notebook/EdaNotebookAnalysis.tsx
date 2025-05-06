@@ -227,14 +227,11 @@ export function EdaNotebookAnalysis(props: Props) {
           <h2>{safeHtml(studyRecord.displayName)}</h2>
         </div>
         {notebookSettings.cells.map((cell, index) => (
-          // <details>
-          //   <summary>{cell.title}</summary>
           <NotebookCell
             analysisState={analysisState}
             cell={cell}
             updateCell={(update) => updateCell(update, index)}
           />
-          // </details>
         ))}
       </div>
     </div>

@@ -5,14 +5,6 @@ import { plugin as differentialabundance } from '../core/components/computations
 import { plugin as correlation } from '../core/components/computations/plugins/correlation';
 import { NotebookCell } from './Types';
 
-// export type NotebookCellDescriptor = {
-//   title: string;
-//   subCells?: (
-//     | VisualizationCellDescriptor
-//     | ComputeCellDescriptor
-//     | TextCellDescriptor
-//   )[];
-// };
 export interface NotebookCellDescriptorBase<T extends string> {
   type: T;
   title: string;
