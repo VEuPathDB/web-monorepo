@@ -12,7 +12,7 @@ import { plugins } from '../core/components/computations/plugins';
 export function VisualizationNotebookCell(
   props: NotebookCellComponentProps<'visualization'>
 ) {
-  const { analysisState, cell, updateCell, isSubCell } = props;
+  const { analysisState, cell, updateCell, isSubCell, isDisabled } = props;
   const { analysis } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
   const { updateVisualization } = analysisState;
@@ -43,8 +43,6 @@ export function VisualizationNotebookCell(
     computationAppOverview?.computeName ?? ''
   );
 
-  // SOON Get the configuration and ask if the job is done
-  // const computeConfig = computation.descriptor.configuration;
   const viz = computation.visualizations.find(
     (v) => v.visualizationId === visualizationId
   );
@@ -84,9 +82,9 @@ export function VisualizationNotebookCell(
     appPlugin && appPlugin.visualizationPlugins[viz.descriptor.type];
 
   return (
-    <details className={isSubCell ? 'subCell' : ''}>
+    <details className={isSubCell ? 'subCell' : ''} open>
       <summary>{cell.title}</summary>
-      <div>
+      <div className={isDisabled ? 'disabled' : ''}>
         {computation && vizPlugin && (
           <vizPlugin.fullscreenComponent
             options={vizPlugin.options}

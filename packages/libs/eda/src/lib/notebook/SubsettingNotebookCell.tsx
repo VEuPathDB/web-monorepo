@@ -27,7 +27,7 @@ export function SubsettingNotebookCell(
     [updateCell]
   );
   return (
-    <details className={isSubCell ? 'subCell' : ''}>
+    <details className={isSubCell ? 'subCell' : ''} open>
       <summary>{cell.title}</summary>
       <div>
         <FilterChipList

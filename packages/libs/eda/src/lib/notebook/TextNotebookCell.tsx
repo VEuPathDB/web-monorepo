@@ -5,17 +5,18 @@ import { NotebookCellComponentProps } from './Types';
 import { H6 } from '@veupathdb/coreui/lib/components/typography/headers';
 
 export function TextNotebookCell(props: NotebookCellComponentProps<'text'>) {
-  const { analysisState, cell, updateCell, isSubCell } = props;
+  const { analysisState, cell, updateCell, isSubCell, isDisabled } = props;
   const { text } = cell;
   const entity = useStudyEntities()[0];
   const totalCountsResult = useEntityCounts();
   const filteredCountsResult = useEntityCounts(
     analysisState.analysis?.descriptor.subset.descriptor
   );
+
   return (
-    <details className={isSubCell ? 'subCell' : ''}>
+    <details className={isSubCell ? 'subCell' : ''} open>
       <summary>{cell.title}</summary>
-      <div>
+      <div className={isDisabled ? 'disabled' : ''}>
         <H6>I'm the title</H6>
         <p>This is my text:</p>
         {text}

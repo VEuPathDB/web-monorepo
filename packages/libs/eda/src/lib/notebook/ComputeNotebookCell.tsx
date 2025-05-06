@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { CSSProperties, useCallback, useEffect, useMemo } from 'react';
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { useStudyEntities } from '../core/hooks/workspace';
 import { NotebookCellComponentProps } from './Types';
@@ -13,10 +13,16 @@ import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 import { plugins } from '../core/components/computations/plugins';
 import { ComputationPlugin } from '../core/components/computations/Types';
 
+// For disabled subCells
+const disabledStyles: CSSProperties = {
+  opacity: '0.5',
+  pointerEvents: 'none',
+};
+
 export function ComputeNotebookCell(
   props: NotebookCellComponentProps<'compute'>
 ) {
-  const { analysisState, cell, updateCell, isSubCell } = props;
+  const { analysisState, cell, updateCell, isSubCell, isDisabled } = props;
   const { analysis } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
   // Eventually this cell should get the plugin list and use the name
@@ -78,9 +84,9 @@ export function ComputeNotebookCell(
 
   return computation ? (
     <>
-      <details className={isSubCell ? 'subCell' : ''}>
+      <details className={isSubCell ? 'subCell' : ''} open>
         <summary>{cell.title}</summary>
-        <div>
+        <div className={isDisabled ? 'disabled' : ''}>
           <plugin.configurationComponent
             analysisState={analysisState}
             computation={computation}
@@ -124,12 +130,15 @@ export function ComputeNotebookCell(
             ...subCell,
             title: subTitle,
           };
+          const isSubCellDisabled =
+            jobStatus !== 'complete' && subCell.type !== 'text';
           return (
             <NotebookCell
               analysisState={analysisState}
               cell={subCellWithTitle}
               updateCell={(update) => updateCell(update)}
               isSubCell={true}
+              isDisabled={isSubCellDisabled}
             />
           );
         })}

@@ -105,6 +105,10 @@
       > div {
         padding: 1em;
       }
+      > div.disabled {
+        pointer-events: none;
+        opacity: 0.5;
+      }
     }
     > details.subCell {
       margin-left: 2em;

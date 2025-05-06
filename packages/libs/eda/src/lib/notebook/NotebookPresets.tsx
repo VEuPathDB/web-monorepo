@@ -86,7 +86,7 @@ export const wgcnaCorrelationNotebook: PresetNotebook = {
         {
           type: 'text',
           title: 'Readme',
-          text: 'This is a sub text cell for the WGCNA correlation notebook.',
+          text: 'This is a sub text cell for the WGCNA correlation notebook. I dont get grayed out even if the compute isnt ready yet.',
         },
         {
           type: 'visualization',
