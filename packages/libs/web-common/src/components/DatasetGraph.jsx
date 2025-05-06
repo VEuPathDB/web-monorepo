@@ -110,6 +110,11 @@ export default class DatasetGraph extends React.PureComponent {
     this.setState({ loading: true });
     this.request = httpGet(baseUrl + '&declareParts=1');
     this.request.promise().then((graphs) => {
+      if (typeof graphs === 'string') {
+        // indicates an error from the server
+        console.error(graphs);
+        graphs = []; // don't break the page
+      }
       this.setState({ graphs, visibleGraphs: [0], loading: false });
     });
   }
