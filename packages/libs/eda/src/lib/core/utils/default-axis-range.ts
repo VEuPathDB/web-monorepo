@@ -1,4 +1,4 @@
-import { Variable } from '../types/study';
+import { NumberDistributionDefaults, Variable } from '../types/study';
 import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
 import { VariableMapping } from '../api/DataClient/types';
@@ -24,7 +24,7 @@ export function numberDateDefaultAxisRange(
             min:
               logScale &&
               observedMin != null &&
-              (observedMin <= 0 ||
+              ((observedMin as number) <= 0 ||
                 (defaults.displayRangeMin != null &&
                   defaults.displayRangeMin <= 0) ||
                 defaults.rangeMin <= 0)
@@ -37,7 +37,7 @@ export function numberDateDefaultAxisRange(
                   //
                   // This can be expressed as a `min` function.
                   (min([
-                    defaults.displayRangeMin ?? 0,
+                    getSafeLowerBound(defaults), // a glorified `defaults.displayRangeMin ?? 0`
                     defaults.rangeMin,
                     observedMin,
                   ]) as number),
@@ -147,4 +147,28 @@ export function numberDateDefaultAxisRange(
           max: Number(observedMax) as number,
         };
   } else return undefined;
+}
+
+const MAX_EDGE_CASE_BINS = 2000;
+function getSafeLowerBound({
+  displayRangeMin,
+  rangeMin,
+  rangeMax,
+  binWidth,
+}: NumberDistributionDefaults): number {
+  // If human-supplied minimum, trust it
+  if (displayRangeMin != null) return displayRangeMin;
+
+  // we don't want to return { min: 0 } if the rangeMax and rangeMin are identical
+  // and the number of bins between 0 and rangeMax would be "too many"
+  if (
+    rangeMin === rangeMax &&
+    binWidth != null &&
+    rangeMax / binWidth > MAX_EDGE_CASE_BINS
+  ) {
+    return rangeMin - MAX_EDGE_CASE_BINS * binWidth;
+  }
+
+  // regular behaviour: histograms should start at 0 if possible
+  return 0;
 }
