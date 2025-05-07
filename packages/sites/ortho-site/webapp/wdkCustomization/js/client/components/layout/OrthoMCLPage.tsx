@@ -579,23 +579,63 @@ function useHeaderMenuItems() {
           },
         ],
       },
+
       {
         key: 'help',
         display: 'Help',
         type: 'subMenu',
         items: [
           {
-            key: 'faq',
-            display: 'FAQ',
-            type: 'reactRoute',
-            url: makeStaticPageRoute('/OrthoMCL/faq.html'),
-          },
-          {
-            key: 'landing',
+            key: 'learning',
             display: 'Learn how to use VEuPathDB',
-            type: 'reactRoute',
-            url: makeStaticPageRoute('/landing.html'),
+            type: 'subMenu',
+            openByDefault: true,
+            items: [
+              {
+                key: 'faqs',
+                display: 'FAQs',
+                type: 'reactRoute',
+                url: makeStaticPageRoute(`/faq.html`),
+              },
+              {
+                key: 'webinars',
+                display: 'Webinars',
+                type: 'reactRoute',
+                url: makeStaticPageRoute(`/webinars.html`),
+              },
+              {
+                key: 'workshops',
+                display: 'Workshops',
+                type: 'reactRoute',
+                url: makeStaticPageRoute(`/workshops.html`),
+              },
+              {
+                key: 'tutorials',
+                display: 'Tutorials',
+                type: 'reactRoute',
+                url: makeStaticPageRoute(`/tutorials.html`),
+              },
+              {
+                key: 'videos',
+                display: 'Videos',
+                type: 'externalLink',
+                url: 'https://www.youtube.com/user/EuPathDB/playlists',
+              },
+              {
+                key: 'methods',
+                display: 'Analysis methods',
+                type: 'reactRoute',
+                url: makeStaticPageRoute(`/methods.html`),
+              },
+              {
+                key: 'landing',
+                display: 'All learning resources',
+                type: 'reactRoute',
+                url: makeStaticPageRoute('/landing.html'),
+              },
+            ],
           },
+
           {
             key: 'reset-session',
             display: `Reset ${displayName} session`,
@@ -605,6 +645,7 @@ function useHeaderMenuItems() {
           },
         ],
       },
+
       {
         key: 'contact-us',
         display: 'Contact Us',
