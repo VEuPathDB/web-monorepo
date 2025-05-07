@@ -26,18 +26,45 @@ export function VisualizationNotebookCell(
 
   // Eventually this cell should get the plugin list and use the name
   // from the analysis state computation id to get the plugin and the computationAppOverview
-  const { visualizationId, computeId, computationAppOverview } = cell;
+  const {
+    visualizationId,
+    computeId,
+    computationAppOverview,
+    visualizationName,
+  } = cell;
 
   // use computeId to find the computation in the analysis state
-  console.log('computeId', computeId);
-  console.log('analysis', analysis);
-  console.log('visualizationId', visualizationId);
   const computation = analysis.descriptor.computations.find(
     (comp) => comp.computationId === computeId
   );
   if (computation == null) throw new Error('Cannot find computation.');
 
-  const { jobStatus, createJob } = useComputeJobStatus(
+  console.log('visualizationName', visualizationName);
+  const appPlugin = plugins[computation.descriptor.type];
+  console.log('appPlugin', appPlugin.visualizationPlugins);
+  const vizPlugin =
+    appPlugin && appPlugin.visualizationPlugins[visualizationName];
+
+  // If there's no visualization with this visualizationId, we
+  // must create one.
+  const existingVisualization = analysisState.analysis?.descriptor.computations
+    .find((comp) => comp.computationId === computation.computationId)
+    ?.visualizations.find((viz) => viz.visualizationId === visualizationId);
+
+  if (existingVisualization == null) {
+    const newVisualization = {
+      visualizationId,
+      displayName: 'Unnamed visualization',
+      descriptor: {
+        type: visualizationName,
+        configuration: vizPlugin?.createDefaultConfig() ?? {},
+      },
+    };
+
+    analysisState.addVisualization(computation.computationId, newVisualization);
+  }
+
+  const { jobStatus } = useComputeJobStatus(
     analysis,
     computation as Computation,
     computationAppOverview?.computeName ?? ''
@@ -46,7 +73,6 @@ export function VisualizationNotebookCell(
   const viz = computation.visualizations.find(
     (v) => v.visualizationId === visualizationId
   );
-  if (viz == null) throw new Error('Cannot find visualization.');
 
   if (computationAppOverview == null)
     throw new Error(
@@ -72,16 +98,13 @@ export function VisualizationNotebookCell(
   );
 
   const vizOverview = computationAppOverview.visualizations.find(
-    (v) => v.name === viz.descriptor.type
+    (v) => v.name === visualizationName
   );
   const constraints = vizOverview?.dataElementConstraints;
   const dataElementDependencyOrder = vizOverview?.dataElementDependencyOrder;
+  console.log('vizPlugin', vizPlugin);
 
-  const appPlugin = plugins[computation.descriptor.type];
-  const vizPlugin =
-    appPlugin && appPlugin.visualizationPlugins[viz.descriptor.type];
-
-  return (
+  return viz ? (
     <details className={isSubCell ? 'subCell' : ''} open>
       <summary>{cell.title}</summary>
       <div className={isDisabled ? 'disabled' : ''}>
@@ -110,6 +133,10 @@ export function VisualizationNotebookCell(
           />
         )}
       </div>
+    </details>
+  ) : (
+    <details>
+      <summary>Loading</summary>
     </details>
   );
 }

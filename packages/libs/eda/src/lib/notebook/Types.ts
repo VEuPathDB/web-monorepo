@@ -24,6 +24,7 @@ export interface ComputeNotebookCell extends NotebookCellBase<'compute'> {
 export interface VisualizationNotebookCell
   extends NotebookCellBase<'visualization'> {
   visualizationId: string;
+  visualizationName: string; // Name of the visualization plugin.
   computeId: string; // Used to link the visualization to a specific compute cell.
   computationAppOverview: ComputationAppOverview;
 }

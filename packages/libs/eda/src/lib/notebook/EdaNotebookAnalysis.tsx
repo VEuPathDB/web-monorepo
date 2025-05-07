@@ -45,6 +45,8 @@ import { parseJson } from './Utils';
 import { useCachedPromise } from '../core/hooks/cachedPromise';
 import {
   differentialAbundanceNotebook,
+  isComputeCellDescriptor,
+  isVisualizationCellDescriptor,
   NotebookCellDescriptorBase,
   wgcnaCorrelationNotebook,
 } from './NotebookPresets';
@@ -137,7 +139,9 @@ export function EdaNotebookAnalysis(props: Props) {
         );
       })
     );
-  }, [appOverview, computation, analysisState]);
+  }, [appOverview, computation, NOTEBOOK_PRESET_TEST]); // Should only change if the preset notebook changes.
+  console.log('presetNotebookCells', presetNotebookCells);
+  console.log(analysisState);
 
   const notebookSettings = useMemo((): NotebookSettings => {
     const storedSettings =
@@ -174,8 +178,6 @@ export function EdaNotebookAnalysis(props: Props) {
     (cell: Partial<Omit<NotebookCellType, 'type'>>, cellIndex: number) => {
       const oldCell = notebookSettings.cells[cellIndex];
       const newCell = { ...oldCell, ...cell };
-      // console.log('oldCell', oldCell);
-      // console.log('newCell', newCell); // good
       const nextCells = notebookSettings.cells.concat();
       nextCells[cellIndex] = newCell;
       const nextSettings = {
@@ -185,7 +187,6 @@ export function EdaNotebookAnalysis(props: Props) {
       analysisState.setVariableUISettings({
         [NOTEBOOK_UI_SETTINGS_KEY]: nextSettings,
       });
-      console.log('nextSettings', nextSettings);
     },
     [analysisState, notebookSettings]
   );
@@ -223,9 +224,7 @@ const notebookSkeletonToCell = function (
   computation?: Computation,
   appOverview?: ComputationAppOverview
 ): NotebookCellType {
-  if (cellDescriptor.type === 'compute' && computation && appOverview) {
-    // Create computation
-    // to do
+  if (isComputeCellDescriptor(cellDescriptor) && computation && appOverview) {
     return {
       ...cellDescriptor,
       computeId: computation.computationId,
@@ -235,56 +234,48 @@ const notebookSkeletonToCell = function (
       ),
     } as ComputeNotebookCell;
   } else if (
-    cellDescriptor.type === 'visualization' &&
+    isVisualizationCellDescriptor(cellDescriptor) &&
     computation &&
     appOverview
   ) {
-    // const visualizationId = useMemo(() => {
-    //   return uuid();
-    // }, []);
-    const visualizationId = 'abcde';
+    const visualizationId = uuid();
 
-    // const vizName = cell.visualizationName;
-    const vizName = 'bipartitenetwork';
+    const vizName = cellDescriptor.visualizationName;
     const appPlugin = plugins[computation.descriptor.type];
     const vizPlugin = appPlugin && appPlugin.visualizationPlugins[vizName];
-    // Add to analysis state ONLY if it doesn't exist
-    const existingVisualization =
-      analysisState.analysis?.descriptor.computations
-        .find((comp) => comp.computationId === computation.computationId)
-        ?.visualizations.find((viz) => viz.visualizationId === visualizationId);
 
-    console.log('existingVisualization', existingVisualization);
-    if (existingVisualization == null) {
-      const newVisualization = {
-        visualizationId,
-        displayName: 'Unnamed visualization',
-        descriptor: {
-          type: vizName,
-          configuration: vizPlugin?.createDefaultConfig() ?? {},
-        },
-      };
+    // // Move this to the visualization cell?
+    // // Add to analysis state ONLY if it doesn't exist
+    // const existingVisualization =
+    //   analysisState.analysis?.descriptor.computations
+    //     .find((comp) => comp.computationId === computation.computationId)
+    //     ?.visualizations.find((viz) => viz.visualizationId === visualizationId);
 
-      console.log('adding new viz');
+    // if (existingVisualization == null) {
+    //   const newVisualization = {
+    //     visualizationId,
+    //     displayName: 'Unnamed visualization',
+    //     descriptor: {
+    //       type: vizName,
+    //       configuration: vizPlugin?.createDefaultConfig() ?? {},
+    //     },
+    //   };
 
-      analysisState.addVisualization(
-        computation.computationId,
-        newVisualization
-      );
-    }
+    //   console.log('adding new viz');
 
-    return existingVisualization
-      ? ({
-          ...cellDescriptor,
-          visualizationId: visualizationId,
-          computeId: computation.computationId,
-          computationAppOverview: appOverview,
-          plugin: vizPlugin,
-        } as VisualizationNotebookCell)
-      : ({
-          title: 'Loading visualization...',
-          type: 'text',
-        } as TextNotebookCell);
+    //   analysisState.addVisualization(
+    //     computation.computationId,
+    //     newVisualization
+    //   );
+    // }
+
+    return {
+      ...cellDescriptor,
+      visualizationId: visualizationId,
+      computeId: computation.computationId,
+      computationAppOverview: appOverview,
+      plugin: vizPlugin,
+    } as VisualizationNotebookCell;
   } else {
     return cellDescriptor as NotebookCellType;
   }

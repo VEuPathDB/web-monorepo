@@ -91,15 +91,15 @@ export const wgcnaCorrelationNotebook: PresetNotebook = {
         {
           type: 'visualization',
           title: 'Correlation Plot',
-          visualizationName: 'bipartiteNetwork',
+          visualizationName: 'bipartitenetwork',
           computationName: 'correlation',
         },
-        // {
-        //   type: 'visualization',
-        //   title: 'Correlation plot 2',
-        //   visualizationName: 'bipartiteNetwork',
-        //   computationName: 'correlation',
-        // },
+        {
+          type: 'visualization',
+          title: 'Correlation plot 2',
+          visualizationName: 'bipartitenetwork',
+          computationName: 'correlation',
+        },
       ],
     },
     {
@@ -118,3 +118,22 @@ export const wgcnaCorrelationNotebook: PresetNotebook = {
 //   projects: ['MicrobiomeDB'],
 //   plugin: correlation,
 // };
+
+// Type guards
+export function isVisualizationCellDescriptor(
+  cellDescriptor: NotebookCellDescriptorBase<string>
+): cellDescriptor is VisualizationCellDescriptor {
+  return cellDescriptor.type === 'visualization';
+}
+
+export function isTextCellDescriptor(
+  cellDescriptor: NotebookCellDescriptorBase<string>
+): cellDescriptor is TextCellDescriptor {
+  return cellDescriptor.type === 'text';
+}
+
+export function isComputeCellDescriptor(
+  cellDescriptor: NotebookCellDescriptorBase<string>
+): cellDescriptor is ComputeCellDescriptor {
+  return cellDescriptor.type === 'compute';
+}
