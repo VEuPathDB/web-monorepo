@@ -163,10 +163,9 @@ function getSafeLowerBound({
   // and the number of bins between 0 and rangeMax would be "too many"
   if (
     rangeMin === rangeMax &&
-    binWidth != null &&
-    rangeMax / binWidth > MAX_EDGE_CASE_BINS
+    rangeMax / (binWidth ?? 1) > MAX_EDGE_CASE_BINS
   ) {
-    return rangeMin - MAX_EDGE_CASE_BINS * binWidth;
+    return rangeMin - MAX_EDGE_CASE_BINS * (binWidth ?? 1);
   }
 
   // regular behaviour: histograms should start at 0 if possible
