@@ -24,6 +24,7 @@ import {
 } from '@veupathdb/coreui/lib/components/Mesa/types';
 import { ExpressionChildRow as ExpressionGraph } from './GeneRecordClasses.GeneRecordClass';
 import { Dialog } from '@veupathdb/wdk-client/lib/Components';
+import { ServiceError } from '@veupathdb/wdk-client/lib/Service/ServiceError';
 
 // Styles
 import './AiExpressionSummary.scss';
@@ -91,10 +92,8 @@ function AiSummaryGate(props: Props) {
   const [summaryGenerationRequested, setSummaryGenerationRequested] =
     useState(false);
 
-  const aiExpressionSummary = useAiExpressionSummary(
-    geneId,
-    summaryGenerationRequested
-  );
+  const { data: aiExpressionSummary, status: serviceStatus } =
+    useAiExpressionSummary(geneId, summaryGenerationRequested);
   const geneResponse = aiExpressionSummary?.[geneId];
   const completeExpressionSummary =
     geneResponse?.resultStatus === 'present' && geneResponse?.expressionSummary
@@ -103,7 +102,11 @@ function AiSummaryGate(props: Props) {
 
   const [pollingCounter, setPollingCounter] = useState(-1);
   const pollingTimeout = useRef<ReturnType<typeof setTimeout>>();
-  const pollingResponse = useAiExpressionSummary(geneId, false, pollingCounter);
+  const { data: pollingResponse } = useAiExpressionSummary(
+    geneId,
+    false,
+    pollingCounter
+  );
 
   // update polling counter when the main request is active
   useEffect(() => {
@@ -117,7 +120,16 @@ function AiSummaryGate(props: Props) {
   }, [summaryGenerationRequested, completeExpressionSummary, pollingCounter]);
 
   if (aiExpressionSummary == null) {
-    return <div>Loading...</div>;
+    if (serviceStatus === 'cost-limit-exceeded') {
+      return (
+        <div>
+          Sorry, the daily AI usage limit has been exceeded. Please refresh the
+          page tomorrow to try again.
+        </div>
+      );
+    } else {
+      return <div>Loading...</div>;
+    }
   } else if (completeExpressionSummary) {
     return (
       <AiExpressionResult summary={completeExpressionSummary} {...props} />
@@ -396,12 +408,21 @@ function AiExperimentSummary({
   );
 }
 
+type ServiceStatus = 'online' | 'cost-limit-exceeded';
+
+interface ServiceResult<T> {
+  data: T | undefined; // undefined if not ready yet
+  status: ServiceStatus;
+}
+
 function useAiExpressionSummary(
   geneId: string,
   summaryGenerationRequested: boolean,
   pollingCounter: number = 0
-): AiExpressionSummaryResponse | undefined {
-  return useWdkService(
+): ServiceResult<AiExpressionSummaryResponse> {
+  const [status, setStatus] = useState<ServiceStatus>('online');
+
+  const data = useWdkService(
     async (wdkService) => {
       if (!isGenomicsService(wdkService)) throw new Error('nasty');
       if (pollingCounter < 0) return undefined;
@@ -420,13 +441,32 @@ function useAiExpressionSummary(
           populateIfNotPresent: summaryGenerationRequested,
         },
       };
-      return await wdkService.getAnswer<AiExpressionSummaryResponse>(
-        answerSpec,
-        formatting
-      );
+      try {
+        return await wdkService.getAnswer<AiExpressionSummaryResponse>(
+          answerSpec,
+          formatting
+        );
+      } catch (error: unknown) {
+        // if it's a 503, set the service status appropriately
+        if (error instanceof ServiceError && error.status === 500) {
+          // use 500 for now
+          setStatus('cost-limit-exceeded');
+          return undefined;
+          // Note that this is a one-way state change.
+          // The user will need to refresh the page to try again.
+        } else {
+          // rethrow for regular "Sorry, something went wrong"
+          throw error;
+        }
+      }
     },
     [geneId, summaryGenerationRequested, pollingCounter]
   );
+
+  return {
+    data,
+    status,
+  };
 }
 
 interface ExpressionGraphFloaterProps {
