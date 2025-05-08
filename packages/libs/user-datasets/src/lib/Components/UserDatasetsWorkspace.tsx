@@ -1,6 +1,11 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 
-import { Switch, Redirect, RouteComponentProps } from 'react-router-dom';
+import {
+  Switch,
+  Redirect,
+  RouteComponentProps,
+  useRouteMatch,
+} from 'react-router-dom';
 
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
@@ -19,6 +24,8 @@ interface Props {
   helpTabContents?: ReactNode;
   dataNoun: DataNoun;
   enablePublicUserDatasets: boolean;
+  activeUploadType?: string;
+  setActiveUploadType?: (newType?: string) => void;
 }
 
 function UserDatasetsWorkspace(props: Props) {
@@ -30,7 +37,20 @@ function UserDatasetsWorkspace(props: Props) {
     helpTabContents,
     dataNoun,
     enablePublicUserDatasets,
+    activeUploadType,
+    setActiveUploadType,
   } = props;
+
+  const {
+    path,
+    params: { type: currentUploadType },
+  } = useRouteMatch<{ type?: string }>();
+
+  useEffect(() => {
+    if (setActiveUploadType && path.match('/new/')) {
+      setActiveUploadType(currentUploadType);
+    }
+  }, [currentUploadType, path, setActiveUploadType]);
 
   return (
     <div>
@@ -48,7 +68,8 @@ function UserDatasetsWorkspace(props: Props) {
             ? [
                 {
                   display: 'New upload',
-                  route: '/new',
+                  route:
+                    '/new' + (activeUploadType ? '/' + activeUploadType : ''),
                   exact: false,
                 },
               ]

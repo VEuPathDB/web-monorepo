@@ -20,7 +20,7 @@ export function UploadFormMenu(props: Props) {
           const datasetUploadType = datasetUploadTypes[type];
           return (
             datasetUploadType && (
-              <li>
+              <li key={type}>
                 <Link to={url + '/' + type} className="btn">
                   <div className="title">
                     <i className="fa fa-file-text" />{' '}

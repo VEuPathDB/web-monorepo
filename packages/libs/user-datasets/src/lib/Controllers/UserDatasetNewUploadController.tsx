@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
+import { Link, useRouteMatch } from 'react-router-dom';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
@@ -36,6 +37,7 @@ interface Props {
 export default function UserDatasetUploadSelector(props: Props) {
   const { baseUrl, type, availableTypes, datasetUploadTypes, urlParams } =
     props;
+  const { url } = useRouteMatch();
 
   if (type == null && availableTypes.length !== 1) {
     return (
@@ -50,12 +52,18 @@ export default function UserDatasetUploadSelector(props: Props) {
   if (datasetUploadType == null) {
     return <NotFoundController />;
   }
+
   return (
-    <InnerUserDatasetUploadController
-      baseUrl={baseUrl}
-      datasetUploadType={datasetUploadType}
-      urlParams={urlParams}
-    />
+    <>
+      <Link to={url.replace(/\/[^/]+$/, '')}>
+        Back to choose an upload type
+      </Link>
+      <InnerUserDatasetUploadController
+        baseUrl={baseUrl}
+        datasetUploadType={datasetUploadType}
+        urlParams={urlParams}
+      />
+    </>
   );
 }
 
@@ -157,6 +165,7 @@ function InnerUserDatasetUploadController({
   ) : (
     <div className="stack">
       <UploadForm
+        key={'upload-form-' + datasetUploadType.type}
         baseUrl={baseUrl}
         datasetUploadType={datasetUploadType}
         projectId={projectId}
