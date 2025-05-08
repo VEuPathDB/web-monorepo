@@ -1,5 +1,4 @@
-import { ComponentType, ReactNode, useMemo } from 'react';
-
+import { ComponentType, ReactNode, useMemo, useState } from 'react';
 import { RouteComponentProps, Switch, useRouteMatch } from 'react-router-dom';
 
 import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
@@ -46,6 +45,8 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
     [availableUploadTypes, uploadTypeConfig]
   );
 
+  const [activeUploadType, setActiveUploadType] = useState<string>();
+
   return (
     <Switch>
       <WdkRoute
@@ -73,6 +74,8 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
               helpTabContents={helpTabContents}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
+              activeUploadType={activeUploadType}
+              setActiveUploadType={setActiveUploadType}
             />
           );
         }}
@@ -102,6 +105,8 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
               helpTabContents={helpTabContents}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
+              activeUploadType={activeUploadType}
+              setActiveUploadType={setActiveUploadType}
             />
           );
         }}
@@ -159,6 +164,8 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
               helpTabContents={helpTabContents}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
+              activeUploadType={activeUploadType}
+              setActiveUploadType={setActiveUploadType}
             />
           );
         }}
