@@ -223,6 +223,7 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
     computation,
     analysisState,
     visualizationId,
+    changeConfigHandlerOverride,
   } = props;
 
   const configuration = computation.descriptor
@@ -230,11 +231,15 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
 
   assertComputationWithConfig(computation, CorrelationConfig);
 
-  const changeConfigHandler = useConfigChangeHandler(
+  const workspaceChangeConfigHandler = useConfigChangeHandler(
     analysisState,
     computation,
     visualizationId
   );
+
+  // This is cheating. Needs to be cleaned up before merging.
+  const changeConfigHandler =
+    changeConfigHandlerOverride ?? workspaceChangeConfigHandler;
 
   // Content for the expandable help section
   // Note the text is dependent on the context, for example in genomics we'll use different

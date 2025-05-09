@@ -57,6 +57,7 @@ export default function Subsetting({
   const entity = entities.find((e) => e.id === entityId);
 
   // What is the current variable?
+  console.log(variableId);
   const variable = entity?.variables.find((v) => v.id === variableId);
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
