@@ -5,7 +5,7 @@ import {
   QuestionActions,
   RecordActions,
 } from '@veupathdb/wdk-client/lib/Actions';
-import { uniq, flow, partialRight } from 'lodash';
+import { uniq, flow, partialRight, omit } from 'lodash';
 import * as tree from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import * as cat from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import { PATHWAY_DYN_COLS_LOADED } from '../actioncreators/RecordViewActionCreators';
@@ -27,7 +27,7 @@ export function reduce(state, action) {
   switch (action.type) {
     case RecordActions.RECORD_RECEIVED:
       return {
-        ...pruneCategories(state),
+        ...pruneState(state),
         // collapse all sections by default. later we will read state from localStorage.
         collapsedSections: RecordStoreModule.getAllFields(state),
       };
@@ -83,17 +83,34 @@ function handlePathwayRecordAction(state = initialPathwayRecordState, action) {
   }
 }
 
-/** prune categoryTree */
-function pruneCategories(nextState) {
-  let { record, categoryTree } = nextState;
+/** prune categoryTree and record attributes */
+/** removes AI gene expression section when the back end is not available */
+function pruneState(nextState) {
+  let { record, recordClass, categoryTree } = nextState;
   if (isGeneRecord(record)) {
+    const hasAiExpressionReporter = recordClass.formats.some(
+      (format) => format.name === 'aiExpression'
+    );
     categoryTree = flow(
       partialRight(pruneCategoryBasedOnShowStrains, record),
       partialRight(pruneCategoryBasedOnHasAlphaFold, record),
       partialRight(pruneCategoriesByMetaTable, record),
-      partialRight(removeProteinCategories, record)
+      partialRight(removeProteinCategories, record),
+      partialRight(
+        pruneCategoriesBasedOnHasAiExpression,
+        hasAiExpressionReporter
+      )
     )(categoryTree);
-    nextState = Object.assign({}, nextState, { categoryTree });
+    nextState = {
+      ...nextState,
+      categoryTree,
+      record: {
+        ...record,
+        attributes: hasAiExpressionReporter
+          ? record.attributes
+          : omit(record.attributes, 'ai_expression'),
+      },
+    };
   }
   if (isDatasetRecord(record)) {
     categoryTree = pruneByDatasetCategory(categoryTree, record);
@@ -228,6 +245,21 @@ function pruneByDatasetCategory(categoryTree, record) {
     }, categoryTree);
   }
   return categoryTree;
+}
+
+/** Remove "AI Expression Summary" from tree if not needed */
+function pruneCategoriesBasedOnHasAiExpression(
+  categoryTree,
+  hasAiExpressionReporter
+) {
+  // check if there is a reporter called aiExpression
+  return hasAiExpressionReporter
+    ? categoryTree
+    : // Remove ai_expression node from tree
+      tree.pruneDescendantNodes(
+        (individual) => cat.getRefName(individual) !== 'ai_expression',
+        categoryTree
+      );
 }
 
 // Custom observers
