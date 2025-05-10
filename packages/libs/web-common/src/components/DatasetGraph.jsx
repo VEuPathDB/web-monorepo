@@ -9,7 +9,7 @@ import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import ExternalResource from './ExternalResource';
 import { JbrowseIframe } from './JbrowseIframe';
 import { EdaScatterPlot } from './eda/EdaScatterPlot';
-import { WdkService } from '@veupathdb/wdk-client/lib/Service/WdkService';
+import WdkService from '@veupathdb/wdk-client/lib/Service/WdkService';
 
 /**
  * Renders an Dataset graph with the provided rowData.
