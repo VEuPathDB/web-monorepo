@@ -115,7 +115,8 @@ export default class DatasetGraph extends React.PureComponent {
       if (typeof graphs === 'string') {
         // indicates an error from the server; log
         let error = 'Error from dataPlotter: ' + graphs;
-        WdkService.submitError(error);
+        // FIXME: Don't understand why this does not exist
+        //WdkService.submitError(error);
         console.error(error);
         // graphs not available; don't break the page
         graphs = [];
