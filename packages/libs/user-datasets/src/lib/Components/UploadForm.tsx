@@ -99,23 +99,28 @@ export interface FormSubmission extends Omit<NewUserDataset, 'uploadMethod'> {
 }
 
 // A little helper to simplify updating fields of the nested inputs
-interface AddNestedInputChildProps<T> {
-  nestedInputObject: T[];
+const createNestedInputUpdater = function <T>(props: {
   index: number;
-}
-
-const createNestedInputUpdater = function <T>(
-  props: AddNestedInputChildProps<T>
-) {
-  const { nestedInputObject, index } = props;
+  setNestedInputObject: React.Dispatch<React.SetStateAction<T[]>>;
+  enforceExclusiveTrue?: boolean;
+}) {
+  const { index, setNestedInputObject, enforceExclusiveTrue } = props;
 
   return function (newValue: string | boolean, inputName: string) {
-    const updatedNestedInputObject = [...nestedInputObject];
-    updatedNestedInputObject[index] = {
-      ...nestedInputObject[index],
-      [inputName]: newValue,
-    };
-    return updatedNestedInputObject;
+    setNestedInputObject((prev) => {
+      const updated = [...prev];
+
+      if (enforceExclusiveTrue && newValue === true) {
+        updated.forEach((item, i) => {
+          if (i !== index) {
+            updated[i] = { ...item, [inputName]: false };
+          }
+        });
+      }
+
+      updated[index] = { ...updated[index], [inputName]: newValue };
+      return updated;
+    });
   };
 };
 
@@ -501,19 +506,17 @@ function UploadForm({
               </FieldLabel>
               {publications.map((publication, index) => {
                 const updatePublicationsObject = createNestedInputUpdater({
-                  nestedInputObject: publications,
-                  index,
+                  index: index,
+                  setNestedInputObject: setPublications,
+                  enforceExclusiveTrue: false,
                 });
                 return (
                   <PublicationInput
                     n={index}
                     pubMedId={publication.pubMedId}
                     onAddPubmedId={(value: string) => {
-                      const updatedPublications = updatePublicationsObject(
-                        value,
-                        'pubMedId'
-                      );
-                      setPublications(updatedPublications);
+                      updatePublicationsObject(value, 'pubMedId');
+                      // setPublications(updatedPublications);
                     }}
                     onRemovePublication={(
                       event: React.MouseEvent<HTMLButtonElement>
@@ -525,11 +528,8 @@ function UploadForm({
                     }}
                     citation={publication.citation}
                     onAddCitation={(value: string) => {
-                      const updatedPublications = updatePublicationsObject(
-                        value,
-                        'citation'
-                      );
-                      setPublications(updatedPublications);
+                      updatePublicationsObject(value, 'citation');
+                      // setPublications(updatedPublications);
                     }}
                   />
                 );
@@ -556,19 +556,17 @@ function UploadForm({
               </FieldLabel>
               {hyperlinks.map((hyperlink, index) => {
                 const updateHyperlinksObject = createNestedInputUpdater({
-                  nestedInputObject: hyperlinks,
-                  index,
+                  index: index,
+                  setNestedInputObject: setHyperlinks,
+                  enforceExclusiveTrue: false,
                 });
                 return (
                   <HyperlinkInput
                     n={index}
                     url={hyperlink.url}
                     onAddUrl={(value: string) => {
-                      const updatedHyperlinks = updateHyperlinksObject(
-                        value,
-                        'url'
-                      );
-                      setHyperlinks(updatedHyperlinks);
+                      updateHyperlinksObject(value, 'url');
+                      // setHyperlinks(updatedHyperlinks);
                     }}
                     onRemoveHyperlink={(
                       event: React.MouseEvent<HTMLButtonElement>
@@ -580,27 +578,18 @@ function UploadForm({
                     }}
                     text={hyperlink.text}
                     onAddText={(value: string) => {
-                      const updatedHyperlinks = updateHyperlinksObject(
-                        value,
-                        'text'
-                      );
-                      setHyperlinks(updatedHyperlinks);
+                      updateHyperlinksObject(value, 'text');
+                      // setHyperlinks(updatedHyperlinks);
                     }}
                     description={hyperlinks[index]?.description}
                     onAddDescription={(value: string) => {
-                      const updatedHyperlinks = updateHyperlinksObject(
-                        value,
-                        'description'
-                      );
-                      setHyperlinks(updatedHyperlinks);
+                      updateHyperlinksObject(value, 'description');
+                      // setHyperlinks(updatedHyperlinks);
                     }}
                     isPublication={hyperlinks[index]?.isPublication}
                     onAddIsPublication={(value: boolean) => {
-                      const updatedHyperlinks = updateHyperlinksObject(
-                        value,
-                        'isPublication'
-                      );
-                      setHyperlinks(updatedHyperlinks);
+                      updateHyperlinksObject(value, 'isPublication');
+                      // setHyperlinks(updatedHyperlinks);
                       return;
                     }}
                   />
@@ -683,75 +672,52 @@ function UploadForm({
               </FieldLabel>
               {contacts.map((contact, index) => {
                 const updateContactsObject = createNestedInputUpdater({
-                  nestedInputObject: contacts,
-                  index,
+                  index: index,
+                  setNestedInputObject: setContacts,
+                  enforceExclusiveTrue: true,
                 });
                 return (
                   <ContactInput
                     n={index}
                     name={contact.name}
                     onAddName={(value: string) => {
-                      const updatedContacts = updateContactsObject(
-                        value,
-                        'name'
-                      );
-                      setContacts(updatedContacts);
+                      updateContactsObject(value, 'name');
+                      // setContacts(updatedContacts);
                     }}
                     email={contact.email}
                     onAddEmail={(value: string) => {
-                      const updatedContacts = updateContactsObject(
-                        value,
-                        'email'
-                      );
-                      setContacts(updatedContacts);
+                      updateContactsObject(value, 'email');
+                      // setContacts(updatedContacts);
                     }}
                     affiliation={contact.affiliation}
                     onAddAffiliation={(value: string) => {
-                      const updatedContacts = updateContactsObject(
-                        value,
-                        'affiliation'
-                      );
-                      setContacts(updatedContacts);
+                      updateContactsObject(value, 'affiliation');
+                      // setContacts(updatedContacts);
                     }}
                     city={contact.city}
                     onAddCity={(value: string) => {
-                      const updatedContacts = updateContactsObject(
-                        value,
-                        'city'
-                      );
-                      setContacts(updatedContacts);
+                      updateContactsObject(value, 'city');
+                      // setContacts(updatedContacts);
                     }}
                     state={contact.state}
                     onAddState={(value: string) => {
-                      const updatedContacts = updateContactsObject(
-                        value,
-                        'state'
-                      );
-                      setContacts(updatedContacts);
+                      updateContactsObject(value, 'state');
+                      // setContacts(updatedContacts);
                     }}
                     country={contact.country}
                     onAddCountry={(value: string) => {
-                      const updatedContacts = updateContactsObject(
-                        value,
-                        'country'
-                      );
-                      setContacts(updatedContacts);
+                      updateContactsObject(value, 'country');
+                      // setContacts(updatedContacts);
                     }}
                     address={contact.address}
                     onAddAddress={(value: string) => {
-                      const updatedContacts = updateContactsObject(
-                        value,
-                        'address'
-                      );
-                      setContacts(updatedContacts);
+                      updateContactsObject(value, 'address');
+                      // setContacts(updatedContacts);
                     }}
                     isPrimary={contact.isPrimary}
                     onAddIsPrimary={(value: boolean) => {
-                      const updatedContacts = updateContactsObject(
-                        value,
-                        'isPrimary'
-                      );
-                      setContacts(updatedContacts);
+                      updateContactsObject(value, 'isPrimary');
+                      // setContacts(updatedContacts);
                     }}
                     onRemoveContact={(
                       event: React.MouseEvent<HTMLButtonElement>
