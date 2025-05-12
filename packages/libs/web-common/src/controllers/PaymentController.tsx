@@ -1,19 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, ReactNode } from 'react';
 import { webAppUrl } from '../config';
 
 import '../styles/Payment.scss';
+import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
 
-// may want to use this later
-//import { Loading } from '@veupathdb/wdk-client/lib/Components';
-
-interface Props {}
-
-interface FormProps {
+interface AutoSubmitFormProps {
   actionUrl: string;
   params: any;
 }
 
-function AutoSubmitForm(props: FormProps) {
+function AutoSubmitForm(props: AutoSubmitFormProps) {
   // submit form as soon as it is rendered
   const formRef = useRef<HTMLFormElement>(null);
   useEffect(() => {
@@ -26,62 +22,94 @@ function AutoSubmitForm(props: FormProps) {
   return (
     <form ref={formRef} method="POST" action={props.actionUrl}>
       {Object.keys(props.params).map((name) => (
-        <input type="hidden" name={name} value={props.params[name]}></input>
+        <input
+          type="hidden"
+          key={name}
+          name={name}
+          value={props.params[name]}
+        ></input>
       ))}
     </form>
   );
 }
 
-async function getFormData(
-  amount: number,
-  setErrorMessage: (s: string) => void
-) {
-  try {
-    const url = webAppUrl + '/service/payment-form-content?amount=' + amount;
-    const response = await fetch(url);
-    if (!response.ok) {
-      setErrorMessage('Cannot connect to payment system.');
-    }
-    return await response.json();
-  } catch (error) {
-    console.error(error);
+async function getFormData(amount: string) {
+  const url = webAppUrl + '/service/payment-form-content?amount=' + amount;
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error('Pre-payment form service error');
   }
+  return await response.json();
 }
 
-function generateForm(
-  amount: string,
-  setAmount: (a: string) => void,
-  setFormData: (b: any) => void,
-  setErrorMessage: (s: string) => void
-) {
-  var amountNum: number = parseFloat(amount);
-  if (isNaN(amountNum) || amountNum <= 0) {
-    setErrorMessage('You must enter a positive number amount.');
-  } else {
-    setErrorMessage('');
-    amountNum = Math.floor(amountNum * 100) / 100;
-    setAmount(amountNum.toString());
-    console.log('Submitting form with payment amount $' + amountNum);
-    getFormData(amountNum, setErrorMessage)
-      .then((formData) => {
-        setFormData(formData);
-      })
-      .catch((error) => {
-        console.log(error);
-        setErrorMessage('Cannot connect to payment system.');
-      });
-  }
-}
-
-export default function PaymentController(props: Props) {
+export default function PaymentController() {
   const [formData, setFormData] = useState(null);
   const [amount, setAmount] = useState('0.00');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState<ReactNode>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // If we're showing a persisted page from a back-button navigation
+  // we need to reset some state.
+  useEffect(() => {
+    function handlePageShow(event: PageTransitionEvent) {
+      if (event.persisted) {
+        setFormData(null); // Clear stale formData
+        setIsSubmitting(false); // and clear this, so the button can be pressed again
+      }
+    }
+
+    window.addEventListener('pageshow', handlePageShow);
+    return () => {
+      window.removeEventListener('pageshow', handlePageShow);
+    };
+  }, []);
+
+  const handleUserSubmit = () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
+    var amountNum: number = Number(removeCommaThousandSeparators(amount));
+    if (isNaN(amountNum) || amountNum < 0.01) {
+      setErrorMessage(
+        <>
+          You must enter a positive dollar amount. <br />
+          Do not use commas for decimals.
+        </>
+      );
+      setIsSubmitting(false);
+    } else {
+      setErrorMessage('');
+      // console.log('Submitting form with payment amount $' + amountNum.toFixed(2));
+
+      // optionally update UI with trimmed amount
+      // (will only be visible for a short time, so potentially panic-inducing?)
+      // setAmount(amountNum.toFixed(2));
+
+      getFormData(amountNum.toFixed(2))
+        .then((formData) => {
+          setFormData(formData);
+        })
+        .catch((error) => {
+          console.error(error);
+          setErrorMessage(
+            <>
+              Cannot connect to payment system. <br />
+              Please{' '}
+              <Link to="/contact-us" target="_blank">
+                let us know
+              </Link>{' '}
+              about this.
+            </>
+          );
+          setIsSubmitting(false);
+        });
+    }
+  };
 
   // initially show the starter form
   if (formData == null) {
     return (
-      <div className="payment-form">
+      <div className="payment-container">
         <h1>Make a credit card payment based on your VEuPathDB invoice</h1>
         <p id="warning">
           Payments are processed securely by CyberSource.
@@ -93,28 +121,33 @@ export default function PaymentController(props: Props) {
           </a>{' '}
           to learn about subscriptions and create an invoice.
         </p>
-        <div className="error-message">
-          <p>{errorMessage}</p>
-        </div>
-        <div className="amount">
-          <p>
-            Please enter the amount from your invoice in USD:&nbsp;&nbsp;
+        <div className="payment-form">
+          <div className="error-message">
+            <p>{errorMessage}</p>
+          </div>
+          <div className="amount">
+            <p>
+              Please enter the amount from your invoice in USD:&nbsp;&nbsp;
+              <input
+                className={errorMessage ? 'hasError' : undefined}
+                type="text"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+              />
+            </p>
+          </div>
+          <div className="button">
+            {isSubmitting && <Loading />}
             <input
-              type="text"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              type="button"
+              value="Pay with Credit Card"
+              disabled={isSubmitting}
+              onClick={handleUserSubmit}
             />
-          </p>
-        </div>
-        <div className="button">
-          <input
-            type="button"
-            value="Pay with Credit Card"
-            onClick={(e) =>
-              generateForm(amount, setAmount, setFormData, setErrorMessage)
-            }
-          />
-          <p>(Clicking the button will take you to secure.cybersource.com.)</p>
+            <p>
+              (Clicking the button will take you to secure.cybersource.com.)
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -127,4 +160,8 @@ export default function PaymentController(props: Props) {
       params={formData}
     />
   );
+}
+
+function removeCommaThousandSeparators(input: string) {
+  return input.replace(/,(\d{3})(?!\d)/g, '$1');
 }
