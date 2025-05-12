@@ -344,7 +344,7 @@ class UserDatasetDetail extends React.Component {
           </span>
         ),
       },
-      {
+      this.props.showExtraMetadata && {
         attribute: 'Publications',
         className: 'NestedFieldsSection',
         value: (
@@ -413,7 +413,7 @@ class UserDatasetDetail extends React.Component {
           </div>
         ),
       },
-      {
+      this.props.showExtraMetadata && {
         attribute: 'Contacts',
         className: 'NestedFieldsSection',
         value: (
@@ -541,7 +541,7 @@ class UserDatasetDetail extends React.Component {
           </div>
         ),
       },
-      {
+      this.props.showExtraMetadata && {
         attribute: 'Hyperlinks',
         className: 'NestedFieldsSection',
         value: (
@@ -639,7 +639,7 @@ class UserDatasetDetail extends React.Component {
           </div>
         ),
       },
-      {
+      this.props.showExtraMetadata && {
         attribute: 'Organisms',
         className: 'NestedFieldsSection',
         value: (
