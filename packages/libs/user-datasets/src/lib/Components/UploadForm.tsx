@@ -519,9 +519,9 @@ function UploadForm({
                       event: React.MouseEvent<HTMLButtonElement>
                     ) => {
                       event.preventDefault();
-                      const updatedPublications = [...publications];
-                      updatedPublications.splice(index, 1);
-                      setPublications(updatedPublications);
+                      setPublications((prev) =>
+                        prev.filter((_, i) => i !== index)
+                      );
                     }}
                     citation={publication.citation}
                     onAddCitation={(value: string) => {
@@ -574,9 +574,9 @@ function UploadForm({
                       event: React.MouseEvent<HTMLButtonElement>
                     ) => {
                       event.preventDefault();
-                      const updatedHyperlinks = [...hyperlinks];
-                      updatedHyperlinks.splice(index, 1);
-                      setHyperlinks(updatedHyperlinks);
+                      setHyperlinks((prev) =>
+                        prev.filter((_, i) => i !== index)
+                      );
                     }}
                     text={hyperlink.text}
                     onAddText={(value: string) => {
@@ -598,7 +598,7 @@ function UploadForm({
                     onAddIsPublication={(value: boolean) => {
                       const updatedHyperlinks = updateHyperlinksObject(
                         value,
-                        'publication'
+                        'isPublication'
                       );
                       setHyperlinks(updatedHyperlinks);
                       return;
@@ -662,17 +662,6 @@ function UploadForm({
                       </div>
                     );
                   })}
-                  <FloatingButton
-                    text="Add Publication"
-                    onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
-                      event.preventDefault();
-                      setPublications((oldPublications) => [
-                        ...oldPublications,
-                        {} as UserDatasetPublication,
-                      ]);
-                    }}
-                    icon={AddIcon}
-                  />
                 </div>
                 <OutlinedButton
                   text="Add Related Organism"
@@ -763,15 +752,12 @@ function UploadForm({
                         'isPrimary'
                       );
                       setContacts(updatedContacts);
-                      return;
                     }}
                     onRemoveContact={(
                       event: React.MouseEvent<HTMLButtonElement>
                     ) => {
                       event.preventDefault();
-                      const updatedContacts = [...contacts];
-                      updatedContacts.splice(index, 1);
-                      setContacts(updatedContacts);
+                      setContacts((prev) => prev.filter((_, i) => i !== index));
                     }}
                   />
                 );
