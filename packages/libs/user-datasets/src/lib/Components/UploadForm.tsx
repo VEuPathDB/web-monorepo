@@ -516,7 +516,6 @@ function UploadForm({
                     pubMedId={publication.pubMedId}
                     onAddPubmedId={(value: string) => {
                       updatePublicationsObject(value, 'pubMedId');
-                      // setPublications(updatedPublications);
                     }}
                     onRemovePublication={(
                       event: React.MouseEvent<HTMLButtonElement>
@@ -529,7 +528,6 @@ function UploadForm({
                     citation={publication.citation}
                     onAddCitation={(value: string) => {
                       updatePublicationsObject(value, 'citation');
-                      // setPublications(updatedPublications);
                     }}
                   />
                 );
@@ -566,7 +564,6 @@ function UploadForm({
                     url={hyperlink.url}
                     onAddUrl={(value: string) => {
                       updateHyperlinksObject(value, 'url');
-                      // setHyperlinks(updatedHyperlinks);
                     }}
                     onRemoveHyperlink={(
                       event: React.MouseEvent<HTMLButtonElement>
@@ -579,17 +576,14 @@ function UploadForm({
                     text={hyperlink.text}
                     onAddText={(value: string) => {
                       updateHyperlinksObject(value, 'text');
-                      // setHyperlinks(updatedHyperlinks);
                     }}
                     description={hyperlinks[index]?.description}
                     onAddDescription={(value: string) => {
                       updateHyperlinksObject(value, 'description');
-                      // setHyperlinks(updatedHyperlinks);
                     }}
                     isPublication={hyperlinks[index]?.isPublication}
                     onAddIsPublication={(value: boolean) => {
                       updateHyperlinksObject(value, 'isPublication');
-                      // setHyperlinks(updatedHyperlinks);
                       return;
                     }}
                   />
@@ -682,42 +676,34 @@ function UploadForm({
                     name={contact.name}
                     onAddName={(value: string) => {
                       updateContactsObject(value, 'name');
-                      // setContacts(updatedContacts);
                     }}
                     email={contact.email}
                     onAddEmail={(value: string) => {
                       updateContactsObject(value, 'email');
-                      // setContacts(updatedContacts);
                     }}
                     affiliation={contact.affiliation}
                     onAddAffiliation={(value: string) => {
                       updateContactsObject(value, 'affiliation');
-                      // setContacts(updatedContacts);
                     }}
                     city={contact.city}
                     onAddCity={(value: string) => {
                       updateContactsObject(value, 'city');
-                      // setContacts(updatedContacts);
                     }}
                     state={contact.state}
                     onAddState={(value: string) => {
                       updateContactsObject(value, 'state');
-                      // setContacts(updatedContacts);
                     }}
                     country={contact.country}
                     onAddCountry={(value: string) => {
                       updateContactsObject(value, 'country');
-                      // setContacts(updatedContacts);
                     }}
                     address={contact.address}
                     onAddAddress={(value: string) => {
                       updateContactsObject(value, 'address');
-                      // setContacts(updatedContacts);
                     }}
                     isPrimary={contact.isPrimary}
                     onAddIsPrimary={(value: boolean) => {
                       updateContactsObject(value, 'isPrimary');
-                      // setContacts(updatedContacts);
                     }}
                     onRemoveContact={(
                       event: React.MouseEvent<HTMLButtonElement>
