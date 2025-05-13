@@ -448,8 +448,7 @@ function useAiExpressionSummary(
         );
       } catch (error: unknown) {
         // if it's a 503, set the service status appropriately
-        if (error instanceof ServiceError && error.status === 500) {
-          // use 500 for now
+        if (error instanceof ServiceError && error.status === 503) {
           setStatus('cost-limit-exceeded');
           return undefined;
           // Note that this is a one-way state change.
