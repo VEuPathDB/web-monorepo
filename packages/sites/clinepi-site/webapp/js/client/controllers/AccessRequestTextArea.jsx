@@ -9,11 +9,18 @@ const AccessRequestTextArea = ({
 }) => (
   <tr>
     <td colSpan={4}>
+      <br />
       <strong>
-        <label htmlFor={mykey}>{label}</label>
+        <label
+          style={{ marginBottom: '0', paddingBottom: '0' }}
+          htmlFor={mykey}
+        >
+          {label}
+        </label>
       </strong>
-      <br />
-      <br />
+      <p style={{ fontSize: '14px', fontStyle: 'italic' }}>
+        (Note: Max 4000 character limit.)
+      </p>
       <textarea
         id={mykey}
         className={
@@ -21,6 +28,7 @@ const AccessRequestTextArea = ({
         }
         rows={8}
         cols={150}
+        maxLength={4000}
         title={
           otherProps.disabled ? 'Pending requests cannot be edited.' : null
         }
