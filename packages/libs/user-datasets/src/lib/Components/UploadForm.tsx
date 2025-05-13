@@ -9,7 +9,7 @@ import React, {
 
 import { Link } from 'react-router-dom';
 
-import { keyBy } from 'lodash';
+import { keyBy, set } from 'lodash';
 
 import {
   TextBox,
@@ -29,6 +29,7 @@ import {
   DatasetUploadTypeConfigEntry,
   NewUserDataset,
   ResultUploadConfig,
+  studyDesignOptions,
   UserDataset,
   UserDatasetContact,
   UserDatasetFormContent,
@@ -162,12 +163,18 @@ function UploadForm({
   const [publications, setPublications] = useState<UserDatasetPublication[]>(
     []
   );
-
   const [hyperlinks, setHyperlinks] = useState<UserDatasetHyperlink[]>([]);
   const [organisms, setOrganisms] = useState<string[]>([]);
   const [contacts, setContacts] = useState<UserDatasetContact[]>(
     [] as UserDatasetContact[]
   );
+  const [studyDesign, setStudyDesign] =
+    useState<keyof typeof studyDesignOptions>('Case-control study');
+  const [disease, setDisease] = useState<string>('');
+  const [sampleType, setSampleType] = useState<string>('');
+  const [country, setCountry] = useState<string>('');
+  const [years, setYears] = useState<string>('');
+  const [ages, setAges] = useState<string>('');
 
   const [dependencies, setDependencies] =
     useState<UserDataset['dependencies']>();
@@ -253,6 +260,14 @@ function UploadForm({
           hyperlinks,
           organisms,
           contacts,
+          datasetCharacteristics: {
+            studyDesign,
+            disease,
+            sampleType,
+            country,
+            years,
+            ages,
+          },
         }
       );
 
@@ -278,6 +293,12 @@ function UploadForm({
       hyperlinks,
       organisms,
       contacts,
+      studyDesign,
+      disease,
+      sampleType,
+      country,
+      years,
+      ages,
     ]
   );
 
@@ -302,6 +323,13 @@ function UploadForm({
 
   const summaryRequired = summaryInputProps?.required ?? true;
   const descriptionRequired = descriptionInputProps?.required ?? false;
+
+  const studyDesignSelectItems = Object.keys(studyDesignOptions).map(
+    (design) => ({
+      value: design,
+      display: design,
+    })
+  );
 
   const defaultFileInputField = (
     <FileInput
@@ -774,6 +802,85 @@ function UploadForm({
             </details>
           </div>
         )}
+        {
+          // isasimple extra metadata
+
+          <div className="formSection formSection--data-set-characteristics">
+            <div className="formSection formSection--data-set-study-design">
+              <FieldLabel required={false} htmlFor="data-set-study-design">
+                Study Design
+              </FieldLabel>
+              <SingleSelect
+                items={studyDesignSelectItems}
+                name={'study-design'}
+                value={studyDesign}
+                onChange={(value) =>
+                  setStudyDesign(value as keyof typeof studyDesignOptions)
+                }
+              />
+            </div>
+            <div className="formSection formSection--data-set-disease">
+              <FieldLabel required={false} htmlFor="data-set-disease">
+                Disease(s)
+              </FieldLabel>
+              <TextBox
+                type="input"
+                id="data-set-disease"
+                placeholder="Disease(s) associated with the dataset."
+                value={disease}
+                onChange={setDisease}
+              />
+            </div>
+            <div className="formSection formSection--data-set-sample-type">
+              <FieldLabel required={false} htmlFor="data-set-sample-type">
+                Sample Type
+              </FieldLabel>
+              <TextBox
+                type="input"
+                id="data-set-sample-type"
+                placeholder="Sample type."
+                value={sampleType}
+                onChange={setSampleType}
+              />
+            </div>
+            <div className="formSection formSection--data-set-country">
+              <FieldLabel required={false} htmlFor="data-set-country">
+                Country
+              </FieldLabel>
+              <TextBox
+                type="input"
+                id="data-set-country"
+                placeholder="Country of origin."
+                value={country}
+                onChange={setCountry}
+              />
+            </div>
+            <div className="formSection formSection--data-set-years">
+              <FieldLabel required={false} htmlFor="data-set-years">
+                Years
+              </FieldLabel>
+              <TextBox
+                type="input"
+                id="data-set-years"
+                placeholder="Years of data collection."
+                value={years}
+                onChange={setYears}
+              />
+            </div>
+            <div className="formSection formSection--data-set-ages">
+              <FieldLabel required={false} htmlFor="data-set-ages">
+                Ages
+              </FieldLabel>
+              <TextBox
+                type="input"
+                id="data-set-ages"
+                placeholder="Ages of subjects."
+                value={ages}
+                onChange={setAges}
+              />
+            </div>
+          </div>
+        }
         {datasetUploadType.formConfig.dependencies && (
           <div className="formSection formSection--data-set-dependencies">
             <FieldLabel

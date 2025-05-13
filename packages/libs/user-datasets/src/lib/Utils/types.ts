@@ -307,6 +307,34 @@ const userDatasetContact = intersection([
   }),
 ]);
 
+export const studyDesignOptions = {
+  'Cluster-randomized controlled trial': null,
+  'Quasi-experimental study': null,
+  'Randomized controlled/clinical trial': null,
+  'Case series study': null,
+  'Case-control study': null,
+  'Cohort study': null,
+  'Cross-sectional study': null,
+  'Ecological study': null,
+  'Panel study': null,
+  'Surveillance study': null,
+  'Meta-analysis': null,
+  Other: null,
+};
+
+export type UserDatasetCharacteristics = TypeOf<
+  typeof userDatasetCharacteristics
+>;
+export const userDatasetCharacteristics = partial({
+  studyDesign: keyof(studyDesignOptions),
+  studyType: string, // assigned by the backend
+  disease: string,
+  sampleType: string,
+  country: string,
+  years: string,
+  ages: string,
+});
+
 export type UserDatasetFormContent = TypeOf<typeof userDatasetFormContent>;
 export const userDatasetFormContent = intersection([
   type({
@@ -322,6 +350,7 @@ export const userDatasetFormContent = intersection([
     hyperlinks: array(userDatasetHyperlink),
     organisms: array(string),
     contacts: array(userDatasetContact),
+    datasetCharacteristics: userDatasetCharacteristics,
   }),
 ]);
 
