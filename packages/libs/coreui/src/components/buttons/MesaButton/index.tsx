@@ -144,7 +144,7 @@ export default function MesaButton({
 
   const finalStyle = useMemo(
     () => merge({}, defaultStyle, themeStyle, styleOverrides),
-    [themeStyle]
+    [themeStyle, styleOverrides]
   );
 
   return (

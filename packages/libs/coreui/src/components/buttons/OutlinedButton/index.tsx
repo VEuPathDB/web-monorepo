@@ -115,7 +115,7 @@ export default function OutlinedButton({
 
   const finalStyle = useMemo(
     () => merge({}, defaultStyle, themeStyle, styleOverrides),
-    [themeStyle]
+    [themeStyle, styleOverrides]
   );
 
   return (
