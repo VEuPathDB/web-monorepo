@@ -311,9 +311,9 @@ export type UserDatasetFormContent = TypeOf<typeof userDatasetFormContent>;
 export const userDatasetFormContent = intersection([
   type({
     name: string,
-    summary: string,
   }),
   partial({
+    summary: string,
     shortName: string,
     shortAttribution: string,
     category: string,

@@ -256,10 +256,13 @@ class UserDatasetList extends React.Component<Props, State> {
           return (
             <div style={{ display: 'block', maxWidth: '100%' }}>
               <SaveableTextEditor
-                rows={Math.max(2, Math.floor(dataset.meta.summary.length / 22))}
+                rows={Math.max(
+                  2,
+                  Math.floor((dataset.meta.summary?.length ?? 0) / 22)
+                )}
                 multiLine={true}
                 onSave={saveSummary}
-                value={dataset.meta.summary}
+                value={dataset.meta.summary ?? ''}
                 readOnly={!isOwner(dataset.ownerUserId)}
               />
             </div>
