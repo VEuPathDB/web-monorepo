@@ -39,11 +39,25 @@ export default function SwissArmyButton({
     [buttonState, disabled]
   );
 
-  const calculatedFontSize = size === 'large' ? '1rem' : '.80rem';
+  const calculatedFontSize =
+    size === 'xlarge' ? '1.5rem' : size === 'large' ? '1rem' : '.80rem';
   const calculatedIconSize =
-    size === 'large' ? '1.5rem' : size === 'medium' ? '1.25rem' : '1rem';
-  const horizontalPadding = size === 'large' ? 15 : 15;
-  const buttonHeight = size === 'large' ? 50 : size === 'medium' ? 35 : 25;
+    size === 'xlarge'
+      ? '2rem'
+      : size === 'large'
+      ? '1.5rem'
+      : size === 'medium'
+      ? '1.25rem'
+      : '1rem';
+  const horizontalPadding = size === 'xlarge' ? 20 : size === 'large' ? 15 : 15;
+  const buttonHeight =
+    size === 'xlarge'
+      ? 65
+      : size === 'large'
+      ? 50
+      : size === 'medium'
+      ? 35
+      : 25;
 
   const Icon = icon;
 
