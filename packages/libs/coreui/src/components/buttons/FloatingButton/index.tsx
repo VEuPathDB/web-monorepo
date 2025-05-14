@@ -81,7 +81,7 @@ export default function FloatingButton({
 
   const finalStyle = useMemo(
     () => merge({}, defaultStyle, themeStyle, styleOverrides),
-    [themeStyle, styleOverrides]
+    [defaultStyle, themeStyle, styleOverrides]
   );
 
   return (
