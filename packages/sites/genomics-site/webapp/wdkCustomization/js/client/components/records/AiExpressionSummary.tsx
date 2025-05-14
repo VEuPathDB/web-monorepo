@@ -122,10 +122,10 @@ function AiSummaryGate(props: Props) {
   if (aiExpressionSummary == null) {
     if (serviceStatus === 'cost-limit-exceeded') {
       return (
-        <div>
+        <p>
           Sorry, the daily AI usage limit has been exceeded. Please refresh the
           page tomorrow to try again.
-        </div>
+        </p>
       );
     } else {
       return <div>Loading...</div>;
