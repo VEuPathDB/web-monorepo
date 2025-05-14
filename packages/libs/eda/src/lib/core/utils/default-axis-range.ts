@@ -1,4 +1,4 @@
-import { Variable } from '../types/study';
+import { NumberDistributionDefaults, Variable } from '../types/study';
 import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
 import { VariableMapping } from '../api/DataClient/types';
@@ -24,23 +24,12 @@ export function numberDateDefaultAxisRange(
             min:
               logScale &&
               observedMin != null &&
-              (observedMin <= 0 ||
+              ((observedMin as number) <= 0 ||
                 (defaults.displayRangeMin != null &&
                   defaults.displayRangeMin <= 0) ||
                 defaults.rangeMin <= 0)
                 ? (observedMinPos as number)
-                : // For the min, we want to start at one of the following, in order of precedence:
-                  //
-                  // - `displayRangeMin`, if it is defined and smaller than `rangeMin`
-                  // - `rangeMin`, if it is smaller than `0`
-                  // - `0`, otherwise.
-                  //
-                  // This can be expressed as a `min` function.
-                  (min([
-                    defaults.displayRangeMin ?? 0,
-                    defaults.rangeMin,
-                    observedMin,
-                  ]) as number),
+                : getSafeLowerBound(defaults, observedMin as number),
             max: max([
               defaults.displayRangeMax,
               defaults.rangeMax,
@@ -147,4 +136,38 @@ export function numberDateDefaultAxisRange(
           max: Number(observedMax) as number,
         };
   } else return undefined;
+}
+
+const MAX_EDGE_CASE_BINS = 2000;
+
+/**
+ * The basic functionality is to return `min([ displayRangeMin ?? 0, rangeMin, observedMin ])`
+ * The zero is targeted at histograms which should start at zero even if rangeMin > 0.
+ *
+ * However, there is an edge case when rangeMin === rangeMax. (When the default binWidth defaults to 1.)
+ * If we are making a `distribution` histogram request in this scenario, we do NOT want
+ * to request `{ min: 0, max: rangeMax, binWidth: 1 }`
+ * because this will cause an OOM error on the backend if `rangeMax` is large.
+ *
+ * The solution is to check for the edge case and return
+ * `rangeMin - binWidth` for the lower bound if the number of bins would be excessive.
+ */
+function getSafeLowerBound(
+  { displayRangeMin, rangeMin, rangeMax, binWidth }: NumberDistributionDefaults,
+  observedMin?: number
+): number {
+  let lowerBound = 0; // for "full" ranges for non-edge-case positive variables
+
+  // If there's a human-supplied minimum, trust it
+  if (displayRangeMin != null) {
+    lowerBound = displayRangeMin;
+  } else if (
+    // check for the edge-case
+    rangeMin === rangeMax &&
+    rangeMax / (binWidth ?? 1) > MAX_EDGE_CASE_BINS
+  ) {
+    lowerBound = rangeMin - (binWidth ?? 1);
+  }
+
+  return min([lowerBound, rangeMin, observedMin]) as number;
 }
