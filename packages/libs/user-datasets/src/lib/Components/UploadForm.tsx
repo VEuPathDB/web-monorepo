@@ -36,8 +36,7 @@ import {
   UserDatasetPublication,
 } from '../Utils/types';
 
-import { FloatingButton, Modal, OutlinedButton } from '@veupathdb/coreui';
-import { OutlinedButtonWDKStyle } from '@veupathdb/coreui/lib/components/buttons/OutlinedButton';
+import { FloatingButton, Modal } from '@veupathdb/coreui';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import AddIcon from '@material-ui/icons/Add';
 import Trash from '@veupathdb/coreui/lib/components/icons/Trash';
@@ -532,7 +531,7 @@ function UploadForm({
                   />
                 );
               })}
-              <OutlinedButton
+              <FloatingButton
                 text="Add Publication"
                 onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
                   event.preventDefault();
@@ -542,7 +541,7 @@ function UploadForm({
                   ]);
                 }}
                 icon={AddIcon}
-                styleOverrides={OutlinedButtonWDKStyle}
+                styleOverrides={FloatingButtonWDKStyle}
               />
             </div>
             <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-hyperlinks">
@@ -589,7 +588,7 @@ function UploadForm({
                   />
                 );
               })}
-              <OutlinedButton
+              <FloatingButton
                 text="Add Hyperlink"
                 onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
                   event.preventDefault();
@@ -599,7 +598,7 @@ function UploadForm({
                   ]);
                 }}
                 icon={AddIcon}
-                styleOverrides={OutlinedButtonWDKStyle}
+                styleOverrides={FloatingButtonWDKStyle}
               />
             </div>
             {!datasetUploadType.formConfig.hideRelatedOrganisms && (
@@ -646,14 +645,14 @@ function UploadForm({
                     );
                   })}
                 </div>
-                <OutlinedButton
+                <FloatingButton
                   text="Add Related Organism"
                   onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
                     event.preventDefault();
                     setOrganisms((oldOrganisms) => [...oldOrganisms, '']);
                   }}
                   icon={AddIcon}
-                  styleOverrides={OutlinedButtonWDKStyle}
+                  styleOverrides={FloatingButtonWDKStyle}
                 />
               </div>
             )}
@@ -714,7 +713,7 @@ function UploadForm({
                   />
                 );
               })}
-              <OutlinedButton
+              <FloatingButton
                 text="Add Contact"
                 onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
                   event.preventDefault();
@@ -724,7 +723,7 @@ function UploadForm({
                   ]);
                 }}
                 icon={AddIcon}
-                styleOverrides={OutlinedButtonWDKStyle}
+                styleOverrides={FloatingButtonWDKStyle}
               />
             </div>
           </div>
@@ -1032,7 +1031,7 @@ function HyperlinkInput(props: HyperlinkInputProps): JSX.Element {
         <TextBox
           type="input"
           id={`data-set-hyperlink-url-${n}`}
-          placeholder="url"
+          placeholder="URL"
           required
           value={url}
           onChange={onAddUrl}
@@ -1041,7 +1040,7 @@ function HyperlinkInput(props: HyperlinkInputProps): JSX.Element {
         <TextBox
           type="input"
           id={`data-set-hyperlink-text-${n}`}
-          placeholder="Text to show for the hyperlink"
+          placeholder="Hyperlink text"
           value={text}
           onChange={onAddText}
         />
@@ -1049,7 +1048,7 @@ function HyperlinkInput(props: HyperlinkInputProps): JSX.Element {
         <TextBox
           type="input"
           id={`data-set-hyperlink-description-${n}`}
-          placeholder="Description of the hyperlink"
+          placeholder="Description"
           value={description}
           required={false}
           onChange={onAddDescription}
