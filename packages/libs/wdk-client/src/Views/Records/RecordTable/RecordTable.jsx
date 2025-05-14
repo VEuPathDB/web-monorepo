@@ -294,7 +294,7 @@ class RecordTable extends Component {
         childRow: childRow ? this.wrappedChildRow : undefined,
         className: 'wdk-DataTableContainer',
         getRowId: getSortIndex,
-        showCount: mesaReadyRows.length > 1,
+        showCount: mesaReadyRows.length > 2,
         ...(isOrthologTableWithData
           ? {
               ...this.props.orthoTableProps.options,
@@ -339,7 +339,7 @@ class RecordTable extends Component {
     return (
       <div className={className}>
         <Mesa state={tableState}>
-          {mesaReadyRows.length > 1 && (
+          {mesaReadyRows.length > 2 && (
             <RecordFilter
               searchTerm={this.state.searchTerm}
               onSearchTermChange={this.onSearchTermChange}
