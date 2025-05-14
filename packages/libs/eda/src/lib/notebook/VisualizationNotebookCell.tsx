@@ -24,8 +24,6 @@ export function VisualizationNotebookCell(
     analysis.descriptor.subset.descriptor
   );
 
-  // Eventually this cell should get the plugin list and use the name
-  // from the analysis state computation id to get the plugin and the computationAppOverview
   const {
     visualizationId,
     computeId,
@@ -39,9 +37,7 @@ export function VisualizationNotebookCell(
   );
   if (computation == null) throw new Error('Cannot find computation.');
 
-  console.log('visualizationName', visualizationName);
   const appPlugin = plugins[computation.descriptor.type];
-  console.log('appPlugin', appPlugin.visualizationPlugins);
   const vizPlugin =
     appPlugin && appPlugin.visualizationPlugins[visualizationName];
 
