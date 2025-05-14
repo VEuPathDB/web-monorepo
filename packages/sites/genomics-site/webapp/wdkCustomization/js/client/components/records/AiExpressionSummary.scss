@@ -23,7 +23,7 @@ div.ai-summary {
   }
 }
 
-div.ai-disclaimer {
+div.ai-floating-extras {
   flex: 1 1 15em;
   min-width: 15em;
   max-width: 50em;
@@ -36,6 +36,43 @@ div.ai-disclaimer {
       cursor: pointer;
       padding: 0.2em 0.4em;
       font-weight: bold;
+    }
+  }
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.5em;
+
+  div.ai-feedback-buttons-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 1em;
+
+    a {
+      /* remove the underline by default */
+      text-decoration: none;
+
+      /* ensure it stays gone on hover/focus/active */
+      &:hover,
+      &:focus,
+      &:active {
+        text-decoration: none;
+      }
+    }
+  }
+
+  div.ai-feedback {
+    margin: 1em;
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 1em;
+    font-style: italic;
+
+    .ai-feedback-help {
+      font-size: 0.9em;
     }
   }
 }

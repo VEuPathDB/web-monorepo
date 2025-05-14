@@ -39,6 +39,7 @@ export const {
   userDatasetsUploadTypes = '',
   communityDatasetsEnabled = false,
   showExtraMetadata = false,
+  aiExpressionQualtricsId = '',
 } = window.__SITE_CONFIG__;
 
 export const edaExampleAnalysesAuthors = !window.__SITE_CONFIG__
