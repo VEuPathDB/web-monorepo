@@ -225,6 +225,11 @@ const AiExpressionResult = (props: AiExpressionResultProps) => {
   // floater management
   const [floaterDatasetId, setFloaterDatasetId] = useState<string>();
 
+  const currentUser = useWdkService(
+    (wdkService) => wdkService.getCurrentUser(),
+    []
+  );
+
   // Note that `safeHtml()` does NOT sanitise dangerous HTML elements and attributes.
   // for example, this would render and the JavaScript will execute:
   // const danger = `<img src="x" onerror="alert('XSS!')" />`;
@@ -382,7 +387,9 @@ const AiExpressionResult = (props: AiExpressionResultProps) => {
             </span>
             <div className="ai-feedback-buttons-container">
               <a
-                href={`https://google.com?q=Yay for ${record.displayName}`}
+                href={`https://google.com?q=Yay for ${
+                  record.displayName
+                }&UserId=${currentUser?.id ?? 'NA'}`}
                 target="_blank"
               >
                 <FloatingButton
