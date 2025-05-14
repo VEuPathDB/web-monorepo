@@ -59,6 +59,7 @@ export default configure({
         showUnreleasedData: process.env.SHOW_UNRELEASED_DATA === 'true',
 	communityDatasetsEnabled: process.env.COMMUNITY_DATASETS_ENABLED === 'true',
         showExtraMetadata: process.env.SHOW_EXTRA_METADATA === 'true',
+	aiExpressionQualtricsId: process.env.AI_EXPRESSION_QUALTRICS_ID,
 })
     }),
     new HtmlWebpackPlugin({

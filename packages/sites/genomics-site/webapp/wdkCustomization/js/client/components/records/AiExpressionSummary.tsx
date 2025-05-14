@@ -30,6 +30,10 @@ import { ServiceError } from '@veupathdb/wdk-client/lib/Service/ServiceError';
 import './AiExpressionSummary.scss';
 import { warning } from '@veupathdb/coreui/lib/definitions/colors';
 import { FloatingButton } from '@veupathdb/coreui/lib';
+import {
+  aiExpressionQualtricsId,
+  projectId,
+} from '@veupathdb/web-common/lib/config';
 
 const MIN_DATASETS_FOR_AI_SUMMARY = 5;
 const POLL_TIME_MS = 5000;
@@ -337,6 +341,8 @@ const AiExpressionResult = (props: AiExpressionResultProps) => {
     },
   };
 
+  const shouldGatherFeedback = aiExpressionQualtricsId !== '';
+
   return (
     <div className="ai-generated">
       <ExpressionGraphFloater
@@ -381,43 +387,47 @@ const AiExpressionResult = (props: AiExpressionResultProps) => {
               </strong>
             </p>
           </details>
-          <div className="ai-feedback">
-            <span>
-              Was this AI expression summary for {record.displayName} helpful?
-            </span>
-            <div className="ai-feedback-buttons-container">
-              <a
-                href={`https://google.com?q=Yay for ${
-                  record.displayName
-                }&UserId=${currentUser?.id ?? 'NA'}`}
-                target="_blank"
-              >
-                <FloatingButton
-                  text="👍"
-                  size="large"
-                  tooltip="Yes"
-                  onPress={
-                    () => {} /* can potentially add client-side deduplication logic here */
-                  }
-                />
-              </a>
-              <a
-                href={`https://google.com?q=Boo to ${record.displayName}`}
-                target="_blank"
-              >
-                <FloatingButton
-                  text="👎"
-                  size="large"
-                  tooltip="No"
-                  onPress={() => {}}
-                />
-              </a>
+          {shouldGatherFeedback && (
+            <div className="ai-feedback">
+              <span>
+                Was this AI expression summary for {record.displayName} helpful?
+              </span>
+              <div className="ai-feedback-buttons-container">
+                <a
+                  href={`https://upenn.co1.qualtrics.com/jfe/form/${aiExpressionQualtricsId}?IsHelpful=Yes&GeneID=${
+                    record.displayName
+                  }&ProjectID=${projectId}&UserId=${currentUser?.id ?? 'NA'}`}
+                  target="_blank"
+                >
+                  <FloatingButton
+                    text="👍"
+                    size="xlarge"
+                    tooltip="Yes"
+                    onPress={
+                      () => {} /* can potentially add client-side deduplication logic here */
+                    }
+                  />
+                </a>
+                <a
+                  href={`https://upenn.co1.qualtrics.com/jfe/form/${aiExpressionQualtricsId}?IsHelpful=No&GeneID=${
+                    record.displayName
+                  }&ProjectID=${projectId}&UserId=${currentUser?.id ?? 'NA'}`}
+                  target="_blank"
+                >
+                  <FloatingButton
+                    text="👎"
+                    size="xlarge"
+                    tooltip="No"
+                    onPress={() => {}}
+                  />
+                </a>
+              </div>
+              <span className="ai-feedback-help">
+                (Opens a short Qualtrics survey in a new tab. All questions are
+                optional.)
+              </span>
             </div>
-            <span className="ai-feedback-help">
-              (Opens a short Qualtrics survey in a new tab. All questions are
-              optional.)
-            </span>
-          </div>
+          )}
         </div>
       </div>
       <Mesa state={mainTableState} />
