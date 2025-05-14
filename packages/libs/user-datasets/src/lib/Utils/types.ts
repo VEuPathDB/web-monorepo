@@ -10,6 +10,8 @@ import {
   string,
   keyof,
   boolean,
+  brand,
+  Branded,
 } from 'io-ts';
 
 // User dataset metadata type used by the UI (as opposed to the type
@@ -326,14 +328,16 @@ export const studyDesignOptions = {
 export type UserDatasetCharacteristics = TypeOf<
   typeof userDatasetCharacteristics
 >;
+
 export const userDatasetCharacteristics = partial({
-  studyDesign: keyof(studyDesignOptions),
+  studyDesign: keyof(studyDesignOptions), // required
   studyType: string, // assigned by the backend
-  disease: string,
-  sampleType: string,
-  country: string,
-  years: string,
-  ages: string,
+  host: string,
+  diseases: array(string),
+  sampleTypes: array(string),
+  countries: array(string),
+  years: array(number),
+  ages: array(string),
 });
 
 export type UserDatasetFormContent = TypeOf<typeof userDatasetFormContent>;
