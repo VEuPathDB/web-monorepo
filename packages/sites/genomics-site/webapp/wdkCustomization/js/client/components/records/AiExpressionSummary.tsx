@@ -29,7 +29,7 @@ import { ServiceError } from '@veupathdb/wdk-client/lib/Service/ServiceError';
 // Styles
 import './AiExpressionSummary.scss';
 import { warning } from '@veupathdb/coreui/lib/definitions/colors';
-import { FloatingButton } from '../../../../../../../../libs/coreui/lib';
+import { FloatingButton } from '@veupathdb/coreui/lib';
 
 const MIN_DATASETS_FOR_AI_SUMMARY = 5;
 const POLL_TIME_MS = 5000;
@@ -387,6 +387,7 @@ const AiExpressionResult = (props: AiExpressionResultProps) => {
               >
                 <FloatingButton
                   text="👍"
+                  size="large"
                   tooltip="Yes"
                   onPress={
                     () => {} /* can potentially add client-side deduplication logic here */
@@ -397,7 +398,12 @@ const AiExpressionResult = (props: AiExpressionResultProps) => {
                 href={`https://google.com?q=Boo to ${record.displayName}`}
                 target="_blank"
               >
-                <FloatingButton text="👎" tooltip="No" onPress={() => {}} />
+                <FloatingButton
+                  text="👎"
+                  size="large"
+                  tooltip="No"
+                  onPress={() => {}}
+                />
               </a>
             </div>
             <span className="ai-feedback-help">
