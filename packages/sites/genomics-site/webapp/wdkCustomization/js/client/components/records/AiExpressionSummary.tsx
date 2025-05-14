@@ -29,6 +29,7 @@ import { ServiceError } from '@veupathdb/wdk-client/lib/Service/ServiceError';
 // Styles
 import './AiExpressionSummary.scss';
 import { warning } from '@veupathdb/coreui/lib/definitions/colors';
+import { FloatingButton } from '../../../../../../../../libs/coreui/lib';
 
 const MIN_DATASETS_FOR_AI_SUMMARY = 5;
 const POLL_TIME_MS = 5000;
@@ -354,7 +355,7 @@ const AiExpressionResult = (props: AiExpressionResultProps) => {
             </i>
           </p>
         </div>
-        <div className="ai-disclaimer">
+        <div className="ai-floating-extras">
           <details
             style={{
               background: warning[100],
@@ -375,6 +376,35 @@ const AiExpressionResult = (props: AiExpressionResultProps) => {
               </strong>
             </p>
           </details>
+          <div className="ai-feedback">
+            <span>
+              Was this AI expression summary for {record.displayName} helpful?
+            </span>
+            <div className="ai-feedback-buttons-container">
+              <a
+                href={`https://google.com?q=Yay for ${record.displayName}`}
+                target="_blank"
+              >
+                <FloatingButton
+                  text="👍"
+                  tooltip="Yes"
+                  onPress={
+                    () => {} /* can potentially add client-side deduplication logic here */
+                  }
+                />
+              </a>
+              <a
+                href={`https://google.com?q=Boo to ${record.displayName}`}
+                target="_blank"
+              >
+                <FloatingButton text="👎" tooltip="No" onPress={() => {}} />
+              </a>
+            </div>
+            <span className="ai-feedback-help">
+              (Opens a short Qualtrics survey in a new tab. All questions are
+              optional.)
+            </span>
+          </div>
         </div>
       </div>
       <Mesa state={mainTableState} />
