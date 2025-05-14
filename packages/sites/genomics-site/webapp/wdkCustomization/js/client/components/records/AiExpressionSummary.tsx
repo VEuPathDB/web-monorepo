@@ -141,8 +141,11 @@ function AiSummaryGate(props: Props) {
         <p>
           Click below to request an AI summary of this gene's expression across
           all the experiments shown in the "Transcript Expression" section
-          below. It could take up to three minutes. When complete, the results
-          will be cached for all users.
+          below.
+        </p>
+        <p>
+          It could take up to three minutes. When complete, the results will be
+          cached for all users.
         </p>
         <button onClick={() => setSummaryGenerationRequested(true)}>
           Start AI Summary
