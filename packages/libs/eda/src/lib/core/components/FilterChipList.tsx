@@ -10,7 +10,7 @@ import { colors, Warning } from '@veupathdb/coreui';
 // Material UI CSS declarations
 const useStyles = makeStyles((theme) => ({
   chips: {
-    display: 'flex',
+    display: 'inline-flex',
     flexWrap: 'wrap',
     '& > *:not(:last-of-type)': {
       // Spacing between chips
