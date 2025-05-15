@@ -10,6 +10,8 @@ import {
   string,
   keyof,
   boolean,
+  brand,
+  Branded,
 } from 'io-ts';
 
 // User dataset metadata type used by the UI (as opposed to the type
@@ -308,6 +310,36 @@ const userDatasetContact = intersection([
   }),
 ]);
 
+export const studyDesignOptions = {
+  'Cluster-randomized controlled trial': null,
+  'Quasi-experimental study': null,
+  'Randomized controlled/clinical trial': null,
+  'Case series study': null,
+  'Case-control study': null,
+  'Cohort study': null,
+  'Cross-sectional study': null,
+  'Ecological study': null,
+  'Panel study': null,
+  'Surveillance study': null,
+  'Meta-analysis': null,
+  Other: null,
+};
+
+export type UserDatasetCharacteristics = TypeOf<
+  typeof userDatasetCharacteristics
+>;
+
+export const userDatasetCharacteristics = partial({
+  studyDesign: keyof(studyDesignOptions), // required
+  studyType: string, // assigned by the backend
+  host: string,
+  diseases: array(string),
+  sampleTypes: array(string),
+  countries: array(string),
+  years: array(number),
+  ages: array(string),
+});
+
 export type UserDatasetFormContent = TypeOf<typeof userDatasetFormContent>;
 export const userDatasetFormContent = intersection([
   type({
@@ -323,6 +355,7 @@ export const userDatasetFormContent = intersection([
     hyperlinks: array(userDatasetHyperlink),
     organisms: array(string),
     contacts: array(userDatasetContact),
+    datasetCharacteristics: userDatasetCharacteristics,
   }),
 ]);
 
