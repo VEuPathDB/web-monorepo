@@ -2,7 +2,7 @@ import { merge } from 'lodash';
 import { useMemo } from 'react';
 
 import useUITheme from '../../theming/useUITheme';
-import { blue, gray } from '../../../definitions/colors';
+import { blue, gray, mutedBlue } from '../../../definitions/colors';
 import SwissArmyButton from '../SwissArmyButton';
 import {
   ButtonStyleSpec,
@@ -115,7 +115,7 @@ export default function OutlinedButton({
 
   const finalStyle = useMemo(
     () => merge({}, defaultStyle, themeStyle, styleOverrides),
-    [themeStyle]
+    [defaultStyle, themeStyle, styleOverrides]
   );
 
   return (
@@ -133,3 +133,51 @@ export default function OutlinedButton({
     />
   );
 }
+
+// Styled for use in the wdk
+export const OutlinedButtonWDKStyle = {
+  default: {
+    textColor: '#0F86C1',
+    fontWeight: 600,
+    color: 'transparent',
+    border: {
+      radius: 5,
+      color: '#0F86C1',
+      style: 'solid',
+      width: 2,
+    },
+  },
+  hover: {
+    textColor: mutedBlue[600],
+    fontWeight: 600,
+    color: 'transparent',
+    border: {
+      radius: 5,
+      color: mutedBlue[600],
+      style: 'solid',
+      width: 2,
+    },
+  },
+  pressed: {
+    textColor: mutedBlue[700],
+    fontWeight: 600,
+    color: 'transparent',
+    border: {
+      radius: 5,
+      color: mutedBlue[700],
+      style: 'solid',
+      width: 2,
+    },
+  },
+  disabled: {
+    textColor: gray[500],
+    fontWeight: 600,
+    color: 'transparent',
+    border: {
+      radius: 5,
+      color: gray[500],
+      style: 'solid',
+      width: 2,
+    },
+  },
+};

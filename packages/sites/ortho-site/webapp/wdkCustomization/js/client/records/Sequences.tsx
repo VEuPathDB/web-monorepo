@@ -339,6 +339,11 @@ export function RecordTable_Sequences(
     [mesaColumns]
   );
 
+  const handleSearchQueryChange = useCallback((query: string) => {
+    setSearchQuery(query);
+    setTablePageNumber(1);
+  }, []);
+
   const handleSpeciesSelection = useCallback((species: string[]) => {
     setSelectedSpecies(species);
     setTablePageNumber(1);
@@ -742,7 +747,7 @@ export function RecordTable_Sequences(
         <RecordFilter
           key={`text-search-${resetCounter}`}
           searchTerm={searchQuery}
-          onSearchTermChange={setSearchQuery}
+          onSearchTermChange={handleSearchQueryChange}
           recordDisplayName="Proteins"
           filterAttributes={filterAttributes}
           selectedColumnFilters={volatileSelectedColumnFilters}

@@ -99,7 +99,7 @@ export default function FilledButton({
 
   const finalStyle = useMemo(
     () => merge({}, defaultStyle, themeStyle, styleOverrides),
-    [themeStyle]
+    [defaultStyle, themeStyle, styleOverrides]
   );
 
   return (
