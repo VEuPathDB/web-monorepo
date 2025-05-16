@@ -265,7 +265,7 @@ class RecordTable extends Component {
       : displayableAttributes;
     const filteredRows = sortedMesaRows.filter((row) => {
       return searchableAttributes.some((attr) =>
-        regex.test(row[attr.name].text ?? row[attr.name])
+        regex.test(row[attr.name]?.text ?? row[attr.name])
       );
     });
 
