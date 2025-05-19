@@ -1,4 +1,4 @@
-// This CSS adds the NEW icon next to the attribute name on record pages
+/* This CSS adds the NEW icon next to the attribute name on record pages */
 #Cellxgene {
   .wdk-CollapsibleSectionHeader:after {
     content: url('~@veupathdb/wdk-client/lib/Core/Style/images/new-feature.png');
@@ -12,4 +12,16 @@
     margin-left: 1em;
     content: url('~@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png');
   }
+}
+
+/* add a badge to the left hand navigation ai_expression item */
+a.wdk-RecordNavigationItem#ai_expression:after,
+/* also add beta badge to the unexpanded parent 'Transcriptomics' item */
+li:not(:has(ul)) a.wdk-RecordNavigationItem#category\:transcriptomics:after {
+  position: absolute;
+  transform: translateY(-70%);
+  width: 38px;
+  height: 22px;
+  margin-left: 1em;
+  content: url('~@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png');
 }
