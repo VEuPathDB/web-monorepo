@@ -23,7 +23,7 @@ let RecordNavigationItem = ({ node, activeSection, onSectionToggle }) => {
         isActive ? 'active' : 'inactive',
         isField ? 'field' : 'category'
       )}
-      id={id}
+      id={'nav-' + id}
       href={'#' + id}
       onClick={(event) => {
         if (isField) {

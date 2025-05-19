@@ -1,27 +1,31 @@
 /* This CSS adds the NEW icon next to the attribute name on record pages */
+
+/* page item */
 #Cellxgene {
   .wdk-CollapsibleSectionHeader:after {
     content: url('~@veupathdb/wdk-client/lib/Core/Style/images/new-feature.png');
     margin-left: 0.5ch;
   }
 }
+/* navigation item */
+a.wdk-RecordNavigationItem#nav-Cellxgene:after {
+  vertical-align: sub;
+  margin-left: 0.5ch;
+  content: url('~@veupathdb/wdk-client/lib/Core/Style/images/new-feature.png');
+}
+
+/* page item */
 #ai_expression {
   .wdk-CollapsibleSectionHeader:after {
     width: 38px;
     height: 22px;
-    margin-left: 1em;
+    margin-left: 1ch;
     content: url('~@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png');
   }
 }
-
-/* add a badge to the left hand navigation ai_expression item */
-a.wdk-RecordNavigationItem#ai_expression:after,
-/* also add beta badge to the unexpanded parent 'Transcriptomics' item */
-li:not(:has(ul)) a.wdk-RecordNavigationItem#category\:transcriptomics:after {
-  position: absolute;
-  transform: translateY(-70%);
-  width: 38px;
-  height: 22px;
-  margin-left: 1em;
+/* navigation item */
+a.wdk-RecordNavigationItem#nav-ai_expression:after {
+  vertical-align: sub;
+  margin-left: 0.5ch;
   content: url('~@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png');
 }
