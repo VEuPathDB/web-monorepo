@@ -2,7 +2,7 @@ import React from 'react';
 import { RecordTable } from './SequenceRecordClasses.SequenceRecordClass';
 import { RecordTableProps, WrappedComponentProps } from './Types';
 
-import MGD_hist_img from './MGD-hist.png';
+import MGD_hist_img from './GroupStats_Par_Rplot.png';
 
 export function RecordTable_GroupStats(
   props: WrappedComponentProps<RecordTableProps>
@@ -33,8 +33,8 @@ export function RecordTable_GroupStats(
             fontSize: '90%',
           }}
         >
-          The histogram shows the distribution of the median percent identity
-          cohesiveness indicator across all orthologous groups.
+          The histograms show the distribution of the median percent identity
+          within Core (red) and All (blue) ortholog groups.
         </figcaption>
       </figure>
     </div>
