@@ -13,19 +13,21 @@ export function RecordTable_GroupStats(
     <div
       style={{
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        columnGap: '2em', // only separate when side-by-side (no rowGap)
       }}
     >
       {regularRecordTable}
       <figure
         style={{
-          width: 390,
+          width: 400,
         }}
       >
         <img
           alt="The histogram shows the distribution of the median percent identity cohesiveness indicator across all orthologous groups. There is a skewed distribution with a peak at 0-5% identity."
-          width={390}
-          height={336}
+          width={400}
+          height={400}
           src={MGD_hist_img}
         />
         <figcaption
