@@ -1,17 +1,11 @@
-import { useMemo } from 'react';
 import { useEntityCounts } from '../core/hooks/entityCounts';
-import { useStudyEntities } from '../core/hooks/workspace';
 import { NotebookCellComponentProps } from './Types';
 import { H6 } from '@veupathdb/coreui/lib/components/typography/headers';
 
 export function TextNotebookCell(props: NotebookCellComponentProps<'text'>) {
-  const { analysisState, cell, updateCell, isSubCell, isDisabled } = props;
+  const { analysisState, cell, isSubCell, isDisabled } = props;
   const { text } = cell;
-  const entity = useStudyEntities()[0];
   const totalCountsResult = useEntityCounts();
-  const filteredCountsResult = useEntityCounts(
-    analysisState.analysis?.descriptor.subset.descriptor
-  );
 
   return (
     <details className={isSubCell ? 'subCell' : ''} open>

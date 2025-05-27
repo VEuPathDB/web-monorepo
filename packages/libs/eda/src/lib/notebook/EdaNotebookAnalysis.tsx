@@ -41,7 +41,7 @@ interface NotebookSettings {
 
 const NOTEBOOK_UI_SETTINGS_KEY = '@@NOTEBOOK@@';
 // Eventually this value should come from the wdk or whomever is creating the notebook.
-const NOTEBOOK_PRESET_TEST = presetNotebooks['wgcnaCorrelationNotebook'];
+const NOTEBOOK_PRESET_TEST = presetNotebooks['differentialAbundanceNotebook'];
 
 interface Props {
   analysis: Analysis | NewAnalysis | undefined;

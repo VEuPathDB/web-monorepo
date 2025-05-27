@@ -47,7 +47,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
     cells: [
       {
         type: 'compute',
-        title: 'diff abund title',
+        title: 'Differential Abundance',
         computationName: 'differentialabundance',
         cells: [
           {

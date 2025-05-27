@@ -29,6 +29,7 @@ export function VisualizationNotebookCell(
     computeId,
     computationAppOverview,
     visualizationName,
+    computeJobStatus,
   } = cell;
 
   // use computeId to find the computation in the analysis state
@@ -47,24 +48,30 @@ export function VisualizationNotebookCell(
     .find((comp) => comp.computationId === computation.computationId)
     ?.visualizations.find((viz) => viz.visualizationId === visualizationId);
 
-  if (existingVisualization == null) {
-    const newVisualization = {
-      visualizationId,
-      displayName: 'Unnamed visualization',
-      descriptor: {
-        type: visualizationName,
-        configuration: vizPlugin?.createDefaultConfig() ?? {},
-      },
-    };
+  useEffect(() => {
+    if (existingVisualization == null) {
+      const newVisualization = {
+        visualizationId,
+        displayName: 'Unnamed visualization',
+        descriptor: {
+          type: visualizationName,
+          configuration: vizPlugin?.createDefaultConfig() ?? {},
+        },
+      };
 
-    analysisState.addVisualization(computation.computationId, newVisualization);
-  }
-
-  const { jobStatus } = useComputeJobStatus(
-    analysis,
-    computation as Computation,
-    computationAppOverview?.computeName ?? ''
-  );
+      analysisState.addVisualization(
+        computation.computationId,
+        newVisualization
+      );
+    }
+  }, [
+    analysisState,
+    computation.computationId,
+    existingVisualization,
+    vizPlugin,
+    visualizationId,
+    visualizationName,
+  ]);
 
   const viz = computation.visualizations.find(
     (v) => v.visualizationId === visualizationId
@@ -90,7 +97,7 @@ export function VisualizationNotebookCell(
         // });
       }
     },
-    [updateVisualization, viz, analysis]
+    [updateVisualization, viz]
   );
 
   const vizOverview = computationAppOverview.visualizations.find(
@@ -98,7 +105,6 @@ export function VisualizationNotebookCell(
   );
   const constraints = vizOverview?.dataElementConstraints;
   const dataElementDependencyOrder = vizOverview?.dataElementDependencyOrder;
-  console.log('vizPlugin', vizPlugin);
 
   return viz ? (
     <details className={isSubCell ? 'subCell' : ''} open>
@@ -123,7 +129,7 @@ export function VisualizationNotebookCell(
             filteredCounts={filteredCountsResult}
             geoConfigs={geoConfigs}
             otherVizOverviews={[]} // to be implemented
-            computeJobStatus={jobStatus}
+            computeJobStatus={computeJobStatus}
             hideInputsAndControls={false}
             // plotContainerStyleOverrides={plotContainerStyleOverrides}
           />

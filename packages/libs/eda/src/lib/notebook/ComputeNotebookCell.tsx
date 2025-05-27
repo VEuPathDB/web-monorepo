@@ -1,7 +1,7 @@
 import { CSSProperties, useCallback, useEffect, useMemo } from 'react';
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { useStudyEntities } from '../core/hooks/workspace';
-import { NotebookCellComponentProps } from './Types';
+import { isVisualizationCell, NotebookCellComponentProps } from './Types';
 import { isEqual } from 'lodash';
 import {
   RunComputeButton,
@@ -92,8 +92,8 @@ export function ComputeNotebookCell(
             computation={computation}
             totalCounts={totalCountsResult}
             filteredCounts={filteredCountsResult}
-            visualizationId="1"
-            addNewComputation={(name, configuration) => console.log('hi')}
+            visualizationId="1" // irrelevant because we have our own changeConfigHandler
+            addNewComputation={(name, configuration) => {}}
             computationAppOverview={computationAppOverview}
             geoConfigs={[]}
             changeConfigHandlerOverride={changeConfigHandler}
@@ -130,6 +130,11 @@ export function ComputeNotebookCell(
             ...subCell,
             title: subTitle,
           };
+          if (isVisualizationCell(subCell)) {
+            // It must be a visualization cell. Not sure why ts doesn't like this.
+            //@ts-ignore
+            subCellWithTitle.computeJobStatus = jobStatus;
+          }
           const isSubCellDisabled =
             jobStatus !== 'complete' && subCell.type !== 'text';
           return (

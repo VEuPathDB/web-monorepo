@@ -224,7 +224,6 @@ export function DifferentialAbundanceConfiguration(
     visualizationId
   );
 
-  // This is cheating. Needs to be cleaned up before merging.
   const changeConfigHandler =
     changeConfigHandlerOverride ?? workspaceChangeConfigHandler;
 
