@@ -8,6 +8,10 @@ import { useGeoConfig } from '../core/hooks/geoConfig';
 import { useComputeJobStatus } from '../core/components/computations/ComputeJobStatusHook';
 import { Computation } from '../core/types/visualization';
 import { plugins } from '../core/components/computations/plugins';
+import {
+  PlotContainerStyleOverrides,
+  VisualizationProps,
+} from '../core/components/visualizations/VisualizationTypes';
 
 export function VisualizationNotebookCell(
   props: NotebookCellComponentProps<'visualization'>
@@ -106,6 +110,13 @@ export function VisualizationNotebookCell(
   const constraints = vizOverview?.dataElementConstraints;
   const dataElementDependencyOrder = vizOverview?.dataElementDependencyOrder;
 
+  // Bipartite networks are set to be extra wide, so we need to override
+  // that behavior or they'll spill off the screen.
+  const plotContainerStyleOverrides: PlotContainerStyleOverrides = {};
+  if (viz?.descriptor.type === 'bipartitenetwork') {
+    plotContainerStyleOverrides.width = 1100;
+  }
+
   return viz ? (
     <details className={isSubCell ? 'subCell' : ''} open>
       <summary>{cell.title}</summary>
@@ -131,7 +142,7 @@ export function VisualizationNotebookCell(
             otherVizOverviews={[]} // to be implemented
             computeJobStatus={computeJobStatus}
             hideInputsAndControls={false}
-            // plotContainerStyleOverrides={plotContainerStyleOverrides}
+            plotContainerStyleOverrides={plotContainerStyleOverrides}
           />
         )}
       </div>

@@ -31,8 +31,8 @@ export default function NotebookRoute(props: Props) {
   const dataClient = useConfiguredDataClient(edaServiceUrl);
   const computeClient = useConfiguredComputeClient(edaServiceUrl);
 
-  // const fakeStudyId = 'DS_82dc5abc7f'; // Lee Gambian plasmo
-  const fakeStudyId = 'DS_1102462e80'; // Bangladesh mbio
+  const fakeStudyId = 'DS_82dc5abc7f'; // Lee Gambian plasmo
+  // const fakeStudyId = 'DS_1102462e80'; // Bangladesh mbio
   const initialAnalysis = useMemo(() => {
     return makeNewAnalysis(fakeStudyId);
   }, []);

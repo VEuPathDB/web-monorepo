@@ -20,7 +20,6 @@ import { v4 as uuid } from 'uuid';
 
 import './EdaNotebook.css';
 import { createComputation } from '../core/components/computations/Utils';
-import { plugins } from '../core/components/computations/plugins';
 import { useCachedPromise } from '../core/hooks/cachedPromise';
 import {
   isComputeCellDescriptor,
@@ -41,7 +40,7 @@ interface NotebookSettings {
 
 const NOTEBOOK_UI_SETTINGS_KEY = '@@NOTEBOOK@@';
 // Eventually this value should come from the wdk or whomever is creating the notebook.
-const NOTEBOOK_PRESET_TEST = presetNotebooks['differentialAbundanceNotebook'];
+const NOTEBOOK_PRESET_TEST = presetNotebooks['wgcnaCorrelationNotebook'];
 
 interface Props {
   analysis: Analysis | NewAnalysis | undefined;
