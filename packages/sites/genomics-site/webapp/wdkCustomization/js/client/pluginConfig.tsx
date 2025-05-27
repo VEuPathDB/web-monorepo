@@ -44,6 +44,10 @@ import {
   EdaSubsetStepDetails,
 } from './components/questions/EdaSubsetParameter';
 import { GenesByEdaSubset } from './components/questions/GenesByEdaSubset';
+import {
+  EdaNotebookParameter,
+  EdaNotebookStepDetails,
+} from './components/questions/EdaNotebookParameter';
 
 const BlastForm = React.lazy(() => import('./plugins/BlastForm'));
 const BlastQuestionController = React.lazy(
@@ -194,7 +198,8 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
     type: 'questionFormParameter',
     test: ({ question }) => question?.queryName === 'GenesByWGCNAModule',
-    component: GenesByWGCNAModules,
+    // component: GenesByWGCNAModules,
+    component: EdaNotebookParameter,
   },
   {
     type: 'questionForm',
@@ -264,6 +269,11 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
     type: 'stepDetails',
     test: isPhenotypeSubsetSearch,
     component: EdaSubsetStepDetails,
+  },
+  {
+    type: 'stepDetails',
+    test: ({ question }) => question?.queryName === 'GenesByWGCNAModule',
+    component: EdaNotebookStepDetails,
   },
 ];
 
