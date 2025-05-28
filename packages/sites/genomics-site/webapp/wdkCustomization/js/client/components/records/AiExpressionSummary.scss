@@ -48,7 +48,6 @@ div.ai-floating-extras {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    gap: 1em;
 
     a {
       /* remove the underline by default */
@@ -107,6 +106,12 @@ span.ai-one-sentence-summary {
 div.ai-topic-heading {
   margin-bottom: 0.5em;
   margin-right: 6em;
+
+  .badge {
+    i {
+      margin-left: 0.5em;
+    }
+  }
 
   &::after {
     content: '';
