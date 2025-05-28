@@ -45,6 +45,7 @@ const datasetIdParamName = 'eda_dataset_id';
 
 export function EdaNotebookParameter(props: Props<StringParam>) {
   const studyId = props.ctx.paramValues[datasetIdParamName] ?? 'DS_82dc5abc7f'; // For testing only because we don't have the param values set yet.
+  console.log(props);
 
   const analysisDescriptor = useMemo(() => {
     const jsonParsedParamValue = parseJson(props.value);

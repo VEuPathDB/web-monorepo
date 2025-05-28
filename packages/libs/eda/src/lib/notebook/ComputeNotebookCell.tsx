@@ -38,7 +38,6 @@ export function ComputeNotebookCell(
   const filteredCountsResult = useEntityCounts(
     analysis.descriptor.subset.descriptor
   );
-  console.log(computation.descriptor.type);
   const plugin = plugins[computation.descriptor.type];
   if (plugin == null) throw new Error('Computation plugin not found.');
 

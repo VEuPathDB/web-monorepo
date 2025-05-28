@@ -10,17 +10,7 @@ export function TextNotebookCell(props: NotebookCellComponentProps<'text'>) {
   return (
     <details className={isSubCell ? 'subCell' : ''} open>
       <summary>{cell.title}</summary>
-      <div className={isDisabled ? 'disabled' : ''}>
-        <H6>I'm the title</H6>
-        <p>This is my text:</p>
-        {text}
-        <p>
-          Total Counts Result:{' '}
-          {totalCountsResult.value
-            ? JSON.stringify(totalCountsResult.value)
-            : 'No data available'}{' '}
-        </p>
-      </div>
+      <div className={isDisabled ? 'disabled' : ''}>{text}</div>
     </details>
   );
 }

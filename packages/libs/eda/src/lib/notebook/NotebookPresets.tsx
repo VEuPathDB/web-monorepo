@@ -76,14 +76,19 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
     projects: ['MicrobiomeDB'],
     cells: [
       {
+        type: 'text',
+        title: 'Extra help',
+        text: 'Some more text for the WGCNA correlation notebook.',
+      },
+      {
         type: 'compute',
         title: 'WGCNA Correlation',
         computationName: 'correlation',
         cells: [
           {
             type: 'text',
-            title: 'Readme',
-            text: 'This is a sub text cell for the WGCNA correlation notebook. I dont get grayed out even if the compute isnt ready yet.',
+            title: 'Using the network plot',
+            text: 'Network plot explanation... To Do',
           },
           {
             type: 'visualization',
@@ -91,18 +96,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             visualizationName: 'bipartitenetwork',
             computationName: 'correlation',
           },
-          {
-            type: 'visualization',
-            title: 'Correlation plot 2',
-            visualizationName: 'bipartitenetwork',
-            computationName: 'correlation',
-          },
         ],
-      },
-      {
-        type: 'text',
-        title: 'Extra help',
-        text: 'Some more text for the WGCNA correlation notebook.',
       },
     ],
   },

@@ -197,9 +197,13 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   },
   {
     type: 'questionFormParameter',
-    test: ({ question }) => question?.queryName === 'GenesByWGCNAModule',
-    // component: GenesByWGCNAModules,
+    name: 'wgcnaParam',
     component: EdaNotebookParameter,
+  },
+  {
+    type: 'questionFormParameter',
+    test: ({ question }) => question?.queryName === 'GenesByWGCNAModule',
+    component: GenesByWGCNAModules,
   },
   {
     type: 'questionForm',
