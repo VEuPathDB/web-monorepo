@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useEffect } from 'react';
+import { useCallback, useMemo, useEffect, useRef, useState } from 'react';
 import {
   Analysis,
   AnalysisState,
@@ -82,8 +82,10 @@ export function EdaNotebookAnalysis(props: Props) {
 
   const appOverview =
     apps && apps.value?.apps.find((app) => app.name === computationName);
+  console.log('computationname:', computationName);
 
   const computation = useMemo(() => {
+    console.log('making new computation');
     return createComputation(computationName, {}, [], []);
   }, [computationName]);
 
@@ -96,26 +98,38 @@ export function EdaNotebookAnalysis(props: Props) {
         (comp) => comp.computationId === computation.computationId
       );
     if (existingComputation) return;
-
+    console.log('setting computation');
     analysisState.setComputations([computation]);
   }, [analysisState, computation]);
 
-  // Maybe use a ref instead?? Don't want to leave out a dependency on purpose.
-  // Could we use the strategy of checking the analysisState for a good viz/compute, and if it
-  // doesn't parse into a real thing then we create a new one?
-  const presetNotebookCells = useMemo(() => {
-    return (
-      appOverview &&
-      NOTEBOOK_PRESET_TEST.cells.map((cellDescriptor) => {
-        return notebookDescriptorToCell(
+  console.log('Computation:', computation);
+  console.log(
+    'analysisState computations:',
+    analysisState.analysis?.descriptor.computations
+  );
+
+  // Use state. Using a memo or ref didn't work because of the dependencies, that it needs to be
+  // called once, and because it is needed elsewhere to run other hooks.
+  const [presetNotebookCells, setPresetNotebookCells] = useState<
+    NotebookCellType[]
+  >([]);
+
+  useEffect(() => {
+    // Assume if this has run once, we don't need it again. The preset
+    // notebook should not change.
+    if (presetNotebookCells.length > 0) return;
+    if (appOverview) {
+      const newCells = NOTEBOOK_PRESET_TEST.cells.map((cellDescriptor) =>
+        notebookDescriptorToCell(
           cellDescriptor,
           analysisState,
           computation,
           appOverview
-        );
-      })
-    );
-  }, [appOverview, computation, NOTEBOOK_PRESET_TEST]); // Should only change if the preset notebook changes.
+        )
+      );
+      setPresetNotebookCells(newCells);
+    }
+  }, [appOverview, analysisState, computation, presetNotebookCells]);
 
   const notebookSettings = useMemo((): NotebookSettings => {
     const storedSettings =
