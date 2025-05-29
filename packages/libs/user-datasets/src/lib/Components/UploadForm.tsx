@@ -9,7 +9,7 @@ import React, {
 
 import { Link } from 'react-router-dom';
 
-import { keyBy } from 'lodash';
+import { capitalize, keyBy, set } from 'lodash';
 
 import {
   TextBox,
@@ -29,11 +29,13 @@ import {
   DatasetUploadTypeConfigEntry,
   NewUserDataset,
   ResultUploadConfig,
+  studyDesignOptions,
   UserDataset,
   UserDatasetContact,
   UserDatasetFormContent,
   UserDatasetHyperlink,
   UserDatasetPublication,
+  // Year,
 } from '../Utils/types';
 
 import { FloatingButton, Modal } from '@veupathdb/coreui';
@@ -43,6 +45,7 @@ import Trash from '@veupathdb/coreui/lib/components/icons/Trash';
 
 import './UploadForm.scss';
 import { FloatingButtonWDKStyle } from '@veupathdb/coreui/lib/components/buttons/FloatingButton';
+import pluralize from 'pluralize';
 
 const cx = makeClassNameHelper('UploadForm');
 
@@ -168,12 +171,18 @@ function UploadForm({
   const [publications, setPublications] = useState<UserDatasetPublication[]>(
     []
   );
-
   const [hyperlinks, setHyperlinks] = useState<UserDatasetHyperlink[]>([]);
   const [organisms, setOrganisms] = useState<string[]>([]);
   const [contacts, setContacts] = useState<UserDatasetContact[]>(
     [] as UserDatasetContact[]
   );
+  const [studyDesign, setStudyDesign] =
+    useState<keyof typeof studyDesignOptions>('Case-control study');
+  const [diseases, setDiseases] = useState<string[]>([]);
+  const [sampleTypes, setSampleTypes] = useState<string[]>([]);
+  const [countries, setCountries] = useState<string[]>([]);
+  const [years, setYears] = useState<number[]>([]);
+  const [ages, setAges] = useState<string[]>([]);
 
   const [dependencies, setDependencies] =
     useState<UserDataset['dependencies']>();
@@ -259,6 +268,14 @@ function UploadForm({
           hyperlinks,
           organisms,
           contacts,
+          datasetCharacteristics: {
+            studyDesign,
+            diseases,
+            sampleTypes,
+            countries,
+            years,
+            ages,
+          },
         }
       );
 
@@ -284,6 +301,12 @@ function UploadForm({
       hyperlinks,
       organisms,
       contacts,
+      studyDesign,
+      diseases,
+      sampleTypes,
+      countries,
+      years,
+      ages,
     ]
   );
 
@@ -308,6 +331,13 @@ function UploadForm({
 
   const summaryRequired = summaryInputProps?.required ?? true;
   const descriptionRequired = descriptionInputProps?.required ?? false;
+
+  const studyDesignSelectItems = Object.keys(studyDesignOptions).map(
+    (design) => ({
+      value: design,
+      display: design,
+    })
+  );
 
   const defaultFileInputField = (
     <FileInput
@@ -480,6 +510,21 @@ function UploadForm({
             onChange={setSummary}
           />
         </div>
+        {
+          <div className="formSection formSection--data-set-study-design">
+            <FieldLabel required={true} htmlFor="data-set-study-design">
+              Study Design
+            </FieldLabel>
+            <SingleSelect
+              items={studyDesignSelectItems}
+              name={'study-design'}
+              value={studyDesign}
+              onChange={(value) =>
+                setStudyDesign(value as keyof typeof studyDesignOptions)
+              }
+            />
+          </div>
+        }
         <div className="formSection formSection--data-set-description">
           <FieldLabel
             htmlFor="data-set-description"
@@ -601,61 +646,13 @@ function UploadForm({
                 styleOverrides={FloatingButtonWDKStyle}
               />
             </div>
-            {!datasetUploadType.formConfig.hideRelatedOrganisms && (
-              <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-organisms">
-                <FieldLabel
-                  htmlFor="data-set-publications-organisms"
-                  required={false}
-                >
-                  Related Organisms
-                </FieldLabel>
-                <div>
-                  {organisms.map((organism, index) => {
-                    return (
-                      <div className={cx('--OrganismInputFields')}>
-                        <FieldLabel required={false} key={index}>
-                          Related Organism {index + 1}
-                        </FieldLabel>
-                        <TextBox
-                          type="input"
-                          id={`data-set-organisms-${index}`}
-                          placeholder="Organism"
-                          required={false}
-                          value={organism}
-                          onChange={(value) => {
-                            const updatedOrganisms = [...organisms];
-                            updatedOrganisms[index] = value;
-                            setOrganisms(updatedOrganisms);
-                          }}
-                        />
-                        <FloatingButton
-                          text="Remove"
-                          onPress={(
-                            event: React.MouseEvent<HTMLButtonElement>
-                          ) => {
-                            event.preventDefault();
-                            const updatedOrganisms = [...organisms];
-                            updatedOrganisms.splice(index, 1);
-                            setOrganisms(updatedOrganisms);
-                          }}
-                          icon={Trash}
-                          styleOverrides={FloatingButtonWDKStyle}
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-                <FloatingButton
-                  text="Add Related Organism"
-                  onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
-                    event.preventDefault();
-                    setOrganisms((oldOrganisms) => [...oldOrganisms, '']);
-                  }}
-                  icon={AddIcon}
-                  styleOverrides={FloatingButtonWDKStyle}
-                />
-              </div>
-            )}
+            {!datasetUploadType.formConfig.hideRelatedOrganisms &&
+              createArrayInput(
+                'organism',
+                'Related Organisms',
+                organisms,
+                setOrganisms
+              )}
             <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-contacts">
               <FieldLabel
                 htmlFor="data-set-publications-contacts"
@@ -728,6 +725,16 @@ function UploadForm({
             </div>
           </div>
         )}
+        {createArrayInput('disease', 'Disease', diseases, setDiseases)}
+        {createArrayInput(
+          'sampleType',
+          'Sample Type',
+          sampleTypes,
+          setSampleTypes
+        )}
+        {createArrayInput('country', 'Country', countries, setCountries)}
+        {createArrayInput('year', 'Year', years, setYears)}
+        {createArrayInput('age', 'Age', ages, setAges)}
         {datasetUploadType.formConfig.dependencies && (
           <div className="formSection formSection--data-set-dependencies">
             <FieldLabel
@@ -927,6 +934,68 @@ function validateForm<T extends string = string>(
       visibility: 'private',
     },
   };
+}
+
+// Create UI for array inputs
+function createArrayInput<T extends string | number | undefined>(
+  name: string,
+  title: string,
+  inputArray: T[],
+  setInputArray: (value: T[]) => void
+) {
+  return (
+    <div
+      className={`additionalDetailsFormSection additionalDetailsFormSection--data-set-${name}`}
+    >
+      <FieldLabel htmlFor={`data-set-publications-${name}`} required={false}>
+        {pluralize(title)}
+      </FieldLabel>
+      <div>
+        {inputArray.map((arrayValue, index) => {
+          return (
+            <div className={cx('--InputFields')}>
+              <FieldLabel required={false} key={index}>
+                {title} {index + 1}
+              </FieldLabel>
+              <TextBox
+                type="input"
+                id={`data-set-${name}-${index}`}
+                placeholder={`${title}`}
+                required={false}
+                value={arrayValue}
+                onChange={(value) => {
+                  const updatedInputArray = [...inputArray];
+                  updatedInputArray[index] = value as T;
+                  setInputArray(updatedInputArray);
+                }}
+              />
+              <FloatingButton
+                text="Remove"
+                onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
+                  event.preventDefault();
+                  const updatedInputArray = [...inputArray];
+                  updatedInputArray.splice(index, 1);
+                  setInputArray(updatedInputArray);
+                }}
+                icon={Trash}
+                styleOverrides={FloatingButtonWDKStyle}
+              />
+            </div>
+          );
+        })}
+      </div>
+      <FloatingButton
+        text={`Add ${title}`}
+        onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
+          event.preventDefault();
+          //@ts-ignore
+          setInputArray((oldInputArray: T[]) => [...oldInputArray, ''] as T[]);
+        }}
+        icon={AddIcon}
+        styleOverrides={FloatingButtonWDKStyle}
+      />
+    </div>
+  );
 }
 
 // Create publication input UI
