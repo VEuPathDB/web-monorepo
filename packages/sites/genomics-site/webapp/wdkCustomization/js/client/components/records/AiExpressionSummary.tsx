@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   CollapsibleSection,
+  HelpIcon,
   Loading,
 } from '@veupathdb/wdk-client/lib/Components';
 import { Props } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
@@ -279,10 +280,40 @@ const AiExpressionResult = (props: AiExpressionResultProps) => {
             <div className="ai-topic-heading">
               <span
                 className="badge"
-                title={`AI-estimated biological importance`}
                 aria-label={`Column heading for AI-estimated importance score`}
               >
                 Importance
+                <HelpIcon>
+                  <div>
+                    <h4>Biological importance & confidence</h4>
+                    <p>
+                      The AI was asked to rate the biological importance of each
+                      experimental result on a scale from 1 (least important) to
+                      5 (most important).
+                    </p>
+                    <p>
+                      Please note that these ratings are based solely on the
+                      available data for a single gene in a single
+                      experiment—typically including standard errors and
+                      percentile statistics—and are <i>not</i> the result of a
+                      robust statistical analysis across all genes or
+                      experiments.
+                    </p>
+                    <p>
+                      The AI also estimated its confidence in each rating using
+                      a scale from A (highest confidence) to E (lowest
+                      confidence).
+                    </p>
+                    <p>
+                      Each value in this column reflects the AI's predicted
+                      importance and confidence level—for example,{' '}
+                      <strong>5A</strong> means the AI judged the result to be
+                      highly important with high confidence, while{' '}
+                      <strong>1E</strong> suggests low importance and low
+                      confidence.
+                    </p>
+                  </div>
+                </HelpIcon>
               </span>
             </div>
             <ul className="ai-topic">
@@ -451,7 +482,6 @@ function AiExperimentSummary({
     <div>
       <span
         className="badge"
-        title={`AI-estimated biological importance: ${biological_importance}/5 (confidence: ${confidenceGrade})`}
         aria-label={`Importance score: ${biological_importance} out of 5`}
       >
         {biological_importance}
