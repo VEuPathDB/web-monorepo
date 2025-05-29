@@ -73,7 +73,7 @@ function Dialog(props: Props) {
       setPopupWidth(rect.width);
       setPopupHeight(rect.height);
       // Only set position offsets (from center of window)
-      // if the haven't been set yet:
+      // if they haven't been set yet:
       setX((x) => (x == null ? -rect.width / 2 : x));
       setY((y) => (y == null ? -rect.height / 2 : y));
 
