@@ -40,6 +40,7 @@ import { formatFilterDisplayValue } from '@veupathdb/eda/lib/core/utils/study-me
 import { DatasetItem } from '@veupathdb/wdk-client/lib/Views/Question/Params/DatasetParamUtils';
 import { parseJson } from '@veupathdb/eda/lib/notebook/Utils';
 import { EdaNotebookAnalysis } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
+import ParameterComponent from '@veupathdb/wdk-client/lib/Views/Question/ParameterComponent';
 
 const datasetIdParamName = 'eda_dataset_id';
 
@@ -79,11 +80,14 @@ export function EdaNotebookParameter(props: Props<StringParam>) {
   if (studyId == null) return <div>Could not find eda study id</div>;
 
   return (
-    <DocumentationContainer>
-      <WorkspaceContainer studyId={studyId} edaServiceUrl={edaServiceUrl}>
-        <EdaNotebookAdapter analysisState={analysisState} />
-      </WorkspaceContainer>
-    </DocumentationContainer>
+    <>
+      <DocumentationContainer>
+        <WorkspaceContainer studyId={studyId} edaServiceUrl={edaServiceUrl}>
+          <EdaNotebookAdapter analysisState={analysisState} />
+        </WorkspaceContainer>
+      </DocumentationContainer>
+      <ParameterComponent {...props} />
+    </>
   );
 }
 
