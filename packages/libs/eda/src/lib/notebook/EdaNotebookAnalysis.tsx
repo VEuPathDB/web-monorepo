@@ -18,7 +18,7 @@ import {
 import { NotebookCell } from './NotebookCell';
 import { v4 as uuid } from 'uuid';
 
-import './EdaNotebook.css';
+import './EdaNotebook.scss';
 import { createComputation } from '../core/components/computations/Utils';
 import { useCachedPromise } from '../core/hooks/cachedPromise';
 import {
