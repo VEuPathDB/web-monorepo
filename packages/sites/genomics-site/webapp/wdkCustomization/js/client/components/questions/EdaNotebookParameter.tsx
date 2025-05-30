@@ -17,6 +17,12 @@ import {
   useGetDefaultVariableDescriptor,
   useStudyEntities,
   useSetterWithCallback,
+  EDAWorkspaceContainer,
+  useConfiguredAnalysisClient,
+  useConfiguredSubsettingClient,
+  useConfiguredDownloadClient,
+  useConfiguredDataClient,
+  useConfiguredComputeClient,
 } from '@veupathdb/eda/lib/core';
 import { VariableLinkConfig } from '@veupathdb/eda/lib/core/components/VariableLink';
 import { edaServiceUrl } from '@veupathdb/web-common/lib/config';
@@ -33,11 +39,14 @@ import {
 import { formatFilterDisplayValue } from '@veupathdb/eda/lib/core/utils/study-metadata';
 import { DatasetItem } from '@veupathdb/wdk-client/lib/Views/Question/Params/DatasetParamUtils';
 import { parseJson } from '@veupathdb/eda/lib/notebook/Utils';
+import { EdaNotebookAnalysis } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
+import ParameterComponent from '@veupathdb/wdk-client/lib/Views/Question/ParameterComponent';
 
 const datasetIdParamName = 'eda_dataset_id';
 
-export function EdaSubsetParameter(props: Props<StringParam>) {
-  const studyId = props.ctx.paramValues[datasetIdParamName];
+export function EdaNotebookParameter(props: Props<StringParam>) {
+  const studyId = props.ctx.paramValues[datasetIdParamName] ?? 'DS_82dc5abc7f'; // For testing only because we don't have the param values set yet.
+  console.log(props);
 
   const analysisDescriptor = useMemo(() => {
     const jsonParsedParamValue = parseJson(props.value);
@@ -71,21 +80,28 @@ export function EdaSubsetParameter(props: Props<StringParam>) {
   if (studyId == null) return <div>Could not find eda study id</div>;
 
   return (
-    <DocumentationContainer>
-      <WorkspaceContainer studyId={studyId} edaServiceUrl={edaServiceUrl}>
-        <SubsettingAdapter analysisState={analysisState} />
-      </WorkspaceContainer>
-    </DocumentationContainer>
+    <>
+      <DocumentationContainer>
+        <WorkspaceContainer studyId={studyId} edaServiceUrl={edaServiceUrl}>
+          <EdaNotebookAdapter analysisState={analysisState} />
+        </WorkspaceContainer>
+      </DocumentationContainer>
+      <ParameterComponent {...props} />
+    </>
   );
 }
 
-interface SubsettingAdapterProps {
+interface EdaNotebookAdapterProps {
   analysisState: AnalysisState;
 }
 
-function SubsettingAdapter(props: SubsettingAdapterProps) {
+function EdaNotebookAdapter(props: EdaNotebookAdapterProps) {
   const { analysisState } = props;
+  const datasetId = analysisState.analysis?.studyId;
   const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
+
+  // Note these may be useful later if we have subsetting. I haven't
+  // handled that case yet.
   const varAndEnt = getDefaultVariableDescriptor();
   const [entityId, setEntityId] = useState<string | undefined>(
     varAndEnt.entityId
@@ -93,77 +109,42 @@ function SubsettingAdapter(props: SubsettingAdapterProps) {
   const [variableId, setVariableId] = useState<string | undefined>(
     varAndEnt.variableId
   );
-  const filters = analysisState.analysis?.descriptor.subset.descriptor;
-  const entities = useStudyEntities();
-  const totalCounts = useEntityCounts();
-  const filteredCounts = useEntityCounts(filters);
-  const variableLinkConfig = useMemo((): VariableLinkConfig => {
-    return {
-      type: 'button',
-      onClick(value) {
-        if (value) {
-          setEntityId(value.entityId);
-          setVariableId(value.variableId);
-        }
-      },
-    };
-  }, []);
-  const baseEntity = entities[0];
-  const filteredCount = filteredCounts.value?.[baseEntity.id];
-  const totalCount = totalCounts.value?.[baseEntity.id];
+  const analysisClient = useConfiguredAnalysisClient(edaServiceUrl);
+  const subsettingClient = useConfiguredSubsettingClient(edaServiceUrl);
+  const downloadClient = useConfiguredDownloadClient(edaServiceUrl);
+  const dataClient = useConfiguredDataClient(edaServiceUrl);
+  const computeClient = useConfiguredComputeClient(edaServiceUrl);
+
+  const initialAnalysis = useMemo(() => {
+    return makeNewAnalysis(datasetId ?? '');
+  }, [datasetId]);
+
+  const [analysis, setAnalysis] =
+    useState<Analysis | NewAnalysis | undefined>(initialAnalysis);
 
   return (
     <div className="EdaSubsettingParameter">
-      <div className="EdaSubsettingParameterCounts">
-        <div className="EdaSubsettingParameterCounts-Total">
-          {totalCount != null &&
-            totalCount.toLocaleString() +
-              ' ' +
-              baseEntity.displayNamePlural +
-              ' Total'}
-        </div>
-        <div className="EdaSubsettingParameterCounts-FiltersAndChips">
-          <div className="EdaSubsettingParameterCounts-Filtered">
-            {totalCount != null &&
-              filteredCount != null &&
-              filteredCount.toLocaleString() +
-                ' of ' +
-                totalCount.toLocaleString() +
-                ' ' +
-                baseEntity.displayNamePlural +
-                ' selected'}
-          </div>
-          <FilterChipList
-            filters={filters}
-            selectedEntityId={entityId}
-            selectedVariableId={variableId}
-            entities={entities}
-            removeFilter={function (filter: Filter): void {
-              const nextFilters = filters?.filter(
-                (f) =>
-                  f.entityId !== filter.entityId ||
-                  f.variableId !== filter.variableId
-              );
-              analysisState.setFilters(nextFilters ?? []);
-            }}
-            variableLinkConfig={variableLinkConfig}
+      {datasetId && (
+        <EDAWorkspaceContainer
+          studyId={datasetId}
+          analysisClient={analysisClient}
+          subsettingClient={subsettingClient}
+          downloadClient={downloadClient}
+          dataClient={dataClient}
+          computeClient={computeClient}
+        >
+          <EdaNotebookAnalysis
+            analysis={analysis}
+            studyId={datasetId}
+            onAnalysisChange={setAnalysis}
           />
-        </div>
-      </div>
-      <Subsetting
-        analysisState={analysisState}
-        entityId={entityId ?? ''}
-        variableId={variableId ?? ''}
-        variableLinkConfig={variableLinkConfig}
-        totalCounts={totalCounts.value}
-        filteredCounts={filteredCounts.value}
-        hideStarredVariables
-      />
+        </EDAWorkspaceContainer>
+      )}
     </div>
   );
 }
 
-export function EdaSubsetStepDetails(props: LeafStepDetailsContentProps) {
+export function EdaNotebookStepDetails(props: LeafStepDetailsContentProps) {
   return (
     <DefaultStepDetailsContent
       {...props}
