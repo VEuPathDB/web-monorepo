@@ -63,14 +63,41 @@ function Dialog(props: Props) {
   const [y, setY] = useState<number>();
   const [popupWidth, setPopupWidth] = useState<number>();
   const [popupHeight, setPopupHeight] = useState<number>();
+  const [hasMoved, setHasMoved] = useState(false);
+  const [hasAutoCentered, setHasAutoCentered] = useState(false);
+  const didSkipInitialResize = useRef(false);
 
-  const handlePopupReady = (node: HTMLElement) => {
-    const rect = node.getBoundingClientRect();
-    setPopupWidth(rect.width);
-    setPopupHeight(rect.height);
-    setX((x) => (x == null ? -rect.width / 2 : x));
-    setY((y) => (y == null ? -rect.height / 2 : y));
-  };
+  const handlePopupReady = useCallback(
+    (node: HTMLElement) => {
+      const rect = node.getBoundingClientRect();
+      setPopupWidth(rect.width);
+      setPopupHeight(rect.height);
+      // Only set position offsets (from center of window)
+      // if they haven't been set yet:
+      setX((x) => (x == null ? -rect.width / 2 : x));
+      setY((y) => (y == null ? -rect.height / 2 : y));
+
+      // Only install our observer if the user hasn’t already
+      // moved the popup, and we haven’t yet auto-centered once:
+      if (!hasMoved && !hasAutoCentered) {
+        const observer = new ResizeObserver(([entry]) => {
+          if (!didSkipInitialResize.current) {
+            // This is the "initial" callback. Not really a resize. Ignore it.
+            didSkipInitialResize.current = true;
+            return;
+          }
+          const { width, height } = entry.contentRect;
+          setX(-width / 2);
+          setY(-height / 2);
+          setHasAutoCentered(true);
+          // stop observing after first resize
+          observer.disconnect();
+        });
+        observer.observe(node);
+      }
+    },
+    [hasMoved, hasAutoCentered]
+  );
 
   useEffect(() => {
     if (!isMoving) return;
@@ -91,18 +118,22 @@ function Dialog(props: Props) {
       switch (e.key) {
         case 'ArrowUp':
           setY((y) => (y == null ? y : clampY(y - moveAmount)));
+          setHasMoved(true);
           handled = true;
           break;
         case 'ArrowDown':
           setY((y) => (y == null ? y : clampY(y + moveAmount)));
+          setHasMoved(true);
           handled = true;
           break;
         case 'ArrowLeft':
           setX((x) => (x == null ? x : clampX(x - moveAmount)));
+          setHasMoved(true);
           handled = true;
           break;
         case 'ArrowRight':
           setX((x) => (x == null ? x : clampX(x + moveAmount)));
+          setHasMoved(true);
           handled = true;
           break;
         case 'Escape':
@@ -302,6 +333,7 @@ function Dialog(props: Props) {
       onMove={(x, y) => {
         setX(x);
         setY(y);
+        setHasMoved(true);
       }}
       onReady={handlePopupReady}
     >
