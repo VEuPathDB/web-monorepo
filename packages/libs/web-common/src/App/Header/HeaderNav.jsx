@@ -92,7 +92,7 @@ class HeaderNav extends React.Component {
                 maxWidth: '35em',
               }}
             >
-              <SiteSearchInput />
+              <SiteSearchInput siteSearchURL={siteSearchServiceUrl} />
             </div>
           )}
         </div>
@@ -219,7 +219,7 @@ class HeaderNav extends React.Component {
                 fontSize: '1.2em',
               }}
             >
-              <SiteSearchInput />
+              <SiteSearchInput siteSearchURL={siteSearchServiceUrl} />
             </div>
           )}
           <div style={{ display: 'flex' }}>
