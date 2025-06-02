@@ -89,7 +89,7 @@ const CompleteDifferentialAbundanceConfig = partialToCompleteCodec(
 
 // Check to ensure the entirety of the configuration is filled out before enabling the
 // Generate Results button.
-function isCompleteDifferentialAbundanceConfig(config: unknown) {
+export function isCompleteDifferentialAbundanceConfig(config: unknown) {
   return (
     CompleteDifferentialAbundanceConfig.is(config) &&
     config.comparator.groupA != null &&
@@ -205,6 +205,7 @@ export function DifferentialAbundanceConfiguration(
     computation,
     analysisState,
     visualizationId,
+    changeConfigHandlerOverride,
   } = props;
 
   const configuration = computation.descriptor
@@ -217,11 +218,16 @@ export function DifferentialAbundanceConfiguration(
 
   assertComputationWithConfig(computation, DifferentialAbundanceConfig);
 
-  const changeConfigHandler = useConfigChangeHandler(
+  const workspaceChangeConfigHandler = useConfigChangeHandler(
     analysisState,
     computation,
     visualizationId
   );
+
+  // Depending on context, we might need a different changeConfigHandler. For example,
+  // in the notebook.
+  const changeConfigHandler =
+    changeConfigHandlerOverride ?? workspaceChangeConfigHandler;
 
   // Set the pValueFloor here. May change for other apps.
   // Note this is intentionally different than the default pValueFloor used in the Volcano component. By default
