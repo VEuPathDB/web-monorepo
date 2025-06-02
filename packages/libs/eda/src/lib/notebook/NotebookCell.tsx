@@ -10,7 +10,7 @@ interface Props {
   cell: NotebookCellType;
   updateCell: (cell: Partial<Omit<NotebookCellType, 'type'>>) => void;
   isSubCell?: boolean; // Indicates if this cell is a sub-cell of another cell. Affects styling.
-  isDisabled?: boolean; // Indicates if the cell is disabled (e.g., during running a computation).
+  isDisabled?: boolean; // Indicates if the cell is disabled (e.g., before a computation is complete).
 }
 
 /**

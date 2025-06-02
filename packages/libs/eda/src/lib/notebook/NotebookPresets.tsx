@@ -1,5 +1,9 @@
 // Notebook presets
 
+// The descriptors contain just enough information to render the cells when given the
+// appropriate context, such as analysis state. In EdaNotebookAnalysis, these
+// descriptors get converted into cells using the ids and such generated in
+// the particular analysis.
 export interface NotebookCellDescriptorBase<T extends string> {
   type: T;
   title: string;
@@ -70,6 +74,8 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
       },
     ],
   },
+  // WGCNA - only for plasmo. No subsetting cells because of the pre-computed modules and eigengenes.
+  // Will be primed and prettified in https://github.com/VEuPathDB/web-monorepo/issues/1381
   wgcnaCorrelationNotebook: {
     name: 'wgcnacorrelation',
     displayName: 'WGCNA Correlation Notebook',

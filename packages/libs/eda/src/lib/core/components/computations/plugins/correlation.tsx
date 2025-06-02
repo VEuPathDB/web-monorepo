@@ -237,7 +237,8 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
     visualizationId
   );
 
-  // This is cheating. Needs to be cleaned up before merging.
+  // Depending on context, we might need a different changeConfigHandler. For example,
+  // in the notebook.
   const changeConfigHandler =
     changeConfigHandlerOverride ?? workspaceChangeConfigHandler;
 

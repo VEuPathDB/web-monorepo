@@ -1,4 +1,4 @@
-import { CSSProperties, useCallback, useEffect, useMemo } from 'react';
+import { CSSProperties } from 'react';
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { useStudyEntities } from '../core/hooks/workspace';
 import { isVisualizationCell, NotebookCellComponentProps } from './Types';
@@ -11,13 +11,6 @@ import { useComputeJobStatus } from '../core/components/computations/ComputeJobS
 import { NotebookCell } from './NotebookCell';
 import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 import { plugins } from '../core/components/computations/plugins';
-import { ComputationPlugin } from '../core/components/computations/Types';
-
-// For disabled subCells
-const disabledStyles: CSSProperties = {
-  opacity: '0.5',
-  pointerEvents: 'none',
-};
 
 export function ComputeNotebookCell(
   props: NotebookCellComponentProps<'compute'>
@@ -25,15 +18,13 @@ export function ComputeNotebookCell(
   const { analysisState, cell, updateCell, isSubCell, isDisabled } = props;
   const { analysis } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
-  // Eventually this cell should get the plugin list and use the name
-  // from the analysis state computation id to get the plugin and the computationAppOverview
+
   const { computeId, computationAppOverview, subCells } = cell;
   const computation = analysis.descriptor.computations.find(
     (comp) => comp.computationId === computeId
   );
   if (computation == null) throw new Error('Cannot find computation.');
 
-  const entities = useStudyEntities();
   const totalCountsResult = useEntityCounts();
   const filteredCountsResult = useEntityCounts(
     analysis.descriptor.subset.descriptor
@@ -41,21 +32,21 @@ export function ComputeNotebookCell(
   const plugin = plugins[computation.descriptor.type];
   if (plugin == null) throw new Error('Computation plugin not found.');
 
+  // We'll use a special changeConfigHandler for the computation configuration
   const changeConfigHandler = (propertyName: string, value?: any) => {
-    if (!computation) return;
-    if (!analysis.descriptor.computations[0]) return;
+    if (!computation || !analysis.descriptor.computations[0]) return;
 
-    // update the analysis state
     const updatedConfiguration = {
-      // @ts-ignore
-      ...computation.descriptor.configuration,
+      ...(computation.descriptor.configuration &&
+      typeof computation.descriptor.configuration === 'object' // needed to use the spread operator
+        ? computation.descriptor.configuration
+        : {}),
       [propertyName]: value,
     };
 
     const existingComputation =
       analysisState.analysis?.descriptor.computations.find(
         (comp) => isEqual(comp.descriptor.configuration, updatedConfiguration) //&&
-        // c.descriptor.type === computation.descriptor.type
       );
 
     if (existingComputation) return;
@@ -92,7 +83,7 @@ export function ComputeNotebookCell(
             totalCounts={totalCountsResult}
             filteredCounts={filteredCountsResult}
             visualizationId="1" // irrelevant because we have our own changeConfigHandler
-            addNewComputation={(name, configuration) => {}}
+            addNewComputation={(name, configuration) => {}} // also irrelevant for us because we add the computation elsewhere
             computationAppOverview={computationAppOverview}
             geoConfigs={[]}
             changeConfigHandlerOverride={changeConfigHandler}
@@ -109,13 +100,7 @@ export function ComputeNotebookCell(
         subCells.map((subCell) => {
           // Add extra flair for subCell titles
           const subTitle = (
-            <div
-              style={{
-                display: 'inline-flex',
-                gap: '0.5em',
-                fontWeight: 'bold',
-              }}
-            >
+            <div className="subCellTitle">
               <span>{subCell.title}</span>
               <span
                 style={{ color: gray[600], fontWeight: 400, marginLeft: '1em' }}
@@ -129,13 +114,13 @@ export function ComputeNotebookCell(
             ...subCell,
             title: subTitle,
           };
-          if (isVisualizationCell(subCell)) {
-            // It must be a visualization cell. Not sure why ts doesn't like this.
-            //@ts-ignore
+          if (isVisualizationCell(subCellWithTitle)) {
             subCellWithTitle.computeJobStatus = jobStatus;
           }
+
           const isSubCellDisabled =
             jobStatus !== 'complete' && subCell.type !== 'text';
+
           return (
             <NotebookCell
               analysisState={analysisState}

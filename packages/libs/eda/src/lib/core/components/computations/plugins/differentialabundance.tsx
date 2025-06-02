@@ -224,6 +224,8 @@ export function DifferentialAbundanceConfiguration(
     visualizationId
   );
 
+  // Depending on context, we might need a different changeConfigHandler. For example,
+  // in the notebook.
   const changeConfigHandler =
     changeConfigHandlerOverride ?? workspaceChangeConfigHandler;
 

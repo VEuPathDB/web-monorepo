@@ -91,6 +91,16 @@
         }
 
         transition: background-color 100ms ease-in;
+
+        > * {
+          display: inline; // prevents contents from wrapping underneath the arrow
+        }
+
+        div.subCellTitle {
+          display: 'inline-flex';
+          gap: 0.5em;
+          font-weight: 'bold';
+        }
       }
 
       &[open] > summary {

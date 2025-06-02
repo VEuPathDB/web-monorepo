@@ -31,8 +31,11 @@ export default function NotebookRoute(props: Props) {
   const dataClient = useConfiguredDataClient(edaServiceUrl);
   const computeClient = useConfiguredComputeClient(edaServiceUrl);
 
+  // TEMPORARY: Use either of these study ids for testing. Ensure
+  // the backend matches the study.
   const fakeStudyId = 'DS_82dc5abc7f'; // Lee Gambian plasmo
   // const fakeStudyId = 'DS_1102462e80'; // Bangladesh mbio
+
   const initialAnalysis = useMemo(() => {
     return makeNewAnalysis(fakeStudyId);
   }, []);

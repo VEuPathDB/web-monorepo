@@ -5,17 +5,14 @@ import {
   Parameter,
   StringParam,
 } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { Subsetting } from '@veupathdb/eda/lib/workspace';
 import { WorkspaceContainer } from '@veupathdb/eda/lib/workspace/WorkspaceContainer';
 import {
   Analysis,
   AnalysisState,
-  Filter,
   makeNewAnalysis,
   NewAnalysis,
   useAnalysisState,
   useGetDefaultVariableDescriptor,
-  useStudyEntities,
   useSetterWithCallback,
   EDAWorkspaceContainer,
   useConfiguredAnalysisClient,
@@ -24,11 +21,8 @@ import {
   useConfiguredDataClient,
   useConfiguredComputeClient,
 } from '@veupathdb/eda/lib/core';
-import { VariableLinkConfig } from '@veupathdb/eda/lib/core/components/VariableLink';
 import { edaServiceUrl } from '@veupathdb/web-common/lib/config';
 import { DocumentationContainer } from '@veupathdb/eda/lib/core/components/docs/DocumentationContainer';
-import { useEntityCounts } from '@veupathdb/eda/lib/core/hooks/entityCounts';
-import FilterChipList from '@veupathdb/eda/lib/core/components/FilterChipList';
 
 import './EdaSubsetParameter.scss';
 import {
@@ -45,8 +39,8 @@ import ParameterComponent from '@veupathdb/wdk-client/lib/Views/Question/Paramet
 const datasetIdParamName = 'eda_dataset_id';
 
 export function EdaNotebookParameter(props: Props<StringParam>) {
-  const studyId = props.ctx.paramValues[datasetIdParamName] ?? 'DS_82dc5abc7f'; // For testing only because we don't have the param values set yet.
-  console.log(props);
+  // TEMPORARY: We don't have this value coming from the wdk yet.
+  const studyId = props.ctx.paramValues[datasetIdParamName] ?? 'DS_82dc5abc7f';
 
   const analysisDescriptor = useMemo(() => {
     const jsonParsedParamValue = parseJson(props.value);
@@ -98,17 +92,17 @@ interface EdaNotebookAdapterProps {
 function EdaNotebookAdapter(props: EdaNotebookAdapterProps) {
   const { analysisState } = props;
   const datasetId = analysisState.analysis?.studyId;
-  const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
 
-  // Note these may be useful later if we have subsetting. I haven't
-  // handled that case yet.
-  const varAndEnt = getDefaultVariableDescriptor();
-  const [entityId, setEntityId] = useState<string | undefined>(
-    varAndEnt.entityId
-  );
-  const [variableId, setVariableId] = useState<string | undefined>(
-    varAndEnt.variableId
-  );
+  // Used for subsetting. To be addressed in #1413
+  // const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
+  // const varAndEnt = getDefaultVariableDescriptor();
+  // const [entityId, setEntityId] = useState<string | undefined>(
+  //   varAndEnt.entityId
+  // );
+  // const [variableId, setVariableId] = useState<string | undefined>(
+  //   varAndEnt.variableId
+  // );
+
   const analysisClient = useConfiguredAnalysisClient(edaServiceUrl);
   const subsettingClient = useConfiguredSubsettingClient(edaServiceUrl);
   const downloadClient = useConfiguredDownloadClient(edaServiceUrl);

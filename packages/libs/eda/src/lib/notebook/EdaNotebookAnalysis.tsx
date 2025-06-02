@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useEffect, useRef, useState } from 'react';
+import { useCallback, useMemo, useEffect, useState } from 'react';
 import {
   Analysis,
   AnalysisState,
@@ -39,7 +39,8 @@ interface NotebookSettings {
 }
 
 const NOTEBOOK_UI_SETTINGS_KEY = '@@NOTEBOOK@@';
-// Eventually this value should come from the wdk or whomever is creating the notebook.
+
+// TEMPORARY: Eventually this value should come from the wdk or whomever is creating the notebook.
 const NOTEBOOK_PRESET_TEST = presetNotebooks['wgcnaCorrelationNotebook'];
 
 interface Props {
@@ -89,6 +90,8 @@ export function EdaNotebookAnalysis(props: Props) {
     return createComputation(computationName, {}, [], []);
   }, [computationName]);
 
+  // Create the one computation for the analysis. Eventually
+  // we'll move this logic or improve it to handle multiple computations.
   useEffect(() => {
     if (!computation) return;
 
@@ -98,17 +101,11 @@ export function EdaNotebookAnalysis(props: Props) {
         (comp) => comp.computationId === computation.computationId
       );
     if (existingComputation) return;
-    console.log('setting computation');
+
     analysisState.setComputations([computation]);
   }, [analysisState, computation]);
 
-  console.log('Computation:', computation);
-  console.log(
-    'analysisState computations:',
-    analysisState.analysis?.descriptor.computations
-  );
-
-  // Use state. Using a memo or ref didn't work because of the dependencies, that it needs to be
+  // Use state for computed preset notebook cells. Using a memo or ref didn't work because of the dependencies, that it needs to be
   // called once, and because it is needed elsewhere to run other hooks.
   const [presetNotebookCells, setPresetNotebookCells] = useState<
     NotebookCellType[]
@@ -116,7 +113,7 @@ export function EdaNotebookAnalysis(props: Props) {
 
   useEffect(() => {
     // Assume if this has run once, we don't need it again. The preset
-    // notebook should not change.
+    // notebook should not change on refresh or rerendering.
     if (presetNotebookCells.length > 0) return;
     if (appOverview) {
       const newCells = NOTEBOOK_PRESET_TEST.cells.map((cellDescriptor) =>
@@ -131,6 +128,7 @@ export function EdaNotebookAnalysis(props: Props) {
     }
   }, [appOverview, analysisState, computation, presetNotebookCells]);
 
+  // The following is currently required for subsetting cells to function.
   const notebookSettings = useMemo((): NotebookSettings => {
     const storedSettings =
       analysisState.analysis?.descriptor.subset.uiSettings[

@@ -1,22 +1,15 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { useStudyEntities } from '../core/hooks/workspace';
 import { NotebookCellComponentProps } from './Types';
-import { createComputation } from '../core/components/computations/Utils';
-import { DifferentialAbundanceConfig } from '../core/components/computations/plugins/differentialabundance';
 import { useGeoConfig } from '../core/hooks/geoConfig';
-import { useComputeJobStatus } from '../core/components/computations/ComputeJobStatusHook';
-import { Computation } from '../core/types/visualization';
 import { plugins } from '../core/components/computations/plugins';
-import {
-  PlotContainerStyleOverrides,
-  VisualizationProps,
-} from '../core/components/visualizations/VisualizationTypes';
+import { PlotContainerStyleOverrides } from '../core/components/visualizations/VisualizationTypes';
 
 export function VisualizationNotebookCell(
   props: NotebookCellComponentProps<'visualization'>
 ) {
-  const { analysisState, cell, updateCell, isSubCell, isDisabled } = props;
+  const { analysisState, cell, isSubCell, isDisabled } = props;
   const { analysis } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
   const { updateVisualization } = analysisState;
@@ -94,11 +87,6 @@ export function VisualizationNotebookCell(
           ...viz,
           descriptor: { ...viz.descriptor, configuration },
         });
-        // and then update the cell?
-        // const newComputation = analysis.descriptor.computations[0];
-        // updateCell({
-        //   computation: newComputation
-        // });
       }
     },
     [updateVisualization, viz]
@@ -129,17 +117,14 @@ export function VisualizationNotebookCell(
             visualization={viz}
             computation={computation}
             copmutationAppOverview={computationAppOverview}
-            filters={[]} // to be implemented
+            filters={[]} // issue #1413
             starredVariables={[]} // to be implemented
             toggleStarredVariable={() => {}}
             updateConfiguration={updateConfiguration}
-            // updateThumbnail={
-            //   disableThumbnailCreation ? undefined : updateThumbnail
-            // }
             totalCounts={totalCountsResult}
             filteredCounts={filteredCountsResult}
             geoConfigs={geoConfigs}
-            otherVizOverviews={[]} // to be implemented
+            otherVizOverviews={[]}
             computeJobStatus={computeJobStatus}
             hideInputsAndControls={false}
             plotContainerStyleOverrides={plotContainerStyleOverrides}
