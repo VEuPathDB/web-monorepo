@@ -325,6 +325,24 @@ export const studyDesignOptions = {
   Other: null,
 };
 
+export type FundingObject = TypeOf<typeof fundingObject>;
+
+const fundingObject = intersection([
+  type({
+    awardNumber: string,
+  }),
+  partial({
+    agency: string,
+  }),
+]);
+
+export type YearsObject = TypeOf<typeof yearsObject>;
+
+const yearsObject = type({
+  start: string,
+  end: string,
+});
+
 export type UserDatasetCharacteristics = TypeOf<
   typeof userDatasetCharacteristics
 >;
@@ -333,11 +351,12 @@ export const userDatasetCharacteristics = partial({
   studyDesign: keyof(studyDesignOptions), // required
   studyType: string, // assigned by the backend
   host: string,
-  diseases: array(string),
-  sampleTypes: array(string),
-  countries: array(string),
-  years: array(number),
-  ages: array(string),
+  diseases: string,
+  sampleTypes: string,
+  countries: string,
+  years: yearsObject, // { start: number, end: number }
+  ages: string,
+  funding: fundingObject, // { awardNumber: string, agency?: string }. If awardNumber, then agency is required.
 });
 
 export type UserDatasetFormContent = TypeOf<typeof userDatasetFormContent>;
