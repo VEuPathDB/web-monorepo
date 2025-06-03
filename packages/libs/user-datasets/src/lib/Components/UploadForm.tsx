@@ -180,6 +180,7 @@ function UploadForm({
   const [studyDesign, setStudyDesign] =
     useState<keyof typeof studyDesignOptions>('Case-control study');
   const [diseases, setDiseases] = useState<string>();
+  const [host, setHost] = useState<string>();
   const [sampleTypes, setSampleTypes] = useState<string>();
   const [countries, setCountries] = useState<string>();
   const [years, setYears] = useState<YearsObject>({ start: '', end: '' });
@@ -276,6 +277,7 @@ function UploadForm({
           datasetCharacteristics: {
             studyDesign,
             diseases,
+            host,
             sampleTypes,
             countries,
             years,
@@ -308,6 +310,7 @@ function UploadForm({
       contacts,
       studyDesign,
       diseases,
+      host,
       sampleTypes,
       countries,
       years,
@@ -601,6 +604,21 @@ function UploadForm({
                 onChange={setDiseases}
               />
             </div>
+            <div className="formSection formSection--data-set-host">
+              <FieldLabel htmlFor="data-set-host" required={false}>
+                Host(s)
+              </FieldLabel>
+              <TextBox
+                type="input"
+                id={`data-set-host`}
+                placeholder={
+                  'Species / host organism(s) from which the data has been collected'
+                }
+                required={false}
+                value={host}
+                onChange={setHost}
+              />
+            </div>
             <div className="formSection formSection--data-set-sampleTypes">
               <FieldLabel htmlFor="data-set-sampleTypes" required={false}>
                 Sample type(s)
@@ -784,7 +802,7 @@ function UploadForm({
             {!datasetUploadType.formConfig.hideRelatedOrganisms &&
               createArrayInput(
                 'organism',
-                'Related Organisms',
+                'Related organisms',
                 organisms,
                 setOrganisms
               )}
@@ -793,7 +811,7 @@ function UploadForm({
                 htmlFor="data-set-publications-contacts"
                 required={false}
               >
-                Contacts
+                Principle investigator(s) & collaborators
               </FieldLabel>
               {contacts.map((contact, index) => {
                 const updateContactsObject = createNestedInputUpdater({
