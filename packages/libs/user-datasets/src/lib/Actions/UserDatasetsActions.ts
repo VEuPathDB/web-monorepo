@@ -714,7 +714,6 @@ function transformVdiResponseToLegacyResponseHelper(
     hyperlinks,
     organisms,
     contacts,
-    createdOn,
     datasetCharacteristics,
   } = ud;
   return {
@@ -738,7 +737,6 @@ function transformVdiResponseToLegacyResponseHelper(
       hyperlinks: hyperlinks ?? ([] as UserDatasetHyperlink[]),
       organisms: organisms ?? [],
       contacts: contacts ?? ([] as UserDatasetContact[]),
-      createdOn: createdOn ?? '',
       datasetCharacteristics:
         datasetCharacteristics ?? ({} as UserDatasetCharacteristics),
     },

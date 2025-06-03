@@ -22,7 +22,6 @@ import { DateTime } from '../DateTime';
 
 import '../UserDatasets.scss';
 import './UserDatasetDetail.scss';
-import { PublicationInput } from '../UploadForm';
 import OutlinedButton from '@veupathdb/coreui/lib/components/buttons/OutlinedButton';
 import AddIcon from '@material-ui/icons/Add';
 import { FloatingButton, Trash } from '@veupathdb/coreui';
@@ -77,6 +76,13 @@ class UserDatasetDetail extends React.Component {
       'contacts',
       'hyperlinks',
       'organisms',
+      'host',
+      'countries',
+      'sampleTypes',
+      'ages',
+      'diseases',
+      'funding',
+      'years',
     ];
     if (typeof key !== 'string' || !META_KEYS.includes(key))
       throw new TypeError(
@@ -140,6 +146,9 @@ class UserDatasetDetail extends React.Component {
         // Regular key-value update.
         updatedMeta = { ...userDataset.meta, [key]: value };
       }
+
+      // for testing only
+      console.log('updatedMeta', updatedMeta);
 
       return updateUserDatasetDetail(userDataset, updatedMeta);
     };
@@ -342,6 +351,127 @@ class UserDatasetDetail extends React.Component {
           <span>
             {display} ({name} {version})
           </span>
+        ),
+      },
+      this.props.showExtraMetadata && {
+        attribute: 'Funding',
+        className: 'idkyet',
+        value: (
+          <div className="wholeThing">
+            <div className="innerthing">
+              <text>Award number: </text>
+              <SaveableTextEditor
+                value={meta.funding?.awardNumber || ''}
+                multiLine={false}
+                readOnly={!isOwner}
+                onSave={this.onMetaSave('funding', 'awardNumber')}
+                emptyText="Award number"
+              />
+            </div>
+            <div className="innerthing">
+              <text>Funding agency: </text>
+              <SaveableTextEditor
+                value={meta.funding?.agency || ''}
+                multiLine={false}
+                readOnly={!isOwner}
+                onSave={this.onMetaSave('funding', 'fundingAgency')}
+                emptyText="Funding agency"
+              />
+            </div>
+          </div>
+        ),
+      },
+      this.props.showExtraMetadata && {
+        attribute: 'Years',
+        className: 'idkyet',
+        value: (
+          <div className="wholeThing">
+            <div className="innerthing">
+              <text>Start: </text>
+              <SaveableTextEditor
+                value={meta.years?.start || ''}
+                multiLine={false}
+                readOnly={!isOwner}
+                onSave={this.onMetaSave('years', 'start')}
+                emptyText="Start year"
+              />
+            </div>
+            <div className="innerthing">
+              <text>End: </text>
+              <SaveableTextEditor
+                value={meta.years?.end || ''}
+                multiLine={false}
+                readOnly={!isOwner}
+                onSave={this.onMetaSave('years', 'end')}
+                emptyText="End year"
+              />
+            </div>
+          </div>
+        ),
+      },
+      this.props.showExtraMetadata && {
+        attribute: 'Countries',
+        className: 'TextInputSection',
+        value: (
+          <SaveableTextEditor
+            multiLine={false}
+            value={meta.countries || ''}
+            readOnly={!isOwner}
+            onSave={onMetaSave('countries')}
+            emptyText="Country or countries"
+          />
+        ),
+      },
+      this.props.showExtraMetadata && {
+        attribute: 'Disease(s) / health condition(s)',
+        className: 'TextInputSection',
+        value: (
+          <SaveableTextEditor
+            multiLine={false}
+            value={meta.diseases || ''}
+            readOnly={!isOwner}
+            onSave={onMetaSave('diseases')}
+            emptyText="Diseases"
+          />
+        ),
+      },
+      this.props.showExtraMetadata && {
+        attribute: 'Host(s)',
+        className: 'TextInputSection',
+        value: (
+          <SaveableTextEditor
+            multiLine={false}
+            value={meta.host || ''}
+            readOnly={!isOwner}
+            onSave={onMetaSave('host')}
+            emptyText="Host organism"
+          />
+        ),
+      },
+      this.props.showExtraMetadata && {
+        attribute: 'Sample type(s)',
+        className: 'TextInputSection',
+        value: (
+          <SaveableTextEditor
+            multiLine={false}
+            value={meta.sampleTypes || ''}
+            readOnly={!isOwner}
+            onSave={onMetaSave('sampleTypes')}
+            emptyText="Participant sample type(s)"
+          />
+        ),
+      },
+      this.props.showExtraMetadata && {
+        attribute: 'Age(s)',
+        className: 'TextInputSection',
+        value: (
+          <SaveableTextEditor
+            multiLine={false}
+            value={meta.ages || ''}
+            readOnly={!isOwner}
+            onSave={onMetaSave('ages')}
+            emptyText="Participant age(s)"
+          />
         ),
       },
       this.props.showExtraMetadata && {

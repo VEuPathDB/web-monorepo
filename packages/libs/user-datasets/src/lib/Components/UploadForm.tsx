@@ -558,7 +558,7 @@ function UploadForm({
               </FieldLabel>
               <div className="formSection--data-set-funding-inputs">
                 <div className="formSection--data-set-funding-input">
-                  <strong>Award Number: </strong>
+                  <strong>Award number: </strong>
                   <TextBox
                     type="input"
                     id={`data-set-funding-award-number`}
@@ -590,60 +590,6 @@ function UploadForm({
                   />
                 </div>
               </div>
-            </div>
-            <div className="formSection formSection--data-set-diseases">
-              <FieldLabel htmlFor="data-set-diseases" required={false}>
-                Disease(s)
-              </FieldLabel>
-              <TextBox
-                type="input"
-                id={`data-set-diseases`}
-                placeholder={'Disease(s) associated with this dataset'}
-                required={false}
-                value={diseases}
-                onChange={setDiseases}
-              />
-            </div>
-            <div className="formSection formSection--data-set-host">
-              <FieldLabel htmlFor="data-set-host" required={false}>
-                Host(s)
-              </FieldLabel>
-              <TextBox
-                type="input"
-                id={`data-set-host`}
-                placeholder={
-                  'Species / host organism(s) from which the data has been collected'
-                }
-                required={false}
-                value={host}
-                onChange={setHost}
-              />
-            </div>
-            <div className="formSection formSection--data-set-sampleTypes">
-              <FieldLabel htmlFor="data-set-sampleTypes" required={false}>
-                Sample type(s)
-              </FieldLabel>
-              <TextBox
-                type="input"
-                id={`data-set-sampleTypes`}
-                placeholder={'Sample type(s) associated with participants'}
-                required={false}
-                value={sampleTypes}
-                onChange={setSampleTypes}
-              />
-            </div>
-            <div className="formSection formSection--data-set-countries">
-              <FieldLabel htmlFor="data-set-countries" required={false}>
-                Countries
-              </FieldLabel>
-              <TextBox
-                type="input"
-                id={`data-set-countries`}
-                placeholder={'Country or countries'}
-                required={false}
-                value={countries}
-                onChange={setCountries}
-              />
             </div>
             <div className="formSection formSection--data-set-years">
               <FieldLabel htmlFor="data-set-years" required={false}>
@@ -683,6 +629,60 @@ function UploadForm({
                   />
                 </div>
               </div>
+            </div>
+            <div className="formSection formSection--data-set-countries">
+              <FieldLabel htmlFor="data-set-countries" required={false}>
+                Countries
+              </FieldLabel>
+              <TextBox
+                type="input"
+                id={`data-set-countries`}
+                placeholder={'Country or countries'}
+                required={false}
+                value={countries}
+                onChange={setCountries}
+              />
+            </div>
+            <div className="formSection formSection--data-set-diseases">
+              <FieldLabel htmlFor="data-set-diseases" required={false}>
+                Disease(s) / health condition(s)
+              </FieldLabel>
+              <TextBox
+                type="input"
+                id={`data-set-diseases`}
+                placeholder={'Disease(s) associated with this dataset'}
+                required={false}
+                value={diseases}
+                onChange={setDiseases}
+              />
+            </div>
+            <div className="formSection formSection--data-set-host">
+              <FieldLabel htmlFor="data-set-host" required={false}>
+                Host(s)
+              </FieldLabel>
+              <TextBox
+                type="input"
+                id={`data-set-host`}
+                placeholder={
+                  'Species / host organism(s) from which the data has been collected'
+                }
+                required={false}
+                value={host}
+                onChange={setHost}
+              />
+            </div>
+            <div className="formSection formSection--data-set-sampleTypes">
+              <FieldLabel htmlFor="data-set-sampleTypes" required={false}>
+                Sample type(s)
+              </FieldLabel>
+              <TextBox
+                type="input"
+                id={`data-set-sampleTypes`}
+                placeholder={'Sample type(s) associated with participants'}
+                required={false}
+                value={sampleTypes}
+                onChange={setSampleTypes}
+              />
             </div>
             <div className="formSection formSection--data-set-ages">
               <FieldLabel htmlFor="data-set-ages" required={false}>
