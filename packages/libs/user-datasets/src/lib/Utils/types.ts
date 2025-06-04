@@ -277,6 +277,7 @@ const userDatasetPublication = intersection([
   }),
   partial({
     citation: string,
+    isPrimary: boolean,
   }),
 ]);
 

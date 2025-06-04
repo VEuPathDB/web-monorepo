@@ -95,7 +95,14 @@ class UserDatasetDetail extends React.Component {
   // First, the easy key-value example. this.onMetaSave('name')('my new name');
   // Second, for fields that are arrays of objects, like meta.publications[index].name, specify the nestedKey and index. this.onMetaSave('publications', 'pubMedId', 0)('new pubMedId value');
   // Third, for arrays of strings, like meta.organisms[index], just specify the index. this.onMetaSave('organisms', undefined, 0)('new organism value');
-  onMetaSave(key, nestedKey = undefined, index = undefined) {
+  // Lastly, for arrays of objects that have a boolean flag where only one in the array can be true,
+  // set the enforceExclusiveTrue argument to true (default false).
+  onMetaSave(
+    key,
+    nestedKey = undefined,
+    index = undefined,
+    enforceExclusiveTrue = false
+  ) {
     this.validateKey(key);
 
     return (value) => {
@@ -130,6 +137,17 @@ class UserDatasetDetail extends React.Component {
             // Update the nested key at the correct index in the array of objects.
             // Example: meta.contacts
             arrayField[index][nestedKey] = value;
+
+            // If enforceExclusiveTrue and this is a boolean, then change
+            // the other matching fields in the array of objects to false.
+            // Example: meta.contacts.isPrimary
+            if (enforceExclusiveTrue && value === true) {
+              arrayField.forEach((item, i) => {
+                if (i !== index) {
+                  arrayField[i] = { ...item, [nestedKey]: false };
+                }
+              });
+            }
           } else {
             // With no nestedKey, just set the value directly on the array.
             // Example: meta.organisms
@@ -150,7 +168,7 @@ class UserDatasetDetail extends React.Component {
       // for testing only
       console.log('updatedMeta', updatedMeta);
 
-      return updateUserDatasetDetail(userDataset, updatedMeta);
+      // return updateUserDatasetDetail(userDataset, updatedMeta);
     };
   }
 
@@ -220,6 +238,52 @@ class UserDatasetDetail extends React.Component {
         'userDatasetType' in q.properties &&
         q.properties.userDatasetType.includes(type.name)
     );
+
+    // FOR TESTING ONLY
+    meta.publications = [
+      {
+        pubMedId: 'id1',
+        citation: 'citation1',
+        isPrimary: false,
+      },
+      {
+        pubMedId: 'id2',
+        citation: 'citation2',
+        isPrimary: true,
+      },
+    ];
+    meta.contacts = [
+      {
+        name: 'Kay',
+        email: 'buzz.com',
+      },
+      {
+        name: 'Ray',
+        city: 'Pizza place',
+      },
+      {
+        name: 'Fey',
+        affiliation: 'A hundred and 3 University',
+      },
+    ];
+    meta.hyperlinks = [
+      {
+        url: 'abc.com',
+        text: 'abc',
+        description: 'abc description',
+        isPublication: false, // this is optional, default is false
+      },
+    ];
+    meta.organisms = ['E coli', 'Staph', 'Beavers'];
+    meta.publications = [
+      {
+        pubMedId: 'id1',
+        citation: 'citation1',
+      },
+      {
+        pubMedId: 'id2',
+      },
+    ];
 
     return [
       this.props.includeNameHeader
@@ -524,6 +588,24 @@ class UserDatasetDetail extends React.Component {
                       )} // Save citation for the specific publication entry
                       emptyText="No Citation"
                     />
+                    <span>Is Primary: </span>
+                    <RadioList
+                      name={`isPrimaryPublication-${index}`}
+                      className="horizontal"
+                      value={publication.isPrimary === true ? 'true' : 'false'}
+                      onChange={(value) => {
+                        this.onMetaSave(
+                          'publications',
+                          'isPrimary', // this is the key in the publication object
+                          index, // the index of the publication in the array
+                          true // enforce only one publication can be primary
+                        )(value === 'true' ? true : false);
+                      }}
+                      items={[
+                        { value: 'true', display: 'Yes' },
+                        { value: 'false', display: 'No' },
+                      ]}
+                    />
                   </div>
                 </div>
               );
@@ -536,7 +618,7 @@ class UserDatasetDetail extends React.Component {
                   'publications',
                   undefined,
                   meta.publications.length
-                )({ pubMedId: '', citation: '' });
+                )({ pubMedId: '', citation: '', isPrimary: false });
               }}
               icon={AddIcon}
             />
@@ -633,8 +715,9 @@ class UserDatasetDetail extends React.Component {
                       onChange={(value) => {
                         this.onMetaSave(
                           'contacts',
-                          'isPrimary', // this is the key in the hyperlink object
-                          index // the index of the hyperlink in the array
+                          'isPrimary', // this is the key in the contacts object
+                          index, // the index of the contacts in the array
+                          true // enforceExclusive true so that there can only be one primary contact
                         )(value === 'true' ? true : false);
                       }}
                       items={[

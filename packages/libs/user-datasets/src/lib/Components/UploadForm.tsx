@@ -705,7 +705,7 @@ function UploadForm({
                 const updatePublicationsObject = createNestedInputUpdater({
                   index: index,
                   setNestedInputObject: setPublications,
-                  enforceExclusiveTrue: false,
+                  enforceExclusiveTrue: true,
                 });
                 return (
                   <PublicationInput
@@ -725,6 +725,10 @@ function UploadForm({
                     citation={publication.citation}
                     onAddCitation={(value: string) => {
                       updatePublicationsObject(value, 'citation');
+                    }}
+                    isPrimary={publication.isPrimary}
+                    onAddIsPrimary={(value: boolean) => {
+                      updatePublicationsObject(value, 'isPrimary');
                     }}
                   />
                 );
@@ -1145,10 +1149,12 @@ function createArrayInput<T extends string | number | undefined>(
 interface PublicationInputProps {
   n: number;
   pubMedId: string;
+  citation?: string;
+  isPrimary?: boolean;
   onAddPubmedId: (value: string) => void;
   onAddCitation: (value: string) => void;
   onRemovePublication: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  citation?: string;
+  onAddIsPrimary: (value: boolean) => void;
 }
 
 export function PublicationInput(props: PublicationInputProps): JSX.Element {
@@ -1156,9 +1162,11 @@ export function PublicationInput(props: PublicationInputProps): JSX.Element {
     n,
     pubMedId = '',
     citation = '',
+    isPrimary = false,
     onAddPubmedId,
     onAddCitation,
     onRemovePublication,
+    onAddIsPrimary,
   } = props;
   return (
     <div className={cx('--NestedInputContainer')}>
@@ -1191,6 +1199,19 @@ export function PublicationInput(props: PublicationInputProps): JSX.Element {
           required={false}
           value={citation}
           onChange={onAddCitation}
+        />
+        <FieldLabel required={false}>Primary publication</FieldLabel>
+        <RadioList
+          name={`isPrimary-${n}`}
+          className="horizontal"
+          value={isPrimary === true ? 'true' : 'false'}
+          onChange={(value) => {
+            onAddIsPrimary(value === 'true' ? true : false);
+          }}
+          items={[
+            { value: 'true', display: 'Yes' },
+            { value: 'false', display: 'No' },
+          ]}
         />
       </div>
     </div>
