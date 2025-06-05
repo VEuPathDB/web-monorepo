@@ -86,9 +86,9 @@ export function EdaNotebookAnalysis(props: Props) {
         const computation = createComputation(
           cell.computationName,
           {},
+          [], // not passing potentially stale previous computations (used to prevent ID clash)
           [],
-          [],
-          computationId
+          computationId // use uuid instead
         );
         setComputations((prev: Computation[]) => [...prev, computation]);
         // recurse into child cells (only from compute cells?)
