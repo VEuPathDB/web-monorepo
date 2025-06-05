@@ -992,13 +992,14 @@ class UserDatasetDetail extends React.Component {
     const { display, name, version } = type;
     return (
       <div className={classify('Subtitle')}>
-        <span>
-          {display} ({name} {version}),{' '}
-        </span>
         <span>created on </span>
         <DateTime datetime={created} />
         <span>, last modified on </span>
         <DateTime datetime={created} />
+        <br></br>
+        <span>
+          {display} ({name} {version}),{' '}
+        </span>
       </div>
     );
   }
@@ -1040,27 +1041,30 @@ class UserDatasetDetail extends React.Component {
   renderAttributeList() {
     const attributes = this.getAttributes();
     return (
-      <div className={classify('AttributeList')}>
-        {attributes.map(({ attribute, value, className }) => (
-          <div
-            className={
-              classify('AttributeRow') +
-              ' ' +
-              (className ?? classify(attribute))
-            }
-            key={attribute}
-          >
-            <div className={classify('AttributeName')}>
-              {typeof attribute === 'string' ? (
-                <strong>{attribute}:</strong>
-              ) : (
-                attribute
-              )}
+      <>
+        <h2>Properties</h2>
+        <div className={classify('AttributeList')}>
+          {attributes.map(({ attribute, value, className }) => (
+            <div
+              className={
+                classify('AttributeRow') +
+                ' ' +
+                (className ?? classify(attribute))
+              }
+              key={attribute}
+            >
+              <div className={classify('AttributeName')}>
+                {typeof attribute === 'string' ? (
+                  <strong>{attribute}:</strong>
+                ) : (
+                  attribute
+                )}
+              </div>
+              <div className={classify('AttributeValue')}>{value}</div>
             </div>
-            <div className={classify('AttributeValue')}>{value}</div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </>
     );
   }
 

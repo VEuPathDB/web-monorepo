@@ -25,7 +25,7 @@
   }
 
   h2 {
-    padding: 0;
+    margin: 1em 0;
     font-size: 2em;
     // color: black;
   }
@@ -59,8 +59,7 @@
       .eda-linkout {
         font-size: 2em;
         font-weight: 500;
-        margin-top: 1em;
-        margin-bottom: 1.5em;
+        margin: 1em 0;
       }
     }
 
@@ -119,13 +118,13 @@
       display: flex;
       flex-direction: row;
       align-items: baseline;
-      margin: 0.5em 0;
+      margin-bottom: 0.5em;
       font-size: 1.4em;
       font-weight: 300;
 
-      &:last-child {
-        margin-bottom: 0;
-      }
+      // &:last-child {
+      //   margin-bottom: 0;
+      // }
 
       a {
         font-weight: 500;
@@ -138,6 +137,7 @@
         strong,
         b {
           font-weight: 400;
+          color: #3f3f3f;
         }
 
         .wdk-SaveableTextEditor {
@@ -212,7 +212,6 @@
       }
     }
     .UserDatasetDetail {
-      &-Summary,
       &-Created {
         margin-top: 1em;
       }
