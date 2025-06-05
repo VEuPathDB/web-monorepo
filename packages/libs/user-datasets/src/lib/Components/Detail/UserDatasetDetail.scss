@@ -55,7 +55,15 @@
 
     .UserDatasetDetail-Header-Attributes {
       flex: 1 1 auto;
+
+      .eda-linkout {
+        font-size: 2em;
+        font-weight: 500;
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+      }
     }
+
     .UserDatasetDetail-Header-Actions {
       flex: 0 0 auto;
     }
@@ -84,6 +92,10 @@
     margin-top: 0.5em;
     margin-bottom: 0.5em;
     display: inline-flex;
+
+    span {
+      white-space: pre;
+    }
   }
 
   // .UserDatasetDetail-Name {
