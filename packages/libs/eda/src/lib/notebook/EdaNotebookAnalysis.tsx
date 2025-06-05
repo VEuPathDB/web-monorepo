@@ -82,16 +82,18 @@ export function EdaNotebookAnalysis(props: Props) {
       parentComputationId?: string
     ) {
       if (cell.type === 'compute') {
+        const computationId = uuid();
         const computation = createComputation(
           cell.computationName,
           {},
-          analysis?.descriptor.computations,
-          []
+          [],
+          [],
+          computationId
         );
         setComputations((prev: Computation[]) => [...prev, computation]);
         // recurse into child cells (only from compute cells?)
         cell.cells?.forEach((child) =>
-          processCell(child, cell.computationName, computation.computationId)
+          processCell(child, cell.computationName, computationId)
         );
       } else if (
         cell.type === 'visualization' &&
@@ -201,6 +203,7 @@ export function EdaNotebookAnalysis(props: Props) {
         </div>
         {notebookSettings.cells.map((cell, index) => (
           <NotebookCell
+            key={index}
             analysisState={analysisState}
             cell={cell}
             updateCell={(update) => updateCell(update, index)}
