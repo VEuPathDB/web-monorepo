@@ -39,6 +39,9 @@ class UserDatasetDetail extends React.Component {
 
     this.getAttributes = this.getAttributes.bind(this);
     this.renderAttributeList = this.renderAttributeList.bind(this);
+    this.renderSubtitle = this.renderSubtitle.bind(this);
+    this.renderDatasetName = this.renderDatasetName.bind(this);
+    this.getDatasetName = this.getDatasetName.bind(this);
     this.renderHeaderSection = this.renderHeaderSection.bind(this);
     this.renderDatasetActions = this.renderDatasetActions.bind(this);
 
@@ -225,6 +228,56 @@ class UserDatasetDetail extends React.Component {
     );
   }
 
+  getDatasetName() {
+    const { userDataset } = this.props;
+    const { meta } = userDataset;
+    const isOwner = this.isMyDataset();
+    return this.props.includeNameHeader
+      ? {
+          attribute: this.props.detailsPageTitle,
+          className: classify('Name'),
+          value: (
+            <SaveableTextEditor
+              value={meta.name}
+              readOnly={!isOwner}
+              onSave={this.onMetaSave('name')}
+            />
+          ),
+        }
+      : null;
+  }
+
+  //       <div className={classify('AttributeList')}>
+  // {attributes.map(({ attribute, value, className }) => (
+  //   <div
+  //     className={
+  //       classify('AttributeRow') +
+  //       ' ' +
+
+  renderDatasetName() {
+    const datasetName = this.getDatasetName();
+    const { attribute, value, className } = datasetName;
+    return (
+      datasetName && (
+        <div className={classify('AttributeList')}>
+          <div
+            className={classify('AttributeRow') + ' ' + className}
+            key={attribute}
+          >
+            <div className={classify('AttributeName')}>
+              {typeof attribute === 'string' ? (
+                <strong>{attribute}:</strong>
+              ) : (
+                attribute
+              )}
+            </div>
+            <div className={classify('AttributeValue')}>{value}</div>
+          </div>
+        </div>
+      )
+    );
+  }
+
   getAttributes() {
     const { userDataset, questionMap, dataNoun } = this.props;
     const { onMetaSave } = this;
@@ -286,19 +339,6 @@ class UserDatasetDetail extends React.Component {
     ];
 
     return [
-      this.props.includeNameHeader
-        ? {
-            attribute: this.props.detailsPageTitle,
-            className: classify('Name'),
-            value: (
-              <SaveableTextEditor
-                value={meta.name}
-                readOnly={!isOwner}
-                onSave={this.onMetaSave('name')}
-              />
-            ),
-          }
-        : null,
       {
         attribute: 'Status',
         value: (
@@ -403,20 +443,20 @@ class UserDatasetDetail extends React.Component {
           />
         ),
       },
-      {
-        attribute: 'Created',
-        value: <DateTime datetime={created} />,
-      },
+      // {
+      //   attribute: 'Created',
+      //   value: <DateTime datetime={created} />,
+      // },
       { attribute: 'Data set size', value: bytesToHuman(size) },
-      { attribute: 'ID', value: id },
-      {
-        attribute: 'Data type',
-        value: (
-          <span>
-            {display} ({name} {version})
-          </span>
-        ),
-      },
+      // { attribute: 'ID', value: id },
+      // {
+      //   attribute: 'Data type',
+      //   value: (
+      //     <span>
+      //       {display} ({name} {version})
+      //     </span>
+      //   ),
+      // },
       this.props.showExtraMetadata && {
         attribute: 'Funding',
         className: 'idkyet',
@@ -907,14 +947,18 @@ class UserDatasetDetail extends React.Component {
 
   renderHeaderSection() {
     const AllLink = this.renderAllDatasetsLink;
+    const Subtitle = this.renderSubtitle;
     const AttributeList = this.renderAttributeList;
     const DatasetActions = this.renderDatasetActions;
+    const DatasetName = this.renderDatasetName;
 
     return (
       <section id="dataset-header">
         <AllLink />
         <div className={classify('Header')}>
           <div className={classify('Header-Attributes')}>
+            <DatasetName />
+            <Subtitle />
             <AttributeList />
           </div>
           <div className={classify('Header-Actions')}>
@@ -924,6 +968,24 @@ class UserDatasetDetail extends React.Component {
       </section>
     );
   }
+
+  renderSubtitle() {
+    const { userDataset } = this.props;
+    const { type, created, size } = userDataset;
+    const { display, name, version } = type;
+    return (
+      <div className={classify('Subtitle')}>
+        <span>
+          {display} ({name} {version}),{' '}
+        </span>
+        <span>created on </span>
+        <DateTime datetime={created} />
+        <span>, last modified on </span>
+        <DateTime datetime={created} />
+      </div>
+    );
+  }
+  // <span>{bytesToHuman(size)}, </span>
 
   renderAttributeList() {
     const attributes = this.getAttributes();

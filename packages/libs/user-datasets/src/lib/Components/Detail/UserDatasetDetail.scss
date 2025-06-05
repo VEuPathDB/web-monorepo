@@ -77,6 +77,28 @@
     }
   }
 
+  .UserDatasetDetail-Subtitle {
+    font-size: 1.2em;
+    font-weight: 300;
+    color: #666;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    display: inline-flex;
+  }
+
+  // .UserDatasetDetail-Name {
+  //   font-weight: 400;
+  //   font-size: 2.8em;
+  //   strong,
+  //   b {
+  //     font-weight: 400;
+  //   }
+
+  //   .wdk-SaveableTextEditor {
+  //     font-style: italic;
+  //   }
+  // }
+
   .UserDatasetDetail-AttributeList {
     display: flex;
     flex-direction: column;
