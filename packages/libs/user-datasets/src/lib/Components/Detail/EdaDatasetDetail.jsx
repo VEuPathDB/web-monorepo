@@ -72,6 +72,7 @@ class EdaDatasetDetail extends UserDatasetDetail {
     const DatasetActions = this.renderDatasetActions;
     const DatasetName = this.renderDatasetName;
     const EdaLinkout = this.renderEdaLinkout;
+    const DetailsList = this.renderDetailsList;
 
     return (
       <section id="dataset-header">
@@ -81,6 +82,7 @@ class EdaDatasetDetail extends UserDatasetDetail {
             <DatasetName />
             <Subtitle />
             <EdaLinkout />
+            <DetailsList />
             <AttributeList />
           </div>
           <div className={classify('Header-Actions')}>

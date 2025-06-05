@@ -40,8 +40,10 @@ class UserDatasetDetail extends React.Component {
     this.getAttributes = this.getAttributes.bind(this);
     this.renderAttributeList = this.renderAttributeList.bind(this);
     this.renderSubtitle = this.renderSubtitle.bind(this);
-    this.renderDatasetName = this.renderDatasetName.bind(this);
     this.getDatasetName = this.getDatasetName.bind(this);
+    this.renderDatasetName = this.renderDatasetName.bind(this);
+    this.getDetails = this.getDetails.bind(this);
+    this.renderDetailsList = this.renderDetailsList.bind(this);
     this.renderHeaderSection = this.renderHeaderSection.bind(this);
     this.renderDatasetActions = this.renderDatasetActions.bind(this);
 
@@ -278,6 +280,68 @@ class UserDatasetDetail extends React.Component {
     );
   }
 
+  getDetails() {
+    const { userDataset, questionMap, dataNoun } = this.props;
+    const { onMetaSave } = this;
+    const { id, type, meta, size, owner, created, sharedWith, status } =
+      userDataset;
+    const { display, name, version } = type;
+    const isOwner = this.isMyDataset();
+    const isInstalled = this.isInstalled();
+
+    return [
+      {
+        attribute: 'Status',
+        value: (
+          <UserDatasetStatus
+            linkToDataset={false}
+            useTooltip={false}
+            userDataset={userDataset}
+            projectId={this.props.config.projectId}
+            displayName={this.props.config.displayName}
+            dataNoun={dataNoun}
+          />
+        ),
+      },
+      {
+        attribute: 'Owner',
+        value: isOwner ? 'Me' : owner,
+      },
+      {
+        attribute: 'Visibility',
+        value:
+          meta.visibility === 'public' ? (
+            <>
+              {' '}
+              <Public className="Community-visible" /> This is a "Community{' '}
+              {dataNoun.singular}" made accessible to the public by user {owner}
+              .
+            </>
+          ) : (
+            <>
+              This {dataNoun.singular.toLowerCase()} is only visible to the
+              owner and those they have shared it with.
+            </>
+          ),
+      },
+      !isOwner || !sharedWith || !sharedWith.length
+        ? null
+        : {
+            attribute: 'Shared with',
+            className: classify('SharedWith'),
+            value: (
+              <ul>
+                {sharedWith.map((share, index) => (
+                  <li key={`${share.userDisplayName}-${index}`}>
+                    {share.userDisplayName}
+                  </li>
+                ))}
+              </ul>
+            ),
+          },
+    ].filter((attr) => attr);
+  }
+
   getAttributes() {
     const { userDataset, questionMap, dataNoun } = this.props;
     const { onMetaSave } = this;
@@ -339,19 +403,6 @@ class UserDatasetDetail extends React.Component {
     ];
 
     return [
-      {
-        attribute: 'Status',
-        value: (
-          <UserDatasetStatus
-            linkToDataset={false}
-            useTooltip={false}
-            userDataset={userDataset}
-            projectId={this.props.config.projectId}
-            displayName={this.props.config.displayName}
-            dataNoun={dataNoun}
-          />
-        ),
-      },
       !questions || !questions.length || !isInstalled
         ? null
         : {
@@ -380,42 +431,6 @@ class UserDatasetDetail extends React.Component {
                     </li>
                   );
                 })}
-              </ul>
-            ),
-          },
-      {
-        attribute: 'Owner',
-        value: isOwner ? 'Me' : owner,
-      },
-      {
-        attribute: 'Visibility',
-        value:
-          meta.visibility === 'public' ? (
-            <>
-              {' '}
-              <Public className="Community-visible" /> This is a "Community{' '}
-              {dataNoun.singular}" made accessible to the public by user {owner}
-              .
-            </>
-          ) : (
-            <>
-              This {dataNoun.singular.toLowerCase()} is only visible to the
-              owner and those they have shared it with.
-            </>
-          ),
-      },
-      !isOwner || !sharedWith || !sharedWith.length
-        ? null
-        : {
-            attribute: 'Shared with',
-            className: classify('SharedWith'),
-            value: (
-              <ul>
-                {sharedWith.map((share, index) => (
-                  <li key={`${share.userDisplayName}-${index}`}>
-                    {share.userDisplayName}
-                  </li>
-                ))}
               </ul>
             ),
           },
@@ -951,6 +966,7 @@ class UserDatasetDetail extends React.Component {
     const AttributeList = this.renderAttributeList;
     const DatasetActions = this.renderDatasetActions;
     const DatasetName = this.renderDatasetName;
+    const DetailsList = this.renderDetailsList;
 
     return (
       <section id="dataset-header">
@@ -959,6 +975,7 @@ class UserDatasetDetail extends React.Component {
           <div className={classify('Header-Attributes')}>
             <DatasetName />
             <Subtitle />
+            <DetailsList />
             <AttributeList />
           </div>
           <div className={classify('Header-Actions')}>
@@ -986,6 +1003,39 @@ class UserDatasetDetail extends React.Component {
     );
   }
   // <span>{bytesToHuman(size)}, </span>
+
+  // renderInternalDetails
+  renderDetailsList() {
+    const details = this.getDetails();
+    console.log(details);
+
+    return (
+      <>
+        <h2>Details</h2>
+        <div className={classify('AttributeList')}>
+          {details.map(({ attribute, value, className }) => (
+            <div
+              className={
+                classify('AttributeRow') +
+                ' ' +
+                (className ?? classify(attribute))
+              }
+              key={attribute}
+            >
+              <div className={classify('AttributeName')}>
+                {typeof attribute === 'string' ? (
+                  <strong>{attribute}:</strong>
+                ) : (
+                  attribute
+                )}
+              </div>
+              <div className={classify('AttributeValue')}>{value}</div>
+            </div>
+          ))}
+        </div>
+      </>
+    );
+  }
 
   renderAttributeList() {
     const attributes = this.getAttributes();
