@@ -4,20 +4,21 @@
 // appropriate context, such as analysis state. In EdaNotebookAnalysis, these
 // descriptors get converted into cells using the ids and such generated in
 // the particular analysis.
+
+export type NotebookCellDescriptor =
+  | VisualizationCellDescriptor
+  | ComputeCellDescriptor
+  | TextCellDescriptor;
+
 export interface NotebookCellDescriptorBase<T extends string> {
   type: T;
   title: string;
-  cells?: (
-    | VisualizationCellDescriptor
-    | ComputeCellDescriptor
-    | TextCellDescriptor
-  )[];
+  cells?: NotebookCellDescriptor[];
 }
 
 export interface VisualizationCellDescriptor
   extends NotebookCellDescriptorBase<'visualization'> {
   visualizationName: string;
-  computationName: string;
 }
 
 export interface ComputeCellDescriptor
@@ -33,11 +34,7 @@ type PresetNotebook = {
   name: string;
   displayName: string;
   projects: string[];
-  cells: (
-    | VisualizationCellDescriptor
-    | ComputeCellDescriptor
-    | TextCellDescriptor
-  )[];
+  cells: NotebookCellDescriptor[];
 };
 
 // Preset notebooks
@@ -58,7 +55,6 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             type: 'visualization',
             title: 'Volcano Plot',
             visualizationName: 'volcanoplot',
-            computationName: 'differentialabundance',
           },
           {
             type: 'text',
@@ -100,7 +96,6 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             type: 'visualization',
             title: 'Correlation Plot',
             visualizationName: 'bipartitenetwork',
-            computationName: 'correlation',
           },
         ],
       },
@@ -115,7 +110,6 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         type: 'visualization',
         title: 'Boxplot Visualization',
         visualizationName: 'boxplot',
-        computationName: 'pass',
       },
     ],
   },

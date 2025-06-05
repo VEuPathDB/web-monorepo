@@ -10,6 +10,7 @@ import {
   useConfiguredDownloadClient,
   useConfiguredSubsettingClient,
   makeNewAnalysis,
+  useAnalysisState,
 } from '../core';
 import { DocumentationContainer } from '../core/components/docs/DocumentationContainer';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -43,6 +44,8 @@ export default function NotebookRoute(props: Props) {
   const [analysis, setAnalysis] =
     useState<Analysis | NewAnalysis | undefined>(initialAnalysis);
 
+  const analysisState = useAnalysisState(analysis, setAnalysis);
+
   return (
     <DocumentationContainer>
       <QueryClientProvider client={queryClient}>
@@ -65,11 +68,7 @@ export default function NotebookRoute(props: Props) {
                 dataClient={dataClient}
                 computeClient={computeClient}
               >
-                <EdaNotebookAnalysis
-                  analysis={analysis}
-                  studyId={props.match.params.datasetId}
-                  onAnalysisChange={setAnalysis}
-                />
+                <EdaNotebookAnalysis analysisState={analysisState} />
               </EDAWorkspaceContainer>
             )}
           />

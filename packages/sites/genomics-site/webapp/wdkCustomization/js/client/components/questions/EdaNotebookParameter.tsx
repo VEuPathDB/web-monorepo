@@ -37,10 +37,13 @@ import { EdaNotebookAnalysis } from '@veupathdb/eda/lib/notebook/EdaNotebookAnal
 import ParameterComponent from '@veupathdb/wdk-client/lib/Views/Question/ParameterComponent';
 
 const datasetIdParamName = 'eda_dataset_id';
+const notebookTypeParamName = 'eda_notebook_type';
 
 export function EdaNotebookParameter(props: Props<StringParam>) {
   // TEMPORARY: We don't have this value coming from the wdk yet.
   const studyId = props.ctx.paramValues[datasetIdParamName] ?? 'DS_82dc5abc7f';
+  const notebookType =
+    props.ctx.paramValues[notebookTypeParamName] ?? 'wgcnaCorrelationNotebook';
 
   const analysisDescriptor = useMemo(() => {
     const jsonParsedParamValue = parseJson(props.value);
@@ -77,7 +80,10 @@ export function EdaNotebookParameter(props: Props<StringParam>) {
     <>
       <DocumentationContainer>
         <WorkspaceContainer studyId={studyId} edaServiceUrl={edaServiceUrl}>
-          <EdaNotebookAdapter analysisState={analysisState} />
+          <EdaNotebookAdapter
+            analysisState={analysisState}
+            notebookType={notebookType}
+          />
         </WorkspaceContainer>
       </DocumentationContainer>
       <ParameterComponent {...props} />
@@ -87,11 +93,12 @@ export function EdaNotebookParameter(props: Props<StringParam>) {
 
 interface EdaNotebookAdapterProps {
   analysisState: AnalysisState;
+  notebookType: string;
 }
 
 function EdaNotebookAdapter(props: EdaNotebookAdapterProps) {
   const { analysisState } = props;
-  const datasetId = analysisState.analysis?.studyId;
+  const studyId = analysisState.analysis?.studyId;
 
   // Used for subsetting. To be addressed in #1413
   // const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
@@ -109,29 +116,18 @@ function EdaNotebookAdapter(props: EdaNotebookAdapterProps) {
   const dataClient = useConfiguredDataClient(edaServiceUrl);
   const computeClient = useConfiguredComputeClient(edaServiceUrl);
 
-  const initialAnalysis = useMemo(() => {
-    return makeNewAnalysis(datasetId ?? '');
-  }, [datasetId]);
-
-  const [analysis, setAnalysis] =
-    useState<Analysis | NewAnalysis | undefined>(initialAnalysis);
-
   return (
     <div className="EdaSubsettingParameter">
-      {datasetId && (
+      {studyId && (
         <EDAWorkspaceContainer
-          studyId={datasetId}
+          studyId={studyId}
           analysisClient={analysisClient}
           subsettingClient={subsettingClient}
           downloadClient={downloadClient}
           dataClient={dataClient}
           computeClient={computeClient}
         >
-          <EdaNotebookAnalysis
-            analysis={analysis}
-            studyId={datasetId}
-            onAnalysisChange={setAnalysis}
-          />
+          <EdaNotebookAnalysis {...props} />
         </EDAWorkspaceContainer>
       )}
     </div>
@@ -147,6 +143,12 @@ export function EdaNotebookStepDetails(props: LeafStepDetailsContentProps) {
   );
 }
 
+//
+// TO DO: adapt for notebook
+//
+// this function returns a brief summary of the search/analysis
+// for the edit/revise popup
+//
 function formatParameterValue(
   parameter: Parameter,
   value: string | undefined,
