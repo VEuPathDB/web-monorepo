@@ -22,7 +22,6 @@ import { DateTime } from '../DateTime';
 
 import '../UserDatasets.scss';
 import './UserDatasetDetail.scss';
-import { PublicationInput } from '../UploadForm';
 import OutlinedButton from '@veupathdb/coreui/lib/components/buttons/OutlinedButton';
 import AddIcon from '@material-ui/icons/Add';
 import { FloatingButton, Trash } from '@veupathdb/coreui';
@@ -40,6 +39,11 @@ class UserDatasetDetail extends React.Component {
 
     this.getAttributes = this.getAttributes.bind(this);
     this.renderAttributeList = this.renderAttributeList.bind(this);
+    this.renderSubtitle = this.renderSubtitle.bind(this);
+    this.getDatasetName = this.getDatasetName.bind(this);
+    this.renderDatasetName = this.renderDatasetName.bind(this);
+    this.getDetails = this.getDetails.bind(this);
+    this.renderDetailsList = this.renderDetailsList.bind(this);
     this.renderHeaderSection = this.renderHeaderSection.bind(this);
     this.renderDatasetActions = this.renderDatasetActions.bind(this);
 
@@ -77,6 +81,13 @@ class UserDatasetDetail extends React.Component {
       'contacts',
       'hyperlinks',
       'organisms',
+      'host',
+      'countries',
+      'sampleTypes',
+      'ages',
+      'diseases',
+      'funding',
+      'years',
     ];
     if (typeof key !== 'string' || !META_KEYS.includes(key))
       throw new TypeError(
@@ -89,7 +100,14 @@ class UserDatasetDetail extends React.Component {
   // First, the easy key-value example. this.onMetaSave('name')('my new name');
   // Second, for fields that are arrays of objects, like meta.publications[index].name, specify the nestedKey and index. this.onMetaSave('publications', 'pubMedId', 0)('new pubMedId value');
   // Third, for arrays of strings, like meta.organisms[index], just specify the index. this.onMetaSave('organisms', undefined, 0)('new organism value');
-  onMetaSave(key, nestedKey = undefined, index = undefined) {
+  // Lastly, for arrays of objects that have a boolean flag where only one in the array can be true,
+  // set the enforceExclusiveTrue argument to true (default false).
+  onMetaSave(
+    key,
+    nestedKey = undefined,
+    index = undefined,
+    enforceExclusiveTrue = false
+  ) {
     this.validateKey(key);
 
     return (value) => {
@@ -124,6 +142,17 @@ class UserDatasetDetail extends React.Component {
             // Update the nested key at the correct index in the array of objects.
             // Example: meta.contacts
             arrayField[index][nestedKey] = value;
+
+            // If enforceExclusiveTrue and this is a boolean, then change
+            // the other matching fields in the array of objects to false.
+            // Example: meta.contacts.isPrimary
+            if (enforceExclusiveTrue && value === true) {
+              arrayField.forEach((item, i) => {
+                if (i !== index) {
+                  arrayField[i] = { ...item, [nestedKey]: false };
+                }
+              });
+            }
           } else {
             // With no nestedKey, just set the value directly on the array.
             // Example: meta.organisms
@@ -141,7 +170,10 @@ class UserDatasetDetail extends React.Component {
         updatedMeta = { ...userDataset.meta, [key]: value };
       }
 
-      return updateUserDatasetDetail(userDataset, updatedMeta);
+      // for testing only
+      console.log('updatedMeta', updatedMeta);
+
+      // return updateUserDatasetDetail(userDataset, updatedMeta);
     };
   }
 
@@ -198,7 +230,57 @@ class UserDatasetDetail extends React.Component {
     );
   }
 
-  getAttributes() {
+  getDatasetName() {
+    const { userDataset } = this.props;
+    const { meta } = userDataset;
+    const isOwner = this.isMyDataset();
+    return this.props.includeNameHeader
+      ? {
+          attribute: this.props.detailsPageTitle,
+          className: classify('Name'),
+          value: (
+            <SaveableTextEditor
+              value={meta.name}
+              readOnly={!isOwner}
+              onSave={this.onMetaSave('name')}
+            />
+          ),
+        }
+      : null;
+  }
+
+  //       <div className={classify('AttributeList')}>
+  // {attributes.map(({ attribute, value, className }) => (
+  //   <div
+  //     className={
+  //       classify('AttributeRow') +
+  //       ' ' +
+
+  renderDatasetName() {
+    const datasetName = this.getDatasetName();
+    const { attribute, value, className } = datasetName;
+    return (
+      datasetName && (
+        <div className={classify('AttributeList')}>
+          <div
+            className={classify('AttributeRow') + ' ' + className}
+            key={attribute}
+          >
+            <div className={classify('AttributeName')}>
+              {typeof attribute === 'string' ? (
+                <strong>{attribute}:</strong>
+              ) : (
+                attribute
+              )}
+            </div>
+            <div className={classify('AttributeValue')}>{value}</div>
+          </div>
+        </div>
+      )
+    );
+  }
+
+  getDetails() {
     const { userDataset, questionMap, dataNoun } = this.props;
     const { onMetaSave } = this;
     const { id, type, meta, size, owner, created, sharedWith, status } =
@@ -206,26 +288,8 @@ class UserDatasetDetail extends React.Component {
     const { display, name, version } = type;
     const isOwner = this.isMyDataset();
     const isInstalled = this.isInstalled();
-    const questions = Object.values(questionMap).filter(
-      (q) =>
-        'userDatasetType' in q.properties &&
-        q.properties.userDatasetType.includes(type.name)
-    );
 
     return [
-      this.props.includeNameHeader
-        ? {
-            attribute: this.props.detailsPageTitle,
-            className: classify('Name'),
-            value: (
-              <SaveableTextEditor
-                value={meta.name}
-                readOnly={!isOwner}
-                onSave={this.onMetaSave('name')}
-              />
-            ),
-          }
-        : null,
       {
         attribute: 'Status',
         value: (
@@ -239,37 +303,6 @@ class UserDatasetDetail extends React.Component {
           />
         ),
       },
-      !questions || !questions.length || !isInstalled
-        ? null
-        : {
-            attribute: 'Available searches',
-            value: (
-              <ul>
-                {questions.map((q) => {
-                  // User dataset searches typically offer changing the dataset through a dropdown
-                  // Ths dropdown is a param, "biom_dataset" on MicrobiomeDB and "rna_seq_dataset" on genomic sites
-                  // Hence the regex: /dataset/
-                  const ps = q.paramNames.filter((paramName) =>
-                    paramName.match(/dataset/)
-                  );
-                  const urlPath = [
-                    '',
-                    'search',
-                    q.outputRecordClassName,
-                    q.urlSegment,
-                  ].join('/');
-                  const url =
-                    urlPath +
-                    (ps.length === 1 ? '?param.' + ps[0] + '=' + id : '');
-                  return (
-                    <li key={q.fullName}>
-                      <Link to={url}>{q.displayName}</Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            ),
-          },
       {
         attribute: 'Owner',
         value: isOwner ? 'Me' : owner,
@@ -306,6 +339,101 @@ class UserDatasetDetail extends React.Component {
               </ul>
             ),
           },
+    ].filter((attr) => attr);
+  }
+
+  getAttributes() {
+    const { userDataset, questionMap, dataNoun } = this.props;
+    const { onMetaSave } = this;
+    const { id, type, meta, size, owner, created, sharedWith, status } =
+      userDataset;
+    const { display, name, version } = type;
+    const isOwner = this.isMyDataset();
+    const isInstalled = this.isInstalled();
+    const questions = Object.values(questionMap).filter(
+      (q) =>
+        'userDatasetType' in q.properties &&
+        q.properties.userDatasetType.includes(type.name)
+    );
+
+    // FOR TESTING ONLY
+    meta.publications = [
+      {
+        pubMedId: 'id1',
+        citation: 'citation1',
+        isPrimary: false,
+      },
+      {
+        pubMedId: 'id2',
+        citation: 'citation2',
+        isPrimary: true,
+      },
+    ];
+    meta.contacts = [
+      {
+        name: 'Kay',
+        email: 'buzz.com',
+      },
+      {
+        name: 'Ray',
+        city: 'Pizza place',
+      },
+      {
+        name: 'Fey',
+        affiliation: 'A hundred and 3 University',
+      },
+    ];
+    meta.hyperlinks = [
+      {
+        url: 'abc.com',
+        text: 'abc',
+        description: 'abc description',
+        isPublication: false, // this is optional, default is false
+      },
+    ];
+    meta.organisms = ['E coli', 'Staph', 'Beavers'];
+    meta.publications = [
+      {
+        pubMedId: 'id1',
+        citation: 'citation1',
+      },
+      {
+        pubMedId: 'id2',
+      },
+    ];
+
+    return [
+      !questions || !questions.length || !isInstalled
+        ? null
+        : {
+            attribute: 'Available searches',
+            value: (
+              <ul>
+                {questions.map((q) => {
+                  // User dataset searches typically offer changing the dataset through a dropdown
+                  // Ths dropdown is a param, "biom_dataset" on MicrobiomeDB and "rna_seq_dataset" on genomic sites
+                  // Hence the regex: /dataset/
+                  const ps = q.paramNames.filter((paramName) =>
+                    paramName.match(/dataset/)
+                  );
+                  const urlPath = [
+                    '',
+                    'search',
+                    q.outputRecordClassName,
+                    q.urlSegment,
+                  ].join('/');
+                  const url =
+                    urlPath +
+                    (ps.length === 1 ? '?param.' + ps[0] + '=' + id : '');
+                  return (
+                    <li key={q.fullName}>
+                      <Link to={url}>{q.displayName}</Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            ),
+          },
       {
         attribute: 'Summary',
         value: (
@@ -330,18 +458,139 @@ class UserDatasetDetail extends React.Component {
           />
         ),
       },
-      {
-        attribute: 'Created',
-        value: <DateTime datetime={created} />,
-      },
+      // {
+      //   attribute: 'Created',
+      //   value: <DateTime datetime={created} />,
+      // },
       { attribute: 'Data set size', value: bytesToHuman(size) },
-      { attribute: 'ID', value: id },
-      {
-        attribute: 'Data type',
+      // { attribute: 'ID', value: id },
+      // {
+      //   attribute: 'Data type',
+      //   value: (
+      //     <span>
+      //       {display} ({name} {version})
+      //     </span>
+      //   ),
+      // },
+      this.props.showExtraMetadata && {
+        attribute: 'Funding',
+        className: 'idkyet',
         value: (
-          <span>
-            {display} ({name} {version})
-          </span>
+          <div className="wholeThing">
+            <div className="innerthing">
+              <text>Award number: </text>
+              <SaveableTextEditor
+                value={meta.funding?.awardNumber || ''}
+                multiLine={false}
+                readOnly={!isOwner}
+                onSave={this.onMetaSave('funding', 'awardNumber')}
+                emptyText="Award number"
+              />
+            </div>
+            <div className="innerthing">
+              <text>Funding agency: </text>
+              <SaveableTextEditor
+                value={meta.funding?.agency || ''}
+                multiLine={false}
+                readOnly={!isOwner}
+                onSave={this.onMetaSave('funding', 'fundingAgency')}
+                emptyText="Funding agency"
+              />
+            </div>
+          </div>
+        ),
+      },
+      this.props.showExtraMetadata && {
+        attribute: 'Years',
+        className: 'idkyet',
+        value: (
+          <div className="wholeThing">
+            <div className="innerthing">
+              <text>Start: </text>
+              <SaveableTextEditor
+                value={meta.years?.start || ''}
+                multiLine={false}
+                readOnly={!isOwner}
+                onSave={this.onMetaSave('years', 'start')}
+                emptyText="Start year"
+              />
+            </div>
+            <div className="innerthing">
+              <text>End: </text>
+              <SaveableTextEditor
+                value={meta.years?.end || ''}
+                multiLine={false}
+                readOnly={!isOwner}
+                onSave={this.onMetaSave('years', 'end')}
+                emptyText="End year"
+              />
+            </div>
+          </div>
+        ),
+      },
+      this.props.showExtraMetadata && {
+        attribute: 'Countries',
+        className: 'TextInputSection',
+        value: (
+          <SaveableTextEditor
+            multiLine={false}
+            value={meta.countries || ''}
+            readOnly={!isOwner}
+            onSave={onMetaSave('countries')}
+            emptyText="Country or countries"
+          />
+        ),
+      },
+      this.props.showExtraMetadata && {
+        attribute: 'Disease(s) / health condition(s)',
+        className: 'TextInputSection',
+        value: (
+          <SaveableTextEditor
+            multiLine={false}
+            value={meta.diseases || ''}
+            readOnly={!isOwner}
+            onSave={onMetaSave('diseases')}
+            emptyText="Diseases"
+          />
+        ),
+      },
+      this.props.showExtraMetadata && {
+        attribute: 'Host(s)',
+        className: 'TextInputSection',
+        value: (
+          <SaveableTextEditor
+            multiLine={false}
+            value={meta.host || ''}
+            readOnly={!isOwner}
+            onSave={onMetaSave('host')}
+            emptyText="Host organism"
+          />
+        ),
+      },
+      this.props.showExtraMetadata && {
+        attribute: 'Sample type(s)',
+        className: 'TextInputSection',
+        value: (
+          <SaveableTextEditor
+            multiLine={false}
+            value={meta.sampleTypes || ''}
+            readOnly={!isOwner}
+            onSave={onMetaSave('sampleTypes')}
+            emptyText="Participant sample type(s)"
+          />
+        ),
+      },
+      this.props.showExtraMetadata && {
+        attribute: 'Age(s)',
+        className: 'TextInputSection',
+        value: (
+          <SaveableTextEditor
+            multiLine={false}
+            value={meta.ages || ''}
+            readOnly={!isOwner}
+            onSave={onMetaSave('ages')}
+            emptyText="Participant age(s)"
+          />
         ),
       },
       this.props.showExtraMetadata && {
@@ -394,6 +643,24 @@ class UserDatasetDetail extends React.Component {
                       )} // Save citation for the specific publication entry
                       emptyText="No Citation"
                     />
+                    <span>Is Primary: </span>
+                    <RadioList
+                      name={`isPrimaryPublication-${index}`}
+                      className="horizontal"
+                      value={publication.isPrimary === true ? 'true' : 'false'}
+                      onChange={(value) => {
+                        this.onMetaSave(
+                          'publications',
+                          'isPrimary', // this is the key in the publication object
+                          index, // the index of the publication in the array
+                          true // enforce only one publication can be primary
+                        )(value === 'true' ? true : false);
+                      }}
+                      items={[
+                        { value: 'true', display: 'Yes' },
+                        { value: 'false', display: 'No' },
+                      ]}
+                    />
                   </div>
                 </div>
               );
@@ -406,7 +673,7 @@ class UserDatasetDetail extends React.Component {
                   'publications',
                   undefined,
                   meta.publications.length
-                )({ pubMedId: '', citation: '' });
+                )({ pubMedId: '', citation: '', isPrimary: false });
               }}
               icon={AddIcon}
             />
@@ -503,8 +770,9 @@ class UserDatasetDetail extends React.Component {
                       onChange={(value) => {
                         this.onMetaSave(
                           'contacts',
-                          'isPrimary', // this is the key in the hyperlink object
-                          index // the index of the hyperlink in the array
+                          'isPrimary', // this is the key in the contacts object
+                          index, // the index of the contacts in the array
+                          true // enforceExclusive true so that there can only be one primary contact
                         )(value === 'true' ? true : false);
                       }}
                       items={[
@@ -694,14 +962,20 @@ class UserDatasetDetail extends React.Component {
 
   renderHeaderSection() {
     const AllLink = this.renderAllDatasetsLink;
+    const Subtitle = this.renderSubtitle;
     const AttributeList = this.renderAttributeList;
     const DatasetActions = this.renderDatasetActions;
+    const DatasetName = this.renderDatasetName;
+    const DetailsList = this.renderDetailsList;
 
     return (
       <section id="dataset-header">
         <AllLink />
         <div className={classify('Header')}>
           <div className={classify('Header-Attributes')}>
+            <DatasetName />
+            <Subtitle />
+            <DetailsList />
             <AttributeList />
           </div>
           <div className={classify('Header-Actions')}>
@@ -712,30 +986,85 @@ class UserDatasetDetail extends React.Component {
     );
   }
 
+  renderSubtitle() {
+    const { userDataset } = this.props;
+    const { type, created, size } = userDataset;
+    const { display, name, version } = type;
+    return (
+      <div className={classify('Subtitle')}>
+        <span>created on </span>
+        <DateTime datetime={created} />
+        <span>, last modified on </span>
+        <DateTime datetime={created} />
+        <br></br>
+        <span>
+          {display} ({name} {version}),{' '}
+        </span>
+      </div>
+    );
+  }
+  // <span>{bytesToHuman(size)}, </span>
+
+  // renderInternalDetails
+  renderDetailsList() {
+    const details = this.getDetails();
+    console.log(details);
+
+    return (
+      <>
+        <h2>Details</h2>
+        <div className={classify('AttributeList')}>
+          {details.map(({ attribute, value, className }) => (
+            <div
+              className={
+                classify('AttributeRow') +
+                ' ' +
+                (className ?? classify(attribute))
+              }
+              key={attribute}
+            >
+              <div className={classify('AttributeName')}>
+                {typeof attribute === 'string' ? (
+                  <strong>{attribute}:</strong>
+                ) : (
+                  attribute
+                )}
+              </div>
+              <div className={classify('AttributeValue')}>{value}</div>
+            </div>
+          ))}
+        </div>
+      </>
+    );
+  }
+
   renderAttributeList() {
     const attributes = this.getAttributes();
     return (
-      <div className={classify('AttributeList')}>
-        {attributes.map(({ attribute, value, className }) => (
-          <div
-            className={
-              classify('AttributeRow') +
-              ' ' +
-              (className ?? classify(attribute))
-            }
-            key={attribute}
-          >
-            <div className={classify('AttributeName')}>
-              {typeof attribute === 'string' ? (
-                <strong>{attribute}:</strong>
-              ) : (
-                attribute
-              )}
+      <>
+        <h2>Properties</h2>
+        <div className={classify('AttributeList')}>
+          {attributes.map(({ attribute, value, className }) => (
+            <div
+              className={
+                classify('AttributeRow') +
+                ' ' +
+                (className ?? classify(attribute))
+              }
+              key={attribute}
+            >
+              <div className={classify('AttributeName')}>
+                {typeof attribute === 'string' ? (
+                  <strong>{attribute}:</strong>
+                ) : (
+                  attribute
+                )}
+              </div>
+              <div className={classify('AttributeValue')}>{value}</div>
             </div>
-            <div className={classify('AttributeValue')}>{value}</div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </>
     );
   }
 
