@@ -381,12 +381,14 @@ function FungiVBOrgLinkoutsTable(props) {
       {Object.entries(groupedLinks).map(([dataset, rows]) => (
         <>
           <dt>{dataset}</dt>
-          {rows.map((row, index) => (
-            <dd key={index}>
-              {renderAttributeValue(row.link)}
-              {index === rows.length - 1 ? null : ', '}
-            </dd>
-          ))}
+          <dd>
+            {rows.map((row, index) => (
+              <span key={index}>
+                {renderAttributeValue(row.link)}
+                {index === rows.length - 1 ? null : ', '}
+              </span>
+            ))}
+          </dd>
         </>
       ))}
     </>

@@ -511,16 +511,6 @@ const useHeaderMenuItems = (
           },
         },
         {
-          key: 'vb-images',
-          display: 'Image gallery',
-          tooltip: 'Free to use pictures of vectors',
-          type: 'reactRoute',
-          url: makeStaticPageRoute('/VectorBase/imageGallery.html'),
-          metadata: {
-            include: [VectorBase],
-          },
-        },
-        {
           key: 'LeishGEdit',
           display: 'LeishGEdit',
           tooltip:
