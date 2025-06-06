@@ -1,29 +1,38 @@
-import { CSSProperties } from 'react';
 import { useEntityCounts } from '../core/hooks/entityCounts';
-import { useStudyEntities } from '../core/hooks/workspace';
-import { isVisualizationCell, NotebookCellComponentProps } from './Types';
+import { useDataClient } from '../core/hooks/workspace';
 import { isEqual } from 'lodash';
 import {
   RunComputeButton,
   StatusIcon,
 } from '../core/components/computations/RunComputeButton';
 import { useComputeJobStatus } from '../core/components/computations/ComputeJobStatusHook';
-import { NotebookCell } from './NotebookCell';
-import { gray } from '@veupathdb/coreui/lib/definitions/colors';
+import { NotebookCell, NotebookCellProps } from './NotebookCell';
 import { plugins } from '../core/components/computations/plugins';
+import { ComputeCellDescriptor } from './NotebookPresets';
+import { useCachedPromise } from '../core/hooks/cachedPromise';
 
 export function ComputeNotebookCell(
-  props: NotebookCellComponentProps<'compute'>
+  props: NotebookCellProps<ComputeCellDescriptor>
 ) {
-  const { analysisState, cell, updateCell, isSubCell, isDisabled } = props;
+  const { analysisState, cell, isSubCell, isDisabled } = props;
   const { analysis } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
 
-  const { computeId, computationAppOverview, subCells } = cell;
+  const { computationName, computationId, cells } = cell;
   const computation = analysis.descriptor.computations.find(
-    (comp) => comp.computationId === computeId
+    (comp) => comp.computationId === computationId
   );
   if (computation == null) throw new Error('Cannot find computation.');
+
+  // fetch 'apps'
+  const dataClient = useDataClient();
+  const fetchApps = async () => {
+    let { apps } = await dataClient.getApps();
+    return { apps };
+  };
+  const apps = useCachedPromise(fetchApps, ['fetchApps']);
+  const appOverview =
+    apps && apps.value?.apps.find((app) => app.name === computationName);
 
   const totalCountsResult = useEntityCounts();
   const filteredCountsResult = useEntityCounts(
@@ -32,7 +41,10 @@ export function ComputeNotebookCell(
   const plugin = plugins[computation.descriptor.type];
   if (plugin == null) throw new Error('Computation plugin not found.');
 
-  // We'll use a special changeConfigHandler for the computation configuration
+  // TO DO: this looks like it needs to be able to handle multiple computations.
+  // Ideally it should also use the functional update form of setComputations.
+  //
+  // We'll use a special, simple changeConfigHandler for the computation configuration
   const changeConfigHandler = (propertyName: string, value?: any) => {
     if (!computation || !analysis.descriptor.computations[0]) return;
 
@@ -65,14 +77,14 @@ export function ComputeNotebookCell(
   const { jobStatus, createJob } = useComputeJobStatus(
     analysis,
     computation,
-    computationAppOverview?.computeName ?? ''
+    appOverview?.computeName ?? ''
   );
 
   const isComputationConfigurationValid = !!plugin?.isConfigurationComplete(
     computation.descriptor.configuration
   );
 
-  return computation ? (
+  return computation && appOverview ? (
     <>
       <details className={isSubCell ? 'subCell' : ''} open>
         <summary>{cell.title}</summary>
@@ -82,50 +94,53 @@ export function ComputeNotebookCell(
             computation={computation}
             totalCounts={totalCountsResult}
             filteredCounts={filteredCountsResult}
-            visualizationId="1" // irrelevant because we have our own changeConfigHandler
-            addNewComputation={(name, configuration) => {}} // also irrelevant for us because we add the computation elsewhere
-            computationAppOverview={computationAppOverview}
+            visualizationId="not_used" // irrelevant because we have our own changeConfigHandler
+            addNewComputation={() => {}} // also irrelevant for us because we add the computation elsewhere
+            computationAppOverview={appOverview}
             geoConfigs={[]}
             changeConfigHandlerOverride={changeConfigHandler}
           />
           <RunComputeButton
-            computationAppOverview={computationAppOverview}
+            computationAppOverview={appOverview}
             status={jobStatus}
             isConfigured={isComputationConfigurationValid}
             createJob={createJob}
           />
         </div>
       </details>
-      {subCells &&
-        subCells.map((subCell) => {
-          // Add extra flair for subCell titles
-          const subTitle = (
-            <div className="subCellTitle">
-              <span>{subCell.title}</span>
-              <span
-                style={{ color: gray[600], fontWeight: 400, marginLeft: '1em' }}
-              >
-                {cell.title}
-              </span>
-              {jobStatus && <StatusIcon status={jobStatus} showLabel={false} />}
-            </div>
-          );
-          const subCellWithTitle = {
-            ...subCell,
-            title: subTitle,
-          };
-          if (isVisualizationCell(subCellWithTitle)) {
-            subCellWithTitle.computeJobStatus = jobStatus;
-          }
-
+      {cells &&
+        cells.map((subCell, index) => {
+          // TO DO: reinstate this, although the visualization cell knows about its compute jobStatus
+          //        so we can probably handle it there instead
+          //
+          //  // Add extra flair for subCell titles
+          //  const subTitle = (
+          //    <div className="subCellTitle">
+          //      <span>{subCell.title}</span>
+          //      <span
+          //        style={{ color: gray[600], fontWeight: 400, marginLeft: '1em' }}
+          //      >
+          //        {cell.title}
+          //      </span>
+          //      {jobStatus && <StatusIcon status={jobStatus} showLabel={false} />}
+          //    </div>
+          //  );
+          //  const subCellWithTitle = {
+          //    ...subCell,
+          //    title: subTitle,
+          //  };
+          //  if (isVisualizationCell(subCellWithTitle)) {
+          //    subCellWithTitle.computeJobStatus = jobStatus;
+          //  }
+          //
           const isSubCellDisabled =
             jobStatus !== 'complete' && subCell.type !== 'text';
 
           return (
             <NotebookCell
+              key={index}
               analysisState={analysisState}
-              cell={subCellWithTitle}
-              updateCell={(update) => updateCell(update)}
+              cell={subCell}
               isSubCell={true}
               isDisabled={isSubCellDisabled}
             />

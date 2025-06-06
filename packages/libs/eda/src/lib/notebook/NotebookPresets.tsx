@@ -1,5 +1,7 @@
 // Notebook presets
 
+import { ReactNode } from 'react';
+
 // The descriptors contain just enough information to render the cells when given the
 // appropriate context, such as analysis state. In EdaNotebookAnalysis, these
 // descriptors get converted into cells using the ids and such generated in
@@ -8,7 +10,8 @@
 export type NotebookCellDescriptor =
   | VisualizationCellDescriptor
   | ComputeCellDescriptor
-  | TextCellDescriptor;
+  | TextCellDescriptor
+  | SubsetCellDescriptor;
 
 export interface NotebookCellDescriptorBase<T extends string> {
   type: T;
@@ -19,16 +22,21 @@ export interface NotebookCellDescriptorBase<T extends string> {
 export interface VisualizationCellDescriptor
   extends NotebookCellDescriptorBase<'visualization'> {
   visualizationName: string;
+  visualizationId: string;
 }
 
 export interface ComputeCellDescriptor
   extends NotebookCellDescriptorBase<'compute'> {
   computationName: string;
+  computationId: string;
 }
 
 export interface TextCellDescriptor extends NotebookCellDescriptorBase<'text'> {
-  text: string;
+  text: ReactNode;
 }
+
+export interface SubsetCellDescriptor
+  extends NotebookCellDescriptorBase<'subset'> {}
 
 type PresetNotebook = {
   name: string;
@@ -50,11 +58,13 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         type: 'compute',
         title: 'Differential Abundance',
         computationName: 'differentialabundance',
+        computationId: 'diff_1',
         cells: [
           {
             type: 'visualization',
             title: 'Volcano Plot',
             visualizationName: 'volcanoplot',
+            visualizationId: 'volcano_1',
           },
           {
             type: 'text',
@@ -86,6 +96,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         type: 'compute',
         title: 'WGCNA Correlation',
         computationName: 'correlation',
+        computationId: 'correlation_1',
         cells: [
           {
             type: 'text',
@@ -96,6 +107,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             type: 'visualization',
             title: 'Correlation Plot',
             visualizationName: 'bipartitenetwork',
+            visualizationId: 'bipartite_1',
           },
         ],
       },
@@ -110,6 +122,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         type: 'visualization',
         title: 'Boxplot Visualization',
         visualizationName: 'boxplot',
+        visualizationId: 'boxplot_1',
       },
     ],
   },
@@ -132,4 +145,10 @@ export function isComputeCellDescriptor(
   cellDescriptor: NotebookCellDescriptorBase<string>
 ): cellDescriptor is ComputeCellDescriptor {
   return cellDescriptor.type === 'compute';
+}
+
+export function isSubsetCellDescriptor(
+  cellDescriptor: NotebookCellDescriptorBase<string>
+): cellDescriptor is SubsetCellDescriptor {
+  return cellDescriptor.type === 'subset';
 }

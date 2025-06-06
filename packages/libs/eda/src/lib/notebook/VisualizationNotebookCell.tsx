@@ -1,18 +1,23 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useEntityCounts } from '../core/hooks/entityCounts';
-import { useStudyEntities } from '../core/hooks/workspace';
-import { NotebookCellComponentProps } from './Types';
+import { useDataClient, useStudyEntities } from '../core/hooks/workspace';
 import { useGeoConfig } from '../core/hooks/geoConfig';
 import { plugins } from '../core/components/computations/plugins';
 import { PlotContainerStyleOverrides } from '../core/components/visualizations/VisualizationTypes';
+import { NotebookCellProps } from './NotebookCell';
+import {
+  ComputeCellDescriptor,
+  VisualizationCellDescriptor,
+} from './NotebookPresets';
+import { useCachedPromise } from '../core/hooks/cachedPromise';
+import { useComputeJobStatus } from '../core/components/computations/ComputeJobStatusHook';
 
 export function VisualizationNotebookCell(
-  props: NotebookCellComponentProps<'visualization'>
+  props: NotebookCellProps<VisualizationCellDescriptor>
 ) {
   const { analysisState, cell, isSubCell, isDisabled } = props;
-  const { analysis } = analysisState;
+  const { analysis, updateVisualization } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
-  const { updateVisualization } = analysisState;
 
   const entities = useStudyEntities();
   const geoConfigs = useGeoConfig(entities);
@@ -21,78 +26,56 @@ export function VisualizationNotebookCell(
     analysis.descriptor.subset.descriptor
   );
 
-  const {
-    visualizationId,
-    computeId,
-    computationAppOverview,
-    visualizationName,
-    computeJobStatus,
-  } = cell;
+  const { visualizationName, visualizationId } = cell;
 
-  // use computeId to find the computation in the analysis state
-  const computation = analysis.descriptor.computations.find(
-    (comp) => comp.computationId === computeId
-  );
-  if (computation == null) throw new Error('Cannot find computation.');
+  const { visualization, computation } =
+    analysisState.getVisualizationAndComputation(visualizationId) ?? {};
+  const computationName = computation?.descriptor.type;
 
-  const appPlugin = plugins[computation.descriptor.type];
+  if (computation == null || computationName == null)
+    throw new Error('Cannot find computation.');
+
+  const appPlugin = plugins[computationName];
   const vizPlugin =
     appPlugin && appPlugin.visualizationPlugins[visualizationName];
 
-  // If there's no visualization with this visualizationId, we
-  // must create one.
-  const existingVisualization = analysisState.analysis?.descriptor.computations
-    .find((comp) => comp.computationId === computation.computationId)
-    ?.visualizations.find((viz) => viz.visualizationId === visualizationId);
+  // fetch 'apps'
+  const dataClient = useDataClient();
+  const fetchApps = async () => {
+    let { apps } = await dataClient.getApps();
+    return { apps };
+  };
+  const apps = useCachedPromise(fetchApps, ['fetchApps']);
+  const appOverview =
+    apps && apps.value?.apps.find((app) => app.name === computationName);
 
-  useEffect(() => {
-    if (existingVisualization == null) {
-      const newVisualization = {
-        visualizationId,
-        displayName: 'Unnamed visualization',
-        descriptor: {
-          type: visualizationName,
-          configuration: vizPlugin?.createDefaultConfig() ?? {},
-        },
-      };
-
-      analysisState.addVisualization(
-        computation.computationId,
-        newVisualization
-      );
-    }
-  }, [
-    analysisState,
-    computation.computationId,
-    existingVisualization,
-    vizPlugin,
-    visualizationId,
-    visualizationName,
-  ]);
-
-  const viz = computation.visualizations.find(
-    (v) => v.visualizationId === visualizationId
+  const { jobStatus: computeJobStatus } = useComputeJobStatus(
+    analysis,
+    computation,
+    appOverview?.computeName ?? ''
   );
 
-  if (computationAppOverview == null)
+  if (appOverview == null)
     throw new Error(
       'Visualizations associated with a computation must have an app overview.'
     );
 
-  // regular updater (no ref)
   const updateConfiguration = useCallback(
     (configuration: unknown) => {
-      if (viz != null) {
+      if (visualization != null) {
         updateVisualization({
-          ...viz,
-          descriptor: { ...viz.descriptor, configuration },
+          ...visualization,
+          descriptor: {
+            ...visualization.descriptor,
+            configuration,
+          },
         });
       }
     },
-    [updateVisualization, viz]
+    [updateVisualization, visualization]
   );
 
-  const vizOverview = computationAppOverview.visualizations.find(
+  const vizOverview = appOverview.visualizations.find(
     (v) => v.name === visualizationName
   );
   const constraints = vizOverview?.dataElementConstraints;
@@ -101,11 +84,11 @@ export function VisualizationNotebookCell(
   // Bipartite networks are set to be extra wide, so we need to override
   // that behavior or they'll spill off the screen.
   const plotContainerStyleOverrides: PlotContainerStyleOverrides = {};
-  if (viz?.descriptor.type === 'bipartitenetwork') {
+  if (visualization?.descriptor.type === 'bipartitenetwork') {
     plotContainerStyleOverrides.width = 1100;
   }
 
-  return viz ? (
+  return visualization ? (
     <details className={isSubCell ? 'subCell' : ''} open>
       <summary>{cell.title}</summary>
       <div className={isDisabled ? 'disabled' : ''}>
@@ -114,9 +97,9 @@ export function VisualizationNotebookCell(
             options={vizPlugin.options}
             dataElementConstraints={constraints}
             dataElementDependencyOrder={dataElementDependencyOrder}
-            visualization={viz}
+            visualization={visualization}
             computation={computation}
-            copmutationAppOverview={computationAppOverview}
+            copmutationAppOverview={appOverview}
             filters={[]} // issue #1413
             starredVariables={[]} // to be implemented
             toggleStarredVariable={() => {}}

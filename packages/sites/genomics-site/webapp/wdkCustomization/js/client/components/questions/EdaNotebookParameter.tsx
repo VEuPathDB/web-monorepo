@@ -86,9 +86,10 @@ export function EdaNotebookParameter(props: Props<StringParam>) {
           />
         </WorkspaceContainer>
       </DocumentationContainer>
-      <ParameterComponent {...props} />
     </>
   );
+
+  // TO DO - don't forget: <ParameterComponent {...props} />
 }
 
 interface EdaNotebookAdapterProps {
@@ -99,16 +100,6 @@ interface EdaNotebookAdapterProps {
 function EdaNotebookAdapter(props: EdaNotebookAdapterProps) {
   const { analysisState } = props;
   const studyId = analysisState.analysis?.studyId;
-
-  // Used for subsetting. To be addressed in #1413
-  // const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
-  // const varAndEnt = getDefaultVariableDescriptor();
-  // const [entityId, setEntityId] = useState<string | undefined>(
-  //   varAndEnt.entityId
-  // );
-  // const [variableId, setVariableId] = useState<string | undefined>(
-  //   varAndEnt.variableId
-  // );
 
   const analysisClient = useConfiguredAnalysisClient(edaServiceUrl);
   const subsettingClient = useConfiguredSubsettingClient(edaServiceUrl);

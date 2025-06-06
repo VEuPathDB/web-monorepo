@@ -68,7 +68,10 @@ export default function NotebookRoute(props: Props) {
                 dataClient={dataClient}
                 computeClient={computeClient}
               >
-                <EdaNotebookAnalysis analysisState={analysisState} />
+                <EdaNotebookAnalysis
+                  analysisState={analysisState}
+                  notebookType="wgcnaCorrelationNotebook"
+                />
               </EDAWorkspaceContainer>
             )}
           />
