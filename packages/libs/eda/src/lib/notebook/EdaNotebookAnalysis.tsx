@@ -5,27 +5,12 @@ import {
   Loading,
   SaveableTextEditor,
 } from '@veupathdb/wdk-client/lib/Components';
-import {
-  ComputeNotebookCell,
-  NotebookCell as NotebookCellType,
-  VisualizationNotebookCell,
-} from './Types';
 import { NotebookCell } from './NotebookCell';
-import { v4 as uuid } from 'uuid';
 
 import './EdaNotebook.scss';
 import { createComputation } from '../core/components/computations/Utils';
-import {
-  isComputeCellDescriptor,
-  isVisualizationCellDescriptor,
-  NotebookCellDescriptorBase,
-  presetNotebooks,
-  NotebookCellDescriptor,
-} from './NotebookPresets';
-import {
-  Computation,
-  ComputationAppOverview,
-} from '../core/types/visualization';
+import { presetNotebooks, NotebookCellDescriptor } from './NotebookPresets';
+import { Computation } from '../core/types/visualization';
 import { plugins } from '../core/components/computations/plugins';
 
 // const NOTEBOOK_UI_SETTINGS_KEY = '@@NOTEBOOK@@';
