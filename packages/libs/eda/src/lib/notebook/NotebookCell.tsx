@@ -1,14 +1,13 @@
 import { AnalysisState } from '../core';
-import { NotebookCell as NotebookCellType } from './Types';
 import { SubsettingNotebookCell } from './SubsettingNotebookCell';
 import { TextNotebookCell } from './TextNotebookCell';
 import { VisualizationNotebookCell } from './VisualizationNotebookCell';
 import { ComputeNotebookCell } from './ComputeNotebookCell';
+import { NotebookCellDescriptor } from './NotebookPresets';
 
-interface Props {
+export interface NotebookCellProps<T extends NotebookCellDescriptor> {
   analysisState: AnalysisState;
-  cell: NotebookCellType;
-  updateCell: (cell: Partial<Omit<NotebookCellType, 'type'>>) => void;
+  cell: T;
   isSubCell?: boolean; // Indicates if this cell is a sub-cell of another cell. Affects styling.
   isDisabled?: boolean; // Indicates if the cell is disabled (e.g., before a computation is complete).
 }
@@ -16,49 +15,17 @@ interface Props {
 /**
  * Top-level component that delegates to imeplementations of NotebookCell variants.
  */
-export function NotebookCell(props: Props) {
-  const { cell, analysisState, updateCell, isSubCell, isDisabled } = props;
+export function NotebookCell(props: NotebookCellProps<NotebookCellDescriptor>) {
+  const { cell } = props;
   switch (cell.type) {
     case 'subset':
-      return (
-        <SubsettingNotebookCell
-          cell={cell}
-          analysisState={analysisState}
-          updateCell={updateCell}
-          isSubCell={isSubCell ?? false}
-          isDisabled={isDisabled ?? false}
-        />
-      );
+      return <SubsettingNotebookCell {...props} cell={cell} />;
     case 'text':
-      return (
-        <TextNotebookCell
-          cell={cell}
-          analysisState={analysisState}
-          updateCell={updateCell}
-          isSubCell={isSubCell ?? false}
-          isDisabled={isDisabled ?? false}
-        />
-      );
+      return <TextNotebookCell {...props} cell={cell} />;
     case 'visualization':
-      return (
-        <VisualizationNotebookCell
-          cell={cell}
-          analysisState={analysisState}
-          updateCell={updateCell}
-          isSubCell={isSubCell ?? false}
-          isDisabled={isDisabled ?? false}
-        />
-      );
+      return <VisualizationNotebookCell {...props} cell={cell} />;
     case 'compute':
-      return (
-        <ComputeNotebookCell
-          cell={cell}
-          analysisState={analysisState}
-          updateCell={updateCell}
-          isSubCell={isSubCell ?? false}
-          isDisabled={isDisabled ?? false}
-        />
-      );
+      return <ComputeNotebookCell {...props} cell={cell} />;
     default:
       return null;
   }

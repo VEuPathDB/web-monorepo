@@ -1,31 +1,47 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useEntityCounts } from '../core/hooks/entityCounts';
-import { useStudyEntities } from '../core/hooks/workspace';
-import { NotebookCellComponentProps } from './Types';
+import {
+  useGetDefaultVariableDescriptor,
+  useStudyEntities,
+} from '../core/hooks/workspace';
 import { VariableLinkConfig } from '../core/components/VariableLink';
 import FilterChipList from '../core/components/FilterChipList';
 import Subsetting from '../workspace/Subsetting';
+import { NotebookCellProps } from './NotebookCell';
+import { SubsetCellDescriptor } from './NotebookPresets';
 
 export function SubsettingNotebookCell(
-  props: NotebookCellComponentProps<'subset'>
+  props: NotebookCellProps<SubsetCellDescriptor>
 ) {
-  const { analysisState, cell, updateCell, isSubCell } = props;
-  const { selectedVariable } = cell;
+  const { analysisState, cell, isSubCell } = props;
+
+  const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
+  const varAndEnt = getDefaultVariableDescriptor();
+
+  const [entityId, setEntityId] = useState<string | undefined>(
+    varAndEnt.entityId
+  );
+  const [variableId, setVariableId] = useState<string | undefined>(
+    varAndEnt.variableId
+  );
+  const variableLinkConfig = useMemo((): VariableLinkConfig => {
+    return {
+      type: 'button',
+      onClick(value) {
+        if (value) {
+          setEntityId(value.entityId);
+          setVariableId(value.variableId);
+        }
+      },
+    };
+  }, []);
+
   const entities = useStudyEntities();
   const totalCountsResult = useEntityCounts();
   const filteredCountsResult = useEntityCounts(
     analysisState.analysis?.descriptor.subset.descriptor
   );
-  const variableLinkConfig = useMemo(
-    (): VariableLinkConfig => ({
-      type: 'button',
-      onClick: (selectedVariable) => {
-        console.log(selectedVariable);
-        updateCell({ selectedVariable });
-      },
-    }),
-    [updateCell]
-  );
+
   return (
     <details className={isSubCell ? 'subCell' : ''} open>
       <summary>{cell.title}</summary>
@@ -33,8 +49,8 @@ export function SubsettingNotebookCell(
         <FilterChipList
           filters={analysisState.analysis?.descriptor.subset.descriptor}
           entities={entities}
-          selectedEntityId={selectedVariable?.entityId}
-          selectedVariableId={selectedVariable?.variableId}
+          selectedEntityId={entityId}
+          selectedVariableId={variableId}
           removeFilter={(filter) => {
             analysisState.setFilters((filters) =>
               filters.filter(
@@ -49,8 +65,8 @@ export function SubsettingNotebookCell(
       </div>
       <Subsetting
         analysisState={analysisState}
-        entityId={selectedVariable?.entityId ?? ''}
-        variableId={selectedVariable?.variableId ?? ''}
+        entityId={entityId ?? ''}
+        variableId={variableId ?? ''}
         totalCounts={totalCountsResult.value}
         filteredCounts={filteredCountsResult.value}
         variableLinkConfig={variableLinkConfig}
