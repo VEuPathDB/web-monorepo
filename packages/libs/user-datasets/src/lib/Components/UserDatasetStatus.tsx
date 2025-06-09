@@ -97,7 +97,9 @@ function getStatus(
       icon: 'clock-o',
     };
   } else {
-    const installData = status.install?.find((d) => d.projectId === projectId);
+    const installData = status.install?.find(
+      (d) => d.installTarget === projectId
+    );
     const metaStatus = installData?.metaStatus;
     const metaMessage = installData?.metaMessage ?? '';
     const dataStatus = installData?.dataStatus;
