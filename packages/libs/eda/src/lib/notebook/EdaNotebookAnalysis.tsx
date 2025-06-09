@@ -60,7 +60,7 @@ export function EdaNotebookAnalysis(props: Props) {
     return { apps };
   };
 
-  const apps = useCachedPromise(fetchApps, [studyId]);
+  const apps = useCachedPromise(fetchApps, ['fetchApps']);
 
   const wrappedOnAnalysisChange = useSetterWithCallback<
     Analysis | NewAnalysis | undefined
