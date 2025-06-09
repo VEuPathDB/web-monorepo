@@ -56,7 +56,7 @@ export function EdaNotebookAnalysis(props: Props) {
   const dataClient = useDataClient();
 
   const fetchApps = async () => {
-    let { apps } = await dataClient.getApps();
+    const { apps } = await dataClient.getApps();
     return { apps };
   };
 
