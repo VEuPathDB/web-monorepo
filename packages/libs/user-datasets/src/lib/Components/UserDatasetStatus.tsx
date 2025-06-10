@@ -179,7 +179,7 @@ function getStatus(
 
 export default function UserDatasetStatus(props: Props) {
   const { baseUrl, userDataset, projectId, displayName, dataNoun } = props;
-  const { projects, status, importMessages } = userDataset;
+  const { installTargets, status, importMessages } = userDataset;
   const lowercaseSingularDataNoun = dataNoun.singular.toLowerCase();
 
   const { content, icon: faIcon } = getStatus(
@@ -188,7 +188,7 @@ export default function UserDatasetStatus(props: Props) {
     projectId,
     lowercaseSingularDataNoun,
     displayName,
-    projects
+    installTargets
   );
 
   const link = `${baseUrl}/${userDataset.id}`;

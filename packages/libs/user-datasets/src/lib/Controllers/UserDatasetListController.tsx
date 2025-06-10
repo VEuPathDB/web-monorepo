@@ -208,7 +208,7 @@ class UserDatasetListController extends PageController<Props> {
     };
     const noDatasetsForThisProject =
       userDatasets
-        .map((id) => userDatasetsById[id].resource.projects)
+        .map((id) => userDatasetsById[id].resource.installTargets)
         .flat()
         .indexOf(projectId) === -1;
 

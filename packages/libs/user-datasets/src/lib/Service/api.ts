@@ -75,7 +75,10 @@ export class UserDatasetApi extends FetchClientWithCredentials {
     });
 
     xhr.addEventListener('readystatechange', () => {
-      if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+      if (
+        xhr.readyState === XMLHttpRequest.DONE &&
+        (xhr.status === 200 || xhr.status === 201)
+      ) {
         try {
           const response = JSON.parse(xhr.response);
           dispatchUploadProgress && dispatchUploadProgress(null);
@@ -94,7 +97,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
 
     const fileBody = new FormData();
 
-    fileBody.append('meta', JSON.stringify(meta));
+    fileBody.append('details', JSON.stringify(meta));
 
     if (uploadMethod.type === 'file') {
       fileBody.append('dataFiles', uploadMethod.file);

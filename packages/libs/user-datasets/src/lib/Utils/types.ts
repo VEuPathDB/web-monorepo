@@ -48,7 +48,7 @@ export interface UserDataset {
     resourceIdentifier: string;
     resourceVersion: string;
   }>;
-  projects: string[];
+  installTargets: string[];
   id: string;
   meta: UserDatasetMeta_UI;
   owner: string;
@@ -73,7 +73,7 @@ export interface UserDatasetUpload {
   datasetName: string;
   summary?: string;
   description?: string;
-  projects: string[];
+  installTargets: string[];
   status: string;
   errors: string[];
   stepPercent?: number;
@@ -338,6 +338,7 @@ const userDatasetDetails_base = intersection([
     origin: string,
     status: statusDetails,
     created: string,
+    installTargets: array(string),
   }),
   partial({
     sourceUrl: string,
@@ -353,7 +354,6 @@ export const userDatasetDetails_VDI = intersection([
   type({
     fileCount: number,
     fileSizeTotal: number,
-    installTargets: array(string),
   }),
   partial({
     shares: array(
