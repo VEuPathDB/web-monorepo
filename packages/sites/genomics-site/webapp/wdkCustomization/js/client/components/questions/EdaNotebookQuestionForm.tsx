@@ -1,13 +1,19 @@
-import { Props } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
+import DefaultQuestionForm, {
+  Props,
+  SubmitSection,
+} from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 import React from 'react';
 import { EdaNotebookParameter } from './EdaNotebookParameter';
+import { ParameterGroup } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 export const EdaNotebookQuestionForm = (props: Props) => {
-  return <h4>Eda Notebook here</h4>;
+  console.log('EdaNotebookQuestionForm props:', props);
 
-  // We don't have the right props here yet. Still investigating how to get them and which
-  // ones we even really need.
-  // return (
-  //   <EdaNotebookParameter {...props} />
-  // );
+  // question params are in props.state.question.paramNames
+
+  const renderParamGroup = (group: ParameterGroup, formProps: Props) => {
+    return <h3> My own param group </h3>;
+  };
+
+  return <DefaultQuestionForm {...props} renderParamGroup={renderParamGroup} />;
 };

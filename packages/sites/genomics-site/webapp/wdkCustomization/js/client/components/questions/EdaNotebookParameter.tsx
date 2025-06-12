@@ -12,7 +12,6 @@ import {
   makeNewAnalysis,
   NewAnalysis,
   useAnalysisState,
-  useGetDefaultVariableDescriptor,
   useSetterWithCallback,
   EDAWorkspaceContainer,
   useConfiguredAnalysisClient,
@@ -34,6 +33,7 @@ import { formatFilterDisplayValue } from '@veupathdb/eda/lib/core/utils/study-me
 import { DatasetItem } from '@veupathdb/wdk-client/lib/Views/Question/Params/DatasetParamUtils';
 import { parseJson } from '@veupathdb/eda/lib/notebook/Utils';
 import { EdaNotebookAnalysis } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
+// import { Props } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm'
 
 const datasetIdParamName = 'eda_dataset_id';
 
