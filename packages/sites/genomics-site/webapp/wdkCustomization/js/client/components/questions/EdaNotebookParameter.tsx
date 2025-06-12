@@ -34,7 +34,6 @@ import { formatFilterDisplayValue } from '@veupathdb/eda/lib/core/utils/study-me
 import { DatasetItem } from '@veupathdb/wdk-client/lib/Views/Question/Params/DatasetParamUtils';
 import { parseJson } from '@veupathdb/eda/lib/notebook/Utils';
 import { EdaNotebookAnalysis } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
-import ParameterComponent from '@veupathdb/wdk-client/lib/Views/Question/ParameterComponent';
 
 const datasetIdParamName = 'eda_dataset_id';
 
@@ -80,7 +79,6 @@ export function EdaNotebookParameter(props: Props<StringParam>) {
           <EdaNotebookAdapter analysisState={analysisState} />
         </WorkspaceContainer>
       </DocumentationContainer>
-      <ParameterComponent {...props} />
     </>
   );
 }
@@ -91,6 +89,7 @@ interface EdaNotebookAdapterProps {
 
 function EdaNotebookAdapter(props: EdaNotebookAdapterProps) {
   const { analysisState } = props;
+  console.log(props);
   const datasetId = analysisState.analysis?.studyId;
 
   // Used for subsetting. To be addressed in #1413
