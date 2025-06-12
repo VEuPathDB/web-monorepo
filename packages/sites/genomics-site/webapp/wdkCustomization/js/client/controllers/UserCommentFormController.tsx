@@ -586,11 +586,7 @@ const mergeProps = (
               onIdsChange={(newValue: string) => {
                 dispatchProps.updateRawFormField('pubMedIds')(newValue);
                 dispatchProps.updateFormField('pubMedIds')(
-                  newValue
-                    .split(/\s*,\s*/g)
-                    .map((x) => parseInt(x))
-                    .filter((x) => x > 0)
-                    .map((x) => `${x}`)
+                  newValue.split(/\s*,\s*/g)
                 );
               }}
               onSearchFieldChange={dispatchProps.updatePubmedIdSearchQuery}
