@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { Props } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
 import {
@@ -12,8 +12,6 @@ import {
   makeNewAnalysis,
   NewAnalysis,
   useAnalysisState,
-  useGetDefaultVariableDescriptor,
-  useSetterWithCallback,
   EDAWorkspaceContainer,
   useConfiguredAnalysisClient,
   useConfiguredSubsettingClient,
@@ -34,45 +32,57 @@ import { formatFilterDisplayValue } from '@veupathdb/eda/lib/core/utils/study-me
 import { DatasetItem } from '@veupathdb/wdk-client/lib/Views/Question/Params/DatasetParamUtils';
 import { parseJson } from '@veupathdb/eda/lib/notebook/Utils';
 import { EdaNotebookAnalysis } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
-import ParameterComponent from '@veupathdb/wdk-client/lib/Views/Question/ParameterComponent';
+import { debounce } from 'lodash';
 
 const datasetIdParamName = 'eda_dataset_id';
 const notebookTypeParamName = 'eda_notebook_type';
 
 export function EdaNotebookParameter(props: Props<StringParam>) {
+  const { onParamValueChange, value, ctx } = props;
+
   // TEMPORARY: We don't have this value coming from the wdk yet.
-  const studyId = props.ctx.paramValues[datasetIdParamName] ?? 'DS_82dc5abc7f';
+  const studyId = ctx.paramValues[datasetIdParamName] ?? 'DS_82dc5abc7f';
   const notebookType =
-    props.ctx.paramValues[notebookTypeParamName] ?? 'wgcnaCorrelationNotebook';
+    ctx.paramValues[notebookTypeParamName] ?? 'wgcnaCorrelationNotebook';
 
-  const analysisDescriptor = useMemo(() => {
-    const jsonParsedParamValue = parseJson(props.value);
-    return NewAnalysis.is(jsonParsedParamValue)
-      ? jsonParsedParamValue
-      : makeNewAnalysis(studyId);
-  }, [props.value, studyId]);
+  // we need to maintain the analysis as regular "live" React state somewhere
+  const [analysis, setAnalysis] = useState<NewAnalysis | Analysis | undefined>(
+    () => {
+      const parsed = parseJson(value);
+      return NewAnalysis.is(parsed) ? parsed : makeNewAnalysis(studyId);
+    }
+  );
 
-  const { onParamValueChange } = props;
-
-  // serialize and persist with `onParamValueChange`
-  const persistAnalysis = useCallback(
-    (analysis: Analysis | NewAnalysis | undefined) => {
-      if (analysis != null) {
-        onParamValueChange(JSON.stringify(analysis));
-      }
-    },
+  // Here we periodically send analysis state back upstream to WDK
+  const debouncedPersist = useMemo(
+    () =>
+      debounce(
+        (a: Analysis | NewAnalysis | undefined) =>
+          onParamValueChange(JSON.stringify(a)),
+        500
+      ),
     [onParamValueChange]
   );
+  useEffect(() => {
+    debouncedPersist(analysis);
+  }, [analysis, debouncedPersist]);
 
-  // wrap `persistAnalysis` inside a state setter function with 'functional update' functionality
-  const wrappedPersistAnalysis = useSetterWithCallback<
-    Analysis | NewAnalysis | undefined
-  >(analysisDescriptor, persistAnalysis);
+  // TO DO (maybe)
+  // Consider watching `value` for updates that happened on the WDK side
+  // and if there's a change that's not deep-equals to `analysis`
+  // call `setAnalysis` with a newly deserialised object.
+  // But probably this never happens? Maybe if the user
+  // has two tabs open?? Good idea to look at what the regular EDA does.
 
-  const analysisState = useAnalysisState(
-    analysisDescriptor,
-    wrappedPersistAnalysis
-  );
+  // debounce clean-up, just to be on the safe side
+  useEffect(() => {
+    return () => {
+      debouncedPersist.cancel();
+    };
+  }, [debouncedPersist]);
+
+  // Create the all-singing, all-dancing analysisState
+  const analysisState = useAnalysisState(analysis, setAnalysis);
 
   if (studyId == null) return <div>Could not find eda study id</div>;
 
