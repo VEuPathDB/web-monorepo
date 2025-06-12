@@ -100,7 +100,7 @@ export function VisualizationNotebookCell(
             visualization={visualization}
             computation={computation}
             copmutationAppOverview={appOverview}
-            filters={[]} // issue #1413
+            filters={analysis.descriptor.subset.descriptor} // issue #1413
             starredVariables={[]} // to be implemented
             toggleStarredVariable={() => {}}
             updateConfiguration={updateConfiguration}
