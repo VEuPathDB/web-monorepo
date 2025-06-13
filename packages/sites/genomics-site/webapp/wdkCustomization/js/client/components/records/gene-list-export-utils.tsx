@@ -370,7 +370,7 @@ export async function uploadGeneListUserDataset(
       type: 'url',
       url: temporaryResultUrl,
     },
-    projects: [projectId],
+    installTargets: [projectId],
     name: step.customName,
     summary: `Genes from step "${step.customName}"`,
     description: datasetDescription,

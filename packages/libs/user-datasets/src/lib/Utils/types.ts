@@ -20,7 +20,7 @@ export interface UserDatasetMeta_UI extends UserDatasetFormContent {
 }
 
 // Interface for the dataset metadata used by VDI. Will get transformed into
-// UserDatasetMeta_UI for the the client.
+// UserDatasetMeta_UI for the client.
 export interface UserDatasetMeta_VDI extends UserDatasetFormContent {
   datasetType: {
     name: string;
@@ -28,7 +28,7 @@ export interface UserDatasetMeta_VDI extends UserDatasetFormContent {
   };
   visibility?: UserDatasetVisibility;
   origin: string;
-  projects: string[];
+  installTargets: string[];
   dependencies: UserDatasetDependency[];
   createdOn?: string;
 }
@@ -48,7 +48,7 @@ export interface UserDataset {
     resourceIdentifier: string;
     resourceVersion: string;
   }>;
-  projects: string[];
+  installTargets: string[];
   id: string;
   meta: UserDatasetMeta_UI;
   owner: string;
@@ -73,7 +73,7 @@ export interface UserDatasetUpload {
   datasetName: string;
   summary?: string;
   description?: string;
-  projects: string[];
+  installTargets: string[];
   status: string;
   errors: string[];
   stepPercent?: number;
@@ -156,7 +156,7 @@ export type DatasetUploadPageConfig<
 
 export interface NewUserDataset extends UserDatasetMeta_UI {
   datasetType: string; // In prototype, the only value is "biom" - will eventually be an enum
-  projects: string[];
+  installTargets: string[];
   dependencies?: UserDataset['dependencies'];
   uploadMethod:
     | {
@@ -226,7 +226,7 @@ const installStatus = keyof({
 
 const installDetails = intersection([
   type({
-    projectId: string,
+    installTarget: string,
   }),
   partial({
     metaStatus: installStatus,
@@ -336,12 +336,13 @@ const userDatasetDetails_base = intersection([
     datasetType: datasetTypeDetails,
     visibility: visibilityOptions,
     origin: string,
-    projectIds: array(string),
     status: statusDetails,
     created: string,
+    installTargets: array(string),
   }),
   partial({
     sourceUrl: string,
+    projectIds: array(string),
     importMessages: array(string),
     createdOn: string,
   }),
