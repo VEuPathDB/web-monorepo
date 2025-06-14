@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { Props } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
 import {
@@ -12,8 +12,6 @@ import {
   makeNewAnalysis,
   NewAnalysis,
   useAnalysisState,
-  useGetDefaultVariableDescriptor,
-  useSetterWithCallback,
   EDAWorkspaceContainer,
   useConfiguredAnalysisClient,
   useConfiguredSubsettingClient,
@@ -35,41 +33,61 @@ import { DatasetItem } from '@veupathdb/wdk-client/lib/Views/Question/Params/Dat
 import { parseJson } from '@veupathdb/eda/lib/notebook/Utils';
 import { EdaNotebookAnalysis } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
 import ParameterComponent from '@veupathdb/wdk-client/lib/Views/Question/ParameterComponent';
+import { debounce } from 'lodash';
 
 const datasetIdParamName = 'eda_dataset_id';
+const notebookTypeParamName = 'eda_notebook_type';
 
 export function EdaNotebookParameter(props: Props<StringParam>) {
+  const { onParamValueChange, value, ctx } = props;
+
   // TEMPORARY: We don't have this value coming from the wdk yet.
-  const studyId = props.ctx.paramValues[datasetIdParamName] ?? 'DS_82dc5abc7f';
+  const studyId = ctx.paramValues[datasetIdParamName] ?? 'DS_82dc5abc7f';
+  const notebookType =
+    ctx.paramValues[notebookTypeParamName] ?? 'wgcnaCorrelationNotebook';
 
-  const analysisDescriptor = useMemo(() => {
-    const jsonParsedParamValue = parseJson(props.value);
-    return NewAnalysis.is(jsonParsedParamValue)
-      ? jsonParsedParamValue
-      : makeNewAnalysis(studyId);
-  }, [props.value, studyId]);
-
-  const { onParamValueChange } = props;
-
-  // serialize and persist with `onParamValueChange`
-  const persistAnalysis = useCallback(
-    (analysis: Analysis | NewAnalysis | undefined) => {
-      if (analysis != null) {
-        onParamValueChange(JSON.stringify(analysis));
-      }
-    },
-    [onParamValueChange]
+  // we need to maintain the analysis as regular "live" React state somewhere
+  const [analysis, setAnalysis] = useState<NewAnalysis | Analysis | undefined>(
+    () => {
+      const parsed = parseJson(value);
+      return NewAnalysis.is(parsed) ? parsed : makeNewAnalysis(studyId);
+    }
   );
 
-  // wrap `persistAnalysis` inside a state setter function with 'functional update' functionality
-  const wrappedPersistAnalysis = useSetterWithCallback<
-    Analysis | NewAnalysis | undefined
-  >(analysisDescriptor, persistAnalysis);
+  // Disabled for now: persistence of analysis state to the 'param'
+  // It should probably be persisted to another 'param' because this
+  // 'param' needs to store the WGCNA module
 
-  const analysisState = useAnalysisState(
-    analysisDescriptor,
-    wrappedPersistAnalysis
-  );
+  //  // Here we periodically send analysis state back upstream to WDK
+  //  const debouncedPersist = useMemo(
+  //    () =>
+  //      debounce(
+  //        (a: Analysis | NewAnalysis | undefined) =>
+  //          onParamValueChange(JSON.stringify(a)),
+  //        500
+  //      ),
+  //    [onParamValueChange]
+  //  );
+  //  useEffect(() => {
+  //    debouncedPersist(analysis);
+  //  }, [analysis, debouncedPersist]);
+  //
+  // useEffect(() => {
+  //   return () => {
+  //     debouncedPersist.cancel();
+  //   };
+  // }, [debouncedPersist]);
+
+  // TO DO (maybe)
+  // Consider watching `value` for updates that happened on the WDK side
+  // and if there's a change that's not deep-equals to `analysis`
+  // call `setAnalysis` with a newly deserialised object.
+  // But probably this never happens? Maybe if the user
+  // has two tabs open?? Good idea to look at what the regular EDA does.
+
+  // debounce clean-up, just to be on the safe side
+  // Create the all-singing, all-dancing analysisState
+  const analysisState = useAnalysisState(analysis, setAnalysis);
 
   if (studyId == null) return <div>Could not find eda study id</div>;
 
@@ -77,7 +95,10 @@ export function EdaNotebookParameter(props: Props<StringParam>) {
     <>
       <DocumentationContainer>
         <WorkspaceContainer studyId={studyId} edaServiceUrl={edaServiceUrl}>
-          <EdaNotebookAdapter analysisState={analysisState} />
+          <EdaNotebookAdapter
+            analysisState={analysisState}
+            notebookType={notebookType}
+          />
         </WorkspaceContainer>
       </DocumentationContainer>
       <ParameterComponent {...props} />
@@ -87,21 +108,12 @@ export function EdaNotebookParameter(props: Props<StringParam>) {
 
 interface EdaNotebookAdapterProps {
   analysisState: AnalysisState;
+  notebookType: string;
 }
 
 function EdaNotebookAdapter(props: EdaNotebookAdapterProps) {
   const { analysisState } = props;
-  const datasetId = analysisState.analysis?.studyId;
-
-  // Used for subsetting. To be addressed in #1413
-  // const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
-  // const varAndEnt = getDefaultVariableDescriptor();
-  // const [entityId, setEntityId] = useState<string | undefined>(
-  //   varAndEnt.entityId
-  // );
-  // const [variableId, setVariableId] = useState<string | undefined>(
-  //   varAndEnt.variableId
-  // );
+  const studyId = analysisState.analysis?.studyId;
 
   const analysisClient = useConfiguredAnalysisClient(edaServiceUrl);
   const subsettingClient = useConfiguredSubsettingClient(edaServiceUrl);
@@ -109,29 +121,18 @@ function EdaNotebookAdapter(props: EdaNotebookAdapterProps) {
   const dataClient = useConfiguredDataClient(edaServiceUrl);
   const computeClient = useConfiguredComputeClient(edaServiceUrl);
 
-  const initialAnalysis = useMemo(() => {
-    return makeNewAnalysis(datasetId ?? '');
-  }, [datasetId]);
-
-  const [analysis, setAnalysis] =
-    useState<Analysis | NewAnalysis | undefined>(initialAnalysis);
-
   return (
     <div className="EdaSubsettingParameter">
-      {datasetId && (
+      {studyId && (
         <EDAWorkspaceContainer
-          studyId={datasetId}
+          studyId={studyId}
           analysisClient={analysisClient}
           subsettingClient={subsettingClient}
           downloadClient={downloadClient}
           dataClient={dataClient}
           computeClient={computeClient}
         >
-          <EdaNotebookAnalysis
-            analysis={analysis}
-            studyId={datasetId}
-            onAnalysisChange={setAnalysis}
-          />
+          <EdaNotebookAnalysis {...props} />
         </EDAWorkspaceContainer>
       )}
     </div>
@@ -147,6 +148,12 @@ export function EdaNotebookStepDetails(props: LeafStepDetailsContentProps) {
   );
 }
 
+//
+// TO DO: adapt for notebook
+//
+// this function returns a brief summary of the search/analysis
+// for the edit/revise popup
+//
 function formatParameterValue(
   parameter: Parameter,
   value: string | undefined,

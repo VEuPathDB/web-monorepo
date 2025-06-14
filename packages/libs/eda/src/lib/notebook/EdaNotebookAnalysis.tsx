@@ -1,172 +1,102 @@
-import { useCallback, useMemo, useEffect, useState } from 'react';
-import {
-  Analysis,
-  AnalysisState,
-  NewAnalysis,
-  useAnalysisState,
-  useSetterWithCallback,
-  useStudyRecord,
-  useDataClient,
-} from '../core';
+import { useEffect } from 'react';
+import { AnalysisState, useStudyRecord } from '../core';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
 import {
-  ComputeNotebookCell,
-  NotebookCell as NotebookCellType,
-  VisualizationNotebookCell,
-} from './Types';
+  Loading,
+  SaveableTextEditor,
+} from '@veupathdb/wdk-client/lib/Components';
 import { NotebookCell } from './NotebookCell';
-import { v4 as uuid } from 'uuid';
-
 import './EdaNotebook.scss';
 import { createComputation } from '../core/components/computations/Utils';
-import { useCachedPromise } from '../core/hooks/cachedPromise';
-import {
-  isComputeCellDescriptor,
-  isVisualizationCellDescriptor,
-  NotebookCellDescriptorBase,
-  presetNotebooks,
-  ComputeCellDescriptor,
-} from './NotebookPresets';
-import {
-  Computation,
-  ComputationAppOverview,
-} from '../core/types/visualization';
+import { presetNotebooks, NotebookCellDescriptor } from './NotebookPresets';
+import { Computation } from '../core/types/visualization';
+import { plugins } from '../core/components/computations/plugins';
 
-interface NotebookSettings {
-  /** Ordered array of notebook cells */
-  cells: NotebookCellType[];
-}
-
-const NOTEBOOK_UI_SETTINGS_KEY = '@@NOTEBOOK@@';
-
-// TEMPORARY: Eventually this value should come from the wdk or whomever is creating the notebook.
-const NOTEBOOK_PRESET_TEST = presetNotebooks['wgcnaCorrelationNotebook'];
+// const NOTEBOOK_UI_SETTINGS_KEY = '@@NOTEBOOK@@';
 
 interface Props {
-  analysis: Analysis | NewAnalysis | undefined;
-  studyId: string;
-  onAnalysisChange: (value: Analysis | NewAnalysis | undefined) => void;
+  analysisState: AnalysisState;
+  notebookType: string;
 }
 
 export function EdaNotebookAnalysis(props: Props) {
-  const { studyId, onAnalysisChange } = props;
+  const { analysisState, notebookType } = props;
+  const { analysis, setComputations, addVisualization } = analysisState;
+
   const studyRecord = useStudyRecord();
 
-  const dataClient = useDataClient();
-
-  const fetchApps = async () => {
-    const { apps } = await dataClient.getApps();
-    return { apps };
-  };
-
-  const apps = useCachedPromise(fetchApps, ['fetchApps']);
-
-  const wrappedOnAnalysisChange = useSetterWithCallback<
-    Analysis | NewAnalysis | undefined
-  >(props.analysis, onAnalysisChange);
-
-  const analysisState = useAnalysisState(
-    props.analysis,
-    wrappedOnAnalysisChange
-  );
-
-  const { analysis } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
 
-  const computationName =
-    (
-      NOTEBOOK_PRESET_TEST.cells.find((cell) =>
-        isComputeCellDescriptor(cell)
-      ) as ComputeCellDescriptor
-    )?.computationName ?? 'pass';
+  const notebookPreset = presetNotebooks[notebookType];
+  if (notebookPreset == null)
+    throw new Error(`Cannot find a notebook preset for ${notebookType}`);
 
-  const appOverview =
-    apps && apps.value?.apps.find((app) => app.name === computationName);
-  console.log('computationname:', computationName);
-
-  const computation = useMemo(() => {
-    console.log('making new computation');
-    return createComputation(computationName, {}, [], []);
-  }, [computationName]);
-
-  // Create the one computation for the analysis. Eventually
-  // we'll move this logic or improve it to handle multiple computations.
+  // One-off, create computations and visualizations in the analysis
+  // (if needed) using the notebookPreset as a guide
   useEffect(() => {
-    if (!computation) return;
+    if (analysis == null) return;
+    // if the analysis already has computations, then don't repeat this
+    if (analysis.descriptor.computations.length > 0) return;
 
-    // Avoid updating if the computation already exists
-    const existingComputation =
-      analysisState.analysis?.descriptor.computations.find(
-        (comp) => comp.computationId === computation.computationId
-      );
-    if (existingComputation) return;
+    // recursive function to handle computation and visualization creation
+    function processCell(
+      cell: NotebookCellDescriptor,
+      parentComputationType?: string,
+      parentComputationId?: string
+    ) {
+      if (cell.type === 'compute') {
+        const computation = createComputation(
+          cell.computationName,
+          {},
+          [],
+          [],
+          cell.computationId
+        );
+        setComputations((prev: Computation[]) => [...prev, computation]);
 
-    analysisState.setComputations([computation]);
-  }, [analysisState, computation]);
+        // recurse into child cells (only from compute cells?)
+        cell.cells?.forEach((child) =>
+          processCell(child, cell.computationName, cell.computationId)
+        );
+      } else if (
+        cell.type === 'visualization' &&
+        parentComputationType != null &&
+        parentComputationId != null
+      ) {
+        const appPlugin = plugins[parentComputationType];
+        const vizPlugin =
+          appPlugin && appPlugin.visualizationPlugins[cell.visualizationName];
 
-  // Use state for computed preset notebook cells. Using a memo or ref didn't work because of the dependencies, that it needs to be
-  // called once, and because it is needed elsewhere to run other hooks.
-  const [presetNotebookCells, setPresetNotebookCells] = useState<
-    NotebookCellType[]
-  >([]);
+        const visualizationId = cell.visualizationId;
+        const visualization = {
+          visualizationId,
+          displayName: 'Unnamed visualization',
+          descriptor: {
+            type: cell.visualizationName,
+            configuration: vizPlugin?.createDefaultConfig() ?? {},
+          },
+        };
 
-  useEffect(() => {
-    // Assume if this has run once, we don't need it again. The preset
-    // notebook should not change on refresh or rerendering.
-    if (presetNotebookCells.length > 0) return;
-    if (appOverview) {
-      const newCells = NOTEBOOK_PRESET_TEST.cells.map((cellDescriptor) =>
-        notebookDescriptorToCell(
-          cellDescriptor,
-          analysisState,
-          computation,
-          appOverview
-        )
-      );
-      setPresetNotebookCells(newCells);
+        addVisualization(parentComputationId, visualization);
+      }
     }
-  }, [appOverview, analysisState, computation, presetNotebookCells]);
 
-  // The following is currently required for subsetting cells to function.
-  const notebookSettings = useMemo((): NotebookSettings => {
-    const storedSettings =
-      analysisState.analysis?.descriptor.subset.uiSettings[
-        NOTEBOOK_UI_SETTINGS_KEY
-      ];
-    if (storedSettings == null) {
-      return presetNotebookCells && presetNotebookCells.length > 0
-        ? {
-            cells: presetNotebookCells,
-          }
-        : {
-            cells: [],
-          };
-    } else {
-      return storedSettings as any as NotebookSettings;
-    }
-  }, [
-    analysisState.analysis?.descriptor.subset.uiSettings,
-    presetNotebookCells,
-  ]);
+    // The recursion and state updates here work as intended because both
+    // `setComputations` and `addVisualization` use the functional update form.
+    // This ensures that updates are queued and applied in order, even across
+    // multiple recursive calls.
+    notebookPreset.cells.forEach((cell) => processCell(cell));
+  }, [analysis, setComputations, addVisualization, notebookPreset]);
 
-  const updateCell = useCallback(
-    (cell: Partial<Omit<NotebookCellType, 'type'>>, cellIndex: number) => {
-      const oldCell = notebookSettings.cells[cellIndex];
-      const newCell = { ...oldCell, ...cell };
-      const nextCells = notebookSettings.cells.concat();
-      nextCells[cellIndex] = newCell;
-      const nextSettings = {
-        ...notebookSettings,
-        cells: nextCells,
-      };
-      analysisState.setVariableUISettings({
-        [NOTEBOOK_UI_SETTINGS_KEY]: nextSettings,
-      });
-    },
-    [analysisState, notebookSettings]
-  );
-
+  //
+  // Now we render the notebook directly from the read-only `notebookPreset`,
+  // fetching computations and visualizations from analysisState.analysis where needed.
+  //
+  // If we need `notebookPreset` to be dynamic state (e.g. user can add/remove new cells)
+  // or if we need to store cell configuration beyond what the computation and visualisation
+  // descriptors in analysisState.analysis can handle, then we can change this to persisted
+  // `notebookState` coming from analysisState.analysis.descriptor.subset.uiSettings[NOTEBOOK_UI_SETTINGS_KEY]
+  //
   return (
     <div className="EdaNotebook">
       <div className="Paper">
@@ -180,54 +110,18 @@ export function EdaNotebookAnalysis(props: Props) {
           </h1>
           <h2>{safeHtml(studyRecord.displayName)}</h2>
         </div>
-        {notebookSettings.cells.map((cell, index) => (
-          <NotebookCell
-            analysisState={analysisState}
-            cell={cell}
-            updateCell={(update) => updateCell(update, index)}
-          />
-        ))}
+        {analysis.descriptor.computations.length > 0 ? (
+          notebookPreset.cells.map((cell, index) => (
+            <NotebookCell
+              key={index}
+              analysisState={analysisState}
+              cell={cell}
+            />
+          ))
+        ) : (
+          <Loading />
+        )}
       </div>
     </div>
   );
 }
-
-// The notebook descriptors just contain basic information about what the cell should become.
-// This function generates the ids and finds the appropriate plugins for the cells.
-const notebookDescriptorToCell = function (
-  cellDescriptor: NotebookCellDescriptorBase<string>,
-  analysisState: AnalysisState,
-  computation?: Computation,
-  appOverview?: ComputationAppOverview
-): NotebookCellType {
-  if (isComputeCellDescriptor(cellDescriptor) && computation && appOverview) {
-    return {
-      ...cellDescriptor,
-      computeId: computation.computationId,
-      computationAppOverview: appOverview,
-      subCells: cellDescriptor.cells?.map((subCell) =>
-        notebookDescriptorToCell(
-          subCell,
-          analysisState,
-          computation,
-          appOverview
-        )
-      ),
-    } as ComputeNotebookCell;
-  } else if (
-    isVisualizationCellDescriptor(cellDescriptor) &&
-    computation &&
-    appOverview
-  ) {
-    const visualizationId = uuid();
-
-    return {
-      ...cellDescriptor,
-      visualizationId: visualizationId,
-      computeId: computation.computationId,
-      computationAppOverview: appOverview,
-    } as VisualizationNotebookCell;
-  } else {
-    return cellDescriptor as NotebookCellType;
-  }
-};
