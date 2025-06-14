@@ -110,29 +110,6 @@ export function ComputeNotebookCell(
       </details>
       {cells &&
         cells.map((subCell, index) => {
-          // TO DO: reinstate this, although the visualization cell knows about its compute jobStatus
-          //        so we can probably handle it there instead
-          //
-          //  // Add extra flair for subCell titles
-          //  const subTitle = (
-          //    <div className="subCellTitle">
-          //      <span>{subCell.title}</span>
-          //      <span
-          //        style={{ color: gray[600], fontWeight: 400, marginLeft: '1em' }}
-          //      >
-          //        {cell.title}
-          //      </span>
-          //      {jobStatus && <StatusIcon status={jobStatus} showLabel={false} />}
-          //    </div>
-          //  );
-          //  const subCellWithTitle = {
-          //    ...subCell,
-          //    title: subTitle,
-          //  };
-          //  if (isVisualizationCell(subCellWithTitle)) {
-          //    subCellWithTitle.computeJobStatus = jobStatus;
-          //  }
-          //
           const isSubCellDisabled =
             jobStatus !== 'complete' && subCell.type !== 'text';
 

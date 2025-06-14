@@ -5,12 +5,10 @@ import { useGeoConfig } from '../core/hooks/geoConfig';
 import { plugins } from '../core/components/computations/plugins';
 import { PlotContainerStyleOverrides } from '../core/components/visualizations/VisualizationTypes';
 import { NotebookCellProps } from './NotebookCell';
-import {
-  ComputeCellDescriptor,
-  VisualizationCellDescriptor,
-} from './NotebookPresets';
+import { VisualizationCellDescriptor } from './NotebookPresets';
 import { useCachedPromise } from '../core/hooks/cachedPromise';
 import { useComputeJobStatus } from '../core/components/computations/ComputeJobStatusHook';
+import { StatusIcon } from '../core/components/computations/RunComputeButton';
 
 export function VisualizationNotebookCell(
   props: NotebookCellProps<VisualizationCellDescriptor>
@@ -90,7 +88,12 @@ export function VisualizationNotebookCell(
 
   return visualization ? (
     <details className={isSubCell ? 'subCell' : ''} open>
-      <summary>{cell.title}</summary>
+      <summary style={{ display: 'flex', justifyContent: 'space-between' }}>
+        {cell.title}{' '}
+        {computeJobStatus && (
+          <StatusIcon status={computeJobStatus} showLabel={false} />
+        )}
+      </summary>
       <div className={isDisabled ? 'disabled' : ''}>
         {computation && vizPlugin && (
           <vizPlugin.fullscreenComponent
