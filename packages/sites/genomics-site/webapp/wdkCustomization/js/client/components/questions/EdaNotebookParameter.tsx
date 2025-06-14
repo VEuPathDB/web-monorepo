@@ -32,6 +32,7 @@ import { formatFilterDisplayValue } from '@veupathdb/eda/lib/core/utils/study-me
 import { DatasetItem } from '@veupathdb/wdk-client/lib/Views/Question/Params/DatasetParamUtils';
 import { parseJson } from '@veupathdb/eda/lib/notebook/Utils';
 import { EdaNotebookAnalysis } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
+import ParameterComponent from '@veupathdb/wdk-client/lib/Views/Question/ParameterComponent';
 import { debounce } from 'lodash';
 
 const datasetIdParamName = 'eda_dataset_id';
@@ -53,19 +54,29 @@ export function EdaNotebookParameter(props: Props<StringParam>) {
     }
   );
 
-  // Here we periodically send analysis state back upstream to WDK
-  const debouncedPersist = useMemo(
-    () =>
-      debounce(
-        (a: Analysis | NewAnalysis | undefined) =>
-          onParamValueChange(JSON.stringify(a)),
-        500
-      ),
-    [onParamValueChange]
-  );
-  useEffect(() => {
-    debouncedPersist(analysis);
-  }, [analysis, debouncedPersist]);
+  // Disabled for now: persistence of analysis state to the 'param'
+  // It should probably be persisted to another 'param' because this
+  // 'param' needs to store the WGCNA module
+
+  //  // Here we periodically send analysis state back upstream to WDK
+  //  const debouncedPersist = useMemo(
+  //    () =>
+  //      debounce(
+  //        (a: Analysis | NewAnalysis | undefined) =>
+  //          onParamValueChange(JSON.stringify(a)),
+  //        500
+  //      ),
+  //    [onParamValueChange]
+  //  );
+  //  useEffect(() => {
+  //    debouncedPersist(analysis);
+  //  }, [analysis, debouncedPersist]);
+  //
+  // useEffect(() => {
+  //   return () => {
+  //     debouncedPersist.cancel();
+  //   };
+  // }, [debouncedPersist]);
 
   // TO DO (maybe)
   // Consider watching `value` for updates that happened on the WDK side
@@ -75,12 +86,6 @@ export function EdaNotebookParameter(props: Props<StringParam>) {
   // has two tabs open?? Good idea to look at what the regular EDA does.
 
   // debounce clean-up, just to be on the safe side
-  useEffect(() => {
-    return () => {
-      debouncedPersist.cancel();
-    };
-  }, [debouncedPersist]);
-
   // Create the all-singing, all-dancing analysisState
   const analysisState = useAnalysisState(analysis, setAnalysis);
 
@@ -96,10 +101,9 @@ export function EdaNotebookParameter(props: Props<StringParam>) {
           />
         </WorkspaceContainer>
       </DocumentationContainer>
+      <ParameterComponent {...props} />
     </>
   );
-
-  // TO DO - don't forget: <ParameterComponent {...props} />
 }
 
 interface EdaNotebookAdapterProps {
