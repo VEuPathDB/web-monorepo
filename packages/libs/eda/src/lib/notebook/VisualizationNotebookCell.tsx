@@ -88,11 +88,20 @@ export function VisualizationNotebookCell(
 
   return visualization ? (
     <details className={isSubCell ? 'subCell' : ''} open>
-      <summary style={{ display: 'flex', justifyContent: 'space-between' }}>
-        {cell.title}{' '}
-        {computeJobStatus && (
-          <StatusIcon status={computeJobStatus} showLabel={false} />
-        )}
+      <summary>
+        <span
+          style={{
+            display: 'inline-flex',
+            justifyContent: 'space-between',
+            width: '95%', // this is a bit of a hack. Ideally it would be 100% but
+            // then the triangle marker goes on a different line. No obvious easy cleaner way :-(
+          }}
+        >
+          <span>{cell.title}</span>
+          {computeJobStatus && (
+            <StatusIcon status={computeJobStatus} showLabel={false} />
+          )}
+        </span>
       </summary>
       <div className={isDisabled ? 'disabled' : ''}>
         {computation && vizPlugin && (
