@@ -6,7 +6,6 @@ import {
   SaveableTextEditor,
 } from '@veupathdb/wdk-client/lib/Components';
 import { NotebookCell } from './NotebookCell';
-
 import './EdaNotebook.scss';
 import { createComputation } from '../core/components/computations/Utils';
 import { presetNotebooks, NotebookCellDescriptor } from './NotebookPresets';
