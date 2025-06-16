@@ -48,12 +48,17 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
           <p className="formInfo">
             <b>Upload your Normalized RNA-Seq data set</b>
             <br />
-            To upload your data set, compress the files into a .tar.gz, .tgz or
-            .zip file (compress the set of files, not a folder containing them).
+            <br />
+            To upload your data set:
+            <ol>
+              <li>compress the files into a .tar.gz, .tgz or .zip file.</li>
+              <li>compress the set of files, not a folder containing them.</li>
+              <li>make sure there are no empty files.</li>
+            </ol>
             The upload requires:
             <ol>
               <li>
-                <b>Counts file(s)</b> - Each sample must have only one
+                <b>a counts file per sample</b> - each sample must have only one
                 tab-delimited file (use extension .txt) containing two columns
                 with these headers:
                 <ul>
@@ -62,7 +67,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
                 </ul>
               </li>
               <li>
-                <b>Manifest file</b> - A tab-delimited file named
+                <b>a manifest file</b> - a tab-delimited file named
                 'manifest.txt', containing three columns without headers:
                 <ul>
                   <li>sample name</li>
@@ -75,13 +80,15 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
               </li>
             </ol>
             Optionally, you may include <b>bigWig files</b> (.bw extension) in
-            your uploaded compressed file. They are not required but will allow
-            visualization in the genome browser. Add these file names in the
-            manifest file.
-            <br />
-            The Upload Data Set service initiates the transfer and will create a
-            record page for your data set that contains links to the fold change
-            search, and bigWig files if included.
+            your comprresed file:
+            <ol>
+              <li>
+                they are not required but will allow visualization in the genome
+                browser.
+              </li>
+              <li>add these file names in the manifest file.</li>
+              <li>make sure there are no empty files.</li>
+            </ol>
           </p>
         ),
         uploadMethodConfig: {
