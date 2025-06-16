@@ -63,26 +63,41 @@ export interface Computation<ConfigType = unknown>
   };
 }
 
-export const Computation = t.type({
-  computationId: string,
-  displayName: t.union([t.string, t.undefined]),
-  descriptor: type({
-    type: string,
-    configuration: unknown,
-  }),
-  visualizations: array(Visualization),
-});
-
-export function makeComputationWithConfigDecoder<T>(
-  configDecoder: t.Type<T>
-): t.Type<Computation<T>> {
-  return t.type({
-    ...Computation.props,
-    descriptor: t.type({
-      ...Computation.props.descriptor.props,
-      configuration: configDecoder,
+export const Computation = intersection([
+  type({
+    computationId: string,
+    descriptor: type({
+      type: string,
+      configuration: unknown,
     }),
-  });
+    visualizations: array(Visualization),
+  }),
+  partial({
+    displayName: string,
+  }),
+]);
+
+export function makeComputationWithConfigDecoder<A>(
+  configDecoder: t.Type<A>
+): t.Type<{
+  computationId: string;
+  descriptor: { type: string; configuration: A };
+  visualizations: Visualization[];
+  displayName?: string;
+}> {
+  return t.intersection([
+    t.type({
+      computationId: t.string,
+      descriptor: t.type({
+        type: t.string,
+        configuration: configDecoder,
+      }),
+      visualizations: t.array(Visualization),
+    }),
+    t.partial({
+      displayName: t.string,
+    }),
+  ]);
 }
 
 const Thing = intersection([

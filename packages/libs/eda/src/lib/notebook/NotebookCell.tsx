@@ -1,0 +1,32 @@
+import { AnalysisState } from '../core';
+import { SubsettingNotebookCell } from './SubsettingNotebookCell';
+import { TextNotebookCell } from './TextNotebookCell';
+import { VisualizationNotebookCell } from './VisualizationNotebookCell';
+import { ComputeNotebookCell } from './ComputeNotebookCell';
+import { NotebookCellDescriptor } from './NotebookPresets';
+
+export interface NotebookCellProps<T extends NotebookCellDescriptor> {
+  analysisState: AnalysisState;
+  cell: T;
+  isSubCell?: boolean; // Indicates if this cell is a sub-cell of another cell. Affects styling.
+  isDisabled?: boolean; // Indicates if the cell is disabled (e.g., before a computation is complete).
+}
+
+/**
+ * Top-level component that delegates to imeplementations of NotebookCell variants.
+ */
+export function NotebookCell(props: NotebookCellProps<NotebookCellDescriptor>) {
+  const { cell } = props;
+  switch (cell.type) {
+    case 'subset':
+      return <SubsettingNotebookCell {...props} cell={cell} />;
+    case 'text':
+      return <TextNotebookCell {...props} cell={cell} />;
+    case 'visualization':
+      return <VisualizationNotebookCell {...props} cell={cell} />;
+    case 'compute':
+      return <ComputeNotebookCell {...props} cell={cell} />;
+    default:
+      return null;
+  }
+}
