@@ -712,7 +712,7 @@ function transformVdiResponseToLegacyResponseHelper(
     hyperlinks,
     organisms,
     contacts,
-    createdOn,
+    //    createdOn,
   } = ud;
   return {
     owner: owner.firstName + ' ' + owner.lastName,
@@ -735,7 +735,7 @@ function transformVdiResponseToLegacyResponseHelper(
       hyperlinks: hyperlinks ?? ([] as UserDatasetHyperlink[]),
       organisms: organisms ?? [],
       contacts: contacts ?? ([] as UserDatasetContact[]),
-      createdOn: createdOn ?? '',
+      //      createdOn: createdOn ?? '',
     },
     ownerUserId: owner.userId,
     age: Date.now() - Date.parse(created),

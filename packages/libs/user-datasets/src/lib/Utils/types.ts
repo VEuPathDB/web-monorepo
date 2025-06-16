@@ -16,7 +16,7 @@ import {
 // used by VDI).
 export interface UserDatasetMeta_UI extends UserDatasetFormContent {
   visibility: UserDatasetVisibility;
-  createdOn?: string;
+  //  createdOn?: string;
 }
 
 // Interface for the dataset metadata used by VDI. Will get transformed into
@@ -30,7 +30,7 @@ export interface UserDatasetMeta_VDI extends UserDatasetFormContent {
   origin: string;
   projects: string[];
   dependencies: UserDatasetDependency[];
-  createdOn?: string;
+  //  createdOn?: string;
 }
 
 export interface UserDatasetShare {
@@ -343,7 +343,7 @@ const userDatasetDetails_base = intersection([
   partial({
     sourceUrl: string,
     importMessages: array(string),
-    createdOn: string,
+    //    createdOn: string,
   }),
 ]);
 
