@@ -36,7 +36,11 @@ export function useDiyDatasets() {
       assertIsVdiCompatibleWdkService(wdkService);
       const userDatasets = await wdkService.getCommunityDatasets();
       const unsortedDiyEntries = userDatasets
-        .filter((userDataset) => userDataset.projectIds.includes(projectId))
+        .filter((userDataset) =>
+          (userDataset.projectIds ?? userDataset.installTargets).includes(
+            projectId
+          )
+        )
         .map(userDatasetToMenuItem);
       return orderBy(unsortedDiyEntries, ({ name }) => name);
     },
