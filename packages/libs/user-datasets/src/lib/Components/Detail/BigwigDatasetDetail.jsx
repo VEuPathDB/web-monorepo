@@ -36,7 +36,7 @@ class BigwigDatasetDetail extends UserDatasetDetail {
     } = this.props;
     const { wdkService } = this.context;
     const { dependencies } = userDataset;
-    if (!userDataset.projects.includes(projectId)) return;
+    if (!userDataset.installTargets.includes(projectId)) return;
     let genome;
     // There will only ever be one such dependency in this array
     dependencies.forEach(function (dependency) {
@@ -187,7 +187,7 @@ class BigwigDatasetDetail extends UserDatasetDetail {
     const { userDataset, config, dataNoun } = this.props;
     const { projectId } = config;
 
-    const { status, projects } = userDataset;
+    const { status, installTargets } = userDataset;
 
     /**
      * In VDI, we know a dataset is compatible when the site-specific's install status
@@ -200,7 +200,7 @@ class BigwigDatasetDetail extends UserDatasetDetail {
       (d) => d.projectId === projectId
     );
 
-    const isTargetingCurrentSite = projects.includes(projectId);
+    const isTargetingCurrentSite = installTargets.includes(projectId);
     const isInstalled = [
       userDataset.status.import,
       installStatusForCurrentProject?.metaStatus,
@@ -236,13 +236,13 @@ class BigwigDatasetDetail extends UserDatasetDetail {
 
   getCompatibilityTableColumns() {
     const { userDataset } = this.props;
-    const { projects } = userDataset;
+    const { installTargets } = userDataset;
     return [
       {
         key: 'project',
         name: 'VEuPathDB Website',
         renderCell() {
-          return projects.join(', ');
+          return installTargets.join(', ');
         },
       },
       {
