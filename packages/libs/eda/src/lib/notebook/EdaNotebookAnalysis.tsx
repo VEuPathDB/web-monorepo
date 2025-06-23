@@ -100,16 +100,6 @@ export function EdaNotebookAnalysis(props: Props) {
   return (
     <div className="EdaNotebook">
       <div className="Paper">
-        <div className="Heading">
-          <h1>
-            <SaveableTextEditor
-              className="Title"
-              value={analysisState.analysis?.displayName ?? ''}
-              onSave={analysisState.setName}
-            />
-          </h1>
-          <h2>{safeHtml(studyRecord.displayName)}</h2>
-        </div>
         {analysis.descriptor.computations.length > 0 ? (
           notebookPreset.cells.map((cell, index) => (
             <NotebookCell

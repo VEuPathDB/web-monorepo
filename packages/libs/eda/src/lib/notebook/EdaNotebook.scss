@@ -12,13 +12,7 @@
     --paper-scale: 0.5;
 
     width: calc(var(--paper-width) * var(--paper-scale));
-    /* height: calc(var(--paper-height) * var(--paper-scale)); */
-
-    padding: 2em;
     margin: 1em auto;
-
-    /* background-color: #f3f3f3; */
-    box-shadow: 0 0 2px #b5b5b5;
 
     > * + * {
       margin-block-start: 1rem;
@@ -119,9 +113,6 @@
         pointer-events: none;
         opacity: 0.5;
       }
-    }
-    > details.subCell {
-      margin-left: 2em;
     }
   }
 
