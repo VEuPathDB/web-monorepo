@@ -87,19 +87,19 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
     cells: [
       {
         type: 'compute',
-        title: 'WGCNA Correlation',
+        title: 'Correlation Computation',
         computationName: 'correlation',
         computationId: 'correlation_1',
         helperText:
-          '(1) Configure and run a correlation computation to find a module of interest.',
+          '(1) Configure and run a correlation computation between WGCNA module eigengene expression and other features of interest.',
         cells: [
           {
             type: 'visualization',
-            title: 'Correlation Plot',
+            title: 'Network Visualization',
             visualizationName: 'bipartitenetwork',
             visualizationId: 'bipartite_1',
             helperText:
-              '(2) Visualize the correlation results with the bipartite network. Click on nodes to highlight them in the network.',
+              '(2) Visualize the correlation results between the two groups in the network. Click on nodes to highlight them in the network.',
           },
         ],
       },

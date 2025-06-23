@@ -216,7 +216,6 @@ const DEFAULT_PROPORTION_NON_ZERO_THRESHOLD = 0.05;
 const DEFAULT_VARIANCE_THRESHOLD = 0;
 const DEFAULT_STANDARD_DEVIATION_THRESHOLD = 0;
 
-// Shows as Step 1 in the full screen visualization page
 export function CorrelationConfiguration(props: ComputationConfigProps) {
   const {
     computationAppOverview,
@@ -224,6 +223,8 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
     analysisState,
     visualizationId,
     changeConfigHandlerOverride,
+    showStepNumber = true,
+    showExpandableHelp = true,
   } = props;
 
   const configuration = computation.descriptor
@@ -350,6 +351,7 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
         stepNumber: 1,
         stepTitle: `Configure ${computationAppOverview.displayName}`,
       }}
+      showStepNumber={showStepNumber}
     >
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <div className={cx()}>
@@ -464,14 +466,16 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
             bannerType="error"
           />
         </div>
-        <ExpandablePanel
-          title="Learn more about correlation"
-          subTitle={{}}
-          children={helpContent}
-          stylePreset="floating"
-          themeRole="primary"
-          styleOverrides={{ container: { marginLeft: 40 } }}
-        />
+        {showExpandableHelp && (
+          <ExpandablePanel
+            title="Learn more about correlation"
+            subTitle={{}}
+            children={helpContent}
+            stylePreset="floating"
+            themeRole="primary"
+            styleOverrides={{ container: { marginLeft: 40 } }}
+          />
+        )}
       </div>
     </ComputationStepContainer>
   );

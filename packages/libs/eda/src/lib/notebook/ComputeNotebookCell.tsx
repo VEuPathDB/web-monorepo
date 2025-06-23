@@ -86,11 +86,13 @@ export function ComputeNotebookCell(
 
   return computation && appOverview ? (
     <>
-      <div className="notebookCellHelpText">
+      <div className="NotebookCellHelpText">
         <span>{cell.helperText}</span>
       </div>
       <details className={isSubCell ? 'subCell' : ''} open>
-        <summary>{cell.title}</summary>
+        <summary>
+          <span>{cell.title}</span>
+        </summary>
         <div className={isDisabled ? 'disabled' : ''}>
           <plugin.configurationComponent
             analysisState={analysisState}
@@ -102,6 +104,8 @@ export function ComputeNotebookCell(
             computationAppOverview={appOverview}
             geoConfigs={[]}
             changeConfigHandlerOverride={changeConfigHandler}
+            showStepNumber={false}
+            showExpandableHelp={false} // no expandable sections within an expandable element.
           />
           <RunComputeButton
             computationAppOverview={appOverview}

@@ -88,7 +88,7 @@ export function VisualizationNotebookCell(
 
   return visualization ? (
     <>
-      <div className="notebookCellHelpText">
+      <div className="NotebookCellHelpText">
         <span>{cell.helperText}</span>
       </div>
       <details className={isSubCell ? 'subCell' : ''} open>
