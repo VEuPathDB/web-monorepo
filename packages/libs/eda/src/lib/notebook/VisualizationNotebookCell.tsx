@@ -87,46 +87,51 @@ export function VisualizationNotebookCell(
   }
 
   return visualization ? (
-    <details className={isSubCell ? 'subCell' : ''} open>
-      <summary>
-        <span
-          style={{
-            display: 'inline-flex',
-            justifyContent: 'space-between',
-            width: '95%', // this is a bit of a hack. Ideally it would be 100% but
-            // then the triangle marker goes on a different line. No obvious easy cleaner way :-(
-          }}
-        >
-          <span>{cell.title}</span>
-          {computeJobStatus && (
-            <StatusIcon status={computeJobStatus} showLabel={false} />
-          )}
-        </span>
-      </summary>
-      <div className={isDisabled ? 'disabled' : ''}>
-        {computation && vizPlugin && (
-          <vizPlugin.fullscreenComponent
-            options={vizPlugin.options}
-            dataElementConstraints={constraints}
-            dataElementDependencyOrder={dataElementDependencyOrder}
-            visualization={visualization}
-            computation={computation}
-            copmutationAppOverview={appOverview}
-            filters={analysis.descriptor.subset.descriptor} // issue #1413
-            starredVariables={[]} // to be implemented
-            toggleStarredVariable={() => {}}
-            updateConfiguration={updateConfiguration}
-            totalCounts={totalCountsResult}
-            filteredCounts={filteredCountsResult}
-            geoConfigs={geoConfigs}
-            otherVizOverviews={[]}
-            computeJobStatus={computeJobStatus}
-            hideInputsAndControls={false}
-            plotContainerStyleOverrides={plotContainerStyleOverrides}
-          />
-        )}
+    <>
+      <div className="notebookCellHelpText">
+        <span>{cell.helperText}</span>
       </div>
-    </details>
+      <details className={isSubCell ? 'subCell' : ''} open>
+        <summary>
+          <span
+            style={{
+              display: 'inline-flex',
+              justifyContent: 'space-between',
+              width: '95%', // this is a bit of a hack. Ideally it would be 100% but
+              // then the triangle marker goes on a different line. No obvious easy cleaner way :-(
+            }}
+          >
+            <span>{cell.title}</span>
+            {computeJobStatus && (
+              <StatusIcon status={computeJobStatus} showLabel={false} />
+            )}
+          </span>
+        </summary>
+        <div className={isDisabled ? 'disabled' : ''}>
+          {computation && vizPlugin && (
+            <vizPlugin.fullscreenComponent
+              options={vizPlugin.options}
+              dataElementConstraints={constraints}
+              dataElementDependencyOrder={dataElementDependencyOrder}
+              visualization={visualization}
+              computation={computation}
+              copmutationAppOverview={appOverview}
+              filters={analysis.descriptor.subset.descriptor} // issue #1413
+              starredVariables={[]} // to be implemented
+              toggleStarredVariable={() => {}}
+              updateConfiguration={updateConfiguration}
+              totalCounts={totalCountsResult}
+              filteredCounts={filteredCountsResult}
+              geoConfigs={geoConfigs}
+              otherVizOverviews={[]}
+              computeJobStatus={computeJobStatus}
+              hideInputsAndControls={false}
+              plotContainerStyleOverrides={plotContainerStyleOverrides}
+            />
+          )}
+        </div>
+      </details>
+    </>
   ) : (
     <details>
       <summary>Loading</summary>

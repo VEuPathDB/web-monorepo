@@ -45,6 +45,11 @@
     }
 
     /* Notebook cell styling */
+    .notebookCellHelpText {
+      margin-top: 2em;
+      font-weight: 500;
+      font-size: 1.2em;
+    }
     > details {
       border: 1px solid;
       border-color: color-mix(

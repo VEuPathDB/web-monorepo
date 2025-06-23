@@ -86,6 +86,9 @@ export function ComputeNotebookCell(
 
   return computation && appOverview ? (
     <>
+      <div className="notebookCellHelpText">
+        <span>{cell.helperText}</span>
+      </div>
       <details className={isSubCell ? 'subCell' : ''} open>
         <summary>{cell.title}</summary>
         <div className={isDisabled ? 'disabled' : ''}>

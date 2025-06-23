@@ -17,6 +17,7 @@ export interface NotebookCellDescriptorBase<T extends string> {
   type: T;
   title: string;
   cells?: NotebookCellDescriptor[];
+  helperText?: string; // Optional text to display above the cell. Instead of a full text cell, use this for quick help and titles.
 }
 
 export interface VisualizationCellDescriptor
@@ -59,17 +60,14 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         title: 'Differential Abundance',
         computationName: 'differentialabundance',
         computationId: 'diff_1',
+        helperText:
+          '(1) Configure and run a DESeq2 computation to find differentially expressed genes.',
         cells: [
           {
             type: 'visualization',
             title: 'Volcano Plot',
             visualizationName: 'volcanoplot',
             visualizationId: 'volcano_1',
-          },
-          {
-            type: 'text',
-            title: 'Sub Text Cell',
-            text: 'This is a sub text cell for the differential abundance notebook.',
           },
         ],
       },
@@ -88,26 +86,20 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
     projects: ['MicrobiomeDB'],
     cells: [
       {
-        type: 'text',
-        title: 'Extra help',
-        text: 'Some more text for the WGCNA correlation notebook.',
-      },
-      {
         type: 'compute',
         title: 'WGCNA Correlation',
         computationName: 'correlation',
         computationId: 'correlation_1',
+        helperText:
+          '(1) Configure and run a correlation computation to find a module of interest.',
         cells: [
-          {
-            type: 'text',
-            title: 'Using the network plot',
-            text: 'Network plot explanation... To Do',
-          },
           {
             type: 'visualization',
             title: 'Correlation Plot',
             visualizationName: 'bipartitenetwork',
             visualizationId: 'bipartite_1',
+            helperText:
+              '(2) Visualize the correlation results with the bipartite network. Click on nodes to highlight them in the network.',
           },
         ],
       },
