@@ -25,9 +25,9 @@
   }
 
   h2 {
-    padding: 0;
-    font-size: 1.65em;
-    color: black;
+    margin: 1em 0;
+    font-size: 2em;
+    // color: black;
   }
   h3 {
     padding: 0;
@@ -55,7 +55,14 @@
 
     .UserDatasetDetail-Header-Attributes {
       flex: 1 1 auto;
+
+      .eda-linkout {
+        font-size: 2em;
+        font-weight: 500;
+        margin: 1em 0;
+      }
     }
+
     .UserDatasetDetail-Header-Actions {
       flex: 0 0 auto;
     }
@@ -77,6 +84,32 @@
     }
   }
 
+  .UserDatasetDetail-Subtitle {
+    font-size: 1.2em;
+    font-weight: 300;
+    color: #666;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    display: inline-flex;
+
+    span {
+      white-space: pre;
+    }
+  }
+
+  // .UserDatasetDetail-Name {
+  //   font-weight: 400;
+  //   font-size: 2.8em;
+  //   strong,
+  //   b {
+  //     font-weight: 400;
+  //   }
+
+  //   .wdk-SaveableTextEditor {
+  //     font-style: italic;
+  //   }
+  // }
+
   .UserDatasetDetail-AttributeList {
     display: flex;
     flex-direction: column;
@@ -85,13 +118,13 @@
       display: flex;
       flex-direction: row;
       align-items: baseline;
-      margin: 0.2em 0;
+      margin-bottom: 0.5em;
       font-size: 1.4em;
       font-weight: 300;
 
-      &:last-child {
-        margin-bottom: 0;
-      }
+      // &:last-child {
+      //   margin-bottom: 0;
+      // }
 
       a {
         font-weight: 500;
@@ -100,9 +133,11 @@
       &.UserDatasetDetail-Name {
         font-weight: 400;
         font-size: 2.8em;
+        margin-bottom: 0;
         strong,
         b {
           font-weight: 400;
+          color: #3f3f3f;
         }
 
         .wdk-SaveableTextEditor {
@@ -118,6 +153,21 @@
 
       .UserDatasetDetail-NestedFields {
         margin-left: 1em;
+      }
+
+      &.TextInputSection {
+        margin-bottom: 0.5em;
+        margin-top: 0.5em;
+      }
+
+      &.DoubleInputSection {
+        margin-bottom: 0.5em;
+        margin-top: 0.5em;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 2em;
+        padding-left: 1em;
       }
 
       // .UserDatasetDetail-NestedField {
@@ -162,8 +212,6 @@
       }
     }
     .UserDatasetDetail {
-      &-Owner,
-      &-Summary,
       &-Created {
         margin-top: 1em;
       }

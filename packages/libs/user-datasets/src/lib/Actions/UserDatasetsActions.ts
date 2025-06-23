@@ -25,12 +25,14 @@ import {
   UserDatasetContact,
   UserDatasetHyperlink,
   UserDatasetPublication,
+  UserDatasetCharacteristics,
 } from '../Utils/types';
 import { FetchClientError } from '@veupathdb/http-utils';
 import {
   InferAction,
   makeActionCreator,
 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
+import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 export type Action =
   | DetailErrorAction
@@ -713,7 +715,7 @@ function transformVdiResponseToLegacyResponseHelper(
     hyperlinks,
     organisms,
     contacts,
-    createdOn,
+    datasetCharacteristics,
   } = ud;
   return {
     owner: owner.firstName + ' ' + owner.lastName,
@@ -736,7 +738,8 @@ function transformVdiResponseToLegacyResponseHelper(
       hyperlinks: hyperlinks ?? ([] as UserDatasetHyperlink[]),
       organisms: organisms ?? [],
       contacts: contacts ?? ([] as UserDatasetContact[]),
-      createdOn: createdOn ?? '',
+      datasetCharacteristics:
+        datasetCharacteristics ?? ({} as UserDatasetCharacteristics),
     },
     ownerUserId: owner.userId,
     age: Date.now() - Date.parse(created),
