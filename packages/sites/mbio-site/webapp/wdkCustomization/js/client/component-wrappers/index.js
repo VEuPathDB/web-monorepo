@@ -484,9 +484,7 @@ function makeHeaderMenuItemsFactory(
           children: [
             {
               text: 'FAQs',
-              route: useEda
-                ? `${STATIC_ROUTE_PATH}/MicrobiomeDB/faq_beta.html`
-                : `${STATIC_ROUTE_PATH}/MicrobiomeDB/faq.html`,
+              route: `${STATIC_ROUTE_PATH}/MicrobiomeDB/faq.html`,
             },
             {
               text: 'News',
