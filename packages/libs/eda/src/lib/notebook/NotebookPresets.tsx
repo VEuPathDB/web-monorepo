@@ -48,6 +48,7 @@ type PresetNotebook = {
   displayName: string;
   projects: string[];
   cells: NotebookCellDescriptor[];
+  header?: string; // Optional header text for the notebook, to be displayed above the cells.
 };
 
 // Preset notebooks
@@ -112,6 +113,8 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
   wgcnaCorrelationNotebook: {
     name: 'wgcnacorrelation',
     displayName: 'WGCNA Correlation Notebook',
+    header:
+      "Use steps 1-3 to find a module of interest, then click 'Get Answer' to retrieve a list of genes.",
     projects: ['MicrobiomeDB'],
     cells: [
       {

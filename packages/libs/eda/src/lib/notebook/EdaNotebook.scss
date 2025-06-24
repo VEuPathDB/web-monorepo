@@ -60,6 +60,9 @@
       font-weight: 500;
       font-size: 1.2em;
     }
+    .NotebookCellHelpText:first-of-type {
+      margin-top: 2em;
+    }
     > details {
       border: 1px solid;
       border-color: color-mix(

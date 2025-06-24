@@ -12,7 +12,7 @@ import { presetNotebooks, NotebookCellDescriptor } from './NotebookPresets';
 import { Computation } from '../core/types/visualization';
 import { plugins } from '../core/components/computations/plugins';
 import CoreUIThemeProvider from '@veupathdb/coreui/lib/components/theming/UIThemeProvider';
-import { colors } from '@veupathdb/coreui';
+import { colors, H3, H5, H6 } from '@veupathdb/coreui';
 
 // const NOTEBOOK_UI_SETTINGS_KEY = '@@NOTEBOOK@@';
 
@@ -111,6 +111,7 @@ export function EdaNotebookAnalysis(props: Props) {
     >
       <div className="EdaNotebook">
         <div className="Paper">
+          {notebookPreset.header && <H5 text={notebookPreset.header} />}
           {analysis.descriptor.computations.length > 0 ? (
             notebookPreset.cells.map((cell, index) => (
               <NotebookCell
