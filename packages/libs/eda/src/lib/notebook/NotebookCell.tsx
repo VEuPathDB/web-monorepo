@@ -8,7 +8,6 @@ import { NotebookCellDescriptor } from './NotebookPresets';
 export interface NotebookCellProps<T extends NotebookCellDescriptor> {
   analysisState: AnalysisState;
   cell: T;
-  isSubCell?: boolean; // Indicates if this cell is a sub-cell of another cell. Affects styling.
   isDisabled?: boolean; // Indicates if the cell is disabled (e.g., before a computation is complete).
 }
 

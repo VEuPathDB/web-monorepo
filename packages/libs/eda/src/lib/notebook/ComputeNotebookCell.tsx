@@ -15,7 +15,7 @@ import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/Expanda
 export function ComputeNotebookCell(
   props: NotebookCellProps<ComputeCellDescriptor>
 ) {
-  const { analysisState, cell, isSubCell, isDisabled } = props;
+  const { analysisState, cell, isDisabled } = props;
   const { analysis } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
 
