@@ -9,6 +9,7 @@ export interface NotebookCellProps<T extends NotebookCellDescriptor> {
   analysisState: AnalysisState;
   cell: T;
   isDisabled?: boolean; // Indicates if the cell is disabled (e.g., before a computation is complete).
+  expandedPanelState?: 'closed' | 'open'; // Indicates if the ExpandabelPanel is expanded in the UI.
 }
 
 /**

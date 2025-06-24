@@ -130,8 +130,8 @@ export function ComputeNotebookCell(
               key={index}
               analysisState={analysisState}
               cell={subCell}
-              isSubCell={true}
               isDisabled={isSubCellDisabled}
+              expandedPanelState={isSubCellDisabled ? 'closed' : 'open'}
             />
           );
         })}

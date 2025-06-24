@@ -1,7 +1,11 @@
 // Notebook presets
 
 import { ReactNode } from 'react';
+import { NumberedHeader } from '../workspace/Subsetting/SubsetDownloadModal';
+import { colors } from '@material-ui/core';
 
+const height = 25;
+const color = 'black';
 // The descriptors contain just enough information to render the cells when given the
 // appropriate context, such as analysis state. In EdaNotebookAnalysis, these
 // descriptors get converted into cells using the ids and such generated in
@@ -17,7 +21,7 @@ export interface NotebookCellDescriptorBase<T extends string> {
   type: T;
   title: string;
   cells?: NotebookCellDescriptor[];
-  helperText?: string; // Optional text to display above the cell. Instead of a full text cell, use this for quick help and titles.
+  helperText?: ReactNode; // Optional information to display above the cell. Instead of a full text cell, use this for quick help and titles.
 }
 
 export interface VisualizationCellDescriptor
@@ -60,8 +64,33 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         title: 'Differential Abundance',
         computationName: 'differentialabundance',
         computationId: 'diff_1',
-        helperText:
-          '(1) Configure and run a DESeq2 computation to find differentially expressed genes.',
+        helperText: (
+          <>
+            <div
+              style={{
+                display: 'inline-block',
+                width: height + 'px',
+                height: height + 'px',
+                lineHeight: height + 'px',
+                color: color,
+                border: '2px solid' + color,
+                borderRadius: height + 'px',
+                fontSize: 18,
+                fontWeight: 'bold',
+                textAlign: 'center',
+                boxSizing: 'content-box',
+                userSelect: 'none',
+              }}
+            >
+              1
+            </div>
+            <span>
+              {' '}
+              Configure and run a DESeq2 computation to find differentially
+              expressed genes.
+            </span>
+          </>
+        ),
         cells: [
           {
             type: 'visualization',
@@ -90,16 +119,30 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         title: 'Correlation Computation',
         computationName: 'correlation',
         computationId: 'correlation_1',
-        helperText:
-          '(1) Configure and run a correlation computation between WGCNA module eigengene expression and other features of interest.',
+        helperText: (
+          <NumberedHeader
+            number={1}
+            text={
+              'Configure and run a correlation computation between WGCNA module eigengene expression and other features of interest.'
+            }
+            color={colors.grey[800]}
+          />
+        ),
         cells: [
           {
             type: 'visualization',
             title: 'Network Visualization',
             visualizationName: 'bipartitenetwork',
             visualizationId: 'bipartite_1',
-            helperText:
-              '(2) Visualize the correlation results between the two groups in the network. Click on nodes to highlight them in the network.',
+            helperText: (
+              <NumberedHeader
+                number={2}
+                text={
+                  'Visualize the correlation results between the two groups in the network. Click on nodes to highlight them in the network.'
+                }
+                color={colors.grey[800]}
+              />
+            ),
           },
         ],
       },
