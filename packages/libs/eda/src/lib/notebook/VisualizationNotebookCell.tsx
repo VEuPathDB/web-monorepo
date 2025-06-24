@@ -8,7 +8,6 @@ import { NotebookCellProps } from './NotebookCell';
 import { VisualizationCellDescriptor } from './NotebookPresets';
 import { useCachedPromise } from '../core/hooks/cachedPromise';
 import { useComputeJobStatus } from '../core/components/computations/ComputeJobStatusHook';
-import { StatusIcon } from '../core/components/computations/RunComputeButton';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
 
 export function VisualizationNotebookCell(

@@ -1,10 +1,7 @@
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { useDataClient } from '../core/hooks/workspace';
 import { isEqual } from 'lodash';
-import {
-  RunComputeButton,
-  StatusIcon,
-} from '../core/components/computations/RunComputeButton';
+import { RunComputeButton } from '../core/components/computations/RunComputeButton';
 import { useComputeJobStatus } from '../core/components/computations/ComputeJobStatusHook';
 import { NotebookCell, NotebookCellProps } from './NotebookCell';
 import { plugins } from '../core/components/computations/plugins';

@@ -1,10 +1,6 @@
 import { useEffect } from 'react';
 import { AnalysisState, useStudyRecord } from '../core';
-import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import {
-  Loading,
-  SaveableTextEditor,
-} from '@veupathdb/wdk-client/lib/Components';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { NotebookCell } from './NotebookCell';
 import './EdaNotebook.scss';
 import { createComputation } from '../core/components/computations/Utils';
@@ -12,7 +8,7 @@ import { presetNotebooks, NotebookCellDescriptor } from './NotebookPresets';
 import { Computation } from '../core/types/visualization';
 import { plugins } from '../core/components/computations/plugins';
 import CoreUIThemeProvider from '@veupathdb/coreui/lib/components/theming/UIThemeProvider';
-import { colors, H3, H5, H6 } from '@veupathdb/coreui';
+import { colors, H5 } from '@veupathdb/coreui';
 
 // const NOTEBOOK_UI_SETTINGS_KEY = '@@NOTEBOOK@@';
 
