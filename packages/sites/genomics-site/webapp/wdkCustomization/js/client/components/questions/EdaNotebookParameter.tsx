@@ -21,7 +21,8 @@ import {
 } from '@veupathdb/eda/lib/core';
 import { edaServiceUrl } from '@veupathdb/web-common/lib/config';
 import { DocumentationContainer } from '@veupathdb/eda/lib/core/components/docs/DocumentationContainer';
-
+import CoreUIThemeProvider from '@veupathdb/coreui/lib/components/theming/UIThemeProvider';
+import colors from '@veupathdb/coreui/lib/definitions/colors';
 import './EdaSubsetParameter.scss';
 import {
   defaultFormatParameterValue,
@@ -32,19 +33,26 @@ import { formatFilterDisplayValue } from '@veupathdb/eda/lib/core/utils/study-me
 import { DatasetItem } from '@veupathdb/wdk-client/lib/Views/Question/Params/DatasetParamUtils';
 import { parseJson } from '@veupathdb/eda/lib/notebook/Utils';
 import { EdaNotebookAnalysis } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
-import ParameterComponent from '@veupathdb/wdk-client/lib/Views/Question/ParameterComponent';
 import { debounce } from 'lodash';
 
-const datasetIdParamName = 'eda_dataset_id';
-const notebookTypeParamName = 'eda_notebook_type';
+type EdaNotebookParameterProps = {
+  onParamValueChange?: (value: string) => void;
+  value: string;
+  datasetIdParamName?: string;
+  notebookTypeParamName?: string;
+};
 
-export function EdaNotebookParameter(props: Props<StringParam>) {
-  const { onParamValueChange, value, ctx } = props;
+export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
+  const {
+    onParamValueChange,
+    value,
+    datasetIdParamName,
+    notebookTypeParamName,
+  } = props;
 
   // TEMPORARY: We don't have this value coming from the wdk yet.
-  const studyId = ctx.paramValues[datasetIdParamName] ?? 'DS_82dc5abc7f';
-  const notebookType =
-    ctx.paramValues[notebookTypeParamName] ?? 'wgcnaCorrelationNotebook';
+  const studyId = datasetIdParamName ?? 'DS_82dc5abc7f';
+  const notebookType = notebookTypeParamName ?? 'wgcnaCorrelationNotebook';
 
   // we need to maintain the analysis as regular "live" React state somewhere
   const [analysis, setAnalysis] = useState<NewAnalysis | Analysis | undefined>(
@@ -95,13 +103,21 @@ export function EdaNotebookParameter(props: Props<StringParam>) {
     <>
       <DocumentationContainer>
         <WorkspaceContainer studyId={studyId} edaServiceUrl={edaServiceUrl}>
-          <EdaNotebookAdapter
-            analysisState={analysisState}
-            notebookType={notebookType}
-          />
+          <CoreUIThemeProvider
+            theme={{
+              palette: {
+                primary: { hue: colors.cyan, level: 600 },
+                secondary: { hue: colors.mutedRed, level: 500 },
+              },
+            }}
+          >
+            <EdaNotebookAdapter
+              analysisState={analysisState}
+              notebookType={notebookType}
+            />
+          </CoreUIThemeProvider>
         </WorkspaceContainer>
       </DocumentationContainer>
-      <ParameterComponent {...props} />
     </>
   );
 }
