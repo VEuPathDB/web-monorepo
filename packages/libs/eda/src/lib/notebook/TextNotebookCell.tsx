@@ -1,15 +1,22 @@
+import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
 import { NotebookCellProps } from './NotebookCell';
 import { TextCellDescriptor } from './NotebookPresets';
 
 export function TextNotebookCell(props: NotebookCellProps<TextCellDescriptor>) {
-  const { cell, isSubCell, isDisabled } = props;
+  const { cell, isDisabled } = props;
 
   const { text, title } = cell;
 
   return (
-    <details className={isSubCell ? 'subCell' : ''} open>
-      <summary>{title}</summary>
-      <div className={isDisabled ? 'disabled' : ''}>{text}</div>
-    </details>
+    <ExpandablePanel
+      title={title}
+      subTitle={''}
+      state="open"
+      themeRole="primary"
+    >
+      <div className={'NotebookCellContent' + (isDisabled ? ' disabled' : '')}>
+        {text}
+      </div>
+    </ExpandablePanel>
   );
 }

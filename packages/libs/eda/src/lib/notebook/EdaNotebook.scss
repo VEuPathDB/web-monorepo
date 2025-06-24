@@ -12,13 +12,7 @@
     --paper-scale: 0.5;
 
     width: calc(var(--paper-width) * var(--paper-scale));
-    /* height: calc(var(--paper-height) * var(--paper-scale)); */
-
-    padding: 2em;
     margin: 1em auto;
-
-    /* background-color: #f3f3f3; */
-    box-shadow: 0 0 2px #b5b5b5;
 
     > * + * {
       margin-block-start: 1rem;
@@ -50,7 +44,25 @@
       }
     }
 
+    /* Override left margin for AppStepConfigurationContainer */
+    .AppStepConfigurationContainer {
+      margin-left: 1em;
+    }
+    .RunComputeButton {
+      margin-left: 1em;
+      margin-bottom: 0em;
+      margin-top: 1.5em;
+    }
+
     /* Notebook cell styling */
+    .NotebookCellHelpText {
+      margin-top: 4em;
+      font-weight: 500;
+      font-size: 1.2em;
+    }
+    .NotebookCellHelpText:first-of-type {
+      margin-top: 2em;
+    }
     > details {
       border: 1px solid;
       border-color: color-mix(
@@ -64,10 +76,10 @@
       border-bottom-right-radius: 0.5em;
 
       > summary {
-        padding: 0.75em;
+        padding: 1em;
         cursor: pointer;
         font-size: 1.2em;
-        font-weight: 500;
+        font-weight: 300;
         background-color: color-mix(
           in srgb,
           var(--coreui-color-primary) 10%,
@@ -94,6 +106,7 @@
 
         > * {
           display: inline; // prevents contents from wrapping underneath the arrow
+          padding-left: 0.75em;
         }
 
         div.subCellTitle {
@@ -120,8 +133,14 @@
         opacity: 0.5;
       }
     }
-    > details.subCell {
-      margin-left: 2em;
+
+    .NotebookCellContent {
+      padding: 2em;
+    }
+
+    .NotebookCellContent.disabled {
+      pointer-events: none;
+      opacity: 0.5;
     }
   }
 

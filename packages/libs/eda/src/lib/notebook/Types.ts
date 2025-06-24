@@ -51,7 +51,6 @@ export interface NotebookCellComponentProps<T extends NotebookCell['type']> {
   cell: NotebookCellOfType<T>;
   // Allow partial updates, but don't allow `type` to be changed.
   updateCell: (cell: Omit<Partial<NotebookCellOfType<T>>, 'type'>) => void;
-  isSubCell?: boolean; // Indicates if this cell is a sub-cell of another cell. Affects styling.
   isDisabled?: boolean; // Indicates if the cell is disabled (e.g., during loading).
 }
 

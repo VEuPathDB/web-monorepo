@@ -1,16 +1,14 @@
 import { useEffect } from 'react';
 import { AnalysisState, useStudyRecord } from '../core';
-import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import {
-  Loading,
-  SaveableTextEditor,
-} from '@veupathdb/wdk-client/lib/Components';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { NotebookCell } from './NotebookCell';
 import './EdaNotebook.scss';
 import { createComputation } from '../core/components/computations/Utils';
 import { presetNotebooks, NotebookCellDescriptor } from './NotebookPresets';
 import { Computation } from '../core/types/visualization';
 import { plugins } from '../core/components/computations/plugins';
+import CoreUIThemeProvider from '@veupathdb/coreui/lib/components/theming/UIThemeProvider';
+import { colors, H5 } from '@veupathdb/coreui';
 
 // const NOTEBOOK_UI_SETTINGS_KEY = '@@NOTEBOOK@@';
 
@@ -98,30 +96,31 @@ export function EdaNotebookAnalysis(props: Props) {
   // `notebookState` coming from analysisState.analysis.descriptor.subset.uiSettings[NOTEBOOK_UI_SETTINGS_KEY]
   //
   return (
-    <div className="EdaNotebook">
-      <div className="Paper">
-        <div className="Heading">
-          <h1>
-            <SaveableTextEditor
-              className="Title"
-              value={analysisState.analysis?.displayName ?? ''}
-              onSave={analysisState.setName}
-            />
-          </h1>
-          <h2>{safeHtml(studyRecord.displayName)}</h2>
+    // The CoreUIThemeProvider should be moved elsewhere. Should go in the genomics form override.
+    <CoreUIThemeProvider
+      theme={{
+        palette: {
+          primary: { hue: colors.cyan, level: 600 },
+          secondary: { hue: colors.mutedRed, level: 500 },
+        },
+      }}
+    >
+      <div className="EdaNotebook">
+        <div className="Paper">
+          {notebookPreset.header && <H5 text={notebookPreset.header} />}
+          {analysis.descriptor.computations.length > 0 ? (
+            notebookPreset.cells.map((cell, index) => (
+              <NotebookCell
+                key={index}
+                analysisState={analysisState}
+                cell={cell}
+              />
+            ))
+          ) : (
+            <Loading />
+          )}
         </div>
-        {analysis.descriptor.computations.length > 0 ? (
-          notebookPreset.cells.map((cell, index) => (
-            <NotebookCell
-              key={index}
-              analysisState={analysisState}
-              cell={cell}
-            />
-          ))
-        ) : (
-          <Loading />
-        )}
       </div>
-    </div>
+    </CoreUIThemeProvider>
   );
 }
