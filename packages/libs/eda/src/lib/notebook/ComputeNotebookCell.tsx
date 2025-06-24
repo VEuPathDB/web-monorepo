@@ -10,6 +10,7 @@ import { NotebookCell, NotebookCellProps } from './NotebookCell';
 import { plugins } from '../core/components/computations/plugins';
 import { ComputeCellDescriptor } from './NotebookPresets';
 import { useCachedPromise } from '../core/hooks/cachedPromise';
+import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
 
 export function ComputeNotebookCell(
   props: NotebookCellProps<ComputeCellDescriptor>
@@ -89,11 +90,15 @@ export function ComputeNotebookCell(
       <div className="NotebookCellHelpText">
         <span>{cell.helperText}</span>
       </div>
-      <details className={isSubCell ? 'subCell' : ''} open>
-        <summary>
-          <span>{cell.title}</span>
-        </summary>
-        <div className={isDisabled ? 'disabled' : ''}>
+      <ExpandablePanel
+        title={cell.title}
+        subTitle={''}
+        state="open"
+        themeRole="primary"
+      >
+        <div
+          className={'NotebookCellContent' + (isDisabled ? ' disabled' : '')}
+        >
           <plugin.configurationComponent
             analysisState={analysisState}
             computation={computation}
@@ -114,7 +119,7 @@ export function ComputeNotebookCell(
             createJob={createJob}
           />
         </div>
-      </details>
+      </ExpandablePanel>
       {cells &&
         cells.map((subCell, index) => {
           const isSubCellDisabled =
