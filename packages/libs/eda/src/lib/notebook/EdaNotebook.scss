@@ -13,9 +13,14 @@
 
     width: calc(var(--paper-width) * var(--paper-scale));
     margin: 1em auto;
+    padding: 0 1em;
 
     > * + * {
       margin-block-start: 1rem;
+    }
+
+    > H5 {
+      padding-bottom: 0.5em;
     }
 
     .Heading {

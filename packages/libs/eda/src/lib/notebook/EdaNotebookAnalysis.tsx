@@ -4,17 +4,23 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { NotebookCell } from './NotebookCell';
 import './EdaNotebook.scss';
 import { createComputation } from '../core/components/computations/Utils';
-import { presetNotebooks, NotebookCellDescriptor } from './NotebookPresets';
+import {
+  presetNotebooks,
+  NotebookCellDescriptor,
+  WdkParamCellDescriptor,
+} from './NotebookPresets';
 import { Computation } from '../core/types/visualization';
 import { plugins } from '../core/components/computations/plugins';
 import { H5 } from '@veupathdb/coreui';
 import colors from '@veupathdb/coreui/lib/definitions/colors';
+import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 // const NOTEBOOK_UI_SETTINGS_KEY = '@@NOTEBOOK@@';
 
 interface Props {
   analysisState: AnalysisState;
   notebookType: string;
+  parameters?: Parameter[]; // Array of parameters from the wdk. Notebook preset will have a list of param names to match.
 }
 
 export function EdaNotebookAnalysis(props: Props) {
@@ -85,6 +91,37 @@ export function EdaNotebookAnalysis(props: Props) {
     // multiple recursive calls.
     notebookPreset.cells.forEach((cell) => processCell(cell));
   }, [analysis, setComputations, addVisualization, notebookPreset]);
+
+  // If the notebook preset has any wdk parameter cells, we need to
+  // check to ensure we have matching parameters from the notebook and wdk.
+  useEffect(() => {
+    if (analysis == null || notebookPreset == null) return;
+
+    // Extract the wdk parameter notebook cell.
+    const wdkParamNotebookCell = notebookPreset.cells.find(
+      (cell) => cell.type === 'wdkparam'
+    ) as WdkParamCellDescriptor;
+
+    if (wdkParamNotebookCell == null || props.parameters == null) return;
+
+    // Filter the wdk parameters to include only those listed in the notebook cell
+    const wdkParameters = props.parameters.filter((param) =>
+      wdkParamNotebookCell.paramNames.includes(param.name)
+    );
+
+    if (wdkParameters.length < wdkParamNotebookCell.paramNames.length) {
+      throw new Error(
+        `Not all WDK parameters specified in the notebook preset (${wdkParamNotebookCell.paramNames.join(
+          ', '
+        )}) were found in the provided parameters.`
+      );
+    }
+
+    // Update the notebook cell with the filtered parameters
+    wdkParamNotebookCell.wdkParameters = wdkParameters;
+    notebookPreset.cells[notebookPreset.cells.indexOf(wdkParamNotebookCell)] =
+      wdkParamNotebookCell;
+  }, [analysis, notebookPreset, props.parameters]);
 
   //
   // Now we render the notebook directly from the read-only `notebookPreset`,

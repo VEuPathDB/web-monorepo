@@ -3,6 +3,7 @@
 import { ReactNode } from 'react';
 import { NumberedHeader } from '../workspace/Subsetting/SubsetDownloadModal';
 import { colors } from '@material-ui/core';
+import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 const height = 25;
 const color = 'black';
@@ -15,11 +16,13 @@ export type NotebookCellDescriptor =
   | VisualizationCellDescriptor
   | ComputeCellDescriptor
   | TextCellDescriptor
-  | SubsetCellDescriptor;
+  | SubsetCellDescriptor
+  | WdkParamCellDescriptor;
 
 export interface NotebookCellDescriptorBase<T extends string> {
   type: T;
   title: string;
+  cellId: string; // Unique identifier for the cell, used for referencing one cell from another.
   cells?: NotebookCellDescriptor[];
   helperText?: ReactNode; // Optional information to display above the cell. Instead of a full text cell, use this for quick help and titles.
 }
@@ -43,6 +46,12 @@ export interface TextCellDescriptor extends NotebookCellDescriptorBase<'text'> {
 export interface SubsetCellDescriptor
   extends NotebookCellDescriptorBase<'subset'> {}
 
+export interface WdkParamCellDescriptor
+  extends NotebookCellDescriptorBase<'wdkparam'> {
+  paramNames: string[]; // Param names from the wdk query. These must match exactly or the notebook will err.
+  wdkParameters?: Parameter[]; // The parameters, including all their details, from the wdk query.
+}
+
 type PresetNotebook = {
   name: string;
   displayName: string;
@@ -62,6 +71,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
     cells: [
       {
         type: 'compute',
+        cellId: 'diff_1',
         title: 'Differential Abundance',
         computationName: 'differentialabundance',
         computationId: 'diff_1',
@@ -98,12 +108,14 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             title: 'Volcano Plot',
             visualizationName: 'volcanoplot',
             visualizationId: 'volcano_1',
+            cellId: 'volcano_1',
           },
         ],
       },
       {
         type: 'text',
         title: 'Text Cell',
+        cellId: 'text_1',
         text: 'This is a text cell for the differential abundance notebook.',
       },
     ],
@@ -119,6 +131,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
     cells: [
       {
         type: 'compute',
+        cellId: 'correlation_1',
         title: 'Correlation Computation',
         computationName: 'correlation',
         computationId: 'correlation_1',
@@ -135,6 +148,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
           {
             type: 'visualization',
             title: 'Network Visualization',
+            cellId: 'bipartite_1',
             visualizationName: 'bipartitenetwork',
             visualizationId: 'bipartite_1',
             helperText: (
@@ -149,6 +163,12 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
           },
         ],
       },
+      {
+        type: 'wdkparam',
+        cellId: 'wdkparam_1',
+        title: 'Finalize search parameters',
+        paramNames: ['wgcnaParam', 'wgcna_correlation_cutoff'],
+      },
     ],
   },
   boxplotNotebook: {
@@ -158,6 +178,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
     cells: [
       {
         type: 'visualization',
+        cellId: 'boxplot_1',
         title: 'Boxplot Visualization',
         visualizationName: 'boxplot',
         visualizationId: 'boxplot_1',

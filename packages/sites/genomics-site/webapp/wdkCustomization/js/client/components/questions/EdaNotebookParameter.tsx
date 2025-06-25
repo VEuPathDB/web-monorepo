@@ -40,6 +40,7 @@ type EdaNotebookParameterProps = {
   value: string;
   datasetIdParamName?: string;
   notebookTypeParamName?: string;
+  parameters?: Parameter[]; // Array of parameters from the wdk. Notebook preset will have a list of param names to match.
 };
 
 export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
@@ -48,6 +49,7 @@ export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
     value,
     datasetIdParamName,
     notebookTypeParamName,
+    parameters = [],
   } = props;
 
   // TEMPORARY: We don't have this value coming from the wdk yet.
@@ -114,6 +116,7 @@ export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
             <EdaNotebookAdapter
               analysisState={analysisState}
               notebookType={notebookType}
+              parameters={parameters}
             />
           </CoreUIThemeProvider>
         </WorkspaceContainer>
@@ -125,6 +128,7 @@ export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
 interface EdaNotebookAdapterProps {
   analysisState: AnalysisState;
   notebookType: string;
+  parameters?: Parameter[];
 }
 
 function EdaNotebookAdapter(props: EdaNotebookAdapterProps) {

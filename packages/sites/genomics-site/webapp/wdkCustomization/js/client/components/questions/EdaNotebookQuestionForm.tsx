@@ -6,13 +6,22 @@ import { EdaNotebookParameter } from './EdaNotebookParameter';
 import { ParameterGroup } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 export const EdaNotebookQuestionForm = (props: Props) => {
-  console.log('EdaNotebookQuestionForm props:', props);
-
-  // question params are in props.state.question.paramNames
+  // value will be the serialized analysis object
 
   const renderParamGroup = (group: ParameterGroup, formProps: Props) => {
-    return <EdaNotebookParameter value={'test'} />;
+    return (
+      <EdaNotebookParameter
+        value={'test'}
+        parameters={props.state.question.parameters}
+      />
+    );
   };
 
-  return <DefaultQuestionForm {...props} renderParamGroup={renderParamGroup} />;
+  return (
+    <DefaultQuestionForm
+      {...props}
+      renderParamGroup={renderParamGroup}
+      resetFormConfig={{ offered: false }}
+    />
+  );
 };
