@@ -68,6 +68,22 @@
     .NotebookCellHelpText:first-of-type {
       margin-top: 2em;
     }
+
+    .WdkParamInputs {
+      display: flex;
+      flex-direction: column;
+      gap: 2em;
+      margin-top: 1em;
+      margin-bottom: 1em;
+    }
+
+    .InputGroup {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 1em;
+      font-weight: 500;
+    }
     > details {
       border: 1px solid;
       border-color: color-mix(

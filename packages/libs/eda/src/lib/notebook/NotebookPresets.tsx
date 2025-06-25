@@ -168,6 +168,13 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         cellId: 'wdkparam_1',
         title: 'Finalize search parameters',
         paramNames: ['wgcnaParam', 'wgcna_correlation_cutoff'],
+        helperText: (
+          <NumberedHeader
+            number={3}
+            text={'Refine parameters for returning the list of genes.'}
+            color={colors.grey[800]}
+          />
+        ),
       },
     ],
   },
