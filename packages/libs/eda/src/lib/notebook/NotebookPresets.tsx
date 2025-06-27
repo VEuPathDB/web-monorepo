@@ -50,6 +50,11 @@ export interface WdkParamCellDescriptor
   extends NotebookCellDescriptorBase<'wdkparam'> {
   paramNames: string[]; // Param names from the wdk query. These must match exactly or the notebook will err.
   wdkParameters?: Parameter[]; // The parameters, including all their details, from the wdk query.
+  wdkUpdateParamValue?: (
+    parameter: Parameter,
+    newParamValue: string,
+    paramValues: Record<string, string>
+  ) => void; // Function to update the parameter value in the WDK search.
 }
 
 type PresetNotebook = {

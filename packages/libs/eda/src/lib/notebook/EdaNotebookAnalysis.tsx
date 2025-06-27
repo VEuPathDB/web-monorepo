@@ -21,6 +21,11 @@ interface Props {
   analysisState: AnalysisState;
   notebookType: string;
   parameters?: Parameter[]; // Array of parameters from the wdk. Notebook preset will have a list of param names to match.
+  wdkUpdateParamValue?: (
+    parameter: Parameter,
+    newParamValue: string,
+    paramValues: Record<string, string>
+  ) => void;
 }
 
 export function EdaNotebookAnalysis(props: Props) {
@@ -119,9 +124,11 @@ export function EdaNotebookAnalysis(props: Props) {
 
     // Update the notebook cell with the filtered parameters
     wdkParamNotebookCell.wdkParameters = wdkParameters;
+    wdkParamNotebookCell.wdkUpdateParamValue = props.wdkUpdateParamValue;
+
     notebookPreset.cells[notebookPreset.cells.indexOf(wdkParamNotebookCell)] =
       wdkParamNotebookCell;
-  }, [analysis, notebookPreset, props.parameters]);
+  }, [analysis, notebookPreset, props.parameters, props.wdkUpdateParamValue]);
 
   //
   // Now we render the notebook directly from the read-only `notebookPreset`,
