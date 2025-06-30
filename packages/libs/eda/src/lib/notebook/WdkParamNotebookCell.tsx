@@ -20,6 +20,12 @@ export function WdkParamNotebookCell(
 
   const { paramNames, title, wdkParameters, wdkUpdateParamValue } = cell;
 
+  const userInputParameters = wdkParameters?.filter((param) =>
+    paramNames?.includes(param.name)
+  );
+
+  console.log(wdkParameters);
+
   useEffect(() => {
     const uiSettings: DynamicObject = (analysisState.analysis?.descriptor.subset
       .uiSettings[uiStateKey] ?? {}) as DynamicObject;
@@ -41,6 +47,8 @@ export function WdkParamNotebookCell(
     }));
   }, [wdkParameters, analysisState]);
 
+  console.log(analysisState.analysis?.descriptor.subset.uiSettings);
+
   return (
     <>
       <div className="NotebookCellHelpText">
@@ -56,8 +64,9 @@ export function WdkParamNotebookCell(
           className={'NotebookCellContent' + (isDisabled ? ' disabled' : '')}
         >
           <div className="WdkParamInputs">
-            {wdkParameters &&
-              wdkParameters.map((param) => {
+            {userInputParameters &&
+              paramNames &&
+              userInputParameters.map((param) => {
                 const paramCurrentValue =
                   analysisState.analysis?.descriptor.subset.uiSettings[
                     uiStateKey
@@ -79,6 +88,7 @@ export function WdkParamNotebookCell(
                       <SingleSelect
                         items={selectItems}
                         value={paramCurrentValue as string}
+                        buttonDisplayContent={paramCurrentValue as string}
                         onSelect={(value: string) => {
                           if (wdkUpdateParamValue) {
                             const uiSettingsAsRecord: Record<string, string> =
@@ -89,6 +99,7 @@ export function WdkParamNotebookCell(
                                 acc[key] = value?.toString() ?? ''; // Convert value to string or use an empty string if undefined
                                 return acc;
                               }, {} as Record<string, string>);
+
                             wdkUpdateParamValue(
                               param,
                               value,
@@ -105,7 +116,6 @@ export function WdkParamNotebookCell(
                             })
                           );
                         }}
-                        buttonDisplayContent={'Select an option'}
                       />
                     </div>
                   );
