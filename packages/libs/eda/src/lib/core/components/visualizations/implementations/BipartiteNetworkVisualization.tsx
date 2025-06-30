@@ -187,6 +187,9 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const minDataWeight = Math.min(...uniqueDataWeights);
   const maxDataWeight = Math.max(...uniqueDataWeights);
 
+  const partitionNames =
+    options?.getParitionNames?.(studyMetadata, computationConfiguration) ?? {};
+
   // Clean and finalize data format. Specifically, assign link colors, add display labels
   const cleanedData = useMemo(() => {
     if (!data.value) return undefined;
@@ -244,9 +247,15 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     // sort node data by label
     // this is mutating the original paritions arrray :shrug:
     const orderedPartitions = data.value.bipartitenetwork.data.partitions.map(
-      (partition) => {
+      (partition, partitionIndex) => {
         return {
           ...partition,
+          name:
+            partitionNames[
+              `partition${
+                partitionIndex + 1
+              }Name` as keyof typeof partitionNames
+            ] ?? '',
           nodeIds: partition.nodeIds.concat().sort((a, b) => {
             const nodeA = nodesById.get(a);
             const nodeB = nodesById.get(b);
@@ -348,7 +357,6 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     getNodeMenuActions,
     // pass visible node labels
     visibleNodeLabels: visibleNodeLabels,
-    ...options?.getParitionNames?.(studyMetadata, computationConfiguration),
   };
 
   const plotNode = (

@@ -138,7 +138,7 @@ export const plugin: ComputationPlugin = {
           return { partition1Name, partition2Name };
         }
       },
-    }), // Must match name in data service and in visualization.tsx
+    }),
   },
   isEnabledInPicker: isEnabledInPicker,
   studyRequirements:

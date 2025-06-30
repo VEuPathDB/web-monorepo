@@ -105,6 +105,7 @@ function BipartiteNetworkPlot(
       column2Position,
       svgStyles.nodeSpacing,
       svgStyles.topPadding,
+      getNodeActions,
     ]
   );
 
