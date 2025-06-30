@@ -99,7 +99,7 @@ export interface Options
         partition2Name: string;
       }>
     | undefined;
-  additionalOnNodeClickAction?: (nodeId: string) => void;
+  additionalOnNodeClickAction?: (value: string) => void;
 }
 
 // Bipartite Network Visualization

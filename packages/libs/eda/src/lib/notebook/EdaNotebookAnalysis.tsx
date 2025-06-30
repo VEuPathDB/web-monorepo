@@ -8,6 +8,7 @@ import {
   presetNotebooks,
   NotebookCellDescriptor,
   WdkParamCellDescriptor,
+  UpdateWdkParamValue,
 } from './NotebookPresets';
 import { Computation } from '../core/types/visualization';
 import { plugins } from '../core/components/computations/plugins';
@@ -21,11 +22,7 @@ interface Props {
   analysisState: AnalysisState;
   notebookType: string;
   parameters?: Parameter[]; // Array of parameters from the wdk. Notebook preset will have a list of param names to match.
-  wdkUpdateParamValue?: (
-    parameter: Parameter,
-    newParamValue: string,
-    paramValues: Record<string, string>
-  ) => void;
+  updateWdkParamValue?: UpdateWdkParamValue; // Function to update the parameter value in the WDK search.
 }
 
 export function EdaNotebookAnalysis(props: Props) {
@@ -88,6 +85,21 @@ export function EdaNotebookAnalysis(props: Props) {
 
         addVisualization(parentComputationId, visualization);
       }
+
+      // Add wdk info if needed
+      if (
+        props.updateWdkParamValue &&
+        props.parameters &&
+        cell.associatedWdkParamName
+      ) {
+        const associatedWdkParam = props.parameters?.find(
+          (param) => param.name === cell.associatedWdkParamName
+        );
+        if (associatedWdkParam) {
+          cell.associatedWdkParam = associatedWdkParam;
+          cell.updateWdkParamValue = props.updateWdkParamValue;
+        }
+      }
     }
 
     // The recursion and state updates here work as intended because both
@@ -95,7 +107,14 @@ export function EdaNotebookAnalysis(props: Props) {
     // This ensures that updates are queued and applied in order, even across
     // multiple recursive calls.
     notebookPreset.cells.forEach((cell) => processCell(cell));
-  }, [analysis, setComputations, addVisualization, notebookPreset]);
+  }, [
+    analysis,
+    setComputations,
+    addVisualization,
+    notebookPreset,
+    props.updateWdkParamValue,
+    props.parameters,
+  ]);
 
   // If the notebook preset has any wdk parameter cells, we need to
   // check to ensure we have matching parameters from the notebook and wdk then
@@ -105,7 +124,7 @@ export function EdaNotebookAnalysis(props: Props) {
       analysis == null ||
       notebookPreset == null ||
       props.parameters == null ||
-      props.wdkUpdateParamValue == null
+      props.updateWdkParamValue == null
     )
       return;
 
@@ -116,13 +135,30 @@ export function EdaNotebookAnalysis(props: Props) {
 
     if (wdkParamNotebookCell == null) return;
 
-    // Update the notebook cell with the filtered parameters
+    // Update the wdk param notebook cell with the parameters
     wdkParamNotebookCell.wdkParameters = props.parameters;
-    wdkParamNotebookCell.wdkUpdateParamValue = props.wdkUpdateParamValue;
+    wdkParamNotebookCell.updateWdkParamValue = props.updateWdkParamValue;
 
     notebookPreset.cells[notebookPreset.cells.indexOf(wdkParamNotebookCell)] =
       wdkParamNotebookCell;
-  }, [analysis, notebookPreset, props.parameters, props.wdkUpdateParamValue]);
+
+    // // There may be additional cells that use wdk information, such as
+    // // visualizations that we can use to set props. We also need to update these
+    // // cells with the parameter object and update function.
+    // console.log(notebookPreset.cells);
+    // notebookPreset.cells.forEach((cell) => {
+    //   if (cell.associatedWdkParamName) {
+    //     console.log(props.parameters);
+    //     const associatedWdkParam = props.parameters?.find(
+    //       (param) => param.name === cell.associatedWdkParamName
+    //     );
+    //     if (associatedWdkParam) {
+    //       cell.associatedWdkParam = associatedWdkParam;
+    //       cell.updateWdkParamValue = props.updateWdkParamValue;
+    //     }
+    //   }
+    // });
+  }, [analysis, notebookPreset, props.parameters, props.updateWdkParamValue]);
 
   //
   // Now we render the notebook directly from the read-only `notebookPreset`,

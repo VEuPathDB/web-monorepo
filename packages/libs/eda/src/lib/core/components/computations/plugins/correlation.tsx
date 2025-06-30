@@ -82,8 +82,8 @@ export const plugin: ComputationPlugin = {
           return [];
         }
       },
-      additionalOnNodeClickAction: (nodeId: string) => {
-        console.log('Clicked node', nodeId);
+      additionalOnNodeClickAction: (value: string) => {
+        console.log('Clicked node', value);
       },
       // makeGetNodeMenuActions(studyMetadata) {
       //   const entities = entityTreeToArray(studyMetadata.rootEntity);

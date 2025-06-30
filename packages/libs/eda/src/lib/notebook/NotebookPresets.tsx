@@ -5,9 +5,18 @@ import { NumberedHeader } from '../workspace/Subsetting/SubsetDownloadModal';
 import { colors } from '@material-ui/core';
 import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { Options } from '../core/components/visualizations/implementations/BipartiteNetworkVisualization';
+import { updateParamValue } from './WdkParamNotebookCell';
+import { AnalysisState } from '../core/hooks/analysis';
 
 const height = 25;
 const color = 'black';
+
+export type UpdateWdkParamValue = (
+  parameter: Parameter,
+  newParamValue: string,
+  paramValues: Record<string, string>
+) => void;
+
 // The descriptors contain just enough information to render the cells when given the
 // appropriate context, such as analysis state. In EdaNotebookAnalysis, these
 // descriptors get converted into cells using the ids and such generated in
@@ -26,13 +35,20 @@ export interface NotebookCellDescriptorBase<T extends string> {
   cellId: string; // Unique identifier for the cell, used for referencing one cell from another.
   cells?: NotebookCellDescriptor[];
   helperText?: ReactNode; // Optional information to display above the cell. Instead of a full text cell, use this for quick help and titles.
+  associatedWdkParamName?: string; // Optional name of a wdk parameter related to this viz. Can be updated using the viz options.
+  associatedWdkParam?: Parameter; // Parameter object. Defined in wdk, not notebook preset.
+  updateWdkParamValue?: UpdateWdkParamValue; // Function to update the parameter value in the WDK search. Defined by the wdk, not the notebook preset
 }
 
 export interface VisualizationCellDescriptor
   extends NotebookCellDescriptorBase<'visualization'> {
   visualizationName: string;
   visualizationId: string;
-  vizPluginOptions?: Partial<Options>; // Viz plugin option overrides.
+  getVizPluginOptions?: (
+    analysisState: AnalysisState,
+    updateWdkParamValue: UpdateWdkParamValue,
+    param: Parameter
+  ) => Partial<Options>; // Viz plugin option overrides.
 }
 
 export interface ComputeCellDescriptor
@@ -52,11 +68,6 @@ export interface WdkParamCellDescriptor
   extends NotebookCellDescriptorBase<'wdkparam'> {
   paramNames: string[]; // Param names from the wdk query. These must match exactly or the notebook will err.
   wdkParameters?: Parameter[]; // The parameters, including all their details, from the wdk query.
-  wdkUpdateParamValue?: (
-    parameter: Parameter,
-    newParamValue: string,
-    paramValues: Record<string, string>
-  ) => void; // Function to update the parameter value in the WDK search.
 }
 
 type PresetNotebook = {
@@ -167,10 +178,20 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                 color={colors.grey[800]}
               />
             ),
-            vizPluginOptions: {
-              additionalOnNodeClickAction: (nodeId: string) => {
-                console.log('third times a charm');
-              },
+            associatedWdkParamName: 'wgcnaParam', // wdk param that controls module name
+            //@ts-ignore
+            getVizPluginOptions: (
+              analysisState: AnalysisState,
+              wdkUpdateParamValue: WdkUpdateParamValue,
+              param: Parameter
+            ) => {
+              return {
+                additionalOnNodeClickAction: updateParamValue(
+                  analysisState,
+                  wdkUpdateParamValue,
+                  param
+                ),
+              };
             },
           },
         ],

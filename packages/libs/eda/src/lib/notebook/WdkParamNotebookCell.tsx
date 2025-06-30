@@ -6,6 +6,8 @@ import { Item } from '@veupathdb/coreui/lib/components/inputs/checkboxes/Checkbo
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
 import { NumberOrDate } from '@veupathdb/components/lib/types/general';
 import { useEffect } from 'react';
+import { AnalysisState } from '../core';
+import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 const uiStateKey = '@@NOTEBOOK_WDK_PARAMS@@';
 
@@ -18,7 +20,7 @@ export function WdkParamNotebookCell(
 ) {
   const { cell, isDisabled, analysisState } = props;
 
-  const { paramNames, title, wdkParameters, wdkUpdateParamValue } = cell;
+  const { paramNames, title, wdkParameters, updateWdkParamValue } = cell;
 
   const userInputParameters = wdkParameters?.filter((param) =>
     paramNames?.includes(param.name)
@@ -46,8 +48,6 @@ export function WdkParamNotebookCell(
       [uiStateKey]: uiSettings,
     }));
   }, [wdkParameters, analysisState]);
-
-  console.log(analysisState.analysis?.descriptor.subset.uiSettings);
 
   return (
     <>
@@ -89,33 +89,11 @@ export function WdkParamNotebookCell(
                         items={selectItems}
                         value={paramCurrentValue as string}
                         buttonDisplayContent={paramCurrentValue as string}
-                        onSelect={(value: string) => {
-                          if (wdkUpdateParamValue) {
-                            const uiSettingsAsRecord: Record<string, string> =
-                              Object.entries(
-                                analysisState.analysis?.descriptor.subset
-                                  .uiSettings[uiStateKey] ?? {}
-                              ).reduce((acc, [key, value]) => {
-                                acc[key] = value?.toString() ?? ''; // Convert value to string or use an empty string if undefined
-                                return acc;
-                              }, {} as Record<string, string>);
-
-                            wdkUpdateParamValue(
-                              param,
-                              value,
-                              uiSettingsAsRecord
-                            );
-                          }
-                          analysisState.setVariableUISettings(
-                            (currentState) => ({
-                              ...currentState,
-                              [uiStateKey]: {
-                                ...currentState[uiStateKey],
-                                [param.name]: value,
-                              },
-                            })
-                          );
-                        }}
+                        onSelect={updateParamValue(
+                          analysisState,
+                          updateWdkParamValue,
+                          param
+                        )}
                       />
                     </div>
                   );
@@ -158,3 +136,30 @@ export function WdkParamNotebookCell(
     </>
   );
 }
+
+export const updateParamValue = (
+  analysisState: AnalysisState,
+  wdkUpdateParamValue: WdkParamCellDescriptor['updateWdkParamValue'],
+  param: Parameter
+) => {
+  return (value: string) => {
+    console.log('im updating!', param);
+    if (wdkUpdateParamValue) {
+      const uiSettingsAsRecord: Record<string, string> = Object.entries(
+        analysisState.analysis?.descriptor.subset.uiSettings[uiStateKey] ?? {}
+      ).reduce((acc, [key, value]) => {
+        acc[key] = value?.toString() ?? ''; // Convert value to string or use an empty string if undefined
+        return acc;
+      }, {} as Record<string, string>);
+
+      wdkUpdateParamValue(param, value, uiSettingsAsRecord);
+    }
+    analysisState.setVariableUISettings((currentState) => ({
+      ...currentState,
+      [uiStateKey]: {
+        ...currentState[uiStateKey],
+        [param.name]: value,
+      },
+    }));
+  };
+};

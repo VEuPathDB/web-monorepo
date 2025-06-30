@@ -1,7 +1,7 @@
 import DefaultQuestionForm, {
   Props,
 } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { EdaNotebookParameter } from './EdaNotebookParameter';
 import {
   ParameterGroup,
@@ -17,23 +17,28 @@ export const EdaNotebookQuestionForm = (props: Props) => {
     throw new Error('No search defined.');
   }
 
+  const updateWdkParamValue = useCallback(
+    (
+      parameter: Parameter,
+      newParamValue: string,
+      paramValues: ParameterValues
+    ) => {
+      props.eventHandlers.updateParamValue({
+        searchName,
+        parameter,
+        paramValues,
+        paramValue: newParamValue,
+      });
+    },
+    [props, searchName]
+  );
+
   const renderParamGroup = (group: ParameterGroup, formProps: Props) => {
     return (
       <EdaNotebookParameter
         value={'test'}
         parameters={props.state.question.parameters}
-        wdkUpdateParamValue={(
-          parameter: Parameter,
-          newParamValue: string,
-          paramValues: ParameterValues
-        ) => {
-          props.eventHandlers.updateParamValue({
-            searchName,
-            parameter,
-            paramValues,
-            paramValue: newParamValue,
-          });
-        }}
+        updateWdkParamValue={updateWdkParamValue}
       />
     );
   };

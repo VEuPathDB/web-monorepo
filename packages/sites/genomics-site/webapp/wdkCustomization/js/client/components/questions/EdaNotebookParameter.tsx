@@ -34,6 +34,7 @@ import { DatasetItem } from '@veupathdb/wdk-client/lib/Views/Question/Params/Dat
 import { parseJson } from '@veupathdb/eda/lib/notebook/Utils';
 import { EdaNotebookAnalysis } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
 import { debounce } from 'lodash';
+import { UpdateWdkParamValue } from '@veupathdb/eda/lib/notebook/NotebookPresets';
 
 type EdaNotebookParameterProps = {
   onParamValueChange?: (value: string) => void;
@@ -41,11 +42,7 @@ type EdaNotebookParameterProps = {
   datasetIdParamName?: string;
   notebookTypeParamName?: string;
   parameters?: Parameter[]; // Array of parameters from the wdk. Notebook preset will have a list of param names to match.
-  wdkUpdateParamValue?: (
-    parameter: Parameter,
-    newParamValue: string,
-    paramValues: Record<string, string>
-  ) => void;
+  updateWdkParamValue?: UpdateWdkParamValue;
 };
 
 export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
@@ -55,7 +52,7 @@ export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
     datasetIdParamName,
     notebookTypeParamName,
     parameters = [],
-    wdkUpdateParamValue,
+    updateWdkParamValue,
   } = props;
 
   // TEMPORARY: We don't have this value coming from the wdk yet.
@@ -123,7 +120,7 @@ export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
               analysisState={analysisState}
               notebookType={notebookType}
               parameters={parameters}
-              wdkUpdateParamValue={wdkUpdateParamValue}
+              updateWdkParamValue={updateWdkParamValue}
             />
           </CoreUIThemeProvider>
         </WorkspaceContainer>
@@ -136,11 +133,7 @@ interface EdaNotebookAdapterProps {
   analysisState: AnalysisState;
   notebookType: string;
   parameters?: Parameter[];
-  wdkUpdateParamValue?: (
-    parameter: Parameter,
-    newParamValue: string,
-    paramValues: Record<string, string>
-  ) => void;
+  updateWdkParamValue?: UpdateWdkParamValue;
 }
 
 function EdaNotebookAdapter(props: EdaNotebookAdapterProps) {

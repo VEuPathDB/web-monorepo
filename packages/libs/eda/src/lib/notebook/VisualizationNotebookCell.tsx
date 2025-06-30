@@ -17,6 +17,8 @@ export function VisualizationNotebookCell(
   const { analysis, updateVisualization } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
 
+  console.log(cell);
+
   const entities = useStudyEntities();
   const geoConfigs = useGeoConfig(entities);
   const totalCountsResult = useEntityCounts();
@@ -24,7 +26,13 @@ export function VisualizationNotebookCell(
     analysis.descriptor.subset.descriptor
   );
 
-  const { visualizationName, visualizationId, vizPluginOptions } = cell;
+  const {
+    visualizationName,
+    visualizationId,
+    getVizPluginOptions,
+    updateWdkParamValue,
+    associatedWdkParam,
+  } = cell;
 
   const { visualization, computation } =
     analysisState.getVisualizationAndComputation(visualizationId) ?? {};
@@ -86,10 +94,27 @@ export function VisualizationNotebookCell(
     plotContainerStyleOverrides.width = 1100;
   }
 
-  //@ts-ignore
-  if (vizPlugin != null && vizPluginOptions !== undefined) {
-    //@ts-ignore
-    vizPlugin.options = { ...vizPlugin.options, ...vizPluginOptions };
+  if (
+    vizPlugin &&
+    getVizPluginOptions &&
+    associatedWdkParam &&
+    updateWdkParamValue
+  ) {
+    console.log({
+      ...getVizPluginOptions(
+        analysisState,
+        updateWdkParamValue,
+        associatedWdkParam
+      ),
+    });
+    vizPlugin.options = {
+      ...vizPlugin.options,
+      ...getVizPluginOptions(
+        analysisState,
+        updateWdkParamValue,
+        associatedWdkParam
+      ),
+    };
   }
 
   return visualization ? (
