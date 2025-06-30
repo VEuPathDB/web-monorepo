@@ -82,7 +82,7 @@ export const BipartiteNetworkConfig = t.partial({
   significanceThreshold: t.number,
 });
 
-interface Options
+export interface Options
   extends LayoutOptions,
     TitleOptions,
     LegendOptions,
@@ -99,6 +99,7 @@ interface Options
         partition2Name: string;
       }>
     | undefined;
+  additionalOnNodeClickAction?: (nodeId: string) => void;
 }
 
 // Bipartite Network Visualization
@@ -357,6 +358,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     getNodeMenuActions,
     // pass visible node labels
     visibleNodeLabels: visibleNodeLabels,
+    additionalOnNodeClickAction: options?.additionalOnNodeClickAction,
   };
 
   const plotNode = (

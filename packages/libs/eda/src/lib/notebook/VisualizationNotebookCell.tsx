@@ -24,7 +24,7 @@ export function VisualizationNotebookCell(
     analysis.descriptor.subset.descriptor
   );
 
-  const { visualizationName, visualizationId } = cell;
+  const { visualizationName, visualizationId, vizPluginOptions } = cell;
 
   const { visualization, computation } =
     analysisState.getVisualizationAndComputation(visualizationId) ?? {};
@@ -84,6 +84,12 @@ export function VisualizationNotebookCell(
   const plotContainerStyleOverrides: PlotContainerStyleOverrides = {};
   if (visualization?.descriptor.type === 'bipartitenetwork') {
     plotContainerStyleOverrides.width = 1100;
+  }
+
+  //@ts-ignore
+  if (vizPlugin != null && vizPluginOptions !== undefined) {
+    //@ts-ignore
+    vizPlugin.options = { ...vizPlugin.options, ...vizPluginOptions };
   }
 
   return visualization ? (

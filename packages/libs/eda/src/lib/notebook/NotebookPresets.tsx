@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 import { NumberedHeader } from '../workspace/Subsetting/SubsetDownloadModal';
 import { colors } from '@material-ui/core';
 import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { Options } from '../core/components/visualizations/implementations/BipartiteNetworkVisualization';
 
 const height = 25;
 const color = 'black';
@@ -31,6 +32,7 @@ export interface VisualizationCellDescriptor
   extends NotebookCellDescriptorBase<'visualization'> {
   visualizationName: string;
   visualizationId: string;
+  vizPluginOptions?: Partial<Options>; // Viz plugin option overrides.
 }
 
 export interface ComputeCellDescriptor
@@ -165,6 +167,11 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                 color={colors.grey[800]}
               />
             ),
+            vizPluginOptions: {
+              additionalOnNodeClickAction: (nodeId: string) => {
+                console.log('third times a charm');
+              },
+            },
           },
         ],
       },
