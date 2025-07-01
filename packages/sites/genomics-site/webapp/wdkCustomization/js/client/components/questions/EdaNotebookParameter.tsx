@@ -35,6 +35,11 @@ import { parseJson } from '@veupathdb/eda/lib/notebook/Utils';
 import { EdaNotebookAnalysis } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
 import { debounce } from 'lodash';
 import { UpdateWdkParamValue } from '@veupathdb/eda/lib/notebook/NotebookPresets';
+import makeSnackbarProvider, {
+  SnackbarStyleProps,
+} from '@veupathdb/coreui/lib/components/notifications/SnackbarProvider';
+
+const SnackbarProvider = makeSnackbarProvider({});
 
 type EdaNotebookParameterProps = {
   onParamValueChange?: (value: string) => void;
@@ -116,12 +121,14 @@ export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
               },
             }}
           >
-            <EdaNotebookAdapter
-              analysisState={analysisState}
-              notebookType={notebookType}
-              parameters={parameters}
-              updateWdkParamValue={updateWdkParamValue}
-            />
+            <SnackbarProvider styleProps={{ nudge: false }}>
+              <EdaNotebookAdapter
+                analysisState={analysisState}
+                notebookType={notebookType}
+                parameters={parameters}
+                updateWdkParamValue={updateWdkParamValue}
+              />
+            </SnackbarProvider>
           </CoreUIThemeProvider>
         </WorkspaceContainer>
       </DocumentationContainer>

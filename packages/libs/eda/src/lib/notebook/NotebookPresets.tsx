@@ -8,6 +8,7 @@ import { Options } from '../core/components/visualizations/implementations/Bipar
 import { updateParamValue } from './WdkParamNotebookCell';
 import { AnalysisState } from '../core/hooks/analysis';
 import { NodeData } from '@veupathdb/components/lib/types/plots/network';
+import { OptionsObject } from 'notistack';
 
 const height = 25;
 const color = 'black';
@@ -48,7 +49,8 @@ export interface VisualizationCellDescriptor
   getVizPluginOptions?: (
     analysisState: AnalysisState,
     updateWdkParamValue: UpdateWdkParamValue,
-    param: Parameter
+    param: Parameter,
+    enqueueSnackbar: (message: string, options?: OptionsObject) => void // So we can call up the snackbar.
   ) => Partial<Options>; // Viz plugin option overrides.
 }
 
@@ -183,16 +185,27 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             getVizPluginOptions: (
               analysisState: AnalysisState,
               wdkUpdateParamValue: UpdateWdkParamValue,
-              param: Parameter
+              param: Parameter,
+              enqueueSnackbar: (
+                message: string,
+                options?: OptionsObject
+              ) => void // So we can call up the snackbar.
             ) => {
               return {
                 additionalOnNodeClickAction: (node: NodeData) => {
+                  // Update module name in the wdk param selector
                   const moduleName = node.label ?? '';
                   updateParamValue(
                     analysisState,
                     wdkUpdateParamValue,
                     param
                   ).call(null, moduleName.toLowerCase());
+
+                  // Open snackbar
+                  enqueueSnackbar(
+                    `Updated WGNCA module search parameter: ${moduleName}`,
+                    { variant: 'info', persist: true }
+                  );
                 },
               };
             },

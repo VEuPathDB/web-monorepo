@@ -9,6 +9,7 @@ import { VisualizationCellDescriptor } from './NotebookPresets';
 import { useCachedPromise } from '../core/hooks/cachedPromise';
 import { useComputeJobStatus } from '../core/components/computations/ComputeJobStatusHook';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
+import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 
 export function VisualizationNotebookCell(
   props: NotebookCellProps<VisualizationCellDescriptor>
@@ -17,14 +18,13 @@ export function VisualizationNotebookCell(
   const { analysis, updateVisualization } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
 
-  console.log(cell);
-
   const entities = useStudyEntities();
   const geoConfigs = useGeoConfig(entities);
   const totalCountsResult = useEntityCounts();
   const filteredCountsResult = useEntityCounts(
     analysis.descriptor.subset.descriptor
   );
+  const { enqueueSnackbar } = useSnackbar();
 
   const {
     visualizationName,
@@ -100,19 +100,13 @@ export function VisualizationNotebookCell(
     associatedWdkParam &&
     updateWdkParamValue
   ) {
-    console.log({
-      ...getVizPluginOptions(
-        analysisState,
-        updateWdkParamValue,
-        associatedWdkParam
-      ),
-    });
     vizPlugin.options = {
       ...vizPlugin.options,
       ...getVizPluginOptions(
         analysisState,
         updateWdkParamValue,
-        associatedWdkParam
+        associatedWdkParam,
+        enqueueSnackbar
       ),
     };
   }
