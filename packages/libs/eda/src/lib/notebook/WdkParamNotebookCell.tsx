@@ -26,8 +26,6 @@ export function WdkParamNotebookCell(
     paramNames?.includes(param.name)
   );
 
-  console.log(wdkParameters);
-
   useEffect(() => {
     const uiSettings: DynamicObject = (analysisState.analysis?.descriptor.subset
       .uiSettings[uiStateKey] ?? {}) as DynamicObject;
@@ -143,7 +141,6 @@ export const updateParamValue = (
   param: Parameter
 ) => {
   return (value: string) => {
-    console.log('im updating!', param);
     if (wdkUpdateParamValue) {
       const uiSettingsAsRecord: Record<string, string> = Object.entries(
         analysisState.analysis?.descriptor.subset.uiSettings[uiStateKey] ?? {}

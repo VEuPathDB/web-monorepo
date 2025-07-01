@@ -7,6 +7,7 @@ import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { Options } from '../core/components/visualizations/implementations/BipartiteNetworkVisualization';
 import { updateParamValue } from './WdkParamNotebookCell';
 import { AnalysisState } from '../core/hooks/analysis';
+import { NodeData } from '@veupathdb/components/lib/types/plots/network';
 
 const height = 25;
 const color = 'black';
@@ -179,18 +180,20 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
               />
             ),
             associatedWdkParamName: 'wgcnaParam', // wdk param that controls module name
-            //@ts-ignore
             getVizPluginOptions: (
               analysisState: AnalysisState,
-              wdkUpdateParamValue: WdkUpdateParamValue,
+              wdkUpdateParamValue: UpdateWdkParamValue,
               param: Parameter
             ) => {
               return {
-                additionalOnNodeClickAction: updateParamValue(
-                  analysisState,
-                  wdkUpdateParamValue,
-                  param
-                ),
+                additionalOnNodeClickAction: (node: NodeData) => {
+                  const moduleName = node.label ?? '';
+                  updateParamValue(
+                    analysisState,
+                    wdkUpdateParamValue,
+                    param
+                  ).call(null, moduleName.toLowerCase());
+                },
               };
             },
           },

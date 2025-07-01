@@ -32,6 +32,7 @@ import {
   CompleteCorrelationConfig,
   CorrelationConfig,
 } from '../../../types/apps';
+import { NodeData } from '@veupathdb/components/lib/types/plots/network';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -82,8 +83,8 @@ export const plugin: ComputationPlugin = {
           return [];
         }
       },
-      additionalOnNodeClickAction: (value: string) => {
-        console.log('Clicked node', value);
+      additionalOnNodeClickAction: (node: NodeData) => {
+        console.log('Clicked node', node.id);
       },
       // makeGetNodeMenuActions(studyMetadata) {
       //   const entities = entityTreeToArray(studyMetadata.rootEntity);

@@ -44,7 +44,10 @@ import { FacetedPlotLayout } from '../../layouts/FacetedPlotLayout';
 import { H6 } from '@veupathdb/coreui';
 import { CorrelationConfig } from '../../../types/apps';
 import { StudyMetadata } from '../../..';
-import { NodeMenuAction } from '@veupathdb/components/lib/types/plots/network';
+import {
+  NodeData,
+  NodeMenuAction,
+} from '@veupathdb/components/lib/types/plots/network';
 // end imports
 
 // Defaults
@@ -99,7 +102,7 @@ export interface Options
         partition2Name: string;
       }>
     | undefined;
-  additionalOnNodeClickAction?: (value: string) => void;
+  additionalOnNodeClickAction?: (node: NodeData) => void;
 }
 
 // Bipartite Network Visualization

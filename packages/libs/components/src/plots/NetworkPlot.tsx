@@ -52,7 +52,7 @@ export interface NetworkPlotProps {
   /** visible node labels */
   visibleNodeLabels?: NodeLabelProp[];
   /** Add additional functionality to a node click */
-  additionalOnNodeClickAction?: (value: string) => void;
+  additionalOnNodeClickAction?: (node: NodeData) => void;
 }
 
 const DEFAULT_PLOT_WIDTH = 800;
@@ -309,7 +309,7 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
                             id === node.id ? undefined : node.id
                           );
                           additionalOnNodeClickAction &&
-                            additionalOnNodeClickAction(node.id);
+                            additionalOnNodeClickAction(node);
                         }}
                         fontWeight={isHighlighted ? 600 : 400}
                         // pass showLabel as a prop for hover event

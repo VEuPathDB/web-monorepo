@@ -147,8 +147,8 @@ Thumbnail.args = {
 };
 
 // Add additional behavior to a node click
-function handleNodeClick(value: string) {
-  console.log('You clicked node ' + value);
+function handleNodeClick(node: NodeData) {
+  console.log('You clicked node ' + node.id);
 }
 export const WithAdditionalNodeClickBehavior = Template.bind({});
 WithAdditionalNodeClickBehavior.args = {
