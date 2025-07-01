@@ -3,7 +3,10 @@
 import { ReactNode } from 'react';
 import { NumberedHeader } from '../workspace/Subsetting/SubsetDownloadModal';
 import { colors } from '@material-ui/core';
-import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import {
+  Parameter,
+  StringParam,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { Options } from '../core/components/visualizations/implementations/BipartiteNetworkVisualization';
 import { updateParamValue } from './WdkParamNotebookCell';
 import { AnalysisState } from '../core/hooks/analysis';
@@ -12,6 +15,8 @@ import { OptionsObject } from 'notistack';
 
 const height = 25;
 const color = 'black';
+
+export const NOTEBOOK_UI_STATE_KEY = '@@NOTEBOOK_WDK_PARAMS@@';
 
 export type UpdateWdkParamValue = (
   parameter: Parameter,
@@ -193,13 +198,34 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             ) => {
               return {
                 additionalOnNodeClickAction: (node: NodeData) => {
+                  const moduleName = (node.label ?? '').toLowerCase();
+
+                  // Do nothing if the node they clicked on is
+                  // not from the group of modules in the param.
+                  // type Parameter has vocabulary... not sure why it's an issue.
+                  // @ts-ignore
+                  const allowedValues = param.vocabulary.map(
+                    (item: [string, string, null]) => item[0].toLowerCase()
+                  );
+                  if (!allowedValues.includes(moduleName)) {
+                    return;
+                  }
+
+                  // Do nothing if the module they clicked on is already selected.
+                  const currentValue = (analysisState.analysis?.descriptor
+                    .subset.uiSettings[NOTEBOOK_UI_STATE_KEY] ?? {})[
+                    'wgcnaParam'
+                  ] as string;
+                  if (currentValue?.toLowerCase() === moduleName) {
+                    return;
+                  }
+
                   // Update module name in the wdk param selector
-                  const moduleName = node.label ?? '';
                   updateParamValue(
                     analysisState,
                     wdkUpdateParamValue,
                     param
-                  ).call(null, moduleName.toLowerCase());
+                  ).call(null, moduleName);
 
                   // Open snackbar
                   enqueueSnackbar(

@@ -107,7 +107,6 @@ function NetworkPlot(props: NetworkPlotProps, ref: Ref<HTMLDivElement>) {
   const plotRect = plotRef.current?.getBoundingClientRect();
   const imageHeight = plotRect?.height;
   const imageWidth = plotRect?.width;
-  console.log('imageHeight', imageHeight);
 
   // Set up styles for the network and incorporate overrides
   const svgStyles = {

@@ -1,6 +1,9 @@
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
 import { NotebookCellProps } from './NotebookCell';
-import { WdkParamCellDescriptor } from './NotebookPresets';
+import {
+  NOTEBOOK_UI_STATE_KEY,
+  WdkParamCellDescriptor,
+} from './NotebookPresets';
 import { SingleSelect } from '@veupathdb/coreui';
 import { Item } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxList';
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
@@ -9,7 +12,7 @@ import { useEffect } from 'react';
 import { AnalysisState } from '../core';
 import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
-const uiStateKey = '@@NOTEBOOK_WDK_PARAMS@@';
+const uiStateKey = NOTEBOOK_UI_STATE_KEY;
 
 interface DynamicObject {
   [key: string]: number | string | undefined;

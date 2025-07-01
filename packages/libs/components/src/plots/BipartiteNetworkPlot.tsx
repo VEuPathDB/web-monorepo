@@ -74,7 +74,6 @@ function BipartiteNetworkPlot(
     columnPadding: 100,
     ...svgStyleOverrides,
   };
-  console.log('height', svgStyles.height);
 
   const column1Position = svgStyles.columnPadding;
   const column2Position = Number(svgStyles.width) - svgStyles.columnPadding;
