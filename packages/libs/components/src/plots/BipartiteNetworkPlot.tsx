@@ -23,6 +23,7 @@ export interface BipartiteNetworkPlotProps extends NetworkPlotProps {
 }
 
 const DEFAULT_TOP_PADDING = 40;
+const DEFAULT_BOTTOM_PADDING = 20;
 const DEFAULT_NODE_SPACING = 30;
 const DEFAULT_SVG_WIDTH = 400;
 
@@ -59,18 +60,21 @@ function BipartiteNetworkPlot(
   } = props;
 
   // Set up styles for the bipartite network and incorporate overrides
+  const topPadding =
+    partitions[0].name || partitions[1].name ? 80 : DEFAULT_TOP_PADDING;
   const svgStyles = {
     width: Number(containerStyles?.width) || DEFAULT_SVG_WIDTH,
     height:
       Math.max(partitions[1].nodeIds.length, partitions[0].nodeIds.length) *
         DEFAULT_NODE_SPACING +
-      DEFAULT_TOP_PADDING,
-    topPadding:
-      partitions[0].name || partitions[1].name ? 60 : DEFAULT_TOP_PADDING,
+      topPadding +
+      DEFAULT_BOTTOM_PADDING,
+    topPadding: topPadding,
     nodeSpacing: DEFAULT_NODE_SPACING,
     columnPadding: 100,
     ...svgStyleOverrides,
   };
+  console.log('height', svgStyles.height);
 
   const column1Position = svgStyles.columnPadding;
   const column2Position = Number(svgStyles.width) - svgStyles.columnPadding;
