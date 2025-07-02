@@ -94,6 +94,8 @@ export function VisualizationNotebookCell(
     plotContainerStyleOverrides.width = 1100;
   }
 
+  // Override vizPlugin Options with ones defined in the notebook preset.
+  // For now this is used to link the bipartite network to the wdk param.
   if (
     vizPlugin &&
     getVizPluginOptions &&

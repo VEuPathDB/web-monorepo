@@ -29,9 +29,6 @@ import { DatasetItem } from '@veupathdb/wdk-client/lib/Views/Question/Params/Dat
 import { parseJson } from '@veupathdb/eda/lib/notebook/Utils';
 import { EdaNotebookAnalysis } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
 import { WdkUpdateParamValue } from '@veupathdb/eda/lib/notebook/NotebookPresets';
-import makeSnackbarProvider from '@veupathdb/coreui/lib/components/notifications/SnackbarProvider';
-
-// const SnackbarProvider = makeSnackbarProvider({});
 
 type EdaNotebookParameterProps = {
   value: string;
@@ -111,14 +108,12 @@ export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
               },
             }}
           >
-            {/* <SnackbarProvider styleProps={{ nudge: false }}> */}
             <EdaNotebookAdapter
               analysisState={analysisState}
               notebookType={notebookType}
               parameters={parameters}
               wdkUpdateParamValue={wdkUpdateParamValue}
             />
-            {/* </SnackbarProvider> */}
           </CoreUIThemeProvider>
         </WorkspaceContainer>
       </DocumentationContainer>
@@ -129,8 +124,8 @@ export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
 interface EdaNotebookAdapterProps {
   analysisState: AnalysisState;
   notebookType: string;
-  parameters?: Parameter[];
-  wdkUpdateParamValue?: WdkUpdateParamValue;
+  parameters?: Parameter[]; // Passed to notebook
+  wdkUpdateParamValue?: WdkUpdateParamValue; // Passed to notebook
 }
 
 function EdaNotebookAdapter(props: EdaNotebookAdapterProps) {

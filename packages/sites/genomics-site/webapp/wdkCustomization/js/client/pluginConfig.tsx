@@ -44,10 +44,6 @@ import {
   EdaSubsetStepDetails,
 } from './components/questions/EdaSubsetParameter';
 import { GenesByEdaSubset } from './components/questions/GenesByEdaSubset';
-import {
-  EdaNotebookParameter,
-  EdaNotebookStepDetails,
-} from './components/questions/EdaNotebookParameter';
 import { EdaNotebookQuestionForm } from './components/questions/EdaNotebookQuestionForm';
 
 const BlastForm = React.lazy(() => import('./plugins/BlastForm'));
@@ -196,16 +192,6 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
     searchName: 'GenesByBindingSiteFeature',
     component: GenesByBindingSiteFeature,
   },
-  // {
-  //   type: 'questionFormParameter',
-  //   name: 'wgcnaParam',
-  //   component: EdaNotebookParameter,
-  // },
-  // {
-  //   type: 'questionFormParameter',
-  //   test: ({ question }) => question?.queryName === 'GenesByWGCNAModule',
-  //   component: GenesByWGCNAModules,
-  // },
   {
     type: 'questionForm',
     name: 'DynSpansBySourceId',
@@ -275,11 +261,6 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
     test: isPhenotypeSubsetSearch,
     component: EdaSubsetStepDetails,
   },
-  // {
-  //   type: 'stepDetails',
-  //   test: ({ question }) => question?.queryName === 'GenesByWGCNAModule',
-  //   component: EdaNotebookStepDetails,
-  // },
   {
     type: 'questionForm',
     test: ({ question }) => question?.queryName === 'GenesByWGCNAModule',

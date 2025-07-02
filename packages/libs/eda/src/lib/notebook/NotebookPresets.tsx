@@ -10,9 +10,6 @@ import { AnalysisState } from '../core/hooks/analysis';
 import { NodeData } from '@veupathdb/components/lib/types/plots/network';
 import { OptionsObject } from 'notistack';
 
-const height = 25;
-const color = 'black';
-
 export const NOTEBOOK_UI_STATE_KEY = '@@NOTEBOOK_WDK_PARAMS@@';
 
 // Type of function that we'll call wdkUpdateParamValue. It's
@@ -98,33 +95,6 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         title: 'Differential Abundance',
         computationName: 'differentialabundance',
         computationId: 'diff_1',
-        helperText: (
-          <>
-            <div
-              style={{
-                display: 'inline-block',
-                width: height + 'px',
-                height: height + 'px',
-                lineHeight: height + 'px',
-                color: color,
-                border: '2px solid' + color,
-                borderRadius: height + 'px',
-                fontSize: 18,
-                fontWeight: 'bold',
-                textAlign: 'center',
-                boxSizing: 'content-box',
-                userSelect: 'none',
-              }}
-            >
-              1
-            </div>
-            <span>
-              {' '}
-              Configure and run a DESeq2 computation to find differentially
-              expressed genes.
-            </span>
-          </>
-        ),
         cells: [
           {
             type: 'visualization',

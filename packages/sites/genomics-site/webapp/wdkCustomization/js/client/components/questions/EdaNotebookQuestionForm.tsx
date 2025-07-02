@@ -10,13 +10,12 @@ import {
 } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 export const EdaNotebookQuestionForm = (props: Props) => {
-  // value will be the serialized analysis object
-
   const { searchName } = props;
   if (!searchName) {
     throw new Error('No search defined.');
   }
 
+  // We'll use this function throughout the notebook to update any wdk parameters.
   const wdkUpdateParamValue = useCallback(
     (
       parameter: Parameter,
@@ -33,6 +32,7 @@ export const EdaNotebookQuestionForm = (props: Props) => {
     [props, searchName]
   );
 
+  // An override that renders the notebook instead of any default parameter or parameter group ui.
   const renderParamGroup = (group: ParameterGroup, formProps: Props) => {
     return (
       <EdaNotebookParameter
