@@ -32,6 +32,7 @@ import {
   CompleteCorrelationConfig,
   CorrelationConfig,
 } from '../../../types/apps';
+import { NodeData } from '@veupathdb/components/lib/types/plots/network';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -82,45 +83,6 @@ export const plugin: ComputationPlugin = {
           return [];
         }
       },
-      makeGetNodeMenuActions(studyMetadata) {
-        const entities = entityTreeToArray(studyMetadata.rootEntity);
-        const variables = entities.flatMap((e) => e.variables);
-        const collections = entities.flatMap(
-          (entity) => entity.collections ?? []
-        );
-        const hostCollection = collections.find(
-          (c) => c.id === 'EUPATH_0005050'
-        );
-        const parasiteCollection = collections.find(
-          (c) => c.id === 'EUPATH_0005051'
-        );
-        return function getNodeActions(nodeId: string) {
-          const [, variableId] = nodeId.split('.');
-          const variable = variables.find((v) => v.id === variableId);
-          if (variable == null) return [];
-
-          // E.g., "qa."
-          const urlPrefix = window.location.host.replace(
-            /(plasmodb|hostdb)\.org/,
-            ''
-          );
-
-          const href = parasiteCollection?.memberVariableIds.includes(
-            variable.id
-          )
-            ? `//${urlPrefix}plasmodb.org/plasmo/app/search/transcript/GenesByRNASeqpfal3D7_Lee_Gambian_ebi_rnaSeq_RSRCWGCNAModules?param.wgcnaParam=${variable.displayName.toLowerCase()}&autoRun=1`
-            : hostCollection?.memberVariableIds.includes(variable.id)
-            ? `//${urlPrefix}hostdb.org/hostdb/app/search/transcript/GenesByRNASeqhsapREF_Lee_Gambian_ebi_rnaSeq_RSRCWGCNAModules?param.wgcnaParam=${variable.displayName.toLowerCase()}&autoRun=1`
-            : undefined;
-          if (href == null) return [];
-          return [
-            {
-              label: 'See list of genes',
-              href,
-            },
-          ];
-        };
-      },
       getParitionNames(studyMetadata, config) {
         if (CorrelationConfig.is(config)) {
           const entities = entityTreeToArray(studyMetadata.rootEntity);
@@ -138,7 +100,7 @@ export const plugin: ComputationPlugin = {
           return { partition1Name, partition2Name };
         }
       },
-    }), // Must match name in data service and in visualization.tsx
+    }),
   },
   isEnabledInPicker: isEnabledInPicker,
   studyRequirements:

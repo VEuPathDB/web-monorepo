@@ -146,6 +146,16 @@ Thumbnail.args = {
   showThumbnail: true,
 };
 
+// Add additional behavior to a node click
+function handleNodeClick(node: NodeData) {
+  console.log('You clicked node ' + node.id);
+}
+export const WithAdditionalNodeClickBehavior = Template.bind({});
+WithAdditionalNodeClickBehavior.args = {
+  ...simpleData,
+  additionalOnNodeClickAction: handleNodeClick,
+};
+
 // Test node actions
 function getNodeActions(nodeId: string): NodeMenuAction[] {
   return [

@@ -13,9 +13,14 @@
 
     width: calc(var(--paper-width) * var(--paper-scale));
     margin: 1em auto;
+    padding: 0 1em;
 
     > * + * {
       margin-block-start: 1rem;
+    }
+
+    > H5 {
+      padding-bottom: 0.5em;
     }
 
     .Heading {
@@ -62,6 +67,22 @@
     }
     .NotebookCellHelpText:first-of-type {
       margin-top: 2em;
+    }
+
+    .WdkParamInputs {
+      display: flex;
+      flex-direction: column;
+      gap: 2em;
+      margin-top: 1em;
+      margin-bottom: 1em;
+    }
+
+    .InputGroup {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 1em;
+      font-weight: 500;
     }
     > details {
       border: 1px solid;

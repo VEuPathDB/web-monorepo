@@ -9,6 +9,7 @@ import { VisualizationCellDescriptor } from './NotebookPresets';
 import { useCachedPromise } from '../core/hooks/cachedPromise';
 import { useComputeJobStatus } from '../core/components/computations/ComputeJobStatusHook';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
+import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 
 export function VisualizationNotebookCell(
   props: NotebookCellProps<VisualizationCellDescriptor>
@@ -23,8 +24,15 @@ export function VisualizationNotebookCell(
   const filteredCountsResult = useEntityCounts(
     analysis.descriptor.subset.descriptor
   );
+  const { enqueueSnackbar } = useSnackbar();
 
-  const { visualizationName, visualizationId } = cell;
+  const {
+    visualizationName,
+    visualizationId,
+    getVizPluginOptions,
+    wdkUpdateParamValue,
+    associatedWdkParam,
+  } = cell;
 
   const { visualization, computation } =
     analysisState.getVisualizationAndComputation(visualizationId) ?? {};
@@ -84,6 +92,25 @@ export function VisualizationNotebookCell(
   const plotContainerStyleOverrides: PlotContainerStyleOverrides = {};
   if (visualization?.descriptor.type === 'bipartitenetwork') {
     plotContainerStyleOverrides.width = 1100;
+  }
+
+  // Override vizPlugin Options with ones defined in the notebook preset.
+  // For now this is used to link the bipartite network to the wdk param.
+  if (
+    vizPlugin &&
+    getVizPluginOptions &&
+    associatedWdkParam &&
+    wdkUpdateParamValue
+  ) {
+    vizPlugin.options = {
+      ...vizPlugin.options,
+      ...getVizPluginOptions(
+        analysisState,
+        wdkUpdateParamValue,
+        associatedWdkParam,
+        enqueueSnackbar
+      ),
+    };
   }
 
   return visualization ? (

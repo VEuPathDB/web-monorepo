@@ -4,6 +4,7 @@ import { TextNotebookCell } from './TextNotebookCell';
 import { VisualizationNotebookCell } from './VisualizationNotebookCell';
 import { ComputeNotebookCell } from './ComputeNotebookCell';
 import { NotebookCellDescriptor } from './NotebookPresets';
+import { WdkParamNotebookCell } from './WdkParamNotebookCell';
 
 export interface NotebookCellProps<T extends NotebookCellDescriptor> {
   analysisState: AnalysisState;
@@ -26,6 +27,8 @@ export function NotebookCell(props: NotebookCellProps<NotebookCellDescriptor>) {
       return <VisualizationNotebookCell {...props} cell={cell} />;
     case 'compute':
       return <ComputeNotebookCell {...props} cell={cell} />;
+    case 'wdkparam':
+      return <WdkParamNotebookCell {...props} cell={cell} />;
     default:
       return null;
   }

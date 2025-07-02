@@ -4,17 +4,25 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { NotebookCell } from './NotebookCell';
 import './EdaNotebook.scss';
 import { createComputation } from '../core/components/computations/Utils';
-import { presetNotebooks, NotebookCellDescriptor } from './NotebookPresets';
+import {
+  presetNotebooks,
+  NotebookCellDescriptor,
+  WdkParamCellDescriptor,
+  WdkUpdateParamValue,
+} from './NotebookPresets';
 import { Computation } from '../core/types/visualization';
 import { plugins } from '../core/components/computations/plugins';
-import CoreUIThemeProvider from '@veupathdb/coreui/lib/components/theming/UIThemeProvider';
-import { colors, H5 } from '@veupathdb/coreui';
+import { H5 } from '@veupathdb/coreui';
+import colors from '@veupathdb/coreui/lib/definitions/colors';
+import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 // const NOTEBOOK_UI_SETTINGS_KEY = '@@NOTEBOOK@@';
 
 interface Props {
   analysisState: AnalysisState;
   notebookType: string;
+  parameters?: Parameter[]; // Array of parameters from the wdk. Notebook preset will have a list of param names to match.
+  wdkUpdateParamValue?: WdkUpdateParamValue; // Function to update the parameter value in the WDK search. Commandeers wdk's updateParamValue function
 }
 
 export function EdaNotebookAnalysis(props: Props) {
@@ -76,6 +84,31 @@ export function EdaNotebookAnalysis(props: Props) {
         };
 
         addVisualization(parentComputationId, visualization);
+      } else if (
+        cell.type === 'wdkparam' &&
+        props.parameters &&
+        props.wdkUpdateParamValue
+      ) {
+        // Attach the wdk details we get from the search props to the notebook cell.
+        cell.wdkParameters = props.parameters;
+        cell.wdkUpdateParamValue = props.wdkUpdateParamValue;
+      }
+
+      // A non-wdkparam cell may have an associated wdk parameter it handles. If that's
+      // the case, we need to also give this cell the wdk parameters and update function.
+      // For example, a visualization that the user can alter in order to update a wdk parameter.
+      if (
+        props.wdkUpdateParamValue &&
+        props.parameters &&
+        cell.associatedWdkParamName
+      ) {
+        const associatedWdkParam = props.parameters?.find(
+          (param) => param.name === cell.associatedWdkParamName
+        );
+        if (associatedWdkParam) {
+          cell.associatedWdkParam = associatedWdkParam;
+          cell.wdkUpdateParamValue = props.wdkUpdateParamValue;
+        }
       }
     }
 
@@ -84,7 +117,41 @@ export function EdaNotebookAnalysis(props: Props) {
     // This ensures that updates are queued and applied in order, even across
     // multiple recursive calls.
     notebookPreset.cells.forEach((cell) => processCell(cell));
-  }, [analysis, setComputations, addVisualization, notebookPreset]);
+  }, [
+    analysis,
+    setComputations,
+    addVisualization,
+    notebookPreset,
+    props.wdkUpdateParamValue,
+    props.parameters,
+  ]);
+
+  // If the notebook preset has any wdk parameter cells, we need to
+  // check to ensure we have matching parameters from the notebook and wdk then
+  // add these parameters to the notebook cell.
+  useEffect(() => {
+    if (
+      analysis == null ||
+      notebookPreset == null ||
+      props.parameters == null ||
+      props.wdkUpdateParamValue == null
+    )
+      return;
+
+    // Extract the wdk parameter notebook cell. There should only be one.
+    const wdkParamNotebookCell = notebookPreset.cells.find(
+      (cell) => cell.type === 'wdkparam'
+    ) as WdkParamCellDescriptor;
+
+    if (wdkParamNotebookCell == null) return;
+
+    // Update the wdk param notebook cell with the parameters
+    wdkParamNotebookCell.wdkParameters = props.parameters;
+    wdkParamNotebookCell.wdkUpdateParamValue = props.wdkUpdateParamValue;
+
+    notebookPreset.cells[notebookPreset.cells.indexOf(wdkParamNotebookCell)] =
+      wdkParamNotebookCell;
+  }, [analysis, notebookPreset, props.parameters, props.wdkUpdateParamValue]);
 
   //
   // Now we render the notebook directly from the read-only `notebookPreset`,
@@ -96,31 +163,23 @@ export function EdaNotebookAnalysis(props: Props) {
   // `notebookState` coming from analysisState.analysis.descriptor.subset.uiSettings[NOTEBOOK_UI_SETTINGS_KEY]
   //
   return (
-    // The CoreUIThemeProvider should be moved elsewhere. Should go in the genomics form override.
-    <CoreUIThemeProvider
-      theme={{
-        palette: {
-          primary: { hue: colors.cyan, level: 600 },
-          secondary: { hue: colors.mutedRed, level: 500 },
-        },
-      }}
-    >
-      <div className="EdaNotebook">
-        <div className="Paper">
-          {notebookPreset.header && <H5 text={notebookPreset.header} />}
-          {analysis.descriptor.computations.length > 0 ? (
-            notebookPreset.cells.map((cell, index) => (
-              <NotebookCell
-                key={index}
-                analysisState={analysisState}
-                cell={cell}
-              />
-            ))
-          ) : (
-            <Loading />
-          )}
-        </div>
+    <div className="EdaNotebook">
+      <div className="Paper">
+        {notebookPreset.header && (
+          <H5 text={notebookPreset.header} color={colors.gray[600]} />
+        )}
+        {analysis.descriptor.computations.length > 0 ? (
+          notebookPreset.cells.map((cell, index) => (
+            <NotebookCell
+              key={index}
+              analysisState={analysisState}
+              cell={cell}
+            />
+          ))
+        ) : (
+          <Loading />
+        )}
       </div>
-    </CoreUIThemeProvider>
+    </div>
   );
 }

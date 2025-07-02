@@ -1,10 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
-
-import { Props } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
-import {
-  Parameter,
-  StringParam,
-} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import React, { useState } from 'react';
+import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { WorkspaceContainer } from '@veupathdb/eda/lib/workspace/WorkspaceContainer';
 import {
   Analysis,
@@ -21,7 +16,8 @@ import {
 } from '@veupathdb/eda/lib/core';
 import { edaServiceUrl } from '@veupathdb/web-common/lib/config';
 import { DocumentationContainer } from '@veupathdb/eda/lib/core/components/docs/DocumentationContainer';
-
+import CoreUIThemeProvider from '@veupathdb/coreui/lib/components/theming/UIThemeProvider';
+import colors from '@veupathdb/coreui/lib/definitions/colors';
 import './EdaSubsetParameter.scss';
 import {
   defaultFormatParameterValue,
@@ -32,19 +28,28 @@ import { formatFilterDisplayValue } from '@veupathdb/eda/lib/core/utils/study-me
 import { DatasetItem } from '@veupathdb/wdk-client/lib/Views/Question/Params/DatasetParamUtils';
 import { parseJson } from '@veupathdb/eda/lib/notebook/Utils';
 import { EdaNotebookAnalysis } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
-import ParameterComponent from '@veupathdb/wdk-client/lib/Views/Question/ParameterComponent';
-import { debounce } from 'lodash';
+import { WdkUpdateParamValue } from '@veupathdb/eda/lib/notebook/NotebookPresets';
 
-const datasetIdParamName = 'eda_dataset_id';
-const notebookTypeParamName = 'eda_notebook_type';
+type EdaNotebookParameterProps = {
+  value: string;
+  datasetIdParamName?: string;
+  notebookTypeParamName?: string;
+  parameters?: Parameter[]; // Array of parameters from the wdk. Notebook preset will have a list of param names to match.
+  wdkUpdateParamValue?: WdkUpdateParamValue;
+};
 
-export function EdaNotebookParameter(props: Props<StringParam>) {
-  const { onParamValueChange, value, ctx } = props;
+export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
+  const {
+    value,
+    datasetIdParamName,
+    notebookTypeParamName,
+    parameters = [],
+    wdkUpdateParamValue,
+  } = props;
 
   // TEMPORARY: We don't have this value coming from the wdk yet.
-  const studyId = ctx.paramValues[datasetIdParamName] ?? 'DS_82dc5abc7f';
-  const notebookType =
-    ctx.paramValues[notebookTypeParamName] ?? 'wgcnaCorrelationNotebook';
+  const studyId = datasetIdParamName ?? 'DS_82dc5abc7f';
+  const notebookType = notebookTypeParamName ?? 'wgcnaCorrelationNotebook';
 
   // we need to maintain the analysis as regular "live" React state somewhere
   const [analysis, setAnalysis] = useState<NewAnalysis | Analysis | undefined>(
@@ -95,13 +100,23 @@ export function EdaNotebookParameter(props: Props<StringParam>) {
     <>
       <DocumentationContainer>
         <WorkspaceContainer studyId={studyId} edaServiceUrl={edaServiceUrl}>
-          <EdaNotebookAdapter
-            analysisState={analysisState}
-            notebookType={notebookType}
-          />
+          <CoreUIThemeProvider
+            theme={{
+              palette: {
+                primary: { hue: colors.cyan, level: 600 },
+                secondary: { hue: colors.mutedRed, level: 500 },
+              },
+            }}
+          >
+            <EdaNotebookAdapter
+              analysisState={analysisState}
+              notebookType={notebookType}
+              parameters={parameters}
+              wdkUpdateParamValue={wdkUpdateParamValue}
+            />
+          </CoreUIThemeProvider>
         </WorkspaceContainer>
       </DocumentationContainer>
-      <ParameterComponent {...props} />
     </>
   );
 }
@@ -109,6 +124,8 @@ export function EdaNotebookParameter(props: Props<StringParam>) {
 interface EdaNotebookAdapterProps {
   analysisState: AnalysisState;
   notebookType: string;
+  parameters?: Parameter[]; // Passed to notebook
+  wdkUpdateParamValue?: WdkUpdateParamValue; // Passed to notebook
 }
 
 function EdaNotebookAdapter(props: EdaNotebookAdapterProps) {

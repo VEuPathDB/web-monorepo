@@ -44,7 +44,10 @@ import { FacetedPlotLayout } from '../../layouts/FacetedPlotLayout';
 import { H6 } from '@veupathdb/coreui';
 import { CorrelationConfig } from '../../../types/apps';
 import { StudyMetadata } from '../../..';
-import { NodeMenuAction } from '@veupathdb/components/lib/types/plots/network';
+import {
+  NodeData,
+  NodeMenuAction,
+} from '@veupathdb/components/lib/types/plots/network';
 // end imports
 
 // Defaults
@@ -82,7 +85,7 @@ export const BipartiteNetworkConfig = t.partial({
   significanceThreshold: t.number,
 });
 
-interface Options
+export interface BipartiteNetworkOptions
   extends LayoutOptions,
     TitleOptions,
     LegendOptions,
@@ -99,12 +102,15 @@ interface Options
         partition2Name: string;
       }>
     | undefined;
+  additionalOnNodeClickAction?: (node: NodeData) => void;
 }
 
 // Bipartite Network Visualization
 // The bipartite network takes no input variables, because the received data will complete the plot.
 // Eventually the user will be able to control the significance and correlation coefficient threshold values.
-function BipartiteNetworkViz(props: VisualizationProps<Options>) {
+function BipartiteNetworkViz(
+  props: VisualizationProps<BipartiteNetworkOptions>
+) {
   const {
     options,
     computation,
@@ -187,6 +193,9 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const minDataWeight = Math.min(...uniqueDataWeights);
   const maxDataWeight = Math.max(...uniqueDataWeights);
 
+  const partitionNames =
+    options?.getParitionNames?.(studyMetadata, computationConfiguration) ?? {};
+
   // Clean and finalize data format. Specifically, assign link colors, add display labels
   const cleanedData = useMemo(() => {
     if (!data.value) return undefined;
@@ -244,9 +253,15 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     // sort node data by label
     // this is mutating the original paritions arrray :shrug:
     const orderedPartitions = data.value.bipartitenetwork.data.partitions.map(
-      (partition) => {
+      (partition, partitionIndex) => {
         return {
           ...partition,
+          name:
+            partitionNames[
+              `partition${
+                partitionIndex + 1
+              }Name` as keyof typeof partitionNames
+            ] ?? '',
           nodeIds: partition.nodeIds.concat().sort((a, b) => {
             const nodeA = nodesById.get(a);
             const nodeB = nodesById.get(b);
@@ -348,7 +363,7 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     getNodeMenuActions,
     // pass visible node labels
     visibleNodeLabels: visibleNodeLabels,
-    ...options?.getParitionNames?.(studyMetadata, computationConfiguration),
+    additionalOnNodeClickAction: options?.additionalOnNodeClickAction,
   };
 
   const plotNode = (

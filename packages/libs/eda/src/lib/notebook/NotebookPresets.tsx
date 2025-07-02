@@ -3,31 +3,55 @@
 import { ReactNode } from 'react';
 import { NumberedHeader } from '../workspace/Subsetting/SubsetDownloadModal';
 import { colors } from '@material-ui/core';
+import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { BipartiteNetworkOptions } from '../core/components/visualizations/implementations/BipartiteNetworkVisualization';
+import { updateParamValue } from './WdkParamNotebookCell';
+import { AnalysisState } from '../core/hooks/analysis';
+import { NodeData } from '@veupathdb/components/lib/types/plots/network';
+import { OptionsObject } from 'notistack';
 
-const height = 25;
-const color = 'black';
+export const NOTEBOOK_UI_STATE_KEY = '@@NOTEBOOK_WDK_PARAMS@@';
+
+// Type of function that we'll call wdkUpdateParamValue. It's
+// adapted from one called updateParamValue used around the wdk and used
+// to update values of parameters that come from the wdk.
+export type WdkUpdateParamValue = (
+  parameter: Parameter,
+  newParamValue: string,
+  paramValues: Record<string, string>
+) => void;
+
 // The descriptors contain just enough information to render the cells when given the
-// appropriate context, such as analysis state. In EdaNotebookAnalysis, these
-// descriptors get converted into cells using the ids and such generated in
-// the particular analysis.
-
+// appropriate context, such as analysis state.
 export type NotebookCellDescriptor =
   | VisualizationCellDescriptor
   | ComputeCellDescriptor
   | TextCellDescriptor
-  | SubsetCellDescriptor;
+  | SubsetCellDescriptor
+  | WdkParamCellDescriptor;
 
 export interface NotebookCellDescriptorBase<T extends string> {
   type: T;
   title: string;
   cells?: NotebookCellDescriptor[];
   helperText?: ReactNode; // Optional information to display above the cell. Instead of a full text cell, use this for quick help and titles.
+  associatedWdkParamName?: string; // Optional name of a wdk parameter related to this viz. Can be updated using the viz options.
+  associatedWdkParam?: Parameter; // Parameter object. Defined in wdk, not notebook preset.
+  wdkUpdateParamValue?: WdkUpdateParamValue; // Function to update the parameter value in the WDK search. Defined by the wdk, not the notebook preset
 }
 
 export interface VisualizationCellDescriptor
   extends NotebookCellDescriptorBase<'visualization'> {
   visualizationName: string;
   visualizationId: string;
+  // Custom function that allows us to override visualization Options from the notebook preset.
+  // Useful for adding interactivity between the viz and other notebook cells.
+  getVizPluginOptions?: (
+    analysisState: AnalysisState,
+    wdkUpdateParamValue: WdkUpdateParamValue,
+    param: Parameter,
+    enqueueSnackbar: (message: string, options?: OptionsObject) => void // So we can call up a snackbar if we mess wtih the viz.
+  ) => Partial<BipartiteNetworkOptions>; // We'll define this function custom for each notebook, so can expand output types as needed.
 }
 
 export interface ComputeCellDescriptor
@@ -42,6 +66,12 @@ export interface TextCellDescriptor extends NotebookCellDescriptorBase<'text'> {
 
 export interface SubsetCellDescriptor
   extends NotebookCellDescriptorBase<'subset'> {}
+
+export interface WdkParamCellDescriptor
+  extends NotebookCellDescriptorBase<'wdkparam'> {
+  paramNames: string[]; // Param names from the wdk query. These must match exactly or the notebook will err.
+  wdkParameters?: Parameter[]; // The parameters, including all their details, from the wdk query.
+}
 
 type PresetNotebook = {
   name: string;
@@ -65,33 +95,6 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         title: 'Differential Abundance',
         computationName: 'differentialabundance',
         computationId: 'diff_1',
-        helperText: (
-          <>
-            <div
-              style={{
-                display: 'inline-block',
-                width: height + 'px',
-                height: height + 'px',
-                lineHeight: height + 'px',
-                color: color,
-                border: '2px solid' + color,
-                borderRadius: height + 'px',
-                fontSize: 18,
-                fontWeight: 'bold',
-                textAlign: 'center',
-                boxSizing: 'content-box',
-                userSelect: 'none',
-              }}
-            >
-              1
-            </div>
-            <span>
-              {' '}
-              Configure and run a DESeq2 computation to find differentially
-              expressed genes.
-            </span>
-          </>
-        ),
         cells: [
           {
             type: 'visualization',
@@ -146,8 +149,69 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                 color={colors.grey[800]}
               />
             ),
+            associatedWdkParamName: 'wgcnaParam', // wdk param that controls module name
+            getVizPluginOptions: (
+              analysisState: AnalysisState,
+              wdkUpdateParamValue: WdkUpdateParamValue,
+              param: Parameter,
+              enqueueSnackbar: (
+                message: string,
+                options?: OptionsObject
+              ) => void // So we can call up the snackbar.
+            ) => {
+              return {
+                additionalOnNodeClickAction: (node: NodeData) => {
+                  const moduleName = (node.label ?? '').toLowerCase();
+
+                  // Do nothing if the node they clicked on is
+                  // not from the group of modules in the param.
+                  // type Parameter has vocabulary... not sure why it's an issue.
+                  // @ts-ignore
+                  const allowedValues = param.vocabulary.map(
+                    (item: [string, string, null]) => item[0].toLowerCase()
+                  );
+                  if (!allowedValues.includes(moduleName)) {
+                    return;
+                  }
+
+                  // Do nothing if the module they clicked on is already selected.
+                  const currentValue = (analysisState.analysis?.descriptor
+                    .subset.uiSettings[NOTEBOOK_UI_STATE_KEY] ?? {})[
+                    'wgcnaParam'
+                  ] as string;
+                  if (currentValue?.toLowerCase() === moduleName) {
+                    return;
+                  }
+
+                  // Update module name in the wdk param selector
+                  updateParamValue(
+                    analysisState,
+                    wdkUpdateParamValue,
+                    param
+                  ).call(null, moduleName);
+
+                  // Open snackbar
+                  enqueueSnackbar(
+                    `Updated WGNCA module search parameter: ${moduleName}`,
+                    { variant: 'info' }
+                  );
+                },
+              };
+            },
           },
         ],
+      },
+      {
+        type: 'wdkparam',
+        title: 'Finalize search parameters',
+        paramNames: ['wgcnaParam', 'wgcna_correlation_cutoff'],
+        helperText: (
+          <NumberedHeader
+            number={3}
+            text={'Refine parameters for returning the list of genes.'}
+            color={colors.grey[800]}
+          />
+        ),
       },
     ],
   },
