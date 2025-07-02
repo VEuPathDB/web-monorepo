@@ -17,7 +17,7 @@ export const EdaNotebookQuestionForm = (props: Props) => {
     throw new Error('No search defined.');
   }
 
-  const updateWdkParamValue = useCallback(
+  const wdkUpdateParamValue = useCallback(
     (
       parameter: Parameter,
       newParamValue: string,
@@ -38,7 +38,7 @@ export const EdaNotebookQuestionForm = (props: Props) => {
       <EdaNotebookParameter
         value={'test'}
         parameters={props.state.question.parameters}
-        updateWdkParamValue={updateWdkParamValue}
+        wdkUpdateParamValue={wdkUpdateParamValue}
       />
     );
   };

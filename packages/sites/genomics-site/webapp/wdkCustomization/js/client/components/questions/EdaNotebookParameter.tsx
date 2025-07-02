@@ -1,10 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
-
-import { Props } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
-import {
-  Parameter,
-  StringParam,
-} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import React, { useState } from 'react';
+import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { WorkspaceContainer } from '@veupathdb/eda/lib/workspace/WorkspaceContainer';
 import {
   Analysis,
@@ -33,31 +28,26 @@ import { formatFilterDisplayValue } from '@veupathdb/eda/lib/core/utils/study-me
 import { DatasetItem } from '@veupathdb/wdk-client/lib/Views/Question/Params/DatasetParamUtils';
 import { parseJson } from '@veupathdb/eda/lib/notebook/Utils';
 import { EdaNotebookAnalysis } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
-import { debounce } from 'lodash';
-import { UpdateWdkParamValue } from '@veupathdb/eda/lib/notebook/NotebookPresets';
-import makeSnackbarProvider, {
-  SnackbarStyleProps,
-} from '@veupathdb/coreui/lib/components/notifications/SnackbarProvider';
+import { WdkUpdateParamValue } from '@veupathdb/eda/lib/notebook/NotebookPresets';
+import makeSnackbarProvider from '@veupathdb/coreui/lib/components/notifications/SnackbarProvider';
 
-const SnackbarProvider = makeSnackbarProvider({});
+// const SnackbarProvider = makeSnackbarProvider({});
 
 type EdaNotebookParameterProps = {
-  onParamValueChange?: (value: string) => void;
   value: string;
   datasetIdParamName?: string;
   notebookTypeParamName?: string;
   parameters?: Parameter[]; // Array of parameters from the wdk. Notebook preset will have a list of param names to match.
-  updateWdkParamValue?: UpdateWdkParamValue;
+  wdkUpdateParamValue?: WdkUpdateParamValue;
 };
 
 export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
   const {
-    onParamValueChange,
     value,
     datasetIdParamName,
     notebookTypeParamName,
     parameters = [],
-    updateWdkParamValue,
+    wdkUpdateParamValue,
   } = props;
 
   // TEMPORARY: We don't have this value coming from the wdk yet.
@@ -121,14 +111,14 @@ export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
               },
             }}
           >
-            <SnackbarProvider styleProps={{ nudge: false }}>
-              <EdaNotebookAdapter
-                analysisState={analysisState}
-                notebookType={notebookType}
-                parameters={parameters}
-                updateWdkParamValue={updateWdkParamValue}
-              />
-            </SnackbarProvider>
+            {/* <SnackbarProvider styleProps={{ nudge: false }}> */}
+            <EdaNotebookAdapter
+              analysisState={analysisState}
+              notebookType={notebookType}
+              parameters={parameters}
+              wdkUpdateParamValue={wdkUpdateParamValue}
+            />
+            {/* </SnackbarProvider> */}
           </CoreUIThemeProvider>
         </WorkspaceContainer>
       </DocumentationContainer>
@@ -140,7 +130,7 @@ interface EdaNotebookAdapterProps {
   analysisState: AnalysisState;
   notebookType: string;
   parameters?: Parameter[];
-  updateWdkParamValue?: UpdateWdkParamValue;
+  wdkUpdateParamValue?: WdkUpdateParamValue;
 }
 
 function EdaNotebookAdapter(props: EdaNotebookAdapterProps) {

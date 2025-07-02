@@ -8,7 +8,7 @@ import {
   presetNotebooks,
   NotebookCellDescriptor,
   WdkParamCellDescriptor,
-  UpdateWdkParamValue,
+  WdkUpdateParamValue,
 } from './NotebookPresets';
 import { Computation } from '../core/types/visualization';
 import { plugins } from '../core/components/computations/plugins';
@@ -22,7 +22,7 @@ interface Props {
   analysisState: AnalysisState;
   notebookType: string;
   parameters?: Parameter[]; // Array of parameters from the wdk. Notebook preset will have a list of param names to match.
-  updateWdkParamValue?: UpdateWdkParamValue; // Function to update the parameter value in the WDK search.
+  wdkUpdateParamValue?: WdkUpdateParamValue; // Function to update the parameter value in the WDK search. Commandeers wdk's updateParamValue function
 }
 
 export function EdaNotebookAnalysis(props: Props) {
@@ -84,11 +84,21 @@ export function EdaNotebookAnalysis(props: Props) {
         };
 
         addVisualization(parentComputationId, visualization);
+      } else if (
+        cell.type === 'wdkparam' &&
+        props.parameters &&
+        props.wdkUpdateParamValue
+      ) {
+        // Attach the wdk details we get from the search props to the notebook cell.
+        cell.wdkParameters = props.parameters;
+        cell.wdkUpdateParamValue = props.wdkUpdateParamValue;
       }
 
-      // Add wdk info if needed
+      // A non-wdkparam cell may have an associated wdk parameter it handles. If that's
+      // the case, we need to also give this cell the wdk parameters and update function.
+      // For example, a visualization that the user can alter in order to update a wdk parameter.
       if (
-        props.updateWdkParamValue &&
+        props.wdkUpdateParamValue &&
         props.parameters &&
         cell.associatedWdkParamName
       ) {
@@ -97,7 +107,7 @@ export function EdaNotebookAnalysis(props: Props) {
         );
         if (associatedWdkParam) {
           cell.associatedWdkParam = associatedWdkParam;
-          cell.updateWdkParamValue = props.updateWdkParamValue;
+          cell.wdkUpdateParamValue = props.wdkUpdateParamValue;
         }
       }
     }
@@ -112,7 +122,7 @@ export function EdaNotebookAnalysis(props: Props) {
     setComputations,
     addVisualization,
     notebookPreset,
-    props.updateWdkParamValue,
+    props.wdkUpdateParamValue,
     props.parameters,
   ]);
 
@@ -124,7 +134,7 @@ export function EdaNotebookAnalysis(props: Props) {
       analysis == null ||
       notebookPreset == null ||
       props.parameters == null ||
-      props.updateWdkParamValue == null
+      props.wdkUpdateParamValue == null
     )
       return;
 
@@ -137,28 +147,11 @@ export function EdaNotebookAnalysis(props: Props) {
 
     // Update the wdk param notebook cell with the parameters
     wdkParamNotebookCell.wdkParameters = props.parameters;
-    wdkParamNotebookCell.updateWdkParamValue = props.updateWdkParamValue;
+    wdkParamNotebookCell.wdkUpdateParamValue = props.wdkUpdateParamValue;
 
     notebookPreset.cells[notebookPreset.cells.indexOf(wdkParamNotebookCell)] =
       wdkParamNotebookCell;
-
-    // // There may be additional cells that use wdk information, such as
-    // // visualizations that we can use to set props. We also need to update these
-    // // cells with the parameter object and update function.
-    // console.log(notebookPreset.cells);
-    // notebookPreset.cells.forEach((cell) => {
-    //   if (cell.associatedWdkParamName) {
-    //     console.log(props.parameters);
-    //     const associatedWdkParam = props.parameters?.find(
-    //       (param) => param.name === cell.associatedWdkParamName
-    //     );
-    //     if (associatedWdkParam) {
-    //       cell.associatedWdkParam = associatedWdkParam;
-    //       cell.updateWdkParamValue = props.updateWdkParamValue;
-    //     }
-    //   }
-    // });
-  }, [analysis, notebookPreset, props.parameters, props.updateWdkParamValue]);
+  }, [analysis, notebookPreset, props.parameters, props.wdkUpdateParamValue]);
 
   //
   // Now we render the notebook directly from the read-only `notebookPreset`,

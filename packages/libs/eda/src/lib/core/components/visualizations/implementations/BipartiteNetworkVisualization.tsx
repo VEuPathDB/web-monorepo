@@ -85,7 +85,7 @@ export const BipartiteNetworkConfig = t.partial({
   significanceThreshold: t.number,
 });
 
-export interface Options
+export interface BipartiteNetworkOptions
   extends LayoutOptions,
     TitleOptions,
     LegendOptions,
@@ -108,7 +108,9 @@ export interface Options
 // Bipartite Network Visualization
 // The bipartite network takes no input variables, because the received data will complete the plot.
 // Eventually the user will be able to control the significance and correlation coefficient threshold values.
-function BipartiteNetworkViz(props: VisualizationProps<Options>) {
+function BipartiteNetworkViz(
+  props: VisualizationProps<BipartiteNetworkOptions>
+) {
   const {
     options,
     computation,

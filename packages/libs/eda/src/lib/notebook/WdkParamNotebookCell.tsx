@@ -23,7 +23,7 @@ export function WdkParamNotebookCell(
 ) {
   const { cell, isDisabled, analysisState } = props;
 
-  const { paramNames, title, wdkParameters, updateWdkParamValue } = cell;
+  const { paramNames, title, wdkParameters, wdkUpdateParamValue } = cell;
 
   const userInputParameters = wdkParameters?.filter((param) =>
     paramNames?.includes(param.name)
@@ -92,7 +92,7 @@ export function WdkParamNotebookCell(
                         buttonDisplayContent={paramCurrentValue as string}
                         onSelect={updateParamValue(
                           analysisState,
-                          updateWdkParamValue,
+                          wdkUpdateParamValue,
                           param
                         )}
                       />
@@ -140,7 +140,7 @@ export function WdkParamNotebookCell(
 
 export const updateParamValue = (
   analysisState: AnalysisState,
-  wdkUpdateParamValue: WdkParamCellDescriptor['updateWdkParamValue'],
+  wdkUpdateParamValue: WdkParamCellDescriptor['wdkUpdateParamValue'],
   param: Parameter
 ) => {
   return (value: string) => {

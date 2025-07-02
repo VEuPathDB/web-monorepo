@@ -3,11 +3,8 @@
 import { ReactNode } from 'react';
 import { NumberedHeader } from '../workspace/Subsetting/SubsetDownloadModal';
 import { colors } from '@material-ui/core';
-import {
-  Parameter,
-  StringParam,
-} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { Options } from '../core/components/visualizations/implementations/BipartiteNetworkVisualization';
+import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { BipartiteNetworkOptions } from '../core/components/visualizations/implementations/BipartiteNetworkVisualization';
 import { updateParamValue } from './WdkParamNotebookCell';
 import { AnalysisState } from '../core/hooks/analysis';
 import { NodeData } from '@veupathdb/components/lib/types/plots/network';
@@ -18,17 +15,17 @@ const color = 'black';
 
 export const NOTEBOOK_UI_STATE_KEY = '@@NOTEBOOK_WDK_PARAMS@@';
 
-export type UpdateWdkParamValue = (
+// Type of function that we'll call wdkUpdateParamValue. It's
+// adapted from one called updateParamValue used around the wdk and used
+// to update values of parameters that come from the wdk.
+export type WdkUpdateParamValue = (
   parameter: Parameter,
   newParamValue: string,
   paramValues: Record<string, string>
 ) => void;
 
 // The descriptors contain just enough information to render the cells when given the
-// appropriate context, such as analysis state. In EdaNotebookAnalysis, these
-// descriptors get converted into cells using the ids and such generated in
-// the particular analysis.
-
+// appropriate context, such as analysis state.
 export type NotebookCellDescriptor =
   | VisualizationCellDescriptor
   | ComputeCellDescriptor
@@ -39,24 +36,25 @@ export type NotebookCellDescriptor =
 export interface NotebookCellDescriptorBase<T extends string> {
   type: T;
   title: string;
-  cellId: string; // Unique identifier for the cell, used for referencing one cell from another.
   cells?: NotebookCellDescriptor[];
   helperText?: ReactNode; // Optional information to display above the cell. Instead of a full text cell, use this for quick help and titles.
   associatedWdkParamName?: string; // Optional name of a wdk parameter related to this viz. Can be updated using the viz options.
   associatedWdkParam?: Parameter; // Parameter object. Defined in wdk, not notebook preset.
-  updateWdkParamValue?: UpdateWdkParamValue; // Function to update the parameter value in the WDK search. Defined by the wdk, not the notebook preset
+  wdkUpdateParamValue?: WdkUpdateParamValue; // Function to update the parameter value in the WDK search. Defined by the wdk, not the notebook preset
 }
 
 export interface VisualizationCellDescriptor
   extends NotebookCellDescriptorBase<'visualization'> {
   visualizationName: string;
   visualizationId: string;
+  // Custom function that allows us to override visualization Options from the notebook preset.
+  // Useful for adding interactivity between the viz and other notebook cells.
   getVizPluginOptions?: (
     analysisState: AnalysisState,
-    updateWdkParamValue: UpdateWdkParamValue,
+    wdkUpdateParamValue: WdkUpdateParamValue,
     param: Parameter,
-    enqueueSnackbar: (message: string, options?: OptionsObject) => void // So we can call up the snackbar.
-  ) => Partial<Options>; // Viz plugin option overrides.
+    enqueueSnackbar: (message: string, options?: OptionsObject) => void // So we can call up a snackbar if we mess wtih the viz.
+  ) => Partial<BipartiteNetworkOptions>; // We'll define this function custom for each notebook, so can expand output types as needed.
 }
 
 export interface ComputeCellDescriptor
@@ -97,7 +95,6 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
     cells: [
       {
         type: 'compute',
-        cellId: 'diff_1',
         title: 'Differential Abundance',
         computationName: 'differentialabundance',
         computationId: 'diff_1',
@@ -134,14 +131,12 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             title: 'Volcano Plot',
             visualizationName: 'volcanoplot',
             visualizationId: 'volcano_1',
-            cellId: 'volcano_1',
           },
         ],
       },
       {
         type: 'text',
         title: 'Text Cell',
-        cellId: 'text_1',
         text: 'This is a text cell for the differential abundance notebook.',
       },
     ],
@@ -157,7 +152,6 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
     cells: [
       {
         type: 'compute',
-        cellId: 'correlation_1',
         title: 'Correlation Computation',
         computationName: 'correlation',
         computationId: 'correlation_1',
@@ -174,7 +168,6 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
           {
             type: 'visualization',
             title: 'Network Visualization',
-            cellId: 'bipartite_1',
             visualizationName: 'bipartitenetwork',
             visualizationId: 'bipartite_1',
             helperText: (
@@ -189,7 +182,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             associatedWdkParamName: 'wgcnaParam', // wdk param that controls module name
             getVizPluginOptions: (
               analysisState: AnalysisState,
-              wdkUpdateParamValue: UpdateWdkParamValue,
+              wdkUpdateParamValue: WdkUpdateParamValue,
               param: Parameter,
               enqueueSnackbar: (
                 message: string,
@@ -230,7 +223,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                   // Open snackbar
                   enqueueSnackbar(
                     `Updated WGNCA module search parameter: ${moduleName}`,
-                    { variant: 'info', persist: true }
+                    { variant: 'info' }
                   );
                 },
               };
@@ -240,7 +233,6 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
       },
       {
         type: 'wdkparam',
-        cellId: 'wdkparam_1',
         title: 'Finalize search parameters',
         paramNames: ['wgcnaParam', 'wgcna_correlation_cutoff'],
         helperText: (
@@ -260,7 +252,6 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
     cells: [
       {
         type: 'visualization',
-        cellId: 'boxplot_1',
         title: 'Boxplot Visualization',
         visualizationName: 'boxplot',
         visualizationId: 'boxplot_1',

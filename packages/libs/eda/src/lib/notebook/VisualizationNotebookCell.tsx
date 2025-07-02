@@ -30,7 +30,7 @@ export function VisualizationNotebookCell(
     visualizationName,
     visualizationId,
     getVizPluginOptions,
-    updateWdkParamValue,
+    wdkUpdateParamValue,
     associatedWdkParam,
   } = cell;
 
@@ -98,13 +98,13 @@ export function VisualizationNotebookCell(
     vizPlugin &&
     getVizPluginOptions &&
     associatedWdkParam &&
-    updateWdkParamValue
+    wdkUpdateParamValue
   ) {
     vizPlugin.options = {
       ...vizPlugin.options,
       ...getVizPluginOptions(
         analysisState,
-        updateWdkParamValue,
+        wdkUpdateParamValue,
         associatedWdkParam,
         enqueueSnackbar
       ),
