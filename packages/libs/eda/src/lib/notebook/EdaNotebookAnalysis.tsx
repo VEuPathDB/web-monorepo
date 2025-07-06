@@ -16,18 +16,18 @@ import {
 
 // const NOTEBOOK_UI_SETTINGS_KEY = '@@NOTEBOOK@@';
 
-// Type of function that we'll call wdkUpdateParamValue. It's
+// Type of function that we'll call updateWdkParamValue. It's
 // adapted from one called updateParamValue used around the wdk and used
 // to update values of parameters that come from the wdk.
-export type UpdateWdkParamValue = (
+export type UpdateParamValue = (
   parameter: Parameter,
   newParamValue: string
 ) => void;
 
 export interface WdkState {
-  wdkParameters?: Parameter[];
-  wdkParamValues?: ParameterValues;
-  updateWdkParamValue?: UpdateWdkParamValue;
+  parameters?: Parameter[];
+  paramValues?: ParameterValues;
+  updateParamValue?: UpdateParamValue;
 }
 
 interface Props {

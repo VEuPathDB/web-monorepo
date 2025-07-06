@@ -8,7 +8,6 @@ import { SingleSelect } from '@veupathdb/coreui';
 import { Item } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxList';
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
 import { NumberOrDate } from '@veupathdb/components/lib/types/general';
-import { useEffect } from 'react';
 import { AnalysisState } from '../core';
 import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { UpdateWdkParamValue } from './EdaNotebookAnalysis';
@@ -18,15 +17,10 @@ const uiStateKey = NOTEBOOK_UI_STATE_KEY;
 export function WdkParamNotebookCell(
   props: NotebookCellProps<WdkParamCellDescriptor>
 ) {
-  const {
-    cell,
-    isDisabled,
-    wdkParameters,
-    wdkParamValues,
-    updateWdkParamValue,
-  } = props;
+  const { cell, isDisabled, wdkState = {} } = props;
 
   const { paramNames, title } = cell;
+  const { wdkParameters, wdkParamValues, updateWdkParamValue } = wdkState;
 
   // userInputParameters are the wdk parameters that the user will
   // fill out in the search. For example, in wgcna the user needs to select a module,
