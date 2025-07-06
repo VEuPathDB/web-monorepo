@@ -35,24 +35,21 @@ import {
   UpdateWdkParamValue,
 } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
 
+export interface WdkState {
+  wdkParameters?: Parameter[];
+  wdkParamValues?: ParameterValues;
+  updateWdkParamValue?: (parameter: Parameter, newParamValue: string) => void;
+}
+
 type EdaNotebookParameterProps = {
   value: string;
   datasetIdParamName?: string;
   notebookTypeParamName?: string;
-  wdkParameters?: Parameter[]; // Array of parameter definitions from the wdk. Notebook preset will have a list of param names to match.
-  wdkParamValues?: ParameterValues;
-  updateWdkParamValue?: UpdateWdkParamValue;
+  wdkState: WdkState;
 };
 
 export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
-  const {
-    value,
-    datasetIdParamName,
-    notebookTypeParamName,
-    wdkParameters = [],
-    wdkParamValues = {},
-    updateWdkParamValue,
-  } = props;
+  const { value, datasetIdParamName, notebookTypeParamName, wdkState } = props;
 
   // TEMPORARY: We don't have this value coming from the wdk yet.
   const studyId = datasetIdParamName ?? 'DS_82dc5abc7f';
@@ -118,9 +115,7 @@ export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
             <EdaNotebookAdapter
               analysisState={analysisState}
               notebookType={notebookType}
-              wdkParameters={wdkParameters}
-              wdkParamValues={wdkParamValues}
-              updateWdkParamValue={updateWdkParamValue}
+              wdkState={wdkState}
             />
           </CoreUIThemeProvider>
         </WorkspaceContainer>
@@ -132,13 +127,11 @@ export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
 interface EdaNotebookAdapterProps {
   analysisState: AnalysisState;
   notebookType: string;
-  wdkParameters?: Parameter[]; // Passed to notebook
-  wdkParamValues?: ParameterValues;
-  updateWdkParamValue?: UpdateWdkParamValue; // Passed to notebook
+  wdkState: WdkState;
 }
 
 function EdaNotebookAdapter(props: EdaNotebookAdapterProps) {
-  const { analysisState } = props;
+  const { analysisState, wdkState, notebookType } = props;
   const studyId = analysisState.analysis?.studyId;
 
   const analysisClient = useConfiguredAnalysisClient(edaServiceUrl);
@@ -158,7 +151,11 @@ function EdaNotebookAdapter(props: EdaNotebookAdapterProps) {
           dataClient={dataClient}
           computeClient={computeClient}
         >
-          <EdaNotebookAnalysis {...props} />
+          <EdaNotebookAnalysis
+            analysisState={analysisState}
+            notebookType={notebookType}
+            wdkState={wdkState}
+          />
         </EDAWorkspaceContainer>
       )}
     </div>

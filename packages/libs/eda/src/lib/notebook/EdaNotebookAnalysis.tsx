@@ -24,22 +24,20 @@ export type UpdateWdkParamValue = (
   newParamValue: string
 ) => void;
 
+export interface WdkState {
+  wdkParameters?: Parameter[];
+  wdkParamValues?: ParameterValues;
+  updateWdkParamValue?: UpdateWdkParamValue;
+}
+
 interface Props {
   analysisState: AnalysisState;
   notebookType: string;
-  wdkParameters?: Parameter[]; // Array of parameters from the wdk. Notebook preset will have a list of param names to match.
-  wdkParamValues?: ParameterValues;
-  updateWdkParamValue?: UpdateWdkParamValue; // Function to update the parameter value in the WDK search. Commandeers wdk's updateParamValue function
+  wdkState: WdkState;
 }
 
 export function EdaNotebookAnalysis(props: Props) {
-  const {
-    analysisState,
-    notebookType,
-    updateWdkParamValue,
-    wdkParameters,
-    wdkParamValues,
-  } = props;
+  const { analysisState, notebookType, wdkState } = props;
   const { analysis, setComputations, addVisualization } = analysisState;
 
   if (analysis == null) throw new Error('Cannot find analysis.');
@@ -125,9 +123,7 @@ export function EdaNotebookAnalysis(props: Props) {
             <NotebookCell
               key={index}
               analysisState={analysisState}
-              wdkParameters={wdkParameters}
-              wdkParamValues={wdkParamValues}
-              updateWdkParamValue={updateWdkParamValue}
+              wdkState={wdkState}
               cell={cell}
             />
           ))

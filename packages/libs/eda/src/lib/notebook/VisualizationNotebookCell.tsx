@@ -14,7 +14,8 @@ import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnack
 export function VisualizationNotebookCell(
   props: NotebookCellProps<VisualizationCellDescriptor>
 ) {
-  const { analysisState, cell, isDisabled, expandedPanelState } = props;
+  const { analysisState, cell, isDisabled, expandedPanelState, wdkState } =
+    props;
   const { analysis, updateVisualization } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
 
