@@ -32,14 +32,8 @@ import { DatasetItem } from '@veupathdb/wdk-client/lib/Views/Question/Params/Dat
 import { parseJson } from '@veupathdb/eda/lib/notebook/Utils';
 import {
   EdaNotebookAnalysis,
-  UpdateWdkParamValue,
+  WdkState,
 } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
-
-export interface WdkState {
-  wdkParameters?: Parameter[];
-  wdkParamValues?: ParameterValues;
-  updateWdkParamValue?: (parameter: Parameter, newParamValue: string) => void;
-}
 
 type EdaNotebookParameterProps = {
   value: string;
@@ -50,8 +44,6 @@ type EdaNotebookParameterProps = {
 
 export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
   const { value, datasetIdParamName, notebookTypeParamName, wdkState } = props;
-
-  const { parameters = [], paramValues = {}, updateParamValue } = wdkState;
 
   // TEMPORARY: We don't have this value coming from the wdk yet.
   const studyId = datasetIdParamName ?? 'DS_82dc5abc7f';

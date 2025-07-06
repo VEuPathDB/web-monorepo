@@ -9,7 +9,7 @@ import { updateParamValue } from './WdkParamNotebookCell';
 import { AnalysisState } from '../core/hooks/analysis';
 import { NodeData } from '@veupathdb/components/lib/types/plots/network';
 import { OptionsObject } from 'notistack';
-import { UpdateWdkParamValue } from './EdaNotebookAnalysis';
+import { UpdateParamValue } from './EdaNotebookAnalysis';
 
 export const NOTEBOOK_UI_STATE_KEY = '@@NOTEBOOK_WDK_PARAMS@@';
 
@@ -37,7 +37,7 @@ export interface VisualizationCellDescriptor
   // Useful for adding interactivity between the viz and other notebook cells.
   getVizPluginOptions?: (
     analysisState: AnalysisState,
-    updateWdkParamValue: UpdateWdkParamValue,
+    updateWdkParamValue: UpdateParamValue,
     param: Parameter,
     enqueueSnackbar: (message: string, options?: OptionsObject) => void // So we can call up a snackbar if we mess wtih the viz.
   ) => Partial<BipartiteNetworkOptions>; // We'll define this function custom for each notebook, so can expand output types as needed.
@@ -139,7 +139,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             ),
             getVizPluginOptions: (
               analysisState: AnalysisState,
-              updateWdkParamValue: UpdateWdkParamValue,
+              updateWdkParamValue: UpdateParamValue,
               param: Parameter,
               enqueueSnackbar: (
                 message: string,

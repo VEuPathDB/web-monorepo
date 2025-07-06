@@ -3,11 +3,8 @@ import DefaultQuestionForm, {
 } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 import React, { useCallback } from 'react';
 import { EdaNotebookParameter } from './EdaNotebookParameter';
-import {
-  Parameter,
-  ParameterValues,
-} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { WdkState } from './EdaNotebookAnalysis';
+import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { WdkState } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
 
 export const EdaNotebookQuestionForm = (props: Props) => {
   const { searchName } = props;
@@ -16,7 +13,7 @@ export const EdaNotebookQuestionForm = (props: Props) => {
   }
 
   // We'll use this function throughout the notebook to update any wdk parameters.
-  const updateWdkParamValue = useCallback(
+  const updateParamValue = useCallback(
     (parameter: Parameter, newParamValue: string) => {
       props.eventHandlers.updateParamValue({
         searchName,

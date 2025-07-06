@@ -10,7 +10,7 @@ import { NumberInput } from '@veupathdb/components/lib/components/widgets/Number
 import { NumberOrDate } from '@veupathdb/components/lib/types/general';
 import { AnalysisState } from '../core';
 import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { UpdateWdkParamValue } from './EdaNotebookAnalysis';
+import { UpdateParamValue } from './EdaNotebookAnalysis';
 
 const uiStateKey = NOTEBOOK_UI_STATE_KEY;
 
@@ -113,7 +113,7 @@ export function WdkParamNotebookCell(
 //
 export const updateParamValue = (
   analysisState: AnalysisState,
-  updateWdkParamValue: UpdateWdkParamValue,
+  updateWdkParamValue: UpdateParamValue,
   param: Parameter
 ) => {
   return (value: NumberOrDate | string | undefined) => {
