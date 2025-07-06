@@ -20,13 +20,13 @@ export function WdkParamNotebookCell(
   const { cell, isDisabled, wdkState = {} } = props;
 
   const { paramNames, title } = cell;
-  const { wdkParameters, wdkParamValues, updateWdkParamValue } = wdkState;
+  const { parameters, paramValues, updateParamValue } = wdkState;
 
   // userInputParameters are the wdk parameters that the user will
   // fill out in the search. For example, in wgcna the user needs to select a module,
   // but doesn't need to select the hidden param for this search called "dataset".
 
-  const userInputParameters = wdkParameters?.filter((param) =>
+  const userInputParameters = parameters?.filter((param) =>
     paramNames?.includes(param.name)
   );
 
@@ -47,9 +47,9 @@ export function WdkParamNotebookCell(
           <div className="WdkParamInputs">
             {userInputParameters &&
               paramNames &&
-              wdkParamValues &&
+              paramValues &&
               userInputParameters.map((param) => {
-                const paramCurrentValue = wdkParamValues[param.name];
+                const paramCurrentValue = paramValues[param.name];
 
                 // There are many param types. The following is not exhaustive.
                 if (param.type === 'single-pick-vocabulary') {
@@ -70,7 +70,7 @@ export function WdkParamNotebookCell(
                         value={paramCurrentValue}
                         buttonDisplayContent={paramCurrentValue}
                         onSelect={(newValue: string) =>
-                          updateWdkParamValue?.(param, newValue)
+                          updateParamValue?.(param, newValue)
                         }
                       />
                     </div>
@@ -88,7 +88,7 @@ export function WdkParamNotebookCell(
                         step={0.01}
                         onValueChange={(newValue?: NumberOrDate) =>
                           newValue != null &&
-                          updateWdkParamValue?.(param, newValue.toString())
+                          updateParamValue?.(param, newValue.toString())
                         }
                       />
                     </div>

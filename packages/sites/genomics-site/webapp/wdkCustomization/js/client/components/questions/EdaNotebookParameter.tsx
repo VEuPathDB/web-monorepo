@@ -51,6 +51,8 @@ type EdaNotebookParameterProps = {
 export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
   const { value, datasetIdParamName, notebookTypeParamName, wdkState } = props;
 
+  const { parameters = [], paramValues = {}, updateParamValue } = wdkState;
+
   // TEMPORARY: We don't have this value coming from the wdk yet.
   const studyId = datasetIdParamName ?? 'DS_82dc5abc7f';
   const notebookType = notebookTypeParamName ?? 'wgcnaCorrelationNotebook';

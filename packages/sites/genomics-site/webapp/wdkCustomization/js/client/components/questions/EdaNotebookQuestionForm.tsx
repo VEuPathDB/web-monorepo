@@ -7,12 +7,7 @@ import {
   Parameter,
   ParameterValues,
 } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-
-export interface WdkState {
-  wdkParameters?: Parameter[];
-  wdkParamValues?: ParameterValues;
-  updateWdkParamValue?: (parameter: Parameter, newParamValue: string) => void;
-}
+import { WdkState } from './EdaNotebookAnalysis';
 
 export const EdaNotebookQuestionForm = (props: Props) => {
   const { searchName } = props;
@@ -34,9 +29,9 @@ export const EdaNotebookQuestionForm = (props: Props) => {
   );
 
   const wdkState: WdkState = {
-    wdkParameters: props.state.question.parameters,
-    wdkParamValues: props.state.paramValues,
-    updateWdkParamValue,
+    parameters: props.state.question.parameters,
+    paramValues: props.state.paramValues,
+    updateParamValue,
   };
 
   // An override that renders the notebook instead of any default parameter or parameter group ui.
