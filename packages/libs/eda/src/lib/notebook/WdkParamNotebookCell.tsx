@@ -11,48 +11,27 @@ import { NumberOrDate } from '@veupathdb/components/lib/types/general';
 import { useEffect } from 'react';
 import { AnalysisState } from '../core';
 import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { UpdateWdkParamValue } from './EdaNotebookAnalysis';
 
 const uiStateKey = NOTEBOOK_UI_STATE_KEY;
-
-interface DynamicObject {
-  [key: string]: number | string | undefined;
-}
 
 export function WdkParamNotebookCell(
   props: NotebookCellProps<WdkParamCellDescriptor>
 ) {
-  const { cell, isDisabled, analysisState } = props;
+  const {
+    cell,
+    isDisabled,
+    wdkParameters,
+    wdkParamValues,
+    updateWdkParamValue,
+  } = props;
 
-  const { paramNames, title, wdkParameters, wdkUpdateParamValue } = cell;
-
-  // The following sets the default values for the parameters in the anlaysis state by
-  // taking advantage of the initialDisplayValue property already set in the parameter.
-  useEffect(() => {
-    // Use a DynamicObject here because we won't know parameter names and types ahead of time.
-    const uiSettings: DynamicObject = (analysisState.analysis?.descriptor.subset
-      .uiSettings[uiStateKey] ?? {}) as DynamicObject;
-
-    // Exit if we already have defined parameters in uiSettings.
-    if (Object.keys(uiSettings).length > 0) {
-      return;
-    }
-
-    // Set initial values for each parameter we care about.
-    wdkParameters?.forEach((param) => {
-      if (uiSettings[param.name] === undefined) {
-        uiSettings[param.name] = param.initialDisplayValue;
-      }
-    });
-
-    analysisState.setVariableUISettings((currentState) => ({
-      ...currentState,
-      [uiStateKey]: uiSettings,
-    }));
-  }, [wdkParameters, analysisState]);
+  const { paramNames, title } = cell;
 
   // userInputParameters are the wdk parameters that the user will
   // fill out in the search. For example, in wgcna the user needs to select a module,
   // but doesn't need to select the hidden param for this search called "dataset".
+
   const userInputParameters = wdkParameters?.filter((param) =>
     paramNames?.includes(param.name)
   );
@@ -74,11 +53,9 @@ export function WdkParamNotebookCell(
           <div className="WdkParamInputs">
             {userInputParameters &&
               paramNames &&
+              wdkParamValues &&
               userInputParameters.map((param) => {
-                const paramCurrentValue =
-                  analysisState.analysis?.descriptor.subset.uiSettings[
-                    uiStateKey
-                  ]?.[param.name];
+                const paramCurrentValue = wdkParamValues[param.name];
 
                 // There are many param types. The following is not exhaustive.
                 if (param.type === 'single-pick-vocabulary') {
@@ -96,13 +73,11 @@ export function WdkParamNotebookCell(
                       <span>{param.displayName}</span>
                       <SingleSelect
                         items={selectItems}
-                        value={paramCurrentValue as string}
-                        buttonDisplayContent={paramCurrentValue as string}
-                        onSelect={updateParamValue(
-                          analysisState,
-                          wdkUpdateParamValue,
-                          param
-                        )}
+                        value={paramCurrentValue}
+                        buttonDisplayContent={paramCurrentValue}
+                        onSelect={(newValue: string) =>
+                          updateWdkParamValue?.(param, newValue)
+                        }
                       />
                     </div>
                   );
@@ -111,15 +86,16 @@ export function WdkParamNotebookCell(
                     <div className="InputGroup">
                       <span>{param.displayName}</span>
                       <NumberInput
-                        value={Number(paramCurrentValue) ?? '1'}
-                        minValue={0} // Currently not derived from the parameter, though they should be.
+                        value={
+                          Number(paramCurrentValue) ?? param.initialDisplayValue
+                        }
+                        minValue={0} // TO DO: Currently not derived from the parameter, though they should be.
                         maxValue={1}
                         step={0.01}
-                        onValueChange={updateParamValue(
-                          analysisState,
-                          wdkUpdateParamValue,
-                          param
-                        )}
+                        onValueChange={(newValue?: NumberOrDate) =>
+                          newValue != null &&
+                          updateWdkParamValue?.(param, newValue.toString())
+                        }
                       />
                     </div>
                   );
@@ -138,17 +114,21 @@ export function WdkParamNotebookCell(
   );
 }
 
+//
+// TO DO: probably get rid of this?
+//
 export const updateParamValue = (
   analysisState: AnalysisState,
-  wdkUpdateParamValue: WdkParamCellDescriptor['wdkUpdateParamValue'],
+  updateWdkParamValue: UpdateWdkParamValue,
   param: Parameter
 ) => {
   return (value: NumberOrDate | string | undefined) => {
     const stringValue = value?.toString() ?? '';
+    // TO DO: early return instead of using empty string fallback?
 
-    if (wdkUpdateParamValue) {
+    if (updateWdkParamValue) {
       // translate the uiSettings stored in the analysisState to
-      // an object that the wdkUpdateParamValue can handle.
+      // an object that the updateWdkParamValue can handle.
       const uiSettingsAsRecord: Record<string, string> = Object.entries(
         analysisState.analysis?.descriptor.subset.uiSettings[uiStateKey] ?? {}
       ).reduce((acc, [key, val]) => {
@@ -157,7 +137,7 @@ export const updateParamValue = (
       }, {} as Record<string, string>);
 
       // Set the new value (stringValue) in the uiSettings.
-      wdkUpdateParamValue(param, stringValue, uiSettingsAsRecord);
+      updateWdkParamValue(param, stringValue); // there was a deprecated third arg: `uiSettingsAsRecord`
     }
 
     // Also update the analysisState with the new parameter value.

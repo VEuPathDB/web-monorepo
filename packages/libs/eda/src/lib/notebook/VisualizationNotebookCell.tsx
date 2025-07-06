@@ -26,13 +26,7 @@ export function VisualizationNotebookCell(
   );
   const { enqueueSnackbar } = useSnackbar();
 
-  const {
-    visualizationName,
-    visualizationId,
-    getVizPluginOptions,
-    wdkUpdateParamValue,
-    associatedWdkParam,
-  } = cell;
+  const { visualizationName, visualizationId, getVizPluginOptions } = cell;
 
   const { visualization, computation } =
     analysisState.getVisualizationAndComputation(visualizationId) ?? {};
@@ -96,22 +90,22 @@ export function VisualizationNotebookCell(
 
   // Override vizPlugin Options with ones defined in the notebook preset.
   // For now this is used to link the bipartite network to the wdk param.
-  if (
-    vizPlugin &&
-    getVizPluginOptions &&
-    associatedWdkParam &&
-    wdkUpdateParamValue
-  ) {
-    vizPlugin.options = {
-      ...vizPlugin.options,
-      ...getVizPluginOptions(
-        analysisState,
-        wdkUpdateParamValue,
-        associatedWdkParam,
-        enqueueSnackbar
-      ),
-    };
-  }
+  //  if (
+  //    vizPlugin &&
+  //    getVizPluginOptions &&
+  //    associatedWdkParam &&
+  //    wdkUpdateParamValue
+  //  ) {
+  //    vizPlugin.options = {
+  //      ...vizPlugin.options,
+  //      ...getVizPluginOptions(
+  //        analysisState,
+  //        wdkUpdateParamValue,
+  //        associatedWdkParam,
+  //        enqueueSnackbar
+  //      ),
+  //    };
+  //  }
 
   return visualization ? (
     <>

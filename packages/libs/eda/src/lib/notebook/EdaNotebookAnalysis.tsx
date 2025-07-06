@@ -1,35 +1,46 @@
 import { useEffect } from 'react';
-import { AnalysisState, useStudyRecord } from '../core';
+import { AnalysisState } from '../core';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { NotebookCell } from './NotebookCell';
 import './EdaNotebook.scss';
 import { createComputation } from '../core/components/computations/Utils';
-import {
-  presetNotebooks,
-  NotebookCellDescriptor,
-  WdkParamCellDescriptor,
-  WdkUpdateParamValue,
-} from './NotebookPresets';
+import { presetNotebooks, NotebookCellDescriptor } from './NotebookPresets';
 import { Computation } from '../core/types/visualization';
 import { plugins } from '../core/components/computations/plugins';
 import { H5 } from '@veupathdb/coreui';
 import colors from '@veupathdb/coreui/lib/definitions/colors';
-import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import {
+  Parameter,
+  ParameterValues,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 // const NOTEBOOK_UI_SETTINGS_KEY = '@@NOTEBOOK@@';
+
+// Type of function that we'll call wdkUpdateParamValue. It's
+// adapted from one called updateParamValue used around the wdk and used
+// to update values of parameters that come from the wdk.
+export type UpdateWdkParamValue = (
+  parameter: Parameter,
+  newParamValue: string
+) => void;
 
 interface Props {
   analysisState: AnalysisState;
   notebookType: string;
-  parameters?: Parameter[]; // Array of parameters from the wdk. Notebook preset will have a list of param names to match.
-  wdkUpdateParamValue?: WdkUpdateParamValue; // Function to update the parameter value in the WDK search. Commandeers wdk's updateParamValue function
+  wdkParameters?: Parameter[]; // Array of parameters from the wdk. Notebook preset will have a list of param names to match.
+  wdkParamValues?: ParameterValues;
+  updateWdkParamValue?: UpdateWdkParamValue; // Function to update the parameter value in the WDK search. Commandeers wdk's updateParamValue function
 }
 
 export function EdaNotebookAnalysis(props: Props) {
-  const { analysisState, notebookType } = props;
+  const {
+    analysisState,
+    notebookType,
+    updateWdkParamValue,
+    wdkParameters,
+    wdkParamValues,
+  } = props;
   const { analysis, setComputations, addVisualization } = analysisState;
-
-  const studyRecord = useStudyRecord();
 
   if (analysis == null) throw new Error('Cannot find analysis.');
 
@@ -84,31 +95,6 @@ export function EdaNotebookAnalysis(props: Props) {
         };
 
         addVisualization(parentComputationId, visualization);
-      } else if (
-        cell.type === 'wdkparam' &&
-        props.parameters &&
-        props.wdkUpdateParamValue
-      ) {
-        // Attach the wdk details we get from the search props to the notebook cell.
-        cell.wdkParameters = props.parameters;
-        cell.wdkUpdateParamValue = props.wdkUpdateParamValue;
-      }
-
-      // A non-wdkparam cell may have an associated wdk parameter it handles. If that's
-      // the case, we need to also give this cell the wdk parameters and update function.
-      // For example, a visualization that the user can alter in order to update a wdk parameter.
-      if (
-        props.wdkUpdateParamValue &&
-        props.parameters &&
-        cell.associatedWdkParamName
-      ) {
-        const associatedWdkParam = props.parameters?.find(
-          (param) => param.name === cell.associatedWdkParamName
-        );
-        if (associatedWdkParam) {
-          cell.associatedWdkParam = associatedWdkParam;
-          cell.wdkUpdateParamValue = props.wdkUpdateParamValue;
-        }
       }
     }
 
@@ -117,41 +103,7 @@ export function EdaNotebookAnalysis(props: Props) {
     // This ensures that updates are queued and applied in order, even across
     // multiple recursive calls.
     notebookPreset.cells.forEach((cell) => processCell(cell));
-  }, [
-    analysis,
-    setComputations,
-    addVisualization,
-    notebookPreset,
-    props.wdkUpdateParamValue,
-    props.parameters,
-  ]);
-
-  // If the notebook preset has any wdk parameter cells, we need to
-  // check to ensure we have matching parameters from the notebook and wdk then
-  // add these parameters to the notebook cell.
-  useEffect(() => {
-    if (
-      analysis == null ||
-      notebookPreset == null ||
-      props.parameters == null ||
-      props.wdkUpdateParamValue == null
-    )
-      return;
-
-    // Extract the wdk parameter notebook cell. There should only be one.
-    const wdkParamNotebookCell = notebookPreset.cells.find(
-      (cell) => cell.type === 'wdkparam'
-    ) as WdkParamCellDescriptor;
-
-    if (wdkParamNotebookCell == null) return;
-
-    // Update the wdk param notebook cell with the parameters
-    wdkParamNotebookCell.wdkParameters = props.parameters;
-    wdkParamNotebookCell.wdkUpdateParamValue = props.wdkUpdateParamValue;
-
-    notebookPreset.cells[notebookPreset.cells.indexOf(wdkParamNotebookCell)] =
-      wdkParamNotebookCell;
-  }, [analysis, notebookPreset, props.parameters, props.wdkUpdateParamValue]);
+  }, [analysis, setComputations, addVisualization, notebookPreset]);
 
   //
   // Now we render the notebook directly from the read-only `notebookPreset`,
@@ -173,6 +125,9 @@ export function EdaNotebookAnalysis(props: Props) {
             <NotebookCell
               key={index}
               analysisState={analysisState}
+              wdkParameters={wdkParameters}
+              wdkParamValues={wdkParamValues}
+              updateWdkParamValue={updateWdkParamValue}
               cell={cell}
             />
           ))

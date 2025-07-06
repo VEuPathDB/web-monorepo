@@ -9,17 +9,9 @@ import { updateParamValue } from './WdkParamNotebookCell';
 import { AnalysisState } from '../core/hooks/analysis';
 import { NodeData } from '@veupathdb/components/lib/types/plots/network';
 import { OptionsObject } from 'notistack';
+import { UpdateWdkParamValue } from './EdaNotebookAnalysis';
 
 export const NOTEBOOK_UI_STATE_KEY = '@@NOTEBOOK_WDK_PARAMS@@';
-
-// Type of function that we'll call wdkUpdateParamValue. It's
-// adapted from one called updateParamValue used around the wdk and used
-// to update values of parameters that come from the wdk.
-export type WdkUpdateParamValue = (
-  parameter: Parameter,
-  newParamValue: string,
-  paramValues: Record<string, string>
-) => void;
 
 // The descriptors contain just enough information to render the cells when given the
 // appropriate context, such as analysis state.
@@ -35,9 +27,6 @@ export interface NotebookCellDescriptorBase<T extends string> {
   title: string;
   cells?: NotebookCellDescriptor[];
   helperText?: ReactNode; // Optional information to display above the cell. Instead of a full text cell, use this for quick help and titles.
-  associatedWdkParamName?: string; // Optional name of a wdk parameter related to this viz. Can be updated using the viz options.
-  associatedWdkParam?: Parameter; // Parameter object. Defined in wdk, not notebook preset.
-  wdkUpdateParamValue?: WdkUpdateParamValue; // Function to update the parameter value in the WDK search. Defined by the wdk, not the notebook preset
 }
 
 export interface VisualizationCellDescriptor
@@ -48,7 +37,7 @@ export interface VisualizationCellDescriptor
   // Useful for adding interactivity between the viz and other notebook cells.
   getVizPluginOptions?: (
     analysisState: AnalysisState,
-    wdkUpdateParamValue: WdkUpdateParamValue,
+    updateWdkParamValue: UpdateWdkParamValue,
     param: Parameter,
     enqueueSnackbar: (message: string, options?: OptionsObject) => void // So we can call up a snackbar if we mess wtih the viz.
   ) => Partial<BipartiteNetworkOptions>; // We'll define this function custom for each notebook, so can expand output types as needed.
@@ -70,7 +59,6 @@ export interface SubsetCellDescriptor
 export interface WdkParamCellDescriptor
   extends NotebookCellDescriptorBase<'wdkparam'> {
   paramNames: string[]; // Param names from the wdk query. These must match exactly or the notebook will err.
-  wdkParameters?: Parameter[]; // The parameters, including all their details, from the wdk query.
 }
 
 type PresetNotebook = {
@@ -149,10 +137,9 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                 color={colors.grey[800]}
               />
             ),
-            associatedWdkParamName: 'wgcnaParam', // wdk param that controls module name
             getVizPluginOptions: (
               analysisState: AnalysisState,
-              wdkUpdateParamValue: WdkUpdateParamValue,
+              updateWdkParamValue: UpdateWdkParamValue,
               param: Parameter,
               enqueueSnackbar: (
                 message: string,
@@ -186,7 +173,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                   // Update module name in the wdk param selector
                   updateParamValue(
                     analysisState,
-                    wdkUpdateParamValue,
+                    updateWdkParamValue,
                     param
                   ).call(null, moduleName);
 
