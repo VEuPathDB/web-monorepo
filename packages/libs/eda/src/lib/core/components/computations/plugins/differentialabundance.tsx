@@ -268,39 +268,36 @@ export function DifferentialAbundanceConfiguration(
 
   // Find the selected comparator variable distribution. For cateogrical variables only.
   // Will be used to disable values that have been filtered out of the subset.
-  const filteredComparatorVariableDistribution = useCachedPromise(
-    async () => {
-      if (
-        configuration.comparator == null ||
-        configuration.comparator.variable == null ||
-        studyMetadata == null ||
-        configuration.comparator.variable.entityId == null ||
-        configuration.comparator.variable.variableId == null ||
-        selectedComparatorVariable == null ||
-        selectedComparatorVariable.variable.dataShape === 'continuous' || // The following is for categorical variables only
-        otherFilters == null ||
-        otherFilters.length === 0
-      ) {
-        return {} as DistributionResponse;
-      }
+  const filteredComparatorVariableDistribution = useCachedPromise(async () => {
+    if (
+      configuration.comparator == null ||
+      configuration.comparator.variable == null ||
+      studyMetadata == null ||
+      configuration.comparator.variable.entityId == null ||
+      configuration.comparator.variable.variableId == null ||
+      selectedComparatorVariable == null ||
+      selectedComparatorVariable.variable.dataShape === 'continuous' || // The following is for categorical variables only
+      otherFilters == null ||
+      otherFilters.length === 0
+    ) {
+      return {} as DistributionResponse;
+    }
 
-      const variableDistribution =
-        await getFilteredVariableValues<DistributionResponse>((filters) => {
-          return subsettingClient.getDistribution(
-            studyMetadata.id,
-            configuration.comparator?.variable.entityId ?? '',
-            configuration.comparator?.variable.variableId ?? '',
-            {
-              valueSpec: 'count',
-              filters,
-            }
-          );
-        }, otherFilters);
+    const variableDistribution =
+      await getFilteredVariableValues<DistributionResponse>((filters) => {
+        return subsettingClient.getDistribution(
+          studyMetadata.id,
+          configuration.comparator?.variable.entityId ?? '',
+          configuration.comparator?.variable.variableId ?? '',
+          {
+            valueSpec: 'count',
+            filters,
+          }
+        );
+      }, otherFilters);
 
-      return variableDistribution;
-    },
-    [configuration.comparator, filters, studyMetadata.id] // used to have `subsettingClient`
-  );
+    return variableDistribution;
+  }, [configuration.comparator, filters, studyMetadata.id, subsettingClient]);
 
   // If the variable is continuous, ask the backend for a list of bins
   const continuousVariableBins = usePromise(
@@ -561,6 +558,6 @@ async function getFilteredVariableValues<T>(
   fetchSummary: SummaryFetcher<T>,
   otherFilters: Filter[] = []
 ) {
-  const foreground = await fetchSummary(otherFilters);
-  return foreground;
+  const variableDistribution = await fetchSummary(otherFilters);
+  return variableDistribution;
 }
