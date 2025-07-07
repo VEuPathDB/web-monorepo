@@ -109,7 +109,7 @@ export function EdaNotebookAnalysis(props: Props) {
   //
   // If we need `notebookPreset` to be dynamic state (e.g. user can add/remove new cells)
   // or if we need to store cell configuration beyond what the computation and visualisation
-  // descriptors in analysisState.analysis can handle, then we can change this to persisted
+  // descriptors in analysisState.analysis and wdkParams can handle, then we can change this to persisted
   // `notebookState` coming from analysisState.analysis.descriptor.subset.uiSettings[NOTEBOOK_UI_SETTINGS_KEY]
   //
   return (

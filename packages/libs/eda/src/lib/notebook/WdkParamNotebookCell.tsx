@@ -1,18 +1,10 @@
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
 import { NotebookCellProps } from './NotebookCell';
-import {
-  NOTEBOOK_UI_STATE_KEY,
-  WdkParamCellDescriptor,
-} from './NotebookPresets';
+import { WdkParamCellDescriptor } from './NotebookPresets';
 import { SingleSelect } from '@veupathdb/coreui';
 import { Item } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxList';
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
 import { NumberOrDate } from '@veupathdb/components/lib/types/general';
-import { AnalysisState } from '../core';
-import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { UpdateParamValue } from './EdaNotebookAnalysis';
-
-const uiStateKey = NOTEBOOK_UI_STATE_KEY;
 
 export function WdkParamNotebookCell(
   props: NotebookCellProps<WdkParamCellDescriptor>
@@ -62,13 +54,17 @@ export function WdkParamNotebookCell(
                       }))
                     : [];
 
+                  const buttonDisplayContent = selectItems.find(
+                    ({ value }) => value === paramCurrentValue
+                  )?.display;
+
                   return (
                     <div className="InputGroup">
                       <span>{param.displayName}</span>
                       <SingleSelect
                         items={selectItems}
                         value={paramCurrentValue}
-                        buttonDisplayContent={paramCurrentValue}
+                        buttonDisplayContent={buttonDisplayContent}
                         onSelect={(newValue: string) =>
                           updateParamValue?.(param, newValue)
                         }
@@ -107,40 +103,3 @@ export function WdkParamNotebookCell(
     </>
   );
 }
-
-//
-// TO DO: probably get rid of this?
-//
-export const updateParamValue = (
-  analysisState: AnalysisState,
-  updateWdkParamValue: UpdateParamValue,
-  param: Parameter
-) => {
-  return (value: NumberOrDate | string | undefined) => {
-    const stringValue = value?.toString() ?? '';
-    // TO DO: early return instead of using empty string fallback?
-
-    if (updateWdkParamValue) {
-      // translate the uiSettings stored in the analysisState to
-      // an object that the updateWdkParamValue can handle.
-      const uiSettingsAsRecord: Record<string, string> = Object.entries(
-        analysisState.analysis?.descriptor.subset.uiSettings[uiStateKey] ?? {}
-      ).reduce((acc, [key, val]) => {
-        acc[key] = val?.toString() ?? '';
-        return acc;
-      }, {} as Record<string, string>);
-
-      // Set the new value (stringValue) in the uiSettings.
-      updateWdkParamValue(param, stringValue); // there was a deprecated third arg: `uiSettingsAsRecord`
-    }
-
-    // Also update the analysisState with the new parameter value.
-    analysisState.setVariableUISettings((currentState) => ({
-      ...currentState,
-      [uiStateKey]: {
-        ...currentState[uiStateKey],
-        [param.name]: stringValue,
-      },
-    }));
-  };
-};
