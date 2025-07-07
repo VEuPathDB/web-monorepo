@@ -76,9 +76,7 @@ export function WdkParamNotebookCell(
                     <div className="InputGroup">
                       <span>{param.displayName}</span>
                       <NumberInput
-                        value={
-                          Number(paramCurrentValue) ?? param.initialDisplayValue
-                        }
+                        value={Number(paramCurrentValue)}
                         minValue={0} // TO DO: Currently not derived from the parameter, though they should be.
                         maxValue={1}
                         step={0.01}
