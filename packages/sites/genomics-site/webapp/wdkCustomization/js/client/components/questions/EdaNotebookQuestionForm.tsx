@@ -22,7 +22,7 @@ export const EdaNotebookQuestionForm = (props: Props) => {
         paramValue: newParamValue,
       });
     },
-    [props, searchName]
+    [props.eventHandlers, searchName]
   );
 
   const wdkState: WdkState = {
@@ -32,6 +32,8 @@ export const EdaNotebookQuestionForm = (props: Props) => {
   };
 
   // An override that renders the notebook instead of any default parameter or parameter group ui.
+  // NOTE: this function is run for every visible parameter group. May cause
+  // an issue if the wdk question has multipl parameter groups.
   const renderParamGroup = () => {
     return <EdaNotebookParameter value={'test'} wdkState={wdkState} />;
   };
