@@ -2,7 +2,6 @@ import {
   ContinuousVariableDataShape,
   DistributionResponse,
   LabeledRange,
-  NumberVariable,
   usePromise,
   useStudyMetadata,
 } from '../../..';
@@ -46,7 +45,7 @@ import { VariableCollectionSelectList } from '../../variableSelectors/VariableCo
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { entityTreeToArray } from '../../../utils/study-metadata';
 import { useCachedPromise } from '../../../hooks/cachedPromise';
-import { getDistribution } from '../../filter/util';
+import { SummaryFetcher } from '../../filter/util';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -260,24 +259,33 @@ export function DifferentialAbundanceConfiguration(
     }
   }, [configuration, findEntityAndVariable]);
 
-  const filteredVariableValues = useCachedPromise(
+  // Find any filters that are not specifically on the comparator variable.
+  const otherFilters = filters?.filter(
+    (f) =>
+      f.entityId !== configuration.comparator?.variable.entityId ||
+      f.variableId !== configuration.comparator?.variable.variableId
+  );
+
+  // Find the selected comparator variable distribution. For cateogrical variables only.
+  // Will be used to disable values that have been filtered out of the subset.
+  const filteredComparatorVariableDistribution = useCachedPromise(
     async () => {
       if (
         configuration.comparator == null ||
         configuration.comparator.variable == null ||
         studyMetadata == null ||
         configuration.comparator.variable.entityId == null ||
-        configuration.comparator.variable.variableId == null
+        configuration.comparator.variable.variableId == null ||
+        selectedComparatorVariable == null ||
+        selectedComparatorVariable.variable.dataShape === 'continuous' || // The following is for categorical variables only
+        otherFilters == null ||
+        otherFilters.length === 0
       ) {
-        return;
+        return {} as DistributionResponse;
       }
-      const distribution = await getDistribution<DistributionResponse>(
-        {
-          entityId: configuration.comparator?.variable.entityId,
-          variableId: configuration.comparator?.variable.variableId,
-          filters: filters,
-        },
-        (filters) => {
+
+      const variableDistribution =
+        await getFilteredVariableValues<DistributionResponse>((filters) => {
           return subsettingClient.getDistribution(
             studyMetadata.id,
             configuration.comparator?.variable.entityId ?? '',
@@ -287,25 +295,12 @@ export function DifferentialAbundanceConfiguration(
               filters,
             }
           );
-        }
-      );
-      console.log('distribution', distribution);
-      console.log('filters', filters);
-      const bgValues = distribution.background.histogram.map(
-        (bin) => bin.binLabel
-      );
-      const fgValues = distribution.foreground.histogram.map(
-        (bin) => bin.binLabel
-      );
+        }, otherFilters);
 
-      // Return the values that are in the background but not in the foreground.
-      // These are the values that have been filtered out.
-      return bgValues.filter((value) => !fgValues.includes(value));
+      return variableDistribution;
     },
     [configuration.comparator, filters, studyMetadata.id] // used to have `subsettingClient`
   );
-
-  console.log('filteredVariableValues', filteredVariableValues);
 
   // If the variable is continuous, ask the backend for a list of bins
   const continuousVariableBins = usePromise(
@@ -357,6 +352,17 @@ export function DifferentialAbundanceConfiguration(
           };
         }
       );
+
+  // Determine any values that were filtered out based on the subset.
+  // This is used to disable values in the ValuePicker.
+  const disabledVariableValues =
+    selectedComparatorVariable?.variable.vocabulary?.filter((value) => {
+      if (filteredComparatorVariableDistribution.value == null) return false;
+
+      return !filteredComparatorVariableDistribution.value.histogram.some(
+        (bin) => bin.binLabel === value
+      );
+    });
 
   return (
     <ComputationStepContainer
@@ -431,7 +437,7 @@ export function DifferentialAbundanceConfiguration(
                     ...(configuration.comparator?.groupB?.map(
                       (entry) => entry.label
                     ) ?? []), // Remove group B values
-                    ...(filteredVariableValues.value ?? []), // Remove filtered values
+                    ...(disabledVariableValues ?? []), // Remove filtered values
                   ]}
                   onSelectedValuesChange={(newValues) => {
                     assertConfigWithComparator(configuration);
@@ -445,7 +451,7 @@ export function DifferentialAbundanceConfiguration(
                       groupB: configuration.comparator.groupB ?? undefined,
                     });
                   }}
-                  disabledCheckboxTooltipContent="Values cannot overlap between groups"
+                  disabledCheckboxTooltipContent="Value either already selected in Group B or has no data in the subset"
                   showClearSelectionButton={false}
                   disableInput={disableGroupValueSelectors}
                   isLoading={continuousVariableBins.pending}
@@ -490,9 +496,12 @@ export function DifferentialAbundanceConfiguration(
                   selectedValues={configuration?.comparator?.groupB?.map(
                     (entry) => entry.label
                   )}
-                  disabledValues={configuration?.comparator?.groupA?.map(
-                    (entry) => entry.label
-                  )}
+                  disabledValues={[
+                    ...(configuration.comparator?.groupA?.map(
+                      (entry) => entry.label
+                    ) ?? []), // Remove group A values
+                    ...(disabledVariableValues ?? []), // Remove filtered values
+                  ]}
                   onSelectedValuesChange={(newValues) => {
                     assertConfigWithComparator(configuration);
                     changeConfigHandler('comparator', {
@@ -544,4 +553,14 @@ function isEnabledInPicker({
   );
 
   return studyHasCollections;
+}
+
+// Used to determine if any variable values were filtered out based
+// on the subset. Adapted from getDistribution<T>
+async function getFilteredVariableValues<T>(
+  fetchSummary: SummaryFetcher<T>,
+  otherFilters: Filter[] = []
+) {
+  const foreground = await fetchSummary(otherFilters);
+  return foreground;
 }
