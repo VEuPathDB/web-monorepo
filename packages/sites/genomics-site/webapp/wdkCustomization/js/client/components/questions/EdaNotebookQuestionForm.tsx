@@ -3,11 +3,8 @@ import DefaultQuestionForm, {
 } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 import React, { useCallback } from 'react';
 import { EdaNotebookParameter } from './EdaNotebookParameter';
-import {
-  ParameterGroup,
-  Parameter,
-  ParameterValues,
-} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { WdkState } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
 
 export const EdaNotebookQuestionForm = (props: Props) => {
   const { searchName } = props;
@@ -16,31 +13,27 @@ export const EdaNotebookQuestionForm = (props: Props) => {
   }
 
   // We'll use this function throughout the notebook to update any wdk parameters.
-  const wdkUpdateParamValue = useCallback(
-    (
-      parameter: Parameter,
-      newParamValue: string,
-      paramValues: ParameterValues
-    ) => {
+  const updateParamValue = useCallback(
+    (parameter: Parameter, newParamValue: string) => {
       props.eventHandlers.updateParamValue({
         searchName,
         parameter,
-        paramValues,
+        paramValues: {}, // deprecated
         paramValue: newParamValue,
       });
     },
     [props, searchName]
   );
 
+  const wdkState: WdkState = {
+    parameters: props.state.question.parameters,
+    paramValues: props.state.paramValues,
+    updateParamValue,
+  };
+
   // An override that renders the notebook instead of any default parameter or parameter group ui.
-  const renderParamGroup = (group: ParameterGroup, formProps: Props) => {
-    return (
-      <EdaNotebookParameter
-        value={'test'}
-        parameters={props.state.question.parameters}
-        wdkUpdateParamValue={wdkUpdateParamValue}
-      />
-    );
+  const renderParamGroup = () => {
+    return <EdaNotebookParameter value={'test'} wdkState={wdkState} />;
   };
 
   return (

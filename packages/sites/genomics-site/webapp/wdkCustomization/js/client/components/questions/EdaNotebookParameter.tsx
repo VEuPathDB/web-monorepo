@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import {
+  Parameter,
+  ParameterValues,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { WorkspaceContainer } from '@veupathdb/eda/lib/workspace/WorkspaceContainer';
 import {
   Analysis,
@@ -27,25 +30,20 @@ import {
 import { formatFilterDisplayValue } from '@veupathdb/eda/lib/core/utils/study-metadata';
 import { DatasetItem } from '@veupathdb/wdk-client/lib/Views/Question/Params/DatasetParamUtils';
 import { parseJson } from '@veupathdb/eda/lib/notebook/Utils';
-import { EdaNotebookAnalysis } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
-import { WdkUpdateParamValue } from '@veupathdb/eda/lib/notebook/NotebookPresets';
+import {
+  EdaNotebookAnalysis,
+  WdkState,
+} from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
 
 type EdaNotebookParameterProps = {
   value: string;
   datasetIdParamName?: string;
   notebookTypeParamName?: string;
-  parameters?: Parameter[]; // Array of parameters from the wdk. Notebook preset will have a list of param names to match.
-  wdkUpdateParamValue?: WdkUpdateParamValue;
+  wdkState: WdkState;
 };
 
 export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
-  const {
-    value,
-    datasetIdParamName,
-    notebookTypeParamName,
-    parameters = [],
-    wdkUpdateParamValue,
-  } = props;
+  const { value, datasetIdParamName, notebookTypeParamName, wdkState } = props;
 
   // TEMPORARY: We don't have this value coming from the wdk yet.
   const studyId = datasetIdParamName ?? 'DS_82dc5abc7f';
@@ -111,8 +109,7 @@ export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
             <EdaNotebookAdapter
               analysisState={analysisState}
               notebookType={notebookType}
-              parameters={parameters}
-              wdkUpdateParamValue={wdkUpdateParamValue}
+              wdkState={wdkState}
             />
           </CoreUIThemeProvider>
         </WorkspaceContainer>
@@ -124,12 +121,11 @@ export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
 interface EdaNotebookAdapterProps {
   analysisState: AnalysisState;
   notebookType: string;
-  parameters?: Parameter[]; // Passed to notebook
-  wdkUpdateParamValue?: WdkUpdateParamValue; // Passed to notebook
+  wdkState: WdkState;
 }
 
 function EdaNotebookAdapter(props: EdaNotebookAdapterProps) {
-  const { analysisState } = props;
+  const { analysisState, wdkState, notebookType } = props;
   const studyId = analysisState.analysis?.studyId;
 
   const analysisClient = useConfiguredAnalysisClient(edaServiceUrl);
@@ -149,7 +145,11 @@ function EdaNotebookAdapter(props: EdaNotebookAdapterProps) {
           dataClient={dataClient}
           computeClient={computeClient}
         >
-          <EdaNotebookAnalysis {...props} />
+          <EdaNotebookAnalysis
+            analysisState={analysisState}
+            notebookType={notebookType}
+            wdkState={wdkState}
+          />
         </EDAWorkspaceContainer>
       )}
     </div>

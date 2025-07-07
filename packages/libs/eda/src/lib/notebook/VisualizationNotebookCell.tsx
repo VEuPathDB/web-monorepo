@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { useDataClient, useStudyEntities } from '../core/hooks/workspace';
 import { useGeoConfig } from '../core/hooks/geoConfig';
@@ -14,9 +14,11 @@ import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnack
 export function VisualizationNotebookCell(
   props: NotebookCellProps<VisualizationCellDescriptor>
 ) {
-  const { analysisState, cell, isDisabled, expandedPanelState } = props;
+  const { analysisState, cell, isDisabled, expandedPanelState, wdkState } =
+    props;
   const { analysis, updateVisualization } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
+  if (wdkState == null) throw new Error('No WDK state.');
 
   const entities = useStudyEntities();
   const geoConfigs = useGeoConfig(entities);
@@ -26,13 +28,7 @@ export function VisualizationNotebookCell(
   );
   const { enqueueSnackbar } = useSnackbar();
 
-  const {
-    visualizationName,
-    visualizationId,
-    getVizPluginOptions,
-    wdkUpdateParamValue,
-    associatedWdkParam,
-  } = cell;
+  const { visualizationName, visualizationId, getVizPluginOptions } = cell;
 
   const { visualization, computation } =
     analysisState.getVisualizationAndComputation(visualizationId) ?? {};
@@ -94,24 +90,13 @@ export function VisualizationNotebookCell(
     plotContainerStyleOverrides.width = 1100;
   }
 
-  // Override vizPlugin Options with ones defined in the notebook preset.
-  // For now this is used to link the bipartite network to the wdk param.
-  if (
-    vizPlugin &&
-    getVizPluginOptions &&
-    associatedWdkParam &&
-    wdkUpdateParamValue
-  ) {
-    vizPlugin.options = {
-      ...vizPlugin.options,
-      ...getVizPluginOptions(
-        analysisState,
-        wdkUpdateParamValue,
-        associatedWdkParam,
-        enqueueSnackbar
-      ),
-    };
-  }
+  const vizOptions = useMemo(
+    () => ({
+      ...vizPlugin?.options,
+      ...getVizPluginOptions?.(wdkState, enqueueSnackbar),
+    }),
+    [wdkState, enqueueSnackbar]
+  );
 
   return visualization ? (
     <>
@@ -129,7 +114,7 @@ export function VisualizationNotebookCell(
         >
           {computation && vizPlugin && (
             <vizPlugin.fullscreenComponent
-              options={vizPlugin.options}
+              options={vizOptions}
               dataElementConstraints={constraints}
               dataElementDependencyOrder={dataElementDependencyOrder}
               visualization={visualization}

@@ -3,23 +3,14 @@
 import { ReactNode } from 'react';
 import { NumberedHeader } from '../workspace/Subsetting/SubsetDownloadModal';
 import { colors } from '@material-ui/core';
-import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { BipartiteNetworkOptions } from '../core/components/visualizations/implementations/BipartiteNetworkVisualization';
-import { updateParamValue } from './WdkParamNotebookCell';
-import { AnalysisState } from '../core/hooks/analysis';
 import { NodeData } from '@veupathdb/components/lib/types/plots/network';
-import { OptionsObject } from 'notistack';
+import { WdkState } from './EdaNotebookAnalysis';
+import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 
+// this is currently not used but may be one day when we need to store user state
+// that is outside AnalysisState and WdkState
 export const NOTEBOOK_UI_STATE_KEY = '@@NOTEBOOK_WDK_PARAMS@@';
-
-// Type of function that we'll call wdkUpdateParamValue. It's
-// adapted from one called updateParamValue used around the wdk and used
-// to update values of parameters that come from the wdk.
-export type WdkUpdateParamValue = (
-  parameter: Parameter,
-  newParamValue: string,
-  paramValues: Record<string, string>
-) => void;
 
 // The descriptors contain just enough information to render the cells when given the
 // appropriate context, such as analysis state.
@@ -35,10 +26,9 @@ export interface NotebookCellDescriptorBase<T extends string> {
   title: string;
   cells?: NotebookCellDescriptor[];
   helperText?: ReactNode; // Optional information to display above the cell. Instead of a full text cell, use this for quick help and titles.
-  associatedWdkParamName?: string; // Optional name of a wdk parameter related to this viz. Can be updated using the viz options.
-  associatedWdkParam?: Parameter; // Parameter object. Defined in wdk, not notebook preset.
-  wdkUpdateParamValue?: WdkUpdateParamValue; // Function to update the parameter value in the WDK search. Defined by the wdk, not the notebook preset
 }
+
+type EnqueueSnackbar = ReturnType<typeof useSnackbar>['enqueueSnackbar'];
 
 export interface VisualizationCellDescriptor
   extends NotebookCellDescriptorBase<'visualization'> {
@@ -47,10 +37,8 @@ export interface VisualizationCellDescriptor
   // Custom function that allows us to override visualization Options from the notebook preset.
   // Useful for adding interactivity between the viz and other notebook cells.
   getVizPluginOptions?: (
-    analysisState: AnalysisState,
-    wdkUpdateParamValue: WdkUpdateParamValue,
-    param: Parameter,
-    enqueueSnackbar: (message: string, options?: OptionsObject) => void // So we can call up a snackbar if we mess wtih the viz.
+    wdkState: WdkState,
+    enqueueSnackbar: EnqueueSnackbar
   ) => Partial<BipartiteNetworkOptions>; // We'll define this function custom for each notebook, so can expand output types as needed.
 }
 
@@ -70,7 +58,6 @@ export interface SubsetCellDescriptor
 export interface WdkParamCellDescriptor
   extends NotebookCellDescriptorBase<'wdkparam'> {
   paramNames: string[]; // Param names from the wdk query. These must match exactly or the notebook will err.
-  wdkParameters?: Parameter[]; // The parameters, including all their details, from the wdk query.
 }
 
 type PresetNotebook = {
@@ -149,50 +136,53 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                 color={colors.grey[800]}
               />
             ),
-            associatedWdkParamName: 'wgcnaParam', // wdk param that controls module name
             getVizPluginOptions: (
-              analysisState: AnalysisState,
-              wdkUpdateParamValue: WdkUpdateParamValue,
-              param: Parameter,
-              enqueueSnackbar: (
-                message: string,
-                options?: OptionsObject
-              ) => void // So we can call up the snackbar.
+              wdkState: WdkState,
+              enqueueSnackbar: EnqueueSnackbar
             ) => {
               return {
                 additionalOnNodeClickAction: (node: NodeData) => {
                   const moduleName = (node.label ?? '').toLowerCase();
 
+                  // because this function is part of read-only "configuration" we can
+                  // hard-code the target parameter name 'wgcnaParam'
+                  const param = wdkState.parameters?.find(
+                    ({ name }) => name === 'wgcnaParam'
+                  );
+
+                  // Early-return type guarding on `param`
+                  if (param == null) return;
+                  if (param.type !== 'single-pick-vocabulary') return;
+                  if (param.displayType === 'treeBox') return; // ← reject the tree-box case
+
+                  // Also guard against no updateParamValue (the main point of this callback)
+                  if (!wdkState.updateParamValue) return;
+
                   // Do nothing if the node they clicked on is
                   // not from the group of modules in the param.
-                  // type Parameter has vocabulary... not sure why it's an issue.
-                  // @ts-ignore
                   const allowedValues = param.vocabulary.map(
                     (item: [string, string, null]) => item[0].toLowerCase()
                   );
                   if (!allowedValues.includes(moduleName)) {
+                    // TO DO: notify user if they've clicked on a "wrong" node? Needs UX.
                     return;
                   }
 
                   // Do nothing if the module they clicked on is already selected.
-                  const currentValue = (analysisState.analysis?.descriptor
-                    .subset.uiSettings[NOTEBOOK_UI_STATE_KEY] ?? {})[
-                    'wgcnaParam'
-                  ] as string;
+                  const currentValue = wdkState.paramValues?.[param.name];
                   if (currentValue?.toLowerCase() === moduleName) {
                     return;
                   }
 
-                  // Update module name in the wdk param selector
-                  updateParamValue(
-                    analysisState,
-                    wdkUpdateParamValue,
-                    param
-                  ).call(null, moduleName);
+                  // Update module name in the wdk param store
+                  wdkState.updateParamValue(param, moduleName);
 
                   // Open snackbar
                   enqueueSnackbar(
-                    `Updated WGNCA module search parameter: ${moduleName}`,
+                    <span>
+                      Updated WGNCA module search parameter in step 3 to:{' '}
+                      <strong>{moduleName}</strong>
+                    </span>,
                     { variant: 'info' }
                   );
                 },
