@@ -2,7 +2,7 @@ import { Filter } from '../../types/filter';
 
 export type SummaryFetcher<T> = (filters: Filter[]) => Promise<T>;
 
-export type Context = {
+type Context = {
   entityId: string;
   variableId: string;
   filters?: Filter[];
