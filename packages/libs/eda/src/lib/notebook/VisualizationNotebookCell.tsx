@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { useDataClient, useStudyEntities } from '../core/hooks/workspace';
 import { useGeoConfig } from '../core/hooks/geoConfig';
@@ -9,13 +9,16 @@ import { VisualizationCellDescriptor } from './NotebookPresets';
 import { useCachedPromise } from '../core/hooks/cachedPromise';
 import { useComputeJobStatus } from '../core/components/computations/ComputeJobStatusHook';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
+import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 
 export function VisualizationNotebookCell(
   props: NotebookCellProps<VisualizationCellDescriptor>
 ) {
-  const { analysisState, cell, isDisabled, expandedPanelState } = props;
+  const { analysisState, cell, isDisabled, expandedPanelState, wdkState } =
+    props;
   const { analysis, updateVisualization } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
+  if (wdkState == null) throw new Error('No WDK state.');
 
   const entities = useStudyEntities();
   const geoConfigs = useGeoConfig(entities);
@@ -23,8 +26,9 @@ export function VisualizationNotebookCell(
   const filteredCountsResult = useEntityCounts(
     analysis.descriptor.subset.descriptor
   );
+  const { enqueueSnackbar } = useSnackbar();
 
-  const { visualizationName, visualizationId } = cell;
+  const { visualizationName, visualizationId, getVizPluginOptions } = cell;
 
   const { visualization, computation } =
     analysisState.getVisualizationAndComputation(visualizationId) ?? {};
@@ -86,6 +90,14 @@ export function VisualizationNotebookCell(
     plotContainerStyleOverrides.width = 1100;
   }
 
+  const vizOptions = useMemo(
+    () => ({
+      ...vizPlugin?.options,
+      ...getVizPluginOptions?.(wdkState, enqueueSnackbar),
+    }),
+    [wdkState, enqueueSnackbar]
+  );
+
   return visualization ? (
     <>
       <div className="NotebookCellHelpText">
@@ -102,7 +114,7 @@ export function VisualizationNotebookCell(
         >
           {computation && vizPlugin && (
             <vizPlugin.fullscreenComponent
-              options={vizPlugin.options}
+              options={vizOptions}
               dataElementConstraints={constraints}
               dataElementDependencyOrder={dataElementDependencyOrder}
               visualization={visualization}
