@@ -1,6 +1,8 @@
 import {
   ContinuousVariableDataShape,
+  DistributionResponse,
   LabeledRange,
+  NumberVariable,
   usePromise,
   useStudyMetadata,
 } from '../../..';
@@ -23,6 +25,7 @@ import {
   useDataClient,
   useFindEntityAndVariable,
   useFindEntityAndVariableCollection,
+  useSubsettingClient,
 } from '../../../hooks/workspace';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
@@ -42,6 +45,8 @@ import {
 import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { entityTreeToArray } from '../../../utils/study-metadata';
+import { useCachedPromise } from '../../../hooks/cachedPromise';
+import { getDistribution } from '../../filter/util';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -215,6 +220,7 @@ export function DifferentialAbundanceConfiguration(
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
   const findEntityAndVariable = useFindEntityAndVariable(filters);
+  const subsettingClient = useSubsettingClient();
 
   assertComputationWithConfig(computation, DifferentialAbundanceConfig);
 
@@ -253,6 +259,53 @@ export function DifferentialAbundanceConfiguration(
       return findEntityAndVariable(configuration.comparator.variable);
     }
   }, [configuration, findEntityAndVariable]);
+
+  const filteredVariableValues = useCachedPromise(
+    async () => {
+      if (
+        configuration.comparator == null ||
+        configuration.comparator.variable == null ||
+        studyMetadata == null ||
+        configuration.comparator.variable.entityId == null ||
+        configuration.comparator.variable.variableId == null
+      ) {
+        return;
+      }
+      const distribution = await getDistribution<DistributionResponse>(
+        {
+          entityId: configuration.comparator?.variable.entityId,
+          variableId: configuration.comparator?.variable.variableId,
+          filters: filters,
+        },
+        (filters) => {
+          return subsettingClient.getDistribution(
+            studyMetadata.id,
+            configuration.comparator?.variable.entityId ?? '',
+            configuration.comparator?.variable.variableId ?? '',
+            {
+              valueSpec: 'count',
+              filters,
+            }
+          );
+        }
+      );
+      console.log('distribution', distribution);
+      console.log('filters', filters);
+      const bgValues = distribution.background.histogram.map(
+        (bin) => bin.binLabel
+      );
+      const fgValues = distribution.foreground.histogram.map(
+        (bin) => bin.binLabel
+      );
+
+      // Return the values that are in the background but not in the foreground.
+      // These are the values that have been filtered out.
+      return bgValues.filter((value) => !fgValues.includes(value));
+    },
+    [configuration.comparator, filters, studyMetadata.id] // used to have `subsettingClient`
+  );
+
+  console.log('filteredVariableValues', filteredVariableValues);
 
   // If the variable is continuous, ask the backend for a list of bins
   const continuousVariableBins = usePromise(
@@ -374,9 +427,12 @@ export function DifferentialAbundanceConfiguration(
                   selectedValues={configuration.comparator?.groupA?.map(
                     (entry) => entry.label
                   )}
-                  disabledValues={configuration.comparator?.groupB?.map(
-                    (entry) => entry.label
-                  )}
+                  disabledValues={[
+                    ...(configuration.comparator?.groupB?.map(
+                      (entry) => entry.label
+                    ) ?? []), // Remove group B values
+                    ...(filteredVariableValues.value ?? []), // Remove filtered values
+                  ]}
                   onSelectedValuesChange={(newValues) => {
                     assertConfigWithComparator(configuration);
                     changeConfigHandler('comparator', {
