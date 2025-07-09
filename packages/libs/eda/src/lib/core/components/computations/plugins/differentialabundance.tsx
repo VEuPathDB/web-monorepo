@@ -280,7 +280,15 @@ export function DifferentialAbundanceConfiguration(
       otherFilters == null ||
       otherFilters.length === 0
     ) {
-      return {} as DistributionResponse;
+      return {
+        histogram: [],
+        statistics: {
+          numVarValues: 0,
+          numDistinctValues: 0,
+          numDistinctEntityRecords: 0,
+          numMissingCases: 0,
+        },
+      } as DistributionResponse;
     }
 
     const variableDistribution =
@@ -297,7 +305,7 @@ export function DifferentialAbundanceConfiguration(
       }, otherFilters);
 
     return variableDistribution;
-  }, [configuration.comparator, filters, studyMetadata.id, subsettingClient]);
+  }, [configuration.comparator, filters, studyMetadata.id]);
 
   // If the variable is continuous, ask the backend for a list of bins
   const continuousVariableBins = usePromise(
@@ -354,7 +362,11 @@ export function DifferentialAbundanceConfiguration(
   // This is used to disable values in the ValuePicker.
   const disabledVariableValues =
     selectedComparatorVariable?.variable.vocabulary?.filter((value) => {
-      if (filteredComparatorVariableDistribution.value == null) return false;
+      if (
+        filteredComparatorVariableDistribution.value == null ||
+        filteredComparatorVariableDistribution.value.histogram.length === 0
+      )
+        return false;
 
       return !filteredComparatorVariableDistribution.value.histogram.some(
         (bin) => bin.binLabel === value
