@@ -205,7 +205,10 @@ function PlotlyPlot<T>(
       },
       autosize: true, // responds properly to enclosing div resizing (not to be confused with config.responsive)
       colorway: colorPalette,
-      annotations: plotlyAnnotations,
+      annotations: [
+        ...(plotlyProps.layout.annotations ?? []),
+        ...(plotlyAnnotations ?? []),
+      ],
     }),
     [
       plotlyProps.layout,
@@ -215,6 +218,7 @@ function PlotlyPlot<T>(
       legendTitle,
       title,
       colorPalette,
+      plotlyAnnotations,
     ]
   );
 
