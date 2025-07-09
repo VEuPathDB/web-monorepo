@@ -1,20 +1,18 @@
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { useDataClient } from '../core/hooks/workspace';
 import { isEqual } from 'lodash';
-import {
-  RunComputeButton,
-  StatusIcon,
-} from '../core/components/computations/RunComputeButton';
+import { RunComputeButton } from '../core/components/computations/RunComputeButton';
 import { useComputeJobStatus } from '../core/components/computations/ComputeJobStatusHook';
 import { NotebookCell, NotebookCellProps } from './NotebookCell';
 import { plugins } from '../core/components/computations/plugins';
 import { ComputeCellDescriptor } from './NotebookPresets';
 import { useCachedPromise } from '../core/hooks/cachedPromise';
+import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
 
 export function ComputeNotebookCell(
   props: NotebookCellProps<ComputeCellDescriptor>
 ) {
-  const { analysisState, cell, isSubCell, isDisabled } = props;
+  const { analysisState, cell, isDisabled, wdkState } = props;
   const { analysis } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
 
@@ -86,9 +84,18 @@ export function ComputeNotebookCell(
 
   return computation && appOverview ? (
     <>
-      <details className={isSubCell ? 'subCell' : ''} open>
-        <summary>{cell.title}</summary>
-        <div className={isDisabled ? 'disabled' : ''}>
+      <div className="NotebookCellHelpText">
+        <span>{cell.helperText}</span>
+      </div>
+      <ExpandablePanel
+        title={cell.title}
+        subTitle={''}
+        state="open"
+        themeRole="primary"
+      >
+        <div
+          className={'NotebookCellContent' + (isDisabled ? ' disabled' : '')}
+        >
           <plugin.configurationComponent
             analysisState={analysisState}
             computation={computation}
@@ -99,6 +106,8 @@ export function ComputeNotebookCell(
             computationAppOverview={appOverview}
             geoConfigs={[]}
             changeConfigHandlerOverride={changeConfigHandler}
+            showStepNumber={false}
+            showExpandableHelp={false} // no expandable sections within an expandable element.
           />
           <RunComputeButton
             computationAppOverview={appOverview}
@@ -107,7 +116,7 @@ export function ComputeNotebookCell(
             createJob={createJob}
           />
         </div>
-      </details>
+      </ExpandablePanel>
       {cells &&
         cells.map((subCell, index) => {
           const isSubCellDisabled =
@@ -118,8 +127,9 @@ export function ComputeNotebookCell(
               key={index}
               analysisState={analysisState}
               cell={subCell}
-              isSubCell={true}
               isDisabled={isSubCellDisabled}
+              expandedPanelState={isSubCellDisabled ? 'closed' : 'open'}
+              wdkState={wdkState}
             />
           );
         })}

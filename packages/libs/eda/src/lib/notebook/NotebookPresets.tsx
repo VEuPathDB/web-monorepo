@@ -1,28 +1,45 @@
 // Notebook presets
 
 import { ReactNode } from 'react';
+import { NumberedHeader } from '../workspace/Subsetting/SubsetDownloadModal';
+import { colors } from '@material-ui/core';
+import { BipartiteNetworkOptions } from '../core/components/visualizations/implementations/BipartiteNetworkVisualization';
+import { NodeData } from '@veupathdb/components/lib/types/plots/network';
+import { WdkState } from './EdaNotebookAnalysis';
+import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
+
+// this is currently not used but may be one day when we need to store user state
+// that is outside AnalysisState and WdkState
+export const NOTEBOOK_UI_STATE_KEY = '@@NOTEBOOK_WDK_PARAMS@@';
 
 // The descriptors contain just enough information to render the cells when given the
-// appropriate context, such as analysis state. In EdaNotebookAnalysis, these
-// descriptors get converted into cells using the ids and such generated in
-// the particular analysis.
-
+// appropriate context, such as analysis state.
 export type NotebookCellDescriptor =
   | VisualizationCellDescriptor
   | ComputeCellDescriptor
   | TextCellDescriptor
-  | SubsetCellDescriptor;
+  | SubsetCellDescriptor
+  | WdkParamCellDescriptor;
 
 export interface NotebookCellDescriptorBase<T extends string> {
   type: T;
   title: string;
   cells?: NotebookCellDescriptor[];
+  helperText?: ReactNode; // Optional information to display above the cell. Instead of a full text cell, use this for quick help and titles.
 }
+
+type EnqueueSnackbar = ReturnType<typeof useSnackbar>['enqueueSnackbar'];
 
 export interface VisualizationCellDescriptor
   extends NotebookCellDescriptorBase<'visualization'> {
   visualizationName: string;
   visualizationId: string;
+  // Custom function that allows us to override visualization Options from the notebook preset.
+  // Useful for adding interactivity between the viz and other notebook cells.
+  getVizPluginOptions?: (
+    wdkState: WdkState,
+    enqueueSnackbar: EnqueueSnackbar
+  ) => Partial<BipartiteNetworkOptions>; // We'll define this function custom for each notebook, so can expand output types as needed.
 }
 
 export interface ComputeCellDescriptor
@@ -38,11 +55,17 @@ export interface TextCellDescriptor extends NotebookCellDescriptorBase<'text'> {
 export interface SubsetCellDescriptor
   extends NotebookCellDescriptorBase<'subset'> {}
 
+export interface WdkParamCellDescriptor
+  extends NotebookCellDescriptorBase<'wdkparam'> {
+  paramNames: string[]; // Param names from the wdk query. These must match exactly or the notebook will err.
+}
+
 type PresetNotebook = {
   name: string;
   displayName: string;
   projects: string[];
   cells: NotebookCellDescriptor[];
+  header?: string; // Optional header text for the notebook, to be displayed above the cells.
 };
 
 // Preset notebooks
@@ -66,11 +89,6 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             visualizationName: 'volcanoplot',
             visualizationId: 'volcano_1',
           },
-          {
-            type: 'text',
-            title: 'Sub Text Cell',
-            text: 'This is a sub text cell for the differential abundance notebook.',
-          },
         ],
       },
       {
@@ -85,31 +103,105 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
   wgcnaCorrelationNotebook: {
     name: 'wgcnacorrelation',
     displayName: 'WGCNA Correlation Notebook',
+    header:
+      "Use steps 1-3 to find a module of interest, then click 'Get Answer' to retrieve a list of genes.",
     projects: ['MicrobiomeDB'],
     cells: [
       {
-        type: 'text',
-        title: 'Extra help',
-        text: 'Some more text for the WGCNA correlation notebook.',
-      },
-      {
         type: 'compute',
-        title: 'WGCNA Correlation',
+        title: 'Correlation Computation',
         computationName: 'correlation',
         computationId: 'correlation_1',
+        helperText: (
+          <NumberedHeader
+            number={1}
+            text={
+              'Configure and run a correlation computation between WGCNA module eigengene expression and other features of interest.'
+            }
+            color={colors.grey[800]}
+          />
+        ),
         cells: [
           {
-            type: 'text',
-            title: 'Using the network plot',
-            text: 'Network plot explanation... To Do',
-          },
-          {
             type: 'visualization',
-            title: 'Correlation Plot',
+            title: 'Network Visualization',
             visualizationName: 'bipartitenetwork',
             visualizationId: 'bipartite_1',
+            helperText: (
+              <NumberedHeader
+                number={2}
+                text={
+                  'Visualize the correlation results between the two groups in the network. Click on nodes to highlight them in the network.'
+                }
+                color={colors.grey[800]}
+              />
+            ),
+            getVizPluginOptions: (
+              wdkState: WdkState,
+              enqueueSnackbar: EnqueueSnackbar
+            ) => {
+              return {
+                additionalOnNodeClickAction: (node: NodeData) => {
+                  const moduleName = (node.label ?? '').toLowerCase();
+
+                  // because this function is part of read-only "configuration" we can
+                  // hard-code the target parameter name 'wgcnaParam'
+                  const param = wdkState.parameters?.find(
+                    ({ name }) => name === 'wgcnaParam'
+                  );
+
+                  // Early-return type guarding on `param`
+                  if (param == null) return;
+                  if (param.type !== 'single-pick-vocabulary') return;
+                  if (param.displayType === 'treeBox') return; // ← reject the tree-box case
+
+                  // Also guard against no updateParamValue (the main point of this callback)
+                  if (!wdkState.updateParamValue) return;
+
+                  // Do nothing if the node they clicked on is
+                  // not from the group of modules in the param.
+                  const allowedValues = param.vocabulary.map(
+                    (item: [string, string, null]) => item[0].toLowerCase()
+                  );
+                  if (!allowedValues.includes(moduleName)) {
+                    // TO DO: notify user if they've clicked on a "wrong" node? Needs UX.
+                    return;
+                  }
+
+                  // Do nothing if the module they clicked on is already selected.
+                  const currentValue = wdkState.paramValues?.[param.name];
+                  if (currentValue?.toLowerCase() === moduleName) {
+                    return;
+                  }
+
+                  // Update module name in the wdk param store
+                  wdkState.updateParamValue(param, moduleName);
+
+                  // Open snackbar
+                  enqueueSnackbar(
+                    <span>
+                      Updated WGNCA module search parameter in step 3 to:{' '}
+                      <strong>{moduleName}</strong>
+                    </span>,
+                    { variant: 'info' }
+                  );
+                },
+              };
+            },
           },
         ],
+      },
+      {
+        type: 'wdkparam',
+        title: 'Finalize search parameters',
+        paramNames: ['wgcnaParam', 'wgcna_correlation_cutoff'],
+        helperText: (
+          <NumberedHeader
+            number={3}
+            text={'Refine parameters for returning the list of genes.'}
+            color={colors.grey[800]}
+          />
+        ),
       },
     ],
   },

@@ -1,29 +1,44 @@
 import { useEffect } from 'react';
-import { AnalysisState, useStudyRecord } from '../core';
-import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import {
-  Loading,
-  SaveableTextEditor,
-} from '@veupathdb/wdk-client/lib/Components';
+import { AnalysisState } from '../core';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { NotebookCell } from './NotebookCell';
 import './EdaNotebook.scss';
 import { createComputation } from '../core/components/computations/Utils';
 import { presetNotebooks, NotebookCellDescriptor } from './NotebookPresets';
 import { Computation } from '../core/types/visualization';
 import { plugins } from '../core/components/computations/plugins';
+import { H5 } from '@veupathdb/coreui';
+import colors from '@veupathdb/coreui/lib/definitions/colors';
+import {
+  Parameter,
+  ParameterValues,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 // const NOTEBOOK_UI_SETTINGS_KEY = '@@NOTEBOOK@@';
+
+// Type of function that we'll call updateWdkParamValue. It's
+// adapted from one called updateParamValue used around the wdk and used
+// to update values of parameters that come from the wdk.
+export type UpdateParamValue = (
+  parameter: Parameter,
+  newParamValue: string
+) => void;
+
+export interface WdkState {
+  parameters?: Parameter[];
+  paramValues?: ParameterValues;
+  updateParamValue?: UpdateParamValue;
+}
 
 interface Props {
   analysisState: AnalysisState;
   notebookType: string;
+  wdkState: WdkState;
 }
 
 export function EdaNotebookAnalysis(props: Props) {
-  const { analysisState, notebookType } = props;
+  const { analysisState, notebookType, wdkState } = props;
   const { analysis, setComputations, addVisualization } = analysisState;
-
-  const studyRecord = useStudyRecord();
 
   if (analysis == null) throw new Error('Cannot find analysis.');
 
@@ -94,27 +109,21 @@ export function EdaNotebookAnalysis(props: Props) {
   //
   // If we need `notebookPreset` to be dynamic state (e.g. user can add/remove new cells)
   // or if we need to store cell configuration beyond what the computation and visualisation
-  // descriptors in analysisState.analysis can handle, then we can change this to persisted
+  // descriptors in analysisState.analysis and wdkParams can handle, then we can change this to persisted
   // `notebookState` coming from analysisState.analysis.descriptor.subset.uiSettings[NOTEBOOK_UI_SETTINGS_KEY]
   //
   return (
     <div className="EdaNotebook">
       <div className="Paper">
-        <div className="Heading">
-          <h1>
-            <SaveableTextEditor
-              className="Title"
-              value={analysisState.analysis?.displayName ?? ''}
-              onSave={analysisState.setName}
-            />
-          </h1>
-          <h2>{safeHtml(studyRecord.displayName)}</h2>
-        </div>
+        {notebookPreset.header && (
+          <H5 text={notebookPreset.header} color={colors.gray[600]} />
+        )}
         {analysis.descriptor.computations.length > 0 ? (
           notebookPreset.cells.map((cell, index) => (
             <NotebookCell
               key={index}
               analysisState={analysisState}
+              wdkState={wdkState}
               cell={cell}
             />
           ))

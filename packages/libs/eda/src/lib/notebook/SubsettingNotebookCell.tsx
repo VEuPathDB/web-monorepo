@@ -9,11 +9,12 @@ import FilterChipList from '../core/components/FilterChipList';
 import Subsetting from '../workspace/Subsetting';
 import { NotebookCellProps } from './NotebookCell';
 import { SubsetCellDescriptor } from './NotebookPresets';
+import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
 
 export function SubsettingNotebookCell(
   props: NotebookCellProps<SubsetCellDescriptor>
 ) {
-  const { analysisState, cell, isSubCell } = props;
+  const { analysisState, cell, isDisabled } = props;
 
   const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
   const varAndEnt = getDefaultVariableDescriptor();
@@ -43,34 +44,47 @@ export function SubsettingNotebookCell(
   );
 
   return (
-    <details className={isSubCell ? 'subCell' : ''} open>
-      <summary>{cell.title}</summary>
-      <div>
-        <FilterChipList
-          filters={analysisState.analysis?.descriptor.subset.descriptor}
-          entities={entities}
-          selectedEntityId={entityId}
-          selectedVariableId={variableId}
-          removeFilter={(filter) => {
-            analysisState.setFilters((filters) =>
-              filters.filter(
-                (f) =>
-                  f.entityId !== filter.entityId ||
-                  f.variableId !== filter.variableId
-              )
-            );
-          }}
-          variableLinkConfig={variableLinkConfig}
-        />
+    <>
+      <div className="NotebookCellHelpText">
+        <span>{cell.helperText}</span>
       </div>
-      <Subsetting
-        analysisState={analysisState}
-        entityId={entityId ?? ''}
-        variableId={variableId ?? ''}
-        totalCounts={totalCountsResult.value}
-        filteredCounts={filteredCountsResult.value}
-        variableLinkConfig={variableLinkConfig}
-      />
-    </details>
+      <ExpandablePanel
+        title={cell.title}
+        subTitle={''}
+        state="open"
+        themeRole="primary"
+      >
+        <div
+          className={'NotebookCellContent' + (isDisabled ? ' disabled' : '')}
+        >
+          <div>
+            <FilterChipList
+              filters={analysisState.analysis?.descriptor.subset.descriptor}
+              entities={entities}
+              selectedEntityId={entityId}
+              selectedVariableId={variableId}
+              removeFilter={(filter) => {
+                analysisState.setFilters((filters) =>
+                  filters.filter(
+                    (f) =>
+                      f.entityId !== filter.entityId ||
+                      f.variableId !== filter.variableId
+                  )
+                );
+              }}
+              variableLinkConfig={variableLinkConfig}
+            />
+          </div>
+          <Subsetting
+            analysisState={analysisState}
+            entityId={entityId ?? ''}
+            variableId={variableId ?? ''}
+            totalCounts={totalCountsResult.value}
+            filteredCounts={filteredCountsResult.value}
+            variableLinkConfig={variableLinkConfig}
+          />
+        </div>
+      </ExpandablePanel>
+    </>
   );
 }
