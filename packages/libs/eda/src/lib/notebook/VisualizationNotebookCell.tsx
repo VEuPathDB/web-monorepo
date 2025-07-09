@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { useDataClient, useStudyEntities } from '../core/hooks/workspace';
 import { useGeoConfig } from '../core/hooks/geoConfig';
@@ -8,14 +8,17 @@ import { NotebookCellProps } from './NotebookCell';
 import { VisualizationCellDescriptor } from './NotebookPresets';
 import { useCachedPromise } from '../core/hooks/cachedPromise';
 import { useComputeJobStatus } from '../core/components/computations/ComputeJobStatusHook';
-import { StatusIcon } from '../core/components/computations/RunComputeButton';
+import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
+import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 
 export function VisualizationNotebookCell(
   props: NotebookCellProps<VisualizationCellDescriptor>
 ) {
-  const { analysisState, cell, isSubCell, isDisabled } = props;
+  const { analysisState, cell, isDisabled, expandedPanelState, wdkState } =
+    props;
   const { analysis, updateVisualization } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
+  if (wdkState == null) throw new Error('No WDK state.');
 
   const entities = useStudyEntities();
   const geoConfigs = useGeoConfig(entities);
@@ -23,8 +26,9 @@ export function VisualizationNotebookCell(
   const filteredCountsResult = useEntityCounts(
     analysis.descriptor.subset.descriptor
   );
+  const { enqueueSnackbar } = useSnackbar();
 
-  const { visualizationName, visualizationId } = cell;
+  const { visualizationName, visualizationId, getVizPluginOptions } = cell;
 
   const { visualization, computation } =
     analysisState.getVisualizationAndComputation(visualizationId) ?? {};
@@ -86,47 +90,52 @@ export function VisualizationNotebookCell(
     plotContainerStyleOverrides.width = 1100;
   }
 
+  const vizOptions = useMemo(
+    () => ({
+      ...vizPlugin?.options,
+      ...getVizPluginOptions?.(wdkState, enqueueSnackbar),
+    }),
+    [wdkState, enqueueSnackbar]
+  );
+
   return visualization ? (
-    <details className={isSubCell ? 'subCell' : ''} open>
-      <summary>
-        <span
-          style={{
-            display: 'inline-flex',
-            justifyContent: 'space-between',
-            width: '95%', // this is a bit of a hack. Ideally it would be 100% but
-            // then the triangle marker goes on a different line. No obvious easy cleaner way :-(
-          }}
-        >
-          <span>{cell.title}</span>
-          {computeJobStatus && (
-            <StatusIcon status={computeJobStatus} showLabel={false} />
-          )}
-        </span>
-      </summary>
-      <div className={isDisabled ? 'disabled' : ''}>
-        {computation && vizPlugin && (
-          <vizPlugin.fullscreenComponent
-            options={vizPlugin.options}
-            dataElementConstraints={constraints}
-            dataElementDependencyOrder={dataElementDependencyOrder}
-            visualization={visualization}
-            computation={computation}
-            copmutationAppOverview={appOverview}
-            filters={analysis.descriptor.subset.descriptor} // issue #1413
-            starredVariables={[]} // to be implemented
-            toggleStarredVariable={() => {}}
-            updateConfiguration={updateConfiguration}
-            totalCounts={totalCountsResult}
-            filteredCounts={filteredCountsResult}
-            geoConfigs={geoConfigs}
-            otherVizOverviews={[]}
-            computeJobStatus={computeJobStatus}
-            hideInputsAndControls={false}
-            plotContainerStyleOverrides={plotContainerStyleOverrides}
-          />
-        )}
+    <>
+      <div className="NotebookCellHelpText">
+        <span>{cell.helperText}</span>
       </div>
-    </details>
+      <ExpandablePanel
+        title={cell.title}
+        subTitle={''}
+        state={expandedPanelState ?? 'open'}
+        themeRole="primary"
+      >
+        <div
+          className={'NotebookCellContent' + (isDisabled ? ' disabled' : '')}
+        >
+          {computation && vizPlugin && (
+            <vizPlugin.fullscreenComponent
+              options={vizOptions}
+              dataElementConstraints={constraints}
+              dataElementDependencyOrder={dataElementDependencyOrder}
+              visualization={visualization}
+              computation={computation}
+              copmutationAppOverview={appOverview}
+              filters={analysis.descriptor.subset.descriptor} // issue #1413
+              starredVariables={[]} // to be implemented
+              toggleStarredVariable={() => {}}
+              updateConfiguration={updateConfiguration}
+              totalCounts={totalCountsResult}
+              filteredCounts={filteredCountsResult}
+              geoConfigs={geoConfigs}
+              otherVizOverviews={[]}
+              computeJobStatus={computeJobStatus}
+              hideInputsAndControls={false}
+              plotContainerStyleOverrides={plotContainerStyleOverrides}
+            />
+          )}
+        </div>
+      </ExpandablePanel>
+    </>
   ) : (
     <details>
       <summary>Loading</summary>

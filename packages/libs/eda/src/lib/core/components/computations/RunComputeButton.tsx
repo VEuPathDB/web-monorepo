@@ -4,6 +4,7 @@ import { ComputationAppOverview } from '../../types/visualization';
 import { Tooltip } from '@veupathdb/coreui';
 import { JobStatus } from './ComputeJobStatusHook';
 import { removeParentheticals } from '../../utils/string-formatters';
+import './plugins/Plugins.scss';
 
 interface Props {
   computationAppOverview: ComputationAppOverview;
@@ -16,16 +17,7 @@ export function RunComputeButton(props: Props) {
   const { computationAppOverview, status, isConfigured, createJob } = props;
 
   return computationAppOverview.computeName ? (
-    <div
-      style={{
-        display: 'flex',
-        gap: '1em',
-        alignItems: 'center',
-        padding: '1em 0',
-        marginLeft: '3em',
-        marginBottom: '2em',
-      }}
-    >
+    <div className="RunComputeButton">
       <FilledButton
         themeRole="primary"
         // Remove any parentheticals from the button text

@@ -4,12 +4,15 @@ import { TextNotebookCell } from './TextNotebookCell';
 import { VisualizationNotebookCell } from './VisualizationNotebookCell';
 import { ComputeNotebookCell } from './ComputeNotebookCell';
 import { NotebookCellDescriptor } from './NotebookPresets';
+import { WdkParamNotebookCell } from './WdkParamNotebookCell';
+import { WdkState } from './EdaNotebookAnalysis';
 
 export interface NotebookCellProps<T extends NotebookCellDescriptor> {
   analysisState: AnalysisState;
   cell: T;
-  isSubCell?: boolean; // Indicates if this cell is a sub-cell of another cell. Affects styling.
   isDisabled?: boolean; // Indicates if the cell is disabled (e.g., before a computation is complete).
+  expandedPanelState?: 'closed' | 'open'; // Indicates if the ExpandabelPanel is expanded in the UI.
+  wdkState?: WdkState;
 }
 
 /**
@@ -26,6 +29,8 @@ export function NotebookCell(props: NotebookCellProps<NotebookCellDescriptor>) {
       return <VisualizationNotebookCell {...props} cell={cell} />;
     case 'compute':
       return <ComputeNotebookCell {...props} cell={cell} />;
+    case 'wdkparam':
+      return <WdkParamNotebookCell {...props} cell={cell} />;
     default:
       return null;
   }
