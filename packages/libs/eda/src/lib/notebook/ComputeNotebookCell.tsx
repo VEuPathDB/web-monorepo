@@ -84,9 +84,11 @@ export function ComputeNotebookCell(
 
   return computation && appOverview ? (
     <>
-      <div className="NotebookCellHelpText">
-        <span>{cell.helperText}</span>
-      </div>
+      {cell.helperText && (
+        <div className="NotebookCellHelpText">
+          <span>{cell.helperText}</span>
+        </div>
+      )}
       <ExpandablePanel
         title={cell.title}
         subTitle={''}
