@@ -362,12 +362,14 @@ export function DifferentialAbundanceConfiguration(
   // This is used to disable values in the ValuePicker.
   const disabledVariableValues =
     selectedComparatorVariable?.variable.vocabulary?.filter((value) => {
+      // Let all values pass if there was no filteredComparatorVariableDistribution
       if (
         filteredComparatorVariableDistribution.value == null ||
         filteredComparatorVariableDistribution.value.histogram.length === 0
       )
         return false;
 
+      // Disable a variable if it does not appear in filteredComparatorVariableDistribution
       return !filteredComparatorVariableDistribution.value.histogram.some(
         (bin) => bin.binLabel === value
       );
