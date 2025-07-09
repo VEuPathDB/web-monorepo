@@ -8,15 +8,24 @@ export function TextNotebookCell(props: NotebookCellProps<TextCellDescriptor>) {
   const { text, title } = cell;
 
   return (
-    <ExpandablePanel
-      title={title}
-      subTitle={''}
-      state="open"
-      themeRole="primary"
-    >
-      <div className={'NotebookCellContent' + (isDisabled ? ' disabled' : '')}>
-        {text}
-      </div>
-    </ExpandablePanel>
+    <>
+      {cell.helperText && (
+        <div className="NotebookCellHelpText">
+          <span>{cell.helperText}</span>
+        </div>
+      )}
+      <ExpandablePanel
+        title={title}
+        subTitle={''}
+        state="open"
+        themeRole="primary"
+      >
+        <div
+          className={'NotebookCellContent' + (isDisabled ? ' disabled' : '')}
+        >
+          {text}
+        </div>
+      </ExpandablePanel>
+    </>
   );
 }
