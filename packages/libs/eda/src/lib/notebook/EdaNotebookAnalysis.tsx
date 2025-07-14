@@ -51,7 +51,7 @@ export function EdaNotebookAnalysis(props: Props) {
   const projectId = useWdkService(
     async (wdkService) => (await wdkService.getConfig()).projectId
   );
-  console.log(`Project ID: ${projectId}`);
+
   if (
     notebookPreset.projects &&
     projectId &&
@@ -142,6 +142,7 @@ export function EdaNotebookAnalysis(props: Props) {
               analysisState={analysisState}
               wdkState={wdkState}
               cell={cell}
+              projectId={projectId}
             />
           ))
         ) : (

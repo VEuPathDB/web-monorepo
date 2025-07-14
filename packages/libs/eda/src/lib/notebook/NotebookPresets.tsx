@@ -7,6 +7,7 @@ import { BipartiteNetworkOptions } from '../core/components/visualizations/imple
 import { NodeData } from '@veupathdb/components/lib/types/plots/network';
 import { WdkState } from './EdaNotebookAnalysis';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
+import { CollectionVariableTreeNode } from '../core';
 
 // this is currently not used but may be one day when we need to store user state
 // that is outside AnalysisState and WdkState
@@ -46,6 +47,9 @@ export interface ComputeCellDescriptor
   extends NotebookCellDescriptorBase<'compute'> {
   computationName: string;
   computationId: string;
+  getAdditionalCollectionPredicate?: (
+    projectId?: string
+  ) => (variableCollection: CollectionVariableTreeNode) => boolean;
 }
 
 export interface TextCellDescriptor extends NotebookCellDescriptorBase<'text'> {
@@ -121,6 +125,20 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             color={colors.grey[800]}
           />
         ),
+        getAdditionalCollectionPredicate:
+          (projectId?: string) =>
+          (variableCollection: CollectionVariableTreeNode) => {
+            // Keep only the plasmo eigengenes for plasmodb...
+            if (projectId === 'PlasmoDB') {
+              return variableCollection.id === 'EUPATH_0005051';
+            }
+            // ... and host eigengenes for hostdb
+            if (projectId === 'HostDB') {
+              return variableCollection.id === 'EUPATH_0005050';
+            }
+            // If we're in the portal, should return both.
+            return true;
+          },
         cells: [
           {
             type: 'visualization',
