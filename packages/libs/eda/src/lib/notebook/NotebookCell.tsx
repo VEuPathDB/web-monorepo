@@ -6,6 +6,7 @@ import { ComputeNotebookCell } from './ComputeNotebookCell';
 import { NotebookCellDescriptor } from './NotebookPresets';
 import { WdkParamNotebookCell } from './WdkParamNotebookCell';
 import { WdkState } from './EdaNotebookAnalysis';
+import { JobStatus } from '../core/components/computations/ComputeJobStatusHook';
 
 export interface NotebookCellProps<T extends NotebookCellDescriptor> {
   analysisState: AnalysisState;
@@ -14,6 +15,7 @@ export interface NotebookCellProps<T extends NotebookCellDescriptor> {
   expandedPanelState?: 'closed' | 'open'; // Indicates if the ExpandabelPanel is expanded in the UI.
   wdkState?: WdkState;
   projectId?: string; // Project ID, ex: PlasmoDB, MicrobiomeDB, etc.
+  computeJobStatus?: JobStatus; // Optional status of the compute job, useful for displaying progress or errors.
 }
 
 /**

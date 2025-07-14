@@ -142,6 +142,7 @@ export function ComputeNotebookCell(
               cell={subCell}
               isDisabled={isSubCellDisabled}
               wdkState={wdkState}
+              computeJobStatus={jobStatus}
             />
           );
         })}
