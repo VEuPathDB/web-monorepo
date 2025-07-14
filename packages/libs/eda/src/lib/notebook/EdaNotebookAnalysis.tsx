@@ -13,6 +13,7 @@ import {
   Parameter,
   ParameterValues,
 } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 // const NOTEBOOK_UI_SETTINGS_KEY = '@@NOTEBOOK@@';
 
@@ -45,6 +46,21 @@ export function EdaNotebookAnalysis(props: Props) {
   const notebookPreset = presetNotebooks[notebookType];
   if (notebookPreset == null)
     throw new Error(`Cannot find a notebook preset for ${notebookType}`);
+
+  // Check to ensure the notebook is valid for this project
+  const projectId = useWdkService(
+    async (wdkService) => (await wdkService.getConfig()).projectId
+  );
+  console.log(`Project ID: ${projectId}`);
+  if (
+    notebookPreset.projects &&
+    projectId &&
+    !notebookPreset.projects.includes(projectId)
+  ) {
+    throw new Error(
+      `Notebook preset ${notebookType} is not valid for project ${projectId}`
+    );
+  }
 
   // One-off, create computations and visualizations in the analysis
   // (if needed) using the notebookPreset as a guide

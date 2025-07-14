@@ -105,7 +105,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
     displayName: 'WGCNA Correlation Notebook',
     header:
       "Use steps 1-3 to find a module of interest, then click 'Get Answer' to retrieve a list of genes.",
-    projects: ['MicrobiomeDB'],
+    projects: ['PlasmoDB', 'HostDB'],
     cells: [
       {
         type: 'compute',
