@@ -1,0 +1,174 @@
+.EdaNotebook {
+  .Heading {
+    display: flex;
+    gap: 2em;
+    align-items: baseline;
+  }
+
+  .Paper {
+    /* A4 dimensions */
+    --paper-width: 2480px;
+    --paper-height: 3508px;
+    --paper-scale: 0.5;
+
+    width: calc(var(--paper-width) * var(--paper-scale));
+    margin: 1em auto;
+    padding: 0 1em;
+
+    > * + * {
+      margin-block-start: 1rem;
+    }
+
+    > H5 {
+      padding-bottom: 0.5em;
+    }
+
+    .Heading {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      gap: 0.5em;
+
+      h1 {
+        padding: 0;
+        font-size: 1.75em;
+      }
+
+      h2 {
+        font-size: 1em;
+        font-weight: bold;
+        padding: 0.25em 0.5em;
+        color: var(--coreui-color-primary, black);
+        border: 2px solid;
+        border-radius: 0.25em;
+        background-color: color-mix(
+          in srgb,
+          var(--coreui-color-primary) 5%,
+          transparent
+        );
+      }
+    }
+
+    /* Override left margin for AppStepConfigurationContainer */
+    .AppStepConfigurationContainer {
+      margin-left: 1em;
+    }
+    .RunComputeButton {
+      margin-left: 1em;
+      margin-bottom: 0em;
+      margin-top: 1.5em;
+    }
+
+    /* Notebook cell styling */
+    .NotebookCellHelpText {
+      margin-top: 4em;
+      font-weight: 500;
+      font-size: 1.2em;
+    }
+    .NotebookCellHelpText:first-of-type {
+      margin-top: 2em;
+    }
+
+    .WdkParamInputs {
+      display: flex;
+      flex-direction: column;
+      gap: 2em;
+      margin-top: 1em;
+      margin-bottom: 1em;
+    }
+
+    .InputGroup {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 1em;
+      font-weight: 500;
+    }
+    > details {
+      border: 1px solid;
+      border-color: color-mix(
+        in srgb,
+        var(--coreui-color-primary) 30%,
+        transparent
+      );
+      border-top-left-radius: 0.5em;
+      border-top-right-radius: 0.5em;
+      border-bottom-left-radius: 0.5em;
+      border-bottom-right-radius: 0.5em;
+
+      > summary {
+        padding: 1em;
+        cursor: pointer;
+        font-size: 1.2em;
+        font-weight: 300;
+        background-color: color-mix(
+          in srgb,
+          var(--coreui-color-primary) 10%,
+          transparent
+        );
+
+        &:hover {
+          background-color: color-mix(
+            in srgb,
+            var(--coreui-color-primary) 20%,
+            transparent
+          );
+        }
+
+        &:active {
+          background-color: color-mix(
+            in srgb,
+            var(--coreui-color-primary) 15%,
+            transparent
+          );
+        }
+
+        transition: background-color 100ms ease-in;
+
+        > * {
+          display: inline; // prevents contents from wrapping underneath the arrow
+          padding-left: 0.75em;
+        }
+
+        div.subCellTitle {
+          display: 'inline-flex';
+          gap: 0.5em;
+          font-weight: 'bold';
+        }
+      }
+
+      &[open] > summary {
+        border-bottom: 1px solid;
+        border-color: color-mix(
+          in srgb,
+          var(--coreui-color-primary) 30%,
+          transparent
+        );
+      }
+
+      > div {
+        padding: 1em;
+      }
+      > div.disabled {
+        pointer-events: none;
+        opacity: 0.5;
+      }
+    }
+
+    .NotebookCellContent {
+      padding: 2em;
+    }
+
+    .NotebookCellContent.disabled {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+  }
+
+  .Title {
+    fieldset {
+      padding: 0;
+      margin: 0;
+    }
+  }
+}

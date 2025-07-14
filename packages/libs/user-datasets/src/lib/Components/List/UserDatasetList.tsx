@@ -25,7 +25,7 @@ import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import {
   DataNoun,
   UserDataset,
-  UserDatasetMeta,
+  UserDatasetMeta_UI,
   UserDatasetShare,
 } from '../../Utils/types';
 
@@ -72,7 +72,7 @@ interface Props {
   removeUserDataset: (dataset: UserDataset) => any;
   updateUserDatasetDetail: (
     userDataset: UserDataset,
-    meta: UserDatasetMeta
+    meta: UserDatasetMeta_UI
   ) => any;
   updateProjectFilter: (filterByProject: boolean) => any;
   quotaSize: number;
@@ -256,10 +256,13 @@ class UserDatasetList extends React.Component<Props, State> {
           return (
             <div style={{ display: 'block', maxWidth: '100%' }}>
               <SaveableTextEditor
-                rows={Math.max(2, Math.floor(dataset.meta.summary.length / 22))}
+                rows={Math.max(
+                  2,
+                  Math.floor((dataset.meta.summary?.length ?? 0) / 22)
+                )}
                 multiLine={true}
                 onSave={saveSummary}
-                value={dataset.meta.summary}
+                value={dataset.meta.summary ?? ''}
                 readOnly={!isOwner(dataset.ownerUserId)}
               />
             </div>
@@ -286,8 +289,8 @@ class UserDatasetList extends React.Component<Props, State> {
         name: 'VEuPathDB Websites',
         renderCell(cellProps: MesaDataCellProps) {
           const userDataset: UserDataset = cellProps.row;
-          const { projects } = userDataset;
-          return projects.join(', ');
+          const { installTargets } = userDataset;
+          return installTargets.join(', ');
         },
       },
       {
@@ -542,7 +545,9 @@ class UserDatasetList extends React.Component<Props, State> {
     const { projectName, filterByProject } = this.props;
     const sort: MesaSortObject = uiState.sort;
     if (filterByProject)
-      rows = rows.filter((dataset) => dataset.projects.includes(projectName));
+      rows = rows.filter((dataset) =>
+        dataset.installTargets.includes(projectName)
+      );
     if (searchTerm && searchTerm.length)
       rows = this.filterRowsBySearchTerm([...rows], searchTerm);
     if (sort.columnKey.length) rows = this.sortRowsByColumnKey([...rows], sort);
@@ -656,8 +661,8 @@ class UserDatasetList extends React.Component<Props, State> {
 
     const totalPercent = totalSize / quotaSize;
 
-    const offerProjectToggle = userDatasets.some(({ projects }) =>
-      projects.some((project) => project !== projectName)
+    const offerProjectToggle = userDatasets.some(({ installTargets }) =>
+      installTargets.some((project) => project !== projectName)
     );
 
     return (

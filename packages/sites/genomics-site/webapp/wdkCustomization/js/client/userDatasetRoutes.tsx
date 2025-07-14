@@ -6,8 +6,10 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 
 import {
+  communityDatasetsEnabled,
   communitySite,
   userDatasetsUploadTypes,
+  showExtraMetadata,
 } from '@veupathdb/web-common/lib/config';
 import ExternalContentController from '@veupathdb/web-common/lib/controllers/ExternalContentController';
 
@@ -19,7 +21,7 @@ const UserDatasetRouter = React.lazy(
 
 const availableUploadTypes = userDatasetsUploadTypes.trim()
   ? userDatasetsUploadTypes.split(/,\s*/g)
-  : ['genelist', 'bigwigfiles', 'rnaseq'];
+  : ['genelist', 'bigwigfiles', 'rnaseq', 'wrangler'];
 
 const USER_DATASETS_HELP_PAGE = 'user_datasets_help.html';
 
@@ -44,6 +46,7 @@ export const userDatasetRoutes: RouteEntry[] = [
       return (
         <Suspense fallback={<Loading />}>
           <UserDatasetRouter
+            enablePublicUserDatasets={!!communityDatasetsEnabled}
             availableUploadTypes={availableUploadTypes}
             detailsPageTitle="My Data Set"
             helpRoute="/workspace/datasets/help"
@@ -53,6 +56,7 @@ export const userDatasetRoutes: RouteEntry[] = [
               <ExternalContentController url={helpTabContentUrl} />
             }
             dataNoun={{ singular: 'Data Set', plural: 'Data Sets' }}
+            showExtraMetadata={!!showExtraMetadata}
           />
         </Suspense>
       );

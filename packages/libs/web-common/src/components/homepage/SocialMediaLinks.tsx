@@ -5,6 +5,7 @@ import { noop } from 'lodash';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import {
+  blueskyUrl,
   twitterUrl,
   twitterUrl2,
   facebookUrl,
@@ -13,6 +14,7 @@ import {
 } from '../../config';
 import {
   AnnouncementsToggle,
+  Bluesky,
   Twitter,
   Facebook,
   YouTube,
@@ -57,6 +59,10 @@ export const SocialMediaLinks = ({
           <AnnouncementsToggle />
         </a>
       }
+
+      <a href={blueskyUrl} target="_blank">
+        <Bluesky />
+      </a>
 
       <a href={finalTwitterUrl} target="_blank">
         <Twitter />

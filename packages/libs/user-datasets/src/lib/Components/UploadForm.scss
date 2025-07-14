@@ -15,7 +15,7 @@
   }
   .formSection {
     > & {
-      margin-block-start: 1em;
+      margin-block-start: 2em;
     }
 
     display: flex;
@@ -28,6 +28,19 @@
 
     #data-set-name {
       width: 300px;
+    }
+  }
+  .additionalDetailsFormSection {
+    > & {
+      margin-block-start: 2em;
+    }
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+
+    > label {
+      font-size: medium;
     }
   }
   .formInfo {
@@ -71,4 +84,58 @@
       pointer-events: none;
     }
   }
+  & &--NestedInputContainer {
+    background: #f7f8fb;
+    padding-bottom: 5px;
+    border-radius: 2px;
+  }
+  & &--NestedInputContainer &--NestedInputTitle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 1.5em;
+    margin-top: 0.5em;
+    margin-right: 0.5em;
+  }
+  & &--NestedInputContainer &--NestedInputFields {
+    display: grid;
+    grid-template-columns: 11em 50em;
+    row-gap: 1.5em;
+    align-items: baseline;
+    padding-left: 2.5em;
+    margin-bottom: 1em;
+  }
+  & &--AdditionalDetails {
+    summary {
+      list-style-position: outside;
+      margin-left: 2em;
+      padding: 10px 10px 10px 20px;
+      cursor: pointer;
+      font-size: 1.2em;
+
+      &::marker {
+        font-size: 1.2em; // Change the size of the marker
+      }
+    }
+
+    padding: 10px;
+    background-color: #fafafa;
+    color: #333;
+  }
+  & &--OrganismInputFields {
+    display: grid;
+    grid-template-columns: 10em 30em 11em;
+    align-items: center;
+    padding-left: 2.5em;
+    column-gap: 1em;
+  }
+}
+.wdk-RadioList.horizontal {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap; /* Optional: allows wrapping to the next line if there are too many items */
+  gap: 1em;
+}
+.wdk-RadioList.horizontal li {
+  list-style: none;
 }

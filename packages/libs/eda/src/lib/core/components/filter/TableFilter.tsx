@@ -232,13 +232,13 @@ export function TableFilter({
       analysisState.setVariableUISettings((currentState) => ({
         ...currentState,
         [uiStateKey]: {
-          ...uiState,
+          ...currentState[uiStateKey],
           sort,
           currentPage: 1,
         },
       }));
     },
-    [analysisState, uiStateKey, uiState]
+    [analysisState, uiStateKey]
   );
 
   const handleSearch = useCallback(
@@ -254,13 +254,13 @@ export function TableFilter({
       analysisState.setVariableUISettings((currentState) => ({
         ...currentState,
         [uiStateKey]: {
-          ...uiState,
+          ...currentState[uiStateKey],
           searchTerm,
           ...(shouldResetPaging ? { currentPage: 1 } : {}),
         },
       }));
     },
-    [analysisState, uiStateKey, uiState]
+    [analysisState, uiStateKey]
   );
 
   const handlePagination = useCallback(
@@ -268,12 +268,12 @@ export function TableFilter({
       analysisState.setVariableUISettings((currentState) => ({
         ...currentState,
         [uiStateKey]: {
-          ...uiState,
+          ...currentState[uiStateKey],
           currentPage,
         },
       }));
     },
-    [analysisState, uiStateKey, uiState]
+    [analysisState, uiStateKey]
   );
 
   const handleRowsPerPage = useCallback(
@@ -281,12 +281,12 @@ export function TableFilter({
       analysisState.setVariableUISettings((currentState) => ({
         ...currentState,
         [uiStateKey]: {
-          ...uiState,
+          ...currentState[uiStateKey],
           rowsPerPage,
         },
       }));
     },
-    [analysisState, uiStateKey, uiState]
+    [analysisState, uiStateKey]
   );
 
   const allValues = useMemo(() => {

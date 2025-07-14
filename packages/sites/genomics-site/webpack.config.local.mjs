@@ -42,8 +42,10 @@ export default configure({
         webAppUrl: process.env.LEGACY_WEB_APP_ENDPOINT,
         facebookUrl: process.env.FACEBOOK_URL,
         twitterUrl: process.env.TWITTER_URL,
+        blueskyUrl: process.env.BLUESKY_URL,
         redditUrl: process.env.REDDIT_URL,
         youtubeUrl: process.env.YOUTUBE_URL,
+        linkedinUrl: process.env.LINKEDIN_URL,
         communitySite: process.env.COMMUNITY_SITE,
         siteSearchServiceUrl: process.env.SITE_SEARCH_SERVICE_ENDPOINT,
         useUserDatasetsWorkspace: process.env.USER_DATASETS_WORKSPACE_ENABLED === 'true',
@@ -55,6 +57,9 @@ export default configure({
         edaSingleAppMode: process.env.EDA_SINGLE_APP_MODE,
         vdiServiceUrl: process.env.VDI_SERVICE_ENDPOINT,
         showUnreleasedData: process.env.SHOW_UNRELEASED_DATA === 'true',
+	communityDatasetsEnabled: process.env.COMMUNITY_DATASETS_ENABLED === 'true',
+        showExtraMetadata: process.env.SHOW_EXTRA_METADATA === 'true',
+	aiExpressionQualtricsId: process.env.AI_EXPRESSION_QUALTRICS_ID,
 })
     }),
     new HtmlWebpackPlugin({

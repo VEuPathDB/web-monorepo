@@ -21,6 +21,9 @@ export interface ComputationConfigProps extends ComputationProps {
   computation: Computation;
   visualizationId: string;
   addNewComputation: (name: string, configuration: unknown) => void;
+  changeConfigHandlerOverride?: (propertyName: string, value: any) => void;
+  showStepNumber?: boolean; // Whether to show step number (NumberedHeader)
+  showExpandableHelp?: boolean; // If computation has expandable help, determines whether or not to show it.
 }
 
 export interface ComputationOverviewProps extends ComputationProps {}

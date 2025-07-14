@@ -9,7 +9,6 @@ import { Subsetting } from '@veupathdb/eda/lib/workspace';
 import { WorkspaceContainer } from '@veupathdb/eda/lib/workspace/WorkspaceContainer';
 import {
   Analysis,
-  AnalysisChangeHandler,
   AnalysisState,
   Filter,
   makeNewAnalysis,
@@ -17,6 +16,7 @@ import {
   useAnalysisState,
   useGetDefaultVariableDescriptor,
   useStudyEntities,
+  useSetterWithCallback,
 } from '@veupathdb/eda/lib/core';
 import { VariableLinkConfig } from '@veupathdb/eda/lib/core/components/VariableLink';
 import { edaServiceUrl } from '@veupathdb/web-common/lib/config';
@@ -32,6 +32,7 @@ import {
 } from '@veupathdb/wdk-client/lib/Views/Strategy/StepDetails';
 import { formatFilterDisplayValue } from '@veupathdb/eda/lib/core/utils/study-metadata';
 import { DatasetItem } from '@veupathdb/wdk-client/lib/Views/Question/Params/DatasetParamUtils';
+import { parseJson } from '@veupathdb/eda/lib/notebook/Utils';
 
 const datasetIdParamName = 'eda_dataset_id';
 
@@ -46,15 +47,26 @@ export function EdaSubsetParameter(props: Props<StringParam>) {
   }, [props.value, studyId]);
 
   const { onParamValueChange } = props;
-  const onAnalysisChange = useCallback<AnalysisChangeHandler>(
-    (analysis) => {
-      const paramValue = JSON.stringify(analysis);
-      onParamValueChange(paramValue);
+
+  // serialize and persist with `onParamValueChange`
+  const persistAnalysis = useCallback(
+    (analysis: Analysis | NewAnalysis | undefined) => {
+      if (analysis != null) {
+        onParamValueChange(JSON.stringify(analysis));
+      }
     },
     [onParamValueChange]
   );
 
-  const analysisState = useAnalysisState(analysisDescriptor, onAnalysisChange);
+  // wrap `persistAnalysis` inside a state setter function with 'functional update' functionality
+  const wrappedPersistAnalysis = useSetterWithCallback<
+    Analysis | NewAnalysis | undefined
+  >(analysisDescriptor, persistAnalysis);
+
+  const analysisState = useAnalysisState(
+    analysisDescriptor,
+    wrappedPersistAnalysis
+  );
 
   if (studyId == null) return <div>Could not find eda study id</div>;
 
@@ -149,14 +161,6 @@ function SubsettingAdapter(props: SubsettingAdapterProps) {
       />
     </div>
   );
-}
-
-function parseJson(str: string) {
-  try {
-    return JSON.parse(str);
-  } catch {
-    return undefined;
-  }
 }
 
 export function EdaSubsetStepDetails(props: LeafStepDetailsContentProps) {

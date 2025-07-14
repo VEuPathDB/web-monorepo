@@ -34,6 +34,7 @@ interface Props {
   selectionConfig: SelectionConfig;
   speciesCounts: Record<string, number>;
   taxonTree: TaxonTree;
+  styleOverrides?: CheckboxTreeStyleSpec;
 }
 
 type SelectionConfig =
@@ -44,12 +45,15 @@ type SelectionConfig =
       selectable: true;
       onSpeciesSelected: (selection: string[]) => void;
       selectedSpecies: string[];
+      /** Optional. When true, popover closing will be deferred until this becomes false */
+      deferPopoverClosing?: boolean;
     };
 
 export function PhyleticDistributionCheckbox({
   selectionConfig,
   speciesCounts,
   taxonTree,
+  styleOverrides,
 }: Props) {
   const phyleticDistributionUiTree = useMemo(
     () => makePhyleticDistributionUiTree(speciesCounts, taxonTree),
@@ -76,6 +80,11 @@ export function PhyleticDistributionCheckbox({
   return (
     <SelectTree
       hasPopoverButton={selectionConfig.selectable}
+      deferPopoverClosing={
+        selectionConfig.selectable
+          ? selectionConfig.deferPopoverClosing
+          : undefined
+      }
       buttonDisplayContent="Organism"
       tree={prunedPhyleticDistributionUiTree}
       getNodeId={getTaxonNodeId}
@@ -111,6 +120,7 @@ export function PhyleticDistributionCheckbox({
           &nbsp; Hide zero counts
         </label>,
       ]}
+      styleOverrides={styleOverrides}
     />
   );
 }

@@ -452,6 +452,7 @@ export const observe = takeEpicInWindow(
     mrate([requestPubmedPreview], getFulfillPubmedPreview),
     mrate([requestSubmitComment], getFulfillSubmitComment, {
       areActionsCoherent: isFulfillSubmitCommentCoherent,
+      areActionsNew: () => true,
     }),
     mrate([fulfillSubmitComment], getRequestUpdateAttachedFiles),
     mrate(

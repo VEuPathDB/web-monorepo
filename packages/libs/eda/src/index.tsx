@@ -60,6 +60,7 @@ import './index.css';
 
 // snackbar
 import makeSnackbarProvider from '@veupathdb/coreui/lib/components/notifications/SnackbarProvider';
+import NotebookRoute from './lib/notebook/NotebookRoute';
 
 // Set singleAppMode to the name of one app, if the eda should use one instance of one app only.
 // Otherwise, let singleAppMode remain undefined or set it to '' to allow multiple app instances.
@@ -67,6 +68,9 @@ const singleAppMode = process.env.REACT_APP_SINGLE_APP_MODE;
 
 const showUnreleasedData =
   process.env.REACT_APP_SHOW_UNRELEASED_DATA === 'true';
+
+const enablePublicUserDatasets =
+  process.env.COMMUNITY_DATASETS_ENABLED === 'true';
 
 const exampleAnalysesAuthors = process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR
   ? process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR.split(/\s*,\s*/)
@@ -169,8 +173,19 @@ initialize({
               <Link to="/maps/studies">All studies</Link>
             </li>
           </ul>
+          <h3>Notebook Links</h3>
+          <ul>
+            <li>
+              <Link to="/notebook">All notebooks</Link>
+            </li>
+          </ul>
         </div>
       ),
+    },
+    {
+      path: '/notebook',
+      exact: false,
+      component: () => <NotebookRoute edaServiceUrl={edaEndpoint} />,
     },
     {
       path: '/eda',
@@ -208,6 +223,7 @@ initialize({
           singleAppMode={singleAppMode}
           edaServiceUrl={edaEndpoint}
           sharingUrlPrefix={window.location.href}
+          enablePublicUserDatasets={enablePublicUserDatasets}
         />
       ),
       exact: false,

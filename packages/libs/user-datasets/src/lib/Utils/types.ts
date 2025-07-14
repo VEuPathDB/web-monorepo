@@ -12,11 +12,25 @@ import {
   boolean,
 } from 'io-ts';
 
-export interface UserDatasetMeta {
-  description: string;
-  name: string;
-  summary: string;
+// User dataset metadata type used by the UI (as opposed to the type
+// used by VDI).
+export interface UserDatasetMeta_UI extends UserDatasetFormContent {
   visibility: UserDatasetVisibility;
+  createdOn?: string;
+}
+
+// Interface for the dataset metadata used by VDI. Will get transformed into
+// UserDatasetMeta_UI for the client.
+export interface UserDatasetMeta_VDI extends UserDatasetFormContent {
+  datasetType: {
+    name: string;
+    version: string;
+  };
+  visibility?: UserDatasetVisibility;
+  origin: string;
+  installTargets: string[];
+  dependencies: UserDatasetDependency[];
+  createdOn?: string;
 }
 
 export interface UserDatasetShare {
@@ -34,9 +48,9 @@ export interface UserDataset {
     resourceIdentifier: string;
     resourceVersion: string;
   }>;
-  projects: string[];
+  installTargets: string[];
   id: string;
-  meta: UserDatasetMeta;
+  meta: UserDatasetMeta_UI;
   owner: string;
   ownerUserId: number;
   sharedWith: UserDatasetShare[] | undefined;
@@ -59,7 +73,7 @@ export interface UserDatasetUpload {
   datasetName: string;
   summary?: string;
   description?: string;
-  projects: string[];
+  installTargets: string[];
   status: string;
   errors: string[];
   stepPercent?: number;
@@ -95,6 +109,7 @@ export interface DatasetUploadTypeConfigEntry<T extends string> {
       render: (props: DependencyProps) => ReactNode;
       required?: boolean;
     };
+    hideRelatedOrganisms?: boolean;
     uploadMethodConfig: {
       file?: FileUploadConfig;
       url?: UrlUploadConfig;
@@ -139,9 +154,9 @@ export type DatasetUploadPageConfig<
       uploadTypeConfig: DatasetUploadTypeConfig<T2>;
     };
 
-export interface NewUserDataset extends UserDatasetMeta {
+export interface NewUserDataset extends UserDatasetMeta_UI {
   datasetType: string; // In prototype, the only value is "biom" - will eventually be an enum
-  projects: string[];
+  installTargets: string[];
   dependencies?: UserDataset['dependencies'];
   uploadMethod:
     | {
@@ -211,7 +226,7 @@ const installStatus = keyof({
 
 const installDetails = intersection([
   type({
-    projectId: string,
+    installTarget: string,
   }),
   partial({
     metaStatus: installStatus,
@@ -255,28 +270,95 @@ const userDatasetRecipientDetails = type({
 
 export const datasetIdType = type({ datasetId: string });
 
-export const userDataset = intersection([
+export type UserDatasetPublication = TypeOf<typeof userDatasetPublication>;
+const userDatasetPublication = intersection([
+  type({
+    pubMedId: string,
+  }),
+  partial({
+    citation: string,
+  }),
+]);
+
+export type UserDatasetHyperlink = TypeOf<typeof userDatasetHyperlink>;
+const userDatasetHyperlink = intersection([
+  type({
+    url: string,
+    text: string,
+  }),
+  partial({
+    description: string,
+    isPublication: boolean,
+  }),
+]);
+
+export type UserDatasetContact = TypeOf<typeof userDatasetContact>;
+const userDatasetContact = intersection([
+  type({
+    name: string,
+  }),
+  partial({
+    email: string,
+    affiliation: string,
+    city: string,
+    state: string,
+    country: string,
+    address: string,
+    isPrimary: boolean,
+  }),
+]);
+
+export type UserDatasetFormContent = TypeOf<typeof userDatasetFormContent>;
+export const userDatasetFormContent = intersection([
+  type({
+    name: string,
+  }),
+  partial({
+    summary: string,
+    shortName: string,
+    shortAttribution: string,
+    category: string,
+    description: string,
+    publications: array(userDatasetPublication),
+    hyperlinks: array(userDatasetHyperlink),
+    organisms: array(string),
+    contacts: array(userDatasetContact),
+  }),
+]);
+
+// Many of these user dataset details are in both the vdi and wdk user datasets.
+// This base type defines the fields common to both.
+const userDatasetDetails_base = intersection([
   datasetIdType,
+  userDatasetFormContent,
   type({
     owner: ownerDetails,
     datasetType: datasetTypeDetails,
     visibility: visibilityOptions,
-    name: string,
     origin: string,
-    projectIds: array(string),
     status: statusDetails,
     created: string,
+    installTargets: array(string),
+  }),
+  partial({
+    sourceUrl: string,
+    projectIds: array(string),
+    importMessages: array(string),
+    createdOn: string,
+  }),
+]);
+
+export const userDatasetDetails_VDI = intersection([
+  datasetIdType,
+  userDatasetDetails_base,
+  type({
     fileCount: number,
     fileSizeTotal: number,
   }),
   partial({
-    summary: string,
-    description: string,
-    sourceUrl: string,
     shares: array(
       intersection([userDatasetRecipientDetails, type({ accepted: boolean })])
     ),
-    importMessages: array(string),
   }),
 ]);
 
@@ -285,7 +367,8 @@ const userDatasetDetailsShareDetails = type({
   recipient: userDatasetRecipientDetails,
 });
 
-const datasetDependency = type({
+export type UserDatasetDependency = TypeOf<typeof userDatasetDependency>;
+const userDatasetDependency = type({
   resourceIdentifier: string,
   resourceDisplayName: string,
   resourceVersion: string,
@@ -293,23 +376,12 @@ const datasetDependency = type({
 
 export const userDatasetDetails = intersection([
   datasetIdType,
+  userDatasetDetails_base,
   type({
-    owner: ownerDetails,
-    datasetType: datasetTypeDetails,
-    visibility: visibilityOptions,
-    name: string,
-    origin: string,
-    projectIds: array(string),
-    status: statusDetails,
-    created: string,
-    dependencies: array(datasetDependency),
+    dependencies: array(userDatasetDependency),
   }),
   partial({
-    summary: string,
-    description: string,
-    sourceUrl: string,
     shares: array(userDatasetDetailsShareDetails),
-    importMessages: array(string),
   }),
 ]);
 
@@ -331,25 +403,7 @@ export const userDatasetFileListing = partial({
   }),
 });
 
-export interface NewUserDatasetMeta {
-  name: string;
-  datasetType: {
-    name: string;
-    version: string;
-  };
-  origin: string;
-  projects: string[];
-  dependencies: {
-    resourceDisplayName: string;
-    resourceIdentifier: string;
-    resourceVersion: string;
-  }[];
-  visibility?: 'private' | 'public' | 'protected';
-  summary?: string;
-  description?: string;
-}
-
-export type UserDatasetVDI = TypeOf<typeof userDataset>;
+export type UserDatasetVDI = TypeOf<typeof userDatasetDetails_VDI>;
 export type UserDatasetDetails = TypeOf<typeof userDatasetDetails>;
 export type UserQuotaMetadata = TypeOf<typeof userQuotaMetadata>;
 export type UserDatasetFileListing = TypeOf<typeof userDatasetFileListing>;

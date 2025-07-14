@@ -24,6 +24,7 @@ export const {
   redditUrl = '',
   linkedinUrl = '',
   vimeoUrl = '',
+  blueskyUrl = '',
   discordUrl = '',
   communitySite = '',
   siteSearchServiceUrl = '',
@@ -36,6 +37,9 @@ export const {
   showUnreleasedData = false,
   vdiServiceUrl = '',
   userDatasetsUploadTypes = '',
+  communityDatasetsEnabled = false,
+  showExtraMetadata = false,
+  aiExpressionQualtricsId = '',
 } = window.__SITE_CONFIG__;
 
 export const edaExampleAnalysesAuthors = !window.__SITE_CONFIG__

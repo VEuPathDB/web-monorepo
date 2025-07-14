@@ -19,9 +19,12 @@ import { FILTER_BY_PROJECT_PREF } from '../Utils/project-filter';
 import {
   UserDataset,
   UserDatasetDetails,
-  UserDatasetMeta,
+  UserDatasetMeta_UI,
   UserDatasetVDI,
   UserDatasetFileListing,
+  UserDatasetContact,
+  UserDatasetHyperlink,
+  UserDatasetPublication,
 } from '../Utils/types';
 import { FetchClientError } from '@veupathdb/http-utils';
 import {
@@ -539,6 +542,7 @@ export function loadUserDatasetDetailWithoutLoadingIndicator(id: string) {
         const { shares, dependencies } = userDataset as UserDatasetDetails;
         const partiallyTransformedResponse =
           transformVdiResponseToLegacyResponseHelper(userDataset);
+
         const transformedResponse = {
           ...partiallyTransformedResponse,
           fileListing,
@@ -633,7 +637,7 @@ export function unshareUserDatasets(
 
 export function updateUserDatasetDetail(
   userDataset: UserDataset,
-  meta: UserDatasetMeta
+  meta: UserDatasetMeta_UI
 ) {
   return validateVdiCompatibleThunk<UpdateAction>(({ wdkService }) => [
     detailUpdating(),
@@ -696,15 +700,24 @@ function transformVdiResponseToLegacyResponseHelper(
     owner,
     datasetType,
     projectIds,
+    installTargets,
     datasetId,
     created,
     status,
     importMessages,
     visibility,
+    shortName,
+    shortAttribution,
+    category,
+    publications,
+    hyperlinks,
+    organisms,
+    contacts,
+    createdOn,
   } = ud;
   return {
     owner: owner.firstName + ' ' + owner.lastName,
-    projects: projectIds ?? [],
+    installTargets: installTargets ?? projectIds ?? [],
     created: ud.created,
     type: {
       display: datasetType.displayName ?? datasetType.name,
@@ -716,6 +729,14 @@ function transformVdiResponseToLegacyResponseHelper(
       description: description ?? '',
       summary: summary ?? '',
       visibility,
+      shortName: shortName ?? '',
+      shortAttribution: shortAttribution ?? '',
+      category: category ?? '',
+      publications: publications ?? ([] as UserDatasetPublication[]),
+      hyperlinks: hyperlinks ?? ([] as UserDatasetHyperlink[]),
+      organisms: organisms ?? [],
+      contacts: contacts ?? ([] as UserDatasetContact[]),
+      createdOn: createdOn ?? '',
     },
     ownerUserId: owner.userId,
     age: Date.now() - Date.parse(created),

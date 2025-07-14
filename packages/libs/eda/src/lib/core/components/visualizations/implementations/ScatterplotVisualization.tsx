@@ -39,6 +39,7 @@ import {
   ComputedVariableDetails,
   VisualizationProps,
 } from '../VisualizationTypes';
+import { HighlightedPointsDetails } from '@veupathdb/components/src/types/general';
 
 import ScatterSVG from './selectorIcons/ScatterSVG';
 
@@ -160,7 +161,6 @@ const CI95TEXT = '95% Confidence interval';
 const CI95SUFFIX = `, ${CI95TEXT}`;
 const BESTFITTEXT = 'Best fit';
 const BESTFITSUFFIX = `, ${BESTFITTEXT}`;
-const TESTHIGHLIGHTIDS = ['SRR7047967 (16S)', 'SRR7054402 (16S)'];
 
 const plotContainerStyles = {
   width: 750,
@@ -241,7 +241,6 @@ function createDefaultConfig(): ScatterplotConfig {
     independentAxisValueSpec: 'Full',
     dependentAxisValueSpec: 'Full',
     markerBodyOpacity: 0.5,
-    returnPointIds: true,
   };
 }
 
@@ -264,7 +263,6 @@ export const ScatterplotConfig = t.partial({
   independentAxisValueSpec: t.string,
   dependentAxisValueSpec: t.string,
   markerBodyOpacity: t.number,
-  returnPointIds: t.boolean,
 });
 
 interface Options
@@ -287,6 +285,7 @@ interface Options
   ): VariableDescriptor | VariableCollectionDescriptor | undefined;
   hideTrendlines?: boolean;
   hideLogScale?: boolean;
+  returnPointIds?: boolean; // Determines whether the backend should return the ids of each point in the scatterplot
 }
 
 function ScatterplotViz(props: VisualizationProps<Options>) {
@@ -753,7 +752,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             ? [vizConfig.facetVariable]
             : undefined,
           showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
-          returnPointIds: vizConfig.returnPointIds ?? true,
+          returnPointIds: options?.returnPointIds ?? true,
         },
         computeConfig: copmutationAppOverview.computeName
           ? computationDescriptor.configuration
@@ -2047,7 +2046,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                 options?.getOverlayVariable != null
                   ? providedOverlayVariableDescriptor
                     ? variableDisplayWithUnit(providedOverlayVariable)
-                    : 'None. ' + options?.getOverlayVariableHelp?.() ?? ''
+                    : 'None. ' + (options?.getOverlayVariableHelp?.() ?? '')
                   : undefined,
             } as const,
           ]),
@@ -2167,7 +2166,8 @@ export function scatterplotResponseToData(
   facetVariable?: Variable,
   computationType?: string,
   entities?: StudyEntity[],
-  colorPaletteOverride?: string[]
+  colorPaletteOverride?: string[],
+  highlightedPointsDetails?: HighlightedPointsDetails
 ): ScatterPlotDataWithCoverage {
   const modeValue = 'markers';
 
@@ -2214,7 +2214,7 @@ export function scatterplotResponseToData(
         computationType,
         entities,
         colorPaletteOverride,
-        TESTHIGHLIGHTIDS
+        highlightedPointsDetails
       );
 
     return {
@@ -2284,8 +2284,7 @@ function processInputData(
   computationType?: string,
   entities?: StudyEntity[],
   colorPaletteOverride?: string[],
-  highlightIds?: string[],
-  highlightMarkerStyleOverride?: ScatterPlotDataSeries['marker']
+  highlightedPointsDetails?: HighlightedPointsDetails
 ) {
   // set variables for x- and yaxis ranges: no default values are set
   let xMin: number | string | undefined;
@@ -2367,10 +2366,12 @@ function processInputData(
   let highlightTrace: any = {
     x: [],
     y: [],
-    name: 'highlight',
+    name: highlightedPointsDetails?.highlightTraceName ?? 'Highlighted Points',
     mode: 'markers',
     type: 'scattergl',
-    marker: highlightMarkerStyleOverride ?? DefaultHighlightMarkerStyle,
+    marker:
+      highlightedPointsDetails?.highlightMarkerStyleOverrides ??
+      DefaultHighlightMarkerStyle,
     pointIds: [],
   };
 
@@ -2497,12 +2498,17 @@ function processInputData(
       // still have a tooltip (regardless of marker size, color, etc.)
       if (
         el.pointIds &&
-        highlightIds &&
-        highlightIds.length > 0 &&
-        highlightIds.some((id) => el.pointIds?.includes(id))
+        highlightedPointsDetails &&
+        highlightedPointsDetails.pointIds.length > 0 &&
+        highlightedPointsDetails.pointIds.some((id: string) =>
+          el.pointIds?.includes(id)
+        )
       ) {
         seriesY.forEach((_value, index: number) => {
-          if (el.pointIds && highlightIds.includes(el.pointIds[index])) {
+          if (
+            el.pointIds &&
+            highlightedPointsDetails.pointIds.includes(el.pointIds[index])
+          ) {
             seriesY[index] = null;
           }
         });
@@ -2513,12 +2519,16 @@ function processInputData(
         x: seriesX.length ? seriesX : [null], // [null] hack required to make sure
         y: seriesY.length ? seriesY : [null], // Plotly has a legend entry for empty traces
         // distinguish X/Y Data from Overlay
-        name: fixedOverlayLabel ?? 'Data',
+        name:
+          fixedOverlayLabel ??
+          highlightedPointsDetails?.nonHighlightTraceName ??
+          'Data',
         mode: modeValue,
         type: scatterPlotType, // for the raw data of the scatterplot
         marker: {
           color:
-            highlightIds && highlightIds.length > 0
+            highlightedPointsDetails &&
+            highlightedPointsDetails.pointIds.length > 0
               ? DefaultNonHighlightColor
               : seriesGradientColorscale?.length > 0 &&
                 markerSymbolGradient === 'circle'
@@ -2531,7 +2541,8 @@ function processInputData(
           // need to set marker.line for a transparent case (opacity != 1)
           line: {
             color:
-              highlightIds && highlightIds.length > 0
+              highlightedPointsDetails &&
+              highlightedPointsDetails.pointIds.length > 0
                 ? DefaultNonHighlightColor
                 : seriesGradientColorscale?.length > 0 &&
                   markerSymbolGradient === 'circle'
@@ -2547,14 +2558,16 @@ function processInputData(
 
       // If there are any highlihgted points, we need to add those to the highlight trace
       if (
-        highlightIds &&
+        highlightedPointsDetails &&
         el.pointIds &&
-        highlightIds.some((id) => el.pointIds?.includes(id))
+        highlightedPointsDetails.pointIds.some((id: string) =>
+          el.pointIds?.includes(id)
+        )
       ) {
         // Extract the indices of highlighted points.
         const highlightIndices = el.pointIds
           .map((id: string, index: number) =>
-            highlightIds.includes(id) ? index : -1
+            highlightedPointsDetails.pointIds.includes(id) ? index : -1
           )
           .filter((index: number) => index !== -1);
         if (highlightIndices && highlightIndices.length !== 0) {

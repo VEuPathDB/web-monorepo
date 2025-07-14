@@ -498,13 +498,16 @@ const useHeaderMenuItems = (
           },
         },
         {
-          key: 'vb-images',
-          display: 'Image gallery',
-          tooltip: 'Free to use pictures of vectors',
+          key: 'gp60',
+          display: (
+            <>
+              <i>gp60</i> Resource page
+            </>
+          ),
           type: 'reactRoute',
-          url: makeStaticPageRoute('/VectorBase/imageGallery.html'),
+          url: makeStaticPageRoute('/gp60.html'),
           metadata: {
-            include: [VectorBase],
+            include: [CryptoDB],
           },
         },
         {
@@ -716,6 +719,18 @@ const useHeaderMenuItems = (
           display: `What is ${displayName}?`,
           type: 'reactRoute',
           url: makeStaticPageRoute('/about.html'),
+        },
+        {
+          key: 'why-support',
+          display: 'Why support us?',
+          type: 'reactRoute',
+          url: makeStaticPageRoute('/why-support.html'),
+        },
+        {
+          key: 'about-faq',
+          display: 'FAQs',
+          type: 'reactRoute',
+          url: makeStaticPageRoute('/faq.html'),
         },
         {
           key: 'switchsites',
@@ -1043,6 +1058,13 @@ const useHeaderMenuItems = (
           url: '/reset-session',
         },
       ],
+    },
+    {
+      key: 'subscr',
+      display: 'Subscriptions',
+      type: 'reactRoute',
+      target: '_blank',
+      url: makeStaticPageRoute('/subscriptions.html'),
     },
     {
       key: 'contact-us',
