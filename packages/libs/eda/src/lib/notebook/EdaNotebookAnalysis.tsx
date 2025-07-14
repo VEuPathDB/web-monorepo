@@ -60,9 +60,10 @@ export function EdaNotebookAnalysis(props: Props) {
       parentComputationId?: string
     ) {
       if (cell.type === 'compute') {
+        const appPlugin = plugins[cell.computationName];
         const computation = createComputation(
           cell.computationName,
-          {},
+          appPlugin.createDefaultConfiguration(),
           [],
           [],
           cell.computationId
