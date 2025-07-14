@@ -72,29 +72,42 @@ type PresetNotebook = {
 // Note - Using differential abundance as practice for differential expression
 // Note - boxplot notebook has no plan for use yet, just good for testing.
 export const presetNotebooks: Record<string, PresetNotebook> = {
-  differentialAbundanceNotebook: {
-    name: 'differentialabundance',
-    displayName: 'Differential Abundance Notebook',
+  differentialExpressionNotebook: {
+    name: 'differentialexpression',
+    displayName: 'Differential Expression Notebook',
     projects: ['MicrobiomeDB'],
     cells: [
       {
         type: 'compute',
-        title: 'Differential Abundance',
-        computationName: 'differentialabundance',
-        computationId: 'diff_1',
+        title: 'Correlation Computation',
+        computationName: 'differentialexpression',
+        computationId: 'de_1',
+        helperText: (
+          <NumberedHeader
+            number={1}
+            text={
+              'Configure and run a differential expression computation between two sets of samples.'
+            }
+            color={colors.grey[800]}
+          />
+        ),
         cells: [
           {
             type: 'visualization',
-            title: 'Volcano Plot',
+            title: 'Volcano Plot Visualization',
             visualizationName: 'volcanoplot',
             visualizationId: 'volcano_1',
+            helperText: (
+              <NumberedHeader
+                number={2}
+                text={
+                  'Visualize the results of the differential expression computation in a volcano plot. Click on points to highlight them in the network.'
+                }
+                color={colors.grey[800]}
+              />
+            ),
           },
         ],
-      },
-      {
-        type: 'text',
-        title: 'Text Cell',
-        text: 'This is a text cell for the differential abundance notebook.',
       },
     ],
   },

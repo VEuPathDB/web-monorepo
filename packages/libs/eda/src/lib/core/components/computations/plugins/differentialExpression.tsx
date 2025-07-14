@@ -205,6 +205,7 @@ export function DifferentialExpressionConfiguration(
     computation,
     analysisState,
     visualizationId,
+    changeConfigHandlerOverride,
   } = props;
 
   const configuration = computation.descriptor
@@ -217,11 +218,16 @@ export function DifferentialExpressionConfiguration(
 
   assertComputationWithConfig(computation, DifferentialExpressionConfig);
 
-  const changeConfigHandler = useConfigChangeHandler(
+  const workspaceChangeConfigHandler = useConfigChangeHandler(
     analysisState,
     computation,
     visualizationId
   );
+
+  // Depending on context, we might need a different changeConfigHandler. For example,
+  // in the notebook.
+  const changeConfigHandler =
+    changeConfigHandlerOverride ?? workspaceChangeConfigHandler;
 
   // Set the pValueFloor here. May change for other apps.
   // Note this is intentionally different than the default pValueFloor used in the Volcano component. By default
