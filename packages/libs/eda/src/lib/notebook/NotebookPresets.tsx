@@ -198,7 +198,9 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         helperText: (
           <NumberedHeader
             number={3}
-            text={'Refine parameters for returning the list of genes.'}
+            text={
+              "Find genes within a particular module that are strongly correlated with the module's eigengene."
+            }
             color={colors.grey[800]}
           />
         ),
