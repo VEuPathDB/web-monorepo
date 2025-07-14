@@ -109,7 +109,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
     cells: [
       {
         type: 'compute',
-        title: 'Correlation Computation',
+        title: 'Correlation computation',
         computationName: 'correlation',
         computationId: 'correlation_1',
         helperText: (
@@ -124,7 +124,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         cells: [
           {
             type: 'visualization',
-            title: 'Network Visualization',
+            title: 'Network visualization of correlation results',
             visualizationName: 'bipartitenetwork',
             visualizationId: 'bipartite_1',
             helperText: (
@@ -193,7 +193,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
       },
       {
         type: 'wdkparam',
-        title: 'Finalize search parameters',
+        title: 'Run gene search',
         paramNames: ['wgcnaParam', 'wgcna_correlation_cutoff'],
         helperText: (
           <NumberedHeader

@@ -130,7 +130,6 @@ export function ComputeNotebookCell(
               analysisState={analysisState}
               cell={subCell}
               isDisabled={isSubCellDisabled}
-              expandedPanelState={isSubCellDisabled ? 'closed' : 'open'}
               wdkState={wdkState}
             />
           );
