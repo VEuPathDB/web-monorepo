@@ -78,6 +78,17 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
     projects: ['MicrobiomeDB'],
     cells: [
       {
+        type: 'subset',
+        title: 'Subset Samples',
+        helperText: (
+          <NumberedHeader
+            number={0}
+            text={'Optionally refine samples for differential expression.'}
+            color={colors.grey[800]}
+          />
+        ),
+      },
+      {
         type: 'compute',
         title: 'Correlation Computation',
         computationName: 'differentialexpression',
@@ -101,7 +112,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
               <NumberedHeader
                 number={2}
                 text={
-                  'Visualize the results of the differential expression computation in a volcano plot. Click on points to highlight them in the network.'
+                  'Visualize the results of the differential expression computation in a volcano plot.'
                 }
                 color={colors.grey[800]}
               />

@@ -23,7 +23,7 @@ import {
   useFindEntityAndVariable,
   useFindEntityAndVariableCollection,
 } from '../../../hooks/workspace';
-import { ReactNode, useCallback, useMemo } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import VariableTreeDropdown from '../../variableSelectors/VariableTreeDropdown';
 import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
@@ -206,6 +206,7 @@ export function DifferentialExpressionConfiguration(
     analysisState,
     visualizationId,
     changeConfigHandlerOverride,
+    showStepNumber = true,
   } = props;
 
   const configuration = computation.descriptor
@@ -228,6 +229,28 @@ export function DifferentialExpressionConfiguration(
   // in the notebook.
   const changeConfigHandler =
     changeConfigHandlerOverride ?? workspaceChangeConfigHandler;
+
+  // If the subset changes while we are configuring the app (for example in a notebook),
+  // we want to reset the values of the comparator variable because it's
+  // possible that in this new subset the values do not exist anymore.
+  // This is true for continuous and categorical variables. Continuous
+  // variables will have their bins recalculated if they are affected by a filter.
+  useEffect(() => {
+    if (
+      analysisState.analysis?.descriptor.subset.descriptor &&
+      configuration.comparator?.variable
+    ) {
+      changeConfigHandler('comparator', {
+        variable: configuration.comparator.variable,
+        groupA: undefined,
+        groupB: undefined,
+      });
+    }
+  }, [
+    analysisState.analysis?.descriptor.subset.descriptor,
+    changeConfigHandler,
+    configuration.comparator?.variable,
+  ]);
 
   // Set the pValueFloor here. May change for other apps.
   // Note this is intentionally different than the default pValueFloor used in the Volcano component. By default
@@ -310,6 +333,7 @@ export function DifferentialExpressionConfiguration(
         stepNumber: 1,
         stepTitle: `Configure ${computationAppOverview.displayName}`,
       }}
+      showStepNumber={showStepNumber}
     >
       <div className={cx()}>
         <div className={cx('-DiffExpressionOuterConfigContainer')}>
