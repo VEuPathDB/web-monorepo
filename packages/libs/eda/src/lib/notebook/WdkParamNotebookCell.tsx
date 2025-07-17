@@ -24,9 +24,11 @@ export function WdkParamNotebookCell(
 
   return (
     <>
-      <div className="NotebookCellHelpText">
-        <span>{cell.helperText}</span>
-      </div>
+      {cell.helperText && (
+        <div className="NotebookCellHelpText">
+          <span>{cell.helperText}</span>
+        </div>
+      )}
       <ExpandablePanel
         title={title}
         subTitle={''}

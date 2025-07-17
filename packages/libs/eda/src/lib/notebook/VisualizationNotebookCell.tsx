@@ -95,14 +95,16 @@ export function VisualizationNotebookCell(
       ...vizPlugin?.options,
       ...getVizPluginOptions?.(wdkState, enqueueSnackbar),
     }),
-    [wdkState, enqueueSnackbar]
+    [wdkState, enqueueSnackbar, getVizPluginOptions, vizPlugin?.options]
   );
 
   return visualization ? (
     <>
-      <div className="NotebookCellHelpText">
-        <span>{cell.helperText}</span>
-      </div>
+      {cell.helperText && (
+        <div className="NotebookCellHelpText">
+          <span>{cell.helperText}</span>
+        </div>
+      )}
       <ExpandablePanel
         title={cell.title}
         subTitle={''}
