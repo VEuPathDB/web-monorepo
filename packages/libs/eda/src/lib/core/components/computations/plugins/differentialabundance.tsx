@@ -268,73 +268,57 @@ export function DifferentialAbundanceConfiguration(
 
   // Find the selected comparator variable distribution. For cateogrical variables only.
   // Will be used to disable values that have been filtered out of the subset.
-  const filteredComparatorVariableDistribution = useCachedPromise(async () => {
+  const filteredComparatorVariableDistribution = useCachedPromise<
+    DistributionResponse | undefined
+  >(async () => {
     if (
       configuration.comparator == null ||
       configuration.comparator.variable == null ||
-      studyMetadata == null ||
-      configuration.comparator.variable.entityId == null ||
-      configuration.comparator.variable.variableId == null ||
-      selectedComparatorVariable == null ||
-      selectedComparatorVariable.variable.dataShape === 'continuous' || // The following is for categorical variables only
+      selectedComparatorVariable?.variable.dataShape === 'continuous' || // The following is for categorical variables only
       otherFilters == null ||
       otherFilters.length === 0
     ) {
-      return {
-        histogram: [],
-        statistics: {
-          numVarValues: 0,
-          numDistinctValues: 0,
-          numDistinctEntityRecords: 0,
-          numMissingCases: 0,
-        },
-      } as DistributionResponse;
+      return;
     }
 
-    const variableDistribution =
-      await getFilteredVariableValues<DistributionResponse>((filters) => {
-        return subsettingClient.getDistribution(
-          studyMetadata.id,
-          configuration.comparator?.variable.entityId ?? '',
-          configuration.comparator?.variable.variableId ?? '',
-          {
-            valueSpec: 'count',
-            filters,
-          }
-        );
-      }, otherFilters);
+    const variableDistribution = await subsettingClient.getDistribution(
+      studyMetadata.id,
+      configuration.comparator.variable.entityId,
+      configuration.comparator.variable.variableId,
+      {
+        valueSpec: 'count',
+        filters: otherFilters,
+      }
+    );
 
     return variableDistribution;
   }, [configuration.comparator, filters, studyMetadata.id]);
 
   // If the variable is continuous, ask the backend for a list of bins
-  const continuousVariableBins = usePromise(
-    useCallback(async () => {
-      if (
-        !ContinuousVariableDataShape.is(
-          selectedComparatorVariable?.variable.dataShape
-        ) ||
-        configuration.comparator == null
-      )
-        return;
+  const continuousVariableBins = useCachedPromise(async () => {
+    if (
+      !ContinuousVariableDataShape.is(
+        selectedComparatorVariable?.variable.dataShape
+      ) ||
+      configuration.comparator == null
+    )
+      return;
 
-      const binRangeProps: GetBinRangesProps = {
-        studyId: studyMetadata.id,
-        ...configuration.comparator.variable,
-        filters: filters ?? [],
-        dataClient,
-        binningMethod: 'quantile',
-      };
-      const bins = await getBinRanges(binRangeProps);
-      return bins;
-    }, [
+    const binRangeProps: GetBinRangesProps = {
+      studyId: studyMetadata.id,
+      ...configuration.comparator.variable,
+      filters: filters ?? [],
       dataClient,
-      configuration?.comparator,
-      filters,
-      selectedComparatorVariable,
-      studyMetadata.id,
-    ])
-  );
+      binningMethod: 'quantile',
+    };
+    const bins = await getBinRanges(binRangeProps);
+    return bins;
+  }, [
+    configuration?.comparator,
+    filters,
+    selectedComparatorVariable,
+    studyMetadata.id,
+  ]);
 
   const disableSwapGroupValuesButton =
     !configuration?.comparator?.groupA && !configuration?.comparator?.groupB;
@@ -564,14 +548,4 @@ function isEnabledInPicker({
   );
 
   return studyHasCollections;
-}
-
-// Used to determine if any variable values were filtered out based
-// on the subset. Adapted from getDistribution<T>
-async function getFilteredVariableValues<T>(
-  fetchSummary: SummaryFetcher<T>,
-  otherFilters: Filter[] = []
-) {
-  const variableDistribution = await fetchSummary(otherFilters);
-  return variableDistribution;
 }
