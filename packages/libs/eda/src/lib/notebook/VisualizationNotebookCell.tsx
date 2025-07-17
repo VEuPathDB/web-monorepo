@@ -14,8 +14,14 @@ import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnack
 export function VisualizationNotebookCell(
   props: NotebookCellProps<VisualizationCellDescriptor>
 ) {
-  const { analysisState, cell, isDisabled, expandedPanelState, wdkState } =
-    props;
+  const {
+    analysisState,
+    cell,
+    isDisabled,
+    expandedPanelState,
+    wdkState,
+    computeJobStatus,
+  } = props;
   const { analysis, updateVisualization } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
   if (wdkState == null) throw new Error('No WDK state.');
@@ -50,12 +56,6 @@ export function VisualizationNotebookCell(
   const apps = useCachedPromise(fetchApps, ['fetchApps']);
   const appOverview =
     apps && apps.value?.apps.find((app) => app.name === computationName);
-
-  const { jobStatus: computeJobStatus } = useComputeJobStatus(
-    analysis,
-    computation,
-    appOverview?.computeName ?? ''
-  );
 
   if (appOverview == null)
     throw new Error(
