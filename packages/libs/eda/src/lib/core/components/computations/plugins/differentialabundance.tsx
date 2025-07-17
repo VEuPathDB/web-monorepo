@@ -2,7 +2,6 @@ import {
   ContinuousVariableDataShape,
   DistributionResponse,
   LabeledRange,
-  usePromise,
   useStudyMetadata,
 } from '../../..';
 import {
@@ -26,7 +25,7 @@ import {
   useFindEntityAndVariableCollection,
   useSubsettingClient,
 } from '../../../hooks/workspace';
-import { ReactNode, useCallback, useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import VariableTreeDropdown from '../../variableSelectors/VariableTreeDropdown';
 import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
@@ -45,7 +44,6 @@ import { VariableCollectionSelectList } from '../../variableSelectors/VariableCo
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { entityTreeToArray } from '../../../utils/study-metadata';
 import { useCachedPromise } from '../../../hooks/cachedPromise';
-import { SummaryFetcher } from '../../filter/util';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
