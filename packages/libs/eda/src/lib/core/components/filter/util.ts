@@ -1,6 +1,6 @@
 import { Filter } from '../../types/filter';
 
-export type SummaryFetcher<T> = (filters: Filter[]) => Promise<T>;
+type SummaryFetcher<T> = (filters: Filter[]) => Promise<T>;
 
 type Context = {
   entityId: string;
