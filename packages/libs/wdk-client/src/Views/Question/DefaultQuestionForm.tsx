@@ -57,6 +57,7 @@ export type Props = {
   onSubmit?: (e: React.FormEvent) => boolean | void;
   resetFormConfig: ResetFormConfig;
   containerClassName?: string;
+  searchName?: string;
 };
 
 const cx = makeClassNameHelper('wdk-QuestionForm');
