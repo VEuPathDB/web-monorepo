@@ -1,27 +1,14 @@
 = web-monorepo
-:icons: font
+These are instructions to work with the VEuPathDB UI either by executing a single workspace’s yarn script -using the nx task runner- (eg the mblast UI or the EDA UI), or by accessing the complete UI by starting a local site. In both cases a webpack server will be started and a new browser tab will be opened. The backend will be accessed via a remote site stated in your monorepo (packages/sites/*website) .env file.
 :toc:
 
-These are instructions to work with the VEuPathDB UI either by executing a
-single workspace’s yarn script -using the nx task runner- (eg the mblast UI or
-the EDA UI), or by accessing the complete UI by starting a local site. In both
-cases a webpack server will be started and a new browser tab will be opened. The
-backend will be accessed via a remote site stated in your monorepo
-(packages/sites/*website) .env file.
-
 == Prerequisites
-
 * `Node <=16.17.1`
 * Either a global installation of `yarn >=1.17.0`, or `volta >=1.1.0`
-** With such a version of `yarn` globally installed, all `yarn` commands
-  executed in this repo will be delegated to the "pinned" `yarn@3.3.1`
-  installation included in `.yarn/releases`.
-** With such a version of https://volta.sh/[volta] installed, the required
-  version of `yarn` will automatically be installed.
+** With such a version of `yarn` globally installed, all `yarn` commands executed in this repo will be delegated to the "pinned" `yarn@3.3.1` installation included in `.yarn/releases`.
+** With such a version of https://volta.sh/[volta] installed, the required version of `yarn` will automatically be installed.
 
-[NOTE]
-It is recommended to install volta, as it will keep your local toolchain in sync
-with the repository.
+_It is recommended to install volta, as it will keep your local toolchain in sync with the repository._
 
 == Quick Start
 
@@ -36,50 +23,33 @@ yarn
 
 == Overview
 
-This repository is a "monorepo", using the https://nx.dev[nx] build system and
-https://v3.yarnpkg.com/[yarn@3] dependency manager. The source code is divided
-into one of three types of packages: "config", "lib", and "site".
+This repository is a "monorepo", using the https://nx.dev[nx] build system and https://v3.yarnpkg.com/[yarn@3] dependency manager. The source code is divided into one of three types of packages: "config", "lib", and "site".
 
-* "config" packages (`./packages/configs`) include various build and development
-  configurations and tools.
-* "lib" packages (`./packages/libs`) include standalone library and webapp
-  source code.
-* "site" packages (`./packages/sites`) include complete website source code.
+- "config" packages (`./packages/configs`) include various build and development configurations and tools.
+- "lib" packages (`./packages/libs`) include standalone library and webapp source code.
+- "site" packages (`./packages/sites`) include complete website source code.
 
-Many "lib" and "site" packages include development tools, such as development
-servers, test scripts, etc.
+Many "lib" and "site" packages include development tools, such as development servers, test scripts, etc.
 
-Many commands require a reference to the package name. All package names are
-currently prefixed with `@veupathdb/`. For example, the eda package name is
-`@veupathdb/eda`.
+Many commands require a reference to the package name. All package names are currently prefixed with `@veupathdb/`. For example, the eda package name is `@veupathdb/eda`.
 
-The repository is currently configured as a "package based repository". This is
-subject to change, in the future (see https://nx.dev/concepts/integrated-vs-package-based
-to read about the differences between package based and integrated repos).
-
+The repository is currently configured as a "package based repository". This is subject to change, in the future (see https://nx.dev/concepts/integrated-vs-package-based to read about the differences between package based and integrated repos).
+ 
 == Common Tasks
 
-The following tasks are common performed by developers. This serves as a
-reference guide, and is not exhaustive in any way. If you feel something is
-missing, create an issue, or open a pull request.
+The following tasks are common performed by developers. This serves as a reference guide, and is not exhaustive in any way. If you feel something is missing, create an issue, or open a pull request.
 
-_All commands are expected to be run in the repository's root directory, unless
-otherwise specified._
+_All commands are expected to be run in the repository's root directory, unless otherwise specified._
 
 === Start a local dev site
 
-"Site" projects are stored in the `packages/sites` directory. Each one
-corresponds to a "cohort". For example, `packages/sites/genomics-site` contains
-the code used to build the client code for a genomics website.
+"Site" projects are stored in the `packages/sites` directory. Each one corresponds to a "cohort". For example, `packages/sites/genomics-site`
+contains the code used to build the client code for a genomics website.
 
-Each cohort contains a `.env.sample` file. Copy this to a sibling `.env` file.
-You may need to modify some values, such as usernames, passwords, etc. You can
-also specify a website to use for various services. Typically, a deployed QA
-site will suffice, but you can also run a "local backend" via various methods.
-(TODO: link to relevant docs/repos).
+Each cohort contains a `.env.sample` file. Copy this to a sibling `.env` file. You may need to modify some values, such as usernames,
+passwords, etc. You can also specify a website to use for various services. Typically a deployed QA site will suffice, but you can also run a "local backend" via various methods. (TODO: link to relevants docs/repos).
 
-Once you have created a `.env` file, you can run the local dev site with the
-command:
+Once you have created a `.env` file, you can run the local dev site with the command:
 
 [source, shell]
 ----
@@ -93,44 +63,31 @@ For example, if you want to run a local clinepi site, you would run the command:
 yarn nx start @veupathdb/clinepi-site
 ----
 
-Once the website has been compiled, the dev server will output some build
-statistics and automatically open a browser tab. You can kill the local dev
-server with `CTRL-C` in the terminal where you started it.
+Once the website has been compiled, the dev server will output some build statistics and automatically open a browser tab. You can kill the local dev server with `CTRL-C` in the terminal where you started it. 
 
 === Modifying code (and updating a running local dev site)
 
-When a local dev site is running, it will detect when build dependencies are
-updated and reload the active webpage.
+When a local dev site is running, it will detect when build dependencies are updated and reload the active webpage.
 
-__Note: the following refers to code tracked by the monorepo, and not
-third-party dependencies from npm.__
+__Note: the following refers to code tracked by the monorepo, and not third-party dependencies from npm.__
 
-There are two types of source code that can be updated:
+There are two types of souce code that can be updated:
 
 1. Source code within the package being served.
 2. Source code within a dependent package.
 
-Changes to code within the package being served will be detected automatically.
-The local dev service should recompile the affected module and reload the
-website without intervention.
+Changes to code within the package being served will be detected automatically. The local dev service should reompile the affected module and reload the website without intervention.
 
-Changes to code within a dependent workspace package will require a build
-command for the local dev server to detect the change.
+Changes to code within a dependent workspace package will require a build command for the local dev server to detect the change.
 
-For example, if you change code in `packages/libs/eda`, you will need to run
-this command in a new terminal window, from the repository root:
+For example, if you change code in `packages/libs/eda`, you will need to run this command in a new terminal window, from the repository root:
 
 [source, shell]
 ----
 yarn workspace @veupathdb/eda build-npm-modules
 ----
 
-Once this command completed, the running dev server will see the updated build
-artifacts, recompile the website, and reload the webpage. There are some cases
-where this might not work as expected, such as if the recompile step fails. In
-those cases, you may need to restart the local dev server. You can monitor the
-progress of the recompilation step in the terminal where you started the dev
-server.
+Once this command completed, the running dev server will see the updated build artifacts, recompile the website, and reload the webpage. There are some cases where this might not work as expected, such as if the recompile step fails. In those cases, you may need to restart the local dev server. You can monitor the progress of the recompilation step in the terminal where you started the dev server.
 
 === View workspace dependency graph
 
@@ -159,9 +116,8 @@ yarn nx run @veupathdb/multi-blast:start
 
 === Rebuild dependencies when running a development server
 
-When running a development server (such as `yarn nx start @veupathdb/eda` or
-`yarn nx start @veupathdb/clinepi-site`), use the following command to rebuild
-changes made to dependencies, and to have the dev site reload with the changes:
+When running a development server (such as `yarn nx start @veupathdb/eda` or `yarn nx start @veupathdb/clinepi-site`),
+use the following command to rebuild changes made to dependencies, and to have the dev site reload with the changes:
 
 [source, shell]
 ----
@@ -169,11 +125,9 @@ cd packages/libs/<package>
 yarn build-npm-modules
 ----
 
-[NOTE]
-You may need to manually reload your website to see the changes the first time.
+**Note: You may need to manually reload your website to see the changes the first time.**
 
-_Using the equivalent `nx` command (`yarn nx build-npm-modules @veupathdb/<package>`)
-has proven inadequate in this scenario._
+_Using the equivalent `nx` command (`yarn nx build-npm-modules @veupathdb/<package>`) has proven inadequate in this scenario._
 
 == Notes on individual packages
 
@@ -181,32 +135,27 @@ has proven inadequate in this scenario._
 
 Directory: `packages/libs/eda`
 
-You will need to configure the server with a `packages/libs/eda/.env.local` file
-that sets various environment variables.
+You will need to configure the server with a `packages/libs/eda/.env.local` file that sets various environment variables.
 
-For more documentation see the link:packages/libs/eda/README.md[package README]
-and link:packages/libs/eda/.env.local.sample.localservices[this sample file].
+For more documentation see the link:packages/libs/eda/README.md[package README] and link:packages/libs/eda/.env.local.sample.localservices[this sample file].
 
 === VEuPathDB sites
 
 Directory: `packages/sites/{site name}-site`
 
-Copy the `packages/sites/{site name}-site/.env.sample` file to
-`packages/sites/{site name}-site/.env` and configure the new file with passwords
-and the desired backend for the site.
+Copy the `packages/sites/{site name}-site/.env.sample` file to `packages/sites/{site name}-site/.env` and configure the new file with passwords and the desired backend for the site.
 
 Run `yarn` to update dependencies if necessary.
 
-Run the command `yarn nx start @veupathdb/{site name}-site`. For example, to run
-the ortho site use `yarn nx start @veupathdb/ortho-site`.
+Run the command `yarn nx start @veupathdb/{site name}-site`. For example, to run the ortho site use `yarn nx start @veupathdb/ortho-site`.
 
 == IDE hints
 
 === emacs tide
 
 If it is showing errors for tsx imports (especially in `eda`) and
-`tide-verify-setup` mentions ts-server version 3.x then it is time to upgrade
-emacs tide (to, at time of writing 4.5.4):
+`tide-verify-setup` mentions tsserver version 3.x then it is time to
+upgrade emacs tide (to, at time of writing 4.5.4):
 
 [source]
 ----

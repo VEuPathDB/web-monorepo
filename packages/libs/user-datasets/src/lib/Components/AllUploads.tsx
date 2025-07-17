@@ -203,7 +203,7 @@ const AllUploads = (props: Props) => {
   const hasUploadFromAnotherProject = useMemo(
     () =>
       uploads.some((upload) =>
-        upload.installTargets.some((project) => project !== projectInfo?.id)
+        upload.projects.some((project) => project !== projectInfo?.id)
       ),
     [projectInfo, uploads]
   );
@@ -214,7 +214,7 @@ const AllUploads = (props: Props) => {
     (upload: UserDatasetUpload) =>
       projectInfo == null ||
       !projectFilterApplied ||
-      upload.installTargets.includes(projectInfo.id),
+      upload.projects.includes(projectInfo.id),
     [projectInfo, projectFilterApplied]
   );
 
