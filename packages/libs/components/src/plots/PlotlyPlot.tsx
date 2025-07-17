@@ -219,6 +219,9 @@ function PlotlyPlot<T>(
       title,
       colorPalette,
       plotlyAnnotations,
+      xAxisTitle,
+      yAxisTitle,
+      maxLegendTitleTextLength,
     ]
   );
 
