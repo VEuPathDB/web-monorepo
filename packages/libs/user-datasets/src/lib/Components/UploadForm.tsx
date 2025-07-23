@@ -921,7 +921,7 @@ function validateForm<T extends string = string>(
       description,
       datasetType: datasetUploadType.type,
       category: datasetUploadType.type === 'wrangler' ? 'phenotype' : undefined,
-      installTargets: [projectId],
+      projects: [projectId],
       dataUploadSelection,
       dependencies,
       visibility: 'private',
