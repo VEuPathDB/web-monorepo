@@ -85,6 +85,20 @@ export function VariableCollectionSelectList(props: Props) {
     }
   }, [entities, value, items]);
 
+  // Handle the case of only one option
+  if (items.length === 1 && items[0].items.length === 1) {
+    // Run handleSelect immediately to set the selection.
+    const singleItem = items[0].items[0];
+    handleSelect(singleItem.value);
+
+    // Return a placeholder to avoid rendering the select, since there's nothing to select!
+    return (
+      <span style={{ fontWeight: 400, marginRight: 15 }}>
+        {singleItem.display}
+      </span>
+    );
+  }
+
   return (
     <SingleSelect<string | undefined>
       items={items}
