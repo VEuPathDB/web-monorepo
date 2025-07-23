@@ -10,7 +10,7 @@ import {
 } from '../../../types/variable';
 import { volcanoPlotVisualization } from '../../visualizations/implementations/VolcanoPlotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { partial } from 'lodash';
+import { isEqual, partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
@@ -23,7 +23,7 @@ import {
   useFindEntityAndVariable,
   useFindEntityAndVariableCollection,
 } from '../../../hooks/workspace';
-import { ReactNode, useCallback, useEffect, useMemo } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import VariableTreeDropdown from '../../variableSelectors/VariableTreeDropdown';
 import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
@@ -41,6 +41,7 @@ import {
 import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { entityTreeToArray } from '../../../utils/study-metadata';
+import { enqueueSnackbar } from 'notistack';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -235,21 +236,45 @@ export function DifferentialExpressionConfiguration(
   // possible that in this new subset the values do not exist anymore.
   // This is true for continuous and categorical variables. Continuous
   // variables will have their bins recalculated if they are affected by a filter.
+  const previousSubset = useRef(
+    analysisState.analysis?.descriptor.subset.descriptor
+  );
+
   useEffect(() => {
     if (
-      analysisState.analysis?.descriptor.subset.descriptor &&
-      configuration.comparator?.variable
+      !configuration.comparator ||
+      (!configuration.comparator.groupA && !configuration.comparator.groupB)
+    )
+      return;
+    if (
+      previousSubset.current &&
+      !isEqual(
+        previousSubset.current,
+        analysisState.analysis?.descriptor.subset.descriptor
+      )
     ) {
+      previousSubset.current =
+        analysisState.analysis?.descriptor.subset.descriptor;
+
+      // Reset the groupA and groupB values.
       changeConfigHandler('comparator', {
         variable: configuration.comparator.variable,
         groupA: undefined,
         groupB: undefined,
       });
+
+      enqueueSnackbar(
+        <span>
+          Reset differential expression group A and B values due to changed
+          subset.
+        </span>,
+        { variant: 'info' }
+      );
     }
   }, [
     analysisState.analysis?.descriptor.subset.descriptor,
     changeConfigHandler,
-    configuration.comparator?.variable,
+    configuration.comparator,
   ]);
 
   // Set the pValueFloor here. May change for other apps.
