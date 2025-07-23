@@ -31,6 +31,7 @@ import {
   Dimmable,
   FilledButton,
   FloatingButton,
+  NoteBox,
   OutlinedButton,
   SelectList,
   Undo,
@@ -674,7 +675,7 @@ export function RecordTable_Sequences(
 
   if (filteredRows == null) return null;
 
-  const warningText =
+  const errorText =
     numSequences >= MIN_SEQUENCES_FOR_TREE &&
     (filteredRows.length > MAX_SEQUENCES_FOR_TREE ||
       filteredRows.length < MIN_SEQUENCES_FOR_TREE) ? (
@@ -716,23 +717,7 @@ export function RecordTable_Sequences(
         } as CSSProperties
       }
     >
-      {warningText && (
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            borderLeft: '.2em solid rgb(225, 133, 133)',
-            borderRight: '.2em solid rgb(225, 133, 133)',
-            padding: '.5em 1em',
-            background: 'rgb(255, 228, 228)',
-            gap: '1em',
-            marginBottom: '1em',
-            fontWeight: 500,
-          }}
-        >
-          {warningText}
-        </div>
-      )}
+      {errorText && <NoteBox type="error">{errorText}</NoteBox>}
       <div
         style={{
           padding: '10px',
