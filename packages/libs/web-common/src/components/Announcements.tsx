@@ -10,11 +10,12 @@ import { ServiceConfig } from '@veupathdb/wdk-client/lib/Service/ServiceBase';
 import { makeEdaRoute } from '../routes';
 import { colors, Warning } from '@veupathdb/coreui';
 import { SubscriptionManagementBanner } from './SubscriptionManagementBanner';
+import { BannerDismissal } from '../hooks/announcements';
 
 // Type definitions
 interface AnnouncementsProps {
-  closedBanners?: string[];
-  setClosedBanners?: (banners: string[]) => void;
+  closedBanners?: BannerDismissal[];
+  setClosedBanners?: (banners: BannerDismissal[]) => void;
 }
 
 interface AnnouncementRenderProps extends ServiceConfig {
@@ -32,6 +33,7 @@ interface SiteAnnouncement {
   id: string;
   category?: 'down' | 'degraded' | 'information' | 'page-information';
   dismissible?: boolean;
+  dismissalDurationSeconds?: number;
   renderDisplay: (props: AnnouncementRenderProps) => React.ReactNode;
 }
 
@@ -105,6 +107,7 @@ const siteAnnouncements: SiteAnnouncement[] = [
   {
     id: 'subscription-management',
     dismissible: true,
+    dismissalDurationSeconds: 48 * 60 * 60, // 48 hours
     renderDisplay: (props: AnnouncementRenderProps) => {
       if (props.currentUser && props.currentUser.isGuest) {
         return <SubscriptionManagementBanner key="subscription-management" />;
@@ -1228,7 +1231,11 @@ export default function Announcements({
 
   const onCloseFactory = useCallback(
     (id: string) => () => {
-      setClosedBanners([...closedBanners, id]);
+      const newDismissal: BannerDismissal = {
+        bannerId: id,
+        timestamp: new Date(),
+      };
+      setClosedBanners([...closedBanners, newDismissal]);
     },
     [closedBanners, setClosedBanners]
   );
@@ -1251,11 +1258,29 @@ export default function Announcements({
           const dismissible = isSiteAnnouncement(announcementData)
             ? announcementData.dismissible ?? category === 'information'
             : category === 'information';
+
           const isOpen = dismissible
-            ? !closedBanners.includes(`${announcementData.id}`)
+            ? !closedBanners.some((dismissal) => {
+                if (dismissal.bannerId !== announcementData.id) return false;
+
+                if (
+                  isSiteAnnouncement(announcementData) &&
+                  announcementData.dismissalDurationSeconds
+                ) {
+                  const now = new Date();
+                  const expiration = new Date(
+                    now.getTime() -
+                      announcementData.dismissalDurationSeconds * 1000
+                  );
+                  return dismissal.timestamp > expiration;
+                }
+
+                return true; // no duration specified: dismissal counts indefinitely
+              })
             : true;
+
           const onClose = dismissible
-            ? onCloseFactory(`${announcementData.id}`)
+            ? onCloseFactory(announcementData.id)
             : noop;
 
           const display = isSiteAnnouncement(announcementData)
@@ -1348,7 +1373,7 @@ function AnnouncementBanner({
           {display}
         </div>
         {dismissible && (
-          <div style={{ marginLeft: 'auto' }}>
+          <div style={{ margin: 'auto' }}>
             <button
               onClick={onClose}
               className="link"
