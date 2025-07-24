@@ -5,9 +5,70 @@ import { groupBy, noop } from 'lodash';
 import { Link, IconAlt } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import { ServiceConfig } from '@veupathdb/wdk-client/lib/Service/ServiceBase';
 import { makeEdaRoute } from '../routes';
 import { colors, Warning } from '@veupathdb/coreui';
 import { SubscriptionManagementBanner } from './SubscriptionManagementBanner';
+
+// Type definitions
+interface AnnouncementsProps {
+  closedBanners?: string[];
+  setClosedBanners?: (banners: string[]) => void;
+}
+
+interface AnnouncementRenderProps extends ServiceConfig {
+  location: ReturnType<typeof useLocation>;
+  currentUser: User;
+}
+
+interface SiteMessage {
+  id: string;
+  category: 'down' | 'degraded' | 'information';
+  message: string;
+}
+
+interface SiteAnnouncement {
+  id: string;
+  category?: 'down' | 'degraded' | 'information' | 'page-information';
+  dismissible?: boolean;
+  renderDisplay: (props: AnnouncementRenderProps) => React.ReactNode;
+}
+
+interface AnnouncementsData {
+  config: ServiceConfig;
+  announcements: SiteMessage[];
+  currentUser: User;
+}
+
+interface AnnouncementContainerProps {
+  category: string;
+  dismissible: boolean;
+  isOpen: boolean;
+  onClose: () => void;
+  display: React.ReactNode;
+}
+
+interface AnnouncementBannerProps {
+  isOpen: boolean;
+  onClose: () => void;
+  icon: React.ReactNode;
+  display: React.ReactNode;
+  dismissible: boolean;
+}
+
+// Type guards
+function isSiteAnnouncement(
+  item: SiteMessage | SiteAnnouncement
+): item is SiteAnnouncement {
+  return 'renderDisplay' in item;
+}
+
+function isSiteMessage(
+  item: SiteMessage | SiteAnnouncement
+): item is SiteMessage {
+  return 'message' in item;
+}
 
 const stopIcon = (
   <span className="fa-stack" style={{ fontSize: '1.2em' }}>
@@ -39,12 +100,12 @@ const infoIcon = (
 // Array of announcements to show. Each element of the array is an object which specifies
 // a unique id for the announcement, and a function that takes props and returns a React Element.
 // Use props as an opportunity to determine if the message should be displayed for the given context.
-const siteAnnouncements = [
+const siteAnnouncements: SiteAnnouncement[] = [
   // subscription management banner
   {
     id: 'subscription-management',
     dismissible: true,
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (props.currentUser && props.currentUser.isGuest) {
         return <SubscriptionManagementBanner key="subscription-management" />;
       }
@@ -54,7 +115,7 @@ const siteAnnouncements = [
   // alpha
   {
     id: 'alpha',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (
         param('alpha', props.location) === 'true' ||
         /^(alpha|a1|a2)/.test(window.location.hostname)
@@ -74,12 +135,13 @@ const siteAnnouncements = [
           </div>
         );
       }
+      return null;
     },
   },
   /*
   {
     id: 'ortho-live',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (props.projectId == 'OrthoMCL' && props.buildNumber == '6.21')
         return (
           <div key="ortho621">
@@ -106,6 +168,7 @@ const siteAnnouncements = [
             .
           </div>
         );
+      return null;
     },
   },
 */
@@ -113,7 +176,7 @@ const siteAnnouncements = [
   /*
   {
     id: 'ortho-beta',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (props.projectId == 'OrthoMCL' && props.buildNumber == '7.0')
         return (
           <div key="ortho7">
@@ -154,13 +217,14 @@ const siteAnnouncements = [
             is still available.
           </div>
         );
+      return null;
     },
   },
 */
   /*
 {   
     id: 'mbio-beta',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
     if ( (props.projectId == 'MicrobiomeDB') && (props.location.pathname === '/') ) {
         return (
           <div>
@@ -177,7 +241,7 @@ const siteAnnouncements = [
   {
     id: 'mbio-variable-fix',
     category: 'degraded',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (
         props.projectId !== 'MicrobiomeDB' ||
         !props.location.pathname.startsWith(makeEdaRoute())
@@ -196,7 +260,7 @@ const siteAnnouncements = [
   /*
   {
     id: 'clinepiEDA',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       const idToDisplay = {
         DS_624583e93e: 'LLINEUP2',
         DS_17191d35b9: 'PRISM2 ICEMR Border Cohort',
@@ -225,7 +289,7 @@ const siteAnnouncements = [
   /* 
  {
     id: 'clinepi-workshop',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
     if (props.projectId == 'ClinEpiDB' || props.projectId == 'AllClinEpiDB' ) {
         return (
           <div>
@@ -243,7 +307,7 @@ const siteAnnouncements = [
   /*
   {
     id: 'beta-genomics',
-    renderDisplay: props => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if ( isGenomicHomePage(props.projectId, props.location) ) return (
         <div key="beta">
           {props.displayName} <em>beta</em> is available for early community review!
@@ -251,6 +315,7 @@ const siteAnnouncements = [
           &nbsp;<a rel="noreferrer" href={`https://${props.projectId.toLowerCase()}.${props.projectId === 'SchistoDB' ? 'net' : 'org'}?useBetaSite=0`}>Click here to return to the legacy site.</a>
         </div>
       );
+      return null;
     }
   },
 */
@@ -259,7 +324,7 @@ const siteAnnouncements = [
   {
     id: 'strategies-beta',
     category: 'degraded',
-    renderDisplay: props => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if ( isGenomicSite(props.projectId) && ( isStrategies(props.location) || isBasket(props.location) || isFavorites(props.location) ) ) return (
         <div key="strategies-beta">
           Strategies, baskets and favorites you save on this <i>beta</i> site are not permanent. 
@@ -272,6 +337,7 @@ const siteAnnouncements = [
           }
         </div>
       )
+      return null;
     }
   },
 */
@@ -279,19 +345,20 @@ const siteAnnouncements = [
   { 
     id: 'apollo-galaxy-off',
     category: 'degraded',
-    renderDisplay: props => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if ( isGalaxy(props.location) || isApollo(props.location) ) return (
         <div>
           Apollo and the Galaxy Data export to VEuPathDB are currently <b>unavailable</b>.  We are working on fixing this issue and hope to have the export service back ASAP.
         </div>
       )
+      return null;
     }
   },
 */
 
   {
     id: 'blast-beta',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (isLegacyBlast(props.projectId, props.location)) {
         return (
           <div key="blast-beta">
@@ -312,7 +379,7 @@ const siteAnnouncements = [
   // RNASeq issue in certain datasets Jan 2023
   /* {
     id: 'rnaseqBug',
-    renderDisplay: props => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if ( isGenomeBrowser(props.location) &&
            (props.projectId == 'AmoebaDB' || 
             props.projectId == 'CryptoDB' ||
@@ -338,7 +405,7 @@ const siteAnnouncements = [
   //VectorBase, fuscipes: https://redmine.apidb.org/issues/53163 b68  1 year (April 2024 to April 2025):
   {
     id: 'fuscipes',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (
         (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
         (props.location.pathname.indexOf('/record/dataset/TMPTX_gfusIAEA2018') >
@@ -379,7 +446,7 @@ const siteAnnouncements = [
   //VectorBase, sinensis: https://redmine.apidb.org/issues/53172 b68 for 1 year (Nov 2023 to Nov 2024):
   {
     id: 'sinensis',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (
         (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
         (props.location.pathname.indexOf('/record/dataset/TMPTX_asinChina') >
@@ -421,7 +488,7 @@ const siteAnnouncements = [
   //VectorBase, glabrata: https://redmine.apidb.org/issues/53159 b68 for 1 year (April 2024 to April 2025)
   {
     id: 'glabrata',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (
         (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
         (props.location.pathname.indexOf('/record/dataset/TMPTX_bglaXG47') >
@@ -462,7 +529,7 @@ const siteAnnouncements = [
   //VectorBase, aziemanni: https://redmine.apidb.org/issues/53767 b68
   {
     id: 'aziemanni',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (
         (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
         (props.location.pathname.indexOf('/record/dataset/TMPTX_acouAcouGA1') >
@@ -504,7 +571,7 @@ const siteAnnouncements = [
   //  b68 may 1 2024: for 1 year (Jan 2024 to Jan 2025) or until fixed by data provider
   {
     id: 'aquasalis',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (
         (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
         (props.location.pathname.indexOf('/record/dataset/TMPTX_aaquAaquGF1') >
@@ -537,7 +604,7 @@ const siteAnnouncements = [
   //VectorBase, arabiensis: https://redmine.apidb.org/issues/53152 b67  Feb-2024 to Feb 2025?
   {
     id: 'arabiensis',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (
         (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
         (props.location.pathname.indexOf(
@@ -576,7 +643,7 @@ const siteAnnouncements = [
   //VectorBase, merus: https://redmine.apidb.org/issues/53156 b67  Feb-2024 to Feb 2025?
   {
     id: 'merus',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (
         (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
         (props.location.pathname.indexOf('/record/dataset/TMPTX_amerMAF2021') >
@@ -614,7 +681,7 @@ const siteAnnouncements = [
   //VectorBase, stephensi : https://redmine.apidb.org/issues/53157 b67  Feb-2024 to Feb 2025?
   {
     id: 'stephensi',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (
         (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
         (props.location.pathname.indexOf(
@@ -653,7 +720,7 @@ const siteAnnouncements = [
   //VectorBase, albimanus: https://redmine.apidb.org/issues/53151  Nov 2023-2024
   {
     id: 'albimanus',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (
         (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
         (props.location.pathname.indexOf(
@@ -692,7 +759,7 @@ const siteAnnouncements = [
   //VectorBase, coluzzii: https://redmine.apidb.org/issues/53153  Nov 2023-2024
   {
     id: 'coluzzii',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (
         (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
         (props.location.pathname.indexOf('/record/dataset/TMPTX_acolAcolN3') >
@@ -730,7 +797,7 @@ const siteAnnouncements = [
   //VectorBase, darlingi: https://redmine.apidb.org/issues/53154  Nov 2023-2024
   {
     id: 'darlingi',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (
         (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
         (props.location.pathname.indexOf('/record/dataset/TMPTX_adarAdarGF1') >
@@ -768,7 +835,7 @@ const siteAnnouncements = [
   //VectorBase, funestus: https://redmine.apidb.org/issues/53155  Nov 2023-2024
   {
     id: 'funestus',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (
         (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
         (props.location.pathname.indexOf('/record/dataset/TMPTX_afunAfunGA1') >
@@ -806,7 +873,7 @@ const siteAnnouncements = [
   //VectorBase, culex: https://redmine.apidb.org/issues/53158  Nov 2023-2024
   {
     id: 'culex',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (
         (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
         (props.location.pathname.indexOf('/record/dataset/TMPTX_cquiJHB') >
@@ -845,7 +912,7 @@ const siteAnnouncements = [
   //VectorBase, longipalpis: https://redmine.apidb.org/issues/53167  Nov 2023-2024
   {
     id: 'longipalpis',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (
         (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
         (props.location.pathname.indexOf('/record/dataset/TMPTX_llonM1') > -1 ||
@@ -883,7 +950,7 @@ const siteAnnouncements = [
   //VectorBase, papatasi: https://redmine.apidb.org/issues/53168  Nov 2023-2024
   {
     id: 'papatasi',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (
         (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
         (props.location.pathname.indexOf('/record/dataset/TMPTX_ppapM1') > -1 ||
@@ -920,7 +987,7 @@ const siteAnnouncements = [
   //VectorBase, July 8 2023  FOR A YEAR  :  genome pages for Aedes albopictus Foshan FPA and Aedes albopictus Foshan  https://redmine.apidb.org/issues/51815
   {
     id: 'albopicusFoshan',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (
         (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
         (props.location.pathname.indexOf('/record/dataset/TMPTX_aalbFPA') >
@@ -958,7 +1025,7 @@ const siteAnnouncements = [
   //VectorBase, July 8 2023  FOR A YEAR  :  genome pages for Ixodes scapularis PalLabHiFi and  Ixodes scapularis Wikel https://redmine.apidb.org/issues/51701
   {
     id: 'ixodesScap',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (
         props.projectId == 'VectorBase' &&
         (props.location.pathname.indexOf(
@@ -997,7 +1064,7 @@ const siteAnnouncements = [
   // VectorBase gene page for Haemaphysalis longicornis HaeL-2018
   {
     id: 'HLOH',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (
         props.projectId == 'VectorBase' &&
         props.location.pathname.indexOf('/record/gene/HLOH_0') > -1
@@ -1029,7 +1096,7 @@ const siteAnnouncements = [
   // VectorBase gene page for Hyalomma asiaticum Hyas-2018
   {
     id: 'HASH',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (
         props.projectId == 'VectorBase' &&
         props.location.pathname.indexOf('/record/gene/HASH_0') > -1
@@ -1061,7 +1128,7 @@ const siteAnnouncements = [
   // VectorBase gene page for Ixodes persulcatus Iper-2018
   {
     id: 'IPEI',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (
         props.projectId == 'VectorBase' &&
         props.location.pathname.indexOf('/record/gene/IPEI_0') > -1
@@ -1094,7 +1161,7 @@ const siteAnnouncements = [
   // TriTryp gene page for Bodo saltans strain Lake Konstanz
   {
     id: 'bodo',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (
         props.projectId == 'TriTrypDB' &&
         (props.location.pathname.indexOf('/record/gene/BS') > -1 ||
@@ -1115,7 +1182,7 @@ const siteAnnouncements = [
   // OrthoMCL enzyme/compound
   {
     id: 'ortho-enzyme',
-    renderDisplay: (props) => {
+    renderDisplay: (props: AnnouncementRenderProps) => {
       if (
         props.projectId == 'OrthoMCL' &&
         /(enzyme|compound)/i.test(window.location.href)
@@ -1133,7 +1200,9 @@ const siteAnnouncements = [
   },
 ];
 
-const fetchAnnouncementsData = async (wdkService) => {
+const fetchAnnouncementsData = async (
+  wdkService: any
+): Promise<AnnouncementsData> => {
   const [config, announcements, currentUser] = await Promise.all([
     wdkService.getConfig(),
     wdkService.getSiteMessages(),
@@ -1153,15 +1222,15 @@ const fetchAnnouncementsData = async (wdkService) => {
 export default function Announcements({
   closedBanners = [],
   setClosedBanners = noop,
-}) {
+}: AnnouncementsProps) {
   const location = useLocation();
   const data = useWdkService(fetchAnnouncementsData, []);
 
   const onCloseFactory = useCallback(
-    (id) => () => {
+    (id: string) => () => {
       setClosedBanners([...closedBanners, id]);
     },
-    [closedBanners]
+    [closedBanners, setClosedBanners]
   );
 
   if (data == null) return null;
@@ -1175,12 +1244,13 @@ export default function Announcements({
   return (
     <div>
       {[...down, ...degraded, ...information, ...siteAnnouncements].map(
-        (announcementData) => {
+        (announcementData: SiteMessage | SiteAnnouncement) => {
           const category = announcementData.category || 'page-information';
 
           // Currently, only announcements of category "information" are dismissible
-          const dismissible =
-            announcementData.dismissible ?? category === 'information';
+          const dismissible = isSiteAnnouncement(announcementData)
+            ? announcementData.dismissible ?? category === 'information'
+            : category === 'information';
           const isOpen = dismissible
             ? !closedBanners.includes(`${announcementData.id}`)
             : true;
@@ -1188,16 +1258,15 @@ export default function Announcements({
             ? onCloseFactory(`${announcementData.id}`)
             : noop;
 
-          const display =
-            typeof announcementData.renderDisplay === 'function'
-              ? announcementData.renderDisplay({
-                  ...data.config,
-                  location,
-                  currentUser: data.currentUser,
-                })
-              : category !== 'information' || location.pathname === '/'
-              ? toElement(announcementData)
-              : null;
+          const display = isSiteAnnouncement(announcementData)
+            ? announcementData.renderDisplay({
+                ...data.config,
+                location,
+                currentUser: data.currentUser,
+              })
+            : category !== 'information' || location.pathname === '/'
+            ? toElement(announcementData)
+            : null;
 
           return (
             <AnnouncementContainer
@@ -1218,7 +1287,7 @@ export default function Announcements({
 /**
  * Container for a single announcement banner.
  */
-function AnnouncementContainer(props) {
+function AnnouncementContainer(props: AnnouncementContainerProps) {
   const icon =
     props.category === 'down'
       ? stopIcon
@@ -1232,7 +1301,13 @@ function AnnouncementContainer(props) {
 /**
  * Banner for a single announcement.
  */
-function AnnouncementBanner({ isOpen, onClose, icon, display, dismissible }) {
+function AnnouncementBanner({
+  isOpen,
+  onClose,
+  icon,
+  display,
+  dismissible,
+}: AnnouncementBannerProps) {
   if (display == null) {
     return null;
   }
@@ -1298,7 +1373,7 @@ function AnnouncementBanner({ isOpen, onClose, icon, display, dismissible }) {
  * @param {string} html
  * @return {React.Element}
  */
-function toElement({ message }) {
+function toElement({ message }: SiteMessage): React.ReactElement {
   return safeHtml(message, { key: message }, 'div');
 }
 
@@ -1309,7 +1384,10 @@ function toElement({ message }) {
  * @param {React.Element} next
  * @return {React.Element[]}
  */
-function injectHr(previous, next) {
+function injectHr(
+  previous: React.ReactElement[] | null,
+  next: React.ReactElement
+): React.ReactElement[] {
   return previous == null ? [next] : previous.concat(<hr />, next);
 }
 
@@ -1318,8 +1396,8 @@ function injectHr(previous, next) {
  * @param {any[]} ...args
  * @return {(fn: Function) => any}
  */
-function invokeWith(...args) {
-  return (fn) => fn(...args);
+function invokeWith(...args: any[]) {
+  return (fn: Function) => fn(...args);
 }
 
 /**
@@ -1329,54 +1407,65 @@ function invokeWith(...args) {
  * @param {Location} location
  * @return {string?}
  */
-function param(name, { search = '' }) {
+function param(
+  name: string,
+  { search = '' }: ReturnType<typeof useLocation>
+): string | undefined {
   return search
     .slice(1)
     .split('&')
-    .map((entry) => entry.split('='))
-    .filter((entry) => entry[0] === name)
-    .map((entry) => entry[1])
+    .map((entry: string) => entry.split('='))
+    .filter((entry: string[]) => entry[0] === name)
+    .map((entry: string[]) => entry[1])
     .map(decodeURIComponent)
     .find(() => true);
 }
 
-function isGenomicSite(projectId) {
+function isGenomicSite(projectId: string): boolean {
   return !/ClinEpiDB|MicrobiomeDB/i.test(projectId);
 }
-function isQASite() {
+function isQASite(): boolean {
   return (
-    param('qa', window.location) === 'true' ||
+    param('qa', window.location as any) === 'true' ||
     /^(qa|q1|q2)/.test(window.location.hostname)
   );
 }
-function isBetaSite() {
+function isBetaSite(): boolean {
   return (
-    param('beta', window.location) === 'true' ||
+    param('beta', window.location as any) === 'true' ||
     /^(beta|b1|b2)/.test(window.location.hostname)
   );
 }
-function isGalaxy(routerLocation) {
+function isGalaxy(routerLocation: ReturnType<typeof useLocation>): boolean {
   return routerLocation.pathname.startsWith('/galaxy-orientation');
 }
-function isGenomeBrowser(routerLocation) {
+function isGenomeBrowser(
+  routerLocation: ReturnType<typeof useLocation>
+): boolean {
   return routerLocation.pathname.startsWith('/jbrowse');
 }
-function isApollo(routerLocation) {
+function isApollo(routerLocation: ReturnType<typeof useLocation>): boolean {
   return routerLocation.pathname.startsWith('/static-content/apollo');
 }
-function isStrategies(routerLocation) {
+function isStrategies(routerLocation: ReturnType<typeof useLocation>): boolean {
   return routerLocation.pathname.startsWith('/workspace/strategies');
 }
-function isBasket(routerLocation) {
+function isBasket(routerLocation: ReturnType<typeof useLocation>): boolean {
   return routerLocation.pathname.startsWith('/workspace/basket');
 }
-function isFavorites(routerLocation) {
+function isFavorites(routerLocation: ReturnType<typeof useLocation>): boolean {
   return routerLocation.pathname.startsWith('/workspace/favorites');
 }
-function isGenomicHomePage(projectId, routerLocation) {
+function isGenomicHomePage(
+  projectId: string,
+  routerLocation: ReturnType<typeof useLocation>
+): boolean {
   return isGenomicSite(projectId) && routerLocation.pathname === '/';
 }
-function isLegacyBlast(projectId, routerLocation) {
+function isLegacyBlast(
+  projectId: string,
+  routerLocation: ReturnType<typeof useLocation>
+): boolean {
   return (
     isGenomicSite(projectId) &&
     routerLocation.pathname.startsWith('/search') &&
