@@ -43,6 +43,7 @@ const siteAnnouncements = [
   // subscription management banner
   {
     id: 'subscription-management',
+    dismissible: true,
     renderDisplay: (props) => {
       if (props.currentUser && props.currentUser.isGuest) {
         return <SubscriptionManagementBanner key="subscription-management" />;
@@ -1178,7 +1179,8 @@ export default function Announcements({
           const category = announcementData.category || 'page-information';
 
           // Currently, only announcements of category "information" are dismissible
-          const dismissible = category === 'information';
+          const dismissible =
+            announcementData.dismissible ?? category === 'information';
           const isOpen = dismissible
             ? !closedBanners.includes(`${announcementData.id}`)
             : true;
