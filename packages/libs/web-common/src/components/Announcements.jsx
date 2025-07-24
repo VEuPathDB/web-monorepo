@@ -7,6 +7,7 @@ import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { makeEdaRoute } from '../routes';
 import { colors, Warning } from '@veupathdb/coreui';
+import { SubscriptionManagementBanner } from './SubscriptionManagementBanner';
 
 const stopIcon = (
   <span className="fa-stack" style={{ fontSize: '1.2em' }}>
@@ -39,6 +40,16 @@ const infoIcon = (
 // a unique id for the announcement, and a function that takes props and returns a React Element.
 // Use props as an opportunity to determine if the message should be displayed for the given context.
 const siteAnnouncements = [
+  // subscription management banner
+  {
+    id: 'subscription-management',
+    renderDisplay: (props) => {
+      if (props.currentUser && props.currentUser.isGuest) {
+        return <SubscriptionManagementBanner key="subscription-management" />;
+      }
+      return null;
+    },
+  },
   // alpha
   {
     id: 'alpha',
@@ -1122,14 +1133,16 @@ const siteAnnouncements = [
 ];
 
 const fetchAnnouncementsData = async (wdkService) => {
-  const [config, announcements] = await Promise.all([
+  const [config, announcements, currentUser] = await Promise.all([
     wdkService.getConfig(),
     wdkService.getSiteMessages(),
+    wdkService.getCurrentUser(),
   ]);
 
   return {
     config,
     announcements,
+    currentUser,
   };
 };
 
@@ -1175,7 +1188,11 @@ export default function Announcements({
 
           const display =
             typeof announcementData.renderDisplay === 'function'
-              ? announcementData.renderDisplay({ ...data.config, location })
+              ? announcementData.renderDisplay({
+                  ...data.config,
+                  location,
+                  currentUser: data.currentUser,
+                })
               : category !== 'information' || location.pathname === '/'
               ? toElement(announcementData)
               : null;
