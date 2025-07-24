@@ -590,6 +590,7 @@ export function ExpressionGraphFloater({
           open={open}
           resizable
           draggable
+          allowKeyboardMoving={true}
           onClose={onClose}
           title={<div className="ai-floater-header">{title?.toString()}</div>}
           description="This floating, keyboard-positionable popup shows one per-experiment AI summary and gene expression data side-by-side. Press the tab key to navigate and the F key to restore focus to the list of experiments. Press M to enter keyboard-positioning mode."
