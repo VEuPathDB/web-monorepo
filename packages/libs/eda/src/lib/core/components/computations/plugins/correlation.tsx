@@ -17,7 +17,7 @@ import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { H6 } from '@veupathdb/coreui';
 import { bipartiteNetworkVisualization } from '../../visualizations/implementations/BipartiteNetworkVisualization';
-import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
+import { VariableCollectionSingleSelect } from '../../variableSelectors/VariableCollectionSingleSelect';
 import SingleSelect, {
   ItemGroup,
 } from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
@@ -218,9 +218,7 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
   ) => {
     return (
       isNotAbsoluteAbundanceVariableCollection(variableCollection) &&
-      (additionalCollectionPredicate
-        ? additionalCollectionPredicate(variableCollection)
-        : true)
+      additionalCollectionPredicate(variableCollection) // note defaults to true if non additional predicates are provided.
     );
   };
 
@@ -340,7 +338,7 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
             <H6>Input Data</H6>
             <div className={cx('-InputContainer')}>
               <span>Data 1</span>
-              <VariableCollectionSelectList
+              <VariableCollectionSingleSelect
                 value={configuration.data1?.collectionSpec}
                 onSelect={(value) => {
                   if (isVariableCollectionDescriptor(value))
@@ -352,7 +350,7 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
                 collectionPredicate={combinedCollectionPredicate}
               />
               <span>Data 2</span>
-              <VariableCollectionSelectList
+              <VariableCollectionSingleSelect
                 value={
                   configuration.data2?.dataType === 'metadata'
                     ? 'metadata'

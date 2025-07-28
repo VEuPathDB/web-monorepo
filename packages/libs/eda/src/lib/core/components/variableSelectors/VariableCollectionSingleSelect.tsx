@@ -19,7 +19,7 @@ interface Props {
   additionalItemGroups?: ItemGroup<string>[];
 }
 
-export function VariableCollectionSelectList(props: Props) {
+export function VariableCollectionSingleSelect(props: Props) {
   const { collectionPredicate, onSelect, value, additionalItemGroups } = props;
   const entities = useStudyEntities();
 
