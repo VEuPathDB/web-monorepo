@@ -354,7 +354,7 @@ function BipartiteNetworkViz(
     partitions: cleanedData ? cleanedData.partitions : undefined,
     showSpinner: data.pending,
     containerStyles: finalPlotContainerStyles,
-    svgStyleOverrides: bipartiteNetworkSVGStyles,
+    bipartiteNetworkStyleConfig: bipartiteNetworkSVGStyles,
     labelTruncationLength: 40,
     emptyNetworkContent,
     getNodeMenuActions,
