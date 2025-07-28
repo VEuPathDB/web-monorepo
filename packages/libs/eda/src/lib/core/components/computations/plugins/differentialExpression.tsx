@@ -1,5 +1,6 @@
 import {
   ContinuousVariableDataShape,
+  DistributionResponse,
   LabeledRange,
   usePromise,
   useStudyMetadata,
@@ -22,6 +23,7 @@ import {
   useDataClient,
   useFindEntityAndVariable,
   useFindEntityAndVariableCollection,
+  useSubsettingClient,
 } from '../../../hooks/workspace';
 import { ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
@@ -42,6 +44,7 @@ import { VariableCollectionSelectList } from '../../variableSelectors/VariableCo
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { entityTreeToArray } from '../../../utils/study-metadata';
 import { enqueueSnackbar } from 'notistack';
+import { useCachedPromise } from '../../../hooks/cachedPromise';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -217,6 +220,7 @@ export function DifferentialExpressionConfiguration(
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
   const findEntityAndVariable = useFindEntityAndVariable(filters);
+  const subsettingClient = useSubsettingClient();
 
   assertComputationWithConfig(computation, DifferentialExpressionConfig);
 
@@ -301,34 +305,66 @@ export function DifferentialExpressionConfiguration(
     }
   }, [configuration, findEntityAndVariable]);
 
-  // If the variable is continuous, ask the backend for a list of bins
-  const continuousVariableBins = usePromise(
-    useCallback(async () => {
-      if (
-        !ContinuousVariableDataShape.is(
-          selectedComparatorVariable?.variable.dataShape
-        ) ||
-        configuration.comparator == null
-      )
-        return;
-
-      const binRangeProps: GetBinRangesProps = {
-        studyId: studyMetadata.id,
-        ...configuration.comparator.variable,
-        filters: filters ?? [],
-        dataClient,
-        binningMethod: 'quantile',
-      };
-      const bins = await getBinRanges(binRangeProps);
-      return bins;
-    }, [
-      dataClient,
-      configuration?.comparator,
-      filters,
-      selectedComparatorVariable,
-      studyMetadata.id,
-    ])
+  // Find any filters that are not specifically on the comparator variable.
+  const otherFilters = filters?.filter(
+    (f) =>
+      f.entityId !== configuration.comparator?.variable.entityId ||
+      f.variableId !== configuration.comparator?.variable.variableId
   );
+
+  // Find the selected comparator variable distribution. For cateogrical variables only.
+  // Will be used to disable values that have been filtered out of the subset.
+  const filteredComparatorVariableDistribution = useCachedPromise<
+    DistributionResponse | undefined
+  >(async () => {
+    if (
+      configuration.comparator == null ||
+      configuration.comparator.variable == null ||
+      selectedComparatorVariable?.variable.dataShape === 'continuous' || // The following is for categorical variables only
+      otherFilters == null ||
+      otherFilters.length === 0
+    ) {
+      return;
+    }
+
+    const variableDistribution = await subsettingClient.getDistribution(
+      studyMetadata.id,
+      configuration.comparator.variable.entityId,
+      configuration.comparator.variable.variableId,
+      {
+        valueSpec: 'count',
+        filters: otherFilters,
+      }
+    );
+
+    return variableDistribution;
+  }, [configuration.comparator, filters, studyMetadata.id]);
+
+  // If the variable is continuous, ask the backend for a list of bins
+  const continuousVariableBins = useCachedPromise(async () => {
+    if (
+      !ContinuousVariableDataShape.is(
+        selectedComparatorVariable?.variable.dataShape
+      ) ||
+      configuration.comparator == null
+    )
+      return;
+
+    const binRangeProps: GetBinRangesProps = {
+      studyId: studyMetadata.id,
+      ...configuration.comparator.variable,
+      filters: filters ?? [],
+      dataClient,
+      binningMethod: 'quantile',
+    };
+    const bins = await getBinRanges(binRangeProps);
+    return bins;
+  }, [
+    configuration?.comparator,
+    filters,
+    selectedComparatorVariable,
+    studyMetadata.id,
+  ]);
 
   const disableSwapGroupValuesButton =
     !configuration?.comparator?.groupA && !configuration?.comparator?.groupB;
@@ -351,6 +387,23 @@ export function DifferentialExpressionConfiguration(
           };
         }
       );
+
+  // Determine any values that were filtered out based on the subset.
+  // This is used to disable values in the ValuePicker.
+  const disabledVariableValues =
+    selectedComparatorVariable?.variable.vocabulary?.filter((value) => {
+      // Let all values pass if there was no filteredComparatorVariableDistribution
+      if (
+        filteredComparatorVariableDistribution.value == null ||
+        filteredComparatorVariableDistribution.value.histogram.length === 0
+      )
+        return false;
+
+      // Disable a variable if it does not appear in filteredComparatorVariableDistribution
+      return !filteredComparatorVariableDistribution.value.histogram.some(
+        (bin) => bin.binLabel === value
+      );
+    });
 
   return (
     <ComputationStepContainer
@@ -422,9 +475,12 @@ export function DifferentialExpressionConfiguration(
                   selectedValues={configuration.comparator?.groupA?.map(
                     (entry) => entry.label
                   )}
-                  disabledValues={configuration.comparator?.groupB?.map(
-                    (entry) => entry.label
-                  )}
+                  disabledValues={[
+                    ...(configuration.comparator?.groupB?.map(
+                      (entry) => entry.label
+                    ) ?? []), // Remove group B values
+                    ...(disabledVariableValues ?? []), // Remove filtered values
+                  ]}
                   onSelectedValuesChange={(newValues) => {
                     assertConfigWithComparator(configuration);
                     changeConfigHandler('comparator', {
@@ -437,7 +493,7 @@ export function DifferentialExpressionConfiguration(
                       groupB: configuration.comparator.groupB ?? undefined,
                     });
                   }}
-                  disabledCheckboxTooltipContent="Values cannot overlap between groups"
+                  disabledCheckboxTooltipContent="Value either already selected in Group B or has no data in the subset"
                   showClearSelectionButton={false}
                   disableInput={disableGroupValueSelectors}
                   isLoading={continuousVariableBins.pending}
@@ -482,9 +538,12 @@ export function DifferentialExpressionConfiguration(
                   selectedValues={configuration?.comparator?.groupB?.map(
                     (entry) => entry.label
                   )}
-                  disabledValues={configuration?.comparator?.groupA?.map(
-                    (entry) => entry.label
-                  )}
+                  disabledValues={[
+                    ...(configuration.comparator?.groupA?.map(
+                      (entry) => entry.label
+                    ) ?? []), // Remove group A values
+                    ...(disabledVariableValues ?? []), // Remove filtered values
+                  ]}
                   onSelectedValuesChange={(newValues) => {
                     assertConfigWithComparator(configuration);
                     changeConfigHandler('comparator', {
@@ -498,7 +557,7 @@ export function DifferentialExpressionConfiguration(
                         : undefined,
                     });
                   }}
-                  disabledCheckboxTooltipContent="Values cannot overlap between groups"
+                  disabledCheckboxTooltipContent="Value either already selected in Group A or has no data in the subset"
                   showClearSelectionButton={false}
                   disableInput={disableGroupValueSelectors}
                   isLoading={continuousVariableBins.pending}
