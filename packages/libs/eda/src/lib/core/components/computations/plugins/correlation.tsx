@@ -191,11 +191,7 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
     changeConfigHandlerOverride,
     showStepNumber = true,
     showExpandableHelp = true,
-    additionalCollectionPredicate = (
-      variableCollection: CollectionVariableTreeNode
-    ) => {
-      return true;
-    },
+    additionalCollectionPredicate = () => true,
   } = props;
 
   const configuration = computation.descriptor
