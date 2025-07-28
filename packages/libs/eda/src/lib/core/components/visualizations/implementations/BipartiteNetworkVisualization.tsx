@@ -294,16 +294,13 @@ function BipartiteNetworkViz(
 
   // plot subtitle
   const plotSubtitle = (
-    <div>
-      <p>
-        {`Showing links with an absolute correlation coefficient above ${vizConfig.correlationCoefThreshold?.toString()} and a p-value below ${vizConfig.significanceThreshold?.toString()}`}
-      </p>
-      <p>
-        Click on a node to highlight its edges.
-        {getNodeMenuActions &&
-          ' A dropdown menu will appear on mouseover, if additional actions are available.'}
-      </p>
-    </div>
+    <span>
+      {`Showing links with an absolute correlation coefficient above ${vizConfig.correlationCoefThreshold?.toString()} and a p-value below ${vizConfig.significanceThreshold?.toString()}`}
+      <br />
+      Click on a node to highlight its edges.
+      {getNodeMenuActions &&
+        ' A dropdown menu will appear on mouseover, if additional actions are available.'}
+    </span>
   );
 
   const finalPlotContainerStyles = useMemo(

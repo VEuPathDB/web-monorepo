@@ -41,9 +41,9 @@ export function OutputEntityTitle({
         </span>
       )}
       {subtitle && (
-        <div className={cxSubtitle()} style={{ color: gray[700] }}>
+        <span className={cxSubtitle()} style={{ color: gray[700] }}>
           {subtitle}
-        </div>
+        </span>
       )}
     </p>
   );
