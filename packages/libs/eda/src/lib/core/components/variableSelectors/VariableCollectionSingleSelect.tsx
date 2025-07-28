@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { CollectionVariableTreeNode, StudyEntity } from '../../types/study';
 import SingleSelect, {
   ItemGroup,
@@ -86,20 +86,20 @@ export function VariableCollectionSingleSelect(props: Props) {
   }, [entities, value, items]);
 
   // Handle the case of only one option
-  if (items.length === 1 && items[0].items.length === 1) {
-    // Run handleSelect immediately to set the selection.
-    const singleItem = items[0].items[0];
-    handleSelect(singleItem.value);
+  useEffect(() => {
+    if (items.length === 1 && items[0].items.length === 1) {
+      const singleItem = items[0].items[0];
+      handleSelect(singleItem.value);
+    }
+  }, [items, handleSelect]);
 
-    // Return a placeholder to avoid rendering the select, since there's nothing to select!
-    return (
-      <span style={{ fontWeight: 400, marginRight: 15 }}>
-        {singleItem.display}
-      </span>
-    );
-  }
-
-  return (
+  // If we only have one item in the list, return a placeholder to avoid rendering the select, since there's nothing to select!
+  // Otherwise, render the SingleSelect component as expected.
+  return items.length === 1 && items[0].items.length === 1 ? (
+    <span style={{ fontWeight: 400, marginRight: 15 }}>
+      {items[0].items[0].display}
+    </span>
+  ) : (
     <SingleSelect<string | undefined>
       items={items}
       value={
