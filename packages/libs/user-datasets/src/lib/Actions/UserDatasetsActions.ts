@@ -700,7 +700,6 @@ function transformVdiResponseToLegacyResponseHelper(
     owner,
     datasetType,
     projectIds,
-    installTargets,
     datasetId,
     created,
     status,
@@ -717,7 +716,7 @@ function transformVdiResponseToLegacyResponseHelper(
   } = ud;
   return {
     owner: owner.firstName + ' ' + owner.lastName,
-    installTargets: installTargets ?? projectIds ?? [],
+    projects: projectIds ?? [],
     created: ud.created,
     type: {
       display: datasetType.displayName ?? datasetType.name,

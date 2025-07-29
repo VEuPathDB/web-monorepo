@@ -289,8 +289,8 @@ class UserDatasetList extends React.Component<Props, State> {
         name: 'VEuPathDB Websites',
         renderCell(cellProps: MesaDataCellProps) {
           const userDataset: UserDataset = cellProps.row;
-          const { installTargets } = userDataset;
-          return installTargets.join(', ');
+          const { projects } = userDataset;
+          return projects.join(', ');
         },
       },
       {
@@ -545,9 +545,7 @@ class UserDatasetList extends React.Component<Props, State> {
     const { projectName, filterByProject } = this.props;
     const sort: MesaSortObject = uiState.sort;
     if (filterByProject)
-      rows = rows.filter((dataset) =>
-        dataset.installTargets.includes(projectName)
-      );
+      rows = rows.filter((dataset) => dataset.projects.includes(projectName));
     if (searchTerm && searchTerm.length)
       rows = this.filterRowsBySearchTerm([...rows], searchTerm);
     if (sort.columnKey.length) rows = this.sortRowsByColumnKey([...rows], sort);
@@ -661,8 +659,8 @@ class UserDatasetList extends React.Component<Props, State> {
 
     const totalPercent = totalSize / quotaSize;
 
-    const offerProjectToggle = userDatasets.some(({ installTargets }) =>
-      installTargets.some((project) => project !== projectName)
+    const offerProjectToggle = userDatasets.some(({ projects }) =>
+      projects.some((project) => project !== projectName)
     );
 
     return (

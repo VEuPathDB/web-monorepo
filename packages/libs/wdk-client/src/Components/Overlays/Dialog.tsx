@@ -373,7 +373,13 @@ function useRestorePreviousFocus(isOpen: boolean) {
 
 function KeyboardMovingHelp() {
   return (
-    <span style={{ color: isMovingHighlightColor }}>
+    <span
+      style={{
+        color: isMovingHighlightColor,
+        marginLeft: 42, // these margins avoid clipping
+        marginRight: 42, // the red text
+      }}
+    >
       ≫ Use arrow keys to move. Press <kbd>Esc</kbd> to exit. ≪
     </span>
   );
