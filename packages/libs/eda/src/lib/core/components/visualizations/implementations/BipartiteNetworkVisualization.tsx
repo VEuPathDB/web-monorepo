@@ -294,13 +294,16 @@ function BipartiteNetworkViz(
 
   // plot subtitle
   const plotSubtitle = (
-    <span>
-      {`Showing links with an absolute correlation coefficient above ${vizConfig.correlationCoefThreshold?.toString()} and a p-value below ${vizConfig.significanceThreshold?.toString()}`}
-      <br />
-      Click on a node to highlight its edges.
-      {getNodeMenuActions &&
-        ' A dropdown menu will appear on mouseover, if additional actions are available.'}
-    </span>
+    <div>
+      <p>
+        {`Showing links with an absolute correlation coefficient above ${vizConfig.correlationCoefThreshold?.toString()} and a p-value below ${vizConfig.significanceThreshold?.toString()}`}
+      </p>
+      <p>
+        Click on a node to highlight its edges.
+        {getNodeMenuActions &&
+          ' A dropdown menu will appear on mouseover, if additional actions are available.'}
+      </p>
+    </div>
   );
 
   const finalPlotContainerStyles = useMemo(
@@ -314,6 +317,7 @@ function BipartiteNetworkViz(
   // These styles affect the network plot and will override the containerStyles if necessary (for example, width).
   const bipartiteNetworkSVGStyles = {
     columnPadding: 300,
+    topPadding: 60,
   };
 
   const plotRef = useUpdateThumbnailEffect(
