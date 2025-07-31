@@ -85,6 +85,7 @@ class UserFormContainer extends React.Component {
     this.onPropertyChange = this.onPropertyChange.bind(this);
     this.onPreferenceChange = this.onPreferenceChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    this.onDiscardChanges = this.onDiscardChanges.bind(this);
   }
 
   render() {
@@ -120,6 +121,8 @@ class UserFormContainer extends React.Component {
               onSubmit={this.onSubmit}
               submitButtonText={this.props.submitButtonText}
               wdkConfig={this.props.globalData.config}
+              previousUserFormData={this.props.previousUserFormData}
+              onDiscardChanges={this.onDiscardChanges}
             />
           </>
         )}
@@ -234,6 +237,18 @@ class UserFormContainer extends React.Component {
     }
     if (valid) {
       this.props.onSubmit(this.props.userFormData);
+    }
+  }
+
+  /**
+   * Resets the form data back to the previous saved state
+   */
+  onDiscardChanges() {
+    if (
+      this.props.previousUserFormData &&
+      this.props.userEvents.updateProfileForm
+    ) {
+      this.props.userEvents.updateProfileForm(this.props.previousUserFormData);
     }
   }
 }
