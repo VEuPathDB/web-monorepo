@@ -2,6 +2,7 @@ import {
   ContinuousVariableDataShape,
   DistributionResponse,
   LabeledRange,
+  usePromise,
   useStudyMetadata,
 } from '../../..';
 import {
@@ -10,11 +11,10 @@ import {
 } from '../../../types/variable';
 import { volcanoPlotVisualization } from '../../visualizations/implementations/VolcanoPlotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { partial } from 'lodash';
+import { isEqual, partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
-  isNotAbsoluteAbundanceVariableCollection,
   partialToCompleteCodec,
 } from '../Utils';
 import * as t from 'io-ts';
@@ -25,7 +25,7 @@ import {
   useFindEntityAndVariableCollection,
   useSubsettingClient,
 } from '../../../hooks/workspace';
-import { ReactNode, useMemo } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import VariableTreeDropdown from '../../variableSelectors/VariableTreeDropdown';
 import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
@@ -43,28 +43,29 @@ import {
 import { VariableCollectionSingleSelect } from '../../variableSelectors/VariableCollectionSingleSelect';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { entityTreeToArray } from '../../../utils/study-metadata';
+import { enqueueSnackbar } from 'notistack';
 import { useCachedPromise } from '../../../hooks/cachedPromise';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
 /**
- * Differential abundance
+ * Differential Expression
  *
- * The differential abundance app is used to find taxa, genes, pathways, etc. that
- * are more abundant in one group of samples than another. This app takes in a continuous variable
- * collection (for example, abundance of 100 Species for all samples) as well as a way to split the samples
+ * The differential expression app is used to find genes that
+ * are more abundant in one group of samples than another. This app takes in a count data variable
+ * collection (for example, RNA-Seq count for 20,000 genes for all samples) as well as a way to split the samples
  * into two groups (for example, red hair and green hair). The computation then returns information on how
- * differentially abundance each item (taxon, gene, etc.) is between the two groups. See VolcanoPlotDataPoint
+ * differentially expression each gene is between the two groups. See VolcanoPlotDataPoint
  * for more details. Importantly, the returned data lives outside the variable tree because each returned
- * data point corresponds to an item (taxon, gene, etc.).
+ * data point corresponds to a gene.
  *
- * Currently the differential abundance app will be implemented with only a volcano visualization. Plans for
+ * Currently the differential expression app will be implemented with only a volcano visualization. Plans for
  * the future of this app include a lefse diagram, tables of results, adding new computation methods, and
  * strategies to create user-defined collections from the output of the computation.
  */
 
-export type DifferentialAbundanceConfig = t.TypeOf<
-  typeof DifferentialAbundanceConfig
+export type DifferentialExpressionConfig = t.TypeOf<
+  typeof DifferentialExpressionConfig
 >;
 
 const Comparator = t.intersection([
@@ -78,49 +79,49 @@ const Comparator = t.intersection([
 ]);
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const DifferentialAbundanceConfig = t.partial({
+export const DifferentialExpressionConfig = t.partial({
   collectionVariable: VariableCollectionDescriptor,
   comparator: Comparator,
-  differentialAbundanceMethod: t.string,
+  differentialExpressionMethod: t.string,
   pValueFloor: t.string,
 });
 
-const CompleteDifferentialAbundanceConfig = partialToCompleteCodec(
-  DifferentialAbundanceConfig
+const CompleteDifferentialExpressionConfig = partialToCompleteCodec(
+  DifferentialExpressionConfig
 );
 
 // Check to ensure the entirety of the configuration is filled out before enabling the
 // Generate Results button.
-export function isCompleteDifferentialAbundanceConfig(config: unknown) {
+function isCompleteDifferentialExpressionConfig(config: unknown) {
   return (
-    CompleteDifferentialAbundanceConfig.is(config) &&
+    CompleteDifferentialExpressionConfig.is(config) &&
     config.comparator.groupA != null &&
     config.comparator.groupB != null
   );
 }
 
 export const plugin: ComputationPlugin = {
-  configurationComponent: DifferentialAbundanceConfiguration,
+  configurationComponent: DifferentialExpressionConfiguration,
   configurationDescriptionComponent:
-    DifferentialAbundanceConfigDescriptionComponent,
+    DifferentialExpressionConfigDescriptionComponent,
   createDefaultConfiguration: () => ({}),
-  isConfigurationComplete: isCompleteDifferentialAbundanceConfig,
+  isConfigurationComplete: isCompleteDifferentialExpressionConfig,
   visualizationPlugins: {
     volcanoplot: volcanoPlotVisualization.withOptions({
       getPlotSubtitle(config) {
         if (
-          DifferentialAbundanceConfig.is(config) &&
-          config.differentialAbundanceMethod &&
-          config.differentialAbundanceMethod in
-            DIFFERENTIAL_ABUNDANCE_METHOD_CITATIONS
+          DifferentialExpressionConfig.is(config) &&
+          config.differentialExpressionMethod &&
+          config.differentialExpressionMethod in
+            DIFFERENTIAL_EXPRESSION_METHOD_CITATIONS
         ) {
           return (
             <span>
-              Differential abundance computed using{' '}
-              {config.differentialAbundanceMethod}{' '}
+              Differential expression computed using{' '}
+              {config.differentialExpressionMethod}{' '}
               {
-                DIFFERENTIAL_ABUNDANCE_METHOD_CITATIONS[
-                  config.differentialAbundanceMethod as keyof typeof DIFFERENTIAL_ABUNDANCE_METHOD_CITATIONS
+                DIFFERENTIAL_EXPRESSION_METHOD_CITATIONS[
+                  config.differentialExpressionMethod as keyof typeof DIFFERENTIAL_EXPRESSION_METHOD_CITATIONS
                 ]
               }{' '}
               with default parameters.
@@ -135,7 +136,7 @@ export const plugin: ComputationPlugin = {
     'These visualizations are only available for studies with compatible assay data.',
 };
 
-function DifferentialAbundanceConfigDescriptionComponent({
+function DifferentialExpressionConfigDescriptionComponent({
   computation,
   filters,
 }: {
@@ -143,7 +144,7 @@ function DifferentialAbundanceConfigDescriptionComponent({
   filters: Filter[];
 }) {
   const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
-  assertComputationWithConfig(computation, DifferentialAbundanceConfig);
+  assertComputationWithConfig(computation, DifferentialExpressionConfig);
   const findEntityAndVariable = useFindEntityAndVariable(filters);
   const { configuration } = computation.descriptor;
   const collectionVariable =
@@ -186,20 +187,21 @@ function DifferentialAbundanceConfigDescriptionComponent({
 // Include available methods in this array.
 // 10/10/23 - decided to only release Maaslin for the first roll-out. DESeq is still available
 // and we're poised to release it in the future.
-type DifferentialAbundanceMethodCitations = { Maaslin: ReactNode };
-const DIFFERENTIAL_ABUNDANCE_METHOD_CITATIONS: DifferentialAbundanceMethodCitations =
+type DifferentialExpressionMethodCitations = { DESeq: ReactNode };
+const DIFFERENTIAL_EXPRESSION_METHOD_CITATIONS: DifferentialExpressionMethodCitations =
   {
-    Maaslin: (
-      <a href="https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1009442">
-        (Mallick et al., 2021)
+    DESeq: (
+      <a href="https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0550-8">
+        (Love et al., 2014)
       </a>
     ),
-  }; // + deseq paper in the future
-const DIFFERENTIAL_ABUNDANCE_METHODS = Object.keys(
-  DIFFERENTIAL_ABUNDANCE_METHOD_CITATIONS
-); // + 'DESeq' in the future
+  };
 
-export function DifferentialAbundanceConfiguration(
+const DIFFERENTIAL_EXPRESSION_METHODS = Object.keys(
+  DIFFERENTIAL_EXPRESSION_METHOD_CITATIONS
+);
+
+export function DifferentialExpressionConfiguration(
   props: ComputationConfigProps
 ) {
   const {
@@ -208,10 +210,11 @@ export function DifferentialAbundanceConfiguration(
     analysisState,
     visualizationId,
     changeConfigHandlerOverride,
+    showStepNumber = true,
   } = props;
 
   const configuration = computation.descriptor
-    .configuration as DifferentialAbundanceConfig;
+    .configuration as DifferentialExpressionConfig;
   const studyMetadata = useStudyMetadata();
   const dataClient = useDataClient();
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
@@ -219,7 +222,7 @@ export function DifferentialAbundanceConfiguration(
   const findEntityAndVariable = useFindEntityAndVariable(filters);
   const subsettingClient = useSubsettingClient();
 
-  assertComputationWithConfig(computation, DifferentialAbundanceConfig);
+  assertComputationWithConfig(computation, DifferentialExpressionConfig);
 
   const workspaceChangeConfigHandler = useConfigChangeHandler(
     analysisState,
@@ -232,6 +235,52 @@ export function DifferentialAbundanceConfiguration(
   const changeConfigHandler =
     changeConfigHandlerOverride ?? workspaceChangeConfigHandler;
 
+  // If the subset changes while we are configuring the app (for example in a notebook),
+  // we want to reset the values of the comparator variable because it's
+  // possible that in this new subset the values do not exist anymore.
+  // This is true for continuous and categorical variables. Continuous
+  // variables will have their bins recalculated if they are affected by a filter.
+  const previousSubset = useRef(
+    analysisState.analysis?.descriptor.subset.descriptor
+  );
+
+  useEffect(() => {
+    if (
+      !configuration.comparator ||
+      (!configuration.comparator.groupA && !configuration.comparator.groupB)
+    )
+      return;
+    if (
+      previousSubset.current &&
+      !isEqual(
+        previousSubset.current,
+        analysisState.analysis?.descriptor.subset.descriptor
+      )
+    ) {
+      previousSubset.current =
+        analysisState.analysis?.descriptor.subset.descriptor;
+
+      // Reset the groupA and groupB values.
+      changeConfigHandler('comparator', {
+        variable: configuration.comparator.variable,
+        groupA: undefined,
+        groupB: undefined,
+      });
+
+      enqueueSnackbar(
+        <span>
+          Reset differential expression group A and B values due to changed
+          subset.
+        </span>,
+        { variant: 'info' }
+      );
+    }
+  }, [
+    analysisState.analysis?.descriptor.subset.descriptor,
+    changeConfigHandler,
+    configuration.comparator,
+  ]);
+
   // Set the pValueFloor here. May change for other apps.
   // Note this is intentionally different than the default pValueFloor used in the Volcano component. By default
   // that component does not floor the data, but we know we want the diff abund computation to use a floor.
@@ -239,11 +288,10 @@ export function DifferentialAbundanceConfiguration(
     changeConfigHandler('pValueFloor', '1e-200');
   }
 
-  // Only releasing Maaslin for b66
-  if (configuration && !configuration.differentialAbundanceMethod) {
+  if (configuration && !configuration.differentialExpressionMethod) {
     changeConfigHandler(
-      'differentialAbundanceMethod',
-      DIFFERENTIAL_ABUNDANCE_METHODS[0]
+      'differentialExpressionMethod',
+      DIFFERENTIAL_EXPRESSION_METHODS[0]
     );
   }
 
@@ -363,23 +411,24 @@ export function DifferentialAbundanceConfiguration(
         stepNumber: 1,
         stepTitle: `Configure ${computationAppOverview.displayName}`,
       }}
+      showStepNumber={showStepNumber}
     >
       <div className={cx()}>
-        <div className={cx('-DiffAbundanceOuterConfigContainer')}>
+        <div className={cx('-DiffExpressionOuterConfigContainer')}>
           <H6>Input Data</H6>
           <div className={cx('-InputContainer')}>
             <span>Data</span>
             <VariableCollectionSingleSelect
               value={configuration.collectionVariable}
               onSelect={partial(changeConfigHandler, 'collectionVariable')}
-              collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
+              collectionPredicate={(collection) => true}
             />
           </div>
         </div>
-        <div className={cx('-DiffAbundanceOuterConfigContainer')}>
+        <div className={cx('-DiffExpressionOuterConfigContainer')}>
           <H6>Group Comparison</H6>
           <div
-            className={cx('-DiffAbundanceOuterConfigContainerGroupComparison')}
+            className={cx('-DiffExpressionOuterConfigContainerGroupComparison')}
           >
             <div className={cx('-InputContainer')}>
               <span>Variable</span>
@@ -508,7 +557,7 @@ export function DifferentialAbundanceConfiguration(
                         : undefined,
                     });
                   }}
-                  disabledCheckboxTooltipContent="Values cannot overlap between groups"
+                  disabledCheckboxTooltipContent="Value either already selected in Group A or has no data in the subset"
                   showClearSelectionButton={false}
                   disableInput={disableGroupValueSelectors}
                   isLoading={continuousVariableBins.pending}
@@ -523,8 +572,8 @@ export function DifferentialAbundanceConfiguration(
 }
 
 function assertConfigWithComparator(
-  configuration: DifferentialAbundanceConfig
-): asserts configuration is Required<DifferentialAbundanceConfig> {
+  configuration: DifferentialExpressionConfig
+): asserts configuration is Required<DifferentialExpressionConfig> {
   if (configuration.comparator == null) {
     throw new Error(
       'Unexpected condition: `configuration.comparator.variable` is not defined.'
@@ -532,7 +581,7 @@ function assertConfigWithComparator(
   }
 }
 
-// Differential abundance requires that the study
+// Differential expression requires that the study
 // has at least one collection.
 function isEnabledInPicker({
   studyMetadata,

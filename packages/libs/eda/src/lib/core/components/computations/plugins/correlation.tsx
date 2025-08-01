@@ -1,5 +1,9 @@
 import { useEffect, useMemo } from 'react';
-import { VariableTreeNode, useFindEntityAndVariableCollection } from '../../..';
+import {
+  CollectionVariableTreeNode,
+  VariableTreeNode,
+  useFindEntityAndVariableCollection,
+} from '../../..';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { partial } from 'lodash';
 import {
@@ -13,7 +17,7 @@ import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { H6 } from '@veupathdb/coreui';
 import { bipartiteNetworkVisualization } from '../../visualizations/implementations/BipartiteNetworkVisualization';
-import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
+import { VariableCollectionSingleSelect } from '../../variableSelectors/VariableCollectionSingleSelect';
 import SingleSelect, {
   ItemGroup,
 } from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
@@ -187,6 +191,7 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
     changeConfigHandlerOverride,
     showStepNumber = true,
     showExpandableHelp = true,
+    additionalCollectionPredicate = () => true,
   } = props;
 
   const configuration = computation.descriptor
@@ -204,6 +209,18 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
   // in the notebook.
   const changeConfigHandler =
     changeConfigHandlerOverride ?? workspaceChangeConfigHandler;
+
+  // Combine default collection predicate and any addiitonal constraints.
+  // Currently only implementetd for Data1 so that the user still has many options
+  // but we can, for example, require one of the collections to be from the host, for example.
+  const combinedCollectionPredicate = (
+    variableCollection: CollectionVariableTreeNode
+  ) => {
+    return (
+      isNotAbsoluteAbundanceVariableCollection(variableCollection) &&
+      additionalCollectionPredicate(variableCollection) // note defaults to true if non additional predicates are provided.
+    );
+  };
 
   // Content for the expandable help section
   // Note the text is dependent on the context, for example in genomics we'll use different
@@ -321,7 +338,7 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
             <H6>Input Data</H6>
             <div className={cx('-InputContainer')}>
               <span>Data 1</span>
-              <VariableCollectionSelectList
+              <VariableCollectionSingleSelect
                 value={configuration.data1?.collectionSpec}
                 onSelect={(value) => {
                   if (isVariableCollectionDescriptor(value))
@@ -330,10 +347,10 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
                       collectionSpec: value,
                     });
                 }}
-                collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
+                collectionPredicate={combinedCollectionPredicate}
               />
               <span>Data 2</span>
-              <VariableCollectionSelectList
+              <VariableCollectionSingleSelect
                 value={
                   configuration.data2?.dataType === 'metadata'
                     ? 'metadata'

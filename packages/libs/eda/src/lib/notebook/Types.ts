@@ -26,7 +26,6 @@ export interface VisualizationNotebookCell
   visualizationName: string; // Name of the visualization plugin.
   computeId: string; // Used to link the visualization to a specific compute cell.
   computationAppOverview: ComputationAppOverview;
-  computeJobStatus?: JobStatus;
 }
 
 export interface TextNotebookCell extends NotebookCellBase<'text'> {

@@ -26,7 +26,7 @@ export function OutputEntityTitle({
   subtitle,
 }: Props) {
   return (
-    <p className={cx()}>
+    <div className={cx()}>
       {outputSize != null && <>{outputSize.toLocaleString()} </>}
       {entityDisplayNameOverride != null ? (
         <span className={cx('-EntityName')}> {entityDisplayNameOverride} </span>
@@ -45,6 +45,6 @@ export function OutputEntityTitle({
           {subtitle}
         </div>
       )}
-    </p>
+    </div>
   );
 }

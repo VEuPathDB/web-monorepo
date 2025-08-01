@@ -61,7 +61,7 @@ export function WdkParamNotebookCell(
                   )?.display;
 
                   return (
-                    <div className="InputGroup">
+                    <div className="InputGroup" key={param.name}>
                       <span>{param.displayName}</span>
                       <SingleSelect
                         items={selectItems}
@@ -75,7 +75,7 @@ export function WdkParamNotebookCell(
                   );
                 } else if (param.type === 'string' && param.isNumber) {
                   return (
-                    <div className="InputGroup">
+                    <div className="InputGroup" key={param.name}>
                       <span>{param.displayName}</span>
                       <NumberInput
                         value={Number(paramCurrentValue)}

@@ -7,7 +7,7 @@ import { Text } from '@visx/text';
 import './BipartiteNetworkPlot.css';
 import NetworkPlot, { NetworkPlotProps } from './NetworkPlot';
 
-export interface BipartiteNetworkSVGStyles extends SVGAttributes<SVGElement> {
+export interface BipartiteNetworkStyleConfig extends SVGAttributes<SVGElement> {
   topPadding?: number; // space between the top of the svg and the top-most node
   nodeSpacing?: number; // space between vertically adjacent nodes
   columnPadding?: number; // space between the left of the svg and the left column, also the right of the svg and the right column.
@@ -16,16 +16,19 @@ export interface BipartiteNetworkSVGStyles extends SVGAttributes<SVGElement> {
 export interface BipartiteNetworkPlotProps extends NetworkPlotProps {
   /** Partitions. An array of NetworkPartitions (an array of node ids and optional name) that defines the two node groups */
   partitions: NetworkPartition[] | undefined;
-  /** bipartite network-specific styling for the svg itself. These
+  /** bipartite network-specific style overrides. These
    * properties will override any adaptation the network may try to do based on the container styles.
    */
-  svgStyleOverrides?: BipartiteNetworkSVGStyles;
+  bipartiteNetworkStyleConfig?: BipartiteNetworkStyleConfig;
+  /** Style overrides for the svg */
+  svgStyleOverrides?: SVGAttributes<SVGElement>;
 }
 
 const DEFAULT_TOP_PADDING = 40;
 const DEFAULT_BOTTOM_PADDING = 20;
 const DEFAULT_NODE_SPACING = 30;
 const DEFAULT_SVG_WIDTH = 400;
+const DEFAULT_COLUMN_PADDING = 100;
 
 // Show a few gray nodes when there is no real data.
 const EmptyBipartiteNetworkData: BipartiteNetworkData = {
@@ -56,6 +59,7 @@ function BipartiteNetworkPlot(
     partitions = EmptyBipartiteNetworkData.partitions,
     containerStyles,
     svgStyleOverrides,
+    bipartiteNetworkStyleConfig,
     getNodeMenuActions: getNodeActions,
   } = props;
 
@@ -69,14 +73,19 @@ function BipartiteNetworkPlot(
         DEFAULT_NODE_SPACING +
       topPadding +
       DEFAULT_BOTTOM_PADDING,
-    topPadding: topPadding,
-    nodeSpacing: DEFAULT_NODE_SPACING,
-    columnPadding: 100,
     ...svgStyleOverrides,
   };
 
-  const column1Position = svgStyles.columnPadding;
-  const column2Position = Number(svgStyles.width) - svgStyles.columnPadding;
+  const bipartiteNetworkStyles = {
+    topPadding: DEFAULT_TOP_PADDING,
+    nodeSpacing: DEFAULT_NODE_SPACING,
+    columnPadding: DEFAULT_COLUMN_PADDING,
+    ...bipartiteNetworkStyleConfig,
+  };
+
+  const column1Position = bipartiteNetworkStyles.columnPadding;
+  const column2Position =
+    Number(svgStyles.width) - bipartiteNetworkStyles.columnPadding;
 
   // Assign coordinates to each node
   // We'll draw the bipartite network in two columns. Nodes in the first partition will
@@ -94,7 +103,8 @@ function BipartiteNetworkPlot(
           // Recall partitionIndex = 0 refers to the left-column nodes whereas 1 refers to right-column nodes
           x: partitionIndex === 0 ? column1Position : column2Position,
           y:
-            svgStyles.topPadding + svgStyles.nodeSpacing * nodeIndexInPartition,
+            bipartiteNetworkStyles.topPadding +
+            bipartiteNetworkStyles.nodeSpacing * nodeIndexInPartition,
           labelPosition:
             partitionIndex === 0 ? 'left' : ('right' as LabelPosition),
           ...node,
@@ -106,8 +116,8 @@ function BipartiteNetworkPlot(
       partitions,
       column1Position,
       column2Position,
-      svgStyles.nodeSpacing,
-      svgStyles.topPadding,
+      bipartiteNetworkStyles.nodeSpacing,
+      bipartiteNetworkStyles.topPadding,
       getNodeActions,
     ]
   );
@@ -116,7 +126,7 @@ function BipartiteNetworkPlot(
   const leftColumnLabel = partitions[0].name && (
     <Text
       x={column1Position}
-      y={svgStyles.topPadding / 2}
+      y={bipartiteNetworkStyles.topPadding / 2}
       textAnchor="end"
       className="BipartiteNetworkPartitionTitle"
     >
@@ -126,7 +136,7 @@ function BipartiteNetworkPlot(
   const rightColumnLabel = partitions[1].name && (
     <Text
       x={column2Position}
-      y={svgStyles.topPadding / 2}
+      y={bipartiteNetworkStyles.topPadding / 2}
       textAnchor="start"
       className="BipartiteNetworkPartitionTitle"
     >

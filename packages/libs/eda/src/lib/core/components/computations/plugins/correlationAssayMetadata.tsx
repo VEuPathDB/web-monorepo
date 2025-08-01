@@ -14,7 +14,7 @@ import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { H6 } from '@veupathdb/coreui';
 import { bipartiteNetworkVisualization } from '../../visualizations/implementations/BipartiteNetworkVisualization';
-import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
+import { VariableCollectionSingleSelect } from '../../variableSelectors/VariableCollectionSingleSelect';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import {
   entityTreeToArray,
@@ -265,7 +265,7 @@ export function CorrelationAssayMetadataConfiguration(
             <H6>Input Data</H6>
             <div className={cx('-InputContainer')}>
               <span>Data 1</span>
-              <VariableCollectionSelectList
+              <VariableCollectionSingleSelect
                 value={configuration.data1?.collectionSpec}
                 onSelect={(value) => {
                   if (isVariableCollectionDescriptor(value))

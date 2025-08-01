@@ -16,7 +16,7 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { H6 } from '@veupathdb/coreui';
 import { bipartiteNetworkVisualization } from '../../visualizations/implementations/BipartiteNetworkVisualization';
 import { variableCollectionsAreUnique } from '../../../utils/visualization';
-import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
+import { VariableCollectionSingleSelect } from '../../variableSelectors/VariableCollectionSingleSelect';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import {
@@ -290,7 +290,7 @@ export function CorrelationAssayAssayConfiguration(
             <H6>Input Data</H6>
             <div className={cx('-InputContainer')}>
               <span>Taxonomic level</span>
-              <VariableCollectionSelectList
+              <VariableCollectionSingleSelect
                 value={configuration.data1?.collectionSpec}
                 onSelect={(value) => {
                   if (isVariableCollectionDescriptor(value))
@@ -302,7 +302,7 @@ export function CorrelationAssayAssayConfiguration(
                 collectionPredicate={isTaxonomicVariableCollection}
               />
               <span>Functional data</span>
-              <VariableCollectionSelectList
+              <VariableCollectionSingleSelect
                 value={configuration.data2?.collectionSpec}
                 onSelect={(value) => {
                   if (isVariableCollectionDescriptor(value))
