@@ -1,5 +1,4 @@
-import PropTypes from 'prop-types';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, ReactNode } from 'react';
 import { wrappable } from '../../Utils/ComponentUtils';
 import ApplicationSpecificProperties from '../../Views/User/ApplicationSpecificProperties';
 import UserPassword from '../../Views/User/Password/UserPassword';
@@ -7,15 +6,32 @@ import UserIdentity from '../../Views/User/UserIdentity';
 import UserSubscriptionManagement from '../../Views/User/UserSubscriptionManagement';
 import ProfileNavigationSection from '../../Views/User/ProfileNavigationSection';
 import { useWdkService } from '../../Hooks/WdkServiceHook';
+import { User } from '../../Utils/WdkUser';
+
+// Define supported section keys
+type SectionKey = 'account' | 'subscription' | 'preferences' | 'security';
+
+// Props interface
+export interface UserAccountFormProps {
+  wdkConfig: any;
+  user: User;
+  onPropertyChange: (field: string) => (value: any) => void;
+  onPreferenceChange: (prefs: Record<string, any>) => void;
+  onEmailChange: (value: string) => void;
+  onConfirmEmailChange: (value: string) => void;
+  showChangePasswordBox: boolean;
+  disableSubmit: boolean;
+  onSubmit: (event: React.FormEvent) => void;
+  submitButtonText: string;
+  formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
+  onDiscardChanges?: () => void;
+}
 
 /**
- * This React component provides the form wrapper and enclosed fieldsets for the user profile/account form.
- * @param props
- * @returns {XML}
- * @constructor
+ * React component providing the form wrapper and sections for user profile.
  */
-const UserAccountForm = (props) => {
-  let {
+function UserAccountForm(props: UserAccountFormProps) {
+  const {
     wdkConfig,
     user,
     onPropertyChange,
@@ -26,37 +42,35 @@ const UserAccountForm = (props) => {
     disableSubmit,
     onSubmit,
     submitButtonText,
-    previousUserFormData,
+    formStatus,
+    onDiscardChanges,
   } = props;
 
-  const [activeSection, setActiveSection] = useState('account');
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [activeSection, setActiveSection] = useState<SectionKey>('account');
+  const hasUnsavedChanges = formStatus === 'modified';
+
   const vocabulary = useWdkService(
     (wdkService) =>
       wdkService.getUserProfileVocabulary().catch((error) => {
         console.error(error);
-        return {};
+        return {} as Record<string, any>;
       }),
     []
   );
 
-  // Track changes between current user data and previous data
-  useEffect(() => {
-    if (previousUserFormData) {
-      const hasChanges =
-        JSON.stringify(user) !== JSON.stringify(previousUserFormData);
-      setHasUnsavedChanges(hasChanges);
-    }
-  }, [user, previousUserFormData]);
-
-  const handleSectionChange = (sectionKey, discardChanges = false) => {
-    if (discardChanges && props.onDiscardChanges) {
-      props.onDiscardChanges();
+  // Section switch handler
+  const handleSectionChange = (
+    sectionKey: SectionKey,
+    discardChanges = false
+  ) => {
+    if (discardChanges && onDiscardChanges) {
+      onDiscardChanges();
     }
     setActiveSection(sectionKey);
   };
 
-  const renderSectionContent = () => {
+  // Renders the content for the active section
+  const renderSectionContent = (): ReactNode => {
     switch (activeSection) {
       case 'account':
         return (
@@ -73,13 +87,15 @@ const UserAccountForm = (props) => {
               <i className="fa fa-asterisk"></i> = required
             </p>
             <div style={{ marginTop: '1em' }}>
-              <input type="submit" value="Save" disabled={disableSubmit} />
+              <input
+                type="submit"
+                value={submitButtonText}
+                disabled={disableSubmit}
+              />
               <button
                 type="button"
                 style={{ marginLeft: '0.5em' }}
-                onClick={() =>
-                  props.onDiscardChanges && props.onDiscardChanges()
-                }
+                onClick={() => onDiscardChanges && onDiscardChanges()}
               >
                 Cancel
               </button>
@@ -104,13 +120,15 @@ const UserAccountForm = (props) => {
               onPreferenceChange={onPreferenceChange}
             />
             <div style={{ marginTop: '1em' }}>
-              <input type="submit" value="Save" disabled={disableSubmit} />
+              <input
+                type="submit"
+                value={submitButtonText}
+                disabled={disableSubmit}
+              />
               <button
                 type="button"
                 style={{ marginLeft: '0.5em' }}
-                onClick={() =>
-                  props.onDiscardChanges && props.onDiscardChanges()
-                }
+                onClick={() => onDiscardChanges && onDiscardChanges()}
               >
                 Cancel
               </button>
@@ -124,13 +142,15 @@ const UserAccountForm = (props) => {
               <UserPassword user={user} wdkConfig={wdkConfig} />
             )}
             <div style={{ marginTop: '1em' }}>
-              <input type="submit" value="Save" disabled={disableSubmit} />
+              <input
+                type="submit"
+                value={submitButtonText}
+                disabled={disableSubmit}
+              />
               <button
                 type="button"
                 style={{ marginLeft: '0.5em' }}
-                onClick={() =>
-                  props.onDiscardChanges && props.onDiscardChanges()
-                }
+                onClick={() => onDiscardChanges && onDiscardChanges()}
               >
                 Cancel
               </button>
@@ -142,7 +162,9 @@ const UserAccountForm = (props) => {
     }
   };
 
+  // Wait for vocabulary to load
   if (vocabulary == null) return null;
+
   return (
     <div className="wdk-RecordContainer wdk-RecordContainer__withSidebar">
       <div className="wdk-RecordSidebarContainer">
@@ -165,44 +187,6 @@ const UserAccountForm = (props) => {
       </div>
     </div>
   );
-};
-
-UserAccountForm.propTypes = {
-  /** The user object to be modified */
-  user: PropTypes.object.isRequired,
-
-  /** Whether to show change password box */
-  showChangePasswordBox: PropTypes.bool.isRequired,
-
-  /** Indicates whether submit button should be enabled/disabled */
-  disableSubmit: PropTypes.bool.isRequired,
-
-  /** The on change handler for the email text box */
-  onEmailChange: PropTypes.func.isRequired,
-
-  /** The on change handler for the confirm email text box */
-  onConfirmEmailChange: PropTypes.func.isRequired,
-
-  /** Creates on change handlers for property inputs */
-  onPropertyChange: PropTypes.func.isRequired,
-
-  /** The on change handler for preference changes */
-  onPreferenceChange: PropTypes.func.isRequired,
-
-  /** The on submit handler for the form */
-  onSubmit: PropTypes.func.isRequired,
-
-  /** Text that should appear on the submit button */
-  submitButtonText: PropTypes.string.isRequired,
-
-  /** WDK config for setting correct change password link */
-  wdkConfig: PropTypes.object.isRequired,
-
-  /** Previous user form data for change detection */
-  previousUserFormData: PropTypes.object,
-
-  /** Handler for discarding changes */
-  onDiscardChanges: PropTypes.func,
-};
+}
 
 export default wrappable(UserAccountForm);
