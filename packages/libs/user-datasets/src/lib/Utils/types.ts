@@ -10,13 +10,14 @@ import {
   string,
   keyof,
   boolean,
+  brand,
+  Branded,
 } from 'io-ts';
 
 // User dataset metadata type used by the UI (as opposed to the type
 // used by VDI).
 export interface UserDatasetMeta_UI extends UserDatasetFormContent {
   visibility: UserDatasetVisibility;
-  createdOn?: string;
 }
 
 // Interface for the dataset metadata used by VDI. Will get transformed into
@@ -30,7 +31,6 @@ export interface UserDatasetMeta_VDI extends UserDatasetFormContent {
   origin: string;
   projects: string[];
   dependencies: UserDatasetDependency[];
-  createdOn?: string;
 }
 
 export interface UserDatasetShare {
@@ -277,6 +277,7 @@ const userDatasetPublication = intersection([
   }),
   partial({
     citation: string,
+    isPrimary: boolean,
   }),
 ]);
 
@@ -308,6 +309,55 @@ const userDatasetContact = intersection([
   }),
 ]);
 
+export const studyDesignOptions = {
+  'Cluster-randomized controlled trial': null,
+  'Quasi-experimental study': null,
+  'Randomized controlled/clinical trial': null,
+  'Case series study': null,
+  'Case-control study': null,
+  'Cohort study': null,
+  'Cross-sectional study': null,
+  'Ecological study': null,
+  'Panel study': null,
+  'Surveillance study': null,
+  'Meta-analysis': null,
+  Other: null,
+};
+
+export type FundingObject = TypeOf<typeof fundingObject>;
+
+const fundingObject = intersection([
+  type({
+    awardNumber: string,
+  }),
+  partial({
+    agency: string,
+  }),
+]);
+
+export type YearsObject = TypeOf<typeof yearsObject>;
+
+const yearsObject = type({
+  start: string,
+  end: string,
+});
+
+export type UserDatasetCharacteristics = TypeOf<
+  typeof userDatasetCharacteristics
+>;
+
+export const userDatasetCharacteristics = partial({
+  studyDesign: keyof(studyDesignOptions), // required
+  studyType: string, // assigned by the backend
+  host: string,
+  diseases: string,
+  sampleTypes: string,
+  countries: string,
+  years: yearsObject, // { start: number, end: number }
+  ages: string,
+  funding: fundingObject, // { awardNumber: string, agency?: string }. If awardNumber, then agency is required.
+});
+
 export type UserDatasetFormContent = TypeOf<typeof userDatasetFormContent>;
 export const userDatasetFormContent = intersection([
   type({
@@ -323,6 +373,7 @@ export const userDatasetFormContent = intersection([
     hyperlinks: array(userDatasetHyperlink),
     organisms: array(string),
     contacts: array(userDatasetContact),
+    datasetCharacteristics: userDatasetCharacteristics,
   }),
 ]);
 
@@ -343,7 +394,6 @@ const userDatasetDetails_base = intersection([
   partial({
     sourceUrl: string,
     importMessages: array(string),
-    createdOn: string,
   }),
 ]);
 
