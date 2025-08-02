@@ -1,14 +1,21 @@
 import React from 'react';
 import { wrappable } from '../../Utils/ComponentUtils';
 
+// Define supported section keys
+export type SectionKey =
+  | 'account'
+  | 'subscription'
+  | 'preferences'
+  | 'security';
+
 interface Section {
-  key: string;
+  key: SectionKey;
   label: string;
 }
 
 interface ProfileNavigationSectionProps {
   activeSection: string;
-  onSectionChange: (sectionKey: string, discardChanges?: boolean) => void;
+  onSectionChange: (sectionKey: SectionKey, discardChanges?: boolean) => void;
   hasUnsavedChanges: boolean;
   sections?: Section[];
 }
@@ -24,7 +31,7 @@ const ProfileNavigationSection: React.FC<ProfileNavigationSectionProps> = ({
     { key: 'security', label: 'Security' },
   ],
 }) => {
-  const handleSectionClick = (sectionKey: string) => {
+  const handleSectionClick = (sectionKey: SectionKey) => {
     if (hasUnsavedChanges && sectionKey !== activeSection) {
       if (
         window.confirm(
@@ -57,7 +64,7 @@ const ProfileNavigationSection: React.FC<ProfileNavigationSectionProps> = ({
           >
             {section.label}
             {hasUnsavedChanges && activeSection === section.key && (
-              <span style={{ marginLeft: '0.5em', color: '#ff6b35' }}>•</span>
+              <span style={{ marginLeft: '0.5em', color: '#ff6b35' }}>⬤</span>
             )}
           </div>
         ))}

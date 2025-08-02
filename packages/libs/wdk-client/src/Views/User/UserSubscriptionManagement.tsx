@@ -1,11 +1,9 @@
 import React from 'react';
+import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
 import { wrappable } from '../../Utils/ComponentUtils';
 
 interface UserSubscriptionManagementProps {
-  user: {
-    isGuest: boolean;
-    email: string;
-  };
+  user: UserProfileFormData;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   disableSubmit: boolean;
 }

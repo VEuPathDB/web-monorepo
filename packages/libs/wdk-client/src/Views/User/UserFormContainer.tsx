@@ -1,7 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
+import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
 import { getChangeHandler, wrappable } from '../../Utils/ComponentUtils';
+import { UserPreferences } from '../../Utils/WdkUser';
 import UserAccountForm from '../../Views/User/UserAccountForm';
 
 export function getDescriptionBoxStyle() {
@@ -17,7 +18,7 @@ export function getDescriptionBoxStyle() {
 
 export function interpretFormStatus(
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error',
-  userFormData: UserType,
+  userFormData: UserProfileFormData,
   errorMessage?: string
 ) {
   let messageClass = 'wdk-UserProfile-banner ',
@@ -76,22 +77,14 @@ export function IntroComponent() {
   );
 }
 
-export interface UserType {
-  email?: string;
-  confirmEmail?: string;
-  properties?: Record<string, any>;
-  preferences?: Record<string, any>;
-  // …other fields…
-}
-
 interface UserFormContainerProps {
   globalData: { config: any };
-  userFormData: UserType;
-  previousUserFormData?: UserType;
+  userFormData: UserProfileFormData;
+  previousUserFormData?: UserProfileFormData;
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
   errorMessage?: string;
   userEvents: {
-    updateProfileForm: (newState: UserType) => void;
+    updateProfileForm: (newState: UserProfileFormData) => void;
   };
   shouldHideForm: boolean;
   hiddenFormMessage: string;
@@ -100,17 +93,19 @@ interface UserFormContainerProps {
   statusDisplayFunction?: typeof interpretFormStatus;
   showChangePasswordBox: boolean;
   submitButtonText: string;
-  onSubmit: (userData: UserType) => void;
+  onSubmit: (userData: UserProfileFormData) => void;
 }
 
 function UserFormContainer(props: UserFormContainerProps) {
-  const initialUserStateRef = useRef<UserType>(props.userFormData);
+  const initialUserStateRef = useRef<UserProfileFormData>(props.userFormData);
 
   useEffect(() => {
-    initialUserStateRef.current = props.userFormData;
+    if (initialUserStateRef.current == null) {
+      initialUserStateRef.current = props.userFormData;
+    }
   }, [props.userFormData]);
 
-  function validateEmailConfirmation(newState: UserType): void {
+  function validateEmailConfirmation(newState: UserProfileFormData): void {
     const userEmail = newState.email;
     const confirmUserEmail = newState.confirmEmail;
     if (userEmail != null && confirmUserEmail != null) {
@@ -126,7 +121,7 @@ function UserFormContainer(props: UserFormContainerProps) {
   }
 
   function onEmailFieldChange(field: string, newValue: any): void {
-    const updater = (newState: UserType) => {
+    const updater = (newState: UserProfileFormData) => {
       validateEmailConfirmation(newState);
       props.userEvents.updateProfileForm(newState);
       return newState;
@@ -154,7 +149,7 @@ function UserFormContainer(props: UserFormContainerProps) {
     };
   }
 
-  function onPreferenceChange(newPreferences: Record<string, any>): void {
+  function onPreferenceChange(newPreferences: UserPreferences): void {
     const updatedUserData = {
       ...props.userFormData,
       preferences: newPreferences,
@@ -180,6 +175,7 @@ function UserFormContainer(props: UserFormContainerProps) {
   }
 
   function onDiscardChanges(): void {
+    console.log('calling onDiscardChanges...');
     props.userEvents.updateProfileForm(initialUserStateRef.current);
   }
 

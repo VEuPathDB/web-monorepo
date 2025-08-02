@@ -1,22 +1,22 @@
-import React, { useState, useEffect, useRef, ReactNode } from 'react';
+import React, { useState, ReactNode } from 'react';
 import { wrappable } from '../../Utils/ComponentUtils';
 import ApplicationSpecificProperties from '../../Views/User/ApplicationSpecificProperties';
 import UserPassword from '../../Views/User/Password/UserPassword';
 import UserIdentity from '../../Views/User/UserIdentity';
 import UserSubscriptionManagement from '../../Views/User/UserSubscriptionManagement';
-import ProfileNavigationSection from '../../Views/User/ProfileNavigationSection';
+import ProfileNavigationSection, {
+  SectionKey,
+} from '../../Views/User/ProfileNavigationSection';
 import { useWdkService } from '../../Hooks/WdkServiceHook';
-import { User } from '../../Utils/WdkUser';
-
-// Define supported section keys
-type SectionKey = 'account' | 'subscription' | 'preferences' | 'security';
+import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
+import { UserPreferences } from '../../Utils/WdkUser';
 
 // Props interface
 export interface UserAccountFormProps {
   wdkConfig: any;
-  user: User;
+  user: UserProfileFormData;
   onPropertyChange: (field: string) => (value: any) => void;
-  onPreferenceChange: (prefs: Record<string, any>) => void;
+  onPreferenceChange: (prefs: UserPreferences) => void;
   onEmailChange: (value: string) => void;
   onConfirmEmailChange: (value: string) => void;
   showChangePasswordBox: boolean;
