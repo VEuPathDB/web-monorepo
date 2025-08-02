@@ -85,6 +85,7 @@ interface UserFormContainerProps {
   errorMessage?: string;
   userEvents: {
     updateProfileForm: (newState: UserProfileFormData) => void;
+    resetProfileForm?: (formData: UserProfileFormData) => void;
   };
   shouldHideForm: boolean;
   hiddenFormMessage: string;
@@ -175,8 +176,11 @@ function UserFormContainer(props: UserFormContainerProps) {
   }
 
   function onDiscardChanges(): void {
-    console.log('calling onDiscardChanges...');
-    props.userEvents.updateProfileForm(initialUserStateRef.current);
+    if (props.userEvents.resetProfileForm) {
+      props.userEvents.resetProfileForm(initialUserStateRef.current);
+    } else {
+      props.userEvents.updateProfileForm(initialUserStateRef.current);
+    }
   }
 
   const dataForStatus = props.previousUserFormData ?? props.userFormData;
@@ -208,7 +212,7 @@ function UserFormContainer(props: UserFormContainerProps) {
             onConfirmEmailChange={onConfirmEmailChange}
             onPropertyChange={onPropertyChange}
             onPreferenceChange={onPreferenceChange}
-            onSubmit={onSubmit}
+            onUserDataSubmit={onSubmit}
             submitButtonText={props.submitButtonText}
             wdkConfig={props.globalData.config}
             onDiscardChanges={onDiscardChanges}

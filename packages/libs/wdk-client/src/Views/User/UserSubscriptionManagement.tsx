@@ -4,8 +4,6 @@ import { wrappable } from '../../Utils/ComponentUtils';
 
 interface UserSubscriptionManagementProps {
   user: UserProfileFormData;
-  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-  disableSubmit: boolean;
 }
 
 /**
@@ -14,45 +12,20 @@ interface UserSubscriptionManagementProps {
  */
 const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
   user,
-  onSubmit,
-  disableSubmit,
 }) => {
-  const handleSubmit = (event: React.MouseEvent<HTMLInputElement>) => {
-    event.preventDefault();
-    // Create a form event to pass to onSubmit
-    const formEvent = new Event('submit', {
-      bubbles: true,
-      cancelable: true,
-    }) as any;
-    onSubmit(formEvent);
-  };
-
   return (
     <fieldset>
-      <legend>Subscription</legend>
+      <legend>Subscription Management</legend>
       <div style={{ padding: '1em 0' }}>
         <p>Subscription management features will be implemented here.</p>
         <p>
-          <em>Coming soon...</em>
+          <em>
+            This section will handle its own form submission when implemented.
+          </em>
         </p>
-      </div>
-      <div>
-        <input
-          type="button"
-          value="Save"
-          disabled={disableSubmit}
-          onClick={handleSubmit}
-        />
-        <button
-          type="button"
-          style={{ marginLeft: '0.5em' }}
-          onClick={() => {
-            // TODO: Reset subscription form data
-            console.log('Cancel subscription changes');
-          }}
-        >
-          Cancel
-        </button>
+        <p style={{ marginTop: '1em' }}>
+          Current user: <strong>{user.email || 'No email'}</strong>
+        </p>
       </div>
     </fieldset>
   );

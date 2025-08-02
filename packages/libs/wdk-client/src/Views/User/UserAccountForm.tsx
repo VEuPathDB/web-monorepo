@@ -21,7 +21,7 @@ export interface UserAccountFormProps {
   onConfirmEmailChange: (value: string) => void;
   showChangePasswordBox: boolean;
   disableSubmit: boolean;
-  onSubmit: (event: React.FormEvent) => void;
+  onUserDataSubmit: (event: React.FormEvent) => void;
   submitButtonText: string;
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
   onDiscardChanges?: () => void;
@@ -40,7 +40,7 @@ function UserAccountForm(props: UserAccountFormProps) {
     onConfirmEmailChange,
     showChangePasswordBox,
     disableSubmit,
-    onSubmit,
+    onUserDataSubmit,
     submitButtonText,
     formStatus,
     onDiscardChanges,
@@ -74,7 +74,11 @@ function UserAccountForm(props: UserAccountFormProps) {
     switch (activeSection) {
       case 'account':
         return (
-          <div>
+          <form
+            className="wdk-UserProfile-profileForm wdk-UserProfile-accountForm"
+            name="userAccountForm"
+            onSubmit={onUserDataSubmit}
+          >
             <UserIdentity
               user={user}
               onEmailChange={onEmailChange}
@@ -97,22 +101,20 @@ function UserAccountForm(props: UserAccountFormProps) {
                 style={{ marginLeft: '0.5em' }}
                 onClick={() => onDiscardChanges && onDiscardChanges()}
               >
-                Cancel
+                Reset form
               </button>
             </div>
-          </div>
+          </form>
         );
       case 'subscription':
-        return (
-          <UserSubscriptionManagement
-            user={user}
-            onSubmit={onSubmit}
-            disableSubmit={disableSubmit}
-          />
-        );
+        return <UserSubscriptionManagement user={user} />;
       case 'preferences':
         return (
-          <div>
+          <form
+            className="wdk-UserProfile-profileForm wdk-UserProfile-preferencesForm"
+            name="userPreferencesForm"
+            onSubmit={onUserDataSubmit}
+          >
             <ApplicationSpecificProperties
               user={user}
               onPropertyChange={onPropertyChange}
@@ -130,10 +132,10 @@ function UserAccountForm(props: UserAccountFormProps) {
                 style={{ marginLeft: '0.5em' }}
                 onClick={() => onDiscardChanges && onDiscardChanges()}
               >
-                Cancel
+                Reset form
               </button>
             </div>
-          </div>
+          </form>
         );
       case 'security':
         return (
@@ -141,20 +143,9 @@ function UserAccountForm(props: UserAccountFormProps) {
             {showChangePasswordBox && (
               <UserPassword user={user} wdkConfig={wdkConfig} />
             )}
-            <div style={{ marginTop: '1em' }}>
-              <input
-                type="submit"
-                value={submitButtonText}
-                disabled={disableSubmit}
-              />
-              <button
-                type="button"
-                style={{ marginLeft: '0.5em' }}
-                onClick={() => onDiscardChanges && onDiscardChanges()}
-              >
-                Cancel
-              </button>
-            </div>
+            <p style={{ marginTop: '1em', fontStyle: 'italic' }}>
+              Password changes are handled independently above.
+            </p>
           </div>
         );
       default:
@@ -175,15 +166,7 @@ function UserAccountForm(props: UserAccountFormProps) {
             hasUnsavedChanges={hasUnsavedChanges}
           />
         </div>
-        <div className="wdk-RecordMain">
-          <form
-            className="wdk-UserProfile-profileForm"
-            name="userProfileForm"
-            onSubmit={onSubmit}
-          >
-            {renderSectionContent()}
-          </form>
-        </div>
+        <div className="wdk-RecordMain">{renderSectionContent()}</div>
       </div>
     </div>
   );

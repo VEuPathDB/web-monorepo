@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { wrappable } from '../../Utils/ComponentUtils';
+import Dialog from '../../Components/Overlays/Dialog';
 
 // Define supported section keys
 export type SectionKey =
@@ -31,45 +32,93 @@ const ProfileNavigationSection: React.FC<ProfileNavigationSectionProps> = ({
     { key: 'security', label: 'Security' },
   ],
 }) => {
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [pendingSectionKey, setPendingSectionKey] =
+    useState<SectionKey | null>(null);
+
   const handleSectionClick = (sectionKey: SectionKey) => {
     if (hasUnsavedChanges && sectionKey !== activeSection) {
-      if (
-        window.confirm(
-          'You have unsaved changes. Do you want to leave this section without saving? Your changes will be lost.'
-        )
-      ) {
-        onSectionChange(sectionKey, true); // true = discard changes
-      }
+      setPendingSectionKey(sectionKey);
+      setShowConfirmDialog(true);
     } else {
       onSectionChange(sectionKey, false);
     }
   };
 
+  const handleConfirmDiscard = () => {
+    if (pendingSectionKey) {
+      onSectionChange(pendingSectionKey, true); // true = discard changes
+    }
+    setShowConfirmDialog(false);
+    setPendingSectionKey(null);
+  };
+
+  const handleCancelDiscard = () => {
+    setShowConfirmDialog(false);
+    setPendingSectionKey(null);
+  };
+
   return (
-    <div className="wdk-RecordNavigationSection">
-      <div className="wdk-RecordNavigationSectionHeader">
-        <h1>Profile</h1>
+    <>
+      <div className="wdk-RecordNavigationSection">
+        <div className="wdk-RecordNavigationSectionHeader">
+          <h1>Profile</h1>
+        </div>
+        <div className="profile-navigation-items">
+          {sections.map((section) => (
+            <div
+              key={section.key}
+              className={`wdk-RecordNavigationItem ${
+                activeSection === section.key
+                  ? 'wdk-RecordNavigationItem__active'
+                  : ''
+              }`}
+              onClick={() => handleSectionClick(section.key)}
+              style={{ cursor: 'pointer' }}
+            >
+              {section.label}
+              {hasUnsavedChanges && activeSection === section.key && (
+                <span style={{ marginLeft: '0.5em', color: '#ff6b35' }}>⬤</span>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
-      <div className="profile-navigation-items">
-        {sections.map((section) => (
-          <div
-            key={section.key}
-            className={`wdk-RecordNavigationItem ${
-              activeSection === section.key
-                ? 'wdk-RecordNavigationItem__active'
-                : ''
-            }`}
-            onClick={() => handleSectionClick(section.key)}
-            style={{ cursor: 'pointer' }}
-          >
-            {section.label}
-            {hasUnsavedChanges && activeSection === section.key && (
-              <span style={{ marginLeft: '0.5em', color: '#ff6b35' }}>⬤</span>
-            )}
+
+      <Dialog
+        open={showConfirmDialog}
+        modal={true}
+        title="Unsaved Changes"
+        onClose={handleCancelDiscard}
+      >
+        <div style={{ padding: '1em' }}>
+          <p>
+            You have unsaved changes. Do you want to leave this section without
+            saving? Your changes will be lost.
+          </p>
+          <div style={{ marginTop: '1.5em', textAlign: 'right' }}>
+            <button
+              type="button"
+              onClick={handleCancelDiscard}
+              style={{ marginRight: '0.5em' }}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleConfirmDiscard}
+              style={{
+                backgroundColor: '#d9534f',
+                color: 'white',
+                border: '1px solid #d43f3a',
+              }}
+            >
+              Discard Changes
+            </button>
           </div>
-        ))}
-      </div>
-    </div>
+        </div>
+      </Dialog>
+    </>
   );
 };
 
