@@ -1,0 +1,175 @@
+import React, { useState, ReactNode } from 'react';
+import { wrappable } from '../../Utils/ComponentUtils';
+import ApplicationSpecificProperties from '../../Views/User/ApplicationSpecificProperties';
+import UserPassword from '../../Views/User/Password/UserPassword';
+import UserIdentity from '../../Views/User/UserIdentity';
+import UserSubscriptionManagement from '../../Views/User/UserSubscriptionManagement';
+import ProfileNavigationSection, {
+  SectionKey,
+} from '../../Views/User/ProfileNavigationSection';
+import { useWdkService } from '../../Hooks/WdkServiceHook';
+import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
+import { UserPreferences } from '../../Utils/WdkUser';
+
+// Props interface
+export interface UserAccountFormProps {
+  wdkConfig: any;
+  user: UserProfileFormData;
+  onPropertyChange: (field: string) => (value: any) => void;
+  onPreferenceChange: (prefs: UserPreferences) => void;
+  onEmailChange: (value: string) => void;
+  onConfirmEmailChange: (value: string) => void;
+  showChangePasswordBox: boolean;
+  disableSubmit: boolean;
+  onUserDataSubmit: (event: React.FormEvent) => void;
+  submitButtonText: string;
+  formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
+  onDiscardChanges?: () => void;
+}
+
+/**
+ * React component providing the form wrapper and sections for user profile.
+ */
+function UserAccountForm(props: UserAccountFormProps) {
+  const {
+    wdkConfig,
+    user,
+    onPropertyChange,
+    onPreferenceChange,
+    onEmailChange,
+    onConfirmEmailChange,
+    showChangePasswordBox,
+    disableSubmit,
+    onUserDataSubmit,
+    submitButtonText,
+    formStatus,
+    onDiscardChanges,
+  } = props;
+
+  const [activeSection, setActiveSection] = useState<SectionKey>('account');
+  const hasUnsavedChanges = formStatus === 'modified';
+
+  const vocabulary = useWdkService(
+    (wdkService) =>
+      wdkService.getUserProfileVocabulary().catch((error) => {
+        console.error(error);
+        return {} as Record<string, any>;
+      }),
+    []
+  );
+
+  // Section switch handler
+  const handleSectionChange = (
+    sectionKey: SectionKey,
+    discardChanges = false
+  ) => {
+    if (discardChanges && onDiscardChanges) {
+      onDiscardChanges();
+    }
+    setActiveSection(sectionKey);
+  };
+
+  // Renders the content for the active section
+  const renderSectionContent = (): ReactNode => {
+    switch (activeSection) {
+      case 'account':
+        return (
+          <form
+            className="wdk-UserProfile-profileForm wdk-UserProfile-accountForm"
+            name="userAccountForm"
+            onSubmit={onUserDataSubmit}
+          >
+            <UserIdentity
+              user={user}
+              onEmailChange={onEmailChange}
+              onConfirmEmailChange={onConfirmEmailChange}
+              onPropertyChange={onPropertyChange}
+              propDefs={wdkConfig.userProfileProperties}
+              vocabulary={vocabulary}
+            />
+            <p>
+              <i className="fa fa-asterisk"></i> = required
+            </p>
+            <div style={{ marginTop: '1em' }}>
+              <input
+                type="submit"
+                value={submitButtonText}
+                disabled={disableSubmit}
+              />
+              <button
+                type="button"
+                style={{ marginLeft: '0.5em' }}
+                onClick={() => onDiscardChanges && onDiscardChanges()}
+              >
+                Reset form
+              </button>
+            </div>
+          </form>
+        );
+      case 'subscription':
+        return <UserSubscriptionManagement user={user} />;
+      case 'preferences':
+        return (
+          <form
+            className="wdk-UserProfile-profileForm wdk-UserProfile-preferencesForm"
+            name="userPreferencesForm"
+            onSubmit={onUserDataSubmit}
+          >
+            <ApplicationSpecificProperties
+              user={user}
+              onPropertyChange={onPropertyChange}
+              propDefs={wdkConfig.userProfileProperties}
+              onPreferenceChange={onPreferenceChange}
+            />
+            <div style={{ marginTop: '1em' }}>
+              <input
+                type="submit"
+                value={submitButtonText}
+                disabled={disableSubmit}
+              />
+              <button
+                type="button"
+                style={{ marginLeft: '0.5em' }}
+                onClick={() => onDiscardChanges && onDiscardChanges()}
+              >
+                Reset form
+              </button>
+            </div>
+          </form>
+        );
+      case 'security':
+        return (
+          <div>
+            {showChangePasswordBox && (
+              <UserPassword user={user} wdkConfig={wdkConfig} />
+            )}
+            <p style={{ marginTop: '1em', fontStyle: 'italic' }}>
+              Password changes are handled independently above.
+            </p>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  // Wait for vocabulary to load
+  if (vocabulary == null) return null;
+
+  return (
+    <div className="wdk-RecordContainer wdk-RecordContainer__withSidebar">
+      <div className="wdk-RecordSidebarContainer">
+        <div className="wdk-RecordSidebar">
+          <ProfileNavigationSection
+            activeSection={activeSection}
+            onSectionChange={handleSectionChange}
+            hasUnsavedChanges={hasUnsavedChanges}
+          />
+        </div>
+        <div className="wdk-RecordMain">{renderSectionContent()}</div>
+      </div>
+    </div>
+  );
+}
+
+export default wrappable(UserAccountForm);
