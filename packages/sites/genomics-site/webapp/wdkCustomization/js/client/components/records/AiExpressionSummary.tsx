@@ -48,15 +48,7 @@ export function AiExpressionSummary(props: Props) {
     <DefaultSectionTitle displayName={displayName} help={help} />
   );
 
-  const microarrayDatasetCount = props.record.attributes[
-    'microarray_dataset_count'
-  ]
-    ? Number(props.record.attributes['microarray_dataset_count'].toString())
-    : 0;
-  const rnaseqDatasetCount = props.record.attributes['rnaseq_dataset_count']
-    ? Number(props.record.attributes['rnaseq_dataset_count'].toString())
-    : 0;
-  const datasetCount = microarrayDatasetCount + rnaseqDatasetCount;
+  const datasetCount = record.tables['ExpressionGraphs']?.length ?? 0;
 
   return (
     <CollapsibleSection
