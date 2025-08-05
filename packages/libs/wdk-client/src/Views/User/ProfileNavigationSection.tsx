@@ -17,7 +17,9 @@ interface Section {
 }
 
 interface ProfileNavigationSectionProps {
-  activeSection: string;
+  activeSection: SectionKey;
+  pendingSection: SectionKey | null;
+  setPendingSection: React.Dispatch<React.SetStateAction<SectionKey | null>>;
   onSectionChange: (sectionKey: SectionKey, discardChanges?: boolean) => void;
   hasUnsavedChanges: boolean;
   sections?: Section[];
@@ -25,6 +27,8 @@ interface ProfileNavigationSectionProps {
 
 const ProfileNavigationSection: React.FC<ProfileNavigationSectionProps> = ({
   activeSection,
+  pendingSection,
+  setPendingSection,
   onSectionChange,
   hasUnsavedChanges,
   sections = [
@@ -35,12 +39,10 @@ const ProfileNavigationSection: React.FC<ProfileNavigationSectionProps> = ({
   ],
 }) => {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [pendingSectionKey, setPendingSectionKey] =
-    useState<SectionKey | null>(null);
 
   const handleSectionClick = (sectionKey: SectionKey) => {
     if (hasUnsavedChanges && sectionKey !== activeSection) {
-      setPendingSectionKey(sectionKey);
+      setPendingSection(sectionKey);
       setShowConfirmDialog(true);
     } else {
       onSectionChange(sectionKey, false);
@@ -48,16 +50,16 @@ const ProfileNavigationSection: React.FC<ProfileNavigationSectionProps> = ({
   };
 
   const handleConfirmDiscard = () => {
-    if (pendingSectionKey) {
-      onSectionChange(pendingSectionKey, true); // true = discard changes
+    if (pendingSection) {
+      onSectionChange(pendingSection, true); // true = discard changes
     }
     setShowConfirmDialog(false);
-    setPendingSectionKey(null);
+    setPendingSection(null);
   };
 
   const handleCancelDiscard = () => {
     setShowConfirmDialog(false);
-    setPendingSectionKey(null);
+    setPendingSection(null);
   };
 
   return (

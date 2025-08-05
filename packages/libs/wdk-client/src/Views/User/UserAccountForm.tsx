@@ -51,6 +51,7 @@ function UserAccountForm(props: UserAccountFormProps) {
 
   const [activeSection, navigateToSection] =
     useCurrentProfileNavigationSection();
+  const [pendingSection, setPendingSection] = useState<SectionKey | null>(null);
   const hasUnsavedChanges = formStatus === 'modified';
 
   // Browser navigation protection
@@ -176,7 +177,7 @@ function UserAccountForm(props: UserAccountFormProps) {
   return (
     <>
       <Prompt
-        when={hasUnsavedChanges}
+        when={hasUnsavedChanges && !pendingSection}
         message="Do you want to leave this page? Your unapplied changes will be discarded."
       />
       <div className="wdk-RecordContainer wdk-RecordContainer__withSidebar">
@@ -184,6 +185,8 @@ function UserAccountForm(props: UserAccountFormProps) {
           <div className="wdk-RecordSidebar">
             <ProfileNavigationSection
               activeSection={activeSection}
+              pendingSection={pendingSection}
+              setPendingSection={setPendingSection}
               onSectionChange={handleSectionChange}
               hasUnsavedChanges={hasUnsavedChanges}
             />
