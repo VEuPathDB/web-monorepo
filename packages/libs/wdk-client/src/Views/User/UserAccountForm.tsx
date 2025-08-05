@@ -1,5 +1,6 @@
 import React, { useState, ReactNode, useEffect } from 'react';
 import { useLocation } from 'react-router';
+import { Prompt } from 'react-router-dom';
 import { wrappable } from '../../Utils/ComponentUtils';
 import ApplicationSpecificProperties from '../../Views/User/ApplicationSpecificProperties';
 import UserPassword from '../../Views/User/Password/UserPassword';
@@ -51,6 +52,19 @@ function UserAccountForm(props: UserAccountFormProps) {
   const [activeSection, navigateToSection] =
     useCurrentProfileNavigationSection();
   const hasUnsavedChanges = formStatus === 'modified';
+
+  // Browser navigation protection
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [hasUnsavedChanges]);
 
   const vocabulary = useWdkService(
     (wdkService) =>
@@ -160,18 +174,24 @@ function UserAccountForm(props: UserAccountFormProps) {
   if (vocabulary == null) return null;
 
   return (
-    <div className="wdk-RecordContainer wdk-RecordContainer__withSidebar">
-      <div className="wdk-RecordSidebarContainer">
-        <div className="wdk-RecordSidebar">
-          <ProfileNavigationSection
-            activeSection={activeSection}
-            onSectionChange={handleSectionChange}
-            hasUnsavedChanges={hasUnsavedChanges}
-          />
+    <>
+      <Prompt
+        when={hasUnsavedChanges}
+        message="Do you want to leave this page? Your unapplied changes will be discarded."
+      />
+      <div className="wdk-RecordContainer wdk-RecordContainer__withSidebar">
+        <div className="wdk-RecordSidebarContainer">
+          <div className="wdk-RecordSidebar">
+            <ProfileNavigationSection
+              activeSection={activeSection}
+              onSectionChange={handleSectionChange}
+              hasUnsavedChanges={hasUnsavedChanges}
+            />
+          </div>
+          <div className="wdk-RecordMain">{renderSectionContent()}</div>
         </div>
-        <div className="wdk-RecordMain">{renderSectionContent()}</div>
       </div>
-    </div>
+    </>
   );
 }
 
