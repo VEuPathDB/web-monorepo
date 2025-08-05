@@ -1,4 +1,5 @@
-import React, { useState, ReactNode } from 'react';
+import React, { useState, ReactNode, useEffect } from 'react';
+import { useLocation } from 'react-router';
 import { wrappable } from '../../Utils/ComponentUtils';
 import ApplicationSpecificProperties from '../../Views/User/ApplicationSpecificProperties';
 import UserPassword from '../../Views/User/Password/UserPassword';
@@ -6,6 +7,7 @@ import UserIdentity from '../../Views/User/UserIdentity';
 import UserSubscriptionManagement from '../../Views/User/UserSubscriptionManagement';
 import ProfileNavigationSection, {
   SectionKey,
+  useCurrentProfileNavigationSection,
 } from '../../Views/User/ProfileNavigationSection';
 import { useWdkService } from '../../Hooks/WdkServiceHook';
 import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
@@ -46,7 +48,8 @@ function UserAccountForm(props: UserAccountFormProps) {
     onDiscardChanges,
   } = props;
 
-  const [activeSection, setActiveSection] = useState<SectionKey>('account');
+  const [activeSection, navigateToSection] =
+    useCurrentProfileNavigationSection();
   const hasUnsavedChanges = formStatus === 'modified';
 
   const vocabulary = useWdkService(
@@ -66,7 +69,7 @@ function UserAccountForm(props: UserAccountFormProps) {
     if (discardChanges && onDiscardChanges) {
       onDiscardChanges();
     }
-    setActiveSection(sectionKey);
+    navigateToSection(sectionKey);
   };
 
   // Renders the content for the active section

@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { wrappable } from '../../Utils/ComponentUtils';
 import Dialog from '../../Components/Overlays/Dialog';
+import { useHistory, useLocation } from 'react-router';
 
-// Define supported section keys
-export type SectionKey =
-  | 'account'
-  | 'subscription'
-  | 'preferences'
-  | 'security';
+const SECTION_KEYS = [
+  'account',
+  'subscription',
+  'preferences',
+  'security',
+] as const;
+export type SectionKey = typeof SECTION_KEYS[number];
 
 interface Section {
   key: SectionKey;
@@ -125,3 +127,45 @@ const ProfileNavigationSection: React.FC<ProfileNavigationSectionProps> = ({
 };
 
 export default wrappable(ProfileNavigationSection);
+
+// section key helpers
+
+function isSectionKey(s: string): s is SectionKey {
+  return SECTION_KEYS.includes(s as SectionKey);
+}
+
+export const useCurrentProfileNavigationSection = (): [
+  SectionKey,
+  (section: SectionKey) => void
+] => {
+  const location = useLocation();
+  const history = useHistory();
+
+  // Get initial section from URL hash
+  const initialSection = useMemo(() => {
+    const cleanedHash = location.hash.replace(/^#/, '');
+    return isSectionKey(cleanedHash) && SECTION_KEYS.includes(cleanedHash)
+      ? cleanedHash
+      : SECTION_KEYS[0];
+  }, [location.hash]);
+
+  const [currentSection, setCurrentSection] =
+    useState<SectionKey>(initialSection);
+
+  // Listen for location changes (browser back/forward)
+  useEffect(() => {
+    const cleanedHash = location.hash.replace(/^#/, '');
+    const validSection =
+      isSectionKey(cleanedHash) && SECTION_KEYS.includes(cleanedHash)
+        ? cleanedHash
+        : SECTION_KEYS[0];
+    setCurrentSection(validSection);
+  }, [location.hash]);
+
+  // Function to navigate to a section
+  const navigateToSection = (sectionKey: SectionKey) => {
+    history.push(`${location.pathname}${location.search}#${sectionKey}`);
+  };
+
+  return [currentSection, navigateToSection];
+};
