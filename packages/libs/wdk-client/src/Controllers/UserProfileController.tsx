@@ -4,6 +4,7 @@ import {
   submitProfileForm,
   profileFormUpdate,
   profileFormSubmissionStatus,
+  profileFormReset,
 } from '../Actions/UserActions';
 import { UserProfileFormData } from '../StoreModules/UserProfileStoreModule';
 import PageController from '../Core/Controllers/PageController';
@@ -17,10 +18,7 @@ const actionCreators = {
   // Note that `resetProfileForm` takes as an arg the unmodified data with which it "resets".
   // This is provided by local state (`initialUserStateRef`) in `UserFormContainer`,
   // rather than by the redux store, as you might expect.
-  resetProfileForm: (formData: UserProfileFormData) => [
-    profileFormUpdate(formData),
-    profileFormSubmissionStatus('new', formData),
-  ],
+  resetProfileForm: profileFormReset,
 };
 
 type StateProps = Pick<RootState, 'globalData'> & RootState['userProfile'];

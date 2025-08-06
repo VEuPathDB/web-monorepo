@@ -91,7 +91,6 @@ export interface UserFormContainerProps {
   hiddenFormMessage: string;
   titleText: string;
   introComponent?: React.ComponentType;
-  statusDisplayFunction?: typeof interpretFormStatus;
   showChangePasswordBox: boolean;
   submitButtonText: string;
   onSubmit: (userData: UserProfileFormData) => void;
@@ -186,18 +185,6 @@ function UserFormContainer(props: UserFormContainerProps) {
     }
   }
 
-  const dataForStatus = props.previousUserFormData ?? props.userFormData;
-
-  // TO DO: probably remove formInterpreter and its messageElement,
-  // but first figure out where statusDisplayFunction is provided
-  // and make sure we don't lose functionality.
-  const formInterpreter = props.statusDisplayFunction || interpretFormStatus;
-  const { messageElement, disableSubmit } = formInterpreter(
-    props.formStatus,
-    dataForStatus ?? {},
-    props.errorMessage
-  );
-
   return (
     <div className="wdk-UserProfile">
       {props.shouldHideForm ? (
@@ -206,11 +193,9 @@ function UserFormContainer(props: UserFormContainerProps) {
         <>
           <h1>{props.titleText}</h1>
           {props.introComponent ? <props.introComponent /> : <IntroComponent />}
-          {messageElement}
           <UserAccountForm
             user={props.userFormData ?? {}}
             showChangePasswordBox={props.showChangePasswordBox}
-            disableSubmit={disableSubmit}
             onEmailChange={onEmailChange}
             onConfirmEmailChange={onConfirmEmailChange}
             onPropertyChange={onPropertyChange}

@@ -13,6 +13,10 @@ import ProfileNavigationSection, {
 import { useWdkService } from '../../Hooks/WdkServiceHook';
 import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
 import { UserPreferences } from '../../Utils/WdkUser';
+import {
+  SaveButton,
+  OutlinedButton,
+} from '@veupathdb/coreui/lib/components/buttons';
 
 // Props interface
 export interface UserAccountFormProps {
@@ -23,7 +27,6 @@ export interface UserAccountFormProps {
   onEmailChange: (value: string) => void;
   onConfirmEmailChange: (value: string) => void;
   showChangePasswordBox: boolean;
-  disableSubmit: boolean;
   onUserDataSubmit: (event: React.FormEvent) => void;
   submitButtonText: string;
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
@@ -43,7 +46,6 @@ function UserAccountForm(props: UserAccountFormProps) {
     onEmailChange,
     onConfirmEmailChange,
     showChangePasswordBox,
-    disableSubmit,
     onUserDataSubmit,
     submitButtonText,
     formStatus,
@@ -110,19 +112,28 @@ function UserAccountForm(props: UserAccountFormProps) {
             <p>
               <i className="fa fa-asterisk"></i> = required
             </p>
-            <div style={{ marginTop: '1em' }}>
-              <input
-                type="submit"
-                value={submitButtonText}
-                disabled={disableSubmit}
+            <div
+              style={{
+                marginTop: '1em',
+                display: 'flex',
+                gap: '0.5em',
+                alignItems: 'center',
+              }}
+            >
+              <SaveButton
+                formStatus={formStatus}
+                onPress={(e) => {
+                  e.preventDefault();
+                  onUserDataSubmit(e);
+                }}
+                customText={{
+                  save: submitButtonText,
+                }}
               />
-              <button
-                type="button"
-                style={{ marginLeft: '0.5em' }}
-                onClick={() => onDiscardChanges && onDiscardChanges()}
-              >
-                Reset form
-              </button>
+              <OutlinedButton
+                text="Reset form"
+                onPress={() => onDiscardChanges && onDiscardChanges()}
+              />
             </div>
           </form>
         );
@@ -141,19 +152,28 @@ function UserAccountForm(props: UserAccountFormProps) {
               propDefs={wdkConfig.userProfileProperties}
               onPreferenceChange={onPreferenceChange}
             />
-            <div style={{ marginTop: '1em' }}>
-              <input
-                type="submit"
-                value={submitButtonText}
-                disabled={disableSubmit}
+            <div
+              style={{
+                marginTop: '1em',
+                display: 'flex',
+                gap: '0.5em',
+                alignItems: 'center',
+              }}
+            >
+              <SaveButton
+                formStatus={formStatus}
+                onPress={(e) => {
+                  e.preventDefault();
+                  onUserDataSubmit(e);
+                }}
+                customText={{
+                  save: submitButtonText,
+                }}
               />
-              <button
-                type="button"
-                style={{ marginLeft: '0.5em' }}
-                onClick={() => onDiscardChanges && onDiscardChanges()}
-              >
-                Reset form
-              </button>
+              <OutlinedButton
+                text="Reset form"
+                onPress={() => onDiscardChanges && onDiscardChanges()}
+              />
             </div>
           </form>
         );
@@ -198,20 +218,26 @@ function UserAccountForm(props: UserAccountFormProps) {
         <p>
           <i className="fa fa-asterisk"></i> = required
         </p>
-        <div style={{ marginTop: '1em' }}>
-          <input
-            type="submit"
-            value={submitButtonText}
-            disabled={disableSubmit}
+        <div
+          style={{
+            marginTop: '1em',
+            display: 'flex',
+            gap: '0.5em',
+            alignItems: 'center',
+          }}
+        >
+          <SaveButton
+            formStatus={formStatus}
+            onPress={(e) => {
+              e.preventDefault();
+              onUserDataSubmit(e);
+            }}
+            customText={{
+              save: submitButtonText,
+            }}
           />
           {onDiscardChanges && (
-            <button
-              type="button"
-              style={{ marginLeft: '0.5em' }}
-              onClick={onDiscardChanges}
-            >
-              Reset form
-            </button>
+            <OutlinedButton text="Reset form" onPress={onDiscardChanges} />
           )}
         </div>
       </form>

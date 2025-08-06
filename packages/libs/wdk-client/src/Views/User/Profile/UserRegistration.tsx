@@ -2,9 +2,7 @@ import React from 'react';
 import { wrappable } from '../../../Utils/ComponentUtils';
 import UserFormContainer, {
   UserFormContainerProps,
-  FormMessage,
   getDescriptionBoxStyle,
-  interpretFormStatus as defaultInterpretFormStatus,
 } from '../../../Views/User/UserFormContainer';
 import { UserProfileFormData } from '../../../StoreModules/UserProfileStoreModule';
 import { GlobalData } from '../../../StoreModules/GlobalData';
@@ -26,53 +24,6 @@ interface UserRegistrationProps {
   };
   initialFormFields?: Record<string, string>;
 }
-
-const interpretFormStatus = (
-  formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error',
-  userFormData: UserProfileFormData,
-  errorMessage?: string
-) => {
-  // configure properties for banner and submit button enabling based on status
-  let messageClass = 'wdk-UserProfile-banner ';
-  let message: string | React.ReactElement = '';
-  let disableSubmit = false;
-  switch (formStatus) {
-    case 'new':
-      disableSubmit = true;
-      break;
-    case 'modified':
-      // don't give status and enable submit button
-      break;
-    case 'pending':
-      message = 'Submitting registration...';
-      messageClass += 'wdk-UserProfile-pending';
-      disableSubmit = true;
-      break;
-    case 'success':
-      // special case for success; include Joint-BRC advertisement
-      message = (
-        <div>
-          <p>
-            You have registered successfully. Please check your email (inbox and
-            spam folder) for a temporary password.
-          </p>
-        </div>
-      );
-      messageClass += 'wdk-UserProfile-success';
-      disableSubmit = true; // same as 'new'
-      break;
-    case 'error':
-      message = errorMessage || '';
-      messageClass += 'wdk-UserProfile-error';
-  }
-  const messageElement =
-    message === '' ? null : typeof message === 'string' ? (
-      <FormMessage messageClass={messageClass} message={message} />
-    ) : (
-      <div className={messageClass}>{message}</div>
-    );
-  return { messageElement, disableSubmit };
-};
 
 const IntroText: React.FC = () => (
   <div style={{ width: '70%', textAlign: 'center', margin: '15px' }}>
@@ -157,6 +108,21 @@ const PrivacyPolicy: React.FC = () => (
  */
 const UserRegistration: React.FC<UserRegistrationProps> = (props) => (
   <div>
+    {props.formStatus === 'success' && (
+      <div className="wdk-UserProfile-banner wdk-UserProfile-success">
+        <div>
+          <p>
+            You have registered successfully. Please check your email (inbox and
+            spam folder) for a temporary password.
+          </p>
+        </div>
+      </div>
+    )}
+    {props.formStatus === 'error' && props.errorMessage && (
+      <div className="wdk-UserProfile-banner wdk-UserProfile-error">
+        {props.errorMessage}
+      </div>
+    )}
     <UserFormContainer
       globalData={props.globalData}
       userFormData={props.userFormData}
@@ -170,7 +136,6 @@ const UserRegistration: React.FC<UserRegistrationProps> = (props) => (
       hiddenFormMessage="You must log out before registering a new user."
       titleText="Registration"
       introComponent={IntroText}
-      statusDisplayFunction={interpretFormStatus}
       showChangePasswordBox={false}
       submitButtonText="Register"
       onSubmit={props.userEvents.submitRegistrationForm}
