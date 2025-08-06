@@ -28,6 +28,7 @@ export interface UserAccountFormProps {
   submitButtonText: string;
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
   onDiscardChanges?: () => void;
+  singleFormMode?: boolean;
 }
 
 /**
@@ -47,6 +48,7 @@ function UserAccountForm(props: UserAccountFormProps) {
     submitButtonText,
     formStatus,
     onDiscardChanges,
+    singleFormMode = false,
   } = props;
 
   const [activeSection, navigateToSection] =
@@ -171,9 +173,68 @@ function UserAccountForm(props: UserAccountFormProps) {
     }
   };
 
+  // Renders combined account + preferences form for registration
+  const renderSingleForm = (): ReactNode => {
+    return (
+      <form
+        className="wdk-UserProfile-profileForm wdk-UserProfile-registrationForm"
+        name="userRegistrationForm"
+        onSubmit={onUserDataSubmit}
+      >
+        <UserIdentity
+          user={user}
+          onEmailChange={onEmailChange}
+          onConfirmEmailChange={onConfirmEmailChange}
+          onPropertyChange={onPropertyChange}
+          propDefs={wdkConfig.userProfileProperties}
+          vocabulary={vocabulary}
+        />
+        <ApplicationSpecificProperties
+          user={user}
+          onPropertyChange={onPropertyChange}
+          propDefs={wdkConfig.userProfileProperties}
+          onPreferenceChange={onPreferenceChange}
+        />
+        <p>
+          <i className="fa fa-asterisk"></i> = required
+        </p>
+        <div style={{ marginTop: '1em' }}>
+          <input
+            type="submit"
+            value={submitButtonText}
+            disabled={disableSubmit}
+          />
+          {onDiscardChanges && (
+            <button
+              type="button"
+              style={{ marginLeft: '0.5em' }}
+              onClick={onDiscardChanges}
+            >
+              Reset form
+            </button>
+          )}
+        </div>
+      </form>
+    );
+  };
+
   // Wait for vocabulary to load
   if (vocabulary == null) return null;
 
+  // Render single form mode for registration
+  if (singleFormMode) {
+    return (
+      <>
+        <Prompt
+          when={hasUnsavedChanges}
+          message="Do you want to leave this page? Your unapplied changes will be discarded."
+        />
+        {renderSingleForm()}
+      </>
+    );
+  }
+
+  // Render tabbed interface for profile editing
   return (
     <>
       <Prompt

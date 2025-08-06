@@ -95,6 +95,7 @@ export interface UserFormContainerProps {
   showChangePasswordBox: boolean;
   submitButtonText: string;
   onSubmit: (userData: UserProfileFormData) => void;
+  singleFormMode?: boolean;
 }
 
 function UserFormContainer(props: UserFormContainerProps) {
@@ -219,6 +220,7 @@ function UserFormContainer(props: UserFormContainerProps) {
             wdkConfig={props.globalData.config}
             onDiscardChanges={onDiscardChanges}
             formStatus={props.formStatus}
+            singleFormMode={props.singleFormMode}
           />
         </>
       )}
