@@ -1,8 +1,6 @@
 import React from 'react';
 import { wrappable } from '../../../Utils/ComponentUtils';
-import UserFormContainer, {
-  UserFormContainerPropTypes,
-} from '../../../Views/User/UserFormContainer';
+import UserFormContainer from '../../../Views/User/UserFormContainer';
 import '../../../Views/User/Profile/UserProfile.scss';
 
 /**
@@ -21,6 +19,6 @@ let UserProfile = (props) => (
   />
 );
 
-UserProfile.propTypes = UserFormContainerPropTypes;
+// PropTypes removed - component props are validated by TypeScript in UserFormContainer
 
 export default wrappable(UserProfile);
