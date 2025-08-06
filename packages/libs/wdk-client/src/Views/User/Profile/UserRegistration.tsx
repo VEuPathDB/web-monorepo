@@ -1,16 +1,41 @@
 import React from 'react';
 import { wrappable } from '../../../Utils/ComponentUtils';
 import UserFormContainer, {
-  UserFormContainerPropTypes,
+  UserFormContainerProps,
   FormMessage,
   getDescriptionBoxStyle,
+  interpretFormStatus as defaultInterpretFormStatus,
 } from '../../../Views/User/UserFormContainer';
+import { UserProfileFormData } from '../../../StoreModules/UserProfileStoreModule';
+import { GlobalData } from '../../../StoreModules/GlobalData';
 
-let interpretFormStatus = (formStatus, userFormData, errorMessage) => {
+// Props interface based on what UserRegistrationController actually passes
+interface UserRegistrationProps {
+  globalData: GlobalData;
+  userFormData?: UserProfileFormData;
+  previousUserFormData?: UserProfileFormData;
+  formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
+  errorMessage?: string;
+  userEvents: {
+    updateProfileForm: (newState: UserProfileFormData) => void;
+    submitRegistrationForm: (formData: UserProfileFormData) => void;
+    conditionallyTransition: (
+      condition: (user: any) => boolean,
+      path: string
+    ) => void;
+  };
+  initialFormFields?: Record<string, string>;
+}
+
+const interpretFormStatus = (
+  formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error',
+  userFormData: UserProfileFormData,
+  errorMessage?: string
+) => {
   // configure properties for banner and submit button enabling based on status
-  let messageClass = 'wdk-UserProfile-banner ',
-    message = '',
-    disableSubmit = false;
+  let messageClass = 'wdk-UserProfile-banner ';
+  let message: string | React.ReactElement = '';
+  let disableSubmit = false;
   switch (formStatus) {
     case 'new':
       disableSubmit = true;
@@ -37,16 +62,19 @@ let interpretFormStatus = (formStatus, userFormData, errorMessage) => {
       disableSubmit = true; // same as 'new'
       break;
     case 'error':
-      message = errorMessage;
+      message = errorMessage || '';
       messageClass += 'wdk-UserProfile-error';
   }
-  let messageElement = (
-    <FormMessage messageClass={messageClass} message={message} />
-  );
+  const messageElement =
+    message === '' ? null : typeof message === 'string' ? (
+      <FormMessage messageClass={messageClass} message={message} />
+    ) : (
+      <div className={messageClass}>{message}</div>
+    );
   return { messageElement, disableSubmit };
 };
 
-let IntroText = () => (
+const IntroText: React.FC = () => (
   <div style={{ width: '70%', textAlign: 'center', margin: '15px' }}>
     IMPORTANT: If you already registered in another site
     <br />
@@ -57,7 +85,7 @@ let IntroText = () => (
   </div>
 );
 
-let WhyRegister = () => (
+const WhyRegister: React.FC = () => (
   <div style={getDescriptionBoxStyle()}>
     <h4>Why register/subscribe?</h4>
     <div id="cirbulletlist">
@@ -72,7 +100,7 @@ let WhyRegister = () => (
   </div>
 );
 
-let PrivacyPolicy = () => (
+const PrivacyPolicy: React.FC = () => (
   <div style={getDescriptionBoxStyle()}>
     <h4>
       <a
@@ -126,13 +154,19 @@ let PrivacyPolicy = () => (
 
 /**
  * React component for the user profile/account form
- * @type {*|Function}
  */
-let UserRegistration = (props) => (
+const UserRegistration: React.FC<UserRegistrationProps> = (props) => (
   <div>
     <UserFormContainer
-      {...props}
-      shouldHideForm={!props.globalData.user.isGuest}
+      globalData={props.globalData}
+      userFormData={props.userFormData}
+      previousUserFormData={props.previousUserFormData}
+      formStatus={props.formStatus}
+      errorMessage={props.errorMessage}
+      userEvents={{
+        updateProfileForm: props.userEvents.updateProfileForm,
+      }}
+      shouldHideForm={!props.globalData.user?.isGuest}
       hiddenFormMessage="You must log out before registering a new user."
       titleText="Registration"
       introComponent={IntroText}
@@ -141,7 +175,7 @@ let UserRegistration = (props) => (
       submitButtonText="Register"
       onSubmit={props.userEvents.submitRegistrationForm}
     />
-    {!props.globalData.user.isGuest ? (
+    {!props.globalData.user?.isGuest ? (
       ''
     ) : (
       <div>
@@ -151,7 +185,5 @@ let UserRegistration = (props) => (
     )}
   </div>
 );
-
-UserRegistration.propTypes = UserFormContainerPropTypes;
 
 export default wrappable(UserRegistration);

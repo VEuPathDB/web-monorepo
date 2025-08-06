@@ -77,9 +77,9 @@ export function IntroComponent() {
   );
 }
 
-interface UserFormContainerProps {
-  globalData: { config: any };
-  userFormData: UserProfileFormData;
+export interface UserFormContainerProps {
+  globalData: { config?: any };
+  userFormData?: UserProfileFormData;
   previousUserFormData?: UserProfileFormData;
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
   errorMessage?: string;
@@ -98,11 +98,13 @@ interface UserFormContainerProps {
 }
 
 function UserFormContainer(props: UserFormContainerProps) {
-  const initialUserStateRef = useRef<UserProfileFormData>(props.userFormData);
+  const initialUserStateRef = useRef<UserProfileFormData>(
+    props.userFormData ?? {}
+  );
 
   useEffect(() => {
     if (initialUserStateRef.current == null) {
-      initialUserStateRef.current = props.userFormData;
+      initialUserStateRef.current = props.userFormData ?? {};
     }
   }, [props.userFormData]);
 
@@ -127,7 +129,7 @@ function UserFormContainer(props: UserFormContainerProps) {
       props.userEvents.updateProfileForm(newState);
       return newState;
     };
-    const handler = getChangeHandler(field, updater, props.userFormData);
+    const handler = getChangeHandler(field, updater, props.userFormData ?? {});
     handler(newValue);
   }
 
@@ -141,7 +143,7 @@ function UserFormContainer(props: UserFormContainerProps) {
 
   function onPropertyChange(field: string) {
     return (newValue: any): void => {
-      const previousState = props.userFormData;
+      const previousState = props.userFormData ?? {};
       const newProps = { ...previousState.properties, [field]: newValue };
       props.userEvents.updateProfileForm({
         ...previousState,
@@ -160,7 +162,7 @@ function UserFormContainer(props: UserFormContainerProps) {
 
   function onSubmit(event: React.FormEvent): void {
     event.preventDefault();
-    validateEmailConfirmation(props.userFormData);
+    validateEmailConfirmation(props.userFormData ?? {});
     const inputs = document.querySelectorAll(
       'input[type=text],input[type=email]'
     );
@@ -171,7 +173,7 @@ function UserFormContainer(props: UserFormContainerProps) {
       }
     });
     if (valid) {
-      props.onSubmit(props.userFormData);
+      props.onSubmit(props.userFormData ?? {});
     }
   }
 
@@ -191,7 +193,7 @@ function UserFormContainer(props: UserFormContainerProps) {
   const formInterpreter = props.statusDisplayFunction || interpretFormStatus;
   const { messageElement, disableSubmit } = formInterpreter(
     props.formStatus,
-    dataForStatus,
+    dataForStatus ?? {},
     props.errorMessage
   );
 
@@ -205,7 +207,7 @@ function UserFormContainer(props: UserFormContainerProps) {
           {props.introComponent ? <props.introComponent /> : <IntroComponent />}
           {messageElement}
           <UserAccountForm
-            user={props.userFormData}
+            user={props.userFormData ?? {}}
             showChangePasswordBox={props.showChangePasswordBox}
             disableSubmit={disableSubmit}
             onEmailChange={onEmailChange}
