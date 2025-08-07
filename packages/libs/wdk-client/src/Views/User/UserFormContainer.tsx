@@ -1,5 +1,4 @@
-import React, { useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useRef } from 'react';
 import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
 import { getChangeHandler, wrappable } from '../../Utils/ComponentUtils';
 import { UserPreferences } from '../../Utils/WdkUser';
@@ -24,22 +23,6 @@ export function FormMessage({
   messageClass: string;
 }) {
   return message === '' ? null : <div className={messageClass}>{message}</div>;
-}
-
-export function IntroComponent() {
-  return (
-    <div style={{ paddingBottom: '2em' }}>
-      Review our&nbsp;
-      <Link
-        title="View the privacy policy in a new tab"
-        target="_blank"
-        to="/static-content/privacyPolicy.html"
-      >
-        <b>VEuPathDB Websites Privacy Policy</b>
-      </Link>
-      .
-    </div>
-  );
 }
 
 export interface UserFormContainerProps {
@@ -152,7 +135,7 @@ function UserFormContainer(props: UserFormContainerProps) {
       ) : (
         <>
           <h1>{props.titleText}</h1>
-          {props.introComponent ? <props.introComponent /> : <IntroComponent />}
+          {props.introComponent && <props.introComponent />}
           <UserAccountForm
             user={currentUserFormData}
             onEmailChange={onEmailChange}

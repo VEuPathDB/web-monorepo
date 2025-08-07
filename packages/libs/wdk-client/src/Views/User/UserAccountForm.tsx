@@ -1,5 +1,4 @@
 import React, { useState, ReactNode, useEffect } from 'react';
-import { useLocation } from 'react-router';
 import { Prompt } from 'react-router-dom';
 import { wrappable } from '../../Utils/ComponentUtils';
 import ApplicationSpecificProperties from '../../Views/User/ApplicationSpecificProperties';
@@ -185,9 +184,6 @@ function UserAccountForm(props: UserAccountFormProps) {
         return (
           <div>
             <UserPassword user={user} wdkConfig={wdkConfig} />
-            <p style={{ marginTop: '1em', fontStyle: 'italic' }}>
-              Password changes are handled independently above.
-            </p>
           </div>
         );
       default:
