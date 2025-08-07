@@ -96,10 +96,13 @@ export default function SaveButton({
               css={{
                 display: 'inline-block',
                 animation: 'spin 1s linear infinite',
+                transformOrigin: 'center 40%',
                 '@keyframes spin': {
                   '0%': { transform: 'rotate(0deg)' },
-                  '100%': { transform: 'rotate(360deg)' },
+                  '100%': { transform: 'rotate(-360deg)' },
                 },
+                marginRight: '0.5em',
+                marginTop: '2px',
               }}
             >
               <LoadingIcon style={{ fontSize: '1em' }} />
