@@ -126,7 +126,7 @@ function UserFormContainer(props: UserFormContainerProps) {
     );
     let valid = true;
     inputs.forEach((input) => {
-      if (input instanceof HTMLInputElement && !input.checkValidity()) {
+      if (input instanceof HTMLInputElement && !input.reportValidity()) {
         valid = false;
       }
     });
