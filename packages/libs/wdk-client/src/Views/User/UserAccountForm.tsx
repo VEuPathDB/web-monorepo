@@ -26,7 +26,6 @@ export interface UserAccountFormProps {
   onPreferenceChange: (prefs: UserPreferences) => void;
   onEmailChange: (value: string) => void;
   onConfirmEmailChange: (value: string) => void;
-  showChangePasswordBox: boolean;
   onUserDataSubmit: (event: React.FormEvent) => void;
   submitButtonText: string;
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
@@ -45,7 +44,6 @@ function UserAccountForm(props: UserAccountFormProps) {
     onPreferenceChange,
     onEmailChange,
     onConfirmEmailChange,
-    showChangePasswordBox,
     onUserDataSubmit,
     submitButtonText,
     formStatus,
@@ -186,9 +184,7 @@ function UserAccountForm(props: UserAccountFormProps) {
       case 'security':
         return (
           <div>
-            {showChangePasswordBox && (
-              <UserPassword user={user} wdkConfig={wdkConfig} />
-            )}
+            <UserPassword user={user} wdkConfig={wdkConfig} />
             <p style={{ marginTop: '1em', fontStyle: 'italic' }}>
               Password changes are handled independently above.
             </p>

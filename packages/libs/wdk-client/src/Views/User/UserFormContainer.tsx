@@ -56,7 +56,6 @@ export interface UserFormContainerProps {
   hiddenFormMessage: string;
   titleText: string;
   introComponent?: React.ComponentType;
-  showChangePasswordBox: boolean;
   submitButtonText: string;
   onSubmit: (userData: UserProfileFormData) => void;
   singleFormMode?: boolean;
@@ -156,7 +155,6 @@ function UserFormContainer(props: UserFormContainerProps) {
           {props.introComponent ? <props.introComponent /> : <IntroComponent />}
           <UserAccountForm
             user={currentUserFormData}
-            showChangePasswordBox={props.showChangePasswordBox}
             onEmailChange={onEmailChange}
             onConfirmEmailChange={onConfirmEmailChange}
             onPropertyChange={onPropertyChange}

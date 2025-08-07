@@ -136,7 +136,6 @@ const UserRegistration: React.FC<UserRegistrationProps> = (props) => (
       hiddenFormMessage="You must log out before registering a new user."
       titleText="Registration"
       introComponent={IntroText}
-      showChangePasswordBox={false}
       submitButtonText="Register"
       onSubmit={props.userEvents.submitRegistrationForm}
       singleFormMode={true}

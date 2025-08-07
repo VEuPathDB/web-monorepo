@@ -27,7 +27,7 @@ type DispatchProps = { userEvents: typeof actionCreators };
 
 type OwnProps = {
   introComponent?: React.ComponentType;
-  showChangePasswordBox?: boolean;
+  singleFormMode?: boolean;
 };
 
 type Props = DispatchProps & StateProps & OwnProps;
