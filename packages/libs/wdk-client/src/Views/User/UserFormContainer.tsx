@@ -16,41 +16,6 @@ export function getDescriptionBoxStyle() {
   };
 }
 
-export function interpretFormStatus(
-  formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error',
-  userFormData: UserProfileFormData,
-  errorMessage?: string
-) {
-  let messageClass = 'wdk-UserProfile-banner ',
-    message = '',
-    disableSubmit = false;
-  switch (formStatus) {
-    case 'new':
-      disableSubmit = true;
-      break;
-    case 'modified':
-      message = '*** You have unsaved changes ***';
-      messageClass += 'wdk-UserProfile-modified';
-      break;
-    case 'pending':
-      message = 'Saving changes...';
-      messageClass += 'wdk-UserProfile-pending';
-      disableSubmit = true;
-      break;
-    case 'success':
-      message = 'Your changes have been successfully saved.';
-      messageClass += 'wdk-UserProfile-success';
-      disableSubmit = true;
-      break;
-    case 'error':
-      message = errorMessage || '';
-      messageClass += 'wdk-UserProfile-error';
-  }
-  const messageElement =
-    message === '' ? null : <div className={messageClass}>{message}</div>;
-  return { messageElement, disableSubmit };
-}
-
 export function FormMessage({
   message,
   messageClass,
@@ -98,15 +63,8 @@ export interface UserFormContainerProps {
 }
 
 function UserFormContainer(props: UserFormContainerProps) {
-  const initialUserStateRef = useRef<UserProfileFormData>(
-    props.userFormData ?? {}
-  );
-
-  useEffect(() => {
-    if (initialUserStateRef.current == null) {
-      initialUserStateRef.current = props.userFormData ?? {};
-    }
-  }, [props.userFormData]);
+  const currentUserFormData = props.userFormData ?? {}; // can be missing in the registration form, of course
+  const initialUserStateRef = useRef<UserProfileFormData>(currentUserFormData);
 
   function validateEmailConfirmation(newState: UserProfileFormData): void {
     const userEmail = newState.email;
@@ -129,7 +87,7 @@ function UserFormContainer(props: UserFormContainerProps) {
       props.userEvents.updateProfileForm(newState);
       return newState;
     };
-    const handler = getChangeHandler(field, updater, props.userFormData ?? {});
+    const handler = getChangeHandler(field, updater, currentUserFormData);
     handler(newValue);
   }
 
@@ -143,7 +101,7 @@ function UserFormContainer(props: UserFormContainerProps) {
 
   function onPropertyChange(field: string) {
     return (newValue: any): void => {
-      const previousState = props.userFormData ?? {};
+      const previousState = currentUserFormData;
       const newProps = { ...previousState.properties, [field]: newValue };
       props.userEvents.updateProfileForm({
         ...previousState,
@@ -162,7 +120,7 @@ function UserFormContainer(props: UserFormContainerProps) {
 
   function onSubmit(event: React.FormEvent): void {
     event.preventDefault();
-    validateEmailConfirmation(props.userFormData ?? {});
+    validateEmailConfirmation(currentUserFormData);
     const inputs = document.querySelectorAll(
       'input[type=text],input[type=email]'
     );
@@ -173,7 +131,10 @@ function UserFormContainer(props: UserFormContainerProps) {
       }
     });
     if (valid) {
-      props.onSubmit(props.userFormData ?? {});
+      // Update the initial state reference to the current data being saved
+      // This ensures that "Reset form" will reset to the last saved state, not the original page load state
+      initialUserStateRef.current = currentUserFormData;
+      props.onSubmit(currentUserFormData);
     }
   }
 
@@ -194,7 +155,7 @@ function UserFormContainer(props: UserFormContainerProps) {
           <h1>{props.titleText}</h1>
           {props.introComponent ? <props.introComponent /> : <IntroComponent />}
           <UserAccountForm
-            user={props.userFormData ?? {}}
+            user={currentUserFormData}
             showChangePasswordBox={props.showChangePasswordBox}
             onEmailChange={onEmailChange}
             onConfirmEmailChange={onConfirmEmailChange}

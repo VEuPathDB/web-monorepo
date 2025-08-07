@@ -92,6 +92,10 @@ function UserAccountForm(props: UserAccountFormProps) {
   };
 
   // Renders the content for the active section
+  const disableResetButton =
+    formStatus === 'new' ||
+    formStatus === 'pending' ||
+    formStatus === 'success';
   const renderSectionContent = (): ReactNode => {
     switch (activeSection) {
       case 'account':
@@ -133,6 +137,7 @@ function UserAccountForm(props: UserAccountFormProps) {
               <OutlinedButton
                 text="Reset form"
                 onPress={() => onDiscardChanges && onDiscardChanges()}
+                disabled={disableResetButton}
               />
             </div>
           </form>
@@ -173,6 +178,7 @@ function UserAccountForm(props: UserAccountFormProps) {
               <OutlinedButton
                 text="Reset form"
                 onPress={() => onDiscardChanges && onDiscardChanges()}
+                disabled={disableResetButton}
               />
             </div>
           </form>
@@ -237,7 +243,11 @@ function UserAccountForm(props: UserAccountFormProps) {
             }}
           />
           {onDiscardChanges && (
-            <OutlinedButton text="Reset form" onPress={onDiscardChanges} />
+            <OutlinedButton
+              text="Reset form"
+              onPress={onDiscardChanges}
+              disabled={disableResetButton}
+            />
           )}
         </div>
       </form>
