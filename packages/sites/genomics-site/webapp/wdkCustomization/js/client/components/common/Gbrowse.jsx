@@ -3,7 +3,7 @@ import { once, debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { httpGet } from '@veupathdb/web-common/lib/util/http';
-import { JbrowseIframe } from '@veupathdb/web-common/lib/components/JbrowseIframe';
+import JbrowseIframe from './JBrowse2'; // stand-in for iframe component - it's not an iframe any more
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import newFeatureImage from '@veupathdb/wdk-client/lib/Core/Style/images/new-feature.png';
 
