@@ -81,7 +81,22 @@ class UserMenu extends React.Component {
 
     return (
       <div className="box UserMenu">
-        <Icon className="UserMenu-Icon" fa={iconClass} />
+        <div className="UserMenu-IconContainer">
+          <Icon className="UserMenu-Icon" fa={iconClass} />
+          {/* TODO: Replace isGuest check with isSubscribed property when available */}
+          {isGuest === false && (
+            <Icon
+              className="UserMenu-StatusIcon UserMenu-StatusIcon--success"
+              fa="check-circle"
+            />
+          )}
+          {isGuest === true && (
+            <Icon
+              className="UserMenu-StatusIcon UserMenu-StatusIcon--warning"
+              fa="exclamation-triangle"
+            />
+          )}
+        </div>
         <span className="UserMenu-Title">
           {typeof isGuest === 'undefined'
             ? '...'

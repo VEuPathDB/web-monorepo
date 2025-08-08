@@ -11,9 +11,30 @@ $white: #e0e0e0;
   padding-left: 2em;
   margin: -0.75em 0;
 
+  .UserMenu-IconContainer {
+    position: relative;
+    display: inline-block;
+  }
+
   .UserMenu-Icon {
     font-size: 30px;
     opacity: 0.5;
+  }
+
+  .UserMenu-StatusIcon {
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    font-size: 16px;
+    background: transparent;
+
+    &--success {
+      color: #28a745;
+    }
+
+    &--warning {
+      color: #ffa500;
+    }
   }
   span.UserMenu-Title {
     opacity: 0.7;
