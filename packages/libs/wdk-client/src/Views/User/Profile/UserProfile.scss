@@ -92,4 +92,10 @@
   textarea {
     max-width: 73vw;
   }
+
+  // Override inline display for registration form fieldsets to stack vertically
+  &-registrationForm fieldset {
+    display: block;
+    width: 100%;
+  }
 }
