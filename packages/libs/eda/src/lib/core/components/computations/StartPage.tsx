@@ -152,9 +152,7 @@ export function StartPage(props: Props) {
                                   analysisState.analysis.descriptor
                                     .computations;
                                 const defaultComputationConfig =
-                                  plugin.createDefaultConfiguration(
-                                    studyMetadata.rootEntity
-                                  );
+                                  plugin.createDefaultConfiguration();
                                 /*
                                   The first instance of a configurable app will be derived by a default configuration.
                                   Here we're checking if a computation with a defaultConfig already exists.

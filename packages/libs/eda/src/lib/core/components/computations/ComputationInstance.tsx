@@ -31,8 +31,6 @@ export function ComputationInstance(props: Props) {
     isSingleAppMode,
   } = props;
 
-  const { rootEntity } = useStudyMetadata();
-
   const { analysis } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
 
@@ -49,7 +47,7 @@ export function ComputationInstance(props: Props) {
           ..._computation,
           descriptor: {
             ..._computation.descriptor,
-            configuration: plugin.createDefaultConfiguration(rootEntity),
+            configuration: plugin.createDefaultConfiguration(),
           },
         }
       : _computation;

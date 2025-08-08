@@ -317,6 +317,7 @@ function BipartiteNetworkViz(
   // These styles affect the network plot and will override the containerStyles if necessary (for example, width).
   const bipartiteNetworkSVGStyles = {
     columnPadding: 300,
+    topPadding: 60,
   };
 
   const plotRef = useUpdateThumbnailEffect(
@@ -357,7 +358,7 @@ function BipartiteNetworkViz(
     partitions: cleanedData ? cleanedData.partitions : undefined,
     showSpinner: data.pending,
     containerStyles: finalPlotContainerStyles,
-    svgStyleOverrides: bipartiteNetworkSVGStyles,
+    bipartiteNetworkStyleConfig: bipartiteNetworkSVGStyles,
     labelTruncationLength: 40,
     emptyNetworkContent,
     getNodeMenuActions,
