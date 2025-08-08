@@ -145,7 +145,6 @@ const UserRegistration: React.FC<UserRegistrationProps> = (props) => (
     ) : (
       <div>
         <WhyRegister />
-        <PrivacyPolicy />
       </div>
     )}
   </div>

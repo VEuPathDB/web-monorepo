@@ -3,10 +3,8 @@ import { connect } from 'react-redux';
 import {
   submitProfileForm,
   profileFormUpdate,
-  profileFormSubmissionStatus,
   profileFormReset,
 } from '../Actions/UserActions';
-import { UserProfileFormData } from '../StoreModules/UserProfileStoreModule';
 import PageController from '../Core/Controllers/PageController';
 import { wrappable } from '../Utils/ComponentUtils';
 import UserProfile from '../Views/User/Profile/UserProfile';
