@@ -63,7 +63,8 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
       <div className="UserMenu-Pane">
         {items.map(({ route, target, onClick, icon, text }) => {
           const key = icon; // previously we used the index but this was creating a warning
-          const className = 'UserMenu-Pane-Item';
+          const className =
+            'UserMenu-Pane-Item UserMenu-Pane-Item--interactive';
 
           if (onClick) {
             return (
@@ -89,12 +90,27 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
           }
 
           return (
-            <div key={key} className={className}>
+            <div key={key} className="UserMenu-Pane-Item">
               <Icon fa={icon + ' UserMenu-Pane-Item-Icon'} />
               {text}
             </div>
           );
         })}
+        <hr style={{ margin: '10px 0', borderColor: '#ccc' }} />
+        {isGuest === false ? (
+          <div className="UserMenu-Pane-Item">
+            <Icon fa="check-circle UserMenu-Pane-Item-Icon UserMenu-StatusIcon--success" />
+            Subscribed
+          </div>
+        ) : (
+          <Link
+            to="/user/profile/#subscription"
+            className="UserMenu-Pane-Item UserMenu-Pane-Item--interactive"
+          >
+            <Icon fa="exclamation-triangle UserMenu-Pane-Item-Icon UserMenu-StatusIcon--warning" />
+            Unsubscribed
+          </Link>
+        )}
       </div>
     );
   };

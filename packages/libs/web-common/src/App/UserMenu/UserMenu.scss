@@ -63,7 +63,7 @@ $white: #e0e0e0;
   display: flex;
   flex-direction: column;
   padding: 10px;
-  min-width: 150px;
+  min-width: 160px;
   position: absolute;
   border-radius: 10px;
   line-height: 1em;
@@ -105,12 +105,27 @@ $white: #e0e0e0;
     flex-direction: row;
     white-space: nowrap;
     cursor: pointer;
-    &:hover {
+
+    &--interactive:hover {
       font-weight: 500;
+    }
+
+    &:not(&--interactive) {
+      cursor: default;
     }
     .UserMenu-Pane-Item-Icon {
       width: 20px;
       margin-right: 10px;
+    }
+  }
+
+  .UserMenu-StatusIcon {
+    &--success {
+      color: #28a745 !important;
+    }
+
+    &--warning {
+      color: #ffa500 !important;
     }
   }
 }
