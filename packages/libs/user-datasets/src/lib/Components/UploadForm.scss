@@ -25,10 +25,20 @@
     > label {
       font-size: medium;
     }
-
-    #data-set-name {
-      width: 300px;
-    }
+  }
+  #data-set-name {
+    min-width: 300px;
+  }
+  #data-set-summary {
+    width: 100%;
+  }
+  #data-set-description {
+    width: 100%;
+    height: 8em;
+  }
+  #data-set-url {
+    width: 100%;
+    max-width: 51em;
   }
   .additionalDetailsFormSection {
     > & {
@@ -60,6 +70,7 @@
 
     li > label {
       display: grid;
+      align-items: baseline;
       grid-template-columns: auto 10em 1fr;
       align-items: baseline;
 

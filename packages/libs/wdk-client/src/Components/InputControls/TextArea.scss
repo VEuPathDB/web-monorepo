@@ -1,0 +1,12 @@
+.TextArea-container {
+  display: inline-block;
+  aside {
+    font-size: 0.95em;
+    &.warn {
+      color: orange;
+    }
+    &.error {
+      color: red;
+    }
+  }
+}
