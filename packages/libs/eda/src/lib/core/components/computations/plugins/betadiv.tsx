@@ -17,7 +17,7 @@ import ScatterBetadivSVG from '../../visualizations/implementations/selectorIcon
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
+import { VariableCollectionSingleSelect } from '../../variableSelectors/VariableCollectionSingleSelect';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { entityTreeToArray } from '../../../utils/study-metadata';
 
@@ -171,7 +171,7 @@ export function BetaDivConfiguration(props: ComputationConfigProps) {
       <div className={cx()}>
         <div className={cx('-InputContainer')}>
           <span>Data</span>
-          <VariableCollectionSelectList
+          <VariableCollectionSingleSelect
             value={configuration.collectionVariable}
             onSelect={partial(changeConfigHandler, 'collectionVariable')}
             collectionPredicate={isNotAbsoluteAbundanceVariableCollection}

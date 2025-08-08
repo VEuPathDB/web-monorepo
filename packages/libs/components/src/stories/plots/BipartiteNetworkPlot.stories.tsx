@@ -114,7 +114,7 @@ const plotContainerStyles = {
   border: '1px solid #dedede',
   boxShadow: '1px 1px 4px #00000066',
 };
-const svgStyleOverrides = {
+const bipartiteNetworkStyleConfig = {
   columnPadding: 150,
   topPadding: 100,
 };
@@ -122,7 +122,7 @@ export const WithStyle = Template.bind({});
 WithStyle.args = {
   ...manyPointsData,
   containerStyles: plotContainerStyles,
-  svgStyleOverrides: svgStyleOverrides,
+  bipartiteNetworkStyleConfig: bipartiteNetworkStyleConfig,
   labelTruncationLength: 5,
 };
 
