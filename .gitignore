@@ -126,6 +126,9 @@ dist
 !.yarn/sdks
 !.yarn/versions
 
+
+# IDEs
+.idea/
 .DS_Store
 
 # AI

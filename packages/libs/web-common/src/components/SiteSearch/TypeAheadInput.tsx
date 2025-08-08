@@ -1,0 +1,554 @@
+import React, { useEffect, useRef, useState } from 'react';
+import { SEARCH_TERM_PARAM } from './SiteSearchConstants';
+import * as io from 'io-ts';
+
+import './SiteSearch.scss';
+import {
+  createJsonRequest,
+  FetchClient,
+  ioTransformer,
+} from '@veupathdb/http-utils';
+import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
+
+// region Keyboard
+
+//
+// Keyboard Event Helper Functions.
+//
+
+/**
+ * Tests whether the keyboard event had a modifier key press present.
+ *
+ * @param e Keyboard event to test.
+ *
+ * @return `true` if the keyboard event had a modifier key press present,
+ * otherwise `false`.
+ */
+const kbHasModifier = (e: React.KeyboardEvent<any>) =>
+  e.altKey || e.metaKey || e.ctrlKey || e.shiftKey;
+
+/**
+ * Tests whether the keyboard event had ONLY the "shift" modifier key press
+ * present.
+ *
+ * @param e Keyboard event to test.
+ *
+ * @return `true` if the keyboard event had the "shift" modifier and only the
+ * "shift" modifier press present, otherwise `false`.
+ */
+const kbHasOnlyShiftMod = (e: React.KeyboardEvent<any>) =>
+  !(e.altKey || e.metaKey || e.ctrlKey) && e.shiftKey;
+
+/**
+ * Tests whether the keyboard event was for a "Tab" key press.
+ *
+ * @param e Keyboard event to test.
+ *
+ * @return `true` if the keyboard event was for a "Tab" key press, otherwise
+ * `false`.
+ */
+const kbIsTab = (e: React.KeyboardEvent<any>) =>
+  e.code === 'Tab' || e.keyCode == 9;
+
+/**
+ * Tests whether the keyboard event was for a "Space" key press.
+ *
+ * @param e Keyboard event to test.
+ *
+ * @return `true` if the keyboard event was for a "Space" key press, otherwise
+ * `false`.
+ */
+const kbIsSpace = (e: React.KeyboardEvent<any>) =>
+  e.code === 'Space' || e.keyCode == 32;
+
+/**
+ * Tests whether the keyboard event was for an "ArrowRight" key press.
+ *
+ * @param e Keyboard event to test.
+ *
+ * @return `true` if the keyboard event was for an "ArrowRight" key press,
+ * otherwise `false`.
+ */
+const kbIsArrowRight = (e: React.KeyboardEvent<any>) =>
+  e.code === 'ArrowRight' || e.keyCode == 39;
+
+/**
+ * Tests whether the keyboard event was for an "ArrowDown" key press.
+ *
+ * @param e Keyboard event to test.
+ *
+ * @return `true` if the keyboard event was for an "ArrowDown" key press,
+ * otherwise `false`.
+ */
+const kbIsArrowDown = (e: React.KeyboardEvent<any>) =>
+  e.code === 'ArrowDown' || e.keyCode == 40;
+
+/**
+ * Tests whether the keyboard event was for an "ArrowUp" key press.
+ *
+ * @param e Keyboard event to test.
+ *
+ * @return `true` if the keyboard event was for an "ArrowUp" key press,
+ * otherwise `false`.
+ */
+const kbIsArrowUp = (e: React.KeyboardEvent<any>) =>
+  e.code === 'ArrowUp' || e.keyCode == 38;
+
+/**
+ * Tests whether the keyboard event was for an "Enter" key press.
+ *
+ * @param e Keyboard event to test.
+ *
+ * @return `true` if the keyboard event was for an "Enter" key press, otherwise
+ * `false`.
+ */
+const kbIsEnter = (e: React.KeyboardEvent<any>) =>
+  e.code === 'Enter' || e.keyCode == 13;
+
+/**
+ * Tests whether the keyboard event was for an "Escape" key press.
+ *
+ * @param e Keyboard event to test.
+ *
+ * @return `true` if the keyboard event was for an "Escape" key press, otherwise
+ * `false`.
+ */
+const kbIsEscape = (e: React.KeyboardEvent<any>) =>
+  e.code === 'Escape' || e.keyCode == 27;
+
+// endregion Keyboard
+
+// region Strings
+
+//
+// String Helper Functions
+//
+
+/**
+ * Returns the last word of the given string.
+ *
+ * @param value String from which the last word should be returned.
+ *
+ * @return The last word of the given string.
+ */
+const lastWordOf = (value: string) =>
+  ((arr: Array<string>) => (arr.length > 0 ? arr[arr.length - 1] : ''))(
+    value.split(/ +/)
+  );
+
+/**
+ * Replaces the last word in the given `original` string with the given
+ * `replacement` word(s), returning the new string.
+ *
+ * @param original Original string whose last word should be replaced.
+ *
+ * @param replacement Word that will replace the last word of the original
+ * string.
+ *
+ * @return A new string formed by replacing the last word of the `original`
+ * string with the given `replacement`.
+ */
+const replaceLastWord = (original: string, replacement: string) =>
+  original.substring(0, original.lastIndexOf(lastWordOf(original))) +
+  replacement;
+
+// endregion Strings
+
+// region Debouncer
+
+/**
+ * Debouncer Function Type.
+ *
+ * Represents a function that may be used to build a "debounced" or "debouncing"
+ * function by passing in a target function that takes a value of type `T` and
+ * returns nothing.
+ *
+ * The return value of a Debouncer function call will be a new function that
+ * wraps the given target function with debouncing.
+ *
+ * @param T Type of the value consumed by the function wrapped by and returned
+ * by the Debouncer function.
+ */
+type Debouncer<T> = (func: (value: T) => void) => (value: T) => void;
+
+/**
+ * Builds a new `Debouncer` function that may be used to build one or more
+ * functions that debounce on the same timer.
+ *
+ * @param delay Debouncing delay.
+ *
+ * @return A `Debouncer` function that may be used to build one or more
+ * functions that debounce on the same timer.
+ */
+function buildDebouncer<T>(delay: number): Debouncer<T> {
+  let timer: any;
+
+  return (func: (value: T) => any) => {
+    return (value: T) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => func(value), delay);
+    };
+  };
+}
+
+// endregion Debouncer
+
+// region TypeAheadAPI
+
+const TYPEAHEAD_PATH: string = 'suggest';
+
+const TypeAheadResponse = io.array(io.string);
+
+/**
+ * Wrapper for the SiteSearch Type-Ahead HTTP API.
+ */
+class TypeAheadAPI extends FetchClient {
+  typeAhead(query: string, cb: (values: Array<string>) => any) {
+    this.fetch(
+      createJsonRequest({
+        method: 'GET',
+        path: '?searchText=' + encodeURIComponent(query),
+        transformResponse: ioTransformer(TypeAheadResponse),
+      })
+    ).then(cb);
+  }
+}
+
+// endregion TypeAheadAPI
+
+// region TypeAheadInput
+
+const debounce = buildDebouncer<() => string>(250);
+
+export interface TypeAheadInputProps {
+  readonly siteSearchURL: string;
+  readonly inputReference: React.RefObject<HTMLInputElement>;
+  readonly searchString: string;
+  readonly placeHolderText?: string;
+  readonly recentSearches: string[];
+  readonly onRecentSearchSelect: (recentSearch: string) => void;
+  readonly onClearRecentSearches: () => void;
+}
+
+export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
+  const [suggestions, setSuggestions] = useState<Array<string>>([]);
+  const [hintValue, setHintValue] = useState('');
+  const [inputValue, setInputValue] = useState(props.searchString);
+  // "focus" follows mouse clicks, but not tabbing
+  const [hasFocus, setHasFocus] = useState(false);
+
+  const typeAheadAPI = new TypeAheadAPI({
+    baseUrl: ((ep) => (ep.endsWith('/') ? ep : ep + '/') + TYPEAHEAD_PATH)(
+      props.siteSearchURL
+    ),
+  });
+  const ulReference = useRef<HTMLUListElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const ulClassName =
+    suggestions.length == 0 ? 'type-ahead-hints hidden' : 'type-ahead-hints';
+
+  /**
+   * Updates the "suggestion" input with the given hint text value.
+   *
+   * @param hint Hint text to show.
+   */
+  const showHint = (hint: string) => {
+    if (inputValue.length == 0) {
+      setHintValue(hint);
+    } else if (hint.startsWith(lastWordOf(inputValue))) {
+      setHintValue(replaceLastWord(inputValue, hint));
+    } else {
+      setHintValue(inputValue + ' ' + hint);
+    }
+  };
+
+  /**
+   * Refocuses the user input field and clears the suggestions, "resetting" the
+   * state of the form.
+   */
+  const resetInput = () => {
+    props.inputReference.current?.focus();
+    setSuggestions([]);
+  };
+
+  /**
+   * Resets the "suggestion" input with the value pulled from the user input
+   * field.
+   */
+  const resetHint = () => {
+    setHintValue(inputValue);
+  };
+
+  /**
+   * "Selects" the suggested hint by updating the user input value to the value
+   * of the "suggestion" input.
+   */
+  const selectHint = () => {
+    setInputValue(hintValue + ' ');
+    resetInput();
+  };
+
+  /**
+   * Handles keyboard events on elements of the suggestion list.
+   *
+   * @param e Keyboard event to handle.
+   *
+   * @param suggestion Value of the suggestion element that the event originated
+   * from.
+   */
+  const onLiKeyDown = (
+    e: React.KeyboardEvent<HTMLLIElement>,
+    suggestion: string
+  ) => {
+    // Filter keyboard events with modifiers:
+    if (kbHasModifier(e)) {
+      // If the event was specifically a <Shift>+<Tab> combination then we want
+      // to reverse the focus by one element, either selecting the suggestion
+      // above the event source, or if the event source was the first
+      // suggestion, selecting the user input field itself.
+      if (kbHasOnlyShiftMod(e) && kbIsTab(e)) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (ulReference.current?.firstElementChild === e.currentTarget) {
+          props.inputReference.current?.focus();
+        } else {
+          (
+            e.currentTarget.previousElementSibling as HTMLLIElement | null
+          )?.focus();
+        }
+      }
+
+      // If the event was anything other than a <Shift>+<Tab> and had one or
+      // more modifier keys pressed, then we will disregard it.
+      else {
+        return;
+      }
+    }
+
+    // If the event was a <Space> or <ArrowRight> key press then select the hint
+    // that was the source of the event.  Additionally, prevent the default
+    // behavior of the action as otherwise we will create an extra space
+    // character in the user input field or scroll the page to the right.
+    else if (kbIsSpace(e) || kbIsArrowRight(e)) {
+      e.preventDefault();
+      e.stopPropagation();
+      selectHint();
+    }
+
+    // If the event was an <Enter> key press, then select the hint that was the
+    // source of the event.  We DO NOT prevent the default behavior here as the
+    // <Enter> key-up will cause the SiteSearch form to be submitted which is
+    // the desired behavior.
+    else if (kbIsEnter(e)) {
+      selectHint();
+    }
+
+    // If the event was an <ArrowUp> key press, then attempt to shift the focus
+    // to the element above the event source element.  If the event source
+    // element was the first suggestion item in the list, then the focus should
+    // be returned to the user input.
+    //
+    // Additionally, prevent the default behavior here as the up arrow will
+    // attempt to scroll the view up.
+    else if (kbIsArrowUp(e)) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (ulReference.current?.firstElementChild === e.currentTarget) {
+        props.inputReference.current?.focus();
+      } else {
+        (
+          e.currentTarget.previousElementSibling as HTMLLIElement | null
+        )?.focus();
+      }
+    }
+
+    // If the event was an <ArrowDown> or <Tab> key press, then attempt to shift
+    // the focus to the element below the event source element.  If the event
+    // source element was the last suggestion item in the list, then the focus
+    // should be returned to the top of the suggestion list.
+    //
+    // Additionally, prevent the default behavior here as the down arrow will
+    // attempt to scroll the view down, and the tab key will shift focus to
+    // whatever the next focus-able element on the page is.
+    else if (kbIsArrowDown(e) || kbIsTab(e)) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (ulReference.current?.lastElementChild === e.currentTarget) {
+        (
+          ulReference.current?.firstElementChild as HTMLLIElement | null
+        )?.focus();
+      } else {
+        (e.currentTarget.nextElementSibling as HTMLLIElement | null)?.focus();
+      }
+    }
+
+    // If the event was an <Escape> key press, "reset" the form.
+    else if (kbIsEscape(e)) {
+      resetInput();
+    }
+  };
+
+  /**
+   * Handles keyboard events on the user input element.
+   *
+   * @param e Keyboard event to handle.
+   */
+  const onInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // If the keyboard event has a modifier on it, ignore it.
+    // TODO: on <Shift>+<Tab> should we roll the focus back to the last
+    //       suggestion (provided there is such a suggestion)?
+    if (kbHasModifier(e)) {
+      return;
+    }
+
+    // If the event is an <ArrowDown> key press, attempt to focus the first
+    // suggestion (if such a suggestion exists).
+    //
+    // Additionally, prevent the default behavior of the event as it will
+    // attempt to scroll the view down.
+    else if (kbIsArrowDown(e)) {
+      e.preventDefault();
+      e.stopPropagation();
+      (ulReference.current?.firstElementChild as HTMLLIElement | null)?.focus();
+    }
+
+    // If the event is an <ArrowUp> key press, attempt to focus the last
+    // suggestion (if such a suggestion exists).
+    //
+    // Additionally, prevent the default behavior of the event as it will
+    // attempt to scroll the view up.
+    else if (kbIsArrowUp(e)) {
+      e.preventDefault();
+      e.stopPropagation();
+      (ulReference.current?.lastElementChild as HTMLLIElement | null)?.focus();
+    }
+
+    // If the event was an <Escape> key press, "reset" the form.
+    else if (kbIsEscape(e)) {
+      resetInput();
+    }
+
+    // If an item is selected, remove "focus"
+    else if (kbIsEnter(e)) {
+      setHasFocus(false);
+    }
+  };
+
+  const typeAhead = debounce((fn: () => string) => {
+    const value = fn();
+    if (lastWordOf(value).length >= 3)
+      typeAheadAPI.typeAhead(lastWordOf(value), setSuggestions);
+  });
+
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const element = e.currentTarget;
+
+    setInputValue(element.value);
+    setHintValue(element.value);
+    setSuggestions([]);
+
+    if (lastWordOf(element.value).length >= 3) typeAhead(() => element.value);
+  };
+
+  const selectRecentSearch = (recentSearch: string) => {
+    props.onRecentSearchSelect(recentSearch);
+    setInputValue(recentSearch);
+    setHasFocus(false);
+  };
+
+  // Show history if input is empty, or if input matches the term in the url
+  const showHistory =
+    hasFocus && (inputValue === '' || props.searchString === inputValue);
+
+  const suggestionItems = suggestions.map((suggestion) => (
+    <li
+      className="type-ahead-hint"
+      tabIndex={0}
+      key={suggestion}
+      onKeyDown={(e) => onLiKeyDown(e, suggestion)}
+      onFocus={() => showHint(suggestion)}
+      onBlur={resetHint}
+      onClick={selectHint}
+    >
+      {suggestion}
+    </li>
+  ));
+
+  const historyMenu = props.recentSearches.length
+    ? [
+        <li className="type-ahead-hint">
+          <strong>Your recent searches</strong>
+        </li>,
+        ...props.recentSearches.map((recentSearch) => (
+          <li
+            key={recentSearch}
+            className="type-ahead-hint"
+            tabIndex={0}
+            onClick={() => selectRecentSearch(recentSearch)}
+            onKeyDown={(e) => {
+              if (kbIsEnter(e)) {
+                selectRecentSearch(recentSearch);
+              }
+            }}
+          >
+            {recentSearch}
+          </li>
+        )),
+        <li
+          className="type-ahead-hint link"
+          tabIndex={0}
+          onClick={props.onClearRecentSearches}
+          onKeyDown={(e) => {
+            if (kbIsEnter(e)) {
+              props.onClearRecentSearches();
+            }
+          }}
+        >
+          Clear search history
+        </li>,
+      ]
+    : null;
+
+  useEffect(() => {
+    const clickHandler = (e: MouseEvent) => {
+      if (!(e.target instanceof HTMLElement)) return;
+      if (e.target.parentElement !== ulReference.current) {
+        setSuggestions([]);
+      }
+      if (!containerRef.current?.contains(e.target)) {
+        setHasFocus(false);
+      }
+    };
+
+    document.addEventListener('click', clickHandler);
+    return () => {
+      removeEventListener('click', clickHandler);
+    };
+  }, []);
+
+  return (
+    <div ref={containerRef} className="type-ahead">
+      <div className="type-ahead-input">
+        <input
+          name={SEARCH_TERM_PARAM}
+          type="input"
+          ref={props.inputReference}
+          value={inputValue}
+          key={props.searchString}
+          onChange={onInputChange}
+          onKeyDown={onInputKeyDown}
+          placeholder={props.placeHolderText}
+          onClick={() => setHasFocus(true)}
+        />
+        <input type="text" value={hintValue} tabIndex={-1} />
+      </div>
+      <ul className={ulClassName} ref={ulReference}>
+        {showHistory ? historyMenu : suggestionItems}
+      </ul>
+    </div>
+  );
+}
+
+// endregion TypeAheadInput

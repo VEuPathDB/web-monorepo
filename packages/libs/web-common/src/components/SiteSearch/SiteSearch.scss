@@ -94,23 +94,100 @@
     display: flex;
     justify-content: space-between;
     border-radius: 1.5em;
-    overflow: hidden;
+    position: relative;
+
+    > :first-child {
+      border-radius: 1.5em 0 0 1.5em;
+      overflow: hidden;
+    }
+
+    > :last-child {
+      border-radius: 0 1.5em 1.5em 0;
+      overflow: hidden;
+    }
 
     &:focus-within {
       box-shadow: 0 0 3pt 2pt #0067f4;
     }
 
-    input {
-      border: none !important;
-      border-radius: 0;
-      padding: 0.4em 0.9em !important;
+    div.type-ahead {
       width: 100%;
-      &:focus {
-        outline: none;
+
+      div.type-ahead-input {
+        position: relative;
+
+        input {
+          border: none !important;
+          padding: 0.4em 0.9em !important;
+          width: 100%;
+
+          &:focus {
+            outline: none;
+          }
+        }
+
+        input:first-child {
+          position: relative;
+          background: #00000000 !important;
+          z-index: 1;
+        }
+
+        input:nth-child(2) {
+          position: absolute;
+          top: 0;
+          left: 0;
+          z-index: 0;
+          color: gray;
+        }
+      }
+
+      ul.type-ahead-hints {
+        margin: 0.2em 0 0 0;
+        padding: 0;
+        list-style: none;
+        position: absolute;
+        background: #ededed;
+        overflow: hidden;
+        border-radius: 1em;
+        box-shadow: 0 0 1em rgba(0, 48, 76, 0.5);
+        left: 0;
+        right: 0;
+
+        li.type-ahead-hint {
+          padding: 0.2em 0 0.2em 1em;
+          text-align: left;
+
+          &[tabindex] {
+            cursor: pointer;
+            &:focus,
+            &:active,
+            &:hover {
+              background: #dedede;
+            }
+          }
+
+          &:first-child {
+            padding-top: 0.4em;
+          }
+
+          &:last-child {
+            padding-bottom: 0.4em;
+          }
+        }
       }
     }
 
-    button {
+    &__with-filters {
+      div.type-ahead {
+        ul.type-ahead-hints {
+          li.type-ahead-hint {
+            padding-left: 13ex;
+          }
+        }
+      }
+    }
+
+    > button {
       border: none;
       border-radius: 0;
       background: #6c757d;
