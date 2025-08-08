@@ -9,6 +9,7 @@ import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import ExternalResource from './ExternalResource';
 import { JbrowseIframe } from './JbrowseIframe';
 import { EdaScatterPlot } from './eda/EdaScatterPlot';
+import WdkService from '@veupathdb/wdk-client/lib/Service/WdkService';
 
 /**
  * Renders an Dataset graph with the provided rowData.
@@ -110,7 +111,18 @@ export default class DatasetGraph extends React.PureComponent {
     this.setState({ loading: true });
     this.request = httpGet(baseUrl + '&declareParts=1');
     this.request.promise().then((graphs) => {
-      this.setState({ graphs, visibleGraphs: [0], loading: false });
+      let visibleGraphs = [0];
+      if (typeof graphs === 'string') {
+        // indicates an error from the server; log
+        let error = 'Error from dataPlotter: ' + graphs;
+        // FIXME: Don't understand why this does not exist
+        //WdkService.submitError(error);
+        console.error(error);
+        // graphs not available; don't break the page
+        graphs = [];
+        visibleGraphs = [];
+      }
+      this.setState({ graphs, visibleGraphs, loading: false });
     });
   }
 
