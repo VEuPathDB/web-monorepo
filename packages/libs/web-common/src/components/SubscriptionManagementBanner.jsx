@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import FilledButton from '@veupathdb/coreui/dist/components/buttons/FilledButton';
+import FilledButton from '@veupathdb/coreui/lib/components/buttons/FilledButton';
 
 export function SubscriptionManagementBanner() {
   return (
