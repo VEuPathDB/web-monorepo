@@ -92,11 +92,6 @@ const ProfileNavigationSection: React.FC<ProfileNavigationSectionProps> = ({
             >
               {section.icon}
               {section.label}
-              {hasUnsavedChanges && activeSection === section.key && (
-                <span style={{ marginLeft: '1em', color: '#ff6b35' }}>
-                  <i>unsaved changes</i>
-                </span>
-              )}
             </div>
           ))}
         </div>

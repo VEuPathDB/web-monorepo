@@ -128,15 +128,14 @@ function UserAccountForm(props: UserAccountFormProps) {
                   e.preventDefault();
                   onUserDataSubmit(e);
                 }}
-                customText={{
-                  save: submitButtonText,
-                }}
               />
-              <OutlinedButton
-                text="Reset form"
-                onPress={() => onDiscardChanges && onDiscardChanges()}
-                disabled={disableResetButton}
-              />
+              {hasUnsavedChanges && (
+                <OutlinedButton
+                  text="Discard changes"
+                  onPress={() => onDiscardChanges && onDiscardChanges()}
+                  disabled={disableResetButton}
+                />
+              )}
             </div>
           </form>
         );
@@ -169,15 +168,14 @@ function UserAccountForm(props: UserAccountFormProps) {
                   e.preventDefault();
                   onUserDataSubmit(e);
                 }}
-                customText={{
-                  save: submitButtonText,
-                }}
               />
-              <OutlinedButton
-                text="Reset form"
-                onPress={() => onDiscardChanges && onDiscardChanges()}
-                disabled={disableResetButton}
-              />
+              {hasUnsavedChanges && (
+                <OutlinedButton
+                  text="Discard changes"
+                  onPress={() => onDiscardChanges && onDiscardChanges()}
+                  disabled={disableResetButton}
+                />
+              )}
             </div>
           </form>
         );
