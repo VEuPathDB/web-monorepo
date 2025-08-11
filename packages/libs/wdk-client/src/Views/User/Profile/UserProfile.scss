@@ -99,3 +99,37 @@
     width: 100%;
   }
 }
+
+.wdk-UserAccountForm {
+  display: flex;
+  gap: 20px;
+
+  .wdk-ProfileNavigationSection {
+    min-width: 250px;
+  }
+
+  .wdk-ProfileNavigationItems {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    margin-bottom: 1em;
+  }
+
+  .wdk-ProfileNavigationItem {
+    display: block;
+    margin: 0;
+    padding: 0.45em;
+    border-radius: 0.35em;
+    cursor: pointer;
+    border: 1px solid transparent;
+
+    &:hover {
+      border: 1px solid #d5eaf5;
+    }
+  }
+
+  .wdk-ProfileNavigationItem__active {
+    background: #d5eaf5;
+    border: 1px solid transparent;
+  }
+}

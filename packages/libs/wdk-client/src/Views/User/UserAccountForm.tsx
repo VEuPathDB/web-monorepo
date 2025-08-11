@@ -16,6 +16,7 @@ import {
   SaveButton,
   OutlinedButton,
 } from '@veupathdb/coreui/lib/components/buttons';
+import './Profile/UserProfile.scss';
 
 // Props interface
 export interface UserAccountFormProps {
@@ -269,18 +270,16 @@ function UserAccountForm(props: UserAccountFormProps) {
         when={hasUnsavedChanges && !pendingSection}
         message="Do you want to leave this page? Your unapplied changes will be discarded."
       />
-      <div className="wdk-RecordContainer wdk-RecordContainer__withSidebar">
-        <div className="wdk-RecordSidebarContainer">
-          <div className="wdk-RecordSidebar">
-            <ProfileNavigationSection
-              activeSection={activeSection}
-              pendingSection={pendingSection}
-              setPendingSection={setPendingSection}
-              onSectionChange={handleSectionChange}
-              hasUnsavedChanges={hasUnsavedChanges}
-            />
-          </div>
-          <div className="wdk-RecordMain">{renderSectionContent()}</div>
+      <div className="wdk-UserAccountForm">
+        <ProfileNavigationSection
+          activeSection={activeSection}
+          pendingSection={pendingSection}
+          setPendingSection={setPendingSection}
+          onSectionChange={handleSectionChange}
+          hasUnsavedChanges={hasUnsavedChanges}
+        />
+        <div className="UserAccountSectionContent">
+          {renderSectionContent()}
         </div>
       </div>
     </>

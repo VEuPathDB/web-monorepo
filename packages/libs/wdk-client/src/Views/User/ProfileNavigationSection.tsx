@@ -64,14 +64,14 @@ const ProfileNavigationSection: React.FC<ProfileNavigationSectionProps> = ({
 
   return (
     <>
-      <div className="wdk-RecordNavigationSection">
-        <div className="profile-navigation-items">
+      <div className="wdk-ProfileNavigationSection">
+        <div className="wdk-ProfileNavigationItems">
           {sections.map((section) => (
             <div
               key={section.key}
-              className={`wdk-RecordNavigationItem ${
+              className={`wdk-ProfileNavigationItem ${
                 activeSection === section.key
-                  ? 'wdk-RecordNavigationItem__active'
+                  ? 'wdk-ProfileNavigationItem__active'
                   : ''
               }`}
               onClick={() => handleSectionClick(section.key)}
