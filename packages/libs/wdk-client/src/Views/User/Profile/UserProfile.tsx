@@ -32,7 +32,7 @@ const UserProfile: React.FC<UserProfileProps> = (props) => (
   <UserFormContainer
     shouldHideForm={!!props.globalData.user?.isGuest}
     hiddenFormMessage="You must first log on to read and alter your account information."
-    titleText="My Account"
+    titleText={`Account: ${props.globalData.user?.properties.firstName} ${props.globalData.user?.properties.lastName}`}
     submitButtonText="Save"
     onSubmit={props.userEvents.submitProfileForm}
     singleFormMode={props.singleFormMode}

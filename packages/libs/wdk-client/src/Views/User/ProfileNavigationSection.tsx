@@ -65,9 +65,6 @@ const ProfileNavigationSection: React.FC<ProfileNavigationSectionProps> = ({
   return (
     <>
       <div className="wdk-RecordNavigationSection">
-        <div className="wdk-RecordNavigationSectionHeader">
-          <h1>Profile</h1>
-        </div>
         <div className="profile-navigation-items">
           {sections.map((section) => (
             <div

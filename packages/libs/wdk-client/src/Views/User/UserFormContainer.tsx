@@ -135,6 +135,17 @@ function UserFormContainer(props: UserFormContainerProps) {
       ) : (
         <>
           <h1>{props.titleText}</h1>
+          {
+            // Fix before merge. We just need some new types around
+            //@ts-ignore
+            props.globalData.user.isGuest ? (
+              // Add icon here
+              <h4>Unsubscribed</h4>
+            ) : (
+              // Add icon here
+              <h4>Subscribed</h4>
+            )
+          }
           {props.introComponent && <props.introComponent />}
           <UserAccountForm
             user={currentUserFormData}
