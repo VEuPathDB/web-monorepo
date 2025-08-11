@@ -3,6 +3,7 @@ import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
 import { getChangeHandler, wrappable } from '../../Utils/ComponentUtils';
 import { UserPreferences } from '../../Utils/WdkUser';
 import UserAccountForm from '../../Views/User/UserAccountForm';
+import './Profile/UserProfile.scss';
 
 export function getDescriptionBoxStyle() {
   return {
@@ -134,18 +135,24 @@ function UserFormContainer(props: UserFormContainerProps) {
         <div>{props.hiddenFormMessage}</div>
       ) : (
         <>
-          <h1>{props.titleText}</h1>
-          {
-            // Fix before merge. We just need some new types around
-            //@ts-ignore
-            props.globalData.user.isGuest ? (
-              // Add icon here
-              <h4>Unsubscribed</h4>
-            ) : (
-              // Add icon here
-              <h4>Subscribed</h4>
-            )
-          }
+          <div className="wdk-UserProfile-title">
+            <h1>{props.titleText}</h1>
+            {
+              // If this is a profile (so the user is not a guest), we want to show the user if they
+              // have subscribed.
+              // Fix before merge. We just need some new types around
+              //@ts-ignore
+              !props.globalData.user.isGuest && (
+                // user.isSubscribed ? (
+                // Add icon here
+                <h3>Unsubscribed</h3>
+                //) : (
+                // Add icon here
+                // <h4>Subscribed</h4>
+                // )
+              )
+            }
+          </div>
           {props.introComponent && <props.introComponent />}
           <UserAccountForm
             user={currentUserFormData}
