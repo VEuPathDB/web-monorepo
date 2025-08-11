@@ -14,6 +14,7 @@ export type SectionKey = typeof SECTION_KEYS[number];
 interface Section {
   key: SectionKey;
   label: string;
+  icon?: React.ReactNode;
 }
 
 interface ProfileNavigationSectionProps {
@@ -32,10 +33,22 @@ const ProfileNavigationSection: React.FC<ProfileNavigationSectionProps> = ({
   onSectionChange,
   hasUnsavedChanges,
   sections = [
-    { key: 'account', label: 'Account' },
-    { key: 'subscription', label: 'Subscription' },
-    { key: 'preferences', label: 'Preferences' },
-    { key: 'security', label: 'Security' },
+    { key: 'account', label: 'Account', icon: <i className="fa fa-user"></i> },
+    {
+      key: 'subscription',
+      label: 'Subscription',
+      icon: <i className="fa fa-bell"></i>,
+    },
+    {
+      key: 'preferences',
+      label: 'Preferences',
+      icon: <i className="fa fa-cog"></i>,
+    },
+    {
+      key: 'security',
+      label: 'Security',
+      icon: <i className="fa fa-lock"></i>,
+    },
   ],
 }) => {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
@@ -77,6 +90,7 @@ const ProfileNavigationSection: React.FC<ProfileNavigationSectionProps> = ({
               onClick={() => handleSectionClick(section.key)}
               style={{ cursor: 'pointer' }}
             >
+              {section.icon}
               {section.label}
               {hasUnsavedChanges && activeSection === section.key && (
                 <span style={{ marginLeft: '1em', color: '#ff6b35' }}>

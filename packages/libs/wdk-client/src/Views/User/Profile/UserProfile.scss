@@ -129,12 +129,19 @@
   }
 
   .wdk-ProfileNavigationItem {
-    display: block;
+    display: grid;
+    align-items: center;
+    gap: 0.5em;
+    grid-template-columns: 1.5em 1fr auto;
     margin: 0;
     padding: 0.45em;
     border-radius: 0.35em;
     cursor: pointer;
     border: 1px solid transparent;
+
+    i {
+      justify-self: center;
+    }
 
     &:hover {
       border: 1px solid #d5eaf5;
