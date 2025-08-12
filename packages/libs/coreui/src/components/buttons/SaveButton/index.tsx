@@ -64,22 +64,12 @@ export default function SaveButton({
 
   // Determine button state based on form status and internal revert state
   const { text, icon, disabled } = useMemo(() => {
-    // If success state has been reverted, show disabled state
-    if (formStatus === 'success' && hasSuccessReverted) {
-      return {
-        text: customText.save || 'Save',
-        icon: undefined,
-        disabled: true,
-      };
-    }
-
     // Otherwise use actual form status
     switch (formStatus) {
       case 'new':
         return {
           text: customText.save || 'Save',
           icon: undefined,
-          disabled: true,
         };
       case 'modified':
       case 'error':
@@ -105,61 +95,23 @@ export default function SaveButton({
                 marginTop: '2px',
               }}
             >
-              <LoadingIcon style={{ fontSize: '1em' }} />
+              <LoadingIcon style={{ fontSize: '1em', fill: 'white' }} />
             </span>
           ),
-          disabled: true,
         };
       case 'success':
         return {
           text: customText.saved || 'Saved',
           icon: CheckIcon,
-          disabled: true,
+          disabled: false,
         };
       default:
         return {
           text: customText.save || 'Save',
           icon: undefined,
-          disabled: true,
         };
     }
-  }, [formStatus, hasSuccessReverted, customText]);
-
-  // Create style specs for different states
-  const defaultStyle: ButtonStyleSpec = {
-    default: {
-      color: formStatus === 'success' ? green[500] : blue[500],
-      border: {
-        radius: 5,
-      },
-      fontWeight: 600,
-      textColor: 'white',
-    },
-    hover: {
-      color: formStatus === 'success' ? green[500] : blue[500],
-      fontWeight: 600,
-      textColor: 'white',
-      border: {
-        color: formStatus === 'success' ? green[600] : blue[600],
-        radius: 5,
-        width: 2,
-        style: 'solid',
-      },
-    },
-    pressed: {
-      color: formStatus === 'success' ? green[600] : blue[600],
-      fontWeight: 600,
-      textColor: 'white',
-      border: {
-        radius: 5,
-      },
-    },
-    disabled: {
-      color: gray[500],
-      textColor: 'white',
-      fontWeight: 600,
-    },
-  };
+  }, [formStatus, customText]);
 
   const themeStyle = useMemo<PartialButtonStyleSpec>(
     () =>
@@ -198,10 +150,45 @@ export default function SaveButton({
     [theme, themeRole]
   );
 
-  const finalStyle = useMemo(
-    () => merge({}, defaultStyle, themeStyle, styleOverrides),
-    [defaultStyle, themeStyle, styleOverrides]
-  );
+  const finalStyle = useMemo(() => {
+    // Create style specs for different states
+    const defaultStyle: ButtonStyleSpec = {
+      default: {
+        color: blue[500],
+        border: {
+          radius: 5,
+        },
+        fontWeight: 600,
+        textColor: 'white',
+      },
+      hover: {
+        color: blue[500],
+        fontWeight: 600,
+        textColor: 'white',
+        border: {
+          color: blue[600],
+          radius: 5,
+          width: 2,
+          style: 'solid',
+        },
+      },
+      pressed: {
+        color: blue[600],
+        fontWeight: 600,
+        textColor: 'white',
+        border: {
+          radius: 5,
+        },
+      },
+      disabled: {
+        color: gray[500],
+        textColor: 'white',
+        fontWeight: 600,
+      },
+    };
+
+    return merge({}, defaultStyle, themeStyle, styleOverrides);
+  }, [themeStyle, styleOverrides]);
 
   return (
     <SwissArmyButton
