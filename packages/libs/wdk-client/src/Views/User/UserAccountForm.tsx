@@ -275,6 +275,7 @@ function UserAccountForm(props: UserAccountFormProps) {
           setPendingSection={setPendingSection}
           onSectionChange={handleSectionChange}
           hasUnsavedChanges={hasUnsavedChanges}
+          onSaveChanges={onUserDataSubmit}
         />
         <div className="UserAccountSectionContent">
           {renderSectionContent()}

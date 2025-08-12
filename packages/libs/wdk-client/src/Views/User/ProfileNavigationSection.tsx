@@ -1,7 +1,8 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, FormEvent } from 'react';
 import { wrappable } from '../../Utils/ComponentUtils';
 import Dialog from '../../Components/Overlays/Dialog';
 import { useHistory, useLocation } from 'react-router';
+import { FilledButton, OutlinedButton } from '@veupathdb/coreui';
 
 const SECTION_KEYS = [
   'account',
@@ -24,6 +25,7 @@ interface ProfileNavigationSectionProps {
   onSectionChange: (sectionKey: SectionKey, discardChanges?: boolean) => void;
   hasUnsavedChanges: boolean;
   sections?: Section[];
+  onSaveChanges?: (event: React.FormEvent) => void;
 }
 
 const ProfileNavigationSection: React.FC<ProfileNavigationSectionProps> = ({
@@ -50,6 +52,7 @@ const ProfileNavigationSection: React.FC<ProfileNavigationSectionProps> = ({
       icon: <i className="fa fa-lock"></i>,
     },
   ],
+  onSaveChanges = () => {},
 }) => {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
@@ -65,6 +68,15 @@ const ProfileNavigationSection: React.FC<ProfileNavigationSectionProps> = ({
   const handleConfirmDiscard = () => {
     if (pendingSection) {
       onSectionChange(pendingSection, true); // true = discard changes
+    }
+    setShowConfirmDialog(false);
+    setPendingSection(null);
+  };
+
+  const handleConfirmSave = (e: FormEvent) => {
+    onSaveChanges(e);
+    if (pendingSection) {
+      onSectionChange(pendingSection, false); // false = do not discard changes
     }
     setShowConfirmDialog(false);
     setPendingSection(null);
@@ -102,31 +114,34 @@ const ProfileNavigationSection: React.FC<ProfileNavigationSectionProps> = ({
         modal={true}
         title="Unsaved Changes"
         onClose={handleCancelDiscard}
+        className="wdk-Profile"
       >
-        <div style={{ padding: '1em' }}>
-          <p>
-            You have unsaved changes. Do you want to leave this section without
-            saving? Your changes will be lost.
+        <div style={{ padding: '1em', width: 380, display: 'grid' }}>
+          <p
+            style={{
+              fontSize: '1.2em',
+              fontWeight: 500,
+              marginBottom: 0,
+              justifySelf: 'center',
+            }}
+          >
+            Do you want to save or discard your changes?
           </p>
-          <div style={{ marginTop: '1.5em', textAlign: 'right' }}>
-            <button
-              type="button"
-              onClick={handleCancelDiscard}
-              style={{ marginRight: '0.5em' }}
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={handleConfirmDiscard}
-              style={{
-                backgroundColor: '#d9534f',
-                color: 'white',
-                border: '1px solid #d43f3a',
-              }}
-            >
-              Discard Changes
-            </button>
+          <p style={{ fontSize: '1.2em', justifySelf: 'center' }}>
+            Unsaved changes will be lost.
+          </p>
+          <div
+            style={{
+              marginTop: '3em',
+              display: 'flex',
+              justifyContent: 'space-between',
+            }}
+          >
+            <OutlinedButton text="Cancel" onPress={handleCancelDiscard} />
+            <div style={{ display: 'inline-flex', gap: '0.5em' }}>
+              <OutlinedButton text="Discard" onPress={handleConfirmDiscard} />
+              <FilledButton text="Save" onPress={handleConfirmSave} />
+            </div>
           </div>
         </div>
       </Dialog>
