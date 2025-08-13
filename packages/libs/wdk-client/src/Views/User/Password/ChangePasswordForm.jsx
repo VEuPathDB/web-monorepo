@@ -1,10 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { wrappable, getChangeHandler } from '../../../Utils/ComponentUtils';
-import {
-  interpretFormStatus,
-  FormMessage,
-} from '../../../Views/User/UserFormContainer';
+import { SaveButton } from '@veupathdb/coreui/lib/components/buttons';
 import TextBox from '../../../Components/InputControls/TextBox';
 import { alert } from '../../../Utils/Platform';
 
@@ -39,8 +36,8 @@ function formValid(passwordForm) {
 }
 
 let ChangePasswordForm = (props) => {
-  let formConfig = interpretFormStatus(props.formStatus, props.errorMessage);
-  let submitHandler = function () {
+  let submitHandler = function (e) {
+    e.preventDefault();
     let form = props.passwordForm;
     if (formValid(form)) {
       props.userEvents.savePassword(form.oldPassword, form.newPassword);
@@ -53,7 +50,6 @@ let ChangePasswordForm = (props) => {
       ) : (
         <div>
           <h1>Change Password</h1>
-          <FormMessage {...formConfig} />
           <div style={{ margin: '1em' }}>
             <form
               className="wdk-UserProfile-profileForm"
@@ -75,11 +71,12 @@ let ChangePasswordForm = (props) => {
                 {...props}
               />
               <div style={{ marginLeft: '115px' }}>
-                <input
-                  type="button"
-                  disabled={formConfig.disableSubmit}
-                  value="Submit"
-                  onClick={submitHandler}
+                <SaveButton
+                  formStatus={props.formStatus}
+                  onPress={submitHandler}
+                  customText={{
+                    save: 'Submit',
+                  }}
                 />
               </div>
             </form>

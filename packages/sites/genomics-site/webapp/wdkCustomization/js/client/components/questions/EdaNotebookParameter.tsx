@@ -101,7 +101,7 @@ export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
           <CoreUIThemeProvider
             theme={{
               palette: {
-                primary: { hue: colors.cyan, level: 600 },
+                primary: { hue: colors.mutedCyan, level: 600 },
                 secondary: { hue: colors.mutedRed, level: 500 },
               },
             }}
