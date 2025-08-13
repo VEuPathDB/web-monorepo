@@ -7,6 +7,8 @@ import '../../../Views/User/Profile/UserProfile.scss';
 import { UserProfileFormData } from '../../../StoreModules/UserProfileStoreModule';
 import { User } from '../../../Utils/WdkUser';
 import { ServiceConfig } from '../../../Service/ServiceBase';
+import CoreUIThemeProvider from '@veupathdb/coreui/lib/components/theming/UIThemeProvider';
+import colors from '@veupathdb/coreui/lib/definitions/colors';
 
 type UserProfileProps = Omit<
   UserFormContainerProps,
@@ -29,15 +31,24 @@ type UserProfileProps = Omit<
  * React component for the user profile/account form
  */
 const UserProfile: React.FC<UserProfileProps> = (props) => (
-  <UserFormContainer
-    shouldHideForm={!!props.globalData.user?.isGuest}
-    hiddenFormMessage="You must first log on to read and alter your account information."
-    titleText={`Account: ${props.globalData.user?.properties.firstName} ${props.globalData.user?.properties.lastName}`}
-    submitButtonText="Save"
-    onSubmit={props.userEvents.submitProfileForm}
-    singleFormMode={props.singleFormMode}
-    {...props}
-  />
+  <CoreUIThemeProvider
+    theme={{
+      palette: {
+        primary: { hue: colors.mutedCyan, level: 600 },
+        secondary: { hue: colors.mutedRed, level: 500 },
+      },
+    }}
+  >
+    <UserFormContainer
+      shouldHideForm={!!props.globalData.user?.isGuest}
+      hiddenFormMessage="You must first log on to read and alter your account information."
+      titleText={`Account: ${props.globalData.user?.properties.firstName} ${props.globalData.user?.properties.lastName}`}
+      submitButtonText="Save"
+      onSubmit={props.userEvents.submitProfileForm}
+      singleFormMode={props.singleFormMode}
+      {...props}
+    />
+  </CoreUIThemeProvider>
 );
 
 export default wrappable(UserProfile);

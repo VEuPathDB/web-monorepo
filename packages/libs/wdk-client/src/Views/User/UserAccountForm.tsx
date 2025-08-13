@@ -128,12 +128,14 @@ function UserAccountForm(props: UserAccountFormProps) {
                   e.preventDefault();
                   onUserDataSubmit(e);
                 }}
+                themeRole="primary"
               />
               {hasUnsavedChanges && (
                 <OutlinedButton
                   text="Discard changes"
                   onPress={() => onDiscardChanges && onDiscardChanges()}
                   disabled={disableResetButton}
+                  themeRole="primary"
                 />
               )}
             </div>
@@ -168,12 +170,14 @@ function UserAccountForm(props: UserAccountFormProps) {
                   e.preventDefault();
                   onUserDataSubmit(e);
                 }}
+                themeRole="primary"
               />
               {hasUnsavedChanges && (
                 <OutlinedButton
                   text="Discard changes"
                   onPress={() => onDiscardChanges && onDiscardChanges()}
                   disabled={disableResetButton}
+                  themeRole="primary"
                 />
               )}
             </div>
