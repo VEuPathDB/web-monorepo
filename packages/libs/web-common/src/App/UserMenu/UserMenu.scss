@@ -14,6 +14,7 @@ $white: #e0e0e0;
   &--expanded {
     height: 5em !important;
     margin-bottom: 8px;
+    margin-top: 2px;
   }
 
   .UserMenu-IconContainer {
@@ -27,7 +28,7 @@ $white: #e0e0e0;
   }
 
   .UserMenu-StatusIcon {
-    fill: white;
+    fill: #dedede; // gray instead of white with opacity
     font-size: 45px;
 
     &--success {
