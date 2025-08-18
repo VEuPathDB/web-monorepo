@@ -118,9 +118,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
   };
 
   return (
-    <div
-      className={'box UserMenu' + (isGuest === false && ' UserMenu--expanded')}
-    >
+    <div className={'box UserMenu' + (!isGuest ? ' UserMenu--expanded' : '')}>
       <div className="UserMenu-IconContainer">
         {/* TODO: Replace isGuest check with isSubscribed property when available */}
         {isGuest === false && <UserCheck className="UserMenu-StatusIcon" />}
@@ -131,7 +129,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
       </div>
       <span
         className={
-          'UserMenu-Title' + (isGuest === false && ' UserMenu-Title--expanded')
+          'UserMenu-Title' + (!isGuest ? ' UserMenu-Title--expanded' : '')
         }
       >
         {typeof isGuest === 'undefined'
