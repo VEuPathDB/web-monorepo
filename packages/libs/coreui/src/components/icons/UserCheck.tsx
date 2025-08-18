@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { SVGProps } from 'react';
+import { success } from '../../definitions/colors';
 const SvgUserCheck = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -12,7 +13,7 @@ const SvgUserCheck = (props: SVGProps<SVGSVGElement>) => (
     <path
       d="M5.9 2.1c2.2 0 3.9 1.8 3.9 3.9 0 2.2-1.8 3.9-3.9 3.9C3.7 9.9 2 8.2 2 6s1.7-3.9 3.9-3.9Zm-.4 4.5L4.4 5.5c-.2-.2-.4-.2-.5 0l-.4.4c-.2.1-.2.4 0 .5l1.8 1.8c.2.2.4.2.6 0l.9-.9 1.8-1.8c.2-.2.2-.4 0-.5l-.5-.5h-.4l-.1.1-1.3 1.3-.7.7Z"
       style={{
-        fill: '#39b54a',
+        fill: success[500],
       }}
     />
   </svg>
