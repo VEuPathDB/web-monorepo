@@ -32,7 +32,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
   const iconClass = 'user-circle' + (isGuest ? '-o' : '');
 
   const renderMenu = (): JSX.Element => {
-    const items: MenuItem[] = !!user?.isGuest
+    const items: MenuItem[] = isGuest
       ? [
           {
             icon: 'sign-in',
