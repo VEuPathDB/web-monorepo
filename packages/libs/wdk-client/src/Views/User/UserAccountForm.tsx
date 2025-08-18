@@ -17,6 +17,7 @@ import {
   OutlinedButton,
 } from '@veupathdb/coreui/lib/components/buttons';
 import './Profile/UserProfile.scss';
+import { FormStatus } from '../../../../coreui/lib/components/buttons/SaveButton';
 
 // Props interface
 export interface UserAccountFormProps {
@@ -54,7 +55,15 @@ function UserAccountForm(props: UserAccountFormProps) {
   const [activeSection, navigateToSection] =
     useCurrentProfileNavigationSection();
   const [pendingSection, setPendingSection] = useState<SectionKey | null>(null);
+  const [displayedFormStatus, setDisplayedFormStatus] =
+    useState<FormStatus>(formStatus);
   const hasUnsavedChanges = formStatus === 'modified';
+
+  // Track formStatus changes to prevent stale "Saved" state when switching tabs
+  // This ensures the Save button shows current status rather than previous section's status
+  useEffect(() => {
+    setDisplayedFormStatus(formStatus);
+  }, [formStatus]);
 
   // Browser navigation protection
   useEffect(() => {
@@ -87,6 +96,8 @@ function UserAccountForm(props: UserAccountFormProps) {
       onDiscardChanges();
     }
     navigateToSection(sectionKey);
+    // Reset button status to 'new' when switching tabs to prevent showing stale "Saved" state
+    setDisplayedFormStatus('new');
   };
 
   // Renders the content for the active section
@@ -119,7 +130,7 @@ function UserAccountForm(props: UserAccountFormProps) {
               }}
             >
               <SaveButton
-                formStatus={formStatus}
+                formStatus={displayedFormStatus}
                 onPress={(e) => {
                   e.preventDefault();
                   onUserDataSubmit(e);
@@ -160,7 +171,7 @@ function UserAccountForm(props: UserAccountFormProps) {
               }}
             >
               <SaveButton
-                formStatus={formStatus}
+                formStatus={displayedFormStatus}
                 onPress={(e) => {
                   e.preventDefault();
                   onUserDataSubmit(e);
@@ -222,7 +233,7 @@ function UserAccountForm(props: UserAccountFormProps) {
           }}
         >
           <SaveButton
-            formStatus={formStatus}
+            formStatus={displayedFormStatus}
             onPress={(e) => {
               e.preventDefault();
               onUserDataSubmit(e);
