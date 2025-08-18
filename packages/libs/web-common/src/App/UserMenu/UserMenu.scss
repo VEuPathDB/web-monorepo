@@ -11,6 +11,11 @@ $white: #e0e0e0;
   padding-left: 2em;
   margin: -0.75em 0;
 
+  &--expanded {
+    height: 5em !important;
+    margin-bottom: 8px;
+  }
+
   .UserMenu-IconContainer {
     position: relative;
     display: inline-block;
@@ -22,11 +27,8 @@ $white: #e0e0e0;
   }
 
   .UserMenu-StatusIcon {
-    position: absolute;
-    top: -6px;
-    left: -6px;
-    font-size: 16px;
-    background: transparent;
+    fill: white;
+    font-size: 45px;
 
     &--success {
       color: #28a745;
@@ -41,6 +43,10 @@ $white: #e0e0e0;
     font-weight: 300;
     padding: 5px;
     font-style: italic;
+
+    &--expanded {
+      padding: 0px 5px 5px 9px; // align text with big user-circle icon.
+    }
   }
 
   &:focus-within,

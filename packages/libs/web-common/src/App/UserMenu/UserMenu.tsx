@@ -5,6 +5,8 @@ import { IconAlt as Icon } from '@veupathdb/wdk-client/lib/Components';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import './UserMenu.scss';
+import UserWarn from '@veupathdb/coreui/lib/components/icons/UserWarn';
+import { UserCheck } from '@veupathdb/coreui';
 
 interface Actions {
   showLoginForm: (destination: string) => void;
@@ -116,24 +118,22 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
   };
 
   return (
-    <div className="box UserMenu">
+    <div
+      className={'box UserMenu' + (isGuest === false && ' UserMenu--expanded')}
+    >
       <div className="UserMenu-IconContainer">
-        <Icon className="UserMenu-Icon" fa={iconClass} />
         {/* TODO: Replace isGuest check with isSubscribed property when available */}
-        {isGuest === false && (
-          <Icon
-            className="UserMenu-StatusIcon UserMenu-StatusIcon--success"
-            fa="check-circle"
-          />
-        )}
+        {isGuest === false && <UserCheck className="UserMenu-StatusIcon" />}
         {isGuest === true && (
-          <Icon
-            className="UserMenu-StatusIcon UserMenu-StatusIcon--warning"
-            fa="exclamation-triangle"
-          />
+          <Icon className="UserMenu-Icon" fa={iconClass} />
+          // Replace with <UserWarn className="UserMenu-StatusIcon"/>
         )}
       </div>
-      <span className="UserMenu-Title">
+      <span
+        className={
+          'UserMenu-Title' + (isGuest === false && ' UserMenu-Title--expanded')
+        }
+      >
         {typeof isGuest === 'undefined'
           ? '...'
           : isGuest !== false
