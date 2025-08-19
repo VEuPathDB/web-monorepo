@@ -1,7 +1,5 @@
 @import '../../styles/collapsed-header-mixins.scss';
 
-/* $hamburger-width: 1170px; */
-
 @mixin shadowed {
   text-shadow: 1px 1px 1px #00000052, -1px -1px 1px #00000052,
     1px -1px 1px #00000052, -1px 1px 1px #00000052, 2px 2px 2px #00000052,
