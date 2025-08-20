@@ -159,9 +159,6 @@ function UserAccountForm(props: UserAccountFormProps) {
           <UserSubscriptionManagement
             user={user}
             subscriptionGroups={subscriptionGroups}
-            // required by user profile form sections
-            formStatus={formStatus}
-            hasUnsavedChanges={hasUnsavedChanges}
             onPropertyChange={onPropertyChange}
             saveButton={saveButton}
           />

@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 
 import { IconAlt as Icon } from '@veupathdb/wdk-client/lib/Components';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { SubscriptionGroup } from '@veupathdb/wdk-client/lib/Service/Mixins/OauthService';
 
 import './UserMenu.scss';
 
@@ -30,6 +32,22 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
 
   const { isGuest, properties = {} } = user;
   const iconClass = 'user-circle' + (isGuest ? '-o' : '');
+
+  const subscriptionGroups = useWdkService(
+    (wdkService) =>
+      wdkService.getSubscriptionGroups().catch((e) => {
+        console.error(e);
+        return [] as SubscriptionGroup[];
+      }),
+    []
+  );
+
+  const isSubscribed =
+    !isGuest &&
+    subscriptionGroups.filter(
+      (g: SubscriptionGroup) =>
+        g.subscriptionToken === user.properties['subscriptionToken']
+    ).length > 0;
 
   const renderMenu = (): JSX.Element => {
     const items: MenuItem[] = !!user?.isGuest
@@ -97,7 +115,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
           );
         })}
         <hr style={{ margin: '10px 0', borderColor: '#ccc' }} />
-        {isGuest === false ? (
+        {isSubscribed ? (
           <div className="UserMenu-Pane-Item">
             <Icon fa="check-circle UserMenu-Pane-Item-Icon UserMenu-StatusIcon--success" />
             Subscribed
@@ -119,14 +137,13 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
     <div className="box UserMenu">
       <div className="UserMenu-IconContainer">
         <Icon className="UserMenu-Icon" fa={iconClass} />
-        {/* TODO: Replace isGuest check with isSubscribed property when available */}
-        {isGuest === false && (
+        {isSubscribed && (
           <Icon
             className="UserMenu-StatusIcon UserMenu-StatusIcon--success"
             fa="check-circle"
           />
         )}
-        {isGuest === true && (
+        {!isSubscribed && (
           <Icon
             className="UserMenu-StatusIcon UserMenu-StatusIcon--warning"
             fa="exclamation-triangle"

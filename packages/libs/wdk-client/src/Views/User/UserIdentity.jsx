@@ -50,7 +50,7 @@ const UserIdentity = (props) => {
           />
         </div>
         {props.propDefs
-          .filter((def) => def.name !== 'subscription_token')
+          .filter((def) => def.name !== 'subscriptionToken')
           .map((propDef) => {
             let {
               name,

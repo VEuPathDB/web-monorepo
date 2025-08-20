@@ -7,8 +7,6 @@ import SingleSelect from '../../Components/InputControls/SingleSelect';
 interface UserSubscriptionManagementProps {
   user: UserProfileFormData;
   subscriptionGroups: SubscriptionGroup[] | undefined;
-  formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
-  hasUnsavedChanges: boolean;
   onPropertyChange: (field: string) => (value: any) => void;
   saveButton: JSX.Element;
 }
