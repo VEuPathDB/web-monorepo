@@ -6,6 +6,7 @@ import { Link, IconAlt } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import { SubscriptionGroup } from '@veupathdb/wdk-client/lib/Service/Mixins/OauthService';
 import { ServiceConfig } from '@veupathdb/wdk-client/lib/Service/ServiceBase';
 import { makeEdaRoute } from '../routes';
 import { colors, Warning } from '@veupathdb/coreui';
@@ -109,7 +110,27 @@ const siteAnnouncements: SiteAnnouncement[] = [
     dismissible: true,
     dismissalDurationSeconds: 48 * 60 * 60, // 48 hours
     renderDisplay: (props: AnnouncementRenderProps) => {
-      if (props.currentUser && props.currentUser.isGuest) {
+      if (!props.currentUser) return null;
+
+      const subscriptionGroups =
+        useWdkService(
+          (wdkService) =>
+            wdkService.getSubscriptionGroups().catch((e) => {
+              console.error(e);
+              return [] as SubscriptionGroup[];
+            }),
+          []
+        ) || [];
+
+      const isSubscribed =
+        !props.currentUser.isGuest &&
+        subscriptionGroups.filter(
+          (g: SubscriptionGroup) =>
+            g.subscriptionToken ===
+            props.currentUser.properties['subscriptionToken']
+        ).length > 0;
+
+      if (!isSubscribed) {
         return <SubscriptionManagementBanner key="subscription-management" />;
       }
       return null;
