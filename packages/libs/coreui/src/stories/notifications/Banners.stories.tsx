@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import UIThemeProvider from '../../components/theming/UIThemeProvider';
 import { gray } from '../../definitions/colors';
+import { FilledButton, OutlinedButton } from '../../components/buttons';
 
 import Banner, { BannerComponentProps } from '../../components/banners/Banner';
 import Toggle from '../../components/widgets/Toggle';
@@ -861,5 +862,42 @@ export const Collapsible = (args) => {
         )}
       </div>
     </>
+  );
+};
+
+// Banner with call to action buttons
+export const BannerWithCta = (args) => {
+  // set useState to close Banner
+  const [shouldShowWarning, setShouldShowWarning] = useState<boolean>(true);
+  const handleCloseWarning = () => {
+    setShouldShowWarning(false);
+  };
+
+  return (
+    <div style={{ width: '750px' }}>
+      {shouldShowWarning && (
+        <Banner
+          banner={{
+            type: 'warning',
+            message: 'This is a "warning" banner with call to action buttons.',
+            pinned: false,
+            intense: false,
+            primaryActionButtonProps: {
+              text: 'Primary Action',
+              onPress: () => {
+                alert('Primary Action Clicked!');
+              },
+            },
+            secondaryActionButtonProps: {
+              text: 'Secondary Action',
+              onPress: () => {
+                alert('Secondary Action Clicked!');
+              },
+            },
+          }}
+          onClose={handleCloseWarning}
+        />
+      )}
+    </div>
   );
 };

@@ -22,6 +22,11 @@ import {
   ColorHue,
 } from '../../definitions/colors';
 import { useUITheme } from '../theming';
+import {
+  FilledButton,
+  OutlinedButton,
+  SwissArmyButtonVariantProps,
+} from '../buttons';
 
 export type BannerProps = {
   // Banner type determines colors and icons. 'normal' has a default color but ideally should use the primary theme color
@@ -57,6 +62,8 @@ export type BannerProps = {
   fadeoutEffect?: boolean;
   setFadeoutEffect?: (newValue: boolean) => void;
   hideIcon?: boolean;
+  primaryActionButtonProps?: Omit<SwissArmyButtonVariantProps, 'themeRole'>;
+  secondaryActionButtonProps?: Omit<SwissArmyButtonVariantProps, 'themeRole'>;
 };
 
 export type BannerComponentProps = {
@@ -128,6 +135,8 @@ export default function Banner(props: BannerComponentProps) {
     fadeoutEffect,
     setFadeoutEffect,
     hideIcon = false,
+    primaryActionButtonProps,
+    secondaryActionButtonProps,
   } = banner;
 
   const [isShowMore, setIsShowMore] = useState(false);
@@ -273,6 +282,28 @@ export default function Banner(props: BannerComponentProps) {
                   </>
                 )}
               </div>
+              {secondaryActionButtonProps != null && (
+                <OutlinedButton
+                  text={secondaryActionButtonProps.text}
+                  styleOverrides={{
+                    container: {
+                      marginRight: '0.5em',
+                    },
+                  }}
+                  {...secondaryActionButtonProps}
+                />
+              )}
+              {primaryActionButtonProps != null && (
+                <FilledButton
+                  text={primaryActionButtonProps.text}
+                  styleOverrides={{
+                    container: {
+                      marginRight: '0.5em',
+                    },
+                  }}
+                  {...primaryActionButtonProps}
+                />
+              )}
               {pinned || !onClose ? null : (
                 <button
                   css={css`
