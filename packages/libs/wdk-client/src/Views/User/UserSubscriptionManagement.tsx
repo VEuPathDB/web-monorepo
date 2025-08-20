@@ -54,9 +54,6 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
             {saveButton}
           </form>
         </p>
-        <p style={{ marginTop: '1em' }}>
-          Current user: <strong>{user.email || 'No email'}</strong>
-        </p>
       </div>
     </fieldset>
   );
