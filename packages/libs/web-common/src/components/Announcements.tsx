@@ -111,7 +111,7 @@ const siteAnnouncements: SiteAnnouncement[] = [
     dismissalDurationSeconds: 48 * 60 * 60, // 48 hours
     renderDisplay: (props: AnnouncementRenderProps) => {
       if (!props.currentUser) return null;
-
+      /*
       const subscriptionGroups =
         useWdkService(
           (wdkService) =>
@@ -120,16 +120,16 @@ const siteAnnouncements: SiteAnnouncement[] = [
               return [] as SubscriptionGroup[];
             }),
           []
-        ) || [];
+        ) || [];*/
 
-      const isSubscribed =
-        !props.currentUser.isGuest &&
+      const isSubscribed = !props.currentUser.isGuest;
+      /*        !props.currentUser.isGuest &&
         subscriptionGroups.filter(
           (g: SubscriptionGroup) =>
             g.subscriptionToken ===
             props.currentUser.properties['subscriptionToken']
         ).length > 0;
-
+*/
       if (!isSubscribed) {
         return <SubscriptionManagementBanner key="subscription-management" />;
       }
