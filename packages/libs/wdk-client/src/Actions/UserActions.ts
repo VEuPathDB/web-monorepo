@@ -25,6 +25,7 @@ export type Action =
   | PreferencesUpdateAction
   | ProfileFormUpdateAction
   | ProfileFormSubmissionStatusAction
+  | ProfileFormResetAction
   | ClearRegistrationFormAction
   | PasswordFormUpdateAction
   | PasswordFormSubmissionStatusAction
@@ -150,6 +151,28 @@ export function profileFormSubmissionStatus(
       formStatus,
       formData,
       errorMessage,
+    },
+  };
+}
+
+//==============================================================================
+
+export const PROFILE_FORM_RESET = 'user/profile-form-reset';
+
+export type ProfileFormResetAction = {
+  type: typeof PROFILE_FORM_RESET;
+  payload: {
+    userFormContent: UserProfileFormData;
+  };
+};
+
+export function profileFormReset(
+  userFormContent: UserProfileFormData
+): ProfileFormResetAction {
+  return {
+    type: PROFILE_FORM_RESET,
+    payload: {
+      userFormContent,
     },
   };
 }

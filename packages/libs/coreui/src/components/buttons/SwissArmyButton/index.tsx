@@ -103,6 +103,7 @@ export default function SwissArmyButton({
   return (
     <div css={{ position: 'relative' }}>
       <button
+        type="button"
         aria-label={ariaLabel}
         tabIndex={0}
         disabled={disabled}
