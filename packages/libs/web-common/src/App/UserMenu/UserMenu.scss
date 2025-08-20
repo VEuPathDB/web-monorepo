@@ -1,3 +1,5 @@
+@import '../../styles/breakpoints.scss';
+
 $red: #dd314e;
 $white: #e0e0e0;
 
@@ -13,8 +15,7 @@ $white: #e0e0e0;
 
   &--expanded {
     height: 5em !important;
-    transform: translateY(-13px);
-    margin-top: 6px;
+    transform: translateY(-10px);
   }
 
   .UserMenu-IconContainer {
@@ -57,6 +58,10 @@ $white: #e0e0e0;
       transition: none;
       top: 100%;
     }
+  }
+
+  @media screen and (max-width: $hamburger-width) {
+    transform: translateY(-2px);
   }
 }
 
