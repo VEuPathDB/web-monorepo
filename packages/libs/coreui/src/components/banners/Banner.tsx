@@ -285,6 +285,13 @@ export default function Banner(props: BannerComponentProps) {
               {secondaryActionButtonProps != null && (
                 <OutlinedButton
                   text={secondaryActionButtonProps.text}
+                  themeRole={
+                    type === 'danger'
+                      ? 'error'
+                      : type === 'normal'
+                      ? 'primary'
+                      : type
+                  }
                   styleOverrides={{
                     container: {
                       marginRight: '0.5em',
@@ -296,6 +303,13 @@ export default function Banner(props: BannerComponentProps) {
               {primaryActionButtonProps != null && (
                 <FilledButton
                   text={primaryActionButtonProps.text}
+                  themeRole={
+                    type === 'danger'
+                      ? 'error'
+                      : type === 'normal'
+                      ? 'primary'
+                      : type
+                  }
                   styleOverrides={{
                     container: {
                       marginRight: '0.5em',
