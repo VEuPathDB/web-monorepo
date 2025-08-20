@@ -10,14 +10,13 @@ import {
 } from '@material-ui/core';
 import { workspaceThemeOptions as MUIThemeOptions } from '@veupathdb/eda/lib/workspaceTheme';
 import UIThemeProvider from '@veupathdb/coreui/lib/components/theming/UIThemeProvider';
-import { colors } from '@veupathdb/coreui';
-import { useCoreUIFonts } from '@veupathdb/coreui/lib/hooks';
-import makeSnackbarProvider from '@veupathdb/coreui/lib/components/notifications/SnackbarProvider';
-import {
+import colors, {
   error,
   success,
   warning,
 } from '@veupathdb/coreui/lib/definitions/colors';
+import { useCoreUIFonts } from '@veupathdb/coreui/lib/hooks';
+import makeSnackbarProvider from '@veupathdb/coreui/lib/components/notifications/SnackbarProvider';
 
 export function Page(DefaultComponent: React.ComponentType<Props>) {
   return function ClinEpiPage(props: Props) {
