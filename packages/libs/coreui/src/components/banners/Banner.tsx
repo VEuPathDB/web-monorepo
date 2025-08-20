@@ -24,6 +24,7 @@ import {
 import { useUITheme } from '../theming';
 
 export type BannerProps = {
+  // Banner type determines colors and icons. 'normal' has a default color but ideally should use the primary theme color
   type: 'warning' | 'danger' | 'error' | 'success' | 'info' | 'normal';
   message: ReactNode;
   pinned?: boolean;
@@ -164,10 +165,11 @@ export default function Banner(props: BannerComponentProps) {
       background: transparent;
       border: none;
       cursor: pointer;
+      color: ${getColorTheme(type, 600)};
       &:hover {
-        color: ${intense ? 'black' : getColorTheme(type, 600)};
+        color: ${getColorTheme(type, 700)};
       }`;
-  }, [type, intense]);
+  }, [type]);
 
   // conditional border color and radius with the presence of CollapsibleContent
   return (
@@ -219,18 +221,19 @@ export default function Banner(props: BannerComponentProps) {
                       ? 'white'
                       : CollapsibleContent != null
                       ? '#00008B'
-                      : 'black'};
+                      : getColorTheme(type, 600)};
                     font-size: 1.4em;
                     line-height: 1.4em;
                     width: 30px;
                     text-align: center;
-                    margin-right: 5px;
+                    margin-right: 8px;
                   `}
                 />
               )}
-              <span
+              <div
                 css={css`
                   margin-right: auto;
+                  color: ${getColorTheme(type, 900)};
                 `}
               >
                 {/* showMore implementation */}
@@ -269,7 +272,7 @@ export default function Banner(props: BannerComponentProps) {
                     </button>
                   </>
                 )}
-              </span>
+              </div>
               {pinned || !onClose ? null : (
                 <button
                   css={css`
