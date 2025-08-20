@@ -174,6 +174,7 @@ export default function Banner(props: BannerComponentProps) {
       background: transparent;
       border: none;
       cursor: pointer;
+      margin-left: 4px; // makes space between CTA button and close same as close and banner border
       color: ${getColorTheme(type, 600)};
       &:hover {
         color: ${getColorTheme(type, 700)};

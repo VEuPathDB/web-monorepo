@@ -3,7 +3,10 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import UIThemeProvider from '../../components/theming/UIThemeProvider';
 import { blue, error, gray, success, warning } from '../../definitions/colors';
 
-import Banner, { BannerComponentProps } from '../../components/banners/Banner';
+import Banner, {
+  BannerComponentProps,
+  BannerProps,
+} from '../../components/banners/Banner';
 import Toggle from '../../components/widgets/Toggle';
 
 export default {
@@ -869,11 +872,12 @@ export const Collapsible = (args) => {
 };
 
 // Banner with call to action buttons
-export const BannerWithCta = Template.bind({});
-BannerWithCta.args = {
+const cta2StoryTheme: BannerProps['type'] = 'success';
+export const BannerWith2CTA = Template.bind({});
+BannerWith2CTA.args = {
   banner: {
-    type: 'success',
-    message: 'This is a "warning" banner with call to action buttons.',
+    type: cta2StoryTheme,
+    message: `This is a ${cta2StoryTheme} banner with call to action buttons.`,
     pinned: false,
     intense: false,
     primaryActionButtonProps: {
@@ -890,4 +894,21 @@ BannerWithCta.args = {
     },
   },
   onClose: () => null,
+} as BannerComponentProps;
+
+const cta1StoryTheme: BannerProps['type'] = 'warning';
+export const BannerWith1CTA = Template.bind({});
+BannerWith1CTA.args = {
+  banner: {
+    type: cta1StoryTheme,
+    message: `This is a ${cta1StoryTheme} banner with a call to action button.`,
+    pinned: true,
+    intense: false,
+    primaryActionButtonProps: {
+      text: 'Take Action',
+      onPress: () => {
+        alert('Action Taken!');
+      },
+    },
+  },
 } as BannerComponentProps;
