@@ -13,6 +13,11 @@ import UIThemeProvider from '@veupathdb/coreui/lib/components/theming/UIThemePro
 import { colors } from '@veupathdb/coreui';
 import { useCoreUIFonts } from '@veupathdb/coreui/lib/hooks';
 import makeSnackbarProvider from '@veupathdb/coreui/lib/components/notifications/SnackbarProvider';
+import {
+  error,
+  success,
+  warning,
+} from '@veupathdb/coreui/lib/definitions/colors';
 
 export function Page(DefaultComponent: React.ComponentType<Props>) {
   return function ClinEpiPage(props: Props) {
@@ -27,6 +32,10 @@ export function Page(DefaultComponent: React.ComponentType<Props>) {
             palette: {
               primary: { hue: colors.mutedCyan, level: 600 },
               secondary: { hue: colors.mutedRed, level: 500 },
+              error: { hue: error, level: 600 },
+              warning: { hue: warning, level: 600 },
+              info: { hue: colors.mutedCyan, level: 600 },
+              success: { hue: success, level: 600 },
             },
           }}
         >
