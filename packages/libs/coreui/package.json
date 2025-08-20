@@ -19,7 +19,7 @@
     "copy-assets": "veupathdb-react-scripts copy-assets src",
     "remove-undesired-assets": "rm -rf lib/assets/svg lib/stories",
     "build-npm-modules": "npm-run-all build tsc copy-assets remove-undesired-assets",
-    "create-svg-icons": "npx @svgr/cli --icon --replace-attr-values \"#000000=currentColor\" --out-dir src/components/icons/ src/assets/svg/ --typescript",
+    "create-svg-icons": "npx @svgr/cli --icon --ignore-existing --replace-attr-values \"#000000=currentColor\" --out-dir src/components/icons/ src/assets/svg/ --typescript",
     "chromatic": "npx chromatic --project-token=52342b8693f6"
   },
   "repository": {
@@ -60,7 +60,7 @@
     "@storybook/addon-essentials": "^6.5.14",
     "@storybook/addon-links": "^6.5.14",
     "@storybook/react": "^6.5.14",
-    "@svgr/cli": "^6.0.0",
+    "@svgr/cli": "^8.0.0",
     "@types/lodash": "^4.14.172",
     "@types/mdx": "^2.0.1",
     "@types/react-table": "^7.7.8",
