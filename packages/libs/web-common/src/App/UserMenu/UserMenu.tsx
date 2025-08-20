@@ -33,14 +33,15 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
   const { isGuest, properties = {} } = user;
   const iconClass = 'user-circle' + (isGuest ? '-o' : '');
 
-  const subscriptionGroups = useWdkService(
-    (wdkService) =>
-      wdkService.getSubscriptionGroups().catch((e) => {
-        console.error(e);
-        return [] as SubscriptionGroup[];
-      }),
-    []
-  );
+  const subscriptionGroups =
+    useWdkService(
+      (wdkService) =>
+        wdkService.getSubscriptionGroups().catch((e) => {
+          console.error(e);
+          return [] as SubscriptionGroup[];
+        }),
+      []
+    ) || [];
 
   const isSubscribed =
     !isGuest &&
