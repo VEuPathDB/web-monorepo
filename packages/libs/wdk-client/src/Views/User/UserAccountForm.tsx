@@ -222,28 +222,7 @@ function UserAccountForm(props: UserAccountFormProps) {
         <p>
           <i className="fa fa-asterisk"></i> = required
         </p>
-        <div
-          style={{
-            marginTop: '1em',
-            display: 'flex',
-            gap: '0.5em',
-            alignItems: 'center',
-          }}
-        >
-          <SaveButton
-            formStatus={displayedFormStatus}
-            onPress={(e) => {
-              e.preventDefault();
-              onUserDataSubmit(e);
-            }}
-            customText={{
-              save: submitButtonText,
-            }}
-          />
-          {onDiscardChanges && (
-            <OutlinedButton text="Reset form" onPress={onDiscardChanges} />
-          )}
-        </div>
+        {saveButton}
       </form>
     );
   };
