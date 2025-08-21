@@ -17,6 +17,7 @@ import {
   OutlinedButton,
 } from '@veupathdb/coreui/lib/components/buttons';
 import './Profile/UserProfile.scss';
+import { SubscriptionGroup } from '../../Service/Mixins/OauthService';
 import { FormStatus } from '../../../../coreui/lib/components/buttons/SaveButton';
 
 // Props interface
@@ -32,6 +33,7 @@ export interface UserAccountFormProps {
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
   onDiscardChanges?: () => void;
   singleFormMode?: boolean;
+  highlightMissingFields?: boolean;
 }
 
 /**
@@ -87,6 +89,15 @@ function UserAccountForm(props: UserAccountFormProps) {
     []
   );
 
+  const subscriptionGroups = useWdkService(
+    (wdkService) =>
+      wdkService.getSubscriptionGroups().catch((error) => {
+        console.error(error);
+        return [] as SubscriptionGroup[];
+      }),
+    []
+  );
+
   // Section switch handler
   const handleSectionChange = (
     sectionKey: SectionKey,
@@ -101,6 +112,33 @@ function UserAccountForm(props: UserAccountFormProps) {
   };
 
   // Renders the content for the active section
+  const saveButton = (
+    <div
+      style={{
+        marginTop: '1em',
+        display: 'flex',
+        gap: '0.5em',
+        alignItems: 'center',
+      }}
+    >
+      <SaveButton
+        formStatus={displayedFormStatus}
+        onPress={(e) => {
+          e.preventDefault();
+          onUserDataSubmit(e);
+        }}
+        themeRole="primary"
+      />
+      {hasUnsavedChanges && (
+        <OutlinedButton
+          text="Discard changes"
+          onPress={() => onDiscardChanges && onDiscardChanges()}
+          themeRole="primary"
+        />
+      )}
+    </div>
+  );
+
   const renderSectionContent = (): ReactNode => {
     switch (activeSection) {
       case 'account':
@@ -117,38 +155,23 @@ function UserAccountForm(props: UserAccountFormProps) {
               onPropertyChange={onPropertyChange}
               propDefs={wdkConfig.userProfileProperties}
               vocabulary={vocabulary}
+              highlightMissingFields={props.highlightMissingFields}
             />
             <p>
               <i className="fa fa-asterisk"></i> = required
             </p>
-            <div
-              style={{
-                marginTop: '1em',
-                display: 'flex',
-                gap: '0.5em',
-                alignItems: 'center',
-              }}
-            >
-              <SaveButton
-                formStatus={displayedFormStatus}
-                onPress={(e) => {
-                  e.preventDefault();
-                  onUserDataSubmit(e);
-                }}
-                themeRole="primary"
-              />
-              {hasUnsavedChanges && (
-                <OutlinedButton
-                  text="Discard changes"
-                  onPress={() => onDiscardChanges && onDiscardChanges()}
-                  themeRole="primary"
-                />
-              )}
-            </div>
+            {saveButton}
           </form>
         );
       case 'subscription':
-        return <UserSubscriptionManagement user={user} />;
+        return (
+          <UserSubscriptionManagement
+            user={user}
+            subscriptionGroups={subscriptionGroups}
+            onPropertyChange={onPropertyChange}
+            saveButton={saveButton}
+          />
+        );
       case 'preferences':
         return (
           <form
@@ -162,30 +185,7 @@ function UserAccountForm(props: UserAccountFormProps) {
               propDefs={wdkConfig.userProfileProperties}
               onPreferenceChange={onPreferenceChange}
             />
-            <div
-              style={{
-                marginTop: '1em',
-                display: 'flex',
-                gap: '0.5em',
-                alignItems: 'center',
-              }}
-            >
-              <SaveButton
-                formStatus={displayedFormStatus}
-                onPress={(e) => {
-                  e.preventDefault();
-                  onUserDataSubmit(e);
-                }}
-                themeRole="primary"
-              />
-              {hasUnsavedChanges && (
-                <OutlinedButton
-                  text="Discard changes"
-                  onPress={() => onDiscardChanges && onDiscardChanges()}
-                  themeRole="primary"
-                />
-              )}
-            </div>
+            {saveButton}
           </form>
         );
       case 'security':
@@ -214,6 +214,7 @@ function UserAccountForm(props: UserAccountFormProps) {
           onPropertyChange={onPropertyChange}
           propDefs={wdkConfig.userProfileProperties}
           vocabulary={vocabulary}
+          highlightMissingFields={props.highlightMissingFields}
         />
         <ApplicationSpecificProperties
           user={user}
@@ -224,28 +225,7 @@ function UserAccountForm(props: UserAccountFormProps) {
         <p>
           <i className="fa fa-asterisk"></i> = required
         </p>
-        <div
-          style={{
-            marginTop: '1em',
-            display: 'flex',
-            gap: '0.5em',
-            alignItems: 'center',
-          }}
-        >
-          <SaveButton
-            formStatus={displayedFormStatus}
-            onPress={(e) => {
-              e.preventDefault();
-              onUserDataSubmit(e);
-            }}
-            customText={{
-              save: submitButtonText,
-            }}
-          />
-          {onDiscardChanges && (
-            <OutlinedButton text="Reset form" onPress={onDiscardChanges} />
-          )}
-        </div>
+        {saveButton}
       </form>
     );
   };

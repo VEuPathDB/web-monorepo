@@ -44,8 +44,9 @@
 
   &-profileForm i {
     color: red;
-    font-size: 0.75em;
+    font-size: 0.666em;
     margin-right: 0.4em;
+    vertical-align: top;
   }
 
   &-profileForm fieldset > div {
@@ -109,6 +110,12 @@
     display: block;
     width: 100%;
   }
+}
+
+// Highlight empty required fields with red border
+.field-required-empty {
+  border: 2px solid #d32f2f !important;
+  box-shadow: 0 0 3px rgba(211, 47, 47, 0.3);
 }
 
 .wdk-UserAccountForm {
