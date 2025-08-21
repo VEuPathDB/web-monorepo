@@ -5,10 +5,11 @@ import { main as compileMain } from '../scripts/compile.js';
 import { main as copyAssetsMain } from '../scripts/copy-assets.js';
 import { main as runSiteDevServer } from '../scripts/run-site-dev-server.js';
 import { main as start } from '../scripts/start.js';
+import { main as buildForeverMain } from '../scripts/build-forever.js';
 
 const script = process.argv[2];
 
-const { compile, copyAssets } = configureBuildScripts({
+const { compile, copyAssets, buildForever } = configureBuildScripts({
   srcDir: process.argv[3],
   targetDir: process.argv[4],
 });
@@ -39,6 +40,9 @@ switch (script) {
   case 'prepare':
     compile().then(copyAssets).catch(handleError);
     break;
+  case 'build-forever':
+    buildForever().catch(handleError);
+    break;
   default:
     spawn('npx', ['react-app-rewired', ...process.argv.slice(2)], {
       stdio: 'inherit',
@@ -50,6 +54,7 @@ function configureBuildScripts({ srcDir = 'src/lib', targetDir = 'lib' }) {
   return {
     compile: () => compileMain(targetDir),
     copyAssets: () => copyAssetsMain(srcDir, targetDir),
+    buildForever: () => buildForeverMain({ srcDir, targetDir }),
   };
 }
 

@@ -12,6 +12,7 @@
     "generate-icons": "mkdir -p dist && icon-font-generator icons/* -o dist -n ebrc-icons -p ebrc-icon --normalize --center --csstp ./templates/icons-css.hbs",
     "build": "veupathdb-react-scripts prepare src",
     "build-npm-modules": "npm-run-all build generate-icons",
+    "build-forever": "veupathdb-react-scripts build-forever src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "eslintConfig": {
