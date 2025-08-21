@@ -112,6 +112,9 @@
 }
 
 .wdk-UserAccountForm {
+  // Active section nice fallback color
+  --active-section: #d5eaf5;
+
   display: flex;
   gap: 20px;
   margin-top: 3em;
@@ -144,13 +147,13 @@
     }
 
     &:hover {
-      border: 1px solid #d5eaf5;
+      border: 1px solid var(--active-section);
     }
   }
 
   .wdk-ProfileNavigationItem__active {
-    background: #d5eaf5;
     border: 1px solid transparent;
+    background: var(--active-section);
   }
 }
 

@@ -64,6 +64,15 @@ export default function SaveButton({
 
   // Determine button state based on form status and internal revert state
   const { text, icon, disabled } = useMemo(() => {
+    // If success state has been reverted, show regular save again.
+    if (formStatus === 'success' && hasSuccessReverted) {
+      return {
+        text: customText.save || 'Save',
+        icon: undefined,
+        disabled: false,
+      };
+    }
+
     // Otherwise use actual form status
     switch (formStatus) {
       case 'new':
@@ -111,7 +120,7 @@ export default function SaveButton({
           icon: undefined,
         };
     }
-  }, [formStatus, customText]);
+  }, [formStatus, customText, hasSuccessReverted]);
 
   const themeStyle = useMemo<PartialButtonStyleSpec>(
     () =>
@@ -184,6 +193,10 @@ export default function SaveButton({
         color: gray[500],
         textColor: 'white',
         fontWeight: 600,
+      },
+      container: {
+        width: '110px',
+        justifyContent: 'center',
       },
     };
 

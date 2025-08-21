@@ -3,6 +3,7 @@ import { wrappable } from '../../Utils/ComponentUtils';
 import Dialog from '../../Components/Overlays/Dialog';
 import { useHistory, useLocation } from 'react-router';
 import { FilledButton, OutlinedButton } from '@veupathdb/coreui';
+import useUITheme from '@veupathdb/coreui/lib/components/theming/useUITheme';
 
 const SECTION_KEYS = [
   'account',
@@ -87,6 +88,14 @@ const ProfileNavigationSection: React.FC<ProfileNavigationSectionProps> = ({
     setPendingSection(null);
   };
 
+  const theme = useUITheme();
+
+  const activeSectionStyle = {
+    // Use a light version of the primary color if defined, otherwise use this nice
+    // light blue.
+    backgroundColor: theme ? theme?.palette.primary.hue[200] : '#d5eaf5',
+  };
+
   return (
     <>
       <div className="wdk-ProfileNavigationSection">
@@ -100,7 +109,12 @@ const ProfileNavigationSection: React.FC<ProfileNavigationSectionProps> = ({
                   : ''
               }`}
               onClick={() => handleSectionClick(section.key)}
-              style={{ cursor: 'pointer' }}
+              style={
+                {
+                  cursor: 'pointer',
+                  '--active-section': theme?.palette.primary.hue[200],
+                } as React.CSSProperties
+              }
             >
               {section.icon}
               {section.label}
@@ -137,10 +151,22 @@ const ProfileNavigationSection: React.FC<ProfileNavigationSectionProps> = ({
               justifyContent: 'space-between',
             }}
           >
-            <OutlinedButton text="Cancel" onPress={handleCancelDiscard} />
+            <OutlinedButton
+              text="Cancel"
+              onPress={handleCancelDiscard}
+              themeRole="primary"
+            />
             <div style={{ display: 'inline-flex', gap: '0.5em' }}>
-              <OutlinedButton text="Discard" onPress={handleConfirmDiscard} />
-              <FilledButton text="Save" onPress={handleConfirmSave} />
+              <OutlinedButton
+                text="Discard"
+                onPress={handleConfirmDiscard}
+                themeRole="primary"
+              />
+              <FilledButton
+                text="Save"
+                onPress={handleConfirmSave}
+                themeRole="primary"
+              />
             </div>
           </div>
         </div>
