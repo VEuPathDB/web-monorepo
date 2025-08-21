@@ -105,11 +105,15 @@ function UserFormContainer(props: UserFormContainerProps) {
     event.preventDefault();
     validateEmailConfirmation(currentUserFormData);
     const inputs = document.querySelectorAll(
-      'input[type=text],input[type=email]'
+      'input[type=text],input[type=email],select'
     );
     let valid = true;
     inputs.forEach((input) => {
-      if (input instanceof HTMLInputElement && !input.reportValidity()) {
+      if (
+        (input instanceof HTMLInputElement ||
+          input instanceof HTMLSelectElement) &&
+        !input.reportValidity()
+      ) {
         valid = false;
       }
     });
