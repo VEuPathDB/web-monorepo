@@ -60,14 +60,15 @@ function NewProfilePropertiesBanner() {
         fontSize: '1.2em',
         message: (
           <>
-            Please complete the missing required fields below to continue using
-            your account. We've recently made some profile information mandatory
-            to better serve our research community. We value your privacy and
-            comply with{' '}
+            Please complete the newly required fields below, and take a moment
+            to review your profile. This will help us understand how our
+            platform contributes to your research and in making future
+            improvements. We value your privacy and comply with{' '}
             <a target="_blank" rel="noreferrer" href="https://gdpr-info.eu/">
               GDPR
             </a>{' '}
-            regulations.
+            regulations. Your information is safe with us. Thanks for being part
+            of our community!
           </>
         ),
       }}
