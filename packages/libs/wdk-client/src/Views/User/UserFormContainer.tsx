@@ -43,6 +43,7 @@ export interface UserFormContainerProps {
   submitButtonText: string;
   onSubmit: (userData: UserProfileFormData) => void;
   singleFormMode?: boolean;
+  highlightMissingFields?: boolean;
 }
 
 function UserFormContainer(props: UserFormContainerProps) {
@@ -170,6 +171,7 @@ function UserFormContainer(props: UserFormContainerProps) {
             onDiscardChanges={onDiscardChanges}
             formStatus={props.formStatus}
             singleFormMode={props.singleFormMode}
+            highlightMissingFields={props.highlightMissingFields}
           />
         </>
       )}

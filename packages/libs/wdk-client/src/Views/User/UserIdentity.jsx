@@ -13,7 +13,7 @@ import { wrappable } from '../../Utils/ComponentUtils';
  * @constructor
  */
 const UserIdentity = (props) => {
-  let { user, onPropertyChange, vocabulary } = props;
+  let { user, onPropertyChange, vocabulary, highlightMissingFields } = props;
   return (
     <>
       <PrivacyPolicyLink />
@@ -32,6 +32,11 @@ const UserIdentity = (props) => {
             maxLength="255"
             size="80"
             placeholder="Your email or (optional) username can be used to log in"
+            className={
+              highlightMissingFields && !user.email
+                ? 'field-required-empty'
+                : ''
+            }
           />
         </div>
         <div>
@@ -47,6 +52,11 @@ const UserIdentity = (props) => {
             maxLength="255"
             size="80"
             placeholder="Please re-type the same email as above"
+            className={
+              highlightMissingFields && !user.confirmEmail
+                ? 'field-required-empty'
+                : ''
+            }
           />
         </div>
         {props.propDefs
@@ -78,6 +88,11 @@ const UserIdentity = (props) => {
                     onChange={onPropertyChange(name)}
                     maxLength="255"
                     size="80"
+                    className={
+                      highlightMissingFields && isRequired && !value
+                        ? 'field-required-empty'
+                        : ''
+                    }
                   />
                 ) : inputType === 'textbox' ? (
                   <TextArea
@@ -89,6 +104,11 @@ const UserIdentity = (props) => {
                     onChange={onPropertyChange(name)}
                     maxLength="3000"
                     style={{ width: '40em', height: '5em' }}
+                    className={
+                      highlightMissingFields && isRequired && !value
+                        ? 'field-required-empty'
+                        : ''
+                    }
                   />
                 ) : inputType === 'select' ? (
                   <SingleSelect
@@ -100,6 +120,11 @@ const UserIdentity = (props) => {
                     items={[{ value: '', display: '--' }].concat(
                       vocabulary[name]
                     )}
+                    className={
+                      highlightMissingFields && isRequired && !value
+                        ? 'field-required-empty'
+                        : ''
+                    }
                   />
                 ) : (
                   <em>Unknown input type: {inputType}</em>
@@ -127,6 +152,9 @@ UserIdentity.propTypes = {
 
   /** An array of the user properties configured in WDK model */
   propDefs: PropTypes.array.isRequired,
+
+  /** Whether to highlight missing required fields */
+  highlightMissingFields: PropTypes.bool,
 };
 
 export default wrappable(UserIdentity);

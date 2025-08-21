@@ -26,6 +26,7 @@ type DispatchProps = { userEvents: typeof actionCreators };
 type OwnProps = {
   introComponent?: React.ComponentType;
   singleFormMode?: boolean;
+  highlightMissingFields?: boolean;
 };
 
 type Props = DispatchProps & StateProps & OwnProps;

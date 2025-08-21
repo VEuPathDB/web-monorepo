@@ -33,6 +33,7 @@ export interface UserAccountFormProps {
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
   onDiscardChanges?: () => void;
   singleFormMode?: boolean;
+  highlightMissingFields?: boolean;
 }
 
 /**
@@ -154,6 +155,7 @@ function UserAccountForm(props: UserAccountFormProps) {
               onPropertyChange={onPropertyChange}
               propDefs={wdkConfig.userProfileProperties}
               vocabulary={vocabulary}
+              highlightMissingFields={props.highlightMissingFields}
             />
             <p>
               <i className="fa fa-asterisk"></i> = required
@@ -212,6 +214,7 @@ function UserAccountForm(props: UserAccountFormProps) {
           onPropertyChange={onPropertyChange}
           propDefs={wdkConfig.userProfileProperties}
           vocabulary={vocabulary}
+          highlightMissingFields={props.highlightMissingFields}
         />
         <ApplicationSpecificProperties
           user={user}
