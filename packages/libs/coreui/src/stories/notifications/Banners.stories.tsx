@@ -22,7 +22,7 @@ const Template: Story<BannerComponentProps> = (args) => {
           primary: { hue: blue, level: 600 },
           secondary: { hue: gray, level: 500 },
           error: { hue: error, level: 600 },
-          warning: { hue: warning, level: 600 },
+          warning: { hue: warning, level: 400 }, // level is different than 600 to test that the banner handles this appropriately
           info: { hue: blue, level: 600 },
           success: { hue: success, level: 600 },
         },
