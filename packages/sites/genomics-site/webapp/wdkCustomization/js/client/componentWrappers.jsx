@@ -43,7 +43,6 @@ import colors, {
   success,
   warning,
 } from '@veupathdb/coreui/lib/definitions/colors';
-import { ErrorBoundary } from '@veupathdb/wdk-client/lib/Controllers';
 
 export const SiteHeader = () => ApiSiteHeader;
 
