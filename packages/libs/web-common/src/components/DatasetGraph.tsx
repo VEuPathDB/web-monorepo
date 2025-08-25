@@ -6,6 +6,10 @@ import {
   Link,
 } from '@veupathdb/wdk-client/lib/Components';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import {
+  RecordInstance,
+  TableField,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import ExternalResource from './ExternalResource';
 import { JbrowseIframe } from './JbrowseIframe';
 import { EdaScatterPlot } from './eda/EdaScatterPlot';
@@ -36,17 +40,12 @@ interface RowData {
 
 interface DataTable {
   DefaultComponent: React.ComponentType<any>;
-  record: {
-    attributes: {
-      CoverageJbrowseIntUrl: string;
-      CoverageJbrowseUrl: string;
-      specialJbrowseUrl: string;
-    };
+  record: RecordInstance;
+  recordClass: {
+    tablesMap: Record<string, TableField>;
+    attributesMap: Record<string, { displayName: string }>;
   };
-  recordClass: any;
-  table: {
-    name: string;
-  };
+  table: TableField;
   value: Array<{ dataset_id: string }>;
 }
 
@@ -282,11 +281,11 @@ const DatasetGraph: React.FC<DatasetGraphProps> = ({
     assay_type,
     module,
     paralog_number,
-    graph_ids,
+    // unused: graph_ids,
     dataset_id,
     dataset_name,
     description,
-    project_id,
+    // unused: project_id,
     project_id_url,
     x_axis,
     y_axis,
@@ -556,14 +555,17 @@ hook: HostResponseGraphs
             >
               <div>
                 <a
-                  href={specialImgUrl.replace('/phenotypeTracks/', '/tracks/')}
+                  href={String(specialImgUrl).replace(
+                    '/phenotypeTracks/',
+                    '/tracks/'
+                  )}
                 >
                   View in genome browser
                 </a>
               </div>
               <ExternalResource>
                 <JbrowseIframe
-                  jbrowseUrl={specialImgUrl.replace(
+                  jbrowseUrl={String(specialImgUrl).replace(
                     '/app/jbrowse',
                     '/jbrowse/index.html'
                   )}
