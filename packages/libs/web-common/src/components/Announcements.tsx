@@ -141,9 +141,14 @@ const siteAnnouncements: SiteAnnouncement[] = [
     dismissalDurationSeconds: 48 * 60 * 60, // 48 hours
     renderDisplay: (props: AnnouncementRenderProps) => {
       // if (props.currentUser && props.currentUser.isGuest) {
+      const firstName = props.currentUser.properties['firstName'];
+      const address = firstName ? `${firstName}, you` : 'You';
       return (
         <div style={{ margin: '3px' }}>
-          <SubscriptionManagementBanner key="subscription-management" />
+          <SubscriptionManagementBanner
+            key="subscription-management"
+            address={address}
+          />
         </div>
       );
       // }
