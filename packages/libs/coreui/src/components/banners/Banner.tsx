@@ -178,6 +178,7 @@ export default function Banner(props: BannerComponentProps) {
       color: ${getColorTheme(type, 600)};
       &:hover {
         color: ${getColorTheme(type, 700)};
+        background: transparent;
       }`;
   }, [type]);
 
