@@ -60,7 +60,6 @@ export default function FilledButton({
     },
   };
   const theme = useUITheme();
-  console.log('filledbutton level', themeRole, theme?.palette);
   const themeStyle = useMemo<PartialButtonStyleSpec>(
     () =>
       theme && themeRole

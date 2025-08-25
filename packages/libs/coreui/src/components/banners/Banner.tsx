@@ -73,6 +73,8 @@ export type BannerComponentProps = {
   CollapsibleContent?: React.FC;
 };
 
+const MAIN_COLOR_LEVEL = 600;
+
 function getIconComponentFromType(type: BannerProps['type']) {
   switch (type) {
     case 'warning':
@@ -175,9 +177,9 @@ export default function Banner(props: BannerComponentProps) {
       border: none;
       cursor: pointer;
       margin-left: 4px; // makes space between CTA button and close same as close and banner border
-      color: ${getColorTheme(type, 600)};
+      color: ${getColorTheme(type, MAIN_COLOR_LEVEL)};
       &:hover {
-        color: ${getColorTheme(type, 700)};
+        color: ${getColorTheme(type, MAIN_COLOR_LEVEL + 100)};
         background: transparent;
       }`;
   }, [type]);
@@ -191,13 +193,13 @@ export default function Banner(props: BannerComponentProps) {
             display: flex;
             color: ${intense ? 'white' : 'black'};
             background-color: ${intense
-              ? getColorTheme(type, 600)
+              ? getColorTheme(type, MAIN_COLOR_LEVEL)
               : getColorTheme(type, 100)};
             border: ${intense
               ? 'none'
               : CollapsibleContent != null
               ? `1px solid #dedede`
-              : `1px solid ${getColorTheme(type, 600)}`};
+              : `1px solid ${getColorTheme(type, MAIN_COLOR_LEVEL)}`};
             box-sizing: border-box;
             border-radius: ${CollapsibleContent != null ? '0' : '7px'};
             margin: ${spacing?.margin != null ? spacing.margin : '10px 0'};
@@ -232,7 +234,7 @@ export default function Banner(props: BannerComponentProps) {
                       ? 'white'
                       : CollapsibleContent != null
                       ? '#00008B'
-                      : getColorTheme(type, 600)};
+                      : getColorTheme(type, MAIN_COLOR_LEVEL)};
                     font-size: 1.4em;
                     line-height: 1.4em;
                     width: 30px;
