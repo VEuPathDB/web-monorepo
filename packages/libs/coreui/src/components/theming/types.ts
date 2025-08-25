@@ -17,6 +17,10 @@ export type UITheme = {
   palette: {
     primary: ColorDescriptor;
     secondary: ColorDescriptor;
+    error: ColorDescriptor;
+    warning: ColorDescriptor;
+    info: ColorDescriptor;
+    success: ColorDescriptor;
   };
   typography?: {
     headers?: {

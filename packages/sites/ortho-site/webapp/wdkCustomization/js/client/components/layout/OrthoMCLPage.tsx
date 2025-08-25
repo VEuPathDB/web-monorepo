@@ -40,7 +40,11 @@ import {
 } from 'ortho-client/hooks/searchCheckboxTree';
 
 import './OrthoMCLPage.scss';
-import { colors } from '@veupathdb/coreui';
+import colors, {
+  error,
+  success,
+  warning,
+} from '@veupathdb/coreui/lib/definitions/colors';
 import { UIThemeProvider } from '@veupathdb/coreui/lib/components/theming';
 
 const cx = makeClassNameHelper('vpdb-');
@@ -93,6 +97,10 @@ export const OrthoMCLPage: FunctionComponent<Props> = (props) => {
         palette: {
           primary: { hue: colors.mutedBlue, level: 600 },
           secondary: { hue: colors.mutedRed, level: 500 },
+          error: { hue: error, level: 600 },
+          warning: { hue: warning, level: 600 },
+          info: { hue: colors.mutedBlue, level: 600 },
+          success: { hue: success, level: 600 },
         },
       }}
     >

@@ -8,7 +8,11 @@ import { UserProfileFormData } from '../../../StoreModules/UserProfileStoreModul
 import { User } from '../../../Utils/WdkUser';
 import { ServiceConfig } from '../../../Service/ServiceBase';
 import CoreUIThemeProvider from '@veupathdb/coreui/lib/components/theming/UIThemeProvider';
-import colors from '@veupathdb/coreui/lib/definitions/colors';
+import colors, {
+  error,
+  warning,
+  success,
+} from '@veupathdb/coreui/lib/definitions/colors';
 
 type UserProfileProps = Omit<
   UserFormContainerProps,
@@ -36,6 +40,10 @@ const UserProfile: React.FC<UserProfileProps> = (props) => (
       palette: {
         primary: { hue: colors.mutedCyan, level: 600 },
         secondary: { hue: colors.mutedRed, level: 500 },
+        error: { hue: error, level: 600 },
+        warning: { hue: warning, level: 600 },
+        info: { hue: colors.mutedCyan, level: 600 },
+        success: { hue: success, level: 600 },
       },
     }}
   >

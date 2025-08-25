@@ -38,8 +38,11 @@ import {
 import { workspaceThemeOptions as MUIThemeOptions } from '@veupathdb/eda/lib/workspaceTheme';
 
 import UIThemeProvider from '@veupathdb/coreui/lib/components/theming/UIThemeProvider';
-import { colors } from '@veupathdb/coreui';
-import { ErrorBoundary } from '@veupathdb/wdk-client/lib/Controllers';
+import colors, {
+  error,
+  success,
+  warning,
+} from '@veupathdb/coreui/lib/definitions/colors';
 
 export const SiteHeader = () => ApiSiteHeader;
 
@@ -506,6 +509,10 @@ export function Page() {
               palette: {
                 primary: { hue: colors.mutedBlue, level: 600 },
                 secondary: { hue: colors.mutedRed, level: 500 },
+                error: { hue: error, level: 600 },
+                warning: { hue: warning, level: 600 },
+                info: { hue: colors.mutedCyan, level: 600 },
+                success: { hue: success, level: 600 },
               },
             }}
           >
