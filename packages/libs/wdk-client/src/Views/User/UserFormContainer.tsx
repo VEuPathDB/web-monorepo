@@ -94,7 +94,7 @@ function UserFormContainer(props: UserFormContainerProps) {
         },
       };
       props.userEvents.updateProfileForm(newUserFormData);
-      if (submitNow && props.userEvents.submitProfileForm) {
+      if (submitNow) {
         props.userEvents.submitProfileForm(newUserFormData);
       }
     };
