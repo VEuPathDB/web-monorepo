@@ -1,6 +1,7 @@
 import React from 'react';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { Link } from 'react-router-dom';
+import { SwissArmyButtonVariantProps } from '@veupathdb/coreui/lib/components/buttons/SwissArmyButton';
 
 export function SubscriptionManagementBanner() {
   const message = (
@@ -16,6 +17,12 @@ export function SubscriptionManagementBanner() {
     type: 'warning',
     message: message,
     pinned: false,
+    primaryActionButtonProps: {
+      text: 'Join a subscribed group',
+      onPress: () => {
+        window.location.href = 'app/user/profile';
+      },
+    },
   };
 
   return (
