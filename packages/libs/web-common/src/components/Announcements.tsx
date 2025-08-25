@@ -9,6 +9,9 @@ import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { ServiceConfig } from '@veupathdb/wdk-client/lib/Service/ServiceBase';
 import { makeEdaRoute } from '../routes';
 import { colors, Warning } from '@veupathdb/coreui';
+import Banner, {
+  BannerProps,
+} from '@veupathdb/coreui/lib/components/banners/Banner';
 import { SubscriptionManagementBanner } from './SubscriptionManagementBanner';
 import { BannerDismissal } from '../hooks/announcements';
 
@@ -35,7 +38,7 @@ interface SiteAnnouncement {
   dismissible?: boolean;
   dismissalDurationSeconds?: number;
   renderDisplay: (props: AnnouncementRenderProps) => React.ReactNode;
-  renderAlone?: boolean;
+  customRender?: boolean;
 }
 
 interface AnnouncementsData {
@@ -109,14 +112,27 @@ const siteAnnouncements: SiteAnnouncement[] = [
     id: 'subscription-info',
     dismissible: true,
     renderDisplay: (props: AnnouncementRenderProps) => {
+      const bannerProps: BannerProps = {
+        type: 'info',
+        message: (
+          <div style={{ fontSize: '1.2em' }}>
+            VEuPathDB now operates under a subscription model in order to remain
+            open source.{' '}
+            <Link to="/static-content/subscriptions.html">
+              Learn about our model{' '}
+            </Link>
+            or view our{' '}
+            <Link to="static-content/subscribers.html">2025 subscribers</Link>.
+          </div>
+        ),
+      };
       return (
-        <div key="subscription-info">
-          VEuPathDB now operates under a subscription model in order to stay
-          open source.
+        <div style={{ margin: '3px' }}>
+          <Banner banner={bannerProps} onClose={() => console.log('closed')} />
         </div>
       );
     },
-    renderAlone: true,
+    customRender: true,
   },
   // subscription management banner for an individual
   {
@@ -133,7 +149,7 @@ const siteAnnouncements: SiteAnnouncement[] = [
       // }
       // return null;
     },
-    renderAlone: true,
+    customRender: true,
   },
   // alpha
   {
@@ -1314,7 +1330,7 @@ export default function Announcements({
             : null;
 
           return isSiteAnnouncement(announcementData) &&
-            announcementData.renderAlone ? (
+            announcementData.customRender ? (
             display
           ) : (
             <AnnouncementContainer

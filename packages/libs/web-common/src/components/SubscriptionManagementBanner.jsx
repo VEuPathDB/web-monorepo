@@ -1,13 +1,12 @@
 import React from 'react';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { Link } from 'react-router-dom';
-import { SwissArmyButtonVariantProps } from '@veupathdb/coreui/lib/components/buttons/SwissArmyButton';
 
 export function SubscriptionManagementBanner() {
   const message = (
     <div style={{ fontSize: '1.2em' }}>
-      You are not associated with a subscription. Please join your group's
-      subscription, or if you are a PI or group manager{' '}
+      <strong>You are not associated with a subscription.</strong> Please join
+      your group's subscription, or if you are a PI or group manager{' '}
       <Link to="/static-content/subscriptions.html">create a subscription</Link>
       .
     </div>
