@@ -35,6 +35,7 @@ interface SiteAnnouncement {
   dismissible?: boolean;
   dismissalDurationSeconds?: number;
   renderDisplay: (props: AnnouncementRenderProps) => React.ReactNode;
+  renderAlone?: boolean;
 }
 
 interface AnnouncementsData {
@@ -103,17 +104,36 @@ const infoIcon = (
 // a unique id for the announcement, and a function that takes props and returns a React Element.
 // Use props as an opportunity to determine if the message should be displayed for the given context.
 const siteAnnouncements: SiteAnnouncement[] = [
-  // subscription management banner
+  // General subscription info
+  {
+    id: 'subscription-info',
+    dismissible: true,
+    renderDisplay: (props: AnnouncementRenderProps) => {
+      return (
+        <div key="subscription-info">
+          VEuPathDB now operates under a subscription model in order to stay
+          open source.
+        </div>
+      );
+    },
+    renderAlone: true,
+  },
+  // subscription management banner for an individual
   {
     id: 'subscription-management',
     dismissible: true,
     dismissalDurationSeconds: 48 * 60 * 60, // 48 hours
     renderDisplay: (props: AnnouncementRenderProps) => {
-      if (props.currentUser && props.currentUser.isGuest) {
-        return <SubscriptionManagementBanner key="subscription-management" />;
-      }
-      return null;
+      // if (props.currentUser && props.currentUser.isGuest) {
+      return (
+        <div style={{ margin: '3px' }}>
+          <SubscriptionManagementBanner key="subscription-management" />
+        </div>
+      );
+      // }
+      // return null;
     },
+    renderAlone: true,
   },
   // alpha
   {
@@ -1254,7 +1274,7 @@ export default function Announcements({
         (announcementData: SiteMessage | SiteAnnouncement) => {
           const category = announcementData.category || 'page-information';
 
-          // Currently, only announcements of category "information" are dismissible
+          // Announcements marked dismissible or those with category='information' are dismissible.
           const dismissible = isSiteAnnouncement(announcementData)
             ? announcementData.dismissible ?? category === 'information'
             : category === 'information';
@@ -1293,7 +1313,10 @@ export default function Announcements({
             ? toElement(announcementData)
             : null;
 
-          return (
+          return isSiteAnnouncement(announcementData) &&
+            announcementData.renderAlone ? (
+            display
+          ) : (
             <AnnouncementContainer
               key={announcementData.id}
               category={category}
