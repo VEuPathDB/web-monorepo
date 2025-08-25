@@ -8,7 +8,9 @@ import {
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import {
   RecordInstance,
+  RecordClass,
   TableField,
+  TableValue,
 } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import ExternalResource from './ExternalResource';
 import { JbrowseIframe } from './JbrowseIframe';
@@ -19,6 +21,14 @@ interface Graph {
   width: number;
   height: number;
   visible_part: string;
+}
+
+interface RecordTableProps {
+  className?: string;
+  record: RecordInstance;
+  recordClass: RecordClass;
+  table: TableField;
+  value: TableValue;
 }
 
 interface RowData {
@@ -39,14 +49,11 @@ interface RowData {
 }
 
 interface DataTable {
-  DefaultComponent: React.ComponentType<any>;
+  DefaultComponent: React.ComponentType<RecordTableProps>;
   record: RecordInstance;
-  recordClass: {
-    tablesMap: Record<string, TableField>;
-    attributesMap: Record<string, { displayName: string }>;
-  };
+  recordClass: RecordClass;
   table: TableField;
-  value: Array<{ dataset_id: string }>;
+  value: TableValue;
 }
 
 interface MetadataTable {
