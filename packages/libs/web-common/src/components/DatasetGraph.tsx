@@ -88,9 +88,6 @@ const DatasetGraph: React.FC<DatasetGraphProps> = ({
   facetMetadataTable,
   contXAxisMetadataTable,
 }) => {
-  const requestRef =
-    useRef<{ abort: () => void; promise: () => Promise<any> } | null>(null);
-
   const [error, setError] = useState<string>();
   // Submit error to WDK service when it changes
   useWdkService(
@@ -168,12 +165,8 @@ const DatasetGraph: React.FC<DatasetGraphProps> = ({
       const baseUrl = makeBaseUrl(currentRowData, currentGraphId);
       setState((prev) => ({ ...prev, loading: true }));
 
-      if (requestRef.current) {
-        requestRef.current.abort();
-      }
-
-      requestRef.current = httpGet(baseUrl + '&declareParts=1');
-      requestRef.current.promise().then((graphs: any) => {
+      const request = httpGet(baseUrl + '&declareParts=1');
+      request.promise().then((graphs: any) => {
         let visibleGraphs = [0];
         if (typeof graphs === 'string') {
           // indicates an error from the server; log
@@ -190,6 +183,7 @@ const DatasetGraph: React.FC<DatasetGraphProps> = ({
           loading: false,
         }));
       });
+      return request;
     },
     [makeBaseUrl]
   );
@@ -198,10 +192,9 @@ const DatasetGraph: React.FC<DatasetGraphProps> = ({
     (graphId: string) => {
       if (state.graphId !== graphId) {
         setState((prev) => ({ ...prev, graphId }));
-        getGraphParts(rowData, graphId);
       }
     },
-    [state.graphId, getGraphParts, rowData]
+    [state.graphId]
   );
 
   const setFacet = useCallback(
@@ -264,12 +257,9 @@ const DatasetGraph: React.FC<DatasetGraphProps> = ({
   }, []);
 
   useEffect(() => {
-    getGraphParts(rowData, state.graphId);
-
+    const request = getGraphParts(rowData, state.graphId);
     return () => {
-      if (requestRef.current) {
-        requestRef.current.abort();
-      }
+      request.abort();
     };
   }, [rowData, getGraphParts, state.graphId]);
 
