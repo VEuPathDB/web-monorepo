@@ -9,7 +9,6 @@ import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import ExternalResource from './ExternalResource';
 import { JbrowseIframe } from './JbrowseIframe';
 import { EdaScatterPlot } from './eda/EdaScatterPlot';
-import WdkService from '@veupathdb/wdk-client/lib/Service/WdkService';
 
 /**
  * Renders an Dataset graph with the provided rowData.
@@ -115,8 +114,8 @@ export default class DatasetGraph extends React.PureComponent {
       if (typeof graphs === 'string') {
         // indicates an error from the server; log
         let error = 'Error from dataPlotter: ' + graphs;
-        // FIXME: Don't understand why this does not exist
-        //WdkService.submitError(error);
+        // FIXME: eventually we want to do:
+        // useWdkService( (wdkService) => wdkService.submitError(error) );
         console.error(error);
         // graphs not available; don't break the page
         graphs = [];
