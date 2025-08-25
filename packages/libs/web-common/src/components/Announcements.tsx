@@ -38,7 +38,7 @@ interface SiteAnnouncement {
   dismissible?: boolean;
   dismissalDurationSeconds?: number;
   renderDisplay: (props: AnnouncementRenderProps) => React.ReactNode;
-  customRender?: boolean;
+  renderAsIs?: boolean;
 }
 
 interface AnnouncementsData {
@@ -132,7 +132,7 @@ const siteAnnouncements: SiteAnnouncement[] = [
         </div>
       );
     },
-    customRender: true,
+    renderAsIs: true,
   },
   // subscription management banner for an individual
   {
@@ -149,7 +149,7 @@ const siteAnnouncements: SiteAnnouncement[] = [
       // }
       // return null;
     },
-    customRender: true,
+    renderAsIs: true,
   },
   // alpha
   {
@@ -1330,7 +1330,7 @@ export default function Announcements({
             : null;
 
           return isSiteAnnouncement(announcementData) &&
-            announcementData.customRender ? (
+            announcementData.renderAsIs ? (
             display
           ) : (
             <AnnouncementContainer
