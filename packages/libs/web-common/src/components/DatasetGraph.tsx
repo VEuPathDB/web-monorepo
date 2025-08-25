@@ -15,6 +15,7 @@ import {
 import ExternalResource from './ExternalResource';
 import { JbrowseIframe } from './JbrowseIframe';
 import { EdaScatterPlot } from './eda/EdaScatterPlot';
+import { useWdkService } from '../../../wdk-client/lib/Hooks/WdkServiceHook';
 
 // TypeScript interfaces
 interface Graph {
@@ -90,6 +91,19 @@ const DatasetGraph: React.FC<DatasetGraphProps> = ({
   const requestRef =
     useRef<{ abort: () => void; promise: () => Promise<any> } | null>(null);
 
+  const [error, setError] = useState<string>();
+  // Submit error to WDK service when it changes
+  useWdkService(
+    (wdkService) => {
+      if (error) {
+        console.log(`Submitting WDK error '${error}'`);
+        wdkService.submitError(new Error(error));
+      }
+      return Promise.resolve();
+    },
+    [error]
+  );
+
   const graphIds = rowData.graph_ids.split(/\s*,\s*/);
 
   const [state, setState] = useState({
@@ -163,10 +177,8 @@ const DatasetGraph: React.FC<DatasetGraphProps> = ({
         let visibleGraphs = [0];
         if (typeof graphs === 'string') {
           // indicates an error from the server; log
-          const error = 'Error from dataPlotter: ' + graphs;
-          // FIXME: eventually we want to do:
-          // useWdkService( (wdkService) => wdkService.submitError(error) );
-          console.error(error);
+          const message = 'Error from dataPlotter: ' + graphs;
+          setError(message);
           // graphs not available; don't break the page
           graphs = [];
           visibleGraphs = [];
