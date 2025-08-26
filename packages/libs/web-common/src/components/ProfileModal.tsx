@@ -43,7 +43,7 @@ export function ProfileModal() {
       >
         <UserProfileController
           introComponent={NewProfilePropertiesBanner}
-          showChangePasswordBox={false}
+          singleFormMode={true}
         />
       </div>
     </Modal>
