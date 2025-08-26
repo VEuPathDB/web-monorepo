@@ -9,6 +9,9 @@ import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { ServiceConfig } from '@veupathdb/wdk-client/lib/Service/ServiceBase';
 import { makeEdaRoute } from '../routes';
 import { colors, Warning } from '@veupathdb/coreui';
+import Banner, {
+  BannerProps,
+} from '@veupathdb/coreui/lib/components/banners/Banner';
 import { SubscriptionManagementBanner } from './SubscriptionManagementBanner';
 import { BannerDismissal } from '../hooks/announcements';
 
@@ -35,6 +38,7 @@ interface SiteAnnouncement {
   dismissible?: boolean;
   dismissalDurationSeconds?: number;
   renderDisplay: (props: AnnouncementRenderProps) => React.ReactNode;
+  renderAsIs?: boolean;
 }
 
 interface AnnouncementsData {
@@ -49,6 +53,7 @@ interface AnnouncementContainerProps {
   isOpen: boolean;
   onClose: () => void;
   display: React.ReactNode;
+  renderAsIs?: boolean;
 }
 
 interface AnnouncementBannerProps {
@@ -103,17 +108,54 @@ const infoIcon = (
 // a unique id for the announcement, and a function that takes props and returns a React Element.
 // Use props as an opportunity to determine if the message should be displayed for the given context.
 const siteAnnouncements: SiteAnnouncement[] = [
-  // subscription management banner
+  // General subscription info
+  {
+    id: 'subscription-info',
+    dismissible: true,
+    renderDisplay: (props: AnnouncementRenderProps) => {
+      const bannerProps: BannerProps = {
+        type: 'info',
+        message: (
+          <div style={{ fontSize: '1.2em' }}>
+            VEuPathDB now operates under a subscription model in order to remain
+            open source.{' '}
+            <Link to="/static-content/subscriptions.html">
+              Learn about our model{' '}
+            </Link>
+            or view our{' '}
+            <Link to="static-content/subscribers.html">2025 subscribers</Link>.
+          </div>
+        ),
+      };
+      return (
+        <div style={{ margin: '3px' }}>
+          <Banner banner={bannerProps} onClose={() => console.log('closed')} />
+        </div>
+      );
+    },
+    renderAsIs: true,
+  },
+  // subscription management banner for an individual
   {
     id: 'subscription-management',
     dismissible: true,
     dismissalDurationSeconds: 48 * 60 * 60, // 48 hours
     renderDisplay: (props: AnnouncementRenderProps) => {
-      if (props.currentUser && props.currentUser.isGuest) {
-        return <SubscriptionManagementBanner key="subscription-management" />;
-      }
-      return null;
+      // if (props.currentUser && props.currentUser.isGuest) {
+      const firstName = props.currentUser.properties['firstName'];
+      const address = firstName ? `${firstName}, you` : 'You';
+      return (
+        <div style={{ margin: '3px' }}>
+          <SubscriptionManagementBanner
+            key="subscription-management"
+            address={address}
+          />
+        </div>
+      );
+      // }
+      // return null;
     },
+    renderAsIs: true,
   },
   // alpha
   {
@@ -1254,7 +1296,7 @@ export default function Announcements({
         (announcementData: SiteMessage | SiteAnnouncement) => {
           const category = announcementData.category || 'page-information';
 
-          // Currently, only announcements of category "information" are dismissible
+          // Announcements marked dismissible or those with category='information' are dismissible.
           const dismissible = isSiteAnnouncement(announcementData)
             ? announcementData.dismissible ?? category === 'information'
             : category === 'information';
@@ -1301,6 +1343,10 @@ export default function Announcements({
               isOpen={isOpen}
               onClose={onClose}
               display={display}
+              renderAsIs={
+                isSiteAnnouncement(announcementData) &&
+                announcementData.renderAsIs
+              }
             />
           );
         }
@@ -1320,7 +1366,13 @@ function AnnouncementContainer(props: AnnouncementContainerProps) {
       ? warningIcon
       : infoIcon;
 
-  return <AnnouncementBanner {...props} icon={icon} />;
+  return props.renderAsIs &&
+    props.display &&
+    React.isValidElement(props.display) ? (
+    props.display
+  ) : (
+    <AnnouncementBanner {...props} icon={icon} />
+  );
 }
 
 /**
