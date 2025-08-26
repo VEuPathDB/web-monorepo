@@ -53,6 +53,7 @@ interface AnnouncementContainerProps {
   isOpen: boolean;
   onClose: () => void;
   display: React.ReactNode;
+  renderAsIs?: boolean;
 }
 
 interface AnnouncementBannerProps {
@@ -1334,10 +1335,7 @@ export default function Announcements({
             ? toElement(announcementData)
             : null;
 
-          return isSiteAnnouncement(announcementData) &&
-            announcementData.renderAsIs ? (
-            display
-          ) : (
+          return (
             <AnnouncementContainer
               key={announcementData.id}
               category={category}
@@ -1345,6 +1343,10 @@ export default function Announcements({
               isOpen={isOpen}
               onClose={onClose}
               display={display}
+              renderAsIs={
+                isSiteAnnouncement(announcementData) &&
+                announcementData.renderAsIs
+              }
             />
           );
         }
@@ -1364,7 +1366,13 @@ function AnnouncementContainer(props: AnnouncementContainerProps) {
       ? warningIcon
       : infoIcon;
 
-  return <AnnouncementBanner {...props} icon={icon} />;
+  return props.renderAsIs &&
+    props.display &&
+    React.isValidElement(props.display) ? (
+    props.display
+  ) : (
+    <AnnouncementBanner {...props} icon={icon} />
+  );
 }
 
 /**
