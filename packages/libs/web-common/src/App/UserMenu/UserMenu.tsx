@@ -139,10 +139,12 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
   return (
     <div className={'box UserMenu' + (!isGuest ? ' UserMenu--expanded' : '')}>
       <div className="UserMenu-IconContainer">
-        {isSubscribed && <UserCheck className="UserMenu-StatusIcon" />}
-        {!isSubscribed && (
+        {isGuest ? (
           <Icon className="UserMenu-Icon" fa={iconClass} />
-          // Replace with <UserWarn className="UserMenu-StatusIcon"/>
+        ) : isSubscribed ? (
+          <UserCheck className="UserMenu-StatusIcon" />
+        ) : (
+          <UserWarn className="UserMenu-StatusIcon" />
         )}
       </div>
       <span
