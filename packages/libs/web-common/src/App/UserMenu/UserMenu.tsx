@@ -8,7 +8,8 @@ import { SubscriptionGroup } from '@veupathdb/wdk-client/lib/Service/Mixins/Oaut
 
 import './UserMenu.scss';
 import UserWarn from '@veupathdb/coreui/lib/components/icons/UserWarn';
-import { UserCheck } from '@veupathdb/coreui';
+import UserCheck from '@veupathdb/coreui/lib/components/icons/UserCheck';
+import UserGuest from '@veupathdb/coreui/lib/components/icons/UserGuest';
 
 interface Actions {
   showLoginForm: (destination: string) => void;
@@ -140,7 +141,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
     <div className={'box UserMenu' + (!isGuest ? ' UserMenu--expanded' : '')}>
       <div className="UserMenu-IconContainer">
         {isGuest ? (
-          <Icon className="UserMenu-Icon" fa={iconClass} />
+          <UserGuest className="UserMenu-GuestIcon" />
         ) : isSubscribed ? (
           <UserCheck className="UserMenu-StatusIcon" />
         ) : (
