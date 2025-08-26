@@ -27,7 +27,7 @@ export interface SaveButtonProps
   /** Duration in milliseconds to show the 'saved' state before reverting to normal. Default is 3000 ms */
   savedStateDuration?: number;
   /** Optional callback that is called when the button has finished its `savedStateDuration` wait in the 'saved' state */
-  onSavedDisplayEnd?: () => void;
+  onSuccess?: () => void;
 }
 
 /** Smart save button that changes appearance based on form status */
@@ -41,7 +41,7 @@ export default function SaveButton({
   styleOverrides = {},
   iconPosition = 'left',
   additionalAriaProperties = {},
-  onSavedDisplayEnd,
+  onSuccess,
   ...otherProps
 }: SaveButtonProps) {
   const theme = useUITheme();
@@ -54,7 +54,7 @@ export default function SaveButton({
     if (formStatus === 'success' && !hasSuccessReverted) {
       const timeoutId = setTimeout(() => {
         setHasSuccessReverted(true);
-        onSavedDisplayEnd?.();
+        onSuccess?.();
       }, savedStateDuration);
 
       return () => clearTimeout(timeoutId);
@@ -64,7 +64,7 @@ export default function SaveButton({
     if (formStatus !== 'success') {
       setHasSuccessReverted(false);
     }
-  }, [formStatus, savedStateDuration, hasSuccessReverted, onSavedDisplayEnd]);
+  }, [formStatus, savedStateDuration, hasSuccessReverted, onSuccess]);
 
   // Determine button state based on form status and internal revert state
   const { text, icon, disabled } = useMemo(() => {
