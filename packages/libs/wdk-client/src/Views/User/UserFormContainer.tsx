@@ -3,7 +3,10 @@ import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
 import { getChangeHandler, wrappable } from '../../Utils/ComponentUtils';
 import { UserPreferences } from '../../Utils/WdkUser';
 import UserAccountForm from '../../Views/User/UserAccountForm';
+import { User } from '../../Utils/WdkUser';
+import { IconAlt as Icon } from '../../Components';
 import './Profile/UserProfile.scss';
+import { success, warning } from '@veupathdb/coreui/lib/definitions/colors';
 
 export function getDescriptionBoxStyle() {
   return {
@@ -27,7 +30,7 @@ export function FormMessage({
 }
 
 export interface UserFormContainerProps {
-  globalData: { config?: any };
+  globalData: { config?: any; user?: User };
   userFormData?: UserProfileFormData;
   previousUserFormData?: UserProfileFormData;
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
@@ -139,6 +142,7 @@ function UserFormContainer(props: UserFormContainerProps) {
       props.userEvents.updateProfileForm(initialUserStateRef.current);
     }
   }
+  console.log(props);
 
   return (
     <div className="wdk-UserProfile">
@@ -151,17 +155,34 @@ function UserFormContainer(props: UserFormContainerProps) {
             {
               // If this is a profile (so the user is not a guest), we want to show the user if they
               // have subscribed.
-              // Fix before merge. We just need some new types around
-              //@ts-ignore
-              !props.globalData.user.isGuest && (
-                // user.isSubscribed ? (
-                // Add icon here
-                <h3>Unsubscribed</h3>
-                //) : (
-                // Add icon here
-                // <h4>Subscribed</h4>
-                // )
-              )
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'baseline',
+                  gap: '0.5em',
+                }}
+              >
+                {props.globalData.user &&
+                  !props.globalData.user.isGuest &&
+                  (props.globalData.user.properties.subscriptionToken ? (
+                    <>
+                      <Icon
+                        fa="check-circle wdk-UserProfile-StatusIcon--success"
+                        style={{ color: success[600], fontSize: '1.35m' }}
+                      />
+                      <h3>Subscribed</h3>
+                    </>
+                  ) : (
+                    <>
+                      <Icon
+                        fa="exclamation-triangle"
+                        className="wdk-UserProfile-StatusIcon--warning"
+                        style={{ color: warning[600], fontSize: '1.5em' }}
+                      />
+                      <h3>Unsubscribed</h3>
+                    </>
+                  ))}
+              </div>
             }
           </div>
           {props.introComponent && <props.introComponent />}
