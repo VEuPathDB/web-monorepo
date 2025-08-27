@@ -1283,7 +1283,7 @@ export default function Announcements({
   setClosedBanners = noop,
 }: AnnouncementsProps) {
   const location = useLocation();
-  let data = useWdkService(fetchAnnouncementsData, []);
+  const data = useWdkService(fetchAnnouncementsData, []);
 
   const onCloseFactory = useCallback(
     (id: string) => () => {
