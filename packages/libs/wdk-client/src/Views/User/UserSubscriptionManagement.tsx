@@ -3,6 +3,7 @@ import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
 import { wrappable } from '../../Utils/ComponentUtils';
 import { SubscriptionGroup } from '../../Service/Mixins/OauthService';
 import Select from 'react-select';
+import { ValueType } from 'react-select/src/types';
 import {
   OutlinedButton,
   SaveButton,
@@ -21,6 +22,11 @@ interface UserSubscriptionManagementProps {
   onDiscardChanges: () => void;
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
 }
+
+type Option = {
+  value: string;
+  label: string;
+};
 
 const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
   user,
@@ -132,18 +138,22 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
     );
   }
 
-  let groupVocab1 = subscriptionGroups.map((group) => ({
-    value: group.subscriptionToken,
-    display: group.groupName,
-  }));
-  let groupVocab2 = subscriptionGroups.map((group) => ({
-    value: group.subscriptionToken,
-    label: group.groupName,
-  }));
+  let groupVocab1 = [{ value: '', display: '--' }].concat(
+    subscriptionGroups.map((group) => ({
+      value: group.subscriptionToken,
+      display: group.groupName,
+    }))
+  );
+  let groupVocab2 = [{ value: '', label: '--' }].concat(
+    subscriptionGroups.map((group) => ({
+      value: group.subscriptionToken,
+      label: group.groupName,
+    }))
+  );
 
   let selectedGroup = groupVocab2.filter((g) => g.value === userGroupToken)[0];
 
-  const tryTypeahead = false;
+  const tryTypeahead = true;
   return (
     <fieldset>
       <legend>Subscription Management</legend>
@@ -160,20 +170,23 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                 value={userGroupToken || ''}
                 required={true}
                 onChange={onPropertyChange(tokenField)}
-                items={[{ value: '', display: '--' }].concat(groupVocab1)}
+                items={groupVocab1}
               />
             ) : (
-              <Select
-                isSearchable={true}
-                name={tokenField}
+              <Select<Option, any>
+                isMulti={false}
+                isSearchable
+                options={groupVocab2}
                 value={selectedGroup}
-                required={true}
-                onChange={(option) =>
+                onChange={(option: ValueType<Option, any>) => {
                   onPropertyChange(tokenField)(
-                    option == null ? '' : option.value
-                  )
-                }
-                items={[{ value: '', label: '--' }].concat(groupVocab2)}
+                    option == null || Array.isArray(option)
+                      ? ''
+                      : (option as Option).value
+                  );
+                }}
+                formatOptionLabel={(option) => option.label}
+                form="DO_NOT_SUBMIT_ON_ENTER"
               />
             )}
             {saveButton}
