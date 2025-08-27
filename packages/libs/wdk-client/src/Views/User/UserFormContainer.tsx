@@ -35,13 +35,13 @@ export interface UserFormContainerProps {
   userEvents: {
     updateProfileForm: (newState: UserProfileFormData) => void;
     resetProfileForm?: (formData: UserProfileFormData) => void;
+    submitProfileForm: (userData: UserProfileFormData) => void;
   };
   shouldHideForm: boolean;
   hiddenFormMessage: string;
   titleText: string;
   introComponent?: React.ComponentType;
   submitButtonText: string;
-  onSubmit: (userData: UserProfileFormData) => void;
   singleFormMode?: boolean;
   highlightMissingFields?: boolean;
 }
@@ -84,13 +84,19 @@ function UserFormContainer(props: UserFormContainerProps) {
   };
 
   function onPropertyChange(field: string) {
-    return (newValue: any): void => {
+    return (newValue: any, submitAfterChange?: boolean): void => {
       const previousState = currentUserFormData;
-      const newProps = { ...previousState.properties, [field]: newValue };
-      props.userEvents.updateProfileForm({
+      const newUserFormData = {
         ...previousState,
-        properties: newProps,
-      });
+        properties: {
+          ...previousState.properties,
+          [field]: newValue,
+        },
+      };
+      props.userEvents.updateProfileForm(newUserFormData);
+      if (submitAfterChange) {
+        props.userEvents.submitProfileForm(newUserFormData);
+      }
     };
   }
 
@@ -122,7 +128,7 @@ function UserFormContainer(props: UserFormContainerProps) {
       // Update the initial state reference to the current data being saved
       // This ensures that "Reset form" will reset to the last saved state, not the original page load state
       initialUserStateRef.current = currentUserFormData;
-      props.onSubmit(currentUserFormData);
+      props.userEvents.submitProfileForm(currentUserFormData);
     }
   }
 

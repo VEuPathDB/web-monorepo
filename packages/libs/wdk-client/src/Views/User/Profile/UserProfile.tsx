@@ -8,7 +8,11 @@ import { UserProfileFormData } from '../../../StoreModules/UserProfileStoreModul
 import { User } from '../../../Utils/WdkUser';
 import { ServiceConfig } from '../../../Service/ServiceBase';
 import CoreUIThemeProvider from '@veupathdb/coreui/lib/components/theming/UIThemeProvider';
-import colors from '@veupathdb/coreui/lib/definitions/colors';
+import colors, {
+  error,
+  warning,
+  success,
+} from '@veupathdb/coreui/lib/definitions/colors';
 
 type UserProfileProps = Omit<
   UserFormContainerProps,
@@ -19,11 +23,6 @@ type UserProfileProps = Omit<
   | 'onSubmit'
 > & {
   globalData: { user?: User; config?: ServiceConfig };
-  userEvents: {
-    submitProfileForm: (userData: UserProfileFormData) => void;
-    updateProfileForm: (newState: UserProfileFormData) => void;
-    resetProfileForm?: (formData: UserProfileFormData) => void;
-  };
   singleFormMode?: boolean;
 };
 
@@ -36,6 +35,10 @@ const UserProfile: React.FC<UserProfileProps> = (props) => (
       palette: {
         primary: { hue: colors.mutedCyan, level: 600 },
         secondary: { hue: colors.mutedRed, level: 500 },
+        error: { hue: error, level: 600 },
+        warning: { hue: warning, level: 600 },
+        info: { hue: colors.mutedCyan, level: 600 },
+        success: { hue: success, level: 600 },
       },
     }}
   >
@@ -44,7 +47,6 @@ const UserProfile: React.FC<UserProfileProps> = (props) => (
       hiddenFormMessage="You must first log on to read and alter your account information."
       titleText={`Account: ${props.globalData.user?.properties.firstName} ${props.globalData.user?.properties.lastName}`}
       submitButtonText="Save"
-      onSubmit={props.userEvents.submitProfileForm}
       singleFormMode={props.singleFormMode}
       {...props}
     />
