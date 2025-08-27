@@ -130,14 +130,14 @@ const UserRegistration: React.FC<UserRegistrationProps> = (props) => (
       formStatus={props.formStatus}
       errorMessage={props.errorMessage}
       userEvents={{
-        updateProfileForm: props.userEvents.updateProfileForm,
+        ...props.userEvents,
+        submitProfileForm: props.userEvents.submitRegistrationForm,
       }}
       shouldHideForm={!props.globalData.user?.isGuest}
       hiddenFormMessage="You must log out before registering a new user."
       titleText="Registration"
       introComponent={IntroText}
       submitButtonText="Register"
-      onSubmit={props.userEvents.submitRegistrationForm}
       singleFormMode={true}
     />
     {!props.globalData.user?.isGuest ? (

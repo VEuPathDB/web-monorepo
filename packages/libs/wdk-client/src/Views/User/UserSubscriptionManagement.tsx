@@ -43,15 +43,6 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
     : subscriptionGroups.filter((g) => g.subscriptionToken === userGroupToken);
   let validGroup = validGroupList.length === 0 ? undefined : validGroupList[0];
 
-  /*useEffect(() => {
-    if (leaveGroupEvent && validGroup == undefined) {
-      // user must have clicked remove me button and onPropertyChange is done
-      let e = leaveGroupEvent;
-      setLeaveGroupEvent(undefined);
-      onSubmit(e);
-    }
-  }, [leaveGroupEvent, validGroup, onSubmit]);*/
-
   if (validGroup && formStatus != 'modified') {
     return (
       <div>
@@ -73,13 +64,19 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                 }}
               >
                 <SaveButton
-                  formStatus={'modified'}
-                  onPress={(e) => onPropertyChange(tokenField)('', true)}
+                  customText={{ save: 'Confirm' }}
+                  formStatus="modified"
+                  onPress={(e) => {
+                    setShowLeaveGroupModal(false);
+                    onPropertyChange(tokenField)('', true);
+                  }}
                   themeRole="primary"
                 />
                 <OutlinedButton
                   text="Discard changes"
-                  onPress={() => setShowLeaveGroupModal(false)}
+                  onPress={() => {
+                    setShowLeaveGroupModal(false);
+                  }}
                   themeRole="primary"
                 />
               </div>
@@ -114,7 +111,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
               <p>This group is led by:</p>
               <ul>
                 {validGroup.groupLeads.map((lead) => (
-                  <li>
+                  <li key={lead.name + lead.organization}>
                     {lead.name}, {lead.organization}
                   </li>
                 ))}
