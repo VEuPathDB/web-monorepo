@@ -33,7 +33,7 @@ export interface UserAccountFormProps {
   onUserDataSubmit: (event: React.FormEvent) => void;
   submitButtonText: string;
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
-  onDiscardChanges?: () => void;
+  onDiscardChanges: () => void;
   singleFormMode?: boolean;
   highlightMissingFields?: boolean;
 }
@@ -172,6 +172,7 @@ function UserAccountForm(props: UserAccountFormProps) {
             subscriptionGroups={subscriptionGroups}
             onPropertyChange={onPropertyChange}
             onSubmit={onUserDataSubmit}
+            onDiscardChanges={onDiscardChanges}
             saveButton={saveButton}
             formStatus={formStatus}
           />

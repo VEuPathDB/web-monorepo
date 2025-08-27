@@ -18,6 +18,7 @@ interface UserSubscriptionManagementProps {
   ) => (value: any, submitAfterChange?: boolean) => void;
   saveButton: JSX.Element;
   onSubmit: (event: FormEvent<Element>) => void;
+  onDiscardChanges: () => void;
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
 }
 
@@ -27,6 +28,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
   onPropertyChange,
   saveButton,
   onSubmit,
+  onDiscardChanges,
   formStatus,
 }) => {
   let [showLeaveGroupModal, setShowLeaveGroupModal] = useState(false);
@@ -43,62 +45,24 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
     : subscriptionGroups.filter((g) => g.subscriptionToken === userGroupToken);
   let validGroup = validGroupList.length === 0 ? undefined : validGroupList[0];
 
-  if (validGroup && formStatus != 'modified') {
+  /**
+   * What is shown is dependent on two state values:
+   *
+   * Screen To Show Based On State                         ValidGroupPresent?   FormStatus?
+   * ----------------------------------------------------------------------------------------------
+   * div w/your subscription status                        valid-group          new/success/error
+   * div w/your subscription status w/dialog               no-group             modified
+   * div w/your subscription status w/dialog (Saving...)   no-group             pending
+   * choose group select (empty group)                     no-group             new/success/error
+   * choose group select (group selected modified form)    valid-group          modified
+   * choose group select (Saving...)                       valid-group          pending
+   */
+  if (
+    validGroup &&
+    (formStatus == 'new' || formStatus == 'success' || formStatus == 'error')
+  ) {
     return (
       <div>
-        <Dialog
-          open={showLeaveGroupModal}
-          modal={true}
-          title="Confirmation"
-          /* An optional description for screen readers only */
-          description={<div>Confirm you want to leave the group.</div>}
-          children={
-            <div>
-              <p>Are you sure you want to leave the group?</p>
-              <div
-                style={{
-                  marginTop: '1em',
-                  display: 'flex',
-                  gap: '0.5em',
-                  alignItems: 'center',
-                }}
-              >
-                <SaveButton
-                  customText={{ save: 'Confirm' }}
-                  formStatus="modified"
-                  onPress={(e) => onPropertyChange(tokenField)('', true)}
-                  onSuccess={() => setShowLeaveGroupModal(false)}
-                  themeRole="primary"
-                />
-                <OutlinedButton
-                  text="Discard changes"
-                  onPress={() => setShowLeaveGroupModal(false)}
-                  themeRole="primary"
-                />
-              </div>
-            </div>
-          }
-          onOpen={() => {}}
-          onClose={() => setShowLeaveGroupModal(false)}
-          /**
-           * Optional arrays of buttons for the title bar.
-           * Note that the default buttons provide onClose and
-           * keyboard-positioning functionality, which you will need to restore.
-           */
-          //buttons?: ReactNode[];
-          //leftButtons?: ReactNode[];
-
-          //draggable?: boolean;
-          //resizable?: boolean;
-          /**
-           * Enable keyboard movement of the dialog. Defaults to false.
-           * When enabled, pressing 'M' will enter keyboard-positioning mode
-           * where arrow keys can be used to move the dialog.
-           */
-          //allowKeyboardMoving?: boolean;
-          //className?: string;
-        />
-        ;
         <fieldset>
           <legend>My Subscription Status</legend>
           <p>You are a member of {validGroup.groupName}.</p>
@@ -118,12 +82,52 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
         <form>
           <OutlinedButton
             text="Leave This Group"
-            onPress={(e) => {
-              setShowLeaveGroupModal(true);
-            }}
+            onPress={(e) => onPropertyChange(tokenField)('')}
             themeRole="primary"
           />
         </form>
+      </div>
+    );
+  }
+  if (!validGroup && (formStatus == 'modified' || formStatus == 'pending')) {
+    return (
+      <div>
+        <Dialog
+          open={!validGroup}
+          modal={true}
+          title="Confirmation"
+          /* An optional description for screen readers only */
+          description={<div>Confirm you want to leave the group.</div>}
+          children={
+            <div>
+              <p>Are you sure you want to leave the group?</p>
+              <div
+                style={{
+                  marginTop: '1em',
+                  display: 'flex',
+                  gap: '0.5em',
+                  alignItems: 'center',
+                }}
+              >
+                <SaveButton
+                  customText={{
+                    save: 'Yes, leave the group',
+                    saving: 'Saving...',
+                  }}
+                  formStatus={formStatus}
+                  onPress={(e) => onSubmit(e)}
+                  themeRole="primary"
+                />
+                <OutlinedButton
+                  text="No, don't leave the group"
+                  onPress={() => onDiscardChanges()}
+                  themeRole="primary"
+                />
+              </div>
+            </div>
+          }
+          onClose={() => onDiscardChanges()}
+        />
       </div>
     );
   }

@@ -1263,7 +1263,9 @@ const fetchAnnouncementsData = async (
   const [config, announcements, currentUser] = await Promise.all([
     wdkService.getConfig(),
     wdkService.getSiteMessages(),
-    wdkService.getCurrentUser(),
+    // FIXME: using force to get fresh user from service; modify to get user from store where
+    //   we should keep a version that is up-to-date with profile changes e.g. subscription status
+    wdkService.getCurrentUser({ force: true }),
   ]);
 
   return {
@@ -1281,7 +1283,7 @@ export default function Announcements({
   setClosedBanners = noop,
 }: AnnouncementsProps) {
   const location = useLocation();
-  const data = useWdkService(fetchAnnouncementsData, []);
+  let data = useWdkService(fetchAnnouncementsData, []);
 
   const onCloseFactory = useCallback(
     (id: string) => () => {
