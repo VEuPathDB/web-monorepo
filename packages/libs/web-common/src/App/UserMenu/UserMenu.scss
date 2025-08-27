@@ -31,6 +31,7 @@ $white: #e0e0e0;
   .UserMenu-StatusIcon {
     fill: #dedede; // gray instead of white with opacity
     font-size: 45px;
+    transform: translateY(2px); // Align with guest icon
 
     &--success {
       color: #28a745;
