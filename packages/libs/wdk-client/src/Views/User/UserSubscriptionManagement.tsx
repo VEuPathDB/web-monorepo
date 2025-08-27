@@ -66,17 +66,13 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                 <SaveButton
                   customText={{ save: 'Confirm' }}
                   formStatus="modified"
-                  onPress={(e) => {
-                    setShowLeaveGroupModal(false);
-                    onPropertyChange(tokenField)('', true);
-                  }}
+                  onPress={(e) => onPropertyChange(tokenField)('', true)}
+                  onSuccess={() => setShowLeaveGroupModal(false)}
                   themeRole="primary"
                 />
                 <OutlinedButton
                   text="Discard changes"
-                  onPress={() => {
-                    setShowLeaveGroupModal(false);
-                  }}
+                  onPress={() => setShowLeaveGroupModal(false)}
                   themeRole="primary"
                 />
               </div>
