@@ -84,13 +84,16 @@ function UserFormContainer(props: UserFormContainerProps) {
   };
 
   function onPropertyChange(field: string) {
-    return (newValue: any): void => {
+    return (newValue: any, submitAfterChange?: boolean): void => {
       const previousState = currentUserFormData;
       const newProps = { ...previousState.properties, [field]: newValue };
       props.userEvents.updateProfileForm({
         ...previousState,
         properties: newProps,
       });
+      if (submitAfterChange) {
+        props.onSubmit(newProps);
+      }
     };
   }
 

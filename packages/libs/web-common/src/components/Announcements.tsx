@@ -22,6 +22,7 @@ interface AnnouncementsProps {
 interface AnnouncementRenderProps extends ServiceConfig {
   location: ReturnType<typeof useLocation>;
   currentUser: User;
+  subscriptionGroups: SubscriptionGroup[];
 }
 
 interface SiteMessage {
@@ -110,30 +111,20 @@ const siteAnnouncements: SiteAnnouncement[] = [
     dismissible: true,
     dismissalDurationSeconds: 48 * 60 * 60, // 48 hours
     renderDisplay: (props: AnnouncementRenderProps) => {
-      if (!props.currentUser) return null;
-
-      const subscriptionGroups: SubscriptionGroup[] = []; /*
-        useWdkService(
-          (wdkService) =>
-            wdkService.getSubscriptionGroups().catch((e) => {
-              console.error(e);
-              return [] as SubscriptionGroup[];
-            }),
-          []
-        ) || [];*/
+      if (!props.currentUser || props.subscriptionGroups.length === 0)
+        return null;
 
       const isSubscribed =
         !props.currentUser.isGuest &&
-        subscriptionGroups.filter(
+        props.subscriptionGroups.filter(
           (g: SubscriptionGroup) =>
             g.subscriptionToken ===
             props.currentUser.properties['subscriptionToken']
         ).length > 0;
 
-      if (!isSubscribed) {
-        return <SubscriptionManagementBanner key="subscription-management" />;
-      }
-      return null;
+      return isSubscribed ? null : (
+        <SubscriptionManagementBanner key="subscription-management" />
+      );
     },
   },
   // alpha
@@ -1261,6 +1252,16 @@ export default function Announcements({
     [closedBanners, setClosedBanners]
   );
 
+  const subscriptionGroups: SubscriptionGroup[] =
+    useWdkService(
+      (wdkService) =>
+        wdkService.getSubscriptionGroups().catch((e) => {
+          console.error(e);
+          return [] as SubscriptionGroup[];
+        }),
+      []
+    ) || [];
+
   if (data == null) return null;
 
   const {
@@ -1309,6 +1310,7 @@ export default function Announcements({
                 ...data.config,
                 location,
                 currentUser: data.currentUser,
+                subscriptionGroups,
               })
             : category !== 'information' || location.pathname === '/'
             ? toElement(announcementData)

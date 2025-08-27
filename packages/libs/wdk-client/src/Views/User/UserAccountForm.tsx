@@ -24,7 +24,9 @@ import { FormStatus } from '../../../../coreui/lib/components/buttons/SaveButton
 export interface UserAccountFormProps {
   wdkConfig: any;
   user: UserProfileFormData;
-  onPropertyChange: (field: string) => (value: any) => void;
+  onPropertyChange: (
+    field: string
+  ) => (value: any, submitAfterChange?: boolean) => void;
   onPreferenceChange: (prefs: UserPreferences) => void;
   onEmailChange: (value: string) => void;
   onConfirmEmailChange: (value: string) => void;
@@ -169,7 +171,9 @@ function UserAccountForm(props: UserAccountFormProps) {
             user={user}
             subscriptionGroups={subscriptionGroups}
             onPropertyChange={onPropertyChange}
+            onSubmit={onUserDataSubmit}
             saveButton={saveButton}
+            formStatus={formStatus}
           />
         );
       case 'preferences':
