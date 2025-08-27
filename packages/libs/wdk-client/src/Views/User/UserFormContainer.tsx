@@ -33,6 +33,7 @@ export interface UserFormContainerProps {
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
   errorMessage?: string;
   userEvents: {
+    submitProfileForm: (userData: UserProfileFormData) => void;
     updateProfileForm: (newState: UserProfileFormData) => void;
     resetProfileForm?: (formData: UserProfileFormData) => void;
   };
@@ -82,14 +83,20 @@ function UserFormContainer(props: UserFormContainerProps) {
     onEmailFieldChange('confirmEmail', newValue);
   };
 
-  function onPropertyChange(field: string) {
+  function onPropertyChange(field: string, submitNow: boolean = false) {
     return (newValue: any): void => {
       const previousState = currentUserFormData;
-      const newProps = { ...previousState.properties, [field]: newValue };
-      props.userEvents.updateProfileForm({
+      const newUserFormData = {
         ...previousState,
-        properties: newProps,
-      });
+        properties: {
+          ...previousState.properties,
+          [field]: newValue,
+        },
+      };
+      props.userEvents.updateProfileForm(newUserFormData);
+      if (submitNow) {
+        props.userEvents.submitProfileForm(newUserFormData);
+      }
     };
   }
 

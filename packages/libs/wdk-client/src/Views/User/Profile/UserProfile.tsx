@@ -23,11 +23,6 @@ type UserProfileProps = Omit<
   | 'onSubmit'
 > & {
   globalData: { user?: User; config?: ServiceConfig };
-  userEvents: {
-    submitProfileForm: (userData: UserProfileFormData) => void;
-    updateProfileForm: (newState: UserProfileFormData) => void;
-    resetProfileForm?: (formData: UserProfileFormData) => void;
-  };
   singleFormMode?: boolean;
 };
 
