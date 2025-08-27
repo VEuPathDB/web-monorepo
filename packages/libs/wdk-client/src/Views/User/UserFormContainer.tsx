@@ -33,9 +33,9 @@ export interface UserFormContainerProps {
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
   errorMessage?: string;
   userEvents: {
+    submitProfileForm: (userData: UserProfileFormData) => void;
     updateProfileForm: (newState: UserProfileFormData) => void;
     resetProfileForm?: (formData: UserProfileFormData) => void;
-    submitProfileForm: (userData: UserProfileFormData) => void;
   };
   shouldHideForm: boolean;
   hiddenFormMessage: string;
@@ -84,7 +84,7 @@ function UserFormContainer(props: UserFormContainerProps) {
   };
 
   function onPropertyChange(field: string) {
-    return (newValue: any, submitAfterChange?: boolean): void => {
+    return (newValue: any, submitAfterUpdate?: boolean): void => {
       const previousState = currentUserFormData;
       const newUserFormData = {
         ...previousState,
@@ -94,7 +94,7 @@ function UserFormContainer(props: UserFormContainerProps) {
         },
       };
       props.userEvents.updateProfileForm(newUserFormData);
-      if (submitAfterChange) {
+      if (submitAfterUpdate) {
         props.userEvents.submitProfileForm(newUserFormData);
       }
     };
