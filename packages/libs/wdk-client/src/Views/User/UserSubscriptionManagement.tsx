@@ -184,4 +184,4 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
   );
 };
 
-export default wrappable(UserSubscriptionManagement);
+export default UserSubscriptionManagement;
