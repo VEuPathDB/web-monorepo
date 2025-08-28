@@ -168,6 +168,9 @@ function UserAccountForm(props: UserAccountFormProps) {
           </form>
         );
       case 'subscription':
+        if (!subscriptionGroups) {
+          return <div>Loading subscription information...</div>;
+        }
         return (
           <UserSubscriptionManagement
             user={user}

@@ -13,7 +13,7 @@ import { Dialog } from '../../Components';
 
 interface UserSubscriptionManagementProps {
   user: UserProfileFormData;
-  subscriptionGroups: SubscriptionGroup[] | undefined;
+  subscriptionGroups: SubscriptionGroup[];
   onPropertyChange: (
     field: string
   ) => (value: any, submitAfterChange?: boolean) => void;
@@ -39,8 +39,6 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
   onDiscardChanges,
   formStatus,
 }) => {
-  if (!subscriptionGroups) return null;
-
   const tokenField = 'subscriptionToken';
   const userGroupToken =
     user != null && user.properties != null
