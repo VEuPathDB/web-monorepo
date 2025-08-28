@@ -51,17 +51,22 @@ export default function SaveButton({
 
   // Auto-revert from 'success' state after timeout
   useEffect(() => {
-    if (formStatus === 'success' && !hasSuccessReverted) {
-      const timeoutId = setTimeout(() => {
-        setHasSuccessReverted(true);
-        onSuccess?.();
-      }, savedStateDuration);
-
-      return () => clearTimeout(timeoutId);
-    }
-
-    // Reset revert state when form status changes away from success
-    if (formStatus !== 'success') {
+    if (formStatus === 'success') {
+      if (!hasSuccessReverted) {
+        const timeout = setTimeout(() => {
+          setHasSuccessReverted(true);
+          // Call onSuccess on the next tick, just in case
+          // it has side-effects on `hasSuccessReverted`.
+          setTimeout(() => {
+            onSuccess?.();
+          }, 0);
+        }, savedStateDuration);
+        return function cleanup() {
+          clearTimeout(timeout);
+        };
+      }
+    } else {
+      // Reset revert state when form status changes away from success
       setHasSuccessReverted(false);
     }
   }, [formStatus, savedStateDuration, hasSuccessReverted, onSuccess]);
@@ -83,6 +88,7 @@ export default function SaveButton({
         return {
           text: customText.save || 'Save',
           icon: undefined,
+          disabled: true,
         };
       case 'modified':
       case 'error':

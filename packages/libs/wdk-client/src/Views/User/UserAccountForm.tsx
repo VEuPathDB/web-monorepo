@@ -1,4 +1,4 @@
-import React, { useState, ReactNode, useEffect } from 'react';
+import React, { useState, ReactNode, useEffect, useCallback } from 'react';
 import { Prompt } from 'react-router-dom';
 import { wrappable } from '../../Utils/ComponentUtils';
 import ApplicationSpecificProperties from '../../Views/User/ApplicationSpecificProperties';
@@ -64,7 +64,8 @@ function UserAccountForm(props: UserAccountFormProps) {
   const hasUnsavedChanges = formStatus === 'modified';
 
   // Track formStatus changes to prevent stale "Saved" state when switching tabs
-  // This ensures the Save button shows current status rather than previous section's status
+  // This ensures the Save button shows current status rather than previous section's status.
+  // See other invocations of `setDisplayedFormStatus` for overriding back to 'new'
   useEffect(() => {
     setDisplayedFormStatus(formStatus);
   }, [formStatus]);
@@ -81,6 +82,8 @@ function UserAccountForm(props: UserAccountFormProps) {
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [hasUnsavedChanges]);
+
+  const handleSuccess = useCallback(() => setDisplayedFormStatus('new'), []);
 
   const vocabulary = useWdkService(
     (wdkService) =>
@@ -109,8 +112,6 @@ function UserAccountForm(props: UserAccountFormProps) {
       onDiscardChanges();
     }
     navigateToSection(sectionKey);
-    // Reset button status to 'new' when switching tabs to prevent showing stale "Saved" state
-    setDisplayedFormStatus('new');
   };
 
   // Renders the content for the active section
@@ -130,6 +131,7 @@ function UserAccountForm(props: UserAccountFormProps) {
           onUserDataSubmit(e);
         }}
         themeRole="primary"
+        onSuccess={handleSuccess}
       />
       {hasUnsavedChanges && (
         <OutlinedButton
@@ -172,9 +174,10 @@ function UserAccountForm(props: UserAccountFormProps) {
             subscriptionGroups={subscriptionGroups}
             onPropertyChange={onPropertyChange}
             onSubmit={onUserDataSubmit}
+            onSuccess={handleSuccess}
             onDiscardChanges={onDiscardChanges}
             saveButton={saveButton}
-            formStatus={formStatus}
+            formStatus={displayedFormStatus}
           />
         );
       case 'preferences':

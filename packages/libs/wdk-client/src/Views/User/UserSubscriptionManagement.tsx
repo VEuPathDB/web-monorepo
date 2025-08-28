@@ -19,6 +19,7 @@ interface UserSubscriptionManagementProps {
   ) => (value: any, submitAfterChange?: boolean) => void;
   saveButton: JSX.Element;
   onSubmit: (event: FormEvent<Element>) => void;
+  onSuccess: () => void;
   onDiscardChanges: () => void;
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
 }
@@ -34,22 +35,22 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
   onPropertyChange,
   saveButton,
   onSubmit,
+  onSuccess,
   onDiscardChanges,
   formStatus,
 }) => {
-  let [showLeaveGroupModal, setShowLeaveGroupModal] = useState(false);
-
   if (!subscriptionGroups) return null;
 
-  let tokenField = 'subscriptionToken';
-  let userGroupToken =
+  const tokenField = 'subscriptionToken';
+  const userGroupToken =
     user != null && user.properties != null
       ? user.properties[tokenField]
       : undefined;
-  let validGroupList = !userGroupToken
+  const validGroupList = !userGroupToken
     ? []
     : subscriptionGroups.filter((g) => g.subscriptionToken === userGroupToken);
-  let validGroup = validGroupList.length === 0 ? undefined : validGroupList[0];
+  const validGroup =
+    validGroupList.length === 0 ? undefined : validGroupList[0];
 
   /**
    * What is shown is dependent on two state values:
@@ -63,10 +64,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
    * choose group select (group selected modified form)    valid-group          modified
    * choose group select (Saving...)                       valid-group          pending
    */
-  if (
-    validGroup &&
-    (formStatus == 'new' || formStatus == 'success' || formStatus == 'error')
-  ) {
+  if (validGroup && (formStatus == 'new' || formStatus == 'error')) {
     return (
       <div>
         <fieldset>
@@ -95,11 +93,16 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
       </div>
     );
   }
-  if (!validGroup && (formStatus == 'modified' || formStatus == 'pending')) {
+  if (
+    !validGroup &&
+    (formStatus == 'modified' ||
+      formStatus == 'pending' ||
+      formStatus == 'success')
+  ) {
     return (
       <div>
         <Dialog
-          open={!validGroup}
+          open={true}
           modal={true}
           title="Confirmation"
           /* An optional description for screen readers only */
@@ -118,16 +121,22 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                 <SaveButton
                   customText={{
                     save: 'Yes, leave the group',
-                    saving: 'Saving...',
+                    saving: 'Leaving the group...',
+                    saved: 'Left the group',
                   }}
                   formStatus={formStatus}
                   onPress={(e) => onSubmit(e)}
                   themeRole="primary"
+                  onSuccess={onSuccess}
+                  savedStateDuration={1000}
                 />
                 <OutlinedButton
                   text="No, don't leave the group"
                   onPress={() => onDiscardChanges()}
                   themeRole="primary"
+                  disabled={
+                    formStatus === 'pending' || formStatus === 'success'
+                  }
                 />
               </div>
             </div>
