@@ -25,8 +25,9 @@ export interface UserAccountFormProps {
   wdkConfig: any;
   user: UserProfileFormData;
   onPropertyChange: (
-    field: string
-  ) => (value: any, submitAfterChange?: boolean) => void;
+    field: string,
+    submitAfterChange?: boolean
+  ) => (value: any) => void;
   onPreferenceChange: (prefs: UserPreferences) => void;
   onEmailChange: (value: string) => void;
   onConfirmEmailChange: (value: string) => void;
@@ -132,6 +133,7 @@ function UserAccountForm(props: UserAccountFormProps) {
         }}
         themeRole="primary"
         onSuccess={handleSuccess}
+        savedStateDuration={2000}
       />
       {hasUnsavedChanges && (
         <OutlinedButton
