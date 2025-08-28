@@ -176,7 +176,7 @@ function UserAccountForm(props: UserAccountFormProps) {
             subscriptionGroups={subscriptionGroups}
             onPropertyChange={onPropertyChange}
             onSubmit={onUserDataSubmit}
-            onSuccess={() => setDisplayedFormStatus('new')}
+            onSuccess={handleSuccess}
             onDiscardChanges={onDiscardChanges}
             saveButton={saveButton}
             formStatus={displayedFormStatus}

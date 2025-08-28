@@ -1,5 +1,5 @@
 import { merge } from 'lodash';
-import { useMemo, useEffect, useState, useRef } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import CheckIcon from '@material-ui/icons/Check';
 
 import useUITheme from '../../theming/useUITheme';
@@ -48,26 +48,27 @@ export default function SaveButton({
 
   // Internal state to track whether success state should be reverted to disabled
   const [hasSuccessReverted, setHasSuccessReverted] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout>();
 
   // Auto-revert from 'success' state after timeout
   useEffect(() => {
     if (formStatus === 'success') {
       if (!hasSuccessReverted) {
-        timeoutRef.current = setTimeout(() => {
+        const timeout = setTimeout(() => {
           setHasSuccessReverted(true);
-          onSuccess?.();
+          // Call onSuccess on the next tick, just in case
+          // it has side-effects on `hasSuccessReverted`.
+          setTimeout(() => {
+            onSuccess?.();
+          }, 0);
         }, savedStateDuration);
+        return function cleanup() {
+          clearTimeout(timeout);
+        };
       }
     } else {
       // Reset revert state when form status changes away from success
       setHasSuccessReverted(false);
     }
-    return function cleanup() {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
   }, [formStatus, savedStateDuration, hasSuccessReverted, onSuccess]);
 
   // Determine button state based on form status and internal revert state
