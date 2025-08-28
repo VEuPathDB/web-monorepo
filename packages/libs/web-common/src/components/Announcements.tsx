@@ -26,6 +26,7 @@ interface AnnouncementRenderProps extends ServiceConfig {
   location: ReturnType<typeof useLocation>;
   currentUser: User;
   subscriptionGroups: SubscriptionGroup[];
+  onClose?: () => void;
 }
 
 interface SiteMessage {
@@ -114,7 +115,7 @@ const siteAnnouncements: SiteAnnouncement[] = [
   {
     id: 'subscription-info',
     dismissible: true,
-    renderDisplay: (props: AnnouncementRenderProps) => {
+    renderDisplay: ({ onClose }: AnnouncementRenderProps) => {
       const bannerProps: BannerProps = {
         type: 'info',
         message: (
@@ -131,7 +132,7 @@ const siteAnnouncements: SiteAnnouncement[] = [
       };
       return (
         <div style={{ margin: '3px' }}>
-          <Banner banner={bannerProps} onClose={() => console.log('closed')} />
+          <Banner banner={bannerProps} onClose={onClose} />
         </div>
       );
     },
@@ -142,27 +143,30 @@ const siteAnnouncements: SiteAnnouncement[] = [
     id: 'subscription-management',
     dismissible: true,
     dismissalDurationSeconds: 48 * 60 * 60, // 48 hours
-    renderDisplay: (props: AnnouncementRenderProps) => {
-      if (!props.currentUser || props.subscriptionGroups.length === 0)
-        return null;
+    renderDisplay: ({
+      currentUser,
+      subscriptionGroups,
+      onClose,
+    }: AnnouncementRenderProps) => {
+      if (!currentUser || subscriptionGroups.length === 0) return null;
 
       const isSubscribed =
-        !props.currentUser.isGuest &&
-        props.subscriptionGroups.filter(
+        !currentUser.isGuest &&
+        subscriptionGroups.filter(
           (g: SubscriptionGroup) =>
-            g.subscriptionToken ===
-            props.currentUser.properties['subscriptionToken']
+            g.subscriptionToken === currentUser.properties['subscriptionToken']
         ).length > 0;
 
       if (isSubscribed) return null;
 
-      const firstName = props.currentUser.properties['firstName'];
+      const firstName = currentUser.properties['firstName'];
       const address = firstName ? `${firstName}, you` : 'You';
       return (
         <div style={{ margin: '3px' }}>
           <SubscriptionManagementBanner
             key="subscription-management"
             address={address}
+            onClose={onClose}
           />
         </div>
       );
@@ -1326,9 +1330,9 @@ export default function Announcements({
             : category === 'information';
 
           const isOpen = dismissible
-            ? !closedBanners.some((dismissal) => {
-                if (dismissal.bannerId !== announcementData.id) return false;
-
+            ? !closedBanners.some(({ timestamp, bannerId }) => {
+                // inside here, we return true for an EXPIRED dismissal
+                if (bannerId !== announcementData.id) return false;
                 if (
                   isSiteAnnouncement(announcementData) &&
                   announcementData.dismissalDurationSeconds
@@ -1338,7 +1342,7 @@ export default function Announcements({
                     now.getTime() -
                       announcementData.dismissalDurationSeconds * 1000
                   );
-                  return dismissal.timestamp > expiration;
+                  return timestamp > expiration;
                 }
 
                 return true; // no duration specified: dismissal counts indefinitely
@@ -1355,6 +1359,7 @@ export default function Announcements({
                 location,
                 currentUser: data.currentUser,
                 subscriptionGroups,
+                onClose,
               })
             : category !== 'information' || location.pathname === '/'
             ? toElement(announcementData)
@@ -1393,6 +1398,7 @@ function AnnouncementContainer(props: AnnouncementContainerProps) {
 
   return props.renderAsIs &&
     props.display &&
+    props.isOpen &&
     React.isValidElement(props.display) ? (
     props.display
   ) : (
