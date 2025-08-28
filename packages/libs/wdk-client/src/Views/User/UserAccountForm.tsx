@@ -133,8 +133,6 @@ function UserAccountForm(props: UserAccountFormProps) {
         themeRole="primary"
         onSuccess={handleSuccess}
       />
-      {formStatus}
-      <br />
       {hasUnsavedChanges && (
         <OutlinedButton
           text="Discard changes"
