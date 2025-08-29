@@ -517,11 +517,10 @@ function getTableQuestionMetadata(
 ): [
   Question | undefined,
   RecordClass | undefined,
-  string | undefined,
   string | undefined
 ] {
   if (!questions || !recordClasses) {
-    return [undefined, undefined, undefined, undefined];
+    return [undefined, undefined, undefined];
   }
 
   const internalQuestion = questions.find(
@@ -529,7 +528,7 @@ function getTableQuestionMetadata(
   );
 
   if (!internalQuestion || !internalQuestion.properties) {
-    return [undefined, undefined, undefined, undefined];
+    return [undefined, undefined, undefined];
   }
 
   const { datasetCategory = [], datasetSubtype = [] } =
