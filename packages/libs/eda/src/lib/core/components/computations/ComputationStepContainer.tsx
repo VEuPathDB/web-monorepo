@@ -1,9 +1,8 @@
 import React, { CSSProperties } from 'react';
 import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
-import {
-  NumberedHeader,
+import NumberedHeader, {
   NumberedHeaderProps,
-} from '../../../workspace/Subsetting/SubsetDownloadModal';
+} from '@veupathdb/coreui/lib/components/forms/NumberedHeader';
 
 type ComputationStepContainer = {
   children: React.ReactChild;

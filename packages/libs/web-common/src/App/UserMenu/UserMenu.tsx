@@ -8,7 +8,8 @@ import { SubscriptionGroup } from '@veupathdb/wdk-client/lib/Service/Mixins/Oaut
 
 import './UserMenu.scss';
 import UserWarn from '@veupathdb/coreui/lib/components/icons/UserWarn';
-import { UserCheck } from '@veupathdb/coreui';
+import UserCheck from '@veupathdb/coreui/lib/components/icons/UserCheck';
+import UserGuest from '@veupathdb/coreui/lib/components/icons/UserGuest';
 
 interface Actions {
   showLoginForm: (destination: string) => void;
@@ -30,11 +31,6 @@ interface MenuItem {
 }
 
 const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
-  if (!user) return null;
-
-  const { isGuest, properties = {} } = user;
-  const iconClass = 'user-circle' + (isGuest ? '-o' : '');
-
   const subscriptionGroups =
     useWdkService(
       (wdkService) =>
@@ -44,6 +40,11 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
         }),
       []
     ) || [];
+
+  if (!user) return null;
+
+  const { isGuest, properties = {} } = user;
+  const iconClass = 'user-circle' + (isGuest ? '-o' : '');
 
   const isSubscribed =
     !isGuest &&
@@ -129,7 +130,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
             className="UserMenu-Pane-Item UserMenu-Pane-Item--interactive"
           >
             <Icon fa="exclamation-triangle UserMenu-Pane-Item-Icon UserMenu-StatusIcon--warning" />
-            Unsubscribed
+            Not subscribed
           </Link>
         )}
       </div>
@@ -139,10 +140,12 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
   return (
     <div className={'box UserMenu' + (!isGuest ? ' UserMenu--expanded' : '')}>
       <div className="UserMenu-IconContainer">
-        {isSubscribed && <UserCheck className="UserMenu-StatusIcon" />}
-        {!isSubscribed && (
-          <Icon className="UserMenu-Icon" fa={iconClass} />
-          // Replace with <UserWarn className="UserMenu-StatusIcon"/>
+        {isGuest ? (
+          <UserGuest className="UserMenu-GuestIcon" />
+        ) : isSubscribed ? (
+          <UserCheck className="UserMenu-StatusIcon" />
+        ) : (
+          <UserWarn className="UserMenu-StatusIcon" />
         )}
       </div>
       <span

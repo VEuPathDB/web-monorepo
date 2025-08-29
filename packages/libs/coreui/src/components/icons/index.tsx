@@ -25,5 +25,6 @@ export { default as TaxaQueryLight } from './TaxaQueryLight';
 export { default as Trash } from './Trash';
 export { default as Undo } from './Undo';
 export { default as UserCheck } from './UserCheck';
+export { default as UserGuest } from './UserGuest';
 export { default as UserWarn } from './UserWarn';
 export { default as Warning } from './Warning';
