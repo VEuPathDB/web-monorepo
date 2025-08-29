@@ -192,20 +192,22 @@ function UserFormContainer(props: UserFormContainerProps) {
             }
           </div>
           {props.introComponent && <props.introComponent />}
-          <UserAccountForm
-            user={currentUserFormData}
-            onEmailChange={onEmailChange}
-            onConfirmEmailChange={onConfirmEmailChange}
-            onPropertyChange={onPropertyChange}
-            onPreferenceChange={onPreferenceChange}
-            onUserDataSubmit={onSubmit}
-            submitButtonText={props.submitButtonText}
-            wdkConfig={props.globalData.config}
-            onDiscardChanges={onDiscardChanges}
-            formStatus={props.formStatus}
-            singleFormMode={props.singleFormMode}
-            highlightMissingFields={props.highlightMissingFields}
-          />
+          {props.globalData.user && (
+            <UserAccountForm
+              user={props.globalData.user}
+              userProfileFormData={currentUserFormData}
+              onEmailChange={onEmailChange}
+              onConfirmEmailChange={onConfirmEmailChange}
+              onPropertyChange={onPropertyChange}
+              onPreferenceChange={onPreferenceChange}
+              onUserDataSubmit={onSubmit}
+              wdkConfig={props.globalData.config}
+              onDiscardChanges={onDiscardChanges}
+              formStatus={props.formStatus}
+              singleFormMode={props.singleFormMode}
+              highlightMissingFields={props.highlightMissingFields}
+            />
+          )}
         </>
       )}
     </div>

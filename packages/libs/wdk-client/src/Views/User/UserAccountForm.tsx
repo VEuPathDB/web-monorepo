@@ -10,8 +10,7 @@ import ProfileNavigationSection, {
   useCurrentProfileNavigationSection,
 } from '../../Views/User/ProfileNavigationSection';
 import { useWdkService } from '../../Hooks/WdkServiceHook';
-import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
-import { UserPreferences } from '../../Utils/WdkUser';
+import { User, UserPreferences } from '../../Utils/WdkUser';
 import {
   SaveButton,
   OutlinedButton,
@@ -19,11 +18,15 @@ import {
 import './Profile/UserProfile.scss';
 import { SubscriptionGroup } from '../../Service/Mixins/OauthService';
 import { FormStatus } from '../../../../coreui/lib/components/buttons/SaveButton';
+import Loading from '../../Components/Loading';
+import './UserAccountForm.scss';
+import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
 
 // Props interface
 export interface UserAccountFormProps {
   wdkConfig: any;
-  user: UserProfileFormData;
+  user: User;
+  userProfileFormData: UserProfileFormData;
   onPropertyChange: (
     field: string,
     submitAfterChange?: boolean
@@ -32,7 +35,6 @@ export interface UserAccountFormProps {
   onEmailChange: (value: string) => void;
   onConfirmEmailChange: (value: string) => void;
   onUserDataSubmit: (event: React.FormEvent) => void;
-  submitButtonText: string;
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
   onDiscardChanges: () => void;
   singleFormMode?: boolean;
@@ -46,12 +48,12 @@ function UserAccountForm(props: UserAccountFormProps) {
   const {
     wdkConfig,
     user,
+    userProfileFormData,
     onPropertyChange,
     onPreferenceChange,
     onEmailChange,
     onConfirmEmailChange,
     onUserDataSubmit,
-    submitButtonText,
     formStatus,
     onDiscardChanges,
     singleFormMode = false,
@@ -171,16 +173,18 @@ function UserAccountForm(props: UserAccountFormProps) {
         );
       case 'subscription':
         if (!subscriptionGroups) {
-          return <div>Loading subscription information...</div>;
+          return (
+            <div className="subscriptions-loading">
+              Loading subscription information... <Loading />
+            </div>
+          );
         }
         return (
           <UserSubscriptionManagement
             user={user}
             subscriptionGroups={subscriptionGroups}
             onPropertyChange={onPropertyChange}
-            onSubmit={onUserDataSubmit}
             onSuccess={handleSuccess}
-            onDiscardChanges={onDiscardChanges}
             saveButton={saveButton}
             formStatus={displayedFormStatus}
           />
@@ -193,7 +197,7 @@ function UserAccountForm(props: UserAccountFormProps) {
             onSubmit={onUserDataSubmit}
           >
             <ApplicationSpecificProperties
-              user={user}
+              user={userProfileFormData}
               onPropertyChange={onPropertyChange}
               propDefs={wdkConfig.userProfileProperties}
               onPreferenceChange={onPreferenceChange}

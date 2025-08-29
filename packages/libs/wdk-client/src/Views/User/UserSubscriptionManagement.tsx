@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, JSX, FormEvent } from 'react';
 import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
 import { IconAlt as Icon } from '../../Components';
+import { wrappable } from '../../Utils/ComponentUtils';
 import { SubscriptionGroup } from '../../Service/Mixins/OauthService';
 import Select from 'react-select';
 import { ValueType } from 'react-select/src/types';
@@ -12,18 +13,17 @@ import SingleSelect from '../../Components/InputControls/SingleSelect';
 import { Dialog } from '../../Components';
 import { success, warning } from '@veupathdb/coreui/lib/definitions/colors';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { User } from '../../Utils/WdkUser';
 
 interface UserSubscriptionManagementProps {
-  user: UserProfileFormData;
+  user: User;
   subscriptionGroups: SubscriptionGroup[];
   onPropertyChange: (
     field: string,
     submitAfterChange?: boolean
   ) => (value: any) => void;
   saveButton: JSX.Element;
-  onSubmit: (event: FormEvent<Element>) => void;
   onSuccess: () => void;
-  onDiscardChanges: () => void;
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
 }
 
@@ -37,21 +37,21 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
   subscriptionGroups,
   onPropertyChange,
   saveButton,
-  onSubmit,
   onSuccess,
-  onDiscardChanges,
   formStatus,
 }) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [localSelection, setLocalSelection] = useState<string>();
+
+  // Reset local selection when database state changes (after successful save)
+  useEffect(() => {
+    if (formStatus === 'new') {
+      setLocalSelection(undefined);
+    }
+  }, [formStatus]);
 
   const tokenField = 'subscriptionToken';
-  const userGroupToken = useMemo(
-    () =>
-      user != null && user.properties != null
-        ? user.properties[tokenField]
-        : undefined,
-    [user]
-  );
+  const userGroupToken = user.properties[tokenField]; // from db-backed state
 
   const validGroup = useMemo(() => {
     if (!userGroupToken) return undefined;
@@ -83,41 +83,44 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
     [subscriptionGroups]
   );
 
-  const selectedGroup = useMemo(
-    () => groupVocab2.filter((g) => g.value === userGroupToken)[0],
-    [groupVocab2, userGroupToken]
-  );
+  const selectedGroup = useMemo(() => {
+    const effectiveToken = localSelection ?? userGroupToken;
+    return groupVocab2.filter((g) => g.value === effectiveToken)[0];
+  }, [groupVocab2, userGroupToken, localSelection]);
 
   const tryTypeahead = true;
 
   return (
     <div>
       {/* Show subscription status only when form is clean (saved state) */}
-      {validGroup && formStatus === 'new' && (
-        <fieldset>
-          <legend>My Subscription Status</legend>
-          <p>You are a member of {validGroup.groupName}.</p>
-          {validGroup.groupLeads.length > 0 && (
-            <div>
-              <p>This group is led by:</p>
-              <ul>
-                {validGroup.groupLeads.map((lead) => (
-                  <li key={lead.name + lead.organization}>
-                    {lead.name}, {lead.organization}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          <form>
-            <OutlinedButton
-              text="Leave this group"
-              onPress={() => setShowConfirmModal(true)}
-              themeRole="primary"
-            />
-          </form>
-        </fieldset>
-      )}
+      {validGroup &&
+        (formStatus === 'new' ||
+          formStatus === 'modified' ||
+          formStatus === 'pending') && (
+          <fieldset>
+            <legend>My Subscription Status</legend>
+            <p>You are a member of {validGroup.groupName}.</p>
+            {validGroup.groupLeads.length > 0 && (
+              <div>
+                <p>This group is led by:</p>
+                <ul>
+                  {validGroup.groupLeads.map((lead) => (
+                    <li key={lead.name + lead.organization}>
+                      {lead.name}, {lead.organization}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <form>
+              <OutlinedButton
+                text="Leave this group"
+                onPress={() => setShowConfirmModal(true)}
+                themeRole="primary"
+              />
+            </form>
+          </fieldset>
+        )}
 
       {/* Show group selection when no saved group OR when there are unsaved changes AND when the modal is not there */}
       {(!validGroup || formStatus !== 'new') && !showConfirmModal && (
@@ -133,7 +136,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                 {!tryTypeahead ? (
                   <SingleSelect
                     name={tokenField}
-                    value={userGroupToken || ''}
+                    value={localSelection ?? userGroupToken ?? ''}
                     required={true}
                     onChange={onPropertyChange(tokenField)}
                     items={groupVocab1}
@@ -145,11 +148,12 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                     options={groupVocab2}
                     value={selectedGroup}
                     onChange={(option: ValueType<Option, any>) => {
-                      onPropertyChange(tokenField)(
+                      const value =
                         option == null || Array.isArray(option)
                           ? ''
-                          : (option as Option).value
-                      );
+                          : (option as Option).value;
+                      setLocalSelection(value);
+                      onPropertyChange(tokenField)(value);
                     }}
                     formatOptionLabel={(option) => option.label}
                     form="DO_NOT_SUBMIT_ON_ENTER"
