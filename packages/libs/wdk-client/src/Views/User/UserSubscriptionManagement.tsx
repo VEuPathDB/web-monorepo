@@ -89,31 +89,34 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
   return (
     <div>
       {/* Show subscription status only when form is clean (saved state) */}
-      {validGroup && formStatus === 'new' && (
-        <fieldset>
-          <legend>My Subscription Status</legend>
-          <p>You are a member of {validGroup.groupName}.</p>
-          {validGroup.groupLeads.length > 0 && (
-            <div>
-              <p>This group is led by:</p>
-              <ul>
-                {validGroup.groupLeads.map((lead) => (
-                  <li key={lead.name + lead.organization}>
-                    {lead.name}, {lead.organization}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          <form>
-            <OutlinedButton
-              text="Leave this group"
-              onPress={() => setShowConfirmModal(true)}
-              themeRole="primary"
-            />
-          </form>
-        </fieldset>
-      )}
+      {validGroup &&
+        (formStatus === 'new' ||
+          formStatus === 'modified' ||
+          formStatus === 'pending') && (
+          <fieldset>
+            <legend>My Subscription Status</legend>
+            <p>You are a member of {validGroup.groupName}.</p>
+            {validGroup.groupLeads.length > 0 && (
+              <div>
+                <p>This group is led by:</p>
+                <ul>
+                  {validGroup.groupLeads.map((lead) => (
+                    <li key={lead.name + lead.organization}>
+                      {lead.name}, {lead.organization}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <form>
+              <OutlinedButton
+                text="Leave this group"
+                onPress={() => setShowConfirmModal(true)}
+                themeRole="primary"
+              />
+            </form>
+          </fieldset>
+        )}
 
       {/* Show group selection when no saved group OR when there are unsaved changes AND when the modal is not there */}
       {(!validGroup || formStatus !== 'new') && !showConfirmModal && (
