@@ -4,6 +4,7 @@ import { IconAlt as Icon } from '../../Components';
 import { wrappable } from '../../Utils/ComponentUtils';
 import { SubscriptionGroup } from '../../Service/Mixins/OauthService';
 import Select from 'react-select';
+import { Link } from 'react-router-dom';
 import { ValueType } from 'react-select/src/types';
 import {
   OutlinedButton,
@@ -142,8 +143,15 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
             <Banner
               banner={{
                 type: 'info',
-                message:
-                  'If you are a PI or group manager, create a subscription.',
+                message: (
+                  <div>
+                    If you are a PI or group manager,{' '}
+                    <Link to="/static-content/subscriptions.html">
+                      create a subscription
+                    </Link>
+                    .
+                  </div>
+                ),
               }}
             />
             <NumberedHeader
@@ -227,7 +235,8 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
               {saveButton}
             </div>
             <span style={{ marginTop: '3em', color: colors.gray[700] }}>
-              Questions? Contact us if you need help joining a subscription.
+              Questions? <Link to="/contact-us">Contact us</Link> if you need
+              help joining a subscription.
             </span>
           </div>
         )}
