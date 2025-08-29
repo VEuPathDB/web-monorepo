@@ -11,10 +11,16 @@ import {
 } from '@veupathdb/coreui/lib/components/buttons';
 import SingleSelect from '../../Components/InputControls/SingleSelect';
 import { Dialog } from '../../Components';
-import { success, warning } from '@veupathdb/coreui/lib/definitions/colors';
+import colors, {
+  success,
+  warning,
+} from '@veupathdb/coreui/lib/definitions/colors';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { User } from '../../Utils/WdkUser';
 import NumberedHeader from '@veupathdb/coreui/lib/components/forms/NumberedHeader';
+import { useTheme } from '@material-ui/core';
+import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
+import './UserSubscriptionManagement.scss';
 
 interface UserSubscriptionManagementProps {
   user: User;
@@ -43,6 +49,8 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
 }) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [localSelection, setLocalSelection] = useState<string>();
+
+  const theme = useUITheme();
 
   // Reset local selection when database state changes (after successful save)
   useEffect(() => {
@@ -89,15 +97,15 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
     return groupVocab2.filter((g) => g.value === effectiveToken)[0];
   }, [groupVocab2, userGroupToken, localSelection]);
 
-  const tryTypeahead = true;
-
   return (
     <div>
       <fieldset>
         <legend>My Subscription Status</legend>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5em' }}>
           <h4>Status: </h4>
-          <span>{validGroup ? 'Subscribed' : 'Not subscribed'}</span>
+          <h4 style={{ fontWeight: 400 }}>
+            {validGroup ? 'Subscribed' : 'Not subscribed'}
+          </h4>
         </div>
         {/* Show subscription status only when form is clean (saved state) */}
         {validGroup &&
@@ -130,7 +138,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
 
         {/* Show group selection when no saved group OR when there are unsaved changes AND when the modal is not there */}
         {(!validGroup || formStatus !== 'new') && !showConfirmModal && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1em' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2em' }}>
             <Banner
               banner={{
                 type: 'info',
@@ -141,18 +149,30 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
             <NumberedHeader
               number={1}
               text="Find your group or lab"
-              color="blue"
-              // color={theme.palette.primary.hue[theme.palette.primary.level]}
+              color={
+                theme?.palette.primary.hue[theme?.palette.primary.level] ??
+                'blue'
+              }
             />
-            <div style={{ marginLeft: '1.5em' }}>
+            <div
+              style={{
+                marginLeft: '1.5em',
+                marginBottom: '1em',
+                marginRight: '1em',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1em',
+              }}
+            >
               <div
                 style={{
                   display: 'flex',
                   alignItems: 'baseline',
-                  gap: '0.5em',
+                  gap: '1em',
+                  marginRight: '0.5em',
                 }}
               >
-                <h5>Group name:</h5>
+                <h4>Group name:</h4>
                 <Select<Option, any>
                   isMulti={false}
                   isSearchable
@@ -168,10 +188,17 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                   }}
                   formatOptionLabel={(option) => option.label}
                   form="DO_NOT_SUBMIT_ON_ENTER"
+                  className="wdk-UserProfile-TypeAheadSelect"
                 />
               </div>
-              <span>
-                Don\'t see your group listed? Ask your group lead or
+              <span
+                style={{
+                  fontStyle: 'italic',
+                  fontSize: '1.1em',
+                  color: colors.gray[700],
+                }}
+              >
+                Don't see your group listed? Ask your group lead or
                 administrator to create a subscription.
               </span>
             </div>
@@ -179,15 +206,27 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
             <NumberedHeader
               number={2}
               text="Associate your account with your group"
-              color="blue"
-              // color={theme.palette.primary.hue[theme.palette.primary.level]}
+              color={
+                theme?.palette.primary.hue[theme?.palette.primary.level] ??
+                'blue'
+              }
             />
-            <span>
-              Click the button to associate your VEuPathDB account with your
-              group. There is no cost to join a group.
-            </span>
-            {saveButton}
-            <span style={{ marginTop: '3em' }}>
+            <div
+              style={{
+                marginLeft: '1.5em',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1em',
+                marginRight: '1em',
+              }}
+            >
+              <span style={{ fontSize: '1.2em' }}>
+                Click the button to associate your VEuPathDB account with your
+                group. There is no cost to join a group.
+              </span>
+              {saveButton}
+            </div>
+            <span style={{ marginTop: '3em', color: colors.gray[700] }}>
               Questions? Contact us if you need help joining a subscription.
             </span>
           </div>
