@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, JSX, FormEvent } from 'react';
 import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
-import { wrappable } from '../../Utils/ComponentUtils';
+import { IconAlt as Icon } from '../../Components';
 import { SubscriptionGroup } from '../../Service/Mixins/OauthService';
 import Select from 'react-select';
 import { ValueType } from 'react-select/src/types';
@@ -10,6 +10,8 @@ import {
 } from '@veupathdb/coreui/lib/components/buttons';
 import SingleSelect from '../../Components/InputControls/SingleSelect';
 import { Dialog } from '../../Components';
+import { success, warning } from '@veupathdb/coreui/lib/definitions/colors';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 interface UserSubscriptionManagementProps {
   user: UserProfileFormData;

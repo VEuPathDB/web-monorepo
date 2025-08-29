@@ -31,11 +31,6 @@ interface MenuItem {
 }
 
 const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
-  if (!user) return null;
-
-  const { isGuest, properties = {} } = user;
-  const iconClass = 'user-circle' + (isGuest ? '-o' : '');
-
   const subscriptionGroups =
     useWdkService(
       (wdkService) =>
@@ -45,6 +40,11 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
         }),
       []
     ) || [];
+
+  if (!user) return null;
+
+  const { isGuest, properties = {} } = user;
+  const iconClass = 'user-circle' + (isGuest ? '-o' : '');
 
   const isSubscribed =
     !isGuest &&
@@ -130,7 +130,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
             className="UserMenu-Pane-Item UserMenu-Pane-Item--interactive"
           >
             <Icon fa="exclamation-triangle UserMenu-Pane-Item-Icon UserMenu-StatusIcon--warning" />
-            Unsubscribed
+            Not subscribed
           </Link>
         )}
       </div>

@@ -174,7 +174,7 @@ function UserFormContainer(props: UserFormContainerProps) {
                     <>
                       <Icon
                         fa="check-circle wdk-UserProfile-StatusIcon--success"
-                        style={{ color: success[600], fontSize: '1.35m' }}
+                        style={{ color: success[600], fontSize: '1.35em' }}
                       />
                       <h3>Subscribed</h3>
                     </>
@@ -185,7 +185,7 @@ function UserFormContainer(props: UserFormContainerProps) {
                         className="wdk-UserProfile-StatusIcon--warning"
                         style={{ color: warning[600], fontSize: '1.5em' }}
                       />
-                      <h3>Unsubscribed</h3>
+                      <h3>Not subscribed</h3>
                     </>
                   ))}
               </div>
