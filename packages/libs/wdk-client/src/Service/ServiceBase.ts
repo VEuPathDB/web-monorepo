@@ -153,25 +153,6 @@ export const ServiceBase = (serviceUrl: string) => {
   }
 
   /**
-   * Get vocabularies for user profile properties.
-   */
-  function getUserProfileVocabulary() {
-    const decoder = Decode.objectOf(
-      Decode.arrayOf(
-        Decode.record({
-          value: Decode.string,
-          display: Decode.string,
-        })
-      )
-    );
-    return sendRequest(decoder, {
-      method: 'get',
-      path: '/user-profile-vocabularies',
-      useCache: true,
-    });
-  }
-
-  /**
    * Send a request to a resource of the Wdk REST Service, and returns a Promise
    * that will fulfill with the response, or reject with a ServiceError.
    *
@@ -547,7 +528,6 @@ export const ServiceBase = (serviceUrl: string) => {
     submitErrorIfNot500,
     submitErrorIfUndelayedAndNot500,
     getConfig,
-    getUserProfileVocabulary,
     getVersion,
     getRecordClasses,
     findRecordClass,

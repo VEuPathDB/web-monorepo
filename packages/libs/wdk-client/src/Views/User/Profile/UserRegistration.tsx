@@ -138,7 +138,6 @@ const UserRegistration: React.FC<UserRegistrationProps> = (props) => (
       titleText="Registration"
       introComponent={IntroText}
       submitButtonText="Register"
-      onSubmit={props.userEvents.submitRegistrationForm}
       singleFormMode={true}
     />
     {!props.globalData.user?.isGuest ? (

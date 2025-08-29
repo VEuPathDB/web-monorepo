@@ -8,10 +8,11 @@ type Props = {
   value?: string;
   required?: boolean;
   onChange: (value: string) => void;
+  className?: string;
 };
 
 function SingleSelect(props: Props) {
-  const { name, value, items, required = false, onChange } = props;
+  const { name, value, items, required = false, onChange, className } = props;
   return (
     <select
       name={name}
@@ -22,6 +23,7 @@ function SingleSelect(props: Props) {
         }
       }}
       required={required}
+      className={className}
     >
       {items.map((item) => (
         <option key={item.value} disabled={item.disabled} value={item.value}>
