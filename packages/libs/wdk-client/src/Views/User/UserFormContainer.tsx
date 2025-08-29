@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { GlobalData } from '../../StoreModules/GlobalData';
 import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
 import { getChangeHandler, wrappable } from '../../Utils/ComponentUtils';
 import { UserPreferences } from '../../Utils/WdkUser';
@@ -27,7 +28,7 @@ export function FormMessage({
 }
 
 export interface UserFormContainerProps {
-  globalData: { config?: any };
+  globalData: GlobalData;
   userFormData?: UserProfileFormData;
   previousUserFormData?: UserProfileFormData;
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
@@ -140,9 +141,10 @@ function UserFormContainer(props: UserFormContainerProps) {
     }
   }
 
-  // for this string, easier to not confirm against groups; any value will do
-  let subscribed =
-    props?.previousUserFormData?.properties?.subscriptionToken !== '';
+  // for this purpose, easier to not confirm against groups; any value will do
+  // (though technically it could clash with the subscriptionGroups-based checks elsewhere)
+  const subscribed =
+    props.globalData?.user?.properties?.subscriptionToken !== '';
 
   return (
     <div className="wdk-UserProfile">
