@@ -69,7 +69,7 @@ type InternalQuestionRecord = {
   record_type: string;
 };
 
-type DatasetRecord = {
+type DatasourceRecord = {
   dataset_name: string;
   display_name: string;
   organism_prefix: string;
@@ -131,7 +131,7 @@ function InternalGeneDatasetContent(props: Props) {
     ? [selectedSearch, true]
     : [internalSearchName, false];
 
-  const [internalQuestion, outputRecordClass, datasetCategory, datasetSubtype] =
+  const [internalQuestion, outputRecordClass, datasetCategory] =
     useMemo(
       () =>
         getTableQuestionMetadata(questions, recordClasses, internalSearchName),
@@ -144,14 +144,13 @@ function InternalGeneDatasetContent(props: Props) {
         !questions ||
         !ontology ||
         !outputRecordClass ||
-        !datasetCategory ||
-        !datasetSubtype
+        !datasetCategory
       ) {
         return undefined;
       }
 
       const answer = await wdkService.getAnswerJson(
-        getAnswerSpec(datasetCategory, datasetSubtype),
+        getAnswerSpec(datasetCategory),
         REPORT_CONFIG
       );
 
@@ -163,7 +162,7 @@ function InternalGeneDatasetContent(props: Props) {
         ontology,
         internalQuestions
       );
-      const datasetRecords = getDatasetRecords(
+      const datasourceRecords = getDatasourceRecords(
         answer,
         displayCategoryMetadata,
         preferredOrganisms
@@ -175,7 +174,7 @@ function InternalGeneDatasetContent(props: Props) {
         displayCategoriesByName:
           displayCategoryMetadata.displayCategoriesByName,
         displayCategoryOrder: displayCategoryMetadata.displayCategoryOrder,
-        datasetRecords,
+        datasourceRecords,
       };
     },
     [
@@ -184,7 +183,6 @@ function InternalGeneDatasetContent(props: Props) {
       internalSearchName,
       outputRecordClass,
       datasetCategory,
-      datasetSubtype,
       preferredOrganisms,
     ]
   );
@@ -193,7 +191,7 @@ function InternalGeneDatasetContent(props: Props) {
     questionNamesByDatasetAndCategory,
     displayCategoriesByName,
     displayCategoryOrder,
-    datasetRecords,
+    datasourceRecords,
   } = serviceResult || {};
 
   const [showingOneRecord, updateShowingOneRecord] =
@@ -202,24 +200,24 @@ function InternalGeneDatasetContent(props: Props) {
   const selectedDataSetRecord = useMemo(
     () =>
       getSelectedDataSetRecord(
-        datasetRecords,
+        datasourceRecords,
         questionNamesByDatasetAndCategory,
         searchName
       ),
-    [datasetRecords, questionNamesByDatasetAndCategory, searchName]
+    [datasourceRecords, questionNamesByDatasetAndCategory, searchName]
   );
 
-  const filteredDatasetRecords = useMemo(
+  const filteredDatasourceRecords = useMemo(
     () =>
-      getFilteredDatasetRecords(
-        datasetRecords,
+      getFilteredDatasourceRecords(
+        datasourceRecords,
         displayCategoriesByName,
         showingOneRecord,
         selectedDataSetRecord,
         preferredOrganismsEnabled
       ),
     [
-      datasetRecords,
+      datasourceRecords,
       displayCategoriesByName,
       showingOneRecord,
       selectedDataSetRecord,
@@ -255,13 +253,12 @@ function InternalGeneDatasetContent(props: Props) {
     !questionNamesByDatasetAndCategory ||
     !displayCategoriesByName ||
     !displayCategoryOrder ||
-    !datasetRecords ||
-    !filteredDatasetRecords ? (
+    !datasourceRecords ||
+    !filteredDatasourceRecords ? (
     <Loading />
   ) : !internalQuestion ||
     !outputRecordClass ||
-    !datasetCategory ||
-    !datasetSubtype ? (
+    !datasetCategory? (
     <NotFound />
   ) : (
     <div className={cx()}>
@@ -333,8 +330,8 @@ function InternalGeneDatasetContent(props: Props) {
         showCount={true}
         rows={
           showingOneRecord || preferredOrganismsEnabled
-            ? filteredDatasetRecords
-            : datasetRecords
+            ? filteredDatasourceRecords
+            : datasourceRecords
         }
         columns={[
           {
@@ -358,7 +355,7 @@ function InternalGeneDatasetContent(props: Props) {
                 summary,
                 publications,
                 build_number_introduced,
-              }: DatasetRecord = cellProps.row;
+              }: DatasourceRecord = cellProps.row;
 
               return (
                 <div>
@@ -520,11 +517,10 @@ function getTableQuestionMetadata(
 ): [
   Question | undefined,
   RecordClass | undefined,
-  string | undefined,
   string | undefined
 ] {
   if (!questions || !recordClasses) {
-    return [undefined, undefined, undefined, undefined];
+    return [undefined, undefined, undefined];
   }
 
   const internalQuestion = questions.find(
@@ -532,7 +528,7 @@ function getTableQuestionMetadata(
   );
 
   if (!internalQuestion || !internalQuestion.properties) {
-    return [undefined, undefined, undefined, undefined];
+    return [undefined, undefined, undefined];
   }
 
   const { datasetCategory = [], datasetSubtype = [] } =
@@ -545,13 +541,12 @@ function getTableQuestionMetadata(
   return [
     internalQuestion,
     outputRecordClass,
-    datasetCategory.join(''),
-    datasetSubtype.join(''),
-  ];
+    datasetCategory.join('')
+    ];
 }
 
 function getSelectedDataSetRecord(
-  datasetRecords: DatasetRecord[] | undefined,
+  datasourceRecords: DatasourceRecord[] | undefined,
   questionNamesByDatasetAndCategory:
     | ReturnType<
         typeof getDisplayCategoryMetadata
@@ -559,42 +554,41 @@ function getSelectedDataSetRecord(
     | undefined,
   searchName: string
 ) {
-  return !datasetRecords || !questionNamesByDatasetAndCategory
+  return !datasourceRecords || !questionNamesByDatasetAndCategory
     ? undefined
-    : datasetRecords.find(({ dataset_name }) =>
+    : datasourceRecords.find(({ dataset_name }) =>
         Object.values(questionNamesByDatasetAndCategory[dataset_name]).includes(
           searchName
         )
       );
 }
 
-function getFilteredDatasetRecords(
-  datasetRecords: DatasetRecord[] | undefined,
+function getFilteredDatasourceRecords(
+  datasourceRecords: DatasourceRecord[] | undefined,
   questionNamesByDatasetAndCategory:
     | ReturnType<
         typeof getDisplayCategoryMetadata
       >['questionNamesByDatasetAndCategory']
     | undefined,
   showingOneRecord: boolean,
-  selectedDataSetRecord: DatasetRecord | undefined,
+  selectedDataSetRecord: DatasourceRecord | undefined,
   preferredOrganismsEnabled: boolean
 ) {
-  return !datasetRecords || !questionNamesByDatasetAndCategory
+  return !datasourceRecords || !questionNamesByDatasetAndCategory
     ? undefined
     : !showingOneRecord
-    ? datasetRecords.filter(
+    ? datasourceRecords.filter(
         ({ isPreferred }) => !preferredOrganismsEnabled || isPreferred
       )
-    : datasetRecords.filter((record) => record === selectedDataSetRecord);
+    : datasourceRecords.filter((record) => record === selectedDataSetRecord);
 }
 
-function getAnswerSpec(datasetCategory: string, datasetSubtype: string) {
+function getAnswerSpec(datasetCategory: string) {
   return {
-    searchName: 'DatasetsByCategoryAndSubtype',
+    searchName: 'DatasourcesByCategory',
     searchConfig: {
       parameters: {
         dataset_category: datasetCategory,
-        dataset_subtype: datasetSubtype,
       },
     },
   };
@@ -662,7 +656,7 @@ function getInternalQuestions(answer: Answer, outputRecordClassName: string) {
     });
 }
 
-function getDatasetRecords(
+function getDatasourceRecords(
   answer: Answer,
   {
     displayCategoriesByName,
