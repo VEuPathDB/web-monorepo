@@ -140,6 +140,10 @@ function UserFormContainer(props: UserFormContainerProps) {
     }
   }
 
+  // for this string, easier to not confirm against groups; any value will do
+  let subscribed =
+    props?.previousUserFormData?.properties?.subscriptionToken !== '';
+
   return (
     <div className="wdk-UserProfile">
       {props.shouldHideForm ? (
@@ -148,21 +152,7 @@ function UserFormContainer(props: UserFormContainerProps) {
         <>
           <div className="wdk-UserProfile-title">
             <h1>{props.titleText}</h1>
-            {
-              // If this is a profile (so the user is not a guest), we want to show the user if they
-              // have subscribed.
-              // Fix before merge. We just need some new types around
-              //@ts-ignore
-              !props.globalData.user.isGuest && (
-                // user.isSubscribed ? (
-                // Add icon here
-                <h3>Unsubscribed</h3>
-                //) : (
-                // Add icon here
-                // <h4>Subscribed</h4>
-                // )
-              )
-            }
+            <h3>{!subscribed && 'Not'} Subscribed</h3>
           </div>
           {props.introComponent && <props.introComponent />}
           <UserAccountForm
