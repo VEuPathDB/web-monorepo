@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { GlobalData } from '../../StoreModules/GlobalData';
 import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
 import { getChangeHandler, wrappable } from '../../Utils/ComponentUtils';
 import { UserPreferences } from '../../Utils/WdkUser';
@@ -30,7 +31,7 @@ export function FormMessage({
 }
 
 export interface UserFormContainerProps {
-  globalData: { config?: any; user?: User };
+  globalData: GlobalData;
   userFormData?: UserProfileFormData;
   previousUserFormData?: UserProfileFormData;
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
@@ -86,8 +87,8 @@ function UserFormContainer(props: UserFormContainerProps) {
     onEmailFieldChange('confirmEmail', newValue);
   };
 
-  function onPropertyChange(field: string) {
-    return (newValue: any, submitAfterUpdate?: boolean): void => {
+  function onPropertyChange(field: string, submitAfterUpdate?: boolean) {
+    return (newValue: any): void => {
       const previousState = currentUserFormData;
       const newUserFormData = {
         ...previousState,
@@ -143,6 +144,11 @@ function UserFormContainer(props: UserFormContainerProps) {
     }
   }
   console.log(props);
+
+  // for this purpose, easier to not confirm against groups; any value will do
+  // (though technically it could clash with the subscriptionGroups-based checks elsewhere)
+  const subscribed =
+    props.globalData?.user?.properties?.subscriptionToken !== '';
 
   return (
     <div className="wdk-UserProfile">

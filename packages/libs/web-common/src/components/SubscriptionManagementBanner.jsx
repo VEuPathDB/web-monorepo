@@ -2,7 +2,7 @@ import React from 'react';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { Link, useHistory } from 'react-router-dom';
 
-export function SubscriptionManagementBanner({ address }) {
+export function SubscriptionManagementBanner({ address, onClose }) {
   const history = useHistory();
 
   const message = (
@@ -26,12 +26,5 @@ export function SubscriptionManagementBanner({ address }) {
     },
   };
 
-  return (
-    <Banner
-      banner={bannerProps}
-      onClose={() => {
-        console.log('closed');
-      }}
-    />
-  );
+  return <Banner banner={bannerProps} onClose={onClose} />;
 }

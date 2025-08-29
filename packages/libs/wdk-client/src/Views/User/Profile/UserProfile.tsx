@@ -4,15 +4,13 @@ import UserFormContainer, {
   UserFormContainerProps,
 } from '../../../Views/User/UserFormContainer';
 import '../../../Views/User/Profile/UserProfile.scss';
-import { UserProfileFormData } from '../../../StoreModules/UserProfileStoreModule';
-import { User } from '../../../Utils/WdkUser';
-import { ServiceConfig } from '../../../Service/ServiceBase';
 import CoreUIThemeProvider from '@veupathdb/coreui/lib/components/theming/UIThemeProvider';
 import colors, {
   error,
   warning,
   success,
 } from '@veupathdb/coreui/lib/definitions/colors';
+import { GlobalData } from '../../../StoreModules/GlobalData';
 
 type UserProfileProps = Omit<
   UserFormContainerProps,
@@ -22,7 +20,7 @@ type UserProfileProps = Omit<
   | 'submitButtonText'
   | 'onSubmit'
 > & {
-  globalData: { user?: User; config?: ServiceConfig };
+  globalData: GlobalData;
   singleFormMode?: boolean;
 };
 
