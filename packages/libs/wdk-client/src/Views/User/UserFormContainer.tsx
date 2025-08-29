@@ -83,8 +83,8 @@ function UserFormContainer(props: UserFormContainerProps) {
     onEmailFieldChange('confirmEmail', newValue);
   };
 
-  function onPropertyChange(field: string) {
-    return (newValue: any, submitAfterUpdate?: boolean): void => {
+  function onPropertyChange(field: string, submitAfterUpdate?: boolean) {
+    return (newValue: any): void => {
       const previousState = currentUserFormData;
       const newUserFormData = {
         ...previousState,

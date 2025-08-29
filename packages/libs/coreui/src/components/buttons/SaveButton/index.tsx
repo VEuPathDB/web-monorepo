@@ -117,6 +117,7 @@ export default function SaveButton({
               <LoadingIcon style={{ fontSize: '1em', fill: 'white' }} />
             </span>
           ),
+          disabled: true,
         };
       case 'success':
         return {
