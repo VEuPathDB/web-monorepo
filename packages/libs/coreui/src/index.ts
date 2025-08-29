@@ -26,7 +26,11 @@ export {
 export { DataGrid, TabbedDisplay } from './components/grids';
 
 // Forms
-export { FormField, MultilineTextField } from './components/forms';
+export {
+  FormField,
+  MultilineTextField,
+  NumberedHeader,
+} from './components/forms';
 
 // Inputs
 export { default as SingleSelect } from './components/inputs/SingleSelect';

@@ -14,6 +14,7 @@ import { Dialog } from '../../Components';
 import { success, warning } from '@veupathdb/coreui/lib/definitions/colors';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { User } from '../../Utils/WdkUser';
+import NumberedHeader from '@veupathdb/coreui/lib/components/forms/NumberedHeader';
 
 interface UserSubscriptionManagementProps {
   user: User;
@@ -92,80 +93,106 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
 
   return (
     <div>
-      {/* Show subscription status only when form is clean (saved state) */}
-      {validGroup &&
-        (formStatus === 'new' ||
-          formStatus === 'modified' ||
-          formStatus === 'pending') && (
-          <fieldset>
-            <legend>My Subscription Status</legend>
-            <p>You are a member of {validGroup.groupName}.</p>
-            {validGroup.groupLeads.length > 0 && (
-              <div>
-                <p>This group is led by:</p>
-                <ul>
-                  {validGroup.groupLeads.map((lead) => (
-                    <li key={lead.name + lead.organization}>
-                      {lead.name}, {lead.organization}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            <form>
-              <OutlinedButton
-                text="Leave this group"
-                onPress={() => setShowConfirmModal(true)}
-                themeRole="primary"
-              />
-            </form>
-          </fieldset>
-        )}
-
-      {/* Show group selection when no saved group OR when there are unsaved changes AND when the modal is not there */}
-      {(!validGroup || formStatus !== 'new') && !showConfirmModal && (
-        <fieldset>
-          <legend>Subscription Management</legend>
-          <div style={{ padding: '1em 0' }}>
-            <p>
-              Please choose your subscription group. If you do not see your
-              group, please talk to your group lead about becoming a subscriber.
-            </p>
-            <p>
+      <fieldset>
+        <legend>My Subscription Status</legend>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5em' }}>
+          <h4>Status: </h4>
+          <span>{validGroup ? 'Subscribed' : 'Not subscribed'}</span>
+        </div>
+        {/* Show subscription status only when form is clean (saved state) */}
+        {validGroup &&
+          (formStatus === 'new' ||
+            formStatus === 'modified' ||
+            formStatus === 'pending') && (
+            <div>
+              <p>You are a member of {validGroup.groupName}.</p>
+              {validGroup.groupLeads.length > 0 && (
+                <div>
+                  <p>This group is led by:</p>
+                  <ul>
+                    {validGroup.groupLeads.map((lead) => (
+                      <li key={lead.name + lead.organization}>
+                        {lead.name}, {lead.organization}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
               <form>
-                {!tryTypeahead ? (
-                  <SingleSelect
-                    name={tokenField}
-                    value={localSelection ?? userGroupToken ?? ''}
-                    required={true}
-                    onChange={onPropertyChange(tokenField)}
-                    items={groupVocab1}
-                  />
-                ) : (
-                  <Select<Option, any>
-                    isMulti={false}
-                    isSearchable
-                    options={groupVocab2}
-                    value={selectedGroup}
-                    onChange={(option: ValueType<Option, any>) => {
-                      const value =
-                        option == null || Array.isArray(option)
-                          ? ''
-                          : (option as Option).value;
-                      setLocalSelection(value);
-                      onPropertyChange(tokenField)(value);
-                    }}
-                    formatOptionLabel={(option) => option.label}
-                    form="DO_NOT_SUBMIT_ON_ENTER"
-                  />
-                )}
-                {saveButton}
+                <OutlinedButton
+                  text="Leave this group"
+                  onPress={() => setShowConfirmModal(true)}
+                  themeRole="primary"
+                />
               </form>
-            </p>
-          </div>
-        </fieldset>
-      )}
+            </div>
+          )}
 
+        {/* Show group selection when no saved group OR when there are unsaved changes AND when the modal is not there */}
+        {(!validGroup || formStatus !== 'new') && !showConfirmModal && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1em' }}>
+            <Banner
+              banner={{
+                type: 'info',
+                message:
+                  'If you are a PI or group manager, create a subscription.',
+              }}
+            />
+            <NumberedHeader
+              number={1}
+              text="Find your group or lab"
+              color="blue"
+              // color={theme.palette.primary.hue[theme.palette.primary.level]}
+            />
+            <div style={{ marginLeft: '1.5em' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'baseline',
+                  gap: '0.5em',
+                }}
+              >
+                <h5>Group name:</h5>
+                <Select<Option, any>
+                  isMulti={false}
+                  isSearchable
+                  options={groupVocab2}
+                  value={selectedGroup}
+                  onChange={(option: ValueType<Option, any>) => {
+                    const value =
+                      option == null || Array.isArray(option)
+                        ? ''
+                        : (option as Option).value;
+                    setLocalSelection(value);
+                    onPropertyChange(tokenField)(value);
+                  }}
+                  formatOptionLabel={(option) => option.label}
+                  form="DO_NOT_SUBMIT_ON_ENTER"
+                />
+              </div>
+              <span>
+                Don\'t see your group listed? Ask your group lead or
+                administrator to create a subscription.
+              </span>
+            </div>
+
+            <NumberedHeader
+              number={2}
+              text="Associate your account with your group"
+              color="blue"
+              // color={theme.palette.primary.hue[theme.palette.primary.level]}
+            />
+            <span>
+              Click the button to associate your VEuPathDB account with your
+              group. There is no cost to join a group.
+            </span>
+            {saveButton}
+            <span style={{ marginTop: '3em' }}>
+              Questions? Contact us if you need help joining a subscription.
+            </span>
+          </div>
+        )}
+      </fieldset>
       {/* Confirmation modal overlay */}
       <Dialog
         open={showConfirmModal}
