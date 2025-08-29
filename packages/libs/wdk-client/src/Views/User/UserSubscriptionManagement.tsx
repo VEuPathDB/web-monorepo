@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useMemo, JSX, FormEvent } from 'react';
-import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
+import React, { useState, useEffect, useMemo, JSX } from 'react';
 import { wrappable } from '../../Utils/ComponentUtils';
 import { SubscriptionGroup } from '../../Service/Mixins/OauthService';
 import Select from 'react-select';
@@ -10,18 +9,17 @@ import {
 } from '@veupathdb/coreui/lib/components/buttons';
 import SingleSelect from '../../Components/InputControls/SingleSelect';
 import { Dialog } from '../../Components';
+import { User } from '../../Utils/WdkUser';
 
 interface UserSubscriptionManagementProps {
-  user: UserProfileFormData;
+  user: User;
   subscriptionGroups: SubscriptionGroup[];
   onPropertyChange: (
     field: string,
     submitAfterChange?: boolean
   ) => (value: any) => void;
   saveButton: JSX.Element;
-  onSubmit: (event: FormEvent<Element>) => void;
   onSuccess: () => void;
-  onDiscardChanges: () => void;
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
 }
 
@@ -35,21 +33,21 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
   subscriptionGroups,
   onPropertyChange,
   saveButton,
-  onSubmit,
   onSuccess,
-  onDiscardChanges,
   formStatus,
 }) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [localSelection, setLocalSelection] = useState<string>();
+
+  // Reset local selection when database state changes (after successful save)
+  useEffect(() => {
+    if (formStatus === 'new') {
+      setLocalSelection(undefined);
+    }
+  }, [formStatus]);
 
   const tokenField = 'subscriptionToken';
-  const userGroupToken = useMemo(
-    () =>
-      user != null && user.properties != null
-        ? user.properties[tokenField]
-        : undefined,
-    [user]
-  );
+  const userGroupToken = user.properties[tokenField]; // from db-backed state
 
   const validGroup = useMemo(() => {
     if (!userGroupToken) return undefined;
@@ -81,10 +79,10 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
     [subscriptionGroups]
   );
 
-  const selectedGroup = useMemo(
-    () => groupVocab2.filter((g) => g.value === userGroupToken)[0],
-    [groupVocab2, userGroupToken]
-  );
+  const selectedGroup = useMemo(() => {
+    const effectiveToken = localSelection ?? userGroupToken;
+    return groupVocab2.filter((g) => g.value === effectiveToken)[0];
+  }, [groupVocab2, userGroupToken, localSelection]);
 
   const tryTypeahead = true;
 
@@ -131,7 +129,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                 {!tryTypeahead ? (
                   <SingleSelect
                     name={tokenField}
-                    value={userGroupToken || ''}
+                    value={localSelection ?? userGroupToken ?? ''}
                     required={true}
                     onChange={onPropertyChange(tokenField)}
                     items={groupVocab1}
@@ -143,11 +141,12 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                     options={groupVocab2}
                     value={selectedGroup}
                     onChange={(option: ValueType<Option, any>) => {
-                      onPropertyChange(tokenField)(
+                      const value =
                         option == null || Array.isArray(option)
                           ? ''
-                          : (option as Option).value
-                      );
+                          : (option as Option).value;
+                      setLocalSelection(value);
+                      onPropertyChange(tokenField)(value);
                     }}
                     formatOptionLabel={(option) => option.label}
                     form="DO_NOT_SUBMIT_ON_ENTER"
