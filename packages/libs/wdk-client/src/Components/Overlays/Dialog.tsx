@@ -32,6 +32,12 @@ type Props = {
 
   draggable?: boolean;
   resizable?: boolean;
+  /**
+   * Enable keyboard movement of the dialog. Defaults to false.
+   * When enabled, pressing 'M' will enter keyboard-positioning mode
+   * where arrow keys can be used to move the dialog.
+   */
+  allowKeyboardMoving?: boolean;
   className?: string;
   onOpen?: () => void;
   onClose?: () => void;
@@ -205,8 +211,8 @@ function Dialog(props: Props) {
           }
         }
       }
-      // M key to enter toggle keyboard moving mode
-      if (e.key === 'M' || e.key === 'm') {
+      // M key to enter toggle keyboard moving mode (only if enabled)
+      if ((e.key === 'M' || e.key === 'm') && props.allowKeyboardMoving) {
         setIsMoving(true);
       }
       // Tab will do its normal thing but also show the focus key help
@@ -267,17 +273,19 @@ function Dialog(props: Props) {
         <Icon type="close" />
       </button>,
     ],
-    leftButtons = [
-      <button
-        title="Toggle keyboard placement mode (shortcut key: M)"
-        key="move"
-        type="button"
-        onClick={() => setIsMoving((prev) => !prev)}
-        style={isMoving ? { color: isMovingHighlightColor } : {}}
-      >
-        <Icon type="move" />
-      </button>,
-    ],
+    leftButtons = props.allowKeyboardMoving
+      ? [
+          <button
+            title="Toggle keyboard placement mode (shortcut key: M)"
+            key="move"
+            type="button"
+            onClick={() => setIsMoving((prev) => !prev)}
+            style={isMoving ? { color: isMovingHighlightColor } : {}}
+          >
+            <Icon type="move" />
+          </button>,
+        ]
+      : [],
   } = props;
 
   const content = (
@@ -373,7 +381,13 @@ function useRestorePreviousFocus(isOpen: boolean) {
 
 function KeyboardMovingHelp() {
   return (
-    <span style={{ color: isMovingHighlightColor }}>
+    <span
+      style={{
+        color: isMovingHighlightColor,
+        marginLeft: 42, // these margins avoid clipping
+        marginRight: 42, // the red text
+      }}
+    >
       ≫ Use arrow keys to move. Press <kbd>Esc</kbd> to exit. ≪
     </span>
   );
