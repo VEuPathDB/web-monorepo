@@ -262,14 +262,26 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
         description={<div>Confirm you want to leave the group.</div>}
         onClose={() => setShowConfirmModal(false)}
       >
-        <div>
-          <p>Are you sure you want to leave the group?</p>
+        <div style={{ padding: '1em', width: 550, display: 'grid' }}>
+          <p
+            style={{
+              fontSize: '1.2em',
+              fontWeight: 500,
+              marginBottom: 0,
+              justifySelf: 'center',
+            }}
+          >
+            Are you sure you want to leave the group?
+          </p>
+          <p style={{ fontSize: '1.2em', justifySelf: 'center' }}>
+            If your position or affiliation has changed, please additionally
+            update the Account page.
+          </p>
           <div
             style={{
-              marginTop: '1em',
+              marginTop: '3em',
               display: 'flex',
-              gap: '0.5em',
-              alignItems: 'center',
+              justifyContent: 'space-between',
             }}
           >
             <SaveButton
@@ -286,6 +298,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                 onSuccess();
               }}
               savedStateDuration={1000}
+              styleOverrides={{ container: { minWidth: 'max-content' } }}
             />
             <OutlinedButton
               text="No, don't leave the group"
