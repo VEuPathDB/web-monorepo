@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { Props } from '@veupathdb/wdk-client/lib/Components/Layout/Page';
@@ -52,6 +53,16 @@ const cx = makeClassNameHelper('vpdb-');
 const SEARCH_TERM_SESSION_KEY = 'header-search-term';
 const EXPANDED_BRANCHES_SESSION_KEY = 'header-expanded-branch-ids';
 
+// Create a stable QueryClient instance
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: 3,
+    },
+  },
+});
+
 export const OrthoMCLPage: FunctionComponent<Props> = (props) => {
   useHomePageTitle();
 
@@ -92,50 +103,52 @@ export const OrthoMCLPage: FunctionComponent<Props> = (props) => {
   );
 
   return (
-    <UIThemeProvider
-      theme={{
-        palette: {
-          primary: { hue: colors.mutedBlue, level: 600 },
-          secondary: { hue: colors.mutedRed, level: 500 },
-          error: { hue: error, level: 600 },
-          warning: { hue: warning, level: 600 },
-          info: { hue: colors.mutedBlue, level: 600 },
-          success: { hue: success, level: 600 },
-        },
-      }}
-    >
-      <OrthoMCLSnackbarProvider styleProps={snackbarStyleProps}>
-        <ReduxNotificationHandler>
-          <div className={cx('RootContainer', props.classNameModifier)}>
-            <ErrorBoundary>
-              <Header
-                menuItems={menuItems}
-                containerClassName={cx(
-                  'Header',
-                  isHeaderExpanded ? 'expanded' : 'collapsed'
-                )}
-                onShowAnnouncements={onShowAnnouncements}
-                showAnnouncementsToggle={showAnnouncementsToggle}
-                branding={branding}
-              />
-            </ErrorBoundary>
-            <div className={cx('Announcements')}>
-              <Announcements
-                closedBanners={closedBanners}
-                setClosedBanners={setClosedBanners}
-              />
+    <QueryClientProvider client={queryClient}>
+      <UIThemeProvider
+        theme={{
+          palette: {
+            primary: { hue: colors.mutedBlue, level: 600 },
+            secondary: { hue: colors.mutedRed, level: 500 },
+            error: { hue: error, level: 600 },
+            warning: { hue: warning, level: 600 },
+            info: { hue: colors.mutedBlue, level: 600 },
+            success: { hue: success, level: 600 },
+          },
+        }}
+      >
+        <OrthoMCLSnackbarProvider styleProps={snackbarStyleProps}>
+          <ReduxNotificationHandler>
+            <div className={cx('RootContainer', props.classNameModifier)}>
+              <ErrorBoundary>
+                <Header
+                  menuItems={menuItems}
+                  containerClassName={cx(
+                    'Header',
+                    isHeaderExpanded ? 'expanded' : 'collapsed'
+                  )}
+                  onShowAnnouncements={onShowAnnouncements}
+                  showAnnouncementsToggle={showAnnouncementsToggle}
+                  branding={branding}
+                />
+              </ErrorBoundary>
+              <div className={cx('Announcements')}>
+                <Announcements
+                  closedBanners={closedBanners}
+                  setClosedBanners={setClosedBanners}
+                />
+              </div>
+              <Main containerClassName={cx('Main')}>{props.children}</Main>
+              <ErrorBoundary>
+                <Footer containerClassName={cx('Footer')}></Footer>
+              </ErrorBoundary>
+              <ErrorBoundary>
+                <CookieBanner />
+              </ErrorBoundary>
             </div>
-            <Main containerClassName={cx('Main')}>{props.children}</Main>
-            <ErrorBoundary>
-              <Footer containerClassName={cx('Footer')}></Footer>
-            </ErrorBoundary>
-            <ErrorBoundary>
-              <CookieBanner />
-            </ErrorBoundary>
-          </div>
-        </ReduxNotificationHandler>
-      </OrthoMCLSnackbarProvider>
-    </UIThemeProvider>
+          </ReduxNotificationHandler>
+        </OrthoMCLSnackbarProvider>
+      </UIThemeProvider>
+    </QueryClientProvider>
   );
 };
 
