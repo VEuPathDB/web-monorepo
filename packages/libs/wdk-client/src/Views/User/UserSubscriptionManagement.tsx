@@ -226,6 +226,19 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                   formatOptionLabel={(option) => option.label}
                   form="DO_NOT_SUBMIT_ON_ENTER"
                   className="wdk-UserProfile-TypeAheadSelect"
+                  theme={(selectTheme) => ({
+                    ...selectTheme,
+                    colors: {
+                      ...selectTheme.colors,
+                      primary25:
+                        theme?.palette.primary.hue[200] ??
+                        selectTheme.colors.primary25,
+                      primary:
+                        theme?.palette.primary.hue[
+                          theme.palette.primary.level
+                        ] ?? selectTheme.colors.primary,
+                    },
+                  })}
                 />
               </div>
               <span
