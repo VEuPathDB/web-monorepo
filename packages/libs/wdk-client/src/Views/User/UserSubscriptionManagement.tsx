@@ -104,9 +104,24 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
         <legend>My Subscription Status</legend>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5em' }}>
           <h4>Status: </h4>
-          <h4 style={{ fontWeight: 400 }}>
-            {validGroup ? 'Subscribed' : 'Not subscribed'}
-          </h4>
+          {validGroup ? (
+            <>
+              <Icon
+                fa="check-circle wdk-UserProfile-StatusIcon--success"
+                style={{ color: success[600], fontSize: '1.2em' }}
+              />
+              <h4 style={{ fontWeight: 400 }}>Subscribed</h4>
+            </>
+          ) : (
+            <>
+              <Icon
+                fa="exclamation-triangle"
+                className="wdk-UserProfile-StatusIcon--warning"
+                style={{ color: warning[600], fontSize: '1.2em' }}
+              />
+              <h4 style={{ fontWeight: 400 }}>Not subscribed</h4>
+            </>
+          )}
         </div>
         {/* Show subscription status only when form is clean (saved state) */}
         {validGroup &&
@@ -123,6 +138,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                   columnGap: '1em',
                   alignItems: 'baseline',
                   marginBottom: '1em',
+                  minWidth: 800, // accommodate the really long names.
                 }}
               >
                 <h4>Group name:</h4>
@@ -220,7 +236,11 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                 }}
               >
                 Don't see your group listed? Ask your group lead or
-                administrator to create a subscription.
+                administrator to{' '}
+                <Link to="/static-content/subscriptions.html">
+                  create a subscription
+                </Link>
+                .
               </span>
             </div>
 
@@ -228,8 +248,10 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
               number={2}
               text="Associate your account with your group"
               color={
-                theme?.palette.primary.hue[theme?.palette.primary.level] ??
-                'blue'
+                localSelection
+                  ? theme?.palette.primary.hue[theme?.palette.primary.level] ??
+                    'blue'
+                  : colors.gray[500]
               }
             />
             <div
@@ -239,12 +261,19 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                 flexDirection: 'column',
                 gap: '1em',
                 marginRight: '1em',
+                color: localSelection ? colors.gray[900] : colors.gray[500],
+                fontSize: '1.2em',
               }}
             >
-              <span style={{ fontSize: '1.2em' }}>
-                Click the button to associate your VEuPathDB account with your
-                group. There is no cost to join a group.
+              <span>
+                Click the Save button to associate your VEuPathDB account with
+                the group:
               </span>
+              {selectedGroup.label && selectedGroup.label !== '--' ? (
+                <span style={{ fontWeight: 600 }}>{selectedGroup.label}</span>
+              ) : (
+                <span style={{ fontStyle: 'italic' }}>No group selected</span>
+              )}
               {saveButton}
             </div>
             <span style={{ marginTop: '3em', color: colors.gray[700] }}>
