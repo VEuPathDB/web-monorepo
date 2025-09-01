@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 
 import { Link, IconAlt } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { useSubscriptionGroups } from '@veupathdb/wdk-client/lib/Hooks/SubscriptionGroups';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { SubscriptionGroup } from '@veupathdb/wdk-client/lib/Service/Mixins/OauthService';
@@ -27,7 +28,7 @@ interface AnnouncementsProps {
 interface AnnouncementRenderProps extends ServiceConfig {
   location: ReturnType<typeof useLocation>;
   currentUser: User;
-  subscriptionGroups: SubscriptionGroup[];
+  subscriptionGroups: SubscriptionGroup[] | undefined;
   onClose?: () => void;
 }
 
@@ -149,7 +150,12 @@ const siteAnnouncements: SiteAnnouncement[] = [
       subscriptionGroups,
       onClose,
     }: AnnouncementRenderProps) => {
-      if (!currentUser || subscriptionGroups.length === 0) return null;
+      if (
+        !currentUser ||
+        subscriptionGroups == null ||
+        subscriptionGroups.length === 0
+      )
+        return null;
 
       const isSubscribed =
         !currentUser.isGuest &&
@@ -1298,15 +1304,7 @@ function Announcements({
     [closedBanners, setClosedBanners]
   );
 
-  const subscriptionGroups: SubscriptionGroup[] =
-    useWdkService(
-      (wdkService) =>
-        wdkService.getSubscriptionGroups().catch((e) => {
-          console.error(e);
-          return [] as SubscriptionGroup[];
-        }),
-      []
-    ) || [];
+  const subscriptionGroups = useSubscriptionGroups();
 
   if (data == null) return null;
 
