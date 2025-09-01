@@ -3,6 +3,7 @@ import React, { cloneElement } from 'react';
 import { connect } from 'react-redux';
 import { useLocation } from 'react-router';
 import { RecoilRoot } from 'recoil';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import QueryString from 'querystring';
 import { emptyAction } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
 import { projectId } from '@veupathdb/web-common/lib/config';
@@ -487,6 +488,16 @@ export function IndexController() {
   return GenomicsIndexController;
 }
 
+// Create a stable QueryClient instance
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: 3,
+    },
+  },
+});
+
 export function Page() {
   return function VuPathDBPage(props) {
     useScrollUpOnRouteChange();
@@ -502,24 +513,26 @@ export function Page() {
     }, [galaxyUrl]);
 
     return (
-      <RecoilRoot>
-        <MUIThemeProvider theme={MUITheme}>
-          <UIThemeProvider
-            theme={{
-              palette: {
-                primary: { hue: colors.mutedBlue, level: 600 },
-                secondary: { hue: colors.mutedRed, level: 500 },
-                error: { hue: error, level: 600 },
-                warning: { hue: warning, level: 600 },
-                info: { hue: colors.mutedCyan, level: 600 },
-                success: { hue: success, level: 600 },
-              },
-            }}
-          >
-            <VEuPathDBHomePage {...props} isHomePage={isHomePage} />
-          </UIThemeProvider>
-        </MUIThemeProvider>
-      </RecoilRoot>
+      <QueryClientProvider client={queryClient}>
+        <RecoilRoot>
+          <MUIThemeProvider theme={MUITheme}>
+            <UIThemeProvider
+              theme={{
+                palette: {
+                  primary: { hue: colors.mutedBlue, level: 600 },
+                  secondary: { hue: colors.mutedRed, level: 500 },
+                  error: { hue: error, level: 600 },
+                  warning: { hue: warning, level: 600 },
+                  info: { hue: colors.mutedCyan, level: 600 },
+                  success: { hue: success, level: 600 },
+                },
+              }}
+            >
+              <VEuPathDBHomePage {...props} isHomePage={isHomePage} />
+            </UIThemeProvider>
+          </MUIThemeProvider>
+        </RecoilRoot>
+      </QueryClientProvider>
     );
   };
 }

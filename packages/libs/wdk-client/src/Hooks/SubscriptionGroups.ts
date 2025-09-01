@@ -1,8 +1,9 @@
-import { useWdkService } from './WdkServiceHook';
+import { useQuery } from '@tanstack/react-query';
 import { SubscriptionGroup } from '../Service/Mixins/OauthService';
+import { useWdkDependenciesContext } from './WdkDependenciesEffect';
 
 /**
- * Hook to fetch subscription groups from the API.
+ * Hook to fetch subscription groups from the API with react-query caching.
  *
  * @returns undefined while loading, SubscriptionGroup[] when loaded, or undefined on error
  *
@@ -17,12 +18,24 @@ import { SubscriptionGroup } from '../Service/Mixins/OauthService';
  * - Announcements: Used for subscription-based banner logic
  */
 export function useSubscriptionGroups(): SubscriptionGroup[] | undefined {
-  return useWdkService(
-    (wdkService) =>
-      wdkService.getSubscriptionGroups().catch((error) => {
+  const { wdkService } = useWdkDependenciesContext();
+
+  const { data } = useQuery({
+    queryKey: ['subscriptionGroups'],
+    queryFn: async () => {
+      if (!wdkService) {
+        throw new Error('WDK service not available');
+      }
+      try {
+        return await wdkService.getSubscriptionGroups();
+      } catch (error: any) {
         console.error('Failed to fetch subscription groups:', error);
         return undefined;
-      }),
-    []
-  );
+      }
+    },
+    enabled: wdkService != null,
+    staleTime: 60 * 60 * 1000, // 1 hour
+  });
+
+  return data;
 }
