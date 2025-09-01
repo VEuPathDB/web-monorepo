@@ -4,6 +4,9 @@ import { useWdkDependenciesContext } from './WdkDependenciesEffect';
 
 /**
  * Hook to fetch subscription groups from the API with react-query caching.
+ * Note: wdkService caching is all-or-nothing. We need something inbetween, so
+ * we disable wdkService caching (in `wdkService.getSubscriptionGroups`)
+ * and use react-query to provide a one-hour cache.
  *
  * @returns undefined while loading, SubscriptionGroup[] when loaded, or undefined on error
  *
