@@ -114,19 +114,32 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
             formStatus === 'modified' ||
             formStatus === 'pending') && (
             <div>
-              <p>You are a member of {validGroup.groupName}.</p>
-              {validGroup.groupLeads.length > 0 && (
-                <div>
-                  <p>This group is led by:</p>
-                  <ul>
-                    {validGroup.groupLeads.map((lead) => (
-                      <li key={lead.name + lead.organization}>
-                        {lead.name}, {lead.organization}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              <h3>Group Subscription</h3>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'max-content 1fr',
+                  rowGap: '0.5em',
+                  columnGap: '1em',
+                  alignItems: 'baseline',
+                  marginBottom: '1em',
+                }}
+              >
+                <h4>Group name:</h4>
+                <h4 style={{ fontWeight: 400 }}>{validGroup.groupName}</h4>
+                <h4>PI(s) or Group lead(s):</h4>
+                {validGroup.groupLeads.length > 0 ? (
+                  <h4 style={{ fontWeight: 400 }}>
+                    {validGroup.groupLeads
+                      .map((lead) => `${lead.name} (${lead.organization})`)
+                      .join(', ')}
+                  </h4>
+                ) : (
+                  <h4 style={{ fontStyle: 'italic', fontWeight: 400 }}>
+                    None provided
+                  </h4>
+                )}
+              </div>
               <form>
                 <OutlinedButton
                   text="Leave this group"
