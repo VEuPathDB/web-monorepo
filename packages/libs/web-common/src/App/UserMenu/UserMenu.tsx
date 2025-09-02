@@ -17,7 +17,7 @@ interface Actions {
 }
 
 interface UserMenuProps {
-  user?: User;
+  user: User;
   actions: Actions;
   webAppUrl?: string; // passed in in several places but not used - potentially remove?
 }
@@ -31,93 +31,42 @@ interface MenuItem {
 }
 
 const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
-  const subscriptionGroups =
-    useWdkService(
-      (wdkService) =>
-        wdkService.getSubscriptionGroups().catch((e) => {
-          console.error(e);
-          return [] as SubscriptionGroup[];
-        }),
-      []
-    ) || [];
+  const subscriptionGroups = useWdkService(
+    (wdkService) =>
+      wdkService.getSubscriptionGroups().catch((e) => {
+        console.error(e);
+        return [] as SubscriptionGroup[];
+      }),
+    []
+  );
 
-  if (!user) return null;
-
-  const { isGuest, properties = {} } = user;
-  const iconClass = 'user-circle' + (isGuest ? '-o' : '');
+  const { properties = {} } = user;
 
   const isSubscribed =
-    !isGuest &&
-    subscriptionGroups.filter(
-      (g: SubscriptionGroup) =>
-        g.subscriptionToken === user.properties['subscriptionToken']
-    ).length > 0;
+    (subscriptionGroups &&
+      subscriptionGroups?.filter(
+        (g: SubscriptionGroup) =>
+          g.subscriptionToken === user.properties['subscriptionToken']
+      ).length > 0) ??
+    false;
 
   const renderMenu = (): JSX.Element => {
-    const items: MenuItem[] = isGuest
-      ? [
-          {
-            icon: 'sign-in',
-            text: 'Login',
-            onClick: () => actions.showLoginForm(window.location.href),
-          },
-          {
-            icon: 'user-plus',
-            text: 'Register',
-            route: '/user/registration',
-            target: '_blank',
-          },
-        ]
-      : [
-          {
-            icon: 'vcard',
-            text: 'My Profile',
-            route: '/user/profile',
-          },
-          {
-            icon: 'power-off',
-            text: 'Log Out',
-            onClick: () => actions.showLogoutWarning(),
-          },
-        ];
+    const items: MenuItem[] = [
+      {
+        icon: 'vcard',
+        text: 'My Profile',
+        route: '/user/profile',
+      },
+      {
+        icon: 'power-off',
+        text: 'Log Out',
+        onClick: () => actions.showLogoutWarning(),
+      },
+    ];
 
     return (
       <div className="UserMenu-Pane">
-        {items.map(({ route, target, onClick, icon, text }) => {
-          const key = icon; // previously we used the index but this was creating a warning
-          const className =
-            'UserMenu-Pane-Item UserMenu-Pane-Item--interactive';
-
-          if (onClick) {
-            return (
-              <button
-                key={key}
-                type="button"
-                className={className}
-                onClick={onClick}
-              >
-                <Icon fa={icon + ' UserMenu-Pane-Item-Icon'} />
-                {text}
-              </button>
-            );
-          }
-
-          if (route) {
-            return (
-              <Link key={key} className={className} to={route} target={target}>
-                <Icon fa={icon + ' UserMenu-Pane-Item-Icon'} />
-                {text}
-              </Link>
-            );
-          }
-
-          return (
-            <div key={key} className="UserMenu-Pane-Item">
-              <Icon fa={icon + ' UserMenu-Pane-Item-Icon'} />
-              {text}
-            </div>
-          );
-        })}
+        {renderItems(items)}
         <hr style={{ margin: '10px 0', borderColor: '#ccc' }} />
         {isSubscribed ? (
           <div className="UserMenu-Pane-Item">
@@ -138,30 +87,86 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
   };
 
   return (
-    <div className={'box UserMenu' + (!isGuest ? ' UserMenu--expanded' : '')}>
+    <div className={'box UserMenu UserMenu--expanded'}>
       <div className="UserMenu-IconContainer">
-        {isGuest ? (
-          <UserGuest className="UserMenu-GuestIcon" />
-        ) : isSubscribed ? (
+        {isSubscribed ? (
           <UserCheck className="UserMenu-StatusIcon" />
         ) : (
           <UserWarn className="UserMenu-StatusIcon" />
         )}
       </div>
-      <span
-        className={
-          'UserMenu-Title' + (!isGuest ? ' UserMenu-Title--expanded' : '')
-        }
-      >
-        {typeof isGuest === 'undefined'
-          ? '...'
-          : isGuest !== false
-          ? 'Guest'
-          : properties.firstName}
+      <span className={'UserMenu-Title UserMenu-Title--expanded'}>
+        {properties.firstName}
       </span>
       {renderMenu()}
     </div>
   );
 };
 
+export const UserMenuGuest: React.FC<Omit<UserMenuProps, 'user'>> = ({
+  actions,
+}) => {
+  const renderMenu = (): JSX.Element => {
+    const items: MenuItem[] = [
+      {
+        icon: 'sign-in',
+        text: 'Login',
+        onClick: () => actions.showLoginForm(window.location.href),
+      },
+      {
+        icon: 'user-plus',
+        text: 'Register',
+        route: '/user/registration',
+        target: '_blank',
+      },
+    ];
+
+    return <div className="UserMenu-Pane">{renderItems(items)}</div>;
+  };
+
+  // Return structure mostly mimics the UserMenu for consistency, but importantly
+  // does not have the 'expanded' part of the class names.
+  return (
+    <div className={'box UserMenu'}>
+      <div className="UserMenu-IconContainer">
+        <UserGuest className="UserMenu-GuestIcon" />
+      </div>
+      <span className={'UserMenu-Title'}>Guest</span>
+      {renderMenu()}
+    </div>
+  );
+};
+
 export default UserMenu;
+
+function renderItems(items: MenuItem[]): JSX.Element[] {
+  return items.map(({ route, target, onClick, icon, text }) => {
+    const key = icon; // previously we used the index but this was creating a warning
+    const className = 'UserMenu-Pane-Item UserMenu-Pane-Item--interactive';
+
+    if (onClick) {
+      return (
+        <button key={key} type="button" className={className} onClick={onClick}>
+          <Icon fa={icon + ' UserMenu-Pane-Item-Icon'} />
+          {text}
+        </button>
+      );
+    }
+
+    if (route) {
+      return (
+        <Link key={key} className={className} to={route} target={target}>
+          <Icon fa={icon + ' UserMenu-Pane-Item-Icon'} />
+          {text}
+        </Link>
+      );
+    }
+
+    return (
+      <div key={key} className="UserMenu-Pane-Item">
+        <Icon fa={icon + ' UserMenu-Pane-Item-Icon'} />
+        {text}
+      </div>
+    );
+  });
+}
