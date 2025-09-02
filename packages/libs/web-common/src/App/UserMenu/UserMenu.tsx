@@ -7,9 +7,12 @@ import { useSubscriptionGroups } from '@veupathdb/wdk-client/lib/Hooks/Subscript
 import { userIsSubscribed } from '@veupathdb/wdk-client/lib/Utils/Subscriptions';
 
 import './UserMenu.scss';
-import UserWarn from '@veupathdb/coreui/lib/components/icons/UserWarn';
-import UserCheck from '@veupathdb/coreui/lib/components/icons/UserCheck';
-import UserGuest from '@veupathdb/coreui/lib/components/icons/UserGuest';
+import {
+  UserLoggedIn,
+  UserWarn,
+  UserCheck,
+  UserGuest,
+} from '../../../../coreui/lib';
 
 interface Actions {
   showLoginForm: (destination: string) => void;
@@ -86,8 +89,8 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
         {isGuest ? (
           <UserGuest className="UserMenu-GuestIcon" />
         ) : subscriptionGroups == null ? (
-          // Still loading - show default user icon
-          <UserGuest className="UserMenu-StatusIcon" />
+          // Still loading subscription groups
+          <UserLoggedIn className="UserMenu-LoggedInIcon" />
         ) : isSubscribed ? (
           <UserCheck className="UserMenu-StatusIcon" />
         ) : (

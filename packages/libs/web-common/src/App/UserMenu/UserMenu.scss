@@ -42,6 +42,12 @@ $white: #e0e0e0;
     }
   }
 
+  .UserMenu-LoggedInIcon {
+    fill: #dedede; // gray instead of white with opacity
+    font-size: 45px;
+    transform: translate(4px, 2px);
+  }
+
   .UserMenu-GuestIcon {
     fill: #dedede; // gray instead of white with opacity
     font-size: 33px;
