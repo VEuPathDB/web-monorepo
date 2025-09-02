@@ -1,4 +1,3 @@
-import UserMenu from './UserMenu';
-import { UserMenuGuest } from './UserMenu';
-export default UserMenu;
-export { UserMenuGuest };
+import { UserMenuGuest, UserMenu } from './UserMenu';
+
+export { UserMenuGuest, UserMenu };

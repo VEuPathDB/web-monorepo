@@ -20,7 +20,7 @@ import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
-import UserMenu, { UserMenuGuest } from '../../App/UserMenu';
+import { UserMenu, UserMenuGuest } from '../../App/UserMenu';
 import { SocialMediaLinks } from '../../components/homepage/SocialMediaLinks';
 import { SiteSearchInput } from '../../components/SiteSearch/SiteSearchInput';
 

@@ -30,7 +30,7 @@ interface MenuItem {
   target?: string;
 }
 
-const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
+export const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
   const subscriptionGroups = useWdkService(
     (wdkService) =>
       wdkService.getSubscriptionGroups().catch((e) => {
@@ -136,8 +136,6 @@ export const UserMenuGuest: React.FC<Omit<UserMenuProps, 'user'>> = ({
     </div>
   );
 };
-
-export default UserMenu;
 
 function renderItems(items: MenuItem[]): JSX.Element[] {
   return items.map(({ route, target, onClick, icon, text }) => {
