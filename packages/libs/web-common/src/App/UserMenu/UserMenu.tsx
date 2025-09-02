@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { IconAlt as Icon } from '@veupathdb/wdk-client/lib/Components';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
-import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { useSubscriptionGroups } from '@veupathdb/wdk-client/lib/Hooks/SubscriptionGroups';
 import { SubscriptionGroup } from '@veupathdb/wdk-client/lib/Service/Mixins/OauthService';
 
 import './UserMenu.scss';
@@ -31,24 +31,19 @@ interface MenuItem {
 }
 
 export const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
-  const subscriptionGroups = useWdkService(
-    (wdkService) =>
-      wdkService.getSubscriptionGroups().catch((e) => {
-        console.error(e);
-        return [] as SubscriptionGroup[];
-      }),
-    []
-  );
-
+  const subscriptionGroups = useSubscriptionGroups();
   const { properties = {} } = user;
+  const isGuest = user.isGuest;
+  const iconClass = 'user';
 
+  // Don't determine subscription status while still loading
   const isSubscribed =
-    (subscriptionGroups &&
-      subscriptionGroups?.filter(
-        (g: SubscriptionGroup) =>
-          g.subscriptionToken === user.properties['subscriptionToken']
-      ).length > 0) ??
-    false;
+    !isGuest &&
+    subscriptionGroups != null &&
+    subscriptionGroups.filter(
+      (g: SubscriptionGroup) =>
+        g.subscriptionToken === user.properties['subscriptionToken']
+    ).length > 0;
 
   const renderMenu = (): JSX.Element => {
     const items: MenuItem[] = [
@@ -67,20 +62,24 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
     return (
       <div className="UserMenu-Pane">
         {renderItems(items)}
-        <hr style={{ margin: '10px 0', borderColor: '#ccc' }} />
-        {isSubscribed ? (
-          <div className="UserMenu-Pane-Item">
-            <Icon fa="check-circle UserMenu-Pane-Item-Icon UserMenu-StatusIcon--success" />
-            Subscribed
-          </div>
-        ) : (
-          <Link
-            to="/user/profile/#subscription"
-            className="UserMenu-Pane-Item UserMenu-Pane-Item--interactive"
-          >
-            <Icon fa="exclamation-triangle UserMenu-Pane-Item-Icon UserMenu-StatusIcon--warning" />
-            Not subscribed
-          </Link>
+        {subscriptionGroups == null ? null : ( // Still loading subscription data - don't show subscription status
+          <>
+            <hr style={{ margin: '10px 0', borderColor: '#ccc' }} />
+            {isSubscribed ? (
+              <div className="UserMenu-Pane-Item">
+                <Icon fa="check-circle UserMenu-Pane-Item-Icon UserMenu-StatusIcon--success" />
+                Subscribed
+              </div>
+            ) : (
+              <Link
+                to="/user/profile/#subscription"
+                className="UserMenu-Pane-Item UserMenu-Pane-Item--interactive"
+              >
+                <Icon fa="exclamation-triangle UserMenu-Pane-Item-Icon UserMenu-StatusIcon--warning" />
+                Unsubscribed
+              </Link>
+            )}
+          </>
         )}
       </div>
     );
@@ -89,7 +88,12 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
   return (
     <div className={'box UserMenu UserMenu--expanded'}>
       <div className="UserMenu-IconContainer">
-        {isSubscribed ? (
+        {isGuest ? (
+          <UserGuest className="UserMenu-GuestIcon" />
+        ) : subscriptionGroups == null ? (
+          // Still loading - show default user icon
+          <UserGuest className="UserMenu-StatusIcon" />
+        ) : isSubscribed ? (
           <UserCheck className="UserMenu-StatusIcon" />
         ) : (
           <UserWarn className="UserMenu-StatusIcon" />

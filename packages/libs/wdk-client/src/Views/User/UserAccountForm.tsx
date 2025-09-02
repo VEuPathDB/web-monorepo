@@ -10,6 +10,7 @@ import ProfileNavigationSection, {
   useCurrentProfileNavigationSection,
 } from '../../Views/User/ProfileNavigationSection';
 import { useWdkService } from '../../Hooks/WdkServiceHook';
+import { useSubscriptionGroups } from '../../Hooks/SubscriptionGroups';
 import { User, UserPreferences } from '../../Utils/WdkUser';
 import {
   SaveButton,
@@ -97,14 +98,7 @@ function UserAccountForm(props: UserAccountFormProps) {
     []
   );
 
-  const subscriptionGroups = useWdkService(
-    (wdkService) =>
-      wdkService.getSubscriptionGroups().catch((error) => {
-        console.error(error);
-        return [] as SubscriptionGroup[];
-      }),
-    []
-  );
+  const subscriptionGroups = useSubscriptionGroups();
 
   // Section switch handler
   const handleSectionChange = (

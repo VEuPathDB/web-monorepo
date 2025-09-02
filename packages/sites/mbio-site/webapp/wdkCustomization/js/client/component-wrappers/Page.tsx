@@ -1,4 +1,5 @@
 import React from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { Props } from '@veupathdb/wdk-client/lib/Components/Layout/Page';
 
@@ -23,6 +24,16 @@ import colors, {
 } from '@veupathdb/coreui/lib/definitions/colors';
 import { useCoreUIFonts } from '@veupathdb/coreui/lib/hooks';
 
+// Create a stable QueryClient instance
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: 3,
+    },
+  },
+});
+
 export function Page(DefaultComponent: React.ComponentType<Props>) {
   return function MicrobiomePage(props: Props) {
     // useAttemptActionClickHandler();
@@ -32,26 +43,28 @@ export function Page(DefaultComponent: React.ComponentType<Props>) {
     const MUITheme = createMUITheme(MUIThemeOptions);
 
     return (
-      <MUIThemeProvider theme={MUITheme}>
-        <UIThemeProvider
-          theme={{
-            palette: {
-              primary: { hue: colors.mutedBlue, level: 500 },
-              secondary: { hue: colors.mutedRed, level: 500 },
-              error: { hue: error, level: 600 },
-              warning: { hue: warning, level: 600 },
-              info: { hue: colors.mutedCyan, level: 600 },
-              success: { hue: success, level: 600 },
-            },
-          }}
-        >
-          <MicrobiomeSnackbarProvider styleProps={snackbarStyleProps}>
-            <ReduxNotificationHandler>
-              <DefaultComponent {...props} />
-            </ReduxNotificationHandler>
-          </MicrobiomeSnackbarProvider>
-        </UIThemeProvider>
-      </MUIThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <MUIThemeProvider theme={MUITheme}>
+          <UIThemeProvider
+            theme={{
+              palette: {
+                primary: { hue: colors.mutedBlue, level: 500 },
+                secondary: { hue: colors.mutedRed, level: 500 },
+                error: { hue: error, level: 600 },
+                warning: { hue: warning, level: 600 },
+                info: { hue: colors.mutedCyan, level: 600 },
+                success: { hue: success, level: 600 },
+              },
+            }}
+          >
+            <MicrobiomeSnackbarProvider styleProps={snackbarStyleProps}>
+              <ReduxNotificationHandler>
+                <DefaultComponent {...props} />
+              </ReduxNotificationHandler>
+            </MicrobiomeSnackbarProvider>
+          </UIThemeProvider>
+        </MUIThemeProvider>
+      </QueryClientProvider>
     );
   };
 }
