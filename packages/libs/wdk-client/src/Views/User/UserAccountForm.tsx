@@ -227,7 +227,7 @@ function UserAccountForm(props: UserAccountFormProps) {
           highlightMissingFields={props.highlightMissingFields}
         />
         <ApplicationSpecificProperties
-          user={user}
+          user={userProfileFormData}
           onPropertyChange={onPropertyChange}
           propDefs={wdkConfig.userProfileProperties}
           onPreferenceChange={onPreferenceChange}
