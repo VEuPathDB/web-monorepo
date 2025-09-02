@@ -17,7 +17,6 @@ import {
   OutlinedButton,
 } from '@veupathdb/coreui/lib/components/buttons';
 import './Profile/UserProfile.scss';
-import { SubscriptionGroup } from '../../Service/Mixins/OauthService';
 import { FormStatus } from '../../../../coreui/lib/components/buttons/SaveButton';
 import Loading from '../../Components/Loading';
 import './UserAccountForm.scss';
