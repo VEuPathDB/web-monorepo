@@ -116,32 +116,33 @@ const infoIcon = (
 // Use props as an opportunity to determine if the message should be displayed for the given context.
 const siteAnnouncements: SiteAnnouncement[] = [
   // General subscription info
-  {
-    id: 'subscription-info',
-    dismissible: true,
-    renderDisplay: ({ onClose }: AnnouncementRenderProps) => {
-      const bannerProps: BannerProps = {
-        type: 'info',
-        message: (
-          <div style={{ fontSize: '1.2em' }}>
-            VEuPathDB now operates under a subscription model in order to remain
-            open source.{' '}
-            <Link to="/static-content/subscriptions.html">
-              Learn about our model{' '}
-            </Link>
-            or view our{' '}
-            <Link to="static-content/subscribers.html">2025 subscribers</Link>.
-          </div>
-        ),
-      };
-      return (
-        <div style={{ margin: '3px' }}>
-          <Banner banner={bannerProps} onClose={onClose} />
-        </div>
-      );
-    },
-    renderAsIs: true,
-  },
+  //  {
+  //    id: 'subscription-info',
+  //    dismissible: true,
+  //    renderDisplay: ({ onClose }: AnnouncementRenderProps) => {
+  //      const bannerProps: BannerProps = {
+  //        type: 'info',
+  //        message: (
+  //          <div style={{ fontSize: '1.2em' }}>
+  //            VEuPathDB now operates under a subscription model in order to remain
+  //            open source.{' '}
+  //            <Link to="/static-content/subscriptions.html">
+  //              Learn about our model{' '}
+  //            </Link>
+  //            or view our{' '}
+  //            <Link to="static-content/subscribers.html">2025 subscribers</Link>.
+  //          </div>
+  //        ),
+  //      };
+  //      return (
+  //        <div style={{ margin: '3px' }}>
+  //          <Banner banner={bannerProps} onClose={onClose} />
+  //        </div>
+  //      );
+  //    },
+  //    renderAsIs: true,
+  //  },
+
   // subscription management banner for an individual
   {
     id: 'subscription-management',
