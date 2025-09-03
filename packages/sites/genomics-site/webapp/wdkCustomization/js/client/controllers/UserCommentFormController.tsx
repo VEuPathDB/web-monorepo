@@ -77,6 +77,7 @@ type StateProps = {
   internalError: string;
   targetType: string;
   categoryChoices: CategoryChoice[];
+  geneId?: string;
 };
 
 type DispatchProps = {
@@ -388,6 +389,13 @@ const categoryChoices = createSelector<
   ({ categoryChoices }: UserCommentFormState) => categoryChoices
 );
 
+const geneId = createSelector<RootState, string, string, string | undefined>(
+  targetType,
+  targetId,
+  (targetType: string, targetId: string) =>
+    targetType === 'gene' ? targetId : undefined
+);
+
 const mapStateToProps = (state: RootState, props: OwnProps) => ({
   submitting: submitting(state),
   completed: completed(state),
@@ -410,6 +418,7 @@ const mapStateToProps = (state: RootState, props: OwnProps) => ({
   internalError: internalError(state),
   targetType: targetType(state),
   categoryChoices: categoryChoices(state),
+  geneId: geneId(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
@@ -581,6 +590,7 @@ const mergeProps = (
           label: 'PubMed ID(s)',
           field: (
             <PubMedIdsField
+              geneId={stateProps.geneId}
               idsField={stateProps.rawFields.pubMedIds}
               searchField={stateProps.pubmedIdSearchQuery}
               onIdsChange={(newValue: string) => {

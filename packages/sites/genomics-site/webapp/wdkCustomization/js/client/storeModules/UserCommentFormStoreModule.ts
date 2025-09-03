@@ -172,6 +172,11 @@ export function reduce(state: State = initialState, action: Action): State {
               ...initialRawFields,
               ...action.payload.userComment.initialRawFields,
             },
+        pubmedIdSearchQuery: action.payload.userComment.editMode
+          ? state.pubmedIdSearchQuery
+          : get(action.payload.userComment.formValues, 'target.type') === 'gene'
+          ? get(action.payload.userComment.formValues, 'target.id', '')
+          : '',
         categoryChoices: action.payload.userComment.categoryIdOptions,
         userCommentLoaded: true,
       };
