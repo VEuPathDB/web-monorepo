@@ -25,11 +25,13 @@ type StateProps = Pick<RootState, 'globalData'> & RootState['userProfile'];
 
 type DispatchProps = { userEvents: typeof actionCreators };
 
-type OwnProps = {
+export type UserProfileControllerProps = {
   introComponent?: React.ComponentType;
   singleFormMode?: boolean;
   highlightMissingFields?: boolean;
+  showSubscriptionProds?: boolean;
 };
+type OwnProps = UserProfileControllerProps;
 
 type Props = DispatchProps & StateProps & OwnProps;
 

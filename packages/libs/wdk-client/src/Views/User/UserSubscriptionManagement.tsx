@@ -1,7 +1,5 @@
-import React, { useState, useEffect, useMemo, JSX, FormEvent } from 'react';
-import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
+import React, { useState, useEffect, useMemo, JSX } from 'react';
 import { IconAlt as Icon } from '../../Components';
-import { wrappable } from '../../Utils/ComponentUtils';
 import { SubscriptionGroup } from '../../Service/Mixins/OauthService';
 import Select from 'react-select';
 import { Link } from 'react-router-dom';
@@ -10,7 +8,6 @@ import {
   OutlinedButton,
   SaveButton,
 } from '@veupathdb/coreui/lib/components/buttons';
-import SingleSelect from '../../Components/InputControls/SingleSelect';
 import { Dialog } from '../../Components';
 import colors, {
   success,
@@ -19,9 +16,10 @@ import colors, {
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { User } from '../../Utils/WdkUser';
 import NumberedHeader from '@veupathdb/coreui/lib/components/forms/NumberedHeader';
-import { useTheme } from '@material-ui/core';
 import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import './UserSubscriptionManagement.scss';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../Core/State/Types';
 
 interface UserSubscriptionManagementProps {
   user: User;
@@ -33,6 +31,7 @@ interface UserSubscriptionManagementProps {
   saveButton: JSX.Element;
   onSuccess: () => void;
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
+  showSubscriptionProds?: boolean;
 }
 
 type Option = {
@@ -47,10 +46,13 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
   saveButton,
   onSuccess,
   formStatus,
+  showSubscriptionProds,
 }) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [localSelection, setLocalSelection] = useState<string>();
-
+  const projectId = useSelector<RootState>(
+    (state) => state.globalData.siteConfig.projectId
+  );
   const theme = useUITheme();
 
   // Reset local selection when database state changes (after successful save)
@@ -99,7 +101,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
   }, [groupVocab2, userGroupToken, localSelection]);
 
   return (
-    <div>
+    <div className="wdk-UserProfile-profileForm">
       <fieldset>
         <legend>My Subscription Status</legend>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5em' }}>
@@ -114,11 +116,13 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
             </>
           ) : (
             <>
-              <Icon
-                fa="exclamation-triangle"
-                className="wdk-UserProfile-StatusIcon--warning"
-                style={{ color: warning[600], fontSize: '1.2em' }}
-              />
+              {showSubscriptionProds && (
+                <Icon
+                  fa="exclamation-triangle"
+                  className="wdk-UserProfile-StatusIcon--warning"
+                  style={{ color: warning[600], fontSize: '1.2em' }}
+                />
+              )}
               <h4 style={{ fontWeight: 400 }}>Not subscribed</h4>
             </>
           )}
@@ -172,7 +176,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
             <Banner
               banner={{
                 type: 'info',
-                message: (
+                message: showSubscriptionProds ? (
                   <div>
                     If you are a PI or group manager,{' '}
                     <Link to="/static-content/subscriptions.html">
@@ -180,6 +184,8 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                     </Link>
                     .
                   </div>
+                ) : (
+                  `Please note, subscriptions are not required for ${projectId}.`
                 ),
               }}
             />

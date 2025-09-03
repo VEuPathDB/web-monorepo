@@ -17,7 +17,6 @@ import {
   OutlinedButton,
 } from '@veupathdb/coreui/lib/components/buttons';
 import './Profile/UserProfile.scss';
-import { SubscriptionGroup } from '../../Service/Mixins/OauthService';
 import { FormStatus } from '../../../../coreui/lib/components/buttons/SaveButton';
 import Loading from '../../Components/Loading';
 import './UserAccountForm.scss';
@@ -41,6 +40,7 @@ export interface UserAccountFormProps {
   onDeleteAccount: () => void;
   singleFormMode?: boolean;
   highlightMissingFields?: boolean;
+  showSubscriptionProds?: boolean;
 }
 
 /**
@@ -60,6 +60,7 @@ function UserAccountForm(props: UserAccountFormProps) {
     onDiscardChanges,
     onDeleteAccount,
     singleFormMode = false,
+    showSubscriptionProds,
   } = props;
 
   const [activeSection, navigateToSection] =
@@ -154,7 +155,7 @@ function UserAccountForm(props: UserAccountFormProps) {
               onSubmit={onUserDataSubmit}
             >
               <UserIdentity
-                user={user}
+                user={userProfileFormData}
                 onEmailChange={onEmailChange}
                 onConfirmEmailChange={onConfirmEmailChange}
                 onPropertyChange={onPropertyChange}
@@ -204,6 +205,7 @@ function UserAccountForm(props: UserAccountFormProps) {
             onSuccess={handleSuccess}
             saveButton={saveButton}
             formStatus={displayedFormStatus}
+            showSubscriptionProds={showSubscriptionProds}
           />
         );
       case 'preferences':
@@ -224,7 +226,7 @@ function UserAccountForm(props: UserAccountFormProps) {
         );
       case 'security':
         return (
-          <div>
+          <div className="wdk-UserProfile-profileForm">
             <UserPassword user={user} wdkConfig={wdkConfig} />
           </div>
         );
@@ -242,7 +244,7 @@ function UserAccountForm(props: UserAccountFormProps) {
         onSubmit={onUserDataSubmit}
       >
         <UserIdentity
-          user={user}
+          user={userProfileFormData}
           onEmailChange={onEmailChange}
           onConfirmEmailChange={onConfirmEmailChange}
           onPropertyChange={onPropertyChange}
@@ -251,7 +253,7 @@ function UserAccountForm(props: UserAccountFormProps) {
           highlightMissingFields={props.highlightMissingFields}
         />
         <ApplicationSpecificProperties
-          user={user}
+          user={userProfileFormData}
           onPropertyChange={onPropertyChange}
           propDefs={wdkConfig.userProfileProperties}
           onPreferenceChange={onPreferenceChange}

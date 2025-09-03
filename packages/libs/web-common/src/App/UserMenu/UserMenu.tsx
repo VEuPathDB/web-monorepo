@@ -4,12 +4,16 @@ import { Link } from 'react-router-dom';
 import { IconAlt as Icon } from '@veupathdb/wdk-client/lib/Components';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { useSubscriptionGroups } from '@veupathdb/wdk-client/lib/Hooks/SubscriptionGroups';
-import { SubscriptionGroup } from '@veupathdb/wdk-client/lib/Service/Mixins/OauthService';
+import { userIsSubscribed } from '@veupathdb/wdk-client/lib/Utils/Subscriptions';
+import { showSubscriptionProds } from '../../config';
 
 import './UserMenu.scss';
-import UserWarn from '@veupathdb/coreui/lib/components/icons/UserWarn';
-import UserCheck from '@veupathdb/coreui/lib/components/icons/UserCheck';
-import UserGuest from '@veupathdb/coreui/lib/components/icons/UserGuest';
+import {
+  UserLoggedIn,
+  UserWarn,
+  UserCheck,
+  UserGuest,
+} from '../../../../coreui/lib';
 
 interface Actions {
   showLoginForm: (destination: string) => void;
@@ -34,16 +38,9 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
   const subscriptionGroups = useSubscriptionGroups();
   const { properties = {} } = user;
   const isGuest = user.isGuest;
-  const iconClass = 'user';
 
   // Don't determine subscription status while still loading
-  const isSubscribed =
-    !isGuest &&
-    subscriptionGroups != null &&
-    subscriptionGroups.filter(
-      (g: SubscriptionGroup) =>
-        g.subscriptionToken === user.properties['subscriptionToken']
-    ).length > 0;
+  const isSubscribed = userIsSubscribed(user, subscriptionGroups);
 
   const renderMenu = (): JSX.Element => {
     const items: MenuItem[] = [
@@ -62,23 +59,25 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
     return (
       <div className="UserMenu-Pane">
         {renderItems(items)}
-        {subscriptionGroups == null ? null : ( // Still loading subscription data - don't show subscription status
+        {subscriptionGroups == null || !showSubscriptionProds ? null : ( // Still loading subscription data - don't show subscription status
           <>
             <hr style={{ margin: '10px 0', borderColor: '#ccc' }} />
-            {isSubscribed ? (
-              <div className="UserMenu-Pane-Item">
-                <Icon fa="check-circle UserMenu-Pane-Item-Icon UserMenu-StatusIcon--success" />
-                Subscribed
-              </div>
-            ) : (
-              <Link
-                to="/user/profile/#subscription"
-                className="UserMenu-Pane-Item UserMenu-Pane-Item--interactive"
-              >
-                <Icon fa="exclamation-triangle UserMenu-Pane-Item-Icon UserMenu-StatusIcon--warning" />
-                Unsubscribed
-              </Link>
-            )}
+            <Link
+              to="/user/profile/#subscription"
+              className="UserMenu-Pane-Item UserMenu-Pane-Item--interactive"
+            >
+              {isSubscribed ? (
+                <>
+                  <Icon fa="check-circle UserMenu-Pane-Item-Icon UserMenu-StatusIcon--success" />
+                  Subscribed
+                </>
+              ) : (
+                <>
+                  <Icon fa="exclamation-triangle UserMenu-Pane-Item-Icon UserMenu-StatusIcon--warning" />
+                  Unsubscribed
+                </>
+              )}
+            </Link>
           </>
         )}
       </div>
@@ -91,12 +90,14 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
         {isGuest ? (
           <UserGuest className="UserMenu-GuestIcon" />
         ) : subscriptionGroups == null ? (
-          // Still loading - show default user icon
-          <UserGuest className="UserMenu-StatusIcon" />
+          // Still loading subscription groups
+          <UserLoggedIn className="UserMenu-LoggedInIcon" />
         ) : isSubscribed ? (
           <UserCheck className="UserMenu-StatusIcon" />
-        ) : (
+        ) : showSubscriptionProds ? (
           <UserWarn className="UserMenu-StatusIcon" />
+        ) : (
+          <UserLoggedIn className="UserMenu-LoggedInIcon" />
         )}
       </div>
       <span className={'UserMenu-Title UserMenu-Title--expanded'}>

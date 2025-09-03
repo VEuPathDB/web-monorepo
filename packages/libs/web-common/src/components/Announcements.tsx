@@ -17,6 +17,8 @@ import Banner, {
 } from '@veupathdb/coreui/lib/components/banners/Banner';
 import { SubscriptionManagementBanner } from './SubscriptionManagementBanner';
 import { BannerDismissal } from '../hooks/announcements';
+import { userIsSubscribed } from '../../../wdk-client/lib/Utils/Subscriptions';
+import { showSubscriptionProds } from '../config';
 
 // Type definitions
 interface AnnouncementsProps {
@@ -152,17 +154,14 @@ const siteAnnouncements: SiteAnnouncement[] = [
     }: AnnouncementRenderProps) => {
       if (
         !currentUser ||
+        currentUser.isGuest ||
         subscriptionGroups == null ||
-        subscriptionGroups.length === 0
+        subscriptionGroups.length === 0 ||
+        !showSubscriptionProds
       )
         return null;
 
-      const isSubscribed =
-        !currentUser.isGuest &&
-        subscriptionGroups.filter(
-          (g: SubscriptionGroup) =>
-            g.subscriptionToken === currentUser.properties['subscriptionToken']
-        ).length > 0;
+      const isSubscribed = userIsSubscribed(currentUser, subscriptionGroups);
 
       if (isSubscribed) return null;
 

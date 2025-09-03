@@ -4,10 +4,11 @@ import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
 import { getChangeHandler, wrappable } from '../../Utils/ComponentUtils';
 import { UserPreferences } from '../../Utils/WdkUser';
 import UserAccountForm from '../../Views/User/UserAccountForm';
-import { User } from '../../Utils/WdkUser';
 import { IconAlt as Icon } from '../../Components';
 import './Profile/UserProfile.scss';
 import { success, warning } from '@veupathdb/coreui/lib/definitions/colors';
+import { useSubscriptionGroups } from '../../Hooks/SubscriptionGroups';
+import { userIsSubscribed } from '../../Utils/Subscriptions';
 
 export function getDescriptionBoxStyle() {
   return {
@@ -49,11 +50,13 @@ export interface UserFormContainerProps {
   submitButtonText: string;
   singleFormMode?: boolean;
   highlightMissingFields?: boolean;
+  showSubscriptionProds?: boolean;
 }
 
 function UserFormContainer(props: UserFormContainerProps) {
   const currentUserFormData = props.userFormData ?? {}; // can be missing in the registration form, of course
   const initialUserStateRef = useRef<UserProfileFormData>(currentUserFormData);
+  const subscriptionGroups = useSubscriptionGroups();
 
   function validateEmailConfirmation(newState: UserProfileFormData): void {
     const userEmail = newState.email;
@@ -152,8 +155,10 @@ function UserFormContainer(props: UserFormContainerProps) {
 
   // for this purpose, easier to not confirm against groups; any value will do
   // (though technically it could clash with the subscriptionGroups-based checks elsewhere)
-  const subscribed =
-    props.globalData?.user?.properties?.subscriptionToken !== '';
+
+  const isSubscribed =
+    props.globalData.user &&
+    userIsSubscribed(props.globalData.user, subscriptionGroups);
 
   return (
     <div className="wdk-UserProfile">
@@ -163,7 +168,7 @@ function UserFormContainer(props: UserFormContainerProps) {
         <>
           <div className="wdk-UserProfile-title">
             <h1>{props.titleText}</h1>
-            {
+            {!props.globalData.user?.isGuest && props.showSubscriptionProds && (
               // If this is a profile (so the user is not a guest), we want to show the user if they
               // have subscribed.
               <div
@@ -173,28 +178,26 @@ function UserFormContainer(props: UserFormContainerProps) {
                   gap: '0.5em',
                 }}
               >
-                {props.globalData.user &&
-                  !props.globalData.user.isGuest &&
-                  (props.globalData.user.properties.subscriptionToken ? (
-                    <>
-                      <Icon
-                        fa="check-circle wdk-UserProfile-StatusIcon--success"
-                        style={{ color: success[600], fontSize: '1.35em' }}
-                      />
-                      <h3>Subscribed</h3>
-                    </>
-                  ) : (
-                    <>
-                      <Icon
-                        fa="exclamation-triangle"
-                        className="wdk-UserProfile-StatusIcon--warning"
-                        style={{ color: warning[600], fontSize: '1.5em' }}
-                      />
-                      <h3>Not subscribed</h3>
-                    </>
-                  ))}
+                {isSubscribed ? (
+                  <>
+                    <Icon
+                      fa="check-circle wdk-UserProfile-StatusIcon--success"
+                      style={{ color: success[600], fontSize: '1.35em' }}
+                    />
+                    <h3>Subscribed</h3>
+                  </>
+                ) : (
+                  <>
+                    <Icon
+                      fa="exclamation-triangle"
+                      className="wdk-UserProfile-StatusIcon--warning"
+                      style={{ color: warning[600], fontSize: '1.5em' }}
+                    />
+                    <h3>Not subscribed</h3>
+                  </>
+                )}
               </div>
-            }
+            )}
           </div>
           {props.introComponent && <props.introComponent />}
           {props.globalData.user && (
@@ -212,6 +215,7 @@ function UserFormContainer(props: UserFormContainerProps) {
               formStatus={props.formStatus}
               singleFormMode={props.singleFormMode}
               highlightMissingFields={props.highlightMissingFields}
+              showSubscriptionProds={props.showSubscriptionProds}
             />
           )}
         </>

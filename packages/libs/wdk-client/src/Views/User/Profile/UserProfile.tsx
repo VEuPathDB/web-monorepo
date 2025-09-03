@@ -22,6 +22,7 @@ type UserProfileProps = Omit<
 > & {
   globalData: GlobalData;
   singleFormMode?: boolean;
+  showSubscriptionProds?: boolean;
 };
 
 /**
@@ -45,7 +46,6 @@ const UserProfile: React.FC<UserProfileProps> = (props) => (
       hiddenFormMessage="You must first log on to read and alter your account information."
       titleText={`Account: ${props.globalData.user?.properties.firstName} ${props.globalData.user?.properties.lastName}`}
       submitButtonText="Save"
-      singleFormMode={props.singleFormMode}
       {...props}
     />
   </CoreUIThemeProvider>
