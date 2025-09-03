@@ -4,7 +4,6 @@ import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
 import { getChangeHandler, wrappable } from '../../Utils/ComponentUtils';
 import { UserPreferences } from '../../Utils/WdkUser';
 import UserAccountForm from '../../Views/User/UserAccountForm';
-import { User } from '../../Utils/WdkUser';
 import { IconAlt as Icon } from '../../Components';
 import './Profile/UserProfile.scss';
 import { success, warning } from '@veupathdb/coreui/lib/definitions/colors';
