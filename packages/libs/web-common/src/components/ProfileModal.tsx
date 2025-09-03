@@ -45,6 +45,7 @@ export function ProfileModal() {
           introComponent={NewProfilePropertiesBanner}
           singleFormMode={true}
           highlightMissingFields={true}
+          showSubscriptionProds={false}
         />
       </div>
     </Modal>

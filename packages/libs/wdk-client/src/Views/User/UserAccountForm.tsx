@@ -39,6 +39,7 @@ export interface UserAccountFormProps {
   onDiscardChanges: () => void;
   singleFormMode?: boolean;
   highlightMissingFields?: boolean;
+  showSubscriptionProds?: boolean;
 }
 
 /**
@@ -57,6 +58,7 @@ function UserAccountForm(props: UserAccountFormProps) {
     formStatus,
     onDiscardChanges,
     singleFormMode = false,
+    showSubscriptionProds,
   } = props;
 
   const [activeSection, navigateToSection] =
@@ -180,6 +182,7 @@ function UserAccountForm(props: UserAccountFormProps) {
             onSuccess={handleSuccess}
             saveButton={saveButton}
             formStatus={displayedFormStatus}
+            showSubscriptionProds={showSubscriptionProds}
           />
         );
       case 'preferences':

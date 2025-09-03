@@ -40,7 +40,7 @@ export const {
   communityDatasetsEnabled = false,
   showExtraMetadata = false,
   aiExpressionQualtricsId = '',
-  useSubscriptions = false,
+  showSubscriptionProds = false,
 } = window.__SITE_CONFIG__;
 
 export const edaExampleAnalysesAuthors = !window.__SITE_CONFIG__

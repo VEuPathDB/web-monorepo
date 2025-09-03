@@ -60,7 +60,7 @@ export default configure({
 	communityDatasetsEnabled: process.env.COMMUNITY_DATASETS_ENABLED === 'true',
         showExtraMetadata: process.env.SHOW_EXTRA_METADATA === 'true',
 	aiExpressionQualtricsId: process.env.AI_EXPRESSION_QUALTRICS_ID,
-	useSubscriptions: process.env.USE_SUBSCRIPTIONS === 'true',
+	showSubscriptionProds: process.env.SHOW_SUBSCRIPTION_PRODS === 'true',
 })
     }),
     new HtmlWebpackPlugin({

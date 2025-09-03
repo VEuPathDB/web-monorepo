@@ -5,6 +5,7 @@ import { IconAlt as Icon } from '@veupathdb/wdk-client/lib/Components';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { useSubscriptionGroups } from '@veupathdb/wdk-client/lib/Hooks/SubscriptionGroups';
 import { userIsSubscribed } from '@veupathdb/wdk-client/lib/Utils/Subscriptions';
+import { showSubscriptionProds } from '../../config';
 
 import './UserMenu.scss';
 import {
@@ -58,7 +59,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
     return (
       <div className="UserMenu-Pane">
         {renderItems(items)}
-        {subscriptionGroups == null ? null : ( // Still loading subscription data - don't show subscription status
+        {subscriptionGroups == null || !showSubscriptionProds ? null : ( // Still loading subscription data - don't show subscription status
           <>
             <hr style={{ margin: '10px 0', borderColor: '#ccc' }} />
             <Link
@@ -93,8 +94,10 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
           <UserLoggedIn className="UserMenu-LoggedInIcon" />
         ) : isSubscribed ? (
           <UserCheck className="UserMenu-StatusIcon" />
-        ) : (
+        ) : showSubscriptionProds ? (
           <UserWarn className="UserMenu-StatusIcon" />
+        ) : (
+          <UserLoggedIn className="UserMenu-LoggedInIcon" />
         )}
       </div>
       <span className={'UserMenu-Title UserMenu-Title--expanded'}>

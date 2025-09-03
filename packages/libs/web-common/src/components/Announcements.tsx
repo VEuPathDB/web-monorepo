@@ -18,6 +18,7 @@ import Banner, {
 import { SubscriptionManagementBanner } from './SubscriptionManagementBanner';
 import { BannerDismissal } from '../hooks/announcements';
 import { userIsSubscribed } from '../../../wdk-client/lib/Utils/Subscriptions';
+import { showSubscriptionProds } from '../config';
 
 // Type definitions
 interface AnnouncementsProps {
@@ -155,7 +156,8 @@ const siteAnnouncements: SiteAnnouncement[] = [
         !currentUser ||
         currentUser.isGuest ||
         subscriptionGroups == null ||
-        subscriptionGroups.length === 0
+        subscriptionGroups.length === 0 ||
+        !showSubscriptionProds
       )
         return null;
 

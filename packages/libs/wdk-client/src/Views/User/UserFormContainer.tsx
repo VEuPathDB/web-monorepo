@@ -49,6 +49,7 @@ export interface UserFormContainerProps {
   submitButtonText: string;
   singleFormMode?: boolean;
   highlightMissingFields?: boolean;
+  showSubscriptionProds?: boolean;
 }
 
 function UserFormContainer(props: UserFormContainerProps) {
@@ -161,7 +162,7 @@ function UserFormContainer(props: UserFormContainerProps) {
         <>
           <div className="wdk-UserProfile-title">
             <h1>{props.titleText}</h1>
-            {!props.globalData.user?.isGuest && (
+            {!props.globalData.user?.isGuest && props.showSubscriptionProds && (
               // If this is a profile (so the user is not a guest), we want to show the user if they
               // have subscribed.
               <div
@@ -207,6 +208,7 @@ function UserFormContainer(props: UserFormContainerProps) {
               formStatus={props.formStatus}
               singleFormMode={props.singleFormMode}
               highlightMissingFields={props.highlightMissingFields}
+              showSubscriptionProds={props.showSubscriptionProds}
             />
           )}
         </>
