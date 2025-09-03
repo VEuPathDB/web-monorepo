@@ -41,6 +41,7 @@ export interface UserFormContainerProps {
     submitProfileForm: (userData: UserProfileFormData) => void;
     updateProfileForm: (newState: UserProfileFormData) => void;
     resetProfileForm?: (formData: UserProfileFormData) => void;
+    deleteAccount: () => void;
   };
   shouldHideForm: boolean;
   hiddenFormMessage: string;
@@ -147,6 +148,11 @@ function UserFormContainer(props: UserFormContainerProps) {
     }
   }
 
+  function onDeleteAccount(): void {
+    // will delete account and log user out
+    props.userEvents.deleteAccount();
+  }
+
   // for this purpose, easier to not confirm against groups; any value will do
   // (though technically it could clash with the subscriptionGroups-based checks elsewhere)
 
@@ -205,6 +211,7 @@ function UserFormContainer(props: UserFormContainerProps) {
               onUserDataSubmit={onSubmit}
               wdkConfig={props.globalData.config}
               onDiscardChanges={onDiscardChanges}
+              onDeleteAccount={onDeleteAccount}
               formStatus={props.formStatus}
               singleFormMode={props.singleFormMode}
               highlightMissingFields={props.highlightMissingFields}
