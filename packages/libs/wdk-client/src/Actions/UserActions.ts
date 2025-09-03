@@ -18,6 +18,7 @@ import {
 import { UserProfileFormData } from '../StoreModules/UserProfileStoreModule';
 import { InferType } from 'prop-types';
 import { makeCommonErrorMessage } from '../Utils/Errors';
+import { notifyUnhandledError } from './UnhandledErrorActions';
 
 export type Action =
   | UserUpdateAction
@@ -620,6 +621,20 @@ export function submitPasswordReset(
           return resetPasswordSubmissionStatus(error.response || error.message);
         }
       ),
+    ];
+  };
+}
+
+export function deleteAccount(): ActionThunk<EmptyAction> {
+  return function run({ wdkService, transitioner }) {
+    return [
+      wdkService
+        .deleteAccount()
+        .then(
+          () => wdkService.logout(),
+          (error) => notifyUnhandledError(error)
+        )
+        .then((response) => emptyAction),
     ];
   };
 }

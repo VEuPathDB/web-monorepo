@@ -132,6 +132,7 @@ const UserRegistration: React.FC<UserRegistrationProps> = (props) => (
       userEvents={{
         ...props.userEvents,
         submitProfileForm: props.userEvents.submitRegistrationForm,
+        deleteAccount: () => {}, // no-op function; no need to delete account on registration page
       }}
       shouldHideForm={!props.globalData.user?.isGuest}
       hiddenFormMessage="You must log out before registering a new user."

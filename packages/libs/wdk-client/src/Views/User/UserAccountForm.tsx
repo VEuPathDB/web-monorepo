@@ -38,6 +38,7 @@ export interface UserAccountFormProps {
   onUserDataSubmit: (event: React.FormEvent) => void;
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
   onDiscardChanges: () => void;
+  onDeleteAccount: () => void;
   singleFormMode?: boolean;
   highlightMissingFields?: boolean;
 }
@@ -57,6 +58,7 @@ function UserAccountForm(props: UserAccountFormProps) {
     onUserDataSubmit,
     formStatus,
     onDiscardChanges,
+    onDeleteAccount,
     singleFormMode = false,
   } = props;
 
@@ -145,25 +147,46 @@ function UserAccountForm(props: UserAccountFormProps) {
     switch (activeSection) {
       case 'account':
         return (
-          <form
-            className="wdk-UserProfile-profileForm wdk-UserProfile-accountForm"
-            name="userAccountForm"
-            onSubmit={onUserDataSubmit}
-          >
-            <UserIdentity
-              user={user}
-              onEmailChange={onEmailChange}
-              onConfirmEmailChange={onConfirmEmailChange}
-              onPropertyChange={onPropertyChange}
-              propDefs={wdkConfig.userProfileProperties}
-              vocabulary={vocabulary}
-              highlightMissingFields={props.highlightMissingFields}
-            />
-            <p>
-              <i className="fa fa-asterisk"></i> = required
-            </p>
-            {saveButton}
-          </form>
+          <div>
+            <form
+              className="wdk-UserProfile-profileForm wdk-UserProfile-accountForm"
+              name="userAccountForm"
+              onSubmit={onUserDataSubmit}
+            >
+              <UserIdentity
+                user={user}
+                onEmailChange={onEmailChange}
+                onConfirmEmailChange={onConfirmEmailChange}
+                onPropertyChange={onPropertyChange}
+                propDefs={wdkConfig.userProfileProperties}
+                vocabulary={vocabulary}
+                highlightMissingFields={props.highlightMissingFields}
+              />
+              <p>
+                <i className="fa fa-asterisk"></i> = required
+              </p>
+              {saveButton}
+            </form>
+            <p style={{ padding: '10px' }}></p>
+            <form
+              className="wdk-UserProfile-profileForm wdk-UserProfile-accountForm"
+              name="deleteAccountForm"
+            >
+              <fieldset>
+                <legend>Delete My Account</legend>
+                <p>
+                  All your personal information will be removed from our systems
+                  and any contributions you have made will be anonymized.
+                </p>
+                <p>This action cannot be undone. Please be sure.</p>
+                <OutlinedButton
+                  text="Delete My Account"
+                  onPress={(e) => onDeleteAccount()}
+                  themeRole="primary"
+                />
+              </fieldset>
+            </form>
+          </div>
         );
       case 'subscription':
         if (!subscriptionGroups) {
