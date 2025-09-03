@@ -200,7 +200,7 @@ function UserAccountForm(props: UserAccountFormProps) {
         );
       case 'security':
         return (
-          <div>
+          <div className="wdk-UserProfile-profileForm">
             <UserPassword user={user} wdkConfig={wdkConfig} />
           </div>
         );

@@ -99,7 +99,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
   }, [groupVocab2, userGroupToken, localSelection]);
 
   return (
-    <div>
+    <div className="wdk-UserProfile-profileForm">
       <fieldset>
         <legend>My Subscription Status</legend>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5em' }}>
