@@ -1,6 +1,7 @@
 import { ServiceBase } from '../../Service/ServiceBase';
 import { User, UserWithPrefs } from '../../Utils/WdkUser';
 import { Identifier } from '../../Utils/WdkModel';
+import { deleteAccount } from '../../Actions/UserActions';
 
 export default (base: ServiceBase) => {
   let currentUserPromise: Promise<User> | undefined;
@@ -43,11 +44,17 @@ export default (base: ServiceBase) => {
     return base._fetchJson<void>('post', url, data);
   }
 
+  function deleteAccount() {
+    let url = '/users/current';
+    return base._fetchJson<void>('delete', url);
+  }
+
   return {
     getCurrentUser,
     createNewUser,
     updateCurrentUser,
     updateCurrentUserPassword,
     resetUserPassword,
+    deleteAccount,
   };
 };

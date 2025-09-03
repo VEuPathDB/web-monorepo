@@ -1,8 +1,10 @@
 import React from 'react';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
-export function SubscriptionManagementBanner({ address }) {
+export function SubscriptionManagementBanner({ address, onClose }) {
+  const history = useHistory();
+
   const message = (
     <div style={{ fontSize: '1.2em' }}>
       <strong>{address} are not associated with a subscription.</strong> Please
@@ -19,17 +21,10 @@ export function SubscriptionManagementBanner({ address }) {
     primaryActionButtonProps: {
       text: 'Join a subscribed group',
       onPress: () => {
-        window.location.href = 'app/user/profile';
+        history.push('/user/profile#subscription');
       },
     },
   };
 
-  return (
-    <Banner
-      banner={bannerProps}
-      onClose={() => {
-        console.log('closed');
-      }}
-    />
-  );
+  return <Banner banner={bannerProps} onClose={onClose} />;
 }

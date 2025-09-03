@@ -20,6 +20,7 @@
     "vendored"
   ],
   "dependencies": {
+    "@tanstack/react-query": "^4.33.0",
     "@veupathdb/components": "workspace:^",
     "@veupathdb/coreui": "workspace:^",
     "classnames": "^2.2.0",

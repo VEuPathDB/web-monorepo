@@ -1,9 +1,14 @@
 import React, { useRef } from 'react';
+import { GlobalData } from '../../StoreModules/GlobalData';
 import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
 import { getChangeHandler, wrappable } from '../../Utils/ComponentUtils';
 import { UserPreferences } from '../../Utils/WdkUser';
 import UserAccountForm from '../../Views/User/UserAccountForm';
+import { IconAlt as Icon } from '../../Components';
 import './Profile/UserProfile.scss';
+import { success, warning } from '@veupathdb/coreui/lib/definitions/colors';
+import { useSubscriptionGroups } from '../../Hooks/SubscriptionGroups';
+import { userIsSubscribed } from '../../Utils/Subscriptions';
 
 export function getDescriptionBoxStyle() {
   return {
@@ -27,7 +32,7 @@ export function FormMessage({
 }
 
 export interface UserFormContainerProps {
-  globalData: { config?: any };
+  globalData: GlobalData;
   userFormData?: UserProfileFormData;
   previousUserFormData?: UserProfileFormData;
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
@@ -36,19 +41,22 @@ export interface UserFormContainerProps {
     submitProfileForm: (userData: UserProfileFormData) => void;
     updateProfileForm: (newState: UserProfileFormData) => void;
     resetProfileForm?: (formData: UserProfileFormData) => void;
+    deleteAccount: () => void;
   };
   shouldHideForm: boolean;
   hiddenFormMessage: string;
   titleText: string;
   introComponent?: React.ComponentType;
   submitButtonText: string;
-  onSubmit: (userData: UserProfileFormData) => void;
   singleFormMode?: boolean;
+  highlightMissingFields?: boolean;
+  showSubscriptionProds?: boolean;
 }
 
 function UserFormContainer(props: UserFormContainerProps) {
   const currentUserFormData = props.userFormData ?? {}; // can be missing in the registration form, of course
   const initialUserStateRef = useRef<UserProfileFormData>(currentUserFormData);
+  const subscriptionGroups = useSubscriptionGroups();
 
   function validateEmailConfirmation(newState: UserProfileFormData): void {
     const userEmail = newState.email;
@@ -83,7 +91,7 @@ function UserFormContainer(props: UserFormContainerProps) {
     onEmailFieldChange('confirmEmail', newValue);
   };
 
-  function onPropertyChange(field: string, submitNow: boolean = false) {
+  function onPropertyChange(field: string, submitAfterUpdate?: boolean) {
     return (newValue: any): void => {
       const previousState = currentUserFormData;
       const newUserFormData = {
@@ -94,7 +102,7 @@ function UserFormContainer(props: UserFormContainerProps) {
         },
       };
       props.userEvents.updateProfileForm(newUserFormData);
-      if (submitNow) {
+      if (submitAfterUpdate) {
         props.userEvents.submitProfileForm(newUserFormData);
       }
     };
@@ -112,11 +120,15 @@ function UserFormContainer(props: UserFormContainerProps) {
     event.preventDefault();
     validateEmailConfirmation(currentUserFormData);
     const inputs = document.querySelectorAll(
-      'input[type=text],input[type=email]'
+      'input[type=text],input[type=email],select'
     );
     let valid = true;
     inputs.forEach((input) => {
-      if (input instanceof HTMLInputElement && !input.reportValidity()) {
+      if (
+        (input instanceof HTMLInputElement ||
+          input instanceof HTMLSelectElement) &&
+        !input.reportValidity()
+      ) {
         valid = false;
       }
     });
@@ -124,7 +136,7 @@ function UserFormContainer(props: UserFormContainerProps) {
       // Update the initial state reference to the current data being saved
       // This ensures that "Reset form" will reset to the last saved state, not the original page load state
       initialUserStateRef.current = currentUserFormData;
-      props.onSubmit(currentUserFormData);
+      props.userEvents.submitProfileForm(currentUserFormData);
     }
   }
 
@@ -136,6 +148,18 @@ function UserFormContainer(props: UserFormContainerProps) {
     }
   }
 
+  function onDeleteAccount(): void {
+    // will delete account and log user out
+    props.userEvents.deleteAccount();
+  }
+
+  // for this purpose, easier to not confirm against groups; any value will do
+  // (though technically it could clash with the subscriptionGroups-based checks elsewhere)
+
+  const isSubscribed =
+    props.globalData.user &&
+    userIsSubscribed(props.globalData.user, subscriptionGroups);
+
   return (
     <div className="wdk-UserProfile">
       {props.shouldHideForm ? (
@@ -144,36 +168,56 @@ function UserFormContainer(props: UserFormContainerProps) {
         <>
           <div className="wdk-UserProfile-title">
             <h1>{props.titleText}</h1>
-            {
+            {!props.globalData.user?.isGuest && props.showSubscriptionProds && (
               // If this is a profile (so the user is not a guest), we want to show the user if they
               // have subscribed.
-              // Fix before merge. We just need some new types around
-              //@ts-ignore
-              !props.globalData.user.isGuest && (
-                // user.isSubscribed ? (
-                // Add icon here
-                <h3>Unsubscribed</h3>
-                //) : (
-                // Add icon here
-                // <h4>Subscribed</h4>
-                // )
-              )
-            }
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'baseline',
+                  gap: '0.5em',
+                }}
+              >
+                {isSubscribed ? (
+                  <>
+                    <Icon
+                      fa="check-circle wdk-UserProfile-StatusIcon--success"
+                      style={{ color: success[600], fontSize: '1.35em' }}
+                    />
+                    <h3>Subscribed</h3>
+                  </>
+                ) : (
+                  <>
+                    <Icon
+                      fa="exclamation-triangle"
+                      className="wdk-UserProfile-StatusIcon--warning"
+                      style={{ color: warning[600], fontSize: '1.5em' }}
+                    />
+                    <h3>Not subscribed</h3>
+                  </>
+                )}
+              </div>
+            )}
           </div>
           {props.introComponent && <props.introComponent />}
-          <UserAccountForm
-            user={currentUserFormData}
-            onEmailChange={onEmailChange}
-            onConfirmEmailChange={onConfirmEmailChange}
-            onPropertyChange={onPropertyChange}
-            onPreferenceChange={onPreferenceChange}
-            onUserDataSubmit={onSubmit}
-            submitButtonText={props.submitButtonText}
-            wdkConfig={props.globalData.config}
-            onDiscardChanges={onDiscardChanges}
-            formStatus={props.formStatus}
-            singleFormMode={props.singleFormMode}
-          />
+          {props.globalData.user && (
+            <UserAccountForm
+              user={props.globalData.user}
+              userProfileFormData={currentUserFormData}
+              onEmailChange={onEmailChange}
+              onConfirmEmailChange={onConfirmEmailChange}
+              onPropertyChange={onPropertyChange}
+              onPreferenceChange={onPreferenceChange}
+              onUserDataSubmit={onSubmit}
+              wdkConfig={props.globalData.config}
+              onDiscardChanges={onDiscardChanges}
+              onDeleteAccount={onDeleteAccount}
+              formStatus={props.formStatus}
+              singleFormMode={props.singleFormMode}
+              highlightMissingFields={props.highlightMissingFields}
+              showSubscriptionProds={props.showSubscriptionProds}
+            />
+          )}
         </>
       )}
     </div>

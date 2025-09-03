@@ -1,11 +1,14 @@
 import React, { useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { groupBy, noop } from 'lodash';
+import { connect } from 'react-redux';
 
 import { Link, IconAlt } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { useSubscriptionGroups } from '@veupathdb/wdk-client/lib/Hooks/SubscriptionGroups';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import { SubscriptionGroup } from '@veupathdb/wdk-client/lib/Service/Mixins/OauthService';
 import { ServiceConfig } from '@veupathdb/wdk-client/lib/Service/ServiceBase';
 import { makeEdaRoute } from '../routes';
 import { colors, Warning } from '@veupathdb/coreui';
@@ -14,9 +17,12 @@ import Banner, {
 } from '@veupathdb/coreui/lib/components/banners/Banner';
 import { SubscriptionManagementBanner } from './SubscriptionManagementBanner';
 import { BannerDismissal } from '../hooks/announcements';
+import { userIsSubscribed } from '../../../wdk-client/lib/Utils/Subscriptions';
+import { showSubscriptionProds } from '../config';
 
 // Type definitions
 interface AnnouncementsProps {
+  currentUser: User;
   closedBanners?: BannerDismissal[];
   setClosedBanners?: (banners: BannerDismissal[]) => void;
 }
@@ -24,6 +30,8 @@ interface AnnouncementsProps {
 interface AnnouncementRenderProps extends ServiceConfig {
   location: ReturnType<typeof useLocation>;
   currentUser: User;
+  subscriptionGroups: SubscriptionGroup[] | undefined;
+  onClose?: () => void;
 }
 
 interface SiteMessage {
@@ -44,7 +52,6 @@ interface SiteAnnouncement {
 interface AnnouncementsData {
   config: ServiceConfig;
   announcements: SiteMessage[];
-  currentUser: User;
 }
 
 interface AnnouncementContainerProps {
@@ -109,51 +116,67 @@ const infoIcon = (
 // Use props as an opportunity to determine if the message should be displayed for the given context.
 const siteAnnouncements: SiteAnnouncement[] = [
   // General subscription info
-  {
-    id: 'subscription-info',
-    dismissible: true,
-    renderDisplay: (props: AnnouncementRenderProps) => {
-      const bannerProps: BannerProps = {
-        type: 'info',
-        message: (
-          <div style={{ fontSize: '1.2em' }}>
-            VEuPathDB now operates under a subscription model in order to remain
-            open source.{' '}
-            <Link to="/static-content/subscriptions.html">
-              Learn about our model{' '}
-            </Link>
-            or view our{' '}
-            <Link to="static-content/subscribers.html">2025 subscribers</Link>.
-          </div>
-        ),
-      };
-      return (
-        <div style={{ margin: '3px' }}>
-          <Banner banner={bannerProps} onClose={() => console.log('closed')} />
-        </div>
-      );
-    },
-    renderAsIs: true,
-  },
+  //  {
+  //    id: 'subscription-info',
+  //    dismissible: true,
+  //    renderDisplay: ({ onClose }: AnnouncementRenderProps) => {
+  //      const bannerProps: BannerProps = {
+  //        type: 'info',
+  //        message: (
+  //          <div style={{ fontSize: '1.2em' }}>
+  //            VEuPathDB now operates under a subscription model in order to remain
+  //            open source.{' '}
+  //            <Link to="/static-content/subscriptions.html">
+  //              Learn about our model{' '}
+  //            </Link>
+  //            or view our{' '}
+  //            <Link to="static-content/subscribers.html">2025 subscribers</Link>.
+  //          </div>
+  //        ),
+  //      };
+  //      return (
+  //        <div style={{ margin: '3px' }}>
+  //          <Banner banner={bannerProps} onClose={onClose} />
+  //        </div>
+  //      );
+  //    },
+  //    renderAsIs: true,
+  //  },
+
   // subscription management banner for an individual
   {
     id: 'subscription-management',
     dismissible: true,
     dismissalDurationSeconds: 48 * 60 * 60, // 48 hours
-    renderDisplay: (props: AnnouncementRenderProps) => {
-      // if (props.currentUser && props.currentUser.isGuest) {
-      const firstName = props.currentUser.properties['firstName'];
+    renderDisplay: ({
+      currentUser,
+      subscriptionGroups,
+      onClose,
+    }: AnnouncementRenderProps) => {
+      if (
+        !currentUser ||
+        currentUser.isGuest ||
+        subscriptionGroups == null ||
+        subscriptionGroups.length === 0 ||
+        !showSubscriptionProds
+      )
+        return null;
+
+      const isSubscribed = userIsSubscribed(currentUser, subscriptionGroups);
+
+      if (isSubscribed) return null;
+
+      const firstName = currentUser.properties['firstName'];
       const address = firstName ? `${firstName}, you` : 'You';
       return (
         <div style={{ margin: '3px' }}>
           <SubscriptionManagementBanner
             key="subscription-management"
             address={address}
+            onClose={onClose}
           />
         </div>
       );
-      // }
-      // return null;
     },
     renderAsIs: true,
   },
@@ -1248,23 +1271,22 @@ const siteAnnouncements: SiteAnnouncement[] = [
 const fetchAnnouncementsData = async (
   wdkService: any
 ): Promise<AnnouncementsData> => {
-  const [config, announcements, currentUser] = await Promise.all([
+  const [config, announcements] = await Promise.all([
     wdkService.getConfig(),
     wdkService.getSiteMessages(),
-    wdkService.getCurrentUser(),
   ]);
 
   return {
     config,
     announcements,
-    currentUser,
   };
 };
 
 /**
  * Info boxes containing announcements.
  */
-export default function Announcements({
+function Announcements({
+  currentUser,
   closedBanners = [],
   setClosedBanners = noop,
 }: AnnouncementsProps) {
@@ -1281,6 +1303,8 @@ export default function Announcements({
     },
     [closedBanners, setClosedBanners]
   );
+
+  const subscriptionGroups = useSubscriptionGroups();
 
   if (data == null) return null;
 
@@ -1302,9 +1326,9 @@ export default function Announcements({
             : category === 'information';
 
           const isOpen = dismissible
-            ? !closedBanners.some((dismissal) => {
-                if (dismissal.bannerId !== announcementData.id) return false;
-
+            ? !closedBanners.some(({ timestamp, bannerId }) => {
+                // inside here, we return true for an EXPIRED dismissal
+                if (bannerId !== announcementData.id) return false;
                 if (
                   isSiteAnnouncement(announcementData) &&
                   announcementData.dismissalDurationSeconds
@@ -1314,7 +1338,7 @@ export default function Announcements({
                     now.getTime() -
                       announcementData.dismissalDurationSeconds * 1000
                   );
-                  return dismissal.timestamp > expiration;
+                  return timestamp > expiration;
                 }
 
                 return true; // no duration specified: dismissal counts indefinitely
@@ -1329,7 +1353,9 @@ export default function Announcements({
             ? announcementData.renderDisplay({
                 ...data.config,
                 location,
-                currentUser: data.currentUser,
+                currentUser,
+                subscriptionGroups,
+                onClose,
               })
             : category !== 'information' || location.pathname === '/'
             ? toElement(announcementData)
@@ -1368,6 +1394,7 @@ function AnnouncementContainer(props: AnnouncementContainerProps) {
 
   return props.renderAsIs &&
     props.display &&
+    props.isOpen &&
     React.isValidElement(props.display) ? (
     props.display
   ) : (
@@ -1550,3 +1577,11 @@ function isLegacyBlast(
       routerLocation.pathname.endsWith('BySimilarity'))
   );
 }
+
+const mapStateToProps = (state: any) => {
+  return {
+    currentUser: state.globalData.user,
+  };
+};
+
+export default connect(mapStateToProps)(Announcements);

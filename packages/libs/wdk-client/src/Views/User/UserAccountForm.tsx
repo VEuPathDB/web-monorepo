@@ -1,4 +1,4 @@
-import React, { useState, ReactNode, useEffect } from 'react';
+import React, { useState, ReactNode, useEffect, useCallback } from 'react';
 import { Prompt } from 'react-router-dom';
 import { wrappable } from '../../Utils/ComponentUtils';
 import ApplicationSpecificProperties from '../../Views/User/ApplicationSpecificProperties';
@@ -10,28 +10,37 @@ import ProfileNavigationSection, {
   useCurrentProfileNavigationSection,
 } from '../../Views/User/ProfileNavigationSection';
 import { useWdkService } from '../../Hooks/WdkServiceHook';
-import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
-import { UserPreferences } from '../../Utils/WdkUser';
+import { useSubscriptionGroups } from '../../Hooks/SubscriptionGroups';
+import { User, UserPreferences } from '../../Utils/WdkUser';
 import {
   SaveButton,
   OutlinedButton,
 } from '@veupathdb/coreui/lib/components/buttons';
 import './Profile/UserProfile.scss';
 import { FormStatus } from '../../../../coreui/lib/components/buttons/SaveButton';
+import Loading from '../../Components/Loading';
+import './UserAccountForm.scss';
+import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
 
 // Props interface
 export interface UserAccountFormProps {
   wdkConfig: any;
-  user: UserProfileFormData;
-  onPropertyChange: (field: string) => (value: any) => void;
+  user: User;
+  userProfileFormData: UserProfileFormData;
+  onPropertyChange: (
+    field: string,
+    submitAfterChange?: boolean
+  ) => (value: any) => void;
   onPreferenceChange: (prefs: UserPreferences) => void;
   onEmailChange: (value: string) => void;
   onConfirmEmailChange: (value: string) => void;
   onUserDataSubmit: (event: React.FormEvent) => void;
-  submitButtonText: string;
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
-  onDiscardChanges?: () => void;
+  onDiscardChanges: () => void;
+  onDeleteAccount: () => void;
   singleFormMode?: boolean;
+  highlightMissingFields?: boolean;
+  showSubscriptionProds?: boolean;
 }
 
 /**
@@ -41,15 +50,17 @@ function UserAccountForm(props: UserAccountFormProps) {
   const {
     wdkConfig,
     user,
+    userProfileFormData,
     onPropertyChange,
     onPreferenceChange,
     onEmailChange,
     onConfirmEmailChange,
     onUserDataSubmit,
-    submitButtonText,
     formStatus,
     onDiscardChanges,
+    onDeleteAccount,
     singleFormMode = false,
+    showSubscriptionProds,
   } = props;
 
   const [activeSection, navigateToSection] =
@@ -60,7 +71,8 @@ function UserAccountForm(props: UserAccountFormProps) {
   const hasUnsavedChanges = formStatus === 'modified';
 
   // Track formStatus changes to prevent stale "Saved" state when switching tabs
-  // This ensures the Save button shows current status rather than previous section's status
+  // This ensures the Save button shows current status rather than previous section's status.
+  // See other invocations of `setDisplayedFormStatus` for overriding back to 'new'
   useEffect(() => {
     setDisplayedFormStatus(formStatus);
   }, [formStatus]);
@@ -78,6 +90,8 @@ function UserAccountForm(props: UserAccountFormProps) {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [hasUnsavedChanges]);
 
+  const handleSuccess = useCallback(() => setDisplayedFormStatus('new'), []);
+
   const vocabulary = useWdkService(
     (wdkService) =>
       wdkService.getUserProfileVocabulary().catch((error) => {
@@ -86,6 +100,8 @@ function UserAccountForm(props: UserAccountFormProps) {
       }),
     []
   );
+
+  const subscriptionGroups = useSubscriptionGroups();
 
   // Section switch handler
   const handleSectionChange = (
@@ -96,59 +112,102 @@ function UserAccountForm(props: UserAccountFormProps) {
       onDiscardChanges();
     }
     navigateToSection(sectionKey);
-    // Reset button status to 'new' when switching tabs to prevent showing stale "Saved" state
-    setDisplayedFormStatus('new');
   };
 
   // Renders the content for the active section
+  const saveButton = (
+    <div
+      style={{
+        marginTop: '1em',
+        display: 'flex',
+        gap: '0.5em',
+        alignItems: 'center',
+      }}
+    >
+      <SaveButton
+        formStatus={displayedFormStatus}
+        onPress={(e) => {
+          e.preventDefault();
+          onUserDataSubmit(e);
+        }}
+        themeRole="primary"
+        onSuccess={handleSuccess}
+        savedStateDuration={2000}
+      />
+      {hasUnsavedChanges && (
+        <OutlinedButton
+          text="Discard changes"
+          onPress={() => onDiscardChanges && onDiscardChanges()}
+          themeRole="primary"
+        />
+      )}
+    </div>
+  );
+
   const renderSectionContent = (): ReactNode => {
     switch (activeSection) {
       case 'account':
         return (
-          <form
-            className="wdk-UserProfile-profileForm wdk-UserProfile-accountForm"
-            name="userAccountForm"
-            onSubmit={onUserDataSubmit}
-          >
-            <UserIdentity
-              user={user}
-              onEmailChange={onEmailChange}
-              onConfirmEmailChange={onConfirmEmailChange}
-              onPropertyChange={onPropertyChange}
-              propDefs={wdkConfig.userProfileProperties}
-              vocabulary={vocabulary}
-            />
-            <p>
-              <i className="fa fa-asterisk"></i> = required
-            </p>
-            <div
-              style={{
-                marginTop: '1em',
-                display: 'flex',
-                gap: '0.5em',
-                alignItems: 'center',
-              }}
+          <div>
+            <form
+              className="wdk-UserProfile-profileForm wdk-UserProfile-accountForm"
+              name="userAccountForm"
+              onSubmit={onUserDataSubmit}
             >
-              <SaveButton
-                formStatus={displayedFormStatus}
-                onPress={(e) => {
-                  e.preventDefault();
-                  onUserDataSubmit(e);
-                }}
-                themeRole="primary"
+              <UserIdentity
+                user={userProfileFormData}
+                onEmailChange={onEmailChange}
+                onConfirmEmailChange={onConfirmEmailChange}
+                onPropertyChange={onPropertyChange}
+                propDefs={wdkConfig.userProfileProperties}
+                vocabulary={vocabulary}
+                highlightMissingFields={props.highlightMissingFields}
               />
-              {hasUnsavedChanges && (
+              <p>
+                <i className="fa fa-asterisk"></i> = required
+              </p>
+              {saveButton}
+            </form>
+            <p style={{ padding: '10px' }}></p>
+            <form
+              className="wdk-UserProfile-profileForm wdk-UserProfile-accountForm"
+              name="deleteAccountForm"
+            >
+              <fieldset>
+                <legend>Delete My Account</legend>
+                <p>
+                  All your personal information will be removed from our systems
+                  and any contributions you have made will be anonymized.
+                </p>
+                <p>This action cannot be undone. Please be sure.</p>
                 <OutlinedButton
-                  text="Discard changes"
-                  onPress={() => onDiscardChanges && onDiscardChanges()}
+                  text="Delete My Account"
+                  onPress={(e) => onDeleteAccount()}
                   themeRole="primary"
                 />
-              )}
-            </div>
-          </form>
+              </fieldset>
+            </form>
+          </div>
         );
       case 'subscription':
-        return <UserSubscriptionManagement user={user} />;
+        if (!subscriptionGroups) {
+          return (
+            <div className="subscriptions-loading">
+              Loading subscription information... <Loading />
+            </div>
+          );
+        }
+        return (
+          <UserSubscriptionManagement
+            user={user}
+            subscriptionGroups={subscriptionGroups}
+            onPropertyChange={onPropertyChange}
+            onSuccess={handleSuccess}
+            saveButton={saveButton}
+            formStatus={displayedFormStatus}
+            showSubscriptionProds={showSubscriptionProds}
+          />
+        );
       case 'preferences':
         return (
           <form
@@ -157,40 +216,17 @@ function UserAccountForm(props: UserAccountFormProps) {
             onSubmit={onUserDataSubmit}
           >
             <ApplicationSpecificProperties
-              user={user}
+              user={userProfileFormData}
               onPropertyChange={onPropertyChange}
               propDefs={wdkConfig.userProfileProperties}
               onPreferenceChange={onPreferenceChange}
             />
-            <div
-              style={{
-                marginTop: '1em',
-                display: 'flex',
-                gap: '0.5em',
-                alignItems: 'center',
-              }}
-            >
-              <SaveButton
-                formStatus={displayedFormStatus}
-                onPress={(e) => {
-                  e.preventDefault();
-                  onUserDataSubmit(e);
-                }}
-                themeRole="primary"
-              />
-              {hasUnsavedChanges && (
-                <OutlinedButton
-                  text="Discard changes"
-                  onPress={() => onDiscardChanges && onDiscardChanges()}
-                  themeRole="primary"
-                />
-              )}
-            </div>
+            {saveButton}
           </form>
         );
       case 'security':
         return (
-          <div>
+          <div className="wdk-UserProfile-profileForm">
             <UserPassword user={user} wdkConfig={wdkConfig} />
           </div>
         );
@@ -208,15 +244,16 @@ function UserAccountForm(props: UserAccountFormProps) {
         onSubmit={onUserDataSubmit}
       >
         <UserIdentity
-          user={user}
+          user={userProfileFormData}
           onEmailChange={onEmailChange}
           onConfirmEmailChange={onConfirmEmailChange}
           onPropertyChange={onPropertyChange}
           propDefs={wdkConfig.userProfileProperties}
           vocabulary={vocabulary}
+          highlightMissingFields={props.highlightMissingFields}
         />
         <ApplicationSpecificProperties
-          user={user}
+          user={userProfileFormData}
           onPropertyChange={onPropertyChange}
           propDefs={wdkConfig.userProfileProperties}
           onPreferenceChange={onPreferenceChange}
@@ -224,28 +261,7 @@ function UserAccountForm(props: UserAccountFormProps) {
         <p>
           <i className="fa fa-asterisk"></i> = required
         </p>
-        <div
-          style={{
-            marginTop: '1em',
-            display: 'flex',
-            gap: '0.5em',
-            alignItems: 'center',
-          }}
-        >
-          <SaveButton
-            formStatus={displayedFormStatus}
-            onPress={(e) => {
-              e.preventDefault();
-              onUserDataSubmit(e);
-            }}
-            customText={{
-              save: submitButtonText,
-            }}
-          />
-          {onDiscardChanges && (
-            <OutlinedButton text="Reset form" onPress={onDiscardChanges} />
-          )}
-        </div>
+        {saveButton}
       </form>
     );
   };
