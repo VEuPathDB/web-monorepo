@@ -150,7 +150,7 @@ function UserAccountForm(props: UserAccountFormProps) {
             onSubmit={onUserDataSubmit}
           >
             <UserIdentity
-              user={user}
+              user={userProfileFormData}
               onEmailChange={onEmailChange}
               onConfirmEmailChange={onConfirmEmailChange}
               onPropertyChange={onPropertyChange}
@@ -218,7 +218,7 @@ function UserAccountForm(props: UserAccountFormProps) {
         onSubmit={onUserDataSubmit}
       >
         <UserIdentity
-          user={user}
+          user={userProfileFormData}
           onEmailChange={onEmailChange}
           onConfirmEmailChange={onConfirmEmailChange}
           onPropertyChange={onPropertyChange}

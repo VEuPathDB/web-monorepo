@@ -53,9 +53,7 @@ export interface UserFormContainerProps {
 }
 
 function UserFormContainer(props: UserFormContainerProps) {
-  const currentUserFormData = props.userFormData ?? {
-    preferences: { global: {}, project: {} },
-  }; // can be missing in the registration form, of course
+  const currentUserFormData = props.userFormData ?? {}; // can be missing in the registration form, of course
   const initialUserStateRef = useRef<UserProfileFormData>(currentUserFormData);
   const subscriptionGroups = useSubscriptionGroups();
 
