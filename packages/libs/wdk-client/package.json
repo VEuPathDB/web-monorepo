@@ -6,7 +6,8 @@
     "test": "jest",
     "clean": "rm -rf ./lib",
     "build": "veupathdb-react-scripts prepare src",
-    "build-npm-modules": "npm-run-all build"
+    "build-npm-modules": "npm-run-all build",
+    "build-forever": "veupathdb-react-scripts build-forever src"
   },
   "repository": {
     "type": "git",

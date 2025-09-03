@@ -44,6 +44,7 @@
     "test": "veupathdb-react-scripts test",
     "eject": "veupathdb-react-scripts eject",
     "build-npm-modules": "veupathdb-react-scripts prepare",
+    "build-forever": "veupathdb-react-scripts build-forever",
     "clean": "rm -rf lib"
   },
   "eslintConfig": {
