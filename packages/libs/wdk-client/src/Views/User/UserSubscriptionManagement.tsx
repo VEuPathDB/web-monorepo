@@ -325,13 +325,20 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
             style={{
               fontSize: '1.2em',
               fontWeight: 500,
-              marginBottom: 0,
+              marginBottom: '1em',
               justifySelf: 'center',
             }}
           >
             Are you sure you want to leave the group?
           </p>
-          <p style={{ fontSize: '1.2em', justifySelf: 'center' }}>
+          <p
+            style={{
+              fontSize: '1.2em',
+              justifySelf: 'center',
+              textAlign: 'center',
+              width: 400,
+            }}
+          >
             If your position or affiliation has changed, please additionally
             update the Account page.
           </p>
