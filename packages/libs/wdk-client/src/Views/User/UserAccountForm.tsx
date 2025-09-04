@@ -146,7 +146,7 @@ function UserAccountForm(props: UserAccountFormProps) {
 
   const renderSectionContent = (): ReactNode => {
     switch (activeSection) {
-      case 'account':
+      case 'profile':
         return (
           <div>
             <form
