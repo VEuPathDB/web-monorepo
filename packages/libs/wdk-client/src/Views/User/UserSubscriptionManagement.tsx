@@ -232,6 +232,16 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                   formatOptionLabel={(option) => option.label}
                   form="DO_NOT_SUBMIT_ON_ENTER"
                   className="wdk-UserProfile-TypeAheadSelect"
+                  styles={{
+                    valueContainer: (provided) => ({
+                      ...provided,
+                      cursor: 'text',
+                    }),
+                    indicatorsContainer: (provided) => ({
+                      ...provided,
+                      cursor: 'pointer', // Keep dropdown arrow as pointer
+                    }),
+                  }}
                   theme={(selectTheme) => ({
                     ...selectTheme,
                     colors: {
