@@ -625,17 +625,16 @@ export function submitPasswordReset(
   };
 }
 
-export function deleteAccount(): ActionThunk<EmptyAction> {
+async function logOut() {
+  await fetch(`/service/logout`, {
+    credentials: 'include',
+  });
+  window.location.assign('/');
+}
+
+export function deleteAccount(): ActionThunk<void> {
   return function run({ wdkService, transitioner }) {
-    return [
-      wdkService
-        .deleteAccount()
-        .then(
-          () => wdkService.logout(),
-          (error) => notifyUnhandledError(error)
-        )
-        .then((response) => emptyAction),
-    ];
+    return [wdkService.deleteAccount().then(() => logOut())];
   };
 }
 
