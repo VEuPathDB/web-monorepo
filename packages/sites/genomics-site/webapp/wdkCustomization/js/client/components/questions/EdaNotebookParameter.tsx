@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Parameter,
-  ParameterValues,
-} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { WorkspaceContainer } from '@veupathdb/eda/lib/workspace/WorkspaceContainer';
 import {
   Analysis,
@@ -20,7 +17,11 @@ import {
 import { edaServiceUrl } from '@veupathdb/web-common/lib/config';
 import { DocumentationContainer } from '@veupathdb/eda/lib/core/components/docs/DocumentationContainer';
 import CoreUIThemeProvider from '@veupathdb/coreui/lib/components/theming/UIThemeProvider';
-import colors from '@veupathdb/coreui/lib/definitions/colors';
+import colors, {
+  error,
+  warning,
+  success,
+} from '@veupathdb/coreui/lib/definitions/colors';
 import './EdaSubsetParameter.scss';
 import {
   defaultFormatParameterValue,
@@ -101,8 +102,12 @@ export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
           <CoreUIThemeProvider
             theme={{
               palette: {
-                primary: { hue: colors.cyan, level: 600 },
+                primary: { hue: colors.mutedCyan, level: 600 },
                 secondary: { hue: colors.mutedRed, level: 500 },
+                error: { hue: error, level: 600 },
+                warning: { hue: warning, level: 600 },
+                info: { hue: colors.mutedCyan, level: 600 },
+                success: { hue: success, level: 600 },
               },
             }}
           >
