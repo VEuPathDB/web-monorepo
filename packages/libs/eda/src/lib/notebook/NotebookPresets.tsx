@@ -1,7 +1,7 @@
 // Notebook presets
 
 import { ReactNode } from 'react';
-import { NumberedHeader } from '../workspace/Subsetting/SubsetDownloadModal';
+import NumberedHeader from '@veupathdb/coreui/lib/components/forms/NumberedHeader';
 import { colors } from '@material-ui/core';
 import { BipartiteNetworkOptions } from '../core/components/visualizations/implementations/BipartiteNetworkVisualization';
 import { NodeData } from '@veupathdb/components/lib/types/plots/network';

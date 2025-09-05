@@ -1,7 +1,7 @@
 import React from 'react';
 import { siteSearchServiceUrl } from '../../config';
 import SiteMenu from '../../App/SiteMenu';
-import UserMenu from '../../App/UserMenu';
+import { UserMenu, UserMenuGuest } from '../../App/UserMenu';
 import { formatReleaseDate } from '../../util/formatters';
 import {
   IconAlt as Icon,
@@ -97,7 +97,11 @@ class HeaderNav extends React.Component {
           )}
         </div>
         <div>
-          <UserMenu webAppUrl={webAppUrl} actions={actions} user={user} />
+          {user && !user.isGuest ? (
+            <UserMenu webAppUrl={webAppUrl} user={user} actions={actions} />
+          ) : (
+            <UserMenuGuest webAppUrl={webAppUrl} actions={actions} />
+          )}
         </div>
       </div>
     );

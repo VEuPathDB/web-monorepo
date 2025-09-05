@@ -12,7 +12,13 @@ import {
 } from '@veupathdb/wdk-client/lib/Components';
 import { Tooltip } from '@veupathdb/coreui';
 import MultiSelectVariableTree from '../../core/components/variableSelectors/MultiSelectVariableTree';
-import { Modal, DataGrid, MesaButton, Download } from '@veupathdb/coreui';
+import {
+  Modal,
+  DataGrid,
+  MesaButton,
+  Download,
+  NumberedHeader,
+} from '@veupathdb/coreui';
 
 // Definitions
 import { AnalysisState } from '../../core/hooks/analysis';
@@ -56,53 +62,6 @@ type SubsetDownloadModalProps = {
   currentEntity: EnhancedEntityDatum;
   starredVariables?: VariableDescriptor[];
   toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
-};
-
-export type NumberedHeaderProps = {
-  number: number;
-  text: string;
-  color?: string;
-};
-
-export const NumberedHeader = (props: NumberedHeaderProps) => {
-  const color = props.color ?? 'black';
-  const height = 25;
-
-  return (
-    <div>
-      <div
-        style={{
-          display: 'inline-block',
-          width: height,
-          height: height,
-          lineHeight: height + 'px',
-          color: color,
-          border: '2px solid ' + color,
-          borderRadius: height,
-          fontSize: 18,
-          fontWeight: 'bold',
-          textAlign: 'center',
-          boxSizing: 'content-box',
-          userSelect: 'none',
-        }}
-      >
-        {props.number}
-      </div>
-      <div
-        style={{
-          display: 'inline-block',
-          marginLeft: 5,
-          height: height,
-          lineHeight: height + 'px',
-          color: color,
-          fontSize: 16,
-          fontWeight: 'bold',
-        }}
-      >
-        {props.text}
-      </div>
-    </div>
-  );
 };
 
 /**
