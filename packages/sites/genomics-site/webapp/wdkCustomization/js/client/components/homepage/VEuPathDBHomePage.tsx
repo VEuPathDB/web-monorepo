@@ -264,7 +264,7 @@ const VEuPathDBHomePageViewStandard: FunctionComponent<Props> = (props) => {
               menuItems={headerMenuItems}
               containerClassName={headerClassName}
               onShowAnnouncements={onShowAnnouncements}
-              showAnnouncementsToggle={isHomePage && closedBanners.length > 0}
+              showAnnouncementsToggle={closedBanners.length > 0}
               branding={branding}
             />
           </ErrorBoundary>

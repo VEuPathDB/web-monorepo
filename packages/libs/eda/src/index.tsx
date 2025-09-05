@@ -54,7 +54,12 @@ import { useAttemptActionClickHandler } from '@veupathdb/study-data-access/lib/d
 import { useCoreUIFonts } from '@veupathdb/coreui/lib/hooks';
 
 // Definitions
-import { colors, H3 } from '@veupathdb/coreui';
+import { H3 } from '@veupathdb/coreui';
+import colors, {
+  error,
+  success,
+  warning,
+} from '@veupathdb/coreui/lib/definitions/colors';
 
 import './index.css';
 
@@ -126,6 +131,10 @@ wrapComponents({
                 palette: {
                   primary: { hue: colors.mutedCyan, level: 600 },
                   secondary: { hue: colors.mutedRed, level: 500 },
+                  error: { hue: error, level: 600 },
+                  warning: { hue: warning, level: 600 },
+                  info: { hue: colors.mutedCyan, level: 600 },
+                  success: { hue: success, level: 600 },
                 },
               }}
             >

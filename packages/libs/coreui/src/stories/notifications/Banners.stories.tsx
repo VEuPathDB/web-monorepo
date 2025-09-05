@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import UIThemeProvider from '../../components/theming/UIThemeProvider';
-import { gray } from '../../definitions/colors';
+import { blue, error, gray, success, warning } from '../../definitions/colors';
 
-import Banner, { BannerComponentProps } from '../../components/banners/Banner';
+import Banner, {
+  BannerComponentProps,
+  BannerProps,
+} from '../../components/banners/Banner';
 import Toggle from '../../components/widgets/Toggle';
 
 export default {
@@ -16,8 +19,12 @@ const Template: Story<BannerComponentProps> = (args) => {
     <UIThemeProvider
       theme={{
         palette: {
-          primary: { hue: gray, level: 200 },
+          primary: { hue: blue, level: 600 },
           secondary: { hue: gray, level: 500 },
+          error: { hue: error, level: 600 },
+          warning: { hue: warning, level: 400 }, // level is different than 600 to test that the banner handles this appropriately
+          info: { hue: blue, level: 600 },
+          success: { hue: success, level: 600 },
         },
       }}
     >
@@ -863,3 +870,45 @@ export const Collapsible = (args) => {
     </>
   );
 };
+
+// Banner with call to action buttons
+const cta2StoryTheme: BannerProps['type'] = 'success';
+export const BannerWith2CTA = Template.bind({});
+BannerWith2CTA.args = {
+  banner: {
+    type: cta2StoryTheme,
+    message: `This is a ${cta2StoryTheme} banner with call to action buttons.`,
+    pinned: false,
+    intense: false,
+    primaryActionButtonProps: {
+      text: 'Primary Action',
+      onPress: () => {
+        alert('Primary Action Clicked!');
+      },
+    },
+    secondaryActionButtonProps: {
+      text: 'Secondary Action',
+      onPress: () => {
+        alert('Secondary Action Clicked!');
+      },
+    },
+  },
+  onClose: () => null,
+} as BannerComponentProps;
+
+const cta1StoryTheme: BannerProps['type'] = 'warning';
+export const BannerWith1CTA = Template.bind({});
+BannerWith1CTA.args = {
+  banner: {
+    type: cta1StoryTheme,
+    message: `This is a ${cta1StoryTheme} banner with a call to action button.`,
+    pinned: true,
+    intense: false,
+    primaryActionButtonProps: {
+      text: 'Take Action',
+      onPress: () => {
+        alert('Action Taken!');
+      },
+    },
+  },
+} as BannerComponentProps;
