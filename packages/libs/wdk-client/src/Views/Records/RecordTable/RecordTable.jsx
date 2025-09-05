@@ -35,11 +35,7 @@ const mapSortType = (val) => {
 // max columns for list mode
 const maxColumns = 4;
 
-const defaultSortId = '@@defaultSortIndex@@';
-const defaultSortColumn = [{ name: defaultSortId, isDisplayable: false }];
-
-const getColumns = (tableField) =>
-  defaultSortColumn.concat(tableField.attributes.map((attr) => attr));
+const getColumns = (tableField) => tableField.attributes.map((attr) => attr);
 
 const getDisplayableAttributes = (tableField) =>
   tableField.attributes.filter((attr) => attr.isDisplayable);
