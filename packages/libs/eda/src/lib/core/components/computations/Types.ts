@@ -4,7 +4,7 @@ import { EntityCounts } from '../../hooks/entityCounts';
 import { PromiseHookState } from '../../hooks/promise';
 import { GeoConfig } from '../../types/geoConfig';
 import { Computation, ComputationAppOverview } from '../../types/visualization';
-import { Filter, StudyEntity } from '../..';
+import { CollectionVariableTreeNode, Filter, StudyEntity } from '../..';
 import { VisualizationPlugin } from '../visualizations/VisualizationPlugin';
 import { IsEnabledInPickerParams } from '../visualizations/VisualizationTypes';
 
@@ -21,6 +21,12 @@ export interface ComputationConfigProps extends ComputationProps {
   computation: Computation;
   visualizationId: string;
   addNewComputation: (name: string, configuration: unknown) => void;
+  changeConfigHandlerOverride?: (propertyName: string, value: any) => void;
+  showStepNumber?: boolean; // Whether to show step number (NumberedHeader)
+  showExpandableHelp?: boolean; // If computation has expandable help, determines whether or not to show it.
+  additionalCollectionPredicate?: (
+    variableCollection: CollectionVariableTreeNode
+  ) => boolean; // Additional constraints for allowed collection variables
 }
 
 export interface ComputationOverviewProps extends ComputationProps {}
@@ -47,12 +53,14 @@ export interface ComputationPlugin {
     filters: Filter[];
   }>;
   visualizationPlugins: Partial<Record<string, VisualizationPlugin<any>>>;
-  createDefaultConfiguration: (
-    rootEntity: StudyEntity
-  ) => Record<string, unknown> | undefined;
+  createDefaultConfiguration: () => Record<string, unknown> | undefined;
   isConfigurationComplete: (configuration: unknown) => boolean;
   /** Function used to determine if visualization is compatible with study */
   isEnabledInPicker?: (props: IsEnabledInPickerParams) => boolean;
   /** Human-readable study requirements for this computation */
   studyRequirements?: string;
+  /** Function that sets collection constraints based on context. Applied after the plugin's default predicate, if any */
+  additionalCollectionPredicate?: (
+    collection: CollectionVariableTreeNode
+  ) => boolean;
 }

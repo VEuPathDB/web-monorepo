@@ -1,5 +1,9 @@
 import { useEffect, useMemo } from 'react';
-import { VariableTreeNode, useFindEntityAndVariableCollection } from '../../..';
+import {
+  CollectionVariableTreeNode,
+  VariableTreeNode,
+  useFindEntityAndVariableCollection,
+} from '../../..';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { partial } from 'lodash';
 import {
@@ -13,7 +17,7 @@ import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { H6 } from '@veupathdb/coreui';
 import { bipartiteNetworkVisualization } from '../../visualizations/implementations/BipartiteNetworkVisualization';
-import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
+import { VariableCollectionSingleSelect } from '../../variableSelectors/VariableCollectionSingleSelect';
 import SingleSelect, {
   ItemGroup,
 } from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
@@ -32,6 +36,7 @@ import {
   CompleteCorrelationConfig,
   CorrelationConfig,
 } from '../../../types/apps';
+import { NodeData } from '@veupathdb/components/lib/types/plots/network';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -82,45 +87,6 @@ export const plugin: ComputationPlugin = {
           return [];
         }
       },
-      makeGetNodeMenuActions(studyMetadata) {
-        const entities = entityTreeToArray(studyMetadata.rootEntity);
-        const variables = entities.flatMap((e) => e.variables);
-        const collections = entities.flatMap(
-          (entity) => entity.collections ?? []
-        );
-        const hostCollection = collections.find(
-          (c) => c.id === 'EUPATH_0005050'
-        );
-        const parasiteCollection = collections.find(
-          (c) => c.id === 'EUPATH_0005051'
-        );
-        return function getNodeActions(nodeId: string) {
-          const [, variableId] = nodeId.split('.');
-          const variable = variables.find((v) => v.id === variableId);
-          if (variable == null) return [];
-
-          // E.g., "qa."
-          const urlPrefix = window.location.host.replace(
-            /(plasmodb|hostdb)\.org/,
-            ''
-          );
-
-          const href = parasiteCollection?.memberVariableIds.includes(
-            variable.id
-          )
-            ? `//${urlPrefix}plasmodb.org/plasmo/app/search/transcript/GenesByRNASeqpfal3D7_Lee_Gambian_ebi_rnaSeq_RSRCWGCNAModules?param.wgcnaParam=${variable.displayName.toLowerCase()}&autoRun=1`
-            : hostCollection?.memberVariableIds.includes(variable.id)
-            ? `//${urlPrefix}hostdb.org/hostdb/app/search/transcript/GenesByRNASeqhsapREF_Lee_Gambian_ebi_rnaSeq_RSRCWGCNAModules?param.wgcnaParam=${variable.displayName.toLowerCase()}&autoRun=1`
-            : undefined;
-          if (href == null) return [];
-          return [
-            {
-              label: 'See list of genes',
-              href,
-            },
-          ];
-        };
-      },
       getParitionNames(studyMetadata, config) {
         if (CorrelationConfig.is(config)) {
           const entities = entityTreeToArray(studyMetadata.rootEntity);
@@ -138,7 +104,7 @@ export const plugin: ComputationPlugin = {
           return { partition1Name, partition2Name };
         }
       },
-    }), // Must match name in data service and in visualization.tsx
+    }),
   },
   isEnabledInPicker: isEnabledInPicker,
   studyRequirements:
@@ -216,13 +182,16 @@ const DEFAULT_PROPORTION_NON_ZERO_THRESHOLD = 0.05;
 const DEFAULT_VARIANCE_THRESHOLD = 0;
 const DEFAULT_STANDARD_DEVIATION_THRESHOLD = 0;
 
-// Shows as Step 1 in the full screen visualization page
 export function CorrelationConfiguration(props: ComputationConfigProps) {
   const {
     computationAppOverview,
     computation,
     analysisState,
     visualizationId,
+    changeConfigHandlerOverride,
+    showStepNumber = true,
+    showExpandableHelp = true,
+    additionalCollectionPredicate = () => true,
   } = props;
 
   const configuration = computation.descriptor
@@ -230,11 +199,28 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
 
   assertComputationWithConfig(computation, CorrelationConfig);
 
-  const changeConfigHandler = useConfigChangeHandler(
+  const workspaceChangeConfigHandler = useConfigChangeHandler(
     analysisState,
     computation,
     visualizationId
   );
+
+  // Depending on context, we might need a different changeConfigHandler. For example,
+  // in the notebook.
+  const changeConfigHandler =
+    changeConfigHandlerOverride ?? workspaceChangeConfigHandler;
+
+  // Combine default collection predicate and any addiitonal constraints.
+  // Currently only implementetd for Data1 so that the user still has many options
+  // but we can, for example, require one of the collections to be from the host, for example.
+  const combinedCollectionPredicate = (
+    variableCollection: CollectionVariableTreeNode
+  ) => {
+    return (
+      isNotAbsoluteAbundanceVariableCollection(variableCollection) &&
+      additionalCollectionPredicate(variableCollection) // note defaults to true if non additional predicates are provided.
+    );
+  };
 
   // Content for the expandable help section
   // Note the text is dependent on the context, for example in genomics we'll use different
@@ -344,6 +330,7 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
         stepNumber: 1,
         stepTitle: `Configure ${computationAppOverview.displayName}`,
       }}
+      showStepNumber={showStepNumber}
     >
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <div className={cx()}>
@@ -351,7 +338,7 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
             <H6>Input Data</H6>
             <div className={cx('-InputContainer')}>
               <span>Data 1</span>
-              <VariableCollectionSelectList
+              <VariableCollectionSingleSelect
                 value={configuration.data1?.collectionSpec}
                 onSelect={(value) => {
                   if (isVariableCollectionDescriptor(value))
@@ -360,10 +347,10 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
                       collectionSpec: value,
                     });
                 }}
-                collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
+                collectionPredicate={combinedCollectionPredicate}
               />
               <span>Data 2</span>
-              <VariableCollectionSelectList
+              <VariableCollectionSingleSelect
                 value={
                   configuration.data2?.dataType === 'metadata'
                     ? 'metadata'
@@ -458,14 +445,16 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
             bannerType="error"
           />
         </div>
-        <ExpandablePanel
-          title="Learn more about correlation"
-          subTitle={{}}
-          children={helpContent}
-          stylePreset="floating"
-          themeRole="primary"
-          styleOverrides={{ container: { marginLeft: 40 } }}
-        />
+        {showExpandableHelp && (
+          <ExpandablePanel
+            title="Learn more about correlation"
+            subTitle={{}}
+            children={helpContent}
+            stylePreset="floating"
+            themeRole="primary"
+            styleOverrides={{ container: { marginLeft: 40 } }}
+          />
+        )}
       </div>
     </ComputationStepContainer>
   );

@@ -2,7 +2,7 @@ import { merge } from 'lodash';
 import { useMemo } from 'react';
 
 import useUITheme from '../../theming/useUITheme';
-import { blue, gray } from '../../../definitions/colors';
+import { blue, gray, mutedBlue } from '../../../definitions/colors';
 import SwissArmyButton from '../SwissArmyButton';
 import {
   ButtonStyleSpec,
@@ -81,7 +81,7 @@ export default function FloatingButton({
 
   const finalStyle = useMemo(
     () => merge({}, defaultStyle, themeStyle, styleOverrides),
-    [themeStyle]
+    [defaultStyle, themeStyle, styleOverrides]
   );
 
   return (
@@ -100,3 +100,26 @@ export default function FloatingButton({
     />
   );
 }
+
+export const FloatingButtonWDKStyle: ButtonStyleSpec = {
+  default: {
+    color: 'transparent',
+    textColor: '#069',
+    fontWeight: 600,
+  },
+  hover: {
+    color: mutedBlue[100],
+    textColor: '#069',
+    fontWeight: 600,
+  },
+  pressed: {
+    color: mutedBlue[200],
+    textColor: '#069',
+    fontWeight: 600,
+  },
+  disabled: {
+    color: 'transparent',
+    textColor: gray[500],
+    fontWeight: 600,
+  },
+};

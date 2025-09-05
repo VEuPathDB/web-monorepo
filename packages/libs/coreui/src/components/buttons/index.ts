@@ -71,7 +71,7 @@ type CoreProps = {
    * pick up styling options from the theme. */
   themeRole?: keyof UITheme['palette'];
   /** The size of the button. */
-  size?: 'small' | 'medium' | 'large';
+  size?: 'small' | 'medium' | 'large' | 'xlarge';
   /** Additional styles to apply to the button container. */
   styleOverrides?: PartialButtonStyleSpec;
   /** Icon can be to the left or to the right of the button's text. Defaults to left. */
@@ -120,3 +120,4 @@ export { default as FilledButton } from './FilledButton';
 export { default as FloatingButton } from './FloatingButton';
 export { default as MesaButton } from './MesaButton';
 export { default as OutlinedButton } from './OutlinedButton';
+export { default as SaveButton } from './SaveButton';

@@ -5,6 +5,7 @@ import PageController from '../Core/Controllers/PageController';
 import UserRegistration from '../Views/User/Profile/UserRegistration';
 import {
   profileFormUpdate,
+  profileFormReset,
   submitRegistrationForm,
   conditionallyTransition,
 } from '../Actions/UserActions';
@@ -14,6 +15,7 @@ import { GlobalData } from '../StoreModules/GlobalData';
 
 const actionCreators = {
   updateProfileForm: profileFormUpdate,
+  resetProfileForm: profileFormReset,
   submitRegistrationForm,
   conditionallyTransition,
 };

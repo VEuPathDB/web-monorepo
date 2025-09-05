@@ -78,7 +78,7 @@
   line-height: normal;
 }
 
-.wdk-Dialog.word-cloud-modal {
+%word-cloud-base {
   height: 400px;
   width: 700px;
 
@@ -89,4 +89,8 @@
   img {
     width: 700px;
   }
+}
+
+.wdk-Dialog.word-cloud-modal {
+  @extend %word-cloud-base;
 }

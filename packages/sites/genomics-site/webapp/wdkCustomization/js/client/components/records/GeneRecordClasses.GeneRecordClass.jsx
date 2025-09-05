@@ -37,7 +37,7 @@ import * as Gbrowse from '../common/Gbrowse';
 import { OverviewThumbnails } from '../common/OverviewThumbnails';
 import { SnpsAlignmentForm } from '../common/Snps';
 import { addCommentLink } from '../common/UserComments';
-import { withRequestFields } from './utils';
+import { withRequestFields, scrollToAndOpenExpressionGraph } from './utils';
 import {
   usePreferredOrganismsEnabledState,
   usePreferredOrganismsState,
@@ -45,6 +45,7 @@ import {
 import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
 import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { AlphaFoldRecordSection } from './AlphaFoldAttributeSection';
+import { AiExpressionSummary } from './AiExpressionSummary';
 import { DEFAULT_TABLE_STATE } from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
 import { Link } from 'react-router-dom';
 
@@ -362,6 +363,8 @@ export function RecordAttributeSection(props) {
   switch (restProps.attribute.name) {
     case 'alphafold_url':
       return <AlphaFoldRecordSection {...restProps} />;
+    case 'ai_expression':
+      return <AiExpressionSummary {...restProps} />;
     default:
       return <DefaultComponent {...restProps} />;
   }
@@ -378,19 +381,21 @@ function FungiVBOrgLinkoutsTable(props) {
       {Object.entries(groupedLinks).map(([dataset, rows]) => (
         <>
           <dt>{dataset}</dt>
-          {rows.map((row, index) => (
-            <dd key={index}>
-              {renderAttributeValue(row.link)}
-              {index === rows.length - 1 ? null : ', '}
-            </dd>
-          ))}
+          <dd>
+            {rows.map((row, index) => (
+              <span key={index}>
+                {renderAttributeValue(row.link)}
+                {index === rows.length - 1 ? null : ', '}
+              </span>
+            ))}
+          </dd>
         </>
       ))}
     </>
   );
 }
 
-const ExpressionChildRow = makeDatasetGraphChildRow({
+export const ExpressionChildRow = makeDatasetGraphChildRow({
   dataTableName: 'ExpressionGraphsDataTable',
   DatasetGraphComponent: DatasetGraph,
 });
@@ -1756,39 +1761,15 @@ const TranscriptionSummaryForm = connect(
           // Find the associated expression graph row data
           // FIXME: Look up the expression graph entry by dataset_id instead of display_name
           // This will require adding the dataset_id as a data attribute
-          const expressionGraphIndex = ExpressionGraphs.findIndex(
-            ({ display_name }) =>
-              e.target.dataset.unformatted.startsWith(display_name)
-          );
-
-          const expressionGraphTableElement =
-            document.getElementById('ExpressionGraphs');
-
-          const expressionGraphTableRowElement =
-            expressionGraphTableElement?.querySelector(
-              `tr#row_id_${expressionGraphIndex}`
-            );
-
-          // If the expression graph table is available...
-          if (
-            expressionGraphIndex !== -1 &&
-            expressionGraphTableRowElement != null
-          ) {
-            // Make sure the table section is open
-            this.props.updateSectionVisibility('ExpressionGraphs', true);
-            // Add a history entry so users can use the back button to go back to *this* section
-            window.history.pushState(null, null, '#ExpressionGraphs');
-
-            expressionGraphTableRowElement.scrollIntoView();
-
-            this.props.updateTableState('ExpressionGraphs', {
-              ...this.props.expressionGraphsTableState,
-              selectedRow: expressionGraphIndex,
-              expandedRows: (
-                this.props.expressionGraphsTableState?.expandedRows ?? []
-              ).concat([expressionGraphIndex]),
-            });
-          }
+          scrollToAndOpenExpressionGraph({
+            expressionGraphs: ExpressionGraphs,
+            findIndexFn: ({ display_name }) =>
+              e.target.dataset.unformatted.startsWith(display_name),
+            tableId: 'ExpressionGraphs',
+            updateSectionVisibility: this.props.updateSectionVisibility,
+            updateTableState: this.props.updateTableState,
+            tableState: this.props.expressionGraphsTableState,
+          });
         }
       });
 

@@ -19,8 +19,10 @@ export const WordCloudModal: React.FunctionComponent<WordCloudModalProps> = ({
     open={open}
     resizable
     draggable
+    allowKeyboardMoving={true}
     onClose={onClose}
     title={`Word Cloud of ${toolName} Results`}
+    description="Floating, keyboard-positionable dialog containing a word cloud representation of the results. Press M to enter keyboard-positioning mode."
     className="word-cloud-modal"
   >
     <img src={imgUrl} />

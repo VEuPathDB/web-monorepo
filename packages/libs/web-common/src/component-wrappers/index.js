@@ -5,6 +5,7 @@ export * from './Footer';
 export * from './Header';
 export * from './RecordPage';
 export * from './UserMessageController';
+export * from './UserProfileController';
 
 import ApiApplicationSpecificProperties from '../components/ApiApplicationSpecificProperties';
 

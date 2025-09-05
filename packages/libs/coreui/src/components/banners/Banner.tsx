@@ -22,8 +22,14 @@ import {
   ColorHue,
 } from '../../definitions/colors';
 import { useUITheme } from '../theming';
+import {
+  FilledButton,
+  OutlinedButton,
+  SwissArmyButtonVariantProps,
+} from '../buttons';
 
 export type BannerProps = {
+  // Banner type determines colors and icons. 'normal' has a default color but ideally should use the primary theme color
   type: 'warning' | 'danger' | 'error' | 'success' | 'info' | 'normal';
   message: ReactNode;
   pinned?: boolean;
@@ -56,6 +62,8 @@ export type BannerProps = {
   fadeoutEffect?: boolean;
   setFadeoutEffect?: (newValue: boolean) => void;
   hideIcon?: boolean;
+  primaryActionButtonProps?: Omit<SwissArmyButtonVariantProps, 'themeRole'>;
+  secondaryActionButtonProps?: Omit<SwissArmyButtonVariantProps, 'themeRole'>;
 };
 
 export type BannerComponentProps = {
@@ -127,7 +135,14 @@ export default function Banner(props: BannerComponentProps) {
     fadeoutEffect,
     setFadeoutEffect,
     hideIcon = false,
+    primaryActionButtonProps,
+    secondaryActionButtonProps,
   } = banner;
+
+  const mainColorLevel =
+    theme && type in theme.palette
+      ? theme.palette[type as keyof typeof theme.palette].level
+      : 600;
 
   const [isShowMore, setIsShowMore] = useState(false);
 
@@ -164,10 +179,13 @@ export default function Banner(props: BannerComponentProps) {
       background: transparent;
       border: none;
       cursor: pointer;
+      margin-left: 4px; // makes space between CTA button and close same as close and banner border
+      color: ${getColorTheme(type, mainColorLevel)};
       &:hover {
-        color: ${intense ? 'black' : getColorTheme(type, 600)};
+        color: ${getColorTheme(type, mainColorLevel + 100)};
+        background: transparent;
       }`;
-  }, [type, intense]);
+  }, [type]);
 
   // conditional border color and radius with the presence of CollapsibleContent
   return (
@@ -178,13 +196,13 @@ export default function Banner(props: BannerComponentProps) {
             display: flex;
             color: ${intense ? 'white' : 'black'};
             background-color: ${intense
-              ? getColorTheme(type, 600)
+              ? getColorTheme(type, mainColorLevel)
               : getColorTheme(type, 100)};
             border: ${intense
               ? 'none'
               : CollapsibleContent != null
               ? `1px solid #dedede`
-              : `1px solid ${getColorTheme(type, 600)}`};
+              : `1px solid ${getColorTheme(type, mainColorLevel)}`};
             box-sizing: border-box;
             border-radius: ${CollapsibleContent != null ? '0' : '7px'};
             margin: ${spacing?.margin != null ? spacing.margin : '10px 0'};
@@ -219,18 +237,19 @@ export default function Banner(props: BannerComponentProps) {
                       ? 'white'
                       : CollapsibleContent != null
                       ? '#00008B'
-                      : 'black'};
+                      : getColorTheme(type, mainColorLevel)};
                     font-size: 1.4em;
                     line-height: 1.4em;
                     width: 30px;
                     text-align: center;
-                    margin-right: 5px;
+                    margin-right: 8px;
                   `}
                 />
               )}
-              <span
+              <div
                 css={css`
                   margin-right: auto;
+                  color: ${getColorTheme(type, 900)};
                 `}
               >
                 {/* showMore implementation */}
@@ -269,7 +288,43 @@ export default function Banner(props: BannerComponentProps) {
                     </button>
                   </>
                 )}
-              </span>
+              </div>
+              {secondaryActionButtonProps != null && (
+                <OutlinedButton
+                  text={secondaryActionButtonProps.text}
+                  themeRole={
+                    type === 'danger'
+                      ? 'error'
+                      : type === 'normal'
+                      ? 'primary'
+                      : type
+                  }
+                  styleOverrides={{
+                    container: {
+                      marginRight: '0.5em',
+                    },
+                  }}
+                  {...secondaryActionButtonProps}
+                />
+              )}
+              {primaryActionButtonProps != null && (
+                <FilledButton
+                  text={primaryActionButtonProps.text}
+                  themeRole={
+                    type === 'danger'
+                      ? 'error'
+                      : type === 'normal'
+                      ? 'primary'
+                      : type
+                  }
+                  styleOverrides={{
+                    container: {
+                      marginRight: '0.5em',
+                    },
+                  }}
+                  {...primaryActionButtonProps}
+                />
+              )}
               {pinned || !onClose ? null : (
                 <button
                   css={css`

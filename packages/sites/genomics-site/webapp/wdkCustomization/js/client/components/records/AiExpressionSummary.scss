@@ -1,0 +1,173 @@
+div.ai-gateway {
+  min-height: 8em;
+}
+
+div.ai-summary-flex-container {
+  display: flex;
+  justify-content: space-between;
+  column-gap: 2em;
+  flex-direction: row;
+  flex-wrap: wrap-reverse;
+}
+
+div.ai-summary {
+  flex: 1 1 50em;
+  margin-left: 15px;
+  max-width: 50em;
+
+  p {
+    ul {
+      margin-top: 0.5em;
+      margin-bottom: 1em;
+    }
+  }
+}
+
+div.ai-floating-extras {
+  flex: 1 1 15em;
+  min-width: 15em;
+  max-width: 50em;
+
+  details {
+    border-radius: 8px;
+    padding: 8px;
+
+    summary {
+      cursor: pointer;
+      padding: 0.2em 0.4em;
+      font-weight: bold;
+    }
+  }
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.5em;
+
+  div.ai-feedback-buttons-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+
+    a {
+      /* remove the underline by default */
+      text-decoration: none;
+
+      /* ensure it stays gone on hover/focus/active */
+      &:hover,
+      &:focus,
+      &:active {
+        text-decoration: none;
+      }
+    }
+  }
+
+  div.ai-feedback {
+    margin: 1em;
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 1em;
+    font-style: italic;
+
+    .ai-feedback-help {
+      font-size: 0.9em;
+    }
+  }
+}
+
+a.javascript-link {
+  cursor: grab;
+}
+
+.AiExpressionResult-Loading {
+  text-align: center;
+  padding: 0;
+  margin-top: 3em;
+  height: unset;
+  max-width: 75px;
+}
+
+.ai-generated {
+  .badge {
+    float: right;
+    background: #eef;
+    border-radius: 5px;
+    padding: 2px 8px;
+    font-size: 0.8rem;
+    color: #333;
+  }
+}
+
+span.ai-one-sentence-summary {
+  padding-right: 2em;
+}
+
+div.ai-topic-heading {
+  margin-bottom: 0.5em;
+  margin-right: 6em;
+
+  .badge {
+    i {
+      margin-left: 0.5em;
+    }
+  }
+
+  &::after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+ul.ai-topic {
+  li {
+    margin-bottom: 0.5em;
+    margin-left: 4em;
+    margin-right: 6em;
+  }
+
+  li.ai-floater-inactive::marker {
+    content: '●  ';
+  }
+  li.ai-floater-active::marker {
+    content: '▶  ';
+  }
+}
+
+.ai-floater-header {
+  white-space: normal;
+  text-align: center;
+}
+
+@import '../stepAnalysis/StepAnalysisEnrichmentResult';
+
+.ai-expression-graph-floater {
+  @extend %word-cloud-base;
+  height: 450px;
+}
+
+.ai-expression-graph-floaterContent {
+  display: block;
+}
+
+/**
+ * color is copied from AllSites.scss
+ * can't seem to `@extend` styles from other files
+ *
+ */
+.ai-link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: #069;
+  text-decoration: none;
+  cursor: pointer;
+  font: inherit;
+
+  &:hover {
+    text-decoration: underline;
+    background: none;
+  }
+}

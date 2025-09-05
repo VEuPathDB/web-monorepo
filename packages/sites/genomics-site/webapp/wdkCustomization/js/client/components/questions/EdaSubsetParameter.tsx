@@ -32,6 +32,7 @@ import {
 } from '@veupathdb/wdk-client/lib/Views/Strategy/StepDetails';
 import { formatFilterDisplayValue } from '@veupathdb/eda/lib/core/utils/study-metadata';
 import { DatasetItem } from '@veupathdb/wdk-client/lib/Views/Question/Params/DatasetParamUtils';
+import { parseJson } from '@veupathdb/eda/lib/notebook/Utils';
 
 const datasetIdParamName = 'eda_dataset_id';
 
@@ -160,14 +161,6 @@ function SubsettingAdapter(props: SubsettingAdapterProps) {
       />
     </div>
   );
-}
-
-function parseJson(str: string) {
-  try {
-    return JSON.parse(str);
-  } catch {
-    return undefined;
-  }
 }
 
 export function EdaSubsetStepDetails(props: LeafStepDetailsContentProps) {

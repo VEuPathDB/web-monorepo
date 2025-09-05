@@ -1,9 +1,8 @@
 import React, { CSSProperties } from 'react';
 import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
-import {
-  NumberedHeader,
+import NumberedHeader, {
   NumberedHeaderProps,
-} from '../../../workspace/Subsetting/SubsetDownloadModal';
+} from '@veupathdb/coreui/lib/components/forms/NumberedHeader';
 
 type ComputationStepContainer = {
   children: React.ReactChild;
@@ -13,6 +12,7 @@ type ComputationStepContainer = {
     color?: NumberedHeaderProps['color'];
   };
   isStepDisabled?: boolean;
+  showStepNumber?: boolean;
 };
 
 const disabledStyles: CSSProperties = {
@@ -24,14 +24,21 @@ export function ComputationStepContainer(props: ComputationStepContainer) {
   const theme = useUITheme();
   const primaryColor =
     theme?.palette.primary.hue[theme.palette.primary.level] ?? 'black';
-  const { children, computationStepInfo, isStepDisabled } = props;
+  const {
+    children,
+    computationStepInfo,
+    isStepDisabled,
+    showStepNumber = true,
+  } = props;
   return (
     <div style={isStepDisabled ? disabledStyles : undefined}>
-      <NumberedHeader
-        number={computationStepInfo.stepNumber}
-        text={computationStepInfo.stepTitle}
-        color={isStepDisabled ? 'darkgrey' : primaryColor}
-      />
+      {showStepNumber && (
+        <NumberedHeader
+          number={computationStepInfo.stepNumber}
+          text={computationStepInfo.stepTitle}
+          color={isStepDisabled ? 'darkgrey' : primaryColor}
+        />
+      )}
       {children}
     </div>
   );
