@@ -18,8 +18,7 @@
     "tsc": "tsc",
     "copy-assets": "veupathdb-react-scripts copy-assets src",
     "remove-undesired-assets": "rm -rf lib/assets/svg lib/stories",
-    "build-npm-modules": "npm-run-all build remove-undesired-assets",
-    "build-forever": "veupathdb-react-scripts build-forever src",
+    "build-npm-modules": "npm-run-all build tsc copy-assets remove-undesired-assets",
     "create-svg-icons": "npx @svgr/cli --icon --ignore-existing --replace-attr-values \"#000000=currentColor\" --out-dir src/components/icons/ src/assets/svg/ --typescript",
     "chromatic": "npx chromatic --project-token=52342b8693f6"
   },
