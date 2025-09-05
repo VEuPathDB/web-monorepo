@@ -625,16 +625,15 @@ export function submitPasswordReset(
   };
 }
 
-async function logOut() {
-  await fetch(`/service/logout`, {
-    credentials: 'include',
-  });
-  window.location.assign('/');
-}
-
-export function deleteAccount(): ActionThunk<void> {
+// FIXME: this method does not properly log out and errors silently
+export function deleteAccount(): ActionThunk<EmptyAction> {
   return function run({ wdkService, transitioner }) {
-    return [wdkService.deleteAccount().then(() => logOut())];
+    return [
+      wdkService
+        .deleteAccount()
+        .then(() => wdkService.logout())
+        .then(() => emptyAction),
+    ];
   };
 }
 
