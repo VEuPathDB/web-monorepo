@@ -625,16 +625,14 @@ export function submitPasswordReset(
   };
 }
 
+// FIXME: this method does not properly log out and errors silently
 export function deleteAccount(): ActionThunk<EmptyAction> {
   return function run({ wdkService, transitioner }) {
     return [
       wdkService
         .deleteAccount()
-        .then(
-          () => wdkService.logout(),
-          (error) => notifyUnhandledError(error)
-        )
-        .then((response) => emptyAction),
+        .then(() => wdkService.logout())
+        .then(() => emptyAction),
     ];
   };
 }
