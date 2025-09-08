@@ -340,7 +340,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
             }}
           >
             If your position or affiliation has changed, please additionally
-            update the Account page.
+            update the Profile tab.
           </p>
           <div
             style={{

@@ -40,7 +40,7 @@ const ProfileNavigationSection: React.FC<ProfileNavigationSectionProps> = ({
     {
       key: 'subscription',
       label: 'Subscription',
-      icon: <i className="fa fa-bell"></i>,
+      icon: <i className="fa fa-tags"></i>,
     },
     {
       key: 'preferences',
