@@ -7,10 +7,14 @@ export function SubscriptionManagementBanner({ address, onClose }) {
 
   const message = (
     <div style={{ fontSize: '1.2em' }}>
-      <strong>{address} are not associated with a subscription.</strong> Please
-      join your group's subscription, or if you are a PI or group manager{' '}
-      <Link to="/static-content/subscriptions.html">create a subscription</Link>
-      .
+      <strong>{address} are not associated with a subscription.</strong>
+      {'  '}If your group has subscribed, please{' '}
+      <Link to="/user/profile#subscription">link to your group</Link>.{'  '}If
+      not, please ask your{' '}
+      <Link to="/static-content/subscriptions.html">
+        PI or group manager to subscribe
+      </Link>
+      {'  '}.
     </div>
   );
 
