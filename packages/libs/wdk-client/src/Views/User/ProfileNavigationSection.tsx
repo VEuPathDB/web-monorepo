@@ -6,7 +6,7 @@ import { FilledButton, OutlinedButton } from '@veupathdb/coreui';
 import useUITheme from '@veupathdb/coreui/lib/components/theming/useUITheme';
 
 const SECTION_KEYS = [
-  'account',
+  'profile',
   'subscription',
   'preferences',
   'security',
@@ -36,11 +36,11 @@ const ProfileNavigationSection: React.FC<ProfileNavigationSectionProps> = ({
   onSectionChange,
   hasUnsavedChanges,
   sections = [
-    { key: 'account', label: 'Account', icon: <i className="fa fa-user"></i> },
+    { key: 'profile', label: 'Profile', icon: <i className="fa fa-user"></i> },
     {
       key: 'subscription',
       label: 'Subscription',
-      icon: <i className="fa fa-bell"></i>,
+      icon: <i className="fa fa-tags"></i>,
     },
     {
       key: 'preferences',

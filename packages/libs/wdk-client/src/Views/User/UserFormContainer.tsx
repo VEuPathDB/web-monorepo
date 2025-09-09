@@ -176,6 +176,7 @@ function UserFormContainer(props: UserFormContainerProps) {
                   display: 'flex',
                   alignItems: 'baseline',
                   gap: '0.5em',
+                  marginTop: '0.5em',
                 }}
               >
                 {isSubscribed ? (

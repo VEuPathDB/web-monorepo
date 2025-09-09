@@ -232,6 +232,16 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                   formatOptionLabel={(option) => option.label}
                   form="DO_NOT_SUBMIT_ON_ENTER"
                   className="wdk-UserProfile-TypeAheadSelect"
+                  styles={{
+                    valueContainer: (provided) => ({
+                      ...provided,
+                      cursor: 'text',
+                    }),
+                    indicatorsContainer: (provided) => ({
+                      ...provided,
+                      cursor: 'pointer', // Keep dropdown arrow as pointer
+                    }),
+                  }}
                   theme={(selectTheme) => ({
                     ...selectTheme,
                     colors: {
@@ -315,15 +325,22 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
             style={{
               fontSize: '1.2em',
               fontWeight: 500,
-              marginBottom: 0,
+              marginBottom: '1em',
               justifySelf: 'center',
             }}
           >
             Are you sure you want to leave the group?
           </p>
-          <p style={{ fontSize: '1.2em', justifySelf: 'center' }}>
+          <p
+            style={{
+              fontSize: '1.2em',
+              justifySelf: 'center',
+              textAlign: 'center',
+              width: 400,
+            }}
+          >
             If your position or affiliation has changed, please additionally
-            update the Account page.
+            update the Profile tab.
           </p>
           <div
             style={{
