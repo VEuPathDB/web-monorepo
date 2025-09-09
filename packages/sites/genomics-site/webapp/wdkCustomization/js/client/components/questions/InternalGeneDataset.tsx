@@ -131,21 +131,15 @@ function InternalGeneDatasetContent(props: Props) {
     ? [selectedSearch, true]
     : [internalSearchName, false];
 
-  const [internalQuestion, outputRecordClass, datasetCategory] =
-    useMemo(
-      () =>
-        getTableQuestionMetadata(questions, recordClasses, internalSearchName),
-      [questions, recordClasses, internalSearchName]
-    );
+  const [internalQuestion, outputRecordClass, datasetCategory] = useMemo(
+    () =>
+      getTableQuestionMetadata(questions, recordClasses, internalSearchName),
+    [questions, recordClasses, internalSearchName]
+  );
 
   const serviceResult = useWdkService(
     async (wdkService) => {
-      if (
-        !questions ||
-        !ontology ||
-        !outputRecordClass ||
-        !datasetCategory
-      ) {
+      if (!questions || !ontology || !outputRecordClass || !datasetCategory) {
         return undefined;
       }
 
@@ -256,9 +250,7 @@ function InternalGeneDatasetContent(props: Props) {
     !datasourceRecords ||
     !filteredDatasourceRecords ? (
     <Loading />
-  ) : !internalQuestion ||
-    !outputRecordClass ||
-    !datasetCategory? (
+  ) : !internalQuestion || !outputRecordClass || !datasetCategory ? (
     <NotFound />
   ) : (
     <div className={cx()}>
@@ -514,11 +506,7 @@ function getTableQuestionMetadata(
   questions: Question[] | undefined,
   recordClasses: RecordClass[] | undefined,
   internalSearchName: string
-): [
-  Question | undefined,
-  RecordClass | undefined,
-  string | undefined
-] {
+): [Question | undefined, RecordClass | undefined, string | undefined] {
   if (!questions || !recordClasses) {
     return [undefined, undefined, undefined];
   }
@@ -538,11 +526,7 @@ function getTableQuestionMetadata(
     ({ urlSegment }) => urlSegment === internalQuestion.outputRecordClassName
   );
 
-  return [
-    internalQuestion,
-    outputRecordClass,
-    datasetCategory.join('')
-    ];
+  return [internalQuestion, outputRecordClass, datasetCategory.join('')];
 }
 
 function getSelectedDataSetRecord(

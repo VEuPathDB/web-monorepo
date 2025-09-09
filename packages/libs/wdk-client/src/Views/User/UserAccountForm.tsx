@@ -146,7 +146,7 @@ function UserAccountForm(props: UserAccountFormProps) {
 
   const renderSectionContent = (): ReactNode => {
     switch (activeSection) {
-      case 'account':
+      case 'profile':
         return (
           <div>
             <form
@@ -168,7 +168,6 @@ function UserAccountForm(props: UserAccountFormProps) {
               </p>
               {saveButton}
             </form>
-            {/*
             <p style={{ padding: '10px' }}></p>
             <form
               className="wdk-UserProfile-profileForm wdk-UserProfile-accountForm"
@@ -188,7 +187,6 @@ function UserAccountForm(props: UserAccountFormProps) {
                 />
               </fieldset>
             </form>
-            */}
           </div>
         );
       case 'subscription':
