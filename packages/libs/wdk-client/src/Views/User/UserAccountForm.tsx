@@ -168,6 +168,7 @@ function UserAccountForm(props: UserAccountFormProps) {
               </p>
               {saveButton}
             </form>
+            {/*
             <p style={{ padding: '10px' }}></p>
             <form
               className="wdk-UserProfile-profileForm wdk-UserProfile-accountForm"
@@ -187,6 +188,7 @@ function UserAccountForm(props: UserAccountFormProps) {
                 />
               </fieldset>
             </form>
+            */}
           </div>
         );
       case 'subscription':
