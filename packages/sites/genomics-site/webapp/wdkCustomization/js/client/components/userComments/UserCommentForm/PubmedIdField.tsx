@@ -99,7 +99,7 @@ export const PubMedIdsField: React.FunctionComponent<PubMedIdsFieldProps> = ({
                 `https://pgb.liv.ac.uk/~tony/ai_summary/?db=${projectId}&gene=${geneId}` +
                 (validIds.length === 1 ? `&id=${validIds[0]}` : '');
               return (
-                <a href={url} target="_blank" rel="noopener noreferrer">
+                <a href={url} target="_blank" rel="noopener">
                   our prototype AI tool
                 </a>
               );
