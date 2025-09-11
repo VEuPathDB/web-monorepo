@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { groupBy, noop } from 'lodash';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 
 import { Link, IconAlt } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
@@ -19,6 +19,7 @@ import { SubscriptionManagementBanner } from './SubscriptionManagementBanner';
 import { BannerDismissal } from '../hooks/announcements';
 import { userIsSubscribed } from '../../../wdk-client/lib/Utils/Subscriptions';
 import { showSubscriptionProds } from '../config';
+import { RootState } from '../../../wdk-client/lib/Core/State/Types';
 
 // Type definitions
 interface AnnouncementsProps {
@@ -29,6 +30,7 @@ interface AnnouncementsProps {
 
 interface AnnouncementRenderProps extends ServiceConfig {
   location: ReturnType<typeof useLocation>;
+  record: RootState['record'];
   currentUser: User;
   subscriptionGroups: SubscriptionGroup[] | undefined;
   onClose?: () => void;
@@ -180,6 +182,59 @@ const siteAnnouncements: SiteAnnouncement[] = [
     },
     renderAsIs: true,
   },
+
+  // Liverpool AI prototype
+  {
+    id: 'liverpool-gene-func-ai',
+    dismissible: true,
+    renderDisplay: ({
+      location,
+      record,
+      projectId,
+      onClose,
+    }: AnnouncementRenderProps) => {
+      if (!location.pathname.startsWith('/record/gene')) return null;
+
+      // get the gene ID from the store rather than the URL, which can be an invalid, user-typed ID
+      if (
+        record.isLoading ||
+        record.recordClass?.fullName !== 'GeneRecordClasses.GeneRecordClass'
+      )
+        return null;
+      const { value: geneId } =
+        record.record?.id?.find(({ name }) => name === 'source_id') ?? {};
+      if (!geneId) return null;
+
+      const url = `https://pgb.liv.ac.uk/~tony/ai_summary/?db=${projectId}&gene=${geneId}`;
+
+      const bannerProps: BannerProps = {
+        type: 'info',
+        message: (
+          <div style={{ fontSize: '1.2em' }}>
+            <b>New:</b>{' '}
+            <a href={url} target="_blank">
+              Prototype AI tool
+            </a>{' '}
+            for summarizing what an open-access publication or uploaded PDF says
+            about this gene.
+          </div>
+        ),
+        primaryActionButtonProps: {
+          text: 'Check it out!',
+          onPress: () => {
+            window.open(url, '_blank');
+          },
+        },
+      };
+      return (
+        <div style={{ margin: '3px' }}>
+          <Banner banner={bannerProps} onClose={onClose} />
+        </div>
+      );
+    },
+    renderAsIs: true,
+  },
+
   // alpha
   {
     id: 'alpha',
@@ -1292,6 +1347,10 @@ function Announcements({
 }: AnnouncementsProps) {
   const location = useLocation();
   const data = useWdkService(fetchAnnouncementsData, []);
+  const record = useSelector((state: RootState) => {
+    console.log({ state });
+    return state.record;
+  });
 
   const onCloseFactory = useCallback(
     (id: string) => () => {
@@ -1352,6 +1411,7 @@ function Announcements({
           const display = isSiteAnnouncement(announcementData)
             ? announcementData.renderDisplay({
                 ...data.config,
+                record,
                 location,
                 currentUser,
                 subscriptionGroups,
