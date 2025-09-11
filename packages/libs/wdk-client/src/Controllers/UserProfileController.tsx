@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { submitProfileForm, profileFormUpdate } from '../Actions/UserActions';
+import {
+  submitProfileForm,
+  profileFormUpdate,
+  profileFormReset,
+  deleteAccount,
+} from '../Actions/UserActions';
 import PageController from '../Core/Controllers/PageController';
 import { wrappable } from '../Utils/ComponentUtils';
 import UserProfile from '../Views/User/Profile/UserProfile';
@@ -9,16 +14,24 @@ import { RootState } from '../Core/State/Types';
 const actionCreators = {
   updateProfileForm: profileFormUpdate,
   submitProfileForm,
+  // Note that `resetProfileForm` takes as an arg the unmodified data with which it "resets".
+  // This is provided by local state (`initialUserStateRef`) in `UserFormContainer`,
+  // rather than by the redux store, as you might expect.
+  resetProfileForm: profileFormReset,
+  deleteAccount: deleteAccount,
 };
 
 type StateProps = Pick<RootState, 'globalData'> & RootState['userProfile'];
 
 type DispatchProps = { userEvents: typeof actionCreators };
 
-type OwnProps = {
+export type UserProfileControllerProps = {
   introComponent?: React.ComponentType;
-  showChangePasswordBox?: boolean;
+  singleFormMode?: boolean;
+  highlightMissingFields?: boolean;
+  showSubscriptionProds?: boolean;
 };
+type OwnProps = UserProfileControllerProps;
 
 type Props = DispatchProps & StateProps & OwnProps;
 

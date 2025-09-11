@@ -1,4 +1,4 @@
-$hamburger-width: 1013px;
+@import '../../styles/collapsed-header-mixins.scss';
 
 @mixin shadowed {
   text-shadow: 1px 1px 1px #00000052, -1px -1px 1px #00000052,
@@ -16,7 +16,7 @@ $hamburger-width: 1013px;
     'site-branding .         project-branding project-branding'
     'site-branding searchbar .                .     '
     'site-branding menubar   social           login          ';
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1.5fr 0.5fr 0.1fr;
 
   align-items: center;
 
