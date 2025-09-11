@@ -85,38 +85,30 @@ export const PubMedIdsField: React.FunctionComponent<PubMedIdsFieldProps> = ({
       {geneId && projectId && (
         <div>
           <h4>
-            🤖 AI-extracted annotations <BetaIcon />
+            🤖 AI Gene Function Summaries <BetaIcon />
           </h4>
-          <ul>
+          <p>
+            You may wish to try{' '}
             {(() => {
               const validIds = idsField
                 .split(',')
                 .map((id) => id.trim())
                 .filter((id) => id !== '' && /^\d+$/.test(id));
 
-              if (validIds.length === 0) {
-                return (
-                  <li key="placeholder">
-                    Enter valid PubMed ID(s) in the field above
-                  </li>
-                );
-              }
-
-              return validIds.map((id, index) => {
-                const url = `https://pgb.liv.ac.uk/~tony/ai_summary/?db=${projectId}&id=${id}&gene=${geneId}`;
-                const link_text = `${geneId} function from full-text of PubMed ${id}`;
-                return (
-                  <li key={index}>
-                    <a href={url} target="_blank" rel="noopener noreferrer">
-                      {link_text}
-                    </a>
-                  </li>
-                );
-              });
-            })()}
-          </ul>
-          <p>
-            <i>Opens new tabs. Requires fully open-access papers.</i>
+              const url =
+                `https://pgb.liv.ac.uk/~tony/ai_summary/?db=${projectId}&gene=${geneId}` +
+                (validIds.length === 1 ? `&id=${validIds[0]}` : '');
+              return (
+                <a href={url} target="_blank" rel="noopener noreferrer">
+                  our prototype AI tool
+                </a>
+              );
+            })()}{' '}
+            (opens in a new browser tab) to generate a summary of what a
+            publication or an uploaded PDF says about this gene. After reviewing
+            and revising the AI output as needed, you can paste the summary into
+            the <i>Comment</i> field above. When satisfied with your comment,
+            click <i>Add Comment</i> to submit.
           </p>
         </div>
       )}

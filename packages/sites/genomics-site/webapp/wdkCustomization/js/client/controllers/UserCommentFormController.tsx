@@ -510,11 +510,18 @@ const mergeProps = (
         </span>
       ),
       field: (
-        <TextArea
-          required
-          onChange={dispatchProps.updateFormField('content')}
-          value={stateProps.submission.content || ''}
-        />
+        <>
+          <TextArea
+            required
+            onChange={dispatchProps.updateFormField('content')}
+            value={stateProps.submission.content || ''}
+          />
+          <p>
+            Note: If your comment is based on an AI-generated summary, please
+            add a brief note at the end of your comment such as “Based on
+            AI-generated summary, reviewed by [your name]”.
+          </p>
+        </>
       ),
     },
   ];
