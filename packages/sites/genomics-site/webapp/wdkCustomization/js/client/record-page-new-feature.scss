@@ -1,17 +1,21 @@
-/* This CSS adds the NEW icon next to the attribute name on record pages */
+/* This CSS adds the NEW or BETA icons next to the attribute name on record pages for specific items */
+
+$icon-new: url('~@veupathdb/wdk-client/lib/Core/Style/images/new-feature.png');
+$icon-beta: url('~@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png');
 
 /* page item */
 #Cellxgene {
   .wdk-CollapsibleSectionHeader:after {
-    content: url('~@veupathdb/wdk-client/lib/Core/Style/images/new-feature.png');
+    content: $icon-new;
     margin-left: 0.5ch;
   }
 }
+
 /* navigation item */
 a.wdk-RecordNavigationItem#nav-Cellxgene:after {
   vertical-align: sub;
   margin-left: 0.5ch;
-  content: url('~@veupathdb/wdk-client/lib/Core/Style/images/new-feature.png');
+  content: $icon-new;
 }
 
 /* page item */
@@ -20,16 +24,18 @@ a.wdk-RecordNavigationItem#nav-Cellxgene:after {
     width: 38px;
     height: 22px;
     margin-left: 1ch;
-    content: url('~@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png');
+    content: $icon-beta;
   }
 }
+
 /* navigation item */
 a.wdk-RecordNavigationItem#nav-ai_expression:after {
   vertical-align: sub;
   margin-left: 0.5ch;
-  content: url('~@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png');
+  content: $icon-beta;
 }
 
+/* table heading */
 div.HeadingCell-liverpool_ai_link,
 div.HeadingCell-liverpool_ai_links {
   white-space: nowrap;
@@ -37,6 +43,6 @@ div.HeadingCell-liverpool_ai_links {
   &:after {
     vertical-align: sub;
     margin-left: 0.5ch;
-    content: url('~@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png');
+    content: $icon-beta;
   }
 }
