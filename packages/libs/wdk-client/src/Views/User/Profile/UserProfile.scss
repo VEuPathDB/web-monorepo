@@ -1,7 +1,7 @@
 .wdk-UserProfile {
   h1 {
     padding: 0;
-    margin: 0.5em 0;
+    margin-top: 0.5em;
   }
 
   > * + * {
@@ -44,8 +44,9 @@
 
   &-profileForm i {
     color: red;
-    font-size: 0.75em;
+    font-size: 0.666em;
     margin-right: 0.4em;
+    vertical-align: top;
   }
 
   &-profileForm fieldset > div {
@@ -92,4 +93,77 @@
   textarea {
     max-width: 73vw;
   }
+
+  &-title {
+    display: flex;
+    flex-direction: column;
+
+    h3 {
+      font-weight: 400;
+      padding: 0;
+      margin-top: 0.25em;
+    }
+  }
+
+  // Override inline display for registration form fieldsets to stack vertically
+  &-registrationForm fieldset {
+    display: block;
+    width: 100%;
+  }
+}
+
+// Highlight empty required fields with red border
+.field-required-empty {
+  border: 2px solid #d32f2f !important;
+  box-shadow: 0 0 3px rgba(211, 47, 47, 0.3);
+}
+
+.wdk-UserAccountForm {
+  // Active section nice fallback color
+  --active-section: #d5eaf5;
+
+  display: flex;
+  gap: 20px;
+  margin-top: 3em;
+
+  .wdk-ProfileNavigationSection {
+    min-width: 250px;
+  }
+
+  .wdk-ProfileNavigationItems {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    margin-bottom: 1em;
+    font-size: 1.5em;
+  }
+
+  .wdk-ProfileNavigationItem {
+    display: grid;
+    align-items: center;
+    gap: 0.5em;
+    grid-template-columns: 1.5em 1fr auto;
+    margin: 0;
+    padding: 0.45em;
+    border-radius: 0.35em;
+    cursor: pointer;
+    border: 1px solid transparent;
+
+    i {
+      justify-self: center;
+    }
+
+    &:hover {
+      border: 1px solid var(--active-section);
+    }
+  }
+
+  .wdk-ProfileNavigationItem__active {
+    border: 1px solid transparent;
+    background: var(--active-section);
+  }
+}
+
+.wdk-DialogContent.wdk-ProfileContent {
+  min-width: 400px;
 }

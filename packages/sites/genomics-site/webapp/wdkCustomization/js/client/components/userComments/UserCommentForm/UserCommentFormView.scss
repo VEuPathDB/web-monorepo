@@ -83,15 +83,17 @@
           margin-left: 1em;
         }
 
-        > div > input[type='text'] {
-          box-sizing: content-box;
-          width: calc(100ch + 4px);
-        }
+        > div {
+          > p,
+          > textarea,
+          > input[type='text'] {
+            box-sizing: content-box;
+            width: calc(100ch + 4px);
+          }
 
-        > div > textarea {
-          height: 5em;
-          box-sizing: content-box;
-          width: calc(100ch + 4px);
+          > textarea {
+            height: 5em;
+          }
         }
 
         .HelpTrigger {
