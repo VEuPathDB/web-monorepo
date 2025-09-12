@@ -320,6 +320,7 @@ export default function Banner(props: BannerComponentProps) {
                   styleOverrides={{
                     container: {
                       marginRight: '0.5em',
+                      minWidth: '11em',
                     },
                   }}
                   {...primaryActionButtonProps}
