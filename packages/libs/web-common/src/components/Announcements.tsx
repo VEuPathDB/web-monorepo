@@ -1347,10 +1347,7 @@ function Announcements({
 }: AnnouncementsProps) {
   const location = useLocation();
   const data = useWdkService(fetchAnnouncementsData, []);
-  const record = useSelector((state: RootState) => {
-    console.log({ state });
-    return state.record;
-  });
+  const record = useSelector((state: RootState) => state.record);
 
   const onCloseFactory = useCallback(
     (id: string) => () => {
