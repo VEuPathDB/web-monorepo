@@ -205,7 +205,7 @@ const siteAnnouncements: SiteAnnouncement[] = [
         record.record?.id?.find(({ name }) => name === 'source_id') ?? {};
       if (!geneId) return null;
 
-      const url = `https://pgb.liv.ac.uk/~tony/ai_summary/?db=${projectId}&gene=${geneId}`;
+      const url = `https://pgb.liv.ac.uk/aisum/?db=${projectId}&gene=${geneId}`;
 
       const bannerProps: BannerProps = {
         type: 'info',
