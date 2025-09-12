@@ -85,7 +85,7 @@ export const PubMedIdsField: React.FunctionComponent<PubMedIdsFieldProps> = ({
       {geneId && projectId && (
         <div>
           <h4>
-            🤖 AI Gene Function Summaries <BetaIcon />
+            AI Gene Function Summaries <BetaIcon />
           </h4>
           <div>
             You may wish to try{' '}
