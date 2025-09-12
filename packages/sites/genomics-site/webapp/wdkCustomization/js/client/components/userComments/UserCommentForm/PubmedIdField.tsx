@@ -87,7 +87,7 @@ export const PubMedIdsField: React.FunctionComponent<PubMedIdsFieldProps> = ({
           <h4>
             🤖 AI Gene Function Summaries <BetaIcon />
           </h4>
-          <p>
+          <div>
             You may wish to try{' '}
             {(() => {
               const validIds = idsField
@@ -109,7 +109,7 @@ export const PubMedIdsField: React.FunctionComponent<PubMedIdsFieldProps> = ({
             and revising the AI output as needed, you can paste the summary into
             the <i>Comment</i> field above. When satisfied with your comment,
             click <i>Add Comment</i> to submit.
-          </p>
+          </div>
         </div>
       )}
     </div>
