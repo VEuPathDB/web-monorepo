@@ -96,7 +96,7 @@ export const PubMedIdsField: React.FunctionComponent<PubMedIdsFieldProps> = ({
                 .filter((id) => id !== '' && /^\d+$/.test(id));
 
               const url =
-                `https://pgb.liv.ac.uk/~tony/ai_summary/?db=${projectId}&gene=${geneId}` +
+                `https://pgb.liv.ac.uk/aisum/?db=${projectId}&gene=${geneId}` +
                 (validIds.length === 1 ? `&id=${validIds[0]}` : '');
               return (
                 <a href={url} target="_blank" rel="noopener">
