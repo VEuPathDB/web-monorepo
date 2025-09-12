@@ -1,6 +1,7 @@
 import React from 'react';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { Link, useHistory } from 'react-router-dom';
+import './SubscriptionManagementBanner.scss';
 
 export function SubscriptionManagementBanner({ address, onClose }) {
   const history = useHistory();
