@@ -29,3 +29,14 @@ a.wdk-RecordNavigationItem#nav-ai_expression:after {
   margin-left: 0.5ch;
   content: url('~@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png');
 }
+
+div.HeadingCell-liverpool_ai_link,
+div.HeadingCell-liverpool_ai_links {
+  white-space: nowrap;
+
+  &:after {
+    vertical-align: sub;
+    margin-left: 0.5ch;
+    content: url('~@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png');
+  }
+}
