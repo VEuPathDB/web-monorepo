@@ -321,7 +321,7 @@ export default function Banner(props: BannerComponentProps) {
                     container: {
                       marginRight: '0.5em',
                       marginLeft: '1em',
-                      minWidth: '11em',
+                      minWidth: 'max-content',
                     },
                   }}
                   {...primaryActionButtonProps}
