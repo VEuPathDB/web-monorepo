@@ -176,10 +176,14 @@ $red: #dd314e;
     height: 100%;
     flex-direction: row;
     align-items: center;
+    transform: unset;
 
-    .UserMenu-Icon {
+    .UserMenu-Icon,
+    .UserMenu-LoggedInIcon,
+    .UserMenu-GuestIcon {
       font-size: 25px;
       margin-right: 10px;
+      margin-bottom: 2px;
     }
   }
 

@@ -228,7 +228,11 @@ class HeaderNav extends React.Component {
           )}
           <div style={{ display: 'flex' }}>
             <IconMenu items={iconMenu} />
-            <UserMenu webAppUrl={webAppUrl} actions={actions} user={user} />
+            {user && !user.isGuest ? (
+              <UserMenu webAppUrl={webAppUrl} user={user} actions={actions} />
+            ) : (
+              <UserMenuGuest webAppUrl={webAppUrl} actions={actions} />
+            )}
           </div>
         </div>
       </div>
