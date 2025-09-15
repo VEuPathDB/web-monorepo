@@ -32,14 +32,22 @@
     background: rgba(0, 125, 0, 0.4);
   }
 
-  &-profileForm fieldset {
-    margin-bottom: 2em;
-    display: inline;
+  &-profileForm {
+    margin-left: 2em;
   }
 
-  &-profileForm legend {
-    font-size: 14px;
-    font-weight: bold;
+  &-profileForm h2 {
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+  &-profileForm h3 {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+  }
+
+  &-profileForm h4 {
+    font-weight: 400;
   }
 
   &-profileForm i {

@@ -163,9 +163,6 @@ function UserAccountForm(props: UserAccountFormProps) {
                 vocabulary={vocabulary}
                 highlightMissingFields={props.highlightMissingFields}
               />
-              <p>
-                <i className="fa fa-asterisk"></i> = required
-              </p>
               {saveButton}
             </form>
             {/*

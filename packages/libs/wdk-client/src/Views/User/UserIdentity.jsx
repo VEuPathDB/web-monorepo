@@ -5,6 +5,8 @@ import TextArea from '../../Components/InputControls/TextArea';
 import TextBox from '../../Components/InputControls/TextBox';
 import SingleSelect from '../../Components/InputControls/SingleSelect';
 import { wrappable } from '../../Utils/ComponentUtils';
+import { Grid } from '@material-ui/core';
+import './Profile/UserProfile.scss';
 
 /**
  * This React stateless function displays the user identification fieldset of the form.
@@ -14,15 +16,28 @@ import { wrappable } from '../../Utils/ComponentUtils';
  */
 const UserIdentity = (props) => {
   let { user, onPropertyChange, vocabulary, highlightMissingFields } = props;
+
   return (
     <>
+      <h2>Profile</h2>
       <PrivacyPolicyLink />
-      <fieldset>
-        <legend>Identification</legend>
-        <div>
-          <label htmlFor="userEmail">
-            <i className="fa fa-asterisk"></i>Email:
-          </label>
+      <h3>Contact</h3>
+      <p>
+        <i className="fa fa-asterisk"></i> = required
+      </p>
+
+      <Grid
+        container
+        justifyContent="flex-start"
+        spacing={1}
+        alignItems="center"
+      >
+        <Grid item xs={3}>
+          <h4>
+            <i className="fa fa-asterisk"></i>Email:{' '}
+          </h4>
+        </Grid>
+        <Grid item xs={9}>
           <TextBox
             type="email"
             id="userEmail"
@@ -38,11 +53,13 @@ const UserIdentity = (props) => {
                 : ''
             }
           />
-        </div>
-        <div>
-          <label htmlFor="confirmUserEmail">
+        </Grid>
+        <Grid item xs={3}>
+          <h4>
             <i className="fa fa-asterisk"></i>Retype Email:
-          </label>
+          </h4>
+        </Grid>
+        <Grid item xs={9}>
           <TextBox
             type="email"
             id="confirmUserEmail"
@@ -58,7 +75,16 @@ const UserIdentity = (props) => {
                 : ''
             }
           />
-        </div>
+        </Grid>
+      </Grid>
+      <h3>Information</h3>
+      <Grid
+        container
+        spacing={1}
+        justifyContent="flex-start"
+        alignItems="center"
+        style={{ marginBottom: '3em' }}
+      >
         {props.propDefs
           .filter((def) => def.name !== 'subscriptionToken')
           .map((propDef) => {
@@ -73,66 +99,70 @@ const UserIdentity = (props) => {
             } = propDef;
             let value = user.properties[name] ? user.properties[name] : '';
             return (
-              <div key={name}>
-                <label htmlFor={name}>
-                  {isRequired ? <i className="fa fa-asterisk"></i> : ''}
-                  {displayName}:
-                </label>
-                {inputType === 'text' ? (
-                  <TextBox
-                    id={name}
-                    name={name}
-                    placeholder={suggestText}
-                    value={value}
-                    required={isRequired}
-                    onChange={onPropertyChange(name)}
-                    maxLength="255"
-                    size="80"
-                    className={
-                      highlightMissingFields && isRequired && !value
-                        ? 'field-required-empty'
-                        : ''
-                    }
-                  />
-                ) : inputType === 'textbox' ? (
-                  <TextArea
-                    id={name}
-                    name={name}
-                    placeholder={suggestText}
-                    value={value}
-                    required={isRequired}
-                    onChange={onPropertyChange(name)}
-                    maxLength="3000"
-                    style={{ width: '40em', height: '5em' }}
-                    className={
-                      highlightMissingFields && isRequired && !value
-                        ? 'field-required-empty'
-                        : ''
-                    }
-                  />
-                ) : inputType === 'select' ? (
-                  <SingleSelect
-                    id={name}
-                    name={name}
-                    value={value}
-                    required={isRequired}
-                    onChange={onPropertyChange(name)}
-                    items={[{ value: '', display: '--' }].concat(
-                      vocabulary[name]
-                    )}
-                    className={
-                      highlightMissingFields && isRequired && !value
-                        ? 'field-required-empty'
-                        : ''
-                    }
-                  />
-                ) : (
-                  <em>Unknown input type: {inputType}</em>
-                )}
-              </div>
+              <>
+                <Grid item key={name} xs={3}>
+                  <h4>
+                    {isRequired ? <i className="fa fa-asterisk"></i> : ''}
+                    {displayName}:
+                  </h4>
+                </Grid>
+                <Grid item xs={9} key={name + '_input'}>
+                  {inputType === 'text' ? (
+                    <TextBox
+                      id={name}
+                      name={name}
+                      placeholder={suggestText}
+                      value={value}
+                      required={isRequired}
+                      onChange={onPropertyChange(name)}
+                      maxLength="255"
+                      size="80"
+                      className={
+                        highlightMissingFields && isRequired && !value
+                          ? 'field-required-empty'
+                          : ''
+                      }
+                    />
+                  ) : inputType === 'textbox' ? (
+                    <TextArea
+                      id={name}
+                      name={name}
+                      placeholder={suggestText}
+                      value={value}
+                      required={isRequired}
+                      onChange={onPropertyChange(name)}
+                      maxLength="3000"
+                      style={{ width: '40em', height: '5em' }}
+                      className={
+                        highlightMissingFields && isRequired && !value
+                          ? 'field-required-empty'
+                          : ''
+                      }
+                    />
+                  ) : inputType === 'select' ? (
+                    <SingleSelect
+                      id={name}
+                      name={name}
+                      value={value}
+                      required={isRequired}
+                      onChange={onPropertyChange(name)}
+                      items={[{ value: '', display: '--' }].concat(
+                        vocabulary[name]
+                      )}
+                      className={
+                        highlightMissingFields && isRequired && !value
+                          ? 'field-required-empty'
+                          : ''
+                      }
+                    />
+                  ) : (
+                    <em>Unknown input type: {inputType}</em>
+                  )}
+                </Grid>
+              </>
             );
           })}
-      </fieldset>
+      </Grid>
     </>
   );
 };
@@ -161,7 +191,7 @@ export default wrappable(UserIdentity);
 
 function PrivacyPolicyLink() {
   return (
-    <div style={{ paddingBottom: '2em' }}>
+    <div>
       Review our&nbsp;
       <Link
         title="View the privacy policy in a new tab"
