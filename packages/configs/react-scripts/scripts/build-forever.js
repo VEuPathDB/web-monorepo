@@ -15,9 +15,14 @@ export async function main({ srcDir = 'src/lib', targetDir = 'lib' }) {
 
   // Set up file watching with chokidar
   let isBuilding = false;
+  let pendingRebuild = false;
 
   const triggerBuild = async (path) => {
-    if (isBuilding) return;
+    if (isBuilding) {
+      pendingRebuild = true;
+      console.log(`🔄 Build in progress, scheduling rebuild for: ${path}`);
+      return;
+    }
 
     isBuilding = true;
     const timestamp = new Date().toLocaleTimeString();
@@ -32,6 +37,12 @@ export async function main({ srcDir = 'src/lib', targetDir = 'lib' }) {
       console.error('❌ Build failed:', error.message);
     } finally {
       isBuilding = false;
+
+      // If changes occurred during build, trigger another build
+      if (pendingRebuild) {
+        pendingRebuild = false;
+        setTimeout(() => triggerBuild('pending changes'), 100);
+      }
     }
   };
 
