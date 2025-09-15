@@ -1,5 +1,6 @@
 import React from 'react';
 import { CheckboxList } from '@veupathdb/wdk-client/lib/Components';
+import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { useSelector } from 'react-redux';
 
 /**
@@ -90,16 +91,20 @@ function ApiApplicationSpecificProperties(props) {
       : EMAIL_PREFERENCE_DATA_GENOMICS;
 
   return (
-    <fieldset>
-      <legend>Preferences</legend>
+    <>
+      <h2>Preferences</h2>
+      <h3 style={{ paddingTop: 0 }}>Email notifications</h3>
       <p>Send me email alerts about new updates and features:</p>
-      <CheckboxList
-        name="emailAlerts"
-        items={emailPrefData}
-        value={emailPrefValue}
-        onChange={onEmailPreferenceChange}
-      />
-    </fieldset>
+      <div style={{ width: '400px', margin: '2em 1em' }}>
+        <CheckboxList
+          name="emailAlerts"
+          items={emailPrefData}
+          value={emailPrefValue}
+          onChange={onEmailPreferenceChange}
+          linksPosition={LinksPosition.Top}
+        />
+      </div>
+    </>
   );
 }
 
