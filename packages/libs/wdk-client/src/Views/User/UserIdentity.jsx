@@ -32,12 +32,12 @@ const UserIdentity = (props) => {
         spacing={1}
         alignItems="center"
       >
-        <Grid item xs={2}>
+        <Grid item xs={6} md={4} lg={3}>
           <h4>
             <i className="fa fa-asterisk"></i>Email:{' '}
           </h4>
         </Grid>
-        <Grid item xs={9}>
+        <Grid item xs={6} md={8} lg={9}>
           <TextBox
             type="email"
             id="userEmail"
@@ -54,12 +54,12 @@ const UserIdentity = (props) => {
             }
           />
         </Grid>
-        <Grid item xs={2}>
+        <Grid item xs={6} md={4} lg={3}>
           <h4>
             <i className="fa fa-asterisk"></i>Retype Email:
           </h4>
         </Grid>
-        <Grid item xs={9}>
+        <Grid item xs={6} md={8} lg={9}>
           <TextBox
             type="email"
             id="confirmUserEmail"
@@ -100,13 +100,13 @@ const UserIdentity = (props) => {
             let value = user.properties[name] ? user.properties[name] : '';
             return (
               <>
-                <Grid item key={name} xs={2}>
+                <Grid item key={name} xs={6} md={4} lg={3}>
                   <h4>
                     {isRequired ? <i className="fa fa-asterisk"></i> : ''}
                     {displayName}:
                   </h4>
                 </Grid>
-                <Grid item xs={9} key={name + '_input'}>
+                <Grid item xs={6} md={8} lg={9} key={name + '_input'}>
                   {inputType === 'text' ? (
                     <TextBox
                       id={name}
