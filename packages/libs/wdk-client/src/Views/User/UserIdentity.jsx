@@ -21,10 +21,10 @@ const UserIdentity = (props) => {
     <>
       <h2>Profile</h2>
       <PrivacyPolicyLink />
-      <h3>Contact</h3>
       <p>
         <i className="fa fa-asterisk"></i> = required
       </p>
+      <h3>Contact</h3>
 
       <Grid
         container
@@ -32,7 +32,7 @@ const UserIdentity = (props) => {
         spacing={1}
         alignItems="center"
       >
-        <Grid item xs={3}>
+        <Grid item xs={2}>
           <h4>
             <i className="fa fa-asterisk"></i>Email:{' '}
           </h4>
@@ -54,7 +54,7 @@ const UserIdentity = (props) => {
             }
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={2}>
           <h4>
             <i className="fa fa-asterisk"></i>Retype Email:
           </h4>
@@ -100,7 +100,7 @@ const UserIdentity = (props) => {
             let value = user.properties[name] ? user.properties[name] : '';
             return (
               <>
-                <Grid item key={name} xs={3}>
+                <Grid item key={name} xs={2}>
                   <h4>
                     {isRequired ? <i className="fa fa-asterisk"></i> : ''}
                     {displayName}:

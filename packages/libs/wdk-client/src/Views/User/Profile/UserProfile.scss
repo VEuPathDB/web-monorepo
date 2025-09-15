@@ -39,6 +39,7 @@
   &-profileForm h2 {
     margin-top: 0;
     padding-top: 0;
+    margin-bottom: 0.5em;
   }
 
   &-profileForm h3 {
@@ -50,11 +51,20 @@
     font-weight: 400;
   }
 
+  &-profileForm select {
+    font-size: 1.1em;
+  }
+
   &-profileForm i {
     color: red;
     font-size: 0.666em;
     margin-right: 0.4em;
     vertical-align: top;
+  }
+
+  &-profileForm input {
+    background-color: white !important;
+    font-size: 1.1em;
   }
 
   &-profileForm fieldset > div {
