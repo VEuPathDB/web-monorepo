@@ -28,7 +28,7 @@ export const UserSecurityForm = (
   return (
     <>
       <h2>Security</h2>
-      <h3 style={{ marginTop: 0 }}>Authentication</h3>
+      <h3 style={{ paddingTop: 0 }}>Authentication</h3>
       <Grid
         container
         spacing={1}
@@ -42,6 +42,7 @@ export const UserSecurityForm = (
           <OutlinedButton
             text="Change your password"
             onPress={() => (window.location.href = url)}
+            themeRole="primary"
           />
         </Grid>
       </Grid>
