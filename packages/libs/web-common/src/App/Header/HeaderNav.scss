@@ -6,6 +6,7 @@ $red: #dd314e;
 
 .HeaderNav {
   width: 100%;
+  min-width: 1024px;
   padding: 5px 10px;
   justify-content: space-between;
   position: relative;
@@ -153,7 +154,6 @@ $red: #dd314e;
   }
 
   width: 100%;
-  min-width: 1200px;
   height: 40px;
   position: fixed;
   top: 0;
