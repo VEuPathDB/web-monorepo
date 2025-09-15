@@ -302,7 +302,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
             )}
           </div>
           {saveButton}
-          <span style={{ marginTop: '3em', color: colors.gray[700] }}>
+          <span style={{ marginTop: '2em', color: colors.gray[700] }}>
             Questions? <Link to="/contact-us">Contact us</Link> if you need help
             joining a subscription.
           </span>

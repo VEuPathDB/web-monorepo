@@ -21,6 +21,7 @@ import { FormStatus } from '../../../../coreui/lib/components/buttons/SaveButton
 import Loading from '../../Components/Loading';
 import './UserAccountForm.scss';
 import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
+import { UserSecurityForm } from './UserSecurityForm';
 
 // Props interface
 export interface UserAccountFormProps {
@@ -226,7 +227,7 @@ function UserAccountForm(props: UserAccountFormProps) {
       case 'security':
         return (
           <div className="wdk-UserProfile-profileForm">
-            <UserPassword user={user} wdkConfig={wdkConfig} />
+            <UserSecurityForm {...props} />
           </div>
         );
       default:
