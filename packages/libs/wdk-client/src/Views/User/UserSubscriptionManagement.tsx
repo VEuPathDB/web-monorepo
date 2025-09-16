@@ -85,6 +85,20 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
     [subscriptionGroups]
   );
 
+  const deburredGroups = useMemo(
+    () =>
+      subscriptionGroups.map((group) => ({
+        ...group,
+        deburredGroupName: deburr(group.groupName.toLowerCase()),
+        deburredLeads: group.groupLeads.map((lead) => ({
+          ...lead,
+          deburredName: deburr(lead.name.toLowerCase()),
+          deburredOrganization: deburr(lead.organization.toLowerCase()),
+        })),
+      })),
+    [subscriptionGroups]
+  );
+
   const selectedGroup = useMemo(() => {
     const effectiveToken = localSelection ?? userGroupToken;
     return groupVocab.filter((g) => g.value === effectiveToken)[0];
@@ -221,24 +235,18 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                   }}
                   formatOptionLabel={(option) => option.label}
                   filterOption={(option, inputValue) => {
-                    const group = subscriptionGroups.find(
+                    const group = deburredGroups.find(
                       (g) => g.subscriptionToken === option.value
                     );
                     if (!group) return false;
 
                     const searchText = deburr(inputValue.toLowerCase().trim());
                     return (
-                      deburr(group.groupName.toLowerCase()).includes(
-                        searchText
-                      ) ||
-                      group.groupLeads.some(
+                      group.deburredGroupName.includes(searchText) ||
+                      group.deburredLeads.some(
                         (lead) =>
-                          deburr(lead.name.toLowerCase()).includes(
-                            searchText
-                          ) ||
-                          deburr(lead.organization.toLowerCase()).includes(
-                            searchText
-                          )
+                          lead.deburredName.includes(searchText) ||
+                          lead.deburredOrganization.includes(searchText)
                       )
                     );
                   }}
