@@ -20,6 +20,7 @@ import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import './UserSubscriptionManagement.scss';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../Core/State/Types';
+import { deburr } from 'lodash';
 
 interface UserSubscriptionManagementProps {
   user: User;
@@ -73,18 +74,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
     return validGroupList.length === 0 ? undefined : validGroupList[0];
   }, [userGroupToken, subscriptionGroups]);
 
-  const groupVocab1 = useMemo(
-    () =>
-      [{ value: '', display: '--' }].concat(
-        subscriptionGroups.map((group) => ({
-          value: group.subscriptionToken,
-          display: group.groupName,
-        }))
-      ),
-    [subscriptionGroups]
-  );
-
-  const groupVocab2 = useMemo(
+  const groupVocab = useMemo(
     () =>
       [{ value: '', label: '--' }].concat(
         subscriptionGroups.map((group) => ({
@@ -97,8 +87,8 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
 
   const selectedGroup = useMemo(() => {
     const effectiveToken = localSelection ?? userGroupToken;
-    return groupVocab2.filter((g) => g.value === effectiveToken)[0];
-  }, [groupVocab2, userGroupToken, localSelection]);
+    return groupVocab.filter((g) => g.value === effectiveToken)[0];
+  }, [groupVocab, userGroupToken, localSelection]);
 
   return (
     <div className="wdk-UserProfile-profileForm">
@@ -219,7 +209,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                 <Select<Option, any>
                   isMulti={false}
                   isSearchable
-                  options={groupVocab2}
+                  options={groupVocab}
                   value={selectedGroup}
                   onChange={(option: ValueType<Option, any>) => {
                     const value =
@@ -230,6 +220,28 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                     onPropertyChange(tokenField)(value);
                   }}
                   formatOptionLabel={(option) => option.label}
+                  filterOption={(option, inputValue) => {
+                    const group = subscriptionGroups.find(
+                      (g) => g.subscriptionToken === option.value
+                    );
+                    if (!group) return false;
+
+                    const searchText = deburr(inputValue.toLowerCase().trim());
+                    return (
+                      deburr(group.groupName.toLowerCase()).includes(
+                        searchText
+                      ) ||
+                      group.groupLeads.some(
+                        (lead) =>
+                          deburr(lead.name.toLowerCase()).includes(
+                            searchText
+                          ) ||
+                          deburr(lead.organization.toLowerCase()).includes(
+                            searchText
+                          )
+                      )
+                    );
+                  }}
                   form="DO_NOT_SUBMIT_ON_ENTER"
                   className="wdk-UserProfile-TypeAheadSelect"
                   styles={{
