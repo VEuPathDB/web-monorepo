@@ -220,7 +220,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                 }}
               >
                 <h4>Group name:</h4>
-                <Select<Option, any>
+                <Select<Option, false>
                   isMulti={false}
                   isSearchable
                   options={groupVocab}
