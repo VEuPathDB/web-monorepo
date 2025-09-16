@@ -225,11 +225,8 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                   isSearchable
                   options={groupVocab}
                   value={selectedGroup}
-                  onChange={(option: ValueType<Option, any>) => {
-                    const value =
-                      option == null || Array.isArray(option)
-                        ? ''
-                        : (option as Option).value;
+                  onChange={(option) => {
+                    const value = option?.value ?? '';
                     setLocalSelection(value);
                     onPropertyChange(tokenField)(value);
                   }}
