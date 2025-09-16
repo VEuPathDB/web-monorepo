@@ -20,6 +20,7 @@ import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import './UserSubscriptionManagement.scss';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../Core/State/Types';
+import { deburr } from 'lodash';
 
 interface UserSubscriptionManagementProps {
   user: User;
@@ -73,18 +74,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
     return validGroupList.length === 0 ? undefined : validGroupList[0];
   }, [userGroupToken, subscriptionGroups]);
 
-  const groupVocab1 = useMemo(
-    () =>
-      [{ value: '', display: '--' }].concat(
-        subscriptionGroups.map((group) => ({
-          value: group.subscriptionToken,
-          display: group.groupName,
-        }))
-      ),
-    [subscriptionGroups]
-  );
-
-  const groupVocab2 = useMemo(
+  const groupVocab = useMemo(
     () =>
       [{ value: '', label: '--' }].concat(
         subscriptionGroups.map((group) => ({
@@ -95,10 +85,24 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
     [subscriptionGroups]
   );
 
+  const deburredGroups = useMemo(
+    () =>
+      subscriptionGroups.map((group) => ({
+        ...group,
+        deburredGroupName: deburr(group.groupName.toLowerCase()),
+        deburredLeads: group.groupLeads.map((lead) => ({
+          ...lead,
+          deburredName: deburr(lead.name.toLowerCase()),
+          deburredOrganization: deburr(lead.organization.toLowerCase()),
+        })),
+      })),
+    [subscriptionGroups]
+  );
+
   const selectedGroup = useMemo(() => {
     const effectiveToken = localSelection ?? userGroupToken;
-    return groupVocab2.filter((g) => g.value === effectiveToken)[0];
-  }, [groupVocab2, userGroupToken, localSelection]);
+    return groupVocab.filter((g) => g.value === effectiveToken)[0];
+  }, [groupVocab, userGroupToken, localSelection]);
 
   return (
     <div className="wdk-UserProfile-profileForm">
@@ -216,20 +220,33 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                 }}
               >
                 <h4>Group name:</h4>
-                <Select<Option, any>
+                <Select<Option, false>
                   isMulti={false}
                   isSearchable
-                  options={groupVocab2}
+                  options={groupVocab}
                   value={selectedGroup}
-                  onChange={(option: ValueType<Option, any>) => {
-                    const value =
-                      option == null || Array.isArray(option)
-                        ? ''
-                        : (option as Option).value;
+                  onChange={(option) => {
+                    const value = option?.value ?? '';
                     setLocalSelection(value);
                     onPropertyChange(tokenField)(value);
                   }}
                   formatOptionLabel={(option) => option.label}
+                  filterOption={(option, inputValue) => {
+                    const group = deburredGroups.find(
+                      (g) => g.subscriptionToken === option.value
+                    );
+                    if (!group) return false;
+
+                    const searchText = deburr(inputValue.toLowerCase().trim());
+                    return (
+                      group.deburredGroupName.includes(searchText) ||
+                      group.deburredLeads.some(
+                        (lead) =>
+                          lead.deburredName.includes(searchText) ||
+                          lead.deburredOrganization.includes(searchText)
+                      )
+                    );
+                  }}
                   form="DO_NOT_SUBMIT_ON_ENTER"
                   className="wdk-UserProfile-TypeAheadSelect"
                   styles={{
