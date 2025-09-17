@@ -261,9 +261,6 @@ function UserAccountForm(props: UserAccountFormProps) {
           onPreferenceChange={onPreferenceChange}
         />
         <br />
-        <p>
-          <i className="fa fa-asterisk"></i> = required
-        </p>
         {saveButton}
         {/* </div> */}
       </form>
