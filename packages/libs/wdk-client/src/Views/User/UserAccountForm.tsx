@@ -243,6 +243,7 @@ function UserAccountForm(props: UserAccountFormProps) {
         name="userRegistrationForm"
         onSubmit={onUserDataSubmit}
       >
+        {/* <div style={{marginLeft: '1em'}}> */}
         <UserIdentity
           user={userProfileFormData}
           onEmailChange={onEmailChange}
@@ -252,16 +253,19 @@ function UserAccountForm(props: UserAccountFormProps) {
           vocabulary={vocabulary}
           highlightMissingFields={props.highlightMissingFields}
         />
+        <br />
         <ApplicationSpecificProperties
           user={userProfileFormData}
           onPropertyChange={onPropertyChange}
           propDefs={wdkConfig.userProfileProperties}
           onPreferenceChange={onPreferenceChange}
         />
+        <br />
         <p>
           <i className="fa fa-asterisk"></i> = required
         </p>
         {saveButton}
+        {/* </div> */}
       </form>
     );
   };

@@ -94,15 +94,17 @@ function ApiApplicationSpecificProperties(props) {
     <>
       <h2>Preferences</h2>
       <h3 style={{ paddingTop: 0 }}>Email notifications</h3>
-      <p>Send me email alerts about new updates and features:</p>
-      <div style={{ width: '400px', margin: '2em 1em' }}>
-        <CheckboxList
-          name="emailAlerts"
-          items={emailPrefData}
-          value={emailPrefValue}
-          onChange={onEmailPreferenceChange}
-          linksPosition={LinksPosition.Top}
-        />
+      <div className={props.contentClassName ?? ''}>
+        <p>Send me email alerts about new updates and features:</p>
+        <div style={{ width: '400px', margin: '2em 1em' }}>
+          <CheckboxList
+            name="emailAlerts"
+            items={emailPrefData}
+            value={emailPrefValue}
+            onChange={onEmailPreferenceChange}
+            linksPosition={LinksPosition.Top}
+          />
+        </div>
       </div>
     </>
   );
