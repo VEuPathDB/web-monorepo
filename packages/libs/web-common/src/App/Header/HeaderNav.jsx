@@ -207,7 +207,13 @@ class HeaderNav extends React.Component {
             <img src={partofveupath} id="VEuPathLogo" />
           </a>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
           <SiteMenu
             items={mainMenu}
             config={siteConfig}
@@ -217,10 +223,9 @@ class HeaderNav extends React.Component {
           {siteSearchServiceUrl && (
             <div
               style={{
-                width: '30em',
                 color: 'black',
-                marginLeft: 'auto',
                 fontSize: '1.2em',
+                flexGrow: 1,
               }}
             >
               <SiteSearchInput />
@@ -228,7 +233,11 @@ class HeaderNav extends React.Component {
           )}
           <div style={{ display: 'flex' }}>
             <IconMenu items={iconMenu} />
-            <UserMenu webAppUrl={webAppUrl} actions={actions} user={user} />
+            {user && !user.isGuest ? (
+              <UserMenu webAppUrl={webAppUrl} user={user} actions={actions} />
+            ) : (
+              <UserMenuGuest webAppUrl={webAppUrl} actions={actions} />
+            )}
           </div>
         </div>
       </div>
