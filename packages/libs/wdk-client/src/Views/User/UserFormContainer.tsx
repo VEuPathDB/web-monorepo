@@ -164,7 +164,7 @@ function UserFormContainer(props: UserFormContainerProps) {
     <div
       className={
         'wdk-UserProfile' +
-        (props.globalData.user?.isGuest && ' wdk-UserProfile-Register')
+        (props.globalData.user?.isGuest ? ' wdk-UserProfile-Register' : '')
       }
     >
       {props.shouldHideForm ? (
