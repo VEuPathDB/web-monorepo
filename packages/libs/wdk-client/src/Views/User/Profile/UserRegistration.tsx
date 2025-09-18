@@ -6,6 +6,7 @@ import UserFormContainer, {
 } from '../../../Views/User/UserFormContainer';
 import { UserProfileFormData } from '../../../StoreModules/UserProfileStoreModule';
 import { GlobalData } from '../../../StoreModules/GlobalData';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 // Props interface based on what UserRegistrationController actually passes
 interface UserRegistrationProps {
@@ -26,13 +27,24 @@ interface UserRegistrationProps {
 }
 
 const IntroText: React.FC = () => (
-  <div style={{ width: '70%', textAlign: 'center', margin: '15px' }}>
-    IMPORTANT: If you already registered in another site
-    <br />
-    (AmoebaDB, CryptoDB, FungiDB, GiardiaDB, MicrosporidiaDB, PiroplasmaDB,
-    PlasmoDB, SchistoDB, ToxoDB, TrichDB, TriTrypDB, VectorBase or VEuPathDB)
-    <br />
-    you do NOT need to register again.
+  <div style={{ margin: '2em 0em' }}>
+    <Banner
+      banner={{
+        type: 'info',
+        message: (
+          <p style={{ margin: '0.5em 0em' }}>
+            If you already registered in another site (
+            <i>
+              AmoebaDB, CryptoDB, FungiDB, GiardiaDB, MicrosporidiaDB,
+              PiroplasmaDB, PlasmoDB, SchistoDB, ToxoDB, TrichDB, TriTrypDB,
+              VectorBase or VEuPathDB
+            </i>
+            ) you do NOT need to register again.
+          </p>
+        ),
+        pinned: true,
+      }}
+    />
   </div>
 );
 

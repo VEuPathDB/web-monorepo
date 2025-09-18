@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { wrappable } from '../../../Utils/ComponentUtils';
 import ChangePasswordLink from '../../../Views/User/Password/ChangePasswordLink';
+import { Button } from '@material-ui/core';
 
 /**
  * This React stateless function provides a link to the password change form inside a password change fieldset
@@ -11,17 +12,9 @@ import ChangePasswordLink from '../../../Views/User/Password/ChangePasswordLink'
  */
 const UserPassword = (props) => {
   return (
-    <fieldset>
-      <legend>Password</legend>
-      <div>
-        <ChangePasswordLink
-          userEmail={props.user.email}
-          changePasswordUrl={props.wdkConfig.changePasswordUrl}
-        >
-          Change your password
-        </ChangePasswordLink>
-      </div>
-    </fieldset>
+    <Button variant="outlined" color="primary" component={ChangePasswordLink}>
+      Change your password
+    </Button>
   );
 };
 

@@ -32,14 +32,27 @@
     background: rgba(0, 125, 0, 0.4);
   }
 
-  &-profileForm fieldset {
-    margin-bottom: 2em;
-    display: inline;
+  &-profileForm {
+    margin-left: 2em;
   }
 
-  &-profileForm legend {
-    font-size: 14px;
-    font-weight: bold;
+  &-profileForm h2 {
+    margin-top: 0;
+    padding-top: 0;
+    margin-bottom: 0.5em;
+  }
+
+  &-profileForm h3 {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+  }
+
+  &-profileForm h4 {
+    font-weight: 400;
+  }
+
+  &-profileForm select {
+    font-size: 1.1em;
   }
 
   &-profileForm i {
@@ -47,6 +60,11 @@
     font-size: 0.666em;
     margin-right: 0.4em;
     vertical-align: top;
+  }
+
+  &-profileForm input {
+    background-color: white !important;
+    font-size: 1.1em;
   }
 
   &-profileForm fieldset > div {
@@ -112,6 +130,14 @@
   }
 }
 
+.wdk-UserProfile.wdk-UserProfile-Register {
+  margin-left: 2em;
+}
+
+.wdk-UserProfile-profileForm.wdk-UserProfile-registrationForm {
+  margin-left: 0;
+}
+
 // Highlight empty required fields with red border
 .field-required-empty {
   border: 2px solid #d32f2f !important;
@@ -166,4 +192,9 @@
 
 .wdk-DialogContent.wdk-ProfileContent {
   min-width: 400px;
+}
+
+.UserAccountSectionContent {
+  width: 70%;
+  max-width: 700px;
 }

@@ -21,6 +21,7 @@ import { FormStatus } from '../../../../coreui/lib/components/buttons/SaveButton
 import Loading from '../../Components/Loading';
 import './UserAccountForm.scss';
 import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
+import { UserSecurityForm } from './UserSecurityForm';
 
 // Props interface
 export interface UserAccountFormProps {
@@ -163,9 +164,6 @@ function UserAccountForm(props: UserAccountFormProps) {
                 vocabulary={vocabulary}
                 highlightMissingFields={props.highlightMissingFields}
               />
-              <p>
-                <i className="fa fa-asterisk"></i> = required
-              </p>
               {saveButton}
             </form>
             {/*
@@ -229,7 +227,7 @@ function UserAccountForm(props: UserAccountFormProps) {
       case 'security':
         return (
           <div className="wdk-UserProfile-profileForm">
-            <UserPassword user={user} wdkConfig={wdkConfig} />
+            <UserSecurityForm {...props} />
           </div>
         );
       default:
@@ -245,6 +243,7 @@ function UserAccountForm(props: UserAccountFormProps) {
         name="userRegistrationForm"
         onSubmit={onUserDataSubmit}
       >
+        {/* <div style={{marginLeft: '1em'}}> */}
         <UserIdentity
           user={userProfileFormData}
           onEmailChange={onEmailChange}
@@ -254,16 +253,16 @@ function UserAccountForm(props: UserAccountFormProps) {
           vocabulary={vocabulary}
           highlightMissingFields={props.highlightMissingFields}
         />
+        <br />
         <ApplicationSpecificProperties
           user={userProfileFormData}
           onPropertyChange={onPropertyChange}
           propDefs={wdkConfig.userProfileProperties}
           onPreferenceChange={onPreferenceChange}
         />
-        <p>
-          <i className="fa fa-asterisk"></i> = required
-        </p>
+        <br />
         {saveButton}
+        {/* </div> */}
       </form>
     );
   };

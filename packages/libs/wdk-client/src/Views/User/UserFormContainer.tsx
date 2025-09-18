@@ -161,7 +161,12 @@ function UserFormContainer(props: UserFormContainerProps) {
     userIsSubscribed(props.globalData.user, subscriptionGroups);
 
   return (
-    <div className="wdk-UserProfile">
+    <div
+      className={
+        'wdk-UserProfile' +
+        (props.globalData.user?.isGuest ? ' wdk-UserProfile-Register' : '')
+      }
+    >
       {props.shouldHideForm ? (
         <div>{props.hiddenFormMessage}</div>
       ) : (
