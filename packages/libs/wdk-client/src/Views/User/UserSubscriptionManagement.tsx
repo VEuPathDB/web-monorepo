@@ -65,7 +65,10 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
   const tokenField = 'subscriptionToken';
   const userGroupToken = user.properties[tokenField]; // from db-backed state
 
-  const findValidGroup = (token: string) => {
+  const findValidGroup = (
+    token: string,
+    subscriptionGroups: SubscriptionGroup[]
+  ) => {
     if (!token) return undefined;
     const validGroupList = subscriptionGroups.filter(
       (g) => g.subscriptionToken === token
@@ -74,22 +77,11 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
   };
 
   const validGroup = useMemo(
-    () => findValidGroup(userGroupToken),
+    () => findValidGroup(userGroupToken, subscriptionGroups),
     [userGroupToken, subscriptionGroups]
   );
 
-  const groupVocab1 = useMemo(
-    () =>
-      [{ value: '', display: '--' }].concat(
-        subscriptionGroups.map((group) => ({
-          value: group.subscriptionToken,
-          display: group.groupName,
-        }))
-      ),
-    [subscriptionGroups]
-  );
-
-  const groupVocab2 = useMemo(
+  const groupVocab = useMemo(
     () =>
       [{ value: '', label: '--' }].concat(
         subscriptionGroups.map((group) => ({
@@ -102,11 +94,10 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
 
   const selectedGroup = useMemo(() => {
     const effectiveToken = localSelection ?? userGroupToken;
-    const group = findValidGroup(effectiveToken);
-    return group
-      ? { value: group.subscriptionToken, label: group.groupName }
-      : { value: '', label: '--' };
-  }, [groupVocab2, userGroupToken, localSelection]);
+    const group = findValidGroup(effectiveToken, subscriptionGroups);
+    const groupValue = group ? group.subscriptionToken : '';
+    return groupVocab.filter((g) => g.value === groupValue)[0]; // should always find it!
+  }, [subscriptionGroups, groupVocab, userGroupToken, localSelection]);
 
   return (
     <div className="wdk-UserProfile-profileForm">
@@ -227,7 +218,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                 <Select<Option, any>
                   isMulti={false}
                   isSearchable
-                  options={groupVocab2}
+                  options={groupVocab}
                   value={selectedGroup}
                   onChange={(option: ValueType<Option, any>) => {
                     const value =
