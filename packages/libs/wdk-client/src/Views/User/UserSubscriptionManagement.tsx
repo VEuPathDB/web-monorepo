@@ -65,13 +65,18 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
   const tokenField = 'subscriptionToken';
   const userGroupToken = user.properties[tokenField]; // from db-backed state
 
-  const validGroup = useMemo(() => {
-    if (!userGroupToken) return undefined;
+  const findValidGroup = (token: string) => {
+    if (!token) return undefined;
     const validGroupList = subscriptionGroups.filter(
-      (g) => g.subscriptionToken === userGroupToken
+      (g) => g.subscriptionToken === token
     );
     return validGroupList.length === 0 ? undefined : validGroupList[0];
-  }, [userGroupToken, subscriptionGroups]);
+  };
+
+  const validGroup = useMemo(
+    () => findValidGroup(userGroupToken),
+    [userGroupToken, subscriptionGroups]
+  );
 
   const groupVocab1 = useMemo(
     () =>
@@ -97,7 +102,10 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
 
   const selectedGroup = useMemo(() => {
     const effectiveToken = localSelection ?? userGroupToken;
-    return groupVocab2.filter((g) => g.value === effectiveToken)[0];
+    const group = findValidGroup(effectiveToken);
+    return group
+      ? { value: group.subscriptionToken, label: group.groupName }
+      : { value: '', label: '--' };
   }, [groupVocab2, userGroupToken, localSelection]);
 
   return (
