@@ -2,7 +2,6 @@ import React, { useState, ReactNode, useEffect, useCallback } from 'react';
 import { Prompt } from 'react-router-dom';
 import { wrappable } from '../../Utils/ComponentUtils';
 import ApplicationSpecificProperties from '../../Views/User/ApplicationSpecificProperties';
-import UserPassword from '../../Views/User/Password/UserPassword';
 import UserIdentity from '../../Views/User/UserIdentity';
 import UserSubscriptionManagement from '../../Views/User/UserSubscriptionManagement';
 import ProfileNavigationSection, {
@@ -243,7 +242,6 @@ function UserAccountForm(props: UserAccountFormProps) {
         name="userRegistrationForm"
         onSubmit={onUserDataSubmit}
       >
-        {/* <div style={{marginLeft: '1em'}}> */}
         <UserIdentity
           user={userProfileFormData}
           onEmailChange={onEmailChange}
@@ -262,7 +260,6 @@ function UserAccountForm(props: UserAccountFormProps) {
         />
         <br />
         {saveButton}
-        {/* </div> */}
       </form>
     );
   };
