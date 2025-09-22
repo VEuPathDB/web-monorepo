@@ -18,6 +18,7 @@ import {
 import { UserProfileFormData } from '../StoreModules/UserProfileStoreModule';
 import { InferType } from 'prop-types';
 import { makeCommonErrorMessage } from '../Utils/Errors';
+import { notifyUnhandledError } from './UnhandledErrorActions';
 
 export type Action =
   | UserUpdateAction
@@ -25,6 +26,7 @@ export type Action =
   | PreferencesUpdateAction
   | ProfileFormUpdateAction
   | ProfileFormSubmissionStatusAction
+  | ProfileFormResetAction
   | ClearRegistrationFormAction
   | PasswordFormUpdateAction
   | PasswordFormSubmissionStatusAction
@@ -150,6 +152,28 @@ export function profileFormSubmissionStatus(
       formStatus,
       formData,
       errorMessage,
+    },
+  };
+}
+
+//==============================================================================
+
+export const PROFILE_FORM_RESET = 'user/profile-form-reset';
+
+export type ProfileFormResetAction = {
+  type: typeof PROFILE_FORM_RESET;
+  payload: {
+    userFormContent: UserProfileFormData;
+  };
+};
+
+export function profileFormReset(
+  userFormContent: UserProfileFormData
+): ProfileFormResetAction {
+  return {
+    type: PROFILE_FORM_RESET,
+    payload: {
+      userFormContent,
     },
   };
 }
@@ -597,6 +621,18 @@ export function submitPasswordReset(
           return resetPasswordSubmissionStatus(error.response || error.message);
         }
       ),
+    ];
+  };
+}
+
+// FIXME: this method does not properly log out and errors silently
+export function deleteAccount(): ActionThunk<EmptyAction> {
+  return function run({ wdkService, transitioner }) {
+    return [
+      wdkService
+        .deleteAccount()
+        .then(() => wdkService.logout())
+        .then(() => emptyAction),
     ];
   };
 }

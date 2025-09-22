@@ -20,7 +20,7 @@ import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
-import UserMenu from '../../App/UserMenu';
+import { UserMenu, UserMenuGuest } from '../../App/UserMenu';
 import { SocialMediaLinks } from '../../components/homepage/SocialMediaLinks';
 import { SiteSearchInput } from '../../components/SiteSearch/SiteSearchInput';
 
@@ -196,7 +196,11 @@ const HeaderView = withRouter(
           />
         </div>
         <SiteSearchInput />
-        <UserMenu webAppUrl={webAppUrl} user={user} actions={actions} />
+        {user && !user.isGuest ? (
+          <UserMenu webAppUrl={webAppUrl} user={user} actions={actions} />
+        ) : (
+          <UserMenuGuest webAppUrl={webAppUrl} actions={actions} />
+        )}
         <SocialMediaLinks
           showAnnouncementsToggle={showAnnouncementsToggle}
           onShowAnnouncements={onShowAnnouncements}

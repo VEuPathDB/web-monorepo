@@ -264,7 +264,7 @@ const VEuPathDBHomePageViewStandard: FunctionComponent<Props> = (props) => {
               menuItems={headerMenuItems}
               containerClassName={headerClassName}
               onShowAnnouncements={onShowAnnouncements}
-              showAnnouncementsToggle={isHomePage && closedBanners.length > 0}
+              showAnnouncementsToggle={closedBanners.length > 0}
               branding={branding}
             />
           </ErrorBoundary>
@@ -862,8 +862,8 @@ const useHeaderMenuItems = (
             {
               key: 'citations',
               display: 'Publications that use our resources',
-              type: 'externalLink',
-              url: 'https://scholar.google.com/scholar?hl=en&as_sdt=0,39&q=OrthoMCL+OR+PlasmoDB+OR+ToxoDB+OR+CryptoDB+OR+TrichDB+OR+GiardiaDB+OR+TriTrypDB+OR+AmoebaDB+OR+MicrosporidiaDB+OR+%22FungiDB%22+OR+PiroplasmaDB+OR+%22vectorbase%22+OR+veupathdb+OR+ApiDB+OR+EuPathDB+-encrypt+-cryptography+-hymenoptera&scisbd=1',
+              type: 'reactRoute',
+              url: makeStaticPageRoute('/pubsUsingVEuPath.html'),
             },
           ],
         },

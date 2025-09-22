@@ -1,12 +1,13 @@
 // Notebook presets
 
 import { ReactNode } from 'react';
-import { NumberedHeader } from '../workspace/Subsetting/SubsetDownloadModal';
+import NumberedHeader from '@veupathdb/coreui/lib/components/forms/NumberedHeader';
 import { colors } from '@material-ui/core';
 import { BipartiteNetworkOptions } from '../core/components/visualizations/implementations/BipartiteNetworkVisualization';
 import { NodeData } from '@veupathdb/components/lib/types/plots/network';
 import { WdkState } from './EdaNotebookAnalysis';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
+import { CollectionVariableTreeNode } from '../core';
 
 // this is currently not used but may be one day when we need to store user state
 // that is outside AnalysisState and WdkState
@@ -46,6 +47,9 @@ export interface ComputeCellDescriptor
   extends NotebookCellDescriptorBase<'compute'> {
   computationName: string;
   computationId: string;
+  getAdditionalCollectionPredicate?: (
+    projectId?: string
+  ) => (variableCollection: CollectionVariableTreeNode) => boolean;
 }
 
 export interface TextCellDescriptor extends NotebookCellDescriptorBase<'text'> {
@@ -129,11 +133,11 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
     displayName: 'WGCNA Correlation Notebook',
     header:
       "Use steps 1-3 to find a module of interest, then click 'Get Answer' to retrieve a list of genes.",
-    projects: ['MicrobiomeDB'],
+    projects: ['PlasmoDB', 'HostDB'],
     cells: [
       {
         type: 'compute',
-        title: 'Correlation Computation',
+        title: 'Correlation computation',
         computationName: 'correlation',
         computationId: 'correlation_1',
         helperText: (
@@ -145,10 +149,24 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             color={colors.grey[800]}
           />
         ),
+        getAdditionalCollectionPredicate:
+          (projectId?: string) =>
+          (variableCollection: CollectionVariableTreeNode) => {
+            // Keep only the plasmo eigengenes for plasmodb...
+            if (projectId === 'PlasmoDB') {
+              return variableCollection.id === 'EUPATH_0005051';
+            }
+            // ... and host eigengenes for hostdb
+            if (projectId === 'HostDB') {
+              return variableCollection.id === 'EUPATH_0005050';
+            }
+            // If we're in the portal, should return both.
+            return true;
+          },
         cells: [
           {
             type: 'visualization',
-            title: 'Network Visualization',
+            title: 'Network visualization of correlation results',
             visualizationName: 'bipartitenetwork',
             visualizationId: 'bipartite_1',
             helperText: (
@@ -217,12 +235,14 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
       },
       {
         type: 'wdkparam',
-        title: 'Finalize search parameters',
+        title: 'Run gene search',
         paramNames: ['wgcnaParam', 'wgcna_correlation_cutoff'],
         helperText: (
           <NumberedHeader
             number={3}
-            text={'Refine parameters for returning the list of genes.'}
+            text={
+              "Find genes within a particular module that are strongly correlated with the module's eigengene."
+            }
             color={colors.grey[800]}
           />
         ),

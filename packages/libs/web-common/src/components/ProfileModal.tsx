@@ -43,7 +43,9 @@ export function ProfileModal() {
       >
         <UserProfileController
           introComponent={NewProfilePropertiesBanner}
-          showChangePasswordBox={false}
+          singleFormMode={true}
+          highlightMissingFields={true}
+          showSubscriptionProds={false}
         />
       </div>
     </Modal>
@@ -59,15 +61,15 @@ function NewProfilePropertiesBanner() {
         fontSize: '1.2em',
         message: (
           <>
-            Please take a moment to update your user profile. This will help us
-            understand how our platform contributes to your research and in
-            making future improvements. We value your privacy and comply with
-            the General Data Protection Regulation (
+            Please complete the newly required fields below, and take a moment
+            to review your profile. This will help us understand how our
+            platform contributes to your research and in making future
+            improvements. We value your privacy and comply with{' '}
             <a target="_blank" rel="noreferrer" href="https://gdpr-info.eu/">
               GDPR
-            </a>
-            ). Your information is safe with us. Thanks for being part of our
-            community!
+            </a>{' '}
+            regulations. Your information is safe with us. Thanks for being part
+            of our community!
           </>
         ),
       }}

@@ -35,26 +35,25 @@ const mapSortType = (val) => {
 // max columns for list mode
 const maxColumns = 4;
 
-const defaultSortId = '@@defaultSortIndex@@';
-const defaultSortColumn = [{ name: defaultSortId, isDisplayable: false }];
-
-const getSortIndex = (rowData) => rowData[defaultSortId];
-
-const addDefaultSortId = (row, index) =>
-  Object.assign({}, row, { [defaultSortId]: index });
-
-const getColumns = (tableField) =>
-  defaultSortColumn.concat(tableField.attributes.map((attr) => attr));
+const getColumns = (tableField) => tableField.attributes.map((attr) => attr);
 
 const getDisplayableAttributes = (tableField) =>
   tableField.attributes.filter((attr) => attr.isDisplayable);
 
-const getOrderedData = (tableValue, tableField) =>
-  orderBy(
+const getOrderedData = (tableValue, tableField, sortIndexMap) => {
+  const orderedRows = orderBy(
     tableValue,
     tableField.clientSortSpec.map(property('itemName')),
     tableField.clientSortSpec.map(property('direction')).map(toLower)
-  ).map(addDefaultSortId);
+  );
+
+  // Store sort indices in WeakMap without mutating row objects
+  orderedRows.forEach((row, index) => {
+    sortIndexMap.set(row, index);
+  });
+
+  return orderedRows;
+};
 
 /**
  * Renders a record table
@@ -62,6 +61,9 @@ const getOrderedData = (tableValue, tableField) =>
 class RecordTable extends Component {
   constructor(props) {
     super(props);
+    // Instance-level WeakMap to store sort indices without mutating row objects
+    this.sortIndexMap = new WeakMap();
+
     this.getColumns = createSelector((props) => props.table, getColumns);
     this.getDisplayableAttributes = createSelector(
       (props) => props.table,
@@ -70,7 +72,8 @@ class RecordTable extends Component {
     this.getOrderedData = createSelector(
       (props) => props.value,
       (props) => props.table,
-      getOrderedData
+      (tableValue, tableField) =>
+        getOrderedData(tableValue, tableField, this.sortIndexMap)
     );
     this.onSort = this.onSort.bind(this);
     this.onSearchTermChange = this.onSearchTermChange.bind(this);
@@ -183,11 +186,17 @@ class RecordTable extends Component {
 
     // Manipulate rows to match Mesa properties; this really only pertains to the
     // link properties that differ between DataTable and Mesa
-    const mesaReadyRows = data.map((d) => {
-      let newData = { ...d };
+    const mesaReadyRows = data.map((d, index) => {
       const columnsWithLinks = mesaReadyColumns.filter(
         (c) => c.key in d && 'type' in c && c.type === 'link'
       );
+
+      // Only create new object if there are link columns to process
+      if (columnsWithLinks.length === 0) {
+        return d; // Return original object unchanged
+      }
+
+      let newData = { ...d };
       columnsWithLinks.forEach((col) => {
         const linkPropertyName = col.key;
         const linkObject = d[linkPropertyName];
@@ -199,6 +208,7 @@ class RecordTable extends Component {
           },
         };
       });
+      this.sortIndexMap.set(newData, index);
       return newData;
     });
 
@@ -293,7 +303,7 @@ class RecordTable extends Component {
         toolbar: isOrthologTableWithData ? false : true,
         childRow: childRow ? this.wrappedChildRow : undefined,
         className: 'wdk-DataTableContainer',
-        getRowId: getSortIndex,
+        getRowId: (rowData) => this.sortIndexMap.get(rowData),
         showCount: mesaReadyRows.length > 2,
         ...(isOrthologTableWithData
           ? {

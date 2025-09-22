@@ -40,7 +40,7 @@ import {
   GetBinRangesProps,
   getBinRanges,
 } from '../../../../map/analysis/utils/defaultOverlayConfig';
-import { VariableCollectionSelectList } from '../../variableSelectors/VariableCollectionSingleSelect';
+import { VariableCollectionSingleSelect } from '../../variableSelectors/VariableCollectionSingleSelect';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { entityTreeToArray } from '../../../utils/study-metadata';
 import { useCachedPromise } from '../../../hooks/cachedPromise';
@@ -369,7 +369,7 @@ export function DifferentialAbundanceConfiguration(
           <H6>Input Data</H6>
           <div className={cx('-InputContainer')}>
             <span>Data</span>
-            <VariableCollectionSelectList
+            <VariableCollectionSingleSelect
               value={configuration.collectionVariable}
               onSelect={partial(changeConfigHandler, 'collectionVariable')}
               collectionPredicate={isNotAbsoluteAbundanceVariableCollection}

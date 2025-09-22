@@ -12,11 +12,16 @@ import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/Expanda
 export function ComputeNotebookCell(
   props: NotebookCellProps<ComputeCellDescriptor>
 ) {
-  const { analysisState, cell, isDisabled, wdkState } = props;
+  const { analysisState, cell, isDisabled, wdkState, projectId } = props;
   const { analysis } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
 
-  const { computationName, computationId, cells } = cell;
+  const {
+    computationName,
+    computationId,
+    cells,
+    getAdditionalCollectionPredicate,
+  } = cell;
   const computation = analysis.descriptor.computations.find(
     (comp) => comp.computationId === computationId
   );
@@ -82,6 +87,11 @@ export function ComputeNotebookCell(
     computation.descriptor.configuration
   );
 
+  // Prep any additional restrictions on collections, if defined
+  const additionalCollectionPredicate =
+    getAdditionalCollectionPredicate &&
+    getAdditionalCollectionPredicate(projectId);
+
   return computation && appOverview ? (
     <>
       {cell.helperText && (
@@ -110,6 +120,7 @@ export function ComputeNotebookCell(
             changeConfigHandlerOverride={changeConfigHandler}
             showStepNumber={false}
             showExpandableHelp={false} // no expandable sections within an expandable element.
+            additionalCollectionPredicate={additionalCollectionPredicate}
           />
           <RunComputeButton
             computationAppOverview={appOverview}
@@ -130,8 +141,8 @@ export function ComputeNotebookCell(
               analysisState={analysisState}
               cell={subCell}
               isDisabled={isSubCellDisabled}
-              expandedPanelState={isSubCellDisabled ? 'closed' : 'open'}
               wdkState={wdkState}
+              computeJobStatus={jobStatus}
             />
           );
         })}
