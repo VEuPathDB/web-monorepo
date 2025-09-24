@@ -2,7 +2,6 @@ import React, { useState, ReactNode, useEffect, useCallback } from 'react';
 import { Prompt } from 'react-router-dom';
 import { wrappable } from '../../Utils/ComponentUtils';
 import ApplicationSpecificProperties from '../../Views/User/ApplicationSpecificProperties';
-import UserPassword from '../../Views/User/Password/UserPassword';
 import UserIdentity from '../../Views/User/UserIdentity';
 import UserSubscriptionManagement from '../../Views/User/UserSubscriptionManagement';
 import ProfileNavigationSection, {
@@ -21,6 +20,7 @@ import { FormStatus } from '../../../../coreui/lib/components/buttons/SaveButton
 import Loading from '../../Components/Loading';
 import './UserAccountForm.scss';
 import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
+import { UserSecurityForm } from './UserSecurityForm';
 
 // Props interface
 export interface UserAccountFormProps {
@@ -163,9 +163,6 @@ function UserAccountForm(props: UserAccountFormProps) {
                 vocabulary={vocabulary}
                 highlightMissingFields={props.highlightMissingFields}
               />
-              <p>
-                <i className="fa fa-asterisk"></i> = required
-              </p>
               {saveButton}
             </form>
             {/*
@@ -229,7 +226,7 @@ function UserAccountForm(props: UserAccountFormProps) {
       case 'security':
         return (
           <div className="wdk-UserProfile-profileForm">
-            <UserPassword user={user} wdkConfig={wdkConfig} />
+            <UserSecurityForm {...props} />
           </div>
         );
       default:
@@ -254,15 +251,14 @@ function UserAccountForm(props: UserAccountFormProps) {
           vocabulary={vocabulary}
           highlightMissingFields={props.highlightMissingFields}
         />
+        <br />
         <ApplicationSpecificProperties
           user={userProfileFormData}
           onPropertyChange={onPropertyChange}
           propDefs={wdkConfig.userProfileProperties}
           onPreferenceChange={onPreferenceChange}
         />
-        <p>
-          <i className="fa fa-asterisk"></i> = required
-        </p>
+        <br />
         {saveButton}
       </form>
     );

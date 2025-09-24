@@ -90,12 +90,6 @@ const ProfileNavigationSection: React.FC<ProfileNavigationSectionProps> = ({
 
   const theme = useUITheme();
 
-  const activeSectionStyle = {
-    // Use a light version of the primary color if defined, otherwise use this nice
-    // light blue.
-    backgroundColor: theme ? theme?.palette.primary.hue[200] : '#d5eaf5',
-  };
-
   return (
     <>
       <div className="wdk-ProfileNavigationSection">
