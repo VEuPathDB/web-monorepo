@@ -77,24 +77,26 @@ function createDefaultConfig(): BipartiteNetworkConfig {
   return {
     correlationCoefThreshold: DEFAULT_CORRELATION_COEF_THRESHOLD,
     significanceThreshold: DEFAULT_SIGNIFICANCE_THRESHOLD,
-    linkType: DEFAULT_LINK_TYPE,
+    correlationDirection: DEFAULT_LINK_TYPE,
   };
 }
 
-const BipartiteNetworkLinkType = t.union([
+const BipartiteNetworkCorrelationDirection = t.union([
   t.literal('positive'),
   t.literal('negative'),
   t.literal('both'),
 ]);
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-type BipartiteNetworkLinkType = t.TypeOf<typeof BipartiteNetworkLinkType>;
+type BipartiteNetworkCorrelationDirection = t.TypeOf<
+  typeof BipartiteNetworkCorrelationDirection
+>;
 
 export type BipartiteNetworkConfig = t.TypeOf<typeof BipartiteNetworkConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BipartiteNetworkConfig = t.partial({
   correlationCoefThreshold: t.number,
   significanceThreshold: t.number,
-  linkType: BipartiteNetworkLinkType,
+  correlationDirection: BipartiteNetworkCorrelationDirection,
 });
 
 export interface BipartiteNetworkOptions
@@ -168,7 +170,7 @@ function BipartiteNetworkViz(
         config: {
           correlationCoefThreshold: vizConfig.correlationCoefThreshold,
           significanceThreshold: vizConfig.significanceThreshold,
-          linkType: vizConfig.linkType,
+          correlationDirection: vizConfig.correlationDirection,
         },
         computeConfig: computationConfiguration,
       };
@@ -193,7 +195,7 @@ function BipartiteNetworkViz(
       visualization.descriptor.type,
       vizConfig.correlationCoefThreshold,
       vizConfig.significanceThreshold,
-      vizConfig.linkType,
+      vizConfig.correlationDirection,
     ])
   );
 
@@ -526,11 +528,16 @@ function BipartiteNetworkViz(
           <LabelledGroup label="Link type" alignChildrenHorizontally={true}>
             <RadioButtonGroup
               options={['positive', 'negative', 'both']}
-              selectedOption={vizConfig.linkType ?? DEFAULT_LINK_TYPE}
+              selectedOption={
+                vizConfig.correlationDirection ?? DEFAULT_LINK_TYPE
+              }
               onOptionSelected={(value) => {
-                const validatedValue = BipartiteNetworkLinkType.decode(value);
+                const validatedValue =
+                  BipartiteNetworkCorrelationDirection.decode(value);
                 if (validatedValue._tag === 'Right') {
-                  updateVizConfig({ linkType: validatedValue.right });
+                  updateVizConfig({
+                    correlationDirection: validatedValue.right,
+                  });
                 } else {
                   console.error('Invalid link type');
                 }

@@ -493,7 +493,7 @@ export const CorrelationBipartiteNetworkResponse = intersection([
     significanceThreshold: number,
   }),
   partial({
-    linkType: union([
+    correlationDirection: union([
       literal('positive'),
       literal('negative'),
       literal('both'),
@@ -507,7 +507,7 @@ export interface BipartiteNetworkRequestParams {
   config: {
     correlationCoefThreshold?: number;
     significanceThreshold?: number;
-    linkType?: 'positive' | 'negative' | 'both';
+    correlationDirection?: 'positive' | 'negative' | 'both';
   };
 }
 
