@@ -1,3 +1,4 @@
+import { grey } from '@material-ui/core/colors';
 import './Profile/UserProfile.scss';
 import { UserAccountFormProps } from './UserAccountForm';
 import Grid from '@material-ui/core/Grid/Grid';
@@ -44,6 +45,12 @@ export const UserSecurityForm = (
             onPress={() => (window.location.href = url)}
             themeRole="primary"
           />
+        </Grid>
+        <Grid item xs={12}>
+          <p style={{ color: grey[700], fontSize: '0.9em', marginTop: 0 }}>
+            You will be redirected to an affiliated page where you can change
+            your password.
+          </p>
         </Grid>
       </Grid>
     </>
