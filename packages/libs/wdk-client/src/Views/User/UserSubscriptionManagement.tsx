@@ -93,6 +93,16 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
     [subscriptionGroups]
   );
 
+  const isMultiGroupSubscription = useMemo(() => {
+    if (validGroup?.subscriberName == null) return false;
+
+    let count = 0;
+    return subscriptionGroups.some(
+      (group) =>
+        group.subscriberName === validGroup.subscriberName && ++count === 2
+    );
+  }, [subscriptionGroups, validGroup]);
+
   const deburredGroups = useMemo(
     () =>
       subscriptionGroups.map((group) => ({
@@ -176,9 +186,15 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
               {validGroup.subscriberName && (
                 <>
                   <h4>
-                    Subscriber:
-                    <br />
-                    (where different from subscribed group)
+                    {isMultiGroupSubscription ? (
+                      <>Multi-group subscriber:</>
+                    ) : (
+                      <>
+                        Subscriber:
+                        <br />
+                        (where different from subscribed group)
+                      </>
+                    )}
                   </h4>
                   <h4 style={{ fontWeight: 400 }}>
                     {validGroup.subscriberName}
