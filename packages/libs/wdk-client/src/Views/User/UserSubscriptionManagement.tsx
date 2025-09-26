@@ -98,6 +98,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
       subscriptionGroups.map((group) => ({
         ...group,
         deburredGroupName: deburr(group.groupName.toLowerCase()),
+        deburredSubscriberName: deburr(group.subscriberName?.toLowerCase()),
         deburredLeads: group.groupLeads.map((lead) => ({
           ...lead,
           deburredName: deburr(lead.name.toLowerCase()),
@@ -146,7 +147,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
           formStatus === 'modified' ||
           formStatus === 'pending') && (
           <div>
-            <h3>Group Subscription</h3>
+            <h3>Group subscription</h3>
             <div
               style={{
                 display: 'grid',
@@ -171,6 +172,14 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                 <h4 style={{ fontStyle: 'italic', fontWeight: 400 }}>
                   None provided
                 </h4>
+              )}
+              {validGroup.subscriberName && (
+                <>
+                  <h4>Subscriber name:</h4>
+                  <h4 style={{ fontWeight: 400 }}>
+                    {validGroup.subscriberName}
+                  </h4>
+                </>
               )}
             </div>
             <form>
@@ -248,6 +257,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                   const searchText = deburr(inputValue.toLowerCase().trim());
                   return (
                     group.deburredGroupName.includes(searchText) ||
+                    group.deburredSubscriberName.includes(searchText) ||
                     group.deburredLeads.some(
                       (lead) =>
                         lead.deburredName.includes(searchText) ||
