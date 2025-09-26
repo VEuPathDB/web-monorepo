@@ -175,7 +175,11 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
               )}
               {validGroup.subscriberName && (
                 <>
-                  <h4>Subscriber name:</h4>
+                  <h4>
+                    Subscriber:
+                    <br />
+                    (where different from subscribed group)
+                  </h4>
                   <h4 style={{ fontWeight: 400 }}>
                     {validGroup.subscriberName}
                   </h4>
