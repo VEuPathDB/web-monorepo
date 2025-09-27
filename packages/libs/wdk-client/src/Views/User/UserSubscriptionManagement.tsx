@@ -20,6 +20,7 @@ import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import './UserSubscriptionManagement.scss';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../Core/State/Types';
+import { deburr } from 'lodash';
 
 interface UserSubscriptionManagementProps {
   user: User;
@@ -92,6 +93,31 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
     [subscriptionGroups]
   );
 
+  const isMultiGroupSubscription = useMemo(() => {
+    if (validGroup?.subscriberName == null) return false;
+
+    let count = 0;
+    return subscriptionGroups.some(
+      (group) =>
+        group.subscriberName === validGroup.subscriberName && ++count === 2
+    );
+  }, [subscriptionGroups, validGroup]);
+
+  const deburredGroups = useMemo(
+    () =>
+      subscriptionGroups.map((group) => ({
+        ...group,
+        deburredGroupName: deburr(group.groupName.toLowerCase()),
+        deburredSubscriberName: deburr(group.subscriberName?.toLowerCase()),
+        deburredLeads: group.groupLeads.map((lead) => ({
+          ...lead,
+          deburredName: deburr(lead.name.toLowerCase()),
+          deburredOrganization: deburr(lead.organization.toLowerCase()),
+        })),
+      })),
+    [subscriptionGroups]
+  );
+
   const selectedGroup = useMemo(() => {
     const effectiveToken = localSelection ?? userGroupToken;
     const group = findValidGroup(effectiveToken, subscriptionGroups);
@@ -131,7 +157,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
           formStatus === 'modified' ||
           formStatus === 'pending') && (
           <div>
-            <h3>Group Subscription</h3>
+            <h3>Group subscription</h3>
             <div
               style={{
                 display: 'grid',
@@ -156,6 +182,24 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                 <h4 style={{ fontStyle: 'italic', fontWeight: 400 }}>
                   None provided
                 </h4>
+              )}
+              {validGroup.subscriberName && (
+                <>
+                  <h4>
+                    {isMultiGroupSubscription ? (
+                      <>Multi-group subscriber:</>
+                    ) : (
+                      <>
+                        Subscriber:
+                        <br />
+                        (where different from subscribed group)
+                      </>
+                    )}
+                  </h4>
+                  <h4 style={{ fontWeight: 400 }}>
+                    {validGroup.subscriberName}
+                  </h4>
+                </>
               )}
             </div>
             <form>
@@ -213,20 +257,34 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
               }}
             >
               <h4>Group name:</h4>
-              <Select<Option, any>
+              <Select<Option, false>
                 isMulti={false}
                 isSearchable
                 options={groupVocab}
                 value={selectedGroup}
-                onChange={(option: ValueType<Option, any>) => {
-                  const value =
-                    option == null || Array.isArray(option)
-                      ? ''
-                      : (option as Option).value;
+                onChange={(option) => {
+                  const value = option?.value ?? '';
                   setLocalSelection(value);
                   onPropertyChange(tokenField)(value);
                 }}
                 formatOptionLabel={(option) => option.label}
+                filterOption={(option, inputValue) => {
+                  const group = deburredGroups.find(
+                    (g) => g.subscriptionToken === option.value
+                  );
+                  if (!group) return false;
+
+                  const searchText = deburr(inputValue.toLowerCase().trim());
+                  return (
+                    group.deburredGroupName.includes(searchText) ||
+                    group.deburredSubscriberName.includes(searchText) ||
+                    group.deburredLeads.some(
+                      (lead) =>
+                        lead.deburredName.includes(searchText) ||
+                        lead.deburredOrganization.includes(searchText)
+                    )
+                  );
+                }}
                 form="DO_NOT_SUBMIT_ON_ENTER"
                 className="wdk-UserProfile-TypeAheadSelect"
                 styles={{
