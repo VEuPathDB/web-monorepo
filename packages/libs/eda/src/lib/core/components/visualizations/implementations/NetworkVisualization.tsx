@@ -48,11 +48,13 @@ import MultiSelect, {
   Option as NodeLabelProp,
 } from '@veupathdb/components/lib/components/plotControls/MultiSelect';
 import { ResetButtonCoreUI } from '../../ResetButton';
+import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 // end imports
 
 // Defaults
 const DEFAULT_CORRELATION_COEF_THRESHOLD = 0.5; // Ability for user to change this value not yet implemented.
 const DEFAULT_SIGNIFICANCE_THRESHOLD = 0.05; // Ability for user to change this value not yet implemented.
+const DEFAULT_LINK_TYPE = 'both'; // Correlation direction. Applies to correlation networks only.
 const DEFAULT_LINK_COLOR_DATA = '0';
 const MIN_STROKE_WIDTH = 0.5; // Minimum stroke width for links in the network. Will represent the smallest link weight.
 const MAX_STROKE_WIDTH = 6; // Maximum stroke width for links in the network. Will represent the largest link weight.
@@ -76,14 +78,26 @@ function createDefaultConfig(): NetworkConfig {
   return {
     correlationCoefThreshold: DEFAULT_CORRELATION_COEF_THRESHOLD,
     significanceThreshold: DEFAULT_SIGNIFICANCE_THRESHOLD,
+    correlationDirection: DEFAULT_LINK_TYPE,
   };
 }
+
+export const NetworkCorrelationDirection = t.union([
+  t.literal('positive'),
+  t.literal('negative'),
+  t.literal('both'),
+]);
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export type NetworkCorrelationDirection = t.TypeOf<
+  typeof NetworkCorrelationDirection
+>;
 
 export type NetworkConfig = t.TypeOf<typeof NetworkConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const NetworkConfig = t.partial({
   correlationCoefThreshold: t.number,
   significanceThreshold: t.number,
+  correlationDirection: NetworkCorrelationDirection,
 });
 
 interface Options
@@ -139,6 +153,7 @@ function NetworkViz(props: VisualizationProps<Options>) {
         config: {
           correlationCoefThreshold: vizConfig.correlationCoefThreshold,
           significanceThreshold: vizConfig.significanceThreshold,
+          correlationDirection: vizConfig.correlationDirection,
         },
         computeConfig: computationConfiguration,
       };
@@ -163,6 +178,7 @@ function NetworkViz(props: VisualizationProps<Options>) {
       visualization.descriptor.type,
       vizConfig.correlationCoefThreshold,
       vizConfig.significanceThreshold,
+      vizConfig.correlationDirection,
     ])
   );
 
@@ -514,37 +530,62 @@ function NetworkViz(props: VisualizationProps<Options>) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       {!hideInputsAndControls && (
-        <LabelledGroup label="Link thresholds" alignChildrenHorizontally={true}>
-          <NumberInput
-            onValueChange={(newValue?: NumberOrDate) =>
-              updateVizConfig({ correlationCoefThreshold: Number(newValue) })
-            }
-            label={'Absolute correlation coefficient'}
-            minValue={0}
-            maxValue={1}
-            value={
-              vizConfig.correlationCoefThreshold ??
-              DEFAULT_CORRELATION_COEF_THRESHOLD
-            }
-            step={0.05}
-            applyWarningStyles={cleanedData && cleanedData.nodes.length === 0}
-          />
+        <div style={{ display: 'flex', flexDirection: 'row', gap: 10 }}>
+          <LabelledGroup
+            label="Link thresholds"
+            alignChildrenHorizontally={true}
+          >
+            <NumberInput
+              onValueChange={(newValue?: NumberOrDate) =>
+                updateVizConfig({ correlationCoefThreshold: Number(newValue) })
+              }
+              label={'Absolute correlation coefficient'}
+              minValue={0}
+              maxValue={1}
+              value={
+                vizConfig.correlationCoefThreshold ??
+                DEFAULT_CORRELATION_COEF_THRESHOLD
+              }
+              step={0.05}
+              applyWarningStyles={cleanedData && cleanedData.nodes.length === 0}
+            />
 
-          <NumberInput
-            label="P-Value"
-            onValueChange={(newValue?: NumberOrDate) =>
-              updateVizConfig({ significanceThreshold: Number(newValue) })
-            }
-            minValue={0}
-            maxValue={1}
-            value={
-              vizConfig.significanceThreshold ?? DEFAULT_SIGNIFICANCE_THRESHOLD
-            }
-            containerStyles={{ marginLeft: 10 }}
-            step={0.001}
-            applyWarningStyles={cleanedData && cleanedData.nodes.length === 0}
-          />
-        </LabelledGroup>
+            <NumberInput
+              label="P-Value"
+              onValueChange={(newValue?: NumberOrDate) =>
+                updateVizConfig({ significanceThreshold: Number(newValue) })
+              }
+              minValue={0}
+              maxValue={1}
+              value={
+                vizConfig.significanceThreshold ??
+                DEFAULT_SIGNIFICANCE_THRESHOLD
+              }
+              containerStyles={{ marginLeft: 10 }}
+              step={0.001}
+              applyWarningStyles={cleanedData && cleanedData.nodes.length === 0}
+            />
+          </LabelledGroup>
+          <LabelledGroup label="Link type" alignChildrenHorizontally={true}>
+            <RadioButtonGroup
+              options={['positive', 'negative', 'both']}
+              selectedOption={
+                vizConfig.correlationDirection ?? DEFAULT_LINK_TYPE
+              }
+              onOptionSelected={(value) => {
+                const validatedValue =
+                  NetworkCorrelationDirection.decode(value);
+                if (validatedValue._tag === 'Right') {
+                  updateVizConfig({
+                    correlationDirection: validatedValue.right,
+                  });
+                } else {
+                  console.error('Invalid link type');
+                }
+              }}
+            />
+          </LabelledGroup>
+        </div>
       )}
       <OutputEntityTitle subtitle={plotSubtitle} />
       <LayoutComponent

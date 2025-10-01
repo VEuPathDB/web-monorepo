@@ -25,6 +25,7 @@ import {
 } from '../../types/general';
 import { VariableDescriptor, StringVariableValue } from '../../types/variable';
 import { ComputationAppOverview } from '../../types/visualization';
+import { NetworkCorrelationDirection } from '../../components/visualizations/implementations/NetworkVisualization';
 
 export const AppsResponse = type({
   apps: array(ComputationAppOverview),
@@ -434,6 +435,7 @@ const NetworkConfig = partial({
   variables: unknown,
   correlationCoefThreshold: number,
   significanceThreshold: number,
+  correlationDirection: NetworkCorrelationDirection,
 });
 export const NetworkResponse = type({
   network: type({
@@ -448,6 +450,7 @@ export interface NetworkRequestParams {
   config: {
     correlationCoefThreshold?: number;
     significanceThreshold?: number;
+    correlationDirection?: NetworkCorrelationDirection;
   };
 }
 
@@ -493,11 +496,7 @@ export const CorrelationBipartiteNetworkResponse = intersection([
     significanceThreshold: number,
   }),
   partial({
-    correlationDirection: union([
-      literal('positive'),
-      literal('negative'),
-      literal('both'),
-    ]),
+    correlationDirection: NetworkCorrelationDirection,
   }),
 ]);
 
@@ -507,7 +506,7 @@ export interface BipartiteNetworkRequestParams {
   config: {
     correlationCoefThreshold?: number;
     significanceThreshold?: number;
-    correlationDirection?: 'positive' | 'negative' | 'both';
+    correlationDirection?: NetworkCorrelationDirection;
   };
 }
 

@@ -49,13 +49,14 @@ import {
   NodeMenuAction,
 } from '@veupathdb/components/lib/types/plots/network';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
+import { NetworkCorrelationDirection } from './NetworkVisualization';
 // end imports
 
 // Defaults
 const DEFAULT_CORRELATION_COEF_THRESHOLD = 0.5; // Ability for user to change this value not yet implemented.
 const DEFAULT_SIGNIFICANCE_THRESHOLD = 0.05; // Ability for user to change this value not yet implemented.
 const DEFAULT_LINK_COLOR_DATA = '0';
-const DEFAULT_LINK_TYPE = 'both';
+const DEFAULT_LINK_TYPE = 'both'; // Correlation direction. Applies to correlation networks only.
 const MIN_STROKE_WIDTH = 0.5; // Minimum stroke width for links in the network. Will represent the smallest link weight.
 const MAX_STROKE_WIDTH = 6; // Maximum stroke width for links in the network. Will represent the largest link weight.
 const DEFAULT_NUMBER_OF_LINE_LEGEND_ITEMS = 4;
@@ -81,22 +82,12 @@ function createDefaultConfig(): BipartiteNetworkConfig {
   };
 }
 
-const BipartiteNetworkCorrelationDirection = t.union([
-  t.literal('positive'),
-  t.literal('negative'),
-  t.literal('both'),
-]);
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-type BipartiteNetworkCorrelationDirection = t.TypeOf<
-  typeof BipartiteNetworkCorrelationDirection
->;
-
 export type BipartiteNetworkConfig = t.TypeOf<typeof BipartiteNetworkConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BipartiteNetworkConfig = t.partial({
   correlationCoefThreshold: t.number,
   significanceThreshold: t.number,
-  correlationDirection: BipartiteNetworkCorrelationDirection,
+  correlationDirection: NetworkCorrelationDirection,
 });
 
 export interface BipartiteNetworkOptions
@@ -533,7 +524,7 @@ function BipartiteNetworkViz(
               }
               onOptionSelected={(value) => {
                 const validatedValue =
-                  BipartiteNetworkCorrelationDirection.decode(value);
+                  NetworkCorrelationDirection.decode(value);
                 if (validatedValue._tag === 'Right') {
                   updateVizConfig({
                     correlationDirection: validatedValue.right,
