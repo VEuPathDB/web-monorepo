@@ -21,7 +21,7 @@ import {
 import { twoColorPalette } from '@veupathdb/components/lib/types/plots/addOns';
 import { useCallback, useMemo, useState } from 'react';
 import { scaleOrdinal } from 'd3-scale';
-import { uniq } from 'lodash';
+import { capitalize, uniq } from 'lodash';
 import { usePromise } from '../../../hooks/promise';
 import {
   useDataClient,
@@ -54,7 +54,7 @@ import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/Radio
 // Defaults
 const DEFAULT_CORRELATION_COEF_THRESHOLD = 0.5; // Ability for user to change this value not yet implemented.
 const DEFAULT_SIGNIFICANCE_THRESHOLD = 0.05; // Ability for user to change this value not yet implemented.
-const DEFAULT_LINK_TYPE = 'both'; // Correlation direction. Applies to correlation networks only.
+const DEFAULT_LINK_TYPE = 'Both'; // Correlation direction. Applies to correlation networks only.
 const DEFAULT_LINK_COLOR_DATA = '0';
 const MIN_STROKE_WIDTH = 0.5; // Minimum stroke width for links in the network. Will represent the smallest link weight.
 const MAX_STROKE_WIDTH = 6; // Maximum stroke width for links in the network. Will represent the largest link weight.
@@ -78,7 +78,8 @@ function createDefaultConfig(): NetworkConfig {
   return {
     correlationCoefThreshold: DEFAULT_CORRELATION_COEF_THRESHOLD,
     significanceThreshold: DEFAULT_SIGNIFICANCE_THRESHOLD,
-    correlationDirection: DEFAULT_LINK_TYPE,
+    correlationDirection:
+      DEFAULT_LINK_TYPE.toLowerCase() as NetworkCorrelationDirection,
   };
 }
 
@@ -568,13 +569,14 @@ function NetworkViz(props: VisualizationProps<Options>) {
           </LabelledGroup>
           <LabelledGroup label="Link type" alignChildrenHorizontally={true}>
             <RadioButtonGroup
-              options={['positive', 'negative', 'both']}
+              options={['Positive', 'Negative', 'Both']}
               selectedOption={
-                vizConfig.correlationDirection ?? DEFAULT_LINK_TYPE
+                capitalize(vizConfig.correlationDirection) ?? DEFAULT_LINK_TYPE
               }
               onOptionSelected={(value) => {
-                const validatedValue =
-                  NetworkCorrelationDirection.decode(value);
+                const validatedValue = NetworkCorrelationDirection.decode(
+                  value.toLowerCase()
+                );
                 if (validatedValue._tag === 'Right') {
                   updateVizConfig({
                     correlationDirection: validatedValue.right,
