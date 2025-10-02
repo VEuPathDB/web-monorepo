@@ -14,6 +14,7 @@ import { User, UserPreferences } from '../../Utils/WdkUser';
 import {
   SaveButton,
   OutlinedButton,
+  FilledButton,
 } from '@veupathdb/coreui/lib/components/buttons';
 import './Profile/UserProfile.scss';
 import { FormStatus } from '../../../../coreui/lib/components/buttons/SaveButton';
@@ -21,6 +22,7 @@ import Loading from '../../Components/Loading';
 import './UserAccountForm.scss';
 import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
 import { UserSecurityForm } from './UserSecurityForm';
+import { Dialog } from '../../Components';
 
 // Props interface
 export interface UserAccountFormProps {
@@ -69,6 +71,7 @@ function UserAccountForm(props: UserAccountFormProps) {
   const [displayedFormStatus, setDisplayedFormStatus] =
     useState<FormStatus>(formStatus);
   const hasUnsavedChanges = formStatus === 'modified';
+  const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
 
   // Track formStatus changes to prevent stale "Saved" state when switching tabs
   // This ensures the Save button shows current status rather than previous section's status.
@@ -165,27 +168,19 @@ function UserAccountForm(props: UserAccountFormProps) {
               />
               {saveButton}
             </form>
-            {/*
             <p style={{ padding: '10px' }}></p>
-            <form
-              className="wdk-UserProfile-profileForm wdk-UserProfile-accountForm"
-              name="deleteAccountForm"
-            >
-              <fieldset>
-                <legend>Delete My Account</legend>
-                <p>
-                  All your personal information will be removed from our systems
-                  and any contributions you have made will be anonymized.
-                </p>
-                <p>This action cannot be undone. Please be sure.</p>
-                <OutlinedButton
-                  text="Delete My Account"
-                  onPress={(e) => onDeleteAccount()}
-                  themeRole="primary"
-                />
-              </fieldset>
-            </form>
-            */}
+            <div className="wdk-UserProfile-profileForm wdk-UserProfile-accountForm">
+              <h2>Delete my account</h2>
+              <p>
+                All your personal information will be removed from our systems
+                and any contributions you have made will be anonymized.
+              </p>
+              <OutlinedButton
+                text="Delete My Account"
+                onPress={() => setShowDeleteConfirmModal(true)}
+                themeRole="error"
+              />
+            </div>
           </div>
         );
       case 'subscription':
@@ -300,6 +295,71 @@ function UserAccountForm(props: UserAccountFormProps) {
           {renderSectionContent()}
         </div>
       </div>
+      {/* Confirmation modal for account deletion */}
+      <Dialog
+        open={showDeleteConfirmModal}
+        modal={true}
+        title="Confirmation"
+        description={<div>Confirm you want to delete your account.</div>}
+        onClose={() => setShowDeleteConfirmModal(false)}
+      >
+        <div style={{ padding: '1em', width: 550, display: 'grid' }}>
+          <p
+            style={{
+              fontSize: '1.2em',
+              fontWeight: 500,
+              marginBottom: '1em',
+              justifySelf: 'center',
+            }}
+          >
+            Are you sure you want to delete your account?
+          </p>
+          <p
+            style={{
+              fontSize: '1.2em',
+              justifySelf: 'center',
+              textAlign: 'center',
+              width: 400,
+            }}
+          >
+            All your personal information will be removed from our systems and
+            any contributions you have made will be anonymized.
+          </p>
+          <p
+            style={{
+              fontSize: '1.2em',
+              fontWeight: 600,
+              justifySelf: 'center',
+              textAlign: 'center',
+              width: 400,
+              marginTop: '1em',
+            }}
+          >
+            This action cannot be undone.
+          </p>
+          <div
+            style={{
+              marginTop: '3em',
+              display: 'flex',
+              justifyContent: 'space-between',
+            }}
+          >
+            <OutlinedButton
+              text="Yes, delete my account"
+              onPress={() => {
+                setShowDeleteConfirmModal(false);
+                onDeleteAccount();
+              }}
+              themeRole="error"
+            />
+            <FilledButton
+              text="No, keep my account"
+              onPress={() => setShowDeleteConfirmModal(false)}
+              themeRole="success"
+            />
+          </div>
+        </div>
+      </Dialog>
     </>
   );
 }
