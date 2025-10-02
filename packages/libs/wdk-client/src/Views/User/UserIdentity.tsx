@@ -96,7 +96,7 @@ const UserIdentity = (props: UserIdentityProps) => {
         </Grid>
         <Grid item xs={6} md={4} lg={3}>
           <h4>
-            <i className="fa fa-asterisk"></i>Retype Email:
+            <i className="fa fa-asterisk"></i>Retype email:
           </h4>
         </Grid>
         <Grid item xs={6} md={8} lg={9}>
