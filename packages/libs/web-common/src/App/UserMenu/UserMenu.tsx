@@ -46,7 +46,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
     const items: MenuItem[] = [
       {
         icon: 'vcard',
-        text: 'My Profile',
+        text: 'My Account',
         route: '/user/profile',
       },
       {
