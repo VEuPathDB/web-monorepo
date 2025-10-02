@@ -18,7 +18,6 @@ import {
 import { UserProfileFormData } from '../StoreModules/UserProfileStoreModule';
 import { InferType } from 'prop-types';
 import { makeCommonErrorMessage } from '../Utils/Errors';
-import { notifyUnhandledError } from './UnhandledErrorActions';
 
 export type Action =
   | UserUpdateAction
@@ -32,6 +31,7 @@ export type Action =
   | PasswordFormSubmissionStatusAction
   | ResetPasswordUpdateEmailAction
   | ResetPasswordSubmissionStatusAction
+  | DeleteAccountStatusAction
   | BasketStatusLoadingAction
   | BasketStatusReceivedAction
   | BasketStatusErrorAction
@@ -286,6 +286,41 @@ export function resetPasswordSubmissionStatus(
     type: RESET_PASSWORD_SUBMISSION_STATUS,
     payload: {
       success: message == null,
+      message,
+    },
+  };
+}
+
+// actions to manage account deletion
+// -----------------------------------
+
+//==============================================================================
+
+export const DELETE_ACCOUNT_STATUS = 'user/delete-account-status';
+
+export type DeleteAccountStatus =
+  | 'idle'
+  | 'deleting'
+  | 'loggingOut'
+  | 'done'
+  | 'error';
+
+export type DeleteAccountStatusAction = {
+  type: typeof DELETE_ACCOUNT_STATUS;
+  payload: {
+    status: DeleteAccountStatus;
+    message?: string;
+  };
+};
+
+export function deleteAccountStatus(
+  status: DeleteAccountStatus,
+  message?: string
+): DeleteAccountStatusAction {
+  return {
+    type: DELETE_ACCOUNT_STATUS,
+    payload: {
+      status,
       message,
     },
   };
@@ -625,15 +660,39 @@ export function submitPasswordReset(
   };
 }
 
-// FIXME: this method does not properly log out and errors silently
-export function deleteAccount(): ActionThunk<EmptyAction> {
-  return function run({ wdkService, transitioner }) {
-    return [
-      wdkService
-        .deleteAccount()
-        .then(() => wdkService.logout())
-        .then(() => emptyAction),
-    ];
+export function deleteAccount(): ActionThunk<DeleteAccountStatusAction> {
+  return function run({ wdkService }) {
+    console.log('[deleteAccount] Starting account deletion process');
+
+    const deletePromise = wdkService.deleteAccount();
+    console.log('[deleteAccount] deletePromise created:', deletePromise);
+
+    const chainedPromise = deletePromise
+      .then(() => {
+        console.log(
+          '[deleteAccount] Account deleted successfully, now logging out'
+        );
+        return wdkService.logout();
+      })
+      .then(() => {
+        console.log(
+          '[deleteAccount] Logout successful, dispatching done status'
+        );
+        return deleteAccountStatus('done');
+      })
+      .catch((error) => {
+        const message = makeCommonErrorMessage(error);
+        console.error(
+          '[deleteAccount] Account deletion failed:',
+          message,
+          error
+        );
+        return deleteAccountStatus('error', message);
+      });
+
+    console.log('[deleteAccount] chainedPromise created:', chainedPromise);
+
+    return [deleteAccountStatus('deleting'), chainedPromise];
   };
 }
 

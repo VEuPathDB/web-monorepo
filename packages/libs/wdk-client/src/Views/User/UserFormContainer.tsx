@@ -37,6 +37,10 @@ export interface UserFormContainerProps {
   previousUserFormData?: UserProfileFormData;
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
   errorMessage?: string;
+  deleteAccountStatus?: {
+    status: 'idle' | 'deleting' | 'loggingOut' | 'done' | 'error';
+    message?: string;
+  };
   userEvents: {
     submitProfileForm: (userData: UserProfileFormData) => void;
     updateProfileForm: (newState: UserProfileFormData) => void;
@@ -219,6 +223,7 @@ function UserFormContainer(props: UserFormContainerProps) {
               onDiscardChanges={onDiscardChanges}
               onDeleteAccount={onDeleteAccount}
               formStatus={props.formStatus}
+              deleteAccountStatus={props.deleteAccountStatus}
               singleFormMode={props.singleFormMode}
               highlightMissingFields={props.highlightMissingFields}
               showSubscriptionProds={props.showSubscriptionProds}

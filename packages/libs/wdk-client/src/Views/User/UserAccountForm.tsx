@@ -43,6 +43,10 @@ export interface UserAccountFormProps {
   singleFormMode?: boolean;
   highlightMissingFields?: boolean;
   showSubscriptionProds?: boolean;
+  deleteAccountStatus?: {
+    status: 'idle' | 'deleting' | 'loggingOut' | 'done' | 'error';
+    message?: string;
+  };
 }
 
 /**
@@ -63,6 +67,7 @@ function UserAccountForm(props: UserAccountFormProps) {
     onDeleteAccount,
     singleFormMode = false,
     showSubscriptionProds,
+    deleteAccountStatus,
   } = props;
 
   const [activeSection, navigateToSection] =
@@ -94,6 +99,24 @@ function UserAccountForm(props: UserAccountFormProps) {
   }, [hasUnsavedChanges]);
 
   const handleSuccess = useCallback(() => setDisplayedFormStatus('new'), []);
+
+  // Map deleteAccountStatus to SaveButton's FormStatus
+  const getDeleteButtonStatus = (): FormStatus => {
+    if (!deleteAccountStatus) return 'modified';
+    switch (deleteAccountStatus.status) {
+      case 'idle':
+        return 'modified';
+      case 'deleting':
+      case 'loggingOut':
+        return 'pending';
+      case 'done':
+        return 'success';
+      case 'error':
+        return 'error';
+      default:
+        return 'modified';
+    }
+  };
 
   const vocabulary = useWdkService(
     (wdkService) =>
@@ -344,13 +367,31 @@ function UserAccountForm(props: UserAccountFormProps) {
               justifyContent: 'space-between',
             }}
           >
-            <OutlinedButton
-              text="Yes, delete my account"
-              onPress={() => {
-                setShowDeleteConfirmModal(false);
+            <SaveButton
+              customText={{
+                save: 'Yes, delete my account',
+                saving: 'Deleting account...',
+                saved: 'Deleted',
+              }}
+              formStatus={getDeleteButtonStatus()}
+              onPress={(e) => {
+                e.preventDefault();
                 onDeleteAccount();
               }}
               themeRole="error"
+              styleOverrides={{
+                container: {
+                  width: 'auto',
+                  minWidth: 'max-content',
+                },
+              }}
+              savedStateDuration={2000}
+              onSuccess={() => {
+                console.log(
+                  '[UserAccountForm] SaveButton onSuccess - redirecting to goodbye page'
+                );
+                window.location.assign('/user/message/account-deleted');
+              }}
             />
             <FilledButton
               text="No, keep my account"

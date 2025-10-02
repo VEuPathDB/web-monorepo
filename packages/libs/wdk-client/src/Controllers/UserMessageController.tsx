@@ -41,6 +41,23 @@ class UserMessageController extends PageController<MergeProps> {
             </span>
           ),
         };
+      case 'account-deleted':
+        return {
+          tabTitle: 'Account Deleted',
+          pageTitle: 'Your account has been deleted',
+          pageContent: (
+            <div>
+              <p>
+                All your personal information has been removed from our systems
+                and any contributions you have made have been anonymized.
+              </p>
+              <p>
+                Thank you for using VEuPathDB. If you wish to use our services
+                again in the future, you are welcome to create a new account.
+              </p>
+            </div>
+          ),
+        };
       case 'login-error':
         let prevPageUrl = this.props.ownProps.requestUrl;
         return {
