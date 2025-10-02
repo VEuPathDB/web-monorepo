@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import TextArea from '../../Components/InputControls/TextArea';
@@ -7,15 +6,56 @@ import SingleSelect from '../../Components/InputControls/SingleSelect';
 import { wrappable } from '../../Utils/ComponentUtils';
 import { Grid } from '@material-ui/core';
 import './Profile/UserProfile.scss';
+import { ServiceConfig } from '../../Service/ServiceBase';
+import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
+
+// this ought to be typed "higher up" but doesn't seem to be
+// see `getUserProfileVocabulary` in OauthService.ts
+type VocabularyItem = {
+  value: string;
+  display: string;
+};
+
+type Vocabulary = Record<string, VocabularyItem[]>;
+
+type UserProfileProperty = ServiceConfig['userProfileProperties'][number] & {
+  suggestText?: string;
+  isMultiLine?: boolean;
+};
+
+interface UserIdentityProps {
+  /** The user object to be modified */
+  user: UserProfileFormData;
+
+  /** The on change handler for email text box input */
+  onEmailChange: (value: string) => void;
+
+  /** The on change handler for confirm email text box input */
+  onConfirmEmailChange: (value: string) => void;
+
+  /** The on change handler for user profile properties inputs */
+  onPropertyChange: (field: string) => (value: any) => void;
+
+  /** An array of the user properties configured in WDK model */
+  propDefs: UserProfileProperty[];
+
+  /** Vocabulary for select fields */
+  vocabulary?: Vocabulary;
+
+  /** Whether to highlight missing required fields */
+  highlightMissingFields?: boolean;
+}
 
 /**
  * This React stateless function displays the user identification fieldset of the form.
- * @param props
- * @returns {XML}
- * @constructor
  */
-const UserIdentity = (props) => {
-  let { user, onPropertyChange, vocabulary, highlightMissingFields } = props;
+const UserIdentity = (props: UserIdentityProps) => {
+  const {
+    user,
+    onPropertyChange,
+    vocabulary = {},
+    highlightMissingFields,
+  } = props;
 
   return (
     <>
@@ -42,10 +82,10 @@ const UserIdentity = (props) => {
             type="email"
             id="userEmail"
             value={user.email}
-            required="required"
+            required
             onChange={props.onEmailChange}
-            maxLength="255"
-            size="80"
+            maxLength={255}
+            size={80}
             placeholder="Your email or (optional) username can be used to log in"
             className={
               highlightMissingFields && !user.email
@@ -64,10 +104,10 @@ const UserIdentity = (props) => {
             type="email"
             id="confirmUserEmail"
             value={user.confirmEmail}
-            required="required"
+            required
             onChange={props.onConfirmEmailChange}
-            maxLength="255"
-            size="80"
+            maxLength={255}
+            size={80}
             placeholder="Please re-type the same email as above"
             className={
               highlightMissingFields && !user.confirmEmail
@@ -88,7 +128,7 @@ const UserIdentity = (props) => {
         {props.propDefs
           .filter((def) => def.name !== 'subscriptionToken')
           .map((propDef) => {
-            let {
+            const {
               name,
               help,
               suggestText,
@@ -97,7 +137,7 @@ const UserIdentity = (props) => {
               inputType,
               isRequired,
             } = propDef;
-            let value = user.properties[name] ? user.properties[name] : '';
+            const value = user.properties?.[name] ?? '';
             return (
               <>
                 <Grid item key={name} xs={6} md={4} lg={3}>
@@ -115,8 +155,8 @@ const UserIdentity = (props) => {
                       value={value}
                       required={isRequired}
                       onChange={onPropertyChange(name)}
-                      maxLength="255"
-                      size="80"
+                      maxLength={255}
+                      size={80}
                       className={
                         highlightMissingFields && isRequired && !value
                           ? 'field-required-empty'
@@ -131,7 +171,7 @@ const UserIdentity = (props) => {
                       value={value}
                       required={isRequired}
                       onChange={onPropertyChange(name)}
-                      maxLength="3000"
+                      maxLength={3000}
                       style={{ width: '40em', height: '5em' }}
                       className={
                         highlightMissingFields && isRequired && !value
@@ -141,13 +181,12 @@ const UserIdentity = (props) => {
                     />
                   ) : inputType === 'select' ? (
                     <SingleSelect
-                      id={name}
                       name={name}
                       value={value}
                       required={isRequired}
                       onChange={onPropertyChange(name)}
                       items={[{ value: '', display: '--' }].concat(
-                        vocabulary[name]
+                        vocabulary[name] ?? []
                       )}
                       className={
                         highlightMissingFields && isRequired && !value
@@ -165,26 +204,6 @@ const UserIdentity = (props) => {
       </Grid>
     </>
   );
-};
-
-UserIdentity.propTypes = {
-  /** The user object to be modified */
-  user: PropTypes.object.isRequired,
-
-  /** The on change handler for email text box input */
-  onEmailChange: PropTypes.func.isRequired,
-
-  /** The on change handler for confirm email text box input */
-  onConfirmEmailChange: PropTypes.func.isRequired,
-
-  /** The on change handler for user profile properties inputs */
-  onPropertyChange: PropTypes.func.isRequired,
-
-  /** An array of the user properties configured in WDK model */
-  propDefs: PropTypes.array.isRequired,
-
-  /** Whether to highlight missing required fields */
-  highlightMissingFields: PropTypes.bool,
 };
 
 export default wrappable(UserIdentity);
