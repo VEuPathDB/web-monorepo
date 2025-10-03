@@ -49,18 +49,29 @@ const IntroText: React.FC = () => (
 );
 
 const WhyRegister: React.FC = () => (
-  <div style={getDescriptionBoxStyle()}>
-    <h4>Why register/subscribe?</h4>
-    <div id="cirbulletlist">
-      <ul>
-        <li>Permanently save Search Strategies</li>
-        <li>Use a Basket to make a set of IDs of interest</li>
-        <li>Use Favorites to mark IDs of interest, for fast access</li>
-        <li>Add a comment on Genes, Sequences and other record types</li>
-        <li>Set site preferences</li>
-      </ul>
-    </div>
-  </div>
+  <Banner
+    banner={{
+      type: 'normal',
+      hideIcon: true,
+      message: (
+        <div
+          style={{ marginLeft: '1em', marginRight: '1em', marginBottom: '1em' }}
+        >
+          <h4>Why register/subscribe?</h4>
+          <div id="cirbulletlist">
+            <ul>
+              <li>Permanently save Search Strategies</li>
+              <li>Use a Basket to make a set of IDs of interest</li>
+              <li>Use Favorites to mark IDs of interest, for fast access</li>
+              <li>Add a comment on Genes, Sequences and other record types</li>
+              <li>Set site preferences</li>
+            </ul>
+          </div>
+        </div>
+      ),
+      pinned: true,
+    }}
+  />
 );
 
 const PrivacyPolicy: React.FC = () => (
@@ -171,7 +182,13 @@ const UserRegistration: React.FC<UserRegistrationProps> = (props) => (
             />
           </div>
         )}
-        <div>
+        <div
+          style={{
+            marginTop: '2em',
+            marginLeft: '24px',
+            maxWidth: 'max-content',
+          }}
+        >
           <WhyRegister />
         </div>
       </>
