@@ -9,6 +9,7 @@ import { filter, mergeMap } from 'rxjs/operators';
 import { Action } from '../Actions';
 import { alert, confirm } from '../Utils/Platform';
 import { EpicDependencies } from '../Core/Store';
+import { clearAuthCookie } from '../Utils/WdkUser';
 
 import {
   showLoginWarning,
@@ -137,6 +138,7 @@ function observeShowLogoutWarning(
       if (method === 'OAUTH2') {
         if (usingExternalWebClient(oauthClientUrl)) {
           await wdkService.logout();
+          clearAuthCookie();
           window.location.assign('/');
         } else {
           const googleSpecific = oauthUrl.indexOf('google') != -1;

@@ -14,6 +14,7 @@ import {
   UserPredicate,
   UserPreferences,
   UserWithPrefs,
+  clearAuthCookie,
 } from '../Utils/WdkUser';
 import { UserProfileFormData } from '../StoreModules/UserProfileStoreModule';
 import { InferType } from 'prop-types';
@@ -678,6 +679,7 @@ export function deleteAccount(): ActionThunk<DeleteAccountStatusAction> {
               console.log(
                 '[deleteAccount] Logout successful, dispatching done status'
               );
+              clearAuthCookie();
               return deleteAccountStatus('done');
             }),
           ];
