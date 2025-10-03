@@ -5,6 +5,7 @@ import { wrappable } from '../Utils/ComponentUtils';
 import NotFound from '../Views/NotFound/NotFound';
 import { RootState } from '../Core/State/Types';
 import { connect } from 'react-redux';
+import { Link } from '../Components';
 
 type PageContent = {
   tabTitle: string;
@@ -54,6 +55,14 @@ class UserMessageController extends PageController<MergeProps> {
               <p>
                 Thank you for using VEuPathDB. If you wish to use our services
                 again in the future, you are welcome to create a new account.
+              </p>
+              <p>
+                <strong>Note:</strong> If you were not expecting to see this
+                message, remember that all VEuPathDB component sites (e.g.
+                PlasmoDB, ToxoDB, VectorBase, etc) share the same user
+                registration system. You have likely deleted your account from a
+                sister site. If this is not the case please{' '}
+                <Link to="/contact-us">contact the helpdesk</Link>.
               </p>
             </div>
           ),
