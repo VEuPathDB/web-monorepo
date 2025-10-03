@@ -22,6 +22,7 @@ interface UserRegistrationProps {
       condition: (user: any) => boolean,
       path: string
     ) => void;
+    showLoginForm: (destination?: string) => void;
   };
   initialFormFields?: Record<string, string>;
 }
@@ -144,7 +145,7 @@ const UserRegistration: React.FC<UserRegistrationProps> = (props) => (
     />
     {props.globalData.user?.isGuest && (
       <>
-        {props.formStatus === 'success' && (
+        {props.formStatus !== 'success' && (
           <div
             className="wdk-UserProfile-banner wdk-UserProfile-success"
             style={{ marginTop: '1em', marginLeft: '24px' }}
@@ -154,16 +155,23 @@ const UserRegistration: React.FC<UserRegistrationProps> = (props) => (
               and spam folder) for a temporary password.
             </p>
             <p style={{ marginTop: '0.5em' }}>
-              <Link
-                to="/user/login"
-                style={{ color: '#fff', textDecoration: 'underline' }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.location.href = '/user/login';
+              <button
+                type="button"
+                style={{
+                  color: '#fff',
+                  textDecoration: 'underline',
+                  background: 'none',
+                  border: 'none',
+                  padding: 0,
+                  cursor: 'pointer',
+                  font: 'inherit',
+                }}
+                onClick={() => {
+                  props.userEvents.showLoginForm('/');
                 }}
               >
                 Click here to log in
-              </Link>
+              </button>
             </p>
           </div>
         )}
