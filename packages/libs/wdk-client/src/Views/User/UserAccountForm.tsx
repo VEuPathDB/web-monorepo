@@ -13,6 +13,7 @@ import { useSubscriptionGroups } from '../../Hooks/SubscriptionGroups';
 import { User, UserPreferences } from '../../Utils/WdkUser';
 import {
   SaveButton,
+  SaveButtonProps,
   OutlinedButton,
   FilledButton,
 } from '@veupathdb/coreui/lib/components/buttons';
@@ -47,6 +48,7 @@ export interface UserAccountFormProps {
     status: 'idle' | 'deleting' | 'loggingOut' | 'done' | 'error';
     message?: string;
   };
+  saveButtonText?: SaveButtonProps['customText'];
 }
 
 /**
@@ -68,6 +70,7 @@ function UserAccountForm(props: UserAccountFormProps) {
     singleFormMode = false,
     showSubscriptionProds,
     deleteAccountStatus,
+    saveButtonText,
   } = props;
 
   const [activeSection, navigateToSection] =
@@ -159,6 +162,7 @@ function UserAccountForm(props: UserAccountFormProps) {
         themeRole="primary"
         onSuccess={handleSuccess}
         savedStateDuration={2000}
+        customText={saveButtonText}
       />
       {hasUnsavedChanges && (
         <OutlinedButton

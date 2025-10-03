@@ -9,6 +9,7 @@ import './Profile/UserProfile.scss';
 import { success, warning } from '@veupathdb/coreui/lib/definitions/colors';
 import { useSubscriptionGroups } from '../../Hooks/SubscriptionGroups';
 import { userIsSubscribed } from '../../Utils/Subscriptions';
+import { SaveButtonProps } from '@veupathdb/coreui/lib/components/buttons';
 
 export function getDescriptionBoxStyle() {
   return {
@@ -51,10 +52,10 @@ export interface UserFormContainerProps {
   hiddenFormMessage: string;
   titleText: string;
   introComponent?: React.ComponentType;
-  submitButtonText: string;
   singleFormMode?: boolean;
   highlightMissingFields?: boolean;
   showSubscriptionProds?: boolean;
+  saveButtonText?: SaveButtonProps['customText'];
 }
 
 function UserFormContainer(props: UserFormContainerProps) {
@@ -227,6 +228,7 @@ function UserFormContainer(props: UserFormContainerProps) {
               singleFormMode={props.singleFormMode}
               highlightMissingFields={props.highlightMissingFields}
               showSubscriptionProds={props.showSubscriptionProds}
+              saveButtonText={props.saveButtonText}
             />
           )}
         </>

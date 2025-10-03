@@ -1,7 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { wrappable } from '../../../Utils/ComponentUtils';
 import UserFormContainer, {
-  UserFormContainerProps,
   getDescriptionBoxStyle,
 } from '../../../Views/User/UserFormContainer';
 import { UserProfileFormData } from '../../../StoreModules/UserProfileStoreModule';
@@ -120,21 +120,6 @@ const PrivacyPolicy: React.FC = () => (
  */
 const UserRegistration: React.FC<UserRegistrationProps> = (props) => (
   <div>
-    {props.formStatus === 'success' && (
-      <div className="wdk-UserProfile-banner wdk-UserProfile-success">
-        <div>
-          <p>
-            You have registered successfully. Please check your email (inbox and
-            spam folder) for a temporary password.
-          </p>
-        </div>
-      </div>
-    )}
-    {props.formStatus === 'error' && props.errorMessage && (
-      <div className="wdk-UserProfile-banner wdk-UserProfile-error">
-        {props.errorMessage}
-      </div>
-    )}
     <UserFormContainer
       globalData={props.globalData}
       userFormData={props.userFormData}
@@ -150,15 +135,50 @@ const UserRegistration: React.FC<UserRegistrationProps> = (props) => (
       hiddenFormMessage="You must log out before registering a new user."
       titleText="Registration"
       introComponent={IntroText}
-      submitButtonText="Register"
       singleFormMode={true}
+      saveButtonText={{
+        save: 'Register',
+        saving: 'Registering...',
+        saved: 'Registered',
+      }}
     />
-    {!props.globalData.user?.isGuest ? (
-      ''
-    ) : (
-      <div>
-        <WhyRegister />
-      </div>
+    {props.globalData.user?.isGuest && (
+      <>
+        {props.formStatus === 'success' && (
+          <div
+            className="wdk-UserProfile-banner wdk-UserProfile-success"
+            style={{ marginTop: '1em', marginLeft: '24px' }}
+          >
+            <p>
+              You have registered successfully. Please check your email (inbox
+              and spam folder) for a temporary password.
+            </p>
+            <p style={{ marginTop: '0.5em' }}>
+              <Link
+                to="/user/login"
+                style={{ color: '#fff', textDecoration: 'underline' }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.location.href = '/user/login';
+                }}
+              >
+                Click here to log in
+              </Link>
+            </p>
+          </div>
+        )}
+        {props.formStatus === 'error' && props.errorMessage && (
+          <div
+            className="wdk-UserProfile-banner wdk-UserProfile-error"
+            style={{ marginTop: '1em' }}
+          >
+            {props.errorMessage}
+          </div>
+        )}
+        <div>
+          <WhyRegister />
+        </div>
+      </>
     )}
   </div>
 );
