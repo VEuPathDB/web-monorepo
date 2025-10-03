@@ -74,7 +74,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
               ) : (
                 <>
                   <Icon fa="exclamation-triangle UserMenu-Pane-Item-Icon UserMenu-StatusIcon--warning" />
-                  Unsubscribed
+                  Not subscribed
                 </>
               )}
             </Link>
