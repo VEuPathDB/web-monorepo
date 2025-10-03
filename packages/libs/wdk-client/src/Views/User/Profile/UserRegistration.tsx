@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { wrappable } from '../../../Utils/ComponentUtils';
 import UserFormContainer, {
   getDescriptionBoxStyle,
@@ -145,42 +144,31 @@ const UserRegistration: React.FC<UserRegistrationProps> = (props) => (
     />
     {props.globalData.user?.isGuest && (
       <>
-        {props.formStatus !== 'success' && (
-          <div
-            className="wdk-UserProfile-banner wdk-UserProfile-success"
-            style={{ marginTop: '1em', marginLeft: '24px' }}
-          >
-            <p>
-              You have registered successfully. Please check your email (inbox
-              and spam folder) for a temporary password.
-            </p>
-            <p style={{ marginTop: '0.5em' }}>
-              <button
-                type="button"
-                style={{
-                  color: '#fff',
-                  textDecoration: 'underline',
-                  background: 'none',
-                  border: 'none',
-                  padding: 0,
-                  cursor: 'pointer',
-                  font: 'inherit',
-                }}
-                onClick={() => {
-                  props.userEvents.showLoginForm('/');
-                }}
-              >
-                Click here to log in
-              </button>
-            </p>
+        {props.formStatus === 'success' && (
+          <div style={{ marginTop: '2em', marginLeft: '24px' }}>
+            <Banner
+              banner={{
+                type: 'success',
+                message:
+                  'You have registered successfully. Please check your email (inbox and spam folder) for a temporary password.',
+                pinned: true,
+                primaryActionButtonProps: {
+                  text: 'Log in',
+                  onPress: () => props.userEvents.showLoginForm('/'),
+                },
+              }}
+            />
           </div>
         )}
         {props.formStatus === 'error' && props.errorMessage && (
-          <div
-            className="wdk-UserProfile-banner wdk-UserProfile-error"
-            style={{ marginTop: '1em' }}
-          >
-            {props.errorMessage}
+          <div style={{ marginTop: '2em', marginLeft: '24px' }}>
+            <Banner
+              banner={{
+                type: 'error',
+                message: props.errorMessage,
+                pinned: true,
+              }}
+            />
           </div>
         )}
         <div>
