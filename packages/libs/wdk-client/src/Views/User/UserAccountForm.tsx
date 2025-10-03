@@ -390,7 +390,7 @@ function UserAccountForm(props: UserAccountFormProps) {
                 console.log(
                   '[UserAccountForm] SaveButton onSuccess - redirecting to goodbye page'
                 );
-                window.location.assign('/user/message/account-deleted');
+                window.location.assign('/a/app/user/message/account-deleted');
               }}
             />
             <FilledButton

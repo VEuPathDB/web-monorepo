@@ -664,35 +664,34 @@ export function deleteAccount(): ActionThunk<DeleteAccountStatusAction> {
   return function run({ wdkService }) {
     console.log('[deleteAccount] Starting account deletion process');
 
-    const deletePromise = wdkService.deleteAccount();
-    console.log('[deleteAccount] deletePromise created:', deletePromise);
-
-    const chainedPromise = deletePromise
-      .then(() => {
-        console.log(
-          '[deleteAccount] Account deleted successfully, now logging out'
-        );
-        return wdkService.logout();
-      })
-      .then(() => {
-        console.log(
-          '[deleteAccount] Logout successful, dispatching done status'
-        );
-        return deleteAccountStatus('done');
-      })
-      .catch((error) => {
-        const message = makeCommonErrorMessage(error);
-        console.error(
-          '[deleteAccount] Account deletion failed:',
-          message,
-          error
-        );
-        return deleteAccountStatus('error', message);
-      });
-
-    console.log('[deleteAccount] chainedPromise created:', chainedPromise);
-
-    return [deleteAccountStatus('deleting'), chainedPromise];
+    return [
+      deleteAccountStatus('deleting'),
+      wdkService
+        .deleteAccount()
+        .then(() => {
+          console.log(
+            '[deleteAccount] Account deleted successfully, now logging out'
+          );
+          return [
+            deleteAccountStatus('loggingOut'),
+            wdkService.logout().then(() => {
+              console.log(
+                '[deleteAccount] Logout successful, dispatching done status'
+              );
+              return deleteAccountStatus('done');
+            }),
+          ];
+        })
+        .catch((error) => {
+          const message = makeCommonErrorMessage(error);
+          console.error(
+            '[deleteAccount] Account deletion failed:',
+            message,
+            error
+          );
+          return deleteAccountStatus('error', message);
+        }),
+    ];
   };
 }
 
