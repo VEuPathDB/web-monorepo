@@ -14,11 +14,11 @@ import {
   UserPredicate,
   UserPreferences,
   UserWithPrefs,
-  clearAuthCookie,
 } from '../Utils/WdkUser';
 import { UserProfileFormData } from '../StoreModules/UserProfileStoreModule';
 import { InferType } from 'prop-types';
 import { makeCommonErrorMessage } from '../Utils/Errors';
+import { performOAuthLogout } from '../StoreModules/UserSessionStoreModule';
 
 export type Action =
   | UserUpdateAction
@@ -675,11 +675,14 @@ export function deleteAccount(): ActionThunk<DeleteAccountStatusAction> {
           );
           return [
             deleteAccountStatus('loggingOut'),
-            wdkService.logout().then(() => {
+            performOAuthLogout(
+              wdkService,
+              '/a/app/user/message/account-deleted'
+            ).then(() => {
               console.log(
-                '[deleteAccount] Logout successful, dispatching done status'
+                '[deleteAccount] Logout successful, redirecting to goodbye page'
               );
-              clearAuthCookie();
+              // The redirect is handled by performOAuthLogout
               return deleteAccountStatus('done');
             }),
           ];

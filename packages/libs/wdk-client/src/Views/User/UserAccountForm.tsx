@@ -386,12 +386,6 @@ function UserAccountForm(props: UserAccountFormProps) {
                 },
               }}
               savedStateDuration={2000}
-              onSuccess={() => {
-                console.log(
-                  '[UserAccountForm] SaveButton onSuccess - redirecting to goodbye page'
-                );
-                window.location.assign('/a/app/user/message/account-deleted');
-              }}
             />
             <FilledButton
               text="No, keep my account"

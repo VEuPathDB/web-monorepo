@@ -130,29 +130,7 @@ function observeShowLogoutWarning(
 
       if (!shouldLogout) return logoutDismissed();
 
-      await paramValueStore.clearParamValues();
-
-      const config = await wdkService.getConfig();
-      const { oauthClientUrl, oauthUrl, method } = config.authentication;
-      const logoutUrl = oauthClientUrl + '/logout';
-      if (method === 'OAUTH2') {
-        if (usingExternalWebClient(oauthClientUrl)) {
-          await wdkService.logout();
-          clearAuthCookie();
-          window.location.assign('/');
-        } else {
-          const googleSpecific = oauthUrl.indexOf('google') != -1;
-          // don't log user out of google, only the eupath oauth server
-          const nextPage = googleSpecific
-            ? logoutUrl
-            : oauthUrl +
-              '/logout?redirect_uri=' +
-              encodeURIComponent(logoutUrl);
-          window.location.assign(nextPage);
-        }
-      } else {
-        window.location.assign(logoutUrl);
-      }
+      await performOAuthLogout(wdkService, '/', paramValueStore);
       return logoutConfirmed();
     })
   );
@@ -160,6 +138,49 @@ function observeShowLogoutWarning(
 
 function usingExternalWebClient(oauthClientUrl: string) {
   return new URL(oauthClientUrl).origin !== window.location.origin;
+}
+
+/**
+ * Performs OAuth logout and redirects to the specified destination.
+ * Handles both external web client (dev) and internal client (production) scenarios.
+ *
+ * @param wdkService - WDK service for API calls
+ * @param destination - URL to redirect to after logout
+ * @param paramValueStore - Optional store for clearing parameter values
+ */
+export async function performOAuthLogout(
+  wdkService: WdkService,
+  destination: string,
+  paramValueStore?: { clearParamValues: () => Promise<void> }
+): Promise<void> {
+  if (paramValueStore) {
+    await paramValueStore.clearParamValues();
+  }
+
+  const config = await wdkService.getConfig();
+  const { oauthClientUrl, oauthUrl, method } = config.authentication;
+  const logoutUrl = oauthClientUrl + '/logout';
+
+  if (method === 'OAUTH2') {
+    if (usingExternalWebClient(oauthClientUrl)) {
+      await wdkService.logout();
+      clearAuthCookie();
+      window.location.assign(destination);
+    } else {
+      const googleSpecific = oauthUrl.indexOf('google') != -1;
+      // don't log user out of google, only the eupath oauth server
+      const logoutWithRedirect =
+        logoutUrl + '?redirectUrl=' + encodeURIComponent(destination);
+      const nextPage = googleSpecific
+        ? logoutWithRedirect
+        : oauthUrl +
+          '/logout?redirect_uri=' +
+          encodeURIComponent(logoutWithRedirect);
+      window.location.assign(nextPage);
+    }
+  } else {
+    window.location.assign(logoutUrl);
+  }
 }
 
 async function performOAuthLogin(
