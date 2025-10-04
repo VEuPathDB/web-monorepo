@@ -679,10 +679,7 @@ export function deleteAccount(): ActionThunk<DeleteAccountStatusAction> {
               wdkService,
               '/a/app/user/message/account-deleted'
             ).then(() => {
-              console.log(
-                '[deleteAccount] Logout successful, redirecting to goodbye page'
-              );
-              // The redirect is handled by performOAuthLogout
+              // performOAuthLogout does a hard redirect. We likely won't reach here.
               return deleteAccountStatus('done');
             }),
           ];

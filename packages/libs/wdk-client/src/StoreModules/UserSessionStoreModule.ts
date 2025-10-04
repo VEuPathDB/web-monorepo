@@ -145,7 +145,7 @@ function usingExternalWebClient(oauthClientUrl: string) {
  * Handles both external web client (dev) and internal client (production) scenarios.
  *
  * @param wdkService - WDK service for API calls
- * @param destination - URL to redirect to after logout
+ * @param destination - URL to redirect to after logout // NOTE: not implemented on /service/logout yet
  * @param paramValueStore - Optional store for clearing parameter values
  */
 export async function performOAuthLogout(
@@ -170,7 +170,7 @@ export async function performOAuthLogout(
       const googleSpecific = oauthUrl.indexOf('google') != -1;
       // don't log user out of google, only the eupath oauth server
       const logoutWithRedirect =
-        logoutUrl + '?redirectUrl=' + encodeURIComponent(destination);
+        logoutUrl + '?redirectUrl=' + encodeURIComponent(destination); // TODO: backend redirectUrl implementation
       const nextPage = googleSpecific
         ? logoutWithRedirect
         : oauthUrl +
