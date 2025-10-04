@@ -46,7 +46,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
     const items: MenuItem[] = [
       {
         icon: 'vcard',
-        text: 'My Profile',
+        text: 'My Account',
         route: '/user/profile',
       },
       {
@@ -74,7 +74,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
               ) : (
                 <>
                   <Icon fa="exclamation-triangle UserMenu-Pane-Item-Icon UserMenu-StatusIcon--warning" />
-                  Unsubscribed
+                  Not subscribed
                 </>
               )}
             </Link>
@@ -122,7 +122,6 @@ export const UserMenuGuest: React.FC<Omit<UserMenuProps, 'user'>> = ({
         icon: 'user-plus',
         text: 'Register',
         route: '/user/registration',
-        target: '_blank',
       },
     ];
 
@@ -157,8 +156,15 @@ function renderItems(items: MenuItem[]): JSX.Element[] {
     }
 
     if (route) {
+      // Blur on mouse out to prevent menu lingering via :focus-within
       return (
-        <Link key={key} className={className} to={route} target={target}>
+        <Link
+          key={key}
+          className={className}
+          to={route}
+          target={target}
+          onMouseOut={(e) => e.currentTarget.blur()}
+        >
           <Icon fa={icon + ' UserMenu-Pane-Item-Icon'} />
           {text}
         </Link>

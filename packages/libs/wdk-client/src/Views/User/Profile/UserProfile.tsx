@@ -14,11 +14,7 @@ import { GlobalData } from '../../../StoreModules/GlobalData';
 
 type UserProfileProps = Omit<
   UserFormContainerProps,
-  | 'shouldHideForm'
-  | 'hiddenFormMessage'
-  | 'titleText'
-  | 'submitButtonText'
-  | 'onSubmit'
+  'shouldHideForm' | 'hiddenFormMessage' | 'titleText' | 'onSubmit'
 > & {
   globalData: GlobalData;
   singleFormMode?: boolean;
@@ -45,7 +41,6 @@ const UserProfile: React.FC<UserProfileProps> = (props) => (
       shouldHideForm={!!props.globalData.user?.isGuest}
       hiddenFormMessage="You must first log on to read and alter your account information."
       titleText={`Account: ${props.globalData.user?.properties.firstName} ${props.globalData.user?.properties.lastName}`}
-      submitButtonText="Save"
       {...props}
     />
   </CoreUIThemeProvider>

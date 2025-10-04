@@ -120,4 +120,4 @@ export { default as FilledButton } from './FilledButton';
 export { default as FloatingButton } from './FloatingButton';
 export { default as MesaButton } from './MesaButton';
 export { default as OutlinedButton } from './OutlinedButton';
-export { default as SaveButton } from './SaveButton';
+export { default as SaveButton, SaveButtonProps } from './SaveButton';

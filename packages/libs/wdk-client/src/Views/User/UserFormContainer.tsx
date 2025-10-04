@@ -9,6 +9,7 @@ import './Profile/UserProfile.scss';
 import { success, warning } from '@veupathdb/coreui/lib/definitions/colors';
 import { useSubscriptionGroups } from '../../Hooks/SubscriptionGroups';
 import { userIsSubscribed } from '../../Utils/Subscriptions';
+import { SaveButtonProps } from '@veupathdb/coreui/lib/components/buttons';
 
 export function getDescriptionBoxStyle() {
   return {
@@ -37,6 +38,10 @@ export interface UserFormContainerProps {
   previousUserFormData?: UserProfileFormData;
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
   errorMessage?: string;
+  deleteAccountStatus?: {
+    status: 'idle' | 'deleting' | 'loggingOut' | 'done' | 'error';
+    message?: string;
+  };
   userEvents: {
     submitProfileForm: (userData: UserProfileFormData) => void;
     updateProfileForm: (newState: UserProfileFormData) => void;
@@ -47,10 +52,10 @@ export interface UserFormContainerProps {
   hiddenFormMessage: string;
   titleText: string;
   introComponent?: React.ComponentType;
-  submitButtonText: string;
   singleFormMode?: boolean;
   highlightMissingFields?: boolean;
   showSubscriptionProds?: boolean;
+  saveButtonText?: SaveButtonProps['customText'];
 }
 
 function UserFormContainer(props: UserFormContainerProps) {
@@ -219,9 +224,11 @@ function UserFormContainer(props: UserFormContainerProps) {
               onDiscardChanges={onDiscardChanges}
               onDeleteAccount={onDeleteAccount}
               formStatus={props.formStatus}
+              deleteAccountStatus={props.deleteAccountStatus}
               singleFormMode={props.singleFormMode}
               highlightMissingFields={props.highlightMissingFields}
               showSubscriptionProds={props.showSubscriptionProds}
+              saveButtonText={props.saveButtonText}
             />
           )}
         </>
