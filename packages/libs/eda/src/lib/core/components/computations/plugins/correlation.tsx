@@ -65,17 +65,6 @@ export const plugin: ComputationPlugin = {
     // First, the configuration must be complete
     if (!CompleteCorrelationConfig.is(configuration)) return false;
 
-    // Also, if both data1 and data2 are collections, they must be unique
-    if (configuration.data2?.dataType === 'collection') {
-      return (
-        isVariableCollectionDescriptor(configuration.data1?.collectionSpec) &&
-        isVariableCollectionDescriptor(configuration.data2?.collectionSpec) &&
-        variableCollectionsAreUnique([
-          configuration.data1?.collectionSpec,
-          configuration.data2?.collectionSpec,
-        ])
-      );
-    }
     return true;
   },
   visualizationPlugins: {
@@ -425,25 +414,6 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
               <span className={cx('-DescriptionContainer')}>% of samples</span>
             </div>
           </div>
-        </div>
-        <div>
-          <PluginError
-            error={
-              isVariableCollectionDescriptor(
-                configuration.data1?.collectionSpec
-              ) &&
-              isVariableCollectionDescriptor(
-                configuration.data2?.collectionSpec
-              ) &&
-              !variableCollectionsAreUnique([
-                configuration.data1?.collectionSpec,
-                configuration.data2?.collectionSpec,
-              ])
-                ? 'Input data must be unique. Please select different data.'
-                : undefined
-            }
-            bannerType="error"
-          />
         </div>
         {showExpandableHelp && (
           <ExpandablePanel
