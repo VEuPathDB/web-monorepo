@@ -6,6 +6,7 @@ $red: #dd314e;
 
 .HeaderNav {
   width: 100%;
+  min-width: 1024px;
   padding: 5px 10px;
   justify-content: space-between;
   position: relative;
@@ -153,7 +154,7 @@ $red: #dd314e;
   }
 
   width: 100%;
-  min-width: 1200px;
+  min-width: 1024px;
   height: 40px;
   position: fixed;
   top: 0;
@@ -176,10 +177,14 @@ $red: #dd314e;
     height: 100%;
     flex-direction: row;
     align-items: center;
+    transform: unset;
 
-    .UserMenu-Icon {
+    .UserMenu-Icon,
+    .UserMenu-LoggedInIcon,
+    .UserMenu-GuestIcon {
       font-size: 25px;
       margin-right: 10px;
+      margin-bottom: 2px;
     }
   }
 

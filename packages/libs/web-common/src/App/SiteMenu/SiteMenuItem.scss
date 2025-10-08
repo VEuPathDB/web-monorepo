@@ -9,6 +9,13 @@ $white: #e0e0e0;
   opacity: 0.85;
   transition: all 0.5s;
 
+  /* Slightly tighter menu for the narrowest screens. */
+  /* Shrinking will be animated so not too noticeable. */
+  @media (max-width: 1099px) {
+    font-size: 18px;
+    padding: 9px 13.5px;
+  }
+
   &:hover {
     background-color: #ffffff24;
   }
