@@ -8436,6 +8436,7 @@ __metadata:
     source-map-loader: ^1.1.3
     ts-loader: ^9.4.3
     typescript: ~4.3.5
+    unused-webpack-plugin: ^2.4.0
     url-loader: ^1.1.2
     webpack: ^5.84.1
     webpack-bundle-analyzer: ^4.10.2
@@ -8786,6 +8787,7 @@ __metadata:
     source-map-loader: ^1.1.3
     ts-loader: ^9.4.3
     typescript: ~4.3.5
+    unused-webpack-plugin: ^2.4.0
     url-loader: ^1.1.2
     webpack: ^5.84.1
     webpack-bundle-analyzer: ^4.10.2
@@ -8870,6 +8872,7 @@ __metadata:
     source-map-loader: ^1.1.3
     ts-loader: ^9.4.3
     typescript: ~4.3.5
+    unused-webpack-plugin: ^2.4.0
     url-loader: ^1.1.2
     webpack: ^5.84.1
     webpack-bundle-analyzer: ^4.10.2
@@ -9028,6 +9031,7 @@ __metadata:
     source-map-loader: ^1.1.3
     ts-loader: ^9.4.3
     typescript: ~4.3.5
+    unused-webpack-plugin: ^2.4.0
     url-loader: ^1.1.2
     webpack: ^5.84.1
     webpack-bundle-analyzer: ^4.10.2
@@ -14017,7 +14021,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:2.4.2, chalk@npm:^2.0.0, chalk@npm:^2.0.1, chalk@npm:^2.3.0, chalk@npm:^2.4.1, chalk@npm:^2.4.2":
+"chalk@npm:2.4.2, chalk@npm:^2.0.0, chalk@npm:^2.0.1, chalk@npm:^2.1.0, chalk@npm:^2.3.0, chalk@npm:^2.4.1, chalk@npm:^2.4.2":
   version: 2.4.2
   resolution: "chalk@npm:2.4.2"
   dependencies:
@@ -17012,6 +17016,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"debug-log@npm:^1.0.0":
+  version: 1.0.1
+  resolution: "debug-log@npm:1.0.1"
+  checksum: 87398a2e25e48b92a35f23a3227532e796aadbc7d4c95dbca0eb13a459d7b56343decc1d42074e5356a2fc70bbc84376f1aac025de2c7763d34c6b9bc73a27ca
+  languageName: node
+  linkType: hard
+
 "debug@npm:2, debug@npm:2.6.9, debug@npm:^2.2.0, debug@npm:^2.3.3, debug@npm:^2.6.0, debug@npm:^2.6.6, debug@npm:^2.6.8, debug@npm:^2.6.9":
   version: 2.6.9
   resolution: "debug@npm:2.6.9"
@@ -17261,6 +17272,20 @@ __metadata:
   version: 1.0.1
   resolution: "defined@npm:1.0.1"
   checksum: b1a852300bdb57f297289b55eafdd0c517afaa3ec8190e78fce91b9d8d0c0369d4505ecbdacfd3d98372e664f4a267d9bd793938d4a8c76209c9d9516fbe2101
+  languageName: node
+  linkType: hard
+
+"deglob@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "deglob@npm:3.1.0"
+  dependencies:
+    find-root: ^1.0.0
+    glob: ^7.0.5
+    ignore: ^5.0.0
+    pkg-config: ^1.1.0
+    run-parallel: ^1.1.2
+    uniq: ^1.0.1
+  checksum: 3ec345d8fc1810e0a112bbc55c4ab6548f620f5c5a06d877ee0bba3f6c3d1aa08155b4625b8aaa8f0cd4ec02f5eca31ebcbac8ebd106fbd8062b70e66f755d5d
   languageName: node
   linkType: hard
 
@@ -19729,7 +19754,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"find-root@npm:^1.1.0":
+"find-root@npm:^1.0.0, find-root@npm:^1.1.0":
   version: 1.1.0
   resolution: "find-root@npm:1.1.0"
   checksum: b2a59fe4b6c932eef36c45a048ae8f93c85640212ebe8363164814990ee20f154197505965f3f4f102efc33bfb1cbc26fd17c4a2fc739ebc51b886b137cbefaf
@@ -20616,7 +20641,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^7.0.0, glob@npm:^7.0.3, glob@npm:^7.1.1, glob@npm:^7.1.2, glob@npm:^7.1.3, glob@npm:^7.1.4, glob@npm:^7.1.6, glob@npm:^7.2.0":
+"glob@npm:^7.0.0, glob@npm:^7.0.3, glob@npm:^7.0.5, glob@npm:^7.1.1, glob@npm:^7.1.2, glob@npm:^7.1.3, glob@npm:^7.1.4, glob@npm:^7.1.6, glob@npm:^7.2.0":
   version: 7.2.3
   resolution: "glob@npm:7.2.3"
   dependencies:
@@ -21986,6 +22011,13 @@ __metadata:
   version: 4.0.6
   resolution: "ignore@npm:4.0.6"
   checksum: 248f82e50a430906f9ee7f35e1158e3ec4c3971451dd9f99c9bc1548261b4db2b99709f60ac6c6cac9333494384176cc4cc9b07acbe42d52ac6a09cad734d800
+  languageName: node
+  linkType: hard
+
+"ignore@npm:^5.0.0":
+  version: 5.3.2
+  resolution: "ignore@npm:5.3.2"
+  checksum: 2acfd32a573260ea522ea0bfeff880af426d68f6831f973129e2ba7363f422923cf53aab62f8369cbf4667c7b25b6f8a3761b34ecdb284ea18e87a5262a865be
   languageName: node
   linkType: hard
 
@@ -29137,6 +29169,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pkg-config@npm:^1.1.0":
+  version: 1.1.1
+  resolution: "pkg-config@npm:1.1.1"
+  dependencies:
+    debug-log: ^1.0.0
+    find-root: ^1.0.0
+    xtend: ^4.0.1
+  checksum: 951d904f0ba050e4e71b5143a518615f12b91416f11c68a00a2c5e2ddb56d9abbb7e66cbf7d182f7c424c0741e73f3f60790c0fd6723bc6449ab82c18fecee28
+  languageName: node
+  linkType: hard
+
 "pkg-dir@npm:^2.0.0":
   version: 2.0.0
   resolution: "pkg-dir@npm:2.0.0"
@@ -34076,7 +34119,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"run-parallel@npm:^1.1.9":
+"run-parallel@npm:^1.1.2, run-parallel@npm:^1.1.9":
   version: 1.2.0
   resolution: "run-parallel@npm:1.2.0"
   dependencies:
@@ -37910,6 +37953,16 @@ __metadata:
   dependencies:
     os-homedir: ^1.0.0
   checksum: 071b394053fc94747d9df8c7f7ca50af41355c1207c8a0bf9f35f52b0d9ad5142a1920b018bc2b6ff04340a4f9c599ad50c9b8f4ff2c689ae52b1463ebbda94e
+  languageName: node
+  linkType: hard
+
+"unused-webpack-plugin@npm:^2.4.0":
+  version: 2.4.0
+  resolution: "unused-webpack-plugin@npm:2.4.0"
+  dependencies:
+    chalk: ^2.1.0
+    deglob: ^3.1.0
+  checksum: caa022975c7189653ee64219158ac315cf58e0ec0060e0db85e2966481749351b1a2534350ec0b7ce87e04b8264654e08af3535a37666b43b0c40e81d0ad6de9
   languageName: node
   linkType: hard
 
