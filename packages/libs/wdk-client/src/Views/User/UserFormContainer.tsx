@@ -8,7 +8,10 @@ import { IconAlt as Icon } from '../../Components';
 import './Profile/UserProfile.scss';
 import { success, warning } from '@veupathdb/coreui/lib/definitions/colors';
 import { useSubscriptionGroups } from '../../Hooks/SubscriptionGroups';
-import { userIsSubscribed } from '../../Utils/Subscriptions';
+import {
+  userIsSubscribed,
+  userIsClassParticipant,
+} from '../../Utils/Subscriptions';
 import { SaveButtonProps } from '@veupathdb/coreui/lib/components/buttons';
 
 export function getDescriptionBoxStyle() {
@@ -165,6 +168,9 @@ function UserFormContainer(props: UserFormContainerProps) {
     props.globalData.user &&
     userIsSubscribed(props.globalData.user, subscriptionGroups);
 
+  const isClassParticipant =
+    props.globalData.user && userIsClassParticipant(props.globalData.user);
+
   return (
     <div
       className={
@@ -192,10 +198,20 @@ function UserFormContainer(props: UserFormContainerProps) {
                 {isSubscribed ? (
                   <>
                     <Icon
-                      fa="check-circle wdk-UserProfile-StatusIcon--success"
+                      fa="check-circle"
+                      className="wdk-UserProfile-StatusIcon--success"
                       style={{ color: success[600], fontSize: '1.35em' }}
                     />
                     <h3>Subscribed</h3>
+                  </>
+                ) : isClassParticipant ? (
+                  <>
+                    <Icon
+                      fa="mortar-board"
+                      className="wdk-UserProfile-StatusIcon--student"
+                      style={{ color: 'black', fontSize: '1.35em' }}
+                    />
+                    <h3>Class participant</h3>
                   </>
                 ) : (
                   <>

@@ -4,7 +4,10 @@ import { Link } from 'react-router-dom';
 import { IconAlt as Icon } from '@veupathdb/wdk-client/lib/Components';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { useSubscriptionGroups } from '@veupathdb/wdk-client/lib/Hooks/SubscriptionGroups';
-import { userIsSubscribed } from '@veupathdb/wdk-client/lib/Utils/Subscriptions';
+import {
+  userIsClassParticipant,
+  userIsSubscribed,
+} from '@veupathdb/wdk-client/lib/Utils/Subscriptions';
 import { showSubscriptionProds } from '../../config';
 
 import './UserMenu.scss';
@@ -41,6 +44,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
 
   // Don't determine subscription status while still loading
   const isSubscribed = userIsSubscribed(user, subscriptionGroups);
+  const isClassParticipant = userIsClassParticipant(user);
 
   const renderMenu = (): JSX.Element => {
     const items: MenuItem[] = [
@@ -63,13 +67,22 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
           <>
             <hr style={{ margin: '10px 0', borderColor: '#ccc' }} />
             <Link
-              to="/user/profile/#subscription"
+              to={
+                isClassParticipant
+                  ? '/user/profile/'
+                  : '/user/profile/#subscription'
+              }
               className="UserMenu-Pane-Item UserMenu-Pane-Item--interactive"
             >
               {isSubscribed ? (
                 <>
                   <Icon fa="check-circle UserMenu-Pane-Item-Icon UserMenu-StatusIcon--success" />
                   Subscribed
+                </>
+              ) : isClassParticipant ? (
+                <>
+                  <Icon fa="mortar-board UserMenu-Pane-Item-Icon UserMenu-StatusIcon--student" />
+                  Class participant
                 </>
               ) : (
                 <>
@@ -94,6 +107,8 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
           <UserLoggedIn className="UserMenu-LoggedInIcon" />
         ) : isSubscribed ? (
           <UserCheck className="UserMenu-StatusIcon" />
+        ) : isClassParticipant ? (
+          <UserLoggedIn className="UserMenu-LoggedInIcon" /> // could have a special student icon here
         ) : showSubscriptionProds ? (
           <UserWarn className="UserMenu-StatusIcon" />
         ) : (
