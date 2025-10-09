@@ -6,6 +6,8 @@ import UserFormContainer, {
 import { UserProfileFormData } from '../../../StoreModules/UserProfileStoreModule';
 import { GlobalData } from '../../../StoreModules/GlobalData';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { ALL_VEUPATHDB_PROJECTS } from '@veupathdb/web-common/lib/config';
+import { formatList } from '@veupathdb/web-common/lib/util/formatters';
 
 // Props interface based on what UserRegistrationController actually passes
 interface UserRegistrationProps {
@@ -34,12 +36,8 @@ const IntroText: React.FC = () => (
         message: (
           <p style={{ margin: '0.5em 0em' }}>
             If you already registered in another site (
-            <i>
-              AmoebaDB, CryptoDB, FungiDB, GiardiaDB, MicrosporidiaDB,
-              PiroplasmaDB, PlasmoDB, SchistoDB, ToxoDB, TrichDB, TriTrypDB,
-              VectorBase or VEuPathDB
-            </i>
-            ) you do NOT need to register again.
+            <i>{formatList(ALL_VEUPATHDB_PROJECTS, 'or')}</i>) you do NOT need
+            to register again.
           </p>
         ),
         pinned: true,
