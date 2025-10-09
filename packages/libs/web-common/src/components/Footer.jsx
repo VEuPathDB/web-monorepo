@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import NewWindowLink from './NewWindowLink';
 import { formatReleaseDate } from '../util/formatters';
+import { ALL_VEUPATHDB_PROJECTS } from '../config';
 
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Tooltip } from '@veupathdb/coreui';
@@ -10,23 +11,7 @@ import '../components/homepage/ProjectLink.scss';
 
 const projectLinkCx = makeClassNameHelper('ebrc-ProjectLink');
 
-const projects = [
-  'VEuPathDB',
-  'AmoebaDB',
-  'CryptoDB',
-  'FungiDB',
-  'GiardiaDB',
-  'MicrosporidiaDB',
-  'PiroplasmaDB',
-  'PlasmoDB',
-  'ToxoDB',
-  'TrichDB',
-  'TriTrypDB',
-  'VectorBase',
-  'OrthoMCL',
-  'ClinEpiDB',
-  'MicrobiomeDB',
-];
+const projects = ALL_VEUPATHDB_PROJECTS;
 
 const enhance = connect((state) => state.globalData, null);
 /** Application footer */

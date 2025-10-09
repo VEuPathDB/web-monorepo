@@ -5,29 +5,13 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { ProjectLink } from '../../components/homepage/ProjectLink';
 import { SocialMediaLinks } from '../../components/homepage/SocialMediaLinks';
 import { combineClassNames } from '../../components/homepage/Utils';
+import { ALL_VEUPATHDB_PROJECTS } from '../../config';
 
 import './Footer.scss';
 
 const cx = makeClassNameHelper('ebrc-Footer');
 
-export const projects = [
-  'VEuPathDB',
-  'AmoebaDB',
-  'CryptoDB',
-  'FungiDB',
-  'GiardiaDB',
-  'HostDB',
-  'MicrosporidiaDB',
-  'PiroplasmaDB',
-  'PlasmoDB',
-  'ToxoDB',
-  'TrichDB',
-  'TriTrypDB',
-  'VectorBase',
-  'OrthoMCL',
-  'ClinEpiDB',
-  'MicrobiomeDB',
-];
+export const projects = ALL_VEUPATHDB_PROJECTS;
 
 type Props = {
   containerClassName?: string;

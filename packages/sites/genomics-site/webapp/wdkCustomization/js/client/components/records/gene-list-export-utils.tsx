@@ -28,26 +28,12 @@ import {
   endpoint,
   rootUrl,
   useUserDatasetsWorkspace,
+  GENOMICS_PROJECTS,
 } from '@veupathdb/web-common/lib/config';
 import { useProjectUrls } from '@veupathdb/web-common/lib/hooks/projectUrls';
 
 import { ExportOption } from './ResultExportSelector';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
-
-const GENOMICS_PROJECTS_LIST = [
-  'VEuPathDB',
-  'AmoebaDB',
-  'CryptoDB',
-  'FungiDB',
-  'GiardiaDB',
-  'MicrosporidiaDB',
-  'PiroplasmaDB',
-  'PlasmoDB',
-  'ToxoDB',
-  'TrichDB',
-  'TriTrypDB',
-  'VectorBase',
-];
 
 const SUPPORTED_RECORD_CLASS_URL_SEGMENTS = new Set(['transcript']);
 
@@ -260,7 +246,7 @@ export function useSendGeneListToGenomicSiteStrategyConfig(
     []
   );
 
-  const exportableProjectIds = GENOMICS_PROJECTS_LIST.filter(
+  const exportableProjectIds = GENOMICS_PROJECTS.filter(
     (id) =>
       (projectId !== 'EuPathDB' && id === 'VEuPathDB') ||
       (projectId === 'EuPathDB' && id !== 'VEuPathDB')
