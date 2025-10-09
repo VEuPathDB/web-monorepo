@@ -24,6 +24,8 @@ import './UserAccountForm.scss';
 import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
 import { UserSecurityForm } from './UserSecurityForm';
 import { Dialog } from '../../Components';
+import { ALL_VEUPATHDB_PROJECTS } from '@veupathdb/web-common/lib/config';
+import { formatList } from '@veupathdb/web-common/lib/util/formatters';
 
 // Props interface
 export interface UserAccountFormProps {
@@ -351,6 +353,19 @@ function UserAccountForm(props: UserAccountFormProps) {
           >
             All your personal information will be removed from our systems and
             any contributions you have made will be anonymized.
+          </p>
+          <p
+            style={{
+              fontSize: '1.2em',
+              justifySelf: 'center',
+              textAlign: 'center',
+              width: 400,
+              marginTop: '1em',
+            }}
+          >
+            Your account is shared across all VEuPathDB sites (
+            {formatList(ALL_VEUPATHDB_PROJECTS, 'and')}). Deleting it will
+            remove your access from all of them.
           </p>
           <p
             style={{
