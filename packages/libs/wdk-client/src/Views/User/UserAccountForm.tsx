@@ -26,6 +26,7 @@ import { UserSecurityForm } from './UserSecurityForm';
 import { Dialog } from '../../Components';
 import { ALL_VEUPATHDB_PROJECTS } from '@veupathdb/web-common/lib/config';
 import { formatList } from '@veupathdb/web-common/lib/util/formatters';
+import { error } from '@veupathdb/coreui/lib/definitions/colors';
 
 // Props interface
 export interface UserAccountFormProps {
@@ -200,6 +201,9 @@ function UserAccountForm(props: UserAccountFormProps) {
             <p style={{ padding: '10px' }}></p>
             <div className="wdk-UserProfile-profileForm wdk-UserProfile-accountForm">
               <h2>Delete my account</h2>
+              <p style={{ fontWeight: 'bold', color: error[600] }}>
+                Warning, this action is permanent.
+              </p>
               <p>
                 All your personal information will be removed from our systems
                 and any contributions you have made will be anonymized.
@@ -411,7 +415,8 @@ function UserAccountForm(props: UserAccountFormProps) {
               onPress={() => setShowDeleteConfirmModal(false)}
               themeRole="primary"
               disabled={
-                deleteAccountStatus?.status === 'pending' ||
+                deleteAccountStatus?.status === 'deleting' ||
+                deleteAccountStatus?.status === 'loggingOut' ||
                 deleteAccountStatus?.status === 'done'
               }
             />
