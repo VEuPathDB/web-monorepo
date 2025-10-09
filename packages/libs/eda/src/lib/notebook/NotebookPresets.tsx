@@ -83,7 +83,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
     cells: [
       {
         type: 'subset',
-        title: 'Subset Samples',
+        title: 'Select samples (optional)',
         helperText: (
           <NumberedHeader
             number={0}
@@ -94,14 +94,14 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
       },
       {
         type: 'compute',
-        title: 'Correlation Computation',
+        title: 'Setup DESeq2 Computation',
         computationName: 'differentialexpression',
         computationId: 'de_1',
         helperText: (
           <NumberedHeader
             number={1}
             text={
-              'Configure and run a differential expression computation between two sets of samples.'
+              'Run a differential expression analysis using DESeq2.Please choose the metadata variable for comparison, and then set up the reference and comparison groups. When all selections have been made, we can run the computation.'
             }
             color={colors.grey[800]}
           />
@@ -109,14 +109,14 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         cells: [
           {
             type: 'visualization',
-            title: 'Volcano Plot Visualization',
+            title: 'Examine DESeq2 Results with Volcano Plot',
             visualizationName: 'volcanoplot',
             visualizationId: 'volcano_1',
             helperText: (
               <NumberedHeader
                 number={2}
                 text={
-                  'Visualize the results of the differential expression computation in a volcano plot.'
+                  'Once the DESeq2 results are ready, a volcano plot will appear below. Set the threshold lines to color the genes based on their significance and fold change.'
                 }
                 color={colors.grey[800]}
               />
