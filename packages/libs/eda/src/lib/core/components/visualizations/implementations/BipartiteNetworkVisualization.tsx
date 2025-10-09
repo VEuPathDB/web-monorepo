@@ -517,7 +517,10 @@ function BipartiteNetworkViz(
               applyWarningStyles={cleanedData && cleanedData.nodes.length === 0}
             />
           </LabelledGroup>
-          <LabelledGroup label="Link type" alignChildrenHorizontally={true}>
+          <LabelledGroup
+            label="Correlation direction"
+            alignChildrenHorizontally={true}
+          >
             <RadioButtonGroup
               options={['Positive', 'Negative', 'Both']}
               selectedOption={
