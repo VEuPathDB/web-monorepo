@@ -1,17 +1,17 @@
 import React, { FunctionComponent } from 'react';
 
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { ALL_VEUPATHDB_PROJECTS } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 
 import { ProjectLink } from '../../components/homepage/ProjectLink';
 import { SocialMediaLinks } from '../../components/homepage/SocialMediaLinks';
 import { combineClassNames } from '../../components/homepage/Utils';
-import { ALL_VEUPATHDB_PROJECTS } from '../../config';
 
 import './Footer.scss';
 
 const cx = makeClassNameHelper('ebrc-Footer');
 
-export const projects = ALL_VEUPATHDB_PROJECTS;
+export const projects = [...ALL_VEUPATHDB_PROJECTS];
 
 type Props = {
   containerClassName?: string;

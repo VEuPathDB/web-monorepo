@@ -24,8 +24,8 @@ import './UserAccountForm.scss';
 import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
 import { UserSecurityForm } from './UserSecurityForm';
 import { Dialog } from '../../Components';
-import { ALL_VEUPATHDB_PROJECTS } from '@veupathdb/web-common/lib/config';
-import { formatList } from '@veupathdb/web-common/lib/util/formatters';
+import { ALL_VEUPATHDB_PROJECTS } from '../../Utils/ProjectConstants';
+import { formatList } from '../../Utils/FormatUtils';
 import { error } from '@veupathdb/coreui/lib/definitions/colors';
 
 // Props interface
@@ -368,7 +368,7 @@ function UserAccountForm(props: UserAccountFormProps) {
             }}
           >
             Your account is shared across all VEuPathDB sites (
-            {formatList(ALL_VEUPATHDB_PROJECTS, 'and')}). Deleting it will
+            {formatList([...ALL_VEUPATHDB_PROJECTS], 'and')}). Deleting it will
             remove your access from all of them.
           </p>
           <p

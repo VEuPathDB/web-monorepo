@@ -23,12 +23,12 @@ import {
 } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
 import { Step } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { enqueueStrategyNotificationAction } from '@veupathdb/wdk-client/lib/Views/Strategy/StrategyNotifications';
+import { GENOMICS_PROJECTS } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 
 import {
   endpoint,
   rootUrl,
   useUserDatasetsWorkspace,
-  GENOMICS_PROJECTS,
 } from '@veupathdb/web-common/lib/config';
 import { useProjectUrls } from '@veupathdb/web-common/lib/hooks/projectUrls';
 
@@ -246,10 +246,14 @@ export function useSendGeneListToGenomicSiteStrategyConfig(
     []
   );
 
-  const exportableProjectIds = GENOMICS_PROJECTS.filter(
-    (id) =>
-      (projectId !== 'EuPathDB' && id === 'VEuPathDB') ||
-      (projectId === 'EuPathDB' && id !== 'VEuPathDB')
+  const exportableProjectIds = useMemo(
+    () =>
+      [...GENOMICS_PROJECTS].filter(
+        (id) =>
+          (projectId !== 'EuPathDB' && id === 'VEuPathDB') ||
+          (projectId === 'EuPathDB' && id !== 'VEuPathDB')
+      ),
+    [projectId]
   );
 
   const projectUrls = useProjectUrls();

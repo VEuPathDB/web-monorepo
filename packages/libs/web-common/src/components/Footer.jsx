@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import NewWindowLink from './NewWindowLink';
 import { formatReleaseDate } from '../util/formatters';
-import { ALL_VEUPATHDB_PROJECTS } from '../config';
+import { ALL_VEUPATHDB_PROJECTS } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Tooltip } from '@veupathdb/coreui';
@@ -11,7 +11,7 @@ import '../components/homepage/ProjectLink.scss';
 
 const projectLinkCx = makeClassNameHelper('ebrc-ProjectLink');
 
-const projects = ALL_VEUPATHDB_PROJECTS;
+const projects = [...ALL_VEUPATHDB_PROJECTS];
 
 const enhance = connect((state) => state.globalData, null);
 /** Application footer */

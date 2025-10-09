@@ -6,8 +6,8 @@ import NotFound from '../Views/NotFound/NotFound';
 import { RootState } from '../Core/State/Types';
 import { connect } from 'react-redux';
 import { Link } from '../Components';
-import { ALL_VEUPATHDB_PROJECTS } from '@veupathdb/web-common/lib/config';
-import { formatList } from '@veupathdb/web-common/lib/util/formatters';
+import { ALL_VEUPATHDB_PROJECTS } from '../Utils/ProjectConstants';
+import { formatList } from '../Utils/FormatUtils';
 
 type PageContent = {
   tabTitle: string;
@@ -61,9 +61,9 @@ class UserMessageController extends PageController<MergeProps> {
               <p>
                 <strong>Note:</strong> If you were not expecting to see this
                 message, remember that all VEuPathDB component sites (
-                {formatList(ALL_VEUPATHDB_PROJECTS, 'or')}) share the same user
-                registration system. You have likely deleted your account from a
-                sister site. If this is not the case please{' '}
+                {formatList([...ALL_VEUPATHDB_PROJECTS], 'or')}) share the same
+                user registration system. You have likely deleted your account
+                from a sister site. If this is not the case please{' '}
                 <Link to="/contact-us">contact the helpdesk</Link>.
               </p>
             </div>
