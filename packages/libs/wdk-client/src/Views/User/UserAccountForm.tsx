@@ -406,10 +406,14 @@ function UserAccountForm(props: UserAccountFormProps) {
               }}
               savedStateDuration={2000}
             />
-            <FilledButton
+            <OutlinedButton
               text="No, keep my account"
               onPress={() => setShowDeleteConfirmModal(false)}
-              themeRole="success"
+              themeRole="primary"
+              disabled={
+                deleteAccountStatus?.status === 'pending' ||
+                deleteAccountStatus?.status === 'done'
+              }
             />
           </div>
         </div>
