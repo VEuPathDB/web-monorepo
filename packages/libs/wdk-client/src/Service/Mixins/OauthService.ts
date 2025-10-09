@@ -9,6 +9,7 @@ export type GroupLead = {
 export type SubscriptionGroup = {
   groupName: string;
   subscriptionToken: string;
+  subscriberName?: string;
   groupLeads: GroupLead[];
 };
 
