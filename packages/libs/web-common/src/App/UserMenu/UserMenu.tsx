@@ -73,6 +73,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
                   : '/user/profile/#subscription'
               }
               className="UserMenu-Pane-Item UserMenu-Pane-Item--interactive"
+              onMouseOut={(e) => e.currentTarget.blur()}
             >
               {isSubscribed ? (
                 <>
