@@ -8,6 +8,8 @@ import { NodeData } from '@veupathdb/components/lib/types/plots/network';
 import { WdkState } from './EdaNotebookAnalysis';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import { CollectionVariableTreeNode } from '../core';
+import { CorrelationConfig } from '../core/types/apps';
+import { is } from 'date-fns/locale';
 
 // this is currently not used but may be one day when we need to store user state
 // that is outside AnalysisState and WdkState
@@ -50,6 +52,10 @@ export interface ComputeCellDescriptor
   getAdditionalCollectionPredicate?: (
     projectId?: string
   ) => (variableCollection: CollectionVariableTreeNode) => boolean;
+  skipChildCell?: (
+    computationConfig: any,
+    visualizationType: string
+  ) => boolean; // Function that can disable certain visualizations based on the computation config. Return true to disable.
 }
 
 export interface TextCellDescriptor extends NotebookCellDescriptorBase<'text'> {
@@ -139,6 +145,23 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             // If we're in the portal, should return both.
             return true;
           },
+        skipChildCell: (
+          computationConfig: CorrelationConfig,
+          visualizationType: string
+        ) => {
+          // If group A = group B, do unipartite viz. Otherwise bipartite.
+          if (CorrelationConfig.is(computationConfig)) {
+            const isSelfCorrelation =
+              computationConfig.data1?.collectionSpec?.collectionId ===
+                computationConfig.data2?.collectionSpec?.collectionId &&
+              computationConfig.data1?.collectionSpec?.entityId ===
+                computationConfig.data2?.collectionSpec?.entityId;
+            return isSelfCorrelation
+              ? visualizationType !== 'unipartitenetwork'
+              : visualizationType !== 'bipartitenetwork';
+          }
+          return false;
+        },
         cells: [
           {
             type: 'visualization',
@@ -206,6 +229,21 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                 },
               };
             },
+          },
+          {
+            type: 'visualization',
+            title: 'Network visualization of correlation results',
+            visualizationName: 'unipartitenetwork',
+            visualizationId: 'unipartite_1',
+            helperText: (
+              <NumberedHeader
+                number={2}
+                text={
+                  'Visualize the correlation results between the two groups in the network. Click on nodes to highlight them in the network.'
+                }
+                color={colors.grey[800]}
+              />
+            ),
           },
         ],
       },

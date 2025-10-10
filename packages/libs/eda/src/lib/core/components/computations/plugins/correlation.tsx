@@ -17,6 +17,7 @@ import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { H6 } from '@veupathdb/coreui';
 import { bipartiteNetworkVisualization } from '../../visualizations/implementations/BipartiteNetworkVisualization';
+import { networkVisualization } from '../../visualizations/implementations/NetworkVisualization';
 import { VariableCollectionSingleSelect } from '../../variableSelectors/VariableCollectionSingleSelect';
 import SingleSelect, {
   ItemGroup,
@@ -35,6 +36,7 @@ import PluginError from '../../visualizations/PluginError';
 import {
   CompleteCorrelationConfig,
   CorrelationConfig,
+  SelfCorrelationConfig,
 } from '../../../types/apps';
 import { NodeData } from '@veupathdb/components/lib/types/plots/network';
 
@@ -94,6 +96,15 @@ export const plugin: ComputationPlugin = {
         }
       },
     }),
+    unipartitenetwork: networkVisualization.withOptions({
+      getLegendTitle(config) {
+        if (SelfCorrelationConfig.is(config)) {
+          return ['absolute correlation coefficient', 'correlation direction'];
+        } else {
+          return [];
+        }
+      },
+    }), // Must match name in data service and in visualization.tsx
   },
   isEnabledInPicker: isEnabledInPicker,
   studyRequirements:
