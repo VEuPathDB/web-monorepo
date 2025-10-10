@@ -5,6 +5,9 @@ import { wrappable } from '../Utils/ComponentUtils';
 import NotFound from '../Views/NotFound/NotFound';
 import { RootState } from '../Core/State/Types';
 import { connect } from 'react-redux';
+import { Link } from '../Components';
+import { ALL_VEUPATHDB_PROJECTS } from '../Utils/ProjectConstants';
+import { formatList } from '../Utils/FormatUtils';
 
 type PageContent = {
   tabTitle: string;
@@ -39,6 +42,31 @@ class UserMessageController extends PageController<MergeProps> {
               You will receive an email shortly containing a new, temporary
               password.
             </span>
+          ),
+        };
+      case 'account-deleted':
+        return {
+          tabTitle: 'Account Deleted',
+          pageTitle: 'Your account has been deleted',
+          pageContent: (
+            <div>
+              <p>
+                All your personal information has been removed from our systems
+                and any contributions you have made have been anonymized.
+              </p>
+              <p>
+                Thank you for using VEuPathDB. If you wish to use our services
+                again in the future, you are welcome to create a new account.
+              </p>
+              <p>
+                <strong>Note:</strong> If you were not expecting to see this
+                message, remember that all VEuPathDB component sites (
+                {formatList([...ALL_VEUPATHDB_PROJECTS], 'or')}) share the same
+                user registration system. You have likely deleted your account
+                from a sister site. If this is not the case please{' '}
+                <Link to="/contact-us">contact the helpdesk</Link>.
+              </p>
+            </div>
           ),
         };
       case 'login-error':

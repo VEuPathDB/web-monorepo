@@ -160,7 +160,8 @@ const siteAnnouncements: SiteAnnouncement[] = [
         currentUser.isGuest ||
         subscriptionGroups == null ||
         subscriptionGroups.length === 0 ||
-        !showSubscriptionProds
+        !showSubscriptionProds ||
+        currentUser.properties['groupType'] === 'class'
       )
         return null;
 
