@@ -9,7 +9,6 @@ import { WdkState } from './EdaNotebookAnalysis';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import { CollectionVariableTreeNode } from '../core';
 import { CorrelationConfig } from '../core/types/apps';
-import { is } from 'date-fns/locale';
 
 // this is currently not used but may be one day when we need to store user state
 // that is outside AnalysisState and WdkState
@@ -55,7 +54,7 @@ export interface ComputeCellDescriptor
   skipChildCell?: (
     computationConfig: any,
     visualizationType: string
-  ) => boolean; // Function that can disable certain visualizations based on the computation config. Return true to disable.
+  ) => boolean; // Function that can disable certain child cells based on the computation config.
 }
 
 export interface TextCellDescriptor extends NotebookCellDescriptorBase<'text'> {
@@ -149,7 +148,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
           computationConfig: CorrelationConfig,
           visualizationType: string
         ) => {
-          // If group A = group B, do unipartite viz. Otherwise bipartite.
+          // If group A = group B, show only unipartite viz. Otherwise show only bipartite.
           if (CorrelationConfig.is(computationConfig)) {
             const isSelfCorrelation =
               computationConfig.data1?.collectionSpec?.collectionId ===
@@ -158,7 +157,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                 computationConfig.data2?.collectionSpec?.entityId;
             return isSelfCorrelation
               ? visualizationType !== 'unipartitenetwork'
-              : visualizationType !== 'bipartitenetwork';
+              : visualizationType !== 'bipartitenetwork'; // If it's self correlation, hide any vizs that are not unipartite networks. vv for bipartite.
           }
           return false;
         },
@@ -239,7 +238,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
               <NumberedHeader
                 number={2}
                 text={
-                  'Visualize the correlation results between the two groups in the network. Click on nodes to highlight them in the network.'
+                  'Visualize the correlation results between the nodes in the network. Click on nodes to highlight them in the network.'
                 }
                 color={colors.grey[800]}
               />
