@@ -39,6 +39,7 @@ import {
   reportAnswerFulfillmentError,
   requestResultTypeDetails,
   fulfillResultTypeDetails,
+  resetColumnPreferencesToDefault,
 } from '../Actions/SummaryView/ResultTableSummaryViewActions';
 import { RootState } from '../Core/State/Types';
 import { EpicDependencies } from '../Core/Store';
@@ -58,6 +59,7 @@ import {
   getGlobalViewFilters,
   setGlobalViewFilters,
   filterInvalidAttributes,
+  clearResultTablePreferences,
 } from '../Utils/UserPreferencesUtils';
 import {
   Answer,
@@ -260,6 +262,16 @@ function reduceView(
 
     case updateInBasketFilter.type: {
       return { ...state, inBaskeFilterEnabled: action.payload.enabled };
+    }
+
+    case resetColumnPreferencesToDefault.type: {
+      return {
+        ...initialViewState,
+        resultType: state.resultType,
+        resultTypeDetails: state.resultTypeDetails,
+        searchName: state.searchName,
+        globalViewFilters: state.globalViewFilters,
+      };
     }
 
     default: {
@@ -856,6 +868,148 @@ async function getFulfillGlobalViewFiltersUpdate(
   return fulfillGlobalViewFilters(viewId, recordClassName, viewFilters);
 }
 
+async function handleResetColumnPreferences(
+  [openAction, resultTypeDetailsAction, resetAction]: [
+    InferAction<typeof openRTS>,
+    InferAction<typeof fulfillResultTypeDetails>,
+    InferAction<typeof resetColumnPreferencesToDefault>
+  ],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof fulfillColumnsChoice>> {
+  await clearResultTablePreferences(resetAction.payload.searchName, wdkService);
+
+  // Get default columns directly from question
+  const { resultType } = openAction.payload;
+  const columns = await getResultTableColumnsPref(
+    wdkService,
+    resetAction.payload.searchName,
+    resultType.type === 'step' ? resultType.step : undefined
+  );
+  const validColumns = await filterInvalidAttributes(
+    wdkService,
+    resetAction.payload.searchName,
+    identity,
+    columns
+  );
+
+  return fulfillColumnsChoice(
+    resetAction.payload.viewId,
+    validColumns,
+    resetAction.payload.searchName
+  );
+}
+
+async function handleResetSortingPreferences(
+  [openAction, resultTypeDetailsAction, resetAction]: [
+    InferAction<typeof openRTS>,
+    InferAction<typeof fulfillResultTypeDetails>,
+    InferAction<typeof resetColumnPreferencesToDefault>
+  ],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof fulfillSorting>> {
+  const { resultType } = openAction.payload;
+  const stepSortColumns =
+    resultType.type === 'step' &&
+    resultType.step.displayPreferences.sortColumns;
+
+  const sorting = stepSortColumns
+    ? stepSortColumns.map(({ name: attributeName, direction }) => ({
+        attributeName,
+        direction,
+      }))
+    : await getResultTableSortingPref(
+        resetAction.payload.searchName,
+        wdkService
+      );
+  const validSorting = await filterInvalidAttributes(
+    wdkService,
+    resetAction.payload.searchName,
+    (spec) => spec.attributeName,
+    sorting
+  );
+
+  return fulfillSorting(
+    resetAction.payload.viewId,
+    validSorting,
+    resetAction.payload.searchName
+  );
+}
+
+async function handleResetViewPage(
+  [openAction, resultTypeDetailsAction, resetAction]: [
+    InferAction<typeof openRTS>,
+    InferAction<typeof fulfillResultTypeDetails>,
+    InferAction<typeof resetColumnPreferencesToDefault>
+  ],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof viewPageNumber>> {
+  return viewPageNumber(resetAction.payload.viewId, 1);
+}
+
+async function handleResetPageSize(
+  [openAction, resultTypeDetailsAction, resetAction]: [
+    InferAction<typeof openRTS>,
+    InferAction<typeof fulfillResultTypeDetails>,
+    InferAction<typeof resetColumnPreferencesToDefault>
+  ],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof fulfillPageSize>> {
+  const pageSize = await getResultTablePageSizePref(wdkService);
+  return fulfillPageSize(resetAction.payload.viewId, pageSize);
+}
+
+async function handleResetInBasketFilter(
+  [openAction, resultTypeDetailsAction, resetAction]: [
+    InferAction<typeof openRTS>,
+    InferAction<typeof fulfillResultTypeDetails>,
+    InferAction<typeof resetColumnPreferencesToDefault>
+  ],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof updateInBasketFilter>> {
+  const currentState = state$.value[key][resetAction.payload.viewId];
+  const enabled = currentState?.inBaskeFilterEnabled ?? false;
+  return updateInBasketFilter(resetAction.payload.viewId, enabled);
+}
+
+async function handleResetGlobalViewFilters(
+  [openAction, resultTypeDetailsAction, resetAction]: [
+    InferAction<typeof openRTS>,
+    InferAction<typeof fulfillResultTypeDetails>,
+    InferAction<typeof resetColumnPreferencesToDefault>
+  ],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof fulfillGlobalViewFilters>> {
+  const { recordClassName } = resultTypeDetailsAction.payload.resultTypeDetails;
+  const viewFilters = await getGlobalViewFilters(wdkService, recordClassName);
+  return fulfillGlobalViewFilters(
+    resetAction.payload.viewId,
+    recordClassName,
+    viewFilters
+  );
+}
+
+function filterResetColumnPreferencesActions([
+  openAction,
+  resultTypeDetailsAction,
+  resetAction,
+]: [
+  InferAction<typeof openRTS>,
+  InferAction<typeof fulfillResultTypeDetails>,
+  InferAction<typeof resetColumnPreferencesToDefault>
+]) {
+  return (
+    openAction.payload.viewId === resetAction.payload.viewId &&
+    resultTypeDetailsAction.payload.resultTypeDetails.searchName ===
+      resetAction.payload.searchName
+  );
+}
+
 export const observe = takeEpicInWindow(
   {
     startActionCreator: openResultTableSummaryView,
@@ -961,6 +1115,36 @@ export const observe = takeEpicInWindow(
         areActionsCoherent: filterFulfillRecordBasketStatusActions,
         areActionsNew: () => true,
       }
+    ),
+    smrate(
+      [openRTS, fulfillResultTypeDetails, resetColumnPreferencesToDefault],
+      handleResetColumnPreferences,
+      { areActionsCoherent: filterResetColumnPreferencesActions }
+    ),
+    smrate(
+      [openRTS, fulfillResultTypeDetails, resetColumnPreferencesToDefault],
+      handleResetSortingPreferences,
+      { areActionsCoherent: filterResetColumnPreferencesActions }
+    ),
+    smrate(
+      [openRTS, fulfillResultTypeDetails, resetColumnPreferencesToDefault],
+      handleResetViewPage,
+      { areActionsCoherent: filterResetColumnPreferencesActions }
+    ),
+    smrate(
+      [openRTS, fulfillResultTypeDetails, resetColumnPreferencesToDefault],
+      handleResetPageSize,
+      { areActionsCoherent: filterResetColumnPreferencesActions }
+    ),
+    smrate(
+      [openRTS, fulfillResultTypeDetails, resetColumnPreferencesToDefault],
+      handleResetInBasketFilter,
+      { areActionsCoherent: filterResetColumnPreferencesActions }
+    ),
+    smrate(
+      [openRTS, fulfillResultTypeDetails, resetColumnPreferencesToDefault],
+      handleResetGlobalViewFilters,
+      { areActionsCoherent: filterResetColumnPreferencesActions }
     )
   )
 );
