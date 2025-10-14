@@ -154,10 +154,7 @@ export type DatasetUploadPageConfig<
       uploadTypeConfig: DatasetUploadTypeConfig<T2>;
     };
 
-export interface NewUserDataset extends UserDatasetMeta_UI {
-  datasetType: string; // In prototype, the only value is "biom" - will eventually be an enum
-  projects: string[];
-  dependencies?: UserDataset['dependencies'];
+export interface NewUserDataset extends DatasetPostRequest {
   uploadMethod:
     | {
         type: 'file';
@@ -174,13 +171,6 @@ export interface NewUserDataset extends UserDatasetMeta_UI {
         reportConfig: unknown;
       };
 }
-
-export type UserDatasetShareResponse = {
-  [Key in 'grant' | 'revoke']: {
-    [Key in string]: UserDataset['sharedWith'];
-  };
-};
-
 /**
  * In EDA, data is referred to as "Study" or "Studies"
  * In genomics, data is referred to as "Data Set" or "Data Sets"
