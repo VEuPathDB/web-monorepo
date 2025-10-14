@@ -3,6 +3,8 @@
 import stringify from 'json-stable-stringify';
 import { get, stubTrue, isEqual, difference, identity } from 'lodash';
 import { combineEpics, StateObservable } from 'redux-observable';
+import { from } from 'rxjs';
+import { filter, mergeMap } from 'rxjs/operators';
 import { Action } from '../Actions';
 import {
   fulfillAddStepToBasket,
@@ -47,6 +49,7 @@ import {
   InferAction,
   switchMapRequestActionsToEpic as smrate,
   takeEpicInWindow,
+  combineLatestIf,
 } from '../Utils/ActionCreatorUtils';
 import { makeCommonErrorMessage } from '../Utils/Errors';
 import {
@@ -868,7 +871,7 @@ async function getFulfillGlobalViewFiltersUpdate(
   return fulfillGlobalViewFilters(viewId, recordClassName, viewFilters);
 }
 
-async function handleResetColumnPreferences(
+async function handleResetAllPreferences(
   [openAction, resultTypeDetailsAction, resetAction]: [
     InferAction<typeof openRTS>,
     InferAction<typeof fulfillResultTypeDetails>,
@@ -876,138 +879,113 @@ async function handleResetColumnPreferences(
   ],
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
-): Promise<InferAction<typeof fulfillColumnsChoice>> {
+): Promise<Action[]> {
   await clearResultTablePreferences(resetAction.payload.searchName, wdkService);
 
-  // Get default columns directly from question
   const { resultType } = openAction.payload;
+  const { recordClassName } = resultTypeDetailsAction.payload.resultTypeDetails;
+  const { viewId, searchName } = resetAction.payload;
+
+  // Get columns
   const columns = await getResultTableColumnsPref(
     wdkService,
-    resetAction.payload.searchName,
+    searchName,
     resultType.type === 'step' ? resultType.step : undefined
   );
   const validColumns = await filterInvalidAttributes(
     wdkService,
-    resetAction.payload.searchName,
+    searchName,
     identity,
     columns
   );
 
-  return fulfillColumnsChoice(
-    resetAction.payload.viewId,
-    validColumns,
-    resetAction.payload.searchName
-  );
-}
-
-async function handleResetSortingPreferences(
-  [openAction, resultTypeDetailsAction, resetAction]: [
-    InferAction<typeof openRTS>,
-    InferAction<typeof fulfillResultTypeDetails>,
-    InferAction<typeof resetColumnPreferencesToDefault>
-  ],
-  state$: StateObservable<RootState>,
-  { wdkService }: EpicDependencies
-): Promise<InferAction<typeof fulfillSorting>> {
-  const { resultType } = openAction.payload;
+  // Get sorting
   const stepSortColumns =
     resultType.type === 'step' &&
     resultType.step.displayPreferences.sortColumns;
-
   const sorting = stepSortColumns
     ? stepSortColumns.map(({ name: attributeName, direction }) => ({
         attributeName,
         direction,
       }))
-    : await getResultTableSortingPref(
-        resetAction.payload.searchName,
-        wdkService
-      );
+    : await getResultTableSortingPref(searchName, wdkService);
   const validSorting = await filterInvalidAttributes(
     wdkService,
-    resetAction.payload.searchName,
+    searchName,
     (spec) => spec.attributeName,
     sorting
   );
 
-  return fulfillSorting(
-    resetAction.payload.viewId,
-    validSorting,
-    resetAction.payload.searchName
-  );
-}
-
-async function handleResetViewPage(
-  [openAction, resultTypeDetailsAction, resetAction]: [
-    InferAction<typeof openRTS>,
-    InferAction<typeof fulfillResultTypeDetails>,
-    InferAction<typeof resetColumnPreferencesToDefault>
-  ],
-  state$: StateObservable<RootState>,
-  { wdkService }: EpicDependencies
-): Promise<InferAction<typeof viewPageNumber>> {
-  return viewPageNumber(resetAction.payload.viewId, 1);
-}
-
-async function handleResetPageSize(
-  [openAction, resultTypeDetailsAction, resetAction]: [
-    InferAction<typeof openRTS>,
-    InferAction<typeof fulfillResultTypeDetails>,
-    InferAction<typeof resetColumnPreferencesToDefault>
-  ],
-  state$: StateObservable<RootState>,
-  { wdkService }: EpicDependencies
-): Promise<InferAction<typeof fulfillPageSize>> {
+  // Get page size
   const pageSize = await getResultTablePageSizePref(wdkService);
-  return fulfillPageSize(resetAction.payload.viewId, pageSize);
-}
 
-async function handleResetInBasketFilter(
-  [openAction, resultTypeDetailsAction, resetAction]: [
-    InferAction<typeof openRTS>,
-    InferAction<typeof fulfillResultTypeDetails>,
-    InferAction<typeof resetColumnPreferencesToDefault>
-  ],
-  state$: StateObservable<RootState>,
-  { wdkService }: EpicDependencies
-): Promise<InferAction<typeof updateInBasketFilter>> {
-  const currentState = state$.value[key][resetAction.payload.viewId];
-  const enabled = currentState?.inBaskeFilterEnabled ?? false;
-  return updateInBasketFilter(resetAction.payload.viewId, enabled);
-}
+  // Get in basket filter state
+  const currentState = state$.value[key][viewId];
+  const inBasketFilterEnabled = currentState?.inBaskeFilterEnabled ?? false;
 
-async function handleResetGlobalViewFilters(
-  [openAction, resultTypeDetailsAction, resetAction]: [
-    InferAction<typeof openRTS>,
-    InferAction<typeof fulfillResultTypeDetails>,
-    InferAction<typeof resetColumnPreferencesToDefault>
-  ],
-  state$: StateObservable<RootState>,
-  { wdkService }: EpicDependencies
-): Promise<InferAction<typeof fulfillGlobalViewFilters>> {
-  const { recordClassName } = resultTypeDetailsAction.payload.resultTypeDetails;
+  // Get global view filters
   const viewFilters = await getGlobalViewFilters(wdkService, recordClassName);
-  return fulfillGlobalViewFilters(
-    resetAction.payload.viewId,
-    recordClassName,
-    viewFilters
-  );
+
+  return [
+    fulfillColumnsChoice(viewId, validColumns, searchName),
+    fulfillSorting(viewId, validSorting, searchName),
+    viewPageNumber(viewId, 1),
+    fulfillPageSize(viewId, pageSize),
+    updateInBasketFilter(viewId, inBasketFilterEnabled),
+    fulfillGlobalViewFilters(viewId, recordClassName, viewFilters),
+  ];
 }
 
-function filterResetColumnPreferencesActions([
-  openAction,
-  resultTypeDetailsAction,
-  resetAction,
-]: [
-  InferAction<typeof openRTS>,
-  InferAction<typeof fulfillResultTypeDetails>,
-  InferAction<typeof resetColumnPreferencesToDefault>
-]) {
-  return (
-    openAction.payload.viewId === resetAction.payload.viewId &&
-    resultTypeDetailsAction.payload.resultTypeDetails.searchName ===
-      resetAction.payload.searchName
-  );
+function createResetPreferencesEpic() {
+  return function resetPreferencesEpic(
+    action$: any,
+    state$: StateObservable<RootState>,
+    dependencies: EpicDependencies
+  ) {
+    const actionStreams = [
+      action$.pipe(filter(openRTS.isOfType)),
+      action$.pipe(filter(fulfillResultTypeDetails.isOfType)),
+      action$.pipe(filter(resetColumnPreferencesToDefault.isOfType)),
+    ];
+
+    let prevFilteredActions: any[] | undefined = undefined;
+
+    const combined$ = combineLatestIf(actionStreams, (actions: any[]) => {
+      const [openAction, resultTypeDetailsAction, resetAction] = actions as [
+        InferAction<typeof openRTS>,
+        InferAction<typeof fulfillResultTypeDetails>,
+        InferAction<typeof resetColumnPreferencesToDefault>
+      ];
+      const isCoherent =
+        openAction.payload.viewId === resetAction.payload.viewId &&
+        resultTypeDetailsAction.payload.resultTypeDetails.searchName ===
+          resetAction.payload.searchName;
+
+      if (!isCoherent) return false;
+
+      const isNew =
+        prevFilteredActions == null || !isEqual(actions, prevFilteredActions);
+      if (isNew) prevFilteredActions = actions;
+
+      return isNew;
+    });
+
+    return combined$.pipe(
+      mergeMap((actions: any) =>
+        from(
+          handleResetAllPreferences(
+            actions as [
+              InferAction<typeof openRTS>,
+              InferAction<typeof fulfillResultTypeDetails>,
+              InferAction<typeof resetColumnPreferencesToDefault>
+            ],
+            state$,
+            dependencies
+          ).then((resultActions) => from(resultActions))
+        ).pipe(mergeMap((obs) => obs))
+      )
+    );
+  };
 }
 
 export const observe = takeEpicInWindow(
@@ -1116,35 +1094,6 @@ export const observe = takeEpicInWindow(
         areActionsNew: () => true,
       }
     ),
-    smrate(
-      [openRTS, fulfillResultTypeDetails, resetColumnPreferencesToDefault],
-      handleResetColumnPreferences,
-      { areActionsCoherent: filterResetColumnPreferencesActions }
-    ),
-    smrate(
-      [openRTS, fulfillResultTypeDetails, resetColumnPreferencesToDefault],
-      handleResetSortingPreferences,
-      { areActionsCoherent: filterResetColumnPreferencesActions }
-    ),
-    smrate(
-      [openRTS, fulfillResultTypeDetails, resetColumnPreferencesToDefault],
-      handleResetViewPage,
-      { areActionsCoherent: filterResetColumnPreferencesActions }
-    ),
-    smrate(
-      [openRTS, fulfillResultTypeDetails, resetColumnPreferencesToDefault],
-      handleResetPageSize,
-      { areActionsCoherent: filterResetColumnPreferencesActions }
-    ),
-    smrate(
-      [openRTS, fulfillResultTypeDetails, resetColumnPreferencesToDefault],
-      handleResetInBasketFilter,
-      { areActionsCoherent: filterResetColumnPreferencesActions }
-    ),
-    smrate(
-      [openRTS, fulfillResultTypeDetails, resetColumnPreferencesToDefault],
-      handleResetGlobalViewFilters,
-      { areActionsCoherent: filterResetColumnPreferencesActions }
-    )
+    createResetPreferencesEpic()
   )
 );
