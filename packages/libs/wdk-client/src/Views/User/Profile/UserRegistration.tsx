@@ -58,11 +58,30 @@ const WhyRegister: React.FC = () => (
           <h4>Why register/subscribe?</h4>
           <div id="cirbulletlist">
             <ul>
-              <li>Permanently save Search Strategies</li>
-              <li>Use a Basket to make a set of IDs of interest</li>
-              <li>Use Favorites to mark IDs of interest, for fast access</li>
-              <li>Add a comment on Genes, Sequences and other record types</li>
-              <li>Set site preferences</li>
+              <li>
+                <strong>Gain access</strong> to all available searches and tools
+              </li>
+              <li>
+                <strong>Save your search strategies</strong> for easy reuse
+              </li>
+              <li>
+                <strong>Collect and organize IDs</strong> using the Basket tool
+              </li>
+              <li>
+                <strong>Mark favorites</strong> for quick access to important
+                records
+              </li>
+              <li>
+                <strong>Add comments</strong> on genes, sequences, and other
+                data types
+              </li>
+              <li>
+                <strong>Customize your site preferences</strong>
+              </li>
+              <li>
+                <strong>Manage your subscription information</strong> in one
+                place
+              </li>
             </ul>
           </div>
         </div>
