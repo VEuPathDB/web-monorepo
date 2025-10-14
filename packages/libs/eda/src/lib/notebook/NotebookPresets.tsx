@@ -79,7 +79,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
   differentialExpressionNotebook: {
     name: 'differentialexpression',
     displayName: 'Differential Expression Notebook',
-    projects: ['MicrobiomeDB'],
+    projects: ['PlasmoDB'],
     cells: [
       {
         type: 'subset',
@@ -120,6 +120,46 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                 }
                 color={colors.grey[800]}
               />
+            ),
+          },
+          {
+            type: 'text',
+            title: 'Review and run search',
+            helperText: (
+              <NumberedHeader
+                number={3}
+                text={
+                  'After identifying genes of interest from the volcano plot, we can run a gene search to review the genes in the Gene Search Results table.'
+                }
+                color={colors.grey[800]}
+              />
+            ),
+            text: (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.5rem',
+                }}
+              >
+                <h4>
+                  Clicking "Get Answer" below will return genes that meet the
+                  following criteria:
+                </h4>
+                <span style={{ fontStyle: 'italic', color: colors.grey[800] }}>
+                  Adjust these parameters in the above cells
+                </span>
+                <span>
+                  Absolute effect size: <strong>1</strong>
+                </span>
+                <span>
+                  Unadjusted P-value: <strong>0.01</strong>
+                </span>
+                <span>
+                  Gene regulation direction:{' '}
+                  <strong>Up and down regulated</strong>
+                </span>
+              </div>
             ),
           },
         ],
