@@ -3,15 +3,15 @@ import { makeClassNameHelper } from "@veupathdb/wdk-client/lib/Utils/ComponentUt
 
 export const cx = makeClassNameHelper("UploadForm");
 
-// A little helper to simplify updating fields of the nested inputs
-export function createNestedInputUpdater<T>(props: {
-  index: number;
-  setNestedInputObject: React.Dispatch<React.SetStateAction<T[]>>;
-  enforceExclusiveTrue?: boolean;
-}): (newValue: string | boolean, inputName: keyof T) => void {
-  const { index, setNestedInputObject, enforceExclusiveTrue } = props;
+export type InputUpdater<T, V extends keyof T = keyof T> = (inputName: V, newValue: T[V]) => void;
 
-  return function (newValue: string | boolean, inputName: keyof T) {
+// A little helper to simplify updating fields of the nested inputs
+export function createNestedInputUpdater<T>(
+  index: number,
+  setNestedInputObject: React.Dispatch<React.SetStateAction<T[]>>,
+  enforceExclusiveTrue: boolean = false,
+): InputUpdater<T> {
+  return function<V extends keyof T>(inputName: keyof T, newValue: T[V]) {
     setNestedInputObject((prev) => {
       const updated = [ ...prev ];
 

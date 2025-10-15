@@ -109,7 +109,6 @@ export interface DatasetUploadTypeConfigEntry<T extends string> {
       render: (props: DependencyProps) => ReactNode;
       required?: boolean;
     };
-    hideRelatedOrganisms?: boolean;
     uploadMethodConfig: {
       file?: FileUploadConfig;
       url?: UrlUploadConfig;

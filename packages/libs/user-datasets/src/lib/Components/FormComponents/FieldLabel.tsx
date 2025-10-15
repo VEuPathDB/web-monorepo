@@ -6,7 +6,7 @@ export interface FieldLabelProps
     HTMLLabelElement
   > {
   children: React.ReactNode;
-  required: boolean;
+  required?: boolean;
 }
 
 export function FieldLabel({ children, required, ...labelProps }: FieldLabelProps) {

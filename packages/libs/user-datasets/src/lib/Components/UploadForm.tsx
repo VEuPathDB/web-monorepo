@@ -27,13 +27,11 @@ import {
   DatasetUploadTypeConfigEntry,
   ResultUploadConfig,
   UserDatasetContact,
-  UserDatasetHyperlink,
 } from "../Utils/types";
 
 import { FloatingButton, Modal } from "@veupathdb/coreui";
 import Banner from "@veupathdb/coreui/lib/components/banners/Banner";
 import AddIcon from "@material-ui/icons/Add";
-import Trash from "@veupathdb/coreui/lib/components/icons/Trash";
 
 import "./UploadForm.scss";
 import { FloatingButtonWDKStyle } from "@veupathdb/coreui/lib/components/buttons/FloatingButton";
@@ -42,8 +40,8 @@ import {
   ContactInput,
   ErrorMessage,
   FieldLabel,
-  HyperlinkInput,
-  PublicationInput,
+  LinkedDatasetInput,
+  PublicationInputList,
   UploadProgress,
 
   createNestedInputUpdater,
@@ -53,7 +51,7 @@ import {
   DatasetDependency,
   DatasetPostRequest,
   DatasetPublication,
-  LinkedDataset, PublicationType,
+  LinkedDataset,
 } from "../Service/Types";
 import { UserDatasetFormContent } from "./FormTypes";
 
@@ -73,7 +71,6 @@ interface Props<T extends string = string> {
   dispatchUploadProgress: (progress: number | null) => void;
   supportedFileUploadTypes: string[];
   maxSizeBytes?: number;
-  showExtraMetadata?: boolean; // Show/hide the additional metadata fields.
 }
 
 type DataUploadMode = "file" | "url" | "strategy" | "step";
@@ -124,7 +121,6 @@ function UploadForm({
   dispatchUploadProgress,
   supportedFileUploadTypes,
   maxSizeBytes,
-  showExtraMetadata = false,
 }: Props) {
   const strategyOptionsByStrategyId = useMemo(
     () => keyBy(strategyOptions, (option) => option.strategyId),
@@ -476,51 +472,7 @@ function UploadForm({
           />
         </div>
         <div className={"formSection"}>
-          <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-publications">
-            <FieldLabel htmlFor="data-set-publications" required={false}>
-              Publications
-            </FieldLabel>
-            {publications.map((publication, index) => {
-              const updatePublicationsObject = createNestedInputUpdater({
-                index: index,
-                setNestedInputObject: setPublications,
-                enforceExclusiveTrue: false,
-              });
-              return (
-                <PublicationInput
-                  index={index}
-
-                  publication={publication}
-
-                  onSetIdentifier={(value: string) => updatePublicationsObject(value, "identifier")}
-                  onSetType={(value: PublicationType) => updatePublicationsObject(value, "type")}
-                  onSetCitation={(value: string) => updatePublicationsObject(value, "citation")}
-                  onSetPrimary={(value: boolean) => updatePublicationsObject(value, "isPrimary")}
-
-                  onRemovePublication={(
-                    event: React.MouseEvent<HTMLButtonElement>,
-                  ) => {
-                    event.preventDefault();
-                    setPublications((prev) =>
-                      prev.filter((_, i) => i !== index),
-                    );
-                  }}
-                />
-              );
-            })}
-            <FloatingButton
-              text="Add Publication"
-              onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
-                event.preventDefault();
-                setPublications((oldPublications) => [
-                  ...oldPublications,
-                  {} as DatasetPublication,
-                ]);
-              }}
-              icon={AddIcon}
-              styleOverrides={FloatingButtonWDKStyle}
-            />
-          </div>
+          <PublicationInputList />
           <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-hyperlinks">
             <FieldLabel
               htmlFor="data-set-publications-hyperlinks"
@@ -528,39 +480,26 @@ function UploadForm({
             >
               Hyperlinks
             </FieldLabel>
-            {linkedDatasets.map((hyperlink, index) => {
-              const updateHyperlinksObject = createNestedInputUpdater({
+            {linkedDatasets.map((linkedDataset, index) => {
+              const updateLinkObject = createNestedInputUpdater({
                 index: index,
                 setNestedInputObject: setLinkedDatasets,
                 enforceExclusiveTrue: false,
               });
               return (
-                <HyperlinkInput
-                  n={index}
-                  url={hyperlink.url}
-                  onAddUrl={(value: string) => {
-                    updateHyperlinksObject(value, "url");
-                  }}
-                  onRemoveHyperlink={(
-                    event: React.MouseEvent<HTMLButtonElement>,
-                  ) => {
+                <LinkedDatasetInput
+                  index={index}
+
+                  link={linkedDataset}
+
+                  onSetUrl={value => updateLinkObject("datasetUri", value)}
+                  onSetSharesRecords={value => updateLinkObject("sharesRecords", value)}
+
+                  onRemoveLink={event => {
                     event.preventDefault();
-                    setLinkedDatasets((prev) =>
+                    setLinkedDatasets(prev =>
                       prev.filter((_, i) => i !== index),
                     );
-                  }}
-                  text={hyperlink.text}
-                  onAddText={(value: string) => {
-                    updateHyperlinksObject(value, "text");
-                  }}
-                  description={linkedDatasets[index]?.description}
-                  onAddDescription={(value: string) => {
-                    updateHyperlinksObject(value, "description");
-                  }}
-                  isPublication={linkedDatasets[index]?.isPublication}
-                  onAddIsPublication={(value: boolean) => {
-                    updateHyperlinksObject(value, "isPublication");
-                    return;
                   }}
                 />
               );
@@ -569,70 +508,15 @@ function UploadForm({
               text="Add Hyperlink"
               onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
                 event.preventDefault();
-                setLinkedDatasets((oldHyperlinks) => [
-                  ...oldHyperlinks,
-                  {} as UserDatasetHyperlink,
+                setLinkedDatasets((oldDatasetLink) => [
+                  ...oldDatasetLink,
+                  {} as LinkedDataset,
                 ]);
               }}
               icon={AddIcon}
               styleOverrides={FloatingButtonWDKStyle}
             />
           </div>
-          {!datasetUploadType.formConfig.hideRelatedOrganisms && (
-            <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-organisms">
-              <FieldLabel
-                htmlFor="data-set-publications-organisms"
-                required={false}
-              >
-                Related Organisms
-              </FieldLabel>
-              <div>
-                {organisms.map((organism, index) => {
-                  return (
-                    <div className={cx("--OrganismInputFields")}>
-                      <FieldLabel required={false} key={index}>
-                        Related Organism {index + 1}
-                      </FieldLabel>
-                      <TextBox
-                        type="input"
-                        id={`data-set-organisms-${index}`}
-                        placeholder="Organism"
-                        required={false}
-                        value={organism}
-                        onChange={(value) => {
-                          const updatedOrganisms = [ ...organisms ];
-                          updatedOrganisms[index] = value;
-                          setOrganisms(updatedOrganisms);
-                        }}
-                      />
-                      <FloatingButton
-                        text="Remove"
-                        onPress={(
-                          event: React.MouseEvent<HTMLButtonElement>,
-                        ) => {
-                          event.preventDefault();
-                          const updatedOrganisms = [ ...organisms ];
-                          updatedOrganisms.splice(index, 1);
-                          setOrganisms(updatedOrganisms);
-                        }}
-                        icon={Trash}
-                        styleOverrides={FloatingButtonWDKStyle}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-              <FloatingButton
-                text="Add Related Organism"
-                onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
-                  event.preventDefault();
-                  setOrganisms((oldOrganisms) => [ ...oldOrganisms, "" ]);
-                }}
-                icon={AddIcon}
-                styleOverrides={FloatingButtonWDKStyle}
-              />
-            </div>
-          )}
           <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-contacts">
             <FieldLabel
               htmlFor="data-set-publications-contacts"
@@ -641,49 +525,28 @@ function UploadForm({
               Contacts
             </FieldLabel>
             {contacts.map((contact, index) => {
-              const updateContactsObject = createNestedInputUpdater({
+              const updateContact = createNestedInputUpdater({
                 index: index,
                 setNestedInputObject: setContacts,
                 enforceExclusiveTrue: true,
               });
               return (
                 <ContactInput
-                  n={index}
-                  name={contact.name}
-                  onAddName={(value: string) => {
-                    updateContactsObject(value, "name");
+                  index={index}
+
+                  contact={contact}
+
+                  onSetName={value => {
+                    updateContact("firstName", value.firstName);
+                    updateContact("middleName", value.middleName);
+                    updateContact("lastName", value.lastName);
                   }}
-                  email={contact.email}
-                  onAddEmail={(value: string) => {
-                    updateContactsObject(value, "email");
-                  }}
-                  affiliation={contact.affiliation}
-                  onAddAffiliation={(value: string) => {
-                    updateContactsObject(value, "affiliation");
-                  }}
-                  city={contact.city}
-                  onAddCity={(value: string) => {
-                    updateContactsObject(value, "city");
-                  }}
-                  state={contact.state}
-                  onAddState={(value: string) => {
-                    updateContactsObject(value, "state");
-                  }}
-                  country={contact.country}
-                  onAddCountry={(value: string) => {
-                    updateContactsObject(value, "country");
-                  }}
-                  address={contact.address}
-                  onAddAddress={(value: string) => {
-                    updateContactsObject(value, "address");
-                  }}
-                  isPrimary={contact.isPrimary}
-                  onAddIsPrimary={(value: boolean) => {
-                    updateContactsObject(value, "isPrimary");
-                  }}
-                  onRemoveContact={(
-                    event: React.MouseEvent<HTMLButtonElement>,
-                  ) => {
+                  onSetEmail={value => updateContact("email", value)}
+                  onSetCountry={value => updateContact("country", value)}
+                  onSetAffiliation={value => updateContact("affiliation", value)}
+                  onSetIsPrimary={value => updateContact("isPrimary", value)}
+
+                  onRemoveContact={event => {
                     event.preventDefault();
                     setContacts((prev) => prev.filter((_, i) => i !== index));
                   }}

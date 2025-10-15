@@ -43,6 +43,7 @@ export const contact = io.partial({
   firstName: io.string,
   middleName: io.string,
   lastName: io.string,
+  email: io.string,
   isPrimary: io.boolean,
   affiliation: io.string,
   country: io.string,

@@ -9,6 +9,8 @@ import { FloatingButton } from "@veupathdb/coreui";
 import { FloatingButtonWDKStyle } from "@veupathdb/coreui/lib/components/buttons/FloatingButton";
 import { Checkbox, SingleSelect, TextBox } from "@veupathdb/wdk-client/lib/Components";
 import { DatasetPublication, PublicationType } from "../../Service/Types";
+import { createNestedInputUpdater } from "./component-utils";
+import AddIcon from "@material-ui/icons/Add";
 
 interface PublicationSelectItem {
   value: api.PublicationType;
@@ -20,68 +22,89 @@ const publicationTypes: PublicationSelectItem[] = [
   { value: "doi", display: "DOI" },
 ];
 
-export interface PublicationInputProps {
-  index: number;
+type PublicationUpdater = React.Dispatch<React.SetStateAction<DatasetPublication[]>>;
 
-  publication: DatasetPublication,
+function newInputFactory(setPublications: PublicationUpdater): (publication: DatasetPublication, index: number) => React.ReactElement {
+  return function (publication: DatasetPublication, index: number): React.ReactElement {
+    const updatePublication = createNestedInputUpdater(index, setPublications);
 
-  onSetIdentifier: (value: string) => void;
-  onSetType: (value: PublicationType) => void;
-  onSetCitation: (value: string) => void;
-  onSetPrimary: (value: boolean) => void;
+    const onRemove = (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+      setPublications((prev) =>
+        prev.filter((_, i) => i !== index),
+      );
+    }
 
-  onRemovePublication: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    return (
+      <div className={util.cx("--NestedInputContainer")}>
+        <div className={util.cx("--NestedInputTitle")}>
+          <FieldLabel style={{ fontSize: "1.2em" }}>Publication {index + 1}</FieldLabel>
+          <FloatingButton
+            text="Remove"
+            onPress={onRemove}
+            icon={Trash}
+            styleOverrides={FloatingButtonWDKStyle}
+          />
+        </div>
+        <div className={util.cx("--NestedInputFields")}>
+          <FieldLabel required>Publication Type</FieldLabel>
+          <SingleSelect
+            required
+            items={publicationTypes}
+            value={publicationTypes[0].value}
+            onChange={value => updatePublication("type", value as PublicationType)}
+          />
+
+          <FieldLabel required>Publication ID</FieldLabel>
+          <TextBox
+            type="input"
+            id={`data-set-publications-publicationId-${index}`}
+            placeholder="Publication ID"
+            required
+            value={publication.identifier}
+            onChange={value => updatePublication("identifier", value)}
+          />
+
+          <FieldLabel>Citation</FieldLabel>
+          <TextBox
+            type="input"
+            id={`data-set-publications-citation-${index}`}
+            placeholder="Citation"
+            required={false}
+            value={publication.citation}
+            onChange={value => updatePublication("citation", value)}
+          />
+
+          <FieldLabel required={false}>Primary Publication</FieldLabel>
+          <Checkbox
+            value={publication.isPrimary ?? false}
+            onChange={value => updatePublication("isPrimary", value)}
+          />
+        </div>
+      </div>
+    );
+  };
 }
 
-export function PublicationInput(props: PublicationInputProps): React.ReactElement {
+export function PublicationInputList(props: { oldPublications?: DatasetPublication[] }): React.ReactElement {
+  const [ publications, setPublications ] = React.useState<DatasetPublication[]>(props.oldPublications ?? []);
+
   return (
-    <div className={util.cx("--NestedInputContainer")}>
-      <div className={util.cx("--NestedInputTitle")}>
-        <FieldLabel required={false} style={{ fontSize: "1.2em" }}>
-          Publication {props.index + 1}
-        </FieldLabel>
-        <FloatingButton
-          text="Remove"
-          onPress={props.onRemovePublication}
-          icon={Trash}
-          styleOverrides={FloatingButtonWDKStyle}
-        />
-      </div>
-      <div className={util.cx("--NestedInputFields")}>
-        <FieldLabel required>Publication Type</FieldLabel>
-        <SingleSelect
-          required
-          items={publicationTypes}
-          value={publicationTypes[0].value}
-          onChange={v => props.onSetType(v as PublicationType)}
-        />
-
-        <FieldLabel required={false}>Publication ID</FieldLabel>
-        <TextBox
-          type="input"
-          id={`data-set-publications-publicationId-${props.index}`}
-          placeholder="Publication ID"
-          required
-          value={props.publication.identifier}
-          onChange={props.onSetIdentifier}
-        />
-
-        <FieldLabel required={false}>Citation</FieldLabel>
-        <TextBox
-          type="input"
-          id={`data-set-publications-citation-${props.index}`}
-          placeholder="Citation"
-          required={false}
-          value={props.publication.citation}
-          onChange={props.onSetCitation}
-        />
-
-        <FieldLabel required={false}>Primary Publication</FieldLabel>
-        <Checkbox
-          value={props.publication.isPrimary ?? false}
-          onChange={props.onSetPrimary}
-        />
-      </div>
+    <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-publications">
+      <FieldLabel htmlFor="data-set-publications" required={false}>Publications</FieldLabel>
+      {publications.map(newInputFactory(setPublications))}
+      <FloatingButton
+        text="Add Publication"
+        onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
+          event.preventDefault();
+          setPublications(oldPublications => [
+            ...oldPublications,
+            {} as DatasetPublication,
+          ]);
+        }}
+        icon={AddIcon}
+        styleOverrides={FloatingButtonWDKStyle}
+      />
     </div>
   );
 }
