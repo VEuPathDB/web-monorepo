@@ -3,8 +3,6 @@
 import stringify from 'json-stable-stringify';
 import { get, stubTrue, isEqual, difference, identity } from 'lodash';
 import { combineEpics, StateObservable } from 'redux-observable';
-import { from } from 'rxjs';
-import { filter, mergeMap } from 'rxjs/operators';
 import { Action } from '../Actions';
 import {
   fulfillAddStepToBasket,
@@ -49,7 +47,6 @@ import {
   InferAction,
   switchMapRequestActionsToEpic as smrate,
   takeEpicInWindow,
-  combineLatestIf,
 } from '../Utils/ActionCreatorUtils';
 import { makeCommonErrorMessage } from '../Utils/Errors';
 import {
@@ -269,11 +266,13 @@ function reduceView(
 
     case resetColumnPreferencesToDefault.type: {
       return {
-        ...initialViewState,
-        resultType: state.resultType,
-        resultTypeDetails: state.resultTypeDetails,
-        searchName: state.searchName,
-        globalViewFilters: state.globalViewFilters,
+        ...state,
+        // Clear any dialog-related state since preferences are changing
+        columnsDialogSelection: undefined,
+        columnsDialogSearchString: undefined,
+        columnsDialogExpandedNodes: undefined,
+        errorMessage: undefined,
+        answer: undefined,
       };
     }
 
@@ -383,6 +382,7 @@ function filterFulfillBySearchName([
     | InferAction<typeof requestSortingPreference>
     | InferAction<typeof requestSortingUpdate>
     | InferAction<typeof requestColumnsChoiceUpdate>
+    | InferAction<typeof resetColumnPreferencesToDefault>
   )
 ]) {
   const { resultTypeDetails } = resultTypeDetailsAction.payload;
@@ -871,7 +871,7 @@ async function getFulfillGlobalViewFiltersUpdate(
   return fulfillGlobalViewFilters(viewId, recordClassName, viewFilters);
 }
 
-async function handleResetAllPreferences(
+async function handleResetColumnPreferencesToDefault(
   [openAction, resultTypeDetailsAction, resetAction]: [
     InferAction<typeof openRTS>,
     InferAction<typeof fulfillResultTypeDetails>,
@@ -879,18 +879,24 @@ async function handleResetAllPreferences(
   ],
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
-): Promise<Action[]> {
-  await clearResultTablePreferences(resetAction.payload.searchName, wdkService);
-
-  const { resultType } = openAction.payload;
-  const { recordClassName } = resultTypeDetailsAction.payload.resultTypeDetails;
+): Promise<InferAction<typeof fulfillColumnsChoice>> {
   const { viewId, searchName } = resetAction.payload;
+  const { resultType } = openAction.payload;
 
-  // Get columns
+  // Clear backend preferences
+  await clearResultTablePreferences(searchName, wdkService);
+
+  if (resultType.type === 'step') {
+    await wdkService.updateStepProperties(resultType.step.id, {
+      displayPreferences: {},
+    });
+  }
+
+  // fulfill column change after checking columns are valid
   const columns = await getResultTableColumnsPref(
     wdkService,
-    searchName,
-    resultType.type === 'step' ? resultType.step : undefined
+    searchName
+    // don't pass the stale step
   );
   const validColumns = await filterInvalidAttributes(
     wdkService,
@@ -899,93 +905,11 @@ async function handleResetAllPreferences(
     columns
   );
 
-  // Get sorting
-  const stepSortColumns =
-    resultType.type === 'step' &&
-    resultType.step.displayPreferences.sortColumns;
-  const sorting = stepSortColumns
-    ? stepSortColumns.map(({ name: attributeName, direction }) => ({
-        attributeName,
-        direction,
-      }))
-    : await getResultTableSortingPref(searchName, wdkService);
-  const validSorting = await filterInvalidAttributes(
-    wdkService,
-    searchName,
-    (spec) => spec.attributeName,
-    sorting
+  return fulfillColumnsChoice(
+    openAction.payload.viewId,
+    validColumns,
+    searchName
   );
-
-  // Get page size
-  const pageSize = await getResultTablePageSizePref(wdkService);
-
-  // Get in basket filter state
-  const currentState = state$.value[key][viewId];
-  const inBasketFilterEnabled = currentState?.inBaskeFilterEnabled ?? false;
-
-  // Get global view filters
-  const viewFilters = await getGlobalViewFilters(wdkService, recordClassName);
-
-  return [
-    fulfillColumnsChoice(viewId, validColumns, searchName),
-    fulfillSorting(viewId, validSorting, searchName),
-    viewPageNumber(viewId, 1),
-    fulfillPageSize(viewId, pageSize),
-    updateInBasketFilter(viewId, inBasketFilterEnabled),
-    fulfillGlobalViewFilters(viewId, recordClassName, viewFilters),
-  ];
-}
-
-function createResetPreferencesEpic() {
-  return function resetPreferencesEpic(
-    action$: any,
-    state$: StateObservable<RootState>,
-    dependencies: EpicDependencies
-  ) {
-    const actionStreams = [
-      action$.pipe(filter(openRTS.isOfType)),
-      action$.pipe(filter(fulfillResultTypeDetails.isOfType)),
-      action$.pipe(filter(resetColumnPreferencesToDefault.isOfType)),
-    ];
-
-    let prevFilteredActions: any[] | undefined = undefined;
-
-    const combined$ = combineLatestIf(actionStreams, (actions: any[]) => {
-      const [openAction, resultTypeDetailsAction, resetAction] = actions as [
-        InferAction<typeof openRTS>,
-        InferAction<typeof fulfillResultTypeDetails>,
-        InferAction<typeof resetColumnPreferencesToDefault>
-      ];
-      const isCoherent =
-        openAction.payload.viewId === resetAction.payload.viewId &&
-        resultTypeDetailsAction.payload.resultTypeDetails.searchName ===
-          resetAction.payload.searchName;
-
-      if (!isCoherent) return false;
-
-      const isNew =
-        prevFilteredActions == null || !isEqual(actions, prevFilteredActions);
-      if (isNew) prevFilteredActions = actions;
-
-      return isNew;
-    });
-
-    return combined$.pipe(
-      mergeMap((actions: any) =>
-        from(
-          handleResetAllPreferences(
-            actions as [
-              InferAction<typeof openRTS>,
-              InferAction<typeof fulfillResultTypeDetails>,
-              InferAction<typeof resetColumnPreferencesToDefault>
-            ],
-            state$,
-            dependencies
-          ).then((resultActions) => from(resultActions))
-        ).pipe(mergeMap((obs) => obs))
-      )
-    );
-  };
 }
 
 export const observe = takeEpicInWindow(
@@ -1022,7 +946,10 @@ export const observe = takeEpicInWindow(
     smrate(
       [openRTS, fulfillResultTypeDetails, requestColumnsChoiceUpdate],
       getFulfillColumnsChoiceUpdate,
-      { areActionsCoherent: filterFulfillBySearchName }
+      {
+        areActionsCoherent: filterFulfillBySearchName,
+        areActionsNew: () => true,
+      }
     ),
     // strat needed for searchName
     smrate([openRTS, fulfillResultTypeDetails], getRequestSortingPreference, {
@@ -1094,6 +1021,14 @@ export const observe = takeEpicInWindow(
         areActionsNew: () => true,
       }
     ),
-    createResetPreferencesEpic()
+    // Reset column preferences
+    smrate(
+      [openRTS, fulfillResultTypeDetails, resetColumnPreferencesToDefault],
+      handleResetColumnPreferencesToDefault,
+      {
+        areActionsCoherent: filterFulfillBySearchName,
+        areActionsNew: () => true,
+      }
+    )
   )
 );

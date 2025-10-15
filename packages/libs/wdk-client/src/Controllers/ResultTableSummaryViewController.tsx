@@ -107,8 +107,10 @@ function ResultTableSummaryViewController(props: Props) {
   } = props;
 
   useEffect(() => {
+    console.log('[oooooo openResultTableSummaryView]');
     actionCreators.openResultTableSummaryView(resultType);
     return () => {
+      console.log('[oooooo closeResultTableSummaryView]');
       actionCreators.closeResultTableSummaryView();
     };
   }, [resultType]);

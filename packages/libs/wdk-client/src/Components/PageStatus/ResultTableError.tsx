@@ -19,9 +19,13 @@ const buttonStyle: React.CSSProperties = {
 export function ResultTableError(props: Props) {
   return (
     <div className="wdk-Error" style={style}>
-      Content could not be loaded: {props.message}
+      <p>Error: content could not be loaded ({props.message})</p>
+      <p>
+        This may be caused by an incompatible column selection. We're working on
+        a fix, but in the meantime you can reset to the default columns.
+      </p>
       <button style={buttonStyle} onClick={props.onReset}>
-        Reset to Default Columns and Retry
+        Reset to Default Columns
       </button>
     </div>
   );
