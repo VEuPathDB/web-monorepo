@@ -77,6 +77,7 @@ function newInputFactory(setPublications: PublicationUpdater): (publication: Dat
 
           <FieldLabel required={false}>Primary Publication</FieldLabel>
           <Checkbox
+            name={`isPrimary-${index}`}
             value={publication.isPrimary ?? false}
             onChange={value => updatePublication("isPrimary", value)}
           />

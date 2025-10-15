@@ -6,8 +6,10 @@ import Trash from "@veupathdb/coreui/lib/components/icons/Trash";
 import { FieldLabel } from "./FieldLabel";
 import { FloatingButton } from "@veupathdb/coreui";
 import { FloatingButtonWDKStyle } from "@veupathdb/coreui/lib/components/buttons/FloatingButton";
-import { RadioList, TextBox } from "@veupathdb/wdk-client/lib/Components";
+import { Checkbox, TextBox } from "@veupathdb/wdk-client/lib/Components";
 import { DatasetContact } from "../../Service/Types";
+import { createNestedInputUpdater } from "./component-utils";
+import AddIcon from "@material-ui/icons/Add";
 
 interface SplitName {
   firstName?: string;
@@ -48,83 +50,93 @@ function joinName(contact: DatasetContact): string {
     (contact.lastName ? " " + contact.lastName : "");
 }
 
-export interface ContactInputProps {
-  index: number;
+type ContactUpdater = React.Dispatch<React.SetStateAction<DatasetContact[]>>;
 
-  contact: DatasetContact;
+function contactInputFactory(updater: ContactUpdater): (contact: DatasetContact, index: number) => React.ReactElement {
+  return function (contact: DatasetContact, index: number): React.ReactElement{
+    const updateContact = createNestedInputUpdater(index, updater);
 
-  onSetAffiliation: (value: string) => void;
-  onSetCountry: (value: string) => void;
-  onSetEmail: (value: string) => void;
-  onSetIsPrimary: (value: boolean) => void;
-  onSetName: (value: SplitName) => void;
+    const onRemove = (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+      updater((prev) => prev.filter((_, i) => i !== index));
+    }
 
-  onRemoveContact: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    return (
+      <div className={util.cx("--NestedInputContainer")}>
+        <div className={util.cx("--NestedInputTitle")}>
+          <FieldLabel style={{ fontSize: "1.2em" }}>Contact {index + 1}</FieldLabel>
+          <FloatingButton
+            text="Remove"
+            onPress={onRemove}
+            icon={Trash}
+            styleOverrides={FloatingButtonWDKStyle}
+          />
+        </div>
+        <div className={util.cx("--NestedInputFields")}>
+          <FieldLabel required>Name</FieldLabel>
+          <TextBox
+            type="input"
+            id={`data-set-contacts-name-${index}`}
+            placeholder="Name"
+            required
+            value={joinName(contact)}
+            onChange={value => {
+              const split = splitName(value);
+              updateContact("firstName", split.firstName);
+              updateContact("middleName", split.middleName);
+              updateContact("lastName", split.lastName);
+            }}
+          />
+          <FieldLabel required={false}>Email</FieldLabel>
+          <TextBox
+            type="input"
+            id={`data-set-contacts-email-${index}`}
+            placeholder="Email"
+            value={contact.email}
+            onChange={value => updateContact("email", value)}
+          />
+          <FieldLabel required={false}>Affiliation</FieldLabel>
+          <TextBox
+            type="input"
+            id={`data-set-contacts-affiliation-${index}`}
+            placeholder="Affiliation"
+            value={contact.affiliation}
+            onChange={value => updateContact("affiliation", value)}
+          />
+          <FieldLabel required={false}>Country</FieldLabel>
+          <TextBox
+            type="input"
+            id={`data-set-contacts-country-${index}`}
+            placeholder="Country"
+            value={contact.country}
+            onChange={value => updateContact("country", value)}
+          />
+          <FieldLabel required={false}>Is primary?</FieldLabel>
+          <Checkbox
+            name={`isPrimary-${index}`}
+            value={contact.isPrimary ?? false}
+            onChange={value => updateContact("isPrimary", value)}
+          />
+        </div>
+      </div>
+    );
+  }
 }
 
-export function ContactInput(props: ContactInputProps): React.ReactElement {
+export function ContactInputList(props: { contacts: DatasetContact[], setContacts: ContactUpdater }): React.ReactElement {
   return (
-    <div className={util.cx("--NestedInputContainer")}>
-      <div className={util.cx("--NestedInputTitle")}>
-        <FieldLabel required={false} style={{ fontSize: "1.2em" }}>
-          Contact {props.index + 1}
-        </FieldLabel>
-        <FloatingButton
-          text="Remove"
-          onPress={props.onRemoveContact}
-          icon={Trash}
-          styleOverrides={FloatingButtonWDKStyle}
-        />
-      </div>
-      <div className={util.cx("--NestedInputFields")}>
-        <FieldLabel required>Name</FieldLabel>
-        <TextBox
-          type="input"
-          id={`data-set-contacts-name-${props.index}`}
-          placeholder="Name"
-          required
-          value={joinName(props.contact)}
-          onChange={name => props.onSetName(splitName(name))}
-        />
-        <FieldLabel required={false}>Email</FieldLabel>
-        <TextBox
-          type="input"
-          id={`data-set-contacts-email-${props.index}`}
-          placeholder="Email"
-          required={false}
-          value={props.contact.email}
-          onChange={props.onSetEmail}
-        />
-        <FieldLabel required={false}>Affiliation</FieldLabel>
-        <TextBox
-          type="input"
-          id={`data-set-contacts-affiliation-${props.index}`}
-          placeholder="Affiliation"
-          required={false}
-          value={props.contact.affiliation}
-          onChange={props.onSetAffiliation}
-        />
-        <FieldLabel required={false}>Country</FieldLabel>
-        <TextBox
-          type="input"
-          id={`data-set-contacts-country-${props.index}`}
-          placeholder="Country"
-          required={false}
-          value={props.contact.country}
-          onChange={props.onSetCountry}
-        />
-        <FieldLabel required={false}>Is primary?</FieldLabel>
-        <RadioList
-          name={`isPrimary-${props.index}`}
-          className="horizontal"
-          value={props.contact.isPrimary ? "true" : "false"}
-          onChange={value => props.onSetIsPrimary(value === "true")}
-          items={[
-            { value: "true", display: "Yes" },
-            { value: "false", display: "No" },
-          ]}
-        />
-      </div>
+    <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-contacts">
+      <FieldLabel htmlFor="data-set-publications-contacts">Contacts</FieldLabel>
+      {props.contacts.map(contactInputFactory(props.setContacts))}
+      <FloatingButton
+        text="Add Contact"
+        onPress={event => {
+          event.preventDefault();
+          props.setContacts(contacts => [ ...contacts, {} ]);
+        }}
+        icon={AddIcon}
+        styleOverrides={FloatingButtonWDKStyle}
+      />
     </div>
-  );
+  )
 }

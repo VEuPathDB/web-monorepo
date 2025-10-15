@@ -37,14 +37,14 @@ import "./UploadForm.scss";
 import { FloatingButtonWDKStyle } from "@veupathdb/coreui/lib/components/buttons/FloatingButton";
 
 import {
-  ContactInput,
+  contactInputFactory,
   ErrorMessage,
   FieldLabel,
   LinkedDatasetInput,
   PublicationInputList,
   UploadProgress,
 
-  createNestedInputUpdater,
+  createNestedInputUpdater, ContactInputList,
 } from "./FormComponents";
 import {
   DatasetContact,
@@ -517,55 +517,7 @@ function UploadForm({
               styleOverrides={FloatingButtonWDKStyle}
             />
           </div>
-          <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-contacts">
-            <FieldLabel
-              htmlFor="data-set-publications-contacts"
-              required={false}
-            >
-              Contacts
-            </FieldLabel>
-            {contacts.map((contact, index) => {
-              const updateContact = createNestedInputUpdater({
-                index: index,
-                setNestedInputObject: setContacts,
-                enforceExclusiveTrue: true,
-              });
-              return (
-                <ContactInput
-                  index={index}
-
-                  contact={contact}
-
-                  onSetName={value => {
-                    updateContact("firstName", value.firstName);
-                    updateContact("middleName", value.middleName);
-                    updateContact("lastName", value.lastName);
-                  }}
-                  onSetEmail={value => updateContact("email", value)}
-                  onSetCountry={value => updateContact("country", value)}
-                  onSetAffiliation={value => updateContact("affiliation", value)}
-                  onSetIsPrimary={value => updateContact("isPrimary", value)}
-
-                  onRemoveContact={event => {
-                    event.preventDefault();
-                    setContacts((prev) => prev.filter((_, i) => i !== index));
-                  }}
-                />
-              );
-            })}
-            <FloatingButton
-              text="Add Contact"
-              onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
-                event.preventDefault();
-                setContacts((contacts) => [
-                  ...contacts,
-                  {} as UserDatasetContact,
-                ]);
-              }}
-              icon={AddIcon}
-              styleOverrides={FloatingButtonWDKStyle}
-            />
-          </div>
+          <ContactInputList contacts={contacts} setContacts={setContacts} />
         </div>
         {datasetUploadType.formConfig.dependencies && (
           <div className="formSection formSection--data-set-dependencies">
