@@ -16,6 +16,7 @@ import {
   UserWarn,
   UserCheck,
   UserGuest,
+  UserClass,
 } from '../../../../coreui/lib';
 
 interface Actions {
@@ -109,7 +110,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
         ) : isSubscribed ? (
           <UserCheck className="UserMenu-StatusIcon" />
         ) : isClassParticipant ? (
-          <UserLoggedIn className="UserMenu-LoggedInIcon" /> // could have a special student icon here
+          <UserClass className="UserMenu-StatusIcon" /> // could have a special student icon here
         ) : showSubscriptionProds ? (
           <UserWarn className="UserMenu-StatusIcon" />
         ) : (
