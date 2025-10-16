@@ -1,5 +1,3 @@
-import * as util from "./component-utils";
-
 import React from "react";
 import Trash from "@veupathdb/coreui/lib/components/icons/Trash";
 
@@ -8,7 +6,7 @@ import { FloatingButton } from "@veupathdb/coreui";
 import { FloatingButtonWDKStyle } from "@veupathdb/coreui/lib/components/buttons/FloatingButton";
 import { Checkbox, TextBox } from "@veupathdb/wdk-client/lib/Components";
 import { DatasetContact } from "../../Service/Types";
-import { createNestedInputUpdater } from "./component-utils";
+import { createNestedInputUpdater, cx, InputConstructor, RecordListProps, RecordUpdater } from "./component-utils";
 import AddIcon from "@material-ui/icons/Add";
 
 interface SplitName {
@@ -50,9 +48,7 @@ function joinName(contact: DatasetContact): string {
     (contact.lastName ? " " + contact.lastName : "");
 }
 
-type ContactUpdater = React.Dispatch<React.SetStateAction<DatasetContact[]>>;
-
-function contactInputFactory(updater: ContactUpdater): (contact: DatasetContact, index: number) => React.ReactElement {
+function contactInputFactory(updater: RecordUpdater<DatasetContact>): InputConstructor<DatasetContact> {
   return function (contact: DatasetContact, index: number): React.ReactElement{
     const updateContact = createNestedInputUpdater(index, updater);
 
@@ -62,8 +58,8 @@ function contactInputFactory(updater: ContactUpdater): (contact: DatasetContact,
     }
 
     return (
-      <div className={util.cx("--NestedInputContainer")}>
-        <div className={util.cx("--NestedInputTitle")}>
+      <div className={cx("--NestedInputContainer")}>
+        <div className={cx("--NestedInputTitle")}>
           <FieldLabel style={{ fontSize: "1.2em" }}>Contact {index + 1}</FieldLabel>
           <FloatingButton
             text="Remove"
@@ -72,7 +68,7 @@ function contactInputFactory(updater: ContactUpdater): (contact: DatasetContact,
             styleOverrides={FloatingButtonWDKStyle}
           />
         </div>
-        <div className={util.cx("--NestedInputFields")}>
+        <div className={cx("--NestedInputFields")}>
           <FieldLabel required>Name</FieldLabel>
           <TextBox
             type="input"
@@ -123,16 +119,16 @@ function contactInputFactory(updater: ContactUpdater): (contact: DatasetContact,
   }
 }
 
-export function ContactInputList(props: { contacts: DatasetContact[], setContacts: ContactUpdater }): React.ReactElement {
+export function ContactInputList(props: RecordListProps<DatasetContact>): React.ReactElement {
   return (
     <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-contacts">
       <FieldLabel htmlFor="data-set-publications-contacts">Contacts</FieldLabel>
-      {props.contacts.map(contactInputFactory(props.setContacts))}
+      {props.records.map(contactInputFactory(props.setRecords))}
       <FloatingButton
         text="Add Contact"
         onPress={event => {
           event.preventDefault();
-          props.setContacts(contacts => [ ...contacts, {} ]);
+          props.setRecords(contacts => [ ...contacts, {} ]);
         }}
         icon={AddIcon}
         styleOverrides={FloatingButtonWDKStyle}

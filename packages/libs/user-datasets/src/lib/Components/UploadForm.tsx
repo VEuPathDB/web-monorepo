@@ -26,26 +26,22 @@ import {
   CompatibleRecordTypes,
   DatasetUploadTypeConfigEntry,
   ResultUploadConfig,
-  UserDatasetContact,
 } from "../Utils/types";
 
-import { FloatingButton, Modal } from "@veupathdb/coreui";
+import { Modal } from "@veupathdb/coreui";
 import Banner from "@veupathdb/coreui/lib/components/banners/Banner";
-import AddIcon from "@material-ui/icons/Add";
 
 import "./UploadForm.scss";
-import { FloatingButtonWDKStyle } from "@veupathdb/coreui/lib/components/buttons/FloatingButton";
 
 import {
-  contactInputFactory,
+  ContactInputList,
   ErrorMessage,
   FieldLabel,
-  LinkedDatasetInput,
+  LinkedDatasetInputList,
   PublicationInputList,
   UploadProgress,
-
-  createNestedInputUpdater, ContactInputList,
 } from "./FormComponents";
+
 import {
   DatasetContact,
   DatasetDependency,
@@ -269,11 +265,7 @@ function UploadForm({
     }
   }, [ badUploadMessage, dispatchUploadProgress ]);
 
-  useEffect(() => {
-    return () => {
-      clearBadUpload();
-    };
-  }, [ clearBadUpload ]);
+  useEffect(() => clearBadUpload, [ clearBadUpload ]);
 
   const nameInputProps = datasetUploadType.formConfig.name?.inputProps;
   const summaryInputProps = datasetUploadType.formConfig.summary?.inputProps;
@@ -471,53 +463,10 @@ function UploadForm({
             onChange={setDescription}
           />
         </div>
-        <div className={"formSection"}>
-          <PublicationInputList />
-          <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-hyperlinks">
-            <FieldLabel
-              htmlFor="data-set-publications-hyperlinks"
-              required={false}
-            >
-              Hyperlinks
-            </FieldLabel>
-            {linkedDatasets.map((linkedDataset, index) => {
-              const updateLinkObject = createNestedInputUpdater({
-                index: index,
-                setNestedInputObject: setLinkedDatasets,
-                enforceExclusiveTrue: false,
-              });
-              return (
-                <LinkedDatasetInput
-                  index={index}
-
-                  link={linkedDataset}
-
-                  onSetUrl={value => updateLinkObject("datasetUri", value)}
-                  onSetSharesRecords={value => updateLinkObject("sharesRecords", value)}
-
-                  onRemoveLink={event => {
-                    event.preventDefault();
-                    setLinkedDatasets(prev =>
-                      prev.filter((_, i) => i !== index),
-                    );
-                  }}
-                />
-              );
-            })}
-            <FloatingButton
-              text="Add Hyperlink"
-              onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
-                event.preventDefault();
-                setLinkedDatasets((oldDatasetLink) => [
-                  ...oldDatasetLink,
-                  {} as LinkedDataset,
-                ]);
-              }}
-              icon={AddIcon}
-              styleOverrides={FloatingButtonWDKStyle}
-            />
-          </div>
-          <ContactInputList contacts={contacts} setContacts={setContacts} />
+        <div className="formSection">
+          <PublicationInputList records={publications} setRecords={setPublications} />
+          <ContactInputList records={contacts} setRecords={setContacts} />
+          <LinkedDatasetInputList records={linkedDatasets} setRecords={setLinkedDatasets} />
         </div>
         {datasetUploadType.formConfig.dependencies && (
           <div className="formSection formSection--data-set-dependencies">

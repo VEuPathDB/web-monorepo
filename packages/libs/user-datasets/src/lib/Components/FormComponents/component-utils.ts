@@ -5,6 +5,15 @@ export const cx = makeClassNameHelper("UploadForm");
 
 export type InputUpdater<T, V extends keyof T = keyof T> = (inputName: V, newValue: T[V]) => void;
 
+export type InputConstructor<T> = (record: T, index: number) => React.ReactElement;
+
+export type RecordUpdater<T> = React.Dispatch<React.SetStateAction<T[]>>;
+
+export interface RecordListProps<T> {
+  readonly records: T[],
+  readonly setRecords: RecordUpdater<T>,
+}
+
 // A little helper to simplify updating fields of the nested inputs
 export function createNestedInputUpdater<T>(
   index: number,

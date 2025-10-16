@@ -1,54 +1,70 @@
-import React from "react";
-
 import { FloatingButton } from "@veupathdb/coreui";
 import { FloatingButtonWDKStyle } from '@veupathdb/coreui/lib/components/buttons/FloatingButton';
-import Trash from '@veupathdb/coreui/lib/components/icons/Trash';
 import { TextBox, Checkbox } from "@veupathdb/wdk-client/lib/Components";
-
-import * as utils from "./component-utils";
 import { FieldLabel } from "./FieldLabel";
 import { LinkedDataset } from "../../Service/Types";
+import { createNestedInputUpdater, cx, InputConstructor, RecordListProps, RecordUpdater } from "./component-utils";
 
-export interface LinkedDatasetInputProps {
-  index: number;
+import Trash from '@veupathdb/coreui/lib/components/icons/Trash';
+import React from "react";
+import AddIcon from "@material-ui/icons/Add";
 
-  link: LinkedDataset;
+function linkInputFactory(updater: RecordUpdater<LinkedDataset>): InputConstructor<LinkedDataset> {
+  return (link, index) => {
+    const updateFn = createNestedInputUpdater(index, updater)
 
-  onSetUrl: (value: string) => void;
-  onSetSharesRecords: (value: boolean) => void;
-  onRemoveLink: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    const deleteFn = (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+      updater(prev => prev.filter((_, i) => i !== index));
+    }
+
+    return (
+      <div className={cx('--NestedInputContainer')}>
+        <div className={cx('--NestedInputTitle')}>
+          <FieldLabel required={false} style={{ fontSize: '1.2em' }}>Linked Dataset {index + 1}</FieldLabel>
+          <FloatingButton
+            text="Remove"
+            onPress={deleteFn}
+            icon={Trash}
+            styleOverrides={FloatingButtonWDKStyle}
+          />
+        </div>
+        <div className={cx('--NestedInputFields')}>
+          <FieldLabel required>Target Dataset URL</FieldLabel>
+          <TextBox
+            type="input"
+            id={`dataset-link-url-${index}`}
+            placeholder="URL"
+            required
+            value={link.datasetUri}
+            onChange={value => updateFn("datasetUri", value)}
+          />
+          <FieldLabel required={false}>Shares Records</FieldLabel>
+          <Checkbox
+            id={`dataset-link-shares-records-${index}`}
+            value={link.sharesRecords}
+            onChange={value => updateFn("sharesRecords", value)}
+          />
+        </div>
+      </div>
+    );
+  };
 }
 
-export function LinkedDatasetInput(props: LinkedDatasetInputProps): React.ReactElement {
+export function LinkedDatasetInputList(props: RecordListProps<LinkedDataset>): React.ReactElement {
   return (
-    <div className={utils.cx('--NestedInputContainer')}>
-      <div className={utils.cx('--NestedInputTitle')}>
-        <FieldLabel required={false} style={{ fontSize: '1.2em' }}>
-          Hyperlink {props.index + 1}
-        </FieldLabel>
-        <FloatingButton
-          text="Remove"
-          onPress={props.onRemoveLink}
-          icon={Trash}
-          styleOverrides={FloatingButtonWDKStyle}
-        />
-      </div>
-      <div className={utils.cx('--NestedInputFields')}>
-        <FieldLabel required>Target Dataset URL</FieldLabel>
-        <TextBox
-          type="input"
-          id={`data-set-hyperlink-url-${props.index}`}
-          placeholder="URL"
-          required
-          value={props.link.datasetUri}
-          onChange={props.onSetUrl}
-        />
-        <FieldLabel required={false}>Shares Records</FieldLabel>
-        <Checkbox
-          value={props.link.sharesRecords}
-          onChange={props.onSetSharesRecords}
-        />
-      </div>
+    <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-hyperlinks">
+      <FieldLabel htmlFor="data-set-publications-hyperlinks">Hyperlinks</FieldLabel>
+      {props.records.map(linkInputFactory(props.setRecords))}
+      <FloatingButton
+        text="Add Hyperlink"
+        onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
+          event.preventDefault();
+          props.setRecords(oldDatasetLink => [ ...oldDatasetLink, {} as LinkedDataset ]);
+        }}
+        icon={AddIcon}
+        styleOverrides={FloatingButtonWDKStyle}
+      />
     </div>
   );
 }
