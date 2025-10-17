@@ -150,7 +150,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
               style={{ color: 'black', fontSize: '1.2em' }}
             />
             <h4 style={{ fontWeight: 400 }}>
-              Class participant (no subscription-related action required)
+              Class participant <em>(subscription not required)</em>
             </h4>
           </>
         ) : (
