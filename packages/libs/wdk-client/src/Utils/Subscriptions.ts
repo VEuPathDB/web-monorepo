@@ -9,11 +9,11 @@ export function userIsSubscribed(
     !user.isGuest &&
     subscriptionGroups?.find(
       (g: SubscriptionGroup) =>
-        g.subscriptionToken === user.properties['subscriptionToken']
+        g.subscriptionToken === user.properties?.['subscriptionToken']
     ) != null
   );
 }
 
 export function userIsClassParticipant(user: User): boolean {
-  return !user.isGuest && user.properties['groupType'] === 'class';
+  return !user.isGuest && user.properties?.['groupType'] === 'class';
 }
