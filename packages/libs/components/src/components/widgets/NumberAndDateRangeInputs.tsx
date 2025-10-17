@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import { Typography } from '@material-ui/core';
 import { DARKEST_GRAY, MEDIUM_GRAY } from '../../constants/colors';
@@ -6,7 +6,6 @@ import { NumberInput, DateInput } from './NumberAndDateInputs';
 import Button from './Button';
 import Notification from './Notification';
 import { NumberRange, DateRange, NumberOrDateRange } from '../../types/general';
-import { propTypes } from 'react-bootstrap/esm/Image';
 
 export type BaseProps<M extends NumberOrDateRange> = {
   /** Externally controlled range. */
@@ -14,7 +13,7 @@ export type BaseProps<M extends NumberOrDateRange> = {
   /** If true, warn about empty lower or upper values. Default is false */
   required?: boolean;
   /** Function to invoke when range changes. */
-  onRangeChange: (newRange?: NumberOrDateRange) => void;
+  onRangeChange: (newRange?: M) => void;
   /** When true, allow undefined min or max. Default is true
    * When false, and rangeBounds is given, use the min or max of rangeBounds to fill in the missing value.
    * */
@@ -25,7 +24,7 @@ export type BaseProps<M extends NumberOrDateRange> = {
    * If a validator is provided, `required` is no longer useful, and
    * rangeBounds will only be used for auto-filling empty inputs.
    */
-  validator?: (newRange?: NumberOrDateRange) => {
+  validator?: (newRange?: M) => {
     validity: boolean;
     message: string;
   };
@@ -52,55 +51,60 @@ export type BaseProps<M extends NumberOrDateRange> = {
 export type NumberRangeInputProps = BaseProps<NumberRange> & { step?: number };
 
 export function NumberRangeInput(props: NumberRangeInputProps) {
-  return <BaseInput {...props} valueType="number" />;
+  return <BaseInput<NumberRange> {...props} valueType="number" />;
 }
 
 export type DateRangeInputProps = BaseProps<DateRange>;
 
 export function DateRangeInput(props: DateRangeInputProps) {
-  return <BaseInput {...props} valueType="date" />;
+  return <BaseInput<DateRange> {...props} valueType="date" />;
 }
 
-type BaseInputProps =
-  | (NumberRangeInputProps & {
-      valueType: 'number';
-    })
-  | (DateRangeInputProps & {
-      valueType: 'date'; // another possibility is 'datetime-local', but the Material UI TextField doesn't provide a date picker
-    });
+type NumberRangeInputPropsInternal<M extends NumberOrDateRange> =
+  BaseProps<M> & {
+    valueType: 'number';
+    step?: number;
+  };
+
+type DateRangeInputPropsInternal<M extends NumberOrDateRange> = BaseProps<M> & {
+  valueType: 'date';
+};
+
+type RangeValue<M extends NumberOrDateRange> = M['min'];
 
 /**
  * Paired input fields taking values we can do < > <= => comparisons with
  * i.e. number or date.
  * Not currently exported. But could be if needed.
  */
-function BaseInput({
-  range,
-  required = false,
-  rangeBounds,
-  validator,
-  onRangeChange,
-  allowPartialRange = true,
-  label,
-  lowerLabel = '',
-  upperLabel = '',
-  valueType,
-  containerStyles,
-  showClearButton = false,
-  clearButtonLabel = 'Clear',
-  // add disabled prop to disable input fields
-  disabled = false,
-  inputHeight,
-  inclusive = false,
-  ...props
-}: BaseInputProps) {
+function BaseInput<M extends NumberOrDateRange>(
+  props: NumberRangeInputPropsInternal<M> | DateRangeInputPropsInternal<M>
+) {
+  const {
+    range,
+    required = false,
+    rangeBounds,
+    validator,
+    onRangeChange,
+    allowPartialRange = true,
+    label,
+    lowerLabel = '',
+    upperLabel = '',
+    valueType,
+    containerStyles,
+    showClearButton = false,
+    clearButtonLabel = 'Clear',
+    disabled = false,
+    inputHeight,
+    inclusive = false,
+  } = props;
+
   if (validator && required)
     console.log(
       'WARNING: NumberRangeInput or DateRangeInput will ignore `required` prop because validator was provided.'
     );
 
-  const [localRange, setLocalRange] =
-    useState<NumberRange | DateRange | undefined>(range);
+  const [localRange, setLocalRange] = useState<M | undefined>(range);
   const [isReceiving, setIsReceiving] = useState<boolean>(false);
   const [validationWarning, setValidationWarning] = useState<string>('');
 
@@ -149,12 +153,12 @@ function BaseInput({
           setLocalRange({
             min: rangeBounds.min,
             max: localRange.max,
-          } as NumberOrDateRange);
+          } as M);
         } else if (localRange.max == null) {
           setLocalRange({
             min: localRange.min,
             max: rangeBounds.max,
-          } as NumberOrDateRange);
+          } as M);
         }
       }
     }
@@ -169,7 +173,27 @@ function BaseInput({
   ]);
 
   const { min, max } = localRange ?? {};
-  const step = 'step' in props ? props.step : undefined;
+
+  const handleMinChange = useCallback(
+    (newValue: RangeValue<M> | undefined) => {
+      setIsReceiving(false);
+      setLocalRange({ min: newValue, max } as M);
+    },
+    [max]
+  );
+
+  const handleMaxChange = useCallback(
+    (newValue: RangeValue<M> | undefined) => {
+      setIsReceiving(false);
+      setLocalRange({ min, max: newValue } as M);
+    },
+    [min]
+  );
+
+  const handleClear = useCallback(() => {
+    setIsReceiving(false);
+    setLocalRange(undefined);
+  }, []);
 
   return (
     <div style={{ ...containerStyles }}>
@@ -186,36 +210,36 @@ function BaseInput({
       >
         {valueType === 'number' ? (
           <NumberInput
-            value={min as number}
-            minValue={validator ? undefined : (rangeBounds?.min as number)}
+            value={min as number | undefined}
+            minValue={
+              validator ? undefined : (rangeBounds?.min as number | undefined)
+            }
             maxValue={
-              validator ? undefined : ((max ?? rangeBounds?.max) as number)
+              validator
+                ? undefined
+                : ((max ?? rangeBounds?.max) as number | undefined)
             }
             label={lowerLabel}
             required={validator ? undefined : required}
-            onValueChange={(newValue) => {
-              setIsReceiving(false);
-              setLocalRange({ min: newValue, max } as NumberRange);
-            }}
-            // add disabled prop to disable input fields
+            onValueChange={handleMinChange}
             disabled={disabled}
-            step={step}
+            step={isNumberRangeInput(props) ? props.step : undefined}
             inputHeight={inputHeight}
           />
         ) : (
           <DateInput
-            value={min as string}
-            minValue={validator ? undefined : (rangeBounds?.min as string)}
+            value={min as string | undefined}
+            minValue={
+              validator ? undefined : (rangeBounds?.min as string | undefined)
+            }
             maxValue={
-              validator ? undefined : ((max ?? rangeBounds?.max) as string)
+              validator
+                ? undefined
+                : ((max ?? rangeBounds?.max) as string | undefined)
             }
             label={lowerLabel}
             required={validator ? undefined : required}
-            onValueChange={(newValue) => {
-              setIsReceiving(false);
-              setLocalRange({ min: newValue, max } as DateRange);
-            }}
-            // add disabled prop to disable input fields
+            onValueChange={handleMinChange}
             disabled={disabled}
             inputHeight={inputHeight}
           />
@@ -237,36 +261,36 @@ function BaseInput({
         </div>
         {valueType === 'number' ? (
           <NumberInput
-            value={max as number}
+            value={max as number | undefined}
             minValue={
-              validator ? undefined : ((min ?? rangeBounds?.min) as number)
+              validator
+                ? undefined
+                : ((min ?? rangeBounds?.min) as number | undefined)
             }
-            maxValue={validator ? undefined : (rangeBounds?.max as number)}
+            maxValue={
+              validator ? undefined : (rangeBounds?.max as number | undefined)
+            }
             label={upperLabel}
             required={validator ? undefined : required}
-            onValueChange={(newValue) => {
-              setIsReceiving(false);
-              setLocalRange({ min, max: newValue } as NumberRange);
-            }}
-            // add disabled prop to disable input fields
+            onValueChange={handleMaxChange}
             disabled={disabled}
-            step={step}
+            step={isNumberRangeInput(props) ? props.step : undefined}
             inputHeight={inputHeight}
           />
         ) : (
           <DateInput
-            value={max as string}
+            value={max as string | undefined}
             minValue={
-              validator ? undefined : ((min ?? rangeBounds?.min) as string)
+              validator
+                ? undefined
+                : ((min ?? rangeBounds?.min) as string | undefined)
             }
-            maxValue={validator ? undefined : (rangeBounds?.max as string)}
+            maxValue={
+              validator ? undefined : (rangeBounds?.max as string | undefined)
+            }
             label={upperLabel}
             required={validator ? undefined : required}
-            onValueChange={(newValue) => {
-              setIsReceiving(false);
-              setLocalRange({ min, max: newValue } as DateRange);
-            }}
-            // add disabled prop to disable input fields
+            onValueChange={handleMaxChange}
             disabled={disabled}
             inputHeight={inputHeight}
           />
@@ -292,10 +316,7 @@ function BaseInput({
           <Button
             type={'outlined'}
             text={clearButtonLabel}
-            onClick={() => {
-              setIsReceiving(false);
-              setLocalRange(undefined);
-            }}
+            onClick={handleClear}
             containerStyles={{
               paddingLeft: '20px',
             }}
@@ -313,4 +334,10 @@ function BaseInput({
       ) : null}
     </div>
   );
+}
+
+function isNumberRangeInput<M extends NumberOrDateRange>(
+  props: NumberRangeInputPropsInternal<M> | DateRangeInputPropsInternal<M>
+): props is NumberRangeInputPropsInternal<M> {
+  return props.valueType === 'number';
 }

@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "include": ["src"],
+  "exclude": ["src/stories"],
   "compilerOptions": {
     "target": "es2015",
     "noEmit": false,

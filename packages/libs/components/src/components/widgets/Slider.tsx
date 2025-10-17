@@ -6,7 +6,6 @@ import Typography from '@material-ui/core/Typography';
 import { NumberInput } from './NumberAndDateInputs';
 import { DARK_GRAY, LIGHT_GRAY, MEDIUM_GRAY } from '../../constants/colors';
 import { debounce } from 'lodash';
-import { NumberOrDate } from '../../types/general';
 
 // a color spec shared among plot components that implements the track gradient
 export const plotsSliderOpacityGradientColorSpec: SliderWidgetProps['colorSpec'] =
@@ -187,9 +186,9 @@ export default function SliderWidget({
           value={localValue ?? 0}
           minValue={minimum}
           maxValue={maximum}
-          onValueChange={(newValue?: NumberOrDate) =>
+          onValueChange={(newValue) =>
             /** disable clearing of text field by ignoring empty string */
-            newValue != null && handleChange(null, newValue as number)
+            newValue != null && handleChange(null, newValue)
           }
           displayRangeViolationWarnings={false}
           containerStyles={{

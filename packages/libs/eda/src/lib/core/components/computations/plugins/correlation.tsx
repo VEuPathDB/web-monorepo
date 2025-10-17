@@ -410,7 +410,7 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
                     proportionNonZero:
                       // save as decimal point, not %
                       newValue != null
-                        ? Number((newValue as number) / 100)
+                        ? Number(newValue / 100)
                         : DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
                     variance:
                       configuration.prefilterThresholds?.variance ??
