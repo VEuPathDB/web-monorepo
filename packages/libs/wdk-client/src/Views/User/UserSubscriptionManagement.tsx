@@ -21,6 +21,7 @@ import './UserSubscriptionManagement.scss';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../Core/State/Types';
 import { deburr } from 'lodash';
+import { userIsClassParticipant } from '../../Utils/Subscriptions';
 
 interface UserSubscriptionManagementProps {
   user: User;
@@ -125,6 +126,8 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
     return groupVocab.filter((g) => g.value === groupValue)[0]; // should always find it!
   }, [subscriptionGroups, groupVocab, userGroupToken, localSelection]);
 
+  const isClassParticipant = userIsClassParticipant(user);
+
   return (
     <div className="wdk-UserProfile-profileForm">
       <h2>Subscription</h2>
@@ -133,10 +136,22 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
         {validGroup ? (
           <>
             <Icon
-              fa="check-circle wdk-UserProfile-StatusIcon--success"
+              fa="check-circle"
+              className="wdk-UserProfile-StatusIcon--success"
               style={{ color: success[600], fontSize: '1.2em' }}
             />
             <h4 style={{ fontWeight: 400 }}>Subscribed</h4>
+          </>
+        ) : isClassParticipant ? (
+          <>
+            <Icon
+              fa="mortar-board"
+              className="wdk-UserProfile-StatusIcon--student"
+              style={{ color: 'black', fontSize: '1.2em' }}
+            />
+            <h4 style={{ fontWeight: 400 }}>
+              Class participant <em>(subscription not required)</em>
+            </h4>
           </>
         ) : (
           <>
