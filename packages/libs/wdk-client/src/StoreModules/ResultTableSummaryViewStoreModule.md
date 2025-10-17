@@ -102,8 +102,8 @@ getFulfillPageSize                                                              
                     │               │              │               │
                     ▼               ▼              ▼               ▼
             fulfillSorting  fulfillGlobalViewFilters  updateInBasketFilter
-                    │               │              │
-                    └───────────────┼──────────────┘
+                    │               │              │               │
+                    └───────────────┼──────────────┴───────────────┘
                                     │
                                     ▼
                             getRequestAnswer
