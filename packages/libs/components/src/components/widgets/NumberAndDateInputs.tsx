@@ -39,22 +39,28 @@ type BaseProps<M extends NumberOrDate> = {
   inputHeight?: number;
 };
 
-export type NumberInputProps<M extends NumberOrDate> = BaseProps<M> & {
+export type NumberInputProps = BaseProps<number> & {
+  step?: number;
+};
+
+export function NumberInput(props: NumberInputProps) {
+  return <BaseInput<number> {...props} valueType="number" />;
+}
+
+export type DateInputProps = BaseProps<string>;
+
+export function DateInput(props: DateInputProps) {
+  return <BaseInput<string> {...props} valueType="date" />;
+}
+
+type NumberInputPropsInternal<M extends NumberOrDate> = BaseProps<M> & {
   valueType: 'number';
   step?: number;
 };
 
-export function NumberInput(props: NumberInputProps<number>) {
-  return <BaseInput<number> {...props} valueType="number" />;
-}
-
-export type DateInputProps<M extends NumberOrDate> = BaseProps<M> & {
+type DateInputPropsInternal<M extends NumberOrDate> = BaseProps<M> & {
   valueType: 'date';
 };
-
-export function DateInput(props: DateInputProps<string>) {
-  return <BaseInput<string> {...props} valueType="date" />;
-}
 
 /**
  * Input field taking a value we can do < > <= => comparisons with
@@ -73,7 +79,7 @@ export function DateInput(props: DateInputProps<string>) {
  * actual value.
  */
 function BaseInput<M extends NumberOrDate>(
-  props: NumberInputProps<M> | DateInputProps<M>
+  props: NumberInputPropsInternal<M> | DateInputPropsInternal<M>
 ) {
   const {
     value,
@@ -238,7 +244,7 @@ function BaseInput<M extends NumberOrDate>(
 }
 
 function isNumberInput<M extends NumberOrDate>(
-  props: NumberInputProps<M> | DateInputProps<M>
-): props is NumberInputProps<M> {
+  props: NumberInputPropsInternal<M> | DateInputPropsInternal<M>
+): props is NumberInputPropsInternal<M> {
   return props.valueType === 'number';
 }
