@@ -108,20 +108,7 @@ function BaseInput<M extends NumberOrDate>(
     helperText: '',
   });
 
-  const classes = makeStyles({
-    root: {
-      height: inputHeight, // default height is 56 and is waaaay too tall
-      // 34.5 is the height of the reset button, but 36.5 lines up better
-      // set width for date
-      width: valueType === 'date' ? 165 : '',
-    },
-    notchedOutline: applyWarningStyles
-      ? {
-          borderColor: warning[500],
-          borderWidth: 3,
-        }
-      : {},
-  })();
+  const classes = useStyles({ inputHeight, valueType, applyWarningStyles });
 
   const debouncedOnChange = useMemo(
     () => debounce(onValueChange, 500),
@@ -248,3 +235,20 @@ function isNumberInput<M extends NumberOrDate>(
 ): props is NumberInputPropsInternal<M> {
   return props.valueType === 'number';
 }
+
+interface StyleProps {
+  inputHeight: number;
+  valueType: 'date' | 'number';
+  applyWarningStyles?: boolean;
+}
+
+const useStyles = makeStyles({
+  root: {
+    height: (props: StyleProps) => props.inputHeight,
+    width: (props: StyleProps) => (props.valueType === 'date' ? 165 : ''),
+  },
+  notchedOutline: (props: StyleProps) =>
+    props.applyWarningStyles
+      ? { borderColor: warning[500], borderWidth: 3 }
+      : {},
+});
