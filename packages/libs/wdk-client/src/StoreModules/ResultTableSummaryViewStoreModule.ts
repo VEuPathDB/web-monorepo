@@ -1,4 +1,8 @@
-// TODO Make this Store Module more generic so that it can be used with an Answer (and no Step).
+// 📖 Documentation: See ResultTableSummaryViewStoreModule.md for detailed explanation of:
+//    - The "window" system and epic lifecycle
+//    - Action flow diagrams showing the 8-action cascade
+//    - How smrate (switchMapRequestActionsToEpic) works
+//    - Debugging tips and common pitfalls
 
 import stringify from 'json-stable-stringify';
 import { get, stubTrue, isEqual, difference, identity } from 'lodash';
