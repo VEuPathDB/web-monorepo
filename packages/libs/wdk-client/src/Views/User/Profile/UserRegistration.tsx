@@ -6,8 +6,13 @@ import UserFormContainer, {
 import { UserProfileFormData } from '../../../StoreModules/UserProfileStoreModule';
 import { GlobalData } from '../../../StoreModules/GlobalData';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import { ALL_VEUPATHDB_PROJECTS } from '../../../Utils/ProjectConstants';
+import {
+  ALL_VEUPATHDB_PROJECTS,
+  GENOMICS_PROJECTS,
+} from '../../../Utils/ProjectConstants';
 import { formatList } from '../../../Utils/FormatUtils';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../Core/State/Types';
 
 // Props interface based on what UserRegistrationController actually passes
 interface UserRegistrationProps {
@@ -28,23 +33,36 @@ interface UserRegistrationProps {
   initialFormFields?: Record<string, string>;
 }
 
-const IntroText: React.FC = () => (
-  <div style={{ margin: '2em 0em' }}>
-    <Banner
-      banner={{
-        type: 'info',
-        message: (
-          <p style={{ margin: '0.5em 0em' }}>
-            If you already registered in another site (
-            <i>{formatList([...ALL_VEUPATHDB_PROJECTS], 'or')}</i>) you do NOT
-            need to register again.
-          </p>
-        ),
-        pinned: true,
-      }}
-    />
-  </div>
-);
+const IntroText: React.FC = () => {
+  const projectId = useSelector<RootState>(
+    (state) => state.globalData.siteConfig.projectId
+  );
+
+  return (
+    <div style={{ margin: '2em 0em' }}>
+      <Banner
+        banner={{
+          type: 'info',
+          message: (
+            <p style={{ margin: '0.5em 0em' }}>
+              If you already registered in another site (
+              <i>
+                {formatList(
+                  ALL_VEUPATHDB_PROJECTS.filter(
+                    (project) => project !== projectId
+                  ),
+                  'or'
+                )}
+              </i>
+              ) you do NOT need to register again.
+            </p>
+          ),
+          pinned: true,
+        }}
+      />
+    </div>
+  );
+};
 
 const WhyRegister: React.FC = () => (
   <Banner
@@ -53,19 +71,28 @@ const WhyRegister: React.FC = () => (
       hideIcon: true,
       message: (
         <div
-          style={{ marginLeft: '1em', marginRight: '1em', marginBottom: '1em' }}
+          style={{
+            marginLeft: '1em',
+            marginRight: '1em',
+            marginBottom: '1em',
+            maxWidth: '40em',
+          }}
         >
-          <h4>Why register/subscribe?</h4>
+          <h4>Why register?</h4>
+          <p>With a VEuPathDB account you can:</p>
           <div id="cirbulletlist">
             <ul>
               <li>
-                <strong>Gain access</strong> to all available searches and tools
+                <strong>Gain access</strong> to searches, tools and gene pages
+                on all of our genomics sites (
+                {formatList([...GENOMICS_PROJECTS], 'and')})
               </li>
               <li>
                 <strong>Save your search strategies</strong> for easy reuse
               </li>
               <li>
-                <strong>Collect and organize IDs</strong> using the Basket tool
+                <strong>Collect and organize IDs</strong> using the{' '}
+                <em>Basket Tool</em>
               </li>
               <li>
                 <strong>Mark favorites</strong> for quick access to important
@@ -76,11 +103,8 @@ const WhyRegister: React.FC = () => (
                 data types
               </li>
               <li>
-                <strong>Customize your site preferences</strong>
-              </li>
-              <li>
-                <strong>Manage your subscription information</strong> in one
-                place
+                <strong>Customize your site preferences</strong>, including{' '}
+                <em>My Organism Preferences</em>
               </li>
             </ul>
           </div>
