@@ -17,6 +17,7 @@ import {
   updateColumnsDialogSearchString,
   updateColumnsDialogExpandedNodes,
   updateSelectedIds,
+  resetColumnPreferencesToDefault,
 } from '../Actions/SummaryView/ResultTableSummaryViewActions';
 import {
   requestUpdateBasket,
@@ -39,6 +40,7 @@ import {
 } from '../Actions/AttributeAnalysisActions';
 import { partial, Partial1 } from '../Utils/ActionCreatorUtils';
 import { ResultType } from '../Utils/WdkResult';
+import { ResultTableError } from '../Components/PageStatus/ResultTableError';
 import { ContentError } from '../Components/PageStatus/ContentError';
 interface StateProps {
   viewData: RootState['resultTableSummaryView'][string];
@@ -72,6 +74,9 @@ type DispatchProps = {
   >;
   updateSelectedIds: Partial1<typeof updateSelectedIds>;
   viewPageNumber: Partial1<typeof viewPageNumber>;
+  resetColumnPreferencesToDefault: Partial1<
+    typeof resetColumnPreferencesToDefault
+  >;
 };
 
 type OwnProps = {
@@ -109,8 +114,20 @@ function ResultTableSummaryViewController(props: Props) {
   }, [resultType]);
 
   if (viewData == null) return null;
-  if (derivedData.errorMessage != null)
+  if (derivedData.errorMessage != null) {
+    if (viewData.searchName != null) {
+      const searchName = viewData.searchName;
+      return (
+        <ResultTableError
+          message={derivedData.errorMessage}
+          onReset={() =>
+            actionCreators.resetColumnPreferencesToDefault(searchName)
+          }
+        />
+      );
+    }
     return <ContentError>{derivedData.errorMessage}</ContentError>;
+  }
 
   return (
     <ResultTableSummaryView
@@ -239,6 +256,10 @@ function mapDispatchToProps(
       ),
       updateSelectedIds: partial(updateSelectedIds, viewId),
       viewPageNumber: partial(viewPageNumber, viewId),
+      resetColumnPreferencesToDefault: partial(
+        resetColumnPreferencesToDefault,
+        viewId
+      ),
     },
     dispatch
   );
