@@ -209,6 +209,11 @@ export const updateInBasketFilter = makeActionCreator(
   (viewId: string, enabled: boolean) => ({ viewId, enabled })
 );
 
+export const resetColumnPreferencesToDefault = makeActionCreator(
+  'resultTableSummaryView/resetColumnPreferencesToDefault',
+  (viewId: string, searchName: string) => ({ viewId, searchName })
+);
+
 export type Action = InferAction<
   | typeof openResultTableSummaryView
   | typeof closeResultTableSummaryView
@@ -237,4 +242,5 @@ export type Action = InferAction<
   | typeof updateGlobalViewFilters
   | typeof fulfillGlobalViewFilters
   | typeof updateInBasketFilter
+  | typeof resetColumnPreferencesToDefault
 >;
