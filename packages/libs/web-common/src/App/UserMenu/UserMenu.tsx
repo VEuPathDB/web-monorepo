@@ -69,9 +69,9 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
             <hr style={{ margin: '10px 0', borderColor: '#ccc' }} />
             <Link
               to={
-                isClassParticipant
-                  ? '/user/profile/'
-                  : '/user/profile/#subscription'
+                isSubscribed || !isClassParticipant
+                  ? '/user/profile/#subscription'
+                  : '/user/profile/'
               }
               className="UserMenu-Pane-Item UserMenu-Pane-Item--interactive"
               onMouseOut={(e) => e.currentTarget.blur()}
@@ -110,7 +110,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
         ) : isSubscribed ? (
           <UserCheck className="UserMenu-StatusIcon" />
         ) : isClassParticipant ? (
-          <UserClass className="UserMenu-StatusIcon" /> // could have a special student icon here
+          <UserClass className="UserMenu-StatusIcon" />
         ) : showSubscriptionProds ? (
           <UserWarn className="UserMenu-StatusIcon" />
         ) : (
