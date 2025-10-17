@@ -13,3 +13,7 @@ export function userIsSubscribed(
     ) != null
   );
 }
+
+export function userIsClassParticipant(user: User): boolean {
+  return !user.isGuest && user.properties['groupType'] === 'class';
+}
