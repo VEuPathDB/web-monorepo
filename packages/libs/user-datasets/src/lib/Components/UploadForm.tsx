@@ -34,17 +34,21 @@ import Banner from "@veupathdb/coreui/lib/components/banners/Banner";
 import "./UploadForm.scss";
 
 import {
+  BioprojectIdRefInputList,
   ContactInputList,
+  DoiRefInputList,
   ErrorMessage,
   FieldLabel,
+  HyperlinkInputList,
   LinkedDatasetInputList,
   PublicationInputList,
-  UploadProgress,
+  UploadProgress, useCharacteristicsSegment, useStudyDesignSegment,
 } from "./FormComponents";
 
 import {
   DatasetContact,
   DatasetDependency,
+  DatasetOrganism,
   DatasetPostRequest,
   DatasetPublication,
   LinkedDataset,
@@ -103,6 +107,10 @@ export interface FormSubmission extends DatasetPostRequest {
   dataUploadSelection: CompleteDataUploadSelection;
 }
 
+const TODO = (msg: string) => {
+  throw new Error(msg);
+};
+
 function UploadForm({
   badUploadMessage,
   baseUrl,
@@ -139,16 +147,41 @@ function UploadForm({
   const enableStrategyUploadMethod =
     Boolean(displayStrategyUploadMethod) && strategyOptions.length > 0;
 
+  // region Form State
+
   const [ name, setName ] = useState(urlParams.datasetName ?? "");
   const [ summary, setSummary ] = useState(urlParams.datasetSummary ?? "");
-  const [ description, setDescription ] = useState(
-    urlParams.datasetDescription ?? "",
-  );
-
+  const [ description, setDescription ] = useState(urlParams.datasetDescription ?? "");
+  const [ dependencies, setDependencies ] = useState<DatasetDependency[]>([]);
   const [ publications, setPublications ] = useState<DatasetPublication[]>([]);
   const [ contacts, setContacts ] = useState<DatasetContact[]>([]);
+  const [ projectName, setProjectName ] = useState<string>();
+  const [ programName, setProgramName ] = useState<string>();
   const [ linkedDatasets, setLinkedDatasets ] = useState<LinkedDataset[]>([]);
-  const [ dependencies, setDependencies ] = useState<DatasetDependency[]>([]);
+  const [ experimentalOrganism, setExperimentalOrganism ] = useState<DatasetOrganism>();
+  const [ hostOrganism, setHostOrganism ] = useState<DatasetOrganism>();
+
+
+  const designInCharacteristics = false;
+
+  const [ studyDesign, setStudyDesign ] = useState<string>();
+  const [ studyType, setStudyType ] = useState<string>();
+  const [ StudyDesignSegment, validateStudyDesign ] = useStudyDesignSegment({
+    designValue: studyDesign,
+    onChangeDesign: setStudyDesign,
+    typeValue: studyType,
+    onChangeType: setStudyType,
+
+    fetchTypeTerms: TODO("where do the terms come from?"),
+    requireDesign: TODO("design required for mbio and ce"),
+    designTerms: TODO("get these from the model?"),
+  });
+
+  const { CharacteristicsSegment, ...characteristics } = useCharacteristicsSegment({
+    StudyDesignSegment: designInCharacteristics
+      ? StudyDesignSegment
+      : () => <></>,
+  });
 
   const [ dataUploadMode, setDataUploadMode ] = useState<DataUploadMode>(
     urlParams.datasetStepId
@@ -161,6 +194,9 @@ function UploadForm({
   );
   const [ file, setFile ] = useState<File>();
   const [ url, setUrl ] = useState(urlParams.datasetUrl ?? "");
+
+  // endregion Form State
+
   const initialStepId = useMemo(() => {
     const parsedStepIdParam = Number(urlParams.datasetStepId);
 
@@ -468,6 +504,11 @@ function UploadForm({
           <ContactInputList records={contacts} setRecords={setContacts} />
           <LinkedDatasetInputList records={linkedDatasets} setRecords={setLinkedDatasets} />
         </div>
+        <div className="formSection externalIdentifiers">
+          <DoiRefInputList records={do} setRecords={} />
+          <HyperlinkInputList records={} setRecords={} />
+          <BioprojectIdRefInputList records={} setRecords={} />
+        </div>
         {datasetUploadType.formConfig.dependencies && (
           <div className="formSection formSection--data-set-dependencies">
             <FieldLabel
@@ -514,6 +555,7 @@ function UploadForm({
           </div>
         }
       </div>
+      <CharacteristicsSegment />
       <button type="submit" className="btn" disabled={submitting}>
         Upload Data Set
       </button>

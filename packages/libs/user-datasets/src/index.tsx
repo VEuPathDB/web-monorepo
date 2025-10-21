@@ -22,11 +22,11 @@ import { wrapWdkService } from './lib/Service';
 import { wrapStoreModules } from './lib/StoreModules';
 import {
   makeDatasetUploadPageConfig,
-  uploadTypeConfig,
 } from './lib/Utils/upload-config';
 
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
+import { uploadTypeConfig } from "@veupathdb/web-common/lib/user-dataset-upload-config";
 
 const availableUploadTypes =
   process.env.REACT_APP_AVAILABLE_UPLOAD_TYPES?.trim().split(/\s*,\s*/g);

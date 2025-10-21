@@ -9,11 +9,9 @@ export interface FieldLabelProps
   required?: boolean;
 }
 
-export function FieldLabel({ children, required, ...labelProps }: FieldLabelProps) {
-  return (
-    <label {...labelProps}>
+export function FieldLabel({ children, ...labelProps }: FieldLabelProps) {
+  return <label {...labelProps}>
       {children}
-      {required ? '*' : null}
     </label>
   );
 }

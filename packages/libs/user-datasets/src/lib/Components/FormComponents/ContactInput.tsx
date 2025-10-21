@@ -6,8 +6,8 @@ import { FloatingButton } from "@veupathdb/coreui";
 import { FloatingButtonWDKStyle } from "@veupathdb/coreui/lib/components/buttons/FloatingButton";
 import { Checkbox, TextBox } from "@veupathdb/wdk-client/lib/Components";
 import { DatasetContact } from "../../Service/Types";
-import { createNestedInputUpdater, cx, InputConstructor, RecordListProps, RecordUpdater } from "./component-utils";
-import AddIcon from "@material-ui/icons/Add";
+import { newArrayInputUpdater, cx, InputConstructor, RecordListProps, RecordUpdater } from "./component-utils";
+import { InputList } from "./InputList";
 
 interface SplitName {
   firstName?: string;
@@ -49,13 +49,13 @@ function joinName(contact: DatasetContact): string {
 }
 
 function contactInputFactory(updater: RecordUpdater<DatasetContact>): InputConstructor<DatasetContact> {
-  return function (contact: DatasetContact, index: number): React.ReactElement{
+  return function (contact: DatasetContact, index: number): React.ReactElement {
     const updateContact = createNestedInputUpdater(index, updater);
 
     const onRemove = (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
       updater((prev) => prev.filter((_, i) => i !== index));
-    }
+    };
 
     return (
       <div className={cx("--NestedInputContainer")}>
@@ -72,7 +72,7 @@ function contactInputFactory(updater: RecordUpdater<DatasetContact>): InputConst
           <FieldLabel required>Name</FieldLabel>
           <TextBox
             type="input"
-            id={`data-set-contacts-name-${index}`}
+            id={`dataset-contacts-name-${index}`}
             placeholder="Name"
             required
             value={joinName(contact)}
@@ -86,7 +86,7 @@ function contactInputFactory(updater: RecordUpdater<DatasetContact>): InputConst
           <FieldLabel required={false}>Email</FieldLabel>
           <TextBox
             type="input"
-            id={`data-set-contacts-email-${index}`}
+            id={`dataset-contacts-email-${index}`}
             placeholder="Email"
             value={contact.email}
             onChange={value => updateContact("email", value)}
@@ -94,7 +94,7 @@ function contactInputFactory(updater: RecordUpdater<DatasetContact>): InputConst
           <FieldLabel required={false}>Affiliation</FieldLabel>
           <TextBox
             type="input"
-            id={`data-set-contacts-affiliation-${index}`}
+            id={`dataset-contacts-affiliation-${index}`}
             placeholder="Affiliation"
             value={contact.affiliation}
             onChange={value => updateContact("affiliation", value)}
@@ -102,7 +102,7 @@ function contactInputFactory(updater: RecordUpdater<DatasetContact>): InputConst
           <FieldLabel required={false}>Country</FieldLabel>
           <TextBox
             type="input"
-            id={`data-set-contacts-country-${index}`}
+            id={`dataset-contacts-country-${index}`}
             placeholder="Country"
             value={contact.country}
             onChange={value => updateContact("country", value)}
@@ -116,23 +116,16 @@ function contactInputFactory(updater: RecordUpdater<DatasetContact>): InputConst
         </div>
       </div>
     );
-  }
+  };
 }
 
 export function ContactInputList(props: RecordListProps<DatasetContact>): React.ReactElement {
-  return (
-    <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-contacts">
-      <FieldLabel htmlFor="data-set-publications-contacts">Contacts</FieldLabel>
-      {props.records.map(contactInputFactory(props.setRecords))}
-      <FloatingButton
-        text="Add Contact"
-        onPress={event => {
-          event.preventDefault();
-          props.setRecords(contacts => [ ...contacts, {} ]);
-        }}
-        icon={AddIcon}
-        styleOverrides={FloatingButtonWDKStyle}
-      />
-    </div>
-  )
+  return InputList<DatasetContact>({
+    header: "Contacts",
+    addRecordText: "Add Contact",
+    className: "additionalDetailsFormSection",
+    subclass: "dataset-contacts",
+    factory: contactInputFactory,
+    ...props,
+  });
 }

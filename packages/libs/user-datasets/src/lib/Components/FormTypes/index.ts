@@ -1,6 +1,13 @@
 import * as io from "io-ts";
 import * as api from "../../Service/Types";
 
+export type {
+  DataInputConfigUnion,
+  DatasetDependenciesConfig,
+  DatasetUploadFormConfig,
+  VariableFieldLabels,
+} from "./form-config";
+
 export const userDatasetFormContent = io.intersection([
   io.type({
     name: io.string,
@@ -23,3 +30,4 @@ export const userDatasetFormContent = io.intersection([
   }),
 ]);
 export type UserDatasetFormContent = io.TypeOf<typeof userDatasetFormContent>;
+

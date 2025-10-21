@@ -3,7 +3,10 @@ import { makeClassNameHelper } from "@veupathdb/wdk-client/lib/Utils/ComponentUt
 
 export const cx = makeClassNameHelper("UploadForm");
 
-export type InputUpdater<T, V extends keyof T = keyof T> = (inputName: V, newValue: T[V]) => void;
+export type FormValidator = () => string[] | null;
+
+export type ObjectUpdater<T, V extends keyof T = keyof T> = (inputName: V, newValue: T[V]) => void;
+export type ArrayUpdater<T> = (newValue: T) => void;
 
 export type InputConstructor<T> = (record: T, index: number) => React.ReactElement;
 
@@ -15,11 +18,11 @@ export interface RecordListProps<T> {
 }
 
 // A little helper to simplify updating fields of the nested inputs
-export function createNestedInputUpdater<T>(
+export function newObjectInputUpdater<T>(
   index: number,
-  setNestedInputObject: React.Dispatch<React.SetStateAction<T[]>>,
+  setNestedInputObject: RecordUpdater<T>,
   enforceExclusiveTrue: boolean = false,
-): InputUpdater<T> {
+): ObjectUpdater<T> {
   return function<V extends keyof T>(inputName: keyof T, newValue: T[V]) {
     setNestedInputObject((prev) => {
       const updated = [ ...prev ];
@@ -36,4 +39,13 @@ export function createNestedInputUpdater<T>(
       return updated;
     });
   };
+}
+
+// A little helper to simplify updating fields of the nested inputs
+export function newArrayInputUpdater<T>(index: number, setNestedInputObject: RecordUpdater<T>): ArrayUpdater<T> {
+  return newValue => setNestedInputObject(prev => {
+    const updated = [ ...prev ];
+    updated[index] = newValue;
+    return updated;
+  });
 }

@@ -11,6 +11,8 @@ import {
   keyof,
   boolean,
 } from 'io-ts';
+import { DataInputConfigUnion, DatasetDependenciesConfig, VariableFieldLabels } from "../Components/FormTypes";
+import { DatasetDependency } from "../Service/Types";
 
 // User dataset metadata type used by the UI (as opposed to the type
 // used by VDI).
@@ -43,11 +45,7 @@ export interface UserDatasetShare {
 export interface UserDataset {
   created: number | string;
   age: number;
-  dependencies?: Array<{
-    resourceDisplayName: string;
-    resourceIdentifier: string;
-    resourceVersion: string;
-  }>;
+  dependencies?: Array<DatasetDependency>;
   projects: string[];
   id: string;
   meta: UserDatasetMeta_UI;
@@ -94,6 +92,7 @@ export interface DatasetUploadTypeConfigEntry<T extends string> {
   displayName: string;
   description: React.ReactNode;
   uploadTitle: string;
+  fieldLabels: VariableFieldLabels,
   formConfig: {
     name?: {
       inputProps: Partial<React.InputHTMLAttributes<HTMLInputElement>>;
@@ -104,32 +103,10 @@ export interface DatasetUploadTypeConfigEntry<T extends string> {
     description?: {
       inputProps: Partial<React.TextareaHTMLAttributes<HTMLTextAreaElement>>;
     };
-    dependencies?: {
-      label: ReactNode;
-      render: (props: DependencyProps) => ReactNode;
-      required?: boolean;
-    };
-    uploadMethodConfig: {
-      file?: FileUploadConfig;
-      url?: UrlUploadConfig;
-      result?: ResultUploadConfig;
-    };
+    dependencies?: DatasetDependenciesConfig;
+    uploadMethodConfig?: DataInputConfigUnion;
     renderInfo?: () => ReactNode;
   };
-}
-
-export interface DependencyProps {
-  value: UserDataset['dependencies'];
-  onChange: (value: UserDataset['dependencies']) => void;
-}
-
-export interface FileUploadConfig {
-  render?: (props: { fieldNode: ReactNode }) => ReactNode;
-  maxSizeBytes?: number;
-}
-
-export interface UrlUploadConfig {
-  offer: boolean;
 }
 
 export interface ResultUploadConfig {
@@ -153,7 +130,7 @@ export type DatasetUploadPageConfig<
       uploadTypeConfig: DatasetUploadTypeConfig<T2>;
     };
 
-export interface NewUserDataset extends DatasetPostRequest {
+export interface NewUserDataset /*extends DatasetPostRequest*/ {
   uploadMethod:
     | {
         type: 'file';

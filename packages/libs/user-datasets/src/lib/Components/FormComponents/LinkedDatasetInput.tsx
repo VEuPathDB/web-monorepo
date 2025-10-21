@@ -1,27 +1,27 @@
 import { FloatingButton } from "@veupathdb/coreui";
-import { FloatingButtonWDKStyle } from '@veupathdb/coreui/lib/components/buttons/FloatingButton';
+import { FloatingButtonWDKStyle } from "@veupathdb/coreui/lib/components/buttons/FloatingButton";
 import { TextBox, Checkbox } from "@veupathdb/wdk-client/lib/Components";
 import { FieldLabel } from "./FieldLabel";
 import { LinkedDataset } from "../../Service/Types";
-import { createNestedInputUpdater, cx, InputConstructor, RecordListProps, RecordUpdater } from "./component-utils";
+import { newArrayInputUpdater, cx, InputConstructor, RecordListProps, RecordUpdater } from "./component-utils";
 
-import Trash from '@veupathdb/coreui/lib/components/icons/Trash';
+import Trash from "@veupathdb/coreui/lib/components/icons/Trash";
 import React from "react";
-import AddIcon from "@material-ui/icons/Add";
+import { InputList } from "./InputList";
 
 function linkInputFactory(updater: RecordUpdater<LinkedDataset>): InputConstructor<LinkedDataset> {
   return (link, index) => {
-    const updateFn = createNestedInputUpdater(index, updater)
+    const updateFn = createNestedInputUpdater(index, updater);
 
     const deleteFn = (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
       updater(prev => prev.filter((_, i) => i !== index));
-    }
+    };
 
     return (
-      <div className={cx('--NestedInputContainer')}>
-        <div className={cx('--NestedInputTitle')}>
-          <FieldLabel required={false} style={{ fontSize: '1.2em' }}>Linked Dataset {index + 1}</FieldLabel>
+      <div className={cx("--NestedInputContainer")}>
+        <div className={cx("--NestedInputTitle")}>
+          <FieldLabel required={false} style={{ fontSize: "1.2em" }}>Linked Dataset {index + 1}</FieldLabel>
           <FloatingButton
             text="Remove"
             onPress={deleteFn}
@@ -29,7 +29,7 @@ function linkInputFactory(updater: RecordUpdater<LinkedDataset>): InputConstruct
             styleOverrides={FloatingButtonWDKStyle}
           />
         </div>
-        <div className={cx('--NestedInputFields')}>
+        <div className={cx("--NestedInputFields")}>
           <FieldLabel required>Target Dataset URL</FieldLabel>
           <TextBox
             type="input"
@@ -52,19 +52,12 @@ function linkInputFactory(updater: RecordUpdater<LinkedDataset>): InputConstruct
 }
 
 export function LinkedDatasetInputList(props: RecordListProps<LinkedDataset>): React.ReactElement {
-  return (
-    <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-hyperlinks">
-      <FieldLabel htmlFor="data-set-publications-hyperlinks">Hyperlinks</FieldLabel>
-      {props.records.map(linkInputFactory(props.setRecords))}
-      <FloatingButton
-        text="Add Hyperlink"
-        onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
-          event.preventDefault();
-          props.setRecords(oldDatasetLink => [ ...oldDatasetLink, {} as LinkedDataset ]);
-        }}
-        icon={AddIcon}
-        styleOverrides={FloatingButtonWDKStyle}
-      />
-    </div>
-  );
+  return InputList<LinkedDataset>({
+    header: "Linked Datasets",
+    addRecordText: "Add Datasets Link",
+    className: "additionalDetailsFormSection",
+    subclass: "dataset-links",
+    factory: linkInputFactory,
+    ...props,
+  });
 }

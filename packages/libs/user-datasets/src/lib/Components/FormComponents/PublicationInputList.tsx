@@ -9,8 +9,8 @@ import { FloatingButton } from "@veupathdb/coreui";
 import { FloatingButtonWDKStyle } from "@veupathdb/coreui/lib/components/buttons/FloatingButton";
 import { Checkbox, SingleSelect, TextBox } from "@veupathdb/wdk-client/lib/Components";
 import { DatasetPublication, PublicationType } from "../../Service/Types";
-import { createNestedInputUpdater, InputConstructor, RecordListProps, RecordUpdater } from "./component-utils";
-import AddIcon from "@material-ui/icons/Add";
+import { newArrayInputUpdater, InputConstructor, RecordListProps, RecordUpdater } from "./component-utils";
+import { InputList } from "./InputList";
 
 interface PublicationSelectItem {
   value: api.PublicationType;
@@ -56,7 +56,7 @@ function newInputFactory(setPublications: RecordUpdater<DatasetPublication>): In
           <FieldLabel required>Publication ID</FieldLabel>
           <TextBox
             type="input"
-            id={`data-set-publications-publicationId-${index}`}
+            id={`dataset-publications-id-${index}`}
             placeholder="Publication ID"
             required
             value={publication.identifier}
@@ -66,7 +66,7 @@ function newInputFactory(setPublications: RecordUpdater<DatasetPublication>): In
           <FieldLabel>Citation</FieldLabel>
           <TextBox
             type="input"
-            id={`data-set-publications-citation-${index}`}
+            id={`dataset-publications-citation-${index}`}
             placeholder="Citation"
             required={false}
             value={publication.citation}
@@ -86,19 +86,12 @@ function newInputFactory(setPublications: RecordUpdater<DatasetPublication>): In
 }
 
 export function PublicationInputList(props: RecordListProps<DatasetPublication>): React.ReactElement {
-  return (
-    <div className="additionalDetailsFormSection additionalDetailsFormSection--data-set-publications">
-      <FieldLabel htmlFor="data-set-publications">Publications</FieldLabel>
-      {props.records.map(newInputFactory(props.setRecords))}
-      <FloatingButton
-        text="Add Publication"
-        onPress={(event: React.MouseEvent<HTMLButtonElement>) => {
-          event.preventDefault();
-          props.setRecords(oldPublications => [ ...oldPublications, {} as DatasetPublication ]);
-        }}
-        icon={AddIcon}
-        styleOverrides={FloatingButtonWDKStyle}
-      />
-    </div>
-  );
+  return InputList<DatasetPublication>({
+    header: "Publications",
+    addRecordText: "Add Publication",
+    className: "additionalDetailsFormSection",
+    subclass: "dataset-publications",
+    factory: newInputFactory,
+    ...props
+  });
 }
