@@ -1,3 +1,5 @@
+// noinspection DuplicatedCode
+
 import React from 'react';
 import { Public } from '@material-ui/icons';
 
@@ -22,14 +24,20 @@ import { DateTime } from '../DateTime';
 
 import '../UserDatasets.scss';
 import './UserDatasetDetail.scss';
-import { PublicationInput } from '../UploadForm';
 import OutlinedButton from '@veupathdb/coreui/lib/components/buttons/OutlinedButton';
 import AddIcon from '@material-ui/icons/Add';
 import { FloatingButton, Trash } from '@veupathdb/coreui';
 
 const classify = makeClassifier('UserDatasetDetail');
 
+/**
+ * @typedef UserDatasetDetail
+ * @property {DetailViewProps} props
+ */
 class UserDatasetDetail extends React.Component {
+  /**
+   * @param {DetailViewProps} props
+   */
   constructor(props) {
     super(props);
 
@@ -53,9 +61,7 @@ class UserDatasetDetail extends React.Component {
 
   isMyDataset() {
     const { user, userDataset } = this.props;
-    return (
-      user && userDataset && user.id && user.id === userDataset.ownerUserId
-    );
+    return user?.id === userDataset?.owner?.userId;
   }
 
   openSharingModal() {
@@ -68,6 +74,9 @@ class UserDatasetDetail extends React.Component {
     this.props.updateSharingModalState(false);
   }
 
+  /**
+   * @param {string} key
+   */
   validateKey(key) {
     const META_KEYS = [
       'name',
@@ -84,11 +93,31 @@ class UserDatasetDetail extends React.Component {
       );
   }
 
-  // Sets values within the meta object.
-  // There are multiple types of metadata fields.
-  // First, the easy key-value example. this.onMetaSave('name')('my new name');
-  // Second, for fields that are arrays of objects, like meta.publications[index].name, specify the nestedKey and index. this.onMetaSave('publications', 'pubMedId', 0)('new pubMedId value');
-  // Third, for arrays of strings, like meta.organisms[index], just specify the index. this.onMetaSave('organisms', undefined, 0)('new organism value');
+  /**
+   * Sets values within the meta object.
+   *
+   * There are multiple types of metadata fields.
+   *
+   * - First, the easy key-value example:
+   *
+   *   `this.onMetaSave('name')('my new name');`
+   *
+   * - Second, for fields that are arrays of objects, like
+   *   `meta.publications[index].name`, specify the `nestedKey` and `index`.
+   *
+   *   `this.onMetaSave('publications', 'pubMedId', 0)('new pubMedId value')`;
+   *
+   * - Third, for arrays of strings, like `meta.organisms[index]`, just specify
+   *   the index.
+   *
+   *   `this.onMetaSave('organisms', undefined, 0)('new organism value');`
+   *
+   * @param key { string }
+   * @param nestedKey { string | undefined }
+   * @param index { number | undefined }
+   *
+   * @return { (value: string | boolean | object) => ActionCreatorResult<UpdateAction, VdiCompatibleEpicDependencies> }
+   */
   onMetaSave(key, nestedKey = undefined, index = undefined) {
     this.validateKey(key);
 
@@ -114,10 +143,11 @@ class UserDatasetDetail extends React.Component {
       }
 
       const { userDataset, updateUserDatasetDetail } = this.props;
-      let updatedMeta = {};
+      let updatedMeta;
+
       if (index !== undefined && Number.isInteger(index) && index >= 0) {
         // Handle nested array case, for example meta.contacts[index].name
-        let arrayField = [...userDataset.meta[key]];
+        let arrayField = [...userDataset[key]];
         const arrayLength = arrayField.length ?? 0;
         if (index <= arrayLength - 1) {
           if (nestedKey !== undefined && typeof nestedKey === 'string') {
@@ -129,16 +159,16 @@ class UserDatasetDetail extends React.Component {
             // Example: meta.organisms
             arrayField[index] = value;
           }
-          updatedMeta = { ...userDataset.meta, [key]: arrayField };
+          updatedMeta = { ...userDataset, [key]: arrayField };
         } else {
           // Add new entry to the array
           // We use this case to add new empty objects to the array.
           arrayField.push(value);
-          updatedMeta = { ...userDataset.meta, [key]: arrayField };
+          updatedMeta = { ...userDataset, [key]: arrayField };
         }
       } else {
         // Regular key-value update.
-        updatedMeta = { ...userDataset.meta, [key]: value };
+        updatedMeta = { ...userDataset, [key]: value };
       }
 
       return updateUserDatasetDetail(userDataset, updatedMeta);
@@ -156,7 +186,7 @@ class UserDatasetDetail extends React.Component {
     } this ${dataNoun.singular.toLowerCase()}? `;
 
     const visibilityMessage =
-      userDataset.meta.visibility === 'public'
+      userDataset?.visibility === 'public'
         ? 'It will no longer be visible to the community'
         : null;
 
@@ -183,7 +213,7 @@ class UserDatasetDetail extends React.Component {
     return (
       <Link className="AllDatasetsLink" to={this.props.baseUrl}>
         <Icon fa="chevron-left" />
-        &nbsp; All {this.props.workspaceTitle}
+        &nbsp; All {this.props.displayText.workspaceTitle}
       </Link>
     );
   }
@@ -201,7 +231,7 @@ class UserDatasetDetail extends React.Component {
   getAttributes() {
     const { userDataset, questionMap, dataNoun } = this.props;
     const { onMetaSave } = this;
-    const { id, type, meta, size, owner, created, sharedWith, status } =
+    const { id, type, meta, size, owner, created, sharedWith } =
       userDataset;
     const { display, name, version } = type;
     const isOwner = this.isMyDataset();
@@ -215,7 +245,7 @@ class UserDatasetDetail extends React.Component {
     return [
       this.props.includeNameHeader
         ? {
-            attribute: this.props.detailsPageTitle,
+            attribute: this.props.displayText.detailsPageTitle,
             className: classify('Name'),
             value: (
               <SaveableTextEditor
@@ -344,7 +374,7 @@ class UserDatasetDetail extends React.Component {
           </span>
         ),
       },
-      this.props.showExtraMetadata && {
+      {
         attribute: 'Publications',
         className: 'NestedFieldsSection',
         value: (
@@ -363,7 +393,7 @@ class UserDatasetDetail extends React.Component {
                         const newPublications = [...meta.publications];
                         newPublications.splice(index, 1); // remove the item at index
                         this.props.updateUserDatasetDetail(userDataset, {
-                          ...userDataset.meta,
+                          ...userDataset,
                           publications: newPublications,
                         });
                       }}
@@ -413,7 +443,7 @@ class UserDatasetDetail extends React.Component {
           </div>
         ),
       },
-      this.props.showExtraMetadata && {
+      {
         attribute: 'Contacts',
         className: 'NestedFieldsSection',
         value: (
@@ -432,7 +462,7 @@ class UserDatasetDetail extends React.Component {
                         const newContacts = [...meta.contacts];
                         newContacts.splice(index, 1); // remove the item at index
                         this.props.updateUserDatasetDetail(userDataset, {
-                          ...userDataset.meta,
+                          ...userDataset,
                           contacts: newContacts,
                         });
                       }}
@@ -505,7 +535,7 @@ class UserDatasetDetail extends React.Component {
                           'contacts',
                           'isPrimary', // this is the key in the hyperlink object
                           index // the index of the hyperlink in the array
-                        )(value === 'true' ? true : false);
+                        )(value === 'true');
                       }}
                       items={[
                         { value: 'true', display: 'Yes' },
@@ -541,7 +571,7 @@ class UserDatasetDetail extends React.Component {
           </div>
         ),
       },
-      this.props.showExtraMetadata && {
+      {
         attribute: 'Hyperlinks',
         className: 'NestedFieldsSection',
         value: (
@@ -560,7 +590,7 @@ class UserDatasetDetail extends React.Component {
                         const newHyperlinks = [...meta.hyperlinks];
                         newHyperlinks.splice(index, 1); // remove the item at index
                         this.props.updateUserDatasetDetail(userDataset, {
-                          ...userDataset.meta,
+                          ...userDataset,
                           hyperlinks: newHyperlinks,
                         });
                       }}
@@ -607,7 +637,7 @@ class UserDatasetDetail extends React.Component {
                           'hyperlinks',
                           'isPublication', // this is the key in the hyperlink object
                           index // the index of the hyperlink in the array
-                        )(value === 'true' ? true : false);
+                        )(value === 'true');
                       }}
                       items={[
                         { value: 'true', display: 'Yes' },
@@ -639,7 +669,7 @@ class UserDatasetDetail extends React.Component {
           </div>
         ),
       },
-      this.props.showExtraMetadata && {
+      {
         attribute: 'Organisms',
         className: 'NestedFieldsSection',
         value: (
@@ -665,7 +695,7 @@ class UserDatasetDetail extends React.Component {
                         const newOrganisms = [...meta.organisms];
                         newOrganisms.splice(index, 1); // remove the item at index
                         this.props.updateUserDatasetDetail(userDataset, {
-                          ...userDataset.meta,
+                          ...userDataset,
                           organisms: newOrganisms,
                         });
                       }}
@@ -745,7 +775,7 @@ class UserDatasetDetail extends React.Component {
       <div className={classify('Actions')}>
         {!isOwner ? null : (
           <ThemedGrantAccessButton
-            buttonText={`Grant Access to ${this.props.dataNoun.plural}`}
+            buttonText={`Grant Access to ${this.props.displayText.datasetNounPlural}`}
             onPress={(grantType) => {
               switch (grantType) {
                 case 'community':

@@ -1,3 +1,5 @@
+// noinspection DuplicatedCode
+
 import React from 'react';
 
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
@@ -13,7 +15,14 @@ import BigwigGBrowseUploader from './BigwigGBrowseUploader';
 
 const classify = makeClassifier('UserDatasetDetail', 'BigwigDatasetDetail');
 
+/**
+ * @typedef BigwigDatasetDetail
+ * @property {DetailViewProps} props
+ */
 class BigwigDatasetDetail extends UserDatasetDetail {
+  /**
+   * @param props {DetailViewProps}
+   */
   constructor(props) {
     super(props);
     this.renderTracksSection = this.renderTracksSection.bind(this);
@@ -36,8 +45,12 @@ class BigwigDatasetDetail extends UserDatasetDetail {
     } = this.props;
     const { wdkService } = this.context;
     const { dependencies } = userDataset;
-    if (!userDataset.projects.includes(projectId)) return;
+
+    if (!userDataset?.installTargets.includes(projectId))
+      return;
+
     let genome;
+
     // There will only ever be one such dependency in this array
     dependencies.forEach(function (dependency) {
       if (dependency.resourceIdentifier.endsWith('_Genome')) {
@@ -48,7 +61,10 @@ class BigwigDatasetDetail extends UserDatasetDetail {
         genome = genomeList[1];
       }
     });
-    if (genome == null) return;
+
+    if (genome == null)
+      return;
+
     wdkService
       .getAnswerJson(
         {
@@ -154,7 +170,7 @@ class BigwigDatasetDetail extends UserDatasetDetail {
 
     const compatibilityTableState = MesaState.create({
       columns: this.getCompatibilityTableColumns(userDataset),
-      rows: userDataset.dependencies,
+      rows: userDataset?.dependencies,
     });
 
     const compatibilityStatus = this.getCompatibilityStatus();
@@ -202,7 +218,7 @@ class BigwigDatasetDetail extends UserDatasetDetail {
 
     const isTargetingCurrentSite = projects.includes(projectId);
     const isInstalled = [
-      userDataset.status.import,
+      userDataset?.status.import,
       installStatusForCurrentProject?.metaStatus,
       installStatusForCurrentProject?.dataStatus,
     ].every((status) => status === 'complete');

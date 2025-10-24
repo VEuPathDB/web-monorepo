@@ -1,6 +1,7 @@
-.UserDatasetUploadFormMenu {
+#UserDatasetUploadFormMenu {
   max-width: 1000px;
   padding: 1em 3em;
+
   h2 {
     color: #222;
     font-size: 1.5em;
@@ -8,6 +9,7 @@
     margin: 0;
     padding: 22px 0 8px 0;
   }
+
   menu {
     display: flex;
     flex-direction: row;
@@ -17,21 +19,24 @@
     padding: 0;
     /*width: max-content;*/
 
-    a.btn {
-      display: inline-block;
-      width: 30em; /*100%;*/
-      padding: 1.25em;
-      font-size: 1.1em;
-
-      .title {
-        font-size: 1.5em;
-        font-weight: 600;
-      }
-      .description {
+    a {
+      .btn {
+        display: inline-block;
+        width: 30em;
+        padding: 1.25em;
         font-size: 1.1em;
-        font-weight: 500;
-        margin: 0;
-        margin-top: 1em;
+
+        .title {
+          font-size: 1.5em;
+          font-weight: 600;
+          padding-left: 1.5ch;
+        }
+
+        .description {
+          font-size: 1.1em;
+          font-weight: 500;
+          margin: 1em 0 0;
+        }
       }
     }
   }

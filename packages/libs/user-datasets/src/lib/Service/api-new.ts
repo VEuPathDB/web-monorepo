@@ -4,17 +4,27 @@ import * as io from "io-ts";
 import * as form from "../Components/UploadForm";
 import * as util from "../Utils/upload-user-dataset";
 
-const PathDatasets = "/datasets";
+export class VDIServiceClient extends http.FetchClientWithCredentials {
+  private static DatasetsPath = "/datasets";
+  private static MetadataPath = "/meta-info";
+  private static PluginsPath = "/plugins";
 
-const datasetPath = (datasetId: string) => `${PathDatasets}/${datasetId}`;
-
-export class VdiServiceApi extends http.FetchClientWithCredentials {
+  /**
+   * Fetches a list of datasets that are visible to the current user.
+   *
+   * @param installTarget Optional project id string used by the service to
+   * filter results to only datasets belonging to the target project.
+   *
+   * @param ownership Optional filter to restrict returned datasets to only
+   * those that are owned by the current user, or those that have been shared
+   * with the current user.
+   */
   public getDatasetList(
     installTarget?: string,
     ownership?: "any" | "owned" | "shared",
   ): Promise<api.DatasetListEntry[]> {
     return this.fetch(http.createJsonRequest({
-      path: PathDatasets + this.makeQueryString({ installTarget, ownership }),
+      path: VDIServiceClient.DatasetsPath + this.makeQueryString({ installTarget, ownership }),
       method: "GET",
       transformResponse: http.ioTransformer(io.array(api.datasetsListEntry)),
     }));
@@ -33,21 +43,21 @@ export class VdiServiceApi extends http.FetchClientWithCredentials {
 
     const xhr = new XMLHttpRequest();
 
-    xhr.upload.addEventListener('progress', e => {
-      dispatchUploadProgress && dispatchUploadProgress(Math.floor((e.loaded / e.total) * 100))
+    xhr.upload.addEventListener("progress", e => {
+      dispatchUploadProgress && dispatchUploadProgress(Math.floor((e.loaded / e.total) * 100));
     });
 
-    xhr.addEventListener('readystatechange', () => {
+    xhr.addEventListener("readystatechange", () => {
       if (xhr.readyState !== XMLHttpRequest.DONE)
         return;
 
       if (xhr.status !== 202) {
         try {
-          const { datasetId } = http.ioDecode(xhr.response, api.postDatasetSuccessResponse)
-          dispatchUploadProgress && dispatchUploadProgress(null)
+          const { datasetId } = http.ioDecode(xhr.response, api.postDatasetSuccessResponse);
+          dispatchUploadProgress && dispatchUploadProgress(null);
           dispatchPageRedirect && dispatchPageRedirect(datasetId);
         } finally {
-          dispatchUploadProgress && dispatchUploadProgress(null)
+          dispatchUploadProgress && dispatchUploadProgress(null);
         }
       } else if (xhr.status >= 400) {
         const error = new Error(xhr.response);
@@ -63,13 +73,13 @@ export class VdiServiceApi extends http.FetchClientWithCredentials {
 
     switch (uploadType.type) {
       case "file":
-        requestBody.append('dataFiles', uploadType.file, uploadType.file.name)
+        requestBody.append("dataFiles", uploadType.file, uploadType.file.name);
         break;
       case "url":
-        requestBody.append('url', uploadType.url)
+        requestBody.append("url", uploadType.url);
         break;
       case "result":
-        // fallthrough;  TODO: why does the "result" type exist if we don't use it?
+      // fallthrough;  TODO: why does the "result" type exist if we don't use it?
       default:
         throw new Error(`Tried to upload a dataset via an unrecognized upload method '${uploadType.type}'`);
 
@@ -77,21 +87,48 @@ export class VdiServiceApi extends http.FetchClientWithCredentials {
 
     const authHeaders = await this.findAuthorizationHeaders();
 
-    xhr.open("POST", `${this.baseUrl}${PathDatasets}`, true);
+    xhr.open("POST", `${this.baseUrl}${VDIServiceClient.DatasetsPath}`, true);
     for (const name in authHeaders)
-      xhr.setRequestHeader(name, authHeaders[name])
+      xhr.setRequestHeader(name, authHeaders[name]);
     xhr.send(requestBody);
   }
 
-  public getDatasetById(datasetId: string): Promise<api.DatasetDetails> {
+  public getDataset(datasetId: string): Promise<api.DatasetDetails> {
     return this.fetch(http.createJsonRequest({
-      path: datasetPath(datasetId),
+      path: VDIServiceClient.datasetPath(datasetId),
       method: "GET",
-      transformResponse: http.ioTransformer(api.datasetDetails)
-    }))
+      transformResponse: http.ioTransformer(api.datasetDetails),
+    }));
   }
 
-  public patchDatasetById(datasetId: )
+  /**
+   * Fetch VDI service metadata such as the running version and configuration
+   * options.
+   */
+  public getServiceMetadata(): Promise<api.ServiceMetadataResponseBody> {
+    return this.fetch(http.createJsonRequest({
+      path: VDIServiceClient.MetadataPath,
+      method: "GET",
+      transformResponse: http.ioTransformer(api.serviceMetadataResponseBody),
+    }));
+  }
+
+  /**
+   * Fetch the listing of dataset type handling plugins currently enabled in the
+   * VDI service.
+   *
+   * @param installTarget Optional project id filter to limit the plugin list to
+   * only plugins that are applicable to the target project.
+   */
+  public getPlugins(installTarget?: string): Promise<api.PluginDetailsResponse> {
+    return this.fetch(http.createJsonRequest({
+      path: VDIServiceClient.PluginsPath + this.makeQueryString({ installTarget }),
+      method: "GET",
+      transformResponse: http.ioTransformer(api.pluginDetailsResponse),
+    }));
+  }
+
+  public patchDataset(datasetId: string) {}
 
   private makeQueryString(params: { [k: string]: string | number | boolean | null | undefined }): string {
     let query = "";
@@ -104,5 +141,9 @@ export class VdiServiceApi extends http.FetchClientWithCredentials {
     }
 
     return query.length === 0 ? "" : "?" + query.substring(1);
+  }
+
+  private static datasetPath(datasetId: string): string {
+    return `${VDIServiceClient.DatasetsPath}/${datasetId}`;
   }
 }

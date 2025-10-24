@@ -1,6 +1,7 @@
 import * as io from "io-ts";
 import * as vdi from "./service-types";
 import * as dataset from "./metadata-types";
+import { pluginDetails, serviceBuildInfo, serviceConfiguration } from "./service-types";
 
 
 // region GET /datasets
@@ -45,9 +46,19 @@ export type AllDatasetsListResponse = io.TypeOf<typeof allDatasetsListResponse>;
 
 // region POST /datasets
 
+const inputDatasetType = io.type({
+  name: io.string,
+  version: io.string,
+});
+
+export type InputDatasetType = io.TypeOf<typeof inputDatasetType>;
+
 const createDatasetRequest = io.intersection([
   dataset.baseMetadata,
-  io.type({ origin: io.string }),
+  io.type({
+    type: inputDatasetType,
+    origin: io.string,
+  }),
   io.partial({ visibility: dataset.visibilityEnum }),
 ]);
 
@@ -259,7 +270,6 @@ export type VdiUserMetadata = io.TypeOf<typeof userMetadata>;
 
 // region /users/self/share-offers
 
-
 const shareOfferStatusEnum = io.union([
   io.literal("open"),
   io.literal("accepted"),
@@ -276,3 +286,22 @@ const shareOfferDetails = io.type({
 export type UserShareOffer = io.TypeOf<typeof shareOfferDetails>;
 
 // endregion /users/self/share-offers
+
+// region GET /plugins
+
+export const pluginDetailsResponse = io.array(pluginDetails);
+
+export type PluginDetailsResponse = io.TypeOf<typeof pluginDetailsResponse>;
+
+// endregion GET /plugins
+
+// region GET /meta-info
+
+export const serviceMetadataResponseBody = io.type({
+  buildInfo: serviceBuildInfo,
+  configuration: serviceConfiguration,
+});
+
+export type ServiceMetadataResponseBody = io.TypeOf<typeof serviceMetadataResponseBody>;
+
+// endregion GET /meta-info

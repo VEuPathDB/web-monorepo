@@ -1,7 +1,8 @@
 // Types that are specific to the VDI service and are not stored as part of a
 // dataset's metadata.
 import * as io from "io-ts";
-import * as dataset from "./metadata-types"
+import * as dataset from "./metadata-types";
+import { datasetType } from "./metadata-types";
 
 export const partialDatasetType = io.type({
   name: io.string,
@@ -127,3 +128,65 @@ export const relatedDataset = io.type({
 export type ImplicitlyRelatedDataset = io.TypeOf<typeof relatedDataset>;
 
 // endregion Related Datasets
+
+// region Plugin Details
+
+export const pluginDetails = io.intersection([
+  io.type({
+    pluginName: io.string,
+    type: datasetType,
+    maxFileSize: io.number,
+    allowedFileExtensions: io.array(io.string),
+  }),
+  io.partial({ installTargets: io.array(io.string) }),
+]);
+
+export type PluginDetails = io.TypeOf<typeof pluginDetails>;
+
+// endregion Plugin Details
+
+// region Service Config & Metadata
+
+export const serviceBuildInfo = io.type({
+  gitTag: io.string,
+  gitCommit: io.string,
+  gitBranch: io.string,
+  gitUrl: io.string,
+  buildId: io.string,
+  buildNumber: io.string,
+  buildTime: io.string,
+});
+
+export type ServiceBuildInfo = io.TypeOf<typeof serviceBuildInfo>;
+
+const restServerConfiguration = io.type({
+  maxUploadSize: io.number,
+  userMaxStorageSize: io.number,
+});
+
+export type RestServerConfiguration = io.TypeOf<typeof restServerConfiguration>;
+
+const reconcilerConfig = io.type({
+  enabled: io.boolean,
+  fullRunInterval: io.string,
+  slimRunInterval: io.string,
+  performDeletes: io.boolean,
+});
+
+export type ReconcilerConfig = io.TypeOf<typeof reconcilerConfig>;
+
+const daemonConfigurations = io.type({
+  reconciler: reconcilerConfig,
+});
+
+export type DaemonConfigurationIndex = io.TypeOf<typeof daemonConfigurations>;
+
+export const serviceConfiguration = io.type({
+  api: restServerConfiguration,
+  daemons: daemonConfigurations,
+});
+
+export type ServiceConfiguration = io.TypeOf<typeof serviceConfiguration>;
+
+// endregion Service Config & Metadata
+

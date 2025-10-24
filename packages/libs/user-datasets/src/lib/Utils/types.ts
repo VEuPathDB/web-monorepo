@@ -1,5 +1,3 @@
-import React, { ReactNode } from 'react';
-
 import {
   TypeOf,
   array,
@@ -10,9 +8,9 @@ import {
   string,
   keyof,
   boolean,
-} from 'io-ts';
-import { DataInputConfigUnion, DatasetDependenciesConfig, VariableFieldLabels } from "../Components/FormTypes";
-import { DatasetDependency } from "../Service/Types";
+} from "io-ts";
+import { DatasetDependency, DatasetPostRequest } from "../Service/Types";
+import { EnabledDatasetType } from "@veupathdb/web-common/src/user-dataset-upload-config";
 
 // User dataset metadata type used by the UI (as opposed to the type
 // used by VDI).
@@ -22,19 +20,7 @@ export interface UserDatasetMeta_UI extends UserDatasetFormContent {
 }
 
 // Interface for the dataset metadata used by VDI. Will get transformed into
-// UserDatasetMeta_UI for the the client.
-export interface UserDatasetMeta_VDI extends UserDatasetFormContent {
-  datasetType: {
-    name: string;
-    version: string;
-  };
-  visibility?: UserDatasetVisibility;
-  origin: string;
-  projects: string[];
-  dependencies: UserDatasetDependency[];
-  createdOn?: string;
-}
-
+// UserDatasetMeta_UI for the client.
 export interface UserDatasetShare {
   time?: number;
   user: number;
@@ -59,7 +45,7 @@ export interface UserDataset {
     version: string;
   };
   fileCount?: number;
-  status: UserDatasetVDI['status'];
+  status: UserDatasetVDI["status"];
   fileListing?: UserDatasetFileListing;
   importMessages: Array<string>;
   visibility?: UserDatasetVisibility;
@@ -82,33 +68,6 @@ export interface UserDatasetUpload {
   isSuccessful: boolean;
   isUserError: boolean;
 }
-
-export type DatasetUploadTypeConfig<T extends string> = {
-  [K in T]: DatasetUploadTypeConfigEntry<K>;
-};
-
-export interface DatasetUploadTypeConfigEntry<T extends string> {
-  type: T;
-  displayName: string;
-  description: React.ReactNode;
-  uploadTitle: string;
-  fieldLabels: VariableFieldLabels,
-  formConfig: {
-    name?: {
-      inputProps: Partial<React.InputHTMLAttributes<HTMLInputElement>>;
-    };
-    summary?: {
-      inputProps: Partial<React.InputHTMLAttributes<HTMLTextAreaElement>>;
-    };
-    description?: {
-      inputProps: Partial<React.TextareaHTMLAttributes<HTMLTextAreaElement>>;
-    };
-    dependencies?: DatasetDependenciesConfig;
-    uploadMethodConfig?: DataInputConfigUnion;
-    renderInfo?: () => ReactNode;
-  };
-}
-
 export interface ResultUploadConfig {
   offerStrategyUpload: boolean;
   compatibleRecordTypes: CompatibleRecordTypes;
@@ -119,34 +78,29 @@ export type CompatibleRecordTypes = Record<
   { reportName: string; reportConfig: unknown }
 >;
 
-export type DatasetUploadPageConfig<
-  T1 extends string = string,
-  T2 extends string = string
-> =
-  | { hasDirectUpload: false }
-  | {
-      hasDirectUpload: true;
-      availableUploadTypes: T1[];
-      uploadTypeConfig: DatasetUploadTypeConfig<T2>;
-    };
-
-export interface NewUserDataset /*extends DatasetPostRequest*/ {
-  uploadMethod:
-    | {
-        type: 'file';
-        file: File;
-      }
-    | {
-        type: 'url';
-        url: string;
-      }
-    | {
-        type: 'result';
-        stepId: number;
-        reportName: string;
-        reportConfig: unknown;
-      };
+interface DisabledUploadPageConfig {
+  readonly hasDirectUpload: false;
 }
+
+interface EnabledUploadPageConfig {
+  readonly hasDirectUpload: true;
+  readonly availableUploadTypes: EnabledDatasetType[];
+}
+
+export type DatasetUploadPageConfig = EnabledUploadPageConfig | DisabledUploadPageConfig;
+
+export interface NewUserDataset extends DatasetPostRequest {
+  uploadMethod:
+    | { type: "file"; file: File; }
+    | { type: "url"; url: string; }
+    | {
+    type: "result";
+    stepId: number;
+    reportName: string;
+    reportConfig: unknown;
+  };
+}
+
 /**
  * In EDA, data is referred to as "Study" or "Studies"
  * In genomics, data is referred to as "Data Set" or "Data Sets"
@@ -183,10 +137,10 @@ const datasetTypeDetails = intersection([
 
 const installStatus = keyof({
   complete: null,
-  'failed-validation': null,
-  'failed-installation': null,
-  'ready-for-reinstall': null,
-  'missing-dependency': null,
+  "failed-validation": null,
+  "failed-installation": null,
+  "ready-for-reinstall": null,
+  "missing-dependency": null,
   running: null,
 });
 
@@ -203,7 +157,7 @@ const installDetails = intersection([
 ]);
 
 const importStatus = keyof({
-  'in-progress': null,
+  "in-progress": null,
   complete: null,
   invalid: null,
   failed: null,
@@ -322,7 +276,7 @@ export const userDatasetDetails_VDI = intersection([
   }),
   partial({
     shares: array(
-      intersection([userDatasetRecipientDetails, type({ accepted: boolean })])
+      intersection([ userDatasetRecipientDetails, type({ accepted: boolean }) ]),
     ),
   }),
 ]);
@@ -331,8 +285,6 @@ const userDatasetDetailsShareDetails = type({
   status: keyof({ grant: null, revoke: null }),
   recipient: userDatasetRecipientDetails,
 });
-
-export type UserDatasetDependency = TypeOf<typeof userDatasetDependency>;
 const userDatasetDependency = type({
   resourceIdentifier: string,
   resourceDisplayName: string,
@@ -370,6 +322,4 @@ export const userDatasetFileListing = partial({
 
 export type UserDatasetVDI = TypeOf<typeof userDatasetDetails_VDI>;
 export type UserDatasetDetails = TypeOf<typeof userDatasetDetails>;
-export type UserQuotaMetadata = TypeOf<typeof userQuotaMetadata>;
 export type UserDatasetFileListing = TypeOf<typeof userDatasetFileListing>;
-export type UserDatasetInstallDetailsByProject = TypeOf<typeof installDetails>;

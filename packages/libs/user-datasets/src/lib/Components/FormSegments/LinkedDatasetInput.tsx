@@ -3,7 +3,13 @@ import { FloatingButtonWDKStyle } from "@veupathdb/coreui/lib/components/buttons
 import { TextBox, Checkbox } from "@veupathdb/wdk-client/lib/Components";
 import { FieldLabel } from "./FieldLabel";
 import { LinkedDataset } from "../../Service/Types";
-import { newArrayInputUpdater, cx, InputConstructor, RecordListProps, RecordUpdater } from "./component-utils";
+import {
+  cx,
+  InputConstructor,
+  RecordListProps,
+  RecordUpdater,
+  newObjectInputUpdater,
+} from "./component-utils";
 
 import Trash from "@veupathdb/coreui/lib/components/icons/Trash";
 import React from "react";
@@ -11,7 +17,7 @@ import { InputList } from "./InputList";
 
 function linkInputFactory(updater: RecordUpdater<LinkedDataset>): InputConstructor<LinkedDataset> {
   return (link, index) => {
-    const updateFn = createNestedInputUpdater(index, updater);
+    const updateFn = newObjectInputUpdater(index, updater);
 
     const deleteFn = (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();

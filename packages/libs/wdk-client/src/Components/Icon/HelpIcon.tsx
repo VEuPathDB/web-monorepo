@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from "react";
 
 import Icon from '../../Components/Icon/IconAlt';
 import { Tooltip } from '@veupathdb/coreui';
@@ -6,7 +6,7 @@ import { Tooltip } from '@veupathdb/coreui';
 import '../../Components/Icon/HelpIcon.scss';
 
 type Props = {
-  children: string | React.ReactElement<any>;
+  children: NonNullable<ReactNode>;
 };
 
 export default function HelpIcon(props: Props) {

@@ -2,6 +2,7 @@ import * as io from "io-ts";
 
 export const datasetType = io.type({
   name: io.string,
+  displayName: io.string,
   version: io.string,
   category: io.string
 });

@@ -1,16 +1,16 @@
 import React from "react";
 
-import { newArrayInputUpdater, cx, InputConstructor, RecordListProps, RecordUpdater } from "./component-utils";
-import { DoiRef } from "../../Service/Types";
+import { cx, InputConstructor, newObjectInputUpdater, RecordListProps, RecordUpdater } from "./component-utils";
+import { BioprojectIDRef } from "../../Service/Types";
 import { FieldLabel } from "./FieldLabel";
 import { TextArea, TextBox } from "@veupathdb/wdk-client/lib/Components";
 import { InputList } from "./InputList";
 import { TrashButton } from "./common-components";
 
 
-function doiReferenceFactory(updater: RecordUpdater<DoiRef>): InputConstructor<DoiRef> {
+function inputFactory(updater: RecordUpdater<BioprojectIDRef>): InputConstructor<BioprojectIDRef> {
   return (record, index) => {
-    const updateRef = createNestedInputUpdater(index, updater);
+    const updateRef = newObjectInputUpdater(index, updater);
     const onRemove = (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
       updater((prev) => prev.filter((_, i) => i !== index));
@@ -30,8 +30,8 @@ function doiReferenceFactory(updater: RecordUpdater<DoiRef>): InputConstructor<D
             id={`dataset-externals-doi-id-${index}`}
             placeholder="DOI"
             required
-            value={record.doi}
-            onChange={value => updateRef("doi", value)}
+            value={record.id}
+            onChange={value => updateRef("id", value)}
           />
 
           <FieldLabel>Description</FieldLabel>
@@ -46,13 +46,13 @@ function doiReferenceFactory(updater: RecordUpdater<DoiRef>): InputConstructor<D
   };
 }
 
-export function DoiRefInputList(props: RecordListProps<DoiRef>): React.ReactElement {
+export function BioprojectIdRefInputList(props: RecordListProps<BioprojectIDRef>): React.ReactElement {
   return InputList({
-    header: "DOI References",
+    header: "Bioproject References",
     addRecordText: "Add Reference",
     className: "externalIdentifiersFormSection",
-    subclass: "dois",
-    factory: doiReferenceFactory,
+    subclass: "bioprojects",
+    factory: inputFactory,
     ...props
   });
 }

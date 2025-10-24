@@ -11,17 +11,15 @@ import {
 import {
   EmptyAction,
   emptyAction,
-} from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
+} from "@veupathdb/wdk-client/lib/Core/WdkMiddleware";
 
-import { validateVdiCompatibleThunk } from '../Service';
+import { validateVdiCompatibleThunk } from "../Service";
 
 import { FILTER_BY_PROJECT_PREF } from '../Utils/project-filter';
 import {
-  UserDataset,
   UserDatasetDetails,
   UserDatasetMeta_UI,
   UserDatasetVDI,
-  UserDatasetFileListing,
   UserDatasetContact,
   UserDatasetHyperlink,
   UserDatasetPublication,
@@ -31,6 +29,8 @@ import {
   InferAction,
   makeActionCreator,
 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
+import { DatasetDetails, DatasetFileListResponse, DatasetListEntry } from "../Service/Types";
+import { projectId } from "@veupathdb/web-common/lib/config";
 
 export type Action =
   | DetailErrorAction
@@ -73,13 +73,13 @@ export const LIST_RECEIVED = 'user-dataset/list-received';
 export type ListReceivedAction = {
   type: typeof LIST_RECEIVED;
   payload: {
-    userDatasets: UserDataset[];
+    userDatasets: DatasetListEntry[];
     filterByProject: boolean;
   };
 };
 
 export function listReceived(
-  userDatasets: UserDataset[],
+  userDatasets: DatasetListEntry[],
   filterByProject: boolean
 ): ListReceivedAction {
   return {
@@ -141,15 +141,15 @@ export type DetailReceivedAction = {
   type: typeof DETAIL_RECEIVED;
   payload: {
     id: string;
-    userDataset?: UserDataset;
-    fileListing?: UserDatasetFileListing;
+    userDataset?: DatasetDetails;
+    fileListing?: DatasetFileListResponse;
   };
 };
 
 export function detailReceived(
   id: string,
-  userDataset?: UserDataset,
-  fileListing?: UserDatasetFileListing
+  userDataset?: DatasetDetails,
+  fileListing?: DatasetFileListResponse
 ): DetailReceivedAction {
   return {
     type: DETAIL_RECEIVED,
@@ -202,12 +202,12 @@ export const DETAIL_UPDATE_SUCCESS = 'user-datasets/detail-update-success';
 export type DetailUpdateSuccessAction = {
   type: typeof DETAIL_UPDATE_SUCCESS;
   payload: {
-    userDataset: UserDataset;
+    userDataset: DatasetDetails;
   };
 };
 
 export function detailUpdateSuccess(
-  userDataset: UserDataset
+  userDataset: DatasetDetails
 ): DetailUpdateSuccessAction {
   return {
     type: DETAIL_UPDATE_SUCCESS,
@@ -260,12 +260,12 @@ export const DETAIL_REMOVE_SUCCESS = 'user-datasets/detail-remove-success';
 export type DetailRemoveSuccessAction = {
   type: typeof DETAIL_REMOVE_SUCCESS;
   payload: {
-    userDataset: UserDataset;
+    userDataset: DatasetDetails;
   };
 };
 
 export function detailRemoveSuccess(
-  userDataset: UserDataset
+  userDataset: DatasetDetails
 ): DetailRemoveSuccessAction {
   return {
     type: DETAIL_REMOVE_SUCCESS,
@@ -453,7 +453,7 @@ export function updateDatasetCommunityVisibility(
         try {
           await Promise.all(
             datasetIds.map((datasetId) =>
-              wdkService.updateUserDataset(datasetId, {
+              wdkService.vdiService.updateUserDataset(datasetId, {
                 visibility: isVisibleToCommunity ? 'public' : 'private',
               })
             )
@@ -505,10 +505,10 @@ export function loadUserDatasetListWithoutLoadingIndicator() {
         // ignore error and default to false
         () => false
       ),
-      wdkService.getCurrentUserDatasets(),
+      wdkService.vdiService.getDatasetList(projectId),
     ]).then(([filterByProject, userDatasets]) => {
       const vdiToExistingUds = userDatasets.map(
-        (ud: UserDatasetVDI): UserDataset => {
+        (ud: DatasetListEntry): DatasetListEntry => {
           const { fileCount, shares, fileSizeTotal } = ud;
           const partiallyTransformedResponse =
             transformVdiResponseToLegacyResponseHelper(ud);
@@ -535,8 +535,8 @@ export function loadUserDatasetList() {
 export function loadUserDatasetDetailWithoutLoadingIndicator(id: string) {
   return validateVdiCompatibleThunk<DetailAction>(({ wdkService }) =>
     Promise.all([
-      wdkService.getUserDataset(id),
-      wdkService.getUserDatasetFileListing(id),
+      wdkService.vdiService.getDataset(id),
+      wdkService.vdiService.getDatasetFileListing(id),
     ]).then(
       ([userDataset, fileListing]) => {
         const { shares, dependencies } = userDataset as UserDatasetDetails;
@@ -590,7 +590,7 @@ export function shareUserDatasets(
     updateSharingDatasetPending(true),
     Promise.all(
       requests.map((req) =>
-        wdkService.editUserDatasetSharing(
+        wdkService.vdiService.editUserDatasetSharing(
           'grant',
           req.datasetId,
           req.recipientId
@@ -623,6 +623,7 @@ export function unshareUserDatasets(
   >(({ wdkService }) => [
     updateSharingDatasetPending(true),
     wdkService
+      .vdiService
       .editUserDatasetSharing('revoke', userDatasetId, recipientUserId)
       .then(() => {
         if (context === 'datasetDetails') {
@@ -636,13 +637,14 @@ export function unshareUserDatasets(
 }
 
 export function updateUserDatasetDetail(
-  userDataset: UserDataset,
+  userDataset: DatasetDetails,
   meta: UserDatasetMeta_UI
 ) {
   return validateVdiCompatibleThunk<UpdateAction>(({ wdkService }) => [
     detailUpdating(),
     wdkService
-      .updateUserDataset(userDataset.id, meta)
+      .vdiService
+      .patchDataset(userDataset.datasetId, meta)
       .then(
         () => detailUpdateSuccess({ ...userDataset, meta }),
         detailUpdateError
@@ -651,13 +653,14 @@ export function updateUserDatasetDetail(
 }
 
 export function removeUserDataset(
-  userDataset: UserDataset,
+  userDataset: DatasetDetails,
   redirectTo?: string
 ) {
   return validateVdiCompatibleThunk<RemovalAction | EmptyAction | RouteAction>(
     ({ wdkService }) => [
       detailRemoving(),
       wdkService
+        .vdiService
         .removeUserDataset(userDataset.id)
         .then(
           () => [
@@ -686,7 +689,7 @@ export function updateProjectFilter(filterByProject: boolean) {
 }
 
 type PartialLegacyUserDataset = Omit<
-  UserDataset,
+  DatasetDetails,
   'datafiles' | 'fileCount' | 'size' | 'sharedWith'
 >;
 

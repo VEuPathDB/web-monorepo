@@ -2,19 +2,21 @@ import * as React from 'react';
 import { IconAlt as Icon, Link } from '@veupathdb/wdk-client/lib/Components';
 import { Tooltip } from '@veupathdb/coreui';
 
-import { DataNoun, UserDataset, UserDatasetVDI } from '../Utils/types';
+import { UserDatasetVDI } from '../Utils/types';
+import { DatasetDetails } from "../Service/Types";
 
-// NOTE: The reinstall interval is configured in the VDI service and thus may change
+// NOTE: The VDI reconciler interval is configured in the VDI service and thus
+// may change.
 const VDI_REINSTALL_INTERVAL = 6;
 
 interface Props {
-  baseUrl: string;
-  userDataset: UserDataset;
-  projectId: string;
-  displayName: string;
-  linkToDataset: boolean;
-  useTooltip: boolean;
-  dataNoun: DataNoun;
+  readonly baseUrl: string;
+  readonly userDataset: DatasetDetails;
+  readonly projectId: string;
+  readonly displayName: string;
+  readonly linkToDataset: boolean;
+  readonly useTooltip: boolean;
+  readonly datasetNoun: string;
 }
 
 const orderedStatuses = [
@@ -176,9 +178,11 @@ function getStatus(
 }
 
 export default function UserDatasetStatus(props: Props) {
-  const { baseUrl, userDataset, projectId, displayName, dataNoun } = props;
+  const { baseUrl, userDataset, projectId, displayName, datasetNoun } = props;
   const { projects, status, importMessages } = userDataset;
-  const lowercaseSingularDataNoun = dataNoun.singular.toLowerCase();
+  const lowercaseSingularDataNoun = datasetNoun.toLowerCase();
+
+  const us
 
   const { content, icon: faIcon } = getStatus(
     status,

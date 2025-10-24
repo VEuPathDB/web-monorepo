@@ -10,23 +10,31 @@
 
 import { HTMLAttributes, ReactElement, ReactNode, useState } from "react";
 import { FileInput, RadioList, TextBox } from "@veupathdb/wdk-client/lib/Components";
-import { LabeledTextInput } from "./LabeledInput";
-import { DatasetVisibility } from "../../Service/Types";
-import { DatasetUploadFormConfig } from "../FormTypes";
+import { VariableDisplayText } from "../../FormTypes";
+import {
+  ExtendedDatasetVisibility,
+  RequiredHeader,
+  RequiredInformationProps,
+  VisibilityRadio
+} from "./common";
 
 
-function RequiredHeader(): ReactElement {
-  return <span className="requiredDatasetInfoHeader">Required Information</span>;
+// FIXME: Move this function to wherever the route is decided!
+export function newGenomicsDisplayText(): VariableDisplayText {
+  return {
+    datasetNameLabel: "Data set name",
+    summaryPlaceholder: "Provide a concise summary of the data set (max 400 characters)."
+  };
 }
 
-interface RequiredInformationProps {
-  config: DatasetUploadFormConfig
-}
+const visibilityOptions = [ "private", "public" ] as ExtendedDatasetVisibility[];
 
-function RequiredGenomicsInformation(props: RequiredInformationProps): ReactElement {
+function GenomicsDatasetDetails({ config }: RequiredInformationProps): ReactElement {
+  const displayText = config.displayText;
+
   const [ name, setName ] = useState<string>();
   const [ summary, setSummary ] = useState<string>();
-  const [ visibility, setVisibility ] = useState<DatasetVisibility>("private")
+  const [ visibility, setVisibility ] = useState<ExtendedDatasetVisibility>("private")
 
   const [ useFile, setUseFile ] = useState(true);
 
@@ -35,7 +43,7 @@ function RequiredGenomicsInformation(props: RequiredInformationProps): ReactElem
 
     <LabeledTextInput
       id="dataset-name"
-      label="Data set name"
+      label={displayText.datasetNameLabel}
       value={name}
       onChange={setName}
       required={true}
@@ -46,14 +54,18 @@ function RequiredGenomicsInformation(props: RequiredInformationProps): ReactElem
       label="Summary"
       value={summary}
       onChange={setSummary}
+      placeholder={displayText.summaryPlaceholder}
       required={true}
     />
 
     {
-      props.config.formConfig.dependencies
+      config.dependencies
         ? <div className="datasetDependencies">
           <label>Reference genome</label>
-          {props.config.formConfig.dependencies.render()}
+          {config.dependencies.render({
+            value: [],
+            onChange: v => {}
+          })}
         </div>
         : null
     }
@@ -63,68 +75,30 @@ function RequiredGenomicsInformation(props: RequiredInformationProps): ReactElem
         useFile
           ? <>
             <label>Upload a file</label>
-            <FileInput
-            />
+            {/*<FileInput*/}
+            {/*/>*/}
             <span className="uploadToUrlToggle">Or provide a <button onClick={() => setUseFile(false)}>link from the web</button>.</span>
           </>
           : <>
             <label>Link from the web</label>
-            <TextBox />
+            {/*<TextBox />*/}
             <span className="uploadToUrlToggle"> | <button onClick={() => setUseFile(true)}>Cancel</button></span>
           </>
       }
     </div>
 
     <VisibilityRadio
-      name="dataset-visibility"
-      onChange={v => setVisibility(v as DatasetVisibility)}
+      fieldName="dataset-visibility"
+      onChange={setVisibility}
       value={visibility}
+      enabledVisibilities={visibilityOptions}
     />
   </div>;
 }
 
-function RequiredMBioInformation(): ReactElement {
-  return <div className="requiredFields">
-    <RequiredHeader/>
-    <label htmlFor={}></label>
-  </div>;
-}
-
-function RequiredClinEpiInformation(): ReactElement {
-  return <div className="requiredFields">
-    <RequiredHeader/>
-    <label htmlFor={}></label>
-  </div>;
-}
-
-interface RadioOption {
-  readonly display: string;
-  readonly value: DatasetVisibility;
-  readonly description: string;
-}
-
-interface VisibilityProps {
-  readonly name: string;
-  readonly value: string;
-  readonly onChange: (v: string) => void;
-}
-
-function VisibilityRadio(props: VisibilityProps): ReactElement {
-  const items = [
-    { value: "private", display: "Private", description: "visible only to you and collaborators with shared access" },
-    { value: "public", display: "Public", description: "visible to all users" },
-  ] as RadioOption[];
-
-  return <div className="datasetVisibility">
-    <label>Data accessibility</label>
-    <RadioList items={items} {...props} />
-  </div>
-}
-
-
 interface LabeledTextInputProps extends Omit<HTMLAttributes<string>, 'onChange'> {
   readonly id: string;
-  readonly label: string;
+  readonly label: NonNullable<ReactNode>;
 
   readonly value?: string;
   readonly onChange: (v: string) => void;
@@ -147,7 +121,7 @@ function LabeledTextInput({
 }
 
 interface LabeledInputProps extends HTMLAttributes<any> {
-  readonly label: string;
+  readonly label: NonNullable<ReactNode>;
   readonly children: ReactElement<HTMLAttributes<any>>;
 }
 

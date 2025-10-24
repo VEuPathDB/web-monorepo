@@ -1,25 +1,24 @@
-import { ReactNode } from 'react';
+import { ReactNode } from "react";
 
-import { Switch, Redirect, RouteComponentProps } from 'react-router-dom';
+import { Switch, Redirect, RouteComponentProps } from "react-router-dom";
 
-import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
-import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
+import WorkspaceNavigation from "@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation";
+import WdkRoute from "@veupathdb/wdk-client/lib/Core/WdkRoute";
 
-import UserDatasetListController from '../Controllers/UserDatasetListController';
-import UserDatasetNewUploadController from '../Controllers/UserDatasetNewUploadController';
+import UserDatasetListController from "../Controllers/UserDatasetListController";
+import UserDatasetNewUploadController from "../Controllers/UserDatasetUploadSelector";
 
-import { DatasetUploadPageConfig, DataNoun } from '../Utils/types';
+import { DatasetUploadPageConfig } from "../Utils/types";
+import { VariableDisplayText } from "./FormTypes";
 
 interface Props {
-  baseUrl: string;
-  helpRoute: string;
-  uploadPageConfig: DatasetUploadPageConfig;
-  urlParams: Record<string, string>;
-  workspaceTitle: string;
-  helpTabContents?: ReactNode;
-  dataNoun: DataNoun;
-  enablePublicUserDatasets: boolean;
-  showExtraMetadata?: boolean; // Used in the upload form
+  readonly baseUrl: string;
+  readonly helpRoute: string;
+  readonly uploadPageConfig: DatasetUploadPageConfig;
+  readonly urlParams: Record<string, string>;
+  readonly helpTabContents?: ReactNode;
+  readonly enablePublicUserDatasets: boolean;
+  readonly displayText: VariableDisplayText;
 }
 
 function UserDatasetsWorkspace(props: Props) {
@@ -27,41 +26,33 @@ function UserDatasetsWorkspace(props: Props) {
     baseUrl,
     helpRoute,
     uploadPageConfig,
-    workspaceTitle,
     helpTabContents,
-    dataNoun,
     enablePublicUserDatasets,
-    showExtraMetadata = false,
+    displayText,
   } = props;
 
   return (
     <div>
       <WorkspaceNavigation
-        heading={workspaceTitle}
+        heading={displayText.workspaceTitle}
         routeBase={baseUrl}
         items={[
-          [
-            {
-              display: 'All',
-              route: '',
-            },
-          ],
+          [{
+            display: "All",
+            route: "",
+          }],
           uploadPageConfig.hasDirectUpload
-            ? [
-                {
-                  display: 'New upload',
-                  route: '/new',
-                  exact: false,
-                },
-              ]
+            ? [{
+              display: "New upload",
+              route: "/new",
+              exact: false,
+            }]
             : [],
           helpTabContents != null
-            ? [
-                {
-                  display: 'Help',
-                  route: '/help',
-                },
-              ]
+            ? [{
+              display: "Help",
+              route: "/help",
+            }]
             : [],
         ].flat()}
       />
@@ -75,12 +66,11 @@ function UserDatasetsWorkspace(props: Props) {
               baseUrl={baseUrl}
               hasDirectUpload={uploadPageConfig.hasDirectUpload}
               helpRoute={helpRoute}
-              workspaceTitle={workspaceTitle}
-              dataNoun={dataNoun}
+              displayText={displayText}
               enablePublicUserDatasets={enablePublicUserDatasets}
             />
           )}
-          disclaimerProps={{ toDoWhatMessage: 'To view your datasets' }}
+          disclaimerProps={{ toDoWhatMessage: "To view your datasets" }}
         />
         {uploadPageConfig.hasDirectUpload && (
           <WdkRoute
@@ -90,40 +80,38 @@ function UserDatasetsWorkspace(props: Props) {
             component={(childProps: RouteComponentProps<{ type?: string }>) => (
               <UserDatasetNewUploadController
                 baseUrl={baseUrl}
-                type={childProps.match.params.type}
-                availableTypes={uploadPageConfig.availableUploadTypes}
-                datasetUploadTypes={uploadPageConfig.uploadTypeConfig}
+                typeName={childProps.match.params.type}
+                enabledFormConfigs={uploadPageConfig.availableUploadTypes}
                 urlParams={props.urlParams}
-                showExtraMetadata={showExtraMetadata}
               />
             )}
             disclaimerProps={{
               toDoWhatMessage: `To upload your dataset`,
               extraParagraphContent:
                 Object.entries(props.urlParams).length === 0 ? undefined : (
-                  <div style={{ width: '100%', paddingBottom: 20 }}>
-                    <div style={{ paddingBottom: 5, textAlign: 'center' }}>
+                  <div style={{ width: "100%", paddingBottom: 20 }}>
+                    <div style={{ paddingBottom: 5, textAlign: "center" }}>
                       Afterwards, you will be taken back to an upload page with
                       these details:
                     </div>
 
-                    <ul style={{ listStyle: 'none' }}>
+                    <ul style={{ listStyle: "none" }}>
                       {Object.entries(props.urlParams).map((e) => (
                         <li
-                          key={e.join(' ')}
+                          key={e.join(" ")}
                           style={{
                             paddingBottom: 5,
-                            maxWidth: '100%',
-                            overflowX: 'auto',
-                            whiteSpace: 'nowrap',
+                            maxWidth: "100%",
+                            overflowX: "auto",
+                            whiteSpace: "nowrap",
                           }}
                         >
-                          <span style={{ fontWeight: 'bold' }}>
+                          <span style={{ fontWeight: "bold" }}>
                             {e[0].charAt(0).toUpperCase() +
-                              e[0].slice(1).replace('_', ' ') +
-                              ': '}
+                              e[0].slice(1).replace("_", " ") +
+                              ": "}
                           </span>
-                          <code style={{ verticalAlign: 'bottom' }}>
+                          <code style={{ verticalAlign: "bottom" }}>
                             {e[1].trim()}
                           </code>
                         </li>
@@ -153,7 +141,7 @@ function UserDatasetsWorkspace(props: Props) {
             component={() => <>{helpTabContents}</>}
           />
         )}
-        <Redirect to={baseUrl} />
+        <Redirect to={baseUrl}/>
       </Switch>
     </div>
   );

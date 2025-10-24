@@ -2,10 +2,10 @@ import * as io from "io-ts";
 import * as api from "../../Service/Types";
 
 export type {
-  DataInputConfigUnion,
+  DataInputConfig,
   DatasetDependenciesConfig,
-  DatasetUploadFormConfig,
-  VariableFieldLabels,
+  UploadFormConfig,
+  VariableDisplayText,
 } from "./form-config";
 
 export const userDatasetFormContent = io.intersection([

@@ -1,0 +1,12 @@
+@import '@veupathdb/wdk-client/lib/Core/Style/palette';
+
+.requiredDatasetInfoHeader {
+  color: $red;
+
+  font-size: 1.5em;
+  font-weight: bold;
+
+  ::after {
+    content: " *";
+  }
+}

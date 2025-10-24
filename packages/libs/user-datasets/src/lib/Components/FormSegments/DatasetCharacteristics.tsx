@@ -11,7 +11,7 @@ interface CharacteristicsFormSegment {
 
   validateCharacteristics(projectId: string): FormValidation;
 
-  CharacteristicsSegment(): React.ReactElement;
+  CharacteristicsSegment: React.ReactElement;
 }
 
 function validateYears(start: number | undefined, end: number | undefined): string[] | null {
@@ -100,14 +100,19 @@ export function useCharacteristicsSegment(props: DatasetCharacteristicsProps): C
         break;
     }
 
-    validateStudyDesignType(studyDesign, studyType, strictDesign)
+    // validateStudyDesignType(studyDesign, studyType, strictDesign)
     validateYears(startYear, endYear)
+
+    return {
+      valid: false,
+      errors: []
+    };
   };
 
   return {
     makeCharacteristicsModel: makeModel,
     validateCharacteristics: validate,
-    CharacteristicsSegment: () => (
+    CharacteristicsSegment: (
       <div className="datasetCharacteristics">
         <h3>Dataset Characteristics</h3>
         <div className="formSection">
@@ -123,12 +128,12 @@ export function useCharacteristicsSegment(props: DatasetCharacteristicsProps): C
           />
           <div className="dataset-year-range">
             <FieldLabel style={{ fontSize: "1.2em" }}>Study years</FieldLabel>
-            <LabeledTextInput
-              id={`${idPrefix}-years-start`}
-              label="Start year"
-              value={startYear}
-              onChange={setStartYear}
-            />
+            {/*<LabeledTextInput*/}
+            {/*  id={`${idPrefix}-years-start`}*/}
+            {/*  label="Start year"*/}
+            {/*  value={startYear}*/}
+            {/*  onChange={setStartYear}*/}
+            {/*/>*/}
           </div>
           <LabeledTextListInput
             idPrefix={`${idPrefix}-species`}

@@ -1,12 +1,12 @@
-import { ComponentType } from 'react';
+import { ComponentType } from "react";
 
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 
-import { keyBy } from 'lodash';
+import { keyBy } from "lodash";
 
-import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
-import PageController from '@veupathdb/wdk-client/lib/Core/Controllers/PageController';
-import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { showLoginForm } from "@veupathdb/wdk-client/lib/Actions/UserSessionActions";
+import PageController from "@veupathdb/wdk-client/lib/Core/Controllers/PageController";
+import { Question } from "@veupathdb/wdk-client/lib/Utils/WdkModel";
 
 import {
   loadUserDatasetDetail,
@@ -19,17 +19,21 @@ import {
   sharingSuccess,
   updateCommunityModalVisibility,
   updateDatasetCommunityVisibility,
-} from '../Actions/UserDatasetsActions';
+} from "../Actions/UserDatasetsActions";
 
-import BigwigDatasetDetail from '../Components/Detail/BigwigDatasetDetail';
-import RnaSeqDatasetDetail from '../Components/Detail/RnaSeqDatasetDetail';
-import UserDatasetDetail from '../Components/Detail/UserDatasetDetail';
-import EmptyState from '../Components/EmptyState';
-import { quotaSize } from '../Components/UserDatasetUtils';
+import BigwigDatasetDetail from "../Components/Detail/BigwigDatasetDetail";
+import RnaSeqDatasetDetail from "../Components/Detail/RnaSeqDatasetDetail";
+import UserDatasetDetail from "../Components/Detail/UserDatasetDetail";
+import EmptyState from "../Components/EmptyState";
 
-import { StateSlice } from '../StoreModules/types';
-import { DataNoun } from '../Utils/types';
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { StateSlice } from "../StoreModules/types";
+import { Loading } from "@veupathdb/wdk-client/lib/Components";
+import { VariableDisplayText } from "../Components/FormTypes";
+
+import { State as UserDatasetDetailState } from "../StoreModules/UserDatasetDetailStoreModule";
+import { GlobalData } from "@veupathdb/wdk-client/lib/StoreModules/GlobalData";
+import { DatasetDetails, DatasetFileListResponse as DatasetFileList } from "../Service/Types";
+
 
 const ActionCreators = {
   showLoginForm,
@@ -47,27 +51,73 @@ const ActionCreators = {
 
 export type UserDatasetDetailProps = any;
 
-type StateProps = StateSlice['userDatasetDetail'] & StateSlice['globalData'];
+type StateProps = StateSlice["userDatasetDetail"] & StateSlice["globalData"];
+
 type DispatchProps = typeof ActionCreators;
+
 type OwnProps = {
   baseUrl: string;
-  detailsPageTitle: string;
-  workspaceTitle: string;
   id: string;
   detailComponentsByTypeName?: Record<
     string,
     ComponentType<UserDatasetDetailProps>
   >;
-  dataNoun: DataNoun;
   enablePublicUserDatasets: boolean;
-  showExtraMetadata: boolean; // Used in user dataset detail view
   includeAllLink: boolean;
   includeNameHeader: boolean;
+  displayText: VariableDisplayText;
+  quotaSize: number;
 };
+
 type MergedProps = {
   ownProps: OwnProps;
   dispatchProps: DispatchProps;
   stateProps: StateProps;
+};
+
+type DetailViewProps = Pick<
+  OwnProps,
+  | "baseUrl"
+  | "enablePublicUserDatasets"
+  | "includeAllLink"
+  | "includeNameHeader"
+  | "displayText"
+  | "quotaSize"
+> & Pick<
+  UserDatasetDetailState,
+  | "userDatasetUpdating"
+  | "sharingModalOpen"
+  | "sharingDatasetPending"
+  | "updateError"
+  | "shareError"
+  | "shareSuccessful"
+  | "communityModalOpen"
+  | "updateDatasetCommunityVisibilityPending"
+  | "updateDatasetCommunityVisibilitySuccess"
+  | "updateDatasetCommunityVisibilityError"
+> & Pick<
+  GlobalData,
+  | "user"
+  | "config"
+> & Pick<
+  typeof ActionCreators,
+  | "updateUserDatasetDetail"
+  | "removeUserDataset"
+  | "shareUserDatasets"
+  | "unshareUserDatasets"
+  | "updateSharingModalState"
+  | "sharingError"
+  | "sharingSuccess"
+  | "updateCommunityModalVisibility"
+  | "updateDatasetCommunityVisibility"
+> & {
+  readonly isOwner: boolean;
+  readonly location: Location;
+  readonly userDataset?: DatasetDetails;
+  readonly fileListing?: DatasetFileList;
+  readonly questionMap: Record<string, Question>;
+
+  getQuestionUrl(question: Question): string;
 };
 
 /**
@@ -83,22 +133,23 @@ class UserDatasetDetailController extends PageController<MergedProps> {
   };
 
   getTitle() {
-    const entry =
-      this.props.stateProps.userDatasetsById[this.props.ownProps.id];
-    if (entry && entry.resource) {
-      return `${this.props.ownProps.detailsPageTitle} ${entry.resource.meta.name}`;
-    }
-    if (entry && !entry.resource) {
-      return `${this.props.ownProps.detailsPageTitle} not found`;
-    }
-    return `${this.props.ownProps.detailsPageTitle} ...`;
+    const text = this.props.ownProps.displayText;
+    const entry = this.props.stateProps.userDatasetsById[this.props.ownProps.id];
+
+    if (entry && entry.resource)
+      return `${text.detailsPageTitle} ${entry.resource.name}`;
+
+    if (entry && !entry.resource)
+      return `${text.detailsPageTitle} not found`;
+
+    return `${text.detailsPageTitle} ...`;
   }
 
   getActionCreators() {
     return ActionCreators;
   }
 
-  loadData(prevProps?: this['props']) {
+  loadData(prevProps?: this["props"]) {
     const idChanged =
       prevProps == null || prevProps.ownProps.id !== this.props.ownProps.id;
     if (idChanged) {
@@ -124,7 +175,8 @@ class UserDatasetDetailController extends PageController<MergedProps> {
     const { loadError } = this.props.stateProps;
     return (
       loadError != null &&
-      (loadError.statusCode === 401 || loadError.statusCode === 403)
+      (
+        loadError.statusCode === 401 || loadError.statusCode === 403)
     );
   }
 
@@ -133,23 +185,22 @@ class UserDatasetDetailController extends PageController<MergedProps> {
     const { userDatasetsById, user, questions, config } = this.props.stateProps;
     const entry = userDatasetsById[id];
     if (user && user.isGuest) return true;
-    return entry && !entry.isLoading && user && questions && config
-      ? true
-      : false;
+    return !!(
+      entry && !entry.isLoading && user && questions && config);
   }
 
-  getDetailView(type: any) {
-    const name: string = type && typeof type === 'object' ? type.name : null;
+  getDetailView(type: any): ComponentType<DetailViewProps> {
+    const name: string = type && typeof type === "object" ? type.name : null;
 
     if (this.props.ownProps.detailComponentsByTypeName?.[name] != null) {
       return this.props.ownProps.detailComponentsByTypeName[name];
     }
 
     switch (name) {
-      case 'bigwigs':
-      case 'bigwigfiles':
+      case "bigwigs":
+      case "bigwigfiles":
         return BigwigDatasetDetail;
-      case 'rnaseq':
+      case "rnaseq":
         return RnaSeqDatasetDetail;
       default:
         return UserDatasetDetail;
@@ -165,7 +216,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
             className="btn"
             onClick={() => this.props.dispatchProps.showLoginForm()}
           >
-            Please log in to access {this.props.ownProps.workspaceTitle}.
+            Please log in to access {this.props.ownProps.displayText.workspaceTitle}.
           </button>
         }
       />
@@ -175,14 +226,12 @@ class UserDatasetDetailController extends PageController<MergedProps> {
   renderView() {
     const {
       baseUrl,
-      detailsPageTitle,
       id,
-      workspaceTitle,
-      dataNoun,
       enablePublicUserDatasets,
-      showExtraMetadata,
       includeAllLink,
       includeNameHeader,
+      displayText,
+      quotaSize,
     } = this.props.ownProps;
     const {
       updateUserDatasetDetail,
@@ -216,10 +265,10 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       user &&
       entry &&
       entry.resource &&
-      entry.resource.ownerUserId === user.id
+      entry.resource.owner.userId === user.id
     );
 
-    const props = {
+    const props: DetailViewProps = {
       baseUrl,
       includeAllLink,
       includeNameHeader,
@@ -244,10 +293,8 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       userDataset: entry?.resource,
       fileListing: entry?.fileListing,
       getQuestionUrl: this.getQuestionUrl,
-      questionMap: keyBy(questions, 'fullName'),
-      workspaceTitle,
-      detailsPageTitle,
-      dataNoun,
+      questionMap: keyBy(questions, "fullName"),
+      displayText,
       enablePublicUserDatasets,
       updateCommunityModalVisibility,
       updateDatasetCommunityVisibility,
@@ -255,19 +302,15 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       updateDatasetCommunityVisibilityError,
       updateDatasetCommunityVisibilityPending,
       updateDatasetCommunityVisibilitySuccess,
-      showExtraMetadata,
     };
 
-    if (entry?.resource == null) return <Loading />;
+    if (entry?.resource == null)
+      return <Loading/>;
 
     const DetailView = this.getDetailView(entry.resource.type);
-    return entry.resource.meta.visibility !== 'public' &&
-      user &&
-      user.isGuest ? (
-      this.renderGuestView()
-    ) : (
-      <DetailView {...props} />
-    );
+    return entry.resource.visibility !== "public" && user && user.isGuest
+      ? this.renderGuestView()
+      : <DetailView {...props} />;
   }
 }
 
@@ -278,16 +321,18 @@ const enhance = connect<
   MergedProps,
   StateSlice
 >(
-  (state) => ({
-    ...state.globalData,
-    ...state.userDatasetDetail,
-  }),
+  (state) => (
+    {
+      ...state.globalData,
+      ...state.userDatasetDetail,
+    }),
   ActionCreators,
-  (stateProps, dispatchProps, ownProps) => ({
-    stateProps,
-    dispatchProps,
-    ownProps,
-  })
+  (stateProps, dispatchProps, ownProps) => (
+    {
+      stateProps,
+      dispatchProps,
+      ownProps,
+    }),
 );
 
 export default enhance(UserDatasetDetailController);

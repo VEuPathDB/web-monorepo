@@ -20,7 +20,7 @@ import {
   updateDatasetCommunityVisibilitySuccess,
 } from '../Actions/UserDatasetsActions';
 
-import { UserDataset, UserDatasetFileListing } from '../Utils/types';
+import { DatasetDetails, DatasetFileListResponse } from "../Service/Types";
 
 export const key = 'userDatasetDetail';
 
@@ -30,12 +30,12 @@ export const key = 'userDatasetDetail';
  */
 export type UserDatasetEntry = {
   isLoading: boolean;
-  resource?: UserDataset;
-  fileListing?: UserDatasetFileListing;
+  resource?: DatasetDetails;
+  fileListing?: DatasetFileListResponse;
 };
 
 export interface State {
-  userDatasetsById: { [key: string]: UserDatasetEntry };
+  userDatasetsById: Record<string, UserDatasetEntry>;
   userDatasetUpdating: boolean;
   userDatasetLoading: boolean;
   userDatasetRemoving: boolean;
@@ -120,7 +120,7 @@ export function reduce(state: State = initialState, action: Action): State {
         userDatasetUpdating: false,
         userDatasetsById: {
           ...state.userDatasetsById,
-          [action.payload.userDataset.id]: {
+          [action.payload.userDataset.datasetId]: {
             isLoading: false,
             resource: action.payload.userDataset,
           },

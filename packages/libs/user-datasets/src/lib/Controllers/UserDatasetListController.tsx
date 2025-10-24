@@ -25,9 +25,10 @@ import { quotaSize } from '../Components/UserDatasetUtils';
 
 import { StateSlice } from '../StoreModules/types';
 
-import { DataNoun, UserDataset } from '../Utils/types';
+import { UserDataset } from '../Utils/types';
 
 import '../Components/UserDatasets.scss';
+import { VariableDisplayText } from "../Components/FormTypes";
 
 const ActionCreators = {
   showLoginForm,
@@ -51,17 +52,16 @@ type StateProps = Pick<
 >;
 type DispatchProps = typeof ActionCreators;
 interface OwnProps extends RouteComponentProps<{}> {
-  baseUrl: string;
-  hasDirectUpload: boolean;
-  helpRoute: string;
-  workspaceTitle: string;
-  dataNoun: DataNoun;
-  enablePublicUserDatasets: boolean;
+  readonly baseUrl: string;
+  readonly hasDirectUpload: boolean;
+  readonly helpRoute: string;
+  readonly displayText: VariableDisplayText;
+  readonly enablePublicUserDatasets: boolean;
 }
 type Props = {
-  ownProps: OwnProps;
-  dispatchProps: DispatchProps;
-  stateProps: StateProps;
+  readonly ownProps: OwnProps;
+  readonly dispatchProps: DispatchProps;
+  readonly stateProps: StateProps;
 };
 
 class UserDatasetListController extends PageController<Props> {
@@ -70,12 +70,13 @@ class UserDatasetListController extends PageController<Props> {
     this.needsUploadMessages = this.needsUploadMessages.bind(this);
   }
   getTitle() {
-    return this.props.ownProps.workspaceTitle;
+    return this.props.ownProps.displayText.workspaceTitle;
   }
 
   getActionCreators() {
     return ActionCreators;
   }
+
   needsUploadMessages() {
     const { config } = this.props.stateProps.globalData;
     const { hasDirectUpload } = this.props.ownProps;
@@ -136,8 +137,8 @@ class UserDatasetListController extends PageController<Props> {
       hasDirectUpload,
       helpRoute,
       location,
-      dataNoun,
       enablePublicUserDatasets,
+      displayText,
     } = this.props.ownProps;
 
     const {
@@ -177,7 +178,7 @@ class UserDatasetListController extends PageController<Props> {
       baseUrl,
       user,
       location,
-      dataNoun,
+      displayText,
       projectId,
       projectName,
       numOngoingUploads,

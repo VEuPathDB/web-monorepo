@@ -9,7 +9,12 @@ import { FloatingButton } from "@veupathdb/coreui";
 import { FloatingButtonWDKStyle } from "@veupathdb/coreui/lib/components/buttons/FloatingButton";
 import { Checkbox, SingleSelect, TextBox } from "@veupathdb/wdk-client/lib/Components";
 import { DatasetPublication, PublicationType } from "../../Service/Types";
-import { newArrayInputUpdater, InputConstructor, RecordListProps, RecordUpdater } from "./component-utils";
+import {
+  InputConstructor,
+  RecordListProps,
+  RecordUpdater,
+  newObjectInputUpdater,
+} from "./component-utils";
 import { InputList } from "./InputList";
 
 interface PublicationSelectItem {
@@ -24,7 +29,7 @@ const publicationTypes: PublicationSelectItem[] = [
 
 function newInputFactory(setPublications: RecordUpdater<DatasetPublication>): InputConstructor<DatasetPublication> {
   return function (publication: DatasetPublication, index: number): React.ReactElement {
-    const updatePublication = createNestedInputUpdater(index, setPublications);
+    const updatePublication = newObjectInputUpdater(index, setPublications);
 
     const onRemove = (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();

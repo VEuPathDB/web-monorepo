@@ -6,47 +6,29 @@ import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
 
 import UserDatasetsWorkspace from '../Components/UserDatasetsWorkspace';
 
-import { makeDatasetUploadPageConfig } from '../Utils/upload-config';
-import { DatasetUploadTypeConfig, DataNoun } from '../Utils/types';
+import { DatasetUploadPageConfig } from "../Utils/types";
 
-import UserDatasetDetailController, {
-  UserDatasetDetailProps,
-} from './UserDatasetDetailController';
+import UserDatasetDetailController, { UserDatasetDetailProps } from './UserDatasetDetailController';
+import { VariableDisplayText } from "../Components/FormTypes";
 
-interface Props<T1 extends string = string, T2 extends string = string> {
-  availableUploadTypes?: T1[];
-  detailsPageTitle: string;
-  helpRoute: string;
-  uploadTypeConfig: DatasetUploadTypeConfig<T2>;
-  workspaceTitle: string;
-  helpTabContents?: ReactNode;
-  detailComponentsByTypeName?: Record<
-    string,
-    ComponentType<UserDatasetDetailProps>
-  >;
-  dataNoun: DataNoun;
-  enablePublicUserDatasets?: boolean;
-  showExtraMetadata?: boolean; // Used in the upload form
+interface Props {
+  readonly helpRoute: string;
+  readonly helpTabContents?: ReactNode;
+  readonly formConfig: DatasetUploadPageConfig,
+  readonly displayText: VariableDisplayText;
+  readonly detailComponentsByTypeName?: Record<string, ComponentType<UserDatasetDetailProps>>;
+  readonly enablePublicUserDatasets?: boolean;
 }
 
-export function UserDatasetRouter<T1 extends string, T2 extends string>({
-  availableUploadTypes,
-  detailsPageTitle,
+export function UserDatasetRouter({
   helpRoute,
-  uploadTypeConfig,
-  workspaceTitle,
   helpTabContents,
+  formConfig,
+  displayText,
   detailComponentsByTypeName,
-  dataNoun,
   enablePublicUserDatasets = false,
-  showExtraMetadata = false,
-}: Props<T1, T2>) {
+}: Props) {
   const { path, url } = useRouteMatch();
-
-  const uploadPageConfig = useMemo(
-    () => makeDatasetUploadPageConfig(availableUploadTypes, uploadTypeConfig),
-    [availableUploadTypes, uploadTypeConfig]
-  );
 
   return (
     <Switch>
@@ -54,9 +36,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
         path={path}
         exact={true}
         requiresLogin={false} // uses custom guest views
-        component={function UserDatasetsWorkspaceRoute(
-          props: RouteComponentProps<{}>
-        ) {
+        component={function UserDatasetsWorkspaceRoute(props: RouteComponentProps) {
           const urlParams = useMemo(() => {
             const searchParamEntries = new URLSearchParams(
               props.location.search
@@ -69,13 +49,11 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
             <UserDatasetsWorkspace
               baseUrl={url}
               helpRoute={helpRoute}
-              uploadPageConfig={uploadPageConfig}
+              uploadPageConfig={formConfig}
               urlParams={urlParams}
-              workspaceTitle={workspaceTitle}
+              displayText={displayText}
               helpTabContents={helpTabContents}
-              dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
-              showExtraMetadata={showExtraMetadata}
             />
           );
         }}
@@ -84,9 +62,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
         path={path + '/new/:type?'}
         exact={true}
         requiresLogin={false} // uses custom guest views
-        component={function UserDatasetsWorkspaceRoute(
-          props: RouteComponentProps<{}>
-        ) {
+        component={function UserDatasetsWorkspaceRoute(props: RouteComponentProps) {
           const urlParams = useMemo(() => {
             const searchParamEntries = new URLSearchParams(
               props.location.search
@@ -99,13 +75,11 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
             <UserDatasetsWorkspace
               baseUrl={url}
               helpRoute={helpRoute}
-              uploadPageConfig={uploadPageConfig}
+              uploadPageConfig={formConfig}
               urlParams={urlParams}
-              workspaceTitle={workspaceTitle}
+              displayText={displayText}
               helpTabContents={helpTabContents}
-              dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
-              showExtraMetadata={showExtraMetadata}
             />
           );
         }}
@@ -143,7 +117,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
         exact={true}
         requiresLogin={false} // uses custom guest views
         component={function UserDatasetsWorkspaceRoute(
-          props: RouteComponentProps<{}>
+          props: RouteComponentProps
         ) {
           const urlParams = useMemo(() => {
             const searchParamEntries = new URLSearchParams(
@@ -157,13 +131,11 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
             <UserDatasetsWorkspace
               baseUrl={url}
               helpRoute={helpRoute}
-              uploadPageConfig={uploadPageConfig}
+              uploadPageConfig={formConfig}
               urlParams={urlParams}
-              workspaceTitle={workspaceTitle}
+              displayText={displayText}
               helpTabContents={helpTabContents}
-              dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
-              showExtraMetadata={showExtraMetadata}
             />
           );
         }}
@@ -175,12 +147,9 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
           return (
             <UserDatasetDetailController
               baseUrl={url}
-              detailsPageTitle={detailsPageTitle}
-              workspaceTitle={workspaceTitle}
               detailComponentsByTypeName={detailComponentsByTypeName}
-              dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
-              showExtraMetadata={showExtraMetadata}
+              displayText={displayText}
               includeAllLink
               includeNameHeader
               {...props.match.params}

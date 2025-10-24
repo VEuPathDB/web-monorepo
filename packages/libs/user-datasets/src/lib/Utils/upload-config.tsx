@@ -1,23 +1,12 @@
-import { intersection } from 'lodash';
-import { DatasetUploadPageConfig, DatasetUploadTypeConfig } from './types';
+import { DatasetUploadPageConfig } from './types';
+import { EnabledDatasetType } from "@veupathdb/web-common/src/user-dataset-upload-config";
+import { VariableDisplayText } from "../Components/FormTypes";
 
-export function makeDatasetUploadPageConfig<
-  T1 extends string,
-  T2 extends string
->(
-  availableUploadTypes: T1[] = [],
-  uploadTypeConfig: DatasetUploadTypeConfig<T2>
-): DatasetUploadPageConfig<T1 & T2, T2> {
-  const restrictedUploadTypes = intersection(
-    availableUploadTypes,
-    Object.keys(uploadTypeConfig)
-  ) as (T1 & T2)[];
-
-  return restrictedUploadTypes.length === 0
-    ? { hasDirectUpload: false }
-    : {
-        hasDirectUpload: true,
-        availableUploadTypes: restrictedUploadTypes,
-        uploadTypeConfig,
-      };
+export function makeDatasetUploadPageConfig(
+  availableUploadTypes: EnabledDatasetType[] = [],
+  displayText: VariableDisplayText,
+): DatasetUploadPageConfig {
+  return availableUploadTypes
+    ? { hasDirectUpload: true, availableUploadTypes }
+    : { hasDirectUpload: false };
 }

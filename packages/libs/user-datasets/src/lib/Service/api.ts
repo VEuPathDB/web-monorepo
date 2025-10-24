@@ -11,7 +11,6 @@ import {
 import {
   userDatasetDetails_VDI,
   UserDatasetMeta_UI,
-  UserDatasetMeta_VDI,
   userDatasetDetails,
   userQuotaMetadata,
   userDatasetFileListing,
@@ -22,6 +21,7 @@ import { array } from 'io-ts';
 import { submitAsForm } from '@veupathdb/wdk-client/lib/Utils/FormSubmitter';
 import { FormSubmission } from '../Components/UploadForm';
 import { makeNewUserDatasetConfig } from '../Utils/upload-user-dataset';
+import { DatasetPostRequest } from "./Types";
 
 const userIdsByEmailDecoder = record({
   results: objectOf(number),
@@ -69,13 +69,8 @@ export class UserDatasetApi extends FetchClientWithCredentials {
     );
     const { uploadMethod, ...remainingConfig } = newUserDatasetConfig;
 
-    const meta: UserDatasetMeta_VDI = {
-      dependencies: [],
+    const meta: DatasetPostRequest = {
       ...remainingConfig,
-      datasetType: {
-        name: newUserDatasetConfig.datasetType,
-        version: '1.0',
-      },
       origin: 'direct-upload',
     };
 
@@ -185,10 +180,6 @@ export class UserDatasetApi extends FetchClientWithCredentials {
     datasetId: string,
     zipFileType: 'upload' | 'data'
   ) => {
-    if (typeof datasetId !== 'string')
-      throw new TypeError(
-        `Can't build downloadUrl; invalid datasetId given (${datasetId}) [${typeof datasetId}]`
-      );
     // When a form is submitted using the GET method, query params are removed.
     // By using the `input` option, the object will get converted to query params
     // by the form submission.
@@ -257,6 +248,6 @@ function makeQueryString(
 }
 
 // QUESTION: also copied from study-data-access's api; move to a different package's util functions?
-async function noContent(body: unknown) {
+async function noContent(_: unknown) {
   return null;
 }

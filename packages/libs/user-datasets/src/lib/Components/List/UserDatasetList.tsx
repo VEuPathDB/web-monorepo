@@ -23,7 +23,6 @@ import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import {
-  DataNoun,
   UserDataset,
   UserDatasetMeta_UI,
   UserDatasetShare,
@@ -43,6 +42,7 @@ import { ThemedGrantAccessButton } from '../ThemedGrantAccessButton';
 import { ThemedDeleteButton } from '../ThemedDeleteButton';
 import { Public } from '@material-ui/icons';
 import { Tooltip } from '@veupathdb/coreui';
+import { VariableDisplayText } from "../FormTypes";
 
 interface Props {
   baseUrl: string;
@@ -76,7 +76,7 @@ interface Props {
   ) => any;
   updateProjectFilter: (filterByProject: boolean) => any;
   quotaSize: number;
-  dataNoun: DataNoun;
+  displayText: VariableDisplayText,
   enablePublicUserDatasets: boolean;
   communityModalOpen: boolean;
   updateCommunityModalVisibility: (visibility: boolean) => any;
@@ -178,7 +178,7 @@ class UserDatasetList extends React.Component<Props, State> {
     if (!isPublic) return null;
     return (
       <Tooltip
-        title={`This ${this.props.dataNoun.singular} is visible to the community.`}
+        title={`This ${this.props.displayText.datasetNounSingular} is visible to the community.`}
       >
         <Public className="Community-visible" />
       </Tooltip>
@@ -187,7 +187,7 @@ class UserDatasetList extends React.Component<Props, State> {
 
   renderStatusCell(cellProps: MesaDataCellProps) {
     const userDataset: UserDataset = cellProps.row;
-    const { baseUrl, projectId, projectName, dataNoun } = this.props;
+    const { baseUrl, projectId, projectName, displayText } = this.props;
     return (
       <UserDatasetStatus
         baseUrl={baseUrl}
@@ -196,7 +196,7 @@ class UserDatasetList extends React.Component<Props, State> {
         userDataset={userDataset}
         projectId={projectId}
         displayName={projectName}
-        dataNoun={dataNoun}
+        datasetNoun={displayText.datasetNounSingular}
       />
     );
   }

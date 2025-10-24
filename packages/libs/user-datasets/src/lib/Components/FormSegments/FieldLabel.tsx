@@ -10,8 +10,5 @@ export interface FieldLabelProps
 }
 
 export function FieldLabel({ children, ...labelProps }: FieldLabelProps) {
-  return <label {...labelProps}>
-      {children}
-    </label>
-  );
+  return <label {...labelProps}>{children}</label>;
 }

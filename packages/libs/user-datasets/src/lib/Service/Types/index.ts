@@ -1,47 +1,56 @@
-export {
-  type DatasetListEntry,
-  type AllDatasetsListMeta,
-  type AllDatasetsListResponse,
-  type CommunityDataset,
-  type DatasetPostRequest,
-  type DatasetDetails,
-  type DatasetFileDetails,
-  type DatasetFileListResponse,
-  type DatasetPatchRequest,
-  type DatasetPutRequest,
-  type DatasetZipDetails,
-  type ShareOfferPutRequest,
-  type ShareReceiptPutRequest,
-  type UserShareOffer,
-  type VdiUserMetadata,
-  type VdiUserUsageQuota,
+export type {
+  DatasetListEntry,
+  AllDatasetsListMeta,
+  AllDatasetsListResponse,
+  CommunityDataset,
+  DatasetPostRequest,
+  DatasetDetails,
+  DatasetFileDetails,
+  DatasetFileListResponse,
+  DatasetPatchRequest,
+  DatasetPutRequest,
+  DatasetZipDetails,
+  PluginDetailsResponse,
+  ServiceMetadataResponseBody,
+  ShareOfferPutRequest,
+  ShareReceiptPutRequest,
+  UserShareOffer,
+  VdiUserMetadata,
+  VdiUserUsageQuota,
+} from "./io-types";
 
+export {
   datasetDetails,
   datasetsListEntry,
+  pluginDetailsResponse,
   postDatasetSuccessResponse,
-} from "./io-types"
+  serviceMetadataResponseBody,
+} from "./io-types";
+
+export type {
+  BioprojectIDRef,
+
+  DatasetCharacteristics,
+  DatasetContact,
+  DatasetDependency,
+  DatasetFundingAward,
+  DatasetHyperlink,
+  DatasetOrganism,
+  DatasetPublication,
+  DatasetRevision,
+  DatasetRevisionHistory,
+  DatasetType,
+  DatasetVisibility,
+
+  DoiRef,
+  ExternalIdentifiers,
+  LinkedDataset,
+  PublicationType,
+  StudyYearRange,
+
+} from "./metadata-types";
 
 export {
-  type BioprojectIDRef,
-
-  type DatasetCharacteristics,
-  type DatasetContact,
-  type DatasetDependency,
-  type DatasetFundingAward,
-  type DatasetHyperlink,
-  type DatasetOrganism,
-  type DatasetPublication,
-  type DatasetRevision,
-  type DatasetRevisionHistory,
-  type DatasetType,
-  type DatasetVisibility,
-
-  type DoiRef,
-  type ExternalIdentifiers,
-  type LinkedDataset,
-  type PublicationType,
-  type StudyYearRange,
-
   characteristics,
   contact,
   externalIdentifiers,
@@ -59,5 +68,6 @@ export type {
   DatasetShareOfferRecipient,
   ImplicitlyRelatedDataset,
   ImplicitRelationDetails,
+  PluginDetails,
   VdiUserInfo,
-} from "./service-types"
+} from "./service-types";

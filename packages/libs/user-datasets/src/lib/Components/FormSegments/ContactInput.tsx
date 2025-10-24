@@ -6,7 +6,13 @@ import { FloatingButton } from "@veupathdb/coreui";
 import { FloatingButtonWDKStyle } from "@veupathdb/coreui/lib/components/buttons/FloatingButton";
 import { Checkbox, TextBox } from "@veupathdb/wdk-client/lib/Components";
 import { DatasetContact } from "../../Service/Types";
-import { newArrayInputUpdater, cx, InputConstructor, RecordListProps, RecordUpdater } from "./component-utils";
+import {
+  cx,
+  InputConstructor,
+  RecordListProps,
+  RecordUpdater,
+  newObjectInputUpdater,
+} from "./component-utils";
 import { InputList } from "./InputList";
 
 interface SplitName {
@@ -50,7 +56,7 @@ function joinName(contact: DatasetContact): string {
 
 function contactInputFactory(updater: RecordUpdater<DatasetContact>): InputConstructor<DatasetContact> {
   return function (contact: DatasetContact, index: number): React.ReactElement {
-    const updateContact = createNestedInputUpdater(index, updater);
+    const updateContact = newObjectInputUpdater(index, updater);
 
     const onRemove = (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();

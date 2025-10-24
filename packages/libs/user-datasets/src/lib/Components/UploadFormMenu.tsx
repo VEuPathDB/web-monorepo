@@ -1,40 +1,33 @@
-import React from 'react';
-import { DatasetUploadTypeConfigEntry } from '../Utils/types';
-import { Link, useRouteMatch } from 'react-router-dom';
+import React from "react";
+import { Link, useRouteMatch } from "react-router-dom";
+import { UploadFormConfig } from "./FormTypes";
 
-import './UploadFormMenu.scss';
+import "./UploadFormMenu.scss";
 
 interface Props {
-  availableTypes: string[];
-  datasetUploadTypes: Record<string, DatasetUploadTypeConfigEntry<string>>;
+  readonly availableTypes: readonly UploadFormConfig[];
 }
 
 export function UploadFormMenu(props: Props) {
-  const { availableTypes, datasetUploadTypes } = props;
+  // Static UI Text
+  const headerText = "Choose an upload type";
+
   const { url } = useRouteMatch();
+
+  const typeConfigs = props.availableTypes.map(({ datasetType, menuConfig }) => <li>
+    <Link to={url + "/" + datasetType.name} className="btn">
+      <span className="fa fa-file-text title">{
+        menuConfig.displayNameOverride?.(datasetType)
+        ?? datasetType.displayName
+      }</span>
+      <span className="description">{menuConfig.description}</span>
+    </Link>
+  </li>);
+
   return (
-    <div className="UserDatasetUploadFormMenu">
-      <h2>Choose an upload type</h2>
-      <menu>
-        {availableTypes.map((type) => {
-          const datasetUploadType = datasetUploadTypes[type];
-          return (
-            datasetUploadType && (
-              <li>
-                <Link to={url + '/' + type} className="btn">
-                  <div className="title">
-                    <i className="fa fa-file-text" />{' '}
-                    {datasetUploadType.displayName}
-                  </div>
-                  <div className="description">
-                    {datasetUploadType.description}
-                  </div>
-                </Link>
-              </li>
-            )
-          );
-        })}
-      </menu>
+    <div id="UserDatasetUploadFormMenu">
+      <h2>{headerText}</h2>
+      <menu>{typeConfigs}</menu>
     </div>
   );
 }
