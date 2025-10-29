@@ -19,12 +19,12 @@ type BaseProps<M extends NumberOrDate> = {
   /** Optional validator function. Should return {validity: true, message: ''} if value is allowed.
    * If provided, minValue and maxValue and required will have no effect.
    */
-  validator?: (newValue?: NumberOrDate) => {
+  validator?: (newValue?: M) => {
     validity: boolean;
     message: string;
   };
   /** Function to invoke when value changes. */
-  onValueChange: (newValue?: NumberOrDate) => void;
+  onValueChange: (newValue?: M) => void;
   /** UI Label for the widget. Optional */
   label?: string;
   /** Additional styles for component container. Optional. */
@@ -39,25 +39,28 @@ type BaseProps<M extends NumberOrDate> = {
   inputHeight?: number;
 };
 
-export type NumberInputProps = BaseProps<number> & { step?: number };
+export type NumberInputProps = BaseProps<number> & {
+  step?: number;
+};
 
 export function NumberInput(props: NumberInputProps) {
-  return <BaseInput {...props} valueType="number" />;
+  return <BaseInput<number> {...props} valueType="number" />;
 }
 
 export type DateInputProps = BaseProps<string>;
 
 export function DateInput(props: DateInputProps) {
-  return <BaseInput {...props} valueType="date" />;
+  return <BaseInput<string> {...props} valueType="date" />;
 }
 
-type BaseInputProps =
-  | (NumberInputProps & {
-      valueType: 'number';
-    })
-  | (DateInputProps & {
-      valueType: 'date'; // another possibility is 'datetime-local', but the Material UI TextField doesn't provide a date picker
-    });
+type NumberInputPropsInternal<M extends NumberOrDate> = BaseProps<M> & {
+  valueType: 'number';
+  step?: number;
+};
+
+type DateInputPropsInternal<M extends NumberOrDate> = BaseProps<M> & {
+  valueType: 'date';
+};
 
 /**
  * Input field taking a value we can do < > <= => comparisons with
@@ -75,49 +78,37 @@ type BaseInputProps =
  * intermediate values. We use a local state variable to track the input's
  * actual value.
  */
-function BaseInput({
-  value,
-  minValue,
-  maxValue,
-  validator,
-  required = false,
-  onValueChange,
-  label,
-  valueType,
-  containerStyles,
-  displayRangeViolationWarnings = true,
-  disabled = false,
-  applyWarningStyles = false,
-  // default value is 36.5
-  inputHeight = 36.5,
-  ...props
-}: BaseInputProps) {
+function BaseInput<M extends NumberOrDate>(
+  props: NumberInputPropsInternal<M> | DateInputPropsInternal<M>
+) {
+  const {
+    value,
+    minValue,
+    maxValue,
+    validator,
+    required = false,
+    onValueChange,
+    label,
+    valueType,
+    containerStyles,
+    displayRangeViolationWarnings = true,
+    disabled = false,
+    applyWarningStyles = false,
+    inputHeight = 36.5,
+  } = props;
+
   if (validator && (required || minValue != null || maxValue != null))
     console.log(
       'WARNING: NumberInput or DateInput will ignore props required, minValue and/or maxValue because validator was provided.'
     );
 
-  const [localValue, setLocalValue] = useState<NumberOrDate | undefined>(value);
-  const [focused, setFocused] = useState(false);
+  const [localValue, setLocalValue] = useState(value);
   const [errorState, setErrorState] = useState({
     error: false,
     helperText: '',
   });
 
-  const classes = makeStyles({
-    root: {
-      height: inputHeight, // default height is 56 and is waaaay too tall
-      // 34.5 is the height of the reset button, but 36.5 lines up better
-      // set width for date
-      width: valueType === 'date' ? 165 : '',
-    },
-    notchedOutline: applyWarningStyles
-      ? {
-          borderColor: warning[500],
-          borderWidth: 3,
-        }
-      : {},
-  })();
+  const classes = useStyles({ inputHeight, valueType, applyWarningStyles });
 
   const debouncedOnChange = useMemo(
     () => debounce(onValueChange, 500),
@@ -127,50 +118,49 @@ function BaseInput({
   // Cancel pending onChange request when this component is unmounted.
   useEffect(() => debouncedOnChange.cancel, []);
 
-  const _validator =
-    validator ??
-    useCallback(
-      (newValue?: NumberOrDate): { validity: boolean; message: string } => {
-        if (newValue == null) {
-          return {
-            validity: !required,
-            message: required ? `Please enter a ${valueType}.` : '',
-          };
-        }
-        if (minValue != null && newValue < minValue) {
-          return {
-            validity: false,
-            message: `Sorry, value can't go below ${minValue}!`,
-          };
-        } else if (maxValue != null && newValue > maxValue) {
-          return {
-            validity: false,
-            message: `Sorry, value can't go above ${maxValue}!`,
-          };
-        } else if (
-          minValue != null &&
-          newValue === minValue &&
-          maxValue != null &&
-          newValue === maxValue
-        ) {
-          return {
-            validity: false,
-            message: `Sorry, min and max values can't be the same!`,
-          };
-        } else {
-          return { validity: true, message: '' };
-        }
-      },
-      [required, minValue, maxValue]
-    );
+  const defaultValidator = useCallback(
+    (newValue?: M): { validity: boolean; message: string } => {
+      if (newValue == null) {
+        return {
+          validity: !required,
+          message: required ? `Please enter a ${valueType}.` : '',
+        };
+      }
+      if (minValue != null && newValue < minValue) {
+        return {
+          validity: false,
+          message: `Sorry, value can't go below ${minValue}!`,
+        };
+      } else if (maxValue != null && newValue > maxValue) {
+        return {
+          validity: false,
+          message: `Sorry, value can't go above ${maxValue}!`,
+        };
+      } else if (
+        minValue != null &&
+        newValue === minValue &&
+        maxValue != null &&
+        newValue === maxValue
+      ) {
+        return {
+          validity: false,
+          message: `Sorry, min and max values can't be the same!`,
+        };
+      } else {
+        return { validity: true, message: '' };
+      }
+    },
+    [required, minValue, maxValue, valueType]
+  );
 
   const boundsCheckedValue = useCallback(
-    (newValue?: NumberOrDate) => {
+    (newValue?: M) => {
+      const _validator = validator ?? defaultValidator;
       const { validity, message } = _validator(newValue);
       setErrorState({ error: message !== '', helperText: message });
       return validity;
     },
-    [_validator]
+    [validator, defaultValidator]
   );
 
   // Handle incoming value changes (including changes in minValue/maxValue, which affect boundsCheckedValue)
@@ -185,8 +175,8 @@ function BaseInput({
         event.target.value === ''
           ? undefined
           : valueType === 'number'
-          ? Number(event.target.value)
-          : String(event.target.value);
+          ? (Number(event.target.value) as M)
+          : (String(event.target.value) as M);
       setLocalValue(newValue);
       const isValid = boundsCheckedValue(newValue);
       if (isValid) {
@@ -196,18 +186,13 @@ function BaseInput({
         debouncedOnChange.flush();
       }
     },
-    [boundsCheckedValue, debouncedOnChange]
+    [boundsCheckedValue, debouncedOnChange, valueType]
   );
-
-  const step =
-    valueType === 'number' && 'step' in props ? props.step : undefined;
 
   return (
     <div
       // containerStyles is not used here - but bin control uses this!
       style={{ ...containerStyles }}
-      onMouseOver={() => setFocused(true)}
-      onMouseOut={() => setFocused(false)}
     >
       {label && (
         <Typography
@@ -220,13 +205,17 @@ function BaseInput({
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <TextField
           InputProps={{ classes }}
-          inputProps={{ step }}
+          inputProps={{
+            step: isNumberInput(props) ? props.step : undefined,
+          }}
           value={
             localValue == null
               ? ''
               : valueType === 'number'
               ? localValue
-              : (localValue as string)?.substr(0, 10) // MUI date picker can't handle date-times
+              : typeof localValue === 'string'
+              ? localValue.substr(0, 10)
+              : '' // MUI date picker can't handle date-times
           }
           type={valueType}
           variant="outlined"
@@ -240,3 +229,26 @@ function BaseInput({
     </div>
   );
 }
+
+function isNumberInput<M extends NumberOrDate>(
+  props: NumberInputPropsInternal<M> | DateInputPropsInternal<M>
+): props is NumberInputPropsInternal<M> {
+  return props.valueType === 'number';
+}
+
+interface StyleProps {
+  inputHeight: number;
+  valueType: 'date' | 'number';
+  applyWarningStyles?: boolean;
+}
+
+const useStyles = makeStyles({
+  root: {
+    height: (props: StyleProps) => props.inputHeight,
+    width: (props: StyleProps) => (props.valueType === 'date' ? 165 : ''),
+  },
+  notchedOutline: (props: StyleProps) =>
+    props.applyWarningStyles
+      ? { borderColor: warning[500], borderWidth: 3 }
+      : {},
+});
