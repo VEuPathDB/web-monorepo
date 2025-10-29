@@ -76,29 +76,93 @@ type PresetNotebook = {
 // Note - Using differential abundance as practice for differential expression
 // Note - boxplot notebook has no plan for use yet, just good for testing.
 export const presetNotebooks: Record<string, PresetNotebook> = {
-  differentialAbundanceNotebook: {
-    name: 'differentialabundance',
-    displayName: 'Differential Abundance Notebook',
-    projects: ['MicrobiomeDB'],
+  differentialExpressionNotebook: {
+    name: 'differentialexpression',
+    displayName: 'Differential Expression Notebook',
+    projects: ['PlasmoDB'],
     cells: [
       {
+        type: 'subset',
+        title: 'Select samples (optional)',
+        helperText: (
+          <NumberedHeader
+            number={0}
+            text={'Optionally refine samples for differential expression.'}
+            color={colors.grey[800]}
+          />
+        ),
+      },
+      {
         type: 'compute',
-        title: 'Differential Abundance',
-        computationName: 'differentialabundance',
-        computationId: 'diff_1',
+        title: 'Setup DESeq2 Computation',
+        computationName: 'differentialexpression',
+        computationId: 'de_1',
+        helperText: (
+          <NumberedHeader
+            number={1}
+            text={
+              'Run a differential expression analysis using DESeq2.Please choose the metadata variable for comparison, and then set up the reference and comparison groups. When all selections have been made, we can run the computation.'
+            }
+            color={colors.grey[800]}
+          />
+        ),
         cells: [
           {
             type: 'visualization',
-            title: 'Volcano Plot',
+            title: 'Examine DESeq2 Results with Volcano Plot',
             visualizationName: 'volcanoplot',
             visualizationId: 'volcano_1',
+            helperText: (
+              <NumberedHeader
+                number={2}
+                text={
+                  'Once the DESeq2 results are ready, a volcano plot will appear below. Set the threshold lines to color the genes based on their significance and fold change.'
+                }
+                color={colors.grey[800]}
+              />
+            ),
+          },
+          {
+            type: 'text',
+            title: 'Review and run search',
+            helperText: (
+              <NumberedHeader
+                number={3}
+                text={
+                  'After identifying genes of interest from the volcano plot, we can run a gene search to review the genes in the Gene Search Results table.'
+                }
+                color={colors.grey[800]}
+              />
+            ),
+            text: (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.5rem',
+                }}
+              >
+                <h4>
+                  Clicking "Get Answer" below will return genes that meet the
+                  following criteria:
+                </h4>
+                <span style={{ fontStyle: 'italic', color: colors.grey[800] }}>
+                  Adjust these parameters in the above cells
+                </span>
+                <span>
+                  Absolute effect size: <strong>1</strong>
+                </span>
+                <span>
+                  Unadjusted P-value: <strong>0.01</strong>
+                </span>
+                <span>
+                  Gene regulation direction:{' '}
+                  <strong>Up and down regulated</strong>
+                </span>
+              </div>
+            ),
           },
         ],
-      },
-      {
-        type: 'text',
-        title: 'Text Cell',
-        text: 'This is a text cell for the differential abundance notebook.',
       },
     ],
   },
