@@ -20,6 +20,7 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { VariableCollectionSingleSelect } from '../../variableSelectors/VariableCollectionSingleSelect';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { entityTreeToArray } from '../../../utils/study-metadata';
+import { InputSpec } from '../../visualizations/InputVariables';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -52,7 +53,7 @@ export const plugin: ComputationPlugin = {
             return {
               entityId: config.collectionVariable.entityId,
               placeholderDisplayName: 'PCA Axis 1',
-              variableId: 'Axis1',
+              variableId: 'PC1',
             };
           }
         },
@@ -64,7 +65,7 @@ export const plugin: ComputationPlugin = {
             return {
               entityId: config.collectionVariable.entityId,
               placeholderDisplayName: 'PCA Axis 2',
-              variableId: 'Axis2',
+              variableId: 'PC2',
             };
           }
         },
