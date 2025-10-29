@@ -57,7 +57,7 @@ jobs:
           fi
       - uses: JS-DevTools/npm-publish@v2
         with:
-          token: ${{ secrets.NPM_TOKEN }}
+          # use verified publisher; token: ${{ secrets.NPM_TOKEN }}
           access: public
           package: packages/sites/${{ matrix.dir }}/package.json
           tag: ${{ env.npm_tag }}
