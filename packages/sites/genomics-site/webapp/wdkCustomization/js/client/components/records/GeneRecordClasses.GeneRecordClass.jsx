@@ -164,8 +164,8 @@ function Shortcuts(props) {
                 includeImageMap={true}
               />
             ),
-            displayName:
-              recordClass.attributesMap[context.gbrowse_url].displayName,
+            displayName: 'pepe',
+            //recordClass.attributesMap[context.gbrowse_url].displayName,
           })
     )
     .toArray();
