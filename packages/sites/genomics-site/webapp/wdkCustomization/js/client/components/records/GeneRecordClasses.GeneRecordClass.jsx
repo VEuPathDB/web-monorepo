@@ -28,6 +28,7 @@ import { preorderSeq } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 import DatasetGraph from '@veupathdb/web-common/lib/components/DatasetGraph';
 import { EdaDatasetGraph } from '@veupathdb/web-common/lib/components/EdaDatasetGraph';
+import { ClustalAlignmentForm } from '@veupathdb/web-common/lib/components';
 import { ExternalResourceContainer } from '@veupathdb/web-common/lib/components/ExternalResource';
 import Sequence from '@veupathdb/web-common/lib/components/records/Sequence';
 import { isNodeOverflowing } from '@veupathdb/web-common/lib/util/domUtils';
@@ -1592,8 +1593,14 @@ class OrthologsForm extends SortKeyTable {
         />
       );
     } else {
+      // TODO: Discuss how to retain "large flanking region" warning in the modal
+      // Original message: "Please note: selecting a large flanking region or a large number of sequences will take several minutes to align."
       return (
-        <form action="/cgi-bin/isolateAlignment" target="_blank" method="post">
+        <ClustalAlignmentForm
+          action="/cgi-bin/isolateAlignment"
+          sequenceCount={this.state.selectedRowIds.length + 1}
+          sequenceType="genes"
+        >
           <input type="hidden" name="type" value="geneOrthologs" />
           <input type="hidden" name="project_id" value={projectId} />
           <input type="hidden" name="gene_ids" value={source_id} />
@@ -1616,10 +1623,6 @@ class OrthologsForm extends SortKeyTable {
               Select sequence type for Clustal Omega multiple sequence
               alignment:
             </b>
-          </p>
-          <p>
-            Please note: selecting a large flanking region or a large number of
-            sequences will take several minutes to align.
           </p>
           <div id="userOptions">
             {is_protein && (
@@ -1684,7 +1687,7 @@ class OrthologsForm extends SortKeyTable {
             </p>
             <input type="submit" value="Run Clustal Omega for selected genes" />
           </div>
-        </form>
+        </ClustalAlignmentForm>
       );
     }
   }
