@@ -6,22 +6,47 @@ interface ClustalAlignmentFormProps {
   sequenceCount: number;
   children: React.ReactNode;
   sequenceType?: string;
+  warnThreshold?: number | ((form: HTMLFormElement) => number);
+  blockThreshold?: number | ((form: HTMLFormElement) => number);
 }
 
-const WARN_THRESHOLD = 50;
-const BLOCK_THRESHOLD = 1000;
+const DEFAULT_WARN_THRESHOLD = 50;
+const DEFAULT_BLOCK_THRESHOLD = 1000;
 
 export default function ClustalAlignmentForm({
   action,
   sequenceCount,
   children,
   sequenceType = 'sequences',
+  warnThreshold,
+  blockThreshold,
 }: ClustalAlignmentFormProps) {
   const [showModal, setShowModal] = useState(false);
+  const [evaluatedWarnThreshold, setEvaluatedWarnThreshold] =
+    useState<number | null>(null);
+  const [evaluatedBlockThreshold, setEvaluatedBlockThreshold] =
+    useState<number | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    // Evaluate thresholds dynamically if they're functions
+    const actualWarn =
+      typeof warnThreshold === 'function'
+        ? formRef.current
+          ? warnThreshold(formRef.current)
+          : DEFAULT_WARN_THRESHOLD
+        : warnThreshold ?? DEFAULT_WARN_THRESHOLD;
+    const actualBlock =
+      typeof blockThreshold === 'function'
+        ? formRef.current
+          ? blockThreshold(formRef.current)
+          : DEFAULT_BLOCK_THRESHOLD
+        : blockThreshold ?? DEFAULT_BLOCK_THRESHOLD;
+
+    setEvaluatedWarnThreshold(actualWarn);
+    setEvaluatedBlockThreshold(actualBlock);
     setShowModal(true);
   };
 
@@ -36,9 +61,13 @@ export default function ClustalAlignmentForm({
     setShowModal(false);
   };
 
-  const isBlocked = sequenceCount > BLOCK_THRESHOLD;
+  const isBlocked =
+    evaluatedBlockThreshold !== null && sequenceCount > evaluatedBlockThreshold;
   const showWarning =
-    sequenceCount > WARN_THRESHOLD && sequenceCount <= BLOCK_THRESHOLD;
+    evaluatedWarnThreshold !== null &&
+    evaluatedBlockThreshold !== null &&
+    sequenceCount > evaluatedWarnThreshold &&
+    sequenceCount <= evaluatedBlockThreshold;
 
   return (
     <>
@@ -108,8 +137,8 @@ export default function ClustalAlignmentForm({
               , which exceeds the maximum limit.
               <br />
               <br />
-              Please reduce your selection to fewer than {BLOCK_THRESHOLD}{' '}
-              {sequenceType} to proceed.
+              Please reduce your selection to fewer than{' '}
+              {evaluatedBlockThreshold} {sequenceType} to proceed.
             </p>
           )}
 
