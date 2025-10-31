@@ -1,26 +1,23 @@
-import React from "react";
-
-import {
-  cx,
-  InputConstructor,
-  RecordListProps,
-  RecordUpdater,
-  newObjectInputUpdater,
-} from "./component-utils";
+import { MouseEvent, ReactElement } from "react";
+import { cx, InputConstructor } from "./component-utils";
 import { DatasetHyperlink } from "../../Service/Types";
 import { FieldLabel } from "./FieldLabel";
 import { TextArea, TextBox } from "@veupathdb/wdk-client/lib/Components";
 import { InputList } from "./InputList";
 import { TrashButton } from "./common-components";
+import { FieldSetter } from "../FormTypes";
+import { ListSectionProps } from "../UploadForm";
 
-
-function inputFactory(updater: RecordUpdater<DatasetHyperlink>): InputConstructor<DatasetHyperlink> {
+function inputFactory(updater: FieldSetter<DatasetHyperlink[]>): InputConstructor<DatasetHyperlink> {
   return (record, index) => {
-    const updateRef = newObjectInputUpdater(index, updater);
-    const onRemove = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const replaceFn = function <K extends keyof DatasetHyperlink>(key: K, value: DatasetHyperlink[K]) {
+      updater(dois => dois?.map((d, i) => i === index ? { ...d, [key]: value } : d));
+    };
+
+    const onRemove = (event: MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
-      updater((prev) => prev.filter((_, i) => i !== index));
-    }
+      updater(prev => prev?.filter((_, i) => i !== index));
+    };
 
     return (
       <div className={cx("--NestedInputContainer")}>
@@ -37,14 +34,14 @@ function inputFactory(updater: RecordUpdater<DatasetHyperlink>): InputConstructo
             placeholder="URL"
             required
             value={record.url}
-            onChange={value => updateRef("url", value)}
+            onChange={value => replaceFn("url", value)}
           />
 
           <FieldLabel>Description</FieldLabel>
           <TextArea
             id={`dataset-externals-hyperlink-desc-${index}`}
             value={record.description}
-            onChange={value => updateRef("description", value)}
+            onChange={value => replaceFn("description", value)}
           />
         </div>
       </div>
@@ -52,13 +49,13 @@ function inputFactory(updater: RecordUpdater<DatasetHyperlink>): InputConstructo
   };
 }
 
-export function HyperlinkInputList(props: RecordListProps<DatasetHyperlink>): React.ReactElement {
+export function HyperlinkInputList(props: ListSectionProps<DatasetHyperlink>): ReactElement {
   return InputList({
+    ...props,
     header: "Hyperlink References",
     addRecordText: "Add Hyperlink",
     className: "externalIdentifiersFormSection",
     subclass: "hyperlinks",
     factory: inputFactory,
-    ...props
   });
 }

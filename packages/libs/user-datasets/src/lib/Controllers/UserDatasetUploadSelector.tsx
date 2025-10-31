@@ -22,16 +22,16 @@ import { assertIsVdiCompatibleWdkService } from "../Service";
 import { NotFoundController } from "@veupathdb/wdk-client/lib/Controllers";
 import { UploadFormMenu } from "../Components/UploadFormMenu";
 import { UploadFormConfig } from "../Components/FormTypes";
-import { projectId } from "@veupathdb/web-common/lib/config";
 import { ServiceConfiguration } from "../Service/Types/service-types";
-import { EnabledDatasetTypeName } from "@veupathdb/web-common/src/user-dataset-upload-config";
+import { EnabledDatasetType, uploadTypeConfigs } from "@veupathdb/web-common/src/user-dataset-upload-config";
+import { EnabledUploadPageConfig } from "../Utils/types";
+import { uploadTypeConfig } from "@veupathdb/web-common/lib/user-dataset-upload-config";
 
-const SUPPORTED_FILE_UPLOAD_TYPES: string[] = [];
 
 interface Props {
   readonly baseUrl: string;
-  readonly typeName?: EnabledDatasetTypeName;
-  readonly enabledFormConfigs: UploadFormConfig[];
+  readonly typeName?: EnabledDatasetType;
+  readonly enabledFormConfig: EnabledUploadPageConfig;
   readonly urlParams: Record<string, string>;
   readonly vdiConfig: ServiceConfiguration;
 }
@@ -40,14 +40,14 @@ export default function UserDatasetUploadSelector(props: Props) {
   const {
     baseUrl,
     typeName,
-    enabledFormConfigs,
+    enabledFormConfig,
     urlParams,
   } = props;
 
-  if (typeName == null && enabledFormConfigs.length !== 1)
-    return <UploadFormMenu availableTypes={enabledFormConfigs}/>;
+  if (typeName == null && enabledFormConfig.availableUploadTypes.length !== 1)
+    return <UploadFormMenu availableTypes={uploadTypeConfigs(props.vdiConfig, enabledFormConfig.availableUploadTypes)}/>;
 
-  const formConfig = enabledFormConfigs.find(({ datasetType }) => datasetType.name === typeName);
+  const formConfig = enabledFormConfig.availableUploadTypes.find(installer => installer.type.name === typeName);
 
   if (formConfig == null)
     return <NotFoundController/>;
@@ -55,8 +55,9 @@ export default function UserDatasetUploadSelector(props: Props) {
   return (
     <InnerUserDatasetUploadController
       baseUrl={baseUrl}
-      formConfig={formConfig}
+      formConfig={uploadTypeConfig(formConfig)}
       urlParams={urlParams}
+      vdiConfig={props.vdiConfig}
     />
   );
 }
@@ -72,6 +73,7 @@ function InnerUserDatasetUploadController({
   baseUrl,
   formConfig,
   urlParams,
+  vdiConfig,
 }: InnerProps) {
   useSetDocumentTitle(formConfig.uploadTitle);
 
@@ -141,13 +143,12 @@ function InnerUserDatasetUploadController({
     [ dispatch ],
   );
 
-  return SUPPORTED_FILE_UPLOAD_TYPES == null || strategyOptions == null
+  return strategyOptions == null
     ? <Loading/>
     : <div className="stack">
       <UploadForm
         baseUrl={baseUrl}
-        uploadConfig={formConfig}
-        projectId={projectId}
+        formConfig={formConfig}
         badUploadMessage={badUploadMessage}
         clearBadUpload={clearBadUploadMessage}
         submitForm={submitForm}
@@ -156,8 +157,7 @@ function InnerUserDatasetUploadController({
         urlParams={urlParams}
         strategyOptions={strategyOptions}
         resultUploadConfig={strategyUpload}
-        supportedFileUploadTypes={SUPPORTED_FILE_UPLOAD_TYPES}
-        maxSizeBytes={uploadMethod?.asKind("file")?.maxSizeBytes}
+        vdiConfig={vdiConfig}
       />
     </div>;
 }

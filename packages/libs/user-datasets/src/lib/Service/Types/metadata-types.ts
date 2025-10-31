@@ -12,6 +12,7 @@ export const visibilityEnum = io.union([
   io.literal("private"),
   io.literal("protected"),
   io.literal("public"),
+  io.literal("controlled"),
 ]);
 export type DatasetVisibility = io.TypeOf<typeof visibilityEnum>;
 

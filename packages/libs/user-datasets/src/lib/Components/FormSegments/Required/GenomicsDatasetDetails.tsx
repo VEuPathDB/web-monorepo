@@ -1,102 +1,73 @@
-// Study name | Dataset name
-// summary
-// reference genome
-// data file | url
-// accessibility
-// design + type
-// data type
-// approval type
-// review period
-
-import { HTMLAttributes, ReactElement, ReactNode, useState } from "react";
-import { FileInput, RadioList, TextBox } from "@veupathdb/wdk-client/lib/Components";
-import { VariableDisplayText } from "../../FormTypes";
-import {
-  ExtendedDatasetVisibility,
-  RequiredHeader,
-  RequiredInformationProps,
-  VisibilityRadio
-} from "./common";
+import React, { HTMLAttributes, ReactElement, ReactNode } from "react";
+import { TextBox } from "@veupathdb/wdk-client/lib/Components";
+import { RequiredHeader, RequiredInformationProps } from "./common";
+import { UploadSection } from "../DataInputs";
+import { DataUploadType, UploadFormConfig } from "../../FormTypes";
+import { UrlParams } from "../../FormTypes/form-config";
+import { rootValueSelector } from "../../../Utils/field-selectors";
+import { VisibilityRadio } from "../DataInputs/VisibilityRadio";
+import { DatasetVisibility } from "../../../Service/Types";
+import { StrategySummary } from "@veupathdb/wdk-client/lib/Utils/WdkUser";
 
 
-// FIXME: Move this function to wherever the route is decided!
-export function newGenomicsDisplayText(): VariableDisplayText {
-  return {
-    datasetNameLabel: "Data set name",
-    summaryPlaceholder: "Provide a concise summary of the data set (max 400 characters)."
-  };
-}
+export function GenomicsDatasetDetails({
+  formConfig,
+  displayText: { formDisplay: { requiredInfo: formDisplayText } },
+  vdiConfig,
+  urlParams,
+  strategyOptions,
+  resultUploadConfig,
+  metaFormState: [ inputValues, setInputValues ],
+  dataUploadState,
+  docFileState: [ docUploads, setDocUploads ],
+}: RequiredInformationProps): ReactElement {
+  const visibilityOptions: DatasetVisibility[] = [ "private", "public" ];
 
-const visibilityOptions = [ "private", "public" ] as ExtendedDatasetVisibility[];
-
-function GenomicsDatasetDetails({ config }: RequiredInformationProps): ReactElement {
-  const displayText = config.displayText;
-
-  const [ name, setName ] = useState<string>();
-  const [ summary, setSummary ] = useState<string>();
-  const [ visibility, setVisibility ] = useState<ExtendedDatasetVisibility>("private")
-
-  const [ useFile, setUseFile ] = useState(true);
+  const uploadMethodItems = urlParams.useFixedUploadMethod === "true"
+    ? <></>
+    : UploadSection({ formConfig, resultUploadConfig, strategyOptions, urlParams });
 
   return <div className="requiredFields">
-    <RequiredHeader/>
+    <RequiredHeader displayText={formDisplayText}/>
 
     <LabeledTextInput
       id="dataset-name"
-      label={displayText.datasetNameLabel}
-      value={name}
-      onChange={setName}
+      label={formDisplayText.nameFieldLabel}
       required={true}
+      {...rootValueSelector("name", datasetMeta, setDatasetMeta)}
     />
 
     <LabeledTextInput
       id="dataset-summary"
-      label="Summary"
-      value={summary}
-      onChange={setSummary}
-      placeholder={displayText.summaryPlaceholder}
+      label={formDisplayText.summaryFieldLabel}
+      placeholder={formDisplayText.summaryPlaceholder}
       required={true}
+      {...rootValueSelector("summary", datasetMeta, setDatasetMeta)}
     />
 
     {
-      config.dependencies
+      formConfig.dependencies
         ? <div className="datasetDependencies">
           <label>Reference genome</label>
-          {config.dependencies.render({
+          {formConfig.dependencies.render({
             value: [],
-            onChange: v => {}
+            onChange: v => {},
           })}
         </div>
         : null
     }
 
-    <div>
-      {
-        useFile
-          ? <>
-            <label>Upload a file</label>
-            {/*<FileInput*/}
-            {/*/>*/}
-            <span className="uploadToUrlToggle">Or provide a <button onClick={() => setUseFile(false)}>link from the web</button>.</span>
-          </>
-          : <>
-            <label>Link from the web</label>
-            {/*<TextBox />*/}
-            <span className="uploadToUrlToggle"> | <button onClick={() => setUseFile(true)}>Cancel</button></span>
-          </>
-      }
-    </div>
+    {uploadMethodItems}
 
     <VisibilityRadio
       fieldName="dataset-visibility"
-      onChange={setVisibility}
-      value={visibility}
       enabledVisibilities={visibilityOptions}
+      {...rootValueSelector("visibility", datasetMeta, setDatasetMeta)}
     />
   </div>;
 }
 
-interface LabeledTextInputProps extends Omit<HTMLAttributes<string>, 'onChange'> {
+interface LabeledTextInputProps extends Omit<HTMLAttributes<string>, "onChange"> {
   readonly id: string;
   readonly label: NonNullable<ReactNode>;
 
@@ -117,7 +88,7 @@ function LabeledTextInput({
 }: LabeledTextInputProps): ReactElement {
   return <LabeledInput {...props}>
     <TextBox {...{ id, value, onChange, placeholder, required }}/>
-  </LabeledInput>
+  </LabeledInput>;
 }
 
 interface LabeledInputProps extends HTMLAttributes<any> {
@@ -130,4 +101,28 @@ function LabeledInput({ label, children, ...props }: LabeledInputProps): ReactEl
     <label htmlFor={children.props.id}>{label}</label>
     {children}
   </div>;
+}
+
+function initialUploadMode(
+  config: UploadFormConfig,
+  urlParams: UrlParams,
+  strategyOptions: StrategySummary[],
+): DataUploadType {
+  if (urlParams.datasetStrategyRootStepId) {
+    const displayStrategyUpload = config.uploadMethodConfigs
+      .some(c => c.asKind(DataUploadType.Result)?.offerStrategyUpload === true);
+
+    if (displayStrategyUpload && strategyOptions.length > 0)
+      return DataUploadType.Result;
+  }
+
+  if (urlParams.datasetUrl) {
+    const displayUrlUpload = config.uploadMethodConfigs
+      .some(c => c.asKind(DataUploadType.URL)?.offer === true)
+
+    if (displayUrlUpload)
+      return DataUploadType.URL;
+  }
+
+  return DataUploadType.SingleFile;
 }

@@ -8,6 +8,7 @@ export const partialDatasetType = io.type({
   name: io.string,
   version: io.string,
 });
+export type PartialDatasetType = io.TypeOf<typeof partialDatasetType>;
 
 export const userInfo = io.intersection([
   io.type({ userId: io.number }),
@@ -18,7 +19,7 @@ export const userInfo = io.intersection([
     affiliation: io.string,
   }),
 ]);
-export type VdiUserInfo = io.TypeOf<typeof userInfo>;
+export type UserInfo = io.TypeOf<typeof userInfo>;
 
 // region Status Types
 
@@ -38,6 +39,7 @@ const installStatusEnum = io.union([
   io.literal("ready-for-reinstall"),
   io.literal("missing-dependency"),
 ]);
+export type InstallStatusEnum = io.TypeOf<typeof installStatusEnum>
 
 const installStatusEntry = io.intersection([
   io.type({
@@ -66,6 +68,7 @@ export const shareOfferActionEnum = io.union([
   io.literal("grant"),
   io.literal("revoke"),
 ]);
+export type ShareOfferAction = io.TypeOf<typeof shareOfferActionEnum>;
 
 export const shareReceiptActionEnum = io.union([
   io.literal("accept"),
@@ -181,9 +184,12 @@ const daemonConfigurations = io.type({
 
 export type DaemonConfigurationIndex = io.TypeOf<typeof daemonConfigurations>;
 
+const serviceFeatures = io.type({ supportedArchiveTypes: io.array(io.string) });
+
 export const serviceConfiguration = io.type({
   api: restServerConfiguration,
   daemons: daemonConfigurations,
+  features: serviceFeatures,
 });
 
 export type ServiceConfiguration = io.TypeOf<typeof serviceConfiguration>;

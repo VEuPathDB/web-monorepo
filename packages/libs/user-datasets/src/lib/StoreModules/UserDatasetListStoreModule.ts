@@ -1,11 +1,11 @@
-import { difference, omit } from 'lodash';
+import { difference, omit } from "lodash";
 
 import {
   Action,
   LIST_LOADING,
   LIST_RECEIVED,
   LIST_ERROR_RECEIVED,
-  DETAIL_UPDATE_SUCCESS,
+  LIST_UPDATE_SUCCESS,
   DETAIL_REMOVE_SUCCESS,
   SHARING_SUCCESS,
   PROJECT_FILTER,
@@ -16,11 +16,11 @@ import {
   updateDatasetCommunityVisibilityError,
   updateDatasetCommunityVisibilityPending,
   updateDatasetCommunityVisibilitySuccess,
-} from '../Actions/UserDatasetsActions';
+} from "../Actions/UserDatasetsActions";
 
-import { UserDataset } from '../Utils/types';
+import { DatasetListEntry } from "../Service/Types";
 
-export const key = 'userDatasetList';
+export const key = "userDatasetList";
 
 type SharingModalState = {
   sharingModalOpen: boolean;
@@ -34,27 +34,27 @@ type SharingModalState = {
 };
 
 type InitialState = SharingModalState & {
-  status: 'not-requested';
+  status: "not-requested";
 };
 
 type LoadingState = SharingModalState & {
-  status: 'loading';
+  status: "loading";
 };
 
 type ErrorState = SharingModalState & {
-  status: 'error';
+  status: "error";
   loadError: Error;
 };
 
 type ForbiddenState = SharingModalState & {
-  status: 'forbidden';
+  status: "forbidden";
   loadError: Error;
 };
 
 type CompleteState = SharingModalState & {
-  status: 'complete';
+  status: "complete";
   userDatasets: Array<string | number>;
-  userDatasetsById: Record<string, { isLoading: false; resource: UserDataset }>;
+  userDatasetsById: Record<string, { isLoading: false; resource: DatasetListEntry }>;
   filterByProject: boolean;
 };
 
@@ -66,7 +66,7 @@ export type State =
   | CompleteState;
 
 const initialState: State = {
-  status: 'not-requested',
+  status: "not-requested",
   sharingModalOpen: false,
   sharingDatasetPending: false,
   shareError: undefined,
@@ -82,61 +82,61 @@ export function reduce(state: State = initialState, action: Action): State {
     case LIST_LOADING:
       return {
         ...state,
-        status: 'loading',
+        status: "loading",
       };
 
     case LIST_RECEIVED:
       return {
         ...state,
-        status: 'complete',
+        status: "complete",
         filterByProject: action.payload.filterByProject,
-        userDatasets: action.payload.userDatasets.map((ud) => ud.id),
+        userDatasets: action.payload.userDatasets.map((ud) => ud.datasetId),
         userDatasetsById: action.payload.userDatasets.reduce(
           (uds, ud) =>
-            Object.assign(uds, { [ud.id]: { loading: false, resource: ud } }),
-          {} as CompleteState['userDatasetsById']
+            Object.assign(uds, { [ud.datasetId]: { loading: false, resource: ud } }),
+          {} as CompleteState["userDatasetsById"],
         ),
       };
 
     case LIST_ERROR_RECEIVED:
       return action.payload.error.statusCode === 403
         ? {
-            ...state,
-            status: 'forbidden',
-            loadError: action.payload.error,
-          }
+          ...state,
+          status: "forbidden",
+          loadError: action.payload.error,
+        }
         : {
-            ...state,
-            status: 'error',
-            loadError: action.payload.error,
-          };
+          ...state,
+          status: "error",
+          loadError: action.payload.error,
+        };
 
-    case DETAIL_UPDATE_SUCCESS:
-      return state.status === 'complete'
+    case LIST_UPDATE_SUCCESS:
+      return state.status === "complete"
         ? {
-            ...state,
-            userDatasetsById: {
-              ...state.userDatasetsById,
-              [action.payload.userDataset.id]: {
-                isLoading: false,
-                resource: action.payload.userDataset,
-              },
+          ...state,
+          userDatasetsById: {
+            ...state.userDatasetsById,
+            [action.payload.userDataset.datasetId]: {
+              isLoading: false,
+              resource: action.payload.userDataset,
             },
-          }
+          },
+        }
         : state;
 
     case DETAIL_REMOVE_SUCCESS:
-      return state.status === 'complete'
+      return state.status === "complete"
         ? {
-            ...state,
-            userDatasets: difference(state.userDatasets, [
-              action.payload.userDataset.id,
-            ]),
-            userDatasetsById: omit(
-              state.userDatasetsById,
-              action.payload.userDataset.id
-            ),
-          }
+          ...state,
+          userDatasets: difference(state.userDatasets, [
+            action.payload.userDataset.datasetId,
+          ]),
+          userDatasetsById: omit(
+            state.userDatasetsById,
+            action.payload.userDataset.datasetId,
+          ),
+        }
         : state;
 
     case SHARING_SUCCESS:
@@ -166,7 +166,7 @@ export function reduce(state: State = initialState, action: Action): State {
       };
 
     case PROJECT_FILTER: {
-      if (state.status === 'complete') {
+      if (state.status === "complete") {
         return {
           ...state,
           filterByProject: action.payload.filterByProject,
@@ -183,10 +183,10 @@ export function reduce(state: State = initialState, action: Action): State {
         ...(action.payload.isVisible
           ? {}
           : {
-              updateDatasetCommunityVisibilityError: undefined,
-              updateDatasetCommunityVisibilityPending: false,
-              updateDatasetCommunityVisibilitySuccess: false,
-            }),
+            updateDatasetCommunityVisibilityError: undefined,
+            updateDatasetCommunityVisibilityPending: false,
+            updateDatasetCommunityVisibilitySuccess: false,
+          }),
       };
     case updateDatasetCommunityVisibilityError.type:
       return {

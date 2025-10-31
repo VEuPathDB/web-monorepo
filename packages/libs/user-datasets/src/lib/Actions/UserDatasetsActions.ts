@@ -1,13 +1,13 @@
-import { get } from 'lodash';
+import { get } from "lodash";
 
 import {
   transitionToInternalPage,
   Action as RouteAction,
-} from '@veupathdb/wdk-client/lib/Actions/RouterActions';
+} from "@veupathdb/wdk-client/lib/Actions/RouterActions";
 import {
   updateUserPreference,
   PreferenceUpdateAction,
-} from '@veupathdb/wdk-client/lib/Actions/UserActions';
+} from "@veupathdb/wdk-client/lib/Actions/UserActions";
 import {
   EmptyAction,
   emptyAction,
@@ -15,21 +15,14 @@ import {
 
 import { validateVdiCompatibleThunk } from "../Service";
 
-import { FILTER_BY_PROJECT_PREF } from '../Utils/project-filter';
-import {
-  UserDatasetDetails,
-  UserDatasetMeta_UI,
-  UserDatasetVDI,
-  UserDatasetContact,
-  UserDatasetHyperlink,
-  UserDatasetPublication,
-} from '../Utils/types';
-import { FetchClientError } from '@veupathdb/http-utils';
+import { FILTER_BY_PROJECT_PREF } from "../Utils/project-filter";
+import { ShareContext } from "../Utils/types";
+import { FetchClientError } from "@veupathdb/http-utils";
 import {
   InferAction,
   makeActionCreator,
-} from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
-import { DatasetDetails, DatasetFileListResponse, DatasetListEntry } from "../Service/Types";
+} from "@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils";
+import { DatasetDetails, DatasetFileListResponse, DatasetListEntry, DatasetPatchRequest } from "../Service/Types";
 import { projectId } from "@veupathdb/web-common/lib/config";
 
 export type Action =
@@ -45,6 +38,9 @@ export type Action =
   | ListLoadingAction
   | ListErrorReceivedAction
   | ListReceivedAction
+  | ListUpdatingAction
+  | ListUpdateErrorAction
+  | ListUpdateSuccessAction
   | ProjectFilterAction
   | SharingDatasetPendingAction
   | SharingSuccessAction
@@ -52,9 +48,19 @@ export type Action =
   | SharingErrorAction
   | CommunityAction;
 
-//==============================================================================
+// region List Actions
 
-export const LIST_LOADING = 'user-datasets/list-loading';
+type ListAction =
+  | ListLoadingAction
+  | ListReceivedAction
+  | ListErrorReceivedAction
+  | ListUpdatingAction
+  | ListUpdateSuccessAction
+  | ListUpdateErrorAction;
+
+// region List Loading
+
+export const LIST_LOADING = "user-datasets/list-loading";
 
 export type ListLoadingAction = {
   type: typeof LIST_LOADING;
@@ -66,9 +72,33 @@ export function listLoading(): ListLoadingAction {
   };
 }
 
-//==============================================================================
+export function loadUserDatasetListWithoutLoadingIndicator() {
+  return validateVdiCompatibleThunk<ListAction>(({ wdkService }) =>
+    Promise.all([
+      wdkService.getCurrentUserPreferences().then(
+        (preferences) =>
+          get(preferences.global, FILTER_BY_PROJECT_PREF, "false") !== "false",
+        // ignore error and default to false
+        () => false,
+      ),
+      wdkService.vdiService.getDatasetList(projectId),
+    ])
+      .then(
+        ([ filterByProject, userDatasets ]) => listReceived(userDatasets, filterByProject),
+        listErrorReceived,
+      ),
+  );
+}
 
-export const LIST_RECEIVED = 'user-dataset/list-received';
+export function loadUserDatasetList() {
+  return [ listLoading(), loadUserDatasetListWithoutLoadingIndicator() ];
+}
+
+// endregion List Loading
+
+// region List Received
+
+export const LIST_RECEIVED = "user-dataset/list-received";
 
 export type ListReceivedAction = {
   type: typeof LIST_RECEIVED;
@@ -80,7 +110,7 @@ export type ListReceivedAction = {
 
 export function listReceived(
   userDatasets: DatasetListEntry[],
-  filterByProject: boolean
+  filterByProject: boolean,
 ): ListReceivedAction {
   return {
     type: LIST_RECEIVED,
@@ -91,9 +121,11 @@ export function listReceived(
   };
 }
 
-//==============================================================================
+// endregion List Received
 
-export const LIST_ERROR_RECEIVED = 'user-dataset/list-error';
+// region List Error Received
+
+export const LIST_ERROR_RECEIVED = "user-dataset/list-error";
 
 export type ListErrorReceivedAction = {
   type: typeof LIST_ERROR_RECEIVED;
@@ -103,7 +135,7 @@ export type ListErrorReceivedAction = {
 };
 
 export function listErrorReceived(
-  error: FetchClientError
+  error: FetchClientError,
 ): ListErrorReceivedAction {
   return {
     type: LIST_ERROR_RECEIVED,
@@ -113,29 +145,110 @@ export function listErrorReceived(
   };
 }
 
-//==============================================================================
+// endregion List Error Received
 
-export const DETAIL_LOADING = 'user-datasets/detail-loading';
+// region List Item Updating
+
+export const LIST_UPDATING = "user-datasets/list-updating";
+
+export interface ListUpdatingAction {
+  readonly type: typeof LIST_UPDATING;
+  readonly payload: {
+    readonly id: string
+  };
+}
+
+export function listUpdating(id: string): ListUpdatingAction {
+  return {
+    type: LIST_UPDATING,
+    payload: { id },
+  };
+}
+
+// endregion List Item Updating
+
+// region List Item Update Success
+
+export const LIST_UPDATE_SUCCESS = "user-datasets/list-update-success";
+
+export interface ListUpdateSuccessAction {
+  readonly type: typeof LIST_UPDATE_SUCCESS;
+  readonly payload: {
+    readonly userDataset: DatasetListEntry;
+  };
+}
+
+export function listUpdateSuccess(userDataset: DatasetListEntry): ListUpdateSuccessAction {
+  return {
+    type: LIST_UPDATE_SUCCESS,
+    payload: { userDataset },
+  };
+}
+
+// endregion List Item Update Success
+
+// region List Item Update Error
+
+export const LIST_UPDATE_ERROR = "user-datasets/list-update-error";
+
+export interface ListUpdateErrorAction {
+  readonly type: typeof LIST_UPDATE_ERROR;
+  readonly payload: {
+    readonly error: FetchClientError;
+  };
+}
+
+export function listUpdateError(error: FetchClientError): ListUpdateErrorAction {
+  return {
+    type: LIST_UPDATE_ERROR,
+    payload: { error },
+  };
+}
+
+// endregion List Item Update Error
+
+// endregion List Actions
+
+// region Detail Actions
+
+// region Detail Loading
+
+type DetailAction =
+  | DetailLoadingAction
+  | DetailReceivedAction
+  | DetailErrorAction;
+
+export const DETAIL_LOADING = "user-datasets/detail-loading";
 
 export type DetailLoadingAction = {
   type: typeof DETAIL_LOADING;
-  payload: {
-    id: string;
-  };
+  payload: { id: string; };
 };
 
 export function detailLoading(id: string): DetailLoadingAction {
   return {
     type: DETAIL_LOADING,
-    payload: {
-      id,
-    },
+    payload: { id },
   };
 }
 
-//==============================================================================
+export function loadUserDatasetDetailWithoutLoadingIndicator(id: string) {
+  return validateVdiCompatibleThunk<DetailAction>(({ wdkService }) =>
+    wdkService.vdiService.getDataset(id)
+      .then(
+        userDataset => detailReceived(id, userDataset),
+        (error: FetchClientError) => detailError(error),
+      ),
+  );
+}
 
-export const DETAIL_RECEIVED = 'user-datasets/detail-received';
+export function loadUserDatasetDetail(id: string) {
+  return [ detailLoading(id), loadUserDatasetDetailWithoutLoadingIndicator(id) ];
+}
+
+// region Detail Received
+
+export const DETAIL_RECEIVED = "user-datasets/detail-received";
 
 export type DetailReceivedAction = {
   type: typeof DETAIL_RECEIVED;
@@ -149,7 +262,7 @@ export type DetailReceivedAction = {
 export function detailReceived(
   id: string,
   userDataset?: DatasetDetails,
-  fileListing?: DatasetFileListResponse
+  fileListing?: DatasetFileListResponse,
 ): DetailReceivedAction {
   return {
     type: DETAIL_RECEIVED,
@@ -161,9 +274,11 @@ export function detailReceived(
   };
 }
 
-//==============================================================================
+// endregion Detail Loading
 
-export const DETAIL_ERROR = 'user-datasets/detail-error';
+// region Detail Error
+
+export const DETAIL_ERROR = "user-datasets/detail-error";
 
 export type DetailErrorAction = {
   type: typeof DETAIL_ERROR;
@@ -181,45 +296,64 @@ export function detailError(error: FetchClientError): DetailErrorAction {
   };
 }
 
-//==============================================================================
+// endregion Detail Error
 
-export const DETAIL_UPDATING = 'user-dataests/detail-updating';
+// endregion Detail Loading
+
+// region Detail Updating
+
+type UpdateAction =
+  | DetailUpdatingAction
+  | DetailUpdateSuccessAction
+  | DetailUpdateErrorAction;
+
+export const DETAIL_UPDATING = "user-dataests/detail-updating";
 
 export type DetailUpdatingAction = {
   type: typeof DETAIL_UPDATING;
 };
 
 export function detailUpdating(): DetailUpdatingAction {
-  return {
-    type: DETAIL_UPDATING,
-  };
+  return { type: DETAIL_UPDATING };
 }
 
-//==============================================================================
+export function updateUserDatasetDetail(
+  datasetId: string,
+  patchRequest: DatasetPatchRequest,
+) {
+  return validateVdiCompatibleThunk<UpdateAction>(({ wdkService }) => [
+    detailUpdating(),
+    wdkService
+      .vdiService
+      .patchDataset(datasetId, patchRequest)
+      .then(
+        () => detailUpdateSuccess(datasetId),
+        detailUpdateError,
+      ),
+  ]);
+}
 
-export const DETAIL_UPDATE_SUCCESS = 'user-datasets/detail-update-success';
+// region Detail Update Success
+
+export const DETAIL_UPDATE_SUCCESS = "user-datasets/detail-update-success";
 
 export type DetailUpdateSuccessAction = {
   type: typeof DETAIL_UPDATE_SUCCESS;
-  payload: {
-    userDataset: DatasetDetails;
-  };
+  payload: { id: string };
 };
 
-export function detailUpdateSuccess(
-  userDataset: DatasetDetails
-): DetailUpdateSuccessAction {
+export function detailUpdateSuccess(id: string): DetailUpdateSuccessAction {
   return {
     type: DETAIL_UPDATE_SUCCESS,
-    payload: {
-      userDataset,
-    },
+    payload: { id },
   };
 }
 
-//==============================================================================
+// endregion Detail Update Success
 
-export const DETAIL_UPDATE_ERROR = 'user-datasets/detail-update-error';
+// region Detail Update Error
+
+export const DETAIL_UPDATE_ERROR = "user-datasets/detail-update-error";
 
 export type DetailUpdateErrorAction = {
   type: typeof DETAIL_UPDATE_ERROR;
@@ -229,7 +363,7 @@ export type DetailUpdateErrorAction = {
 };
 
 export function detailUpdateError(
-  error: FetchClientError
+  error: FetchClientError,
 ): DetailUpdateErrorAction {
   return {
     type: DETAIL_UPDATE_ERROR,
@@ -239,45 +373,68 @@ export function detailUpdateError(
   };
 }
 
-//==============================================================================
+// endregion Detail Update Error
 
-export const DETAIL_REMOVING = 'user-datasets/detail-removing';
+// endregion Detail Updating
 
-export type DetailRemovingAction = {
-  type: typeof DETAIL_REMOVING;
-};
+// region Detail Removing
+
+type RemovalAction =
+  | DetailRemovingAction
+  | DetailRemoveSuccessAction
+  | DetailRemoveErrorAction;
+
+export const DETAIL_REMOVING = "user-datasets/detail-removing";
+
+export interface DetailRemovingAction {
+  readonly type: typeof DETAIL_REMOVING;
+}
 
 export function detailRemoving(): DetailRemovingAction {
-  return {
-    type: DETAIL_REMOVING,
-  };
+  return { type: DETAIL_REMOVING, };
 }
 
-//==============================================================================
+export function removeUserDataset(id: string, redirectTo?: string) {
+  return validateVdiCompatibleThunk<RemovalAction | EmptyAction | RouteAction>(
+    ({ wdkService }) => [
+      detailRemoving(),
+      wdkService
+        .vdiService
+        .deleteDataset(id)
+        .then(
+          () => [
+            detailRemoveSuccess(id),
+            typeof redirectTo === "string"
+              ? transitionToInternalPage(redirectTo)
+              : emptyAction,
+          ],
+          detailRemoveError,
+        ),
+    ],
+  );
+}
 
-export const DETAIL_REMOVE_SUCCESS = 'user-datasets/detail-remove-success';
+// region Detail Remove Success
 
-export type DetailRemoveSuccessAction = {
-  type: typeof DETAIL_REMOVE_SUCCESS;
-  payload: {
-    userDataset: DatasetDetails;
-  };
-};
+export const DETAIL_REMOVE_SUCCESS = "user-datasets/detail-remove-success";
 
-export function detailRemoveSuccess(
-  userDataset: DatasetDetails
-): DetailRemoveSuccessAction {
+export interface DetailRemoveSuccessAction {
+  readonly type: typeof DETAIL_REMOVE_SUCCESS;
+  readonly payload: { id: string };
+}
+
+export function detailRemoveSuccess(id: string): DetailRemoveSuccessAction {
   return {
     type: DETAIL_REMOVE_SUCCESS,
-    payload: {
-      userDataset,
-    },
+    payload: { id },
   };
 }
 
-//==============================================================================
+// endregion Detail Remove Success
 
-export const DETAIL_REMOVE_ERROR = 'user-datasets/detail-remove-error';
+// region Detail Remove Error
+
+export const DETAIL_REMOVE_ERROR = "user-datasets/detail-remove-error";
 
 export type DetailRemoveErrorAction = {
   type: typeof DETAIL_REMOVE_ERROR;
@@ -287,7 +444,7 @@ export type DetailRemoveErrorAction = {
 };
 
 export function detailRemoveError(
-  error: FetchClientError
+  error: FetchClientError,
 ): DetailRemoveErrorAction {
   return {
     type: DETAIL_REMOVE_ERROR,
@@ -297,9 +454,80 @@ export function detailRemoveError(
   };
 }
 
-//==============================================================================
+// endregion Detail Remove Error
 
-export const SHARING_DATASET_PENDING = 'user-datasets/sharing-dataset-pending';
+// endregion Detail Removing
+
+// endregion Detail Actions
+
+// region Sharing Actions
+
+export function shareUserDatasets(
+  datasetIds: string[],
+  recipientIds: number[],
+  context: ShareContext,
+) {
+  // here we're making an array of objects to help facilitate the sharing of multiple datasets with multiple users
+  const requests: { datasetId: string; recipientId: number }[] = [];
+  for (const datasetId of datasetIds) {
+    for (const recipientId of recipientIds) {
+      requests.push({ datasetId, recipientId });
+    }
+  }
+  return validateVdiCompatibleThunk<
+    | DetailAction
+    | ListAction
+    | SharingDatasetPendingAction
+    | SharingSuccessAction
+    | SharingErrorAction
+  >(({ wdkService }) => [
+    updateSharingDatasetPending(true),
+    Promise.all(requests.map(req =>
+      wdkService.vdiService.putShareOffer(req.datasetId, req.recipientId, "grant"),
+    ))
+      .then(
+        () =>
+          context === "datasetDetails"
+            ? [
+              loadUserDatasetDetailWithoutLoadingIndicator(datasetIds[0]),
+              sharingSuccess(true),
+            ]
+            : [
+              loadUserDatasetListWithoutLoadingIndicator(),
+              sharingSuccess(true),
+            ],
+        sharingError,
+      ),
+    updateSharingDatasetPending(false),
+  ]);
+}
+
+export function unshareUserDataset(
+  datasetId: string,
+  recipientId: number,
+  context: ShareContext,
+) {
+  return validateVdiCompatibleThunk<
+    DetailAction | ListAction | SharingDatasetPendingAction | SharingErrorAction
+  >(({ wdkService }) => [
+    updateSharingDatasetPending(true),
+    wdkService
+      .vdiService
+      .putShareOffer(datasetId, recipientId, "revoke")
+      .then(() => {
+        if (context === "datasetDetails") {
+          return loadUserDatasetDetailWithoutLoadingIndicator(datasetId);
+        } else {
+          return loadUserDatasetListWithoutLoadingIndicator();
+        }
+      }, sharingError),
+    updateSharingDatasetPending(false),
+  ]);
+}
+
+// region Share Pending
+
+export const SHARING_DATASET_PENDING = "user-datasets/sharing-dataset-pending";
 
 export type SharingDatasetPendingAction = {
   type: typeof SHARING_DATASET_PENDING;
@@ -309,7 +537,7 @@ export type SharingDatasetPendingAction = {
 };
 
 export function updateSharingDatasetPending(
-  sharingDatasetPending: boolean
+  sharingDatasetPending: boolean,
 ): SharingDatasetPendingAction {
   return {
     type: SHARING_DATASET_PENDING,
@@ -319,9 +547,11 @@ export function updateSharingDatasetPending(
   };
 }
 
-//==============================================================================
+// endregion Share Pending
 
-export const SHARING_SUCCESS = 'user-datasets/sharing-success';
+// region Share Success
+
+export const SHARING_SUCCESS = "user-datasets/sharing-success";
 
 export type SharingSuccessAction = {
   type: typeof SHARING_SUCCESS;
@@ -331,7 +561,7 @@ export type SharingSuccessAction = {
 };
 
 export function sharingSuccess(
-  shareSuccessful: boolean | undefined
+  shareSuccessful: boolean | undefined,
 ): SharingSuccessAction {
   return {
     type: SHARING_SUCCESS,
@@ -341,9 +571,11 @@ export function sharingSuccess(
   };
 }
 
-//==============================================================================
+// endregion Share Success
 
-export const SHARING_ERROR = 'user-datasets/sharing-error';
+// region Share Error
+
+export const SHARING_ERROR = "user-datasets/sharing-error";
 
 export type SharingErrorAction = {
   type: typeof SHARING_ERROR;
@@ -353,7 +585,7 @@ export type SharingErrorAction = {
 };
 
 export function sharingError(
-  shareError: Error | undefined
+  shareError: Error | undefined,
 ): SharingErrorAction {
   return {
     type: SHARING_ERROR,
@@ -363,9 +595,11 @@ export function sharingError(
   };
 }
 
-//==============================================================================
+// endregion Share Success
 
-export const SHARING_MODAL_OPEN = 'user-datasets/sharing-modal-open-state';
+// region Share Modal Open
+
+export const SHARING_MODAL_OPEN = "user-datasets/sharing-modal-open-state";
 
 export type SharingModalOpenAction = {
   type: typeof SHARING_MODAL_OPEN;
@@ -375,7 +609,7 @@ export type SharingModalOpenAction = {
 };
 
 export function updateSharingModalState(
-  sharingModalOpen: boolean
+  sharingModalOpen: boolean,
 ): SharingModalOpenAction {
   return {
     type: SHARING_MODAL_OPEN,
@@ -385,10 +619,12 @@ export function updateSharingModalState(
   };
 }
 
-//==============================================================================
+// endregion Share Success
+
+// endregion Sharing Actions
 
 export const PROJECT_FILTER =
-  'user-datasets/project-filter-preference-received';
+  "user-datasets/project-filter-preference-received";
 
 export type ProjectFilterAction = {
   type: typeof PROJECT_FILTER;
@@ -406,27 +642,40 @@ export function projectFilter(filterByProject: boolean): ProjectFilterAction {
   };
 }
 
+export function updateProjectFilter(filterByProject: boolean) {
+  return validateVdiCompatibleThunk<
+    PreferenceUpdateAction | ProjectFilterAction
+  >(() => [
+    updateUserPreference(
+      "global",
+      FILTER_BY_PROJECT_PREF,
+      JSON.stringify(filterByProject),
+    ),
+    projectFilter(filterByProject),
+  ]);
+}
+
 //==============================================================================
 
 // Community sharing actions. Note, these are using the `makeActionCreator` utility
 // which reduces boilerplate dramatically.
 
 export const updateCommunityModalVisibility = makeActionCreator(
-  'user-datasets/update-community-modal-visibility',
-  (isVisible: boolean) => ({ isVisible })
+  "user-datasets/update-community-modal-visibility",
+  (isVisible: boolean) => ({ isVisible }),
 );
 
 export const updateDatasetCommunityVisibilityPending = makeActionCreator(
-  'user-datasets/update-community-visibility-pending'
+  "user-datasets/update-community-visibility-pending",
 );
 
 export const updateDatasetCommunityVisibilitySuccess = makeActionCreator(
-  'user-datasets/update-community-visibility-success'
+  "user-datasets/update-community-visibility-success",
 );
 
 export const updateDatasetCommunityVisibilityError = makeActionCreator(
-  'user-datastes/update-community-visibility-error',
-  (errorMessage: string) => ({ errorMessage })
+  "user-datastes/update-community-visibility-error",
+  (errorMessage: string) => ({ errorMessage }),
 );
 
 type UpdateCommunityVisibilityThunkAction =
@@ -444,7 +693,7 @@ type CommunityAction =
 export function updateDatasetCommunityVisibility(
   datasetIds: string[],
   isVisibleToCommunity: boolean,
-  context: 'datasetDetails' | 'datasetsList'
+  context: "datasetDetails" | "datasetsList",
 ) {
   return [
     updateDatasetCommunityVisibilityPending(),
@@ -453,12 +702,12 @@ export function updateDatasetCommunityVisibility(
         try {
           await Promise.all(
             datasetIds.map((datasetId) =>
-              wdkService.vdiService.updateUserDataset(datasetId, {
-                visibility: isVisibleToCommunity ? 'public' : 'private',
-              })
-            )
+              wdkService.vdiService.patchDataset(datasetId, {
+                visibility: { value: isVisibleToCommunity ? "public" : "private" },
+              }),
+            ),
           );
-          if (context === 'datasetDetails') {
+          if (context === "datasetDetails") {
             return [
               loadUserDatasetDetailWithoutLoadingIndicator(datasetIds[0]),
               updateDatasetCommunityVisibilitySuccess,
@@ -472,278 +721,9 @@ export function updateDatasetCommunityVisibility(
         } catch (error) {
           return updateDatasetCommunityVisibilityError(String(error));
         }
-      }
+      },
     ),
   ];
 }
 
 //==============================================================================
-
-type ListAction =
-  | ListLoadingAction
-  | ListReceivedAction
-  | ListErrorReceivedAction;
-type DetailAction =
-  | DetailLoadingAction
-  | DetailReceivedAction
-  | DetailErrorAction;
-type UpdateAction =
-  | DetailUpdatingAction
-  | DetailUpdateSuccessAction
-  | DetailUpdateErrorAction;
-type RemovalAction =
-  | DetailRemovingAction
-  | DetailRemoveSuccessAction
-  | DetailRemoveErrorAction;
-
-export function loadUserDatasetListWithoutLoadingIndicator() {
-  return validateVdiCompatibleThunk<ListAction>(({ wdkService }) =>
-    Promise.all([
-      wdkService.getCurrentUserPreferences().then(
-        (preferences) =>
-          get(preferences.global, FILTER_BY_PROJECT_PREF, 'false') !== 'false',
-        // ignore error and default to false
-        () => false
-      ),
-      wdkService.vdiService.getDatasetList(projectId),
-    ]).then(([filterByProject, userDatasets]) => {
-      const vdiToExistingUds = userDatasets.map(
-        (ud: DatasetListEntry): DatasetListEntry => {
-          const { fileCount, shares, fileSizeTotal } = ud;
-          const partiallyTransformedResponse =
-            transformVdiResponseToLegacyResponseHelper(ud);
-          return {
-            ...partiallyTransformedResponse,
-            fileCount,
-            size: fileSizeTotal,
-            sharedWith: shares?.map((d) => ({
-              user: d.userId,
-              userDisplayName: d.firstName + ' ' + d.lastName,
-            })),
-          };
-        }
-      );
-      return listReceived(vdiToExistingUds, filterByProject);
-    }, listErrorReceived)
-  );
-}
-
-export function loadUserDatasetList() {
-  return [listLoading(), loadUserDatasetListWithoutLoadingIndicator()];
-}
-
-export function loadUserDatasetDetailWithoutLoadingIndicator(id: string) {
-  return validateVdiCompatibleThunk<DetailAction>(({ wdkService }) =>
-    Promise.all([
-      wdkService.vdiService.getDataset(id),
-      wdkService.vdiService.getDatasetFileListing(id),
-    ]).then(
-      ([userDataset, fileListing]) => {
-        const { shares, dependencies } = userDataset as UserDatasetDetails;
-        const partiallyTransformedResponse =
-          transformVdiResponseToLegacyResponseHelper(userDataset);
-
-        const transformedResponse = {
-          ...partiallyTransformedResponse,
-          fileListing,
-          fileCount: fileListing?.upload?.contents.length,
-          size: fileListing?.upload?.zipSize,
-          sharedWith: shares
-            ?.filter((d) => d.status === 'grant')
-            .map((d) => ({
-              userDisplayName:
-                d.recipient.firstName + ' ' + d.recipient.lastName,
-              user: d.recipient.userId,
-            })),
-          dependencies,
-        };
-        return detailReceived(id, transformedResponse, fileListing);
-      },
-      (error: FetchClientError) => detailError(error)
-    )
-  );
-}
-
-export function loadUserDatasetDetail(id: string) {
-  return [detailLoading(id), loadUserDatasetDetailWithoutLoadingIndicator(id)];
-}
-
-export function shareUserDatasets(
-  userDatasetIds: string[],
-  recipientUserIds: number[],
-  context: 'datasetDetails' | 'datasetsList'
-) {
-  // here we're making an array of objects to help facilitate the sharing of multiple datasets with multiple users
-  const requests: { datasetId: string; recipientId: number }[] = [];
-  for (const datasetId of userDatasetIds) {
-    for (const recipientId of recipientUserIds) {
-      requests.push({ datasetId, recipientId });
-    }
-  }
-  return validateVdiCompatibleThunk<
-    | DetailAction
-    | ListAction
-    | SharingDatasetPendingAction
-    | SharingSuccessAction
-    | SharingErrorAction
-  >(({ wdkService }) => [
-    updateSharingDatasetPending(true),
-    Promise.all(
-      requests.map((req) =>
-        wdkService.vdiService.editUserDatasetSharing(
-          'grant',
-          req.datasetId,
-          req.recipientId
-        )
-      )
-    ).then(() => {
-      if (context === 'datasetDetails') {
-        return [
-          loadUserDatasetDetailWithoutLoadingIndicator(userDatasetIds[0]),
-          sharingSuccess(true),
-        ];
-      } else {
-        return [
-          loadUserDatasetListWithoutLoadingIndicator(),
-          sharingSuccess(true),
-        ];
-      }
-    }, sharingError),
-    updateSharingDatasetPending(false),
-  ]);
-}
-
-export function unshareUserDatasets(
-  userDatasetId: string,
-  recipientUserId: number,
-  context: 'datasetDetails' | 'datasetsList'
-) {
-  return validateVdiCompatibleThunk<
-    DetailAction | ListAction | SharingDatasetPendingAction | SharingErrorAction
-  >(({ wdkService }) => [
-    updateSharingDatasetPending(true),
-    wdkService
-      .vdiService
-      .editUserDatasetSharing('revoke', userDatasetId, recipientUserId)
-      .then(() => {
-        if (context === 'datasetDetails') {
-          return loadUserDatasetDetailWithoutLoadingIndicator(userDatasetId);
-        } else {
-          return loadUserDatasetListWithoutLoadingIndicator();
-        }
-      }, sharingError),
-    updateSharingDatasetPending(false),
-  ]);
-}
-
-export function updateUserDatasetDetail(
-  userDataset: DatasetDetails,
-  meta: UserDatasetMeta_UI
-) {
-  return validateVdiCompatibleThunk<UpdateAction>(({ wdkService }) => [
-    detailUpdating(),
-    wdkService
-      .vdiService
-      .patchDataset(userDataset.datasetId, meta)
-      .then(
-        () => detailUpdateSuccess({ ...userDataset, meta }),
-        detailUpdateError
-      ),
-  ]);
-}
-
-export function removeUserDataset(
-  userDataset: DatasetDetails,
-  redirectTo?: string
-) {
-  return validateVdiCompatibleThunk<RemovalAction | EmptyAction | RouteAction>(
-    ({ wdkService }) => [
-      detailRemoving(),
-      wdkService
-        .vdiService
-        .removeUserDataset(userDataset.id)
-        .then(
-          () => [
-            detailRemoveSuccess(userDataset),
-            typeof redirectTo === 'string'
-              ? transitionToInternalPage(redirectTo)
-              : emptyAction,
-          ],
-          detailRemoveError
-        ),
-    ]
-  );
-}
-
-export function updateProjectFilter(filterByProject: boolean) {
-  return validateVdiCompatibleThunk<
-    PreferenceUpdateAction | ProjectFilterAction
-  >(() => [
-    updateUserPreference(
-      'global',
-      FILTER_BY_PROJECT_PREF,
-      JSON.stringify(filterByProject)
-    ),
-    projectFilter(filterByProject),
-  ]);
-}
-
-type PartialLegacyUserDataset = Omit<
-  DatasetDetails,
-  'datafiles' | 'fileCount' | 'size' | 'sharedWith'
->;
-
-function transformVdiResponseToLegacyResponseHelper(
-  ud: UserDatasetDetails | UserDatasetVDI
-): PartialLegacyUserDataset {
-  const {
-    name,
-    description,
-    summary,
-    owner,
-    datasetType,
-    projectIds,
-    datasetId,
-    created,
-    status,
-    importMessages,
-    visibility,
-    shortName,
-    shortAttribution,
-    category,
-    publications,
-    hyperlinks,
-    organisms,
-    contacts,
-    createdOn,
-  } = ud;
-  return {
-    owner: owner.firstName + ' ' + owner.lastName,
-    projects: projectIds ?? [],
-    created: ud.created,
-    type: {
-      display: datasetType.displayName ?? datasetType.name,
-      name: datasetType.name,
-      version: datasetType.version,
-    },
-    meta: {
-      name,
-      description: description ?? '',
-      summary: summary ?? '',
-      visibility,
-      shortName: shortName ?? '',
-      shortAttribution: shortAttribution ?? '',
-      category: category ?? '',
-      publications: publications ?? ([] as UserDatasetPublication[]),
-      hyperlinks: hyperlinks ?? ([] as UserDatasetHyperlink[]),
-      organisms: organisms ?? [],
-      contacts: contacts ?? ([] as UserDatasetContact[]),
-      createdOn: createdOn ?? '',
-    },
-    ownerUserId: owner.userId,
-    age: Date.now() - Date.parse(created),
-    id: datasetId,
-    status,
-    importMessages: importMessages ?? [],
-  };
-}

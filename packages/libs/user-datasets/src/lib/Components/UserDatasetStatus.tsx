@@ -1,17 +1,14 @@
-import * as React from 'react';
-import { IconAlt as Icon, Link } from '@veupathdb/wdk-client/lib/Components';
-import { Tooltip } from '@veupathdb/coreui';
+import * as React from "react";
+import { IconAlt as Icon, Link } from "@veupathdb/wdk-client/lib/Components";
+import { Tooltip } from "@veupathdb/coreui";
 
-import { UserDatasetVDI } from '../Utils/types';
-import { DatasetDetails } from "../Service/Types";
-
-// NOTE: The VDI reconciler interval is configured in the VDI service and thus
-// may change.
-const VDI_REINSTALL_INTERVAL = 6;
+import { DatasetDetails, DatasetListEntry, InstallStatusEnum } from "../Service/Types";
+import { VDIConfig } from "../Utils/types";
 
 interface Props {
   readonly baseUrl: string;
-  readonly userDataset: DatasetDetails;
+  readonly userDataset: DatasetDetails | DatasetListEntry;
+  readonly vdiConfig: VDIConfig,
   readonly projectId: string;
   readonly displayName: string;
   readonly linkToDataset: boolean;
@@ -19,13 +16,13 @@ interface Props {
   readonly datasetNoun: string;
 }
 
-const orderedStatuses = [
-  'failed-validation',
-  'missing-dependency',
-  'failed-installation',
-  'ready-for-reinstall',
-  'running',
-  'complete',
+const orderedStatuses: InstallStatusEnum[] = [
+  "failed-validation",
+  "missing-dependency",
+  "failed-installation",
+  "ready-for-reinstall",
+  "running",
+  "complete",
 ];
 
 /**
@@ -41,169 +38,168 @@ const orderedStatuses = [
  *  install failed-installation   grey: "error on install (a bug); pls let us know"
  *  install ready-for-reinstall   grey: "error on install (a bug); pls let us know"
  *  install missing-dependency    yellow: "incompatible, why"
- **/
-
+ */
 function getStatus(
-  status: UserDatasetVDI['status'],
-  importMessages: UserDatasetVDI['importMessages'],
+  dataset: DatasetDetails | DatasetListEntry,
+  reconcilerInterval: string,
   projectId: string,
   dataNoun: string,
   projectDisplayName: string,
-  projects: string[]
 ): { content: React.ReactNode; icon: string } {
-  const isTargetingCurrentSite = projects.includes(projectId);
+  const status = dataset.status;
+
+  const isTargetingCurrentSite = dataset.installTargets.includes(projectId);
+
   if (!isTargetingCurrentSite) {
     return {
       content: `This ${dataNoun} was uploaded and installed in a different VEuPathDB project.`,
-      icon: 'minus-circle',
+      icon: "minus-circle",
     };
   }
 
   const importStatus = status.import;
+
   switch (importStatus) {
-    case 'queued':
-    case 'in-progress':
+    case "queued":
+    case "in-progress":
       return {
         content: `This ${dataNoun} is queued. Please check again soon (reload the page).`,
-        icon: 'clock-o',
+        icon: "clock-o",
       };
-    case 'invalid':
+
+    case "invalid":
       return {
-        content: (
-          <>
-            This {dataNoun} was rejected as invalid during the import phase:{' '}
-            {importMessages?.join(', ')}
-          </>
-        ),
-        icon: 'exclamation-circle',
+        content: <>
+          This {dataNoun} was rejected as invalid during the import phase
+          {"importMessages" in dataset
+            ? " " + (dataset as DatasetDetails).importMessages?.join(", ") + "."
+            : "."
+          }
+        </>,
+        icon: "exclamation-circle",
       };
-    case 'failed':
+
+    case "failed":
       return {
         content: (
           <>
             Failed during the import phase. If the problem persists, please let
-            us know through our{' '}
-            <Link to="/contact-us" target="_blank">
-              support form
-            </Link>
-            .
+            us know through our{" "}
+            <Link to="/contact-us" target="_blank">support form</Link>.
           </>
         ),
-        icon: 'times-circle',
+        icon: "times-circle",
       };
   }
 
-  if (importStatus !== 'complete') {
+  if (importStatus !== "complete") {
     return {
       content: `This ${dataNoun} is queued. Please check again soon.`,
-      icon: 'clock-o',
+      icon: "clock-o",
     };
-  } else {
-    const installData = status.install?.find((d) => d.projectId === projectId);
-    const metaStatus = installData?.metaStatus;
-    const metaMessage = installData?.metaMessage ?? '';
-    const dataStatus = installData?.dataStatus;
-    const dataMessage = installData?.dataMessage ?? '';
+  }
 
-    // Returns the "least" status between metaStatus and dataStatus
-    const combinedStatus = orderedStatuses.find(
-      (status) => metaStatus === status || dataStatus === status
-    );
+  const installData = status.install?.find(d => d.installTarget === projectId);
+  const metaStatus = installData?.metaStatus;
+  const metaMessage = installData?.metaMessages?.join(", ") ?? "";
+  const dataStatus = installData?.dataStatus;
+  const dataMessage = installData?.dataMessages?.join(", ") ?? "";
 
-    switch (combinedStatus) {
-      case 'running':
-        return {
-          content: 'In progress. Please check again soon.',
-          icon: 'clock-o',
-        };
-      case 'complete':
-        return {
-          content: `This ${dataNoun} is installed and ready to use in ${projectDisplayName}.`,
-          icon: 'check-circle',
-        };
-      case 'failed-validation':
-        return {
-          content: (
-            <>
-              This {dataNoun} was rejected as invalid during the install phase:{' '}
-              {metaMessage}
-              {metaMessage.length && dataMessage.length ? '; ' : ''}
-              {dataMessage}
-            </>
-          ),
-          icon: 'exclamation-circle',
-        };
-      case 'failed-installation':
-        return {
-          content: (
-            <>
-              Failed during the install phase. If the problem persists, please
-              let us know through our{' '}
-              <Link to="/contact-us" target="_blank">
-                support form
-              </Link>
-              .
-            </>
-          ),
-          icon: 'times-circle',
-        };
-      case 'ready-for-reinstall':
-        return {
-          content: (
-            <>
-              This {dataNoun} will be reinstalled within{' '}
-              {VDI_REINSTALL_INTERVAL} hours. Please check again soon.
-            </>
-          ),
-          icon: 'minus-circle',
-        };
-      case 'missing-dependency':
-        return {
-          content: (
-            <>
-              This {dataNoun} is incompatible: {metaMessage}
-              {metaMessage.length && dataMessage.length ? '; ' : ''}
-              {dataMessage}
-            </>
-          ),
-          icon: 'exclamation-circle',
-        };
-      default:
-        return {
-          content: 'Status unknown at this time. Please check again soon.',
-          icon: 'clock-o',
-        };
-    }
+  // Returns the "least" status between metaStatus and dataStatus
+  const combinedStatus = orderedStatuses.find(
+    status => metaStatus === status || dataStatus === status,
+  );
+
+  switch (combinedStatus) {
+    case "running":
+      return {
+        content: "In progress. Please check again soon.",
+        icon: "clock-o",
+      };
+
+    case "complete":
+      return {
+        content: `This ${dataNoun} is installed and ready to use in ${projectDisplayName}.`,
+        icon: "check-circle",
+      };
+
+    case "failed-validation":
+      return {
+        content: (
+          <>
+            This {dataNoun} was rejected as invalid during the install phase:{" "}
+            {metaMessage}
+            {metaMessage.length && dataMessage.length ? "; " : ""}
+            {dataMessage}
+          </>
+        ),
+        icon: "exclamation-circle",
+      };
+
+    case "failed-installation":
+      return {
+        content: <>
+          Failed during the install phase. If the problem persists, please
+          let us know through our{" "}
+          <Link to="/contact-us" target="_blank">support form</Link>
+          .
+        </>,
+        icon: "times-circle",
+      };
+
+    case "ready-for-reinstall":
+      return {
+        content: <>
+          This {dataNoun} will be reinstalled within {reconcilerInterval} hours.
+          Please check again soon.
+        </>,
+        icon: "minus-circle",
+      };
+
+    case "missing-dependency":
+      return {
+        content: <>
+          This {dataNoun} is incompatible: {metaMessage}
+          {metaMessage.length && dataMessage.length ? "; " : ""}
+          {dataMessage}
+        </>,
+        icon: "exclamation-circle",
+      };
+
+    default:
+      return {
+        content: "Status unknown at this time. Please check again soon.",
+        icon: "clock-o",
+      };
   }
 }
 
 export default function UserDatasetStatus(props: Props) {
-  const { baseUrl, userDataset, projectId, displayName, datasetNoun } = props;
-  const { projects, status, importMessages } = userDataset;
-  const lowercaseSingularDataNoun = datasetNoun.toLowerCase();
-
-  const us
 
   const { content, icon: faIcon } = getStatus(
-    status,
-    importMessages,
-    projectId,
-    lowercaseSingularDataNoun,
-    displayName,
-    projects
+    props.userDataset,
+    props.vdiConfig.daemons.reconciler.fullRunInterval,
+    props.projectId,
+    props.datasetNoun.toLowerCase(),
+    props.displayName,
   );
 
-  const link = `${baseUrl}/${userDataset.id}`;
-  const children = <Icon className="StatusIcon" fa={faIcon} />;
+  const link = `${props.baseUrl}/${props.userDataset.datasetId}`;
+  const children = <Icon className="StatusIcon" fa={faIcon}/>;
+
   if (props.useTooltip && props.linkToDataset) {
     return (
-      <Tooltip title={content ?? ''}>
+      <Tooltip title={content ?? ""}>
         <Link to={link}>{children}</Link>
       </Tooltip>
     );
-  } else if (props.useTooltip && !props.linkToDataset) {
-    return <Tooltip title={content ?? ''}>{children}</Tooltip>;
-  } else if (!props.useTooltip && props.linkToDataset) {
+  }
+
+  if (props.useTooltip && !props.linkToDataset) {
+    return <Tooltip title={content ?? ""}>{children}</Tooltip>;
+  }
+
+  if (!props.useTooltip && props.linkToDataset) {
     return (
       <Link to={link}>
         <React.Fragment>
@@ -211,11 +207,11 @@ export default function UserDatasetStatus(props: Props) {
         </React.Fragment>
       </Link>
     );
-  } else {
-    return (
-      <React.Fragment>
-        {children} {content}
-      </React.Fragment>
-    );
   }
+
+  return (
+    <React.Fragment>
+      {children} {content}
+    </React.Fragment>
+  );
 }

@@ -34,6 +34,7 @@ export type State = {
   badAllUploadsActionMessage?: { message: string; timestamp: number };
   uploadProgress?: { progress: number | null };
 };
+
 export function reduce(state: State = {}, action: Action): State {
   switch (action.type) {
     case receiveBadUpload.type:

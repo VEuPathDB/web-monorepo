@@ -9,13 +9,14 @@ import UserDatasetsWorkspace from '../Components/UserDatasetsWorkspace';
 import { DatasetUploadPageConfig } from "../Utils/types";
 
 import UserDatasetDetailController, { UserDatasetDetailProps } from './UserDatasetDetailController';
-import { VariableDisplayText } from "../Components/FormTypes";
+import { newDefaultedDisplayText } from "../Components";
+import { useWdkService } from "@veupathdb/wdk-client/lib/Hooks/WdkServiceHook";
+import { isVdiCompatibleWdkService } from "../Service";
 
 interface Props {
   readonly helpRoute: string;
   readonly helpTabContents?: ReactNode;
   readonly formConfig: DatasetUploadPageConfig,
-  readonly displayText: VariableDisplayText;
   readonly detailComponentsByTypeName?: Record<string, ComponentType<UserDatasetDetailProps>>;
   readonly enablePublicUserDatasets?: boolean;
 }
@@ -24,11 +25,16 @@ export function UserDatasetRouter({
   helpRoute,
   helpTabContents,
   formConfig,
-  displayText,
   detailComponentsByTypeName,
   enablePublicUserDatasets = false,
 }: Props) {
   const { path, url } = useRouteMatch();
+
+  const vdi = useWdkService(
+    async wdk => isVdiCompatibleWdkService(wdk)
+      ? await wdk.vdiService.getServiceMetadata()
+      : undefined
+  )?.configuration;
 
   return (
     <Switch>
@@ -51,9 +57,9 @@ export function UserDatasetRouter({
               helpRoute={helpRoute}
               uploadPageConfig={formConfig}
               urlParams={urlParams}
-              displayText={displayText}
               helpTabContents={helpTabContents}
               enablePublicUserDatasets={enablePublicUserDatasets}
+              vdiConfig={vdi!!}
             />
           );
         }}
@@ -77,9 +83,9 @@ export function UserDatasetRouter({
               helpRoute={helpRoute}
               uploadPageConfig={formConfig}
               urlParams={urlParams}
-              displayText={displayText}
               helpTabContents={helpTabContents}
               enablePublicUserDatasets={enablePublicUserDatasets}
+              vdiConfig={vdi!!}
             />
           );
         }}
@@ -133,9 +139,9 @@ export function UserDatasetRouter({
               helpRoute={helpRoute}
               uploadPageConfig={formConfig}
               urlParams={urlParams}
-              displayText={displayText}
               helpTabContents={helpTabContents}
               enablePublicUserDatasets={enablePublicUserDatasets}
+              vdiConfig={vdi!!}
             />
           );
         }}
@@ -149,7 +155,8 @@ export function UserDatasetRouter({
               baseUrl={url}
               detailComponentsByTypeName={detailComponentsByTypeName}
               enablePublicUserDatasets={enablePublicUserDatasets}
-              displayText={displayText}
+              displayText={newDefaultedDisplayText()}
+              vdiConfig={vdi!!}
               includeAllLink
               includeNameHeader
               {...props.match.params}

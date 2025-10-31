@@ -3,11 +3,22 @@ import * as api from "./Types";
 import * as io from "io-ts";
 import * as form from "../Components/UploadForm";
 import * as util from "../Utils/upload-user-dataset";
+import { ShareOfferAction } from "./Types";
 
 export class VDIServiceClient extends http.FetchClientWithCredentials {
-  private static DatasetsPath = "/datasets";
-  private static MetadataPath = "/meta-info";
-  private static PluginsPath = "/plugins";
+  private static readonly DatasetsPath = "/datasets";
+
+  private static readonly MetadataPath = "/meta-info";
+
+  private static readonly PluginsPath = "/plugins";
+
+  private static readonly DatasetPath = (id: string) => VDIServiceClient.DatasetsPath + "/" + id;
+
+  private static readonly DatasetFilesPath = (id: string) =>
+    VDIServiceClient.DatasetsPath + "/" + id + "/files";
+
+  private static readonly ShareOfferPath = (datasetId: string, recipientId: number) =>
+    VDIServiceClient.DatasetsPath + "/" + datasetId + "/shares/" + recipientId.toString() + "/offer";
 
   /**
    * Fetches a list of datasets that are visible to the current user.
@@ -101,6 +112,31 @@ export class VDIServiceClient extends http.FetchClientWithCredentials {
     }));
   }
 
+  public deleteDataset(datasetId: string): Promise<null> {
+    return this.fetch(http.createJsonRequest({
+      path: VDIServiceClient.DatasetPath(datasetId),
+      method: "DELETE",
+      transformResponse: async (_: unknown) => null,
+    }));
+  }
+
+  public getDatasetFiles(datasetId: string): Promise<api.DatasetFileListResponse> {
+    return this.fetch(http.createJsonRequest({
+      path: VDIServiceClient.DatasetFilesPath(datasetId),
+      method: "GET",
+      transformResponse: http.ioTransformer(api.datasetFileListResponse),
+    }));
+  }
+
+  public putShareOffer(datasetId: string, recipientId: number, action: ShareOfferAction): Promise<null> {
+    return this.fetch(http.createJsonRequest({
+      path: VDIServiceClient.ShareOfferPath(datasetId, recipientId),
+      method: "PATCH",
+      body: { action } as api.ShareOfferPutRequest,
+      transformResponse: async (_: unknown) => null,
+    }));
+  }
+
   /**
    * Fetch VDI service metadata such as the running version and configuration
    * options.
@@ -128,7 +164,9 @@ export class VDIServiceClient extends http.FetchClientWithCredentials {
     }));
   }
 
-  public patchDataset(datasetId: string) {}
+  public patchDataset(datasetId: string, request: api.DatasetPatchRequest): Promise<void> {
+    throw new Error("TODO"); // FIXME: todo
+  }
 
   private makeQueryString(params: { [k: string]: string | number | boolean | null | undefined }): string {
     let query = "";

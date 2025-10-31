@@ -8,17 +8,17 @@ import WdkRoute from "@veupathdb/wdk-client/lib/Core/WdkRoute";
 import UserDatasetListController from "../Controllers/UserDatasetListController";
 import UserDatasetNewUploadController from "../Controllers/UserDatasetUploadSelector";
 
-import { DatasetUploadPageConfig } from "../Utils/types";
-import { VariableDisplayText } from "./FormTypes";
+import { DatasetUploadPageConfig, VDIConfig } from "../Utils/types";
+import { EnabledDatasetType } from "@veupathdb/web-common/src/user-dataset-upload-config";
 
 interface Props {
   readonly baseUrl: string;
   readonly helpRoute: string;
   readonly uploadPageConfig: DatasetUploadPageConfig;
+  readonly vdiConfig: VDIConfig,
   readonly urlParams: Record<string, string>;
   readonly helpTabContents?: ReactNode;
   readonly enablePublicUserDatasets: boolean;
-  readonly displayText: VariableDisplayText;
 }
 
 function UserDatasetsWorkspace(props: Props) {
@@ -28,13 +28,12 @@ function UserDatasetsWorkspace(props: Props) {
     uploadPageConfig,
     helpTabContents,
     enablePublicUserDatasets,
-    displayText,
   } = props;
 
   return (
     <div>
       <WorkspaceNavigation
-        heading={displayText.workspaceTitle}
+        heading={uploadPageConfig.displayText.workspaceTitle}
         routeBase={baseUrl}
         items={[
           [{
@@ -66,8 +65,9 @@ function UserDatasetsWorkspace(props: Props) {
               baseUrl={baseUrl}
               hasDirectUpload={uploadPageConfig.hasDirectUpload}
               helpRoute={helpRoute}
-              displayText={displayText}
+              displayText={uploadPageConfig.displayText}
               enablePublicUserDatasets={enablePublicUserDatasets}
+              vdiConfig={props.vdiConfig}
             />
           )}
           disclaimerProps={{ toDoWhatMessage: "To view your datasets" }}
@@ -77,48 +77,51 @@ function UserDatasetsWorkspace(props: Props) {
             requiresLogin
             exact
             path={`${baseUrl}/new/:type?`}
-            component={(childProps: RouteComponentProps<{ type?: string }>) => (
+            component={(childProps: RouteComponentProps<{ type?: EnabledDatasetType }>) => (
               <UserDatasetNewUploadController
                 baseUrl={baseUrl}
                 typeName={childProps.match.params.type}
-                enabledFormConfigs={uploadPageConfig.availableUploadTypes}
+                enabledFormConfig={uploadPageConfig}
                 urlParams={props.urlParams}
+                vdiConfig={props.vdiConfig}
               />
             )}
             disclaimerProps={{
               toDoWhatMessage: `To upload your dataset`,
               extraParagraphContent:
-                Object.entries(props.urlParams).length === 0 ? undefined : (
-                  <div style={{ width: "100%", paddingBottom: 20 }}>
-                    <div style={{ paddingBottom: 5, textAlign: "center" }}>
-                      Afterwards, you will be taken back to an upload page with
-                      these details:
-                    </div>
+                Object.entries(props.urlParams).length === 0
+                  ? undefined
+                  : (
+                    <div style={{ width: "100%", paddingBottom: 20 }}>
+                      <div style={{ paddingBottom: 5, textAlign: "center" }}>
+                        Afterwards, you will be taken back to an upload page with
+                        these details:
+                      </div>
 
-                    <ul style={{ listStyle: "none" }}>
-                      {Object.entries(props.urlParams).map((e) => (
-                        <li
-                          key={e.join(" ")}
-                          style={{
-                            paddingBottom: 5,
-                            maxWidth: "100%",
-                            overflowX: "auto",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          <span style={{ fontWeight: "bold" }}>
-                            {e[0].charAt(0).toUpperCase() +
-                              e[0].slice(1).replace("_", " ") +
-                              ": "}
-                          </span>
-                          <code style={{ verticalAlign: "bottom" }}>
-                            {e[1].trim()}
-                          </code>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ),
+                      <ul style={{ listStyle: "none" }}>
+                        {Object.entries(props.urlParams).map((e) => (
+                          <li
+                            key={e.join(" ")}
+                            style={{
+                              paddingBottom: 5,
+                              maxWidth: "100%",
+                              overflowX: "auto",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            <span style={{ fontWeight: "bold" }}>
+                              {e[0].charAt(0).toUpperCase() +
+                                e[0].slice(1).replace("_", " ") +
+                                ": "}
+                            </span>
+                            <code style={{ verticalAlign: "bottom" }}>
+                              {e[1].trim()}
+                            </code>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ),
             }}
           />
         )}

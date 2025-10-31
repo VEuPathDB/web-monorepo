@@ -1,6 +1,6 @@
 import React from "react";
 
-import { cx, InputConstructor, newObjectInputUpdater, RecordListProps, RecordUpdater } from "./component-utils";
+import { cx, InputConstructor, newListPropUpdater, RecordListProps, RecordUpdater } from "./component-utils";
 import { BioprojectIDRef } from "../../Service/Types";
 import { FieldLabel } from "./FieldLabel";
 import { TextArea, TextBox } from "@veupathdb/wdk-client/lib/Components";
@@ -10,7 +10,7 @@ import { TrashButton } from "./common-components";
 
 function inputFactory(updater: RecordUpdater<BioprojectIDRef>): InputConstructor<BioprojectIDRef> {
   return (record, index) => {
-    const updateRef = newObjectInputUpdater(index, updater);
+    const updateRef = newListPropUpdater(index, updater);
     const onRemove = (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
       updater((prev) => prev.filter((_, i) => i !== index));

@@ -1,14 +1,14 @@
-import { connect } from 'react-redux';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
+import { connect } from "react-redux";
+import { RouteComponentProps, withRouter } from "react-router-dom";
 
-import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
-import PageController from '@veupathdb/wdk-client/lib/Core/Controllers/PageController';
+import { showLoginForm } from "@veupathdb/wdk-client/lib/Actions/UserSessionActions";
+import PageController from "@veupathdb/wdk-client/lib/Core/Controllers/PageController";
 
 import {
   loadUserDatasetList,
   removeUserDataset,
   shareUserDatasets,
-  unshareUserDatasets,
+  unshareUserDataset,
   updateProjectFilter,
   updateUserDatasetDetail,
   updateSharingModalState,
@@ -16,18 +16,18 @@ import {
   sharingSuccess,
   updateCommunityModalVisibility,
   updateDatasetCommunityVisibility,
-} from '../Actions/UserDatasetsActions';
-import { requestUploadMessages } from '../Actions/UserDatasetUploadActions';
+} from "../Actions/UserDatasetsActions";
+import { requestUploadMessages } from "../Actions/UserDatasetUploadActions";
 
-import UserDatasetList from '../Components/List/UserDatasetList';
-import NoDatasetsMessage from '../Components/NoDatasetsMessage';
-import { quotaSize } from '../Components/UserDatasetUtils';
+import UserDatasetList from "../Components/List/UserDatasetList";
+import NoDatasetsMessage from "../Components/NoDatasetsMessage";
+import { quotaSize } from "../Components/UserDatasetUtils";
 
-import { StateSlice } from '../StoreModules/types';
+import { StateSlice } from "../StoreModules/types";
 
-import { UserDataset } from '../Utils/types';
+import { VDIConfig } from "../Utils/types";
 
-import '../Components/UserDatasets.scss';
+import "../Components/UserDatasets.scss";
 import { VariableDisplayText } from "../Components/FormTypes";
 
 const ActionCreators = {
@@ -36,7 +36,7 @@ const ActionCreators = {
   updateUserDatasetDetail,
   removeUserDataset,
   shareUserDatasets,
-  unshareUserDatasets,
+  unshareUserDatasets: unshareUserDataset,
   updateProjectFilter,
   requestUploadMessages,
   updateSharingModalState,
@@ -48,16 +48,20 @@ const ActionCreators = {
 
 type StateProps = Pick<
   StateSlice,
-  'userDatasetList' | 'userDatasetUpload' | 'globalData'
+  "userDatasetList" | "userDatasetUpload" | "globalData"
 >;
+
 type DispatchProps = typeof ActionCreators;
-interface OwnProps extends RouteComponentProps<{}> {
+
+interface OwnProps extends RouteComponentProps {
   readonly baseUrl: string;
   readonly hasDirectUpload: boolean;
   readonly helpRoute: string;
   readonly displayText: VariableDisplayText;
   readonly enablePublicUserDatasets: boolean;
+  readonly vdiConfig: VDIConfig;
 }
+
 type Props = {
   readonly ownProps: OwnProps;
   readonly dispatchProps: DispatchProps;
@@ -69,6 +73,7 @@ class UserDatasetListController extends PageController<Props> {
     super(props);
     this.needsUploadMessages = this.needsUploadMessages.bind(this);
   }
+
   getTitle() {
     return this.props.ownProps.displayText.workspaceTitle;
   }
@@ -78,56 +83,52 @@ class UserDatasetListController extends PageController<Props> {
   }
 
   needsUploadMessages() {
-    const { config } = this.props.stateProps.globalData;
-    const { hasDirectUpload } = this.props.ownProps;
-    if (config == null) {
+    if (this.props.stateProps.globalData == null)
       return true;
-    }
+
     const { uploads, badAllUploadsActionMessage } =
       this.props.stateProps.userDatasetUpload;
-    return (
-      hasDirectUpload && uploads == null && badAllUploadsActionMessage == null
-    );
+
+    return this.props.ownProps.hasDirectUpload
+      && uploads == null
+      && badAllUploadsActionMessage == null;
   }
 
   loadData(prevProps?: Props) {
+    const { dispatchProps, stateProps } = this.props;
+
     if (prevProps == null) {
-      this.props.dispatchProps.loadUserDatasetList();
+      dispatchProps.loadUserDatasetList();
       return;
     }
 
-    const { config } = this.props.stateProps.globalData;
     if (
-      config != null &&
-      prevProps.stateProps.userDatasetList.status !==
-        this.props.stateProps.userDatasetList.status &&
-      this.needsUploadMessages()
+      stateProps.globalData.config != null
+      && prevProps.stateProps.userDatasetList.status !== stateProps.userDatasetList.status
+      && this.needsUploadMessages()
     ) {
-      this.props.dispatchProps.requestUploadMessages();
+      dispatchProps.requestUploadMessages();
     }
   }
 
   isRenderDataLoaded() {
-    return (
-      this.props.stateProps.userDatasetList.status !== 'not-requested' &&
-      this.props.stateProps.userDatasetList.status !== 'loading' &&
-      this.props.stateProps.globalData.config != null &&
-      this.props.stateProps.globalData.user != null
-      // &&
-      // !this.needsUploadMessages()
-    );
+    return this.props.stateProps.userDatasetList.status !== "not-requested"
+      && this.props.stateProps.userDatasetList.status !== "loading"
+      && this.props.stateProps.globalData.config != null
+      && this.props.stateProps.globalData.user != null;
   }
 
   isRenderDataLoadError() {
-    return this.props.stateProps.userDatasetList.status === 'error';
+    return this.props.stateProps.userDatasetList.status === "error";
   }
 
   renderView() {
     const { config, user } = this.props.stateProps.globalData;
 
-    if (user == null || config == null) return this.renderDataLoading();
+    if (user == null || config == null)
+      return this.renderDataLoading();
 
-    if (this.props.stateProps.userDatasetList.status !== 'complete')
+    if (this.props.stateProps.userDatasetList.status !== "complete")
       return null;
 
     const { projectId, displayName: projectName } = config;
@@ -139,6 +140,7 @@ class UserDatasetListController extends PageController<Props> {
       location,
       enablePublicUserDatasets,
       displayText,
+      vdiConfig,
     } = this.props.ownProps;
 
     const {
@@ -184,9 +186,7 @@ class UserDatasetListController extends PageController<Props> {
       numOngoingUploads,
       quotaSize,
       enablePublicUserDatasets,
-      userDatasets: userDatasets.map(
-        (id) => userDatasetsById[id].resource
-      ) as UserDataset[],
+      userDatasets: userDatasets.map(id => userDatasetsById[id].resource),
       filterByProject,
       shareUserDatasets,
       unshareUserDatasets,
@@ -206,25 +206,21 @@ class UserDatasetListController extends PageController<Props> {
       updateDatasetCommunityVisibilityError,
       updateDatasetCommunityVisibilityPending,
       updateDatasetCommunityVisibilitySuccess,
+      vdiConfig,
     };
-    const noDatasetsForThisProject =
-      userDatasets
-        .map((id) => userDatasetsById[id].resource.projects)
-        .flat()
-        .indexOf(projectId) === -1;
+    const haveDatasetsForThisProject =
+      userDatasets.some(id => userDatasetsById[id].resource.installTargets.some(tgt => tgt === projectId));
 
     return (
       <div className="UserDatasetList-Controller">
         <div className="UserDatasetList-Content">
-          {noDatasetsForThisProject ? (
-            <NoDatasetsMessage
+          {haveDatasetsForThisProject
+            ? <UserDatasetList {...listProps} />
+            : <NoDatasetsMessage
               baseUrl={baseUrl}
               hasDirectUpload={hasDirectUpload}
               helpRoute={helpRoute}
-            />
-          ) : (
-            <UserDatasetList {...listProps} />
-          )}
+            />}
         </div>
       </div>
     );
@@ -242,7 +238,7 @@ const enhance = connect<StateProps, DispatchProps, OwnProps, Props, StateSlice>(
     stateProps,
     dispatchProps,
     ownProps,
-  })
+  }),
 );
 
 export default withRouter(enhance(UserDatasetListController));

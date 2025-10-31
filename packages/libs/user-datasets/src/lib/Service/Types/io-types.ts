@@ -1,21 +1,33 @@
 import * as io from "io-ts";
 import * as vdi from "./service-types";
 import * as dataset from "./metadata-types";
-import { pluginDetails, serviceBuildInfo, serviceConfiguration } from "./service-types";
 
 
 // region GET /datasets
 
+const datasetListEntryShareInfo = io.type({
+  userId: io.number,
+  firstName: io.string,
+  lastName: io.string,
+  affiliation: io.string,
+  accepted: io.boolean,
+});
+
+export type DatasetListEntryShareInfo = io.TypeOf<typeof datasetListEntryShareInfo>;
+
 export const datasetsListEntry = io.intersection([
   io.type({
     datasetId: io.string,
-    owner: io.number,
-    datasetType: dataset.datasetType,
+    owner: vdi.userInfo,
+    type: dataset.datasetType,
     visibility: dataset.visibilityEnum,
     name: io.string,
     origin: io.string,
     installTargets: io.array(io.string),
     status: vdi.datasetStatusInfo,
+    shares: io.array(datasetListEntryShareInfo),
+    fileCount: io.number,
+    fileSizeTotal: io.number,
     created: io.string,
     isDeleted: io.boolean,
     summary: io.string,
@@ -72,8 +84,35 @@ export type DatasetPostSuccessResponse = io.TypeOf<typeof postDatasetSuccessResp
 
 // region /datasets/{vdi-id}
 
-// region GET /datasets/{vdi-id}
+// region GET /datasets/{vdi-id}/files
 
+const datasetFileDetails = io.type({
+  fileName: io.string,
+  fileSize: io.number,
+});
+
+export type DatasetFileDetails = io.TypeOf<typeof datasetFileDetails>;
+
+const datasetZipDetails = io.type({
+  zipSize: io.number,
+  contents: io.array(datasetFileDetails),
+});
+
+export type DatasetZipDetails = io.TypeOf<typeof datasetZipDetails>;
+
+export const datasetFileListResponse = io.intersection([
+  io.type({ upload: datasetZipDetails }),
+  io.partial({
+    install: datasetZipDetails,
+    documents: io.array(datasetFileDetails),
+  }),
+]);
+
+export type DatasetFileListResponse = io.TypeOf<typeof datasetFileListResponse>;
+
+// endregion GET /datasets/{vdi-id}/files
+
+// region GET /datasets/{vdi-id}
 
 export const datasetDetails = io.intersection([
   dataset.baseMetadata,
@@ -85,6 +124,7 @@ export const datasetDetails = io.intersection([
     created: io.string,
     shortName: io.string,
     status: vdi.datasetStatusInfo,
+    files: datasetFileListResponse,
   }),
   io.partial({
     sourceUrl: io.string,
@@ -191,33 +231,6 @@ export type DatasetPutRequest = io.TypeOf<typeof datasetPutRequest>;
 
 // endregion PUT /datasets/{vdi-id}
 
-// region GET /datasets/{vdi-id}/files
-
-const datasetFileDetails = io.type({
-  fileName: io.string,
-  fileSize: io.number,
-});
-
-export type DatasetFileDetails = io.TypeOf<typeof datasetFileDetails>;
-
-const datasetZipDetails = io.type({
-  zipSize: io.number,
-  contents: io.array(datasetFileDetails),
-});
-
-export type DatasetZipDetails = io.TypeOf<typeof datasetZipDetails>;
-
-const datasetFileListResponse = io.intersection([
-  io.type({ upload: datasetZipDetails }),
-  io.partial({
-    install: datasetZipDetails,
-    documents: io.array(datasetFileDetails),
-  }),
-]);
-
-export type DatasetFileListResponse = io.TypeOf<typeof datasetFileListResponse>;
-
-// endregion GET /datasets/{vdi-id}/files
 
 // region PUT /datasets/{vdi-id}/shares/{user-id}/offer
 
@@ -289,7 +302,7 @@ export type UserShareOffer = io.TypeOf<typeof shareOfferDetails>;
 
 // region GET /plugins
 
-export const pluginDetailsResponse = io.array(pluginDetails);
+export const pluginDetailsResponse = io.array(vdi.pluginDetails);
 
 export type PluginDetailsResponse = io.TypeOf<typeof pluginDetailsResponse>;
 
@@ -298,8 +311,8 @@ export type PluginDetailsResponse = io.TypeOf<typeof pluginDetailsResponse>;
 // region GET /meta-info
 
 export const serviceMetadataResponseBody = io.type({
-  buildInfo: serviceBuildInfo,
-  configuration: serviceConfiguration,
+  buildInfo: vdi.serviceBuildInfo,
+  configuration: vdi.serviceConfiguration,
 });
 
 export type ServiceMetadataResponseBody = io.TypeOf<typeof serviceMetadataResponseBody>;

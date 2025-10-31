@@ -9,8 +9,14 @@ import {
   keyof,
   boolean,
 } from "io-ts";
-import { DatasetDependency, DatasetPostRequest } from "../Service/Types";
-import { EnabledDatasetType } from "@veupathdb/web-common/src/user-dataset-upload-config";
+import { DatasetDependency, DatasetPostRequest, DatasetVisibility } from "../Service/Types";
+import { DatasetInstaller, DisplayTextOverride } from "@veupathdb/web-common/src/user-dataset-upload-config";
+import { ServiceConfiguration } from "../Service/Types/service-types";
+import { ReactNode } from "react";
+
+export type ShareContext = "datasetDetails" | "datasetsList";
+
+export type VDIConfig = ServiceConfiguration;
 
 // User dataset metadata type used by the UI (as opposed to the type
 // used by VDI).
@@ -45,7 +51,7 @@ export interface UserDataset {
     version: string;
   };
   fileCount?: number;
-  status: UserDatasetVDI["status"];
+  // status: UserDatasetVDI["status"];
   fileListing?: UserDatasetFileListing;
   importMessages: Array<string>;
   visibility?: UserDatasetVisibility;
@@ -68,6 +74,13 @@ export interface UserDatasetUpload {
   isSuccessful: boolean;
   isUserError: boolean;
 }
+
+export interface DatasetVisibilityOption {
+  readonly value: DatasetVisibility;
+  readonly display: NonNullable<ReactNode>;
+  readonly description: () => NonNullable<ReactNode>;
+}
+
 export interface ResultUploadConfig {
   offerStrategyUpload: boolean;
   compatibleRecordTypes: CompatibleRecordTypes;
@@ -80,14 +93,18 @@ export type CompatibleRecordTypes = Record<
 
 interface DisabledUploadPageConfig {
   readonly hasDirectUpload: false;
+  readonly displayTextOverride?: DisplayTextOverride;
 }
 
-interface EnabledUploadPageConfig {
+export interface EnabledUploadPageConfig {
   readonly hasDirectUpload: true;
-  readonly availableUploadTypes: EnabledDatasetType[];
+  readonly availableUploadTypes: DatasetInstaller[];
+  readonly displayTextOverride?: DisplayTextOverride;
 }
 
 export type DatasetUploadPageConfig = EnabledUploadPageConfig | DisabledUploadPageConfig;
+
+
 
 export interface NewUserDataset extends DatasetPostRequest {
   uploadMethod:
@@ -100,15 +117,6 @@ export interface NewUserDataset extends DatasetPostRequest {
     reportConfig: unknown;
   };
 }
-
-/**
- * In EDA, data is referred to as "Study" or "Studies"
- * In genomics, data is referred to as "Data Set" or "Data Sets"
- */
-export type DataNoun = {
-  singular: string;
-  plural: string;
-};
 
 // VDI types
 const userMetadata = partial({
@@ -190,7 +198,6 @@ const userDatasetRecipientDetails = type({
 
 export const datasetIdType = type({ datasetId: string });
 
-export type UserDatasetPublication = TypeOf<typeof userDatasetPublication>;
 const userDatasetPublication = intersection([
   type({
     pubMedId: string,
@@ -200,7 +207,6 @@ const userDatasetPublication = intersection([
   }),
 ]);
 
-export type UserDatasetHyperlink = TypeOf<typeof userDatasetHyperlink>;
 const userDatasetHyperlink = intersection([
   type({
     url: string,
@@ -212,7 +218,6 @@ const userDatasetHyperlink = intersection([
   }),
 ]);
 
-export type UserDatasetContact = TypeOf<typeof userDatasetContact>;
 const userDatasetContact = intersection([
   type({
     name: string,
@@ -267,20 +272,6 @@ const userDatasetDetails_base = intersection([
   }),
 ]);
 
-export const userDatasetDetails_VDI = intersection([
-  datasetIdType,
-  userDatasetDetails_base,
-  type({
-    fileCount: number,
-    fileSizeTotal: number,
-  }),
-  partial({
-    shares: array(
-      intersection([ userDatasetRecipientDetails, type({ accepted: boolean }) ]),
-    ),
-  }),
-]);
-
 const userDatasetDetailsShareDetails = type({
   status: keyof({ grant: null, revoke: null }),
   recipient: userDatasetRecipientDetails,
@@ -320,6 +311,4 @@ export const userDatasetFileListing = partial({
   }),
 });
 
-export type UserDatasetVDI = TypeOf<typeof userDatasetDetails_VDI>;
-export type UserDatasetDetails = TypeOf<typeof userDatasetDetails>;
 export type UserDatasetFileListing = TypeOf<typeof userDatasetFileListing>;

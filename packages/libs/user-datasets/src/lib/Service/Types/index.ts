@@ -1,15 +1,17 @@
 export type {
-  DatasetListEntry,
   AllDatasetsListMeta,
   AllDatasetsListResponse,
   CommunityDataset,
-  DatasetPostRequest,
   DatasetDetails,
   DatasetFileDetails,
   DatasetFileListResponse,
+  DatasetListEntry,
+  DatasetListEntryShareInfo,
   DatasetPatchRequest,
+  DatasetPostRequest,
   DatasetPutRequest,
   DatasetZipDetails,
+  InputDatasetType,
   PluginDetailsResponse,
   ServiceMetadataResponseBody,
   ShareOfferPutRequest,
@@ -21,6 +23,7 @@ export type {
 
 export {
   datasetDetails,
+  datasetFileListResponse,
   datasetsListEntry,
   pluginDetailsResponse,
   postDatasetSuccessResponse,
@@ -68,6 +71,9 @@ export type {
   DatasetShareOfferRecipient,
   ImplicitlyRelatedDataset,
   ImplicitRelationDetails,
+  InstallStatusEnum,
+  PartialDatasetType,
   PluginDetails,
-  VdiUserInfo,
+  ShareOfferAction,
+  UserInfo,
 } from "./service-types";

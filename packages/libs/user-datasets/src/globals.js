@@ -6,5 +6,4 @@ window.__SITE_CONFIG__ = {
   rootUrl,
   rootElement,
   endpoint,
-  // projectId: process.env.PROJECT_ID
 };

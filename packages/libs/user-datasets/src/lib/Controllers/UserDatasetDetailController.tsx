@@ -12,7 +12,7 @@ import {
   loadUserDatasetDetail,
   removeUserDataset,
   shareUserDatasets,
-  unshareUserDatasets,
+  unshareUserDataset,
   updateUserDatasetDetail,
   updateSharingModalState,
   sharingError,
@@ -32,7 +32,8 @@ import { VariableDisplayText } from "../Components/FormTypes";
 
 import { State as UserDatasetDetailState } from "../StoreModules/UserDatasetDetailStoreModule";
 import { GlobalData } from "@veupathdb/wdk-client/lib/StoreModules/GlobalData";
-import { DatasetDetails, DatasetFileListResponse as DatasetFileList } from "../Service/Types";
+import { DatasetDetails } from "../Service/Types";
+import { VDIConfig } from "../Utils/types";
 
 
 const ActionCreators = {
@@ -41,7 +42,7 @@ const ActionCreators = {
   updateUserDatasetDetail,
   removeUserDataset,
   shareUserDatasets,
-  unshareUserDatasets,
+  unshareUserDatasets: unshareUserDataset,
   updateSharingModalState,
   sharingError,
   sharingSuccess,
@@ -66,7 +67,7 @@ type OwnProps = {
   includeAllLink: boolean;
   includeNameHeader: boolean;
   displayText: VariableDisplayText;
-  quotaSize: number;
+  vdiConfig: VDIConfig;
 };
 
 type MergedProps = {
@@ -82,7 +83,7 @@ type DetailViewProps = Pick<
   | "includeAllLink"
   | "includeNameHeader"
   | "displayText"
-  | "quotaSize"
+  | "vdiConfig"
 > & Pick<
   UserDatasetDetailState,
   | "userDatasetUpdating"
@@ -114,7 +115,6 @@ type DetailViewProps = Pick<
   readonly isOwner: boolean;
   readonly location: Location;
   readonly userDataset?: DatasetDetails;
-  readonly fileListing?: DatasetFileList;
   readonly questionMap: Record<string, Question>;
 
   getQuestionUrl(question: Question): string;
@@ -175,8 +175,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
     const { loadError } = this.props.stateProps;
     return (
       loadError != null &&
-      (
-        loadError.statusCode === 401 || loadError.statusCode === 403)
+      (loadError.statusCode === 401 || loadError.statusCode === 403)
     );
   }
 
@@ -231,7 +230,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       includeAllLink,
       includeNameHeader,
       displayText,
-      quotaSize,
+      vdiConfig,
     } = this.props.ownProps;
     const {
       updateUserDatasetDetail,
@@ -278,7 +277,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       location: window.location,
       updateError,
       removeUserDataset,
-      quotaSize,
+      vdiConfig,
       userDatasetUpdating,
       shareUserDatasets,
       unshareUserDatasets,
@@ -291,7 +290,6 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       shareSuccessful,
       updateSharingModalState,
       userDataset: entry?.resource,
-      fileListing: entry?.fileListing,
       getQuestionUrl: this.getQuestionUrl,
       questionMap: keyBy(questions, "fullName"),
       displayText,

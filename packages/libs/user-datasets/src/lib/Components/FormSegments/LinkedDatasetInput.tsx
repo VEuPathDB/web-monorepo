@@ -8,7 +8,7 @@ import {
   InputConstructor,
   RecordListProps,
   RecordUpdater,
-  newObjectInputUpdater,
+  newListPropUpdater,
 } from "./component-utils";
 
 import Trash from "@veupathdb/coreui/lib/components/icons/Trash";
@@ -17,7 +17,7 @@ import { InputList } from "./InputList";
 
 function linkInputFactory(updater: RecordUpdater<LinkedDataset>): InputConstructor<LinkedDataset> {
   return (link, index) => {
-    const updateFn = newObjectInputUpdater(index, updater);
+    const updateFn = newListPropUpdater(index, updater);
 
     const deleteFn = (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();

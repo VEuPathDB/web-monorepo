@@ -1,26 +1,23 @@
-import React from "react";
-
-import {
-  cx,
-  InputConstructor,
-  RecordListProps,
-  RecordUpdater,
-  newObjectInputUpdater,
-} from "./component-utils";
+import React, { MouseEvent, ReactElement } from "react";
+import { cx, InputConstructor } from "./component-utils";
 import { DoiRef } from "../../Service/Types";
 import { FieldLabel } from "./FieldLabel";
 import { TextArea, TextBox } from "@veupathdb/wdk-client/lib/Components";
 import { InputList } from "./InputList";
 import { TrashButton } from "./common-components";
+import { FieldSetter } from "../FormTypes";
+import { ListSectionProps } from "../UploadForm";
 
-
-function doiReferenceFactory(updater: RecordUpdater<DoiRef>): InputConstructor<DoiRef> {
+function doiReferenceFactory(updater: FieldSetter<DoiRef[]>): InputConstructor<DoiRef> {
   return (record, index) => {
-    const updateRef = newObjectInputUpdater(index, updater);
-    const onRemove = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const replaceFn = function <K extends keyof DoiRef>(key: K, value: DoiRef[K]) {
+      updater(dois => dois?.map((d, i) => i === index ? { ...d, [key]: value } : d));
+    };
+
+    const onRemove = (event: MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
-      updater((prev) => prev.filter((_, i) => i !== index));
-    }
+      updater(prev => prev?.filter((_, i) => i !== index))
+    };
 
     return (
       <div className={cx("--NestedInputContainer")}>
@@ -37,14 +34,14 @@ function doiReferenceFactory(updater: RecordUpdater<DoiRef>): InputConstructor<D
             placeholder="DOI"
             required
             value={record.doi}
-            onChange={value => updateRef("doi", value)}
+            onChange={value => replaceFn("doi", value)}
           />
 
           <FieldLabel>Description</FieldLabel>
           <TextArea
             id={`dataset-externals-doi-desc-${index}`}
             value={record.description}
-            onChange={value => updateRef("description", value)}
+            onChange={value => replaceFn("description", value)}
           />
         </div>
       </div>
@@ -52,13 +49,13 @@ function doiReferenceFactory(updater: RecordUpdater<DoiRef>): InputConstructor<D
   };
 }
 
-export function DoiRefInputList(props: RecordListProps<DoiRef>): React.ReactElement {
-  return InputList({
+export function DoiRefInputList(props: ListSectionProps<DoiRef>): ReactElement {
+  return InputList<DoiRef>({
+    ...props,
     header: "DOI References",
     addRecordText: "Add Reference",
     className: "externalIdentifiersFormSection",
     subclass: "dois",
     factory: doiReferenceFactory,
-    ...props
   });
 }

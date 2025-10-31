@@ -3,35 +3,82 @@ import { DatasetDependency, DatasetType, PluginDetails } from "../../Service/Typ
 import { transform } from "../../Utils/utils";
 import { DatasetInstaller } from "@veupathdb/web-common/src/user-dataset-upload-config";
 import { ServiceConfiguration } from "../../Service/Types/service-types";
+import {
+  BaseDataUpload,
+  DataUpload,
+  DataUploadKind,
+  DataUploadType, MultiDataFileUpload,
+  ResultUpload,
+  SingleDataFileUpload,
+  UrlUpload,
+} from "./index";
+import { StateField } from "../../Utils/util-types";
+import { StrategySummary } from "@veupathdb/wdk-client/lib/Utils/WdkUser";
+
+// region Session Inputs
+
+export interface UrlParams {
+  readonly datasetName?: string;
+  readonly datasetSummary?: string;
+  readonly datasetDescription?: string;
+  readonly datasetUrl?: string;
+  readonly useFixedUploadMethod?: string;
+  readonly datasetStrategyRootStepId?: number;
+  readonly datasetStepId?: number;
+  readonly datasetStrategyId?: number;
+}
+
+// endregion Session Inputs
 
 // region = Data Source Input
 
 // region == Data Input Base
 
 export interface DataInputProps {
-  readonly formField: ReactNode;
+  readonly formField: () => ReactNode;
   readonly installer: DatasetInstaller;
   readonly vdiConfig: ServiceConfiguration;
 }
 
 type DataInputFactory = (props: DataInputProps) => ReactNode;
 
-export type DataInputKind = "file" | "url" | "result";
+export const UploadTypes = {
+  File: "file",
+  URL: "url",
+  Result: "result",
+} as const;
 
-interface BaseDataInputConfig<T extends DataInputKind> {
-  readonly kind: T;
+export type UploadType = typeof UploadTypes[keyof typeof UploadTypes];
 
-  readonly render?: (props?: DataInputProps) => ReactNode;
+type DataUploadConfigKind<T> = T extends BaseDataUpload<infer K> ? K : never;
 
-  asKind<R extends DataInputKind = T>(kind: R): (DataInputConfig & BaseDataInputConfig<R>) | undefined;
+interface BaseDataInputConfig<C extends BaseDataUpload<any>> {
+  readonly kind: DataUploadKind<C>;
+
+  readonly label: ReactNode;
+
+  readonly installer: DatasetInstaller;
+
+  readonly vdiConfig: ServiceConfiguration;
+
+  readonly fieldState: StateField<DataUpload | undefined>;
+
+  /**
+   * Optional function that may be used to wrap or replace the default form
+   * field.
+   */
+  readonly render?: (props: DataInputProps) => ReactNode;
+
+  asKind<R extends DataUploadType>(kind: R): UploadMethodConfig & { kind: typeof kind } | undefined;
 }
 
-export type DataInputConfig = FileInputConfig | UrlInputConfig | ResultInputConfig;
+export type UploadMethodConfig =
+  | SingleFileUploadConfig
+  | MultiFileUploadConfig
+  | UrlUploadConfig
+  | ResultUploadConfig;
 
-function asKind<
-  R extends DataInputKind,
-  T extends BaseDataInputConfig<R>
->(self: T): (kind: DataInputKind) => T | undefined {
+function asKind<T extends UploadMethodConfig>(self: T): (kind: DataUploadType) => T | undefined {
   return kind => self.kind === kind ? self : undefined;
 }
 
@@ -39,39 +86,34 @@ function asKind<
 
 // region == File Input
 
-export interface FileInputConfig extends BaseDataInputConfig<"file"> {
-  readonly kind: "file";
-  readonly maxSizeBytes: number;
-  readonly allowedExtensions: string[];
-}
+export type SingleFileUploadConfig = BaseDataInputConfig<SingleDataFileUpload>;
 
 // export function
-export function newFileInputConfig(): FileInputConfig
-export function newFileInputConfig(render: DataInputFactory): FileInputConfig;
-export function newFileInputConfig(render?: DataInputFactory): FileInputConfig {
+export function newSingleFileInputConfig(): SingleFileUploadConfig
+export function newSingleFileInputConfig(render: DataInputFactory): SingleFileUploadConfig;
+export function newSingleFileInputConfig(render?: DataInputFactory): SingleFileUploadConfig {
   return transform(
-    {
-      kind: "file",
-      render
-    } as FileInputConfig,
+    { kind: DataUploadType.SingleFile, render } as SingleFileUploadConfig,
     v => ({ ...v, asKind: asKind(v) }),
-  ) as FileInputConfig;
+  ) as SingleFileUploadConfig;
 }
+
+export type MultiFileUploadConfig = BaseDataInputConfig<MultiDataFileUpload>;
 
 // endregion == File Input
 
 // region == URL Input
 
-interface UrlInputConfig extends BaseDataInputConfig<"url"> {
-  readonly kind: "url";
+export interface UrlUploadConfig extends BaseDataInputConfig<UrlUpload> {
+  readonly inputPlaceholder: string;
   readonly offer: boolean;
 }
 
-export function newUrlInputConfig(offer: boolean = false, render?: DataInputFactory): UrlInputConfig {
+export function newUrlInputConfig(offer: boolean = false, render?: DataInputFactory): UrlUploadConfig {
   return transform(
-    { kind: "url", offer, render } as UrlInputConfig,
+    { kind: DataUploadType.URL, offer, render } as UrlUploadConfig,
     v => ({ ...v, asKind: asKind(v) }),
-  ) as UrlInputConfig;
+  ) as UrlUploadConfig;
 }
 
 // endregion == URL Input
@@ -80,8 +122,9 @@ export function newUrlInputConfig(offer: boolean = false, render?: DataInputFact
 
 type CompatibleRecordTypes = Record<string, { reportName: string; reportConfig: unknown }>;
 
-interface ResultInputConfig extends BaseDataInputConfig<"result"> {
-  readonly kind: "result";
+export interface ResultUploadConfig extends BaseDataInputConfig<ResultUpload> {
+  readonly urlParams: UrlParams;
+  readonly strategyOptions: StrategySummary[];
   readonly offerStrategyUpload: boolean;
   readonly compatibleRecordTypes: CompatibleRecordTypes;
 }
@@ -90,16 +133,16 @@ export function newResultInputConfig(
   compatibleRecordTypes: CompatibleRecordTypes,
   offerStrategyUpload: boolean = false,
   render?: DataInputFactory,
-): ResultInputConfig {
+): ResultUploadConfig {
   return transform(
     {
-      kind: "result",
+      kind: DataUploadType.Result,
       compatibleRecordTypes,
       offerStrategyUpload,
       render,
-    } as ResultInputConfig,
+    } as ResultUploadConfig,
     v => ({ ...v, asKind: asKind(v) }),
-  ) as ResultInputConfig;
+  ) as ResultUploadConfig;
 }
 
 // endregion == Result Input
@@ -120,19 +163,6 @@ export interface DatasetDependenciesConfig {
 
 // endregion Dependencies
 
-// region Common Field Overrides
-
-export interface VariableDisplayText {
-  readonly detailsPageTitle: string;
-  readonly workspaceTitle: string;
-  readonly datasetNounSingular: string;
-  readonly datasetNounPlural: string;
-  readonly datasetNameLabel: NonNullable<ReactNode>;
-  readonly summaryPlaceholder: string;
-}
-
-// endregion Common Field Overrides
-
 // region = Type-Specific Configuration
 
 interface MenuButtonConfig {
@@ -152,6 +182,8 @@ export interface UploadFormConfig {
   /**
    * Used as the document title as well as the type-specific upload-form header
    * text.
+   *
+   * **THIS VALUE IS DATASET TYPE SPECIFIC**
    */
   readonly uploadTitle: string;
 
@@ -165,14 +197,14 @@ export interface UploadFormConfig {
    * Called to generate the help/info text that appears at the bottom of the
    * upload form.
    */
-  readonly renderFormFooterInfo?: (configs: DataInputConfig[]) => ReactNode;
+  readonly renderFormFooterInfo?: (configs: UploadMethodConfig[]) => ReactNode;
 
   readonly installer: PluginDetails;
 
   readonly dependencies?: DatasetDependenciesConfig;
 
-  readonly uploadMethodConfigs: DataInputConfig[];
-
+  readonly uploadMethodConfigs: UploadMethodConfig[];
 }
+
 
 // endregion = Type-Specific Configuration

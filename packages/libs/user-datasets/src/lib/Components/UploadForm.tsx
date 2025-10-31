@@ -1,31 +1,14 @@
-import React, {
-  Dispatch,
-  FormEvent, ReactElement, ReactNode, SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { FormEvent, JSXElementConstructor, ReactElement, useCallback, useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 
-import { keyBy } from "lodash";
-
-import {
-  TextBox,
-  TextArea,
-  FileInput,
-  RadioList,
-} from "@veupathdb/wdk-client/lib/Components";
+import { TextArea } from "@veupathdb/wdk-client/lib/Components";
 
 import { makeClassNameHelper } from "@veupathdb/wdk-client/lib/Utils/ComponentUtils";
 import { StrategySummary } from "@veupathdb/wdk-client/lib/Utils/WdkUser";
 
 import { State } from "../StoreModules/UserDatasetUploadStoreModule";
-import {
-  CompatibleRecordTypes,
-  ResultUploadConfig,
-} from "../Utils/types";
+import { ResultUploadConfig } from "../Utils/types";
 
 import { Modal } from "@veupathdb/coreui";
 import Banner from "@veupathdb/coreui/lib/components/banners/Banner";
@@ -33,58 +16,53 @@ import Banner from "@veupathdb/coreui/lib/components/banners/Banner";
 import "./UploadForm.scss";
 
 import {
+  BioprojectIdRefInputList,
   ContactInputList,
+  DoiRefInputList,
   ErrorMessage,
   FieldLabel,
+  HyperlinkInputList,
   LinkedDatasetInputList,
   PublicationInputList,
   UploadProgress,
-  useCharacteristicsSegment,
-  useStudyDesignSegment,
 } from "./FormSegments";
 
+import { DatasetPostRequest } from "../Service/Types";
 import {
-  DatasetContact,
-  DatasetDependency,
-  DatasetPostRequest,
-  DatasetPublication,
-  LinkedDataset,
-} from "../Service/Types";
-import { DataInputConfig, UploadFormConfig, VariableDisplayText } from "./FormTypes";
+  DatasetFormData,
+  DataUpload,
+  DataUploadType,
+  MetaFileUpload,
+  UploadFormConfig,
+} from "./FormTypes";
 import { ServiceConfiguration } from "../Service/Types/service-types";
-import { DataInputKind } from "./FormTypes/form-config";
-import { DataFileInput, DataSourceURLInput, StrategyDataInput } from "./FormSegments/DataInputs";
+import { ClinEpiDatasetDetails } from "./FormSegments/Required/ClinEpiDatasetDetails";
+import { projectId } from "@veupathdb/web-common/lib/config";
+import { MBioDatasetDetails } from "./FormSegments/Required/MBioDatasetDetails";
+import { GenomicsDatasetDetails } from "./FormSegments/Required/GenomicsDatasetDetails";
+import { RequiredInformationProps } from "./FormSegments/Required/common";
+import { UrlParams } from "./FormTypes/form-config";
+import { CharacteristicsSegment } from "./FormSegments/DatasetCharacteristics";
+import { DisplayText } from "@veupathdb/web-common/src/user-dataset-upload-config";
+import { transform } from "../Utils/utils";
+import { createRootListSectionProps, createSubListSectionProps } from "../Utils/field-selectors";
 
 const cx = makeClassNameHelper("UploadForm");
 
 interface Props {
   baseUrl: string;
-  uploadConfig: UploadFormConfig;
-  projectId: string;
+  formConfig: UploadFormConfig;
   badUploadMessage: State["badUploadMessage"];
-  urlParams: Record<string, string>; // Assume we want to support this for all of our new fields
+  urlParams: UrlParams,
   strategyOptions: StrategySummary[];
   resultUploadConfig?: ResultUploadConfig;
+  displayText: DisplayText;
   clearBadUpload: () => void;
   submitForm: (formSubmission: FormSubmission, baseUrl?: string) => void;
   uploadProgress?: number | null;
   dispatchUploadProgress: (progress: number | null) => void;
-  displayText: VariableDisplayText;
   vdiConfig: ServiceConfiguration,
 }
-
-type DataUploadMode = "file" | "url" | "strategy" | "step";
-
-type DataUploadSelection =
-  | { type: "file"; file?: File }
-  | { type: "url"; url?: string }
-  | {
-  type: "result";
-  stepId?: number;
-  compatibleRecordTypes?: CompatibleRecordTypes;
-};
-
-type CompleteDataUploadSelection = Required<DataUploadSelection>;
 
 interface InvalidForm {
   valid: false;
@@ -98,170 +76,51 @@ interface ValidForm {
 
 export type FormValidation = InvalidForm | ValidForm;
 
-export interface FormSubmission extends DatasetPostRequest {
-  dataUploadSelection: CompleteDataUploadSelection;
-}
-
-const TODO = (msg: string) => {
-  throw new Error(msg);
-};
-
-interface UploadMethodItem {
-  readonly value: DataInputKind;
-  readonly display: NonNullable<ReactNode>;
+export interface FormSubmission {
+  readonly metadata: DatasetPostRequest;
+  readonly data: DataUpload;
+  readonly docs: MetaFileUpload[];
 }
 
 export function UploadForm({
   badUploadMessage,
   baseUrl,
-  uploadConfig,
-  projectId,
+  formConfig,
   urlParams,
+  displayText,
   strategyOptions,
   resultUploadConfig,
   clearBadUpload,
   submitForm,
   uploadProgress,
   dispatchUploadProgress,
-  displayText,
   vdiConfig,
 }: Props) {
-  const strategyOptionsByStrategyId = useMemo(
-    () => keyBy(strategyOptions, (option) => option.strategyId),
-    [ strategyOptions ],
-  );
+  const [ dsDetails, setDsDetails ] = useState<Partial<DatasetPostRequest>>(() => ({
+    installTargets: [ projectId ],
+    name: urlParams.datasetName,
+    summary: urlParams.datasetSummary,
+    dependencies: [],
+    description: urlParams.datasetDescription,
+    origin: "direct-upload",
+  }));
 
-  const { useFixedUploadMethod: useFixedUploadMethodStr } = urlParams;
-
-  const useFixedUploadMethod = useMemo(
-    () => useFixedUploadMethodStr === "true",
-    [ useFixedUploadMethodStr ],
-  );
-
-  const displayUrlUpload = uploadConfig.uploadMethodConfigs
-    .some(config => config.asKind("url")?.offer === true);
-
-  const displayStrategyUpload = uploadConfig.uploadMethodConfigs
-    .some(config => config.asKind("result")?.offerStrategyUpload === true);
-
-  const enableStrategyUploadMethod = displayStrategyUpload && strategyOptions.length > 0;
-
-  // region Form State
-
-  const [ name, setName ] = useState(urlParams.datasetName ?? "");
-  const [ summary, setSummary ] = useState(urlParams.datasetSummary ?? "");
-  const [ description, setDescription ] = useState(urlParams.datasetDescription ?? "");
-  const [ dependencies, setDependencies ] = useState<DatasetDependency[]>([]);
-  const [ publications, setPublications ] = useState<DatasetPublication[]>([]);
-  const [ contacts, setContacts ] = useState<DatasetContact[]>([]);
-  const [ linkedDatasets, setLinkedDatasets ] = useState<LinkedDataset[]>([]);
-
-
-  const designInCharacteristics = false;
-
-  const [ studyDesign, setStudyDesign ] = useState<string>();
-  const [ studyType, setStudyType ] = useState<string>();
-  const [ StudyDesignSegment, validateStudyDesign ] = useStudyDesignSegment({
-    designValue: studyDesign,
-    onChangeDesign: setStudyDesign,
-    typeValue: studyType,
-    onChangeType: setStudyType,
-
-    fetchTypeTerms: TODO("where do the terms come from?"),
-    requireDesign: TODO("design required for mbio and ce"),
-    designTerms: TODO("get these from the model?"),
-  });
-
-  const { CharacteristicsSegment, ...characteristics } = useCharacteristicsSegment({
-    StudyDesignSegment: designInCharacteristics
-      ? StudyDesignSegment
-      : () => <></>,
-  });
-
-  const [ dataUploadMode, setDataUploadMode ] = useState<DataUploadMode>(
-    urlParams.datasetStepId
-      ? "step"
-      : urlParams.datasetStrategyRootStepId && enableStrategyUploadMethod
-        ? "strategy"
-        : urlParams.datasetUrl && displayUrlUpload
-          ? "url"
-          : "file",
-  );
-  const [ file, setFile ] = useState<File>();
-  const [ url, setUrl ] = useState(urlParams.datasetUrl ?? "");
-
-  // endregion Form State
-
-  const initialStepId = useMemo(() => {
-    const parsedStepIdParam = Number(urlParams.datasetStepId);
-
-    if (isFinite(parsedStepIdParam)) {
-      return parsedStepIdParam;
-    }
-
-    const parsedStrategyIdParam = Number(urlParams.datasetStrategyId);
-
-    return !enableStrategyUploadMethod || !isFinite(parsedStrategyIdParam)
-      ? strategyOptions[0]?.rootStepId
-      : strategyOptionsByStrategyId[parsedStrategyIdParam]?.rootStepId;
-  }, [
-    urlParams.datasetStepId,
-    urlParams.datasetStrategyId,
-    strategyOptions,
-    strategyOptionsByStrategyId,
-    enableStrategyUploadMethod,
-  ]);
-  const [ stepId, setStepId ] = useState(initialStepId);
-
-  useEffect(() => {
-    setStepId(initialStepId);
-  }, [ initialStepId ]);
+  const dataUploadState = useState<DataUpload>();
+  const docFileState = useState<MetaFileUpload[]>([]);
 
   const [ errorMessages, setErrorMessages ] = useState<string[]>([]);
   const [ submitting, setSubmitting ] = useState(false);
-
-  const dataUploadSelection = useMemo((): DataUploadSelection => {
-    if (dataUploadMode === "file") {
-      return { type: "file", file };
-    }
-
-    if (dataUploadMode === "url") {
-      return { type: "url", url };
-    }
-
-    if (resultUploadConfig == null) {
-      throw new Error("This data set type does not support result uploads.");
-    }
-
-    if (stepId == null) {
-      return { type: "result" };
-    }
-
-    return {
-      type: "result",
-      stepId,
-      compatibleRecordTypes: resultUploadConfig.compatibleRecordTypes,
-    };
-  }, [ dataUploadMode, file, url, resultUploadConfig, stepId ]);
 
   const onSubmit = useCallback(
     (event: FormEvent) => {
       event.preventDefault();
 
       const formValidation = validateForm(
-        projectId,
-        uploadConfig,
-        enableStrategyUploadMethod,
-        {
-          name,
-          summary,
-          description,
-          dataUploadSelection,
-          dependencies,
-          publications,
-          linkedDatasets: linkedDatasets,
-          contacts,
-        },
+        formConfig,
+        displayText.formDisplay,
+        dsDetails,
+        dataUploadState[0],
+        docFileState[0],
       );
 
       if (!formValidation.valid) {
@@ -273,18 +132,12 @@ export function UploadForm({
     },
     [
       baseUrl,
-      projectId,
-      uploadConfig,
-      enableStrategyUploadMethod,
-      name,
-      summary,
-      description,
-      dependencies,
-      dataUploadSelection,
+      displayText.formDisplay,
+      docFileState,
+      dsDetails,
       submitForm,
-      publications,
-      linkedDatasets,
-      contacts,
+      formConfig,
+      dataUploadState,
     ],
   );
 
@@ -298,38 +151,26 @@ export function UploadForm({
 
   useEffect(() => clearBadUpload, [ clearBadUpload ]);
 
-
-  const uploadMethodItems: Array<() => UploadMethodItem> = uploadConfig.uploadMethodConfigs.map(config => {
-    switch (config.kind) {
-      case "file":
-        return () => {
-          return {
-            value: config.kind,
-            display: DataFileInput({
-              inputConstructor: config.asKind("file")?.render
-                ? baseInput
-                : () => render!!({
-                  formField: baseInput(),
-                  installer: uploadConfig.installer,
-                  vdiConfig,
-                }),
-            }),
-          };
-        };
-      case "url":
-        return () => ({
-          value: config.kind,
-          display: DataSourceURLInput({ url, setUrl }),
-        });
-      case "result":
-        return () => ({
-          value: config.kind,
-          display: StrategyDataInput({ stepId, setStepId, strategyOptions }),
-        });
-      default:
-        throw new Error(`illegal state: invalid upload type '${(config as DataInputConfig).kind}'`)
+  const requiredDetailsSection = transform(
+    {
+      formConfig,
+      displayText,
+      vdiConfig,
+      urlParams,
+      strategyOptions,
+      resultUploadConfig,
+      dataUploadState,
+      docFileState,
+      metaFormState: [ dsDetails, setDsDetails ],
+    } as RequiredInformationProps,
+    props => {
+      switch (projectId) {
+        case "ClinEpiDB": return ClinEpiDatasetDetails(props)
+        case "MicrobiomeDB": return MBioDatasetDetails(props)
+        default: return GenomicsDatasetDetails(props)
+      }
     }
-  });
+  )
 
   return (
     <form
@@ -339,7 +180,7 @@ export function UploadForm({
     >
       {errorMessages.length > 0 && <ErrorMessage errors={errorMessages}/>}
       <div>
-        <h2>{uploadConfig.uploadTitle}</h2>
+        <h2>{formConfig.uploadTitle}</h2>
         <Banner
           banner={{
             type: "warning",
@@ -352,94 +193,52 @@ export function UploadForm({
             ),
           }}
         />
-        <div className="formSection formSection--data-set-name">
-          <FieldLabel required htmlFor="data-set-name">
-            {displayText.datasetNameLabel}
-          </FieldLabel>
-          <TextBox
-            type="input"
-            id="data-set-name"
-            required
-            value={name}
-            onChange={setName}
-          />
-        </div>
-        <div className="formSection formSection--data-set-summary">
-          <FieldLabel htmlFor="data-set-summary">Summary</FieldLabel>
-          <TextBox
-            type="input"
-            id="data-set-summary"
-            placeholder={displayText.summaryPlaceholder}
-            required={true}
-            value={summary}
-            onChange={setSummary}
-          />
-        </div>
+        {requiredDetailsSection}
         <div className="formSection formSection--data-set-description">
           <FieldLabel htmlFor="data-set-description">Description</FieldLabel>
           <TextArea
             id="data-set-description"
             placeholder="longer description of the data set contents"
             rows={6}
-            value={description}
-            onChange={setDescription}
+            value={dsDetails.description}
+            onChange={description => setDsDetails({ ...dsDetails, description })}
           />
         </div>
+
         <div className="formSection">
-          <PublicationInputList records={publications} setRecords={setPublications}/>
-          <ContactInputList records={contacts} setRecords={setContacts}/>
-          <LinkedDatasetInputList records={linkedDatasets} setRecords={setLinkedDatasets}/>
+          <PublicationInputList {...createRootListSectionProps("publications", dsDetails, setDsDetails)}/>
+          <ContactInputList {...createRootListSectionProps("contacts", dsDetails, setDsDetails)}/>
+          <LinkedDatasetInputList {...createRootListSectionProps("linkedDatasets", dsDetails, setDsDetails)}/>
         </div>
-        {/*<div className="formSection externalIdentifiers">*/}
-        {/*  <DoiRefInputList records={} setRecords={} />*/}
-        {/*  <HyperlinkInputList records={} setRecords={} />*/}
-        {/*  <BioprojectIdRefInputList records={} setRecords={} />*/}
-        {/*</div>*/}
-        {uploadConfig.dependencies && (
+
+        <div className="formSection externalIdentifiers">
+          <DoiRefInputList {...createSubListSectionProps(
+            "externalIdentifiers", "dois", dsDetails, setDsDetails)} />
+          <HyperlinkInputList {...createSubListSectionProps(
+            "externalIdentifiers", "hyperlinks", dsDetails, setDsDetails)}/>
+          <BioprojectIdRefInputList {...createSubListSectionProps(
+            "externalIdentifiers", "bioprojectIds", dsDetails, setDsDetails)}/>
+        </div>
+
+        {formConfig.dependencies && (
           <div className="formSection formSection--data-set-dependencies">
             <FieldLabel>
-              {uploadConfig.dependencies.label}
+              {formConfig.dependencies.label}
             </FieldLabel>
-            {uploadConfig.dependencies.render({
-              value: dependencies,
-              onChange: setDependencies,
+            {formConfig.dependencies.render({
+              value: dsDetails.dependencies ?? [],
+              onChange: it => setDsDetails({ ...dsDetails, dependencies: it }),
             })}
           </div>
         )}
-        {
-          <div className="formSection formSection--data-set-file">
-            {uploadMethodItems.length === 1
-              ? <div className={cx("--UploadMethodSelector")}>
-                <div className={cx("--FixedUploadItem")}>
-                  {uploadMethodItems[0]().display}
-                </div>
-              </div>
-              : <RadioList
-                name="data-set-radio"
-                className={cx("--UploadMethodSelector")}
-                value={dataUploadMode}
-                onChange={(value) => {
-                  if (
-                    value !== "url" &&
-                    value !== "file" &&
-                    value !== "strategy"
-                  ) {
-                    throw new Error(
-                      `Unrecognized upload method '${value}' encountered.`,
-                    );
-                  }
-                  setDataUploadMode(value);
-                }}
-                items={uploadMethodItems.map(it => it())}
-              />
-            }
-          </div>
-        }
       </div>
-      {CharacteristicsSegment}
+
+      <CharacteristicsSegment datasetMeta={dsDetails} setter={setDsDetails} studyDesignSegment={}/>
+
       <button type="submit" className="btn" disabled={submitting}>
-        Upload Data Set
+        {displayText.formDisplay.uploadButtonLabel}
       </button>
+
       <Modal
         visible={submitting && Boolean(uploadProgress)}
         toggleVisible={() => null}
@@ -462,60 +261,68 @@ export function UploadForm({
       >
         <UploadProgress uploadProgress={uploadProgress}/>
       </Modal>
-      {uploadConfig?.renderFormFooterInfo?.(uploadConfig.uploadMethodConfigs)}
+      {formConfig?.renderFormFooterInfo?.(formConfig.uploadMethodConfigs)}
     </form>
   );
 }
 
 function validateForm(
-  projectId: string,
-  datasetUploadType: UploadFormConfig,
-  enableResultUploadMethod: boolean,
-  formContent: {
-    name: string;
-    summary: string;
-    description: string;
-    dataUploadSelection: { type: "file"; file?: File } | { type: "url"; url?: string } | {
-      type: "result";
-      stepId?: number;
-      compatibleRecordTypes?: CompatibleRecordTypes
-    };
-    dependencies: DatasetDependency[];
-    publications: DatasetPublication[];
-    linkedDatasets: LinkedDataset[];
-    contacts: DatasetContact[]
-  },
+  formConfig: UploadFormConfig,
+  { requiredInfo: displayText }: DisplayText["formDisplay"],
+  formContent: DatasetFormData,
+  dataUpload: DataUpload | undefined,
+  metaUploads: MetaFileUpload[],
 ): FormValidation {
-  const { name, summary, description, dataUploadSelection, dependencies } =
-    formContent;
-
-  if (
-    datasetUploadType.dependencies != null &&
-    dependencies == null
-  ) {
+  if (formConfig.dependencies != null && !formContent.dependencies) {
     return {
       valid: false,
-      errors: [ `Required: ${datasetUploadType.dependencies.label}` ],
+      errors: [ `Required: ${displayText.dependenciesFieldLabel.toLowerCase()}` ],
     };
   }
 
-  if (!isCompleteDataUploadSelection(dataUploadSelection)) {
+  if (dataUpload == null) {
+    const typeString = transform(
+      formConfig.uploadMethodConfigs
+        .map(it => {
+          switch (it.kind) {
+            case DataUploadType.SingleFile:
+            case DataUploadType.MultiFile:
+              return displayText.uploadField.fileText.toLowerCase();
+            case DataUploadType.URL:
+              return displayText.uploadField.urlText.toUpperCase();
+            case DataUploadType.Result:
+              return displayText.uploadField.resultText.toLowerCase();
+            default:
+              throw new Error(`illegal state: unrecognized upload method kind '${it["kind"]}'`);
+          }
+        }),
+      it => {
+        switch (it.length) {
+          // case 0: -- should be impossible to reach this point with an empty
+          //            upload method config array
+          case 1:
+            return it[0];
+          case 2:
+            return `${it[0]} or ${it[1]}`;
+          default:
+            return it.slice(0, -1).join(", ") + ", or " + it[it.length-1];
+        }
+      },
+    );
+
+
     return {
       valid: false,
-      errors: !enableResultUploadMethod
-        ? [ "Required: data file or URL" ]
-        : [ "Required: data file, URL, or strategy" ],
+      errors: [ `Required: data ${typeString}` ],
     };
   }
 
-  if (
-    dataUploadSelection.type === "url" &&
-    !isValidUrl(dataUploadSelection.url)
-  ) {
+  if (dataUpload.kind === DataUploadType.URL && !isValidUrl(dataUpload.url!!)) {
     return {
       valid: false,
       errors: [
-        "The provided data URL does not seem valid. A valid URL must start with \"http://\" or \"https://\".",
+        "The provided data URL does not seem valid. A valid URL must start with"
+        + " \"http://\" or \"https://\".",
       ],
     };
   }
@@ -523,33 +330,19 @@ function validateForm(
   return {
     valid: true,
     submission: {
-      name,
-      summary,
-      description,
-      origin: "direct-upload",
-      type: datasetUploadType.installer.type,
-      installTargets: [ projectId ],
-      dataUploadSelection,
-      dependencies: dependencies ?? [],
-      visibility: "private",
+      metadata: formContent as DatasetPostRequest,
+      data: dataUpload as DataUpload,
+      docs: metaUploads,
     },
   };
 }
 
-
-function isCompleteDataUploadSelection(
-  dataUploadSelection: DataUploadSelection,
-): dataUploadSelection is CompleteDataUploadSelection {
-  return Object.values(dataUploadSelection).every((value) => value != null);
-}
-
 // https://stackoverflow.com/a/43467144
 function isValidUrl(string: string) {
-  let url: URL;
   try {
-    url = new URL(string);
+    const url = new URL(string);
+    return url.protocol === "http:" || url.protocol === "https:";
   } catch (_) {
     return false;
   }
-  return url.protocol === "http:" || url.protocol === "https:";
 }

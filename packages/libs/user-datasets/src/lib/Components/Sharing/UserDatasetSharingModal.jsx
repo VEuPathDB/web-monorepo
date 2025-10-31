@@ -13,6 +13,28 @@ import './UserDatasetSharingModal.scss';
 
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+/**
+ * @typedef {object} UserDatasetSharingModalProps
+ *
+ * @property {User} user
+ * @property {DatasetListEntry[]} datasets
+ * @property {(DatasetListEntry) => void} deselectDataset
+ * @property {(ids: string[], users: number[], ctx: 'datasetDetails' | 'datasetsList') => void} shareUserDatasets
+ * @property {'datasetDetails' | 'datasetsList'} context
+ * @property {(id: string, user: number, ctx: 'datasetDetails' | 'datasetsList') => void} unshareUserDatasets
+ * @property {() => void} onClose
+ * @property {VariableDisplayText} displayText
+ * @property {boolean} sharingDatasetPending
+ * @property {boolean | undefined} shareSuccessful
+ * @property {Error | undefined} shareError
+ * @property {(ds: DatasetListEntry) => any} updateUserDatasetDetail
+ */
+
+/**
+ * @typedef UserDatasetSharingModal
+ *
+ * @prop {UserDatasetSharingModalProps} props
+ */
 class UserDatasetSharingModal extends React.Component {
   constructor(props) {
     super(props);
@@ -47,9 +69,12 @@ class UserDatasetSharingModal extends React.Component {
     this.renderSharingButtons = this.renderSharingButtons.bind(this);
   }
 
+  /**
+   * @param {DatasetListEntry} dataset
+   * @return {boolean}
+   */
   isMyDataset(dataset) {
-    const { user } = this.props;
-    return dataset && dataset.ownerUserId && dataset.ownerUserId === user.id;
+    return dataset && dataset?.owner && dataset?.owner === this.props.user.id;
   }
 
   handleTextChange(recipientInput = null) {
@@ -58,8 +83,8 @@ class UserDatasetSharingModal extends React.Component {
 
   getDatasetNoun() {
     return this.props.datasets.length === 1
-      ? `this ${this.props.dataNoun.singular.toLowerCase()}`
-      : `these ${this.props.dataNoun.plural.toLowerCase()}`;
+      ? `this ${this.props.displayText.datasetNounSingular.toLowerCase()}`
+      : `these ${this.props.displayText.datasetNounPlural.toLowerCase()}`;
   }
 
   verifyRecipient(recipientEmail) {
@@ -96,7 +121,7 @@ class UserDatasetSharingModal extends React.Component {
             recipientEmail,
             <span>
               Sorry, you cannot share a{' '}
-              {this.props.dataNoun.singular.toLowerCase()} with yourself.
+              {this.props.displayText.datasetNounSingular.toLowerCase()} with yourself.
             </span>
           );
         } else {
@@ -187,12 +212,16 @@ class UserDatasetSharingModal extends React.Component {
   renderEmptyState() {
     return (
       <i className="faded">
-        This {this.props.dataNoun.singular.toLowerCase()} hasn't been shared
+        This {this.props.displayText.datasetNounSingular.toLowerCase()} hasn't been shared
         yet.
       </i>
     );
   }
 
+  /**
+   * @param {string} datasetId
+   * @param {number} userId
+   */
   unshareWithUser(datasetId, userId) {
     if (
       !window.confirm(
@@ -231,18 +260,20 @@ class UserDatasetSharingModal extends React.Component {
     deselectDataset(dataset);
   }
 
+  /**
+   * @param {DatasetListEntry} userDataset
+   * @return {Element}
+   */
   renderDatasetItem(userDataset) {
-    const { sharedWith, id, meta } = userDataset;
-    const { name } = meta;
+    const { sharedWith } = userDataset;
     const isOwner = this.isMyDataset(userDataset);
-    const { deselectDataset, dataNoun } = this.props;
 
     const EmptyState = this.renderEmptyState;
     const ShareList = this.renderShareList;
 
     return (
       <div
-        key={id}
+        key={userDataset?.datasetId}
         className={'UserDatasetSharing-Dataset' + (isOwner ? '' : ' invalid')}
       >
         <div className="UserDatasetSharing-Dataset-Icon">
@@ -250,10 +281,10 @@ class UserDatasetSharingModal extends React.Component {
         </div>
 
         <div className="UserDatasetSharing-Dataset-Details">
-          <h3>{name}</h3>
+          <h3>{userDataset.name}</h3>
           {!isOwner ? (
             <i className="faded danger">
-              This {dataNoun.singular.toLowerCase()} has been shared with you.
+              This {this.props.displayText.datasetNounSingular.toLowerCase()} has been shared with you.
               Only the owner can share it.
             </i>
           ) : Array.isArray(sharedWith) && sharedWith.length ? (
@@ -264,10 +295,10 @@ class UserDatasetSharingModal extends React.Component {
         </div>
 
         <div className="UserDatasetSharing-Dataset-Actions">
-          {typeof deselectDataset !== 'function' ? null : (
+          {typeof this.props.deselectDataset !== 'function' ? null : (
             <button
               type="button"
-              title={`Unselect this ${dataNoun.singular.toLowerCase()} for sharing`}
+              title={`Unselect this ${this.props.displayText.datasetNounSingular.toLowerCase()} for sharing`}
               onClick={() => this.unselectDataset(userDataset)}
               className="link removalLink"
             >
@@ -338,6 +369,11 @@ class UserDatasetSharingModal extends React.Component {
         );
   }
 
+  /**
+   *
+   * @param {DatasetListEntry[]} datasets
+   * @return {null|ReactElement}
+   */
   renderDatasetList({ datasets }) {
     return !Array.isArray(datasets) || !datasets.length
       ? null
@@ -426,7 +462,6 @@ class UserDatasetSharingModal extends React.Component {
     const { recipients } = this.state;
     const { datasets, onClose, dataNoun, shareError, shareSuccessful } =
       this.props;
-    const datasetNoun = this.getDatasetNoun();
 
     const DatasetList = this.renderDatasetList;
     const RecipientList = this.renderRecipientList;

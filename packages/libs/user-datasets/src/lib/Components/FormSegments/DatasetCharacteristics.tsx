@@ -1,18 +1,13 @@
-import React from "react";
-import { DatasetCharacteristics, StudyYearRange } from "../../Service/Types";
+import React, { JSXElementConstructor, ReactElement } from "react";
+import { DatasetCharacteristics } from "../../Service/Types";
 import { LabeledTextInput, LabeledTextListInput } from "./LabeledInput";
 import { FieldLabel } from "./FieldLabel";
 import { FormValidation } from "../UploadForm";
+import { DatasetFormData } from "../FormTypes";
+import { FieldSetter } from "../../Utils/util-types";
 
 const idPrefix = "dataset-characteristics";
 
-interface CharacteristicsFormSegment {
-  makeCharacteristicsModel(): DatasetCharacteristics;
-
-  validateCharacteristics(projectId: string): FormValidation;
-
-  CharacteristicsSegment: React.ReactElement;
-}
 
 function validateYears(start: number | undefined, end: number | undefined): string[] | null {
   if (start !== undefined) {
@@ -54,32 +49,26 @@ function validateStudyDesignType(design: string | undefined, type: string | unde
 // TODO: Collapsible "Field or Clinical Study Characteristics"
 
 interface DatasetCharacteristicsProps {
-  readonly StudyDesignSegment: () => React.ReactElement;
+  readonly datasetMeta: DatasetFormData;
+  readonly setter: FieldSetter<DatasetFormData>;
+  readonly studyDesignSegment: JSXElementConstructor<any>;
 }
 
-export function useCharacteristicsSegment(props: DatasetCharacteristicsProps): CharacteristicsFormSegment {
-  // region Form State
+export function CharacteristicsSegment({
+  datasetMeta: { characteristics },
+  setter,
+  studyDesignSegment,
+}: DatasetCharacteristicsProps): ReactElement<DatasetCharacteristicsProps> {
 
-  const [ countries, setCountries ] = React.useState<string[]>([]);
-  const [ startYear, setStartYear ] = React.useState<number>();
-  const [ endYear, setEndYear ] = React.useState<number>();
-  const [ studySpecies, setStudySpecies ] = React.useState<string[]>([]);
-  const [ diseases, setDiseases ] = React.useState<string[]>([]);
-  const [ associatedFactors, setAssociatedFactors ] = React.useState<string[]>([]);
-  const [ participantAges, setParticipantAges ] = React.useState<string>();
-  const [ sampleTypes, setSampleTypes ] = React.useState<string[]>([]);
-
-  // endregion Form State
-
-  const makeModel = (): DatasetCharacteristics => ({
-    countries,
-    years: { start: startYear!!, end: endYear!! },
-    studySpecies,
-    diseases,
-    associatedFactors,
-    participantAges,
-    sampleTypes,
-  });
+  const setField = function <K extends keyof DatasetCharacteristics>(key: K, value: DatasetCharacteristics[K]) {
+    setter(prev => ({
+      ...prev,
+      characteristics: {
+        ...(prev.characteristics ?? {}),
+        [key]: value,
+      },
+    }));
+  };
 
   // TODO: Conditionally required fields:
   //       - Study Design
@@ -87,7 +76,7 @@ export function useCharacteristicsSegment(props: DatasetCharacteristicsProps): C
   /* TODO: if one is present, the other is required */
 
   const validate = (projectId: string): FormValidation => {
-    let strictDesign = false
+    let strictDesign = false;
     let strictContact = false;
 
     // FIXME: how do we handle project specific nonsense like this?
@@ -101,84 +90,80 @@ export function useCharacteristicsSegment(props: DatasetCharacteristicsProps): C
     }
 
     // validateStudyDesignType(studyDesign, studyType, strictDesign)
-    validateYears(startYear, endYear)
+    validateYears(characteristics?.years?.start, characteristics?.years?.end);
 
     return {
       valid: false,
-      errors: []
+      errors: [],
     };
   };
 
-  return {
-    makeCharacteristicsModel: makeModel,
-    validateCharacteristics: validate,
-    CharacteristicsSegment: (
-      <div className="datasetCharacteristics">
-        <h3>Dataset Characteristics</h3>
-        <div className="formSection">
-          <props.StudyDesignSegment />
-          <LabeledTextListInput
-            idPrefix={`${idPrefix}-countries`}
-            className="datasetCharacteristicsStrings"
-            subclass="countries"
-            header="Countries"
-            addRecordText="Additional country"
-            records={countries}
-            setRecords={setCountries}
-          />
-          <div className="dataset-year-range">
-            <FieldLabel style={{ fontSize: "1.2em" }}>Study years</FieldLabel>
-            {/*<LabeledTextInput*/}
-            {/*  id={`${idPrefix}-years-start`}*/}
-            {/*  label="Start year"*/}
-            {/*  value={startYear}*/}
-            {/*  onChange={setStartYear}*/}
-            {/*/>*/}
-          </div>
-          <LabeledTextListInput
-            idPrefix={`${idPrefix}-species`}
-            className="datasetCharacteristicsStrings"
-            subclass="species"
-            header="Study species"
-            addRecordText="Additional study species"
-            records={studySpecies}
-            setRecords={setStudySpecies}
-          />
-          <LabeledTextListInput
-            idPrefix={`${idPrefix}-diseases`}
-            className="datasetCharacteristicsStrings"
-            subclass="diseases"
-            header="Diseases or health conditions"
-            addRecordText="Additional disease or health condition"
-            records={diseases}
-            setRecords={setDiseases}
-          />
-          <LabeledTextListInput
-            idPrefix={`${idPrefix}-associated-factors`}
-            className="datasetCharacteristicsStrings"
-            subclass="associatedFactors"
-            header="Associated factors"
-            addRecordText="Additional risk factor"
-            records={associatedFactors}
-            setRecords={setAssociatedFactors}
-          />
-          <LabeledTextInput
-            id={`${idPrefix}-participant-ages`}
-            label="Participant ages"
-            value={participantAges}
-            onChange={setParticipantAges}
-          />
-          <LabeledTextListInput
-            idPrefix={`${idPrefix}-sample-types`}
-            className="datasetCharacteristicsStrings"
-            subclass="sampleTypes"
-            header="Sample types"
-            addRecordText="Additional sample type"
-            records={sampleTypes}
-            setRecords={setSampleTypes}
-          />
+  return (
+    <div className="datasetCharacteristics">
+      <h3>Dataset Characteristics</h3>
+      <div className="formSection">
+        <studyDesignSegment/>
+        <LabeledTextListInput
+          idPrefix={`${idPrefix}-countries`}
+          className="datasetCharacteristicsStrings"
+          subclass="countries"
+          header="Countries"
+          addRecordText="Additional country"
+          records={characteristics?.countries}
+          setRecords={it => setField("countries", it)}
+        />
+        <div className="dataset-year-range">
+          <FieldLabel style={{ fontSize: "1.2em" }}>Study years</FieldLabel>
+          {/*<LabeledTextInput*/}
+          {/*  id={`${idPrefix}-years-start`}*/}
+          {/*  label="Start year"*/}
+          {/*  value={startYear}*/}
+          {/*  onChange={setStartYear}*/}
+          {/*/>*/}
         </div>
+        <LabeledTextListInput
+          idPrefix={`${idPrefix}-species`}
+          className="datasetCharacteristicsStrings"
+          subclass="species"
+          header="Study species"
+          addRecordText="Additional study species"
+          records={characteristics?.studySpecies}
+          setRecords={it => setField("studySpecies", it)}
+        />
+        <LabeledTextListInput
+          idPrefix={`${idPrefix}-diseases`}
+          className="datasetCharacteristicsStrings"
+          subclass="diseases"
+          header="Diseases or health conditions"
+          addRecordText="Additional disease or health condition"
+          records={characteristics?.diseases}
+          setRecords={it => setField("diseases", it)}
+        />
+        <LabeledTextListInput
+          idPrefix={`${idPrefix}-associated-factors`}
+          className="datasetCharacteristicsStrings"
+          subclass="associatedFactors"
+          header="Associated factors"
+          addRecordText="Additional risk factor"
+          records={characteristics?.associatedFactors}
+          setRecords={it => setField("associatedFactors", it)}
+        />
+        <LabeledTextInput
+          id={`${idPrefix}-participant-ages`}
+          label="Participant ages"
+          value={characteristics?.participantAges}
+          onChange={it => setField("participantAges", it)}
+        />
+        <LabeledTextListInput
+          idPrefix={`${idPrefix}-sample-types`}
+          className="datasetCharacteristicsStrings"
+          subclass="sampleTypes"
+          header="Sample types"
+          addRecordText="Additional sample type"
+          records={characteristics?.sampleTypes}
+          setRecords={it => setField("sampleTypes", it)}
+        />
       </div>
-    ),
-  };
+    </div>
+  );
 }

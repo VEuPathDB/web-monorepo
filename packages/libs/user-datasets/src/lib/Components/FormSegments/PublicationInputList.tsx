@@ -9,13 +9,10 @@ import { FloatingButton } from "@veupathdb/coreui";
 import { FloatingButtonWDKStyle } from "@veupathdb/coreui/lib/components/buttons/FloatingButton";
 import { Checkbox, SingleSelect, TextBox } from "@veupathdb/wdk-client/lib/Components";
 import { DatasetPublication, PublicationType } from "../../Service/Types";
-import {
-  InputConstructor,
-  RecordListProps,
-  RecordUpdater,
-  newObjectInputUpdater,
-} from "./component-utils";
+import { InputConstructor, newListPropUpdater } from "./component-utils";
 import { InputList } from "./InputList";
+import { ListSectionProps } from "../UploadForm";
+import { FieldSetter } from "../FormTypes";
 
 interface PublicationSelectItem {
   value: api.PublicationType;
@@ -27,9 +24,9 @@ const publicationTypes: PublicationSelectItem[] = [
   { value: "doi", display: "DOI" },
 ];
 
-function newInputFactory(setPublications: RecordUpdater<DatasetPublication>): InputConstructor<DatasetPublication> {
+function newInputFactory(setPublications: FieldSetter<DatasetPublication[]>): InputConstructor<DatasetPublication> {
   return function (publication: DatasetPublication, index: number): React.ReactElement {
-    const updatePublication = newObjectInputUpdater(index, setPublications);
+    const updatePublication = newListPropUpdater(index, setPublications);
 
     const onRemove = (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
@@ -90,13 +87,13 @@ function newInputFactory(setPublications: RecordUpdater<DatasetPublication>): In
   };
 }
 
-export function PublicationInputList(props: RecordListProps<DatasetPublication>): React.ReactElement {
+export function PublicationInputList(props: ListSectionProps<DatasetPublication>): React.ReactElement {
   return InputList<DatasetPublication>({
+    ...props,
     header: "Publications",
     addRecordText: "Add Publication",
     className: "additionalDetailsFormSection",
     subclass: "dataset-publications",
     factory: newInputFactory,
-    ...props
   });
 }

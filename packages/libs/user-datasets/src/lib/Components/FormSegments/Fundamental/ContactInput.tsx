@@ -1,19 +1,19 @@
 import React from "react";
 import Trash from "@veupathdb/coreui/lib/components/icons/Trash";
 
-import { FieldLabel } from "./FieldLabel";
+import { FieldLabel } from "../FieldLabel";
 import { FloatingButton } from "@veupathdb/coreui";
 import { FloatingButtonWDKStyle } from "@veupathdb/coreui/lib/components/buttons/FloatingButton";
 import { Checkbox, TextBox } from "@veupathdb/wdk-client/lib/Components";
-import { DatasetContact } from "../../Service/Types";
+import { DatasetContact } from "../../../Service/Types";
 import {
   cx,
   InputConstructor,
   RecordListProps,
   RecordUpdater,
-  newObjectInputUpdater,
-} from "./component-utils";
-import { InputList } from "./InputList";
+  newListPropUpdater,
+} from "../component-utils";
+import { InputList } from "../InputList";
 
 interface SplitName {
   firstName?: string;
@@ -56,7 +56,7 @@ function joinName(contact: DatasetContact): string {
 
 function contactInputFactory(updater: RecordUpdater<DatasetContact>): InputConstructor<DatasetContact> {
   return function (contact: DatasetContact, index: number): React.ReactElement {
-    const updateContact = newObjectInputUpdater(index, updater);
+    const updateContact = newListPropUpdater(index, updater);
 
     const onRemove = (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();

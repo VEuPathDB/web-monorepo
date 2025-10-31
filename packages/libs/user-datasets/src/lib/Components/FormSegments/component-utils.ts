@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { makeClassNameHelper } from "@veupathdb/wdk-client/lib/Utils/ComponentUtils";
 
 export const cx = makeClassNameHelper("UploadForm");
@@ -10,20 +10,22 @@ export type ArrayUpdater<T> = (newValue: T) => void;
 
 export type InputConstructor<T> = (record: T, index: number) => React.ReactElement;
 
-export type RecordUpdater<T> = React.Dispatch<React.SetStateAction<T[]>>;
+export type RecordUpdater<R> = Dispatch<SetStateAction<R[]>>;
 
 export interface RecordListProps<T> {
-  readonly records: T[],
-  readonly setRecords: RecordUpdater<T>,
+  readonly records?: T[],
+  readonly setRecords: (values: T[]) => void,
 }
 
+export type ArrayElement<T> = T extends Array<infer E> ? E : never;
+
 // A little helper to simplify updating fields of the nested inputs
-export function newObjectInputUpdater<T>(
+export function newListPropUpdater<T>(
   index: number,
   setNestedInputObject: RecordUpdater<T>,
   enforceExclusiveTrue: boolean = false,
 ): ObjectUpdater<T> {
-  return function<V extends keyof T>(inputName: keyof T, newValue: T[V]) {
+  return function<K extends keyof T, V = ArrayElement<T[K]>>(inputName: K, newValue: V) {
     setNestedInputObject((prev) => {
       const updated = [ ...prev ];
 

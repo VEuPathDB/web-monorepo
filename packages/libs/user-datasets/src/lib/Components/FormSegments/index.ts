@@ -1,4 +1,4 @@
-export { ContactInputList } from "./ContactInput";
+export { ContactInputList } from "./Fundamental/ContactInput";
 export { ErrorMessage } from "./ErrorMessage";
 export { FieldLabel, type FieldLabelProps } from "./FieldLabel";
 export { HyperlinkInputList } from "./HyperlinkReferenceInput";

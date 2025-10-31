@@ -20,7 +20,7 @@ import {
   updateDatasetCommunityVisibilitySuccess,
 } from '../Actions/UserDatasetsActions';
 
-import { DatasetDetails, DatasetFileListResponse } from "../Service/Types";
+import { DatasetDetails } from "../Service/Types";
 
 export const key = 'userDatasetDetail';
 
@@ -31,7 +31,6 @@ export const key = 'userDatasetDetail';
 export type UserDatasetEntry = {
   isLoading: boolean;
   resource?: DatasetDetails;
-  fileListing?: DatasetFileListResponse;
 };
 
 export interface State {
@@ -95,7 +94,6 @@ export function reduce(state: State = initialState, action: Action): State {
           [action.payload.id]: {
             isLoading: false,
             resource: action.payload.userDataset,
-            fileListing: action.payload.fileListing,
           },
         },
       };

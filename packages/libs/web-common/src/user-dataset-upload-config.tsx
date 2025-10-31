@@ -10,50 +10,175 @@ import { TreeBoxVocabNode } from "@veupathdb/wdk-client/lib/Utils/WdkModel";
 import { Node } from "@veupathdb/wdk-client/lib/Utils/TreeUtils";
 import { areTermsInString } from "@veupathdb/wdk-client/lib/Utils/SearchUtils";
 import {
+  DataInputProps,
   UploadFormConfig,
-  newFileInputConfig,
+  newSingleFileInputConfig,
   newResultInputConfig,
-  newUrlInputConfig, FileInputConfig, DataInputProps,
+  newUrlInputConfig,
 } from "@veupathdb/user-datasets/src/lib/Components/FormTypes/form-config";
-import { DatasetDependency, DatasetType, PluginDetails } from "@veupathdb/user-datasets/src/lib/Service/Types";
+import {
+  DatasetDependency,
+  DatasetDetails,
+  DatasetType,
+  PluginDetails,
+} from "@veupathdb/user-datasets/src/lib/Service/Types";
 import { toVdiCompatibleWdkService } from "@veupathdb/user-datasets/src/lib/Service";
 import { InputDatasetType } from "@veupathdb/user-datasets/src/lib/Service/Types/io-types";
-import { transform } from "@veupathdb/user-datasets/src/lib/Utils/utils";
+import { ServiceConfiguration } from "@veupathdb/user-datasets/src/lib/Service/Types/service-types";
 
-// region Shared Constants
+// region Display Text
 
-const SupportedArchiveTypes: readonly string[] = [
-  ".zip",
-  ".tgz",
-  // ".tar.gz", // disabled due to browser bug with multiple `.` characters in extensions
-];
+export const initDisplayText = () => ({
+  common: {
+    dataset: {
+      nounSingular: "Data set",
+      nounPlural: "Data sets",
+    }
+  },
+  workspace: {
+    title: "My Data Sets",
+  },
+  detailsPage: {
+    title: (dataset: DatasetDetails): ReactNode => <>My Data Set: <i>{dataset.name}</i></>,
+  },
+  formDisplay: {
+    requiredInfo: {
+      title: "Required Information",
+      nameFieldLabel: "Data set name",
+      summaryFieldLabel: "Summary",
+      summaryPlaceholder: "Provide a concise summary of the data set (max 400 characters).",
+      dependenciesFieldLabel: "Reference genome",
+      uploadField: {
+        label: "Data",
+        fileText: "File",
+        resultText: "Strategy",
+        urlText: "URL",
+        urlPlaceholder: "Address of a data file from the Web",
+      },
+      visibilityFieldLabel: "Data accessibility",
+    },
+    additionalInfo: {
+      title: "Additional Information",
+      importButtonText: "Import from Existing Data Set",
 
-// endregion Shared Constants
+      fundamentals: {
+        title: "Fundamental Information",
+
+        dataDictionary: {
+          sectionHeader: "Data Dictionary",
+
+          uploadHint: <div>
+            File must:
+            <ul>
+              <li>be in .csv, .tsv, or tab-delimited .txt format</li>
+              <li>contain one row for every variable in the data file</li>
+              <li>include columns labeled (i) variable; (ii) label; (iii)
+                definition</li>
+            </ul>
+            <br/>
+            See 'Help' for more information on how to properly format your data
+            dictionary
+          </div>,
+        },
+
+        contacts: {
+          sectionHeader: "Principal Investigators and Collaborators",
+
+          primaryContactHeader: "Primary contact",
+          additionalContactHeader: "Additional contact",
+          addContactLabel: "Additional contact",
+
+          copyProfileInfoButtonText: "Copy from My Profile",
+
+          firstNameLabel: "First name",
+          middleNameLabel: "Middle name",
+          lastNameLabel: "Last name",
+          emailLabel: "Email",
+          retypeEmailLabel: "Retype email",
+          affiliationLabel: "Organization name",
+          countryLabel: "Country"
+        },
+      },
+
+      recommended: {
+        title: "Recommended Information",
+        publicationsHeader: "Publications",
+
+        funding: {
+          sectionHeader: "Funding",
+          agencyLabel: "Agency",
+          awardNumLabel: "Award number",
+        },
+
+        datasetInfo: {
+          sectionHeader: "Data Set Information",
+
+          firstAuthorLabel: "First author",
+          addAuthorText: "Additional first author",
+          firstAuthorHelp: <>
+            For a dataset derived from a published manuscript, the first author
+            is the first author of the manuscript. If this dataset is not
+            included in a published dataset, the first author is the individual
+            who made the leading contribution to its creation, design, and
+            preparation for sharing.
+          </>,
+
+          descriptionLabel: "Description",
+          descriptionPlaceholder: "Longer description of the study including"
+            + " background, objectives, methodology, etc."
+        },
+
+        experimentalOrganismHeader: "Experimental Organism",
+        hostOrganismHeader: "Host Organism",
+        externalIdentifiersHeader: "External Identifiers",
+      },
+      optional: {
+        title: "Optional Information",
+        affiliationsHeader: "Project and Programmatic Affiliations",
+        relatedDataHeader: "VEuPathDB Related Data Sets and Studies",
+        characteristicsHeader: "Field or Clinical Study Characteristics",
+      },
+    },
+    uploadButtonLabel: "Upload Data Set",
+  }
+} as const);
+
+export type DisplayText = ReturnType<typeof initDisplayText>;
+
+export type DisplayTextOverride<T extends DisplayText = DisplayText> =
+  (original: DisplayText) => T;
+
+// endregion Display Text
 
 
 // region Shared Utils
 
-enum FileSizeFormat { Metric = 1000, Base2 = 1024 }
+const Kibibyte = 1024;
+const Mebibyte = 1048576;
+const Gibibyte = 1073741824;
 
-const Mebibyte = FileSizeFormat.Base2 * FileSizeFormat.Base2;
-const Gibibyte = FileSizeFormat.Base2 * FileSizeFormat.Base2 * FileSizeFormat.Base2;
-
-function renderSizeBytes(size: number, format: FileSizeFormat = FileSizeFormat.Base2): string {
-  // noinspection JSUnusedAssignment -- Avoid incorrect editor warnings.
-  let scale = 1;
-
-  const suffix = format === FileSizeFormat.Base2 ? "iB" : "B";
+function renderSizeBytes(size: number): string {
+  let scale;
+  let suffix;
 
   switch (true) {
-    case size > (scale = Math.pow(format, 3)):
-      return `${Math.round((size / scale!!) * 10) / 10}G${suffix}`;
-    case size > (scale = Math.pow(format, 2)):
-      return `${Math.round((size / scale!!) * 10) / 10}M${suffix}`;
-    case size > (scale = format):
-      return `${Math.round((size / scale!!) * 10) / 10}K${suffix}`;
+    case size > Gibibyte:
+      scale = Gibibyte;
+      suffix = "GiB";
+      break;
+    case size > Mebibyte:
+      scale = Mebibyte;
+      suffix = "MiB";
+      break;
+    case size > Kibibyte:
+      scale = Kibibyte;
+      suffix = "KiB";
+      break;
     default:
       return `${size}B`;
   }
+
+  return `${Math.round(size / scale * 10) / 10}${suffix}`;
 }
 
 function ReferenceGenomeDependency(props: DependencyProps) {
@@ -151,21 +276,23 @@ function searchPredicate(node: Node<TreeBoxVocabNode>, terms: string[]) {
 
 // region Implemented Dataset Types
 
+export const EnabledDatasetTypes = {
+  BigWig: "bigwigfiles",
+  BIOM: "biom",
+  GeneList: "genelist",
+  ISASimple: "isasimple",
+  Lightweight: "lightweight",
+  RNASeq: "rnaseq",
+  Phenotype: "phenotype",
+} as const;
+
+export type EnabledDatasetType = typeof EnabledDatasetTypes[keyof typeof EnabledDatasetTypes];
+
 interface EnabledDatasetTypeRef extends InputDatasetType {
-  readonly name: EnabledDatasetTypeName;
+  readonly name: EnabledDatasetType;
 }
 
 type ConfigEntryConstructor = (dt: PluginDetails) => UploadFormConfig;
-
-export enum EnabledDatasetTypeName {
-  BigWig = "bigwigfiles",
-  BIOM = "biom",
-  GeneList = "genelist",
-  ISASimple = "isasimple",
-  Lightweight = "lightweight",
-  RNASeq = "rnaseq",
-  Phenotype = "phenotype",
-}
 
 export type DatasetInstaller = PluginDetails;
 
@@ -185,7 +312,10 @@ export function useAllCompatibleInstallers(): DatasetInstaller[] {
 const pruneDatasetType = ({ name, version }: DatasetType) =>
   ({ name, version }) as EnabledDatasetTypeRef;
 
-export function uploadTypeConfigs(installers: readonly DatasetInstaller[]): readonly UploadFormConfig[] {
+export function uploadTypeConfigs(
+  { features }: ServiceConfiguration,
+  installers: readonly DatasetInstaller[],
+): readonly UploadFormConfig[] {
   const fullMap = newAllDataTypeConfigMap();
   const result = [];
 
@@ -196,7 +326,7 @@ export function uploadTypeConfigs(installers: readonly DatasetInstaller[]): read
 
     result.push(value({
       ...installer,
-      allowedFileExtensions: SupportedArchiveTypes.concat(installer.allowedFileExtensions)
+      allowedFileExtensions: features.supportedArchiveTypes.concat(installer.allowedFileExtensions),
     }));
   }
 
@@ -208,13 +338,13 @@ export const uploadTypeConfig = (datasetType: DatasetInstaller) =>
 
 function newAllDataTypeConfigMap(): Map<EnabledDatasetTypeRef, ConfigEntryConstructor> {
   return new Map([
-    [ { name: EnabledDatasetTypeName.BigWig, version: "1.0" }, newBigWigConfigEntry ],
-    [ { name: EnabledDatasetTypeName.BIOM, version: "1.0" }, newBiomConfigEntry ],
-    [ { name: EnabledDatasetTypeName.GeneList, version: "1.0" }, newGenelistConfigEntry ],
-    [ { name: EnabledDatasetTypeName.ISASimple, version: "1.0" }, newIsaConfigEntry ],
-    [ { name: EnabledDatasetTypeName.Lightweight, version: "1.0" }, newNoopConfigEntry ],
-    [ { name: EnabledDatasetTypeName.RNASeq, version: "1.0" }, newRnaSeqConfigEntry ],
-    [ { name: EnabledDatasetTypeName.RNASeq, version: "1.0" }, newPhenotypeConfigEntry ],
+    [ { name: EnabledDatasetTypes.BigWig, version: "1.0" }, newBigWigConfigEntry ],
+    [ { name: EnabledDatasetTypes.BIOM, version: "1.0" }, newBiomConfigEntry ],
+    [ { name: EnabledDatasetTypes.GeneList, version: "1.0" }, newGenelistConfigEntry ],
+    [ { name: EnabledDatasetTypes.ISASimple, version: "1.0" }, newIsaConfigEntry ],
+    [ { name: EnabledDatasetTypes.Lightweight, version: "1.0" }, newNoopConfigEntry ],
+    [ { name: EnabledDatasetTypes.RNASeq, version: "1.0" }, newRnaSeqConfigEntry ],
+    [ { name: EnabledDatasetTypes.RNASeq, version: "1.0" }, newPhenotypeConfigEntry ],
   ]);
 }
 
@@ -229,8 +359,8 @@ function newBigWigConfigEntry(dt: DatasetInstaller): UploadFormConfig {
       label: "Reference Genome",
       render: props => <ReferenceGenomeDependency {...props} />,
     },
-    uploadMethodConfigs: [ newFileInputConfig(defaultInputConfigElement) ],
-    renderFormFooterInfo: ([ config ]) => <>
+    uploadMethodConfigs: [ newSingleFileInputConfig(defaultInputConfigElement) ],
+    renderFormFooterInfo: ([ { installer } ]) => <>
       <p className="formInfo">
         We accept .bw files in the
         <a href="https://genome.ucsc.edu/goldenpath/help/bigWig.html">
@@ -246,7 +376,7 @@ function newBigWigConfigEntry(dt: DatasetInstaller): UploadFormConfig {
           Each bigWig file must be mapped to the genome that you selected
           above.
         </li>
-        <li>Data file(s) must be less than {renderSizeBytes((config as FileInputConfig).maxSizeBytes)}.</li>
+        <li>Data file(s) must be less than {renderSizeBytes(installer.maxFileSize)}.</li>
         <li>
           Please restrict the .bw file names to &lt; 100 chars and use
           only letters, numbers, spaces and dashes.
@@ -264,7 +394,7 @@ function newBiomConfigEntry(dt: DatasetInstaller): UploadFormConfig {
       description: `Integrate your BIOM study data in ${projectId}.`,
     },
     uploadMethodConfigs: [
-      newFileInputConfig(({ formField }) => <>
+      newSingleFileInputConfig(({ formField }) => <>
         {formField}
         <p style={{ marginTop: "0.25em" }}>
           Data file must be less than {renderSizeBytes(dt.maxFileSize)}.
@@ -318,7 +448,7 @@ function newIsaConfigEntry(dt: DatasetInstaller): UploadFormConfig {
       description: `Integrate your study data in ${projectId}.`,
     },
     uploadMethodConfigs: [
-      newFileInputConfig(({ formField }) => <>
+      newSingleFileInputConfig(({ formField }) => <>
         {formField}
         <div style={{ marginTop: "0.25em" }}>
           File must be a .csv, .tsv, or tab-delimited .txt file.
@@ -336,7 +466,7 @@ function newNoopConfigEntry(dt: DatasetInstaller): UploadFormConfig {
     menuConfig: {
       description: "", // FIXME: description for upload-only datasets
     },
-    uploadMethodConfigs: [ newFileInputConfig(defaultInputConfigElement) ],
+    uploadMethodConfigs: [ newSingleFileInputConfig(defaultInputConfigElement) ],
   };
 }
 
@@ -348,7 +478,7 @@ function newPhenotypeConfigEntry(dt: DatasetInstaller): UploadFormConfig {
       description: `Integrate your Phenotype data in ${projectId}.`,
     },
     uploadMethodConfigs: [
-      newFileInputConfig(
+      newSingleFileInputConfig(
         ({ formField }) => <>
           {formField}
           <div style={{ marginTop: "0.25em" }}>
@@ -396,7 +526,7 @@ function newRnaSeqConfigEntry(dt: DatasetInstaller): UploadFormConfig {
       label: "Reference Genome",
       render: props => <ReferenceGenomeDependency {...props} />,
     },
-    uploadMethodConfigs: [ newFileInputConfig(defaultInputConfigElement) ],
+    uploadMethodConfigs: [ newSingleFileInputConfig(defaultInputConfigElement) ],
     renderFormFooterInfo: () => <>
       <p className="formInfo">
         <b>Upload your Normalized RNA-Seq data set</b>

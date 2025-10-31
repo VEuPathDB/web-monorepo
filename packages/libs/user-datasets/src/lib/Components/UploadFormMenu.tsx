@@ -14,11 +14,11 @@ export function UploadFormMenu(props: Props) {
 
   const { url } = useRouteMatch();
 
-  const typeConfigs = props.availableTypes.map(({ datasetType, menuConfig }) => <li>
-    <Link to={url + "/" + datasetType.name} className="btn">
+  const typeConfigs = props.availableTypes.map(({ menuConfig, installer }) => <li>
+    <Link to={url + "/" + installer.type.name} className="btn">
       <span className="fa fa-file-text title">{
-        menuConfig.displayNameOverride?.(datasetType)
-        ?? datasetType.displayName
+        menuConfig.displayNameOverride?.(installer.type)
+        ?? installer.type.displayName
       }</span>
       <span className="description">{menuConfig.description}</span>
     </Link>
