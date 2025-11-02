@@ -177,9 +177,11 @@
 }
 
 .eupathdb-ThumbnailLabel {
-  font-weight: 300;
-  font-size: 1.2em;
-  margin: 0.2em 0;
+  font-weight: 600;
+  font-size: 0.9em;
+  margin: 0;
+  padding: 0.5em 0.75em;
+  text-align: center;
 }
 
 .eupathdb-ThumbnailsTitle {
@@ -189,29 +191,46 @@
 }
 
 .eupathdb-ThumbnailsContainer {
-  border: 1px solid #d8d8d8;
-  background: #f2f2f2;
-  border-radius: 4px;
+  /* Grey box removed - modern card styling now on individual thumbnails */
   display: inline-block;
   max-width: 100%;
-  min-height: 100px;
-  white-space: nowrap;
+  /* white-space: nowrap removed to allow grid wrapping */
 }
 
 .eupathdb-Thumbnails {
-  display: flex;
-  flex-wrap: wrap;
+  /* Modern grid layout with balanced rows to prevent orphans */
+  display: inline-grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    120px
+  ); /* Fixed column width including spacing */
+  gap: 1em; /* Consistent spacing between items */
+  justify-content: center; /* Center items within the grid */
+  max-width: 700px; /* Expanded to allow 5-6 columns for better space utilization */
+  padding: 0.5em;
 }
 
 .eupathdb-ThumbnailWrapper {
-  margin: 0.5em 1em;
+  /* Modern card styling */
   position: relative;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease-in-out;
+  overflow: hidden; /* Contain child elements within rounded corners */
+}
+
+.eupathdb-ThumbnailWrapper:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
 }
 
 .eupathdb-Thumbnail {
-  border: 1px solid #a9a9a9;
+  /* Border removed - card already provides visual structure */
+  border: none;
+  border-top: 1px solid #e0e0e0; /* Subtle separator from label */
   display: block;
-  margin-left: auto;
+  margin: 0 auto 10px; /* Center horizontally with bottom spacing */
   height: 60px;
   width: 100px;
   overflow: hidden;
