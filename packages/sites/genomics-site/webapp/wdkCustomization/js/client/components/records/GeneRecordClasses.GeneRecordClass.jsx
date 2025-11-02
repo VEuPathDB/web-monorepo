@@ -166,12 +166,13 @@ function Shortcuts(props) {
             ),
             displayName:
               recordClass.attributesMap[context.gbrowse_url]?.displayName ??
-              `>>no recordClass.attributesMap[${
-                context.gbrowse_url
-              }] - attributes[${context.gbrowse_url}] = '${
-                attributes[context.gbrowse_url]
-              }'<<` ??
-              'no_gbrowse_url',
+              (context.gbrowse_url
+                ? `>>no recordClass.attributesMap[${
+                    context.gbrowse_url
+                  }] - attributes[${context.gbrowse_url}] = '${
+                    attributes[context.gbrowse_url]
+                  }'<<`
+                : 'no_gbrowse_url'),
           })
     )
     .toArray();
