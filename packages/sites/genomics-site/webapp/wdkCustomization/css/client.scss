@@ -191,23 +191,24 @@
 }
 
 .eupathdb-ThumbnailsContainer {
-  /* Grey box removed - modern card styling now on individual thumbnails */
   display: inline-block;
   max-width: 100%;
-  /* white-space: nowrap removed to allow grid wrapping */
+  margin-bottom: 10px;
 }
 
 .eupathdb-Thumbnails {
-  /* Modern grid layout with balanced rows to prevent orphans */
-  display: inline-grid;
-  grid-template-columns: repeat(
-    auto-fit,
-    120px
-  ); /* Fixed column width including spacing */
-  gap: 1em; /* Consistent spacing between items */
-  justify-content: center; /* Center items within the grid */
-  max-width: 700px; /* Expanded to allow 5-6 columns for better space utilization */
-  padding: 0.5em;
+  --thumbnail-col-count: 3;
+  max-width: 44rem;
+  display: grid;
+  grid-template-columns: repeat(var(--thumbnail-col-count, 4), 1fr);
+  gap: 2em;
+}
+
+@media (max-width: 1280px) {
+  .eupathdb-Thumbnails {
+    max-width: 100%;
+    --thumbnail-col-count: 8;
+  }
 }
 
 .eupathdb-ThumbnailWrapper {

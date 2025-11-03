@@ -120,6 +120,25 @@ export let contexts = [
     anchor: 'spanGenomicContext',
     isPbrowse: false,
   },
+  // TEMPORARY MOCK CARDS FOR LAYOUT TESTING - REMOVE THESE!
+  {
+    gbrowse_url: 'SyntenyGbrowseUrl',
+    displayName: 'Test Card 1',
+    anchor: 'SyntenyGbrowseUrl',
+    isPbrowse: false,
+  },
+  //  {
+  //    gbrowse_url: 'BlatAlignmentsGbrowseUrl',
+  //    displayName: 'Test Card 2',
+  //    anchor: 'BlatAlignmentsGbrowseUrl',
+  //    isPbrowse: false,
+  //  },
+  //  {
+  //    gbrowse_url: 'SnpsGbrowseUrl',
+  //    displayName: 'Test Card 3',
+  //    anchor: 'SnpsGbrowseUrl',
+  //    isPbrowse: false,
+  //  },
 ];
 
 const JbrowseLink = ({ url }) => (
