@@ -197,17 +197,90 @@
 }
 
 .eupathdb-Thumbnails {
-  --thumbnail-col-count: 3;
+  --thumbnail-col-count: 5;
   max-width: 44rem;
   display: grid;
   grid-template-columns: repeat(var(--thumbnail-col-count, 4), 1fr);
   gap: 2em;
 }
 
+/* Dynamic column count based on number of items (wider screens only) */
+/* Prefer full grids, then avoid orphans, maintain width > height */
+@media (min-width: 1281px) {
+  .eupathdb-Thumbnails {
+    /* 1 item: 1x1 */
+    &:has(> :first-child:nth-last-child(1)) {
+      --thumbnail-col-count: 1;
+    }
+
+    /* 2 items: 1x2 (full grid) */
+    &:has(> :first-child:nth-last-child(2)) {
+      --thumbnail-col-count: 2;
+    }
+
+    /* 3 items: 1x3 (full grid) */
+    &:has(> :first-child:nth-last-child(3)) {
+      --thumbnail-col-count: 3;
+    }
+
+    /* 4 items: 1x4 (full grid) */
+    &:has(> :first-child:nth-last-child(4)) {
+      --thumbnail-col-count: 4;
+    }
+
+    /* 5 items: 3 cols → rows of 3,2 (no orphan) */
+    &:has(> :first-child:nth-last-child(5)) {
+      --thumbnail-col-count: 5;
+    }
+
+    /* 6 items: 2x3 (full grid) */
+    &:has(> :first-child:nth-last-child(6)) {
+      --thumbnail-col-count: 3;
+    }
+
+    /* 7 items: 4 cols → rows of 4,3 (no orphan) */
+    &:has(> :first-child:nth-last-child(7)) {
+      --thumbnail-col-count: 4;
+    }
+
+    /* 8 items: 2x4 (full grid) */
+    &:has(> :first-child:nth-last-child(8)) {
+      --thumbnail-col-count: 4;
+    }
+
+    /* 9 items: 5 cols → rows of 5,4 (no orphan, width>height) */
+    &:has(> :first-child:nth-last-child(9)) {
+      --thumbnail-col-count: 5;
+    }
+
+    /* 10 items: 2x5 (full grid) */
+    &:has(> :first-child:nth-last-child(10)) {
+      --thumbnail-col-count: 5;
+    }
+  }
+}
+
 @media (max-width: 1280px) {
   .eupathdb-Thumbnails {
     max-width: 100%;
+  }
+}
+
+@media (min-width: 1001px) and (max-width: 1280px) {
+  .eupathdb-Thumbnails {
     --thumbnail-col-count: 8;
+  }
+}
+
+@media (min-width: 801px) and (max-width: 1000px) {
+  .eupathdb-Thumbnails {
+    --thumbnail-col-count: 6;
+  }
+}
+
+@media (max-width: 800px) {
+  .eupathdb-Thumbnails {
+    --thumbnail-col-count: 4;
   }
 }
 
