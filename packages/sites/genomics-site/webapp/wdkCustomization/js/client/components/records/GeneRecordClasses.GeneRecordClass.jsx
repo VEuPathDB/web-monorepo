@@ -145,6 +145,17 @@ function Shortcuts(props) {
     })
     // remove thumbnails whose associated fields are not present in record instance
     .filter((context) => instanceFields.has(context.anchor))
+    // filter out contexts where the attributesMap entry is missing (protects against runtime errors)
+    .filter(
+      (context) =>
+        // Allow special thumbnails through (they don't have gbrowse_url attributes)
+        context === transcriptomicsThumbnail ||
+        context === phenotypeThumbnail ||
+        context === crisprPhenotypeThumbnail ||
+        // For other contexts, ensure the attributesMap entry exists
+        !context.gbrowse_url ||
+        recordClass.attributesMap[context.gbrowse_url] != null
+    )
     .map((context) =>
       context === transcriptomicsThumbnail ||
       context === phenotypeThumbnail ||
@@ -164,8 +175,8 @@ function Shortcuts(props) {
                 includeImageMap={true}
               />
             ),
-            displayName: 'pepe',
-            //recordClass.attributesMap[context.gbrowse_url].displayName,
+            displayName:
+              recordClass.attributesMap[context.gbrowse_url]?.displayName,
           })
     )
     .toArray();
