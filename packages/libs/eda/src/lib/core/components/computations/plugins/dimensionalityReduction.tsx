@@ -74,6 +74,7 @@ export const plugin: ComputationPlugin = {
         hideFacetInputs: true,
         hideLogScale: true,
         returnPointIds: false,
+        sendComputedVariablesInRequest: true,
       })
       .withSelectorIcon(ScatterBetadivSVG),
   },
