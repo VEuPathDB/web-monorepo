@@ -357,8 +357,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       }
     : null;
 
-  console.log('computedXAxisDescriptor:', computedXAxisDescriptor);
-
   // When we only have a computed y axis (and no provided overlay) then the y axis var
   // can have a "normal" variable descriptor. See abundance app for the funny case of handeling a computed overlay.
   const computedYAxisDescriptor = computedYAxisDetails
