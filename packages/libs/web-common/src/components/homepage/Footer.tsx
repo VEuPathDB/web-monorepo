@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react';
 
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { ALL_VEUPATHDB_PROJECTS } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 
 import { ProjectLink } from '../../components/homepage/ProjectLink';
 import { SocialMediaLinks } from '../../components/homepage/SocialMediaLinks';
@@ -10,24 +11,7 @@ import './Footer.scss';
 
 const cx = makeClassNameHelper('ebrc-Footer');
 
-export const projects = [
-  'VEuPathDB',
-  'AmoebaDB',
-  'CryptoDB',
-  'FungiDB',
-  'GiardiaDB',
-  'HostDB',
-  'MicrosporidiaDB',
-  'PiroplasmaDB',
-  'PlasmoDB',
-  'ToxoDB',
-  'TrichDB',
-  'TriTrypDB',
-  'VectorBase',
-  'OrthoMCL',
-  'ClinEpiDB',
-  'MicrobiomeDB',
-];
+export const projects = [...ALL_VEUPATHDB_PROJECTS];
 
 type Props = {
   containerClassName?: string;

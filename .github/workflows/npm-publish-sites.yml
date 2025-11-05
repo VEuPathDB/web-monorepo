@@ -25,6 +25,9 @@ jobs:
     needs:
       - dirs
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # required to use OIDC
     strategy:
       matrix:
         dir: ${{fromJSON(needs.dirs.outputs.matrix)}}
@@ -55,9 +58,9 @@ jobs:
           else
             echo "npm_tag=alpha" >> $GITHUB_ENV
           fi
-      - uses: JS-DevTools/npm-publish@v2
+      - uses: JS-DevTools/npm-publish@v4
         with:
-          token: ${{ secrets.NPM_TOKEN }}
+          # use verified publisher; token: ${{ secrets.NPM_TOKEN }}
           access: public
           package: packages/sites/${{ matrix.dir }}/package.json
           tag: ${{ env.npm_tag }}

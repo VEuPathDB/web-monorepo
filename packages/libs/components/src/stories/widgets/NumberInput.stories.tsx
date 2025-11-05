@@ -5,6 +5,7 @@ import {
   NumberInput,
   NumberInputProps,
 } from '../../components/widgets/NumberAndDateInputs';
+import { NumberOrDate } from '../../../lib/types/general';
 
 export default {
   title: 'Widgets/Number Input',
@@ -29,6 +30,31 @@ const ControlledTemplate: Story<NumberInputProps> = (args) => {
       containerStyles={{ ...args.containerStyles, margin: 25 }}
     />
   );
+};
+
+const OptionalTemplate: Story<NumberInputProps> = (args) => {
+  const [value, setValue] = useState<NumberOrDate | undefined>(args.value);
+  const onValueChange = useCallback(
+    (newValue: NumberOrDate | undefined) => {
+      console.log(`new value = ${newValue}`);
+      setValue(newValue);
+    },
+    [setValue]
+  );
+
+  return (
+    <NumberInput
+      {...args}
+      value={value as number | undefined}
+      onValueChange={onValueChange}
+      containerStyles={{ ...args.containerStyles, margin: 25 }}
+    />
+  );
+};
+
+export const Optional = OptionalTemplate.bind({});
+Optional.args = {
+  label: 'Optional (starts undefined)',
 };
 
 export const NoBounds = ControlledTemplate.bind({});

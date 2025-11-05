@@ -69,6 +69,7 @@ const enhance = connect<
       preferences: state.globalData.preferences,
       ...state.userProfile.userFormData,
     },
+    deleteAccountStatus: state.userProfile.deleteAccountStatus,
   }),
   actionCreators,
   (stateProps, dispatchProps, ownProps) => ({
