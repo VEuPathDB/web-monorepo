@@ -7,10 +7,10 @@ import {
   makeCommonDevServerConfig,
 } from '@veupathdb/react-scripts/utils/dev-server-config.js';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+import configure from '@veupathdb/site-webpack-config';
+import { additionalConfig } from './webpack.config.js';
 
-const { default: configure } = await import('@veupathdb/site-webpack-config');
-const { additionalConfig } = await import('./webpack.config.js');
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default configure({
   ...additionalConfig,
