@@ -6,7 +6,6 @@
     "url": "https://github.com/VEuPathDB/web-monorepo"
   },
   "main": "index.js",
-  "repository": "https://github.com/VEuPathDB/OrthoMCLClient",
   "license": "MIT",
   "scripts": {
     "start": "veupathdb-react-scripts run-site-dev-server --config webpack.config.local.mjs",
