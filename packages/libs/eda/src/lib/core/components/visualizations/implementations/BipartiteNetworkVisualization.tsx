@@ -50,6 +50,7 @@ import {
 } from '@veupathdb/components/lib/types/plots/network';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { NetworkCorrelationDirection } from './NetworkVisualization';
+import { isRight } from 'fp-ts/lib/Either';
 // end imports
 
 // Defaults
@@ -530,7 +531,7 @@ function BipartiteNetworkViz(
                 const validatedValue = NetworkCorrelationDirection.decode(
                   value.toLowerCase()
                 );
-                if (validatedValue._tag === 'Right') {
+                if (isRight(validatedValue)) {
                   updateVizConfig({
                     correlationDirection: validatedValue.right,
                   });

@@ -8,6 +8,7 @@ import {
   LegendOptions,
 } from '../../layouts/types';
 import { RequestOptions } from '../options/types';
+import { isRight } from 'fp-ts/lib/Either';
 
 // Network imports
 import NetworkPlot, {
@@ -580,7 +581,7 @@ function NetworkViz(props: VisualizationProps<Options>) {
                 const validatedValue = NetworkCorrelationDirection.decode(
                   value.toLowerCase()
                 );
-                if (validatedValue._tag === 'Right') {
+                if (isRight(validatedValue)) {
                   updateVizConfig({
                     correlationDirection: validatedValue.right,
                   });
