@@ -749,11 +749,13 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           outputEntityId: outputEntity.id,
           valueSpec: hideTrendlines ? undefined : valueSpecValue,
           xAxisVariable:
-            (sendComputedVariablesInRequest && computedXAxisDescriptor) ||
-            vizConfig.xAxisVariable,
+            sendComputedVariablesInRequest && computedXAxisDescriptor
+              ? computedXAxisDescriptor
+              : vizConfig.xAxisVariable,
           yAxisVariable:
-            (sendComputedVariablesInRequest && computedYAxisDescriptor) ||
-            vizConfig.yAxisVariable,
+            sendComputedVariablesInRequest && computedYAxisDescriptor
+              ? computedYAxisDescriptor
+              : vizConfig.yAxisVariable,
           overlayVariable: vizConfig.overlayVariable,
           facetVariable: vizConfig.facetVariable
             ? [vizConfig.facetVariable]

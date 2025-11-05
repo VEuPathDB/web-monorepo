@@ -2,7 +2,6 @@ import { useFindEntityAndVariableCollection } from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { partial } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
@@ -11,8 +10,6 @@ import {
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
-import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
-import { useMemo } from 'react';
 import ScatterBetadivSVG from '../../visualizations/implementations/selectorIcons/ScatterBetadivSVG';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import './Plugins.scss';
@@ -20,7 +17,6 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { VariableCollectionSingleSelect } from '../../variableSelectors/VariableCollectionSingleSelect';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { entityTreeToArray } from '../../../utils/study-metadata';
-import { InputSpec } from '../../visualizations/InputVariables';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -156,8 +152,8 @@ export function DimensionalityReductionConfiguration(
   );
 }
 
-// Beta div's only requirement of the study is that it contains
-// at least one collection
+// Dimensionality reduction's only requirement of the study is that it contains
+// at least one collection.
 function isEnabledInPicker({
   studyMetadata,
 }: IsEnabledInPickerParams): boolean {
