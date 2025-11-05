@@ -58,7 +58,7 @@ jobs:
           else
             echo "npm_tag=alpha" >> $GITHUB_ENV
           fi
-      - uses: JS-DevTools/npm-publish@v2
+      - uses: JS-DevTools/npm-publish@v4
         with:
           # use verified publisher; token: ${{ secrets.NPM_TOKEN }}
           access: public
