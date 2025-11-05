@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import {
   CollectionVariableTreeNode,
   VariableTreeNode,
@@ -36,7 +36,6 @@ import {
   CompleteCorrelationConfig,
   CorrelationConfig,
 } from '../../../types/apps';
-import { NodeData } from '@veupathdb/components/lib/types/plots/network';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
