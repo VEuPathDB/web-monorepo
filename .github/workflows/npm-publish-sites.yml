@@ -35,7 +35,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 14
+          node-version: 24
           cache: yarn
       - run: yarn
       - run: yarn nx bundle:npm @veupathdb/${{matrix.dir}}
@@ -71,7 +71,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 14
+          node-version: 24
           cache: yarn
       - run: yarn
       - run: ./tools/scripts/test-report
