@@ -158,7 +158,10 @@ export default function ClustalAlignmentForm({
                 type="button"
                 className="btn"
                 onClick={handleConfirm}
-                style={{ backgroundColor: '#5a9fd4', color: 'white' }}
+                style={{
+                  backgroundColor: 'var(--coreui-color-primary)',
+                  color: 'white',
+                }}
               >
                 Continue Alignment
               </button>
