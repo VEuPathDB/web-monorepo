@@ -1,6 +1,7 @@
 import React, { useRef, useState, FormEvent } from 'react';
 import { Dialog } from '@veupathdb/wdk-client/lib/Components';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import useUITheme from '@veupathdb/coreui/lib/components/theming/useUITheme';
 
 interface ClustalAlignmentFormProps {
   action: string;
@@ -22,6 +23,7 @@ export default function ClustalAlignmentForm({
   warnThreshold,
   blockThreshold,
 }: ClustalAlignmentFormProps) {
+  const theme = useUITheme();
   const [showModal, setShowModal] = useState(false);
   const [evaluatedWarnThreshold, setEvaluatedWarnThreshold] =
     useState<number | null>(null);
@@ -156,7 +158,9 @@ export default function ClustalAlignmentForm({
                 className="btn"
                 onClick={handleConfirm}
                 style={{
-                  backgroundColor: 'var(--coreui-color-primary)',
+                  backgroundColor: theme
+                    ? theme.palette.primary.hue[theme.palette.primary.level]
+                    : '#4D4D4D',
                   color: 'white',
                   fontWeight: 600,
                 }}
