@@ -10,6 +10,7 @@ import { RecordTableProps, WrappedComponentProps } from './Types';
 import { useOrthoService } from 'ortho-client/hooks/orthoService';
 import { Loading, Link } from '@veupathdb/wdk-client/lib/Components';
 import { Branch, parseNewick } from 'patristic';
+import { ClustalAlignmentForm } from '@veupathdb/web-common/lib/components';
 import {
   AttributeValue,
   TableValue,
@@ -799,15 +800,15 @@ export function RecordTable_Sequences(
             }
             maxColumnWidth={maxColumnWidth}
           ></TreeTable>
-          <form action="/cgi-bin/msaOrthoMCL" target="_blank" method="post">
+          <ClustalAlignmentForm
+            action="/cgi-bin/msaOrthoMCL"
+            sequenceCount={highlightedNodes.length}
+            sequenceType="proteins"
+          >
             <input type="hidden" name="project_id" value="OrthoMCL" />
             {highlightedNodes.map((id) => (
               <input type="hidden" name="msa_full_ids" value={id} key={id} />
             ))}
-            <p>
-              Please note: selecting a large number of proteins will take
-              several minutes to align.
-            </p>
             <div id="userOptions">
               <p>
                 Output format: &nbsp;
@@ -830,7 +831,7 @@ export function RecordTable_Sequences(
                 )}
               </div>
             </div>
-          </form>
+          </ClustalAlignmentForm>
         </Dimmable>
       )}
       <p>
