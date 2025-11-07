@@ -130,8 +130,8 @@ export default function ClustalAlignmentForm({
               <p style={{ marginTop: '0px' }}>
                 The alignment results will open in a new browser tab.
               </p>
+              <p>The tab may appear empty while the alignment is running.</p>
               <p>
-                The tab may appear empty while the alignment is running.{' '}
                 <strong>
                   Please be patient and avoid resubmitting - multiple requests
                   will not make it faster and can overload our servers.
