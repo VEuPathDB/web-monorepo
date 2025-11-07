@@ -1704,7 +1704,11 @@ class OrthologsForm extends SortKeyTable {
                 <option value="vie">VIENNA</option>
               </select>
             </p>
-            <input type="submit" value="Run Clustal Omega for selected genes" />
+            <input
+              type="submit"
+              value="Run Clustal Omega for selected genes"
+              disabled={this.state.selectedRowIds.length < 2}
+            />
           </div>
         </ClustalAlignmentForm>
       );
