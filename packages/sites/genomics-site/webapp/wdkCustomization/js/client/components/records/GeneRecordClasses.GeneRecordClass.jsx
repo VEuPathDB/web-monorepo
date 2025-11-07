@@ -1600,9 +1600,13 @@ class OrthologsForm extends SortKeyTable {
           action="/cgi-bin/isolateAlignment"
           sequenceCount={this.state.selectedRowIds.length + 1}
           sequenceType="genes"
+          warnThreshold={(form) => {
+            const formData = new FormData(form);
+            return formData.get('sequence_Type') === 'genomic' ? 10 : 1000;
+          }}
           blockThreshold={(form) => {
             const formData = new FormData(form);
-            return formData.get('sequence_Type') === 'genomic' ? 200 : 1000;
+            return formData.get('sequence_Type') === 'genomic' ? 50 : 1000;
           }}
         >
           <input type="hidden" name="type" value="geneOrthologs" />

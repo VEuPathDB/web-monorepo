@@ -161,6 +161,7 @@ export default function ClustalAlignmentForm({
                 style={{
                   backgroundColor: 'var(--coreui-color-primary)',
                   color: 'white',
+                  fontWeight: 600,
                 }}
               >
                 Continue Alignment
