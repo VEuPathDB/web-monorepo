@@ -1708,6 +1708,11 @@ class OrthologsForm extends SortKeyTable {
               type="submit"
               value="Run Clustal Omega for selected genes"
               disabled={this.state.selectedRowIds.length < 2}
+              title={
+                this.state.selectedRowIds.length < 2
+                  ? 'Check two or more checkboxes in the table above to use this feature.'
+                  : ''
+              }
             />
           </div>
         </ClustalAlignmentForm>
