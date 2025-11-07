@@ -22,6 +22,12 @@ let ThumbnailPropType = PropTypes.shape({
 
 /**
  * Thumbnails for overview section of record page.
+ *
+ * NOTE: The popover/zoom feature is currently DISABLED (see line 116).
+ * The infrastructure (renderPopover, setActiveThumbnail, keyboard navigation)
+ * is still present but not triggered by any UI control. To re-enable:
+ * uncomment the zoom button on line 116 or add another trigger to call
+ * this.setActiveThumbnail(thumbnail).
  */
 export class OverviewThumbnails extends Component {
   constructor(...args) {
@@ -113,6 +119,12 @@ export class OverviewThumbnails extends Component {
                 }
               />
             </a>
+            {/*
+              ZOOM FEATURE DISABLED:
+              This button would trigger the popover/zoom view showing the thumbnail.element.
+              The popover infrastructure is still functional (see renderPopover method),
+              but is not currently triggered. Uncomment to re-enable the zoom feature.
+            */}
             {/* <button className="eupathdb-ThumbnailZoomButton" type="button" title="View larger image" onClick={() => this.setActiveThumbnail(thumbnail)}><i className="fa fa-search-plus"/></button> */}
           </div>
         ))}
@@ -121,6 +133,12 @@ export class OverviewThumbnails extends Component {
     );
   }
 
+  /**
+   * Renders the popover/zoom view for a thumbnail.
+   * This is still functional but currently not triggered because the zoom button is disabled.
+   * When activeThumbnail state is set, displays a full-screen overlay showing thumbnail.element
+   * with navigation controls and keyboard support (arrow keys, ESC to close).
+   */
   renderPopover() {
     if (this.state.activeThumbnail) {
       let index = this.props.thumbnails.indexOf(this.state.activeThumbnail);
