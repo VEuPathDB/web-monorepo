@@ -1,5 +1,6 @@
 import React, { useRef, useState, FormEvent } from 'react';
 import { Dialog } from '@veupathdb/wdk-client/lib/Components';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 interface ClustalAlignmentFormProps {
   action: string;
@@ -87,61 +88,57 @@ export default function ClustalAlignmentForm({
         title="Run Clustal Omega Alignment"
         onClose={handleCancel}
       >
-        <div style={{ padding: '10px', maxWidth: '600px' }}>
-          <p style={{ marginTop: '0px' }}>
-            The alignment results will open in a new browser tab.
-          </p>
-          <p>
-            The tab may appear empty while the alignment is running. Please be
-            patient and avoid resubmitting - multiple requests will not make it
-            faster and can overload our servers.
-          </p>
-
+        <div style={{ padding: '10px', width: '500px' }}>
           {showWarning && (
-            <p
-              style={{
-                marginTop: '20px',
-                fontWeight: 'bold',
-                color: '#856404',
-                backgroundColor: '#fff3cd',
-                padding: '12px',
-                borderRadius: '4px',
-                border: '1px solid #ffeaa7',
+            <Banner
+              banner={{
+                type: 'warning',
+                message: (
+                  <>
+                    You have selected{' '}
+                    <strong>
+                      {sequenceCount} {sequenceType}
+                    </strong>
+                    . Aligning this many {sequenceType} may take several minutes
+                    to complete.
+                  </>
+                ),
               }}
-            >
-              ⚠️ You have selected{' '}
-              <strong>
-                {sequenceCount} {sequenceType}
-              </strong>
-              . Aligning this many {sequenceType} may take several minutes to
-              complete.
-            </p>
+            />
           )}
-
           {isBlocked && (
-            <p
-              style={{
-                marginTop: '20px',
-                fontWeight: 'bold',
-                color: '#721c24',
-                backgroundColor: '#f8d7da',
-                padding: '12px',
-                borderRadius: '4px',
-                border: '1px solid #f5c6cb',
+            <Banner
+              banner={{
+                type: 'error',
+                message: (
+                  <>
+                    You have selected{' '}
+                    <strong>
+                      {sequenceCount} {sequenceType}
+                    </strong>
+                    , which exceeds the maximum limit.
+                    <br />
+                    Please reduce your selection to fewer than{' '}
+                    {evaluatedBlockThreshold} {sequenceType} to proceed.
+                  </>
+                ),
               }}
-            >
-              🛑 You have selected{' '}
-              <strong>
-                {sequenceCount} {sequenceType}
-              </strong>
-              , which exceeds the maximum limit.
-              <br />
-              <br />
-              Please reduce your selection to fewer than{' '}
-              {evaluatedBlockThreshold} {sequenceType} to proceed.
-            </p>
+            />
           )}
-
+          {!isBlocked && (
+            <>
+              <p style={{ marginTop: '0px' }}>
+                The alignment results will open in a new browser tab.
+              </p>
+              <p>
+                The tab may appear empty while the alignment is running.{' '}
+                <strong>
+                  Please be patient and avoid resubmitting - multiple requests
+                  will not make it faster and can overload our servers.
+                </strong>
+              </p>
+            </>
+          )}
           <div
             style={{
               marginTop: '20px',
