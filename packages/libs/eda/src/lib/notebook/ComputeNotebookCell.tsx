@@ -5,9 +5,13 @@ import { RunComputeButton } from '../core/components/computations/RunComputeButt
 import { useComputeJobStatus } from '../core/components/computations/ComputeJobStatusHook';
 import { NotebookCell, NotebookCellProps } from './NotebookCell';
 import { plugins } from '../core/components/computations/plugins';
-import { ComputeCellDescriptor } from './NotebookPresets';
+import {
+  ComputeCellDescriptor,
+  isVisualizationCellDescriptor,
+} from './NotebookPresets';
 import { useCachedPromise } from '../core/hooks/cachedPromise';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
+import { isVisualizationCell } from './Types';
 
 export function ComputeNotebookCell(
   props: NotebookCellProps<ComputeCellDescriptor>
@@ -21,6 +25,7 @@ export function ComputeNotebookCell(
     computationId,
     cells,
     getAdditionalCollectionPredicate,
+    skipChildCell,
   } = cell;
   const computation = analysis.descriptor.computations.find(
     (comp) => comp.computationId === computationId
@@ -135,6 +140,19 @@ export function ComputeNotebookCell(
           const isSubCellDisabled =
             jobStatus !== 'complete' && subCell.type !== 'text';
 
+          // Skip rendering of the child cell if indicated by skipChildCell
+          if (skipChildCell && isVisualizationCellDescriptor(subCell)) {
+            if (
+              skipChildCell(
+                computation.descriptor.configuration,
+                subCell.visualizationName
+              )
+            ) {
+              return null;
+            }
+          }
+
+          // Here's where we can check to hide the visualization. Or just skip it...
           return (
             <NotebookCell
               key={index}

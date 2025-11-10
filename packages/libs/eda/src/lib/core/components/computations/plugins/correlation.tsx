@@ -17,6 +17,7 @@ import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { H6 } from '@veupathdb/coreui';
 import { bipartiteNetworkVisualization } from '../../visualizations/implementations/BipartiteNetworkVisualization';
+import { networkVisualization } from '../../visualizations/implementations/NetworkVisualization';
 import { VariableCollectionSingleSelect } from '../../variableSelectors/VariableCollectionSingleSelect';
 import SingleSelect, {
   ItemGroup,
@@ -35,6 +36,7 @@ import PluginError from '../../visualizations/PluginError';
 import {
   CompleteCorrelationConfig,
   CorrelationConfig,
+  SelfCorrelationConfig,
 } from '../../../types/apps';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
@@ -64,17 +66,6 @@ export const plugin: ComputationPlugin = {
     // First, the configuration must be complete
     if (!CompleteCorrelationConfig.is(configuration)) return false;
 
-    // Also, if both data1 and data2 are collections, they must be unique
-    if (configuration.data2?.dataType === 'collection') {
-      return (
-        isVariableCollectionDescriptor(configuration.data1?.collectionSpec) &&
-        isVariableCollectionDescriptor(configuration.data2?.collectionSpec) &&
-        variableCollectionsAreUnique([
-          configuration.data1?.collectionSpec,
-          configuration.data2?.collectionSpec,
-        ])
-      );
-    }
     return true;
   },
   visualizationPlugins: {
@@ -104,6 +95,15 @@ export const plugin: ComputationPlugin = {
         }
       },
     }),
+    unipartitenetwork: networkVisualization.withOptions({
+      getLegendTitle(config) {
+        if (SelfCorrelationConfig.is(config)) {
+          return ['absolute correlation coefficient', 'correlation direction'];
+        } else {
+          return [];
+        }
+      },
+    }), // Must match name in data service and in visualization.tsx
   },
   isEnabledInPicker: isEnabledInPicker,
   studyRequirements:
@@ -424,25 +424,6 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
               <span className={cx('-DescriptionContainer')}>% of samples</span>
             </div>
           </div>
-        </div>
-        <div>
-          <PluginError
-            error={
-              isVariableCollectionDescriptor(
-                configuration.data1?.collectionSpec
-              ) &&
-              isVariableCollectionDescriptor(
-                configuration.data2?.collectionSpec
-              ) &&
-              !variableCollectionsAreUnique([
-                configuration.data1?.collectionSpec,
-                configuration.data2?.collectionSpec,
-              ])
-                ? 'Input data must be unique. Please select different data.'
-                : undefined
-            }
-            bannerType="error"
-          />
         </div>
         {showExpandableHelp && (
           <ExpandablePanel
