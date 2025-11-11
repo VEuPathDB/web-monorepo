@@ -11,3 +11,4 @@ export { default as TabularReporterFormSubmitButtons } from './reporters/Tabular
 export { SiteSearchInput } from '../components/SiteSearch/SiteSearchInput';
 export { default as DownloadLink } from '../App/Studies/DownloadLink';
 export { SearchCheckboxTree } from '../components/homepage/SearchPane';
+export { default as ClustalAlignmentForm } from './records/ClustalAlignmentForm';

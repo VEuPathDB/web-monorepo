@@ -21,7 +21,7 @@ import {
 import { twoColorPalette } from '@veupathdb/components/lib/types/plots/addOns';
 import { useCallback, useMemo } from 'react';
 import { scaleOrdinal } from 'd3-scale';
-import { uniq } from 'lodash';
+import { capitalize, uniq } from 'lodash';
 import { usePromise } from '../../../hooks/promise';
 import {
   useDataClient,
@@ -48,12 +48,16 @@ import {
   NodeData,
   NodeMenuAction,
 } from '@veupathdb/components/lib/types/plots/network';
+import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
+import { NetworkCorrelationDirection } from './NetworkVisualization';
+import { isRight } from 'fp-ts/lib/Either';
 // end imports
 
 // Defaults
 const DEFAULT_CORRELATION_COEF_THRESHOLD = 0.5; // Ability for user to change this value not yet implemented.
 const DEFAULT_SIGNIFICANCE_THRESHOLD = 0.05; // Ability for user to change this value not yet implemented.
 const DEFAULT_LINK_COLOR_DATA = '0';
+const DEFAULT_LINK_TYPE = 'Both'; // Correlation direction. Applies to correlation networks only.
 const MIN_STROKE_WIDTH = 0.5; // Minimum stroke width for links in the network. Will represent the smallest link weight.
 const MAX_STROKE_WIDTH = 6; // Maximum stroke width for links in the network. Will represent the largest link weight.
 const DEFAULT_NUMBER_OF_LINE_LEGEND_ITEMS = 4;
@@ -75,6 +79,8 @@ function createDefaultConfig(): BipartiteNetworkConfig {
   return {
     correlationCoefThreshold: DEFAULT_CORRELATION_COEF_THRESHOLD,
     significanceThreshold: DEFAULT_SIGNIFICANCE_THRESHOLD,
+    correlationDirection:
+      DEFAULT_LINK_TYPE.toLowerCase() as NetworkCorrelationDirection,
   };
 }
 
@@ -83,6 +89,7 @@ export type BipartiteNetworkConfig = t.TypeOf<typeof BipartiteNetworkConfig>;
 export const BipartiteNetworkConfig = t.partial({
   correlationCoefThreshold: t.number,
   significanceThreshold: t.number,
+  correlationDirection: NetworkCorrelationDirection,
 });
 
 export interface BipartiteNetworkOptions
@@ -156,6 +163,7 @@ function BipartiteNetworkViz(
         config: {
           correlationCoefThreshold: vizConfig.correlationCoefThreshold,
           significanceThreshold: vizConfig.significanceThreshold,
+          correlationDirection: vizConfig.correlationDirection,
         },
         computeConfig: computationConfiguration,
       };
@@ -180,6 +188,7 @@ function BipartiteNetworkViz(
       visualization.descriptor.type,
       vizConfig.correlationCoefThreshold,
       vizConfig.significanceThreshold,
+      vizConfig.correlationDirection,
     ])
   );
 
@@ -472,37 +481,67 @@ function BipartiteNetworkViz(
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       {!hideInputsAndControls && (
-        <LabelledGroup label="Link thresholds" alignChildrenHorizontally={true}>
-          <NumberInput
-            onValueChange={(newValue?: NumberOrDate) =>
-              updateVizConfig({ correlationCoefThreshold: Number(newValue) })
-            }
-            label={'Absolute correlation coefficient'}
-            minValue={0}
-            maxValue={1}
-            value={
-              vizConfig.correlationCoefThreshold ??
-              DEFAULT_CORRELATION_COEF_THRESHOLD
-            }
-            step={0.05}
-            applyWarningStyles={cleanedData && cleanedData.nodes.length === 0}
-          />
+        <div style={{ display: 'flex', flexDirection: 'row', gap: 10 }}>
+          <LabelledGroup
+            label="Link thresholds"
+            alignChildrenHorizontally={true}
+            containerStyles={{ maxWidth: 420 }}
+          >
+            <NumberInput
+              onValueChange={(newValue?: NumberOrDate) =>
+                updateVizConfig({ correlationCoefThreshold: Number(newValue) })
+              }
+              label={'Absolute correlation coefficient'}
+              minValue={0}
+              maxValue={1}
+              value={
+                vizConfig.correlationCoefThreshold ??
+                DEFAULT_CORRELATION_COEF_THRESHOLD
+              }
+              step={0.05}
+              applyWarningStyles={cleanedData && cleanedData.nodes.length === 0}
+            />
 
-          <NumberInput
-            label="P-Value"
-            onValueChange={(newValue?: NumberOrDate) =>
-              updateVizConfig({ significanceThreshold: Number(newValue) })
-            }
-            minValue={0}
-            maxValue={1}
-            value={
-              vizConfig.significanceThreshold ?? DEFAULT_SIGNIFICANCE_THRESHOLD
-            }
-            containerStyles={{ marginLeft: 10 }}
-            step={0.001}
-            applyWarningStyles={cleanedData && cleanedData.nodes.length === 0}
-          />
-        </LabelledGroup>
+            <NumberInput
+              label="P-Value"
+              onValueChange={(newValue?: NumberOrDate) =>
+                updateVizConfig({ significanceThreshold: Number(newValue) })
+              }
+              minValue={0}
+              maxValue={1}
+              value={
+                vizConfig.significanceThreshold ??
+                DEFAULT_SIGNIFICANCE_THRESHOLD
+              }
+              containerStyles={{ marginLeft: 10 }}
+              step={0.001}
+              applyWarningStyles={cleanedData && cleanedData.nodes.length === 0}
+            />
+          </LabelledGroup>
+          <LabelledGroup
+            label="Correlation direction"
+            alignChildrenHorizontally={true}
+          >
+            <RadioButtonGroup
+              options={['Positive', 'Negative', 'Both']}
+              selectedOption={
+                capitalize(vizConfig.correlationDirection) ?? DEFAULT_LINK_TYPE
+              }
+              onOptionSelected={(value) => {
+                const validatedValue = NetworkCorrelationDirection.decode(
+                  value.toLowerCase()
+                );
+                if (isRight(validatedValue)) {
+                  updateVizConfig({
+                    correlationDirection: validatedValue.right,
+                  });
+                } else {
+                  console.error('Invalid link type');
+                }
+              }}
+            />
+          </LabelledGroup>
+        </div>
       )}
       <OutputEntityTitle subtitle={plotSubtitle} />
       <LayoutComponent
