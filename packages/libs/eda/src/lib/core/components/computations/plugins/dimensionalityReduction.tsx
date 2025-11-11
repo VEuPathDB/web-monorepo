@@ -118,15 +118,20 @@ export function DimensionalityReductionConfiguration(
     computation,
     analysisState,
     visualizationId,
+    changeConfigHandlerOverride,
   } = props;
   assertComputationWithConfig(computation, DimensionalityReductionConfig);
   const configuration = computation.descriptor.configuration;
 
-  const changeConfigHandler = useConfigChangeHandler(
+  const workspaceChangeConfigHandler = useConfigChangeHandler(
     analysisState,
     computation,
     visualizationId
   );
+
+  const changeConfigHandler = changeConfigHandlerOverride
+    ? changeConfigHandlerOverride
+    : workspaceChangeConfigHandler;
 
   return (
     <ComputationStepContainer
