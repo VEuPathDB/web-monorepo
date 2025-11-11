@@ -83,6 +83,20 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
     cells: [
       {
         type: 'compute',
+        title: 'PCA',
+        computationName: 'dimensionalityreduction',
+        computationId: 'pca_1',
+        cells: [
+          {
+            type: 'visualization',
+            title: 'PCA Plot',
+            visualizationName: 'scatterplot',
+            visualizationId: 'pca_1',
+          },
+        ],
+      },
+      {
+        type: 'compute',
         title: 'Differential Abundance',
         computationName: 'differentialabundance',
         computationId: 'diff_1',
