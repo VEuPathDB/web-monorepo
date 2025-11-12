@@ -7,8 +7,6 @@ export function TextNotebookCell(props: NotebookCellProps<TextCellDescriptor>) {
 
   const { text, title, getText } = cell;
 
-  console.log('text cell updating');
-
   return (
     <>
       {cell.helperText && (

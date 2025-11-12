@@ -9,7 +9,10 @@ import { WdkState } from './EdaNotebookAnalysis';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import { AnalysisState, CollectionVariableTreeNode } from '../core';
 import { DifferentialExpressionConfig } from '../core/components/computations/plugins/differentialExpression';
-import { VolcanoPlotConfig } from '../core/components/visualizations/implementations/VolcanoPlotVisualization';
+import {
+  VolcanoPlotConfig,
+  VolcanoPlotOptions,
+} from '../core/components/visualizations/implementations/VolcanoPlotVisualization';
 
 // this is currently not used but may be one day when we need to store user state
 // that is outside AnalysisState and WdkState
@@ -42,7 +45,7 @@ export interface VisualizationCellDescriptor
   getVizPluginOptions?: (
     wdkState: WdkState,
     enqueueSnackbar: EnqueueSnackbar
-  ) => Partial<BipartiteNetworkOptions>; // We'll define this function custom for each notebook, so can expand output types as needed.
+  ) => Partial<BipartiteNetworkOptions> | Partial<VolcanoPlotOptions>; // We'll define this function custom for each notebook, so can expand output types as needed.
   // Use the following to show updates when viz config changes.
   additionalUpdateConfiguration?: (
     vizConfig: any,
@@ -120,22 +123,40 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             title: 'Examine DESeq2 Results with Volcano Plot',
             visualizationName: 'volcanoplot',
             visualizationId: 'volcano_1',
-            additionalUpdateConfiguration: (
-              vizConfig: VolcanoPlotConfig,
+            getVizPluginOptions: (
+              wdkState: WdkState,
               enqueueSnackbar: EnqueueSnackbar
             ) => {
-              console.log(vizConfig);
-              // Open snackbar
-              enqueueSnackbar(
-                <span>
-                  Updated threshold search parameter in step 3 to:{' '}
-                  <strong>{vizConfig.effectSizeThreshold}</strong>
-                  <br></br>
-                  Updated p value cutoff to:{' '}
-                  <strong>{vizConfig.significanceThreshold}</strong>
-                </span>,
-                { variant: 'info' }
-              );
+              return {
+                // When user changes viz config, show snackbar with updated params
+                inputSnackbar: <K extends keyof VolcanoPlotConfig>(
+                  enqueueSnackbar: EnqueueSnackbar,
+                  vizConfigParameter: K,
+                  newValue: VolcanoPlotConfig[K]
+                ) => {
+                  let paramText = '';
+                  // The only two parameters we want to alert the user about are numbers.
+                  if (typeof newValue === 'number') {
+                    switch (vizConfigParameter) {
+                      case 'effectSizeThreshold':
+                        paramText = 'Absolute effect size';
+                        break;
+                      case 'significanceThreshold':
+                        paramText = 'Unadjusted P-value';
+                        break;
+                      default:
+                        paramText = 'Unknown parameter';
+                    }
+                    enqueueSnackbar(
+                      <span>
+                        Updated <strong>{paramText}</strong> search parameter in
+                        step 3 to: <strong>{newValue}</strong>
+                      </span>,
+                      { variant: 'info' }
+                    );
+                  }
+                },
+              };
             },
             helperText: (
               <NumberedHeader
