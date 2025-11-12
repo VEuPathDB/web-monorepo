@@ -1,4 +1,8 @@
-// TODO Make this Store Module more generic so that it can be used with an Answer (and no Step).
+// 📖 Documentation: See ResultTableSummaryViewStoreModule.md for detailed explanation of:
+//    - The "window" system and epic lifecycle
+//    - Action flow diagrams showing the 8-action cascade
+//    - How smrate (switchMapRequestActionsToEpic) works
+//    - Debugging tips and common pitfalls
 
 import stringify from 'json-stable-stringify';
 import { get, stubTrue, isEqual, difference, identity } from 'lodash';
@@ -39,6 +43,7 @@ import {
   reportAnswerFulfillmentError,
   requestResultTypeDetails,
   fulfillResultTypeDetails,
+  resetColumnPreferencesToDefault,
 } from '../Actions/SummaryView/ResultTableSummaryViewActions';
 import { RootState } from '../Core/State/Types';
 import { EpicDependencies } from '../Core/Store';
@@ -58,6 +63,7 @@ import {
   getGlobalViewFilters,
   setGlobalViewFilters,
   filterInvalidAttributes,
+  clearResultTablePreferences,
 } from '../Utils/UserPreferencesUtils';
 import {
   Answer,
@@ -262,6 +268,18 @@ function reduceView(
       return { ...state, inBaskeFilterEnabled: action.payload.enabled };
     }
 
+    case resetColumnPreferencesToDefault.type: {
+      return {
+        ...state,
+        // Clear any dialog-related state since preferences are changing
+        columnsDialogSelection: undefined,
+        columnsDialogSearchString: undefined,
+        columnsDialogExpandedNodes: undefined,
+        errorMessage: undefined,
+        answer: undefined,
+      };
+    }
+
     default: {
       return state;
     }
@@ -368,6 +386,7 @@ function filterFulfillBySearchName([
     | InferAction<typeof requestSortingPreference>
     | InferAction<typeof requestSortingUpdate>
     | InferAction<typeof requestColumnsChoiceUpdate>
+    | InferAction<typeof resetColumnPreferencesToDefault>
   )
 ]) {
   const { resultTypeDetails } = resultTypeDetailsAction.payload;
@@ -856,6 +875,47 @@ async function getFulfillGlobalViewFiltersUpdate(
   return fulfillGlobalViewFilters(viewId, recordClassName, viewFilters);
 }
 
+async function handleResetColumnPreferencesToDefault(
+  [openAction, resultTypeDetailsAction, resetAction]: [
+    InferAction<typeof openRTS>,
+    InferAction<typeof fulfillResultTypeDetails>,
+    InferAction<typeof resetColumnPreferencesToDefault>
+  ],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof fulfillColumnsChoice>> {
+  const { viewId, searchName } = resetAction.payload;
+  const { resultType } = openAction.payload;
+
+  // Clear backend preferences
+  await clearResultTablePreferences(searchName, wdkService);
+
+  if (resultType.type === 'step') {
+    await wdkService.updateStepProperties(resultType.step.id, {
+      displayPreferences: {},
+    });
+  }
+
+  // fulfill column change after checking columns are valid
+  const columns = await getResultTableColumnsPref(
+    wdkService,
+    searchName
+    // don't pass the stale step
+  );
+  const validColumns = await filterInvalidAttributes(
+    wdkService,
+    searchName,
+    identity,
+    columns
+  );
+
+  return fulfillColumnsChoice(
+    openAction.payload.viewId,
+    validColumns,
+    searchName
+  );
+}
+
 export const observe = takeEpicInWindow(
   {
     startActionCreator: openResultTableSummaryView,
@@ -890,7 +950,10 @@ export const observe = takeEpicInWindow(
     smrate(
       [openRTS, fulfillResultTypeDetails, requestColumnsChoiceUpdate],
       getFulfillColumnsChoiceUpdate,
-      { areActionsCoherent: filterFulfillBySearchName }
+      {
+        areActionsCoherent: filterFulfillBySearchName,
+        areActionsNew: () => true,
+      }
     ),
     // strat needed for searchName
     smrate([openRTS, fulfillResultTypeDetails], getRequestSortingPreference, {
@@ -959,6 +1022,15 @@ export const observe = takeEpicInWindow(
       getFulfillRecordsBasketStatus,
       {
         areActionsCoherent: filterFulfillRecordBasketStatusActions,
+        areActionsNew: () => true,
+      }
+    ),
+    // Reset column preferences
+    smrate(
+      [openRTS, fulfillResultTypeDetails, resetColumnPreferencesToDefault],
+      handleResetColumnPreferencesToDefault,
+      {
+        areActionsCoherent: filterFulfillBySearchName,
         areActionsNew: () => true,
       }
     )

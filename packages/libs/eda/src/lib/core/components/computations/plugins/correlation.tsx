@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import {
   CollectionVariableTreeNode,
   VariableTreeNode,
@@ -36,7 +36,6 @@ import {
   CompleteCorrelationConfig,
   CorrelationConfig,
 } from '../../../types/apps';
-import { NodeData } from '@veupathdb/components/lib/types/plots/network';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -410,7 +409,7 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
                     proportionNonZero:
                       // save as decimal point, not %
                       newValue != null
-                        ? Number((newValue as number) / 100)
+                        ? Number(newValue / 100)
                         : DEFAULT_PROPORTION_NON_ZERO_THRESHOLD,
                     variance:
                       configuration.prefilterThresholds?.variance ??

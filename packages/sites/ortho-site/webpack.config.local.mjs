@@ -7,10 +7,10 @@ import {
   makeCommonDevServerConfig,
 } from '@veupathdb/react-scripts/utils/dev-server-config.js';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+import configure from '@veupathdb/site-webpack-config';
+import { additionalConfig } from './webpack.config.js';
 
-const { default: configure } = await import('@veupathdb/site-webpack-config');
-const { additionalConfig } = await import('./webpack.config.js');
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default configure({
   ...additionalConfig,
@@ -22,6 +22,7 @@ export default configure({
       [process.env.MULTI_BLAST_ENDPOINT]: process.env.MULTI_BLAST_URL,
       [process.env.DOCUMENTS_ENDPOINT]: process.env.DOCUMENTS_URL,
       [process.env.ASSETS_ENDPOINT]: process.env.ASSETS_URL,
+      [process.env.CGI_BIN_ENDPOINT]: process.env.CGI_BIN_URL,
     },
     legacyWebAppEndpoint: process.env.LEGACY_WEB_APP_ENDPOINT,
     legacyWebAppUrl: process.env.LEGACY_WEB_APP_URL,

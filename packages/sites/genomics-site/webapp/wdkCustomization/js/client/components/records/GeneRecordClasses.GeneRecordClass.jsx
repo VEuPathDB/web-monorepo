@@ -28,6 +28,7 @@ import { preorderSeq } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 import DatasetGraph from '@veupathdb/web-common/lib/components/DatasetGraph';
 import { EdaDatasetGraph } from '@veupathdb/web-common/lib/components/EdaDatasetGraph';
+import { ClustalAlignmentForm } from '@veupathdb/web-common/lib/components';
 import { ExternalResourceContainer } from '@veupathdb/web-common/lib/components/ExternalResource';
 import Sequence from '@veupathdb/web-common/lib/components/records/Sequence';
 import { isNodeOverflowing } from '@veupathdb/web-common/lib/util/domUtils';
@@ -145,6 +146,17 @@ function Shortcuts(props) {
     })
     // remove thumbnails whose associated fields are not present in record instance
     .filter((context) => instanceFields.has(context.anchor))
+    // filter out contexts where the attributesMap entry is missing (protects against runtime errors)
+    .filter(
+      (context) =>
+        // Allow special thumbnails through (they don't have gbrowse_url attributes)
+        context === transcriptomicsThumbnail ||
+        context === phenotypeThumbnail ||
+        context === crisprPhenotypeThumbnail ||
+        // For other contexts, ensure the attributesMap entry exists
+        !context.gbrowse_url ||
+        recordClass.attributesMap[context.gbrowse_url] != null
+    )
     .map((context) =>
       context === transcriptomicsThumbnail ||
       context === phenotypeThumbnail ||
@@ -165,7 +177,7 @@ function Shortcuts(props) {
               />
             ),
             displayName:
-              recordClass.attributesMap[context.gbrowse_url].displayName,
+              recordClass.attributesMap[context.gbrowse_url]?.displayName,
           })
     )
     .toArray();
@@ -1592,8 +1604,22 @@ class OrthologsForm extends SortKeyTable {
         />
       );
     } else {
+      // TODO: Discuss how to retain "large flanking region" warning in the modal
+      // Original message: "Please note: selecting a large flanking region or a large number of sequences will take several minutes to align."
       return (
-        <form action="/cgi-bin/isolateAlignment" target="_blank" method="post">
+        <ClustalAlignmentForm
+          action="/cgi-bin/isolateAlignment"
+          sequenceCount={this.state.selectedRowIds.length + 1}
+          sequenceType="genes"
+          warnThreshold={(form) => {
+            const formData = new FormData(form);
+            return formData.get('sequence_Type') === 'genomic' ? 10 : 1000;
+          }}
+          blockThreshold={(form) => {
+            const formData = new FormData(form);
+            return formData.get('sequence_Type') === 'genomic' ? 50 : 1000;
+          }}
+        >
           <input type="hidden" name="type" value="geneOrthologs" />
           <input type="hidden" name="project_id" value={projectId} />
           <input type="hidden" name="gene_ids" value={source_id} />
@@ -1616,10 +1642,6 @@ class OrthologsForm extends SortKeyTable {
               Select sequence type for Clustal Omega multiple sequence
               alignment:
             </b>
-          </p>
-          <p>
-            Please note: selecting a large flanking region or a large number of
-            sequences will take several minutes to align.
           </p>
           <div id="userOptions">
             {is_protein && (
@@ -1682,9 +1704,18 @@ class OrthologsForm extends SortKeyTable {
                 <option value="vie">VIENNA</option>
               </select>
             </p>
-            <input type="submit" value="Run Clustal Omega for selected genes" />
+            <input
+              type="submit"
+              value="Run Clustal Omega for selected genes"
+              disabled={this.state.selectedRowIds.length < 2}
+              title={
+                this.state.selectedRowIds.length < 2
+                  ? 'Check two or more checkboxes in the table above to use this feature.'
+                  : ''
+              }
+            />
           </div>
-        </form>
+        </ClustalAlignmentForm>
       );
     }
   }

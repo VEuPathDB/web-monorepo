@@ -1,12 +1,18 @@
 import React from 'react';
 import { wrappable } from '../../../Utils/ComponentUtils';
 import UserFormContainer, {
-  UserFormContainerProps,
   getDescriptionBoxStyle,
 } from '../../../Views/User/UserFormContainer';
 import { UserProfileFormData } from '../../../StoreModules/UserProfileStoreModule';
 import { GlobalData } from '../../../StoreModules/GlobalData';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import {
+  ALL_VEUPATHDB_PROJECTS,
+  GENOMICS_PROJECTS,
+} from '../../../Utils/ProjectConstants';
+import { formatList } from '../../../Utils/FormatUtils';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../Core/State/Types';
 
 // Props interface based on what UserRegistrationController actually passes
 interface UserRegistrationProps {
@@ -22,45 +28,91 @@ interface UserRegistrationProps {
       condition: (user: any) => boolean,
       path: string
     ) => void;
+    showLoginForm: (destination?: string) => void;
   };
   initialFormFields?: Record<string, string>;
 }
 
-const IntroText: React.FC = () => (
-  <div style={{ margin: '2em 0em' }}>
-    <Banner
-      banner={{
-        type: 'info',
-        message: (
-          <p style={{ margin: '0.5em 0em' }}>
-            If you already registered in another site (
-            <i>
-              AmoebaDB, CryptoDB, FungiDB, GiardiaDB, MicrosporidiaDB,
-              PiroplasmaDB, PlasmoDB, SchistoDB, ToxoDB, TrichDB, TriTrypDB,
-              VectorBase or VEuPathDB
-            </i>
-            ) you do NOT need to register again.
-          </p>
-        ),
-        pinned: true,
-      }}
-    />
-  </div>
-);
+const IntroText: React.FC = () => {
+  const projectId = useSelector<RootState>(
+    (state) => state.globalData.siteConfig.projectId
+  );
+
+  return (
+    <div style={{ margin: '2em 0em' }}>
+      <Banner
+        banner={{
+          type: 'info',
+          message: (
+            <p style={{ margin: '0.5em 0em' }}>
+              If you already registered in another site (
+              <i>
+                {formatList(
+                  ALL_VEUPATHDB_PROJECTS.filter(
+                    (project) => project !== projectId
+                  ),
+                  'or'
+                )}
+              </i>
+              ) you do NOT need to register again.
+            </p>
+          ),
+          pinned: true,
+        }}
+      />
+    </div>
+  );
+};
 
 const WhyRegister: React.FC = () => (
-  <div style={getDescriptionBoxStyle()}>
-    <h4>Why register/subscribe?</h4>
-    <div id="cirbulletlist">
-      <ul>
-        <li>Permanently save Search Strategies</li>
-        <li>Use a Basket to make a set of IDs of interest</li>
-        <li>Use Favorites to mark IDs of interest, for fast access</li>
-        <li>Add a comment on Genes, Sequences and other record types</li>
-        <li>Set site preferences</li>
-      </ul>
-    </div>
-  </div>
+  <Banner
+    banner={{
+      type: 'normal',
+      hideIcon: true,
+      message: (
+        <div
+          style={{
+            marginLeft: '1em',
+            marginRight: '1em',
+            marginBottom: '1em',
+            maxWidth: '40em',
+          }}
+        >
+          <h4>Why register?</h4>
+          <p>With a VEuPathDB account you can:</p>
+          <div id="cirbulletlist">
+            <ul>
+              <li>
+                <strong>Gain access</strong> to searches, tools and gene pages
+                on all of our genomics sites (
+                {formatList([...GENOMICS_PROJECTS], 'and')})
+              </li>
+              <li>
+                <strong>Save your search strategies</strong> for easy reuse
+              </li>
+              <li>
+                <strong>Collect and organize IDs</strong> using the{' '}
+                <em>Basket Tool</em>
+              </li>
+              <li>
+                <strong>Mark favorites</strong> for quick access to important
+                records
+              </li>
+              <li>
+                <strong>Add comments</strong> on genes, sequences, and other
+                data types
+              </li>
+              <li>
+                <strong>Customize your site preferences</strong>, including{' '}
+                <em>My Organism Preferences</em>
+              </li>
+            </ul>
+          </div>
+        </div>
+      ),
+      pinned: true,
+    }}
+  />
 );
 
 const PrivacyPolicy: React.FC = () => (
@@ -120,21 +172,6 @@ const PrivacyPolicy: React.FC = () => (
  */
 const UserRegistration: React.FC<UserRegistrationProps> = (props) => (
   <div>
-    {props.formStatus === 'success' && (
-      <div className="wdk-UserProfile-banner wdk-UserProfile-success">
-        <div>
-          <p>
-            You have registered successfully. Please check your email (inbox and
-            spam folder) for a temporary password.
-          </p>
-        </div>
-      </div>
-    )}
-    {props.formStatus === 'error' && props.errorMessage && (
-      <div className="wdk-UserProfile-banner wdk-UserProfile-error">
-        {props.errorMessage}
-      </div>
-    )}
     <UserFormContainer
       globalData={props.globalData}
       userFormData={props.userFormData}
@@ -150,15 +187,52 @@ const UserRegistration: React.FC<UserRegistrationProps> = (props) => (
       hiddenFormMessage="You must log out before registering a new user."
       titleText="Registration"
       introComponent={IntroText}
-      submitButtonText="Register"
       singleFormMode={true}
+      saveButtonText={{
+        save: 'Register',
+        saving: 'Registering...',
+        saved: 'Registered',
+      }}
     />
-    {!props.globalData.user?.isGuest ? (
-      ''
-    ) : (
-      <div>
-        <WhyRegister />
-      </div>
+    {props.globalData.user?.isGuest && (
+      <>
+        {props.formStatus === 'success' && (
+          <div style={{ marginTop: '2em', marginLeft: '24px' }}>
+            <Banner
+              banner={{
+                type: 'success',
+                message:
+                  'You have registered successfully. Please check your email (inbox and spam folder) for a temporary password.',
+                pinned: true,
+                primaryActionButtonProps: {
+                  text: 'Log in',
+                  onPress: () => props.userEvents.showLoginForm('/'),
+                },
+              }}
+            />
+          </div>
+        )}
+        {props.formStatus === 'error' && props.errorMessage && (
+          <div style={{ marginTop: '2em', marginLeft: '24px' }}>
+            <Banner
+              banner={{
+                type: 'error',
+                message: props.errorMessage,
+                pinned: true,
+              }}
+            />
+          </div>
+        )}
+        <div
+          style={{
+            marginTop: '2em',
+            marginLeft: '24px',
+            maxWidth: 'max-content',
+          }}
+        >
+          <WhyRegister />
+        </div>
+      </>
     )}
   </div>
 );

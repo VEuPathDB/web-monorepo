@@ -40,6 +40,10 @@ $white: #e0e0e0;
     &--warning {
       color: #ffa500;
     }
+
+    &--student {
+      color: #000 !important;
+    }
   }
 
   .UserMenu-LoggedInIcon {
@@ -89,7 +93,7 @@ $white: #e0e0e0;
   display: flex;
   flex-direction: column;
   padding: 10px;
-  min-width: 160px;
+  min-width: 180px; // max-content isn't ideal because the width shifts on mouse-over bolding of link text
   position: absolute;
   border-radius: 10px;
   line-height: 1em;
@@ -152,6 +156,10 @@ $white: #e0e0e0;
 
     &--warning {
       color: #ffa500 !important;
+    }
+
+    &--student {
+      color: #000 !important;
     }
   }
 }

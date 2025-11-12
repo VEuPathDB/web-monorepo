@@ -149,6 +149,18 @@ export async function setResultTableSortingPref(
   );
 }
 
+export async function clearResultTablePreferences(
+  searchName: string,
+  wdkService: WdkService
+): Promise<void> {
+  const question = await getQuestionFromSearchName(searchName, wdkService);
+  // Clear both column and sorting preferences by setting them to null
+  await Promise.all([
+    setPrefWith(wdkService, prefSpecs.summary(question.fullName), null),
+    setPrefWith(wdkService, prefSpecs.sort(question.fullName), null),
+  ]);
+}
+
 export async function getResultTablePageSizePref(
   wdkService: WdkService
 ): Promise<number> {

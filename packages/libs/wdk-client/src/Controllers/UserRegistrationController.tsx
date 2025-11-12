@@ -9,6 +9,7 @@ import {
   submitRegistrationForm,
   conditionallyTransition,
 } from '../Actions/UserActions';
+import { showLoginForm } from '../Actions/UserSessionActions';
 import { RootState } from '../Core/State/Types';
 import { connect } from 'react-redux';
 import { GlobalData } from '../StoreModules/GlobalData';
@@ -18,6 +19,7 @@ const actionCreators = {
   resetProfileForm: profileFormReset,
   submitRegistrationForm,
   conditionallyTransition,
+  showLoginForm,
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
