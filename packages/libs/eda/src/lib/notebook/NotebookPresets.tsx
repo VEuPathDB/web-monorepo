@@ -7,7 +7,9 @@ import { BipartiteNetworkOptions } from '../core/components/visualizations/imple
 import { NodeData } from '@veupathdb/components/lib/types/plots/network';
 import { WdkState } from './EdaNotebookAnalysis';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
-import { CollectionVariableTreeNode } from '../core';
+import { AnalysisState, CollectionVariableTreeNode } from '../core';
+import { DifferentialExpressionConfig } from '../core/components/computations/plugins/differentialExpression';
+import { VolcanoPlotConfig } from '../core/components/visualizations/implementations/VolcanoPlotVisualization';
 
 // this is currently not used but may be one day when we need to store user state
 // that is outside AnalysisState and WdkState
@@ -41,6 +43,11 @@ export interface VisualizationCellDescriptor
     wdkState: WdkState,
     enqueueSnackbar: EnqueueSnackbar
   ) => Partial<BipartiteNetworkOptions>; // We'll define this function custom for each notebook, so can expand output types as needed.
+  // Use the following to show updates when viz config changes.
+  additionalUpdateConfiguration?: (
+    vizConfig: any,
+    enqueueSnackbar: EnqueueSnackbar
+  ) => void;
 }
 
 export interface ComputeCellDescriptor
@@ -54,6 +61,7 @@ export interface ComputeCellDescriptor
 
 export interface TextCellDescriptor extends NotebookCellDescriptorBase<'text'> {
   text: ReactNode;
+  getText?: (analysisState: AnalysisState) => ReactNode;
 }
 
 export interface SubsetCellDescriptor
@@ -79,7 +87,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
   differentialExpressionNotebook: {
     name: 'differentialexpression',
     displayName: 'Differential Expression Notebook',
-    projects: ['PlasmoDB'],
+    projects: ['PlasmoDB', 'MicrobiomeDB'],
     cells: [
       {
         type: 'subset',
@@ -112,6 +120,23 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             title: 'Examine DESeq2 Results with Volcano Plot',
             visualizationName: 'volcanoplot',
             visualizationId: 'volcano_1',
+            additionalUpdateConfiguration: (
+              vizConfig: VolcanoPlotConfig,
+              enqueueSnackbar: EnqueueSnackbar
+            ) => {
+              console.log(vizConfig);
+              // Open snackbar
+              enqueueSnackbar(
+                <span>
+                  Updated threshold search parameter in step 3 to:{' '}
+                  <strong>{vizConfig.effectSizeThreshold}</strong>
+                  <br></br>
+                  Updated p value cutoff to:{' '}
+                  <strong>{vizConfig.significanceThreshold}</strong>
+                </span>,
+                { variant: 'info' }
+              );
+            },
             helperText: (
               <NumberedHeader
                 number={2}
@@ -129,7 +154,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
               <NumberedHeader
                 number={3}
                 text={
-                  'After identifying genes of interest from the volcano plot, we can run a gene search to review the genes in the Gene Search Results table.'
+                  'After identifying genes of interest from the volcano plot, run a gene search to review the genes in the Gene Search Results table.'
                 }
                 color={colors.grey[800]}
               />
@@ -146,21 +171,46 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                   Clicking "Get Answer" below will return genes that meet the
                   following criteria:
                 </h4>
-                <span style={{ fontStyle: 'italic', color: colors.grey[800] }}>
-                  Adjust these parameters in the above cells
-                </span>
-                <span>
-                  Absolute effect size: <strong>1</strong>
-                </span>
-                <span>
-                  Unadjusted P-value: <strong>0.01</strong>
-                </span>
-                <span>
-                  Gene regulation direction:{' '}
-                  <strong>Up and down regulated</strong>
-                </span>
               </div>
             ),
+            getText: (analysisState: AnalysisState) => {
+              const volcanoPlotConfig = analysisState.analysis?.descriptor
+                .computations[0].visualizations[0].descriptor
+                .configuration as VolcanoPlotConfig;
+              return (
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.5em',
+                    marginTop: '0.5em',
+                  }}
+                >
+                  <span>
+                    Absolute effect size:{' '}
+                    <strong>{volcanoPlotConfig.effectSizeThreshold}</strong>
+                  </span>
+                  <span>
+                    Unadjusted P-value:{' '}
+                    <strong>{volcanoPlotConfig.significanceThreshold}</strong>
+                  </span>
+                  <span>
+                    Gene regulation direction:{' '}
+                    <strong>Up and down regulated</strong>
+                  </span>
+                  <span
+                    style={{
+                      fontStyle: 'italic',
+                      color: colors.grey[800],
+                      marginTop: '0.5em',
+                    }}
+                  >
+                    To make adjustments, update the volcano plot settings in
+                    step 2.
+                  </span>
+                </div>
+              );
+            },
           },
         ],
       },
