@@ -83,9 +83,18 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
     cells: [
       {
         type: 'compute',
-        title: 'PCA',
+        title: 'Configure PCA',
         computationName: 'dimensionalityreduction',
         computationId: 'pca_1',
+        helperText: (
+          <NumberedHeader
+            number={1}
+            text={
+              'Use PCA to investigate possible sources of variation in the dataset.'
+            }
+            color={colors.grey[800]}
+          />
+        ),
         cells: [
           {
             type: 'visualization',

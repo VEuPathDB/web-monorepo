@@ -119,6 +119,7 @@ export function DimensionalityReductionConfiguration(
     analysisState,
     visualizationId,
     changeConfigHandlerOverride,
+    showStepNumber = true,
   } = props;
   assertComputationWithConfig(computation, DimensionalityReductionConfig);
   const configuration = computation.descriptor.configuration;
@@ -139,6 +140,7 @@ export function DimensionalityReductionConfiguration(
         stepNumber: 1,
         stepTitle: `Configure ${computationAppOverview.displayName}`,
       }}
+      showStepNumber={showStepNumber}
     >
       <div className={cx()}>
         <div className={cx('-InputContainer')}>
