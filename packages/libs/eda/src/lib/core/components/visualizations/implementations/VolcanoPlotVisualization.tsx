@@ -64,6 +64,8 @@ import { truncationConfig } from '../../../utils/truncation-config-utils';
 // use Notification for truncation warning message
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 import PluginError from '../PluginError';
+import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
+type EnqueueSnackbar = ReturnType<typeof useSnackbar>['enqueueSnackbar'];
 
 const DEFAULT_SIG_THRESHOLD = 0.05; // significance threshold (horizontal line)
 const DEFAULT_ES_THRESHOLD = 1; // effect size threshold (vertical lines)
@@ -113,16 +115,22 @@ export const VolcanoPlotConfig = t.partial({
   dependentAxisRange: NumberRange,
 });
 
-interface Options
+export interface VolcanoPlotOptions
   extends LayoutOptions,
     TitleOptions,
-    RequestOptions<VolcanoPlotConfig, {}, VolcanoPlotRequestParams> {}
+    RequestOptions<VolcanoPlotConfig, {}, VolcanoPlotRequestParams> {
+  inputSnackbar?: <K extends keyof VolcanoPlotConfig>(
+    enqueueSnackbar: EnqueueSnackbar,
+    vizConfigParameter: K,
+    newValue: VolcanoPlotConfig[K]
+  ) => void;
+}
 
 // Volcano Plot Visualization
 // The volcano plot visualization takes no input variables. The received data populates all parts of the plot.
 // The user can control the threshold lines, which affect the marker colors. Additional controls
 // include axis ranges and marker opacity slider.
-function VolcanoPlotViz(props: VisualizationProps<Options>) {
+function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
   const {
     options,
     computation,
@@ -138,6 +146,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
 
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
+  const { enqueueSnackbar } = useSnackbar();
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
   const computationConfiguration: DifferentialAbundanceConfig = computation
@@ -749,9 +758,16 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
       {!hideInputsAndControls && (
         <LabelledGroup label="Threshold lines" alignChildrenHorizontally={true}>
           <NumberInput
-            onValueChange={(newValue?: NumberOrDate) =>
-              updateVizConfig({ effectSizeThreshold: Number(newValue) })
-            }
+            onValueChange={(newValue?: NumberOrDate) => {
+              updateVizConfig({ effectSizeThreshold: Number(newValue) });
+              options?.inputSnackbar &&
+                typeof newValue === 'number' &&
+                options.inputSnackbar(
+                  enqueueSnackbar,
+                  'effectSizeThreshold',
+                  newValue
+                );
+            }}
             label={finalData?.effectSizeLabel ?? 'Effect Size'}
             minValue={0}
             value={vizConfig.effectSizeThreshold ?? DEFAULT_ES_THRESHOLD}
@@ -760,9 +776,16 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
 
           <NumberInput
             label="P-Value"
-            onValueChange={(newValue?: NumberOrDate) =>
-              updateVizConfig({ significanceThreshold: Number(newValue) })
-            }
+            onValueChange={(newValue?: NumberOrDate) => {
+              updateVizConfig({ significanceThreshold: Number(newValue) });
+              options?.inputSnackbar &&
+                typeof newValue === 'number' &&
+                options.inputSnackbar(
+                  enqueueSnackbar,
+                  'significanceThreshold',
+                  newValue
+                );
+            }}
             minValue={0}
             value={vizConfig.significanceThreshold ?? DEFAULT_SIG_THRESHOLD}
             containerStyles={{ marginLeft: 10 }}

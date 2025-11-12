@@ -7,7 +7,12 @@ import { BipartiteNetworkOptions } from '../core/components/visualizations/imple
 import { NodeData } from '@veupathdb/components/lib/types/plots/network';
 import { WdkState } from './EdaNotebookAnalysis';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
-import { CollectionVariableTreeNode } from '../core';
+import { AnalysisState, CollectionVariableTreeNode } from '../core';
+import { DifferentialExpressionConfig } from '../core/components/computations/plugins/differentialExpression';
+import {
+  VolcanoPlotConfig,
+  VolcanoPlotOptions,
+} from '../core/components/visualizations/implementations/VolcanoPlotVisualization';
 
 // this is currently not used but may be one day when we need to store user state
 // that is outside AnalysisState and WdkState
@@ -40,7 +45,12 @@ export interface VisualizationCellDescriptor
   getVizPluginOptions?: (
     wdkState: WdkState,
     enqueueSnackbar: EnqueueSnackbar
-  ) => Partial<BipartiteNetworkOptions>; // We'll define this function custom for each notebook, so can expand output types as needed.
+  ) => Partial<BipartiteNetworkOptions> | Partial<VolcanoPlotOptions>; // We'll define this function custom for each notebook, so can expand output types as needed.
+  // Use the following to show updates when viz config changes.
+  additionalUpdateConfiguration?: (
+    vizConfig: any,
+    enqueueSnackbar: EnqueueSnackbar
+  ) => void;
 }
 
 export interface ComputeCellDescriptor
@@ -54,6 +64,7 @@ export interface ComputeCellDescriptor
 
 export interface TextCellDescriptor extends NotebookCellDescriptorBase<'text'> {
   text: ReactNode;
+  getText?: (analysisState: AnalysisState) => ReactNode;
 }
 
 export interface SubsetCellDescriptor
@@ -76,29 +87,153 @@ type PresetNotebook = {
 // Note - Using differential abundance as practice for differential expression
 // Note - boxplot notebook has no plan for use yet, just good for testing.
 export const presetNotebooks: Record<string, PresetNotebook> = {
-  differentialAbundanceNotebook: {
-    name: 'differentialabundance',
-    displayName: 'Differential Abundance Notebook',
-    projects: ['MicrobiomeDB'],
+  differentialExpressionNotebook: {
+    name: 'differentialexpression',
+    displayName: 'Differential Expression Notebook',
+    projects: ['PlasmoDB', 'MicrobiomeDB'],
     cells: [
       {
+        type: 'subset',
+        title: 'Select samples (optional)',
+        helperText: (
+          <NumberedHeader
+            number={0}
+            text={'Optionally refine samples for differential expression.'}
+            color={colors.grey[800]}
+          />
+        ),
+      },
+      {
         type: 'compute',
-        title: 'Differential Abundance',
-        computationName: 'differentialabundance',
-        computationId: 'diff_1',
+        title: 'Setup DESeq2 Computation',
+        computationName: 'differentialexpression',
+        computationId: 'de_1',
+        helperText: (
+          <NumberedHeader
+            number={1}
+            text={
+              'Run a differential expression analysis using DESeq2.Please choose the metadata variable for comparison, and then set up the reference and comparison groups. When all selections have been made, we can run the computation.'
+            }
+            color={colors.grey[800]}
+          />
+        ),
         cells: [
           {
             type: 'visualization',
-            title: 'Volcano Plot',
+            title: 'Examine DESeq2 Results with Volcano Plot',
             visualizationName: 'volcanoplot',
             visualizationId: 'volcano_1',
+            getVizPluginOptions: (
+              wdkState: WdkState,
+              enqueueSnackbar: EnqueueSnackbar
+            ) => {
+              return {
+                // When user changes viz config, show snackbar with updated params
+                inputSnackbar: <K extends keyof VolcanoPlotConfig>(
+                  enqueueSnackbar: EnqueueSnackbar,
+                  vizConfigParameter: K,
+                  newValue: VolcanoPlotConfig[K]
+                ) => {
+                  let paramText = '';
+                  // The only two parameters we want to alert the user about are numbers.
+                  if (typeof newValue === 'number') {
+                    switch (vizConfigParameter) {
+                      case 'effectSizeThreshold':
+                        paramText = 'Absolute effect size';
+                        break;
+                      case 'significanceThreshold':
+                        paramText = 'Unadjusted P-value';
+                        break;
+                      default:
+                        paramText = 'Unknown parameter';
+                    }
+                    enqueueSnackbar(
+                      <span>
+                        Updated <strong>{paramText}</strong> search parameter in
+                        step 3 to: <strong>{newValue}</strong>
+                      </span>,
+                      { variant: 'info' }
+                    );
+                  }
+                },
+              };
+            },
+            helperText: (
+              <NumberedHeader
+                number={2}
+                text={
+                  'Once the DESeq2 results are ready, a volcano plot will appear below. Set the threshold lines to color the genes based on their significance and fold change.'
+                }
+                color={colors.grey[800]}
+              />
+            ),
+          },
+          {
+            type: 'text',
+            title: 'Review and run search',
+            helperText: (
+              <NumberedHeader
+                number={3}
+                text={
+                  'After identifying genes of interest from the volcano plot, run a gene search to review the genes in the Gene Search Results table.'
+                }
+                color={colors.grey[800]}
+              />
+            ),
+            text: (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.5rem',
+                }}
+              >
+                <h4>
+                  Clicking "Get Answer" below will return genes that meet the
+                  following criteria:
+                </h4>
+              </div>
+            ),
+            getText: (analysisState: AnalysisState) => {
+              const volcanoPlotConfig = analysisState.analysis?.descriptor
+                .computations[0].visualizations[0].descriptor
+                .configuration as VolcanoPlotConfig;
+              return (
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.5em',
+                    marginTop: '0.5em',
+                  }}
+                >
+                  <span>
+                    Absolute effect size:{' '}
+                    <strong>{volcanoPlotConfig.effectSizeThreshold}</strong>
+                  </span>
+                  <span>
+                    Unadjusted P-value:{' '}
+                    <strong>{volcanoPlotConfig.significanceThreshold}</strong>
+                  </span>
+                  <span>
+                    Gene regulation direction:{' '}
+                    <strong>Up and down regulated</strong>
+                  </span>
+                  <span
+                    style={{
+                      fontStyle: 'italic',
+                      color: colors.grey[800],
+                      marginTop: '0.5em',
+                    }}
+                  >
+                    To make adjustments, update the volcano plot settings in
+                    step 2.
+                  </span>
+                </div>
+              );
+            },
           },
         ],
-      },
-      {
-        type: 'text',
-        title: 'Text Cell',
-        text: 'This is a text cell for the differential abundance notebook.',
       },
     ],
   },

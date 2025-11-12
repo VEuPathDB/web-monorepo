@@ -7,7 +7,6 @@ import { PlotContainerStyleOverrides } from '../core/components/visualizations/V
 import { NotebookCellProps } from './NotebookCell';
 import { VisualizationCellDescriptor } from './NotebookPresets';
 import { useCachedPromise } from '../core/hooks/cachedPromise';
-import { useComputeJobStatus } from '../core/components/computations/ComputeJobStatusHook';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 
@@ -34,7 +33,12 @@ export function VisualizationNotebookCell(
   );
   const { enqueueSnackbar } = useSnackbar();
 
-  const { visualizationName, visualizationId, getVizPluginOptions } = cell;
+  const {
+    visualizationName,
+    visualizationId,
+    getVizPluginOptions,
+    additionalUpdateConfiguration,
+  } = cell;
 
   const { visualization, computation } =
     analysisState.getVisualizationAndComputation(visualizationId) ?? {};
@@ -72,9 +76,18 @@ export function VisualizationNotebookCell(
             configuration,
           },
         });
+        // if additional update logic, do it here.
+        if (additionalUpdateConfiguration) {
+          additionalUpdateConfiguration(configuration, enqueueSnackbar);
+        }
       }
     },
-    [updateVisualization, visualization]
+    [
+      updateVisualization,
+      visualization,
+      additionalUpdateConfiguration,
+      enqueueSnackbar,
+    ]
   );
 
   const vizOverview = appOverview.visualizations.find(
