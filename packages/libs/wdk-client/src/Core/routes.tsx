@@ -39,28 +39,7 @@ const routes: RouteEntry[] = [
 
   {
     path: '/search/:recordClass/:question/result',
-    component: (
-      props: RouteComponentProps<{ recordClass: string; question: string }>
-    ) => {
-      const {
-        filterTerm,
-        filterAttributes = [],
-        filterTables = [],
-      } = QueryString.parse(props.location.search.slice(1));
-      const parameters = parseSearchParamsFromQueryParams(
-        parseQueryString(props)
-      );
-      return (
-        <AnswerController
-          {...props.match.params}
-          parameters={parameters}
-          filterTerm={isArray(filterTerm) ? filterTerm[0] : filterTerm}
-          filterAttributes={castArray(filterAttributes)}
-          filterTables={castArray(filterTables)}
-          history={props.history}
-        />
-      );
-    },
+    component: makeAnswerControllerRouteComponent(),
   },
 
   {
@@ -324,4 +303,41 @@ function parseSearchParamsFromQueryParams(restQueryParams: {
   return initialParamValuesEntries.length > 0
     ? Object.fromEntries(initialParamValuesEntries)
     : undefined;
+}
+
+/**
+ * Creates a route component for AnswerController with proper query string handling
+ * @param routeMatches - Optional. When provided, uses the specified recordClass and question
+ *                       instead of extracting them from route parameters. Useful for hardcoding
+ *                       specific routes (e.g., {recordClass: 'dataset', question: 'AllDatasets'}).
+ *                       When omitted, the recordClass and question are extracted from the route's
+ *                       :recordClass and :question path parameters.
+ * @returns A route component function
+ */
+export function makeAnswerControllerRouteComponent(routeMatches?: {
+  recordClass: string;
+  question: string;
+}) {
+  return (
+    props: RouteComponentProps<{ recordClass: string; question: string }>
+  ) => {
+    const {
+      filterTerm,
+      filterAttributes = [],
+      filterTables = [],
+    } = QueryString.parse(props.location.search.slice(1));
+    const parameters = parseSearchParamsFromQueryParams(
+      parseQueryString(props)
+    );
+    return (
+      <AnswerController
+        {...(routeMatches ?? props.match.params)}
+        parameters={parameters}
+        filterTerm={isArray(filterTerm) ? filterTerm[0] : filterTerm}
+        filterAttributes={castArray(filterAttributes)}
+        filterTables={castArray(filterTables)}
+        history={props.history}
+      />
+    );
+  };
 }
