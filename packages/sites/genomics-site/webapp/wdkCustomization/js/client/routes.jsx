@@ -3,7 +3,6 @@ import React, { Suspense } from 'react';
 import { Redirect, useHistory, useRouteMatch } from 'react-router-dom';
 
 import SiteSearchController from '@veupathdb/web-common/lib/controllers/SiteSearchController';
-import AnswerController from '@veupathdb/wdk-client/lib/Controllers/AnswerController';
 
 // load api-specific page controllers
 import FastaConfigController from './components/controllers/FastaConfigController';
