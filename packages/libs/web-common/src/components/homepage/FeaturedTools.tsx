@@ -331,7 +331,17 @@ const ToolListItem = ({ entry, onSelect, isSelected }: ToolListItemProps) => {
         if (e.shiftKey || e.ctrlKey) return;
         e.preventDefault();
         onSelect();
-        history.replace(`#${entry.identifier}`);
+        //history.replace(`#${entry.identifier}`);
+        // show URL as /app#funding instead of /app/#funding, so when they copy/paste it works
+        const { pathname } = window.location;
+        if (pathname.endsWith('/')) {
+          const newPathname = (pathname + '/')
+            .replace(/[/]+/g, '/')
+            .slice(0, -1);
+          window.history.replaceState(null, '', newPathname);
+        }
+        const newUrl = `${window.location.origin}${window.location.pathname}${window.location.search}#${entry.identifier}`;
+        window.history.replaceState(null, '', newUrl);
       }}
       type="button"
     >

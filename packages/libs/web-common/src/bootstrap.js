@@ -69,6 +69,7 @@ export function initialize(options = {}) {
     additionalMiddleware,
   } = options;
 
+  fixURLSlashHash();
   fixForwardSlashes();
   unaliasWebappUrl();
   removeJsessionid();
@@ -104,6 +105,17 @@ export function initialize(options = {}) {
   return context;
 }
 
+// home page tiles: redirect incorrect urls provided to users /app/#funding to correct /app#funding,
+function fixURLSlashHash() {
+  const { pathname, hash } = window.location;
+  if (hash && pathname.endsWith('/')) {
+    const newPathname = (pathname + '/').replace(/[/]+/g, '/').slice(0, -1);
+    window.history.replaceState(null, '', newPathname);
+    const newUrl = `${window.location.origin}${window.location.pathname}${window.location.search}${hash}`;
+    window.history.replaceState(null, '', newUrl);
+  }
+}
+
 function fixForwardSlashes() {
   const { pathname } = window.location;
   if (pathname.includes('//') || pathname.endsWith('/')) {
@@ -113,7 +125,7 @@ function fixForwardSlashes() {
 }
 
 /**
- * Replace apache alaias `/a` with the webapp url.
+ * Replace apache alias `/a` with the webapp url.
  */
 function unaliasWebappUrl() {
   if (rootUrl) {
