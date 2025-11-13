@@ -3,6 +3,7 @@ import React, { Suspense } from 'react';
 import { Redirect, useHistory, useRouteMatch } from 'react-router-dom';
 
 import SiteSearchController from '@veupathdb/web-common/lib/controllers/SiteSearchController';
+import AnswerController from '@veupathdb/wdk-client/lib/Controllers/AnswerController';
 
 // load api-specific page controllers
 import FastaConfigController from './components/controllers/FastaConfigController';
@@ -161,6 +162,26 @@ function DownloadsRouteComponent() {
  * Wrap Ebrc Routes
  */
 export const wrapRoutes = (ebrcRoutes) => [
+  {
+    path: '/search/dataset/AllDatasets/result',
+    requiresLogin: false,
+    component: () => (
+      <AnswerController
+        {...{ question: 'AllDatasets', recordClass: 'dataset' }}
+      />
+    ),
+  },
+
+  {
+    path: '/search/organism/GenomeDataTypes/result',
+    requiresLogin: false,
+    component: () => (
+      <AnswerController
+        {...{ question: 'GenomeDataTypes', recordClass: 'organism' }}
+      />
+    ),
+  },
+
   {
     path: '/downloads',
     component: DownloadsRouteComponent,
