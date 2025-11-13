@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useMemo, JSX } from 'react';
 import { IconAlt as Icon } from '../../Components';
-import { SubscriptionGroup } from '../../Service/Mixins/OauthService';
+import {
+  SubscriptionGroup,
+  SubscriptionGroupWithMembers,
+} from '../../Service/Mixins/OauthService';
 import Select from 'react-select';
 import { Link } from 'react-router-dom';
 import { ValueType } from 'react-select/src/types';
@@ -22,6 +25,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../Core/State/Types';
 import { deburr } from 'lodash';
 import { userIsClassParticipant } from '../../Utils/Subscriptions';
+import { useWdkEffect } from '../../Service/WdkService';
 
 interface UserSubscriptionManagementProps {
   user: User;
@@ -41,6 +45,8 @@ type Option = {
   label: string;
 };
 
+const ManagedGroups = () => {};
+
 const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
   user,
   subscriptionGroups,
@@ -52,6 +58,9 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
 }) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [localSelection, setLocalSelection] = useState<string>();
+  const [managedGroups, setManagedGroups] = useState<
+    SubscriptionGroupWithMembers[]
+  >([]);
   const projectId = useSelector<RootState>(
     (state) => state.globalData.siteConfig.projectId
   );
@@ -63,6 +72,12 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
       setLocalSelection(undefined);
     }
   }, [formStatus]);
+
+  useWdkEffect((wdkService) => {
+    wdkService
+      .getManagedGroupsForUser()
+      .then((groups) => setManagedGroups(groups));
+  });
 
   const tokenField = 'subscriptionToken';
   const userGroupToken = user.properties[tokenField]; // from db-backed state
@@ -226,6 +241,34 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
             </form>
           </div>
         )}
+
+      {/* Show any groups this user manages (if they manage more than zero) */}
+      {ManagedGroups.length > 1 && (
+        <div>
+          <h3>Groups I Manage</h3>
+          {managedGroups.map((group) => (
+            <div>
+              <h4>group.groupName</h4>
+              <h5>Leads</h5>
+              <ul>
+                {group.groupLeads.map((u) => (
+                  <li>
+                    {u.name} ({u.organization})
+                  </li>
+                ))}
+              </ul>
+              <h5>Members</h5>
+              <ul>
+                {group.groupLeads.map((u) => (
+                  <li>
+                    {u.name} ({u.organization})
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Show group selection when no saved group OR when there are unsaved changes AND when the modal is not there */}
       {(!validGroup || formStatus !== 'new') && !showConfirmModal && (
