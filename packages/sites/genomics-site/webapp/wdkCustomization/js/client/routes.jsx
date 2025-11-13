@@ -33,6 +33,7 @@ import { userDatasetRoutes } from './userDatasetRoutes';
 import Downloads from './components/Downloads';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { makeAnswerControllerRouteComponent } from '@veupathdb/wdk-client/lib/Core/routes';
 import { Srt } from './components/Srt';
 
 // Project id is not needed for these record classes.
@@ -162,24 +163,22 @@ function DownloadsRouteComponent() {
  * Wrap Ebrc Routes
  */
 export const wrapRoutes = (ebrcRoutes) => [
+  // Allow guests to access All Datasets and All Organisms for SEO and public visibility
   {
     path: '/search/dataset/AllDatasets/result',
     requiresLogin: false,
-    component: () => (
-      <AnswerController
-        {...{ question: 'AllDatasets', recordClass: 'dataset' }}
-      />
-    ),
+    component: makeAnswerControllerRouteComponent({
+      recordClass: 'dataset',
+      question: 'AllDatasets',
+    }),
   },
-
   {
     path: '/search/organism/GenomeDataTypes/result',
     requiresLogin: false,
-    component: () => (
-      <AnswerController
-        {...{ question: 'GenomeDataTypes', recordClass: 'organism' }}
-      />
-    ),
+    component: makeAnswerControllerRouteComponent({
+      recordClass: 'organism',
+      question: 'GenomeDataTypes',
+    }),
   },
 
   {
