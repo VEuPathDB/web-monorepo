@@ -242,22 +242,24 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
           {managedGroups.map((group) => (
             <div>
               <h4>{group.groupName}</h4>
-              <b>Leads</b>
-              <ul>
-                {group.groupLeads.map((u) => (
-                  <li>
-                    {u.name} ({u.organization})
-                  </li>
-                ))}
-              </ul>
-              <b>Members</b>
-              <ul>
-                {group.members.map((u) => (
-                  <li>
-                    {u.name} ({u.organization})
-                  </li>
-                ))}
-              </ul>
+              <div style={{ margin: '0 30px' }}>
+                <h4>Leads</h4>
+                <ul>
+                  {group.groupLeads.map((u) => (
+                    <li>
+                      {u.name} ({u.organization})
+                    </li>
+                  ))}
+                </ul>
+                <h4>Members</h4>
+                <ul>
+                  {group.members.map((u) => (
+                    <li>
+                      {u.name} ({u.organization})
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           ))}
         </div>
