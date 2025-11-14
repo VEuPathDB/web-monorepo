@@ -695,36 +695,42 @@ function CheckboxTree<T>(props: CheckboxTreeProps<T>) {
     tree,
     getNodeId,
     getNodeChildren,
-    searchTerm,
-    selectedList,
+    searchTerm = '',
+    selectedList = [],
     currentList,
     defaultList,
-    isSearchable,
+    isSearchable = false,
     isAdditionalFilterApplied,
     name,
     shouldExpandDescendantsWithOneChild,
     onExpansionChange,
-    isSelectable,
-    isMultiPick,
-    onSelectionChange,
-    showRoot,
+    isSelectable = false,
+    isMultiPick = true,
+    onSelectionChange = () => {
+      /* */
+    },
+    showRoot = false,
     additionalActions,
     linksPosition = LinksPosition.Both,
-    showSearchBox,
+    showSearchBox = true,
     autoFocusSearchBox,
-    onSearchTermChange,
-    searchBoxPlaceholder,
+    onSearchTermChange = () => {
+      /* */
+    },
+    searchBoxPlaceholder = 'Search...',
     searchIconName,
     searchIconPosition,
-    searchBoxHelp,
+    searchBoxHelp = '',
     additionalFilters,
     wrapTreeSection,
     shouldExpandOnClick = true,
-    customCheckboxes,
+    customCheckboxes = {},
     renderNoResults,
     styleOverrides = {},
     customTreeNodeCssSelectors = {},
     renderNode: renderNodeProp,
+    searchPredicate = () => true,
+    expandedList = null,
   } = props;
 
   const styleSpec: CheckboxTreeStyleSpec = useMemo(() => {
@@ -1071,29 +1077,6 @@ function defaultRenderNoResults() {
   );
 }
 
-const defaultProps = {
-  showRoot: false,
-  expandedList: null,
-  isSelectable: false,
-  selectedList: [],
-  customCheckboxes: {},
-  isMultiPick: true,
-  onSelectionChange: () => {
-    /* */
-  },
-  isSearchable: false,
-  showSearchBox: true,
-  searchBoxPlaceholder: 'Search...',
-  searchBoxHelp: '',
-  searchTerm: '',
-  onSearchTermChange: () => {
-    /* */
-  },
-  searchPredicate: () => true,
-  linksPosition: LinksPosition.Both,
-};
-
-CheckboxTree.defaultProps = defaultProps;
 CheckboxTree.LinkPlacement = LinksPosition;
 export default CheckboxTree;
 

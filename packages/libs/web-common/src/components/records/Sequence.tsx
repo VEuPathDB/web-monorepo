@@ -19,8 +19,7 @@ interface HighlightRegion {
   renderRegion: (region: string) => React.ReactNode;
 }
 
-function Sequence(props: Props) {
-  const { accession, highlightRegions = [], sequence } = props;
+function Sequence({ accession, highlightRegions = [], sequence }: Props) {
   const ref = useRef<HTMLPreElement>(null);
   const [isExpanded, setIsExpanded] = useState<boolean>();
   const isOverflowing = useIsRefOverflowingVertically(ref);
@@ -136,10 +135,6 @@ Sequence.propTypes = {
       end: PropTypes.number.isRequired,
     })
   ),
-};
-
-Sequence.defaultProps = {
-  highlightRegions: [],
 };
 
 function handleCopy(event: React.ClipboardEvent) {

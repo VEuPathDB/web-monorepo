@@ -3,18 +3,28 @@ import PropTypes from 'prop-types';
 import Link from '../../Components/Link/Link';
 import { wrappable } from '../../Utils/ComponentUtils';
 
-let RecordActionLink = (props) => {
-  let className = 'wdk-RecordActionLink ' + props.className;
-  let LinkComponent = props.external ? 'a' : Link;
+let RecordActionLink = ({
+  record,
+  recordClass,
+  className = '',
+  iconClassName = 'fa fa-bolt',
+  onClick,
+  href = '#',
+  label = 'Record action',
+  showLabel = true,
+  external = false,
+}) => {
+  let fullClassName = 'wdk-RecordActionLink ' + className;
+  let LinkComponent = external ? 'a' : Link;
   let linkProps = {
-    [props.external ? 'href' : 'to']: props.href,
-    title: props.label,
-    className: className,
-    onClick: props.onClick,
+    [external ? 'href' : 'to']: href,
+    title: label,
+    className: fullClassName,
+    onClick: onClick,
   };
   return (
     <LinkComponent {...linkProps}>
-      {props.showLabel ? props.label : ''} <i className={props.iconClassName} />
+      {showLabel ? label : ''} <i className={iconClassName} />
     </LinkComponent>
   );
 };
@@ -28,15 +38,6 @@ RecordActionLink.propTypes = {
   href: PropTypes.string,
   label: PropTypes.string,
   showLabel: PropTypes.bool,
-};
-
-RecordActionLink.defaultProps = {
-  href: '#',
-  external: false,
-  className: '',
-  label: 'Record action',
-  iconClassName: 'fa fa-bolt',
-  showLabel: true,
 };
 
 export default wrappable(RecordActionLink);

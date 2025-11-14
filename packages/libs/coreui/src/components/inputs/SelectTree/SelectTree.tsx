@@ -18,20 +18,37 @@ export interface SelectTreeProps<T> extends CheckboxTreeProps<T> {
 }
 
 function SelectTree<T>(props: SelectTreeProps<T>) {
-  const [buttonDisplayContent, setButtonDisplayContent] = useState<ReactNode>(
-    props.currentList && props.currentList.length
-      ? props.currentList.join(', ')
-      : props.buttonDisplayContent
-  );
   const {
-    selectedList,
-    onSelectionChange,
+    showRoot = false,
+    expandedList = null,
+    isSelectable = false,
+    selectedList = [],
+    customCheckboxes = {},
+    isMultiPick = true,
+    onSelectionChange = () => {},
+    isSearchable = false,
+    showSearchBox = true,
+    searchBoxPlaceholder = 'Search...',
+    searchBoxHelp = '',
+    searchTerm = '',
+    onSearchTermChange = () => {},
+    searchPredicate = () => true,
+    linksPosition = LinksPosition.Both,
+    isDisabled = false,
+    instantUpdate = true,
     shouldCloseOnSelection,
     hasPopoverButton = true,
-    instantUpdate = true,
     wrapPopover,
     deferPopoverClosing = false,
+    currentList,
+    buttonDisplayContent: buttonDisplayContentProp,
   } = props;
+
+  const [buttonDisplayContent, setButtonDisplayContent] = useState<ReactNode>(
+    currentList && currentList.length
+      ? currentList.join(', ')
+      : buttonDisplayContentProp
+  );
 
   // This local state is updated whenever a checkbox is clicked in the species tree.
   // When `instantUpdate` is false, pass the final value to `onSelectionChange` when the popover closes.
@@ -73,7 +90,7 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
     setButtonDisplayContent(
       localSelectedList.length
         ? truncatedButtonContent(localSelectedList)
-        : props.buttonDisplayContent
+        : buttonDisplayContentProp
     );
     if (!instantUpdate) onSelectionChange(localSelectedList);
   };
@@ -88,29 +105,29 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
         props.shouldExpandDescendantsWithOneChild
       }
       shouldExpandOnClick={props.shouldExpandOnClick}
-      showRoot={props.showRoot}
+      showRoot={showRoot}
       renderNode={props.renderNode}
-      expandedList={props.expandedList}
-      isSelectable={props.isSelectable}
+      expandedList={expandedList}
+      isSelectable={isSelectable}
       selectedList={localSelectedList}
       filteredList={props.filteredList}
-      customCheckboxes={props.customCheckboxes}
-      isMultiPick={props.isMultiPick}
+      customCheckboxes={customCheckboxes}
+      isMultiPick={isMultiPick}
       name={props.name}
       onSelectionChange={setLocalSelectedList}
-      currentList={props.currentList}
+      currentList={currentList}
       defaultList={props.defaultList}
-      isSearchable={props.isSearchable}
+      isSearchable={isSearchable}
       autoFocusSearchBox={props.autoFocusSearchBox}
-      showSearchBox={props.showSearchBox}
-      searchBoxPlaceholder={props.searchBoxPlaceholder}
+      showSearchBox={showSearchBox}
+      searchBoxPlaceholder={searchBoxPlaceholder}
       searchIconName={props.searchIconName}
-      searchBoxHelp={props.searchBoxHelp}
-      searchTerm={props.searchTerm}
-      onSearchTermChange={props.onSearchTermChange}
-      searchPredicate={props.searchPredicate}
+      searchBoxHelp={searchBoxHelp}
+      searchTerm={searchTerm}
+      onSearchTermChange={onSearchTermChange}
+      searchPredicate={searchPredicate}
       renderNoResults={props.renderNoResults}
-      linksPosition={props.linksPosition}
+      linksPosition={linksPosition}
       additionalActions={props.additionalActions}
       additionalFilters={props.additionalFilters}
       isAdditionalFilterApplied={props.isAdditionalFilterApplied}
@@ -125,7 +142,7 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
       key={shouldCloseOnSelection ? key : ''}
       buttonDisplayContent={buttonDisplayContent}
       onClose={onClose}
-      isDisabled={props.isDisabled}
+      isDisabled={isDisabled}
       deferClosing={deferPopoverClosing}
     >
       <div
@@ -143,26 +160,5 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
   );
 }
 
-const defaultProps = {
-  showRoot: false,
-  expandedList: null,
-  isSelectable: false,
-  selectedList: [],
-  customCheckboxes: {},
-  isMultiPick: true,
-  onSelectionChange: () => {},
-  isSearchable: false,
-  showSearchBox: true,
-  searchBoxPlaceholder: 'Search...',
-  searchBoxHelp: '',
-  searchTerm: '',
-  onSearchTermChange: () => {},
-  searchPredicate: () => true,
-  linksPosition: LinksPosition.Both,
-  isDisabled: false,
-  instantUpdate: true, // Set default value to true
-};
-
-SelectTree.defaultProps = defaultProps;
 SelectTree.LinkPlacement = LinksPosition;
 export default SelectTree;
