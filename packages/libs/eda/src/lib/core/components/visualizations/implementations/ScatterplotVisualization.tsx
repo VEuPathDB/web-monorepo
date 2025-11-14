@@ -286,6 +286,7 @@ interface Options
   hideTrendlines?: boolean;
   hideLogScale?: boolean;
   returnPointIds?: boolean; // Determines whether the backend should return the ids of each point in the scatterplot
+  sendComputedVariablesInRequest?: boolean; // Determines whether computed variable descriptors should be sent to the backend in the data request.
 }
 
 function ScatterplotViz(props: VisualizationProps<Options>) {
@@ -332,6 +333,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     computedYAxisDetails,
     computedOverlayVariableDescriptor,
     providedOverlayVariableDescriptor,
+    sendComputedVariablesInRequest,
   ] = useMemo(
     () => [
       options?.getComputedXAxisDetails?.(computation.descriptor.configuration),
@@ -340,6 +342,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         computation.descriptor.configuration
       ),
       options?.getOverlayVariable?.(computation.descriptor.configuration),
+      options?.sendComputedVariablesInRequest ?? false,
     ],
     [computation.descriptor.configuration, options]
   );
@@ -745,8 +748,14 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         config: {
           outputEntityId: outputEntity.id,
           valueSpec: hideTrendlines ? undefined : valueSpecValue,
-          xAxisVariable: vizConfig.xAxisVariable,
-          yAxisVariable: vizConfig.yAxisVariable,
+          xAxisVariable:
+            sendComputedVariablesInRequest && computedXAxisDescriptor
+              ? computedXAxisDescriptor
+              : vizConfig.xAxisVariable,
+          yAxisVariable:
+            sendComputedVariablesInRequest && computedYAxisDescriptor
+              ? computedYAxisDescriptor
+              : vizConfig.yAxisVariable,
           overlayVariable: vizConfig.overlayVariable,
           facetVariable: vizConfig.facetVariable
             ? [vizConfig.facetVariable]
