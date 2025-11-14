@@ -1,9 +1,6 @@
 import React, { useState, useEffect, useMemo, JSX } from 'react';
 import { IconAlt as Icon } from '../../Components';
-import {
-  SubscriptionGroup,
-  SubscriptionGroupWithMembers,
-} from '../../Service/Mixins/OauthService';
+import { SubscriptionGroup } from '../../Service/Mixins/OauthService';
 import Select from 'react-select';
 import { Link } from 'react-router-dom';
 import { ValueType } from 'react-select/src/types';
@@ -44,8 +41,6 @@ type Option = {
   value: string;
   label: string;
 };
-
-const ManagedGroups = () => {};
 
 const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
   user,
