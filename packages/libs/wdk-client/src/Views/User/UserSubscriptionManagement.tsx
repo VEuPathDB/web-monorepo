@@ -236,7 +236,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
         )}
 
       {/* Show any groups this user manages (if they manage more than zero) */}
-      {managedGroups && managedGroups.length > 1 && (
+      {managedGroups && managedGroups.length > 0 && (
         <div>
           <h3>Groups I Manage</h3>
           {managedGroups.map((group) => (
