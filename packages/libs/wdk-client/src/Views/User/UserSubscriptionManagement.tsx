@@ -241,8 +241,8 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
           <h3>Groups I Manage</h3>
           {managedGroups.map((group) => (
             <div>
-              <h4>group.groupName</h4>
-              <h5>Leads</h5>
+              <h4>{group.groupName}</h4>
+              <b>Leads</b>
               <ul>
                 {group.groupLeads.map((u) => (
                   <li>
@@ -250,9 +250,9 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                   </li>
                 ))}
               </ul>
-              <h5>Members</h5>
+              <b>Members</b>
               <ul>
-                {group.groupLeads.map((u) => (
+                {group.members.map((u) => (
                   <li>
                     {u.name} ({u.organization})
                   </li>
