@@ -22,6 +22,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../Core/State/Types';
 import { deburr } from 'lodash';
 import { userIsClassParticipant } from '../../Utils/Subscriptions';
+import { useSubscriptionGroupsByLead } from '../../Hooks/SubscriptionGroups';
 
 interface UserSubscriptionManagementProps {
   user: User;
@@ -78,6 +79,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
     return validGroupList.length === 0 ? undefined : validGroupList[0];
   };
 
+  // valid group does not necessarily mean active subscription; could be expired
   const validGroup = useMemo(
     () => findValidGroup(userGroupToken, subscriptionGroups),
     [userGroupToken, subscriptionGroups]
@@ -128,12 +130,16 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
 
   const isClassParticipant = userIsClassParticipant(user);
 
+  let managedGroups = useSubscriptionGroupsByLead();
+
   return (
     <div className="wdk-UserProfile-profileForm">
       <h2>Subscription</h2>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5em' }}>
         <h4>Status: </h4>
-        {validGroup ? (
+        {validGroup &&
+        (validGroup.activeStatus == 'active' ||
+          validGroup.activeStatus == 'grace_period') ? (
           <>
             <Icon
               fa="check-circle"
@@ -172,7 +178,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
           formStatus === 'modified' ||
           formStatus === 'pending') && (
           <div>
-            <h3>Group subscription</h3>
+            <h3>My subscription group</h3>
             <div
               style={{
                 display: 'grid',
@@ -226,6 +232,36 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
             </form>
           </div>
         )}
+
+      {/* Show any groups this user manages (if they manage more than zero) */}
+      {managedGroups && managedGroups.length > 0 && (
+        <div>
+          <h3>Subscription group management</h3>
+          {managedGroups.map((group) => (
+            <div>
+              <h4>{group.groupName}</h4>
+              <div style={{ margin: '0 30px' }}>
+                <h4>Leads</h4>
+                <ul>
+                  {group.groupLeads.map((u) => (
+                    <li>
+                      {u.name} ({u.organization})
+                    </li>
+                  ))}
+                </ul>
+                <h4>Members</h4>
+                <ul>
+                  {group.members.map((u) => (
+                    <li>
+                      {u.name} ({u.organization})
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Show group selection when no saved group OR when there are unsaved changes AND when the modal is not there */}
       {(!validGroup || formStatus !== 'new') && !showConfirmModal && (

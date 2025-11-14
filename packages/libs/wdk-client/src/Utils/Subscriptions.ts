@@ -5,12 +5,14 @@ export function userIsSubscribed(
   user: User,
   subscriptionGroups: SubscriptionGroup[] | undefined
 ): boolean {
+  if (user.isGuest) return false;
+  let group = subscriptionGroups?.find(
+    (g: SubscriptionGroup) =>
+      g.subscriptionToken === user.properties?.['subscriptionToken']
+  );
   return (
-    !user.isGuest &&
-    subscriptionGroups?.find(
-      (g: SubscriptionGroup) =>
-        g.subscriptionToken === user.properties?.['subscriptionToken']
-    ) != null
+    group != null &&
+    (group.activeStatus == 'active' || group?.activeStatus == 'grace_period')
   );
 }
 
