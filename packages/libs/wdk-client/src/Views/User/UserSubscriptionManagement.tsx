@@ -25,7 +25,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../Core/State/Types';
 import { deburr } from 'lodash';
 import { userIsClassParticipant } from '../../Utils/Subscriptions';
-import { useWdkEffect } from '../../Service/WdkService';
+import { useSubscriptionGroupsByLead } from '../../Hooks/SubscriptionGroups';
 
 interface UserSubscriptionManagementProps {
   user: User;
@@ -58,9 +58,6 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
 }) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [localSelection, setLocalSelection] = useState<string>();
-  const [managedGroups, setManagedGroups] = useState<
-    SubscriptionGroupWithMembers[]
-  >([]);
   const projectId = useSelector<RootState>(
     (state) => state.globalData.siteConfig.projectId
   );
@@ -72,12 +69,6 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
       setLocalSelection(undefined);
     }
   }, [formStatus]);
-
-  useWdkEffect((wdkService) => {
-    wdkService
-      .getManagedGroupsForUser()
-      .then((groups) => setManagedGroups(groups));
-  });
 
   const tokenField = 'subscriptionToken';
   const userGroupToken = user.properties[tokenField]; // from db-backed state
@@ -142,6 +133,8 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
   }, [subscriptionGroups, groupVocab, userGroupToken, localSelection]);
 
   const isClassParticipant = userIsClassParticipant(user);
+
+  let managedGroups = useSubscriptionGroupsByLead();
 
   return (
     <div className="wdk-UserProfile-profileForm">
@@ -243,7 +236,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
         )}
 
       {/* Show any groups this user manages (if they manage more than zero) */}
-      {ManagedGroups.length > 1 && (
+      {managedGroups && managedGroups.length > 1 && (
         <div>
           <h3>Groups I Manage</h3>
           {managedGroups.map((group) => (
