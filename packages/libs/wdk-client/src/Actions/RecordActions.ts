@@ -29,6 +29,7 @@ export type Action =
   | UpdateTableStateAction
   | SetCollapsedSectionsAction
   | AllFieldVisibilityAction
+  | ProgressiveExpandAllAction
   | NavigationVisibilityAction
   | CategoryExpansionAction
   | NavigationQueryAction;
@@ -251,6 +252,21 @@ export function updateAllFieldVisibility(
   return {
     type: ALL_FIELD_VISIBILITY,
     payload: { isVisible },
+  };
+}
+
+//==============================================================================
+
+export const PROGRESSIVE_EXPAND_ALL = 'record-view/progressive-expand-all';
+
+export type ProgressiveExpandAllAction = {
+  type: typeof PROGRESSIVE_EXPAND_ALL;
+};
+
+/** Progressively expand all collapsed sections one at a time (for debugging) */
+export function progressiveExpandAll(): ProgressiveExpandAllAction {
+  return {
+    type: PROGRESSIVE_EXPAND_ALL,
   };
 }
 
