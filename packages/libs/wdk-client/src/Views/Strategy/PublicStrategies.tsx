@@ -106,7 +106,7 @@ export const PublicStrategies = ({
           Public strategies are visible to the community.
         </div>
       </div>
-      <Mesa state={mesaState}>
+      <Mesa state={mesaState as any}>
         <div className={cx('--SearchGroup')}>
           <h3
             className={cx('--SearchTitle')}

@@ -492,16 +492,16 @@ function StrategiesTable(props: TableProps) {
   const tableState = MesaState.create({
     rows: mesaRows,
     filteredRows: mesaFilteredRows,
-    columns: mesaColumns,
+    columns: mesaColumns as any,
     options: mesaOptions,
-    actions: mesaActions,
+    actions: mesaActions as any,
     eventHandlers: mesaEventHandlers,
     uiState,
   });
 
   return (
     <React.Fragment>
-      <Mesa state={tableState}>
+      <Mesa state={tableState as any}>
         <h3 className={cx('--Title')}>{props.title}</h3>
         <RealTimeSearchBox
           searchTerm={searchTerm}

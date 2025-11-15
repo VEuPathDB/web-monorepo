@@ -207,11 +207,11 @@ const StrategyInputSelectorTable = ({
     options: mesaOptions,
     actions: mesaActions,
     eventHandlers: mesaEventHandlers,
-    uiState: mesaUiState,
+    uiState: mesaUiState as any,
   });
 
   return (
-    <Mesa state={mesaState}>
+    <Mesa state={mesaState as any}>
       <div className={cx('--SearchGroup')}>
         <h3
           className={cx('--SearchTitle')}
