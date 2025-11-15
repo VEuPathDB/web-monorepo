@@ -14,7 +14,11 @@ export default function PlaceholderCard() {
   );
 }
 
-function PlaceholderParagraph(props) {
+interface PlaceholderParagraphProps {
+  lines: number;
+}
+
+function PlaceholderParagraph(props: PlaceholderParagraphProps) {
   const { lines } = props;
   return (
     <div className="PlaceholderParagraph">

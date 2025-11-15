@@ -6,9 +6,30 @@ import { requestNews } from '../App/NewsSidebar/NewsModule';
 import { loadSearches } from '../App/Searches/SearchCardActionCreators';
 import { requestStudies } from '../App/Studies/StudyActionCreators';
 import CardBasedIndex from '../components/CardBasedIndex';
+import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
+
+interface OwnProps {
+  getSiteData: (state: RootState) => unknown;
+  getHomeContent: (siteData: unknown) => unknown;
+  searchesUserEmails?: string[];
+}
+
+interface ConnectedProps {
+  displayName?: string;
+  siteData: unknown;
+  newsSidebar: unknown;
+  homeContent: unknown;
+  attemptAction: typeof attemptAction;
+  loadSearches: typeof loadSearches;
+  requestNews: typeof requestNews;
+  requestStudies: typeof requestStudies;
+  searchesUserEmails?: string[];
+}
+
+type CardBasedIndexControllerProps = ConnectedProps & OwnProps;
 
 const enhance = connect(
-  (state, props) => {
+  (state: RootState, props: OwnProps) => {
     const { getSiteData, getHomeContent } = props;
     const { globalData, newsSidebar } = state;
     const { siteConfig, config } = globalData;
@@ -20,7 +41,7 @@ const enhance = connect(
   { attemptAction, loadSearches, requestNews, requestStudies }
 );
 
-class ClinEpiIndexController extends PageController {
+class CardBasedIndexController extends PageController<CardBasedIndexControllerProps> {
   getTitle() {
     return this.props.displayName || '';
   }
@@ -37,4 +58,4 @@ class ClinEpiIndexController extends PageController {
   }
 }
 
-export default enhance(ClinEpiIndexController);
+export default enhance(CardBasedIndexController);

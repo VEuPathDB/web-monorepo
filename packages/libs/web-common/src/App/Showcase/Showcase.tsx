@@ -8,7 +8,39 @@ import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDepen
 import { AnalysisClient } from '@veupathdb/eda/lib/core/api/AnalysisClient';
 import { edaServiceUrl } from '../../config';
 
-export default function Showcase(props) {
+interface ShowcaseContent {
+  items?: any[];
+  title?: string;
+  viewAllUrl?: string;
+  viewAllAppUrl?: string;
+  filters?: any[];
+  filtersLabel?: string;
+  contentType?: string;
+  contentNamePlural?: string;
+  description?: string;
+  isLoading?: boolean;
+  isExpandable?: boolean;
+  isSearchable?: boolean;
+  tableViewLink?: string;
+  tableViewLinkText?: string;
+  cardComponent: React.ComponentType<any>;
+  getSearchStringForItem?: (item: any) => string;
+  matchPredicate?: (searchString: string, filterString: string) => boolean;
+  permissions?: any;
+  loadItems?: (params: {
+    analysisClient: AnalysisClient;
+    wdkService: any;
+  }) => Promise<any[]>;
+}
+
+interface ShowcaseProps {
+  analyses?: any[];
+  content: ShowcaseContent;
+  prefix: string;
+  attemptAction?: (action: any) => void;
+}
+
+export default function Showcase(props: ShowcaseProps) {
   const { analyses, content, prefix, attemptAction } = props;
   const {
     items,
@@ -32,8 +64,10 @@ export default function Showcase(props) {
     loadItems,
   } = content;
 
-  const [list, setList] = React.useState(loadItems == null ? items : null);
-  const [error, setError] = React.useState();
+  const [list, setList] = React.useState<any[] | null>(
+    loadItems == null ? items || null : null
+  );
+  const [error, setError] = React.useState<Error>();
   const { wdkService } = React.useContext(WdkDependenciesContext);
   const analysisClient = useMemo(
     () => new AnalysisClient({ baseUrl: edaServiceUrl }, wdkService),
@@ -50,7 +84,7 @@ export default function Showcase(props) {
 
   React.useEffect(() => {
     if (loadItems == null) {
-      setList(items);
+      setList(items || null);
     }
   }, [items, loadItems]);
 

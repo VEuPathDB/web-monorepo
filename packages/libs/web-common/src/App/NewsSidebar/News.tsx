@@ -24,7 +24,24 @@ function useNewsUrl() {
   return `${STATIC_ROUTE_PATH}/${(config || {}).displayName}/news.html`;
 }
 
-const News = ({ twitterUrls, news, error }) => {
+interface NewsRecord {
+  attributes: {
+    date: string;
+    tag: string;
+    headline: string;
+    item: string;
+  };
+}
+
+interface NewsProps {
+  twitterUrls: string[];
+  news?: {
+    records: NewsRecord[];
+  };
+  error?: boolean;
+}
+
+const News: React.FC<NewsProps> = ({ twitterUrls, news, error }) => {
   const newsUrl = useNewsUrl();
 
   return (

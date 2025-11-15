@@ -9,8 +9,20 @@ import {
   makeSearchHelpText,
 } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 
-class TreeDataViewer extends Component {
-  constructor(props) {
+interface TreeNode {
+  id: string;
+  display: string;
+  children?: TreeNode[];
+}
+
+interface TreeDataViewerState {
+  text: string;
+  expandedNodes: string[];
+  searchTerm: string;
+}
+
+class TreeDataViewer extends Component<{}, TreeDataViewerState> {
+  constructor(props: {}) {
     super(props);
     this.state = {
       text: '',
@@ -21,29 +33,33 @@ class TreeDataViewer extends Component {
   }
 
   // event handlers update individual state values
-  onTextChange(event) {
+  onTextChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
     update(this, { text: event.target.value });
   }
-  onExpansionChange(expandedNodes) {
+
+  onExpansionChange(expandedNodes: string[]) {
     update(this, { expandedNodes: expandedNodes });
   }
-  onSearchTermChange(searchTerm) {
+
+  onSearchTermChange(searchTerm: string) {
     update(this, { searchTerm: searchTerm });
   }
 
   render() {
-    let display = '';
-    if (this.state.text != '') {
+    let display: React.ReactNode = '';
+    if (this.state.text !== '') {
       try {
-        let parsedTree = JSON.parse(this.state.text);
+        const parsedTree: TreeNode = JSON.parse(this.state.text);
         display = (
           <CheckboxTree
             tree={parsedTree}
-            getNodeId={(node) => node.id}
-            getNodeChildren={(node) => (node.children ? node.children : [])}
+            getNodeId={(node: TreeNode) => node.id}
+            getNodeChildren={(node: TreeNode) =>
+              node.children ? node.children : []
+            }
             onExpansionChange={this.onExpansionChange}
             showRoot={true}
-            renderNode={(node) => <span>{node.display}</span>}
+            renderNode={(node: TreeNode) => <span>{node.display}</span>}
             expandedList={this.state.expandedNodes}
             isSelectable={false}
             selectedList={[]}
@@ -57,7 +73,7 @@ class TreeDataViewer extends Component {
           />
         );
       } catch (e) {
-        display = <span>{e.message}</span>;
+        display = <span>{(e as Error).message}</span>;
       }
     }
     return (
@@ -76,11 +92,11 @@ class TreeDataViewer extends Component {
   }
 }
 
-function isNodeInSearch(node, terms) {
+function isNodeInSearch(node: TreeNode, terms: string): boolean {
   return areTermsInString(terms, `${node.id} ${node.display}`);
 }
 
-function update(stateContainer, changedState) {
+function update<S>(stateContainer: Component<{}, S>, changedState: Partial<S>) {
   stateContainer.setState(Object.assign(stateContainer.state, changedState));
 }
 

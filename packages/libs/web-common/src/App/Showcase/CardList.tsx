@@ -1,6 +1,5 @@
 import { upperFirst } from 'lodash';
 import React from 'react';
-import PropTypes from 'prop-types';
 import Select from 'react-select';
 import { Link, RealTimeSearchBox } from '@veupathdb/wdk-client/lib/Components';
 import { projectId } from '../../config';
@@ -24,7 +23,28 @@ const FILTER_CLASS_NAME = `${CLASS_NAME}__FilterInput`;
 
 const ALLSTUDIES_LINK_CLASS_NAME = `${CLASS_NAME}__TableViewLink link`;
 
-export default function CardList(props) {
+interface Filter {
+  id: string;
+  display: React.ReactNode;
+}
+
+interface CardListProps {
+  additionalClassName?: string;
+  isLoading?: boolean;
+  list?: any[];
+  renderCard: (item: any, index: number) => React.ReactNode;
+  filters?: Filter[];
+  filtersLabel?: string;
+  isExpandable?: boolean;
+  isSearchable?: boolean;
+  tableViewLink?: string;
+  tableViewLinkText?: string;
+  contentNamePlural?: string;
+  getSearchStringForItem?: (item: any) => string;
+  matchPredicate?: (searchString: string, filterString: string) => boolean;
+}
+
+export default function CardList(props: CardListProps) {
   const {
     additionalClassName,
     isLoading,
@@ -42,9 +62,9 @@ export default function CardList(props) {
   } = props;
 
   // state
-  const [isExpanded, setIsExpanded] = React.useState(null);
-  const [filterString, setFilterString] = React.useState(null);
-  const [categoryFilter, setCategoryFilter] = React.useState();
+  const [isExpanded, setIsExpanded] = React.useState<boolean | null>(null);
+  const [filterString, setFilterString] = React.useState<string | null>(null);
+  const [categoryFilter, setCategoryFilter] = React.useState<string>();
 
   // save state to session storage
   React.useEffect(() => {
@@ -208,19 +228,6 @@ export default function CardList(props) {
   );
 }
 
-function defaultMatchPredicate(searchString, filterString) {
+function defaultMatchPredicate(searchString: string, filterString: string) {
   return searchString.toLowerCase().includes(filterString.toLowerCase());
 }
-
-CardList.propTypes = {
-  renderCard: PropTypes.func.isRequired,
-  additionalClassName: PropTypes.string,
-  isLoading: PropTypes.bool,
-  list: PropTypes.array,
-  isExpandable: PropTypes.bool,
-  isSearchable: PropTypes.bool,
-  isExpanded: PropTypes.bool,
-  filterString: PropTypes.string,
-  contentNamePlural: PropTypes.string,
-  getSearchStringForItem: PropTypes.func,
-};

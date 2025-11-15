@@ -13,8 +13,48 @@ import { SiteSearchInput } from '../../components';
 
 import './HeaderNav.scss';
 
-class HeaderNav extends React.Component {
-  constructor(props) {
+interface MenuItem {
+  type?: string;
+  url?: string;
+  name?: string;
+  text?: string;
+}
+
+interface HeaderMenuItems {
+  mainMenu: any[];
+  iconMenu: MenuItem[];
+}
+
+interface HeaderNavProps {
+  headerMenuItems: HeaderMenuItems;
+  config?: {
+    buildNumber?: string;
+    releaseDate?: string;
+  };
+  siteConfig: {
+    webAppUrl: string;
+    rootUrl: string;
+  };
+  siteData?: any;
+  user?: {
+    isGuest: boolean;
+  };
+  actions: any;
+  titleWithoutDB: string;
+  subTitle: string;
+  logoUrl: string;
+  heroImageUrl: string;
+  tagline: string;
+}
+
+interface HeaderNavState {
+  stickyHeaderVisible: boolean;
+}
+
+class HeaderNav extends React.Component<HeaderNavProps, HeaderNavState> {
+  private scrollListener: any;
+
+  constructor(props: HeaderNavProps) {
     super(props);
     this.state = { stickyHeaderVisible: false };
 
@@ -107,7 +147,7 @@ class HeaderNav extends React.Component {
     );
   }
 
-  renderBranding({ config = {}, titleWithoutDB, subTitle, logoUrl }) {
+  renderBranding({ config = {}, titleWithoutDB, subTitle, logoUrl }: any) {
     const { buildNumber, releaseDate } = config;
 
     return (
@@ -129,7 +169,7 @@ class HeaderNav extends React.Component {
     );
   }
 
-  getIconByType(type = '') {
+  getIconByType(type: string = '') {
     if (typeof type !== 'string' || !type.length) return 'globe';
     switch (type.toLowerCase()) {
       case 'facebook':
@@ -152,7 +192,7 @@ class HeaderNav extends React.Component {
     }
   }
 
-  renderIconMenuItem({ type, url = '', name, text }) {
+  renderIconMenuItem({ type, url = '', name, text }: MenuItem) {
     const icon = this.getIconByType(type);
     return (
       <a
@@ -167,7 +207,7 @@ class HeaderNav extends React.Component {
     );
   }
 
-  renderIconMenu({ items }) {
+  renderIconMenu({ items }: { items: MenuItem[] }) {
     const IconMenuItem = this.renderIconMenuItem;
     return (
       <div className="row HeaderNav-Social nowrap">

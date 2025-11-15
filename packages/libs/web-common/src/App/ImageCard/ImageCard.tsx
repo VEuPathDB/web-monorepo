@@ -4,11 +4,21 @@ import './ImageCard.scss';
 
 import { IconAlt as Icon } from '@veupathdb/wdk-client/lib/Components';
 
-class ImageCard extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+interface ImageCardProps {
+  card: {
+    appImage?: string;
+    image?: string;
+    appUrl?: string;
+    url?: string;
+    title: string;
+    description: string;
+    linkText: string;
+    linkTarget?: string;
+  };
+  prefix?: string;
+}
 
+class ImageCard extends React.Component<ImageCardProps> {
   render() {
     const { card, prefix = '' } = this.props;
     const {

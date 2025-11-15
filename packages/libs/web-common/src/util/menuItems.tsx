@@ -4,18 +4,62 @@ import {
   getId,
   getDisplayName,
   getTargetType,
+  CategoryTreeNode,
 } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
+import {
+  RecordClass,
+  Question,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+
+export interface MenuItem {
+  id: string;
+  text: React.ReactNode;
+  tooltip?: string;
+  children?: MenuItem[];
+  route?: string;
+  url?: string;
+  onClick?: (e: React.MouseEvent) => void;
+  loginRequired?: boolean;
+  target?: string;
+  liClassName?: string;
+  className?: string;
+  title?: string;
+}
+
+interface SiteConfig {
+  facebookUrl?: string;
+  twitterUrl?: string;
+  youtubeUrl?: string;
+  webAppUrl: string;
+}
+
+export interface MakeMenuItemsProps {
+  basketCounts: Record<string, number>;
+  user: User | null;
+  siteConfig: SiteConfig;
+  showLoginForm: () => void;
+  showLogoutWarning: () => void;
+  searchTree: CategoryTreeNode | null;
+  recordClasses: RecordClass[] | null;
+  includeQueryGrid?: boolean;
+}
 
 /** Map search tree to menu items.  */
-function getSearchItems(searchTree, recordClasses) {
+function getSearchItems(
+  searchTree: CategoryTreeNode | null,
+  recordClasses: RecordClass[] | null
+): MenuItem[] {
   if (searchTree == null || recordClasses == null) return [];
   return searchTree.children.map(createMenuItem);
 }
 
-/** Map a search node to a meny entry */
-function createMenuItem(searchNode) {
+/** Map a search node to a menu entry */
+function createMenuItem(searchNode: CategoryTreeNode): MenuItem {
   const question =
-    getTargetType(searchNode) === 'search' && searchNode.wdkReference;
+    getTargetType(searchNode) === 'search' &&
+    'wdkReference' in searchNode &&
+    (searchNode.wdkReference as Question);
   return {
     id: getId(searchNode),
     text: getDisplayName(searchNode),
@@ -38,10 +82,10 @@ function createMenuItem(searchNode) {
  *
  * Note, each top-level entry has a unique id. This can be leveraged to alter
  * the final structure of the menu items.
- *
- * @param {object} props Header props
  */
-export function makeMenuItems(props) {
+export function makeMenuItems(
+  props: MakeMenuItemsProps
+): Record<string, MenuItem> {
   const {
     basketCounts,
     user,
@@ -114,7 +158,7 @@ export function makeMenuItems(props) {
             id: 'profileOrLogin',
             text: 'Login',
             url: '#login',
-            onClick: (e) => {
+            onClick: (e: React.MouseEvent) => {
               e.preventDefault();
               showLoginForm();
             },
@@ -125,7 +169,7 @@ export function makeMenuItems(props) {
             id: 'registerOrLogout',
             text: 'Logout',
             url: '#logout',
-            onClick: (e) => {
+            onClick: (e: React.MouseEvent) => {
               e.preventDefault();
               showLogoutWarning();
             },

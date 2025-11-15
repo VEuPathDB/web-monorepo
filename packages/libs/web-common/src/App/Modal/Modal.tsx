@@ -4,7 +4,12 @@ import { useBodyScrollManager } from '@veupathdb/wdk-client/lib/Components/Overl
 
 import './Modal.scss';
 
-function Modal(props) {
+interface ModalProps extends React.HTMLAttributes<HTMLDivElement> {
+  when?: boolean;
+  wrapperClassName?: string;
+}
+
+function Modal(props: ModalProps) {
   const { when, wrapperClassName, ...divProps } = props;
   const active = typeof when === 'undefined' ? true : when;
   const finalWrapperClassName =

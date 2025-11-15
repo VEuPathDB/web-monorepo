@@ -9,15 +9,39 @@ import {
 import { updateSecurityAgreementStatus } from '../actioncreators/GalaxyTermsActionCreators';
 import GalaxyTerms from '../components/GalaxyTerms';
 import GalaxySignUp from '../components/GalaxySignUp';
+import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
+import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
-let { updateUserPreference } = UserActions;
-let { showLoginForm } = UserSessionActions;
+const { updateUserPreference } = UserActions;
+const { showLoginForm } = UserSessionActions;
 
 export const SHOW_GALAXY_PAGE_PREFERENCE = 'show-galaxy-orientation-page';
 
-class GalaxyTermsController extends PageController {
-  constructor(...args) {
-    super(...args);
+interface StateProps {
+  user: User | undefined;
+  securityAgreementStatus: string | undefined;
+  webAppUrl: string | undefined;
+}
+
+interface DispatchProps {
+  showLoginForm: typeof showLoginForm;
+  updateUserPreference: typeof updateUserPreference;
+  updateSecurityAgreementStatus: typeof updateSecurityAgreementStatus;
+}
+
+interface OwnProps {
+  signUp?: boolean;
+}
+
+interface GalaxyTermsControllerProps {
+  stateProps: StateProps;
+  dispatchProps: DispatchProps;
+  signUp?: boolean;
+}
+
+class GalaxyTermsController extends PageController<GalaxyTermsControllerProps> {
+  constructor(props: GalaxyTermsControllerProps) {
+    super(props);
     this.onGalaxyNavigate = this.onGalaxyNavigate.bind(this);
   }
 
@@ -56,7 +80,7 @@ class GalaxyTermsController extends PageController {
   }
 }
 
-export default connect(
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(
   (state) => ({
     user: get(state, 'globalData.user'),
     securityAgreementStatus: get(state, 'galaxyTerms.securityAgreementStatus'),

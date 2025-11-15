@@ -34,15 +34,61 @@ import {
   validatedAttachmentMetadata,
   screenshotMetadata,
 } from '../selectors/ContactUsSelectors';
+import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
+import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
-class ContactUsView extends PageController {
+interface StateProps {
+  displayName: string | undefined;
+  user: User | undefined;
+  submitDisabled: boolean;
+  submissionFailed: boolean;
+  submissionSuccessful: boolean;
+  responseMessage: string | undefined;
+  subjectValue: string;
+  reporterEmailValue: string;
+  ccEmailsValue: string;
+  messageValue: string;
+  reporterEmailValidity: string | null;
+  ccEmailsValidity: string | null;
+  messageValidity: string | null;
+  validatedAttachmentMetadata: unknown[];
+  screenshotMetadata: unknown[];
+}
+
+interface DispatchProps {
+  updateSubject: (value: string) => void;
+  updateReporterEmail: (value: string) => void;
+  updateCcEmails: (value: string) => void;
+  updateMessage: (value: string) => void;
+  updateContext: (context: string) => void;
+  changeFile: (index: number, files: FileList) => void;
+  addFile: () => void;
+  removeFile: (index: number) => void;
+  addScreenshot: (file: File) => void;
+  removeScreenshot: (index: number) => void;
+  submitDetails: typeof submitDetails;
+}
+
+interface OwnProps {
+  specialInstructions?: React.ReactNode;
+  context?: string;
+}
+
+interface ContactUsViewProps {
+  stateProps: StateProps;
+  dispatchProps: DispatchProps;
+  specialInstructions: React.ReactNode | null;
+  context: string;
+}
+
+class ContactUsView extends PageController<ContactUsViewProps> {
   isRenderDataLoaded() {
     const { displayName, user } = this.props.stateProps;
 
     return displayName && user;
   }
 
-  loadData(prevProps) {
+  loadData(prevProps?: ContactUsViewProps) {
     if (prevProps == null) {
       const { context = '' } = this.props;
       const { updateContext } = this.props.dispatchProps;
@@ -126,12 +172,14 @@ class ContactUsView extends PageController {
   }
 }
 
-const targetValue = ({ target: { value } }) => value;
+const targetValue = ({
+  target: { value },
+}: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => value;
 
 const mapStateToProps = ({
   contactUs: contactUsState,
   globalData: globalDataState,
-}) => ({
+}: RootState): StateProps => ({
   displayName: get('config.displayName', globalDataState),
   user: get('user', globalDataState),
   submitDisabled: submitDisabled(contactUsState),
@@ -149,25 +197,29 @@ const mapStateToProps = ({
   screenshotMetadata: screenshotMetadata(contactUsState),
 });
 
-const mapDispatchToProps = {
+const mapDispatchToProps: DispatchProps = {
   updateSubject: compose(updateField('subject'), targetValue),
   updateReporterEmail: compose(updateField('reporterEmail'), targetValue),
   updateCcEmails: compose(updateField('ccEmails'), targetValue),
   updateMessage: compose(updateField('message'), targetValue),
   updateContext: updateField('context'),
-  changeFile: (index, files) => {
+  changeFile: (index: number, files: FileList) => {
     return files.length === 0
       ? changeAttachmentMetadata(index, { file: null })
       : changeAttachmentMetadata(index, { file: files[0] });
   },
   addFile: () => addAttachmentMetadata({}),
-  removeFile: (index) => removeAttachmentMetadata(index),
-  addScreenshot: (file) => addScreenshotMetadata({ file }),
-  removeScreenshot: (index) => removeScreenshotMetadata(index),
+  removeFile: (index: number) => removeAttachmentMetadata(index),
+  addScreenshot: (file: File) => addScreenshotMetadata({ file }),
+  removeScreenshot: (index: number) => removeScreenshotMetadata(index),
   submitDetails,
 };
 
-const mergeProps = (stateProps, dispatchProps, ownProps) => ({
+const mergeProps = (
+  stateProps: StateProps,
+  dispatchProps: DispatchProps,
+  ownProps: OwnProps
+): ContactUsViewProps => ({
   stateProps,
   dispatchProps,
   specialInstructions: ownProps.specialInstructions || null,

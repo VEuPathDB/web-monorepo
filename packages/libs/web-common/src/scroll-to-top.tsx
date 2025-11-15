@@ -2,10 +2,12 @@
  * Created by dfalke on 8/24/16.
  */
 import React from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot, Root } from 'react-dom/client';
 import { throttle, partial } from 'lodash';
 
-const visibleStyle = {
+type StyleConfig = React.CSSProperties;
+
+const visibleStyle: StyleConfig = {
   color: 'white',
   background: 'rgba(0, 0, 0, 0.19)',
   border: 'none',
@@ -20,25 +22,27 @@ const visibleStyle = {
   transition: 'background .5s, opacity .5s, visibility .5s',
 };
 
-const hoverStyle = Object.assign({}, visibleStyle, {
+const hoverStyle: StyleConfig = {
+  ...visibleStyle,
   background: 'rgba(0, 0, 0, 0.5)',
-});
+};
 
-const hiddenStyle = Object.assign({}, visibleStyle, {
+const hiddenStyle: StyleConfig = {
+  ...visibleStyle,
   opacity: 0,
   visibility: 'hidden',
-});
+};
 
-const scrollToTop = () => {
+const scrollToTop = (): void => {
   location.hash = '';
   window.scrollTo(window.scrollX, 0);
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  const root = createRoot(
+  const root: Root = createRoot(
     document.body.appendChild(document.createElement('div'))
   );
-  const renderScrollToTop = (style) =>
+  const renderScrollToTop = (style: StyleConfig): void =>
     root.render(
       <ScrollToTop style={window.scrollY > 250 ? style : hiddenStyle} />
     );
@@ -50,7 +54,11 @@ document.addEventListener('DOMContentLoaded', () => {
     visibleStyle
   );
 
-  const ScrollToTop = ({ style }) => (
+  interface ScrollToTopProps {
+    style: StyleConfig;
+  }
+
+  const ScrollToTop: React.FC<ScrollToTopProps> = ({ style }) => (
     <button
       type="button"
       style={style}

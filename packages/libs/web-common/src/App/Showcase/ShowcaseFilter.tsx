@@ -2,8 +2,27 @@ import React from 'react';
 
 import { IconAlt as Icon, Mesa } from '@veupathdb/wdk-client/lib/Components';
 
-class ShowcaseFilter extends React.Component {
-  constructor(props) {
+interface Filter {
+  id: string;
+  display: React.ReactNode;
+  predicate: (item: any) => boolean;
+}
+
+interface ShowcaseFilterProps {
+  filters: Filter[];
+  items?: any[];
+  onFilter?: (filteredItems: any[]) => void;
+}
+
+interface ShowcaseFilterState {
+  activeFilters: string[];
+}
+
+class ShowcaseFilter extends React.Component<
+  ShowcaseFilterProps,
+  ShowcaseFilterState
+> {
+  constructor(props: ShowcaseFilterProps) {
     super(props);
     const { filters } = props;
     this.state = { activeFilters: [] };
@@ -11,13 +30,13 @@ class ShowcaseFilter extends React.Component {
     this.applyFilterToList = this.applyFilterToList.bind(this);
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: ShowcaseFilterProps) {
     if (this.props.filters !== prevProps.filters) {
       this.setState({ activeFilters: [] });
     }
   }
 
-  toggleFilter(id) {
+  toggleFilter(id: string) {
     const { activeFilters } = this.state;
     let newFilters;
     if (activeFilters.includes(id)) {

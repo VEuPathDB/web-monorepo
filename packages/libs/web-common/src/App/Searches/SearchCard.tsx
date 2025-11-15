@@ -5,7 +5,21 @@ import './SearchCard.scss';
 import { IconAlt as Icon } from '@veupathdb/wdk-client/lib/Components';
 import { getBodyClassByType } from './SearchUtils';
 
-class SearchCard extends React.Component {
+interface SearchCardProps {
+  card: {
+    icon: string;
+    name: string;
+    studyName?: string;
+    recordClassDisplayName: string;
+    url?: string;
+    appUrl?: string;
+    description: string;
+    disabled?: boolean;
+  };
+  prefix?: string;
+}
+
+class SearchCard extends React.Component<SearchCardProps> {
   render() {
     const { card, prefix = '' } = this.props;
     const {
@@ -23,7 +37,7 @@ class SearchCard extends React.Component {
 
     const bodyClass = getBodyClassByType(recordClassDisplayName);
 
-    function httpHtml(content) {
+    function httpHtml(content: { description: string }) {
       const reg = /(http:\/\/|https:\/\/)((\w|=|\?|\.|\/|&|-)+)/g;
       return content.description.replace(reg, "<a href='$1$2'>$1$2</a>");
     }

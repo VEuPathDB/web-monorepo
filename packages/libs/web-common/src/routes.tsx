@@ -16,6 +16,7 @@ import StudyAccessController from '@veupathdb/study-data-access/lib/study-access
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { showLoginForm as showLoginFormAction } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
+import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 
 import {
   edaExampleAnalysesAuthors,
@@ -29,11 +30,11 @@ import { LegacyMapRedirectHandler } from './controllers/LegacyMapRedirectHandler
 export const STATIC_ROUTE_PATH = '/static-content';
 const WGCNA_HELP_PAGE = '/wgcna_help.html';
 
-export function makeEdaRoute(studyId) {
+export function makeEdaRoute(studyId?: string): string {
   return '/workspace/analyses' + (studyId ? `/${studyId}` : '');
 }
 
-export function makeMapRoute(studyId) {
+export function makeMapRoute(studyId?: string): string {
   return '/workspace/maps' + (studyId ? `/${studyId}` : '');
 }
 
@@ -44,11 +45,13 @@ const EdaWorkspace = React.lazy(() => import('@veupathdb/eda/lib/workspace'));
  * Jan 9 2019: routes here connect to a react component that is mostly shared across websites.
  * For example: the route '/about' is not here because the content (in About.jsx) is not shared.
  */
-export const wrapRoutes = (wdkRoutes) => [
+export const wrapRoutes = (wdkRoutes: RouteEntry[]): RouteEntry[] => [
   // FIXME: Should this be a ClinEpi-level route?
   {
     path: '/study-access/:datasetId',
-    component: (props) => <StudyAccessController {...props.match.params} />,
+    component: (props: any) => (
+      <StudyAccessController {...props.match.params} />
+    ),
     requiresLogin: true,
   },
 
@@ -122,7 +125,7 @@ export const wrapRoutes = (wdkRoutes) => [
   {
     path: '/eda',
     exact: false,
-    component: ({ location }) => (
+    component: ({ location }: any) => (
       <Redirect
         to={{
           ...location,
@@ -156,7 +159,7 @@ export const wrapRoutes = (wdkRoutes) => [
   {
     path: '/contact-us',
     requiresLogin: false,
-    component: (props) => {
+    component: (props: any) => {
       const params = new URLSearchParams(props.location.search);
       return <ContactUsController context={params.get('ctx')} />;
     },
@@ -165,7 +168,7 @@ export const wrapRoutes = (wdkRoutes) => [
   {
     path: `${STATIC_ROUTE_PATH}/:path*`,
     requiresLogin: false,
-    component: (props) => (
+    component: (props: any) => (
       <ExternalContentController
         url={communitySite + props.match.params.path + props.location.search}
       />
@@ -174,7 +177,7 @@ export const wrapRoutes = (wdkRoutes) => [
 
   {
     path: '/downloads/:path*',
-    component: (props) => (
+    component: (props: any) => (
       <iframe
         src={`/common/downloads/${
           (props.match.params.path || '') +
@@ -186,14 +189,14 @@ export const wrapRoutes = (wdkRoutes) => [
           height: '100%',
           border: 'none',
         }}
-        onLoad={(event) => {
+        onLoad={(event: React.SyntheticEvent<HTMLIFrameElement>) => {
           window.scrollTo(0, 0);
-          const iframe = event.target;
-          const pathname = iframe.contentWindow.location.pathname.replace(
-            /^\/common/,
-            ''
-          );
-          const { search, hash } = iframe.contentWindow.location;
+          const iframe = event.target as HTMLIFrameElement;
+          const pathname =
+            iframe.contentWindow?.location.pathname.replace(/^\/common/, '') ||
+            '';
+          const search = iframe.contentWindow?.location.search || '';
+          const hash = iframe.contentWindow?.location.hash || '';
           const href = props.history.createHref({
             ...props.location,
             pathname,
@@ -201,14 +204,17 @@ export const wrapRoutes = (wdkRoutes) => [
             hash,
           });
           window.history.replaceState({}, '', href);
-          iframe.style.height = iframe.contentDocument.body.scrollHeight + 'px';
+          if (iframe.contentDocument?.body) {
+            iframe.style.height =
+              iframe.contentDocument.body.scrollHeight + 'px';
+          }
 
           if (pathname == '/downloads/') {
             // remove Parent Directory link
-            const img = iframe.contentDocument.body.querySelector('hr + img');
+            const img = iframe.contentDocument?.body.querySelector('hr + img');
             if (img == null) return;
             for (let i = 0; i < 3; i++) {
-              img.nextSibling.remove();
+              img.nextSibling?.remove();
             }
             img.remove();
           }

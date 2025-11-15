@@ -24,21 +24,126 @@ import {
   setFilterPopupPinned,
   setFilterPopupVisiblity,
 } from '../util/QuestionWizardState';
+import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
+import {
+  Question,
+  Parameter,
+  ParameterGroup,
+  RecordClass,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { ParameterValues } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import { Dispatch } from 'redux';
+import WdkService from '@veupathdb/wdk-client/lib/Core/WdkService';
 
-//  type State = {
-//    activeGroup: Group;
-//    groupUIState: Record<string, {
-//      valid?: boolean;
-//      loading?: boolean;
-//      accumulatedTotal?: boolean;
-//    }>;
-//  }
+type SubmissionMetadata =
+  | { type: 'create-strategy' }
+  | {
+      type: 'add-binary-step';
+      strategyId: number;
+      addType: string;
+      operatorSearchName: string;
+    }
+  | { type: 'add-unary-step'; strategyId: number; addType: string }
+  | { type: 'submit-custom-form'; stepId: number }
+  | {
+      type: 'edit-step';
+      strategyId: number;
+      stepId: number;
+      previousSearchConfig: { parameters: ParameterValues };
+    };
+
+interface FilterPopupState {
+  visible: boolean;
+  pinned: boolean;
+}
+
+interface GroupUIState {
+  isVisible: boolean;
+  filteredCountState: unknown;
+}
+
+interface QuestionState {
+  questionStatus?: string;
+  question?: Question;
+  paramValues?: ParameterValues;
+  defaultParamValues?: ParameterValues;
+  groupUIState?: Record<string, GroupUIState>;
+  paramUIState?: unknown;
+}
+
+interface OperatorQuestionState {
+  questionStatus?: string;
+  paramValues?: ParameterValues;
+}
+
+interface QuestionWizardControllerState {
+  filterPopupState: FilterPopupState;
+  updatingParamName: string | undefined;
+  submitting: boolean | undefined;
+  customName: string;
+  error?: Error;
+}
+
+interface OwnProps {
+  searchName: string;
+  recordClassName: string;
+  submissionMetadata: SubmissionMetadata;
+  initialParamData?: ParameterValues;
+  autoRun?: boolean;
+  shouldChangeDocumentTitle?: boolean;
+  submitButtonText?: string;
+}
+
+interface StateProps {
+  wdkService: WdkService;
+  recordClasses: RecordClass[] | undefined;
+  questionStatus?: string;
+  question?: Question;
+  paramValues?: ParameterValues;
+  defaultParamValues?: ParameterValues;
+  groupUIState?: Record<string, GroupUIState>;
+  paramUIState?: unknown;
+  operatorQuestionState?: OperatorQuestionState;
+}
+
+interface DispatchProps {
+  dispatch: Dispatch;
+}
+
+type QuestionWizardControllerProps = OwnProps & StateProps & DispatchProps;
+
+interface WizardEventHandlers {
+  onSelectGroup: (activeGroupIx: number) => void;
+  onFilterPopupVisibilityChange: (show: boolean) => void;
+  onFilterPopupPinned: (pinned: boolean) => void;
+  onParamValuesReset: () => void;
+  onSubmit: () => void;
+}
+
+interface ParameterEventHandlers {
+  onSelectFilterParamField: (
+    activeGroupIx: number,
+    parameter: Parameter,
+    field: { term: string }
+  ) => void;
+  onParamValueChange: (
+    parameter: Parameter,
+    paramValue: string,
+    callback?: () => void
+  ) => void;
+}
 
 /**
  * Controller for question wizard
  */
-class QuestionWizardController extends ViewController {
-  constructor(props) {
+class QuestionWizardController extends ViewController<
+  QuestionWizardControllerProps,
+  QuestionWizardControllerState
+> {
+  wizardEventHandlers: WizardEventHandlers;
+  parameterEventHandlers: ParameterEventHandlers;
+
+  constructor(props: QuestionWizardControllerProps) {
     super(props);
     this.state = {
       filterPopupState: {
@@ -52,11 +157,11 @@ class QuestionWizardController extends ViewController {
     this.wizardEventHandlers = mapValues(
       this.getWizardEventHandlers(),
       (handler) => handler.bind(this)
-    );
+    ) as WizardEventHandlers;
     this.parameterEventHandlers = mapValues(
       this.getParameterEventHandlers(),
       (handler) => handler.bind(this)
-    );
+    ) as ParameterEventHandlers;
 
     this._activeGroupIx = this._activeGroupIx.bind(this);
     this._resetParameters = this._resetParameters.bind(this);
@@ -107,6 +212,7 @@ class QuestionWizardController extends ViewController {
       })
     );
   }
+
   async componentStateFromLoadedQuestion() {
     const {
       question,
@@ -133,7 +239,9 @@ class QuestionWizardController extends ViewController {
       recordClasses &&
       recordClasses.find(({ urlSegment }) => urlSegment === recordClassName);
 
-    document.title = `Search for ${recordClass.displayName} by ${question.displayName}`;
+    if (recordClass && question) {
+      document.title = `Search for ${recordClass.displayName} by ${question.displayName}`;
+    }
 
     this.props.dispatch(
       changeGroupVisibility({
@@ -144,6 +252,7 @@ class QuestionWizardController extends ViewController {
     );
     this.onSelectGroup(0);
   }
+
   // Top level action creator methods
   // --------------------------------
 
@@ -151,8 +260,10 @@ class QuestionWizardController extends ViewController {
    * Update selected group and its count.
    * Active group, and everything to the left, is "visible" for the purpose of maintaining the counts
    */
-  onSelectGroup(activeGroupIx) {
+  onSelectGroup(activeGroupIx: number) {
     const prevActiveGroupIx = this._activeGroupIx();
+
+    if (!this.props.question) return;
 
     if (prevActiveGroupIx < activeGroupIx) {
       this.props.question.groups
@@ -183,8 +294,14 @@ class QuestionWizardController extends ViewController {
     }
   }
 
-  onSelectFilterParamField(activeGroupIx, parameter, field) {
+  onSelectFilterParamField(
+    activeGroupIx: number,
+    parameter: Parameter,
+    field: { term: string }
+  ) {
     this.onSelectGroup(activeGroupIx);
+
+    if (!this.props.paramValues) return;
 
     this.props.dispatch(
       setActiveField({
@@ -196,16 +313,24 @@ class QuestionWizardController extends ViewController {
     );
   }
 
-  onParamValueChange(parameter, paramValue, callback) {
+  onParamValueChange(
+    parameter: Parameter,
+    paramValue: string,
+    callback?: () => void
+  ) {
     /*
      * Mark in the state that new parameter is expected
      * It is set back to null when props change with the new value.
      */
+    if (!this.props.paramValues) return;
+
     const currentValue = this.props.paramValues[parameter.name];
     const updatingParamName =
-      paramValue != currentValue ? parameter.name : null;
+      paramValue !== currentValue ? parameter.name : undefined;
 
     this.setState({ updatingParamName }, () => {
+      if (!this.props.paramValues) return;
+
       this.props.dispatch(
         updateParamValue({
           searchName: this.props.searchName,
@@ -223,14 +348,14 @@ class QuestionWizardController extends ViewController {
   /**
    * Set filter popup visiblity
    */
-  onFilterPopupVisibilityChange(show) {
+  onFilterPopupVisibilityChange(show: boolean) {
     this.setState((state) => setFilterPopupVisiblity(state, show));
   }
 
   /**
    * Set filter popup stickyness
    */
-  onFilterPopupPinned(pinned) {
+  onFilterPopupPinned(pinned: boolean) {
     this.setState((state) => setFilterPopupPinned(state, pinned));
   }
 
@@ -238,22 +363,29 @@ class QuestionWizardController extends ViewController {
    * Set all params to default values, then update group counts and ontology term summaries
    */
   onParamValuesReset() {
+    if (
+      !this.props.question ||
+      !this.props.paramValues ||
+      !this.props.defaultParamValues
+    )
+      return;
+
     this._resetParameters(
       this.props.question.parameters
         .filter((parameter) => parameter.isVisible)
         .filter(
           (parameter) =>
-            this.props.paramValues[parameter.name] !=
-            this.props.defaultParamValues[parameter.name]
+            this.props.paramValues![parameter.name] !==
+            this.props.defaultParamValues![parameter.name]
         )
     );
   }
 
-  _resetParameters(parameters) {
-    if (parameters.length === 0) {
+  _resetParameters(parameters: Parameter[]) {
+    if (parameters.length === 0 || !this.props.defaultParamValues) {
       return;
     }
-    let [parameter, ...otherParameters] = parameters;
+    const [parameter, ...otherParameters] = parameters;
     this.onParamValueChange(
       parameter,
       this.props.defaultParamValues[parameter.name],
@@ -263,24 +395,19 @@ class QuestionWizardController extends ViewController {
     );
   }
 
-  setCustomName(newCustomName) {
+  setCustomName(newCustomName: string) {
     this.setState({ customName: newCustomName });
   }
 
   onSubmit() {
-    this.props.dispatch(async ({ wdkService }) => {
+    this.props.dispatch(async ({ wdkService }: { wdkService: WdkService }) => {
       try {
         this.setState({ submitting: true });
         const { submissionMetadata } = this.props;
-        // submissionMetadata.type =
-        //   | "create-strategy"
-        //   | "add-binary-step"
-        //   | "add-unary-step"
-        //   | "submit-custom-form"
-        //   | "edit-step"
 
         const customName =
-          this.state.customName || this.props.question.shortDisplayName;
+          this.state.customName ||
+          (this.props.question?.shortDisplayName ?? '');
 
         if (submissionMetadata.type === 'edit-step') {
           // update step's customName and searchConfig
@@ -292,7 +419,7 @@ class QuestionWizardController extends ViewController {
             },
             {
               ...submissionMetadata.previousSearchConfig,
-              parameters: this.props.paramValues,
+              parameters: this.props.paramValues!,
             }
           );
         }
@@ -301,7 +428,7 @@ class QuestionWizardController extends ViewController {
         const searchSpec = {
           searchName: this.props.searchName,
           searchConfig: {
-            parameters: this.props.paramValues,
+            parameters: this.props.paramValues!,
             wdkWeight: DEFAULT_STEP_WEIGHT,
           },
           customName,
@@ -342,7 +469,7 @@ class QuestionWizardController extends ViewController {
               `Tried to create an operator step using a nonexistent or unloaded question: ${submissionMetadata.operatorSearchName}`
             );
           }
-          const operatorParamValues = operatorQuestionState.paramValues;
+          const operatorParamValues = operatorQuestionState.paramValues!;
           const operatorStepResponse = await wdkService.createStep({
             searchName: submissionMetadata.operatorSearchName,
             searchConfig: {
@@ -377,7 +504,9 @@ class QuestionWizardController extends ViewController {
         }
 
         throw new Error(
-          `Unknown submissionMetadata type: "${submissionMetadata.type}"`
+          `Unknown submissionMetadata type: "${
+            (submissionMetadata as SubmissionMetadata).type
+          }"`
         );
       } catch (error) {
         this.setState({ submitting: false });
@@ -398,13 +527,13 @@ class QuestionWizardController extends ViewController {
     this.loadQuestion();
   }
 
-  async componentDidUpdate(prevProps) {
+  async componentDidUpdate(prevProps: QuestionWizardControllerProps) {
     if (prevProps.searchName !== this.props.searchName) {
       this.loadQuestion();
     }
     if (
       prevProps.questionStatus !== 'complete' &&
-      this.props.questionStatus == 'complete'
+      this.props.questionStatus === 'complete'
     ) {
       this.componentStateFromLoadedQuestion();
     }
@@ -413,16 +542,20 @@ class QuestionWizardController extends ViewController {
     */
     if (
       this.state.updatingParamName &&
+      this.props.paramValues &&
+      prevProps.paramValues &&
       prevProps.paramValues[this.state.updatingParamName] !==
         this.props.paramValues[this.state.updatingParamName]
     ) {
-      this.setState({ updatingParamName: null });
+      this.setState({ updatingParamName: undefined });
     }
   }
 
-  _activeGroupIx() {
+  _activeGroupIx(): number {
+    if (!this.props.question || !this.props.groupUIState) return -1;
+
     return this.props.question.groups
-      .map((group) => this.props.groupUIState[group.name].isVisible)
+      .map((group) => this.props.groupUIState![group.name].isVisible)
       .lastIndexOf(true);
   }
 
@@ -434,6 +567,16 @@ class QuestionWizardController extends ViewController {
       );
     const activeGroupIx = this._activeGroupIx();
 
+    if (
+      !this.props.question ||
+      !this.props.paramValues ||
+      !this.props.defaultParamValues ||
+      !this.props.groupUIState ||
+      !this.props.paramUIState
+    ) {
+      return null;
+    }
+
     return (
       <React.Fragment>
         {this.state.error && (
@@ -443,10 +586,9 @@ class QuestionWizardController extends ViewController {
             title="An error occurred"
             onClose={() => this.setState({ error: undefined })}
           >
-            {Seq.from(this.state.error.stack.split('\n')).flatMap((line) => [
-              line,
-              <br />,
-            ])}
+            {Seq.from(this.state.error.stack?.split('\n') ?? []).flatMap(
+              (line) => [line, <br key={line} />]
+            )}
           </Dialog>
         )}
         {this.state.submitting && (
@@ -480,7 +622,7 @@ class QuestionWizardController extends ViewController {
             customName={this.state.customName}
             setCustomName={this.setCustomName}
             isAddingStep={this.props.submissionMetadata.type.startsWith('add-')}
-            showHelpText={!this.props.submissionMetadata.type === 'edit-step'}
+            showHelpText={this.props.submissionMetadata.type !== 'edit-step'}
             dispatch={this.props.dispatch}
           />
         )}
@@ -489,7 +631,7 @@ class QuestionWizardController extends ViewController {
   }
 }
 
-function mapStateToPropsPrevious(state, props) {
+function mapStateToPropsPrevious(state: RootState, props: OwnProps) {
   const { submissionMetadata } = props;
   if (submissionMetadata.type === 'add-binary-step') {
     const operatorQuestionState =
@@ -498,36 +640,34 @@ function mapStateToPropsPrevious(state, props) {
   }
   return {};
 }
-function getQuestion(state, props) {
+
+function getQuestion(state: RootState, props: OwnProps): QuestionState {
   const { searchName } = props;
   const q = state.question.questions[searchName];
-  /*
-   * Triggers this error, I don't know how to get rid of it:
-   * webapp/wdkCustomization/js/client/plugins/QuestionWizardPlugin.tsx:16:7 - error TS2322: Type '{ searchName: string; recordClassName: string; submissionMetadata: SubmissionMetadata; shouldChangeDocumentTitle: boolean | undefined; submitButtonText: string | undefined; }' is not assignable to type 'IntrinsicAttributes & Pick<any, never>'.
-  Property 'searchName' does not exist on type 'IntrinsicAttributes & Pick<any, never>'.
-
-16       searchName={props.searchName}
-         ~~~~~~~~~~
-
-*/
   return q || {};
 }
+
 const enhance = connect(
-  (state, props) =>
+  (state: RootState, props: OwnProps): StateProps =>
     Object.assign(
       {},
       mapStateToPropsPrevious(state, props),
       {
-        wdkService: window.ebrc.context.wdkService,
+        wdkService: (window as any).ebrc.context.wdkService,
         recordClasses: state.globalData.recordClasses,
       },
       getQuestion(state, props)
     ),
-  (dispatch) => ({ dispatch }),
-  (stateProps, dispatchProps, ownProps) => ({
+  (dispatch: Dispatch): DispatchProps => ({ dispatch }),
+  (
+    stateProps: StateProps,
+    dispatchProps: DispatchProps,
+    ownProps: OwnProps
+  ): QuestionWizardControllerProps => ({
     ...stateProps,
     ...dispatchProps,
     ...ownProps,
   })
 );
-export default enhance(wrappable(QuestionWizardController));
+
+export default enhance(wrappable(QuestionWizardController as any));

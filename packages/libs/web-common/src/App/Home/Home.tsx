@@ -8,6 +8,25 @@ import { News } from '../../App/NewsSidebar';
 
 import './HomePage.scss';
 
+interface HomePageProps {
+  newsSidebar: {
+    news?: {
+      records: any[];
+    };
+    error?: boolean;
+  };
+  twitterUrl: string;
+  webAppUrl: string;
+  projectId: string;
+  siteData: {
+    studies: {
+      entities: any[];
+    };
+  };
+  attemptAction?: (action: any) => void;
+  homeContent: any[];
+}
+
 export default function HomePage({
   newsSidebar,
   twitterUrl,
@@ -16,7 +35,7 @@ export default function HomePage({
   siteData,
   attemptAction,
   homeContent,
-}) {
+}: HomePageProps) {
   const { wdkService } = useContext(WdkDependenciesContext);
   const analysisClient = useMemo(
     () =>
