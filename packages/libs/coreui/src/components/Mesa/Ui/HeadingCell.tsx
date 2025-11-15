@@ -30,7 +30,7 @@ class HeadingCell<Row, Key = string> extends React.PureComponent<
   HeadingCellState
 > {
   private element?: HTMLTableCellElement;
-  private listeners?: { [key: string]: number };
+  private listeners?: { [key: string]: string };
 
   constructor(props: HeadingCellProps<Row, Key>) {
     super(props);
@@ -133,7 +133,9 @@ class HeadingCell<Row, Key = string> extends React.PureComponent<
       !('renderHeading' in column) ||
       typeof column.renderHeading !== 'function'
     )
-      return this.wrapContent(Templates.heading(column, columnIndex));
+      return this.wrapContent(
+        Templates.heading({ key: column.key, column } as any)
+      );
 
     const content = column.renderHeading(column, columnIndex, {
       SortTrigger: (<SortTrigger />) as ReactElement,
@@ -146,7 +148,7 @@ class HeadingCell<Row, Key = string> extends React.PureComponent<
         ? wrapCustomHeadings({
             column,
             columnIndex,
-            headingRowIndex: headingRowIndex ?? 0,
+            headerRowIndex: headingRowIndex ?? 0,
           })
         : wrapCustomHeadings;
 
@@ -257,7 +259,7 @@ class HeadingCell<Row, Key = string> extends React.PureComponent<
     if (typeof onColumnReorder !== 'function') return;
     const draggedColumn = event.dataTransfer.getData('text');
     if (this.state.isDragTarget) this.setState({ isDragTarget: false });
-    onColumnReorder(draggedColumn as Key, columnIndex);
+    onColumnReorder(draggedColumn as unknown as Key, columnIndex);
   }
 
   getDomEvents() {
@@ -289,7 +291,7 @@ class HeadingCell<Row, Key = string> extends React.PureComponent<
     if (isDragTarget) modifiers.push('DragTarget');
     return (
       (typeof className === 'string' ? className + ' ' : '') +
-      headingCellClass(null, modifiers)
+      headingCellClass(undefined, modifiers)
     );
   }
 

@@ -1,19 +1,19 @@
 import React, { useCallback } from 'react';
 import { ArrowDown, ArrowRight } from '../../icons';
 
-type Props = {
-  rows: unknown[];
-  row: unknown;
+type Props<Row = unknown> = {
+  rows: Row[];
+  row: Row;
   onExpandedRowsChange: (ids: (string | number)[]) => void;
   expandedRows: (string | number)[];
-  getRowId: (row: unknown) => string | number;
+  getRowId: (row: Row) => string | number;
   inert: boolean;
   heading: boolean;
 };
 
-const EMPTY_ARRAY: Props['expandedRows'] = [];
+const EMPTY_ARRAY: (string | number)[] = [];
 
-export default function ExpansionCell({
+export default function ExpansionCell<Row = unknown>({
   rows,
   row,
   onExpandedRowsChange,
@@ -21,7 +21,7 @@ export default function ExpansionCell({
   getRowId,
   inert,
   heading,
-}: Props) {
+}: Props<Row>) {
   const expandAllRows = useCallback(
     () => onExpandedRowsChange(rows.map((row) => getRowId(row))),
     [onExpandedRowsChange, rows, getRowId]

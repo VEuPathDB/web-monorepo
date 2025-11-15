@@ -10,8 +10,8 @@ class RowCounter<Row> extends React.PureComponent<RowCounterProps<Row>> {
   render() {
     const { rows, uiState, eventHandlers } = this.props;
 
-    const { pagination = {}, filteredRowCount = 0 } = uiState ?? {};
-    const { totalRows, rowsPerPage } = pagination;
+    const { pagination, filteredRowCount = 0 } = uiState ?? {};
+    const { totalRows, rowsPerPage, currentPage } = pagination ?? {};
 
     const isPaginated = eventHandlers && 'onPageChange' in eventHandlers;
     const isSearching = uiState?.searchQuery && uiState.searchQuery.length;
@@ -23,9 +23,9 @@ class RowCounter<Row> extends React.PureComponent<RowCounterProps<Row>> {
       (count - filteredRowCount === 1 ? '' : 's');
 
     const start =
-      !isPaginated || !pagination.currentPage || !rowsPerPage
+      !isPaginated || !currentPage || !rowsPerPage
         ? null
-        : (pagination.currentPage - 1) * rowsPerPage + 1;
+        : (currentPage - 1) * rowsPerPage + 1;
 
     const end =
       !isPaginated || !start || !rowsPerPage

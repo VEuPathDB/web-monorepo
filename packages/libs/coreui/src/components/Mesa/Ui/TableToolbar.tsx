@@ -39,7 +39,7 @@ class TableToolbar<Row> extends React.PureComponent<TableToolbarProps<Row>> {
       <TableSearch
         searchQuery={searchQuery}
         onSearch={onSearch}
-        options={options}
+        options={options as any}
       />
     );
   }

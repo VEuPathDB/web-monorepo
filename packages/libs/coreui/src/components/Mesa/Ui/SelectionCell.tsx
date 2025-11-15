@@ -48,7 +48,7 @@ class SelectionCell<Row> extends React.PureComponent<SelectionCellProps<Row>> {
     const { rows, isRowSelected, inert, options } = this.props;
     if (!rows) return null;
     const selection = rows.filter(isRowSelected);
-    const checked = rows.length && rows.every(isRowSelected);
+    const checked = rows.length > 0 && rows.every(isRowSelected);
     const isIndeterminate = selection.length > 0 && !checked;
 
     const { selectColumnHeadingDetails } = options ?? {};

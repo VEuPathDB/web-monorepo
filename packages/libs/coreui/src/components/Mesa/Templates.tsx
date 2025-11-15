@@ -24,11 +24,7 @@ const Templates = {
     const text = stringValue(value);
 
     return truncated ? (
-      <TruncatedText
-        className={className}
-        cutoff={truncated ? OptionsDefaults.overflowHeight : null}
-        text={text}
-      />
+      <TruncatedText className={className} text={text} />
     ) : (
       <div className={className}>{text}</div>
     );
@@ -63,12 +59,16 @@ const Templates = {
       typeof value === 'object' && value !== null
         ? (value as LinkValue)
         : defaults;
-    href = href ? href : typeof value === 'string' ? value : null;
-    text = text.length ? text : href ?? '';
+    const finalHref = href
+      ? href
+      : typeof value === 'string'
+      ? value
+      : undefined;
+    text = text.length ? text : finalHref ?? '';
 
-    const props = { href, target, className, name: text };
+    const props = { href: finalHref, target, className, name: text };
 
-    return href ? <a {...props}>{text}</a> : null;
+    return finalHref ? <a {...props}>{text}</a> : null;
   },
 
   htmlCell<Row>({ key, value, column }: CellProps<Row>): ReactNode {
@@ -77,12 +77,15 @@ const Templates = {
     const content = (
       <div dangerouslySetInnerHTML={{ __html: value as string }} />
     );
-    const size = truncated === true ? '16em' : truncated;
+    const maxHeight = truncated === true ? '16em' : truncated;
 
     return truncated ? (
-      <OverScroll className={className} size={size}>
+      <div
+        className={className}
+        style={{ maxHeight, overflowY: 'auto' } as React.CSSProperties}
+      >
         {content}
-      </OverScroll>
+      </div>
     ) : (
       <div className={className}>{content}</div>
     );

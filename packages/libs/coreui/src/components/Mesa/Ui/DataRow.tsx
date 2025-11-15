@@ -119,7 +119,7 @@ class DataRow<Row> extends React.PureComponent<
     const rowStyle = !inline
       ? {}
       : { whiteSpace: 'nowrap' as const, textOverflow: 'ellipsis' as const };
-    let className = dataRowClass(null, inline ? 'inline' : '');
+    let className = dataRowClass(undefined, inline ? 'inline' : '');
 
     const { deriveRowClassName } = options || {};
     if (typeof deriveRowClassName === 'function') {
@@ -150,16 +150,20 @@ class DataRow<Row> extends React.PureComponent<
           {hasExpansionColumn && eventHandlers && uiState && (
             <ExpansionCell
               key="_expansion"
+              rows={[]}
               row={row}
               onExpandedRowsChange={eventHandlers.onExpandedRowsChange!}
               expandedRows={uiState.expandedRows!}
               getRowId={getRowId!}
+              inert={false}
+              heading={false}
             />
           )}
           {hasSelectionColumn && options && eventHandlers && (
             <SelectionCell
               key="_selection"
               row={row}
+              options={options}
               eventHandlers={eventHandlers}
               isRowSelected={options.isRowSelected!}
             />

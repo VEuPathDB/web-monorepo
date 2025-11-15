@@ -44,6 +44,7 @@ export interface MesaStateProps<
     editableColumns?: boolean;
     overflowHeight?: string;
     toolbar?: boolean;
+    columnDefaults?: Partial<MesaColumn<Row, Key>>;
     /**
      * It's possible to render counts in the ActionToolbar and the Toolbar, so be careful not to duplicate.
      * This is because we pass search filters as children to Mesa that renders in the Toolbar if the toolbar
@@ -91,7 +92,7 @@ export interface MesaStateProps<
     onMultipleRowSelect?: (rows: Row[]) => void;
     onMultipleRowDeselect?: (rows: Row[]) => void;
     onColumnReorder?: (columnKey: Key, columnIndex: number) => void;
-    onExpandedRowsChange?: (indexes: number[]) => void;
+    onExpandedRowsChange?: (ids: (string | number)[]) => void;
     onGroupBySelectedChange?: (groupBySelected: boolean) => void;
   };
 }
@@ -136,9 +137,12 @@ export interface MesaColumn<
   resizeable?: boolean;
   moveable?: boolean;
   helpText?: string;
+  htmlHelp?: string;
   style?: CSSProperties;
+  headingStyle?: CSSProperties;
   className?: string;
   width?: CSSProperties['width'];
+  hidden?: boolean;
   getValue?: (props: { row: Row; index: number }) => Value;
   renderCell?: (cellProps: CellProps<Row, Key, Value>) => ReactNode;
   renderHeading?:
