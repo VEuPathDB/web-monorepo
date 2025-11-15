@@ -64,7 +64,8 @@ const getOrderedData = (
   const orderedRows = orderBy(
     tableValue,
     tableField.clientSortSpec?.map(property('itemName')) ?? [],
-    tableField.clientSortSpec?.map(property('direction')).map(toLower) ?? []
+    (tableField.clientSortSpec?.map(property('direction')).map(toLower) ??
+      []) as ('asc' | 'desc')[]
   );
 
   // Store sort indices in WeakMap without mutating row objects
@@ -135,7 +136,10 @@ interface RecordTableProps {
 class RecordTable extends Component<RecordTableProps, RecordTableState> {
   private sortIndexMap: WeakMap<Record<string, AttributeValue>, number>;
   private getColumns: Selector<RecordTableProps, AttributeField[]>;
-  private getDisplayableAttributes: Selector<RecordTableProps, AttributeField[]>;
+  private getDisplayableAttributes: Selector<
+    RecordTableProps,
+    AttributeField[]
+  >;
   private getOrderedData: Selector<
     RecordTableProps,
     Record<string, AttributeValue>[]
@@ -284,7 +288,7 @@ class RecordTable extends Component<RecordTableProps, RecordTableState> {
         return d; // Return original object unchanged
       }
 
-      let newData = { ...d };
+      let newData: any = { ...d };
       columnsWithLinks.forEach((col) => {
         const linkPropertyName = col.key;
         const linkObject = d[linkPropertyName] as any;
@@ -313,25 +317,26 @@ class RecordTable extends Component<RecordTableProps, RecordTableState> {
             (row) => {
               const { columnKey } = sort;
               const isLinkType = columnToSort!.type === 'link';
+              const rowData = row as any;
               if (sortType === 'number' && isLinkType) {
-                return row[columnKey!]['text'] === ''
+                return rowData[columnKey!]['text'] === ''
                   ? -Infinity
-                  : Number(row[columnKey!]['text']);
+                  : Number(rowData[columnKey!]['text']);
               }
               if (sortType === 'number') {
-                return row[columnKey!] == null
+                return rowData[columnKey!] == null
                   ? -Infinity
-                  : Number(row[columnKey!]);
+                  : Number(rowData[columnKey!]);
               }
               if (columnToSort!.type === 'link') {
-                return row[columnKey!]['text'];
+                return rowData[columnKey!]['text'];
               }
               if (sortType === 'htmlText') {
-                return stripHTML(row[columnKey!]).toLowerCase().trim();
+                return stripHTML(rowData[columnKey!]).toLowerCase().trim();
               }
-              return row[columnKey!] == null
+              return rowData[columnKey!] == null
                 ? ''
-                : row[columnKey!].toLowerCase().trim();
+                : rowData[columnKey!].toLowerCase().trim();
             },
             [sort.direction]
           );
@@ -379,7 +384,10 @@ class RecordTable extends Component<RecordTableProps, RecordTableState> {
           : {}),
       },
       uiState: {
-        sort: this.state.sort,
+        sort: {
+          columnKey: this.state.sort.columnKey ?? '',
+          direction: this.state.sort.direction,
+        },
         expandedRows,
         filteredRowCount: mesaReadyRows.length - filteredRows.length,
         ...(isOrthologTableWithData &&
@@ -457,4 +465,4 @@ class RecordTable extends Component<RecordTableProps, RecordTableState> {
   }
 }
 
-export default wrappable(pure(RecordTable));
+export default wrappable(pure(RecordTable) as any);
