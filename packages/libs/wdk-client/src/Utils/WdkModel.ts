@@ -49,6 +49,7 @@ export interface Reporter {
   description?: string;
   isInReport: boolean;
   scopes: string[];
+  newBuild?: string;
 }
 
 interface ParameterBase extends NamedModelEntity {

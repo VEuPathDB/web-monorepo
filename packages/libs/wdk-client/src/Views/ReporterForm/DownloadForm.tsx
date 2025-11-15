@@ -5,7 +5,7 @@ import WdkServiceJsonReporterForm from '../../Views/ReporterForm/WdkServiceJsonR
 type Props = Record<string, any>;
 
 const DownloadForm: React.FC<Props> = (props) => (
-  <WdkServiceJsonReporterForm {...props} />
+  <WdkServiceJsonReporterForm {...(props as any)} />
 );
 
 export default wrappable(DownloadForm);

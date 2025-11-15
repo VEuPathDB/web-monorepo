@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { wrappable } from '../../Utils/ComponentUtils';
 import { User, UserPreferences } from '../../Utils/WdkUser';
 import { ServiceConfig } from '../../Service/ServiceBase';
+import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
 
 /**
  * Type for user profile property definitions, extending the service configuration
@@ -17,7 +18,7 @@ type UserProfileProperty = ServiceConfig['userProfileProperties'][number] & {
  */
 interface ApplicationSpecificPropertiesProps {
   /** The user object to be modified */
-  user: User;
+  user: UserProfileFormData;
 
   /** The on change handler for user profile properties inputs */
   onPropertyChange: (
@@ -35,8 +36,9 @@ interface ApplicationSpecificPropertiesProps {
 /**
  * This React component is a placeholder for any application specific properties that may have added by the overriding application.
  */
-const ApplicationSpecificProperties: FC<ApplicationSpecificPropertiesProps> = () => {
-  return null;
-};
+const ApplicationSpecificProperties: FC<ApplicationSpecificPropertiesProps> =
+  () => {
+    return null;
+  };
 
 export default wrappable(ApplicationSpecificProperties);

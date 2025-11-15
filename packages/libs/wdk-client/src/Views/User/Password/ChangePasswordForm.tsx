@@ -13,7 +13,7 @@ interface PasswordForm {
 }
 
 interface UserEvents {
-  updateChangePasswordForm: (form: PasswordForm) => PasswordForm;
+  updateChangePasswordForm: (form: PasswordForm) => void;
   savePassword: (oldPassword: string, newPassword: string) => void;
 }
 
@@ -76,12 +76,16 @@ function formValid(passwordForm: PasswordForm): boolean {
 }
 
 const ChangePasswordForm: React.FC<ChangePasswordFormProps> = (props) => {
-  const submitHandler = function (e: React.FormEvent<HTMLFormElement>): void {
-    e.preventDefault();
+  const handleSubmit = function (): void {
     const form = props.passwordForm;
     if (formValid(form)) {
       props.userEvents.savePassword(form.oldPassword, form.newPassword);
     }
+  };
+
+  const submitHandler = function (e: React.FormEvent<HTMLFormElement>): void {
+    e.preventDefault();
+    handleSubmit();
   };
   return (
     <div style={{ margin: '0 2em' }}>
@@ -117,7 +121,7 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = (props) => {
               <div style={{ marginLeft: '115px' }}>
                 <SaveButton
                   formStatus={props.formStatus}
-                  onPress={submitHandler}
+                  onPress={handleSubmit}
                   customText={{
                     save: 'Submit',
                   }}

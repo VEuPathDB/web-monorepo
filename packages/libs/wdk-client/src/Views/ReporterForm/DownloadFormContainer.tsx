@@ -51,7 +51,7 @@ const ReporterSelect = (props: ReporterSelectProps): JSX.Element => {
 };
 
 function getTitle(
-  scope: string,
+  scope: string | null,
   resultType: ResultType,
   recordClass: RecordClass
 ): ReactNode {
@@ -107,7 +107,7 @@ function getTitle(
 }
 
 interface DownloadFormContainerProps {
-  scope: string;
+  scope: string | null;
   resultType: ResultType;
   availableReporters: Reporter[];
   selectedReporter: string | null;
@@ -135,7 +135,9 @@ class DownloadFormContainer extends Component<DownloadFormContainerProps> {
   async onSubmit(): Promise<void> {
     const { submitForm, resultType, selectedReporter, formState, viewFilters } =
       this.props;
-    await submitForm(resultType, selectedReporter, formState, viewFilters);
+    if (selectedReporter) {
+      await submitForm(resultType, selectedReporter, formState, viewFilters);
+    }
   }
 
   render(): JSX.Element {
