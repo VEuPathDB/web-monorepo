@@ -67,10 +67,17 @@ function ServerSideAttributeFilter(props: ServerSideAttributeFilterProps) {
     <div style={{ overflowX: 'auto', marginRight: '1em' }}>
       {hideFilterPanel || (
         <FilterList
-          {...props}
+          onActiveFieldChange={props.onActiveFieldChange}
+          onFiltersChange={props.onFiltersChange}
           fieldTree={fieldTree}
+          filters={props.filters}
           displayName={props.displayName || 'Items'}
+          dataCount={props.dataCount}
+          filteredDataCount={props.filteredDataCount}
           hideGlobalCounts={props.hideGlobalCounts || false}
+          loadingFilteredCount={props.loadingFilteredCount}
+          activeField={props.activeField}
+          minSelectedCount={props.minSelectedCount}
         />
       )}
 
