@@ -13,13 +13,13 @@ interface PasswordForm {
 }
 
 interface UserEvents {
-  updateChangePasswordForm: (form: PasswordForm) => void;
+  updateChangePasswordForm: (form: PasswordForm) => PasswordForm;
   savePassword: (oldPassword: string, newPassword: string) => void;
 }
 
 interface ChangePasswordFormProps {
   /** User object */
-  user: User;
+  user?: User;
 
   /** Contains values for form input fields */
   passwordForm: PasswordForm;
@@ -85,7 +85,7 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = (props) => {
   };
   return (
     <div style={{ margin: '0 2em' }}>
-      {props.user.isGuest ? (
+      {!props.user || props.user.isGuest ? (
         <div>You must first log on to change your password.</div>
       ) : (
         <div>

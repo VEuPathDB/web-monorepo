@@ -58,7 +58,11 @@ import Link from '../../Components/Link/Link';
 import CheckboxTree, {
   LinksPosition,
 } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
-import { getNodeChildren, getPropertyValue, OntologyNode } from '../../Utils/OntologyUtils';
+import {
+  getNodeChildren,
+  getPropertyValue,
+  OntologyNode,
+} from '../../Utils/OntologyUtils';
 import {
   getTargetType,
   getRefName,
@@ -90,7 +94,7 @@ interface NodeData {
  * Props for the SiteMap component
  */
 interface SiteMapProps {
-  tree: SiteMapOntology;
+  tree?: SiteMapOntology;
   expandedList: string[];
   searchText: string;
   siteMapActions: {
@@ -103,6 +107,8 @@ interface SiteMapProps {
  * Displays site map page, basically just a custom expandable tree
  */
 const SiteMap: React.FC<SiteMapProps> = (props) => {
+  if (!props.tree) return null;
+
   const treeProps = {
     tree: props.tree,
     getNodeId: getNodeId,
