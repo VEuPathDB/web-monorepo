@@ -224,29 +224,27 @@ class RecordUI extends Component<RecordUIProps, RecordUIState> {
           <div className="wdk-RecordSidebar">
             {this.props.navigationVisible ? (
               <RecordNavigationSection
-                visibilityToggle={visibilityToggle}
-                heading={this.props.record.displayName}
-                record={this.props.record}
-                recordClass={this.props.recordClass}
-                categoryTree={this.props.categoryTree}
-                collapsedSections={this.props.collapsedSections}
-                activeSection={this.state.activeSectionId ?? ''}
-                navigationQuery={this.props.navigationQuery}
-                navigationExpanded={this.props.navigationExpanded}
-                navigationCategoriesExpanded={
-                  this.props.navigationCategoriesExpanded
-                }
-                onSectionToggle={(id: string, value?: boolean) =>
-                  this.props.updateSectionVisibility(id, value ?? false)
-                }
-                onNavigationVisibilityChange={
-                  this.props.updateNavigationVisibility
-                }
-                onNavigationCategoryExpansionChange={
-                  this.props.updateNavigationCategoryExpansion
-                }
-                onNavigationQueryChange={this.props.updateNavigationQuery}
-                requestPartialRecord={this.props.requestPartialRecord}
+                {...({
+                  visibilityToggle,
+                  heading: this.props.record.displayName,
+                  record: this.props.record,
+                  recordClass: this.props.recordClass,
+                  categoryTree: this.props.categoryTree,
+                  collapsedSections: this.props.collapsedSections,
+                  activeSection: this.state.activeSectionId ?? '',
+                  navigationQuery: this.props.navigationQuery,
+                  navigationExpanded: this.props.navigationExpanded,
+                  navigationCategoriesExpanded:
+                    this.props.navigationCategoriesExpanded,
+                  onSectionToggle: (id: string, value?: boolean) =>
+                    this.props.updateSectionVisibility(id, value ?? false),
+                  onNavigationVisibilityChange:
+                    this.props.updateNavigationVisibility,
+                  onNavigationCategoryExpansionChange:
+                    this.props.updateNavigationCategoryExpansion,
+                  onNavigationQueryChange: this.props.updateNavigationQuery,
+                  requestPartialRecord: this.props.requestPartialRecord,
+                } as any)}
               />
             ) : (
               visibilityToggle
@@ -254,15 +252,17 @@ class RecordUI extends Component<RecordUIProps, RecordUIState> {
           </div>
           <div className="wdk-RecordMain">
             <RecordMainSection
-              ref={(c: any) => (this.recordMainSectionNode = findDOMNode(c))}
-              record={this.props.record}
-              recordClass={this.props.recordClass}
-              categories={this.props.categoryTree.children}
-              collapsedSections={this.props.collapsedSections}
-              onSectionToggle={this.props.updateSectionVisibility}
-              requestPartialRecord={this.props.requestPartialRecord}
-              tableStates={this.props.tableStates}
-              updateTableState={this.props.updateTableState}
+              {...({
+                ref: (c: any) => (this.recordMainSectionNode = findDOMNode(c)),
+                record: this.props.record,
+                recordClass: this.props.recordClass,
+                categories: this.props.categoryTree.children,
+                collapsedSections: this.props.collapsedSections,
+                onSectionToggle: this.props.updateSectionVisibility,
+                requestPartialRecord: this.props.requestPartialRecord,
+                tableStates: this.props.tableStates,
+                updateTableState: this.props.updateTableState,
+              } as any)}
             />
           </div>
         </div>

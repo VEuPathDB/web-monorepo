@@ -3,7 +3,11 @@ import { includes, stubTrue } from 'lodash';
 import React from 'react';
 import CategoriesCheckboxTree from '../../../Components/CheckboxTree/CategoriesCheckboxTree';
 import { CategoryTreeNode, getId } from '../../../Utils/CategoryUtils';
-import { safeHtml, wrappable, ComponentWrapper } from '../../../Utils/ComponentUtils';
+import {
+  safeHtml,
+  wrappable,
+  ComponentWrapper,
+} from '../../../Utils/ComponentUtils';
 import RecordNavigationItem from '../../../Views/Records/RecordNavigation/RecordNavigationItem';
 
 /** Navigation panel for record page */
@@ -65,38 +69,40 @@ class RecordNavigationSection extends React.PureComponent<
           {visibilityToggle}
         </div>
         <CategoriesCheckboxTree
-          disableHelp
-          visibilityFilter={visibilityFilter}
-          searchBoxPlaceholder="Search section names..."
-          tree={categoryTree}
-          leafType="section"
-          isSelectable={false}
-          expandedBranches={navigationCategoriesExpanded}
-          onUiChange={onNavigationCategoryExpansionChange}
-          searchTerm={navigationQuery}
-          onSearchTermChange={this.handleSearchTermChange}
-          renderNode={(node, path) => (
-            <RecordNavigationItem
-              node={node}
-              path={path}
-              activeSection={activeSection}
-              onSectionToggle={onSectionToggle}
-              checked={!includes(collapsedSections, getId(node))}
-            />
-          )}
-          linksPosition={LinksPosition.Top}
-          styleOverrides={{
-            treeSection: {
-              ul: {
-                padding: '0 0 0 1em',
+          {...({
+            disableHelp: true,
+            visibilityFilter,
+            searchBoxPlaceholder: 'Search section names...',
+            tree: categoryTree,
+            leafType: 'section',
+            isSelectable: false,
+            expandedBranches: navigationCategoriesExpanded,
+            onUiChange: onNavigationCategoryExpansionChange,
+            searchTerm: navigationQuery,
+            onSearchTermChange: this.handleSearchTermChange,
+            renderNode: (node: any, path: any) => (
+              <RecordNavigationItem
+                node={node}
+                path={path}
+                activeSection={activeSection}
+                onSectionToggle={onSectionToggle}
+                checked={!includes(collapsedSections, getId(node))}
+              />
+            ),
+            linksPosition: LinksPosition.Top,
+            styleOverrides: {
+              treeSection: {
+                ul: {
+                  padding: '0 0 0 1em',
+                },
+              },
+              treeNode: {
+                nodeWrapper: {
+                  alignItems: 'center',
+                },
               },
             },
-            treeNode: {
-              nodeWrapper: {
-                alignItems: 'center',
-              },
-            },
-          }}
+          } as any)}
         />
       </div>
     );

@@ -465,4 +465,4 @@ class RecordTable extends Component<RecordTableProps, RecordTableState> {
   }
 }
 
-export default wrappable(pure(RecordTable) as any);
+export default wrappable(pure(RecordTable as any));
