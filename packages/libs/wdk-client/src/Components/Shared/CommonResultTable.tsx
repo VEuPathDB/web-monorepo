@@ -67,10 +67,12 @@ export class CommonResultTable<R = Record<string, any>> extends Component<
           },
       uiState: {
         searchQuery: this.props.initialSearchQuery || '',
-        sort: {
-          columnKey: this.props.initialSortColumnKey || null,
-          direction: this.props.initialSortDirection || 'asc',
-        },
+        sort: this.props.initialSortColumnKey
+          ? {
+              columnKey: this.props.initialSortColumnKey,
+              direction: this.props.initialSortDirection || 'asc',
+            }
+          : undefined,
         pagination: this.props.pagination
           ? {
               currentPage: 1,
@@ -93,7 +95,7 @@ export class CommonResultTable<R = Record<string, any>> extends Component<
       this.setState((prevState: any, props: CommonResultTableProps<R>) =>
         MesaState.setColumns(
           MesaState.setRows(prevState, props.rows),
-          props.columns
+          props.columns as any
         )
       );
     }
@@ -116,10 +118,12 @@ export class CommonResultTable<R = Record<string, any>> extends Component<
   }
 
   handlePageChange(pageNumber: number) {
+    const currentUiState = MesaState.getUiState(this.state);
+    const currentPagination = currentUiState.pagination!;
     const updatedTableState = MesaState.setUiState(this.state, {
-      ...MesaState.getUiState(this.state),
+      ...currentUiState,
       pagination: {
-        ...MesaState.getUiState(this.state).pagination,
+        ...currentPagination,
         currentPage: pageNumber,
       },
     });
@@ -128,10 +132,12 @@ export class CommonResultTable<R = Record<string, any>> extends Component<
   }
 
   handleRowsPerPageChange(rowsPerPage: number) {
+    const currentUiState = MesaState.getUiState(this.state);
+    const currentPagination = currentUiState.pagination!;
     const updatedTableState = MesaState.setUiState(this.state, {
-      ...MesaState.getUiState(this.state),
+      ...currentUiState,
       pagination: {
-        ...MesaState.getUiState(this.state).pagination,
+        ...currentPagination,
         rowsPerPage,
       },
     });
@@ -147,10 +153,10 @@ export class CommonResultTable<R = Record<string, any>> extends Component<
       setFilteredRows,
       setUiState,
     } = MesaState;
-    const {
-      searchQuery,
-      sort: { columnKey: sortColumnKey, direction: sortDirection },
-    } = getUiState(this.state);
+    const uiState = getUiState(this.state);
+    const { searchQuery, sort } = uiState;
+    const sortColumnKey = sort?.columnKey;
+    const sortDirection = sort?.direction;
 
     const filteredState = searchQuery
       ? MesaState.filterRows(
@@ -180,7 +186,7 @@ export class CommonResultTable<R = Record<string, any>> extends Component<
       ? setUiState(setFilteredRows(filterCountedState, pagedRows), {
           ...MesaState.getUiState(filterCountedState),
           pagination: {
-            ...MesaState.getUiState(filterCountedState).pagination,
+            ...MesaState.getUiState(filterCountedState).pagination!,
             currentPage: newCurrentPage,
             totalPages,
             totalRows: allRows.length,
@@ -189,14 +195,15 @@ export class CommonResultTable<R = Record<string, any>> extends Component<
       : filterCountedState;
 
     const { sortType = 'text' } =
-      getColumns(pagedState).find(({ key }) => key === sortColumnKey) || {};
+      (getColumns(pagedState).find(
+        ({ key }) => key === sortColumnKey
+      ) as ColumnSettings<R>) || {};
     const sortMethod = sortTypes[sortType] || sortTypes['text'];
 
     const unsortedRows = getFilteredRows(pagedState);
-    const sortedRows =
-      sortColumnKey === null
-        ? unsortedRows
-        : sortMethod(unsortedRows, sortColumnKey, sortDirection === 'asc');
+    const sortedRows = !sortColumnKey
+      ? unsortedRows
+      : sortMethod(unsortedRows, sortColumnKey, sortDirection === 'asc');
 
     const sortedState = setFilteredRows(pagedState, sortedRows);
 
@@ -233,8 +240,8 @@ const sortTypes: Record<
 > = {
   number: MesaUtils.numberSort,
   text: MesaUtils.textSort,
-  htmlText: MesaUtils.customSortFactory(htmlStringValue),
+  htmlText: MesaUtils.customSortFactory(htmlStringValue as any),
   htmlNumber: MesaUtils.customSortFactory(
-    compose(numericValue, htmlStringValue)
+    compose(numericValue as any, htmlStringValue as any)
   ),
 };

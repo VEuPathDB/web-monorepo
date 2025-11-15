@@ -857,7 +857,11 @@ class MembershipTable extends React.PureComponent<
               headingStyle: { minWidth: '12em' },
               inline: true,
               sortable: useSort,
-              wrapCustomHeadings: ({ headerRowIndex }) => headerRowIndex === 0,
+              wrapCustomHeadings: ({
+                headerRowIndex,
+              }: {
+                headerRowIndex: number;
+              }) => headerRowIndex === 0,
               renderHeading: useSearch
                 ? [this.renderValueHeading, this.renderValueHeadingSearch]
                 : this.renderValueHeading,
@@ -878,7 +882,11 @@ class MembershipTable extends React.PureComponent<
                   value
                 </div>
               ),
-              wrapCustomHeadings: ({ headerRowIndex }) => headerRowIndex === 0,
+              wrapCustomHeadings: ({
+                headerRowIndex,
+              }: {
+                headerRowIndex: number;
+              }) => headerRowIndex === 0,
               renderHeading:
                 this.props.activeFieldState.summary.internalsFilteredCount !=
                 null
@@ -900,7 +908,11 @@ class MembershipTable extends React.PureComponent<
                   value
                 </div>
               ),
-              wrapCustomHeadings: ({ headerRowIndex }) => headerRowIndex === 0,
+              wrapCustomHeadings: ({
+                headerRowIndex,
+              }: {
+                headerRowIndex: number;
+              }) => headerRowIndex === 0,
               renderHeading:
                 this.props.activeFieldState.summary.internalsCount != null
                   ? [
