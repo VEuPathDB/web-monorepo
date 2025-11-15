@@ -12,6 +12,10 @@ import {
   Mesa,
   Utils as MesaUtils,
 } from '@veupathdb/coreui/lib/components/Mesa';
+import type {
+  MesaColumn,
+  MesaStateProps,
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import {
   areTermsInStringRegexString,
   parseSearchQueryString,
@@ -76,15 +80,9 @@ const getOrderedData = (
   return orderedRows;
 };
 
-interface MesaColumn {
-  key: string;
-  name: string;
-  sortable: boolean;
-  type: string;
-  helpText?: string;
+// Extended MesaColumn to include sortType property used in RecordTable
+interface RecordTableColumn extends MesaColumn<Record<string, AttributeValue>> {
   sortType?: string;
-  className?: string;
-  [key: string]: any;
 }
 
 interface SortState {
@@ -175,8 +173,11 @@ class RecordTable extends Component<RecordTableProps, RecordTableState> {
     };
   }
 
-  onSort(column: MesaColumn, direction: string): void {
-    const columnKey = column.key;
+  onSort(
+    column: MesaColumn<Record<string, AttributeValue>>,
+    direction: string
+  ): void {
+    const columnKey = column.key as string;
     this.setState((state) => ({ ...state, sort: { columnKey, direction } }));
   }
 
@@ -231,7 +232,7 @@ class RecordTable extends Component<RecordTableProps, RecordTableState> {
       : undefined;
 
     // Manipulate columns to match properties expected in Mesa
-    const mesaReadyColumns: MesaColumn[] = columns
+    const mesaReadyColumns: RecordTableColumn[] = columns
       // NOTE: prefer to change ortho's clustalInput columns to not be displayable
       .filter((c) => c.isDisplayable && c.name !== 'clustalInput')
       .map((c) => {
@@ -372,9 +373,12 @@ class RecordTable extends Component<RecordTableProps, RecordTableState> {
       );
     });
 
-    const tableState = {
+    const tableState: MesaStateProps<Record<string, AttributeValue>, string> = {
       rows: sortedMesaRows,
-      columns: mesaReadyColumns,
+      columns: mesaReadyColumns as MesaColumn<
+        Record<string, AttributeValue>,
+        string
+      >[],
       filteredRows: this.state.searchTerm.length ? filteredRows : undefined,
       eventHandlers: {
         onSort: this.onSort,
@@ -386,7 +390,7 @@ class RecordTable extends Component<RecordTableProps, RecordTableState> {
       uiState: {
         sort: {
           columnKey: this.state.sort.columnKey ?? '',
-          direction: this.state.sort.direction,
+          direction: this.state.sort.direction as 'asc' | 'desc',
         },
         expandedRows,
         filteredRowCount: mesaReadyRows.length - filteredRows.length,
@@ -445,7 +449,7 @@ class RecordTable extends Component<RecordTableProps, RecordTableState> {
 
     return (
       <div className={className}>
-        <Mesa state={tableState as any}>
+        <Mesa state={tableState}>
           {mesaReadyRows.length > 2 && (
             <RecordFilter
               searchTerm={this.state.searchTerm}
