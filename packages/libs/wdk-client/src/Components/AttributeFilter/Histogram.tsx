@@ -195,7 +195,8 @@ var Histogram = (function () {
         );
       var { scaleYAxis = props.defaultScaleYAxis, yaxisMin = 0 } =
         props.uiState;
-      xaxisMax = assignBin(binSize, binStart, xaxisMax ?? 0) + binSize;
+      xaxisMax =
+        assignBin(binSize ?? 0, binStart, xaxisMax ?? 0) + (binSize ?? 0);
       return {
         yaxisMax,
         xaxisMin,
@@ -685,11 +686,11 @@ var Histogram = (function () {
             inline
             hideReset
             value={{
-              min: formatDate(timeformat ?? 'yyyy-MM-dd', xaxisMin),
-              max: formatDate(timeformat ?? 'yyyy-MM-dd', xaxisMax),
+              min: formatDate(timeformat ?? 'yyyy-MM-dd', xaxisMin ?? 0),
+              max: formatDate(timeformat ?? 'yyyy-MM-dd', xaxisMax ?? 0),
             }}
-            start={formatDate(timeformat ?? 'yyyy-MM-dd', valuesMin)}
-            end={formatDate(timeformat ?? 'yyyy-MM-dd', valuesMax)}
+            start={formatDate(timeformat ?? 'yyyy-MM-dd', valuesMin ?? 0)}
+            end={formatDate(timeformat ?? 'yyyy-MM-dd', valuesMax ?? 0)}
             onChange={(value) =>
               this.setXAxisRange(
                 parseDate(value.min).getTime(),
@@ -719,6 +720,7 @@ var Histogram = (function () {
           value={{ min: yaxisMin ?? 0, max: yaxisMax ?? 0 }}
           start={0}
           end={Infinity}
+          step={1}
           onChange={(value) =>
             this.setYAxisRange(Number(value.min), Number(value.max))
           }
