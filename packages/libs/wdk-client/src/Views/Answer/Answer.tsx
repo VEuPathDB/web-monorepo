@@ -9,7 +9,8 @@ import React, {
 } from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
 import Icon from '../../Components/Icon/IconAlt';
-import { Mesa, MesaState } from '@veupathdb/coreui/lib/components/Mesa';
+import { Mesa } from '@veupathdb/coreui/lib/components/Mesa';
+import { MesaStateProps } from '@veupathdb/coreui/lib/components/Mesa/types';
 import Dialog from '../../Components/Overlays/Dialog';
 import { wrappable } from '../../Utils/ComponentUtils';
 import AttributeSelector from '../../Views/Answer/AnswerAttributeSelector';
@@ -90,7 +91,7 @@ const Answer: FC<AnswerProps> = (props) => {
             <AttributePopup {...(props as any)} />
           </div>
         </div>
-        <Mesa state={tableState as any} />
+        <Mesa state={tableState} />
       </div>
     </div>
   );
@@ -316,15 +317,14 @@ function useTableState(props: AnswerProps) {
   const headerWrapperStyle = { zIndex: 2 };
 
   return useMemo(
-    () =>
-      MesaState.create({
-        rows,
-        columns,
-        options,
-        uiState,
-        eventHandlers,
-        headerWrapperStyle,
-      }),
+    (): MesaStateProps<RecordInstance, string> => ({
+      rows,
+      columns,
+      options,
+      uiState,
+      eventHandlers,
+      headerWrapperStyle,
+    }),
     [rows, columns, options, uiState, eventHandlers]
   );
 }
