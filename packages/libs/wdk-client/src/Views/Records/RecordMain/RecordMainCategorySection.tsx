@@ -67,7 +67,7 @@ class RecordMainCategorySection extends React.PureComponent<Props> {
       case 'attribute':
         return (
           <RecordAttributeSection
-            attribute={(category as IndividualNode).wdkReference}
+            attribute={(category as IndividualNode).wdkReference as any}
             ontologyProperties={category.properties}
             record={record}
             recordClass={recordClass}
@@ -81,7 +81,7 @@ class RecordMainCategorySection extends React.PureComponent<Props> {
         const individualCategory = category as IndividualNode;
         return (
           <RecordTableSection
-            table={individualCategory.wdkReference}
+            table={individualCategory.wdkReference as any}
             tableState={tableStates[individualCategory.wdkReference.name]}
             updateTableState={(tableState) =>
               updateTableState(individualCategory.wdkReference.name, tableState)
@@ -99,7 +99,7 @@ class RecordMainCategorySection extends React.PureComponent<Props> {
       default: {
         let id = getId(category);
         let categoryName = getDisplayName(category);
-        let Header = 'h' + Math.min(depth + 2, 6);
+        let Header = ('h' + Math.min(depth + 2, 6)) as keyof React.ReactHTML;
         let headerContent = (
           <span>
             {categoryName}
@@ -113,11 +113,12 @@ class RecordMainCategorySection extends React.PureComponent<Props> {
           </span>
         );
         if (depth === 0) {
+          const HeaderElement = Header as any;
           return (
             <>
-              <Header id={id} className="wdk-RecordSectionHeader">
+              <HeaderElement id={id} className="wdk-RecordSectionHeader">
                 {headerContent}
-              </Header>
+              </HeaderElement>
               <div className="wdk-RecordSectionChildren">{children}</div>
             </>
           );
