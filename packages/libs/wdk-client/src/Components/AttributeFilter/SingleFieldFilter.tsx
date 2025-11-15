@@ -92,11 +92,12 @@ export default class SingleFieldFilter extends React.Component<SingleFieldFilter
 
     const restProps = omit(this.props, ['filters']);
 
+    const Component = FieldDetail as any;
     return (
-      FieldDetail && (
+      Component && (
         <React.Fragment>
-          <FieldDetail
-            filter={filter as any}
+          <Component
+            filter={filter}
             onChange={this.handleFieldFilterChange}
             {...restProps}
           />

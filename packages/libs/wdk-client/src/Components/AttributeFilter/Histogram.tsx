@@ -124,11 +124,14 @@ var Histogram = (function () {
 
     componentDidMount() {
       ($ as any)(window).on('resize', this.handleResize);
-      ($(ReactDOM.findDOMNode(this)) as any)
-        .on('plotselected .chart', this.handlePlotSelected.bind(this))
-        .on('plotselecting .chart', this.handlePlotSelecting.bind(this))
-        .on('plotunselected .chart', this.handlePlotUnselected.bind(this))
-        .on('plothover .chart', this.handlePlotHover.bind(this));
+      const node = ReactDOM.findDOMNode(this);
+      if (node) {
+        ($(node) as any)
+          .on('plotselected .chart', this.handlePlotSelected.bind(this))
+          .on('plotselecting .chart', this.handlePlotSelecting.bind(this))
+          .on('plotunselected .chart', this.handlePlotUnselected.bind(this))
+          .on('plothover .chart', this.handlePlotHover.bind(this));
+      }
 
       this.createPlot();
       this.createTooltip();
@@ -195,8 +198,8 @@ var Histogram = (function () {
         );
       var { scaleYAxis = props.defaultScaleYAxis, yaxisMin = 0 } =
         props.uiState;
-      xaxisMax =
-        assignBin(binSize ?? 0, binStart, xaxisMax ?? 0) + (binSize ?? 0);
+      const assignedBin = assignBin(binSize ?? 0, binStart, xaxisMax ?? 0);
+      xaxisMax = (assignedBin ?? 0) + (binSize ?? 0);
       return {
         yaxisMax,
         xaxisMin,
@@ -480,8 +483,11 @@ var Histogram = (function () {
 
       if (this.plot) this.plot.destroy();
 
-      this.$chart = ($(ReactDOM.findDOMNode(this)) as any).find('.chart');
-      this.plot = ($ as any).plot(this.$chart, seriesData, plotOptions);
+      const node = ReactDOM.findDOMNode(this);
+      if (node) {
+        this.$chart = ($(node) as any).find('.chart');
+        this.plot = ($ as any).plot(this.$chart, seriesData, plotOptions);
+      }
     }
 
     createTooltip() {
