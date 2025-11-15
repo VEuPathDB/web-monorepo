@@ -108,7 +108,7 @@ function getTitle(
 
 interface DownloadFormContainerProps {
   scope: string | null;
-  resultType: ResultType;
+  resultType: ResultType | null;
   availableReporters: Reporter[];
   selectedReporter: string | null;
   recordClass: RecordClass;
@@ -135,7 +135,7 @@ class DownloadFormContainer extends Component<DownloadFormContainerProps> {
   async onSubmit(): Promise<void> {
     const { submitForm, resultType, selectedReporter, formState, viewFilters } =
       this.props;
-    if (selectedReporter) {
+    if (selectedReporter && resultType) {
       await submitForm(resultType, selectedReporter, formState, viewFilters);
     }
   }

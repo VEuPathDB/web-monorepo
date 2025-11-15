@@ -1,5 +1,5 @@
 import React from 'react';
-import { wrappable, getChangeHandler } from '../../../Utils/ComponentUtils';
+import { wrappable } from '../../../Utils/ComponentUtils';
 import { SaveButton } from '@veupathdb/coreui/lib/components/buttons';
 import TextBox from '../../../Components/InputControls/TextBox';
 import { alert } from '../../../Utils/Platform';
@@ -47,17 +47,20 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
   passwordForm,
   userEvents,
 }) => {
+  const handleChange = (newValue: string) => {
+    userEvents.updateChangePasswordForm({
+      ...passwordForm,
+      [name]: newValue,
+    });
+  };
+
   return (
     <div style={{ margin: '5px' }}>
       <label>{display}:</label>
       <TextBox
         type="password"
         value={passwordForm[name]}
-        onChange={getChangeHandler(
-          name,
-          userEvents.updateChangePasswordForm,
-          passwordForm
-        )}
+        onChange={handleChange}
       />
     </div>
   );
