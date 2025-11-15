@@ -1,8 +1,8 @@
 import { ok } from '@veupathdb/wdk-client/lib/Utils/Json';
 
-export default (wdkService) => ({
+export default (wdkService: any): any => ({
   ...wdkService,
-  getStudies(attributes, tables = []) {
+  getStudies(attributes: string[], tables: string[] = []) {
     return wdkService.sendRequest(ok, {
       useCache: true,
       cacheId: 'studies',

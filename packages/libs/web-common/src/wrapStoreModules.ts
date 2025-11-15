@@ -20,7 +20,7 @@ import { newsReducer } from './App/NewsSidebar/NewsModule';
 
 // const composeReducerWith = curryN(2, composeReducers);
 
-export default (storeModules) => ({
+export default (storeModules: any): any => ({
   ...storeModules,
   searchCards: {
     key: 'searchCards',
@@ -42,7 +42,7 @@ export default (storeModules) => ({
   contactUs,
   globalData: {
     ...storeModules.globalData,
-    reduce: (state, action) => {
+    reduce: (state: any, action: any) => {
       state = storeModules.globalData.reduce(state, action);
       return ebrcGlobalData(state, action);
     },
@@ -64,7 +64,7 @@ export default (storeModules) => ({
 //   update('downloadForm', module => ({ ...module, reduce: module.makeReducer(selectReporterComponent) }))
 // );
 
-function ebrcGlobalData(state, { type, payload }) {
+function ebrcGlobalData(state: any, { type, payload }: any): any {
   switch (type) {
     case SITE_CONFIG_LOADED:
       return Object.assign({}, state, {
