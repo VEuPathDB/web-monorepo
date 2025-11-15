@@ -104,17 +104,14 @@ const PLOT_SETTINGS_OPEN_KEY = 'wdk/filterParam/plotSettingsOpen';
 var Histogram = (function () {
   /** Common histogram component */
   class LazyHistogram extends React.Component<HistogramProps, HistogramState> {
-    handleResize: () => void;
-    emitStateChange: (uiState: UIState) => void;
-    getRange: (distribution: DistributionEntry[]) => {
-      min: number;
-      max: number;
-    };
-    getNumFixedDigits: (distribution: DistributionEntry[]) => number;
-    getDefaultBinSize: (props: HistogramProps) => number;
     plot: any;
     $chart: any;
     tooltip: any;
+    handleResize: any;
+    emitStateChange: any;
+    getRange: any;
+    getNumFixedDigits: any;
+    getDefaultBinSize: any;
 
     constructor(props: HistogramProps) {
       super(props);
@@ -131,8 +128,8 @@ var Histogram = (function () {
     }
 
     componentDidMount() {
-      $(window).on('resize', this.handleResize);
-      $(ReactDOM.findDOMNode(this))
+      ($ as any)(window).on('resize', this.handleResize);
+      ($(ReactDOM.findDOMNode(this)) as any)
         .on('plotselected .chart', this.handlePlotSelected.bind(this))
         .on('plotselecting .chart', this.handlePlotSelecting.bind(this))
         .on('plotunselected .chart', this.handlePlotUnselected.bind(this))
@@ -483,8 +480,8 @@ var Histogram = (function () {
 
       if (this.plot) this.plot.destroy();
 
-      this.$chart = $(ReactDOM.findDOMNode(this)).find('.chart');
-      this.plot = $.plot(this.$chart, seriesData, plotOptions);
+      this.$chart = ($(ReactDOM.findDOMNode(this)) as any).find('.chart');
+      this.plot = ($ as any).plot(this.$chart, seriesData, plotOptions);
     }
 
     createTooltip() {
@@ -852,7 +849,7 @@ var Histogram = (function () {
     }
   }
 
-  LazyHistogram.defaultProps = {
+  (LazyHistogram as any).defaultProps = {
     xaxisLabel: 'X-Axis',
     yaxisLabel: 'Y-Axis',
     selectedMin: null,
@@ -864,10 +861,14 @@ var Histogram = (function () {
   };
 
   return lazy<HistogramProps>(async () => {
+    // @ts-ignore - vendored script-loader imports
     await import('!!script-loader!../../../vendored/flot/jquery.flot');
     await Promise.all([
+      // @ts-ignore - vendored script-loader imports
       import('!!script-loader!../../../vendored/flot/jquery.flot.categories'),
+      // @ts-ignore - vendored script-loader imports
       import('!!script-loader!../../../vendored/flot/jquery.flot.selection'),
+      // @ts-ignore - vendored script-loader imports
       import('!!script-loader!../../../vendored/flot/jquery.flot.time'),
     ]);
   })(LazyHistogram);

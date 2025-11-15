@@ -85,9 +85,9 @@ function FieldFilter(props: FieldFilterProps) {
               props.activeFieldState.summary == null &&
               props.activeFieldState.leafSummaries == null) ||
             props.dataCount == null ? null : isMulti(props.activeField) ? (
-            <MultiFieldFilter {...props} />
+            <MultiFieldFilter {...(props as any)} />
           ) : (
-            <SingleFieldFilter {...props} />
+            <SingleFieldFilter {...(props as any)} />
           )}
         </React.Fragment>
       )}

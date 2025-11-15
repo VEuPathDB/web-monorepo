@@ -75,11 +75,11 @@ export default class FilterList extends React.Component<FilterListProps, {}> {
           ...containerValue,
           filters: containerValue.filters.filter((f: any) => f !== filter),
         },
-      };
+      } as Filter;
       this.props.onFiltersChange(
-        otherFilters.concat(
-          shouldAddFilter(nextContainerFilter) ? [nextContainerFilter] : []
-        ) as Filter[]
+        shouldAddFilter(nextContainerFilter)
+          ? otherFilters.concat(nextContainerFilter)
+          : otherFilters
       );
     } else {
       this.props.onFiltersChange(

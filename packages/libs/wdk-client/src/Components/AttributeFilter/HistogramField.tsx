@@ -151,7 +151,9 @@ export default class HistogramField extends React.Component<
 
   cacheDistributionOperations(props: HistogramFieldProps) {
     this.convertedDistribution = props.distribution.map((entry) =>
-      Object.assign({}, entry, { value: props.toHistogramValue(entry.value) })
+      Object.assign({}, entry, {
+        value: entry.value != null ? props.toHistogramValue(entry.value) : 0,
+      })
     );
     var values = this.convertedDistribution.map(
       (entry) => entry.value
@@ -211,8 +213,8 @@ export default class HistogramField extends React.Component<
   }
 
   _updateFilterValueFromSelection(range: RangeValue) {
-    const min = this.formatRangeValue(range.min);
-    const max = this.formatRangeValue(range.max);
+    const min = this.formatRangeValue(range.min ?? null);
+    const max = this.formatRangeValue(range.max ?? null);
     // XXX Snap to actual values?
     this.updateFilterValue({ min, max });
   }
@@ -290,7 +292,9 @@ export default class HistogramField extends React.Component<
     var selectedMax = max == null ? null : this.props.toHistogramValue(max);
 
     var selectionTotal =
-      filter && filter.selection && (filter.selection as any).length;
+      filter &&
+      (filter as any).selection &&
+      ((filter as any).selection as any).length;
 
     var selection =
       selectionTotal != null ? ' (' + selectionTotal + ' selected) ' : null;
@@ -340,7 +344,7 @@ export default class HistogramField extends React.Component<
         </div>
 
         <Histogram
-          distribution={this.convertedDistribution}
+          distribution={this.convertedDistribution as any}
           onSelected={this.updateFilterValueFromSelection}
           selectedMin={selectedMin}
           selectedMax={selectedMax}
@@ -348,7 +352,7 @@ export default class HistogramField extends React.Component<
           timeformat={this.props.timeformat}
           xaxisLabel={activeField.display}
           yaxisLabel={displayName}
-          uiState={activeFieldState}
+          uiState={activeFieldState as any}
           onUiStateChange={this.handleRangeScaleChange}
           truncateYAxis={this.props.histogramTruncateYAxisDefault}
           defaultScaleYAxis={this.props.histogramScaleYAxisDefault}
