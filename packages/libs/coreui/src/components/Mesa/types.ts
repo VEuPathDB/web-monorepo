@@ -29,6 +29,7 @@ export interface MesaStateProps<
     emptinessCulprit?: 'search' | 'nocolumns' | 'filters' | 'nodata';
     expandedRows?: (number | string)[];
     groupBySelected?: boolean;
+    columnOrder?: string[];
   };
   headerWrapperStyle?: CSSProperties;
   options?: {
@@ -95,7 +96,7 @@ export interface MesaStateProps<
   };
 }
 
-interface MesaAction<Row, Key = DefaultColumnKey<Row>> {
+export interface MesaAction<Row, Key = DefaultColumnKey<Row>> {
   selectionRequired?: boolean;
   element: React.ReactNode;
   callback?: (row: Row, columns: MesaColumn<Row, Key>[]) => void;
