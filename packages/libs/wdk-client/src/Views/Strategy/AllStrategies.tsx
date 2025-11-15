@@ -13,6 +13,7 @@ import {
   MesaSortObject,
   MesaColumn,
   MesaAction,
+  MesaStateProps,
 } from '@veupathdb/coreui/lib/components/Mesa/types';
 import RealTimeSearchBox from '../../Components/SearchBox/RealTimeSearchBox';
 import { StrategyControls } from '../../Views/Strategy/StrategyControls';
@@ -491,7 +492,7 @@ function StrategiesTable(props: TableProps) {
     [mesaRows, searchTerm]
   );
 
-  const tableState = MesaState.create({
+  const tableState: MesaStateProps<StrategySummary, string> = {
     rows: mesaRows,
     filteredRows: mesaFilteredRows,
     columns: mesaColumns,
@@ -499,12 +500,11 @@ function StrategiesTable(props: TableProps) {
     actions: mesaActions,
     eventHandlers: mesaEventHandlers,
     uiState,
-  });
+  };
 
   return (
     <React.Fragment>
-      {/* Type assertion needed: MesaState.create returns Partial but Mesa expects full */}
-      <Mesa state={tableState as any}>
+      <Mesa state={tableState}>
         <h3 className={cx('--Title')}>{props.title}</h3>
         <RealTimeSearchBox
           searchTerm={searchTerm}
