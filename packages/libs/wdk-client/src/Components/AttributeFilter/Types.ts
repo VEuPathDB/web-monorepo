@@ -9,6 +9,8 @@ interface BaseField {
   display: string;
   parent?: string;
   isRange?: boolean;
+  description?: string;
+  variableName?: string;
 }
 
 export interface StringMemberField extends BaseField {
@@ -147,6 +149,7 @@ export type ValueCounts = Array<{
 }>;
 
 export type OntologyTermSummary = {
+  term: string;
   valueCounts: ValueCounts;
   internalsCount: number;
   internalsFilteredCount: number;

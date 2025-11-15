@@ -103,9 +103,15 @@ export default function SaveAsStrategyForm(props: Props) {
   );
   const tableState = MesaState.create({
     rows: mesaRows,
-    columns: mesaColumns,
-    eventHandlers,
-    uiState: { sort },
+    columns: mesaColumns as any,
+    eventHandlers: {
+      ...eventHandlers,
+      onRowSelect: (s: StrategySummary) => {
+        setName(s.name);
+        setSelectedStrategyId(s.strategyId);
+      },
+    },
+    uiState: { sort } as any,
     options: {
       useStickyHeader: true,
       tableBodyMaxHeight: '50vh',
@@ -115,10 +121,6 @@ export default function SaveAsStrategyForm(props: Props) {
           '--TableRow',
           s.strategyId === selectedStrategyId ? 'selected' : 'unselected'
         ),
-      onRowClick: (s: StrategySummary) => {
-        setName(s.name);
-        setSelectedStrategyId(s.strategyId);
-      },
     },
   });
 
@@ -160,7 +162,7 @@ export default function SaveAsStrategyForm(props: Props) {
       </div>
       <form onSubmit={handleSubmit}>
         <div className={cx('--SelectorPanel')}>
-          <Mesa state={tableState}></Mesa>
+          <Mesa state={tableState as any}></Mesa>
           <div className={cx('--InputLine')}>
             <label htmlFor="saveAsInput">Save as</label>
             <input

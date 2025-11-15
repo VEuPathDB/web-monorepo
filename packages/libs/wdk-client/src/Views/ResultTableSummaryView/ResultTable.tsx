@@ -114,14 +114,17 @@ function ResultTable(props: Props) {
     options,
     actions:
       actions &&
-      actions.map((action) => ({
-        selectionRequired: false,
-        element: action.element,
-      })),
-    columns,
+      actions.map(
+        (action) =>
+          ({
+            selectionRequired: false,
+            element: action.element,
+          } as any)
+      ),
+    columns: columns as any,
     rows,
     eventHandlers,
-    uiState,
+    uiState: uiState as any,
   });
 
   const downloadLink =
@@ -174,7 +177,7 @@ function ResultTable(props: Props) {
   );
 
   return (
-    <Mesa state={tableState}>
+    <Mesa state={tableState as any}>
       {renderToolbarContent({
         addColumnsNode,
         addToBasketNode,
