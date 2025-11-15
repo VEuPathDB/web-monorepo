@@ -1,8 +1,15 @@
 import { orderBy, uniq, ListIteratee } from 'lodash';
-import React, { useMemo, useState, useCallback, FC, ReactNode, FormEvent } from 'react';
+import React, {
+  useMemo,
+  useState,
+  useCallback,
+  FC,
+  ReactNode,
+  FormEvent,
+} from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
 import Icon from '../../Components/Icon/IconAlt';
-import { Mesa, MesaState, MesaStateOptions } from '@veupathdb/coreui/lib/components/Mesa';
+import { Mesa, MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 import Dialog from '../../Components/Overlays/Dialog';
 import { wrappable } from '../../Utils/ComponentUtils';
 import AttributeSelector from '../../Views/Answer/AnswerAttributeSelector';
@@ -135,9 +142,7 @@ const AttributePopup: FC<AttributePopupProps> = (props) => {
       event.preventDefault();
       event.stopPropagation();
       const nextVisibleAttributes = selectedAttributes
-        .map((attrName) =>
-          allAttributes.find((attr) => attr.name === attrName)
-        )
+        .map((attrName) => allAttributes.find((attr) => attr.name === attrName))
         .filter((attr): attr is AttributeField => attr !== undefined);
       onChangeColumns(nextVisibleAttributes);
       setIsOpen(false);
@@ -186,9 +191,10 @@ interface MesaColumn {
   renderCell: (cellData: { row: RecordInstance }) => ReactNode;
 }
 
-interface MesaOptions extends MesaStateOptions {
+interface MesaOptions {
   useStickyFirstNColumns?: number;
   deriveRowClassName?: (record: RecordInstance) => string | undefined;
+  [key: string]: any;
 }
 
 interface MesaUIState {
@@ -225,7 +231,7 @@ function useTableState(props: AnswerProps) {
           helpText: attribute.help,
           name: attribute.displayName,
           sortable: attribute.isSortable,
-          primary: attribute.isPrimary,
+          primary: attribute.isPrimary ?? false,
           moveable: true,
           renderCell: ({ row: record }) => {
             const cellProps: CellContentProps = {
@@ -253,7 +259,8 @@ function useTableState(props: AnswerProps) {
       tableBodyMaxHeight: '70vh',
       deriveRowClassName:
         deriveRowClassName &&
-        ((record: RecordInstance) => deriveRowClassName({ recordClass, record })),
+        ((record: RecordInstance) =>
+          deriveRowClassName({ recordClass, record })),
     }),
     [deriveRowClassName, useStickyFirstNColumns, recordClass]
   );
@@ -291,7 +298,9 @@ function useTableState(props: AnswerProps) {
   const eventHandlers = useMemo(
     () => ({
       onSort({ key }: { key: string }, direction: string) {
-        onSort([{ attributeName: key, direction: direction as 'ASC' | 'DESC' }]);
+        onSort([
+          { attributeName: key, direction: direction as 'ASC' | 'DESC' },
+        ]);
       },
       onColumnReorder: (colKey: string, newIndex: number) => {
         const currentIndex = columns.findIndex((col) => col.key === colKey);
@@ -331,7 +340,10 @@ function makeSortKeys(
         castValue(
           record.attributes[sortingAttribute.name] &&
             typeof record.attributes[sortingAttribute.name] === 'string'
-            ? (record.attributes[sortingAttribute.name] as string).replace(/,/g, '')
+            ? (record.attributes[sortingAttribute.name] as string).replace(
+                /,/g,
+                ''
+              )
             : record.attributes[sortingAttribute.name]
         ),
     ];
@@ -340,9 +352,9 @@ function makeSortKeys(
       (record: RecordInstance) =>
         castValue(
           record.attributes[sortingAttribute.name] &&
-          typeof record.attributes[sortingAttribute.name] === 'object' &&
-          record.attributes[sortingAttribute.name] !== null &&
-          'displayText' in record.attributes[sortingAttribute.name]
+            typeof record.attributes[sortingAttribute.name] === 'object' &&
+            record.attributes[sortingAttribute.name] !== null &&
+            'displayText' in record.attributes[sortingAttribute.name]
             ? (record.attributes[sortingAttribute.name] as any).displayText
             : record.attributes[sortingAttribute.name]
         ),
@@ -365,7 +377,9 @@ function makeSortKeys(
   }
 }
 
-function castValue(value: AttributeValue | string | null | undefined): number | string {
+function castValue(
+  value: AttributeValue | string | null | undefined
+): number | string {
   if (value == null) return Number.NEGATIVE_INFINITY;
   const stringValue = typeof value === 'string' ? value : String(value);
   const numberValue = Number(stringValue);
