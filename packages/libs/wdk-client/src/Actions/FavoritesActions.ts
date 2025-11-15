@@ -2,12 +2,12 @@ import { ActionThunk } from '../Core/WdkMiddleware';
 import { Favorite, RecordClass } from '../Utils/WdkModel';
 import { ServiceError } from '../Service/ServiceError';
 import { MesaState } from '@veupathdb/coreui/lib/components/Mesa';
+import type { MesaStateProps } from '@veupathdb/coreui/lib/components/Mesa/types';
 
 // Types
 // -----
 
-// FIXME Determine the actual type from Mesa
-type TableState = {};
+type TableState = Partial<MesaStateProps<Favorite>>;
 
 export type Action =
   | SortTableAction
@@ -482,11 +482,11 @@ export function loadFavoritesList(): ActionThunk<ListAction> {
 }
 
 export function saveCellData(
-  tableState: {},
+  tableState: TableState,
   updatedFavorite: Favorite
 ): ActionThunk<SaveAction> {
   return ({ wdkService }) => {
-    const rows = MesaState.getRows(tableState);
+    const rows = MesaState.getRows(tableState) as Favorite[];
     const updatedRows = rows.map((fav: Favorite) =>
       fav.id === updatedFavorite.id ? updatedFavorite : fav
     );
@@ -503,12 +503,12 @@ export function saveCellData(
 }
 
 export function deleteFavorites(
-  tableState: {},
+  tableState: TableState,
   deletedFavorites: Favorite[]
 ): ActionThunk<DeleteAction> {
   return ({ wdkService }) => {
     const deletedIds = deletedFavorites.map((fav: Favorite) => fav.id);
-    const rows = MesaState.getRows(tableState);
+    const rows = MesaState.getRows(tableState) as Favorite[];
     const updatedRows = rows.filter(
       (fav: Favorite) => !deletedIds.includes(fav.id)
     );
@@ -525,12 +525,12 @@ export function deleteFavorites(
 }
 
 export function undeleteFavorites(
-  tableState: {},
+  tableState: TableState,
   undeletedFavorites: Favorite[]
 ): ActionThunk<AddAction> {
   return ({ wdkService }) => {
     const ids = undeletedFavorites.map((favorite) => favorite.id);
-    const rows = MesaState.getRows(tableState);
+    const rows = MesaState.getRows(tableState) as Favorite[];
     const updatedTableState = MesaState.setRows(tableState, [
       ...rows,
       ...undeletedFavorites,
