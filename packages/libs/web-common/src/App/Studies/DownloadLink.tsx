@@ -4,11 +4,23 @@ import { compose } from 'lodash/fp';
 
 import { IconAlt as Icon, Mesa } from '@veupathdb/wdk-client/lib/Components';
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { attemptAction } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionActionCreators';
+import { attemptAction as attemptActionCreator } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionActionCreators';
 import { connect } from 'react-redux';
 import { isPrereleaseStudy } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
+import { UserPermissions } from '@veupathdb/study-data-access/lib/study-access/permission';
 
-function DownloadLink(props) {
+interface DownloadLinkProps {
+  attemptAction: typeof attemptActionCreator;
+  studyAccess: string;
+  studyId: string;
+  studyUrl: string;
+  permissions?: UserPermissions;
+  className?: string;
+  linkText?: string;
+  iconFirst?: boolean;
+}
+
+function DownloadLink(props: DownloadLinkProps) {
   const {
     attemptAction,
     studyAccess,
@@ -61,5 +73,5 @@ function DownloadLink(props) {
 // attemptAction gets bound to the store, the store receives the action, which will get executed when user clicks.
 export default compose(
   wrappable,
-  connect(null, { attemptAction })
+  connect(null, { attemptAction: attemptActionCreator })
 )(DownloadLink);

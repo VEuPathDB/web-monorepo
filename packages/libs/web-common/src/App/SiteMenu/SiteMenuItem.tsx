@@ -2,20 +2,57 @@ import React from 'react';
 
 import './SiteMenuItem.scss';
 import { IconAlt as Icon, Link } from '@veupathdb/wdk-client/lib/Components';
+import { MenuItem } from '../../util/menuItems';
+import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
-class SiteMenuItem extends React.Component {
-  constructor(props) {
+interface SiteMenuItemConfig {
+  webAppUrl: string;
+  projectId?: string;
+}
+
+interface SiteMenuItemActions {
+  showLoginWarning: (message: string, href: string) => void;
+}
+
+interface ExtendedMenuItem extends Omit<MenuItem, 'children'> {
+  appUrl?: string;
+  isVisible?: boolean;
+  children?:
+    | MenuItem[]
+    | ((context: {
+        webAppUrl: string;
+        projectId?: string;
+        isFocused: boolean;
+      }) => MenuItem[]);
+}
+
+interface SiteMenuItemProps {
+  item: ExtendedMenuItem;
+  config: SiteMenuItemConfig;
+  actions: SiteMenuItemActions;
+  user: User;
+}
+
+interface SiteMenuItemState {
+  isFocused: boolean;
+}
+
+class SiteMenuItem extends React.Component<
+  SiteMenuItemProps,
+  SiteMenuItemState
+> {
+  constructor(props: SiteMenuItemProps) {
     super(props);
     this.state = { isFocused: false };
     this.focus = this.focus.bind(this);
     this.blur = this.blur.bind(this);
   }
 
-  focus(event) {
+  focus(event: React.MouseEvent) {
     this.setState({ isFocused: true });
   }
 
-  blur(event) {
+  blur(event: React.MouseEvent | React.TouchEvent) {
     this.setState({ isFocused: false });
   }
 
@@ -37,7 +74,7 @@ class SiteMenuItem extends React.Component {
 
     const { showLoginWarning } = actions;
     const isGuest = user.isGuest;
-    let handleClick = (e) => {
+    let handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
       if (item.onClick) {
         item.onClick(e);
       }

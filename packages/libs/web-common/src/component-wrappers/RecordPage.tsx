@@ -2,14 +2,28 @@ import React from 'react';
 import { RecordAttribute } from '@veupathdb/wdk-client/lib/Components';
 import { renderWithCustomElements } from '../util/customElements';
 import { findExportWith } from './util';
+import {
+  RecordInstance,
+  RecordClass,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 // Wrappers
 // --------
 
-export function RecordHeading(DefaultComponent) {
+interface RecordComponentProps {
+  record: RecordInstance;
+  recordClass: RecordClass;
+  overviewRef?: React.RefObject<HTMLDivElement>;
+  depth?: number;
+  [key: string]: any;
+}
+
+export function RecordHeading(
+  DefaultComponent: React.ComponentType<RecordComponentProps>
+) {
   const DynamicRecordHeading =
     makeDynamicWrapper('RecordHeading')(DefaultComponent);
-  return function EbrcRecordHeading(props) {
+  return function EbrcRecordHeading(props: RecordComponentProps) {
     return (
       <React.Fragment>
         <DynamicRecordHeading {...props} />
@@ -22,10 +36,12 @@ export function RecordHeading(DefaultComponent) {
   };
 }
 
-export function RecordMainSection(DefaultComponent) {
+export function RecordMainSection(
+  DefaultComponent: React.ComponentType<RecordComponentProps>
+) {
   const DynamicRecordMainSection =
     makeDynamicWrapper('RecordMainSection')(DefaultComponent);
-  return function EbrcRecordMainSection(props) {
+  return function EbrcRecordMainSection(props: RecordComponentProps) {
     return (
       <>
         <DynamicRecordMainSection {...props} />
@@ -67,9 +83,11 @@ const findRecordPageComponent = findExportWith(
  * const RecordTable = makeDynamicWrapper(findRecordPageComponent('RecordTable'));
  * ```
  */
-function makeDynamicWrapper(componentName) {
-  return function dynamicWrapper(DefaultComponent) {
-    return function DynamicWrapper(props) {
+function makeDynamicWrapper(componentName: string) {
+  return function dynamicWrapper(
+    DefaultComponent: React.ComponentType<RecordComponentProps>
+  ) {
+    return function DynamicWrapper(props: RecordComponentProps) {
       // Need to append the .js suffix for this to work. Not sure why this
       // changed, but probably related to the prepublish build. @dmfalke
       const ResolvedComponent =

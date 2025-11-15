@@ -8,7 +8,7 @@ const USER_AGREED_KEY = 'agreed-to-cookie-usage';
 
 const UserAgreedStore = {
   get: () => persistence.get(USER_AGREED_KEY, false),
-  set: (value) => persistence.set(USER_AGREED_KEY, Boolean(value)),
+  set: (value: boolean) => persistence.set(USER_AGREED_KEY, Boolean(value)),
 };
 
 const privacyPolicyLink = '/a/app/static-content/privacyPolicy.html';
@@ -16,7 +16,7 @@ const privacyPolicyLink = '/a/app/static-content/privacyPolicy.html';
 // Styles
 // ------
 
-const bannerStyle = {
+const bannerStyle: React.CSSProperties = {
   position: 'fixed',
   bottom: 0,
   left: 0,
@@ -32,23 +32,31 @@ const bannerStyle = {
   zIndex: 1000,
 };
 
-const linkStyle = {
+const linkStyle: React.CSSProperties = {
   color: '#96b1e9',
   textDecoration: 'underline',
   whiteSpace: 'nowrap',
 };
 
-const positStyle = {
+const positStyle: React.CSSProperties = {
   position: 'relative',
   bottom: '0.75em',
   marginLeft: '1em',
 };
 
+interface CookieBannerState {
+  userAgreed: boolean | undefined;
+  loading: boolean;
+}
+
 /**
  * Inform user of cookie usage. Display banner until user clicks agree button.
  */
-export default class CookieBanner extends React.Component {
-  constructor(props) {
+export default class CookieBanner extends React.Component<
+  {},
+  CookieBannerState
+> {
+  constructor(props: {}) {
     super(props);
     this.state = {
       userAgreed: undefined,

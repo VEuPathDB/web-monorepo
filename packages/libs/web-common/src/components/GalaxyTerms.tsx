@@ -1,17 +1,22 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import GalaxyPageLayout from './GalaxyPageLayout';
 import welcomeImage from '../../images/globus-01-welcome-page.png';
 
+interface GalaxyTermsProps {
+  user: any;
+  showLoginForm: () => void;
+}
+
 /**
  * Galaxy page component
  */
-export default function GalaxyTerms(props) {
+export default function GalaxyTerms(props: GalaxyTermsProps) {
   let { user, showLoginForm } = props;
   const displayName = useSelector(
-    (state) => state.globalData.config && state.globalData.config.displayName
+    (state: any) =>
+      state.globalData.config && state.globalData.config.displayName
   );
 
   return (
@@ -53,8 +58,3 @@ export default function GalaxyTerms(props) {
     </GalaxyPageLayout>
   );
 }
-
-GalaxyTerms.propTypes = {
-  user: PropTypes.object.isRequired,
-  showLoginForm: PropTypes.func.isRequired,
-};

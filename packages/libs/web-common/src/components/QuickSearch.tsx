@@ -1,38 +1,59 @@
 import { find, get, map } from 'lodash';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Mesa, Link } from '@veupathdb/wdk-client/lib/Components';
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import * as persistence from '../util/persistence';
 
-let ParamPropType = PropTypes.shape({
-  initialDisplayValue: PropTypes.string,
-  help: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  alternate: PropTypes.string,
-});
+interface Param {
+  initialDisplayValue?: string;
+  help: string;
+  name: string;
+  alternate?: string;
+  type?: string;
+}
 
-let ReferencePropType = PropTypes.shape({
-  name: PropTypes.string.isRequired,
-  recordClassName: PropTypes.string.isRequired,
-  paramName: PropTypes.string.isRequired,
-  displayName: PropTypes.string.isRequired,
-  alternate: PropTypes.string,
-  linkTemplate: PropTypes.string,
-  isDisabled: PropTypes.bool,
-});
+interface Reference {
+  name: string;
+  recordClassName: string;
+  paramName: string;
+  displayName: string;
+  alternate?: string;
+  linkTemplate?: string;
+  isDisabled?: boolean;
+  help: string;
+}
 
-let QuestionPropType = PropTypes.shape({
-  name: PropTypes.string,
-  parameters: PropTypes.arrayOf(ParamPropType),
-});
+interface Question {
+  name?: string;
+  fullName?: string;
+  parameters?: Param[];
+}
+
+interface QuickSearchItemState {
+  value: string;
+}
 
 /**
  * Quick search boxes that appear in header
  */
-class _QuickSearchItem extends Component {
-  constructor(props) {
+class _QuickSearchItem extends Component<
+  RouteComponentProps & {
+    webAppUrl: string;
+    question?: Question;
+    reference: Reference;
+  },
+  QuickSearchItemState
+> {
+  inputElement?: HTMLInputElement | null;
+
+  constructor(
+    props: RouteComponentProps & {
+      webAppUrl: string;
+      question?: Question;
+      reference: Reference;
+    }
+  ) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -48,22 +69,46 @@ class _QuickSearchItem extends Component {
 
   componentWillUnmount() {}
 
-  componentWillReceiveProps(props) {
+  componentWillReceiveProps(
+    props: RouteComponentProps & {
+      webAppUrl: string;
+      question?: Question;
+      reference: Reference;
+    }
+  ) {
     this.setStateFromProps(props);
   }
 
-  getStorageKey(props) {
+  getStorageKey(
+    props: RouteComponentProps & {
+      webAppUrl: string;
+      question?: Question;
+      reference: Reference;
+    }
+  ) {
     return 'ebrc::quicksearch::' + props.reference.name;
   }
 
-  getSearchParam(props) {
+  getSearchParam(
+    props: RouteComponentProps & {
+      webAppUrl: string;
+      question?: Question;
+      reference: Reference;
+    }
+  ) {
     return find(
       get(props, 'question.parameters'),
       ({ name }) => name === props.reference.paramName
     );
   }
 
-  setStateFromProps(props) {
+  setStateFromProps(
+    props: RouteComponentProps & {
+      webAppUrl: string;
+      question?: Question;
+      reference: Reference;
+    }
+  ) {
     let value = persistence.get(
       this.getStorageKey(props),
       get(this.getSearchParam(props), 'initialDisplayValue', '')
@@ -71,12 +116,12 @@ class _QuickSearchItem extends Component {
     this.setState({ value });
   }
 
-  handleChange(event) {
+  handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     this.setState({ value: event.target.value });
   }
 
   // Save value on submit
-  handleSubmit(event) {
+  handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     const { linkTemplate } = this.props.reference;
     persistence.set(this.getStorageKey(this.props), this.state.value);
     if (linkTemplate != null) {
@@ -150,7 +195,7 @@ class _QuickSearchItem extends Component {
                   value={question.fullName}
                 />
                 <input type="hidden" name="questionSubmit" value="Get Answer" />
-                {question.parameters.map((parameter) => {
+                {question.parameters!.map((parameter) => {
                   if (parameter === searchParam) return null;
                   let { initialDisplayValue = '', type, name } = parameter;
                   let typeTag = isStringParam(type) ? 'value' : 'array';
@@ -179,7 +224,7 @@ class _QuickSearchItem extends Component {
                   className="search-box"
                   value={this.state.value}
                   onChange={this.handleChange}
-                  name={'value(' + searchParam.name + ')'}
+                  name={'value(' + searchParam!.name + ')'}
                   ref={(el) => (this.inputElement = el)}
                 />
                 <input
@@ -201,16 +246,15 @@ class _QuickSearchItem extends Component {
   }
 }
 
-_QuickSearchItem.propTypes = {
-  history: PropTypes.object.isRequired,
-  webAppUrl: PropTypes.string.isRequired,
-  question: QuestionPropType,
-  reference: ReferencePropType.isRequired,
-};
-
 const QuickSearchItem = withRouter(_QuickSearchItem);
 
-function QuickSearch(props) {
+interface QuickSearchProps {
+  webAppUrl: string;
+  references?: Reference[];
+  questions?: Record<string, Question> | Error;
+}
+
+function QuickSearch(props: QuickSearchProps) {
   let { references, questions = {}, webAppUrl } = props;
 
   return (
@@ -241,21 +285,14 @@ function QuickSearch(props) {
   );
 }
 
-QuickSearch.propTypes = {
-  webAppUrl: PropTypes.string.isRequired,
-  references: PropTypes.arrayOf(ReferencePropType),
-  questions: PropTypes.oneOfType([
-    PropTypes.objectOf(QuestionPropType),
-    PropTypes.instanceOf(Error),
-  ]),
-};
-
 export default wrappable(QuickSearch);
 
 /**
  * @param {Parameter} parameter
  * @return {boolean}
  */
-function isStringParam(parameter) {
-  return ['StringParam', 'TimestampParam'].includes(parameter.type);
+function isStringParam(parameter?: string) {
+  return (
+    parameter != null && ['StringParam', 'TimestampParam'].includes(parameter)
+  );
 }

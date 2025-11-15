@@ -13,6 +13,12 @@ import {
   RecordFilter,
   useRecordFilter,
 } from '@veupathdb/wdk-client/lib/Views/Records/RecordTable/RecordFilter';
+import {
+  RecordInstance,
+  RecordClass,
+  AttributeField,
+  AttributeValue,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import {
   useDiyStudySummaryColumns,
@@ -21,8 +27,33 @@ import {
 
 import DataGrid from '@veupathdb/coreui/lib/components/grids/DataGrid';
 
+interface StudyAnswerControllerProps {
+  DefaultComponent: React.ComponentType<any>;
+  stateProps: {
+    records?: RecordInstance[];
+    unfilteredRecords?: RecordInstance[];
+    isLoading?: boolean;
+    meta?: {
+      totalCount: number;
+      [key: string]: any;
+    };
+    [key: string]: any;
+  };
+  permissions?: any;
+  renderCellContent?: (props: CellContentProps) => React.ReactElement;
+  useStickyFirstNColumns?: number;
+}
+
+interface CellContentProps {
+  value: AttributeValue;
+  attribute: AttributeField;
+  record: RecordInstance;
+  recordClass: RecordClass;
+  CellContent: React.ComponentType<CellContentProps>;
+}
+
 // wrapping WDKClient AnswerController for specific rendering on certain columns
-function StudyAnswerController(props) {
+function StudyAnswerController(props: StudyAnswerControllerProps) {
   const studyEntities = useSelector(
     (state) => state.studies && state.studies.entities
   );
@@ -213,87 +244,76 @@ let StudySearchCellContent = connect(
   null
 )(StudySearchIconLinks);
 
-/* prop types defined in WDKClient/../AnswerController.jsx
-   and used in Answer.jsx
- 
-interface CellContentProps {
-  value: AttributeValue;
-  attribute: AttributeField;
-  record: RecordInstance;
-  recordClass: RecordClass;
-}
-interface RenderCellProps extends CellContentProps {
-  CellContent: React.ComponentType<CellContentProps>;
-}
-*/
-
-const makeRenderCellContent = (permissions) => (props) => {
-  const shouldRenderAsPrerelease = isPrereleaseStudy(
-    props.record.attributes.study_access.toLowerCase(),
-    props.record.attributes.dataset_id,
-    permissions
-  );
-
-  if (props.attribute.name === 'primary_key' && useEda) {
-    return (
-      <Link to={`${makeEdaRoute(props.record.id[0].value)}/new/details`}>
-        {safeHtml(props.record.attributes.primary_key)}
-      </Link>
+const makeRenderCellContent =
+  (permissions: any) => (props: CellContentProps) => {
+    const shouldRenderAsPrerelease = isPrereleaseStudy(
+      props.record.attributes.study_access.toLowerCase(),
+      props.record.attributes.dataset_id,
+      permissions
     );
-  }
 
-  if (props.attribute.name === 'study_categories') {
-    let studyCategories = JSON.parse(props.record.attributes.study_categories);
-    return (
-      <div style={{ textAlign: 'center' }}>
-        {studyCategories &&
-          studyCategories.map((cat) => (
+    if (props.attribute.name === 'primary_key' && useEda) {
+      return (
+        <Link to={`${makeEdaRoute(props.record.id[0].value)}/new/details`}>
+          {safeHtml(props.record.attributes.primary_key)}
+        </Link>
+      );
+    }
+
+    if (props.attribute.name === 'study_categories') {
+      let studyCategories = JSON.parse(
+        props.record.attributes.study_categories
+      );
+      return (
+        <div style={{ textAlign: 'center' }}>
+          {studyCategories &&
+            studyCategories.map((cat) => (
+              <CategoryIcon category={cat} key={cat} />
+            ))}
+        </div>
+      );
+    }
+    if (props.attribute.name === 'disease') {
+      const disease = props.record.attributes.disease || 'Unknown';
+      const categories = disease.split(/\s*,\s*/);
+      return categories[0] === 'Unknown' ? (
+        <div>&nbsp;</div>
+      ) : (
+        <div style={{ textAlign: 'center' }}>
+          {categories.map((cat) => (
             <CategoryIcon category={cat} key={cat} />
           ))}
-      </div>
-    );
-  }
-  if (props.attribute.name === 'disease') {
-    const disease = props.record.attributes.disease || 'Unknown';
-    const categories = disease.split(/\s*,\s*/);
-    return categories[0] === 'Unknown' ? (
-      <div>&nbsp;</div>
-    ) : (
-      <div style={{ textAlign: 'center' }}>
-        {categories.map((cat) => (
-          <CategoryIcon category={cat} key={cat} />
-        ))}
-        <strong>{disease}</strong>
-      </div>
-    );
-  }
-  if (props.attribute.name === 'card_questions') {
-    return !shouldRenderAsPrerelease ? (
-      <StudySearchCellContent {...props} />
-    ) : (
-      <div>&nbsp;</div>
-    );
-  }
-  if (props.attribute.name === 'bulk_download_url') {
-    return !shouldRenderAsPrerelease ? (
-      <DownloadLink
-        studyId={props.record.id[0].value}
-        studyUrl={props.record.attributes.bulk_download_url.url}
-      />
-    ) : (
-      <div>&nbsp;</div>
-    );
-  }
-  return <props.CellContent {...props} />;
-};
+          <strong>{disease}</strong>
+        </div>
+      );
+    }
+    if (props.attribute.name === 'card_questions') {
+      return !shouldRenderAsPrerelease ? (
+        <StudySearchCellContent {...props} />
+      ) : (
+        <div>&nbsp;</div>
+      );
+    }
+    if (props.attribute.name === 'bulk_download_url') {
+      return !shouldRenderAsPrerelease ? (
+        <DownloadLink
+          studyId={props.record.id[0].value}
+          studyUrl={props.record.attributes.bulk_download_url.url}
+        />
+      ) : (
+        <div>&nbsp;</div>
+      );
+    }
+    return <props.CellContent {...props} />;
+  };
 
 // mapStateToProps()
-// - input props: StudySearchCellContent, of type RenderCellProps
+// - input props: StudySearchCellContent, of type CellContentProps
 //   will be converted into new props needed to render StudySearchIconLinks (defined in StudySearches.jsx)
 // --- entries = [{question, recordClass}],
 // --- webAppUrl
 //
-function mapStateToProps(state, props) {
+function mapStateToProps(state: any, props: CellContentProps) {
   const { record } = props;
   const { globalData, studies } = state;
   const { siteConfig } = globalData;

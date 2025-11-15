@@ -2,13 +2,19 @@ import { constant } from 'lodash';
 import React from 'react';
 import { Mesa, Link } from '@veupathdb/wdk-client/lib/Components';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { Study } from './StudyActionCreators';
 
 import './StudySearches.scss';
 
 const cx = makeClassNameHelper('StudySearchIconLinks');
 const renderEmpty = constant(null);
 
-export default function StudySearchIconLinks(props) {
+interface StudySearchIconLinksProps {
+  study?: Study;
+  renderNotFound?: () => JSX.Element | null;
+}
+
+export default function StudySearchIconLinks(props: StudySearchIconLinksProps) {
   const { study, renderNotFound = renderEmpty } = props;
 
   if (study == null) return renderNotFound();

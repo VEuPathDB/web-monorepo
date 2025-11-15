@@ -14,10 +14,37 @@ import { isUserFullyApprovedForStudy } from '@veupathdb/study-data-access/lib/st
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
+import {
+  RecordInstance,
+  RecordClass,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import './StudyRecordHeading.scss';
 
 const cx = makeClassNameHelper('StudyRecordHeadingSearchLinks');
+
+interface StudyRecordHeadingOwnProps {
+  record: RecordInstance;
+  recordClass: RecordClass;
+  DefaultComponent: React.ComponentType<any>;
+  showSearches?: boolean;
+  showDownload?: boolean;
+  showAnalyzeLink?: boolean;
+  entries?: any;
+  loading?: boolean;
+}
+
+interface StudyRecordHeadingDispatchProps {
+  attemptAction: typeof attemptAction;
+}
+
+interface StudyRecordHeadingStateProps {
+  permissions?: any;
+}
+
+type StudyRecordHeadingProps = StudyRecordHeadingOwnProps &
+  StudyRecordHeadingDispatchProps &
+  StudyRecordHeadingStateProps;
 
 function StudyRecordHeading({
   showSearches = false,
@@ -28,7 +55,7 @@ function StudyRecordHeading({
   attemptAction,
   permissions,
   ...props
-}) {
+}: StudyRecordHeadingProps) {
   const study = useMemo(
     () => ({
       id: props.record.attributes.dataset_id,
@@ -162,13 +189,23 @@ const mapDispatchToProps = {
 
 export default connect(null, mapDispatchToProps)(StudyRecordHeading);
 
-function isPrivateStudy(access, studyId, permissions) {
+function isPrivateStudy(
+  access: string,
+  studyId: string,
+  permissions: any
+): boolean {
   return (
     access === 'private' && !isUserFullyApprovedForStudy(permissions, studyId)
   );
 }
 
-function UserLink({ to, user, children }) {
+interface UserLinkProps {
+  to?: string;
+  user: any;
+  children: React.ReactNode;
+}
+
+function UserLink({ to, user, children }: UserLinkProps) {
   const dispatch = useDispatch();
   const history = useHistory();
   const dest = to

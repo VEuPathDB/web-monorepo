@@ -6,7 +6,7 @@ import Announcements from '../components/Announcements';
 /**
  * Wrap Header component with state from store and configured actionCreators
  */
-export const Header = () => () =>
+export const Header = (): React.ComponentType => () =>
   (
     <React.Fragment>
       <SiteHeader />

@@ -1,13 +1,37 @@
 import { isEmpty, identity } from 'lodash';
-import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
+interface MenuItem {
+  id?: string;
+  text: string | React.ReactNode;
+  tooltip?: string;
+  url?: string;
+  webAppUrl?: string;
+  route?: string;
+  target?: string;
+  onClick?: (e: React.MouseEvent) => void;
+  loginRequired?: boolean;
+  beta?: boolean;
+  new?: boolean;
+  children?: MenuItem[];
+  include?: string[];
+  exclude?: string[];
+}
+
+interface MenuProps {
+  webAppUrl: string;
+  showLoginWarning?: (feature: string, url: string) => void;
+  items: MenuItem[];
+  isGuest?: boolean;
+  projectId: string;
+}
+
 /**
  * Site menu
  */
-export default function Menu(props) {
+export default function Menu(props: MenuProps) {
   return (
     <ul className="eupathdb-Menu">
       {props.items.filter(identity).map((item, index) => (
@@ -24,30 +48,35 @@ export default function Menu(props) {
   );
 }
 
-Menu.propTypes = {
-  webAppUrl: PropTypes.string.isRequired,
-  showLoginWarning: PropTypes.func,
-  items: PropTypes.array.isRequired,
-  isGuest: PropTypes.bool,
-  projectId: PropTypes.string.isRequired,
-};
+interface MenuItemProps {
+  webAppUrl: string;
+  showLoginWarning?: (feature: string, url: string) => void;
+  item: MenuItem;
+  isGuest?: boolean;
+  projectId: string;
+}
 
 /**
  * Site menu item.
  */
-function MenuItem(props) {
+function MenuItem(props: MenuItemProps) {
   let { item, webAppUrl, showLoginWarning, isGuest, projectId } = props;
 
   if (!include(item, projectId)) return null;
 
-  let handleClick = (e) => {
+  let handleClick = (
+    e: React.MouseEvent<HTMLAnchorElement | HTMLDivElement>
+  ) => {
     if (item.onClick) {
       item.onClick(e);
     }
-    if (item.loginRequired && isGuest) {
+    if (item.loginRequired && isGuest && showLoginWarning) {
       e.preventDefault();
       e.stopPropagation();
-      showLoginWarning('use this feature', e.currentTarget.href);
+      showLoginWarning(
+        'use this feature',
+        (e.currentTarget as HTMLAnchorElement).href
+      );
     }
   };
   let baseClassName = 'eupathdb-MenuItemText';
@@ -99,7 +128,7 @@ function MenuItem(props) {
 
       {!isEmpty(item.children) && (
         <ul className="eupathdb-Submenu">
-          {item.children.filter(identity).map((childItem, index) => (
+          {item.children!.filter(identity).map((childItem, index) => (
             <MenuItem {...props} key={childItem.id || index} item={childItem} />
           ))}
         </ul>
@@ -108,18 +137,10 @@ function MenuItem(props) {
   );
 }
 
-MenuItem.propTypes = {
-  webAppUrl: PropTypes.string.isRequired,
-  showLoginWarning: PropTypes.func,
-  item: PropTypes.object.isRequired,
-  isGuest: PropTypes.bool,
-  projectId: PropTypes.string.isRequired,
-};
-
 /**
  * Determine is menu item should be include for projectId
  */
-function include(item, projectId) {
+function include(item: MenuItem, projectId: string) {
   const { include, exclude } = item;
   return (
     (include == null && exclude == null) ||
@@ -131,6 +152,6 @@ function include(item, projectId) {
 /**
  * Returns a render compatible element
  */
-function renderItemText(text) {
+function renderItemText(text: string | React.ReactNode) {
   return typeof text === 'string' ? safeHtml(text) : text;
 }

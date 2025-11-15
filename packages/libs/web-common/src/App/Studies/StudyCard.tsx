@@ -9,16 +9,41 @@ import { isPrereleaseStudy } from '@veupathdb/study-data-access/lib/data-restric
 import './StudyCard.scss';
 import { makeEdaRoute } from '../../routes';
 import { Tooltip } from '@veupathdb/coreui';
+import { Study } from './StudyActionCreators';
+import { UserPermissions } from '@veupathdb/study-data-access/lib/study-access/permission';
+import { attemptAction } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionActionCreators';
 
-class StudyCard extends React.Component {
-  constructor(props) {
+interface Analysis {
+  studyId: string;
+  [key: string]: any;
+}
+
+interface StudyCardData extends Omit<Study, 'downloadUrl'> {
+  downloadUrl?: {
+    url: string;
+  };
+}
+
+interface StudyCardProps {
+  card: StudyCardData;
+  permissions?: UserPermissions;
+  analyses?: Analysis[];
+  attemptAction?: typeof attemptAction;
+}
+
+interface StudyCardState {
+  searchType: string | null;
+}
+
+class StudyCard extends React.Component<StudyCardProps, StudyCardState> {
+  constructor(props: StudyCardProps) {
     super(props);
     this.state = { searchType: null };
     this.displaySearchType = this.displaySearchType.bind(this);
     this.clearDisplaySearchType = this.clearDisplaySearchType.bind(this);
   }
 
-  displaySearchType(searchType) {
+  displaySearchType(searchType: string) {
     this.setState({ searchType });
   }
 
@@ -56,7 +81,7 @@ class StudyCard extends React.Component {
           linkText="Download Data"
           studyAccess={card.access}
           studyId={card.id}
-          studyUrl={card.downloadUrl.url}
+          studyUrl={card.downloadUrl?.url || ''}
           attemptAction={attemptAction}
         />
       );

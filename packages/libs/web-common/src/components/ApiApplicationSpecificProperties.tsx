@@ -3,22 +3,42 @@ import { CheckboxList } from '@veupathdb/wdk-client/lib/Components';
 import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { useSelector } from 'react-redux';
 
+interface EmailPreference {
+  value: string;
+  display: string;
+}
+
+interface UserPreferences {
+  global: Record<string, string | null>;
+  project: Record<string, string | null>;
+}
+
+interface User {
+  preferences: UserPreferences;
+}
+
+interface ApiApplicationSpecificPropertiesProps {
+  user: User;
+  onPreferenceChange: (preferences: UserPreferences) => void;
+  contentClassName?: string;
+}
+
 /**
  * Provides hardcode relationships between user email preferences and the display labels in the order the data
  * should be displayed.
  * @type {*[]}
  */
-const EMAIL_PREFERENCE_DATA_CLINEPI = [
+const EMAIL_PREFERENCE_DATA_CLINEPI: EmailPreference[] = [
   { value: 'preference_global_email_clinepidb', display: 'ClinEpiDB' },
   { value: 'preference_global_email_microbiomedb', display: 'MicrobiomeDB' },
   { value: 'preference_global_email_apidb', display: 'VEuPathDB' },
 ];
-const EMAIL_PREFERENCE_DATA_MICROBIOME = [
+const EMAIL_PREFERENCE_DATA_MICROBIOME: EmailPreference[] = [
   { value: 'preference_global_email_microbiomedb', display: 'MicrobiomeDB' },
   { value: 'preference_global_email_clinepidb', display: 'ClinEpiDB' },
   { value: 'preference_global_email_apidb', display: 'VEuPathDB' },
 ];
-const EMAIL_PREFERENCE_DATA_GENOMICS = [
+const EMAIL_PREFERENCE_DATA_GENOMICS: EmailPreference[] = [
   { value: 'preference_global_email_amoebadb', display: 'AmoebaDB' },
   { value: 'preference_global_email_cryptodb', display: 'CryptoDB' },
   { value: 'preference_global_email_fungidb', display: 'FungiDB' },
@@ -41,9 +61,11 @@ const EMAIL_PREFERENCE_DATA_GENOMICS = [
  * This React component displays in a fieldset, the possible email alert preferences in the form of a checkbox list, overlaid
  * with the user's current selections.
  */
-function ApiApplicationSpecificProperties(props) {
+function ApiApplicationSpecificProperties(
+  props: ApiApplicationSpecificPropertiesProps
+) {
   const projectId = useSelector(
-    (state) => state.globalData.siteConfig.projectId
+    (state: any) => state.globalData.siteConfig.projectId
   );
   if (projectId == 'AllClinEpiDB') return null;
 
@@ -54,15 +76,12 @@ function ApiApplicationSpecificProperties(props) {
    * replaced with these and delivered to the store.
    * @param newPreferences - an array of selected items
    */
-  function onEmailPreferenceChange(newEmailPrefArray) {
+  function onEmailPreferenceChange(newEmailPrefArray: string[]) {
     // make a deep copy of existing prefs
-    let newPrefs = Object.assign(
-      {},
-      {
-        global: Object.assign({}, props.user.preferences.global),
-        project: Object.assign({}, props.user.preferences.project),
-      }
-    );
+    let newPrefs: UserPreferences = {
+      global: Object.assign({}, props.user.preferences.global),
+      project: Object.assign({}, props.user.preferences.project),
+    };
     // set all existing email prefs to null
     Object.keys(newPrefs.global).forEach(function (key) {
       if (key.startsWith('preference_global_email_'))
@@ -115,7 +134,7 @@ function ApiApplicationSpecificProperties(props) {
  * @param object
  * @returns {*}
  */
-function toNamedArray(object) {
+function toNamedArray(object: Record<string, string | null>) {
   return Object.keys(object).map((key) => ({ name: key, value: object[key] }));
 }
 

@@ -1,8 +1,10 @@
 import { webAppUrl } from '../config';
 
-export const UserMessageController = (WdkUserMessageController) =>
+export const UserMessageController = <T extends new (...args: any[]) => any>(
+  WdkUserMessageController: T
+) =>
   class EbrcUserMessageController extends WdkUserMessageController {
-    getContactUrl() {
+    getContactUrl(): string {
       return `${webAppUrl}/contactUs.do`;
     }
   };

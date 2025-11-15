@@ -10,21 +10,34 @@ import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { isPrereleaseStudy } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
 import { makeEdaRoute } from '../../routes';
 import './StudyMenu.scss';
+import { Study, StudySearch } from './StudyActionCreators';
+import { UserPermissions } from '@veupathdb/study-data-access/lib/study-access/permission';
 
-class StudyMenuItem extends React.Component {
-  constructor(props) {
+interface StudyMenuItemConfig {
+  webAppUrl: string;
+}
+
+interface StudyMenuItemProps {
+  study: Study;
+  permissions?: UserPermissions;
+  config: StudyMenuItemConfig;
+  isChildOfCollapsibleSection?: boolean;
+}
+
+class StudyMenuItem extends React.Component<StudyMenuItemProps> {
+  constructor(props: StudyMenuItemProps) {
     super(props);
     this.makeAppUrl = this.makeAppUrl.bind(this);
     this.renderSearchLink = this.renderSearchLink.bind(this);
   }
 
-  makeAppUrl(url) {
+  makeAppUrl(url: string): string {
     const { config } = this.props;
     const { webAppUrl } = config;
     return (webAppUrl ? webAppUrl : '') + (!url.indexOf('/') ? '' : '/') + url;
   }
 
-  renderSearchLink({ displayName, icon, path }) {
+  renderSearchLink({ displayName, icon, path }: StudySearch) {
     const { study } = this.props;
 
     const route = `/search/${path}`;

@@ -6,13 +6,19 @@ import { Tooltip } from '@veupathdb/coreui';
 
 import { getCategoryColor } from './CategoryUtils';
 
-class CategoryIcon extends React.Component {
+interface CategoryIconProps {
+  category?: string;
+}
+
+class CategoryIcon extends React.Component<CategoryIconProps> {
   render() {
     const { category } = this.props;
     if (!category || category === 'Unknown') return null;
     const categoryName = capitalize(category);
     const categoryColor = getCategoryColor(category);
-    const categoryStyle = { backgroundColor: categoryColor };
+    const categoryStyle = categoryColor
+      ? { backgroundColor: categoryColor }
+      : undefined;
 
     return (
       <div style={{ position: 'relative' }}>
