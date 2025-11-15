@@ -27,6 +27,7 @@ import {
   RecordClass,
   AttributeField,
   AttributeValue,
+  LinkAttributeValue,
 } from '../../../Utils/WdkModel';
 import './RecordTable.css';
 
@@ -254,7 +255,12 @@ class RecordTable extends Component<RecordTableProps, RecordTableState> {
         const nonNullDataValue =
           nonNullDataObject != null
             ? type === 'link'
-              ? (nonNullDataObject[name] as any)['displayText']
+              ? typeof nonNullDataObject[name] === 'object' &&
+                nonNullDataObject[name] !== null &&
+                'displayText' in nonNullDataObject[name]
+                ? (nonNullDataObject[name] as { displayText?: string })
+                    .displayText
+                : ''
               : nonNullDataObject[name]
             : undefined;
         const sortType =
@@ -289,10 +295,10 @@ class RecordTable extends Component<RecordTableProps, RecordTableState> {
         return d; // Return original object unchanged
       }
 
-      let newData: any = { ...d };
+      let newData: Record<string, any> = { ...d };
       columnsWithLinks.forEach((col) => {
         const linkPropertyName = col.key;
-        const linkObject = d[linkPropertyName] as any;
+        const linkObject = d[linkPropertyName] as LinkAttributeValue | null;
         newData = {
           ...newData,
           [linkPropertyName]: {
@@ -318,26 +324,25 @@ class RecordTable extends Component<RecordTableProps, RecordTableState> {
             (row) => {
               const { columnKey } = sort;
               const isLinkType = columnToSort!.type === 'link';
-              const rowData = row as any;
               if (sortType === 'number' && isLinkType) {
-                return rowData[columnKey!]['text'] === ''
+                return row[columnKey!]['text'] === ''
                   ? -Infinity
-                  : Number(rowData[columnKey!]['text']);
+                  : Number(row[columnKey!]['text']);
               }
               if (sortType === 'number') {
-                return rowData[columnKey!] == null
+                return row[columnKey!] == null
                   ? -Infinity
-                  : Number(rowData[columnKey!]);
+                  : Number(row[columnKey!]);
               }
               if (columnToSort!.type === 'link') {
-                return rowData[columnKey!]['text'];
+                return row[columnKey!]['text'];
               }
               if (sortType === 'htmlText') {
-                return stripHTML(rowData[columnKey!]).toLowerCase().trim();
+                return stripHTML(row[columnKey!]).toLowerCase().trim();
               }
-              return rowData[columnKey!] == null
+              return row[columnKey!] == null
                 ? ''
-                : rowData[columnKey!].toLowerCase().trim();
+                : row[columnKey!].toLowerCase().trim();
             },
             [sort.direction.toLowerCase() as 'asc' | 'desc']
           );
@@ -368,9 +373,14 @@ class RecordTable extends Component<RecordTableProps, RecordTableState> {
         )
       : displayableAttributes;
     const filteredRows: Record<string, any>[] = sortedMesaRows.filter((row) => {
-      return searchableAttributes.some((attr) =>
-        regex.test((row[attr.name] as any)?.text ?? row[attr.name])
-      );
+      return searchableAttributes.some((attr) => {
+        const value = row[attr.name];
+        const searchValue =
+          typeof value === 'object' && value !== null && 'text' in value
+            ? (value as { text: string }).text
+            : value;
+        return regex.test(searchValue);
+      });
     });
 
     const tableState: MesaStateProps<Record<string, AttributeValue>, string> = {

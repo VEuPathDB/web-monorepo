@@ -22,6 +22,7 @@ import {
   RecordInstance,
   Question,
   AttributeValue,
+  LinkAttributeValue,
 } from '../../Utils/WdkModel';
 import { DisplayInfo, Sorting } from '../../Actions/AnswerActions';
 
@@ -356,7 +357,7 @@ function makeSortKeys(
             typeof attrValue === 'object' &&
             attrValue !== null &&
             'displayText' in attrValue
-            ? (attrValue as any).displayText
+            ? (attrValue as LinkAttributeValue).displayText
             : attrValue
         );
       },
