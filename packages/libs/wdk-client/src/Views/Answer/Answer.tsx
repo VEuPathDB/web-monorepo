@@ -1,16 +1,66 @@
-import { orderBy, uniq } from 'lodash';
-import React, { useMemo, useState, useCallback } from 'react';
-import { withRouter } from 'react-router';
+import { orderBy, uniq, ListIteratee } from 'lodash';
+import React, { useMemo, useState, useCallback, FC, ReactNode, FormEvent } from 'react';
+import { withRouter, RouteComponentProps } from 'react-router';
 import Icon from '../../Components/Icon/IconAlt';
-import { Mesa, MesaState } from '@veupathdb/coreui/lib/components/Mesa';
+import { Mesa, MesaState, MesaStateOptions } from '@veupathdb/coreui/lib/components/Mesa';
 import Dialog from '../../Components/Overlays/Dialog';
 import { wrappable } from '../../Utils/ComponentUtils';
 import AttributeSelector from '../../Views/Answer/AnswerAttributeSelector';
 import AnswerFilter from '../../Views/Answer/AnswerFilter';
 import AnswerTableCell from '../../Views/Answer/AnswerTableCell';
 import '../../Views/Answer/wdk-Answer.scss';
+import {
+  AttributeField,
+  RecordClass,
+  RecordInstance,
+  Question,
+  AttributeValue,
+} from '../../Utils/WdkModel';
+import { DisplayInfo, Sorting } from '../../Actions/AnswerActions';
 
-function Answer(props) {
+interface TableAction {
+  key: string;
+  display: ReactNode;
+}
+
+interface CellContentProps {
+  value: AttributeValue;
+  attribute: AttributeField;
+  record: RecordInstance;
+  recordClass: RecordClass;
+}
+
+interface RenderCellProps extends CellContentProps {
+  CellContent: React.ComponentType<CellContentProps>;
+}
+
+interface RowClassNameProps {
+  record: RecordInstance;
+  recordClass: RecordClass;
+}
+
+interface AnswerProps extends RouteComponentProps {
+  question: Question;
+  recordClass: RecordClass;
+  displayInfo: DisplayInfo;
+  meta: {
+    totalCount: number;
+    responseCount: number;
+  };
+  records: RecordInstance[];
+  allAttributes: AttributeField[];
+  visibleAttributes: AttributeField[];
+  onSort: (sorting: Sorting[]) => void;
+  onMoveColumn: (columnName: string, newIndex: number) => void;
+  onChangeColumns: (attributes: AttributeField[]) => void;
+  renderCellContent?: (props: RenderCellProps) => ReactNode;
+  deriveRowClassName?: (props: RowClassNameProps) => string | undefined;
+  customSortBys?: Record<string, ListIteratee<RecordInstance>[]>;
+  additionalActions?: TableAction[];
+  useStickyFirstNColumns?: number;
+}
+
+const Answer: FC<AnswerProps> = (props) => {
   const { question, recordClass, displayInfo, additionalActions } = props;
 
   const tableState = useTableState(props);
@@ -23,22 +73,32 @@ function Answer(props) {
       <div className="wdk-AnswerDescription">{recordClass.description}</div>
       <div className="wdk-Answer">
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <AnswerFilter {...props} />
-          <AnswerCount {...props} />
+          <AnswerFilter {...(props as any)} />
+          <AnswerCount {...(props as any)} />
           <div style={{ flex: 1, textAlign: 'right' }}>
             {additionalActions?.map(({ key, display }) => (
               <React.Fragment key={key}>{display}</React.Fragment>
             ))}
-            <AttributePopup {...props} />
+            <AttributePopup {...(props as any)} />
           </div>
         </div>
         <Mesa state={tableState} />
       </div>
     </div>
   );
+};
+
+interface AnswerCountProps {
+  recordClass: RecordClass;
+  meta: {
+    totalCount: number;
+    responseCount: number;
+  };
+  records: RecordInstance[];
+  displayInfo: DisplayInfo;
 }
 
-function AnswerCount(props) {
+const AnswerCount: FC<AnswerCountProps> = (props) => {
   const { recordClass, meta, records, displayInfo } = props;
   const { displayNamePlural } = recordClass;
   const { pagination } = displayInfo;
@@ -55,29 +115,37 @@ function AnswerCount(props) {
       Showing {countPhrase} {displayNamePlural}
     </p>
   );
+};
+
+interface AttributePopupProps {
+  allAttributes: AttributeField[];
+  visibleAttributes: AttributeField[];
+  onChangeColumns: (attributes: AttributeField[]) => void;
 }
 
-function AttributePopup(props) {
+const AttributePopup: FC<AttributePopupProps> = (props) => {
   const { allAttributes, visibleAttributes, onChangeColumns } = props;
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedAttributes, setSelectedAttributes] = useState(
+  const [selectedAttributes, setSelectedAttributes] = useState<string[]>(
     visibleAttributes.map((attr) => attr.name)
   );
   const handleClose = useCallback(() => setIsOpen(false), [setIsOpen]);
   const handleAttributeSelectorSubmit = useCallback(
-    (event) => {
+    (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       event.stopPropagation();
-      const nextVisibleAttributes = selectedAttributes.map((attrName) =>
-        allAttributes.find((attr) => attr.name === attrName)
-      );
+      const nextVisibleAttributes = selectedAttributes
+        .map((attrName) =>
+          allAttributes.find((attr) => attr.name === attrName)
+        )
+        .filter((attr): attr is AttributeField => attr !== undefined);
       onChangeColumns(nextVisibleAttributes);
       setIsOpen(false);
     },
     [allAttributes, onChangeColumns, selectedAttributes, setIsOpen]
   );
   const toggleSelectedAttribute = useCallback(
-    (attributeName, isVisible) => {
+    (attributeName: string, isVisible: boolean) => {
       const nextSelectedAttributes = isVisible
         ? uniq([...selectedAttributes, attributeName])
         : selectedAttributes.filter((attrName) => attrName !== attributeName);
@@ -106,9 +174,36 @@ function AttributePopup(props) {
       </Dialog>
     </>
   );
+};
+
+interface MesaColumn {
+  key: string;
+  helpText?: string;
+  name: string;
+  sortable: boolean;
+  primary: boolean;
+  moveable: boolean;
+  renderCell: (cellData: { row: RecordInstance }) => ReactNode;
 }
 
-function useTableState(props) {
+interface MesaOptions extends MesaStateOptions {
+  useStickyFirstNColumns?: number;
+  deriveRowClassName?: (record: RecordInstance) => string | undefined;
+}
+
+interface MesaUIState {
+  sort: {
+    columnKey: string | null;
+    direction: string;
+  } | null;
+}
+
+interface MesaEventHandlers {
+  onSort: (column: { key: string }, direction: string) => void;
+  onColumnReorder: (colKey: string, newIndex: number) => void;
+}
+
+function useTableState(props: AnswerProps) {
   const {
     records,
     onSort,
@@ -118,13 +213,13 @@ function useTableState(props) {
     displayInfo,
     renderCellContent,
     deriveRowClassName,
-    customSortBys,
+    customSortBys = {},
     useStickyFirstNColumns,
   } = props;
 
   const columns = useMemo(
     () =>
-      visibleAttributes.map((attribute) => {
+      visibleAttributes.map((attribute): MesaColumn => {
         return {
           key: attribute.name,
           helpText: attribute.help,
@@ -133,7 +228,7 @@ function useTableState(props) {
           primary: attribute.isPrimary,
           moveable: true,
           renderCell: ({ row: record }) => {
-            const cellProps = {
+            const cellProps: CellContentProps = {
               attribute,
               record,
               recordClass,
@@ -148,7 +243,7 @@ function useTableState(props) {
           },
         };
       }),
-    [renderCellContent, visibleAttributes]
+    [renderCellContent, visibleAttributes, recordClass]
   );
 
   const options = useMemo(
@@ -158,9 +253,9 @@ function useTableState(props) {
       tableBodyMaxHeight: '70vh',
       deriveRowClassName:
         deriveRowClassName &&
-        ((record) => deriveRowClassName({ recordClass, record })),
+        ((record: RecordInstance) => deriveRowClassName({ recordClass, record })),
     }),
-    [deriveRowClassName]
+    [deriveRowClassName, useStickyFirstNColumns, recordClass]
   );
 
   const { sorting } = displayInfo;
@@ -181,24 +276,24 @@ function useTableState(props) {
 
   const rows = useMemo(() => {
     const sortingAttribute = visibleAttributes.find(
-      (attribute) => attribute.name === sorting[0].attributeName
+      (attribute) => attribute.name === sorting[0]?.attributeName
     );
     const sortKeys = makeSortKeys(
       sortingAttribute ? sortingAttribute : visibleAttributes[0],
       customSortBys
     );
     const sortDirections = sortKeys.map(
-      (_) => sorting[0].direction.toLowerCase() || 'asc'
+      (_) => sorting[0]?.direction.toLowerCase() || 'asc'
     );
     return orderBy(records, sortKeys, sortDirections);
   }, [records, sorting, visibleAttributes, customSortBys]);
 
   const eventHandlers = useMemo(
     () => ({
-      onSort({ key }, direction) {
-        onSort([{ attributeName: key, direction }]);
+      onSort({ key }: { key: string }, direction: string) {
+        onSort([{ attributeName: key, direction: direction as 'ASC' | 'DESC' }]);
       },
-      onColumnReorder: (colKey, newIndex) => {
+      onColumnReorder: (colKey: string, newIndex: number) => {
         const currentIndex = columns.findIndex((col) => col.key === colKey);
         if (currentIndex < 0) return;
         if (newIndex < currentIndex) newIndex++;
@@ -224,44 +319,57 @@ function useTableState(props) {
   );
 }
 
-function makeSortKeys(sortingAttribute, customSortBys = {}) {
+function makeSortKeys(
+  sortingAttribute: AttributeField,
+  customSortBys: Record<string, ListIteratee<RecordInstance>[]> = {}
+): ListIteratee<RecordInstance>[] {
   if (customSortBys[sortingAttribute.name] != null) {
     return customSortBys[sortingAttribute.name];
   } else if (sortingAttribute.type === 'number') {
     return [
-      (record) =>
+      (record: RecordInstance) =>
         castValue(
           record.attributes[sortingAttribute.name] &&
-            record.attributes[sortingAttribute.name].replace(/,/g, '')
+            typeof record.attributes[sortingAttribute.name] === 'string'
+            ? (record.attributes[sortingAttribute.name] as string).replace(/,/g, '')
+            : record.attributes[sortingAttribute.name]
         ),
     ];
   } else if (sortingAttribute.type === 'link') {
     return [
-      (record) =>
+      (record: RecordInstance) =>
         castValue(
           record.attributes[sortingAttribute.name] &&
-            record.attributes[sortingAttribute.name].displayText
+          typeof record.attributes[sortingAttribute.name] === 'object' &&
+          record.attributes[sortingAttribute.name] !== null &&
+          'displayText' in record.attributes[sortingAttribute.name]
+            ? (record.attributes[sortingAttribute.name] as any).displayText
+            : record.attributes[sortingAttribute.name]
         ),
     ];
   } else {
     return [
-      (record) => {
-        if (record.attributes[sortingAttribute.name] === null) {
+      (record: RecordInstance) => {
+        const attrValue = record.attributes[sortingAttribute.name];
+        if (attrValue === null) {
           // return a string from the smallest UTF-16
           return String.fromCharCode(0);
-        } else {
+        } else if (typeof attrValue === 'string') {
           // compare strings as lowercase to normalize the sorting behavior
-          return record.attributes[sortingAttribute.name].toLowerCase();
+          return attrValue.toLowerCase();
+        } else {
+          return attrValue;
         }
       },
     ];
   }
 }
 
-function castValue(value) {
+function castValue(value: AttributeValue | string | null | undefined): number | string {
   if (value == null) return Number.NEGATIVE_INFINITY;
-  const numberValue = Number(value);
-  return Number.isNaN(numberValue) ? value : numberValue;
+  const stringValue = typeof value === 'string' ? value : String(value);
+  const numberValue = Number(stringValue);
+  return Number.isNaN(numberValue) ? stringValue : numberValue;
 }
 
 export default wrappable(withRouter(Answer));

@@ -1,16 +1,16 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { wrappable } from '../../Utils/ComponentUtils';
+import { AttributeField } from '../../Utils/WdkModel';
 
-function AnswerTableHeader(props) {
+interface AnswerTableHeaderProps {
+  descriptor: AttributeField;
+}
+
+function AnswerTableHeader(props: AnswerTableHeaderProps): JSX.Element {
   let {
     descriptor: { help, displayName },
   } = props;
   return <span title={help || ''}>{displayName}</span>;
 }
-
-AnswerTableHeader.propTypes = {
-  descriptor: PropTypes.object.isRequired,
-};
 
 export default wrappable(AnswerTableHeader);

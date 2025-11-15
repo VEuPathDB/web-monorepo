@@ -1,18 +1,28 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import { wrappable } from '../../../Utils/ComponentUtils';
 import TextBox from '../../../Components/InputControls/TextBox';
 
+interface Props {
+  /** current email typed in textbox */
+  emailText: string;
+
+  /** message to be shown to the user */
+  message?: string;
+
+  /** event handler to call when textbox content changes */
+  updatePasswordResetEmail: (emailText: string) => void;
+
+  /** event handler to call when form is submitted */
+  submitPasswordReset: (emailText: string) => void;
+}
+
 /**
  * This React stateless function provides a link to the password change form inside a password change fieldset
- * @param props
- * @returns {XML}
- * @constructor
  */
-const UserPasswordReset = (props) => {
+const UserPasswordReset: React.FC<Props> = (props) => {
   let { emailText, message, updatePasswordResetEmail, submitPasswordReset } =
     props;
-  let submitHandler = (event) => {
+  let submitHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     submitPasswordReset(emailText);
   };
@@ -35,20 +45,6 @@ const UserPasswordReset = (props) => {
       </form>
     </div>
   );
-};
-
-UserPasswordReset.propTypes = {
-  /** current email typed in textbox */
-  emailText: PropTypes.string.isRequired,
-
-  /** message to be shown to the user */
-  message: PropTypes.string,
-
-  /** event handler to call when textbox content changes */
-  updatePasswordResetEmail: PropTypes.func.isRequired,
-
-  /** event handler to call when form is submitted */
-  submitPasswordReset: PropTypes.func.isRequired,
 };
 
 export default wrappable(UserPasswordReset);

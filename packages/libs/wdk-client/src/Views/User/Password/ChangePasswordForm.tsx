@@ -1,12 +1,52 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import { wrappable, getChangeHandler } from '../../../Utils/ComponentUtils';
 import { SaveButton } from '@veupathdb/coreui/lib/components/buttons';
 import TextBox from '../../../Components/InputControls/TextBox';
 import { alert } from '../../../Utils/Platform';
+import { User } from '../../../Utils/WdkUser';
+import { FormStatus } from '../../../Actions/UserActions';
 
-let PasswordField = (props) => {
-  let { name, display, passwordForm, userEvents } = props;
+interface PasswordForm {
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+interface UserEvents {
+  updateChangePasswordForm: (form: PasswordForm) => void;
+  savePassword: (oldPassword: string, newPassword: string) => void;
+}
+
+interface ChangePasswordFormProps {
+  /** User object */
+  user: User;
+
+  /** Contains values for form input fields */
+  passwordForm: PasswordForm;
+
+  /** Contains current status of the form */
+  formStatus: FormStatus;
+
+  /** Contains a message for the user if status is 'error' */
+  errorMessage?: string;
+
+  /** Object containing event handler functions */
+  userEvents: UserEvents;
+}
+
+interface PasswordFieldProps {
+  name: 'oldPassword' | 'newPassword' | 'confirmPassword';
+  display: string;
+  passwordForm: PasswordForm;
+  userEvents: UserEvents;
+}
+
+const PasswordField: React.FC<PasswordFieldProps> = ({
+  name,
+  display,
+  passwordForm,
+  userEvents,
+}) => {
   return (
     <div style={{ margin: '5px' }}>
       <label>{display}:</label>
@@ -23,8 +63,8 @@ let PasswordField = (props) => {
   );
 };
 
-function formValid(passwordForm) {
-  let { oldPassword, newPassword, confirmPassword } = passwordForm;
+function formValid(passwordForm: PasswordForm): boolean {
+  const { oldPassword, newPassword, confirmPassword } = passwordForm;
   if (newPassword == '') {
     alert('Uh oh!', 'New password must be non-empty.  Please try again.');
     return false;
@@ -35,10 +75,10 @@ function formValid(passwordForm) {
   return true;
 }
 
-let ChangePasswordForm = (props) => {
-  let submitHandler = function (e) {
+const ChangePasswordForm: React.FC<ChangePasswordFormProps> = (props) => {
+  const submitHandler = function (e: React.FormEvent<HTMLFormElement>): void {
     e.preventDefault();
-    let form = props.passwordForm;
+    const form = props.passwordForm;
     if (formValid(form)) {
       props.userEvents.savePassword(form.oldPassword, form.newPassword);
     }
@@ -54,21 +94,25 @@ let ChangePasswordForm = (props) => {
             <form
               className="wdk-UserProfile-profileForm"
               name="userPasswordForm"
+              onSubmit={submitHandler}
             >
               <PasswordField
                 name="oldPassword"
                 display="Old Password"
-                {...props}
+                passwordForm={props.passwordForm}
+                userEvents={props.userEvents}
               />
               <PasswordField
                 name="newPassword"
                 display="New Password"
-                {...props}
+                passwordForm={props.passwordForm}
+                userEvents={props.userEvents}
               />
               <PasswordField
                 name="confirmPassword"
                 display="Confirm Password"
-                {...props}
+                passwordForm={props.passwordForm}
+                userEvents={props.userEvents}
               />
               <div style={{ marginLeft: '115px' }}>
                 <SaveButton
@@ -85,33 +129,6 @@ let ChangePasswordForm = (props) => {
       )}
     </div>
   );
-};
-
-ChangePasswordForm.propTypes = {
-  /** User object */
-  user: PropTypes.object.isRequired,
-
-  /** Contains values for form input fields */
-  passwordForm: PropTypes.shape({
-    oldPassword: PropTypes.string.isRequired,
-    newPassword: PropTypes.string.isRequired,
-    confirmPassword: PropTypes.string.isRequired,
-  }),
-
-  /** Contains current status of the form */
-  formStatus: PropTypes.string.isRequired, // Values: [ 'new', 'pending', 'success', 'error' ]
-
-  /** Contains a message for the user if status is 'error' */
-  errorMessage: PropTypes.string,
-
-  /** Object containing event handler functions */
-  userEvents: PropTypes.shape({
-    /** Called with the new form state object when a form input changes */
-    updateChangePasswordForm: PropTypes.func.isRequired,
-
-    /** Called when the user clicks the submit button */
-    savePassword: PropTypes.func.isRequired,
-  }),
 };
 
 export default wrappable(ChangePasswordForm);
