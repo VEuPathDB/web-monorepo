@@ -8,6 +8,7 @@ import {
   getTargetType,
   getDisplayName,
   CategoryTreeNode,
+  IndividualNode,
 } from '../../../Utils/CategoryUtils';
 import { RecordInstance, RecordClass } from '../../../Utils/WdkModel';
 import { TableState } from '../../../StoreModules/RecordStoreModule';
@@ -66,7 +67,7 @@ class RecordMainCategorySection extends React.PureComponent<Props> {
       case 'attribute':
         return (
           <RecordAttributeSection
-            attribute={category.wdkReference}
+            attribute={(category as IndividualNode).wdkReference}
             ontologyProperties={category.properties}
             record={record}
             recordClass={recordClass}
@@ -76,13 +77,14 @@ class RecordMainCategorySection extends React.PureComponent<Props> {
           />
         );
 
-      case 'table':
+      case 'table': {
+        const individualCategory = category as IndividualNode;
         return (
           <RecordTableSection
-            table={category.wdkReference}
-            tableState={tableStates[category.wdkReference.name]}
+            table={individualCategory.wdkReference}
+            tableState={tableStates[individualCategory.wdkReference.name]}
             updateTableState={(tableState) =>
-              updateTableState(category.wdkReference.name, tableState)
+              updateTableState(individualCategory.wdkReference.name, tableState)
             }
             ontologyProperties={category.properties}
             record={record}
@@ -92,6 +94,7 @@ class RecordMainCategorySection extends React.PureComponent<Props> {
             requestPartialRecord={requestPartialRecord}
           />
         );
+      }
 
       default: {
         let id = getId(category);

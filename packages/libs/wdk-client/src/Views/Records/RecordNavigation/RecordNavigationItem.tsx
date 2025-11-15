@@ -1,6 +1,11 @@
 import React, { useMemo } from 'react';
 import { makeClassNameHelper, wrappable } from '../../../Utils/ComponentUtils';
-import { getId, getDisplayName, CategoryTreeNode } from '../../../Utils/CategoryUtils';
+import {
+  getId,
+  getDisplayName,
+  CategoryTreeNode,
+  isIndividual,
+} from '../../../Utils/CategoryUtils';
 
 import { preorderSeq } from '../../../Utils/TreeUtils';
 
@@ -14,10 +19,14 @@ interface RecordNavigationItemProps {
   checked?: boolean;
 }
 
-let RecordNavigationItem = ({ node, activeSection, onSectionToggle }: RecordNavigationItemProps) => {
+let RecordNavigationItem = ({
+  node,
+  activeSection,
+  onSectionToggle,
+}: RecordNavigationItemProps) => {
   let id = getId(node);
   let displayName = getDisplayName(node);
-  let isField = node.wdkReference != null;
+  let isField = isIndividual(node) && node.wdkReference != null;
 
   let isActive = useMemo(
     () => preorderSeq(node).some((node) => getId(node) === activeSection),
