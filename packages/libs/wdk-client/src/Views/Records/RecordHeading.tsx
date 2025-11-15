@@ -1,10 +1,27 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { ReactNode } from 'react';
+import { RecordClass, RecordInstance } from '../../Utils/WdkModel';
 import { safeHtml, wrappable } from '../../Utils/ComponentUtils';
 import RecordActionLink from '../../Views/Records/RecordActionLink';
 
-let RecordHeading = (props) => {
-  let {
+export interface HeaderAction {
+  className?: string;
+  iconClassName?: string;
+  onClick?: () => void;
+  href?: string;
+  label?: string;
+  showLabel?: boolean;
+  external?: boolean;
+}
+
+export interface RecordHeadingProps {
+  record: RecordInstance;
+  recordClass: RecordClass;
+  headerActions: HeaderAction[];
+  displayName?: ReactNode;
+}
+
+const RecordHeading: React.FC<RecordHeadingProps> = (props) => {
+  const {
     record,
     recordClass,
     headerActions,
@@ -28,12 +45,6 @@ let RecordHeading = (props) => {
       <h1 className="wdk-RecordHeading">{displayName}</h1>
     </>
   );
-};
-
-RecordHeading.propTypes = {
-  record: PropTypes.object.isRequired,
-  recordClass: PropTypes.object.isRequired,
-  headerActions: PropTypes.arrayOf(PropTypes.object),
 };
 
 export default wrappable(RecordHeading);

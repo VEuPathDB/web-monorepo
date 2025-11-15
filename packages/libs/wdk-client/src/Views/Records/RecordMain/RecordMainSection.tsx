@@ -1,14 +1,29 @@
-import PropTypes from 'prop-types';
 import { flowRight } from 'lodash';
 import React from 'react';
 import RecordMainCategorySection from '../../../Views/Records/RecordMain/RecordMainCategorySection';
 import { pure, wrappable } from '../../../Utils/ComponentUtils';
-import { getId, getLabel } from '../../../Utils/CategoryUtils';
+import { getId, getLabel, CategoryTreeNode } from '../../../Utils/CategoryUtils';
+import { RecordInstance, RecordClass } from '../../../Utils/WdkModel';
+import { TableState } from '../../../StoreModules/RecordStoreModule';
+import { PartialRecordRequest } from '../../../Views/Records/RecordUtils';
+
+interface RecordMainSectionProps {
+  depth?: number;
+  record: RecordInstance;
+  recordClass: RecordClass;
+  tableStates: Record<string, TableState>;
+  updateTableState: (tableName: string, tableState: TableState) => void;
+  categories: CategoryTreeNode[] | null;
+  collapsedSections: string[];
+  parentEnumeration?: string;
+  onSectionToggle: (categoryId: string, isVisible: boolean) => void;
+  requestPartialRecord: (request: PartialRecordRequest) => void;
+}
 
 /** @type {React.FunctionComponent} */
-let RecordMainSection$;
+let RecordMainSection$: React.FunctionComponent<RecordMainSectionProps>;
 
-const RecordMainSection = ({
+const RecordMainSection: React.FC<RecordMainSectionProps> = ({
   depth = 0,
   record,
   recordClass,
@@ -62,17 +77,6 @@ const RecordMainSection = ({
       })}
     </>
   );
-
-RecordMainSection.propTypes = {
-  record: PropTypes.object.isRequired,
-  recordClass: PropTypes.object.isRequired,
-  tableStates: PropTypes.object.isRequired,
-  categories: PropTypes.array.isRequired,
-  collapsedSections: PropTypes.array.isRequired,
-  onSectionToggle: PropTypes.func.isRequired,
-  depth: PropTypes.number,
-  parentEnumeration: PropTypes.string,
-};
 
 // Append `$` so we can refer to this component recursively. We want to reserve
 // the normal name `RecordMainSection` for the inner function for debugging purposes.

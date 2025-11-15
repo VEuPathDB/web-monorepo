@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import RecordAttributeSection from '../../../Views/Records/RecordAttributes/RecordAttributeSection';
 import RecordTableSection from '../../../Views/Records/RecordTable/RecordTableSection';
@@ -8,13 +7,30 @@ import {
   getId,
   getTargetType,
   getDisplayName,
+  CategoryTreeNode,
 } from '../../../Utils/CategoryUtils';
+import { RecordInstance, RecordClass } from '../../../Utils/WdkModel';
+import { TableState } from '../../../StoreModules/RecordStoreModule';
+
+export interface Props {
+  category: CategoryTreeNode;
+  depth: number;
+  enumeration: string;
+  isCollapsed: boolean;
+  onSectionToggle: (categoryId: string, isVisible: boolean) => void;
+  record: RecordInstance;
+  recordClass: RecordClass;
+  tableStates: Record<string, TableState>;
+  updateTableState: (tableName: string, tableState: TableState) => void;
+  requestPartialRecord: (request: any) => void;
+  children?: React.ReactElement;
+}
 
 /**
  * Content for a node of a record category tree, or a record field.
  */
-class RecordMainCategorySection extends React.PureComponent {
-  constructor(props) {
+class RecordMainCategorySection extends React.PureComponent<Props> {
+  constructor(props: Props) {
     super(props);
     this.toggleCollapse = this.toggleCollapse.bind(this);
   }
@@ -119,16 +135,5 @@ class RecordMainCategorySection extends React.PureComponent {
     }
   }
 }
-
-RecordMainCategorySection.propTypes = {
-  category: PropTypes.object.isRequired,
-  depth: PropTypes.number.isRequired,
-  enumeration: PropTypes.string.isRequired,
-  isCollapsed: PropTypes.bool.isRequired,
-  onSectionToggle: PropTypes.func.isRequired,
-  record: PropTypes.object.isRequired,
-  recordClass: PropTypes.object.isRequired,
-  children: PropTypes.element,
-};
 
 export default wrappable(RecordMainCategorySection);

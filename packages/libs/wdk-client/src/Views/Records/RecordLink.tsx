@@ -1,14 +1,15 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { ReactNode } from 'react';
 import Link from '../../Components/Link/Link';
 import { wrappable } from '../../Utils/ComponentUtils';
+import { RecordClass, PrimaryKey } from '../../Utils/WdkModel';
 
-let idPartPropType = PropTypes.shape({
-  name: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
-});
+interface RecordLinkProps {
+  recordId: PrimaryKey;
+  recordClass: RecordClass;
+  children?: ReactNode;
+}
 
-function RecordLink(props) {
+function RecordLink(props: RecordLinkProps) {
   let { recordClass, recordId } = props;
   let pkValues = recordId.map((p) => p.value).join('/');
 
@@ -18,10 +19,5 @@ function RecordLink(props) {
     </Link>
   );
 }
-
-RecordLink.propTypes = {
-  recordId: PropTypes.arrayOf(idPartPropType).isRequired,
-  recordClass: PropTypes.object.isRequired,
-};
 
 export default wrappable(RecordLink);

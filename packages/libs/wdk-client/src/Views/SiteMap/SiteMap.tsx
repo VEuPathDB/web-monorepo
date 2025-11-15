@@ -25,7 +25,7 @@
  *   align: String,
  *   isSortable: Boolean,
  *   isRemovable: Boolean,
- *   type: String (comes from “type” property of attribute tag),
+ *   type: String (comes from "type" property of attribute tag),
  *   category: String,
  *   truncateTo: Integer,
  *   isDisplayable: Boolean,
@@ -58,7 +58,7 @@ import Link from '../../Components/Link/Link';
 import CheckboxTree, {
   LinksPosition,
 } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
-import { getNodeChildren, getPropertyValue } from '../../Utils/OntologyUtils';
+import { getNodeChildren, getPropertyValue, OntologyNode } from '../../Utils/OntologyUtils';
 import {
   getTargetType,
   getRefName,
@@ -66,14 +66,44 @@ import {
   getDescription,
   getNodeId,
   getId,
+  isIndividual,
+  CategoryTreeNode,
 } from '../../Utils/CategoryUtils';
 import { areTermsInString, makeSearchHelpText } from '../../Utils/SearchUtils';
+import { SiteMapOntology } from '../../Actions/SiteMapActions';
+
+/**
+ * Data structure for node information used by search and display
+ */
+interface NodeData {
+  id?: string;
+  targetType?: string;
+  siteMapSpecial?: string;
+  ontologyParent?: string;
+  recordClassDisplayName?: string;
+  name?: string;
+  displayName?: string;
+  description?: string;
+}
+
+/**
+ * Props for the SiteMap component
+ */
+interface SiteMapProps {
+  tree: SiteMapOntology;
+  expandedList: string[];
+  searchText: string;
+  siteMapActions: {
+    updateExpanded: (expandedList: string[]) => void;
+    setSearchText: (searchText: string) => void;
+  };
+}
 
 /**
  * Displays site map page, basically just a custom expandable tree
  */
-let SiteMap = (props) => {
-  let treeProps = {
+const SiteMap: React.FC<SiteMapProps> = (props) => {
+  const treeProps = {
     tree: props.tree,
     getNodeId: getNodeId,
     getNodeChildren: getNodeChildren,
@@ -106,8 +136,8 @@ let SiteMap = (props) => {
  * Collects relevant data from the node, used by the search predicate and the
  * display component.
  */
-let getNodeData = (node) => {
-  let data = {};
+const getNodeData = (node: CategoryTreeNode): NodeData => {
+  const data: NodeData = {};
   data.id = getId(node);
   data.targetType = getTargetType(node);
   data.siteMapSpecial = getPropertyValue('SiteMapSpecial', node);
@@ -117,8 +147,8 @@ let getNodeData = (node) => {
     node
   );
   data.name = getRefName(node);
-  if (node.wdkReference) {
-    let tt = data.targetType === 'search' ? '' : ' (' + data.targetType + ')';
+  if (isIndividual(node)) {
+    const tt = data.targetType === 'search' ? '' : ' (' + data.targetType + ')';
     data.displayName = node.wdkReference.displayName + tt;
     data.description = node.wdkReference.description;
   } else if (data.targetType === 'track') {
@@ -135,22 +165,25 @@ let getNodeData = (node) => {
 /**
  * Defines how to search for site-map nodes
  */
-let siteMapSearchPredicate = (node, searchQueryTerms) => {
-  let data = getNodeData(node);
-  let strings = [
+const siteMapSearchPredicate = (
+  node: CategoryTreeNode,
+  searchQueryTerms: string[]
+): boolean => {
+  const data = getNodeData(node);
+  const strings = [
     data.recordClassDisplayName,
     data.displayName /* , data.description */,
   ];
-  let searchableString = strings.join();
-  let flag = areTermsInString(searchQueryTerms, searchableString);
+  const searchableString = strings.join();
+  const flag = areTermsInString(searchQueryTerms, searchableString);
   return flag;
 };
 
 /**
  * Defines how to display site-map nodes
  */
-let renderSiteMapNode = (node) => {
-  let data = getNodeData(node);
+const renderSiteMapNode = (node: CategoryTreeNode): React.ReactElement => {
+  const data = getNodeData(node);
 
   if (data.targetType === 'search') {
     return (
@@ -164,7 +197,7 @@ let renderSiteMapNode = (node) => {
     );
   }
   if (data.siteMapSpecial) {
-    if (data.displayName.match(/ Page$/)) {
+    if (data.displayName?.match(/ Page$/)) {
       return (
         <Link to={'/record/gene/PF3D7_1133400#' + data.ontologyParent}>
           <span title={data.description}>{data.displayName}</span>
