@@ -19,8 +19,8 @@ export interface SelectTreeProps<T> extends CheckboxTreeProps<T> {
 
 function SelectTree<T>(props: SelectTreeProps<T>) {
   const {
-    selectedList,
-    onSelectionChange,
+    selectedList = [],
+    onSelectionChange = () => {},
     shouldCloseOnSelection,
     hasPopoverButton = true,
     instantUpdate = true,

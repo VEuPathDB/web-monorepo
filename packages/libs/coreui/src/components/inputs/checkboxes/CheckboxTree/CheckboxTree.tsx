@@ -459,12 +459,12 @@ function applyPropsToStatefulTree<T>(
   root: StatefulNode<T>,
   getNodeId: CheckboxTreeProps<T>['getNodeId'],
   getNodeChildren: CheckboxTreeProps<T>['getNodeChildren'],
-  isSelectable: CheckboxTreeProps<T>['isSelectable'],
-  isSearchable: CheckboxTreeProps<T>['isSearchable'],
-  isMultiPick: CheckboxTreeProps<T>['isMultiPick'],
-  searchTerm: CheckboxTreeProps<T>['searchTerm'],
-  selectedList: CheckboxTreeProps<T>['selectedList'],
-  propsExpandedList: CheckboxTreeProps<T>['expandedList'],
+  isSelectable: boolean,
+  isSearchable: boolean,
+  isMultiPick: boolean,
+  searchTerm: string,
+  selectedList: string[],
+  propsExpandedList: string[] | null,
   isAdditionalFilterApplied: CheckboxTreeProps<T>['isAdditionalFilterApplied'],
   isLeafVisible: (id: string) => boolean,
   stateExpandedList?: string[]
@@ -589,8 +589,8 @@ function applyPropsToStatefulTree<T>(
  */
 function isActiveSearch<T>(
   isAdditionalFilterApplied: CheckboxTreeProps<T>['isAdditionalFilterApplied'],
-  isSearchable: CheckboxTreeProps<T>['isSearchable'],
-  searchTerm: CheckboxTreeProps<T>['searchTerm']
+  isSearchable: boolean,
+  searchTerm: string
 ) {
   return isSearchable && isFiltered(searchTerm, isAdditionalFilterApplied);
 }
@@ -625,12 +625,12 @@ function isFiltered(searchTerm: string, isAdditionalFilterApplied?: boolean) {
  */
 function createIsLeafVisible<T>(
   tree: CheckboxTreeProps<T>['tree'],
-  searchTerm: CheckboxTreeProps<T>['searchTerm'],
-  searchPredicate: CheckboxTreeProps<T>['searchPredicate'],
+  searchTerm: string,
+  searchPredicate: (node: T, terms: string[]) => boolean,
   getNodeId: CheckboxTreeProps<T>['getNodeId'],
   getNodeChildren: CheckboxTreeProps<T>['getNodeChildren'],
   isAdditionalFilterApplied: CheckboxTreeProps<T>['isAdditionalFilterApplied'],
-  isSearchable: CheckboxTreeProps<T>['isSearchable'],
+  isSearchable: boolean,
   filteredList: CheckboxTreeProps<T>['filteredList']
 ) {
   // if not searching, if no additional filters are applied, and if filteredList is undefined, then all nodes are visible
@@ -738,7 +738,17 @@ function CheckboxTree<T>(props: CheckboxTreeProps<T>) {
   }, [styleOverrides]);
 
   // initialize stateful tree; this immutable tree structure will be replaced with each state change
-  const treeState = useTreeState(props);
+  // Apply defaults to props for child hooks/functions
+  const propsWithDefaults = {
+    ...props,
+    searchTerm,
+    selectedList,
+    isSearchable,
+    onSelectionChange,
+    searchPredicate,
+    expandedList,
+  };
+  const treeState = useTreeState(propsWithDefaults as CheckboxTreeProps<T>);
 
   /**
    * Creates a function that will handle a click of one of the tree links above
@@ -770,7 +780,7 @@ function CheckboxTree<T>(props: CheckboxTreeProps<T>) {
    * Creates a function that will handle selection-related tree link clicks
    */
   function createSelector(listFetcher: ListFetcher) {
-    return createLinkHandler(listFetcher, props.onSelectionChange);
+    return createLinkHandler(listFetcher, onSelectionChange);
   }
 
   // define event handlers related to expansion
@@ -1083,19 +1093,20 @@ export default CheckboxTree;
 function useTreeState<T>(props: CheckboxTreeProps<T>) {
   const {
     tree,
-    searchPredicate,
+    searchPredicate = () => true,
     getNodeId,
     getNodeChildren,
     isAdditionalFilterApplied,
-    isSearchable,
-    isSelectable,
-    isMultiPick,
-    selectedList,
-    expandedList,
+    isSearchable = false,
+    isSelectable = false,
+    isMultiPick = true,
+    selectedList = [],
+    expandedList = null,
     filteredList,
+    searchTerm: searchTermProp = '',
   } = props;
 
-  const searchTerm = useDeferredValue(props.searchTerm);
+  const searchTerm = useDeferredValue(searchTermProp);
 
   const statefulTree = useMemo(
     () => createStatefulTree(tree, getNodeChildren),
