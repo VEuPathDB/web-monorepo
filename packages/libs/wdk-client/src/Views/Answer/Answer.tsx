@@ -291,7 +291,7 @@ function useTableState(props: AnswerProps) {
     );
     const sortDirections = sortKeys.map(
       (_) => sorting[0]?.direction.toLowerCase() || 'asc'
-    );
+    ) as ('asc' | 'desc')[];
     return orderBy(records, sortKeys, sortDirections);
   }, [records, sorting, visibleAttributes, customSortBys]);
 
@@ -349,15 +349,17 @@ function makeSortKeys(
     ];
   } else if (sortingAttribute.type === 'link') {
     return [
-      (record: RecordInstance) =>
-        castValue(
-          record.attributes[sortingAttribute.name] &&
-            typeof record.attributes[sortingAttribute.name] === 'object' &&
-            record.attributes[sortingAttribute.name] !== null &&
-            'displayText' in record.attributes[sortingAttribute.name]
-            ? (record.attributes[sortingAttribute.name] as any).displayText
-            : record.attributes[sortingAttribute.name]
-        ),
+      (record: RecordInstance) => {
+        const attrValue = record.attributes[sortingAttribute.name];
+        return castValue(
+          attrValue &&
+            typeof attrValue === 'object' &&
+            attrValue !== null &&
+            'displayText' in attrValue
+            ? (attrValue as any).displayText
+            : attrValue
+        );
+      },
     ];
   } else {
     return [
