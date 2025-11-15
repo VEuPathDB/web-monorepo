@@ -1,5 +1,5 @@
 import React from 'react';
-import { clamp, debounce, get } from 'lodash';
+import { clamp, debounce, get, noop } from 'lodash';
 
 import Histogram from '../../Components/AttributeFilter/Histogram';
 import FilterLegend from '../../Components/AttributeFilter/FilterLegend';
@@ -346,6 +346,7 @@ export default class HistogramField extends React.Component<
         <Histogram
           distribution={this.convertedDistribution as any}
           onSelected={this.updateFilterValueFromSelection}
+          onSelecting={noop}
           selectedMin={selectedMin}
           selectedMax={selectedMax}
           chartType={activeField.type as 'number' | 'date'}

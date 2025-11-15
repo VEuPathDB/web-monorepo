@@ -22,15 +22,27 @@ class Sticky extends React.Component<Props, State> {
 
   componentDidMount() {
     this.node = ReactDOM.findDOMNode(this);
-    window.addEventListener('scroll', this.updateIsFixed, { passive: true });
-    window.addEventListener('wheel', this.updateIsFixed, { passive: true });
-    window.addEventListener('resize', this.updateIsFixed, { passive: true });
+    window.addEventListener('scroll', this.updateIsFixed, {
+      passive: true,
+    } as any);
+    window.addEventListener('wheel', this.updateIsFixed, {
+      passive: true,
+    } as any);
+    window.addEventListener('resize', this.updateIsFixed, {
+      passive: true,
+    } as any);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('scroll', this.updateIsFixed, { passive: true });
-    window.removeEventListener('wheel', this.updateIsFixed, { passive: true });
-    window.removeEventListener('resize', this.updateIsFixed, { passive: true });
+    window.removeEventListener('scroll', this.updateIsFixed, {
+      passive: true,
+    } as any);
+    window.removeEventListener('wheel', this.updateIsFixed, {
+      passive: true,
+    } as any);
+    window.removeEventListener('resize', this.updateIsFixed, {
+      passive: true,
+    } as any);
   }
 
   // Set position to fixed if top is above threshold, otherwise
@@ -60,7 +72,7 @@ class Sticky extends React.Component<Props, State> {
   render() {
     return (
       // This node is used to track scroll position
-      <div style={{ height: this.state.height }}>
+      <div style={{ height: this.state.height ?? undefined }}>
         {this.props.children(this.state)}
       </div>
     );

@@ -65,20 +65,23 @@ function ServerSideAttributeFilter(props: ServerSideAttributeFilterProps) {
 
   return (
     <div style={{ overflowX: 'auto', marginRight: '1em' }}>
-      {hideFilterPanel || <FilterList {...props} />}
+      {hideFilterPanel || <FilterList {...props} fieldTree={fieldTree!} />}
 
       {/* Main selection UI */}
       <div className="filters ui-helper-clearfix">
         {hideFieldPanel || (
           <FieldList
             autoFocus={props.autoFocus}
-            fieldTree={props.fieldTree}
+            fieldTree={fieldTree!}
             onActiveFieldChange={props.onActiveFieldChange}
             activeField={props.activeField}
             valuesMap={props.valuesMap}
           />
         )}
-        <FieldFilter {...props} />
+        <FieldFilter
+          {...props}
+          selectByDefault={props.selectByDefault ?? false}
+        />
       </div>
     </div>
   );

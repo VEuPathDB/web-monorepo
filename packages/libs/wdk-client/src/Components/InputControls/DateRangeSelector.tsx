@@ -37,17 +37,19 @@ class DateRangeSelector extends React.Component<
 
     let { start, end } = props;
 
-    start = DateUtils.isValidDateString(start)
-      ? DateUtils.formatDateObject(DateUtils.parseDate(start))
-      : DateUtils.formatDateObject(DateUtils.getEpochStart());
+    const startStr =
+      start && DateUtils.isValidDateString(start)
+        ? DateUtils.formatDateObject(DateUtils.parseDate(start))
+        : DateUtils.formatDateObject(DateUtils.getEpochStart());
 
-    end = DateUtils.isValidDateString(end)
-      ? DateUtils.formatDateObject(DateUtils.parseDate(end))
-      : DateUtils.formatDateObject(DateUtils.getEpochEnd());
+    const endStr =
+      end && DateUtils.isValidDateString(end)
+        ? DateUtils.formatDateObject(DateUtils.parseDate(end))
+        : DateUtils.formatDateObject(DateUtils.getEpochEnd());
 
     this.state = {
-      start: DateUtils.parseDate(start),
-      end: DateUtils.parseDate(end),
+      start: DateUtils.parseDate(startStr),
+      end: DateUtils.parseDate(endStr),
     };
     this.handleReset = this.handleReset.bind(this);
     this.handleMinValueChange = this.handleMinValueChange.bind(this);
@@ -56,21 +58,21 @@ class DateRangeSelector extends React.Component<
 
   UNSAFE_componentWillReceiveProps(nextProps: DateRangeSelectorProps) {
     let { start, end } = nextProps;
-    start =
+    const startStr =
       start === this.props.start
         ? DateUtils.formatDateObject(this.state.start)
-        : DateUtils.isValidDateString(start)
+        : start && DateUtils.isValidDateString(start)
         ? start
         : DateUtils.formatDateObject(DateUtils.getEpochStart());
-    end =
+    const endStr =
       end === this.props.end
         ? DateUtils.formatDateObject(this.state.end)
-        : DateUtils.isValidDateString(end)
+        : end && DateUtils.isValidDateString(end)
         ? end
         : DateUtils.formatDateObject(DateUtils.getEpochEnd());
     this.setState({
-      start: DateUtils.parseDate(start),
-      end: DateUtils.parseDate(end),
+      start: DateUtils.parseDate(startStr),
+      end: DateUtils.parseDate(endStr),
     });
   }
 

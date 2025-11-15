@@ -171,7 +171,7 @@ export default class MultiFieldFilter extends React.Component<
         {
           ...filter,
           value: { ...(filter.value as MultiFilterValue), operation },
-        },
+        } as Filter,
       ]);
       this.props.onFiltersChange(nextFilters);
     }
@@ -346,13 +346,13 @@ export default class MultiFieldFilter extends React.Component<
   renderRowValue(row: TableRow): React.ReactNode {
     const { value, filter, summary, isSelected } = row;
     if (value == null) return null;
-    const filterValue = get(filter, 'value', []);
+    const filterValue = get(filter, 'value', []) as any[];
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
       this.handleLeafFilterChange(
         this.getFieldByTerm(summary.term)!,
         event.target.checked
           ? [value].concat(filterValue)
-          : filterValue.filter((item) => item !== value),
+          : filterValue.filter((item: any) => item !== value),
         false,
         summary.valueCounts
       );
@@ -383,23 +383,26 @@ export default class MultiFieldFilter extends React.Component<
       (summary) => summary.internalsCount === 0
     );
 
-    const rows: TableRow[] = Seq.from(
-      this.props.activeFieldState.leafSummaries
-    ).flatMap((summary) => [
-      {
-        summary,
-        filter: filtersByField[summary.term],
-      },
-      ...summary.valueCounts.map((data, index) => ({
-        summary,
-        value: data.value,
-        filter: filtersByField[summary.term],
-        isSelected: get(filtersByField, [summary.term, 'value'], []).includes(
-          data.value
+    const rows: TableRow[] = Seq.from(this.props.activeFieldState.leafSummaries)
+      .flatMap((summary) => [
+        {
+          summary,
+          filter: filtersByField[summary.term],
+        } as TableRow,
+        ...summary.valueCounts.map(
+          (data, index) =>
+            ({
+              summary,
+              value: data.value,
+              filter: filtersByField[summary.term],
+              isSelected: (
+                get(filtersByField, [summary.term, 'value'], []) as any[]
+              ).includes(data.value as any),
+              isLast: index === summary.valueCounts.length - 1,
+            } as TableRow)
         ),
-        isLast: index === summary.valueCounts.length - 1,
-      })),
-    ]);
+      ])
+      .toArray();
 
     const filteredRows = rows.filter(({ summary }) =>
       findAncestorFields(this.props.fieldTree, summary.term)
@@ -453,8 +456,8 @@ export default class MultiFieldFilter extends React.Component<
           eventHandlers={{
             onSort: this.handleTableSort,
           }}
-          rows={rows.toArray()}
-          filteredRows={filteredRows.toArray()}
+          rows={rows}
+          filteredRows={filteredRows}
           columns={[
             {
               key: 'display',

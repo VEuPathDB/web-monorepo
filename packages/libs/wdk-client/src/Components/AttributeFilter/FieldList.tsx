@@ -140,7 +140,7 @@ export default class FieldList extends React.Component<
 
     return (
       <div className="field-list">
-        <CheckboxTree
+        <CheckboxTree<TreeNode<Field>>
           ref={this.handleCheckboxTreeRef as any}
           autoFocusSearchBox={autoFocus}
           tree={fieldTree}

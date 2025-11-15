@@ -195,7 +195,7 @@ var Histogram = (function () {
         );
       var { scaleYAxis = props.defaultScaleYAxis, yaxisMin = 0 } =
         props.uiState;
-      xaxisMax = assignBin(binSize, binStart, xaxisMax) + binSize;
+      xaxisMax = assignBin(binSize, binStart, xaxisMax ?? 0) + binSize;
       return {
         yaxisMax,
         xaxisMin,
@@ -301,7 +301,7 @@ var Histogram = (function () {
               ? minDistance
               : Math.min(entry.value - prevValue, minDistance),
         }),
-        { prev: null as number | null, minDistance: Infinity }
+        { prevValue: null as number | null, minDistance: Infinity }
       );
       return clamp(minDistance * padding, minWidth, maxWidth);
     }
@@ -401,7 +401,11 @@ var Histogram = (function () {
       var { uiState } = this.state;
       var { binSize, binStart, xaxisMin, xaxisMax } = uiState;
       const distribution = binSize
-        ? this.getBinnedDistribution(binSize, binStart, this.props.distribution)
+        ? this.getBinnedDistribution(
+            binSize,
+            binStart ?? 0,
+            this.props.distribution
+          )
         : this.props.distribution;
       const clampedDistribution = binSize
         ? distribution
@@ -520,12 +524,12 @@ var Histogram = (function () {
         const barWidthPx = (item.series.bars.barWidth / 2) * pointToPixelFactor;
         var formattedValue =
           this.props.chartType === 'date'
-            ? formatDate(this.props.timeformat, value)
+            ? formatDate(this.props.timeformat ?? 'yyyy-MM-dd', value)
             : formatNumber(value, { useScientificNotation: false });
         var formattedBinEnd =
           this.props.chartType === 'date'
             ? formatDate(
-                this.props.timeformat,
+                this.props.timeformat ?? 'yyyy-MM-dd',
                 value + (this.state.uiState.binSize || 0) * DAY
               )
             : formatNumber(value + (this.state.uiState.binSize || 0), {
@@ -618,11 +622,11 @@ var Histogram = (function () {
         this.props.chartType === 'date' ? xaxisMin : Math.min(0, xaxisMin);
       const rangeMin = binStart;
       const rangeMax =
-        assignBin(
+        (assignBin(
           binSize,
           binStart,
           xaxisMax === rangeMin ? rangeMin + 1 : xaxisMax
-        ) + binSize;
+        ) ?? 0) + binSize;
       this.setXAxisRange(rangeMin, rangeMax);
       this.setXAxisBinState(binStart, binSize);
     }
@@ -681,11 +685,11 @@ var Histogram = (function () {
             inline
             hideReset
             value={{
-              min: formatDate(timeformat, xaxisMin),
-              max: formatDate(timeformat, xaxisMax),
+              min: formatDate(timeformat ?? 'yyyy-MM-dd', xaxisMin),
+              max: formatDate(timeformat ?? 'yyyy-MM-dd', xaxisMax),
             }}
-            start={formatDate(timeformat, valuesMin)}
-            end={formatDate(timeformat, valuesMax)}
+            start={formatDate(timeformat ?? 'yyyy-MM-dd', valuesMin)}
+            end={formatDate(timeformat ?? 'yyyy-MM-dd', valuesMax)}
             onChange={(value) =>
               this.setXAxisRange(
                 parseDate(value.min).getTime(),
@@ -712,7 +716,7 @@ var Histogram = (function () {
 
       var yAxisScaleSelector = (
         <NumberRangeSelector
-          value={{ min: yaxisMin, max: yaxisMax }}
+          value={{ min: yaxisMin ?? 0, max: yaxisMax ?? 0 }}
           start={0}
           end={Infinity}
           onChange={(value) =>
@@ -804,7 +808,9 @@ var Histogram = (function () {
                         min={0}
                         value={this.state.uiState.binSize}
                         onFocus={autoSelectOnFocus}
-                        onChange={(e) => this.setXAxisBinSize(eventToNumber(e))}
+                        onChange={(e) =>
+                          this.setXAxisBinSize(eventToNumber(e) ?? 0)
+                        }
                       />
                       <em>
                         {' '}
