@@ -96,7 +96,7 @@ export default class DateField extends React.Component<DateFieldProps> {
   toFilterValue(value: number): number | string {
     switch (typeof value) {
       case 'number':
-        return formatDate(this.timeformat, new Date(value));
+        return formatDate(this.timeformat || 'yyyy-MM-dd', new Date(value));
       default:
         return value;
     }

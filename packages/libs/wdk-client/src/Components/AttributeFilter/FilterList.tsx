@@ -8,7 +8,7 @@ import {
   shouldAddFilter,
 } from '../../Components/AttributeFilter/AttributeFilterUtils';
 import { postorderSeq } from '../../Utils/TreeUtils';
-import { Filter, FieldTreeNode, Field } from './Types';
+import { Filter, FieldTreeNode, Field, MultiFilterValue } from './Types';
 
 interface FilterListProps {
   onActiveFieldChange: (field: string) => void;
@@ -68,17 +68,18 @@ export default class FilterList extends React.Component<FilterListProps, {}> {
       const otherFilters = this.props.filters.filter(
         (f) => f !== containerFilter
       );
+      const containerValue = containerFilter.value as MultiFilterValue;
       const nextContainerFilter = {
         ...containerFilter,
         value: {
-          ...containerFilter.value,
-          filters: containerFilter.value.filters.filter((f) => f !== filter),
+          ...containerValue,
+          filters: containerValue.filters.filter((f: any) => f !== filter),
         },
       };
       this.props.onFiltersChange(
         otherFilters.concat(
           shouldAddFilter(nextContainerFilter) ? [nextContainerFilter] : []
-        )
+        ) as Filter[]
       );
     } else {
       this.props.onFiltersChange(

@@ -157,7 +157,7 @@ export default class FieldList extends React.Component<
           searchTerm={this.state.searchTerm}
           onSearchTermChange={this.handleSearchTermChange}
           searchPredicate={this.searchPredicate}
-          renderNode={(node) => (
+          renderNode={(node: FieldTreeNode) => (
             <FieldNode
               node={node}
               searchTerm={this.state.searchTerm}
@@ -206,7 +206,7 @@ function FieldNode({
 
   useLayoutEffect(() => {
     if (isActive && nodeRef.current && nodeRef.current.offsetParent) {
-      scrollIntoViewIfNeeded(nodeRef.current.offsetParent);
+      scrollIntoViewIfNeeded(nodeRef.current.offsetParent as HTMLElement);
     }
   }, [isActive, nodeRef.current, searchTerm]);
 

@@ -8,6 +8,7 @@ import { isMulti } from '../../Components/AttributeFilter/AttributeFilterUtils';
 import {
   Field,
   Filter,
+  FieldTreeNode,
   OntologyTermSummary,
 } from '../../Components/AttributeFilter/Types';
 
@@ -35,6 +36,7 @@ type FieldFilterProps = {
   filters?: Filter[];
   activeField?: Field | null;
   activeFieldState?: FieldFilterState;
+  fieldTree?: FieldTreeNode;
   onFiltersChange?: (filters: Filter[]) => void;
   onMemberSort?: (sortBy: string) => void;
   onMemberSearch?: (searchTerm: string) => void;
@@ -52,7 +54,7 @@ function FieldFilter(props: FieldFilterProps) {
   return (
     <div className={className}>
       {!props.activeField ? (
-        <EmptyField displayName={props.displayName} />
+        <EmptyField displayName={props.displayName || ''} />
       ) : (
         <React.Fragment>
           <h3>
