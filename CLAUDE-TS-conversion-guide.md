@@ -52,7 +52,7 @@ grep -r "interface\|type" packages/libs/PACKAGE/src --include="*.ts" --include="
    - Remove PropTypes imports and definitions
 4. **Write the converted file**
 5. **Delete the old JavaScript file**
-6. **Verify compilation** with `npx tsc --noEmit`
+6. **Verify compilation** (see Testing and Verification section below)
 
 #### 3. Handling Common Patterns
 
@@ -558,15 +558,26 @@ class Form extends Component<FormProps> {
 
 ### Before Committing
 
-**1. TypeScript Compilation:**
+**1. Install Dependencies (first time only):**
 
 ```bash
-npx tsc --noEmit
+# Download and install all dependencies (can take a few minutes)
+yarn
 ```
 
-Must show `0 errors`.
+**2. Build and Verify TypeScript Compilation:**
 
-**2. Check for Remaining Issues:**
+```bash
+# Build wdk-client and its dependencies (cached if no changes)
+yarn nx build-npm-modules @veupathdb/wdk-client
+
+# Or, if dependencies are already built, build just wdk-client:
+yarn workspace @veupathdb/wdk-client build-npm-modules
+```
+
+Must complete successfully with no errors.
+
+**3. Check for Remaining Issues:**
 
 ```bash
 # Count 'as any' assertions
