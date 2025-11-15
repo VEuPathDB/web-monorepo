@@ -44,15 +44,24 @@ grep -r "interface\|type" packages/libs/PACKAGE/src --include="*.ts" --include="
 
 1. **Read the file** to understand its structure
 2. **Identify dependencies** and their types
-3. **Create TypeScript version** with proper types:
-   - Add `.tsx` extension for JSX files, `.ts` for plain JavaScript
+3. **Rename the file** using `git mv` to preserve history:
+
+   ```bash
+   # For JSX files
+   git mv Component.jsx Component.tsx
+
+   # For plain JavaScript files
+   git mv utility.js utility.ts
+   ```
+
+4. **Update the file** with proper TypeScript types:
    - Import types from existing TypeScript files where available
    - Create interfaces for component props and state
    - Add type annotations to function parameters and return values
    - Remove PropTypes imports and definitions
-4. **Write the converted file**
-5. **Delete the old JavaScript file**
-6. **Verify compilation** (see Testing and Verification section below)
+5. **Verify compilation** (see Testing and Verification section below)
+
+**Important:** Always use `git mv` instead of renaming files manually. This preserves git history and makes it easier to track changes across the rename.
 
 #### 3. Handling Common Patterns
 
