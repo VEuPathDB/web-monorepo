@@ -3,10 +3,11 @@ import React, { useCallback, useMemo } from 'react';
 import { orderBy } from 'lodash';
 
 import { Checkbox, Icon, Link, RealTimeSearchBox } from '../../Components';
-import { MesaState, Mesa } from '@veupathdb/coreui/lib/components/Mesa';
+import { Mesa } from '@veupathdb/coreui/lib/components/Mesa';
 import {
   MesaSortObject,
   MesaColumn,
+  MesaStateProps,
 } from '@veupathdb/coreui/lib/components/Mesa/types';
 import { makeClassNameHelper } from '../../Utils/ComponentUtils';
 import { StrategySummary } from '../../Utils/WdkUser';
@@ -86,15 +87,15 @@ export const PublicStrategies = ({
   );
   const mesaUiState = useMemo(() => makeMesaUiState(sort), [sort]);
 
-  const mesaState = MesaState.create({
-    columns: mesaColumns,
+  const mesaState: MesaStateProps<StrategySummary, string> = {
+    columns: mesaColumns as MesaColumn<StrategySummary, string>[],
     rows: mesaRows,
     filteredRows: mesaFilteredRows,
     options: mesaOptions,
     actions: mesaActions,
     eventHandlers: mesaEventHandlers,
     uiState: mesaUiState,
-  });
+  };
 
   return (
     <div className={cx()}>
@@ -106,7 +107,7 @@ export const PublicStrategies = ({
           Public strategies are visible to the community.
         </div>
       </div>
-      <Mesa state={mesaState as any}>
+      <Mesa state={mesaState}>
         <div className={cx('--SearchGroup')}>
           <h3
             className={cx('--SearchTitle')}

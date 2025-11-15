@@ -1,8 +1,12 @@
 import { orderBy } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Mesa, { MesaState } from '@veupathdb/coreui/lib/components/Mesa';
-import { MesaSortObject } from '@veupathdb/coreui/lib/components/Mesa/types';
+import Mesa from '@veupathdb/coreui/lib/components/Mesa';
+import {
+  MesaSortObject,
+  MesaStateProps,
+  MesaColumn,
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import { preferences, usePreference } from '../../Preferences';
 import { makeClassNameHelper } from '../../Utils/ComponentUtils';
 import { SaveStrategyOptions, StrategySummary } from '../../Utils/WdkUser';
@@ -101,9 +105,9 @@ export default function SaveAsStrategyForm(props: Props) {
     [sort.columnKey],
     [sort.direction]
   );
-  const tableState = MesaState.create({
+  const tableState: MesaStateProps<StrategySummary, string> = {
     rows: mesaRows,
-    columns: mesaColumns as any,
+    columns: mesaColumns as MesaColumn<StrategySummary, string>[],
     eventHandlers: {
       ...eventHandlers,
       onRowSelect: (s: StrategySummary) => {
@@ -111,7 +115,7 @@ export default function SaveAsStrategyForm(props: Props) {
         setSelectedStrategyId(s.strategyId);
       },
     },
-    uiState: { sort } as any,
+    uiState: { sort },
     options: {
       useStickyHeader: true,
       tableBodyMaxHeight: '50vh',
@@ -122,7 +126,7 @@ export default function SaveAsStrategyForm(props: Props) {
           s.strategyId === selectedStrategyId ? 'selected' : 'unselected'
         ),
     },
-  });
+  };
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -162,7 +166,7 @@ export default function SaveAsStrategyForm(props: Props) {
       </div>
       <form onSubmit={handleSubmit}>
         <div className={cx('--SelectorPanel')}>
-          <Mesa state={tableState as any}></Mesa>
+          <Mesa state={tableState}></Mesa>
           <div className={cx('--InputLine')}>
             <label htmlFor="saveAsInput">Save as</label>
             <input

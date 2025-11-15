@@ -4,10 +4,11 @@ import { connect } from 'react-redux';
 import { orderBy } from 'lodash';
 
 import { Loading, RealTimeSearchBox } from '../../Components';
-import Mesa, { MesaState } from '@veupathdb/coreui/lib/components/Mesa';
+import Mesa from '@veupathdb/coreui/lib/components/Mesa';
 import {
   MesaSortObject,
   MesaColumn,
+  MesaStateProps,
 } from '@veupathdb/coreui/lib/components/Mesa/types';
 import { RootState } from '../../Core/State/Types';
 import { useWdkService } from '../../Hooks/WdkServiceHook';
@@ -200,18 +201,18 @@ const StrategyInputSelectorTable = ({
   );
   const mesaUiState = useMemo(() => makeMesaUiState(sort), [sort]);
 
-  const mesaState = MesaState.create({
-    columns: mesaColumns,
+  const mesaState: MesaStateProps<StrategySummaryWithDataType, string> = {
+    columns: mesaColumns as MesaColumn<StrategySummaryWithDataType, string>[],
     rows: mesaRows,
     filteredRows: mesaFilteredRows,
     options: mesaOptions,
     actions: mesaActions,
     eventHandlers: mesaEventHandlers,
-    uiState: mesaUiState as any,
-  });
+    uiState: mesaUiState.sort != null ? { sort: mesaUiState.sort } : undefined,
+  };
 
   return (
-    <Mesa state={mesaState as any}>
+    <Mesa state={mesaState}>
       <div className={cx('--SearchGroup')}>
         <h3
           className={cx('--SearchTitle')}
