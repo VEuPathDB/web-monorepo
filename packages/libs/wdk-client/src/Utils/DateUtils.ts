@@ -8,13 +8,13 @@
  *    duh, obvious
  **/
 
-interface DateObject {
+export interface DateObject {
   day: number;
   month: number;
   year: number;
 }
 
-interface DateRangeObject {
+export interface DateRangeObject {
   start: DateObject;
   end: DateObject;
 }

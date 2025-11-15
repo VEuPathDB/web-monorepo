@@ -49,6 +49,7 @@ export interface Reporter {
   description?: string;
   isInReport: boolean;
   scopes: string[];
+  newBuild?: string;
 }
 
 interface ParameterBase extends NamedModelEntity {
@@ -318,6 +319,7 @@ export interface AttributeField extends NamedModelEntity {
   isSortable: boolean;
   isRemovable: boolean;
   isDisplayable: boolean;
+  isPrimary?: boolean;
   type?: string;
   truncateTo: number;
   formats: Reporter[];
