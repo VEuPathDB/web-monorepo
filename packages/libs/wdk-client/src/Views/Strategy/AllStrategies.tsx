@@ -9,7 +9,11 @@ import { RecordClass } from '../../Utils/WdkModel';
 import Tabs from '../../Components/Tabs/Tabs';
 import { makeClassNameHelper } from '../../Utils/ComponentUtils';
 
-import { MesaSortObject } from '@veupathdb/coreui/lib/components/Mesa/types';
+import {
+  MesaSortObject,
+  MesaColumn,
+  MesaAction,
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import RealTimeSearchBox from '../../Components/SearchBox/RealTimeSearchBox';
 import { StrategyControls } from '../../Views/Strategy/StrategyControls';
 
@@ -182,14 +186,13 @@ const invalidIcon = (
 function makeColumns(
   isSaved: boolean,
   updatePublicStatus: TableProps['updatePublicStatus']
-) {
+): MesaColumn<StrategySummary, string, any>[] {
   return [
     {
       key: 'isValid',
-      name: invalidIcon,
       className: cx('--TableCell', 'isValid'),
-      renderCell: ({ value }: CellRenderProps<boolean>) =>
-        value ? null : invalidIcon,
+      renderHeading: () => invalidIcon,
+      renderCell: ({ value }) => (value ? null : invalidIcon),
       sortable: true,
     },
     {
@@ -197,7 +200,7 @@ function makeColumns(
       name: 'Strategy',
       className: cx('--TableCell', 'name'),
       sortable: true,
-      renderCell: ({ row, value }: CellRenderProps<string>) => {
+      renderCell: ({ row, value }) => {
         const path = row.isValid
           ? `${row.strategyId}/${row.rootStepId}`
           : row.strategyId;
@@ -213,7 +216,7 @@ function makeColumns(
       key: 'description',
       name: 'Description',
       className: cx('--TableCell', 'description'),
-      renderCell: ({ value, row }: CellRenderProps<string>) => (
+      renderCell: ({ value, row }) => (
         <OverflowingTextCell
           value={value || row.nameOfFirstStep || ''}
           key={row.strategyId}
@@ -231,16 +234,14 @@ function makeColumns(
       key: 'actions',
       name: 'Actions',
       className: cx('--TableCell', 'actions'),
-      renderCell: ({ row }: CellRenderProps<void>) => (
-        <StrategyControls strategyId={row.strategyId} />
-      ),
+      renderCell: ({ row }) => <StrategyControls strategyId={row.strategyId} />,
     },
     {
       key: 'isPublic',
       name: 'Public',
       className: cx('--TableCell', 'isPublic'),
       sortable: true,
-      renderCell: ({ row, value }: CellRenderProps<boolean>) => (
+      renderCell: ({ row, value }) => (
         <input
           type="checkbox"
           title={
@@ -281,8 +282,7 @@ function makeColumns(
       name: 'Result size',
       className: cx('--TableCell', 'estimatedSize'),
       sortable: true,
-      renderCell: ({ value }: CellRenderProps<number | undefined>) =>
-        value == null ? '?' : value.toLocaleString(),
+      renderCell: ({ value }) => (value == null ? '?' : value.toLocaleString()),
     },
   ];
 }
@@ -293,7 +293,9 @@ function makeActions(
   removeFromOpened: TableProps['removeFromOpened'],
   removeFromSelection: TableProps['removeFromSelection'],
   deleteStrategies: TableProps['deleteStrategies']
-) {
+): Array<
+  Omit<MesaAction<StrategySummary, string>, 'callback'> & { callback?: any }
+> {
   const handleOpen = makeActionCallback(addToOpened, removeFromSelection);
   return [
     {
@@ -492,15 +494,16 @@ function StrategiesTable(props: TableProps) {
   const tableState = MesaState.create({
     rows: mesaRows,
     filteredRows: mesaFilteredRows,
-    columns: mesaColumns as any,
+    columns: mesaColumns,
     options: mesaOptions,
-    actions: mesaActions as any,
+    actions: mesaActions,
     eventHandlers: mesaEventHandlers,
     uiState,
   });
 
   return (
     <React.Fragment>
+      {/* Type assertion needed: MesaState.create returns Partial but Mesa expects full */}
       <Mesa state={tableState as any}>
         <h3 className={cx('--Title')}>{props.title}</h3>
         <RealTimeSearchBox
@@ -525,7 +528,7 @@ function TruncatedText({
   return <span title={title}>{truncated}</span>;
 }
 
-function formatDateTime(props: CellRenderProps<string>) {
+function formatDateTime(props: { value: string }) {
   return formatDateTimeString(props.value);
 }
 
