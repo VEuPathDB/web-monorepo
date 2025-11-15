@@ -1,24 +1,42 @@
 import React from 'react';
 import * as DateUtils from '../../Utils/DateUtils';
+import { DateObject } from '../../Utils/DateUtils';
 
 import '../../Components/InputControls/wdk-DateSelector.scss';
 import Select from '../../Components/InputControls/SingleSelect';
 
-class DateSelector extends React.Component {
-  constructor(props) {
+interface Props {
+  value?: string;
+  start?: string;
+  end?: string;
+  onChange?: (value: string) => void;
+  required?: boolean;
+}
+
+interface State {
+  year: number;
+  month: number;
+  day: number;
+  value?: string;
+  start: DateObject;
+  end: DateObject;
+}
+
+class DateSelector extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     let { value, start, end } = props;
 
-    let { year, month, day } = DateUtils.isValidDateString(value)
-      ? DateUtils.parseDate(value)
-      : { year: currentYear, month: 1, day: 1 };
+    let { year, month, day } = DateUtils.isValidDateString(value || '')
+      ? DateUtils.parseDate(value || '')
+      : { year: DateUtils.currentYear, month: 1, day: 1 };
 
-    start = DateUtils.isValidDateString(start)
-      ? DateUtils.parseDate(start)
+    start = DateUtils.isValidDateString(start || '')
+      ? DateUtils.parseDate(start || '')
       : DateUtils.getEpochStart();
 
-    end = DateUtils.isValidDateString(end)
-      ? DateUtils.parseDate(end)
+    end = DateUtils.isValidDateString(end || '')
+      ? DateUtils.parseDate(end || '')
       : DateUtils.getEpochEnd();
 
     let initial = JSON.stringify([year, month, day]);
@@ -39,7 +57,7 @@ class DateSelector extends React.Component {
     this.componentWillReceiveProps = this.componentWillReceiveProps.bind(this);
   }
 
-  handleYearChange(year) {
+  handleYearChange(year: number): void {
     year = year * 1;
     let { month, day, start, end } = this.state;
     ({ year, month, day } = DateUtils.conformDateToBounds(
@@ -49,10 +67,10 @@ class DateSelector extends React.Component {
 
     let result = DateUtils.formatDate(year, month, day);
     if (!DateUtils.isValidDateString(result)) return;
-    if ('onChange' in this.props) this.props.onChange(result);
+    if ('onChange' in this.props) this.props.onChange?.(result);
   }
 
-  handleMonthChange(month) {
+  handleMonthChange(month: number): void {
     month = month * 1;
     let { year, day, start, end } = this.state;
     ({ year, month, day } = DateUtils.conformDateToBounds(
@@ -62,10 +80,10 @@ class DateSelector extends React.Component {
 
     let result = DateUtils.formatDate(year, month, day);
     if (!DateUtils.isValidDateString(result)) return;
-    if ('onChange' in this.props) this.props.onChange(result);
+    if ('onChange' in this.props) this.props.onChange?.(result);
   }
 
-  handleDayChange(day) {
+  handleDayChange(day: number): void {
     day = day * 1;
     let { year, month, start, end } = this.state;
     ({ year, month, day } = DateUtils.conformDateToBounds(
@@ -75,28 +93,28 @@ class DateSelector extends React.Component {
 
     let result = DateUtils.formatDate(year, month, day);
     if (!DateUtils.isValidDateString(result)) return;
-    if ('onChange' in this.props) this.props.onChange(result);
+    if ('onChange' in this.props) this.props.onChange?.(result);
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: Props): void {
     let { value, start, end } = nextProps;
     if (value && value === this.props.value && this.state.value) return; // No change
-    let { year, month, day } = DateUtils.parseDate(value);
+    let { year, month, day } = DateUtils.parseDate(value || '');
 
     start =
       start === this.props.start
         ? this.state.start
-        : DateUtils.isValidDateString(start)
-        ? DateUtils.parseDate(start)
+        : DateUtils.isValidDateString(start || '')
+        ? DateUtils.parseDate(start || '')
         : DateUtils.getEpochStart();
     end =
       end === this.props.end
         ? this.state.end
-        : DateUtils.isValidDateString(end)
-        ? DateUtils.parseDate(end)
+        : DateUtils.isValidDateString(end || '')
+        ? DateUtils.parseDate(end || '')
         : DateUtils.getEpochEnd();
 
-    if (!DateUtils.isValidDateString(value)) {
+    if (!DateUtils.isValidDateString(value || '')) {
       let message;
       if (this.state.value) {
         message = `<DateSelector> received an invalid {value} property. `;
@@ -113,7 +131,7 @@ class DateSelector extends React.Component {
     this.setState({ value, year, month, day, start, end });
   }
 
-  render() {
+  render(): React.ReactNode {
     let { value, onChange, required = false } = this.props;
     let { year, month, day, start, end } = this.state;
 

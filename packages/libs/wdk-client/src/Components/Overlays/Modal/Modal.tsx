@@ -4,7 +4,12 @@ import '../../../Components/Overlays/Modal/Modal.scss';
 import { BodyLayer } from '@veupathdb/coreui/lib/components/Mesa';
 import { useBodyScrollManager } from '../../../Components/Overlays/BodyScrollManager';
 
-function Modal(props) {
+type Props = {
+  when?: boolean;
+  wrapperClass?: string;
+} & React.HTMLAttributes<HTMLDivElement>;
+
+function Modal(props: Props) {
   const { when, wrapperClass, ...otherProps } = props;
   const active = typeof when === 'undefined' ? true : when;
   const wrapperClassName =

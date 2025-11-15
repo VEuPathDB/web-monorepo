@@ -1,9 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import PropTypes from 'prop-types';
 
-class Sticky extends React.Component {
-  constructor(props) {
+interface Props {
+  children: (state: State) => React.ReactNode;
+}
+
+interface State {
+  isFixed: boolean;
+  height: number | null;
+  width: number | null;
+}
+
+class Sticky extends React.Component<Props, State> {
+  node: Element | Text | null = null;
+
+  constructor(props: Props) {
     super(props);
     this.updateIsFixed = this.updateIsFixed.bind(this);
     this.state = { isFixed: false, height: null, width: null };
@@ -24,25 +35,27 @@ class Sticky extends React.Component {
 
   // Set position to fixed if top is above threshold, otherwise
   // set position to absolute.
-  updateIsFixed() {
+  updateIsFixed = () => {
     // See https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
-    let rect = this.node.getBoundingClientRect();
-    if (rect.top < 0 && this.state.isFixed === false) {
-      let contentNode = this.node.children[0];
-      let contentRect = contentNode.getBoundingClientRect();
-      this.setState({
-        isFixed: true,
-        height: rect.height,
-        width: contentRect.width,
-      });
-    } else if (rect.top >= 0 && this.state.isFixed === true) {
-      this.setState({
-        isFixed: false,
-        height: null,
-        width: null,
-      });
+    if (this.node instanceof Element) {
+      let rect = this.node.getBoundingClientRect();
+      if (rect.top < 0 && this.state.isFixed === false) {
+        let contentNode = this.node.children[0];
+        let contentRect = contentNode.getBoundingClientRect();
+        this.setState({
+          isFixed: true,
+          height: rect.height,
+          width: contentRect.width,
+        });
+      } else if (rect.top >= 0 && this.state.isFixed === true) {
+        this.setState({
+          isFixed: false,
+          height: null,
+          width: null,
+        });
+      }
     }
-  }
+  };
 
   render() {
     return (
@@ -53,9 +66,5 @@ class Sticky extends React.Component {
     );
   }
 }
-
-Sticky.propTypes = {
-  children: PropTypes.func.isRequired,
-};
 
 export default Sticky;

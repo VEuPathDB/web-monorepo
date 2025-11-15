@@ -1,7 +1,16 @@
 import React from 'react';
 
-export default class AccordionButton extends React.Component {
-  constructor(props) {
+interface AccordionButtonProps {
+  toggleExpansion: (node: any) => void;
+  node: any;
+  expanded: boolean;
+}
+
+export default class AccordionButton extends React.Component<
+  AccordionButtonProps,
+  {}
+> {
+  constructor(props: AccordionButtonProps) {
     super(props);
     // hard bind the handleExpansion functions to the Accordion Button object
     this.handleExpansion = this.handleExpansion.bind(this);

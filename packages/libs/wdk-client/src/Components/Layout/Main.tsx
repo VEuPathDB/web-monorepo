@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
 import { wrappable } from '../../Utils/ComponentUtils';
 
-class Main extends Component {
+interface Props {
+  className?: string;
+  children?: React.ReactNode;
+}
+
+class Main extends Component<Props> {
   render() {
     return <div className={this.props.className}>{this.props.children}</div>;
   }
