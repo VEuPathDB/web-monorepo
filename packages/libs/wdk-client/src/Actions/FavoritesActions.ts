@@ -472,7 +472,7 @@ export function loadFavoritesList(): ActionThunk<ListAction> {
       startFavoritesRequest(),
       wdkService.getCurrentFavorites().then(
         (rows) => {
-          const newTableState = MesaState.create({ rows });
+          const newTableState = MesaState.create({ rows }) as any;
           return endFavoritesRequestWithSucess(newTableState);
         },
         (error: ServiceError) => endFavoritesRequestWithError(error)

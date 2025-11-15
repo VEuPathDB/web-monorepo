@@ -219,7 +219,7 @@ class FavoritesList extends Component<Props, State> {
 
   countFavoritesByType(): Record<string, number> {
     const { recordClasses, tableState } = this.props;
-    const rows = MesaState.getRows(tableState);
+    const rows = MesaState.getRows(tableState) as Favorite[];
     const counts = rows.reduce(
       (tally: Record<string, number>, { recordClassName }: Favorite) => {
         if (tally[recordClassName])
@@ -227,7 +227,7 @@ class FavoritesList extends Component<Props, State> {
         else tally[recordClassName] = 1;
         return tally;
       },
-      {}
+      {} as Record<string, number>
     );
     return counts;
   }
@@ -585,15 +585,15 @@ class FavoritesList extends Component<Props, State> {
     const rows = MesaState.getRows(tableState);
     const uiState =
       'uiState' in tableState ? MesaState.getUiState(tableState) : null;
-    const { sort } = uiState ? uiState : { sort: {} };
-    const filteredRows = MesaState.getFilteredRows(tableState);
+    const { sort } = uiState ? uiState : { sort: undefined };
+    const filteredRows = MesaState.getFilteredRows(tableState) as Favorite[];
     const sortedFilteredRows =
       sort && sort.columnKey
-        ? MesaUtils.textSort(
-            filteredRows,
+        ? (MesaUtils.textSort(
+            filteredRows as any,
             sort.columnKey,
             sort.direction === 'asc'
-          )
+          ) as Favorite[])
         : filteredRows;
 
     tableState = MesaState.setOptions(tableState, this.getTableOptions());

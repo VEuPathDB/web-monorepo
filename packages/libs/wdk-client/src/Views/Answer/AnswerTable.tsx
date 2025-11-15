@@ -254,13 +254,15 @@ class AnswerTable extends React.Component<AnswerTableProps, AnswerTableState> {
         </Dialog>
 
         <DataTable
-          columns={this.state.columns}
-          data={this.state.data}
-          searchable={false}
-          width="100%"
-          height={this.props.height}
-          sorting={this.state.sorting}
-          onSortingChange={this.handleSort}
+          {...({
+            columns: this.state.columns,
+            data: this.state.data,
+            searchable: false,
+            width: '100%',
+            height: this.props.height,
+            sorting: this.state.sorting,
+            onSortingChange: this.handleSort,
+          } as any)}
         />
       </div>
     );

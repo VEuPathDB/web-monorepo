@@ -200,7 +200,7 @@ export class CommonResultTable<R = Record<string, any>> extends Component<
       ) as ColumnSettings<R>) || {};
     const sortMethod = sortTypes[sortType] || sortTypes['text'];
 
-    const unsortedRows = getFilteredRows(pagedState);
+    const unsortedRows = getFilteredRows(pagedState as any);
     const sortedRows = !sortColumnKey
       ? unsortedRows
       : sortMethod(unsortedRows, sortColumnKey, sortDirection === 'asc');

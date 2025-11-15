@@ -257,7 +257,8 @@ class RecordTable extends Component<RecordTableProps, RecordTableState> {
             ? type === 'link'
               ? typeof nonNullDataObject[name] === 'object' &&
                 nonNullDataObject[name] !== null &&
-                'displayText' in nonNullDataObject[name]
+                typeof nonNullDataObject[name] === 'object' &&
+                'displayText' in (nonNullDataObject[name] as object)
                 ? (nonNullDataObject[name] as { displayText?: string })
                     .displayText
                 : ''
@@ -392,7 +393,7 @@ class RecordTable extends Component<RecordTableProps, RecordTableState> {
       filteredRows: this.state.searchTerm.length ? filteredRows : undefined,
       eventHandlers: {
         onSort: this.onSort,
-        onExpandedRowsChange,
+        onExpandedRowsChange: onExpandedRowsChange as any,
         ...(isOrthologTableWithData
           ? { ...this.props.orthoTableProps!.eventHandlers }
           : {}),
