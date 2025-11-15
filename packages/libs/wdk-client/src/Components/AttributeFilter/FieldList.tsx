@@ -1,5 +1,4 @@
 import { memoize, uniq } from 'lodash';
-import PropTypes from 'prop-types';
 import React, { useLayoutEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { scrollIntoViewIfNeeded } from '../../Utils/DomUtils';
@@ -17,14 +16,35 @@ import {
   isRange,
   findAncestorFields,
 } from '../../Components/AttributeFilter/AttributeFilterUtils';
+import {
+  Field,
+  FieldTreeNode,
+  TreeNode,
+} from '../../Components/AttributeFilter/Types';
+
+interface FieldListProps {
+  autoFocus?: boolean;
+  fieldTree: FieldTreeNode;
+  onActiveFieldChange: (term: string) => void;
+  activeField?: Field | null;
+  valuesMap: Record<string, string[]>;
+}
+
+interface FieldListState {
+  searchTerm: string;
+  expandedNodes: string[];
+}
 
 /**
  * Tree of Fields, used to set the active field.
  */
-export default class FieldList extends React.Component {
-  // eslint-disable-line react/no-deprecated
+export default class FieldList extends React.Component<
+  FieldListProps,
+  FieldListState
+> {
+  treeDomNode?: Element | Text | null;
 
-  constructor(props) {
+  constructor(props: FieldListProps) {
     super(props);
     this.handleCheckboxTreeRef = this.handleCheckboxTreeRef.bind(this);
     this.getNodeId = this.getNodeId.bind(this);
@@ -43,7 +63,7 @@ export default class FieldList extends React.Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: FieldListProps) {
     if (
       nextProps.activeField == null ||
       this.props.activeField === nextProps.activeField
@@ -64,15 +84,15 @@ export default class FieldList extends React.Component {
     }
   }
 
-  handleCheckboxTreeRef(component) {
+  handleCheckboxTreeRef(component: any) {
     this.treeDomNode = ReactDOM.findDOMNode(component);
   }
 
-  handleExpansionChange(expandedNodes) {
+  handleExpansionChange(expandedNodes: string[]) {
     this.setState({ expandedNodes });
   }
 
-  handleFieldSelect(node) {
+  handleFieldSelect(node: TreeNode<Field>) {
     this.props.onActiveFieldChange(node.field.term);
     const expandedNodes = Seq.from(this.state.expandedNodes)
       .concat(this._getPathToField(node.field))
@@ -82,19 +102,20 @@ export default class FieldList extends React.Component {
     this.setState({ expandedNodes });
   }
 
-  handleSearchTermChange(searchTerm) {
+  handleSearchTermChange(searchTerm: string) {
     // update search term, then if it is empty, make sure selected field is visible
     this.setState({ searchTerm });
   }
-  getNodeId(node) {
+
+  getNodeId(node: TreeNode<Field>) {
     return node.field.term;
   }
 
-  getNodeChildren(node) {
+  getNodeChildren(node: TreeNode<Field>) {
     return isMulti(node.field) ? [] : node.children;
   }
 
-  getFieldSearchString(node) {
+  getFieldSearchString(node: TreeNode<Field>): string {
     return isMulti(node.field)
       ? preorderSeq(node)
           .map(getNodeSearchString(this.props.valuesMap))
@@ -102,11 +123,11 @@ export default class FieldList extends React.Component {
       : getNodeSearchString(this.props.valuesMap)(node);
   }
 
-  searchPredicate(node, searchTerms) {
+  searchPredicate(node: TreeNode<Field>, searchTerms: string[]) {
     return areTermsInString(searchTerms, this.getFieldSearchString(node));
   }
 
-  _getPathToField(field) {
+  _getPathToField(field: Field | null | undefined): string[] {
     if (field == null) return [];
 
     return findAncestorFields(this.props.fieldTree, field.term)
@@ -114,8 +135,8 @@ export default class FieldList extends React.Component {
       .toArray();
   }
 
-  render() {
-    var { activeField, autoFocus, fieldTree } = this.props;
+  render(): JSX.Element {
+    const { activeField, autoFocus, fieldTree } = this.props;
 
     return (
       <div className="field-list">
@@ -158,27 +179,30 @@ export default class FieldList extends React.Component {
   }
 }
 
-FieldList.propTypes = {
-  autoFocus: PropTypes.bool,
-  fieldTree: PropTypes.object.isRequired,
-  onActiveFieldChange: PropTypes.func.isRequired,
-  activeField: PropTypes.object,
-  valuesMap: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string).isRequired)
-    .isRequired,
-};
-
-function getNodeSearchString(valuesMap) {
+function getNodeSearchString(valuesMap: Record<string, string[]>) {
   return function ({
     field: { term, display = '', description = '', variableName = '' },
-  }) {
+  }: TreeNode<Field>): string {
     return `${display} ${description} ${variableName} ${
       valuesMap[term] || ''
     }`.toLowerCase();
   };
 }
 
-function FieldNode({ node, isActive, searchTerm, handleFieldSelect }) {
-  const nodeRef = useRef(null);
+interface FieldNodeProps {
+  node: TreeNode<Field>;
+  isActive: boolean;
+  searchTerm: string;
+  handleFieldSelect: (node: TreeNode<Field>) => void;
+}
+
+function FieldNode({
+  node,
+  isActive,
+  searchTerm,
+  handleFieldSelect,
+}: FieldNodeProps): JSX.Element {
+  const nodeRef = useRef<HTMLAnchorElement>(null);
 
   useLayoutEffect(() => {
     if (isActive && nodeRef.current && nodeRef.current.offsetParent) {
@@ -213,6 +237,6 @@ function FieldNode({ node, isActive, searchTerm, handleFieldSelect }) {
   );
 }
 
-function getIcon(field) {
+function getIcon(field: Field): string {
   return isRange(field) ? 'bar-chart-o' : isMulti(field) ? 'th-list' : 'list';
 }

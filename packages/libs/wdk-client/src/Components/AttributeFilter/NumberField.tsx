@@ -3,6 +3,12 @@ import { partition } from 'lodash';
 
 import { formatNumber } from '../../Components/AttributeFilter/AttributeFilterUtils';
 import HistogramField from '../../Components/AttributeFilter/HistogramField';
+import {
+  Field,
+  RangeFilter,
+  OntologyTermSummary,
+  ValueCounts,
+} from '../../Components/AttributeFilter/Types';
 
 // the data distribution is stored in knownDist, an array of n objects (n distinctive values)
 // each object has 3 properties { count, filteredCount, value }
@@ -14,14 +20,44 @@ import HistogramField from '../../Components/AttributeFilter/HistogramField';
 const MAX_DECIMALS = 3;
 
 /**
+ * Distribution entry type for number data
+ */
+interface DistributionEntry {
+  value: number | string | null;
+  count: number;
+  filteredCount: number;
+}
+
+/**
+ * Props for the NumberField component
+ */
+interface NumberFieldProps {
+  activeField: Field;
+  activeFieldState: {
+    summary: OntologyTermSummary;
+    [key: string]: any;
+  };
+  filter?: RangeFilter;
+  onChange: (
+    activeField: Field,
+    range: any,
+    includeUnknown: boolean,
+    valueCounts: ValueCounts
+  ) => void;
+  displayName: string;
+  selectByDefault?: boolean;
+  [key: string]: any;
+}
+
+/**
  * Number field component
  */
-export default class NumberField extends React.Component {
-  static getHelpContent(props) {
-    return HistogramField.getHelpContent(props);
+export default class NumberField extends React.Component<NumberFieldProps> {
+  static getHelpContent(props: NumberFieldProps) {
+    return (HistogramField as any).getHelpContent(props);
   }
 
-  constructor(props) {
+  constructor(props: NumberFieldProps) {
     super(props);
     this.toHistogramValue = this.toHistogramValue.bind(this);
     this.toFilterValue = this.toFilterValue.bind(this);
@@ -31,7 +67,7 @@ export default class NumberField extends React.Component {
   // E.g., S = '-'
   // A potential solution is to use strings for state and to
   // convert to Number when needed
-  parseValue(value) {
+  parseValue(value: string | number): number {
     switch (typeof value) {
       case 'string':
         return Number(value);
@@ -40,7 +76,7 @@ export default class NumberField extends React.Component {
     }
   }
 
-  toHistogramValue(value) {
+  toHistogramValue(value: number | string): number {
     return Number(value);
     // The following code causes some data to be not included in a range.
     // If this proves to have a negative impact on the UI, we will need
@@ -52,11 +88,11 @@ export default class NumberField extends React.Component {
     // return integerPart + decimalPart;
   }
 
-  toFilterValue(value) {
+  toFilterValue(value: number | string): number | string {
     return value;
   }
 
-  numericDataMedian(arr) {
+  numericDataMedian(arr: number[]): number {
     let mid = Math.floor(arr.length / 2);
     let nums = [...arr].sort((a, b) => a - b);
     return arr.length % 2 !== 0 ? nums[mid] : (nums[mid - 1] + nums[mid]) / 2;
@@ -73,16 +109,16 @@ export default class NumberField extends React.Component {
       return entry.filteredCount + sum;
     }, 0);
     var sum = knownDist.reduce(function (sum, entry) {
-      return entry.value * entry.filteredCount + sum;
+      return (entry.value as number) * entry.filteredCount + sum;
     }, 0);
     var values = knownDist
       .filter((entry) => entry.filteredCount > 0)
-      .map((entry) => entry.value);
+      .map((entry) => entry.value as number);
     var distMin = Math.min(...values);
     var distMax = Math.max(...values);
     var distAvg = sum / size;
     var median = this.numericDataMedian(
-      knownDist.flatMap((x) => Array(x.filteredCount).fill(x.value))
+      knownDist.flatMap((x) => Array(x.filteredCount).fill(x.value as number))
     );
     var unknownCount = unknownDist.reduce((sum, entry) => sum + entry.count, 0);
     var overview = (
@@ -100,7 +136,7 @@ export default class NumberField extends React.Component {
 
     return (
       <HistogramField
-        {...this.props}
+        {...(this.props as any)}
         distribution={knownDist}
         unknownCount={unknownCount}
         toFilterValue={this.toFilterValue}

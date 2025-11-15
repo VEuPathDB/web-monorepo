@@ -7,16 +7,62 @@ import {
   formatDate,
   parseDate,
 } from '../../Components/AttributeFilter/AttributeFilterUtils';
+import {
+  Field,
+  RangeFilter,
+  OntologyTermSummary,
+  ValueCounts,
+} from '../../Components/AttributeFilter/Types';
+
+/**
+ * Distribution entry type for histogram data
+ */
+interface DistributionEntry {
+  value: number | string | null;
+  count: number;
+  filteredCount: number;
+}
+
+/**
+ * Props for the DateField component
+ */
+interface DateFieldProps {
+  distribution: DistributionEntry[];
+  toFilterValue: (value: number) => number | string;
+  toHistogramValue: (value: number | string) => number;
+  selectByDefault: boolean;
+  onChange: (
+    activeField: Field,
+    range: { min?: number | string | null; max?: number | string | null },
+    includeUnknown: boolean,
+    valueCounts: ValueCounts
+  ) => void;
+  activeField: Field;
+  activeFieldState: {
+    summary: OntologyTermSummary;
+    [key: string]: any;
+  };
+  filter?: RangeFilter;
+  overview?: React.ReactNode;
+  displayName: string;
+  unknownCount: number;
+  timeformat?: string;
+  onRangeScaleChange?: (activeField: Field, range: any) => void;
+  histogramTruncateYAxisDefault?: boolean;
+  histogramScaleYAxisDefault?: boolean;
+}
 
 /**
  * Date field component
  */
-export default class DateField extends React.Component {
-  static getHelpContent(props) {
-    return HistogramField.getHelpContent(props);
+export default class DateField extends React.Component<DateFieldProps> {
+  timeformat?: string;
+
+  static getHelpContent(props: DateFieldProps) {
+    return HistogramField.getHelpContent(props as any);
   }
 
-  constructor(props) {
+  constructor(props: DateFieldProps) {
     super(props);
     this.toHistogramValue = this.toHistogramValue.bind(this);
     this.toFilterValue = this.toFilterValue.bind(this);
@@ -26,11 +72,11 @@ export default class DateField extends React.Component {
     this.setDateFormat(this.props.activeFieldState.summary.valueCounts);
   }
 
-  componentWillUpdate(nextProps) {
+  componentWillUpdate(nextProps: DateFieldProps) {
     this.setDateFormat(nextProps.activeFieldState.summary.valueCounts);
   }
 
-  setDateFormat(distribution) {
+  setDateFormat(distribution: ValueCounts) {
     const firstDateEntry = distribution.find((entry) => entry.value != null);
     if (firstDateEntry == null) {
       console.warn(
@@ -38,16 +84,16 @@ export default class DateField extends React.Component {
         distribution
       );
     } else {
-      this.timeformat = getFormatFromDateString(firstDateEntry.value);
+      this.timeformat = getFormatFromDateString(firstDateEntry.value as string);
     }
   }
 
-  toHistogramValue(value) {
+  toHistogramValue(value: number | string): number {
     const date = typeof value === 'string' ? parseDate(value) : new Date(value);
     return date.getTime();
   }
 
-  toFilterValue(value) {
+  toFilterValue(value: number): number | string {
     switch (typeof value) {
       case 'number':
         return formatDate(this.timeformat, new Date(value));
@@ -68,7 +114,7 @@ export default class DateField extends React.Component {
       knownDist
         .filter((entry) => entry.filteredCount > 0)
         .map((entry) => entry.value),
-      (value) => parseDate(value).getTime()
+      (value) => parseDate(value as string | number).getTime()
     );
     var distMin = values[0];
     var distMax = values[values.length - 1];
@@ -76,7 +122,7 @@ export default class DateField extends React.Component {
     var dateDist = knownDist.map(function (entry) {
       // convert value to time in ms
       return Object.assign({}, entry, {
-        value: parseDate(entry.value).getTime(),
+        value: parseDate(entry.value as string | number).getTime(),
       });
     });
 
@@ -93,7 +139,7 @@ export default class DateField extends React.Component {
 
     return (
       <HistogramField
-        {...this.props}
+        {...(this.props as any)}
         timeformat={this.timeformat}
         distribution={dateDist}
         unknownCount={unknownCount}

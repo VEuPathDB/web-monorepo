@@ -15,21 +15,83 @@ import {
 } from '../../Components/AttributeFilter/AttributeFilterUtils';
 import { preorderSeq } from '../../Utils/TreeUtils';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import {
+  Field,
+  Filter,
+  FieldTreeNode,
+  OntologyTermSummary,
+  ValueCounts,
+  MultiFilterValue,
+} from '../../Components/AttributeFilter/Types';
 
 const cx = makeClassNameHelper('wdk-MultiFieldFilter');
 
-const getCountType = curry((countType, summary, value) =>
-  get(
-    summary.valueCounts.find((count) => count.value === value),
-    countType,
-    NaN
-  )
+/**
+ * Props for the MultiFieldFilter component
+ */
+interface MultiFieldFilterProps {
+  activeField: Field;
+  activeFieldState: {
+    searchTerm?: string;
+    leafSummaries: OntologyTermSummary[];
+    sort?: {
+      columnKey: string;
+      direction: 'asc' | 'desc';
+    };
+    [key: string]: any;
+  };
+  filters: Filter[];
+  fieldTree: FieldTreeNode;
+  displayName: string;
+  dataCount: number;
+  fillBarColor?: string;
+  fillFilteredBarColor?: string;
+  selectByDefault: boolean;
+  onFiltersChange: (filters: Filter[]) => void;
+  onMemberSort: (
+    field: Field,
+    sort: { columnKey: string; direction: string }
+  ) => void;
+  onMemberSearch: (field: Field, searchTerm: string) => void;
+}
+
+/**
+ * State for the MultiFieldFilter component
+ */
+interface MultiFieldFilterState {
+  operation: 'union' | 'intersect';
+}
+
+/**
+ * Type for row data used in Mesa table
+ */
+interface TableRow {
+  summary: OntologyTermSummary;
+  value?: string | number | null;
+  filter?: Filter;
+  isSelected?: boolean;
+  isLast?: boolean;
+}
+
+const getCountType = curry(
+  (countType: string, summary: OntologyTermSummary, value: any) =>
+    get(
+      summary.valueCounts.find((count) => count.value === value),
+      countType,
+      NaN
+    )
 );
 const getCount = getCountType('count');
 const getFilteredCount = getCountType('filteredCount');
 
-export default class MultiFieldFilter extends React.Component {
-  constructor(props) {
+/**
+ * Component for filtering multiple fields with intersection/union operations
+ */
+export default class MultiFieldFilter extends React.Component<
+  MultiFieldFilterProps,
+  MultiFieldFilterState
+> {
+  constructor(props: MultiFieldFilterProps) {
     super(props);
     bindAll(this, [
       'deriveRowClassName',
@@ -44,89 +106,100 @@ export default class MultiFieldFilter extends React.Component {
     this.state = { operation: 'intersect' };
   }
 
-  getFieldByTerm(term) {
+  getFieldByTerm(term: string): Field | undefined {
     return preorderSeq(this.props.fieldTree)
-      .map((node) => node.field)
-      .find((field) => field.term === term);
+      .map((node: any) => node.field)
+      .find((field: Field) => field.term === term);
   }
   // Event handlers
 
   // Invoke callback with filters array
-  handleLeafFilterChange(field, value, includeUnknown, valueCounts) {
+  handleLeafFilterChange(
+    field: Field,
+    value: any,
+    includeUnknown: boolean,
+    valueCounts: ValueCounts
+  ): void {
     const multiFilter = this.getOrCreateFilter(this.props, this.state);
-    const leafFilter = {
+    const leafFilter: Filter = {
       field: field.term,
-      type: field.type,
+      type: field.type || '',
       isRange: isRange(field),
       value,
       includeUnknown,
-    };
-    const otherLeafFilters = multiFilter.value.filters.filter(
-      (filter) => filter.field !== field.term
-    );
+    } as Filter;
+    const otherLeafFilters = (
+      multiFilter.value as MultiFilterValue
+    ).filters.filter((filter) => filter.field !== field.term);
     const shouldAdd = shouldAddFilter(
       leafFilter,
       valueCounts,
       this.props.selectByDefault
     );
-    const filter = {
+    const filter: Filter = {
       ...multiFilter,
       value: {
-        ...multiFilter.value,
-        filters: otherLeafFilters.concat(shouldAdd ? [leafFilter] : []),
+        ...(multiFilter.value as MultiFilterValue),
+        filters: otherLeafFilters.concat(shouldAdd ? [leafFilter as any] : []),
       },
-    };
+    } as Filter;
     const otherFilters = this.props.filters.filter(
-      (filter) => filter.field !== this.props.activeField.term
+      (f) => f.field !== this.props.activeField.term
     );
     const nextFilters = otherFilters.concat(
-      filter.value.filters.length > 0 ? [filter] : []
+      (filter.value as MultiFilterValue).filters.length > 0 ? [filter] : []
     );
 
     this.props.onFiltersChange(nextFilters);
   }
 
-  handleTableSort(column, direction) {
+  handleTableSort(column: any, direction: string): void {
     this.props.onMemberSort(this.props.activeField, {
       columnKey: column.key,
       direction,
     });
   }
 
-  setOperation(operation) {
+  setOperation(operation: 'union' | 'intersect'): void {
     this.setState({ operation });
     const filter = this.getOrCreateFilter(this.props, this.state);
-    if (filter.value.filters.length > 0) {
+    if ((filter.value as MultiFilterValue).filters.length > 0) {
       const otherFilters = this.props.filters.filter(
-        (filter) => filter.field !== this.props.activeField.term
+        (f) => f.field !== this.props.activeField.term
       );
       const nextFilters = otherFilters.concat([
-        { ...filter, value: { ...filter.value, operation } },
+        {
+          ...filter,
+          value: { ...(filter.value as MultiFilterValue), operation },
+        },
       ]);
       this.props.onFiltersChange(nextFilters);
     }
   }
 
-  getOrCreateFilter(props, state) {
-    const { term: field, type, isRange } = props.activeField;
+  getOrCreateFilter(
+    props: MultiFieldFilterProps,
+    state: MultiFieldFilterState
+  ): Filter {
+    const { term: field, type, isRange: isFieldRange } = props.activeField;
     const filter = props.filters.find(
-      (filter) => filter.field === props.activeField.term
+      (f) => f.field === props.activeField.term
     );
     return filter != null
       ? filter
-      : {
+      : ({
           field,
           type,
-          isRange,
+          isRange: isFieldRange,
           value: {
             operation: state.operation,
             filters: [],
           },
           includeUnknown: false, // not sure we need this for multi filter
-        };
+        } as Filter);
   }
 
-  deriveRowClassName(row) {
+  deriveRowClassName(row: TableRow): string {
     return cx(
       'Row',
       row.value == null ? 'summary' : 'value',
@@ -144,11 +217,11 @@ export default class MultiFieldFilter extends React.Component {
     );
   }
 
-  renderDisplayHeadingName() {
+  renderDisplayHeadingName(): string {
     return this.props.activeField.display;
   }
 
-  renderDisplayHeadingSearch() {
+  renderDisplayHeadingSearch(): React.ReactNode {
     return (
       <div
         style={{
@@ -163,7 +236,7 @@ export default class MultiFieldFilter extends React.Component {
         <RealTimeSearchBox
           searchTerm={this.props.activeFieldState.searchTerm}
           placeholderText="Find items"
-          onSearchTermChange={(searchTerm) =>
+          onSearchTermChange={(searchTerm: string) =>
             this.props.onMemberSearch(this.props.activeField, searchTerm)
           }
         />
@@ -171,18 +244,24 @@ export default class MultiFieldFilter extends React.Component {
     );
   }
 
-  renderDisplayCell({ row }) {
+  renderDisplayCell({ row }: { row: TableRow }): React.ReactNode {
+    const displayField =
+      row.value == null ? this.getFieldByTerm(row.summary.term) : null;
     return (
       <div className={cx('ValueContainer')}>
-        <div>
-          {row.value == null && this.getFieldByTerm(row.summary.term).display}
-        </div>
+        <div>{row.value == null && displayField && displayField.display}</div>
         <div>{this.renderRowValue(row)}</div>
       </div>
     );
   }
 
-  renderCountCell({ key, row }) {
+  renderCountCell({
+    key,
+    row,
+  }: {
+    key: string;
+    row: TableRow;
+  }): React.ReactNode {
     const internalsCount =
       key === 'count'
         ? row.summary.internalsCount
@@ -205,7 +284,7 @@ export default class MultiFieldFilter extends React.Component {
     );
   }
 
-  renderDistributionCell({ row }) {
+  renderDistributionCell({ row }: { row: TableRow }): React.ReactNode {
     const unknownCount = this.props.dataCount - row.summary.internalsCount;
     const notAll = row.value == null;
     let percent = 0;
@@ -249,7 +328,7 @@ export default class MultiFieldFilter extends React.Component {
     );
   }
 
-  renderPercentCell({ row }) {
+  renderPercentCell({ row }: { row: TableRow }): React.ReactNode {
     return (
       row.value != null && (
         <small>
@@ -264,13 +343,13 @@ export default class MultiFieldFilter extends React.Component {
     );
   }
 
-  renderRowValue(row) {
+  renderRowValue(row: TableRow): React.ReactNode {
     const { value, filter, summary, isSelected } = row;
     if (value == null) return null;
     const filterValue = get(filter, 'value', []);
-    const handleChange = (event) =>
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
       this.handleLeafFilterChange(
-        this.getFieldByTerm(summary.term),
+        this.getFieldByTerm(summary.term)!,
         event.target.checked
           ? [value].concat(filterValue)
           : filterValue.filter((item) => item !== value),
@@ -285,14 +364,12 @@ export default class MultiFieldFilter extends React.Component {
     );
   }
 
-  render() {
+  render(): React.ReactNode {
     const { searchTerm = '' } = this.props.activeFieldState;
     const searchRe = new RegExp(escapeRegExp(searchTerm), 'i');
     const filter = this.getOrCreateFilter(this.props, this.state);
     const leafFilters = get(
-      this.props.filters.find(
-        (filter) => filter.field === this.props.activeField.term
-      ),
+      this.props.filters.find((f) => f.field === this.props.activeField.term),
       'value.filters',
       []
     );
@@ -306,29 +383,29 @@ export default class MultiFieldFilter extends React.Component {
       (summary) => summary.internalsCount === 0
     );
 
-    const rows = Seq.from(this.props.activeFieldState.leafSummaries).flatMap(
-      (summary) => [
-        {
-          summary,
-          filter: filtersByField[summary.term],
-        },
-        ...summary.valueCounts.map((data, index) => ({
-          summary,
-          value: data.value,
-          filter: filtersByField[summary.term],
-          isSelected: get(filtersByField, [summary.term, 'value'], []).includes(
-            data.value
-          ),
-          isLast: index === summary.valueCounts.length - 1,
-        })),
-      ]
-    );
+    const rows: TableRow[] = Seq.from(
+      this.props.activeFieldState.leafSummaries
+    ).flatMap((summary) => [
+      {
+        summary,
+        filter: filtersByField[summary.term],
+      },
+      ...summary.valueCounts.map((data, index) => ({
+        summary,
+        value: data.value,
+        filter: filtersByField[summary.term],
+        isSelected: get(filtersByField, [summary.term, 'value'], []).includes(
+          data.value
+        ),
+        isLast: index === summary.valueCounts.length - 1,
+      })),
+    ]);
 
     const filteredRows = rows.filter(({ summary }) =>
       findAncestorFields(this.props.fieldTree, summary.term)
-        .dropWhile((field) => field.term !== this.props.activeField.term)
+        .dropWhile((field: any) => field.term !== this.props.activeField.term)
         .drop(1)
-        .some((field) => searchRe.test(field.display))
+        .some((field: any) => searchRe.test(field.display))
     );
 
     return (
@@ -348,9 +425,14 @@ export default class MultiFieldFilter extends React.Component {
           Find {this.props.displayName} with{' '}
           <select
             value={
-              this.getOrCreateFilter(this.props, this.state).value.operation
+              (
+                this.getOrCreateFilter(this.props, this.state)
+                  .value as MultiFilterValue
+              ).operation
             }
-            onChange={(e) => this.setOperation(e.target.value)}
+            onChange={(e) =>
+              this.setOperation(e.target.value as 'union' | 'intersect')
+            }
           >
             <option value="union">{getOperationDisplay('union')}</option>
             <option value="intersect">
@@ -378,7 +460,7 @@ export default class MultiFieldFilter extends React.Component {
               key: 'display',
               sortable: true,
               // width: '40%',
-              wrapCustomHeadings: ({ headingRowIndex }) =>
+              wrapCustomHeadings: ({ headingRowIndex }: any) =>
                 headingRowIndex === 0,
               renderHeading: [
                 this.renderDisplayHeadingName,
@@ -399,7 +481,7 @@ export default class MultiFieldFilter extends React.Component {
                   and that have the given value
                 </div>
               ),
-              wrapCustomHeadings: ({ headingRowIndex }) =>
+              wrapCustomHeadings: ({ headingRowIndex }: any) =>
                 headingRowIndex === 0,
               name: (
                 <div style={{ textAlign: 'center' }}>
@@ -419,7 +501,7 @@ export default class MultiFieldFilter extends React.Component {
                   that have the given value
                 </div>
               ),
-              wrapCustomHeadings: ({ headingRowIndex }) =>
+              wrapCustomHeadings: ({ headingRowIndex }: any) =>
                 headingRowIndex === 0,
               name: (
                 <div style={{ textAlign: 'center' }}>
