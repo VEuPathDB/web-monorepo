@@ -63,8 +63,8 @@ const getOrderedData = (
 ): Record<string, AttributeValue>[] => {
   const orderedRows = orderBy(
     tableValue,
-    tableField.clientSortSpec?.map(property('itemName')) ?? [],
-    (tableField.clientSortSpec?.map(property('direction')).map(toLower) ??
+    tableField.clientSortSpec?.map((spec) => spec.itemName) ?? [],
+    (tableField.clientSortSpec?.map((spec) => spec.direction.toLowerCase()) ??
       []) as ('asc' | 'desc')[]
   );
 
@@ -338,7 +338,7 @@ class RecordTable extends Component<RecordTableProps, RecordTableState> {
                 ? ''
                 : rowData[columnKey!].toLowerCase().trim();
             },
-            [sort.direction]
+            [sort.direction.toLowerCase() as 'asc' | 'desc']
           );
 
     const sortedMesaRows: Record<string, any>[] =
@@ -445,7 +445,7 @@ class RecordTable extends Component<RecordTableProps, RecordTableState> {
 
     return (
       <div className={className}>
-        <Mesa state={tableState}>
+        <Mesa state={tableState as any}>
           {mesaReadyRows.length > 2 && (
             <RecordFilter
               searchTerm={this.state.searchTerm}
