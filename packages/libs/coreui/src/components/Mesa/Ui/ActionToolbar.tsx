@@ -61,7 +61,7 @@ class ActionToolbar<Row> extends React.PureComponent<ActionToolbarProps<Row>> {
     let { element } = action;
     let selection = this.getSelection();
     let disabled =
-      action.selectionRequired && !selection.length ? 'disabled' : null;
+      action.selectionRequired && !selection.length ? 'disabled' : undefined;
 
     if (typeof element !== 'string' && !React.isValidElement(element)) {
       if (typeof element === 'function') element = element(selection);

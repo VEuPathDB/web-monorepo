@@ -119,7 +119,7 @@ class DataRow<Row> extends React.PureComponent<
     const rowStyle = !inline
       ? {}
       : { whiteSpace: 'nowrap' as const, textOverflow: 'ellipsis' as const };
-    let className = dataRowClass(null, inline ? 'inline' : '');
+    let className = dataRowClass(undefined, inline ? 'inline' : '');
 
     const { deriveRowClassName } = options || {};
     if (typeof deriveRowClassName === 'function') {
