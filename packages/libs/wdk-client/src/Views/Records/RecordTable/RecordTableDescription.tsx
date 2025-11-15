@@ -1,8 +1,18 @@
-import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { safeHtml, wrappable } from '../../../Utils/ComponentUtils';
+import {
+  RecordClass,
+  RecordInstance,
+  TableField,
+} from '../../../Utils/WdkModel';
 
-const containerStyle = {
+interface RecordTableDescriptionProps {
+  table: TableField;
+  record: RecordInstance;
+  recordClass: RecordClass;
+}
+
+const containerStyle: React.CSSProperties = {
   display: 'flex',
   flexWrap: 'wrap',
   borderLeft: '.2em solid #79a3d7',
@@ -13,10 +23,11 @@ const containerStyle = {
   marginBottom: '1em',
 };
 
-function RecordTableDescription(props) {
+function RecordTableDescription(props: RecordTableDescriptionProps) {
   const { description } = props.table;
-  const [isOverflowing, setIsOverflowing] = useState(undefined);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isOverflowing, setIsOverflowing] =
+    useState<boolean | undefined>(undefined);
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
   if (!description) return null;
 
@@ -25,7 +36,7 @@ function RecordTableDescription(props) {
       {safeHtml(
         description,
         {
-          ref: (el) => {
+          ref: (el: HTMLDivElement | null) => {
             if (el == null || isOverflowing != null) {
               return;
             }
@@ -62,11 +73,5 @@ function RecordTableDescription(props) {
     </div>
   );
 }
-
-RecordTableDescription.propTypes = {
-  table: PropTypes.object.isRequired,
-  record: PropTypes.object.isRequired,
-  recordClass: PropTypes.object.isRequired,
-};
 
 export default wrappable(RecordTableDescription);

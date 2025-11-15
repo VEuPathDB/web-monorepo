@@ -1,13 +1,21 @@
 import React from 'react';
 import { wrappable } from '../../Utils/ComponentUtils';
 import CheckboxList from '../../Components/InputControls/CheckboxList';
+import { NamedModelEntity } from '../../Utils/WdkModel';
 
-let ReporterCheckboxList = (props) => {
-  let { title, onChange, fields, selectedFields } = props;
-  if (fields.length == 0) {
+interface ReporterCheckboxListProps {
+  title: string;
+  onChange: (value: string[]) => void;
+  fields: NamedModelEntity[];
+  selectedFields: string[];
+}
+
+const ReporterCheckboxList: React.FC<ReporterCheckboxListProps> = (props) => {
+  const { title, onChange, fields, selectedFields } = props;
+  if (fields.length === 0) {
     return <noscript />;
   }
-  let mappedFields = fields.map((val) => ({
+  const mappedFields = fields.map((val) => ({
     value: val.name,
     display: val.displayName,
   }));

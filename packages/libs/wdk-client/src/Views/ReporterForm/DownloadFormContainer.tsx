@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, ReactNode } from 'react';
 import { WdkStatusIcon } from '../../Components/Icon/WdkStatusIcon';
 import RadioList from '../../Components/InputControls/RadioList';
 import {
@@ -7,14 +7,25 @@ import {
   safeHtml,
 } from '../../Utils/ComponentUtils';
 import DownloadForm from '../../Views/ReporterForm/DownloadForm';
+import { Reporter, RecordClass, FilterValueArray } from '../../Utils/WdkModel';
+import { ResultType } from '../../Utils/WdkResult';
 
-let NO_REPORTER_SELECTED = '_none_';
+const NO_REPORTER_SELECTED = '_none_';
 
-let ReporterSelect = (props) => {
-  let { reporters, selected, onChange } = props;
+interface ReporterSelectProps {
+  reporters: Reporter[];
+  selected: string | null;
+  onChange: (value: string) => void;
+}
+
+const ReporterSelect = (props: ReporterSelectProps): JSX.Element => {
+  const { reporters, selected, onChange } = props;
   if (reporters.length < 2) return <noscript />;
-  let nestedDivStyle = { display: 'inline-block', verticalAlign: 'top' };
-  let items = reporters.map((reporter) => ({
+  const nestedDivStyle = {
+    display: 'inline-block',
+    verticalAlign: 'top' as const,
+  };
+  const items = reporters.map((reporter) => ({
     value: reporter.name,
     display: (
       <>
@@ -39,7 +50,11 @@ let ReporterSelect = (props) => {
   );
 };
 
-function getTitle(scope, resultType, recordClass) {
+function getTitle(
+  scope: string,
+  resultType: ResultType,
+  recordClass: RecordClass
+): ReactNode {
   switch (scope) {
     case 'results':
       switch (resultType.type) {
@@ -91,21 +106,40 @@ function getTitle(scope, resultType, recordClass) {
   }
 }
 
-class DownloadFormContainer extends Component {
-  constructor(props) {
+interface DownloadFormContainerProps {
+  scope: string;
+  resultType: ResultType;
+  availableReporters: Reporter[];
+  selectedReporter: string | null;
+  recordClass: RecordClass;
+  selectReporter: (value: string) => void;
+  submitForm: (
+    resultType: ResultType,
+    selectedReporter: string,
+    formState: any,
+    viewFilters?: FilterValueArray
+  ) => Promise<void>;
+  includeTitle?: boolean;
+  includeSubmit?: boolean;
+  includeSelector?: boolean;
+  [key: string]: any;
+}
+
+class DownloadFormContainer extends Component<DownloadFormContainerProps> {
+  constructor(props: DownloadFormContainerProps) {
     super(props);
     this.onSubmit = this.onSubmit.bind(this);
   }
 
   // create parameterless form submission function for forms to use
-  async onSubmit() {
-    let { submitForm, resultType, selectedReporter, formState, viewFilters } =
+  async onSubmit(): Promise<void> {
+    const { submitForm, resultType, selectedReporter, formState, viewFilters } =
       this.props;
     await submitForm(resultType, selectedReporter, formState, viewFilters);
   }
 
-  render() {
-    let {
+  render(): JSX.Element {
+    const {
       scope,
       resultType,
       availableReporters,
@@ -118,17 +152,18 @@ class DownloadFormContainer extends Component {
     } = this.props;
 
     // create page title element
-    let title = getTitle(scope, resultType, recordClass);
+    const title = getTitle(scope, resultType, recordClass);
 
     // filter props we don't want to send to the child form
-    let formProps = filterOutProps(this.props, [
+    const formProps = filterOutProps(this.props, [
       'selectReporter',
       'submitForm',
     ]);
 
     // incoming store value of null indicates no format currently selected
-    if (selectedReporter == null) {
-      selectedReporter = NO_REPORTER_SELECTED;
+    let currentSelectedReporter = selectedReporter;
+    if (currentSelectedReporter == null) {
+      currentSelectedReporter = NO_REPORTER_SELECTED;
     }
 
     return (
@@ -142,7 +177,7 @@ class DownloadFormContainer extends Component {
         {includeSelector && (
           <ReporterSelect
             reporters={availableReporters}
-            selected={selectedReporter}
+            selected={currentSelectedReporter}
             onChange={selectReporter}
           />
         )}

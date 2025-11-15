@@ -1,6 +1,6 @@
 import { escape } from 'lodash';
-import React, { Component } from 'react';
-import { withRouter } from 'react-router';
+import React, { Component, CSSProperties, ReactNode } from 'react';
+import { withRouter, WithRouterProps } from 'react-router';
 import BannerList from '@veupathdb/coreui/lib/components/banners/BannerList';
 import Icon from '../../Components/Icon/IconAlt';
 import TextArea from '../../Components/InputControls/TextArea';
@@ -13,13 +13,78 @@ import {
 import RealTimeSearchBox from '../../Components/SearchBox/RealTimeSearchBox';
 import { wrappable } from '../../Utils/ComponentUtils';
 import RecordLink from '../../Views/Records/RecordLink';
+import { Favorite, RecordClass } from '../../Utils/WdkModel';
+import { User } from '../../Utils/WdkUser';
 import '../../Views/Favorites/wdk-Favorites.scss';
+
+interface Banner {
+  id: string;
+  type: string;
+  message: ReactNode;
+}
+
+interface EditCoordinates {
+  row: number;
+  column: number;
+}
+
+interface FavoritesEvents {
+  searchTerm: (value: string) => void;
+  updateSelection: (payload: {
+    selectIds?: number[];
+    deselectIds?: number[];
+  }) => void;
+  sortColumn: (key: string, direction: string) => void;
+  filterByType: (type: string | null) => void;
+  editCell: (payload: {
+    coordinates: EditCoordinates;
+    key: string;
+    value: string;
+    rowData: Favorite;
+  }) => void;
+  changeCell: (value: string) => void;
+  saveCellData: (tableState: any, favorite: Favorite) => void;
+  cancelCellEdit: () => void;
+  deleteFavorites: (tableState: any, favorites: Favorite[]) => void;
+  undeleteFavorites: (tableState: any, favorites: Favorite[]) => void;
+}
+
+interface Props extends WithRouterProps<any> {
+  tableState: any;
+  tableSelection: number[];
+  favoritesLoading: boolean;
+  loadError: Error | null;
+  existingFavorite: Partial<Favorite>;
+  editCoordinates: EditCoordinates | Record<string, never>;
+  editValue: string;
+  searchText: string;
+  filterByType: string | null;
+  deletedFavorite: Favorite | null;
+  user: User;
+  recordClasses: RecordClass[];
+  searchBoxPlaceholder: string;
+  searchBoxHelp: string;
+  favoritesEvents: FavoritesEvents;
+}
+
+interface State {
+  banners: Banner[];
+}
+
+interface CellRendererProps {
+  key: string;
+  value: any;
+  row: Favorite;
+  rowIndex?: number;
+  columnIndex?: number;
+  column: any;
+}
 
 /**
  * Provides the favorites listing page.  The component relies entirely on its properties.
  */
-class FavoritesList extends Component {
-  constructor(props) {
+class FavoritesList extends Component<Props, State> {
+  constructor(props: Props) {
     super(props);
 
     this.renderIdCell = this.renderIdCell.bind(this);
@@ -58,12 +123,12 @@ class FavoritesList extends Component {
     this.state = { banners: [] };
   }
 
-  createDeletedBanner(selection) {
+  createDeletedBanner(selection: Favorite[]): void {
     if (!selection || !selection.length) return;
     const { banners } = this.state;
     const bannerId = selection.map((s) => s.displayName).join('-');
 
-    const output = {
+    const output: Banner = {
       id: bannerId,
       type: 'success',
       message: null,
@@ -106,21 +171,21 @@ class FavoritesList extends Component {
     this.setState({ banners });
   }
 
-  handleBannerClose(index, banner) {
+  handleBannerClose(index: number, banner: Banner): void {
     const { banners } = this.state;
     banners.splice(index, 1);
     this.setState({ banners });
   }
 
-  handleSearchTermChange(value) {
+  handleSearchTermChange(value: string): void {
     const { favoritesEvents } = this.props;
     favoritesEvents.searchTerm(value);
   }
 
-  renderEmptyState() {
+  renderEmptyState(): ReactNode {
     const { searchText } = this.props;
     const isSearching = searchText && searchText.length;
-    const wrapperStyle = {
+    const wrapperStyle: CSSProperties = {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -128,7 +193,7 @@ class FavoritesList extends Component {
       justifyContent: 'center',
     };
 
-    const iconStyle = {
+    const iconStyle: CSSProperties = {
       fontSize: '80px',
     };
 
@@ -152,24 +217,30 @@ class FavoritesList extends Component {
     );
   }
 
-  countFavoritesByType() {
+  countFavoritesByType(): Record<string, number> {
     const { recordClasses, tableState } = this.props;
     const rows = MesaState.getRows(tableState);
-    const counts = rows.reduce((tally, { recordClassName }) => {
-      if (tally[recordClassName])
-        tally[recordClassName] = tally[recordClassName] + 1;
-      else tally[recordClassName] = 1;
-      return tally;
-    }, {});
+    const counts = rows.reduce(
+      (tally: Record<string, number>, { recordClassName }: Favorite) => {
+        if (tally[recordClassName])
+          tally[recordClassName] = tally[recordClassName] + 1;
+        else tally[recordClassName] = 1;
+        return tally;
+      },
+      {}
+    );
     return counts;
   }
 
   //  RENDERERS ===============================================================
 
-  renderIdCell({ key, value, row, column }) {
-    const { recordClassName, primaryKey, displayName } = row;
+  renderIdCell({ key, value, row, column }: CellRendererProps): ReactNode {
+    const { recordClassName, primaryKey, displayName } = row as Favorite;
     const recordClass = this.getRecordClassByName(recordClassName);
-    const style = { whiteSpace: 'normal', wordWrap: 'break-word' };
+    const style: CSSProperties = {
+      whiteSpace: 'normal',
+      wordWrap: 'break-word',
+    };
     return (
       <div style={style}>
         <RecordLink recordClass={recordClass} recordId={primaryKey}>
@@ -179,25 +250,39 @@ class FavoritesList extends Component {
     );
   }
 
-  renderGroupCell({ key, value, row, rowIndex, columnIndex, column }) {
+  renderGroupCell({
+    key,
+    value,
+    row,
+    rowIndex,
+    columnIndex,
+    column,
+  }: CellRendererProps): ReactNode {
     const { editCoordinates, editValue } = this.props;
-    const normalStyle = { display: 'flex', whiteSpace: 'normal' };
-    const editStyle = {
+    const normalStyle: CSSProperties = {
+      display: 'flex',
+      whiteSpace: 'normal',
+    };
+    const editStyle: CSSProperties = {
       marginLeft: 'auto',
       paddingRight: '1em',
       cursor: 'pointer',
     };
     const isBeingEdited =
       editCoordinates &&
-      editCoordinates.row === rowIndex &&
-      editCoordinates.column === columnIndex;
+      'row' in editCoordinates &&
+      'column' in editCoordinates &&
+      (editCoordinates as EditCoordinates).row === rowIndex &&
+      (editCoordinates as EditCoordinates).column === columnIndex;
 
     return isBeingEdited ? (
       <div className="editor-cell">
         <TextBox
           value={editValue}
-          onKeyPress={(e) => this.handleEnterKey(e, column.key)}
-          onChange={(newValue) => this.handleCellChange(newValue)}
+          onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) =>
+            this.handleEnterKey(e, column.key)
+          }
+          onChange={(newValue: string) => this.handleCellChange(newValue)}
           autoComplete={true}
           maxLength="50"
           size="5"
@@ -223,7 +308,13 @@ class FavoritesList extends Component {
         <div style={editStyle}>
           <a
             onClick={() =>
-              this.handleEditClick(rowIndex, columnIndex, key, row, value)
+              this.handleEditClick(
+                rowIndex || 0,
+                columnIndex || 0,
+                key,
+                row,
+                value
+              )
             }
             className="edit-link"
             title="Edit This Favorite's Project Grouping"
@@ -235,30 +326,42 @@ class FavoritesList extends Component {
     );
   }
 
-  renderTypeCell({ key, value, row, column }) {
-    let type = this.getRecordClassByName(value);
-    type = type ? type.displayName : 'Unknown';
+  renderTypeCell({ key, value, row, column }: CellRendererProps): ReactNode {
+    let recordClass = this.getRecordClassByName(value);
+    let type = recordClass ? recordClass.displayName : 'Unknown';
     return <div>{type}</div>;
   }
 
-  renderNoteCell({ key, value, row, rowIndex, column, columnIndex }) {
+  renderNoteCell({
+    key,
+    value,
+    row,
+    rowIndex,
+    column,
+    columnIndex,
+  }: CellRendererProps): ReactNode {
     const { editCoordinates, editValue } = this.props;
-    const editContainerStyle = { display: 'flex', whiteSpace: 'normal' };
-    const editStyle = {
+    const editContainerStyle: CSSProperties = {
+      display: 'flex',
+      whiteSpace: 'normal',
+    };
+    const editStyle: CSSProperties = {
       marginLeft: 'auto',
       paddingRight: '1em',
       cursor: 'pointer',
     };
     const isBeingEdited =
       editCoordinates &&
-      editCoordinates.row === rowIndex &&
-      editCoordinates.column === columnIndex;
+      'row' in editCoordinates &&
+      'column' in editCoordinates &&
+      (editCoordinates as EditCoordinates).row === rowIndex &&
+      (editCoordinates as EditCoordinates).column === columnIndex;
 
     return isBeingEdited ? (
       <div className="editor-cell">
         <TextArea
           value={editValue}
-          onChange={(newValue) => this.handleCellChange(newValue)}
+          onChange={(newValue: string) => this.handleCellChange(newValue)}
           maxLength="200"
           cols="50"
           rows="4"
@@ -284,7 +387,13 @@ class FavoritesList extends Component {
         <div style={editStyle}>
           <a
             onClick={() =>
-              this.handleEditClick(rowIndex, columnIndex, key, row, value)
+              this.handleEditClick(
+                rowIndex || 0,
+                columnIndex || 0,
+                key,
+                row,
+                value
+              )
             }
             className="edit-link"
             title="Edit This Favorite's Project Grouping"
@@ -296,23 +405,25 @@ class FavoritesList extends Component {
     );
   }
 
-  renderCountSummary() {
+  renderCountSummary(): ReactNode {
     const counts = this.countFavoritesByType();
-    const recordClasses = Object.keys(counts);
-    const output = recordClasses.map((recordClass, idx) => {
-      let type = this.getRecordClassByName(recordClass);
-      let name = type ? type.displayNamePlural : 'Unknown';
+    const recordClassNames = Object.keys(counts);
+    const output = recordClassNames.map((recordClassName, idx) => {
+      let recordClass = this.getRecordClassByName(recordClassName);
+      let name = recordClass ? recordClass.displayNamePlural : 'Unknown';
       let { filterByType } = this.props;
       let className =
         'Favorites-GroupCount ' +
-        (filterByType && filterByType === recordClass ? 'active' : 'inactive');
+        (filterByType && filterByType === recordClassName
+          ? 'active'
+          : 'inactive');
       return (
         <span
-          onClick={() => this.handleTypeFilterClick(recordClass)}
+          onClick={() => this.handleTypeFilterClick(recordClassName)}
           className={className}
           key={idx}
         >
-          {name}: {counts[recordClass]}
+          {name}: {counts[recordClassName]}
         </span>
       );
     });
@@ -322,33 +433,33 @@ class FavoritesList extends Component {
 
   // Table event handlers =====================================================
 
-  onRowSelect({ id }) {
+  onRowSelect({ id }: { id: number }): void {
     const { favoritesEvents } = this.props;
     const { updateSelection } = favoritesEvents;
     updateSelection({ selectIds: [id] });
   }
 
-  onRowDeselect({ id }) {
+  onRowDeselect({ id }: { id: number }): void {
     const { favoritesEvents } = this.props;
     const { updateSelection } = favoritesEvents;
     updateSelection({ deselectIds: [id] });
   }
 
-  onMultipleRowSelect(rows) {
+  onMultipleRowSelect(rows: Favorite[]): void {
     const { favoritesEvents } = this.props;
     const ids = rows.map((row) => row.id);
     const { updateSelection } = favoritesEvents;
     updateSelection({ selectIds: ids });
   }
 
-  onMultipleRowDeselect(rows) {
+  onMultipleRowDeselect(rows: Favorite[]): void {
     const { favoritesEvents } = this.props;
     const ids = rows.map((row) => row.id);
     const { updateSelection } = favoritesEvents;
     updateSelection({ deselectIds: ids });
   }
 
-  onSort({ key }, direction) {
+  onSort({ key }: { key: string }, direction: string): void {
     const { favoritesEvents } = this.props;
     const { sortColumn } = favoritesEvents;
     sortColumn(key, direction);
@@ -356,13 +467,13 @@ class FavoritesList extends Component {
 
   // Table config generators =================================================
 
-  getTableActions() {
+  getTableActions(): any[] {
     const { favoritesEvents, tableState } = this.props;
     const { deleteFavorites } = favoritesEvents;
     return [
       {
         selectionRequired: true,
-        element(selection) {
+        element(selection: Favorite[]) {
           return (
             <button className="btn btn-error">
               <Icon fa="trash" /> Remove{' '}
@@ -374,7 +485,7 @@ class FavoritesList extends Component {
             </button>
           );
         },
-        callback: (selection) => {
+        callback: (selection: Favorite[]) => {
           deleteFavorites(tableState, selection);
           this.createDeletedBanner(selection);
         },
@@ -382,7 +493,7 @@ class FavoritesList extends Component {
     ];
   }
 
-  getTableOptions() {
+  getTableOptions(): any {
     const { searchBoxPlaceholder, tableSelection } = this.props;
 
     return {
@@ -392,13 +503,13 @@ class FavoritesList extends Component {
       tableBodyMaxHeight: 'calc(100vh - 80px)',
       renderEmptyState: this.renderEmptyState,
       searchPlaceholder: searchBoxPlaceholder,
-      isRowSelected({ id }) {
+      isRowSelected({ id }: { id: number }) {
         return tableSelection.includes(id);
       },
     };
   }
 
-  getTableColumns() {
+  getTableColumns(): any[] {
     const { renderIdCell, renderTypeCell, renderNoteCell, renderGroupCell } =
       this;
     return [
@@ -437,7 +548,7 @@ class FavoritesList extends Component {
     ];
   }
 
-  getTableEventHandlers() {
+  getTableEventHandlers(): any {
     const {
       onSort,
       onRowSelect,
@@ -454,7 +565,7 @@ class FavoritesList extends Component {
     };
   }
 
-  render() {
+  render(): ReactNode {
     let { banners } = this.state;
     let {
       recordClasses,
@@ -523,7 +634,7 @@ class FavoritesList extends Component {
     );
   }
 
-  handleTypeFilterClick(recordType) {
+  handleTypeFilterClick(recordType: string): void {
     const { filterByType, favoritesEvents } = this.props;
     const active = recordType === filterByType;
     favoritesEvents.filterByType(active ? null : recordType);
@@ -539,7 +650,13 @@ class FavoritesList extends Component {
    * @param cellData
    * @private
    */
-  handleEditClick(rowIndex, columnIndex, dataKey, rowData, cellData) {
+  handleEditClick(
+    rowIndex: number,
+    columnIndex: number,
+    dataKey: string,
+    rowData: Favorite,
+    cellData: any
+  ): void {
     this.props.favoritesEvents.editCell({
       coordinates: {
         row: rowIndex,
@@ -556,7 +673,7 @@ class FavoritesList extends Component {
    * @param value - edited value
    * @private
    */
-  handleCellChange(value) {
+  handleCellChange(value: string): void {
     this.props.favoritesEvents.changeCell(value);
   }
 
@@ -567,13 +684,13 @@ class FavoritesList extends Component {
    * @param dataKey - the property of the favorite that was edited (group or note here)
    * @private
    */
-  handleCellSave(dataKey) {
+  handleCellSave(dataKey: string): void {
     const { tableState, editValue, existingFavorite, favoritesEvents } =
       this.props;
     const favorite = Object.assign({}, existingFavorite, {
       [dataKey]: editValue,
     });
-    favoritesEvents.saveCellData(tableState, favorite);
+    favoritesEvents.saveCellData(tableState, favorite as Favorite);
   }
 
   /**
@@ -581,7 +698,7 @@ class FavoritesList extends Component {
    * in-line edit form, which can alter row height, the CellMeasure cache is cleared.
    * @private
    */
-  handleCellCancel() {
+  handleCellCancel(): void {
     this.props.favoritesEvents.cancelCellEdit();
   }
 
@@ -591,28 +708,31 @@ class FavoritesList extends Component {
    * @param e - Keypress event
    * @param dataKey - cell data key to pass along for saving
    **/
-  handleEnterKey(e, dataKey) {
+  handleEnterKey(
+    e: React.KeyboardEvent<HTMLInputElement>,
+    dataKey: string
+  ): void {
     if (e.key !== 'Enter' || !dataKey) return;
     this.handleCellSave(dataKey);
   }
 
-  handleRowDelete(row) {
+  handleRowDelete(row: Favorite): void {
     const { tableState, favoritesEvents } = this.props;
     favoritesEvents.deleteFavorites(tableState, [row]);
     this.onRowDeselect(row);
   }
 
-  handleUndoDelete(row) {
+  handleUndoDelete(row: Favorite): void {
     const { tableState, favoritesEvents } = this.props;
     favoritesEvents.undeleteFavorites(tableState, [row]);
   }
 
-  handleBulkUndoDelete(rows) {
+  handleBulkUndoDelete(rows: Favorite[]): void {
     const { tableState, favoritesEvents } = this.props;
     favoritesEvents.undeleteFavorites(tableState, rows);
   }
 
-  getDataKeyTooltip(dataKey) {
+  getDataKeyTooltip(dataKey: string): string {
     switch (dataKey) {
       case 'display':
         return 'This links back to your favorite';
@@ -627,7 +747,7 @@ class FavoritesList extends Component {
     }
   }
 
-  getRecordClassByName(recordClassName) {
+  getRecordClassByName(recordClassName: string): RecordClass | undefined {
     let { recordClasses } = this.props;
     return recordClasses.find(({ fullName }) => fullName === recordClassName);
   }
