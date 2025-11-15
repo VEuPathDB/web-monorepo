@@ -44,7 +44,11 @@ const ReporterSelect = (props: ReporterSelectProps): JSX.Element => {
         </span>
       </div>
       <div style={nestedDivStyle}>
-        <RadioList items={items} value={selected} onChange={onChange} />
+        <RadioList
+          items={items}
+          value={selected ?? undefined}
+          onChange={onChange}
+        />
       </div>
     </div>
   );
@@ -154,7 +158,7 @@ class DownloadFormContainer extends Component<DownloadFormContainerProps> {
     } = this.props;
 
     // create page title element
-    const title = getTitle(scope, resultType, recordClass);
+    const title = resultType && getTitle(scope, resultType, recordClass);
 
     // filter props we don't want to send to the child form
     const formProps = filterOutProps(this.props, [
