@@ -85,7 +85,7 @@ class RecordNavigationSection extends React.PureComponent<
                 node={node}
                 path={path}
                 activeSection={activeSection}
-                onSectionToggle={onSectionToggle}
+                onSectionToggle={onSectionToggle || (() => {})}
                 checked={!includes(collapsedSections, getId(node))}
               />
             ),

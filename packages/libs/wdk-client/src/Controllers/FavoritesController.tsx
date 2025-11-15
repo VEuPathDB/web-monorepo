@@ -85,10 +85,12 @@ class FavoritesListController extends PageController<Props> {
 
     return (
       <FavoritesList
-        {...stateProps}
-        favoritesEvents={dispatchProps}
-        searchBoxPlaceholder="Search Favorites..."
-        searchBoxHelp="All table columns will be searched"
+        {...({
+          ...stateProps,
+          favoritesEvents: dispatchProps,
+          searchBoxPlaceholder: 'Search Favorites...',
+          searchBoxHelp: 'All table columns will be searched',
+        } as any)}
       />
     );
   }
