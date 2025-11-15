@@ -102,7 +102,7 @@ class DownloadFormController extends PageController<Props> {
     };
     return (
       <DownloadFormContainer
-        {...formProps}
+        {...(formProps as any)}
         includeTitle={this.props.ownProps.includeTitle ?? true}
         includeSubmit={this.props.ownProps.includeSubmit ?? true}
         includeSelector={this.props.ownProps.includeSelector}
