@@ -1,13 +1,15 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { isEmpty, map, pick } from 'lodash';
+import { Filter } from './Types';
+
+interface Props {
+  filters: Filter[];
+}
 
 /**
  * List of filters with invalid fields and/or values
  */
-export default function InvalidFilterList(props) {
-  var { filters } = props;
-
+export default function InvalidFilterList({ filters }: Props) {
   if (isEmpty(filters)) return null;
 
   return (
@@ -17,7 +19,10 @@ export default function InvalidFilterList(props) {
       </p>
       <ul>
         {map(filters, (filter) => (
-          <li className="invalid">
+          <li
+            className="invalid"
+            key={`${filter.field}-${JSON.stringify(filter.value)}`}
+          >
             {JSON.stringify(pick(filter, 'field', 'value', 'includeUnknown'))}
           </li>
         ))}
@@ -25,7 +30,3 @@ export default function InvalidFilterList(props) {
     </div>
   );
 }
-
-InvalidFilterList.propTypes = {
-  filters: PropTypes.array,
-};

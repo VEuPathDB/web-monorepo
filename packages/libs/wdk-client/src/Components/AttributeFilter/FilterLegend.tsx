@@ -1,9 +1,20 @@
 import React from 'react';
+import { Field } from './Types';
+
+/**
+ * Props for the FilterLegend component
+ */
+interface FilterLegendProps {
+  displayName?: string;
+  activeField?: Field;
+}
 
 /**
  * Legend used for all filters
  */
-export default function FilterLegend(props) {
+export default function FilterLegend(
+  props: FilterLegendProps
+): React.ReactElement {
   return (
     <div className="filter-param-legend">
       <div>
@@ -11,7 +22,7 @@ export default function FilterLegend(props) {
           <div className="fill"></div>
         </div>
         <div className="label">
-          All {props.displayName} having "{props.activeField.display}"
+          All {props.displayName} having "{props.activeField?.display}"
         </div>
       </div>
       <div>
@@ -26,6 +37,7 @@ export default function FilterLegend(props) {
     </div>
   );
 }
+
 // TODO Either remove the commented code below, or replace using provided total counts
 // const totalCounts = Seq.from(props.distribution)
 //   // FIXME Always filter nulls when they are moved to different section for non-range fields
@@ -51,7 +63,10 @@ export default function FilterLegend(props) {
  */
 // FIXME Remove eslint rule when counts and percentages are figured out
 // eslint-disable-next-line no-unused-vars, require-jsdoc
-function concatCounts(countsA, countsB) {
+function concatCounts(
+  countsA: { count: number; filteredCount: number },
+  countsB: { count: number; filteredCount: number }
+): { count: number; filteredCount: number } {
   return {
     count: countsA.count + countsB.count,
     filteredCount: countsA.filteredCount + countsB.filteredCount,
