@@ -1,17 +1,30 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import RecordLink from '../../Views/Records/RecordLink';
 import { renderAttributeValue, wrappable } from '../../Utils/ComponentUtils';
+import {
+  AttributeValue,
+  AttributeField,
+  RecordInstance,
+  RecordClass,
+} from '../../Utils/WdkModel';
 
 // FIXME Remove hardcoded name and lookup from recordClass
-let primaryKeyName = 'primary_key';
+const primaryKeyName = 'primary_key';
 
-function AnswerTableCell(props) {
+interface AnswerTableCellProps {
+  value: AttributeValue;
+  attribute: AttributeField;
+  record: RecordInstance;
+  recordClass: RecordClass;
+  className?: string;
+}
+
+function AnswerTableCell(props: AnswerTableCellProps): JSX.Element | null {
   if (props.value == null) {
     return null;
   }
 
-  let { value, attribute, record, recordClass } = props;
+  const { value, attribute, record, recordClass } = props;
 
   if (attribute.name === primaryKeyName) {
     return (
@@ -27,13 +40,5 @@ function AnswerTableCell(props) {
     return renderAttributeValue(value);
   }
 }
-
-AnswerTableCell.propTypes = {
-  // TODO Put reusable propTypes in a module
-  value: PropTypes.string,
-  attribute: PropTypes.object.isRequired,
-  record: PropTypes.object.isRequired,
-  recordClass: PropTypes.object.isRequired,
-};
 
 export default wrappable(AnswerTableCell);

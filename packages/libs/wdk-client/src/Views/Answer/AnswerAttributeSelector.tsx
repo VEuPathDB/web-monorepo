@@ -1,11 +1,19 @@
-import React from 'react';
+import React, { FormEvent } from 'react';
+import { AttributeField } from '../../Utils/WdkModel';
+
+interface Props {
+  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  allAttributes: AttributeField[];
+  selectedAttributes: string[];
+  onChange: (attributeName: string, isChecked: boolean) => void;
+}
 
 function AttributeSelector({
   onSubmit,
   allAttributes,
   selectedAttributes,
   onChange,
-}) {
+}: Props) {
   return (
     <form onSubmit={onSubmit}>
       <div className="wdk-AnswerTable-AttributeSelectorButtonWrapper">

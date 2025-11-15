@@ -4,23 +4,42 @@ import ReactDOM from 'react-dom';
 import { HelpTrigger } from '@veupathdb/coreui/lib/components/Mesa';
 import { Tooltip } from '@veupathdb/coreui';
 import { wrappable } from '../../Utils/ComponentUtils';
+import { RecordClass, Question, AttributeField, TableField } from '../../Utils/WdkModel';
+import { DisplayInfo } from '../../Actions/AnswerActions';
 import AnswerFilterSelector from '../../Views/Answer/AnswerFilterSelector';
 
 // concatenate each item in items with arr
-function addToArray(arr, item) {
+function addToArray(arr: string[], item: string): string[] {
   return arr.concat(item);
 }
 
-function removeFromArray(arr, item) {
+function removeFromArray(arr: string[], item: string): string[] {
   return arr.filter(function (a) {
     return a !== item;
   });
 }
 
-class AnswerFilter extends React.Component {
-  constructor(props) {
+interface AnswerFilterProps {
+  recordClass: RecordClass;
+  question: Question;
+  filterTerm: string;
+  displayInfo: DisplayInfo;
+  onFilter: (filterTerm: string, filterAttributes: string[], filterTables: string[]) => void;
+}
+
+interface AnswerFilterState {
+  showFilterFieldSelector: boolean;
+  filterAttributes: string[];
+  filterTables: string[];
+}
+
+class AnswerFilter extends React.Component<AnswerFilterProps, AnswerFilterState> {
+  filterInputRef: React.RefObject<HTMLInputElement>;
+
+  constructor(props: AnswerFilterProps) {
     super(props);
 
+    this.filterInputRef = React.createRef();
     this.toggleFilterFieldSelector = this.toggleFilterFieldSelector.bind(this);
     this.handleFilter = debounce(this.handleFilter.bind(this), 300);
     this.toggleAttribute = this.toggleAttribute.bind(this);
@@ -36,7 +55,7 @@ class AnswerFilter extends React.Component {
     };
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps: AnswerFilterProps, prevState: AnswerFilterState): void {
     let { filterAttributes, filterTables } = this.state;
     if (
       filterAttributes !== prevState.filterAttributes ||
@@ -46,19 +65,22 @@ class AnswerFilter extends React.Component {
     }
   }
 
-  toggleFilterFieldSelector() {
+  toggleFilterFieldSelector(): void {
     this.setState({
       showFilterFieldSelector: !this.state.showFilterFieldSelector,
     });
   }
 
-  handleFilter() {
-    let value = ReactDOM.findDOMNode(this.refs.filterInput).value;
+  handleFilter(): void {
+    const inputElement = this.filterInputRef.current;
+    if (!inputElement) return;
+
+    let value = inputElement.value;
     let { filterAttributes, filterTables } = this.state;
     this.props.onFilter(value, filterAttributes, filterTables);
   }
 
-  toggleAttribute(e) {
+  toggleAttribute(e: React.ChangeEvent<HTMLInputElement>): void {
     let attr = e.target.value;
     let op = e.target.checked ? addToArray : removeFromArray;
     this.setState({
@@ -66,7 +88,7 @@ class AnswerFilter extends React.Component {
     });
   }
 
-  toggleTable(e) {
+  toggleTable(e: React.ChangeEvent<HTMLInputElement>): void {
     let table = e.target.value;
     let op = e.target.checked ? addToArray : removeFromArray;
     this.setState({
@@ -74,21 +96,21 @@ class AnswerFilter extends React.Component {
     });
   }
 
-  selectAll(e) {
+  selectAll(e: React.MouseEvent<HTMLAnchorElement>): void {
     let { attributes, tables } = this.props.recordClass;
     this.setState({
-      filterAttributes: attributes.map((a) => a.name),
-      filterTables: tables.map((t) => t.name),
+      filterAttributes: attributes.map((a: AttributeField) => a.name),
+      filterTables: tables.map((t: TableField) => t.name),
     });
     e.preventDefault();
   }
 
-  clearAll(e) {
+  clearAll(e: React.MouseEvent<HTMLAnchorElement>): void {
     this.setState({ filterAttributes: [], filterTables: [] });
     e.preventDefault();
   }
 
-  render() {
+  render(): React.ReactNode {
     let { filterAttributes, filterTables, showFilterFieldSelector } =
       this.state;
     let { recordClass, question, filterTerm, displayInfo } = this.props;
@@ -138,15 +160,15 @@ class AnswerFilter extends React.Component {
     );
     let attributes = recordClass.attributes
       .concat(question.dynamicAttributes)
-      .filter((attr) => displayInfo.attributes.includes(attr.name));
-    let tables = recordClass.tables.filter((table) =>
+      .filter((attr: AttributeField) => displayInfo.attributes.includes(attr.name));
+    let tables = recordClass.tables.filter((table: TableField) =>
       displayInfo.tables.includes(table.name)
     );
 
     return (
       <div className="wdk-Answer-filter">
         <input
-          ref="filterInput"
+          ref={this.filterInputRef}
           className="wdk-Answer-filterInput"
           defaultValue={filterTerm}
           placeholder={`Search ${displayNamePlural}`}

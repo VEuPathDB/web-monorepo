@@ -1,10 +1,16 @@
 import { pick, property } from 'lodash';
-import PropTypes from 'prop-types';
 import React from 'react';
-import { withRouter } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router';
 import DataTable from '../../Components/DataTable/DataTable';
 import Dialog from '../../Components/Overlays/Dialog';
 import { wrappable } from '../../Utils/ComponentUtils';
+import {
+  AttributeField,
+  RecordClass,
+  RecordInstance,
+} from '../../Utils/WdkModel';
+import { DisplayInfo, Sorting } from '../../Actions/AnswerActions';
+import { History, Location } from 'history';
 
 /**
  * Generic table with UI features:
@@ -31,7 +37,14 @@ import { wrappable } from '../../Utils/ComponentUtils';
  */
 function noop() {}
 
-function AttributeSelector(props) {
+interface AttributeSelectorProps {
+  allAttributes: AttributeField[];
+  selectedAttributes: AttributeField[];
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  onChange: (attributeName: string, isVisible: boolean) => void;
+}
+
+function AttributeSelector(props: AttributeSelectorProps) {
   return (
     <form onSubmit={props.onSubmit}>
       <div className="wdk-AnswerTable-AttributeSelectorButtonWrapper">
@@ -69,8 +82,45 @@ function AttributeSelector(props) {
   );
 }
 
-class AnswerTable extends React.Component {
-  constructor(props) {
+interface AnswerTableProps extends RouteComponentProps {
+  meta: any;
+  displayInfo: DisplayInfo;
+  records: RecordInstance[];
+  recordClass: RecordClass;
+  allAttributes: AttributeField[];
+  visibleAttributes: AttributeField[];
+  height: number;
+  history: History;
+  onSort?: (sorting: Sorting[]) => void;
+  onMoveColumn?: (columnName: string, newPosition: number) => void;
+  onChangeColumns?: (attributes: AttributeField[]) => void;
+  onNewPage?: (offset: number, numRecords: number) => void;
+  onRecordClick?: () => void;
+}
+
+interface DataTableColumn extends AttributeField {
+  isDisplayable: boolean;
+}
+
+interface DataTableRow {
+  [key: string]: any;
+}
+
+interface DataTableSortingEntry {
+  name: string;
+  direction: 'ASC' | 'DESC';
+}
+
+interface AnswerTableState {
+  columns: DataTableColumn[];
+  data: DataTableRow[];
+  sorting: DataTableSortingEntry[];
+  pendingVisibleAttributes: AttributeField[];
+  attributeSelectorOpen: boolean;
+}
+
+class AnswerTable extends React.Component<AnswerTableProps, AnswerTableState> {
+  constructor(props: AnswerTableProps) {
     super(props);
     this.handleSort = this.handleSort.bind(this);
     this.handleOpenAttributeSelectorClick =
@@ -96,7 +146,7 @@ class AnswerTable extends React.Component {
     });
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: AnswerTableProps) {
     this.setState({
       pendingVisibleAttributes: nextProps.visibleAttributes,
     });
@@ -124,11 +174,12 @@ class AnswerTable extends React.Component {
     }
   }
 
-  handleSort(datatableSorting) {
-    this.props.onSort(
+  handleSort(datatableSorting: DataTableSortingEntry[]) {
+    const onSort = this.props.onSort || noop;
+    onSort(
       datatableSorting.map((entry) => ({
         attributeName: entry.name,
-        direction: entry.direction,
+        direction: entry.direction as 'ASC' | 'DESC',
       }))
     );
   }
@@ -143,10 +194,11 @@ class AnswerTable extends React.Component {
     this.setState(this._getInitialAttributeSelectorState());
   }
 
-  handleAttributeSelectorSubmit(e) {
+  handleAttributeSelectorSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     e.stopPropagation();
-    this.props.onChangeColumns(this.state.pendingVisibleAttributes);
+    const onChangeColumns = this.props.onChangeColumns || noop;
+    onChangeColumns(this.state.pendingVisibleAttributes);
     this.setState({
       attributeSelectorOpen: false,
     });
@@ -155,7 +207,7 @@ class AnswerTable extends React.Component {
   /**
    * Filter unchecked checkboxes and map to attributes
    */
-  togglePendingAttribute(attributeName, isVisible) {
+  togglePendingAttribute(attributeName: string, isVisible: boolean) {
     let pending = new Set(
       this.state.pendingVisibleAttributes.map((attr) => attr.name)
     );
@@ -215,22 +267,6 @@ class AnswerTable extends React.Component {
   }
 }
 
-AnswerTable.propTypes = {
-  meta: PropTypes.object.isRequired,
-  displayInfo: PropTypes.object.isRequired,
-  records: PropTypes.array.isRequired,
-  recordClass: PropTypes.object.isRequired,
-  allAttributes: PropTypes.array.isRequired,
-  visibleAttributes: PropTypes.array.isRequired,
-  height: PropTypes.number.isRequired,
-  history: PropTypes.object.isRequired,
-  onSort: PropTypes.func,
-  onMoveColumn: PropTypes.func,
-  onChangeColumns: PropTypes.func,
-  onNewPage: PropTypes.func,
-  onRecordClick: PropTypes.func,
-};
-
 AnswerTable.defaultProps = {
   onSort: noop,
   onMoveColumn: noop,
@@ -242,7 +278,11 @@ AnswerTable.defaultProps = {
 export default wrappable(withRouter(AnswerTable));
 
 /** Convert records array to DataTable format */
-function getDataFromRecords(records, recordClass, history) {
+function getDataFromRecords(
+  records: RecordInstance[],
+  recordClass: RecordClass,
+  history: History
+): DataTableRow[] {
   let attributeNames = recordClass.attributes
     .filter((attr) => attr.isDisplayable)
     .map((attr) => attr.name);
@@ -253,14 +293,14 @@ function getDataFromRecords(records, recordClass, history) {
       pathname: `/record/${recordClass.urlSegment}/${record.id
         .map(property('value'))
         .join('/')}`,
-    });
+    } as Location);
     trimmedAttrs.primary_key = `<a href="${recordUrl}">${trimmedAttrs.primary_key}</a>`;
     return trimmedAttrs;
   });
 }
 
 /** Convert sorting to DataTable format */
-function getDataTableSorting(wdkSorting) {
+function getDataTableSorting(wdkSorting: Sorting[]): DataTableSortingEntry[] {
   return wdkSorting.map((entry) => ({
     name: entry.attributeName,
     direction: entry.direction,
@@ -268,7 +308,10 @@ function getDataTableSorting(wdkSorting) {
 }
 
 /** Convert attributes to DataTable format */
-function setVisibilityFlag(attributes, visibleAttributes) {
+function setVisibilityFlag(
+  attributes: AttributeField[],
+  visibleAttributes: AttributeField[]
+): DataTableColumn[] {
   let visibleSet = new Set(visibleAttributes);
   return attributes
     .filter((attr) => attr.isDisplayable)
