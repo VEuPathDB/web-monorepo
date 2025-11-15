@@ -81,14 +81,13 @@ class ActionToolbar<Row> extends React.PureComponent<ActionToolbarProps<Row>> {
 
   renderActionItemList(): ReactNode {
     const { actions } = this.props;
-    const ActionItem = this.renderActionItem;
     return (
       <div className={actionToolbarClass('ItemList')}>
         {!actions
           ? null
           : actions
               .filter((action) => action.element)
-              .map((action, idx) => <ActionItem action={action} key={idx} />)}
+              .map((action) => this.renderActionItem({ action }))}
       </div>
     );
   }
@@ -130,19 +129,6 @@ class ActionToolbar<Row> extends React.PureComponent<ActionToolbarProps<Row>> {
       onMultipleRowDeselect,
     } = eventHandlers || {};
 
-    const ActionList = this.renderActionItemList;
-
-    const selectionCounterProps = {
-      rows,
-      isRowSelected,
-      onRowSelect,
-      onRowDeselect,
-      onMultipleRowSelect,
-      onMultipleRowDeselect,
-      selectedNoun,
-      selectedPluralNoun,
-    };
-
     return (
       <div className={actionToolbarClass() + ' Toolbar'}>
         {!children ? null : (
@@ -151,9 +137,20 @@ class ActionToolbar<Row> extends React.PureComponent<ActionToolbarProps<Row>> {
         {this.renderCounter()}
         <div className={actionToolbarClass('Info')}>
           {this.renderGroupBySelectedToggle()}
-          <SelectionCounter {...selectionCounterProps} />
+          {rows && isRowSelected && (
+            <SelectionCounter
+              rows={rows}
+              isRowSelected={isRowSelected}
+              onRowSelect={onRowSelect}
+              onRowDeselect={onRowDeselect}
+              onMultipleRowSelect={onMultipleRowSelect}
+              onMultipleRowDeselect={onMultipleRowDeselect}
+              selectedNoun={selectedNoun}
+              selectedPluralNoun={selectedPluralNoun}
+            />
+          )}
         </div>
-        <ActionList />
+        {this.renderActionItemList()}
       </div>
     );
   }

@@ -150,16 +150,20 @@ class DataRow<Row> extends React.PureComponent<
           {hasExpansionColumn && eventHandlers && uiState && (
             <ExpansionCell
               key="_expansion"
+              rows={[]}
               row={row}
               onExpandedRowsChange={eventHandlers.onExpandedRowsChange!}
               expandedRows={uiState.expandedRows!}
               getRowId={getRowId!}
+              inert={false}
+              heading={false}
             />
           )}
           {hasSelectionColumn && options && eventHandlers && (
             <SelectionCell
               key="_selection"
               row={row}
+              options={options}
               eventHandlers={eventHandlers}
               isRowSelected={options.isRowSelected!}
             />

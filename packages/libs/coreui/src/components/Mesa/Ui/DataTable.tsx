@@ -215,10 +215,13 @@ class DataTable<Row> extends React.Component<
     return (
       <div ref={(node) => (this.mainRef = node)} className="MesaComponent">
         <div
-          className={dataTableClass(null, [
-            options && options.useStickyHeader ? 'Sticky' : undefined,
-            options && options.marginContent ? 'HasMargin' : undefined,
-          ])}
+          className={dataTableClass(
+            undefined,
+            [
+              options && options.useStickyHeader ? 'Sticky' : undefined,
+              options && options.marginContent ? 'HasMargin' : undefined,
+            ].filter((x): x is string => x !== undefined)
+          )}
           style={wrapperStyle}
         >
           <table
@@ -227,7 +230,7 @@ class DataTable<Row> extends React.Component<
             style={tableStyle}
             ref={(node) => (this.contentTable = node)}
           >
-            <HeadingRow {...tableProps} />
+            <HeadingRow {...(tableProps as any)} />
             <DataRowList {...tableProps} />
           </table>
           {this.props.options && this.props.options.marginContent && (

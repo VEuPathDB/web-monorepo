@@ -18,7 +18,7 @@ interface ColumnDefaults {
   [key: string]: any;
 }
 
-interface HeadingRowColumn<Row, Key = string> extends MesaColumn<Row, Key> {
+type HeadingRowColumn<Row, Key = string> = MesaColumn<Row, Key> & {
   renderHeading?:
     | boolean
     | ((
@@ -27,7 +27,7 @@ interface HeadingRowColumn<Row, Key = string> extends MesaColumn<Row, Key> {
         components: any
       ) => ReactNode)
     | ReactNode[];
-}
+};
 
 class HeadingRow<Row, Key = string> extends React.PureComponent<
   HeadingRowProps<Row, Key>
@@ -69,7 +69,7 @@ class HeadingRow<Row, Key = string> extends React.PureComponent<
       const isFirstRow = !index;
       const cols = columns.map((col) => {
         const column = col as HeadingRowColumn<Row, Key>;
-        const output: HeadingRowColumn<Row, Key> = { ...column };
+        const output: any = { ...column };
         if (Array.isArray(column.renderHeading)) {
           output.renderHeading =
             column.renderHeading.length > index
@@ -78,7 +78,7 @@ class HeadingRow<Row, Key = string> extends React.PureComponent<
         } else if (!isFirstRow) {
           output.renderHeading = false;
         }
-        return output;
+        return output as HeadingRowColumn<Row, Key>;
       });
       return { cols, isFirstRow };
     });
@@ -94,8 +94,8 @@ class HeadingRow<Row, Key = string> extends React.PureComponent<
                   heading={true}
                   key="_expansion"
                   rows={filteredRows}
-                  childRow={childRow}
-                  getRowId={getRowId}
+                  row={filteredRows[0]}
+                  getRowId={getRowId as any}
                   onExpandedRowsChange={onExpandedRowsChange}
                   expandedRows={expandedRows}
                 />
@@ -106,8 +106,8 @@ class HeadingRow<Row, Key = string> extends React.PureComponent<
                   heading={true}
                   key="_selection"
                   rows={filteredRows}
-                  options={options}
-                  eventHandlers={eventHandlers}
+                  options={options as any}
+                  eventHandlers={eventHandlers as any}
                   isRowSelected={isRowSelected}
                 />
               )}
@@ -117,7 +117,7 @@ class HeadingRow<Row, Key = string> extends React.PureComponent<
                   mergedColumn = { ...columnDefaults, ...column };
                 return (
                   <HeadingCell
-                    sort={sort}
+                    sort={sort as any}
                     key={`${String(mergedColumn.key)}-${columnIndex}`}
                     primary={isFirstRow}
                     column={mergedColumn}
