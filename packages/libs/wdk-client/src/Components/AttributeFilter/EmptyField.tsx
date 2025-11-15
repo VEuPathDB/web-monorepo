@@ -1,9 +1,10 @@
 import React from 'react';
 
-/**
- * Empty field component
- */
-export default function EmptyField(props) {
+interface EmptyFieldProps {
+  displayName: string;
+}
+
+export default function EmptyField(props: EmptyFieldProps) {
   return (
     <div>
       <h3>

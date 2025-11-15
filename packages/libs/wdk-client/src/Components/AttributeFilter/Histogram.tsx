@@ -10,7 +10,6 @@ import {
   throttle,
   get,
 } from 'lodash';
-import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { lazy } from '../../Utils/ComponentUtils';
@@ -30,13 +29,54 @@ const DAY = 1000 * 60 * 60 * 24;
 
 const IGNORED_UI_STATE_PROPERTIES = ['loading', 'valid', 'errorMessage'];
 
-var distributionEntryPropType = PropTypes.shape({
-  value: PropTypes.number.isRequired,
-  count: PropTypes.number.isRequired,
-  filteredCount: PropTypes.number.isRequired,
-});
+// Type definitions
+interface DistributionEntry {
+  value: number;
+  count: number;
+  filteredCount: number;
+}
 
-const transforms = {
+interface UIState {
+  xaxisMin?: number;
+  xaxisMax?: number;
+  yaxisMin?: number;
+  yaxisMax?: number;
+  binSize?: number;
+  binStart?: number;
+  scaleYAxis?: boolean;
+}
+
+interface HistogramProps {
+  distribution: DistributionEntry[];
+  selectedMin?: number | null;
+  selectedMax?: number | null;
+  chartType: 'number' | 'date';
+  timeformat?: string;
+  xaxisLabel?: string;
+  yaxisLabel?: string;
+  truncateYAxis?: boolean;
+  defaultScaleYAxis?: boolean;
+  uiState: UIState;
+  onUiStateChange: (uiState: UIState) => void;
+  onSelected: (range: { min: number | null; max: number | null }) => void;
+  onSelecting: (range: { min: number | null; max: number | null }) => void;
+  onUnselected?: (range: { min: number | null; max: number | null }) => void;
+}
+
+interface HistogramState {
+  uiState: UIState;
+  showSettings: boolean;
+}
+
+interface Transform {
+  display: string;
+  xform: (v: number) => number;
+  inverse: (v: number) => number;
+}
+
+type Transforms = Record<string, Transform>;
+
+const transforms: Transforms = {
   none: {
     display: 'None',
     xform: (v) => v,
@@ -63,8 +103,20 @@ const PLOT_SETTINGS_OPEN_KEY = 'wdk/filterParam/plotSettingsOpen';
 
 var Histogram = (function () {
   /** Common histogram component */
-  class LazyHistogram extends React.Component {
-    constructor(props) {
+  class LazyHistogram extends React.Component<HistogramProps, HistogramState> {
+    handleResize: () => void;
+    emitStateChange: (uiState: UIState) => void;
+    getRange: (distribution: DistributionEntry[]) => {
+      min: number;
+      max: number;
+    };
+    getNumFixedDigits: (distribution: DistributionEntry[]) => number;
+    getDefaultBinSize: (props: HistogramProps) => number;
+    plot: any;
+    $chart: any;
+    tooltip: any;
+
+    constructor(props: HistogramProps) {
       super(props);
       this.handleResize = throttle(this.handleResize.bind(this), 100);
       this.emitStateChange = debounce(this.emitStateChange, 100);
@@ -91,7 +143,7 @@ var Histogram = (function () {
       this.drawPlotSelection();
     }
 
-    UNSAFE_componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps: HistogramProps) {
       if (
         nextProps.uiState.yaxisMax !== this.state.uiState.yaxisMax ||
         nextProps.uiState.xaxisMin !== this.state.uiState.xaxisMin ||
@@ -105,7 +157,7 @@ var Histogram = (function () {
     /**
      * Conditionally update plot and selection based on props and state.
      */
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps: HistogramProps) {
       if (
         !isEqual(this.props.distribution, prevProps.distribution) ||
         !isEqual(
@@ -131,12 +183,12 @@ var Histogram = (function () {
       if (this.tooltip) this.tooltip.qtip('destroy');
     }
 
-    isProbablity(props) {
+    isProbablity(props: HistogramProps) {
       const { min, max } = this.getRange(props.distribution);
       return min >= 0 && (max === 1 || max === 100);
     }
 
-    getStateFromProps(props) {
+    getStateFromProps(props: HistogramProps): UIState {
       var { xaxisMin, xaxisMax } = this.getXAxisMinMax(props);
       var binStart =
         props.uiState.binStart ?? props.chartType === 'date'
@@ -163,7 +215,7 @@ var Histogram = (function () {
       };
     }
 
-    getRange(distribution) {
+    getRange(distribution: DistributionEntry[]) {
       return distribution.reduce(
         ({ min, max }, entry) => ({
           min: Math.min(min, entry.value),
@@ -173,11 +225,11 @@ var Histogram = (function () {
       );
     }
 
-    isEveryValueAnInteger(distribution) {
+    isEveryValueAnInteger(distribution: DistributionEntry[]): boolean {
       return distribution.every(({ value }) => Number.isInteger(value));
     }
 
-    getDefaultBinSize(props) {
+    getDefaultBinSize(props: HistogramProps): number {
       if (props.chartType === 'date') return 1;
       const { min, max } = this.getRange(props.distribution);
       if (this.isProbablity(props)) return max / 100;
@@ -194,7 +246,10 @@ var Histogram = (function () {
       return Math.ceil(binSize);
     }
 
-    getXAxisMinMax(props) {
+    getXAxisMinMax(props: HistogramProps): {
+      xaxisMin: number;
+      xaxisMax: number;
+    } {
       const { min, max } = this.getRange(props.distribution);
       var { xaxisMin, xaxisMax } = props.uiState;
       if (xaxisMin == null)
@@ -203,7 +258,10 @@ var Histogram = (function () {
       return { xaxisMin, xaxisMax };
     }
 
-    getYAxisMax(distribution, truncateYAxis) {
+    getYAxisMax(
+      distribution: DistributionEntry[],
+      truncateYAxis: boolean
+    ): number {
       var counts = distribution.map((entry) => entry.count);
       // Reverse sort, then pull out first and second highest values
       var [max, nextMax] = counts.sort((a, b) => (a < b ? 1 : -1));
@@ -214,24 +272,27 @@ var Histogram = (function () {
       return yaxisMax;
     }
 
-    getClampedDistribution(distribution, uiState) {
+    getClampedDistribution(
+      distribution: DistributionEntry[],
+      uiState: UIState
+    ): DistributionEntry[] {
       const { xaxisMin, xaxisMax } = uiState;
       return xaxisMin == null && xaxisMax == null
         ? distribution
         : xaxisMax == null
-        ? distribution.filter((entry) => entry.value >= xaxisMin)
+        ? distribution.filter((entry) => entry.value >= xaxisMin!)
         : xaxisMin == null
-        ? distribution.filter((entry) => entry.value <= xaxisMax)
+        ? distribution.filter((entry) => entry.value <= xaxisMax!)
         : distribution.filter(
-            (entry) => entry.value >= xaxisMin && entry.value <= xaxisMax
+            (entry) => entry.value >= xaxisMin! && entry.value <= xaxisMax!
           );
     }
 
-    getBarWidth(distribution) {
+    getBarWidth(distribution: DistributionEntry[]): number {
       // padding factor
       const padding = 0.75;
       const { xaxisMin, xaxisMax } = this.state.uiState;
-      const length = xaxisMax - xaxisMin;
+      const length = xaxisMax! - xaxisMin!;
       const minWidth = length / 1000;
       const maxWidth = length / 100;
       // For dates, use one day as width
@@ -248,12 +309,16 @@ var Histogram = (function () {
               ? minDistance
               : Math.min(entry.value - prevValue, minDistance),
         }),
-        { prev: null, minDistance: Infinity }
+        { prev: null as number | null, minDistance: Infinity }
       );
       return clamp(minDistance * padding, minWidth, maxWidth);
     }
 
-    getBinnedDistribution(binSize, binStart, distribution) {
+    getBinnedDistribution(
+      binSize: number,
+      binStart: number,
+      distribution: DistributionEntry[]
+    ): DistributionEntry[] {
       return createBinnedDistribution(
         this.props.chartType === 'date' ? binSize * DAY : binSize,
         this.props.chartType === 'date' ? binStart * DAY : binStart,
@@ -261,7 +326,9 @@ var Histogram = (function () {
       );
     }
 
-    getSeriesData(distribution) {
+    getSeriesData(
+      distribution: DistributionEntry[]
+    ): Array<{ data: Array<[number, number]>; hoverable?: boolean }> {
       return [
         {
           data: distribution.map((entry) => [entry.value, entry.count]),
@@ -274,7 +341,7 @@ var Histogram = (function () {
       ];
     }
 
-    getNumFixedDigits(distribution) {
+    getNumFixedDigits(distribution: DistributionEntry[]): number {
       return Seq.from(distribution)
         .map((entry) => getNumFixedDigits(entry.value))
         .reduce(Math.max, 0);
@@ -287,12 +354,12 @@ var Histogram = (function () {
       this.drawPlotSelection();
     }
 
-    handlePlotSelected(event, ranges) {
+    handlePlotSelected(event: any, ranges: any) {
       var range = unwrapXaxisRange(ranges);
       this.props.onSelected(range);
     }
 
-    handlePlotSelecting(event, ranges) {
+    handlePlotSelecting(event: any, ranges: any) {
       if (!ranges) return;
       var range = unwrapXaxisRange(ranges);
       this.props.onSelecting(range);
@@ -347,7 +414,7 @@ var Histogram = (function () {
       const clampedDistribution = binSize
         ? distribution
         : this.getClampedDistribution(distribution, uiState);
-      const useScientificNotation = xaxisMax - xaxisMin < 0.1;
+      const useScientificNotation = xaxisMax! - xaxisMin! < 0.1;
 
       var barWidth = binSize
         ? chartType === 'date'
@@ -359,7 +426,7 @@ var Histogram = (function () {
         chartType === 'date'
           ? { mode: 'time', timeformat: timeformat }
           : {
-              tickFormatter: (value) =>
+              tickFormatter: (value: number) =>
                 useScientificNotation
                   ? value.toExponential(2)
                   : value.toLocaleString(undefined, {
@@ -391,8 +458,8 @@ var Histogram = (function () {
         xaxis: Object.assign(
           {
             tickLength: 0,
-            min: binSize ? xaxisMin : xaxisMin - barWidth,
-            max: binSize ? xaxisMax : xaxisMax + barWidth,
+            min: binSize ? xaxisMin : xaxisMin! - barWidth,
+            max: binSize ? xaxisMax : xaxisMax! + barWidth,
           },
           xaxisBaseOptions
         ),
@@ -441,7 +508,7 @@ var Histogram = (function () {
       });
     }
 
-    handlePlotHover(event, pos, item) {
+    handlePlotHover(event: any, pos: any, item: any) {
       var qtipApi = this.tooltip.qtip('api');
 
       if (!item) {
@@ -502,35 +569,42 @@ var Histogram = (function () {
       }
     }
 
-    updateUIState(updater) {
+    updateUIState(updater: (uiState: UIState) => UIState) {
       this.setState(
         ({ uiState }) => ({ uiState: updater(uiState) }),
         () => this.emitStateChange(this.state.uiState)
       );
     }
 
-    emitStateChange(uiState) {
+    emitStateChange(uiState: UIState) {
       this.props.onUiStateChange(uiState);
     }
 
     // x-axis settings
     // ---------------
 
-    setXAxisRange(xaxisMin, xaxisMax) {
+    setXAxisRange(xaxisMin: number, xaxisMax: number) {
       this.updateUIState((uiState) => ({ ...uiState, xaxisMin, xaxisMax }));
     }
 
-    setXAxisBinSize(binSize) {
+    setXAxisBinSize(binSize: number) {
       this.setXAxisBinState(this.state.uiState.binStart, binSize);
     }
 
-    setXAxisBinStart(binStart) {
+    setXAxisBinStart(binStart: number) {
       this.setXAxisBinState(binStart, this.state.uiState.binSize);
     }
 
-    setXAxisBinState(binStart, binSize) {
+    setXAxisBinState(
+      binStart: number | undefined,
+      binSize: number | undefined
+    ) {
       const distribution = binSize
-        ? this.getBinnedDistribution(binSize, binStart, this.props.distribution)
+        ? this.getBinnedDistribution(
+            binSize,
+            binStart || 0,
+            this.props.distribution
+          )
         : this.props.distribution;
       const yaxisMax = binSize
         ? Math.max(...distribution.map((entry) => entry.count))
@@ -564,22 +638,22 @@ var Histogram = (function () {
     // y-axis settings
     // ---------------
 
-    setYAxisRange(yaxisMin, yaxisMax) {
+    setYAxisRange(yaxisMin: number, yaxisMax: number) {
       this.updateUIState((uiState) => ({ ...uiState, yaxisMin, yaxisMax }));
     }
 
-    setScaleYAxis(scaleYAxis) {
+    setScaleYAxis(scaleYAxis: boolean) {
       this.updateUIState((uiState) => ({ ...uiState, scaleYAxis }));
     }
 
     resetYAxisState() {
       const { binStart, binSize } = this.state.uiState;
       this.setXAxisBinState(binStart, binSize);
-      this.setScaleYAxis(this.props.defaultScaleYAxis);
+      this.setScaleYAxis(this.props.defaultScaleYAxis || false);
       this.updateUIState((uiState) => ({ ...uiState, yaxisMin: 0 }));
     }
 
-    setSettingsOpen(showSettings) {
+    setSettingsOpen(showSettings: boolean) {
       sessionStorage.setItem(
         PLOT_SETTINGS_OPEN_KEY,
         JSON.stringify(Boolean(showSettings))
@@ -631,8 +705,8 @@ var Histogram = (function () {
           <React.Fragment>
             <NumberRangeSelector
               value={{
-                min: Number(xaxisMin.toFixed(numFixedDigits)),
-                max: Number(xaxisMax.toFixed(numFixedDigits)),
+                min: Number(xaxisMin!.toFixed(numFixedDigits)),
+                max: Number(xaxisMax!.toFixed(numFixedDigits)),
               }}
               start={-Infinity}
               end={Infinity}
@@ -778,38 +852,6 @@ var Histogram = (function () {
     }
   }
 
-  LazyHistogram.propTypes = {
-    distribution: PropTypes.arrayOf(distributionEntryPropType).isRequired,
-    selectedMin: PropTypes.number,
-    selectedMax: PropTypes.number,
-    chartType: PropTypes.oneOf(['number', 'date']).isRequired,
-    timeformat: PropTypes.string,
-    xaxisLabel: PropTypes.string,
-    yaxisLabel: PropTypes.string,
-
-    // Controls if truncation logic is applied
-    // to deemphasize outliers
-    truncateYAxis: PropTypes.bool,
-
-    defaultScaleYAxis: PropTypes.bool,
-
-    uiState: PropTypes.shape({
-      xaxisMin: PropTypes.number,
-      xaxisMax: PropTypes.number,
-      yaxisMin: PropTypes.number,
-      yaxisMax: PropTypes.number,
-      binSize: PropTypes.number,
-      binStart: PropTypes.number,
-      scaleYAxis: PropTypes.bool,
-    }),
-
-    onUiStateChange: PropTypes.func,
-
-    onSelected: PropTypes.func,
-    onSelecting: PropTypes.func,
-    onUnselected: PropTypes.func,
-  };
-
   LazyHistogram.defaultProps = {
     xaxisLabel: 'X-Axis',
     yaxisLabel: 'Y-Axis',
@@ -821,7 +863,7 @@ var Histogram = (function () {
     onUnselected: noop,
   };
 
-  return lazy(async () => {
+  return lazy<HistogramProps>(async () => {
     await import('!!script-loader!../../../vendored/flot/jquery.flot');
     await Promise.all([
       import('!!script-loader!../../../vendored/flot/jquery.flot.categories'),
@@ -833,8 +875,21 @@ var Histogram = (function () {
 
 export default Histogram;
 
-function RangeWarning({ rangeMin, rangeMax, selectionMin, selectionMax }) {
-  if (rangeMin >= selectionMin && rangeMax <= selectionMax) return null;
+interface RangeWarningProps {
+  rangeMin: number;
+  rangeMax: number;
+  selectionMin?: number;
+  selectionMax?: number;
+}
+
+function RangeWarning({
+  rangeMin,
+  rangeMax,
+  selectionMin,
+  selectionMax,
+}: RangeWarningProps) {
+  if (rangeMin >= (selectionMin ?? 0) && rangeMax <= (selectionMax ?? 0))
+    return null;
   return (
     <Tooltip title="Some values are hidden due to your current range selection.">
       <IconAlt fa="exclamation-circle range-warning" />
@@ -846,7 +901,14 @@ function RangeWarning({ rangeMin, rangeMax, selectionMin, selectionMax }) {
  * Reusable histogram field component. The parent component is responsible for
  * preparing the data.
  */
-function unwrapXaxisRange(flotRanges) {
+interface FlotRanges {
+  xaxis: { from: number; to: number };
+}
+
+function unwrapXaxisRange(flotRanges: FlotRanges | null | undefined): {
+  min: number | null;
+  max: number | null;
+} {
   if (flotRanges == null) {
     return { min: null, max: null };
   }
@@ -856,7 +918,7 @@ function unwrapXaxisRange(flotRanges) {
 }
 
 const FIXED_DIGITS_RE = /^(\d*)\.?(\d*)$/;
-function getNumFixedDigits(num) {
+function getNumFixedDigits(num: number): number {
   const matches = FIXED_DIGITS_RE.exec(String(num));
   return matches == null ? 0 : matches[2].length;
 }
@@ -870,7 +932,11 @@ function getNumFixedDigits(num) {
 // - Bar width will be determined by binSize.
 //
 
-function assignBin(binSize, binStart, value) {
+function assignBin(
+  binSize: number,
+  binStart: number,
+  value: number
+): number | undefined {
   if (value < binStart) return;
   const shift = binStart % binSize;
   const shiftedValue = value - shift;
@@ -879,26 +945,38 @@ function assignBin(binSize, binStart, value) {
   return bin + shift;
 }
 
-function createBinnedDistribution(binSize, binStart, distribution) {
-  const binnedObject = distribution.reduce((binnedDist, entry) => {
-    const bin = assignBin(binSize, binStart, entry.value);
-    if (bin == null) return binnedDist;
-    const count = get(binnedDist, [bin, 'count'], 0) + entry.count;
-    const filteredCount =
-      get(binnedDist, [bin, 'filteredCount'], 0) + entry.filteredCount;
-    return Object.assign(binnedDist, { [bin]: { count, filteredCount } });
-  }, {});
+function createBinnedDistribution(
+  binSize: number,
+  binStart: number,
+  distribution: DistributionEntry[]
+): DistributionEntry[] {
+  const binnedObject = distribution.reduce(
+    (
+      binnedDist: Record<number, { count: number; filteredCount: number }>,
+      entry
+    ) => {
+      const bin = assignBin(binSize, binStart, entry.value);
+      if (bin == null) return binnedDist;
+      const count = get(binnedDist, [bin, 'count'], 0) + entry.count;
+      const filteredCount =
+        get(binnedDist, [bin, 'filteredCount'], 0) + entry.filteredCount;
+      return Object.assign(binnedDist, { [bin]: { count, filteredCount } });
+    },
+    {}
+  );
   return Object.entries(binnedObject).map((entry) => ({
     value: Number(entry[0]),
     ...entry[1],
   }));
 }
 
-function eventToNumber(event) {
+function eventToNumber(
+  event: React.ChangeEvent<HTMLInputElement>
+): number | undefined {
   const value = event.target.value.trim();
   return value === '' ? undefined : Number(value);
 }
 
-function autoSelectOnFocus(event) {
+function autoSelectOnFocus(event: React.FocusEvent<HTMLInputElement>) {
   event.target.select();
 }

@@ -1,5 +1,4 @@
 import { partial } from 'lodash';
-import PropTypes from 'prop-types';
 import React from 'react';
 import { Seq } from '../../Utils/IterableUtils';
 import IconAlt from '../../Components/Icon/IconAlt';
@@ -9,6 +8,21 @@ import {
   shouldAddFilter,
 } from '../../Components/AttributeFilter/AttributeFilterUtils';
 import { postorderSeq } from '../../Utils/TreeUtils';
+import { Filter, FieldTreeNode, Field } from './Types';
+
+interface FilterListProps {
+  onActiveFieldChange: (field: string) => void;
+  onFiltersChange: (filters: Filter[]) => void;
+  fieldTree: FieldTreeNode;
+  filters: Filter[];
+  displayName: string;
+  dataCount?: number;
+  filteredDataCount?: number;
+  hideGlobalCounts: boolean;
+  loadingFilteredCount?: boolean;
+  activeField?: Field;
+  minSelectedCount?: number;
+}
 
 /**
  * List of filters configured by the user.
@@ -16,12 +30,12 @@ import { postorderSeq } from '../../Utils/TreeUtils';
  * Each filter can be used to update the active field
  * or to remove a filter.
  */
-export default class FilterList extends React.Component {
+export default class FilterList extends React.Component<FilterListProps, {}> {
   /**
    * @param {FilterListProps} props
    * @return {React.Component<FilterListProps, void>}
    */
-  constructor(props) {
+  constructor(props: FilterListProps) {
     super(props);
     this.handleFilterSelectClick = this.handleFilterSelectClick.bind(this);
     this.handleFilterRemoveClick = this.handleFilterRemoveClick.bind(this);
@@ -31,16 +45,24 @@ export default class FilterList extends React.Component {
    * @param {Filter} filter
    * @param {Event} event
    */
-  handleFilterSelectClick(filter, containerFilter = filter, event) {
+  handleFilterSelectClick = (
+    filter: Filter,
+    containerFilter: Filter = filter,
+    event: React.MouseEvent<HTMLAnchorElement>
+  ) => {
     event.preventDefault();
     this.props.onActiveFieldChange(containerFilter.field);
-  }
+  };
 
   /**
    * @param {Filter} filter
    * @param {Event} event
    */
-  handleFilterRemoveClick(filter, containerFilter, event) {
+  handleFilterRemoveClick = (
+    filter: Filter,
+    containerFilter: Filter | undefined,
+    event: React.MouseEvent<HTMLSpanElement>
+  ) => {
     event.preventDefault();
     if (containerFilter != null) {
       const otherFilters = this.props.filters.filter(
@@ -63,30 +85,30 @@ export default class FilterList extends React.Component {
         this.props.filters.filter((f) => f !== filter)
       );
     }
-  }
+  };
 
-  renderFilterItem(filter, containerFilter) {
-    var { fieldTree } = this.props;
-    var handleSelectClick = partial(
+  renderFilterItem(filter: Filter, containerFilter?: Filter): JSX.Element {
+    const { fieldTree } = this.props;
+    const handleSelectClick = partial(
       this.handleFilterSelectClick,
       filter,
       containerFilter
     );
-    var handleRemoveClick = partial(
+    const handleRemoveClick = partial(
       this.handleFilterRemoveClick,
       filter,
       containerFilter
     );
-    var field = postorderSeq(fieldTree)
+    const field = postorderSeq(fieldTree)
       .map((node) => node.field)
       .find((field) => field.term === filter.field);
-    var filterDisplay = getFilterValueDisplay(filter);
+    const filterDisplay = getFilterValueDisplay(filter);
 
     return (
       <div className="filter-item">
         <a
           className="select"
-          onClick={handleSelectClick}
+          onClick={handleSelectClick as any}
           href={'#' + filter.field}
           title={filterDisplay}
         >
@@ -99,7 +121,7 @@ export default class FilterList extends React.Component {
             the encoding is done in the browser */}
         <span
           className="remove"
-          onClick={handleRemoveClick}
+          onClick={handleRemoveClick as any}
           title="remove restriction"
         >
           {String.fromCharCode(215)}
@@ -108,7 +130,7 @@ export default class FilterList extends React.Component {
     );
   }
 
-  render() {
+  render(): JSX.Element {
     const {
       activeField,
       fieldTree,
@@ -136,7 +158,9 @@ export default class FilterList extends React.Component {
       </span>
     );
 
-    const needsMoreCount = minSelectedCount > filteredDataCount;
+    const needsMoreCount = minSelectedCount
+      ? minSelectedCount > (filteredDataCount || 0)
+      : false;
 
     const filtered = hideGlobalCounts ? null : (
       <span
@@ -188,12 +212,12 @@ export default class FilterList extends React.Component {
                     <React.Fragment>
                       <sup className="multiFilter-operation">
                         {getOperationDisplay(
-                          filter.value.operation
+                          (filter.value as any).operation
                         ).toUpperCase()}{' '}
                         {field == null ? filter.field : field.display} filters
                       </sup>
                       <ul className="filter-items">
-                        {filter.value.filters.map((leaf) => (
+                        {(filter.value as any).filters.map((leaf: Filter) => (
                           <li key={leaf.field}>
                             {this.renderFilterItem(leaf, filter)}
                           </li>
@@ -210,17 +234,3 @@ export default class FilterList extends React.Component {
     );
   }
 }
-
-FilterList.propTypes = {
-  onActiveFieldChange: PropTypes.func.isRequired,
-  onFiltersChange: PropTypes.func.isRequired,
-  fieldTree: PropTypes.object.isRequired,
-  filters: PropTypes.array.isRequired,
-  displayName: PropTypes.string.isRequired,
-  dataCount: PropTypes.number,
-  filteredDataCount: PropTypes.number,
-  hideGlobalCounts: PropTypes.bool.isRequired,
-  loadingFilteredCount: PropTypes.bool,
-  activeField: PropTypes.object,
-  minSelectedCount: PropTypes.number,
-};

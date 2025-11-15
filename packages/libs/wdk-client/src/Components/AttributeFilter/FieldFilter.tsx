@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import { makeClassNameHelper } from '../../Utils/ComponentUtils';
 import Icon from '../../Components/Icon/IconAlt';
@@ -6,12 +5,48 @@ import EmptyField from '../../Components/AttributeFilter/EmptyField';
 import MultiFieldFilter from '../../Components/AttributeFilter/MultiFieldFilter';
 import SingleFieldFilter from '../../Components/AttributeFilter/SingleFieldFilter';
 import { isMulti } from '../../Components/AttributeFilter/AttributeFilterUtils';
+import {
+  Field,
+  Filter,
+  OntologyTermSummary,
+} from '../../Components/AttributeFilter/Types';
 
 const cx = makeClassNameHelper('field-detail');
+
+/**
+ * State for a particular field filter
+ */
+type FieldFilterState = {
+  loading?: boolean;
+  summary?: OntologyTermSummary;
+  leafSummaries?: OntologyTermSummary[];
+  errorMessage?: string;
+  // member, range, multi specific settings
+  [key: string]: any;
+};
+
+/**
+ * Props for the FieldFilter component
+ */
+type FieldFilterProps = {
+  displayName?: string;
+  dataCount?: number | null;
+  filteredDataCount?: number;
+  filters?: Filter[];
+  activeField?: Field | null;
+  activeFieldState?: FieldFilterState;
+  onFiltersChange?: (filters: Filter[]) => void;
+  onMemberSort?: (sortBy: string) => void;
+  onMemberSearch?: (searchTerm: string) => void;
+  onRangeScaleChange?: (scale: string) => void;
+  hideFieldPanel?: boolean;
+  selectByDefault: boolean;
+};
+
 /**
  * Main interactive filtering interface for a particular field.
  */
-function FieldFilter(props) {
+function FieldFilter(props: FieldFilterProps) {
   let className = cx('', props.hideFieldPanel && 'fullWidth');
 
   return (
@@ -57,43 +92,6 @@ function FieldFilter(props) {
     </div>
   );
 }
-
-const FieldSummary = PropTypes.shape({
-  valueCounts: PropTypes.array.isRequired,
-  internalsCount: PropTypes.number.isRequired,
-  internalsFilteredCount: PropTypes.number.isRequired,
-});
-
-const MultiFieldSummary = PropTypes.arrayOf(
-  PropTypes.shape({
-    term: PropTypes.string.isRequired,
-    valueCounts: PropTypes.array.isRequired,
-    internalsCount: PropTypes.number.isRequired,
-    internalsFilteredCount: PropTypes.number.isRequired,
-  })
-);
-
-FieldFilter.propTypes = {
-  displayName: PropTypes.string,
-  dataCount: PropTypes.number,
-  filteredDataCount: PropTypes.number,
-  filters: PropTypes.array,
-  activeField: PropTypes.object,
-  activeFieldState: PropTypes.shape({
-    loading: PropTypes.boolean,
-    summary: FieldSummary,
-    leafSummaries: MultiFieldSummary,
-    /* member, range, multi specific settings */
-  }),
-
-  onFiltersChange: PropTypes.func,
-  onMemberSort: PropTypes.func,
-  onMemberSearch: PropTypes.func,
-  onRangeScaleChange: PropTypes.func,
-
-  hideFieldPanel: PropTypes.bool,
-  selectByDefault: PropTypes.bool.isRequired,
-};
 
 FieldFilter.defaultProps = {
   displayName: 'Items',
