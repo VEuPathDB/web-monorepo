@@ -107,24 +107,19 @@ var Histogram = (function () {
     plot: any;
     $chart: any;
     tooltip: any;
-    handleResize: any;
-    emitStateChange: any;
-    getRange: any;
-    getNumFixedDigits: any;
-    getDefaultBinSize: any;
 
     constructor(props: HistogramProps) {
       super(props);
-      this.handleResize = throttle(this.handleResize.bind(this), 100);
-      this.emitStateChange = debounce(this.emitStateChange, 100);
+      this.handleResize = throttle(this.handleResize.bind(this), 100) as any;
+      this.emitStateChange = debounce(this.emitStateChange, 100) as any;
       this.state = {
         uiState: this.getStateFromProps(props),
         showSettings:
           sessionStorage.getItem(PLOT_SETTINGS_OPEN_KEY) !== 'false',
       };
-      this.getRange = memoize(this.getRange);
-      this.getNumFixedDigits = memoize(this.getNumFixedDigits);
-      this.getDefaultBinSize = memoize(this.getDefaultBinSize);
+      this.getRange = memoize(this.getRange) as any;
+      this.getNumFixedDigits = memoize(this.getNumFixedDigits) as any;
+      this.getDefaultBinSize = memoize(this.getDefaultBinSize) as any;
     }
 
     componentDidMount() {
