@@ -89,13 +89,13 @@ class RecordUI extends Component<RecordUIProps, RecordUIState> {
   monitorActiveSection(): void {
     window.addEventListener('scroll', this._updateActiveSection, {
       passive: true,
-    });
+    } as any);
   }
 
   unmonitorActiveSection(): void {
     window.removeEventListener('scroll', this._updateActiveSection, {
       passive: true,
-    });
+    } as any);
   }
 
   getHeaderOffset(): number {
@@ -122,7 +122,7 @@ class RecordUI extends Component<RecordUIProps, RecordUIState> {
     this.activeSectionTop = activeElement?.getBoundingClientRect().top ?? null;
 
     if (activeSectionId !== this.state.activeSectionId) {
-      this.setState({ activeSectionId }, () => {
+      this.setState({ activeSectionId: activeSectionId ?? null }, () => {
         this._updateUrl(this.state.activeSectionId);
       });
     }
@@ -130,9 +130,9 @@ class RecordUI extends Component<RecordUIProps, RecordUIState> {
 
   _updateUrl = (activeSection: string | null): void => {
     let hash = activeSection ? `#${activeSection}` : '';
-    let newUrl = new URL(hash, location);
+    let newUrl = new URL(hash, location.href);
     try {
-      history.replaceState(null, null, newUrl.href);
+      history.replaceState(null, '', newUrl.href);
     } catch (error) {
       console.error('Could not replace history state', newUrl);
       console.error(error);
@@ -152,12 +152,13 @@ class RecordUI extends Component<RecordUIProps, RecordUIState> {
     );
 
     if (targetNode != null && sectionNode != null) {
+      const sectionId = (sectionNode as HTMLElement).id;
       if (isFirstLoadForRecordId) {
         // open the target section
-        this.props.updateSectionVisibility(sectionNode.id, true);
+        this.props.updateSectionVisibility(sectionId, true);
         const ancestorCategoryNodes = getAncestors(
           this.props.categoryTree,
-          sectionNode.id
+          sectionId
         ).slice(1);
         const ancestorNodeId = ancestorCategoryNodes.map(getId);
         this.props.updateNavigationCategoryExpansion(ancestorNodeId);
@@ -229,13 +230,15 @@ class RecordUI extends Component<RecordUIProps, RecordUIState> {
                 recordClass={this.props.recordClass}
                 categoryTree={this.props.categoryTree}
                 collapsedSections={this.props.collapsedSections}
-                activeSection={this.state.activeSectionId}
+                activeSection={this.state.activeSectionId ?? ''}
                 navigationQuery={this.props.navigationQuery}
                 navigationExpanded={this.props.navigationExpanded}
                 navigationCategoriesExpanded={
                   this.props.navigationCategoriesExpanded
                 }
-                onSectionToggle={this.props.updateSectionVisibility}
+                onSectionToggle={(id: string, value?: boolean) =>
+                  this.props.updateSectionVisibility(id, value ?? false)
+                }
                 onNavigationVisibilityChange={
                   this.props.updateNavigationVisibility
                 }
@@ -251,7 +254,7 @@ class RecordUI extends Component<RecordUIProps, RecordUIState> {
           </div>
           <div className="wdk-RecordMain">
             <RecordMainSection
-              ref={(c) => (this.recordMainSectionNode = findDOMNode(c))}
+              ref={(c: any) => (this.recordMainSectionNode = findDOMNode(c))}
               record={this.props.record}
               recordClass={this.props.recordClass}
               categories={this.props.categoryTree.children}
