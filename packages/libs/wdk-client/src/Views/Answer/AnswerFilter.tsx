@@ -4,7 +4,12 @@ import ReactDOM from 'react-dom';
 import { HelpTrigger } from '@veupathdb/coreui/lib/components/Mesa';
 import { Tooltip } from '@veupathdb/coreui';
 import { wrappable } from '../../Utils/ComponentUtils';
-import { RecordClass, Question, AttributeField, TableField } from '../../Utils/WdkModel';
+import {
+  RecordClass,
+  Question,
+  AttributeField,
+  TableField,
+} from '../../Utils/WdkModel';
 import { DisplayInfo } from '../../Actions/AnswerActions';
 import AnswerFilterSelector from '../../Views/Answer/AnswerFilterSelector';
 
@@ -24,7 +29,13 @@ interface AnswerFilterProps {
   question: Question;
   filterTerm: string;
   displayInfo: DisplayInfo;
-  onFilter: (filterTerm: string, filterAttributes: string[], filterTables: string[]) => void;
+  filterAttributes: string[];
+  filterTables: string[];
+  onFilter: (
+    filterTerm: string,
+    filterAttributes: string[],
+    filterTables: string[]
+  ) => void;
 }
 
 interface AnswerFilterState {
@@ -33,7 +44,10 @@ interface AnswerFilterState {
   filterTables: string[];
 }
 
-class AnswerFilter extends React.Component<AnswerFilterProps, AnswerFilterState> {
+class AnswerFilter extends React.Component<
+  AnswerFilterProps,
+  AnswerFilterState
+> {
   filterInputRef: React.RefObject<HTMLInputElement>;
 
   constructor(props: AnswerFilterProps) {
@@ -55,7 +69,10 @@ class AnswerFilter extends React.Component<AnswerFilterProps, AnswerFilterState>
     };
   }
 
-  componentDidUpdate(prevProps: AnswerFilterProps, prevState: AnswerFilterState): void {
+  componentDidUpdate(
+    prevProps: AnswerFilterProps,
+    prevState: AnswerFilterState
+  ): void {
     let { filterAttributes, filterTables } = this.state;
     if (
       filterAttributes !== prevState.filterAttributes ||
@@ -160,7 +177,9 @@ class AnswerFilter extends React.Component<AnswerFilterProps, AnswerFilterState>
     );
     let attributes = recordClass.attributes
       .concat(question.dynamicAttributes)
-      .filter((attr: AttributeField) => displayInfo.attributes.includes(attr.name));
+      .filter((attr: AttributeField) =>
+        displayInfo.attributes.includes(attr.name)
+      );
     let tables = recordClass.tables.filter((table: TableField) =>
       displayInfo.tables.includes(table.name)
     );

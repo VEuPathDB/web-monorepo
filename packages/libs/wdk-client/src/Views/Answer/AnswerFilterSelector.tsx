@@ -49,12 +49,12 @@ const ANSWER_FILTER_CLASSNAME = 'wdk-Answer-filterFieldSelector';
 
 /** Record fields to match filter expression against */
 class AnswerFilterSelector extends Component<AnswerFilterSelectorProps> {
-  handleKeyPress: (e: KeyboardEvent) => void;
+  handleKeyPress: (e: React.KeyboardEvent<HTMLDivElement>) => void;
   handleDocumentClick: (e: MouseEvent) => void;
 
   constructor(props: AnswerFilterSelectorProps) {
     super(props);
-    this.handleKeyPress = (e: KeyboardEvent) => {
+    this.handleKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === 'Escape') {
         this.props.onClose();
       }
@@ -69,18 +69,30 @@ class AnswerFilterSelector extends Component<AnswerFilterSelectorProps> {
 
   componentDidMount() {
     if (this.props.open) {
-      document.addEventListener('click', this.handleDocumentClick as EventListener);
+      document.addEventListener(
+        'click',
+        this.handleDocumentClick as EventListener
+      );
     }
   }
 
   componentWillUnmount() {
-    document.removeEventListener('click', this.handleDocumentClick as EventListener);
+    document.removeEventListener(
+      'click',
+      this.handleDocumentClick as EventListener
+    );
   }
 
   componentDidUpdate() {
-    document.removeEventListener('click', this.handleDocumentClick as EventListener);
+    document.removeEventListener(
+      'click',
+      this.handleDocumentClick as EventListener
+    );
     if (this.props.open) {
-      document.addEventListener('click', this.handleDocumentClick as EventListener);
+      document.addEventListener(
+        'click',
+        this.handleDocumentClick as EventListener
+      );
     }
   }
 
@@ -104,7 +116,7 @@ class AnswerFilterSelector extends Component<AnswerFilterSelectorProps> {
     return (
       <TabbableContainer
         autoFocus
-        onKeyDown={this.handleKeyPress as React.KeyboardEventHandler<HTMLDivElement>}
+        onKeyDown={this.handleKeyPress}
         className={ANSWER_FILTER_CLASSNAME}
       >
         <p>

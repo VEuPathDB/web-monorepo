@@ -7,14 +7,18 @@ interface RecordLinkProps {
   recordId: PrimaryKey;
   recordClass: RecordClass;
   children?: ReactNode;
+  className?: string;
 }
 
 function RecordLink(props: RecordLinkProps) {
-  let { recordClass, recordId } = props;
+  let { recordClass, recordId, className } = props;
   let pkValues = recordId.map((p) => p.value).join('/');
 
   return (
-    <Link to={`/record/${recordClass.urlSegment}/${pkValues}`}>
+    <Link
+      to={`/record/${recordClass.urlSegment}/${pkValues}`}
+      className={className}
+    >
       {props.children}
     </Link>
   );

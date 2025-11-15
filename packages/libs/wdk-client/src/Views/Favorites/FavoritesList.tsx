@@ -1,6 +1,6 @@
 import { escape } from 'lodash';
 import React, { Component, CSSProperties, ReactNode } from 'react';
-import { withRouter, WithRouterProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router';
 import BannerList from '@veupathdb/coreui/lib/components/banners/BannerList';
 import { BannerProps } from '@veupathdb/coreui/lib/components/banners/Banner';
 import Icon from '../../Components/Icon/IconAlt';
@@ -48,7 +48,7 @@ interface FavoritesEvents {
   undeleteFavorites: (tableState: any, favorites: Favorite[]) => void;
 }
 
-interface Props extends WithRouterProps<any> {
+interface Props extends RouteComponentProps<any> {
   tableState: any;
   tableSelection: number[];
   favoritesLoading: boolean;
@@ -64,6 +64,7 @@ interface Props extends WithRouterProps<any> {
   searchBoxPlaceholder: string;
   searchBoxHelp: string;
   favoritesEvents: FavoritesEvents;
+  favoriteIds?: number[];
 }
 
 interface State {
