@@ -1,0 +1,78 @@
+/**
+ * Test a node to see if its content is overflowing
+ */
+export function isNodeOverflowing(node: HTMLElement): boolean {
+  return node.clientWidth !== node.scrollWidth;
+}
+
+export interface BestPosition {
+  offsetTop: number;
+  offsetLeft: number;
+}
+
+/**
+ * Calculate the offsetLeft and offsetTop for `element` such that it is visible
+ * within the viewport, relative to another element. The positions are absolute,
+ * and above and to the right of `aroundElement` is preferred.
+ *
+ * If `aroundElement` is null, `element` will be centered.
+ */
+export function getBestPosition(
+  element: HTMLElement,
+  aroundElement: HTMLElement | null = null
+): BestPosition {
+  let elementRectangle = element.getBoundingClientRect();
+  let containerRectangle = {
+    left: 0,
+    right: window.innerWidth,
+    top: 0,
+    bottom: window.innerHeight,
+    width: window.innerWidth,
+    height: window.innerHeight,
+  };
+
+  let centerLeft =
+    containerRectangle.left +
+    containerRectangle.width / 2 -
+    elementRectangle.width / 2;
+  let centerTop =
+    containerRectangle.top +
+    containerRectangle.height / 2 -
+    elementRectangle.height / 2;
+
+  if (aroundElement != null) {
+    let aroundRectangle = aroundElement.getBoundingClientRect();
+    let goRight =
+      containerRectangle.right - aroundRectangle.right > elementRectangle.width;
+    let goLeft =
+      !goRight &&
+      aroundRectangle.left - containerRectangle.left > elementRectangle.width;
+    let goUp =
+      aroundRectangle.top - containerRectangle.top > elementRectangle.height;
+    let goDown =
+      !goUp &&
+      containerRectangle.bottom - aroundRectangle.bottom >
+        elementRectangle.height;
+
+    let offsetLeft = goRight
+      ? aroundRectangle.right
+      : goLeft
+      ? aroundRectangle.left - elementRectangle.width
+      : centerLeft;
+
+    let offsetTop = goDown
+      ? aroundRectangle.bottom
+      : goUp
+      ? aroundRectangle.top - elementRectangle.height
+      : centerTop;
+
+    return { offsetTop, offsetLeft };
+  }
+
+  return { offsetTop: centerTop, offsetLeft: centerLeft };
+}
+
+export const findChildren =
+  (childSelector: string) =>
+  (node: Element): NodeListOf<Element> =>
+    node.querySelectorAll(childSelector);
