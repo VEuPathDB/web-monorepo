@@ -4,6 +4,7 @@ import { getTree } from '@veupathdb/wdk-client/lib/Utils/OntologyUtils';
 import {
   getRecordClassName,
   isQualifying,
+  CategoryTreeNode,
 } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 
 let isSearchMenuScope = isQualifying({ targetType: 'search', scope: 'menu' });
@@ -15,26 +16,21 @@ let isSearchMenuScope = isQualifying({ targetType: 'search', scope: 'menu' });
  * will be ignored.
  *
  * This is used by bubbles, query grid, and menus.
- *
- * @param {Ontology} ontology
- * @param {RecordClass[]} recordClasses
- * @returns {import('@veupathdb/wdk-client/lib/Utils/CategoryUtils').CategoryTreeNode}
  */
-export function getSearchMenuCategoryTree(ontology, recordClasses) {
+export function getSearchMenuCategoryTree(
+  ontology: any,
+  recordClasses: any[]
+): any {
   let recordClassMap = new Map(recordClasses.map((rc) => [rc.fullName, rc]));
   // get searches scoped for menu
   let categoryTree = getTree(ontology, isSearchMenuScope);
   return groupByRecordClass(categoryTree, recordClassMap);
 }
 
-/**
- *
- * @param categoryTree
- * @param recordClassMap
- * @param options?
- * @returns {RecordClassTree[]}
- */
-function groupByRecordClass(categoryTree, recordClassMap) {
+function groupByRecordClass(
+  categoryTree: CategoryTreeNode,
+  recordClassMap: Map<string, any>
+): any {
   let recordClassCategories = Seq.from(recordClassMap.keys())
     .map((name) => recordClassMap.get(name))
     .map(getRecordClassTree(categoryTree))
@@ -43,12 +39,12 @@ function groupByRecordClass(categoryTree, recordClassMap) {
   return { children: recordClassCategories };
 }
 
-function isDefined(maybe) {
+function isDefined<T>(maybe: T | undefined): maybe is T {
   return maybe !== undefined;
 }
 
-function getRecordClassTree(categoryTree) {
-  return function (recordClass) {
+function getRecordClassTree(categoryTree: CategoryTreeNode) {
+  return function (recordClass: any): any {
     let tree = pruneDescendantNodes(
       isRecordClassTreeNode(recordClass),
       categoryTree
@@ -64,8 +60,8 @@ function getRecordClassTree(categoryTree) {
   };
 }
 
-function isRecordClassTreeNode(recordClass) {
-  return function (node) {
+function isRecordClassTreeNode(recordClass: any) {
+  return function (node: CategoryTreeNode): boolean {
     return (
       node.children.length !== 0 ||
       getRecordClassName(node) === recordClass.fullName

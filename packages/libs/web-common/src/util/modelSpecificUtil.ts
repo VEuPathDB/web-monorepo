@@ -1,6 +1,9 @@
 import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { nodeHasChildren } from '@veupathdb/wdk-client/lib/Utils/OntologyUtils';
-import { getNodeId } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
+import {
+  getNodeId,
+  CategoryTreeNode,
+} from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 
 let booleanQuestionPrefixes = [
   'InternalQuestions.boolean_question',
@@ -9,7 +12,10 @@ let booleanQuestionPrefixes = [
 
 let badBooleanAttributes = ['transcripts_found_per_gene'];
 
-export function trimBooleanQuestionAttribs(question, categoryTree) {
+export function trimBooleanQuestionAttribs(
+  question: any,
+  categoryTree: CategoryTreeNode
+): CategoryTreeNode {
   // determine if this type of question needs its attributes trimmed
   let needsTrimming = false;
   booleanQuestionPrefixes.forEach((prefix) => {
@@ -21,7 +27,7 @@ export function trimBooleanQuestionAttribs(question, categoryTree) {
   }
 
   // function tells whether a leaf should be trimmed off (if so, returns true)
-  let trimLeafPredicate = (node) =>
+  let trimLeafPredicate = (node: CategoryTreeNode): boolean =>
     badBooleanAttributes.indexOf(getNodeId(node)) !== -1;
 
   return pruneDescendantNodes(

@@ -1,19 +1,14 @@
 /**
  * Test a node to see if its content is overflowing
- *
- * @param {HTMLElement} node
- * @return {boolean}
  */
-export function isNodeOverflowing(node) {
+export function isNodeOverflowing(node: HTMLElement): boolean {
   return node.clientWidth !== node.scrollWidth;
 }
 
-/**
- * @typedef BestPosition
- * @type {object}
- * @property {number} offsetTop
- * @property {number} offsetLeft
- */
+export interface BestPosition {
+  offsetTop: number;
+  offsetLeft: number;
+}
 
 /**
  * Calculate the offsetLeft and offsetTop for `element` such that it is visible
@@ -21,12 +16,11 @@ export function isNodeOverflowing(node) {
  * and above and to the right of `aroundElement` is preferred.
  *
  * If `aroundElement` is null, `element` will be centered.
- *
- * @param {HTMLElement} element
- * @param {HTMLElement?} aroundElement
- * @return {BestPosition}
  */
-export function getBestPosition(element, aroundElement = null) {
+export function getBestPosition(
+  element: HTMLElement,
+  aroundElement: HTMLElement | null = null
+): BestPosition {
   let elementRectangle = element.getBoundingClientRect();
   let containerRectangle = {
     left: 0,
@@ -78,5 +72,7 @@ export function getBestPosition(element, aroundElement = null) {
   return { offestTop: centerTop, offsetLeft: centerLeft };
 }
 
-export const findChildren = (childSelector) => (node) =>
-  node.querySelectorAll(childSelector);
+export const findChildren =
+  (childSelector: string) =>
+  (node: Element): NodeListOf<Element> =>
+    node.querySelectorAll(childSelector);

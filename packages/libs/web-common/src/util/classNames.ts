@@ -9,13 +9,10 @@
  * makeClassName('Hello', 'green') //=> 'EbrcHello EbrcHello__green'
  * makeClassName('Hello', 'red', 'muted') //=> 'EbrcHello EbrcHello__red EbrcHello__muted'
  * ```
- * @param {string} baseClassName The root string to prepend to all variants.
- * @param {string} element Suffix to append to baseClassName.
- * @param {string[]} ...modifiers Variants to append to classNames
  */
 export const classNameHelper =
-  (baseClassName) =>
-  (element = '', ...modifiers) => {
+  (baseClassName: string) =>
+  (element: string = '', ...modifiers: string[]): string => {
     const className = baseClassName + element;
     const modifiedClassNames = modifiers
       .filter((modifier) => modifier)

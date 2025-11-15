@@ -10,7 +10,7 @@ const prefix = '@@ebrc@@';
 /**
  * Set the value for the key in the store
  */
-export function set(key, value) {
+export function set<T>(key: string, value: T): void {
   try {
     store.setItem(prefix + '/' + key, JSON.stringify(value));
   } catch (e) {
@@ -21,7 +21,7 @@ export function set(key, value) {
 /**
  * Get the value for the key from the store
  */
-export function get(key, defaultValue) {
+export function get<T>(key: string, defaultValue: T): T {
   try {
     let item = store.getItem(prefix + '/' + key);
     return item == null ? defaultValue : JSON.parse(item);

@@ -8,20 +8,23 @@ import {
 
 import { CategoryIcon } from '../App/Categories';
 
-export function studyFilters(studies) {
+export function studyFilters(studies: any): any[] {
   return Seq.from(studies.entities || [])
-    .flatMap((study) => study.categories)
-    .orderBy((c) => c)
+    .flatMap((study: any) => study.categories)
+    .orderBy((c: string) => c)
     .uniq()
-    .map((category) => ({
+    .map((category: string) => ({
       id: category,
       display: <CategoryIcon category={category} />,
-      predicate: (study) => study.categories.includes(category),
+      predicate: (study: any) => study.categories.includes(category),
     }))
     .toArray();
 }
 
-export function studyMatchPredicate(searchString, filterString) {
+export function studyMatchPredicate(
+  searchString: string,
+  filterString: string
+): boolean {
   const terms = parseSearchQueryString(filterString);
   return areTermsInString(terms, searchString);
 }

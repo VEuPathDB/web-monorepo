@@ -26,11 +26,14 @@ import TranscriptTableReporterForm from '../components/reporters/TranscriptTable
 import TranscriptAttributesReporterForm from '../components/reporters/TranscriptAttributesReporterForm';
 import ZippedFilesReporterForm from '../components/reporters/ZippedFilesReporterForm';
 
-let EmptyReporter = (props) => null;
+let EmptyReporter: any = (props: any) => null;
 
 EmptyReporter.getInitialState = () => ({ formState: null, formUiState: null });
 
-export function selectReporterComponent(reporterName, recordClassFullName) {
+export function selectReporterComponent(
+  reporterName: string,
+  recordClassFullName: string
+): any {
   switch (reporterName) {
     case 'attributesTabular':
       switch (recordClassFullName) {
