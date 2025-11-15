@@ -2,6 +2,7 @@ import { escape } from 'lodash';
 import React, { Component, CSSProperties, ReactNode } from 'react';
 import { withRouter, WithRouterProps } from 'react-router';
 import BannerList from '@veupathdb/coreui/lib/components/banners/BannerList';
+import { BannerProps } from '@veupathdb/coreui/lib/components/banners/Banner';
 import Icon from '../../Components/Icon/IconAlt';
 import TextArea from '../../Components/InputControls/TextArea';
 import TextBox from '../../Components/InputControls/TextBox';
@@ -17,10 +18,8 @@ import { Favorite, RecordClass } from '../../Utils/WdkModel';
 import { User } from '../../Utils/WdkUser';
 import '../../Views/Favorites/wdk-Favorites.scss';
 
-interface Banner {
+interface Banner extends BannerProps {
   id: string;
-  type: string;
-  message: ReactNode;
 }
 
 interface EditCoordinates {
@@ -243,9 +242,13 @@ class FavoritesList extends Component<Props, State> {
     };
     return (
       <div style={style}>
-        <RecordLink recordClass={recordClass} recordId={primaryKey}>
-          {displayName}
-        </RecordLink>
+        {recordClass ? (
+          <RecordLink recordClass={recordClass} recordId={primaryKey}>
+            {displayName}
+          </RecordLink>
+        ) : (
+          displayName
+        )}
       </div>
     );
   }
@@ -283,9 +286,9 @@ class FavoritesList extends Component<Props, State> {
             this.handleEnterKey(e, column.key)
           }
           onChange={(newValue: string) => this.handleCellChange(newValue)}
-          autoComplete={true}
-          maxLength="50"
-          size="5"
+          autoComplete="on"
+          maxLength={50}
+          size={5}
         />
         <Icon
           fa="check-circle action-icon save-icon"
@@ -362,9 +365,9 @@ class FavoritesList extends Component<Props, State> {
         <TextArea
           value={editValue}
           onChange={(newValue: string) => this.handleCellChange(newValue)}
-          maxLength="200"
-          cols="50"
-          rows="4"
+          maxLength={200}
+          cols={50}
+          rows={4}
         />
         <Icon
           fa="check-circle action-icon save-icon"
@@ -605,8 +608,6 @@ class FavoritesList extends Component<Props, State> {
       rows.length && !filteredRows.length ? 'search' : null
     );
 
-    const CountSummary = this.renderCountSummary;
-
     if (!recordClasses) return null;
     if (user.isGuest)
       return (
@@ -615,11 +616,18 @@ class FavoritesList extends Component<Props, State> {
         </div>
       );
 
+    const bannerProps: BannerProps[] = banners.map(({ id, ...rest }) => rest);
+
     return (
       <div className="wdk-Favorites">
         <h1 className="page-title">Favorites</h1>
-        <CountSummary />
-        <BannerList onClose={this.handleBannerClose} banners={banners} />
+        {this.renderCountSummary()}
+        <BannerList
+          onClose={(index, banner) =>
+            this.handleBannerClose(index, banners[index])
+          }
+          banners={bannerProps}
+        />
         <Mesa state={tableState}>
           <RealTimeSearchBox
             className="favorites-search-field"
@@ -753,4 +761,4 @@ class FavoritesList extends Component<Props, State> {
   }
 }
 
-export default wrappable(withRouter(FavoritesList));
+export default wrappable(withRouter(FavoritesList as any));
