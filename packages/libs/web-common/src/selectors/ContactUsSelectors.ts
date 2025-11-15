@@ -15,12 +15,17 @@ import { EMAIL_REGEX } from '../util/email';
 import {
   SUBMISSION_FAILED,
   SUBMISSION_SUCCESSFUL,
+  ContactUsState,
+  AttachmentMetadata,
 } from '../store-modules/ContactUsStoreModule';
 
 export const MAX_ATTACHMENT_SIZE = 5000000;
 export const MAX_ATTACHMENT_SIZE_DESCRIPTION = '5Mb';
 
-const propSelectorFactory = (prop) => (state) => state[prop];
+const propSelectorFactory =
+  <K extends keyof ContactUsState>(prop: K) =>
+  (state: ContactUsState): ContactUsState[K] =>
+    state[prop];
 
 export const submittingStatus = propSelectorFactory('submittingStatus');
 export const submissionStatus = propSelectorFactory('submissionStatus');
@@ -47,14 +52,16 @@ export const submissionSuccessful = createSelector(
 
 export const reporterEmailValidity = createSelector(
   reporterEmailValue,
-  (reporterEmail) =>
+  (reporterEmail: string): string =>
     reporterEmail.length > 0 && !EMAIL_REGEX.test(reporterEmail)
       ? 'Please provide a valid email address where we can reach you.'
       : ''
 );
 
-export const messageValidity = createSelector(messageValue, (message) =>
-  message.length === 0 ? 'Please provide a message for our team.' : ''
+export const messageValidity = createSelector(
+  messageValue,
+  (message: string): string =>
+    message.length === 0 ? 'Please provide a message for our team.' : ''
 );
 
 export const parsedCcEmails = createSelector(
@@ -62,21 +69,24 @@ export const parsedCcEmails = createSelector(
   compose(filter(length), map(trim), split(/[;,]/))
 );
 
-export const ccEmailsValidity = createSelector(parsedCcEmails, (ccEmails) => {
-  if (ccEmails.length > 10) {
-    return 'Please provide at most 10 emails to cc.';
+export const ccEmailsValidity = createSelector(
+  parsedCcEmails,
+  (ccEmails: string[]): string => {
+    if (ccEmails.length > 10) {
+      return 'Please provide at most 10 emails to cc.';
+    }
+
+    const invalidEmails = ccEmails.filter(
+      (ccEmail) => !EMAIL_REGEX.test(ccEmail)
+    );
+
+    return invalidEmails.length
+      ? `Please correct the following email address(es): ${invalidEmails.join(
+          ', '
+        )}.`
+      : '';
   }
-
-  const invalidEmails = ccEmails.filter(
-    (ccEmail) => !EMAIL_REGEX.test(ccEmail)
-  );
-
-  return invalidEmails.length
-    ? `Please correct the following email address(es): ${invalidEmails.join(
-        ', '
-      )}.`
-    : '';
-});
+);
 
 export const files = createSelector(
   attachmentMetadata,
@@ -84,12 +94,20 @@ export const files = createSelector(
   compose(map('file'), concat)
 );
 
+// Type for validated attachment metadata
+export interface ValidatedAttachmentMetadata extends AttachmentMetadata {
+  validity: string;
+}
+
 export const validatedAttachmentMetadata = createSelector(
   attachmentMetadata,
-  (attachmentMetadata) => map(validateMetadatum)(attachmentMetadata)
+  (attachmentMetadata: AttachmentMetadata[]): ValidatedAttachmentMetadata[] =>
+    map(validateMetadatum)(attachmentMetadata)
 );
 
-const validateMetadatum = (metadatum) => {
+const validateMetadatum = (
+  metadatum: AttachmentMetadata
+): ValidatedAttachmentMetadata => {
   if (!metadatum.file) {
     return addValidityToAttachmentMetadatum(
       metadatum,
@@ -105,10 +123,22 @@ const validateMetadatum = (metadatum) => {
   }
 };
 
-const addValidityToAttachmentMetadatum = (metadatum, validity) => ({
+const addValidityToAttachmentMetadatum = (
+  metadatum: AttachmentMetadata,
+  validity: string
+): ValidatedAttachmentMetadata => ({
   ...metadatum,
   validity,
 });
+
+// Type for parsed form fields
+export interface ParsedFormFields {
+  subject: string;
+  reporterEmail: string;
+  ccEmails: string[];
+  message: string;
+  context: string;
+}
 
 export const parsedFormFields = createSelector(
   subjectValue,
@@ -116,7 +146,13 @@ export const parsedFormFields = createSelector(
   parsedCcEmails,
   messageValue,
   contextValue,
-  (subject, reporterEmail, ccEmails, message, context) => ({
+  (
+    subject: string,
+    reporterEmail: string,
+    ccEmails: string[],
+    message: string,
+    context: string
+  ): ParsedFormFields => ({
     subject,
     reporterEmail,
     ccEmails,

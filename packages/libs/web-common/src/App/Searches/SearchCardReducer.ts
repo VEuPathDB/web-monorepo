@@ -2,12 +2,34 @@ import {
   SEARCHES_LOADED,
   SEARCHES_LOADING,
   SEARCHES_ERROR,
+  SearchesAction,
 } from './SearchCardActionCreators';
 
+export interface SearchCard {
+  icon: string;
+  recordClassDisplayName: string;
+  name: string;
+  studyName?: string;
+  appUrl: string;
+  description: string;
+}
+
+export interface SearchCardState {
+  loading: boolean;
+  error: string | null;
+  entities: SearchCard[] | null;
+}
+
+const initialState: SearchCardState = {
+  loading: false,
+  error: null,
+  entities: null,
+};
+
 export default function reduce(
-  state = { loading: false, error: null, entities: null },
-  action
-) {
+  state: SearchCardState = initialState,
+  action: SearchesAction
+): SearchCardState {
   switch (action.type) {
     case SEARCHES_LOADING:
       return {

@@ -1,5 +1,5 @@
 // FIXME Replace w/ stable random color assignment
-export function getBodyClassByType(type = '') {
+export function getBodyClassByType(type = ''): string {
   return /participant/i.test(type)
     ? 'red-fade-bg'
     : /household/i.test(type)

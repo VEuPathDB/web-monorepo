@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function getCategoryColor(category) {
+export function getCategoryColor(category: string | null | undefined): string | null {
   if (!category) return null;
   switch (category.toLowerCase()) {
     // This contains a mix of disease variables from https://webprotege.stanford.edu/#projects/719dd1bd-ffbb-4c15-99cc-050a233977ee/edit/Classes?selection=Class(%3Chttp://purl.obolibrary.org/obo/DOID_4%3E),
@@ -37,7 +37,7 @@ export function getCategoryColor(category) {
   }
 }
 
-export function getCategoryName(category = '') {
+export function getCategoryName(category = ''): JSX.Element {
   switch (category.toLowerCase()) {
     case 'malarial':
     case 'malaria':

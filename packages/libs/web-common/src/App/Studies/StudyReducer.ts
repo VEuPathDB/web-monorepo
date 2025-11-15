@@ -2,15 +2,26 @@ import {
   STUDIES_REQUESTED,
   STUDIES_RECEIVED,
   STUDIES_ERROR,
+  StudiesAction,
+  Study,
 } from './StudyActionCreators';
 
-const initialState = {
+export interface StudyState {
+  loading: boolean;
+  error?: string;
+  entities?: Study[];
+}
+
+const initialState: StudyState = {
   loading: false,
   error: undefined,
   entities: undefined,
 };
 
-export default function reduce(state = initialState, action) {
+export default function reduce(
+  state: StudyState = initialState,
+  action: StudiesAction
+): StudyState {
   switch (action.type) {
     case STUDIES_REQUESTED:
       return {

@@ -1,14 +1,69 @@
-import { get, identity, keyBy, mapValues, orderBy, spread } from 'lodash';
+import { get, identity, keyBy, mapValues, spread } from 'lodash';
 import { emptyAction } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
 
 import { getSearchableString } from '@veupathdb/wdk-client/lib/Views/Records/RecordUtils';
 
 import { showUnreleasedData } from '../../config';
 import { isDiyWdkRecordId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
+import WdkService from '@veupathdb/wdk-client/lib/Service/WdkService';
+import {
+  Question,
+  RecordClass,
+  RecordInstance,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 export const STUDIES_REQUESTED = 'studies/studies-requested';
 export const STUDIES_RECEIVED = 'studies/studies-received';
 export const STUDIES_ERROR = 'studies/studies-error';
+
+export interface StudySearch {
+  icon: string;
+  name: string;
+  path: string;
+  displayName: string;
+}
+
+export interface Study {
+  name: string;
+  id: string;
+  route: string;
+  categories: string[];
+  access: string;
+  isReleased: boolean;
+  email?: string;
+  policyUrl?: string;
+  requestNeedsApproval?: string;
+  downloadUrl?: string;
+  headline?: string;
+  points?: string[];
+  searches: StudySearch[];
+  searchString: string;
+  disabled: boolean;
+}
+
+interface InvalidRecord {
+  record: RecordInstance;
+  error: Error;
+}
+
+export type StudiesRequestedAction = {
+  type: typeof STUDIES_REQUESTED;
+};
+
+export type StudiesReceivedAction = {
+  type: typeof STUDIES_RECEIVED;
+  payload: { studies: Study[] };
+};
+
+export type StudiesErrorAction = {
+  type: typeof STUDIES_ERROR;
+  payload: { error: string };
+};
+
+export type StudiesAction =
+  | StudiesRequestedAction
+  | StudiesReceivedAction
+  | StudiesErrorAction;
 
 /**
  * Load studies
@@ -20,16 +75,16 @@ export function requestStudies() {
 // Action creators
 // ---------------
 
-function studiesRequested() {
+function studiesRequested(): StudiesRequestedAction {
   return { type: STUDIES_REQUESTED };
 }
 
-function studiesReceived([studies, invalidRecords]) {
+function studiesReceived([studies, invalidRecords]: [Study[], InvalidRecord[]]) {
   return [
     { type: STUDIES_RECEIVED, payload: { studies } },
     invalidRecords.length === 0
       ? emptyAction
-      : ({ wdkService }) =>
+      : ({ wdkService }: { wdkService: WdkService }) =>
           wdkService
             .submitError(
               new Error(
@@ -43,7 +98,7 @@ function studiesReceived([studies, invalidRecords]) {
   ];
 }
 
-function studiesError(error) {
+function studiesError(error: Error): StudiesErrorAction {
   return { type: STUDIES_ERROR, payload: { error: error.message } };
 }
 
@@ -62,12 +117,14 @@ const requiredAttributes = [
 // -------------
 
 function loadStudies() {
-  return function run({ wdkService }) {
+  return function run({ wdkService }: { wdkService: WdkService }) {
     return fetchStudies(wdkService).then(studiesReceived, studiesError);
   };
 }
 
-export function fetchStudies(wdkService) {
+export function fetchStudies(
+  wdkService: WdkService
+): Promise<[Study[], InvalidRecord[]]> {
   return Promise.all([
     wdkService.getQuestions(),
     wdkService.getRecordClasses(),
@@ -78,22 +135,45 @@ export function fetchStudies(wdkService) {
 // Helpers
 //
 
-const parseStudy = mapProps({
+type PropMapper<T> = {
+  [K in keyof T]: [
+    string | ((record: RecordInstance) => any),
+    ((value: any) => T[K])?,
+  ];
+};
+
+interface ParsedStudy {
+  name: string;
+  id: string;
+  route: string;
+  categories: string[];
+  access: string;
+  isReleased: boolean;
+  email?: string;
+  policyUrl?: string;
+  requestNeedsApproval?: string;
+  downloadUrl?: string;
+  headline?: string;
+  points?: string[];
+  searches: Record<string, string>;
+}
+
+const parseStudy = mapProps<ParsedStudy>({
   name: ['attributes.display_name'],
   id: ['attributes.dataset_id'],
-  route: ['attributes.dataset_id', (id) => `/record/dataset/${id}`],
+  route: ['attributes.dataset_id', (id: string) => `/record/dataset/${id}`],
   categories: [
-    (record) =>
+    (record: RecordInstance) =>
       'disease' in record.attributes
         ? (record.attributes.disease || 'Unknown').split(/,\s*/g)
-        : JSON.parse(record.attributes.study_categories),
+        : JSON.parse(record.attributes.study_categories as string),
   ],
   // TODO Remove .toLowerCase() when attribute display value is updated
   access: [
     'attributes.study_access',
-    (access) => access && access.toLowerCase(),
+    (access: string) => access && access.toLowerCase(),
   ],
-  isReleased: ['attributes.is_public', (str) => str === 'true'],
+  isReleased: ['attributes.is_public', (str: string) => str === 'true'],
   email: ['attributes.email'],
   policyUrl: ['attributes.policy_url'],
   requestNeedsApproval: ['attributes.request_needs_approval'],
@@ -103,11 +183,25 @@ const parseStudy = mapProps({
   searches: ['attributes.card_questions', JSON.parse],
 });
 
-function formatStudies(questions, recordClasses, answer) {
-  const questionsByName = keyBy(questions, 'fullName');
-  const recordClassesByName = keyBy(recordClasses, 'urlSegment');
+function formatStudies(
+  questions: Question[],
+  recordClasses: RecordClass[],
+  answer: { records: RecordInstance[] }
+): [Study[], InvalidRecord[]] {
+  const questionsByName: Record<string, Question> = keyBy(
+    questions,
+    'fullName'
+  );
+  const recordClassesByName: Record<string, RecordClass> = keyBy(
+    recordClasses,
+    'urlSegment'
+  );
 
-  const records = answer.records.reduce(
+  const records = answer.records.reduce<{
+    valid: Study[];
+    invalid: InvalidRecord[];
+    appearFirst: Set<string>;
+  }>(
     (records, record) => {
       try {
         const missingAttributes = requiredAttributes.filter(
@@ -121,19 +215,19 @@ function formatStudies(questions, recordClasses, answer) {
         records.valid.push({
           ...parseStudy(record),
           searchString: getSearchableString([], [], record),
-        });
+        } as Study);
 
         // Our presenters use a build number of 0 to convey studies
         // which should appear first...
         // (1) in the cards and...
         // (2) in the "Search a study" menu
         if (record.attributes.build_number_introduced === '0') {
-          records.appearFirst.add(record.attributes.dataset_id);
+          records.appearFirst.add(record.attributes.dataset_id as string);
         }
 
         return records;
       } catch (error) {
-        records.invalid.push({ record, error });
+        records.invalid.push({ record, error: error as Error });
         return records;
       }
     },
@@ -153,7 +247,7 @@ function formatStudies(questions, recordClasses, answer) {
         searches: Object.values(study.searches)
           .map((questionName) => questionsByName[questionName])
           .filter((question) => question != null)
-          .map((question) => {
+          .map((question): StudySearch => {
             const recordClass =
               recordClassesByName[question.outputRecordClassName];
             return {
@@ -173,21 +267,29 @@ function formatStudies(questions, recordClasses, answer) {
 /**
  *  Map props from source object to props in new object.
  *
- * @param {object} propMap Object describing how to map properties. Keys are
+ * @param propMap Object describing how to map properties. Keys are
  * key for new object, and values are an array of [ path, valueMapper ], where
  * valueMapper is a function that takes the value from the source object and
  * returns a new value. If valueMapper is not specified, then identity is used.
  */
-function mapProps(propMap) {
-  return function mapper(source) {
-    return mapValues(propMap, ([sourcePath, valueMapper = identity]) => {
-      try {
-        if (typeof sourcePath === 'function')
-          return valueMapper(sourcePath(source));
-        return valueMapper(get(source, sourcePath));
-      } catch (error) {
-        throw new Error(`Parsing error at ${sourcePath}: ${error.message}`);
+function mapProps<T>(propMap: PropMapper<T>) {
+  return function mapper(source: RecordInstance): T {
+    return mapValues(
+      propMap,
+      ([sourcePath, valueMapper = identity]: [
+        string | ((record: RecordInstance) => any),
+        ((value: any) => any)?,
+      ]) => {
+        try {
+          if (typeof sourcePath === 'function')
+            return valueMapper(sourcePath(source));
+          return valueMapper(get(source, sourcePath));
+        } catch (error) {
+          throw new Error(
+            `Parsing error at ${sourcePath}: ${(error as Error).message}`
+          );
+        }
       }
-    });
+    ) as T;
   };
 }
