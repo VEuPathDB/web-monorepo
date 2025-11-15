@@ -113,7 +113,7 @@ export function initialize(options: {
     paramValueStore,
     transitioner,
     wdkService,
-  });
+  }) as EpicDependencies;
 
   let store = createWdkStore(
     wrapStoreModules(storeModules),
@@ -126,12 +126,12 @@ export function initialize(options: {
 
   // render the root element once page has completely loaded
   document.addEventListener('DOMContentLoaded', function () {
-    let container: HTMLElement | null | undefined =
+    let container: HTMLElement | null =
       rootElement instanceof HTMLElement
         ? rootElement
         : rootElement
-        ? document.querySelector(rootElement)
-        : undefined;
+        ? (document.querySelector(rootElement) as HTMLElement | null)
+        : null;
     let handleLocationChange = (location: Location) => {
       if (onLocationChange) onLocationChange(location);
       store.dispatch(updateLocation(location));
@@ -150,7 +150,7 @@ export function initialize(options: {
       });
       const root = ReactDOMClient.createRoot(container);
       root.render(applicationElement);
-    } else if (__DEV__) {
+    } else if (typeof __DEV__ !== 'undefined' && __DEV__) {
       console.debug(
         'Could not resolve rootElement %o. Application will not render automatically.',
         rootElement
