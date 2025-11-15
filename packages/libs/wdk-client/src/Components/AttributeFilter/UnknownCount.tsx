@@ -1,7 +1,16 @@
 import React from 'react';
 import { toPercentage } from '../../Components/AttributeFilter/AttributeFilterUtils';
+import { OntologyTermSummary } from '../../Components/AttributeFilter/Types';
 
-export default function UnknownCount(props) {
+interface UnknownCountProps {
+  activeFieldState: {
+    summary: OntologyTermSummary;
+  };
+  dataCount: number;
+  displayName: string;
+}
+
+export default function UnknownCount(props: UnknownCountProps) {
   const { activeFieldState, dataCount, displayName } = props;
   return (
     <div className="unknown-count">

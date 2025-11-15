@@ -1,7 +1,11 @@
 import React from 'react';
 import { wrappable } from '../../Utils/ComponentUtils';
 
-let PrimaryKeySpan = (props) => {
+interface PrimaryKeySpanProps {
+  primaryKeyString: string;
+}
+
+const PrimaryKeySpan: React.FC<PrimaryKeySpanProps> = (props) => {
   return <span>{props.primaryKeyString}</span>;
 };
 

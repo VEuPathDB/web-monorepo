@@ -3,9 +3,9 @@
 // import css files
 import '../Core/Style/index.scss';
 
-import { createBrowserHistory } from 'history';
+import { createBrowserHistory, History } from 'history';
 import { identity, isString } from 'lodash';
-import { createElement } from 'react';
+import { createElement, ReactElement } from 'react';
 import * as ReactDOMClient from 'react-dom/client';
 import * as Components from '../Components';
 import { ClientPluginRegistryEntry } from '../Utils/ClientPlugin'; // eslint-disable-line no-unused-vars
@@ -21,7 +21,9 @@ import wdkRoutes from '../Core/routes';
 import defaultPluginConfig from '../Core/pluginConfig';
 
 import storeModules from '../StoreModules';
-import { createWdkStore } from '../Core/Store';
+import { createWdkStore, EpicDependencies } from '../Core/Store';
+import { Middleware, Store } from 'redux';
+import { Location } from 'history';
 
 /**
  * Initialize the application.
@@ -53,7 +55,26 @@ import { createWdkStore } from '../Core/Store';
  * @param {ClientPluginRegistryEntry<unknown>[]} [options.pluginConfig]
  * @param {ReduxMiddleware[]} [options.additionalMiddleware]
  */
-export function initialize(options) {
+export function initialize(options: {
+  requireLogin?: boolean;
+  rootUrl: string;
+  rootElement: string | HTMLElement;
+  endpoint: string;
+  retainContainerContent?: boolean;
+  wrapRoutes?: (routes: any) => any;
+  wrapStoreModules?: (modules: any) => any;
+  wrapWdkDependencies?: (deps: EpicDependencies) => EpicDependencies;
+  wrapWdkService?: (service: any) => any;
+  onLocationChange?: (location: Location) => void;
+  pluginConfig?: ClientPluginRegistryEntry<unknown>[];
+  additionalMiddleware?: Middleware[];
+}): {
+  wdkService: any;
+  paramValueStore: any;
+  store: Store;
+  history: History;
+  pluginConfig: ClientPluginRegistryEntry<unknown>[];
+} {
   let {
     requireLogin = false,
     rootUrl,
@@ -80,7 +101,7 @@ export function initialize(options) {
 
   // define the elements of the Flux architecture
 
-  let history =
+  let history: History =
     location.pathname.startsWith(rootUrl) && !retainContainerContent
       ? createBrowserHistory({ basename: rootUrl })
       : createMockHistory({ basename: rootUrl });
@@ -88,7 +109,7 @@ export function initialize(options) {
   let paramValueStore = getParamValueStoreInstance(endpoint, wdkService);
   let transitioner = getTransitioner(history);
 
-  let wdkDependencies = wrapWdkDependencies({
+  let wdkDependencies: EpicDependencies = wrapWdkDependencies({
     paramValueStore,
     transitioner,
     wdkService,
@@ -105,18 +126,18 @@ export function initialize(options) {
 
   // render the root element once page has completely loaded
   document.addEventListener('DOMContentLoaded', function () {
-    let container =
+    let container: HTMLElement | null | undefined =
       rootElement instanceof HTMLElement
         ? rootElement
         : rootElement
         ? document.querySelector(rootElement)
         : undefined;
-    let handleLocationChange = (location) => {
+    let handleLocationChange = (location: Location) => {
       if (onLocationChange) onLocationChange(location);
       store.dispatch(updateLocation(location));
     };
     if (container != null) {
-      let applicationElement = createElement(Root, {
+      let applicationElement: ReactElement = createElement(Root, {
         requireLogin,
         rootUrl,
         store,
@@ -152,13 +173,15 @@ export function initialize(options) {
  *
  * @param {Object} componentWrappers
  */
-export function wrapComponents(componentWrappers) {
+export function wrapComponents(
+  componentWrappers: Record<string, (component: any) => any>
+): void {
   for (let key in componentWrappers) {
     // look in Components for class by this name
-    let Component = Components[key];
+    let Component = (Components as Record<string, any>)[key];
     // if not found, look in Controllers
     if (Component == null) {
-      Component = Controllers[key];
+      Component = (Controllers as Record<string, any>)[key];
     }
     // if still not found, warn and skip
     if (Component == null) {
