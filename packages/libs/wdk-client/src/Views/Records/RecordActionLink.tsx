@@ -1,33 +1,35 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Link from '../../Components/Link/Link';
 import { wrappable } from '../../Utils/ComponentUtils';
+import { RecordClass, RecordInstance } from '../../Utils/WdkModel';
 
-let RecordActionLink = (props) => {
-  let className = 'wdk-RecordActionLink ' + props.className;
-  let LinkComponent = props.external ? 'a' : Link;
-  let linkProps = {
+interface RecordActionLinkProps {
+  record: RecordInstance;
+  recordClass: RecordClass;
+  className?: string;
+  iconClassName?: string;
+  onClick?: () => void;
+  href?: string;
+  label?: string;
+  showLabel?: boolean;
+  external?: boolean;
+}
+
+const RecordActionLink: React.FC<RecordActionLinkProps> = (props) => {
+  const className = 'wdk-RecordActionLink ' + (props.className || '');
+  const LinkComponent = props.external ? 'a' : Link;
+  const linkProps = {
     [props.external ? 'href' : 'to']: props.href,
     title: props.label,
     className: className,
     onClick: props.onClick,
   };
+
   return (
     <LinkComponent {...linkProps}>
       {props.showLabel ? props.label : ''} <i className={props.iconClassName} />
     </LinkComponent>
   );
-};
-
-RecordActionLink.propTypes = {
-  record: PropTypes.object.isRequired,
-  recordClass: PropTypes.object.isRequired,
-  className: PropTypes.string,
-  iconClassName: PropTypes.string,
-  onClick: PropTypes.func,
-  href: PropTypes.string,
-  label: PropTypes.string,
-  showLabel: PropTypes.bool,
 };
 
 RecordActionLink.defaultProps = {

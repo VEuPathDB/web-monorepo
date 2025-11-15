@@ -1,12 +1,20 @@
 import React, { useMemo } from 'react';
 import { makeClassNameHelper, wrappable } from '../../../Utils/ComponentUtils';
-import { getId, getDisplayName } from '../../../Utils/CategoryUtils';
+import { getId, getDisplayName, CategoryTreeNode } from '../../../Utils/CategoryUtils';
 
 import { preorderSeq } from '../../../Utils/TreeUtils';
 
 let cx = makeClassNameHelper('wdk-RecordNavigationItem');
 
-let RecordNavigationItem = ({ node, activeSection, onSectionToggle }) => {
+interface RecordNavigationItemProps {
+  node: CategoryTreeNode;
+  activeSection: string;
+  onSectionToggle: (id: string, value?: boolean) => void;
+  path?: string[];
+  checked?: boolean;
+}
+
+let RecordNavigationItem = ({ node, activeSection, onSectionToggle }: RecordNavigationItemProps) => {
   let id = getId(node);
   let displayName = getDisplayName(node);
   let isField = node.wdkReference != null;
@@ -40,7 +48,7 @@ let RecordNavigationItem = ({ node, activeSection, onSectionToggle }) => {
         }
 
         const navSectionIsExpanded =
-          event.target.closest('li')?.querySelector('ul') != null;
+          event.currentTarget.closest('li')?.querySelector('ul') != null;
 
         // Prevent nav section toggle if the corresponding section is not active
         // and the nav section is expanded.

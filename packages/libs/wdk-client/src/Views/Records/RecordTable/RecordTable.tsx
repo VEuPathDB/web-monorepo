@@ -1,7 +1,6 @@
 import { chunk, property, orderBy, toLower, uniqueId } from 'lodash';
-import React, { Component } from 'react';
-import { createSelector } from 'reselect';
-import PropTypes from 'prop-types';
+import React, { Component, ReactNode } from 'react';
+import { createSelector, Selector } from 'reselect';
 import { RecordFilter } from './RecordFilter';
 import {
   renderAttributeValue,
@@ -19,10 +18,16 @@ import {
 } from '../../../Utils/SearchUtils';
 import { ErrorBoundary } from '../../../Controllers';
 import { stripHTML } from '../../../Utils/DomUtils';
+import {
+  TableField,
+  RecordClass,
+  AttributeField,
+  AttributeValue,
+} from '../../../Utils/WdkModel';
 import './RecordTable.css';
 
 // NOTE: This is very hacky because the model is not reliably providing column or sort types
-const mapSortType = (val) => {
+const mapSortType = (val: any): string => {
   if (!isNaN(parseFloat(val)) && isFinite(val)) {
     return 'number';
   }
@@ -35,16 +40,31 @@ const mapSortType = (val) => {
 // max columns for list mode
 const maxColumns = 4;
 
-const getColumns = (tableField) => tableField.attributes.map((attr) => attr);
+const getColumns = (tableField: TableField): AttributeField[] =>
+  tableField.attributes.map((attr) => attr);
 
-const getDisplayableAttributes = (tableField) =>
+const getDisplayableAttributes = (tableField: TableField): AttributeField[] =>
   tableField.attributes.filter((attr) => attr.isDisplayable);
 
-const getOrderedData = (tableValue, tableField, sortIndexMap) => {
+interface SortItem {
+  itemName: string;
+  direction: string;
+}
+
+// Enhanced TableField with clientSortSpec property at runtime
+interface TableFieldWithSort extends TableField {
+  clientSortSpec?: SortItem[];
+}
+
+const getOrderedData = (
+  tableValue: Record<string, AttributeValue>[],
+  tableField: TableFieldWithSort,
+  sortIndexMap: WeakMap<Record<string, AttributeValue>, number>
+): Record<string, AttributeValue>[] => {
   const orderedRows = orderBy(
     tableValue,
-    tableField.clientSortSpec.map(property('itemName')),
-    tableField.clientSortSpec.map(property('direction')).map(toLower)
+    tableField.clientSortSpec?.map(property('itemName')) ?? [],
+    tableField.clientSortSpec?.map(property('direction')).map(toLower) ?? []
   );
 
   // Store sort indices in WeakMap without mutating row objects
@@ -55,23 +75,88 @@ const getOrderedData = (tableValue, tableField, sortIndexMap) => {
   return orderedRows;
 };
 
+interface MesaColumn {
+  key: string;
+  name: string;
+  sortable: boolean;
+  type: string;
+  helpText?: string;
+  sortType?: string;
+  className?: string;
+  [key: string]: any;
+}
+
+interface SortState {
+  columnKey?: string;
+  direction: string;
+}
+
+interface RecordTableState {
+  searchTerm: string;
+  selectedColumnFilters: string[];
+  sort: SortState;
+}
+
+interface OrthoTableOptions {
+  isRowSelected: (row: any) => boolean;
+  [key: string]: any;
+}
+
+interface OrthoTableEventHandlers {
+  [key: string]: any;
+}
+
+interface OrthoTableProps {
+  groupBySelected?: boolean;
+  options: OrthoTableOptions & any;
+  eventHandlers: OrthoTableEventHandlers;
+  actions?: any;
+}
+
+interface RecordTableProps {
+  value: Record<string, AttributeValue>[];
+  table: TableFieldWithSort;
+  childRow?: string | React.ComponentType<{ rowIndex: number; rowData: any }>;
+  expandedRows?: number[];
+  onExpandedRowsChange?: (rows: number[]) => void;
+  className?: string;
+  onDraw?: () => void;
+  searchTerm?: string;
+  onSearchTermChange?: (searchTerm: string) => void;
+  record?: any;
+  recordClass: RecordClass;
+  ontologyProperties?: any;
+  orthoTableProps?: OrthoTableProps;
+}
+
 /**
  * Renders a record table
  */
-class RecordTable extends Component {
-  constructor(props) {
+class RecordTable extends Component<RecordTableProps, RecordTableState> {
+  private sortIndexMap: WeakMap<Record<string, AttributeValue>, number>;
+  private getColumns: Selector<RecordTableProps, AttributeField[]>;
+  private getDisplayableAttributes: Selector<RecordTableProps, AttributeField[]>;
+  private getOrderedData: Selector<
+    RecordTableProps,
+    Record<string, AttributeValue>[]
+  >;
+
+  constructor(props: RecordTableProps) {
     super(props);
     // Instance-level WeakMap to store sort indices without mutating row objects
     this.sortIndexMap = new WeakMap();
 
-    this.getColumns = createSelector((props) => props.table, getColumns);
+    this.getColumns = createSelector(
+      (props: RecordTableProps) => props.table,
+      getColumns
+    );
     this.getDisplayableAttributes = createSelector(
-      (props) => props.table,
+      (props: RecordTableProps) => props.table,
       getDisplayableAttributes
     );
     this.getOrderedData = createSelector(
-      (props) => props.value,
-      (props) => props.table,
+      (props: RecordTableProps) => props.value,
+      (props: RecordTableProps) => props.table,
       (tableValue, tableField) =>
         getOrderedData(tableValue, tableField, this.sortIndexMap)
     );
@@ -86,26 +171,29 @@ class RecordTable extends Component {
     };
   }
 
-  onSort(column, direction) {
+  onSort(column: MesaColumn, direction: string): void {
     const columnKey = column.key;
     this.setState((state) => ({ ...state, sort: { columnKey, direction } }));
   }
 
-  onSearchTermChange(searchTerm) {
+  onSearchTermChange(searchTerm: string): void {
     this.setState((state) => ({
       ...state,
       searchTerm,
     }));
   }
 
-  onColumnFilterChange(selectedColumnFilters) {
+  onColumnFilterChange(selectedColumnFilters: string[]): void {
     this.setState((state) => ({
       ...state,
       selectedColumnFilters,
     }));
   }
 
-  wrappedChildRow(rowIndex, rowData) {
+  wrappedChildRow(
+    rowIndex: number,
+    rowData: Record<string, AttributeValue>
+  ): ReactNode {
     const { childRow: ChildRow } = this.props;
     if (!ChildRow) return;
     const content =
@@ -125,7 +213,7 @@ class RecordTable extends Component {
     );
   }
 
-  render() {
+  render(): ReactNode {
     const { value, childRow, expandedRows, onExpandedRowsChange, className } =
       this.props;
     const { sort } = this.state;
@@ -139,7 +227,7 @@ class RecordTable extends Component {
       : undefined;
 
     // Manipulate columns to match properties expected in Mesa
-    const mesaReadyColumns = columns
+    const mesaReadyColumns: MesaColumn[] = columns
       // NOTE: prefer to change ortho's clustalInput columns to not be displayable
       .filter((c) => c.isDisplayable && c.name !== 'clustalInput')
       .map((c) => {
@@ -161,7 +249,7 @@ class RecordTable extends Component {
         const nonNullDataValue =
           nonNullDataObject != null
             ? type === 'link'
-              ? nonNullDataObject[name]['displayText']
+              ? (nonNullDataObject[name] as any)['displayText']
               : nonNullDataObject[name]
             : undefined;
         const sortType =
@@ -186,7 +274,7 @@ class RecordTable extends Component {
 
     // Manipulate rows to match Mesa properties; this really only pertains to the
     // link properties that differ between DataTable and Mesa
-    const mesaReadyRows = data.map((d, index) => {
+    const mesaReadyRows: Record<string, any>[] = data.map((d, index) => {
       const columnsWithLinks = mesaReadyColumns.filter(
         (c) => c.key in d && 'type' in c && c.type === 'link'
       );
@@ -199,7 +287,7 @@ class RecordTable extends Component {
       let newData = { ...d };
       columnsWithLinks.forEach((col) => {
         const linkPropertyName = col.key;
-        const linkObject = d[linkPropertyName];
+        const linkObject = d[linkPropertyName] as any;
         newData = {
           ...newData,
           [linkPropertyName]: {
@@ -217,44 +305,44 @@ class RecordTable extends Component {
     );
     const sortType = columnToSort?.sortType ?? 'text';
 
-    const preSortedMesaRows =
+    const preSortedMesaRows: Record<string, any>[] =
       sort?.columnKey == null
         ? mesaReadyRows
         : orderBy(
             mesaReadyRows,
             (row) => {
               const { columnKey } = sort;
-              const isLinkType = columnToSort.type === 'link';
+              const isLinkType = columnToSort!.type === 'link';
               if (sortType === 'number' && isLinkType) {
-                return row[columnKey]['text'] === ''
+                return row[columnKey!]['text'] === ''
                   ? -Infinity
-                  : Number(row[columnKey]['text']);
+                  : Number(row[columnKey!]['text']);
               }
               if (sortType === 'number') {
-                return row[columnKey] == null
+                return row[columnKey!] == null
                   ? -Infinity
-                  : Number(row[columnKey]);
+                  : Number(row[columnKey!]);
               }
-              if (columnToSort.type === 'link') {
-                return row[columnKey]['text'];
+              if (columnToSort!.type === 'link') {
+                return row[columnKey!]['text'];
               }
               if (sortType === 'htmlText') {
-                return stripHTML(row[columnKey]).toLowerCase().trim();
+                return stripHTML(row[columnKey!]).toLowerCase().trim();
               }
-              return row[columnKey] == null
+              return row[columnKey!] == null
                 ? ''
-                : row[columnKey].toLowerCase().trim();
+                : row[columnKey!].toLowerCase().trim();
             },
             [sort.direction]
           );
 
-    const sortedMesaRows =
-      isOrthologTableWithData && this.props.orthoTableProps.groupBySelected
+    const sortedMesaRows: Record<string, any>[] =
+      isOrthologTableWithData && this.props.orthoTableProps!.groupBySelected
         ? preSortedMesaRows.sort((a, b) => {
             const aSelected =
-              this.props.orthoTableProps.options.isRowSelected(a);
+              this.props.orthoTableProps!.options.isRowSelected(a);
             const bSelected =
-              this.props.orthoTableProps.options.isRowSelected(b);
+              this.props.orthoTableProps!.options.isRowSelected(b);
             return aSelected && bSelected
               ? 0
               : aSelected
@@ -273,9 +361,9 @@ class RecordTable extends Component {
           this.state.selectedColumnFilters.includes(attr.name)
         )
       : displayableAttributes;
-    const filteredRows = sortedMesaRows.filter((row) => {
+    const filteredRows: Record<string, any>[] = sortedMesaRows.filter((row) => {
       return searchableAttributes.some((attr) =>
-        regex.test(row[attr.name]?.text ?? row[attr.name])
+        regex.test((row[attr.name] as any)?.text ?? row[attr.name])
       );
     });
 
@@ -287,7 +375,7 @@ class RecordTable extends Component {
         onSort: this.onSort,
         onExpandedRowsChange,
         ...(isOrthologTableWithData
-          ? { ...this.props.orthoTableProps.eventHandlers }
+          ? { ...this.props.orthoTableProps!.eventHandlers }
           : {}),
       },
       uiState: {
@@ -295,29 +383,30 @@ class RecordTable extends Component {
         expandedRows,
         filteredRowCount: mesaReadyRows.length - filteredRows.length,
         ...(isOrthologTableWithData &&
-        this.props.orthoTableProps.groupBySelected != null
-          ? { groupBySelected: this.props.orthoTableProps.groupBySelected }
+        this.props.orthoTableProps!.groupBySelected != null
+          ? { groupBySelected: this.props.orthoTableProps!.groupBySelected }
           : {}),
       },
       options: {
         toolbar: isOrthologTableWithData ? false : true,
         childRow: childRow ? this.wrappedChildRow : undefined,
         className: 'wdk-DataTableContainer',
-        getRowId: (rowData) => this.sortIndexMap.get(rowData),
+        getRowId: (rowData: Record<string, any>) =>
+          this.sortIndexMap.get(rowData),
         showCount: mesaReadyRows.length > 2,
         ...(isOrthologTableWithData
           ? {
-              ...this.props.orthoTableProps.options,
+              ...this.props.orthoTableProps!.options,
               selectColumnHeadingDetails: {
-                heading: clustalInputRow.displayName,
-                helpText: clustalInputRow.help,
+                heading: clustalInputRow!.displayName,
+                helpText: clustalInputRow!.help,
               },
             }
           : {}),
       },
       ...(isOrthologTableWithData
         ? {
-            actions: this.props.orthoTableProps.actions,
+            actions: this.props.orthoTableProps!.actions,
           }
         : {}),
     };
@@ -367,17 +456,5 @@ class RecordTable extends Component {
     );
   }
 }
-
-RecordTable.propTypes = {
-  value: PropTypes.array.isRequired,
-  table: PropTypes.object.isRequired,
-  childRow: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-  expandedRows: PropTypes.arrayOf(PropTypes.number),
-  onExpandedRowsChange: PropTypes.func,
-  className: PropTypes.string,
-  onDraw: PropTypes.func,
-  searchTerm: PropTypes.string,
-  onSearchTermChange: PropTypes.func,
-};
 
 export default wrappable(pure(RecordTable));

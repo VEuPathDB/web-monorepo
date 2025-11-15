@@ -9,14 +9,48 @@ import { postorderSeq, preorderSeq } from '../../Utils/TreeUtils';
 import RecordHeading from '../../Views/Records/RecordHeading';
 import RecordMainSection from '../../Views/Records/RecordMain/RecordMainSection';
 import RecordNavigationSection from '../../Views/Records/RecordNavigation/RecordNavigationSection';
+import { RecordInstance, RecordClass } from '../../Utils/WdkModel';
+import { CategoryTreeNode } from '../../Utils/CategoryUtils';
+import { PartialRecordRequest } from '../../Views/Records/RecordUtils';
+import { TableState } from '../../StoreModules/RecordStoreModule';
+import { HeaderAction } from '../../Views/Records/RecordHeading';
 
 import '../../Views/Records/Record.css';
+
+interface RecordUIState {
+  activeSectionId: string | null;
+}
+
+interface RecordUIProps {
+  record: RecordInstance;
+  recordClass: RecordClass;
+  headerActions: HeaderAction[];
+  navigationVisible: boolean;
+  ownProps: {
+    compressedUI: boolean;
+  };
+  categoryTree: CategoryTreeNode;
+  collapsedSections: string[];
+  navigationQuery: string;
+  navigationExpanded: boolean;
+  navigationCategoriesExpanded: string[];
+  tableStates: Record<string, TableState>;
+  updateTableState: (tableName: string, tableState: TableState) => void;
+  updateSectionVisibility: (categoryId: string, isVisible: boolean) => void;
+  updateNavigationVisibility: (visible: boolean) => void;
+  updateNavigationCategoryExpansion: (ids: string[]) => void;
+  updateNavigationQuery: (term: string) => void;
+  requestPartialRecord: (request: PartialRecordRequest) => void;
+}
 
 /**
  * Renders the main UI for the WDK Record page.
  */
-class RecordUI extends Component {
-  constructor(props) {
+class RecordUI extends Component<RecordUIProps, RecordUIState> {
+  recordMainSectionNode: any = null;
+  activeSectionTop: number | null = null;
+
+  constructor(props: RecordUIProps) {
     super(props);
 
     this._updateActiveSection = this._updateActiveSection.bind(this);
@@ -34,12 +68,12 @@ class RecordUI extends Component {
     };
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     this._scrollToActiveSection(true);
     this.monitorActiveSection();
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: RecordUIProps): void {
     let recordChanged = prevProps.record !== this.props.record;
     if (recordChanged) {
       this._scrollToActiveSection(
@@ -48,36 +82,36 @@ class RecordUI extends Component {
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount(): void {
     this.unmonitorActiveSection();
   }
 
-  monitorActiveSection() {
+  monitorActiveSection(): void {
     window.addEventListener('scroll', this._updateActiveSection, {
       passive: true,
     });
   }
 
-  unmonitorActiveSection() {
+  unmonitorActiveSection(): void {
     window.removeEventListener('scroll', this._updateActiveSection, {
       passive: true,
     });
   }
 
-  getHeaderOffset() {
+  getHeaderOffset(): number {
     const headerOffsetString = getComputedStyle(document.body).getPropertyValue(
       '--page-offset-top'
     );
     return parseInt(headerOffsetString) || 0;
   }
 
-  _updateActiveSection() {
+  _updateActiveSection = (): void => {
     let headerOffsetPx = this.getHeaderOffset();
     let activeElement = preorderSeq(this.props.categoryTree)
       .map((node) => document.getElementById(getId(node)))
       .filter((el) => el != null)
       .findLast((el) => {
-        let rect = el.getBoundingClientRect();
+        let rect = el!.getBoundingClientRect();
         return Math.floor(rect.top) <= headerOffsetPx;
       });
     let activeSectionId = get(activeElement, 'id');
@@ -85,27 +119,27 @@ class RecordUI extends Component {
     // keep track of the activeElement's top value. This helps to determine if
     // the page's scroll position needs to be updated, when the record data is
     // updated.
-    this.activeSectionTop = activeElement?.getBoundingClientRect().top;
+    this.activeSectionTop = activeElement?.getBoundingClientRect().top ?? null;
 
     if (activeSectionId !== this.state.activeSectionId) {
       this.setState({ activeSectionId }, () => {
         this._updateUrl(this.state.activeSectionId);
       });
     }
-  }
+  };
 
-  _updateUrl(activeSection) {
+  _updateUrl = (activeSection: string | null): void => {
     let hash = activeSection ? `#${activeSection}` : '';
     let newUrl = new URL(hash, location);
     try {
-      history.replaceState(null, null, newUrl);
+      history.replaceState(null, null, newUrl.href);
     } catch (error) {
       console.error('Could not replace history state', newUrl);
       console.error(error);
     }
-  }
+  };
 
-  _scrollToActiveSection(isFirstLoadForRecordId) {
+  _scrollToActiveSection(isFirstLoadForRecordId: boolean): void {
     const targetId = location.hash.slice(1);
     const targetNode = document.getElementById(targetId);
 
@@ -144,7 +178,7 @@ class RecordUI extends Component {
     }
   }
 
-  render() {
+  render(): React.ReactNode {
     let classNames = classnames(
       'wdk-RecordContainer',
       'wdk-RecordContainer__' + this.props.recordClass.fullName,

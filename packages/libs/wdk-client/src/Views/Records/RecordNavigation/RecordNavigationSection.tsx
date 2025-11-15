@@ -1,25 +1,50 @@
 import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { includes, stubTrue } from 'lodash';
-import PropTypes from 'prop-types';
 import React from 'react';
 import CategoriesCheckboxTree from '../../../Components/CheckboxTree/CategoriesCheckboxTree';
-import { getId } from '../../../Utils/CategoryUtils';
-import { safeHtml, wrappable } from '../../../Utils/ComponentUtils';
+import { CategoryTreeNode, getId } from '../../../Utils/CategoryUtils';
+import { safeHtml, wrappable, ComponentWrapper } from '../../../Utils/ComponentUtils';
 import RecordNavigationItem from '../../../Views/Records/RecordNavigation/RecordNavigationItem';
 
 /** Navigation panel for record page */
-class RecordNavigationSection extends React.PureComponent {
-  constructor(props) {
+interface RecordNavigationSectionProps {
+  activeSection: string;
+  categoryTree: CategoryTreeNode;
+  collapsedSections: string[];
+  heading?: React.ReactNode;
+  navigationQuery: string;
+  navigationCategoriesExpanded: string[];
+  onNavigationCategoryExpansionChange: (ids: string[]) => void;
+  onNavigationQueryChange: (term: string) => void;
+  onSectionToggle?: (id: string, value?: boolean) => void;
+  visibilityFilter?: (node: CategoryTreeNode) => boolean;
+  visibilityToggle?: React.ReactNode;
+}
+
+interface RecordNavigationSectionState {
+  activeCategory: null | string;
+}
+
+class RecordNavigationSection extends React.PureComponent<
+  RecordNavigationSectionProps,
+  RecordNavigationSectionState
+> {
+  static defaultProps: Partial<RecordNavigationSectionProps> = {
+    onSectionToggle: () => {},
+    heading: 'Contents',
+  };
+
+  constructor(props: RecordNavigationSectionProps) {
     super(props);
     this.handleSearchTermChange = this.handleSearchTermChange.bind(this);
     this.state = { activeCategory: null };
   }
 
-  handleSearchTermChange(term) {
+  handleSearchTermChange(term: string): void {
     this.props.onNavigationQueryChange(term);
   }
 
-  render() {
+  render(): React.ReactNode {
     let {
       activeSection,
       categoryTree,
@@ -36,7 +61,7 @@ class RecordNavigationSection extends React.PureComponent {
     return (
       <div className="wdk-RecordNavigationSection">
         <div className="wdk-RecordNavigationSectionHeader">
-          {safeHtml(heading, null, 'h1')}
+          {safeHtml(heading as string, null, 'h1')}
           {visibilityToggle}
         </div>
         <CategoriesCheckboxTree
@@ -78,15 +103,6 @@ class RecordNavigationSection extends React.PureComponent {
   }
 }
 
-RecordNavigationSection.propTypes = {
-  collapsedSections: PropTypes.array,
-  onSectionToggle: PropTypes.func,
-  heading: PropTypes.node,
-};
-
-RecordNavigationSection.defaultProps = {
-  onSectionToggle: function noop() {},
-  heading: 'Contents',
-};
-
-export default wrappable(RecordNavigationSection);
+export default wrappable<RecordNavigationSectionProps>(
+  RecordNavigationSection
+) as unknown as ComponentWrapper<RecordNavigationSectionProps>;
