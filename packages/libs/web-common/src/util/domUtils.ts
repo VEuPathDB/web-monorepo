@@ -69,7 +69,7 @@ export function getBestPosition(
     return { offsetTop, offsetLeft };
   }
 
-  return { offestTop: centerTop, offsetLeft: centerLeft };
+  return { offsetTop: centerTop, offsetLeft: centerLeft };
 }
 
 export const findChildren =
