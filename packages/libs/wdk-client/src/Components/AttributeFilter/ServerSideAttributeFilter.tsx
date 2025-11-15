@@ -76,7 +76,7 @@ function ServerSideAttributeFilter(props: ServerSideAttributeFilterProps) {
           filteredDataCount={props.filteredDataCount}
           hideGlobalCounts={props.hideGlobalCounts || false}
           loadingFilteredCount={props.loadingFilteredCount}
-          activeField={props.activeField}
+          activeField={props.activeField ?? undefined}
           minSelectedCount={props.minSelectedCount}
         />
       )}

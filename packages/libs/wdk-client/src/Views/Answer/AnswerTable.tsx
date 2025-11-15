@@ -1,7 +1,7 @@
 import { pick, property } from 'lodash';
 import React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
-import DataTable from '../../Components/DataTable/DataTable';
+import DataTable from '@veupathdb/coreui/lib/components/Mesa/Ui/DataTable';
 import Dialog from '../../Components/Overlays/Dialog';
 import { wrappable } from '../../Utils/ComponentUtils';
 import {
@@ -267,7 +267,7 @@ class AnswerTable extends React.Component<AnswerTableProps, AnswerTableState> {
   }
 }
 
-AnswerTable.defaultProps = {
+(AnswerTable as any).defaultProps = {
   onSort: noop,
   onMoveColumn: noop,
   onChangeColumns: noop,
