@@ -71,7 +71,7 @@ export function reduce(state: State = initialState, action: Action): State {
       const { setSortDirection, setSortColumnKey } = MesaState;
       const { sortDirection, sortKey } = action.payload;
       const tableState = setSortDirection(
-        setSortColumnKey(state.tableState, sortKey),
+        setSortColumnKey(state.tableState || {}, sortKey),
         sortDirection.toLowerCase() as 'asc' | 'desc'
       );
       return { ...state, tableState };

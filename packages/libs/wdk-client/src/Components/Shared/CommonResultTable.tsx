@@ -210,7 +210,7 @@ export class CommonResultTable<R = Record<string, any>> extends Component<
     return (
       <Fragment>
         {this.props.rows.length ? (
-          <Mesa state={sortedState}>
+          <Mesa state={sortedState as any}>
             <div className="wdk-RealTimeSearchBoxContainer">
               <span>{this.props.searchBoxHeader || null}</span>
               <RealTimeSearchBox

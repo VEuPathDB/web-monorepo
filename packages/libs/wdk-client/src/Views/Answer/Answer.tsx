@@ -90,7 +90,7 @@ const Answer: FC<AnswerProps> = (props) => {
             <AttributePopup {...(props as any)} />
           </div>
         </div>
-        <Mesa state={tableState} />
+        <Mesa state={tableState as any} />
       </div>
     </div>
   );
@@ -270,14 +270,14 @@ function useTableState(props: AnswerProps) {
 
   const uiState = useMemo(
     () => ({
-      sort: !sorting.length
-        ? null
-        : {
-            columnKey: sorting[0].attributeName
-              ? sorting[0].attributeName
-              : null,
-            direction: sorting[0].direction.toLowerCase() || 'asc',
-          },
+      sort:
+        !sorting.length || !sorting[0].attributeName
+          ? undefined
+          : {
+              columnKey: sorting[0].attributeName,
+              direction:
+                (sorting[0].direction.toLowerCase() as 'asc' | 'desc') || 'asc',
+            },
     }),
     [sorting]
   );
