@@ -19,27 +19,14 @@ export interface SelectTreeProps<T> extends CheckboxTreeProps<T> {
 
 function SelectTree<T>(props: SelectTreeProps<T>) {
   const {
-    showRoot = false,
-    expandedList = null,
-    isSelectable = false,
-    selectedList = [],
-    customCheckboxes = {},
-    isMultiPick = true,
-    onSelectionChange = () => {},
-    isSearchable = false,
-    showSearchBox = true,
-    searchBoxPlaceholder = 'Search...',
-    searchBoxHelp = '',
-    searchTerm = '',
-    onSearchTermChange = () => {},
-    searchPredicate = () => true,
-    linksPosition = LinksPosition.Both,
-    isDisabled = false,
-    instantUpdate = true,
+    selectedList,
+    onSelectionChange,
     shouldCloseOnSelection,
     hasPopoverButton = true,
+    instantUpdate = true,
     wrapPopover,
     deferPopoverClosing = false,
+    isDisabled = false,
     currentList,
     buttonDisplayContent: buttonDisplayContentProp,
   } = props;
@@ -105,29 +92,29 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
         props.shouldExpandDescendantsWithOneChild
       }
       shouldExpandOnClick={props.shouldExpandOnClick}
-      showRoot={showRoot}
+      showRoot={props.showRoot}
       renderNode={props.renderNode}
-      expandedList={expandedList}
-      isSelectable={isSelectable}
+      expandedList={props.expandedList}
+      isSelectable={props.isSelectable}
       selectedList={localSelectedList}
       filteredList={props.filteredList}
-      customCheckboxes={customCheckboxes}
-      isMultiPick={isMultiPick}
+      customCheckboxes={props.customCheckboxes}
+      isMultiPick={props.isMultiPick}
       name={props.name}
       onSelectionChange={setLocalSelectedList}
       currentList={currentList}
       defaultList={props.defaultList}
-      isSearchable={isSearchable}
+      isSearchable={props.isSearchable}
       autoFocusSearchBox={props.autoFocusSearchBox}
-      showSearchBox={showSearchBox}
-      searchBoxPlaceholder={searchBoxPlaceholder}
+      showSearchBox={props.showSearchBox}
+      searchBoxPlaceholder={props.searchBoxPlaceholder}
       searchIconName={props.searchIconName}
-      searchBoxHelp={searchBoxHelp}
-      searchTerm={searchTerm}
-      onSearchTermChange={onSearchTermChange}
-      searchPredicate={searchPredicate}
+      searchBoxHelp={props.searchBoxHelp}
+      searchTerm={props.searchTerm}
+      onSearchTermChange={props.onSearchTermChange}
+      searchPredicate={props.searchPredicate}
       renderNoResults={props.renderNoResults}
-      linksPosition={linksPosition}
+      linksPosition={props.linksPosition}
       additionalActions={props.additionalActions}
       additionalFilters={props.additionalFilters}
       isAdditionalFilterApplied={props.isAdditionalFilterApplied}
