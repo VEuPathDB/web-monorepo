@@ -59,6 +59,7 @@ export type IndividualNode = OntologyNode<{
     summary?: string;
     description?: string;
     fullName?: string; // FIXME Remove when the urlSegment/name/fullName saga is resolved
+    urlSegment?: string;
   };
 }>;
 

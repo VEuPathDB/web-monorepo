@@ -406,8 +406,11 @@ function SearchInputNode({
   const displayName = getDisplayName(node);
   const nodeMetadata =
     isIndividual(node) && getTargetType(node) === 'search'
-      ? { isSearch: true, searchName: (node.wdkReference as any).urlSegment }
-      : { isSearch: false };
+      ? ({
+          isSearch: true as const,
+          searchName: node.wdkReference.urlSegment || node.wdkReference.name,
+        } as const)
+      : ({ isSearch: false as const } as const);
 
   const displayElement = nodeMetadata.isSearch ? (
     <Link
