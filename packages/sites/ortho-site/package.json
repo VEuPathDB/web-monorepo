@@ -17,7 +17,8 @@
     "bundle:dev": "npm-run-all clean copy:webapp copy:images generate:bundlePathScript && BROWSERSLIST_ENV=modern webpack --mode=development && BROWSERSLIST_ENV=legacy webpack --mode=development",
     "bundle:npm": "npm-run-all clean copy:webapp copy:images generate:bundlePathScript && BROWSERSLIST_ENV=modern webpack --mode=production && BROWSERSLIST_ENV=legacy webpack --mode=production",
     "bundle:analyze": "BROWSERSLIST_ENV=modern webpack --mode=production --config webpack.config.analyze.mjs",
-    "bundle:analyze:dev": "BROWSERSLIST_ENV=modern webpack --mode=development --config webpack.config.analyze.mjs"
+    "bundle:analyze:dev": "BROWSERSLIST_ENV=modern webpack --mode=development --config webpack.config.analyze.mjs",
+    "bundle:find:unused": "BROWSERSLIST_ENV=modern webpack --mode=production --config webpack.config.unused.mjs"
   },
   "browserslist": [
     "extends @veupathdb/browserslist-config"
@@ -88,6 +89,7 @@
     "source-map-loader": "^1.1.3",
     "ts-loader": "^9.4.3",
     "typescript": "~4.3.5",
+    "unused-webpack-plugin": "^2.4.0",
     "url-loader": "^1.1.2",
     "webpack": "^5.84.1",
     "webpack-bundle-analyzer": "^4.10.2",
