@@ -589,11 +589,11 @@ class FavoritesList extends Component<Props, State> {
     const filteredRows = MesaState.getFilteredRows(tableState) as Favorite[];
     const sortedFilteredRows =
       sort && sort.columnKey
-        ? (MesaUtils.textSort(
-            filteredRows as any,
+        ? MesaUtils.textSort(
+            filteredRows,
             sort.columnKey,
             sort.direction === 'asc'
-          ) as Favorite[])
+          )
         : filteredRows;
 
     tableState = MesaState.setOptions(tableState, this.getTableOptions());
