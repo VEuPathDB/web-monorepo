@@ -48,7 +48,9 @@ export function sortFactory<T>(
   return function (a: T, b: T) {
     const A = accessorFn(a);
     const B = accessorFn(b);
-    // Using any for comparison as we're doing a generic sort
+    // A and B are unknown - cast to any for comparison since TypeScript's < operator
+    // only works with number | bigint | string. At runtime, JavaScript handles this correctly.
+    // This is acceptable: we're at a boundary with runtime values where we trust JS comparison.
     return A === B ? 0 : (A as any) < (B as any) ? 1 : -1;
   };
 }

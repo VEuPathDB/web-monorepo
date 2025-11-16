@@ -10,7 +10,7 @@ interface HeadingRowProps<Row, Key = string>
     MesaStateProps<Row, Key>,
     'columns' | 'uiState' | 'eventHandlers' | 'options' | 'actions'
   > {
-  filteredRows: Row[];
+  filteredRows?: Row[];
   offsetLeft?: number;
 }
 
@@ -34,13 +34,14 @@ class HeadingRow<Row, Key = string> extends React.PureComponent<
 > {
   render() {
     const {
-      filteredRows,
+      filteredRows: filteredRowsProp,
       options,
       columns,
       uiState,
       eventHandlers,
       offsetLeft,
     } = this.props;
+    const filteredRows = filteredRowsProp ?? [];
     const { isRowSelected, columnDefaults, childRow, getRowId } = options ?? {};
     const { sort, expandedRows } = uiState ?? {};
     const { onRowSelect, onRowDeselect, onExpandedRowsChange } =

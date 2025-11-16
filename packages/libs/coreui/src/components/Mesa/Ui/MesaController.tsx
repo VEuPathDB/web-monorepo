@@ -44,7 +44,7 @@ class MesaController<Row, Key = string> extends React.Component<
     const props = { rows, options, columns, uiState, eventHandlers, children };
     if (!options || !options.toolbar) return null;
 
-    return <TableToolbar {...(props as any)} />;
+    return <TableToolbar {...props} />;
   }
 
   renderActionBar() {
@@ -62,7 +62,7 @@ class MesaController<Row, Key = string> extends React.Component<
     if (!this.renderToolbar() && children)
       props = Object.assign({}, props, { children });
 
-    return <ActionToolbar {...(props as any)} />;
+    return <ActionToolbar {...props} />;
   }
 
   renderEmptyState() {
@@ -113,7 +113,7 @@ class MesaController<Row, Key = string> extends React.Component<
         <PageNav />
         {rows.length ? (
           <React.Fragment>
-            <DataTable {...(props as any)} />
+            <DataTable {...props} />
             {filteredRows.length ? null : this.renderEmptyState()}
           </React.Fragment>
         ) : (

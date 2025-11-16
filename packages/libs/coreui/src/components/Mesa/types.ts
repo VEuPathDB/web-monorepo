@@ -146,6 +146,7 @@ export interface MesaColumn<
   className?: string;
   width?: CSSProperties['width'];
   hidden?: boolean;
+  truncated?: boolean | string;
   getValue?: (props: { row: Row; index: number }) => Value;
   renderCell?: (cellProps: CellProps<Row, Key, Value>) => ReactNode;
   renderHeading?:

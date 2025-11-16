@@ -3,10 +3,13 @@ import React from 'react';
 import DataRow from './DataRow';
 import { MesaStateProps } from '../types';
 
-interface DataRowListProps<Row> extends MesaStateProps<Row> {}
+interface DataRowListProps<Row, Key = string>
+  extends MesaStateProps<Row, Key> {}
 
-class DataRowList<Row> extends React.Component<DataRowListProps<Row>> {
-  constructor(props: DataRowListProps<Row>) {
+class DataRowList<Row, Key = string> extends React.Component<
+  DataRowListProps<Row, Key>
+> {
+  constructor(props: DataRowListProps<Row, Key>) {
     super(props);
   }
 

@@ -4,14 +4,19 @@ import TableSearch from './TableSearch';
 import RowCounter from './RowCounter';
 import { MesaStateProps } from '../types';
 
-interface TableToolbarProps<Row>
-  extends Pick<MesaStateProps<Row>, 'uiState' | 'eventHandlers' | 'options'> {
+interface TableToolbarProps<Row, Key = string>
+  extends Pick<
+    MesaStateProps<Row, Key>,
+    'uiState' | 'eventHandlers' | 'options'
+  > {
   rows?: Row[];
   children?: ReactNode;
 }
 
-class TableToolbar<Row> extends React.PureComponent<TableToolbarProps<Row>> {
-  constructor(props: TableToolbarProps<Row>) {
+class TableToolbar<Row, Key = string> extends React.PureComponent<
+  TableToolbarProps<Row, Key>
+> {
+  constructor(props: TableToolbarProps<Row, Key>) {
     super(props);
 
     this.renderTitle = this.renderTitle.bind(this);
@@ -39,7 +44,7 @@ class TableToolbar<Row> extends React.PureComponent<TableToolbarProps<Row>> {
       <TableSearch
         searchQuery={searchQuery}
         onSearch={onSearch}
-        options={options as any}
+        options={options}
       />
     );
   }

@@ -9,14 +9,14 @@ import { MesaStateProps, MesaColumn } from '../types';
 
 const dataTableClass = makeClassifier('DataTable');
 
-interface DataTableProps<Row> extends MesaStateProps<Row> {}
+interface DataTableProps<Row, Key = string> extends MesaStateProps<Row, Key> {}
 
 interface DataTableState {
   dynamicWidths?: number[] | null;
 }
 
-class DataTable<Row> extends React.Component<
-  DataTableProps<Row>,
+class DataTable<Row, Key = string> extends React.Component<
+  DataTableProps<Row, Key>,
   DataTableState
 > {
   widthCache: number[] = [];
@@ -25,7 +25,7 @@ class DataTable<Row> extends React.Component<
   contentTable: HTMLTableElement | null = null;
   cachedWidth?: number;
 
-  constructor(props: DataTableProps<Row>) {
+  constructor(props: DataTableProps<Row, Key>) {
     super(props);
     this.widthCache = [];
     this.renderStickyTable = this.renderStickyTable.bind(this);
@@ -42,18 +42,20 @@ class DataTable<Row> extends React.Component<
   shouldUseStickyHeader(): boolean {
     const { options } = this.props;
     if (!options || !options.useStickyHeader) return false;
-    if (!options.tableBodyMaxHeight)
-      return console.error(`
+    if (!options.tableBodyMaxHeight) {
+      console.error(`
       "useStickyHeader" option enabled but no maxHeight for the table is set.
       Use a css height as the "tableBodyMaxHeight" option to use this setting.
-    `) as any;
+    `);
+      return false;
+    }
     return true;
   }
 
   makeFirstNColumnsSticky(
-    columns: MesaColumn<Row>[],
+    columns: MesaColumn<Row, Key>[],
     n: number
-  ): MesaColumn<Row>[] {
+  ): MesaColumn<Row, Key>[] {
     const dynamicWidths = this.widthCache;
 
     if (n <= columns.length) {
@@ -93,7 +95,7 @@ class DataTable<Row> extends React.Component<
     this.attachResizeHandler();
   }
 
-  componentDidUpdate(prevProps: DataTableProps<Row>): void {
+  componentDidUpdate(prevProps: DataTableProps<Row, Key>): void {
     if (
       this.props.columns.map((c) => c.name).toString() !==
         prevProps.columns.map((c) => c.name).toString() ||
@@ -128,7 +130,7 @@ class DataTable<Row> extends React.Component<
         return;
       this.setDynamicWidths();
       this.cachedWidth = this.mainRef.clientWidth;
-    }, 250) as any;
+    }, 250) as unknown as number;
   }
 
   removeResizeHandler(): void {
@@ -230,7 +232,7 @@ class DataTable<Row> extends React.Component<
             style={tableStyle}
             ref={(node) => (this.contentTable = node)}
           >
-            <HeadingRow {...(tableProps as any)} />
+            <HeadingRow {...tableProps} />
             <DataRowList {...tableProps} />
           </table>
           {this.props.options && this.props.options.marginContent && (

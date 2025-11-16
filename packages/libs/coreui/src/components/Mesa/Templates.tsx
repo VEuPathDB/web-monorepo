@@ -23,7 +23,7 @@ const Templates = {
     value,
     column,
   }: CellProps<Row, Key>): ReactNode {
-    const { truncated } = column as any;
+    const { truncated } = column;
     const className = 'Cell Cell-' + key;
     const text = stringValue(value);
 
@@ -86,7 +86,7 @@ const Templates = {
     value,
     column,
   }: CellProps<Row, Key>): ReactNode {
-    const { truncated } = column as any;
+    const { truncated } = column;
     const className = 'Cell HtmlCell Cell-' + key;
     const content = (
       <div dangerouslySetInnerHTML={{ __html: value as string }} />

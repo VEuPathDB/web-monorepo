@@ -2,14 +2,16 @@ import React from 'react';
 import Icon from '../Components/Icon';
 import { MesaStateProps } from '../types';
 
-interface TableSearchProps {
+interface TableSearchProps<Row = any, Key = string> {
   searchQuery?: string;
-  options?: MesaStateProps<any>['options'];
+  options?: MesaStateProps<Row, Key>['options'];
   onSearch?: (query: string) => void;
 }
 
-class TableSearch extends React.PureComponent<TableSearchProps> {
-  constructor(props: TableSearchProps) {
+class TableSearch<Row = any, Key = string> extends React.PureComponent<
+  TableSearchProps<Row, Key>
+> {
+  constructor(props: TableSearchProps<Row, Key>) {
     super(props);
     this.handleQueryChange = this.handleQueryChange.bind(this);
     this.clearSearchQuery = this.clearSearchQuery.bind(this);

@@ -8,12 +8,15 @@ import { MesaStateProps } from '../types';
 
 const actionToolbarClass = makeClassifier('ActionToolbar');
 
-interface ActionToolbarProps<Row> extends Partial<MesaStateProps<Row>> {
+interface ActionToolbarProps<Row, Key = string>
+  extends Partial<MesaStateProps<Row, Key>> {
   children?: ReactNode;
 }
 
-class ActionToolbar<Row> extends React.PureComponent<ActionToolbarProps<Row>> {
-  constructor(props: ActionToolbarProps<Row>) {
+class ActionToolbar<Row, Key = string> extends React.PureComponent<
+  ActionToolbarProps<Row, Key>
+> {
+  constructor(props: ActionToolbarProps<Row, Key>) {
     super(props);
     this.dispatchAction = this.dispatchAction.bind(this);
     this.renderCounter = this.renderCounter.bind(this);
