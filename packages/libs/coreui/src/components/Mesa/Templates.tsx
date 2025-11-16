@@ -18,7 +18,11 @@ interface LinkValue {
 }
 
 const Templates = {
-  textCell<Row>({ key, value, column }: CellProps<Row>): ReactNode {
+  textCell<Row, Key = string>({
+    key,
+    value,
+    column,
+  }: CellProps<Row, Key>): ReactNode {
     const { truncated } = column as any;
     const className = 'Cell Cell-' + key;
     const text = stringValue(value);
@@ -30,7 +34,10 @@ const Templates = {
     );
   },
 
-  numberCell<Row>({ key, value }: CellProps<Row>): ReactNode {
+  numberCell<Row, Key = string>({
+    key,
+    value,
+  }: CellProps<Row, Key>): ReactNode {
     const className = 'Cell NumberCell Cell-' + key;
     const display =
       typeof value === 'number' ? value.toLocaleString() : stringValue(value);
@@ -38,7 +45,10 @@ const Templates = {
     return <div className={className}>{display}</div>;
   },
 
-  wdkLinkCell<Row>({ key, value }: CellProps<Row>): ReactNode {
+  wdkLinkCell<Row, Key = string>({
+    key,
+    value,
+  }: CellProps<Row, Key>): ReactNode {
     const className = 'Cell wdkLinkCell Cell-' + key;
     const typedValue = value as WdkLinkValue;
     let { displayText, url } = typedValue;
@@ -52,7 +62,7 @@ const Templates = {
     return <a {...props}>{textElement}</a>;
   },
 
-  linkCell<Row>({ key, value }: CellProps<Row>): ReactNode {
+  linkCell<Row, Key = string>({ key, value }: CellProps<Row, Key>): ReactNode {
     const className = 'Cell LinkCell Cell-' + key;
     const defaults: LinkValue = { href: null, target: '_blank', text: '' };
     let { href, target, text } =
@@ -71,7 +81,11 @@ const Templates = {
     return finalHref ? <a {...props}>{text}</a> : null;
   },
 
-  htmlCell<Row>({ key, value, column }: CellProps<Row>): ReactNode {
+  htmlCell<Row, Key = string>({
+    key,
+    value,
+    column,
+  }: CellProps<Row, Key>): ReactNode {
     const { truncated } = column as any;
     const className = 'Cell HtmlCell Cell-' + key;
     const content = (
@@ -91,10 +105,13 @@ const Templates = {
     );
   },
 
-  heading<Row>({ key, column }: CellProps<Row>): ReactNode {
+  heading<Row, Key = string>({
+    key,
+    column,
+  }: Pick<CellProps<Row, Key>, 'key' | 'column'>): ReactNode {
     const name = column.name;
     const className = 'Cell HeadingCell HeadingCell-' + key;
-    const content = <b>{name || key}</b>;
+    const content = <b>{name || String(key)}</b>;
 
     return <div className={className}>{content}</div>;
   },

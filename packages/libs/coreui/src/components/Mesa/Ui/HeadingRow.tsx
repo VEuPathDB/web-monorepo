@@ -88,14 +88,14 @@ class HeadingRow<Row, Key = string> extends React.PureComponent<
         {headingRows.map(({ cols, isFirstRow }, index) => {
           return (
             <tr className="Row HeadingRow" key={index}>
-              {hasExpansionColumn && (
+              {hasExpansionColumn && getRowId && (
                 <ExpansionCell
                   inert={!isFirstRow}
                   heading={true}
                   key="_expansion"
                   rows={filteredRows}
                   row={filteredRows[0]}
-                  getRowId={getRowId as any}
+                  getRowId={getRowId}
                   onExpandedRowsChange={onExpandedRowsChange}
                   expandedRows={expandedRows}
                 />
@@ -106,8 +106,8 @@ class HeadingRow<Row, Key = string> extends React.PureComponent<
                   heading={true}
                   key="_selection"
                   rows={filteredRows}
-                  options={options as any}
-                  eventHandlers={eventHandlers as any}
+                  options={options}
+                  eventHandlers={eventHandlers}
                   isRowSelected={isRowSelected}
                 />
               )}
@@ -117,7 +117,7 @@ class HeadingRow<Row, Key = string> extends React.PureComponent<
                   mergedColumn = { ...columnDefaults, ...column };
                 return (
                   <HeadingCell
-                    sort={sort as any}
+                    sort={sort}
                     key={`${String(mergedColumn.key)}-${columnIndex}`}
                     primary={isFirstRow}
                     column={mergedColumn}

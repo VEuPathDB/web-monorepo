@@ -133,9 +133,7 @@ class HeadingCell<Row, Key = string> extends React.PureComponent<
       !('renderHeading' in column) ||
       typeof column.renderHeading !== 'function'
     )
-      return this.wrapContent(
-        Templates.heading({ key: column.key, column } as any)
-      );
+      return this.wrapContent(Templates.heading({ key: column.key, column }));
 
     const content = column.renderHeading(column, columnIndex, {
       SortTrigger: (<SortTrigger />) as ReactElement,

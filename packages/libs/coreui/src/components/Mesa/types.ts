@@ -16,7 +16,7 @@ export interface MesaStateProps<
   columns: MesaColumn<Row, Key, Value>[];
   filteredRows?: Row[];
   uiState?: {
-    sort?: MesaSortObject;
+    sort?: MesaSortObject<Key extends string ? Key : string>;
     searchQuery?: string;
     filteredRowCount?: number;
     pagination?: {
@@ -77,6 +77,9 @@ export interface MesaStateProps<
      * aligns with table rows, etc.
      */
     marginContent?: React.ReactNode;
+    onRowClick?: (row: Row, rowIndex: number) => void;
+    onRowMouseOver?: (row: Row, rowIndex: number) => void;
+    onRowMouseOut?: (row: Row, rowIndex: number) => void;
   };
   actions?: MesaAction<Row, Key>[];
   eventHandlers?: {

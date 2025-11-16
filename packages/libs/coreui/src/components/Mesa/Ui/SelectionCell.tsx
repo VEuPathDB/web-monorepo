@@ -5,18 +5,20 @@ import AnchoredTooltip from '../Components/AnchoredTooltip';
 import Icon from '../Components/Icon';
 import { MesaStateProps } from '../types';
 
-interface SelectionCellProps<Row> {
+interface SelectionCellProps<Row, Key = string> {
   rows?: Row[];
   row?: Row;
   heading?: boolean;
   inert?: boolean;
   isRowSelected: (row: Row) => boolean;
-  options: MesaStateProps<Row>['options'];
-  eventHandlers: MesaStateProps<Row>['eventHandlers'];
+  options: MesaStateProps<Row, Key>['options'];
+  eventHandlers: MesaStateProps<Row, Key>['eventHandlers'];
 }
 
-class SelectionCell<Row> extends React.PureComponent<SelectionCellProps<Row>> {
-  constructor(props: SelectionCellProps<Row>) {
+class SelectionCell<Row, Key = string> extends React.PureComponent<
+  SelectionCellProps<Row, Key>
+> {
+  constructor(props: SelectionCellProps<Row, Key>) {
     super(props);
     this.selectAllRows = this.selectAllRows.bind(this);
     this.deselectAllRows = this.deselectAllRows.bind(this);

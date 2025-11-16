@@ -11,7 +11,7 @@ const dataRowClass = makeClassifier('DataRow');
 const EXTRA_COLUMNS_FOR_EXPAND_AND_SELECT = 2;
 const EXTRA_COLUMNS_FOR_EXPAND = 1;
 
-interface DataRowProps<Row> extends MesaStateProps<Row> {
+interface DataRowProps<Row, Key = string> extends MesaStateProps<Row, Key> {
   row: Row;
   rowIndex: number;
 }
@@ -20,11 +20,11 @@ interface DataRowState {
   expanded: boolean;
 }
 
-class DataRow<Row> extends React.PureComponent<
-  DataRowProps<Row>,
+class DataRow<Row, Key = string> extends React.PureComponent<
+  DataRowProps<Row, Key>,
   DataRowState
 > {
-  constructor(props: DataRowProps<Row>) {
+  constructor(props: DataRowProps<Row, Key>) {
     super(props);
     this.state = { expanded: false };
     this.handleRowClick = this.handleRowClick.bind(this);
@@ -35,7 +35,7 @@ class DataRow<Row> extends React.PureComponent<
     this.componentWillReceiveProps = this.componentWillReceiveProps.bind(this);
   }
 
-  componentWillReceiveProps(newProps: DataRowProps<Row>): void {
+  componentWillReceiveProps(newProps: DataRowProps<Row, Key>): void {
     const { row } = this.props;
     if (newProps.row !== row) this.collapseRow();
   }
@@ -55,7 +55,7 @@ class DataRow<Row> extends React.PureComponent<
   handleRowClick(): void {
     const { row, rowIndex, options } = this.props;
     if (!options) return;
-    const { inline, onRowClick, inlineUseTooltips } = options as any;
+    const { inline, onRowClick, inlineUseTooltips } = options;
     if (!inline && !onRowClick) return;
     if (inline && !inlineUseTooltips)
       this.setState({ expanded: !this.state.expanded });
@@ -65,7 +65,7 @@ class DataRow<Row> extends React.PureComponent<
   handleRowMouseOver(): void {
     const { row, rowIndex, options } = this.props;
     if (!options) return;
-    const { onRowMouseOver } = options as any;
+    const { onRowMouseOver } = options;
 
     if (typeof onRowMouseOver === 'function') {
       onRowMouseOver(row, rowIndex);
@@ -75,7 +75,7 @@ class DataRow<Row> extends React.PureComponent<
   handleRowMouseOut(): void {
     const { row, rowIndex, options } = this.props;
     if (!options) return;
-    const { onRowMouseOut } = options as any;
+    const { onRowMouseOut } = options;
 
     if (typeof onRowMouseOut === 'function') {
       onRowMouseOut(row, rowIndex);
@@ -86,9 +86,7 @@ class DataRow<Row> extends React.PureComponent<
     const { row, rowIndex, columns, options, eventHandlers, uiState } =
       this.props;
     const { expanded } = this.state;
-    const { columnDefaults, childRow, getRowId } = options
-      ? options
-      : ({} as any);
+    const { columnDefaults, childRow, getRowId } = options ?? {};
     const inline = options && options.inline ? !expanded : false;
 
     const hasSelectionColumn =
@@ -137,11 +135,7 @@ class DataRow<Row> extends React.PureComponent<
           className={className
             .concat(showChildRow ? ' _childIsExpanded' : '')
             .concat(hasExpansionColumn ? ' _isExpandable' : '')}
-          tabIndex={
-            this.props.options && (this.props.options as any).onRowClick
-              ? -1
-              : undefined
-          }
+          tabIndex={this.props.options?.onRowClick ? -1 : undefined}
           style={rowStyle}
           onClick={this.handleRowClick}
           onMouseOver={this.handleRowMouseOver}
@@ -185,11 +179,7 @@ class DataRow<Row> extends React.PureComponent<
         {showChildRow && (
           <tr
             className={className + ' _isExpandable'}
-            tabIndex={
-              this.props.options && (this.props.options as any).onRowClick
-                ? -1
-                : undefined
-            }
+            tabIndex={this.props.options?.onRowClick ? -1 : undefined}
             style={rowStyle}
             onClick={this.handleRowClick}
             onMouseOver={this.handleRowMouseOver}
@@ -201,7 +191,7 @@ class DataRow<Row> extends React.PureComponent<
                 style: {},
                 width: undefined,
                 className: '',
-                key: 'childRow-test' as any,
+                key: 'childRow-test' as unknown as Key,
               }}
               columnIndex={null}
               isChildRow={true}

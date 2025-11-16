@@ -2,25 +2,28 @@ import React, { ReactNode } from 'react';
 
 import Templates from '../Templates';
 import { makeClassifier } from '../Utils/Utils';
-import { MesaColumn, MesaStateProps } from '../types';
+import { MesaColumn, MesaStateProps, CellProps } from '../types';
 
 import { Tooltip } from '../../../components/info/Tooltip';
 
 const dataCellClass = makeClassifier('DataCell');
 
-interface DataCellProps<Row> {
-  column: MesaColumn<Row>;
+interface DataCellProps<Row extends Record<PropertyKey, any>, Key = string> {
+  column: MesaColumn<Row, Key>;
   row: Row;
   inline?: boolean;
-  options?: MesaStateProps<Row>['options'];
+  options?: MesaStateProps<Row, Key>['options'];
   rowIndex: number;
   columnIndex: number | null;
   isChildRow?: boolean;
   childRowColSpan?: number;
 }
 
-class DataCell<Row> extends React.PureComponent<DataCellProps<Row>> {
-  constructor(props: DataCellProps<Row>) {
+class DataCell<
+  Row extends Record<PropertyKey, any>,
+  Key = string
+> extends React.PureComponent<DataCellProps<Row, Key>> {
+  constructor(props: DataCellProps<Row, Key>) {
     super(props);
     this.renderContent = this.renderContent.bind(this);
   }
@@ -32,7 +35,7 @@ class DataCell<Row> extends React.PureComponent<DataCellProps<Row>> {
     const value =
       typeof getValue === 'function'
         ? getValue({ row, index: rowIndex })
-        : (row as any)[key];
+        : row[key as unknown as PropertyKey];
     const cellProps = {
       key,
       value,
@@ -40,7 +43,7 @@ class DataCell<Row> extends React.PureComponent<DataCellProps<Row>> {
       column,
       rowIndex,
       columnIndex: columnIndex ?? 0,
-    };
+    } as CellProps<Row, Key>;
     const { childRow } = options || {};
     if (isChildRow && childRow != null) {
       return childRow({ rowIndex, rowData: row });
@@ -108,7 +111,7 @@ class DataCell<Row> extends React.PureComponent<DataCellProps<Row>> {
       ...(isChildRow ? { colSpan: childRowColSpan } : null),
     };
 
-    return (column as any).hidden ? null : (
+    return column.hidden ? null : (
       <td
         onMouseEnter={(e) => this.setTitle(e.target as HTMLTableCellElement)}
         onMouseLeave={() => this.setTitle(null)}
