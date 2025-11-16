@@ -109,7 +109,7 @@ export default class FilterList extends React.Component<FilterListProps, {}> {
       <div className="filter-item">
         <a
           className="select"
-          onClick={handleSelectClick as any}
+          onClick={handleSelectClick}
           href={'#' + filter.field}
           title={filterDisplay}
         >
@@ -122,7 +122,7 @@ export default class FilterList extends React.Component<FilterListProps, {}> {
             the encoding is done in the browser */}
         <span
           className="remove"
-          onClick={handleRemoveClick as any}
+          onClick={handleRemoveClick}
           title="remove restriction"
         >
           {String.fromCharCode(215)}
