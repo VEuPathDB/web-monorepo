@@ -240,8 +240,10 @@ const sortTypes: Record<
 > = {
   number: MesaUtils.numberSort,
   text: MesaUtils.textSort,
-  htmlText: MesaUtils.customSortFactory(htmlStringValue as any),
+  htmlText: MesaUtils.customSortFactory(
+    htmlStringValue as (value: unknown) => string
+  ),
   htmlNumber: MesaUtils.customSortFactory(
-    compose(numericValue as any, htmlStringValue as any)
+    compose(numericValue, htmlStringValue) as (value: unknown) => number
   ),
 };
