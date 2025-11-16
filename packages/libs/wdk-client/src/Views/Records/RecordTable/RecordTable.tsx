@@ -118,7 +118,7 @@ interface RecordTableProps {
   table: TableFieldWithSort;
   childRow?: string | React.ComponentType<{ rowIndex: number; rowData: any }>;
   expandedRows?: number[];
-  onExpandedRowsChange?: (rows: number[]) => void;
+  onExpandedRowsChange?: (rows: (string | number)[]) => void;
   className?: string;
   onDraw?: () => void;
   searchTerm?: string;
@@ -393,7 +393,7 @@ class RecordTable extends Component<RecordTableProps, RecordTableState> {
       filteredRows: this.state.searchTerm.length ? filteredRows : undefined,
       eventHandlers: {
         onSort: this.onSort,
-        onExpandedRowsChange: onExpandedRowsChange as any,
+        onExpandedRowsChange,
         ...(isOrthologTableWithData
           ? { ...this.props.orthoTableProps!.eventHandlers }
           : {}),
