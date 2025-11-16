@@ -207,24 +207,24 @@ export default class FilterList extends React.Component<FilterListProps, {}> {
                 .find((field) => field.term === filter.field);
               return (
                 <li key={filter.field} className={className}>
-                  {filter.type !== 'multiFilter' ? (
-                    this.renderFilterItem(filter)
-                  ) : (
+                  {filter.type === 'multiFilter' ? (
                     <React.Fragment>
                       <sup className="multiFilter-operation">
                         {getOperationDisplay(
-                          (filter.value as any).operation
+                          filter.value.operation
                         ).toUpperCase()}{' '}
                         {field == null ? filter.field : field.display} filters
                       </sup>
                       <ul className="filter-items">
-                        {(filter.value as any).filters.map((leaf: Filter) => (
+                        {filter.value.filters.map((leaf: Filter) => (
                           <li key={leaf.field}>
                             {this.renderFilterItem(leaf, filter)}
                           </li>
                         ))}
                       </ul>
                     </React.Fragment>
+                  ) : (
+                    this.renderFilterItem(filter)
                   )}
                 </li>
               );
