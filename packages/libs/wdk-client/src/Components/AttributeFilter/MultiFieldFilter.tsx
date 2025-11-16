@@ -19,6 +19,7 @@ import {
   Field,
   Filter,
   FieldTreeNode,
+  MemberFilter,
   OntologyTermSummary,
   ValueCounts,
   MultiFilterValue,
@@ -121,13 +122,13 @@ export default class MultiFieldFilter extends React.Component<
     valueCounts: ValueCounts
   ): void {
     const multiFilter = this.getOrCreateFilter(this.props, this.state);
-    const leafFilter: Filter = {
+    const leafFilter = {
       field: field.term,
       type: field.type || '',
       isRange: isRange(field),
       value,
       includeUnknown,
-    } as Filter;
+    } as MemberFilter;
     const otherLeafFilters = (
       multiFilter.value as MultiFilterValue
     ).filters.filter((filter) => filter.field !== field.term);
@@ -140,7 +141,7 @@ export default class MultiFieldFilter extends React.Component<
       ...multiFilter,
       value: {
         ...(multiFilter.value as MultiFilterValue),
-        filters: otherLeafFilters.concat(shouldAdd ? [leafFilter as any] : []),
+        filters: otherLeafFilters.concat(shouldAdd ? [leafFilter] : []),
       },
     } as Filter;
     const otherFilters = this.props.filters.filter(
@@ -346,13 +347,13 @@ export default class MultiFieldFilter extends React.Component<
   renderRowValue(row: TableRow): React.ReactNode {
     const { value, filter, summary, isSelected } = row;
     if (value == null) return null;
-    const filterValue = get(filter, 'value', []) as any[];
+    const filterValue = get(filter, 'value', []) as (string | number)[];
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
       this.handleLeafFilterChange(
         this.getFieldByTerm(summary.term)!,
         event.target.checked
           ? [value].concat(filterValue)
-          : filterValue.filter((item: any) => item !== value),
+          : filterValue.filter((item) => item !== value),
         false,
         summary.valueCounts
       );
@@ -396,8 +397,11 @@ export default class MultiFieldFilter extends React.Component<
               value: data.value,
               filter: filtersByField[summary.term],
               isSelected: (
-                get(filtersByField, [summary.term, 'value'], []) as any[]
-              ).includes(data.value as any),
+                get(filtersByField, [summary.term, 'value'], []) as (
+                  | string
+                  | number
+                )[]
+              ).includes(data.value as string | number),
               isLast: index === summary.valueCounts.length - 1,
             } as TableRow)
         ),

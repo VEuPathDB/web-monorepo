@@ -83,12 +83,21 @@ const Answer: FC<AnswerProps> = (props) => {
       <div className="wdk-Answer">
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <AnswerFilter {...(props as any)} />
-          <AnswerCount {...(props as any)} />
+          <AnswerCount
+            recordClass={props.recordClass}
+            meta={props.meta}
+            records={props.records}
+            displayInfo={props.displayInfo}
+          />
           <div style={{ flex: 1, textAlign: 'right' }}>
             {additionalActions?.map(({ key, display }) => (
               <React.Fragment key={key}>{display}</React.Fragment>
             ))}
-            <AttributePopup {...(props as any)} />
+            <AttributePopup
+              allAttributes={props.allAttributes}
+              visibleAttributes={props.visibleAttributes}
+              onChangeColumns={props.onChangeColumns}
+            />
           </div>
         </div>
         <Mesa state={tableState} />
