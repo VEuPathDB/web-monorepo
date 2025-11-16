@@ -79,7 +79,7 @@ export default class AttributeAnalysisTabs<
             )
           : true
       )
-      .orderBy((row) => (row as any)[sort.key], sort.direction === 'desc')
+      .orderBy((row) => row[sort.key as T], sort.direction === 'desc')
       .toArray();
 
     const firstRowIndex = (currentPage - 1) * rowsPerPage;
