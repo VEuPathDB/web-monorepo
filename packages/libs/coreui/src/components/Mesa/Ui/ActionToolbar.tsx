@@ -4,7 +4,7 @@ import SelectionCounter from './SelectionCounter';
 import RowCounter from './RowCounter';
 import { makeClassifier } from '../Utils/Utils';
 import Toggle from '../../widgets/Toggle';
-import { MesaStateProps } from '../types';
+import { MesaStateProps, MesaAction } from '../types';
 
 const actionToolbarClass = makeClassifier('ActionToolbar');
 
@@ -34,7 +34,7 @@ class ActionToolbar<Row, Key = string> extends React.PureComponent<
     return rows.filter(isRowSelected);
   }
 
-  dispatchAction(action: any): void {
+  dispatchAction(action: MesaAction<Row, Key>): void {
     const { handler, callback } = action;
     const { rows, columns } = this.props;
     const selection = this.getSelection();
@@ -60,7 +60,13 @@ class ActionToolbar<Row, Key = string> extends React.PureComponent<
     );
   }
 
-  renderActionItem({ action }: { action: any }): ReactNode {
+  renderActionItem({
+    action,
+    key,
+  }: {
+    action: MesaAction<Row, Key>;
+    key: number;
+  }): ReactNode {
     let { element } = action;
     let selection = this.getSelection();
     let disabled =
@@ -73,7 +79,7 @@ class ActionToolbar<Row, Key = string> extends React.PureComponent<
     let handler = () => this.dispatchAction(action);
     return (
       <div
-        key={action.__id}
+        key={key}
         onClick={handler}
         className={actionToolbarClass('Item', disabled)}
       >
@@ -90,7 +96,9 @@ class ActionToolbar<Row, Key = string> extends React.PureComponent<
           ? null
           : actions
               .filter((action) => action.element)
-              .map((action) => this.renderActionItem({ action }))}
+              .map((action, idx) =>
+                this.renderActionItem({ action, key: idx })
+              )}
       </div>
     );
   }

@@ -102,12 +102,12 @@ export interface MesaStateProps<
 
 export interface MesaAction<Row, Key = DefaultColumnKey<Row>> {
   selectionRequired?: boolean;
-  element: React.ReactNode;
-  callback?: (row: Row, columns: MesaColumn<Row, Key>[]) => void;
-  handler?: (
+  element: React.ReactNode | ((selection: Row[]) => React.ReactNode);
+  handler?: (row: Row, columns?: MesaColumn<Row, Key>[]) => void;
+  callback?: (
     selection: Row[],
-    columns: MesaColumn<Row, Key>[],
-    rows: Row[]
+    columns?: MesaColumn<Row, Key>[],
+    rows?: Row[]
   ) => void;
 }
 
