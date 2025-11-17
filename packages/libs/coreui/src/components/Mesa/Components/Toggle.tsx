@@ -17,20 +17,21 @@ class Toggle extends React.Component<ToggleProps> {
   }
 
   handleClick(e: React.MouseEvent): void {
-    let { enabled, onChange } = this.props;
+    const { enabled, onChange } = this.props;
     if (typeof onChange === 'function') onChange(!!enabled);
   }
 
   render() {
-    let { enabled, className, disabled, style } = this.props;
+    const { enabled, disabled, style } = this.props;
+    let className = this.props.className;
     className = 'Toggle' + (className ? ' ' + className : '');
     className += ' ' + (enabled ? 'Toggle-On' : 'Toggle-Off');
     className += disabled ? ' Toggle-Disabled' : '';
-    let offStyle: React.CSSProperties = {
+    const offStyle: React.CSSProperties = {
       fontSize: '1.2rem',
       color: '#989898',
     };
-    let onStyle: React.CSSProperties = Object.assign({}, offStyle, {
+    const onStyle: React.CSSProperties = Object.assign({}, offStyle, {
       color: '#198835',
     });
 

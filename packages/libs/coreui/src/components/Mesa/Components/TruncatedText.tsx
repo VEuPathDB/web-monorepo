@@ -56,29 +56,31 @@ class TruncatedText extends React.Component<
 
   truncate(text: string, cutoff: number): string {
     if (typeof text !== 'string' || typeof cutoff !== 'number') return text;
-    let count = this.wordCount(text);
+    const count = this.wordCount(text);
     if (count !== undefined && count < cutoff) return text;
 
-    let words = text
+    const words = text
       .trim()
       .split(' ')
       .filter((x) => x.length);
-    let threshold = Math.ceil(cutoff * 0.66);
-    let short = words.slice(0, threshold).join(' ');
+    const threshold = Math.ceil(cutoff * 0.66);
+    const short = words.slice(0, threshold).join(' ');
 
     return this.trimPunctuation(short) + '...';
   }
 
   toggleExpansion(): void {
-    let { expanded } = this.state;
+    const { expanded } = this.state;
     this.setState({ expanded: !expanded });
   }
 
   render() {
-    let { expanded } = this.state;
-    let { className, cutoff, text } = this.props;
+    const { expanded } = this.state;
+    let className = this.props.className;
+    let cutoff = this.props.cutoff;
+    let text = this.props.text;
     cutoff = typeof cutoff === 'number' ? cutoff : 100;
-    let expandable = (this.wordCount(text) ?? 0) > cutoff;
+    const expandable = (this.wordCount(text) ?? 0) > cutoff;
 
     className = 'TruncatedText' + (className ? ' ' + className : '');
     text = expanded ? text : this.truncate(text, cutoff);
