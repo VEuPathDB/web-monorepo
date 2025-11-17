@@ -34,7 +34,7 @@ class DataCell<
     const { key, getValue } = column;
     const value =
       typeof getValue === 'function'
-        ? getValue({ row, index: rowIndex })
+        ? getValue({ row, key })
         : row[key as unknown as PropertyKey];
     const cellProps = {
       key,
@@ -46,7 +46,7 @@ class DataCell<
     } as CellProps<Row, Key>;
     const { childRow } = options || {};
     if (isChildRow && childRow != null) {
-      return childRow({ rowIndex, rowData: row });
+      return childRow(rowIndex, row);
     }
     if ('renderCell' in column && column.renderCell) {
       return column.renderCell(cellProps);

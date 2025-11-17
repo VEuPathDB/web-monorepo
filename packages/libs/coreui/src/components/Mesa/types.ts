@@ -2,10 +2,12 @@ import React, { CSSProperties, ReactElement, ReactNode } from 'react';
 
 type DefaultColumnKey<Row> = Extract<keyof Row, string>;
 
-export type ChildRowProps<Row> = {
-  rowIndex: number;
-  rowData: Row;
-};
+// Note: childRow is a function that receives two separate arguments, not a props object
+// This matches the original JavaScript API and how RecordTable uses it
+export type ChildRowFunc<Row> = (
+  rowIndex: number,
+  rowData: Row
+) => ReactElement;
 
 export interface MesaStateProps<
   Row,
@@ -69,7 +71,7 @@ export interface MesaStateProps<
      * To handle errors gracefully, childRow elements should be wrapped in wdk-client's ErrorBoundary.
      * As a reference, refer to the RecordTable.jsx component in wdk-client.
      */
-    childRow?: (props: ChildRowProps<Row>) => ReactElement<ChildRowProps<Row>>;
+    childRow?: ChildRowFunc<Row>;
     getRowId?: (row: Row) => string | number;
     /**
      * Renders the node in the left margin of the table.
@@ -147,7 +149,7 @@ export interface MesaColumn<
   width?: CSSProperties['width'];
   hidden?: boolean;
   truncated?: boolean | string;
-  getValue?: (props: { row: Row; index: number }) => Value;
+  getValue?: (props: { row: Row; key: Key }) => Value;
   renderCell?: (cellProps: CellProps<Row, Key, Value>) => ReactNode;
   renderHeading?:
     | boolean
