@@ -664,6 +664,172 @@ const value = obj?.property?.nested ?? defaultValue;
 
 ---
 
+## Trust Usage Patterns Over Type Definitions
+
+### Critical Principle
+
+**The implementation is the source of truth, not the types.**
+
+When reviewing JS→TS conversions, **always trust the original JavaScript usage patterns** over any existing TypeScript type definitions. Type definitions can be incorrect due to:
+
+1. **Human error** when types were first written
+2. **Stale types** that weren't updated when the implementation changed
+3. **Incorrect assumptions** during previous conversion attempts
+4. **Copy-paste errors** from similar but different APIs
+
+### Verification Process
+
+When you encounter a type definition that seems questionable:
+
+1. **Find the original JavaScript implementation:**
+
+   ```bash
+   # Check git history for the original .js/.jsx file
+   git log --all --follow --format="%H %s" -- "**/ComponentName.*"
+   git show <commit>^:path/to/file.jsx
+   ```
+
+2. **Search for actual usage in the codebase:**
+
+   ```bash
+   # Find all consumers of the API
+   grep -r "functionName\|ComponentName" packages/ --include="*.js" --include="*.jsx" --include="*.ts" --include="*.tsx"
+   ```
+
+3. **Compare implementations across time:**
+   ```bash
+   # View the diff between original JS and current TS
+   git diff <js-commit> HEAD -- path/to/file
+   ```
+
+### Red Flags Indicating Type Problems
+
+Watch for these warning signs:
+
+- **Comments questioning types**: "NOTE: the typing of X seems wrong..."
+- **Workarounds with type assertions**: `as unknown as SomeType`
+- **Unused APIs**: If no one uses a function, the type might be wrong
+- **Defensive code**: Logic working around "incorrect" types
+- **Multiple consumers using assertions**: All callers need `as` to use it
+
+### Case Study: Mesa Component API Bugs
+
+During careful review of the Mesa TS conversion, we found **three significant API bugs** where types didn't match the original JavaScript:
+
+#### Bug 1: `getValue` Parameter Mismatch
+
+**Original JS (correct):**
+
+```javascript
+getValue({ row, key }); // Pass the column key
+```
+
+**Incorrect TS type definition:**
+
+```typescript
+getValue?: (props: { row: Row; index: number }) => Value;  // Wrong: uses index
+```
+
+**How we found it:**
+
+- Checked `git log` for DataCell.jsx
+- Found original always used `{ row, key }`
+- No actual usage in codebase (unused API)
+
+**Fix:**
+
+```typescript
+getValue?: (props: { row: Row; key: Key }) => Value;  // Restored original API
+```
+
+#### Bug 2: `childRow` Breaking Change
+
+**Original JS (correct):**
+
+```javascript
+childRow(rowIndex, row); // Two separate positional arguments
+```
+
+**Incorrect TS conversion:**
+
+```typescript
+childRow({ rowIndex, rowData: row }); // Object argument - BREAKING!
+```
+
+**Evidence of breakage** - Found this workaround in AiExpressionSummary.tsx:
+
+```typescript
+childRow: (badProps) => {
+  // NOTE: the typing of `ChildRowProps` seems wrong
+  // as it is called with two args, not one
+  const rowIndex = badProps as unknown as number;
+  const rowData = topics[rowIndex];
+  // ...
+```
+
+**Fix:**
+
+```typescript
+export type ChildRowFunc<Row> = (rowIndex: number, rowData: Row) => ReactElement;
+childRow?: ChildRowFunc<Row>;
+```
+
+And in DataCell.tsx:
+
+```typescript
+// Before: childRow({ rowIndex, rowData: row })
+// After:  childRow(rowIndex, row)
+```
+
+#### Bug 3: `MesaAction` Swapped Parameters
+
+**Type definition claimed:**
+
+```typescript
+handler?: (selection: Row[], columns, rows) => void;  // "Full selection"
+callback?: (row: Row, columns) => void;               // "Single row"
+```
+
+**Runtime actually did:**
+
+```typescript
+if (typeof handler === 'function')
+  selection.forEach((row) => handler(row, columns)); // Per-row iteration!
+
+if (typeof callback === 'function') callback(selection, columns, rows); // Full selection!
+```
+
+**They were backwards!** The type definition had them swapped.
+
+**Fix:** Corrected the signatures to match actual behavior.
+
+### Lessons Learned
+
+1. **Types can lie** - especially if they predate the implementation
+2. **Check git blame** - see when types vs. implementation were introduced
+3. **Look for workarounds** - they indicate type problems
+4. **Unused code is suspicious** - if nobody uses it, type might be wrong
+5. **Comments are clues** - developers often note when types seem off
+
+### Best Practices for Review
+
+When reviewing a TS conversion:
+
+✅ **DO:**
+
+- Check original .js/.jsx file in git history
+- Search for all consumers of the API
+- Look for type assertions at call sites
+- Read comments questioning the types
+- Verify types match actual runtime behavior
+
+❌ **DON'T:**
+
+- Assume existing .d.ts or types.ts files are correct
+- Trust types without verifying against implementation
+- Ignore comments about "weird" types
+- Accept widespread `as any` usage as necessary
+
 ## Lessons Learned from This Session
 
 ### What Worked Well
@@ -673,6 +839,8 @@ const value = obj?.property?.nested ?? defaultValue;
 3. **Using generic type parameters** instead of `as` assertions
 4. **Starting with utilities** before components (bottom-up approach)
 5. **Regular commits and pushes** to preserve progress
+6. **Trusting original JavaScript** over questionable TypeScript types
+7. **Following the clues** (comments, workarounds, git history)
 
 ### Common Pitfalls to Avoid
 
