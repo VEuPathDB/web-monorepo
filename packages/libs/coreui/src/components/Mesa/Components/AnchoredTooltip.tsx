@@ -48,9 +48,9 @@ class AnchoredTooltip extends React.Component<AnchoredTooltipProps> {
     this.forceUpdate();
   }
 
-  getPosition(): Position {
+  getPosition(): Position | undefined {
     const element = this.childWrapperRef.current;
-    if (!element) return { left: 0, top: 0 };
+    if (!element) return undefined;
 
     const offset = element.getBoundingClientRect();
     const { top, left } = offset;

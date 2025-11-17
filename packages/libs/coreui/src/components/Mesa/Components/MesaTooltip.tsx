@@ -16,7 +16,7 @@ interface MesaTooltipProps {
   corner?: string;
   position?: Position;
   style?: CSSProperties;
-  getPosition?: () => Position;
+  getPosition?: () => Position | undefined;
   renderHtml?: boolean;
 }
 
