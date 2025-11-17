@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface SelectionCounterProps<Row> {
+interface SelectionCounterProps<Row extends Record<PropertyKey, any>> {
   // all/total "rows" in the table
   rows: Row[];
   // predicate to test for 'selectedness'
@@ -16,9 +16,9 @@ interface SelectionCounterProps<Row> {
   onMultipleRowDeselect?: (rows: Row[]) => void;
 }
 
-class SelectionCounter<Row> extends React.Component<
-  SelectionCounterProps<Row>
-> {
+class SelectionCounter<
+  Row extends Record<PropertyKey, any>
+> extends React.Component<SelectionCounterProps<Row>> {
   constructor(props: SelectionCounterProps<Row>) {
     super(props);
     this.noun = this.noun.bind(this);

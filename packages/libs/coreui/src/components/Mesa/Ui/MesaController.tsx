@@ -7,15 +7,18 @@ import PaginationMenu from './PaginationMenu';
 import EmptyState from './EmptyState';
 import { MesaStateProps } from '../types';
 
-interface MesaControllerProps<Row, Key = string>
-  extends MesaStateProps<Row, Key> {
+interface MesaControllerProps<
+  Row extends Record<PropertyKey, any>,
+  Key = string
+> extends MesaStateProps<Row, Key> {
   children?: ReactNode;
   headerWrapperStyle?: React.CSSProperties;
 }
 
-class MesaController<Row, Key = string> extends React.Component<
-  MesaControllerProps<Row, Key>
-> {
+class MesaController<
+  Row extends Record<PropertyKey, any>,
+  Key = string
+> extends React.Component<MesaControllerProps<Row, Key>> {
   constructor(props: MesaControllerProps<Row, Key>) {
     super(props);
     this.renderToolbar = this.renderToolbar.bind(this);

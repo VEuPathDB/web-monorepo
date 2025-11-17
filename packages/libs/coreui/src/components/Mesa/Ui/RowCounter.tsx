@@ -1,14 +1,15 @@
 import React from 'react';
 import { MesaStateProps } from '../types';
 
-interface RowCounterProps<Row, Key = string>
+interface RowCounterProps<Row extends Record<PropertyKey, any>, Key = string>
   extends Pick<MesaStateProps<Row, Key>, 'uiState' | 'eventHandlers'> {
   rows: Row[];
 }
 
-class RowCounter<Row, Key = string> extends React.PureComponent<
-  RowCounterProps<Row, Key>
-> {
+class RowCounter<
+  Row extends Record<PropertyKey, any>,
+  Key = string
+> extends React.PureComponent<RowCounterProps<Row, Key>> {
   render() {
     const { rows, uiState, eventHandlers } = this.props;
 
