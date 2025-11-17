@@ -5,7 +5,7 @@ import HeadingCell from './HeadingCell';
 import SelectionCell from './SelectionCell';
 import { MesaStateProps, MesaColumn } from '../types';
 
-interface HeadingRowProps<Row, Key = string>
+interface HeadingRowProps<Row extends Record<PropertyKey, any>, Key = string>
   extends Pick<
     MesaStateProps<Row, Key>,
     'columns' | 'uiState' | 'eventHandlers' | 'options' | 'actions'
@@ -14,24 +14,25 @@ interface HeadingRowProps<Row, Key = string>
   offsetLeft?: number;
 }
 
-interface ColumnDefaults {
-  [key: string]: any;
-}
+type RenderHeadingFunction<Row extends Record<PropertyKey, any>, Key = string> =
+  (
+    column: MesaColumn<Row, Key>,
+    columnIndex: number,
+    components: any
+  ) => ReactNode;
 
-type HeadingRowColumn<Row, Key = string> = MesaColumn<Row, Key> & {
-  renderHeading?:
-    | boolean
-    | ((
-        column: MesaColumn<Row, Key>,
-        columnIndex: number,
-        components: any
-      ) => ReactNode)
-    | ReactNode[];
-};
+type HeadingRowColumn<Row extends Record<PropertyKey, any>, Key = string> =
+  MesaColumn<Row, Key> & {
+    renderHeading?:
+      | boolean
+      | RenderHeadingFunction<Row, Key>
+      | Array<RenderHeadingFunction<Row, Key>>; // Multi-row headers: each array element becomes a separate header row
+  };
 
-class HeadingRow<Row, Key = string> extends React.PureComponent<
-  HeadingRowProps<Row, Key>
-> {
+class HeadingRow<
+  Row extends Record<PropertyKey, any>,
+  Key = string
+> extends React.PureComponent<HeadingRowProps<Row, Key>> {
   render() {
     const {
       filteredRows: filteredRowsProp,
@@ -66,20 +67,26 @@ class HeadingRow<Row, Key = string> extends React.PureComponent<
       return Math.max(thisCount, count);
     }, 1);
 
-    const headingRows = new Array(rowCount).fill({}).map((blank, index) => {
+    const headingRows = new Array(rowCount).fill({}).map((_blank, index) => {
       const isFirstRow = !index;
-      const cols = columns.map((col) => {
+      const cols = columns.map((col): MesaColumn<Row, Key> => {
         const column = col as HeadingRowColumn<Row, Key>;
-        const output: any = { ...column };
+
         if (Array.isArray(column.renderHeading)) {
-          output.renderHeading =
-            column.renderHeading.length > index
-              ? column.renderHeading[index]
-              : false;
-        } else if (!isFirstRow) {
-          output.renderHeading = false;
+          return {
+            ...column,
+            renderHeading:
+              column.renderHeading.length > index
+                ? column.renderHeading[index]
+                : false,
+          };
         }
-        return output as HeadingRowColumn<Row, Key>;
+
+        if (!isFirstRow) {
+          return { ...column, renderHeading: false };
+        }
+
+        return column;
       });
       return { cols, isFirstRow };
     });
