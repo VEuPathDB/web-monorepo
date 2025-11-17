@@ -10,7 +10,7 @@ export type ChildRowFunc<Row> = (
 ) => ReactElement;
 
 export interface MesaStateProps<
-  Row,
+  Row extends Record<PropertyKey, any>,
   Key = DefaultColumnKey<Row>,
   Value = DefaultColumnValue<Row, Key>
 > {
@@ -102,7 +102,10 @@ export interface MesaStateProps<
   };
 }
 
-export interface MesaAction<Row, Key = DefaultColumnKey<Row>> {
+export interface MesaAction<
+  Row extends Record<PropertyKey, any>,
+  Key = DefaultColumnKey<Row>
+> {
   selectionRequired?: boolean;
   element: React.ReactNode | ((selection: Row[]) => React.ReactNode);
   handler?: (row: Row, columns?: MesaColumn<Row, Key>[]) => void;
@@ -116,7 +119,7 @@ export interface MesaAction<Row, Key = DefaultColumnKey<Row>> {
 type DefaultColumnValue<Row, Key> = Key extends keyof Row ? Row[Key] : unknown;
 
 export interface CellProps<
-  Row,
+  Row extends Record<PropertyKey, any>,
   Key = DefaultColumnKey<Row>,
   Value = DefaultColumnValue<Row, Key>
 > {
@@ -129,7 +132,7 @@ export interface CellProps<
 }
 
 export interface MesaColumn<
-  Row,
+  Row extends Record<PropertyKey, any>,
   Key = DefaultColumnKey<Row>,
   Value = DefaultColumnValue<Row, Key>
 > {

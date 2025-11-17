@@ -11,7 +11,8 @@ const dataRowClass = makeClassifier('DataRow');
 const EXTRA_COLUMNS_FOR_EXPAND_AND_SELECT = 2;
 const EXTRA_COLUMNS_FOR_EXPAND = 1;
 
-interface DataRowProps<Row, Key = string> extends MesaStateProps<Row, Key> {
+interface DataRowProps<Row extends Record<PropertyKey, any>, Key = string>
+  extends MesaStateProps<Row, Key> {
   row: Row;
   rowIndex: number;
 }
@@ -20,10 +21,10 @@ interface DataRowState {
   expanded: boolean;
 }
 
-class DataRow<Row, Key = string> extends React.PureComponent<
-  DataRowProps<Row, Key>,
-  DataRowState
-> {
+class DataRow<
+  Row extends Record<PropertyKey, any>,
+  Key = string
+> extends React.PureComponent<DataRowProps<Row, Key>, DataRowState> {
   constructor(props: DataRowProps<Row, Key>) {
     super(props);
     this.state = { expanded: false };
@@ -89,18 +90,34 @@ class DataRow<Row, Key = string> extends React.PureComponent<
     const { columnDefaults, childRow, getRowId } = options ?? {};
     const inline = options && options.inline ? !expanded : false;
 
-    const hasSelectionColumn =
+    const selectionProps =
       options &&
       eventHandlers &&
       typeof options.isRowSelected === 'function' &&
       typeof eventHandlers.onRowSelect === 'function' &&
-      typeof eventHandlers.onRowDeselect === 'function';
+      typeof eventHandlers.onRowDeselect === 'function'
+        ? {
+            isRowSelected: options.isRowSelected,
+            options,
+            eventHandlers,
+          }
+        : null;
 
-    const hasExpansionColumn =
+    const hasSelectionColumn = selectionProps != null;
+
+    const expansionProps =
       childRow != null &&
       eventHandlers?.onExpandedRowsChange != null &&
       uiState?.expandedRows != null &&
-      getRowId != null;
+      getRowId != null
+        ? {
+            onExpandedRowsChange: eventHandlers.onExpandedRowsChange,
+            expandedRows: uiState.expandedRows,
+            getRowId: getRowId,
+          }
+        : null;
+
+    const hasExpansionColumn = expansionProps != null;
 
     const showChildRow =
       hasExpansionColumn &&
@@ -141,26 +158,18 @@ class DataRow<Row, Key = string> extends React.PureComponent<
           onMouseOver={this.handleRowMouseOver}
           onMouseOut={this.handleRowMouseOut}
         >
-          {hasExpansionColumn && eventHandlers && uiState && (
+          {expansionProps && (
             <ExpansionCell
               key="_expansion"
               rows={[]}
               row={row}
-              onExpandedRowsChange={eventHandlers.onExpandedRowsChange!}
-              expandedRows={uiState.expandedRows!}
-              getRowId={getRowId!}
+              {...expansionProps}
               inert={false}
               heading={false}
             />
           )}
-          {hasSelectionColumn && options && eventHandlers && (
-            <SelectionCell
-              key="_selection"
-              row={row}
-              options={options}
-              eventHandlers={eventHandlers}
-              isRowSelected={options.isRowSelected!}
-            />
+          {selectionProps && (
+            <SelectionCell key="_selection" row={row} {...selectionProps} />
           )}
           {columns.map((column, columnIndex) => {
             let finalColumn = column;
