@@ -28,12 +28,12 @@ class SelectBox extends React.PureComponent<SelectBoxProps> {
   getOptions(): SelectOption[] {
     let { options } = this.props;
     if (!Array.isArray(options)) return [];
-    options = options.map((option) => {
+    const normalizedOptions: SelectOption[] = options.map((option) => {
       return typeof option === 'object' && 'name' in option && 'value' in option
         ? option
         : { name: option.toString(), value: option };
     });
-    return options as SelectOption[];
+    return normalizedOptions;
   }
 
   render() {
