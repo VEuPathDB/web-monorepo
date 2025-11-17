@@ -34,8 +34,6 @@ class Checkbox extends React.Component<CheckboxProps> {
           <IndeterminateCheckbox
             checked={checked}
             indeterminate={indeterminate}
-            name=""
-            value=""
             onChange={this.handleClick}
           />
         ) : (
