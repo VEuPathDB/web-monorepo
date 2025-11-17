@@ -13,10 +13,10 @@ RUN apk add libstdc++
 
 # Install NodeJS as well as yarn
 RUN cd /opt \
-  && wget https://unofficial-builds.nodejs.org/download/release/v16.17.1/node-v16.17.1-linux-x64-musl.tar.gz -O node-v16.17.1-linux-x64-musl.tar.gz \
-  && tar -xf node-v16.17.1-linux-x64-musl.tar.gz \
-  && rm node-v16.17.1-linux-x64-musl.tar.gz \
-  && mv node-v16.17.1-linux-x64-musl node \
+  && wget https://unofficial-builds.nodejs.org/download/release/v24.11.0/node-v24.11.0-linux-x64-musl.tar.gz -O node-v24.11.0-linux-x64-musl.tar.gz \
+  && tar -xf node-v24.11.0-linux-x64-musl.tar.gz \
+  && rm node-v24.11.0-linux-x64-musl.tar.gz \
+  && mv node-v24.11.0-linux-x64-musl node \
   && npm i -g yarn \
   && mkdir /project
 
