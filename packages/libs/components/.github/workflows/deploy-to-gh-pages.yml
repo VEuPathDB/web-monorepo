@@ -15,7 +15,7 @@ jobs:
       - name: Install and Build 🔧
         uses: actions/setup-node@v1
         with:
-          node-version: 14
+          node-version: 24
       - run: |
           yarn install
           yarn build-storybook
