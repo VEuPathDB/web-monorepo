@@ -9,7 +9,7 @@ import { MesaColumn, MesaSortObject, MesaStateProps } from '../types';
 
 const headingCellClass = makeClassifier('HeadingCell');
 
-interface HeadingCellProps<Row, Key = string> {
+interface HeadingCellProps<Row extends Record<PropertyKey, any>, Key = string> {
   sort?: MesaSortObject<Key extends string ? Key : string>;
   eventHandlers?: MesaStateProps<Row, Key>['eventHandlers'];
   column: MesaColumn<Row, Key>;
@@ -25,10 +25,10 @@ interface HeadingCellState {
   isDragTarget: boolean;
 }
 
-class HeadingCell<Row, Key = string> extends React.PureComponent<
-  HeadingCellProps<Row, Key>,
-  HeadingCellState
-> {
+class HeadingCell<
+  Row extends Record<PropertyKey, any>,
+  Key = string
+> extends React.PureComponent<HeadingCellProps<Row, Key>, HeadingCellState> {
   private element?: HTMLTableCellElement;
   private listeners?: { [key: string]: string };
 
@@ -136,9 +136,9 @@ class HeadingCell<Row, Key = string> extends React.PureComponent<
       return this.wrapContent(Templates.heading({ key: column.key, column }));
 
     const content = column.renderHeading(column, columnIndex, {
-      SortTrigger: (<SortTrigger />) as ReactElement,
-      HelpTrigger: (<HelpTrigger />) as ReactElement,
-      ClickBoundary: (<ClickBoundary children={null} />) as ReactElement,
+      SortTrigger,
+      HelpTrigger,
+      ClickBoundary,
     });
     const { wrapCustomHeadings } = column;
     const shouldWrap =
@@ -153,7 +153,11 @@ class HeadingCell<Row, Key = string> extends React.PureComponent<
     return shouldWrap ? this.wrapContent(content) : content;
   }
 
-  renderClickBoundary({ children }: { children: React.ReactNode }) {
+  renderClickBoundary({
+    children,
+  }: {
+    children: React.ReactNode;
+  }): ReactElement {
     const style: CSSProperties = { display: 'inline-block' };
     const stopPropagation = (node: HTMLDivElement | null) => {
       if (!node) return null;
@@ -169,7 +173,7 @@ class HeadingCell<Row, Key = string> extends React.PureComponent<
     );
   }
 
-  renderSortTrigger() {
+  renderSortTrigger(): ReactElement | null {
     const { column, sort, eventHandlers } = this.props;
     const { columnKey, direction } = sort ?? {};
     const { key, sortable } = column ?? {};
@@ -203,7 +207,7 @@ class HeadingCell<Row, Key = string> extends React.PureComponent<
     );
   }
 
-  renderHelpTrigger() {
+  renderHelpTrigger(): ReactElement | null {
     const { column } = this.props;
     if (!column.helpText && !('htmlHelp' in column)) return null;
     return (

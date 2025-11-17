@@ -160,9 +160,9 @@ export interface MesaColumn<
         column: MesaColumn<Row, Key>,
         columnIndex: number,
         components: {
-          SortTrigger: ReactElement;
-          HelpTrigger: ReactElement;
-          ClickBoundary: ReactElement;
+          SortTrigger: () => ReactElement | null;
+          HelpTrigger: () => ReactElement | null;
+          ClickBoundary: (props: { children: ReactNode }) => ReactElement;
         }
       ) => ReactNode);
   wrapCustomHeadings?: (props: {

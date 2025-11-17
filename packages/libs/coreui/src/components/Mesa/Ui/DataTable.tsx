@@ -9,16 +9,17 @@ import { MesaStateProps, MesaColumn } from '../types';
 
 const dataTableClass = makeClassifier('DataTable');
 
-interface DataTableProps<Row, Key = string> extends MesaStateProps<Row, Key> {}
+interface DataTableProps<Row extends Record<PropertyKey, any>, Key = string>
+  extends MesaStateProps<Row, Key> {}
 
 interface DataTableState {
   dynamicWidths?: number[] | null;
 }
 
-class DataTable<Row, Key = string> extends React.Component<
-  DataTableProps<Row, Key>,
-  DataTableState
-> {
+class DataTable<
+  Row extends Record<PropertyKey, any>,
+  Key = string
+> extends React.Component<DataTableProps<Row, Key>, DataTableState> {
   widthCache: number[] = [];
   resizeId: number = -1;
   mainRef: HTMLDivElement | null = null;
