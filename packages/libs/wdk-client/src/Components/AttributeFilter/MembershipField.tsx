@@ -100,12 +100,12 @@ interface SortEvent {
 }
 
 class MembershipField extends React.PureComponent<
-  MembershipFieldProps,
+  MembershipTableProps,
   MembershipFieldState
 > {
   debouncedMapMouseTargetToTooltipState: any;
 
-  constructor(props: MembershipFieldProps) {
+  constructor(props: MembershipTableProps) {
     super(props);
     this.state = { showDisabledTooltip: false };
     this.handleMouseOver = this.handleMouseOver.bind(this);
@@ -189,7 +189,7 @@ class MembershipField extends React.PureComponent<
                 <em>Check items below to apply this filter</em>
               </div>
               <div className="membership-action">
-                <UnknownCount {...(this.props as any)} />
+                <UnknownCount {...this.props} />
               </div>
             </div>
           ) : this.isSortEnabled() ? (
@@ -213,7 +213,7 @@ class MembershipField extends React.PureComponent<
                 </button>
               </div>
               <div className="membership-action">
-                <UnknownCount {...(this.props as any)} />
+                <UnknownCount {...this.props} />
               </div>
             </div>
           ) : null}
@@ -231,18 +231,12 @@ class MembershipField extends React.PureComponent<
             </div>
           )}
 
-          <MembershipTable {...(this.props as any)} />
+          <MembershipTable {...this.props} />
         </div>
       </ErrorBoundary>
     );
   }
 }
-
-(MembershipField as any).defaultProps = {
-  filteredCountHeadingPrefix: 'Remaining',
-  unfilteredCountHeadingPrefix: '',
-  showInternalMesaCounts: false,
-};
 
 function filterBySearchTerm(
   rows: ValueCounts,
@@ -704,7 +698,7 @@ class MembershipTable extends React.PureComponent<
 
   renderFilteredCountHeading1() {
     return this.renderCountHeading1(
-      this.props.filteredCountHeadingPrefix || ''
+      this.props.filteredCountHeadingPrefix ?? 'Remaining'
     );
   }
 
@@ -723,7 +717,7 @@ class MembershipTable extends React.PureComponent<
 
   renderUnfilteredCountHeading1() {
     return this.renderCountHeading1(
-      this.props.unfilteredCountHeadingPrefix || ''
+      this.props.unfilteredCountHeadingPrefix ?? ''
     );
   }
 
