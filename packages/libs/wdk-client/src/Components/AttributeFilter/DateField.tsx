@@ -43,10 +43,8 @@ interface DateFieldProps {
     [key: string]: any;
   };
   filter?: RangeFilter;
-  overview?: React.ReactNode;
   displayName: string;
   unknownCount: number;
-  timeformat?: string;
   onRangeScaleChange?: (activeField: Field, range: any) => void;
   histogramTruncateYAxisDefault?: boolean;
   histogramScaleYAxisDefault?: boolean;
@@ -101,7 +99,12 @@ export default class DateField extends React.Component<DateFieldProps> {
   toFilterValue(value: number): number | string {
     switch (typeof value) {
       case 'number':
-        return formatDate(this.timeformat || 'yyyy-MM-dd', new Date(value));
+        // TODO: this.timeformat can be undefined if setDateFormat() finds no non-null
+        // distribution entries, which will cause formatDate() to crash. Should either:
+        // 1) Add a fallback format (e.g., '%Y-%m-%d' - note: strftime format, not 'yyyy-MM-dd')
+        // 2) Handle this edge case earlier in the component lifecycle
+        // 3) Prevent rendering DateField when there's no valid date data
+        return formatDate(this.timeformat!, new Date(value));
       default:
         return value;
     }
@@ -144,7 +147,7 @@ export default class DateField extends React.Component<DateFieldProps> {
 
     return (
       <HistogramField
-        {...(this.props as any)}
+        {...this.props}
         timeformat={this.timeformat}
         distribution={dateDist}
         unknownCount={unknownCount}
