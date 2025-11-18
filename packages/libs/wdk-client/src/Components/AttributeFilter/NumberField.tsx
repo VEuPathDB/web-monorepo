@@ -54,7 +54,12 @@ interface NumberFieldProps {
  */
 export default class NumberField extends React.Component<NumberFieldProps> {
   static getHelpContent(props: NumberFieldProps) {
-    return (HistogramField as any).getHelpContent(props);
+    return (
+      <div>
+        Select a range of {props.activeField.display} values with the graph
+        below.
+      </div>
+    );
   }
 
   constructor(props: NumberFieldProps) {

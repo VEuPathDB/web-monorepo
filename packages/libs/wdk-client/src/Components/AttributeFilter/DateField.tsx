@@ -59,7 +59,12 @@ export default class DateField extends React.Component<DateFieldProps> {
   timeformat?: string;
 
   static getHelpContent(props: DateFieldProps) {
-    return HistogramField.getHelpContent(props as any);
+    return (
+      <div>
+        Select a range of {props.activeField.display} values with the graph
+        below.
+      </div>
+    );
   }
 
   constructor(props: DateFieldProps) {
