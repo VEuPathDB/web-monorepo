@@ -39,7 +39,7 @@ const SubscriptionGroupBaseDecoder: Decode.Decoder<SubscriptionGroupBase> =
 const SubscriptionGroupDecoder: Decode.Decoder<SubscriptionGroup> =
   Decode.combine(
     SubscriptionGroupBaseDecoder,
-    Decode.field('subscriberName', Decode.string),
+    Decode.optional(Decode.field('subscriberName', Decode.string)),
     Decode.field(
       'activeStatus',
       Decode.oneOf(
