@@ -51,7 +51,7 @@ interface MultiFieldFilterProps {
   onFiltersChange: (filters: Filter[]) => void;
   onMemberSort: (
     field: Field,
-    sort: { columnKey: string; direction: string }
+    sort: { columnKey: string; direction: 'asc' | 'desc' }
   ) => void;
   onMemberSearch: (field: Field, searchTerm: string) => void;
 }
@@ -154,7 +154,7 @@ export default class MultiFieldFilter extends React.Component<
     this.props.onFiltersChange(nextFilters);
   }
 
-  handleTableSort(column: any, direction: string): void {
+  handleTableSort(column: any, direction: 'asc' | 'desc'): void {
     this.props.onMemberSort(this.props.activeField, {
       columnKey: column.key,
       direction,
