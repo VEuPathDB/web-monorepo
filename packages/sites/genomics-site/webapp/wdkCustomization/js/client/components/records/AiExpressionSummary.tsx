@@ -352,7 +352,8 @@ const AiExpressionResult = (props: AiExpressionResultProps) => {
       getRowId: (row) => row.rowId,
     },
     eventHandlers: {
-      onExpandedRowsChange: (rowIndexes) => setExpandedRows(rowIndexes),
+      onExpandedRowsChange: (rowIndexes) =>
+        setExpandedRows(rowIndexes as number[]),
     },
     uiState: {
       expandedRows,
