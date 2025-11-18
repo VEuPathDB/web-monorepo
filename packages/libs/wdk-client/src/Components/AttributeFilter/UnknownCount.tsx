@@ -4,7 +4,7 @@ import { OntologyTermSummary } from '../../Components/AttributeFilter/Types';
 
 interface UnknownCountProps {
   activeFieldState: {
-    summary: OntologyTermSummary;
+    summary: Pick<OntologyTermSummary, 'internalsCount'>;
   };
   dataCount: number;
   displayName: string;
