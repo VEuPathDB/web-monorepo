@@ -92,7 +92,7 @@ interface Props {
 
 interface State {
   selectedRows: Array<number | string>;
-  uiState: { sort: MesaSortObject };
+  uiState: { sort: MesaSortObject<keyof UserDataset & string> };
   searchTerm: string;
   editingCache: any;
 }
@@ -398,15 +398,16 @@ class UserDatasetList extends React.Component<Props, State> {
     this.setState({ selectedRows: newSelection });
   }
 
-  onSort(column: MesaColumn<UserDataset>, direction: string): void {
+  onSort(column: MesaColumn<UserDataset>, direction: 'asc' | 'desc'): void {
     const key = column.key;
-    const { state } = this;
-    const { setSortColumnKey, setSortDirection } = MesaState;
-    const updatedState = setSortDirection(
-      setSortColumnKey(state, key),
-      direction
-    );
-    this.setState(updatedState);
+    this.setState({
+      uiState: {
+        sort: {
+          columnKey: key,
+          direction: direction,
+        },
+      },
+    });
   }
 
   getEventHandlers() {
@@ -543,7 +544,7 @@ class UserDatasetList extends React.Component<Props, State> {
   filterAndSortRows(rows: UserDataset[]): UserDataset[] {
     const { searchTerm, uiState } = this.state;
     const { projectName, filterByProject } = this.props;
-    const sort: MesaSortObject = uiState.sort;
+    const sort: MesaSortObject<keyof UserDataset & string> = uiState.sort;
     if (filterByProject)
       rows = rows.filter((dataset) => dataset.projects.includes(projectName));
     if (searchTerm && searchTerm.length)
@@ -567,12 +568,11 @@ class UserDatasetList extends React.Component<Props, State> {
     if (columnKey === null) return (data: any) => data;
     switch (columnKey) {
       case 'type':
-        return (data: UserDataset, index: number): string =>
-          data.type.display.toLowerCase();
+        return (data: UserDataset): string => data.type.display.toLowerCase();
       case 'meta.name':
         return (data: UserDataset) => data.meta.name.toLowerCase();
       default:
-        return (data: any, index: number) => {
+        return (data: any) => {
           return typeof data[columnKey] !== 'undefined'
             ? data[columnKey]
             : null;
@@ -582,7 +582,7 @@ class UserDatasetList extends React.Component<Props, State> {
 
   sortRowsByColumnKey(
     rows: UserDataset[],
-    sort: MesaSortObject
+    sort: MesaSortObject<keyof UserDataset & string>
   ): UserDataset[] {
     const direction: string = sort.direction;
     const columnKey: string = sort.columnKey;
@@ -648,7 +648,7 @@ class UserDatasetList extends React.Component<Props, State> {
       eventHandlers,
       uiState: {
         ...uiState,
-        emptinessCulprit: userDatasets.length ? 'search' : null,
+        emptinessCulprit: userDatasets.length ? ('search' as const) : undefined,
       },
     };
 
