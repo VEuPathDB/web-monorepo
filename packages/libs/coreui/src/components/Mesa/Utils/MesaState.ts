@@ -16,14 +16,35 @@ import { CSSProperties } from 'react';
  */
 
 /*    Basic Setters   */
-export const setRows = <
+// Overload: Full state in -> full state out
+export function setRows<
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
+  state: MesaStateProps<Row, Key>,
+  rows: Row[],
+  resetFilteredRows?: boolean
+): MesaStateProps<Row, Key>;
+
+// Overload: Partial state in -> partial state out
+export function setRows<
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
+  state: Partial<MesaStateProps<Row, Key>>,
+  rows: Row[],
+  resetFilteredRows?: boolean
+): Partial<MesaStateProps<Row, Key>>;
+
+// Implementation
+export function setRows<
   Row extends Record<PropertyKey, any>,
   Key extends string = string
 >(
   state: Partial<MesaStateProps<Row, Key>>,
   rows: Row[],
   resetFilteredRows = true
-): Partial<MesaStateProps<Row, Key>> => {
+): Partial<MesaStateProps<Row, Key>> {
   if (!Array.isArray(rows))
     return badType('setRows', 'rows', 'array', typeof rows) || state;
   const filteredRows = [...rows];
@@ -33,15 +54,34 @@ export const setRows = <
     resetFilteredRows ? { filteredRows } : {}
   );
   return Object.assign({}, state, replacements);
-};
+}
 
-export const setFilteredRows = <
+// Overload: Full state in -> full state out
+export function setFilteredRows<
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
+  state: MesaStateProps<Row, Key>,
+  filteredRows: Row[]
+): MesaStateProps<Row, Key>;
+
+// Overload: Partial state in -> partial state out
+export function setFilteredRows<
   Row extends Record<PropertyKey, any>,
   Key extends string = string
 >(
   state: Partial<MesaStateProps<Row, Key>>,
   filteredRows: Row[]
-): Partial<MesaStateProps<Row, Key>> => {
+): Partial<MesaStateProps<Row, Key>>;
+
+// Implementation
+export function setFilteredRows<
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
+  state: Partial<MesaStateProps<Row, Key>>,
+  filteredRows: Row[]
+): Partial<MesaStateProps<Row, Key>> {
   if (!Array.isArray(filteredRows))
     return (
       badType(
@@ -52,15 +92,34 @@ export const setFilteredRows = <
       ) || state
     );
   return Object.assign({}, state, { filteredRows });
-};
+}
 
-export const filterRows = <
+// Overload: Full state in -> full state out
+export function filterRows<
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
+  state: MesaStateProps<Row, Key>,
+  predicate: (row: Row) => boolean
+): MesaStateProps<Row, Key>;
+
+// Overload: Partial state in -> partial state out
+export function filterRows<
   Row extends Record<PropertyKey, any>,
   Key extends string = string
 >(
   state: Partial<MesaStateProps<Row, Key>>,
   predicate: (row: Row) => boolean
-): Partial<MesaStateProps<Row, Key>> => {
+): Partial<MesaStateProps<Row, Key>>;
+
+// Implementation
+export function filterRows<
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
+  state: Partial<MesaStateProps<Row, Key>>,
+  predicate: (row: Row) => boolean
+): Partial<MesaStateProps<Row, Key>> {
   if (typeof predicate !== 'function')
     return (
       badType('filterRows', 'predicate', 'function', typeof predicate) || state
@@ -69,15 +128,34 @@ export const filterRows = <
     return missingFromState('filterRows', 'rows', state as object) || state;
   const filteredRows = state.rows.filter(predicate);
   return setFilteredRows(state, filteredRows);
-};
+}
 
-export const setColumns = <
+// Overload: Full state in -> full state out
+export function setColumns<
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
+  state: MesaStateProps<Row, Key>,
+  columns: MesaColumn<Row, Key>[]
+): MesaStateProps<Row, Key>;
+
+// Overload: Partial state in -> partial state out
+export function setColumns<
   Row extends Record<PropertyKey, any>,
   Key extends string = string
 >(
   state: Partial<MesaStateProps<Row, Key>>,
   columns: MesaColumn<Row, Key>[]
-): Partial<MesaStateProps<Row, Key>> => {
+): Partial<MesaStateProps<Row, Key>>;
+
+// Implementation
+export function setColumns<
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
+  state: Partial<MesaStateProps<Row, Key>>,
+  columns: MesaColumn<Row, Key>[]
+): Partial<MesaStateProps<Row, Key>> {
   if (!Array.isArray(columns))
     return badType('setColumns', 'columns', 'array', typeof columns) || state;
   const keys = columns.map((col) => col.key);
@@ -92,7 +170,7 @@ export const setColumns = <
   columnOrder = columnOrder!.filter((keyStr) => keys.includes(keyStr as Key));
   const uiState = Object.assign({}, initialUiState, { columnOrder });
   return Object.assign({}, state, { columns, uiState });
-};
+}
 
 export const setColumnOrder = <
   Row extends Record<PropertyKey, any>,
@@ -125,17 +203,36 @@ export const setActions = <
   return Object.assign({}, state, { actions });
 };
 
-export const setUiState = <
+// Overload: Full state in -> full state out
+export function setUiState<
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
+  state: MesaStateProps<Row, Key>,
+  uiState: NonNullable<MesaStateProps<Row, Key>['uiState']>
+): MesaStateProps<Row, Key>;
+
+// Overload: Partial state in -> partial state out
+export function setUiState<
   Row extends Record<PropertyKey, any>,
   Key extends string = string
 >(
   state: Partial<MesaStateProps<Row, Key>>,
   uiState: NonNullable<MesaStateProps<Row, Key>['uiState']>
-): Partial<MesaStateProps<Row, Key>> => {
+): Partial<MesaStateProps<Row, Key>>;
+
+// Implementation
+export function setUiState<
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
+  state: Partial<MesaStateProps<Row, Key>>,
+  uiState: NonNullable<MesaStateProps<Row, Key>['uiState']>
+): Partial<MesaStateProps<Row, Key>> {
   if (typeof uiState !== 'object')
     return badType('setUiState', 'uiState', 'object', typeof uiState) || state;
   return Object.assign({}, state, { uiState });
-};
+}
 
 export const setOptions = <
   Row extends Record<PropertyKey, any>,
@@ -372,7 +469,7 @@ export const create = <
     headerWrapperStyle?: CSSProperties;
   },
   state: Partial<MesaStateProps<Row, Key>> = {}
-): Partial<MesaStateProps<Row, Key>> => {
+): MesaStateProps<Row, Key> => {
   state = setRows(state, rows ? rows : []);
   state = setColumns(state, columns ? columns : []);
   state = setOptions(state, options ? options : {});
@@ -387,7 +484,7 @@ export const create = <
     state,
     headerWrapperStyle ? headerWrapperStyle : {}
   );
-  return state;
+  return state as MesaStateProps<Row, Key>;
 };
 
 /*    Deeper, more specific setters   */
@@ -414,13 +511,32 @@ export const setSelectionPredicate = <
   return Object.assign({}, state, { options });
 };
 
-export const setSearchQuery = <
+// Overload: Full state in -> full state out
+export function setSearchQuery<
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
+  state: MesaStateProps<Row, Key>,
+  searchQuery: string | null
+): MesaStateProps<Row, Key>;
+
+// Overload: Partial state in -> partial state out
+export function setSearchQuery<
   Row extends Record<PropertyKey, any>,
   Key extends string = string
 >(
   state: Partial<MesaStateProps<Row, Key>>,
   searchQuery: string | null
-): Partial<MesaStateProps<Row, Key>> => {
+): Partial<MesaStateProps<Row, Key>>;
+
+// Implementation
+export function setSearchQuery<
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
+  state: Partial<MesaStateProps<Row, Key>>,
+  searchQuery: string | null
+): Partial<MesaStateProps<Row, Key>> {
   if (typeof searchQuery !== 'string' && searchQuery !== null)
     return (
       badType('setSearchQuery', 'searchQuery', 'string', typeof searchQuery) ||
@@ -431,7 +547,7 @@ export const setSearchQuery = <
     searchQuery,
   });
   return Object.assign({}, state, { uiState });
-};
+}
 
 export const setEmptinessCulprit = <
   Row extends Record<PropertyKey, any>,
@@ -458,13 +574,29 @@ export const setEmptinessCulprit = <
   return Object.assign({}, state, { uiState });
 };
 
-export const setSortColumnKey = <
+// Overload: Full state in -> full state out
+export function setSortColumnKey<
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(state: MesaStateProps<Row, Key>, columnKey: string): MesaStateProps<Row, Key>;
+
+// Overload: Partial state in -> partial state out
+export function setSortColumnKey<
   Row extends Record<PropertyKey, any>,
   Key extends string = string
 >(
   state: Partial<MesaStateProps<Row, Key>>,
   columnKey: string
-): Partial<MesaStateProps<Row, Key>> => {
+): Partial<MesaStateProps<Row, Key>>;
+
+// Implementation
+export function setSortColumnKey<
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
+  state: Partial<MesaStateProps<Row, Key>>,
+  columnKey: string
+): Partial<MesaStateProps<Row, Key>> {
   if (typeof columnKey !== 'string')
     return (
       badType('setSortColumnKey', 'columnKey', 'string', typeof columnKey) ||
@@ -479,15 +611,34 @@ export const setSortColumnKey = <
   );
   const uiState = Object.assign({}, currentUiState, { sort });
   return Object.assign({}, state, { uiState });
-};
+}
 
-export const setSortDirection = <
+// Overload: Full state in -> full state out
+export function setSortDirection<
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
+  state: MesaStateProps<Row, Key>,
+  direction: 'asc' | 'desc'
+): MesaStateProps<Row, Key>;
+
+// Overload: Partial state in -> partial state out
+export function setSortDirection<
   Row extends Record<PropertyKey, any>,
   Key extends string = string
 >(
   state: Partial<MesaStateProps<Row, Key>>,
   direction: 'asc' | 'desc'
-): Partial<MesaStateProps<Row, Key>> => {
+): Partial<MesaStateProps<Row, Key>>;
+
+// Implementation
+export function setSortDirection<
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
+  state: Partial<MesaStateProps<Row, Key>>,
+  direction: 'asc' | 'desc'
+): Partial<MesaStateProps<Row, Key>> {
   if (typeof direction !== 'string')
     return (
       badType('setSortDirection', 'direction', 'string', typeof direction) ||
@@ -510,7 +661,7 @@ export const setSortDirection = <
   );
   const uiState = Object.assign({}, currentUiState, { sort });
   return Object.assign({}, state, { uiState });
-};
+}
 
 export const moveColumnToIndex = <
   Row extends Record<PropertyKey, any>,

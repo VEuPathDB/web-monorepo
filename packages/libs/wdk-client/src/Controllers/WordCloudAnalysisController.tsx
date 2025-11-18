@@ -89,7 +89,7 @@ class WordCloudAnalysisController extends React.PureComponent<Props> {
             { key: 'word', display: 'Word' },
             { key: 'count', display: 'Occurrence' },
           ],
-          data: tags,
+          data: tags as any,
         }}
         visualizationConfig={{
           display: 'Word Cloud',
