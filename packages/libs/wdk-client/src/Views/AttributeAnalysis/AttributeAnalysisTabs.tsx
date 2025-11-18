@@ -18,10 +18,10 @@ import {
 import '../../Views/AttributeAnalysis/AttributeAnalysisTabs.scss';
 import { MesaColumn } from '@veupathdb/coreui/lib/components/Mesa/types';
 
-export interface TableState {
+export interface TableState<T extends string = string> {
   currentPage: number;
   rowsPerPage: number;
-  sort: { key: string; direction: 'asc' | 'desc' };
+  sort: { key: T; direction: 'asc' | 'desc' };
   search: string;
 }
 
@@ -32,13 +32,13 @@ type VisualizationConfig = {
 
 type TableConfig<T extends string> = {
   columns: { key: T; display: string }[];
-  data: Record<T, string | number>[];
+  data: Array<Record<T, string | number> & Record<PropertyKey, unknown>>;
 };
 
 type Props<T extends string> = {
   dispatch: Dispatch;
   activeTab: string;
-  tableState: TableState;
+  tableState: TableState<T>;
   visualizationConfig: VisualizationConfig;
   tableConfig: TableConfig<T>;
 };
@@ -79,7 +79,7 @@ export default class AttributeAnalysisTabs<
             )
           : true
       )
-      .orderBy((row) => (row as any)[sort.key], sort.direction === 'desc')
+      .orderBy((row) => row[sort.key as T], sort.direction === 'desc')
       .toArray();
 
     const firstRowIndex = (currentPage - 1) * rowsPerPage;
@@ -123,10 +123,13 @@ export default class AttributeAnalysisTabs<
                       onRowsPerPageChange: this.onRowsPerPageChange,
                     },
                     uiState: {
+                      // Assertion needed: Mesa's conditional type for MesaSortObject
+                      // cannot be satisfied at compile time, but the object structure
+                      // is correct at runtime
                       sort: {
                         columnKey: tableState.sort.key,
                         direction: tableState.sort.direction,
-                      },
+                      } as any,
                       pagination: {
                         currentPage,
                         rowsPerPage,

@@ -3,8 +3,8 @@ import { useRef, useEffect } from 'react';
 export type IndeterminateCheckboxProps<T> = {
   checked: boolean;
   indeterminate: boolean;
-  name: string;
-  value: string;
+  name?: string;
+  value?: string;
   onChange: (isChecked: boolean) => void;
 };
 
@@ -14,9 +14,9 @@ export type IndeterminateCheckboxProps<T> = {
 export default function IndeterminateCheckbox<T>({
   checked,
   indeterminate,
-  name,
+  name = '',
   onChange,
-  value,
+  value = '',
 }: IndeterminateCheckboxProps<T>) {
   const nameProp = name ? { name } : {};
   const nodeRef = useRef<HTMLInputElement>(null);

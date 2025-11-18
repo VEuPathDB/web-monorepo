@@ -261,12 +261,7 @@ const AiExpressionResult = (props: AiExpressionResultProps) => {
       },
     ],
     options: {
-      childRow: (badProps) => {
-        // NOTE: the typing of `ChildRowProps` seems wrong
-        // as it is called with two args, not one, see
-        // https://github.com/VEuPathDB/web-monorepo/blob/d1d03fcd051cd7a54706fe879e4af4b1fc220d88/packages/libs/coreui/src/components/Mesa/Ui/DataCell.jsx#L26
-        const rowIndex = badProps as unknown as number;
-        const rowData = topics[rowIndex];
+      childRow: (rowIndex, rowData) => {
         return (
           <ErrorBoundary>
             <div className="ai-topic-heading">
@@ -357,7 +352,8 @@ const AiExpressionResult = (props: AiExpressionResultProps) => {
       getRowId: (row) => row.rowId,
     },
     eventHandlers: {
-      onExpandedRowsChange: (rowIndexes) => setExpandedRows(rowIndexes),
+      onExpandedRowsChange: (rowIndexes) =>
+        setExpandedRows(rowIndexes as number[]),
     },
     uiState: {
       expandedRows,

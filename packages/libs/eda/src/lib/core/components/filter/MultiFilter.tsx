@@ -244,11 +244,12 @@ export function MultiFilter(props: Props) {
           return {
             term: leaf.term,
             display: leaf.display,
-            valueCounts: variable.vocabulary?.map((label) => ({
-              value: label,
-              count: bgValueByLabel[label],
-              filteredCount: fgValueByLabel[label] ?? 0,
-            })),
+            valueCounts:
+              variable.vocabulary?.map((label) => ({
+                value: label,
+                count: bgValueByLabel[label],
+                filteredCount: fgValueByLabel[label] ?? 0,
+              })) ?? [],
             internalsCount:
               distribution.background.statistics.numDistinctEntityRecords,
             internalsFilteredCount:
@@ -368,10 +369,9 @@ export function MultiFilter(props: Props) {
         Update distributions now
       </button>
       <MultiFieldFilter
-        displayName={entity.displayNamePlural}
+        displayName={entity.displayNamePlural ?? entity.displayName}
         dataCount={totalEntityCount}
-        filteredDataCount={filteredEntityCount}
-        filters={wdkFilters}
+        filters={wdkFilters ?? []}
         activeField={activeField}
         activeFieldState={activeFieldState}
         fieldTree={fieldTree}
@@ -380,6 +380,9 @@ export function MultiFilter(props: Props) {
         onMemberSearch={onMemberSearch}
         fillBarColor={gray}
         fillFilteredBarColor={red}
+        selectByDefault={
+          true /* maintains original behavior (was effectively undefined in original JS MultiFieldFilter) */
+        }
       />
     </div>
   );

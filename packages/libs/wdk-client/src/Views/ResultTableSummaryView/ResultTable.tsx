@@ -8,7 +8,12 @@ import {
   RecordInstance,
 } from '../../Utils/WdkModel';
 import { pure, wrappable } from '../../Utils/ComponentUtils';
-import { Mesa, MesaState } from '@veupathdb/coreui/lib/components/Mesa';
+import { Mesa } from '@veupathdb/coreui/lib/components/Mesa';
+import {
+  MesaStateProps,
+  MesaColumn,
+  MesaAction,
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import Link from '../../Components/Link';
 import BasketCell from '../../Views/ResultTableSummaryView/BasketCell';
 import PrimaryKeyCell from '../../Views/ResultTableSummaryView/PrimaryKeyCell';
@@ -87,7 +92,9 @@ function ResultTable(props: Props) {
       answer.meta.sorting.length > 0
         ? {
             columnKey: answer.meta.sorting[0].attributeName,
-            direction: answer.meta.sorting[0].direction.toLowerCase(),
+            direction: answer.meta.sorting[0].direction.toLowerCase() as
+              | 'asc'
+              | 'desc',
           }
         : undefined,
     pagination: {
@@ -110,19 +117,19 @@ function ResultTable(props: Props) {
     },
     showCount,
   };
-  const tableState = MesaState.create({
+  const tableState: MesaStateProps<RecordInstance, string> = {
     options,
     actions:
       actions &&
-      actions.map((action) => ({
+      (actions.map((action) => ({
         selectionRequired: false,
         element: action.element,
-      })),
-    columns,
+      })) as MesaAction<RecordInstance, string>[]),
+    columns: columns as MesaColumn<RecordInstance, string>[],
     rows,
     eventHandlers,
     uiState,
-  });
+  };
 
   const downloadLink =
     resultType.type === 'step'

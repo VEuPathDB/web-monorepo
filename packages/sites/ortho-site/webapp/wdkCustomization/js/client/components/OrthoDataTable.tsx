@@ -4,6 +4,7 @@ import { orderBy } from 'lodash';
 
 import { RealTimeSearchBox } from '@veupathdb/wdk-client/lib/Components';
 import { Mesa, MesaState } from '@veupathdb/coreui/lib/components/Mesa';
+import { MesaSortObject } from '@veupathdb/coreui/lib/components/Mesa/types';
 import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import {
   areTermsInString,
@@ -73,7 +74,7 @@ export function OrthoDataTable<R, C extends DataTableColumnKey<R>>({
 
   const mesaState = useMemo(
     () =>
-      MesaState.create({
+      MesaState.create<R, C>({
         rows: mesaRows,
         filteredRows: mesaFilteredRows,
         columns: mesaColumns,
@@ -198,7 +199,7 @@ function makeMesaUiState<R, C extends DataTableColumnKey<R>>(
   sort: DataTableSortObject<R, C>
 ) {
   return {
-    sort,
+    sort: sort as MesaSortObject<C extends string ? C : string>,
   };
 }
 

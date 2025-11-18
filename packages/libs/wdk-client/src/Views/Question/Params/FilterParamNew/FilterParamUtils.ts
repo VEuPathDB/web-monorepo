@@ -26,7 +26,7 @@ import {
 } from '../../../../Views/Question/Params/FilterParamNew/State';
 import { Context } from '../../../../Views/Question/Params/Utils';
 
-const natSortComparator = (natsort as any)();
+const natSortComparator = natsort();
 
 export function isType(parameter: Parameter): parameter is FilterParamNew {
   return parameter.type === 'filter';

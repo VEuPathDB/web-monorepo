@@ -7,7 +7,10 @@ import {
   Props as UserTableProps,
 } from './UserTable';
 
-export type Props<R, C extends UserTableColumnKey<R>> =
+export type Props<
+  R extends Record<PropertyKey, any>,
+  C extends UserTableColumnKey<R>
+> =
   | {
       status: 'loading';
     }
@@ -24,9 +27,10 @@ export type Props<R, C extends UserTableColumnKey<R>> =
       value: UserTableProps<R, C>;
     };
 
-export function UserTableSection<R, C extends UserTableColumnKey<R>>(
-  props: Props<R, C>
-) {
+export function UserTableSection<
+  R extends Record<PropertyKey, any>,
+  C extends UserTableColumnKey<R>
+>(props: Props<R, C>) {
   return props.status === 'loading' ||
     props.status === 'unavailable' ? null : props.status === 'error' ? (
     <p>{props.message}</p>

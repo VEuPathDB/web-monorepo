@@ -95,7 +95,7 @@ export function useCombinedResultProps({
     filesToOrganisms
   );
 
-  const [sort, setSort] = useState<MesaSortObject>({
+  const [sort, setSort] = useState<MesaSortObject<keyof CombinedResultRow>>({
     columnKey: 'queryRank',
     direction: 'asc',
   });
@@ -236,7 +236,7 @@ function useCombinedResultColumns(
   jobId: string,
   organismToProject: Record<string, string>,
   projectUrls: Record<string, string>
-): MesaColumn<CombinedResultRow>[] {
+): MesaColumn<CombinedResultRow, keyof CombinedResultRow>[] {
   const targetMetadataByDataType = useContext(TargetMetadataByDataType);
 
   const recordLinkUrlSegment =
@@ -574,7 +574,9 @@ function useSortedCombinedResultRows(
   return sortedRows;
 }
 
-function useMesaEventHandlers(setSort: (newSort: MesaSortObject) => void) {
+function useMesaEventHandlers(
+  setSort: (newSort: MesaSortObject<keyof CombinedResultRow>) => void
+) {
   return useMemo(
     () => ({
       onSort: (
@@ -588,7 +590,7 @@ function useMesaEventHandlers(setSort: (newSort: MesaSortObject) => void) {
   );
 }
 
-function useMesaUiState(sort: MesaSortObject) {
+function useMesaUiState(sort: MesaSortObject<keyof CombinedResultRow>) {
   return useMemo(() => ({ sort }), [sort]);
 }
 

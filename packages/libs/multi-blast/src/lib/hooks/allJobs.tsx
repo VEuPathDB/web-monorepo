@@ -100,12 +100,12 @@ export function useSortedJobRows(unsortedRows: JobRow[], sort: MesaSortObject) {
   );
 }
 
-export function useMesaUiState(sort: MesaSortObject) {
+export function useMesaUiState(sort: MesaSortObject<keyof JobRow>) {
   return useMemo(() => ({ sort }), [sort]);
 }
 
 export function useMesaEventHandlers(
-  setSort: (newSort: MesaSortObject) => void
+  setSort: (newSort: MesaSortObject<keyof JobRow>) => void
 ) {
   return useMemo(
     () => ({

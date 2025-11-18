@@ -210,7 +210,9 @@ export const useCompatibleOperatorMetadata = (
       return undefined;
     }
 
-    const compatibleOperatorMetadata = binaryOperations.reduce(
+    const compatibleOperatorMetadata = binaryOperations.reduce<
+      Record<string, OperatorMetadata>
+    >(
       (
         memo,
         {
@@ -245,7 +247,7 @@ export const useCompatibleOperatorMetadata = (
 
         const newMetadataEntries =
           operationQuestion &&
-          parameterValues.reduce(
+          parameterValues.reduce<Record<string, OperatorMetadata>>(
             (memo, itemValue) => ({
               ...memo,
               [itemValue]: {
@@ -257,7 +259,7 @@ export const useCompatibleOperatorMetadata = (
                 reviseOperatorParamConfiguration,
               },
             }),
-            {} as Record<string, OperatorMetadata>
+            {}
           );
 
         return {
@@ -265,7 +267,7 @@ export const useCompatibleOperatorMetadata = (
           ...newMetadataEntries,
         };
       },
-      {} as Record<string, OperatorMetadata>
+      {}
     );
 
     return compatibleOperatorMetadata;
@@ -326,27 +328,30 @@ export const useReviseOperatorConfigs = (
   const reviseOperatorConfigsWithoutIgnore = useMemo(
     () =>
       operatorMetadata &&
-      binaryOperations.reduce((memo, { baseClassName, operatorMenuGroup }) => {
-        return operatorMenuGroup.items.some(
-          (menuItem) => !operatorMetadata[menuItem.value]
-        )
-          ? memo
-          : [
-              ...memo,
-              {
-                name: operatorMenuGroup.name,
-                display: operatorMenuGroup.display,
-                items: operatorMenuGroup.items.map((menuItem) => ({
-                  display: menuItem.radioDisplay(stepALabel, stepBLabel),
-                  iconClassName: cxOperator(
-                    `--${baseClassName}`,
-                    toUpper(menuItem.value)
-                  ),
-                  value: menuItem.value,
-                })),
-              },
-            ];
-      }, [] as ReviseOperatorMenuGroup[]),
+      binaryOperations.reduce<ReviseOperatorMenuGroup[]>(
+        (memo, { baseClassName, operatorMenuGroup }) => {
+          return operatorMenuGroup.items.some(
+            (menuItem) => !operatorMetadata[menuItem.value]
+          )
+            ? memo
+            : [
+                ...memo,
+                {
+                  name: operatorMenuGroup.name,
+                  display: operatorMenuGroup.display,
+                  items: operatorMenuGroup.items.map((menuItem) => ({
+                    display: menuItem.radioDisplay(stepALabel, stepBLabel),
+                    iconClassName: cxOperator(
+                      `--${baseClassName}`,
+                      toUpper(menuItem.value)
+                    ),
+                    value: menuItem.value,
+                  })),
+                },
+              ];
+        },
+        []
+      ),
     [binaryOperations, operatorMetadata]
   );
 
@@ -488,12 +493,14 @@ export const useSelectedAddStepFormComponent = (
   const operationFormsByName = useMemo(
     () =>
       menuConfigs &&
-      menuConfigs.reduce(
+      menuConfigs.reduce<
+        Record<string, React.ComponentType<AddStepOperationFormProps>>
+      >(
         (memo, { addStepFormComponents }) => ({
           ...memo,
           ...addStepFormComponents,
         }),
-        {} as Record<string, React.ComponentType<AddStepOperationFormProps>>
+        {}
       ),
     [menuConfigs]
   );
