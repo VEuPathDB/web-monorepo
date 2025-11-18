@@ -28,7 +28,7 @@ export const badType = (
 export const missingFromState = (
   fn: string,
   missing: string,
-  obj: Record<string, unknown> = {},
+  obj: object = {},
   fatal = false
 ): undefined | never => {
   const present = Object.keys(obj).join(', ');

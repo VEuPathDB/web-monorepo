@@ -3,8 +3,23 @@ import { repositionItemInList } from './Utils';
 import type { MesaStateProps, MesaColumn } from '../types';
 import { CSSProperties } from 'react';
 
+/*
+ * NOTE: This file contains extensive runtime type checking (badType, missingFromState, etc.)
+ * that may seem redundant with TypeScript's compile-time checks. This is legacy defensive
+ * code from the original JavaScript implementation. While TypeScript now provides type safety
+ * at compile time, these runtime checks remain as defense against:
+ * - Type assertions/casts that bypass compile-time checks
+ * - External consumers using 'any' types
+ * - Debugging issues in production
+ *
+ * In a greenfield TypeScript project, most of these checks would be unnecessary.
+ */
+
 /*    Basic Setters   */
-export const setRows = <Row, Key extends string = string>(
+export const setRows = <
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
   state: Partial<MesaStateProps<Row, Key>>,
   rows: Row[],
   resetFilteredRows = true
@@ -20,7 +35,10 @@ export const setRows = <Row, Key extends string = string>(
   return Object.assign({}, state, replacements);
 };
 
-export const setFilteredRows = <Row, Key extends string = string>(
+export const setFilteredRows = <
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
   state: Partial<MesaStateProps<Row, Key>>,
   filteredRows: Row[]
 ): Partial<MesaStateProps<Row, Key>> => {
@@ -36,7 +54,10 @@ export const setFilteredRows = <Row, Key extends string = string>(
   return Object.assign({}, state, { filteredRows });
 };
 
-export const filterRows = <Row, Key extends string = string>(
+export const filterRows = <
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
   state: Partial<MesaStateProps<Row, Key>>,
   predicate: (row: Row) => boolean
 ): Partial<MesaStateProps<Row, Key>> => {
@@ -45,18 +66,15 @@ export const filterRows = <Row, Key extends string = string>(
       badType('filterRows', 'predicate', 'function', typeof predicate) || state
     );
   if (!Array.isArray(state.rows))
-    return (
-      missingFromState(
-        'filterRows',
-        'rows',
-        state as Record<string, unknown>
-      ) || state
-    );
+    return missingFromState('filterRows', 'rows', state as object) || state;
   const filteredRows = state.rows.filter(predicate);
   return setFilteredRows(state, filteredRows);
 };
 
-export const setColumns = <Row, Key extends string = string>(
+export const setColumns = <
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
   state: Partial<MesaStateProps<Row, Key>>,
   columns: MesaColumn<Row, Key>[]
 ): Partial<MesaStateProps<Row, Key>> => {
@@ -76,7 +94,10 @@ export const setColumns = <Row, Key extends string = string>(
   return Object.assign({}, state, { columns, uiState });
 };
 
-export const setColumnOrder = <Row, Key extends string = string>(
+export const setColumnOrder = <
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
   state: Partial<MesaStateProps<Row, Key>>,
   columnOrder: string[]
 ): Partial<MesaStateProps<Row, Key>> | undefined => {
@@ -92,7 +113,10 @@ export const setColumnOrder = <Row, Key extends string = string>(
   return Object.assign({}, state, { uiState });
 };
 
-export const setActions = <Row, Key extends string = string>(
+export const setActions = <
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
   state: Partial<MesaStateProps<Row, Key>>,
   actions: NonNullable<MesaStateProps<Row, Key>['actions']>
 ): Partial<MesaStateProps<Row, Key>> => {
@@ -101,7 +125,10 @@ export const setActions = <Row, Key extends string = string>(
   return Object.assign({}, state, { actions });
 };
 
-export const setUiState = <Row, Key extends string = string>(
+export const setUiState = <
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
   state: Partial<MesaStateProps<Row, Key>>,
   uiState: NonNullable<MesaStateProps<Row, Key>['uiState']>
 ): Partial<MesaStateProps<Row, Key>> => {
@@ -110,7 +137,10 @@ export const setUiState = <Row, Key extends string = string>(
   return Object.assign({}, state, { uiState });
 };
 
-export const setOptions = <Row, Key extends string = string>(
+export const setOptions = <
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
   state: Partial<MesaStateProps<Row, Key>>,
   options: NonNullable<MesaStateProps<Row, Key>['options']>
 ): Partial<MesaStateProps<Row, Key>> => {
@@ -119,7 +149,10 @@ export const setOptions = <Row, Key extends string = string>(
   return Object.assign({}, state, { options });
 };
 
-export const setHeaderWrapperStyle = <Row, Key extends string = string>(
+export const setHeaderWrapperStyle = <
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
   state: Partial<MesaStateProps<Row, Key>>,
   headerWrapperStyle: CSSProperties
 ): Partial<MesaStateProps<Row, Key>> => {
@@ -135,7 +168,10 @@ export const setHeaderWrapperStyle = <Row, Key extends string = string>(
   return Object.assign({}, state, { headerWrapperStyle });
 };
 
-export const setEventHandlers = <Row, Key extends string = string>(
+export const setEventHandlers = <
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
   state: Partial<MesaStateProps<Row, Key>>,
   eventHandlers: NonNullable<MesaStateProps<Row, Key>['eventHandlers']>
 ): Partial<MesaStateProps<Row, Key>> => {
@@ -151,78 +187,68 @@ export const setEventHandlers = <Row, Key extends string = string>(
   return Object.assign({}, state, { eventHandlers });
 };
 
-export const getSelectedRows = <Row, Key extends string = string>(
+export const getSelectedRows = <
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
   state: Partial<MesaStateProps<Row, Key>>,
   onlyFilteredRows = true
 ): Row[] => {
-  if (onlyFilteredRows && !('filteredRows' in state))
-    return (
-      missingFromState(
-        'getSelectedRows',
-        'filteredRows',
-        state as Record<string, unknown>
-      ) || (state as never)
-    );
+  if (onlyFilteredRows && !('filteredRows' in state)) {
+    missingFromState('getSelectedRows', 'filteredRows', state as object);
+    return [];
+  }
   const { filteredRows } = state;
-  if (onlyFilteredRows && !Array.isArray(filteredRows))
-    return (badType(
-      'getSelectedRows',
-      'filteredRows',
-      'array',
-      typeof filteredRows
-    ) || state) as never;
+  if (onlyFilteredRows && !Array.isArray(filteredRows)) {
+    badType('getSelectedRows', 'filteredRows', 'array', typeof filteredRows);
+    return [];
+  }
 
-  if (!onlyFilteredRows && !('rows' in state))
-    return (
-      missingFromState(
-        'getSelectedRows',
-        'filteredRows',
-        state as Record<string, unknown>
-      ) || (state as never)
-    );
+  if (!onlyFilteredRows && !('rows' in state)) {
+    missingFromState('getSelectedRows', 'rows', state as object);
+    return [];
+  }
   const { rows } = state;
-  if (!onlyFilteredRows && !Array.isArray(rows))
-    return (
-      badType('getSelectedRows', 'rows', 'array', typeof rows) ||
-      (state as never)
-    );
+  if (!onlyFilteredRows && !Array.isArray(rows)) {
+    badType('getSelectedRows', 'rows', 'array', typeof rows);
+    return [];
+  }
 
-  if (!('options' in state))
-    return (
-      missingFromState(
-        'getSelectedRows',
-        'options',
-        state as Record<string, unknown>
-      ) || (state as never)
-    );
-  if (typeof state.options !== 'object')
-    return (badType(
-      'getSelectedRows',
-      'options',
-      'object',
-      typeof state.options
-    ) || state) as never;
+  if (!('options' in state)) {
+    missingFromState('getSelectedRows', 'options', state as object);
+    return [];
+  }
+  if (typeof state.options !== 'object') {
+    badType('getSelectedRows', 'options', 'object', typeof state.options);
+    return [];
+  }
   const { options } = state;
 
-  if (!options || !('isRowSelected' in options))
-    return (missingFromState(
+  if (!options || !('isRowSelected' in options)) {
+    missingFromState(
       'getSelectedRows',
       'options.isRowSelected',
-      (options as Record<string, unknown>) || {}
-    ) || state) as never;
+      (options as object) || {}
+    );
+    return [];
+  }
   const { isRowSelected } = options;
-  if (typeof isRowSelected !== 'function')
-    return (badType(
+  if (typeof isRowSelected !== 'function') {
+    badType(
       'getSelectedRows',
       'options.isRowSelected',
       'function',
       typeof isRowSelected
-    ) || state) as never;
+    );
+    return [];
+  }
 
   return (onlyFilteredRows ? filteredRows : rows)!.filter(isRowSelected);
 };
 
-export const getRows = <Row>(state: Partial<MesaStateProps<Row>>): Row[] => {
+export const getRows = <Row extends Record<PropertyKey, any>>(
+  state: Partial<MesaStateProps<Row>>
+): Row[] => {
   const { rows } = state;
   if (!Array.isArray(rows)) {
     badType('getRows', 'rows', 'array', typeof rows);
@@ -231,7 +257,7 @@ export const getRows = <Row>(state: Partial<MesaStateProps<Row>>): Row[] => {
   return rows;
 };
 
-export const getFilteredRows = <Row>(
+export const getFilteredRows = <Row extends Record<PropertyKey, any>>(
   state: Partial<MesaStateProps<Row>>
 ): Row[] => {
   const { filteredRows } = state;
@@ -242,7 +268,10 @@ export const getFilteredRows = <Row>(
   return filteredRows;
 };
 
-export const getColumns = <Row, Key extends string = string>(
+export const getColumns = <
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
   state: Partial<MesaStateProps<Row, Key>>
 ): MesaColumn<Row, Key>[] => {
   const { columns } = state;
@@ -253,7 +282,10 @@ export const getColumns = <Row, Key extends string = string>(
   return columns;
 };
 
-export const getActions = <Row, Key extends string = string>(
+export const getActions = <
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
   state: Partial<MesaStateProps<Row, Key>>
 ): NonNullable<MesaStateProps<Row, Key>['actions']> => {
   const { actions } = state;
@@ -264,7 +296,10 @@ export const getActions = <Row, Key extends string = string>(
   return actions;
 };
 
-export const getOptions = <Row, Key extends string = string>(
+export const getOptions = <
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
   state: Partial<MesaStateProps<Row, Key>>
 ): NonNullable<MesaStateProps<Row, Key>['options']> => {
   const { options } = state;
@@ -275,7 +310,10 @@ export const getOptions = <Row, Key extends string = string>(
   return options;
 };
 
-export const getEventHandlers = <Row, Key extends string = string>(
+export const getEventHandlers = <
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
   state: Partial<MesaStateProps<Row, Key>>
 ): NonNullable<MesaStateProps<Row, Key>['eventHandlers']> => {
   const { eventHandlers } = state;
@@ -291,7 +329,10 @@ export const getEventHandlers = <Row, Key extends string = string>(
   return eventHandlers;
 };
 
-export const getUiState = <Row, Key extends string = string>(
+export const getUiState = <
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
   state: Partial<MesaStateProps<Row, Key>>
 ): NonNullable<MesaStateProps<Row, Key>['uiState']> => {
   const { uiState } = state;
@@ -307,7 +348,10 @@ export const getUiState = <Row, Key extends string = string>(
 /**
  * Creates a Mesa state object from the provided options
  */
-export const create = <Row, Key extends string = string>(
+export const create = <
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
   {
     rows,
     filteredRows,
@@ -348,7 +392,10 @@ export const create = <Row, Key extends string = string>(
 
 /*    Deeper, more specific setters   */
 
-export const setSelectionPredicate = <Row, Key extends string = string>(
+export const setSelectionPredicate = <
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
   state: Partial<MesaStateProps<Row, Key>>,
   predicate: (row: Row) => boolean
 ): Partial<MesaStateProps<Row, Key>> => {
@@ -367,7 +414,10 @@ export const setSelectionPredicate = <Row, Key extends string = string>(
   return Object.assign({}, state, { options });
 };
 
-export const setSearchQuery = <Row, Key extends string = string>(
+export const setSearchQuery = <
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
   state: Partial<MesaStateProps<Row, Key>>,
   searchQuery: string | null
 ): Partial<MesaStateProps<Row, Key>> => {
@@ -383,7 +433,10 @@ export const setSearchQuery = <Row, Key extends string = string>(
   return Object.assign({}, state, { uiState });
 };
 
-export const setEmptinessCulprit = <Row, Key extends string = string>(
+export const setEmptinessCulprit = <
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
   state: Partial<MesaStateProps<Row, Key>>,
   emptinessCulprit:
     | NonNullable<MesaStateProps<Row, Key>['uiState']>['emptinessCulprit']
@@ -405,7 +458,10 @@ export const setEmptinessCulprit = <Row, Key extends string = string>(
   return Object.assign({}, state, { uiState });
 };
 
-export const setSortColumnKey = <Row, Key extends string = string>(
+export const setSortColumnKey = <
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
   state: Partial<MesaStateProps<Row, Key>>,
   columnKey: string
 ): Partial<MesaStateProps<Row, Key>> => {
@@ -425,7 +481,10 @@ export const setSortColumnKey = <Row, Key extends string = string>(
   return Object.assign({}, state, { uiState });
 };
 
-export const setSortDirection = <Row, Key extends string = string>(
+export const setSortDirection = <
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
   state: Partial<MesaStateProps<Row, Key>>,
   direction: 'asc' | 'desc'
 ): Partial<MesaStateProps<Row, Key>> => {
@@ -453,7 +512,10 @@ export const setSortDirection = <Row, Key extends string = string>(
   return Object.assign({}, state, { uiState });
 };
 
-export const moveColumnToIndex = <Row, Key extends string = string>(
+export const moveColumnToIndex = <
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
   state: Partial<MesaStateProps<Row, Key>>,
   columnKey: Key,
   toIndex: number
@@ -470,11 +532,7 @@ export const moveColumnToIndex = <Row, Key extends string = string>(
     );
   if (!('columns' in state))
     return (
-      missingFromState(
-        'changeColumnIndex',
-        'columns',
-        state as Record<string, unknown>
-      ) || state
+      missingFromState('changeColumnIndex', 'columns', state as object) || state
     );
 
   const oldColumns = getColumns(state);
@@ -490,7 +548,10 @@ export const moveColumnToIndex = <Row, Key extends string = string>(
   return Object.assign({}, state, { columns });
 };
 
-export const callActionOnSelectedRows = <Row, Key extends string = string>(
+export const callActionOnSelectedRows = <
+  Row extends Record<PropertyKey, any>,
+  Key extends string = string
+>(
   state: Partial<MesaStateProps<Row, Key>>,
   action: (row: Row) => void,
   batch = false,
@@ -501,7 +562,7 @@ export const callActionOnSelectedRows = <Row, Key extends string = string>(
       missingFromState(
         'callActionOnSelectedRows',
         'selectedRows',
-        state as Record<string, unknown>
+        state as object
       ) || state
     );
   if (typeof action !== 'function')
