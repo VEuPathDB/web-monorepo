@@ -180,30 +180,25 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
           formStatus === 'pending') && (
           <div>
             <h3>My subscription group</h3>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'max-content 1fr',
-                rowGap: '0.5em',
-                columnGap: '1em',
-                alignItems: 'baseline',
-                marginBottom: '1em',
-                minWidth: 800, // accommodate the really long names.
-              }}
-            >
+            <div className="label-value-grid">
               <h4>Group name:</h4>
-              <h4 style={{ fontWeight: 400 }}>{validGroup.groupName}</h4>
+              <span className="h4-style-light" style={{ fontWeight: 400 }}>
+                {validGroup.groupName}
+              </span>
               <h4>PI(s) or Group lead(s):</h4>
               {validGroup.groupLeads.length > 0 ? (
-                <h4 style={{ fontWeight: 400 }}>
+                <span className="h4-style-light" style={{ fontWeight: 400 }}>
                   {validGroup.groupLeads
                     .map((lead) => `${lead.name} (${lead.organization})`)
                     .join(', ')}
-                </h4>
+                </span>
               ) : (
-                <h4 style={{ fontStyle: 'italic', fontWeight: 400 }}>
+                <span
+                  className="h4-style-light"
+                  style={{ fontStyle: 'italic', fontWeight: 400 }}
+                >
                   None provided
-                </h4>
+                </span>
               )}
               {validGroup.subscriberName && (
                 <>
@@ -218,9 +213,9 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                       </>
                     )}
                   </h4>
-                  <h4 style={{ fontWeight: 400 }}>
+                  <span className="h4-style-light" style={{ fontWeight: 400 }}>
                     {validGroup.subscriberName}
-                  </h4>
+                  </span>
                 </>
               )}
             </div>
@@ -239,11 +234,10 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
         <div>
           <h3>Subscription group management</h3>
           <span
+            className="additional-info"
             style={{
-              fontStyle: 'italic',
-              fontSize: '1.1em',
-              color: colors.gray[700],
               lineHeight: '1.4em',
+              color: colors.gray[700],
             }}
           >
             If you would like to make updates to the subscription group(s) you
@@ -252,53 +246,47 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
           </span>
           {managedGroups.map((group) => (
             <div style={{ marginTop: '1em' }}>
-              <h4 style={{ fontWeight: 500 }}>{group.groupName}</h4>
+              <span className="h4-style-light" style={{ fontWeight: 500 }}>
+                {group.groupName}
+              </span>
               <div
+                className="label-value-grid"
                 style={{
-                  display: 'grid',
                   gridTemplateColumns: '0.1fr 1fr',
                   rowGap: '0em',
-                  columnGap: '1em',
-                  alignItems: 'baseline',
-                  marginBottom: '1em',
-                  minWidth: 800, // accommodate the really long names.
-                  marginLeft: '1em',
                 }}
               >
                 <h4>Leads:</h4>
                 {group.groupLeads.map((u) => (
                   <>
-                    <h4>
+                    <span className="h4-style-light">
                       {u.name} ({u.organization})
-                    </h4>
+                    </span>
+                    {/* Extra div added so that the leads all show up in the right column */}
                     <div></div>
                   </>
                 ))}
               </div>
               <div
+                className="label-value-grid"
                 style={{
-                  display: 'grid',
                   gridTemplateColumns: '0.1fr 1fr',
                   rowGap: '0em',
-                  columnGap: '1em',
-                  alignItems: 'baseline',
-                  marginBottom: '1em',
-                  minWidth: 800, // accommodate the really long names.
-                  marginLeft: '1em',
                 }}
               >
                 <h4>Members:</h4>
                 {group.members.length > 0 ? (
                   group.members.map((u) => (
                     <>
-                      <h4>
+                      <span className="h4-style-light">
                         {u.name} ({u.organization})
-                      </h4>
+                      </span>
+                      {/* Extra div added so that the members all show up in the right column */}
                       <div></div>
                     </>
                   ))
                 ) : (
-                  <h4>No members</h4>
+                  <span className="h4-style-light">No members</span>
                 )}
               </div>
             </div>
@@ -407,10 +395,9 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
             </div>
             <span
               style={{
-                fontStyle: 'italic',
-                fontSize: '1.1em',
                 color: colors.gray[700],
               }}
+              className="additional-info"
             >
               Don't see your group listed? Ask your group lead or administrator
               to{' '}
