@@ -87,15 +87,13 @@ class RecordUI extends Component<RecordUIProps, RecordUIState> {
   }
 
   monitorActiveSection(): void {
-    window.addEventListener('scroll', this._updateActiveSection, {
-      passive: true,
-    } as any);
+    const options: AddEventListenerOptions = { passive: true };
+    window.addEventListener('scroll', this._updateActiveSection, options);
   }
 
   unmonitorActiveSection(): void {
-    window.removeEventListener('scroll', this._updateActiveSection, {
-      passive: true,
-    } as any);
+    const options: AddEventListenerOptions = { passive: true };
+    window.removeEventListener('scroll', this._updateActiveSection, options);
   }
 
   getHeaderOffset(): number {
