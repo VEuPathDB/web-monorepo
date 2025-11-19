@@ -76,7 +76,9 @@ function RecordTableSection(props: Props) {
     >
       <ErrorBoundary>
         <RecordTableDescription
-          {...({ ontologyProperties, table, record, recordClass } as any)}
+          table={table}
+          record={record}
+          recordClass={recordClass}
         />
         {isError ? (
           <p style={{ color: 'darkred', fontStyle: 'italic' }}>
