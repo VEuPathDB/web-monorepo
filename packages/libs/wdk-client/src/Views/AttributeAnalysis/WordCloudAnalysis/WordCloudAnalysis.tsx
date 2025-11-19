@@ -9,7 +9,7 @@ import { RankRange, Sort } from '../../../Actions/WordCloudAnalysisActions';
 
 import '../../../Views/AttributeAnalysis/WordCloudAnalysis/WordCloudAnalysis.scss';
 
-export interface Tag {
+export interface Tag extends Record<string, string | number> {
   word: string;
   count: number;
 }
