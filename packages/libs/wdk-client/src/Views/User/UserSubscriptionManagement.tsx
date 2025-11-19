@@ -172,6 +172,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
           </>
         )}
       </div>
+
       {/* Show subscription status only when form is clean (saved state) */}
       {validGroup &&
         (formStatus === 'new' ||
@@ -237,26 +238,68 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
       {managedGroups && managedGroups.length > 0 && (
         <div>
           <h3>Subscription group management</h3>
+          <span
+            style={{
+              fontStyle: 'italic',
+              fontSize: '1.1em',
+              color: colors.gray[700],
+              lineHeight: '1.4em',
+            }}
+          >
+            If you would like to make updates to the subscription group(s) you
+            manage, such as removing members or editing the group name, please
+            contact us at <strong>subscriptions@veupathdb.org</strong>
+          </span>
           {managedGroups.map((group) => (
-            <div>
-              <h4>{group.groupName}</h4>
-              <div style={{ margin: '0 30px' }}>
-                <h4>Leads</h4>
-                <ul>
-                  {group.groupLeads.map((u) => (
-                    <li>
+            <div style={{ marginTop: '1em' }}>
+              <h4 style={{ fontWeight: 500 }}>{group.groupName}</h4>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '0.1fr 1fr',
+                  rowGap: '0em',
+                  columnGap: '1em',
+                  alignItems: 'baseline',
+                  marginBottom: '1em',
+                  minWidth: 800, // accommodate the really long names.
+                  marginLeft: '1em',
+                }}
+              >
+                <h4>Leads:</h4>
+                {group.groupLeads.map((u) => (
+                  <>
+                    <h4>
                       {u.name} ({u.organization})
-                    </li>
-                  ))}
-                </ul>
-                <h4>Members</h4>
-                <ul>
-                  {group.members.map((u) => (
-                    <li>
-                      {u.name} ({u.organization})
-                    </li>
-                  ))}
-                </ul>
+                    </h4>
+                    <div></div>
+                  </>
+                ))}
+              </div>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '0.1fr 1fr',
+                  rowGap: '0em',
+                  columnGap: '1em',
+                  alignItems: 'baseline',
+                  marginBottom: '1em',
+                  minWidth: 800, // accommodate the really long names.
+                  marginLeft: '1em',
+                }}
+              >
+                <h4>Members:</h4>
+                {group.members.length > 0 ? (
+                  group.members.map((u) => (
+                    <>
+                      <h4>
+                        {u.name} ({u.organization})
+                      </h4>
+                      <div></div>
+                    </>
+                  ))
+                ) : (
+                  <h4>No members</h4>
+                )}
               </div>
             </div>
           ))}
