@@ -12,6 +12,7 @@ import {
 import React from 'react';
 import Toggle from '../../Components/Icon/Toggle';
 import { MesaController as Mesa } from '@veupathdb/coreui/lib/components/Mesa';
+import type { MesaColumn } from '@veupathdb/coreui/lib/components/Mesa/types';
 import RealTimeSearchBox from '../../Components/SearchBox/RealTimeSearchBox';
 import ErrorBoundary from '../../Core/Controllers/ErrorBoundary';
 import { safeHtml } from '../../Utils/ComponentUtils';

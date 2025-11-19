@@ -142,11 +142,13 @@ export type Filter = MemberFilter | RangeFilter | MultiFilter;
 
 export type FilterWithFieldDisplayName = Filter & { fieldDisplayName?: string };
 
-export type ValueCounts = Array<{
-  value: string | number | null;
-  count: number;
-  filteredCount: number;
-}>;
+export type ValueCounts = Array<
+  {
+    value: string | number | null;
+    count: number;
+    filteredCount: number;
+  } & Record<string, any>
+>;
 
 export type OntologyTermSummary = {
   term: string;

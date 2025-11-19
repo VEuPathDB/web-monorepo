@@ -4,6 +4,7 @@ import React from 'react';
 import { makeClassNameHelper } from '../../Utils/ComponentUtils';
 import { Seq } from '../../Utils/IterableUtils';
 import { MesaController as Mesa } from '@veupathdb/coreui/lib/components/Mesa';
+import type { MesaColumn } from '@veupathdb/coreui/lib/components/Mesa/types';
 import RealTimeSearchBox from '../../Components/SearchBox/RealTimeSearchBox';
 import StackedBar from '../../Components/AttributeFilter/StackedBar';
 import {
@@ -66,7 +67,7 @@ interface MultiFieldFilterState {
 /**
  * Type for row data used in Mesa table
  */
-interface TableRow {
+interface TableRow extends Record<string, any> {
   summary: OntologyTermSummary;
   value?: string | number | null;
   filter?: Filter;
