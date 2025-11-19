@@ -36,7 +36,7 @@ interface DistributionEntry {
   filteredCount: number;
 }
 
-interface UIState {
+export interface UIState {
   xaxisMin?: number;
   xaxisMax?: number;
   yaxisMin?: number;
