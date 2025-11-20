@@ -137,7 +137,7 @@ function ShareAction(props: ActionProps) {
         />
         <Link
           style={{ display: 'none' }}
-          innerRef={anchorRef as any}
+          innerRef={anchorRef}
           to={`/workspace/strategies/import/${strategy.signature}`}
         >
           link

@@ -1,7 +1,7 @@
 import React from 'react';
 import { clamp, debounce, get, noop } from 'lodash';
 
-import Histogram from '../../Components/AttributeFilter/Histogram';
+import Histogram, { UIState } from '../../Components/AttributeFilter/Histogram';
 import FilterLegend from '../../Components/AttributeFilter/FilterLegend';
 import UnknownCount from '../../Components/AttributeFilter/UnknownCount';
 import {
@@ -21,6 +21,15 @@ interface DistributionEntry {
 }
 
 /**
+ * Converted distribution entry with numeric values for Histogram component
+ */
+interface ConvertedDistributionEntry {
+  value: number;
+  count: number;
+  filteredCount: number;
+}
+
+/**
  * Range value type for min/max values
  */
 interface RangeValue {
@@ -35,7 +44,7 @@ interface HistogramFieldProps {
   distribution: DistributionEntry[];
   toFilterValue: (value: number) => number | string;
   toHistogramValue: (value: number | string) => number;
-  selectByDefault: boolean;
+  selectByDefault?: boolean;
   onChange: (
     activeField: Field,
     range: RangeValue,
@@ -45,12 +54,12 @@ interface HistogramFieldProps {
   activeField: Field;
   activeFieldState: {
     summary: OntologyTermSummary;
-    [key: string]: any;
-  };
+  } & UIState;
   filter?: RangeFilter;
   overview: React.ReactNode;
   displayName: string;
   unknownCount: number;
+  dataCount?: number;
   timeformat?: string;
   onRangeScaleChange?: (activeField: Field, range: any) => void;
   histogramTruncateYAxisDefault?: boolean;
@@ -77,7 +86,7 @@ export default class HistogramField extends React.Component<
   HistogramFieldProps,
   HistogramFieldState
 > {
-  convertedDistribution: DistributionEntry[] = [];
+  convertedDistribution: ConvertedDistributionEntry[] = [];
   convertedDistributionRange: { min: number; max: number } = {
     min: 0,
     max: 0,
@@ -291,14 +300,6 @@ export default class HistogramField extends React.Component<
     var selectedMin = min == null ? null : this.props.toHistogramValue(min);
     var selectedMax = max == null ? null : this.props.toHistogramValue(max);
 
-    var selectionTotal =
-      filter &&
-      (filter as any).selection &&
-      ((filter as any).selection as any).length;
-
-    var selection =
-      selectionTotal != null ? ' (' + selectionTotal + ' selected) ' : null;
-
     return (
       <div className="range-filter">
         <div className="head">
@@ -335,16 +336,21 @@ export default class HistogramField extends React.Component<
                   Include {unknownCount} Unknown
                 </label>
               )}
-              <span className="selection-total">{selection}</span>
             </div>
           </div>
-          <div>
-            <UnknownCount {...(this.props as any)} />
-          </div>
+          {this.props.dataCount && (
+            <div>
+              <UnknownCount
+                activeFieldState={this.props.activeFieldState}
+                dataCount={this.props.dataCount}
+                displayName={this.props.displayName}
+              />
+            </div>
+          )}
         </div>
 
         <Histogram
-          distribution={this.convertedDistribution as any}
+          distribution={this.convertedDistribution}
           onSelected={this.updateFilterValueFromSelection}
           onSelecting={noop}
           selectedMin={selectedMin}
@@ -353,7 +359,7 @@ export default class HistogramField extends React.Component<
           timeformat={this.props.timeformat}
           xaxisLabel={activeField.display}
           yaxisLabel={displayName}
-          uiState={activeFieldState as any}
+          uiState={activeFieldState}
           onUiStateChange={this.handleRangeScaleChange}
           truncateYAxis={this.props.histogramTruncateYAxisDefault}
           defaultScaleYAxis={this.props.histogramScaleYAxisDefault}

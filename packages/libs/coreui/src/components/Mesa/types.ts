@@ -137,20 +137,21 @@ export interface MesaColumn<
   Value = DefaultColumnValue<Row, Key>
 > {
   key: Key;
-  name?: string;
+  name?: ReactNode;
   type?: string;
   primary?: boolean;
   searchable?: boolean;
   sortable?: boolean;
   resizeable?: boolean;
   moveable?: boolean;
-  helpText?: string;
+  helpText?: ReactNode;
   htmlHelp?: string;
   style?: CSSProperties;
   headingStyle?: CSSProperties;
   className?: string;
   width?: CSSProperties['width'];
   hidden?: boolean;
+  inline?: boolean;
   truncated?: boolean | string;
   getValue?: (props: { row: Row; key: Key }) => Value;
   renderCell?: (cellProps: CellProps<Row, Key, Value>) => ReactNode;
@@ -164,7 +165,18 @@ export interface MesaColumn<
           HelpTrigger: () => ReactElement | null;
           ClickBoundary: (props: { children: ReactNode }) => ReactElement;
         }
-      ) => ReactNode);
+      ) => ReactNode)
+    | Array<
+        (
+          column: MesaColumn<Row, Key>,
+          columnIndex: number,
+          components: {
+            SortTrigger: () => ReactElement | null;
+            HelpTrigger: () => ReactElement | null;
+            ClickBoundary: (props: { children: ReactNode }) => ReactElement;
+          }
+        ) => ReactNode
+      >;
   wrapCustomHeadings?: (props: {
     column: MesaColumn<Row, Key, Value>;
     columnIndex: number;

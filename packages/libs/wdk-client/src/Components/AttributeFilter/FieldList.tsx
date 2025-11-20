@@ -141,40 +141,39 @@ export default class FieldList extends React.Component<
     return (
       <div className="field-list">
         <CheckboxTree<TreeNode<Field>>
-          {...({
-            ref: this.handleCheckboxTreeRef,
-            autoFocusSearchBox: autoFocus,
-            tree: fieldTree,
-            expandedList: this.state.expandedNodes,
-            getNodeId: this.getNodeId,
-            getNodeChildren: this.getNodeChildren,
-            onExpansionChange: this.handleExpansionChange,
-            isSelectable: false,
-            isSearchable: true,
-            searchBoxPlaceholder: 'Find a variable',
-            searchBoxHelp: makeSearchHelpText(
-              'the variables by name or description'
-            ),
-            searchTerm: this.state.searchTerm,
-            onSearchTermChange: this.handleSearchTermChange,
-            searchPredicate: this.searchPredicate,
-            renderNode: (node: FieldTreeNode) => (
-              <FieldNode
-                node={node}
-                searchTerm={this.state.searchTerm}
-                isActive={node.field.term === activeField?.term}
-                handleFieldSelect={this.handleFieldSelect}
-              />
-            ),
-            linksPosition: LinksPosition.Top,
-            styleOverrides: {
-              treeNode: {
-                nodeWrapper: {
-                  padding: 0,
-                },
+          autoFocusSearchBox={autoFocus}
+          tree={fieldTree}
+          expandedList={this.state.expandedNodes}
+          getNodeId={this.getNodeId}
+          getNodeChildren={this.getNodeChildren}
+          onExpansionChange={this.handleExpansionChange}
+          isSelectable={false}
+          selectedList={[]}
+          onSelectionChange={() => {}}
+          isSearchable={true}
+          searchBoxPlaceholder="Find a variable"
+          searchBoxHelp={makeSearchHelpText(
+            'the variables by name or description'
+          )}
+          searchTerm={this.state.searchTerm}
+          onSearchTermChange={this.handleSearchTermChange}
+          searchPredicate={this.searchPredicate}
+          renderNode={(node: FieldTreeNode) => (
+            <FieldNode
+              node={node}
+              searchTerm={this.state.searchTerm}
+              isActive={node.field.term === activeField?.term}
+              handleFieldSelect={this.handleFieldSelect}
+            />
+          )}
+          linksPosition={LinksPosition.Top}
+          styleOverrides={{
+            treeNode: {
+              nodeWrapper: {
+                padding: 0,
               },
             },
-          } as any)}
+          }}
         />
       </div>
     );

@@ -12,6 +12,7 @@ import {
 import React from 'react';
 import Toggle from '../../Components/Icon/Toggle';
 import { MesaController as Mesa } from '@veupathdb/coreui/lib/components/Mesa';
+import type { MesaColumn } from '@veupathdb/coreui/lib/components/Mesa/types';
 import RealTimeSearchBox from '../../Components/SearchBox/RealTimeSearchBox';
 import ErrorBoundary from '../../Core/Controllers/ErrorBoundary';
 import { safeHtml } from '../../Utils/ComponentUtils';
@@ -837,113 +838,110 @@ class MembershipTable extends React.PureComponent<
         eventHandlers={eventHandlers}
         rows={rows}
         filteredRows={filteredRows}
-        columns={
-          [
-            {
-              key: 'checked',
-              sortable: false,
-              width: '32px',
-              renderHeading: this.renderCheckboxHeading,
-              renderCell: this.renderCheckboxCell,
-            },
-            {
-              key: 'value',
-              headingStyle: { minWidth: '12em' },
-              inline: true,
-              sortable: useSort,
-              wrapCustomHeadings: ({
-                headerRowIndex,
-              }: {
-                headerRowIndex: number;
-              }) => headerRowIndex === 0,
-              renderHeading: useSearch
-                ? [this.renderValueHeading, this.renderValueHeadingSearch]
-                : this.renderValueHeading,
-              renderCell: this.renderValueCell,
-            },
-            {
-              key: 'filteredCount',
-              sortable: useSort,
-              headingStyle: { maxWidth: '12em' },
-              helpText: (
-                <div>
-                  The number of <em>{this.props.displayName}</em> that match the
-                  filters applied for other variables
-                  <br />
-                  and have the given <em>
-                    {this.props.activeField.display}
-                  </em>{' '}
-                  value
-                </div>
-              ),
-              wrapCustomHeadings: ({
-                headerRowIndex,
-              }: {
-                headerRowIndex: number;
-              }) => headerRowIndex === 0,
-              renderHeading:
-                this.props.activeFieldState.summary.internalsFilteredCount !=
-                null
-                  ? [
-                      this.renderFilteredCountHeading1,
-                      this.renderFilteredCountHeading2,
-                    ]
-                  : this.renderFilteredCountHeading1,
-              renderCell: this.renderFilteredCountCell,
-            },
-            {
-              key: 'count',
-              sortable: useSort,
-              headingStyle: { maxWidth: '12em' },
-              helpText: (
-                <div>
-                  The number of <em>{this.props.displayName}</em> in the dataset
-                  that have the given <em>{this.props.activeField.display}</em>{' '}
-                  value
-                </div>
-              ),
-              wrapCustomHeadings: ({
-                headerRowIndex,
-              }: {
-                headerRowIndex: number;
-              }) => headerRowIndex === 0,
-              renderHeading:
-                this.props.activeFieldState.summary.internalsCount != null
-                  ? [
-                      this.renderUnfilteredCountHeading1,
-                      this.renderUnfilteredCountHeading2,
-                    ]
-                  : this.renderUnfilteredCountHeading1,
-              renderCell: this.renderUnfilteredCountCell,
-            },
-            {
-              key: 'distribution',
-              name: 'Distribution',
-              width: '30%',
-              helpText: (
-                <div>
-                  The subset of <em>{this.props.displayName}</em> that have the
-                  given <em>{this.props.activeField.display}</em> value when
-                  other filters have been applied
-                </div>
-              ),
-              renderCell: this.renderDistributionCell,
-            },
-            {
-              key: '%',
-              name: '',
-              width: '4em',
-              helpText: (
-                <div>
-                  The subset of <em>{this.props.displayName}</em> out of all{' '}
-                  <em>{this.props.displayName}</em> that have the given{' '}
-                  <em>{this.props.activeField.display}</em> value
-                </div>
-              ),
-              renderCell: this.renderPrecentageCell,
-            },
-          ] as any
-        }
+        columns={[
+          {
+            key: 'checked',
+            sortable: false,
+            width: '32px',
+            renderHeading: this.renderCheckboxHeading,
+            renderCell: this.renderCheckboxCell,
+          },
+          {
+            key: 'value',
+            headingStyle: { minWidth: '12em' },
+            inline: true,
+            sortable: useSort,
+            wrapCustomHeadings: ({
+              headerRowIndex,
+            }: {
+              headerRowIndex: number;
+            }) => headerRowIndex === 0,
+            renderHeading: useSearch
+              ? [this.renderValueHeading, this.renderValueHeadingSearch]
+              : this.renderValueHeading,
+            renderCell: this.renderValueCell,
+          },
+          {
+            key: 'filteredCount',
+            sortable: useSort,
+            headingStyle: { maxWidth: '12em' },
+            helpText: (
+              <div>
+                The number of <em>{this.props.displayName}</em> that match the
+                filters applied for other variables
+                <br />
+                and have the given <em>
+                  {this.props.activeField.display}
+                </em>{' '}
+                value
+              </div>
+            ),
+            wrapCustomHeadings: ({
+              headerRowIndex,
+            }: {
+              headerRowIndex: number;
+            }) => headerRowIndex === 0,
+            renderHeading:
+              this.props.activeFieldState.summary.internalsFilteredCount != null
+                ? [
+                    this.renderFilteredCountHeading1,
+                    this.renderFilteredCountHeading2,
+                  ]
+                : this.renderFilteredCountHeading1,
+            renderCell: this.renderFilteredCountCell,
+          },
+          {
+            key: 'count',
+            sortable: useSort,
+            headingStyle: { maxWidth: '12em' },
+            helpText: (
+              <div>
+                The number of <em>{this.props.displayName}</em> in the dataset
+                that have the given <em>{this.props.activeField.display}</em>{' '}
+                value
+              </div>
+            ),
+            wrapCustomHeadings: ({
+              headerRowIndex,
+            }: {
+              headerRowIndex: number;
+            }) => headerRowIndex === 0,
+            renderHeading:
+              this.props.activeFieldState.summary.internalsCount != null
+                ? [
+                    this.renderUnfilteredCountHeading1,
+                    this.renderUnfilteredCountHeading2,
+                  ]
+                : this.renderUnfilteredCountHeading1,
+            renderCell: this.renderUnfilteredCountCell,
+          },
+          {
+            key: 'distribution',
+            name: 'Distribution',
+            width: '30%',
+            helpText: (
+              <div>
+                The subset of <em>{this.props.displayName}</em> that have the
+                given <em>{this.props.activeField.display}</em> value when other
+                filters have been applied
+              </div>
+            ),
+            renderCell: this.renderDistributionCell,
+          },
+          {
+            key: '%',
+            name: '',
+            width: '4em',
+            helpText: (
+              <div>
+                The subset of <em>{this.props.displayName}</em> out of all{' '}
+                <em>{this.props.displayName}</em> that have the given{' '}
+                <em>{this.props.activeField.display}</em> value
+              </div>
+            ),
+            renderCell: this.renderPrecentageCell,
+          },
+        ]}
       ></Mesa>
     );
   }

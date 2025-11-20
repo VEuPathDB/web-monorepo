@@ -16,7 +16,10 @@ import {
 } from '../../Actions/AttributeAnalysisActions';
 
 import '../../Views/AttributeAnalysis/AttributeAnalysisTabs.scss';
-import { MesaColumn } from '@veupathdb/coreui/lib/components/Mesa/types';
+import {
+  MesaColumn,
+  MesaSortObject,
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 
 export interface TableState<T extends string = string> {
   currentPage: number;
@@ -123,13 +126,10 @@ export default class AttributeAnalysisTabs<
                       onRowsPerPageChange: this.onRowsPerPageChange,
                     },
                     uiState: {
-                      // Assertion needed: Mesa's conditional type for MesaSortObject
-                      // cannot be satisfied at compile time, but the object structure
-                      // is correct at runtime
                       sort: {
                         columnKey: tableState.sort.key,
                         direction: tableState.sort.direction,
-                      } as any,
+                      } as MesaSortObject<T extends string ? T : string>,
                       pagination: {
                         currentPage,
                         rowsPerPage,

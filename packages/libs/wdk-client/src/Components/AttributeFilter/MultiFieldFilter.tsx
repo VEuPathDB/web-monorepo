@@ -4,6 +4,7 @@ import React from 'react';
 import { makeClassNameHelper } from '../../Utils/ComponentUtils';
 import { Seq } from '../../Utils/IterableUtils';
 import { MesaController as Mesa } from '@veupathdb/coreui/lib/components/Mesa';
+import type { MesaColumn } from '@veupathdb/coreui/lib/components/Mesa/types';
 import RealTimeSearchBox from '../../Components/SearchBox/RealTimeSearchBox';
 import StackedBar from '../../Components/AttributeFilter/StackedBar';
 import {
@@ -66,7 +67,7 @@ interface MultiFieldFilterState {
 /**
  * Type for row data used in Mesa table
  */
-interface TableRow {
+interface TableRow extends Record<string, any> {
   summary: OntologyTermSummary;
   value?: string | number | null;
   filter?: Filter;
@@ -462,88 +463,86 @@ export default class MultiFieldFilter extends React.Component<
           }}
           rows={rows}
           filteredRows={filteredRows}
-          columns={
-            [
-              {
-                key: 'display',
-                sortable: true,
-                // width: '40%',
-                wrapCustomHeadings: ({ headingRowIndex }: any) =>
-                  headingRowIndex === 0,
-                renderHeading: [
-                  this.renderDisplayHeadingName,
-                  this.renderDisplayHeadingSearch,
-                ],
-                renderCell: this.renderDisplayCell,
-              },
-              {
-                key: 'filteredCount',
-                className: cx('CountCell'),
-                sortable: true,
-                width: '13em',
-                helpText: (
-                  <div>
-                    The number of <em>{this.props.displayName}</em> that match
-                    the filters applied for other variables
-                    <br />
-                    and that have the given value
-                  </div>
-                ),
-                wrapCustomHeadings: ({ headingRowIndex }: any) =>
-                  headingRowIndex === 0,
-                name: (
-                  <div style={{ textAlign: 'center' }}>
-                    Subset of <i>{this.props.displayName}</i>
-                  </div>
-                ),
-                renderCell: this.renderCountCell,
-              },
-              {
-                key: 'count',
-                className: cx('CountCell'),
-                sortable: true,
-                width: '13em',
-                helpText: (
-                  <div>
-                    The number of <em>{this.props.displayName}</em> in the
-                    dataset that have the given value
-                  </div>
-                ),
-                wrapCustomHeadings: ({ headingRowIndex }: any) =>
-                  headingRowIndex === 0,
-                name: (
-                  <div style={{ textAlign: 'center' }}>
-                    All <i>{this.props.displayName}</i>
-                  </div>
-                ),
-                renderCell: this.renderCountCell,
-              },
-              {
-                key: 'distribution',
-                name: 'Distribution',
-                width: '30%',
-                helpText: (
-                  <div>
-                    The subset of <em>{this.props.displayName}</em> that have
-                    the given value when other filters have been applied
-                  </div>
-                ),
-                renderCell: this.renderDistributionCell,
-              },
-              {
-                key: '%',
-                width: '4em',
-                name: '%',
-                helpText: (
-                  <div>
-                    The subset of <em>{this.props.displayName}</em> out of all{' '}
-                    <em>{this.props.displayName}</em> that have the given value
-                  </div>
-                ),
-                renderCell: this.renderPercentCell,
-              },
-            ] as any
-          }
+          columns={[
+            {
+              key: 'display',
+              sortable: true,
+              // width: '40%',
+              wrapCustomHeadings: ({ headingRowIndex }: any) =>
+                headingRowIndex === 0,
+              renderHeading: [
+                this.renderDisplayHeadingName,
+                this.renderDisplayHeadingSearch,
+              ],
+              renderCell: this.renderDisplayCell,
+            },
+            {
+              key: 'filteredCount',
+              className: cx('CountCell'),
+              sortable: true,
+              width: '13em',
+              helpText: (
+                <div>
+                  The number of <em>{this.props.displayName}</em> that match the
+                  filters applied for other variables
+                  <br />
+                  and that have the given value
+                </div>
+              ),
+              wrapCustomHeadings: ({ headingRowIndex }: any) =>
+                headingRowIndex === 0,
+              name: (
+                <div style={{ textAlign: 'center' }}>
+                  Subset of <i>{this.props.displayName}</i>
+                </div>
+              ),
+              renderCell: this.renderCountCell,
+            },
+            {
+              key: 'count',
+              className: cx('CountCell'),
+              sortable: true,
+              width: '13em',
+              helpText: (
+                <div>
+                  The number of <em>{this.props.displayName}</em> in the dataset
+                  that have the given value
+                </div>
+              ),
+              wrapCustomHeadings: ({ headingRowIndex }: any) =>
+                headingRowIndex === 0,
+              name: (
+                <div style={{ textAlign: 'center' }}>
+                  All <i>{this.props.displayName}</i>
+                </div>
+              ),
+              renderCell: this.renderCountCell,
+            },
+            {
+              key: 'distribution',
+              name: 'Distribution',
+              width: '30%',
+              helpText: (
+                <div>
+                  The subset of <em>{this.props.displayName}</em> that have the
+                  given value when other filters have been applied
+                </div>
+              ),
+              renderCell: this.renderDistributionCell,
+            },
+            {
+              key: '%',
+              width: '4em',
+              name: '%',
+              helpText: (
+                <div>
+                  The subset of <em>{this.props.displayName}</em> out of all{' '}
+                  <em>{this.props.displayName}</em> that have the given value
+                </div>
+              ),
+              renderCell: this.renderPercentCell,
+            },
+          ]}
         />
       </div>
     );

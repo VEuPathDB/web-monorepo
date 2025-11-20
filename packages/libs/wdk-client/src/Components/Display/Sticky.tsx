@@ -22,27 +22,17 @@ class Sticky extends React.Component<Props, State> {
 
   componentDidMount() {
     this.node = ReactDOM.findDOMNode(this);
-    window.addEventListener('scroll', this.updateIsFixed, {
-      passive: true,
-    } as any);
-    window.addEventListener('wheel', this.updateIsFixed, {
-      passive: true,
-    } as any);
-    window.addEventListener('resize', this.updateIsFixed, {
-      passive: true,
-    } as any);
+    const options: AddEventListenerOptions = { passive: true };
+    window.addEventListener('scroll', this.updateIsFixed, options);
+    window.addEventListener('wheel', this.updateIsFixed, options);
+    window.addEventListener('resize', this.updateIsFixed, options);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('scroll', this.updateIsFixed, {
-      passive: true,
-    } as any);
-    window.removeEventListener('wheel', this.updateIsFixed, {
-      passive: true,
-    } as any);
-    window.removeEventListener('resize', this.updateIsFixed, {
-      passive: true,
-    } as any);
+    const options: AddEventListenerOptions = { passive: true };
+    window.removeEventListener('scroll', this.updateIsFixed, options);
+    window.removeEventListener('wheel', this.updateIsFixed, options);
+    window.removeEventListener('resize', this.updateIsFixed, options);
   }
 
   // Set position to fixed if top is above threshold, otherwise

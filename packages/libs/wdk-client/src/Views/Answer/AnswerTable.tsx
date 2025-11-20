@@ -269,7 +269,11 @@ class AnswerTable extends React.Component<AnswerTableProps, AnswerTableState> {
   }
 }
 
-(AnswerTable as any).defaultProps = {
+(
+  AnswerTable as typeof AnswerTable & {
+    defaultProps: Partial<AnswerTableProps>;
+  }
+).defaultProps = {
   onSort: noop,
   onMoveColumn: noop,
   onChangeColumns: noop,

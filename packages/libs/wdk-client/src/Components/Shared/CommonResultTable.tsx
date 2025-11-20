@@ -12,6 +12,7 @@ import { RealTimeSearchBox } from '../../Components';
 import { compose, debounce } from 'lodash/fp';
 import type {
   MesaColumn,
+  MesaSortObject,
   MesaStateProps,
 } from '@veupathdb/coreui/lib/components/Mesa/types';
 
@@ -77,7 +78,11 @@ export class CommonResultTable<
           ? ({
               columnKey: this.props.initialSortColumnKey,
               direction: this.props.initialSortDirection || 'asc',
-            } as any)
+            } as MesaSortObject<
+              Extract<keyof Row, string> extends string
+                ? Extract<keyof Row, string>
+                : string
+            >)
           : undefined,
         pagination: this.props.pagination
           ? {

@@ -36,7 +36,7 @@ interface DistributionEntry {
   filteredCount: number;
 }
 
-interface UIState {
+export interface UIState {
   xaxisMin?: number;
   xaxisMax?: number;
   yaxisMin?: number;
@@ -110,23 +110,23 @@ var Histogram = (function () {
 
     constructor(props: HistogramProps) {
       super(props);
-      this.handleResize = throttle(this.handleResize.bind(this), 100) as any;
-      this.emitStateChange = debounce(this.emitStateChange, 100) as any;
+      this.handleResize = throttle(this.handleResize.bind(this), 100);
+      this.emitStateChange = debounce(this.emitStateChange, 100);
       this.state = {
         uiState: this.getStateFromProps(props),
         showSettings:
           sessionStorage.getItem(PLOT_SETTINGS_OPEN_KEY) !== 'false',
       };
-      this.getRange = memoize(this.getRange) as any;
-      this.getNumFixedDigits = memoize(this.getNumFixedDigits) as any;
-      this.getDefaultBinSize = memoize(this.getDefaultBinSize) as any;
+      this.getRange = memoize(this.getRange);
+      this.getNumFixedDigits = memoize(this.getNumFixedDigits);
+      this.getDefaultBinSize = memoize(this.getDefaultBinSize);
     }
 
     componentDidMount() {
-      ($ as any)(window).on('resize', this.handleResize);
+      $(window).on('resize', this.handleResize);
       const node = ReactDOM.findDOMNode(this);
       if (node) {
-        ($(node) as any)
+        $(node)
           .on('plotselected .chart', this.handlePlotSelected.bind(this))
           .on('plotselecting .chart', this.handlePlotSelecting.bind(this))
           .on('plotunselected .chart', this.handlePlotUnselected.bind(this))
@@ -485,7 +485,7 @@ var Histogram = (function () {
 
       const node = ReactDOM.findDOMNode(this);
       if (node) {
-        this.$chart = ($(node) as any).find('.chart');
+        this.$chart = $(node).find('.chart');
         this.plot = ($ as any).plot(this.$chart, seriesData, plotOptions);
       }
     }
@@ -858,7 +858,11 @@ var Histogram = (function () {
     }
   }
 
-  (LazyHistogram as any).defaultProps = {
+  (
+    LazyHistogram as typeof LazyHistogram & {
+      defaultProps: Partial<HistogramProps>;
+    }
+  ).defaultProps = {
     xaxisLabel: 'X-Axis',
     yaxisLabel: 'Y-Axis',
     selectedMin: null,

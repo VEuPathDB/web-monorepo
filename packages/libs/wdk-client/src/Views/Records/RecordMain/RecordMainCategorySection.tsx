@@ -10,7 +10,12 @@ import {
   CategoryTreeNode,
   IndividualNode,
 } from '../../../Utils/CategoryUtils';
-import { RecordInstance, RecordClass } from '../../../Utils/WdkModel';
+import {
+  RecordInstance,
+  RecordClass,
+  AttributeField,
+  TableField,
+} from '../../../Utils/WdkModel';
 import { TableState } from '../../../StoreModules/RecordStoreModule';
 
 export interface Props {
@@ -67,7 +72,9 @@ class RecordMainCategorySection extends React.PureComponent<Props> {
       case 'attribute':
         return (
           <RecordAttributeSection
-            attribute={(category as IndividualNode).wdkReference as any}
+            attribute={
+              (category as IndividualNode).wdkReference as AttributeField
+            }
             ontologyProperties={category.properties}
             record={record}
             recordClass={recordClass}
@@ -81,7 +88,7 @@ class RecordMainCategorySection extends React.PureComponent<Props> {
         const individualCategory = category as IndividualNode;
         return (
           <RecordTableSection
-            table={individualCategory.wdkReference as any}
+            table={individualCategory.wdkReference as TableField}
             tableState={tableStates[individualCategory.wdkReference.name]}
             updateTableState={(tableState) =>
               updateTableState(individualCategory.wdkReference.name, tableState)
@@ -113,7 +120,7 @@ class RecordMainCategorySection extends React.PureComponent<Props> {
           </span>
         );
         if (depth === 0) {
-          const HeaderElement = Header as any;
+          const HeaderElement = Header as keyof JSX.IntrinsicElements;
           return (
             <>
               <HeaderElement id={id} className="wdk-RecordSectionHeader">
