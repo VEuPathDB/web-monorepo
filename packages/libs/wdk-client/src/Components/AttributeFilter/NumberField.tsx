@@ -3,6 +3,7 @@ import { partition } from 'lodash';
 
 import { formatNumber } from '../../Components/AttributeFilter/AttributeFilterUtils';
 import HistogramField from '../../Components/AttributeFilter/HistogramField';
+import { UIState } from '../../Components/AttributeFilter/Histogram';
 import {
   Field,
   RangeFilter,
@@ -35,8 +36,7 @@ interface NumberFieldProps {
   activeField: Field;
   activeFieldState: {
     summary: OntologyTermSummary;
-    [key: string]: any;
-  };
+  } & UIState;
   filter?: RangeFilter;
   onChange: (
     activeField: Field,
@@ -45,8 +45,11 @@ interface NumberFieldProps {
     valueCounts: ValueCounts
   ) => void;
   displayName: string;
+  dataCount?: number;
   selectByDefault?: boolean;
-  [key: string]: any;
+  onRangeScaleChange?: (activeField: Field, range: any) => void;
+  histogramTruncateYAxisDefault?: boolean;
+  histogramScaleYAxisDefault?: boolean;
 }
 
 /**
@@ -141,7 +144,7 @@ export default class NumberField extends React.Component<NumberFieldProps> {
 
     return (
       <HistogramField
-        {...(this.props as any)}
+        {...this.props}
         distribution={knownDist}
         unknownCount={unknownCount}
         toFilterValue={this.toFilterValue}

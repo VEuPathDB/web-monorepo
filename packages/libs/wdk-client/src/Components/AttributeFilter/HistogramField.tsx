@@ -44,7 +44,7 @@ interface HistogramFieldProps {
   distribution: DistributionEntry[];
   toFilterValue: (value: number) => number | string;
   toHistogramValue: (value: number | string) => number;
-  selectByDefault: boolean;
+  selectByDefault?: boolean;
   onChange: (
     activeField: Field,
     range: RangeValue,
@@ -300,14 +300,6 @@ export default class HistogramField extends React.Component<
     var selectedMin = min == null ? null : this.props.toHistogramValue(min);
     var selectedMax = max == null ? null : this.props.toHistogramValue(max);
 
-    var selectionTotal =
-      filter &&
-      (filter as any).selection &&
-      ((filter as any).selection as any).length;
-
-    var selection =
-      selectionTotal != null ? ' (' + selectionTotal + ' selected) ' : null;
-
     return (
       <div className="range-filter">
         <div className="head">
@@ -344,7 +336,6 @@ export default class HistogramField extends React.Component<
                   Include {unknownCount} Unknown
                 </label>
               )}
-              <span className="selection-total">{selection}</span>
             </div>
           </div>
           {this.props.dataCount && (
