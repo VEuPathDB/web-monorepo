@@ -85,9 +85,55 @@ function FieldFilter(props: FieldFilterProps) {
               props.activeFieldState.summary == null &&
               props.activeFieldState.leafSummaries == null) ||
             props.dataCount == null ? null : isMulti(props.activeField) ? (
-            <MultiFieldFilter {...(props as any)} />
+            <MultiFieldFilter
+              activeField={props.activeField}
+              activeFieldState={
+                {
+                  ...props.activeFieldState,
+                  leafSummaries: props.activeFieldState!.leafSummaries!,
+                } as {
+                  leafSummaries: OntologyTermSummary[];
+                  searchTerm?: string;
+                  sort?: { columnKey: string; direction: 'asc' | 'desc' };
+                  [key: string]: any;
+                }
+              }
+              filters={props.filters ?? []}
+              fieldTree={props.fieldTree!}
+              displayName={props.displayName ?? 'Items'}
+              dataCount={props.dataCount}
+              selectByDefault={props.selectByDefault}
+              onFiltersChange={props.onFiltersChange ?? (() => {})}
+              onMemberSort={(field, sort) => {
+                if (props.onMemberSort) {
+                  props.onMemberSort(sort.columnKey);
+                }
+              }}
+              onMemberSearch={(field, searchTerm) => {
+                if (props.onMemberSearch) {
+                  props.onMemberSearch(searchTerm);
+                }
+              }}
+            />
           ) : (
-            <SingleFieldFilter {...(props as any)} />
+            <SingleFieldFilter
+              activeField={props.activeField}
+              activeFieldState={
+                props.activeFieldState
+                  ? ({
+                      ...props.activeFieldState,
+                      summary: props.activeFieldState.summary!,
+                    } as { summary: OntologyTermSummary; [key: string]: any })
+                  : null
+              }
+              filters={props.filters ?? []}
+              onFiltersChange={props.onFiltersChange ?? (() => {})}
+              selectByDefault={props.selectByDefault}
+              displayName={props.displayName}
+              dataCount={props.dataCount}
+              filteredDataCount={props.filteredDataCount}
+              onRangeScaleChange={props.onRangeScaleChange}
+            />
           )}
         </React.Fragment>
       )}
