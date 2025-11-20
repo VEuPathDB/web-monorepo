@@ -246,7 +246,14 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
           </span>
           {managedGroups.map((group) => (
             <div style={{ marginTop: '1em' }}>
-              <span className="h4-style-light" style={{ fontWeight: 500 }}>
+              <span
+                className="h4-style-light"
+                style={{
+                  fontWeight: 500,
+                  marginBottom: '0.5em',
+                  marginTop: '1.5em',
+                }}
+              >
                 {group.groupName}
               </span>
               <div
