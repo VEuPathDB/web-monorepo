@@ -69,40 +69,40 @@ class RecordNavigationSection extends React.PureComponent<
           {visibilityToggle}
         </div>
         <CategoriesCheckboxTree
-          {...({
-            disableHelp: true,
-            visibilityFilter,
-            searchBoxPlaceholder: 'Search section names...',
-            tree: categoryTree,
-            leafType: 'section',
-            isSelectable: false,
-            expandedBranches: navigationCategoriesExpanded,
-            onUiChange: onNavigationCategoryExpansionChange,
-            searchTerm: navigationQuery,
-            onSearchTermChange: this.handleSearchTermChange,
-            renderNode: (node: any, path: any) => (
-              <RecordNavigationItem
-                node={node}
-                path={path}
-                activeSection={activeSection}
-                onSectionToggle={onSectionToggle || (() => {})}
-                checked={!includes(collapsedSections, getId(node))}
-              />
-            ),
-            linksPosition: LinksPosition.Top,
-            styleOverrides: {
-              treeSection: {
-                ul: {
-                  padding: '0 0 0 1em',
-                },
-              },
-              treeNode: {
-                nodeWrapper: {
-                  alignItems: 'center',
-                },
+          disableHelp={true}
+          visibilityFilter={visibilityFilter}
+          searchBoxPlaceholder="Search section names..."
+          tree={categoryTree}
+          leafType="section"
+          isSelectable={false}
+          selectedLeaves={[]}
+          onChange={() => {}}
+          expandedBranches={navigationCategoriesExpanded}
+          onUiChange={onNavigationCategoryExpansionChange}
+          searchTerm={navigationQuery}
+          onSearchTermChange={this.handleSearchTermChange}
+          renderNode={(node: any, path: any) => (
+            <RecordNavigationItem
+              node={node}
+              path={path}
+              activeSection={activeSection}
+              onSectionToggle={onSectionToggle || (() => {})}
+              checked={!includes(collapsedSections, getId(node))}
+            />
+          )}
+          linksPosition={LinksPosition.Top}
+          styleOverrides={{
+            treeSection: {
+              ul: {
+                padding: '0 0 0 1em',
               },
             },
-          } as any)}
+            treeNode: {
+              nodeWrapper: {
+                alignItems: 'center',
+              },
+            },
+          }}
         />
       </div>
     );
