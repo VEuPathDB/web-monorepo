@@ -17,6 +17,8 @@ import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBa
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { decode, string } from '@veupathdb/wdk-client/lib/Utils/Json';
 
+import { fixURLSlashHash } from '../../bootstrap.js';
+
 import './FeaturedTools.scss';
 import { ContentError } from './ContentError';
 
@@ -332,6 +334,7 @@ const ToolListItem = ({ entry, onSelect, isSelected }: ToolListItemProps) => {
         e.preventDefault();
         onSelect();
         history.replace(`#${entry.identifier}`);
+        fixURLSlashHash();
       }}
       type="button"
     >

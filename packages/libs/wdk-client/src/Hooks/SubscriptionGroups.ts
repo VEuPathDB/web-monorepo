@@ -1,12 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
-import { SubscriptionGroup } from '../Service/Mixins/OauthService';
+import {
+  SubscriptionGroup,
+  SubscriptionGroupWithMembers,
+} from '../Service/Mixins/OauthService';
 import { useWdkDependenciesContext } from './WdkDependenciesEffect';
 
 /**
- * Hook to fetch subscription groups from the API with react-query caching.
- * Note: wdkService caching is all-or-nothing. We need something inbetween, so
- * we disable wdkService caching (in `wdkService.getSubscriptionGroups`)
- * and use react-query to provide a one-hour cache.
+ * Hook to fetch subscription groups and group info from the API with react-query caching.
+ * Note: wdkService caching is all-or-nothing. We need something in between, so
+ * we disable wdkService caching (in `wdkService.getSubscriptionGroups` and
+ * `wdkService.getManagedGroupsForUser`) and use react-query to provide a limited-time cache.
  *
  * @returns undefined while loading, SubscriptionGroup[] when loaded, or undefined on error
  *
@@ -38,6 +41,31 @@ export function useSubscriptionGroups(): SubscriptionGroup[] | undefined {
     },
     enabled: wdkService != null,
     staleTime: 60 * 60 * 1000, // 1 hour
+  });
+
+  return data;
+}
+
+export function useSubscriptionGroupsByLead():
+  | SubscriptionGroupWithMembers[]
+  | undefined {
+  const { wdkService } = useWdkDependenciesContext();
+
+  const { data } = useQuery({
+    queryKey: ['subscriptionGroupsWithMembers'],
+    queryFn: async () => {
+      if (!wdkService) {
+        throw new Error('WDK service not available');
+      }
+      try {
+        return await wdkService.getManagedGroupsForUser();
+      } catch (error: any) {
+        console.error('Failed to fetch subscription groups by lead:', error);
+        return undefined;
+      }
+    },
+    enabled: wdkService != null,
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   return data;
