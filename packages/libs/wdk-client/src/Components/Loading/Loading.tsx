@@ -1,6 +1,5 @@
 import { flow } from 'lodash';
 import React from 'react';
-import { findDOMNode } from 'react-dom';
 import { Spinner } from 'spin.js';
 import { delay, wrappable } from '../../Utils/ComponentUtils';
 
@@ -31,6 +30,7 @@ type Props = {
  */
 class Loading extends React.Component<Props> {
   private spinner?: Spinner;
+  private containerRef = React.createRef<HTMLDivElement>();
 
   componentDidMount() {
     const { radius = 8, top = '50%', left = '50%' } = this.props;
@@ -52,8 +52,10 @@ class Loading extends React.Component<Props> {
       top, // Top position relative to parent
       left, // Left position relative to parent
     };
-    const node = findDOMNode(this) as HTMLElement;
-    this.spinner = new Spinner(opts).spin(node);
+    const node = this.containerRef.current;
+    if (node) {
+      this.spinner = new Spinner(opts).spin(node);
+    }
   }
 
   componentWillUnmount() {
@@ -63,7 +65,7 @@ class Loading extends React.Component<Props> {
   render() {
     const { className = '', style } = this.props;
     return (
-      <div style={style} className={`wdk-Loading ${className}`}>
+      <div ref={this.containerRef} style={style} className={`wdk-Loading ${className}`}>
         {this.props.children}
       </div>
     );
