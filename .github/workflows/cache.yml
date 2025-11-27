@@ -17,5 +17,6 @@ jobs:
         with:
           node-version: 24
           cache: yarn
+      - run: corepack enable
       - run: yarn
 
