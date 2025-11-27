@@ -4,16 +4,34 @@ These are instructions to work with the VEuPathDB UI either by executing a singl
 
 == Prerequisites
 * `Node >=24.0.0`
-* `corepack` enabled (comes with Node.js 16.9.0+)
+* `corepack` enabled for Yarn version management
 
-To enable corepack:
+=== Setup with Volta (Recommended)
+
+https://volta.sh/[Volta] is recommended for Node version management. It will automatically use Node 24 when working in this repository.
+
+To set up Volta with Corepack:
+
+[source, shell]
+----
+# Install volta if you haven't already
+curl https://get.volta.sh | bash
+
+# Install corepack globally and enable it with volta integration
+npm install -g corepack
+corepack enable --install-directory ~/.volta/bin
+----
+
+This configuration allows Volta to manage Node versions while Corepack manages Yarn versions based on the `packageManager` field in `package.json`.
+
+=== Setup without Volta
+
+If you're not using Volta, simply enable corepack:
 
 [source, shell]
 ----
 corepack enable
 ----
-
-This will automatically use the Yarn version specified in `package.json` (`yarn@4.10.3`) when you run `yarn` commands in this repository.
 
 _Note: If you have a global `yarn` installation, you may need to uninstall it first to avoid conflicts with corepack._
 
