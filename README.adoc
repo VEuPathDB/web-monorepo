@@ -3,12 +3,19 @@ These are instructions to work with the VEuPathDB UI either by executing a singl
 :toc:
 
 == Prerequisites
-* `Node <=16.17.1`
-* Either a global installation of `yarn >=1.17.0`, or `volta >=1.1.0`
-** With such a version of `yarn` globally installed, all `yarn` commands executed in this repo will be delegated to the "pinned" `yarn@3.3.1` installation included in `.yarn/releases`.
-** With such a version of https://volta.sh/[volta] installed, the required version of `yarn` will automatically be installed.
+* `Node >=24.0.0`
+* `corepack` enabled (comes with Node.js 16.9.0+)
 
-_It is recommended to install volta, as it will keep your local toolchain in sync with the repository._
+To enable corepack:
+
+[source, shell]
+----
+corepack enable
+----
+
+This will automatically use the Yarn version specified in `package.json` (`yarn@4.10.3`) when you run `yarn` commands in this repository.
+
+_Note: If you have a global `yarn` installation, you may need to uninstall it first to avoid conflicts with corepack._
 
 == Quick Start
 
