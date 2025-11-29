@@ -1,5 +1,3 @@
-name: Generate caches
-
 # NOTE: This workflow is largely legacy/redundant now that all workflows (including pr-check.yml)
 # automatically cache dependencies. Since PR caches are accessible to the main branch and vice versa,
 # this explicit pre-warming step is no longer strictly necessary.
@@ -11,6 +9,7 @@ name: Generate caches
 #
 # This could be safely removed if desired - PRs will create caches that main can use.
 
+name: Generate caches
 on:
   push:
     branches:
