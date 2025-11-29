@@ -28,5 +28,5 @@ jobs:
             ${{ runner.os }}-build-
       - uses: nrwl/nx-set-shas@v4
       - run: yarn
-      - run: yarn nx affected --target=build-npm-modules --parallel=3
-      - run: yarn nx affected --target=compile:check
+      - run: yarn nx affected --target=build-npm-modules --parallel=3 --verbose
+      - run: yarn nx affected --target=compile:check --verbose
