@@ -42,13 +42,9 @@ jobs:
           path: |
             .yarn/cache
             .yarn/install-state.gz
-            node_modules/.cache/nx
-            packages/libs/*/lib
-            packages/sites/*/lib
-          key: ${{ runner.os }}-build-${{ hashFiles('yarn.lock') }}-${{ hashFiles('packages/libs/**/*', 'packages/sites/**/*', '!packages/**/lib/**', '!packages/**/node_modules/**') }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-build-${{ hashFiles('yarn.lock') }}-
-            ${{ runner.os }}-build-
+            ${{ runner.os }}-yarn-
       - run: yarn
       - run: yarn nx bundle:npm @veupathdb/${{matrix.dir}}
         env:
@@ -90,13 +86,9 @@ jobs:
           path: |
             .yarn/cache
             .yarn/install-state.gz
-            node_modules/.cache/nx
-            packages/libs/*/lib
-            packages/sites/*/lib
-          key: ${{ runner.os }}-build-${{ hashFiles('yarn.lock') }}-${{ hashFiles('packages/libs/**/*', 'packages/sites/**/*', '!packages/**/lib/**', '!packages/**/node_modules/**') }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-build-${{ hashFiles('yarn.lock') }}-
-            ${{ runner.os }}-build-
+            ${{ runner.os }}-yarn-
       - run: yarn
       - run: ./tools/scripts/test-report
       - uses: actions/upload-artifact@v4

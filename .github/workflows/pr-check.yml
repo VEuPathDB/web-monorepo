@@ -1,4 +1,8 @@
 # Ensure that affected projects build without error for any pull request
+#
+# Note: We only run compile:check, which has dependsOn: ["^build-npm-modules"] configured
+# in nx.json. This means NX automatically builds all dependencies before running the check.
+# Any libraries that aren't dependencies of the site packages won't be built or checked.
 
 name: CI
 on: pull_request
@@ -19,14 +23,9 @@ jobs:
           path: |
             .yarn/cache
             .yarn/install-state.gz
-            node_modules/.cache/nx
-            packages/libs/*/lib
-            packages/sites/*/lib
-          key: ${{ runner.os }}-build-${{ hashFiles('yarn.lock') }}-${{ hashFiles('packages/libs/**/*', 'packages/sites/**/*', '!packages/**/lib/**', '!packages/**/node_modules/**') }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-build-${{ hashFiles('yarn.lock') }}-
-            ${{ runner.os }}-build-
+            ${{ runner.os }}-yarn-
       - uses: nrwl/nx-set-shas@v4
       - run: yarn
-      - run: yarn nx affected --target=build-npm-modules --parallel=3 --verbose
-      - run: yarn nx affected --target=compile:check --verbose
+      - run: yarn nx affected --target=compile:check
