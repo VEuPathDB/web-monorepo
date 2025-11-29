@@ -20,9 +20,12 @@ jobs:
             .yarn/cache
             .yarn/install-state.gz
             node_modules/.cache/nx
-          key: ${{ runner.os }}-deps-${{ hashFiles('yarn.lock') }}
+            packages/libs/*/lib
+            packages/sites/*/lib
+          key: ${{ runner.os }}-build-${{ hashFiles('yarn.lock') }}-${{ hashFiles('packages/libs/**/*', 'packages/sites/**/*', '!packages/**/lib/**', '!packages/**/node_modules/**') }}
           restore-keys: |
-            ${{ runner.os }}-deps-
+            ${{ runner.os }}-build-${{ hashFiles('yarn.lock') }}-
+            ${{ runner.os }}-build-
       - uses: nrwl/nx-set-shas@v4
       - run: yarn
       - run: yarn nx affected --target=build-npm-modules --parallel=3
