@@ -1,6 +1,6 @@
 {
   "name": "monorepo-prototype",
-  "packageManager": "yarn@4.10.3",
+  "packageManager": "yarn@4.12.0",
   "workspaces": [
     "packages/libs/*",
     "packages/configs/*",
