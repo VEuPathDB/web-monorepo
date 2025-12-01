@@ -3,12 +3,47 @@ These are instructions to work with the VEuPathDB UI either by executing a singl
 :toc:
 
 == Prerequisites
-* `Node <=16.17.1`
-* Either a global installation of `yarn >=1.17.0`, or `volta >=1.1.0`
-** With such a version of `yarn` globally installed, all `yarn` commands executed in this repo will be delegated to the "pinned" `yarn@3.3.1` installation included in `.yarn/releases`.
-** With such a version of https://volta.sh/[volta] installed, the required version of `yarn` will automatically be installed.
+* `Node >=24.0.0`
+* `corepack` enabled for Yarn version management
 
-_It is recommended to install volta, as it will keep your local toolchain in sync with the repository._
+=== Setup with Volta (Recommended)
+
+https://volta.sh/[Volta] is recommended for Node version management. It will automatically use Node 24 when working in this repository.
+
+To set up Volta with Corepack:
+
+[source, shell]
+----
+# Install volta if you haven't already
+curl https://get.volta.sh | bash
+
+# Install corepack globally and enable it with volta integration
+npm install -g corepack
+corepack enable --install-directory ~/.volta/bin
+----
+
+This configuration allows Volta to manage Node versions while Corepack manages Yarn versions based on the `packageManager` field in `package.json`.
+
+=== Setup without Volta
+
+If you're not using Volta, simply enable corepack:
+
+[source, shell]
+----
+corepack enable
+----
+
+_Note: If you have a global `yarn` installation, you may need to uninstall it first to avoid conflicts with corepack._
+
+=== Package Manager Verification
+
+*IMPORTANT:* This project requires Yarn. Using `npm install` will fail with dependency resolution errors because this monorepo uses Yarn-specific features (workspace protocol, etc.) that npm doesn't support.
+
+The repository includes automatic checks that run before `yarn install` to verify:
+
+- Corepack is properly configured with the correct Yarn version (4.12.0)
+
+If you see errors about wrong Yarn version, refer to the setup instructions above.
 
 == Quick Start
 
@@ -21,9 +56,11 @@ From anywhere in the repo:
 yarn
 ----
 
+*Note:* This repository uses immutable installs for security. The `yarn.lock` file must be committed to git and cannot be modified by `yarn install`. Commands like `yarn add <package>` and `yarn remove <package>` work normally and will update the lockfile as expected. This prevents accidental mass upgrades (e.g., deleting and regenerating yarn.lock would upgrade many packages to newer versions). All dependency upgrades should be intentional and reviewed.
+
 == Overview
 
-This repository is a "monorepo", using the https://nx.dev[nx] build system and https://v3.yarnpkg.com/[yarn@3] dependency manager. The source code is divided into one of three types of packages: "config", "lib", and "site".
+This repository is a "monorepo", using the https://nx.dev[nx] build system and https://yarnpkg.com/[yarn@4] dependency manager. The source code is divided into one of three types of packages: "config", "lib", and "site".
 
 - "config" packages (`./packages/configs`) include various build and development configurations and tools.
 - "lib" packages (`./packages/libs`) include standalone library and webapp source code.
@@ -162,7 +199,9 @@ upgrade emacs tide (to, at time of writing 4.5.4):
 M-x package-reinstall <ret> tide <ret>
 ----
 
-== Client Bundle Server
+== Client Bundle Server 🐉
+
+**Warning. There be dragons! This section has not been maintained for a long time.**
 
 The Client Bundle Server is a Docker image based on NGINX that is used to serve
 VEuPathDB client code over HTTP.

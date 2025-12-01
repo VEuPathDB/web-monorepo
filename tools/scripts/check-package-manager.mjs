@@ -1,0 +1,43 @@
+#!/usr/bin/env node
+
+/**
+ * Verifies that corepack is properly configured with the correct Yarn version.
+ * This runs as a preinstall hook to catch misconfigurations early.
+ *
+ * Note: npm usage is blocked naturally because this monorepo uses Yarn-specific
+ * features (workspace:^ protocol) that npm doesn't understand.
+ */
+
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+// Get the repo root (two directories up from this script)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const repoRoot = join(__dirname, '..', '..');
+
+// Read expected version from package.json
+const packageJson = JSON.parse(readFileSync(join(repoRoot, 'package.json'), 'utf-8'));
+const expectedVersion = packageJson.packageManager?.replace('yarn@', '');
+
+if (!expectedVersion) {
+  console.error('\x1b[31m%s\x1b[0m', '❌ Error: packageManager field not found in package.json');
+  process.exit(1);
+}
+
+// Check if yarn version is correct (verifies corepack is working)
+// The user agent string contains the actual running package manager version
+const userAgent = process.env.npm_config_user_agent || '';
+const match = userAgent.match(/yarn\/(\S+)/);
+const actualVersion = match ? match[1] : '';
+
+if (actualVersion !== expectedVersion) {
+  console.error('\x1b[31m%s\x1b[0m', `❌ Error: Expected Yarn ${expectedVersion} but got ${actualVersion || 'unknown version'}.`);
+  console.error('\x1b[33m%s\x1b[0m', '\nThis likely means corepack is not enabled.');
+  console.error('\x1b[2m%s\x1b[0m', '\nSee README.adoc Prerequisites section for setup instructions.');
+  process.exit(1);
+}
+
+// All checks passed
+console.log('\x1b[32m%s\x1b[0m', '✓ Yarn version check passed');

@@ -130,9 +130,5 @@
     "@material-ui/icons": "^4.11.3",
     "@material-ui/lab": "^4.0.0-alpha.61",
     "react": ">=16.14"
-  },
-  "volta": {
-    "node": "14.17.0",
-    "yarn": "1.22.10"
   }
 }
