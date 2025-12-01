@@ -22,6 +22,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../Core/State/Types';
 import { deburr } from 'lodash';
 import { userIsClassParticipant } from '../../Utils/Subscriptions';
+import { useSubscriptionGroupsByLead } from '../../Hooks/SubscriptionGroups';
 
 interface UserSubscriptionManagementProps {
   user: User;
@@ -78,6 +79,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
     return validGroupList.length === 0 ? undefined : validGroupList[0];
   };
 
+  // valid group does not necessarily mean active subscription; could be expired
   const validGroup = useMemo(
     () => findValidGroup(userGroupToken, subscriptionGroups),
     [userGroupToken, subscriptionGroups]
@@ -128,12 +130,16 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
 
   const isClassParticipant = userIsClassParticipant(user);
 
+  let managedGroups = useSubscriptionGroupsByLead();
+
   return (
     <div className="wdk-UserProfile-profileForm">
       <h2>Subscription</h2>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5em' }}>
         <h4>Status: </h4>
-        {validGroup ? (
+        {validGroup &&
+        (validGroup.activeStatus == 'active' ||
+          validGroup.activeStatus == 'grace_period') ? (
           <>
             <Icon
               fa="check-circle"
@@ -166,37 +172,33 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
           </>
         )}
       </div>
+
       {/* Show subscription status only when form is clean (saved state) */}
       {validGroup &&
         (formStatus === 'new' ||
           formStatus === 'modified' ||
           formStatus === 'pending') && (
           <div>
-            <h3>Group subscription</h3>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'max-content 1fr',
-                rowGap: '0.5em',
-                columnGap: '1em',
-                alignItems: 'baseline',
-                marginBottom: '1em',
-                minWidth: 800, // accommodate the really long names.
-              }}
-            >
+            <h3>My subscription group</h3>
+            <div className="label-value-grid">
               <h4>Group name:</h4>
-              <h4 style={{ fontWeight: 400 }}>{validGroup.groupName}</h4>
+              <span className="h4-style-light" style={{ fontWeight: 400 }}>
+                {validGroup.groupName}
+              </span>
               <h4>PI(s) or Group lead(s):</h4>
               {validGroup.groupLeads.length > 0 ? (
-                <h4 style={{ fontWeight: 400 }}>
+                <span className="h4-style-light" style={{ fontWeight: 400 }}>
                   {validGroup.groupLeads
                     .map((lead) => `${lead.name} (${lead.organization})`)
                     .join(', ')}
-                </h4>
+                </span>
               ) : (
-                <h4 style={{ fontStyle: 'italic', fontWeight: 400 }}>
+                <span
+                  className="h4-style-light"
+                  style={{ fontStyle: 'italic', fontWeight: 400 }}
+                >
                   None provided
-                </h4>
+                </span>
               )}
               {validGroup.subscriberName && (
                 <>
@@ -211,9 +213,9 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                       </>
                     )}
                   </h4>
-                  <h4 style={{ fontWeight: 400 }}>
+                  <span className="h4-style-light" style={{ fontWeight: 400 }}>
                     {validGroup.subscriberName}
-                  </h4>
+                  </span>
                 </>
               )}
             </div>
@@ -226,6 +228,78 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
             </form>
           </div>
         )}
+
+      {/* Show any groups this user manages (if they manage more than zero) */}
+      {managedGroups && managedGroups.length > 0 && (
+        <div>
+          <h3>Subscription group management</h3>
+          <span
+            className="additional-info"
+            style={{
+              lineHeight: '1.4em',
+              color: colors.gray[700],
+            }}
+          >
+            If you would like to make updates to the subscription group(s) you
+            manage, such as removing members or editing the group name, please
+            contact us at <strong>subscriptions@veupathdb.org</strong>
+          </span>
+          {managedGroups.map((group) => (
+            <div style={{ marginTop: '1em' }}>
+              <span
+                className="h4-style-light"
+                style={{
+                  fontWeight: 500,
+                  marginBottom: '0.5em',
+                  marginTop: '1.5em',
+                }}
+              >
+                {group.groupName}
+              </span>
+              <div
+                className="label-value-grid"
+                style={{
+                  gridTemplateColumns: '0.1fr 1fr',
+                  rowGap: '0em',
+                }}
+              >
+                <h4>Leads:</h4>
+                {group.groupLeads.map((u) => (
+                  <>
+                    <span className="h4-style-light">
+                      {u.name} ({u.organization})
+                    </span>
+                    {/* Extra div added so that the leads all show up in the right column */}
+                    <div></div>
+                  </>
+                ))}
+              </div>
+              <div
+                className="label-value-grid"
+                style={{
+                  gridTemplateColumns: '0.1fr 1fr',
+                  rowGap: '0em',
+                }}
+              >
+                <h4>Members:</h4>
+                {group.members.length > 0 ? (
+                  group.members.map((u) => (
+                    <>
+                      <span className="h4-style-light">
+                        {u.name} ({u.organization})
+                      </span>
+                      {/* Extra div added so that the members all show up in the right column */}
+                      <div></div>
+                    </>
+                  ))
+                ) : (
+                  <span className="h4-style-light">No members</span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Show group selection when no saved group OR when there are unsaved changes AND when the modal is not there */}
       {(!validGroup || formStatus !== 'new') && !showConfirmModal && (
@@ -328,10 +402,9 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
             </div>
             <span
               style={{
-                fontStyle: 'italic',
-                fontSize: '1.1em',
                 color: colors.gray[700],
               }}
+              className="additional-info"
             >
               Don't see your group listed? Ask your group lead or administrator
               to{' '}

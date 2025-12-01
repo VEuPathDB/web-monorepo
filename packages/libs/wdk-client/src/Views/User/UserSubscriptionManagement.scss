@@ -1,3 +1,32 @@
 .wdk-UserProfile-TypeAheadSelect {
   flex: 1;
 }
+
+.h4-style {
+  display: block;
+  font-size: 1.2em;
+  font-weight: 600;
+  margin: 1.33em 0 0.67em; // typical h4 default margins
+}
+
+.h4-style-light {
+  display: block;
+  font-size: 1.2em;
+  font-weight: 400;
+}
+
+.additional-info {
+  font-style: italic;
+  font-size: 1.1em;
+}
+
+.label-value-grid {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  row-gap: 0.5em;
+  column-gap: 1em;
+  align-items: baseline;
+  margin-bottom: 1em;
+  min-width: 800px; // accommodate the really long names.
+  margin-left: 1em;
+}
