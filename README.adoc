@@ -35,6 +35,16 @@ corepack enable
 
 _Note: If you have a global `yarn` installation, you may need to uninstall it first to avoid conflicts with corepack._
 
+=== Package Manager Verification
+
+*IMPORTANT:* This project requires Yarn. Using `npm install` will fail with dependency resolution errors because this monorepo uses Yarn-specific features (workspace protocol, etc.) that npm doesn't support.
+
+The repository includes automatic checks that run before `yarn install` to verify:
+
+- Corepack is properly configured with the correct Yarn version (4.12.0)
+
+If you see errors about wrong Yarn version, refer to the setup instructions above.
+
 == Quick Start
 
 === Install yarn dependencies
