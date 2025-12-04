@@ -70,7 +70,7 @@ export default function NotebookRoute(props: Props) {
               >
                 <EdaNotebookAnalysis
                   analysisState={analysisState}
-                  notebookType="differentialAbundanceNotebook"
+                  notebookType="differentialExpressionNotebook"
                   wdkState={{}}
                 />
               </EDAWorkspaceContainer>

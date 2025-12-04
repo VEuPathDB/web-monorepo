@@ -7,7 +7,11 @@ import { BipartiteNetworkOptions } from '../core/components/visualizations/imple
 import { NodeData } from '@veupathdb/components/lib/types/plots/network';
 import { WdkState } from './EdaNotebookAnalysis';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
-import { CollectionVariableTreeNode } from '../core';
+import { AnalysisState, CollectionVariableTreeNode } from '../core';
+import {
+  VolcanoPlotConfig,
+  VolcanoPlotOptions,
+} from '../core/components/visualizations/implementations/VolcanoPlotVisualization';
 
 // this is currently not used but may be one day when we need to store user state
 // that is outside AnalysisState and WdkState
@@ -40,7 +44,7 @@ export interface VisualizationCellDescriptor
   getVizPluginOptions?: (
     wdkState: WdkState,
     enqueueSnackbar: EnqueueSnackbar
-  ) => Partial<BipartiteNetworkOptions>; // We'll define this function custom for each notebook, so can expand output types as needed.
+  ) => Partial<BipartiteNetworkOptions> | Partial<VolcanoPlotOptions>; // We'll define this function custom for each notebook, so can expand output types as needed.
 }
 
 export interface ComputeCellDescriptor
@@ -54,6 +58,7 @@ export interface ComputeCellDescriptor
 
 export interface TextCellDescriptor extends NotebookCellDescriptorBase<'text'> {
   text: ReactNode;
+  getDynamicContent?: (analysisState: AnalysisState) => ReactNode;
 }
 
 export interface SubsetCellDescriptor
@@ -76,11 +81,22 @@ type PresetNotebook = {
 // Note - Using differential abundance as practice for differential expression
 // Note - boxplot notebook has no plan for use yet, just good for testing.
 export const presetNotebooks: Record<string, PresetNotebook> = {
-  differentialAbundanceNotebook: {
-    name: 'differentialabundance',
-    displayName: 'Differential Abundance Notebook',
-    projects: ['MicrobiomeDB'],
+  differentialExpressionNotebook: {
+    name: 'differentialexpression',
+    displayName: 'Differential Expression Notebook',
+    projects: ['PlasmoDB', 'MicrobiomeDB'],
     cells: [
+      {
+        type: 'subset',
+        title: 'Select samples (optional)',
+        helperText: (
+          <NumberedHeader
+            number={0}
+            text={'Optionally refine samples for differential expression.'}
+            color={colors.grey[800]}
+          />
+        ),
+      },
       {
         type: 'compute',
         title: 'Configure PCA',
@@ -106,22 +122,153 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
       },
       {
         type: 'compute',
-        title: 'Differential Abundance',
-        computationName: 'differentialabundance',
-        computationId: 'diff_1',
+        title: 'Setup DESeq2 Computation',
+        computationName: 'differentialexpression',
+        computationId: 'de_1',
+        helperText: (
+          <NumberedHeader
+            number={2}
+            text={
+              'Run a differential expression analysis using DESeq2.Please choose the metadata variable for comparison, and then set up the reference and comparison groups. When all selections have been made, we can run the computation.'
+            }
+            color={colors.grey[800]}
+          />
+        ),
         cells: [
           {
             type: 'visualization',
-            title: 'Volcano Plot',
+            title: 'Examine DESeq2 Results with Volcano Plot',
             visualizationName: 'volcanoplot',
             visualizationId: 'volcano_1',
+            getVizPluginOptions: (
+              wdkState: WdkState,
+              enqueueSnackbar: EnqueueSnackbar
+            ) => {
+              return {
+                // When user changes viz config, show snackbar with updated params
+                inputSnackbar: <K extends keyof VolcanoPlotConfig>(
+                  enqueueSnackbar: EnqueueSnackbar,
+                  vizConfigParameter: K,
+                  newValue: VolcanoPlotConfig[K]
+                ) => {
+                  let paramText = '';
+                  // The only two parameters we want to alert the user about are numbers.
+                  if (typeof newValue === 'number') {
+                    switch (vizConfigParameter) {
+                      case 'effectSizeThreshold':
+                        paramText = 'Absolute effect size';
+                        break;
+                      case 'significanceThreshold':
+                        paramText = 'Unadjusted P-value';
+                        break;
+                      default:
+                        paramText = 'Unknown parameter';
+                    }
+                    enqueueSnackbar(
+                      <span>
+                        Updated <strong>{paramText}</strong> search parameter in
+                        step 3 to: <strong>{newValue}</strong>
+                      </span>,
+                      { variant: 'info' }
+                    );
+                  }
+                },
+              };
+            },
+            helperText: (
+              <NumberedHeader
+                number={2}
+                text={
+                  'Once the DESeq2 results are ready, a volcano plot will appear below. Set the threshold lines to color the genes based on their significance and fold change.'
+                }
+                color={colors.grey[800]}
+              />
+            ),
+          },
+          {
+            type: 'text',
+            title: 'Review and run search',
+            helperText: (
+              <NumberedHeader
+                number={3}
+                text={
+                  'After identifying genes of interest from the volcano plot, run a gene search to review the genes in the Gene Search Results table.'
+                }
+                color={colors.grey[800]}
+              />
+            ),
+            text: (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.5rem',
+                }}
+              >
+                <h4>
+                  Clicking "Get Answer" below will return genes that meet the
+                  following criteria:
+                </h4>
+              </div>
+            ),
+            getDynamicContent: (analysisState: AnalysisState) => {
+              // Extra guards
+              if (!analysisState.analysis?.descriptor?.computations?.length) {
+                return <div>No analysis configuration available</div>;
+              }
+              const computation =
+                analysisState.analysis.descriptor.computations[0];
+              if (!computation?.visualizations?.length) {
+                return <div>No visualization configuration available</div>;
+              }
+
+              const volcanoPlotConfig =
+                analysisState.analysis?.descriptor.computations[0]
+                  .visualizations[0].descriptor.configuration;
+
+              if (
+                !volcanoPlotConfig ||
+                !VolcanoPlotConfig.is(volcanoPlotConfig)
+              ) {
+                return <div>No configuration</div>;
+              }
+
+              return (
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.5em',
+                    marginTop: '0.5em',
+                  }}
+                >
+                  <span>
+                    Absolute effect size:{' '}
+                    <strong>{volcanoPlotConfig.effectSizeThreshold}</strong>
+                  </span>
+                  <span>
+                    Unadjusted P-value:{' '}
+                    <strong>{volcanoPlotConfig.significanceThreshold}</strong>
+                  </span>
+                  <span>
+                    Gene regulation direction:{' '}
+                    <strong>Up and down regulated</strong>
+                  </span>
+                  <span
+                    style={{
+                      fontStyle: 'italic',
+                      color: colors.grey[800],
+                      marginTop: '0.5em',
+                    }}
+                  >
+                    To make adjustments, update the volcano plot settings in
+                    step 2.
+                  </span>
+                </div>
+              );
+            },
           },
         ],
-      },
-      {
-        type: 'text',
-        title: 'Text Cell',
-        text: 'This is a text cell for the differential abundance notebook.',
       },
     ],
   },
@@ -183,7 +330,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             ) => {
               return {
                 additionalOnNodeClickAction: (node: NodeData) => {
-                  const moduleName = (node.label ?? '').toLowerCase();
+                  const moduleName = String(node.label ?? '').toLowerCase();
 
                   // because this function is part of read-only "configuration" we can
                   // hard-code the target parameter name 'wgcnaParam'
@@ -195,15 +342,24 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                   if (param == null) return;
                   if (param.type !== 'single-pick-vocabulary') return;
                   if (param.displayType === 'treeBox') return; // ← reject the tree-box case
+                  if (!param.vocabulary || !Array.isArray(param.vocabulary))
+                    return;
 
                   // Also guard against no updateParamValue (the main point of this callback)
                   if (!wdkState.updateParamValue) return;
 
                   // Do nothing if the node they clicked on is
                   // not from the group of modules in the param.
-                  const allowedValues = param.vocabulary.map(
-                    (item: [string, string, null]) => item[0].toLowerCase()
-                  );
+                  // Here we assume the structure of the vocabulary coming from the wdk.
+                  const allowedValues = param.vocabulary
+                    .filter(
+                      (item): item is [string, string, null] =>
+                        Array.isArray(item) && item.length === 3
+                    )
+                    .map((item: [string, string, null]) =>
+                      item[0].toLowerCase()
+                    );
+                  if (allowedValues.length === 0) return;
                   if (!allowedValues.includes(moduleName)) {
                     // TO DO: notify user if they've clicked on a "wrong" node? Needs UX.
                     return;
@@ -211,7 +367,10 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
 
                   // Do nothing if the module they clicked on is already selected.
                   const currentValue = wdkState.paramValues?.[param.name];
-                  if (currentValue?.toLowerCase() === moduleName) {
+                  if (
+                    typeof currentValue === 'string' &&
+                    currentValue.toLowerCase() === moduleName
+                  ) {
                     return;
                   }
 

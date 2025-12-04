@@ -6,6 +6,7 @@ import { plugin as distributions } from './distributions';
 import { plugin as countsandproportions } from './countsAndProportions';
 import { plugin as abundance } from './abundance';
 import { plugin as differentialabundance } from './differentialabundance';
+// import { plugin as differentialexpression } from './differentialExpression';
 import { plugin as correlationassaymetadata } from './correlationAssayMetadata'; // mbio
 import { plugin as correlationassayassay } from './correlationAssayAssay'; // mbio
 import { plugin as correlation } from './correlation'; // genomics (- vb)
@@ -18,6 +19,7 @@ export const plugins: Record<string, ComputationPlugin> = {
   betadiv,
   dimensionalityreduction,
   differentialabundance,
+  // differentialexpression,
   correlationassaymetadata,
   correlationassayassay,
   correlation,
