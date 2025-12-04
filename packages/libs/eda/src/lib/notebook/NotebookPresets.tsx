@@ -129,7 +129,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
           <NumberedHeader
             number={2}
             text={
-              'Run a differential expression analysis using DESeq2.Please choose the metadata variable for comparison, and then set up the reference and comparison groups. When all selections have been made, we can run the computation.'
+              'Run a differential expression analysis using DESeq2. Please choose the metadata variable for comparison, and then set up the reference and comparison groups. When all selections have been made, we can run the computation.'
             }
             color={colors.grey[800]}
           />
@@ -177,7 +177,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             },
             helperText: (
               <NumberedHeader
-                number={2}
+                number={3}
                 text={
                   'Once the DESeq2 results are ready, a volcano plot will appear below. Set the threshold lines to color the genes based on their significance and fold change.'
                 }
@@ -190,7 +190,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             title: 'Review and run search',
             helperText: (
               <NumberedHeader
-                number={3}
+                number={4}
                 text={
                   'After identifying genes of interest from the volcano plot, run a gene search to review the genes in the Gene Search Results table.'
                 }
@@ -216,15 +216,15 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
               if (!analysisState.analysis?.descriptor?.computations?.length) {
                 return <div>No analysis configuration available</div>;
               }
-              const computation =
-                analysisState.analysis.descriptor.computations[0];
-              if (!computation?.visualizations?.length) {
+              const differentialExpressionComputation =
+                analysisState.analysis.descriptor.computations[1];
+              if (!differentialExpressionComputation?.visualizations?.length) {
                 return <div>No visualization configuration available</div>;
               }
 
               const volcanoPlotConfig =
-                analysisState.analysis?.descriptor.computations[0]
-                  .visualizations[0].descriptor.configuration;
+                differentialExpressionComputation.visualizations[0].descriptor
+                  .configuration;
 
               if (
                 !volcanoPlotConfig ||
@@ -262,7 +262,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                     }}
                   >
                     To make adjustments, update the volcano plot settings in
-                    step 2.
+                    step 3.
                   </span>
                 </div>
               );
