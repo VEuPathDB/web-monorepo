@@ -5,7 +5,7 @@ import { TextCellDescriptor } from './NotebookPresets';
 export function TextNotebookCell(props: NotebookCellProps<TextCellDescriptor>) {
   const { cell, isDisabled, analysisState } = props;
 
-  const { text, title, getText } = cell;
+  const { text, title, getDynamicContent } = cell;
 
   return (
     <>
@@ -24,7 +24,7 @@ export function TextNotebookCell(props: NotebookCellProps<TextCellDescriptor>) {
           className={'NotebookCellContent' + (isDisabled ? ' disabled' : '')}
         >
           {text}
-          {getText && getText(analysisState)}
+          {getDynamicContent && getDynamicContent(analysisState)}
         </div>
       </ExpandablePanel>
     </>

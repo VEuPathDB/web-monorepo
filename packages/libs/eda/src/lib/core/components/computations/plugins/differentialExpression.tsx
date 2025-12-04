@@ -595,6 +595,7 @@ function isEnabledInPicker({
     (entity) => !!entity.collections?.length
   );
 
+  // TODO Remove this temporary override when the data is ready and collections have been verified.
   // return studyHasCollections;
   return true;
 }

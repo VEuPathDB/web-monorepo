@@ -33,12 +33,7 @@ export function VisualizationNotebookCell(
   );
   const { enqueueSnackbar } = useSnackbar();
 
-  const {
-    visualizationName,
-    visualizationId,
-    getVizPluginOptions,
-    additionalUpdateConfiguration,
-  } = cell;
+  const { visualizationName, visualizationId, getVizPluginOptions } = cell;
 
   const { visualization, computation } =
     analysisState.getVisualizationAndComputation(visualizationId) ?? {};
@@ -76,18 +71,9 @@ export function VisualizationNotebookCell(
             configuration,
           },
         });
-        // if additional update logic, do it here.
-        if (additionalUpdateConfiguration) {
-          additionalUpdateConfiguration(configuration, enqueueSnackbar);
-        }
       }
     },
-    [
-      updateVisualization,
-      visualization,
-      additionalUpdateConfiguration,
-      enqueueSnackbar,
-    ]
+    [updateVisualization, visualization]
   );
 
   const vizOverview = appOverview.visualizations.find(
