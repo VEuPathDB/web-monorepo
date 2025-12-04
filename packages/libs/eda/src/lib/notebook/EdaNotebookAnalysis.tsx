@@ -118,7 +118,10 @@ export function EdaNotebookAnalysis(props: Props) {
     // This ensures that updates are queued and applied in order, even across
     // multiple recursive calls.
     notebookPreset.cells.forEach((cell) => processCell(cell));
+    console.log('createdcells');
   }, [analysis, setComputations, addVisualization, notebookPreset]);
+
+  console.log('notebookpreset', notebookPreset);
 
   //
   // Now we render the notebook directly from the read-only `notebookPreset`,
