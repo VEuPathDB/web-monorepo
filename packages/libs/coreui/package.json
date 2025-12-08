@@ -91,9 +91,5 @@
     "@material-ui/icons": "^4.11.3",
     "notistack": "^1.0.10",
     "react": ">=16.14"
-  },
-  "volta": {
-    "node": "16.14.0",
-    "yarn": "1.22.4"
   }
 }
