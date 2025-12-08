@@ -12,10 +12,12 @@ import { plugin as correlationassayassay } from './correlationAssayAssay'; // mb
 import { plugin as correlation } from './correlation'; // genomics (- vb)
 import { plugin as selfcorrelation } from './selfCorrelation';
 import { plugin as xyrelationships } from './xyRelationships';
+import { plugin as dimensionalityreduction } from './dimensionalityReduction';
 export const plugins: Record<string, ComputationPlugin> = {
   abundance,
   alphadiv,
   betadiv,
+  dimensionalityreduction,
   differentialabundance,
   // differentialexpression,
   correlationassaymetadata,
