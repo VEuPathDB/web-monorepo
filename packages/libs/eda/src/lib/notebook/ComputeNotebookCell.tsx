@@ -15,6 +15,7 @@ export function ComputeNotebookCell(
   const { analysisState, cell, isDisabled, wdkState, projectId } = props;
   const { analysis } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
+  console.log('compute name', cell.computationName);
 
   const {
     computationName,
@@ -48,6 +49,7 @@ export function ComputeNotebookCell(
   // Ideally it should also use the functional update form of setComputations.
   //
   // We'll use a special, simple changeConfigHandler for the computation configuration
+  console.log('analysis', analysis.descriptor.computations);
   const changeConfigHandler = (propertyName: string, value?: any) => {
     if (!computation || !analysis.descriptor.computations[0]) return;
 
@@ -61,7 +63,9 @@ export function ComputeNotebookCell(
 
     const existingComputation =
       analysisState.analysis?.descriptor.computations.find(
-        (comp) => isEqual(comp.descriptor.configuration, updatedConfiguration) //&&
+        (comp) =>
+          isEqual(comp.computationId, computationId) &&
+          isEqual(comp.descriptor.configuration, updatedConfiguration)
       );
 
     if (existingComputation) return;
@@ -74,7 +78,13 @@ export function ComputeNotebookCell(
       },
     };
 
-    analysisState.setComputations([updatedComputation]);
+    analysisState.setComputations((computations) => {
+      return computations.map((comp) =>
+        comp.computationId === computation.computationId
+          ? updatedComputation
+          : comp
+      );
+    });
   };
 
   const { jobStatus, createJob } = useComputeJobStatus(
