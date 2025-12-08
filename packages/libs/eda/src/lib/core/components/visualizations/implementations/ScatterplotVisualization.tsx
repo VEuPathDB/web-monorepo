@@ -379,8 +379,14 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   // variables within a viz. Computed overlay was left out intentionally to retain
   // desired behavior (see PR #38).
   const variablesForConstraints = useDeepValue({
-    xAxisVariable: computedXAxisDescriptor ?? vizConfig.xAxisVariable,
-    yAxisVariable: computedYAxisDescriptor ?? vizConfig.yAxisVariable,
+    xAxisVariable:
+      sendComputedVariablesInRequest && computedXAxisDescriptor
+        ? computedXAxisDescriptor
+        : vizConfig.xAxisVariable,
+    yAxisVariable:
+      sendComputedVariablesInRequest && computedYAxisDescriptor
+        ? computedYAxisDescriptor
+        : vizConfig.yAxisVariable,
     overlayVariable:
       vizConfig.overlayVariable &&
       (providedOverlayVariableDescriptor ?? vizConfig.overlayVariable),

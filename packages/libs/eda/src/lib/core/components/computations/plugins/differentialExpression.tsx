@@ -2,7 +2,6 @@ import {
   ContinuousVariableDataShape,
   DistributionResponse,
   LabeledRange,
-  usePromise,
   useStudyMetadata,
 } from '../../..';
 import {
@@ -25,7 +24,7 @@ import {
   useFindEntityAndVariableCollection,
   useSubsettingClient,
 } from '../../../hooks/workspace';
-import { ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
+import { ReactNode, useEffect, useMemo, useRef } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import VariableTreeDropdown from '../../variableSelectors/VariableTreeDropdown';
 import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
