@@ -37,10 +37,6 @@
     "react-scripts": "4.0.1",
     "typescript": "^4.4.4"
   },
-  "volta": {
-    "node": "14.15.5",
-    "yarn": "1.22.10"
-  },
   "dependencies": {
     "@veupathdb/http-utils": "workspace:^",
     "@veupathdb/wdk-client": "workspace:^",
