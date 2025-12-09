@@ -7,11 +7,15 @@ import {
 import { EMPTY, Observable, from, merge, of } from 'rxjs';
 import {
   bufferTime,
+  concatMap,
+  delay,
   filter,
   groupBy,
   map,
   mergeMap,
   switchMap,
+  takeWhile,
+  withLatestFrom,
 } from 'rxjs/operators';
 import { Action } from '../Actions';
 import {
@@ -19,6 +23,7 @@ import {
   CATEGORY_EXPANSION,
   NAVIGATION_QUERY,
   NAVIGATION_VISIBILITY,
+  PROGRESSIVE_EXPAND_ALL,
   RECORD_ERROR,
   RECORD_LOADING,
   RECORD_RECEIVED,
@@ -30,10 +35,12 @@ import {
   RequestPartialRecord,
   RecordReceivedAction,
   RecordUpdatedAction,
+  ProgressiveExpandAllAction,
   getPrimaryKey,
   updateNavigationVisibility,
   setCollapsedSections,
   updateTableState,
+  updateSectionVisibility,
 } from '../Actions/RecordActions';
 import {
   BASKET_STATUS_ERROR,
@@ -287,7 +294,88 @@ type RecordOptions = {
   tables: string[];
 };
 
-export const observe = combineEpics(observeRecordRequests, observeUserSettings);
+/**
+ * Progressive expansion epic for debugging.
+ * Expands all collapsed sections one at a time, stopping if an error occurs.
+ */
+function observeProgressiveExpand(
+  action$: ActionsObservable<Action>,
+  state$: StateObservable<RootState>,
+  deps: EpicDependencies
+): Observable<Action> {
+  return action$.pipe(
+    filter(
+      (action): action is ProgressiveExpandAllAction =>
+        action.type === PROGRESSIVE_EXPAND_ALL
+    ),
+    withLatestFrom(state$),
+    mergeMap(([_, state]) => {
+      const recordState = state[key];
+      const allFields = getAllFields(recordState);
+      const collapsedFields = recordState.collapsedSections.filter((section) =>
+        allFields.includes(section)
+      );
+
+      // Track the initial error count
+      const initialErrorCount = state.unhandledErrors.errors.length;
+
+      console.log(
+        `[Progressive Expand] Starting expansion of ${collapsedFields.length} collapsed sections`
+      );
+
+      // Expand sections one at a time
+      return from(collapsedFields).pipe(
+        concatMap((fieldName, index) =>
+          of(updateSectionVisibility(fieldName, true)).pipe(
+            delay(300), // Wait 300ms between each expansion
+            withLatestFrom(state$),
+            mergeMap(([action, currentState]) => {
+              const currentErrorCount =
+                currentState.unhandledErrors.errors.length;
+              const hasNewError = currentErrorCount > initialErrorCount;
+
+              if (hasNewError) {
+                const latestError =
+                  currentState.unhandledErrors.errors[
+                    currentState.unhandledErrors.errors.length - 1
+                  ];
+                console.error(
+                  `[Progressive Expand] Stopped at section "${fieldName}" (${index + 1}/${collapsedFields.length}) due to error:`,
+                  latestError.error
+                );
+                return EMPTY; // Stop expansion
+              }
+
+              console.log(
+                `[Progressive Expand] Expanded section ${index + 1}/${collapsedFields.length}: "${fieldName}"`
+              );
+
+              if (index === collapsedFields.length - 1) {
+                console.log(
+                  '[Progressive Expand] Completed successfully - all sections expanded without errors'
+                );
+              }
+
+              return of(action);
+            })
+          )
+        ),
+        // Stop if we encounter an error
+        takeWhile((action, index) => {
+          const currentState = state$.value;
+          const currentErrorCount = currentState.unhandledErrors.errors.length;
+          return currentErrorCount === initialErrorCount;
+        }, true) // inclusive: true allows the last emission before stopping
+      );
+    })
+  );
+}
+
+export const observe = combineEpics(
+  observeRecordRequests,
+  observeUserSettings,
+  observeProgressiveExpand
+);
 
 interface StorageDescriptor {
   path: string;
