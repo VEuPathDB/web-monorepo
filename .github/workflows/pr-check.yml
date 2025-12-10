@@ -10,6 +10,9 @@ permissions: read-all
 jobs:
   main:
     runs-on: ubuntu-latest
+    env:
+      YARN_IGNORE_PATH: 1
+      YARN_NPM_MINIMAL_AGE_GATE: 10080
     steps:
       - uses: actions/checkout@v4
         with:
@@ -28,9 +31,4 @@ jobs:
             ${{ runner.os }}-yarn-
       - uses: nrwl/nx-set-shas@v4
       - run: yarn
-        env:
-          YARN_IGNORE_PATH: 1
-          YARN_NPM_MINIMAL_AGE_GATE: 10080
       - run: yarn nx affected --target=compile:check
-        env:
-          YARN_IGNORE_PATH: 1
