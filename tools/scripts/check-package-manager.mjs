@@ -12,6 +12,15 @@ import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
+// Check for bypass environment variable for legacy deployment environments
+const skipCheck = process.env.SKIP_YARN_VERSION_CHECK;
+
+if (skipCheck === 'true' || skipCheck === '1') {
+  console.warn('\x1b[33m%s\x1b[0m', '⚠️  SKIP_YARN_VERSION_CHECK enabled - skipping package manager version checks');
+  console.warn('\x1b[2m%s\x1b[0m', 'This should only be used on legacy deployment servers that cannot upgrade Node.js.');
+  process.exit(0);
+}
+
 // Get the repo root (two directories up from this script)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

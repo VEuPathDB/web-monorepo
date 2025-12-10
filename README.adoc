@@ -45,6 +45,26 @@ The repository includes automatic checks that run before `yarn install` to verif
 
 If you see errors about wrong Yarn version, refer to the setup instructions above.
 
+=== Legacy Deployment Environments
+
+*WARNING*: This section is ONLY for legacy deployment servers that cannot upgrade to Node.js 24. Development machines should follow the standard Prerequisites above.
+
+If you're deploying to an environment that cannot run Node.js 24 (such as end-of-life CentOS 7), you can skip the package manager version checks:
+
+[source, bash]
+----
+export SKIP_YARN_VERSION_CHECK=true
+export npm_config_engine_strict=false
+----
+
+This will allow Yarn 3.x with Node.js 14-16 to work, but bypasses supply chain security measures:
+
+- No package manager version enforcement (allows Yarn 3.x instead of requiring Yarn 4.12.0)
+- No Node.js version enforcement (allows Node 14-16 instead of requiring Node 24+)
+- No package age gate (Yarn 4+ feature, ignored by Yarn 3 anyway)
+
+*Security implications*: Only use this for deployment servers where you will NOT be running `yarn add` or installing new packages. The security measures are designed to protect developer machines from supply chain attacks during package installation.
+
 == Quick Start
 
 === Install yarn dependencies
