@@ -13,6 +13,29 @@ import { EbrcDefaultQuestionForm } from './components/questions/EbrcDefaultQuest
 import { RadioParams } from './plugins/RadioParams';
 import QuestionWizardPlugin from './plugins/QuestionWizardPlugin';
 
+/**
+ * EBRC Plugin Configuration
+ *
+ * This file provides VEuPathDB-specific plugin implementations shared across
+ * all EBRC/VEuPathDB sites. These plugins extend the base WDK functionality
+ * with features common to all VEuPathDB projects.
+ *
+ * For comprehensive documentation on the plugin system and these specific plugins, see:
+ * - Plugin System Architecture: @veupathdb/wdk-client/lib/Utils/PLUGIN_SYSTEM.md
+ * - EBRC Plugin Details: ./EBRC_PLUGINS.md
+ *
+ * Plugin Hierarchy:
+ * 1. Site-specific plugins (highest precedence) - e.g., genomics-site/pluginConfig.tsx
+ * 2. EBRC shared plugins (medium precedence) - THIS FILE
+ * 3. WDK base plugins (lowest precedence) - @veupathdb/wdk-client/lib/Core/pluginConfig
+ *
+ * The plugins in this file provide:
+ * - Analysis tools: Word clouds, histograms
+ * - Enhanced forms: Wizard interface, radio parameter layout, EBRC default styling
+ * - Step analysis support: Microbiome analyses (OTU, diversity) and ClinEpi analyses
+ * - Default views: Enhanced result table views, step analysis displays
+ */
+
 const ebrcPluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
     type: 'attributeAnalysis',
