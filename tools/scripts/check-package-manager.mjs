@@ -21,25 +21,31 @@ if (skipCheck === 'true' || skipCheck === '1') {
   process.exit(0);
 }
 
-// Check for required development environment variables
-const ignorePathSet = process.env.YARN_IGNORE_PATH === 'true' || process.env.YARN_IGNORE_PATH === '1';
-const ageGateValue = parseInt(process.env.YARN_NPM_MINIMAL_AGE_GATE || '0', 10);
+// Skip environment variable checks in CI environments (GitHub Actions, etc.)
+// CI environments are controlled and don't need developer environment validation
+const isCI = process.env.CI === 'true' || process.env.CI === '1';
 
-if (!ignorePathSet) {
-  console.error('\x1b[31m%s\x1b[0m', '❌ Error: YARN_IGNORE_PATH is not set to true');
-  console.error('\x1b[33m%s\x1b[0m', '\nYou are likely using the bundled Yarn 3.3.1 instead of Yarn 4.12.0 via corepack.');
-  console.error('\x1b[2m%s\x1b[0m', 'Add to your shell profile (~/.bashrc, ~/.zshrc, etc.):');
-  console.error('\x1b[2m%s\x1b[0m', '  export YARN_IGNORE_PATH=true');
-  console.error('\x1b[2m%s\x1b[0m', '\nSee README.adoc "Required Environment Variables for Development" section.');
-  process.exit(1);
-}
+if (!isCI) {
+  // Check for required development environment variables
+  const ignorePathSet = process.env.YARN_IGNORE_PATH === 'true' || process.env.YARN_IGNORE_PATH === '1';
+  const ageGateValue = parseInt(process.env.YARN_NPM_MINIMAL_AGE_GATE || '0', 10);
 
-if (ageGateValue === 0) {
-  console.warn('\x1b[33m%s\x1b[0m', '⚠️  Warning: YARN_NPM_MINIMAL_AGE_GATE is not set');
-  console.warn('\x1b[2m%s\x1b[0m', 'For supply chain security, add to your shell profile:');
-  console.warn('\x1b[2m%s\x1b[0m', '  export YARN_NPM_MINIMAL_AGE_GATE=10080');
-  console.warn('\x1b[2m%s\x1b[0m', 'This requires NPM packages to be at least 7 days old before installation.');
-  // Don't exit - just warn
+  if (!ignorePathSet) {
+    console.error('\x1b[31m%s\x1b[0m', '❌ Error: YARN_IGNORE_PATH is not set to true');
+    console.error('\x1b[33m%s\x1b[0m', '\nYou are likely using the bundled Yarn 3.3.1 instead of Yarn 4.12.0 via corepack.');
+    console.error('\x1b[2m%s\x1b[0m', 'Add to your shell profile (~/.bashrc, ~/.zshrc, etc.):');
+    console.error('\x1b[2m%s\x1b[0m', '  export YARN_IGNORE_PATH=true');
+    console.error('\x1b[2m%s\x1b[0m', '\nSee README.adoc "Required Environment Variables for Development" section.');
+    process.exit(1);
+  }
+
+  if (ageGateValue === 0) {
+    console.warn('\x1b[33m%s\x1b[0m', '⚠️  Warning: YARN_NPM_MINIMAL_AGE_GATE is not set');
+    console.warn('\x1b[2m%s\x1b[0m', 'For supply chain security, add to your shell profile:');
+    console.warn('\x1b[2m%s\x1b[0m', '  export YARN_NPM_MINIMAL_AGE_GATE=10080');
+    console.warn('\x1b[2m%s\x1b[0m', 'This requires NPM packages to be at least 7 days old before installation.');
+    // Don't exit - just warn
+  }
 }
 
 // Get the repo root (two directories up from this script)
