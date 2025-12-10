@@ -37,4 +37,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - run: yarn
+        env:
+          YARN_IGNORE_PATH: 1
+          YARN_NPM_MINIMAL_AGE_GATE: 10080
 
