@@ -7,18 +7,23 @@ These are instructions to work with the VEuPathDB UI either by executing a singl
 * `corepack` enabled for Yarn version management
 * Supply chain security environment variable (recommended)
 
-=== Supply Chain Security
+=== Required Environment Variables for Development
 
-For additional security, set this environment variable in your shell profile (`.bashrc`, `.zshrc`, etc.):
+Add these to your shell profile (`.bashrc`, `.zshrc`, etc.):
 
 [source, bash]
 ----
+# Use corepack (Yarn 4.12.0) instead of bundled Yarn 3.3.1
+export YARN_IGNORE_PATH=true
+
+# Supply chain security: require packages to be 7+ days old
 export YARN_NPM_MINIMAL_AGE_GATE=10080
 ----
 
-This requires NPM packages to be at least 7 days old (10080 minutes) before installation, protecting against supply chain attacks with newly published malicious packages.
+*Why these are needed:*
 
-*Note*: This is a Yarn 4+ feature and will be ignored by Yarn 3.x on legacy deployments.
+- `YARN_IGNORE_PATH=true`: The repository includes a bundled Yarn 3.3.1 binary for legacy deployment servers. This tells Yarn 4 to ignore it and use corepack instead.
+- `YARN_NPM_MINIMAL_AGE_GATE=10080`: Protects against supply chain attacks by requiring NPM packages to be at least 7 days old before installation (Yarn 4+ feature).
 
 === Setup with Volta (Recommended)
 
@@ -76,16 +81,17 @@ If you're deploying to an environment that cannot run Node.js 24 (such as end-of
 
 [source, bash]
 ----
-# Use bundled Yarn 3.3.1
-export YARN_YARN_PATH=.yarn/releases/yarn-3.3.1.cjs
-
 # Bypass version checks
 export SKIP_YARN_VERSION_CHECK=true
 export npm_config_engine_strict=false
 
 # Allow lockfile modifications (Yarn 3/4 lockfile format incompatibility)
 export YARN_ENABLE_IMMUTABLE_INSTALLS=false
+
+# Do NOT set YARN_IGNORE_PATH - the bundled Yarn 3.3.1 should be used
 ----
+
+The repository's `yarnPath` setting in `.yarnrc.yml` will automatically make `yarn` commands use the bundled Yarn 3.3.1, even when called from Ant or other build tools. No need to call Yarn with a fully-qualified path.
 
 *CRITICAL*: The `yarn.lock` file uses Yarn 4 format. When Yarn 3 runs `yarn install`, it will modify checksums in the lockfile. These changes are format-only (no package version changes) but must *NEVER* be committed to git, as they will break Yarn 4 on development machines.
 
