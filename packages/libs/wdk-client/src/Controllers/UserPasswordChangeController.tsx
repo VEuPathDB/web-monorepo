@@ -30,7 +30,17 @@ class UserPasswordChangeController extends PageController<MergedProps> {
   }
 
   renderView() {
-    return <ChangePasswordForm {...this.props} />;
+    const { user, passwordForm, formStatus, errorMessage, userEvents } =
+      this.props;
+    return (
+      <ChangePasswordForm
+        user={user}
+        passwordForm={passwordForm}
+        formStatus={formStatus}
+        errorMessage={errorMessage}
+        userEvents={userEvents}
+      />
+    );
   }
 }
 
