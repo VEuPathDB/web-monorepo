@@ -1,4 +1,7 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+# Check yarn.lock format before allowing commit
+./tools/scripts/check-yarn-lockfile.sh || exit 1
+
 yarn lint-staged
