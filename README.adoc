@@ -1,3 +1,7 @@
+ifdef::env-github[]
+:note-caption: :information_source:
+endif::[]
+
 = web-monorepo
 These are instructions to work with the VEuPathDB UI either by executing a single workspace’s yarn script -using the nx task runner- (eg the mblast UI or the EDA UI), or by accessing the complete UI by starting a local site. In both cases a webpack server will be started and a new browser tab will be opened. The backend will be accessed via a remote site stated in your monorepo (packages/sites/*website) .env file.
 :toc:
@@ -5,6 +9,64 @@ These are instructions to work with the VEuPathDB UI either by executing a singl
 == Prerequisites
 * `Node >=24.0.0`
 * `corepack` enabled for Yarn version management
+* Supply chain security environment variable (recommended)
+
+=== Required Environment Variables for Development
+
+Add these to your shell profile (`.bashrc`, `.zshrc`, etc.):
+
+[source, bash]
+----
+# Use corepack (Yarn 4.12.0) instead of bundled Yarn 3.3.1
+export YARN_IGNORE_PATH=true
+
+# Supply chain security: require packages to be 7+ days old
+export YARN_NPM_MINIMAL_AGE_GATE=10080
+----
+
+*Why these are needed:*
+
+- `YARN_IGNORE_PATH=true`: The repository includes a bundled Yarn 3.3.1 binary for legacy deployment servers. This tells Yarn 4 to ignore it and use corepack instead.
+- `YARN_NPM_MINIMAL_AGE_GATE=10080`: Protects against supply chain attacks by requiring NPM packages to be at least 7 days old before installation (Yarn 4+ feature).
+
+[NOTE]
+====
+*Developers have two options for setting these variables*
+
+_Option A: Global shell configuration (simple)_
+
+Add the variables to your shell profile (`.bashrc`, `.zshrc`, etc.) as shown above. These will apply to all Yarn projects on your system.
+
+_Option B: Per-repository with direnv (recommended)_
+
+Use https://direnv.net/[direnv] to automatically set these variables only when working in this repository:
+
+1. Install direnv for your platform (see https://direnv.net/docs/installation.html[installation instructions])
+
+2. Add the direnv hook to your shell config:
++
+[source, bash]
+----
+# For bash, add to ~/.bashrc:
+eval "$(direnv hook bash)"
+
+# For zsh, add to ~/.zshrc:
+eval "$(direnv hook zsh)"
+
+# For fish, add to ~/.config/fish/config.fish:
+direnv hook fish | source
+----
+
+3. In this repository, create your `.envrc` file:
++
+[source, shell]
+----
+cp .envrc.example .envrc
+direnv allow
+----
+
+The environment variables will now be set automatically whenever you enter this repository directory, and unset when you leave.
+====
 
 === Setup with Volta (Recommended)
 
@@ -44,6 +106,45 @@ The repository includes automatic checks that run before `yarn install` to verif
 - Corepack is properly configured with the correct Yarn version (4.12.0)
 
 If you see errors about wrong Yarn version, refer to the setup instructions above.
+
+=== Legacy Deployment Environments
+
+*WARNING*: This section is ONLY for legacy deployment servers that cannot upgrade to Node.js 24. Development machines should follow the standard Prerequisites above.
+
+==== Dual-Mode Yarn Setup
+
+This repository supports both modern (corepack-managed Yarn 4) and legacy (bundled Yarn 3) environments:
+
+- *Development machines*: Use Yarn 4.12.0 via corepack (as specified in `package.json`)
+- *Legacy deployment servers*: Use bundled Yarn 3.3.1 at `.yarn/releases/yarn-3.3.1.cjs`
+
+==== Deployment on Legacy Systems
+
+If you're deploying to an environment that cannot run Node.js 24 (such as end-of-life CentOS 7), set these environment variables:
+
+On `palm` and other legacy servers, add these exports to `$BASE_GUS/etc/setenv` for persistence, then paste them into your current shell to activate immediately. _(Don't re-source `setenv` - it will duplicate `PATH` entries.)_
+
+[source, bash]
+----
+# Bypass version checks for web-monorepo
+export SKIP_YARN_VERSION_CHECK=true
+export npm_config_engine_strict=false
+
+# Allow lockfile modifications (Yarn 3/4 lockfile format incompatibility)
+export YARN_ENABLE_IMMUTABLE_INSTALLS=false
+
+# Do NOT set YARN_IGNORE_PATH - the bundled Yarn 3.3.1 should be used
+----
+
+The repository's `yarnPath` setting in `.yarnrc.yml` will automatically make `yarn` commands use the bundled Yarn 3.3.1, even when called from Ant or other build tools. No need to call Yarn with a fully-qualified path.
+
+*CRITICAL*: The `yarn.lock` file uses Yarn 4 format. When Yarn 3 runs `yarn install`, it will modify checksums in the lockfile. These changes are format-only (no package version changes) but must *NEVER* be committed to git, as they will break Yarn 4 on development machines. A hook should prevent this anyway. Before changing code with `git pull` or `git checkout` you will need to restore the file with `git restore yarn.lock`.
+
+*Security implications*:
+
+- Legacy deployments do NOT benefit from the 7-day package age gate (Yarn 4+ feature)
+- Only use this for deployment servers where you will NOT be running `yarn add` or installing new packages
+- The security measures are designed to protect developer machines from supply chain attacks during package installation
 
 == Quick Start
 
