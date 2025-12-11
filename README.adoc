@@ -31,13 +31,13 @@ export YARN_NPM_MINIMAL_AGE_GATE=10080
 
 [NOTE]
 ====
-==== Developers have two options for setting these variables
+*Developers have two options for setting these variables*
 
-===== Option A: Global shell configuration (simple)
+_Option A: Global shell configuration (simple)_
 
 Add the variables to your shell profile (`.bashrc`, `.zshrc`, etc.) as shown above. These will apply to all Yarn projects on your system.
 
-===== Option B: Per-repository with direnv (recommended)
+_Option B: Per-repository with direnv (recommended)_
 
 Use https://direnv.net/[direnv] to automatically set these variables only when working in this repository:
 
