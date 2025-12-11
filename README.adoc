@@ -122,9 +122,11 @@ This repository supports both modern (corepack-managed Yarn 4) and legacy (bundl
 
 If you're deploying to an environment that cannot run Node.js 24 (such as end-of-life CentOS 7), set these environment variables:
 
+On `palm` and other legacy servers, add these exports to `$BASE_GUS/etc/setenv` for persistence, then paste them into your current shell to activate immediately. _(Don't re-source `setenv` - it will duplicate `PATH` entries.)_
+
 [source, bash]
 ----
-# Bypass version checks
+# Bypass version checks for web-monorepo
 export SKIP_YARN_VERSION_CHECK=true
 export npm_config_engine_strict=false
 
