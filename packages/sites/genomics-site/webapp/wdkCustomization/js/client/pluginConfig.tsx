@@ -1,3 +1,27 @@
+/**
+ * Genomics Site Plugin Configuration
+ *
+ * This file provides genomics-specific plugin implementations that customize
+ * the genomics site with features for genomic data analysis and searching.
+ *
+ * For comprehensive documentation on the plugin system and these specific plugins, see:
+ * - Plugin System Architecture: @veupathdb/wdk-client/lib/Utils/PLUGIN_SYSTEM.md
+ * - EBRC Shared Plugins: @veupathdb/web-common/lib/EBRC_PLUGINS.md
+ * - Genomics Plugin Details: ./PLUGIN_CONFIG.md
+ *
+ * Plugin Hierarchy:
+ * 1. Site-specific plugins (highest precedence) - THIS FILE
+ * 2. EBRC shared plugins (medium precedence) - @veupathdb/web-common/lib/pluginConfig
+ * 3. WDK base plugins (lowest precedence) - @veupathdb/wdk-client/lib/Core/pluginConfig
+ *
+ * The plugins in this file provide:
+ * - Genomic result views: Genomic browser, BLAST view, popset views
+ * - Custom search forms: BLAST, location-based, fold change, EDA integration
+ * - Genomic analyses: Pathway enrichment, GO enrichment, word enrichment
+ * - Specialized parameters: Organism selection, transcription factor binding sites
+ * - Dataset integration: Internal gene datasets, user datasets, EDA subsets
+ */
+
 import React, { Suspense } from 'react';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
