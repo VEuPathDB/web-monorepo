@@ -138,7 +138,7 @@ export YARN_ENABLE_IMMUTABLE_INSTALLS=false
 
 The repository's `yarnPath` setting in `.yarnrc.yml` will automatically make `yarn` commands use the bundled Yarn 3.3.1, even when called from Ant or other build tools. No need to call Yarn with a fully-qualified path.
 
-*CRITICAL*: The `yarn.lock` file uses Yarn 4 format. When Yarn 3 runs `yarn install`, it will modify checksums in the lockfile. These changes are format-only (no package version changes) but must *NEVER* be committed to git, as they will break Yarn 4 on development machines.
+*CRITICAL*: The `yarn.lock` file uses Yarn 4 format. When Yarn 3 runs `yarn install`, it will modify checksums in the lockfile. These changes are format-only (no package version changes) but must *NEVER* be committed to git, as they will break Yarn 4 on development machines. A hook should prevent this anyway. Before changing code with `git pull` or `git checkout` you will need to restore the file with `git restore yarn.lock`.
 
 *Security implications*:
 
