@@ -25,8 +25,8 @@ export YARN_NPM_MINIMAL_AGE_GATE=10080
 - `YARN_IGNORE_PATH=true`: The repository includes a bundled Yarn 3.3.1 binary for legacy deployment servers. This tells Yarn 4 to ignore it and use corepack instead.
 - `YARN_NPM_MINIMAL_AGE_GATE=10080`: Protects against supply chain attacks by requiring NPM packages to be at least 7 days old before installation (Yarn 4+ feature).
 
-*Setting these variables - two options:*
-
+.Setting these variables - two options:
+****
 ==== Option A: Global shell configuration (simple)
 
 Add the variables to your shell profile (`.bashrc`, `.zshrc`, etc.) as shown above. These will apply to all Yarn projects on your system.
@@ -60,6 +60,7 @@ direnv allow
 ----
 
 The environment variables will now be set automatically whenever you enter this repository directory, and unset when you leave.
+****
 
 === Setup with Volta (Recommended)
 
