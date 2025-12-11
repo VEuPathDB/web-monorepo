@@ -56,8 +56,6 @@ eval "$(direnv hook zsh)"
 # For fish, add to ~/.config/fish/config.fish:
 direnv hook fish | source
 ----
-====
-
 
 3. In this repository, create your `.envrc` file:
 +
@@ -68,6 +66,7 @@ direnv allow
 ----
 
 The environment variables will now be set automatically whenever you enter this repository directory, and unset when you leave.
+====
 
 === Setup with Volta (Recommended)
 
