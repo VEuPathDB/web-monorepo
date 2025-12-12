@@ -53,10 +53,11 @@ eval "$(direnv hook zsh)"
 direnv hook fish | source
 ----
 
-3. In this repository, the `.envrc` file is already configured. Just run:
+3. Enable direnv in this repository:
 +
 [source, shell]
 ----
+cp .envrc.example .envrc
 direnv allow
 ----
 
