@@ -1,8 +1,5 @@
 # direnv configuration for web-monorepo
 # Copy this file to .envrc and run 'direnv allow' to enable
 
-# Use corepack (Yarn 4.12.0) instead of bundled Yarn 3.3.1
-export YARN_IGNORE_PATH=1
-
 # Supply chain security: require packages to be 7+ days old
 export YARN_NPM_MINIMAL_AGE_GATE=10080

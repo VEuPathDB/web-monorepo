@@ -14,7 +14,7 @@ if git diff --cached --name-only | grep -q "^yarn.lock$"; then
     echo "This repository requires 'version: 8' (Yarn 4 format)."
     echo ""
     echo "This usually happens when:"
-    echo "  - You ran yarn commands without YARN_IGNORE_PATH=true"
+    echo "  - The yarnPath line in .yarnrc.yml was uncommented"
     echo "  - You're on a legacy deployment server (should never commit from there)"
     echo ""
     echo "To fix:"
