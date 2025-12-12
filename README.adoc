@@ -154,6 +154,29 @@ This will make `yarn` commands use the bundled Yarn 3.3.1, even when called from
 - Only use this for deployment servers where you will NOT be running `yarn add` or installing new packages
 - The security measures are designed to protect developer machines from supply chain attacks during package installation
 
+==== Ant Build Workaround
+
+The `YARN_ENABLE_IMMUTABLE_INSTALLS=false` environment variable does not override `yarn --frozen-lockfile` commands in Ant build scripts. To work around this:
+
+*First-time setup after checkout:*
+
+[source, bash]
+----
+cd web-monorepo
+yarn  # This modifies yarn.lock to Yarn 3 format
+# Verify: git status should show yarn.lock as modified
+----
+
+After this initial `yarn` run, subsequent Ant build commands (`rebuilder`, `wb site`, etc.) will succeed because the lockfile is already in the expected format.
+
+*IMPORTANT*: Before running `git pull` or `git checkout`, restore the lockfile:
+[source, bash]
+----
+git restore yarn.lock
+----
+
+After any git operation that changes the repository, run `yarn` again to re-modify the lockfile.
+
 == Quick Start
 
 === Install yarn dependencies
