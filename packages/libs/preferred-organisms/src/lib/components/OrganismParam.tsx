@@ -120,7 +120,6 @@ function TreeBoxOrganismEnumParam(
     : undefined;
   const { wrappedOnChange, modalElement } = useMaxRecommendedGate(
     onChange,
-    selectedValues,
     maxRecommended,
   );
 
@@ -227,7 +226,6 @@ function FlatOrganismEnumParam(
     : undefined;
   const { wrappedOnChange, modalElement } = useMaxRecommendedGate(
     onChange,
-    selectedValues,
     maxRecommended,
   );
 

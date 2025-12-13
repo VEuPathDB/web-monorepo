@@ -7,7 +7,6 @@ import {
 
 export function useMaxRecommendedGate(
   onChange: (newValue: string[]) => void,
-  selectedValues: string[],
   maxRecommended: number | undefined,
 ): {
   wrappedOnChange: (newValue: string[]) => void;
