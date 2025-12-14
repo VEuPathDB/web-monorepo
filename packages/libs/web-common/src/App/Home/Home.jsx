@@ -5,8 +5,13 @@ import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDepen
 import { edaServiceUrl } from '../../config';
 import { Showcase } from '../../App/Showcase';
 import { News } from '../../App/NewsSidebar';
+import { FeaturedTools } from '../../components/homepage/FeaturedTools';
+import { WorkshopExercises } from '../../components/homepage/WorkshopExercises';
 
 import './HomePage.scss';
+
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+const cx = makeClassNameHelper('vpdb-');
 
 export default function HomePage({
   newsSidebar,
@@ -32,17 +37,11 @@ export default function HomePage({
   return (
     <div className="HomePage">
       <div className="Showcase-Section">
-        {homeContent.map((section, idx) => (
-          <Showcase
-            studies={siteData.studies.entities}
-            analyses={analyses}
-            content={section}
-            prefix={webAppUrl}
-            projectId={projectId}
-            attemptAction={attemptAction}
-            key={idx}
-          />
-        ))}
+        <div className={cx('MainContent')}>
+          <FeaturedTools />
+          <hr />
+          <WorkshopExercises />
+        </div>
       </div>
       <div className="News-Section">
         <News twitterUrls={[twitterUrl]} {...newsSidebar} />
