@@ -71,7 +71,7 @@ class HeaderNav extends React.Component {
         <div>
           <h2 className="HeaderNav-Title">
             <Link to="/" style={{ color: '#DD314E' }}>
-              <mark>{titleWithoutDB}</mark>DB
+              <mark>{titleWithoutDB}</mark>
             </Link>
           </h2>
         </div>
@@ -118,7 +118,7 @@ class HeaderNav extends React.Component {
         <div className="box stack">
           <h1 className="HeaderNav-Title">
             <Link to="/" style={{ color: '#DD314E' }}>
-              <mark>{titleWithoutDB}</mark>DB
+              <mark>Data</mark>Explorer
             </Link>
           </h1>
           <p>

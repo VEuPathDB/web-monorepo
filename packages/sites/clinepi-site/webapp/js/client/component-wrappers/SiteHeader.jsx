@@ -83,9 +83,9 @@ export default function SiteHeaderWrapper() {
           logoUrl={logoUrl}
           heroImageUrl={heroImageUrl}
           heroImagePosition="left 33%"
-          titleWithoutDB="ClinEpi"
-          subTitle="Clinical Epidemiology Resources"
-          tagline="Share, explore, and visualize clinical and epidemiological data"
+          titleWithoutDB="DataExplorer"
+          subTitle="anything here?"
+          tagline="Share, explore, and visualize data"
           getSiteData={getStaticSiteData}
           makeHeaderMenuItems={makeHeaderMenuItems}
           searchTerm={searchTerm}
