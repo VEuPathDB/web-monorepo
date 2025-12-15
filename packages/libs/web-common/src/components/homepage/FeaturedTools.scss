@@ -1,12 +1,19 @@
+$default-color: #0f5970e6;
+
+// genomic sites
+main.ebrc-Main .vpdb-FeaturedTools h2 {
+  font-size: 2.3em;
+  padding: 0;
+  font-weight: normal;
+}
+
+//all sites
 .vpdb-FeaturedTools {
   position: relative;
   color: #00304c;
 
   h2 {
-    font-size: 2.3em;
     margin-bottom: 0.25em;
-    padding: 0;
-    font-weight: normal;
   }
 
   h3 {
@@ -21,7 +28,7 @@
 
     a {
       font-size: 1.2em;
-      color: #00304c;
+      color: $default-color;
     }
   }
 
@@ -39,7 +46,7 @@
       button {
         background: white;
         border: none;
-        color: #00304c;
+        color: $default-color;
         padding: 2.5em 1em;
         opacity: 0.5;
         font-size: 1.1em;
@@ -97,7 +104,7 @@
         height: 1.75em;
         width: 1.75em;
 
-        border: 0.05em solid #00304c;
+        border: 0.05em solid $default-color;
         border-radius: 0.25em;
         padding: 0.25em;
         font-size: 2em;
@@ -113,7 +120,7 @@
         text-decoration: none;
 
         .vpdb-FeaturedToolsListItemIconContainer {
-          border: 0.075em solid #00304c;
+          border: 0.075em solid $default-color;
         }
       }
 
@@ -126,10 +133,10 @@
         text-decoration: none;
         font-weight: bold;
 
-        border-color: #00304c;
+        border-color: $default-color;
 
         .vpdb-FeaturedToolsListItemIconContainer {
-          border: 0.2em solid #00304c;
+          border: 0.2em solid $default-color;
         }
       }
 
@@ -150,6 +157,7 @@
       color: white;
       padding: 0.25em 1.39em;
       margin: 0;
+      background-color: $default-color;
     }
 
     &Body {
