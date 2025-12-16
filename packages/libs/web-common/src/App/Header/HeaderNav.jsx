@@ -118,7 +118,7 @@ class HeaderNav extends React.Component {
         <div className="box stack">
           <h1 className="HeaderNav-Title">
             <Link to="/" style={{ color: '#DD314E' }}>
-              <mark>Data</mark>Explorer
+              <mark>data</mark>Explorer
             </Link>
           </h1>
           <p>
@@ -200,7 +200,7 @@ class HeaderNav extends React.Component {
           <div>
             <Branding {...this.props} />
           </div>
-          <div style={{ marginRight: 'auto', alignSelf: 'center' }}>
+          <div style={{ alignSelf: 'center' }}>
             <h3 dangerouslySetInnerHTML={{ __html: tagline }} />
           </div>
           <a href="https://veupathdb.org" target="_blank">
