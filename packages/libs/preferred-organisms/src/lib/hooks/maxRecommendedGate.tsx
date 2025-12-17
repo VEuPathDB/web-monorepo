@@ -5,9 +5,12 @@ import {
   OutlinedButton,
 } from '@veupathdb/coreui/lib/components/buttons';
 
+import './maxRecommendedGate.scss';
+
 export function useMaxRecommendedGate(
   onChange: (newValue: string[]) => void,
   maxRecommended: number | undefined,
+  customMessage?: string,
 ): {
   wrappedOnChange: (newValue: string[]) => void;
   modalElement: JSX.Element | null;
@@ -32,8 +35,13 @@ export function useMaxRecommendedGate(
 
   const wrappedOnChange = useCallback(
     (newValues: string[]) => {
-      // Pass through if maxRecommended is undefined
-      if (maxRecommended === undefined) {
+      // Pass through if maxRecommended is not a valid positive integer
+      if (
+        maxRecommended === undefined ||
+        !Number.isFinite(maxRecommended) ||
+        maxRecommended <= 0 ||
+        !Number.isInteger(maxRecommended)
+      ) {
         onChange(newValues);
         return;
       }
@@ -57,63 +65,49 @@ export function useMaxRecommendedGate(
     [onChange, maxRecommended, hasAcknowledged],
   );
 
-  const modalElement = showModal ? (
-    <Dialog
-      open={showModal}
-      modal={true}
-      title="Recommended Limit Exceeded"
-      onClose={handleCancel}
-    >
-      <div style={{ padding: '1em', width: 550, display: 'grid' }}>
-        <p
-          style={{
-            fontSize: '1.2em',
-            fontWeight: 500,
-            marginBottom: '1em',
-            justifySelf: 'center',
-          }}
-        >
-          You are selecting more than {maxRecommended} organisms.
-        </p>
-        <p
-          style={{
-            fontSize: '1.2em',
-            justifySelf: 'center',
-            textAlign: 'center',
-            width: 400,
-          }}
-        >
-          Selecting a large number of organisms may impact performance and make
+  const defaultMessage =
+    maxRecommended !== undefined &&
+    Number.isFinite(maxRecommended) &&
+    maxRecommended > 0 &&
+    Number.isInteger(maxRecommended) ? (
+      <div>
+        <p>You are selecting more than {maxRecommended} items.</p>
+        <p>
+          Selecting a large number of items may impact performance and make
           results harder to interpret.
         </p>
-        <p
-          style={{
-            fontSize: '1.2em',
-            justifySelf: 'center',
-            textAlign: 'center',
-            width: 400,
-            marginTop: '1em',
-          }}
-        >
+        <p>
           You can continue if needed, but we recommend staying within the
           recommended limit for best results. This warning will only appear
           once.
         </p>
-        <div
-          style={{
-            marginTop: '3em',
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
+      </div>
+    ) : null;
+
+  const modalElement = showModal ? (
+    <Dialog
+      open={showModal}
+      modal={true}
+      title="⚠️ Recommended Limit Exceeded"
+      onClose={handleCancel}
+    >
+      <div className="MaxRecommendedGate">
+        <div className="MaxRecommendedGate--Message">
+          {customMessage ? (
+            <div dangerouslySetInnerHTML={{ __html: customMessage }} />
+          ) : (
+            defaultMessage
+          )}
+        </div>
+        <div className="MaxRecommendedGate--Buttons">
           <FilledButton
-            text="Continue with Selection"
-            onPress={handleConfirm}
+            text="Make another selection"
+            onPress={handleCancel}
             themeRole="primary"
           />
           <OutlinedButton
-            text="Cancel"
-            onPress={handleCancel}
+            text="Ignore this warning"
+            onPress={handleConfirm}
             themeRole="primary"
           />
         </div>

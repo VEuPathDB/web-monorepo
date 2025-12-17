@@ -1,0 +1,19 @@
+.MaxRecommendedGate {
+  padding: 1em;
+  width: 450px;
+  display: grid;
+
+  &--Message {
+    > div p {
+      font-size: 1.2em;
+      justify-self: center;
+      text-align: center;
+    }
+  }
+
+  &--Buttons {
+    margin-top: 3em;
+    display: flex;
+    justify-content: space-between;
+  }
+}

@@ -66,6 +66,7 @@ export const HIGHLIGHT_REFERENCE_ORGANISMS_PROPERTY =
   'highlightReferenceOrganisms';
 export const IS_SPECIES_PARAM_PROPERTY = 'isSpeciesParam';
 export const MAX_RECOMMENDED_PROPERTY = 'maxRecommended';
+export const MAX_RECOMMENDED_MSG_PROPERTY = 'maxRecommendedMsg';
 
 interface OrganismParamProps<
   T extends Parameter,
@@ -113,14 +114,16 @@ function TreeBoxOrganismEnumParam(
   const { selectedValues, onChange } = useEnumParamSelectedValues(props);
 
   // Extract maxRecommended and apply the gate
-  const maxRecommendedStr =
-    props.parameter.properties?.[MAX_RECOMMENDED_PROPERTY]?.[0];
-  const maxRecommended = maxRecommendedStr
-    ? Number(JSON.parse(maxRecommendedStr))
-    : undefined;
+  const maxRecommended = Number(
+    props.parameter.properties?.[MAX_RECOMMENDED_PROPERTY]?.[0],
+  );
+  const maxRecommendedMsg =
+    props.parameter.properties?.[MAX_RECOMMENDED_MSG_PROPERTY]?.[0];
+
   const { wrappedOnChange, modalElement } = useMaxRecommendedGate(
     onChange,
     maxRecommended,
+    maxRecommendedMsg,
   );
 
   const paramWithPrunedVocab = useTreeBoxParamWithPrunedVocab(
@@ -219,14 +222,16 @@ function FlatOrganismEnumParam(
   const { selectedValues, onChange } = useEnumParamSelectedValues(props);
 
   // Extract maxRecommended and apply the gate
-  const maxRecommendedStr =
-    props.parameter.properties?.[MAX_RECOMMENDED_PROPERTY]?.[0];
-  const maxRecommended = maxRecommendedStr
-    ? Number(JSON.parse(maxRecommendedStr))
-    : undefined;
+  const maxRecommended = Number(
+    props.parameter.properties?.[MAX_RECOMMENDED_PROPERTY]?.[0],
+  );
+  const maxRecommendedMsg =
+    props.parameter.properties?.[MAX_RECOMMENDED_MSG_PROPERTY]?.[0];
+
   const { wrappedOnChange, modalElement } = useMaxRecommendedGate(
     onChange,
     maxRecommended,
+    maxRecommendedMsg,
   );
 
   const paramWithPrunedVocab = useFlatParamWithPrunedVocab(
