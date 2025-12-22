@@ -104,21 +104,21 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         computationName: 'dimensionalityreduction',
         computationId: 'pca_1',
         hidden: true, // Hide in UI since config is already known.
-        helperText: (
-          <NumberedHeader
-            number={2}
-            text={
-              'Use PCA to investigate possible sources of variation in the dataset.'
-            }
-            color={colors.grey[800]}
-          />
-        ),
         cells: [
           {
             type: 'visualization',
             title: 'PCA Plot',
             visualizationName: 'scatterplot',
             visualizationId: 'pca_1',
+            helperText: (
+              <NumberedHeader
+                number={2}
+                text={
+                  'Use PCA to investigate possible sources of variation in the dataset.'
+                }
+                color={colors.grey[800]}
+              />
+            ),
           },
         ],
       },

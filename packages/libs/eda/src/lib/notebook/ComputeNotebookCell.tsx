@@ -8,6 +8,7 @@ import { plugins } from '../core/components/computations/plugins';
 import { ComputeCellDescriptor } from './NotebookPresets';
 import { useCachedPromise } from '../core/hooks/cachedPromise';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
+import { useEffect } from 'react';
 
 export function ComputeNotebookCell(
   props: NotebookCellProps<ComputeCellDescriptor>
@@ -97,50 +98,80 @@ export function ComputeNotebookCell(
   const isComputationConfigurationValid = !!plugin?.isConfigurationComplete(
     computation.descriptor.configuration
   );
-
+  
   // Prep any additional restrictions on collections, if defined
   const additionalCollectionPredicate =
     getAdditionalCollectionPredicate &&
     getAdditionalCollectionPredicate(projectId);
+  
+  
+  // Run the compute if we're all set to go. Useful when there is a default configuration.
+  useEffect(() => {
+    if (isComputationConfigurationValid && jobStatus === 'no-such-job') {
+      console.log("creating job");
+      createJob();
+    }
+  }, [isComputationConfigurationValid, jobStatus, createJob]);
 
-  return computation && appOverview && !hidden ? (
+  return computation && appOverview ? (
     <>
-      {cell.helperText && (
-        <div className="NotebookCellHelpText">
-          <span>{cell.helperText}</span>
-        </div>
+      {hidden ? (
+        <plugin.configurationComponent
+          analysisState={analysisState}
+          computation={computation}
+          totalCounts={totalCountsResult}
+          filteredCounts={filteredCountsResult}
+          visualizationId="not_used" // irrelevant because we have our own changeConfigHandler
+          addNewComputation={() => {}} // also irrelevant for us because we add the computation elsewhere
+          computationAppOverview={appOverview}
+          geoConfigs={[]}
+          changeConfigHandlerOverride={changeConfigHandler}
+          showStepNumber={false}
+          showExpandableHelp={false} // no expandable sections within an expandable element.
+          additionalCollectionPredicate={additionalCollectionPredicate}
+          hideConfigurationComponent={true}
+        />
+      ) : (
+        <>
+          {cell.helperText && (
+          <div className="NotebookCellHelpText">
+            <span>{cell.helperText}</span>
+          </div>
+          )}
+          <ExpandablePanel
+            title={cell.title}
+            subTitle={''}
+            state="open"
+            themeRole="primary"
+          >
+            <div
+              className={'NotebookCellContent' + (isDisabled ? ' disabled' : '')}
+            >
+              <plugin.configurationComponent
+                analysisState={analysisState}
+                computation={computation}
+                totalCounts={totalCountsResult}
+                filteredCounts={filteredCountsResult}
+                visualizationId="not_used" // irrelevant because we have our own changeConfigHandler
+                addNewComputation={() => {}} // also irrelevant for us because we add the computation elsewhere
+                computationAppOverview={appOverview}
+                geoConfigs={[]}
+                changeConfigHandlerOverride={changeConfigHandler}
+                showStepNumber={false}
+                showExpandableHelp={false} // no expandable sections within an expandable element.
+                additionalCollectionPredicate={additionalCollectionPredicate}
+                hideConfigurationComponent={false}
+              />
+              <RunComputeButton
+                computationAppOverview={appOverview}
+                status={jobStatus}
+                isConfigured={isComputationConfigurationValid}
+                createJob={createJob}
+              />
+            </div>
+          </ExpandablePanel>
+        </>
       )}
-      <ExpandablePanel
-        title={cell.title}
-        subTitle={''}
-        state="open"
-        themeRole="primary"
-      >
-        <div
-          className={'NotebookCellContent' + (isDisabled ? ' disabled' : '')}
-        >
-          <plugin.configurationComponent
-            analysisState={analysisState}
-            computation={computation}
-            totalCounts={totalCountsResult}
-            filteredCounts={filteredCountsResult}
-            visualizationId="not_used" // irrelevant because we have our own changeConfigHandler
-            addNewComputation={() => {}} // also irrelevant for us because we add the computation elsewhere
-            computationAppOverview={appOverview}
-            geoConfigs={[]}
-            changeConfigHandlerOverride={changeConfigHandler}
-            showStepNumber={false}
-            showExpandableHelp={false} // no expandable sections within an expandable element.
-            additionalCollectionPredicate={additionalCollectionPredicate}
-          />
-          <RunComputeButton
-            computationAppOverview={appOverview}
-            status={jobStatus}
-            isConfigured={isComputationConfigurationValid}
-            createJob={createJob}
-          />
-        </div>
-      </ExpandablePanel>
       {cells &&
         cells.map((subCell, index) => {
           const isSubCellDisabled =

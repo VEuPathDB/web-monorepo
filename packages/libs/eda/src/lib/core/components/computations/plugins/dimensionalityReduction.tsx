@@ -1,4 +1,4 @@
-import { useFindEntityAndVariableCollection } from '../../..';
+import { StudyEntity, useFindEntityAndVariableCollection, useStudyEntities } from '../../..';
 import { VariableCollectionDescriptor } from '../../../types/variable';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
@@ -17,6 +17,9 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { VariableCollectionSingleSelect } from '../../variableSelectors/VariableCollectionSingleSelect';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { entityTreeToArray } from '../../../utils/study-metadata';
+import { useEffect, useMemo, useState } from 'react';
+import { ItemGroup } from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
+import { Item } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxList';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -120,6 +123,7 @@ export function DimensionalityReductionConfiguration(
     visualizationId,
     changeConfigHandlerOverride,
     showStepNumber = true,
+    hideConfigurationComponent = false,
   } = props;
   assertComputationWithConfig(computation, DimensionalityReductionConfig);
   const configuration = computation.descriptor.configuration;
@@ -134,7 +138,54 @@ export function DimensionalityReductionConfiguration(
     ? changeConfigHandlerOverride
     : workspaceChangeConfigHandler;
 
-  return (
+  const entities = useStudyEntities();
+  const collectionsInStudy = useMemo(() => {
+      const collectionItems = entities
+        .filter(
+          (e): e is StudyEntity & Required<Pick<StudyEntity, 'collections'>> =>
+            !!e.collections?.length
+        )
+        .map((e): ItemGroup<string> => {
+          // const collections = collectionPredicate
+          //   ? e.collections.filter(collectionPredicate)
+          //   : e.collections;
+          const collections = e.collections;
+          return {
+            label: e.displayName,
+            items: collections.map(
+              (collection): Item<string> => ({
+                value: `${e.id}:${collection.id}`,
+                display: collection.displayName ?? collection.id,
+              })
+            ),
+          };
+        })
+        .filter((itemGroup) => itemGroup.items.length > 0); // Remove entites that had all their collections fail the collection predicate.
+      return collectionItems;
+    }, [entities]);
+
+    console.log('collectionsInStudy', collectionsInStudy);
+  
+  // This computation only has one input. If there is only one option for the input (one collection),
+  // then we can set it automaticaly. 
+  // With only one collection, it may be useful to hide the entire configuration component (differential expression notebook)
+  useEffect(() => {
+    // If there is only one collection variable, set it automatically
+    // TEMPORARY - until we have the right data, just pretend we only have one by 
+    // using the first collection
+    // if (collectionsInStudy.length === 1) {
+      console.log('only one collection group');
+      changeConfigHandler('collectionVariable', {
+        entityId: collectionsInStudy[0].items[0].value.split(':')[0],
+        collectionId: collectionsInStudy[0].items[0].value.split(':')[1],
+      });
+    // }
+  }, [collectionsInStudy, changeConfigHandler]);
+    
+
+  return hideConfigurationComponent ? (
+    null
+  ) : (
     <ComputationStepContainer
       computationStepInfo={{
         stepNumber: 1,
