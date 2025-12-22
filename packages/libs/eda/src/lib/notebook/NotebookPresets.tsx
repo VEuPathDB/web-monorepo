@@ -54,6 +54,7 @@ export interface ComputeCellDescriptor
   getAdditionalCollectionPredicate?: (
     projectId?: string
   ) => (variableCollection: CollectionVariableTreeNode) => boolean;
+  hidden?: boolean; // Whether to hide this computation cell in the UI. Useful for computations where the entire configuration is already known.
 }
 
 export interface TextCellDescriptor extends NotebookCellDescriptorBase<'text'> {
@@ -102,6 +103,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         title: 'Configure PCA',
         computationName: 'dimensionalityreduction',
         computationId: 'pca_1',
+        hidden: true, // Hide in UI since config is already known.
         helperText: (
           <NumberedHeader
             number={2}

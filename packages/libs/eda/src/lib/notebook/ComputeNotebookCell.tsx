@@ -22,6 +22,7 @@ export function ComputeNotebookCell(
     computationId,
     cells,
     getAdditionalCollectionPredicate,
+    hidden=false,
   } = cell;
   const computation = analysis.descriptor.computations.find(
     (comp) => comp.computationId === computationId
@@ -102,7 +103,7 @@ export function ComputeNotebookCell(
     getAdditionalCollectionPredicate &&
     getAdditionalCollectionPredicate(projectId);
 
-  return computation && appOverview ? (
+  return computation && appOverview && !hidden ? (
     <>
       {cell.helperText && (
         <div className="NotebookCellHelpText">
