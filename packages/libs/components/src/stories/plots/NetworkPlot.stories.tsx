@@ -15,7 +15,7 @@ import LabelledGroup from '../../components/widgets/LabelledGroup';
 import { Undo as UndoIcon } from '@veupathdb/coreui/lib/components/icons';
 
 export default {
-  title: 'Plots/Networks/NetworkPlot',
+  sectionHeader: 'Plots/Networks/NetworkPlot',
   component: NetworkPlot,
 } as Meta;
 

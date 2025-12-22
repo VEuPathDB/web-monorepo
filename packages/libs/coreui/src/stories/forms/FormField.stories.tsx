@@ -7,7 +7,7 @@ import UIThemeProvider from '../../components/theming/UIThemeProvider';
 import { mutedCyan, purple } from '../../definitions/colors';
 
 export default {
-  title: 'Forms/FormField',
+  sectionHeader: 'Forms/FormField',
   component: FormField,
 } as Meta;
 

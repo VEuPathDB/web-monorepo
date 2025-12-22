@@ -7,7 +7,7 @@ import {
 } from '../../components/widgets/NumberAndDateInputs';
 
 export default {
-  title: 'Widgets/Date Input',
+  sectionHeader: 'Widgets/Date Input',
   component: DateInput,
 } as Meta;
 

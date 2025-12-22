@@ -187,7 +187,7 @@ export function BubbleMarkerConfigurationMenu({
         ]}
         customSections={[
           {
-            title: (
+            sectionHeader: (
               <>
                 <span style={{ marginRight: '0.5em' }}>
                   {selectedVariable

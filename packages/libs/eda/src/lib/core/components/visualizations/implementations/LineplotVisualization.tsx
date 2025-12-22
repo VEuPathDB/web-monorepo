@@ -1784,7 +1784,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
             inputs={inputs}
             customSections={[
               {
-                title: (
+                sectionHeader: (
                   <>
                     <span style={{ marginRight: '0.5em' }}>
                       Y-axis aggregation{' '}

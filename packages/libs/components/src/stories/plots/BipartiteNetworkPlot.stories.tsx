@@ -11,7 +11,7 @@ import BipartiteNetworkPlot, {
 import { twoColorPalette } from '../../types/plots/addOns';
 
 export default {
-  title: 'Plots/Networks/BipartiteNetwork',
+  sectionHeader: 'Plots/Networks/BipartiteNetwork',
   component: BipartiteNetworkPlot,
 } as Meta;
 

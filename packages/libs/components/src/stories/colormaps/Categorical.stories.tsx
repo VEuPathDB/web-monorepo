@@ -20,7 +20,7 @@ import { LegendItemsProps } from '../../components/plotControls/PlotListLegend';
 
 // A collection of stories for vieweing our categorical colormaps
 export default {
-  title: 'Colors/Categorical',
+  sectionHeader: 'Colors/Categorical',
   component: ScatterPlot,
   argTypes: {
     nPoints: {

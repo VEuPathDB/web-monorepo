@@ -28,7 +28,7 @@ import { PlotRef } from '../types/plots';
 import SemanticMarkers, { SemanticMarkersProps } from '../map/SemanticMarkers';
 
 export default {
-  title: 'Map/General',
+  sectionHeader: 'Map/General',
   component: MapVEuMapSidebar,
 } as Meta;
 

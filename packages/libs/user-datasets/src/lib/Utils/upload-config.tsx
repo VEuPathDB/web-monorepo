@@ -1,10 +1,9 @@
 import { DatasetUploadPageConfig } from './types';
-import { DatasetInstaller } from "@veupathdb/web-common/src/user-dataset-upload-config";
-import { VariableDisplayText } from "../Components/FormTypes";
+import { DatasetInstaller, DisplayText } from "@veupathdb/web-common/src/user-dataset-upload-config";
 
 export function makeDatasetUploadPageConfig(
   availableUploadTypes: DatasetInstaller[] = [],
-  displayText: VariableDisplayText,
+  displayText: DisplayText,
 ): DatasetUploadPageConfig {
   return availableUploadTypes
     ? { hasDirectUpload: true, availableUploadTypes, displayText }

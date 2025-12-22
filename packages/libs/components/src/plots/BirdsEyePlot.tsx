@@ -129,7 +129,7 @@ export default function BirdsEyePlot({
     xaxis: {
       automargin: weHaveData, // this avoids a console warning about too many auto-margin redraws that occur with empty data
       showgrid: false,
-      title: {
+      sectionHeader: {
         text: weHaveData ? dependentAxisLabel : undefined,
       },
       zeroline: false,
@@ -143,7 +143,7 @@ export default function BirdsEyePlot({
       showgrid: false,
       zeroline: false,
       showline: weHaveData,
-      title: {},
+      sectionHeader: {},
       tickfont: weHaveData ? {} : { color: 'transparent' },
       tickmode: 'array',
       tickvals: data.brackets.map((_, index) =>

@@ -6,7 +6,7 @@ const ADDON_ID = 'redmine';
 
 addons.register(ADDON_ID, () => {
   addons.add(ADDON_ID, {
-    title: 'redmine',
+    sectionHeader: 'redmine',
     type: types.TOOL,
     match: ({ viewMode }) => viewMode === 'story',
     render: () => {

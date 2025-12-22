@@ -83,13 +83,13 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
     cells: [
       {
         type: 'compute',
-        title: 'Differential Abundance',
+        sectionHeader: 'Differential Abundance',
         computationName: 'differentialabundance',
         computationId: 'diff_1',
         cells: [
           {
             type: 'visualization',
-            title: 'Volcano Plot',
+            sectionHeader: 'Volcano Plot',
             visualizationName: 'volcanoplot',
             visualizationId: 'volcano_1',
           },
@@ -97,7 +97,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
       },
       {
         type: 'text',
-        title: 'Text Cell',
+        sectionHeader: 'Text Cell',
         text: 'This is a text cell for the differential abundance notebook.',
       },
     ],
@@ -113,7 +113,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
     cells: [
       {
         type: 'compute',
-        title: 'Correlation computation',
+        sectionHeader: 'Correlation computation',
         computationName: 'correlation',
         computationId: 'correlation_1',
         helperText: (
@@ -142,7 +142,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         cells: [
           {
             type: 'visualization',
-            title: 'Network visualization of correlation results',
+            sectionHeader: 'Network visualization of correlation results',
             visualizationName: 'bipartitenetwork',
             visualizationId: 'bipartite_1',
             helperText: (
@@ -211,7 +211,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
       },
       {
         type: 'wdkparam',
-        title: 'Run gene search',
+        sectionHeader: 'Run gene search',
         paramNames: ['wgcnaParam', 'wgcna_correlation_cutoff'],
         helperText: (
           <NumberedHeader
@@ -232,7 +232,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
     cells: [
       {
         type: 'visualization',
-        title: 'Boxplot Visualization',
+        sectionHeader: 'Boxplot Visualization',
         visualizationName: 'boxplot',
         visualizationId: 'boxplot_1',
       },

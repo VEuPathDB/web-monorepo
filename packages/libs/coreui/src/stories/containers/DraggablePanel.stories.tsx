@@ -10,7 +10,7 @@ import DraggablePanel, {
 } from '../../components/containers/DraggablePanel';
 
 export default {
-  title: 'Containers/DraggablePanel',
+  sectionHeader: 'Containers/DraggablePanel',
   component: DraggablePanel,
 } as Meta;
 

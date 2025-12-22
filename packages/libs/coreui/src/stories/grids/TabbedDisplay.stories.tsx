@@ -10,7 +10,7 @@ import { green, purple } from '../../definitions/colors';
 import typography from '../../styleDefinitions/typography';
 
 export default {
-  title: 'Grids/TabbedDisplay',
+  sectionHeader: 'Grids/TabbedDisplay',
   component: TabbedDisplay,
 } as Meta;
 

@@ -11,7 +11,7 @@ import { NumberOrTimeDelta, TimeDelta } from '../../types/general';
 import { mutedPurple } from '@veupathdb/coreui/lib/definitions/colors';
 
 export default {
-  title: 'Plot Controls/Histogram',
+  sectionHeader: 'Plot Controls/Histogram',
   component: HistogramControls,
 } as Meta;
 

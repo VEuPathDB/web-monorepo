@@ -4,7 +4,7 @@ import BirdsEyePlot, { BirdsEyePlotProps } from '../../plots/BirdsEyePlot';
 import { BirdsEyePlotData } from '../../types/plots';
 
 export default {
-  title: 'Plots/Birds-Eye',
+  sectionHeader: 'Plots/Birds-Eye',
   component: BirdsEyePlot,
 } as Meta;
 

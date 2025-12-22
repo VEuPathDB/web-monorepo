@@ -6,7 +6,7 @@ import { green, purple, teal } from '../../definitions/colors';
 import { useEffect, useState } from 'react';
 
 export default {
-  title: 'Controls/Widgets/Checkbox',
+  sectionHeader: 'Controls/Widgets/Checkbox',
   component: Checkbox,
 } as Meta;
 

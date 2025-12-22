@@ -7,7 +7,7 @@ import SingleSelect, {
 import { chunk, range } from 'lodash';
 
 export default {
-  title: 'Inputs/SingleSelect',
+  sectionHeader: 'Inputs/SingleSelect',
   component: SingleSelect,
 } as Meta;
 

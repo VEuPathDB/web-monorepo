@@ -28,7 +28,7 @@ import AreaSelect from '../map/AreaSelect';
 import { Bounds } from '../map/Types';
 
 export default {
-  title: 'Map/Marker Selection',
+  sectionHeader: 'Map/Marker Selection',
   component: MapVEuMapSidebar,
 } as Meta;
 

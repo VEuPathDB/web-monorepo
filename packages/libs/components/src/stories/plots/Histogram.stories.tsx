@@ -21,7 +21,7 @@ import {
 import FacetedHistogram from '../../plots/facetedPlots/FacetedHistogram';
 
 export default {
-  title: 'Plots/Histogram',
+  sectionHeader: 'Plots/Histogram',
   component: Histogram,
 } as Meta;
 
@@ -66,7 +66,7 @@ const TemplateWithMinimalControls: Story<Omit<HistogramProps, 'data'>> = (
 
 export const SomeCovidData = TemplateWithMinimalControls.bind({});
 SomeCovidData.args = {
-  title: 'Some Current Covid Data in U.S. States',
+  sectionHeader: 'Some Current Covid Data in U.S. States',
   containerStyles: {
     height: '400px',
     width: '800px',
@@ -161,7 +161,7 @@ const TemplateWithSelectedRangeControls: Story<Omit<HistogramProps, 'data'>> = (
 
 export const RangeSelection = TemplateWithSelectedRangeControls.bind({});
 RangeSelection.args = {
-  title: 'Some Current Covid Data in U.S. States',
+  sectionHeader: 'Some Current Covid Data in U.S. States',
   containerStyles: {
     height: '400px',
     width: '800px',
@@ -178,7 +178,7 @@ const SimpleDateTemplate: Story<HistogramProps> = (
 
 export const EventHoursNoControls = SimpleDateTemplate.bind({});
 EventHoursNoControls.args = {
-  title: 'Recent VEuPathDB github events',
+  sectionHeader: 'Recent VEuPathDB github events',
   containerStyles: {
     height: '400px',
     width: '800px',
@@ -198,7 +198,7 @@ EventHoursNoControls.loaders = [
 
 export const RepoMonthsNoControls = SimpleDateTemplate.bind({});
 RepoMonthsNoControls.args = {
-  title: 'VEuPathDB github repo creation dates',
+  sectionHeader: 'VEuPathDB github repo creation dates',
   containerStyles: {
     height: '400px',
     width: '800px',
@@ -312,7 +312,7 @@ export const DateRangeSelection = TemplateWithSelectedDateRangeControls.bind(
   {}
 );
 DateRangeSelection.args = {
-  title: 'VEuPathDB github repo creation dates',
+  sectionHeader: 'VEuPathDB github repo creation dates',
   containerStyles: {
     height: '400px',
     width: '800px',
@@ -546,7 +546,7 @@ export const Faceted = FacetedTemplate.bind({});
 Faceted.args = {
   data: facetedData,
   componentProps: {
-    title: 'Penguins',
+    sectionHeader: 'Penguins',
     containerStyles: {
       width: 300,
       height: 300,

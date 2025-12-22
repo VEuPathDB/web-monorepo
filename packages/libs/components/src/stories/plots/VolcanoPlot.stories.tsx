@@ -13,7 +13,7 @@ import { significanceColors } from '../../types/plots';
 import { CSSProperties } from 'react';
 
 export default {
-  title: 'Plots/VolcanoPlot',
+  sectionHeader: 'Plots/VolcanoPlot',
   component: VolcanoPlot,
   argTypes: {
     effectSizeThreshold: {

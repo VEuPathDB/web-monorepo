@@ -126,7 +126,7 @@ const ScatterPlot = makePlotlyPlotComponent(
     const layout: Partial<Layout> = {
       hovermode: 'closest',
       xaxis: {
-        title: independentAxisLabel,
+        sectionHeader: independentAxisLabel,
         // truncation
         range: data.series.length
           ? [
@@ -156,7 +156,7 @@ const ScatterPlot = makePlotlyPlotComponent(
         ),
       },
       yaxis: {
-        title: dependentAxisLabel,
+        sectionHeader: dependentAxisLabel,
         // with the truncated axis, negative values need to be checked for log scale
         range: data.series.length
           ? [

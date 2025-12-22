@@ -7,7 +7,7 @@ import OpacitySlider, {
 } from '../../components/widgets/OpacitySlider';
 
 export default {
-  title: 'Widgets/Slider/Opacity',
+  sectionHeader: 'Widgets/Slider/Opacity',
   component: OpacitySlider,
 } as Meta;
 

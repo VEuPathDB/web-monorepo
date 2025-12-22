@@ -8,7 +8,7 @@ import { Meta, Story } from '@storybook/react';
 import './diagram.css';
 
 export default {
-  title: 'Entity Diagram',
+  sectionHeader: 'Entity Diagram',
   component: EntityDiagram,
 } as Meta;
 

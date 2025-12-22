@@ -29,18 +29,22 @@ import { ServiceConfiguration } from "@veupathdb/user-datasets/src/lib/Service/T
 // region Display Text
 
 export const initDisplayText = () => ({
+
   common: {
     dataset: {
       nounSingular: "Data set",
       nounPlural: "Data sets",
-    }
+    },
   },
+
   workspace: {
     title: "My Data Sets",
   },
+
   detailsPage: {
     title: (dataset: DatasetDetails): ReactNode => <>My Data Set: <i>{dataset.name}</i></>,
   },
+
   formDisplay: {
     requiredInfo: {
       title: "Required Information",
@@ -57,6 +61,7 @@ export const initDisplayText = () => ({
       },
       visibilityFieldLabel: "Data accessibility",
     },
+
     additionalInfo: {
       title: "Additional Information",
       importButtonText: "Import from Existing Data Set",
@@ -73,7 +78,8 @@ export const initDisplayText = () => ({
               <li>be in .csv, .tsv, or tab-delimited .txt format</li>
               <li>contain one row for every variable in the data file</li>
               <li>include columns labeled (i) variable; (ii) label; (iii)
-                definition</li>
+                definition
+              </li>
             </ul>
             <br/>
             See 'Help' for more information on how to properly format your data
@@ -96,13 +102,19 @@ export const initDisplayText = () => ({
           emailLabel: "Email",
           retypeEmailLabel: "Retype email",
           affiliationLabel: "Organization name",
-          countryLabel: "Country"
+          countryLabel: "Country",
         },
       },
 
       recommended: {
-        title: "Recommended Information",
-        publicationsHeader: "Publications",
+        sectionHeader: "Recommended Information",
+
+        publications: {
+          sectionHeader: "Publications",
+          pubmedIdLabel: "PMID",
+          doiLabel: "DOI",
+          primaryPublicationLabel: "Primary publication",
+        },
 
         funding: {
           sectionHeader: "Funding",
@@ -125,7 +137,7 @@ export const initDisplayText = () => ({
 
           descriptionLabel: "Description",
           descriptionPlaceholder: "Longer description of the study including"
-            + " background, objectives, methodology, etc."
+            + " background, objectives, methodology, etc.",
         },
 
         experimentalOrganismHeader: "Experimental Organism",
@@ -140,7 +152,7 @@ export const initDisplayText = () => ({
       },
     },
     uploadButtonLabel: "Upload Data Set",
-  }
+  },
 } as const);
 
 export type DisplayText = ReturnType<typeof initDisplayText>;
@@ -149,130 +161,6 @@ export type DisplayTextOverride<T extends DisplayText = DisplayText> =
   (original: DisplayText) => T;
 
 // endregion Display Text
-
-
-// region Shared Utils
-
-const Kibibyte = 1024;
-const Mebibyte = 1048576;
-const Gibibyte = 1073741824;
-
-function renderSizeBytes(size: number): string {
-  let scale;
-  let suffix;
-
-  switch (true) {
-    case size > Gibibyte:
-      scale = Gibibyte;
-      suffix = "GiB";
-      break;
-    case size > Mebibyte:
-      scale = Mebibyte;
-      suffix = "MiB";
-      break;
-    case size > Kibibyte:
-      scale = Kibibyte;
-      suffix = "KiB";
-      break;
-    default:
-      return `${size}B`;
-  }
-
-  return `${Math.round(size / scale * 10) / 10}${suffix}`;
-}
-
-function ReferenceGenomeDependency(props: DependencyProps) {
-  const { value, onChange } = props;
-
-  const selectedList = value?.map((entry) => entry.resourceDisplayName);
-  const organismTree = useOrganismTree(true);
-
-  const fileNameByTerm = useWdkService(async (wdkService) => {
-    const genomeDataTypesResult = await wdkService.getAnswerJson(
-      {
-        searchName: "GenomeDataTypes",
-        searchConfig: { parameters: {} },
-      },
-      {
-        attributes: [ "organism_full", "name_for_filenames" ],
-        pagination: {
-          numRecords: -1,
-          offset: 0,
-        },
-      },
-    );
-    return new Map(
-      genomeDataTypesResult.records.map((rec) => [
-        rec.attributes.organism_full as string,
-        rec.attributes.name_for_filenames as string,
-      ]),
-    );
-  }, []);
-  const buildNumber = useWdkService(async (wdkService) => {
-    const config = await wdkService.getConfig();
-    return config.buildNumber;
-  }, []);
-  const onSelectionChange = useCallback(
-    function handleChange(selection: string[]) {
-      if (fileNameByTerm == null || buildNumber == null) return;
-      const dependencies = selection
-        .map(term => {
-          const fileName = fileNameByTerm.get(term);
-          return fileName == null
-            ? undefined
-            : {
-              resourceDisplayName: term,
-              resourceIdentifier: `${projectId}-${buildNumber}_${fileName}_Genome`,
-              resourceVersion: buildNumber,
-            } as DatasetDependency;
-        })
-        .filter(dep => dep != null) as DatasetDependency[];
-      onChange(dependencies);
-    },
-    [ buildNumber, fileNameByTerm, onChange ],
-  );
-  const [ expandedNodes, setExpandedNodes ] = useState<string[]>([]);
-  const [ searchTerm, setSearchTerm ] = useState("");
-
-  if (organismTree == null)
-    return null;
-
-  const styleOverrides = {
-    treeNode: {
-      labelTextWrapper: {
-        fontSize: "1.1em",
-      },
-    },
-  };
-
-  return (
-    <SelectTree
-      shouldCloseOnSelection
-      buttonDisplayContent="Choose reference genome"
-      tree={organismTree}
-      getNodeId={n => n.data.term}
-      getNodeChildren={n => n.children}
-      onExpansionChange={setExpandedNodes}
-      expandedList={expandedNodes}
-      isMultiPick={false}
-      isSearchable
-      searchTerm={searchTerm}
-      onSearchTermChange={setSearchTerm}
-      searchPredicate={searchPredicate}
-      isSelectable
-      selectedList={selectedList}
-      onSelectionChange={onSelectionChange}
-      linksPosition={SelectTree.LinkPlacement.Top}
-      styleOverrides={styleOverrides}
-    />
-  );
-}
-
-function searchPredicate(node: Node<TreeBoxVocabNode>, terms: string[]) {
-  return areTermsInString(terms, node.data.display);
-}
-
-// endregion Shared Utils
 
 // region Implemented Dataset Types
 
@@ -588,3 +476,126 @@ function defaultInputConfigElement(props: DataInputProps): ReactNode {
 }
 
 // endregion Type Specific Form Configs
+
+// region Shared Utils
+
+const Kibibyte = 1024;
+const Mebibyte = 1048576;
+const Gibibyte = 1073741824;
+
+function renderSizeBytes(size: number): string {
+  let scale;
+  let suffix;
+
+  switch (true) {
+    case size > Gibibyte:
+      scale = Gibibyte;
+      suffix = "GiB";
+      break;
+    case size > Mebibyte:
+      scale = Mebibyte;
+      suffix = "MiB";
+      break;
+    case size > Kibibyte:
+      scale = Kibibyte;
+      suffix = "KiB";
+      break;
+    default:
+      return `${size}B`;
+  }
+
+  return `${Math.round(size / scale * 10) / 10}${suffix}`;
+}
+
+function ReferenceGenomeDependency(props: DependencyProps) {
+  const { value, onChange } = props;
+
+  const selectedList = value?.map((entry) => entry.resourceDisplayName);
+  const organismTree = useOrganismTree(true);
+
+  const fileNameByTerm = useWdkService(async (wdkService) => {
+    const genomeDataTypesResult = await wdkService.getAnswerJson(
+      {
+        searchName: "GenomeDataTypes",
+        searchConfig: { parameters: {} },
+      },
+      {
+        attributes: [ "organism_full", "name_for_filenames" ],
+        pagination: {
+          numRecords: -1,
+          offset: 0,
+        },
+      },
+    );
+    return new Map(
+      genomeDataTypesResult.records.map((rec) => [
+        rec.attributes.organism_full as string,
+        rec.attributes.name_for_filenames as string,
+      ]),
+    );
+  }, []);
+  const buildNumber = useWdkService(async (wdkService) => {
+    const config = await wdkService.getConfig();
+    return config.buildNumber;
+  }, []);
+  const onSelectionChange = useCallback(
+    function handleChange(selection: string[]) {
+      if (fileNameByTerm == null || buildNumber == null) return;
+      const dependencies = selection
+        .map(term => {
+          const fileName = fileNameByTerm.get(term);
+          return fileName == null
+            ? undefined
+            : {
+              resourceDisplayName: term,
+              resourceIdentifier: `${projectId}-${buildNumber}_${fileName}_Genome`,
+              resourceVersion: buildNumber,
+            } as DatasetDependency;
+        })
+        .filter(dep => dep != null) as DatasetDependency[];
+      onChange(dependencies);
+    },
+    [ buildNumber, fileNameByTerm, onChange ],
+  );
+  const [ expandedNodes, setExpandedNodes ] = useState<string[]>([]);
+  const [ searchTerm, setSearchTerm ] = useState("");
+
+  if (organismTree == null)
+    return null;
+
+  const styleOverrides = {
+    treeNode: {
+      labelTextWrapper: {
+        fontSize: "1.1em",
+      },
+    },
+  };
+
+  return (
+    <SelectTree
+      shouldCloseOnSelection
+      buttonDisplayContent="Choose reference genome"
+      tree={organismTree}
+      getNodeId={n => n.data.term}
+      getNodeChildren={n => n.children}
+      onExpansionChange={setExpandedNodes}
+      expandedList={expandedNodes}
+      isMultiPick={false}
+      isSearchable
+      searchTerm={searchTerm}
+      onSearchTermChange={setSearchTerm}
+      searchPredicate={searchPredicate}
+      isSelectable
+      selectedList={selectedList}
+      onSelectionChange={onSelectionChange}
+      linksPosition={SelectTree.LinkPlacement.Top}
+      styleOverrides={styleOverrides}
+    />
+  );
+}
+
+function searchPredicate(node: Node<TreeBoxVocabNode>, terms: string[]) {
+  return areTermsInString(terms, node.data.display);
+}
+
+// endregion Shared Utils

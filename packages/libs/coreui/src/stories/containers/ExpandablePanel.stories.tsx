@@ -67,7 +67,7 @@ const ModalContent = ({
 );
 
 export default {
-  title: 'Containers/ExpandablePanel',
+  sectionHeader: 'Containers/ExpandablePanel',
   component: ExpandablePanel,
 } as Meta;
 
@@ -97,7 +97,7 @@ const Template: Story<ExpandablePanelProps> = (args) => {
 };
 export const DefaultPreset = Template.bind({});
 DefaultPreset.args = {
-  title: 'Expandable Panel w/ Default Style Preset',
+  sectionHeader: 'Expandable Panel w/ Default Style Preset',
   state: 'closed',
   stylePreset: 'default',
   children: <ModalContent />,
@@ -106,7 +106,7 @@ DefaultPreset.args = {
 
 export const SimpleSubtitle = Template.bind({});
 SimpleSubtitle.args = {
-  title: 'Expandable Panel w/ Simple Subtitle',
+  sectionHeader: 'Expandable Panel w/ Simple Subtitle',
   subTitle: 'Here is a simple subtitle',
   state: 'closed',
   stylePreset: 'default',
@@ -116,7 +116,7 @@ SimpleSubtitle.args = {
 
 export const ComplexSubtitle = Template.bind({});
 ComplexSubtitle.args = {
-  title: 'Expandable Panel w/ Simple Subtitle',
+  sectionHeader: 'Expandable Panel w/ Simple Subtitle',
   subTitle: {
     description: 'Updated file x to account for bug y.',
     date: '2021-11-01',
@@ -130,7 +130,7 @@ ComplexSubtitle.args = {
 export const ThemedDefaultPreset = Template.bind({});
 ThemedDefaultPreset.args = {
   ...DefaultPreset.args,
-  title: 'Themed Expandable Panel',
+  sectionHeader: 'Themed Expandable Panel',
   themeRole: 'primary',
   children: <ModalContent themeRole="primary" />,
 } as ExpandablePanelProps;
@@ -160,7 +160,7 @@ export const StyleOverrides: Story<ExpandablePanelProps> = (args) => {
 
 StyleOverrides.args = {
   ...DefaultPreset.args,
-  title: 'Supports Style Overrides',
+  sectionHeader: 'Supports Style Overrides',
   children: (
     <div css={{ padding: 15 }}>
       <H6
@@ -230,6 +230,6 @@ StyleOverrides.args = {
 export const FloatingStylePreset = Template.bind({});
 FloatingStylePreset.args = {
   ...DefaultPreset.args,
-  title: 'Expandable Panel w/ Floating Style Preset',
+  sectionHeader: 'Expandable Panel w/ Floating Style Preset',
   stylePreset: 'floating',
 } as ExpandablePanelProps;

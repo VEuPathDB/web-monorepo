@@ -20,7 +20,7 @@ import { symbol } from 'd3';
 import { HighlightedPointsDetails } from '../../types/general';
 
 export default {
-  title: 'Plots/ScatterPlot',
+  sectionHeader: 'Plots/ScatterPlot',
   component: ScatterPlot,
   parameters: {
     redmine: 'https://redmine.apidb.org/issues/41310',
@@ -101,7 +101,7 @@ export const MultipleDataDefaultColors = () => {
       // not to use independentAxisRange
       // independentAxisRange={[xMin, xMax]}
       dependentAxisRange={{ min: yMin, max: yMax }}
-      title={plotTitle}
+      sectionHeader={plotTitle}
       // width height is replaced with containerStyles
       containerStyles={{
         width: plotWidth,
@@ -130,7 +130,7 @@ export const EmptyData = () => {
       // not to use independentAxisRange
       // independentAxisRange={[xMin, xMax]}
       dependentAxisRange={{ min: yMin, max: yMax }}
-      title={plotTitle}
+      sectionHeader={plotTitle}
       // width height is replaced with containerStyles
       containerStyles={{
         width: plotWidth,
@@ -157,7 +157,7 @@ export const EmptyDataLoading = () => {
     <ScatterPlot
       data={undefined}
       dependentAxisRange={{ min: yMin, max: yMax }}
-      title={plotTitle}
+      sectionHeader={plotTitle}
       // width height is replaced with containerStyles
       containerStyles={{
         width: plotWidth,
@@ -276,7 +276,7 @@ export const Faceted = FacetedTemplate.bind({});
 Faceted.args = {
   data: facetedData,
   componentProps: {
-    title: 'Faceted ScatterPlot',
+    sectionHeader: 'Faceted ScatterPlot',
     containerStyles: {
       width: 300,
       height: 300,
@@ -319,7 +319,7 @@ export const opacitySlider = () => {
         // not to use independentAxisRange
         // independentAxisRange={[xMin, xMax]}
         dependentAxisRange={{ min: yMin, max: yMax }}
-        title={'General color'}
+        sectionHeader={'General color'}
         // width height is replaced with containerStyles
         containerStyles={{
           width: plotWidth,
@@ -346,7 +346,7 @@ export const opacitySlider = () => {
         // not to use independentAxisRange
         // independentAxisRange={[xMin, xMax]}
         dependentAxisRange={{ min: yMin, max: yMax }}
-        title={'Sequential gradient color'}
+        sectionHeader={'Sequential gradient color'}
         // width height is replaced with containerStyles
         containerStyles={{
           width: plotWidth,

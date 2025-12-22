@@ -5,7 +5,7 @@ import { FacetedData, BoxplotData } from '../../types/plots';
 import FacetedBoxplot from '../../plots/facetedPlots/FacetedBoxplot';
 
 export default {
-  title: 'Plots/Boxplot',
+  sectionHeader: 'Plots/Boxplot',
   component: Boxplot,
   argTypes: {
     opacity: {
@@ -168,7 +168,7 @@ export const singleDataset = () => {
         width: plotWidth,
         height: plotHeight,
       }}
-      title={plotTitle}
+      sectionHeader={plotTitle}
       orientation={orientation}
       independentAxisLabel={'Floor material'}
       dependentAxisLabel={'Sleeping rooms in dwelling'}
@@ -193,7 +193,7 @@ export const multipleDataset = () => {
         width: plotWidth,
         height: plotHeight,
       }}
-      title={plotTitle}
+      sectionHeader={plotTitle}
       orientation={orientation}
       independentAxisLabel={'Floor material'}
       dependentAxisLabel={'Sleeping rooms in dwelling'}
@@ -218,7 +218,7 @@ export const yearDataset = () => {
         width: plotWidth,
         height: plotHeight,
       }}
-      title={plotTitle}
+      sectionHeader={plotTitle}
       orientation={orientation}
       independentAxisLabel={'Breastfed'}
       dependentAxisLabel={'Enrollment year'}
@@ -419,7 +419,7 @@ export const Faceted = FacetedTemplate.bind({});
 Faceted.args = {
   data: facetedData,
   componentProps: {
-    title: 'Number of rooms (faceted)',
+    sectionHeader: 'Number of rooms (faceted)',
     containerStyles: {
       width: 300,
       height: 300,

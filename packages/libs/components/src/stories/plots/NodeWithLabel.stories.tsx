@@ -4,7 +4,7 @@ import { NodeWithLabel } from '../../plots/Node';
 import { Group } from '@visx/group';
 
 export default {
-  title: 'Plots/Networks/NodeWithLabel',
+  sectionHeader: 'Plots/Networks/NodeWithLabel',
   component: NodeWithLabel,
 } as Meta;
 

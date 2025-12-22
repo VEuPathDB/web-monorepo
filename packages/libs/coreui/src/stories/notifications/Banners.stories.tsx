@@ -10,7 +10,7 @@ import Banner, {
 import Toggle from '../../components/widgets/Toggle';
 
 export default {
-  title: 'Notifications/Banners',
+  sectionHeader: 'Notifications/Banners',
   component: Banner,
 } as Meta;
 

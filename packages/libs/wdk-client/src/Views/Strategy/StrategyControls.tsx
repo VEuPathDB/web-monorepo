@@ -153,7 +153,7 @@ function ShareAction(props: ActionProps) {
 export const StrategyActions: Record<string, StrategyAction> = {
   copy: {
     iconName: 'clone',
-    title: 'Copy',
+    sectionHeader: 'Copy',
     render: (props: ActionProps) => (
       <React.Fragment>
         <div>Are you sure you want to make a copy of your strategy?</div>
@@ -176,27 +176,27 @@ export const StrategyActions: Record<string, StrategyAction> = {
 
   edit: {
     iconName: 'pencil-square-o',
-    title: 'Edit details',
+    sectionHeader: 'Edit details',
     render: (props: ActionProps) => <EditStrategyForm {...props} />,
   },
 
   save: {
     iconName: 'floppy-o',
-    title: 'Save as',
+    sectionHeader: 'Save as',
     render: (props: ActionProps) => <SaveAsStrategyForm {...props} />,
     loginRequired: true,
   },
 
   share: {
     iconName: 'share-alt',
-    title: 'Share',
+    sectionHeader: 'Share',
     render: ShareAction,
     loginRequired: true,
   },
 
   delete: {
     iconName: 'trash-o',
-    title: 'Delete',
+    sectionHeader: 'Delete',
     render: (props: ActionProps) => (
       <React.Fragment>
         <div>Are you sure you want to delete your strategy?</div>

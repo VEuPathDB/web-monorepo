@@ -14,7 +14,7 @@ import {
 } from '../../constants/colors';
 
 export default {
-  title: 'Widgets/Slider',
+  sectionHeader: 'Widgets/Slider',
   component: SliderWidget,
 } as Meta;
 

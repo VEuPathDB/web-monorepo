@@ -8,21 +8,24 @@ import { InputList, InputListProps } from "./InputList";
 import Trash from "@veupathdb/coreui/lib/components/icons/Trash";
 
 interface LabeledInputProps<T> {
-  readonly id: string;
   readonly label: string;
-  readonly placeholder?: string;
   readonly value: T;
   readonly onChange: (value: T) => void;
+  readonly id?: string;
+  readonly className?: string;
+  readonly placeholder?: string;
+  readonly disabled?: boolean;
   readonly required?: boolean;
 }
 
 export function LabeledTextInput(props: LabeledInputProps<string | undefined>): React.ReactElement {
   return (
     <>
-      <FieldLabel htmlFor={props.id} required={props.required}>{props.label}</FieldLabel>
+      <FieldLabel htmlFor={props.id} className={props.className}>{props.label}</FieldLabel>
       <TextBox
         id={props.id}
         required={props.required}
+        disabled={props.disabled}
         placeholder={props.placeholder === undefined ? props.label : (!props.placeholder ? "" : props.placeholder)}
         value={props.value}
         onChange={props.onChange}

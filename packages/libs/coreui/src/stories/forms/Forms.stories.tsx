@@ -13,7 +13,7 @@ import { FloatingButton, FilledButton } from '../../components/buttons';
 import { Download } from '../../components/icons';
 
 export default {
-  title: 'Forms/Example',
+  sectionHeader: 'Forms/Example',
 } as Meta;
 
 export const Example: Story = (args) => {

@@ -409,7 +409,7 @@ export class GbrowseImage extends PureComponent {
                 return content;
               }
             },
-            title: 'Track details', // adds the top border that the close button resides within
+            sectionHeader: 'Track details', // adds the top border that the close button resides within
             button: true, // close button
           },
           position: {

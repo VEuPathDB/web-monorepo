@@ -34,7 +34,7 @@ export interface PlotProps<T> extends ColorPaletteAddon {
   /** plot data - following web-components' API, not Plotly's */
   data?: T;
   /** Title of plot. */
-  title?: string;
+  sectionHeader?: string;
   /** Should plot legend be displayed? Default is yes */
   displayLegend?: boolean;
   /** CSS styles for enclosing div
@@ -92,7 +92,7 @@ function PlotlyPlot<T>(
   ref: Ref<PlotRef>
 ) {
   const {
-    title,
+    sectionHeader,
     displayLegend = true,
     containerStyles = { width: '100%', height: DEFAULT_CONTAINER_HEIGHT },
     containerClass = 'web-components-plot',
@@ -142,8 +142,8 @@ function PlotlyPlot<T>(
     [displayLibraryControls, interactive]
   );
 
-  const xAxisTitle = plotlyProps?.layout?.xaxis?.title;
-  const yAxisTitle = plotlyProps?.layout?.yaxis?.title;
+  const xAxisTitle = plotlyProps?.layout?.xaxis?.sectionHeader;
+  const yAxisTitle = plotlyProps?.layout?.yaxis?.sectionHeader;
 
   // Convert generalized annotation object to plotly-specific annotation
   const plotlyAnnotations: PlotParams['layout']['annotations'] = useMemo(() => {
@@ -174,14 +174,14 @@ function PlotlyPlot<T>(
         ...plotlyProps.layout.xaxis,
         fixedrange: true,
         linewidth: 1,
-        title: axisTitleEllipsis(xAxisTitle, maxIndependentAxisTitleTextLength),
+        sectionHeader: axisTitleEllipsis(xAxisTitle, maxIndependentAxisTitleTextLength),
       },
       yaxis: {
         linecolor: 'black',
         ...plotlyProps.layout.yaxis,
         fixedrange: true,
         linewidth: 1,
-        title: axisTitleEllipsis(yAxisTitle, maxDependentAxisTitleTextLength),
+        sectionHeader: axisTitleEllipsis(yAxisTitle, maxDependentAxisTitleTextLength),
       },
       showlegend: displayLegend ?? true,
       margin: {
@@ -193,7 +193,7 @@ function PlotlyPlot<T>(
       },
       legend: {
         ...plotlyProps.layout.legend,
-        title: {
+        sectionHeader: {
           // add ellipsis for legendTitle
           text:
             (legendTitle || '').length > maxLegendTitleTextLength
@@ -216,7 +216,7 @@ function PlotlyPlot<T>(
       legendOptions,
       displayLegend,
       legendTitle,
-      title,
+      sectionHeader,
       colorPalette,
       plotlyAnnotations,
       xAxisTitle,
@@ -449,19 +449,19 @@ function PlotlyPlot<T>(
           onInitialized={onInitialized}
         />
         {showNoDataOverlay && (
-          <NoDataOverlay plotTitle={title} opacity={0.85} />
+          <NoDataOverlay plotTitle={sectionHeader} opacity={0.85} />
         )}
-        {title && (
+        {sectionHeader && (
           <div
             style={{
               position: 'absolute',
               top: marginTop / 3,
               left: '10%',
               fontSize: 17,
-              fontStyle: title === 'No data' ? 'italic' : 'normal',
+              fontStyle: sectionHeader === 'No data' ? 'italic' : 'normal',
             }}
           >
-            {title}
+            {sectionHeader}
           </div>
         )}
         {showSpinner && <Spinner />}

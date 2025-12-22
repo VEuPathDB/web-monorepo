@@ -6,7 +6,7 @@ import usePlotControls, {
 } from '../../hooks/usePlotControls';
 
 export default {
-  title: 'Plot Controls/ScatterPlot',
+  sectionHeader: 'Plot Controls/ScatterPlot',
   component: ScatterPlotControls,
 } as Meta;
 

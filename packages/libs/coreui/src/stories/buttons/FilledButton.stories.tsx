@@ -8,7 +8,7 @@ import UIThemeProvider from '../../components/theming/UIThemeProvider';
 import { green, orange } from '../../definitions/colors';
 
 export default {
-  title: 'Controls/Buttons/FilledButton',
+  sectionHeader: 'Controls/Buttons/FilledButton',
   component: FilledButton,
 } as Meta;
 

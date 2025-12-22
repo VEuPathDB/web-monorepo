@@ -7,7 +7,7 @@ import OrientationToggle, {
 import { OrientationOptions } from '../../types/plots';
 
 export default {
-  title: 'Widgets/Orientation Toggle',
+  sectionHeader: 'Widgets/Orientation Toggle',
   component: OrientationToggle,
 } as Meta;
 

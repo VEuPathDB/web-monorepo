@@ -14,7 +14,7 @@ import {
 import { uniq } from 'lodash';
 
 export default {
-  title: 'Inputs/CheckboxTree',
+  sectionHeader: 'Inputs/CheckboxTree',
   component: CheckboxTree,
 } as Meta;
 

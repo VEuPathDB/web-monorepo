@@ -14,7 +14,7 @@ import SelectTree, {
 } from '../../components/inputs/SelectTree/SelectTree';
 
 export default {
-  title: 'Inputs/SelectTree',
+  sectionHeader: 'Inputs/SelectTree',
   component: SelectTree,
 } as Meta;
 

@@ -6,7 +6,7 @@ import UIThemeProvider from '../../components/theming/UIThemeProvider';
 import { mutedGreen, purple } from '../../definitions/colors';
 
 export default {
-  title: 'Controls/Widgets/Chip',
+  sectionHeader: 'Controls/Widgets/Chip',
   component: Chip,
 } as Meta;
 

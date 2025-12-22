@@ -8,7 +8,7 @@ import React, { useState } from 'react';
 import { CheckboxList } from '../../../../coreui/lib';
 
 export default {
-  title: 'HorizontalDendrogram',
+  sectionHeader: 'HorizontalDendrogram',
   component: HorizontalDendrogram,
   parameters: {},
   argTypes: {}, // couldn't get storybook-addon-deep-controls to work :(

@@ -24,7 +24,7 @@ import typography from '../styleDefinitions/typography';
 import ColorPalettesMDX from './ColorPalettes.mdx';
 
 export default {
-  title: 'Color/Palettes',
+  sectionHeader: 'Color/Palettes',
   parameters: {
     docs: {
       page: ColorPalettesMDX,

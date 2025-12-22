@@ -28,7 +28,7 @@ import { Toggle } from '@veupathdb/coreui';
 import SemanticMarkers from '../map/SemanticMarkers';
 
 export default {
-  title: 'Map/Chart Markers',
+  sectionHeader: 'Map/Chart Markers',
   component: MapVEuMap,
 } as Meta;
 

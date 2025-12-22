@@ -31,7 +31,7 @@ import { PlotRef } from '../types/plots';
 import SemanticMarkers from '../map/SemanticMarkers';
 
 export default {
-  title: 'Map/Map ref related',
+  sectionHeader: 'Map/Map ref related',
   component: MapVEuMap,
 } as Meta;
 

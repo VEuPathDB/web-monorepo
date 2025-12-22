@@ -16,7 +16,7 @@ import {
 } from '../../definitions/colors';
 
 export default {
-  title: 'Typography/Paragraph',
+  sectionHeader: 'Typography/Paragraph',
   component: Paragraph,
   argTypes: {
     color: {

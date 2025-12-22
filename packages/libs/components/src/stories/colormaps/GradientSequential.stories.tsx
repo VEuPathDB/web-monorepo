@@ -19,7 +19,7 @@ import { scaleLinear } from 'd3';
 
 // A collection of stories for viewing our Sequential Gradient Colormap
 export default {
-  title: 'Colors/Gradient Sequential',
+  sectionHeader: 'Colors/Gradient Sequential',
   component: ScatterPlot,
   argTypes: {
     nPoints: {

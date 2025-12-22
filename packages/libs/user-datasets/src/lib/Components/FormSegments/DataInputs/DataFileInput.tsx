@@ -4,6 +4,7 @@ import { cx } from "../component-utils";
 import { FileInput } from "@veupathdb/wdk-client/lib/Components";
 import { SingleFileUploadConfig } from "../../FormTypes/form-config";
 import { newSingleFileUpload } from "../../FormTypes";
+import { ifExists, sanitizeFilename } from "../../../Utils/utils";
 
 
 export function DataFileInput(props: SingleFileUploadConfig): ReactElement {
@@ -30,14 +31,8 @@ function newDefaultFileInput({
   return <FileInput
     accept={props.installer.allowedFileExtensions?.join(",") || undefined}
     maxSizeBytes={props.installer.maxFileSize}
-    onChange={file => setUpload(
-      file != null
-        ? newSingleFileUpload(new File(
-          [ file ],
-          file?.name.replace(/\s+/g, "_"),
-          file,
-        ))
-        : undefined
-    )}
+    onChange={it => setUpload(ifExists(it, file =>
+      newSingleFileUpload(new File([ file ], sanitizeFilename(file), file))
+    ))}
   />;
 }

@@ -8,7 +8,7 @@ import { NumberRange, NumberOrDateRange } from '../../types/general';
 import { Toggle } from '@veupathdb/coreui';
 
 export default {
-  title: 'Plots/Barplot',
+  sectionHeader: 'Plots/Barplot',
   component: Barplot,
 } as Meta;
 
@@ -35,7 +35,7 @@ Basic.args = {
   independentAxisLabel: 'Animal',
   legendTitle: 'Domesticated',
   opacity: 0.75,
-  title: 'Awesomeness of animals stratified by domestication',
+  sectionHeader: 'Awesomeness of animals stratified by domestication',
 };
 
 export const EmptyData = Template.bind({});
@@ -56,7 +56,7 @@ NoDataOverlay.args = {
   dependentAxisLabel: 'Dependent axis label',
   independentAxisLabel: 'Independent axis label',
   showNoDataOverlay: true,
-  title: 'Awesomeness of animals stratified by domestication',
+  sectionHeader: 'Awesomeness of animals stratified by domestication',
 };
 
 /**
@@ -116,7 +116,7 @@ export const Faceted = FacetedTemplate.bind({});
 Faceted.args = {
   data: facetedData,
   componentProps: {
-    title: 'Indoor and outdoor pets',
+    sectionHeader: 'Indoor and outdoor pets',
     independentAxisLabel: 'Pet',
     dependentAxisLabel: 'Count',
     containerStyles: {

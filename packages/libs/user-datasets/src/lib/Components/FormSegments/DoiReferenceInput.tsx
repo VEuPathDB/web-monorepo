@@ -5,8 +5,8 @@ import { FieldLabel } from "./FieldLabel";
 import { TextArea, TextBox } from "@veupathdb/wdk-client/lib/Components";
 import { InputList } from "./InputList";
 import { TrashButton } from "./common-components";
-import { FieldSetter } from "../FormTypes";
-import { ListSectionProps } from "../UploadForm";
+import { FieldSetter } from "../../Utils/util-types";
+import { ListSectionProps } from "../../Utils/field-selectors";
 
 function doiReferenceFactory(updater: FieldSetter<DoiRef[]>): InputConstructor<DoiRef> {
   return (record, index) => {

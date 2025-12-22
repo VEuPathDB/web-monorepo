@@ -48,7 +48,7 @@ const ModalContent = ({
 );
 
 export default {
-  title: 'Containers/Modal',
+  sectionHeader: 'Containers/Modal',
   component: CoreUIModal,
 } as Meta;
 
@@ -96,13 +96,13 @@ Basic.args = {
 export const WithTitle = Template.bind({});
 WithTitle.args = {
   ...Basic.args,
-  title: 'Share Large Analysis',
+  sectionHeader: 'Share Large Analysis',
 } as ModalProps;
 
 export const WithReactNodeTitle = Template.bind({});
 WithReactNodeTitle.args = {
   ...Basic.args,
-  title: (
+  sectionHeader: (
     <span>
       <i>Span</i> element used as a title
     </span>
@@ -112,21 +112,21 @@ WithReactNodeTitle.args = {
 export const WithSubtitle = Template.bind({});
 WithSubtitle.args = {
   ...Basic.args,
-  title: 'Share Large Analysis',
+  sectionHeader: 'Share Large Analysis',
   subtitle: 'The subtitle is under the main title!',
 } as ModalProps;
 
 export const IncludeCloseButton = Template.bind({});
 IncludeCloseButton.args = {
   ...Basic.args,
-  title: 'Modal With Close Button',
+  sectionHeader: 'Modal With Close Button',
   includeCloseButton: true,
 } as ModalProps;
 
 export const OpenCloseCallbacks = Template.bind({});
 OpenCloseCallbacks.args = {
   ...Basic.args,
-  title: 'Modal With Close Button',
+  sectionHeader: 'Modal With Close Button',
   includeCloseButton: true,
   onOpen: () => console.log('Modal Open Callback'),
   onClose: () => console.log('Modal Close Callback'),
@@ -135,7 +135,7 @@ OpenCloseCallbacks.args = {
 export const SpecificSize = Template.bind({});
 SpecificSize.args = {
   ...IncludeCloseButton.args,
-  title: 'Specifically Sized Modal',
+  sectionHeader: 'Specifically Sized Modal',
   includeCloseButton: true,
   styleOverrides: {
     size: {
@@ -156,14 +156,14 @@ SpecificSize.args = {
 export const UsingTheme = Template.bind({});
 UsingTheme.args = {
   ...IncludeCloseButton.args,
-  title: 'Using Theme Styling',
+  sectionHeader: 'Using Theme Styling',
   themeRole: 'primary',
 } as ModalProps;
 
 export const CustomContentPadding = Template.bind({});
 CustomContentPadding.args = {
   ...IncludeCloseButton.args,
-  title: 'Customized Content Padding',
+  sectionHeader: 'Customized Content Padding',
   styleOverrides: {
     content: {
       padding: {

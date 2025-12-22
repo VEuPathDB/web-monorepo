@@ -5,7 +5,7 @@ import { FacetedData, MosaicPlotData } from '../../types/plots';
 import FacetedMosaicPlot from '../../plots/facetedPlots/FacetedMosaicPlot';
 
 export default {
-  title: 'Plots/Mosaic',
+  sectionHeader: 'Plots/Mosaic',
   component: MosaicPlot,
 } as Meta;
 
@@ -31,7 +31,7 @@ TwoByTwo.args = {
   independentAxisLabel: 'Sex',
   dependentAxisLabel: 'Status',
   colors: ['orange', 'blue'],
-  title: 'Sex & Status Mosaic',
+  sectionHeader: 'Sex & Status Mosaic',
 };
 
 export const TwoByThree = Template.bind({});
@@ -321,7 +321,7 @@ export const Faceted = FacetedTemplate.bind({});
 Faceted.args = {
   data: facetedData,
   componentProps: {
-    title: 'Atmospheric makeup of planets over time',
+    sectionHeader: 'Atmospheric makeup of planets over time',
     containerStyles: {
       width: 300,
       height: 300,

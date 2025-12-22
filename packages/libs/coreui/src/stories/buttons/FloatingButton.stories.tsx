@@ -9,7 +9,7 @@ import { green, orange } from '../../definitions/colors';
 import { AccessAlarm } from '@material-ui/icons';
 
 export default {
-  title: 'Controls/Buttons/FloatingButton',
+  sectionHeader: 'Controls/Buttons/FloatingButton',
   component: FloatingButton,
 } as Meta;
 

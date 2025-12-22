@@ -137,7 +137,7 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
     // use unified hovering when marginal histogram is used
     hovermode: showMarginalHistogram ? 'x unified' : 'x',
     xaxis: {
-      title: independentAxisLabel,
+      sectionHeader: independentAxisLabel,
       // add axis range control truncation
       range: data.series.length
         ? [
@@ -186,7 +186,7 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
           : undefined,
     },
     yaxis: {
-      title: dependentAxisLabel,
+      sectionHeader: dependentAxisLabel,
       // add axis range control
       range: data.series.length
         ? [
@@ -227,7 +227,7 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
         : undefined,
       // disable plotly's mouse zoom control
       fixedrange: true,
-      title: 'Count',
+      sectionHeader: 'Count',
     },
     // axis range control: add truncatedAxisHighlighting for layout.shapes
     shapes: truncatedAxisHighlighting,

@@ -162,7 +162,7 @@ const Barplot = makePlotlyPlotComponent(
       showgrid: false,
       zeroline: false,
       showline: dependentAxisLogScale || dataLooksFractional,
-      title: {
+      sectionHeader: {
         text: independentAxisLabel ? independentAxisLabel : '',
       },
       range: data.series.length ? undefined : [0, 10],
@@ -214,7 +214,7 @@ const Barplot = makePlotlyPlotComponent(
           : ',.0f'
         : undefined,
       type: dependentAxisLogScale ? 'log' : 'linear',
-      title: {
+      sectionHeader: {
         text: dependentAxisLabel ? dependentAxisLabel : '',
       },
       tickfont: data.series.length ? {} : { color: 'transparent' },

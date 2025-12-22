@@ -9,7 +9,7 @@ import { Toggle } from '@veupathdb/coreui';
 import { LinePlotDataSeries } from '../../types/plots';
 
 export default {
-  title: 'Plots/LinePlot',
+  sectionHeader: 'Plots/LinePlot',
   component: LinePlot,
 } as Meta;
 
@@ -80,7 +80,7 @@ Basic.args = {
   dependentAxisLabel: 'Awesomeness',
   independentAxisLabel: 'Age',
   legendTitle: 'Animal',
-  title: 'Awesomeness of animals',
+  sectionHeader: 'Awesomeness of animals',
   interactive: true,
 };
 
@@ -90,7 +90,7 @@ ErrorBars.args = {
   dependentAxisLabel: 'Awesomeness with error bars',
   independentAxisLabel: 'Age',
   legendTitle: 'Animal',
-  title: 'Awesomeness of animals',
+  sectionHeader: 'Awesomeness of animals',
 };
 
 export const EmptyData = Template.bind({});
@@ -111,7 +111,7 @@ NoDataOverlay.args = {
   dependentAxisLabel: 'Dependent axis label',
   independentAxisLabel: 'Independent axis label',
   showNoDataOverlay: true,
-  title: 'Awesomeness of animals',
+  sectionHeader: 'Awesomeness of animals',
 };
 
 export const MarkerTooltips = Template.bind({});
@@ -120,7 +120,7 @@ MarkerTooltips.args = {
   dependentAxisLabel: 'Awesomeness',
   independentAxisLabel: 'Age',
   legendTitle: 'Animal',
-  title: 'Awesomeness of animals',
+  sectionHeader: 'Awesomeness of animals',
   interactive: true,
 };
 
@@ -181,7 +181,7 @@ export const Faceted = FacetedTemplate.bind({});
 Faceted.args = {
   data: facetedData,
   componentProps: {
-    title: 'indoor and outdoor pets',
+    sectionHeader: 'indoor and outdoor pets',
     containerStyles: {
       width: 300,
       height: 300,

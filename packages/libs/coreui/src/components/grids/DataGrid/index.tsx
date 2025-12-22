@@ -38,7 +38,7 @@ export type DataGridProps = {
   /** Optional. Indicates whether or not data is currently being loaded. */
   loading?: boolean;
   /** Optional. Title for DataGrid */
-  title?: string;
+  sectionHeader?: string;
   /** Optional. Designates that the grid should be sortable. */
   sortable?: boolean;
   /**
@@ -57,8 +57,8 @@ export type DataGridProps = {
       /**
        * Function to update the data for the current page.
        * NOTE: To avoid infinite loops, define this function with
-       * useCallback. Here is an example to help you get started. :) 
-       * 
+       * useCallback. Here is an example to help you get started. :)
+       *
        * const fetchPaginatedData = useCallback(({ pageSize, pageIndex }) => {
             setIsLoading(true);
             setTimeout(() => {
@@ -103,7 +103,7 @@ export default function DataGrid({
   data,
   themeRole,
   loading = false,
-  title,
+  sectionHeader,
   sortable = false,
   onRowSelection = undefined,
   pagination,
@@ -272,7 +272,7 @@ export default function DataGrid({
         width: finalStyle.size?.width,
       }}
     >
-      {title && <H3 text={title} additionalStyles={{ marginBottom: 20 }} />}
+      {sectionHeader && <H3 text={sectionHeader} additionalStyles={{ marginBottom: 20 }} />}
       {['top', 'both'].includes(pagination?.controlsLocation ?? '') && (
         <PaginationControls
           loading={loading}

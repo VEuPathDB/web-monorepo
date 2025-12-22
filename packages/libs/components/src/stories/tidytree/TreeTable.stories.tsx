@@ -4,7 +4,7 @@ import { MesaColumn } from '../../../../coreui/lib/components/Mesa/types';
 import { useState } from 'react';
 
 export default {
-  title: 'TreeTable',
+  sectionHeader: 'TreeTable',
   component: TreeTable,
   parameters: {},
   argTypes: {},

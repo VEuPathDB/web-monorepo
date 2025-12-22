@@ -1,4 +1,4 @@
-import React, { FormEvent, JSXElementConstructor, ReactElement, useCallback, useEffect, useState } from "react";
+import React, { FormEvent, useCallback, useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 
@@ -16,6 +16,7 @@ import Banner from "@veupathdb/coreui/lib/components/banners/Banner";
 import "./UploadForm.scss";
 
 import {
+  AdditionalInformation,
   BioprojectIdRefInputList,
   ContactInputList,
   DoiRefInputList,
@@ -27,7 +28,7 @@ import {
   UploadProgress,
 } from "./FormSegments";
 
-import { DatasetPostRequest } from "../Service/Types";
+import { DatasetPostRequest, DatasetPublication } from "../Service/Types";
 import {
   DatasetFormData,
   DataUpload,
@@ -46,6 +47,7 @@ import { CharacteristicsSegment } from "./FormSegments/DatasetCharacteristics";
 import { DisplayText } from "@veupathdb/web-common/src/user-dataset-upload-config";
 import { transform } from "../Utils/utils";
 import { createRootListSectionProps, createSubListSectionProps } from "../Utils/field-selectors";
+import { Fundamentals } from "./FormSegments/Fundamental";
 
 const cx = makeClassNameHelper("UploadForm");
 
@@ -103,9 +105,11 @@ export function UploadForm({
     dependencies: [],
     description: urlParams.datasetDescription,
     origin: "direct-upload",
+    publications: [{} as DatasetPublication],
   }));
 
   const dataUploadState = useState<DataUpload>();
+  const dictFileState = useState<File>();
   const docFileState = useState<MetaFileUpload[]>([]);
 
   const [ errorMessages, setErrorMessages ] = useState<string[]>([]);
@@ -194,6 +198,13 @@ export function UploadForm({
           }}
         />
         {requiredDetailsSection}
+
+        <AdditionalInformation
+          displayText={displayText.formDisplay.additionalInfo}
+          formDataState={[dsDetails, setDsDetails]}
+          dictFileState={dictFileState}
+          docFileState={docFileState} />
+
         <div className="formSection formSection--data-set-description">
           <FieldLabel htmlFor="data-set-description">Description</FieldLabel>
           <TextArea
@@ -205,8 +216,11 @@ export function UploadForm({
           />
         </div>
 
-        <div className="formSection">
+        <div className="formSection" id="dataset-upload-addtl">
           <PublicationInputList {...createRootListSectionProps("publications", dsDetails, setDsDetails)}/>
+
+          <Fundamentals displayText={displayText.formDisplay.additionalInfo.fundamentals}/>
+
           <ContactInputList {...createRootListSectionProps("contacts", dsDetails, setDsDetails)}/>
           <LinkedDatasetInputList {...createRootListSectionProps("linkedDatasets", dsDetails, setDsDetails)}/>
         </div>

@@ -8,7 +8,7 @@ import UIThemeProvider from '../../components/theming/UIThemeProvider';
 import { mutedCyan, orange } from '../../definitions/colors';
 
 export default {
-  title: 'Controls/Buttons/MesaButton',
+  sectionHeader: 'Controls/Buttons/MesaButton',
   component: MesaButton,
 } as Meta;
 

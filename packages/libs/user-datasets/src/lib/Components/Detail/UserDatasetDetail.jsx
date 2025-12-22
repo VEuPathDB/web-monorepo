@@ -375,7 +375,7 @@ class UserDatasetDetail extends React.Component {
         ),
       },
       {
-        attribute: 'Publications',
+        attribute: 'PublicationList',
         className: 'NestedFieldsSection',
         value: (
           <div className={classify('NestedFields')}>

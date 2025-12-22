@@ -67,7 +67,7 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
 
   return (
     <>
-      <h2>{componentProps.title}</h2>
+      <h2>{componentProps.sectionHeader}</h2>
       <div
         style={{
           display: 'flex',

@@ -10,7 +10,7 @@ import { LIGHT_PURPLE } from '../../constants/colors';
 import { mutedPurple } from '@veupathdb/coreui/lib/definitions/colors';
 
 export default {
-  title: 'Plot Controls/PieControls',
+  sectionHeader: 'Plot Controls/PieControls',
   component: PieControls,
 } as Meta;
 

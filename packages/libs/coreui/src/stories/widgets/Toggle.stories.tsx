@@ -10,7 +10,7 @@ import { green, magenta, orange, purple } from '../../definitions/colors';
 import { useState } from 'react';
 
 export default {
-  title: 'Controls/Widgets/Toggle',
+  sectionHeader: 'Controls/Widgets/Toggle',
   component: Toggle,
 } as Meta;
 

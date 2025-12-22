@@ -8,7 +8,7 @@ import UIThemeProvider from '../../components/theming/UIThemeProvider';
 import { purple, red } from '../../definitions/colors';
 
 export default {
-  title: 'Controls/Buttons/OutlinedButton',
+  sectionHeader: 'Controls/Buttons/OutlinedButton',
   component: OutlinedButton,
 } as Meta;
 

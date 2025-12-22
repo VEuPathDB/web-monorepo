@@ -5,7 +5,7 @@ import { FacetedData, HeatmapData } from '../../types/plots';
 import FacetedHeatmap from '../../plots/facetedPlots/FacetedHeatmap';
 
 export default {
-  title: 'Plots/Heatmap',
+  sectionHeader: 'Plots/Heatmap',
   component: Heatmap,
   parameters: {
     redmine: 'https://redmine.apidb.org/issues/42052',
@@ -30,7 +30,7 @@ NumericAxes.args = {
   xAxisLabel: 'Number of pets',
   yAxisLabel: 'Number of children',
   showValues: false,
-  title: 'Numeric heatmap',
+  sectionHeader: 'Numeric heatmap',
   legendTitle: 'Count of households',
 };
 
@@ -46,7 +46,7 @@ CategoricalAxes.args = {
     ],
   },
   showValues: true,
-  title: 'Categorical heatmap',
+  sectionHeader: 'Categorical heatmap',
   legendTitle: 'Temperature',
 };
 
@@ -109,7 +109,7 @@ export const Faceted = FacetedTemplate.bind({});
 Faceted.args = {
   data: facetedData,
   componentProps: {
-    title: 'Number of children vs Number of pets (faceted)',
+    sectionHeader: 'Number of children vs Number of pets (faceted)',
   },
   modalComponentProps: {
     containerStyles: {

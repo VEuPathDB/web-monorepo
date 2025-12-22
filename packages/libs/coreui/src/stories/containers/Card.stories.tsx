@@ -39,7 +39,7 @@ const ModalContent = ({
 );
 
 export default {
-  title: 'Containers/Card',
+  sectionHeader: 'Containers/Card',
   component: Card,
 } as Meta;
 
@@ -61,7 +61,7 @@ const Template: Story<CardProps> = (args) => {
 };
 export const Basic = Template.bind({});
 Basic.args = {
-  title: 'Example Card',
+  sectionHeader: 'Example Card',
   titleSize: 'large',
   height: 450,
   width: 350,
@@ -69,7 +69,7 @@ Basic.args = {
 
 export const UseTheme = Template.bind({});
 UseTheme.args = {
-  title: 'Example Card',
+  sectionHeader: 'Example Card',
   titleSize: 'large',
   height: 450,
   width: 350,
@@ -78,7 +78,7 @@ UseTheme.args = {
 
 export const SmallTitle = Template.bind({});
 SmallTitle.args = {
-  title: 'Example Card',
+  sectionHeader: 'Example Card',
   titleSize: 'small',
   height: 450,
   width: 350,
@@ -87,7 +87,7 @@ SmallTitle.args = {
 
 export const ThinMargins = Template.bind({});
 ThinMargins.args = {
-  title: 'Example Card',
+  sectionHeader: 'Example Card',
   titleSize: 'large',
   height: 450,
   width: 350,
@@ -97,7 +97,7 @@ ThinMargins.args = {
 
 export const MinimumTitleBarHeight = Template.bind({});
 MinimumTitleBarHeight.args = {
-  title: 'Example Card',
+  sectionHeader: 'Example Card',
   titleSize: 'large',
   height: 450,
   width: 350,
@@ -107,7 +107,7 @@ MinimumTitleBarHeight.args = {
 
 export const StyleOverrides = Template.bind({});
 StyleOverrides.args = {
-  title: 'Example Card',
+  sectionHeader: 'Example Card',
   titleSize: 'large',
   height: 450,
   width: 350,

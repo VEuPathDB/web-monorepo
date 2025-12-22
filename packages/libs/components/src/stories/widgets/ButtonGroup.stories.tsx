@@ -6,7 +6,7 @@ import ButtonGroup, {
 } from '../../components/widgets/ButtonGroup';
 
 export default {
-  title: 'Widgets/ButtonGroup',
+  sectionHeader: 'Widgets/ButtonGroup',
   component: ButtonGroup,
 } as Meta;
 

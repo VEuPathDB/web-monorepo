@@ -13,7 +13,7 @@ import UIThemeProvider from '../../components/theming/UIThemeProvider';
 import { green, mutedBlue, purple } from '../../definitions/colors';
 
 export default {
-  title: 'Typography/Headers',
+  sectionHeader: 'Typography/Headers',
   component: H1Component,
   argTypes: {
     color: {

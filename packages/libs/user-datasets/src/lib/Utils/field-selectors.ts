@@ -37,14 +37,25 @@ export function createRootListSectionProps<
   T extends object,
   K extends keyof T,
   V extends ArrayElement<T[K]>,
->(
-  key: K,
-  obj: T,
-  setter: FieldSetter<T>,
-): ListSectionProps<V> {
-  return {
+>(key: K, source: [ T, FieldSetter<T> ]): ListSectionProps<V>
+export function createRootListSectionProps<
+  T extends object,
+  K extends keyof T,
+  V extends ArrayElement<T[K]>,
+>(key: K, obj: T, setter: FieldSetter<T>): ListSectionProps<V>
+export function createRootListSectionProps<
+  T extends object,
+  K extends keyof T,
+  V extends ArrayElement<T[K]>,
+>(key: K, obj: T | [ T, FieldSetter<T> ], setter?: FieldSetter<T>): ListSectionProps<V> {
+  return Array.isArray(obj)
+    ? {
+      records: obj[0][key] as V[] ?? [],
+      setRecords: values => obj[1]({ ...obj[0], [key]: values })
+    }
+    : {
     records: (obj[key] as V[]) ?? [],
-    setRecords: values => setter({ ...obj, [key]: values }),
+    setRecords: values => setter!({ ...obj, [key]: values }),
   };
 }
 

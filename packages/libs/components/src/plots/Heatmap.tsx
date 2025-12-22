@@ -38,7 +38,7 @@ const Heatmap = makePlotlyPlotComponent('Heatmap', (props: any) => {
     //DKDK set annotations for displaying values at each cell
     annotations: [],
     xaxis: {
-      title: xAxisLabel,
+      sectionHeader: xAxisLabel,
       mirror: true,
       showgrid: false,
       tickfont: isEmptyData ? { color: 'transparent' } : {},
@@ -46,7 +46,7 @@ const Heatmap = makePlotlyPlotComponent('Heatmap', (props: any) => {
       nticks: isEmptyData ? 5 : data.xLabels.length + 1,
     },
     yaxis: {
-      title: yAxisLabel,
+      sectionHeader: yAxisLabel,
       mirror: true,
       showgrid: false,
       tickfont: isEmptyData ? { color: 'transparent' } : {},

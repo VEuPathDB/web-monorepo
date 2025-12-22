@@ -10,7 +10,7 @@ import UIThemeProvider from '../../components/theming/UIThemeProvider';
 import { mutedCyan } from '../../definitions/colors';
 
 export default {
-  title: 'Forms/MultilineTextField',
+  sectionHeader: 'Forms/MultilineTextField',
   component: MultilineTextField,
 } as Meta;
 

@@ -4,7 +4,7 @@ import { Meta } from '@storybook/react/types-6-0';
 import PopoverButton from '../../components/widgets/PopoverButton';
 
 export default {
-  title: 'Widgets/PopoverButton',
+  sectionHeader: 'Widgets/PopoverButton',
   component: PopoverButton,
 } as Meta;
 

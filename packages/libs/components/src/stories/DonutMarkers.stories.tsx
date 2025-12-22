@@ -30,7 +30,7 @@ import DonutMarker, {
 import SemanticMarkers from '../map/SemanticMarkers';
 
 export default {
-  title: 'Map/Donut Markers',
+  sectionHeader: 'Map/Donut Markers',
   component: MapVEuMapSidebar,
 } as Meta;
 

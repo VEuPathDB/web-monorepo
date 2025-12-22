@@ -21,7 +21,7 @@ const SnackbarProvider = makeSnackbarProvider({
 });
 
 export default {
-  title: 'Notifications/Snackbars',
+  sectionHeader: 'Notifications/Snackbars',
   component: SnackbarProvider,
 } as Meta;
 

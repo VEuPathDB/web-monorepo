@@ -5,7 +5,20 @@ export const cx = makeClassNameHelper("UploadForm");
 
 export type FormValidator = () => string[] | null;
 
-export type ObjectUpdater<T, V extends keyof T = keyof T> = (inputName: V, newValue: T[V]) => void;
+type Scalar = string | number | boolean | bigint | null;
+
+export declare function updateObject<T>(
+  newValues: { [V in keyof T]: (T[V] & Scalar) | undefined }
+): void;
+export declare function updateObject<T, V extends keyof T = keyof T>(
+  key: V,
+  newValue: (T[V] & Scalar) | undefined
+): void;
+export declare function updateObject<T, V extends keyof T = keyof T>(
+  multi: V | { [V in keyof T]: (T[V] & Scalar) | undefined }, newValue?: Scalar): void;
+
+export type ObjectUpdater<T, V extends keyof T = keyof T> = typeof updateObject<T, V>;
+
 export type ArrayUpdater<T> = (newValue: T) => void;
 
 export type InputConstructor<T> = (record: T, index: number) => React.ReactElement;
@@ -23,21 +36,15 @@ export type ArrayElement<T> = T extends Array<infer E> ? E : never;
 export function newListPropUpdater<T>(
   index: number,
   setNestedInputObject: RecordUpdater<T>,
-  enforceExclusiveTrue: boolean = false,
 ): ObjectUpdater<T> {
-  return function<K extends keyof T, V = ArrayElement<T[K]>>(inputName: K, newValue: V) {
-    setNestedInputObject((prev) => {
+  return function<K extends keyof T, V = ArrayElement<T[K]>>(multi: K | { [V in keyof T]: T[V] }, newValue?: V) {
+    setNestedInputObject((prev: T[]) => {
       const updated = [ ...prev ];
 
-      if (enforceExclusiveTrue && newValue === true) {
-        updated.forEach((item, i) => {
-          if (i !== index) {
-            updated[i] = { ...item, [inputName]: false };
-          }
-        });
-      }
+      updated[index] = typeof multi === "object"
+        ? { ...updated[index], ...multi }
+        : { ...updated[index], [multi]: newValue }
 
-      updated[index] = { ...updated[index], [inputName]: newValue };
       return updated;
     });
   };

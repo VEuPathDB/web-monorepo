@@ -216,7 +216,7 @@ export function useOpenDialogConfig() {
         setOpenDialogConfig(undefined);
       } else if (newDialogContentProps.type === 'access-denial') {
         setOpenDialogConfig({
-          title: 'Denying Access',
+          sectionHeader: 'Denying Access',
           onClose: () => {
             setOpenDialogConfig(undefined);
           },
@@ -224,7 +224,7 @@ export function useOpenDialogConfig() {
         });
       } else if (newDialogContentProps.type === 'add-users') {
         setOpenDialogConfig({
-          title: `Adding ${capitalizeRole(
+          sectionHeader: `Adding ${capitalizeRole(
             newDialogContentProps.permissionNamePlural
           )}`,
           onClose: () => {
@@ -234,7 +234,7 @@ export function useOpenDialogConfig() {
         });
       } else if (newDialogContentProps.type === 'users-added') {
         setOpenDialogConfig({
-          title: `New ${capitalizeRole(
+          sectionHeader: `New ${capitalizeRole(
             newDialogContentProps.permissionNamePlural
           )}`,
           onClose: () => {
@@ -289,7 +289,7 @@ export function useStaffTableSectionConfig(
           }
         : {
             status: 'success',
-            title: 'VEuPathDB Staff',
+            sectionHeader: 'VEuPathDB Staff',
             value: {
               rows: value.result.data.map(({ user, staffId, isOwner }) => ({
                 userId: user.userId,
@@ -402,7 +402,7 @@ export function useProviderTableSectionConfig(
           }
         : {
             status: 'success',
-            title: 'Study Team Members',
+            sectionHeader: 'Study Team Members',
             value: {
               rows: value.result.data.map(
                 ({ user, providerId, isManager }) => ({
@@ -545,7 +545,7 @@ export function useEndUserTableSectionConfig(
           }
         : {
             status: 'success',
-            title: 'Data Requesters',
+            sectionHeader: 'Data Requesters',
             value: {
               rows: value.result.data.map(
                 ({
@@ -738,7 +738,7 @@ export function useHistoryTableSectionConfig(
           }
         : {
             status: 'success',
-            title: 'Data Requester Table Updates',
+            sectionHeader: 'Data Requester Table Updates',
             value: {
               rows: value.result.results
                 .filter(

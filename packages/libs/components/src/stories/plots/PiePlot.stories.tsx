@@ -68,7 +68,7 @@ const Template: Story<PiePlotProps> = (args) => (
 export const Basic = Template.bind({});
 Basic.args = {
   data: data,
-  title: 'Pie Plot',
+  sectionHeader: 'Pie Plot',
   legendOptions: {
     horizontalPosition: 'right',
     horizontalPaddingAdjustment: 0.1,
@@ -88,7 +88,7 @@ Basic.args = {
 export const BasicLoading = Template.bind({});
 BasicLoading.args = {
   data: data,
-  title: 'Pie Plot',
+  sectionHeader: 'Pie Plot',
   legendOptions: {
     horizontalPosition: 'right',
     horizontalPaddingAdjustment: 0.1,
@@ -110,13 +110,13 @@ export const CustomSliceColors = Template.bind({});
 CustomSliceColors.args = {
   ...Basic.args,
   data: coloredData,
-  title: 'Pie Plot w/ Custom Colors',
+  sectionHeader: 'Pie Plot w/ Custom Colors',
 };
 
 export const BasicDonut = Template.bind({});
 BasicDonut.args = {
   ...Basic.args,
-  title: 'Basic Donut Plot',
+  sectionHeader: 'Basic Donut Plot',
   donutOptions: {
     size: 0.3,
   },
@@ -125,7 +125,7 @@ BasicDonut.args = {
 export const DonutText = Template.bind({});
 DonutText.args = {
   ...Basic.args,
-  title: 'Donut Plot w/Text',
+  sectionHeader: 'Donut Plot w/Text',
   donutOptions: {
     size: 0.4,
     text: 'Donut Text',
@@ -135,7 +135,7 @@ DonutText.args = {
 export const FilledDonut = Template.bind({});
 FilledDonut.args = {
   ...Basic.args,
-  title: 'Filled Donut',
+  sectionHeader: 'Filled Donut',
   donutOptions: {
     size: 0.4,
     backgroundColor: DARK_GRAY,
@@ -233,7 +233,7 @@ export const Faceted = FacetedTemplate.bind({});
 Faceted.args = {
   data: facetedData,
   componentProps: {
-    title: 'indoor and outdoor pets',
+    sectionHeader: 'indoor and outdoor pets',
     containerStyles: {
       width: 300,
       height: 300,

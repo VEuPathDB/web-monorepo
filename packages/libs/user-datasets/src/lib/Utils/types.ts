@@ -10,7 +10,11 @@ import {
   boolean,
 } from "io-ts";
 import { DatasetDependency, DatasetPostRequest, DatasetVisibility } from "../Service/Types";
-import { DatasetInstaller, DisplayTextOverride } from "@veupathdb/web-common/src/user-dataset-upload-config";
+import {
+  DatasetInstaller,
+  DisplayText,
+  DisplayTextOverride,
+} from "@veupathdb/web-common/src/user-dataset-upload-config";
 import { ServiceConfiguration } from "../Service/Types/service-types";
 import { ReactNode } from "react";
 
@@ -93,13 +97,13 @@ export type CompatibleRecordTypes = Record<
 
 interface DisabledUploadPageConfig {
   readonly hasDirectUpload: false;
-  readonly displayTextOverride?: DisplayTextOverride;
+  readonly displayTextOverride: DisplayText;
 }
 
 export interface EnabledUploadPageConfig {
   readonly hasDirectUpload: true;
   readonly availableUploadTypes: DatasetInstaller[];
-  readonly displayTextOverride?: DisplayTextOverride;
+  readonly displayTextOverride: DisplayText;
 }
 
 export type DatasetUploadPageConfig = EnabledUploadPageConfig | DisabledUploadPageConfig;

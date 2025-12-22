@@ -19,7 +19,7 @@ import { scaleLinear } from 'd3';
 
 // A collection of stories for viewing our Diverging Gradient Colormap
 export default {
-  title: 'Colors/Gradient Diverging',
+  sectionHeader: 'Colors/Gradient Diverging',
   component: ScatterPlot,
   argTypes: {
     nPoints: {

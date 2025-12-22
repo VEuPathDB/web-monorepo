@@ -16,7 +16,7 @@ import DataGrid, { DataGridProps } from '../../components/grids/DataGrid';
 import UIThemeProvider from '../../components/theming/UIThemeProvider';
 
 export default {
-  title: 'Grids/DataGrid',
+  sectionHeader: 'Grids/DataGrid',
   component: DataGrid,
 } as Meta;
 
@@ -129,14 +129,14 @@ export const WithServerControlledPagination: Story<DataGridProps> = (args) => {
   );
 };
 WithServerControlledPagination.args = {
-  title: 'Data Grid w/ Server Pagination',
+  sectionHeader: 'Data Grid w/ Server Pagination',
 };
 
 export const WithServerControlledPaginationAndSorting: Story<DataGridProps> = (
   args
 ) => <WithServerControlledPagination {...args} />;
 WithServerControlledPaginationAndSorting.args = {
-  title: 'Data Grid w/ Server Pagination and Sorting',
+  sectionHeader: 'Data Grid w/ Server Pagination and Sorting',
   sortable: true,
 };
 
@@ -154,7 +154,7 @@ StylePreset.args = {
 export const CustomStyling = Template.bind({});
 CustomStyling.args = {
   ...Basic.args,
-  title: 'Data Grid w/ Custom Styling',
+  sectionHeader: 'Data Grid w/ Custom Styling',
   styleOverrides: {
     headerCells: {
       borderColor: gray[400],

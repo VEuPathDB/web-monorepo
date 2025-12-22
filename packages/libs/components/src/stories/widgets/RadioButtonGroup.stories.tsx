@@ -6,7 +6,7 @@ import RadioButtonGroup, {
 } from '../../components/widgets/RadioButtonGroup';
 
 export default {
-  title: 'Widgets/RadioButtonGroup',
+  sectionHeader: 'Widgets/RadioButtonGroup',
   component: RadioButtonGroup,
 } as Meta;
 

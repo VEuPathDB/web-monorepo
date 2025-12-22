@@ -10,7 +10,7 @@ import AxisRangeControl from '../../components/plotControls/AxisRangeControl';
 import { NumberOrDateRange } from '../../types/general';
 
 export default {
-  title: 'Plot Controls/TimeSlider',
+  sectionHeader: 'Plot Controls/TimeSlider',
   component: TimeSlider,
 } as Meta;
 

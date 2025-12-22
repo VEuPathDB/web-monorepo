@@ -76,15 +76,15 @@ interface SectionSpec {
 const sectionInfo: Record<string, SectionSpec> = {
   default: {
     order: 0,
-    title: 'Variables',
+    sectionHeader: 'Variables',
   },
   axis: {
     order: 50,
-    title: 'Axis variables',
+    sectionHeader: 'Axis variables',
   },
   stratification: {
     order: 100,
-    title: 'Stratification variables',
+    sectionHeader: 'Stratification variables',
   },
 };
 

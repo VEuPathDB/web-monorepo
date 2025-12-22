@@ -14,7 +14,7 @@ import { Viewport } from '../map/MapVEuMap';
 import SemanticMarkers from '../map/SemanticMarkers';
 
 export default {
-  title: 'Map/Zoom animation',
+  sectionHeader: 'Map/Zoom animation',
   //  component: MapVEuMap,
 } as Meta;
 

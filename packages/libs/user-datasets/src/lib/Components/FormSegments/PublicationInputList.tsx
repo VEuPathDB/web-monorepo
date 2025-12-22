@@ -90,7 +90,7 @@ function newInputFactory(setPublications: FieldSetter<DatasetPublication[]>): In
 export function PublicationInputList(props: ListSectionProps<DatasetPublication>): React.ReactElement {
   return InputList<DatasetPublication>({
     ...props,
-    header: "Publications",
+    header: "PublicationList",
     addRecordText: "Add Publication",
     className: "additionalDetailsFormSection",
     subclass: "dataset-publications",

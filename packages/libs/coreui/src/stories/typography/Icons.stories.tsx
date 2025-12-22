@@ -42,7 +42,7 @@ import { H5 } from '../../components/typography';
 import { grey } from '@material-ui/core/colors';
 
 export default {
-  title: 'Typography/Icons',
+  sectionHeader: 'Typography/Icons',
   component: Arrow,
   argTypes: {
     color: {

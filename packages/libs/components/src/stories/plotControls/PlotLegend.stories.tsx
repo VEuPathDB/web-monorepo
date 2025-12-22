@@ -9,7 +9,7 @@ import {
 } from '../../types/plots';
 
 export default {
-  title: 'Plot Controls/PlotLegend',
+  sectionHeader: 'Plot Controls/PlotLegend',
   component: PlotLegend,
 } as Meta;
 
@@ -505,7 +505,7 @@ export const HistogramPlotLegend = () => {
         data={data}
         independentAxisLabel={independentAxisLabel}
         dependentAxisLabel={dependentAxisLabel}
-        title={plotTitle}
+        sectionHeader={plotTitle}
         // width height is replaced with containerStyles
         containerStyles={{
           width: plotWidth,

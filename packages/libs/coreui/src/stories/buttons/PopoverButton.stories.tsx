@@ -7,7 +7,7 @@ import PopoverButton, {
 import { gray } from '../../definitions/colors';
 
 export default {
-  title: 'Controls/Buttons/PopoverButton',
+  sectionHeader: 'Controls/Buttons/PopoverButton',
   component: PopoverButton,
 } as Meta;
 

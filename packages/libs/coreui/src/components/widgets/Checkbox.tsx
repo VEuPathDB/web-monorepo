@@ -26,6 +26,7 @@ export type CheckboxProps = {
    * pick up styling options from the theme. */
   themeRole?: keyof UITheme['palette'];
   styleOverrides?: Partial<CheckboxStyleSpec>;
+  className?: string;
 };
 
 export default function Checkbox({
@@ -33,6 +34,7 @@ export default function Checkbox({
   onToggle,
   themeRole,
   styleOverrides,
+  className,
 }: CheckboxProps) {
   const defaultStyle: CheckboxStyleSpec = {
     size: 12,
@@ -59,7 +61,7 @@ export default function Checkbox({
   );
 
   return (
-    <div onClick={() => onToggle(selected ? false : true)}>
+    <div className={className} onClick={() => onToggle(selected ? false : true)}>
       {selected ? (
         <div
           css={{

@@ -6,7 +6,7 @@ import SelectList, {
 } from '../../components/inputs/SelectList';
 
 export default {
-  title: 'Inputs/SelectList',
+  sectionHeader: 'Inputs/SelectList',
   component: SelectList,
 } as Meta;
 

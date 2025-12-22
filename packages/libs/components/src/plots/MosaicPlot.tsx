@@ -176,7 +176,7 @@ const MosaicPlot = makePlotlyPlotComponent(
 
     const layout: Partial<Layout> = {
       xaxis: {
-        title: {
+        sectionHeader: {
           text:
             independentAxisLabel === undefined && showColumnLabels != false
               ? ''
@@ -192,7 +192,7 @@ const MosaicPlot = makePlotlyPlotComponent(
         automargin: true,
       },
       yaxis: {
-        title: {
+        sectionHeader: {
           text: dependentAxisLabel && dependentAxisLabel + ' (Proportion)',
           standoff: yAxisTitleStandoff,
         },

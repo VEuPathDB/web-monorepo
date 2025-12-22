@@ -434,7 +434,7 @@ const Histogram = makePlotlyPlotComponent(
       showgrid: false,
       zeroline: false,
       showline: !axisTruncationConfig?.dependentAxis?.min,
-      title: {
+      sectionHeader: {
         text: independentAxisLabel,
       },
       range: plotlyIndependentAxisRange,
@@ -510,7 +510,7 @@ const Histogram = makePlotlyPlotComponent(
           : ',.0f'
         : undefined,
       automargin: true,
-      title: {
+      sectionHeader: {
         text: dependentAxisLabel,
       },
       // range should be an array

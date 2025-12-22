@@ -6,7 +6,7 @@ import { MapVEuMapProps } from '../map/MapVEuMap';
 import { BubbleMarkerStandalone } from '../map/BubbleMarker';
 
 export default {
-  title: 'Map/Bubble Markers',
+  sectionHeader: 'Map/Bubble Markers',
 } as Meta;
 
 const valueToDiameterMapper = (value: number) => {

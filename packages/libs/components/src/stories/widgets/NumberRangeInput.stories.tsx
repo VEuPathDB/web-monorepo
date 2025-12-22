@@ -8,7 +8,7 @@ import {
 } from '../../components/widgets/NumberAndDateRangeInputs';
 
 export default {
-  title: 'Widgets/Number Range Input',
+  sectionHeader: 'Widgets/Number Range Input',
   component: NumberRangeInput,
 } as Meta;
 
