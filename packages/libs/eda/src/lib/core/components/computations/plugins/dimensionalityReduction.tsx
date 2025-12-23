@@ -139,6 +139,7 @@ export function DimensionalityReductionConfiguration(
     : workspaceChangeConfigHandler;
 
   const entities = useStudyEntities();
+
   const collectionsInStudy = useMemo(() => {
       const collectionItems = entities
         .filter(
@@ -146,10 +147,7 @@ export function DimensionalityReductionConfiguration(
             !!e.collections?.length
         )
         .map((e): ItemGroup<string> => {
-          // const collections = collectionPredicate
-          //   ? e.collections.filter(collectionPredicate)
-          //   : e.collections;
-          const collections = e.collections;
+          const collections = e.collections.filter(isNotAbsoluteAbundanceVariableCollection)
           return {
             label: e.displayName,
             items: collections.map(
@@ -210,8 +208,8 @@ export function DimensionalityReductionConfiguration(
   );
 }
 
-// Dimensionality reduction's only requirement of the study is that it contains
-// at least one collection.
+// For now, dimensionality reduction's only requirement of the study is that it contains
+// at least one collection. This may change in the future or possibly made configurable via the notebook.
 function isEnabledInPicker({
   studyMetadata,
 }: IsEnabledInPickerParams): boolean {
