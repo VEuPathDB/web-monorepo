@@ -1,5 +1,7 @@
 import './globals';
 import { vdiServiceUrl } from './constants';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import * as React from 'react';
 
 import { RouteComponentProps } from 'react-router-dom';
 
@@ -22,11 +24,12 @@ import { wrapWdkService } from './lib/Service';
 import { wrapStoreModules } from './lib/StoreModules';
 import {
   makeDatasetUploadPageConfig,
-  uploadTypeConfig,
 } from './lib/Utils/upload-config';
 
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
+
+import { uploadTypeConfig } from './___dont_commit/user-dataset-upload-config';
 
 const availableUploadTypes =
   process.env.REACT_APP_AVAILABLE_UPLOAD_TYPES?.trim().split(/\s*,\s*/g);
@@ -35,6 +38,22 @@ const hasDirectUpload = makeDatasetUploadPageConfig(
   availableUploadTypes,
   uploadTypeConfig
 ).hasDirectUpload;
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // This is similar behavior to our custom usePromise hook.
+      // It can be overridden on an individual basis, if needed.
+      keepPreviousData: true,
+      // We presume data will not go stale during the lifecycle of an application.
+      staleTime: Infinity,
+      // Do not attempt to retry if an error is encountered
+      retry: false,
+      // Do not referch when the browser tab is focused again
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 initialize({
   rootUrl,
@@ -86,6 +105,9 @@ initialize({
   ],
   componentWrappers: {
     SiteHeader: () => Header,
+    Page: (Component: React.ComponentType) => function WrappedPage(props: object) {
+      return <QueryClientProvider client={queryClient}><Component {...props} /></QueryClientProvider>
+    }
   },
   endpoint,
   wrapStoreModules,
