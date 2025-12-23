@@ -174,8 +174,8 @@ export function DimensionalityReductionConfiguration(
     // if (collectionsInStudy.length === 1) {
       console.log('only one collection group');
       changeConfigHandler('collectionVariable', {
-        entityId: collectionsInStudy[0].items[0].value.split(':')[0],
-        collectionId: collectionsInStudy[0].items[0].value.split(':')[1],
+        entityId: collectionsInStudy[0].items[1].value.split(':')[0],
+        collectionId: collectionsInStudy[0].items[1].value.split(':')[1],
       });
     // }
   }, [collectionsInStudy, changeConfigHandler]);

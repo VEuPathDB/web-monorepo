@@ -100,7 +100,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
       },
       {
         type: 'compute',
-        title: 'Configure PCA',
+        title: 'PCA',
         computationName: 'dimensionalityreduction',
         computationId: 'pca_1',
         hidden: true, // Hide in UI since config is already known.

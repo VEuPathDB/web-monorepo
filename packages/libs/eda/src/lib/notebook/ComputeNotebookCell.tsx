@@ -8,7 +8,10 @@ import { plugins } from '../core/components/computations/plugins';
 import { ComputeCellDescriptor } from './NotebookPresets';
 import { useCachedPromise } from '../core/hooks/cachedPromise';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import Dialog from '@veupathdb/wdk-client/lib/Components/Overlays/Dialog';
+import { FilledButton, OutlinedButton } from '@veupathdb/coreui';
+import { Link } from 'react-router-dom';
 
 export function ComputeNotebookCell(
   props: NotebookCellProps<ComputeCellDescriptor>
@@ -29,6 +32,7 @@ export function ComputeNotebookCell(
     (comp) => comp.computationId === computationId
   );
   if (computation == null) throw new Error('Cannot find computation.');
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
 
   // fetch 'apps'
   const dataClient = useDataClient();
@@ -51,7 +55,6 @@ export function ComputeNotebookCell(
   // Ideally it should also use the functional update form of setComputations.
   //
   // We'll use a special, simple changeConfigHandler for the computation configuration
-  console.log('analysis', analysis.descriptor.computations);
   const changeConfigHandler = (propertyName: string, value?: any) => {
     if (!computation || !analysis.descriptor.computations[0]) return;
 
@@ -107,14 +110,35 @@ export function ComputeNotebookCell(
   
   // Run the compute if we're all set to go. Useful when there is a default configuration.
   useEffect(() => {
-    if (isComputationConfigurationValid && jobStatus === 'no-such-job') {
+    if (isComputationConfigurationValid && jobStatus === 'no-such-job' && hidden) {
       console.log("creating job");
       createJob();
     }
-  }, [isComputationConfigurationValid, jobStatus, createJob]);
+  }, [isComputationConfigurationValid, jobStatus, createJob, hidden]);
+
+  // Show error dialog when hidden compute fails
+  useEffect(() => {
+    if (hidden && jobStatus === 'failed') {
+      setShowErrorDialog(true);
+    }
+  }, [hidden, jobStatus]);
+
 
   return computation && appOverview ? (
     <>
+      {/* Error Dialog */}
+      <Dialog
+        open={showErrorDialog}
+        onClose={() => setShowErrorDialog(false)}
+        aria-labelledby="compute-error-dialog-title"
+        title="Computation failed"
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '600px', padding: '1em', alignItems: 'center', fontSize: '1.2em', height: '130px', textAlign: 'center', margin: '0.5em 0' }}>
+            <p>The background {cell.title + ' ' || ''}computation for has failed. <strong>Please <Link to="/contact-us">contact us</Link> for assistance.</strong>
+            </p>
+            <p>After closing this dialog, you may continue with your search.</p>
+        </div>
+      </Dialog>
       {hidden ? (
         <plugin.configurationComponent
           analysisState={analysisState}
