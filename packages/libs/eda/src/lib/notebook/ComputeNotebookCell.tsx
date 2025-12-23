@@ -8,6 +8,10 @@ import { plugins } from '../core/components/computations/plugins';
 import { ComputeCellDescriptor } from './NotebookPresets';
 import { useCachedPromise } from '../core/hooks/cachedPromise';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
+import { useEffect, useState } from 'react';
+import Dialog from '@veupathdb/wdk-client/lib/Components/Overlays/Dialog';
+import { FilledButton, OutlinedButton } from '@veupathdb/coreui';
+import { Link } from 'react-router-dom';
 
 export function ComputeNotebookCell(
   props: NotebookCellProps<ComputeCellDescriptor>
@@ -22,11 +26,13 @@ export function ComputeNotebookCell(
     computationId,
     cells,
     getAdditionalCollectionPredicate,
+    hidden=false,
   } = cell;
   const computation = analysis.descriptor.computations.find(
     (comp) => comp.computationId === computationId
   );
   if (computation == null) throw new Error('Cannot find computation.');
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
 
   // fetch 'apps'
   const dataClient = useDataClient();
@@ -49,7 +55,6 @@ export function ComputeNotebookCell(
   // Ideally it should also use the functional update form of setComputations.
   //
   // We'll use a special, simple changeConfigHandler for the computation configuration
-  console.log('analysis', analysis.descriptor.computations);
   const changeConfigHandler = (propertyName: string, value?: any) => {
     if (!computation || !analysis.descriptor.computations[0]) return;
 
@@ -96,50 +101,101 @@ export function ComputeNotebookCell(
   const isComputationConfigurationValid = !!plugin?.isConfigurationComplete(
     computation.descriptor.configuration
   );
-
+  
   // Prep any additional restrictions on collections, if defined
   const additionalCollectionPredicate =
     getAdditionalCollectionPredicate &&
     getAdditionalCollectionPredicate(projectId);
+  
+  
+  // Run the compute if we're all set to go. Useful when there is a default configuration.
+  useEffect(() => {
+    if (isComputationConfigurationValid && jobStatus === 'no-such-job' && hidden) {
+      console.log("creating job");
+      createJob();
+    }
+  }, [isComputationConfigurationValid, jobStatus, createJob, hidden]);
+
+  // Show error dialog when hidden compute fails
+  useEffect(() => {
+    if (hidden && jobStatus === 'failed') {
+      setShowErrorDialog(true);
+    }
+  }, [hidden, jobStatus]);
+
 
   return computation && appOverview ? (
     <>
-      {cell.helperText && (
-        <div className="NotebookCellHelpText">
-          <span>{cell.helperText}</span>
-        </div>
-      )}
-      <ExpandablePanel
-        title={cell.title}
-        subTitle={''}
-        state="open"
-        themeRole="primary"
+      {/* Error Dialog */}
+      <Dialog
+        open={showErrorDialog}
+        onClose={() => setShowErrorDialog(false)}
+        aria-labelledby="compute-error-dialog-title"
+        title="Computation failed"
       >
-        <div
-          className={'NotebookCellContent' + (isDisabled ? ' disabled' : '')}
-        >
-          <plugin.configurationComponent
-            analysisState={analysisState}
-            computation={computation}
-            totalCounts={totalCountsResult}
-            filteredCounts={filteredCountsResult}
-            visualizationId="not_used" // irrelevant because we have our own changeConfigHandler
-            addNewComputation={() => {}} // also irrelevant for us because we add the computation elsewhere
-            computationAppOverview={appOverview}
-            geoConfigs={[]}
-            changeConfigHandlerOverride={changeConfigHandler}
-            showStepNumber={false}
-            showExpandableHelp={false} // no expandable sections within an expandable element.
-            additionalCollectionPredicate={additionalCollectionPredicate}
-          />
-          <RunComputeButton
-            computationAppOverview={appOverview}
-            status={jobStatus}
-            isConfigured={isComputationConfigurationValid}
-            createJob={createJob}
-          />
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '600px', padding: '1em', alignItems: 'center', fontSize: '1.2em', height: '130px', textAlign: 'center', margin: '0.5em 0' }}>
+            <p>The background {cell.title + ' ' || ''}computation for has failed. <strong>Please <Link to="/contact-us">contact us</Link> for assistance.</strong>
+            </p>
+            <p>After closing this dialog, you may continue with your search.</p>
         </div>
-      </ExpandablePanel>
+      </Dialog>
+      {hidden ? (
+        <plugin.configurationComponent
+          analysisState={analysisState}
+          computation={computation}
+          totalCounts={totalCountsResult}
+          filteredCounts={filteredCountsResult}
+          visualizationId="not_used" // irrelevant because we have our own changeConfigHandler
+          addNewComputation={() => {}} // also irrelevant for us because we add the computation elsewhere
+          computationAppOverview={appOverview}
+          geoConfigs={[]}
+          changeConfigHandlerOverride={changeConfigHandler}
+          showStepNumber={false}
+          showExpandableHelp={false} // no expandable sections within an expandable element.
+          additionalCollectionPredicate={additionalCollectionPredicate}
+          hideConfigurationComponent={true}
+        />
+      ) : (
+        <>
+          {cell.helperText && (
+          <div className="NotebookCellHelpText">
+            <span>{cell.helperText}</span>
+          </div>
+          )}
+          <ExpandablePanel
+            title={cell.title}
+            subTitle={''}
+            state="open"
+            themeRole="primary"
+          >
+            <div
+              className={'NotebookCellContent' + (isDisabled ? ' disabled' : '')}
+            >
+              <plugin.configurationComponent
+                analysisState={analysisState}
+                computation={computation}
+                totalCounts={totalCountsResult}
+                filteredCounts={filteredCountsResult}
+                visualizationId="not_used" // irrelevant because we have our own changeConfigHandler
+                addNewComputation={() => {}} // also irrelevant for us because we add the computation elsewhere
+                computationAppOverview={appOverview}
+                geoConfigs={[]}
+                changeConfigHandlerOverride={changeConfigHandler}
+                showStepNumber={false}
+                showExpandableHelp={false} // no expandable sections within an expandable element.
+                additionalCollectionPredicate={additionalCollectionPredicate}
+                hideConfigurationComponent={false}
+              />
+              <RunComputeButton
+                computationAppOverview={appOverview}
+                status={jobStatus}
+                isConfigured={isComputationConfigurationValid}
+                createJob={createJob}
+              />
+            </div>
+          </ExpandablePanel>
+        </>
+      )}
       {cells &&
         cells.map((subCell, index) => {
           const isSubCellDisabled =
