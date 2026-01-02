@@ -52,6 +52,10 @@ export function Error(DefaultComponent: React.ComponentType<Props>) {
       </Link>
     );
 
+    const refreshPage = () => {
+      window.location.reload();
+    };
+
     return (
       <DefaultComponent message={props.message}>
         {props.children || (
@@ -59,12 +63,19 @@ export function Error(DefaultComponent: React.ComponentType<Props>) {
             <div style={style}>
               <p>
                 1- Try{' '}
-                <a href="" title="Reload the current page.">
+                <a
+                  href=""
+                  title="Reload the current page"
+                  onClick={refreshPage}
+                >
                   reloading the page
                 </a>
               </p>
               <p>2- If the problem persists, try {resetLink}</p>
-              <p>3- Please {contactUsLink} to assist you</p>
+              <p>
+                3- Please {contactUsLink} to assist you;{' '}
+                <strong>send us a screenshot of this window.</strong>
+              </p>
             </div>
             <div>{props.message}</div>
           </>
