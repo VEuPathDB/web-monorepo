@@ -30,6 +30,7 @@ export type Action =
   | SetCollapsedSectionsAction
   | AllFieldVisibilityAction
   | ProgressiveExpandAllAction
+  | StopProgressiveExpandAction
   | NavigationVisibilityAction
   | CategoryExpansionAction
   | NavigationQueryAction;
@@ -51,7 +52,7 @@ export type RecordReceivedAction = {
 
 export function recordReceived(
   id: string,
-  payload: RecordReceivedAction['payload']
+  payload: RecordReceivedAction['payload'],
 ): RecordReceivedAction {
   return {
     type: RECORD_RECEIVED,
@@ -80,7 +81,7 @@ export function requestPartialRecord(
   recordClassName: string,
   primaryKeyValues: string[],
   attributes?: string[],
-  tables?: string[]
+  tables?: string[],
 ): RequestPartialRecord {
   return {
     type: REQUEST_PARTIAL_RECORD,
@@ -108,7 +109,7 @@ export type RecordUpdatedAction = {
 
 export function recordUpdate(
   id: string,
-  record: RecordInstance
+  record: RecordInstance,
 ): RecordUpdatedAction {
   return {
     type: RECORD_UPDATE,
@@ -134,7 +135,7 @@ export type RecordLoadingAction = {
 
 export function recordLoading(
   id: string,
-  payload: RecordLoadingAction['payload']
+  payload: RecordLoadingAction['payload'],
 ): RecordLoadingAction {
   return {
     type: RECORD_LOADING,
@@ -155,7 +156,7 @@ export type RecordErrorAction = {
 
 export function recordError(
   id: string,
-  error: ServiceError
+  error: ServiceError,
 ): RecordErrorAction {
   return {
     type: RECORD_ERROR,
@@ -181,7 +182,7 @@ export type SectionVisibilityAction = {
 /** Update a section's collapsed status */
 export function updateSectionVisibility(
   sectionName: string,
-  isVisible: boolean
+  isVisible: boolean,
 ): SectionVisibilityAction {
   return {
     type: SECTION_VISIBILITY,
@@ -202,7 +203,7 @@ export type SetCollapsedSectionsAction = {
 
 /** Update a section's collapsed status */
 export function setCollapsedSections(
-  names: string[]
+  names: string[],
 ): SetCollapsedSectionsAction {
   return {
     type: SET_COLLAPSED_SECTIONS,
@@ -228,7 +229,7 @@ export type UpdateTableStateAction = {
 
 export const updateTableState = (
   tableName: string,
-  tableState: UpdateTableStateAction['payload']['tableState']
+  tableState: UpdateTableStateAction['payload']['tableState'],
 ): UpdateTableStateAction => ({
   type: TABLE_STATE_UPDATED,
   payload: { tableName, tableState },
@@ -247,7 +248,7 @@ export type AllFieldVisibilityAction = {
 
 /** Change the visibility for all record fields (attributes and tables) */
 export function updateAllFieldVisibility(
-  isVisible: boolean
+  isVisible: boolean,
 ): AllFieldVisibilityAction {
   return {
     type: ALL_FIELD_VISIBILITY,
@@ -272,6 +273,21 @@ export function progressiveExpandAll(): ProgressiveExpandAllAction {
 
 //==============================================================================
 
+export const STOP_PROGRESSIVE_EXPAND = 'record-view/stop-progressive-expand';
+
+export type StopProgressiveExpandAction = {
+  type: typeof STOP_PROGRESSIVE_EXPAND;
+};
+
+/** Stop the progressive expansion of sections */
+export function stopProgressiveExpand(): StopProgressiveExpandAction {
+  return {
+    type: STOP_PROGRESSIVE_EXPAND,
+  };
+}
+
+//==============================================================================
+
 export const NAVIGATION_VISIBILITY =
   'record-view/navigation-visibility-changed';
 
@@ -284,7 +300,7 @@ export type NavigationVisibilityAction = {
 
 /** Change the visibility of the navigation panel */
 export function updateNavigationVisibility(
-  isVisible: boolean
+  isVisible: boolean,
 ): NavigationVisibilityAction {
   return {
     type: NAVIGATION_VISIBILITY,
@@ -306,7 +322,7 @@ export type CategoryExpansionAction = {
 
 /** Change the visibility of subcategories in the navigation section */
 export function updateNavigationCategoryExpansion(
-  expandedCategories: string[]
+  expandedCategories: string[],
 ): CategoryExpansionAction {
   return {
     type: CATEGORY_EXPANSION,
@@ -363,14 +379,15 @@ export interface RecordRequestOptions {
 interface RequestRequestOptionsGetter {
   (
     recordClass: RecordClass,
-    categoryTree: CategoryTreeNode
+    categoryTree: CategoryTreeNode,
   ): RecordRequestOptions[];
 }
 
 interface DefaultExpandedSectionsGetter {
-  (recordClass: RecordClass, categoryTree: CategoryTreeNode):
-    | string[]
-    | undefined;
+  (
+    recordClass: RecordClass,
+    categoryTree: CategoryTreeNode,
+  ): string[] | undefined;
 }
 
 interface CategoryTreePruner {
@@ -383,7 +400,7 @@ export function loadRecordData(
   primaryKeyValues: string[],
   getRecordRequestOptions: RequestRequestOptionsGetter,
   pruneCategoryTree: CategoryTreePruner,
-  getDefaultExpandedSections: DefaultExpandedSectionsGetter
+  getDefaultExpandedSections: DefaultExpandedSectionsGetter,
 ): ActionThunk<LoadRecordAction | UserAction | EmptyAction> {
   return function run({ wdkService }) {
     return setActiveRecord(
@@ -391,7 +408,7 @@ export function loadRecordData(
       primaryKeyValues,
       getRecordRequestOptions,
       pruneCategoryTree,
-      getDefaultExpandedSections
+      getDefaultExpandedSections,
     );
   };
 }
@@ -408,7 +425,7 @@ function setActiveRecord(
   primaryKeyValues: string[],
   getRecordRequestOptions: RequestRequestOptionsGetter,
   pruneCategoryTree: CategoryTreePruner,
-  getDefaultExpandedSections: DefaultExpandedSectionsGetter
+  getDefaultExpandedSections: DefaultExpandedSectionsGetter,
 ): ActionThunk<LoadRecordAction | UserAction | EmptyAction> {
   return ({ wdkService }) => {
     const id = uniqueId('recordViewId');
@@ -424,17 +441,17 @@ function setActiveRecord(
         ([recordClass, primaryKey, fullCategoryTree]) => {
           const prunedCategoryTree = pruneCategoryTree(
             recordClass,
-            fullCategoryTree
+            fullCategoryTree,
           );
           const [initialOptions, ...additionalOptions] =
             getRecordRequestOptions(recordClass, prunedCategoryTree);
           const categoryTree = getTree(
             { name: '__', tree: prunedCategoryTree },
-            isNotInternalNode
+            isNotInternalNode,
           );
           const defaultExpandedSections = getDefaultExpandedSections(
             recordClass,
-            categoryTree
+            categoryTree,
           );
           const initialAction$ = wdkService
             .getRecord(recordClass.urlSegment, primaryKey, initialOptions)
@@ -444,15 +461,15 @@ function setActiveRecord(
                 recordClass,
                 categoryTree,
                 defaultExpandedSections,
-              })
+              }),
             );
           const additionalActions = additionalOptions.map((options) =>
             wdkService
               .getRecord(recordClass.urlSegment, primaryKey, options)
               .then(
                 (record) => recordUpdate(id, record),
-                (error) => recordError(id, error)
-              )
+                (error) => recordError(id, error),
+              ),
           );
 
           return initialAction$.then(
@@ -462,18 +479,18 @@ function setActiveRecord(
               recordClass.useBasket
                 ? loadBasketStatus(
                     action.payload.record,
-                    recordClass.urlSegment
+                    recordClass.urlSegment,
                   )
                 : emptyAction,
               loadFavoritesStatus(
                 action.payload.record,
-                recordClass.urlSegment
+                recordClass.urlSegment,
               ),
             ],
-            (error) => recordError(id, error)
+            (error) => recordError(id, error),
           );
         },
-        (error) => recordError(id, error)
+        (error) => recordError(id, error),
       ),
     ];
   };
@@ -492,7 +509,7 @@ function setActiveRecord(
 export function getPrimaryKey(
   wdkService: WdkService,
   recordClassUrlSegment: string,
-  primaryKeyValues: string[]
+  primaryKeyValues: string[],
 ) {
   return wdkService
     .findRecordClass(recordClassUrlSegment)
@@ -501,7 +518,7 @@ export function getPrimaryKey(
         throw new Error(
           'Could not find a record class identified by `' +
             recordClassUrlSegment +
-            '`.'
+            '`.',
         );
 
       return recordClass.primaryKeyColumnRefs.map((ref, index) => ({
@@ -514,7 +531,7 @@ export function getPrimaryKey(
 /** Get the category tree for the given record class */
 function getCategoryTree(
   wdkService: WdkService,
-  recordClassUrlSegment: string
+  recordClassUrlSegment: string,
 ) {
   return Promise.all([
     wdkService

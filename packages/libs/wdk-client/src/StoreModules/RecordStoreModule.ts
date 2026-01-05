@@ -1,10 +1,11 @@
+import React from 'react';
 import { chunk, difference, get, union, uniq } from 'lodash';
 import {
   ActionsObservable,
   combineEpics,
   StateObservable,
 } from 'redux-observable';
-import { EMPTY, Observable, from, merge, of } from 'rxjs';
+import { EMPTY, Observable, concat, from, merge, of } from 'rxjs';
 import {
   bufferTime,
   concatMap,
@@ -14,6 +15,7 @@ import {
   map,
   mergeMap,
   switchMap,
+  takeUntil,
   takeWhile,
   withLatestFrom,
 } from 'rxjs/operators';
@@ -31,6 +33,7 @@ import {
   REQUEST_PARTIAL_RECORD,
   SECTION_VISIBILITY,
   SET_COLLAPSED_SECTIONS,
+  STOP_PROGRESSIVE_EXPAND,
   TABLE_STATE_UPDATED,
   RequestPartialRecord,
   RecordReceivedAction,
@@ -42,6 +45,9 @@ import {
   updateTableState,
   updateSectionVisibility,
 } from '../Actions/RecordActions';
+import { enqueueSnackbar } from '../Actions/NotificationActions';
+import { scrollIntoView } from '../Utils/DomUtils';
+import { StopProgressiveExpandButton } from '../Views/Records/StopProgressiveExpandButton';
 import {
   BASKET_STATUS_ERROR,
   BASKET_STATUS_LOADING,
@@ -121,10 +127,10 @@ export function reduce(state: State = {} as State, action: Action): State {
       const collapsedSections = getLeaves(categoryTree, (node) => node.children)
         .filter(
           (
-            node
+            node,
           ): node is CategoryTreeNode & { properties: { name: string[] } } =>
             !!node.properties.scope?.includes('record-collapsed') &&
-            !!node.properties.name
+            !!node.properties.name,
         )
         .map((node) => getRefName(node));
 
@@ -171,7 +177,7 @@ export function reduce(state: State = {} as State, action: Action): State {
           action.payload.isVisible ??
           state.collapsedSections.includes(action.payload.name)
         ),
-        state.collapsedSections
+        state.collapsedSections,
       );
       return { ...state, collapsedSections };
     }
@@ -279,7 +285,7 @@ function updateList<T>(item: T, add: boolean, list: T[] = []) {
 /** Get all attributes and tables of active record */
 export function getAllFields(state: State) {
   return filterNodes<CategoryTreeNode>(isFieldNode, state.categoryTree).map(
-    getId
+    getId,
   );
 }
 
@@ -296,85 +302,103 @@ type RecordOptions = {
 
 /**
  * Progressive expansion epic for debugging.
- * Expands all collapsed sections one at a time, stopping if an error occurs.
+ * Expands all collapsed sections one at a time with snackbar notifications and stop button.
  */
 function observeProgressiveExpand(
   action$: ActionsObservable<Action>,
   state$: StateObservable<RootState>,
-  deps: EpicDependencies
+  deps: EpicDependencies,
 ): Observable<Action> {
   return action$.pipe(
     filter(
       (action): action is ProgressiveExpandAllAction =>
-        action.type === PROGRESSIVE_EXPAND_ALL
+        action.type === PROGRESSIVE_EXPAND_ALL,
     ),
     withLatestFrom(state$),
     mergeMap(([_, state]) => {
       const recordState = state[key];
       const allFields = getAllFields(recordState);
       const collapsedFields = recordState.collapsedSections.filter((section) =>
-        allFields.includes(section)
+        allFields.includes(section),
       );
 
-      // Track the initial error count
-      const initialErrorCount = state.unhandledErrors.errors.length;
+      // Show starting notification
+      const startingSnackbar = enqueueSnackbar(
+        `Starting expansion of ${collapsedFields.length} collapsed sections`,
+        {
+          key: `progressive-expand-start-${Date.now()}`,
+          variant: 'info',
+          persist: true,
+          action: (key) =>
+            React.createElement(StopProgressiveExpandButton, {
+              snackbarKey: key,
+            }),
+        },
+      );
 
-      console.log(
-        `[Progressive Expand] Starting expansion of ${collapsedFields.length} collapsed sections`
+      // Create stop signal
+      const stop$ = action$.pipe(
+        filter((action) => action.type === STOP_PROGRESSIVE_EXPAND),
       );
 
       // Expand sections one at a time
-      return from(collapsedFields).pipe(
+      const expansion$ = from(collapsedFields).pipe(
         concatMap((fieldName, index) =>
           of(updateSectionVisibility(fieldName, true)).pipe(
-            delay(300), // Wait 300ms between each expansion
-            withLatestFrom(state$),
-            mergeMap(([action, currentState]) => {
-              const currentErrorCount =
-                currentState.unhandledErrors.errors.length;
-              const hasNewError = currentErrorCount > initialErrorCount;
-
-              if (hasNewError) {
-                const latestError =
-                  currentState.unhandledErrors.errors[
-                    currentState.unhandledErrors.errors.length - 1
-                  ];
-                console.error(
-                  `[Progressive Expand] Stopped at section "${fieldName}" (${index + 1}/${collapsedFields.length}) due to error:`,
-                  latestError.error
-                );
-                return EMPTY; // Stop expansion
+            delay(5000), // Wait 5000ms between each expansion to allow heavy sections to load
+            mergeMap((action) => {
+              // Scroll to the section being expanded
+              const element = document.getElementById(fieldName);
+              if (element) {
+                scrollIntoView(element);
               }
 
-              console.log(
-                `[Progressive Expand] Expanded section ${index + 1}/${collapsedFields.length}: "${fieldName}"`
+              // Show progress notification
+              const progressSnackbar = enqueueSnackbar(
+                `Expanded section ${index + 1}/${collapsedFields.length}: "${fieldName}"`,
+                {
+                  key: `progressive-expand-${index}-${Date.now()}`,
+                  variant: 'success',
+                  persist: true,
+                  action: (key) =>
+                    React.createElement(StopProgressiveExpandButton, {
+                      snackbarKey: key,
+                    }),
+                },
               );
 
-              if (index === collapsedFields.length - 1) {
-                console.log(
-                  '[Progressive Expand] Completed successfully - all sections expanded without errors'
-                );
-              }
-
-              return of(action);
-            })
-          )
+              // Emit both the visibility action and the snackbar action
+              return from([action, progressSnackbar]);
+            }),
+          ),
         ),
-        // Stop if we encounter an error
-        takeWhile((action, index) => {
-          const currentState = state$.value;
-          const currentErrorCount = currentState.unhandledErrors.errors.length;
-          return currentErrorCount === initialErrorCount;
-        }, true) // inclusive: true allows the last emission before stopping
+        // Stop expansion if STOP_PROGRESSIVE_EXPAND is dispatched
+        takeUntil(stop$),
       );
-    })
+
+      // Completion notification (shown when all sections are expanded)
+      const completionSnackbar = enqueueSnackbar(
+        'Completed - all sections expanded',
+        {
+          key: `progressive-expand-complete-${Date.now()}`,
+          variant: 'success',
+          persist: false, // Auto-dismiss completion message
+        },
+      );
+
+      // Return: starting snackbar -> expansion -> completion snackbar
+      return merge(
+        of(startingSnackbar),
+        concat(expansion$, of(completionSnackbar)),
+      );
+    }),
   );
 }
 
 export const observe = combineEpics(
   observeRecordRequests,
   observeUserSettings,
-  observeProgressiveExpand
+  observeProgressiveExpand,
 );
 
 interface StorageDescriptor {
@@ -407,12 +431,12 @@ const storageItems: Record<string, StorageDescriptor> = {
 function observeRecordRequests(
   action$: ActionsObservable<Action>,
   state$: StateObservable<RootState>,
-  deps: EpicDependencies
+  deps: EpicDependencies,
 ): Observable<Action> {
   return action$.pipe(
     filter(
       (action): action is RequestPartialRecord =>
-        action.type === REQUEST_PARTIAL_RECORD
+        action.type === REQUEST_PARTIAL_RECORD,
     ),
     groupBy((action) => action.id),
     mergeMap((group$) =>
@@ -433,17 +457,17 @@ function observeRecordRequests(
                 tables: uniq([...options.tables, ...tables]),
               });
             },
-            { attributes: [], tables: [] } as RecordOptions
+            { attributes: [], tables: [] } as RecordOptions,
           );
           const primaryKey = await getPrimaryKey(
             deps.wdkService,
             recordClassName,
-            primaryKeyValues
+            primaryKeyValues,
           );
           const record = await deps.wdkService.getRecord(
             recordClassName,
             primaryKey,
-            options
+            options,
           );
           return {
             type: RECORD_UPDATE,
@@ -452,9 +476,9 @@ function observeRecordRequests(
               record,
             },
           } as RecordUpdatedAction;
-        })
-      )
-    )
+        }),
+      ),
+    ),
   );
 }
 
@@ -465,12 +489,12 @@ function observeRecordRequests(
 function observeUserSettings(
   action$: ActionsObservable<Action>,
   state$: StateObservable<RootState>,
-  deps: EpicDependencies
+  deps: EpicDependencies,
 ) {
   return action$.pipe(
     filter(
       (action): action is RecordReceivedAction =>
-        action.type === RECORD_RECEIVED
+        action.type === RECORD_RECEIVED,
     ),
     switchMap((action) => {
       let state = state$.value[key];
@@ -480,14 +504,14 @@ function observeUserSettings(
       let navigationVisible = getStateFromStorage(
         storageItems.navigationVisible,
         state,
-        state.categoryTree.children.length >= 5
+        state.categoryTree.children.length >= 5,
       );
 
       /** merge stored visibleSections */
       let expandedSections = getStateFromStorage(
         storageItems.expandedSections,
         state,
-        action.payload.defaultExpandedSections ?? allFields
+        action.payload.defaultExpandedSections ?? allFields,
       );
 
       let collapsedSections = expandedSections
@@ -497,18 +521,18 @@ function observeUserSettings(
       let tableStates = getStateFromStorage(
         storageItems.tables,
         state,
-        {}
+        {},
       ) as Record<string, TableState>;
 
       return merge(
         from(
           Object.entries(tableStates).map(([tableName, tableState]) =>
-            updateTableState(tableName, tableState)
-          )
+            updateTableState(tableName, tableState),
+          ),
         ),
         of(
           updateNavigationVisibility(navigationVisible),
-          setCollapsedSections(collapsedSections)
+          setCollapsedSections(collapsedSections),
         ),
         action$.pipe(
           mergeMap((action) => {
@@ -517,13 +541,13 @@ function observeUserSettings(
               case ALL_FIELD_VISIBILITY:
                 setStateInStorage(
                   storageItems.expandedSections,
-                  state$.value[key]
+                  state$.value[key],
                 );
                 break;
               case NAVIGATION_VISIBILITY:
                 setStateInStorage(
                   storageItems.navigationVisible,
-                  state$.value[key]
+                  state$.value[key],
                 );
                 break;
               case TABLE_STATE_UPDATED:
@@ -531,10 +555,10 @@ function observeUserSettings(
                 break;
             }
             return EMPTY;
-          })
-        )
+          }),
+        ),
       );
-    })
+    }),
   );
 }
 
@@ -542,38 +566,38 @@ function observeUserSettings(
 // (1) On record load, update the "navigationVisible" state based on the "navigationVisible" preference
 // (2) On change of "navigationVisible" state, update the "navigationVisible" preference
 export function makeNavigationVisibilityPreferenceEpics(
-  initialVisibility: (recordClass: RecordClass) => boolean
+  initialVisibility: (recordClass: RecordClass) => boolean,
 ) {
   const observeNavigationVisibilityPreference: ModuleEpic<RootState, Action> = (
     action$,
     state$,
-    deps
+    deps,
   ) =>
     action$.pipe(
       filter(
         (action): action is RecordReceivedAction =>
-          action.type === RECORD_RECEIVED
+          action.type === RECORD_RECEIVED,
       ),
       switchMap(() => {
         const recordClass = state$.value[key].recordClass;
 
         const navigationVisiblePreference$ = getValue(
           deps.wdkService,
-          preferences.navigationVisible(recordClass.urlSegment)
+          preferences.navigationVisible(recordClass.urlSegment),
         );
 
         return from(navigationVisiblePreference$).pipe(
           map((value) =>
-            updateNavigationVisibility(value ?? initialVisibility(recordClass))
-          )
+            updateNavigationVisibility(value ?? initialVisibility(recordClass)),
+          ),
         );
-      })
+      }),
     );
 
   const observeNavigationVisibilityState: ModuleEpic<RootState, Action> = (
     action$,
     state$,
-    deps
+    deps,
   ) =>
     stateEffect(
       state$,
@@ -585,9 +609,9 @@ export function makeNavigationVisibilityPreferenceEpics(
         setValue(
           deps.wdkService,
           preferences.navigationVisible(recordClassUrlSegment),
-          newNavigationVisibility
+          newNavigationVisibility,
         );
-      }
+      },
     );
 
   return {
@@ -600,7 +624,7 @@ export function makeNavigationVisibilityPreferenceEpics(
 function getStateFromStorage(
   descriptor: StorageDescriptor,
   state: State,
-  defaultValue: unknown
+  defaultValue: unknown,
 ) {
   try {
     let key = getStorageKey(descriptor, state.record);
@@ -609,7 +633,7 @@ function getStateFromStorage(
     console.error(
       'Warning: Could not retrieve %s from local storage.',
       descriptor.path,
-      error
+      error,
     );
     return defaultValue;
   }
@@ -623,13 +647,13 @@ function setStateInStorage(descriptor: StorageDescriptor, state: State) {
       key,
       typeof descriptor.getValue === 'function'
         ? descriptor.getValue(state)
-        : get(state, descriptor.path)
+        : get(state, descriptor.path),
     );
   } catch (error) {
     console.error(
       'Warning: Could not set %s to local storage.',
       descriptor.path,
-      error
+      error,
     );
   }
 }
