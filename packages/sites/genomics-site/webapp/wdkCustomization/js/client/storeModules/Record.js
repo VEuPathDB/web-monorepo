@@ -184,7 +184,7 @@ function pruneCategoriesByMetaTable(categoryTree, record) {
     }
     if (index[row.target_name + '-' + row.target_type].keep) return index;
     if (
-      row.organisms == null ||
+   //   row.organisms == null ||
       row.organisms === record.attributes.organism_full
     ) {
       index[row.target_name + '-' + row.target_type].keep = true;
@@ -198,7 +198,9 @@ function pruneCategoriesByMetaTable(categoryTree, record) {
     if (individual.children.length > 0) return true;
     if (individual.wdkReference == null) return false;
     let key = cat.getRefName(individual) + '-' + cat.getTargetType(individual);
-    if (metaTableIndex[key] === undefined) return true;
+ //   if (metaTableIndex[key] === undefined) return true;
+    if ( (metaTableIndex[key] === undefined) && (cat.getTargetType(individual) == 'table') ) return false;
+    if ( (metaTableIndex[key] === undefined) && (cat.getTargetType(individual) == 'attribute') ) return true;
     return metaTableIndex[key].keep;
   }, categoryTree);
 }

@@ -1,0 +1,5 @@
+# direnv configuration for web-monorepo
+# Copy this file to .envrc and run 'direnv allow' to enable
+
+# Supply chain security: require packages to be 7+ days old
+export YARN_NPM_MINIMAL_AGE_GATE=10080

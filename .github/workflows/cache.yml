@@ -1,3 +1,14 @@
+# NOTE: This workflow is largely legacy/redundant now that all workflows (including pr-check.yml)
+# automatically cache dependencies. Since PR caches are accessible to the main branch and vice versa,
+# this explicit pre-warming step is no longer strictly necessary.
+#
+# We're keeping it for now because:
+# 1. It ensures main always has a "canonical" cache after yarn.lock changes
+# 2. It provides explicit cache warming independent of PR activity
+# 3. It has minimal overhead and doesn't cause problems
+#
+# This could be safely removed if desired - PRs will create caches that main can use.
+
 name: Generate caches
 on:
   push:
@@ -10,13 +21,24 @@ jobs:
   # See https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows#example-using-the-cache-action
   cache-yarn:
     name: Generate yarn cache
-    if: github.push.pa
     runs-on: ubuntu-latest
+    env:
+      YARN_NPM_MINIMAL_AGE_GATE: 10080
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 14
-          cache: yarn
+          node-version: '24.11.0'
+      - run: corepack enable
+      - name: Remove yarnPath to use corepack's Yarn 4.12.0
+        run: sed -i '/^yarnPath:/d' .yarnrc.yml
+      - uses: actions/cache@v4
+        with:
+          path: |
+            .yarn/cache
+            .yarn/install-state.gz
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
       - run: yarn
 

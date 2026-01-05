@@ -2,7 +2,6 @@ import {
   ContinuousVariableDataShape,
   DistributionResponse,
   LabeledRange,
-  usePromise,
   useStudyMetadata,
 } from '../../..';
 import {
@@ -25,7 +24,7 @@ import {
   useFindEntityAndVariableCollection,
   useSubsettingClient,
 } from '../../../hooks/workspace';
-import { ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
+import { ReactNode, useEffect, useMemo, useRef } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import VariableTreeDropdown from '../../variableSelectors/VariableTreeDropdown';
 import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
@@ -431,7 +430,7 @@ export function DifferentialExpressionConfiguration(
             className={cx('-DiffExpressionOuterConfigContainerGroupComparison')}
           >
             <div className={cx('-InputContainer')}>
-              <span>Variable</span>
+              <span>Metadata Variable</span>
               <VariableTreeDropdown
                 showClearSelectionButton={false}
                 scope="variableTree"
@@ -465,7 +464,7 @@ export function DifferentialExpressionConfiguration(
                   disableGroupValueSelectors && 'disabled'
                 )}
               >
-                <span>Group A</span>
+                <span>Reference Group</span>
                 <ValuePicker
                   allowedValues={
                     !continuousVariableBins.pending
@@ -528,7 +527,7 @@ export function DifferentialExpressionConfiguration(
                     ? { tooltip: 'Swap Group A and Group B values' }
                     : {})}
                 />
-                <span>Group B</span>
+                <span>Comparison Group</span>
                 <ValuePicker
                   allowedValues={
                     !continuousVariableBins.pending
@@ -589,10 +588,13 @@ function isEnabledInPicker({
   if (!studyMetadata) return false;
 
   const entities = entityTreeToArray(studyMetadata.rootEntity);
+
   // Ensure there are collections in this study. Otherwise, disable app
   const studyHasCollections = entities.some(
     (entity) => !!entity.collections?.length
   );
 
-  return studyHasCollections;
+  // TODO Remove this temporary override when the data is ready and collections have been verified.
+  // return studyHasCollections;
+  return true;
 }

@@ -11,10 +11,16 @@ export default function NumberedHeader(props: NumberedHeaderProps) {
   const height = 25;
 
   return (
-    <div>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'flex-start',
+      }}
+    >
       <div
         style={{
           display: 'inline-block',
+          flexShrink: 0,
           width: height,
           height: height,
           lineHeight: height + 'px',
@@ -33,8 +39,9 @@ export default function NumberedHeader(props: NumberedHeaderProps) {
       <div
         style={{
           display: 'inline-block',
+          flex: 1,
           marginLeft: 5,
-          height: height,
+          paddingTop: '2px',
           lineHeight: height + 'px',
           color: color,
           fontSize: 16,

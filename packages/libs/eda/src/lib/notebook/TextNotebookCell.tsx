@@ -1,11 +1,17 @@
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
 import { NotebookCellProps } from './NotebookCell';
 import { TextCellDescriptor } from './NotebookPresets';
+import { useMemo } from 'react';
 
 export function TextNotebookCell(props: NotebookCellProps<TextCellDescriptor>) {
-  const { cell, isDisabled } = props;
+  const { cell, isDisabled, analysisState } = props;
 
-  const { text, title } = cell;
+  const { text, title, getDynamicContent } = cell;
+
+  const dynamicContent = useMemo(
+    () => getDynamicContent?.(analysisState),
+    [getDynamicContent, analysisState]
+  );
 
   return (
     <>
@@ -24,6 +30,7 @@ export function TextNotebookCell(props: NotebookCellProps<TextCellDescriptor>) {
           className={'NotebookCellContent' + (isDisabled ? ' disabled' : '')}
         >
           {text}
+          {dynamicContent}
         </div>
       </ExpandablePanel>
     </>
