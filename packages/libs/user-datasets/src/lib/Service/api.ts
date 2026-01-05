@@ -16,6 +16,9 @@ import {
   userQuotaMetadata,
   userDatasetFileListing,
   datasetIdType,
+  datasetListEntry,
+  DatasetListEntry,
+  datasetDetails,
 } from '../Utils/types';
 
 import { array } from 'io-ts';
@@ -29,30 +32,22 @@ const userIdsByEmailDecoder = record({
 
 export class UserDatasetApi extends FetchClientWithCredentials {
   getCurrentUserDatasets = (
-    projectId?: string,
+    installTarget?: string,
     ownership?: string,
-    offset?: number,
-    limit?: number,
-    sortField?: string,
-    sortOrder?: string
   ) => {
     // TODO: wire up to allow query params
     const queryString = makeQueryString(
       [
-        'project_id',
+        'install_target',
         'ownership',
-        'offset',
-        'limit',
-        'sort_field',
-        'sort_order',
       ],
-      [projectId, ownership, offset, limit, sortField, sortOrder]
+      [installTarget, ownership]
     );
     return this.fetch(
       createJsonRequest({
         path: '/datasets' + queryString,
         method: 'GET',
-        transformResponse: ioTransformer(array(userDatasetDetails_VDI)),
+        transformResponse: ioTransformer(array(datasetListEntry)),
       })
     );
   };
@@ -132,7 +127,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
       createJsonRequest({
         path: `/datasets/${datasetId}`,
         method: 'GET',
-        transformResponse: ioTransformer(userDatasetDetails),
+        transformResponse: ioTransformer(datasetDetails),
       })
     );
   };

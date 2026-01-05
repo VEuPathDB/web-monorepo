@@ -25,6 +25,10 @@ import {
   UserDatasetContact,
   UserDatasetHyperlink,
   UserDatasetPublication,
+  DatasetDetails,
+  DatasetListEntry,
+  DatasetInstallStatusEntry,
+  DatasetContact,
 } from '../Utils/types';
 import { FetchClientError } from '@veupathdb/http-utils';
 import {
@@ -507,21 +511,48 @@ export function loadUserDatasetListWithoutLoadingIndicator() {
       ),
       wdkService.getCurrentUserDatasets(),
     ]).then(([filterByProject, userDatasets]) => {
+      const now = Date.now();
+
       const vdiToExistingUds = userDatasets.map(
-        (ud: UserDatasetVDI): UserDataset => {
-          const { fileCount, shares, fileSizeTotal } = ud;
-          const partiallyTransformedResponse =
-            transformVdiResponseToLegacyResponseHelper(ud);
-          return {
-            ...partiallyTransformedResponse,
-            fileCount,
-            size: fileSizeTotal,
-            sharedWith: shares?.map((d) => ({
-              user: d.userId,
-              userDisplayName: d.firstName + ' ' + d.lastName,
-            })),
-          };
-        }
+        (ud: DatasetListEntry): UserDataset => ({
+          created: ud.created,
+          age: now - Date.parse(ud.created),
+          projects: ud.installTargets,
+          id: ud.datasetId,
+          meta: {
+            visibility: ud.visibility,
+            createdOn: ud.created,
+            name: ud.name,
+            summary: ud.summary,
+            category: ud.type.category,
+            description: ud.description,
+          },
+          owner: ud.owner.firstName + ' ' + ud.owner.lastName,
+          ownerUserId: ud.owner.userId,
+          sharedWith: ud.shares?.map((d) => ({
+            user: d.userId,
+            userDisplayName: d.firstName + ' ' + d.lastName,
+          })),
+          size: ud.fileSizeTotal,
+          type: {
+            name: ud.type.name,
+            display: ud.type.category,
+            version: ud.type.version,
+          },
+          fileCount: ud.fileCount,
+          status: {
+            import: ud.status.import.status,
+            install: ud.status.install?.map((e: DatasetInstallStatusEntry) => ({
+              projectId: e.installTarget,
+              metaStatus: e.metaStatus,
+              metaMessage: e.metaMessages?.join("\n"),
+              dataStatus: e.dataStatus,
+              dataMessage: e.dataMessages?.join("\n"),
+            }))
+          },
+          importMessages: ud.status.import.messages ?? [],
+          visibility: ud.visibility,
+        })
       );
       return listReceived(vdiToExistingUds, filterByProject);
     }, listErrorReceived)
@@ -534,30 +565,26 @@ export function loadUserDatasetList() {
 
 export function loadUserDatasetDetailWithoutLoadingIndicator(id: string) {
   return validateVdiCompatibleThunk<DetailAction>(({ wdkService }) =>
-    Promise.all([
-      wdkService.getUserDataset(id),
-      wdkService.getUserDatasetFileListing(id),
-    ]).then(
-      ([userDataset, fileListing]) => {
-        const { shares, dependencies } = userDataset as UserDatasetDetails;
-        const partiallyTransformedResponse =
-          transformVdiResponseToLegacyResponseHelper(userDataset);
-
-        const transformedResponse = {
-          ...partiallyTransformedResponse,
-          fileListing,
-          fileCount: fileListing?.upload?.contents.length,
-          size: fileListing?.upload?.zipSize,
-          sharedWith: shares
-            ?.filter((d) => d.status === 'grant')
-            .map((d) => ({
-              userDisplayName:
-                d.recipient.firstName + ' ' + d.recipient.lastName,
-              user: d.recipient.userId,
-            })),
-          dependencies,
-        };
-        return detailReceived(id, transformedResponse, fileListing);
+    wdkService.getUserDataset(id).then(
+      (ud: DatasetDetails) => {
+        const transformedResponse: UserDataset = {
+          created: ud.created,
+          age: Date.now() - Date.parse(ud.created),
+          dependencies: ud.dependencies,
+          // ...partiallyTransformedResponse,
+          // fileListing,
+          // fileCount: fileListing?.upload?.contents.length,
+          // size: fileListing?.upload?.zipSize,
+          // sharedWith: shares
+          //   ?.filter((d) => d.status === 'grant')
+          //   .map((d) => ({
+          //     userDisplayName:
+          //       d.recipient.firstName + ' ' + d.recipient.lastName,
+          //     user: d.recipient.userId,
+          //   })),
+          // dependencies,
+        } as unknown as UserDataset;
+        return detailReceived(id, transformedResponse, null as unknown as UserDatasetFileListing);
       },
       (error: FetchClientError) => detailError(error)
     )
@@ -683,64 +710,4 @@ export function updateProjectFilter(filterByProject: boolean) {
     ),
     projectFilter(filterByProject),
   ]);
-}
-
-type PartialLegacyUserDataset = Omit<
-  UserDataset,
-  'datafiles' | 'fileCount' | 'size' | 'sharedWith'
->;
-
-function transformVdiResponseToLegacyResponseHelper(
-  ud: UserDatasetDetails | UserDatasetVDI
-): PartialLegacyUserDataset {
-  const {
-    name,
-    description,
-    summary,
-    owner,
-    datasetType,
-    projectIds,
-    datasetId,
-    created,
-    status,
-    importMessages,
-    visibility,
-    shortName,
-    shortAttribution,
-    category,
-    publications,
-    hyperlinks,
-    organisms,
-    contacts,
-    createdOn,
-  } = ud;
-  return {
-    owner: owner.firstName + ' ' + owner.lastName,
-    projects: projectIds ?? [],
-    created: ud.created,
-    type: {
-      display: datasetType.displayName ?? datasetType.name,
-      name: datasetType.name,
-      version: datasetType.version,
-    },
-    meta: {
-      name,
-      description: description ?? '',
-      summary: summary ?? '',
-      visibility,
-      shortName: shortName ?? '',
-      shortAttribution: shortAttribution ?? '',
-      category: category ?? '',
-      publications: publications ?? ([] as UserDatasetPublication[]),
-      hyperlinks: hyperlinks ?? ([] as UserDatasetHyperlink[]),
-      organisms: organisms ?? [],
-      contacts: contacts ?? ([] as UserDatasetContact[]),
-      createdOn: createdOn ?? '',
-    },
-    ownerUserId: owner.userId,
-    age: Date.now() - Date.parse(created),
-    id: datasetId,
-    status,
-    importMessages: importMessages ?? [],
-  };
 }
