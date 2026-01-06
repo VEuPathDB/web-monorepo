@@ -16,7 +16,6 @@ import {
   mergeMap,
   switchMap,
   takeUntil,
-  takeWhile,
   withLatestFrom,
 } from 'rxjs/operators';
 import { Action } from '../Actions';
@@ -45,7 +44,7 @@ import {
   updateTableState,
   updateSectionVisibility,
 } from '../Actions/RecordActions';
-import { enqueueSnackbar } from '../Actions/NotificationActions';
+import { enqueueSnackbar, closeSnackbar } from '../Actions/NotificationActions';
 import { scrollIntoView } from '../Utils/DomUtils';
 import { StopProgressiveExpandButton } from '../Views/Records/StopProgressiveExpandButton';
 import {
@@ -124,15 +123,7 @@ export function reduce(state: State = {} as State, action: Action): State {
       if (action.id !== state.requestId) return state;
       let { record, recordClass, categoryTree } = action.payload;
 
-      const collapsedSections = getLeaves(categoryTree, (node) => node.children)
-        .filter(
-          (
-            node,
-          ): node is CategoryTreeNode & { properties: { name: string[] } } =>
-            !!node.properties.scope?.includes('record-collapsed') &&
-            !!node.properties.name,
-        )
-        .map((node) => getRefName(node));
+      const collapsedSections = getInitiallyCollapsedSections(categoryTree);
 
       return {
         ...state,
@@ -295,6 +286,19 @@ function isFieldNode(node: CategoryTreeNode) {
   return targetType === 'attribute' || targetType === 'table';
 }
 
+/** Get sections marked as 'record-collapsed' */
+export function getInitiallyCollapsedSections(
+  categoryTree: CategoryTreeNode,
+): string[] {
+  return getLeaves(categoryTree, (node) => node.children)
+    .filter(
+      (node): node is CategoryTreeNode & { properties: { name: string[] } } =>
+        !!node.properties.scope?.includes('record-collapsed') &&
+        !!node.properties.name,
+    )
+    .map((node) => getRefName(node));
+}
+
 type RecordOptions = {
   attributes: string[];
   tables: string[];
@@ -317,18 +321,25 @@ function observeProgressiveExpand(
     withLatestFrom(state$),
     mergeMap(([_, state]) => {
       const recordState = state[key];
+      // Get all field sections (attributes and tables)
       const allFields = getAllFields(recordState);
-      const collapsedFields = recordState.collapsedSections.filter((section) =>
-        allFields.includes(section),
+      // Filter to only expand sections that are currently collapsed AND are fields
+      const collapsedFields = recordState.collapsedSections.filter(
+        (section) => allFields.includes(section), // remove any sections that are attributes and where state.record.record.attributes[section] is short
       );
+
+      // Track all snackbar keys so we can close them when stopped
+      const snackbarKeys: string[] = [];
+      const startKey = `progressive-expand-start-${Date.now()}`;
+      snackbarKeys.push(startKey);
 
       // Show starting notification
       const startingSnackbar = enqueueSnackbar(
         `Starting expansion of ${collapsedFields.length} collapsed sections`,
         {
-          key: `progressive-expand-start-${Date.now()}`,
+          key: startKey,
           variant: 'info',
-          persist: true,
+          persist: false,
           action: (key) =>
             React.createElement(StopProgressiveExpandButton, {
               snackbarKey: key,
@@ -345,7 +356,6 @@ function observeProgressiveExpand(
       const expansion$ = from(collapsedFields).pipe(
         concatMap((fieldName, index) =>
           of(updateSectionVisibility(fieldName, true)).pipe(
-            delay(5000), // Wait 5000ms between each expansion to allow heavy sections to load
             mergeMap((action) => {
               // Scroll to the section being expanded
               const element = document.getElementById(fieldName);
@@ -353,43 +363,55 @@ function observeProgressiveExpand(
                 scrollIntoView(element);
               }
 
+              // Track snackbar key
+              const progressKey = `progressive-expand-${index}-${Date.now()}`;
+              snackbarKeys.push(progressKey);
+
               // Show progress notification
               const progressSnackbar = enqueueSnackbar(
                 `Expanded section ${index + 1}/${collapsedFields.length}: "${fieldName}"`,
                 {
-                  key: `progressive-expand-${index}-${Date.now()}`,
+                  key: progressKey,
                   variant: 'success',
                   persist: true,
                   action: (key) =>
                     React.createElement(StopProgressiveExpandButton, {
                       snackbarKey: key,
                     }),
+                  preventDuplicate: true,
                 },
               );
 
               // Emit both the visibility action and the snackbar action
               return from([action, progressSnackbar]);
             }),
+            // Wait 5000ms AFTER expansion to allow heavy sections to load before moving to next
+            delay(5000),
           ),
         ),
         // Stop expansion if STOP_PROGRESSIVE_EXPAND is dispatched
         takeUntil(stop$),
       );
 
-      // Completion notification (shown when all sections are expanded)
-      const completionSnackbar = enqueueSnackbar(
-        'Completed - all sections expanded',
-        {
-          key: `progressive-expand-complete-${Date.now()}`,
-          variant: 'success',
-          persist: false, // Auto-dismiss completion message
-        },
+      // Close all snackbars when stop is triggered
+      const closeSnackbarsOnStop$ = stop$.pipe(
+        mergeMap(() => from(snackbarKeys.map((key) => closeSnackbar(key)))),
       );
 
+      // Completion notification (shown when all sections are expanded)
+      const completionSnackbar = enqueueSnackbar('Section expansion done', {
+        key: `progressive-expand-complete-${Date.now()}`,
+        variant: 'success',
+        persist: false, // Auto-dismiss completion message
+        preventDuplicate: true,
+      });
+
       // Return: starting snackbar -> expansion -> completion snackbar
+      // Also close all snackbars if stop is triggered
       return merge(
         of(startingSnackbar),
         concat(expansion$, of(completionSnackbar)),
+        closeSnackbarsOnStop$,
       );
     }),
   );
