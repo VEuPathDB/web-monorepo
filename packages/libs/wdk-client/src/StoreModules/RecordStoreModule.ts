@@ -169,7 +169,7 @@ export function reduce(state: State = {} as State, action: Action): State {
           action.payload.isVisible ??
           state.collapsedSections.includes(action.payload.name)
         ),
-        state.collapsedSections,
+        state.collapsedSections
       );
       return { ...state, collapsedSections };
     }
@@ -277,7 +277,7 @@ function updateList<T>(item: T, add: boolean, list: T[] = []) {
 /** Get all attributes and tables of active record */
 export function getAllFields(state: State) {
   return filterNodes<CategoryTreeNode>(isFieldNode, state.categoryTree).map(
-    getId,
+    getId
   );
 }
 
@@ -289,13 +289,13 @@ function isFieldNode(node: CategoryTreeNode) {
 
 /** Get sections marked as 'record-collapsed' */
 export function getInitiallyCollapsedSections(
-  categoryTree: CategoryTreeNode,
+  categoryTree: CategoryTreeNode
 ): string[] {
   return getLeaves(categoryTree, (node) => node.children)
     .filter(
       (node): node is CategoryTreeNode & { properties: { name: string[] } } =>
         !!node.properties.scope?.includes('record-collapsed') &&
-        !!node.properties.name,
+        !!node.properties.name
     )
     .map((node) => getRefName(node));
 }
@@ -312,12 +312,12 @@ type RecordOptions = {
 function observeProgressiveExpand(
   action$: ActionsObservable<Action>,
   state$: StateObservable<RootState>,
-  deps: EpicDependencies,
+  deps: EpicDependencies
 ): Observable<Action> {
   return action$.pipe(
     filter(
       (action): action is ProgressiveExpandAllAction =>
-        action.type === PROGRESSIVE_EXPAND_ALL,
+        action.type === PROGRESSIVE_EXPAND_ALL
     ),
     withLatestFrom(state$),
     mergeMap(([_, state]) => {
@@ -340,7 +340,7 @@ function observeProgressiveExpand(
           }
 
           return true;
-        },
+        }
       );
 
       // Track all snackbar keys so we can close them when stopped
@@ -348,7 +348,7 @@ function observeProgressiveExpand(
 
       // Create stop signal
       const stop$ = action$.pipe(
-        filter((action) => action.type === STOP_PROGRESSIVE_EXPAND),
+        filter((action) => action.type === STOP_PROGRESSIVE_EXPAND)
       );
 
       // Expand sections one at a time
@@ -366,7 +366,9 @@ function observeProgressiveExpand(
 
           // Show progress notification FIRST (before expansion)
           const progressSnackbar = enqueueSnackbar(
-            `Expanding section ${index + 1}/${collapsedFields.length}: "${fieldName}"`,
+            `Expanding section ${index + 1}/${
+              collapsedFields.length
+            }: "${fieldName}"`,
             {
               key: progressKey,
               variant: 'info',
@@ -376,7 +378,7 @@ function observeProgressiveExpand(
                   snackbarKey: key,
                 }),
               preventDuplicate: true,
-            },
+            }
           );
 
           // Create the expansion action
@@ -387,16 +389,16 @@ function observeProgressiveExpand(
           // EMPTY.pipe(delay(5000)) creates a 5-second pause before moving to next field
           return concat(
             from([progressSnackbar, expansionAction]),
-            EMPTY.pipe(delay(5000)),
+            EMPTY.pipe(delay(5000))
           );
         }),
         // Stop expansion if STOP_PROGRESSIVE_EXPAND is dispatched
-        takeUntil(stop$),
+        takeUntil(stop$)
       );
 
       // Close all snackbars when stop is triggered
       const closeSnackbarsOnStop$ = stop$.pipe(
-        mergeMap(() => from(snackbarKeys.map((key) => closeSnackbar(key)))),
+        mergeMap(() => from(snackbarKeys.map((key) => closeSnackbar(key))))
       );
 
       // Completion notification (shown when all sections are expanded)
@@ -411,16 +413,16 @@ function observeProgressiveExpand(
       // Also close all snackbars if stop is triggered
       return merge(
         concat(expansion$, of(completionSnackbar)),
-        closeSnackbarsOnStop$,
+        closeSnackbarsOnStop$
       );
-    }),
+    })
   );
 }
 
 export const observe = combineEpics(
   observeRecordRequests,
   observeUserSettings,
-  observeProgressiveExpand,
+  observeProgressiveExpand
 );
 
 interface StorageDescriptor {
@@ -453,12 +455,12 @@ const storageItems: Record<string, StorageDescriptor> = {
 function observeRecordRequests(
   action$: ActionsObservable<Action>,
   state$: StateObservable<RootState>,
-  deps: EpicDependencies,
+  deps: EpicDependencies
 ): Observable<Action> {
   return action$.pipe(
     filter(
       (action): action is RequestPartialRecord =>
-        action.type === REQUEST_PARTIAL_RECORD,
+        action.type === REQUEST_PARTIAL_RECORD
     ),
     groupBy((action) => action.id),
     mergeMap((group$) =>
@@ -479,17 +481,17 @@ function observeRecordRequests(
                 tables: uniq([...options.tables, ...tables]),
               });
             },
-            { attributes: [], tables: [] } as RecordOptions,
+            { attributes: [], tables: [] } as RecordOptions
           );
           const primaryKey = await getPrimaryKey(
             deps.wdkService,
             recordClassName,
-            primaryKeyValues,
+            primaryKeyValues
           );
           const record = await deps.wdkService.getRecord(
             recordClassName,
             primaryKey,
-            options,
+            options
           );
           return {
             type: RECORD_UPDATE,
@@ -498,9 +500,9 @@ function observeRecordRequests(
               record,
             },
           } as RecordUpdatedAction;
-        }),
-      ),
-    ),
+        })
+      )
+    )
   );
 }
 
@@ -511,12 +513,12 @@ function observeRecordRequests(
 function observeUserSettings(
   action$: ActionsObservable<Action>,
   state$: StateObservable<RootState>,
-  deps: EpicDependencies,
+  deps: EpicDependencies
 ) {
   return action$.pipe(
     filter(
       (action): action is RecordReceivedAction =>
-        action.type === RECORD_RECEIVED,
+        action.type === RECORD_RECEIVED
     ),
     switchMap((action) => {
       let state = state$.value[key];
@@ -526,14 +528,14 @@ function observeUserSettings(
       let navigationVisible = getStateFromStorage(
         storageItems.navigationVisible,
         state,
-        state.categoryTree.children.length >= 5,
+        state.categoryTree.children.length >= 5
       );
 
       /** merge stored visibleSections */
       let expandedSections = getStateFromStorage(
         storageItems.expandedSections,
         state,
-        action.payload.defaultExpandedSections ?? allFields,
+        action.payload.defaultExpandedSections ?? allFields
       );
 
       let collapsedSections = expandedSections
@@ -543,18 +545,18 @@ function observeUserSettings(
       let tableStates = getStateFromStorage(
         storageItems.tables,
         state,
-        {},
+        {}
       ) as Record<string, TableState>;
 
       return merge(
         from(
           Object.entries(tableStates).map(([tableName, tableState]) =>
-            updateTableState(tableName, tableState),
-          ),
+            updateTableState(tableName, tableState)
+          )
         ),
         of(
           updateNavigationVisibility(navigationVisible),
-          setCollapsedSections(collapsedSections),
+          setCollapsedSections(collapsedSections)
         ),
         action$.pipe(
           mergeMap((action) => {
@@ -563,13 +565,13 @@ function observeUserSettings(
               case ALL_FIELD_VISIBILITY:
                 setStateInStorage(
                   storageItems.expandedSections,
-                  state$.value[key],
+                  state$.value[key]
                 );
                 break;
               case NAVIGATION_VISIBILITY:
                 setStateInStorage(
                   storageItems.navigationVisible,
-                  state$.value[key],
+                  state$.value[key]
                 );
                 break;
               case TABLE_STATE_UPDATED:
@@ -577,10 +579,10 @@ function observeUserSettings(
                 break;
             }
             return EMPTY;
-          }),
-        ),
+          })
+        )
       );
-    }),
+    })
   );
 }
 
@@ -588,38 +590,38 @@ function observeUserSettings(
 // (1) On record load, update the "navigationVisible" state based on the "navigationVisible" preference
 // (2) On change of "navigationVisible" state, update the "navigationVisible" preference
 export function makeNavigationVisibilityPreferenceEpics(
-  initialVisibility: (recordClass: RecordClass) => boolean,
+  initialVisibility: (recordClass: RecordClass) => boolean
 ) {
   const observeNavigationVisibilityPreference: ModuleEpic<RootState, Action> = (
     action$,
     state$,
-    deps,
+    deps
   ) =>
     action$.pipe(
       filter(
         (action): action is RecordReceivedAction =>
-          action.type === RECORD_RECEIVED,
+          action.type === RECORD_RECEIVED
       ),
       switchMap(() => {
         const recordClass = state$.value[key].recordClass;
 
         const navigationVisiblePreference$ = getValue(
           deps.wdkService,
-          preferences.navigationVisible(recordClass.urlSegment),
+          preferences.navigationVisible(recordClass.urlSegment)
         );
 
         return from(navigationVisiblePreference$).pipe(
           map((value) =>
-            updateNavigationVisibility(value ?? initialVisibility(recordClass)),
-          ),
+            updateNavigationVisibility(value ?? initialVisibility(recordClass))
+          )
         );
-      }),
+      })
     );
 
   const observeNavigationVisibilityState: ModuleEpic<RootState, Action> = (
     action$,
     state$,
-    deps,
+    deps
   ) =>
     stateEffect(
       state$,
@@ -631,9 +633,9 @@ export function makeNavigationVisibilityPreferenceEpics(
         setValue(
           deps.wdkService,
           preferences.navigationVisible(recordClassUrlSegment),
-          newNavigationVisibility,
+          newNavigationVisibility
         );
-      },
+      }
     );
 
   return {
@@ -646,7 +648,7 @@ export function makeNavigationVisibilityPreferenceEpics(
 function getStateFromStorage(
   descriptor: StorageDescriptor,
   state: State,
-  defaultValue: unknown,
+  defaultValue: unknown
 ) {
   try {
     let key = getStorageKey(descriptor, state.record);
@@ -655,7 +657,7 @@ function getStateFromStorage(
     console.error(
       'Warning: Could not retrieve %s from local storage.',
       descriptor.path,
-      error,
+      error
     );
     return defaultValue;
   }
@@ -669,13 +671,13 @@ function setStateInStorage(descriptor: StorageDescriptor, state: State) {
       key,
       typeof descriptor.getValue === 'function'
         ? descriptor.getValue(state)
-        : get(state, descriptor.path),
+        : get(state, descriptor.path)
     );
   } catch (error) {
     console.error(
       'Warning: Could not set %s to local storage.',
       descriptor.path,
-      error,
+      error
     );
   }
 }

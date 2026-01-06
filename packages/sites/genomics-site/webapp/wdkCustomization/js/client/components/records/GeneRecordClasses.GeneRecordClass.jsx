@@ -59,7 +59,7 @@ export const RecordHeading = connect(
     navigationCategoriesExpanded: state.record.navigationCategoriesExpanded,
     requestId: state.record.requestId,
   }),
-  RecordActions,
+  RecordActions
 )(function RecordHeadingWrapper({ DefaultComponent, ...props }) {
   return (
     <>
@@ -84,7 +84,7 @@ function Shortcuts(props) {
       const parentCategories = Category.getAncestors(categoryTree, anchor); //.slice(1);
       const parentCategoryIds = parentCategories.map(Category.getId);
       const nextExpandedNavCats = Array.from(
-        new Set([...navigationCategoriesExpanded, ...parentCategoryIds]),
+        new Set([...navigationCategoriesExpanded, ...parentCategoryIds])
       );
       updateSectionVisibility(anchor, true);
       updateNavigationCategoryExpansion(nextExpandedNavCats);
@@ -94,7 +94,7 @@ function Shortcuts(props) {
       navigationCategoriesExpanded,
       updateNavigationCategoryExpansion,
       updateSectionVisibility,
-    ],
+    ]
   );
 
   // Get field present in record instance. This is leveraging the fact that
@@ -103,7 +103,7 @@ function Shortcuts(props) {
   const instanceFields = new Set(
     preorderSeq(categoryTree)
       .filter((node) => !node.children.length)
-      .map((node) => node.properties.name[0]),
+      .map((node) => node.properties.name[0])
   );
 
   const transcriptomicsThumbnail = {
@@ -155,7 +155,7 @@ function Shortcuts(props) {
         context === crisprPhenotypeThumbnail ||
         // For other contexts, ensure the attributesMap entry exists
         !context.gbrowse_url ||
-        recordClass.attributesMap[context.gbrowse_url] != null,
+        recordClass.attributesMap[context.gbrowse_url] != null
     )
     .map((context) =>
       context === transcriptomicsThumbnail ||
@@ -178,7 +178,7 @@ function Shortcuts(props) {
             ),
             displayName:
               recordClass.attributesMap[context.gbrowse_url]?.displayName,
-          }),
+          })
     )
     .toArray();
 
@@ -198,7 +198,7 @@ function RecordOverview(props) {
     if (!(attributeName in record.attributes)) {
       console.warn(
         'Attempting to render an attribute value that has not been requested. ' +
-          'It may need to be added to the ontology with a scope of "record-internal".',
+          'It may need to be added to the ontology with a scope of "record-internal".'
       );
     }
     const rawValue = record.attributes[attributeName];
@@ -340,55 +340,53 @@ function RecordOverview(props) {
   );
 }
 
-export const RecordMainSection = connect(null)(({
-  DefaultComponent,
-  dispatch,
-  ...props
-}) => {
-  return (
-    <React.Fragment>
-      {props.depth == null && (
-        <div
-          style={{
-            position: 'absolute',
-            right: 0,
-            top: '1em',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1em',
-          }}
-        >
-          <div>
-            <i className="fa fa-exclamation-triangle" />
-            &nbsp;
-            <button
-              className="link"
-              onClick={() =>
-                dispatch(RecordActions.updateAllFieldVisibility(false))
-              }
-            >
-              Collapse all sections for better performance
-            </button>
-          </div>
-          {process.env.NODE_ENV !== 'production' && (
+export const RecordMainSection = connect(null)(
+  ({ DefaultComponent, dispatch, ...props }) => {
+    return (
+      <React.Fragment>
+        {props.depth == null && (
+          <div
+            style={{
+              position: 'absolute',
+              right: 0,
+              top: '1em',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '1em',
+            }}
+          >
             <div>
-              <i className="fa fa-bug" />
+              <i className="fa fa-exclamation-triangle" />
               &nbsp;
               <button
                 className="link"
-                onClick={() => dispatch(RecordActions.progressiveExpandAll())}
-                title="Progressively expands all sections one at a time, every 5 seconds."
+                onClick={() =>
+                  dispatch(RecordActions.updateAllFieldVisibility(false))
+                }
               >
-                Progressively expand all sections for debugging
+                Collapse all sections for better performance
               </button>
             </div>
-          )}
-        </div>
-      )}
-      <DefaultComponent {...props} />
-    </React.Fragment>
-  );
-});
+            {process.env.NODE_ENV !== 'production' && (
+              <div>
+                <i className="fa fa-bug" />
+                &nbsp;
+                <button
+                  className="link"
+                  onClick={() => dispatch(RecordActions.progressiveExpandAll())}
+                  title="Progressively expands all sections one at a time, every 5 seconds."
+                >
+                  Progressively expand all sections for debugging
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+        <DefaultComponent {...props} />
+      </React.Fragment>
+    );
+  }
+);
 
 export function RecordAttributeSection(props) {
   const { DefaultComponent, ...restProps } = props;
@@ -590,7 +588,7 @@ export function RecordTableDescription(props) {
         renderAttributeValue(
           props.record.attributes.ec_number_warning,
           null,
-          'p',
+          'p'
         )
       );
 
@@ -601,7 +599,7 @@ export function RecordTableDescription(props) {
         renderAttributeValue(
           props.record.attributes.ec_inferred_description,
           null,
-          'p',
+          'p'
         )
       );
 
@@ -626,7 +624,7 @@ export function RecordTableDescription(props) {
         renderAttributeValue(
           props.record.attributes.alphafold_table_help,
           null,
-          'p',
+          'p'
         )
       );
 
@@ -655,16 +653,16 @@ function SNPsAlignment(props) {
   );
 }
 
-const RodMalPhenotypeTableChildRow = pure(
-  function RodMalPhenotypeTableChildRow(props) {
-    let { phenotype } = props.rowData;
-    return (
-      <div>
-        <b>Phenotype</b>:{phenotype == null ? null : safeHtml(phenotype)}
-      </div>
-    );
-  },
-);
+const RodMalPhenotypeTableChildRow = pure(function RodMalPhenotypeTableChildRow(
+  props
+) {
+  let { phenotype } = props.rowData;
+  return (
+    <div>
+      <b>Phenotype</b>:{phenotype == null ? null : safeHtml(phenotype)}
+    </div>
+  );
+});
 
 const CellxgeneTableChildRow = pure(function CellxgeneTableChildRow(props) {
   let { source_id, source_ids, dataset_name, project_id } = props.rowData;
@@ -739,7 +737,7 @@ function makeDatasetGraphChildRow({
 function makeGenomicRegions(
   gen_rel_intron_utr_coords,
   shouldOmitThreePrimeUtr,
-  threePrimeUtrLength,
+  threePrimeUtrLength
 ) {
   const allGenomicRegions = JSON.parse(gen_rel_intron_utr_coords || '[]');
 
@@ -759,7 +757,7 @@ function makeGenomicRegions(
 
       return memo;
     },
-    { genomicRegions: [], omissionLength: 0 },
+    { genomicRegions: [], omissionLength: 0 }
   );
 
   return genomicRegions.reverse();
@@ -792,7 +790,7 @@ const SequencesTableChildRow = pure(function SequencesTableChildRow(props) {
   let shouldOmitThreePrimeUtr = transcript_type === 'pseudogenic_transcript';
   let threePrimeUtrCoords = useMemo(
     () => JSON.parse(three_prime_utr_coords),
-    [three_prime_utr_coords],
+    [three_prime_utr_coords]
   );
   let transcriptRegions = [
     JSON.parse(five_prime_utr_coords) || undefined,
@@ -808,9 +806,9 @@ const SequencesTableChildRow = pure(function SequencesTableChildRow(props) {
         shouldOmitThreePrimeUtr,
         !threePrimeUtrCoords
           ? -Infinity
-          : threePrimeUtrCoords[1] - threePrimeUtrCoords[0] + 1,
+          : threePrimeUtrCoords[1] - threePrimeUtrCoords[0] + 1
       ),
-    [gen_rel_intron_utr_coords, shouldOmitThreePrimeUtr, threePrimeUtrCoords],
+    [gen_rel_intron_utr_coords, shouldOmitThreePrimeUtr, threePrimeUtrCoords]
   );
   let genomicHighlightRegions = genomicRegions.map((coord) => {
     return {
@@ -932,7 +930,7 @@ class MercatorTable extends React.Component {
     this.props.onChange(
       this.props.isMultiPick
         ? this.state.selectedLeaves
-        : this.state.selectedLeaves[0],
+        : this.state.selectedLeaves[0]
     );
   }
   handleSearchTermChange(searchTerm) {
@@ -1070,7 +1068,7 @@ class SortKeyTable extends React.Component {
     // is a new table and reset the sorting. This is bad if a user has already
     // sorted the table.
     this.sortValue = lodash.memoize((value) =>
-      lodash.sortBy(value, 'sort_key'),
+      lodash.sortBy(value, 'sort_key')
     );
   }
 
@@ -1468,7 +1466,7 @@ function OrthologsFormContainer(props) {
         </strong>
       </label>
     ),
-    [setShowLongestTranscriptPerGene],
+    [setShowLongestTranscriptPerGene]
   );
 
   const filteredValue = useMemo(() => {
@@ -1479,7 +1477,7 @@ function OrthologsFormContainer(props) {
     const preferredOrganismsSet = new Set(preferredOrganisms);
 
     return props.value.filter(({ organism }) =>
-      preferredOrganismsSet.has(organism),
+      preferredOrganismsSet.has(organism)
     );
   }, [props.value, preferredOrganisms, preferredOrganismsEnabled]);
 
@@ -1490,7 +1488,7 @@ function OrthologsFormContainer(props) {
     for (const datum of filteredValue) {
       // check if we have matching ortho source ids between our new array and the data array
       const matchingGene = dataWithLongestTranscriptPerGene.find(
-        (d) => d['ortho_gene_source_id'] === datum['ortho_gene_source_id'],
+        (d) => d['ortho_gene_source_id'] === datum['ortho_gene_source_id']
       );
       // NOTE: below matchingGene is for testing on PlasmoDB since I can't find an ortho/paralogs table that actually has duplicates since VectorBase isn't working...
       // const matchingGene = dataWithLongestTranscriptPerGene.find(
@@ -1555,7 +1553,7 @@ class OrthologsForm extends SortKeyTable {
     this.setState((state) => ({
       ...state,
       selectedRowIds: state.selectedRowIds.filter(
-        (id) => id !== ortho_gene_source_id,
+        (id) => id !== ortho_gene_source_id
       ),
     }));
   }
@@ -1564,7 +1562,7 @@ class OrthologsForm extends SortKeyTable {
     this.setState((state) => ({
       ...state,
       selectedRowIds: state.selectedRowIds.concat(
-        rows.map((row) => row['ortho_gene_source_id']),
+        rows.map((row) => row['ortho_gene_source_id'])
       ),
     }));
   }
@@ -1573,7 +1571,7 @@ class OrthologsForm extends SortKeyTable {
     this.setState((state) => ({
       ...state,
       selectedRowIds: state.selectedRowIds.filter((row) =>
-        rows.includes(row['ortho_gene_source_id']),
+        rows.includes(row['ortho_gene_source_id'])
       ),
     }));
   }
@@ -1749,7 +1747,7 @@ const TranscriptionSummaryForm = connect(
   {
     updateSectionVisibility: RecordActions.updateSectionVisibility,
     updateTableState: RecordActions.updateTableState,
-  },
+  }
 )(
   class TranscriptionSummaryFormPres extends SortKeyTable {
     constructor(props) {
@@ -1769,7 +1767,7 @@ const TranscriptionSummaryForm = connect(
       if (
         this._makeIframeUrl(
           projectId,
-          prevProps.record.attributes.source_id,
+          prevProps.record.attributes.source_id
         ) !==
         this._makeIframeUrl(projectId, this.props.record.attributes.source_id)
       ) {
@@ -1873,11 +1871,11 @@ const TranscriptionSummaryForm = connect(
         </div>
       );
     }
-  },
+  }
 );
 
 const UserCommentsTable = addCommentLink(
-  (props) => props.record.attributes.user_comment_link_url,
+  (props) => props.record.attributes.user_comment_link_url
 );
 
 /**

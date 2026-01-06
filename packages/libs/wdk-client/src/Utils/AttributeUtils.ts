@@ -8,16 +8,16 @@ import { stripHTML } from './DomUtils';
  * @returns true if the attribute is short (< 150 characters), false otherwise
  */
 export function isShortAttribute(
-  value: string | { displayText?: string; url: string } | null | undefined,
+  value: string | { displayText?: string; url: string } | null | undefined
 ): boolean {
   const textLength =
     value == null
       ? -1
       : typeof value === 'string'
-        ? stripHTML(value).length
-        : value.displayText != null
-          ? stripHTML(value.displayText).length
-          : value.url.length;
+      ? stripHTML(value).length
+      : value.displayText != null
+      ? stripHTML(value.displayText).length
+      : value.url.length;
 
   return textLength < 150;
 }
