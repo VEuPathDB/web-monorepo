@@ -345,22 +345,6 @@ function observeProgressiveExpand(
 
       // Track all snackbar keys so we can close them when stopped
       const snackbarKeys: string[] = [];
-      const startKey = `progressive-expand-start-${Date.now()}`;
-      snackbarKeys.push(startKey);
-
-      // Show starting notification
-      const startingSnackbar = enqueueSnackbar(
-        `Starting expansion of ${collapsedFields.length} collapsed sections`,
-        {
-          key: startKey,
-          variant: 'info',
-          persist: false,
-          action: (key) =>
-            React.createElement(StopProgressiveExpandButton, {
-              snackbarKey: key,
-            }),
-        },
-      );
 
       // Create stop signal
       const stop$ = action$.pipe(
@@ -369,41 +353,43 @@ function observeProgressiveExpand(
 
       // Expand sections one at a time
       const expansion$ = from(collapsedFields).pipe(
-        concatMap((fieldName, index) =>
-          of(updateSectionVisibility(fieldName, true)).pipe(
-            mergeMap((action) => {
-              // Scroll to the section being expanded
-              const element = document.getElementById(fieldName);
-              if (element) {
-                scrollIntoView(element);
-              }
+        concatMap((fieldName, index) => {
+          // Scroll to the section being expanded (side effect)
+          const element = document.getElementById(fieldName);
+          if (element) {
+            scrollIntoView(element);
+          }
 
-              // Track snackbar key
-              const progressKey = `progressive-expand-${index}-${Date.now()}`;
-              snackbarKeys.push(progressKey);
+          // Track snackbar key
+          const progressKey = `progressive-expand-${index}-${Date.now()}`;
+          snackbarKeys.push(progressKey);
 
-              // Show progress notification
-              const progressSnackbar = enqueueSnackbar(
-                `Expanded section ${index + 1}/${collapsedFields.length}: "${fieldName}"`,
-                {
-                  key: progressKey,
-                  variant: 'success',
-                  persist: true,
-                  action: (key) =>
-                    React.createElement(StopProgressiveExpandButton, {
-                      snackbarKey: key,
-                    }),
-                  preventDuplicate: true,
-                },
-              );
+          // Show progress notification FIRST (before expansion)
+          const progressSnackbar = enqueueSnackbar(
+            `Expanding section ${index + 1}/${collapsedFields.length}: "${fieldName}"`,
+            {
+              key: progressKey,
+              variant: 'info',
+              persist: true,
+              action: (key) =>
+                React.createElement(StopProgressiveExpandButton, {
+                  snackbarKey: key,
+                }),
+              preventDuplicate: true,
+            },
+          );
 
-              // Emit both the visibility action and the snackbar action
-              return from([action, progressSnackbar]);
-            }),
-            // Wait 5000ms AFTER expansion to allow heavy sections to load before moving to next
-            delay(5000),
-          ),
-        ),
+          // Create the expansion action
+          const expansionAction = updateSectionVisibility(fieldName, true);
+
+          // Emit snackbar first, then expansion action, then wait before next section
+          // concat() combines observables sequentially - second one starts when first completes
+          // EMPTY.pipe(delay(5000)) creates a 5-second pause before moving to next field
+          return concat(
+            from([progressSnackbar, expansionAction]),
+            EMPTY.pipe(delay(5000)),
+          );
+        }),
         // Stop expansion if STOP_PROGRESSIVE_EXPAND is dispatched
         takeUntil(stop$),
       );
@@ -421,10 +407,9 @@ function observeProgressiveExpand(
         preventDuplicate: true,
       });
 
-      // Return: starting snackbar -> expansion -> completion snackbar
+      // Return: expansion -> completion snackbar
       // Also close all snackbars if stop is triggered
       return merge(
-        of(startingSnackbar),
         concat(expansion$, of(completionSnackbar)),
         closeSnackbarsOnStop$,
       );
