@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { wrappable } from '../../../Utils/ComponentUtils';
 import CollapsibleSection from '../../../Components/Display/CollapsibleSection';
 import ErrorBoundary from '../../../Core/Controllers/ErrorBoundary';
@@ -11,7 +11,7 @@ import {
 import RecordAttribute from '../../../Views/Records/RecordAttributes/RecordAttribute';
 import { PartialRecordRequest } from '../../../Views/Records/RecordUtils';
 import { DefaultSectionTitle } from '../../../Views/Records/SectionTitle';
-import { stripHTML } from '../../../Utils/DomUtils';
+import { isShortAttribute } from '../../../Utils/AttributeUtils';
 
 export interface Props {
   attribute: AttributeField;
@@ -27,16 +27,8 @@ export interface Props {
 /** Record attribute section container for record page */
 function RecordAttributeSection(props: Props) {
   let value = props.record.attributes[props.attribute.name];
-  const textLength = useMemo(() => {
-    return value == null
-      ? -1
-      : typeof value === 'string'
-      ? stripHTML(value).length
-      : value.displayText != null
-      ? stripHTML(value.displayText).length
-      : value.url.length;
-  }, [value]);
-  if (textLength < 150) return <InlineRecordAttributeSection {...props} />;
+  if (isShortAttribute(value))
+    return <InlineRecordAttributeSection {...props} />;
   else return <BlockRecordAttributeSection {...props} />;
 }
 

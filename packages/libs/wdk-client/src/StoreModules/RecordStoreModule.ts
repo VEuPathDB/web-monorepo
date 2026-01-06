@@ -46,6 +46,7 @@ import {
 } from '../Actions/RecordActions';
 import { enqueueSnackbar, closeSnackbar } from '../Actions/NotificationActions';
 import { scrollIntoView } from '../Utils/DomUtils';
+import { isShortAttribute } from '../Utils/AttributeUtils';
 import { StopProgressiveExpandButton } from '../Views/Records/StopProgressiveExpandButton';
 import {
   BASKET_STATUS_ERROR,
@@ -324,8 +325,22 @@ function observeProgressiveExpand(
       // Get all field sections (attributes and tables)
       const allFields = getAllFields(recordState);
       // Filter to only expand sections that are currently collapsed AND are fields
+      // Also exclude short attributes (< 150 chars) which display inline
       const collapsedFields = recordState.collapsedSections.filter(
-        (section) => allFields.includes(section), // remove any sections that are attributes and where state.record.record.attributes[section] is short
+        (section) => {
+          if (!allFields.includes(section)) return false;
+
+          // Filter out short attributes
+          const attributeValue = recordState.record.attributes[section];
+          if (
+            attributeValue !== undefined &&
+            isShortAttribute(attributeValue)
+          ) {
+            return false;
+          }
+
+          return true;
+        },
       );
 
       // Track all snackbar keys so we can close them when stopped

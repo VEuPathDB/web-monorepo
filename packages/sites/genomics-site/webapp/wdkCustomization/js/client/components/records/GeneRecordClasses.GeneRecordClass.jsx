@@ -377,7 +377,7 @@ export const RecordMainSection = connect(null)(({
               <button
                 className="link"
                 onClick={() => dispatch(RecordActions.progressiveExpandAll())}
-                title="Progressively expands all sections one at a time, every 5 seconds. Including non-expandible sections, unfortunately."
+                title="Progressively expands all sections one at a time, every 5 seconds."
               >
                 Progressively expand all sections for debugging
               </button>
