@@ -350,18 +350,36 @@ export const RecordMainSection = connect(null)(
               position: 'absolute',
               right: 0,
               top: '1em',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '1em',
             }}
           >
-            <i className="fa fa-exclamation-triangle" />
-            &nbsp;
-            <button
-              className="link"
-              onClick={() =>
-                dispatch(RecordActions.updateAllFieldVisibility(false))
-              }
-            >
-              Collapse all sections for better performance
-            </button>
+            <div>
+              <i className="fa fa-exclamation-triangle" />
+              &nbsp;
+              <button
+                className="link"
+                onClick={() =>
+                  dispatch(RecordActions.updateAllFieldVisibility(false))
+                }
+              >
+                Collapse all sections for better performance
+              </button>
+            </div>
+            {process.env.NODE_ENV !== 'production' && (
+              <div>
+                <i className="fa fa-bug" />
+                &nbsp;
+                <button
+                  className="link"
+                  onClick={() => dispatch(RecordActions.progressiveExpandAll())}
+                  title="Progressively expands all sections one at a time, every 5 seconds."
+                >
+                  Progressively expand all sections for debugging
+                </button>
+              </div>
+            )}
           </div>
         )}
         <DefaultComponent {...props} />

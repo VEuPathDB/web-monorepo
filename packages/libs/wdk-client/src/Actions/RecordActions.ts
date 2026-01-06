@@ -29,6 +29,8 @@ export type Action =
   | UpdateTableStateAction
   | SetCollapsedSectionsAction
   | AllFieldVisibilityAction
+  | ProgressiveExpandAllAction
+  | StopProgressiveExpandAction
   | NavigationVisibilityAction
   | CategoryExpansionAction
   | NavigationQueryAction;
@@ -251,6 +253,36 @@ export function updateAllFieldVisibility(
   return {
     type: ALL_FIELD_VISIBILITY,
     payload: { isVisible },
+  };
+}
+
+//==============================================================================
+
+export const PROGRESSIVE_EXPAND_ALL = 'record-view/progressive-expand-all';
+
+export type ProgressiveExpandAllAction = {
+  type: typeof PROGRESSIVE_EXPAND_ALL;
+};
+
+/** Progressively expand all collapsed sections one at a time (for debugging) */
+export function progressiveExpandAll(): ProgressiveExpandAllAction {
+  return {
+    type: PROGRESSIVE_EXPAND_ALL,
+  };
+}
+
+//==============================================================================
+
+export const STOP_PROGRESSIVE_EXPAND = 'record-view/stop-progressive-expand';
+
+export type StopProgressiveExpandAction = {
+  type: typeof STOP_PROGRESSIVE_EXPAND;
+};
+
+/** Stop the progressive expansion of sections */
+export function stopProgressiveExpand(): StopProgressiveExpandAction {
+  return {
+    type: STOP_PROGRESSIVE_EXPAND,
   };
 }
 

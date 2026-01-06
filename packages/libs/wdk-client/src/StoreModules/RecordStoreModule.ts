@@ -1,17 +1,22 @@
+import React from 'react';
 import { chunk, difference, get, union, uniq } from 'lodash';
 import {
   ActionsObservable,
   combineEpics,
   StateObservable,
 } from 'redux-observable';
-import { EMPTY, Observable, from, merge, of } from 'rxjs';
+import { EMPTY, Observable, concat, from, merge, of } from 'rxjs';
 import {
   bufferTime,
+  concatMap,
+  delay,
   filter,
   groupBy,
   map,
   mergeMap,
   switchMap,
+  takeUntil,
+  withLatestFrom,
 } from 'rxjs/operators';
 import { Action } from '../Actions';
 import {
@@ -19,6 +24,7 @@ import {
   CATEGORY_EXPANSION,
   NAVIGATION_QUERY,
   NAVIGATION_VISIBILITY,
+  PROGRESSIVE_EXPAND_ALL,
   RECORD_ERROR,
   RECORD_LOADING,
   RECORD_RECEIVED,
@@ -26,15 +32,22 @@ import {
   REQUEST_PARTIAL_RECORD,
   SECTION_VISIBILITY,
   SET_COLLAPSED_SECTIONS,
+  STOP_PROGRESSIVE_EXPAND,
   TABLE_STATE_UPDATED,
   RequestPartialRecord,
   RecordReceivedAction,
   RecordUpdatedAction,
+  ProgressiveExpandAllAction,
   getPrimaryKey,
   updateNavigationVisibility,
   setCollapsedSections,
   updateTableState,
+  updateSectionVisibility,
 } from '../Actions/RecordActions';
+import { enqueueSnackbar, closeSnackbar } from '../Actions/NotificationActions';
+import { scrollIntoView } from '../Utils/DomUtils';
+import { isShortAttribute } from '../Utils/AttributeUtils';
+import { StopProgressiveExpandButton } from '../Views/Records/StopProgressiveExpandButton';
 import {
   BASKET_STATUS_ERROR,
   BASKET_STATUS_LOADING,
@@ -111,15 +124,7 @@ export function reduce(state: State = {} as State, action: Action): State {
       if (action.id !== state.requestId) return state;
       let { record, recordClass, categoryTree } = action.payload;
 
-      const collapsedSections = getLeaves(categoryTree, (node) => node.children)
-        .filter(
-          (
-            node
-          ): node is CategoryTreeNode & { properties: { name: string[] } } =>
-            !!node.properties.scope?.includes('record-collapsed') &&
-            !!node.properties.name
-        )
-        .map((node) => getRefName(node));
+      const collapsedSections = getInitiallyCollapsedSections(categoryTree);
 
       return {
         ...state,
@@ -282,12 +287,143 @@ function isFieldNode(node: CategoryTreeNode) {
   return targetType === 'attribute' || targetType === 'table';
 }
 
+/** Get sections marked as 'record-collapsed' */
+export function getInitiallyCollapsedSections(
+  categoryTree: CategoryTreeNode
+): string[] {
+  return getLeaves(categoryTree, (node) => node.children)
+    .filter(
+      (node): node is CategoryTreeNode & { properties: { name: string[] } } =>
+        !!node.properties.scope?.includes('record-collapsed') &&
+        !!node.properties.name
+    )
+    .map((node) => getRefName(node));
+}
+
 type RecordOptions = {
   attributes: string[];
   tables: string[];
 };
 
-export const observe = combineEpics(observeRecordRequests, observeUserSettings);
+/**
+ * Progressive expansion epic for debugging.
+ * Expands all collapsed sections one at a time with snackbar notifications and stop button.
+ */
+function observeProgressiveExpand(
+  action$: ActionsObservable<Action>,
+  state$: StateObservable<RootState>,
+  deps: EpicDependencies
+): Observable<Action> {
+  return action$.pipe(
+    filter(
+      (action): action is ProgressiveExpandAllAction =>
+        action.type === PROGRESSIVE_EXPAND_ALL
+    ),
+    withLatestFrom(state$),
+    mergeMap(([_, state]) => {
+      const recordState = state[key];
+      // Get all field sections (attributes and tables)
+      const allFields = getAllFields(recordState);
+      // Filter to only expand sections that are currently collapsed AND are fields
+      // Also exclude short attributes (< 150 chars) which display inline
+      const collapsedFields = recordState.collapsedSections.filter(
+        (section) => {
+          if (!allFields.includes(section)) return false;
+
+          // Filter out short attributes
+          const attributeValue = recordState.record.attributes[section];
+          if (
+            attributeValue !== undefined &&
+            isShortAttribute(attributeValue)
+          ) {
+            return false;
+          }
+
+          return true;
+        }
+      );
+
+      // Track all snackbar keys so we can close them when stopped
+      const snackbarKeys: string[] = [];
+
+      // Create stop signal
+      const stop$ = action$.pipe(
+        filter((action) => action.type === STOP_PROGRESSIVE_EXPAND)
+      );
+
+      // Expand sections one at a time
+      const expansion$ = from(collapsedFields).pipe(
+        concatMap((fieldName, index) => {
+          // Scroll to the section being expanded (side effect)
+          const element = document.getElementById(fieldName);
+          if (element) {
+            scrollIntoView(element);
+          }
+
+          // Track snackbar key
+          const progressKey = `progressive-expand-${index}-${Date.now()}`;
+          snackbarKeys.push(progressKey);
+
+          // Show progress notification FIRST (before expansion)
+          const progressSnackbar = enqueueSnackbar(
+            `Expanding section ${index + 1}/${
+              collapsedFields.length
+            }: "${fieldName}"`,
+            {
+              key: progressKey,
+              variant: 'info',
+              persist: true,
+              action: (key) =>
+                React.createElement(StopProgressiveExpandButton, {
+                  snackbarKey: key,
+                }),
+              preventDuplicate: true,
+            }
+          );
+
+          // Create the expansion action
+          const expansionAction = updateSectionVisibility(fieldName, true);
+
+          // Emit snackbar first, then expansion action, then wait before next section
+          // concat() combines observables sequentially - second one starts when first completes
+          // EMPTY.pipe(delay(5000)) creates a 5-second pause before moving to next field
+          return concat(
+            from([progressSnackbar, expansionAction]),
+            EMPTY.pipe(delay(5000))
+          );
+        }),
+        // Stop expansion if STOP_PROGRESSIVE_EXPAND is dispatched
+        takeUntil(stop$)
+      );
+
+      // Close all snackbars when stop is triggered
+      const closeSnackbarsOnStop$ = stop$.pipe(
+        mergeMap(() => from(snackbarKeys.map((key) => closeSnackbar(key))))
+      );
+
+      // Completion notification (shown when all sections are expanded)
+      const completionSnackbar = enqueueSnackbar('Section expansion done', {
+        key: `progressive-expand-complete-${Date.now()}`,
+        variant: 'success',
+        persist: false, // Auto-dismiss completion message
+        preventDuplicate: true,
+      });
+
+      // Return: expansion -> completion snackbar
+      // Also close all snackbars if stop is triggered
+      return merge(
+        concat(expansion$, of(completionSnackbar)),
+        closeSnackbarsOnStop$
+      );
+    })
+  );
+}
+
+export const observe = combineEpics(
+  observeRecordRequests,
+  observeUserSettings,
+  observeProgressiveExpand
+);
 
 interface StorageDescriptor {
   path: string;
