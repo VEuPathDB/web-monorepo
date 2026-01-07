@@ -342,9 +342,8 @@ function RecordOverview(props) {
 
 export const RecordMainSection = connect(null)(
   ({ DefaultComponent, dispatch, ...props }) => {
-    let segment;
-    if (process.env.NODE_ENV === 'production') {
-      segment = (
+    return (
+      <div>
         <React.Fragment>
           {props.depth == null && (
             <div
@@ -364,51 +363,27 @@ export const RecordMainSection = connect(null)(
               >
                 Collapse all sections for better performance
               </button>
+              {process.env.NODE_ENV !== 'production' && (
+                <>
+                  <br />
+                  <i className="fa fa-cog" />
+                  &nbsp;
+                  <button
+                    className="link"
+                    onClick={() =>
+                      dispatch(RecordActions.updateAllFieldVisibility(true))
+                    }
+                  >
+                    <strong>Open all sections for testing</strong>
+                  </button>
+                </>
+              )}
             </div>
           )}
           <DefaultComponent {...props} />
         </React.Fragment>
-      );
-    } else {
-      // non prod
-      segment = (
-        <React.Fragment>
-          {props.depth == null && (
-            <div
-              style={{
-                position: 'absolute',
-                right: 0,
-                top: '1em',
-              }}
-            >
-              <i className="fa fa-exclamation-triangle" />
-              &nbsp;
-              <button
-                className="link"
-                onClick={() =>
-                  dispatch(RecordActions.updateAllFieldVisibility(false))
-                }
-              >
-                Collapse all sections for better performance
-              </button>
-              <br />
-              <i className="fa fa-cog" />
-              &nbsp;
-              <button
-                className="link"
-                onClick={() =>
-                  dispatch(RecordActions.updateAllFieldVisibility(true))
-                }
-              >
-                <strong>Open all sections for testing</strong>
-              </button>
-            </div>
-          )}
-          <DefaultComponent {...props} />
-        </React.Fragment>
-      );
-    }
-    return <div>{segment}</div>;
+      </div>
+    );
   }
 );
 
