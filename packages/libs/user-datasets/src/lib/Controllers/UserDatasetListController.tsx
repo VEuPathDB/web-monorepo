@@ -19,13 +19,15 @@ import {
 } from '../Actions/UserDatasetsActions';
 import { requestUploadMessages } from '../Actions/UserDatasetUploadActions';
 
-import UserDatasetList from '../Components/List/UserDatasetList';
+import UserDatasetList, {
+  DatasetListProps,
+} from '../Components/List/UserDatasetList';
 import NoDatasetsMessage from '../Components/NoDatasetsMessage';
 import { quotaSize } from '../Components/UserDatasetUtils';
 
 import { StateSlice } from '../StoreModules/types';
 
-import { DataNoun, UserDataset } from '../Utils/types';
+import { DataNoun, DatasetListEntry } from '../Utils/types';
 
 import '../Components/UserDatasets.scss';
 
@@ -50,7 +52,8 @@ type StateProps = Pick<
   'userDatasetList' | 'userDatasetUpload' | 'globalData'
 >;
 type DispatchProps = typeof ActionCreators;
-interface OwnProps extends RouteComponentProps<{}> {
+
+interface OwnProps extends RouteComponentProps {
   baseUrl: string;
   hasDirectUpload: boolean;
   helpRoute: string;
@@ -58,6 +61,7 @@ interface OwnProps extends RouteComponentProps<{}> {
   dataNoun: DataNoun;
   enablePublicUserDatasets: boolean;
 }
+
 type Props = {
   ownProps: OwnProps;
   dispatchProps: DispatchProps;
@@ -124,7 +128,8 @@ class UserDatasetListController extends PageController<Props> {
   renderView() {
     const { config, user } = this.props.stateProps.globalData;
 
-    if (user == null || config == null) return this.renderDataLoading();
+    if (user == null || config == null)
+      return this.renderDataLoading();
 
     if (this.props.stateProps.userDatasetList.status !== 'complete')
       return null;
@@ -154,11 +159,12 @@ class UserDatasetListController extends PageController<Props> {
         updateDatasetCommunityVisibilityPending,
         updateDatasetCommunityVisibilitySuccess,
       },
-      userDatasetUpload: { uploads },
     } = this.props.stateProps;
 
-    const numOngoingUploads =
-      uploads != null ? uploads.filter((upload) => upload.isOngoing).length : 0;
+    // This doesn't appear to be used by anything
+    // const numOngoingUploads = uploads != null
+    //   ? uploads.filter((upload) => upload.isOngoing).length
+    //   : 0;
 
     const {
       shareUserDatasets,
@@ -173,19 +179,19 @@ class UserDatasetListController extends PageController<Props> {
       updateDatasetCommunityVisibility,
     } = this.props.dispatchProps;
 
-    const listProps = {
+    const listProps: DatasetListProps = {
       baseUrl,
       user,
       location,
       dataNoun,
       projectId,
       projectName,
-      numOngoingUploads,
+      // numOngoingUploads, // what is this?
       quotaSize,
       enablePublicUserDatasets,
       userDatasets: userDatasets.map(
-        (id) => userDatasetsById[id].resource
-      ) as UserDataset[],
+        (id) => userDatasetsById[id].resource as DatasetListEntry
+      ),
       filterByProject,
       shareUserDatasets,
       unshareUserDatasets,
@@ -206,9 +212,10 @@ class UserDatasetListController extends PageController<Props> {
       updateDatasetCommunityVisibilityPending,
       updateDatasetCommunityVisibilitySuccess,
     };
+
     const noDatasetsForThisProject =
       userDatasets
-        .map((id) => userDatasetsById[id].resource.projects)
+        .map((id) => userDatasetsById[id].resource.installTargets)
         .flat()
         .indexOf(projectId) === -1;
 

@@ -73,16 +73,17 @@ export const datasetInstallStatus = io.union([
   io.literal('missing-dependency'),
 ]);
 
-export const datasetInstallStatusEntry = io.intersection([
+const datasetInstallStatusEntry = io.intersection([
+  io.type({ status: datasetInstallStatus }),
+  io.partial({ messages: io.array(io.string) }),
+]);
+
+export const datasetInstallStatusMap = io.intersection([
   io.type({
     installTarget: io.string,
-    metaStatus: datasetInstallStatus,
+    meta: datasetInstallStatusEntry,
   }),
-  io.partial({
-    metaMessages: io.array(io.string),
-    dataStatus: datasetInstallStatus,
-    dataMessages: io.array(io.string),
-  }),
+  io.partial({ data: datasetInstallStatusEntry }),
 ]);
 
 export const partialUser = io.intersection([
@@ -105,8 +106,13 @@ export const datasetListShareUser = io.type({
 
 export const datasetStatusInfo = io.intersection([
   io.type({ import: datasetImportStatusDetails }),
-  io.partial({ install: io.array(datasetInstallStatusEntry) }),
+  io.partial({ install: io.array(datasetInstallStatusMap) }),
 ]);
+
+export const datasetTypeInput = io.type({
+  name: io.string,
+  version: io.string,
+});
 
 export const datasetTypeOutput = io.type({
   name: io.string,
@@ -226,12 +232,12 @@ export const datasetRevision = io.type({
   revisionId: io.string,
   revisionNote: io.string,
   fileListUrl: io.string,
-})
+});
 
 export const revisionHistory = io.type({
   originalId: io.string,
   revisions: io.array(datasetRevision),
-})
+});
 
 export const datasetMetaBase = io.intersection([
   io.type({
@@ -260,7 +266,7 @@ export const datasetMetaBase = io.intersection([
 export const relationType = io.union([
   io.literal('publication'),
   io.literal('program-name'),
-  io.literal('project-name')
+  io.literal('project-name'),
 ]);
 
 export const relatedDatasetInfo = io.type({
@@ -302,6 +308,14 @@ export const datasetDetails = io.intersection([
   }),
 ]);
 
+export const datasetPostDetails = io.intersection([
+  datasetMetaBase,
+  io.type({
+    type: datasetTypeInput,
+  }),
+  io.partial({ visibility: datasetVisibility }),
+]);
+
 export type APIServiceConfiguration = io.TypeOf<typeof apiServiceConfiguration>;
 export type DatasetCharacteristics = io.TypeOf<typeof datasetCharacteristics>;
 export type DatasetContact = io.TypeOf<typeof datasetContact>;
@@ -313,19 +327,41 @@ export type DatasetFundingAward = io.TypeOf<typeof datasetFundingAward>;
 export type DatasetImportStatus = io.TypeOf<typeof datasetImportStatus>;
 export type DatasetInstallStatus = io.TypeOf<typeof datasetInstallStatus>;
 export type DatasetInstallStatusEntry = io.TypeOf<
-  typeof datasetInstallStatusEntry
+  typeof datasetInstallStatusMap
 >;
+
 export type DatasetListEntry = io.TypeOf<typeof datasetListEntry>;
 export type DatasetListShareUser = io.TypeOf<typeof datasetListShareUser>;
 export type DatasetOrganism = io.TypeOf<typeof datasetOrganism>;
-export type DatasetOwner = io.TypeOf<typeof partialUser>;
+export type DatasetPostDetails = io.TypeOf<typeof datasetPostDetails>;
 export type DatasetPublication = io.TypeOf<typeof datasetPublication>;
 export type DatasetPublicationType = io.TypeOf<typeof datasetPublicationType>;
+export type DatasetShareOffer = io.TypeOf<typeof shareOffer>;
 export type DatasetStatusInfo = io.TypeOf<typeof datasetStatusInfo>;
 export type DatasetTypeOutput = io.TypeOf<typeof datasetTypeOutput>;
+export type DatasetUser = io.TypeOf<typeof partialUser>;
 export type DatasetVisibility = io.TypeOf<typeof datasetVisibility>;
 export type LinkedDataset = io.TypeOf<typeof linkedDataset>;
 export type RelatedDatasetInfo = io.TypeOf<typeof relatedDatasetInfo>;
+
+export type PatchValue<T> = {
+  value: T | null;
+}
+
+export type DatasetPatchBody = Record<string, PatchValue<unknown>>
+
+/**
+ * Union type for compatibility between the VDI API and legacy code based on the
+ * User Dataset Install Service.
+ *
+ * The client was previously ported from UDIS to VDI under tight time constraint
+ * and uses the different types interchangeably in some methods.
+ *
+ * To dissolve this type, the dataset list and dataset details store modules
+ * need to be untangled as they are both incorrectly typed and using the
+ * types incorrectly interchangeably.
+ */
+export type LegacyCompatDatasetType = DatasetListEntry | DatasetDetails;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -337,7 +373,7 @@ export interface UserDatasetMeta_UI extends UserDatasetFormContent {
 }
 
 // Interface for the dataset metadata used by VDI. Will get transformed into
-// UserDatasetMeta_UI for the the client.
+// UserDatasetMeta_UI for the client.
 export interface UserDatasetMeta_VDI extends UserDatasetFormContent {
   datasetType: {
     name: string;
@@ -355,33 +391,6 @@ export interface UserDatasetShare {
   user: number;
   email?: string;
   userDisplayName: string;
-}
-
-export interface UserDataset {
-  created: number | string;
-  age: number;
-  dependencies?: Array<{
-    resourceDisplayName: string;
-    resourceIdentifier: string;
-    resourceVersion: string;
-  }>;
-  projects: string[];
-  id: string;
-  meta: UserDatasetMeta_UI;
-  owner: string;
-  ownerUserId: number;
-  sharedWith: UserDatasetShare[] | undefined;
-  size?: number;
-  type: {
-    name: string;
-    display: string;
-    version: string;
-  };
-  fileCount?: number;
-  status: UserDatasetVDI['status'];
-  fileListing?: DatasetFileListing;
-  importMessages: Array<string>;
-  visibility?: DatasetVisibility;
 }
 
 export interface UserDatasetUpload {
@@ -437,8 +446,8 @@ export interface DatasetUploadTypeConfigEntry<T extends string> {
 }
 
 export interface DependencyProps {
-  value: UserDataset['dependencies'];
-  onChange: (value: UserDataset['dependencies']) => void;
+  value: DatasetDependency[];
+  onChange: (value: DatasetDependency[]) => void;
 }
 
 export interface FileUploadConfig {
@@ -471,10 +480,8 @@ export type DatasetUploadPageConfig<
       uploadTypeConfig: DatasetUploadTypeConfig<T2>;
     };
 
-export interface NewUserDataset extends UserDatasetMeta_UI {
-  datasetType: string; // In prototype, the only value is "biom" - will eventually be an enum
-  projects: string[];
-  dependencies?: UserDataset['dependencies'];
+export interface NewUserDataset {
+  details: Partial<DatasetPostDetails>;
   uploadMethod:
     | {
         type: 'file';
@@ -491,13 +498,6 @@ export interface NewUserDataset extends UserDatasetMeta_UI {
         reportConfig: unknown;
       };
 }
-
-export type UserDatasetShareResponse = {
-  [Key in 'grant' | 'revoke']: {
-    [Key in string]: UserDataset['sharedWith'];
-  };
-};
-
 /**
  * In EDA, data is referred to as "Study" or "Studies"
  * In genomics, data is referred to as "Data Set" or "Data Sets"
@@ -569,9 +569,6 @@ const statusDetails = intersection([
     install: array(installDetails),
   }),
 ]);
-
-export type UserDatasetVisibility = TypeOf<typeof visibilityOptions>;
-
 const visibilityOptions = keyof({
   private: null,
   protected: null,
@@ -586,8 +583,6 @@ const userDatasetRecipientDetails = type({
 });
 
 export const datasetIdType = type({ datasetId: string });
-
-export type UserDatasetPublication = TypeOf<typeof userDatasetPublication>;
 const userDatasetPublication = intersection([
   type({
     pubMedId: string,
@@ -596,8 +591,6 @@ const userDatasetPublication = intersection([
     citation: string,
   }),
 ]);
-
-export type UserDatasetHyperlink = TypeOf<typeof userDatasetHyperlink>;
 const userDatasetHyperlink = intersection([
   type({
     url: string,
@@ -608,8 +601,6 @@ const userDatasetHyperlink = intersection([
     isPublication: boolean,
   }),
 ]);
-
-export type UserDatasetContact = TypeOf<typeof userDatasetContact>;
 const userDatasetContact = intersection([
   type({
     name: string,
@@ -678,28 +669,12 @@ export const userDatasetDetails_VDI = intersection([
   }),
 ]);
 
-const userDatasetDetailsShareDetails = type({
-  status: keyof({ grant: null, revoke: null }),
-  recipient: userDatasetRecipientDetails,
-});
-
 export type UserDatasetDependency = TypeOf<typeof userDatasetDependency>;
 const userDatasetDependency = type({
   resourceIdentifier: string,
   resourceDisplayName: string,
   resourceVersion: string,
 });
-
-export const userDatasetDetails = intersection([
-  datasetIdType,
-  userDatasetDetails_base,
-  type({
-    dependencies: array(userDatasetDependency),
-  }),
-  partial({
-    shares: array(userDatasetDetailsShareDetails),
-  }),
-]);
 
 export const userQuotaMetadata = type({
   quota: type({
@@ -720,7 +695,3 @@ export const userDatasetFileListing = partial({
 });
 
 export type UserDatasetVDI = TypeOf<typeof userDatasetDetails_VDI>;
-export type UserDatasetDetails = TypeOf<typeof userDatasetDetails>;
-export type UserQuotaMetadata = TypeOf<typeof userQuotaMetadata>;
-export type UserDatasetFileListing = TypeOf<typeof userDatasetFileListing>;
-export type UserDatasetInstallDetailsByProject = TypeOf<typeof installDetails>;

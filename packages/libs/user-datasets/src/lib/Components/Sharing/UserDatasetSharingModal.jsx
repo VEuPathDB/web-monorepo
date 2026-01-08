@@ -10,9 +10,30 @@ import { Modal } from '@veupathdb/coreui';
 import { isVdiCompatibleWdkService } from '../../Service';
 import '../UserDatasets.scss';
 import './UserDatasetSharingModal.scss';
+import {datasetUserFullName} from "../../Utils/formatting";
 
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+/**
+ * @typedef DatasetSharingModelProps
+ *
+ * @property {User} user
+ * @property {LegacyCompatDatasetType[]} datasets
+ * @property {DataNoun} dataNoun
+ * @property {() => any} onClose
+ * @property {'datasetsList'|'datasetDetails'} context
+ * @property {(dids: string[], rids: number[], ctx: 'datasetDetails' | 'datasetsList') => any} shareUserDatasets
+ * @property {(oid: string, rid: number, ctx: 'datasetDetails' | 'datasetsList') => any} unshareUserDatasets
+ * @property {boolean} sharingDatasetPending
+ * @property {boolean?} shareSuccessful
+ * @property {Error?} shareError
+ * @property {(ds: LegacyCompatDatasetType, patch: Partial<LegacyCompatDatasetType>) => any} updateUserDatasetDetail
+ * @property {boolean} enablePublicUserDatasets
+ */
+/**
+ * @typedef UserDatasetSharingModal
+ * @property {DatasetSharingModelProps} props
+ */
 class UserDatasetSharingModal extends React.Component {
   constructor(props) {
     super(props);
@@ -47,15 +68,22 @@ class UserDatasetSharingModal extends React.Component {
     this.renderSharingButtons = this.renderSharingButtons.bind(this);
   }
 
+  /**
+   * @param {LegacyCompatDatasetType} dataset
+   * @returns {boolean}
+   */
   isMyDataset(dataset) {
     const { user } = this.props;
-    return dataset && dataset.ownerUserId && dataset.ownerUserId === user.id;
+    return dataset && dataset.owner.userId && dataset.owner.userId === user.id;
   }
 
   handleTextChange(recipientInput = null) {
     this.setState({ recipientInput });
   }
 
+  /**
+   * @returns {string}
+   */
   getDatasetNoun() {
     return this.props.datasets.length === 1
       ? `this ${this.props.dataNoun.singular.toLowerCase()}`
@@ -65,14 +93,14 @@ class UserDatasetSharingModal extends React.Component {
   verifyRecipient(recipientEmail) {
     if (typeof recipientEmail !== 'string' || !recipientEmail.length)
       throw new TypeError(
-        `verifyRecipient: bad email received (${recipientEmail})`
+        `verifyRecipient: bad email received (${recipientEmail})`,
       );
 
     const { wdkService } = this.context;
 
     if (!isVdiCompatibleWdkService(wdkService)) {
       throw new Error(
-        `verifyRecipient: must have a properly configured UserDatasetsCompatibleWdkService`
+        `verifyRecipient: must have a properly configured UserDatasetsCompatibleWdkService`,
       );
     }
 
@@ -87,7 +115,7 @@ class UserDatasetSharingModal extends React.Component {
             <span>
               This email is not associated with a VEuPathDB account. <br />{' '}
               <b>{recipientEmail}</b> will not receive {this.getDatasetNoun()}.
-            </span>
+            </span>,
           );
         }
 
@@ -97,7 +125,7 @@ class UserDatasetSharingModal extends React.Component {
             <span>
               Sorry, you cannot share a{' '}
               {this.props.dataNoun.singular.toLowerCase()} with yourself.
-            </span>
+            </span>,
           );
         } else {
           return this.acceptRecipient(recipientEmail, foundUserId);
@@ -106,11 +134,11 @@ class UserDatasetSharingModal extends React.Component {
       .catch((err) => {
         console.error(
           `verifyRecipient:  error checking if '${recipientEmail}' exists.`,
-          err
+          err,
         );
         return this.disqualifyRecipient(
           recipientEmail,
-          <span>An unknown error occurred.</span>
+          <span>An unknown error occurred.</span>,
         );
       });
   }
@@ -164,7 +192,7 @@ class UserDatasetSharingModal extends React.Component {
     if (
       recipients.find(
         (recipient) =>
-          recipient.email.toLowerCase() === recipientInput.toLowerCase()
+          recipient.email.toLowerCase() === recipientInput.toLowerCase(),
       )
     )
       return alert('This email has already been entered.');
@@ -180,7 +208,7 @@ class UserDatasetSharingModal extends React.Component {
           },
         ],
       },
-      () => this.verifyRecipient(recipientInput)
+      () => this.verifyRecipient(recipientInput),
     );
   }
 
@@ -196,7 +224,7 @@ class UserDatasetSharingModal extends React.Component {
   unshareWithUser(datasetId, userId) {
     if (
       !window.confirm(
-        `Are you sure you want to stop sharing ${this.getDatasetNoun()} with this user?`
+        `Are you sure you want to stop sharing ${this.getDatasetNoun()} with this user?`,
       )
     )
       return;
@@ -204,19 +232,30 @@ class UserDatasetSharingModal extends React.Component {
     if (typeof unshareUserDatasets !== 'function')
       throw new TypeError(
         'UserDatasetSharingModal:unshareWithUser: expected unshareUserDatasets to be function. Got: ' +
-          typeof unshareUserDatasets
+          typeof unshareUserDatasets,
       );
     unshareUserDatasets(datasetId, userId, context);
   }
 
+  /**
+   * @param {DatasetListShareUser|DatasetShareOffer} share
+   * @param {number} index
+   * @param {LegacyCompatDatasetType} userDataset
+   * @returns {React.JSX.Element}
+   */
   renderShareItem(share, index, userDataset) {
-    const { user, userDisplayName } = share;
+    // If we're coming from the dataset details page, the share object is a more
+    // fleshed out type than the share object in the list view.
+    if (this.props.context === 'datasetDetails')
+      share = share.recipient;
+
+
     return (
       <div key={index}>
-        <span className="faded">Shared with</span> <b>{userDisplayName}</b>{' '}
+        <span className="faded">Shared with</span> <b>{datasetUserFullName(share)}</b>{' '}
         <button
           type="button"
-          onClick={() => this.unshareWithUser(userDataset.id, user)}
+          onClick={() => this.unshareWithUser(userDataset.datasetId, share.userId)}
           className="link"
         >
           <Icon fa="times-circle unshareRecipient" />
@@ -231,9 +270,12 @@ class UserDatasetSharingModal extends React.Component {
     deselectDataset(dataset);
   }
 
+  /**
+   * @param {LegacyCompatDatasetType} userDataset
+   * @returns {React.JSX.Element}
+   */
   renderDatasetItem(userDataset) {
-    const { sharedWith, id, meta } = userDataset;
-    const { name } = meta;
+    const { shares, datasetId } = userDataset;
     const isOwner = this.isMyDataset(userDataset);
     const { deselectDataset, dataNoun } = this.props;
 
@@ -242,7 +284,7 @@ class UserDatasetSharingModal extends React.Component {
 
     return (
       <div
-        key={id}
+        key={datasetId}
         className={'UserDatasetSharing-Dataset' + (isOwner ? '' : ' invalid')}
       >
         <div className="UserDatasetSharing-Dataset-Icon">
@@ -250,13 +292,13 @@ class UserDatasetSharingModal extends React.Component {
         </div>
 
         <div className="UserDatasetSharing-Dataset-Details">
-          <h3>{name}</h3>
+          <h3>{userDataset.name}</h3>
           {!isOwner ? (
             <i className="faded danger">
               This {dataNoun.singular.toLowerCase()} has been shared with you.
               Only the owner can share it.
             </i>
-          ) : Array.isArray(sharedWith) && sharedWith.length ? (
+          ) : Array.isArray(shares) && shares.length ? (
             <ShareList userDataset={userDataset} />
           ) : (
             <EmptyState />
@@ -286,8 +328,8 @@ class UserDatasetSharingModal extends React.Component {
       verified === null
         ? 'circle-o-notch fa-spin'
         : verified
-        ? 'user-circle'
-        : 'user-times danger';
+          ? 'user-circle'
+          : 'user-times danger';
 
     return (
       <div
@@ -330,12 +372,17 @@ class UserDatasetSharingModal extends React.Component {
   }
 
   renderShareList({ userDataset }) {
-    const { sharedWith } = userDataset;
-    return !Array.isArray(sharedWith) || !sharedWith.length
-      ? null
-      : sharedWith.map((share, index) =>
-          this.renderShareItem(share, index, userDataset)
-        );
+    let { shares } = userDataset;
+
+    if (!Array.isArray(shares) || !shares.length)
+      return null;
+
+    // Filter out revoked shares when on the dataset details page.
+    if (this.props.context === 'datasetDetails')
+      shares = shares.filter(it => it.status === 'grant')
+        .map(it => it.recipient)
+
+    return shares.map((share, index) => this.renderShareItem(share, index, userDataset));
   }
 
   renderDatasetList({ datasets }) {
@@ -348,8 +395,12 @@ class UserDatasetSharingModal extends React.Component {
     return recipient.verified && recipient.id !== this.props.user.id;
   }
 
+  /**
+   * @param {LegacyCompatDatasetType} dataset
+   * @returns {boolean}
+   */
   isDatasetShareable(dataset = {}) {
-    return dataset.ownerUserId === this.props.user.id;
+    return dataset.owner.userId === this.props.user.id;
   }
 
   submitShare() {
@@ -359,9 +410,9 @@ class UserDatasetSharingModal extends React.Component {
     const { shareUserDatasets, context } = this.props;
 
     shareUserDatasets(
-      datasets.map(({ id }) => id),
+      datasets.map(({ datasetId }) => datasetId),
       recipients.map(({ id }) => id),
-      context
+      context,
     );
   }
 
@@ -396,9 +447,11 @@ class UserDatasetSharingModal extends React.Component {
     return recipients.filter(this.isRecipientValid);
   }
 
+  /**
+   * @returns {LegacyCompatDatasetType[]}
+   */
   getShareableDatasets() {
-    const { datasets } = this.props;
-    return datasets.filter(this.isDatasetShareable);
+    return this.props.datasets.filter(this.isDatasetShareable);
   }
 
   renderSharingButtons() {
@@ -426,7 +479,6 @@ class UserDatasetSharingModal extends React.Component {
     const { recipients } = this.state;
     const { datasets, onClose, dataNoun, shareError, shareSuccessful } =
       this.props;
-    const datasetNoun = this.getDatasetNoun();
 
     const DatasetList = this.renderDatasetList;
     const RecipientList = this.renderRecipientList;

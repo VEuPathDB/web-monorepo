@@ -9,16 +9,14 @@ import {
 } from '@veupathdb/http-utils';
 
 import {
-  userDatasetDetails_VDI,
-  UserDatasetMeta_UI,
-  UserDatasetMeta_VDI,
-  userDatasetDetails,
   userQuotaMetadata,
   userDatasetFileListing,
   datasetIdType,
   datasetListEntry,
-  DatasetListEntry,
   datasetDetails,
+  DatasetPostDetails,
+  DatasetPatchBody,
+  LegacyCompatDatasetType,
 } from '../Utils/types';
 
 import { array } from 'io-ts';
@@ -62,26 +60,23 @@ export class UserDatasetApi extends FetchClientWithCredentials {
       this.wdkService,
       formSubmission
     );
-    const { uploadMethod, ...remainingConfig } = newUserDatasetConfig;
+    const { uploadMethod, details } = newUserDatasetConfig;
 
-    const meta: UserDatasetMeta_VDI = {
+    const meta = {
       dependencies: [],
-      ...remainingConfig,
-      datasetType: {
-        name: newUserDatasetConfig.datasetType,
-        version: '1.0',
-      },
+      ...details,
       origin: 'direct-upload',
-    };
+    } as DatasetPostDetails;
 
     const xhr = new XMLHttpRequest();
+
     xhr.upload.addEventListener('progress', (e) => {
       const progress = Math.floor((e.loaded / e.total) * 100);
       dispatchUploadProgress && dispatchUploadProgress(progress);
     });
 
     xhr.addEventListener('readystatechange', () => {
-      if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+      if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 202) {
         try {
           const response = JSON.parse(xhr.response);
           dispatchUploadProgress && dispatchUploadProgress(null);
@@ -100,10 +95,10 @@ export class UserDatasetApi extends FetchClientWithCredentials {
 
     const fileBody = new FormData();
 
-    fileBody.append('meta', JSON.stringify(meta));
+    fileBody.append('details', JSON.stringify(meta));
 
     if (uploadMethod.type === 'file') {
-      fileBody.append('file', uploadMethod.file);
+      fileBody.append('dataFile', uploadMethod.file);
     } else if (uploadMethod.type === 'url') {
       fileBody.append('url', uploadMethod.url);
     } else {
@@ -134,8 +129,13 @@ export class UserDatasetApi extends FetchClientWithCredentials {
 
   updateUserDataset = (
     datasetId: string,
-    requestBody: Partial<UserDatasetMeta_UI>
+    updatedMeta: Partial<LegacyCompatDatasetType>,
   ) => {
+    const requestBody: DatasetPatchBody = {};
+
+    for (const key of Object.keys(updatedMeta) as Array<keyof LegacyCompatDatasetType>)
+      requestBody[key] = { value: updatedMeta[key] }
+
     return this.fetch(
       createJsonRequest({
         path: `/datasets/${datasetId}`,
@@ -161,7 +161,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
       createJsonRequest({
         path: `/datasets/community`,
         method: 'GET',
-        transformResponse: ioTransformer(array(userDatasetDetails_VDI)),
+        transformResponse: ioTransformer(array(datasetListEntry)),
       })
     );
   };
@@ -180,10 +180,6 @@ export class UserDatasetApi extends FetchClientWithCredentials {
     datasetId: string,
     zipFileType: 'upload' | 'data'
   ) => {
-    if (typeof datasetId !== 'string')
-      throw new TypeError(
-        `Can't build downloadUrl; invalid datasetId given (${datasetId}) [${typeof datasetId}]`
-      );
     // When a form is submitted using the GET method, query params are removed.
     // By using the `input` option, the object will get converted to query params
     // by the form submission.
@@ -218,9 +214,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
     return this.wdkService.sendRequest(userIdsByEmailDecoder, {
       path: '/user-id-query',
       method: 'POST',
-      body: JSON.stringify({
-        emails,
-      }),
+      body: JSON.stringify({ emails }),
     });
   };
 
@@ -252,6 +246,6 @@ function makeQueryString(
 }
 
 // QUESTION: also copied from study-data-access's api; move to a different package's util functions?
-async function noContent(body: unknown) {
+async function noContent(_: unknown) {
   return null;
 }

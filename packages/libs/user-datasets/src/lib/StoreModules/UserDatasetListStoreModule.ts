@@ -18,7 +18,7 @@ import {
   updateDatasetCommunityVisibilitySuccess,
 } from '../Actions/UserDatasetsActions';
 
-import { UserDataset } from '../Utils/types';
+import { DatasetListEntry } from '../Utils/types';
 
 export const key = 'userDatasetList';
 
@@ -53,8 +53,8 @@ type ForbiddenState = SharingModalState & {
 
 type CompleteState = SharingModalState & {
   status: 'complete';
-  userDatasets: Array<string | number>;
-  userDatasetsById: Record<string, { isLoading: false; resource: UserDataset }>;
+  userDatasets: Array<string>;
+  userDatasetsById: Record<string, { isLoading: false; resource: Partial<DatasetListEntry> }>;
   filterByProject: boolean;
 };
 
@@ -90,10 +90,10 @@ export function reduce(state: State = initialState, action: Action): State {
         ...state,
         status: 'complete',
         filterByProject: action.payload.filterByProject,
-        userDatasets: action.payload.userDatasets.map((ud) => ud.id),
+        userDatasets: action.payload.userDatasets.map((ud) => ud.datasetId),
         userDatasetsById: action.payload.userDatasets.reduce(
           (uds, ud) =>
-            Object.assign(uds, { [ud.id]: { loading: false, resource: ud } }),
+            Object.assign(uds, { [ud.datasetId]: { loading: false, resource: ud } }),
           {} as CompleteState['userDatasetsById']
         ),
       };
@@ -117,9 +117,9 @@ export function reduce(state: State = initialState, action: Action): State {
             ...state,
             userDatasetsById: {
               ...state.userDatasetsById,
-              [action.payload.userDataset.id]: {
+              [action.payload.datasetId]: {
                 isLoading: false,
-                resource: action.payload.userDataset,
+                resource: action.payload.userDataset as Partial<DatasetListEntry>,
               },
             },
           }
@@ -130,11 +130,11 @@ export function reduce(state: State = initialState, action: Action): State {
         ? {
             ...state,
             userDatasets: difference(state.userDatasets, [
-              action.payload.userDataset.id,
+              action.payload.userDataset.datasetId,
             ]),
             userDatasetsById: omit(
               state.userDatasetsById,
-              action.payload.userDataset.id
+              action.payload.userDataset.datasetId
             ),
           }
         : state;

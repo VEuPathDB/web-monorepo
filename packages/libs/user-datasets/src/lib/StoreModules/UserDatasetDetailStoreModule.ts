@@ -20,7 +20,7 @@ import {
   updateDatasetCommunityVisibilitySuccess,
 } from '../Actions/UserDatasetsActions';
 
-import { UserDataset, UserDatasetFileListing } from '../Utils/types';
+import { DatasetDetails, LegacyCompatDatasetType } from '../Utils/types';
 
 export const key = 'userDatasetDetail';
 
@@ -30,8 +30,7 @@ export const key = 'userDatasetDetail';
  */
 export type UserDatasetEntry = {
   isLoading: boolean;
-  resource?: UserDataset;
-  fileListing?: UserDatasetFileListing;
+  resource?: LegacyCompatDatasetType;
 };
 
 export interface State {
@@ -95,7 +94,6 @@ export function reduce(state: State = initialState, action: Action): State {
           [action.payload.id]: {
             isLoading: false,
             resource: action.payload.userDataset,
-            fileListing: action.payload.fileListing,
           },
         },
       };
@@ -120,9 +118,9 @@ export function reduce(state: State = initialState, action: Action): State {
         userDatasetUpdating: false,
         userDatasetsById: {
           ...state.userDatasetsById,
-          [action.payload.userDataset.id]: {
+          [action.payload.datasetId]: {
             isLoading: false,
-            resource: action.payload.userDataset,
+            resource: action.payload.userDataset as DatasetDetails,
           },
         },
       };

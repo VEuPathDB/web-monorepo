@@ -17,18 +17,9 @@ import { validateVdiCompatibleThunk } from '../Service';
 
 import { FILTER_BY_PROJECT_PREF } from '../Utils/project-filter';
 import {
-  UserDataset,
-  UserDatasetDetails,
-  UserDatasetMeta_UI,
-  UserDatasetVDI,
-  UserDatasetFileListing,
-  UserDatasetContact,
-  UserDatasetHyperlink,
-  UserDatasetPublication,
   DatasetDetails,
   DatasetListEntry,
-  DatasetInstallStatusEntry,
-  DatasetContact,
+  LegacyCompatDatasetType,
 } from '../Utils/types';
 import { FetchClientError } from '@veupathdb/http-utils';
 import {
@@ -77,13 +68,13 @@ export const LIST_RECEIVED = 'user-dataset/list-received';
 export type ListReceivedAction = {
   type: typeof LIST_RECEIVED;
   payload: {
-    userDatasets: UserDataset[];
+    userDatasets: DatasetListEntry[];
     filterByProject: boolean;
   };
 };
 
 export function listReceived(
-  userDatasets: UserDataset[],
+  userDatasets: DatasetListEntry[],
   filterByProject: boolean
 ): ListReceivedAction {
   return {
@@ -111,9 +102,7 @@ export function listErrorReceived(
 ): ListErrorReceivedAction {
   return {
     type: LIST_ERROR_RECEIVED,
-    payload: {
-      error,
-    },
+    payload: { error },
   };
 }
 
@@ -131,9 +120,7 @@ export type DetailLoadingAction = {
 export function detailLoading(id: string): DetailLoadingAction {
   return {
     type: DETAIL_LOADING,
-    payload: {
-      id,
-    },
+    payload: { id },
   };
 }
 
@@ -145,22 +132,19 @@ export type DetailReceivedAction = {
   type: typeof DETAIL_RECEIVED;
   payload: {
     id: string;
-    userDataset?: UserDataset;
-    fileListing?: UserDatasetFileListing;
+    userDataset?: DatasetDetails;
   };
 };
 
 export function detailReceived(
   id: string,
-  userDataset?: UserDataset,
-  fileListing?: UserDatasetFileListing
+  userDataset?: DatasetDetails,
 ): DetailReceivedAction {
   return {
     type: DETAIL_RECEIVED,
     payload: {
       id,
       userDataset,
-      fileListing,
     },
   };
 }
@@ -179,9 +163,7 @@ export type DetailErrorAction = {
 export function detailError(error: FetchClientError): DetailErrorAction {
   return {
     type: DETAIL_ERROR,
-    payload: {
-      error,
-    },
+    payload: { error },
   };
 }
 
@@ -206,16 +188,19 @@ export const DETAIL_UPDATE_SUCCESS = 'user-datasets/detail-update-success';
 export type DetailUpdateSuccessAction = {
   type: typeof DETAIL_UPDATE_SUCCESS;
   payload: {
-    userDataset: UserDataset;
+    datasetId: string,
+    userDataset: LegacyCompatDatasetType;
   };
 };
 
 export function detailUpdateSuccess(
-  userDataset: UserDataset
+  datasetId: string,
+  userDataset: LegacyCompatDatasetType
 ): DetailUpdateSuccessAction {
   return {
     type: DETAIL_UPDATE_SUCCESS,
     payload: {
+      datasetId,
       userDataset,
     },
   };
@@ -237,9 +222,7 @@ export function detailUpdateError(
 ): DetailUpdateErrorAction {
   return {
     type: DETAIL_UPDATE_ERROR,
-    payload: {
-      error,
-    },
+    payload: { error },
   };
 }
 
@@ -264,12 +247,12 @@ export const DETAIL_REMOVE_SUCCESS = 'user-datasets/detail-remove-success';
 export type DetailRemoveSuccessAction = {
   type: typeof DETAIL_REMOVE_SUCCESS;
   payload: {
-    userDataset: UserDataset;
+    userDataset: DatasetListEntry ;
   };
 };
 
 export function detailRemoveSuccess(
-  userDataset: UserDataset
+  userDataset: DatasetListEntry,
 ): DetailRemoveSuccessAction {
   return {
     type: DETAIL_REMOVE_SUCCESS,
@@ -459,7 +442,7 @@ export function updateDatasetCommunityVisibility(
             datasetIds.map((datasetId) =>
               wdkService.updateUserDataset(datasetId, {
                 visibility: isVisibleToCommunity ? 'public' : 'private',
-              })
+              } as LegacyCompatDatasetType)
             )
           );
           if (context === 'datasetDetails') {
@@ -510,53 +493,8 @@ export function loadUserDatasetListWithoutLoadingIndicator() {
         () => false
       ),
       wdkService.getCurrentUserDatasets(),
-    ]).then(([filterByProject, userDatasets]) => {
-      const now = Date.now();
-
-      const vdiToExistingUds = userDatasets.map(
-        (ud: DatasetListEntry): UserDataset => ({
-          created: ud.created,
-          age: now - Date.parse(ud.created),
-          projects: ud.installTargets,
-          id: ud.datasetId,
-          meta: {
-            visibility: ud.visibility,
-            createdOn: ud.created,
-            name: ud.name,
-            summary: ud.summary,
-            category: ud.type.category,
-            description: ud.description,
-          },
-          owner: ud.owner.firstName + ' ' + ud.owner.lastName,
-          ownerUserId: ud.owner.userId,
-          sharedWith: ud.shares?.map((d) => ({
-            user: d.userId,
-            userDisplayName: d.firstName + ' ' + d.lastName,
-          })),
-          size: ud.fileSizeTotal,
-          type: {
-            name: ud.type.name,
-            display: ud.type.category,
-            version: ud.type.version,
-          },
-          fileCount: ud.fileCount,
-          status: {
-            import: ud.status.import.status,
-            install: ud.status.install?.map((e: DatasetInstallStatusEntry) => ({
-              projectId: e.installTarget,
-              metaStatus: e.metaStatus,
-              metaMessage: e.metaMessages?.join("\n"),
-              dataStatus: e.dataStatus,
-              dataMessage: e.dataMessages?.join("\n"),
-            }))
-          },
-          importMessages: ud.status.import.messages ?? [],
-          visibility: ud.visibility,
-        })
-      );
-      return listReceived(vdiToExistingUds, filterByProject);
-    }, listErrorReceived)
-  );
+    ]).then(([filterByProject, userDatasets]) =>
+      listReceived(userDatasets, filterByProject), listErrorReceived));
 }
 
 export function loadUserDatasetList() {
@@ -566,26 +504,7 @@ export function loadUserDatasetList() {
 export function loadUserDatasetDetailWithoutLoadingIndicator(id: string) {
   return validateVdiCompatibleThunk<DetailAction>(({ wdkService }) =>
     wdkService.getUserDataset(id).then(
-      (ud: DatasetDetails) => {
-        const transformedResponse: UserDataset = {
-          created: ud.created,
-          age: Date.now() - Date.parse(ud.created),
-          dependencies: ud.dependencies,
-          // ...partiallyTransformedResponse,
-          // fileListing,
-          // fileCount: fileListing?.upload?.contents.length,
-          // size: fileListing?.upload?.zipSize,
-          // sharedWith: shares
-          //   ?.filter((d) => d.status === 'grant')
-          //   .map((d) => ({
-          //     userDisplayName:
-          //       d.recipient.firstName + ' ' + d.recipient.lastName,
-          //     user: d.recipient.userId,
-          //   })),
-          // dependencies,
-        } as unknown as UserDataset;
-        return detailReceived(id, transformedResponse, null as unknown as UserDatasetFileListing);
-      },
+      (ud: DatasetDetails) => detailReceived(id, ud),
       (error: FetchClientError) => detailError(error)
     )
   );
@@ -663,29 +582,29 @@ export function unshareUserDatasets(
 }
 
 export function updateUserDatasetDetail(
-  userDataset: UserDataset,
-  meta: UserDatasetMeta_UI
+  userDataset: LegacyCompatDatasetType,
+  patch: Partial<LegacyCompatDatasetType>,
 ) {
   return validateVdiCompatibleThunk<UpdateAction>(({ wdkService }) => [
     detailUpdating(),
     wdkService
-      .updateUserDataset(userDataset.id, meta)
+      .updateUserDataset(userDataset.datasetId, patch)
       .then(
-        () => detailUpdateSuccess({ ...userDataset, meta }),
+        () => detailUpdateSuccess(userDataset.datasetId, { ...userDataset, ...patch } as LegacyCompatDatasetType),
         detailUpdateError
       ),
   ]);
 }
 
 export function removeUserDataset(
-  userDataset: UserDataset,
+  userDataset: DatasetListEntry,
   redirectTo?: string
 ) {
   return validateVdiCompatibleThunk<RemovalAction | EmptyAction | RouteAction>(
     ({ wdkService }) => [
       detailRemoving(),
       wdkService
-        .removeUserDataset(userDataset.id)
+        .removeUserDataset(userDataset.datasetId)
         .then(
           () => [
             detailRemoveSuccess(userDataset),
