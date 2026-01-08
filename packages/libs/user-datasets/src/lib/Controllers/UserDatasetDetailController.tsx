@@ -28,11 +28,8 @@ import EmptyState from '../Components/EmptyState';
 import { quotaSize } from '../Components/UserDatasetUtils';
 
 import { StateSlice } from '../StoreModules/types';
-import { DataNoun, DatasetDetails } from '../Utils/types';
+import { DataNoun } from '../Utils/types';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
-import { User } from "@veupathdb/wdk-client/lib/Utils/WdkUser";
-import { ServiceConfig } from "@veupathdb/wdk-client/lib/Service/ServiceBase";
-import { FetchClientError } from "@veupathdb/http-utils";
 
 const ActionCreators = {
   showLoginForm,
@@ -224,7 +221,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       .map(file => file.fileSize)
       .reduce(add, 0)
 
-    const props: DetailViewProps = {
+    const props = {
       baseUrl,
       includeAllLink,
       includeNameHeader,
@@ -246,7 +243,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       sharingSuccess,
       shareSuccessful,
       updateSharingModalState,
-      userDataset: entry?.resource as DatasetDetails,
+      userDataset: entry?.resource,
       getQuestionUrl: this.getQuestionUrl,
       questionMap: keyBy(questions, 'fullName'),
       workspaceTitle,
@@ -273,44 +270,6 @@ class UserDatasetDetailController extends PageController<MergedProps> {
     );
   }
 }
-
-type DetailViewProps = {
-  baseUrl: string;
-  includeAllLink: boolean;
-  includeNameHeader: boolean;
-  user: User;
-  config: ServiceConfig;
-  isOwner: boolean;
-  location: Location;
-  updateError?: FetchClientError;
-  removeUserDataset: typeof removeUserDataset;
-  quotaSize: number;
-  userDatasetUpdating: boolean;
-  shareUserDatasets: typeof shareUserDatasets;
-  unshareUserDatasets: typeof unshareUserDatasets;
-  updateUserDatasetDetail: typeof updateUserDatasetDetail;
-  sharingModalOpen: boolean;
-  sharingDatasetPending: boolean;
-  sharingError: typeof sharingError;
-  shareError?: Error;
-  sharingSuccess: typeof sharingSuccess;
-  shareSuccessful?: boolean;
-  userDataset: DatasetDetails;
-  getQuestionUrl: (q: Question) => string;
-  questionMap: Record<string, Question>;
-  workspaceTitle: string;
-  detailsPageTitle: string;
-  dataNoun: DataNoun;
-  enablePublicUserDatasets: boolean;
-  updateCommunityModalVisibility: typeof updateCommunityModalVisibility;
-  updateDatasetCommunityVisibility: typeof updateDatasetCommunityVisibility;
-  updateSharingModalState: typeof updateSharingModalState;
-  communityModalOpen: boolean;
-  updateDatasetCommunityVisibilityError?: string;
-  updateDatasetCommunityVisibilityPending: boolean;
-  updateDatasetCommunityVisibilitySuccess: boolean;
-  datasetSize: number;
-};
 
 const enhance = connect<
   StateProps,

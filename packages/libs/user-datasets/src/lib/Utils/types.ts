@@ -316,33 +316,16 @@ export const datasetPostDetails = io.intersection([
   io.partial({ visibility: datasetVisibility }),
 ]);
 
-export type APIServiceConfiguration = io.TypeOf<typeof apiServiceConfiguration>;
-export type DatasetCharacteristics = io.TypeOf<typeof datasetCharacteristics>;
-export type DatasetContact = io.TypeOf<typeof datasetContact>;
 export type DatasetDependency = io.TypeOf<typeof datasetDependency>;
 export type DatasetDetails = io.TypeOf<typeof datasetDetails>;
-export type DatasetFileDetails = io.TypeOf<typeof datasetFileDetails>;
-export type DatasetFileListing = io.TypeOf<typeof datasetFileListing>;
-export type DatasetFundingAward = io.TypeOf<typeof datasetFundingAward>;
-export type DatasetImportStatus = io.TypeOf<typeof datasetImportStatus>;
-export type DatasetInstallStatus = io.TypeOf<typeof datasetInstallStatus>;
-export type DatasetInstallStatusEntry = io.TypeOf<
-  typeof datasetInstallStatusMap
->;
 
 export type DatasetListEntry = io.TypeOf<typeof datasetListEntry>;
 export type DatasetListShareUser = io.TypeOf<typeof datasetListShareUser>;
-export type DatasetOrganism = io.TypeOf<typeof datasetOrganism>;
 export type DatasetPostDetails = io.TypeOf<typeof datasetPostDetails>;
-export type DatasetPublication = io.TypeOf<typeof datasetPublication>;
-export type DatasetPublicationType = io.TypeOf<typeof datasetPublicationType>;
 export type DatasetShareOffer = io.TypeOf<typeof shareOffer>;
 export type DatasetStatusInfo = io.TypeOf<typeof datasetStatusInfo>;
 export type DatasetTypeOutput = io.TypeOf<typeof datasetTypeOutput>;
 export type DatasetUser = io.TypeOf<typeof partialUser>;
-export type DatasetVisibility = io.TypeOf<typeof datasetVisibility>;
-export type LinkedDataset = io.TypeOf<typeof linkedDataset>;
-export type RelatedDatasetInfo = io.TypeOf<typeof relatedDatasetInfo>;
 
 export type PatchValue<T> = {
   value: T | null;
@@ -357,34 +340,6 @@ export type DatasetPatchBody = Record<string, PatchValue<unknown>>
 export type LegacyCompatDatasetType = DatasetListEntry | DatasetDetails;
 
 ////////////////////////////////////////////////////////////////////////////////
-
-// User dataset metadata type used by the UI (as opposed to the type
-// used by VDI).
-export interface UserDatasetMeta_UI extends UserDatasetFormContent {
-  visibility: DatasetVisibility;
-  createdOn?: string;
-}
-
-// Interface for the dataset metadata used by VDI. Will get transformed into
-// UserDatasetMeta_UI for the client.
-export interface UserDatasetMeta_VDI extends UserDatasetFormContent {
-  datasetType: {
-    name: string;
-    version: string;
-  };
-  visibility?: DatasetVisibility;
-  origin: string;
-  projects: string[];
-  dependencies: UserDatasetDependency[];
-  createdOn?: string;
-}
-
-export interface UserDatasetShare {
-  time?: number;
-  user: number;
-  email?: string;
-  userDisplayName: string;
-}
 
 export interface UserDatasetUpload {
   id: string;
@@ -500,174 +455,19 @@ export type DataNoun = {
   plural: string;
 };
 
-// VDI types
-const userMetadata = partial({
-  firstName: string,
-  lastName: string,
-  email: string,
-  organization: string,
-});
-
-const ownerDetails = intersection([
-  type({
-    userId: number,
-  }),
-  userMetadata,
-]);
-
-const datasetTypeDetails = intersection([
-  type({
-    name: string,
-    version: string,
-  }),
-  partial({
-    displayName: string,
-  }),
-]);
-
-const installStatus = keyof({
-  complete: null,
-  'failed-validation': null,
-  'failed-installation': null,
-  'ready-for-reinstall': null,
-  'missing-dependency': null,
-  running: null,
-});
-
-const installDetails = intersection([
-  type({
-    projectId: string,
-  }),
-  partial({
-    metaStatus: installStatus,
-    metaMessage: string,
-    dataStatus: installStatus,
-    dataMessage: string,
-  }),
-]);
-
-const importStatus = keyof({
-  'in-progress': null,
-  complete: null,
-  invalid: null,
-  failed: null,
-  queued: null,
-});
-
-const statusDetails = intersection([
-  type({
-    import: importStatus,
-  }),
-  partial({
-    install: array(installDetails),
-  }),
-]);
-const visibilityOptions = keyof({
-  private: null,
-  protected: null,
-  public: null,
-});
-
-const userDatasetRecipientDetails = type({
-  userId: number,
-  firstName: string,
-  lastName: string,
-  organization: string,
-});
-
 export const datasetIdType = type({ datasetId: string });
-const userDatasetPublication = intersection([
-  type({
-    pubMedId: string,
-  }),
-  partial({
-    citation: string,
-  }),
-]);
-const userDatasetHyperlink = intersection([
-  type({
-    url: string,
-    text: string,
-  }),
-  partial({
-    description: string,
-    isPublication: boolean,
-  }),
-]);
-const userDatasetContact = intersection([
-  type({
-    name: string,
-  }),
-  partial({
-    email: string,
-    affiliation: string,
-    city: string,
-    state: string,
-    country: string,
-    address: string,
-    isPrimary: boolean,
-  }),
-]);
 
 export type UserDatasetFormContent = TypeOf<typeof userDatasetFormContent>;
 export const userDatasetFormContent = intersection([
   type({
     name: string,
-  }),
-  partial({
     summary: string,
-    shortName: string,
+  }),
+  partial({
     shortAttribution: string,
-    category: string,
     description: string,
-    publications: array(userDatasetPublication),
-    hyperlinks: array(userDatasetHyperlink),
-    organisms: array(string),
-    contacts: array(userDatasetContact),
   }),
 ]);
-
-// Many of these user dataset details are in both the vdi and wdk user datasets.
-// This base type defines the fields common to both.
-const userDatasetDetails_base = intersection([
-  datasetIdType,
-  userDatasetFormContent,
-  type({
-    owner: ownerDetails,
-    datasetType: datasetTypeDetails,
-    visibility: visibilityOptions,
-    origin: string,
-    projectIds: array(string),
-    status: statusDetails,
-    created: string,
-  }),
-  partial({
-    sourceUrl: string,
-    importMessages: array(string),
-    createdOn: string,
-  }),
-]);
-
-export const userDatasetDetails_VDI = intersection([
-  datasetIdType,
-  userDatasetDetails_base,
-  type({
-    fileCount: number,
-    fileSizeTotal: number,
-  }),
-  partial({
-    shares: array(
-      intersection([userDatasetRecipientDetails, type({ accepted: boolean })]),
-    ),
-  }),
-]);
-
-export type UserDatasetDependency = TypeOf<typeof userDatasetDependency>;
-const userDatasetDependency = type({
-  resourceIdentifier: string,
-  resourceDisplayName: string,
-  resourceVersion: string,
-});
 
 export const userQuotaMetadata = type({
   quota: type({
@@ -686,5 +486,3 @@ export const userDatasetFileListing = partial({
     contents: array(type({ fileName: string, fileSize: number })),
   }),
 });
-
-export type UserDatasetVDI = TypeOf<typeof userDatasetDetails_VDI>;

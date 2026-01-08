@@ -16,10 +16,7 @@ import {
 import { validateVdiCompatibleThunk } from '../Service';
 
 import { FILTER_BY_PROJECT_PREF } from '../Utils/project-filter';
-import {
-  DatasetDetails,
-  DatasetListEntry,
-} from '../Utils/types';
+import { DatasetDetails, DatasetListEntry } from '../Utils/types';
 import { FetchClientError } from '@veupathdb/http-utils';
 import {
   InferAction,
@@ -104,7 +101,9 @@ export function listErrorReceived(
 ): ListErrorReceivedAction {
   return {
     type: LIST_ERROR_RECEIVED,
-    payload: { error },
+    payload: {
+      error,
+    },
   };
 }
 
@@ -181,7 +180,9 @@ export type DetailLoadingAction = {
 export function detailLoading(id: string): DetailLoadingAction {
   return {
     type: DETAIL_LOADING,
-    payload: { id },
+    payload: {
+      id,
+    },
   };
 }
 
@@ -224,7 +225,9 @@ export type DetailErrorAction = {
 export function detailError(error: FetchClientError): DetailErrorAction {
   return {
     type: DETAIL_ERROR,
-    payload: { error },
+    payload: {
+      error,
+    },
   };
 }
 
@@ -283,7 +286,9 @@ export function detailUpdateError(
 ): DetailUpdateErrorAction {
   return {
     type: DETAIL_UPDATE_ERROR,
-    payload: { error },
+    payload: {
+      error,
+    },
   };
 }
 
@@ -317,7 +322,9 @@ export function detailRemoveSuccess(
 ): DetailRemoveSuccessAction {
   return {
     type: DETAIL_REMOVE_SUCCESS,
-    payload: { datasetId },
+    payload: {
+      datasetId
+    },
   };
 }
 
@@ -533,7 +540,6 @@ type ListItemUpdateAction =
   | ListItemUpdatingAction
   | ListItemUpdateErrorAction
   | ListItemUpdateSuccessAction;
-
 type DetailAction =
   | DetailLoadingAction
   | DetailReceivedAction
@@ -542,7 +548,6 @@ type DetailUpdateAction =
   | DetailUpdatingAction
   | DetailUpdateSuccessAction
   | DetailUpdateErrorAction;
-
 type RemovalAction =
   | DetailRemovingAction
   | DetailRemoveSuccessAction

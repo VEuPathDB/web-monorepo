@@ -7,6 +7,7 @@ import Link from '@veupathdb/wdk-client/lib/Components/Link';
 import { Mesa, MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
+import RadioList from '@veupathdb/wdk-client/lib/Components/InputControls/RadioList';
 
 import NotFound from '@veupathdb/wdk-client/lib/Views/NotFound/NotFound';
 
@@ -25,10 +26,6 @@ import {datasetUserFullName} from "../../Utils/formatting";
 
 const classify = makeClassifier('UserDatasetDetail');
 
-/**
- * @typedef UserDatasetDetail
- * @property {DetailViewProps} props
- */
 class UserDatasetDetail extends React.Component {
   constructor(props) {
     super(props);
@@ -70,10 +67,9 @@ class UserDatasetDetail extends React.Component {
       'hyperlinks',
       'organisms',
     ];
-
     if (typeof key !== 'string' || !META_KEYS.includes(key))
       throw new TypeError(
-        `Can't edit meta for invalid key: ${JSON.stringify(key)}`,
+        `Can't edit meta for invalid key: ${JSON.stringify(key)}`
       );
   }
 
@@ -106,22 +102,22 @@ class UserDatasetDetail extends React.Component {
         typeof value !== 'object'
       ) {
         throw new TypeError(
-          `onMetaSave: expected input value to be string or boolean or object; got ${typeof value}`,
+          `onMetaSave: expected input value to be string or boolean or object; got ${typeof value}`
         );
       }
       if (nestedKey && typeof nestedKey !== 'string') {
         throw new TypeError(
-          `onMetaSave: expected nestedKey to be a string; got ${typeof nestedKey}`,
+          `onMetaSave: expected nestedKey to be a string; got ${typeof nestedKey}`
         );
       }
       if (index && !Number.isInteger(index)) {
         throw new TypeError(
-          `onMetaSave: expected index to be an integer; got ${typeof index} with value ${index}`,
+          `onMetaSave: expected index to be an integer; got ${typeof index} with value ${index}`
         );
       }
 
-      const userDataset = this.props.userDataset;
-      let updatedMeta;
+      const { userDataset, updateUserDatasetDetail } = this.props;
+      let updatedMeta = {};
       if (index !== undefined && Number.isInteger(index) && index >= 0) {
         // Handle nested array case, for example meta.contacts[index].name
         let arrayField = [...userDataset[key]];
@@ -148,12 +144,12 @@ class UserDatasetDetail extends React.Component {
         updatedMeta = { [key]: value };
       }
 
-      return this.props.updateUserDatasetDetail(userDataset, updatedMeta);
+      return updateUserDatasetDetail(userDataset, updatedMeta);
     };
   }
 
   handleDelete() {
-    const { isOwner, userDataset, dataNoun } = this.props;
+    const { baseUrl, isOwner, userDataset, removeUserDataset, dataNoun } = this.props;
     const { shares } = userDataset;
     const shareCount = !Array.isArray(shares) ? null : shares.length;
 
@@ -180,7 +176,7 @@ class UserDatasetDetail extends React.Component {
         : visibilityMessage || shareMessage);
 
     if (window.confirm(message)) {
-      this.props.removeUserDataset(userDataset, this.props.baseUrl);
+      removeUserDataset(userDataset, baseUrl);
     }
   }
 
@@ -204,22 +200,14 @@ class UserDatasetDetail extends React.Component {
     );
   }
 
-  /**
-   * @returns {DatasetShareOffer[]}
-   */
-  getGrantedShares() {
-    return this.props.userDataset.shares.filter(it => it.status === 'grant');
-  }
-
   getAttributes() {
-    const { userDataset: dataset, isOwner } = this.props;
-    const { questionMap, dataNoun } = this.props;
+    const { userDataset, isOwner, questionMap, dataNoun } = this.props;
     const { onMetaSave } = this;
     const isInstalled = this.isInstalled();
     const questions = Object.values(questionMap).filter(
       (q) =>
         'userDatasetType' in q.properties &&
-        q.properties.userDatasetType.includes(dataset.type.name),
+        q.properties.userDatasetType.includes(userDataset.type.name),
     );
 
     const shares = this.getGrantedShares();
@@ -231,7 +219,7 @@ class UserDatasetDetail extends React.Component {
             className: classify('Name'),
             value: (
               <SaveableTextEditor
-                value={dataset.name}
+                value={userDataset.name}
                 readOnly={!isOwner}
                 onSave={this.onMetaSave('name')}
               />
@@ -244,14 +232,14 @@ class UserDatasetDetail extends React.Component {
           <UserDatasetStatus
             linkToDataset={false}
             useTooltip={false}
-            userDataset={dataset}
+            userDataset={userDataset}
             projectId={this.props.config.projectId}
             displayName={this.props.config.displayName}
             dataNoun={dataNoun}
           />
         ),
       },
-      !questions || !Array.isArray(questions.length) || !isInstalled
+      !Array.isArray(questions) || !questions.length || !isInstalled
         ? null
         : {
             attribute: 'Available searches',
@@ -272,7 +260,9 @@ class UserDatasetDetail extends React.Component {
                   ].join('/');
                   const url =
                     urlPath +
-                    (ps.length === 1 ? '?param.' + ps[0] + '=' + dataset.datasetId : '');
+                    (ps.length === 1
+                      ? '?param.' + ps[0] + '=' + userDataset.datasetId
+                      : '');
                   return (
                     <li key={q.fullName}>
                       <Link to={url}>{q.displayName}</Link>
@@ -284,17 +274,17 @@ class UserDatasetDetail extends React.Component {
           },
       {
         attribute: 'Owner',
-        value: isOwner ? 'Me' : datasetUserFullName(dataset.owner),
+        value: isOwner ? 'Me' : datasetUserFullName(userDataset.owner),
       },
       {
         attribute: 'Visibility',
         value:
-          dataset.visibility === 'public' ? (
+          userDataset.visibility === 'public' ? (
             <>
               {' '}
               <Public className="Community-visible" /> This is a "Community{' '}
-              {dataNoun.singular}" made accessible to the public by user {datasetUserFullName(dataset.owner)}
-              .
+              {dataNoun.singular}" made accessible to the public by user{' '}
+              {datasetUserFullName(userDataset.owner)}.
             </>
           ) : (
             <>
@@ -323,7 +313,7 @@ class UserDatasetDetail extends React.Component {
         value: (
           <SaveableTextEditor
             multiLine={true}
-            value={dataset.summary}
+            value={userDataset.summary}
             readOnly={!isOwner}
             onSave={onMetaSave('summary')}
             emptyText="No Summary"
@@ -334,7 +324,7 @@ class UserDatasetDetail extends React.Component {
         attribute: 'Description',
         value: (
           <SaveableTextEditor
-            value={dataset.description ?? ''}
+            value={userDataset.description ?? ''}
             multiLine={true}
             readOnly={!isOwner}
             onSave={this.onMetaSave('description')}
@@ -344,15 +334,19 @@ class UserDatasetDetail extends React.Component {
       },
       {
         attribute: 'Created',
-        value: <DateTime datetime={dataset.created} />,
+        value: <DateTime datetime={userDataset.created} />,
       },
-      { attribute: 'Data set size', value: bytesToHuman(this.props.datasetSize) },
-      { attribute: 'ID', value: dataset.datasetId },
+      {
+        attribute: 'Data set size',
+        value: bytesToHuman(this.props.datasetSize),
+      },
+      { attribute: 'ID', value: userDataset.datasetId },
       {
         attribute: 'Data type',
         value: (
           <span>
-            {dataset.type.category} ({dataset.type.name} {dataset.type.version})
+            {userDataset.type.category} ({userDataset.type.name}{' '}
+            {userDataset.type.version})
           </span>
         ),
       },
@@ -407,9 +401,10 @@ class UserDatasetDetail extends React.Component {
   }
 
   renderDatasetActions() {
+    const { isOwner } = this.props;
     return (
       <div className={classify('Actions')}>
-        {!this.props.isOwner ? null : (
+        {!isOwner ? null : (
           <ThemedGrantAccessButton
             buttonText={`Grant Access to ${this.props.dataNoun.plural}`}
             onPress={(grantType) => {
@@ -428,7 +423,7 @@ class UserDatasetDetail extends React.Component {
             enablePublicUserDatasets={this.props.enablePublicUserDatasets}
           />
         )}
-        {this.props.isOwner ? (
+        {isOwner ? (
           <ThemedDeleteButton buttonText="Delete" onPress={this.handleDelete} />
         ) : null}
       </div>
@@ -436,11 +431,12 @@ class UserDatasetDetail extends React.Component {
   }
 
   renderDetailsSection() {
+    const { userDataset } = this.props;
     return (
       <section>
         <details>
           <pre>
-            <code>{JSON.stringify(this.props.userDataset, null, '  ')}</code>
+            <code>{JSON.stringify(userDataset, null, '  ')}</code>
           </pre>
         </details>
       </section>
@@ -587,6 +583,8 @@ class UserDatasetDetail extends React.Component {
       shareUserDatasets,
       unshareUserDatasets,
       dataNoun,
+      isOwner,
+      sharingModalOpen,
       sharingDatasetPending,
       shareSuccessful,
       shareError,
@@ -611,7 +609,7 @@ class UserDatasetDetail extends React.Component {
         {this.getPageSections().map((Section, key) => (
           <Section key={key} />
         ))}
-        {!this.props.isOwner || !this.props.sharingModalOpen ? null : (
+        {!isOwner || !sharingModalOpen ? null : (
           <SharingModal
             user={user}
             datasets={[userDataset]}

@@ -57,12 +57,12 @@ export interface DatasetListProps {
   shareUserDatasets: (
     userDatasetIds: string[],
     recipientUserIds: number[],
-    context: 'datasetDetails' | 'datasetsList',
+    context: 'datasetDetails' | 'datasetsList'
   ) => any;
   unshareUserDatasets: (
     userDatasetId: string,
     recipientUserId: number,
-    context: 'datasetDetails' | 'datasetsList',
+    context: 'datasetDetails' | 'datasetsList'
   ) => any;
   sharingModalOpen: boolean;
   sharingSuccess: (shareSuccessful: boolean | undefined) => any;
@@ -82,7 +82,7 @@ export interface DatasetListProps {
   updateDatasetCommunityVisibility: (
     datasetIds: string[],
     isVisibleToCommunity: boolean,
-    context: 'datasetDetails' | 'datasetsList',
+    context: 'datasetDetails' | 'datasetsList'
   ) => any;
   updateDatasetCommunityVisibilityError: string | undefined;
   updateDatasetCommunityVisibilityPending: boolean;
@@ -361,41 +361,32 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
 
   onRowDeselect(row: DatasetListEntry): void {
     const { selectedRows } = this.state;
-
     if (!selectedRows.includes(row.datasetId)) return;
-
-    const newSelection = selectedRows.filter(selectedId => selectedId !== row.datasetId);
-
+    const newSelection = selectedRows.filter(
+      (selectedId) => selectedId !== row.datasetId
+    );
     this.setState({ selectedRows: newSelection });
   }
 
   onMultipleRowSelect(rows: DatasetListEntry[]): void {
-    if (!rows.length)
-      return;
-
+    if (!rows.length) return;
     const { selectedRows } = this.state;
-
     const unselectedRows = rows
       .filter((dataset: DatasetListEntry) => !selectedRows.includes(dataset.datasetId))
       .map((dataset: DatasetListEntry) => dataset.datasetId);
-
-    if (!unselectedRows.length)
-      return;
-
-    const newSelection = [ ...selectedRows, ...unselectedRows ];
-
+    if (!unselectedRows.length) return;
+    const newSelection = [
+      ...selectedRows,
+      ...unselectedRows,
+    ];
     this.setState({ selectedRows: newSelection });
   }
 
   onMultipleRowDeselect(rows: DatasetListEntry[]): void {
-    if (!rows.length)
-      return;
-
+    if (!rows.length) return;
     const { selectedRows } = this.state;
-
     const deselectedIds = rows.map(row => row.datasetId);
     const newSelection = selectedRows.filter(id => !deselectedIds.includes(id));
-
     this.setState({ selectedRows: newSelection });
   }
 
@@ -422,11 +413,11 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
 
   getTableActions() {
     const { isMyDataset } = this;
-    const { dataNoun, enablePublicUserDatasets } =
+    const { removeUserDataset, dataNoun, enablePublicUserDatasets } =
       this.props;
     return [
       {
-        callback: (_: DatasetListEntry[]) => {},
+        callback: (rows: DatasetListEntry[]) => {},
         element: (
           <ThemedGrantAccessButton
             buttonText={`Grant Access to ${dataNoun.plural}`}
@@ -453,15 +444,14 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
               : [`these ${this.props.dataNoun.plural.toLowerCase()}`, 'them'];
 
           const affectedUsers: DatasetListShareUser[] = userDatasets.reduce(
+            (
+              affectedUserList: DatasetListShareUser[],
+              userDataset: DatasetListEntry,
+              ) => {
 
-            (affectedUserList: DatasetListShareUser[], userDataset: DatasetListEntry) => {
-
-              if (!isMyDataset(userDataset))
-                return affectedUserList;
-
+              if (!isMyDataset(userDataset)) return affectedUserList;
               if (!userDataset.shares || userDataset.shares.length)
                 return affectedUserList;
-
               const newlyAffectedUsers = userDataset.shares.filter(
                 (sharedWithUser: DatasetListShareUser) => {
                   return (
@@ -486,7 +476,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
             )
           )
             return;
-          userDatasets.forEach((userDataset) => this.props.removeUserDataset(userDataset));
+          userDatasets.forEach((userDataset) => removeUserDataset(userDataset));
         },
         element: (
           <ThemedDeleteButton buttonText="Delete" onPress={() => null} />
@@ -547,16 +537,12 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
     const { searchTerm, uiState } = this.state;
     const { projectName, filterByProject } = this.props;
     const sort: MesaSortObject = uiState.sort;
-
     if (filterByProject)
       rows = rows.filter((dataset) => dataset.installTargets.includes(projectName));
-
     if (searchTerm && searchTerm.length)
       return this.filterRowsBySearchTerm([...rows], searchTerm);
-
     if (sort.columnKey.length)
       return this.sortRowsByColumnKey([...rows], sort);
-
     return [ ...rows ];
   }
 
@@ -566,15 +552,13 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
   ): DatasetListEntry[] {
     if (!searchTerm || !searchTerm.length) return rows;
     return rows.filter((dataset) => {
-      const searchableRow = JSON.stringify(dataset).toLowerCase();
+      const searchableRow: string = JSON.stringify(dataset).toLowerCase();
       return searchableRow.indexOf(searchTerm.toLowerCase()) !== -1;
     });
   }
 
   getColumnSortValueMapper(columnKey: string | null) {
-    if (columnKey === null)
-      return (data: any) => data;
-
+    if (columnKey === null) return (data: any) => data;
     switch (columnKey) {
       case 'type':
         return (data: DatasetListEntry, _: number): string =>
@@ -582,24 +566,21 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
 
       case 'meta.name':
         return (data: DatasetListEntry) => data.name.toLowerCase();
-
       default:
-        return (data: any, _: number) => typeof data[columnKey] !== 'undefined'
+        return (data: any, index: number) => {
+          return typeof data[columnKey] !== 'undefined'
           ? data[columnKey]
           : null;
+        };
     }
   }
 
-  /**
-   * @returns A new, sorted copy of the input array.
-   */
   sortRowsByColumnKey(
     rows: DatasetListEntry[],
     sort: MesaSortObject
   ): DatasetListEntry[] {
     const mappedValue = this.getColumnSortValueMapper(sort.columnKey);
     const sorted = [...rows].sort(MesaUtils.sortFactory(mappedValue));
-
     return sort.direction === 'asc' ? sorted : sorted.reverse();
   }
 

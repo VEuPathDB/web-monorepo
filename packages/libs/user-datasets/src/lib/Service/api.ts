@@ -14,7 +14,6 @@ import {
   datasetIdType,
   datasetListEntry,
   datasetDetails,
-  DatasetPostDetails,
   DatasetPatchBody,
   LegacyCompatDatasetType,
 } from '../Utils/types';
@@ -66,10 +65,9 @@ export class UserDatasetApi extends FetchClientWithCredentials {
       dependencies: [],
       ...details,
       origin: 'direct-upload',
-    } as DatasetPostDetails;
+    };
 
     const xhr = new XMLHttpRequest();
-
     xhr.upload.addEventListener('progress', (e) => {
       const progress = Math.floor((e.loaded / e.total) * 100);
       dispatchUploadProgress && dispatchUploadProgress(progress);
@@ -214,7 +212,9 @@ export class UserDatasetApi extends FetchClientWithCredentials {
     return this.wdkService.sendRequest(userIdsByEmailDecoder, {
       path: '/user-id-query',
       method: 'POST',
-      body: JSON.stringify({ emails }),
+      body: JSON.stringify({
+        emails,
+      }),
     });
   };
 
@@ -246,6 +246,6 @@ function makeQueryString(
 }
 
 // QUESTION: also copied from study-data-access's api; move to a different package's util functions?
-async function noContent(_: unknown) {
+async function noContent(body: unknown) {
   return null;
 }

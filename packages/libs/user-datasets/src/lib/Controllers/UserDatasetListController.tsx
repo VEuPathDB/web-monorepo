@@ -52,8 +52,7 @@ type StateProps = Pick<
   'userDatasetList' | 'userDatasetUpload' | 'globalData'
 >;
 type DispatchProps = typeof ActionCreators;
-
-interface OwnProps extends RouteComponentProps {
+interface OwnProps extends RouteComponentProps<{}> {
   baseUrl: string;
   hasDirectUpload: boolean;
   helpRoute: string;
@@ -61,7 +60,6 @@ interface OwnProps extends RouteComponentProps {
   dataNoun: DataNoun;
   enablePublicUserDatasets: boolean;
 }
-
 type Props = {
   ownProps: OwnProps;
   dispatchProps: DispatchProps;
@@ -128,8 +126,7 @@ class UserDatasetListController extends PageController<Props> {
   renderView() {
     const { config, user } = this.props.stateProps.globalData;
 
-    if (user == null || config == null)
-      return this.renderDataLoading();
+    if (user == null || config == null) return this.renderDataLoading();
 
     if (this.props.stateProps.userDatasetList.status !== 'complete')
       return null;

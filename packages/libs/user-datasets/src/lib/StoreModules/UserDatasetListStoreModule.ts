@@ -121,7 +121,7 @@ export function reduce(state: State = initialState, action: Action): State {
         ? {
             ...state,
             userDatasets: state.userDatasets.filter(
-              (it) => it.datasetId !== action.payload.datasetId,
+              it => it.datasetId !== action.payload.datasetId,
             ),
           }
         : state;
